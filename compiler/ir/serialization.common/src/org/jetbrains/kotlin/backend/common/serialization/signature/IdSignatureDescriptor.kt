@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.backend.common.serialization.signature
 
-import org.jetbrains.kotlin.backend.common.serialization.mangle.MangleConstant
+import org.jetbrains.kotlin.ir.util.MangleConstant
 import org.jetbrains.kotlin.backend.common.serialization.mangle.SpecialDeclarationType
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.ir.descriptors.IrImplementingDelegateDescriptor

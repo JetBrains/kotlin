@@ -5,21 +5,24 @@
 
 package org.jetbrains.kotlin.backend.jvm
 
-import org.jetbrains.kotlin.backend.common.serialization.DeclarationTable
+import org.jetbrains.kotlin.backend.common.serialization.DeclarationTable2
+import org.jetbrains.kotlin.backend.common.serialization.StringSignatureClashTracker
 import org.jetbrains.kotlin.backend.jvm.lower.getFileClassInfo
-import org.jetbrains.kotlin.backend.jvm.serialization.JvmGlobalDeclarationTable
 import org.jetbrains.kotlin.backend.jvm.serialization.JvmIrSerializerSession
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.config.JvmSerializeIrMode
 import org.jetbrains.kotlin.ir.declarations.IrClass
+import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.util.IrMessageLogger
+import org.jetbrains.kotlin.ir.util.StringSignature
 import org.jetbrains.kotlin.name.FqName
 
 class JvmIrSerializerImpl(private val configuration: CompilerConfiguration) : JvmIrSerializer {
 
-    private val declarationTable = DeclarationTable(JvmGlobalDeclarationTable())
+    private val globalTable = mutableMapOf<IrDeclaration, StringSignature>()
+//    private val declarationTable = DeclarationTable(JvmGlobalDeclarationTable())
 
     override fun serializeIrFile(irFile: IrFile): ByteArray? {
         val fileClassFqName = irFile.getFileClassInfo().fileClassFqName
@@ -35,7 +38,7 @@ class JvmIrSerializerImpl(private val configuration: CompilerConfiguration) : Jv
     private fun makeSerializerSession(fileClassFqName: FqName) =
         JvmIrSerializerSession(
             configuration.get(IrMessageLogger.IR_MESSAGE_LOGGER) ?: IrMessageLogger.None,
-            declarationTable,
+            DeclarationTable2(globalTable, StringSignatureClashTracker.DEFAULT_TRACKER),
             mutableMapOf(),
             configuration.get(JVMConfigurationKeys.SERIALIZE_IR) ?: JvmSerializeIrMode.NONE,
             fileClassFqName

@@ -16,10 +16,7 @@ import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.IrConstructor
 import org.jetbrains.kotlin.ir.linkage.IrDeserializer
 import org.jetbrains.kotlin.ir.symbols.*
-import org.jetbrains.kotlin.ir.util.IdSignature
-import org.jetbrains.kotlin.ir.util.IrMessageLogger
-import org.jetbrains.kotlin.ir.util.ReferenceSymbolTable
-import org.jetbrains.kotlin.ir.util.TypeTranslator
+import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.resolve.BindingContext
@@ -137,7 +134,7 @@ open class IrPluginContextImpl constructor(
     }
 
     override fun referenceTopLevel(
-        signature: IdSignature,
+        signature: StringSignature,
         kind: IrDeserializer.TopLevelSymbolKind,
         moduleDescriptor: ModuleDescriptor
     ): IrSymbol? {

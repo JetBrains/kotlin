@@ -5,13 +5,15 @@ import org.jetbrains.kotlin.backend.common.serialization.IrModuleSerializer
 import org.jetbrains.kotlin.backend.konan.ir.interop.IrProviderForCEnumAndCStructStubs
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.ir.IrBuiltIns
+import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.util.IrMessageLogger
+import org.jetbrains.kotlin.ir.util.StringSignature
 
 class KonanIrModuleSerializer(
     messageLogger: IrMessageLogger,
-    irBuiltIns: IrBuiltIns,
+    private val irBuiltIns: IrBuiltIns,
     private val expectDescriptorToSymbol: MutableMap<DeclarationDescriptor, IrSymbol>,
     val skipExpects: Boolean,
     compatibilityMode: CompatibilityMode,
@@ -19,7 +21,8 @@ class KonanIrModuleSerializer(
     sourceBaseDirs: Collection<String>
 ) : IrModuleSerializer<KonanIrFileSerializer>(messageLogger, compatibilityMode, normalizeAbsolutePaths, sourceBaseDirs) {
 
-    private val globalDeclarationTable = KonanGlobalDeclarationTable(irBuiltIns)
+//    private val globalDeclarationTable = KonanGlobalDeclarationTable(irBuiltIns)
+    private val globalTable = mutableMapOf<IrDeclaration, StringSignature>()
 
     // We skip files with IR for C structs and enums because they should be
     // generated anew.
@@ -31,5 +34,5 @@ class KonanIrModuleSerializer(
             file.fileEntry.name != IrProviderForCEnumAndCStructStubs.cTypeDefinitionsFileName
 
     override fun createSerializerForFile(file: IrFile): KonanIrFileSerializer =
-            KonanIrFileSerializer(messageLogger, KonanDeclarationTable(globalDeclarationTable), expectDescriptorToSymbol, skipExpects = skipExpects, compatibilityMode = compatibilityMode, normalizeAbsolutePaths = normalizeAbsolutePaths, sourceBaseDirs = sourceBaseDirs)
+            KonanIrFileSerializer(messageLogger, KonanDeclarationTable2(irBuiltIns, globalTable), expectDescriptorToSymbol, skipExpects = skipExpects, compatibilityMode = compatibilityMode, normalizeAbsolutePaths = normalizeAbsolutePaths, sourceBaseDirs = sourceBaseDirs)
 }

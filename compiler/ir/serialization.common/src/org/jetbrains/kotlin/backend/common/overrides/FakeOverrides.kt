@@ -16,9 +16,7 @@
 
 package org.jetbrains.kotlin.backend.common.overrides
 
-import org.jetbrains.kotlin.backend.common.serialization.CompatibilityMode
-import org.jetbrains.kotlin.backend.common.serialization.DeclarationTable
-import org.jetbrains.kotlin.backend.common.serialization.GlobalDeclarationTable
+import org.jetbrains.kotlin.backend.common.serialization.*
 import org.jetbrains.kotlin.backend.common.serialization.signature.IdSignatureSerializer
 import org.jetbrains.kotlin.backend.common.serialization.signature.PublicIdSignatureComputer
 import org.jetbrains.kotlin.ir.declarations.*
@@ -50,13 +48,25 @@ open class FakeOverrideDeclarationTable(
     }
 }
 
+open class FakeOverrideDeclarationTable2 : DeclarationTable2(mutableMapOf(), StringSignatureClashTracker.DEFAULT_TRACKER) {
+    private data class LocalKey(val file: IrFile, val sig: StringSignature)
+    private val localClassesMap = mutableMapOf<IrClass, LocalKey>()
+    override fun assumeDeclarationSignature(clazz: IrClass, stringSignature: StringSignature, file: IrFile) {
+        localClassesMap[clazz] = LocalKey(file, stringSignature)
+    }
+
+    override fun localClassComputer(): (IrDeclaration) -> Int = {
+        localClassesMap[it]?.sig?.localIndex() ?: error("Not found for declaration ${it.render()}")
+    }
+}
+
 interface FakeOverrideClassFilter {
     fun needToConstructFakeOverrides(clazz: IrClass): Boolean
 }
 
 interface FileLocalAwareLinker {
-    fun tryReferencingSimpleFunctionByLocalSignature(parent: IrDeclaration, idSignature: IdSignature): IrSimpleFunctionSymbol?
-    fun tryReferencingPropertyByLocalSignature(parent: IrDeclaration, idSignature: IdSignature): IrPropertySymbol?
+    fun tryReferencingSimpleFunctionByLocalSignature(parent: IrDeclaration, signature: StringSignature): IrSimpleFunctionSymbol?
+    fun tryReferencingPropertyByLocalSignature(parent: IrDeclaration, signature: StringSignature): IrPropertySymbol?
 }
 
 object DefaultFakeOverrideClassFilter : FakeOverrideClassFilter {
@@ -70,9 +80,7 @@ class FakeOverrideBuilder(
     typeSystem: IrTypeSystemContext,
     friendModules: Map<String, Collection<String>>,
     val platformSpecificClassFilter: FakeOverrideClassFilter = DefaultFakeOverrideClassFilter,
-    private val fakeOverrideDeclarationTable: DeclarationTable = FakeOverrideDeclarationTable(mangler) { builder, table ->
-        IdSignatureSerializer(builder, table)
-    }
+    private val fakeOverrideDeclarationTable: DeclarationTable2 = FakeOverrideDeclarationTable2()
 ) : FakeOverrideBuilderStrategy(friendModules) {
     private val haveFakeOverrides = mutableSetOf<IrClass>()
 
@@ -82,8 +90,8 @@ class FakeOverrideBuilder(
 //    private val fakeOverrideDeclarationTable = FakeOverrideDeclarationTable(mangler, signatureSerializerFactory)
 
     val fakeOverrideCandidates = mutableMapOf<IrClass, CompatibilityMode>()
-    fun enqueueClass(clazz: IrClass, signature: IdSignature, compatibilityMode: CompatibilityMode) {
-        fakeOverrideDeclarationTable.assumeDeclarationSignature(clazz, signature)
+    fun enqueueClass(clazz: IrClass, signature: StringSignature, file: IrFile, compatibilityMode: CompatibilityMode) {
+        fakeOverrideDeclarationTable.assumeDeclarationSignature(clazz, signature, file)
         fakeOverrideCandidates[clazz] = compatibilityMode
     }
 
@@ -145,10 +153,12 @@ class FakeOverrideBuilder(
         }
     }
 
-    private fun composeSignature(declaration: IrDeclaration, compatibleMode: Boolean) =
-        fakeOverrideDeclarationTable.signaturer.composeSignatureForDeclaration(declaration, compatibleMode)
+    private fun composeSignature(declaration: IrDeclaration, compatibleMode: Boolean): StringSignature {
+        return fakeOverrideDeclarationTable.computeForDeclaration(declaration) // TODO
+//        return fakeOverrideDeclarationTable.signaturer.composeSignatureForDeclaration(declaration, compatibleMode)
+    }
 
-    private fun declareFunctionFakeOverride(declaration: IrFakeOverrideFunction, signature: IdSignature) {
+    private fun declareFunctionFakeOverride(declaration: IrFakeOverrideFunction, signature: StringSignature) {
         val parent = declaration.parentAsClass
         val symbol = linker.tryReferencingSimpleFunctionByLocalSignature(parent, signature)
             ?: symbolTable.referenceSimpleFunction(signature, false)
@@ -158,7 +168,7 @@ class FakeOverrideBuilder(
         }
     }
 
-    private fun declarePropertyFakeOverride(declaration: IrFakeOverrideProperty, signature: IdSignature) {
+    private fun declarePropertyFakeOverride(declaration: IrFakeOverrideProperty, signature: StringSignature) {
         val parent = declaration.parentAsClass
         val symbol = linker.tryReferencingPropertyByLocalSignature(parent, signature)
             ?: symbolTable.referenceProperty(signature, false)

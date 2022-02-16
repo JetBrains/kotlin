@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.expressions.IrCall
-import org.jetbrains.kotlin.ir.util.IdSignature
+import org.jetbrains.kotlin.ir.util.StringSignature
 import org.jetbrains.kotlin.ir.util.dump
 import org.jetbrains.kotlin.ir.util.file
 import org.jetbrains.kotlin.ir.util.render
@@ -163,7 +163,7 @@ class InlineFunctionHashBuilder(
         return computedHashes
     }
 
-    fun buildInlineGraph(computedHashed: Map<IrSimpleFunction, TransHash>): Map<IrFile, Collection<Pair<IdSignature, TransHash>>> {
+    fun buildInlineGraph(computedHashed: Map<IrSimpleFunction, TransHash>): Map<IrFile, Collection<Pair<StringSignature, TransHash>>> {
         val perFileInlineGraph = inlineGraph.entries.groupBy({ it.key.file }) {
             it.value
         }
@@ -173,8 +173,8 @@ class InlineFunctionHashBuilder(
                 edges.mapNotNull { callee ->
                     // TODO: use resolved FO
                     if (!callee.isFakeOverride) {
-                        val signature = callee.symbol.signature // ?: error("Expecting signature for ${callee.render()}")
-                        if (signature?.visibleCrossFile == true) {
+                        val signature = callee.symbol.signature // ?: error("Expecting signature for ${callee.render()}"))
+                        if (signature != null && !signature.isLocal) {
                             signature to (computedHashed[callee] ?: hashProvider.hashForExternalFunction(callee)
                             ?: error("Internal error: No has found for ${callee.render()}"))
                         } else null

@@ -5,15 +5,12 @@
 
 package org.jetbrains.kotlin.backend.jvm.serialization
 
-import org.jetbrains.kotlin.backend.common.overrides.DefaultFakeOverrideClassFilter
-import org.jetbrains.kotlin.backend.common.overrides.FakeOverrideBuilder
-import org.jetbrains.kotlin.backend.common.overrides.FakeOverrideDeclarationTable
-import org.jetbrains.kotlin.backend.common.overrides.FileLocalAwareLinker
+import org.jetbrains.kotlin.backend.common.overrides.*
 import org.jetbrains.kotlin.backend.common.serialization.*
 import org.jetbrains.kotlin.backend.common.serialization.encodings.BinarySymbolData
 import org.jetbrains.kotlin.backend.common.serialization.signature.IdSignatureSerializer
 import org.jetbrains.kotlin.backend.jvm.serialization.proto.JvmIr
-import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.backend.jvm.serialization.JvmIrMangler
@@ -64,9 +61,7 @@ fun deserializeFromByteArray(
         symbolTable,
         irLibraryFile,
         fileSymbol = dummyIrFile.symbol,
-        fileSignature = dummyFileSignature,
-        /* TODO */ actuals = emptyList(),
-        enqueueLocalTopLevelDeclaration = {}, // just link to it in symbolTable
+        actuals = emptyList(),
         handleExpectActualMapping = { _, symbol -> symbol } // no expect declarations
     ) { idSignature, symbolKind ->
         referencePublicSymbol(symbolTable, idSignature, symbolKind)
@@ -98,9 +93,7 @@ fun deserializeFromByteArray(
         }
     }
 
-    symbolTable.signaturer.withFileSignature(dummyFileSignature) {
-        ExternalDependenciesGenerator(symbolTable, irProviders).generateUnboundSymbolsAsDependencies()
-    }
+    ExternalDependenciesGenerator(symbolTable, irProviders).generateUnboundSymbolsAsDependencies()
     buildFakeOverridesForLocalClasses(symbolTable, typeSystemContext, symbolDeserializer, toplevelParent)
 }
 
@@ -129,7 +122,7 @@ private class IrLibraryFileFromAnnotation(
 
 private fun referencePublicSymbol(
     symbolTable: SymbolTable,
-    idSig: IdSignature,
+    idSig: StringSignature,
     symbolKind: BinarySymbolData.SymbolKind
 ): IrSymbol {
     with(symbolTable) {
@@ -155,18 +148,19 @@ fun makeSimpleFakeOverrideBuilder(
 ): FakeOverrideBuilder {
     return FakeOverrideBuilder(
         object : FileLocalAwareLinker {
-            override fun tryReferencingPropertyByLocalSignature(parent: IrDeclaration, idSignature: IdSignature): IrPropertySymbol =
-                symbolDeserializer.referencePropertyByLocalSignature(idSignature)
+            override fun tryReferencingPropertyByLocalSignature(parent: IrDeclaration, signature: StringSignature): IrPropertySymbol =
+                symbolDeserializer.referencePropertyByLocalSignature(signature)
 
             override fun tryReferencingSimpleFunctionByLocalSignature(
-                parent: IrDeclaration, idSignature: IdSignature
+                parent: IrDeclaration, signature: StringSignature
             ): IrSimpleFunctionSymbol =
-                symbolDeserializer.referenceSimpleFunctionByLocalSignature(idSignature)
+                symbolDeserializer.referenceSimpleFunctionByLocalSignature(signature)
         },
         symbolTable,
         JvmIrMangler,
         typeSystemContext,
-        fakeOverrideDeclarationTable = PrePopulatedDeclarationTable(symbolDeserializer.deserializedSymbols),
+//        fakeOverrideDeclarationTable = PrePopulatedDeclarationTable(symbolDeserializer.deserializedSymbols),
+        fakeOverrideDeclarationTable = PrePopulatedDeclarationTable2(symbolDeserializer.deserializedSymbols),
         friendModules = emptyMap() // TODO: provide friend modules
     )
 }
@@ -199,6 +193,17 @@ class PrePopulatedDeclarationTable(
     private val symbol2Sig = sig2symbol.entries.associate { (x, y) -> y to x }
 
     override fun tryComputeBackendSpecificSignature(declaration: IrDeclaration): IdSignature? {
+        symbol2Sig[declaration.symbol]?.let { return it }
+        return super.tryComputeBackendSpecificSignature(declaration)
+    }
+}
+
+class PrePopulatedDeclarationTable2(
+    sig2symbol: Map<StringSignature, IrSymbol>
+) : FakeOverrideDeclarationTable2() {
+    private val symbol2Sig = sig2symbol.entries.associate { (x, y) -> y to x }
+
+    override fun tryComputeBackendSpecificSignature(declaration: IrDeclaration): StringSignature? {
         symbol2Sig[declaration.symbol]?.let { return it }
         return super.tryComputeBackendSpecificSignature(declaration)
     }

@@ -28,7 +28,6 @@ import org.jetbrains.kotlin.fir.lazy.Fir2IrLazyConstructor
 import org.jetbrains.kotlin.fir.lazy.Fir2IrLazyProperty
 import org.jetbrains.kotlin.fir.lazy.Fir2IrLazySimpleFunction
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.isLocalClassOrAnonymousObject
-import org.jetbrains.kotlin.fir.types.isSuspendFunctionType
 import org.jetbrains.kotlin.fir.resolve.isKFunctionInvoke
 import org.jetbrains.kotlin.fir.resolve.providers.firProvider
 import org.jetbrains.kotlin.fir.resolve.toSymbol
@@ -417,7 +416,7 @@ class Fir2IrDeclarationStorage(
     fun getCachedIrFunction(
         function: FirSimpleFunction,
         dispatchReceiverLookupTag: ConeClassLikeLookupTag?,
-        signatureCalculator: () -> IdSignature?
+        signatureCalculator: () -> StringSignature?
     ): IrSimpleFunction? {
         if (function.visibility == Visibilities.Local) {
             return localStorage.getLocalFunction(function)
@@ -435,7 +434,7 @@ class Fir2IrDeclarationStorage(
     fun originalDeclarationForDelegated(irDeclaration: IrDeclaration): FirDeclaration? = delegatedReverseCache[irDeclaration]
 
     internal fun declareIrSimpleFunction(
-        signature: IdSignature?,
+        signature: StringSignature?,
         containerSource: DeserializedContainerSource?,
         factory: (IrSimpleFunctionSymbol) -> IrSimpleFunction
     ): IrSimpleFunction =
@@ -548,7 +547,7 @@ class Fir2IrDeclarationStorage(
 
     fun getCachedIrConstructor(
         constructor: FirConstructor,
-        signatureCalculator: () -> IdSignature? = { null }
+        signatureCalculator: () -> StringSignature? = { null }
     ): IrConstructor? {
         return constructorCache[constructor] ?: signatureCalculator()?.let { signature ->
             symbolTable.referenceConstructorIfAny(signature)?.let { irConstructorSymbol ->
@@ -559,7 +558,7 @@ class Fir2IrDeclarationStorage(
         }
     }
 
-    private fun declareIrConstructor(signature: IdSignature?, factory: (IrConstructorSymbol) -> IrConstructor): IrConstructor =
+    private fun declareIrConstructor(signature: StringSignature?, factory: (IrConstructorSymbol) -> IrConstructor): IrConstructor =
         if (signature == null)
             factory(IrConstructorSymbolImpl())
         else
@@ -606,7 +605,7 @@ class Fir2IrDeclarationStorage(
     }
 
     private fun declareIrAccessor(
-        signature: IdSignature?,
+        signature: StringSignature?,
         containerSource: DeserializedContainerSource?,
         factory: (IrSimpleFunctionSymbol) -> IrSimpleFunction
     ): IrSimpleFunction =
@@ -732,7 +731,7 @@ class Fir2IrDeclarationStorage(
         }
 
     private fun declareIrProperty(
-        signature: IdSignature?,
+        signature: StringSignature?,
         containerSource: DeserializedContainerSource?,
         factory: (IrPropertySymbol) -> IrProperty
     ): IrProperty =
@@ -741,7 +740,7 @@ class Fir2IrDeclarationStorage(
         else
             symbolTable.declareProperty(signature, { Fir2IrPropertySymbol(signature, containerSource) }, factory)
 
-    private fun declareIrField(signature: IdSignature?, factory: (IrFieldSymbol) -> IrField): IrField =
+    private fun declareIrField(signature: StringSignature?, factory: (IrFieldSymbol) -> IrField): IrField =
         if (signature == null)
             factory(IrFieldSymbolImpl())
         else
@@ -898,7 +897,7 @@ class Fir2IrDeclarationStorage(
     fun getCachedIrProperty(
         property: FirProperty,
         dispatchReceiverLookupTag: ConeClassLikeLookupTag?,
-        signatureCalculator: () -> IdSignature?
+        signatureCalculator: () -> StringSignature?
     ): IrProperty? {
         return getCachedIrCallable(property, dispatchReceiverLookupTag, propertyCache, signatureCalculator) { signature ->
             symbolTable.referencePropertyIfAny(signature)?.owner
@@ -909,8 +908,8 @@ class Fir2IrDeclarationStorage(
         declaration: FC,
         dispatchReceiverLookupTag: ConeClassLikeLookupTag?,
         cache: MutableMap<FC, IC>,
-        signatureCalculator: () -> IdSignature?,
-        referenceIfAny: (IdSignature) -> IC?
+        signatureCalculator: () -> StringSignature?,
+        referenceIfAny: (StringSignature) -> IC?
     ): IC? {
         val isFakeOverride = dispatchReceiverLookupTag != null && dispatchReceiverLookupTag != declaration.containingClass()
         if (!isFakeOverride) {
@@ -1212,7 +1211,7 @@ class Fir2IrDeclarationStorage(
 
     private fun createIrLazyFunction(
         fir: FirSimpleFunction,
-        signature: IdSignature,
+        signature: StringSignature,
         lazyParent: Fir2IrLazyClass,
         declarationOrigin: IrDeclarationOrigin
     ): IrSimpleFunction {
@@ -1290,7 +1289,7 @@ class Fir2IrDeclarationStorage(
 
     private fun createIrLazyProperty(
         fir: FirProperty,
-        signature: IdSignature,
+        signature: StringSignature,
         lazyParent: Fir2IrLazyClass,
         declarationOrigin: IrDeclarationOrigin
     ): IrProperty {
@@ -1342,9 +1341,9 @@ class Fir2IrDeclarationStorage(
             > getIrCallableSymbol(
         firSymbol: FS,
         dispatchReceiverLookupTag: ConeClassLikeLookupTag?,
-        getCachedIrDeclaration: (firDeclaration: F, dispatchReceiverLookupTag: ConeClassLikeLookupTag?, () -> IdSignature?) -> I?,
+        getCachedIrDeclaration: (firDeclaration: F, dispatchReceiverLookupTag: ConeClassLikeLookupTag?, () -> StringSignature?) -> I?,
         createIrDeclaration: (parent: IrDeclarationParent?, origin: IrDeclarationOrigin) -> I,
-        createIrLazyDeclaration: (signature: IdSignature, lazyOwner: Fir2IrLazyClass, origin: IrDeclarationOrigin) -> I,
+        createIrLazyDeclaration: (signature: StringSignature, lazyOwner: Fir2IrLazyClass, origin: IrDeclarationOrigin) -> I,
     ): IrSymbol {
         val fir = firSymbol.fir as F
         val irParent by lazy { findIrParent(fir) }

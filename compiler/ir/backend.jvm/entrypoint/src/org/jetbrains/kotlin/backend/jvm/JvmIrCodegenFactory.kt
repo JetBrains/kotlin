@@ -8,12 +8,15 @@ package org.jetbrains.kotlin.backend.jvm
 import org.jetbrains.kotlin.analyzer.hasJdkCapability
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContextImpl
-import org.jetbrains.kotlin.backend.common.phaser.*
+import org.jetbrains.kotlin.backend.common.phaser.CompilerPhase
+import org.jetbrains.kotlin.backend.common.phaser.PhaseConfig
+import org.jetbrains.kotlin.backend.common.phaser.invokeToplevel
+import org.jetbrains.kotlin.backend.common.phaser.then
 import org.jetbrains.kotlin.backend.common.serialization.DescriptorByIdSignatureFinderImpl
+import org.jetbrains.kotlin.backend.common.serialization.signature.StringSignatureBuilderOverDescriptors
 import org.jetbrains.kotlin.backend.jvm.intrinsics.IrIntrinsicMethods
 import org.jetbrains.kotlin.backend.jvm.ir.getKtFile
-import org.jetbrains.kotlin.backend.jvm.serialization.DisabledIdSignatureDescriptor
-import org.jetbrains.kotlin.backend.jvm.serialization.JvmIdSignatureDescriptor
+import org.jetbrains.kotlin.backend.jvm.serialization.DisabledSignatureDescriptor
 import org.jetbrains.kotlin.codegen.CodegenFactory
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.config.CompilerConfiguration
@@ -83,8 +86,8 @@ open class JvmIrCodegenFactory(
             else {
                 val mangler = JvmDescriptorMangler(MainFunctionDetector(input.bindingContext, input.languageVersionSettings))
                 val signaturer =
-                    if (enableIdSignatures) JvmIdSignatureDescriptor(mangler)
-                    else DisabledIdSignatureDescriptor
+                    if (enableIdSignatures) StringSignatureBuilderOverDescriptors()
+                    else DisabledSignatureDescriptor
                 val symbolTable = SymbolTable(signaturer, IrFactoryImpl)
                 mangler to symbolTable
             }

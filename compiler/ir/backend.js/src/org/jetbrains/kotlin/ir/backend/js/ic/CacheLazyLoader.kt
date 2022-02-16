@@ -5,42 +5,43 @@
 
 package org.jetbrains.kotlin.ir.backend.js.ic
 
-import org.jetbrains.kotlin.backend.common.serialization.IdSignatureDeserializer
-import org.jetbrains.kotlin.backend.common.serialization.IrLibraryBytesSource
-import org.jetbrains.kotlin.backend.common.serialization.IrLibraryFileFromBytes
 import org.jetbrains.kotlin.backend.common.serialization.codedInputStream
-import org.jetbrains.kotlin.backend.common.serialization.proto.IrFile
-import org.jetbrains.kotlin.ir.util.IdSignature
+import org.jetbrains.kotlin.ir.util.StringSignature
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.protobuf.ExtensionRegistryLite
+import org.jetbrains.kotlin.backend.common.serialization.proto.IrFile as ProtoFile
 
 
 class CacheLazyLoader(private val cacheProvider: PersistentCacheProvider, private val library: KotlinLibrary) {
-    private val graphInlineCache = mutableMapOf<String, Collection<Pair<IdSignature, TransHash>>>()
+    private val graphInlineCache = mutableMapOf<String, Collection<Pair<StringSignature, TransHash>>>()
     private val fingerPrintCache = mutableMapOf<String, Hash>()
 
-    val signatureReadersList: List<Pair<String, IdSignatureDeserializer>> by lazy {
-        library.filesAndSigReaders()
+    val libraryFiles: List<String> by lazy {
+        library.files()
     }
 
-    private val signatureReadersMap: Map<String, IdSignatureDeserializer> by lazy {
-        signatureReadersList.toMap()
-    }
-
-    val allInlineFunctionHashes: Map<IdSignature, TransHash> by lazy {
+    val allInlineFunctionHashes: Map<StringSignature, TransHash> by lazy {
         cacheProvider.allInlineHashes { librarySrc, index ->
-            val libReader = signatureReadersMap[librarySrc] ?: error("No module reader for lib $librarySrc")
-            libReader.deserializeIdSignature(index)
+            val fileIndex = libraryFiles.indexOf(librarySrc)
+            assert(fileIndex >= 0) { "No module reader for file $librarySrc" }
+            StringSignature(library.string(index, fileIndex).decodeToString())
         }
     }
 
-    fun getInlineHashesByFile() = signatureReadersList.associateTo(mutableMapOf()) {
-        it.first to cacheProvider.inlineHashes(it.first) { index -> it.second.deserializeIdSignature(index) }
+    fun getInlineHashesByFile(): MutableMap<String, Map<StringSignature, TransHash>> {
+        var index = 0
+        return libraryFiles.associateWithTo(mutableMapOf()) { fileName ->
+            val fileIndex = index++
+            cacheProvider.inlineHashes(fileName) { sigIndex ->
+                StringSignature(library.signature(sigIndex, fileIndex).decodeToString())
+            }
+        }
     }
 
     fun getInlineGraphForFile(srcFile: String) = graphInlineCache.getOrPut(srcFile) {
-        val fileReader = signatureReadersMap[srcFile] ?: error("Cannot find signature reader for $srcFile")
-        cacheProvider.inlineGraphForFile(srcFile) { index -> fileReader.deserializeIdSignature(index) }
+        val fileIndex = libraryFiles.indexOf(srcFile)
+        assert(fileIndex >= 0)
+        cacheProvider.inlineGraphForFile(srcFile) { index -> StringSignature(library.string(index, fileIndex).decodeToString()) }
     }
 
     fun getFileFingerPrint(srcFile: String) = fingerPrintCache.getOrPut(srcFile) {
@@ -54,30 +55,15 @@ class CacheLazyLoader(private val cacheProvider: PersistentCacheProvider, privat
         fingerPrintCache.clear()
     }
 
-    private fun KotlinLibrary.filesAndSigReaders(): List<Pair<String, IdSignatureDeserializer>> {
+    private fun KotlinLibrary.files(): List<String> {
         val fileSize = fileCount()
-        val result = ArrayList<Pair<String, IdSignatureDeserializer>>(fileSize)
+        val result = ArrayList<String>(fileSize)
         val extReg = ExtensionRegistryLite.newInstance()
 
         for (i in 0 until fileSize) {
             val fileStream = file(i).codedInputStream
-            val fileProto = IrFile.parseFrom(fileStream, extReg)
-            val sigReader = IdSignatureDeserializer(IrLibraryFileFromBytes(object : IrLibraryBytesSource() {
-                private fun err(): Nothing = error("Not supported")
-                override fun irDeclaration(index: Int): ByteArray = err()
-
-                override fun type(index: Int): ByteArray = err()
-
-                override fun signature(index: Int): ByteArray = signature(index, i)
-
-                override fun string(index: Int): ByteArray = string(index, i)
-
-                override fun body(index: Int): ByteArray = err()
-
-                override fun debugInfo(index: Int): ByteArray? = null
-            }), null)
-
-            result.add(fileProto.fileEntry.name to sigReader)
+            val fileProto = ProtoFile.parseFrom(fileStream, extReg)
+            result.add(fileProto.fileEntry.name)
         }
 
         return result

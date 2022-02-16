@@ -15,61 +15,60 @@ import org.jetbrains.kotlin.ir.symbols.impl.IrAnonymousInitializerSymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrLocalDelegatedPropertySymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrValueParameterSymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrVariableSymbolImpl
-import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.ir.util.ReferenceSymbolTable
+import org.jetbrains.kotlin.ir.util.StringSignature
 
 class IrSymbolDeserializer(
     val symbolTable: ReferenceSymbolTable,
     val libraryFile: IrLibraryFile,
     val fileSymbol: IrFileSymbol,
     val actuals: List<Actual>,
-    val enqueueLocalTopLevelDeclaration: (IdSignature) -> Unit,
-    val handleExpectActualMapping: (IdSignature, IrSymbol) -> IrSymbol,
-    val symbolProcessor: IrSymbolDeserializer.(IrSymbol, IdSignature) -> IrSymbol = { s, _ -> s },
-    private val fileSignature: IdSignature.FileSignature = IdSignature.FileSignature(fileSymbol),
-    val deserializePublicSymbol: (IdSignature, BinarySymbolData.SymbolKind) -> IrSymbol
+//    val enqueueLocalTopLevelDeclaration: (StringSignature) -> Unit,
+    val handleExpectActualMapping: (StringSignature, IrSymbol) -> IrSymbol,
+    val symbolProcessor: IrSymbolDeserializer.(IrSymbol, StringSignature) -> IrSymbol = { s, _ -> s },
+//    private val fileSignature: IdSignature.FileSignature = IdSignature.FileSignature(fileSymbol),
+    val deserializePublicSymbol: (StringSignature, BinarySymbolData.SymbolKind) -> IrSymbol
 ) {
 
-    val deserializedSymbols: MutableMap<IdSignature, IrSymbol> = mutableMapOf()
+    val deserializedSymbols: MutableMap<StringSignature, IrSymbol> = mutableMapOf()
 
-    fun deserializeIrSymbol(idSig: IdSignature, symbolKind: BinarySymbolData.SymbolKind): IrSymbol {
-        return deserializedSymbols.getOrPut(idSig) {
-            val symbol = referenceDeserializedSymbol(symbolKind, idSig)
+    val signatureCache = mutableMapOf<Int, StringSignature>()
 
-            handleExpectActualMapping(idSig, symbol)
+    fun deserializeIrSymbol(signature: StringSignature, symbolKind: BinarySymbolData.SymbolKind): IrSymbol {
+        return deserializedSymbols.getOrPut(signature) {
+            val symbol = referenceDeserializedSymbol(symbolKind, signature)
+
+            handleExpectActualMapping(signature, symbol)
         }
     }
 
-    private fun referenceDeserializedSymbol(symbolKind: BinarySymbolData.SymbolKind, idSig: IdSignature): IrSymbol {
-        return symbolProcessor(referenceDeserializedSymbol(symbolTable, fileSymbol, symbolKind, idSig), idSig)
+    private fun referenceDeserializedSymbol(symbolKind: BinarySymbolData.SymbolKind, signature: StringSignature): IrSymbol {
+        return symbolProcessor(referenceDeserializedSymbol(symbolTable, fileSymbol, symbolKind, signature), signature)
     }
 
-    fun referenceLocalIrSymbol(symbol: IrSymbol, signature: IdSignature) {
+    fun referenceLocalIrSymbol(symbol: IrSymbol, signature: StringSignature) {
         deserializedSymbols.put(signature, symbol)
     }
 
-    fun referenceSimpleFunctionByLocalSignature(idSignature: IdSignature) : IrSimpleFunctionSymbol =
-        deserializeIrSymbolData(idSignature, BinarySymbolData.SymbolKind.FUNCTION_SYMBOL) as IrSimpleFunctionSymbol
+    fun referenceSimpleFunctionByLocalSignature(signature: StringSignature): IrSimpleFunctionSymbol =
+        deserializeIrSymbolData(signature, BinarySymbolData.SymbolKind.FUNCTION_SYMBOL) as IrSimpleFunctionSymbol
 
-    fun referencePropertyByLocalSignature(idSignature: IdSignature): IrPropertySymbol =
-        deserializeIrSymbolData(idSignature, BinarySymbolData.SymbolKind.PROPERTY_SYMBOL) as IrPropertySymbol
+    fun referencePropertyByLocalSignature(signature: StringSignature): IrPropertySymbol =
+        deserializeIrSymbolData(signature, BinarySymbolData.SymbolKind.PROPERTY_SYMBOL) as IrPropertySymbol
 
-    private fun deserializeIrSymbolData(idSignature: IdSignature, symbolKind: BinarySymbolData.SymbolKind): IrSymbol {
-        if (!idSignature.isPubliclyVisible) {
-            return deserializedSymbols.getOrPut(idSignature) {
-                if (idSignature.hasTopLevel) {
-                    enqueueLocalTopLevelDeclaration(idSignature.topLevelSignature())
-                }
-                referenceDeserializedSymbol(symbolKind, idSignature)
+    private fun deserializeIrSymbolData(signature: StringSignature, symbolKind: BinarySymbolData.SymbolKind): IrSymbol {
+        if (signature.isLocal) {
+            return deserializedSymbols.getOrPut(signature) {
+                referenceDeserializedSymbol(symbolKind, signature)
             }
         }
 
-        return deserializePublicSymbol(idSignature, symbolKind)
+        return deserializePublicSymbol(signature, symbolKind)
     }
 
-    fun deserializeIrSymbolToDeclare(code: Long): Pair<IrSymbol, IdSignature> {
+    fun deserializeIrSymbolToDeclare(code: Long): Pair<IrSymbol, StringSignature> {
         val symbolData = parseSymbolData(code)
-        val signature = deserializeIdSignature(symbolData.signatureId)
+        val signature = deserializeSignature(symbolData.signatureId)
         return Pair(deserializeIrSymbolData(signature, symbolData.kind), signature)
     }
 
@@ -80,41 +79,49 @@ class IrSymbolDeserializer(
     fun deserializeIrSymbol(code: Long): IrSymbol {
         return symbolCache.getOrPut(code) {
             val symbolData = parseSymbolData(code)
-            val signature = deserializeIdSignature(symbolData.signatureId)
+            val signature = deserializeSignature(symbolData.signatureId)
             deserializeIrSymbolData(signature, symbolData.kind)
         }
     }
 
-    val signatureDeserializer = IdSignatureDeserializer(libraryFile, fileSignature)
-
-    fun deserializeIdSignature(index: Int): IdSignature {
-        return signatureDeserializer.deserializeIdSignature(index)
+    fun deserializeSignature(index: Int): StringSignature {
+        return signatureCache.getOrPut(index) {
+            StringSignature(libraryFile.string(index))
+        }
+//        val r = StringSignature(libraryFile.string(index))
+//        return r
     }
+
+//    val signatureDeserializer = IdSignatureDeserializer(libraryFile, fileSignature)
+//
+//    fun deserializeIdSignature(index: Int): IdSignature {
+//        return signatureDeserializer.deserializeIdSignature(index)
+//    }
 }
 
 internal fun referenceDeserializedSymbol(
     symbolTable: ReferenceSymbolTable,
     fileSymbol: IrFileSymbol?,
     symbolKind: BinarySymbolData.SymbolKind,
-    idSig: IdSignature
+    signature: StringSignature
 ): IrSymbol = symbolTable.run {
     when (symbolKind) {
         BinarySymbolData.SymbolKind.ANONYMOUS_INIT_SYMBOL -> IrAnonymousInitializerSymbolImpl()
-        BinarySymbolData.SymbolKind.CLASS_SYMBOL -> referenceClass(idSig, false)
-        BinarySymbolData.SymbolKind.CONSTRUCTOR_SYMBOL -> referenceConstructor(idSig, false)
-        BinarySymbolData.SymbolKind.TYPE_PARAMETER_SYMBOL -> referenceTypeParameter(idSig, false)
-        BinarySymbolData.SymbolKind.ENUM_ENTRY_SYMBOL -> referenceEnumEntry(idSig, false)
-        BinarySymbolData.SymbolKind.STANDALONE_FIELD_SYMBOL -> referenceField(idSig, false)
-        BinarySymbolData.SymbolKind.FIELD_SYMBOL -> referenceField(idSig, false)
-        BinarySymbolData.SymbolKind.FUNCTION_SYMBOL -> referenceSimpleFunction(idSig, false)
-        BinarySymbolData.SymbolKind.TYPEALIAS_SYMBOL -> referenceTypeAlias(idSig, false)
-        BinarySymbolData.SymbolKind.PROPERTY_SYMBOL -> referenceProperty(idSig, false)
+        BinarySymbolData.SymbolKind.CLASS_SYMBOL -> referenceClass(signature, false)
+        BinarySymbolData.SymbolKind.CONSTRUCTOR_SYMBOL -> referenceConstructor(signature, false)
+        BinarySymbolData.SymbolKind.TYPE_PARAMETER_SYMBOL -> referenceTypeParameter(signature, false)
+        BinarySymbolData.SymbolKind.ENUM_ENTRY_SYMBOL -> referenceEnumEntry(signature, false)
+        BinarySymbolData.SymbolKind.STANDALONE_FIELD_SYMBOL -> referenceField(signature, false)
+        BinarySymbolData.SymbolKind.FIELD_SYMBOL -> referenceField(signature, false)
+        BinarySymbolData.SymbolKind.FUNCTION_SYMBOL -> referenceSimpleFunction(signature, false)
+        BinarySymbolData.SymbolKind.TYPEALIAS_SYMBOL -> referenceTypeAlias(signature, false)
+        BinarySymbolData.SymbolKind.PROPERTY_SYMBOL -> referenceProperty(signature, false)
         BinarySymbolData.SymbolKind.VARIABLE_SYMBOL -> IrVariableSymbolImpl()
         BinarySymbolData.SymbolKind.VALUE_PARAMETER_SYMBOL -> IrValueParameterSymbolImpl()
         BinarySymbolData.SymbolKind.RECEIVER_PARAMETER_SYMBOL -> IrValueParameterSymbolImpl()
         BinarySymbolData.SymbolKind.LOCAL_DELEGATED_PROPERTY_SYMBOL ->
             IrLocalDelegatedPropertySymbolImpl()
         BinarySymbolData.SymbolKind.FILE_SYMBOL -> fileSymbol ?: error("File symbol is not provided")
-        else -> error("Unexpected classifier symbol kind: $symbolKind for signature $idSig")
+        else -> error("Unexpected classifier symbol kind: $symbolKind for signature $signature")
     }
 }

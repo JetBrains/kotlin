@@ -89,7 +89,7 @@ internal class IrProviderForCEnumAndCStructStubs(
         cStructCompanionGenerator.invokePostLinkageSteps()
     }
 
-    fun getDeclaration(descriptor: DeclarationDescriptor, idSignature: IdSignature, file: IrFile, symbolKind: BinarySymbolData.SymbolKind): IrSymbolOwner {
+    fun getDeclaration(descriptor: DeclarationDescriptor, idSignature: StringSignature, file: IrFile, symbolKind: BinarySymbolData.SymbolKind): IrSymbolOwner {
         return symbolTable.run {
             when (symbolKind) {
                 BinarySymbolData.SymbolKind.CONSTRUCTOR_SYMBOL -> declareConstructorFromLinker(descriptor as ClassConstructorDescriptor, idSignature) { s ->

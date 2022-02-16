@@ -17,7 +17,7 @@ sealed class IrDeserializationException(message: String) : Exception(message) {
 class IrSymbolTypeMismatchException(
     val expected: Class<out IrSymbol>,
     val actual: IrSymbol
-) : IrDeserializationException("The symbol of unexpected type encountered during IR deserialization: ${actual::class.java.simpleName}, ${actual.signature?.render() ?: actual.toString()}. ${expected.simpleName} is expected.")
+) : IrDeserializationException("The symbol of unexpected type encountered during IR deserialization: ${actual::class.java.simpleName}, ${actual.signature?.value ?: actual.toString()}. ${expected.simpleName} is expected.")
 
 class IrDisallowedErrorNode(
     clazz: Class<out IrAnnotationContainer>

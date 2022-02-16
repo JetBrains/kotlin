@@ -8,12 +8,14 @@ package org.jetbrains.kotlin.backend.konan.optimizations
 import org.jetbrains.kotlin.backend.common.CommonBackendContext
 import org.jetbrains.kotlin.backend.common.lower.loops.*
 import org.jetbrains.kotlin.backend.konan.ir.KonanNameConventions
-import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
+import org.jetbrains.kotlin.ir.declarations.IrProperty
+import org.jetbrains.kotlin.ir.declarations.IrValueParameter
+import org.jetbrains.kotlin.ir.declarations.IrVariable
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
-import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
-import org.jetbrains.kotlin.ir.symbols.IrSymbol
+import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
 import org.jetbrains.kotlin.ir.symbols.IrValueSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.getClass
@@ -189,10 +191,12 @@ class KonanBCEForLoopBodyTransformer : ForLoopBodyTransformer() {
                 }
             }
 
-    private fun IrExpression.isProgressionPropertyGetter(propertyName: String) =
-            this is IrCall && symbol.owner.origin == IrDeclarationOrigin.DEFAULT_PROPERTY_ACCESSOR &&
-                    (symbol.signature as? IdSignature.AccessorSignature)?.propertySignature?.asPublic()?.shortName == propertyName &&
-                    dispatchReceiver?.type?.getClass()?.symbol in context.ir.symbols.progressionClasses
+    @Suppress("UNUSED_PARAMETER")
+    private fun IrExpression.isProgressionPropertyGetter(propertyName: String): Boolean {
+        return this is IrCall && symbol.owner.origin == IrDeclarationOrigin.DEFAULT_PROPERTY_ACCESSOR && // TODO
+//                (symbol.signature as? IdSignature.AccessorSignature)?.propertySignature?.asPublic()?.shortName == propertyName &&
+                dispatchReceiver?.type?.getClass()?.symbol in context.ir.symbols.progressionClasses
+    }
 
     private fun analyzeLoopHeader(loopHeader: ForLoopHeader): BoundsCheckAnalysisResult {
         var analysisResult = BoundsCheckAnalysisResult(false, null)

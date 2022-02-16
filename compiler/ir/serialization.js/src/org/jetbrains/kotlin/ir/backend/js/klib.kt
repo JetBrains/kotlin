@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.backend.common.serialization.metadata.DynamicTypeDes
 import org.jetbrains.kotlin.backend.common.serialization.metadata.KlibMetadataIncrementalSerializer
 import org.jetbrains.kotlin.backend.common.serialization.metadata.KlibMetadataVersion
 import org.jetbrains.kotlin.backend.common.serialization.signature.IdSignatureDescriptor
+import org.jetbrains.kotlin.backend.common.serialization.signature.StringSignatureBuilderOverDescriptors
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
@@ -151,7 +152,7 @@ fun generateIrForKlibSerialization(
         serializedIrFiles.addAll(storage.map { it.irData })
     }
 
-    val symbolTable = SymbolTable(IdSignatureDescriptor(JsManglerDesc), irFactory)
+    val symbolTable = SymbolTable(StringSignatureBuilderOverDescriptors(), irFactory)
     val psi2Ir = Psi2IrTranslator(configuration.languageVersionSettings, Psi2IrConfiguration(errorPolicy.allowErrors, allowUnboundSymbols))
     val psi2IrContext = psi2Ir.createGeneratorContext(analysisResult.moduleDescriptor, analysisResult.bindingContext, symbolTable)
     val irBuiltIns = psi2IrContext.irBuiltIns
@@ -180,9 +181,9 @@ fun generateIrForKlibSerialization(
         irLinker.modules.forEach { fakeOverrideChecker.check(it) }
     }
 
-    if (!configuration.expectActualLinker) {
+//    if (!configuration.expectActualLinker) {
         moduleFragment.transform(ExpectDeclarationRemover(psi2IrContext.symbolTable, false), null)
-    }
+//    }
 
     return moduleFragment
 }
@@ -300,8 +301,7 @@ fun loadIr(
     val messageLogger = configuration.get(IrMessageLogger.IR_MESSAGE_LOGGER) ?: IrMessageLogger.None
     val allowUnboundSymbol = configuration[JSConfigurationKeys.PARTIAL_LINKAGE] ?: false
 
-    val signaturer = IdSignatureDescriptor(JsManglerDesc)
-    val symbolTable = SymbolTable(signaturer, irFactory)
+    val symbolTable = SymbolTable(StringSignatureBuilderOverDescriptors(), irFactory)
 
     when (mainModule) {
         is MainModule.SourceFiles -> {

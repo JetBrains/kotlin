@@ -41,7 +41,7 @@ private val objCConstructorFqName = FqName("kotlinx.cinterop.ObjCConstructor")
 private val objCFactoryFqName = interopPackageName.child(Name.identifier("ObjCFactory"))
 private val objcnamesForwardDeclarationsPackageName = Name.identifier("objcnames")
 
-private fun getTopLevelPublicSignature(fqName: FqName): IdSignature.CommonSignature =
+private fun getTopLevelPublicSignature(fqName: FqName): StringSignature =
         getPublicSignature(fqName.parent(), fqName.shortName().asString())
 
 fun ClassDescriptor.isObjCClass(): Boolean =

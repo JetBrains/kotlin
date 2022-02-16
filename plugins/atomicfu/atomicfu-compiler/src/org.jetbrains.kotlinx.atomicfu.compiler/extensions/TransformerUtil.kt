@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.types.impl.*
 import org.jetbrains.kotlin.ir.util.IdSignature
+import org.jetbrains.kotlin.ir.util.StringSignature
 import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -310,4 +311,10 @@ private fun IrSimpleType.getArrayClassFqName(): FqName =
 internal fun IdSignature.getDeclarationNameBySignature(): String? {
     val commonSignature = if (this is IdSignature.AccessorSignature) accessorSignature else asPublic()
     return commonSignature?.declarationFqName
+}
+
+internal fun StringSignature.getDeclarationNameBySignature(): String? {
+//    val commonSignature = if (this is IdSignature.AccessorSignature) accessorSignature else asPublic()
+//    return commonSignature?.declarationFqName
+    return if (isLocal) null else declarationFqName
 }

@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.ir.backend.js
 
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.StageController
-import org.jetbrains.kotlin.ir.util.IdSignature
+import org.jetbrains.kotlin.ir.util.StringSignature
 
 // Only allows to apply a lowering to the whole world and save the result
 class WholeWorldStageController : StageController() {
@@ -46,7 +46,7 @@ class WholeWorldStageController : StageController() {
         }
     }
 
-    override fun createSignature(parentSignature: IdSignature): IdSignature {
-        return IdSignature.LoweredDeclarationSignature(parentSignature, currentStage, index++)
+    override fun createSignature(parentSignature: StringSignature): StringSignature {
+        return StringSignature("${parentSignature.value}:$currentStage:${index++}")
     }
 }

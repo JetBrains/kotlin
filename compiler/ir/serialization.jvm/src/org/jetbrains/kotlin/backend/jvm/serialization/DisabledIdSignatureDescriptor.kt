@@ -12,6 +12,8 @@ import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.ir.util.KotlinMangler
+import org.jetbrains.kotlin.ir.util.StringSignature
+import org.jetbrains.kotlin.ir.util.StringSignatureComposer
 
 object DisabledDescriptorMangler : KotlinMangler.DescriptorMangler {
     override val String.hashMangle: Long
@@ -47,4 +49,14 @@ object DisabledIdSignatureDescriptor : IdSignatureDescriptor(DisabledDescriptorM
 
     override fun createSignatureBuilder(type: SpecialDeclarationType): DescriptorBasedSignatureBuilder =
         error("Should not be called")
+}
+
+object DisabledSignatureDescriptor : StringSignatureComposer {
+    override fun composeSignature(descriptor: DeclarationDescriptor): StringSignature? = null
+
+    override fun composeEnumEntrySignature(descriptor: ClassDescriptor): StringSignature? = null
+
+    override fun composeFieldSignature(descriptor: PropertyDescriptor): StringSignature? = null
+
+    override fun composeAnonInitSignature(descriptor: ClassDescriptor): StringSignature? = null
 }

@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.fir.moduleData
 import org.jetbrains.kotlin.fir.packageFqName
 import org.jetbrains.kotlin.fir.psi
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
-import org.jetbrains.kotlin.fir.signaturer.FirBasedSignatureComposer
+import org.jetbrains.kotlin.fir.signaturer.FirBasedSignatureComposer2
 import org.jetbrains.kotlin.fir.signaturer.FirMangler
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
@@ -417,7 +417,7 @@ class Fir2IrConverter(
             firFiles: List<FirFile>,
             languageVersionSettings: LanguageVersionSettings,
             descriptorMangler: KotlinMangler.DescriptorMangler,
-            signaturer: IdSignatureComposer,
+            signaturer: StringSignatureComposer,
             generatorExtensions: GeneratorExtensions,
             mangler: FirMangler,
             irFactory: IrFactory,
@@ -427,7 +427,7 @@ class Fir2IrConverter(
         ): Fir2IrResult {
             val moduleDescriptor = FirModuleDescriptor(session)
             val symbolTable = SymbolTable(signaturer, irFactory)
-            val signatureComposer = FirBasedSignatureComposer(mangler)
+            val signatureComposer = FirBasedSignatureComposer2()
             val components = Fir2IrComponentsStorage(session, scopeSession, symbolTable, irFactory, signatureComposer)
             val converter = Fir2IrConverter(moduleDescriptor, components)
 
@@ -519,7 +519,7 @@ class Fir2IrConverter(
         }
 
         override fun referenceTopLevel(
-            signature: IdSignature,
+            signature: StringSignature,
             kind: IrDeserializer.TopLevelSymbolKind,
             moduleDescriptor: ModuleDescriptor
         ): IrSymbol? {

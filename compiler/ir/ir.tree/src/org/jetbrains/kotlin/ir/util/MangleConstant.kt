@@ -1,9 +1,9 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.backend.common.serialization.mangle
+package org.jetbrains.kotlin.ir.util
 
 enum class MangleConstant(val prefix: Char, val separator: Char, val suffix: Char) {
     VALUE_PARAMETERS('(', ';', ')'),
@@ -46,5 +46,47 @@ enum class MangleConstant(val prefix: Char, val separator: Char, val suffix: Cha
         const val FUN_PREFIX = "kfun"
         const val CLASS_PREFIX = "kclass"
         const val FIELD_PREFIX = "kfield"
+
+        const val FIELD_MARK = '§'
+        const val CONSTRUCTOR_MARK = "^c"
+        const val GETTER_MARK = "^g"
+        const val SETTER_MARK = "^s"
+        const val DYNAMIC_TYPE_MARK = "^d"
+        const val ERROR_TYPE_MARK = "^e"
+        const val SUSPEND_MARK = 'S'
+        const val EXTENSION_RECEIVER_MARK = '@'
+        const val LOCAL_CLASS_MARK = '$'
+        const val RETURN_TYPE_MARK = '='
+        const val NAME_SEPARATOR = '/'
     }
 }
+
+fun <T> Collection<T>.collectForMangler(builder: StringBuilder, params: MangleConstant, collect: StringBuilder.(T) -> Unit) {
+    var first = true
+
+    builder.append(params.prefix)
+
+    var addSeparator = true
+
+    for (e in this) {
+        if (first) {
+            first = false
+        } else if (addSeparator) {
+            builder.append(params.separator)
+        }
+
+        val l = builder.length
+        builder.collect(e)
+        addSeparator = l < builder.length
+    }
+
+    if (!addSeparator) {
+        if (builder.last() == params.separator) {
+            // avoid signatures like foo(Int;)
+            builder.deleteCharAt(builder.lastIndex)
+        }
+    }
+
+    builder.append(params.suffix)
+}
+

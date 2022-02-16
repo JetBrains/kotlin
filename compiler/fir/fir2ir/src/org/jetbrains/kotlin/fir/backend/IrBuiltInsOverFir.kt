@@ -648,7 +648,7 @@ class IrBuiltInsOverFir(
 
     private fun createClass(
         parent: IrDeclarationParent,
-        signature: IdSignature.CommonSignature,
+        signature: StringSignature,
         build: IrClassBuilder.() -> Unit = {},
         lazyContents: (IrClass.() -> Unit) = { finalizeClassDefinition() }
     ) = BuiltInsClass(
@@ -704,7 +704,7 @@ class IrBuiltInsOverFir(
         builderBlock: IrClassBuilder.() -> Unit = {},
         block: IrClass.() -> Unit = {}
     ): IrClassSymbol {
-        val signature = IdSignature.CommonSignature(fqName.parent().asString(), fqName.shortName().asString(), null, 0)
+        val signature = StringSignature(fqName.parent().asString(), fqName.shortName().asString())
 
         return this.createClass(
             signature, *supertypes,
@@ -713,7 +713,7 @@ class IrBuiltInsOverFir(
     }
 
     private fun IrDeclarationParent.createClass(
-        signature: IdSignature.CommonSignature,
+        signature: StringSignature,
         vararg supertypes: IrType,
         classKind: ClassKind = ClassKind.CLASS,
         classModality: Modality = Modality.OPEN,
@@ -749,8 +749,7 @@ class IrBuiltInsOverFir(
         build: IrConstructor.() -> Unit = {}
     ): IrConstructorSymbol {
         val name = SpecialNames.INIT
-        val signature =
-            IdSignature.CommonSignature(this.packageFqName!!.asString(), classId!!.relativeClassName.child(name).asString(), null, 0)
+        val signature = StringSignature(this.packageFqName!!.asString(), classId!!.relativeClassName.child(name).asString())
         val ctor = irFactory.createConstructor(
             UNDEFINED_OFFSET, UNDEFINED_OFFSET, origin, IrConstructorPublicSymbolImpl(signature), name, visibility, defaultType,
             isInline = false, isExternal = false, isPrimary = isPrimary, isExpect = false
@@ -777,12 +776,7 @@ class IrBuiltInsOverFir(
         isOperator: Boolean = false,
         build: IrFunctionBuilder.() -> Unit = {}
     ) = parent.createFunction(
-        IdSignature.CommonSignature(
-            this.packageFqName!!.asString(),
-            classId!!.relativeClassName.child(Name.identifier(name)).asString(),
-            null,
-            0
-        ),
+        StringSignature(this.packageFqName!!.asString(), classId!!.relativeClassName.child(Name.identifier(name)).asString()),
         name, returnType, valueParameterTypes, origin, modality, isOperator, build
     ).also { fn ->
         fn.addDispatchReceiver { type = this@createMemberFunction.defaultType }
@@ -830,7 +824,7 @@ class IrBuiltInsOverFir(
     }
 
     private fun IrDeclarationParent.createFunction(
-        signature: IdSignature,
+        signature: StringSignature,
         name: String,
         returnType: IrType,
         valueParameterTypes: Array<out Pair<String, IrType>>,
@@ -865,7 +859,7 @@ class IrBuiltInsOverFir(
         modality: Modality = Modality.FINAL,
         isOperator: Boolean = false
     ) = createFunction(
-        IdSignature.CommonSignature(packageFqName.asString(), name, null, 0),
+        StringSignature(packageFqName.asString(), name),
         name, returnType, valueParameterTypes, origin, modality, isOperator
     )
 
@@ -976,7 +970,7 @@ class IrBuiltInsOverFir(
     }
 
     private fun IrPackageFragment.createNumberClass(
-        signature: IdSignature.CommonSignature,
+        signature: StringSignature,
         lazyContents: (IrClass.() -> Unit)? = null
     ) =
         createClass(this, signature) {
@@ -1001,7 +995,7 @@ class IrBuiltInsOverFir(
     ) =
         createClass(
             parent,
-            IdSignature.CommonSignature(parent.kotlinFqName.asString(), primitiveType.arrayTypeName.asString(), null, 0),
+            StringSignature(parent.kotlinFqName.asString(), primitiveType.arrayTypeName.asString()),
             build = { modality = Modality.FINAL }
         ) {
             configureSuperTypes()

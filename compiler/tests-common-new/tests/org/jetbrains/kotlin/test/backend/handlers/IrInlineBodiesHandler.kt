@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.test.backend.handlers
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.expressions.IrMemberAccessExpression
-import org.jetbrains.kotlin.ir.util.IdSignature
+import org.jetbrains.kotlin.ir.util.StringSignature
 import org.jetbrains.kotlin.ir.util.allUnbound
 import org.jetbrains.kotlin.ir.util.resolveFakeOverride
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestServices
 
 class IrInlineBodiesHandler(testServices: TestServices) : AbstractIrHandler(testServices) {
-    val declaredInlineFunctionSignatures = mutableSetOf<IdSignature>()
+    val declaredInlineFunctionSignatures = mutableSetOf<StringSignature>()
 
     override fun processModule(module: TestModule, info: IrBackendInput) {
         val irModule = info.irModuleFragment

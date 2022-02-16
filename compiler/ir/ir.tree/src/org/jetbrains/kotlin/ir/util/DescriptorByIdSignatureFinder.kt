@@ -9,4 +9,5 @@ import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 
 interface DescriptorByIdSignatureFinder {
     fun findDescriptorBySignature(signature: IdSignature): DeclarationDescriptor?
+    fun findDescriptorBySignature(signature: StringSignature): DeclarationDescriptor?
 }

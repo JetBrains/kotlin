@@ -33,7 +33,7 @@ class JsIrLinker(
     exportedDependencies = emptyList(),
     symbolProcessor = { symbol, idSig ->
         if (idSig.isLocal) {
-            symbol.privateSignature = IdSignature.CompositeSignature(IdSignature.FileSignature(fileSymbol), idSig)
+            symbol.privateSignature = StringSignature("${fileSymbol.owner.fileEntry.name}/${idSig.value}")
         }
         symbol
     }) {

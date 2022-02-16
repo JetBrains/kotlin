@@ -25,7 +25,6 @@ import org.jetbrains.kotlin.ir.linkage.IrDeserializer
 import org.jetbrains.kotlin.ir.linkage.IrProvider
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.util.SymbolTable
-import org.jetbrains.kotlin.ir.util.noUnboundLeft
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi2ir.generators.GeneratorContext
 import org.jetbrains.kotlin.psi2ir.generators.GeneratorExtensions
@@ -93,7 +92,7 @@ class Psi2IrTranslator(
 
         deserializers.forEach { it.postProcess() }
         if (!context.configuration.allowUnboundSymbols) {
-            context.symbolTable.noUnboundLeft("Unbound symbols not allowed\n")
+//            context.symbolTable.noUnboundLeft("Unbound symbols not allowed\n")
         }
 
         postprocessingSteps.forEach { it.invoke(irModule) }

@@ -20,8 +20,8 @@ import org.jetbrains.kotlin.ir.symbols.IrFieldSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.types.IrTypeSystemContext
 import org.jetbrains.kotlin.ir.util.DeclarationStubGenerator
-import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.ir.util.IrMessageLogger
+import org.jetbrains.kotlin.ir.util.StringSignature
 import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.library.IrLibrary
 import org.jetbrains.kotlin.library.KotlinAbiVersion
@@ -127,19 +127,19 @@ class JvmIrLinker(
         IrModuleDeserializer(moduleDescriptor, KotlinAbiVersion.CURRENT) {
 
         // TODO: implement proper check whether `idSig` belongs to this module
-        override fun contains(idSig: IdSignature): Boolean = true
+        override fun contains(signature: StringSignature): Boolean = true
 
         private val descriptorFinder = DescriptorByIdSignatureFinderImpl(
             moduleDescriptor, manglerDesc,
             DescriptorByIdSignatureFinderImpl.LookupMode.MODULE_ONLY
         )
 
-        private fun resolveDescriptor(idSig: IdSignature): DeclarationDescriptor {
-            return descriptorFinder.findDescriptorBySignature(idSig) ?: error("No descriptor found for $idSig")
+        private fun resolveDescriptor(signature: StringSignature): DeclarationDescriptor {
+            return descriptorFinder.findDescriptorBySignature(signature) ?: error("No descriptor found for $signature")
         }
 
-        override fun deserializeIrSymbol(idSig: IdSignature, symbolKind: BinarySymbolData.SymbolKind): IrSymbol {
-            val descriptor = resolveDescriptor(idSig)
+        override fun deserializeIrSymbol(signature: StringSignature, symbolKind: BinarySymbolData.SymbolKind): IrSymbol {
+            val descriptor = resolveDescriptor(signature)
 
             val declaration = stubGenerator.run {
                 when (symbolKind) {
@@ -149,7 +149,7 @@ class JvmIrLinker(
                     BinarySymbolData.SymbolKind.CONSTRUCTOR_SYMBOL -> generateConstructorStub(descriptor as ClassConstructorDescriptor)
                     BinarySymbolData.SymbolKind.ENUM_ENTRY_SYMBOL -> generateEnumEntryStub(descriptor as ClassDescriptor)
                     BinarySymbolData.SymbolKind.TYPEALIAS_SYMBOL -> generateTypeAliasStub(descriptor as TypeAliasDescriptor)
-                    else -> error("Unexpected type $symbolKind for sig $idSig")
+                    else -> error("Unexpected type $symbolKind for sig $signature")
                 }
             }
 

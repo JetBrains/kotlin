@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.ir.backend.js.ic
 
-import org.jetbrains.kotlin.ir.util.IdSignature
+import org.jetbrains.kotlin.ir.util.StringSignature
 import java.io.File
 import java.io.PrintWriter
 import java.security.MessageDigest
@@ -36,11 +36,11 @@ class ModuleCache(val name: String, val asts: Map<String, FileCache>)
 interface PersistentCacheProvider {
     fun fileFingerPrint(path: String): Hash
 
-    fun inlineGraphForFile(path: String, sigResolver: (Int) -> IdSignature): Collection<Pair<IdSignature, TransHash>>
+    fun inlineGraphForFile(path: String, sigResolver: (Int) -> StringSignature): Collection<Pair<StringSignature, TransHash>>
 
-    fun inlineHashes(path: String, sigResolver: (Int) -> IdSignature): Map<IdSignature, TransHash>
+    fun inlineHashes(path: String, sigResolver: (Int) -> StringSignature): Map<StringSignature, TransHash>
 
-    fun allInlineHashes(sigResolver: (String, Int) -> IdSignature): Map<IdSignature, TransHash>
+    fun allInlineHashes(sigResolver: (String, Int) -> StringSignature): Map<StringSignature, TransHash>
 
     fun binaryAst(path: String): ByteArray?
 
@@ -58,15 +58,15 @@ interface PersistentCacheProvider {
                 return 0
             }
 
-            override fun inlineGraphForFile(path: String, sigResolver: (Int) -> IdSignature): Collection<Pair<IdSignature, TransHash>> {
+            override fun inlineGraphForFile(path: String, sigResolver: (Int) -> StringSignature): Collection<Pair<StringSignature, TransHash>> {
                 return emptyList()
             }
 
-            override fun inlineHashes(path: String, sigResolver: (Int) -> IdSignature): Map<IdSignature, TransHash> {
+            override fun inlineHashes(path: String, sigResolver: (Int) -> StringSignature): Map<StringSignature, TransHash> {
                 return emptyMap()
             }
 
-            override fun allInlineHashes(sigResolver: (String, Int) -> IdSignature): Map<IdSignature, TransHash> {
+            override fun allInlineHashes(sigResolver: (String, Int) -> StringSignature): Map<StringSignature, TransHash> {
                 return emptyMap()
             }
 
@@ -113,8 +113,8 @@ class PersistentCacheProviderImpl(private val cachePath: String) : PersistentCac
     private fun parseHashList(
         fileDir: File,
         fileName: String,
-        sigResolver: (Int) -> IdSignature
-    ): Collection<Pair<IdSignature, TransHash>> {
+        sigResolver: (Int) -> StringSignature
+    ): Collection<Pair<StringSignature, TransHash>> {
         val inlineGraphFile = File(fileDir, fileName)
 
         if (inlineGraphFile.exists()) {
@@ -136,16 +136,16 @@ class PersistentCacheProviderImpl(private val cachePath: String) : PersistentCac
         return emptyList()
     }
 
-    override fun inlineGraphForFile(path: String, sigResolver: (Int) -> IdSignature): Collection<Pair<IdSignature, TransHash>> {
+    override fun inlineGraphForFile(path: String, sigResolver: (Int) -> StringSignature): Collection<Pair<StringSignature, TransHash>> {
         return parseHashList(path.fileDir, inlineGraphFile, sigResolver)
     }
 
-    override fun inlineHashes(path: String, sigResolver: (Int) -> IdSignature): Map<IdSignature, TransHash> {
+    override fun inlineHashes(path: String, sigResolver: (Int) -> StringSignature): Map<StringSignature, TransHash> {
         return parseHashList(path.fileDir, inlineFunctionsFile, sigResolver).toMap()
     }
 
-    override fun allInlineHashes(sigResolver: (String, Int) -> IdSignature): Map<IdSignature, TransHash> {
-        val result = mutableMapOf<IdSignature, TransHash>()
+    override fun allInlineHashes(sigResolver: (String, Int) -> StringSignature): Map<StringSignature, TransHash> {
+        val result = mutableMapOf<StringSignature, TransHash>()
         val cachePath = File(cachePath)
         cachePath.listFiles { file: File -> file.isDirectory }!!.forEach { f ->
             val fileInfo = File(f, fileInfoFile)
@@ -195,9 +195,9 @@ class PersistentCacheProviderImpl(private val cachePath: String) : PersistentCac
 }
 
 interface PersistentCacheConsumer {
-    fun commitInlineFunctions(path: String, hashes: Collection<Pair<IdSignature, TransHash>>, sigResolver: (IdSignature) -> Int)
+    fun commitInlineFunctions(path: String, hashes: Collection<Pair<StringSignature, TransHash>>, sigResolver: (StringSignature) -> Int)
     fun commitFileFingerPrint(path: String, fingerprint: Hash)
-    fun commitInlineGraph(path: String, hashes: Collection<Pair<IdSignature, TransHash>>, sigResolver: (IdSignature) -> Int)
+    fun commitInlineGraph(path: String, hashes: Collection<Pair<StringSignature, TransHash>>, sigResolver: (StringSignature) -> Int)
     fun commitBinaryAst(path: String, astData: ByteArray)
     fun commitBinaryDts(path: String, dstData: ByteArray)
     fun commitSourceMap(path: String, mapData: ByteArray)
@@ -210,8 +210,8 @@ interface PersistentCacheConsumer {
         val EMPTY = object : PersistentCacheConsumer {
             override fun commitInlineFunctions(
                 path: String,
-                hashes: Collection<Pair<IdSignature, TransHash>>,
-                sigResolver: (IdSignature) -> Int
+                hashes: Collection<Pair<StringSignature, TransHash>>,
+                sigResolver: (StringSignature) -> Int
             ) {
             }
 
@@ -220,8 +220,8 @@ interface PersistentCacheConsumer {
 
             override fun commitInlineGraph(
                 path: String,
-                hashes: Collection<Pair<IdSignature, TransHash>>,
-                sigResolver: (IdSignature) -> Int
+                hashes: Collection<Pair<StringSignature, TransHash>>,
+                sigResolver: (StringSignature) -> Int
             ) {
             }
 
@@ -256,8 +256,8 @@ class PersistentCacheConsumerImpl(private val cachePath: String) : PersistentCac
     private fun commitFileHashMapping(
         path: String,
         cacheDst: String,
-        hashes: Collection<Pair<IdSignature, TransHash>>,
-        sigResolver: (IdSignature) -> Int
+        hashes: Collection<Pair<StringSignature, TransHash>>,
+        sigResolver: (StringSignature) -> Int
     ) {
         val fileId = createFileCacheId(path)
         val fileDir = File(File(cachePath), fileId)
@@ -274,7 +274,7 @@ class PersistentCacheConsumerImpl(private val cachePath: String) : PersistentCac
         }
     }
 
-    override fun commitInlineFunctions(path: String, hashes: Collection<Pair<IdSignature, TransHash>>, sigResolver: (IdSignature) -> Int) {
+    override fun commitInlineFunctions(path: String, hashes: Collection<Pair<StringSignature, TransHash>>, sigResolver: (StringSignature) -> Int) {
         commitFileHashMapping(path, inlineFunctionsFile, hashes, sigResolver)
     }
 
@@ -291,7 +291,7 @@ class PersistentCacheConsumerImpl(private val cachePath: String) : PersistentCac
         }
     }
 
-    override fun commitInlineGraph(path: String, hashes: Collection<Pair<IdSignature, TransHash>>, sigResolver: (IdSignature) -> Int) {
+    override fun commitInlineGraph(path: String, hashes: Collection<Pair<StringSignature, TransHash>>, sigResolver: (StringSignature) -> Int) {
         commitFileHashMapping(path, inlineGraphFile, hashes, sigResolver)
     }
 

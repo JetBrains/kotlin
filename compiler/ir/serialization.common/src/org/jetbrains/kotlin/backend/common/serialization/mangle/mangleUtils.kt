@@ -5,35 +5,36 @@
 
 package org.jetbrains.kotlin.backend.common.serialization.mangle
 
+import org.jetbrains.kotlin.ir.util.MangleConstant
 import org.jetbrains.kotlin.name.FqName
 
-fun <T> Collection<T>.collectForMangler(builder: StringBuilder, params: MangleConstant, collect: StringBuilder.(T) -> Unit) {
-    var first = true
-
-    builder.append(params.prefix)
-
-    var addSeparator = true
-
-    for (e in this) {
-        if (first) {
-            first = false
-        } else if (addSeparator) {
-            builder.append(params.separator)
-        }
-
-        val l = builder.length
-        builder.collect(e)
-        addSeparator = l < builder.length
-    }
-
-    if (!addSeparator) {
-        if (builder.last() == params.separator) {
-            // avoid signatures like foo(Int;)
-            builder.deleteCharAt(builder.lastIndex)
-        }
-    }
-
-    builder.append(params.suffix)
-}
+//fun <T> Collection<T>.collectForMangler(builder: StringBuilder, params: MangleConstant, collect: StringBuilder.(T) -> Unit) {
+//    var first = true
+//
+//    builder.append(params.prefix)
+//
+//    var addSeparator = true
+//
+//    for (e in this) {
+//        if (first) {
+//            first = false
+//        } else if (addSeparator) {
+//            builder.append(params.separator)
+//        }
+//
+//        val l = builder.length
+//        builder.collect(e)
+//        addSeparator = l < builder.length
+//    }
+//
+//    if (!addSeparator) {
+//        if (builder.last() == params.separator) {
+//            // avoid signatures like foo(Int;)
+//            builder.deleteCharAt(builder.lastIndex)
+//        }
+//    }
+//
+//    builder.append(params.suffix)
+//}
 
 internal val publishedApiAnnotation = FqName("kotlin.PublishedApi")

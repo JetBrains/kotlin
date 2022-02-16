@@ -79,7 +79,7 @@ internal fun Context.psiToIr(
             override fun getDeclaration(symbol: IrSymbol) = functionIrClassFactory.getDeclaration(symbol)
                     ?: stubGenerator.getDeclaration(symbol)
 
-            override fun resolveBySignatureInModule(signature: IdSignature, kind: IrDeserializer.TopLevelSymbolKind, moduleName: Name): IrSymbol {
+            override fun resolveBySignatureInModule(signature: StringSignature, kind: IrDeserializer.TopLevelSymbolKind, moduleName: Name): IrSymbol {
                 error("Should not be called")
             }
         }

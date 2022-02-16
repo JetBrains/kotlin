@@ -5,13 +5,10 @@
 
 package org.jetbrains.kotlin.backend.common.serialization
 
-import org.jetbrains.kotlin.backend.common.serialization.mangle.MangleConstant
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
-import org.jetbrains.kotlin.ir.util.DescriptorByIdSignatureFinder
-import org.jetbrains.kotlin.ir.util.IdSignature
-import org.jetbrains.kotlin.ir.util.KotlinMangler
+import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
@@ -41,6 +38,12 @@ class DescriptorByIdSignatureFinderImpl(
          * Perform search of descriptor only in [moduleDescriptor].
          */
         MODULE_ONLY
+    }
+
+    override fun findDescriptorBySignature(signature: StringSignature): DeclarationDescriptor? {
+        val parsedSig = signature.parsedSignature
+//        if (parsedSig is StringSignature.ParsedSignature.ClassSignature)
+        TODO("..")
     }
 
     override fun findDescriptorBySignature(signature: IdSignature): DeclarationDescriptor? =

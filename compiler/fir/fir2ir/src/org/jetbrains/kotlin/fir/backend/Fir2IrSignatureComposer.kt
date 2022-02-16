@@ -9,8 +9,14 @@ import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
 import org.jetbrains.kotlin.ir.util.IdSignature
+import org.jetbrains.kotlin.ir.util.StringSignature
 
 interface Fir2IrSignatureComposer {
     fun composeSignature(declaration: FirDeclaration, containingClass: ConeClassLikeLookupTag? = null): IdSignature?
     fun composeAccessorSignature(property: FirProperty, isSetter: Boolean, containingClass: ConeClassLikeLookupTag? = null): IdSignature?
+}
+
+interface Fir2IrSignatureComposer2 {
+    fun composeSignature(declaration: FirDeclaration, containingClass: ConeClassLikeLookupTag? = null): StringSignature?
+    fun composeAccessorSignature(property: FirProperty, isSetter: Boolean, containingClass: ConeClassLikeLookupTag? = null): StringSignature?
 }

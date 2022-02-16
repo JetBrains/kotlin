@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.ir.symbols
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.util.IdSignature
+import org.jetbrains.kotlin.ir.util.StringSignature
 
 abstract class IrDelegatingSymbol<S : IrBindableSymbol<D, B>, B : IrSymbolOwner, D : DeclarationDescriptor>(var delegate: S) :
     IrBindableSymbol<D, B> {
@@ -23,7 +23,7 @@ abstract class IrDelegatingSymbol<S : IrBindableSymbol<D, B>, B : IrSymbolOwner,
 
     override val isBound: Boolean get() = delegate.isBound
 
-    override val signature: IdSignature?
+    override val signature: StringSignature?
         get() = delegate.signature
 
     override fun bind(owner: B) = delegate.bind(owner)
@@ -34,7 +34,7 @@ abstract class IrDelegatingSymbol<S : IrBindableSymbol<D, B>, B : IrSymbolOwner,
         return false
     }
 
-    override var privateSignature: IdSignature?
+    override var privateSignature: StringSignature?
         get() = delegate.privateSignature
         set(value) {
             delegate.privateSignature = value

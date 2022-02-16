@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrReturnableBlock
 import org.jetbrains.kotlin.ir.util.IdSignature
+import org.jetbrains.kotlin.ir.util.StringSignature
 import org.jetbrains.kotlin.types.model.TypeConstructorMarker
 import org.jetbrains.kotlin.types.model.TypeParameterMarker
 
@@ -35,11 +36,11 @@ interface IrSymbol {
 
     val isBound: Boolean
 
-    val signature: IdSignature?
+    val signature: StringSignature?
 
     // TODO: remove once JS IR IC migrates to a different stable tag generation scheme
     // Used to store signatures in private symbols for JS IC
-    var privateSignature: IdSignature?
+    var privateSignature: StringSignature?
 }
 
 val IrSymbol.isPublicApi: Boolean

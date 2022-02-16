@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.ir.backend.js.ic
 
 import org.jetbrains.kotlin.backend.common.serialization.signature.IdSignatureDescriptor
+import org.jetbrains.kotlin.backend.common.serialization.signature.StringSignatureBuilderOverDescriptors
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.config.languageVersionSettings
@@ -34,16 +35,20 @@ import java.io.File
 import java.security.MessageDigest
 
 private fun KotlinLibrary.fingerprint(fileIndex: Int): Hash {
-    return ((((types(fileIndex).md5() * 31) + signatures(fileIndex).md5()) * 31 + strings(fileIndex).md5()) * 31 + declarations(fileIndex).md5()) * 31 + bodies(
-        fileIndex
-    ).md5()
+    val typesHash = types(fileIndex).md5()
+    val sigHash = signatures(fileIndex).md5()
+    val stringHash = strings(fileIndex).md5()
+    val declHash = declarations(fileIndex).md5()
+    val bodyHash = bodies(fileIndex).md5()
+
+    return ((((typesHash * 31) + sigHash) * 31 + stringHash) * 31 + declHash) * 31 + bodyHash
 }
 
 private fun invalidateCacheForModule(
     library: KotlinLibrary,
     libraryFiles: List<String>,
-    externalHashes: Map<IdSignature, TransHash>,
-    cachedInlineHashesForFile: MutableMap<String, Map<IdSignature, TransHash>>,
+    externalHashes: Map<StringSignature, TransHash>,
+    cachedInlineHashesForFile: MutableMap<String, Map<StringSignature, TransHash>>,
     cacheProvider: CacheLazyLoader,
     cacheConsumer: PersistentCacheConsumer,
     fileFingerPrints: MutableMap<String, Hash>
@@ -119,6 +124,7 @@ private fun CacheInfo.commitLibraryInfo(cacheConsumer: PersistentCacheConsumer, 
     )
 }
 
+
 private fun buildCacheForModule(
     configuration: CompilerConfiguration,
     irModule: IrModuleFragment,
@@ -126,9 +132,9 @@ private fun buildCacheForModule(
     dependencies: Collection<IrModuleFragment>,
     dirtyFiles: Collection<String>,
     deletedFiles: Collection<String>,
-    cleanInlineHashes: Map<IdSignature, Hash>,
+    cleanInlineHashes: Map<StringSignature, Hash>,
     cacheConsumer: PersistentCacheConsumer,
-    signatureDeserializers: Map<FilePath, Map<IdSignature, Int>>,
+    signatureDeserializers: Map<FilePath, Map<StringSignature, Int>>,
     fileFingerPrints: Map<String, Hash>,
     mainArguments: List<String>?,
     cacheExecutor: CacheExecutor
@@ -152,7 +158,10 @@ private fun buildCacheForModule(
     val hashes = hashBuilder.buildHashes(dirtyIrFiles)
 
     val splitPerFiles =
-        hashes.entries.filter { !it.key.isFakeOverride && (it.key.symbol.signature?.visibleCrossFile ?: false) }.groupBy({ it.key.file }) {
+        hashes.entries.filter {
+            val sig = it.key.symbol.signature
+            !it.key.isFakeOverride && (sig != null && !sig.isLocal)
+        }.groupBy({ it.key.file }) {
             val signature = it.key.symbol.signature ?: error("Unexpected private inline fun ${it.key.render()}")
             signature to it.value
         }
@@ -162,7 +171,7 @@ private fun buildCacheForModule(
     dirtyIrFiles.forEach { irFile ->
         val fileName = irFile.fileEntry.name
         val sigToIndexMap = signatureDeserializers[fileName] ?: error("No sig2id mapping found for $fileName")
-        val indexResolver: (IdSignature) -> Int = { sigToIndexMap[it] ?: error("No index found for sig $it") }
+        val indexResolver: (StringSignature) -> Int = { sigToIndexMap[it] ?: error("No index found for sig $it") }
         val inlineHashes = splitPerFiles[irFile] ?: emptyList()
         cacheConsumer.commitInlineFunctions(fileName, inlineHashes, indexResolver)
         val fileInlineGraph = inlineGraph[irFile] ?: emptyList()
@@ -225,7 +234,8 @@ private fun createLinker(
 ): JsIrLinker {
     val logger = configuration[IrMessageLogger.IR_MESSAGE_LOGGER] ?: IrMessageLogger.None
     val signaturer = IdSignatureDescriptor(JsManglerDesc)
-    val symbolTable = SymbolTable(signaturer, irFactory)
+//    val symbolTable = SymbolTable(signaturer, irFactory)
+    val symbolTable = SymbolTable(StringSignatureBuilderOverDescriptors(), irFactory)
     val moduleDescriptor = loadedModules.keys.last()
     val typeTranslator = TypeTranslatorImpl(symbolTable, configuration.languageVersionSettings, moduleDescriptor)
     val irBuiltIns = IrBuiltInsOverDescriptors(moduleDescriptor.builtIns, typeTranslator, symbolTable)
@@ -495,17 +505,46 @@ private fun actualizeCacheForModule(
     // 1. Invalidate
     val dependencies = dependencyGraph[library]!!
 
+//    val libraryFiles = library.files()
+//    val depReaders = dependencies.associateWith { it.files() }
+//
+//    val signatureResolver: (String, Int) -> StringSignature = { f, s ->
+//        val fileIndex = libraryFiles.indexOf(f)
+//        assert(fileIndex >= 0)
+//        StringSignature(library.string(s, fileIndex).decodeToString())
+//    }
+// ^^^^
     val currentLibraryCacheProvider = persistentCacheProviders[library] ?: error("No cache provider for $library")
-    val libraryFiles = currentLibraryCacheProvider.signatureReadersList.map { it.first }
+    val libraryFiles = currentLibraryCacheProvider.libraryFiles //currentLibraryCacheProvider.signatureReadersList.map { it.first }
 
-    val sigHashes = mutableMapOf<IdSignature, TransHash>()
+    val sigHashes = mutableMapOf<StringSignature, TransHash>()
     dependencies.forEach { lib ->
         persistentCacheProviders[lib]?.let { provider ->
+//            val moduleReaders = depReaders[lib]!!
+//            val inlineHashes = provider.allInlineHashes { f, i ->
+//                val fileIndex = moduleReaders.indexOf(f)
+//                assert(fileIndex >= 0) { "No module reader for file $f" }
+//                StringSignature(lib.string(i, fileIndex).decodeToString())
+//            }
+//            sigHashes.putAll(inlineHashes)
+//            ^^^
             sigHashes.putAll(provider.allInlineFunctionHashes)
         }
     }
 
     val fileFingerPrints = mutableMapOf<String, Hash>()
+
+//    val currentLibraryCacheProvider = persistentCacheProviders[library] ?: error("No cache provider for $library")
+
+//    val fileCachedInlineHashes = mutableMapOf<String, Map<StringSignature, TransHash>>()
+
+//    libraryFiles.forEachIndexed { fileIndex, fileName ->
+//        fileCachedInlineHashes[fileName] =
+//            currentLibraryCacheProvider.inlineHashes(fileName) { sigIndex ->
+//                StringSignature(library.signature(sigIndex, fileIndex).decodeToString())
+//            }
+//    }
+// ^^^^^
     val fileCachedInlineHashes = currentLibraryCacheProvider.getInlineHashesByFile()
 
     val (dirtySet, deletedFiles) = invalidateCacheForModule(
@@ -550,11 +589,15 @@ private fun actualizeCacheForModule(
     val currentIrModule = irModules.find { it.second == library }?.first!!
     val currentModuleDeserializer = jsIrLinker.moduleDeserializer(currentIrModule.descriptor)
 
+    val deserializers =
+        dirtySet.associateWith { currentModuleDeserializer.signatureDeserializerForFile(it).entries.associate { e -> e.value to e.key } }
+
+//    ^^^^
     for (hashes in fileCachedInlineHashes.values) {
         sigHashes.putAll(hashes)
     }
 
-    val deserializers = dirtySet.associateWith { currentModuleDeserializer.signatureDeserializerForFile(it).signatureToIndexMapping() }
+//    val deserializers = dirtySet.associateWith { currentModuleDeserializer.signatureDeserializerForFile(it).signatureToIndexMapping() }
 
     buildCacheForModule(
         configuration,
@@ -664,8 +707,8 @@ fun loadModuleCaches(icCachePaths: Collection<String>): Map<String, ModuleCache>
     return icCacheMap.entries.associate { (lib, cache) ->
         val provider = createCacheProvider(cache.path)
         val files = provider.filePaths()
-        lib to ModuleCache(provider.moduleName(), files.associate { f ->
-            f to FileCache(f, provider.binaryAst(f), provider.dts(f), provider.sourceMap(f))
+        lib to ModuleCache(provider.moduleName(), files.associateWith { f ->
+            FileCache(f, provider.binaryAst(f), provider.dts(f), provider.sourceMap(f))
         })
     }
 }
