@@ -142,12 +142,12 @@ abstract class WasmExpressionBuilder {
         buildInstr(WasmOp.REF_CAST)
     }
 
-    fun buildRefNull(type: WasmHeapType) {
-        buildInstr(WasmOp.REF_NULL, WasmImmediate.HeapType(WasmRefType(type)))
+    fun buildRefCastStatic(type: WasmSymbolReadOnly<WasmTypeDeclaration>) {
+        buildInstr(WasmOp.REF_CAST_STATIC, WasmImmediate.TypeIdx(type))
     }
 
-    fun buildRttSub(decl: WasmSymbol<WasmTypeDeclaration>) {
-        buildInstr(WasmOp.RTT_SUB, WasmImmediate.TypeIdx(decl))
+    fun buildRefNull(type: WasmHeapType) {
+        buildInstr(WasmOp.REF_NULL, WasmImmediate.HeapType(WasmRefType(type)))
     }
 
     fun buildRttCanon(decl: WasmSymbol<WasmTypeDeclaration>) {

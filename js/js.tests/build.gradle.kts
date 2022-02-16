@@ -158,7 +158,7 @@ val v8osString = when (currentOsType) {
 }
 
 val v8edition = "rel" // rel or dbg
-val v8version = "9.2.212"
+val v8version = "10.2.9"
 val v8fileName = "v8-${v8osString}-${v8edition}-${v8version}"
 val v8url = "https://storage.googleapis.com/chromium-v8/official/canary/$v8fileName.zip"
 
