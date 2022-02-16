@@ -1164,6 +1164,9 @@ private fun FlyweightCapableTreeStructure<LighterASTNode>.constructorKeyword(nod
 private fun FlyweightCapableTreeStructure<LighterASTNode>.dotOperator(node: LighterASTNode): LighterASTNode? =
     findChildByType(node, KtTokens.DOT)
 
+private fun FlyweightCapableTreeStructure<LighterASTNode>.hashOperator(node: LighterASTNode): LighterASTNode? =
+    findChildByType(node, KtTokens.HASH)
+
 private fun FlyweightCapableTreeStructure<LighterASTNode>.safeAccess(node: LighterASTNode): LighterASTNode? =
     findChildByType(node, KtTokens.SAFE_ACCESS)
 

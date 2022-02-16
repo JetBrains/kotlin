@@ -987,6 +987,7 @@ object PositioningStrategies {
                 element.left?.let { return mark(it) }
             }
             var result: PsiElement = when (element) {
+                is KtHashQualifiedExpression -> element
                 is KtQualifiedExpression -> {
                     when (val selectorExpression = element.selectorExpression) {
                         is KtCallExpression -> selectorExpression.calleeExpression ?: selectorExpression
