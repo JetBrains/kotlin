@@ -16714,15 +16714,15 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
         }
 
         @Test
-        @TestMetadata("unboxNullableValueOfInlineClassWithNullableInlineClassUnderlyingTypeGenericWithInterface.kt")
-        public void testUnboxNullableValueOfInlineClassWithNullableInlineClassUnderlyingTypeGenericWithInterface() throws Exception {
-            runTest("compiler/testData/codegen/box/inlineClasses/unboxNullableValueOfInlineClassWithNullableInlineClassUnderlyingTypeGenericWithInterface.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+        @TestMetadata("unboxNullableValueOfInlineClassWithNullableInlineClassUnderlyingTypeGWI.kt")
+        public void testUnboxNullableValueOfInlineClassWithNullableInlineClassUnderlyingTypeGWI() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/unboxNullableValueOfInlineClassWithNullableInlineClassUnderlyingTypeGWI.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
-        @TestMetadata("unboxNullableValueOfInlineClassWithNullableInlineClassUnderlyingTypeGenericWithInterface2.kt")
-        public void testUnboxNullableValueOfInlineClassWithNullableInlineClassUnderlyingTypeGenericWithInterface2() throws Exception {
-            runTest("compiler/testData/codegen/box/inlineClasses/unboxNullableValueOfInlineClassWithNullableInlineClassUnderlyingTypeGenericWithInterface2.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+        @TestMetadata("unboxNullableValueOfInlineClassWithNullableInlineClassUnderlyingTypeGWI2.kt")
+        public void testUnboxNullableValueOfInlineClassWithNullableInlineClassUnderlyingTypeGWI2() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/unboxNullableValueOfInlineClassWithNullableInlineClassUnderlyingTypeGWI2.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
@@ -16732,21 +16732,21 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
         }
 
         @Test
+        @TestMetadata("unboxNullableValueOfInlineClassWithNullablePrimitiveUnderlyingTypeGWI.kt")
+        public void testUnboxNullableValueOfInlineClassWithNullablePrimitiveUnderlyingTypeGWI() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/unboxNullableValueOfInlineClassWithNullablePrimitiveUnderlyingTypeGWI.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+        }
+
+        @Test
+        @TestMetadata("unboxNullableValueOfInlineClassWithNullablePrimitiveUnderlyingTypeGWI2.kt")
+        public void testUnboxNullableValueOfInlineClassWithNullablePrimitiveUnderlyingTypeGWI2() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/unboxNullableValueOfInlineClassWithNullablePrimitiveUnderlyingTypeGWI2.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+        }
+
+        @Test
         @TestMetadata("unboxNullableValueOfInlineClassWithNullablePrimitiveUnderlyingTypeGeneric.kt")
         public void testUnboxNullableValueOfInlineClassWithNullablePrimitiveUnderlyingTypeGeneric() throws Exception {
             runTest("compiler/testData/codegen/box/inlineClasses/unboxNullableValueOfInlineClassWithNullablePrimitiveUnderlyingTypeGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        }
-
-        @Test
-        @TestMetadata("unboxNullableValueOfInlineClassWithNullablePrimitiveUnderlyingTypeGenericWithInterface.kt")
-        public void testUnboxNullableValueOfInlineClassWithNullablePrimitiveUnderlyingTypeGenericWithInterface() throws Exception {
-            runTest("compiler/testData/codegen/box/inlineClasses/unboxNullableValueOfInlineClassWithNullablePrimitiveUnderlyingTypeGenericWithInterface.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        }
-
-        @Test
-        @TestMetadata("unboxNullableValueOfInlineClassWithNullablePrimitiveUnderlyingTypeGenericWithInterface2.kt")
-        public void testUnboxNullableValueOfInlineClassWithNullablePrimitiveUnderlyingTypeGenericWithInterface2() throws Exception {
-            runTest("compiler/testData/codegen/box/inlineClasses/unboxNullableValueOfInlineClassWithNullablePrimitiveUnderlyingTypeGenericWithInterface2.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test

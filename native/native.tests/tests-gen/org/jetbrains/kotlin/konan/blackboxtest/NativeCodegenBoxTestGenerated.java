@@ -16248,12 +16248,12 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
                 register("compiler/testData/codegen/box/inlineClasses/UIntArraySortExampleGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
                 register("compiler/testData/codegen/box/inlineClasses/unboxNullableValueOfInlineClassWithNonNullUnderlyingType.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
                 register("compiler/testData/codegen/box/inlineClasses/unboxNullableValueOfInlineClassWithNonNullUnderlyingTypeGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-                register("compiler/testData/codegen/box/inlineClasses/unboxNullableValueOfInlineClassWithNullableInlineClassUnderlyingTypeGenericWithInterface.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-                register("compiler/testData/codegen/box/inlineClasses/unboxNullableValueOfInlineClassWithNullableInlineClassUnderlyingTypeGenericWithInterface2.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+                register("compiler/testData/codegen/box/inlineClasses/unboxNullableValueOfInlineClassWithNullableInlineClassUnderlyingTypeGWI.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+                register("compiler/testData/codegen/box/inlineClasses/unboxNullableValueOfInlineClassWithNullableInlineClassUnderlyingTypeGWI2.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
                 register("compiler/testData/codegen/box/inlineClasses/unboxNullableValueOfInlineClassWithNullablePrimitiveUnderlyingType.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+                register("compiler/testData/codegen/box/inlineClasses/unboxNullableValueOfInlineClassWithNullablePrimitiveUnderlyingTypeGWI.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+                register("compiler/testData/codegen/box/inlineClasses/unboxNullableValueOfInlineClassWithNullablePrimitiveUnderlyingTypeGWI2.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
                 register("compiler/testData/codegen/box/inlineClasses/unboxNullableValueOfInlineClassWithNullablePrimitiveUnderlyingTypeGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-                register("compiler/testData/codegen/box/inlineClasses/unboxNullableValueOfInlineClassWithNullablePrimitiveUnderlyingTypeGenericWithInterface.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-                register("compiler/testData/codegen/box/inlineClasses/unboxNullableValueOfInlineClassWithNullablePrimitiveUnderlyingTypeGenericWithInterface2.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
                 register("compiler/testData/codegen/box/inlineClasses/unboxNullableValueOfInlineClassWithPrimitiveUnderlyingType.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
                 register("compiler/testData/codegen/box/inlineClasses/unboxNullableValueOfInlineClassWithPrimitiveUnderlyingTypeGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
                 register("compiler/testData/codegen/box/inlineClasses/unboxParameterOfSuspendLambdaBeforeInvoke.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
@@ -18353,17 +18353,17 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
             }
 
             @Test
-            @TestMetadata("unboxNullableValueOfInlineClassWithNullableInlineClassUnderlyingTypeGenericWithInterface.kt")
-            public void testUnboxNullableValueOfInlineClassWithNullableInlineClassUnderlyingTypeGenericWithInterface() throws Exception {
+            @TestMetadata("unboxNullableValueOfInlineClassWithNullableInlineClassUnderlyingTypeGWI.kt")
+            public void testUnboxNullableValueOfInlineClassWithNullableInlineClassUnderlyingTypeGWI() throws Exception {
                 // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-                runTest("compiler/testData/codegen/box/inlineClasses/unboxNullableValueOfInlineClassWithNullableInlineClassUnderlyingTypeGenericWithInterface.kt");
+                runTest("compiler/testData/codegen/box/inlineClasses/unboxNullableValueOfInlineClassWithNullableInlineClassUnderlyingTypeGWI.kt");
             }
 
             @Test
-            @TestMetadata("unboxNullableValueOfInlineClassWithNullableInlineClassUnderlyingTypeGenericWithInterface2.kt")
-            public void testUnboxNullableValueOfInlineClassWithNullableInlineClassUnderlyingTypeGenericWithInterface2() throws Exception {
+            @TestMetadata("unboxNullableValueOfInlineClassWithNullableInlineClassUnderlyingTypeGWI2.kt")
+            public void testUnboxNullableValueOfInlineClassWithNullableInlineClassUnderlyingTypeGWI2() throws Exception {
                 // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-                runTest("compiler/testData/codegen/box/inlineClasses/unboxNullableValueOfInlineClassWithNullableInlineClassUnderlyingTypeGenericWithInterface2.kt");
+                runTest("compiler/testData/codegen/box/inlineClasses/unboxNullableValueOfInlineClassWithNullableInlineClassUnderlyingTypeGWI2.kt");
             }
 
             @Test
@@ -18374,24 +18374,24 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
             }
 
             @Test
+            @TestMetadata("unboxNullableValueOfInlineClassWithNullablePrimitiveUnderlyingTypeGWI.kt")
+            public void testUnboxNullableValueOfInlineClassWithNullablePrimitiveUnderlyingTypeGWI() throws Exception {
+                // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
+                runTest("compiler/testData/codegen/box/inlineClasses/unboxNullableValueOfInlineClassWithNullablePrimitiveUnderlyingTypeGWI.kt");
+            }
+
+            @Test
+            @TestMetadata("unboxNullableValueOfInlineClassWithNullablePrimitiveUnderlyingTypeGWI2.kt")
+            public void testUnboxNullableValueOfInlineClassWithNullablePrimitiveUnderlyingTypeGWI2() throws Exception {
+                // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
+                runTest("compiler/testData/codegen/box/inlineClasses/unboxNullableValueOfInlineClassWithNullablePrimitiveUnderlyingTypeGWI2.kt");
+            }
+
+            @Test
             @TestMetadata("unboxNullableValueOfInlineClassWithNullablePrimitiveUnderlyingTypeGeneric.kt")
             public void testUnboxNullableValueOfInlineClassWithNullablePrimitiveUnderlyingTypeGeneric() throws Exception {
                 // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
                 runTest("compiler/testData/codegen/box/inlineClasses/unboxNullableValueOfInlineClassWithNullablePrimitiveUnderlyingTypeGeneric.kt");
-            }
-
-            @Test
-            @TestMetadata("unboxNullableValueOfInlineClassWithNullablePrimitiveUnderlyingTypeGenericWithInterface.kt")
-            public void testUnboxNullableValueOfInlineClassWithNullablePrimitiveUnderlyingTypeGenericWithInterface() throws Exception {
-                // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-                runTest("compiler/testData/codegen/box/inlineClasses/unboxNullableValueOfInlineClassWithNullablePrimitiveUnderlyingTypeGenericWithInterface.kt");
-            }
-
-            @Test
-            @TestMetadata("unboxNullableValueOfInlineClassWithNullablePrimitiveUnderlyingTypeGenericWithInterface2.kt")
-            public void testUnboxNullableValueOfInlineClassWithNullablePrimitiveUnderlyingTypeGenericWithInterface2() throws Exception {
-                // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-                runTest("compiler/testData/codegen/box/inlineClasses/unboxNullableValueOfInlineClassWithNullablePrimitiveUnderlyingTypeGenericWithInterface2.kt");
             }
 
             @Test
