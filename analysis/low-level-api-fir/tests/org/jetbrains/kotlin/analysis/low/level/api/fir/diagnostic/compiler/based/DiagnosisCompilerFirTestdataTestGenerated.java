@@ -6017,6 +6017,158 @@ public class DiagnosisCompilerFirTestdataTestGenerated extends AbstractDiagnosis
                 public void testUntypedPropertyWithBackingFieldUsage() throws Exception {
                     runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/properties/backingField/untypedPropertyWithBackingFieldUsage.kt");
                 }
+
+                @Nested
+                @TestMetadata("compiler/fir/analysis-tests/testData/resolveWithStdlib/properties/backingField/directAccess")
+                @TestDataPath("$PROJECT_ROOT")
+                public class DirectAccess {
+                    @Test
+                    public void testAllFilesPresentInDirectAccess() throws Exception {
+                        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolveWithStdlib/properties/backingField/directAccess"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+                    }
+
+                    @Test
+                    @TestMetadata("directAccessBadReceiver.kt")
+                    public void testDirectAccessBadReceiver() throws Exception {
+                        runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/properties/backingField/directAccess/directAccessBadReceiver.kt");
+                    }
+
+                    @Test
+                    @TestMetadata("directAccessInSameClass.kt")
+                    public void testDirectAccessInSameClass() throws Exception {
+                        runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/properties/backingField/directAccess/directAccessInSameClass.kt");
+                    }
+
+                    @Test
+                    @TestMetadata("directAccessInvisibleField.kt")
+                    public void testDirectAccessInvisibleField() throws Exception {
+                        runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/properties/backingField/directAccess/directAccessInvisibleField.kt");
+                    }
+
+                    @Test
+                    @TestMetadata("directAccessPlusAssign.kt")
+                    public void testDirectAccessPlusAssign() throws Exception {
+                        runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/properties/backingField/directAccess/directAccessPlusAssign.kt");
+                    }
+
+                    @Test
+                    @TestMetadata("directAccessWithExplicitReceiver.kt")
+                    public void testDirectAccessWithExplicitReceiver() throws Exception {
+                        runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/properties/backingField/directAccess/directAccessWithExplicitReceiver.kt");
+                    }
+
+                    @Test
+                    @TestMetadata("directAccessWithExtensionFunction.kt")
+                    public void testDirectAccessWithExtensionFunction() throws Exception {
+                        runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/properties/backingField/directAccess/directAccessWithExtensionFunction.kt");
+                    }
+
+                    @Test
+                    @TestMetadata("directAccessWithLongChain.kt")
+                    public void testDirectAccessWithLongChain() throws Exception {
+                        runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/properties/backingField/directAccess/directAccessWithLongChain.kt");
+                    }
+
+                    @Test
+                    @TestMetadata("multiFileDirectAccess.kt")
+                    public void testMultiFileDirectAccess() throws Exception {
+                        runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/properties/backingField/directAccess/multiFileDirectAccess.kt");
+                    }
+                }
+            }
+
+            @Nested
+            @TestMetadata("compiler/fir/analysis-tests/testData/resolveWithStdlib/properties/delegateAccess")
+            @TestDataPath("$PROJECT_ROOT")
+            public class DelegateAccess {
+                @Test
+                public void testAllFilesPresentInDelegateAccess() throws Exception {
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolveWithStdlib/properties/delegateAccess"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+                }
+
+                @Test
+                @TestMetadata("delegateAccessFunctionCall.kt")
+                public void testDelegateAccessFunctionCall() throws Exception {
+                    runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/properties/delegateAccess/delegateAccessFunctionCall.kt");
+                }
+
+                @Test
+                @TestMetadata("delegateAccessInSameClass.kt")
+                public void testDelegateAccessInSameClass() throws Exception {
+                    runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/properties/delegateAccess/delegateAccessInSameClass.kt");
+                }
+
+                @Test
+                @TestMetadata("delegateAccessInvisibleField.kt")
+                public void testDelegateAccessInvisibleField() throws Exception {
+                    runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/properties/delegateAccess/delegateAccessInvisibleField.kt");
+                }
+
+                @Test
+                @TestMetadata("delegateAccessPlusAssign.kt")
+                public void testDelegateAccessPlusAssign() throws Exception {
+                    runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/properties/delegateAccess/delegateAccessPlusAssign.kt");
+                }
+
+                @Test
+                @TestMetadata("delegateAccessSeparateClass.kt")
+                public void testDelegateAccessSeparateClass() throws Exception {
+                    runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/properties/delegateAccess/delegateAccessSeparateClass.kt");
+                }
+
+                @Test
+                @TestMetadata("delegateAccessWithExplicitReceiver.kt")
+                public void testDelegateAccessWithExplicitReceiver() throws Exception {
+                    runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/properties/delegateAccess/delegateAccessWithExplicitReceiver.kt");
+                }
+
+                @Test
+                @TestMetadata("delegateAccessWithExtensionFunction.kt")
+                public void testDelegateAccessWithExtensionFunction() throws Exception {
+                    runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/properties/delegateAccess/delegateAccessWithExtensionFunction.kt");
+                }
+
+                @Test
+                @TestMetadata("delegateAccessWithExtensionFunction2.kt")
+                public void testDelegateAccessWithExtensionFunction2() throws Exception {
+                    runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/properties/delegateAccess/delegateAccessWithExtensionFunction2.kt");
+                }
+
+                @Test
+                @TestMetadata("delegateAccessWithInvoke.kt")
+                public void testDelegateAccessWithInvoke() throws Exception {
+                    runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/properties/delegateAccess/delegateAccessWithInvoke.kt");
+                }
+
+                @Test
+                @TestMetadata("delegateAccessWithLongChain.kt")
+                public void testDelegateAccessWithLongChain() throws Exception {
+                    runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/properties/delegateAccess/delegateAccessWithLongChain.kt");
+                }
+
+                @Test
+                @TestMetadata("delegateAccessWithOverriddenProperties.kt")
+                public void testDelegateAccessWithOverriddenProperties() throws Exception {
+                    runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/properties/delegateAccess/delegateAccessWithOverriddenProperties.kt");
+                }
+
+                @Test
+                @TestMetadata("exposedDelegateAccess.kt")
+                public void testExposedDelegateAccess() throws Exception {
+                    runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/properties/delegateAccess/exposedDelegateAccess.kt");
+                }
+
+                @Test
+                @TestMetadata("multiFileDelegateAccess.kt")
+                public void testMultiFileDelegateAccess() throws Exception {
+                    runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/properties/delegateAccess/multiFileDelegateAccess.kt");
+                }
+
+                @Test
+                @TestMetadata("universalDelegateExposure.kt")
+                public void testUniversalDelegateExposure() throws Exception {
+                    runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/properties/delegateAccess/universalDelegateExposure.kt");
+                }
             }
         }
 

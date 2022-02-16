@@ -116,6 +116,140 @@ public class FirSpecificBlackBoxCodegenTestGenerated extends AbstractFirBlackBox
                 public void testOverriddenPropertiesWithExplicitBackingFields() throws Exception {
                     runTest("compiler/fir/fir2ir/testData/codegen/box/properties/backingField/overriddenPropertiesWithExplicitBackingFields.kt");
                 }
+
+                @Nested
+                @TestMetadata("compiler/fir/fir2ir/testData/codegen/box/properties/backingField/directAccess")
+                @TestDataPath("$PROJECT_ROOT")
+                public class DirectAccess {
+                    @Test
+                    public void testAllFilesPresentInDirectAccess() throws Exception {
+                        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/fir2ir/testData/codegen/box/properties/backingField/directAccess"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+                    }
+
+                    @Test
+                    @TestMetadata("directAccessInSameClass.kt")
+                    public void testDirectAccessInSameClass() throws Exception {
+                        runTest("compiler/fir/fir2ir/testData/codegen/box/properties/backingField/directAccess/directAccessInSameClass.kt");
+                    }
+
+                    @Test
+                    @TestMetadata("directAccessPlusAssign.kt")
+                    public void testDirectAccessPlusAssign() throws Exception {
+                        runTest("compiler/fir/fir2ir/testData/codegen/box/properties/backingField/directAccess/directAccessPlusAssign.kt");
+                    }
+
+                    @Test
+                    @TestMetadata("directAccessWithExplicitReceiver.kt")
+                    public void testDirectAccessWithExplicitReceiver() throws Exception {
+                        runTest("compiler/fir/fir2ir/testData/codegen/box/properties/backingField/directAccess/directAccessWithExplicitReceiver.kt");
+                    }
+
+                    @Test
+                    @TestMetadata("directAccessWithExtensionFunction.kt")
+                    public void testDirectAccessWithExtensionFunction() throws Exception {
+                        runTest("compiler/fir/fir2ir/testData/codegen/box/properties/backingField/directAccess/directAccessWithExtensionFunction.kt");
+                    }
+
+                    @Test
+                    @TestMetadata("directAccessWithLongChain.kt")
+                    public void testDirectAccessWithLongChain() throws Exception {
+                        runTest("compiler/fir/fir2ir/testData/codegen/box/properties/backingField/directAccess/directAccessWithLongChain.kt");
+                    }
+
+                    @Test
+                    @TestMetadata("multiFileDirectAccess.kt")
+                    public void testMultiFileDirectAccess() throws Exception {
+                        runTest("compiler/fir/fir2ir/testData/codegen/box/properties/backingField/directAccess/multiFileDirectAccess.kt");
+                    }
+                }
+            }
+
+            @Nested
+            @TestMetadata("compiler/fir/fir2ir/testData/codegen/box/properties/delegateAccess")
+            @TestDataPath("$PROJECT_ROOT")
+            public class DelegateAccess {
+                @Test
+                public void testAllFilesPresentInDelegateAccess() throws Exception {
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/fir2ir/testData/codegen/box/properties/delegateAccess"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+                }
+
+                @Test
+                @TestMetadata("delegateAccessFunctionCall.kt")
+                public void testDelegateAccessFunctionCall() throws Exception {
+                    runTest("compiler/fir/fir2ir/testData/codegen/box/properties/delegateAccess/delegateAccessFunctionCall.kt");
+                }
+
+                @Test
+                @TestMetadata("delegateAccessInSameClass.kt")
+                public void testDelegateAccessInSameClass() throws Exception {
+                    runTest("compiler/fir/fir2ir/testData/codegen/box/properties/delegateAccess/delegateAccessInSameClass.kt");
+                }
+
+                @Test
+                @TestMetadata("delegateAccessPlusAssign.kt")
+                public void testDelegateAccessPlusAssign() throws Exception {
+                    runTest("compiler/fir/fir2ir/testData/codegen/box/properties/delegateAccess/delegateAccessPlusAssign.kt");
+                }
+
+                @Test
+                @TestMetadata("delegateAccessSeparateClass.kt")
+                public void testDelegateAccessSeparateClass() throws Exception {
+                    runTest("compiler/fir/fir2ir/testData/codegen/box/properties/delegateAccess/delegateAccessSeparateClass.kt");
+                }
+
+                @Test
+                @TestMetadata("delegateAccessWithExplicitReceiver.kt")
+                public void testDelegateAccessWithExplicitReceiver() throws Exception {
+                    runTest("compiler/fir/fir2ir/testData/codegen/box/properties/delegateAccess/delegateAccessWithExplicitReceiver.kt");
+                }
+
+                @Test
+                @TestMetadata("delegateAccessWithExtensionFunction.kt")
+                public void testDelegateAccessWithExtensionFunction() throws Exception {
+                    runTest("compiler/fir/fir2ir/testData/codegen/box/properties/delegateAccess/delegateAccessWithExtensionFunction.kt");
+                }
+
+                @Test
+                @TestMetadata("delegateAccessWithExtensionFunction2.kt")
+                public void testDelegateAccessWithExtensionFunction2() throws Exception {
+                    runTest("compiler/fir/fir2ir/testData/codegen/box/properties/delegateAccess/delegateAccessWithExtensionFunction2.kt");
+                }
+
+                @Test
+                @TestMetadata("delegateAccessWithInvoke.kt")
+                public void testDelegateAccessWithInvoke() throws Exception {
+                    runTest("compiler/fir/fir2ir/testData/codegen/box/properties/delegateAccess/delegateAccessWithInvoke.kt");
+                }
+
+                @Test
+                @TestMetadata("delegateAccessWithLongChain.kt")
+                public void testDelegateAccessWithLongChain() throws Exception {
+                    runTest("compiler/fir/fir2ir/testData/codegen/box/properties/delegateAccess/delegateAccessWithLongChain.kt");
+                }
+
+                @Test
+                @TestMetadata("delegateAccessWithOverriddenProperties.kt")
+                public void testDelegateAccessWithOverriddenProperties() throws Exception {
+                    runTest("compiler/fir/fir2ir/testData/codegen/box/properties/delegateAccess/delegateAccessWithOverriddenProperties.kt");
+                }
+
+                @Test
+                @TestMetadata("exposedDelegateAccess.kt")
+                public void testExposedDelegateAccess() throws Exception {
+                    runTest("compiler/fir/fir2ir/testData/codegen/box/properties/delegateAccess/exposedDelegateAccess.kt");
+                }
+
+                @Test
+                @TestMetadata("multiFileDelegateAccess.kt")
+                public void testMultiFileDelegateAccess() throws Exception {
+                    runTest("compiler/fir/fir2ir/testData/codegen/box/properties/delegateAccess/multiFileDelegateAccess.kt");
+                }
+
+                @Test
+                @TestMetadata("universalDelegateExposure.kt")
+                public void testUniversalDelegateExposure() throws Exception {
+                    runTest("compiler/fir/fir2ir/testData/codegen/box/properties/delegateAccess/universalDelegateExposure.kt");
+                }
             }
         }
     }
@@ -151,6 +285,22 @@ public class FirSpecificBlackBoxCodegenTestGenerated extends AbstractFirBlackBox
                 @TestMetadata("backingFieldWithSmartTypeParameters.kt")
                 public void testBackingFieldWithSmartTypeParameters() throws Exception {
                     runTest("compiler/fir/fir2ir/testData/codegen/boxWithStdLib/properties/backingField/backingFieldWithSmartTypeParameters.kt");
+                }
+            }
+
+            @Nested
+            @TestMetadata("compiler/fir/fir2ir/testData/codegen/boxWithStdLib/properties/delegateAccess")
+            @TestDataPath("$PROJECT_ROOT")
+            public class DelegateAccess {
+                @Test
+                public void testAllFilesPresentInDelegateAccess() throws Exception {
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/fir2ir/testData/codegen/boxWithStdLib/properties/delegateAccess"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+                }
+
+                @Test
+                @TestMetadata("lazyAccessDelegate.kt")
+                public void testLazyAccessDelegate() throws Exception {
+                    runTest("compiler/fir/fir2ir/testData/codegen/boxWithStdLib/properties/delegateAccess/lazyAccessDelegate.kt");
                 }
             }
         }
