@@ -18,7 +18,6 @@ interface WasmModuleCodegenContext : WasmBaseCodegenContext {
     fun defineFunction(irFunction: IrFunctionSymbol, wasmFunction: WasmFunction)
     fun defineGlobal(irField: IrFieldSymbol, wasmGlobal: WasmGlobal)
     fun defineGcType(irClass: IrClassSymbol, wasmType: WasmTypeDeclaration)
-    fun defineRTT(irClass: IrClassSymbol, wasmGlobal: WasmGlobal)
     fun defineFunctionType(irFunction: IrFunctionSymbol, wasmFunctionType: WasmFunctionType)
     fun defineInterfaceMethodTable(irFunction: IrFunctionSymbol, wasmTable: WasmTable)
     fun addJsFun(importName: String, jsCode: String)

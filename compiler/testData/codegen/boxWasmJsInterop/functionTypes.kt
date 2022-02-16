@@ -1,3 +1,5 @@
+// V8 fail: https://bugs.chromium.org/p/v8/issues/detail?id=12834
+// IGNORE_BACKEND: WASM
 
 // Char issues
 // IGNORE_BACKEND: JS_IR
