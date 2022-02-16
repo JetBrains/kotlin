@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -153,13 +153,12 @@ open class KtLightMethodImpl protected constructor(
     override fun equals(other: Any?): Boolean = other === this ||
             other is KtLightMethodImpl &&
             other.javaClass == javaClass &&
+            other.memberIndex == memberIndex &&
             other.containingClass == containingClass &&
             other.lightMemberOrigin == lightMemberOrigin &&
-            other.dummyDelegate == dummyDelegate &&
-            other.memberIndex == memberIndex
+            other.dummyDelegate == dummyDelegate
 
     override fun hashCode(): Int = name.hashCode()
-        .times(31).plus(lightMemberOrigin.hashCode())
         .times(31).plus(containingClass.hashCode())
         .times(31).plus(memberIndex.hashCode())
 
