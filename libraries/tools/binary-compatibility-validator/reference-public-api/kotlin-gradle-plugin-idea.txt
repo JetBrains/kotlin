@@ -50,14 +50,6 @@ public abstract class org/jetbrains/kotlin/gradle/kpm/KotlinMutableExternalModel
 	public abstract fun set (Lorg/jetbrains/kotlin/gradle/kpm/KotlinExternalModelKey;Ljava/lang/Object;)V
 }
 
-public final class org/jetbrains/kotlin/gradle/kpm/KotlinSerializableExternalModelSerializer : org/jetbrains/kotlin/gradle/kpm/KotlinExternalModelSerializer {
-	public fun <init> (Ljava/lang/Class;)V
-	public fun deserialize ([B)Ljava/io/Serializable;
-	public synthetic fun deserialize ([B)Ljava/lang/Object;
-	public fun serialize (Ljava/io/Serializable;)[B
-	public synthetic fun serialize (Ljava/lang/Object;)[B
-}
-
 public abstract interface class org/jetbrains/kotlin/gradle/kpm/idea/IdeaKotlinFragment : java/io/Serializable {
 	public abstract fun getDependencies ()Ljava/util/Collection;
 	public abstract fun getDirectRefinesDependencies ()Ljava/util/Collection;
