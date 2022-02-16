@@ -453,7 +453,7 @@ class FirCallCompletionResultsWriterTransformer(
 
     private fun Candidate.createArgumentsMapping(): ExpectedArgumentType? {
         val lambdasReturnType = postponedAtoms.filterIsInstance<ResolvedLambdaAtom>().associate {
-            Pair(it.atom, finalSubstitutor.substituteOrSelf(substitutor.substituteOrSelf(it.returnType)))
+            Pair(it.atom, finalSubstitutor.substituteOrSelf(substitutor.substituteOrSelf(it.returnType)).approximateIntegerLiteralType())
         }
 
         val isIntegerOperator = symbol.isWrappedIntegerOperator()
