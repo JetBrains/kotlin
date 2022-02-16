@@ -29,7 +29,6 @@ interface WasmBaseCodegenContext {
     fun referenceClassId(irClass: IrClassSymbol): WasmSymbol<Int>
     fun referenceInterfaceId(irInterface: IrClassSymbol): WasmSymbol<Int>
     fun referenceVirtualFunctionId(irFunction: IrSimpleFunctionSymbol): WasmSymbol<Int>
-    fun referenceClassRTT(irClass: IrClassSymbol): WasmSymbol<WasmGlobal>
 
     fun referenceSignatureId(signature: WasmSignature): WasmSymbol<Int>
 

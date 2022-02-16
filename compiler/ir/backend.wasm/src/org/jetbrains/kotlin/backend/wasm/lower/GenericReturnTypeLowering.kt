@@ -51,9 +51,6 @@ class GenericReturnTypeLowering(val context: WasmBackendContext) : FileLoweringP
         val function: IrSimpleFunction =
             call.symbol.owner as? IrSimpleFunction ?: return call
 
-        if (!function.realOverrideTarget.returnType.isTypeParameter())
-            return call
-
         val erasedReturnType: IrType =
             function.realOverrideTarget.returnType.eraseUpperBoundType()
 
@@ -72,11 +69,6 @@ class GenericReturnTypeLowering(val context: WasmBackendContext) : FileLoweringP
             )
 
             context.createIrBuilder(scopeOwnerSymbol).apply {
-                if (call.type.isUnit()) {
-                    return irComposite(call) {
-                        +newCall
-                    }
-                }
                 return irImplicitCast(newCall, call.type)
             }
         }

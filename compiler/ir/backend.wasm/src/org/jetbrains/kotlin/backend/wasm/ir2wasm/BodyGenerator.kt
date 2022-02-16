@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.ir.backend.js.utils.isDispatchReceiver
 import org.jetbrains.kotlin.ir.backend.js.utils.realOverrideTarget
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
+import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.defaultType
 import org.jetbrains.kotlin.ir.util.getInlineClassBackingField
@@ -217,7 +218,7 @@ class BodyGenerator(val context: WasmFunctionCodegenContext) : IrElementVisitorV
                 generateDefaultInitializerForType(context.transformType(field.type), body)
         }
 
-        body.buildGetGlobal(context.referenceClassRTT(klass.symbol))
+        generateClassRTT(klass.symbol)
         body.buildStructNew(wasmGcType)
         generateCall(expression)
     }
@@ -247,7 +248,7 @@ class BodyGenerator(val context: WasmFunctionCodegenContext) : IrElementVisitorV
             body.buildConstI32Symbol(klassId)
             body.buildConstI32(0) // Any::_hashCode
             generateExpression(call.getValueArgument(0)!!)
-            body.buildGetGlobal(context.referenceClassRTT(klass.symbol))
+            generateClassRTT(klass.symbol)
             body.buildStructNew(structTypeName)
             return
         }
@@ -313,8 +314,12 @@ class BodyGenerator(val context: WasmFunctionCodegenContext) : IrElementVisitorV
     }
 
     private fun generateTypeRTT(type: IrType) {
-        val rtClass = type.getRuntimeClass?.symbol ?: context.backendContext.irBuiltIns.anyClass
-        body.buildGetGlobal(context.referenceClassRTT(rtClass))
+        val klass = type.getRuntimeClass?.symbol ?: context.backendContext.irBuiltIns.anyClass
+        generateClassRTT(klass)
+    }
+
+    private fun generateClassRTT(klass: IrClassSymbol) {
+        body.buildRttCanon(context.referenceGcType(klass))
     }
 
     // Return true if generated.
@@ -323,7 +328,7 @@ class BodyGenerator(val context: WasmFunctionCodegenContext) : IrElementVisitorV
         call: IrFunctionAccessExpression,
         function: IrFunction
     ): Boolean {
-        if (tryToGenerateWasmOpIntrinsicCall(call, function)) {
+        if (tryToGenerateWasmOpIntrinsicCall(function)) {
             return true
         }
 
@@ -346,6 +351,12 @@ class BodyGenerator(val context: WasmFunctionCodegenContext) : IrElementVisitorV
                 val toType = call.getTypeArgument(0)!!
                 generateTypeRTT(toType)
                 body.buildRefCast()
+            }
+
+            wasmSymbols.refTest -> {
+                val toType = call.getTypeArgument(0)!!
+                generateTypeRTT(toType)
+                body.buildInstr(WasmOp.REF_TEST)
             }
 
             wasmSymbols.unboxIntrinsic -> {
@@ -544,7 +555,7 @@ class BodyGenerator(val context: WasmFunctionCodegenContext) : IrElementVisitorV
     }
 
     // Return true if function is recognized as intrinsic.
-    fun tryToGenerateWasmOpIntrinsicCall(call: IrFunctionAccessExpression, function: IrFunction): Boolean {
+    fun tryToGenerateWasmOpIntrinsicCall(function: IrFunction): Boolean {
         if (function.hasWasmNoOpCastAnnotation()) {
             return true
         }
@@ -554,17 +565,7 @@ class BodyGenerator(val context: WasmFunctionCodegenContext) : IrElementVisitorV
             val op = WasmOp.valueOf(opString)
             var immediates = emptyArray<WasmImmediate>()
             when (op.immediates.size) {
-                0 -> {
-                    when (op) {
-                        WasmOp.REF_TEST -> {
-                            val toIrType = call.getTypeArgument(0)!!
-                            // ref.test takes RTT as a second operand
-                            generateTypeRTT(toIrType)
-                        }
-                        else -> {
-                        }
-                    }
-                }
+                0 -> {}
                 1 -> {
                     immediates = arrayOf(
                         when (val imm = op.immediates[0]) {
@@ -572,6 +573,9 @@ class BodyGenerator(val context: WasmFunctionCodegenContext) : IrElementVisitorV
                                 WasmImmediate.MemArg(0u, 0u)
                             WasmImmediateKind.STRUCT_TYPE_IDX ->
                                 WasmImmediate.GcType(context.referenceGcType(function.dispatchReceiverParameter!!.type.classOrNull!!))
+                            WasmImmediateKind.TYPE_IDX ->
+                                WasmImmediate.TypeIdx(context.referenceGcType(function.dispatchReceiverParameter!!.type.classOrNull!!))
+
                             else ->
                                 error("Immediate $imm is unsupported")
                         }

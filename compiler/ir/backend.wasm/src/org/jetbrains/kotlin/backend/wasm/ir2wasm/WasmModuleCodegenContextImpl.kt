@@ -106,10 +106,6 @@ class WasmModuleCodegenContextImpl(
         wasmFragment.gcTypes.define(irClass, wasmType)
     }
 
-    override fun defineRTT(irClass: IrClassSymbol, wasmGlobal: WasmGlobal) {
-        wasmFragment.runtimeTypes.define(irClass, wasmGlobal)
-    }
-
     override fun defineFunctionType(irFunction: IrFunctionSymbol, wasmFunctionType: WasmFunctionType) {
         wasmFragment.functionTypes.define(irFunction, wasmFunctionType)
     }
@@ -156,9 +152,6 @@ class WasmModuleCodegenContextImpl(
         }
         return wasmFragment.gcTypes.reference(irClass)
     }
-
-    override fun referenceClassRTT(irClass: IrClassSymbol): WasmSymbol<WasmGlobal> =
-        wasmFragment.runtimeTypes.reference(irClass)
 
     override fun referenceFunctionType(irFunction: IrFunctionSymbol): WasmSymbol<WasmFunctionType> =
         wasmFragment.functionTypes.reference(irFunction)

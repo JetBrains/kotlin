@@ -86,7 +86,6 @@ class DeclarationGenerator(val context: WasmModuleCodegenContext, private val al
 
         val wasmFunctionType =
             WasmFunctionType(
-                name = watName,
                 parameterTypes = irParameters.map { context.transformValueParameterType(it) },
                 resultTypes = listOfNotNull(resultType)
             )
@@ -105,17 +104,19 @@ class DeclarationGenerator(val context: WasmModuleCodegenContext, private val al
             "Sanity check that $declaration is a real function that can be used in calls"
         }
 
+        val functionTypeSymbol = context.referenceFunctionType(declaration.symbol)
+
         if (importedName != null) {
             // Imported functions don't have bodies. Declaring the signature:
             context.defineFunction(
                 declaration.symbol,
-                WasmFunction.Imported(watName, wasmFunctionType, importedName)
+                WasmFunction.Imported(watName, functionTypeSymbol, importedName)
             )
             // TODO: Support re-export of imported functions.
             return
         }
 
-        val function = WasmFunction.Defined(watName, wasmFunctionType)
+        val function = WasmFunction.Defined(watName, functionTypeSymbol)
         val functionCodegenContext = WasmFunctionCodegenContextImpl(
             declaration,
             function,
@@ -201,6 +202,8 @@ class DeclarationGenerator(val context: WasmModuleCodegenContext, private val al
             context.registerInterface(symbol)
         } else {
             val nameStr = declaration.fqNameWhenAvailable.toString()
+            val metadata = context.getClassMetadata(symbol)
+            val superClass = metadata.superClass
             val structType = WasmStructDeclaration(
                 name = nameStr,
                 fields = declaration.allFields(irBuiltIns).map {
@@ -209,40 +212,11 @@ class DeclarationGenerator(val context: WasmModuleCodegenContext, private val al
                         type = context.transformFieldType(it.type),
                         isMutable = true
                     )
-                }
+                },
+                superClass?.let { context.referenceGcType(superClass.klass.symbol) }
             )
 
             context.defineGcType(symbol, structType)
-
-            var depth = 0
-            val metadata = context.getClassMetadata(symbol)
-            var subMetadata = metadata
-            while (true) {
-                subMetadata = subMetadata.superClass ?: break
-                depth++
-            }
-
-            val initBody = mutableListOf<WasmInstr>()
-            val wasmExpressionGenerator = WasmIrExpressionBuilder(initBody)
-
-            val wasmGcType = context.referenceGcType(symbol)
-            val superClass = metadata.superClass
-            if (superClass != null) {
-                val superRTT = context.referenceClassRTT(superClass.klass.symbol)
-                wasmExpressionGenerator.buildGetGlobal(superRTT)
-                wasmExpressionGenerator.buildRttSub(wasmGcType)
-            } else {
-                wasmExpressionGenerator.buildRttCanon(wasmGcType)
-            }
-
-            val rtt = WasmGlobal(
-                name = "rtt_of_$nameStr",
-                isMutable = false,
-                type = WasmRtt(depth, WasmSymbol(structType)),
-                init = initBody
-            )
-
-            context.defineRTT(symbol, rtt)
             context.registerClass(symbol)
             context.generateTypeInfo(symbol, binaryDataStruct(metadata))
 
@@ -395,7 +369,7 @@ fun generateDefaultInitializerForType(type: WasmType, g: WasmExpressionBuilder) 
     WasmF32 -> g.buildConstF32(0f)
     WasmF64 -> g.buildConstF64(0.0)
     is WasmRefNullType -> g.buildRefNull(type.heapType)
-    is WasmExternRef, is WasmAnyRef -> g.buildRefNull(WasmHeapType.Simple.Extern)
+    is WasmAnyRef -> g.buildRefNull(WasmHeapType.Simple.Any)
     WasmUnreachableType -> error("Unreachable type can't be initialized")
     else -> error("Unknown value type ${type.name}")
 }

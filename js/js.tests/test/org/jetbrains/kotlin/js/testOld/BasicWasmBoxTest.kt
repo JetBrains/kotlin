@@ -179,7 +179,6 @@ abstract class BasicWasmBoxTest(
                 File(dir, "test.js").writeText(testJs)
                 ExternalTool(System.getProperty("javascript.engine.path.V8"))
                     .run(
-                        "--experimental-wasm-typed-funcref",
                         "--experimental-wasm-gc",
                         "--experimental-wasm-eh",
                         *jsFilesBefore.map { File(it).absolutePath }.toTypedArray(),
