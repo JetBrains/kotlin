@@ -6017,6 +6017,22 @@ public class FirDiagnosticsWithLightTreeTestGenerated extends AbstractFirDiagnos
                 public void testUntypedPropertyWithBackingFieldUsage() throws Exception {
                     runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/properties/backingField/untypedPropertyWithBackingFieldUsage.kt");
                 }
+
+                @Nested
+                @TestMetadata("compiler/fir/analysis-tests/testData/resolveWithStdlib/properties/backingField/directAccess")
+                @TestDataPath("$PROJECT_ROOT")
+                public class DirectAccess {
+                    @Test
+                    public void testAllFilesPresentInDirectAccess() throws Exception {
+                        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolveWithStdlib/properties/backingField/directAccess"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+                    }
+
+                    @Test
+                    @TestMetadata("commonUseCases.kt")
+                    public void testCommonUseCases() throws Exception {
+                        runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/properties/backingField/directAccess/commonUseCases.kt");
+                    }
+                }
             }
         }
 

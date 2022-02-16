@@ -88,6 +88,12 @@ public class FirSpecificBlackBoxCodegenTestGenerated extends AbstractFirBlackBox
                 }
 
                 @Test
+                @TestMetadata("directAccessCommonUseCases.kt")
+                public void testDirectAccessCommonUseCases() throws Exception {
+                    runTest("compiler/fir/fir2ir/testData/codegen/box/properties/backingField/directAccessCommonUseCases.kt");
+                }
+
+                @Test
                 @TestMetadata("explicitBackingFieldInAnonymous.kt")
                 public void testExplicitBackingFieldInAnonymous() throws Exception {
                     runTest("compiler/fir/fir2ir/testData/codegen/box/properties/backingField/explicitBackingFieldInAnonymous.kt");

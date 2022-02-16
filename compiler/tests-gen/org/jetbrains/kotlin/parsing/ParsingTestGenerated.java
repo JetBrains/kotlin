@@ -2015,6 +2015,11 @@ public class ParsingTestGenerated extends AbstractParsingTest {
                 KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/psi/propertyBackingField"), Pattern.compile("^(.*)\\.kts?$"), null, true);
             }
 
+            @TestMetadata("directBackingFieldAccess.kt")
+            public void testDirectBackingFieldAccess() throws Exception {
+                runTest("compiler/testData/psi/propertyBackingField/directBackingFieldAccess.kt");
+            }
+
             @TestMetadata("explicitBackingField.kt")
             public void testExplicitBackingField() throws Exception {
                 runTest("compiler/testData/psi/propertyBackingField/explicitBackingField.kt");
