@@ -306,6 +306,10 @@ public class KtVisitor<R, D> extends PsiElementVisitor {
         return visitQualifiedExpression(expression, data);
     }
 
+    public R visitHashQualifiedExpression(@NotNull KtHashQualifiedExpression expression, D data) {
+        return visitQualifiedExpression(expression, data);
+    }
+
     public R visitSafeQualifiedExpression(@NotNull KtSafeQualifiedExpression expression, D data) {
         return visitQualifiedExpression(expression, data);
     }

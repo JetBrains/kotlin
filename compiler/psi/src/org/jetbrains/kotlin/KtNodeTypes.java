@@ -145,6 +145,7 @@ public interface KtNodeTypes {
     IElementType ARRAY_ACCESS_EXPRESSION   = new KtNodeType("ARRAY_ACCESS_EXPRESSION", KtArrayAccessExpression.class);
     IElementType INDICES                   = new KtNodeType("INDICES", KtContainerNode.class);
     IElementType DOT_QUALIFIED_EXPRESSION  = KtStubElementTypes.DOT_QUALIFIED_EXPRESSION;
+    IElementType HASH_QUALIFIED_EXPRESSION = KtStubElementTypes.HASH_QUALIFIED_EXPRESSION;
     IElementType CALLABLE_REFERENCE_EXPRESSION = new KtNodeType("CALLABLE_REFERENCE_EXPRESSION", KtCallableReferenceExpression.class);
     IElementType CLASS_LITERAL_EXPRESSION  = new KtNodeType("CLASS_LITERAL_EXPRESSION", KtClassLiteralExpression.class);
     IElementType SAFE_ACCESS_EXPRESSION    = new KtNodeType("SAFE_ACCESS_EXPRESSION", KtSafeQualifiedExpression.class);

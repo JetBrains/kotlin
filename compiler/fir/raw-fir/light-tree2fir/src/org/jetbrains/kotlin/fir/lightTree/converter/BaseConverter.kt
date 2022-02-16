@@ -111,7 +111,7 @@ abstract class BaseConverter(
             var candidate: LighterASTNode? = null
             this?.forEachChildren {
                 when (it.tokenType) {
-                    DOT, SAFE_ACCESS -> return if (candidate?.elementType != TokenType.ERROR_ELEMENT) candidate else null
+                    DOT, HASH, SAFE_ACCESS -> return if (candidate?.elementType != TokenType.ERROR_ELEMENT) candidate else null
                     else -> candidate = it
                 }
             }
@@ -123,7 +123,7 @@ abstract class BaseConverter(
             var isSelector = false
             this?.forEachChildren {
                 when (it.tokenType) {
-                    DOT, SAFE_ACCESS -> isSelector = true
+                    DOT, HASH, SAFE_ACCESS -> isSelector = true
                     else -> if (isSelector) return if (it.elementType != TokenType.ERROR_ELEMENT) it else null
                 }
             }

@@ -49,7 +49,7 @@ public class KotlinParsing extends AbstractKotlinParsing {
     private static final TokenSet PACKAGE_NAME_RECOVERY_SET = TokenSet.create(DOT, EOL_OR_SEMICOLON);
     private static final TokenSet IMPORT_RECOVERY_SET = TokenSet.create(AS_KEYWORD, DOT, EOL_OR_SEMICOLON);
     private static final TokenSet TYPE_REF_FIRST = TokenSet.create(LBRACKET, IDENTIFIER, LPAR, HASH, DYNAMIC_KEYWORD);
-    private static final TokenSet RECEIVER_TYPE_TERMINATORS = TokenSet.create(DOT, SAFE_ACCESS);
+    private static final TokenSet RECEIVER_TYPE_TERMINATORS = TokenSet.create(DOT, HASH, SAFE_ACCESS);
     private static final TokenSet VALUE_PARAMETER_FIRST =
             TokenSet.orSet(
                     TokenSet.create(IDENTIFIER, LBRACKET, VAL_KEYWORD, VAR_KEYWORD),
@@ -1842,7 +1842,7 @@ public class KotlinParsing extends AbstractKotlinParsing {
                                     if (topLevel && (definitelyOutOfReceiver() || at(LPAR))) return true;
                                     if (topLevel && at(IDENTIFIER)) {
                                         IElementType lookahead = lookahead(1);
-                                        return lookahead != LT && lookahead != DOT && lookahead != SAFE_ACCESS && lookahead != QUEST;
+                                        return lookahead != LT && lookahead != DOT && lookahead != HASH && lookahead != SAFE_ACCESS && lookahead != QUEST;
                                     }
                                     return false;
                                 }

@@ -104,6 +104,7 @@ public interface KtStubElementTypes {
 
     KtNameReferenceExpressionElementType REFERENCE_EXPRESSION = new KtNameReferenceExpressionElementType("REFERENCE_EXPRESSION");
     KtDotQualifiedExpressionElementType DOT_QUALIFIED_EXPRESSION = new KtDotQualifiedExpressionElementType("DOT_QUALIFIED_EXPRESSION");
+    KtHashQualifiedExpressionElementType HASH_QUALIFIED_EXPRESSION = new KtHashQualifiedExpressionElementType("HASH_QUALIFIED_EXPRESSION");
     KtEnumEntrySuperClassReferenceExpressionElementType
             ENUM_ENTRY_SUPERCLASS_REFERENCE_EXPRESSION = new KtEnumEntrySuperClassReferenceExpressionElementType("ENUM_ENTRY_SUPERCLASS_REFERENCE_EXPRESSION");
     KtPlaceHolderStubElementType<KtTypeArgumentList> TYPE_ARGUMENT_LIST =

@@ -120,6 +120,37 @@ fun KtSimpleNameExpression.getReceiverExpression(): KtExpression? {
     return null
 }
 
+//fun KtHashQualifiedExpression.getReceiverExpression(): KtExpression? {
+//    val parent = parent
+//    when {
+//        parent is KtQualifiedExpression -> {
+//            val receiverExpression = parent.receiverExpression
+//            // Name expression can't be receiver for itself
+//            if (receiverExpression != this) {
+//                return receiverExpression
+//            }
+//        }
+//        parent is KtCallExpression -> {
+//            //This is in case `a().b()`
+//            val grandParent = parent.parent
+//            if (grandParent is KtQualifiedExpression) {
+//                val parentsReceiver = grandParent.receiverExpression
+//                if (parentsReceiver != parent) {
+//                    return parentsReceiver
+//                }
+//            }
+//        }
+//        parent is KtUserType -> {
+//            val qualifier = parent.qualifier
+//            if (qualifier != null) {
+//                return qualifier.referenceExpression!!
+//            }
+//        }
+//    }
+//
+//    return null
+//}
+
 fun KtElement.getQualifiedExpressionForSelector(): KtQualifiedExpression? {
     val parent = parent
     return if (parent is KtQualifiedExpression && parent.selectorExpression == this) parent else null
