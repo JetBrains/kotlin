@@ -298,12 +298,7 @@ internal class JvmMetadataExtensions : MetadataExtensions {
     override fun createPackageExtension(): KmPackageExtension = JvmPackageExtension()
 
     override fun createModuleFragmentExtensions(): KmModuleFragmentExtension =
-        object : KmModuleFragmentExtension {
-            override val type: KmExtensionType = KmExtensionType(KmModuleFragmentExtension::class)
-
-            override fun accept(visitor: KmModuleFragmentExtensionVisitor) {
-            }
-        }
+        error("metadata-jvm doesn't have any extensions for module fragment!")
 
     override fun createFunctionExtension(): KmFunctionExtension = JvmFunctionExtension()
 
