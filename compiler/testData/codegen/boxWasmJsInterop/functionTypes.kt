@@ -1,3 +1,5 @@
+// V8 Milestone 5 fail
+// IGNORE_BACKEND: WASM
 
 // Char issues
 // IGNORE_BACKEND: JS_IR

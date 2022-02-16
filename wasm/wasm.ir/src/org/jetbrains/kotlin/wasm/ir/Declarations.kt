@@ -9,6 +9,7 @@ package org.jetbrains.kotlin.wasm.ir
 class WasmModule(
     val functionTypes: List<WasmFunctionType> = emptyList(),
     val gcTypes: List<WasmTypeDeclaration> = emptyList(),
+    val gcTypesInRecursiveGroup: Boolean,
 
     val importsInOrder: List<WasmNamedModuleField> = emptyList(),
     val importedFunctions: List<WasmFunction.Imported> = emptyList(),
@@ -38,18 +39,18 @@ sealed class WasmNamedModuleField {
 
 sealed class WasmFunction(
     override val name: String,
-    val type: WasmFunctionType
+    val type: WasmSymbolReadOnly<WasmFunctionType>
 ) : WasmNamedModuleField() {
     class Defined(
         name: String,
-        type: WasmFunctionType,
+        type: WasmSymbolReadOnly<WasmFunctionType>,
         val locals: MutableList<WasmLocal> = mutableListOf(),
         val instructions: MutableList<WasmInstr> = mutableListOf()
     ) : WasmFunction(name, type)
 
     class Imported(
         name: String,
-        type: WasmFunctionType,
+        type: WasmSymbolReadOnly<WasmFunctionType>,
         val importPair: WasmImportPair
     ) : WasmFunction(name, type)
 }
@@ -146,15 +147,15 @@ sealed class WasmTypeDeclaration(
     override val name: String
 ) : WasmNamedModuleField()
 
-class WasmFunctionType(
-    name: String,
+data class WasmFunctionType(
     val parameterTypes: List<WasmType>,
     val resultTypes: List<WasmType>
-) : WasmTypeDeclaration(name)
+) : WasmTypeDeclaration("")
 
 class WasmStructDeclaration(
     name: String,
-    val fields: List<WasmStructFieldDeclaration>
+    val fields: List<WasmStructFieldDeclaration>,
+    val superType: WasmSymbolReadOnly<WasmTypeDeclaration>?
 ) : WasmTypeDeclaration(name)
 
 class WasmArrayDeclaration(

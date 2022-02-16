@@ -82,11 +82,11 @@ class WasmTypeTransformer(
                 WasmF64
 
             builtIns.nothingNType ->
-                WasmExternRef
+                WasmAnyRef
 
             // Value will not be created. Just using a random Wasm type.
             builtIns.nothingType ->
-                WasmExternRef
+                WasmAnyRef
 
             symbols.voidType ->
                 error("Void type can't be used as a value")

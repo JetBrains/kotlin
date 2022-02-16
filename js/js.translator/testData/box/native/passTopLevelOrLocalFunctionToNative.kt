@@ -1,3 +1,6 @@
+// V8 Milestone 5 fail
+// IGNORE_BACKEND: WASM
+
 // EXPECTED_REACHABLE_NODES: 1284
 package foo
 
