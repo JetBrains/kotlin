@@ -100,6 +100,8 @@ class KtLightMethodForDecompiledDeclaration(
     override val clsDelegate: PsiMethod = funDelegate
 
     override fun isValid(): Boolean = parent.isValid
+
+    override fun getOriginalElement() = funDelegate
 }
 
 private fun KtLightMethod.checkIsMangled(): Boolean {
