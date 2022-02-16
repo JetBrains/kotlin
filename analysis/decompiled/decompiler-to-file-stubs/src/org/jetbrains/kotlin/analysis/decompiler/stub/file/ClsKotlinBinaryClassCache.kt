@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.analysis.decompiler.stub.file
 
 import com.intellij.ide.highlighter.JavaClassFileType
+import com.intellij.model.ModelBranch
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.diagnostic.ControlFlowException
 import com.intellij.openapi.util.Key
@@ -60,6 +61,7 @@ class ClsKotlinBinaryClassCache {
         file: VirtualFile,
         fileContent: ByteArray?
     ): KotlinJvmBinaryClass? {
+        if (ModelBranch.getFileBranch(file) != null) return null
         val classFileContent = try {
             KotlinBinaryClassCache.getKotlinBinaryClassOrClassFileContent(file, fileContent)
         } catch (e: Exception) {
