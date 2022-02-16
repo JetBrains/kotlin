@@ -27,7 +27,7 @@ abstract class Fir2IrBindableSymbol<out D : DeclarationDescriptor, B : IrDeclara
         if (_owner == null) {
             _owner = owner
         } else {
-            throw IllegalStateException("${javaClass.simpleName} is already bound")
+            throw IllegalStateException("${javaClass.simpleName} for $signature is already bound")
         }
     }
 
