@@ -24,13 +24,13 @@ public inline fun <R> synchronized(lock: Any, block: () -> R): R {
     // prerequisite for using fast locking implementations. See KT-48367 for details.
     val lockLocal = lock
 
-    @Suppress("NON_PUBLIC_CALL_FROM_PUBLIC_INLINE", "INVISIBLE_MEMBER")
+    @Suppress("NON_PUBLIC_CALL_FROM_PUBLIC_INLINE", "INVISIBLE_MEMBER", "INVISIBLE_REFERENCE")
     monitorEnter(lockLocal)
     try {
         return block()
     }
     finally {
-        @Suppress("NON_PUBLIC_CALL_FROM_PUBLIC_INLINE", "INVISIBLE_MEMBER")
+        @Suppress("NON_PUBLIC_CALL_FROM_PUBLIC_INLINE", "INVISIBLE_MEMBER", "INVISIBLE_REFERENCE")
         monitorExit(lockLocal)
     }
 }
