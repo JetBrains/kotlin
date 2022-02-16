@@ -81,7 +81,6 @@ sealed class ReadBuffer {
             var tmpBuffer = weakBuffer.get()
             if (tmpBuffer == null) {
                 tmpBuffer = file.readBytes().buffer
-                tmpBuffer.position(pos)
                 println(
                     """
                     FILE: ${file.absolutePath}
@@ -90,6 +89,7 @@ sealed class ReadBuffer {
                     TMP buffer capacity: ${tmpBuffer.capacity()}
                 """.trimIndent()
                 )
+                tmpBuffer.position(pos)
                 weakBuffer = SoftReference(tmpBuffer)
             }
             return tmpBuffer
