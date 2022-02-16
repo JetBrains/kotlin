@@ -60,7 +60,7 @@ public actual fun Int.countOneBits(): Int {
 @SinceKotlin("1.4")
 @WasExperimental(ExperimentalStdlibApi::class)
 @kotlin.internal.InlineOnly
-public actual inline fun Int.countLeadingZeroBits(): Int = JsMath.clz32(this)
+public actual inline fun Int.countLeadingZeroBits(): Int = nativeClz32(this)
 
 /**
  * Counts the number of consecutive least significant bits that are zero in the binary representation of this [Int] number.

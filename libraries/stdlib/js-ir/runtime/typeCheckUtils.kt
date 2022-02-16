@@ -142,9 +142,7 @@ internal fun isArray(obj: Any): Boolean {
     return isJsArray(obj) && !(obj.asDynamic().`$type$`)
 }
 
-internal fun isArrayish(o: dynamic) =
-    isJsArray(o) || js("ArrayBuffer").isView(o).unsafeCast<Boolean>()
-
+internal fun isArrayish(o: dynamic) = isJsArray(o) || arrayBufferIsView(o)
 
 internal fun isChar(@Suppress("UNUSED_PARAMETER") c: Any): Boolean {
     error("isChar is not implemented")

@@ -1248,7 +1248,6 @@ public class JsToStringGenerationVisitor extends JsVisitor {
         p.print(javaScriptString(jsImport.getModule()));
     }
 
-
     private void newline() {
         p.newline();
         sourceLocationConsumer.newLine();

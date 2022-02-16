@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -33,24 +33,20 @@ internal external object JsMath {
     fun round(value: Number): Double
     fun floor(value: Number): Double
     fun ceil(value: Number): Double
-
-    fun trunc(value: Number): Double
-    fun sign(value: Number): Double
-
-    fun sinh(value: Double): Double
-    fun cosh(value: Double): Double
-    fun tanh(value: Double): Double
-    fun asinh(value: Double): Double
-    fun acosh(value: Double): Double
-    fun atanh(value: Double): Double
-
-    fun hypot(x: Double, y: Double): Double
-
-    fun expm1(value: Double): Double
-    fun log10(value: Double): Double
-    fun log2(value: Double): Double
-    fun log1p(value: Double): Double
-
-    fun clz32(value: Int): Int
 }
 
+internal const val defineTaylorNBound = """
+    var epsilon = 2.220446049250313E-16;
+    var taylor_2_bound = Math.sqrt(epsilon);
+    var taylor_n_bound = Math.sqrt(taylor_2_bound);
+"""
+
+internal const val defineUpperTaylor2Bound = """
+    $defineTaylorNBound
+    var upper_taylor_2_bound = 1/taylor_2_bound;
+"""
+
+internal const val defineUpperTaylorNBound = """
+    $defineUpperTaylor2Bound
+    var upper_taylor_n_bound = 1/taylor_n_bound;
+"""
