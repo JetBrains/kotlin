@@ -132,7 +132,7 @@ fun getAllFilesForRunner(
         val dceOutputDir = JsEnvironmentConfigurator.getJsArtifactsOutputDir(testServices, TranslationMode.FULL_DCE)
 
         val artifactsPaths = modulesToArtifact.values.map { it.outputFile.absolutePath }.filter { !File(it).isDirectory }
-        val allJsFiles = additionalFiles + inputJsFilesBefore + artifactsPaths + commonFiles + additionalMainFiles + inputJsFilesAfter
+        val allJsFiles = additionalFiles + inputJsFilesBefore +artifactsPaths + commonFiles + additionalMainFiles + inputJsFilesAfter
 
         val result = mutableMapOf(TranslationMode.FULL to allJsFiles)
 

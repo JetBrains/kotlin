@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.backend.common.phaser.invokeToplevel
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.backend.js.codegen.JsGenerationGranularity
+import org.jetbrains.kotlin.ir.backend.js.lower.collectNativeImplementations
 import org.jetbrains.kotlin.ir.backend.js.lower.generateJsTests
 import org.jetbrains.kotlin.ir.backend.js.lower.moveBodilessDeclarationsToSeparatePlace
 import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.JsIrLinker
@@ -140,6 +141,7 @@ fun compileIr(
     }
 
     allModules.forEach { module ->
+        collectNativeImplementations(context, module)
         moveBodilessDeclarationsToSeparatePlace(context, module)
     }
 
@@ -158,6 +160,7 @@ fun generateJsCode(
     moduleFragment: IrModuleFragment,
     nameTables: NameTables
 ): String {
+    collectNativeImplementations(context, moduleFragment)
     moveBodilessDeclarationsToSeparatePlace(context, moduleFragment)
     jsPhases.invokeToplevel(PhaseConfig(jsPhases), context, listOf(moduleFragment))
 

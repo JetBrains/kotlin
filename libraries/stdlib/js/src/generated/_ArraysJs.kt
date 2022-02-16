@@ -1464,7 +1464,7 @@ public actual fun CharArray.copyOfRange(fromIndex: Int, toIndex: Int): CharArray
 @Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
 public actual fun <T> Array<T>.fill(element: T, fromIndex: Int = 0, toIndex: Int = size): Unit {
     AbstractList.checkRangeIndexes(fromIndex, toIndex, size)
-    this.asDynamic().fill(element, fromIndex, toIndex);
+    nativeFill(element, fromIndex, toIndex);
 }
 
 /**
@@ -1480,7 +1480,7 @@ public actual fun <T> Array<T>.fill(element: T, fromIndex: Int = 0, toIndex: Int
 @Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
 public actual fun ByteArray.fill(element: Byte, fromIndex: Int = 0, toIndex: Int = size): Unit {
     AbstractList.checkRangeIndexes(fromIndex, toIndex, size)
-    this.asDynamic().fill(element, fromIndex, toIndex);
+    nativeFill(element, fromIndex, toIndex);
 }
 
 /**
@@ -1496,7 +1496,7 @@ public actual fun ByteArray.fill(element: Byte, fromIndex: Int = 0, toIndex: Int
 @Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
 public actual fun ShortArray.fill(element: Short, fromIndex: Int = 0, toIndex: Int = size): Unit {
     AbstractList.checkRangeIndexes(fromIndex, toIndex, size)
-    this.asDynamic().fill(element, fromIndex, toIndex);
+    nativeFill(element, fromIndex, toIndex);
 }
 
 /**
@@ -1512,7 +1512,7 @@ public actual fun ShortArray.fill(element: Short, fromIndex: Int = 0, toIndex: I
 @Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
 public actual fun IntArray.fill(element: Int, fromIndex: Int = 0, toIndex: Int = size): Unit {
     AbstractList.checkRangeIndexes(fromIndex, toIndex, size)
-    this.asDynamic().fill(element, fromIndex, toIndex);
+    nativeFill(element, fromIndex, toIndex);
 }
 
 /**
@@ -1528,7 +1528,7 @@ public actual fun IntArray.fill(element: Int, fromIndex: Int = 0, toIndex: Int =
 @Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
 public actual fun LongArray.fill(element: Long, fromIndex: Int = 0, toIndex: Int = size): Unit {
     AbstractList.checkRangeIndexes(fromIndex, toIndex, size)
-    this.asDynamic().fill(element, fromIndex, toIndex);
+    nativeFill(element, fromIndex, toIndex);
 }
 
 /**
@@ -1544,7 +1544,7 @@ public actual fun LongArray.fill(element: Long, fromIndex: Int = 0, toIndex: Int
 @Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
 public actual fun FloatArray.fill(element: Float, fromIndex: Int = 0, toIndex: Int = size): Unit {
     AbstractList.checkRangeIndexes(fromIndex, toIndex, size)
-    this.asDynamic().fill(element, fromIndex, toIndex);
+    nativeFill(element, fromIndex, toIndex);
 }
 
 /**
@@ -1560,7 +1560,7 @@ public actual fun FloatArray.fill(element: Float, fromIndex: Int = 0, toIndex: I
 @Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
 public actual fun DoubleArray.fill(element: Double, fromIndex: Int = 0, toIndex: Int = size): Unit {
     AbstractList.checkRangeIndexes(fromIndex, toIndex, size)
-    this.asDynamic().fill(element, fromIndex, toIndex);
+    nativeFill(element, fromIndex, toIndex);
 }
 
 /**
@@ -1576,7 +1576,7 @@ public actual fun DoubleArray.fill(element: Double, fromIndex: Int = 0, toIndex:
 @Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
 public actual fun BooleanArray.fill(element: Boolean, fromIndex: Int = 0, toIndex: Int = size): Unit {
     AbstractList.checkRangeIndexes(fromIndex, toIndex, size)
-    this.asDynamic().fill(element, fromIndex, toIndex);
+    nativeFill(element, fromIndex, toIndex);
 }
 
 /**
@@ -1592,7 +1592,7 @@ public actual fun BooleanArray.fill(element: Boolean, fromIndex: Int = 0, toInde
 @Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
 public actual fun CharArray.fill(element: Char, fromIndex: Int = 0, toIndex: Int = size): Unit {
     AbstractList.checkRangeIndexes(fromIndex, toIndex, size)
-    this.asDynamic().fill(element, fromIndex, toIndex);
+    nativeFill(element, fromIndex, toIndex);
 }
 
 /**
@@ -2062,7 +2062,7 @@ public actual fun CharArray.sort(fromIndex: Int = 0, toIndex: Int = size): Unit 
 @DeprecatedSinceKotlin(warningSince = "1.6")
 @kotlin.internal.InlineOnly
 public inline fun ByteArray.sort(noinline comparison: (a: Byte, b: Byte) -> Int): Unit {
-    asDynamic().sort(comparison)
+    nativeSort(comparison)
 }
 
 /**
@@ -2072,7 +2072,7 @@ public inline fun ByteArray.sort(noinline comparison: (a: Byte, b: Byte) -> Int)
 @DeprecatedSinceKotlin(warningSince = "1.6")
 @kotlin.internal.InlineOnly
 public inline fun ShortArray.sort(noinline comparison: (a: Short, b: Short) -> Int): Unit {
-    asDynamic().sort(comparison)
+    nativeSort(comparison)
 }
 
 /**
@@ -2082,7 +2082,7 @@ public inline fun ShortArray.sort(noinline comparison: (a: Short, b: Short) -> I
 @DeprecatedSinceKotlin(warningSince = "1.6")
 @kotlin.internal.InlineOnly
 public inline fun IntArray.sort(noinline comparison: (a: Int, b: Int) -> Int): Unit {
-    asDynamic().sort(comparison)
+    nativeSort(comparison)
 }
 
 /**
@@ -2092,7 +2092,7 @@ public inline fun IntArray.sort(noinline comparison: (a: Int, b: Int) -> Int): U
 @DeprecatedSinceKotlin(warningSince = "1.6")
 @kotlin.internal.InlineOnly
 public inline fun LongArray.sort(noinline comparison: (a: Long, b: Long) -> Int): Unit {
-    asDynamic().sort(comparison)
+    nativeSort(comparison)
 }
 
 /**
@@ -2102,7 +2102,7 @@ public inline fun LongArray.sort(noinline comparison: (a: Long, b: Long) -> Int)
 @DeprecatedSinceKotlin(warningSince = "1.6")
 @kotlin.internal.InlineOnly
 public inline fun FloatArray.sort(noinline comparison: (a: Float, b: Float) -> Int): Unit {
-    asDynamic().sort(comparison)
+    nativeSort(comparison)
 }
 
 /**
@@ -2112,7 +2112,7 @@ public inline fun FloatArray.sort(noinline comparison: (a: Float, b: Float) -> I
 @DeprecatedSinceKotlin(warningSince = "1.6")
 @kotlin.internal.InlineOnly
 public inline fun DoubleArray.sort(noinline comparison: (a: Double, b: Double) -> Int): Unit {
-    asDynamic().sort(comparison)
+    nativeSort(comparison)
 }
 
 /**
@@ -2122,7 +2122,7 @@ public inline fun DoubleArray.sort(noinline comparison: (a: Double, b: Double) -
 @DeprecatedSinceKotlin(warningSince = "1.6")
 @kotlin.internal.InlineOnly
 public inline fun CharArray.sort(noinline comparison: (a: Char, b: Char) -> Int): Unit {
-    asDynamic().sort(comparison)
+    nativeSort(comparison)
 }
 
 /**

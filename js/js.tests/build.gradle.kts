@@ -333,7 +333,8 @@ val runMocha by task<NpmTask> {
 
     environment.set(mapOf(
         "KOTLIN_JS_LOCATION" to rootDir.resolve("dist/js/kotlin.js").toString(),
-        "KOTLIN_JS_TEST_LOCATION" to rootDir.resolve("dist/js/kotlin-test.js").toString()
+        "KOTLIN_JS_TEST_LOCATION" to rootDir.resolve("dist/js/kotlin-test.js").toString(),
+        "BOX_FLAG_LOCATION" to rootDir.resolve("compiler/testData/jsBoxFlag.js").toString()
     ))
 }
 

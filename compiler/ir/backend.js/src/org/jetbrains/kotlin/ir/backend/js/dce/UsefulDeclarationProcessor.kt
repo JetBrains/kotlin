@@ -55,9 +55,24 @@ abstract class UsefulDeclarationProcessor(
             expression.symbol.owner.enqueue(data, "raw function access")
         }
 
+        override fun visitBlock(expression: IrBlock, data: IrDeclaration) {
+            super.visitBlock(expression, data)
+            if (expression !is IrReturnableBlock) return
+            expression.inlineFunctionSymbol?.owner?.enqueue(data, "inline function usage")
+        }
+
         override fun visitFieldAccess(expression: IrFieldAccessExpression, data: IrDeclaration) {
             super.visitFieldAccess(expression, data)
-            expression.symbol.owner.enqueue(data, "field access")
+
+            val field = expression.symbol.owner.apply { enqueue(data, "field access") }
+            val correspondingProperty = field.correspondingPropertySymbol?.owner ?: return
+
+            if (
+                field.origin == IrDeclarationOrigin.PROPERTY_BACKING_FIELD &&
+                correspondingProperty.hasJsPolyfill()
+            ) {
+                correspondingProperty.enqueue(field, "property backing field")
+            }
         }
 
         override fun visitStringConcatenation(expression: IrStringConcatenation, data: IrDeclaration) {

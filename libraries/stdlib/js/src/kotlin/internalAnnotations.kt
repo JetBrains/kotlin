@@ -7,4 +7,4 @@ package kotlin.js
 
 @Retention(AnnotationRetention.BINARY)
 @Target(AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY)
-internal annotation class JsNativeImplementation(val implementation: String)
+internal annotation class JsPolyfill(val implementation: String)

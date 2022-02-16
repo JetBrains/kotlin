@@ -114,7 +114,6 @@ class IrElementToJsExpressionTransformer : BaseIrElementToJsNodeTransformer<JsEx
                     expression
                 )
             return JsNameRef(field.getJsNameOrKotlinName().identifier, receiver).withSource(expression, context)
-                .also { context.staticContext.polyfills.visitDeclaration(field) }
         }
 
         if (fieldParent is IrClass && context.isClassInlineLike(fieldParent)) {
@@ -129,7 +128,6 @@ class IrElementToJsExpressionTransformer : BaseIrElementToJsNodeTransformer<JsEx
         if (owner.isThisReceiver()) return JsThisRef().withSource(expression, context)
 
         return context.getNameForValueDeclaration(owner).makeRef().withSource(expression, context)
-            .also { context.staticContext.polyfills.visitDeclaration(owner) }
     }
 
     override fun visitGetObjectValue(expression: IrGetObjectValue, context: JsGenerationContext): JsExpression {
@@ -146,7 +144,6 @@ class IrElementToJsExpressionTransformer : BaseIrElementToJsNodeTransformer<JsEx
         val dest = jsElementAccess(fieldName.ident, expression.receiver?.accept(this, context))
         val source = expression.value.accept(this, context)
         return jsAssignment(dest, source).withSource(expression, context)
-            .also { context.staticContext.polyfills.visitDeclaration(field) }
     }
 
     override fun visitSetValue(expression: IrSetValue, context: JsGenerationContext): JsExpression {
@@ -154,7 +151,6 @@ class IrElementToJsExpressionTransformer : BaseIrElementToJsNodeTransformer<JsEx
         val ref = JsNameRef(context.getNameForValueDeclaration(field))
         val value = expression.value.accept(this, context)
         return JsBinaryOperation(JsBinaryOperator.ASG, ref, value).withSource(expression, context)
-            .also { context.staticContext.polyfills.visitDeclaration(field) }
     }
 
     override fun visitDelegatingConstructorCall(expression: IrDelegatingConstructorCall, context: JsGenerationContext): JsExpression {
@@ -225,10 +221,6 @@ class IrElementToJsExpressionTransformer : BaseIrElementToJsNodeTransformer<JsEx
             return JsCallTransformer(expression, context).generateExpression()
         }
         return translateCall(expression, context, this).withSource(expression, context)
-            .also {
-                val function = expression.symbol.owner
-                context.staticContext.polyfills.visitDeclaration(function.correspondingPropertySymbol?.owner ?: function)
-            }
     }
 
     override fun visitWhen(expression: IrWhen, context: JsGenerationContext): JsExpression {

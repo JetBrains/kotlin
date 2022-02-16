@@ -34,9 +34,11 @@ fun eliminateDeadDeclarations(
 
     val uselessDeclarationsProcessor =
         UselessDeclarationsRemover(removeUnusedAssociatedObjects, usefulDeclarations, context, context.dceRuntimeDiagnostic)
+
     modules.forEach { module ->
         module.files.forEach {
             it.acceptVoid(uselessDeclarationsProcessor)
+            context.polyfills.saveOnlyIntersectionOfNextDeclarationsFor(it, usefulDeclarations)
         }
     }
 }
@@ -55,7 +57,15 @@ private fun IrDeclaration.addRootsTo(
             setter?.addRootsTo(nestedVisitor, context)
         }
         isEffectivelyExternal() -> {
-            acceptVoid(nestedVisitor)
+            val correspondingProperty = when (this) {
+                is IrField -> correspondingPropertySymbol?.owner
+                is IrSimpleFunction -> correspondingPropertySymbol?.owner
+                else -> null
+            }
+
+            if (!hasJsPolyfill() && correspondingProperty?.hasJsPolyfill() != true) {
+                acceptVoid(nestedVisitor)
+            }
         }
         isExported(context) -> {
             acceptVoid(nestedVisitor)

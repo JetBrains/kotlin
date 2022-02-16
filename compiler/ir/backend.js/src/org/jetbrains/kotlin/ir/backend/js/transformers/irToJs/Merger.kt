@@ -159,21 +159,22 @@ class Merger(
 
         linkJsNames()
 
-        val moduleBody = mutableListOf<JsStatement>().also {
-            if (!generateScriptModule) it += JsStringLiteral("use strict").makeStmt()
-        }
+        val moduleBody = mutableListOf<JsStatement>()
 
         val preDeclarationBlock = JsGlobalBlock()
         val postDeclarationBlock = JsGlobalBlock()
+        val polyfillDeclarationBlock = JsGlobalBlock()
 
         moduleBody.addWithComment("block: pre-declaration", preDeclarationBlock)
 
         val classModels = mutableMapOf<JsName, JsIrIcClassModel>()
         val initializerBlock = JsGlobalBlock()
+
         fragments.forEach {
             moduleBody += it.declarations.statements
             classModels += it.classes
             initializerBlock.statements += it.initializers.statements
+            polyfillDeclarationBlock.statements += it.polyfills.statements
         }
 
         // sort member forwarding code
@@ -213,9 +214,13 @@ class Merger(
 
         if (generateScriptModule) {
             with(program.globalBlock) {
-                this.statements.addWithComment("block: imports", importStatements)
-                this.statements += moduleBody
-                this.statements.addWithComment("block: exports", exportStatements)
+                if (!generateScriptModule) {
+                    statements += JsStringLiteral("use strict").makeStmt()
+                }
+                statements.addWithComment("block: polyfills", polyfillDeclarationBlock.statements)
+                statements.addWithComment("block: imports", importStatements)
+                statements += moduleBody
+                statements.addWithComment("block: exports", exportStatements)
             }
         } else {
             val internalModuleName = ReservedJsNames.makeInternalModuleName()
@@ -223,9 +228,12 @@ class Merger(
                 parameters += JsParameter(internalModuleName)
                 parameters += (importedJsModules).map { JsParameter(it.internalName) }
                 with(body) {
-                    this.statements.addWithComment("block: imports", importStatements)
-                    this.statements += moduleBody
-                    this.statements.addWithComment("block: exports", exportStatements)
+                    if (!generateScriptModule) {
+                        statements += JsStringLiteral("use strict").makeStmt()
+                    }
+                    statements.addWithComment("block: imports", importStatements)
+                    statements += moduleBody
+                    statements.addWithComment("block: exports", exportStatements)
                     if (generateCallToMain) {
                         callToMain?.let { this.statements += it }
                     }
@@ -233,6 +241,7 @@ class Merger(
                 }
             }
 
+            program.globalBlock.statements.addWithComment("block: polyfills", polyfillDeclarationBlock.statements)
             program.globalBlock.statements += ModuleWrapperTranslation.wrap(
                 moduleName,
                 rootFunction,
