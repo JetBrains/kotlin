@@ -1,6 +1,6 @@
 // WITH_STDLIB
 // WORKS_WHEN_VALUE_CLASS
-// IGNORE_BACKEND: JVM
+// IGNORE_BACKEND: JVM, JS_IR
 // LANGUAGE: +ValueClasses, +GenericInlineClassParameter
 
 class BoxT<T>(val boxed: T)
