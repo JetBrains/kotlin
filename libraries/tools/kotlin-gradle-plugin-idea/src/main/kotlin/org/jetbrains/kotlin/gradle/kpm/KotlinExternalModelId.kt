@@ -15,7 +15,7 @@ inline fun <reified T : Any> KotlinExternalModelId(disambiguationName: String? =
 }
 
 class KotlinExternalModelId<T : Any> @PublishedApi internal constructor(
-    internal val type: KotlinExternalModelType<T>,
+    private val type: KotlinExternalModelType<T>,
     private val disambiguationName: String? = null
 ) : Serializable {
     override fun toString(): String {
