@@ -82,6 +82,14 @@ sealed class ReadBuffer {
             if (tmpBuffer == null) {
                 tmpBuffer = file.readBytes().buffer
                 tmpBuffer.position(pos)
+                println(
+                    """
+                    FILE: ${file.absolutePath}
+                    TMP buffer position: ${tmpBuffer.position()}
+                    TMP buffer limit: ${tmpBuffer.limit()}
+                    TMP buffer capacity: ${tmpBuffer.capacity()}
+                """.trimIndent()
+                )
                 weakBuffer = SoftReference(tmpBuffer)
             }
             return tmpBuffer
