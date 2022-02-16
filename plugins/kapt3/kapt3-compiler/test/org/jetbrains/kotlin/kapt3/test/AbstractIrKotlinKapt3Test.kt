@@ -11,18 +11,8 @@ import org.jetbrains.kotlin.test.TargetBackend
 
 open class AbstractIrClassFileToSourceStubConverterTest : AbstractClassFileToSourceStubConverterTest() {
     override val backend = TargetBackend.JVM_IR
-
-    override fun updateConfiguration(configuration: CompilerConfiguration) {
-        configuration.put(JVMConfigurationKeys.DO_NOT_CLEAR_BINDING_CONTEXT, true)
-        super.updateConfiguration(configuration)
-    }
 }
 
 abstract class AbstractIrKotlinKaptContextTest : AbstractKotlinKaptContextTest() {
     override val backend = TargetBackend.JVM_IR
-
-    override fun updateConfiguration(configuration: CompilerConfiguration) {
-        configuration.put(JVMConfigurationKeys.DO_NOT_CLEAR_BINDING_CONTEXT, true)
-        super.updateConfiguration(configuration)
-    }
 }
