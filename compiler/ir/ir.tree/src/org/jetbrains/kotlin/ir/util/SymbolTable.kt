@@ -93,7 +93,7 @@ open class SymbolTable(
                     set(new)
                     new
                 } else {
-                    unboundSymbols.remove(existing)
+//                    unboundSymbols.remove(existing)
                     existing
                 }
                 return createOwner(symbol)
@@ -106,7 +106,7 @@ open class SymbolTable(
                 val symbol = if (existing == null) {
                     createSymbol()
                 } else {
-                    unboundSymbols.remove(existing)
+//                    unboundSymbols.remove(existing)
                     existing
                 }
                 val result = createOwner(symbol)
@@ -126,7 +126,7 @@ open class SymbolTable(
                     set(new)
                     new
                 } else {
-                    if (!existing.isBound) unboundSymbols.remove(existing)
+//                    if (!existing.isBound) unboundSymbols.remove(existing)
                     existing
                 }
                 return if (symbol.isBound) symbol.owner else createOwner(symbol)
@@ -142,7 +142,7 @@ open class SymbolTable(
                     set(new)
                     new
                 } else {
-                    unboundSymbols.remove(existing)
+//                    unboundSymbols.remove(existing)
                     existing
                 }
                 return createOwner(symbol)
