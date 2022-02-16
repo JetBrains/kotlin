@@ -106,6 +106,7 @@ class ExternalClassGenerator(session: FirSession) : FirDeclarationGenerationExte
 
     private fun buildClass(classId: ClassId): FirRegularClass {
         return buildRegularClass {
+            resolvePhase = FirResolvePhase.BODY_RESOLVE
             moduleData = session.moduleData
             origin = Key.origin
             classKind = ClassKind.CLASS

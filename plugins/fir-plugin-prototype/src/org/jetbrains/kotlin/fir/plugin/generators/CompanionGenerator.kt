@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirPluginKey
+import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.builder.buildRegularClass
 import org.jetbrains.kotlin.fir.declarations.builder.buildSimpleFunction
 import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl
@@ -49,6 +50,7 @@ class CompanionGenerator(session: FirSession) : FirDeclarationGenerationExtensio
         val owner = matchedClasses.firstOrNull { it.classId == classId.outerClassId } ?: return null
         if (owner.companionObjectSymbol != null) return null
         val regularClass = buildRegularClass {
+            resolvePhase = FirResolvePhase.BODY_RESOLVE
             moduleData = session.moduleData
             origin = Key.origin
             classKind = ClassKind.OBJECT
@@ -71,6 +73,7 @@ class CompanionGenerator(session: FirSession) : FirDeclarationGenerationExtensio
         if (owner == null || owner.origin != Key.origin) return emptyList()
         if (callableId.callableName != FOO_NAME) return emptyList()
         val function = buildSimpleFunction {
+            resolvePhase = FirResolvePhase.BODY_RESOLVE
             moduleData = session.moduleData
             origin = Key.origin
             status = FirResolvedDeclarationStatusImpl(

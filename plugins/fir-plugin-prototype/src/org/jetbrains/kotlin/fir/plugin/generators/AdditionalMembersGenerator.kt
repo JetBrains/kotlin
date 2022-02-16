@@ -11,12 +11,15 @@ import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirPluginKey
+import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.builder.buildRegularClass
 import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.extensions.FirDeclarationGenerationExtension
 import org.jetbrains.kotlin.fir.extensions.FirDeclarationPredicateRegistrar
 import org.jetbrains.kotlin.fir.extensions.predicate.DeclarationPredicate
 import org.jetbrains.kotlin.fir.extensions.predicate.has
+import org.jetbrains.kotlin.fir.extensions.predicate.metaHas
+import org.jetbrains.kotlin.fir.extensions.predicate.or
 import org.jetbrains.kotlin.fir.extensions.predicateBasedProvider
 import org.jetbrains.kotlin.fir.moduleData
 import org.jetbrains.kotlin.fir.plugin.fqn
@@ -61,6 +64,7 @@ class AdditionalMembersGenerator(session: FirSession) : FirDeclarationGeneration
         val parentClassId = classId.parentClassId ?: return null
         if (matchedClasses.none { it.classId == parentClassId }) return null
         return buildRegularClass {
+            resolvePhase = FirResolvePhase.BODY_RESOLVE
             moduleData = session.moduleData
             origin = Key.origin
             classKind = ClassKind.CLASS

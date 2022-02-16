@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirPluginKey
+import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.builder.buildSimpleFunction
 import org.jetbrains.kotlin.fir.declarations.builder.buildValueParameter
 import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl
@@ -44,6 +45,7 @@ class TopLevelDeclarationsGenerator(session: FirSession) : FirDeclarationGenerat
         if (owner != null) return emptyList()
         val matchedClassSymbol = findMatchedClassForFunction(callableId) ?: return emptyList()
         val function = buildSimpleFunction {
+            resolvePhase = FirResolvePhase.BODY_RESOLVE
             moduleData = session.moduleData
             origin = Key.origin
             status = FirResolvedDeclarationStatusImpl(
@@ -53,6 +55,7 @@ class TopLevelDeclarationsGenerator(session: FirSession) : FirDeclarationGenerat
             )
             returnTypeRef = session.builtinTypes.stringType
             valueParameters += buildValueParameter {
+                resolvePhase = FirResolvePhase.BODY_RESOLVE
                 moduleData = session.moduleData
                 origin = Key.origin
                 returnTypeRef = buildResolvedTypeRef {
