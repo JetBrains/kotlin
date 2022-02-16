@@ -44,9 +44,6 @@ internal abstract class KotlinJvmOptionsBase : org.jetbrains.kotlin.gradle.dsl.K
             javaParametersField = value
         }
 
-    @Deprecated(message = "This option is not working well with Gradle caching and will be removed in the future.", level = DeprecationLevel.WARNING)
-    override var jdkHome: kotlin.String? = null
-
     override var jvmTarget: kotlin.String? = null
 
     override var moduleName: kotlin.String? = null
@@ -73,7 +70,6 @@ internal abstract class KotlinJvmOptionsBase : org.jetbrains.kotlin.gradle.dsl.K
         languageVersion?.let { args.languageVersion = it }
         useFirField?.let { args.useFir = it }
         javaParametersField?.let { args.javaParameters = it }
-        jdkHome?.let { args.jdkHome = it }
         jvmTarget?.let { args.jvmTarget = it }
         moduleName?.let { args.moduleName = it }
         noJdkField?.let { args.noJdk = it }
@@ -89,7 +85,6 @@ internal fun org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments.fi
     languageVersion = null
     useFir = false
     javaParameters = false
-    jdkHome = null
     jvmTarget = null
     moduleName = null
     noJdk = false
