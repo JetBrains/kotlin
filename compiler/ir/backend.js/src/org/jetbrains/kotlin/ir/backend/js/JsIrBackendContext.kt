@@ -80,6 +80,8 @@ class JsIrBackendContext(
 
     override var inVerbosePhase: Boolean = false
 
+    val exportedDeclarationsCache = mutableMapOf<IrDeclaration, Boolean>()
+
     override fun isSideEffectFree(call: IrCall): Boolean =
         call.symbol in intrinsics.primitiveToLiteralConstructor.values ||
                 call.symbol == intrinsics.arrayLiteral ||

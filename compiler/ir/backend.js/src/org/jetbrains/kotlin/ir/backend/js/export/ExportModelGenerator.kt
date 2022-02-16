@@ -628,6 +628,12 @@ private fun getExportCandidate(declaration: IrDeclaration): IrDeclarationWithNam
 }
 
 private fun shouldDeclarationBeExported(declaration: IrDeclarationWithName, context: JsIrBackendContext): Boolean {
+    return context.exportedDeclarationsCache.getOrPut(declaration) {
+        shouldDeclarationBeExportedImpl(declaration, context)
+    }
+}
+
+private fun shouldDeclarationBeExportedImpl(declaration: IrDeclarationWithName, context: JsIrBackendContext): Boolean {
     if (context.additionalExportedDeclarationNames.contains(declaration.fqNameWhenAvailable))
         return true
 
