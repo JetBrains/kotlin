@@ -18,11 +18,13 @@ configurations {
 
 sourceSets {
     compileOnlyDeclarations {
+        if (!BuildPropertiesKt.getKotlinBuildProperties(project).inIdeaSync)
         java {
             srcDir 'compileOnly'
         }
     }
     main {
+        if (!BuildPropertiesKt.getKotlinBuildProperties(project).inIdeaSync)
         java {
             srcDir "${rootDir}/core/builtins/src"
             srcDir 'runtime'
@@ -30,16 +32,19 @@ sourceSets {
         }
     }
     mainJdk7 {
+        if (!BuildPropertiesKt.getKotlinBuildProperties(project).inIdeaSync)
         kotlin {
             srcDir '../jdk7/src'
         }
     }
     mainJdk8 {
+        if (!BuildPropertiesKt.getKotlinBuildProperties(project).inIdeaSync)
         kotlin {
             srcDir '../jdk8/src'
         }
     }
     test {
+        if (!BuildPropertiesKt.getKotlinBuildProperties(project).inIdeaSync)
         kotlin {
             srcDir 'test'
             srcDir '../jdk7/test'
@@ -47,11 +52,13 @@ sourceSets {
         }
     }
     longRunningTest {
+        if (!BuildPropertiesKt.getKotlinBuildProperties(project).inIdeaSync)
         kotlin {
             srcDir 'testLongRunning'
         }
     }
     java9 {
+        if (!BuildPropertiesKt.getKotlinBuildProperties(project).inIdeaSync)
         java {
             srcDir 'java9'
         }
