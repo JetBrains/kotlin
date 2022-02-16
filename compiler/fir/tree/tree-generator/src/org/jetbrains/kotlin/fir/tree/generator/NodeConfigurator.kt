@@ -70,6 +70,11 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
             +controlFlowGraphReferenceField
         }
 
+        contextReceiver.configure {
+            +field(typeRef, withReplace = true).withTransform()
+            +field("labelName", nameType, nullable = true)
+        }
+
         declaration.configure {
             +symbolWithPackage("fir.symbols", "FirBasedSymbol", "out FirDeclaration")
             +field("moduleData", firModuleDataType)
@@ -87,6 +92,8 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
 
             +field("containerSource", type(DeserializedContainerSource::class), nullable = true)
             +field("dispatchReceiverType", coneSimpleKotlinTypeType, nullable = true)
+
+            +fieldList(contextReceiver)
         }
 
         function.configure {
@@ -251,6 +258,7 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
             +booleanField("hasLazyNestedClassifiers")
             +field("companionObjectSymbol", regularClassSymbolType, nullable = true, withReplace = true)
             +superTypeRefs(withReplace = true)
+            +fieldList(contextReceiver)
         }
 
         anonymousObject.configure {
@@ -638,6 +646,8 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
             +valueParameters
             +returnTypeRef
             +booleanField("isSuspend")
+
+            +fieldList("contextReceiverTypeRefs", typeRef)
         }
 
         intersectionTypeRef.configure {

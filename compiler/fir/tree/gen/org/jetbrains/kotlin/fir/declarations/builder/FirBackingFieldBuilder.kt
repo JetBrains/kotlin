@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.fir.builder.FirAnnotationContainerBuilder
 import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
 import org.jetbrains.kotlin.fir.declarations.DeprecationsPerUseSite
 import org.jetbrains.kotlin.fir.declarations.FirBackingField
+import org.jetbrains.kotlin.fir.declarations.FirContextReceiver
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationAttributes
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationStatus
@@ -47,6 +48,7 @@ class FirBackingFieldBuilder : FirAnnotationContainerBuilder {
     var deprecation: DeprecationsPerUseSite? = null
     var containerSource: DeserializedContainerSource? = null
     var dispatchReceiverType: ConeSimpleKotlinType? = null
+    val contextReceivers: MutableList<FirContextReceiver> = mutableListOf()
     lateinit var name: Name
     var delegate: FirExpression? = null
     var isVar: Boolean by kotlin.properties.Delegates.notNull<Boolean>()
@@ -74,6 +76,7 @@ class FirBackingFieldBuilder : FirAnnotationContainerBuilder {
             deprecation,
             containerSource,
             dispatchReceiverType,
+            contextReceivers,
             name,
             delegate,
             isVar,

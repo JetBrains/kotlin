@@ -52,6 +52,9 @@ class FirJavaClass @FirImplementationDetail internal constructor(
     override val controlFlowGraphReference: FirControlFlowGraphReference? get() = null
     override var deprecation: DeprecationsPerUseSite? = null
 
+    override val contextReceivers: List<FirContextReceiver>
+        get() = emptyList()
+
     init {
         symbol.bind(this)
     }

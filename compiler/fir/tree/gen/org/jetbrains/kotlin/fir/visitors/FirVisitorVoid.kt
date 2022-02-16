@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.fir.declarations.FirResolvedDeclarationStatus
 import org.jetbrains.kotlin.fir.declarations.FirControlFlowGraphOwner
 import org.jetbrains.kotlin.fir.expressions.FirStatement
 import org.jetbrains.kotlin.fir.expressions.FirExpression
+import org.jetbrains.kotlin.fir.declarations.FirContextReceiver
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirTypeParameterRefsOwner
 import org.jetbrains.kotlin.fir.declarations.FirTypeParametersOwner
@@ -193,6 +194,10 @@ abstract class FirVisitorVoid : FirVisitor<Unit, Nothing?>() {
 
     open fun visitExpression(expression: FirExpression) {
         visitElement(expression)
+    }
+
+    open fun visitContextReceiver(contextReceiver: FirContextReceiver) {
+        visitElement(contextReceiver)
     }
 
     open fun visitDeclaration(declaration: FirDeclaration) {
@@ -741,6 +746,10 @@ abstract class FirVisitorVoid : FirVisitor<Unit, Nothing?>() {
 
     final override fun visitExpression(expression: FirExpression, data: Nothing?) {
         visitExpression(expression)
+    }
+
+    final override fun visitContextReceiver(contextReceiver: FirContextReceiver, data: Nothing?) {
+        visitContextReceiver(contextReceiver)
     }
 
     final override fun visitDeclaration(declaration: FirDeclaration, data: Nothing?) {

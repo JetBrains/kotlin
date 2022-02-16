@@ -24,6 +24,7 @@ abstract class FirFunctionTypeRef : FirTypeRefWithNullability() {
     abstract val valueParameters: List<FirValueParameter>
     abstract val returnTypeRef: FirTypeRef
     abstract val isSuspend: Boolean
+    abstract val contextReceiverTypeRefs: List<FirTypeRef>
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitFunctionTypeRef(this, data)
 

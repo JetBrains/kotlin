@@ -85,6 +85,9 @@ class FirJavaMethod @FirImplementationDetail constructor(
 
     override val annotations: List<FirAnnotation> by lazy { annotationBuilder() }
 
+    override val contextReceivers: List<FirContextReceiver>
+        get() = emptyList()
+
     //not used actually, because get 'enhanced' into regular FirSimpleFunction
     override var deprecation: DeprecationsPerUseSite? = null
 
@@ -222,6 +225,10 @@ class FirJavaMethodBuilder : FirFunctionBuilder, FirTypeParametersOwnerBuilder, 
         set(_) {
             throw IllegalStateException()
         }
+
+    @Deprecated("Modification of 'contextReceivers' has no impact for FirJavaFunctionBuilder", level = DeprecationLevel.HIDDEN)
+    override val contextReceivers: MutableList<FirContextReceiver>
+        get() = throw IllegalStateException()
 
     @OptIn(FirImplementationDetail::class)
     override fun build(): FirJavaMethod {

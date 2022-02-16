@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.builder.FirAnnotationContainerBuilder
 import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
 import org.jetbrains.kotlin.fir.declarations.DeprecationsPerUseSite
+import org.jetbrains.kotlin.fir.declarations.FirContextReceiver
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationAttributes
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationStatus
@@ -47,6 +48,7 @@ class FirErrorFunctionBuilder : FirAnnotationContainerBuilder {
     var deprecation: DeprecationsPerUseSite? = null
     var containerSource: DeserializedContainerSource? = null
     var dispatchReceiverType: ConeSimpleKotlinType? = null
+    val contextReceivers: MutableList<FirContextReceiver> = mutableListOf()
     val valueParameters: MutableList<FirValueParameter> = mutableListOf()
     lateinit var diagnostic: ConeDiagnostic
     lateinit var symbol: FirErrorFunctionSymbol
@@ -62,6 +64,7 @@ class FirErrorFunctionBuilder : FirAnnotationContainerBuilder {
             deprecation,
             containerSource,
             dispatchReceiverType,
+            contextReceivers,
             valueParameters,
             diagnostic,
             symbol,

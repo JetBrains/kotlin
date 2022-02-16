@@ -63,6 +63,8 @@ class FirJavaConstructor @FirImplementationDetail constructor(
 
     override val annotations: List<FirAnnotation> by lazy { annotationBuilder() }
 
+    override val contextReceivers: List<FirContextReceiver>
+        get() = emptyList()
 
     override fun <D> transformValueParameters(transformer: FirTransformer<D>, data: D): FirJavaConstructor {
         valueParameters.transformInplace(transformer, data)
