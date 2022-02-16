@@ -1,4 +1,4 @@
-// IGNORE_BACKEND: JVM_IR
+
 // WITH_STDLIB
 
 @file:Suppress("NOTHING_TO_INLINE")
