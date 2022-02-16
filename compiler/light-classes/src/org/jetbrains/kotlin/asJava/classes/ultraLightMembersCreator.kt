@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -35,7 +35,7 @@ import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.descriptorUtil.isPublishedApi
 import org.jetbrains.kotlin.resolve.inline.isInlineOnly
-import org.jetbrains.kotlin.resolve.jvm.annotations.*
+import org.jetbrains.kotlin.resolve.jvm.annotations.hasJvmSyntheticAnnotation
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOriginKind
 
 internal class UltraLightMembersCreator(
@@ -160,7 +160,7 @@ internal class UltraLightMembersCreator(
                 other.psiMethod == psiMethod &&
                 other.expression == expression
 
-        override fun hashCode(): Int = psiMethod.hashCode() * 31 + expression.hashCode()
+        override fun hashCode(): Int = psiMethod.hashCode()
 
         override fun toString(): String = "KtUltraLightAnnotationMethod(method=$psiMethod, expression=$expression"
 
