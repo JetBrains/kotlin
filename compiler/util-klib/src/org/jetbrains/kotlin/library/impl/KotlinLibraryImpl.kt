@@ -113,6 +113,7 @@ class IrMonoliticLibraryImpl(_access: IrLibraryAccess<IrKotlinLibraryLayout>) : 
             println("Bodies: ${reader.file}")
             val buffer = ReadBuffer.WeakFileBuffer(reader.file.javaFile())
             println("Buffer size = ${buffer.size} while bodies size = ${reader.buffer.size}")
+            println("Buffer position = ${buffer.position}")
 
             throw e
         }
