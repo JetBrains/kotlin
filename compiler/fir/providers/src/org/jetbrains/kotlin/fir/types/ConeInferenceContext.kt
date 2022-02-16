@@ -329,7 +329,9 @@ interface ConeInferenceContext : TypeSystemInferenceExtensionContext, ConeTypeCo
 
     override fun typeSubstitutorByTypeConstructor(map: Map<TypeConstructorMarker, KotlinTypeMarker>): ConeSubstitutor {
         @Suppress("UNCHECKED_CAST")
-        return createTypeSubstitutorByTypeConstructor(map as Map<TypeConstructorMarker, ConeKotlinType>, this)
+        return createTypeSubstitutorByTypeConstructor(
+            map as Map<TypeConstructorMarker, ConeKotlinType>, this, approximateIntegerLiterals = false
+        )
     }
 
     override fun createEmptySubstitutor(): ConeSubstitutor {

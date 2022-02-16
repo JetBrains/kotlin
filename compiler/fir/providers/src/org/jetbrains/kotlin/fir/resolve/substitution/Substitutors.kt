@@ -217,13 +217,18 @@ class ConeSubstitutorByMap(
     override fun hashCode() = hashCode
 }
 
-fun createTypeSubstitutorByTypeConstructor(map: Map<TypeConstructorMarker, ConeKotlinType>, context: ConeTypeContext): ConeSubstitutor {
+fun createTypeSubstitutorByTypeConstructor(
+    map: Map<TypeConstructorMarker, ConeKotlinType>,
+    context: ConeTypeContext,
+    approximateIntegerLiterals: Boolean
+): ConeSubstitutor {
     if (map.isEmpty()) return ConeSubstitutor.Empty
     return object : AbstractConeSubstitutor(context), TypeSubstitutorMarker {
         override fun substituteType(type: ConeKotlinType): ConeKotlinType? {
             if (type !is ConeLookupTagBasedType && type !is ConeStubType) return null
             val new = map[type.typeConstructor(context)] ?: return null
-            return new.approximateIntegerLiteralType().updateNullabilityIfNeeded(type)?.withCombinedAttributesFrom(type)
+            val approximatedIntegerLiteralType = if (approximateIntegerLiterals) new.approximateIntegerLiteralType() else new
+            return approximatedIntegerLiteralType.updateNullabilityIfNeeded(type)?.withCombinedAttributesFrom(type)
         }
     }
 }

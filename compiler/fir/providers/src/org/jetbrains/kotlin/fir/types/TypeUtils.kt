@@ -128,6 +128,7 @@ fun <T : ConeKotlinType> T.withAttributes(attributes: ConeAttributes): T {
         is ConeIntersectionType -> this
         // Attributes for stub types are not supported, and it's not obvious if it should
         is ConeStubType -> this
+        is ConeIntegerLiteralType -> this
         else -> error("Not supported: $this: ${this.render()}")
     } as T
 }

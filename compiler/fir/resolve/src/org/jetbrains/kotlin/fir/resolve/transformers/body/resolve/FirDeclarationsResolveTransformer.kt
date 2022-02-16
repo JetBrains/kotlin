@@ -318,7 +318,9 @@ open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransfor
                 }
                 val typeVariableTypeToStubType = context.inferenceSession.createSyntheticStubTypes(system)
 
-                val substitutor = createTypeSubstitutorByTypeConstructor(typeVariableTypeToStubType, session.typeContext)
+                val substitutor = createTypeSubstitutorByTypeConstructor(
+                    typeVariableTypeToStubType, session.typeContext, approximateIntegerLiterals = true
+                )
                 val delegateExpressionTypeRef = delegateExpression.typeRef
                 val stubTypeSubstituted = substitutor.substituteOrNull(delegateExpressionTypeRef.coneType)
                 delegateExpression.replaceTypeRef(delegateExpressionTypeRef.withReplacedConeType(stubTypeSubstituted))
@@ -338,7 +340,9 @@ open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransfor
                 system.markPostponedVariable(it.value.typeVariable)
             }
             val typeVariableTypeToStubType = context.inferenceSession.createSyntheticStubTypes(system)
-            val substitutor = createTypeSubstitutorByTypeConstructor(typeVariableTypeToStubType, session.typeContext)
+            val substitutor = createTypeSubstitutorByTypeConstructor(
+                typeVariableTypeToStubType, session.typeContext, approximateIntegerLiterals = true
+            )
 
             val stubTypeSubstituted = substitutor.substituteOrSelf(provideDelegateCandidate.substitutor.substituteOrSelf(components.typeFromCallee(provideDelegateCall).type))
 
