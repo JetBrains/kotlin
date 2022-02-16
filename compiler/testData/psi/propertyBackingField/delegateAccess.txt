@@ -1,0 +1,323 @@
+KtFile: delegateAccess.kt
+  PACKAGE_DIRECTIVE
+    <empty list>
+  IMPORT_LIST
+    IMPORT_DIRECTIVE
+      PsiElement(import)('import')
+      PsiWhiteSpace(' ')
+      DOT_QUALIFIED_EXPRESSION
+        DOT_QUALIFIED_EXPRESSION
+          REFERENCE_EXPRESSION
+            PsiElement(IDENTIFIER)('kotlin')
+          PsiElement(DOT)('.')
+          REFERENCE_EXPRESSION
+            PsiElement(IDENTIFIER)('reflect')
+        PsiElement(DOT)('.')
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('KProperty')
+  PsiWhiteSpace('\n\n')
+  CLASS
+    PsiElement(class)('class')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('A')
+    PsiWhiteSpace(' ')
+    CLASS_BODY
+      PsiElement(LBRACE)('{')
+      PsiWhiteSpace('\n    ')
+      PROPERTY
+        PsiElement(var)('var')
+        PsiWhiteSpace(' ')
+        PsiElement(IDENTIFIER)('number')
+        PsiWhiteSpace(' ')
+        PROPERTY_DELEGATE
+          PsiElement(by)('by')
+          PsiWhiteSpace(' ')
+          OBJECT_LITERAL
+            OBJECT_DECLARATION
+              PsiElement(object)('object')
+              PsiWhiteSpace(' ')
+              CLASS_BODY
+                PsiElement(LBRACE)('{')
+                PsiWhiteSpace('\n        ')
+                PROPERTY
+                  PsiElement(var)('var')
+                  PsiWhiteSpace(' ')
+                  PsiElement(IDENTIFIER)('rawValue')
+                  PsiWhiteSpace(' ')
+                  PsiElement(EQ)('=')
+                  PsiWhiteSpace(' ')
+                  INTEGER_CONSTANT
+                    PsiElement(INTEGER_LITERAL)('10')
+                PsiWhiteSpace('\n\n        ')
+                FUN
+                  MODIFIER_LIST
+                    PsiElement(operator)('operator')
+                  PsiWhiteSpace(' ')
+                  PsiElement(fun)('fun')
+                  PsiWhiteSpace(' ')
+                  PsiElement(IDENTIFIER)('getValue')
+                  VALUE_PARAMETER_LIST
+                    PsiElement(LPAR)('(')
+                    VALUE_PARAMETER
+                      PsiElement(IDENTIFIER)('thisRef')
+                      PsiElement(COLON)(':')
+                      PsiWhiteSpace(' ')
+                      TYPE_REFERENCE
+                        NULLABLE_TYPE
+                          USER_TYPE
+                            REFERENCE_EXPRESSION
+                              PsiElement(IDENTIFIER)('Any')
+                          PsiElement(QUEST)('?')
+                    PsiElement(COMMA)(',')
+                    PsiWhiteSpace(' ')
+                    VALUE_PARAMETER
+                      PsiElement(IDENTIFIER)('property')
+                      PsiElement(COLON)(':')
+                      PsiWhiteSpace(' ')
+                      TYPE_REFERENCE
+                        USER_TYPE
+                          REFERENCE_EXPRESSION
+                            PsiElement(IDENTIFIER)('KProperty')
+                          TYPE_ARGUMENT_LIST
+                            PsiElement(LT)('<')
+                            TYPE_PROJECTION
+                              PsiElement(MUL)('*')
+                            PsiElement(GT)('>')
+                    PsiElement(RPAR)(')')
+                  PsiElement(COLON)(':')
+                  PsiWhiteSpace(' ')
+                  TYPE_REFERENCE
+                    USER_TYPE
+                      REFERENCE_EXPRESSION
+                        PsiElement(IDENTIFIER)('String')
+                  PsiWhiteSpace(' ')
+                  BLOCK
+                    PsiElement(LBRACE)('{')
+                    PsiWhiteSpace('\n            ')
+                    RETURN
+                      PsiElement(return)('return')
+                      PsiWhiteSpace(' ')
+                      DOT_QUALIFIED_EXPRESSION
+                        REFERENCE_EXPRESSION
+                          PsiElement(IDENTIFIER)('rawValue')
+                        PsiElement(DOT)('.')
+                        CALL_EXPRESSION
+                          REFERENCE_EXPRESSION
+                            PsiElement(IDENTIFIER)('toString')
+                          VALUE_ARGUMENT_LIST
+                            PsiElement(LPAR)('(')
+                            PsiElement(RPAR)(')')
+                    PsiWhiteSpace('\n        ')
+                    PsiElement(RBRACE)('}')
+                PsiWhiteSpace('\n\n        ')
+                FUN
+                  MODIFIER_LIST
+                    PsiElement(operator)('operator')
+                  PsiWhiteSpace(' ')
+                  PsiElement(fun)('fun')
+                  PsiWhiteSpace(' ')
+                  PsiElement(IDENTIFIER)('setValue')
+                  VALUE_PARAMETER_LIST
+                    PsiElement(LPAR)('(')
+                    VALUE_PARAMETER
+                      PsiElement(IDENTIFIER)('thisRef')
+                      PsiElement(COLON)(':')
+                      PsiWhiteSpace(' ')
+                      TYPE_REFERENCE
+                        NULLABLE_TYPE
+                          USER_TYPE
+                            REFERENCE_EXPRESSION
+                              PsiElement(IDENTIFIER)('Any')
+                          PsiElement(QUEST)('?')
+                    PsiElement(COMMA)(',')
+                    PsiWhiteSpace(' ')
+                    VALUE_PARAMETER
+                      PsiElement(IDENTIFIER)('property')
+                      PsiElement(COLON)(':')
+                      PsiWhiteSpace(' ')
+                      TYPE_REFERENCE
+                        USER_TYPE
+                          REFERENCE_EXPRESSION
+                            PsiElement(IDENTIFIER)('KProperty')
+                          TYPE_ARGUMENT_LIST
+                            PsiElement(LT)('<')
+                            TYPE_PROJECTION
+                              PsiElement(MUL)('*')
+                            PsiElement(GT)('>')
+                    PsiElement(COMMA)(',')
+                    PsiWhiteSpace(' ')
+                    VALUE_PARAMETER
+                      PsiElement(IDENTIFIER)('value')
+                      PsiElement(COLON)(':')
+                      PsiWhiteSpace(' ')
+                      TYPE_REFERENCE
+                        USER_TYPE
+                          REFERENCE_EXPRESSION
+                            PsiElement(IDENTIFIER)('String')
+                    PsiElement(RPAR)(')')
+                  PsiWhiteSpace(' ')
+                  BLOCK
+                    PsiElement(LBRACE)('{')
+                    PsiWhiteSpace('\n            ')
+                    BINARY_EXPRESSION
+                      REFERENCE_EXPRESSION
+                        PsiElement(IDENTIFIER)('rawValue')
+                      PsiWhiteSpace(' ')
+                      OPERATION_REFERENCE
+                        PsiElement(EQ)('=')
+                      PsiWhiteSpace(' ')
+                      DOT_QUALIFIED_EXPRESSION
+                        REFERENCE_EXPRESSION
+                          PsiElement(IDENTIFIER)('value')
+                        PsiElement(DOT)('.')
+                        REFERENCE_EXPRESSION
+                          PsiElement(IDENTIFIER)('length')
+                    PsiWhiteSpace('\n        ')
+                    PsiElement(RBRACE)('}')
+                PsiWhiteSpace('\n    ')
+                PsiElement(RBRACE)('}')
+      PsiWhiteSpace('\n\n    ')
+      FUN
+        PsiElement(fun)('fun')
+        PsiWhiteSpace(' ')
+        PsiElement(IDENTIFIER)('updateNumber')
+        VALUE_PARAMETER_LIST
+          PsiElement(LPAR)('(')
+          PsiElement(RPAR)(')')
+        PsiWhiteSpace(' ')
+        BLOCK
+          PsiElement(LBRACE)('{')
+          PsiWhiteSpace('\n        ')
+          BINARY_EXPRESSION
+            HASH_QUALIFIED_EXPRESSION
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('number')
+              PsiElement(HASH)('#')
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('rawValue')
+            PsiWhiteSpace(' ')
+            OPERATION_REFERENCE
+              PsiElement(PLUSEQ)('+=')
+            PsiWhiteSpace(' ')
+            INTEGER_CONSTANT
+              PsiElement(INTEGER_LITERAL)('100')
+          PsiWhiteSpace('\n    ')
+          PsiElement(RBRACE)('}')
+      PsiWhiteSpace('\n\n    ')
+      FUN
+        PsiElement(fun)('fun')
+        PsiWhiteSpace(' ')
+        PsiElement(IDENTIFIER)('represent')
+        VALUE_PARAMETER_LIST
+          PsiElement(LPAR)('(')
+          PsiElement(RPAR)(')')
+        PsiElement(COLON)(':')
+        PsiWhiteSpace(' ')
+        TYPE_REFERENCE
+          USER_TYPE
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('String')
+        PsiWhiteSpace(' ')
+        BLOCK
+          PsiElement(LBRACE)('{')
+          PsiWhiteSpace('\n        ')
+          RETURN
+            PsiElement(return)('return')
+            PsiWhiteSpace(' ')
+            BINARY_EXPRESSION
+              STRING_TEMPLATE
+                PsiElement(OPEN_QUOTE)('"')
+                LITERAL_STRING_TEMPLATE_ENTRY
+                  PsiElement(REGULAR_STRING_PART)('rawValue = ')
+                PsiElement(CLOSING_QUOTE)('"')
+              PsiWhiteSpace(' ')
+              OPERATION_REFERENCE
+                PsiElement(PLUS)('+')
+              PsiWhiteSpace(' ')
+              HASH_QUALIFIED_EXPRESSION
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('number')
+                PsiElement(HASH)('#')
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('rawValue')
+          PsiWhiteSpace('\n    ')
+          PsiElement(RBRACE)('}')
+      PsiWhiteSpace('\n')
+      PsiElement(RBRACE)('}')
+  PsiWhiteSpace('\n\n')
+  FUN
+    PsiElement(fun)('fun')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('previousNumber')
+    VALUE_PARAMETER_LIST
+      PsiElement(LPAR)('(')
+      VALUE_PARAMETER
+        PsiElement(IDENTIFIER)('a')
+        PsiElement(COLON)(':')
+        PsiWhiteSpace(' ')
+        TYPE_REFERENCE
+          USER_TYPE
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('A')
+      PsiElement(RPAR)(')')
+    PsiElement(COLON)(':')
+    PsiWhiteSpace(' ')
+    TYPE_REFERENCE
+      USER_TYPE
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('Int')
+    PsiWhiteSpace(' ')
+    BLOCK
+      PsiElement(LBRACE)('{')
+      PsiWhiteSpace('\n    ')
+      PROPERTY
+        PsiElement(val)('val')
+        PsiWhiteSpace(' ')
+        PsiElement(IDENTIFIER)('value')
+        PsiElement(COLON)(':')
+        PsiWhiteSpace(' ')
+        TYPE_REFERENCE
+          USER_TYPE
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('Int')
+        PsiWhiteSpace(' ')
+        PsiElement(EQ)('=')
+        PsiWhiteSpace(' ')
+        DOT_QUALIFIED_EXPRESSION
+          DOT_QUALIFIED_EXPRESSION
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('a')
+            PsiElement(DOT)('.')
+            HASH_QUALIFIED_EXPRESSION
+              HASH_QUALIFIED_EXPRESSION
+                HASH_QUALIFIED_EXPRESSION
+                  HASH_QUALIFIED_EXPRESSION
+                    REFERENCE_EXPRESSION
+                      PsiElement(IDENTIFIER)('number')
+                    PsiElement(HASH)('#')
+                    REFERENCE_EXPRESSION
+                      PsiElement(IDENTIFIER)('self')
+                  PsiElement(HASH)('#')
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('self')
+                PsiElement(HASH)('#')
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('rawValue')
+              PsiElement(HASH)('#')
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('self')
+          PsiElement(DOT)('.')
+          CALL_EXPRESSION
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('dec')
+            VALUE_ARGUMENT_LIST
+              PsiElement(LPAR)('(')
+              PsiElement(RPAR)(')')
+      PsiWhiteSpace('\n    ')
+      RETURN
+        PsiElement(return)('return')
+        PsiWhiteSpace(' ')
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('value')
+      PsiWhiteSpace('\n')
+      PsiElement(RBRACE)('}')

@@ -1,0 +1,21 @@
+FILE: directAccessWithArray.kt
+    public final val number: R|kotlin/String|
+        internal <explicit backing field>: R|kotlin/collections/MutableList<kotlin/Int>| = R|kotlin/collections/mutableListOf|<R|kotlin/Int|>(vararg(Int(10), Int(20)))
+        public get(): R|kotlin/String| {
+            ^ F|/number|.R|kotlin/collections/joinToString|<R|kotlin/Int|>(String(, ))
+        }
+    public final fun box(): R|kotlin/String| {
+         {
+            lval <<array>>: R|kotlin/collections/MutableList<kotlin/Int>| = F|/number|
+            lval <<index_0>>: R|kotlin/Int| = Int(1)
+            R|<local>/<<array>>|.R|SubstitutionOverride<kotlin/collections/MutableList.set: R|kotlin/Int|>|(R|<local>/<<index_0>>|, R|<local>/<<array>>|.R|SubstitutionOverride<kotlin/collections/MutableList.get: R|kotlin/Int|>|(R|<local>/<<index_0>>|).R|kotlin/Int.plus|(Int(4)))
+        }
+
+        when () {
+            !=(R|/number|, String(10, 24)) ->  {
+                ^box <strcat>(String(FAIL: expected `10, 24`, was ), R|/number|)
+            }
+        }
+
+        ^box String(OK)
+    }

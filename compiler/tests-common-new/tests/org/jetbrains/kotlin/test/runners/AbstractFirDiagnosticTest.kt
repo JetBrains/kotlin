@@ -141,9 +141,13 @@ fun TestConfigurationBuilder.baseFirDiagnosticTestConfiguration(
         }
     }
 
-    forTestsMatching("compiler/fir/analysis-tests/testData/resolveWithStdlib/properties/backingField/*") {
+    forTestsMatching(
+        "compiler/fir/analysis-tests/testData/resolveWithStdlib/properties/backingField/*" or
+                "compiler/fir/analysis-tests/testData/resolveWithStdlib/properties/delegateAccess/*"
+    ) {
         defaultDirectives {
             LANGUAGE + "+ExplicitBackingFields"
+            LANGUAGE + "+DirectFieldOrDelegateAccess"
         }
     }
 

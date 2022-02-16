@@ -1,0 +1,17 @@
+FILE: directAccessBadReceiver.kt
+    public final fun test(): R|kotlin/String| {
+        ^test String(test)
+    }
+    public final val rest: R|kotlin/String| = String(rest)
+        public get(): R|kotlin/String|
+    public final fun box(): R|kotlin/Unit| {
+        lval a: <ERROR TYPE REF: Bad hash-qualified name> = ERROR_EXPR(Bad hash-qualified name)
+        lval b: <ERROR TYPE REF: Bad hash-qualified name> = ERROR_EXPR(Bad hash-qualified name)
+        lval c: <ERROR TYPE REF: Bad hash-qualified name> = ERROR_EXPR(Bad hash-qualified name)
+        lval d: R|kotlin/String| = R|/test|()
+        R|kotlin/with|<R|kotlin/Int|, R|kotlin/Unit|>(Int(20), <L> = with@fun R|kotlin/Int|.<anonymous>(): R|kotlin/Unit| <inline=Inline, kind=EXACTLY_ONCE>  {
+            lval e: <ERROR TYPE REF: Bad hash-qualified name> = ERROR_EXPR(Bad hash-qualified name)
+        }
+        )
+        lval g: <ERROR TYPE REF: References to variables aren't supported yet> = ::<References to variables aren't supported yet>#
+    }
