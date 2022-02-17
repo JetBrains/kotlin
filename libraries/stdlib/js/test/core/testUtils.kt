@@ -30,3 +30,13 @@ actual val supportsSuppressedExceptions: Boolean get() = true
 public actual val supportsNamedCapturingGroup: Boolean get() = true
 
 public actual val regexSplitUnicodeCodePointHandling: Boolean get() = true
+
+public actual object BackReferenceHandling {
+    actual val captureLargestValidIndex: Boolean get() = false
+
+    actual val notYetDefinedGroup: HandlingOption = HandlingOption.IGNORE_BACK_REFERENCE_EXPRESSION
+    actual val notYetDefinedNamedGroup: HandlingOption = HandlingOption.IGNORE_BACK_REFERENCE_EXPRESSION
+    actual val enclosingGroup: HandlingOption = HandlingOption.IGNORE_BACK_REFERENCE_EXPRESSION
+    actual val nonExistentGroup: HandlingOption = HandlingOption.THROW
+    actual val nonExistentNamedGroup: HandlingOption = HandlingOption.THROW
+}

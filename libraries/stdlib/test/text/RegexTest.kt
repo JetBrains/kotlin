@@ -9,6 +9,8 @@ package test.text
 
 import test.regexSplitUnicodeCodePointHandling
 import test.supportsNamedCapturingGroup
+import test.BackReferenceHandling
+import test.HandlingOption
 import kotlin.test.*
 
 class RegexTest {
@@ -216,13 +218,16 @@ class RegexTest {
         }
 
         // capture the largest valid group index
-        "(\\w+), yes \\12".toRegex().let { regex ->
-            val match = regex.find("Do you copy? Sir, yes Sir2")!!
-            assertEquals("Sir, yes Sir2", match.value)
-            assertEquals("Sir", match.groups[1]?.value)
+        "(\\w+), yes \\12".let { pattern ->
+            if (BackReferenceHandling.captureLargestValidIndex) {
+                val match = pattern.toRegex().find("Do you copy? Sir, yes Sir2")!!
+                assertEquals("Sir, yes Sir2", match.value)
+                assertEquals("Sir", match.groups[1]?.value)
+            } else {
+                // JS throws SyntaxError
+                assertFails { pattern.toRegex() }
+            }
         }
-        // back reference to non-existent group
-        assertNull("a(a)\\21".toRegex().find("aaaa1"))
 
         // back reference to a group with large index
         "0(1(2(3(4(5(6(7(8(9(A(B(C))))))))\\11))))".toRegex().let { regex ->
@@ -232,10 +237,9 @@ class RegexTest {
             assertEquals("456789ABCBC", match.groups[4]?.value)
         }
 
-        // back reference to an enclosing group
-        assertNull("a(a\\1)".toRegex().find("aaaa"))
-        // back reference to not yet available group
-        assertNull("a\\1(a)".toRegex().find("aaaa"))
+        testInvalidBackReference(BackReferenceHandling.nonExistentGroup, pattern = "a(a)\\2")
+        testInvalidBackReference(BackReferenceHandling.enclosingGroup, pattern = "a(a\\1)")
+        testInvalidBackReference(BackReferenceHandling.notYetDefinedGroup, pattern = "a\\1(a)")
     }
 
     @Test fun matchNamedGroupsWithBackReference() {
@@ -249,38 +253,51 @@ class RegexTest {
             assertNull(regex.find("Do you copy? Sir, yes I do!"))
         }
 
-        // back reference to an enclosing group
-        assertNull("a(?<first>a\\k<first>)".toRegex().find("aaaa"))
-        // back reference to not yet available group
-        assertFailsWith<IllegalArgumentException> {
-            "a\\k<first>(?<first>a)".toRegex()
+        testInvalidBackReference(BackReferenceHandling.nonExistentNamedGroup, pattern = "a(a)\\k<name>")
+        testInvalidBackReference(BackReferenceHandling.enclosingGroup, pattern = "a(?<first>a\\k<first>)")
+        testInvalidBackReference(BackReferenceHandling.notYetDefinedNamedGroup, pattern = "a\\k<first>(?<first>a)")
+    }
+
+    private fun testInvalidBackReference(option: HandlingOption, pattern: String, input: CharSequence = "aaaa", matchValue: String = "aa") {
+        when (option) {
+            HandlingOption.IGNORE_BACK_REFERENCE_EXPRESSION ->
+                assertEquals(matchValue, pattern.toRegex().find(input)?.value)
+            HandlingOption.THROW ->
+                // TODO: should fail with IllegalArgumentException, but JS fails with SyntaxError
+                assertFails { pattern.toRegex() }
+            HandlingOption.MATCH_NOTHING ->
+                assertNull(pattern.toRegex().find(input))
         }
     }
 
-    @Test fun incompleteNamedGroupDeclaration() {
+    @Test fun invalidNamedGroupDeclaration() {
         if (!supportsNamedCapturingGroup) return
 
-        assertFailsWith<IllegalArgumentException> {
+        // TODO: should fail with IllegalArgumentException, but JS fails with SyntaxError
+
+        assertFails {
             "(?<".toRegex()
         }
-        assertFailsWith<IllegalArgumentException> {
+        assertFails {
             "(?<)".toRegex()
         }
-        assertFailsWith<IllegalArgumentException> {
+        assertFails {
             "(?<name".toRegex()
         }
-        assertFailsWith<IllegalArgumentException> {
+        assertFails {
             "(?<name)".toRegex()
         }
-        assertFailsWith<IllegalArgumentException> {
+        assertFails {
             "(?<name>".toRegex()
         }
-        assertFailsWith<IllegalArgumentException> {
+        assertFails {
             "(?<>\\w+), yes \\k<>".toRegex()
         }
     }
 
     // TODO: Test comment mode enabled and group name is separated by space, (before, in the middle, after)
+    // TODO: Test comment mode enabled and back reference group index is separated by space, (before, in the middle, after)
+    // TODO: Test back reference with \0
 
     @Test fun matchMultiline() {
         val regex = "^[a-z]*$".toRegex(setOf(RegexOption.IGNORE_CASE, RegexOption.MULTILINE))
