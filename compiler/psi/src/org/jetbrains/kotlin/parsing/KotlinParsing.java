@@ -2167,16 +2167,20 @@ public class KotlinParsing extends AbstractKotlinParsing {
 
         parseTypeModifierList();
 
-        PsiBuilder.Marker typeElementMarker = mark();
 
         IElementType lookahead = lookahead(1);
         IElementType lookahead2 = lookahead(2);
         boolean typeBeforeDot = true;
         boolean withContextReceiver = at(CONTEXT_KEYWORD) && lookahead == LPAR;
+        boolean wasFunctionTypeParsed = false;
+
+        PsiBuilder.Marker contextReceiversStart = mark();
 
         if (withContextReceiver) {
             parseContextReceiverList();
         }
+
+        PsiBuilder.Marker typeElementMarker = mark();
 
         if (at(IDENTIFIER) && !(lookahead == DOT && lookahead2 == IDENTIFIER) && lookahead != LT && at(DYNAMIC_KEYWORD)) {
             PsiBuilder.Marker dynamicType = mark();
@@ -2186,26 +2190,18 @@ public class KotlinParsing extends AbstractKotlinParsing {
         else if (at(IDENTIFIER) || at(PACKAGE_KEYWORD) || atParenthesizedMutableForPlatformTypes(0)) {
             parseUserType(allowSimpleIntersectionTypes);
         }
-        else if (at(LPAR) && !withContextReceiver) {
+        else if (at(LPAR)) {
             PsiBuilder.Marker functionOrParenthesizedType = mark();
 
             // This may be a function parameter list or just a parenthesized type
             advance(); // LPAR
             parseTypeRefContents(TokenSet.EMPTY, /* allowSimpleIntersectionTypes */ true).drop(); // parenthesized types, no reference element around it is needed
 
-            if (at(RPAR)) {
-                advance(); // RPAR
-                if (at(ARROW)) {
-                    // It's a function type with one parameter specified
-                    //    (A) -> B
-                    functionOrParenthesizedType.rollbackTo();
-                    parseFunctionType();
-                }
-                else {
-                    // It's a parenthesized type
-                    //    (A)
-                    functionOrParenthesizedType.drop();
-                }
+            if (at(RPAR) && lookahead(1) != ARROW) {
+                // It's a parenthesized type
+                //    (A)
+                advance();
+                functionOrParenthesizedType.drop();
             }
             else {
                 // This must be a function type
@@ -2213,11 +2209,11 @@ public class KotlinParsing extends AbstractKotlinParsing {
                 // or
                 //   (a : A) -> C
                 functionOrParenthesizedType.rollbackTo();
-                parseFunctionType();
+                parseFunctionType(contextReceiversStart.precede());
+                wasFunctionTypeParsed = true;
             }
-
         }
-        else if (!withContextReceiver) {
+        else {
             errorWithRecovery("Type expected",
                     TokenSet.orSet(TOP_LEVEL_DECLARATION_FIRST,
                                    TokenSet.create(EQ, COMMA, GT, RBRACKET, DOT, RPAR, RBRACE, LBRACE, SEMICOLON),
@@ -2246,36 +2242,40 @@ public class KotlinParsing extends AbstractKotlinParsing {
             intersectionType.done(INTERSECTION_TYPE);
             wasIntersection = true;
         }
-        boolean withExtensionReceiver = typeBeforeDot && at(DOT);
 
-
-        if (withExtensionReceiver && !wasIntersection || withContextReceiver) {
+        if (typeBeforeDot && at(DOT) && !wasIntersection) {
             // This is a receiver for a function type
             //  A.(B) -> C
             //   ^
 
-            PsiBuilder.Marker functionType = typeElementMarker.precede();
+            PsiBuilder.Marker functionType = contextReceiversStart.precede();
 
             PsiBuilder.Marker receiverTypeRef = typeElementMarker.precede();
             PsiBuilder.Marker receiverType = receiverTypeRef.precede();
             receiverTypeRef.done(TYPE_REFERENCE);
             receiverType.done(FUNCTION_TYPE_RECEIVER);
 
-            if (withExtensionReceiver) {
-                advance(); // DOT
-            }
+            advance(); // DOT
 
             if (at(LPAR)) {
-                parseFunctionTypeContents().drop();
+                parseFunctionType(functionType);
             }
             else {
                 error("Expecting function type");
             }
 
-            functionType.done(FUNCTION_TYPE);
+            wasFunctionTypeParsed = true;
+        }
+
+        if (withContextReceiver && !wasFunctionTypeParsed) {
+            errorWithRecovery("Function type expected expected",
+                              TokenSet.orSet(TOP_LEVEL_DECLARATION_FIRST,
+                                             TokenSet.create(EQ, COMMA, GT, RBRACKET, DOT, RPAR, RBRACE, LBRACE, SEMICOLON),
+                                             extraRecoverySet));
         }
 
         typeElementMarker.drop();
+        contextReceiversStart.drop();
         return typeRefMarker;
     }
 
@@ -2448,13 +2448,12 @@ public class KotlinParsing extends AbstractKotlinParsing {
      *   : (type ".")? "(" parameter{","}? ")" "->" type?
      *   ;
      */
-    private void parseFunctionType() {
-        parseFunctionTypeContents().done(FUNCTION_TYPE);
+    private void parseFunctionType(PsiBuilder.Marker functionType) {
+        parseFunctionTypeContents(functionType).done(FUNCTION_TYPE);
     }
 
-    private PsiBuilder.Marker parseFunctionTypeContents() {
+    private PsiBuilder.Marker parseFunctionTypeContents(PsiBuilder.Marker functionType) {
         assert _at(LPAR) : tt();
-        PsiBuilder.Marker functionType = mark();
 
         parseValueParameterList(true, /* typeRequired  = */ true, TokenSet.EMPTY);
 
