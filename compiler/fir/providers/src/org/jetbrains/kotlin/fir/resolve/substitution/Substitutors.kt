@@ -223,24 +223,19 @@ fun createTypeSubstitutorByTypeConstructor(
     approximateIntegerLiterals: Boolean
 ): ConeSubstitutor {
     if (map.isEmpty()) return ConeSubstitutor.Empty
-    return object : AbstractConeSubstitutor(context), TypeSubstitutorMarker {
-        override fun substituteType(type: ConeKotlinType): ConeKotlinType? {
-            if (type !is ConeLookupTagBasedType && type !is ConeStubType) return null
-            val new = map[type.typeConstructor(context)] ?: return null
-            val approximatedIntegerLiteralType = if (approximateIntegerLiterals) new.approximateIntegerLiteralType() else new
-            return approximatedIntegerLiteralType.updateNullabilityIfNeeded(type)?.withCombinedAttributesFrom(type)
-        }
-    }
+    return ConeTypeSubstitutorByTypeConstructor(map, context, approximateIntegerLiterals)
 }
 
-internal class TypeSubstitutorByTypeConstructor(
+internal class ConeTypeSubstitutorByTypeConstructor(
     private val map: Map<TypeConstructorMarker, ConeKotlinType>,
-    context: ConeTypeContext
+    private val context: ConeTypeContext,
+    private val approximateIntegerLiterals: Boolean
 ) : AbstractConeSubstitutor(context), TypeSubstitutorMarker {
     override fun substituteType(type: ConeKotlinType): ConeKotlinType? {
         if (type !is ConeLookupTagBasedType && type !is ConeStubType) return null
-        val new = map[type.typeConstructor(typeContext)] ?: return null
-        return new.approximateIntegerLiteralType().updateNullabilityIfNeeded(type)?.withCombinedAttributesFrom(type)
+        val new = map[type.typeConstructor(context)] ?: return null
+        val approximatedIntegerLiteralType = if (approximateIntegerLiterals) new.approximateIntegerLiteralType() else new
+        return approximatedIntegerLiteralType.updateNullabilityIfNeeded(type)?.withCombinedAttributesFrom(type)
     }
 }
 
