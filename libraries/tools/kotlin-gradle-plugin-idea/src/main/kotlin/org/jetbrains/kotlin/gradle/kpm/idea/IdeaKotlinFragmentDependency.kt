@@ -12,6 +12,8 @@ interface IdeaKotlinFragmentDependency : Serializable
 @Suppress("unused")
 @InternalKotlinGradlePluginApi
 class IdeaKotlinFragmentDependencyImpl: IdeaKotlinFragmentDependency {
+
+    @InternalKotlinGradlePluginApi
     companion object {
         const val serialVersionUID = 0L
     }
