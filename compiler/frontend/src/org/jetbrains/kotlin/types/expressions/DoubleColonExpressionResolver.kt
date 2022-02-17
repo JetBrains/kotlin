@@ -109,7 +109,7 @@ class DoubleColonExpressionResolver(
             val result = resolveDoubleColonLHS(expression, c)
 
             if (c.inferenceSession is BuilderInferenceSession && result?.type?.contains { it is StubTypeForBuilderInference } == true) {
-                c.inferenceSession.addOldCallableReferenceCalls(expression)
+                c.inferenceSession.addExpression(expression)
             }
 
             if (result != null && !result.type.isError) {
@@ -555,7 +555,7 @@ class DoubleColonExpressionResolver(
         val dataFlowInfo = (lhs as? DoubleColonLHS.Expression)?.dataFlowInfo ?: c.dataFlowInfo
 
         if (c.inferenceSession is BuilderInferenceSession && result?.contains { it is StubTypeForBuilderInference } == true) {
-            c.inferenceSession.addOldCallableReferenceCalls(expression)
+            c.inferenceSession.addExpression(expression)
         }
 
         return dataFlowAnalyzer.checkType(createTypeInfo(result, dataFlowInfo), expression, c)

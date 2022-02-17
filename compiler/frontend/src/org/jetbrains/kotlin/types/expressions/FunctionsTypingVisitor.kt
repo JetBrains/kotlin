@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.psi.psiUtil.getAnnotationEntries
 import org.jetbrains.kotlin.resolve.*
 import org.jetbrains.kotlin.resolve.BindingContext.EXPECTED_RETURN_TYPE
 import org.jetbrains.kotlin.resolve.calls.context.ContextDependency
+import org.jetbrains.kotlin.resolve.calls.inference.BuilderInferenceSession
 import org.jetbrains.kotlin.resolve.calls.inference.model.TypeVariableTypeConstructor
 import org.jetbrains.kotlin.resolve.checkers.TrailingCommaChecker
 import org.jetbrains.kotlin.resolve.checkers.UnderscoreChecker
@@ -179,6 +180,10 @@ internal class FunctionsTypingVisitor(facade: ExpressionTypingInternals) : Expre
             context,
             functionDescriptor.createFunctionType(components.builtIns, suspendFunctionTypeExpected)!!
         )
+
+        if (context.inferenceSession is BuilderInferenceSession) {
+            context.inferenceSession.addExpression(expression)
+        }
 
         if (functionTypeExpected) {
             // all checks were done before

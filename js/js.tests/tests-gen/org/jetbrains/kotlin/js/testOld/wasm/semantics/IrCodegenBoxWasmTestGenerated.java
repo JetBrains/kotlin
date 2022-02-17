@@ -12343,6 +12343,11 @@ public class IrCodegenBoxWasmTestGenerated extends AbstractIrCodegenBoxWasmTest 
                 runTest("compiler/testData/codegen/box/inference/builderInference/kt49887.kt");
             }
 
+            @TestMetadata("kt50520.kt")
+            public void testKt50520() throws Exception {
+                runTest("compiler/testData/codegen/box/inference/builderInference/kt50520.kt");
+            }
+
             @TestMetadata("labaledCall.kt")
             public void testLabaledCall() throws Exception {
                 runTest("compiler/testData/codegen/box/inference/builderInference/labaledCall.kt");

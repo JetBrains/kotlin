@@ -14661,6 +14661,12 @@ public class IrJsCodegenBoxTestGenerated extends AbstractIrJsCodegenBoxTest {
             }
 
             @Test
+            @TestMetadata("kt50520.kt")
+            public void testKt50520() throws Exception {
+                runTest("compiler/testData/codegen/box/inference/builderInference/kt50520.kt");
+            }
+
+            @Test
             @TestMetadata("labaledCall.kt")
             public void testLabaledCall() throws Exception {
                 runTest("compiler/testData/codegen/box/inference/builderInference/labaledCall.kt");
