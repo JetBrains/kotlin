@@ -69,6 +69,10 @@ android {
             dimension "box"
         }
 
+        common3 {
+            dimension "box"
+        }
+
         reflect0 {
             dimension "box"
         }
