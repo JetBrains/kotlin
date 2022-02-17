@@ -408,8 +408,8 @@ interface ConeInferenceContext : TypeSystemInferenceExtensionContext, ConeTypeCo
     }
 
     private fun AnnotationMarker.isCustomAttribute(): Boolean {
-        val compilerAttributes = CompilerConeAttributes.classIdByCompilerAttribute
-        return this !in compilerAttributes && this !is CustomAnnotationTypeAttribute
+        val compilerAttributes = CompilerConeAttributes.classIdByCompilerAttributeKey
+        return (this as? ConeAttribute<*>)?.key !in compilerAttributes && this !is CustomAnnotationTypeAttribute
     }
 
     override fun KotlinTypeMarker.replaceCustomAttributes(newAttributes: List<AnnotationMarker>): KotlinTypeMarker {

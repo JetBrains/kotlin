@@ -6,9 +6,9 @@
 package org.jetbrains.kotlin.fir.types
 
 import org.jetbrains.kotlin.fir.util.ConeTypeRegistry
+import org.jetbrains.kotlin.types.model.AnnotationMarker
 import org.jetbrains.kotlin.util.AttributeArrayOwner
 import org.jetbrains.kotlin.util.TypeRegistry
-import org.jetbrains.kotlin.types.model.AnnotationMarker
 import org.jetbrains.kotlin.utils.addIfNotNull
 import kotlin.properties.ReadOnlyProperty
 import kotlin.reflect.KClass
@@ -33,6 +33,8 @@ abstract class ConeAttribute<T : ConeAttribute<T>> : AnnotationMarker {
 
     abstract val key: KClass<out T>
 }
+
+typealias ConeAttributeKey = KClass<out ConeAttribute<*>>
 
 class ConeAttributes private constructor(attributes: List<ConeAttribute<*>>) : AttributeArrayOwner<ConeAttribute<*>, ConeAttribute<*>>(),
     Iterable<ConeAttribute<*>> {
@@ -82,7 +84,11 @@ class ConeAttributes private constructor(attributes: List<ConeAttribute<*>>) : A
     }
 
     operator fun contains(attribute: ConeAttribute<*>): Boolean {
-        val index = getId(attribute.key)
+        return contains(attribute.key)
+    }
+
+    operator fun contains(attributeKey: KClass<out ConeAttribute<*>>): Boolean {
+        val index = getId(attributeKey)
         return arrayMap[index] != null
     }
 
