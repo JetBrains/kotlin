@@ -76,8 +76,8 @@ class ParametersBuilder private constructor() {
         return info
     }
 
-    fun markValueParametersStart() {
-        this.valueParamFirstIndex = params.size
+    fun markValueParametersStart(contextReceiversCount: Int) {
+        this.valueParamFirstIndex = params.size - contextReceiversCount
         this.nextValueParameterIndex = valueParamFirstIndex
     }
 
