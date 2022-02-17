@@ -16,6 +16,16 @@ interface IdeaKotlinProjectModel : Serializable {
     val modules: List<IdeaKotlinModule>
 }
 
+fun IdeaKotlinProjectModel.deepCopy(interner: Interner = Interner.default()): IdeaKotlinProjectModel {
+    return IdeaKotlinProjectModelImpl(
+        gradlePluginVersion = interner.intern(gradlePluginVersion),
+        coreLibrariesVersion = interner.intern(coreLibrariesVersion),
+        explicitApiModeCliOption = interner.intern(explicitApiModeCliOption),
+        kotlinNativeHome = interner.intern(kotlinNativeHome),
+        modules = interner.internList(modules.map { it.deepCopy(interner) })
+    )
+}
+
 @InternalKotlinGradlePluginApi
 data class IdeaKotlinProjectModelImpl(
     override val gradlePluginVersion: String,
