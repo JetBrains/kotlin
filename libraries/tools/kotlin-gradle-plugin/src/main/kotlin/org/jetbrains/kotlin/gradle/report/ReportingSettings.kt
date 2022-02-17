@@ -22,7 +22,6 @@ data class ReportingSettings(
 }
 
 data class FileReportSettings(
-    val metricsOutputFile: File? = null,
     val buildReportDir: File,
     val includeMetricsInReport: Boolean = false,
 ) : Serializable {

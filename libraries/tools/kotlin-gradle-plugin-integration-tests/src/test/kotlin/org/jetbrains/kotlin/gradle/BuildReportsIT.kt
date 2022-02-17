@@ -64,7 +64,7 @@ class BuildReportsIT : KGPBaseTest() {
             assertTrue { report.contains("Time metrics:") }
             assertTrue { report.contains("Run compilation:") }
             assertTrue { report.contains("Incremental compilation in daemon:") }
-            assertTrue { report.contains("Build performance metrics:") }
+            assertTrue { report.contains("Size metrics:") }
             assertTrue { report.contains("Total size of the cache directory:") }
             assertTrue { report.contains("Total compiler iteration:") }
             assertTrue { report.contains("ABI snapshot size:") }

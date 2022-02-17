@@ -10,11 +10,11 @@ import org.jetbrains.kotlin.build.report.metrics.BuildMetrics
 class BuildExecutionData(
     val startParameters: Collection<String>,
     val failureMessages: List<String?>,
-    val taskExecutionData: Collection<TaskExecutionData>
+    val buildOperationRecord: Collection<BuildOperationRecord>
 ) {
     val aggregatedMetrics by lazy {
         BuildMetrics().also { acc ->
-            taskExecutionData.forEach { acc.addAll(it.buildMetrics) }
+            buildOperationRecord.forEach { acc.addAll(it.buildMetrics) }
         }
     }
 }

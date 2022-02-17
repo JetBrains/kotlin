@@ -85,8 +85,7 @@ abstract class KotlinBasePluginWrapper : Plugin<Project> {
 
         KotlinGradleBuildServices.detectKotlinPluginLoadedInMultipleProjects(project, kotlinPluginVersion)
 
-        val buildMetricReporter =
-            BuildMetricsReporterService.registerIfAbsent(project, BuildMetricsReporterService.getStartParameters(project))
+        val buildMetricReporter = BuildMetricsReporterService.registerIfAbsent(project)
 
         buildMetricReporter?.also { BuildEventsListenerRegistryHolder.getInstance(project).listenerRegistry.onTaskCompletion(it) }
 

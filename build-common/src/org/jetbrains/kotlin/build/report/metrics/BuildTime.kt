@@ -27,7 +27,7 @@ enum class BuildTime(val parent: BuildTime? = null, val readableString: String) 
                     SET_UP_ABI_SNAPSHOTS(JAR_SNAPSHOT, "Set up ABI snapshot"),
                     IC_ANALYZE_JAR_FILES(JAR_SNAPSHOT, "Analyze jar files"),
                 IC_CALCULATE_INITIAL_DIRTY_SET(INCREMENTAL_COMPILATION_DAEMON, "Calculate initial dirty sources set"), //TODO
-                    COMPUTE_CLASSPATH_CHANGES(IC_CALCULATE_INITIAL_DIRTY_SET, "Compute task classpath changes"),
+                    COMPUTE_CLASSPATH_CHANGES(IC_CALCULATE_INITIAL_DIRTY_SET, "Compute classpath changes"),
                         LOAD_CURRENT_CLASSPATH_SNAPSHOT(COMPUTE_CLASSPATH_CHANGES, "Load current classpath snapshot"),
                             REMOVE_DUPLICATE_CLASSES(LOAD_CURRENT_CLASSPATH_SNAPSHOT, "Remove duplicate classes"),
                         SHRINK_CURRENT_CLASSPATH_SNAPSHOT(COMPUTE_CLASSPATH_CHANGES, "Shrink current classpath snapshot"),
@@ -51,14 +51,24 @@ enum class BuildTime(val parent: BuildTime? = null, val readableString: String) 
                 COMPILATION_ROUND(INCREMENTAL_COMPILATION_DAEMON, "Sources compilation round"),
                 IC_WRITE_HISTORY_FILE(INCREMENTAL_COMPILATION_DAEMON, "Write history file"),
                 SHRINK_AND_SAVE_CURRENT_CLASSPATH_SNAPSHOT_AFTER_COMPILATION(INCREMENTAL_COMPILATION_DAEMON, "Shrink and save current classpath snapshot after compilation"),
-                    LOAD_SHRUNK_PREVIOUS_CLASSPATH_SNAPSHOT_AFTER_COMPILATION(SHRINK_AND_SAVE_CURRENT_CLASSPATH_SNAPSHOT_AFTER_COMPILATION, "Load shrunk previous classpath snapshot after compilation"),
-                    LOAD_CURRENT_CLASSPATH_SNAPSHOT_AFTER_COMPILATION(SHRINK_AND_SAVE_CURRENT_CLASSPATH_SNAPSHOT_AFTER_COMPILATION, "Load current classpath snapshot after compilation"),
-                    SHRINK_CURRENT_CLASSPATH_SNAPSHOT_AFTER_COMPILATION(SHRINK_AND_SAVE_CURRENT_CLASSPATH_SNAPSHOT_AFTER_COMPILATION, "Shrink current classpath snapshot after compilation"),
-                    SAVE_SHRUNK_CURRENT_CLASSPATH_SNAPSHOT_AFTER_COMPILATION(SHRINK_AND_SAVE_CURRENT_CLASSPATH_SNAPSHOT_AFTER_COMPILATION, "Save shrunk classpath snapshot after compilation"),
+                    INCREMENTAL_LOAD_SHRUNK_PREVIOUS_CLASSPATH_SNAPSHOT(SHRINK_AND_SAVE_CURRENT_CLASSPATH_SNAPSHOT_AFTER_COMPILATION, "Incremental shrinking - Load shrunk previous classpath snapshot"),
+                    INCREMENTAL_LOAD_CURRENT_CLASSPATH_SNAPSHOT(SHRINK_AND_SAVE_CURRENT_CLASSPATH_SNAPSHOT_AFTER_COMPILATION, "Incremental shrinking - Load current classpath snapshot"),
+                    INCREMENTAL_SHRINK_CURRENT_CLASSPATH_SNAPSHOT(SHRINK_AND_SAVE_CURRENT_CLASSPATH_SNAPSHOT_AFTER_COMPILATION, "Incremental shrinking - Shrink current classpath snapshot"),
+                    NON_INCREMENTAL_LOAD_CURRENT_CLASSPATH_SNAPSHOT(SHRINK_AND_SAVE_CURRENT_CLASSPATH_SNAPSHOT_AFTER_COMPILATION, "Non-incremental shrinking - Load current classpath snapshot"),
+                    NON_INCREMENTAL_SHRINK_CURRENT_CLASSPATH_SNAPSHOT(SHRINK_AND_SAVE_CURRENT_CLASSPATH_SNAPSHOT_AFTER_COMPILATION, "Non-incremental shrinking - Shrink current classpath snapshot"),
+                    SAVE_SHRUNK_CURRENT_CLASSPATH_SNAPSHOT(SHRINK_AND_SAVE_CURRENT_CLASSPATH_SNAPSHOT_AFTER_COMPILATION, "Save shrunk current classpath snapshot"),
     COMPILER_PERFORMANCE(readableString = "Compiler time"),
         COMPILER_INITIALIZATION(COMPILER_PERFORMANCE, "Compiler initialization time"),
         CODE_ANALYSIS(COMPILER_PERFORMANCE, "Compiler code analysis"),
         CODE_GENERATION(COMPILER_PERFORMANCE, "Compiler code generation"),
+    CLASSPATH_ENTRY_SNAPSHOT_TRANSFORM(parent = null, "Classpath entry snapshot transform"),
+        LOAD_CLASSES(parent = CLASSPATH_ENTRY_SNAPSHOT_TRANSFORM, "Load classes"),
+        SNAPSHOT_CLASSES(parent = CLASSPATH_ENTRY_SNAPSHOT_TRANSFORM, "Snapshot classes"),
+            READ_CLASSES_BASIC_INFO(parent = SNAPSHOT_CLASSES, "Read basic information about classes"),
+            FIND_INACCESSIBLE_CLASSES(parent = SNAPSHOT_CLASSES, "Find inaccessible classes"),
+            SNAPSHOT_KOTLIN_CLASSES(parent = SNAPSHOT_CLASSES, "Snapshot Kotlin classes"),
+            SNAPSHOT_JAVA_CLASSES(parent = SNAPSHOT_CLASSES, "Snapshot Java classes"),
+        SAVE_CLASSPATH_ENTRY_SNAPSHOT(parent = CLASSPATH_ENTRY_SNAPSHOT_TRANSFORM, "Save classpath entry snapshot")
     ;
 
     companion object {

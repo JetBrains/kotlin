@@ -19,11 +19,10 @@ import org.gradle.tooling.events.task.TaskSkippedResult
 import org.jetbrains.kotlin.build.report.metrics.BuildMetrics
 import org.jetbrains.kotlin.build.report.metrics.BuildMetricsReporter
 import org.jetbrains.kotlin.build.report.metrics.BuildTime
-import org.jetbrains.kotlin.gradle.plugin.KotlinGradleBuildServices
 import org.jetbrains.kotlin.gradle.plugin.internal.state.TaskExecutionResults
 import org.jetbrains.kotlin.gradle.report.data.BuildExecutionData
 import org.jetbrains.kotlin.gradle.report.data.BuildExecutionDataProcessor
-import org.jetbrains.kotlin.gradle.report.data.TaskExecutionData
+import org.jetbrains.kotlin.gradle.report.data.BuildOperationRecord
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.ConcurrentLinkedQueue
 
@@ -38,42 +37,67 @@ abstract class BuildMetricsReporterService : BuildService<BuildMetricsReporterSe
 
     private val log = Logging.getLogger(this.javaClass)
 
-    //Task path to build metrics
-    private val buildMetricsMap = ConcurrentHashMap<String, BuildMetricsReporter>()
-    private val taskRecords = ConcurrentHashMap<String, TaskRecord>()
-    private val failureMessages = ConcurrentLinkedQueue<String?>()
-    private val taskClass = ConcurrentHashMap<String, String>()
+    // Tasks and transforms' records
+    private val buildOperationRecords = ConcurrentLinkedQueue<BuildOperationRecord>()
+    private val failureMessages = ConcurrentLinkedQueue<String>()
 
-    open fun add(taskPath: String, type: String, metrics: BuildMetricsReporter) {
-        if (buildMetricsMap.containsKey(taskPath)) {
-            log.warn("Duplicate path $taskPath")
+    // Info for tasks only
+    private val taskPathToMetricsReporter = ConcurrentHashMap<String, BuildMetricsReporter>()
+    private val taskPathToTaskClass = ConcurrentHashMap<String, String>()
+
+    open fun addTask(taskPath: String, taskClass: Class<*>, metricsReporter: BuildMetricsReporter) {
+        taskPathToMetricsReporter.put(taskPath, metricsReporter).also {
+            if (it != null) log.warn("Duplicate task path: $taskPath") // Should never happen but log it just in case
         }
-        buildMetricsMap[taskPath] = metrics
-        taskClass[taskPath] = type
+        taskPathToTaskClass.put(taskPath, taskClass.name).also {
+            if (it != null) log.warn("Duplicate task path: $taskPath") // Should never happen but log it just in case
+        }
+    }
+
+    open fun addTransformMetrics(
+        transformPath: String,
+        transformClass: Class<*>,
+        isKotlinTransform: Boolean,
+        startTimeMs: Long,
+        totalTimeMs: Long,
+        buildMetrics: BuildMetrics,
+        failureMessage: String?
+    ) {
+        buildOperationRecords.add(
+            TransformRecord(transformPath, transformClass.name, isKotlinTransform, startTimeMs, totalTimeMs, buildMetrics)
+        )
+        failureMessage?.let { failureMessages.add(it) }
     }
 
     override fun onFinish(event: FinishEvent?) {
         if (event is TaskFinishEvent) {
             val result = event.result
             val taskPath = event.descriptor.taskPath
-            val startMs = event.result.startTime
-            val finishMs = event.result.endTime
+            val totalTimeMs = result.endTime - result.startTime
+
+            val buildMetrics = BuildMetrics()
+            buildMetrics.buildTimes.addTimeMs(BuildTime.GRADLE_TASK, totalTimeMs)
+            taskPathToMetricsReporter[taskPath]?.let {
+                buildMetrics.addAll(it.getMetrics())
+            }
+            val taskExecutionResult = TaskExecutionResults[taskPath]
+            taskExecutionResult?.buildMetrics?.also { buildMetrics.addAll(it) }
+
+            buildOperationRecords.add(
+                TaskRecord(
+                    path = taskPath,
+                    classFqName = taskPathToTaskClass[taskPath] ?: "unknown",
+                    startTimeMs = result.startTime,
+                    totalTimeMs = totalTimeMs,
+                    buildMetrics = buildMetrics,
+                    didWork = result is TaskExecutionResult,
+                    skipMessage = (result as? TaskSkippedResult)?.skipMessage,
+                    icLogLines = taskExecutionResult?.icLogLines ?: emptyList()
+                )
+            )
             if (result is TaskFailureResult) {
                 failureMessages.addAll(result.failures.map { it.message })
             }
-            val skipMessage = when (result) {
-                is TaskSkippedResult -> result.skipMessage
-                else -> null
-            }
-            val didWork = result is TaskExecutionResult
-            val buildMetrics = BuildMetrics()
-            buildMetrics.buildTimes.addTimeMs(BuildTime.GRADLE_TASK, finishMs - startMs)
-
-            buildMetricsMap[taskPath]?.also { buildMetrics.addAll(it.getMetrics()) }
-            val taskExecutionResult = TaskExecutionResults[taskPath]
-            val icLogLines = taskExecutionResult?.icLogLines ?: emptyList()
-            taskExecutionResult?.buildMetrics?.also { buildMetrics.addAll(it) }
-            taskRecords[taskPath] = TaskRecord(taskPath, startMs, finishMs, skipMessage, didWork, icLogLines, buildMetrics, taskClass[taskPath] ?: "unknown")
         }
     }
 
@@ -81,19 +105,16 @@ abstract class BuildMetricsReporterService : BuildService<BuildMetricsReporterSe
         val buildData = BuildExecutionData(
             startParameters = parameters.startParameters,
             failureMessages = failureMessages.toList(),
-            taskExecutionData = taskRecords.values.sortedBy { it.startMs }
+            buildOperationRecord = buildOperationRecords.sortedBy { it.startTimeMs }
         )
         parameters.buildDataProcessors.forEach { it.process(buildData, log) }
-        buildMetricsMap.clear()
-        taskRecords.clear()
-        failureMessages.clear()
     }
 
     companion object {
 
         fun getStartParameters(project: Project) = project.gradle.startParameter.let {
             val startParameters = arrayListOf<String>()
-            startParameters.add("tasks = ${it.taskRequests.joinToString { it.args.toString() }}")
+            startParameters.add("tasks = ${it.taskRequests.joinToString { task -> task.args.toString() }}")
             startParameters.add("excluded tasks = ${it.excludedTaskNames}")
             startParameters.add("current dir = ${it.currentDir}")
             startParameters.add("project properties args = ${it.projectProperties}")
@@ -101,33 +122,34 @@ abstract class BuildMetricsReporterService : BuildService<BuildMetricsReporterSe
             startParameters
         }
 
-        fun registerIfAbsent(project: Project, startParameters: List<String>): Provider<BuildMetricsReporterService>? {
-            val rootProject = project.gradle.rootProject
-            val reportingSettings = reportingSettings(rootProject)
+        fun registerIfAbsent(project: Project): Provider<BuildMetricsReporterService>? {
+            val serviceClass = BuildMetricsReporterService::class.java
+            val serviceName = "${serviceClass.name}_${serviceClass.classLoader.hashCode()}"
 
-            val buildDataProcessors = ArrayList<BuildExecutionDataProcessor>()
-            reportingSettings.fileReportSettings?.let {
-                buildDataProcessors.add(
-                    PlainTextBuildReportWriterDataProcessor(
-                        it,
-                        rootProject.name
-                    )
-                )
+            // Return early if the service was already registered to avoid the overhead of reading the reporting settings below
+            project.gradle.sharedServices.registrations.findByName(serviceName)?.let {
+                @Suppress("UNCHECKED_CAST")
+                return it.service as Provider<BuildMetricsReporterService>
             }
 
-            if (reportingSettings.metricsOutputFile != null) {
-                buildDataProcessors.add(MetricsWriter(reportingSettings.metricsOutputFile.absoluteFile))
-            }
-
-            if (reportingSettings.buildReportOutputs.isEmpty() && buildDataProcessors.isEmpty()) {
+            val reportingSettings = reportingSettings(project.rootProject)
+            if (reportingSettings.buildReportOutputs.isEmpty()
+                && reportingSettings.fileReportSettings == null
+                && reportingSettings.metricsOutputFile == null
+            ) {
                 return null
             }
 
-            return project.gradle.sharedServices.registerIfAbsent(
-                "build_metric_service_${KotlinGradleBuildServices::class.java.classLoader.hashCode()}",
-                BuildMetricsReporterService::class.java
-            ) {
-                it.parameters.startParameters = startParameters
+            return project.gradle.sharedServices.registerIfAbsent(serviceName, serviceClass) {
+                val buildDataProcessors = mutableListOf<BuildExecutionDataProcessor>()
+                reportingSettings.fileReportSettings?.let { fileReportSettings ->
+                    buildDataProcessors.add(PlainTextBuildReportWriterDataProcessor(fileReportSettings, project.rootProject.name))
+                }
+                reportingSettings.metricsOutputFile?.let { metricsOutputFile ->
+                    buildDataProcessors.add(MetricsWriter(metricsOutputFile.absoluteFile))
+                }
+
+                it.parameters.startParameters = getStartParameters(project)
                 it.parameters.buildDataProcessors = buildDataProcessors
                 it.parameters.reportingSettings = reportingSettings
             }!!
@@ -138,19 +160,27 @@ abstract class BuildMetricsReporterService : BuildService<BuildMetricsReporterSe
 }
 
 private class TaskRecord(
-    override val taskPath: String,
-    override val startMs: Long,
-    override val endMs: Long,
-    override val skipMessage: String?,
-    override val didWork: Boolean,
-    override val icLogLines: List<String>,
+    override val path: String,
+    override val classFqName: String,
+    override val startTimeMs: Long,
+    override val totalTimeMs: Long,
     override val buildMetrics: BuildMetrics,
-    override val type: String
-) : TaskExecutionData {
-    override val isKotlinTask by lazy {
-        type.startsWith("org.jetbrains.kotlin")
-    }
+    override val didWork: Boolean,
+    override val skipMessage: String?,
+    override val icLogLines: List<String>
+) : BuildOperationRecord {
+    override val isFromKotlinPlugin: Boolean = classFqName.startsWith("org.jetbrains.kotlin")
+}
 
-    override val totalTimeMs: Long
-        get() = (endMs - startMs)
+private class TransformRecord(
+    override val path: String,
+    override val classFqName: String,
+    override val isFromKotlinPlugin: Boolean,
+    override val startTimeMs: Long,
+    override val totalTimeMs: Long,
+    override val buildMetrics: BuildMetrics
+) : BuildOperationRecord {
+    override val didWork: Boolean = true
+    override val skipMessage: String? = null
+    override val icLogLines: List<String> = emptyList()
 }

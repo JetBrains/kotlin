@@ -9,7 +9,7 @@ import org.gradle.api.logging.Logger
 import org.jetbrains.kotlin.build.report.metrics.*
 import org.jetbrains.kotlin.gradle.report.data.BuildExecutionData
 import org.jetbrains.kotlin.gradle.report.data.BuildExecutionDataProcessor
-import org.jetbrains.kotlin.gradle.report.data.TaskExecutionData
+import org.jetbrains.kotlin.gradle.report.data.BuildOperationRecord
 import org.jetbrains.kotlin.gradle.utils.Printer
 import java.io.File
 import java.io.Serializable
@@ -59,8 +59,15 @@ internal class PlainTextBuildReportWriter(
     }
 
     private fun printBuildReport(build: BuildExecutionData) {
+        // NOTE: BuildExecutionData / BuildOperationRecord contains data for both tasks and transforms.
+        // Where possible, we still use the term "tasks" because saying "tasks/transforms" is a bit verbose and "build operations" may sound
+        // a bit unfamiliar.
+        // TODO: If it is confusing, consider renaming "tasks" to "build operations" in this class.
         printBuildInfo(build)
-        printMetrics(build.aggregatedMetrics)
+        if (printMetrics) {
+            printMetrics(build.aggregatedMetrics)
+            p.println()
+        }
         printTaskOverview(build)
         printTasksLog(build)
     }
@@ -69,17 +76,15 @@ internal class PlainTextBuildReportWriter(
         p.withIndent("Gradle start parameters:") {
             build.startParameters.forEach { p.println(it) }
         }
-
         p.println()
+
         if (build.failureMessages.isNotEmpty()) {
             p.println("Build failed: ${build.failureMessages}")
+            p.println()
         }
-        p.println()
     }
 
     private fun printMetrics(buildMetrics: BuildMetrics) {
-        if (!printMetrics) return
-
         printBuildTimes(buildMetrics.buildTimes)
         printBuildPerformanceMetrics(buildMetrics.buildPerformanceMetrics)
         printBuildAttributes(buildMetrics.buildAttributes)
@@ -114,19 +119,38 @@ internal class PlainTextBuildReportWriter(
                 printBuildTime(buildTime)
             }
         }
-        p.println()
     }
 
     private fun printBuildPerformanceMetrics(buildMetrics: BuildPerformanceMetrics) {
         val allBuildMetrics = buildMetrics.asMap()
         if (allBuildMetrics.isEmpty()) return
 
-        p.withIndent("Build performance metrics:") {
+        p.withIndent("Size metrics:") {
             for (metric in BuildPerformanceMetric.values()) {
-                allBuildMetrics[metric]?.let { p.println("${metric.readableString}: $it") }
+                allBuildMetrics[metric]?.let { printSizeMetric(metric, it) }
             }
         }
-        p.println()
+    }
+
+    private fun printSizeMetric(sizeMetric: BuildPerformanceMetric, value: Long) {
+        fun BuildPerformanceMetric.numberOfAncestors(): Int {
+            var count = 0
+            var parent: BuildPerformanceMetric? = parent
+            while (parent != null) {
+                count++
+                parent = parent.parent
+            }
+            return count
+        }
+
+        val indentLevel = sizeMetric.numberOfAncestors()
+
+        repeat(indentLevel) { p.pushIndent() }
+        when (sizeMetric.type) {
+            SizeMetricType.BYTES -> p.println("${sizeMetric.readableString}: ${formatSize(value)}")
+            SizeMetricType.NUMBER -> p.println("${sizeMetric.readableString}: $value")
+        }
+        repeat(indentLevel) { p.popIndent() }
     }
 
     private fun printBuildAttributes(buildAttributes: BuildAttributes) {
@@ -139,19 +163,18 @@ internal class PlainTextBuildReportWriter(
                 printMap(p, kind.name, attributesCounts.map { (k, v) -> k.readableString to v }.toMap())
             }
         }
-        p.println()
     }
 
     private fun printTaskOverview(build: BuildExecutionData) {
         var allTasksTimeMs = 0L
         var kotlinTotalTimeMs = 0L
-        val kotlinTasks = ArrayList<TaskExecutionData>()
+        val kotlinTasks = ArrayList<BuildOperationRecord>()
 
-        for (task in build.taskExecutionData) {
+        for (task in build.buildOperationRecord) {
             val taskTimeMs = task.totalTimeMs
             allTasksTimeMs += taskTimeMs
 
-            if (task.isKotlinTask) {
+            if (task.isFromKotlinPlugin) {
                 kotlinTotalTimeMs += taskTimeMs
                 kotlinTasks.add(task)
             }
@@ -166,37 +189,39 @@ internal class PlainTextBuildReportWriter(
         p.println("Total time for Kotlin tasks: ${formatTime(kotlinTotalTimeMs)} ($ktTaskPercent % of all tasks time)")
 
         val table = TextTable("Time", "% of Kotlin time", "Task")
-        for (task in kotlinTasks.sortedByDescending { it.totalTimeMs }) {
+        for (task in kotlinTasks.sortedWith(compareBy({ -it.totalTimeMs }, { it.startTimeMs }))) {
             val timeMs = task.totalTimeMs
             val percent = (timeMs.toDouble() / kotlinTotalTimeMs * 100).asString(1)
-            table.addRow(formatTime(timeMs), "$percent %", task.taskPath)
+            table.addRow(formatTime(timeMs), "$percent %", task.path)
         }
         table.printTo(p)
         p.println()
     }
 
     private fun printTasksLog(build: BuildExecutionData) {
-        for (task in build.taskExecutionData) {
+        for (task in build.buildOperationRecord.sortedWith(compareBy({ -it.totalTimeMs }, { it.startTimeMs }))) {
             printTaskLog(task)
             p.println()
         }
     }
 
-    private fun printTaskLog(task: TaskExecutionData) {
+    private fun printTaskLog(task: BuildOperationRecord) {
         val skipMessage = task.skipMessage
         if (skipMessage != null) {
-            p.println("Task '${task.taskPath}' was skipped: $skipMessage")
+            p.println("Task '${task.path}' was skipped: $skipMessage")
         } else {
-            p.println("Task '${task.taskPath}' finished in ${formatTime(task.totalTimeMs)}")
+            p.println("Task '${task.path}' finished in ${formatTime(task.totalTimeMs)}")
         }
 
         if (task.icLogLines.isNotEmpty()) {
-            p.withIndent("Compilation log for task '${task.taskPath}':") {
+            p.withIndent("Compilation log for task '${task.path}':") {
                 task.icLogLines.forEach { p.println(it) }
             }
         }
 
-        printMetrics(task.buildMetrics)
+        if (printMetrics) {
+            printMetrics(task.buildMetrics)
+        }
     }
 }
 

@@ -5,6 +5,10 @@
 
 package org.jetbrains.kotlin.incremental.classpathDiff
 
+import org.jetbrains.kotlin.build.report.metrics.BuildMetricsReporter
+import org.jetbrains.kotlin.build.report.metrics.BuildTime
+import org.jetbrains.kotlin.build.report.metrics.DoNothingBuildMetricsReporter
+import org.jetbrains.kotlin.build.report.metrics.measure
 import org.jetbrains.kotlin.incremental.ChangesCollector.Companion.getNonPrivateMemberNames
 import org.jetbrains.kotlin.incremental.KotlinClassInfo
 import org.jetbrains.kotlin.incremental.PackagePartProtoData
@@ -26,14 +30,22 @@ object ClasspathEntrySnapshotter {
                 && !unixStyleRelativePath.equals("module-info.class", ignoreCase = true)
     }
 
-    fun snapshot(classpathEntry: File): ClasspathEntrySnapshot {
-        val classes = DirectoryOrJarContentsReader
-            .read(classpathEntry, DEFAULT_CLASS_FILTER)
-            .map { (unixStyleRelativePath, contents) ->
-                ClassFileWithContents(ClassFile(classpathEntry, unixStyleRelativePath), contents)
-            }
+    fun snapshot(
+        classpathEntry: File,
+        granularity: ClassSnapshotGranularity,
+        metrics: BuildMetricsReporter = DoNothingBuildMetricsReporter
+    ): ClasspathEntrySnapshot {
+        val classes = metrics.measure(BuildTime.LOAD_CLASSES) {
+            DirectoryOrJarContentsReader
+                .read(classpathEntry, DEFAULT_CLASS_FILTER)
+                .map { (unixStyleRelativePath, contents) ->
+                    ClassFileWithContents(ClassFile(classpathEntry, unixStyleRelativePath), contents)
+                }
+        }
 
-        val snapshots = ClassSnapshotter.snapshot(classes)
+        val snapshots = metrics.measure(BuildTime.SNAPSHOT_CLASSES) {
+            ClassSnapshotter.snapshot(classes, granularity, metrics = metrics)
+        }
 
         val relativePathsToSnapshotsMap = classes.map { it.classFile.unixStyleRelativePath }.zip(snapshots).toMap(LinkedHashMap())
         return ClasspathEntrySnapshot(relativePathsToSnapshotsMap)
@@ -47,17 +59,24 @@ object ClassSnapshotter {
     fun snapshot(
         classes: List<ClassFileWithContents>,
         granularity: ClassSnapshotGranularity = CLASS_MEMBER_LEVEL,
-        includeDebugInfoInJavaSnapshot: Boolean = false
+        includeDebugInfoInJavaSnapshot: Boolean = false,
+        metrics: BuildMetricsReporter = DoNothingBuildMetricsReporter
     ): List<ClassSnapshot> {
-        // Find inaccessible classes first
-        val classesInfo: List<BasicClassInfo> = classes.map { it.classInfo }
-        val inaccessibleClassesInfo: Set<BasicClassInfo> = getInaccessibleClasses(classesInfo).toSet()
-
+        val classesInfo: List<BasicClassInfo> = metrics.measure(BuildTime.READ_CLASSES_BASIC_INFO) {
+            classes.map { it.classInfo }
+        }
+        val inaccessibleClassesInfo: Set<BasicClassInfo> = metrics.measure(BuildTime.FIND_INACCESSIBLE_CLASSES) {
+            findInaccessibleClasses(classesInfo)
+        }
         return classes.map {
             when {
                 it.classInfo in inaccessibleClassesInfo -> InaccessibleClassSnapshot
-                it.classInfo.isKotlinClass -> snapshotKotlinClass(it, granularity)
-                else -> JavaClassSnapshotter.snapshot(it, granularity, includeDebugInfoInJavaSnapshot)
+                it.classInfo.isKotlinClass -> metrics.measure(BuildTime.SNAPSHOT_KOTLIN_CLASSES) {
+                    snapshotKotlinClass(it, granularity)
+                }
+                else -> metrics.measure(BuildTime.SNAPSHOT_JAVA_CLASSES) {
+                    JavaClassSnapshotter.snapshot(it, granularity, includeDebugInfoInJavaSnapshot)
+                }
             }
         }
     }
@@ -96,7 +115,7 @@ object ClassSnapshotter {
      * NOTE: If we do not have enough info to determine whether a class is inaccessible, we will assume that the class is accessible to be
      * safe.
      */
-    private fun getInaccessibleClasses(classesInfo: List<BasicClassInfo>): List<BasicClassInfo> {
+    private fun findInaccessibleClasses(classesInfo: List<BasicClassInfo>): Set<BasicClassInfo> {
         fun BasicClassInfo.isInaccessible(): Boolean {
             return if (this.isKotlinClass) {
                 when (this.kotlinClassHeader!!.kind) {
@@ -130,7 +149,7 @@ object ClassSnapshotter {
             }
         }
 
-        return classesInfo.filter { it.isTransitivelyInaccessible() }
+        return classesInfo.filterTo(mutableSetOf()) { it.isTransitivelyInaccessible() }
     }
 }
 
