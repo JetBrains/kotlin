@@ -10,10 +10,10 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinGradleFragment
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinGradleFragmentInternal
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinGradleVariant
 
-private typealias FragmentInterner = MutableMap<KotlinGradleFragment, IdeaKotlinFragment>
+private typealias IdeaKotlinFragmentBuilderCache = MutableMap<KotlinGradleFragment, IdeaKotlinFragment>
 
 internal fun KotlinGradleFragment.toIdeaKotlinFragment(
-    cache: FragmentInterner = mutableMapOf()
+    cache: IdeaKotlinFragmentBuilderCache = mutableMapOf()
 ): IdeaKotlinFragment {
     return cache.getOrPut(this) {
         if (this is KotlinGradleVariant) buildIdeaKotlinVariant(cache)
@@ -21,9 +21,10 @@ internal fun KotlinGradleFragment.toIdeaKotlinFragment(
     }
 }
 
-private fun KotlinGradleFragment.buildIdeaKotlinFragment(cache: FragmentInterner): IdeaKotlinFragment {
+private fun KotlinGradleFragment.buildIdeaKotlinFragment(cache: IdeaKotlinFragmentBuilderCache): IdeaKotlinFragment {
     return IdeaKotlinFragmentImpl(
         name = name,
+        moduleIdentifier = containingModule.moduleIdentifier.toIdeaKotlinModuleIdentifier(),
         languageSettings = languageSettings.toIdeaKotlinLanguageSettings(),
         dependencies = emptyList(),
         directRefinesDependencies = directRefinesDependencies.map { refinesFragment ->
@@ -37,7 +38,7 @@ private fun KotlinGradleFragment.buildIdeaKotlinFragment(cache: FragmentInterner
     )
 }
 
-private fun KotlinGradleVariant.buildIdeaKotlinVariant(cache: FragmentInterner): IdeaKotlinVariant {
+private fun KotlinGradleVariant.buildIdeaKotlinVariant(cache: IdeaKotlinFragmentBuilderCache): IdeaKotlinVariant {
     return IdeaKotlinVariantImpl(
         fragment = buildIdeaKotlinFragment(cache),
         variantAttributes = variantAttributes.mapKeys { (key, _) -> key.uniqueName },
