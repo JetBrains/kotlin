@@ -60,6 +60,7 @@ public abstract interface class org/jetbrains/kotlin/gradle/kpm/idea/IdeaKotlinF
 	public abstract fun getDirectRefinesDependencies ()Ljava/util/List;
 	public abstract fun getExternal ()Lorg/jetbrains/kotlin/gradle/kpm/KotlinExternalModelContainer;
 	public abstract fun getLanguageSettings ()Lorg/jetbrains/kotlin/gradle/kpm/idea/IdeaKotlinLanguageSettings;
+	public abstract fun getModuleIdentifier ()Lorg/jetbrains/kotlin/gradle/kpm/idea/IdeaKotlinModuleIdentifier;
 	public abstract fun getName ()Ljava/lang/String;
 	public abstract fun getResourceDirectories ()Ljava/util/List;
 	public abstract fun getSourceDirectories ()Ljava/util/List;
