@@ -5,21 +5,30 @@
 package org.jetbrains.kotlin.konan
 
 inline class MetaVersion(val metaString: String) {
+    operator fun compareTo(other: MetaVersion): Int {
+        if (metaOrder.contains(this)) {
+            if (metaOrder.contains(other)) {
+                return metaOrder.indexOf(this).compareTo(metaOrder.indexOf(other))
+            }
+        }
+        return metaString.compareTo(other.metaString)
+    }
+
     companion object {
         // Following meta versions are left for source-level compatibility
         val DEV = MetaVersion("dev")
         val DEV_GOOGLE = MetaVersion("dev-google-pr")
         val EAP = MetaVersion("eap")
         val BETA = MetaVersion("Beta")
-        val M1 = MetaVersion("M1")
-        val M2 = MetaVersion("M2")
         val RC = MetaVersion("RC")
         val PUB = MetaVersion("PUB")
         val RELEASE = MetaVersion("release")
 
-        fun findAppropriate(metaString: String): MetaVersion =
-            listOf(DEV, DEV_GOOGLE, EAP, BETA, M1, M2, RC, PUB, RELEASE)
-                .find { it.metaString.equals(metaString, ignoreCase = true) }
-                ?: if (metaString.isBlank()) RELEASE else MetaVersion(metaString)
+        // Defines order of meta versions
+        private val metaOrder = listOf(DEV, DEV_GOOGLE, EAP, BETA, RC, PUB, RELEASE)
+
+        fun findAppropriate(metaString: String): MetaVersion = metaOrder
+            .find { it.metaString.equals(metaString, ignoreCase = true) }
+            ?: if (metaString.isBlank()) RELEASE else MetaVersion(metaString)  // should it be lowercased?
     }
 }

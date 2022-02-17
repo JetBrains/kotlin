@@ -76,3 +76,11 @@ data class CompilerVersionImpl(
 
     override fun toString() = versionString
 }
+
+fun CompilerVersion.isAtLeast(compilerVersion: CompilerVersion): Boolean {
+    if (this.major != compilerVersion.major) return this.major > compilerVersion.major
+    if (this.minor != compilerVersion.minor) return this.minor > compilerVersion.minor
+    if (this.maintenance != compilerVersion.maintenance) return this.maintenance > compilerVersion.maintenance
+    if (this.meta != compilerVersion.meta) return this.meta > compilerVersion.meta
+    return this.build >= compilerVersion.build
+}
