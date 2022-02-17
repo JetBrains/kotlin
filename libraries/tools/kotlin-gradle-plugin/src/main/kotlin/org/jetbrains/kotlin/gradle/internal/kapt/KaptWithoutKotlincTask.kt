@@ -112,7 +112,10 @@ abstract class KaptWithoutKotlincTask @Inject constructor(
 
         val compileClasspath = classpath.files.toMutableList()
         if (addJdkClassesToClasspath.get()) {
-            compileClasspath.addAll(0, PathUtil.getJdkClassesRootsFromCurrentJre())
+            compileClasspath.addAll(
+                0,
+                PathUtil.getJdkClassesRoots(defaultKotlinJavaToolchain.get().providedJvm.get().javaHome)
+            )
         }
 
         val kaptFlagsForWorker = mutableSetOf<String>().apply {
