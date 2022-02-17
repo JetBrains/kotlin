@@ -373,10 +373,6 @@ message Catch {
 message Empty {
 }
 
-message Code {
-    required string value = 1;
-}
-
 message SingleLineComment {
     required string message = 1;
 }
