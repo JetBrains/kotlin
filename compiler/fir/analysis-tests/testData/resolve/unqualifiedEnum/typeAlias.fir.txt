@@ -1,0 +1,27 @@
+FILE: typeAlias.kt
+    public final enum class Some : R|kotlin/Enum<Some>| {
+        private constructor(): R|Some| {
+            super<R|kotlin/Enum<Some>|>()
+        }
+
+        public final static enum entry FIRST: R|Some|
+        public final static enum entry SECOND: R|Some|
+        public final static fun values(): R|kotlin/Array<Some>| {
+        }
+
+        public final static fun valueOf(value: R|kotlin/String|): R|Some| {
+        }
+
+    }
+    public final typealias Other = R|Some|
+    public final fun foo(o: R|Other|): R|kotlin/Int| {
+        ^foo when (R|<local>/o|) {
+            ==($subj$, R|/Some.FIRST|) ->  {
+                Int(1)
+            }
+            ==($subj$, R|/Some.SECOND|) ->  {
+                Int(2)
+            }
+        }
+
+    }

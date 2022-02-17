@@ -1,0 +1,60 @@
+FILE: first.kt
+    package first
+
+    public final enum class First : R|kotlin/Enum<first/First>| {
+        private constructor(): R|first/First| {
+            super<R|kotlin/Enum<first/First>|>()
+        }
+
+        public final static enum entry ONE: R|first/First|
+        public final static enum entry TWO: R|first/First|
+        public final static fun values(): R|kotlin/Array<first/First>| {
+        }
+
+        public final static fun valueOf(value: R|kotlin/String|): R|first/First| {
+        }
+
+    }
+    public final val THREE: R|first/First| = Q|first/First|.R|first/First.ONE|
+        public get(): R|first/First|
+FILE: second.kt
+    package second
+
+    public final enum class Second : R|kotlin/Enum<second/Second>| {
+        private constructor(): R|second/Second| {
+            super<R|kotlin/Enum<second/Second>|>()
+        }
+
+        public final static enum entry THREE: R|second/Second|
+        public final static enum entry FOUR: R|second/Second|
+        public final static fun values(): R|kotlin/Array<second/Second>| {
+        }
+
+        public final static fun valueOf(value: R|kotlin/String|): R|second/Second| {
+        }
+
+    }
+    public final val ONE: R|second/Second| = Q|second/Second|.R|second/Second.THREE|
+        public get(): R|second/Second|
+    public final fun foo(f: R|first/First|): R|kotlin/Unit| {
+        ^foo when (R|<local>/f|) {
+            ==($subj$, R|second/ONE|) ->  {
+                Int(1)
+            }
+            ==($subj$, R|first/First.TWO|) ->  {
+                Int(2)
+            }
+        }
+
+    }
+    public final fun bar(s: R|second/Second|): R|kotlin/Unit| {
+        ^bar when (R|<local>/s|) {
+            ==($subj$, R|first/THREE|) ->  {
+                Int(3)
+            }
+            ==($subj$, R|second/Second.FOUR|) ->  {
+                Int(4)
+            }
+        }
+
+    }

@@ -44,6 +44,8 @@ sealed class TowerGroupKind(val index: Byte) : Comparable<TowerGroupKind> {
 
     object QualifierValue : TowerGroupKind(8)
 
+    class UnqualifiedEnum(depth: Int) : WithDepth(9, depth)
+
     object Last : TowerGroupKind(0b1111)
 
     override fun compareTo(other: TowerGroupKind): Int {
@@ -156,6 +158,8 @@ private constructor(
         val QualifierValue = kindOf(TowerGroupKind.QualifierValue)
 
         val Member = kindOf(TowerGroupKind.Member)
+
+        fun UnqualifiedEnum(depth: Int) = kindOf(TowerGroupKind.UnqualifiedEnum(depth))
 
         fun Local(depth: Int) = kindOf(TowerGroupKind.Local(depth))
 

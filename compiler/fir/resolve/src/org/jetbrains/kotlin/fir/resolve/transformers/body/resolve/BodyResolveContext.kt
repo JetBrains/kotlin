@@ -33,9 +33,11 @@ import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.scopes.createImportingScopes
 import org.jetbrains.kotlin.fir.scopes.impl.FirLocalScope
 import org.jetbrains.kotlin.fir.scopes.impl.FirMemberTypeParameterScope
+import org.jetbrains.kotlin.fir.scopes.impl.FirWhenSubjectImportingScope
 import org.jetbrains.kotlin.fir.symbols.impl.FirAnonymousFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
+import org.jetbrains.kotlin.fir.types.ConeClassLikeType
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.FirImplicitTypeRef
 import org.jetbrains.kotlin.fir.types.coneType
@@ -77,6 +79,9 @@ class BodyResolveContext(
     @set:PrivateForInline
     var containers: ArrayDeque<FirDeclaration> = ArrayDeque()
 
+    @PrivateForInline
+    val whenSubjectImportingScopes: ArrayDeque<FirWhenSubjectImportingScope?> = ArrayDeque()
+
     @set:PrivateForInline
     var containingClass: FirRegularClass? = null
 
@@ -94,7 +99,7 @@ class BodyResolveContext(
         get() = containingClassDeclarations.lastOrNull()
 
     @OptIn(PrivateForInline::class)
-    private inline fun <T> withNewTowerDataForClass(newContexts: FirRegularTowerDataContexts, f: () -> T): T {
+    inline fun <T> withNewTowerDataForClass(newContexts: FirRegularTowerDataContexts, f: () -> T): T {
         val old = regularTowerDataContexts
         regularTowerDataContexts = newContexts
         return try {
@@ -485,6 +490,36 @@ class BodyResolveContext(
             primaryConstructorAllParametersScope
         )
 
+        return withNewTowerDataForClass(newContexts) {
+            f()
+        }
+    }
+
+    @OptIn(PrivateForInline::class)
+    inline fun <T> withWhenSubjectType(
+        subjectType: ConeKotlinType?,
+        sessionHolder: SessionHolder,
+        f: () -> T
+    ): T {
+        val session = sessionHolder.session
+        val subjectClassSymbol = (subjectType as? ConeClassLikeType)
+            ?.lookupTag?.toFirRegularClassSymbol(session)?.takeIf { it.fir.classKind == ClassKind.ENUM_CLASS }
+        val whenSubjectImportingScope = subjectClassSymbol?.let {
+            FirWhenSubjectImportingScope(it.classId, session, sessionHolder.scopeSession)
+        }
+        whenSubjectImportingScopes.add(whenSubjectImportingScope)
+        return try {
+            f()
+        } finally {
+            whenSubjectImportingScopes.removeLast()
+        }
+    }
+
+    @OptIn(PrivateForInline::class)
+    inline fun <T> withWhenSubjectImportingScope(f: () -> T): T {
+        val whenSubjectImportingScope = whenSubjectImportingScopes.lastOrNull() ?: return f()
+        val newTowerDataContext = towerDataContext.addNonLocalScope(whenSubjectImportingScope)
+        val newContexts = FirRegularTowerDataContexts(newTowerDataContext)
         return withNewTowerDataForClass(newContexts) {
             f()
         }

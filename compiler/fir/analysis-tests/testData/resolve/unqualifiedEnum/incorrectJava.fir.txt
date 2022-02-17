@@ -1,0 +1,12 @@
+FILE: test.kt
+    public final fun foo(javaEnum: R|JavaEnum|): R|kotlin/Unit| {
+        ^foo when (R|<local>/javaEnum|) {
+            ==($subj$, <Unresolved name: first>#()) ->  {
+                Int(1)
+            }
+            ==($subj$, <Unresolved name: second>#) ->  {
+                Int(2)
+            }
+        }
+
+    }

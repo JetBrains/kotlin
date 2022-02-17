@@ -167,7 +167,7 @@ class FirTowerDataContext private constructor(
         return addNonLocalScope(scope)
     }
 
-    private fun addNonLocalScope(scope: FirScope): FirTowerDataContext {
+    fun addNonLocalScope(scope: FirScope): FirTowerDataContext {
         val element = scope.asTowerDataElement(isLocal = false)
         return FirTowerDataContext(
             towerDataElements.add(element),
