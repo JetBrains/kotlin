@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.KtPsiSourceElement
 import org.jetbrains.kotlin.KtRealPsiSourceElement
 import org.jetbrains.kotlin.analyzer.ModuleInfo
 import org.jetbrains.kotlin.fakeElement
+import org.jetbrains.kotlin.fir.declarations.FirContextReceiver
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.expressions.FirBlock
 import org.jetbrains.kotlin.fir.expressions.FirExpression
@@ -21,6 +22,7 @@ import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.*
 import org.jetbrains.kotlin.fir.types.impl.*
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.Name
 
 fun ModuleInfo.dependenciesWithoutSelf(): Sequence<ModuleInfo> = dependencies().asSequence().filter { it != this }
 
@@ -78,3 +80,4 @@ val FirElement.realPsi: PsiElement? get() = (source as? KtRealPsiSourceElement)?
 val FirReference.resolved: FirResolvedNamedReference? get() = this as? FirResolvedNamedReference
 val FirReference.resolvedSymbol: FirBasedSymbol<*>? get() = resolved?.resolvedSymbol
 
+val FirContextReceiver.labelName: Name? get() = customLabelName ?: labelNameFromTypeRef

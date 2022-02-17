@@ -25,7 +25,6 @@ import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.diagnostics.*
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.builder.*
-import org.jetbrains.kotlin.fir.expressions.impl.FirEmptyAnnotationArgumentMapping
 import org.jetbrains.kotlin.fir.expressions.impl.FirSingleExpressionBlock
 import org.jetbrains.kotlin.fir.references.builder.*
 import org.jetbrains.kotlin.fir.scopes.FirScopeProvider
@@ -1028,7 +1027,8 @@ open class RawFirBuilder(
             return receivers.map { contextReceiverElement ->
                 buildContextReceiver {
                     this.source = contextReceiverElement.toFirSourceElement()
-                    this.labelName = contextReceiverElement.labelNameAsName()
+                    this.customLabelName = contextReceiverElement.labelNameAsName()
+                    this.labelNameFromTypeRef = contextReceiverElement.typeReference()?.nameForReceiverLabel()?.let(Name::identifier)
 
                     contextReceiverElement.typeReference().convertSafe<FirTypeRef>()?.let {
                         this.typeRef = it
