@@ -280,7 +280,7 @@ open class FirRenderer(builder: StringBuilder, protected val mode: RenderMode = 
     }
 
     override fun visitContextReceiver(contextReceiver: FirContextReceiver) {
-        contextReceiver.labelName?.let {
+        contextReceiver.customLabelName?.let {
             print(it.asString() + "@")
         }
 

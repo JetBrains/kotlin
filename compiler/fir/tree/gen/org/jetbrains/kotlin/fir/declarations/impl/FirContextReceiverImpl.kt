@@ -19,7 +19,8 @@ import org.jetbrains.kotlin.fir.visitors.*
 internal class FirContextReceiverImpl(
     override val source: KtSourceElement?,
     override var typeRef: FirTypeRef,
-    override val labelName: Name?,
+    override val customLabelName: Name?,
+    override val labelNameFromTypeRef: Name?,
 ) : FirContextReceiver() {
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
         typeRef.accept(visitor, data)

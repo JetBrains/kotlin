@@ -20,7 +20,8 @@ import org.jetbrains.kotlin.fir.visitors.*
 abstract class FirContextReceiver : FirPureAbstractElement(), FirElement {
     abstract override val source: KtSourceElement?
     abstract val typeRef: FirTypeRef
-    abstract val labelName: Name?
+    abstract val customLabelName: Name?
+    abstract val labelNameFromTypeRef: Name?
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitContextReceiver(this, data)
 

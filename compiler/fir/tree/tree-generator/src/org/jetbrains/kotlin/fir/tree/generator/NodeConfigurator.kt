@@ -72,7 +72,8 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
 
         contextReceiver.configure {
             +field(typeRef, withReplace = true).withTransform()
-            +field("labelName", nameType, nullable = true)
+            +field("customLabelName", nameType, nullable = true)
+            +field("labelNameFromTypeRef", nameType, nullable = true)
         }
 
         declaration.configure {

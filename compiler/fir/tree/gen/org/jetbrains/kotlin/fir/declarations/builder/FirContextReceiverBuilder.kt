@@ -23,13 +23,15 @@ import org.jetbrains.kotlin.name.Name
 class FirContextReceiverBuilder {
     var source: KtSourceElement? = null
     lateinit var typeRef: FirTypeRef
-    var labelName: Name? = null
+    var customLabelName: Name? = null
+    var labelNameFromTypeRef: Name? = null
 
     fun build(): FirContextReceiver {
         return FirContextReceiverImpl(
             source,
             typeRef,
-            labelName,
+            customLabelName,
+            labelNameFromTypeRef,
         )
     }
 

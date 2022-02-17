@@ -34,7 +34,6 @@ import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
 import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.builder.*
-import org.jetbrains.kotlin.fir.expressions.impl.FirEmptyAnnotationArgumentMapping
 import org.jetbrains.kotlin.fir.expressions.impl.FirSingleExpressionBlock
 import org.jetbrains.kotlin.fir.lightTree.LightTree2Fir
 import org.jetbrains.kotlin.fir.lightTree.fir.*
@@ -2261,14 +2260,20 @@ class DeclarationsConverter(
         return receivers.map { contextReceiverElement ->
             buildContextReceiver {
                 this.source = contextReceiverElement.toFirSourceElement()
-                this.labelName =
+                this.customLabelName =
                     contextReceiverElement
                         .getChildNodeByType(LABEL_QUALIFIER)
                         ?.getChildNodeByType(LABEL)
                         ?.getChildNodeByType(IDENTIFIER)
                         ?.getReferencedNameAsName()
 
-                contextReceiverElement.getChildNodeByType(TYPE_REFERENCE)?.let {
+                val typeReference = contextReceiverElement.getChildNodeByType(TYPE_REFERENCE)
+
+                this.labelNameFromTypeRef = typeReference?.getChildNodeByType(USER_TYPE)
+                    ?.getChildNodeByType(REFERENCE_EXPRESSION)
+                    ?.getReferencedNameAsName()
+
+                typeReference?.let {
                     this.typeRef = convertType(it)
                 }
             }
