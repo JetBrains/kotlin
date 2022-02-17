@@ -429,14 +429,14 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, Ty
 
     override fun KotlinTypeMarker.hasCustomAttributes(): Boolean {
         require(this is ConeKotlinType)
-        val compilerAttributes = CompilerConeAttributes.classIdByCompilerAttribute
-        return this.attributes.any { it !in compilerAttributes && it !is CustomAnnotationTypeAttribute }
+        val compilerAttributes = CompilerConeAttributes.classIdByCompilerAttributeKey
+        return this.attributes.any { it.key !in compilerAttributes && it !is CustomAnnotationTypeAttribute }
     }
 
     override fun KotlinTypeMarker.getCustomAttributes(): List<AnnotationMarker> {
         require(this is ConeKotlinType)
-        val compilerAttributes = CompilerConeAttributes.classIdByCompilerAttribute
-        return attributes.filterNot { it in compilerAttributes || it is CustomAnnotationTypeAttribute }
+        val compilerAttributes = CompilerConeAttributes.classIdByCompilerAttributeKey
+        return attributes.filterNot { it.key in compilerAttributes || it is CustomAnnotationTypeAttribute }
     }
 
     override fun SimpleTypeMarker.isStubType(): Boolean {
@@ -520,7 +520,7 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, Ty
 
     override fun KotlinTypeMarker.hasAnnotation(fqName: FqName): Boolean {
         require(this is ConeKotlinType)
-        val compilerAttribute = CompilerConeAttributes.compilerAttributeByFqName[fqName]
+        val compilerAttribute = CompilerConeAttributes.compilerAttributeKeyByFqName[fqName]
         if (compilerAttribute != null) {
             return compilerAttribute in attributes
         }

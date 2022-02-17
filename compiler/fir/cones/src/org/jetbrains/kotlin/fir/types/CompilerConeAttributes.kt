@@ -81,20 +81,21 @@ object CompilerConeAttributes {
         override fun toString(): String = "@UnsafeVariance"
     }
 
-    val compilerAttributeByClassId: Map<ClassId, ConeAttribute<*>> = mapOf(
-        Exact.ANNOTATION_CLASS_ID to Exact,
-        NoInfer.ANNOTATION_CLASS_ID to NoInfer,
-        EnhancedNullability.ANNOTATION_CLASS_ID to EnhancedNullability,
-        ExtensionFunctionType.ANNOTATION_CLASS_ID to ExtensionFunctionType,
-        UnsafeVariance.ANNOTATION_CLASS_ID to UnsafeVariance
+    private val compilerAttributeByClassId: Map<ClassId, ConeAttributeKey> = mapOf(
+        Exact.ANNOTATION_CLASS_ID to Exact.key,
+        NoInfer.ANNOTATION_CLASS_ID to NoInfer.key,
+        EnhancedNullability.ANNOTATION_CLASS_ID to EnhancedNullability.key,
+        ExtensionFunctionType.ANNOTATION_CLASS_ID to ExtensionFunctionType.key,
+        UnsafeVariance.ANNOTATION_CLASS_ID to UnsafeVariance.key
     )
 
-    val classIdByCompilerAttribute: Map<ConeAttribute<*>, ClassId> = compilerAttributeByClassId.entries.associateBy(
+    val classIdByCompilerAttributeKey: Map<ConeAttributeKey, ClassId> = compilerAttributeByClassId.entries.associateBy(
         keySelector = { it.value },
         valueTransform = { it.key }
     )
 
-    val compilerAttributeByFqName: Map<FqName, ConeAttribute<*>> = compilerAttributeByClassId.mapKeys { it.key.asSingleFqName() }
+    val compilerAttributeKeyByFqName: Map<FqName, ConeAttributeKey> =
+        compilerAttributeByClassId.mapKeys { it.key.asSingleFqName() }
 }
 
 val ConeAttributes.exact: CompilerConeAttributes.Exact? by ConeAttributes.attributeAccessor<CompilerConeAttributes.Exact>()

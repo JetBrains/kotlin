@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.serialization
 
+import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
@@ -17,11 +18,10 @@ import org.jetbrains.kotlin.fir.declarations.comparators.FirCallableDeclarationC
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyAccessor
 import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.deserialization.projection
-import org.jetbrains.kotlin.fir.expressions.FirAnnotation
-import org.jetbrains.kotlin.fir.expressions.FirArgumentList
-import org.jetbrains.kotlin.fir.expressions.FirExpression
-import org.jetbrains.kotlin.fir.expressions.FirNamedArgumentExpression
+import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.builder.buildAnnotation
+import org.jetbrains.kotlin.fir.expressions.builder.buildAnnotationArgumentMapping
+import org.jetbrains.kotlin.fir.expressions.builder.buildConstExpression
 import org.jetbrains.kotlin.fir.expressions.impl.FirEmptyAnnotationArgumentMapping
 import org.jetbrains.kotlin.fir.extensions.extensionService
 import org.jetbrains.kotlin.fir.extensions.typeAttributeExtensions
@@ -51,6 +51,7 @@ import org.jetbrains.kotlin.name.*
 import org.jetbrains.kotlin.resolve.RequireKotlinConstants
 import org.jetbrains.kotlin.serialization.deserialization.ProtoEnumFlags
 import org.jetbrains.kotlin.types.AbstractTypeApproximator
+import org.jetbrains.kotlin.types.ConstantValueKind
 import org.jetbrains.kotlin.types.TypeApproximatorConfiguration
 
 class FirElementSerializer private constructor(
@@ -597,9 +598,9 @@ class FirElementSerializer private constructor(
             val compilerAttributes = mutableListOf<ConeAttribute<*>>()
             val extensionAttributes = mutableListOf<ConeAttribute<*>>()
             for (attribute in coneType.attributes) {
-                when (attribute) {
-                    is CustomAnnotationTypeAttribute -> continue
-                    in CompilerConeAttributes.classIdByCompilerAttribute -> compilerAttributes += attribute
+                when {
+                    attribute is CustomAnnotationTypeAttribute -> continue
+                    attribute.key in CompilerConeAttributes.classIdByCompilerAttributeKey -> compilerAttributes += attribute
                     else -> extensionAttributes += attribute
                 }
             }
@@ -608,7 +609,7 @@ class FirElementSerializer private constructor(
                 val annotation = buildAnnotation {
                     annotationTypeRef = buildResolvedTypeRef {
                         type = ConeClassLikeTypeImpl(
-                            ConeClassLikeLookupTagImpl(CompilerConeAttributes.classIdByCompilerAttribute.getValue(attribute)),
+                            ConeClassLikeLookupTagImpl(CompilerConeAttributes.classIdByCompilerAttributeKey.getValue(attribute.key)),
                             emptyArray(),
                             isNullable = false
                         )
@@ -661,11 +662,6 @@ class FirElementSerializer private constructor(
                     return functionType
                 }
                 fillFromPossiblyInnerType(builder, type)
-                if (type.isExtensionFunctionType) {
-                    serializeAnnotationFromAttribute(
-                        correspondingTypeRef?.annotations, CompilerConeAttributes.ExtensionFunctionType.ANNOTATION_CLASS_ID, builder
-                    )
-                }
             }
             is ConeTypeParameterType -> {
                 val typeParameter = type.lookupTag.typeParameterSymbol.fir
