@@ -23,4 +23,9 @@ enum class UnitSuspendFunctionObjCExport {
      * async functions with `Void` return type
      */
     PROPER,
+    ;
+
+    companion object {
+        val DEFAULT = PROPER
+    }
 }

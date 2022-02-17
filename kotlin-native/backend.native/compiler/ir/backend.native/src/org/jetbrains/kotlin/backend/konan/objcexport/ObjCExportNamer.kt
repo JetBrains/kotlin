@@ -90,7 +90,7 @@ fun createNamer(
 ): ObjCExportNamer = ObjCExportNamerImpl(
         (exportedDependencies + moduleDescriptor).toSet(),
         moduleDescriptor.builtIns,
-        ObjCExportMapper(local = true, unitSuspendFunctionExport = UnitSuspendFunctionObjCExport.LEGACY),
+        ObjCExportMapper(local = true, unitSuspendFunctionExport = UnitSuspendFunctionObjCExport.DEFAULT),
         topLevelNamePrefix,
         local = true
 )
