@@ -392,7 +392,7 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments> : AbstractKotl
             executeImpl(inputChanges, outputsBackup)
         }
 
-        buildMetricsReporterService.orNull?.also { it.add(path, this::class.java.name, buildMetrics) }
+        buildMetricsReporterService.orNull?.also { it.addTask(path, this.javaClass, buildMetrics) }
     }
 
     protected open fun skipCondition(): Boolean =
@@ -560,13 +560,18 @@ abstract class KotlinCompile @Inject constructor(
             }
             project.extensions.extraProperties[TRANSFORMS_REGISTERED] = true
 
+            val buildMetricsReporterService = BuildMetricsReporterService.registerIfAbsent(project)
             project.dependencies.registerTransform(ClasspathEntrySnapshotTransform::class.java) {
                 it.from.attribute(ARTIFACT_TYPE_ATTRIBUTE, JAR_ARTIFACT_TYPE)
                 it.to.attribute(ARTIFACT_TYPE_ATTRIBUTE, CLASSPATH_ENTRY_SNAPSHOT_ARTIFACT_TYPE)
+                it.parameters.gradleUserHomeDir.set(project.gradle.gradleUserHomeDir)
+                buildMetricsReporterService?.apply { it.parameters.buildMetricsReporterService.set(this) }
             }
             project.dependencies.registerTransform(ClasspathEntrySnapshotTransform::class.java) {
                 it.from.attribute(ARTIFACT_TYPE_ATTRIBUTE, DIRECTORY_ARTIFACT_TYPE)
                 it.to.attribute(ARTIFACT_TYPE_ATTRIBUTE, CLASSPATH_ENTRY_SNAPSHOT_ARTIFACT_TYPE)
+                it.parameters.gradleUserHomeDir.set(project.gradle.gradleUserHomeDir)
+                buildMetricsReporterService?.apply { it.parameters.buildMetricsReporterService.set(this) }
             }
         }
 

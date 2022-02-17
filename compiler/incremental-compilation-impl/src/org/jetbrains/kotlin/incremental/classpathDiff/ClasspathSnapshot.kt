@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.incremental.classpathDiff
 
 import org.jetbrains.kotlin.incremental.KotlinClassInfo
+import org.jetbrains.kotlin.incremental.classpathDiff.ClassSnapshotGranularity.CLASS_LEVEL
 import org.jetbrains.kotlin.incremental.classpathDiff.ClassSnapshotGranularity.CLASS_MEMBER_LEVEL
 import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader.Kind.*
 import org.jetbrains.kotlin.name.ClassId
@@ -141,7 +142,18 @@ class JavaElementSnapshotForTests(
  */
 object InaccessibleClassSnapshot : ClassSnapshot()
 
-/** The granularity of a [ClassSnapshot]. */
+/**
+ * The granularity of a [ClassSnapshot].
+ *
+ * There are currently two granularity levels:
+ *   - [CLASS_LEVEL]) (coarse-grained): The size of the snapshot will be smaller, but we will have coarse-grained classpath changes, which
+ *     means more source files will be recompiled.
+ *   - [CLASS_MEMBER_LEVEL] (fine-grained): The size of the snapshot will be larger, but we will have fine-grained classpath changes, which
+ *     means fewer source files will be recompiled.
+ *
+ * Therefore, [CLASS_LEVEL] is typically suitable for classes that are infrequently changed (e.g., external libraries), whereas
+ * [CLASS_MEMBER_LEVEL] is suitable for classes that are frequently changed (e.g., classes produced by the current project).
+ */
 enum class ClassSnapshotGranularity {
 
     /**

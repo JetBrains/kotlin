@@ -5,20 +5,17 @@
 
 package org.jetbrains.kotlin.gradle.report.data
 
-import org.gradle.api.Task
-import org.gradle.api.tasks.TaskState
 import org.jetbrains.kotlin.build.report.metrics.BuildMetrics
 
-interface TaskExecutionData {
-    val taskPath: String
-    val startMs: Long
-    val endMs: Long
+/** Data for a build operation (e.g., task or transform). */
+interface BuildOperationRecord {
+    val path: String
+    val classFqName: String
+    val isFromKotlinPlugin: Boolean
+    val startTimeMs: Long // Measured by System.currentTimeMillis()
     val totalTimeMs: Long
-    val skipMessage: String?
-    val didWork: Boolean
-    val icLogLines: List<String>
     val buildMetrics: BuildMetrics
-    val isKotlinTask: Boolean
-    val type: String
+    val didWork: Boolean
+    val skipMessage: String?
+    val icLogLines: List<String>
 }
-
