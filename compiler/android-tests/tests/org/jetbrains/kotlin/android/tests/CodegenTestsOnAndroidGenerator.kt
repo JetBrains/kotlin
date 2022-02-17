@@ -59,7 +59,7 @@ class CodegenTestsOnAndroidGenerator private constructor(private val pathManager
     //keep it globally to avoid test grouping on TC
     private val generatedTestNames = hashSetOf<String>()
 
-    private val COMMON = FlavorConfig(TargetBackend.ANDROID,"common", 3)
+    private val COMMON = FlavorConfig(TargetBackend.ANDROID,"common", 4)
     private val REFLECT = FlavorConfig(TargetBackend.ANDROID, "reflect", 1)
 
     private val COMMON_IR = FlavorConfig(TargetBackend.ANDROID_IR, "common_ir", 4)
