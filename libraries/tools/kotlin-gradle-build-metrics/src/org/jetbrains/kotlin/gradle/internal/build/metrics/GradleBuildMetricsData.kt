@@ -10,14 +10,15 @@ import java.io.Serializable
 class GradleBuildMetricsData : Serializable {
     val parentMetric: MutableMap<String, String?> = LinkedHashMap()
     val buildAttributeKind: MutableMap<String, String> = LinkedHashMap()
-    val taskData: MutableMap<String, TaskData> = LinkedHashMap()
+    val buildOperationData: MutableMap<String, BuildOperationData> = LinkedHashMap()
 
     companion object {
         const val serialVersionUID = 0L
     }
 }
 
-data class TaskData(
+/** Data for a build operation (e.g., task or transform). */
+data class BuildOperationData(
     val path: String,
     val typeFqName: String,
     val buildTimesMs: Map<String, Long>,

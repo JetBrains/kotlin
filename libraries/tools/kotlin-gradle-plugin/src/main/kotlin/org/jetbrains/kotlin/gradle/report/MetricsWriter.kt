@@ -9,7 +9,7 @@ import org.gradle.api.logging.Logger
 import org.jetbrains.kotlin.build.report.metrics.BuildAttribute
 import org.jetbrains.kotlin.build.report.metrics.BuildTime
 import org.jetbrains.kotlin.gradle.internal.build.metrics.GradleBuildMetricsData
-import org.jetbrains.kotlin.gradle.internal.build.metrics.TaskData
+import org.jetbrains.kotlin.gradle.internal.build.metrics.BuildOperationData
 import org.jetbrains.kotlin.gradle.logging.kotlinDebug
 import org.jetbrains.kotlin.gradle.report.data.BuildExecutionData
 import org.jetbrains.kotlin.gradle.report.data.BuildExecutionDataProcessor
@@ -34,11 +34,11 @@ internal class MetricsWriter(
                 buildMetricsData.buildAttributeKind[attr.name] = attr.kind.name
             }
 
-            for (data in build.taskExecutionData) {
-                buildMetricsData.taskData[data.taskPath] =
-                    TaskData(
-                        path = data.taskPath,
-                        typeFqName = data.type,
+            for (data in build.buildOperationRecord) {
+                buildMetricsData.buildOperationData[data.path] =
+                    BuildOperationData(
+                        path = data.path,
+                        typeFqName = data.classFqName,
                         buildTimesMs = data.buildMetrics.buildTimes.asMapMs().mapKeys { it.key.name },
                         performanceMetrics = data.buildMetrics.buildPerformanceMetrics.asMap().mapKeys { it.key.name },
                         buildAttributes = data.buildMetrics.buildAttributes.asMap().mapKeys { it.key.name },

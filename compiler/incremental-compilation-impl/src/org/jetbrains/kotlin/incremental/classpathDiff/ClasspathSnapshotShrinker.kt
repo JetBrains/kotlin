@@ -207,12 +207,12 @@ internal fun shrinkAndSaveClasspathSnapshot(
                 ShrinkMode.NoChanges
             } else {
                 val shrunkPreviousClasspathAgainstPreviousLookups =
-                    metrics.measure(BuildTime.LOAD_SHRUNK_PREVIOUS_CLASSPATH_SNAPSHOT_AFTER_COMPILATION) {
+                    metrics.measure(BuildTime.INCREMENTAL_LOAD_SHRUNK_PREVIOUS_CLASSPATH_SNAPSHOT) {
                         ListExternalizer(AccessibleClassSnapshotExternalizer)
                             .loadFromFile(classpathChanges.classpathSnapshotFiles.shrunkPreviousClasspathSnapshotFile)
                     }
                 ShrinkMode.Incremental(
-                    currentClasspathSnapshot = metrics.measure(BuildTime.LOAD_CURRENT_CLASSPATH_SNAPSHOT_AFTER_COMPILATION) {
+                    currentClasspathSnapshot = metrics.measure(BuildTime.INCREMENTAL_LOAD_CURRENT_CLASSPATH_SNAPSHOT) {
                         CachedClasspathSnapshotSerializer
                             .load(classpathChanges.classpathSnapshotFiles.currentClasspathEntrySnapshotFiles)
                             .removeDuplicateAndInaccessibleClasses()
@@ -243,7 +243,7 @@ internal fun shrinkAndSaveClasspathSnapshot(
             // shrunkCurrentClasspathAgainst[*Current*]Lookups == shrunkCurrentClasspathAgainst[*Previous*]Lookups
             shrinkMode.shrunkCurrentClasspathAgainstPreviousLookups
         }
-        is ShrinkMode.Incremental -> metrics.measure(BuildTime.SHRINK_CURRENT_CLASSPATH_SNAPSHOT_AFTER_COMPILATION) {
+        is ShrinkMode.Incremental -> metrics.measure(BuildTime.INCREMENTAL_SHRINK_CURRENT_CLASSPATH_SNAPSHOT) {
             val shrunkClasses = shrinkMode.shrunkCurrentClasspathAgainstPreviousLookups.mapTo(mutableSetOf()) { it.classId }
             val notYetShrunkClasses = shrinkMode.currentClasspathSnapshot.filter { it.classId !in shrunkClasses }
             val addedLookupSymbols = shrinkMode.addedLookupSymbols
@@ -252,12 +252,12 @@ internal fun shrinkAndSaveClasspathSnapshot(
             shrinkMode.shrunkCurrentClasspathAgainstPreviousLookups + shrunkRemainingClassesAgainstNewLookups
         }
         is ShrinkMode.NonIncremental -> {
-            val classpathSnapshot = metrics.measure(BuildTime.LOAD_CURRENT_CLASSPATH_SNAPSHOT_AFTER_COMPILATION) {
+            val classpathSnapshot = metrics.measure(BuildTime.NON_INCREMENTAL_LOAD_CURRENT_CLASSPATH_SNAPSHOT) {
                 CachedClasspathSnapshotSerializer
                     .load(classpathChanges.classpathSnapshotFiles.currentClasspathEntrySnapshotFiles)
                     .removeDuplicateAndInaccessibleClasses()
             }
-            metrics.measure(BuildTime.SHRINK_CURRENT_CLASSPATH_SNAPSHOT_AFTER_COMPILATION) {
+            metrics.measure(BuildTime.NON_INCREMENTAL_SHRINK_CURRENT_CLASSPATH_SNAPSHOT) {
                 shrinkClasspath(classpathSnapshot, lookupStorage)
             }
         }
@@ -269,7 +269,7 @@ internal fun shrinkAndSaveClasspathSnapshot(
             "File '${classpathChanges.classpathSnapshotFiles.shrunkPreviousClasspathSnapshotFile.path}' does not exist"
         }
     } else {
-        metrics.measure(BuildTime.SAVE_SHRUNK_CURRENT_CLASSPATH_SNAPSHOT_AFTER_COMPILATION) {
+        metrics.measure(BuildTime.SAVE_SHRUNK_CURRENT_CLASSPATH_SNAPSHOT) {
             ListExternalizer(AccessibleClassSnapshotExternalizer).saveToFile(
                 classpathChanges.classpathSnapshotFiles.shrunkPreviousClasspathSnapshotFile,
                 shrunkCurrentClasspath!!
@@ -277,8 +277,13 @@ internal fun shrinkAndSaveClasspathSnapshot(
         }
     }
 
+    metrics.addMetric(BuildPerformanceMetric.SHRINK_AND_SAVE_CLASSPATH_SNAPSHOT_EXECUTION_COUNT, 1)
     metrics.addMetric(
-        BuildPerformanceMetric.ORIGINAL_CLASSPATH_SNAPSHOT_SIZE,
+        BuildPerformanceMetric.CLASSPATH_ENTRY_COUNT,
+        classpathChanges.classpathSnapshotFiles.currentClasspathEntrySnapshotFiles.size.toLong()
+    )
+    metrics.addMetric(
+        BuildPerformanceMetric.CLASSPATH_SNAPSHOT_SIZE,
         classpathChanges.classpathSnapshotFiles.currentClasspathEntrySnapshotFiles.sumOf { it.length() }
     )
     metrics.addMetric(

@@ -6,26 +6,97 @@
 package org.jetbrains.kotlin.gradle.internal.transforms
 
 import org.gradle.api.artifacts.transform.*
+import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.file.FileSystemLocation
+import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.Classpath
+import org.gradle.api.tasks.Internal
+import org.jetbrains.kotlin.build.report.metrics.*
+import org.jetbrains.kotlin.gradle.report.BuildMetricsReporterService
+import org.jetbrains.kotlin.incremental.classpathDiff.ClassSnapshotGranularity
+import org.jetbrains.kotlin.incremental.classpathDiff.ClassSnapshotGranularity.CLASS_LEVEL
+import org.jetbrains.kotlin.incremental.classpathDiff.ClassSnapshotGranularity.CLASS_MEMBER_LEVEL
 import org.jetbrains.kotlin.incremental.classpathDiff.ClasspathEntrySnapshotExternalizer
 import org.jetbrains.kotlin.incremental.classpathDiff.ClasspathEntrySnapshotter
 import org.jetbrains.kotlin.incremental.storage.saveToFile
+import java.io.File
 
 /** Transform to create a snapshot of a classpath entry (directory or jar). */
 @CacheableTransform
-abstract class ClasspathEntrySnapshotTransform : TransformAction<TransformParameters.None> {
+abstract class ClasspathEntrySnapshotTransform : TransformAction<ClasspathEntrySnapshotTransform.Parameters> {
+
+    abstract class Parameters : TransformParameters {
+        @get:Internal
+        abstract val gradleUserHomeDir: DirectoryProperty
+
+        @get:Internal
+        abstract val buildMetricsReporterService: Property<BuildMetricsReporterService>
+    }
 
     @get:Classpath
     @get:InputArtifact
     abstract val inputArtifact: Provider<FileSystemLocation>
 
     override fun transform(outputs: TransformOutputs) {
-        val classpathEntry = inputArtifact.get().asFile
-        val snapshotFile = outputs.file(classpathEntry.name.replace('.', '_') + "-snapshot.bin")
+        val classpathEntryInputDirOrJar = inputArtifact.get().asFile
+        val snapshotOutputFile = outputs.file(classpathEntryInputDirOrJar.name.replace('.', '_') + "-snapshot.bin")
 
-        val snapshot = ClasspathEntrySnapshotter.snapshot(classpathEntry)
-        ClasspathEntrySnapshotExternalizer.saveToFile(snapshotFile, snapshot)
+        val granularity = getClassSnapshotGranularity(classpathEntryInputDirOrJar, parameters.gradleUserHomeDir.get().asFile)
+
+        val buildMetricsReporterService = parameters.buildMetricsReporterService.orNull
+        val metricsReporter = buildMetricsReporterService?.let { BuildMetricsReporterImpl() } ?: DoNothingBuildMetricsReporter
+
+        val startTimeMs = System.currentTimeMillis()
+        var failureMessage: String? = null
+        try {
+            doTransform(classpathEntryInputDirOrJar, snapshotOutputFile, granularity, metricsReporter)
+        } catch (e: Throwable) {
+            failureMessage = e.message
+            throw e
+        } finally {
+            buildMetricsReporterService?.addTransformMetrics(
+                transformPath = "${ClasspathEntrySnapshotTransform::class.simpleName} for ${classpathEntryInputDirOrJar.path}",
+                transformClass = ClasspathEntrySnapshotTransform::class.java,
+                isKotlinTransform = true,
+                startTimeMs = startTimeMs,
+                totalTimeMs = System.currentTimeMillis() - startTimeMs,
+                buildMetrics = metricsReporter.getMetrics(),
+                failureMessage = failureMessage
+            )
+        }
+    }
+
+    /**
+     * Determines the [ClassSnapshotGranularity] when taking a snapshot of the given [classpathEntryDirOrJar].
+     *
+     * As mentioned in [ClassSnapshotGranularity]'s kdoc, we will take [CLASS_LEVEL] snapshots for classes that are infrequently changed
+     * (e.g., external libraries which are typically stored/transformed inside the Gradle user home, or a few hard-coded cases), and take
+     * [CLASS_MEMBER_LEVEL] snapshots for the others.
+     */
+    private fun getClassSnapshotGranularity(classpathEntryDirOrJar: File, gradleUserHomeDir: File): ClassSnapshotGranularity {
+        return if (
+            classpathEntryDirOrJar.startsWith(gradleUserHomeDir) ||
+            classpathEntryDirOrJar.name == "android.jar"
+        ) CLASS_LEVEL
+        else CLASS_MEMBER_LEVEL
+    }
+
+    private fun doTransform(
+        classpathEntryInputDirOrJar: File, snapshotOutputFile: File,
+        granularity: ClassSnapshotGranularity, metrics: BuildMetricsReporter
+    ) {
+        metrics.measure(BuildTime.CLASSPATH_ENTRY_SNAPSHOT_TRANSFORM) {
+            val snapshot = ClasspathEntrySnapshotter.snapshot(classpathEntryInputDirOrJar, granularity, metrics)
+            metrics.measure(BuildTime.SAVE_CLASSPATH_ENTRY_SNAPSHOT) {
+                ClasspathEntrySnapshotExternalizer.saveToFile(snapshotOutputFile, snapshot)
+            }
+
+            metrics.addMetric(BuildPerformanceMetric.CLASSPATH_ENTRY_SNAPSHOT_TRANSFORM_EXECUTION_COUNT, 1)
+            if (classpathEntryInputDirOrJar.extension.equals("jar", ignoreCase = true)) {
+                metrics.addMetric(BuildPerformanceMetric.JAR_CLASSPATH_ENTRY_SIZE, classpathEntryInputDirOrJar.length())
+            }
+            metrics.addMetric(BuildPerformanceMetric.CLASSPATH_ENTRY_SNAPSHOT_SIZE, snapshotOutputFile.length())
+        }
     }
 }
