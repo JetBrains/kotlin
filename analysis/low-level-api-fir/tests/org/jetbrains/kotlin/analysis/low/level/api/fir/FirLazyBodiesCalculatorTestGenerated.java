@@ -70,6 +70,12 @@ public class FirLazyBodiesCalculatorTestGenerated extends AbstractFirLazyBodiesC
         }
 
         @Test
+        @TestMetadata("contextReceivers.kt")
+        public void testContextReceivers() throws Exception {
+            runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/contextReceivers.kt");
+        }
+
+        @Test
         @TestMetadata("delegates.kt")
         public void testDelegates() throws Exception {
             runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/delegates.kt");
