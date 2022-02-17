@@ -93,6 +93,12 @@ class FirIrProvider(val fir2IrComponents: Fir2IrComponents) : IrProvider {
                     firCandidates = listOf(firClass)
                     parent = firParentClass?.let { classifierStorage.getIrClassSymbol(it.symbol).owner } ?: packageFragment
                 }
+                SymbolKind.ENUM_ENTRY_SYMBOL -> {
+                    val lastName = Name.guessByFirstCharacter(nameSegments.last())
+                    val firCandidate = firClass.declarations.singleOrNull { (it as? FirEnumEntry)?.name == lastName }
+                    firCandidates = firCandidate?.let { listOf(it) } ?: return null
+                    parent = classifierStorage.getIrClassSymbol(firClass.symbol).owner
+                }
                 SymbolKind.CONSTRUCTOR_SYMBOL -> {
                     val constructors = mutableListOf<FirConstructor>()
                     scope.processDeclaredConstructors { constructors.add(it.fir) }
@@ -139,6 +145,7 @@ class FirIrProvider(val fir2IrComponents: Fir2IrComponents) : IrProvider {
 
         return when (kind) {
             SymbolKind.CLASS_SYMBOL -> classifierStorage.getIrClassSymbol((firDeclaration as FirRegularClass).symbol).owner
+            SymbolKind.ENUM_ENTRY_SYMBOL -> classifierStorage.createIrEnumEntry(firDeclaration as FirEnumEntry, parent as IrClass)
             SymbolKind.CONSTRUCTOR_SYMBOL -> {
                 val firConstructor = firDeclaration as FirConstructor
                 declarationStorage.getOrCreateIrConstructor(firConstructor, parent as IrClass)
@@ -163,7 +170,7 @@ class FirIrProvider(val fir2IrComponents: Fir2IrComponents) : IrProvider {
         candidates.firstOrNull { candidate ->
             if (hash == null) {
                 // We don't compute id for type aliases and classes.
-                candidate is FirClass || candidate is FirTypeAlias
+                candidate is FirClass || candidate is FirEnumEntry || candidate is FirTypeAlias
             } else {
                 // The next line should have singleOrNull, but in some cases we get multiple references to the same FIR declaration.
                 with(fir2IrComponents.signatureComposer.mangler) { candidate.signatureMangle(compatibleMode = false) == hash }
