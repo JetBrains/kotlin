@@ -28,7 +28,7 @@ abstract class StubTypesBasedInferenceSession<D : CallableDescriptor>(
     protected val callComponents: KotlinCallComponents,
     val builtIns: KotlinBuiltIns
 ) : InferenceSession {
-    protected val partiallyResolvedCallsInfo = arrayListOf<PSIPartialCallInfo>()
+    protected val commonPartiallyResolvedCalls = arrayListOf<PSIPartialCallInfo>()
     val errorCallsInfo = arrayListOf<PSIErrorCallInfo<D>>()
     private val completedCalls = hashSetOf<ResolvedAtom>()
     protected val nestedInferenceSessions = hashSetOf<StubTypesBasedInferenceSession<*>>()
@@ -49,7 +49,7 @@ abstract class StubTypesBasedInferenceSession<D : CallableDescriptor>(
         if (callInfo !is PSIPartialCallInfo) {
             throw AssertionError("Call info for $callInfo should be instance of PSIPartialCallInfo")
         }
-        partiallyResolvedCallsInfo.add(callInfo)
+        commonPartiallyResolvedCalls.add(callInfo)
     }
 
     override fun addCompletedCallInfo(callInfo: CompletedCallInfo) {
@@ -65,7 +65,7 @@ abstract class StubTypesBasedInferenceSession<D : CallableDescriptor>(
     }
 
     override fun currentConstraintSystem(): ConstraintStorage {
-        return partiallyResolvedCallsInfo.lastOrNull()?.callResolutionResult?.constraintSystem?.getBuilder()?.currentStorage()
+        return commonPartiallyResolvedCalls.lastOrNull()?.callResolutionResult?.constraintSystem?.getBuilder()?.currentStorage()
             ?: ConstraintStorage.Empty
     }
 
@@ -75,7 +75,7 @@ abstract class StubTypesBasedInferenceSession<D : CallableDescriptor>(
     override fun shouldCompleteResolvedSubAtomsOf(resolvedCallAtom: ResolvedCallAtom) = true
 
     fun resolveCandidates(resolutionCallbacks: KotlinResolutionCallbacks): List<ResolutionResultCallInfo<D>> {
-        val resolvedCallsInfo = partiallyResolvedCallsInfo.toList()
+        val resolvedCallsInfo = commonPartiallyResolvedCalls.toList()
 
         val diagnosticHolder = KotlinDiagnosticsHolder.SimpleHolder()
 
