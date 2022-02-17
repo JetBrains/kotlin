@@ -32,18 +32,6 @@ internal class KotlinMutableExternalModelContainerImpl private constructor(
         return values[key]?.let { it as T }
     }
 
-    override fun copy(): KotlinMutableExternalModelContainerImpl {
-        val copiedValues = values.mapValuesTo(mutableMapOf()) { (key, value) ->
-            val serializer = key.serializer
-            if (key.serializer != null) {
-                @Suppress("UNCHECKED_CAST")
-                serializer as KotlinExternalModelSerializer<Any>
-                serializer.deserialize(serializer.serialize(value))
-            } else value
-        }
-        return KotlinMutableExternalModelContainerImpl(copiedValues)
-    }
-
     @Synchronized
     private fun writeReplace(): Any {
         return SerializedKotlinExternalModelContainerCarrier(serialize(values))
@@ -77,21 +65,6 @@ private class SerializedKotlinExternalModelContainer(
         deserializedValues[key] = deserializedValue
         serializedValues.remove(key.id)
         return deserializedValue
-    }
-
-    override fun copy(): KotlinExternalModelContainer {
-        val copiedValues = deserializedValues.mapValuesTo(mutableMapOf()) { (key, value) ->
-            /* Serializer has to be present, otherwise where would the value be coming from ¯\_(ツ)_/¯ */
-            @Suppress("unchecked_cast")
-            val serializer = key.serializer as KotlinExternalModelSerializer<Any>
-            serializer.serialize(value)
-        }.mapKeys { (key, _) -> key.id }
-
-        /**
-         * [serializedValues] is all private. [ByteArray] will never be mutated and can't be referenced from anywhere
-         * [KotlinExternalModelKey] is immutable. We therefore only need to copy already deserialized values here.
-         */
-        return SerializedKotlinExternalModelContainer(serializedValues.plus(copiedValues).toMutableMap())
     }
 
     @Synchronized

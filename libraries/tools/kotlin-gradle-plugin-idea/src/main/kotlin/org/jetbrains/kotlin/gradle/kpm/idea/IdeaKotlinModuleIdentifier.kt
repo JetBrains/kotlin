@@ -21,30 +21,6 @@ interface IdeaKotlinMavenModuleIdentifier : IdeaKotlinModuleIdentifier {
     val name: String
 }
 
-fun IdeaKotlinModuleIdentifier.deepCopy(interner: Interner = Interner.default()): IdeaKotlinModuleIdentifier {
-    return when (this) {
-        is IdeaKotlinLocalModuleIdentifier -> this.deepCopy(interner)
-        is IdeaKotlinMavenModuleIdentifier -> this.deepCopy(interner)
-        else -> throw IllegalArgumentException("Unexpected ${IdeaKotlinMavenModuleIdentifier::class.java.simpleName}: $this")
-    }
-}
-
-fun IdeaKotlinLocalModuleIdentifier.deepCopy(interner: Interner = Interner.default()): IdeaKotlinLocalModuleIdentifier {
-    return IdeaKotlinLocalModuleIdentifierImpl(
-        moduleClassifier = interner.intern(moduleClassifier),
-        buildId = interner.intern(buildId),
-        projectId = interner.intern(projectId)
-    )
-}
-
-fun IdeaKotlinMavenModuleIdentifier.deepCopy(interner: Interner = Interner.default()): IdeaKotlinMavenModuleIdentifier {
-    return IdeaKotlinMavenModuleIdentifierImpl(
-        moduleClassifier = interner.intern(moduleClassifier),
-        group = interner.intern(group),
-        name = interner.intern(name)
-    )
-}
-
 @InternalKotlinGradlePluginApi
 data class IdeaKotlinLocalModuleIdentifierImpl(
     override val moduleClassifier: String?,

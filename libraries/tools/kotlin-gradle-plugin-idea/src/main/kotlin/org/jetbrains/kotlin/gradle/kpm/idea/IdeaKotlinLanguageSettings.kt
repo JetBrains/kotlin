@@ -19,19 +19,6 @@ interface IdeaKotlinLanguageSettings : Serializable {
     val freeCompilerArgs: List<String>
 }
 
-fun IdeaKotlinLanguageSettings.deepCopy(interner: Interner = Interner.default()): IdeaKotlinLanguageSettings {
-    return IdeaKotlinLanguageSettingsImpl(
-        languageVersion = interner.intern(languageVersion),
-        apiVersion = interner.intern(apiVersion),
-        isProgressiveMode = isProgressiveMode,
-        enabledLanguageFeatures = interner.internSet(enabledLanguageFeatures),
-        optInAnnotationsInUse = interner.internSet(optInAnnotationsInUse),
-        compilerPluginArguments = interner.internList(compilerPluginArguments),
-        compilerPluginClasspath = interner.internList(compilerPluginClasspath),
-        freeCompilerArgs = interner.internList(freeCompilerArgs)
-    )
-}
-
 @InternalKotlinGradlePluginApi
 data class IdeaKotlinLanguageSettingsImpl(
     override val languageVersion: String?,
