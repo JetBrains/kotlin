@@ -533,9 +533,25 @@ internal class Pattern(val pattern: String, flags: Int = 0) {
                     term = EOLSet(consumersCount++, AbstractLineTerminator.getInstance(flags))
                 }
 
-                Lexer.CHAR_START_OF_INPUT -> {  // Start if an input: \A
+                Lexer.CHAR_START_OF_INPUT -> {  // Start of an input: \A
                     lexemes.next()
                     term = SOLSet(AbstractLineTerminator.getInstance(flags))
+                }
+
+                Lexer.CHAR_LINEBREAK -> {
+                    // Any unicode linebreak sequence:
+                    // \u000D\u000A|[\u000A\u000B\u000C\u000D\u0085\u2028\u2029]
+                    lexemes.next()
+                    val fSet = NonCapFSet(consumersCount++)
+                    val lineBreakSequence = SequenceSet("\u000D\u000A").apply {
+                        next = fSet
+                    }
+                    val lineBreakChars = RangeSet(
+                        CharClass().addAll(listOf('\u000A', '\u000B', '\u000C', '\u000D', '\u0085', '\u2028', '\u2029'))
+                    ).apply {
+                        next = fSet
+                    }
+                    term = NonCapturingJointSet(listOf(lineBreakSequence, lineBreakChars), fSet)
                 }
 
                 Lexer.CHAR_PREVIOUS_MATCH -> {  // A previous match: \G
