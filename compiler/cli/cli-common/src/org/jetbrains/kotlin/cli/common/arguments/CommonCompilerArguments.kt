@@ -163,6 +163,12 @@ abstract class CommonCompilerArguments : CommonToolArguments() {
         valueDescription = "<fq.name>",
         description = "Enable, but don't propagate usages of experimental API for marker annotation with the given fully qualified name"
     )
+    @IDEAPluginsCompatibilityAPI(
+        IDEAPlatforms._212, // maybe 211 AS used it too
+        IDEAPlatforms._213,
+        message = "Please migrate to -opt-in",
+        plugins = "Android"
+    )
     var useExperimental: Array<String>? by FreezableVar(null)
 
     @Argument(
