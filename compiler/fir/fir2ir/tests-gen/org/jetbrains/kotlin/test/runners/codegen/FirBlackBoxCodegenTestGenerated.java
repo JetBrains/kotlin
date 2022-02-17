@@ -16525,6 +16525,12 @@ public class FirBlackBoxCodegenTestGenerated extends AbstractFirBlackBoxCodegenT
             }
 
             @Test
+            @TestMetadata("contextualInlineCall.kt")
+            public void testContextualInlineCall() throws Exception {
+                runTest("compiler/testData/codegen/box/extensionFunctions/contextReceivers/contextualInlineCall.kt");
+            }
+
+            @Test
             @TestMetadata("delegatedPropertiesOperators.kt")
             public void testDelegatedPropertiesOperators() throws Exception {
                 runTest("compiler/testData/codegen/box/extensionFunctions/contextReceivers/delegatedPropertiesOperators.kt");

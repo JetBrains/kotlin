@@ -505,7 +505,7 @@ class ExpressionCodegen(
             callGenerator.genValueAndPut(callee.extensionReceiverParameter!!, receiver, type, this, data)
         }
 
-        callGenerator.beforeValueParametersStart()
+        callGenerator.beforeValueParametersStart(callee.contextReceiverParametersCount)
         callee.valueParameters.subList(callee.contextReceiverParametersCount, callee.valueParameters.size)
             .forEachIndexed { i, valueParameter -> handleValueParameter(i + contextReceivers.size, valueParameter) }
 
