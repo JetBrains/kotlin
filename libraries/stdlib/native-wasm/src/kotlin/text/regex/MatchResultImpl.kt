@@ -36,7 +36,7 @@ constructor (internal val input: CharSequence,
 
     // Harmony's implementation ========================================================================================
     private val nativePattern = regex.nativePattern
-    private val groupCount = nativePattern.capturingGroupCount
+    private val groupCount = nativePattern.capturingGroups.size
     private val groupBounds = IntArray(groupCount * 2) { -1 }
 
     private val consumers = IntArray(nativePattern.consumersCount + 1) { -1 }
