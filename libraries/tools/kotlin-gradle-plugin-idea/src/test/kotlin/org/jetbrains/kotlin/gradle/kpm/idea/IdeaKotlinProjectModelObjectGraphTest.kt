@@ -17,7 +17,7 @@ import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
 import kotlin.test.assertTrue
 
-@OptIn(kotlin.ExperimentalStdlibApi::class)
+@OptIn(ExperimentalStdlibApi::class)
 @RunWith(Parameterized::class)
 class IdeaKotlinProjectModelObjectGraphTest(private val node: KClass<*>, @Suppress("unused_parameter") clazzName: String) {
 
@@ -85,7 +85,7 @@ class IdeaKotlinProjectModelObjectGraphTest(private val node: KClass<*>, @Suppre
                 }
             }
 
-            return classes.map { clazz -> arrayOf<Any>(clazz, checkNotNull(clazz.simpleName)) }
+            return classes.map { clazz -> arrayOf(clazz, checkNotNull(clazz.simpleName)) }
         }
 
         private fun KClass<*>.resolveReachableClasses(): Set<KClass<*>> {
