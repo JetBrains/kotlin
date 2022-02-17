@@ -19,18 +19,6 @@ interface IdeaKotlinFragment : Serializable {
     val external: KotlinExternalModelContainer
 }
 
-fun IdeaKotlinFragment.deepCopy(interner: Interner = Interner.default()): IdeaKotlinFragment {
-    return IdeaKotlinFragmentImpl(
-        name = interner.intern(name),
-        languageSettings = interner.intern(languageSettings?.deepCopy(interner)),
-        dependencies = interner.internList(dependencies.map { it.deepCopy(interner) }),
-        directRefinesDependencies = interner.internList(directRefinesDependencies.map { it.deepCopy(interner) }),
-        sourceDirectories = interner.internList(sourceDirectories.map { it.deepCopy(interner) }),
-        resourceDirectories = interner.internList(resourceDirectories.map { it.deepCopy(interner) }),
-        external = external.copy()
-    )
-}
-
 @InternalKotlinGradlePluginApi
 data class IdeaKotlinFragmentImpl(
     override val name: String,

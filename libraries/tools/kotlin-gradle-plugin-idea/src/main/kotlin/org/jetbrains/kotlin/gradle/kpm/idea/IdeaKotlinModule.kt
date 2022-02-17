@@ -12,13 +12,6 @@ interface IdeaKotlinModule : Serializable {
     val fragments: List<IdeaKotlinFragment>
 }
 
-fun IdeaKotlinModule.deepCopy(interner: Interner): IdeaKotlinModule {
-    return IdeaKotlinModuleImpl(
-        moduleIdentifier = interner.intern(moduleIdentifier.deepCopy(interner)),
-        fragments = interner.internList(fragments.map { it.deepCopy(interner) })
-    )
-}
-
 @InternalKotlinGradlePluginApi
 data class IdeaKotlinModuleImpl(
     override val moduleIdentifier: IdeaKotlinModuleIdentifier,

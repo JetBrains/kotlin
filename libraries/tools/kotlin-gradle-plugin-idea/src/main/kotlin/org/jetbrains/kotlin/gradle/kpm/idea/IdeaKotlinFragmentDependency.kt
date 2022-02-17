@@ -8,8 +8,3 @@ package org.jetbrains.kotlin.gradle.kpm.idea
 import java.io.Serializable
 
 interface IdeaKotlinFragmentDependency : Serializable
-
-fun IdeaKotlinFragmentDependency.deepCopy(interner: Interner = Interner.default()): IdeaKotlinFragmentDependency {
-    // TODO
-    return interner.intern(this)
-}

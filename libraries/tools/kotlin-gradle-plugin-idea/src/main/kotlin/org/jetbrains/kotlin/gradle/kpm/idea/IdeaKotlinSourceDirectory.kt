@@ -12,12 +12,6 @@ interface IdeaKotlinSourceDirectory : Serializable {
     val file: File
 }
 
-fun IdeaKotlinSourceDirectory.deepCopy(interner: Interner): IdeaKotlinSourceDirectory {
-    return IdeaKotlinSourceDirectoryImpl(
-        file = interner.intern(file)
-    )
-}
-
 @InternalKotlinGradlePluginApi
 data class IdeaKotlinSourceDirectoryImpl(
     override val file: File,

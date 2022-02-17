@@ -1,9 +1,13 @@
 public abstract class org/jetbrains/kotlin/gradle/kpm/KotlinExternalModelContainer : java/io/Serializable {
 	public static final field Companion Lorg/jetbrains/kotlin/gradle/kpm/KotlinExternalModelContainer$Companion;
 	public abstract fun contains (Lorg/jetbrains/kotlin/gradle/kpm/KotlinExternalModelKey;)Z
+	public fun equals (Ljava/lang/Object;)Z
 	public abstract fun get (Lorg/jetbrains/kotlin/gradle/kpm/KotlinExternalModelKey;)Ljava/lang/Object;
 	public abstract fun getIds ()Ljava/util/Set;
 	public final fun getOrThrow (Lorg/jetbrains/kotlin/gradle/kpm/KotlinExternalModelKey;)Ljava/lang/Object;
+	public fun hashCode ()I
+	public final fun isEmpty ()Z
+	public final fun isNotEmpty ()Z
 	public fun toString ()Ljava/lang/String;
 }
 
