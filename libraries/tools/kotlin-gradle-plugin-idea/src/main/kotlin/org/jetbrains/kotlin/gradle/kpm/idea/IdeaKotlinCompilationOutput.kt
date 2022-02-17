@@ -13,6 +13,13 @@ interface IdeaKotlinCompilationOutput : Serializable {
     val resourcesDir: File?
 }
 
+fun IdeaKotlinCompilationOutput.deepCopy(interner: Interner = Interner.default()): IdeaKotlinCompilationOutput {
+    return IdeaKotlinCompilationOutputImpl(
+        classesDirs = interner.internSet(classesDirs),
+        resourcesDir = interner.intern(resourcesDir)
+    )
+}
+
 @InternalKotlinGradlePluginApi
 data class IdeaKotlinCompilationOutputImpl(
     override val classesDirs: Set<File>,

@@ -7,6 +7,8 @@
 
 package org.jetbrains.kotlin.gradle.kpm.idea
 
+import buildIdeaKotlinProjectModel
+import createKpmProject
 import createProxyInstance
 import deserialize
 import org.gradle.api.Project
@@ -46,11 +48,7 @@ class BackwardsCompatibilityDeserializationTest {
 
     @Test
     fun `test - simple project`() {
-        val project = ProjectBuilder.builder().build() as ProjectInternal
-        project.plugins.apply(KotlinPm20PluginWrapper::class.java)
-
-        /* Setup example project */
-        val kotlinExtension = project.extensions.getByType(KotlinPm20ProjectExtension::class.java)
+        val (project, kotlinExtension) = createKpmProject()
         kotlinExtension.mainAndTest {
             jvm
             val native = fragments.create("native")
@@ -62,7 +60,7 @@ class BackwardsCompatibilityDeserializationTest {
         }
         project.evaluate()
 
-        val model = buildModel(project)
+        val model = project.buildIdeaKotlinProjectModel()
         val deserializedModel = deserializeModelWithBackwardsCompatibleClasses(model)
 
         /* Use proxy instances to assert the deserialized model */
@@ -102,7 +100,7 @@ class BackwardsCompatibilityDeserializationTest {
         kotlinExtension.main.common.external[retainedModelKey] = RetainedModel(2411)
         kotlinExtension.main.common.external[unretainedModelKey] = UnretainedModel(510)
 
-        val model = buildModel(project)
+        val model = project.buildIdeaKotlinProjectModel()
         val deserializedModel = deserializeModelWithBackwardsCompatibleClasses(model)
         val deserializedModelProxy = createProxyInstance<IdeaKotlinProjectModel>(deserializedModel)
 
@@ -133,11 +131,6 @@ private fun getClasspathForBackwardsCompatibilityTest(): List<File> {
 
     return backwardsCompatibilityClasspathString.split(";").map { path -> File(path) }
         .onEach { file -> if (!file.exists()) println("[WARNING] Missing $file") }
-}
-
-private fun buildModel(project: Project): IdeaKotlinProjectModel {
-    return project.serviceOf<ToolingModelBuilderRegistry>().getBuilder(IdeaKotlinProjectModel::class.java.name)
-        .buildAll(IdeaKotlinProjectModel::class.java.name, project) as IdeaKotlinProjectModel
 }
 
 private fun deserializeModelWithBackwardsCompatibleClasses(model: IdeaKotlinProjectModel): Any {
