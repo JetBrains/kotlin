@@ -60,7 +60,7 @@ internal class PlainTextBuildReportWriter(
 
     private fun printBuildReport(build: BuildExecutionData) {
         printBuildInfo(build)
-        printMetrics(build.aggregatedMetrics)
+        printMetrics(build.aggregatedMetrics, printExtraLine = true)
         printTaskOverview(build)
         printTasksLog(build)
     }
@@ -69,20 +69,21 @@ internal class PlainTextBuildReportWriter(
         p.withIndent("Gradle start parameters:") {
             build.startParameters.forEach { p.println(it) }
         }
-
         p.println()
+
         if (build.failureMessages.isNotEmpty()) {
             p.println("Build failed: ${build.failureMessages}")
+            p.println()
         }
-        p.println()
     }
 
-    private fun printMetrics(buildMetrics: BuildMetrics) {
+    private fun printMetrics(buildMetrics: BuildMetrics, printExtraLine: Boolean = false) {
         if (!printMetrics) return
 
         printBuildTimes(buildMetrics.buildTimes)
         printBuildPerformanceMetrics(buildMetrics.buildPerformanceMetrics)
         printBuildAttributes(buildMetrics.buildAttributes)
+        if (printExtraLine) p.println()
     }
 
     private fun printBuildTimes(buildTimes: BuildTimes) {
@@ -114,7 +115,6 @@ internal class PlainTextBuildReportWriter(
                 printBuildTime(buildTime)
             }
         }
-        p.println()
     }
 
     private fun printBuildPerformanceMetrics(buildMetrics: BuildPerformanceMetrics) {
@@ -126,7 +126,6 @@ internal class PlainTextBuildReportWriter(
                 allBuildMetrics[metric]?.let { p.println("${metric.readableString}: $it") }
             }
         }
-        p.println()
     }
 
     private fun printBuildAttributes(buildAttributes: BuildAttributes) {
@@ -139,7 +138,6 @@ internal class PlainTextBuildReportWriter(
                 printMap(p, kind.name, attributesCounts.map { (k, v) -> k.readableString to v }.toMap())
             }
         }
-        p.println()
     }
 
     private fun printTaskOverview(build: BuildExecutionData) {
@@ -151,7 +149,7 @@ internal class PlainTextBuildReportWriter(
             val taskTimeMs = task.totalTimeMs
             allTasksTimeMs += taskTimeMs
 
-            if (task.isKotlinTask) {
+            if (task.isKotlinTaskOrTransform) {
                 kotlinTotalTimeMs += taskTimeMs
                 kotlinTasks.add(task)
             }
@@ -166,17 +164,17 @@ internal class PlainTextBuildReportWriter(
         p.println("Total time for Kotlin tasks: ${formatTime(kotlinTotalTimeMs)} ($ktTaskPercent % of all tasks time)")
 
         val table = TextTable("Time", "% of Kotlin time", "Task")
-        for (task in kotlinTasks.sortedByDescending { it.totalTimeMs }) {
+        for (task in kotlinTasks.sortedWith(compareBy({ -it.totalTimeMs }, { it.startTimeMs }))) {
             val timeMs = task.totalTimeMs
             val percent = (timeMs.toDouble() / kotlinTotalTimeMs * 100).asString(1)
-            table.addRow(formatTime(timeMs), "$percent %", task.taskPath)
+            table.addRow(formatTime(timeMs), "$percent %", task.taskOrTransformPath)
         }
         table.printTo(p)
         p.println()
     }
 
     private fun printTasksLog(build: BuildExecutionData) {
-        for (task in build.taskExecutionData) {
+        for (task in build.taskExecutionData.sortedWith(compareBy({ -it.totalTimeMs }, { it.startTimeMs }))) {
             printTaskLog(task)
             p.println()
         }
@@ -185,13 +183,13 @@ internal class PlainTextBuildReportWriter(
     private fun printTaskLog(task: TaskExecutionData) {
         val skipMessage = task.skipMessage
         if (skipMessage != null) {
-            p.println("Task '${task.taskPath}' was skipped: $skipMessage")
+            p.println("Task '${task.taskOrTransformPath}' was skipped: $skipMessage")
         } else {
-            p.println("Task '${task.taskPath}' finished in ${formatTime(task.totalTimeMs)}")
+            p.println("Task '${task.taskOrTransformPath}' finished in ${formatTime(task.totalTimeMs)}")
         }
 
         if (task.icLogLines.isNotEmpty()) {
-            p.withIndent("Compilation log for task '${task.taskPath}':") {
+            p.withIndent("Compilation log for task '${task.taskOrTransformPath}':") {
                 task.icLogLines.forEach { p.println(it) }
             }
         }

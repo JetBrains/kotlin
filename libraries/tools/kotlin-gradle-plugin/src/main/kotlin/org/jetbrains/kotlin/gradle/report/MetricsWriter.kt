@@ -35,10 +35,10 @@ internal class MetricsWriter(
             }
 
             for (data in build.taskExecutionData) {
-                buildMetricsData.taskData[data.taskPath] =
+                buildMetricsData.taskData[data.taskOrTransformPath] =
                     TaskData(
-                        path = data.taskPath,
-                        typeFqName = data.type,
+                        path = data.taskOrTransformPath,
+                        typeFqName = data.taskOrTransformClass,
                         buildTimesMs = data.buildMetrics.buildTimes.asMapMs().mapKeys { it.key.name },
                         performanceMetrics = data.buildMetrics.buildPerformanceMetrics.asMap().mapKeys { it.key.name },
                         buildAttributes = data.buildMetrics.buildAttributes.asMap().mapKeys { it.key.name },
