@@ -300,6 +300,46 @@ internal abstract class AbstractCharClass : SpecialToken() {
         override fun computeValue(): AbstractCharClass = CharClass().add('0', '9').add('a', 'f').add('A', 'F')
     }
 
+    // From Java 8+ `Pattern` doc: \v - A vertical whitespace character: [\n\x0B\f\r\x85\u2028\u2029]
+    internal class CachedVerticalWhitespace : CachedCharClass() {
+        init {
+            initValues()
+        }
+        override fun computeValue(): AbstractCharClass =
+            CharClass().addAll(listOf('\n', '\u000B', '\u000C' /* aka \f */, '\r', '\u0085', '\u2028', '\u2029'))
+    }
+
+    // From Java 8+ `Pattern` doc: \V - A non-vertical whitespace character: [^\v]
+    internal class CachedNonVerticalWhitespace: CachedCharClass() {
+        init {
+            initValues()
+        }
+        override fun computeValue(): AbstractCharClass =
+            CachedVerticalWhitespace().getValue(negative = true).apply { mayContainSupplCodepoints = true }
+        // TODO: Does it match a pair of surrogates? Do we really need mayContainSupplCodepoints?
+    }
+
+    // From Java 8+ `Pattern` doc:
+    // \h - A horizontal whitespace character: [ \t\xA0\u1680\u180e\u2000-\u200a\u202f\u205f\u3000]
+    internal class CachedHorizontalWhitespace: CachedCharClass() {
+        init {
+            initValues()
+        }
+        override fun computeValue(): AbstractCharClass =
+            CharClass().addAll(listOf(' ', '\t', '\u00A0', '\u1680', '\u180e', '\u202f', '\u205f', '\u3000'))
+                .add('\u2000', '\u200a')
+    }
+
+    // From Java 8+ `Pattern` doc:
+    // \H - A non-horizontal whitespace character: [^\h]
+    internal class CachedNonHorizontalWhitespace: CachedCharClass() {
+        init {
+            initValues()
+        }
+        override fun computeValue(): AbstractCharClass =
+            CachedHorizontalWhitespace().getValue(negative = true).apply { mayContainSupplCodepoints = true }
+    }
+
     internal class CachedRange(var start: Int, var end: Int) : CachedCharClass() {
         init {
             initValues()
@@ -392,6 +432,10 @@ internal abstract class AbstractCharClass : SpecialToken() {
             NON_SPACE("S", ::CachedNonSpace),
             DIGIT_SHORT("d", ::CachedDigit),
             NON_DIGIT("D", ::CachedNonDigit),
+            VERTICAL_WHITESPACE("v", ::CachedVerticalWhitespace),
+            NON_VERTICAL_WHITESPACE("V", ::CachedNonVerticalWhitespace),
+            HORIZONTAL_WHITESPACE("h", ::CachedHorizontalWhitespace),
+            NON_HORIZONTAL_WHITESPACE("H", ::CachedNonHorizontalWhitespace),
             BASIC_LATIN("BasicLatin", { CachedRange(0x0000, 0x007F) }),
             LATIN1_SUPPLEMENT("Latin-1Supplement", { CachedRange(0x0080, 0x00FF) }),
             LATIN_EXTENDED_A("LatinExtended-A", { CachedRange(0x0100, 0x017F) }),

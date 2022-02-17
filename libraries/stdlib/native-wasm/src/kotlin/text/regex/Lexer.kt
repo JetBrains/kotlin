@@ -435,7 +435,7 @@ internal class Lexer(val patternString: String, flags: Int) {
             }
 
             // Word/whitespace/digit.
-            'w', 's', 'd', 'W', 'S', 'D' -> {
+            'w', 's', 'd', 'W', 'S', 'D', 'v', 'V', 'h', 'H' -> {
                 lookAheadSpecialToken = AbstractCharClass.getPredefinedClass(
                         pattern.concatToString(prevNonWhitespaceIndex, prevNonWhitespaceIndex + 1),
                         false
@@ -477,6 +477,7 @@ internal class Lexer(val patternString: String, flags: Int) {
             'G' -> lookAhead = CHAR_PREVIOUS_MATCH
             'Z' -> lookAhead = CHAR_END_OF_LINE
             'z' -> lookAhead = CHAR_END_OF_INPUT
+            'R' -> lookAhead = CHAR_LINEBREAK
 
             // \cx - A control character corresponding to x.
             'c' -> {
@@ -488,7 +489,7 @@ internal class Lexer(val patternString: String, flags: Int) {
                 }
             }
 
-            'C', 'E', 'F', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'R', 'T', 'U', 'V', 'X', 'Y', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'o', 'q', 'y' ->
+            'C', 'E', 'F', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'T', 'U', 'X', 'Y', 'g', 'i', 'j', 'k', 'l', 'm', 'o', 'q', 'y' ->
                 throw PatternSyntaxException("Illegal escape sequence", patternString, curTokenIndex)
         }
         return false
@@ -704,6 +705,7 @@ internal class Lexer(val patternString: String, flags: Int) {
         val CHAR_PREVIOUS_MATCH       = 0x80000000.toInt() or 'G'.toInt()
         val CHAR_END_OF_INPUT         = 0x80000000.toInt() or 'z'.toInt()
         val CHAR_END_OF_LINE          = 0x80000000.toInt() or 'Z'.toInt()
+        val CHAR_LINEBREAK            = 0x80000000.toInt() or 'R'.toInt()
 
         // Quantifier modes.
         val QMOD_GREEDY     = 0xe0000000.toInt()

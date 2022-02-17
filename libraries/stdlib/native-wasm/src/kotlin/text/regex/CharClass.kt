@@ -244,6 +244,16 @@ internal class CharClass(val ignoreCase: Boolean = false, negative: Boolean = fa
 
     fun add(start: Char, end: Char): CharClass = add(start.toInt(), end.toInt())
 
+    fun addAll(chars: Iterable<Char>): CharClass {
+        chars.forEach { add(it) }
+        return this
+    }
+
+    fun addAll(chars: Iterable<Int>): CharClass {
+        chars.forEach { add(it) }
+        return this
+    }
+
     // OR operation
     fun union(another: AbstractCharClass) {
         if (!mayContainSupplCodepoints && another.mayContainSupplCodepoints) {
