@@ -104,10 +104,10 @@ abstract class BuildMetricsReporterService : BuildService<BuildMetricsReporterSe
         }
 
         fun registerIfAbsent(project: Project, startParameters: List<String>): Provider<BuildMetricsReporterService>? {
-            val buildDataProcessors = ArrayList<BuildExecutionDataProcessor>()
             val rootProject = project.gradle.rootProject
             val reportingSettings = reportingSettings(rootProject)
 
+            val buildDataProcessors = ArrayList<BuildExecutionDataProcessor>()
             reportingSettings.fileReportSettings?.let {
                 buildDataProcessors.add(
                     PlainTextBuildReportWriterDataProcessor(
@@ -121,7 +121,7 @@ abstract class BuildMetricsReporterService : BuildService<BuildMetricsReporterSe
                 buildDataProcessors.add(MetricsWriter(reportingSettings.metricsOutputFile.absoluteFile))
             }
 
-            if (buildDataProcessors.isEmpty()) {
+            if (reportingSettings.buildReportOutputs.isEmpty() && buildDataProcessors.isEmpty()) {
                 return null
             }
 
