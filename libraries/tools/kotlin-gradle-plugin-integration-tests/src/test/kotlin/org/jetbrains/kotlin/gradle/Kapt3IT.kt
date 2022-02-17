@@ -101,6 +101,34 @@ open class Kapt3WorkersIT : Kapt3IT() {
         }
     }
 
+    @DisplayName("KT-48402: Kapt worker classpath is using JRE classes from toolchain")
+    @JdkVersions(versions = [JavaVersion.VERSION_16])
+    @GradleWithJdkTest
+    fun kaptClasspathJreToolchain(
+        gradleVersion: GradleVersion,
+        jdk: JdkVersions.ProvidedJdk
+    ) {
+        project(
+            "simple".withPrefix,
+            gradleVersion,
+            buildJdk = jdk.location
+        ) {
+            buildGradle.modify {
+                """
+                $it
+                
+                kotlin {
+                    jvmToolchain {
+                        languageVersion.set(JavaLanguageVersion.of("8"))
+                    }
+                }
+                """.trimIndent()
+            }
+
+            build("assemble")
+        }
+    }
+
     @DisplayName("Additional Kapt jvm arguments are passed to the process")
     @GradleTest
     internal fun additionalJvmArgumentsArePassed(gradleVersion: GradleVersion) {
