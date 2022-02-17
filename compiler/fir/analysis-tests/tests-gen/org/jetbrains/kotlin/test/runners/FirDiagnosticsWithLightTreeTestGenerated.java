@@ -5968,6 +5968,12 @@ public class FirDiagnosticsWithLightTreeTestGenerated extends AbstractFirDiagnos
             }
 
             @Test
+            @TestMetadata("stringConstructors.kt")
+            public void testStringConstructors() throws Exception {
+                runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/problems/stringConstructors.kt");
+            }
+
+            @Test
             @TestMetadata("TypesEligibleForSimpleVisit.kt")
             public void testTypesEligibleForSimpleVisit() throws Exception {
                 runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/problems/TypesEligibleForSimpleVisit.kt");
