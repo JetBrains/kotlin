@@ -5,10 +5,7 @@
 
 package org.jetbrains.kotlin.native
 
-import org.jetbrains.kotlin.konan.CompilerVersion
-import org.jetbrains.kotlin.konan.CompilerVersionImpl
-import org.jetbrains.kotlin.konan.MetaVersion
-import org.jetbrains.kotlin.konan.parseCompilerVersion
+import org.jetbrains.kotlin.konan.*
 import org.junit.Assert.assertEquals
 import org.junit.Test
 import kotlin.test.*
@@ -61,20 +58,6 @@ class NativeCompilerVersionTest {
             assertEquals(0, maintenance)
             assertEquals(MetaVersion.DEV, meta)
             assertEquals(1, build)
-        }
-        "1.6.10-M1-3".parseCompilerVersion().apply {
-            assertEquals(1, major)
-            assertEquals(6, minor)
-            assertEquals(10, maintenance)
-            assertEquals(MetaVersion.M1, meta)
-            assertEquals(3, build)
-        }
-        "1.6.20-M2".parseCompilerVersion().apply {
-            assertEquals(1, major)
-            assertEquals(6, minor)
-            assertEquals(20, maintenance)
-            assertEquals(MetaVersion.M2, meta)
-            assertEquals(-1, build)
         }
         "1.6.10-RC".parseCompilerVersion().apply {
             assertEquals(1, major)
@@ -160,5 +143,18 @@ class NativeCompilerVersionTest {
             assertEquals(MetaVersion("Beta2"), meta)
             assertEquals(-1, build)
         }
+    }
+
+    @Test
+    fun metaVersionOrder() {
+        assertTrue("1.7.0-RC2".parseCompilerVersion().isAtLeast("1.7.0-RC".parseCompilerVersion()))
+        assertTrue("1.7.0-RC".parseCompilerVersion().isAtLeast("1.7.0-BETA".parseCompilerVersion()))
+        assertTrue("1.7.0-RC".parseCompilerVersion().isAtLeast("1.7.0-BETA2".parseCompilerVersion()))
+        assertTrue("1.7.0-RC2".parseCompilerVersion().isAtLeast("1.7.0-BETA3".parseCompilerVersion()))
+        assertTrue("1.7.0-release".parseCompilerVersion().isAtLeast("1.7.0-RC".parseCompilerVersion()))
+        assertTrue("1.7.0-release".parseCompilerVersion().isAtLeast("1.7.0-RC3".parseCompilerVersion()))
+        assertTrue("1.7.0-release".parseCompilerVersion().isAtLeast("1.7.0-dev-1234".parseCompilerVersion()))
+        assertTrue("1.7.0-eap1".parseCompilerVersion().isAtLeast("1.7.0-eap".parseCompilerVersion()))
+        assertTrue("1.7.0-eap1".parseCompilerVersion().isAtLeast("1.7.0-eap-134".parseCompilerVersion()))
     }
 }
