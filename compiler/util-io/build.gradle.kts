@@ -19,7 +19,7 @@ tasks {
         kotlinOptions {
             languageVersion = "1.4"
             apiVersion = "1.4"
-            freeCompilerArgs += "-Xsuppress-version-warnings"
+            freeCompilerArgs += listOf("-Xsuppress-version-warnings", "-Xinline-classes")
         }
     }
 }
