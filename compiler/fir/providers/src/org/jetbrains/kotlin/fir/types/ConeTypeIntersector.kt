@@ -69,8 +69,7 @@ object ConeTypeIntersector {
         }
         assert(filteredEqualTypes.isNotEmpty(), errorMessage)
 
-        // TODO
-        // IntegerLiteralTypeConstructor.findIntersectionType(filteredEqualTypes)?.let { return it }
+        ConeIntegerLiteralIntersector.findCommonIntersectionType(filteredEqualTypes)?.let { return it }
 
         /*
          * For the case like it(ft(String..String?), String?), where ft(String..String?) == String?, we prefer to _keep_ flexible type.
