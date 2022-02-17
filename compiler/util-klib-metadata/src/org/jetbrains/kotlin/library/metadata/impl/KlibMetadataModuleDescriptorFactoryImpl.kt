@@ -190,6 +190,7 @@ class KlibMetadataModuleDescriptorFactoryImpl(
         } ?: provider
     }
 
+    // Used from IDEA plugin.
     fun createForwardDeclarationHackPackagePartProvider(
         storageManager: StorageManager,
         module: ModuleDescriptorImpl
@@ -200,7 +201,8 @@ class KlibMetadataModuleDescriptorFactoryImpl(
                 module,
                 fqName,
                 Name.identifier(supertypeName),
-                classKind
+                classKind,
+                isExpect = true
             )
 
         val packageFragmentProvider = PackageFragmentProviderImpl(
