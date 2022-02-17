@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.types
 
+import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -67,6 +68,22 @@ object CompilerConeAttributes {
         override fun toString(): String = "@ExtensionFunctionType"
     }
 
+    class ContextFunctionTypeParams(val contextReceiverNumber: Int) : ConeAttribute<ContextFunctionTypeParams>() {
+        override fun union(other: ContextFunctionTypeParams?): ContextFunctionTypeParams? = other
+        override fun intersect(other: ContextFunctionTypeParams?): ContextFunctionTypeParams = this
+        override fun add(other: ContextFunctionTypeParams?): ContextFunctionTypeParams = this
+
+        override fun isSubtypeOf(other: ContextFunctionTypeParams?): Boolean = true
+
+        override val key: KClass<out ContextFunctionTypeParams> = ContextFunctionTypeParams::class
+
+        override fun toString(): String = "@${StandardNames.FqNames.contextFunctionTypeParams.shortName().asString()}"
+
+        companion object {
+            val ANNOTATION_CLASS_ID = ClassId.topLevel(StandardNames.FqNames.contextFunctionTypeParams)
+        }
+    }
+
     object UnsafeVariance : ConeAttribute<UnsafeVariance>() {
         val ANNOTATION_CLASS_ID = ClassId(FqName("kotlin"), Name.identifier("UnsafeVariance"))
 
@@ -102,6 +119,8 @@ val ConeAttributes.exact: CompilerConeAttributes.Exact? by ConeAttributes.attrib
 val ConeAttributes.noInfer: CompilerConeAttributes.NoInfer? by ConeAttributes.attributeAccessor<CompilerConeAttributes.NoInfer>()
 val ConeAttributes.enhancedNullability: CompilerConeAttributes.EnhancedNullability? by ConeAttributes.attributeAccessor<CompilerConeAttributes.EnhancedNullability>()
 val ConeAttributes.extensionFunctionType: CompilerConeAttributes.ExtensionFunctionType? by ConeAttributes.attributeAccessor<CompilerConeAttributes.ExtensionFunctionType>()
+private val ConeAttributes.contextFunctionTypeParams: CompilerConeAttributes.ContextFunctionTypeParams? by ConeAttributes.attributeAccessor<CompilerConeAttributes.ContextFunctionTypeParams>()
+
 val ConeAttributes.unsafeVarianceType: CompilerConeAttributes.UnsafeVariance? by ConeAttributes.attributeAccessor<CompilerConeAttributes.UnsafeVariance>()
 
 // ------------------------------------------------------------------
@@ -116,3 +135,11 @@ val ConeKotlinType.hasEnhancedNullability: Boolean
 
 val ConeKotlinType.isExtensionFunctionType: Boolean
     get() = attributes.extensionFunctionType != null
+
+val ConeKotlinType.hasContextReceivers: Boolean
+    get() = attributes.contextReceiversNumberForFunctionType > 0
+
+val ConeKotlinType.contextReceiversNumberForFunctionType: Int
+    get() = attributes.contextReceiversNumberForFunctionType
+
+val ConeAttributes.contextReceiversNumberForFunctionType: Int get() = contextFunctionTypeParams?.contextReceiverNumber ?: 0

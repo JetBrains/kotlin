@@ -662,6 +662,15 @@ class FirElementSerializer private constructor(
                     return functionType
                 }
                 fillFromPossiblyInnerType(builder, type)
+                if (type.hasContextReceivers) {
+                    serializeAnnotationFromAttribute(
+                        correspondingTypeRef?.annotations, CompilerConeAttributes.ContextFunctionTypeParams.ANNOTATION_CLASS_ID, builder,
+                        argumentMapping = buildAnnotationArgumentMapping {
+                            this.mapping[StandardNames.CONTEXT_FUNCTION_TYPE_PARAMETER_COUNT_NAME] =
+                                buildConstExpression(source = null, ConstantValueKind.Int, type.contextReceiversNumberForFunctionType)
+                        }
+                    )
+                }
             }
             is ConeTypeParameterType -> {
                 val typeParameter = type.lookupTag.typeParameterSymbol.fir
@@ -721,17 +730,18 @@ class FirElementSerializer private constructor(
     private fun serializeAnnotationFromAttribute(
         existingAnnotations: List<FirAnnotation>?,
         classId: ClassId,
-        builder: ProtoBuf.Type.Builder
+        builder: ProtoBuf.Type.Builder,
+        argumentMapping: FirAnnotationArgumentMapping = FirEmptyAnnotationArgumentMapping,
     ) {
         if (existingAnnotations?.any { it.annotationTypeRef.coneTypeSafe<ConeClassLikeType>()?.classId == classId } != true) {
             extension.serializeTypeAnnotation(
                 buildAnnotation {
                     annotationTypeRef = buildResolvedTypeRef {
-                        this.type = CompilerConeAttributes.ExtensionFunctionType.ANNOTATION_CLASS_ID.constructClassLikeType(
+                        this.type = classId.constructClassLikeType(
                             emptyArray(), isNullable = false
                         )
                     }
-                    argumentMapping = FirEmptyAnnotationArgumentMapping
+                    this.argumentMapping = argumentMapping
                 }, builder
             )
         }
