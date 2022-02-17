@@ -479,7 +479,7 @@ class Fir2IrDeclarationStorage(
         isLocal: Boolean = false,
     ): IrSimpleFunction {
         getCachedIrFunction(function)?.let { return it }
-        return createIrFunction(function, irParent, isLocal = isLocal)
+        return createIrFunction(function, irParent, containingClass = function.containingClass(), isLocal = isLocal)
     }
 
     fun createIrFunction(
