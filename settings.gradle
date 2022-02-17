@@ -155,7 +155,6 @@ include ":benchmarks",
         ":compiler:tests-common-jvm6",
         ":compiler:tests-against-klib",
         ":compiler:tests-for-compiler-generator",
-        ":dukat",
         ":js:js.ast",
         ":js:js.sourcemap",
         ":js:js.serializer",
@@ -695,7 +694,6 @@ project(':kotlin-imports-dumper-compiler-plugin').projectDir = "$rootDir/plugins
 project(':libraries:kotlin-prepush-hook').projectDir = "$rootDir/libraries/tools/kotlin-prepush-hook" as File
 project(':plugins:jvm-abi-gen').projectDir = "$rootDir/plugins/jvm-abi-gen" as File
 project(':plugins:jvm-abi-gen-embeddable').projectDir = "$rootDir/plugins/jvm-abi-gen/embeddable" as File
-project(":dukat").projectDir = "$rootDir/libraries/tools/dukat" as File
 
 project(':js:js.tests').projectDir = "$rootDir/js/js.tests" as File
 project(':js:js.engines').projectDir = "$rootDir/js/js.engines" as File
