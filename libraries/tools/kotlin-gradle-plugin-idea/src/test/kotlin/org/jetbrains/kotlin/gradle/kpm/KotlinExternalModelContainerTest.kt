@@ -10,6 +10,7 @@ import serialize
 import java.io.Serializable
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertNotSame
 import kotlin.test.assertNull
 
 class KotlinExternalModelContainerTest {
@@ -105,5 +106,22 @@ class KotlinExternalModelContainerTest {
 
         /* Now accessing retainedModelFoo without serializer should behave like above */
         assertNull(deserializedContainer[KotlinExternalModelKey(retainedModelKeyFoo.id)])
+    }
+
+    @Test
+    fun `test - empty containers are equal`() {
+        val container1 = KotlinExternalModelContainer.mutable()
+        val container2 = KotlinExternalModelContainer.mutable()
+
+        assertNotSame(container1, container2)
+        assertEquals(container1, container2)
+        assertEquals(container2, container1)
+        assertEquals<KotlinExternalModelContainer>(KotlinExternalModelContainer.Empty, container1)
+        assertEquals<KotlinExternalModelContainer>(container1, KotlinExternalModelContainer.Empty)
+        assertEquals<KotlinExternalModelContainer>(KotlinExternalModelContainer.Empty, container2)
+        assertEquals<KotlinExternalModelContainer>(container2, KotlinExternalModelContainer.Empty)
+
+        assertEquals(container1.hashCode(), container2.hashCode())
+        assertEquals(container1.hashCode(), KotlinExternalModelContainer.Empty.hashCode())
     }
 }
