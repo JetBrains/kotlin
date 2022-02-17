@@ -402,6 +402,7 @@ private fun IrSimpleFunction.createSuspendFunctionStub(context: JvmBackendContex
 
         function.annotations += annotations
         function.metadata = metadata
+        function.contextReceiverParametersCount = contextReceiverParametersCount
 
         function.copyAttributes(this)
         function.copyTypeParametersFrom(this)
