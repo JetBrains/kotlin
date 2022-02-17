@@ -44,3 +44,13 @@ public actual val supportsSuppressedExceptions: Boolean get() = !isJava6
 public actual val supportsNamedCapturingGroup: Boolean get() = !isJava6
 
 public actual val regexSplitUnicodeCodePointHandling: Boolean get() = false
+
+public actual object BackReferenceHandling {
+    actual val captureLargestValidIndex: Boolean get() = true
+
+    actual val notYetDefinedGroup: HandlingOption = HandlingOption.MATCH_NOTHING
+    actual val notYetDefinedNamedGroup: HandlingOption = HandlingOption.THROW
+    actual val enclosingGroup: HandlingOption = HandlingOption.MATCH_NOTHING
+    actual val nonExistentGroup: HandlingOption = HandlingOption.MATCH_NOTHING
+    actual val nonExistentNamedGroup: HandlingOption = HandlingOption.THROW
+}
