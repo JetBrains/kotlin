@@ -11,6 +11,8 @@ import org.reflections.Reflections
 import java.lang.reflect.Field
 import java.lang.reflect.Modifier
 import kotlin.reflect.KClass
+import kotlin.reflect.KVisibility
+import kotlin.reflect.KVisibility.PUBLIC
 import kotlin.reflect.full.memberProperties
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -20,6 +22,8 @@ import kotlin.test.assertTrue
 @OptIn(ExperimentalStdlibApi::class)
 @RunWith(Parameterized::class)
 class IdeaKotlinProjectModelObjectGraphTest(private val node: KClass<*>, @Suppress("unused_parameter") clazzName: String) {
+
+    private val reflections = Reflections("org.jetbrains.kotlin")
 
     @Test
     fun `test - node implements Serializable`() {
@@ -31,12 +35,27 @@ class IdeaKotlinProjectModelObjectGraphTest(private val node: KClass<*>, @Suppre
 
     @Test
     fun `test - node implementations contain serialVersionUID`() {
-        val reflections = Reflections("org.jetbrains.kotlin")
-        reflections.getSubTypesOf(node.java).forEach { subtype ->
-            if (!subtype.isInterface && !Modifier.isAbstract(subtype.modifiers)) {
-                assertNodeImplementationDefinesSerialVersionUID(subtype)
+        val implementations = reflections.getSubTypesOf(node.java).plus(node.java)
+            .filter { subtype -> !subtype.isInterface && !Modifier.isAbstract(subtype.modifiers) }
+
+        assertTrue(
+            implementations.isNotEmpty(),
+            "No implementations found for $node"
+        )
+
+        implementations.forEach { implementation -> assertNodeImplementationDefinesSerialVersionUID(implementation) }
+    }
+
+    @Test
+    fun `test - node implementations are marked with InternalKotlinGradlePluginApi when data class`() {
+        reflections.getSubTypesOf(node.java).plus(node.java)
+            .filter { subtype -> subtype.kotlin.isData && subtype.kotlin.visibility == PUBLIC }
+            .forEach { dataClass ->
+                assertTrue(
+                    dataClass.annotations.any { it.annotationClass.simpleName == "InternalKotlinGradlePluginApi" },
+                    "Expected $dataClass to be annotated with '@InternalKotlinGradlePluginApi'"
+                )
             }
-        }
     }
 
     private fun assertNodeImplementationDefinesSerialVersionUID(implementationClass: Class<*>) {

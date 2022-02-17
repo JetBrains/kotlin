@@ -8,3 +8,11 @@ package org.jetbrains.kotlin.gradle.kpm.idea
 import java.io.Serializable
 
 interface IdeaKotlinFragmentDependency : Serializable
+
+@Suppress("unused")
+@InternalKotlinGradlePluginApi
+class IdeaKotlinFragmentDependencyImpl: IdeaKotlinFragmentDependency {
+    companion object {
+        const val serialVersionUID = 0L
+    }
+}
