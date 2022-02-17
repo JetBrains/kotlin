@@ -190,9 +190,6 @@ class LocalVariableResolver(
             initializeWithDefaultGetterSetter(propertyDescriptor)
             trace.record(BindingContext.VARIABLE, variable, propertyDescriptor)
             result = propertyDescriptor
-            if (inferenceSession is BuilderInferenceSession) {
-                inferenceSession.addLocalVariable(variable)
-            }
         } else {
             val variableDescriptor = resolveLocalVariableDescriptorWithType(scope, variable, null, trace)
             // For a local variable the type must not be deferred
@@ -200,10 +197,10 @@ class LocalVariableResolver(
                 variableDescriptor, scope, variable, dataFlowInfo, inferenceSession, trace, local = true
             )
             variableDescriptor.setOutType(type)
-            if (inferenceSession is BuilderInferenceSession) {
-                inferenceSession.addLocalVariable(variable)
-            }
             result = variableDescriptor
+        }
+        if (inferenceSession is BuilderInferenceSession) {
+            inferenceSession.addExpression(variable)
         }
         variableTypeAndInitializerResolver
             .setConstantForVariableIfNeeded(result, scope, variable, dataFlowInfo, type, inferenceSession, trace)
