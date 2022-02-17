@@ -18,6 +18,8 @@ data class IdeaKotlinVariantImpl(
     override val variantAttributes: Map<String, String>,
     override val compilationOutputs: IdeaKotlinCompilationOutput,
 ) : IdeaKotlinVariant, IdeaKotlinFragment by fragment {
+
+    @InternalKotlinGradlePluginApi
     companion object {
         private const val serialVersionUID = 0L
     }

@@ -38,6 +38,9 @@ sealed class KotlinExternalModelContainer : Serializable {
         override val ids: Set<KotlinExternalModelId<*>> = emptySet()
         override fun <T : Any> contains(key: KotlinExternalModelKey<T>): Boolean = false
         override fun <T : Any> get(key: KotlinExternalModelKey<T>): T? = null
+
+
+        private const val serialVersionUID = 0L
     }
 
     override fun toString(): String {
