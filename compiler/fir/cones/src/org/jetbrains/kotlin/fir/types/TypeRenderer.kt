@@ -70,9 +70,12 @@ fun ConeTypeProjection.render(): String {
 }
 
 fun ConeKotlinType.renderFunctionType(
-    kind: FunctionClassKind?, isExtension: Boolean, renderType: ConeTypeProjection.() -> String = { render() }
+    kind: FunctionClassKind?, renderType: ConeTypeProjection.() -> String = { render() }
 ): String {
     if (!kind.withPrettyRender()) return renderType()
+
+    val isExtension = isExtensionFunctionType
+
     val renderedType = buildString {
         if (kind == FunctionClassKind.SuspendFunction) {
             append("suspend ")

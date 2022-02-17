@@ -324,7 +324,7 @@ class FirVisualizer(private val firFile: FirFile) : BaseRenderer() {
 
         private fun ConeTypeProjection.tryToRenderConeAsFunctionType(): String {
             if (this !is ConeKotlinType) return localTypeRenderer()
-            val functionType = renderFunctionType(functionTypeKind, isExtensionFunctionType) { localTypeRenderer() }
+            val functionType = renderFunctionType(functionTypeKind) { localTypeRenderer() }
             return functionType.removeCurrentFilePackage()
         }
 

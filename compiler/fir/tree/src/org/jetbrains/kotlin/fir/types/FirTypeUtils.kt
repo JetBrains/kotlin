@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.types
 
+import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.builtins.functions.FunctionClassKind
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
@@ -113,9 +114,13 @@ fun ConeClassLikeType.toConstKind(): ConstantValueKind<*>? = when (lookupTag.cla
     else -> null
 }
 
-fun List<FirAnnotation>.computeTypeAttributes(session: FirSession): ConeAttributes {
-    if (this.isEmpty()) return ConeAttributes.Empty
+fun List<FirAnnotation>.computeTypeAttributes(session: FirSession, predefined: List<ConeAttribute<*>> = emptyList()): ConeAttributes {
+    if (this.isEmpty()) {
+        if (predefined.isEmpty()) return ConeAttributes.Empty
+        return ConeAttributes.create(predefined)
+    }
     val attributes = mutableListOf<ConeAttribute<*>>()
+    attributes += predefined
     val customAnnotations = mutableListOf<FirAnnotation>()
     for (annotation in this) {
         val type = annotation.annotationTypeRef.coneTypeSafe<ConeClassLikeType>() ?: continue
@@ -123,6 +128,11 @@ fun List<FirAnnotation>.computeTypeAttributes(session: FirSession): ConeAttribut
             CompilerConeAttributes.Exact.ANNOTATION_CLASS_ID -> attributes += CompilerConeAttributes.Exact
             CompilerConeAttributes.NoInfer.ANNOTATION_CLASS_ID -> attributes += CompilerConeAttributes.NoInfer
             CompilerConeAttributes.ExtensionFunctionType.ANNOTATION_CLASS_ID -> attributes += CompilerConeAttributes.ExtensionFunctionType
+            CompilerConeAttributes.ContextFunctionTypeParams.ANNOTATION_CLASS_ID ->
+                attributes +=
+                    CompilerConeAttributes.ContextFunctionTypeParams(
+                        annotation.extractContextReceiversCount() ?: 0
+                    )
             CompilerConeAttributes.UnsafeVariance.ANNOTATION_CLASS_ID -> attributes += CompilerConeAttributes.UnsafeVariance
             else -> {
                 val attributeFromPlugin = session.extensionService.typeAttributeExtensions.firstNotNullOfOrNull {
@@ -141,6 +151,9 @@ fun List<FirAnnotation>.computeTypeAttributes(session: FirSession): ConeAttribut
     }
     return ConeAttributes.create(attributes)
 }
+
+private fun FirAnnotation.extractContextReceiversCount() =
+    (argumentMapping.mapping[StandardNames.CONTEXT_FUNCTION_TYPE_PARAMETER_COUNT_NAME] as? FirConstExpression<*>)?.value as? Int
 
 fun FirTypeProjection.toConeTypeProjection(): ConeTypeProjection =
     when (this) {

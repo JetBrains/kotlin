@@ -130,7 +130,7 @@ private fun FqNameUnsafe.getFunctionalClassKind(): FunctionClassKind? {
 
 fun KotlinType.contextFunctionTypeParamsCount(): Int {
     val annotationDescriptor = annotations.findAnnotation(StandardNames.FqNames.contextFunctionTypeParams) ?: return 0
-    val constantValue = annotationDescriptor.allValueArguments.getValue(Name.identifier("count"))
+    val constantValue = annotationDescriptor.allValueArguments.getValue(StandardNames.CONTEXT_FUNCTION_TYPE_PARAMETER_COUNT_NAME)
     return (constantValue as IntValue).value
 }
 
@@ -279,7 +279,7 @@ fun Annotations.withContextReceiversFunctionAnnotation(builtIns: KotlinBuiltIns,
         Annotations.create(
             this + BuiltInAnnotationDescriptor(
                 builtIns, StandardNames.FqNames.contextFunctionTypeParams, mapOf(
-                    Name.identifier("count") to IntValue(contextReceiversCount)
+                    StandardNames.CONTEXT_FUNCTION_TYPE_PARAMETER_COUNT_NAME to IntValue(contextReceiversCount)
                 )
             )
         )

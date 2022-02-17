@@ -30,6 +30,8 @@ object StandardNames {
 
     @JvmField val CHAR_CODE = Name.identifier("code")
 
+    @JvmField val CONTEXT_FUNCTION_TYPE_PARAMETER_COUNT_NAME = Name.identifier("count")
+
     @JvmField val COROUTINES_PACKAGE_FQ_NAME = FqName("kotlin.coroutines")
 
     @JvmField val COROUTINES_JVM_INTERNAL_PACKAGE_FQ_NAME = FqName("kotlin.coroutines.jvm.internal")

@@ -2161,9 +2161,6 @@ class DeclarationsConverter(
             receiverTypeRef = receiverTypeReference
             returnTypeRef = returnTypeReference
             valueParameters += valueParametersList.map { it.firValueParameter }
-            if (receiverTypeReference != null) {
-                annotations += extensionFunctionAnnotation
-            }
             this.isSuspend = isSuspend
             this.contextReceiverTypeRefs.addAll(
                 functionType.getChildNodeByType(CONTEXT_RECEIVER_LIST)?.getChildNodesByType(CONTEXT_RECEIVER)?.mapNotNull {
@@ -2237,17 +2234,6 @@ class DeclarationsConverter(
             annotations += additionalAnnotations
         }
         return ValueParameter(isVal, isVar, modifiers, firValueParameter, destructuringDeclaration)
-    }
-
-    private val extensionFunctionAnnotation = buildAnnotation {
-        annotationTypeRef = buildResolvedTypeRef {
-            type = ConeClassLikeTypeImpl(
-                ConeClassLikeLookupTagImpl(EXTENSION_FUNCTION_ANNOTATION),
-                emptyArray(),
-                false
-            )
-        }
-        argumentMapping = FirEmptyAnnotationArgumentMapping
     }
 
     private fun <T> fillDanglingConstraintsTo(
