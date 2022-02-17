@@ -3,7 +3,7 @@ plugins {
 }
 
 object BackwardsCompatibilityTestConfiguration {
-    const val minimalBackwardsCompatibleVersion = "1.7.0-dev-1924"
+    const val minimalBackwardsCompatibleVersion = "1.7.0-dev-1987"
 }
 
 kotlin.sourceSets.configureEach {
@@ -18,6 +18,9 @@ dependencies {
     testImplementation(gradleKotlinDsl())
     testImplementation(project(":kotlin-gradle-plugin"))
     testImplementation(project(":kotlin-test:kotlin-test-junit"))
+    testImplementation("org.reflections:reflections:0.10.2") {
+        because("Tests on the object graph are performed. This library will find implementations of interfaces at runtime")
+    }
 }
 
 publish()
