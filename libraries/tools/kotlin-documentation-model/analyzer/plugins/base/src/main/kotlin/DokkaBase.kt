@@ -29,6 +29,8 @@ import org.jetbrains.dokka.base.translators.documentables.DefaultDocumentableToP
 import org.jetbrains.dokka.base.translators.psi.DefaultPsiToDocumentableTranslator
 import org.jetbrains.dokka.base.generation.SingleModuleGeneration
 import org.jetbrains.dokka.base.renderers.html.command.consumers.ReplaceVersionsConsumer
+import org.jetbrains.dokka.base.transformers.pages.tags.CustomTagContentProvider
+import org.jetbrains.dokka.base.transformers.pages.tags.SinceKotlinTagContentProvider
 import org.jetbrains.dokka.base.translators.descriptors.DefaultExternalDocumentablesProvider
 import org.jetbrains.dokka.base.translators.descriptors.ExternalClasslikesTranslator
 import org.jetbrains.dokka.base.translators.descriptors.ExternalDocumentablesProvider
@@ -41,6 +43,7 @@ class DokkaBase : DokkaPlugin() {
     val preMergeDocumentableTransformer by extensionPoint<PreMergeDocumentableTransformer>()
     val pageMergerStrategy by extensionPoint<PageMergerStrategy>()
     val commentsToContentConverter by extensionPoint<CommentsToContentConverter>()
+    val customTagContentProvider by extensionPoint<CustomTagContentProvider>()
     val signatureProvider by extensionPoint<SignatureProvider>()
     val locationProviderFactory by extensionPoint<LocationProviderFactory>()
     val externalLocationProviderFactory by extensionPoint<ExternalLocationProviderFactory>()
@@ -149,6 +152,10 @@ class DokkaBase : DokkaPlugin() {
 
     val docTagToContentConverter by extending {
         commentsToContentConverter with DocTagToContentConverter()
+    }
+
+    val sinceKotlinTagContentProvider by extending {
+        customTagContentProvider with SinceKotlinTagContentProvider
     }
 
     val pageMerger by extending {
