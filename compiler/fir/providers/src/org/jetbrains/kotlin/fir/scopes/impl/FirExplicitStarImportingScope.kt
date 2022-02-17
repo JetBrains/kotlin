@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.fir.declarations.FirImport
 import org.jetbrains.kotlin.fir.declarations.FirResolvedImport
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 
-class FirExplicitStarImportingScope(
+open class FirExplicitStarImportingScope(
     imports: List<FirImport>,
     session: FirSession,
     scopeSession: ScopeSession,

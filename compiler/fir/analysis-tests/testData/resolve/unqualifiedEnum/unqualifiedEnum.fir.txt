@@ -1,0 +1,77 @@
+FILE: unqualifiedEnum.kt
+    package test
+
+    public final enum class Sample : R|kotlin/Enum<test/Sample>| {
+        private constructor(): R|test/Sample| {
+            super<R|kotlin/Enum<test/Sample>|>()
+        }
+
+        public final static enum entry FIRST: R|test/Sample|
+        public final static enum entry SECOND: R|test/Sample|
+        public final static enum entry THIRD: R|test/Sample|
+        public final static fun values(): R|kotlin/Array<test/Sample>| {
+        }
+
+        public final static fun valueOf(value: R|kotlin/String|): R|test/Sample| {
+        }
+
+    }
+    public final fun trivial(s: R|test/Sample|): R|kotlin/Int| {
+        ^trivial when (R|<local>/s|) {
+            ==($subj$, R|test/Sample.FIRST|) ->  {
+                Int(1)
+            }
+            ==($subj$, R|test/Sample.SECOND|) ->  {
+                Int(2)
+            }
+            ==($subj$, R|test/Sample.THIRD|) ->  {
+                Int(3)
+            }
+        }
+
+    }
+    public final fun shouldNotWork(s: R|test/Sample|): R|kotlin/Int| {
+        ^shouldNotWork when () {
+            ==(R|<local>/s|, <Unresolved name: FIRST>#) ->  {
+                Int(1)
+            }
+            ==(R|<local>/s|, <Unresolved name: SECOND>#) ->  {
+                Int(2)
+            }
+            ==(R|<local>/s|, <Unresolved name: THIRD>#) ->  {
+                Int(3)
+            }
+            else ->  {
+                Int(0)
+            }
+        }
+
+    }
+    public final class Container : R|kotlin/Any| {
+        public constructor(): R|test/Container| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val SECOND: R|test/Sample| = Q|test/Sample|.R|test/Sample.SECOND|
+            public get(): R|test/Sample|
+
+        public final fun priority(s: R|test/Sample|): R|kotlin/Int| {
+            lval FIRST: R|test/Sample| = Q|test/Sample|.R|test/Sample.THIRD|
+            ^priority when (R|<local>/s|) {
+                ==($subj$, R|<local>/FIRST|) ->  {
+                    Int(3)
+                }
+                ==($subj$, this@R|test/Container|.R|test/Container.SECOND|) ->  {
+                    Int(2)
+                }
+                ==($subj$, Q|test/Sample|.R|test/Sample.FIRST|) ->  {
+                    Int(1)
+                }
+                else ->  {
+                    Int(0)
+                }
+            }
+
+        }
+
+    }

@@ -12,12 +12,10 @@ import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.impl.FirElseIfTrueCondition
 import org.jetbrains.kotlin.fir.expressions.impl.FirEmptyExpressionBlock
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
-import org.jetbrains.kotlin.fir.resolve.ResolutionMode
+import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.resolve.calls.isUnitOrFlexibleUnit
-import org.jetbrains.kotlin.fir.resolve.transformWhenSubjectExpressionUsingSmartcastInfo
 import org.jetbrains.kotlin.fir.resolve.transformers.FirSyntheticCallGenerator
 import org.jetbrains.kotlin.fir.resolve.transformers.FirWhenExhaustivenessTransformer
-import org.jetbrains.kotlin.fir.resolve.withExpectedType
 import org.jetbrains.kotlin.fir.resolvedTypeFromPrototype
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.buildErrorTypeRef
@@ -65,33 +63,35 @@ class FirControlFlowStatementsResolveTransformer(transformer: FirBodyResolveTran
         return context.withWhenExpression(whenExpression, session) with@{
             @Suppress("NAME_SHADOWING")
             var whenExpression = whenExpression.transformSubject(transformer, ResolutionMode.ContextIndependent)
-
-            when {
-                whenExpression.branches.isEmpty() -> {}
-                whenExpression.isOneBranch() -> {
-                    whenExpression = whenExpression.transformBranches(transformer, ResolutionMode.ContextIndependent)
-                    whenExpression.resultType = whenExpression.branches.first().result.resultType
-                }
-                else -> {
-                    whenExpression = whenExpression.transformBranches(transformer, ResolutionMode.ContextDependent)
-
-                    whenExpression = syntheticCallGenerator.generateCalleeForWhenExpression(whenExpression, resolutionContext) ?: run {
-                        whenExpression = whenExpression.transformSingle(whenExhaustivenessTransformer, null)
-                        dataFlowAnalyzer.exitWhenExpression(whenExpression)
-                        whenExpression.resultType = buildErrorTypeRef {
-                            diagnostic = ConeSimpleDiagnostic("Can't resolve when expression", DiagnosticKind.InferenceError)
-                        }
-                        return@with whenExpression
+            val subjectType = whenExpression.subject?.typeRef?.coneType?.fullyExpandedType(session)
+            context.withWhenSubjectType(subjectType, components) {
+                when {
+                    whenExpression.branches.isEmpty() -> {}
+                    whenExpression.isOneBranch() -> {
+                        whenExpression = whenExpression.transformBranches(transformer, ResolutionMode.ContextIndependent)
+                        whenExpression.resultType = whenExpression.branches.first().result.resultType
                     }
+                    else -> {
+                        whenExpression = whenExpression.transformBranches(transformer, ResolutionMode.ContextDependent)
 
-                    val completionResult = callCompleter.completeCall(whenExpression, data)
-                    whenExpression = completionResult.result
+                        whenExpression = syntheticCallGenerator.generateCalleeForWhenExpression(whenExpression, resolutionContext) ?: run {
+                            whenExpression = whenExpression.transformSingle(whenExhaustivenessTransformer, null)
+                            dataFlowAnalyzer.exitWhenExpression(whenExpression)
+                            whenExpression.resultType = buildErrorTypeRef {
+                                diagnostic = ConeSimpleDiagnostic("Can't resolve when expression", DiagnosticKind.InferenceError)
+                            }
+                            return@withWhenSubjectType whenExpression
+                        }
+
+                        val completionResult = callCompleter.completeCall(whenExpression, data)
+                        whenExpression = completionResult.result
+                    }
                 }
+                whenExpression = whenExpression.transformSingle(whenExhaustivenessTransformer, null)
+                dataFlowAnalyzer.exitWhenExpression(whenExpression)
+                whenExpression = whenExpression.replaceReturnTypeIfNotExhaustive()
+                whenExpression
             }
-            whenExpression = whenExpression.transformSingle(whenExhaustivenessTransformer, null)
-            dataFlowAnalyzer.exitWhenExpression(whenExpression)
-            whenExpression = whenExpression.replaceReturnTypeIfNotExhaustive()
-            whenExpression
         }
     }
 
@@ -110,9 +110,10 @@ class FirControlFlowStatementsResolveTransformer(transformer: FirBodyResolveTran
     }
 
     override fun transformWhenBranch(whenBranch: FirWhenBranch, data: ResolutionMode): FirWhenBranch {
-        return whenBranch.also { dataFlowAnalyzer.enterWhenBranchCondition(whenBranch) }
-            .transformCondition(transformer, withExpectedType(session.builtinTypes.booleanType))
-            .also { dataFlowAnalyzer.exitWhenBranchCondition(it) }
+        dataFlowAnalyzer.enterWhenBranchCondition(whenBranch)
+        return context.withWhenSubjectImportingScope {
+            whenBranch.transformCondition(transformer, withExpectedType(session.builtinTypes.booleanType))
+        }.also { dataFlowAnalyzer.exitWhenBranchCondition(it) }
             .transformResult(transformer, data)
             .also { dataFlowAnalyzer.exitWhenBranchResult(it) }
 
@@ -186,6 +187,7 @@ class FirControlFlowStatementsResolveTransformer(transformer: FirBodyResolveTran
     ): FirStatement {
         val labeledElement = returnExpression.target.labeledElement
         val expectedTypeRef = labeledElement.returnTypeRef
+
         @Suppress("IntroduceWhenSubject")
         val mode = when {
             labeledElement.symbol in context.anonymousFunctionsAnalyzedInDependentContext -> {

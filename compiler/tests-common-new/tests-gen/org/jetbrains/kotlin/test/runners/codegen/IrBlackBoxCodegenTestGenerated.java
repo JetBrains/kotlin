@@ -17236,6 +17236,12 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
         public void testSuspendExtension() throws Exception {
             runTest("compiler/testData/codegen/box/fir/SuspendExtension.kt");
         }
+
+        @Test
+        @TestMetadata("unqualifiedEnum.kt")
+        public void testUnqualifiedEnum() throws Exception {
+            runTest("compiler/testData/codegen/box/fir/unqualifiedEnum.kt");
+        }
     }
 
     @Nested
