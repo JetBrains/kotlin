@@ -97,7 +97,8 @@ class PsiInlineCodegen(
             hiddenParameters += invocationParamBuilder.addNextParameter(param.asmType, false) to
                     codegen.frameMap.enterTemp(param.asmType)
         }
-        invocationParamBuilder.markValueParametersStart()
+        // TODO: Add context receivers as hiddenParameters and pass their count
+        invocationParamBuilder.markValueParametersStart(0)
     }
 
     override fun putHiddenParamsIntoLocals() {
