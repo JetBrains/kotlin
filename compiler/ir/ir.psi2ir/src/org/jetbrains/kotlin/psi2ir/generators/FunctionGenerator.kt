@@ -351,7 +351,7 @@ class FunctionGenerator(declarationGenerator: DeclarationGenerator) : Declaratio
                         valueParameterDescriptor.containingDeclaration.safeAs<ConstructorDescriptor>()?.isAnnotationConstructor() ?: false
                     if (inAnnotation) {
                         generateDefaultAnnotationParameterValue(defaultValue, valueParameterDescriptor)
-                    } else if (!context.configuration.skipBodies) {
+                    } else if (context.configuration.generateBodies) {
                         bodyGenerator.generateExpressionBody(defaultValue)
                     } else context.irFactory.createExpressionBody(
                         IrErrorExpressionImpl(
