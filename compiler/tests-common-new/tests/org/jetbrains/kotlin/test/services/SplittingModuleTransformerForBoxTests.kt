@@ -6,6 +6,8 @@
 package org.jetbrains.kotlin.test.services
 
 import org.jetbrains.kotlin.test.TestInfrastructureInternals
+import org.jetbrains.kotlin.test.builders.RegisteredDirectivesBuilder
+import org.jetbrains.kotlin.test.directives.CodegenTestDirectives
 import org.jetbrains.kotlin.test.model.DependencyDescription
 import org.jetbrains.kotlin.test.model.DependencyKind
 import org.jetbrains.kotlin.test.model.DependencyRelation
@@ -52,7 +54,9 @@ class SplittingModuleTransformerForBoxTests : ModuleStructureTransformer() {
             module.binaryKind,
             files = listOf(secondModuleFile) + additionalFiles,
             allDependencies = listOf(DependencyDescription("lib", DependencyKind.Binary, DependencyRelation.FriendDependency)),
-            module.directives,
+            RegisteredDirectivesBuilder(module.directives).apply {
+                -CodegenTestDirectives.IGNORE_FIR_DIAGNOSTICS
+            }.build(),
             module.languageVersionSettings
         )
         return TestModuleStructureImpl(listOf(firstModule, secondModule), moduleStructure.originalTestDataFiles)
