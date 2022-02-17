@@ -236,24 +236,22 @@ KtFile: FunctionTypes.kt
     PsiWhiteSpace('  ')
     TYPE_REFERENCE
       FUNCTION_TYPE
-        FUNCTION_TYPE_RECEIVER
-          TYPE_REFERENCE
-            CONTEXT_RECEIVER_LIST
-              PsiElement(context)('context')
-              PsiElement(LPAR)('(')
-              CONTEXT_RECEIVER
-                TYPE_REFERENCE
-                  USER_TYPE
-                    REFERENCE_EXPRESSION
-                      PsiElement(IDENTIFIER)('T')
-              PsiElement(COMMA)(',')
-              PsiWhiteSpace(' ')
-              CONTEXT_RECEIVER
-                TYPE_REFERENCE
-                  USER_TYPE
-                    REFERENCE_EXPRESSION
-                      PsiElement(IDENTIFIER)('X')
-              PsiElement(RPAR)(')')
+        CONTEXT_RECEIVER_LIST
+          PsiElement(context)('context')
+          PsiElement(LPAR)('(')
+          CONTEXT_RECEIVER
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('T')
+          PsiElement(COMMA)(',')
+          PsiWhiteSpace(' ')
+          CONTEXT_RECEIVER
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('X')
+          PsiElement(RPAR)(')')
         PsiWhiteSpace(' ')
         VALUE_PARAMETER_LIST
           PsiElement(LPAR)('(')
@@ -296,24 +294,22 @@ KtFile: FunctionTypes.kt
     PsiWhiteSpace('  ')
     TYPE_REFERENCE
       FUNCTION_TYPE
-        FUNCTION_TYPE_RECEIVER
-          TYPE_REFERENCE
-            CONTEXT_RECEIVER_LIST
-              PsiElement(context)('context')
-              PsiElement(LPAR)('(')
-              CONTEXT_RECEIVER
-                TYPE_REFERENCE
-                  USER_TYPE
-                    REFERENCE_EXPRESSION
-                      PsiElement(IDENTIFIER)('T')
-              PsiElement(COMMA)(',')
-              PsiWhiteSpace(' ')
-              CONTEXT_RECEIVER
-                TYPE_REFERENCE
-                  USER_TYPE
-                    REFERENCE_EXPRESSION
-                      PsiElement(IDENTIFIER)('X')
-              PsiElement(RPAR)(')')
+        CONTEXT_RECEIVER_LIST
+          PsiElement(context)('context')
+          PsiElement(LPAR)('(')
+          CONTEXT_RECEIVER
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('T')
+          PsiElement(COMMA)(',')
+          PsiWhiteSpace(' ')
+          CONTEXT_RECEIVER
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('X')
+          PsiElement(RPAR)(')')
         PsiWhiteSpace(' ')
         VALUE_PARAMETER_LIST
           PsiElement(LPAR)('(')
@@ -344,24 +340,22 @@ KtFile: FunctionTypes.kt
     PsiWhiteSpace('  ')
     TYPE_REFERENCE
       FUNCTION_TYPE
-        FUNCTION_TYPE_RECEIVER
-          TYPE_REFERENCE
-            CONTEXT_RECEIVER_LIST
-              PsiElement(context)('context')
-              PsiElement(LPAR)('(')
-              CONTEXT_RECEIVER
-                TYPE_REFERENCE
-                  USER_TYPE
-                    REFERENCE_EXPRESSION
-                      PsiElement(IDENTIFIER)('T')
-              PsiElement(COMMA)(',')
-              PsiWhiteSpace(' ')
-              CONTEXT_RECEIVER
-                TYPE_REFERENCE
-                  USER_TYPE
-                    REFERENCE_EXPRESSION
-                      PsiElement(IDENTIFIER)('X')
-              PsiElement(RPAR)(')')
+        CONTEXT_RECEIVER_LIST
+          PsiElement(context)('context')
+          PsiElement(LPAR)('(')
+          CONTEXT_RECEIVER
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('T')
+          PsiElement(COMMA)(',')
+          PsiWhiteSpace(' ')
+          CONTEXT_RECEIVER
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('X')
+          PsiElement(RPAR)(')')
         PsiWhiteSpace(' ')
         VALUE_PARAMETER_LIST
           PsiElement(LPAR)('(')
@@ -383,24 +377,22 @@ KtFile: FunctionTypes.kt
     PsiWhiteSpace('  ')
     TYPE_REFERENCE
       FUNCTION_TYPE
-        FUNCTION_TYPE_RECEIVER
-          TYPE_REFERENCE
-            CONTEXT_RECEIVER_LIST
-              PsiElement(context)('context')
-              PsiElement(LPAR)('(')
-              CONTEXT_RECEIVER
-                TYPE_REFERENCE
-                  USER_TYPE
-                    REFERENCE_EXPRESSION
-                      PsiElement(IDENTIFIER)('T')
-              PsiElement(COMMA)(',')
-              PsiWhiteSpace(' ')
-              CONTEXT_RECEIVER
-                TYPE_REFERENCE
-                  USER_TYPE
-                    REFERENCE_EXPRESSION
-                      PsiElement(IDENTIFIER)('X')
-              PsiElement(RPAR)(')')
+        CONTEXT_RECEIVER_LIST
+          PsiElement(context)('context')
+          PsiElement(LPAR)('(')
+          CONTEXT_RECEIVER
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('T')
+          PsiElement(COMMA)(',')
+          PsiWhiteSpace(' ')
+          CONTEXT_RECEIVER
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('X')
+          PsiElement(RPAR)(')')
         PsiWhiteSpace(' ')
         VALUE_PARAMETER_LIST
           PsiElement(LPAR)('(')
@@ -732,18 +724,18 @@ KtFile: FunctionTypes.kt
     PsiWhiteSpace(' ')
     TYPE_REFERENCE
       FUNCTION_TYPE
+        CONTEXT_RECEIVER_LIST
+          PsiElement(context)('context')
+          PsiElement(LPAR)('(')
+          CONTEXT_RECEIVER
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('T')
+          PsiElement(RPAR)(')')
+        PsiWhiteSpace(' ')
         FUNCTION_TYPE_RECEIVER
           TYPE_REFERENCE
-            CONTEXT_RECEIVER_LIST
-              PsiElement(context)('context')
-              PsiElement(LPAR)('(')
-              CONTEXT_RECEIVER
-                TYPE_REFERENCE
-                  USER_TYPE
-                    REFERENCE_EXPRESSION
-                      PsiElement(IDENTIFIER)('T')
-              PsiElement(RPAR)(')')
-            PsiWhiteSpace(' ')
             USER_TYPE
               REFERENCE_EXPRESSION
                 PsiElement(IDENTIFIER)('T')
@@ -768,33 +760,33 @@ KtFile: FunctionTypes.kt
     PsiWhiteSpace(' ')
     TYPE_REFERENCE
       FUNCTION_TYPE
+        CONTEXT_RECEIVER_LIST
+          PsiElement(context)('context')
+          PsiElement(LPAR)('(')
+          CONTEXT_RECEIVER
+            TYPE_REFERENCE
+              USER_TYPE
+                USER_TYPE
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('T')
+                PsiElement(DOT)('.')
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('T')
+          PsiElement(COMMA)(',')
+          PsiWhiteSpace(' ')
+          CONTEXT_RECEIVER
+            TYPE_REFERENCE
+              USER_TYPE
+                USER_TYPE
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('T')
+                PsiElement(DOT)('.')
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('T')
+          PsiElement(RPAR)(')')
+        PsiWhiteSpace(' ')
         FUNCTION_TYPE_RECEIVER
           TYPE_REFERENCE
-            CONTEXT_RECEIVER_LIST
-              PsiElement(context)('context')
-              PsiElement(LPAR)('(')
-              CONTEXT_RECEIVER
-                TYPE_REFERENCE
-                  USER_TYPE
-                    USER_TYPE
-                      REFERENCE_EXPRESSION
-                        PsiElement(IDENTIFIER)('T')
-                    PsiElement(DOT)('.')
-                    REFERENCE_EXPRESSION
-                      PsiElement(IDENTIFIER)('T')
-              PsiElement(COMMA)(',')
-              PsiWhiteSpace(' ')
-              CONTEXT_RECEIVER
-                TYPE_REFERENCE
-                  USER_TYPE
-                    USER_TYPE
-                      REFERENCE_EXPRESSION
-                        PsiElement(IDENTIFIER)('T')
-                    PsiElement(DOT)('.')
-                    REFERENCE_EXPRESSION
-                      PsiElement(IDENTIFIER)('T')
-              PsiElement(RPAR)(')')
-            PsiWhiteSpace(' ')
             USER_TYPE
               USER_TYPE
                 REFERENCE_EXPRESSION
@@ -823,67 +815,67 @@ KtFile: FunctionTypes.kt
     PsiWhiteSpace(' ')
     TYPE_REFERENCE
       FUNCTION_TYPE
+        CONTEXT_RECEIVER_LIST
+          PsiElement(context)('context')
+          PsiElement(LPAR)('(')
+          CONTEXT_RECEIVER
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('T')
+                TYPE_ARGUMENT_LIST
+                  PsiElement(LT)('<')
+                  TYPE_PROJECTION
+                    TYPE_REFERENCE
+                      USER_TYPE
+                        REFERENCE_EXPRESSION
+                          PsiElement(IDENTIFIER)('A')
+                  PsiElement(COMMA)(',')
+                  PsiWhiteSpace(' ')
+                  TYPE_PROJECTION
+                    TYPE_REFERENCE
+                      USER_TYPE
+                        REFERENCE_EXPRESSION
+                          PsiElement(IDENTIFIER)('B')
+                  PsiElement(GT)('>')
+          PsiElement(COMMA)(',')
+          PsiWhiteSpace(' ')
+          CONTEXT_RECEIVER
+            TYPE_REFERENCE
+              USER_TYPE
+                USER_TYPE
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('T')
+                  TYPE_ARGUMENT_LIST
+                    PsiElement(LT)('<')
+                    TYPE_PROJECTION
+                      TYPE_REFERENCE
+                        USER_TYPE
+                          REFERENCE_EXPRESSION
+                            PsiElement(IDENTIFIER)('A')
+                    PsiElement(COMMA)(',')
+                    PsiWhiteSpace(' ')
+                    TYPE_PROJECTION
+                      TYPE_REFERENCE
+                        USER_TYPE
+                          REFERENCE_EXPRESSION
+                            PsiElement(IDENTIFIER)('B')
+                    PsiElement(GT)('>')
+                PsiElement(DOT)('.')
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('T')
+                TYPE_ARGUMENT_LIST
+                  PsiElement(LT)('<')
+                  TYPE_PROJECTION
+                    TYPE_REFERENCE
+                      USER_TYPE
+                        REFERENCE_EXPRESSION
+                          PsiElement(IDENTIFIER)('x')
+                  PsiElement(GT)('>')
+          PsiElement(RPAR)(')')
+        PsiWhiteSpace(' ')
         FUNCTION_TYPE_RECEIVER
           TYPE_REFERENCE
-            CONTEXT_RECEIVER_LIST
-              PsiElement(context)('context')
-              PsiElement(LPAR)('(')
-              CONTEXT_RECEIVER
-                TYPE_REFERENCE
-                  USER_TYPE
-                    REFERENCE_EXPRESSION
-                      PsiElement(IDENTIFIER)('T')
-                    TYPE_ARGUMENT_LIST
-                      PsiElement(LT)('<')
-                      TYPE_PROJECTION
-                        TYPE_REFERENCE
-                          USER_TYPE
-                            REFERENCE_EXPRESSION
-                              PsiElement(IDENTIFIER)('A')
-                      PsiElement(COMMA)(',')
-                      PsiWhiteSpace(' ')
-                      TYPE_PROJECTION
-                        TYPE_REFERENCE
-                          USER_TYPE
-                            REFERENCE_EXPRESSION
-                              PsiElement(IDENTIFIER)('B')
-                      PsiElement(GT)('>')
-              PsiElement(COMMA)(',')
-              PsiWhiteSpace(' ')
-              CONTEXT_RECEIVER
-                TYPE_REFERENCE
-                  USER_TYPE
-                    USER_TYPE
-                      REFERENCE_EXPRESSION
-                        PsiElement(IDENTIFIER)('T')
-                      TYPE_ARGUMENT_LIST
-                        PsiElement(LT)('<')
-                        TYPE_PROJECTION
-                          TYPE_REFERENCE
-                            USER_TYPE
-                              REFERENCE_EXPRESSION
-                                PsiElement(IDENTIFIER)('A')
-                        PsiElement(COMMA)(',')
-                        PsiWhiteSpace(' ')
-                        TYPE_PROJECTION
-                          TYPE_REFERENCE
-                            USER_TYPE
-                              REFERENCE_EXPRESSION
-                                PsiElement(IDENTIFIER)('B')
-                        PsiElement(GT)('>')
-                    PsiElement(DOT)('.')
-                    REFERENCE_EXPRESSION
-                      PsiElement(IDENTIFIER)('T')
-                    TYPE_ARGUMENT_LIST
-                      PsiElement(LT)('<')
-                      TYPE_PROJECTION
-                        TYPE_REFERENCE
-                          USER_TYPE
-                            REFERENCE_EXPRESSION
-                              PsiElement(IDENTIFIER)('x')
-                      PsiElement(GT)('>')
-              PsiElement(RPAR)(')')
-            PsiWhiteSpace(' ')
             USER_TYPE
               USER_TYPE
                 REFERENCE_EXPRESSION
@@ -947,18 +939,18 @@ KtFile: FunctionTypes.kt
           PsiElement(RBRACKET)(']')
       PsiWhiteSpace(' ')
       FUNCTION_TYPE
+        CONTEXT_RECEIVER_LIST
+          PsiElement(context)('context')
+          PsiElement(LPAR)('(')
+          CONTEXT_RECEIVER
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('T')
+          PsiElement(RPAR)(')')
+        PsiWhiteSpace(' ')
         FUNCTION_TYPE_RECEIVER
           TYPE_REFERENCE
-            CONTEXT_RECEIVER_LIST
-              PsiElement(context)('context')
-              PsiElement(LPAR)('(')
-              CONTEXT_RECEIVER
-                TYPE_REFERENCE
-                  USER_TYPE
-                    REFERENCE_EXPRESSION
-                      PsiElement(IDENTIFIER)('T')
-              PsiElement(RPAR)(')')
-            PsiWhiteSpace(' ')
             USER_TYPE
               REFERENCE_EXPRESSION
                 PsiElement(IDENTIFIER)('T')
@@ -995,33 +987,33 @@ KtFile: FunctionTypes.kt
           PsiElement(RBRACKET)(']')
       PsiWhiteSpace(' ')
       FUNCTION_TYPE
+        CONTEXT_RECEIVER_LIST
+          PsiElement(context)('context')
+          PsiElement(LPAR)('(')
+          CONTEXT_RECEIVER
+            TYPE_REFERENCE
+              USER_TYPE
+                USER_TYPE
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('T')
+                PsiElement(DOT)('.')
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('T')
+          PsiElement(COMMA)(',')
+          PsiWhiteSpace(' ')
+          CONTEXT_RECEIVER
+            TYPE_REFERENCE
+              USER_TYPE
+                USER_TYPE
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('T')
+                PsiElement(DOT)('.')
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('T')
+          PsiElement(RPAR)(')')
+        PsiWhiteSpace(' ')
         FUNCTION_TYPE_RECEIVER
           TYPE_REFERENCE
-            CONTEXT_RECEIVER_LIST
-              PsiElement(context)('context')
-              PsiElement(LPAR)('(')
-              CONTEXT_RECEIVER
-                TYPE_REFERENCE
-                  USER_TYPE
-                    USER_TYPE
-                      REFERENCE_EXPRESSION
-                        PsiElement(IDENTIFIER)('T')
-                    PsiElement(DOT)('.')
-                    REFERENCE_EXPRESSION
-                      PsiElement(IDENTIFIER)('T')
-              PsiElement(COMMA)(',')
-              PsiWhiteSpace(' ')
-              CONTEXT_RECEIVER
-                TYPE_REFERENCE
-                  USER_TYPE
-                    USER_TYPE
-                      REFERENCE_EXPRESSION
-                        PsiElement(IDENTIFIER)('T')
-                    PsiElement(DOT)('.')
-                    REFERENCE_EXPRESSION
-                      PsiElement(IDENTIFIER)('T')
-              PsiElement(RPAR)(')')
-            PsiWhiteSpace(' ')
             USER_TYPE
               USER_TYPE
                 REFERENCE_EXPRESSION
@@ -1062,67 +1054,67 @@ KtFile: FunctionTypes.kt
           PsiElement(RBRACKET)(']')
       PsiWhiteSpace(' ')
       FUNCTION_TYPE
+        CONTEXT_RECEIVER_LIST
+          PsiElement(context)('context')
+          PsiElement(LPAR)('(')
+          CONTEXT_RECEIVER
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('T')
+                TYPE_ARGUMENT_LIST
+                  PsiElement(LT)('<')
+                  TYPE_PROJECTION
+                    TYPE_REFERENCE
+                      USER_TYPE
+                        REFERENCE_EXPRESSION
+                          PsiElement(IDENTIFIER)('A')
+                  PsiElement(COMMA)(',')
+                  PsiWhiteSpace(' ')
+                  TYPE_PROJECTION
+                    TYPE_REFERENCE
+                      USER_TYPE
+                        REFERENCE_EXPRESSION
+                          PsiElement(IDENTIFIER)('B')
+                  PsiElement(GT)('>')
+          PsiElement(COMMA)(',')
+          PsiWhiteSpace(' ')
+          CONTEXT_RECEIVER
+            TYPE_REFERENCE
+              USER_TYPE
+                USER_TYPE
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('T')
+                  TYPE_ARGUMENT_LIST
+                    PsiElement(LT)('<')
+                    TYPE_PROJECTION
+                      TYPE_REFERENCE
+                        USER_TYPE
+                          REFERENCE_EXPRESSION
+                            PsiElement(IDENTIFIER)('A')
+                    PsiElement(COMMA)(',')
+                    PsiWhiteSpace(' ')
+                    TYPE_PROJECTION
+                      TYPE_REFERENCE
+                        USER_TYPE
+                          REFERENCE_EXPRESSION
+                            PsiElement(IDENTIFIER)('B')
+                    PsiElement(GT)('>')
+                PsiElement(DOT)('.')
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('T')
+                TYPE_ARGUMENT_LIST
+                  PsiElement(LT)('<')
+                  TYPE_PROJECTION
+                    TYPE_REFERENCE
+                      USER_TYPE
+                        REFERENCE_EXPRESSION
+                          PsiElement(IDENTIFIER)('x')
+                  PsiElement(GT)('>')
+          PsiElement(RPAR)(')')
+        PsiWhiteSpace(' ')
         FUNCTION_TYPE_RECEIVER
           TYPE_REFERENCE
-            CONTEXT_RECEIVER_LIST
-              PsiElement(context)('context')
-              PsiElement(LPAR)('(')
-              CONTEXT_RECEIVER
-                TYPE_REFERENCE
-                  USER_TYPE
-                    REFERENCE_EXPRESSION
-                      PsiElement(IDENTIFIER)('T')
-                    TYPE_ARGUMENT_LIST
-                      PsiElement(LT)('<')
-                      TYPE_PROJECTION
-                        TYPE_REFERENCE
-                          USER_TYPE
-                            REFERENCE_EXPRESSION
-                              PsiElement(IDENTIFIER)('A')
-                      PsiElement(COMMA)(',')
-                      PsiWhiteSpace(' ')
-                      TYPE_PROJECTION
-                        TYPE_REFERENCE
-                          USER_TYPE
-                            REFERENCE_EXPRESSION
-                              PsiElement(IDENTIFIER)('B')
-                      PsiElement(GT)('>')
-              PsiElement(COMMA)(',')
-              PsiWhiteSpace(' ')
-              CONTEXT_RECEIVER
-                TYPE_REFERENCE
-                  USER_TYPE
-                    USER_TYPE
-                      REFERENCE_EXPRESSION
-                        PsiElement(IDENTIFIER)('T')
-                      TYPE_ARGUMENT_LIST
-                        PsiElement(LT)('<')
-                        TYPE_PROJECTION
-                          TYPE_REFERENCE
-                            USER_TYPE
-                              REFERENCE_EXPRESSION
-                                PsiElement(IDENTIFIER)('A')
-                        PsiElement(COMMA)(',')
-                        PsiWhiteSpace(' ')
-                        TYPE_PROJECTION
-                          TYPE_REFERENCE
-                            USER_TYPE
-                              REFERENCE_EXPRESSION
-                                PsiElement(IDENTIFIER)('B')
-                        PsiElement(GT)('>')
-                    PsiElement(DOT)('.')
-                    REFERENCE_EXPRESSION
-                      PsiElement(IDENTIFIER)('T')
-                    TYPE_ARGUMENT_LIST
-                      PsiElement(LT)('<')
-                      TYPE_PROJECTION
-                        TYPE_REFERENCE
-                          USER_TYPE
-                            REFERENCE_EXPRESSION
-                              PsiElement(IDENTIFIER)('x')
-                      PsiElement(GT)('>')
-              PsiElement(RPAR)(')')
-            PsiWhiteSpace(' ')
             USER_TYPE
               USER_TYPE
                 REFERENCE_EXPRESSION

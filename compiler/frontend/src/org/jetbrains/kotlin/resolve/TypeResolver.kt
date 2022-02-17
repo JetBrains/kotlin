@@ -364,7 +364,7 @@ class TypeResolver(
 
             override fun visitFunctionType(type: KtFunctionType) {
                 val receiverTypeRef = type.receiverTypeReference
-                val receiverType = if (receiverTypeRef?.typeElement == null) null else resolveType(c.noBareTypes(), receiverTypeRef)
+                val receiverType = if (receiverTypeRef == null) null else resolveType(c.noBareTypes(), receiverTypeRef)
 
                 val contextReceiverList = type.contextReceiverList
                 val contextReceiversTypes = if (contextReceiverList != null) {
