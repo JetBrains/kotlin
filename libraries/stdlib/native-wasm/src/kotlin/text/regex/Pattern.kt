@@ -32,8 +32,8 @@ internal class Pattern(val pattern: String, flags: Int = 0) {
     /** A lexer instance used to get tokens from the pattern. */
     private val lexemes = Lexer(pattern, flags)
 
-    /** All back references that may be used in pattern. */
-    private val backRefs = arrayOfNulls<FSet>(BACK_REF_NUMBER)
+    /** List of all capturing groups in the pattern. Primarily used for handling back references. */
+    val capturingGroups = mutableListOf<FSet>()
 
     /** Mapping from group name to its index */
     val groupNameToIndex = hashMapOf<String, Int>()
@@ -41,17 +41,13 @@ internal class Pattern(val pattern: String, flags: Int = 0) {
     /** Is true if back referenced sets replacement by second compilation pass is needed.*/
     private var needsBackRefReplacement = false
 
-    /** Global count of found capturing groups. */
-    var capturingGroupCount = 0
-        private set
-
     /** A number of group quantifiers in the pattern */
     var groupQuantifierCount = 0
         private set
 
     /**
      * A number of consumers found in the pattern.
-     * Consumer is any expression ending with an FSet except capturing groups (they are counted by [capturingGroupCount])
+     * Consumer is any expression ending with an FSet except capturing groups (they are counted by [capturingGroups])
      */
     var consumersCount = 0
         private set
@@ -127,16 +123,15 @@ internal class Pattern(val pattern: String, flags: Int = 0) {
                     fSet = FinalSet()
                     saveChangedFlags = true
                 } else {
-                    fSet = FSet(capturingGroupCount)
+                    fSet = FSet(capturingGroups.size)
                 }
-                if (capturingGroupCount < BACK_REF_NUMBER) {
-                    backRefs[capturingGroupCount] = fSet
-                }
+
+                capturingGroups.add(fSet)
+
                 if (ch == Lexer.CHAR_NAMED_GROUP) {
                     val name = (lexemes.curSpecialToken as NamedGroup).name
-                    groupNameToIndex[name] = capturingGroupCount
+                    groupNameToIndex[name] = fSet.groupIndex
                 }
-                capturingGroupCount++
             }
         }
 
@@ -579,7 +574,16 @@ internal class Pattern(val pattern: String, flags: Int = 0) {
                 0x80000000.toInt() or '7'.toInt(),
                 0x80000000.toInt() or '8'.toInt(),
                 0x80000000.toInt() or '9'.toInt() -> {
-                    val groupIndex = (char and 0x7FFFFFFF) - '0'.toInt()
+                    var groupIndex = (char and 0x7FFFFFFF) - '0'.code
+                    while (lexemes.lookAhead in '0'.code..'9'.code) {
+                        val newGroupIndex = (groupIndex * 10) + (lexemes.lookAhead - '0'.code)
+                        if (newGroupIndex in 0 until capturingGroups.size) {
+                            groupIndex = newGroupIndex
+                            lexemes.next()
+                        } else {
+                            break
+                        }
+                    }
                     term = createBackReference(groupIndex)
                     lexemes.next()
                 }
@@ -636,9 +640,8 @@ internal class Pattern(val pattern: String, flags: Int = 0) {
 
     /** Creates a back reference to the group with specified [groupIndex], or throws if the group doesn't exist yet. */
     private fun createBackReference(groupIndex: Int): BackReferenceSet {
-        if (groupIndex >= 0 && groupIndex < capturingGroupCount) {   // All is ok - the group exists.
-            // backRefs[groupIndex] is proved to be not null because the group is already created (groupIndex < capturingGroupCount)
-            backRefs[groupIndex]!!.isBackReferenced = true
+        if (groupIndex >= 0 && groupIndex < capturingGroups.size) {
+            capturingGroups[groupIndex].isBackReferenced = true
             needsBackRefReplacement = true // And process back references in the second pass.
             return BackReferenceSet(groupIndex, consumersCount++, hasFlag(CASE_INSENSITIVE))
         } else {
@@ -887,9 +890,6 @@ internal class Pattern(val pattern: String, flags: Int = 0) {
          * equivalent.
          */
         val CANON_EQ = 1 shl 6
-
-        /** Max number of back references supported. */
-        internal val BACK_REF_NUMBER = 10
 
         /** A bit mask that includes all defined match flags */
         internal val flagsBitMask = Pattern.UNIX_LINES or
