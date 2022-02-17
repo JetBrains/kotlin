@@ -1,0 +1,20 @@
+FILE: contextReceivers.kt
+    context(A, b@B)
+    public? final? fun foo(): R|kotlin/Unit| {
+    }
+    context(A, b@B)
+    public? final? val x: Int
+        public? get(): Int {
+            ^ IntegerLiteral(1)
+        }
+    context(A, b@B)
+    public? final? class C : R|kotlin/Any| {
+        public? [ContainingClassKey=C] constructor(): R|C| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public? final? fun bar1(x: context(A, B)( () -> Unit )): R|kotlin/Unit| {
+    }
+    public? final? fun bar2(x: context(A, B)( C.() -> Unit )): R|kotlin/Unit| {
+    }

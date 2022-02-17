@@ -1,0 +1,15 @@
+FILE: contextReceivers.kt
+    context(A, b@B)
+    public? final? fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
+    context(A, b@B)
+    public? final? val x: Int
+        public? get(): Int { LAZY_BLOCK }
+    context(A, b@B)
+    public? final? class C : R|kotlin/Any| {
+        public? constructor(): R|C| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public? final? fun bar1(x: context(A, B)( () -> Unit )): R|kotlin/Unit| { LAZY_BLOCK }
+    public? final? fun bar2(x: context(A, B)( C.() -> Unit )): R|kotlin/Unit| { LAZY_BLOCK }

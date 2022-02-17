@@ -591,6 +591,8 @@ class DeclarationsConverter(
                         )
                     }
                     initCompanionObjectSymbolAttr()
+
+                    contextReceivers.addAll(convertContextReceivers(classNode))
                 }.also {
                     it.delegateFieldsMap = delegatedFieldsMap
                 }
@@ -1234,6 +1236,8 @@ class DeclarationsConverter(
                 it.useSiteTarget != PROPERTY_GETTER &&
                         (!isVar || it.useSiteTarget != SETTER_PARAMETER && it.useSiteTarget != PROPERTY_SETTER)
             }
+
+            contextReceivers.addAll(convertContextReceivers(property))
         }.also {
             fillDanglingConstraintsTo(firTypeParameters, typeConstraints, it)
         }
@@ -1615,6 +1619,7 @@ class DeclarationsConverter(
 
                 symbol = functionSymbol
                 dispatchReceiverType = currentDispatchReceiverType()
+                contextReceivers.addAll(convertContextReceivers(functionDeclaration))
             }
         }
 
@@ -2160,6 +2165,11 @@ class DeclarationsConverter(
                 annotations += extensionFunctionAnnotation
             }
             this.isSuspend = isSuspend
+            this.contextReceiverTypeRefs.addAll(
+                functionType.getChildNodeByType(CONTEXT_RECEIVER_LIST)?.getChildNodesByType(CONTEXT_RECEIVER)?.mapNotNull {
+                    it.getChildNodeByType(TYPE_REFERENCE)?.let(::convertType)
+                }.orEmpty()
+            )
         }
     }
 
@@ -2257,6 +2267,25 @@ class DeclarationsConverter(
         }
         if (result.isNotEmpty()) {
             to.danglingTypeConstraints = result
+        }
+    }
+
+    private fun convertContextReceivers(container: LighterASTNode): List<FirContextReceiver> {
+        val receivers = container.getChildNodeByType(CONTEXT_RECEIVER_LIST)?.getChildNodesByType(CONTEXT_RECEIVER) ?: emptyList()
+        return receivers.map { contextReceiverElement ->
+            buildContextReceiver {
+                this.source = contextReceiverElement.toFirSourceElement()
+                this.labelName =
+                    contextReceiverElement
+                        .getChildNodeByType(LABEL_QUALIFIER)
+                        ?.getChildNodeByType(LABEL)
+                        ?.getChildNodeByType(IDENTIFIER)
+                        ?.getReferencedNameAsName()
+
+                contextReceiverElement.getChildNodeByType(TYPE_REFERENCE)?.let {
+                    this.typeRef = convertType(it)
+                }
+            }
         }
     }
 }
