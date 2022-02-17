@@ -90,7 +90,6 @@ class NativeCompilerVersionTest {
         assertFailsWith<IllegalArgumentException> { CompilerVersion.fromString("1.5.30-M1-dev-123") }
         assertFailsWith<IllegalArgumentException> { CompilerVersion.fromString("1.5.30-M1-release-123") }
         assertFailsWith<IllegalArgumentException> { CompilerVersion.fromString("1.5.30.40-release-123") }
-        assertFailsWith<IllegalStateException> { CompilerVersion.fromString("1.6.0-M3-123") }
     }
 
     @Test
@@ -122,5 +121,44 @@ class NativeCompilerVersionTest {
             assertEquals(123, build)
         }
         assertEquals("1.5.30-PUB-140", CompilerVersionImpl(MetaVersion.PUB, 1, 5, 30, -1, 140).toString())
+    }
+
+    @Test
+    fun betasAndRCs() {
+        "1.7.0-RC".parseCompilerVersion().apply {
+            assertEquals(1, major)
+            assertEquals(7, minor)
+            assertEquals(0, maintenance)
+            assertEquals(MetaVersion.RC, meta)
+            assertEquals(-1, build)
+        }
+        "1.7.0-RC2".parseCompilerVersion().apply {
+            assertEquals(1, major)
+            assertEquals(7, minor)
+            assertEquals(0, maintenance)
+            assertEquals(MetaVersion("RC2"), meta)
+            assertEquals(-1, build)
+        }
+        "1.7.0-RC2-123".parseCompilerVersion().apply {
+            assertEquals(1, major)
+            assertEquals(7, minor)
+            assertEquals(0, maintenance)
+            assertEquals(MetaVersion("RC2"), meta)
+            assertEquals(123, build)
+        }
+        "1.7.0-Beta".parseCompilerVersion().apply {
+            assertEquals(1, major)
+            assertEquals(7, minor)
+            assertEquals(0, maintenance)
+            assertEquals(MetaVersion.BETA, meta)
+            assertEquals(-1, build)
+        }
+        "1.7.0-Beta2".parseCompilerVersion().apply {
+            assertEquals(1, major)
+            assertEquals(7, minor)
+            assertEquals(0, maintenance)
+            assertEquals(MetaVersion("Beta2"), meta)
+            assertEquals(-1, build)
+        }
     }
 }
