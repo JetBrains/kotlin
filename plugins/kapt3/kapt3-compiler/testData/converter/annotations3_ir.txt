@@ -65,7 +65,8 @@ public abstract interface Parceler<T extends java.lang.Object> {
 
 import java.lang.System;
 
-@TypeParceler.Container(value = {@TypeParceler(), @TypeParceler()})
+@TypeParceler()
+@TypeParceler()
 @kotlin.Metadata()
 public final class Test {
 
