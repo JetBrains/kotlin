@@ -457,3 +457,8 @@ fun LLVMTypeRef.isVectorElementType(): Boolean = when (llvm.LLVMGetTypeKind(this
     LLVMTypeKind.LLVMDoubleTypeKind -> true
     else -> false
 }
+
+fun LLVMModuleRef.getName(): String = memScoped {
+    val sizeVar = alloc<size_tVar>()
+    LLVMGetModuleIdentifier(this@getName, sizeVar.ptr)!!.toKStringFromUtf8()
+}

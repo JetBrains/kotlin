@@ -27,6 +27,8 @@ object BinaryOptions : BinaryOptionRegistry() {
     val unitSuspendFunctionObjCExport by option<UnitSuspendFunctionObjCExport>()
 
     val gcSchedulerType by option<GCSchedulerType>()
+
+    val linkRuntime by option<RuntimeLinkageStrategyBinaryOption>()
 }
 
 open class BinaryOption<T : Any>(
