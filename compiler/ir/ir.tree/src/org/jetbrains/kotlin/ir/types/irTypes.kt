@@ -81,10 +81,14 @@ fun IrType.removeAnnotations(): IrType =
     }
 
 val IrType.classifierOrFail: IrClassifierSymbol
-    get() = cast<IrSimpleType>().classifier
+    get() = classifierOrNull ?: error("Can't get classifier of ${render()}")
 
 val IrType.classifierOrNull: IrClassifierSymbol?
-    get() = safeAs<IrSimpleType>()?.classifier
+    get() = when (this) {
+        is IrSimpleType -> classifier
+        is IrDefinitelyNotNullType -> original.classifierOrNull
+        else -> null
+    }
 
 val IrType.classOrNull: IrClassSymbol?
     get() =

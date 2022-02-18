@@ -1,6 +1,8 @@
 // !LANGUAGE: -ApproximateIntegerLiteralTypesInReceiverPosition
 // WITH_REFLECT
 // TARGET_BACKEND: JVM
+// KT-51458:
+// IGNORE_BACKEND_FIR: JVM_IR
 
 // TODO: it's not clear why compilation fails for Android
 // IGNORE_BACKEND: ANDROID
