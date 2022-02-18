@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.fir.resolve.calls.tower
 
-import org.jetbrains.kotlin.fir.util.asReversedFrozen
 import org.jetbrains.kotlin.fir.declarations.FirTowerDataContext
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
@@ -18,6 +17,7 @@ import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.scopes.impl.FirWhenSubjectImportingScope
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.impl.FirImplicitBuiltinTypeRef
+import org.jetbrains.kotlin.fir.util.asReversedFrozen
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
 import org.jetbrains.kotlin.resolve.descriptorUtil.HIDES_MEMBERS_NAME_LIST
@@ -66,7 +66,7 @@ internal abstract class FirBaseTowerResolveTask(
     open fun onSuccessfulLevel(towerGroup: TowerGroup) {}
 
     protected suspend inline fun processLevel(
-        towerLevel: SessionBasedTowerLevel,
+        towerLevel: TowerScopeLevel,
         callInfo: CallInfo,
         group: TowerGroup,
         explicitReceiverKind: ExplicitReceiverKind = ExplicitReceiverKind.NO_EXPLICIT_RECEIVER,
@@ -82,7 +82,7 @@ internal abstract class FirBaseTowerResolveTask(
         withHideMembersOnly: Boolean = false,
         includeInnerConstructors: Boolean = extensionReceiver != null,
     ): ScopeTowerLevel = ScopeTowerLevel(
-        session, components, this,
+        components, this,
         extensionReceiver, withHideMembersOnly, includeInnerConstructors
     )
 
@@ -90,9 +90,8 @@ internal abstract class FirBaseTowerResolveTask(
         extensionReceiver: ReceiverValue? = null,
         implicitExtensionInvokeMode: Boolean = false
     ) = MemberScopeTowerLevel(
-        session, components, this,
+        components, this,
         extensionReceiver, implicitExtensionInvokeMode,
-        scopeSession = components.scopeSession
     )
 
     protected inline fun enumerateTowerLevels(
@@ -126,7 +125,7 @@ internal abstract class FirBaseTowerResolveTask(
      * @return true if level is empty
      */
     private suspend fun processLevel(
-        towerLevel: SessionBasedTowerLevel,
+        towerLevel: TowerScopeLevel,
         callInfo: CallInfo,
         group: TowerGroup,
         explicitReceiverKind: ExplicitReceiverKind

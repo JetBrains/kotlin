@@ -29,7 +29,7 @@ internal class TowerLevelHandler {
         info: CallInfo,
         explicitReceiverKind: ExplicitReceiverKind,
         group: TowerGroup,
-        towerLevel: SessionBasedTowerLevel
+        towerLevel: TowerScopeLevel
     ): ProcessResult {
         processResult = ProcessResult.SCOPE_EMPTY
         val processor =
