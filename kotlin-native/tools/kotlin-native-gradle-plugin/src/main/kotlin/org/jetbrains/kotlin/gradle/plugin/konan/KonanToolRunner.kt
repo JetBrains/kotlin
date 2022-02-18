@@ -66,7 +66,12 @@ internal abstract class KonanCliRunner(
 
     final override val execSystemProperties by lazy { mapOf("konan.home" to konanHome) }
 
-    final override val classpath by lazy { project.fileTree("$konanHome/konan/lib/").apply { include("*.jar") }.files }
+    final override val classpath by lazy {
+        project.fileTree("$konanHome/konan/lib/").apply {
+            include("trove4j.jar")
+            include("kotlin-native-compiler-embeddable.jar")
+        }.files
+    }
 
     final override fun checkClasspath() =
             check(classpath.isNotEmpty()) {
