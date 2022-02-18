@@ -88,7 +88,7 @@ internal sealed class RuntimeLinkageStrategy {
                 runtimeLlvmModules == null -> return None
                 binaryOption == RuntimeLinkageStrategyBinaryOption.Raw -> Raw(runtimeLlvmModules)
                 binaryOption == RuntimeLinkageStrategyBinaryOption.Optimize -> LinkAndOptimize(context, runtimeLlvmModules)
-                context.config.debug -> Raw(runtimeLlvmModules)
+                context.config.debug -> LinkAndOptimize(context, runtimeLlvmModules)
                 else -> Raw(runtimeLlvmModules)
             }
 
