@@ -23,7 +23,10 @@ import org.jetbrains.kotlin.codegen.coroutines.SUSPEND_FUNCTION_COMPLETION_PARAM
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.load.kotlin.TypeMappingMode
-import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.KtCallableDeclaration
+import org.jetbrains.kotlin.psi.KtDeclaration
+import org.jetbrains.kotlin.psi.KtFunction
+import org.jetbrains.kotlin.psi.KtParameter
 import org.jetbrains.kotlin.psi.psiUtil.isPrivate
 import org.jetbrains.kotlin.types.KotlinType
 
@@ -130,10 +133,15 @@ internal abstract class KtUltraLightParameter(
     override fun getContainingFile(): PsiFile = method.containingFile
     override fun getParent(): PsiElement = method.parameterList
 
-    override fun equals(other: Any?): Boolean = other === this ||
-            other is KtUltraLightParameter &&
-            other.javaClass == this.javaClass &&
-            other.ultraLightMethod == this.ultraLightMethod
+    override fun equals(other: Any?): Boolean {
+        if (other === this) return true
+        if (other !is KtUltraLightParameter || other.javaClass != this.javaClass || other.name != this.name) return false
+        if (other.kotlinOrigin != null) {
+            return other.kotlinOrigin == this.kotlinOrigin
+        }
+
+        return this.kotlinOrigin == null && other.ultraLightMethod == this.ultraLightMethod
+    }
 
     override fun hashCode(): Int = name.hashCode()
 
@@ -218,6 +226,14 @@ internal class KtUltraLightParameterForSetterParameter(
         get() = property.annotationEntries.toLightAnnotations(this, AnnotationUseSiteTarget.SETTER_PARAMETER)
 
     override fun isVarArgs(): Boolean = false
+
+    override fun equals(other: Any?): Boolean = other === this ||
+            other is KtUltraLightParameterForSetterParameter &&
+            other.name == this.name &&
+            other.property == this.property &&
+            other.containingDeclaration == this.containingDeclaration
+
+    override fun hashCode(): Int = name.hashCode()
 }
 
 internal class KtUltraLightReceiverParameter(
@@ -225,7 +241,7 @@ internal class KtUltraLightReceiverParameter(
     support: KtUltraLightSupport,
     method: KtUltraLightMethod
 ) : KtAbstractUltraLightParameterForDeclaration(
-    /** @see org.jetbrains.kotlin.codegen.AsmUtil.getNameForReceiverParameter */
+    /** @see org.jetbrains.kotlin.codegen.DescriptorAsmUtil.getNameForReceiverParameter */
     name = AsmUtil.getLabeledThisName(containingDeclaration.name ?: method.name, LABELED_THIS_PARAMETER, RECEIVER_PARAMETER_NAME),
     kotlinOrigin = null,
     support = support,
@@ -248,7 +264,7 @@ internal class KtUltraLightReceiverParameter(
 }
 
 internal class KtUltraLightParameterForDescriptor(
-    descriptor: ParameterDescriptor,
+    private val descriptor: ParameterDescriptor,
     support: KtUltraLightSupport,
     method: KtUltraLightMethod
 ) : KtUltraLightParameter(
@@ -282,6 +298,14 @@ internal class KtUltraLightParameterForDescriptor(
     }
 
     override fun getType(): PsiType = _parameterType
+
+    override fun equals(other: Any?): Boolean = other === this ||
+            other is KtUltraLightParameterForDescriptor &&
+            other.name == this.name &&
+            other.descriptor.type == this.descriptor.type &&
+            other.method == this.method
+
+    override fun hashCode(): Int = name.hashCode()
 
     init {
         //We should force computations on all lazy delegates to release descriptor on the end of ctor call
