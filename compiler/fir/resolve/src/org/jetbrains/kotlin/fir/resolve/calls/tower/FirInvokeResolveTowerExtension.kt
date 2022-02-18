@@ -136,13 +136,11 @@ internal class FirInvokeResolveTowerExtension(
     }
 
     private fun enqueueResolverTasksForInvokeReceiverCandidates(
-        extensionInvokeOnActualReceiver: Boolean,
+        invokeBuiltinExtensionMode: Boolean,
         info: CallInfo,
         receiverGroup: TowerGroup,
         collector: CandidateCollector
     ) {
-        val invokeBuiltinExtensionMode: Boolean = extensionInvokeOnActualReceiver
-
         for (invokeReceiverCandidate in collector.bestCandidates()) {
             val symbol = invokeReceiverCandidate.symbol
             if (symbol !is FirCallableSymbol<*> && symbol !is FirClassLikeSymbol<*>) continue
@@ -153,7 +151,6 @@ internal class FirInvokeResolveTowerExtension(
             if (invokeBuiltinExtensionMode && !isExtensionFunctionType) {
                 continue
             }
-
 
             val extensionReceiverExpression = invokeReceiverCandidate.extensionReceiverExpression()
             val useImplicitReceiverAsBuiltinInvokeArgument =
