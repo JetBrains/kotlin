@@ -23,8 +23,6 @@ import kotlin.test.assertTrue
 @RunWith(Parameterized::class)
 class IdeaKotlinProjectModelObjectGraphTest(private val node: KClass<*>, @Suppress("unused_parameter") clazzName: String) {
 
-    private val reflections = Reflections("org.jetbrains.kotlin")
-
     @Test
     fun `test - node implements Serializable`() {
         assertTrue(
@@ -35,49 +33,37 @@ class IdeaKotlinProjectModelObjectGraphTest(private val node: KClass<*>, @Suppre
 
     @Test
     fun `test - node implementations contain serialVersionUID`() {
-        val implementations = reflections.getSubTypesOf(node.java).plus(node.java)
-            .filter { subtype -> !subtype.isInterface && !Modifier.isAbstract(subtype.modifiers) }
+        if (!node.java.isInterface && !Modifier.isAbstract(node.java.modifiers)) {
+            val serialVersionUID = assertNotNull(
+                node.java.getDeclaredFieldOrNull("serialVersionUID"),
+                "Expected $node to declare 'serialVersionUID' field"
+            )
 
-        assertTrue(
-            implementations.isNotEmpty(),
-            "No implementations found for $node"
-        )
+            assertTrue(
+                Modifier.isStatic(serialVersionUID.modifiers),
+                "Expected $node to declare 'serialVersionUID' statically"
+            )
 
-        implementations.forEach { implementation -> assertNodeImplementationDefinesSerialVersionUID(implementation) }
+            assertTrue(
+                serialVersionUID.type.isPrimitive,
+                "Expected $node to declare primitive 'serialVersionUID'"
+            )
+
+            assertEquals(
+                serialVersionUID.type, Long::class.javaPrimitiveType,
+                "Expected $node to declare 'serialVersionUID' of type Long"
+            )
+        }
     }
 
     @Test
     fun `test - node implementations are marked with InternalKotlinGradlePluginApi when data class`() {
-        reflections.getSubTypesOf(node.java).plus(node.java)
-            .filter { subtype -> subtype.kotlin.isData && subtype.kotlin.visibility == PUBLIC }
-            .forEach { dataClass ->
-                assertTrue(
-                    dataClass.annotations.any { it.annotationClass.simpleName == "InternalKotlinGradlePluginApi" },
-                    "Expected $dataClass to be annotated with '@InternalKotlinGradlePluginApi'"
-                )
-            }
-    }
-
-    private fun assertNodeImplementationDefinesSerialVersionUID(implementationClass: Class<*>) {
-        val serialVersionUID = assertNotNull(
-            implementationClass.getDeclaredFieldOrNull("serialVersionUID"),
-            "Expected $implementationClass to declare 'serialVersionUID' field"
-        )
-
-        assertTrue(
-            Modifier.isStatic(serialVersionUID.modifiers),
-            "Expected $implementationClass to declare 'serialVersionUID' statically"
-        )
-
-        assertTrue(
-            serialVersionUID.type.isPrimitive,
-            "Expected $implementationClass to declare primitive 'serialVersionUID'"
-        )
-
-        assertEquals(
-            serialVersionUID.type, Long::class.javaPrimitiveType,
-            "Expected $implementationClass to declare 'serialVersionUID' of type Long"
-        )
+        if (node.isData && node.visibility == PUBLIC) {
+            assertTrue(
+                node.annotations.any { it.annotationClass.simpleName == "InternalKotlinGradlePluginApi" },
+                "Expected $node to be annotated with '@InternalKotlinGradlePluginApi'"
+            )
+        }
     }
 
     private fun Class<*>.getDeclaredFieldOrNull(name: String): Field? {
@@ -89,6 +75,8 @@ class IdeaKotlinProjectModelObjectGraphTest(private val node: KClass<*>, @Suppre
     }
 
     companion object {
+        private val reflections = Reflections("org.jetbrains.kotlin")
+
         @JvmStatic
         @Parameterized.Parameters(name = "{1}")
         fun findNodes(): List<Array<Any>> {
@@ -100,6 +88,12 @@ class IdeaKotlinProjectModelObjectGraphTest(private val node: KClass<*>, @Suppre
                 children.forEach { child ->
                     if (classes.add(child)) {
                         resolveQueue.add(child)
+                        if (child.java.isInterface || Modifier.isAbstract(child.java.modifiers)) {
+                            val subtypes = reflections.getSubTypesOf(child.java).map { it.kotlin }
+                            assertTrue(subtypes.isNotEmpty(), "Missing implementations for $child")
+                            classes.addAll(subtypes)
+                            resolveQueue.addAll(subtypes)
+                        }
                     }
                 }
             }
