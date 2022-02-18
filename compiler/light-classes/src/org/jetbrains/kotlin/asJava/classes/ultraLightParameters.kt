@@ -231,8 +231,7 @@ internal class KtUltraLightParameterForSetterParameter(
     override fun equals(other: Any?): Boolean = other === this ||
             other is KtUltraLightParameterForSetterParameter &&
             other.name == this.name &&
-            other.property == this.property &&
-            other.containingDeclaration == this.containingDeclaration
+            other.property == this.property
 
     override fun hashCode(): Int = name.hashCode()
 }
