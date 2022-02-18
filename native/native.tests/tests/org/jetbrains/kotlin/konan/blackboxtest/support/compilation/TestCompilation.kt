@@ -8,6 +8,8 @@ package org.jetbrains.kotlin.konan.blackboxtest.support.compilation
 import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.konan.blackboxtest.support.*
 import org.jetbrains.kotlin.konan.blackboxtest.support.TestCase.*
+import org.jetbrains.kotlin.konan.blackboxtest.support.compilation.ExecutableCompilation.Companion.applyTestRunnerSpecificArgs
+import org.jetbrains.kotlin.konan.blackboxtest.support.compilation.ExecutableCompilation.Companion.assertTestDumpFileNotEmptyIfExists
 import org.jetbrains.kotlin.konan.blackboxtest.support.compilation.TestCompilationArtifact.*
 import org.jetbrains.kotlin.konan.blackboxtest.support.compilation.TestCompilationDependencyType.*
 import org.jetbrains.kotlin.konan.blackboxtest.support.settings.*
@@ -16,6 +18,7 @@ import org.jetbrains.kotlin.konan.blackboxtest.support.util.buildArgs
 import org.jetbrains.kotlin.konan.blackboxtest.support.util.flatMapToSet
 import org.jetbrains.kotlin.konan.blackboxtest.support.util.mapToSet
 import org.jetbrains.kotlin.konan.properties.resolvablePropertyList
+import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertTrue
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.fail
 import java.io.File
 
@@ -29,14 +32,14 @@ internal abstract class BasicCompilation<A : TestCompilationArtifact>(
     private val classLoader: KotlinNativeClassLoader,
     private val optimizationMode: OptimizationMode,
     protected val freeCompilerArgs: TestCompilerArgs,
-    protected val dependencies: Iterable<TestCompilationDependency<*>>,
+    protected val dependencies: CategorizedDependencies,
     protected val expectedArtifact: A
 ) : TestCompilation<A>() {
     protected abstract val sourceModules: Collection<TestModule>
 
     // Runs the compiler and memorizes the result on property access.
     final override val result: TestCompilationResult<out A> by lazy {
-        val failures = dependencies.collectFailures()
+        val failures = dependencies.failures
         if (failures.isNotEmpty())
             TestCompilationResult.DependencyFailures(causes = failures)
         else
@@ -64,6 +67,8 @@ internal abstract class BasicCompilation<A : TestCompilationArtifact>(
     private fun ArgsBuilder.applySources() {
         addFlattenedTwice(sourceModules, { it.files }) { it.location.path }
     }
+
+    protected open fun postCompileCheck() = Unit
 
     private fun doCompile(): TestCompilationResult.ImmediateResult<out A> {
         val compilerArgs = buildArgs {
@@ -100,38 +105,9 @@ internal abstract class BasicCompilation<A : TestCompilationArtifact>(
 
         expectedArtifact.logFile.writeText(loggedCompilerCall.toString())
 
+        postCompileCheck()
+
         return result
-    }
-
-    companion object {
-        private fun Iterable<TestCompilationDependency<*>>.collectFailures() = flatMapToSet { dependency ->
-            when (val result = (dependency as? TestCompilation<*>)?.result) {
-                is TestCompilationResult.Failure -> listOf(result)
-                is TestCompilationResult.DependencyFailures -> result.causes
-                is TestCompilationResult.Success -> emptyList()
-                null -> emptyList()
-            }
-        }
-
-        @JvmStatic
-        protected inline fun <reified A : TestCompilationArtifact, reified T : TestCompilationDependencyType<A>> Iterable<TestCompilationDependency<*>>.collectArtifacts(): List<A> {
-            val concreteDependencyType = T::class.objectInstance
-            val dependencyTypeMatcher: (TestCompilationDependencyType<*>) -> Boolean = if (concreteDependencyType != null) {
-                { it == concreteDependencyType }
-            } else {
-                { it.canYield(A::class.java) }
-            }
-
-            return mapNotNull { dependency -> if (dependencyTypeMatcher(dependency.type)) dependency.artifact as A else null }
-        }
-
-        @JvmStatic
-        protected val Iterable<TestCompilationDependency<*>>.cachedLibraries: List<KLIBStaticCache>
-            get() = collectArtifacts<KLIBStaticCache, LibraryStaticCache>()
-
-        @JvmStatic
-        protected val Iterable<KLIBStaticCache>.uniqueCacheDirs: Set<File>
-            get() = mapToSet { (libraryCacheDir, _) -> libraryCacheDir } // Avoid repeating the same directory more than once.
     }
 }
 
@@ -146,7 +122,7 @@ internal abstract class SourceBasedCompilation<A : TestCompilationArtifact>(
     private val gcScheduler: GCScheduler,
     freeCompilerArgs: TestCompilerArgs,
     override val sourceModules: Collection<TestModule>,
-    dependencies: Iterable<TestCompilationDependency<*>>,
+    dependencies: CategorizedDependencies,
     expectedArtifact: A
 ) : BasicCompilation<A>(
     targets = targets,
@@ -172,12 +148,6 @@ internal abstract class SourceBasedCompilation<A : TestCompilationArtifact>(
         }
         add(dependencies.includedLibraries) { include -> "-Xinclude=${include.path}" }
     }
-
-    companion object {
-        private val Iterable<TestCompilationDependency<*>>.libraries get() = collectArtifacts<KLIB, Library>()
-        private val Iterable<TestCompilationDependency<*>>.friends get() = collectArtifacts<KLIB, FriendLibrary>()
-        private val Iterable<TestCompilationDependency<*>>.includedLibraries get() = collectArtifacts<KLIB, IncludedLibrary>()
-    }
 }
 
 internal class LibraryCompilation(
@@ -197,7 +167,7 @@ internal class LibraryCompilation(
     gcScheduler = settings.get(),
     freeCompilerArgs = freeCompilerArgs,
     sourceModules = sourceModules,
-    dependencies = dependencies,
+    dependencies = CategorizedDependencies(dependencies),
     expectedArtifact = expectedArtifact
 ) {
     override fun applySpecificArgs(argsBuilder: ArgsBuilder) = with(argsBuilder) {
@@ -227,7 +197,7 @@ internal class ExecutableCompilation(
     gcScheduler = settings.get(),
     freeCompilerArgs = freeCompilerArgs,
     sourceModules = sourceModules,
-    dependencies = dependencies,
+    dependencies = CategorizedDependencies(dependencies),
     expectedArtifact = expectedArtifact
 ) {
     private val cacheMode: CacheMode = settings.get()
@@ -240,13 +210,20 @@ internal class ExecutableCompilation(
         when (extras) {
             is NoTestRunnerExtras -> add("-entry", extras.entryPoint)
             is WithTestRunnerExtras -> {
-                val testRunnerArg = when (extras.runnerType) {
-                    TestRunnerType.DEFAULT -> "-generate-test-runner"
-                    TestRunnerType.WORKER -> "-generate-worker-test-runner"
-                    TestRunnerType.NO_EXIT -> "-generate-no-exit-test-runner"
+                val testDumpFile: File? = if (sourceModules.isEmpty()
+                    && dependencies.includedLibraries.isNotEmpty()
+                    && cacheMode.staticCacheRequiredForEveryLibrary
+                ) {
+                    // If there are no source modules passed to the compiler, but there is an included library with the static cache, then
+                    // this should be two-stage test mode: Test functions are already stored in the included library, and they should
+                    // already have been dumped during generation of library's static cache.
+                    null // No, don't need to dump tests.
+                } else {
+                    expectedArtifact.testDumpFile // Yes, need to dump tests.
+
                 }
-                add(testRunnerArg)
-                add("-Xdump-tests-to=${expectedArtifact.testDumpFile}")
+
+                applyTestRunnerSpecificArgs(extras, testDumpFile)
             }
         }
         super.applySpecificArgs(argsBuilder)
@@ -255,13 +232,38 @@ internal class ExecutableCompilation(
     override fun applyDependencies(argsBuilder: ArgsBuilder): Unit = with(argsBuilder) {
         super.applyDependencies(argsBuilder)
         cacheMode.staticCacheRootDir?.let { cacheRootDir -> add("-Xcache-directory=$cacheRootDir") }
-        add(dependencies.cachedLibraries.uniqueCacheDirs) { libraryCacheDir -> "-Xcache-directory=${libraryCacheDir.path}" }
+        add(dependencies.uniqueCacheDirs) { libraryCacheDir -> "-Xcache-directory=${libraryCacheDir.path}" }
+    }
+
+    override fun postCompileCheck() {
+        expectedArtifact.assertTestDumpFileNotEmptyIfExists()
+    }
+
+    companion object {
+        internal fun ArgsBuilder.applyTestRunnerSpecificArgs(extras: WithTestRunnerExtras, testDumpFile: File?) {
+            val testRunnerArg = when (extras.runnerType) {
+                TestRunnerType.DEFAULT -> "-generate-test-runner"
+                TestRunnerType.WORKER -> "-generate-worker-test-runner"
+                TestRunnerType.NO_EXIT -> "-generate-no-exit-test-runner"
+            }
+            add(testRunnerArg)
+            testDumpFile?.let { add("-Xdump-tests-to=$it") }
+        }
+
+        internal fun Executable.assertTestDumpFileNotEmptyIfExists() {
+            if (testDumpFile.exists()) {
+                testDumpFile.useLines { lines ->
+                    assertTrue(lines.filter(String::isNotBlank).any()) { "Test dump file is empty: $testDumpFile" }
+                }
+            }
+        }
     }
 }
 
 internal class StaticCacheCompilation(
     settings: Settings,
     freeCompilerArgs: TestCompilerArgs,
+    private val options: Options,
     dependencies: Iterable<TestCompilationDependency<*>>,
     expectedArtifact: KLIBStaticCache
 ) : BasicCompilation<KLIBStaticCache>(
@@ -270,9 +272,14 @@ internal class StaticCacheCompilation(
     classLoader = settings.get(),
     optimizationMode = settings.get(),
     freeCompilerArgs = freeCompilerArgs,
-    dependencies = dependencies,
+    dependencies = CategorizedDependencies(dependencies),
     expectedArtifact = expectedArtifact
 ) {
+    sealed interface Options {
+        object Regular : Options
+        class ForIncludedLibraryWithTests(val expectedExecutableArtifact: Executable, val extras: WithTestRunnerExtras) : Options
+    }
+
     override val sourceModules get() = emptyList<TestModule>()
 
     private val cacheRootDir: File = run {
@@ -282,6 +289,14 @@ internal class StaticCacheCompilation(
 
     override fun applySpecificArgs(argsBuilder: ArgsBuilder): Unit = with(argsBuilder) {
         add("-produce", "static_cache")
+
+        when (options) {
+            is Options.Regular -> Unit /* Nothing to do. */
+            is Options.ForIncludedLibraryWithTests -> {
+                applyTestRunnerSpecificArgs(options.extras, options.expectedExecutableArtifact.testDumpFile)
+                add("-Xinclude=${dependencies.libraryToCache.path}")
+            }
+        }
 
         // The following line adds "-Xembed-bitcode-marker" for certain iOS device targets:
         add(home.properties.resolvablePropertyList("additionalCacheFlags", targets.testTarget.visibleName))
@@ -293,17 +308,51 @@ internal class StaticCacheCompilation(
     }
 
     override fun applyDependencies(argsBuilder: ArgsBuilder): Unit = with(argsBuilder) {
-        val cachedLibraries = dependencies.cachedLibraries
-        addFlattened(cachedLibraries) { (_, library) -> listOf("-l", library.path) }
-        add(cachedLibraries.uniqueCacheDirs) { libraryCacheDir -> "-Xcache-directory=${libraryCacheDir.path}" }
+        addFlattened(dependencies.cachedLibraries) { (_, library) -> listOf("-l", library.path) }
+        add(dependencies.uniqueCacheDirs) { libraryCacheDir -> "-Xcache-directory=${libraryCacheDir.path}" }
     }
 
-    companion object {
-        private val Iterable<TestCompilationDependency<*>>.libraryToCache: KLIB
-            get() {
-                val libraries = collectArtifacts<KLIB, TestCompilationDependencyType<KLIB>>()
-                return libraries.singleOrNull()
-                    ?: fail { "Only one library is expected as input for ${StaticCacheCompilation::class.java}, found: $libraries" }
+    override fun postCompileCheck() {
+        (options as? Options.ForIncludedLibraryWithTests)?.expectedExecutableArtifact?.assertTestDumpFileNotEmptyIfExists()
+    }
+}
+
+internal class CategorizedDependencies(uncategorizedDependencies: Iterable<TestCompilationDependency<*>>) {
+    val failures: Set<TestCompilationResult.Failure> by lazy {
+        uncategorizedDependencies.flatMapToSet { dependency ->
+            when (val result = (dependency as? TestCompilation<*>)?.result) {
+                is TestCompilationResult.Failure -> listOf(result)
+                is TestCompilationResult.DependencyFailures -> result.causes
+                is TestCompilationResult.Success -> emptyList()
+                null -> emptyList()
             }
+        }
+    }
+
+    val libraries: List<KLIB> by lazy { uncategorizedDependencies.collectArtifacts<KLIB, Library>() }
+    val friends: List<KLIB> by lazy { uncategorizedDependencies.collectArtifacts<KLIB, FriendLibrary>() }
+    val includedLibraries: List<KLIB> by lazy { uncategorizedDependencies.collectArtifacts<KLIB, IncludedLibrary>() }
+
+    val cachedLibraries: List<KLIBStaticCache> by lazy { uncategorizedDependencies.collectArtifacts<KLIBStaticCache, LibraryStaticCache>() }
+
+    val libraryToCache: KLIB by lazy {
+        val libraries = uncategorizedDependencies.collectArtifacts<KLIB, TestCompilationDependencyType<KLIB>>()
+        libraries.singleOrNull<KLIB>()
+            ?: fail { "Only one library is expected as input for ${StaticCacheCompilation::class.java}, found: $libraries" }
+    }
+
+    val uniqueCacheDirs: Set<File> by lazy {
+        cachedLibraries.mapToSet { (libraryCacheDir, _) -> libraryCacheDir } // Avoid repeating the same directory more than once.
+    }
+
+    private inline fun <reified A : TestCompilationArtifact, reified T : TestCompilationDependencyType<A>> Iterable<TestCompilationDependency<*>>.collectArtifacts(): List<A> {
+        val concreteDependencyType = T::class.objectInstance
+        val dependencyTypeMatcher: (TestCompilationDependencyType<*>) -> Boolean = if (concreteDependencyType != null) {
+            { it == concreteDependencyType }
+        } else {
+            { it.canYield(A::class.java) }
+        }
+
+        return mapNotNull { dependency -> if (dependencyTypeMatcher(dependency.type)) dependency.artifact as A else null }
     }
 }
