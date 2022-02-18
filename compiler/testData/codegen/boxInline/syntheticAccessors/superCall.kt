@@ -1,4 +1,5 @@
 // IGNORE_BACKEND_FIR: JVM_IR
+// IGNORE_BACKEND_FIR_MULTI_MODULE: JVM_IR
 // !LANGUAGE: -ProhibitSuperCallsFromPublicInline
 // FILE: 1.kt
 
