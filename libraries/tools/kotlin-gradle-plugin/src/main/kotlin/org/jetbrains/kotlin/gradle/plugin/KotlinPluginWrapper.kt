@@ -20,7 +20,6 @@ import org.gradle.api.GradleException
 import org.gradle.api.NamedDomainObjectFactory
 import org.gradle.api.Plugin
 import org.gradle.api.Project
-import org.gradle.api.logging.Logger
 import org.gradle.api.logging.Logging
 import org.gradle.api.model.ObjectFactory
 import org.gradle.tooling.provider.model.ToolingModelBuilderRegistry
@@ -29,7 +28,6 @@ import org.jetbrains.kotlin.gradle.dsl.*
 import org.jetbrains.kotlin.gradle.internal.KOTLIN_COMPILER_EMBEDDABLE
 import org.jetbrains.kotlin.gradle.internal.KOTLIN_MODULE_GROUP
 import org.jetbrains.kotlin.gradle.logging.kotlinDebug
-import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinMetadataTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinMultiplatformPlugin
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsages
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinPm20GradlePlugin
@@ -54,17 +52,6 @@ import javax.inject.Inject
 import kotlin.reflect.KClass
 
 abstract class KotlinBasePluginWrapper : Plugin<Project> {
-
-    private val log = Logging.getLogger(this.javaClass)
-
-    @Deprecated(
-        message = "Scheduled to be removed in 1.7 release",
-        replaceWith = ReplaceWith(
-            "project.getKotlinPluginVersion()",
-            "org.jetbrains.kotlin.gradle.plugin.getKotlinPluginVersion"
-        )
-    )
-    val kotlinPluginVersion by lazy { loadKotlinVersionFromResource(log) }
 
     open val projectExtensionClass: KClass<out KotlinTopLevelExtension> get() = KotlinProjectExtension::class
 
@@ -265,20 +252,6 @@ open class KotlinPm20PluginWrapper @Inject constructor(
 
     override val projectExtensionClass: KClass<out KotlinPm20ProjectExtension>
         get() = KotlinPm20ProjectExtension::class
-}
-
-@Deprecated(
-    message = "Scheduled to be removed in 1.7 release",
-    replaceWith = ReplaceWith(
-        "project.getKotlinPluginVersion()",
-        "org.jetbrains.kotlin.gradle.plugin.getKotlinPluginVersion"
-    )
-)
-fun Plugin<*>.loadKotlinVersionFromResource(log: Logger): String {
-    log.kotlinDebug("Loading version information")
-    val projectVersion = loadPropertyFromResources("project.properties", "project.version")
-    log.kotlinDebug("Found project version [$projectVersion]")
-    return projectVersion
 }
 
 fun Project.getKotlinPluginVersion(): String {
