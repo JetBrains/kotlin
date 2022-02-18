@@ -5,11 +5,13 @@
 
 package org.jetbrains.kotlin.gradle.kpm
 
+import org.jetbrains.kotlin.gradle.kpm.idea.WriteReplacedModel
 import java.io.Serializable
 
+@WriteReplacedModel(SerializedKotlinExternalModelContainerCarrier::class)
 internal class KotlinMutableExternalModelContainerImpl private constructor(
     private val values: MutableMap<KotlinExternalModelKey<*>, Any>
-) : KotlinMutableExternalModelContainer(), Serializable {
+) : KotlinMutableExternalModelContainer() {
 
     constructor() : this(mutableMapOf())
 
@@ -42,6 +44,7 @@ internal class KotlinMutableExternalModelContainerImpl private constructor(
     }
 }
 
+@WriteReplacedModel(SerializedKotlinExternalModelContainerCarrier::class)
 private class SerializedKotlinExternalModelContainer(
     private val serializedValues: MutableMap<KotlinExternalModelId<*>, ByteArray>
 ) : KotlinExternalModelContainer(), Serializable {
