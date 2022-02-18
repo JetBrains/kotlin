@@ -31,15 +31,11 @@ internal class FirInvokeResolveTowerExtension(
 
     fun enqueueResolveTasksForQualifier(info: CallInfo, receiver: FirResolvedQualifier) {
         if (info.callKind != CallKind.Function) return
-        enqueueBothInvokeReceiverTasks(
-            info,
-            invokeAction = { task, receiverInfo ->
-                task.runResolverForQualifierReceiver(receiverInfo, receiver)
-            },
-            invokeExtensionAction = { task, receiverInfo ->
-                task.runResolverForNoReceiver(receiverInfo)
-            }
-        )
+        enqueueResolveForExplicitReceiver(
+            info
+        ) { task, receiverInfo ->
+            task.runResolverForQualifierReceiver(receiverInfo, receiver)
+        }
     }
 
     fun enqueueResolveTasksForNoReceiver(info: CallInfo) {
@@ -68,24 +64,24 @@ internal class FirInvokeResolveTowerExtension(
 
     fun enqueueResolveTasksForExpressionReceiver(info: CallInfo, receiver: FirExpression) {
         if (info.callKind != CallKind.Function) return
-        enqueueBothInvokeReceiverTasks(
-            info,
-            invokeAction = { task, receiverInfo ->
-                task.runResolverForExpressionReceiver(receiverInfo, receiver)
-            },
-            invokeExtensionAction = { task, receiverInfo ->
-                task.runResolverForNoReceiver(receiverInfo)
-            }
-        )
+        enqueueResolveForExplicitReceiver(
+            info
+        ) { task, receiverInfo ->
+            task.runResolverForExpressionReceiver(receiverInfo, receiver)
+        }
     }
 
-    private inline fun enqueueBothInvokeReceiverTasks(
+    /**
+     * It's whether Qualifier.f() or expressionReceiver.f(), later we name it as "x.f()"
+     *
+     * @param originalCallInfo describes whole "x.f()"
+     * @param invokeAction runs the process of looking for the receiver "x.f" depending on the kind of "x" (qualifier or expression)
+     */
+    private inline fun enqueueResolveForExplicitReceiver(
         originalCallInfo: CallInfo,
-        crossinline invokeAction: suspend (FirTowerResolveTask, CallInfo) -> Unit,
-        crossinline invokeExtensionAction: suspend (FirTowerResolveTask, CallInfo) -> Unit
+        crossinline invokeAction: suspend (FirTowerResolveTask, CallInfo) -> Unit
     ) {
         val invokeReceiverVariableInfo = originalCallInfo.replaceWithVariableAccess()
-        val invokeReceiverVariableWithNoReceiverInfo = invokeReceiverVariableInfo.replaceExplicitReceiver(null)
 
         val towerDataElementsForName = TowerDataElementsForName(invokeReceiverVariableInfo.name, components.towerDataContext)
 
@@ -97,22 +93,36 @@ internal class FirInvokeResolveTowerExtension(
         ) {
             invokeAction(it, invokeReceiverVariableInfo)
         }
+
+        // Try to find "f" property in the given scopes without explicit receiver and then supply "x" as a first argument for invokeExtension
+        val invokeReceiverVariableWithNoReceiverInfo = invokeReceiverVariableInfo.replaceExplicitReceiver(null)
         enqueueInvokeReceiverTask(
             originalCallInfo,
             invokeReceiverVariableWithNoReceiverInfo,
             towerDataElementsForName = towerDataElementsForName,
             invokeBuiltinExtensionMode = true
         ) {
-            invokeExtensionAction(it, invokeReceiverVariableWithNoReceiverInfo)
+            it.runResolverForNoReceiver(invokeReceiverVariableWithNoReceiverInfo)
         }
     }
 
+    /**
+     * Let we have a call if a form of "x.f()" or "f()"
+     *
+     * This method enqueues a task (based on runResolutionForInvokeReceiverVariable) that for each successful property enqueues another task
+     * that tries to resolve "f()" call itself
+     *
+     * @param info describes whole "x.f()" or "f()"
+     * @param invokeReceiverInfo describes "x.f" or "f" variable (in case of no-receiver call or in case of resolving invokeExtension with "x")
+     * @param invokeBuiltinExtensionMode is true only when the original call has a form "x.f()" and invokeReceiverInfo is "f"
+     * @param runResolutionForInvokeReceiverVariable runs the process of looking for the receiver ("x.f" or "f") on the given FirTowerResolveTask
+     */
     private inline fun enqueueInvokeReceiverTask(
         info: CallInfo,
         invokeReceiverInfo: CallInfo,
         towerDataElementsForName: TowerDataElementsForName = TowerDataElementsForName(invokeReceiverInfo.name, components.towerDataContext),
         invokeBuiltinExtensionMode: Boolean,
-        crossinline task: suspend (FirTowerResolveTask) -> Unit
+        crossinline runResolutionForInvokeReceiverVariable: suspend (FirTowerResolveTask) -> Unit
     ) {
         val collector = CandidateCollector(components, components.resolutionStageRunner)
         val invokeReceiverProcessor = InvokeReceiverResolveTask(
@@ -131,7 +141,7 @@ internal class FirInvokeResolveTowerExtension(
             }
         )
         manager.enqueueResolverTask {
-            task(invokeReceiverProcessor)
+            runResolutionForInvokeReceiverVariable(invokeReceiverProcessor)
         }
     }
 
@@ -187,9 +197,12 @@ internal class FirInvokeResolveTowerExtension(
     }
 
     private fun enqueueResolverTasksForInvoke(
+        // "x.f.invoke(...)" or "f.invoke(x)" (latter for the invokeExtension calls when "f" has an extension function type)
         invokeFunctionInfo: CallInfo,
         explicitReceiver: ExpressionReceiverValue,
+        // Might be true only if initial call had explicit receiver (x.f()) and here we resolve "f.invoke(x)" with given "f"
         invokeBuiltinExtensionMode: Boolean,
+        // The call has a form "f(..)" without explicit receiver and "f" has an extension function type
         useImplicitReceiverAsBuiltinInvokeArgument: Boolean,
         receiverGroup: TowerGroup
     ) {
@@ -204,6 +217,7 @@ internal class FirInvokeResolveTowerExtension(
             }
         } else {
             if (useImplicitReceiverAsBuiltinInvokeArgument) {
+                require(explicitReceiver.type.fullyExpandedType(context.session).isExtensionFunctionType)
                 manager.enqueueResolverTask {
                     task.runResolverForBuiltinInvokeExtensionWithImplicitArgument(
                         invokeFunctionInfo, explicitReceiver,
@@ -221,6 +235,7 @@ internal class FirInvokeResolveTowerExtension(
         }
     }
 
+    // For calls having a form of "x.(f)()"
     fun enqueueResolveTasksForImplicitInvokeCall(info: CallInfo, receiverExpression: FirExpression) {
         val explicitReceiverValue = ExpressionReceiverValue(receiverExpression)
         val task = createInvokeFunctionResolveTask(info, TowerGroup.EmptyRoot)
@@ -395,7 +410,9 @@ private class InvokeFunctionResolveTask(
 
     // Here we don't know extension receiver for invoke, assuming it's one of implicit receivers
     suspend fun runResolverForBuiltinInvokeExtensionWithImplicitArgument(
+        // "f.invoke(...)"
         info: CallInfo,
+        // "f" should have an extension function type
         invokeReceiverValue: ExpressionReceiverValue,
         parentGroupForInvokeCandidates: TowerGroup
     ) {
@@ -408,6 +425,7 @@ private class InvokeFunctionResolveTask(
 
             processLevel(
                 invokeReceiverValue.toMemberScopeTowerLevel(
+                    // Try to supply `implicitReceiverValue` as an "x" in "f.invoke(x)"
                     extensionReceiver = implicitReceiverValue,
                     implicitExtensionInvokeMode = true
                 ),
