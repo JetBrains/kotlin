@@ -24,6 +24,8 @@ dependencies {
 }
 
 publish()
+javadocJar()
+sourcesJar()
 
 /* Setup Backwards Compatibility Test */
 run {
