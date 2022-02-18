@@ -97,6 +97,7 @@ abstract class AbstractNativeKlibABITest : AbstractNativeSimpleTest() {
         val compilation = StaticCacheCompilation(
             settings = testRunSettings,
             freeCompilerArgs = COMPILER_ARGS_FOR_STATIC_CACHE_AND_EXECUTABLE,
+            options = StaticCacheCompilation.Options.Regular,
             dependencies = createLibraryCacheDependencies(moduleDependencies) + klibArtifact.toDependency(),
             expectedArtifact = klibArtifact.toStaticCacheArtifact()
         )
