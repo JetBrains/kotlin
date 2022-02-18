@@ -11,25 +11,25 @@ inline class S(val value: String) {
 
 object C {
     @JvmStatic
-    fun foo(x: S, y: String): S = x + S(y)
+    fun foo(x: S, y: String, z: S?): S = x + S(y) + z!!
 }
 
 interface I {
     companion object {
         @JvmStatic
-        fun bar(x: String, y: S): S = S(x) + y
+        fun bar(x: String, y: S, z: S?): S = S(x) + y + z!!
     }
 }
 
 fun box(): String {
-    assertEquals(S("ab"), C::foo.call(S("a"), "b"))
-    assertEquals(S("cd"), (I)::bar.call("c", S("d")))
+    assertEquals(S("abc"), C::foo.call(S("a"), "b", S("c")))
+    assertEquals(S("def"), (I)::bar.call("d", S("e"), S("f")))
 
     val unboundFoo = C::class.members.single { it.name == "foo" } as KFunction<*>
-    assertEquals(S("ef"), unboundFoo.call(C, S("e"), "f"))
+    assertEquals(S("ghi"), unboundFoo.call(C, S("g"), "h", S("i")))
 
     val unboundBar = I.Companion::class.members.single { it.name == "bar" } as KFunction<*>
-    assertEquals(S("gh"), unboundBar.call(I, "g", S("h")))
+    assertEquals(S("jkl"), unboundBar.call(I, "j", S("k"), S("l")))
 
     return "OK"
 }
