@@ -892,32 +892,41 @@ class IrBuiltInsOverFir(
             }
 
             if (withGetter) {
-                property.getter = irFactory.buildFun {
-                    this.name = Name.special("<get-$propertyName>")
+                property.addGetter {
                     this.returnType = returnType
                     this.modality = modality
                     this.isOperator = false
                 }.also { getter ->
                     getter.addDispatchReceiver { type = this@createProperty.defaultType }
-                    getter.parent = this
-                    getter.correspondingPropertySymbol = property.symbol
                     getter.overriddenSymbols = property.overriddenSymbols.mapNotNull { it.owner.getter?.symbol }
                 }
             }
             if (withField || fieldInit != null) {
-                property.backingField = irFactory.buildField {
-                    this.name = property.name
-                    this.type = defaultType
+                property.addBackingField {
+                    this.type = returnType
+                    this.isFinal = isConst
                 }.also {
                     if (fieldInit != null) {
                         it.initializer = irFactory.createExpressionBody(0, 0) {
                             expression = fieldInit
                         }
                     }
-                    it.correspondingPropertySymbol = property.symbol
                 }
             }
             property.builder()
+            components.symbolTable.declarePropertyWithSignature(
+                irSignatureBuilder.computeSignature(property), property.symbol
+            )
+            property.getter?.let {
+                components.symbolTable.declareSimpleFunctionWithSignature(
+                    irSignatureBuilder.computeSignature(it), it.symbol
+                )
+            }
+            property.backingField?.let {
+                components.symbolTable.declareFieldWithSignature(
+                    irSignatureBuilder.computeSignature(it), it.symbol
+                )
+            }
         }
     }
 

@@ -141,6 +141,18 @@ fun IrProperty.addDefaultGetter(parentClass: IrClass, builtIns: IrBuiltIns) {
     }
 }
 
+inline fun IrProperty.addBackingField(builder: IrFieldBuilder.() -> Unit = {}): IrField =
+    IrFieldBuilder().run {
+        name = this@addBackingField.name
+        origin = IrDeclarationOrigin.PROPERTY_BACKING_FIELD
+        builder()
+        factory.buildField(this).also { field ->
+            this@addBackingField.backingField = field
+            field.correspondingPropertySymbol = this@addBackingField.symbol
+            field.parent = this@addBackingField.parent
+        }
+    }
+
 @PublishedApi
 internal fun IrFactory.buildFunction(builder: IrFunctionBuilder): IrSimpleFunction = with(builder) {
     createFunction(
