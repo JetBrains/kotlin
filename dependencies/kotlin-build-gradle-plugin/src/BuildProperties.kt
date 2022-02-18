@@ -66,6 +66,8 @@ class KotlinBuildProperties(
 
     val buildCachePassword: String? = getOrNull("kotlin.build.cache.password") as String?
 
+    val buildGradlePluginVersion: String? = getOrNull("kotlin.build.gradlePlugin.version") as String?
+
     val kotlinBootstrapVersion: String? = getOrNull("bootstrap.kotlin.default.version") as String?
 
     val defaultSnapshotVersion: String? = getOrNull("defaultSnapshotVersion") as String?
