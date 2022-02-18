@@ -97,6 +97,8 @@ class KotlinBuildProperties(
     val rootProjectDir: File = propertiesProvider.rootProjectDir
 
     val isKotlinNativeEnabled: Boolean = getBoolean("kotlin.native.enabled")
+
+    val renderDiagnosticNames: Boolean = getBoolean("kotlin.build.render.diagnostic.names")
 }
 
 private const val extensionName = "kotlinBuildProperties"
