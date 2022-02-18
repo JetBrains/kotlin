@@ -733,7 +733,7 @@ func testClashes() throws {
     try assertEquals(actual: 2, expected: test2.clashingProperty__ as! Int32)
 }
 
-func testInvalidIdentifiers() throws {
+/*func testInvalidIdentifiers() throws {
     let test = TestInvalidIdentifiers()
 
     try assertTrue(TestInvalidIdentifiers._Foo() is TestInvalidIdentifiers._Foo)
@@ -752,7 +752,7 @@ func testInvalidIdentifiers() throws {
     try assertEquals(actual: TestInvalidIdentifiers.Companion_()._42, expected: 42)
 
     try assertEquals(actual: Set([test.__, test.___]), expected: Set(["$".utf16.first, "_".utf16.first]))
-}
+}*/
 
 class ImplementingHiddenSubclass : TestDeprecation.ImplementingHidden {
     override func effectivelyHidden() -> Int32 {
@@ -1427,7 +1427,7 @@ class ValuesTests : SimpleTestProvider {
         test("TestKClass", testKClass)
         test("TestSR10177Workaround", testSR10177Workaround)
         test("TestClashes", testClashes)
-        test("TestInvalidIdentifiers", testInvalidIdentifiers)
+//        test("TestInvalidIdentifiers", testInvalidIdentifiers)
         test("TestDeprecation", testDeprecation)
         test("TestWeakRefs", testWeakRefs)
         test("TestSharedRefs", TestSharedRefs().test)
