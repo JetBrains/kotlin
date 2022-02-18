@@ -17,4 +17,9 @@ interface IdeaKotlinCompilationOutput : Serializable {
 data class IdeaKotlinCompilationOutputImpl(
     override val classesDirs: Set<File>,
     override val resourcesDir: File?
-) : IdeaKotlinCompilationOutput
+) : IdeaKotlinCompilationOutput {
+    @InternalKotlinGradlePluginApi
+    companion object {
+        const val serialVersionUID = 0L
+    }
+}
