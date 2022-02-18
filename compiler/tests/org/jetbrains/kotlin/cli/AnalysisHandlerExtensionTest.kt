@@ -9,6 +9,7 @@ import com.intellij.mock.MockProject
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.analyzer.AnalysisResult
 import org.jetbrains.kotlin.cli.common.CLITool
+import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.js.K2JSCompiler
 import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
 import org.jetbrains.kotlin.cli.metadata.K2MetadataCompiler
@@ -26,59 +27,85 @@ import org.jetbrains.kotlin.test.TestCaseWithTmpdir
 import java.io.File
 import java.util.zip.ZipEntry
 import java.util.zip.ZipOutputStream
+import kotlin.reflect.KClass
+import kotlin.test.assertEquals
 
 private data class TestKtFile(
     val name: String,
     val content: String
 )
 
+private val simple = TestKtFile("Simple.kt", "class Simple")
 private val classNotFound = TestKtFile("C.kt", "class C : ClassNotFound")
 private val repeatedAnalysis = TestKtFile("D.kt", "class D : Generated")
 
 class AnalysisHandlerExtensionTest : TestCaseWithTmpdir() {
 
     // Writes the service file only; CustomComponentRegistrar is already in classpath.
-    private fun writePlugin(): String {
+    private fun writePlugin(klass: KClass<out ComponentRegistrar>): String {
         val jarFile = tmpdir.resolve("plugin.jar")
         ZipOutputStream(jarFile.outputStream()).use {
             val entry = ZipEntry("META-INF/services/org.jetbrains.kotlin.compiler.plugin.ComponentRegistrar")
             it.putNextEntry(entry)
-            it.write(CustomComponentRegistrar::class.java.name.toByteArray())
+            it.write(klass.java.name.toByteArray())
         }
         return jarFile.absolutePath
     }
 
-    private fun runTest(compiler: CLITool<*>, src: TestKtFile, extras: List<String> = emptyList()) {
+    private fun runTest(
+        compiler: CLITool<*>,
+        src: TestKtFile,
+        klass: KClass<out ComponentRegistrar>,
+        expectedExitCode: ExitCode = ExitCode.OK,
+        extras: List<String> = emptyList(),
+    ) {
         val mainKt = tmpdir.resolve(src.name).apply {
             writeText(src.content)
         }
-        val plugin = writePlugin()
+        val plugin = writePlugin(klass)
         val args = listOf("-Xplugin=$plugin", mainKt.absolutePath)
-        CompilerTestUtil.executeCompilerAssertSuccessful(compiler, args + extras)
+        val outputPath = if (compiler is K2JSCompiler)
+            listOf("-output", tmpdir.resolve("out.js").absolutePath)
+        else
+            listOf("-d", tmpdir.resolve("out").absolutePath)
+        val (output, exitCode) = CompilerTestUtil.executeCompiler(compiler, args + outputPath + extras)
+        assertEquals(expectedExitCode, exitCode, output)
     }
 
     fun testShouldNotGenerateCodeJVM() {
-        runTest(K2JVMCompiler(), classNotFound, listOf("-d", tmpdir.resolve("out").absolutePath))
+        runTest(K2JVMCompiler(), classNotFound, CustomComponentRegistrar::class)
     }
 
     fun testShouldNotGenerateCodeJS() {
-        runTest(K2JSCompiler(), classNotFound, listOf("-output", tmpdir.resolve("out.js").absolutePath))
+        runTest(K2JSCompiler(), classNotFound, CustomComponentRegistrar::class)
     }
 
     fun testShouldNotGenerateCodeMetadata() {
-        runTest(K2MetadataCompiler(), classNotFound, listOf("-d", tmpdir.resolve("out").absolutePath))
+        runTest(K2MetadataCompiler(), classNotFound, CustomComponentRegistrar::class)
     }
 
     fun testRepeatedAnalysisJVM() {
-        runTest(K2JVMCompiler(), repeatedAnalysis, listOf("-d", tmpdir.resolve("out").absolutePath))
+        runTest(K2JVMCompiler(), repeatedAnalysis, CustomComponentRegistrar::class)
     }
 
     fun testRepeatedAnalysisJS() {
-        runTest(K2JSCompiler(), repeatedAnalysis, listOf("-output", tmpdir.resolve("out.js").absolutePath))
+        runTest(K2JSCompiler(), repeatedAnalysis, CustomComponentRegistrar::class)
     }
 
     fun testRepeatedAnalysisMetadata() {
-        runTest(K2MetadataCompiler(), repeatedAnalysis, listOf("-d", tmpdir.resolve("out").absolutePath))
+        runTest(K2MetadataCompiler(), repeatedAnalysis, CustomComponentRegistrar::class)
+    }
+
+    fun testAnalysisError() {
+        runTest(K2JVMCompiler(), simple, ErrorAnalysisComponentRegistrar::class, ExitCode.COMPILATION_ERROR)
+    }
+
+    fun testAnalysisErrorWithUnresolvedOptIn() {
+        // KT-30172
+        runTest(
+            K2JVMCompiler(), simple, ErrorAnalysisComponentRegistrar::class, ExitCode.COMPILATION_ERROR,
+            listOf("-Xopt-in=Unresolved")
+        )
     }
 }
 
@@ -112,4 +139,21 @@ private class CustomAnalysisHandler : AnalysisHandlerExtension {
         }
         return AnalysisResult.success(BindingContext.EMPTY, module, false)
     }
+}
+
+class ErrorAnalysisComponentRegistrar : ComponentRegistrar {
+    override fun registerProjectComponents(project: MockProject, configuration: CompilerConfiguration) {
+        AnalysisHandlerExtension.registerExtension(project, ErrorAnalysisHandlerExtension())
+    }
+}
+
+private class ErrorAnalysisHandlerExtension : AnalysisHandlerExtension {
+    override fun doAnalysis(
+        project: Project,
+        module: ModuleDescriptor,
+        projectContext: ProjectContext,
+        files: Collection<KtFile>,
+        bindingTrace: BindingTrace,
+        componentProvider: ComponentProvider
+    ): AnalysisResult = AnalysisResult.compilationError(BindingContext.EMPTY)
 }
