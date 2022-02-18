@@ -163,16 +163,6 @@ private:
     std::function<void()> scheduleGC_;
 };
 
-namespace internal {
-
-KStdUniquePtr<gc::GCSchedulerData> MakeGCSchedulerData(
-        SchedulerType type,
-        GCSchedulerConfig& config,
-        std::function<void()> scheduleGC,
-        std::function<std::chrono::time_point<std::chrono::steady_clock>()> currentTime) noexcept;
-
-}
-
 } // namespace gc
 } // namespace kotlin
 

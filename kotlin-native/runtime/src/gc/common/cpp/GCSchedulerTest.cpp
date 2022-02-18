@@ -11,6 +11,8 @@
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"
 
+#include "ClockTestSupport.hpp"
+#include "GCSchedulerImpl.hpp"
 #include "SingleThreadExecutor.hpp"
 #include "TestSupport.hpp"
 
@@ -281,8 +283,6 @@ TEST(GCSchedulerThreadDataTest, UpdateThresholdsAfterAllocationSafePoint) {
     EXPECT_THAT(scheduler.safePointsCounter(), 0);
 }
 
-using TimePoint = std::chrono::time_point<std::chrono::steady_clock>;
-
 class MutatorThread : private Pinned {
 public:
     MutatorThread(GCSchedulerConfig& config, std::function<void(GCSchedulerThreadData&)> slowPath) :
@@ -309,60 +309,62 @@ private:
     SingleThreadExecutor<Context> executor_;
 };
 
-template <compiler::GCSchedulerType schedulerType, int MutatorCount>
+template <typename GCScheduler, int MutatorCount>
 class GCSchedulerDataTestApi {
 public:
-    static constexpr TimePoint initialTime = TimePoint();
-
-    explicit GCSchedulerDataTestApi(GCSchedulerConfig& config) {
-        ON_CALL(currentTime_, Call()).WillByDefault([&]() { return time_.load(); });
-
-        scheduler_ = internal::MakeGCSchedulerData(schedulerType, config, scheduleGC_.AsStdFunction(), currentTime_.AsStdFunction());
-
+    explicit GCSchedulerDataTestApi(GCSchedulerConfig& config) : scheduler_(config, scheduleGC_.AsStdFunction()) {
         mutators_.reserve(MutatorCount);
         for (int i = 0; i < MutatorCount; ++i) {
             mutators_.emplace_back(make_unique<MutatorThread>(
-                    config, [this](GCSchedulerThreadData& threadData) { scheduler_->UpdateFromThreadData(threadData); }));
+                    config, [this](GCSchedulerThreadData& threadData) { scheduler_.UpdateFromThreadData(threadData); }));
         }
     }
 
     std::future<void> Allocate(int mutator, size_t bytes) { return mutators_[mutator]->Allocate(bytes); }
 
-    void OnPerformFullGC() { scheduler_->OnPerformFullGC(); }
+    void OnPerformFullGC() { scheduler_.OnPerformFullGC(); }
 
-    void UpdateAliveSetBytes(size_t bytes) { scheduler_->UpdateAliveSetBytes(bytes); }
+    void UpdateAliveSetBytes(size_t bytes) { scheduler_.UpdateAliveSetBytes(bytes); }
 
     testing::MockFunction<void()>& scheduleGC() { return scheduleGC_; }
 
     template <typename Duration>
     void advance_time(Duration duration) {
-        auto time = time_.load();
-        while (true) {
-            auto newTime = time + std::chrono::duration_cast<TimePoint::duration>(duration);
-            if (time_.compare_exchange_weak(time, newTime)) {
-                // TODO: Figure out mocking out RepeatedTimer (or clock underneath it) to avoid sleeping.
-                std::this_thread::sleep_for(duration);
-                return;
-            }
-        }
+        test_support::manual_clock::sleep_for(duration);
     }
 
 private:
-    std::atomic<TimePoint> time_ = initialTime;
     KStdVector<KStdUniquePtr<MutatorThread>> mutators_;
     testing::MockFunction<void()> scheduleGC_;
-    testing::NiceMock<testing::MockFunction<TimePoint()>> currentTime_;
-    KStdUniquePtr<GCSchedulerData> scheduler_;
+    GCScheduler scheduler_;
 };
 
-TEST(GCSchedulerDataOnSafePoints, CollectOnTargetHeapReached) {
+template <int MutatorCount>
+using GCSchedulerDataOnSafepointsTestApi =
+        GCSchedulerDataTestApi<gc::internal::GCSchedulerDataOnSafepoints<test_support::manual_clock>, MutatorCount>;
+
+template <int MutatorCount>
+using GCSchedulerDataWithTimerTestApi =
+        GCSchedulerDataTestApi<gc::internal::GCSchedulerDataWithTimer<test_support::manual_clock>, MutatorCount>;
+
+class GCSchedulerDataTest : public ::testing::Test {
+public:
+    GCSchedulerDataTest() { test_support::manual_clock::reset(); }
+};
+
+class GCSchedulerDataOnSafePointsTest : public GCSchedulerDataTest {};
+class GCSchedulerDataWithTimerTest : public GCSchedulerDataTest {};
+
+TEST_F(GCSchedulerDataOnSafePointsTest, CollectOnTargetHeapReached) {
+    test_support::manual_clock::reset();
+
     constexpr int mutatorsCount = kDefaultThreadCount;
 
     GCSchedulerConfig config;
-    config.regularGcIntervalMicroseconds = std::chrono::microseconds(std::chrono::minutes(10)).count();
+    config.regularGcIntervalMicroseconds = 10;
     config.autoTune = false;
     config.targetHeapBytes = (mutatorsCount + 1) * 10;
-    GCSchedulerDataTestApi<compiler::GCSchedulerType::kOnSafepoints, mutatorsCount> schedulerTestApi(config);
+    GCSchedulerDataOnSafepointsTestApi<mutatorsCount> schedulerTestApi(config);
 
     EXPECT_CALL(schedulerTestApi.scheduleGC(), Call()).Times(0);
     KStdVector<std::future<void>> futures;
@@ -392,17 +394,17 @@ TEST(GCSchedulerDataOnSafePoints, CollectOnTargetHeapReached) {
     schedulerTestApi.UpdateAliveSetBytes(0);
 }
 
-TEST(GCSchedulerDataOnSafePoints, CollectOnTimeoutReached) {
+TEST_F(GCSchedulerDataOnSafePointsTest, CollectOnTimeoutReached) {
     constexpr int mutatorsCount = kDefaultThreadCount;
 
     GCSchedulerConfig config;
-    config.regularGcIntervalMicroseconds = std::chrono::microseconds(std::chrono::milliseconds(20)).count();
+    config.regularGcIntervalMicroseconds = 10;
     config.autoTune = false;
     config.targetHeapBytes = std::numeric_limits<size_t>::max();
-    GCSchedulerDataTestApi<compiler::GCSchedulerType::kOnSafepoints, mutatorsCount> schedulerTestApi(config);
+    GCSchedulerDataOnSafepointsTestApi<mutatorsCount> schedulerTestApi(config);
 
     EXPECT_CALL(schedulerTestApi.scheduleGC(), Call()).Times(0);
-    schedulerTestApi.advance_time(std::chrono::milliseconds(10));
+    schedulerTestApi.advance_time(microseconds(5));
     KStdVector<std::future<void>> futures;
     for (int i = 0; i < mutatorsCount; ++i) {
         futures.push_back(schedulerTestApi.Allocate(i, 0));
@@ -413,52 +415,52 @@ TEST(GCSchedulerDataOnSafePoints, CollectOnTimeoutReached) {
     testing::Mock::VerifyAndClearExpectations(&schedulerTestApi.scheduleGC());
 
     EXPECT_CALL(schedulerTestApi.scheduleGC(), Call());
-    schedulerTestApi.advance_time(std::chrono::milliseconds(15));
+    schedulerTestApi.advance_time(microseconds(5));
     schedulerTestApi.Allocate(0, 0).get();
     testing::Mock::VerifyAndClearExpectations(&schedulerTestApi.scheduleGC());
     schedulerTestApi.OnPerformFullGC();
     schedulerTestApi.UpdateAliveSetBytes(0);
 }
 
-TEST(GCSchedulerDataOnSafePoints, FullTimeoutAfterLastGC) {
+TEST_F(GCSchedulerDataOnSafePointsTest, FullTimeoutAfterLastGC) {
     constexpr int mutatorsCount = kDefaultThreadCount;
 
     GCSchedulerConfig config;
-    config.regularGcIntervalMicroseconds = std::chrono::microseconds(std::chrono::milliseconds(20)).count();
+    config.regularGcIntervalMicroseconds = 10;
     config.autoTune = false;
     config.targetHeapBytes = 10;
-    GCSchedulerDataTestApi<compiler::GCSchedulerType::kOnSafepoints, mutatorsCount> schedulerTestApi(config);
+    GCSchedulerDataOnSafepointsTestApi<mutatorsCount> schedulerTestApi(config);
 
     EXPECT_CALL(schedulerTestApi.scheduleGC(), Call());
-    schedulerTestApi.advance_time(std::chrono::milliseconds(10));
+    schedulerTestApi.advance_time(microseconds(5));
     schedulerTestApi.Allocate(0, 10).get();
     testing::Mock::VerifyAndClearExpectations(&schedulerTestApi.scheduleGC());
     schedulerTestApi.OnPerformFullGC();
     schedulerTestApi.UpdateAliveSetBytes(0);
 
     EXPECT_CALL(schedulerTestApi.scheduleGC(), Call()).Times(0);
-    schedulerTestApi.advance_time(std::chrono::milliseconds(15));
+    schedulerTestApi.advance_time(microseconds(5));
     schedulerTestApi.Allocate(0, 0).get();
-    // It's now 25 ms since the start, but only 15ms since previous collection.
+    // It's now 10 us since the start, but only 5 us since previous collection.
     testing::Mock::VerifyAndClearExpectations(&schedulerTestApi.scheduleGC());
 
     EXPECT_CALL(schedulerTestApi.scheduleGC(), Call());
-    schedulerTestApi.advance_time(std::chrono::milliseconds(10));
+    schedulerTestApi.advance_time(microseconds(5));
     schedulerTestApi.Allocate(0, 0).get();
-    // It's now 25 ms since the previous collection.
+    // It's now 10 us since the previous collection.
     testing::Mock::VerifyAndClearExpectations(&schedulerTestApi.scheduleGC());
     schedulerTestApi.OnPerformFullGC();
     schedulerTestApi.UpdateAliveSetBytes(0);
 }
 
-TEST(GCSchedulerDataOnSafePoints, DoNotTuneTargetHeap) {
+TEST_F(GCSchedulerDataOnSafePointsTest, DoNotTuneTargetHeap) {
     constexpr int mutatorsCount = 1;
 
     GCSchedulerConfig config;
-    config.regularGcIntervalMicroseconds = std::chrono::microseconds(std::chrono::minutes(10)).count();
+    config.regularGcIntervalMicroseconds = 10;
     config.autoTune = false;
     config.targetHeapBytes = 10;
-    GCSchedulerDataTestApi<compiler::GCSchedulerType::kOnSafepoints, mutatorsCount> schedulerTestApi(config);
+    GCSchedulerDataOnSafepointsTestApi<mutatorsCount> schedulerTestApi(config);
 
     EXPECT_CALL(schedulerTestApi.scheduleGC(), Call());
     schedulerTestApi.Allocate(0, 10).get();
@@ -469,17 +471,17 @@ TEST(GCSchedulerDataOnSafePoints, DoNotTuneTargetHeap) {
     EXPECT_THAT(config.targetHeapBytes.load(), 10);
 }
 
-TEST(GCSchedulerDataOnSafePoints, TuneTargetHeap) {
+TEST_F(GCSchedulerDataOnSafePointsTest, TuneTargetHeap) {
     constexpr int mutatorsCount = 1;
 
     GCSchedulerConfig config;
-    config.regularGcIntervalMicroseconds = std::chrono::microseconds(std::chrono::minutes(10)).count();
+    config.regularGcIntervalMicroseconds = 10;
     config.autoTune = true;
     config.targetHeapBytes = 10;
     config.targetHeapUtilization = 0.5;
     config.minHeapBytes = 5;
     config.maxHeapBytes = 50;
-    GCSchedulerDataTestApi<compiler::GCSchedulerType::kOnSafepoints, mutatorsCount> schedulerTestApi(config);
+    GCSchedulerDataOnSafepointsTestApi<mutatorsCount> schedulerTestApi(config);
 
     EXPECT_CALL(schedulerTestApi.scheduleGC(), Call());
     schedulerTestApi.Allocate(0, 10).get();
@@ -538,14 +540,14 @@ TEST(GCSchedulerDataOnSafePoints, TuneTargetHeap) {
     EXPECT_THAT(config.targetHeapBytes.load(), 5);
 }
 
-TEST(GCSchedulerDataWithTimer, CollectOnTargetHeapReached) {
+TEST_F(GCSchedulerDataWithTimerTest, CollectOnTargetHeapReached) {
     constexpr int mutatorsCount = kDefaultThreadCount;
 
     GCSchedulerConfig config;
-    config.regularGcIntervalMicroseconds = std::chrono::microseconds(std::chrono::minutes(10)).count();
+    config.regularGcIntervalMicroseconds = 10;
     config.autoTune = false;
     config.targetHeapBytes = (mutatorsCount + 1) * 10;
-    GCSchedulerDataTestApi<compiler::GCSchedulerType::kWithTimer, mutatorsCount> schedulerTestApi(config);
+    GCSchedulerDataWithTimerTestApi<mutatorsCount> schedulerTestApi(config);
 
     EXPECT_CALL(schedulerTestApi.scheduleGC(), Call()).Times(0);
     KStdVector<std::future<void>> futures;
@@ -575,72 +577,59 @@ TEST(GCSchedulerDataWithTimer, CollectOnTargetHeapReached) {
     schedulerTestApi.UpdateAliveSetBytes(0);
 }
 
-TEST(GCSchedulerDataWithTimer, CollectOnTimeoutReached) {
+TEST_F(GCSchedulerDataWithTimerTest, CollectOnTimeoutReached) {
     constexpr int mutatorsCount = kDefaultThreadCount;
 
     GCSchedulerConfig config;
-    config.regularGcIntervalMicroseconds = std::chrono::microseconds(std::chrono::milliseconds(2000)).count();
+    config.regularGcIntervalMicroseconds = 10;
     config.autoTune = false;
     config.targetHeapBytes = std::numeric_limits<size_t>::max();
-    GCSchedulerDataTestApi<compiler::GCSchedulerType::kWithTimer, mutatorsCount> schedulerTestApi(config);
+    GCSchedulerDataWithTimerTestApi<mutatorsCount> schedulerTestApi(config);
 
-    EXPECT_CALL(schedulerTestApi.scheduleGC(), Call()).Times(0);
-    schedulerTestApi.advance_time(std::chrono::milliseconds(1000));
-    testing::Mock::VerifyAndClearExpectations(&schedulerTestApi.scheduleGC());
+    // Wait until the timer is initialized.
+    test_support::manual_clock::waitForPending(test_support::manual_clock::now() + microseconds(10));
 
     EXPECT_CALL(schedulerTestApi.scheduleGC(), Call());
-    schedulerTestApi.advance_time(std::chrono::milliseconds(1500));
+    schedulerTestApi.advance_time(microseconds(10));
+    test_support::manual_clock::waitForPending(test_support::manual_clock::now() + microseconds(10));
     testing::Mock::VerifyAndClearExpectations(&schedulerTestApi.scheduleGC());
     schedulerTestApi.OnPerformFullGC();
     schedulerTestApi.UpdateAliveSetBytes(0);
 }
 
-TEST(GCSchedulerDataWithTimer, FullTimeoutAfterLastGC) {
+TEST_F(GCSchedulerDataWithTimerTest, FullTimeoutAfterLastGC) {
     constexpr int mutatorsCount = kDefaultThreadCount;
 
     GCSchedulerConfig config;
-    config.regularGcIntervalMicroseconds = std::chrono::microseconds(std::chrono::milliseconds(2000)).count();
+    config.regularGcIntervalMicroseconds = 10;
     config.autoTune = false;
     config.targetHeapBytes = 10;
-    GCSchedulerDataTestApi<compiler::GCSchedulerType::kWithTimer, mutatorsCount> schedulerTestApi(config);
+    GCSchedulerDataWithTimerTestApi<mutatorsCount> schedulerTestApi(config);
 
-    EXPECT_CALL(schedulerTestApi.scheduleGC(), Call()).Times(0);
-    schedulerTestApi.advance_time(std::chrono::milliseconds(1000));
-    testing::Mock::VerifyAndClearExpectations(&schedulerTestApi.scheduleGC());
+    // Wait until the timer is initialized.
+    test_support::manual_clock::waitForPending(test_support::manual_clock::now() + microseconds(10));
 
+    schedulerTestApi.advance_time(microseconds(5));
     EXPECT_CALL(schedulerTestApi.scheduleGC(), Call());
     schedulerTestApi.Allocate(0, 10).get();
     testing::Mock::VerifyAndClearExpectations(&schedulerTestApi.scheduleGC());
     schedulerTestApi.OnPerformFullGC();
     schedulerTestApi.UpdateAliveSetBytes(0);
 
+    // pending should restart to be 10us since the previous collection without scheduling another GC.
     EXPECT_CALL(schedulerTestApi.scheduleGC(), Call()).Times(0);
-    schedulerTestApi.advance_time(std::chrono::milliseconds(1500));
-    // It's now 250 ms since the start, but only 150ms since previous collection.
-    // However, the timer has fired once ~50ms ago.
+    test_support::manual_clock::waitForPending(test_support::manual_clock::now() + microseconds(10));
     testing::Mock::VerifyAndClearExpectations(&schedulerTestApi.scheduleGC());
-
-    EXPECT_CALL(schedulerTestApi.scheduleGC(), Call()).Times(0);
-    schedulerTestApi.advance_time(std::chrono::milliseconds(1000));
-    // It's now 250 ms since the previous collection, but the timer will fire in ~50ms.
-    testing::Mock::VerifyAndClearExpectations(&schedulerTestApi.scheduleGC());
-
-    EXPECT_CALL(schedulerTestApi.scheduleGC(), Call());
-    schedulerTestApi.advance_time(std::chrono::milliseconds(1000));
-    // 350ms since previous collection, and the timer has fired ~50ms ago.
-    testing::Mock::VerifyAndClearExpectations(&schedulerTestApi.scheduleGC());
-    schedulerTestApi.OnPerformFullGC();
-    schedulerTestApi.UpdateAliveSetBytes(0);
 }
 
-TEST(GCSchedulerDataWithTimer, DoNotTuneTargetHeap) {
+TEST_F(GCSchedulerDataWithTimerTest, DoNotTuneTargetHeap) {
     constexpr int mutatorsCount = 1;
 
     GCSchedulerConfig config;
-    config.regularGcIntervalMicroseconds = std::chrono::microseconds(std::chrono::minutes(10)).count();
+    config.regularGcIntervalMicroseconds = 10;
     config.autoTune = false;
     config.targetHeapBytes = 10;
-    GCSchedulerDataTestApi<compiler::GCSchedulerType::kWithTimer, mutatorsCount> schedulerTestApi(config);
+    GCSchedulerDataWithTimerTestApi<mutatorsCount> schedulerTestApi(config);
 
     EXPECT_CALL(schedulerTestApi.scheduleGC(), Call());
     schedulerTestApi.Allocate(0, 10).get();
@@ -651,17 +640,17 @@ TEST(GCSchedulerDataWithTimer, DoNotTuneTargetHeap) {
     EXPECT_THAT(config.targetHeapBytes.load(), 10);
 }
 
-TEST(GCSchedulerDataWithTimer, TuneTargetHeap) {
+TEST_F(GCSchedulerDataWithTimerTest, TuneTargetHeap) {
     constexpr int mutatorsCount = 1;
 
     GCSchedulerConfig config;
-    config.regularGcIntervalMicroseconds = std::chrono::microseconds(std::chrono::minutes(10)).count();
+    config.regularGcIntervalMicroseconds = 10;
     config.autoTune = true;
     config.targetHeapBytes = 10;
     config.targetHeapUtilization = 0.5;
     config.minHeapBytes = 5;
     config.maxHeapBytes = 50;
-    GCSchedulerDataTestApi<compiler::GCSchedulerType::kWithTimer, mutatorsCount> schedulerTestApi(config);
+    GCSchedulerDataWithTimerTestApi<mutatorsCount> schedulerTestApi(config);
 
     EXPECT_CALL(schedulerTestApi.scheduleGC(), Call());
     schedulerTestApi.Allocate(0, 10).get();
