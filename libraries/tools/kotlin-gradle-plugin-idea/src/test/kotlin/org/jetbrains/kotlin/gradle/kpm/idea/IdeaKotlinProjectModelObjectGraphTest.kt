@@ -11,8 +11,8 @@ import org.reflections.Reflections
 import java.lang.reflect.Field
 import java.lang.reflect.Modifier
 import kotlin.reflect.KClass
-import kotlin.reflect.KVisibility
 import kotlin.reflect.KVisibility.PUBLIC
+import kotlin.reflect.full.findAnnotation
 import kotlin.reflect.full.memberProperties
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -80,20 +80,26 @@ class IdeaKotlinProjectModelObjectGraphTest(private val node: KClass<*>, @Suppre
         @JvmStatic
         @Parameterized.Parameters(name = "{1}")
         fun findNodes(): List<Array<Any>> {
-            val classes = mutableSetOf<KClass<*>>(IdeaKotlinProjectModel::class)
-            val resolveQueue = ArrayDeque(classes)
+            val classes = mutableSetOf<KClass<*>>()
+            val resolveQueue = ArrayDeque<KClass<*>>(listOf(IdeaKotlinProjectModel::class))
 
             while (resolveQueue.isNotEmpty()) {
-                val children = resolveQueue.removeFirst().resolveReachableClasses()
-                children.forEach { child ->
-                    if (classes.add(child)) {
-                        resolveQueue.add(child)
-                        if (child.java.isInterface || Modifier.isAbstract(child.java.modifiers)) {
-                            val subtypes = reflections.getSubTypesOf(child.java).map { it.kotlin }
-                            assertTrue(subtypes.isNotEmpty(), "Missing implementations for $child")
-                            classes.addAll(subtypes)
-                            resolveQueue.addAll(subtypes)
-                        }
+                val next = resolveQueue.removeFirst()
+
+                /* Model gets replaced by other class */
+                val writeReplacedModelAnnotation = next.findAnnotation<WriteReplacedModel>()
+                if (writeReplacedModelAnnotation != null) {
+                    resolveQueue.add(writeReplacedModelAnnotation.replacedBy)
+                    continue
+                }
+
+                if (!classes.add(next)) continue
+                next.resolveReachableClasses().forEach { child ->
+                    resolveQueue.add(child)
+                    if (child.java.isInterface || Modifier.isAbstract(child.java.modifiers)) {
+                        val subtypes = reflections.getSubTypesOf(child.java).map { it.kotlin }
+                        assertTrue(subtypes.isNotEmpty(), "Missing implementations for $child")
+                        resolveQueue.addAll(subtypes)
                     }
                 }
             }
