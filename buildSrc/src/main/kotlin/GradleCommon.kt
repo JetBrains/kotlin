@@ -77,7 +77,9 @@ fun Project.configureGradlePluginCommonSettings() {
             // Decoupling gradle-api artifact from current project Gradle version. Later would be useful for
             // gradle plugin variants
             "compileOnly"("dev.gradleplugins:gradle-api:7.1.1")
-            if (this@configureGradlePluginCommonSettings.name != "kotlin-gradle-plugin-api") {
+            if (this@configureGradlePluginCommonSettings.name != "kotlin-gradle-plugin-api" &&
+                this@configureGradlePluginCommonSettings.name != "android-test-fixes"
+            ) {
                 "api"(project(":kotlin-gradle-plugin-api"))
             }
         }
