@@ -81,6 +81,22 @@ public class FirPluginDiagnosticTestGenerated extends AbstractFirPluginDiagnosti
     }
 
     @Nested
+    @TestMetadata("plugins/fir-plugin-prototype/testData/diagnostics/receivers")
+    @TestDataPath("$PROJECT_ROOT")
+    public class Receivers {
+        @Test
+        public void testAllFilesPresentInReceivers() throws Exception {
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/fir-plugin-prototype/testData/diagnostics/receivers"), Pattern.compile("^(.+)\\.kt$"), null, true);
+        }
+
+        @Test
+        @TestMetadata("receiverInjection.kt")
+        public void testReceiverInjection() throws Exception {
+            runTest("plugins/fir-plugin-prototype/testData/diagnostics/receivers/receiverInjection.kt");
+        }
+    }
+
+    @Nested
     @TestMetadata("plugins/fir-plugin-prototype/testData/diagnostics/status")
     @TestDataPath("$PROJECT_ROOT")
     public class Status {

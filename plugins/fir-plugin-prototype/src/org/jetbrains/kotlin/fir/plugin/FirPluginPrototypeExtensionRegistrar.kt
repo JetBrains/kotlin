@@ -21,6 +21,7 @@ class FirPluginPrototypeExtensionRegistrar : FirExtensionRegistrar() {
         +::SomeAdditionalSupertypeGenerator
         +::PluginAdditionalCheckers
         +::FirNumberSignAttributeExtension
+        +::AlgebraReceiverInjector
 
         // Declaration generators
         +::TopLevelDeclarationsGenerator
