@@ -40226,24 +40226,6 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
                 }
 
                 @Test
-                @TestMetadata("constructorWithInlineClassParameters.kt")
-                public void testConstructorWithInlineClassParameters() throws Exception {
-                    runTest("compiler/testData/codegen/box/reflection/call/inlineClasses/constructorWithInlineClassParameters.kt");
-                }
-
-                @Test
-                @TestMetadata("fieldAccessors.kt")
-                public void testFieldAccessors() throws Exception {
-                    runTest("compiler/testData/codegen/box/reflection/call/inlineClasses/fieldAccessors.kt");
-                }
-
-                @Test
-                @TestMetadata("functionsWithInlineClassParameters.kt")
-                public void testFunctionsWithInlineClassParameters() throws Exception {
-                    runTest("compiler/testData/codegen/box/reflection/call/inlineClasses/functionsWithInlineClassParameters.kt");
-                }
-
-                @Test
                 @TestMetadata("inlineClassConstructor.kt")
                 public void testInlineClassConstructor() throws Exception {
                     runTest("compiler/testData/codegen/box/reflection/call/inlineClasses/inlineClassConstructor.kt");
@@ -40256,57 +40238,237 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
                 }
 
                 @Test
-                @TestMetadata("jvmStaticFieldInObject.kt")
-                public void testJvmStaticFieldInObject() throws Exception {
-                    runTest("compiler/testData/codegen/box/reflection/call/inlineClasses/jvmStaticFieldInObject.kt");
-                }
-
-                @Test
-                @TestMetadata("jvmStaticFunction.kt")
-                public void testJvmStaticFunction() throws Exception {
-                    runTest("compiler/testData/codegen/box/reflection/call/inlineClasses/jvmStaticFunction.kt");
-                }
-
-                @Test
-                @TestMetadata("nonOverridingFunOfInlineClass.kt")
-                public void testNonOverridingFunOfInlineClass() throws Exception {
-                    runTest("compiler/testData/codegen/box/reflection/call/inlineClasses/nonOverridingFunOfInlineClass.kt");
-                }
-
-                @Test
-                @TestMetadata("nonOverridingVarOfInlineClass.kt")
-                public void testNonOverridingVarOfInlineClass() throws Exception {
-                    runTest("compiler/testData/codegen/box/reflection/call/inlineClasses/nonOverridingVarOfInlineClass.kt");
-                }
-
-                @Test
-                @TestMetadata("overridingFunOfInlineClass.kt")
-                public void testOverridingFunOfInlineClass() throws Exception {
-                    runTest("compiler/testData/codegen/box/reflection/call/inlineClasses/overridingFunOfInlineClass.kt");
-                }
-
-                @Test
-                @TestMetadata("overridingVarOfInlineClass.kt")
-                public void testOverridingVarOfInlineClass() throws Exception {
-                    runTest("compiler/testData/codegen/box/reflection/call/inlineClasses/overridingVarOfInlineClass.kt");
-                }
-
-                @Test
                 @TestMetadata("primaryValOfInlineClass.kt")
                 public void testPrimaryValOfInlineClass() throws Exception {
                     runTest("compiler/testData/codegen/box/reflection/call/inlineClasses/primaryValOfInlineClass.kt");
                 }
 
-                @Test
-                @TestMetadata("properties.kt")
-                public void testProperties() throws Exception {
-                    runTest("compiler/testData/codegen/box/reflection/call/inlineClasses/properties.kt");
+                @Nested
+                @TestMetadata("compiler/testData/codegen/box/reflection/call/inlineClasses/nonNullObject")
+                @TestDataPath("$PROJECT_ROOT")
+                public class NonNullObject {
+                    @Test
+                    public void testAllFilesPresentInNonNullObject() throws Exception {
+                        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/reflection/call/inlineClasses/nonNullObject"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+                    }
+
+                    @Test
+                    @TestMetadata("constructorWithInlineClassParameters.kt")
+                    public void testConstructorWithInlineClassParameters() throws Exception {
+                        runTest("compiler/testData/codegen/box/reflection/call/inlineClasses/nonNullObject/constructorWithInlineClassParameters.kt");
+                    }
+
+                    @Test
+                    @TestMetadata("fieldAccessors.kt")
+                    public void testFieldAccessors() throws Exception {
+                        runTest("compiler/testData/codegen/box/reflection/call/inlineClasses/nonNullObject/fieldAccessors.kt");
+                    }
+
+                    @Test
+                    @TestMetadata("functionsWithInlineClassParameters.kt")
+                    public void testFunctionsWithInlineClassParameters() throws Exception {
+                        runTest("compiler/testData/codegen/box/reflection/call/inlineClasses/nonNullObject/functionsWithInlineClassParameters.kt");
+                    }
+
+                    @Test
+                    @TestMetadata("jvmStaticFieldInObject.kt")
+                    public void testJvmStaticFieldInObject() throws Exception {
+                        runTest("compiler/testData/codegen/box/reflection/call/inlineClasses/nonNullObject/jvmStaticFieldInObject.kt");
+                    }
+
+                    @Test
+                    @TestMetadata("jvmStaticFunction.kt")
+                    public void testJvmStaticFunction() throws Exception {
+                        runTest("compiler/testData/codegen/box/reflection/call/inlineClasses/nonNullObject/jvmStaticFunction.kt");
+                    }
+
+                    @Test
+                    @TestMetadata("nonOverridingFunOfInlineClass.kt")
+                    public void testNonOverridingFunOfInlineClass() throws Exception {
+                        runTest("compiler/testData/codegen/box/reflection/call/inlineClasses/nonNullObject/nonOverridingFunOfInlineClass.kt");
+                    }
+
+                    @Test
+                    @TestMetadata("nonOverridingVarOfInlineClass.kt")
+                    public void testNonOverridingVarOfInlineClass() throws Exception {
+                        runTest("compiler/testData/codegen/box/reflection/call/inlineClasses/nonNullObject/nonOverridingVarOfInlineClass.kt");
+                    }
+
+                    @Test
+                    @TestMetadata("overridingFunOfInlineClass.kt")
+                    public void testOverridingFunOfInlineClass() throws Exception {
+                        runTest("compiler/testData/codegen/box/reflection/call/inlineClasses/nonNullObject/overridingFunOfInlineClass.kt");
+                    }
+
+                    @Test
+                    @TestMetadata("overridingVarOfInlineClass.kt")
+                    public void testOverridingVarOfInlineClass() throws Exception {
+                        runTest("compiler/testData/codegen/box/reflection/call/inlineClasses/nonNullObject/overridingVarOfInlineClass.kt");
+                    }
+
+                    @Test
+                    @TestMetadata("properties.kt")
+                    public void testProperties() throws Exception {
+                        runTest("compiler/testData/codegen/box/reflection/call/inlineClasses/nonNullObject/properties.kt");
+                    }
+
+                    @Test
+                    @TestMetadata("suspendFunction.kt")
+                    public void testSuspendFunction() throws Exception {
+                        runTest("compiler/testData/codegen/box/reflection/call/inlineClasses/nonNullObject/suspendFunction.kt");
+                    }
                 }
 
-                @Test
-                @TestMetadata("suspendFunction.kt")
-                public void testSuspendFunction() throws Exception {
-                    runTest("compiler/testData/codegen/box/reflection/call/inlineClasses/suspendFunction.kt");
+                @Nested
+                @TestMetadata("compiler/testData/codegen/box/reflection/call/inlineClasses/nullableObject")
+                @TestDataPath("$PROJECT_ROOT")
+                public class NullableObject {
+                    @Test
+                    public void testAllFilesPresentInNullableObject() throws Exception {
+                        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/reflection/call/inlineClasses/nullableObject"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+                    }
+
+                    @Test
+                    @TestMetadata("constructorWithInlineClassParameters.kt")
+                    public void testConstructorWithInlineClassParameters() throws Exception {
+                        runTest("compiler/testData/codegen/box/reflection/call/inlineClasses/nullableObject/constructorWithInlineClassParameters.kt");
+                    }
+
+                    @Test
+                    @TestMetadata("fieldAccessors.kt")
+                    public void testFieldAccessors() throws Exception {
+                        runTest("compiler/testData/codegen/box/reflection/call/inlineClasses/nullableObject/fieldAccessors.kt");
+                    }
+
+                    @Test
+                    @TestMetadata("functionsWithInlineClassParameters.kt")
+                    public void testFunctionsWithInlineClassParameters() throws Exception {
+                        runTest("compiler/testData/codegen/box/reflection/call/inlineClasses/nullableObject/functionsWithInlineClassParameters.kt");
+                    }
+
+                    @Test
+                    @TestMetadata("jvmStaticFieldInObject.kt")
+                    public void testJvmStaticFieldInObject() throws Exception {
+                        runTest("compiler/testData/codegen/box/reflection/call/inlineClasses/nullableObject/jvmStaticFieldInObject.kt");
+                    }
+
+                    @Test
+                    @TestMetadata("jvmStaticFunction.kt")
+                    public void testJvmStaticFunction() throws Exception {
+                        runTest("compiler/testData/codegen/box/reflection/call/inlineClasses/nullableObject/jvmStaticFunction.kt");
+                    }
+
+                    @Test
+                    @TestMetadata("nonOverridingFunOfInlineClass.kt")
+                    public void testNonOverridingFunOfInlineClass() throws Exception {
+                        runTest("compiler/testData/codegen/box/reflection/call/inlineClasses/nullableObject/nonOverridingFunOfInlineClass.kt");
+                    }
+
+                    @Test
+                    @TestMetadata("nonOverridingVarOfInlineClass.kt")
+                    public void testNonOverridingVarOfInlineClass() throws Exception {
+                        runTest("compiler/testData/codegen/box/reflection/call/inlineClasses/nullableObject/nonOverridingVarOfInlineClass.kt");
+                    }
+
+                    @Test
+                    @TestMetadata("overridingFunOfInlineClass.kt")
+                    public void testOverridingFunOfInlineClass() throws Exception {
+                        runTest("compiler/testData/codegen/box/reflection/call/inlineClasses/nullableObject/overridingFunOfInlineClass.kt");
+                    }
+
+                    @Test
+                    @TestMetadata("overridingVarOfInlineClass.kt")
+                    public void testOverridingVarOfInlineClass() throws Exception {
+                        runTest("compiler/testData/codegen/box/reflection/call/inlineClasses/nullableObject/overridingVarOfInlineClass.kt");
+                    }
+
+                    @Test
+                    @TestMetadata("properties.kt")
+                    public void testProperties() throws Exception {
+                        runTest("compiler/testData/codegen/box/reflection/call/inlineClasses/nullableObject/properties.kt");
+                    }
+
+                    @Test
+                    @TestMetadata("suspendFunction.kt")
+                    public void testSuspendFunction() throws Exception {
+                        runTest("compiler/testData/codegen/box/reflection/call/inlineClasses/nullableObject/suspendFunction.kt");
+                    }
+                }
+
+                @Nested
+                @TestMetadata("compiler/testData/codegen/box/reflection/call/inlineClasses/primitive")
+                @TestDataPath("$PROJECT_ROOT")
+                public class Primitive {
+                    @Test
+                    public void testAllFilesPresentInPrimitive() throws Exception {
+                        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/reflection/call/inlineClasses/primitive"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+                    }
+
+                    @Test
+                    @TestMetadata("constructorWithInlineClassParameters.kt")
+                    public void testConstructorWithInlineClassParameters() throws Exception {
+                        runTest("compiler/testData/codegen/box/reflection/call/inlineClasses/primitive/constructorWithInlineClassParameters.kt");
+                    }
+
+                    @Test
+                    @TestMetadata("fieldAccessors.kt")
+                    public void testFieldAccessors() throws Exception {
+                        runTest("compiler/testData/codegen/box/reflection/call/inlineClasses/primitive/fieldAccessors.kt");
+                    }
+
+                    @Test
+                    @TestMetadata("functionsWithInlineClassParameters.kt")
+                    public void testFunctionsWithInlineClassParameters() throws Exception {
+                        runTest("compiler/testData/codegen/box/reflection/call/inlineClasses/primitive/functionsWithInlineClassParameters.kt");
+                    }
+
+                    @Test
+                    @TestMetadata("jvmStaticFieldInObject.kt")
+                    public void testJvmStaticFieldInObject() throws Exception {
+                        runTest("compiler/testData/codegen/box/reflection/call/inlineClasses/primitive/jvmStaticFieldInObject.kt");
+                    }
+
+                    @Test
+                    @TestMetadata("jvmStaticFunction.kt")
+                    public void testJvmStaticFunction() throws Exception {
+                        runTest("compiler/testData/codegen/box/reflection/call/inlineClasses/primitive/jvmStaticFunction.kt");
+                    }
+
+                    @Test
+                    @TestMetadata("nonOverridingFunOfInlineClass.kt")
+                    public void testNonOverridingFunOfInlineClass() throws Exception {
+                        runTest("compiler/testData/codegen/box/reflection/call/inlineClasses/primitive/nonOverridingFunOfInlineClass.kt");
+                    }
+
+                    @Test
+                    @TestMetadata("nonOverridingVarOfInlineClass.kt")
+                    public void testNonOverridingVarOfInlineClass() throws Exception {
+                        runTest("compiler/testData/codegen/box/reflection/call/inlineClasses/primitive/nonOverridingVarOfInlineClass.kt");
+                    }
+
+                    @Test
+                    @TestMetadata("overridingFunOfInlineClass.kt")
+                    public void testOverridingFunOfInlineClass() throws Exception {
+                        runTest("compiler/testData/codegen/box/reflection/call/inlineClasses/primitive/overridingFunOfInlineClass.kt");
+                    }
+
+                    @Test
+                    @TestMetadata("overridingVarOfInlineClass.kt")
+                    public void testOverridingVarOfInlineClass() throws Exception {
+                        runTest("compiler/testData/codegen/box/reflection/call/inlineClasses/primitive/overridingVarOfInlineClass.kt");
+                    }
+
+                    @Test
+                    @TestMetadata("properties.kt")
+                    public void testProperties() throws Exception {
+                        runTest("compiler/testData/codegen/box/reflection/call/inlineClasses/primitive/properties.kt");
+                    }
+
+                    @Test
+                    @TestMetadata("suspendFunction.kt")
+                    public void testSuspendFunction() throws Exception {
+                        runTest("compiler/testData/codegen/box/reflection/call/inlineClasses/primitive/suspendFunction.kt");
+                    }
                 }
             }
         }
