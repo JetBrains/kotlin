@@ -61,7 +61,7 @@ class BlackBoxCodegenSuppressor(
         fun extractIgnoreDirective(module: TestModule): ValueDirective<TargetBackend>? {
             return when (module.frontendKind) {
                 FrontendKinds.ClassicFrontend -> customIgnoreDirective ?: IGNORE_BACKEND
-                FrontendKinds.FIR -> IGNORE_BACKEND_FIR
+                FrontendKinds.FIR -> customIgnoreDirective ?: IGNORE_BACKEND_FIR
                 else -> null
             }
         }
