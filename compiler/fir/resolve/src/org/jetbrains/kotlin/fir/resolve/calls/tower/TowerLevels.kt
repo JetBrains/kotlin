@@ -65,13 +65,6 @@ abstract class TowerScopeLevel {
     }
 }
 
-abstract class SessionBasedTowerLevel(val session: FirSession) : TowerScopeLevel() {
-    protected fun FirCallableSymbol<*>.hasConsistentExtensionReceiver(extensionReceiver: Receiver?): Boolean {
-        return (extensionReceiver != null) == hasExtensionReceiver()
-    }
-
-    open fun replaceReceiverValue(receiverValue: ReceiverValue) = this
-}
 
 // This is more like "dispatch receiver-based tower level"
 // Here we always have an explicit or implicit dispatch receiver, and can access members of its scope
@@ -80,13 +73,14 @@ abstract class SessionBasedTowerLevel(val session: FirSession) : TowerScopeLevel
 // So: extension receiver = either none, if dispatch receiver = explicit receiver,
 //     or given implicit or explicit receiver, otherwise
 class MemberScopeTowerLevel(
-    session: FirSession,
     private val bodyResolveComponents: BodyResolveComponents,
     val dispatchReceiverValue: ReceiverValue,
     private val extensionReceiver: ReceiverValue? = null,
     private val implicitExtensionInvokeMode: Boolean = false,
-    private val scopeSession: ScopeSession
-) : SessionBasedTowerLevel(session) {
+) : TowerScopeLevel() {
+    private val scopeSession: ScopeSession get() = bodyResolveComponents.scopeSession
+    private val session: FirSession get() = bodyResolveComponents.session
+
     private fun <T : FirBasedSymbol<*>> processMembers(
         output: TowerScopeLevelProcessor<T>,
         processScopeMembers: FirScope.(processor: (T) -> Unit) -> Unit
@@ -205,12 +199,6 @@ class MemberScopeTowerLevel(
         return ProcessResult.FOUND
     }
 
-    override fun replaceReceiverValue(receiverValue: ReceiverValue): SessionBasedTowerLevel {
-        return MemberScopeTowerLevel(
-            session, bodyResolveComponents, receiverValue, extensionReceiver, implicitExtensionInvokeMode, scopeSession
-        )
-    }
-
     private inline fun withMemberCallLookup(
         lookupTracker: FirLookupTrackerComponent?,
         info: CallInfo,
@@ -232,6 +220,10 @@ class MemberScopeTowerLevel(
             }
         }
     }
+
+    private fun FirCallableSymbol<*>.hasConsistentExtensionReceiver(extensionReceiver: Receiver?): Boolean {
+        return (extensionReceiver != null) == hasExtensionReceiver()
+    }
 }
 
 // This is more like "scope-based tower level"
@@ -242,13 +234,13 @@ class MemberScopeTowerLevel(
 // So: extension receiver = either none or explicit
 // (if explicit receiver exists, it always *should* be an extension receiver)
 class ScopeTowerLevel(
-    session: FirSession,
     private val bodyResolveComponents: BodyResolveComponents,
     val scope: FirScope,
     val extensionReceiver: ReceiverValue?,
     private val withHideMembersOnly: Boolean,
     private val includeInnerConstructors: Boolean
-) : SessionBasedTowerLevel(session) {
+) : TowerScopeLevel() {
+    private val session: FirSession get() = bodyResolveComponents.session
 
     private fun dispatchReceiverValue(candidate: FirCallableSymbol<*>): ReceiverValue? {
         candidate.fir.importedFromObjectData?.let { data ->
