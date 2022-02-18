@@ -26,7 +26,9 @@ import org.jetbrains.kotlin.konan.target.presetName
 import org.junit.*
 import org.junit.rules.TemporaryFolder
 import java.io.File
+import java.nio.file.Files
 import java.util.*
+import kotlin.io.path.absolutePathString
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
@@ -1225,11 +1227,17 @@ class GeneralNativeIT : BaseGradleIT() {
             gradleProperties().appendText(
                 """
                 
-                kotlin.native.reinstall=true
                 kotlin.native.distribution.baseDownloadUrl=https://non-existent.net
                 """.trimIndent()
             )
-            build("build") {
+
+            build(
+                "build",
+                options = defaultBuildOptions().copy(
+                    forceOutputToStdout = true,
+                    customEnvironmentVariables = mapOf("KONAN_DATA_DIR" to Files.createTempDirectory("konan-data-dir").absolutePathString())
+                )
+            ) {
                 assertFailed()
                 assertContains("Could not HEAD 'https://non-existent.net")
             }
