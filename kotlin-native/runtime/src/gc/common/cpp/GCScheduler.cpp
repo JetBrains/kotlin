@@ -33,7 +33,7 @@ public:
     void OnPerformFullGC() noexcept { allocatedBytes_ = 0; }
 
     // Called by the GC thread.
-    void UpdateAliveSetBytes(size_t bytes) noexcept {
+    void UpdateAliveSetBytes(size_t bytes, uint64_t timeSinceLastGC) noexcept {
         lastAliveSetBytes_ = bytes;
 
         if (config_.autoTune.load()) {
@@ -45,6 +45,11 @@ public:
             double minHeapBytes = static_cast<double>(config_.minHeapBytes.load());
             double maxHeapBytes = static_cast<double>(config_.maxHeapBytes.load());
             targetHeapBytes = std::min(std::max(targetHeapBytes, minHeapBytes), maxHeapBytes);
+            // Analyze allocation speed.
+            double currentAllocationSpeed = targetHeapBytes / timeSinceLastGC;
+            if (currentAllocationSpeed / 30 > targetHeapBytes / config_.regularGcIntervalMicroseconds.load()) {
+                config_.targetHeapUtilization = config_.targetHeapUtilization / 1.05;
+            }
             config_.targetHeapBytes = static_cast<int64_t>(targetHeapBytes);
         }
     }
@@ -91,7 +96,7 @@ private:
 class GCEmptySchedulerData : public gc::GCSchedulerData {
     void UpdateFromThreadData(gc::GCSchedulerThreadData& threadData) noexcept override {}
     void OnPerformFullGC() noexcept override {}
-    void UpdateAliveSetBytes(size_t bytes) noexcept override {}
+    void UpdateAliveSetBytes(size_t bytes, uint64_t timeSinceLastGC) noexcept override {}
 };
 
 #ifndef KONAN_NO_THREADS
@@ -125,7 +130,9 @@ public:
         regularIntervalPacer_.OnPerformFullGC();
     }
 
-    void UpdateAliveSetBytes(size_t bytes) noexcept override { heapGrowthController_.UpdateAliveSetBytes(bytes); }
+    void UpdateAliveSetBytes(size_t bytes, uint64_t timeSinceLastGC) noexcept override {
+        heapGrowthController_.UpdateAliveSetBytes(bytes, timeSinceLastGC);
+    }
 
 private:
     gc::GCSchedulerConfig& config_;
@@ -159,7 +166,9 @@ public:
         regularIntervalPacer_.OnPerformFullGC();
     }
 
-    void UpdateAliveSetBytes(size_t bytes) noexcept override { heapGrowthController_.UpdateAliveSetBytes(bytes); }
+    void UpdateAliveSetBytes(size_t bytes, uint64_t timeSinceLastGC) noexcept override {
+        heapGrowthController_.UpdateAliveSetBytes(bytes, timeSinceLastGC);
+    }
 
 private:
     HeapGrowthController heapGrowthController_;
@@ -179,7 +188,7 @@ public:
     void UpdateFromThreadData(gc::GCSchedulerThreadData& threadData) noexcept override { scheduleGC_(); }
 
     void OnPerformFullGC() noexcept override {}
-    void UpdateAliveSetBytes(size_t bytes) noexcept override {}
+    void UpdateAliveSetBytes(size_t bytes, uint64_t timeSinceLastGC) noexcept override {}
 
 private:
     std::function<void()> scheduleGC_;

@@ -64,7 +64,7 @@ public:
     virtual void OnPerformFullGC() noexcept = 0;
 
     // Always called by the GC thread.
-    virtual void UpdateAliveSetBytes(size_t bytes) noexcept = 0;
+    virtual void UpdateAliveSetBytes(size_t bytes, uint64_t timeSinceLastGC) noexcept = 0;
 };
 
 class GCSchedulerThreadData {
