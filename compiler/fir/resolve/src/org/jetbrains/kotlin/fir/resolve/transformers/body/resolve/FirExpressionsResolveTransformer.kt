@@ -16,6 +16,8 @@ import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.builder.*
 import org.jetbrains.kotlin.fir.expressions.impl.FirResolvedArgumentList
 import org.jetbrains.kotlin.fir.expressions.impl.toAnnotationArgumentMapping
+import org.jetbrains.kotlin.fir.extensions.expressionResolutionExtensions
+import org.jetbrains.kotlin.fir.extensions.extensionService
 import org.jetbrains.kotlin.fir.references.*
 import org.jetbrains.kotlin.fir.references.builder.buildErrorNamedReference
 import org.jetbrains.kotlin.fir.references.builder.buildExplicitSuperReference
@@ -32,6 +34,7 @@ import org.jetbrains.kotlin.fir.resolve.transformers.InvocationKindTransformer
 import org.jetbrains.kotlin.fir.resolve.transformers.StoreReceiver
 import org.jetbrains.kotlin.fir.scopes.impl.isWrappedIntegerOperator
 import org.jetbrains.kotlin.fir.scopes.impl.isWrappedIntegerOperatorForUnsignedType
+import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.buildErrorTypeRef
@@ -55,6 +58,8 @@ open class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransform
     private val arrayOfCallTransformer = FirArrayOfCallTransformer()
     var enableArrayOfCallTransformation = false
     var containingSafeCallExpression: FirSafeCallExpression? = null
+
+    private val expressionResolutionExtensions = session.extensionService.expressionResolutionExtensions.takeIf { it.isNotEmpty() }
 
     init {
         @Suppress("LeakingThis")
@@ -378,12 +383,32 @@ open class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransform
             }
         val result = completeInference.transformToIntegerOperatorCallOrApproximateItIfNeeded(data)
         dataFlowAnalyzer.exitFunctionCall(result, callCompleted)
+
+        addReceiversFromExtensions(result)
+
         if (callCompleted) {
             if (enableArrayOfCallTransformation) {
                 return arrayOfCallTransformer.transformFunctionCall(result, null)
             }
         }
         return result
+    }
+
+    @OptIn(PrivateForInline::class)
+    private fun addReceiversFromExtensions(functionCall: FirFunctionCall) {
+        val extensions = expressionResolutionExtensions ?: return
+        val boundSymbol = context.containerIfAny?.symbol as? FirCallableSymbol<*> ?: return
+        for (extension in extensions) {
+            for (receiverType in extension.addNewImplicitReceivers(functionCall)) {
+                val receiverValue = ImplicitExtensionReceiverValue(
+                    boundSymbol,
+                    receiverType,
+                    session,
+                    scopeSession
+                )
+                context.addReceiver(name = null, receiverValue)
+            }
+        }
     }
 
     private fun FirFunctionCall.transformToIntegerOperatorCallOrApproximateItIfNeeded(resolutionMode: ResolutionMode): FirFunctionCall {

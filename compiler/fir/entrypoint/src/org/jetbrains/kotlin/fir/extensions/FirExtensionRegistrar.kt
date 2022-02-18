@@ -28,6 +28,7 @@ abstract class FirExtensionRegistrar : FirExtensionRegistrarAdapter() {
             FirAdditionalCheckersExtension::class,
             FirSupertypeGenerationExtension::class,
             FirTypeAttributeExtension::class,
+            FirExpressionResolutionExtension::class,
         )
     }
 
@@ -60,6 +61,11 @@ abstract class FirExtensionRegistrar : FirExtensionRegistrarAdapter() {
         @JvmName("plusTypeAttributeExtension")
         operator fun ((FirSession) -> FirTypeAttributeExtension).unaryPlus() {
             registerExtension(FirTypeAttributeExtension::class, FirTypeAttributeExtension.Factory { this.invoke(it) })
+        }
+
+        @JvmName("plusExpressionResolutionExtension")
+        operator fun ((FirSession) -> FirExpressionResolutionExtension).unaryPlus() {
+            registerExtension(FirExpressionResolutionExtension::class, FirExpressionResolutionExtension.Factory { this.invoke(it) })
         }
     }
 
