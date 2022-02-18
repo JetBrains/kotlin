@@ -290,7 +290,11 @@ class MemoizedInlineClassReplacements(
                         parent = propertySymbol.owner.parent
                         copyAttributes(propertySymbol.owner)
                         annotations = propertySymbol.owner.annotations
-                        backingField = propertySymbol.owner.backingField
+                        // In case this property is declared in an object in another file which is not yet lowered, its backing field will
+                        // be made static later. We have to handle it here though, because this new property will be saved to the cache
+                        // and reused when lowering the same call in all subsequent files, which would be incorrect if it was unlowered.
+                        backingField = context.cachedDeclarations.getStaticBackingField(propertySymbol.owner)
+                            ?: propertySymbol.owner.backingField
                     }
                 }
                 correspondingPropertySymbol = property.symbol
