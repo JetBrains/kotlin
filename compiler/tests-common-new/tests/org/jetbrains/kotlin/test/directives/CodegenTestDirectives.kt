@@ -29,6 +29,11 @@ object CodegenTestDirectives : SimpleDirectivesContainer() {
         applicability = Global
     )
 
+    val IGNORE_BACKEND_FIR_MULTI_MODULE by enumDirective<TargetBackend>(
+        description = "Ignore failures of multimodule test on target backend if test uses FIR",
+        applicability = Global
+    )
+
     val USE_JAVAC_BASED_ON_JVM_TARGET by directive(
         description = """
             Determine version of javac for compilation of java files based
