@@ -116,3 +116,10 @@ interface KotlinCompilerPluginSupportPlugin : Plugin<Project> {
 open class SubpluginArtifact(val groupId: String, val artifactId: String, val version: String? = null)
 
 class JetBrainsSubpluginArtifact(artifactId: String) : SubpluginArtifact(groupId = "org.jetbrains.kotlin", artifactId = artifactId)
+
+/**
+ * Marker interface left here for backward compatibility with older plugin versions.
+ * Remove once minimal supported Gradle version will use Kotlin 1.7+.
+ */
+@Deprecated(level = DeprecationLevel.HIDDEN, message = "")
+interface KotlinGradleSubplugin

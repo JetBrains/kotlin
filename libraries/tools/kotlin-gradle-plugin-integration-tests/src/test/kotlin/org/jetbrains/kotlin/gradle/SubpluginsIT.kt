@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.util.checkBytecodeContains
 import org.jetbrains.kotlin.test.util.JUnit4Assertions.assertTrue
 import org.junit.jupiter.api.DisplayName
-import kotlin.io.path.readText
 
 @DisplayName("Other plugins tests")
 @OtherGradlePluginTests
@@ -210,6 +209,38 @@ class SubpuginsIT : KGPBaseTest() {
                     "Expected serialization plugin to go first; actual order: $xPlugin"
                 }
             }
+        }
+    }
+
+    @DisplayName("KT-51378: Using 'kotlin-dsl' with latest plugin version in buildSrc module")
+    @GradleTestVersions(
+        minVersion = TestVersions.Gradle.G_6_8 // Gradle usage of sam-with-receivers subplugin was added in this version
+    )
+    @GradleTest
+    fun testBuildSrcKotlinDSL(gradleVersion: GradleVersion) {
+        project("buildSrcUsingKotlinCompilationAndKotlinPlugin", gradleVersion) {
+            subProject("buildSrc").buildGradleKts.modify {
+                //language=kts
+                """
+                ${it.substringBefore("}")}
+                }
+                
+                buildscript {
+                    val kotlin_version: String by extra
+                    repositories {
+                        mavenLocal()
+                    }
+                    
+                    dependencies {
+                        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:${'$'}kotlin_version")
+                    }
+                }
+                
+                ${it.substringAfter("}")}
+                """.trimIndent()
+            }
+
+            build("assemble")
         }
     }
 }
