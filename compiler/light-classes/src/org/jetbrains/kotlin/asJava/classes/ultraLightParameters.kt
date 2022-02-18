@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtFunction
 import org.jetbrains.kotlin.psi.KtParameter
 import org.jetbrains.kotlin.psi.psiUtil.isPrivate
+import org.jetbrains.kotlin.resolve.indexOrMinusOne
 import org.jetbrains.kotlin.types.KotlinType
 
 internal class KtUltraLightSuspendContinuationParameter(
@@ -264,7 +265,7 @@ internal class KtUltraLightReceiverParameter(
 }
 
 internal class KtUltraLightParameterForDescriptor(
-    private val descriptor: ParameterDescriptor,
+    descriptor: ParameterDescriptor,
     support: KtUltraLightSupport,
     method: KtUltraLightMethod
 ) : KtUltraLightParameter(
@@ -297,12 +298,16 @@ internal class KtUltraLightParameterForDescriptor(
         computeParameterType(descriptor.type, descriptor.containingDeclaration as? CallableMemberDescriptor)
     }
 
+    private val _index: Int by getAndAddLazy {
+        descriptor.indexOrMinusOne()
+    }
+
     override fun getType(): PsiType = _parameterType
 
     override fun equals(other: Any?): Boolean = other === this ||
             other is KtUltraLightParameterForDescriptor &&
             other.name == this.name &&
-            other.descriptor.type == this.descriptor.type &&
+            other._index == this._index &&
             other.method == this.method
 
     override fun hashCode(): Int = name.hashCode()
