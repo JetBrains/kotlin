@@ -78,15 +78,15 @@ internal fun produceCStubs(context: Context) {
 private fun linkAllDependencies(context: Context, generatedBitcodeFiles: List<String>) {
     val config = context.config
 
-    val runtimeNativeLibraries = config.runtimeNativeLibraries
-            .takeIf { context.producedLlvmModuleContainsStdlib }.orEmpty()
+    // TODO: Possibly slow, maybe to a separate phase?
+    val runtimeModules = RuntimeLinkageStrategy.pick(context).run()
 
     val launcherNativeLibraries = config.launcherNativeLibraries
             .takeIf { config.produce == CompilerOutputKind.PROGRAM }.orEmpty()
 
     linkObjC(context)
 
-    val nativeLibraries = config.nativeLibraries + runtimeNativeLibraries + launcherNativeLibraries
+    val nativeLibraries = config.nativeLibraries + launcherNativeLibraries
 
     val bitcodeLibraries = context.llvm.bitcodeToLink.map { it.bitcodePaths }.flatten().filter { it.isBitcode }
     val additionalBitcodeFilesToLink = context.llvm.additionalProducedBitcodeFiles
@@ -96,6 +96,12 @@ private fun linkAllDependencies(context: Context, generatedBitcodeFiles: List<St
         bitcodeFiles += exceptionsSupportNativeLibrary
 
     val llvmModule = context.llvmModule!!
+    runtimeModules.forEach {
+        val failed = llvmLinkModules2(context, llvmModule, it)
+        if (failed != 0) {
+            error("Failed to link ${it.getName()}")
+        }
+    }
     bitcodeFiles.forEach {
         parseAndLinkBitcodeFile(context, llvmModule, it)
     }
@@ -205,14 +211,14 @@ internal fun produceOutput(context: Context) {
     }
 }
 
-private fun parseAndLinkBitcodeFile(context: Context, llvmModule: LLVMModuleRef, path: String) {
+internal fun parseAndLinkBitcodeFile(context: Context, llvmModule: LLVMModuleRef, path: String) {
     val parsedModule = parseBitcodeFile(path)
     if (!context.shouldUseDebugInfoFromNativeLibs()) {
         LLVMStripModuleDebugInfo(parsedModule)
     }
     val failed = llvmLinkModules2(context, llvmModule, parsedModule)
     if (failed != 0) {
-        throw Error("failed to link $path") // TODO: retrieve error message from LLVM.
+        throw Error("failed to link $path")
     }
 }
 

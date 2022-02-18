@@ -356,7 +356,12 @@ internal val rewriteExternalCallsCheckerGlobals = makeKonanModuleOpPhase(
 internal val bitcodeOptimizationPhase = makeKonanModuleOpPhase(
         name = "BitcodeOptimization",
         description = "Optimize bitcode",
-        op = { context, _ -> runLlvmOptimizationPipeline(context) }
+        op = { context, _ ->
+            val config = createLTOFinalPipelineConfig(context)
+            LlvmOptimizationPipeline(config, context.llvmModule!!, context).use {
+                it.run()
+            }
+        }
 )
 
 internal val coveragePhase = makeKonanModuleOpPhase(
