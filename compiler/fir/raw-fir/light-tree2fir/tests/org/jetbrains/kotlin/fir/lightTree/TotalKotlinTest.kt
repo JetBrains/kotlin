@@ -10,11 +10,15 @@ import com.intellij.openapi.vfs.CharsetToolkit
 import com.intellij.psi.impl.DebugUtil
 import com.intellij.testFramework.TestDataPath
 import com.intellij.util.PathUtil
+import org.jetbrains.kotlin.KtIoFileSourceFile
+import org.jetbrains.kotlin.KtSourceFile
+import org.jetbrains.kotlin.KtSourceFileLinesMapping
 import org.jetbrains.kotlin.fir.FirRenderer
 import org.jetbrains.kotlin.fir.builder.AbstractRawFirBuilderTestCase
 import org.jetbrains.kotlin.fir.builder.StubFirScopeProvider
 import org.jetbrains.kotlin.fir.session.FirSessionFactory
 import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.readSourceFileWithMapping
 import org.jetbrains.kotlin.test.JUnit3RunnerWithInners
 import org.junit.runner.RunWith
 import java.io.File
@@ -33,12 +37,15 @@ class TotalKotlinTest : AbstractRawFirBuilderTestCase() {
         }
     }
 
-    private fun generateFirFromLightTree(onlyLightTree: Boolean, converter: LightTree2Fir, text: String, fileName: String, filePath: String) {
+    private fun generateFirFromLightTree(
+        onlyLightTree: Boolean, converter: LightTree2Fir,
+        text: CharSequence, sourceFile: KtSourceFile, linesMapping: KtSourceFileLinesMapping
+    ) {
         if (onlyLightTree) {
             val lightTree = LightTree2Fir.buildLightTree(text)
             DebugUtil.lightTreeToString(lightTree, false)
         } else {
-            val firFile = converter.buildFirFile(text, fileName, filePath)
+            val firFile = converter.buildFirFile(text, sourceFile, linesMapping)
             StringBuilder().also { FirRenderer(it).visitFile(firFile) }.toString()
         }
     }
@@ -57,9 +64,12 @@ class TotalKotlinTest : AbstractRawFirBuilderTestCase() {
         if (onlyLightTree) println("LightTree generation") else println("Fir from LightTree converter")
         println("BASE PATH: $path")
         path.walkTopDown {
-            val text = FileUtil.loadFile(it, CharsetToolkit.UTF8, true).trim()
+            val sourceFile = KtIoFileSourceFile(it)
+            val (code, linesMapping) = with(it.inputStream().reader(Charsets.UTF_8)) {
+                this.readSourceFileWithMapping()
+            }
             time += measureNanoTime {
-                generateFirFromLightTree(onlyLightTree, lightTreeConverter, text, it.name, it.path)
+                generateFirFromLightTree(onlyLightTree, lightTreeConverter, code, sourceFile, linesMapping)
             }
 
             counter++

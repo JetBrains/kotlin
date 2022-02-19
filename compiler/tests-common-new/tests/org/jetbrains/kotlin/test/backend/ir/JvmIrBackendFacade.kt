@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.test.backend.ir
 
+import org.jetbrains.kotlin.KtPsiSourceFile
 import org.jetbrains.kotlin.backend.common.BackendException
 import org.jetbrains.kotlin.backend.jvm.MultifileFacadeFileEntry
 import org.jetbrains.kotlin.backend.jvm.lower.getFileClassInfoFromIrFile
@@ -21,7 +22,6 @@ import org.jetbrains.kotlin.test.model.SourceFileInfo
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.compilerConfigurationProvider
-import java.io.File
 
 class JvmIrBackendFacade(
     testServices: TestServices
@@ -48,14 +48,20 @@ class JvmIrBackendFacade(
         val configuration = testServices.compilerConfigurationProvider.getCompilerConfiguration(module)
         javaCompilerFacade.compileJavaFiles(module, configuration, state.factory)
 
-        fun sourceFileInfos(irFile: IrFile, allowNestedMultifileFacades: Boolean): List<SourceFileInfo<*>> =
+        fun sourceFileInfos(irFile: IrFile, allowNestedMultifileFacades: Boolean): List<SourceFileInfo> =
             when (val fileEntry = irFile.fileEntry) {
                 is PsiIrFileEntry -> {
-                    listOf(SourceFileInfo(fileEntry.psiFile, JvmFileClassUtil.getFileClassInfoNoResolve(fileEntry.psiFile as KtFile)))
+                    listOf(
+                        SourceFileInfo(
+                            KtPsiSourceFile(fileEntry.psiFile),
+                            JvmFileClassUtil.getFileClassInfoNoResolve(fileEntry.psiFile as KtFile)
+                        )
+                    )
                 }
                 is NaiveSourceBasedFileEntryImpl -> {
-                    val file = File(fileEntry.name)
-                    listOf(SourceFileInfo(file, getFileClassInfoFromIrFile(irFile, file.name)))
+                    val sourceFile = inputArtifact.sourceFiles.find { it.path == fileEntry.name }
+                    if (sourceFile == null) emptyList() // synthetic files, like CoroutineHelpers.kt, are ignored here
+                    else listOf(SourceFileInfo(sourceFile, getFileClassInfoFromIrFile(irFile, sourceFile.name)))
                 }
                 is MultifileFacadeFileEntry -> {
                     if (!allowNestedMultifileFacades) error("nested multi-file facades are not allowed")

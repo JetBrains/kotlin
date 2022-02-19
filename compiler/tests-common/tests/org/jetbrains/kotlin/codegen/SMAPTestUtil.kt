@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.codegen.inline.GENERATE_SMAP
 import org.jetbrains.kotlin.test.KotlinBaseTest
 import org.jetbrains.kotlin.test.util.JUnit4Assertions
 import org.junit.Assert
+import java.io.File
 import java.io.StringReader
 
 object SMAPTestUtil {
@@ -62,7 +63,7 @@ object SMAPTestUtil {
         }.associateBy { it.sourceFile }
 
         for (source in sourceData) {
-            val ktFileName = "/" + source.sourceFile
+            val ktFileName = "/" + File(source.sourceFile).name
                 .replace(".smap-nonseparate-compilation", ".kt")
                 .replace(".smap-separate-compilation", ".kt")
                 .replace(".smap", ".kt")

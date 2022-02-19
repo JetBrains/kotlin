@@ -61,7 +61,7 @@ open class JvmBoxRunner(testServices: TestServices) : JvmBinaryArtifactHandler(t
         val classLoader = createAndVerifyClassLoader(module, info.classFileFactory, reportProblems)
         try {
             for (fileInfo in fileInfos) {
-                if (fileContainsBoxMethod(fileInfo.file)) {
+                if (fileContainsBoxMethod(fileInfo.sourceFile)) {
                     boxMethodFound = true
                     callBoxMethodAndCheckResultWithCleanup(
                         fileInfo.info,
