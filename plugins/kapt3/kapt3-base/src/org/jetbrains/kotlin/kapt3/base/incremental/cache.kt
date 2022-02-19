@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.kapt3.base.incremental
 
 import java.io.*
+import java.util.ArrayDeque
 
 // TODO(gavra): switch away from Java serialization
 class JavaClassCacheManager(val file: File) : Closeable {
@@ -59,9 +60,9 @@ class JavaClassCacheManager(val file: File) : Closeable {
          *
          * However, comparing total numbers is probably good enough, and it should eliminate most of the issues. See KT-41456 for details.
          */
-        val totalCompiledClasses = compiledSources.sumOf { it.walk().filter { it.extension == "class" }.count() }
         val totalDeclaredTypes = javaCache.getSourceFileDefinedTypesCount()
-        if (totalCompiledClasses < totalDeclaredTypes) {
+        val compileOutputHasEnoughClassFiles = checkMinNumberOfClassFiles(compiledSources, totalDeclaredTypes)
+        if (!compileOutputHasEnoughClassFiles) {
             return SourcesToReprocess.FullRebuild
         }
 
@@ -197,4 +198,32 @@ sealed class SourcesToReprocess {
     ) : SourcesToReprocess()
 
     object FullRebuild : SourcesToReprocess()
+}
+
+/** Returns if specified root dirs have at least [required] number of class files. */
+private fun checkMinNumberOfClassFiles(roots: List<File>, required: Int): Boolean {
+    var currentlyMissing = required
+    roots.filter { it.isDirectory }.forEach {
+        val inThisRoot = countClassFilesUpToLimit(it, currentlyMissing)
+        currentlyMissing -= inThisRoot
+    }
+    return currentlyMissing <= 0
+}
+
+private fun countClassFilesUpToLimit(root: File, limit: Int): Int {
+    var cnt = 0;
+    val toVisit = ArrayDeque<File>()
+    toVisit.add(root)
+    while (cnt < limit && toVisit.isNotEmpty()) {
+        val curr = toVisit.removeFirst()
+        if (curr.isFile && curr.toString().endsWith(".class")) {
+            cnt++
+        } else if (curr.isDirectory) {
+            curr.listFiles()?.forEach {
+                toVisit.addLast(it)
+            }
+        }
+    }
+
+    return cnt
 }
