@@ -9,7 +9,6 @@ import com.sun.source.tree.*
 import com.sun.source.util.*
 import com.sun.tools.javac.code.Symbol
 import com.sun.tools.javac.tree.JCTree
-import java.io.File
 import javax.lang.model.element.ElementKind
 import javax.lang.model.element.Modifier
 import javax.lang.model.element.TypeElement

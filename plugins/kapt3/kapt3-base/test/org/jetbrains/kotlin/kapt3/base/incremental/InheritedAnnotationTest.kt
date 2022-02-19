@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.kapt.base.test.org.jetbrains.kotlin.kapt3.base.incr
 
 import org.jetbrains.kotlin.kapt3.base.incremental.JavaClassCacheManager
 import org.jetbrains.kotlin.kapt3.base.incremental.MentionedTypesTaskListener
+import org.jetbrains.kotlin.kapt3.base.incremental.SourceFileStructure
 import org.junit.Assert.assertEquals
 import org.junit.BeforeClass
 import org.junit.ClassRule
@@ -51,9 +52,9 @@ class TestInheritedAnnotation {
 
     @Test
     fun testAnnotationInherited() {
-        val shouldInheritAnnotation = cache.javaCache.getStructure(MY_TEST_DIR.resolve("ExtendsBase.java"))!!
+        val shouldInheritAnnotation = cache.javaCache.getStructure(MY_TEST_DIR.resolve("ExtendsBase.java"))!! as SourceFileStructure
 
-        assertEquals(setOf("test.ExtendsBase"), shouldInheritAnnotation.getDeclaredTypes())
+        assertEquals(setOf("test.ExtendsBase"), shouldInheritAnnotation.declaredTypes)
         assertEquals(setOf("test.InheritableAnnotation"), shouldInheritAnnotation.getMentionedAnnotations())
         assertEquals(emptySet<String>(), shouldInheritAnnotation.getPrivateTypes())
         assertEquals(
