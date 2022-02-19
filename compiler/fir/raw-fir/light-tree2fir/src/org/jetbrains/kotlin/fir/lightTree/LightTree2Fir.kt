@@ -65,7 +65,7 @@ class LightTree2Fir(
     fun buildFirFile(lightTreeFile: LightTreeFile): FirFile = with(lightTreeFile) {
         DeclarationsConverter(
             session, scopeProvider, lightTree, diagnosticsReporter = diagnosticsReporter,
-            diagnosticContext = makeDiagnosticContext(path)
+            diagnosticContext = makeDiagnosticContext("/$fileName")
         ).convertFile(lightTree.root, fileName, path)
     }
 

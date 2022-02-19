@@ -103,7 +103,7 @@ fun SourceFileProvider.getLightTreeKtFileForSourceFile(testFile: TestFile): Ligh
     val shortName = testFile.name.substringAfterLast('/').substringAfterLast('\\')
     val file = getRealFileForSourceFile(testFile)
     val lightTree = LightTree2Fir.buildLightTree(file.readText())
-    return LightTreeFile(lightTree, shortName, "/$shortName") // emulating behavior of KtTestUtil.createFile so path looks the same in testdata
+    return LightTreeFile(lightTree, shortName, file.path)
 }
 
 fun SourceFileProvider.getLightTreeFilesForSourceFiles(testFiles: Collection<TestFile>): Map<TestFile, LightTreeFile> {
