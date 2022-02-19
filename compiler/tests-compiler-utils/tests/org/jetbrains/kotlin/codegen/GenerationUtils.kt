@@ -134,7 +134,7 @@ object GenerationUtils {
         generationState.beforeCompile()
         generationState.oldBEInitTrace(files)
         codegenFactory.generateModuleInFrontendIRMode(
-            generationState, files, moduleFragment, symbolTable, extensions, FirJvmBackendExtension(session, components),
+            generationState, moduleFragment, symbolTable, extensions, FirJvmBackendExtension(session, components),
         ) {}
 
         generationState.factory.done()

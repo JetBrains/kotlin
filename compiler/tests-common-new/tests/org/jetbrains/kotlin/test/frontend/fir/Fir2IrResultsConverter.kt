@@ -76,7 +76,6 @@ class Fir2IrResultsConverter(
             codegenFactory,
             JvmIrCodegenFactory.JvmIrBackendInput(
                 irModuleFragment,
-                ktFiles,
                 symbolTable,
                 phaseConfig,
                 irProviders,

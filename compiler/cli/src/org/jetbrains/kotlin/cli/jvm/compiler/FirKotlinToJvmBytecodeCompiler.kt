@@ -327,7 +327,7 @@ object FirKotlinToJvmBytecodeCompiler {
         generationState.beforeCompile()
         generationState.oldBEInitTrace(ktFiles)
         codegenFactory.generateModuleInFrontendIRMode(
-            generationState, ktFiles, moduleFragment, symbolTable, extensions, FirJvmBackendExtension(session, components)
+            generationState, moduleFragment, symbolTable, extensions, FirJvmBackendExtension(session, components)
         ) {
             performanceManager?.notifyIRLoweringFinished()
             performanceManager?.notifyIRGenerationStarted()
