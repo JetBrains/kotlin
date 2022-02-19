@@ -158,6 +158,18 @@ class JavaClassCache() : Serializable {
 
         allSources.forEach { sourceCache.remove(it) }
     }
+
+    /** Returns total number of declared types in .java source files that were processed. */
+    fun getSourceFileDefinedTypesCount(): Int {
+        return sourceCache.values.sumOf {
+            val structure = it as? SourceFileStructure ?: return@sumOf 0
+            if (structure.declaredTypes.size == 1 && structure.declaredTypes.single() == "error.NonExistentClass") {
+                // never report package for error.NonExistentClass, as it is never compiled by javac/kotlinc
+                return@sumOf 0
+            }
+            return@sumOf structure.declaredTypes.size
+        }
+    }
 }
 
 

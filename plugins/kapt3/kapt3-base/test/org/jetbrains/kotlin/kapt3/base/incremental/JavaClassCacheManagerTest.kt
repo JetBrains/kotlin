@@ -21,10 +21,12 @@ class JavaClassCacheManagerTest {
 
     private lateinit var cache: JavaClassCacheManager
     private lateinit var cacheDir: File
+    private lateinit var compiledSources: List<File>
 
     @Before
     fun setUp() {
         cacheDir = tmp.newFolder()
+        compiledSources = listOf(tmp.newFolder().also { it.resolve(TEST_PACKAGE_NAME).mkdir() })
         cache = JavaClassCacheManager(cacheDir)
     }
 
@@ -42,21 +44,24 @@ class JavaClassCacheManagerTest {
         SourceFileStructure(File("Mentioned.java").toURI()).also {
             it.addDeclaredType("test.Mentioned")
             cache.javaCache.addSourceStructure(it)
+            compiledSources.single().resolve("test/Mentioned.class").createNewFile()
         }
         SourceFileStructure(File("Src.java").toURI()).also {
             it.addDeclaredType("test.Src")
             it.addMentionedType("test.Mentioned")
             cache.javaCache.addSourceStructure(it)
+            compiledSources.single().resolve("test/Src.class").createNewFile()
         }
         SourceFileStructure(File("ReferencesSrc.java").toURI()).also {
             it.addDeclaredType("test.ReferencesSrc")
             it.addPrivateType("test.Src")
             cache.javaCache.addSourceStructure(it)
+            compiledSources.single().resolve("test/ReferencesSrc.class").createNewFile()
         }
         prepareForIncremental()
 
         val dirtyFiles =
-            cache.invalidateAndGetDirtyFiles(listOf(File("Mentioned.java").absoluteFile), emptyList()) as SourcesToReprocess.Incremental
+            cache.invalidateAndGetDirtyFiles(listOf(File("Mentioned.java").absoluteFile), emptyList(), compiledSources) as SourcesToReprocess.Incremental
         assertEquals(
             listOf(
                 File("Mentioned.java").absoluteFile,
@@ -71,21 +76,24 @@ class JavaClassCacheManagerTest {
         SourceFileStructure(File("Mentioned.java").toURI()).also {
             it.addDeclaredType("test.Mentioned")
             cache.javaCache.addSourceStructure(it)
+            compiledSources.single().resolve("test/Mentioned.class").createNewFile()
         }
         SourceFileStructure(File("Src.java").toURI()).also {
             it.addDeclaredType("test.Src")
             it.addPrivateType("test.Mentioned")
             cache.javaCache.addSourceStructure(it)
+            compiledSources.single().resolve("test/Src.class").createNewFile()
         }
         SourceFileStructure(File("ReferencesSrc.java").toURI()).also {
             it.addDeclaredType("test.ReferencesSrc")
             it.addPrivateType("test.Src")
             cache.javaCache.addSourceStructure(it)
+            compiledSources.single().resolve("test/ReferencesSrc.class").createNewFile()
         }
         prepareForIncremental()
 
         val dirtyFiles =
-            cache.invalidateAndGetDirtyFiles(listOf(File("Mentioned.java").absoluteFile), emptyList()) as SourcesToReprocess.Incremental
+            cache.invalidateAndGetDirtyFiles(listOf(File("Mentioned.java").absoluteFile), emptyList(), compiledSources) as SourcesToReprocess.Incremental
         assertEquals(
             listOf(
                 File("Mentioned.java").absoluteFile,
@@ -100,21 +108,25 @@ class JavaClassCacheManagerTest {
             it.addDeclaredType("test.TwoTypes")
             it.addDeclaredType("test.AnotherType")
             cache.javaCache.addSourceStructure(it)
+            compiledSources.single().resolve("test/TwoTypes.class").createNewFile()
+            compiledSources.single().resolve("test/AnotherType.class").createNewFile()
         }
         SourceFileStructure(File("ReferencesTwoTypes.java").toURI()).also {
             it.addDeclaredType("test.ReferencesTwoTypes")
             it.addPrivateType("test.TwoTypes")
             cache.javaCache.addSourceStructure(it)
+            compiledSources.single().resolve("test/ReferencesTwoTypes.class").createNewFile()
         }
         SourceFileStructure(File("ReferencesAnotherType.java").toURI()).also {
             it.addDeclaredType("test.ReferencesAnotherType")
             it.addPrivateType("test.AnotherType")
             cache.javaCache.addSourceStructure(it)
+            compiledSources.single().resolve("test/ReferencesAnotherType.class").createNewFile()
         }
         prepareForIncremental()
 
         val dirtyFiles =
-            cache.invalidateAndGetDirtyFiles(listOf(File("TwoTypes.java").absoluteFile), emptyList()) as SourcesToReprocess.Incremental
+            cache.invalidateAndGetDirtyFiles(listOf(File("TwoTypes.java").absoluteFile), emptyList(), compiledSources) as SourcesToReprocess.Incremental
         assertEquals(
             listOf(
                 File("TwoTypes.java").absoluteFile,
@@ -130,10 +142,11 @@ class JavaClassCacheManagerTest {
             it.addDeclaredType("test.Src")
             it.addMentionedType("test.Mentioned")
             cache.javaCache.addSourceStructure(it)
+            compiledSources.single().resolve("test/Src.class").createNewFile()
         }
         prepareForIncremental()
 
-        val dirtyFiles = cache.invalidateAndGetDirtyFiles(listOf(), listOf("test/Mentioned")) as SourcesToReprocess.Incremental
+        val dirtyFiles = cache.invalidateAndGetDirtyFiles(listOf(), listOf("test/Mentioned"), compiledSources) as SourcesToReprocess.Incremental
         assertEquals(listOf(File("Src.java").absoluteFile), dirtyFiles.toReprocess)
     }
 
@@ -142,22 +155,25 @@ class JavaClassCacheManagerTest {
         SourceFileStructure(File("Constants.java").toURI()).also {
             it.addDeclaredType("test.Constants")
             cache.javaCache.addSourceStructure(it)
+            compiledSources.single().resolve("test/Constants.class").createNewFile()
         }
         SourceFileStructure(File("MentionsConst.java").toURI()).also {
             it.addDeclaredType("test.MentionsConst")
             it.addMentionedConstant("test.Constants", "CONST")
             cache.javaCache.addSourceStructure(it)
+            compiledSources.single().resolve("test/MentionsConst.class").createNewFile()
         }
         SourceFileStructure(File("MentionsOtherConst.java").toURI()).also {
             it.addDeclaredType("test.MentionsOtherConst")
             it.addMentionedConstant("test.OtherConstants", "CONST")
             cache.javaCache.addSourceStructure(it)
+            compiledSources.single().resolve("test/MentionsOtherConst.class").createNewFile()
         }
         prepareForIncremental()
 
         val dirtyFiles =
             cache.invalidateAndGetDirtyFiles(
-                listOf(File("Constants.java").absoluteFile), emptyList()
+                listOf(File("Constants.java").absoluteFile), emptyList(), compiledSources
             ) as SourcesToReprocess.Incremental
         assertEquals(
             listOf(File("Constants.java").absoluteFile, File("MentionsConst.java").absoluteFile),
@@ -170,3 +186,5 @@ class JavaClassCacheManagerTest {
         cache = JavaClassCacheManager(cacheDir)
     }
 }
+
+private const val TEST_PACKAGE_NAME = "test"
