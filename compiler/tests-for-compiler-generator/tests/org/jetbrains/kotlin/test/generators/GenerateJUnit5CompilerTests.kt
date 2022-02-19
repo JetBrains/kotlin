@@ -231,6 +231,10 @@ fun generateJUnit5CompilerTests(args: Array<String>) {
                 model("codegen/boxInline")
             }
 
+            testClass<AbstractFirLightTreeBlackBoxInlineCodegenTest> {
+                model("codegen/boxInline")
+            }
+
             testClass<AbstractFirSteppingTest> {
                 model("debug/stepping")
             }
