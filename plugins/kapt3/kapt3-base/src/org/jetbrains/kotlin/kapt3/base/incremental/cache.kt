@@ -36,8 +36,32 @@ class JavaClassCacheManager(val file: File) : Closeable {
      * From set of changed sources, get list of files to recompile using structural information and dependency information from
      * annotation processing.
      */
-    fun invalidateAndGetDirtyFiles(changedSources: Collection<File>, dirtyClasspathJvmNames: Collection<String>): SourcesToReprocess {
+    fun invalidateAndGetDirtyFiles(
+        changedSources: Collection<File>,
+        dirtyClasspathJvmNames: Collection<String>,
+        compiledSources: List<File>
+    ): SourcesToReprocess {
         if (!aptCache.isIncremental) {
+            return SourcesToReprocess.FullRebuild
+        }
+
+        /**
+         * Incremental annotation processing tries to limit the number of .java files that are passes to annotation processors, and it
+         * uses already existing .class files to resolve types. This relies on outputs of kotlinc and javac being present.
+         *
+         * The check below verifies that the number of types defined in the processed .java files matches the number of .class files
+         * in the compiled sources. This check does not guarantee that .class file will indeed exist for every defined type, but
+         * even if such check is introduced, there is no guarantee that the actual content of the source file matches the .class file. E.g:
+         * - clean build i.e non-incremental KAPT
+         * - modify B.java with error in the method body: KAPT runs successfully, but java compilation will fail (assume old B.class is kept)
+         * - add C.java that references B as method parameter type: KAPT wil only process C.java, and it will use old version of B
+         * To properly fix this, KAPT needs to keep track of kotlinc and javac compilation outcome, and there is no clean API to do that.
+         *
+         * However, comparing total numbers is probably good enough, and it should eliminate most of the issues. See KT-41456 for details.
+         */
+        val totalCompiledClasses = compiledSources.sumOf { it.walk().filter { it.extension == "class" }.count() }
+        val totalDeclaredTypes = javaCache.getSourceFileDefinedTypesCount()
+        if (totalCompiledClasses < totalDeclaredTypes) {
             return SourcesToReprocess.FullRebuild
         }
 

@@ -394,6 +394,27 @@ class KaptIncrementalWithIsolatingApt : KaptIncrementalIT() {
             )
         }
     }
+
+    //KT-41456: detect missing kotlin compilation output
+    @Test
+    fun testMissingKotlinOutputForcesNonIncrementalRun() {
+        //https://youtrack.jetbrains.com/issue/KTI-405
+        if (System.getProperty("os.name")?.toLowerCase()?.contains("windows") == true) return
+
+        val project = getProject()
+        project.build("clean", "assemble") {
+            assertSuccessful()
+        }
+
+        // Explicitly remove all kotlinc generated .class files
+        project.projectDir.resolve("build/classes/kotlin/main").listFiles()!!.forEach { it.deleteRecursively() }
+        project.projectDir.resolve("src/main/java/bar/useB.kt").modify { current -> "$current\nfun otherFunction() {}" }
+
+        project.build("assemble") {
+            assertSuccessful()
+            assertContains("Unable to run incrementally, processing all sources.")
+        }
+    }
 }
 
 private const val patternApt = "Processing java sources with annotation processors:"
