@@ -129,7 +129,10 @@ class IncrementalKaptTest {
 
         val classesOutput = tmp.newFolder()
         compileSources(sourcesDir.listFiles().asIterable(), classesOutput)
-        compileSources(listOf(outputDir.resolve("test/UserGenerated.java")), classesOutput)
+        compileSources(
+            listOf(outputDir.resolve("test/UserGenerated.java"), outputDir.resolve("test/AddressGenerated.java")),
+            classesOutput
+        )
 
         val optionsForSecondRun = KaptOptions.Builder().apply {
             projectBaseDir = tmp.newFolder()
