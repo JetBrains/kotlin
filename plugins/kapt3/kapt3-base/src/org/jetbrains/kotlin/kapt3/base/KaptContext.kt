@@ -74,10 +74,14 @@ open class KaptContext(val options: KaptOptions, val withJdk: Boolean, val logge
             sourcesToReprocess = run {
                 val start = System.currentTimeMillis()
                 cacheManager?.invalidateAndGetDirtyFiles(
-                    options.changedFiles, options.classpathChanges
-                ).also {
+                    options.changedFiles, options.classpathChanges, options.compiledSources
+                ).also { result ->
                     if (logger.isVerbose) {
-                        logger.info("Computing sources to reprocess took ${System.currentTimeMillis() - start}[ms].")
+                        if (result == SourcesToReprocess.FullRebuild) {
+                            logger.info("Unable to run incrementally, processing all sources.")
+                        } else {
+                            logger.info("Computing sources to reprocess took ${System.currentTimeMillis() - start}[ms].")
+                        }
                     }
                 }
             }?: SourcesToReprocess.FullRebuild
