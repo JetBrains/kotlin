@@ -8,7 +8,10 @@ package org.jetbrains.kotlin.backend.jvm
 import org.jetbrains.kotlin.analyzer.hasJdkCapability
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContextImpl
-import org.jetbrains.kotlin.backend.common.phaser.*
+import org.jetbrains.kotlin.backend.common.phaser.CompilerPhase
+import org.jetbrains.kotlin.backend.common.phaser.PhaseConfig
+import org.jetbrains.kotlin.backend.common.phaser.invokeToplevel
+import org.jetbrains.kotlin.backend.common.phaser.then
 import org.jetbrains.kotlin.backend.common.serialization.DescriptorByIdSignatureFinderImpl
 import org.jetbrains.kotlin.backend.jvm.intrinsics.IrIntrinsicMethods
 import org.jetbrains.kotlin.backend.jvm.ir.getIoFile
@@ -59,7 +62,6 @@ open class JvmIrCodegenFactory(
 ) : CodegenFactory {
     data class JvmIrBackendInput(
         val irModuleFragment: IrModuleFragment,
-        val ktFiles: List<KtFile>,
         val symbolTable: SymbolTable,
         val phaseConfig: PhaseConfig?,
         val irProviders: List<IrProvider>,
@@ -215,7 +217,6 @@ open class JvmIrCodegenFactory(
         }
         return JvmIrBackendInput(
             irModuleFragment,
-            input.files.toList(),
             symbolTable,
             phaseConfig,
             irProviders,
@@ -250,7 +251,7 @@ open class JvmIrCodegenFactory(
     }
 
     override fun invokeLowerings(state: GenerationState, input: CodegenFactory.BackendInput): CodegenFactory.CodegenInput {
-        val (irModuleFragment, _, symbolTable, customPhaseConfig, irProviders, extensions, backendExtension, notifyCodegenStart) =
+        val (irModuleFragment, symbolTable, customPhaseConfig, irProviders, extensions, backendExtension, notifyCodegenStart) =
             input as JvmIrBackendInput
         val irSerializer = if (
             state.configuration.get(JVMConfigurationKeys.SERIALIZE_IR, JvmSerializeIrMode.NONE) != JvmSerializeIrMode.NONE
@@ -289,7 +290,6 @@ open class JvmIrCodegenFactory(
 
     fun generateModuleInFrontendIRMode(
         state: GenerationState,
-        ktFiles: List<KtFile>,
         irModuleFragment: IrModuleFragment,
         symbolTable: SymbolTable,
         extensions: JvmGeneratorExtensionsImpl,
@@ -299,10 +299,7 @@ open class JvmIrCodegenFactory(
         val irProviders = configureBuiltInsAndGenerateIrProvidersInFrontendIRMode(irModuleFragment, symbolTable, extensions)
         generateModule(
             state,
-            JvmIrBackendInput(
-                irModuleFragment, ktFiles, symbolTable, phaseConfig, irProviders, extensions, backendExtension,
-                notifyCodegenStart
-            )
+            JvmIrBackendInput(irModuleFragment, symbolTable, phaseConfig, irProviders, extensions, backendExtension, notifyCodegenStart)
         )
     }
 

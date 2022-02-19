@@ -9,6 +9,7 @@ import junit.framework.TestCase
 import org.jetbrains.kotlin.backend.common.CodegenUtil.getMemberDeclarationsToGenerate
 import org.jetbrains.kotlin.codegen.*
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
+import org.jetbrains.kotlin.fileClasses.JvmFileClassInfo
 import org.jetbrains.kotlin.fileClasses.JvmFileClassUtil.getFileClassInfoNoResolve
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.TestJdkKind
@@ -31,7 +32,7 @@ import org.jetbrains.kotlin.test.services.jvm.compiledClassesManager
 import org.jetbrains.kotlin.test.services.jvm.jvmBoxMainClassProvider
 import org.jetbrains.kotlin.test.services.runtimeClasspathProviders
 import org.jetbrains.kotlin.test.services.sourceProviders.MainFunctionForBlackBoxTestsSourceProvider
-import org.jetbrains.kotlin.test.services.sourceProviders.MainFunctionForBlackBoxTestsSourceProvider.Companion.containsBoxMethod
+import org.jetbrains.kotlin.test.services.sourceProviders.MainFunctionForBlackBoxTestsSourceProvider.Companion.fileContainsBoxMethod
 import org.jetbrains.kotlin.test.util.KtTestUtil
 import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
@@ -55,15 +56,15 @@ open class JvmBoxRunner(testServices: TestServices) : JvmBinaryArtifactHandler(t
     }
 
     override fun processModule(module: TestModule, info: BinaryArtifacts.Jvm) {
-        val ktFiles = info.ktFiles.ifEmpty { return }
+        val fileInfos = info.fileInfos.ifEmpty { return }
         val reportProblems = !testServices.codegenSuppressionChecker.failuresInModuleAreIgnored(module)
         val classLoader = createAndVerifyClassLoader(module, info.classFileFactory, reportProblems)
         try {
-            for (ktFile in ktFiles) {
-                if (containsBoxMethod(ktFile.text)) {
+            for (fileInfo in fileInfos) {
+                if (fileContainsBoxMethod(fileInfo.file)) {
                     boxMethodFound = true
                     callBoxMethodAndCheckResultWithCleanup(
-                        ktFile,
+                        fileInfo.info,
                         module,
                         info.classFileFactory,
                         classLoader,
@@ -79,7 +80,7 @@ open class JvmBoxRunner(testServices: TestServices) : JvmBinaryArtifactHandler(t
     }
 
     private fun callBoxMethodAndCheckResultWithCleanup(
-        ktFile: KtFile,
+        fileInfo: JvmFileClassInfo,
         module: TestModule,
         classFileFactory: ClassFileFactory,
         classLoader: URLClassLoader,
@@ -87,7 +88,7 @@ open class JvmBoxRunner(testServices: TestServices) : JvmBinaryArtifactHandler(t
         reportProblems: Boolean
     ) {
         try {
-            callBoxMethodAndCheckResult(ktFile, module, classFileFactory, classLoader, unexpectedBehaviour)
+            callBoxMethodAndCheckResult(fileInfo, module, classFileFactory, classLoader, unexpectedBehaviour)
         } catch (e: Throwable) {
             if (reportProblems) {
                 try {
@@ -106,11 +107,11 @@ open class JvmBoxRunner(testServices: TestServices) : JvmBinaryArtifactHandler(t
     }
 
     private fun findClassAndMethodToExecute(
-        ktFile: KtFile,
+        fileInfo: JvmFileClassInfo,
         classLoader: URLClassLoader,
         classFileFactory: ClassFileFactory
     ): Pair<Class<*>, Method> {
-        val className = ktFile.getFacadeFqName() ?: error("Class<*> for ${ktFile.name} not found")
+        val className = fileInfo.facadeClassFqName.asString()
         val clazz = try {
             classLoader.getGeneratedClass(className)
         } catch (e: LinkageError) {
@@ -121,7 +122,7 @@ open class JvmBoxRunner(testServices: TestServices) : JvmBinaryArtifactHandler(t
     }
 
     private fun callBoxMethodAndCheckResult(
-        ktFile: KtFile,
+        fileInfo: JvmFileClassInfo,
         module: TestModule,
         classFileFactory: ClassFileFactory,
         classLoader: URLClassLoader,
@@ -132,7 +133,7 @@ open class JvmBoxRunner(testServices: TestServices) : JvmBinaryArtifactHandler(t
                 module,
                 classFileFactory,
                 classLoader,
-                findClassAndMethodToExecute(ktFile, classLoader, classFileFactory).first
+                findClassAndMethodToExecute(fileInfo, classLoader, classFileFactory).first
             )
         } else {
             val jdkKind = module.directives.singleOrZeroValue(JDK_KIND)
@@ -141,7 +142,7 @@ open class JvmBoxRunner(testServices: TestServices) : JvmBinaryArtifactHandler(t
             } else {
                 runBoxInCurrentProcess(
                     classLoader,
-                    findClassAndMethodToExecute(ktFile, classLoader, classFileFactory).second
+                    findClassAndMethodToExecute(fileInfo, classLoader, classFileFactory).second
                 )
             }
         }
