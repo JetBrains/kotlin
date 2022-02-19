@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.test.backend.ir
 
+import org.jetbrains.kotlin.KtSourceFile
 import org.jetbrains.kotlin.backend.jvm.JvmIrCodegenFactory
 import org.jetbrains.kotlin.codegen.CodegenFactory
 import org.jetbrains.kotlin.codegen.state.GenerationState
@@ -35,7 +36,8 @@ sealed class IrBackendInput : ResultingArtifact.BackendInput<IrBackendInput>() {
     data class JvmIrBackendInput(
         val state: GenerationState,
         val codegenFactory: JvmIrCodegenFactory,
-        val backendInput: JvmIrCodegenFactory.JvmIrBackendInput
+        val backendInput: JvmIrCodegenFactory.JvmIrBackendInput,
+        val sourceFiles: List<KtSourceFile>
     ) : IrBackendInput() {
         override val irModuleFragment: IrModuleFragment
             get() = backendInput.irModuleFragment

@@ -6,6 +6,8 @@
 package org.jetbrains.kotlin.fir.tree.generator
 
 import org.jetbrains.kotlin.KtSourceElement
+import org.jetbrains.kotlin.KtSourceFile
+import org.jetbrains.kotlin.KtSourceFileLinesMapping
 import org.jetbrains.kotlin.contracts.description.EventOccurrencesRange
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
@@ -23,6 +25,8 @@ import org.jetbrains.kotlin.types.SmartcastStability
 import org.jetbrains.kotlin.types.Variance
 
 val sourceElementType = type(KtSourceElement::class)
+val sourceFileType = type(KtSourceFile::class)
+val sourceFileLinesMappingType = type(KtSourceFileLinesMapping::class)
 val jumpTargetType = type("fir", "FirTarget")
 val constKindType = type("types", "ConstantValueKind")
 val operationType = type("fir.expressions", "FirOperation")

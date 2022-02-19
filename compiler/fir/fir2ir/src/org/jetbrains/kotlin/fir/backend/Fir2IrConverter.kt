@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.fir.backend
 
+import org.jetbrains.kotlin.KtPsiSourceFileLinesMapping
+import org.jetbrains.kotlin.KtSourceFileLinesMappingFromLineStartOffsets
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.backend.common.ir.BuiltinSymbolsBase
@@ -167,7 +169,18 @@ class Fir2IrConverter(
     private fun registerFileAndClasses(file: FirFile, moduleFragment: IrModuleFragment) {
         val fileEntry = when (file.origin) {
             FirDeclarationOrigin.Source ->
-                file.psi?.let { PsiIrFileEntry(it as KtFile) } ?: NaiveSourceBasedFileEntryImpl(file.path ?: file.name, intArrayOf(0))
+                file.psi?.let { PsiIrFileEntry(it as KtFile) }
+                    ?: when (val linesMapping = file.sourceFileLinesMapping) {
+                        is KtSourceFileLinesMappingFromLineStartOffsets ->
+                            NaiveSourceBasedFileEntryImpl(
+                                file.sourceFile?.path ?: file.sourceFile?.name ?: file.name,
+                                linesMapping.lineStartOffsets,
+                                linesMapping.lastOffset
+                            )
+                        is KtPsiSourceFileLinesMapping -> PsiIrFileEntry(linesMapping.psiFile)
+                        else ->
+                            NaiveSourceBasedFileEntryImpl(file.sourceFile?.path ?: file.sourceFile?.name ?: file.name)
+                    }
             FirDeclarationOrigin.Synthetic -> NaiveSourceBasedFileEntryImpl(file.name)
             else -> error("Unsupported file origin: ${file.origin}")
         }

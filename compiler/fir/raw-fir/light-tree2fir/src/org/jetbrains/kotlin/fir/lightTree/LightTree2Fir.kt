@@ -7,9 +7,10 @@ package org.jetbrains.kotlin.fir.lightTree
 
 import com.intellij.lang.LighterASTNode
 import com.intellij.lang.impl.PsiBuilderFactoryImpl
-import com.intellij.openapi.util.io.FileUtil
-import com.intellij.openapi.vfs.CharsetToolkit
 import com.intellij.util.diff.FlyweightCapableTreeStructure
+import org.jetbrains.kotlin.KtIoFileSourceFile
+import org.jetbrains.kotlin.KtSourceFile
+import org.jetbrains.kotlin.KtSourceFileLinesMapping
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.diagnostics.DiagnosticContext
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
@@ -22,6 +23,7 @@ import org.jetbrains.kotlin.fir.scopes.FirScopeProvider
 import org.jetbrains.kotlin.lexer.KotlinLexer
 import org.jetbrains.kotlin.parsing.KotlinLightParser
 import org.jetbrains.kotlin.parsing.KotlinParserDefinition
+import org.jetbrains.kotlin.readSourceFileWithMapping
 import java.io.File
 import java.nio.file.Path
 
@@ -46,7 +48,7 @@ class LightTree2Fir(
             return builder.lightTree
         }
 
-        fun buildLightTree(code: String): FlyweightCapableTreeStructure<LighterASTNode> {
+        fun buildLightTree(code: CharSequence): FlyweightCapableTreeStructure<LighterASTNode> {
             val builder = PsiBuilderFactoryImpl().createBuilder(parserDefinition, makeLexer(), code)
             KotlinLightParser.parse(builder)
             return builder.lightTree
@@ -58,25 +60,25 @@ class LightTree2Fir(
     }
 
     fun buildFirFile(file: File): FirFile {
-        val code = FileUtil.loadFile(file, CharsetToolkit.UTF8, true)
-        return buildFirFile(code, file.name, file.path)
+        val sourceFile = KtIoFileSourceFile(file)
+        val (code, linesMapping) = with(file.inputStream().reader(Charsets.UTF_8)) {
+            this.readSourceFileWithMapping()
+        }
+        return buildFirFile(code, sourceFile, linesMapping)
     }
 
-    fun buildFirFile(lightTreeFile: LightTreeFile): FirFile = with(lightTreeFile) {
+    fun buildFirFile(
+        lightTree: FlyweightCapableTreeStructure<LighterASTNode>,
+        sourceFile: KtSourceFile,
+        linesMapping: KtSourceFileLinesMapping
+    ): FirFile =
         DeclarationsConverter(
             session, scopeProvider, lightTree, diagnosticsReporter = diagnosticsReporter,
-            diagnosticContext = makeDiagnosticContext(path)
-        ).convertFile(lightTree.root, fileName, path)
-    }
+            diagnosticContext = makeDiagnosticContext(sourceFile.path)
+        ).convertFile(lightTree.root, sourceFile, linesMapping)
 
-    fun buildFirFile(code: String, fileName: String, path: String?): FirFile {
-        val lightTree = buildLightTree(code)
-
-        return DeclarationsConverter(
-            session, scopeProvider, lightTree, diagnosticsReporter = diagnosticsReporter,
-            diagnosticContext = makeDiagnosticContext(path)
-        ).convertFile(lightTree.root, fileName, path)
-    }
+    fun buildFirFile(code: CharSequence, sourceFile: KtSourceFile, linesMapping: KtSourceFileLinesMapping): FirFile =
+        buildFirFile(buildLightTree(code), sourceFile, linesMapping)
 
     private fun makeDiagnosticContext(path: String?) =
         if (diagnosticsReporter == null) null else object : DiagnosticContext {
@@ -85,10 +87,4 @@ class LightTree2Fir(
             override fun isDiagnosticSuppressed(diagnostic: KtDiagnostic): Boolean = false
         }
 }
-
-data class LightTreeFile(
-    val lightTree: FlyweightCapableTreeStructure<LighterASTNode>,
-    val fileName: String,
-    val path: String?
-)
 

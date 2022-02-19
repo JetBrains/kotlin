@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.moduleStructure
 import org.jetbrains.kotlin.test.utils.MultiModuleInfoDumper
 import org.jetbrains.kotlin.test.utils.withExtension
+import java.io.File
 
 class SMAPDumpHandler(testServices: TestServices) : JvmBinaryArtifactHandler(testServices) {
     companion object {
@@ -39,7 +40,7 @@ class SMAPDumpHandler(testServices: TestServices) : JvmBinaryArtifactHandler(tes
         val originalFileNames = module.files.map { it.name }
 
         val compiledSmaps = CommonSMAPTestUtil.extractSMAPFromClasses(info.classFileFactory.getClassFiles()).mapNotNull {
-            val name = it.sourceFile.removePrefix("/")
+            val name = File(it.sourceFile).name
             val index = originalFileNames.indexOf(name)
             val testFile = module.files[index]
             if (NO_SMAP_DUMP in testFile.directives) return@mapNotNull null
@@ -57,7 +58,7 @@ class SMAPDumpHandler(testServices: TestServices) : JvmBinaryArtifactHandler(tes
 
         dumper.builderForModule(module).apply {
             for (source in compiledData.values) {
-                appendLine("// FILE: ${source.sourceFile.removePrefix("/")}")
+                appendLine("// FILE: ${File(source.sourceFile).name}")
                 appendLine(source.smap ?: "")
             }
         }

@@ -8,6 +8,9 @@ package org.jetbrains.kotlin.incremental
 import com.intellij.ide.highlighter.JavaFileType
 import com.intellij.openapi.util.Disposer
 import com.intellij.psi.PsiJavaModule
+import org.jetbrains.kotlin.KtIoFileSourceFile
+import org.jetbrains.kotlin.KtSourceFile
+import org.jetbrains.kotlin.KtVirtualFileSourceFile
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.backend.jvm.JvmGeneratorExtensionsImpl
 import org.jetbrains.kotlin.backend.jvm.serialization.JvmIdSignatureDescriptor
@@ -99,7 +102,7 @@ class IncrementalFirJvmCompilerRunner(
         val moduleName = args.moduleName ?: JvmProtoBufUtil.DEFAULT_MODULE_NAME
         val targetId = TargetId(moduleName, "java-production") // TODO: get rid of magic constant
 
-        val dirtySources = linkedSetOf<File>().apply { addAll(sourcesToCompile) }
+        val dirtySources = linkedSetOf<KtSourceFile>().apply { sourcesToCompile.forEach { add(KtIoFileSourceFile(it)) } }
 
         // TODO: probably shoudl be passed along with sourcesToCompile
         // TODO: file path normalization
@@ -175,12 +178,11 @@ class IncrementalFirJvmCompilerRunner(
                 createProjectEnvironment(configuration, rootDisposable, EnvironmentConfigFiles.JVM_CONFIG_FILES, messageCollector)
 
             // -sources
-            val allPlatformSourceFiles = linkedSetOf<File>() // TODO: get from caller
-            val allCommonSourceFiles = linkedSetOf<File>()
+            val allPlatformSourceFiles = linkedSetOf<KtSourceFile>() // TODO: get from caller
+            val allCommonSourceFiles = linkedSetOf<KtSourceFile>()
 
             configuration.kotlinSourceRoots.forAllFiles(configuration, projectEnvironment.project) { virtualFile, isCommon ->
-                val file = File(virtualFile.canonicalPath ?: virtualFile.path)
-                if (!file.isFile) error("TODO: better error: file not found $virtualFile")
+                val file = KtVirtualFileSourceFile(virtualFile)
                 if (isCommon) allCommonSourceFiles.add(file)
                 else allPlatformSourceFiles.add(file)
             }
@@ -203,8 +205,8 @@ class IncrementalFirJvmCompilerRunner(
 
                     val compilerInput = ModuleCompilerInput(
                         targetId,
-                        CommonPlatforms.defaultCommonPlatform, dirtySources.filter { it in allCommonSourceFiles },
-                        JvmPlatforms.unspecifiedJvmPlatform, dirtySources.filter { it in allPlatformSourceFiles },
+                        CommonPlatforms.defaultCommonPlatform, allCommonSourceFiles.filter { dirtySources.any { df -> df.path == it.path } },
+                        JvmPlatforms.unspecifiedJvmPlatform, allPlatformSourceFiles.filter { dirtySources.any { df -> df.path == it.path } },
                         configuration
                     )
 
@@ -227,7 +229,10 @@ class IncrementalFirJvmCompilerRunner(
                         mainClassFqName = findMainClass(analysisResults.fir)
                     }
 
-                    allCompiledSources.addAll(dirtySources)
+                    // TODO: switch the whole IC to KtSourceFile instead of FIle
+                    dirtySources.forEach {
+                        allCompiledSources.add(File(it.path!!))
+                    }
 
                     if (diagnosticsReporter.hasErrors) {
                         diagnosticsReporter.reportToMessageCollector(messageCollector, renderDiagnosticName)
@@ -250,7 +255,9 @@ class IncrementalFirJvmCompilerRunner(
                         }
                     }
                     caches.inputsCache.removeOutputForSourceFiles(newDirtySources)
-                    dirtySources.addAll(newDirtySources)
+                    newDirtySources.forEach {
+                        dirtySources.add(KtIoFileSourceFile(it))
+                    }
                     projectEnvironment.localFileSystem.refresh(false)
                 }
             }

@@ -17,6 +17,8 @@ import com.intellij.openapi.vfs.VirtualFileSystem
 import com.intellij.psi.PsiManager
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.util.io.URLUtil
+import org.jetbrains.kotlin.KtSourceFile
+import org.jetbrains.kotlin.KtVirtualFileSourceFile
 import org.jetbrains.kotlin.analyzer.common.CommonPlatformAnalyzerServices
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.backend.jvm.JvmGeneratorExtensionsImpl
@@ -105,13 +107,12 @@ fun compileModulesUsingFrontendIrAndLightTree(
         val moduleConfiguration = compilerConfiguration.copy().applyModuleProperties(module, buildFile).apply {
             addAll(JVMConfigurationKeys.FRIEND_PATHS, module.getFriendPaths())
         }
-        val platformSources = linkedSetOf<File>()
-        val commonSources = linkedSetOf<File>()
+        val platformSources = linkedSetOf<KtSourceFile>()
+        val commonSources = linkedSetOf<KtSourceFile>()
 
         // !!
         compilerConfiguration.kotlinSourceRoots.forAllFiles(compilerConfiguration, projectEnvironment.project) { virtualFile, isCommon ->
-            val file = File(virtualFile.canonicalPath ?: virtualFile.path)
-            if (!file.isFile) error("TODO: better error: file not found $virtualFile")
+            val file = KtVirtualFileSourceFile(virtualFile)
             if (isCommon) commonSources.add(file)
             else platformSources.add(file)
         }
@@ -261,14 +262,14 @@ fun compileModuleToAnalyzedFir(
     diagnosticsReporter: DiagnosticReporter,
     performanceManager: CommonCompilerPerformanceManager?
 ): ModuleCompilerAnalyzedOutput {
-    var sourcesScope = environment.projectEnvironment.getSearchScopeByIoFiles(input.platformSources) //!!
+    var sourcesScope = environment.projectEnvironment.getSearchScopeBySourceFiles(input.platformSources)
     val sessionProvider = FirProjectSessionProvider()
     val extendedAnalysisMode = input.configuration.getBoolean(CommonConfigurationKeys.USE_FIR_EXTENDED_CHECKERS)
 
     val commonSession = runIf(
         input.commonSources.isNotEmpty() && input.configuration.languageVersionSettings.supportsFeature(LanguageFeature.MultiPlatformProjects)
     ) {
-        val commonSourcesScope = environment.projectEnvironment.getSearchScopeByIoFiles(input.commonSources) //!!
+        val commonSourcesScope = environment.projectEnvironment.getSearchScopeBySourceFiles(input.commonSources)
         sourcesScope -= commonSourcesScope
         createSession(
             "${input.targetId.name}-common",
@@ -310,12 +311,11 @@ fun compileModuleToAnalyzedFir(
     // raw fir
     val commonRawFir = commonSession?.buildFirViaLightTree(
         input.commonSources,
-        environment.projectEnvironment,
         diagnosticsReporter,
         countFilesAndLines
     )
     val rawFir =
-        session.buildFirViaLightTree(input.platformSources, environment.projectEnvironment, diagnosticsReporter, countFilesAndLines)
+        session.buildFirViaLightTree(input.platformSources, diagnosticsReporter, countFilesAndLines)
 
     // resolution
     commonSession?.apply {

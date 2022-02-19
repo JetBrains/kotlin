@@ -6,11 +6,13 @@
 package org.jetbrains.kotlin.test.services
 
 import com.intellij.openapi.project.Project
+import org.jetbrains.kotlin.KtInMemoryTextSourceFile
 import org.jetbrains.kotlin.fir.lightTree.LightTree2Fir
-import org.jetbrains.kotlin.fir.lightTree.LightTreeFile
 import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.sourceFiles.LightTreeFile
 import org.jetbrains.kotlin.test.model.TestFile
 import org.jetbrains.kotlin.test.util.KtTestUtil
+import org.jetbrains.kotlin.toSourceLinesMapping
 import java.io.File
 
 abstract class SourceFilePreprocessor(val testServices: TestServices) {
@@ -101,9 +103,10 @@ fun SourceFileProvider.getKtFilesForSourceFiles(testFiles: Collection<TestFile>,
 
 fun SourceFileProvider.getLightTreeKtFileForSourceFile(testFile: TestFile): LightTreeFile {
     val shortName = testFile.name.substringAfterLast('/').substringAfterLast('\\')
-    val file = getRealFileForSourceFile(testFile)
-    val lightTree = LightTree2Fir.buildLightTree(file.readText())
-    return LightTreeFile(lightTree, shortName, "/$shortName") // emulating behavior of KtTestUtil.createFile so path looks the same in testdata
+    val sourceFile = KtInMemoryTextSourceFile(shortName, "/$shortName", getContentOfSourceFile(testFile))
+    val linesMapping = sourceFile.text.toSourceLinesMapping()
+    val lightTree = LightTree2Fir.buildLightTree(sourceFile.text)
+    return LightTreeFile(lightTree, sourceFile, linesMapping)
 }
 
 fun SourceFileProvider.getLightTreeFilesForSourceFiles(testFiles: Collection<TestFile>): Map<TestFile, LightTreeFile> {
