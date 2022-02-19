@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.test.services.sourceProviders
 
+import com.intellij.psi.PsiFile
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.REQUIRES_SEPARATE_PROCESS
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives.JDK_KIND
 import org.jetbrains.kotlin.test.directives.model.RegisteredDirectives
@@ -14,6 +15,7 @@ import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.AdditionalSourceProvider
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.temporaryDirectoryManager
+import java.io.File
 
 open class MainFunctionForBlackBoxTestsSourceProvider(testServices: TestServices) : AdditionalSourceProvider(testServices) {
     companion object {
@@ -36,6 +38,13 @@ open class MainFunctionForBlackBoxTestsSourceProvider(testServices: TestServices
         fun containsSuspendBoxMethod(file: TestFile): Boolean {
             return containsBoxMethod(file.originalContent)
         }
+
+        fun <T> fileContainsBoxMethod(file: T): Boolean =
+            when (file) {
+                is PsiFile -> containsBoxMethod(file.text)
+                is File -> containsBoxMethod(file.readText())
+                else -> error("Unknown file type: $file")
+            }
 
         fun containsBoxMethod(fileContent: String): Boolean {
             return START_BOX_METHOD_REGEX.containsMatchIn(fileContent) ||
