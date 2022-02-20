@@ -236,7 +236,15 @@ internal abstract class KDeclarationContainerImpl : ClassBasedDeclarationContain
         repeat((valueParameters.size + Integer.SIZE - 1) / Integer.SIZE) {
             result.add(Integer.TYPE)
         }
-        result.add(if (isConstructor) DEFAULT_CONSTRUCTOR_MARKER else Any::class.java)
+
+        if (isConstructor) {
+            // Constructors that include the value class as an argument will include DEFAULT_CONSTRUCTOR_MARKER as an argument,
+            // regardless of whether there is a default argument.
+            // On the other hand, when searching for the default constructor,
+            // DEFAULT_CONSTRUCTOR_MARKER needs to be present only at the end, so it is removed here.
+            result.remove(DEFAULT_CONSTRUCTOR_MARKER)
+            result.add(DEFAULT_CONSTRUCTOR_MARKER)
+        } else result.add(Any::class.java)
     }
 
     private fun loadParameterTypes(desc: String): List<Class<*>> {

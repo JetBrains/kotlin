@@ -76,7 +76,7 @@ internal class KFunctionImpl private constructor(
 
         when (member) {
             is Constructor<*> ->
-                createConstructorCaller(member, descriptor)
+                createConstructorCaller(member, descriptor, false)
             is Method -> when {
                 !Modifier.isStatic(member.modifiers) ->
                     createInstanceMethodCaller(member)
@@ -112,7 +112,7 @@ internal class KFunctionImpl private constructor(
 
         when (member) {
             is Constructor<*> ->
-                createConstructorCaller(member, descriptor)
+                createConstructorCaller(member, descriptor, true)
             is Method -> when {
                 // Note that static $default methods for @JvmStatic functions are generated differently in objects and companion objects.
                 // In objects, $default's signature does _not_ contain the additional object instance parameter,
@@ -140,8 +140,10 @@ internal class KFunctionImpl private constructor(
     private fun createInstanceMethodCaller(member: Method) =
         if (isBound) CallerImpl.Method.BoundInstance(member, boundReceiver) else CallerImpl.Method.Instance(member)
 
-    private fun createConstructorCaller(member: Constructor<*>, descriptor: FunctionDescriptor): CallerImpl<Constructor<*>> {
-        return if (shouldHideConstructorDueToInlineClassTypeValueParameters(descriptor)) {
+    private fun createConstructorCaller(
+        member: Constructor<*>, descriptor: FunctionDescriptor, isDefault: Boolean
+    ): CallerImpl<Constructor<*>> {
+        return if (!isDefault && shouldHideConstructorDueToInlineClassTypeValueParameters(descriptor)) {
             if (isBound)
                 CallerImpl.AccessorForHiddenBoundConstructor(member, boundReceiver)
             else
