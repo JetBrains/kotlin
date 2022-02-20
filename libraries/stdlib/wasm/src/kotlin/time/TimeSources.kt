@@ -18,22 +18,20 @@ private external fun dateNow(): Double
 
 @SinceKotlin("1.3")
 @ExperimentalTime
-internal actual object MonotonicTimeSource : TimeSource, AbstractDoubleTimeSource(unit = DurationUnit.MILLISECONDS) {
+internal actual object MonotonicTimeSource : TimeSource {
     private val performance: ExternalInterfaceType? = tryGetPerformance()
 
-    override fun read(): Double =
+    private fun read(): Double =
         if (performance != null) getPerformanceNow(performance) else dateNow()
+
+    actual override fun markNow(): DefaultTimeMark = DefaultTimeMark(read())
+    actual fun elapsedFrom(timeMark: DefaultTimeMark): Duration = (read() - timeMark.reading as Double).milliseconds
+    actual fun adjustReading(timeMark: DefaultTimeMark, duration: Duration): DefaultTimeMark =
+        DefaultTimeMark(timeMark.reading as Double + duration.toDouble(DurationUnit.MILLISECONDS))
 
     override fun toString(): String =
         if (performance != null) "TimeSource(globalThis.performance.now())" else "TimeSource(Date.now())"
 }
 
-@SinceKotlin("1.3")
-@ExperimentalTime
-internal actual object MonotonicTimeSource : TimeSource {
-    actual override fun markNow(): DefaultTimeMark = TODO("Wasm stdlib: MonotonicTimeSource::markNow")
-    actual fun elapsedFrom(timeMark: DefaultTimeMark): Duration = TODO("Wasm stdlib: MonotonicTimeSource")
-    actual fun adjustReading(timeMark: DefaultTimeMark, duration: Duration): DefaultTimeMark = TODO("Wasm stdlib: MonotonicTimeSource")
-}
-
-internal actual class DefaultTimeMarkReading // TODO: Long?
+@Suppress("ACTUAL_WITHOUT_EXPECT") // visibility
+internal actual typealias DefaultTimeMarkReading = Double
