@@ -27,7 +27,7 @@ internal actual object MonotonicTimeSource : TimeSource {
     actual override fun markNow(): DefaultTimeMark = DefaultTimeMark(read())
     actual fun elapsedFrom(timeMark: DefaultTimeMark): Duration = (read() - timeMark.reading as Double).milliseconds
     actual fun adjustReading(timeMark: DefaultTimeMark, duration: Duration): DefaultTimeMark =
-        DefaultTimeMark(timeMark.reading as Double + duration.toDouble(DurationUnit.MILLISECONDS))
+        DefaultTimeMark(sumCheckNaN(timeMark.reading as Double + duration.toDouble(DurationUnit.MILLISECONDS)))
 
     override fun toString(): String =
         if (performance != null) "TimeSource(globalThis.performance.now())" else "TimeSource(Date.now())"
@@ -35,3 +35,5 @@ internal actual object MonotonicTimeSource : TimeSource {
 
 @Suppress("ACTUAL_WITHOUT_EXPECT") // visibility
 internal actual typealias DefaultTimeMarkReading = Double
+
+private fun sumCheckNaN(value: Double): Double = value.also { if (it.isNaN()) throw IllegalArgumentException("Summing infinities of different signs") }

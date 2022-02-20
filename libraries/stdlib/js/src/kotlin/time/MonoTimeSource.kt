@@ -7,6 +7,7 @@ package kotlin.time
 
 import org.w3c.performance.GlobalPerformance
 import org.w3c.performance.Performance
+import kotlin.math.truncate
 import kotlin.time.Duration.Companion.milliseconds
 
 @Suppress("ACTUAL_WITHOUT_EXPECT") // visibility
@@ -56,8 +57,8 @@ internal class HrTimeSource(private val process: Process) : DefaultTimeSource {
     override fun adjustReading(timeMark: DefaultTimeMark, duration: Duration): DefaultTimeMark =
         @Suppress("UNCHECKED_CAST")
         (timeMark.reading as Array<Double>).let { (seconds, nanos) ->
-            duration.toComponents { addSeconds, addNanos ->
-                arrayOf<Double>(seconds + addSeconds, nanos + addNanos)
+            duration.toComponents { _, addNanos ->
+                arrayOf<Double>(sumCheckNaN(seconds + truncate(duration.toDouble(DurationUnit.SECONDS))), nanos + addNanos)
             }
         }.let(::DefaultTimeMark)
 
@@ -73,7 +74,7 @@ internal class PerformanceTimeSource(val performance: Performance) : DefaultTime
     override fun markNow(): DefaultTimeMark = DefaultTimeMark(read())
     override fun elapsedFrom(timeMark: DefaultTimeMark): Duration = (read() - timeMark.reading as Double).milliseconds
     override fun adjustReading(timeMark: DefaultTimeMark, duration: Duration): DefaultTimeMark =
-        DefaultTimeMark(timeMark.reading as Double + duration.toDouble(DurationUnit.MILLISECONDS))
+        DefaultTimeMark(sumCheckNaN(timeMark.reading as Double + duration.toDouble(DurationUnit.MILLISECONDS)))
 
     override fun toString(): String = "TimeSource(self.performance.now())"
 }
@@ -86,7 +87,9 @@ internal object DateNowTimeSource : DefaultTimeSource {
     override fun markNow(): DefaultTimeMark = DefaultTimeMark(read())
     override fun elapsedFrom(timeMark: DefaultTimeMark): Duration = (read() - timeMark.reading as Double).milliseconds
     override fun adjustReading(timeMark: DefaultTimeMark, duration: Duration): DefaultTimeMark =
-        DefaultTimeMark(timeMark.reading as Double + duration.toDouble(DurationUnit.MILLISECONDS))
+        DefaultTimeMark(sumCheckNaN(timeMark.reading as Double + duration.toDouble(DurationUnit.MILLISECONDS)))
 
     override fun toString(): String = "TimeSource(Date.now())"
 }
+
+private fun sumCheckNaN(value: Double): Double = value.also { if (it.isNaN()) throw IllegalArgumentException("Summing infinities of different signs") }
