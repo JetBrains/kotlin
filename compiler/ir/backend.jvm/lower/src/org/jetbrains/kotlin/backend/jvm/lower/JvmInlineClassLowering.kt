@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
 import org.jetbrains.kotlin.backend.common.pop
 import org.jetbrains.kotlin.backend.common.push
 import org.jetbrains.kotlin.backend.jvm.*
+import org.jetbrains.kotlin.backend.jvm.ir.erasedUpperBound
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.config.ApiVersion
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
@@ -29,10 +30,7 @@ import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.IrValueSymbol
 import org.jetbrains.kotlin.ir.transformStatement
-import org.jetbrains.kotlin.ir.types.IrType
-import org.jetbrains.kotlin.ir.types.classOrNull
-import org.jetbrains.kotlin.ir.types.isNullable
-import org.jetbrains.kotlin.ir.types.makeNotNull
+import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.load.java.JvmAbi
@@ -68,7 +66,9 @@ private class JvmInlineClassLowering(private val context: JvmBackendContext) : F
         }
     }
 
-    override fun lower(irFile: IrFile) = irFile.transformChildrenVoid()
+    override fun lower(irFile: IrFile) {
+        irFile.transformChildrenVoid()
+    }
 
     override fun visitClassNew(declaration: IrClass): IrStatement {
         // The arguments to the primary constructor are in scope in the initializers of IrFields.
@@ -78,7 +78,9 @@ private class JvmInlineClassLowering(private val context: JvmBackendContext) : F
 
         declaration.transformDeclarationsFlat { memberDeclaration ->
             if (memberDeclaration is IrFunction) {
-                transformFunctionFlat(memberDeclaration)
+                withinScope(memberDeclaration) {
+                    transformFunctionFlat(memberDeclaration)
+                }
             } else {
                 memberDeclaration.accept(this, null)
                 null
@@ -134,7 +136,10 @@ private class JvmInlineClassLowering(private val context: JvmBackendContext) : F
     }
 
     private fun transformSimpleFunctionFlat(function: IrSimpleFunction, replacement: IrSimpleFunction): List<IrDeclaration> {
-        replacement.valueParameters.forEach { it.transformChildrenVoid() }
+        replacement.valueParameters.forEach {
+            it.transformChildrenVoid()
+            it.defaultValue?.patchDeclarationParents(replacement)
+        }
         allScopes.push(createScope(function))
         replacement.body = function.body?.transform(this, null)?.patchDeclarationParents(replacement)
         allScopes.pop()
@@ -297,9 +302,12 @@ private class JvmInlineClassLowering(private val context: JvmBackendContext) : F
         val replacement = context.inlineClassReplacements.getReplacementFunction(function)
             ?: return super.visitFunctionReference(expression)
 
+        // In case of callable reference to inline class constructor,
+        // type parameters of the replacement include class's type parameters,
+        // however, expression does not. Thus, we should not include them either.
         return IrFunctionReferenceImpl(
             expression.startOffset, expression.endOffset, expression.type,
-            replacement.symbol, replacement.typeParameters.size,
+            replacement.symbol, function.typeParameters.size,
             replacement.valueParameters.size, expression.reflectionTarget, expression.origin
         ).apply {
             buildReplacement(function, expression, replacement)
@@ -320,12 +328,24 @@ private class JvmInlineClassLowering(private val context: JvmBackendContext) : F
         }
     }
 
-    private fun coerceInlineClasses(argument: IrExpression, from: IrType, to: IrType) =
-        IrCallImpl.fromSymbolOwner(UNDEFINED_OFFSET, UNDEFINED_OFFSET, to, context.ir.symbols.unsafeCoerceIntrinsic).apply {
-            putTypeArgument(0, from)
-            putTypeArgument(1, to)
-            putValueArgument(0, argument)
+    private fun coerceInlineClasses(argument: IrExpression, from: IrType, to: IrType, skipCast: Boolean = false): IrExpression {
+        return IrCallImpl.fromSymbolOwner(UNDEFINED_OFFSET, UNDEFINED_OFFSET, to, context.ir.symbols.unsafeCoerceIntrinsic).apply {
+            val underlyingType = from.erasedUpperBound.inlineClassRepresentation?.underlyingType
+            if (underlyingType?.isTypeParameter() == true && !skipCast) {
+                putTypeArgument(0, from)
+                putTypeArgument(1, underlyingType)
+                putValueArgument(
+                    0, IrTypeOperatorCallImpl(
+                        UNDEFINED_OFFSET, UNDEFINED_OFFSET, to, IrTypeOperator.IMPLICIT_CAST, underlyingType, argument
+                    )
+                )
+            } else {
+                putTypeArgument(0, from)
+                putTypeArgument(1, to)
+                putValueArgument(0, argument)
+            }
         }
+    }
 
     private fun IrExpression.coerceToUnboxed() =
         coerceInlineClasses(this, this.type, this.type.unboxInlineClass())
@@ -528,7 +548,7 @@ private class JvmInlineClassLowering(private val context: JvmBackendContext) : F
         function.valueParameters.forEach { it.transformChildrenVoid() }
         function.body = context.createIrBuilder(function.symbol).irBlockBody {
             val argument = function.valueParameters[0]
-            val thisValue = irTemporary(coerceInlineClasses(irGet(argument), argument.type, function.returnType))
+            val thisValue = irTemporary(coerceInlineClasses(irGet(argument), argument.type, function.returnType, skipCast = true))
             valueMap[irClass.thisReceiver!!.symbol] = thisValue
             for (initBlock in initBlocks) {
                 for (stmt in initBlock.body.statements) {

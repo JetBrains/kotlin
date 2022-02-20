@@ -6,8 +6,6 @@
 package org.jetbrains.kotlin.generators.tests.analysis.api.dsl
 
 import org.jetbrains.annotations.NotNull
-import org.jetbrains.kotlin.analysis.api.descriptors.test.KtFe10FrontendApiTestConfiguratorService
-import org.jetbrains.kotlin.analysis.api.fir.FirFrontendApiTestConfiguratorService
 import org.jetbrains.kotlin.analysis.api.impl.barebone.test.FrontendApiTestConfiguratorService
 import org.jetbrains.kotlin.generators.MethodGenerator
 import org.jetbrains.kotlin.generators.model.MethodModel
@@ -25,7 +23,7 @@ object FrontendConfiguratorTestGenerator : MethodGenerator<FrontendConfiguratorT
 
     override fun generateBody(method: FrontendConfiguratorTestModel, p: Printer): Unit = with(p) {
         print("return ")
-        printWithNoIndent(method.frontendConfiguratorType.configuratorClass.simpleName)
+        printWithNoIndent(method.frontendConfiguratorClass.simpleName)
         printWithNoIndent(".INSTANCE")
         printlnWithNoIndent(";")
     }
@@ -33,7 +31,7 @@ object FrontendConfiguratorTestGenerator : MethodGenerator<FrontendConfiguratorT
 
 object FrontendConfiguratorTestModelKind : MethodModel.Kind()
 
-class FrontendConfiguratorTestModel(val frontendConfiguratorType: FrontendConfiguratorType) : MethodModel {
+class FrontendConfiguratorTestModel(val frontendConfiguratorClass: KClass<out FrontendApiTestConfiguratorService>) : MethodModel {
     override val kind: MethodModel.Kind get() = FrontendConfiguratorTestModelKind
     override val name: String get() = "getConfigurator"
     override val dataString: String? get() = null
@@ -46,12 +44,7 @@ class FrontendConfiguratorTestModel(val frontendConfiguratorType: FrontendConfig
         return buildList {
             add(NotNull::class.java)
             add(FrontendApiTestConfiguratorService::class.java)
-            add(frontendConfiguratorType.configuratorClass.java)
+            add(frontendConfiguratorClass.java)
         }
-    }
-
-    enum class FrontendConfiguratorType(val configuratorClass: KClass<out FrontendApiTestConfiguratorService>) {
-        FIR(FirFrontendApiTestConfiguratorService::class),
-        FE10(KtFe10FrontendApiTestConfiguratorService::class);
     }
 }

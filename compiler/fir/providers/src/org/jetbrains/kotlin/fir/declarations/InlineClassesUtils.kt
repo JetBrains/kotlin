@@ -20,7 +20,9 @@ import org.jetbrains.kotlin.types.model.typeConstructor
 
 internal fun ConeKotlinType.substitutedUnderlyingTypeForInlineClass(session: FirSession, context: ConeTypeContext): ConeKotlinType? {
     val unsubstitutedType = unsubstitutedUnderlyingTypeForInlineClass(session) ?: return null
-    val substitutor = createTypeSubstitutorByTypeConstructor(mapOf(this.typeConstructor(context) to this), context)
+    val substitutor = createTypeSubstitutorByTypeConstructor(
+        mapOf(this.typeConstructor(context) to this), context, approximateIntegerLiterals = true
+    )
     return substitutor.substituteOrNull(unsubstitutedType)
 }
 

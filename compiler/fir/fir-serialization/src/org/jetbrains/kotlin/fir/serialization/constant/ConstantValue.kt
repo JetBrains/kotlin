@@ -139,7 +139,7 @@ internal class KClassValue(value: Value) : ConstantValue<KClassValue.Value>(valu
             is Value.NormalClass -> {
                 val (classId, arrayDimensions) = value.value
                 val klass = session.symbolProvider.getClassLikeSymbolByClassId(classId)?.fir as? FirRegularClass ?: return null
-                var type: ConeKotlinType = klass.defaultType().replaceArgumentsWithStarProjections()
+                var type: ConeClassLikeType = klass.defaultType().replaceArgumentsWithStarProjections()
                 repeat(arrayDimensions) {
                     type = type.createArrayType()
                 }
@@ -152,7 +152,7 @@ internal class KClassValue(value: Value) : ConstantValue<KClassValue.Value>(valu
 
     companion object {
         fun create(argumentType: ConeKotlinType): ConstantValue<*>? {
-            if (argumentType is ConeKotlinErrorType) return null
+            if (argumentType is ConeErrorType) return null
             if (argumentType !is ConeClassLikeType) return null
             var type = argumentType
             var arrayDimensions = 0

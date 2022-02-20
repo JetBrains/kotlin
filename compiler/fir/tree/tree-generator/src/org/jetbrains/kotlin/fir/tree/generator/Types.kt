@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.fir.tree.generator.context.generatedType
 import org.jetbrains.kotlin.fir.tree.generator.context.type
-import org.jetbrains.kotlin.fir.types.ConeClassErrorType
+import org.jetbrains.kotlin.fir.types.ConeErrorType
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.ConeSimpleKotlinType
 import org.jetbrains.kotlin.name.ClassId
@@ -55,7 +55,7 @@ val emptyCfgReferenceType = generatedType("references.impl", "FirEmptyControlFlo
 val noReceiverExpressionType = generatedType("expressions.impl", "FirNoReceiverExpression")
 val implicitTypeRefType = generatedType("types.impl", "FirImplicitTypeRefImpl")
 val firQualifierPartType = type("fir.types", "FirQualifierPart")
-val coneClassErrorTypeType = type(ConeClassErrorType::class)
+val ConeErrorTypeType = type(ConeErrorType::class)
 val simpleNamedReferenceType = generatedType("references.impl", "FirSimpleNamedReference")
 val explicitThisReferenceType = generatedType("references.impl", "FirExplicitThisReference")
 val explicitSuperReferenceType = generatedType("references.impl", "FirExplicitSuperReference")

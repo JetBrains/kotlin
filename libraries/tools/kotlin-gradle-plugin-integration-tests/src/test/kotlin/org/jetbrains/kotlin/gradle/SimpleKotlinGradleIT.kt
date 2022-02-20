@@ -210,18 +210,6 @@ class SimpleKotlinGradleIT : KGPBaseTest() {
     }
 
     @GradleTest
-    @DisplayName("useExperimentalAnnotation should produce deprecation warning")
-    fun testUseExperimentalAnnotationShouldProduceWarning(gradleVersion: GradleVersion) {
-        project("optInAnnotation", gradleVersion, buildOptions = defaultBuildOptions.copy(logLevel = LogLevel.DEBUG)) {
-            build("assemble") {
-                assertOutputContains("-opt-in=kotlin.RequiresOptIn")
-                assertOutputContains("-opt-in=FooAnnotation")
-                assertOutputContains("is deprecated and will be removed in next major releases")
-            }
-        }
-    }
-
-    @GradleTest
     @DisplayName("Should be compatible with project isolation")
     @GradleTestVersions(minVersion = TestVersions.Gradle.G_7_1, maxVersion = TestVersions.Gradle.G_7_1)
     fun testProjectIsolation(gradleVersion: GradleVersion) {

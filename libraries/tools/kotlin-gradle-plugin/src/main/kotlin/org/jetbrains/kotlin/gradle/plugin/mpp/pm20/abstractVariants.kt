@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.DefaultKotlinCompilationOutput
 import org.jetbrains.kotlin.gradle.plugin.mpp.MavenPublicationCoordinatesProvider
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.ComputedCapability
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.disambiguateName
+import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.newDependencyFilesHolder
 import org.jetbrains.kotlin.gradle.plugin.mpp.publishedConfigurationName
 import org.jetbrains.kotlin.gradle.utils.dashSeparatedName
 import org.jetbrains.kotlin.project.model.KotlinAttributeKey
@@ -56,9 +57,16 @@ class DefaultSingleMavenPublishedModuleHolder(
 
     private var assignedMavenPublication: MavenPublication? = null
 
+    private val publicationAssignedHandlers = mutableListOf<(MavenPublication) -> Unit>()
+
     override fun assignMavenPublication(publication: MavenPublication) {
         if (assignedMavenPublication != null) error("already assigned publication $publication")
         assignedMavenPublication = publication
+        publicationAssignedHandlers.forEach { it(publication) }
+    }
+
+    override fun whenPublicationAssigned(handlePublication: (MavenPublication) -> Unit) {
+        assignedMavenPublication?.let(handlePublication) ?: publicationAssignedHandlers.add(handlePublication)
     }
 
     override val publishedMavenModuleCoordinates: PublishedModuleCoordinatesProvider = MavenPublicationCoordinatesProvider(

@@ -6,10 +6,7 @@
 package org.jetbrains.kotlin.ir.util
 
 import org.jetbrains.kotlin.ir.IrElement
-import org.jetbrains.kotlin.ir.declarations.IrDeclaration
-import org.jetbrains.kotlin.ir.declarations.IrDeclarationParent
-import org.jetbrains.kotlin.ir.declarations.IrPackageFragment
-import org.jetbrains.kotlin.ir.declarations.IrDeclarationBase
+import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
@@ -21,13 +18,8 @@ fun <T : IrElement> T.patchDeclarationParents(initialParent: IrDeclarationParent
         acceptVoid(visitor)
     }
 
-class PatchDeclarationParentsVisitor() : IrElementVisitorVoid {
-
-    constructor(containingDeclaration: IrDeclarationParent) : this() {
-        declarationParentsStack.push(containingDeclaration)
-    }
-
-    private val declarationParentsStack = ArrayDeque<IrDeclarationParent>()
+abstract class DeclarationParentsVisitor : IrElementVisitorVoid {
+    protected val declarationParentsStack = ArrayDeque<IrDeclarationParent>()
 
     override fun visitElement(element: IrElement) {
         element.acceptChildrenVoid(this)
@@ -40,7 +32,7 @@ class PatchDeclarationParentsVisitor() : IrElementVisitorVoid {
     }
 
     override fun visitDeclaration(declaration: IrDeclarationBase) {
-        patchParent(declaration)
+        handleParent(declaration, declarationParentsStack.peekFirst())
 
         if (declaration is IrDeclarationParent) {
             declarationParentsStack.push(declaration)
@@ -53,7 +45,16 @@ class PatchDeclarationParentsVisitor() : IrElementVisitorVoid {
         }
     }
 
-    private fun patchParent(declaration: IrDeclaration) {
-        declaration.parent = declarationParentsStack.peekFirst()
+    protected abstract fun handleParent(declaration: IrDeclaration, parent: IrDeclarationParent)
+}
+
+class PatchDeclarationParentsVisitor() : DeclarationParentsVisitor() {
+
+    constructor(containingDeclaration: IrDeclarationParent) : this() {
+        declarationParentsStack.push(containingDeclaration)
+    }
+
+    override fun handleParent(declaration: IrDeclaration, parent: IrDeclarationParent) {
+        declaration.parent = parent
     }
 }

@@ -1,0 +1,35 @@
+STEP 0:
+    dependencies: stdlib
+    modifications:
+        U : l1.kt.0.txt -> l1.kt
+    dirty: l1.kt
+STEP 1:
+    dependencies: stdlib
+    modifications:
+        U : l1.kt.1.txt -> l1.kt
+    dirty: l1.kt
+STEP 2:
+    dependencies: stdlib
+    modifications:
+        U : l1.kt.2.txt -> l1.kt
+    dirty: l1.kt
+STEP 3:
+    dependencies: stdlib
+    modifications:
+        U : l1.kt.3.txt -> l1.kt
+    dirty: l1.kt
+STEP 4:
+    dependencies: stdlib
+    modifications:
+        U : l1.kt.4.txt -> l1.kt
+    dirty: l1.kt
+STEP 5:
+    dependencies: stdlib
+    modifications:
+        U : l1.kt.5.txt -> l1.kt
+    dirty: l1.kt
+STEP 6:
+    dependencies: stdlib
+    modifications:
+        U : l1.kt.6.txt -> l1.kt
+    dirty: l1.kt

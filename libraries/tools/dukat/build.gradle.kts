@@ -1,9 +1,13 @@
 plugins {
-    kotlin("jvm")
+    kotlin("jvm") version "1.6.10"
+}
+
+repositories {
+    mavenCentral()
+    maven("https://maven.pkg.jetbrains.space/kotlin/p/kotlin/kotlin-dependencies")
 }
 
 dependencies {
-    implementation(kotlinStdlib())
     implementation("org.jetbrains.dukat:dukat:0.5.8-rc.4")
     implementation("org.jsoup:jsoup:1.14.2")
 }

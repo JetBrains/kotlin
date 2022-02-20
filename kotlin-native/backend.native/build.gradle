@@ -50,6 +50,17 @@ kotlinNativeInterop {
         dependsOn ":kotlin-native:llvmCoverageMappingC:${NativePluginKt.lib("coverageMapping")}"
         defFile 'llvm.def'
         compilerOpts "-I$llvmDir/include", "-I${rootProject.project(':kotlin-native:llvmDebugInfoC').projectDir}/src/main/include", "-I${rootProject.project(':kotlin-native:llvmCoverageMappingC').projectDir}/src/main/include"
+        if (isMac()) {
+            // $llvmDir/lib contains libc++.1.dylib too, and it seems to be preferred by the linker
+            // over the sysroot-provided one.
+            // As a result, libllvmstubs.dylib gets linked with $llvmDir/lib/libc++.1.dylib.
+            // It has install_name = @rpath/libc++.1.dylib, which won't work for us, because
+            // dynamic loader won't be able to find libc++ when loading libllvmstubs.
+            // For some reason, this worked fine before macOS 12.3.
+            //
+            // To enforce linking with proper libc++, pass the default path explicitly:
+            linkerOpts "-L${platformManager.hostPlatform.absoluteTargetSysRoot}/usr/lib"
+        }
         linkerOpts "-L$llvmDir/lib", "-L${rootProject.project(':kotlin-native:llvmDebugInfoC').buildDir}", "-L${rootProject.project(':kotlin-native:llvmCoverageMappingC').buildDir}"
     }
 

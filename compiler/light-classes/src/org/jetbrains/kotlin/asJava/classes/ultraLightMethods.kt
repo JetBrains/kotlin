@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -137,12 +137,10 @@ internal abstract class KtUltraLightMethod(
     override fun equals(other: Any?): Boolean = other === this ||
             other is KtUltraLightMethod &&
             other.methodIndex == methodIndex &&
-            other.delegate == delegate &&
-            super.equals(other)
+            super.equals(other) &&
+            other.delegate == delegate
 
-    override fun hashCode(): Int = super.hashCode()
-        .times(31).plus(delegate.hashCode())
-        .times(31).plus(methodIndex.hashCode())
+    override fun hashCode(): Int = super.hashCode().times(31).plus(methodIndex.hashCode())
 
     override fun isDeprecated(): Boolean = _deprecated
 }
@@ -196,10 +194,10 @@ internal class KtUltraLightMethodForSourceDeclaration(
 
     override val checkNeedToErasureParametersTypes: Boolean by lazyPub { computeCheckNeedToErasureParametersTypes(methodDescriptor) }
 
-    override fun equals(other: Any?): Boolean =
-        other is KtUltraLightMethodForSourceDeclaration &&
-                other.forceToSkipNullabilityAnnotation == forceToSkipNullabilityAnnotation &&
-                super.equals(other)
+    override fun equals(other: Any?): Boolean = other === this ||
+            other is KtUltraLightMethodForSourceDeclaration &&
+            other.forceToSkipNullabilityAnnotation == forceToSkipNullabilityAnnotation &&
+            super.equals(other)
 
     override fun hashCode(): Int = super.hashCode() * 31 + forceToSkipNullabilityAnnotation.hashCode()
 }

@@ -183,7 +183,7 @@ object FirJavaGenericVarianceViolationTypeChecker : FirFunctionCallChecker() {
         }
     }
 
-    private fun ConeInferenceContext.isTypeConstructorEqualOrSubClassOf(subType: ConeKotlinType, superType: ConeKotlinType): Boolean {
+    private fun ConeInferenceContext.isTypeConstructorEqualOrSubClassOf(subType: ConeKotlinType, superType: ConeSimpleKotlinType): Boolean {
         return isTypeConstructorEqualOrSubClassOf(subType.typeConstructor(), superType.typeConstructor())
     }
 

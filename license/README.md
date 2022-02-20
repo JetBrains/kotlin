@@ -93,6 +93,10 @@ the Kotlin IntelliJ IDEA plugin:
       - License: Boost Software License 1.0 ([license/third_party/boost_LICENSE.txt][boost])
       - Origin: Derived from boost special math functions, Copyright Eric Ford & Hubert Holin 2001.
 
+ - Path: libraries/stdlib/js/src/kotlin/js/math.polyfills.kt
+      - License: Boost Software License 1.0 ([license/third_party/boost_LICENSE.txt][boost])
+      - Origin: Derived from boost special math functions, Copyright Eric Ford & Hubert Holin 2001.
+
  - Path: libraries/stdlib/wasm/internal/kotlin/wasm/internal/Number2String.kt
       - License: Apache 2 ([third_party/assemblyscript_license.txt][assemblyscript])
       - Origin: Derived from assemblyscript standard library
@@ -128,7 +132,11 @@ the Kotlin IntelliJ IDEA plugin:
  - Path: libraries/stdlib/wasm/src/kotlin/math/fdlibm/
    - License: SUN ([license/third_party/sun_license.txt][sun])
    - Origin: Copyright (C) 1993 by Sun Microsystems, Inc.
-   
+
+ - Path: kotlin-native/runtime/src/main/cpp/Utils.cpp
+   - License: Boost Software License 1.0 ([license/third_party/boost_LICENSE.txt][boost])
+   - Origin: Derived from boost hash functions, Copyright 2005-2014 Daniel James
+
 ## Kotlin Test Data
 
 The following source code is used for testing the Kotlin compiler and/or plugin and is not incorporated into

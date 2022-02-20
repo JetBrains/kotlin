@@ -86,9 +86,7 @@ class IrElementToJsStatementTransformer : BaseIrElementToJsNodeTransformer<JsSta
     override fun visitSetValue(expression: IrSetValue, context: JsGenerationContext): JsStatement {
         val owner = expression.symbol.owner
         val ref = JsNameRef(context.getNameForValueDeclaration(owner))
-        return expression.value
-            .maybeOptimizeIntoSwitch(context) { jsAssignment(ref, it).withSource(expression, context).makeStmt() }
-            .also { context.staticContext.polyfills.visitDeclaration(owner) }
+        return expression.value.maybeOptimizeIntoSwitch(context) { jsAssignment(ref, it).withSource(expression, context).makeStmt() }
     }
 
     override fun visitReturn(expression: IrReturn, context: JsGenerationContext): JsStatement {
@@ -135,27 +133,10 @@ class IrElementToJsStatementTransformer : BaseIrElementToJsNodeTransformer<JsSta
     }
 
     override fun visitCall(expression: IrCall, data: JsGenerationContext): JsStatement {
-        if (data.checkIfJsCode(expression.symbol)) {
-            val statements = translateJsCodeIntoStatementList(
-                expression.getValueArgument(0)
-                    ?: compilationException(
-                        "JsCode is expected",
-                        expression
-                    ),
-                data.staticContext.backendContext
-            ) ?: compilationException(
-                "Cannot compute js code",
-                expression
-            )
-            return when (statements.size) {
-                0 -> JsEmpty
-                1 -> statements.single().withSource(expression, data)
-                // TODO: use transparent block (e.g. JsCompositeBlock)
-                else -> JsBlock(statements)
-            }
+        if (data.checkIfJsCode(expression.symbol) || data.checkIfAnnotatedWithJsFunc(expression.symbol)) {
+            return JsCallTransformer(expression, data).generateStatement()
         }
         return translateCall(expression, data, IrElementToJsExpressionTransformer()).withSource(expression, data).makeStmt()
-            .also { data.staticContext.polyfills.visitDeclaration(expression.symbol.owner) }
     }
 
     override fun visitInstanceInitializerCall(expression: IrInstanceInitializerCall, context: JsGenerationContext): JsStatement {

@@ -7,10 +7,13 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir
 
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.DiagnosticCheckerFilter
-import org.jetbrains.kotlin.analysis.low.level.api.fir.api.FirModuleResolveState
+import org.jetbrains.kotlin.analysis.low.level.api.fir.api.LLFirModuleResolveState
+import org.jetbrains.kotlin.analysis.low.level.api.fir.element.builder.FirElementBuilder
 import org.jetbrains.kotlin.analysis.low.level.api.fir.element.builder.FirTowerContextProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.file.builder.ModuleFileCache
 import org.jetbrains.kotlin.analysis.low.level.api.fir.file.structure.KtToFirMapping
+import org.jetbrains.kotlin.analysis.low.level.api.fir.state.LLFirResolvableModuleResolveState
+import org.jetbrains.kotlin.analysis.low.level.api.fir.state.TowerProviderForElementForState
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.containingKtFileIfAny
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.originalKtFile
 import org.jetbrains.kotlin.analysis.project.structure.KtModule
@@ -24,38 +27,23 @@ import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.psi.KtLambdaExpression
 
 internal class FirModuleResolveStateDepended(
-    val originalState: FirModuleResolveStateImpl,
+    val originalState: LLFirResolvableModuleResolveState,
     val towerProviderBuiltUponElement: FirTowerContextProvider,
     private val ktToFirMapping: KtToFirMapping?,
-) : FirModuleResolveState() {
-
+) : LLFirModuleResolveState() {
     override val project: Project get() = originalState.project
     override val module: KtModule get() = originalState.module
     override val rootModuleSession get() = originalState.rootModuleSession
-    private val fileStructureCache get() = originalState.fileStructureCache
 
     override fun getSessionFor(module: KtModule): FirSession =
         originalState.getSessionFor(module)
 
     override fun getOrBuildFirFor(element: KtElement): FirElement? {
-        val elementBuilder = originalState.elementBuilder
-
-        val psi = elementBuilder.getPsiAsFirElementSource(element) ?: return null
-        if (!elementBuilder.doKtElementHasCorrespondingFirElement(element)) return null
-
+        val psi = FirElementBuilder.getPsiAsFirElementSource(element) ?: return null
         ktToFirMapping?.getFirOfClosestParent(psi, this)?.let { return it }
-
-        return elementBuilder.getOrBuildFirFor(
-            element = element,
-            firFileBuilder = originalState.firFileBuilder,
-            moduleFileCache = originalState.rootModuleSession.cache,
-            fileStructureCache = fileStructureCache,
-            firLazyDeclarationResolver = originalState.firLazyDeclarationResolver,
-            state = this,
-        )
+        return originalState.getOrBuildFirFor(element = element)
     }
 
     override fun getOrBuildFirFile(ktFile: KtFile): FirFile =
@@ -78,15 +66,10 @@ internal class FirModuleResolveStateDepended(
     override fun collectDiagnosticsForFile(ktFile: KtFile, filter: DiagnosticCheckerFilter): Collection<KtPsiDiagnostic> =
         TODO("Diagnostics are not implemented for depended state")
 
-    override fun findSourceFirSymbol(ktDeclaration: KtDeclaration): FirBasedSymbol<*> {
-        return originalState.findSourceFirSymbol(ktDeclaration)
+    override fun resolveToFirSymbol(ktDeclaration: KtDeclaration, phase: FirResolvePhase): FirBasedSymbol<*> {
+        return originalState.resolveToFirSymbol(ktDeclaration, phase)
     }
 
-    override fun findSourceFirSymbol(ktDeclaration: KtLambdaExpression): FirBasedSymbol<*> {
-        return originalState.findSourceFirSymbol(ktDeclaration)
-    }
-
-    override fun findSourceFirCompiledSymbol(ktDeclaration: KtDeclaration): FirBasedSymbol<*> {
-        return originalState.findSourceFirCompiledSymbol(ktDeclaration)
-    }
+    override fun getTowerContextProvider(ktFile: KtFile): FirTowerContextProvider =
+        TowerProviderForElementForState(this)
 }

@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.gradle.native.NativeExternalDependenciesIT.Companion
 import org.jetbrains.kotlin.gradle.native.NativeExternalDependenciesIT.Companion.findParameterInOutput
 import org.jetbrains.kotlin.konan.library.KONAN_PLATFORM_LIBS_NAME_PREFIX
 import org.jetbrains.kotlin.konan.target.HostManager
+import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.junit.Assume.assumeFalse
 import org.junit.Assume.assumeTrue
 import org.junit.Test
@@ -26,8 +27,11 @@ class NativeIrLinkerIssuesIT : BaseGradleIT() {
 
     @Test
     fun `ktor 1_5_4 and coroutines 1_5_0-RC-native-mt (KT-46697)`() {
-        // Run this test only on macOS.
-        assumeTrue(HostManager.hostIsMac)
+        // Run this test only on macOS x64,
+        // arm64 requires newer ktor (>=1.6.5) and coroutines (>=1.5.2-native-mt)
+        // that compatible to each other and don't fail this way.
+        // TODO: consider finding a newer versions that support arm64 and reproduce this issue
+        assumeTrue(HostManager.host == KonanTarget.MACOS_X64)
 
         buildApplicationAndFail(
             directoryPrefix = null,

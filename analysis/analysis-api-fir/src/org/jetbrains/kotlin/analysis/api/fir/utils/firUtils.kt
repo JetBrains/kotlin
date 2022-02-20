@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeUnresolvedNameError
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
-import org.jetbrains.kotlin.fir.types.ConeClassErrorType
+import org.jetbrains.kotlin.fir.types.ConeErrorType
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.ConeNullability
 import org.jetbrains.kotlin.fir.types.coneType
@@ -56,7 +56,7 @@ internal fun FirNamedReference.getReferencedElementType(): ConeKotlinType {
         else -> error("Unexpected ${this::class}")
     }
     val firCallableDeclaration = symbols.singleOrNull()?.fir as? FirCallableDeclaration
-        ?: return ConeClassErrorType(ConeUnresolvedNameError(name))
+        ?: return ConeErrorType(ConeUnresolvedNameError(name))
 
     return firCallableDeclaration.symbol.resolvedReturnType
 }

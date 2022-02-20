@@ -5,7 +5,6 @@
 
 package plugins
 
-import PublishToMavenLocalSerializable
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.attributes.Usage
@@ -14,7 +13,6 @@ import org.gradle.api.plugins.JavaBasePlugin
 import org.gradle.api.publish.PublishingExtension
 import org.gradle.api.publish.maven.MavenPublication
 import org.gradle.api.publish.maven.plugins.MavenPublishPlugin
-import org.gradle.api.publish.maven.tasks.PublishToMavenLocal
 import org.gradle.api.publish.maven.tasks.PublishToMavenRepository
 import org.gradle.api.tasks.TaskProvider
 import org.gradle.kotlin.dsl.*
@@ -152,18 +150,6 @@ fun Project.configureDefaultPublishing() {
 
     tasks.register("install") {
         dependsOn(tasks.named("publishToMavenLocal"))
-    }
-
-    // workaround for Gradle configuration cache
-    // TODO: remove it when https://github.com/gradle/gradle/pull/16945 merged into used in build Gradle version
-    tasks.withType(PublishToMavenLocal::class.java) {
-        val originalTask = this
-        val serializablePublishTask =
-            tasks.register(originalTask.name + "Serializable", PublishToMavenLocalSerializable::class.java) {
-                publication = originalTask.publication
-            }
-        originalTask.onlyIf { false }
-        originalTask.dependsOn(serializablePublishTask)
     }
 
     tasks.withType<PublishToMavenRepository>()

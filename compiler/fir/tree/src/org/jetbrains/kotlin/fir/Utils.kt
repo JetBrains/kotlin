@@ -17,10 +17,7 @@ import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.references.FirReference
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
-import org.jetbrains.kotlin.fir.types.FirDynamicTypeRef
-import org.jetbrains.kotlin.fir.types.FirErrorTypeRef
-import org.jetbrains.kotlin.fir.types.FirImplicitTypeRef
-import org.jetbrains.kotlin.fir.types.FirTypeRef
+import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.*
 import org.jetbrains.kotlin.fir.types.impl.*
 import org.jetbrains.kotlin.name.FqName
@@ -62,6 +59,12 @@ fun <R : FirTypeRef> R.copyWithNewSourceKind(newKind: KtFakeSourceElementKind): 
             annotations += typeRef.annotations
         }
         is FirImplicitBuiltinTypeRef -> typeRef.withFakeSource(newKind)
+        is FirIntersectionTypeRef -> buildIntersectionTypeRef {
+            source = newSource
+            isMarkedNullable = typeRef.isMarkedNullable
+            leftType = typeRef.leftType
+            rightType = typeRef.rightType
+        }
         else -> TODO("Not implemented for ${typeRef::class}")
     } as R
 }

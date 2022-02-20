@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.backend.common.phaser.invokeToplevel
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.backend.js.codegen.JsGenerationGranularity
+import org.jetbrains.kotlin.ir.backend.js.lower.collectNativeImplementations
 import org.jetbrains.kotlin.ir.backend.js.lower.generateJsTests
 import org.jetbrains.kotlin.ir.backend.js.lower.moveBodilessDeclarationsToSeparatePlace
 import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.JsIrLinker
@@ -41,7 +42,8 @@ class CompilationOutputs(
 class LoweredIr(
     val context: JsIrBackendContext,
     val mainModule: IrModuleFragment,
-    val allModules: List<IrModuleFragment>
+    val allModules: List<IrModuleFragment>,
+    val moduleFragmentToUniqueName: Map<IrModuleFragment, String>,
 )
 
 fun compile(
@@ -60,7 +62,7 @@ fun compile(
     icCompatibleIr2Js: Boolean = false,
 ): LoweredIr {
 
-    val (moduleFragment: IrModuleFragment, dependencyModules, irBuiltIns, symbolTable, deserializer) =
+    val (moduleFragment: IrModuleFragment, dependencyModules, irBuiltIns, symbolTable, deserializer, moduleToName) =
         loadIr(depsDescriptors, irFactory, verifySignatures, filesToLower, loadFunctionInterfacesIntoStdlib = true)
 
     return compileIr(
@@ -68,6 +70,7 @@ fun compile(
         depsDescriptors.mainModule,
         depsDescriptors.compilerConfiguration,
         dependencyModules,
+        moduleToName,
         irBuiltIns,
         symbolTable,
         deserializer,
@@ -88,6 +91,7 @@ fun compileIr(
     mainModule: MainModule,
     configuration: CompilerConfiguration,
     dependencyModules: List<IrModuleFragment>,
+    moduleToName: Map<IrModuleFragment, String>,
     irBuiltIns: IrBuiltIns,
     symbolTable: SymbolTable,
     deserializer: JsIrLinker,
@@ -137,6 +141,7 @@ fun compileIr(
     }
 
     allModules.forEach { module ->
+        collectNativeImplementations(context, module)
         moveBodilessDeclarationsToSeparatePlace(context, module)
     }
 
@@ -147,7 +152,7 @@ fun compileIr(
         lowerPreservingTags(allModules, context, phaseConfig, it)
     } ?: jsPhases.invokeToplevel(phaseConfig, context, allModules)
 
-    return LoweredIr(context, moduleFragment, allModules)
+    return LoweredIr(context, moduleFragment, allModules, moduleToName)
 }
 
 fun generateJsCode(
@@ -155,6 +160,7 @@ fun generateJsCode(
     moduleFragment: IrModuleFragment,
     nameTables: NameTables
 ): String {
+    collectNativeImplementations(context, moduleFragment)
     moveBodilessDeclarationsToSeparatePlace(context, moduleFragment)
     jsPhases.invokeToplevel(PhaseConfig(jsPhases), context, listOf(moduleFragment))
 

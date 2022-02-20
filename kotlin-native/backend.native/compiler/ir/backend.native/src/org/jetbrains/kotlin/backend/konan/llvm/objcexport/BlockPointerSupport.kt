@@ -34,10 +34,6 @@ internal fun ObjCExportCodeGeneratorBase.generateBlockToKotlinFunctionConverter(
             LlvmFunctionSignature(invokeMethod, codegen),
             "invokeFunction${bridge.nameSuffix}"
     ).generate {
-        val args = (0 until bridge.numberOfParameters).map { index ->
-            kotlinReferenceToLocalObjC(param(index + 1))
-        }
-
         val thisRef = param(0)
         val associatedObjectHolder = if (useSeparateHolder) {
             val bodyPtr = bitcast(pointerType(bodyType), thisRef)
@@ -51,16 +47,35 @@ internal fun ObjCExportCodeGeneratorBase.generateBlockToKotlinFunctionConverter(
         )
 
         val invoke = loadBlockInvoke(blockPtr, bridge)
+
+        val args = (0 until bridge.numberOfParameters).map { index ->
+            kotlinReferenceToRetainedObjC(param(index + 1))
+        }
+
         switchThreadStateIfExperimentalMM(ThreadState.Native)
         // Using terminatingExceptionHandler, so any exception thrown by `invoke` will lead to the termination,
         // and switching the thread state back to `Runnable` on exceptional path is not required.
-        val result = call(invoke, listOf(blockPtr) + args, exceptionHandler = terminatingExceptionHandler)
+        val result = callAndMaybeRetainAutoreleased(
+                invoke,
+                bridge.blockType.blockInvokeLlvmType,
+                listOf(blockPtr) + args,
+                exceptionHandler = terminatingExceptionHandler,
+                doRetain = !bridge.returnsVoid
+        )
+        args.forEach {
+            objcReleaseFromNativeThreadState(it)
+        }
+
         switchThreadStateIfExperimentalMM(ThreadState.Runnable)
 
         val kotlinResult = if (bridge.returnsVoid) {
             theUnitInstanceRef.llvm
         } else {
+            // TODO: in some cases the sequence below will have redundant retain-release pair.
+            // We could implement an optimized objCRetainedReferenceToKotlin, which takes ownership
+            // of its argument (i.e. consumes retained reference).
             objCReferenceToKotlin(result, Lifetime.RETURN_VALUE)
+                    .also { objcReleaseFromRunnableThreadState(result) }
         }
         ret(kotlinResult)
     }.also {
@@ -85,7 +100,7 @@ internal fun ObjCExportCodeGeneratorBase.generateBlockToKotlinFunctionConverter(
         val retainedBlockPtr = callFromBridge(retainBlock, listOf(blockPtr))
 
         val result = if (useSeparateHolder) {
-            val result = allocInstance(typeInfo.llvm, Lifetime.RETURN_VALUE)
+            val result = allocInstance(typeInfo.llvm, Lifetime.RETURN_VALUE, null)
             val bodyPtr = bitcast(pointerType(bodyType), result)
             val holder = allocInstanceWithAssociatedObject(
                     symbols.interopForeignObjCObject.owner.typeInfoPtr,

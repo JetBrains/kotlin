@@ -6,6 +6,8 @@
 #ifndef RUNTIME_UTILS_H
 #define RUNTIME_UTILS_H
 
+#include <cstddef>
+
 #include <type_traits>
 
 namespace kotlin {
@@ -75,6 +77,8 @@ private:
     T1* variable_;
     T2 oldValue_;
 };
+
+size_t CombineHash(size_t seed, size_t value);
 
 } // namespace kotlin
 

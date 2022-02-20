@@ -33,8 +33,12 @@ private val IrTypeParameter.erasedUpperBound: IrClass?
     }
 
 val IrType.erasedUpperBound: IrClass?
-    get() = when (val classifier = classifierOrNull) {
-        is IrClassSymbol -> classifier.owner
-        is IrTypeParameterSymbol -> classifier.owner.erasedUpperBound
-        else -> throw IllegalStateException()
-    }
+    get() =
+        if (this is IrDefinitelyNotNullType)
+            this.original.erasedUpperBound
+        else
+            when (val classifier = classifierOrNull) {
+                is IrClassSymbol -> classifier.owner
+                is IrTypeParameterSymbol -> classifier.owner.erasedUpperBound
+                else -> throw IllegalStateException()
+            }

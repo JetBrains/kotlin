@@ -83,7 +83,7 @@ class ErrorTypeCorrector(
 
     private fun convert(type: SimpleType): JCTree.JCExpression {
         // TODO now the raw Java type is returned. In future we need to properly convert all type parameters
-        return treeMaker.Type(converter.kaptContext.generationState.typeMapper.mapType(type))
+        return treeMaker.Type(KaptTypeMapper.mapType(type))
     }
 
     private fun convertUserType(type: KtUserType, substitutions: SubstitutionMap): JCTree.JCExpression {
@@ -98,16 +98,14 @@ class ErrorTypeCorrector(
                 return convert(actualType, typeAlias.getSubstitutions(type))
             }
             is ClassConstructorDescriptor -> {
-                val asmType = converter.kaptContext.generationState.typeMapper
-                    .mapType(target.constructedClass.defaultType, null, TypeMappingMode.GENERIC_ARGUMENT)
+                val asmType = KaptTypeMapper.mapType(target.constructedClass.defaultType, TypeMappingMode.GENERIC_ARGUMENT)
 
                 baseExpression = converter.treeMaker.Type(asmType)
             }
             is ClassDescriptor -> {
                 // We only get here if some type were an error type. In other words, 'type' is either an error type or its argument,
                 // so it's impossible it to be unboxed primitive.
-                val asmType = converter.kaptContext.generationState.typeMapper
-                    .mapType(target.defaultType, null, TypeMappingMode.GENERIC_ARGUMENT)
+                val asmType = KaptTypeMapper.mapType(target.defaultType, TypeMappingMode.GENERIC_ARGUMENT)
 
                 baseExpression = converter.treeMaker.Type(asmType)
             }

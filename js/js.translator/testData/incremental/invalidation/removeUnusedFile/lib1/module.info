@@ -1,0 +1,10 @@
+STEP 0:
+    dependencies: stdlib
+    dirty: l1_0.kt, l1_1.kt
+STEP 1:
+    dependencies: stdlib
+    modifications:
+        D : l1_1.kt
+STEP 2:
+    dependencies: stdlib
+    flags: FP

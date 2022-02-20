@@ -137,6 +137,12 @@ internal fun createTempClass(name: Name, origin: IrDeclarationOrigin = TEMP_CLAS
     )
 }
 
+internal fun IrFunction.createGetField(): IrExpression {
+    val backingField = (this as IrSimpleFunction).correspondingPropertySymbol?.owner?.backingField!!
+    val receiver = dispatchReceiverParameter ?: extensionReceiverParameter
+    return IrGetFieldImpl(SYNTHETIC_OFFSET, SYNTHETIC_OFFSET, backingField.symbol, backingField.type, receiver?.createGetValue())
+}
+
 internal fun List<IrStatement>.wrapWithBlockBody(): IrBlockBody {
     return IrBlockBodyImpl(SYNTHETIC_OFFSET, SYNTHETIC_OFFSET, this)
 }

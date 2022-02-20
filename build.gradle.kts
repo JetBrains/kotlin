@@ -29,7 +29,7 @@ buildscript {
     dependencies {
         bootstrapCompilerClasspath(kotlin("compiler-embeddable", bootstrapKotlinVersion))
 
-        classpath("org.jetbrains.kotlin:kotlin-build-gradle-plugin:0.0.32")
+        classpath("org.jetbrains.kotlin:kotlin-build-gradle-plugin:0.0.35")
         classpath(kotlin("gradle-plugin", bootstrapKotlinVersion))
         classpath(kotlin("serialization", bootstrapKotlinVersion))
         classpath("org.jetbrains.dokka:dokka-gradle-plugin:0.9.17")
@@ -120,11 +120,11 @@ rootProject.apply {
 IdeVersionConfigurator.setCurrentIde(project)
 
 if (!project.hasProperty("versions.kotlin-native")) {
-    extra["versions.kotlin-native"] = "1.7.0-dev-1037"
+    extra["versions.kotlin-native"] = "1.7.0-dev-1827"
 }
 
-
 val useJvmFir by extra(project.kotlinBuildProperties.useFir)
+val renderDiagnosticNames by extra(project.kotlinBuildProperties.renderDiagnosticNames)
 
 val irCompilerModules = arrayOf(
     ":compiler:ir.tree",
@@ -159,6 +159,7 @@ val commonCompilerModules = arrayOf(
     ":analysis:decompiled:decompiler-to-file-stubs",
     ":analysis:decompiled:decompiler-to-psi",
     ":analysis:decompiled:light-classes-for-decompiled",
+    ":analysis:kt-references",
 ).also { extra["commonCompilerModules"] = it }
 
 val firCompilerCoreModules = arrayOf(
@@ -258,6 +259,7 @@ extra["compilerModulesForJps"] = listOf(
     ":core:deserialization",
     ":core:deserialization.common",
     ":core:deserialization.common.jvm",
+    ":compiler:frontend.common.jvm",
     ":compiler:frontend.java",
     ":core:metadata",
     ":core:metadata.jvm",
@@ -302,6 +304,7 @@ extra["compilerArtifactsForIde"] = listOf(
     ":prepare:ide-plugin-dependencies:analysis-api-providers-for-ide",
     ":prepare:ide-plugin-dependencies:analysis-project-structure-for-ide",
     ":prepare:ide-plugin-dependencies:symbol-light-classes-for-ide",
+    ":prepare:ide-plugin-dependencies:analysis-api-standalone-for-ide",
     ":prepare:ide-plugin-dependencies:kotlin-compiler-ir-for-ide",
     ":prepare:ide-plugin-dependencies:kotlin-compiler-common-for-ide",
     ":prepare:ide-plugin-dependencies:kotlin-compiler-fe10-for-ide",
@@ -360,6 +363,7 @@ val projectsWithDisabledFirBootstrap = coreLibProjects + listOf(
 val gradlePluginProjects = listOf(
     ":kotlin-gradle-plugin",
     ":kotlin-gradle-plugin-api",
+    ":kotlin-gradle-plugin-idea",
     ":kotlin-gradle-plugin-kpm-android",
     ":kotlin-allopen",
     ":kotlin-annotation-processing-gradle",
@@ -497,6 +501,9 @@ allprojects {
             if (useJvmFir && this@allprojects.path !in projectsWithDisabledFirBootstrap) {
                 freeCompilerArgs += "-Xuse-fir"
                 freeCompilerArgs += "-Xabi-stability=stable"
+            }
+            if (renderDiagnosticNames) {
+                freeCompilerArgs += "-Xrender-internal-diagnostic-names"
             }
         }
     }
@@ -650,7 +657,8 @@ tasks {
             ":kotlin-test:kotlin-test-js:kotlin-test-js-it".takeIf { !kotlinBuildProperties.isInJpsBuildIdeaSync },
             ":kotlin-test:kotlin-test-js-ir:kotlin-test-js-ir-it".takeIf { !kotlinBuildProperties.isInJpsBuildIdeaSync },
             ":kotlinx-metadata-jvm",
-            ":tools:binary-compatibility-validator"
+            ":tools:binary-compatibility-validator",
+            ":kotlin-stdlib-wasm",
         )).forEach {
             dependsOn("$it:check")
         }

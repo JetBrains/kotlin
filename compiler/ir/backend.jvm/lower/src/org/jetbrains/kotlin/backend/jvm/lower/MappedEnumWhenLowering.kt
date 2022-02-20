@@ -127,7 +127,6 @@ private class MappedEnumWhenLowering(context: JvmBackendContext) : EnumWhenLower
         super.visitClassNew(declaration)
 
         for ((enum, mapping) in mappingState.mappings) {
-            val builder = context.createIrBuilder(mappingState.mappingsClass.symbol)
             val enumValues = enum.functions.single {
                 it.name.toString() == "values"
                         && it.dispatchReceiverParameter == null
@@ -136,6 +135,7 @@ private class MappedEnumWhenLowering(context: JvmBackendContext) : EnumWhenLower
                         && it.returnType.isBoxedArray
                         && it.returnType.getArrayElementType(context.irBuiltIns).classOrNull == enum.symbol
             }
+            val builder = context.createIrBuilder(mapping.field.symbol)
             mapping.field.initializer = builder.irExprBody(builder.irBlock {
                 val enumSize = irCall(refArraySize).apply { dispatchReceiver = irCall(enumValues) }
                 val result = irTemporary(irCall(intArrayConstructor).apply { putValueArgument(0, enumSize) })

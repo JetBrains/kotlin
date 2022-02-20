@@ -1,0 +1,60 @@
+STEP 0:
+    dependencies: stdlib
+    modifications:
+        U : l1.kt.0_init.txt -> l1.kt
+    dirty: l1.kt
+STEP 1:
+    dependencies: stdlib
+    modifications:
+        U : l1.kt.1_update_fun.txt -> l1.kt
+    dirty: l1.kt
+STEP 2:
+    dependencies: stdlib
+    modifications:
+        U : l1.kt.2_update_inline_fun.txt -> l1.kt
+    dirty: l1.kt
+STEP 3:
+    dependencies: stdlib
+    modifications:
+        U : l1.kt.3_add_param.txt -> l1.kt
+    dirty: l1.kt
+STEP 4:
+    dependencies: stdlib
+    modifications:
+        U : l1.kt.4_add_field.txt -> l1.kt
+    dirty: l1.kt
+STEP 5:
+    dependencies: stdlib
+    modifications:
+        U : l1.kt.5_update_field.txt -> l1.kt
+    dirty: l1.kt
+STEP 6:
+    dependencies: stdlib
+    modifications:
+        U : l1.kt.6_update_unused_inline.txt -> l1.kt
+    dirty: l1.kt
+STEP 7:
+    dependencies: stdlib
+    modifications:
+        U : l1.kt.7_add_unused_interface.txt -> l1.kt
+    dirty: l1.kt
+STEP 8:
+    dependencies: stdlib
+    modifications:
+        U : l1.kt.8_use_interface.txt -> l1.kt
+    dirty: l1.kt
+STEP 9:
+    dependencies: stdlib
+    modifications:
+        U : l1.kt.9_update_interface.txt -> l1.kt
+    dirty: l1.kt
+STEP 10:
+    dependencies: stdlib
+    modifications:
+        U : l1.kt.10_update_field_type.txt -> l1.kt
+    dirty: l1.kt
+STEP 11:
+    dependencies: stdlib
+    modifications:
+        U : l1.kt.11_update_field_type.txt -> l1.kt
+    dirty: l1.kt

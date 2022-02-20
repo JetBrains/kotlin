@@ -28,7 +28,7 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath("org.jetbrains.kotlin:kotlin-build-gradle-plugin:0.0.32")
+        classpath("org.jetbrains.kotlin:kotlin-build-gradle-plugin:0.0.35")
     }
 }
 
@@ -155,7 +155,6 @@ include ":benchmarks",
         ":compiler:tests-common-jvm6",
         ":compiler:tests-against-klib",
         ":compiler:tests-for-compiler-generator",
-        ":dukat",
         ":js:js.ast",
         ":js:js.sourcemap",
         ":js:js.serializer",
@@ -227,6 +226,7 @@ include ":benchmarks",
         ":tools:kotlinp",
         ":kotlin-project-model",
         ":kotlin-gradle-plugin-api",
+        ":kotlin-gradle-plugin-idea",
         ":kotlin-gradle-plugin-dsl-codegen",
         ":kotlin-gradle-plugin-npm-versions-codegen",
         ":kotlin-gradle-statistics",
@@ -374,6 +374,7 @@ if (!buildProperties.inJpsBuildIdeaSync) {
             ":prepare:ide-plugin-dependencies:analysis-api-providers-for-ide",
             ":prepare:ide-plugin-dependencies:analysis-project-structure-for-ide",
             ":prepare:ide-plugin-dependencies:symbol-light-classes-for-ide",
+            ":prepare:ide-plugin-dependencies:analysis-api-standalone-for-ide",
             ":prepare:ide-plugin-dependencies:kotlin-compiler-ir-for-ide",
             ":prepare:ide-plugin-dependencies:kotlin-compiler-common-for-ide",
             ":prepare:ide-plugin-dependencies:kotlin-compiler-fe10-for-ide",
@@ -385,7 +386,12 @@ void intellij(String imlPath) {
     imlFile = imlFile.exists() ? imlFile : new File("${rootDir}/intellij/plugins/kotlin/${imlPath}")
     imlFile = imlFile.exists() ? imlFile : new File("${rootDir}/intellij/community/${imlPath}")
     imlFile = imlFile.exists() ? imlFile : new File("${rootDir}/intellij/${imlPath}")
-    assert imlFile.exists()
+    if (!imlFile.exists()) {
+        throw new IllegalStateException("$imlFile doesn't exist. Please, update mapping in settings.gradle. And regenerate " +
+                "build.gradle files in kt-branch in 'intellij' repo (./gradlew generateIdePluginGradleFiles). Or you can " +
+                "remove 'attachedIntellijVersion' in your 'local.properties' if you don't care about being possible to" +
+                "browse Kotlin plugin sources in scope of Kotlin compiler sources")
+    }
     String fileName = imlFile.name
     String projectName = ":kotlin-ide.${fileName.substring(0, fileName.length() - ".iml".length())}"
     include(projectName)
@@ -449,9 +455,6 @@ if (attachedIntellijVersion == "212") { // Latest available platform in scope of
     intellij "compiler-plugins/allopen/tests/kotlin.compiler-plugins.allopen.tests.iml"
     intellij "compiler-plugins/allopen/gradle/kotlin.compiler-plugins.allopen.gradle.iml"
     intellij "compiler-plugins/allopen/maven/kotlin.compiler-plugins.allopen.maven.iml"
-    intellij "compiler-plugins/annotation-based-compiler-support/common/kotlin.compiler-plugins.annotation-based-compiler-support.common.iml"
-    intellij "compiler-plugins/annotation-based-compiler-support/gradle/kotlin.compiler-plugins.annotation-based-compiler-support.gradle.iml"
-    intellij "compiler-plugins/annotation-based-compiler-support/maven/kotlin.compiler-plugins.annotation-based-compiler-support.maven.iml"
     intellij "compiler-plugins/kapt/kotlin.compiler-plugins.kapt.iml"
     intellij "compiler-plugins/kotlinx-serialization/common/kotlin.compiler-plugins.kotlinx-serialization.common.iml"
     intellij "compiler-plugins/kotlinx-serialization/gradle/kotlin.compiler-plugins.kotlinx-serialization.gradle.iml"
@@ -499,8 +502,10 @@ include ":generators:analysis-api-generator",
         ":analysis:analysis-api-impl-base",
         ":analysis:analysis-api-providers",
         ":analysis:analysis-internal-utils",
+        ":analysis:kt-references",
         ":analysis:symbol-light-classes",
         ":analysis:project-structure",
+        ":analysis:analysis-api-standalone",
         ":analysis:analysis-api-fe10",
         ":analysis:decompiled:decompiler-to-psi",
         ":analysis:decompiled:decompiler-to-stubs",
@@ -626,6 +631,7 @@ project(':kotlin-sam-with-receiver-compiler-plugin').projectDir = "$rootDir/plug
 project(':tools:kotlinp').projectDir = "$rootDir/libraries/tools/kotlinp" as File
 project(':kotlin-project-model').projectDir = "$rootDir/libraries/tools/kotlin-project-model" as File
 project(':kotlin-gradle-plugin-api').projectDir = "$rootDir/libraries/tools/kotlin-gradle-plugin-api" as File
+project(':kotlin-gradle-plugin-idea').projectDir = "$rootDir/libraries/tools/kotlin-gradle-plugin-idea" as File
 project(':kotlin-gradle-plugin-dsl-codegen').projectDir = "$rootDir/libraries/tools/kotlin-gradle-plugin-dsl-codegen" as File
 project(':kotlin-gradle-plugin-npm-versions-codegen').projectDir = "$rootDir/libraries/tools/kotlin-gradle-plugin-npm-versions-codegen" as File
 project(':kotlin-gradle-statistics').projectDir = "$rootDir/libraries/tools/kotlin-gradle-statistics" as File
@@ -688,7 +694,6 @@ project(':kotlin-imports-dumper-compiler-plugin').projectDir = "$rootDir/plugins
 project(':libraries:kotlin-prepush-hook').projectDir = "$rootDir/libraries/tools/kotlin-prepush-hook" as File
 project(':plugins:jvm-abi-gen').projectDir = "$rootDir/plugins/jvm-abi-gen" as File
 project(':plugins:jvm-abi-gen-embeddable').projectDir = "$rootDir/plugins/jvm-abi-gen/embeddable" as File
-project(":dukat").projectDir = "$rootDir/libraries/tools/dukat" as File
 
 project(':js:js.tests').projectDir = "$rootDir/js/js.tests" as File
 project(':js:js.engines').projectDir = "$rootDir/js/js.engines" as File

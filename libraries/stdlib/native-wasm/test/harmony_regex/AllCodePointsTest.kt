@@ -31,35 +31,24 @@ class AllCodePointsTest {
     }
 
     // TODO: Here is a performance problem: an execution of this test requires much more time than it in Kotlin/JVM.
-    @Test fun test() {
+    fun testImpl(regex: String, expectedCount: Int) {
         // Regression for HARMONY-3145
-        var p = Regex("(\\p{all})+")
-        var res = true
+        val p = Regex(regex)
         var cnt = 0
-        var s: String
         for (i in 0..1114111) {
-            s = codePointToString(i)
+            val s = codePointToString(i)
             if (!s.matches(p)) {
                 cnt++
-                res = false
             }
         }
-        assertTrue(res)
-        assertEquals(0, cnt)
+        assertEquals(expectedCount, cnt)
+    }
 
-        p = Regex("(\\P{all})+")
-        res = true
-        cnt = 0
+    @Test fun test1() {
+        testImpl("(\\p{all})+", 0)
+    }
 
-        for (i in 0..1114111) {
-            s = codePointToString(i)
-            if (!s.matches(p)) {
-                cnt++
-                res = false
-            }
-        }
-
-        assertFalse(res)
-        assertEquals(0x110000, cnt)
+    @Test fun test2() {
+        testImpl("(\\P{all})+", 0x110000)
     }
 }

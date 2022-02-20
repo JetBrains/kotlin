@@ -51,6 +51,7 @@ static void injectToRuntime();
 
 +(void)initialize {
   if (self == [KotlinBase class]) {
+    injectToRuntime(); // In case `initialize` is called before `load` (see e.g. https://youtrack.jetbrains.com/issue/KT-50982).
     Kotlin_ObjCExport_initialize();
   }
   Kotlin_ObjCExport_initializeClass(self);
@@ -243,7 +244,7 @@ OBJ_GETTER(Kotlin_boxDouble, KDouble value);
 }
 @end;
 
-static void injectToRuntime() {
+static void injectToRuntimeImpl() {
   // If the code below fails, then it is most likely caused by KT-42254.
   constexpr const char* errorMessage = "runtime injected twice; https://youtrack.jetbrains.com/issue/KT-42254 might be related";
 
@@ -252,6 +253,13 @@ static void injectToRuntime() {
 
   RuntimeCheck(Kotlin_ObjCExport_releaseAsAssociatedObjectSelector == nullptr, errorMessage);
   Kotlin_ObjCExport_releaseAsAssociatedObjectSelector = @selector(releaseAsAssociatedObject:);
+}
+
+static void injectToRuntime() {
+  static dispatch_once_t onceToken;
+  dispatch_once(&onceToken, ^{
+    injectToRuntimeImpl();
+  });
 }
 
 #endif // KONAN_OBJC_INTEROP

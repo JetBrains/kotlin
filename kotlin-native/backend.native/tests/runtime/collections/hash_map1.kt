@@ -89,11 +89,6 @@ fun testClear() {
 }
 
 @Test fun runTest() {
-    // TODO: Do not manually control this.
-    if (Platform.memoryModel == MemoryModel.EXPERIMENTAL) {
-        GC.threshold = 1000000
-        GC.thresholdAllocations = 1000000
-    }
     testRehashAndCompact()
     testClear()
     println("OK")

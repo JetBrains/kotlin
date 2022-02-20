@@ -1,5 +1,4 @@
 // !DIAGNOSTICS: -ACTUAL_WITHOUT_EXPECT
-// !LANGUAGE: +MultiPlatformProjects
 // MODULE: m1-common
 // FILE: common.kt
 

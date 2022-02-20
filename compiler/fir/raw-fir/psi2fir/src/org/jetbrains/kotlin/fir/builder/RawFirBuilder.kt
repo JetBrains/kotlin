@@ -10,7 +10,10 @@ import com.intellij.psi.tree.IElementType
 import org.jetbrains.kotlin.*
 import org.jetbrains.kotlin.builtins.StandardNames.BACKING_FIELD
 import org.jetbrains.kotlin.builtins.StandardNames.DEFAULT_VALUE_PARAMETER
-import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.ClassKind
+import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.descriptors.Visibilities
+import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget.*
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.contracts.FirContractDescription
@@ -40,7 +43,6 @@ import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.*
 import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
-import org.jetbrains.kotlin.types.ConstantValueKind
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.types.expressions.OperatorConventions
 import org.jetbrains.kotlin.util.OperatorNameConventions
@@ -1748,9 +1750,11 @@ open class RawFirBuilder(
                         }
                     }
                 }
-                is KtIntersectionType -> FirErrorTypeRefBuilder().apply {
+                is KtIntersectionType -> FirIntersectionTypeRefBuilder().apply {
                     this.source = source
-                    diagnostic = ConeSimpleDiagnostic("Intersection types are not supported yet", DiagnosticKind.Syntax)
+                    isMarkedNullable = isNullable
+                    leftType = unwrappedElement.getLeftTypeRef()?.toFirOrErrorType()
+                    rightType = unwrappedElement.getRightTypeRef()?.toFirOrErrorType()
                 }
                 null -> FirErrorTypeRefBuilder().apply {
                     this.source = source
@@ -1904,19 +1908,30 @@ open class RawFirBuilder(
         override fun visitIfExpression(expression: KtIfExpression, data: Unit): FirElement {
             return buildWhenExpression {
                 source = expression.toFirSourceElement()
-                val ktCondition = expression.condition
-                branches += buildWhenBranch {
-                    source = ktCondition?.toFirSourceElement(KtFakeSourceElementKind.WhenCondition)
-                    condition = ktCondition.toFirExpression("If statement should have condition")
-                    result = expression.then.toFirBlock()
-                }
-                if (expression.elseKeyword != null) {
+
+                var ktLastIf: KtIfExpression = expression
+                whenBranches@ while (true) {
+                    val ktCondition = ktLastIf.condition
                     branches += buildWhenBranch {
-                        source = expression.elseKeyword?.toKtPsiSourceElement()
-                        condition = buildElseIfTrueCondition()
-                        result = expression.`else`.toFirBlock()
+                        source = ktCondition?.toFirSourceElement(KtFakeSourceElementKind.WhenCondition)
+                        condition = ktCondition.toFirExpression("If statement should have condition")
+                        result = ktLastIf.then.toFirBlock()
+                    }
+
+                    when (val ktElse = ktLastIf.`else`) {
+                        null -> break@whenBranches
+                        is KtIfExpression -> ktLastIf = ktElse
+                        else -> {
+                            branches += buildWhenBranch {
+                                source = ktLastIf.elseKeyword?.toKtPsiSourceElement()
+                                condition = buildElseIfTrueCondition()
+                                result = ktLastIf.`else`.toFirBlock()
+                            }
+                            break@whenBranches
+                        }
                     }
                 }
+
                 usedAsExpression = expression.usedAsExpression
             }
         }
@@ -2178,10 +2193,10 @@ open class RawFirBuilder(
                     return expression.left.generateAssignment(
                         source,
                         expression.left?.toFirSourceElement(),
-                        expression.right,
                         rightArgument,
                         firOperation,
-                        leftArgument.annotations
+                        leftArgument.annotations,
+                        expression.right,
                     ) {
                         (this as KtExpression).toFirExpression("Incorrect expression in assignment: ${expression.text}")
                     }
@@ -2234,21 +2249,9 @@ open class RawFirBuilder(
                     }
 
                     val receiver = argument.toFirExpression("No operand")
-                    if (operationToken == PLUS || operationToken == MINUS) {
-                        if (receiver is FirConstExpression<*> && receiver.kind == ConstantValueKind.IntegerLiteral) {
-                            val value = receiver.value as Long
-                            val convertedValue = when (operationToken) {
-                                MINUS -> -value
-                                PLUS -> value
-                                else -> error("Should not be here")
-                            }
-                            return buildConstExpression(
-                                expression.toKtPsiSourceElement(),
-                                ConstantValueKind.IntegerLiteral,
-                                convertedValue
-                            )
-                        }
-                    }
+
+                    convertUnaryPlusMinusCallOnIntegerLiteralIfNecessary(expression, receiver, operationToken)?.let { return it }
+
                     buildFunctionCall {
                         source = expression.toFirSourceElement()
                         calleeReference = buildSimpleNamedReference {
@@ -2354,7 +2357,7 @@ open class RawFirBuilder(
                     }
                 }
                 origin = FirFunctionCallOrigin.Operator
-            }
+            }.pullUpSafeCallIfNecessary()
         }
 
         override fun visitQualifiedExpression(expression: KtQualifiedExpression, data: Unit): FirElement {
@@ -2369,7 +2372,7 @@ open class RawFirBuilder(
                 if (expression is KtSafeQualifiedExpression) {
                     @OptIn(FirImplementationDetail::class)
                     firSelector.replaceSource(expression.toFirSourceElement(KtFakeSourceElementKind.DesugaredSafeCallExpression))
-                    return firSelector.wrapWithSafeCall(
+                    return firSelector.createSafeCall(
                         receiver,
                         expression.toFirSourceElement()
                     )

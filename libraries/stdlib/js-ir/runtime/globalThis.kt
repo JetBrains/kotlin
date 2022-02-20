@@ -5,7 +5,7 @@
 
 package kotlin.js
 
-@JsNativeImplementation("""
+@JsPolyfill("""
 (function() {
     if (typeof globalThis === 'object') return; 
     Object.defineProperty(Object.prototype, '__magic__', {

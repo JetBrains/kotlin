@@ -5,9 +5,10 @@
 
 #pragma once
 
-#include "ObjectFactory.hpp"
 #include "ConcurrentMarkAndSweep.hpp"
 #include "GCState.hpp"
+#include "ObjectFactory.hpp"
+#include "ScopedThread.hpp"
 
 namespace kotlin::gc {
 
@@ -25,7 +26,7 @@ public:
     ~FinalizerProcessor();
 
 private:
-    std::thread finalizerThread_;
+    ScopedThread finalizerThread_;
     Queue finalizerQueue_;
     std::condition_variable finalizerQueueCondVar_;
     std::mutex finalizerQueueMutex_;

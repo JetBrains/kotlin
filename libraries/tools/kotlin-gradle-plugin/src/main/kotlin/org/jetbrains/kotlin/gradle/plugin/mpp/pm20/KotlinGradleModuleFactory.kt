@@ -35,7 +35,7 @@ open class KotlinGradleModuleFactory(private val project: Project) : NamedDomain
                 .matching { it.fragmentName == KotlinGradleFragment.COMMON_FRAGMENT_NAME }
                 .configureEach { commonFragment ->
                     commonFragment.dependencies {
-                        api(module.project.pm20Extension.modules.getByName(KotlinGradleModule.MAIN_MODULE_NAME))
+                        api(module.project.kpmModules.getByName(KotlinGradleModule.MAIN_MODULE_NAME))
                     }
                 }
         }

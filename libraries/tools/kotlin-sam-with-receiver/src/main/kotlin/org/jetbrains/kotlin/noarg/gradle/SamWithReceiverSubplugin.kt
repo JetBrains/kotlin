@@ -16,21 +16,17 @@
 
 package org.jetbrains.kotlin.samWithReceiver.gradle
 
-import org.gradle.api.GradleException
 import org.gradle.api.Project
 import org.gradle.api.provider.Provider
-import org.gradle.api.tasks.compile.AbstractCompile
-import org.gradle.tooling.provider.model.ToolingModelBuilder
 import org.gradle.tooling.provider.model.ToolingModelBuilderRegistry
-import org.jetbrains.kotlin.gradle.dsl.KotlinCommonOptions
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.noarg.gradle.model.builder.SamWithReceiverModelBuilder
 import javax.inject.Inject
 
-class SamWithReceiverGradleSubplugin @Inject internal constructor(private val registry: ToolingModelBuilderRegistry) :
-    KotlinCompilerPluginSupportPlugin,
-    @Suppress("DEPRECATION_ERROR") // implementing to fix KT-39809
-    KotlinGradleSubplugin<AbstractCompile> {
+class SamWithReceiverGradleSubplugin
+@Inject internal constructor(
+    private val registry: ToolingModelBuilderRegistry
+) : KotlinCompilerPluginSupportPlugin {
 
     override fun apply(target: Project) {
         target.extensions.create("samWithReceiver", SamWithReceiverExtension::class.java)
@@ -54,7 +50,7 @@ class SamWithReceiverGradleSubplugin @Inject internal constructor(private val re
         val samWithReceiverExtension =
             project.extensions.findByType(SamWithReceiverExtension::class.java) ?: return project.provider { emptyList<SubpluginOption>() }
 
-        return project.provider<List<SubpluginOption>> {
+        return project.provider {
             val options = mutableListOf<SubpluginOption>()
 
             for (anno in samWithReceiverExtension.myAnnotations) {
@@ -72,21 +68,4 @@ class SamWithReceiverGradleSubplugin @Inject internal constructor(private val re
     override fun getCompilerPluginId() = "org.jetbrains.kotlin.samWithReceiver"
     override fun getPluginArtifact(): SubpluginArtifact =
         JetBrainsSubpluginArtifact(artifactId = SAM_WITH_RECEIVER_ARTIFACT_NAME)
-
-    //region Stub implementation for legacy API, KT-39809
-    internal constructor(): this(object : ToolingModelBuilderRegistry {
-        override fun register(p0: ToolingModelBuilder) = Unit
-        override fun getBuilder(p0: String): ToolingModelBuilder = error("Method should not be called")
-    })
-
-    override fun isApplicable(project: Project, task: AbstractCompile): Boolean = true
-
-    override fun apply(
-        project: Project, kotlinCompile: AbstractCompile, javaCompile: AbstractCompile?, variantData: Any?, androidProjectHandler: Any?,
-        kotlinCompilation: KotlinCompilation<KotlinCommonOptions>?
-    ): List<SubpluginOption> = throw GradleException(
-        "This version of the kotlin-sam-with-receiver Gradle plugin is built for a newer Kotlin version. " +
-                "Please use an older version of kotlin-sam-with-receiver or upgrade the Kotlin Gradle plugin version to make them match."
-    )
-    //endregion
 }

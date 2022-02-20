@@ -36,12 +36,8 @@ abstract class KtFe10SimpleNameReference(expression: KtSimpleNameExpression) : K
 internal class CliKtFe10SimpleNameReference(
     expression: KtSimpleNameExpression
 ) : KtFe10SimpleNameReference(expression), CliKtFe10Reference {
-    override fun doCanBeReferenceTo(candidateTarget: PsiElement): Boolean {
-        return true
-    }
-
-    override fun isReferenceTo(element: PsiElement): Boolean {
-        return resolve() == element
+    override fun isReferenceToViaExtension(element: PsiElement): Boolean {
+        return false
     }
 
     override fun handleElementRename(newElementName: String): PsiElement? {

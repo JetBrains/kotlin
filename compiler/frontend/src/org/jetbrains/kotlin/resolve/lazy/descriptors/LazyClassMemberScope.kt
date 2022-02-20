@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor.Kind.DELEGATION
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor.Kind.FAKE_OVERRIDE
 import org.jetbrains.kotlin.descriptors.impl.ClassConstructorDescriptorImpl
+import org.jetbrains.kotlin.descriptors.impl.FunctionDescriptorImpl
 import org.jetbrains.kotlin.diagnostics.DiagnosticSink
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.diagnostics.reportOnDeclarationAs
@@ -254,6 +255,23 @@ open class LazyClassMemberScope(
                     }
                 }
             })
+        for (descriptor in result) {
+            if (descriptor !is FunctionDescriptorImpl) continue
+            for (overriddenFunction in descriptor.overriddenDescriptors) {
+                if (overriddenFunction !is FunctionDescriptorImpl) continue
+                val conflictedDescriptor = overriddenFunction.getUserData(DeserializedDeclarationsFromSupertypeConflictDataKey) ?: continue
+                reportOnDeclarationAs<KtClassOrObject>(
+                    trace,
+                    thisDescriptor
+                ) { ktClassOrObject ->
+                    Errors.CONFLICTING_INHERITED_MEMBERS_WARNING.on(
+                        ktClassOrObject,
+                        thisDescriptor,
+                        listOf(overriddenFunction, conflictedDescriptor)
+                    )
+                }
+            }
+        }
         OverrideResolver.resolveUnknownVisibilities(result, trace)
     }
 

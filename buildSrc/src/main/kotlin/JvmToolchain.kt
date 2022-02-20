@@ -51,14 +51,16 @@ fun Project.configureJvmToolchain(
 
         if (shouldOverrideObsoleteJdk(jdkVersion)) {
             kotlinExtension.jvmToolchain {
-                (this as JavaToolchainSpec).languageVersion
-                    .set(JavaLanguageVersion.of(jdkVersion.overrideMajorVersion!!))
+                languageVersion.set(
+                    JavaLanguageVersion.of(jdkVersion.overrideMajorVersion!!)
+                )
             }
             updateJvmTarget(jdkVersion.targetName)
         } else {
             kotlinExtension.jvmToolchain {
-                (this as JavaToolchainSpec).languageVersion
-                    .set(JavaLanguageVersion.of(jdkVersion.majorVersion))
+                languageVersion.set(
+                    JavaLanguageVersion.of(jdkVersion.majorVersion)
+                )
             }
         }
 

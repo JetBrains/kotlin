@@ -1,0 +1,129 @@
+public abstract class org/jetbrains/kotlin/gradle/kpm/KotlinExternalModelContainer : java/io/Serializable {
+	public static final field Companion Lorg/jetbrains/kotlin/gradle/kpm/KotlinExternalModelContainer$Companion;
+	public abstract fun contains (Lorg/jetbrains/kotlin/gradle/kpm/KotlinExternalModelKey;)Z
+	public fun equals (Ljava/lang/Object;)Z
+	public abstract fun get (Lorg/jetbrains/kotlin/gradle/kpm/KotlinExternalModelKey;)Ljava/lang/Object;
+	public abstract fun getIds ()Ljava/util/Set;
+	public final fun getOrThrow (Lorg/jetbrains/kotlin/gradle/kpm/KotlinExternalModelKey;)Ljava/lang/Object;
+	public fun hashCode ()I
+	public final fun isEmpty ()Z
+	public final fun isNotEmpty ()Z
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class org/jetbrains/kotlin/gradle/kpm/KotlinExternalModelContainer$Empty : org/jetbrains/kotlin/gradle/kpm/KotlinExternalModelContainer {
+	public static final field INSTANCE Lorg/jetbrains/kotlin/gradle/kpm/KotlinExternalModelContainer$Empty;
+	public fun contains (Lorg/jetbrains/kotlin/gradle/kpm/KotlinExternalModelKey;)Z
+	public fun get (Lorg/jetbrains/kotlin/gradle/kpm/KotlinExternalModelKey;)Ljava/lang/Object;
+	public fun getIds ()Ljava/util/Set;
+}
+
+public final class org/jetbrains/kotlin/gradle/kpm/KotlinExternalModelId : java/io/Serializable {
+	public static final field Companion Lorg/jetbrains/kotlin/gradle/kpm/KotlinExternalModelId$Companion;
+	public fun <init> (Lorg/jetbrains/kotlin/gradle/kpm/KotlinExternalModelType;Ljava/lang/String;)V
+	public fun equals (Ljava/lang/Object;)Z
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class org/jetbrains/kotlin/gradle/kpm/KotlinExternalModelKey {
+	public fun <init> (Lorg/jetbrains/kotlin/gradle/kpm/KotlinExternalModelId;Lorg/jetbrains/kotlin/gradle/kpm/KotlinExternalModelSerializer;)V
+	public fun equals (Ljava/lang/Object;)Z
+	public fun hashCode ()I
+}
+
+public abstract interface class org/jetbrains/kotlin/gradle/kpm/KotlinExternalModelSerializer {
+	public static final field Companion Lorg/jetbrains/kotlin/gradle/kpm/KotlinExternalModelSerializer$Companion;
+	public abstract fun deserialize ([B)Ljava/lang/Object;
+	public abstract fun serialize (Ljava/lang/Object;)[B
+}
+
+public final class org/jetbrains/kotlin/gradle/kpm/KotlinExternalModelType : java/io/Serializable {
+	public static final field Companion Lorg/jetbrains/kotlin/gradle/kpm/KotlinExternalModelType$Companion;
+	public fun <init> (Ljava/lang/String;)V
+	public fun equals (Ljava/lang/Object;)Z
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class org/jetbrains/kotlin/gradle/kpm/KotlinExternalModelTypeKt {
+	public static final fun externalModelTypeSignature (Lkotlin/reflect/KType;)Ljava/lang/String;
+}
+
+public abstract class org/jetbrains/kotlin/gradle/kpm/KotlinMutableExternalModelContainer : org/jetbrains/kotlin/gradle/kpm/KotlinExternalModelContainer {
+	public abstract fun set (Lorg/jetbrains/kotlin/gradle/kpm/KotlinExternalModelKey;Ljava/lang/Object;)V
+}
+
+public abstract interface class org/jetbrains/kotlin/gradle/kpm/idea/IdeaKotlinCompilationOutput : java/io/Serializable {
+	public abstract fun getClassesDirs ()Ljava/util/Set;
+	public abstract fun getResourcesDir ()Ljava/io/File;
+}
+
+public abstract interface class org/jetbrains/kotlin/gradle/kpm/idea/IdeaKotlinFragment : java/io/Serializable {
+	public abstract fun getDependencies ()Ljava/util/List;
+	public abstract fun getDirectRefinesDependencies ()Ljava/util/List;
+	public abstract fun getExternal ()Lorg/jetbrains/kotlin/gradle/kpm/KotlinExternalModelContainer;
+	public abstract fun getLanguageSettings ()Lorg/jetbrains/kotlin/gradle/kpm/idea/IdeaKotlinLanguageSettings;
+	public abstract fun getModuleIdentifier ()Lorg/jetbrains/kotlin/gradle/kpm/idea/IdeaKotlinModuleIdentifier;
+	public abstract fun getName ()Ljava/lang/String;
+	public abstract fun getResourceDirectories ()Ljava/util/List;
+	public abstract fun getSourceDirectories ()Ljava/util/List;
+}
+
+public abstract interface class org/jetbrains/kotlin/gradle/kpm/idea/IdeaKotlinFragmentDependency : java/io/Serializable {
+}
+
+public abstract interface class org/jetbrains/kotlin/gradle/kpm/idea/IdeaKotlinLanguageSettings : java/io/Serializable {
+	public abstract fun getApiVersion ()Ljava/lang/String;
+	public abstract fun getCompilerPluginArguments ()Ljava/util/List;
+	public abstract fun getCompilerPluginClasspath ()Ljava/util/List;
+	public abstract fun getEnabledLanguageFeatures ()Ljava/util/Set;
+	public abstract fun getFreeCompilerArgs ()Ljava/util/List;
+	public abstract fun getLanguageVersion ()Ljava/lang/String;
+	public abstract fun getOptInAnnotationsInUse ()Ljava/util/Set;
+	public abstract fun isProgressiveMode ()Z
+}
+
+public abstract interface class org/jetbrains/kotlin/gradle/kpm/idea/IdeaKotlinLocalModuleIdentifier : org/jetbrains/kotlin/gradle/kpm/idea/IdeaKotlinModuleIdentifier {
+	public abstract fun getBuildId ()Ljava/lang/String;
+	public abstract fun getProjectId ()Ljava/lang/String;
+}
+
+public abstract interface class org/jetbrains/kotlin/gradle/kpm/idea/IdeaKotlinMavenModuleIdentifier : org/jetbrains/kotlin/gradle/kpm/idea/IdeaKotlinModuleIdentifier {
+	public abstract fun getGroup ()Ljava/lang/String;
+	public abstract fun getName ()Ljava/lang/String;
+}
+
+public abstract interface class org/jetbrains/kotlin/gradle/kpm/idea/IdeaKotlinModule : java/io/Serializable {
+	public abstract fun getFragments ()Ljava/util/List;
+	public abstract fun getModuleIdentifier ()Lorg/jetbrains/kotlin/gradle/kpm/idea/IdeaKotlinModuleIdentifier;
+}
+
+public abstract interface class org/jetbrains/kotlin/gradle/kpm/idea/IdeaKotlinModuleIdentifier : java/io/Serializable {
+	public abstract fun getModuleClassifier ()Ljava/lang/String;
+}
+
+public abstract interface class org/jetbrains/kotlin/gradle/kpm/idea/IdeaKotlinProjectModel : java/io/Serializable {
+	public abstract fun getCoreLibrariesVersion ()Ljava/lang/String;
+	public abstract fun getExplicitApiModeCliOption ()Ljava/lang/String;
+	public abstract fun getGradlePluginVersion ()Ljava/lang/String;
+	public abstract fun getKotlinNativeHome ()Ljava/io/File;
+	public abstract fun getModules ()Ljava/util/List;
+}
+
+public abstract interface class org/jetbrains/kotlin/gradle/kpm/idea/IdeaKotlinResourceDirectory : java/io/Serializable {
+	public abstract fun getFile ()Ljava/io/File;
+}
+
+public abstract interface class org/jetbrains/kotlin/gradle/kpm/idea/IdeaKotlinSourceDirectory : java/io/Serializable {
+	public abstract fun getFile ()Ljava/io/File;
+}
+
+public abstract interface class org/jetbrains/kotlin/gradle/kpm/idea/IdeaKotlinVariant : java/io/Serializable, org/jetbrains/kotlin/gradle/kpm/idea/IdeaKotlinFragment {
+	public abstract fun getCompilationOutputs ()Lorg/jetbrains/kotlin/gradle/kpm/idea/IdeaKotlinCompilationOutput;
+	public abstract fun getVariantAttributes ()Ljava/util/Map;
+}
+
+public abstract interface annotation class org/jetbrains/kotlin/gradle/kpm/idea/InternalKotlinGradlePluginApi : java/lang/annotation/Annotation {
+}
+

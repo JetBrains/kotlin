@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<results>
+  <testsuite name="org.foo.test.TestKt" tests="4" skipped="0" failures="1" errors="0" timestamp="..." hostname="..." time="...">
+    <properties/>
+    <testcase name="fooTest[iosArm64]" classname="org.foo.test.TestKt" time="..."/>
+    <testcase name="barTest[iosArm64]" classname="org.foo.test.TestKt" time="..."/>
+    <testcase name="barfooTest[iosArm64]" classname="org.foo.test.TestKt" time="..."/>
+    <testcase name="fail[iosArm64]" classname="org.foo.test.TestKt" time="...">
+      <failure message="..." type="kotlin.IllegalStateException">...</failure>
+    </testcase>
+    <system-out><![CDATA[Foo call
+Bar call
+42
+]]></system-out>
+    <system-err><![CDATA[]]></system-err>
+  </testsuite>
+</results>

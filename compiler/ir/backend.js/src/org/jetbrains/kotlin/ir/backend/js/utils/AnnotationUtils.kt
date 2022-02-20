@@ -27,7 +27,7 @@ object JsAnnotations {
     val jsNativeSetter = FqName("kotlin.js.nativeSetter")
     val jsNativeInvoke = FqName("kotlin.js.nativeInvoke")
     val jsFunFqn = FqName("kotlin.js.JsFun")
-    val jsNativeImplementationFqn = FqName("kotlin.js.JsNativeImplementation")
+    val JsPolyfillFqn = FqName("kotlin.js.JsPolyfill")
 }
 
 @Suppress("UNCHECKED_CAST")
@@ -46,8 +46,11 @@ fun IrAnnotationContainer.getJsQualifier(): String? =
 fun IrAnnotationContainer.getJsName(): String? =
     getAnnotation(JsAnnotations.jsNameFqn)?.getSingleConstStringArgument()
 
-fun IrAnnotationContainer.getJsNativeImplementation(): String? =
-    getAnnotation(JsAnnotations.jsNativeImplementationFqn)?.getSingleConstStringArgument()
+fun IrAnnotationContainer.getJsPolyfill(): String? =
+    getAnnotation(JsAnnotations.JsPolyfillFqn)?.getSingleConstStringArgument()
+
+fun IrAnnotationContainer.hasJsPolyfill(): Boolean =
+    hasAnnotation(JsAnnotations.JsPolyfillFqn)
 
 fun IrAnnotationContainer.getJsFunAnnotation(): String? =
     getAnnotation(JsAnnotations.jsFunFqn)?.getSingleConstStringArgument()
@@ -60,6 +63,8 @@ fun IrAnnotationContainer.isJsNativeGetter(): Boolean = hasAnnotation(JsAnnotati
 fun IrAnnotationContainer.isJsNativeSetter(): Boolean = hasAnnotation(JsAnnotations.jsNativeSetter)
 
 fun IrAnnotationContainer.isJsNativeInvoke(): Boolean = hasAnnotation(JsAnnotations.jsNativeInvoke)
+
+fun IrAnnotationContainer.isAnnotatedWithJsFun(): Boolean = hasAnnotation(JsAnnotations.jsFunFqn)
 
 fun IrDeclarationWithName.getJsNameForOverriddenDeclaration(): String? {
     val jsName = getJsName()

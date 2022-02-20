@@ -226,8 +226,8 @@ fun router() {
     val express = require("express")
     val router = express.Router()
     val connector = ElasticSearchConnector(networkConnector)
-    val benchmarksDispatcher = BenchmarksIndexesDispatcher(connector, "env.machine.os",
-            listOf("Linux", "Mac OS X", "Windows 10")
+    val benchmarksDispatcher = BenchmarksIndexesDispatcher(connector, "target",
+            listOf("Linux", "Mac OS X", "Windows 10", "Mac OS X Arm64")
     )
     val goldenIndex = GoldenResultsIndex(connector)
     val buildInfoIndex = BuildInfoIndex(connector)
@@ -282,9 +282,14 @@ fun router() {
                         val goldenResultPromise = getGoldenResults(goldenIndex)
                         val goldenResults = goldenResultPromise.await()
                         // Register build information.
+                        val target = reports[0].env.machine.os.let {
+                            if (it == "Mac OS X" && reports[0].env.machine.cpu == "aarch64")
+                                "$it Arm64"
+                            else it
+                        }
                         var buildInfoInstance = getConsistentBuildInfo(
                                 BuildInfo(buildInfo.buildNumber, buildInfo.startTime, buildInfo.finishTime,
-                                        commitsList, buildInfo.branch, reports[0].env.machine.os, buildInfo.buildType),
+                                        commitsList, buildInfo.branch, target, buildInfo.buildType),
                                 reports
                         )
                         if (register.bundleSize != null) {
@@ -295,7 +300,7 @@ fun router() {
                             val bundleSizeReport = BenchmarksReport(reports[0].env,
                                     listOf(bundleSizeBenchmark), reports[0].compiler)
                             bundleSizeReport.buildNumber = buildInfoInstance.buildNumber
-                            benchmarksDispatcher.insert(bundleSizeReport, reports[0].env.machine.os).then { _ ->
+                            benchmarksDispatcher.insert(bundleSizeReport, target).then { _ ->
                                 println("[BUNDLE] Success insert ${buildInfoInstance.buildNumber}")
                             }.catch { errorResponse ->
                                 println("Failed to insert data for build")
@@ -307,7 +312,7 @@ fun router() {
                                     .normalizeBenchmarksSet(goldenResults)
                             benchmarksReport.buildNumber = buildInfoInstance.buildNumber
                             // Save results in database.
-                            benchmarksDispatcher.insert(benchmarksReport, benchmarksReport.env.machine.os)
+                            benchmarksDispatcher.insert(benchmarksReport, target)
                         }
                         if (!buildExists(buildInfoInstance, buildInfoIndex)) {
                             buildInfoIndex.insert(buildInfoInstance).then { _ ->

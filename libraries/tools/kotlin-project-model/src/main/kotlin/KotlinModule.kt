@@ -7,8 +7,7 @@ package org.jetbrains.kotlin.project.model
 
 import java.io.Serializable
 
-// TODO sealed with an abstract subclass? this will make exhaustive checks work
-open class KotlinModuleIdentifier(open val moduleClassifier: String?): Serializable
+sealed class KotlinModuleIdentifier(open val moduleClassifier: String?): Serializable
 
 // TODO consider id: Any, to allow IDs with custom equality?
 data class LocalModuleIdentifier(

@@ -132,6 +132,13 @@ private object NativeTestSupport {
             }
         }
 
+        val gcScheduler = computeGCScheduler(enforcedProperties)
+        if (gcScheduler != GCScheduler.UNSPECIFIED) {
+            assertEquals(MemoryModel.EXPERIMENTAL, memoryModel) {
+                "GC scheduler can be specified only with experimental memory model"
+            }
+        }
+
         val nativeHome = getOrCreateTestProcessSettings().get<KotlinNativeHome>()
 
         val hostManager = HostManager(distribution = Distribution(nativeHome.dir.path), experimental = false)
@@ -141,6 +148,7 @@ private object NativeTestSupport {
         output += memoryModel
         output += threadStateChecker
         output += gcType
+        output += gcScheduler
         output += nativeTargets
         output += CacheMode::class to computeCacheMode(enforcedProperties, nativeHome, nativeTargets, optimizationMode)
         output += computeTestMode(enforcedProperties)
@@ -168,6 +176,9 @@ private object NativeTestSupport {
     private fun computeGCType(enforcedProperties: EnforcedProperties): GCType =
         ClassLevelProperty.GC_TYPE.readValue(enforcedProperties, GCType.values(), default = GCType.UNSPECIFIED)
 
+    private fun computeGCScheduler(enforcedProperties: EnforcedProperties): GCScheduler =
+        ClassLevelProperty.GC_SCHEDULER.readValue(enforcedProperties, GCScheduler.values(), default = GCScheduler.UNSPECIFIED)
+
     private fun computeNativeTargets(enforcedProperties: EnforcedProperties, hostManager: HostManager): KotlinNativeTargets {
         val hostTarget = HostManager.host
         return KotlinNativeTargets(
@@ -186,15 +197,6 @@ private object NativeTestSupport {
         kotlinNativeTargets: KotlinNativeTargets,
         optimizationMode: OptimizationMode
     ): CacheMode {
-        // TODO: legacy, need to remove it
-        val legacyUseCache = System.getProperty("kotlin.internal.native.test.useCache")?.let(String::toBooleanStrictOrNull)
-        if (legacyUseCache != null) {
-            return if (legacyUseCache)
-                CacheMode.WithStaticCache(kotlinNativeHome, kotlinNativeTargets, optimizationMode, false)
-            else
-                CacheMode.WithoutCache
-        }
-
         val cacheMode = ClassLevelProperty.CACHE_MODE.readValue(
             enforcedProperties,
             CacheMode.Alias.values(),
@@ -210,7 +212,7 @@ private object NativeTestSupport {
     }
 
     private fun computeTestMode(enforcedProperties: EnforcedProperties): TestMode =
-        ClassLevelProperty.TEST_MODE.readValue(enforcedProperties, TestMode.values(), default = TestMode.WITH_MODULES)
+        ClassLevelProperty.TEST_MODE.readValue(enforcedProperties, TestMode.values(), default = TestMode.TWO_STAGE_MULTI_MODULE)
 
     private fun computeTimeouts(enforcedProperties: EnforcedProperties): Timeouts {
         val executionTimeout = ClassLevelProperty.EXECUTION_TIMEOUT.readValue(

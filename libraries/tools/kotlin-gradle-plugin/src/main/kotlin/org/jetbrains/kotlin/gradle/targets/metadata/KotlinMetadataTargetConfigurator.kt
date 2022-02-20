@@ -21,9 +21,9 @@ import org.jetbrains.kotlin.gradle.dsl.*
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.CompilationSourceSetUtil.compilationsBySourceSets
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinGradleModule
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinNativeFragmentMetadataCompilationData
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinPm20ProjectExtension
+import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.*
+import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.hasKpmModel
+import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.metadataCompilationRegistryByModuleId
 import org.jetbrains.kotlin.gradle.plugin.sources.*
 import org.jetbrains.kotlin.gradle.plugin.statistics.KotlinBuildStatsService
 import org.jetbrains.kotlin.gradle.targets.native.internal.*
@@ -38,14 +38,14 @@ internal const val ALL_COMPILE_METADATA_CONFIGURATION_NAME = "allSourceSetsCompi
 internal const val ALL_RUNTIME_METADATA_CONFIGURATION_NAME = "allSourceSetsRuntimeDependenciesMetadata"
 
 internal val Project.isKotlinGranularMetadataEnabled: Boolean
-    get() = project.topLevelExtension is KotlinPm20ProjectExtension || with(PropertiesProvider(rootProject)) {
+    get() = project.hasKpmModel || with(PropertiesProvider(rootProject)) {
         mppHierarchicalStructureByDefault || // then we want to use KLIB granular compilation & artifacts even if it's just commonMain
                 hierarchicalStructureSupport ||
                 enableGranularSourceSetsMetadata == true
     }
 
 internal val Project.shouldCompileIntermediateSourceSetsToMetadata: Boolean
-    get() = project.topLevelExtension is KotlinPm20ProjectExtension || with(PropertiesProvider(rootProject)) {
+    get() = project.hasKpmModel || with(PropertiesProvider(rootProject)) {
         when {
             !hierarchicalStructureSupport && mppHierarchicalStructureByDefault -> false
             else -> true
@@ -147,16 +147,18 @@ class KotlinMetadataTargetConfigurator :
             }
         }
 
-        val legacyJar = target.project.registerTask<Jar>(target.legacyArtifactsTaskName)
-        legacyJar.configure {
-            // Capture it here to use in onlyIf spec. Direct usage causes serialization of target attempt when configuration cache is enabled
-            val isCompatibilityMetadataVariantEnabled = target.project.isCompatibilityMetadataVariantEnabled
-            it.description = "Assembles an archive containing the Kotlin metadata of the commonMain source set."
-            if (!isCompatibilityMetadataVariantEnabled) {
-                it.archiveClassifier.set("commonMain")
+        if (target.project.isCompatibilityMetadataVariantEnabled) {
+            val legacyJar = target.project.registerTask<Jar>(target.legacyArtifactsTaskName)
+            legacyJar.configure {
+                // Capture it here to use in onlyIf spec. Direct usage causes serialization of target attempt when configuration cache is enabled
+                val isCompatibilityMetadataVariantEnabled = target.project.isCompatibilityMetadataVariantEnabled
+                it.description = "Assembles an archive containing the Kotlin metadata of the commonMain source set."
+                if (!isCompatibilityMetadataVariantEnabled) {
+                    it.archiveClassifier.set("commonMain")
+                }
+                it.onlyIf { isCompatibilityMetadataVariantEnabled }
+                it.from(target.compilations.getByName(KotlinCompilation.MAIN_COMPILATION_NAME).output.allOutputs)
             }
-            it.onlyIf { isCompatibilityMetadataVariantEnabled }
-            it.from(target.compilations.getByName(KotlinCompilation.MAIN_COMPILATION_NAME).output.allOutputs)
         }
 
         return result
@@ -285,6 +287,8 @@ class KotlinMetadataTargetConfigurator :
     ): AbstractKotlinCompilation<*> {
         val project = target.project
 
+        check(!project.hasKpmModel) { "KotlinMetadataTargetConfigurator cannot work with KPM!" }
+
         val compilationName = sourceSet.name
 
         val platformCompilations = compilationsBySourceSets(project)
@@ -302,7 +306,9 @@ class KotlinMetadataTargetConfigurator :
 
         return compilationFactory.create(compilationName).apply {
             target.compilations.add(this@apply)
-            addExactSourceSetsEagerly(setOf(sourceSet))
+
+            (compilationDetails as DefaultCompilationDetails<*>).addExactSourceSetsEagerly(setOf(sourceSet))
+
             configureMetadataDependenciesForCompilation(this@apply)
 
             if (!isHostSpecific) {
@@ -358,40 +364,41 @@ class KotlinMetadataTargetConfigurator :
                 }
             )
 
-            (sourceSet as DefaultKotlinSourceSet).dependencyTransformations[scope] = granularMetadataTransformation
-
-            val sourceSetMetadataConfigurationByScope = project.sourceSetMetadataConfigurationByScope(sourceSet, scope)
-
-            granularMetadataTransformation.applyToConfiguration(sourceSetMetadataConfigurationByScope)
+            if (sourceSet is DefaultKotlinSourceSet)
+                sourceSet.dependencyTransformations[scope] = granularMetadataTransformation
 
             val sourceSetDependencyConfigurationByScope = project.sourceSetDependencyConfigurationByScope(sourceSet, scope)
 
-            // All source set dependencies except for compileOnly agree in versions with all other published runtime dependencies:
-            if (scope != KotlinDependencyScope.COMPILE_ONLY_SCOPE) {
-                if (isSourceSetPublished) {
+            if (isSourceSetPublished) {
+                if (scope != KotlinDependencyScope.COMPILE_ONLY_SCOPE) {
                     project.addExtendsFromRelation(
                         ALL_RUNTIME_METADATA_CONFIGURATION_NAME,
                         sourceSetDependencyConfigurationByScope.name
                     )
                 }
-                project.addExtendsFromRelation(
-                    sourceSetMetadataConfigurationByScope.name,
-                    ALL_RUNTIME_METADATA_CONFIGURATION_NAME
-                )
-            }
-
-            // All source set dependencies except for runtimeOnly agree in versions with all other published compile dependencies:
-            if (scope != KotlinDependencyScope.RUNTIME_ONLY_SCOPE) {
-                if (isSourceSetPublished) {
+                if (scope != KotlinDependencyScope.RUNTIME_ONLY_SCOPE) {
                     project.addExtendsFromRelation(
                         ALL_COMPILE_METADATA_CONFIGURATION_NAME,
                         sourceSetDependencyConfigurationByScope.name
                     )
                 }
-                project.addExtendsFromRelation(
-                    sourceSetMetadataConfigurationByScope.name,
-                    ALL_COMPILE_METADATA_CONFIGURATION_NAME
-                )
+            }
+
+            if (!PropertiesProvider(project).experimentalKpmModelMapping) {
+                val sourceSetMetadataConfigurationByScope = project.sourceSetMetadataConfigurationByScope(sourceSet, scope)
+                granularMetadataTransformation.applyToConfiguration(sourceSetMetadataConfigurationByScope)
+                if (scope != KotlinDependencyScope.COMPILE_ONLY_SCOPE) {
+                    project.addExtendsFromRelation(
+                        sourceSetMetadataConfigurationByScope.name,
+                        ALL_COMPILE_METADATA_CONFIGURATION_NAME
+                    )
+                }
+                if (scope != KotlinDependencyScope.RUNTIME_ONLY_SCOPE) {
+                    project.addExtendsFromRelation(
+                        sourceSetMetadataConfigurationByScope.name,
+                        ALL_COMPILE_METADATA_CONFIGURATION_NAME
+                    )
+                }
             }
         }
     }

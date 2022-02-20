@@ -14,10 +14,7 @@ import org.gradle.api.services.BuildServiceParameters
 import org.jetbrains.kotlin.gradle.logging.kotlinDebug
 import org.jetbrains.kotlin.gradle.plugin.internal.state.TaskExecutionResults
 import org.jetbrains.kotlin.gradle.plugin.internal.state.TaskLoggers
-import org.jetbrains.kotlin.gradle.plugin.stat.ReportStatistics
-import org.jetbrains.kotlin.gradle.plugin.statistics.KotlinBuildStatListener
-import org.jetbrains.kotlin.gradle.plugin.statistics.ReportStatisticsToBuildScan
-import org.jetbrains.kotlin.gradle.plugin.statistics.ReportStatisticsByHttp
+import org.jetbrains.kotlin.gradle.plugin.statistics.BuildScanStatisticsListener
 import org.jetbrains.kotlin.gradle.report.BuildReportType
 import org.jetbrains.kotlin.gradle.report.ReportingSettings
 import org.jetbrains.kotlin.gradle.report.reportingSettings
@@ -50,40 +47,35 @@ internal abstract class KotlinGradleBuildServices : BuildService<KotlinGradleBui
     }
 
     companion object {
+        fun registerIfAbsent(project: Project, kotlinVersion: String): Provider<KotlinGradleBuildServices> =
+            project.gradle.sharedServices.registerIfAbsent(
+                "kotlin-build-service-${KotlinGradleBuildServices::class.java.canonicalName}_${KotlinGradleBuildServices::class.java.classLoader.hashCode()}",
+                KotlinGradleBuildServices::class.java
+            ) { service ->
+                service.parameters.rootDir = project.rootProject.rootDir
+                service.parameters.buildDir = project.rootProject.buildDir
 
-        fun registerIfAbsent(project: Project): Provider<KotlinGradleBuildServices> = project.gradle.sharedServices.registerIfAbsent(
-            "kotlin-build-service-${KotlinGradleBuildServices::class.java.canonicalName}_${KotlinGradleBuildServices::class.java.classLoader.hashCode()}",
-            KotlinGradleBuildServices::class.java
-        ) { service ->
-            service.parameters.rootDir = project.rootProject.rootDir
-            service.parameters.buildDir = project.rootProject.buildDir
-
-            val reportingSettings = reportingSettings(project.rootProject)
-            addListeners(project, reportingSettings)
-        }
-
-        fun addListeners(project: Project, reportingSettings: ReportingSettings) {
-            val listeners = project.rootProject.objects.listProperty(ReportStatistics::class.java)
-                .value(listOf<ReportStatistics>())
-
-            reportingSettings.httpReportSettings?.let {
-                listeners.add(
-                    ReportStatisticsByHttp(reportingSettings.httpReportSettings)
-                )
+                val reportingSettings = reportingSettings(project.rootProject)
+                addListeners(project, reportingSettings, kotlinVersion)
             }
 
+        fun addListeners(project: Project, reportingSettings: ReportingSettings, kotlinVersion: String) {
             project.rootProject.extensions.findByName("buildScan")
                 ?.also {
                     if (reportingSettings.buildReportOutputs.contains(BuildReportType.BUILD_SCAN)) {
-                        listeners.add(ReportStatisticsToBuildScan(it as BuildScanExtension))
+                        val listenerRegistryHolder = BuildEventsListenerRegistryHolder.getInstance(project)
+                        listenerRegistryHolder.listenerRegistry.onTaskCompletion(
+                            project.provider {
+                                BuildScanStatisticsListener(
+                                    it as BuildScanExtension,
+                                    project.rootProject.name,
+                                    reportingSettings.buildReportLabel,
+                                    kotlinVersion
+                                )
+                            }
+                        )
                     }
                 }
-
-            if (listeners.get().isNotEmpty()) {
-                val listenerRegistryHolder = BuildEventsListenerRegistryHolder.getInstance(project)
-                val statListener = KotlinBuildStatListener(project.rootProject.name, listeners.get())
-                listenerRegistryHolder.listenerRegistry.onTaskCompletion(project.provider { statListener })
-            }
         }
 
         private val multipleProjectsHolder = KotlinPluginInMultipleProjectsHolder(

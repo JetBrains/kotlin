@@ -274,7 +274,7 @@ class FirJvmSerializerExtension(
                 (grandParent.classKind == ClassKind.INTERFACE || grandParent.classKind == ClassKind.ANNOTATION_CLASS)
     }
 
-    override fun serializeErrorType(type: ConeKotlinErrorType, builder: ProtoBuf.Type.Builder) {
+    override fun serializeErrorType(type: ConeErrorType, builder: ProtoBuf.Type.Builder) {
         if (classBuilderMode === ClassBuilderMode.KAPT3) {
             builder.className = stringTable.getStringIndex(NON_EXISTENT_CLASS_NAME)
             return

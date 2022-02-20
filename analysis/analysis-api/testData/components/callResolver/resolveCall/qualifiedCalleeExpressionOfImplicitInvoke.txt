@@ -6,6 +6,7 @@ KtSuccessCallInfo:
         isSafeNavigation = false
       extensionReceiver = null
       signature = KtVariableLikeSignature:
+        name = f
         receiverType = null
         returnType = kotlin.Function0<kotlin.Unit>
         symbol = val f: kotlin.Function0<kotlin.Unit>

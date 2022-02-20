@@ -17,6 +17,7 @@ import org.gradle.api.attributes.Attribute
 import org.gradle.api.attributes.Category
 import org.gradle.api.attributes.Usage
 import org.gradle.api.attributes.Usage.USAGE_ATTRIBUTE
+import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.file.FileCollection
 import org.gradle.api.internal.artifacts.ArtifactAttributes
 import org.gradle.api.plugins.BasePlugin
@@ -70,8 +71,8 @@ interface KotlinTargetConfigurator<KotlinTargetType : KotlinTarget> {
 }
 
 abstract class AbstractKotlinTargetConfigurator<KotlinTargetType : KotlinTarget>(
-    protected val createDefaultSourceSets: Boolean,
-    protected val createTestCompilation: Boolean
+    internal val createDefaultSourceSets: Boolean,
+    internal val createTestCompilation: Boolean
 ) : KotlinTargetConfigurator<KotlinTargetType> {
 
     protected open fun setupCompilationDependencyFiles(compilation: KotlinCompilation<KotlinCommonOptions>) {
@@ -135,26 +136,29 @@ abstract class AbstractKotlinTargetConfigurator<KotlinTargetType : KotlinTarget>
     ) {
         val project = compilation.target.project
 
-        project.locateOrRegisterTask<ProcessResources>(compilation.processResourcesTaskName) { resourcesTask ->
+        val resourcesDestinationDir = project.file(compilation.output.resourcesDir)
+        val resourcesTask = project.locateOrRegisterTask<ProcessResources>(compilation.processResourcesTaskName) { resourcesTask ->
             resourcesTask.description = "Processes $resourceSet."
             resourcesTask.from(resourceSet)
-            resourcesTask.into(project.file(compilation.output.resourcesDir))
+            resourcesTask.into(resourcesDestinationDir)
         }
+
+        compilation.output.resourcesDirProvider = resourcesTask.map { resourcesDestinationDir }
     }
 
     protected fun createLifecycleTask(compilation: KotlinCompilation<*>) {
         val project = compilation.target.project
 
-        compilation.output.classesDirs.from(project.files().builtBy(compilation.compileAllTaskName))
-
         project.registerTask<DefaultTask>(compilation.compileAllTaskName) {
             it.group = LifecycleBasePlugin.BUILD_GROUP
             it.description = "Assembles outputs for compilation '${compilation.name}' of target '${compilation.target.name}'"
-            it.dependsOn(compilation.compileKotlinTaskName)
-            if (compilation is KotlinCompilationWithResources) {
-                it.dependsOn(compilation.processResourcesTaskName)
-            }
+            it.inputs.files(project.provider {
+                // the task may not be registered at this point, reference it lazily
+                compilation.compileKotlinTaskProvider.map { it.outputs.files }
+            })
+            it.inputs.files(compilation.output.resourcesDirProvider)
         }
+        compilation.output.classesDirs.from(project.files().builtBy(compilation.compileAllTaskName))
     }
 
     override fun defineConfigurationsForTarget(target: KotlinTargetType) {

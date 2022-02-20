@@ -806,6 +806,8 @@ private fun IrDeclaration.renderDeclarationParentFqn(sb: StringBuilder) {
 
 fun IrType.render() = RenderIrElementVisitor().renderType(this)
 
+fun IrSimpleType.render() = (this as IrType).render()
+
 fun IrTypeArgument.render() =
     when (this) {
         is IrStarProjection -> "*"

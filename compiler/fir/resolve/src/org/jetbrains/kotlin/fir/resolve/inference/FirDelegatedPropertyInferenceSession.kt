@@ -34,7 +34,7 @@ class FirDelegatedPropertyInferenceSession(
     private val currentConstraintSystem = components.session.inferenceComponents.createConstraintSystem()
     override val currentConstraintStorage: ConstraintStorage get() = currentConstraintSystem.currentStorage()
 
-    private val unitType: ConeKotlinType = components.session.builtinTypes.unitType.type
+    private val unitType: ConeClassLikeType = components.session.builtinTypes.unitType.type
     private lateinit var resultingConstraintSystem: NewConstraintSystem
 
     private fun ConeKotlinType.containsStubType(): Boolean {

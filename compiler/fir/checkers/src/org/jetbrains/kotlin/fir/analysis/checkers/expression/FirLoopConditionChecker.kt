@@ -17,7 +17,7 @@ object FirLoopConditionChecker : FirLoopExpressionChecker() {
         if (expression is FirErrorLoop) return
         val condition = expression.condition
         withSuppressedDiagnostics(condition, context) {
-            checkCondition(condition, context, reporter)
+            checkCondition(condition, it, reporter)
         }
     }
 }

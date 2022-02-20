@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.backend.wasm
 
 import org.jetbrains.kotlin.backend.common.phaser.PhaseConfig
 import org.jetbrains.kotlin.backend.common.phaser.invokeToplevel
-import org.jetbrains.kotlin.backend.wasm.dce.eliminateDeadDeclarations
 import org.jetbrains.kotlin.backend.wasm.ir2wasm.WasmCompiledModuleFragment
 import org.jetbrains.kotlin.backend.wasm.ir2wasm.WasmModuleFragmentGenerator
 import org.jetbrains.kotlin.backend.wasm.lower.markExportedDeclarations
@@ -15,6 +14,7 @@ import org.jetbrains.kotlin.ir.backend.js.MainModule
 import org.jetbrains.kotlin.ir.backend.js.ModulesStructure
 import org.jetbrains.kotlin.ir.backend.js.loadIr
 import org.jetbrains.kotlin.ir.declarations.IrFactory
+import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.util.ExternalDependenciesGenerator
 import org.jetbrains.kotlin.ir.util.noUnboundLeft
 import org.jetbrains.kotlin.ir.util.patchDeclarationParents
@@ -22,18 +22,17 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.wasm.ir.convertors.WasmIrToBinary
 import org.jetbrains.kotlin.wasm.ir.convertors.WasmIrToText
 import java.io.ByteArrayOutputStream
+import java.io.File
 
 class WasmCompilerResult(val wat: String, val js: String, val wasm: ByteArray)
 
-fun compileWasm(
+fun compileToLoweredIr(
     depsDescriptors: ModulesStructure,
     phaseConfig: PhaseConfig,
     irFactory: IrFactory,
     exportedDeclarations: Set<FqName> = emptySet(),
     propertyLazyInitialization: Boolean,
-    emitNameSection: Boolean = false,
-    dceEnabled: Boolean = false,
-): WasmCompilerResult {
+): Pair<List<IrModuleFragment>, WasmBackendContext> {
     val mainModule = depsDescriptors.mainModule
     val configuration = depsDescriptors.compilerConfiguration
     val (moduleFragment, dependencyModules, irBuiltIns, symbolTable, deserializer) = loadIr(
@@ -56,28 +55,31 @@ fun compileWasm(
         ExternalDependenciesGenerator(symbolTable, listOf(deserializer)).generateUnboundSymbolsAsDependencies()
     }
 
-    val irFiles = allModules.flatMap { it.files }
-    moduleFragment.files.clear()
-    moduleFragment.files += irFiles
-
     // Create stubs
     ExternalDependenciesGenerator(symbolTable, listOf(deserializer)).generateUnboundSymbolsAsDependencies()
-    moduleFragment.patchDeclarationParents()
+    allModules.forEach { it.patchDeclarationParents() }
 
     deserializer.postProcess()
     symbolTable.noUnboundLeft("Unbound symbols at the end of linker")
 
-    moduleFragment.files.forEach { irFile -> markExportedDeclarations(context, irFile, exportedDeclarations) }
+    for (module in allModules)
+        for (file in module.files)
+            markExportedDeclarations(context, file, exportedDeclarations)
 
-    wasmPhases.invokeToplevel(phaseConfig, context, moduleFragment)
+    wasmPhases.invokeToplevel(phaseConfig, context, allModules)
 
-    if (dceEnabled) {
-        eliminateDeadDeclarations(listOf(moduleFragment), context)
-    }
+    return Pair(allModules, context)
+}
 
-    val compiledWasmModule = WasmCompiledModuleFragment(context.irBuiltIns)
-    val codeGenerator = WasmModuleFragmentGenerator(context, compiledWasmModule, allowIncompleteImplementations = dceEnabled)
-    codeGenerator.generateModule(moduleFragment)
+fun compileWasm(
+    allModules: List<IrModuleFragment>,
+    backendContext: WasmBackendContext,
+    emitNameSection: Boolean = false,
+    allowIncompleteImplementations: Boolean = false,
+): WasmCompilerResult {
+    val compiledWasmModule = WasmCompiledModuleFragment(backendContext.irBuiltIns)
+    val codeGenerator = WasmModuleFragmentGenerator(backendContext, compiledWasmModule, allowIncompleteImplementations = allowIncompleteImplementations)
+    allModules.forEach { codeGenerator.generateModule(it) }
 
     val linkedModule = compiledWasmModule.linkWasmCompiledFragments()
     val watGenerator = WasmIrToText()
@@ -87,7 +89,7 @@ fun compileWasm(
     val js = compiledWasmModule.generateJs()
 
     val os = ByteArrayOutputStream()
-    WasmIrToBinary(os, linkedModule, moduleDescriptor.name.asString(), emitNameSection).appendWasmModule()
+    WasmIrToBinary(os, linkedModule, allModules.last().descriptor.name.asString(), emitNameSection).appendWasmModule()
     val byteArray = os.toByteArray()
 
     return WasmCompilerResult(
@@ -97,36 +99,79 @@ fun compileWasm(
     )
 }
 
-
 fun WasmCompiledModuleFragment.generateJs(): String {
     //language=js
     val runtime = """
-    var wasmInstance = null;
     
     const externrefBoxes = new WeakMap();
-    
-    const runtime = {
-        identity(x) {
-            return x;
-        },
-
-        println(valueAddr) {
-            console.log(">>>  " + importStringFromWasm(valueAddr));
-        }
-    };
-    
-    function importStringFromWasm(addr) {
-        const mem16 = new Uint16Array(wasmInstance.exports.memory.buffer);
-        const mem32 = new Int32Array(wasmInstance.exports.memory.buffer);
-        const len = mem32[addr / 4];
-        const str_start_addr = (addr + 4) / 2;
-        const slice = mem16.slice(str_start_addr, str_start_addr + len);
-        return String.fromCharCode.apply(null, slice);
-    }
     """.trimIndent()
 
+    val jsCodeBody = jsFuns.joinToString(",\n") { "\"" + it.importName + "\" : " + it.jsCode }
+    val jsCodeBodyIndented = jsCodeBody.prependIndent("    ")
     val jsCode =
-        "\nconst js_code = {${jsFuns.joinToString(",\n") { "\"" + it.importName + "\" : " + it.jsCode }}};"
+        "\nconst js_code = {\n$jsCodeBodyIndented\n};\n"
 
     return runtime + jsCode
+}
+
+enum class WasmLoaderKind {
+    D8,
+    NODE,
+    BROWSER,
+}
+
+fun generateJsWasmLoader(kind: WasmLoaderKind, wasmFilePath: String, externalJs: String): String {
+    val instantiation = when (kind) {
+        WasmLoaderKind.D8 ->
+            """
+                const wasmModule = new WebAssembly.Module(read('$wasmFilePath', 'binary'));
+                const wasmInstance = new WebAssembly.Instance(wasmModule, { js_code });
+            """.trimIndent()
+
+        WasmLoaderKind.NODE ->
+            """
+                const fs = require('fs');
+                var path = require('path');
+                const wasmBuffer = fs.readFileSync(path.resolve(__dirname, './$wasmFilePath'));
+                const wasmModule = new WebAssembly.Module(wasmBuffer);
+                const wasmInstance = new WebAssembly.Instance(wasmModule, { js_code });
+            """.trimIndent()
+
+        WasmLoaderKind.BROWSER ->
+            """
+                const { wasmInstance } = await WebAssembly.instantiateStreaming(fetch("$wasmFilePath"), { js_code });
+            """.trimIndent()
+    }
+
+    val init =
+        """
+            
+            const wasmExports = wasmInstance.exports;
+            wasmExports.__init();
+            wasmExports.startUnitTests?.();
+            
+        """.trimIndent()
+
+    val export = when (kind) {
+        WasmLoaderKind.D8, WasmLoaderKind.BROWSER ->
+            "export default wasmExports;\n"
+
+        WasmLoaderKind.NODE ->
+            "module.exports = wasmExports;\n"
+    }
+
+    return externalJs + instantiation + init + export
+}
+
+fun writeCompilationResult(
+    result: WasmCompilerResult,
+    dir: File,
+    loaderKind: WasmLoaderKind,
+    fileNameBase: String = "index",
+) {
+    dir.mkdirs()
+    File(dir, "$fileNameBase.wat").writeText(result.wat)
+    File(dir, "$fileNameBase.wasm").writeBytes(result.wasm)
+    val jsWithLoader = generateJsWasmLoader(loaderKind, "./$fileNameBase.wasm", result.js)
+    File(dir, "$fileNameBase.js").writeText(jsWithLoader)
 }

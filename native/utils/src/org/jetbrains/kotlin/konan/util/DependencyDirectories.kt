@@ -8,9 +8,8 @@ package org.jetbrains.kotlin.konan.util
 import java.io.File
 
 object DependencyDirectories {
-    val localKonanDir: File by lazy {
-        File(System.getenv("KONAN_DATA_DIR") ?: (System.getProperty("user.home") + File.separator + ".konan"))
-    }
+    val localKonanDir: File
+        get() = File(System.getenv("KONAN_DATA_DIR") ?: (System.getProperty("user.home") + File.separator + ".konan"))
 
     @JvmStatic
     val defaultDependenciesRoot: File

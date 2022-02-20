@@ -76,19 +76,19 @@ fun case_3(b: Boolean) {
     val y = if (b) x else null
 
     if (false || false || false || false || y !== null) {
-        val z = <!DEBUG_INFO_EXPRESSION_TYPE("case_3.<anonymous>.<no name provided>?")!><!UNSAFE_IMPLICIT_INVOKE_CALL!>y<!>()<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("(() -> case_3.<anonymous>.<no name provided>?)?")!>y<!><!UNSAFE_CALL!>.<!>equals(null)
-        <!DEBUG_INFO_EXPRESSION_TYPE("(() -> case_3.<anonymous>.<no name provided>?)?")!>y<!>.propT
-        <!DEBUG_INFO_EXPRESSION_TYPE("(() -> case_3.<anonymous>.<no name provided>?)?")!>y<!><!UNSAFE_CALL!>.<!>propAny
-        <!DEBUG_INFO_EXPRESSION_TYPE("(() -> case_3.<anonymous>.<no name provided>?)?")!>y<!>.propNullableT
-        <!DEBUG_INFO_EXPRESSION_TYPE("(() -> case_3.<anonymous>.<no name provided>?)?")!>y<!>.propNullableAny
-        <!DEBUG_INFO_EXPRESSION_TYPE("(() -> case_3.<anonymous>.<no name provided>?)?")!>y<!>.funT()
-        <!DEBUG_INFO_EXPRESSION_TYPE("(() -> case_3.<anonymous>.<no name provided>?)?")!>y<!><!UNSAFE_CALL!>.<!>funAny()
-        <!DEBUG_INFO_EXPRESSION_TYPE("(() -> case_3.<anonymous>.<no name provided>?)?")!>y<!>.funNullableT()
-        <!DEBUG_INFO_EXPRESSION_TYPE("(() -> case_3.<anonymous>.<no name provided>?)?")!>y<!>.funNullableAny()
+        val z = <!DEBUG_INFO_EXPRESSION_TYPE("case_3.`<anonymous>`.`<no name provided>`?")!><!UNSAFE_IMPLICIT_INVOKE_CALL!>y<!>()<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("(() -> case_3.`<anonymous>`.`<no name provided>`?)?")!>y<!><!UNSAFE_CALL!>.<!>equals(null)
+        <!DEBUG_INFO_EXPRESSION_TYPE("(() -> case_3.`<anonymous>`.`<no name provided>`?)?")!>y<!>.propT
+        <!DEBUG_INFO_EXPRESSION_TYPE("(() -> case_3.`<anonymous>`.`<no name provided>`?)?")!>y<!><!UNSAFE_CALL!>.<!>propAny
+        <!DEBUG_INFO_EXPRESSION_TYPE("(() -> case_3.`<anonymous>`.`<no name provided>`?)?")!>y<!>.propNullableT
+        <!DEBUG_INFO_EXPRESSION_TYPE("(() -> case_3.`<anonymous>`.`<no name provided>`?)?")!>y<!>.propNullableAny
+        <!DEBUG_INFO_EXPRESSION_TYPE("(() -> case_3.`<anonymous>`.`<no name provided>`?)?")!>y<!>.funT()
+        <!DEBUG_INFO_EXPRESSION_TYPE("(() -> case_3.`<anonymous>`.`<no name provided>`?)?")!>y<!><!UNSAFE_CALL!>.<!>funAny()
+        <!DEBUG_INFO_EXPRESSION_TYPE("(() -> case_3.`<anonymous>`.`<no name provided>`?)?")!>y<!>.funNullableT()
+        <!DEBUG_INFO_EXPRESSION_TYPE("(() -> case_3.`<anonymous>`.`<no name provided>`?)?")!>y<!>.funNullableAny()
 
         if (z != null || false) {
-            <!DEBUG_INFO_EXPRESSION_TYPE("case_3.<anonymous>.<no name provided> & case_3.<anonymous>.<no name provided>?"), DEBUG_INFO_SMARTCAST!>z<!>.a
+            <!DEBUG_INFO_EXPRESSION_TYPE("case_3.`<anonymous>`.`<no name provided>` & case_3.`<anonymous>`.`<no name provided>`?"), DEBUG_INFO_SMARTCAST!>z<!>.a
         }
     }
 }
@@ -283,21 +283,21 @@ fun case_11(b: Boolean) {
     val y = if (b) x else null
 
     if (y === null && true) else {
-        val z = <!DEBUG_INFO_EXPRESSION_TYPE("case_11.<anonymous>.<no name provided>?")!><!UNSAFE_IMPLICIT_INVOKE_CALL!>y<!>()<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("(() -> case_11.<anonymous>.<no name provided>?)?")!>y<!><!UNSAFE_CALL!>.<!>equals(null)
-        <!DEBUG_INFO_EXPRESSION_TYPE("(() -> case_11.<anonymous>.<no name provided>?)?")!>y<!>.propT
-        <!DEBUG_INFO_EXPRESSION_TYPE("(() -> case_11.<anonymous>.<no name provided>?)?")!>y<!><!UNSAFE_CALL!>.<!>propAny
-        <!DEBUG_INFO_EXPRESSION_TYPE("(() -> case_11.<anonymous>.<no name provided>?)?")!>y<!>.propNullableT
-        <!DEBUG_INFO_EXPRESSION_TYPE("(() -> case_11.<anonymous>.<no name provided>?)?")!>y<!>.propNullableAny
-        <!DEBUG_INFO_EXPRESSION_TYPE("(() -> case_11.<anonymous>.<no name provided>?)?")!>y<!>.funT()
-        <!DEBUG_INFO_EXPRESSION_TYPE("(() -> case_11.<anonymous>.<no name provided>?)?")!>y<!><!UNSAFE_CALL!>.<!>funAny()
-        <!DEBUG_INFO_EXPRESSION_TYPE("(() -> case_11.<anonymous>.<no name provided>?)?")!>y<!>.funNullableT()
-        <!DEBUG_INFO_EXPRESSION_TYPE("(() -> case_11.<anonymous>.<no name provided>?)?")!>y<!>.funNullableAny()
+        val z = <!DEBUG_INFO_EXPRESSION_TYPE("case_11.`<anonymous>`.`<no name provided>`?")!><!UNSAFE_IMPLICIT_INVOKE_CALL!>y<!>()<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("(() -> case_11.`<anonymous>`.`<no name provided>`?)?")!>y<!><!UNSAFE_CALL!>.<!>equals(null)
+        <!DEBUG_INFO_EXPRESSION_TYPE("(() -> case_11.`<anonymous>`.`<no name provided>`?)?")!>y<!>.propT
+        <!DEBUG_INFO_EXPRESSION_TYPE("(() -> case_11.`<anonymous>`.`<no name provided>`?)?")!>y<!><!UNSAFE_CALL!>.<!>propAny
+        <!DEBUG_INFO_EXPRESSION_TYPE("(() -> case_11.`<anonymous>`.`<no name provided>`?)?")!>y<!>.propNullableT
+        <!DEBUG_INFO_EXPRESSION_TYPE("(() -> case_11.`<anonymous>`.`<no name provided>`?)?")!>y<!>.propNullableAny
+        <!DEBUG_INFO_EXPRESSION_TYPE("(() -> case_11.`<anonymous>`.`<no name provided>`?)?")!>y<!>.funT()
+        <!DEBUG_INFO_EXPRESSION_TYPE("(() -> case_11.`<anonymous>`.`<no name provided>`?)?")!>y<!><!UNSAFE_CALL!>.<!>funAny()
+        <!DEBUG_INFO_EXPRESSION_TYPE("(() -> case_11.`<anonymous>`.`<no name provided>`?)?")!>y<!>.funNullableT()
+        <!DEBUG_INFO_EXPRESSION_TYPE("(() -> case_11.`<anonymous>`.`<no name provided>`?)?")!>y<!>.funNullableAny()
 
         if (z != null || b) {
 
         } else {
-            <!DEBUG_INFO_CONSTANT, DEBUG_INFO_EXPRESSION_TYPE("case_11.<anonymous>.<no name provided>? & kotlin.Nothing?")!>z<!>
+            <!DEBUG_INFO_CONSTANT, DEBUG_INFO_EXPRESSION_TYPE("case_11.`<anonymous>`.`<no name provided>`? & kotlin.Nothing?")!>z<!>
         }
     }
 }

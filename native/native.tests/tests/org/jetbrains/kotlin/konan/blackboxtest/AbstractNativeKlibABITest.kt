@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.konan.blackboxtest.support.util.*
 import org.junit.jupiter.api.Tag
 import java.io.File
 
-@Tag("klib")
+@Tag("klib-abi")
 abstract class AbstractNativeKlibABITest : AbstractNativeSimpleTest() {
     private val producedKlibs = linkedMapOf<KLIB, Collection<File>>() // IMPORTANT: The order makes sense!
 
@@ -88,7 +88,7 @@ abstract class AbstractNativeKlibABITest : AbstractNativeSimpleTest() {
         )
 
         val compilationResult = compilation.result.assertSuccess() // <-- trigger compilation
-        val executable = TestExecutable(executableFile, compilationResult.loggedData)
+        val executable = TestExecutable.fromCompilationResult(testCase, compilationResult)
 
         runExecutableAndVerify(testCase, executable) // <-- run executable and verify
     }

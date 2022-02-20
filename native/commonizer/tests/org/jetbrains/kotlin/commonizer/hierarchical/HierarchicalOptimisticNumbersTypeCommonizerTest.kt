@@ -707,12 +707,18 @@ class HierarchicalOptimisticNumbersTypeCommonizerTest : AbstractInlineSourcesCom
         val result = commonize {
             outputTarget("(a, b)")
             setting(OptimisticNumberCommonizationEnabledKey, true)
+            registerFakeStdlibIntegersDependency("(a, b)")
             registerDependency("a", "b", "(a, b)") { unsignedIntegers() }
             simpleSingleSourceTarget("a", "val x: UInt = null!!")
             simpleSingleSourceTarget("b", "val x: ULong = null!!")
         }
 
-        result.assertCommonized("(a, b)", "expect val x: kotlin.UInt")
+        result.assertCommonized(
+            "(a, b)", """
+            @UnsafeNumber(["a: kotlin.UInt", "b: kotlin.ULong"])
+            expect val x: kotlin.UInt
+            """.trimIndent()
+        )
     }
 
     fun `test property with aliased number return type`() {
@@ -788,6 +794,77 @@ class HierarchicalOptimisticNumbersTypeCommonizerTest : AbstractInlineSourcesCom
                 @UnsafeNumber(["a: kotlin.Short", "b: kotlin.Int" ,"c: kotlin.Int", "d: kotlin.Int","e: kotlin.Long", "f: kotlin.Int"])
                 typealias X = Short
             """.trimIndent()
+        )
+    }
+
+    // return types, unlike parameter types, don't participate in function signature, and therefore can be commonized optimistically
+    fun `test optimistic commonization in function return types`() {
+        val result = commonize {
+            outputTarget("(a, b)")
+            setting(OptimisticNumberCommonizationEnabledKey, true)
+            registerFakeStdlibIntegersDependency(("(a, b)"))
+
+            "a" withSource """
+                fun explicitReturnType(): Short {
+                    return 42
+                }
+                
+                fun implicitReturnType() = 42
+            """.trimIndent()
+
+            "b" withSource """
+                fun explicitReturnType(): Long {
+                    return 42L
+                }
+                
+                fun implicitReturnType() = 42L
+            """.trimIndent()
+        }
+
+        result.assertCommonized(
+            "(a, b)", """
+            import kotlinx.cinterop.*
+            
+            @UnsafeNumber(["a: kotlin.Short", "b: kotlin.Long"])
+            expect fun explicitReturnType(): Short
+            
+            @UnsafeNumber(["a: kotlin.Int", "b: kotlin.Long"])
+            expect fun implicitReturnType(): Int
+        """.trimIndent()
+        )
+    }
+
+    fun `test optimistic commonization in property return types`() {
+        val result = commonize {
+            outputTarget("(a, b)")
+            setting(OptimisticNumberCommonizationEnabledKey, true)
+            registerFakeStdlibIntegersDependency(("(a, b)"))
+
+            "a" withSource """
+                val explicitReturnType: Short
+                    get() = 42
+                
+                val implicitReturnType = 42
+            """.trimIndent()
+
+            "b" withSource """
+                val explicitReturnType: Long 
+                    get() = 42L
+                
+                val implicitReturnType = 42L
+            """.trimIndent()
+        }
+
+        result.assertCommonized(
+            "(a, b)", """
+            import kotlinx.cinterop.*
+            
+            @UnsafeNumber(["a: kotlin.Short", "b: kotlin.Long"])
+            expect val explicitReturnType: Short
+            
+            @UnsafeNumber(["a: kotlin.Int", "b: kotlin.Long"])
+            expect val implicitReturnType: Int
+        """.trimIndent()
         )
     }
 }

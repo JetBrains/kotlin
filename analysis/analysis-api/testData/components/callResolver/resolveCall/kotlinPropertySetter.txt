@@ -6,6 +6,7 @@ KtSuccessCallInfo:
         isSafeNavigation = false
       extensionReceiver = null
       signature = KtVariableLikeSignature:
+        name = foo
         receiverType = null
         returnType = kotlin.Int
         symbol = var foo: kotlin.Int

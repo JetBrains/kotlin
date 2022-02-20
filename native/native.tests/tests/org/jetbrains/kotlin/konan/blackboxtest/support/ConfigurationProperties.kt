@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.konan.blackboxtest.support
 
+import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.fail
 
 /*************** Process-level system properties ***************/
@@ -23,10 +24,18 @@ internal enum class ProcessLevelProperty(shortName: String) {
 @Target(AnnotationTarget.CLASS)
 internal annotation class EnforcedProperty(val property: ClassLevelProperty, val propertyValue: String)
 
+@Target(AnnotationTarget.CLASS)
+internal annotation class EnforcedHostTarget
+
 internal class EnforcedProperties(testClass: Class<*>) {
-    private val enforcedAnnotations: Map<ClassLevelProperty, String> = testClass.annotations
-        .filterIsInstance<EnforcedProperty>()
-        .associate { it.property to it.propertyValue }
+    private val enforcedAnnotations: Map<ClassLevelProperty, String> = buildMap {
+        testClass.annotations.forEach { annotation ->
+            when (annotation) {
+                is EnforcedProperty -> this[annotation.property] = annotation.propertyValue
+                is EnforcedHostTarget -> this[ClassLevelProperty.TEST_TARGET] = HostManager.host.name
+            }
+        }
+    }
 
     operator fun get(propertyType: ClassLevelProperty): String? = enforcedAnnotations[propertyType]
 }
@@ -38,6 +47,7 @@ internal enum class ClassLevelProperty(shortName: String) {
     MEMORY_MODEL("memoryModel"),
     USE_THREAD_STATE_CHECKER("useThreadStateChecker"),
     GC_TYPE("gcType"),
+    GC_SCHEDULER("gcScheduler"),
     CACHE_MODE("cacheMode"),
     EXECUTION_TIMEOUT("executionTimeout");
 

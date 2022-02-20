@@ -461,10 +461,13 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
         }
 
         augmentedArraySetCall.configure {
-            +field("assignCall", functionCall)
-            +field("setGetBlock", block)
+            +field("lhsGetCall", functionCall)
+            +field("rhs", expression)
+            +field("rhs2", expression)
             +field("operation", operationType)
+            // Used for resolution errors reporting in case
             +field("calleeReference", reference, withReplace = true)
+            +field("arrayAccessSource", sourceElementType, nullable = true)
         }
 
         classReferenceExpression.configure {
@@ -506,7 +509,7 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
             // Special node that might be used as a reference to receiver of a safe call after null check
             +field("checkedSubjectRef", safeCallCheckedSubjectReferenceType)
             // One that uses checkedReceiver as a receiver
-            +field("regularQualifiedAccess", qualifiedAccess, withReplace = true).withTransform()
+            +field("selector", statement, withReplace = true).withTransform()
         }
 
         checkedSafeCallSubject.configure {
@@ -638,6 +641,11 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
             +valueParameters
             +returnTypeRef
             +booleanField("isSuspend")
+        }
+
+        intersectionTypeRef.configure {
+            +field("leftType", typeRef, nullable = true)
+            +field("rightType", typeRef, nullable = true)
         }
 
         thisReceiverExpression.configure {

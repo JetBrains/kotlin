@@ -86,6 +86,9 @@ val Project.testOutputExternal
 val Project.cacheRedirectorEnabled
     get() = findProperty("cacheRedirectorEnabled")?.toString()?.toBoolean() ?: false
 
+val Project.compileOnlyTests: Boolean
+    get() = hasProperty("test_compile_only")
+
 fun Project.redirectIfEnabled(url: String):String = if (cacheRedirectorEnabled) {
     val base = URL(url)
     "https://cache-redirector.jetbrains.com/${base.host}/${base.path}"
@@ -116,18 +119,20 @@ fun File.dependencies() =
 
 
 fun Task.dependsOnPlatformLibs() {
-    (this as? KonanTest)?.run {
-        project.file(source).dependencies().forEach {
-            this.dependsOn(":kotlin-native:platformLibs:${project.testTarget.name}-$it")
-            //this.dependsOn(":kotlin-native:platformLibs:${project.testTarget.name}-${it}Cache")
-        }
-        if (this is KonanLinkTest) {
-            project.file(lib).dependencies().forEach {
+    if (!project.hasPlatformLibs) {
+        (this as? KonanTest)?.run {
+            project.file(source).dependencies().forEach {
                 this.dependsOn(":kotlin-native:platformLibs:${project.testTarget.name}-$it")
+                //this.dependsOn(":kotlin-native:platformLibs:${project.testTarget.name}-${it}Cache")
             }
-        }
-        this.dependsOnDist()
-    } ?: error("unsupported task : $this")
+            if (this is KonanLinkTest) {
+                project.file(lib).dependencies().forEach {
+                    this.dependsOn(":kotlin-native:platformLibs:${project.testTarget.name}-$it")
+                }
+            }
+            this.dependsOnDist()
+        } ?: error("unsupported task : $this")
+    }
 }
 
 @Suppress("UNCHECKED_CAST")
@@ -247,6 +252,20 @@ fun Task.dependsOnDist() {
     val target = project.testTarget
     if (project.isDefaultNativeHome) {
         dependsOn(":kotlin-native:dist")
+        if (target != HostManager.host) {
+            // if a test_target property is set then tests should depend on a crossDist
+            // otherwise, runtime components would not be build for a target.
+            dependsOn(":kotlin-native:${target.name}CrossDist")
+        }
+    } else {
+        if (!project.isCrossDist) {
+            dependsOn(":kotlin-native:${target.name}CrossDist")
+        }
+    }
+}
+
+fun Task.dependsOnCrossDist(target: KonanTarget) {
+    if (project.isDefaultNativeHome) {
         if (target != HostManager.host) {
             // if a test_target property is set then tests should depend on a crossDist
             // otherwise, runtime components would not be build for a target.

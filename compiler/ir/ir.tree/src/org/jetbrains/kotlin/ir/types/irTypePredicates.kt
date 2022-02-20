@@ -9,12 +9,14 @@ import org.jetbrains.kotlin.builtins.PrimitiveType
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.builtins.UnsignedType
 import org.jetbrains.kotlin.ir.declarations.IrClass
+import org.jetbrains.kotlin.ir.declarations.IrPackageFragment
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
 import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.ir.util.hasEqualFqName
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.FqNameUnsafe
+import org.jetbrains.kotlin.name.Name
 
 @Suppress("ObjectPropertyName")
 object IdSignatureValues {
@@ -55,8 +57,13 @@ fun getPublicSignature(packageFqName: FqName, name: String) =
 private fun IrType.isClassType(signature: IdSignature.CommonSignature, hasQuestionMark: Boolean? = null): Boolean {
     if (this !is IrSimpleType) return false
     if (hasQuestionMark != null && this.hasQuestionMark != hasQuestionMark) return false
-    return signature == classifier.signature
+    return signature == classifier.signature ||
+            classifier.owner.let { it is IrClass && it.hasFqNameEqualToSignature(signature) }
 }
+
+private fun IrClass.hasFqNameEqualToSignature(signature: IdSignature.CommonSignature): Boolean =
+    name.asString() == signature.shortName &&
+            hasEqualFqName(FqName("${signature.packageFqName}.${signature.declarationFqName}"))
 
 fun IrClassifierSymbol.isClassWithFqName(fqName: FqNameUnsafe): Boolean =
     this is IrClassSymbol && classFqNameEquals(this, fqName)
@@ -70,6 +77,17 @@ private val idSignatureToPrimitiveType: Map<IdSignature.CommonSignature, Primiti
     PrimitiveType.values().associateBy {
         getPublicSignature(StandardNames.BUILT_INS_PACKAGE_FQ_NAME, it.typeName.asString())
     }
+
+private val shortNameToPrimitiveType: Map<Name, PrimitiveType> =
+    PrimitiveType.values().associateBy(PrimitiveType::typeName)
+
+private val idSignatureToUnsignedType: Map<IdSignature.CommonSignature, UnsignedType> =
+    UnsignedType.values().associateBy {
+        getPublicSignature(StandardNames.BUILT_INS_PACKAGE_FQ_NAME, it.typeName.asString())
+    }
+
+private val shortNameToUnsignedType: Map<Name, UnsignedType> =
+    UnsignedType.values().associateBy(UnsignedType::typeName)
 
 val primitiveArrayTypesSignatures: Map<PrimitiveType, IdSignature.CommonSignature> =
     PrimitiveType.values().associateWith {
@@ -97,23 +115,24 @@ fun IrType.isPrimitiveType(hasQuestionMark: Boolean = false): Boolean =
 fun IrType.isNullablePrimitiveType(): Boolean = isPrimitiveType(true)
 
 fun IrType.getPrimitiveType(): PrimitiveType? =
-    if (this is IrSimpleType && classifier is IrClassSymbol)
-        idSignatureToPrimitiveType[classifier.signature]
-    else null
+    getPrimitiveOrUnsignedType(idSignatureToPrimitiveType, shortNameToPrimitiveType)
 
 fun IrType.isUnsignedType(hasQuestionMark: Boolean = false): Boolean =
     this is IrSimpleType && hasQuestionMark == this.hasQuestionMark && getUnsignedType() != null
 
 fun IrType.getUnsignedType(): UnsignedType? =
-    if (this is IrSimpleType && classifier is IrClassSymbol)
-        when (classifier.signature) {
-            IdSignatureValues.uByte -> UnsignedType.UBYTE
-            IdSignatureValues.uShort -> UnsignedType.USHORT
-            IdSignatureValues.uInt -> UnsignedType.UINT
-            IdSignatureValues.uLong -> UnsignedType.ULONG
-            else -> null
-        }
-    else null
+    getPrimitiveOrUnsignedType(idSignatureToUnsignedType, shortNameToUnsignedType)
+
+fun <T : Enum<T>> IrType.getPrimitiveOrUnsignedType(byIdSignature: Map<IdSignature.CommonSignature, T>, byShortName: Map<Name, T>): T? {
+    if (this !is IrSimpleType) return null
+    val symbol = classifier as? IrClassSymbol ?: return null
+    if (symbol.signature != null) return byIdSignature[symbol.signature]
+
+    val klass = symbol.owner
+    val parent = klass.parent
+    if (parent !is IrPackageFragment || parent.fqName != StandardNames.BUILT_INS_PACKAGE_FQ_NAME) return null
+    return byShortName[klass.name]
+}
 
 fun IrType.isMarkedNullable() = (this as? IrSimpleType)?.hasQuestionMark ?: false
 
@@ -151,8 +170,6 @@ fun IrType.isLongArray(): Boolean = isNotNullClassType(primitiveArrayTypesSignat
 fun IrType.isFloatArray(): Boolean = isNotNullClassType(primitiveArrayTypesSignatures[PrimitiveType.FLOAT]!!)
 fun IrType.isDoubleArray(): Boolean = isNotNullClassType(primitiveArrayTypesSignatures[PrimitiveType.DOUBLE]!!)
 
-// TODO: remove this method using FqNames.
-//  Need to refactor declarationBuilders.kt: visibilty is known, need to add info about package in IrFactory.buildClass (similar to name).
 fun IrType.isClassType(fqName: FqNameUnsafe, hasQuestionMark: Boolean): Boolean {
     if (this !is IrSimpleType) return false
     if (this.hasQuestionMark != hasQuestionMark) return false

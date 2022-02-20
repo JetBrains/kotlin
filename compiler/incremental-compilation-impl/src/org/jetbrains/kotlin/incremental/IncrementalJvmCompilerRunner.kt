@@ -52,6 +52,8 @@ import org.jetbrains.kotlin.incremental.ClasspathChanges.ClasspathSnapshotEnable
 import org.jetbrains.kotlin.incremental.ClasspathChanges.ClasspathSnapshotEnabled.NotAvailableForNonIncrementalRun
 import org.jetbrains.kotlin.incremental.ClasspathChanges.NotAvailableForJSCompiler
 import org.jetbrains.kotlin.incremental.classpathDiff.*
+import org.jetbrains.kotlin.incremental.classpathDiff.ClasspathChangesComputer.computeChangedAndImpactedSet
+import org.jetbrains.kotlin.incremental.classpathDiff.ClasspathSnapshotShrinker.shrinkClasspath
 import org.jetbrains.kotlin.incremental.components.ExpectActualTracker
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.incremental.multiproject.EmptyModulesApiHistory
@@ -219,8 +221,8 @@ class IncrementalJvmCompilerRunner(
 
     // Used by `calculateSourcesToCompileImpl` and `performWorkAfterSuccessfulCompilation` methods below.
     // Thread safety: There is no concurrent access to these variables.
-    private var currentClasspathSnapshot: List<ClassSnapshotWithHash>? = null
-    private var shrunkCurrentClasspathAgainstPreviousLookups: List<ClassSnapshotWithHash>? = null
+    private var currentClasspathSnapshot: List<AccessibleClassSnapshot>? = null
+    private var shrunkCurrentClasspathAgainstPreviousLookups: List<AccessibleClassSnapshot>? = null
 
     private fun calculateSourcesToCompileImpl(
         caches: IncrementalJvmCachesManager,
@@ -245,9 +247,15 @@ class IncrementalJvmCompilerRunner(
                 }
                 check(shrunkCurrentClasspathAgainstPreviousLookups == null)
                 shrunkCurrentClasspathAgainstPreviousLookups = reporter.measure(BuildTime.SHRINK_CURRENT_CLASSPATH_SNAPSHOT) {
-                    ClasspathSnapshotShrinker.shrink(currentClasspathSnapshot!!, caches.lookupCache, reporter)
+                    shrinkClasspath(
+                        currentClasspathSnapshot!!, caches.lookupCache,
+                        ClasspathSnapshotShrinker.MetricsReporter(
+                            reporter,
+                            BuildTime.GET_LOOKUP_SYMBOLS, BuildTime.FIND_REFERENCED_CLASSES, BuildTime.FIND_TRANSITIVELY_REFERENCED_CLASSES
+                        )
+                    )
                 }
-                ClasspathChangesComputer.computeChangedAndImpactedSet(
+                computeChangedAndImpactedSet(
                     shrunkCurrentClasspathAgainstPreviousLookups!!,
                     classpathChanges.classpathSnapshotFiles.shrunkPreviousClasspathSnapshotFile,
                     reporter
@@ -256,7 +264,14 @@ class IncrementalJvmCompilerRunner(
             is NotAvailableDueToMissingClasspathSnapshot -> ChangesEither.Unknown(BuildAttribute.CLASSPATH_SNAPSHOT_NOT_FOUND)
             is NotAvailableForNonIncrementalRun -> ChangesEither.Unknown(BuildAttribute.UNKNOWN_CHANGES_IN_GRADLE_INPUTS)
             is ClasspathSnapshotDisabled -> reporter.measure(BuildTime.IC_ANALYZE_CHANGES_IN_DEPENDENCIES) {
-                val lastBuildInfo = BuildInfo.read(lastBuildInfoFile) ?: return CompilationMode.Rebuild(BuildAttribute.IC_IS_NOT_ENABLED)
+                if (!withSnapshot && !buildHistoryFile.isFile) {
+                    // If the previous build was a Gradle cache hit, the build history file must have been deleted as it is marked as
+                    // @LocalState in the Gradle task. Therefore, this compilation will need to run non-incrementally.
+                    // (Note that buildHistoryFile is outside workingDir. We don't need to perform the same check for files inside
+                    // workingDir as workingDir is an @OutputDirectory, so the files must be present in an incremental build.)
+                    return CompilationMode.Rebuild(BuildAttribute.NO_BUILD_HISTORY)
+                }
+                val lastBuildInfo = BuildInfo.read(lastBuildInfoFile)
                 reporter.reportVerbose { "Last Kotlin Build info -- $lastBuildInfo" }
                 val scopes = caches.lookupCache.lookupSymbols.map { it.scope.ifBlank { it.name } }.distinct()
 

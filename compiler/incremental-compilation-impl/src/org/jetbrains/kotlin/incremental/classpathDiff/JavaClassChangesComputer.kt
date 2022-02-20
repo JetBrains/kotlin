@@ -18,11 +18,11 @@ object JavaClassChangesComputer {
      * Each list must not contain duplicate classes (having the same [JvmClassName]/[ClassId]).
      */
     fun compute(
-        currentJavaClassSnapshots: List<RegularJavaClassSnapshot>,
-        previousJavaClassSnapshots: List<RegularJavaClassSnapshot>
+        currentJavaClassSnapshots: List<JavaClassSnapshot>,
+        previousJavaClassSnapshots: List<JavaClassSnapshot>
     ): ChangeSet {
-        val currentClasses: Map<ClassId, RegularJavaClassSnapshot> = currentJavaClassSnapshots.associateBy { it.classId }
-        val previousClasses: Map<ClassId, RegularJavaClassSnapshot> = previousJavaClassSnapshots.associateBy { it.classId }
+        val currentClasses: Map<ClassId, JavaClassSnapshot> = currentJavaClassSnapshots.associateBy { it.classId }
+        val previousClasses: Map<ClassId, JavaClassSnapshot> = previousJavaClassSnapshots.associateBy { it.classId }
 
         // Note: Added classes can also impact recompilation.
         // For example, suppose a source file uses `SomeClass` through `*` imports:
@@ -50,28 +50,46 @@ object JavaClassChangesComputer {
      * The two classes must have the same [ClassId].
      */
     private fun collectClassChanges(
-        currentClassSnapshot: RegularJavaClassSnapshot,
-        previousClassSnapshot: RegularJavaClassSnapshot,
+        currentClassSnapshot: JavaClassSnapshot,
+        previousClassSnapshot: JavaClassSnapshot,
         changes: ChangeSet.Collector
     ) {
+        if (currentClassSnapshot.classAbiHash == previousClassSnapshot.classAbiHash) return
+
         val classId = currentClassSnapshot.classId.also { check(it == previousClassSnapshot.classId) }
-        if (currentClassSnapshot.classAbiExcludingMembers.abiHash != previousClassSnapshot.classAbiExcludingMembers.abiHash) {
-            changes.addChangedClass(classId)
+        if (currentClassSnapshot.classMemberLevelSnapshot != null && previousClassSnapshot.classMemberLevelSnapshot != null) {
+            if (currentClassSnapshot.classMemberLevelSnapshot.classAbiExcludingMembers.abiHash
+                != previousClassSnapshot.classMemberLevelSnapshot.classAbiExcludingMembers.abiHash
+            ) {
+                changes.addChangedClass(classId)
+            } else {
+                collectClassMemberChanges(
+                    classId,
+                    currentClassSnapshot.classMemberLevelSnapshot.fieldsAbi,
+                    previousClassSnapshot.classMemberLevelSnapshot.fieldsAbi,
+                    changes
+                )
+                collectClassMemberChanges(
+                    classId,
+                    currentClassSnapshot.classMemberLevelSnapshot.methodsAbi,
+                    previousClassSnapshot.classMemberLevelSnapshot.methodsAbi,
+                    changes
+                )
+            }
         } else {
-            collectClassMemberChanges(classId, currentClassSnapshot.fieldsAbi, previousClassSnapshot.fieldsAbi, changes)
-            collectClassMemberChanges(classId, currentClassSnapshot.methodsAbi, previousClassSnapshot.methodsAbi, changes)
+            changes.addChangedClass(classId)
         }
     }
 
     /** Collects changes between two lists of fields/methods within a class. */
     private fun collectClassMemberChanges(
         classId: ClassId,
-        currentMemberSnapshots: List<AbiSnapshot>,
-        previousMemberSnapshots: List<AbiSnapshot>,
+        currentMemberSnapshots: List<JavaElementSnapshot>,
+        previousMemberSnapshots: List<JavaElementSnapshot>,
         changes: ChangeSet.Collector
     ) {
-        val currentMemberHashes: Map<Long, AbiSnapshot> = currentMemberSnapshots.associateBy { it.abiHash }
-        val previousMemberHashes: Map<Long, AbiSnapshot> = previousMemberSnapshots.associateBy { it.abiHash }
+        val currentMemberHashes: Map<Long, JavaElementSnapshot> = currentMemberSnapshots.associateBy { it.abiHash }
+        val previousMemberHashes: Map<Long, JavaElementSnapshot> = previousMemberSnapshots.associateBy { it.abiHash }
 
         val addedMembers = currentMemberHashes.keys - previousMemberHashes.keys
         val removedMembers = previousMemberHashes.keys - currentMemberHashes.keys

@@ -8,11 +8,11 @@ package org.jetbrains.kotlin.fir
 import org.jetbrains.kotlin.fir.types.*
 
 fun ConeKotlinType.renderForDebugInfo(): String {
-    val nullabilitySuffix = if (this !is ConeKotlinErrorType && this !is ConeClassErrorType) nullability.suffix else ""
+    val nullabilitySuffix = if (this !is ConeErrorType && this !is ConeErrorType) nullability.suffix else ""
     return when (this) {
         is ConeTypeVariableType -> "TypeVariable(${this.lookupTag.name})"
         is ConeDefinitelyNotNullType -> "${original.renderForDebugInfo()}!!"
-        is ConeClassErrorType -> "ERROR CLASS: ${diagnostic.reason}"
+        is ConeErrorType -> "ERROR CLASS: ${diagnostic.reason}"
         is ConeCapturedType -> "CapturedType(${constructor.projection.renderForDebugInfo()})"
         is ConeClassLikeType -> {
             buildString {
@@ -40,7 +40,8 @@ fun ConeKotlinType.renderForDebugInfo(): String {
             ) { it.renderForDebugInfo() }
         }
         is ConeStubType -> "Stub: ${constructor.variable}"
-        is ConeIntegerLiteralType -> "ILT: $value"
+        is ConeIntegerLiteralConstantType -> "ILT: $value"
+        is ConeIntegerConstantOperatorType -> "IOT"
     } + nullabilitySuffix
 }
 

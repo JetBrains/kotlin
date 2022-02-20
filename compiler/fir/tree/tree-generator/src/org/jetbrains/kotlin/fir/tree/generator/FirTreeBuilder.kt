@@ -111,6 +111,7 @@ object FirTreeBuilder : AbstractFirTreeBuilder() {
     val qualifiedAccessExpression by element(Expression, expression, qualifiedAccess)
     val propertyAccessExpression by element(Expression, qualifiedAccessExpression)
     val functionCall by element(Expression, qualifiedAccessExpression, call)
+    val integerLiteralOperatorCall by element(Expression, functionCall)
     val implicitInvokeCall by element(Expression, functionCall)
     val delegatedConstructorCall by element(Expression, resolvable, call)
     val componentCall by element(Expression, functionCall)
@@ -161,6 +162,7 @@ object FirTreeBuilder : AbstractFirTreeBuilder() {
     val userTypeRef by element(TypeRef, typeRefWithNullability)
     val dynamicTypeRef by element(TypeRef, typeRefWithNullability)
     val functionTypeRef by element(TypeRef, typeRefWithNullability)
+    val intersectionTypeRef by element(TypeRef, typeRefWithNullability)
     val implicitTypeRef by element(TypeRef, typeRef)
 
     val effectDeclaration by element(Contracts)

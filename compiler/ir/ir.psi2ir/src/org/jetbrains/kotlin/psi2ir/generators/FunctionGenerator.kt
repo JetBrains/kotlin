@@ -15,17 +15,12 @@ import org.jetbrains.kotlin.ir.expressions.IrBlockBody
 import org.jetbrains.kotlin.ir.expressions.IrBody
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrExpressionBody
-import org.jetbrains.kotlin.ir.expressions.impl.IrGetFieldImpl
-import org.jetbrains.kotlin.ir.expressions.impl.IrGetValueImpl
-import org.jetbrains.kotlin.ir.expressions.impl.IrReturnImpl
-import org.jetbrains.kotlin.ir.expressions.impl.IrSetFieldImpl
+import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.types.impl.IrUninitializedType
 import org.jetbrains.kotlin.ir.util.declareSimpleFunctionWithOverrides
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.psiUtil.getElementTextWithContext
-import org.jetbrains.kotlin.psi.psiUtil.pureEndOffset
-import org.jetbrains.kotlin.psi.psiUtil.pureStartOffset
+import org.jetbrains.kotlin.psi.psiUtil.*
 import org.jetbrains.kotlin.psi2ir.isConstructorDelegatingToSuper
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
@@ -57,16 +52,18 @@ class FunctionGenerator(declarationGenerator: DeclarationGenerator) : Declaratio
             ktFunction.bodyExpression?.let { generateFunctionBody(it) }
         }
 
-    fun generateLambdaFunctionDeclaration(ktFunction: KtFunctionLiteral): IrSimpleFunction =
-        declareSimpleFunction(
+    fun generateLambdaFunctionDeclaration(ktFunction: KtFunctionLiteral): IrSimpleFunction {
+        val lambdaDescriptor = getOrFail(BindingContext.FUNCTION, ktFunction)
+        return declareSimpleFunction(
             ktFunction,
             null,
             emptyList(),
             IrDeclarationOrigin.LOCAL_FUNCTION_FOR_LAMBDA,
-            getOrFail(BindingContext.FUNCTION, ktFunction)
+            lambdaDescriptor
         ) {
-            generateLambdaBody(ktFunction)
+            generateLambdaBody(ktFunction, lambdaDescriptor)
         }
+    }
 
     fun generateFakeOverrideFunction(functionDescriptor: FunctionDescriptor, ktElement: KtPureElement): IrSimpleFunction? =
         functionDescriptor.takeIf { it.visibility != DescriptorVisibilities.INVISIBLE_FAKE }
@@ -129,12 +126,14 @@ class FunctionGenerator(declarationGenerator: DeclarationGenerator) : Declaratio
                 irAccessor, ktAccessor ?: ktProperty, ktProperty.receiverTypeReference,
                 ktProperty.contextReceivers.mapNotNull { it.typeReference() }
             )
-            val ktBodyExpression = ktAccessor?.bodyExpression
-            irAccessor.body =
-                if (ktBodyExpression != null)
-                    createBodyGenerator(irAccessor.symbol).generateFunctionBody(ktBodyExpression)
-                else
-                    generateDefaultAccessorBody(descriptor, irAccessor)
+            if (context.configuration.generateBodies) {
+                val ktBodyExpression = ktAccessor?.bodyExpression
+                irAccessor.body =
+                    if (ktBodyExpression != null)
+                        createBodyGenerator(irAccessor.symbol).generateFunctionBody(ktBodyExpression)
+                    else
+                        generateDefaultAccessorBody(descriptor, irAccessor)
+            }
         }
 
     fun generateDefaultAccessorForPrimaryConstructorParameter(
@@ -352,8 +351,16 @@ class FunctionGenerator(declarationGenerator: DeclarationGenerator) : Declaratio
                         valueParameterDescriptor.containingDeclaration.safeAs<ConstructorDescriptor>()?.isAnnotationConstructor() ?: false
                     if (inAnnotation) {
                         generateDefaultAnnotationParameterValue(defaultValue, valueParameterDescriptor)
-                    } else
+                    } else if (context.configuration.generateBodies) {
                         bodyGenerator.generateExpressionBody(defaultValue)
+                    } else context.irFactory.createExpressionBody(
+                        IrErrorExpressionImpl(
+                            defaultValue.startOffsetSkippingComments,
+                            defaultValue.endOffset,
+                            context.irBuiltIns.nothingType,
+                            defaultValue::class.java.simpleName
+                        )
+                    )
                 }
             }
         }

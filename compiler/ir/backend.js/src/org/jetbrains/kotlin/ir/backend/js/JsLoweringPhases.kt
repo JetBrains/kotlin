@@ -66,14 +66,6 @@ private fun makeCustomJsModulePhase(
     actions = setOf(defaultDumper.toMultiModuleAction(), validationAction.toMultiModuleAction()),
 )
 
-private fun <C> Action<IrElement, C>.toMultiModuleAction(): Action<Iterable<IrModuleFragment>, C> {
-    return { state, modules, context ->
-        modules.forEach { module ->
-            this(state, module, context)
-        }
-    }
-}
-
 sealed class Lowering(val name: String) {
     abstract val modulePhase: NamedCompilerPhase<JsIrBackendContext, Iterable<IrModuleFragment>>
 }

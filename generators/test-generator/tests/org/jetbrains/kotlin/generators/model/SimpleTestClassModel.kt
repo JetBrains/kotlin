@@ -25,6 +25,7 @@ class SimpleTestClassModel(
     private val testClassName: String,
     val targetBackend: TargetBackend,
     excludeDirs: Collection<String>,
+    excludeDirsRecursively: Collection<String>,
     private val skipIgnored: Boolean,
     private val testRunnerMethodName: String,
     private val additionalRunnerArguments: List<String>,
@@ -37,6 +38,7 @@ class SimpleTestClassModel(
         get() = testClassName
 
     val excludeDirs: Set<String> = excludeDirs.toSet()
+    val excludeDirsRecursively: Set<String> = excludeDirsRecursively.toSet()
 
     override val innerTestClasses: Collection<TestClassModel> by lazy {
         if (!rootFile.isDirectory || !recursive || deep != null && deep < 1) {
@@ -45,7 +47,7 @@ class SimpleTestClassModel(
         val children = mutableListOf<TestClassModel>()
         val files = rootFile.listFiles() ?: return@lazy emptyList()
         for (file in files) {
-            if (file.isDirectory && dirHasFilesInside(file) && !excludeDirs.contains(file.name)) {
+            if (file.isDirectory && dirHasFilesInside(file) && !excludeDirs.contains(file.name) && !excludeDirsRecursively.contains(file.name)) {
                 val innerTestClassName = fileNameToJavaIdentifier(file)
                 children.add(
                     SimpleTestClassModel(
@@ -59,6 +61,7 @@ class SimpleTestClassModel(
                         innerTestClassName,
                         targetBackend,
                         excludesStripOneDirectory(file.name),
+                        excludeDirsRecursively,
                         skipIgnored,
                         testRunnerMethodName,
                         additionalRunnerArguments,

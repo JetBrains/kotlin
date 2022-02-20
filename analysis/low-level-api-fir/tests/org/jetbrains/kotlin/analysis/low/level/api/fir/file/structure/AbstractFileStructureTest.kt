@@ -9,7 +9,7 @@ import com.intellij.psi.PsiComment
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiElementVisitor
 import com.intellij.psi.impl.source.tree.LeafPsiElement
-import org.jetbrains.kotlin.analysis.low.level.api.fir.FirModuleResolveStateImpl
+import org.jetbrains.kotlin.analysis.low.level.api.fir.state.LLFirSourceModuleResolveState
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getResolveState
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.base.AbstractLowLevelApiSingleFileTest
 import org.jetbrains.kotlin.psi.*
@@ -85,10 +85,10 @@ abstract class AbstractFileStructureTest : AbstractLowLevelApiSingleFileTest() {
     }
 
     private fun KtFile.getFileStructure(): FileStructure {
-        val moduleResolveState = getResolveState() as FirModuleResolveStateImpl
+        val moduleResolveState = getResolveState() as LLFirSourceModuleResolveState
         return moduleResolveState.fileStructureCache.getFileStructure(
             ktFile = this,
-            moduleFileCache = moduleResolveState.rootModuleSession.cache
+            moduleFileCache = moduleResolveState.cache
         )
     }
 

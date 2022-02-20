@@ -11,8 +11,11 @@ import com.intellij.openapi.util.text.StringUtil
 import org.jetbrains.kotlin.backend.common.CompilationException
 import org.jetbrains.kotlin.backend.common.phaser.PhaseConfig
 import org.jetbrains.kotlin.backend.common.serialization.metadata.KlibMetadataVersion
+import org.jetbrains.kotlin.backend.wasm.WasmLoaderKind
 import org.jetbrains.kotlin.backend.wasm.compileWasm
+import org.jetbrains.kotlin.backend.wasm.compileToLoweredIr
 import org.jetbrains.kotlin.backend.wasm.wasmPhases
+import org.jetbrains.kotlin.backend.wasm.writeCompilationResult
 import org.jetbrains.kotlin.cli.common.*
 import org.jetbrains.kotlin.cli.common.ExitCode.*
 import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
@@ -31,18 +34,16 @@ import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.cli.jvm.plugins.PluginCliParser
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
-import org.jetbrains.kotlin.config.IncrementalCompilation
 import org.jetbrains.kotlin.config.Services
 import org.jetbrains.kotlin.incremental.components.ExpectActualTracker
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.incremental.js.IncrementalDataProvider
 import org.jetbrains.kotlin.incremental.js.IncrementalNextRoundChecker
 import org.jetbrains.kotlin.incremental.js.IncrementalResultsConsumer
+import org.jetbrains.kotlin.backend.wasm.dce.eliminateDeadDeclarations
 import org.jetbrains.kotlin.ir.backend.js.*
 import org.jetbrains.kotlin.ir.backend.js.codegen.JsGenerationGranularity
-import org.jetbrains.kotlin.ir.backend.js.ic.actualizeCacheForModule
-import org.jetbrains.kotlin.ir.backend.js.ic.buildCacheForModuleFiles
-import org.jetbrains.kotlin.ir.backend.js.ic.loadModuleCaches
+import org.jetbrains.kotlin.ir.backend.js.ic.*
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.IrModuleToJsTransformer
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.IrModuleToJsTransformerTmp
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.SourceMapsInfo
@@ -196,9 +197,9 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
         // TODO: Handle non-empty main call arguments
         val mainCallArguments = if (K2JsArgumentConstants.NO_CALL == arguments.main) null else emptyList<String>()
 
-        val icCaches = configureLibraries(arguments.cacheDirectories)
+        val cacheDirectories = configureLibraries(arguments.cacheDirectories)
 
-        if (arguments.irBuildCache) {
+        val icCaches = if (cacheDirectories.isNotEmpty()) {
             messageCollector.report(INFO, "")
             messageCollector.report(INFO, "Building cache:")
             messageCollector.report(INFO, "to: ${outputFilePath}")
@@ -207,26 +208,27 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
 
             val includes = arguments.includes!!
 
-            val start = System.currentTimeMillis()
+            var start = System.currentTimeMillis()
 
-            val updateStatus = actualizeCacheForModule(
+            actualizeCaches(
                 includes,
-                outputFilePath,
                 configurationJs,
                 libraries,
-                icCaches,
-                IrFactoryImplForJsIC(WholeWorldStageController()),
+                cacheDirectories,
+                { IrFactoryImplForJsIC(WholeWorldStageController()) },
                 mainCallArguments,
-                ::buildCacheForModuleFiles
-            )
-
-            if (updateStatus.upToDate) {
-                messageCollector.report(INFO, "IC per-file cache up-to-date check duration: ${System.currentTimeMillis() - start}ms")
-            } else {
-                messageCollector.report(INFO, "IC per-file cache building duration: ${System.currentTimeMillis() - start}ms")
+                ::buildCacheForModuleFiles,
+            ) { updateStatus, updatedModule ->
+                val now = System.currentTimeMillis()
+                val strStatus = when (updateStatus) {
+                    CacheUpdateStatus.FAST_PATH -> "up-to-date; fast check"
+                    CacheUpdateStatus.NO_DIRTY_FILES -> "up-to-date; full check"
+                    CacheUpdateStatus.DIRTY -> "dirty; cache building"
+                }
+                messageCollector.report(INFO, "IC per-file is $strStatus duration ${now - start}ms; module [${File(updatedModule).name}]")
+                start = now
             }
-            return OK
-        }
+        } else emptyList()
 
         // Run analysis if main module is sources
         lateinit var sourceModule: ModulesStructure
@@ -321,52 +323,37 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
 
 
             if (arguments.wasm) {
-                val res = compileWasm(
-                    module,
-                    PhaseConfig(wasmPhases),
-                    IrFactoryImpl,
+                val (allModules, backendContext) = compileToLoweredIr(
+                    depsDescriptors = module,
+                    phaseConfig = PhaseConfig(wasmPhases),
+                    irFactory = IrFactoryImpl,
                     exportedDeclarations = setOf(FqName("main")),
-                    emitNameSection = arguments.wasmDebug,
                     propertyLazyInitialization = arguments.irPropertyLazyInitialization,
-                    dceEnabled = arguments.irDce,
                 )
-                val outputWasmFile = outputFile.withReplacedExtensionOrNull(outputFile.extension, "wasm")!!
-                outputWasmFile.writeBytes(res.wasm)
-                val outputWatFile = outputFile.withReplacedExtensionOrNull(outputFile.extension, "wat")!!
-                outputWatFile.writeText(res.wat)
+                if (arguments.irDce) {
+                    eliminateDeadDeclarations(allModules, backendContext)
+                }
+                val res = compileWasm(
+                    allModules = allModules,
+                    backendContext = backendContext,
+                    emitNameSection = arguments.wasmDebug,
+                    allowIncompleteImplementations = arguments.irDce,
+                )
 
-                val esmRunner = """
-                    export default WebAssembly.instantiateStreaming(fetch('${outputWasmFile.name}'), { runtime, js_code }).then((it) => {
-                        wasmInstance = it.instance;
-                        wasmInstance.exports.__init?.();
-                        wasmInstance.exports.startUnitTests?.();
-                        
-                        return it.instance.exports;
-                    });
-                """.trimIndent()
-
-                val nodeRunner = """
-                    const fs = require('fs');
-                    var path = require('path');
-                    const wasmBuffer = fs.readFileSync(path.resolve(__dirname, './${outputWasmFile.name}'));
-                    
-                    module.exports = WebAssembly.instantiate(wasmBuffer, { runtime, js_code }).then(wasm => {
-                        wasmInstance = wasm.instance;
-                    
-                        wasmInstance.exports.__init?.();
-                        wasmInstance.exports.startUnitTests?.();
-                    
-                        return wasmInstance.exports
-                    });
-                """.trimIndent()
-
-                val runner = when (arguments.wasmLauncher) {
-                    "esm" -> esmRunner
-                    "nodejs" -> nodeRunner
+                val launcherKind = when (arguments.wasmLauncher) {
+                    "esm" -> WasmLoaderKind.BROWSER
+                    "nodejs" -> WasmLoaderKind.NODE
+                    "d8" -> WasmLoaderKind.D8
                     else -> throw IllegalArgumentException("Unrecognized flavor for the wasm launcher")
                 }
 
-                outputFile.writeText(res.js + "\n" + runner)
+                writeCompilationResult(
+                    result = res,
+                    dir = outputFile.parentFile,
+                    loaderKind = launcherKind,
+                    fileNameBase = outputFile.nameWithoutExtension
+                )
+
                 return OK
             }
 
@@ -406,6 +393,7 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
                         ir.context,
                         mainCallArguments,
                         relativeRequirePath = true,
+                        moduleToName = ir.moduleFragmentToUniqueName
                     )
 
                     transformer.generateModule(ir.allModules, setOf(TranslationMode.fromFlags(arguments.irDce, arguments.irPerModule)))
@@ -417,6 +405,7 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
                         dceJs = arguments.irDce,
                         multiModule = arguments.irPerModule,
                         relativeRequirePath = true,
+                        moduleToName = ir.moduleFragmentToUniqueName
                     )
 
                     transformer.generateModule(ir.allModules)

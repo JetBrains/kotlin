@@ -17,21 +17,21 @@ class BuildMetricsReporterImpl : BuildMetricsReporter, Serializable {
     private val myBuildMetrics = BuildPerformanceMetrics()
     private val myBuildAttributes = BuildAttributes()
 
-    override fun startMeasure(time: BuildTime, startNs: Long) {
+    override fun startMeasure(time: BuildTime) {
         if (time in myBuildTimeStartNs) {
             error("$time was restarted before it finished")
         }
-        myBuildTimeStartNs[time] = startNs
+        myBuildTimeStartNs[time] = System.nanoTime()
     }
 
-    override fun endMeasure(time: BuildTime, endNs: Long) {
+    override fun endMeasure(time: BuildTime) {
         val startNs = myBuildTimeStartNs.remove(time) ?: error("$time finished before it started")
-        val durationMs = (endNs - startNs) / 1_000_000
-        myBuildTimes.add(time, durationMs)
+        val durationNs = System.nanoTime() - startNs
+        myBuildTimes.addTimeNs(time, durationNs)
     }
 
-    override fun addTimeMetric(time: BuildTime, durationMs: Long) {
-        myBuildTimes.add(time, durationMs)
+    override fun addTimeMetricNs(time: BuildTime, durationNs: Long) {
+        myBuildTimes.addTimeNs(time, durationNs)
     }
 
     override fun addMetric(metric: BuildPerformanceMetric, value: Long) {
@@ -49,9 +49,7 @@ class BuildMetricsReporterImpl : BuildMetricsReporter, Serializable {
             buildAttributes = myBuildAttributes
         )
 
-    override fun addMetrics(metrics: BuildMetrics?) {
-        if (metrics == null) return
-
+    override fun addMetrics(metrics: BuildMetrics) {
         myBuildAttributes.addAll(metrics.buildAttributes)
         myBuildTimes.addAll(metrics.buildTimes)
         myBuildMetrics.addAll(metrics.buildPerformanceMetrics)

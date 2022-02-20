@@ -6,6 +6,7 @@
 #include "MemoryPrivate.hpp"
 #include "Runtime.h"
 #include "RuntimePrivate.hpp"
+#include "ScopedThread.hpp"
 #include "ThreadSuspension.hpp"
 #include "ThreadState.hpp"
 
@@ -13,7 +14,6 @@
 #include <gmock/gmock.h>
 
 #include <future>
-#include <thread>
 #include <TestSupport.hpp>
 #include <TestSupportCompilerGenerated.hpp>
 
@@ -77,15 +77,12 @@ public:
     ~ThreadSuspensionTest() {
         canStart = true;
         shouldStop = true;
-        for (auto& thread : threads) {
-            if (thread.joinable()) thread.join();
-        }
     }
 
     static constexpr size_t kThreadCount = kDefaultThreadCount;
     static constexpr size_t kIterations = kDefaultIterations;
 
-    KStdVector<std::thread> threads;
+    KStdVector<ScopedThread> threads;
     std::array<std::atomic<bool>, kThreadCount> ready{false};
     std::atomic<bool> canStart{false};
     std::atomic<bool> shouldStop{false};

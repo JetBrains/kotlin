@@ -15,12 +15,6 @@ internal class TaskExecutionResult(
 )
 
 internal class TaskExecutionInfo(
-    val properties: List<TaskExecutionProperties> = emptyList(),
-    val changedFiles: ChangedFiles? = null
+    val changedFiles: ChangedFiles? = null,
+    val compilerArguments: Array<String> = emptyArray()
 )
-
-internal enum class TaskExecutionProperties {
-    ABI_SNAPSHOT,
-    ARTIFACT_TRANSFORM
-    ;
-}

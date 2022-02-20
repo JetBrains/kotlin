@@ -15,13 +15,15 @@ import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.extensions.predicate.DeclarationPredicate
 
 abstract class FirRegisteredPluginAnnotations(val session: FirSession) : FirSessionComponent {
-    companion object {
-        fun create(session: FirSession): FirRegisteredPluginAnnotations {
-            return FirRegisteredPluginAnnotationsImpl(session)
-        }
-    }
-
+    /**
+     * Contains all annotations that can be targeted by the plugins. It includes the annotations directly mentioned by the plugin,
+     * and all the user-defined annotations which are meta-annotated by the annotations from the [metaAnnotations] list.
+     */
     abstract val annotations: Set<AnnotationFqn>
+
+    /**
+     * Contains meta-annotations that can be targeted by the plugins.
+     */
     abstract val metaAnnotations: Set<AnnotationFqn>
 
     val hasRegisteredAnnotations: Boolean
@@ -38,7 +40,7 @@ abstract class FirRegisteredPluginAnnotations(val session: FirSession) : FirSess
 }
 
 @NoMutableState
-private class FirRegisteredPluginAnnotationsImpl(session: FirSession) : FirRegisteredPluginAnnotations(session) {
+class FirRegisteredPluginAnnotationsImpl(session: FirSession) : FirRegisteredPluginAnnotations(session) {
     override val annotations: MutableSet<AnnotationFqn> = mutableSetOf()
     override val metaAnnotations: MutableSet<AnnotationFqn> = mutableSetOf()
 

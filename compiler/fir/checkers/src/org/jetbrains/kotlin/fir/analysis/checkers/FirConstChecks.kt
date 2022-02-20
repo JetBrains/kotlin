@@ -14,7 +14,6 @@ import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.references.FirErrorNamedReference
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.resolve.toSymbol
-import org.jetbrains.kotlin.fir.scopes.impl.FirIntegerOperatorCall
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.*
@@ -52,10 +51,6 @@ internal fun checkConstantArguments(
         expression is FirComparisonExpression -> {
             return checkConstantArguments(expression.compareToCall, session)
         }
-        expression is FirIntegerOperatorCall -> {
-            for (exp in (expression as FirCall).arguments.plus(expression.dispatchReceiver))
-                checkConstantArguments(exp, session).let { return it }
-        }
         expression is FirStringConcatenationCall || expression is FirEqualityOperatorCall -> {
             for (exp in (expression as FirCall).arguments)
                 checkConstantArguments(exp, session).let { return it }
@@ -66,7 +61,7 @@ internal fun checkConstantArguments(
                 ?.typeRef
                 ?.coneType
 
-            if (coneType is ConeClassErrorType)
+            if (coneType is ConeErrorType)
                 return ConstantArgumentKind.NOT_CONST
 
             while (coneType?.classId == StandardClassIds.Array)

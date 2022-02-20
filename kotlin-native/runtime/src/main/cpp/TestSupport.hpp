@@ -6,10 +6,10 @@
 #pragma once
 
 #include <functional>
-#include <thread>
 
 #include "Memory.h"
 #include "Runtime.h"
+#include "ScopedThread.hpp"
 
 namespace kotlin {
 
@@ -48,10 +48,10 @@ private:
 
 // Runs the given function in a separate thread with minimally initialized runtime.
 inline void RunInNewThread(std::function<void(MemoryState*)> f) {
-    std::thread([&f]() {
+    ScopedThread([&f]() {
         ScopedMemoryInit init;
         f(init.memoryState());
-    }).join();
+    });
 }
 
 // Runs the given function in a separate thread with minimally initialized runtime.

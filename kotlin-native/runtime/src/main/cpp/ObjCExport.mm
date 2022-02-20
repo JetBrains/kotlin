@@ -493,15 +493,17 @@ static OBJ_GETTER(blockToKotlinImp, id block, SEL cmd) {
   for (int i = 1; i <= parameterCount; ++i) {
     const char* argEncoding = [signature getArgumentTypeAtIndex:i];
     if (argEncoding[0] != '@') {
+      kotlin::ThreadStateGuard guard(kotlin::ThreadState::kNative);
       [NSException raise:NSGenericException
-            format:@"Blocks with non-reference-typed arguments aren't supported (%s)", argEncoding];
+            format:@"Converting Obj-C blocks with non-reference-typed arguments to kotlin.Any is not supported (%s)", argEncoding];
     }
   }
 
   const char* returnTypeEncoding = signature.methodReturnType;
   if (returnTypeEncoding[0] != '@') {
+    kotlin::ThreadStateGuard guard(kotlin::ThreadState::kNative);
     [NSException raise:NSGenericException
-          format:@"Blocks with non-reference-typed return value aren't supported (%s)", returnTypeEncoding];
+          format:@"Converting Obj-C blocks with non-reference-typed return value to kotlin.Any is not supported (%s)", returnTypeEncoding];
   }
 
   auto converter = parameterCount < Kotlin_ObjCExport_blockToFunctionConverters_size
@@ -564,11 +566,13 @@ extern "C" id Kotlin_ObjCExport_refToLocalObjC(ObjHeader* obj) {
   return Kotlin_ObjCExport_refToObjCImpl<false>(obj);
 }
 
-extern "C" ALWAYS_INLINE id Kotlin_Interop_refToObjC(ObjHeader* obj) {
+// The function is marked with noexcept, so any exception reaching it will cause std::terminate.
+extern "C" ALWAYS_INLINE id Kotlin_Interop_refToObjC(ObjHeader* obj) noexcept {
   return Kotlin_ObjCExport_refToObjCImpl<false>(obj);
 }
 
-extern "C" ALWAYS_INLINE OBJ_GETTER(Kotlin_Interop_refFromObjC, id obj) {
+// The function is marked with noexcept, so any exception reaching it will cause std::terminate.
+extern "C" ALWAYS_INLINE OBJ_GETTER(Kotlin_Interop_refFromObjC, id obj) noexcept {
   // TODO: consider removing this function.
   RETURN_RESULT_OF(Kotlin_ObjCExport_refFromObjC, obj);
 }

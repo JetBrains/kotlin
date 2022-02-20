@@ -5,17 +5,15 @@
 
 #include "ThreadRegistry.hpp"
 
-#include <pthread.h>
-#include <thread>
-
 #include "gtest/gtest.h"
 
+#include "ScopedThread.hpp"
 #include "ThreadData.hpp"
 
 using namespace kotlin;
 
 TEST(ThreadRegistryTest, RegisterCurrentThread) {
-    std::thread t([]() {
+    ScopedThread([]() {
         class ScopedRegistration {
         public:
             ScopedRegistration() : node(mm::ThreadRegistry::Instance().RegisterCurrentThread()) {}
@@ -27,5 +25,4 @@ TEST(ThreadRegistryTest, RegisterCurrentThread) {
         EXPECT_EQ(konan::currentThreadId(), threadData->threadId());
         EXPECT_EQ(threadData, mm::ThreadRegistry::Instance().CurrentThreadData());
     });
-    t.join();
 }

@@ -122,6 +122,14 @@ sealed class ClangArgs(
                 "-mfpu=vfp", "-mfloat-abi=hard"
         )
 
+        KonanTarget.IOS_ARM32, KonanTarget.WATCHOS_ARM32 -> listOf(
+                // Force generation of ARM instruction set instead of Thumb-2.
+                // It allows LLVM ARM backend to encode bigger offsets in BL instruction,
+                // thus allowing to generate a slightly bigger binaries.
+                // See KT-37368.
+                "-marm"
+        )
+
         KonanTarget.ANDROID_ARM32, KonanTarget.ANDROID_ARM64,
         KonanTarget.ANDROID_X86, KonanTarget.ANDROID_X64 -> {
             val clangTarget = targetTriple.withoutVendor()

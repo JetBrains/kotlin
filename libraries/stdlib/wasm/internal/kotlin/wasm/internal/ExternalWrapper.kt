@@ -138,6 +138,15 @@ internal fun anyToExternRef(x: Any): ExternalInterfaceType {
         x.asWasmExternRef()
 }
 
+@JsFun("""(addr) => {
+    const mem16 = new Uint16Array(wasmExports.memory.buffer);
+    const mem32 = new Int32Array(wasmExports.memory.buffer);
+    const len = mem32[addr / 4];
+    const str_start_addr = (addr + 4) / 2;
+    const slice = mem16.slice(str_start_addr, str_start_addr + len);
+    return String.fromCharCode.apply(null, slice);
+}
+""")
 internal external fun importStringFromWasm(addr: Int): ExternalInterfaceType
 
 @JsFun("x => x.length")
@@ -154,7 +163,7 @@ internal fun convertJsStringToKotlinString(x: ExternalInterfaceType): String {
 //language=js
 @JsFun(
 """ (str, addr) => { 
-    const memory = new DataView(wasmInstance.exports.memory.buffer);
+    const memory = new DataView(wasmExports.memory.buffer);
     for (var i = 0; i < str.length; i++) {
         memory.setInt16(addr + i * 2, str.charCodeAt(i), true);
     }

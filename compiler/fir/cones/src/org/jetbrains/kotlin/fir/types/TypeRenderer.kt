@@ -10,11 +10,11 @@ import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.contract
 
 fun ConeKotlinType.render(): String {
-    val nullabilitySuffix = if (this !is ConeFlexibleType && this !is ConeClassErrorType) nullability.suffix else ""
+    val nullabilitySuffix = if (this !is ConeFlexibleType && this !is ConeErrorType) nullability.suffix else ""
     return when (this) {
         is ConeTypeVariableType -> "${renderAttributes()}TypeVariable(${this.lookupTag.name})"
         is ConeDefinitelyNotNullType -> "${original.render()} & Any"
-        is ConeClassErrorType -> "${renderAttributes()}ERROR CLASS: ${diagnostic.reason}"
+        is ConeErrorType -> "${renderAttributes()}ERROR CLASS: ${diagnostic.reason}"
         is ConeCapturedType -> "${renderAttributes()}CapturedType(${constructor.projection.render()})"
         is ConeClassLikeType -> {
             buildString {
@@ -49,7 +49,8 @@ fun ConeKotlinType.render(): String {
         is ConeStubTypeForChainInference -> "${renderAttributes()}Stub (chain inference): ${constructor.variable}"
         is ConeStubTypeForSyntheticFixation -> "${renderAttributes()}Stub (fixation): ${constructor.variable}"
         is ConeStubType -> "${renderAttributes()}Stub (subtyping): ${constructor.variable}"
-        is ConeIntegerLiteralType -> "${renderAttributes()}ILT: $value"
+        is ConeIntegerLiteralConstantType -> "${renderAttributes()}ILT: $value"
+        is ConeIntegerConstantOperatorType -> "${renderAttributes()}IOT"
     } + nullabilitySuffix
 }
 

@@ -37,7 +37,6 @@ import org.jetbrains.kotlin.resolve.calls.tasks.isDynamic
 import org.jetbrains.kotlin.resolve.calls.util.FakeCallableDescriptorForObject
 import org.jetbrains.kotlin.resolve.descriptorUtil.classValueType
 import org.jetbrains.kotlin.types.KotlinType
-import java.util.*
 
 class CallGenerator(statementGenerator: StatementGenerator) : StatementGeneratorExtension(statementGenerator) {
     fun generateCall(startOffset: Int, endOffset: Int, call: CallBuilder, origin: IrStatementOrigin? = null): IrExpression {
@@ -306,69 +305,21 @@ class CallGenerator(statementGenerator: StatementGenerator) : StatementGenerator
             }
         }
 
-    private fun generateFunctionCall(
+    internal fun generateFunctionCall(
         functionDescriptor: FunctionDescriptor,
         startOffset: Int,
         endOffset: Int,
         origin: IrStatementOrigin?,
         call: CallBuilder
-    ): IrExpression =
-        call.callReceiver.call { dispatchReceiverValue, extensionReceiverValue, contextReceiverValues ->
-            val irType = functionDescriptor.returnType!!.toIrType()
-
+    ): IrExpression {
+        val builder = CallExpressionBuilder { dispatchReceiverValue, extensionReceiverValue, contextReceiverValues ->
             if (functionDescriptor.isDynamic()) {
-                fun makeDynamicOperatorExpression(operator: IrDynamicOperator) =
-                    IrDynamicOperatorExpressionImpl(
-                        startOffset, endOffset,
-                        irType,
-                        operator
-                    )
-
-                fun makeDynamicOperatorExpressionWithArguments(operator: IrDynamicOperator, dynamicReceiver: IrExpression) =
-                    makeDynamicOperatorExpression(operator).apply {
-                        receiver = dynamicReceiver
-                        arguments.addAll(call.getValueArgumentsInParameterOrder().mapIndexed { index: Int, arg: IrExpression? ->
-                            arg ?: throw AssertionError("No argument in dynamic call $functionDescriptor at position $index")
-                        })
-                    }
-
-                val dynamicReceiver = getDynamicExpressionReceiver(dispatchReceiverValue, extensionReceiverValue, functionDescriptor)
-
-                when {
-                    call.original.isImplicitInvoke() ->
-                        makeDynamicOperatorExpressionWithArguments(IrDynamicOperator.INVOKE, dynamicReceiver)
-                    call.original.isImplicitGet() ->
-                        makeDynamicOperatorExpressionWithArguments(IrDynamicOperator.ARRAY_ACCESS, dynamicReceiver)
-                    call.original.isImplicitSet() ->
-                        makeDynamicOperatorExpression(IrDynamicOperator.EQ).apply {
-                            val args = call.getValueArgumentsInParameterOrder()
-                            val arg0 = args[0]
-                                ?: throw AssertionError("No index argument in dynamic array set: ${call.original.call.callElement.text}")
-                            val arg1 = args[1]
-                                ?: throw AssertionError("No value argument in dynamic array set: ${call.original.call.callElement.text}")
-                            left =
-                                makeDynamicOperatorExpression(IrDynamicOperator.ARRAY_ACCESS).apply {
-                                    left = dynamicReceiver
-                                    right = arg0
-                                }
-                            right = arg1
-                        }
-                    else ->
-                        makeDynamicOperatorExpressionWithArguments(
-                            IrDynamicOperator.INVOKE,
-                            IrDynamicMemberExpressionImpl(
-                                startOffset, endOffset, // TODO obtain more exact start/end offsets for explicit receiver expression
-                                dynamicReceiver.type,
-                                functionDescriptor.name.asString(),
-                                dynamicReceiver
-                            )
-                        )
-                }
+                generateDynamicFunctionCall(startOffset, endOffset, functionDescriptor, call, dispatchReceiverValue, extensionReceiverValue)
             } else {
                 val originalSymbol = context.symbolTable.referenceSimpleFunction(functionDescriptor.original)
                 IrCallImpl.fromSymbolDescriptor(
                     startOffset, endOffset,
-                    irType,
+                    functionDescriptor.returnType!!.toIrType(),
                     originalSymbol,
                     origin = origin,
                     superQualifierSymbol = call.superQualifier?.let { context.symbolTable.referenceClass(it) }
@@ -379,10 +330,74 @@ class CallGenerator(statementGenerator: StatementGenerator) : StatementGenerator
                     extensionReceiver = extensionReceiverValue?.load()
                     val contextReceivers = contextReceiverValues.map { it.load() }
                     contextReceiversCount = contextReceivers.size
-                    addParametersToCall(startOffset, endOffset, call, this, irType, contextReceivers)
+                    addParametersToCall(startOffset, endOffset, call, this, type, contextReceivers)
                 }
             }
         }
+        return with(call.callReceiver) {
+            when (this) {
+                is SimpleCallReceiver -> builder.withReceivers(dispatchReceiverValue, extensionReceiverValue, contextReceiverValues)
+                else -> call(builder)
+            }
+        }
+    }
+
+    private fun generateDynamicFunctionCall(
+        startOffset: Int,
+        endOffset: Int,
+        functionDescriptor: FunctionDescriptor,
+        call: CallBuilder,
+        dispatchReceiverValue: IntermediateValue?,
+        extensionReceiverValue: IntermediateValue?,
+    ): IrDynamicOperatorExpressionImpl {
+        fun makeDynamicOperatorExpression(operator: IrDynamicOperator) =
+            IrDynamicOperatorExpressionImpl(
+                startOffset, endOffset,
+                functionDescriptor.returnType!!.toIrType(),
+                operator
+            )
+
+        fun makeDynamicOperatorExpressionWithArguments(operator: IrDynamicOperator, dynamicReceiver: IrExpression) =
+            makeDynamicOperatorExpression(operator).apply {
+                receiver = dynamicReceiver
+                arguments.addAll(call.getValueArgumentsInParameterOrder().mapIndexed { index: Int, arg: IrExpression? ->
+                    arg ?: throw AssertionError("No argument in dynamic call $functionDescriptor at position $index")
+                })
+            }
+
+        val dynamicReceiver = getDynamicExpressionReceiver(dispatchReceiverValue, extensionReceiverValue, functionDescriptor)
+
+        return when {
+            call.original.isImplicitInvoke() ->
+                makeDynamicOperatorExpressionWithArguments(IrDynamicOperator.INVOKE, dynamicReceiver)
+            call.original.isImplicitGet() ->
+                makeDynamicOperatorExpressionWithArguments(IrDynamicOperator.ARRAY_ACCESS, dynamicReceiver)
+            call.original.isImplicitSet() ->
+                makeDynamicOperatorExpression(IrDynamicOperator.EQ).apply {
+                    val args = call.getValueArgumentsInParameterOrder()
+                    val arg0 = args[0]
+                        ?: throw AssertionError("No index argument in dynamic array set: ${call.original.call.callElement.text}")
+                    val arg1 = args[1]
+                        ?: throw AssertionError("No value argument in dynamic array set: ${call.original.call.callElement.text}")
+                    left =
+                        makeDynamicOperatorExpression(IrDynamicOperator.ARRAY_ACCESS).apply {
+                            left = dynamicReceiver
+                            right = arg0
+                        }
+                    right = arg1
+                }
+            else ->
+                makeDynamicOperatorExpressionWithArguments(
+                    IrDynamicOperator.INVOKE,
+                    IrDynamicMemberExpressionImpl(
+                        startOffset, endOffset, // TODO obtain more exact start/end offsets for explicit receiver expression
+                        dynamicReceiver.type,
+                        functionDescriptor.name.asString(),
+                        dynamicReceiver
+                    )
+                )
+        }
+    }
 
     private fun addParametersToCall(
         startOffset: Int,

@@ -6,7 +6,6 @@
 #include "ObjectFactory.hpp"
 
 #include <atomic>
-#include <thread>
 #include <type_traits>
 
 #include "gmock/gmock.h"
@@ -16,6 +15,7 @@
 #include "FinalizerHooksTestSupport.hpp"
 #include "ObjectOps.hpp"
 #include "ObjectTestSupport.hpp"
+#include "ScopedThread.hpp"
 #include "TestSupport.hpp"
 #include "Types.h"
 
@@ -630,7 +630,7 @@ TEST(ObjectFactoryStorageTest, ConcurrentPublish) {
     constexpr int kThreadCount = kDefaultThreadCount;
     std::atomic<bool> canStart(false);
     std::atomic<int> readyCount(0);
-    KStdVector<std::thread> threads;
+    KStdVector<ScopedThread> threads;
     KStdVector<int> expected;
 
     for (int i = 0; i < kThreadCount; ++i) {
@@ -648,9 +648,7 @@ TEST(ObjectFactoryStorageTest, ConcurrentPublish) {
     while (readyCount < kThreadCount) {
     }
     canStart = true;
-    for (auto& t : threads) {
-        t.join();
-    }
+    threads.clear();
 
     auto actual = Collect<int>(storage);
 
@@ -676,7 +674,7 @@ TEST(ObjectFactoryStorageTest, IterWhileConcurrentPublish) {
     std::atomic<bool> canStart(false);
     std::atomic<int> readyCount(0);
     std::atomic<int> startedCount(0);
-    KStdVector<std::thread> threads;
+    KStdVector<ScopedThread> threads;
     for (int i = 0; i < kThreadCount; ++i) {
         int j = i + kStartCount;
         expectedAfter.push_back(j);
@@ -706,9 +704,7 @@ TEST(ObjectFactoryStorageTest, IterWhileConcurrentPublish) {
         }
     }
 
-    for (auto& t : threads) {
-        t.join();
-    }
+    threads.clear();
 
     EXPECT_THAT(actualBefore, testing::ElementsAreArray(expectedBefore));
 
@@ -736,7 +732,7 @@ TEST(ObjectFactoryStorageTest, EraseWhileConcurrentPublish) {
     std::atomic<bool> canStart(false);
     std::atomic<int> readyCount(0);
     std::atomic<int> startedCount(0);
-    KStdVector<std::thread> threads;
+    KStdVector<ScopedThread> threads;
     for (int i = 0; i < kThreadCount; ++i) {
         int j = i + kStartCount;
         expectedAfter.push_back(j);
@@ -768,9 +764,7 @@ TEST(ObjectFactoryStorageTest, EraseWhileConcurrentPublish) {
         }
     }
 
-    for (auto& t : threads) {
-        t.join();
-    }
+    threads.clear();
 
     auto actual = Collect<int>(storage);
 
@@ -1110,7 +1104,7 @@ TEST(ObjectFactoryTest, ConcurrentPublish) {
     constexpr int kThreadCount = kDefaultThreadCount;
     std::atomic<bool> canStart(false);
     std::atomic<int> readyCount(0);
-    KStdVector<std::thread> threads;
+    KStdVector<ScopedThread> threads;
     std::mutex expectedMutex;
     KStdVector<ObjHeader*> expected;
 
@@ -1135,9 +1129,7 @@ TEST(ObjectFactoryTest, ConcurrentPublish) {
     }
     testing::Mock::VerifyAndClearExpectations(&allocator);
     canStart = true;
-    for (auto& t : threads) {
-        t.join();
-    }
+    threads.clear();
 
     auto iter = objectFactory.LockForIter();
     KStdVector<ObjHeader*> actual;

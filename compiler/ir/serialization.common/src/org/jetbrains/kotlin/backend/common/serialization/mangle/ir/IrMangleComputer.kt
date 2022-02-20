@@ -191,6 +191,10 @@ abstract class IrMangleComputer(protected val builder: StringBuilder, private va
                 mangleTypePlatformSpecific(type, tBuilder)
             }
             is IrDynamicType -> tBuilder.appendSignature(MangleConstant.DYNAMIC_MARK)
+            is IrDefinitelyNotNullType -> {
+                // TODO mangle DNN type differently from original simple type?
+                mangleType(tBuilder, type.original)
+            }
             is IrErrorType -> tBuilder.appendSignature(MangleConstant.ERROR_MARK)
             else -> error("Unexpected type $type")
         }

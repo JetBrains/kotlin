@@ -5,21 +5,15 @@
 
 package org.jetbrains.kotlin.analysis.api.impl.base.test
 
-import com.intellij.psi.PsiReference
-import com.intellij.psi.impl.source.resolve.reference.impl.PsiMultiReference
 import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
 import org.jetbrains.kotlin.analysis.api.components.KtDeclarationRendererOptions
 import org.jetbrains.kotlin.analysis.api.components.RendererModifier
-import org.jetbrains.kotlin.analysis.api.impl.barebone.test.FrontendApiTestConfiguratorService
 import org.jetbrains.kotlin.analysis.api.impl.barebone.test.expressionMarkerProvider
+import org.jetbrains.kotlin.analysis.api.impl.base.test.TestReferenceResolveResultRenderer.renderResolvedTo
 import org.jetbrains.kotlin.analysis.api.impl.base.test.test.framework.AbstractHLApiSingleModuleTest
 import org.jetbrains.kotlin.analysis.api.symbols.*
-import org.jetbrains.kotlin.analysis.api.symbols.markers.KtNamedSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.markers.KtPossibleMemberSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.markers.KtSymbolWithKind
 import org.jetbrains.kotlin.idea.references.KtReference
-import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
@@ -53,8 +47,8 @@ abstract class AbstractReferenceResolveTest : AbstractHLApiSingleModuleTest() {
                 PsiTreeUtil.findElementOfClassAtOffset(mainKtFile, caretPosition, KtDeclaration::class.java, false) ?: mainKtFile
             ) {
                 val symbols = ktReferences.flatMap { it.resolveToSymbols() }
-                checkReferenceResultForValidity(module, testServices, symbols)
-                renderResolvedTo(symbols)
+                checkReferenceResultForValidity(ktReferences, module, testServices, symbols)
+                renderResolvedTo(symbols, renderingOptions)
             }
 
         if (Directives.UNRESOLVED_REFERENCE in module.directives) {
@@ -69,6 +63,7 @@ abstract class AbstractReferenceResolveTest : AbstractHLApiSingleModuleTest() {
         mainKtFile.findReferenceAt(caretPosition)?.unwrapMultiReferences().orEmpty().filterIsInstance<KtReference>()
 
     private fun KtAnalysisSession.checkReferenceResultForValidity(
+        references: List<KtReference>,
         module: TestModule,
         testServices: TestServices,
         resolvedTo: List<KtSymbol>
@@ -78,51 +73,10 @@ abstract class AbstractReferenceResolveTest : AbstractHLApiSingleModuleTest() {
                 "Reference should be unresolved, but was resolved to ${renderResolvedTo(resolvedTo)}"
             }
         } else {
-            testServices.assertions.assertTrue(resolvedTo.isNotEmpty()) { "Unresolved reference" }
-        }
-    }
-
-    private fun KtAnalysisSession.renderResolvedTo(symbols: List<KtSymbol>) =
-        symbols.map { renderResolveResult(it) }
-            .sorted()
-            .withIndex()
-            .joinToString(separator = "\n") { "${it.index}: ${it.value}" }
-
-
-    private fun KtAnalysisSession.renderResolveResult(symbol: KtSymbol): String {
-        return buildString {
-            symbolContainerFqName(symbol)?.let { fqName ->
-                append("(in $fqName) ")
-            }
-            when (symbol) {
-                is KtDeclarationSymbol -> append(symbol.render(renderingOptions))
-                is KtPackageSymbol -> append("package ${symbol.fqName}")
-                is KtReceiverParameterSymbol -> {
-                    append("extension receiver with type ")
-                    append(symbol.type.render(renderingOptions.typeRendererOptions))
-                }
-                else -> error("Unexpected symbol ${symbol::class}")
+            if (resolvedTo.isEmpty()) {
+                testServices.assertions.fail { "Unresolved reference ${references.first().element.text}" }
             }
         }
-    }
-
-    @Suppress("unused")// KtAnalysisSession receiver
-    private fun KtAnalysisSession.symbolContainerFqName(symbol: KtSymbol): String? {
-        if (symbol is KtPackageSymbol || symbol is KtValueParameterSymbol) return null
-        val nonLocalFqName = when (symbol) {
-            is KtConstructorSymbol -> symbol.containingClassIdIfNonLocal?.asSingleFqName()
-            is KtCallableSymbol -> symbol.callableIdIfNonLocal?.asSingleFqName()?.parent()
-            is KtClassLikeSymbol -> symbol.classIdIfNonLocal?.asSingleFqName()?.parent()
-            else -> null
-        }
-        when (nonLocalFqName) {
-            null -> Unit
-            FqName.ROOT -> return "ROOT"
-            else -> return nonLocalFqName.asString()
-        }
-        val container = (symbol as? KtSymbolWithKind)?.getContainingSymbol() ?: return null
-        val parents = generateSequence(container) { it.getContainingSymbol() }.toList().asReversed()
-        return "<local>: " + parents.joinToString(separator = ".") { (it as? KtNamedSymbol)?.name?.asString() ?: "<no name>" }
     }
 
     private object Directives : SimpleDirectivesContainer() {
@@ -136,9 +90,4 @@ abstract class AbstractReferenceResolveTest : AbstractHLApiSingleModuleTest() {
         sortNestedDeclarations = true
     )
 
-    private fun PsiReference.unwrapMultiReferences(): List<PsiReference> = when (this) {
-        is KtReference -> listOf(this)
-        is PsiMultiReference -> references.flatMap { it.unwrapMultiReferences() }
-        else -> error("Unexpected reference $this")
-    }
 }

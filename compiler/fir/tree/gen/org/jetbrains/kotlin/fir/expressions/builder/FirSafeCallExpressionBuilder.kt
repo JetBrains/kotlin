@@ -13,8 +13,8 @@ import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirCheckedSafeCallSubject
 import org.jetbrains.kotlin.fir.expressions.FirExpression
-import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccess
 import org.jetbrains.kotlin.fir.expressions.FirSafeCallExpression
+import org.jetbrains.kotlin.fir.expressions.FirStatement
 import org.jetbrains.kotlin.fir.expressions.builder.FirExpressionBuilder
 import org.jetbrains.kotlin.fir.expressions.impl.FirSafeCallExpressionImpl
 import org.jetbrains.kotlin.fir.types.FirTypeRef
@@ -33,7 +33,7 @@ class FirSafeCallExpressionBuilder : FirAnnotationContainerBuilder, FirExpressio
     override val annotations: MutableList<FirAnnotation> = mutableListOf()
     lateinit var receiver: FirExpression
     lateinit var checkedSubjectRef: FirExpressionRef<FirCheckedSafeCallSubject>
-    lateinit var regularQualifiedAccess: FirQualifiedAccess
+    lateinit var selector: FirStatement
 
     override fun build(): FirSafeCallExpression {
         return FirSafeCallExpressionImpl(
@@ -42,7 +42,7 @@ class FirSafeCallExpressionBuilder : FirAnnotationContainerBuilder, FirExpressio
             annotations,
             receiver,
             checkedSubjectRef,
-            regularQualifiedAccess,
+            selector,
         )
     }
 

@@ -1,0 +1,29 @@
+STEP 0:
+    dependencies: stdlib, lib1
+    dirty: m.kt
+STEP 1:
+    dependencies: stdlib, lib1
+STEP 2:
+    dependencies: stdlib, lib1
+    dirty: m.kt
+STEP 3:
+    dependencies: stdlib, lib1
+    dirty: m.kt
+STEP 4:
+    dependencies: stdlib, lib1
+STEP 5:
+    dependencies: stdlib, lib1
+STEP 6:
+    dependencies: stdlib, lib1
+STEP 7:
+    dependencies: stdlib, lib1
+STEP 8:
+    dependencies: stdlib, lib1
+STEP 9:
+    dependencies: stdlib, lib1
+STEP 10:
+    dependencies: stdlib, lib1
+    dirty: m.kt
+STEP 11:
+    dependencies: stdlib, lib1
+    dirty: m.kt

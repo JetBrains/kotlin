@@ -13,6 +13,10 @@ object PlatformInfo {
     fun isLinux() = HostManager.hostIsLinux
 
     @JvmStatic
+    val hostName: String
+        get() = HostManager.hostName
+
+    @JvmStatic
     fun isAppleTarget(project: Project): Boolean {
         val target = getTarget(project)
         return target.family.isAppleFamily
@@ -56,7 +60,7 @@ object PlatformInfo {
                 && properties.checkXcodeVersion
                 && requiredMajorVersion != null
         ) {
-            val currentXcodeVersion = Xcode.current.version
+            val currentXcodeVersion = Xcode.findCurrent().version
             val currentMajorVersion = currentXcodeVersion.splitToSequence('.').first()
             if (currentMajorVersion != requiredMajorVersion) {
                 throw IllegalStateException(

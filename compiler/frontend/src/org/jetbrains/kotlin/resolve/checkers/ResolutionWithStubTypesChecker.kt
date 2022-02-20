@@ -112,9 +112,9 @@ class ResolutionWithStubTypesChecker(private val kotlinCallResolver: KotlinCallR
             context.trace.report(
                 OVERLOAD_RESOLUTION_AMBIGUITY_BECAUSE_OF_STUB_TYPES.on(
                     calleeExpression,
-                    builderCalleeExpression.toString(),
-                    typeVariablesCausedAmbiguity.toString(),
-                    calleeExpression.toString()
+                    builderCalleeExpression.text,
+                    typeVariablesCausedAmbiguity.joinToString { it.originalTypeParameter.toString() },
+                    calleeExpression.text
                 )
             )
         }
@@ -140,14 +140,14 @@ class ResolutionWithStubTypesChecker(private val kotlinCallResolver: KotlinCallR
         if (receiverType != newReceiverType) {
             val typeVariables = substitutionMap.map { it.key as NewTypeVariableConstructor }
             val typeParameters = typeVariables.joinToString { (it.originalTypeParameter?.name ?: it).toString() }
-            val inferredTypes = substitutionMap.values.joinToString()
+            val inferredTypes = substitutionMap.values
 
             addAll(typeVariables)
 
             context.trace.report(
                 STUB_TYPE_IN_RECEIVER_CAUSES_AMBIGUITY.on(
                     kotlinCall.explicitReceiver?.psiExpression ?: kotlinCall.psiCall.callElement,
-                    newReceiverType, typeParameters, inferredTypes,
+                    newReceiverType, typeParameters, inferredTypes.joinToString(),
                     if (relatedLambdaToLabel != null) BuilderLambdaLabelingInfo(relatedLambdaToLabel) else BuilderLambdaLabelingInfo.EMPTY
                 )
             )
@@ -171,12 +171,12 @@ class ResolutionWithStubTypesChecker(private val kotlinCallResolver: KotlinCallR
                 val psiExpression = valueArgument.psiExpression ?: continue
                 val typeVariables = substitutionMap.map { it.key as NewTypeVariableConstructor }
                 val typeParameters = typeVariables.joinToString { (it.originalTypeParameter?.name ?: it).toString() }
-                val inferredTypes = substitutionMap.values.joinToString()
+                val inferredTypes = substitutionMap.values
 
                 addAll(typeVariables)
 
                 context.trace.report(
-                    STUB_TYPE_IN_ARGUMENT_CAUSES_AMBIGUITY.on(psiExpression, substitutedType, typeParameters, inferredTypes)
+                    STUB_TYPE_IN_ARGUMENT_CAUSES_AMBIGUITY.on(psiExpression, substitutedType, typeParameters, inferredTypes.joinToString())
                 )
             }
         }

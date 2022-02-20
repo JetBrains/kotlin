@@ -40,7 +40,7 @@ object FirOptInUsageTypeRefChecker : FirTypeRefChecker() {
             if (annotation.getAnnotationClassForOptInMarker(context.session) != null) {
                 if (annotation.useSiteTarget == AnnotationUseSiteTarget.RECEIVER) {
                     withSuppressedDiagnostics(annotation, context) {
-                        reporter.reportOn(annotation.source, FirErrors.OPT_IN_MARKER_ON_WRONG_TARGET, "parameter", context)
+                        reporter.reportOn(annotation.source, FirErrors.OPT_IN_MARKER_ON_WRONG_TARGET, "parameter", it)
                     }
                 }
             }

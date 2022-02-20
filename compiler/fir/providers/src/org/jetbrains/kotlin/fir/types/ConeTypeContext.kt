@@ -43,6 +43,14 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, Ty
         return this is ConeIntegerLiteralType
     }
 
+    override fun TypeConstructorMarker.isIntegerLiteralConstantTypeConstructor(): Boolean {
+        return this is ConeIntegerLiteralConstantType
+    }
+
+    override fun TypeConstructorMarker.isIntegerConstantOperatorTypeConstructor(): Boolean {
+        return this is ConeIntegerConstantOperatorType
+    }
+
     override fun TypeConstructorMarker.isLocalType(): Boolean {
         if (this !is ConeClassLikeLookupTag) return false
         return classId.isLocal
@@ -89,13 +97,13 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, Ty
 
     override fun KotlinTypeMarker.isError(): Boolean {
         assert(this is ConeKotlinType)
-        return this is ConeClassErrorType || this is ConeKotlinErrorType || this.typeConstructor().isError() ||
+        return this is ConeErrorType || this is ConeErrorType || this.typeConstructor().isError() ||
                 (this is ConeClassLikeType && this.lookupTag is ConeClassLikeErrorLookupTag)
     }
 
     override fun KotlinTypeMarker.isUninferredParameter(): Boolean {
         assert(this is ConeKotlinType)
-        return this is ConeClassErrorType && this.isUninferredParameter
+        return this is ConeErrorType && this.isUninferredParameter
     }
 
     override fun FlexibleTypeMarker.asDynamicType(): DynamicTypeMarker? {

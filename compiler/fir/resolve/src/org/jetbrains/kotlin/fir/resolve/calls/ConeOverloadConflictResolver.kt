@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.fir.resolve.calls
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirMemberDeclaration
-import org.jetbrains.kotlin.fir.declarations.getAnnotationByClassId
 import org.jetbrains.kotlin.fir.declarations.utils.modality
 import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.resolve.inference.ConeTypeParameterBasedTypeVariable
@@ -16,7 +15,6 @@ import org.jetbrains.kotlin.fir.resolve.inference.InferenceComponents
 import org.jetbrains.kotlin.fir.resolve.substitution.substitutorByMap
 import org.jetbrains.kotlin.fir.symbols.ConeTypeParameterLookupTag
 import org.jetbrains.kotlin.fir.types.coneType
-import org.jetbrains.kotlin.name.StandardClassIds.Annotations.HidesMembers
 import org.jetbrains.kotlin.resolve.calls.inference.model.NewConstraintSystemImpl
 import org.jetbrains.kotlin.resolve.calls.inference.model.SimpleConstraintSystemConstraintPosition
 import org.jetbrains.kotlin.resolve.calls.results.FlatSignature
@@ -26,6 +24,8 @@ import org.jetbrains.kotlin.types.model.KotlinTypeMarker
 import org.jetbrains.kotlin.types.model.TypeParameterMarker
 import org.jetbrains.kotlin.types.model.TypeSubstitutorMarker
 import org.jetbrains.kotlin.types.model.TypeSystemInferenceExtensionContext
+
+typealias CandidateSignature = FlatSignature<Candidate>
 
 class ConeOverloadConflictResolver(
     specificityComparator: TypeSpecificityComparator,
@@ -128,60 +128,46 @@ class ConeOverloadConflictResolver(
 
     private fun findMaximallySpecificCall(
         candidates: Set<Candidate>,
-        discriminateGenerics: Boolean//,
-        //isDebuggerContext: Boolean
+        discriminateGenerics: Boolean
     ): Candidate? {
         if (candidates.size <= 1) return candidates.singleOrNull()
 
-        val conflictingCandidates = candidates.map { candidateCall ->
+        val candidateSignatures = candidates.map { candidateCall ->
             createFlatSignature(candidateCall)
         }
 
-        val bestCandidatesByParameterTypes = conflictingCandidates.filter { candidate ->
-            isMostSpecific(candidate, conflictingCandidates) { call1, call2 ->
-                isNotLessSpecificCallWithArgumentMapping(call1, call2, discriminateGenerics)
+        val bestCandidatesByParameterTypes = candidateSignatures.filter { signature ->
+            candidateSignatures.all { other ->
+                signature === other || isNotLessSpecificCallWithArgumentMapping(signature, other, discriminateGenerics)
             }
         }
 
-        return bestCandidatesByParameterTypes.exactMaxWith { call1, call2 ->
-            isOfNotLessSpecificShape(call1, call2)// && isOfNotLessSpecificVisibilityForDebugger(call1, call2, isDebuggerContext)
-        }?.origin
+        return bestCandidatesByParameterTypes.exactMaxWith()?.origin
     }
-
-
-    private inline fun <C : Any> Collection<C>.exactMaxWith(isNotWorse: (C, C) -> Boolean): C? {
-        var result: C? = null
-        for (candidate in this) {
-            if (result == null || isNotWorse(candidate, result)) {
-                result = candidate
-            }
-        }
-        if (result == null) return null
-        if (any { it != result && isNotWorse(it, result) }) {
-            return null
-        }
-        return result
-    }
-
-    private inline fun <C> isMostSpecific(candidate: C, candidates: Collection<C>, isNotLessSpecific: (C, C) -> Boolean): Boolean =
-        candidates.all { other ->
-            candidate === other ||
-                    isNotLessSpecific(candidate, other)
-        }
 
     /**
      * `call1` is not less specific than `call2`
      */
     private fun isNotLessSpecificCallWithArgumentMapping(
-        call1: FlatSignature<Candidate>,
-        call2: FlatSignature<Candidate>,
+        call1: CandidateSignature,
+        call2: CandidateSignature,
         discriminateGenerics: Boolean
     ): Boolean {
-        return compareCallsByUsedArguments(
-            call1,
-            call2,
-            discriminateGenerics
-        )
+        return compareCallsByUsedArguments(call1, call2, discriminateGenerics)
+    }
+
+    private fun List<CandidateSignature>.exactMaxWith(): CandidateSignature? {
+        var result: CandidateSignature? = null
+        for (candidate in this) {
+            if (result == null || isOfNotLessSpecificShape(candidate, result)) {
+                result = candidate
+            }
+        }
+        if (result == null) return null
+        if (any { it != result && isOfNotLessSpecificShape(it, result) }) {
+            return null
+        }
+        return result
     }
 
     private fun isOfNotLessSpecificShape(

@@ -16,7 +16,7 @@ class FullPipelineModularizedTest : AbstractFullPipelineModularizedTest() {
         args.useIR = true
         args.apiVersion = LANGUAGE_VERSION
         args.jvmDefault = "compatibility"
-        args.optIn = arrayOf(
+        args.optIn = moduleData.optInAnnotations.toTypedArray() + arrayOf(
             "kotlin.RequiresOptIn",
             "kotlin.contracts.ExperimentalContracts",
             "kotlin.io.path.ExperimentalPathApi",

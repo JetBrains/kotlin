@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fakeElement
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.declarations.builder.buildAnonymousFunctionCopy
 import org.jetbrains.kotlin.fir.declarations.builder.buildValueParameter
 import org.jetbrains.kotlin.fir.declarations.impl.FirDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyAccessor
@@ -304,8 +305,8 @@ open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransfor
     ): FirStatement {
         dataFlowAnalyzer.enterDelegateExpression()
         // First, resolve delegate expression in dependent context
-        val delegateExpression =
-            wrappedDelegateExpression.expression.transformSingle(transformer, ResolutionMode.ContextDependent)
+        val delegateExpression = wrappedDelegateExpression.expression.transformSingle(transformer, ResolutionMode.ContextDependent)
+            .transformSingle(components.integerLiteralAndOperatorApproximationTransformer, null)
 
         // Second, replace result type of delegate expression with stub type if delegate not yet resolved
         if (delegateExpression is FirQualifiedAccess) {
@@ -317,7 +318,9 @@ open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransfor
                 }
                 val typeVariableTypeToStubType = context.inferenceSession.createSyntheticStubTypes(system)
 
-                val substitutor = createTypeSubstitutorByTypeConstructor(typeVariableTypeToStubType, session.typeContext)
+                val substitutor = createTypeSubstitutorByTypeConstructor(
+                    typeVariableTypeToStubType, session.typeContext, approximateIntegerLiterals = true
+                )
                 val delegateExpressionTypeRef = delegateExpression.typeRef
                 val stubTypeSubstituted = substitutor.substituteOrNull(delegateExpressionTypeRef.coneType)
                 delegateExpression.replaceTypeRef(delegateExpressionTypeRef.withReplacedConeType(stubTypeSubstituted))
@@ -337,7 +340,9 @@ open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransfor
                 system.markPostponedVariable(it.value.typeVariable)
             }
             val typeVariableTypeToStubType = context.inferenceSession.createSyntheticStubTypes(system)
-            val substitutor = createTypeSubstitutorByTypeConstructor(typeVariableTypeToStubType, session.typeContext)
+            val substitutor = createTypeSubstitutorByTypeConstructor(
+                typeVariableTypeToStubType, session.typeContext, approximateIntegerLiterals = true
+            )
 
             val stubTypeSubstituted = substitutor.substituteOrSelf(provideDelegateCandidate.substitutor.substituteOrSelf(components.typeFromCallee(provideDelegateCall).type))
 
@@ -354,7 +359,6 @@ open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransfor
 
         // Select delegate expression otherwise
         return delegateExpression
-            .approximateIfIsIntegerConst()
     }
 
     private fun transformLocalVariable(variable: FirProperty): FirProperty {
@@ -627,7 +631,6 @@ open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransfor
                         returnExpression.resultType.approximatedIfNeededOrSelf(
                             session.typeApproximator,
                             simpleFunction?.visibilityForApproximation(),
-                            transformer.session.typeContext,
                             simpleFunction?.isInline == true
                         )
                     )
@@ -764,6 +767,7 @@ open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransfor
             }
             is ResolutionMode.WithExpectedType,
             is ResolutionMode.ContextIndependent,
+            is ResolutionMode.ReceiverResolution,
             is ResolutionMode.WithSuggestedType -> {
                 val expectedTypeRef = when (data) {
                     is ResolutionMode.WithExpectedType -> {
@@ -802,14 +806,15 @@ open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransfor
         }
         val returnTypeRefFromResolvedAtom =
             resolvedLambdaAtom?.returnType?.let { lambda.returnTypeRef.resolvedTypeFromPrototype(it) }
-        lambda = lambda.copy(
+        lambda = buildAnonymousFunctionCopy(lambda) {
             receiverTypeRef = lambda.receiverTypeRef?.takeIf { it !is FirImplicitTypeRef }
-                ?: resolvedLambdaAtom?.receiver?.let { lambda.receiverTypeRef?.resolvedTypeFromPrototype(it) },
-            valueParameters = valueParameters,
+                ?: resolvedLambdaAtom?.receiver?.let { lambda.receiverTypeRef?.resolvedTypeFromPrototype(it) }
+            this.valueParameters.clear()
+            this.valueParameters.addAll(valueParameters)
             returnTypeRef = (lambda.returnTypeRef as? FirResolvedTypeRef)
                 ?: returnTypeRefFromResolvedAtom
-                ?: lambda.returnTypeRef
-        )
+                        ?: lambda.returnTypeRef
+        }
         lambda = lambda.transformValueParameters(ImplicitToErrorTypeTransformer, null)
         val bodyExpectedType = returnTypeRefFromResolvedAtom ?: expectedTypeRef
         context.withAnonymousFunction(lambda, components, data) {
@@ -824,6 +829,7 @@ open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransfor
             components.returnTypeCalculator,
             session.typeApproximator,
             dataFlowAnalyzer,
+            components.integerLiteralAndOperatorApproximationTransformer
         )
         lambda.transformSingle(writer, expectedTypeRef.coneTypeSafe<ConeKotlinType>()?.toExpectedType())
 
@@ -989,7 +995,6 @@ open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransfor
                 expectedType.approximatedIfNeededOrSelf(
                     session.typeApproximator,
                     backingField.visibilityForApproximation(),
-                    session.typeContext,
                 )
             )
         )
@@ -1014,7 +1019,6 @@ open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransfor
                         expectedType.approximatedIfNeededOrSelf(
                             session.typeApproximator,
                             variable.visibilityForApproximation(),
-                            session.typeContext,
                         )
                     )
                 )
@@ -1068,7 +1072,7 @@ open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransfor
                 valueParameter.transformReturnTypeRef(
                     StoreType,
                     valueParameter.returnTypeRef.resolvedTypeFromPrototype(
-                        ConeKotlinErrorType(
+                        ConeErrorType(
                             ConeSimpleDiagnostic(
                                 "No type for parameter",
                                 DiagnosticKind.ValueParameterWithNoTypeAnnotation

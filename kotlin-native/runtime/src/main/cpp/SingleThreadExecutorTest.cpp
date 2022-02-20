@@ -55,7 +55,7 @@ testing::MockFunction<void(PinnedContext&)>* PinnedContext::dtorMock = nullptr;
 TEST(SingleThreadExecutorTest, ContextThreadBound) {
     PinnedContext::ScopedMocks mocks;
     PinnedContext* createdContext = nullptr;
-    std::thread::id createdThread;
+    ScopedThread::id createdThread;
     EXPECT_CALL(mocks.ctorMock, Call(_)).WillOnce([&](PinnedContext& context) {
         createdContext = &context;
         createdThread = std::this_thread::get_id();
@@ -172,7 +172,7 @@ TEST(SingleThreadExecutorTest, ExecuteFromManyThreads) {
     std::atomic_bool canStart = false;
 
     KStdVector<int> expected;
-    KStdVector<std::thread> threads;
+    KStdVector<ScopedThread> threads;
     for (int i = 0; i < kDefaultThreadCount; ++i) {
         expected.push_back(i);
         threads.emplace_back([&, i] {
@@ -184,9 +184,7 @@ TEST(SingleThreadExecutorTest, ExecuteFromManyThreads) {
 
     canStart = true;
 
-    for (auto& thread : threads) {
-        thread.join();
-    }
+    threads.clear();
 
     EXPECT_THAT(executor.context().result, testing::UnorderedElementsAreArray(expected));
 }

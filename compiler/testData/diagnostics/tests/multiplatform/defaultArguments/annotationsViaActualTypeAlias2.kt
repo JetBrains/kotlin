@@ -1,5 +1,5 @@
 // FIR_IDENTICAL
-// !LANGUAGE: +MultiPlatformProjects -ProhibitGenericArrayClassLiteral
+// !LANGUAGE: -ProhibitGenericArrayClassLiteral
 // MODULE: m1-common
 // FILE: common.kt
 

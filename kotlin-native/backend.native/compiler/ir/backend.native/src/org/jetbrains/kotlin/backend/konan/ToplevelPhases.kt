@@ -1,6 +1,6 @@
 package org.jetbrains.kotlin.backend.konan
 
-import org.jetbrains.kotlin.backend.common.CheckDeclarationParentsVisitor
+import org.jetbrains.kotlin.backend.common.checkDeclarationParents
 import org.jetbrains.kotlin.backend.common.IrValidator
 import org.jetbrains.kotlin.backend.common.IrValidatorConfig
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
@@ -46,7 +46,7 @@ internal fun moduleValidationCallback(state: ActionState, module: IrModuleFragme
     )
     try {
         module.accept(IrValidator(context, validatorConfig), null)
-        module.accept(CheckDeclarationParentsVisitor, null)
+        module.checkDeclarationParents()
     } catch (t: Throwable) {
         // TODO: Add reference to source.
         if (validatorConfig.abortOnError)
@@ -64,7 +64,7 @@ internal fun fileValidationCallback(state: ActionState, irFile: IrFile, context:
     )
     try {
         irFile.accept(IrValidator(context, validatorConfig), null)
-        irFile.accept(CheckDeclarationParentsVisitor, null)
+        irFile.checkDeclarationParents()
     } catch (t: Throwable) {
         // TODO: Add reference to source.
         if (validatorConfig.abortOnError)
@@ -348,6 +348,30 @@ internal val dependenciesLowerPhase = NamedCompilerPhase(
             }
         })
 
+internal val dumpTestsPhase = makeCustomPhase<Context, IrModuleFragment>(
+        name = "dumpTestsPhase",
+        description = "Dump the list of all available tests",
+        op = { context, _ ->
+            val testDumpFile = context.config.testDumpFile
+            requireNotNull(testDumpFile)
+
+            if (context.testCasesToDump.isEmpty()) {
+                testDumpFile.writeText("")
+                return@makeCustomPhase
+            }
+
+            testDumpFile.writeText(
+                    context.testCasesToDump.asSequence()
+                            .flatMap { (suiteClassId, functionNames) ->
+                                val suiteName = suiteClassId.asString()
+                                functionNames.asSequence().map { "$suiteName:$it" }
+                            }
+                            .sorted()
+                            .joinToString(separator = "\n")
+            )
+        }
+)
+
 internal val entryPointPhase = makeCustomPhase<Context, IrModuleFragment>(
         name = "addEntryPoint",
         description = "Add entry point for program",
@@ -533,6 +557,7 @@ private val backendCodegen = namedUnitPhase(
                 allLoweringsPhase then // Lower current module first.
                 dependenciesLowerPhase then // Then lower all libraries in topological order.
                                             // With that we guarantee that inline functions are unlowered while being inlined.
+                dumpTestsPhase then
                 entryPointPhase then
                 exportInternalAbiPhase then
                 useInternalAbiPhase then
@@ -602,6 +627,7 @@ internal fun PhaseConfig.konanPhasesConfig(config: KonanConfig) {
         disableUnless(objectFilesPhase, config.produce.involvesLinkStage)
         disableUnless(linkerPhase, config.produce.involvesLinkStage)
         disableIf(testProcessorPhase, getNotNull(KonanConfigKeys.GENERATE_TEST_RUNNER) == TestRunnerKind.NONE)
+        disableIf(dumpTestsPhase, getNotNull(KonanConfigKeys.GENERATE_TEST_RUNNER) == TestRunnerKind.NONE || config.testDumpFile == null)
         disableUnless(buildDFGPhase, getBoolean(KonanConfigKeys.OPTIMIZATION))
         disableUnless(devirtualizationAnalysisPhase, getBoolean(KonanConfigKeys.OPTIMIZATION))
         disableUnless(devirtualizationPhase, getBoolean(KonanConfigKeys.OPTIMIZATION))

@@ -1,0 +1,8 @@
+STEP 0:
+    dependencies: stdlib, lib1
+    dirty: l2_0.kt, l2_1.kt
+
+STEP 1:
+    dependencies: stdlib, lib1
+    modifications:
+        D : l2_1.kt

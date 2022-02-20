@@ -1,1 +1,3 @@
-fun <T> function(t: <caret>T) where T : Int, T : Long = TODO()
+fun <T, K> function(t: <caret>T): String where T : A, T : Sequence<Int> = TODO()
+
+interface A

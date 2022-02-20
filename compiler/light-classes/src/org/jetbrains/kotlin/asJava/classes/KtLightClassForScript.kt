@@ -1,11 +1,10 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.asJava.classes
 
-import com.intellij.openapi.util.Comparing
 import com.intellij.openapi.util.Key
 import com.intellij.psi.*
 import com.intellij.psi.impl.PsiSuperMethodImplUtil
@@ -43,10 +42,6 @@ open class KtLightClassForScript(val script: KtScript) : KtLazyLightClass(script
     protected open val javaFileStub: PsiJavaFileStub?
         get() = getLightClassDataHolder().javaFileStub
 
-    private val hashCode: Int = computeHashCode()
-
-    private val packageFqName: FqName = script.fqName.parent()
-
     private val modifierList: PsiModifierList = LightModifierList(manager, KotlinLanguage.INSTANCE, PsiModifier.PUBLIC)
 
     private val scriptImplementsList: LightEmptyImplementsList = LightEmptyImplementsList(manager)
@@ -62,13 +57,13 @@ open class KtLightClassForScript(val script: KtScript) : KtLazyLightClass(script
             script.containingKtFile,
             lightClass = { this },
             stub = { javaFileStub },
-            packageFqName = packageFqName,
+            packageFqName = fqName.parent(),
         )
     }
 
     override val kotlinOrigin: KtClassOrObject? get() = null
 
-    val fqName: FqName = script.fqName
+    val fqName: FqName get() = script.fqName
 
     override fun getModifierList() = modifierList
 
@@ -164,13 +159,7 @@ open class KtLightClassForScript(val script: KtScript) : KtLazyLightClass(script
 
     override fun getScope(): PsiElement = parent
 
-    override fun hashCode() = hashCode
-
-    private fun computeHashCode(): Int {
-        var result = manager.hashCode()
-        result = 31 * result + script.hashCode()
-        return result
-    }
+    override fun hashCode() = script.hashCode()
 
     override fun equals(other: Any?): Boolean {
         if (other == null || this::class.java != other::class.java) {
@@ -180,8 +169,6 @@ open class KtLightClassForScript(val script: KtScript) : KtLazyLightClass(script
         val lightClass = other as? KtLightClassForScript ?: return false
         if (this === other) return true
 
-        if (this.hashCode != lightClass.hashCode) return false
-        if (manager != lightClass.manager) return false
         if (script != lightClass.script) return false
 
         return true

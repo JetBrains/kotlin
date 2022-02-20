@@ -11,9 +11,10 @@ compiler or generated code. Use it at your own risk!
 warning: ATTENTION!
  This build uses in-dev FIR:
   -Xuse-fir
-compiler/testData/cli/jvm/firMultiplatformCompilationWithError/jvm.kt:1:18: error: actual class 'A' has no corresponding members for expected class members:
+compiler/testData/cli/jvm/firMultiplatformCompilationWithError/jvm.kt:1:18: error: actual class 'public abstract actual interface A : R|kotlin/Any|' has no corresponding members for expected class members:
 
-    /A.foo
+    public abstract expect fun foo(): R|kotlin/Unit|
+
 
 actual interface A
                  ^

@@ -24,10 +24,8 @@ import org.jetbrains.kotlin.gradle.plugin.internal.state.TaskExecutionResults
 import org.jetbrains.kotlin.gradle.report.data.BuildExecutionData
 import org.jetbrains.kotlin.gradle.report.data.BuildExecutionDataProcessor
 import org.jetbrains.kotlin.gradle.report.data.TaskExecutionData
-import org.jetbrains.kotlin.gradle.tasks.AbstractKotlinCompile
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.ConcurrentLinkedQueue
-import kotlin.collections.ArrayList
 
 abstract class BuildMetricsReporterService : BuildService<BuildMetricsReporterService.Parameters>,
     OperationCompletionListener, AutoCloseable {
@@ -69,7 +67,7 @@ abstract class BuildMetricsReporterService : BuildService<BuildMetricsReporterSe
             }
             val didWork = result is TaskExecutionResult
             val buildMetrics = BuildMetrics()
-            buildMetrics.buildTimes.add(BuildTime.GRADLE_TASK, finishMs - startMs)
+            buildMetrics.buildTimes.addTimeMs(BuildTime.GRADLE_TASK, finishMs - startMs)
 
             buildMetricsMap[taskPath]?.also { buildMetrics.addAll(it.getMetrics()) }
             val taskExecutionResult = TaskExecutionResults[taskPath]
@@ -104,10 +102,10 @@ abstract class BuildMetricsReporterService : BuildService<BuildMetricsReporterSe
         }
 
         fun registerIfAbsent(project: Project, startParameters: List<String>): Provider<BuildMetricsReporterService>? {
-            val buildDataProcessors = ArrayList<BuildExecutionDataProcessor>()
             val rootProject = project.gradle.rootProject
             val reportingSettings = reportingSettings(rootProject)
 
+            val buildDataProcessors = ArrayList<BuildExecutionDataProcessor>()
             reportingSettings.fileReportSettings?.let {
                 buildDataProcessors.add(
                     PlainTextBuildReportWriterDataProcessor(
@@ -121,7 +119,7 @@ abstract class BuildMetricsReporterService : BuildService<BuildMetricsReporterSe
                 buildDataProcessors.add(MetricsWriter(reportingSettings.metricsOutputFile.absoluteFile))
             }
 
-            if (buildDataProcessors.isEmpty()) {
+            if (reportingSettings.buildReportOutputs.isEmpty() && buildDataProcessors.isEmpty()) {
                 return null
             }
 

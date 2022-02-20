@@ -154,14 +154,14 @@ abstract class KotlinIrLinker(
         }
     }
 
-    override fun getDeclaration(symbol: IrSymbol): IrDeclaration? {
-        if (!symbol.isPublicApi) {
-            if (symbol.hasDescriptor) {
-                val descriptor = symbol.descriptor
-                if (!platformSpecificSymbol(symbol)) {
-                    if (descriptor.module !== currentModule) return null
-                }
-            }
+    override fun getDeclaration(symbol: IrSymbol): IrDeclaration? =
+        deserializeOrResolveDeclaration(symbol, false)
+
+    protected fun deserializeOrResolveDeclaration(symbol: IrSymbol, allowSymbolsWithoutSignaturesFromOtherModule: Boolean): IrDeclaration? {
+        if (!allowSymbolsWithoutSignaturesFromOtherModule) {
+            if (!symbol.isPublicApi && symbol.hasDescriptor && !platformSpecificSymbol(symbol) &&
+                symbol.descriptor.module !== currentModule
+            ) return null
         }
 
         if (!symbol.isBound) {

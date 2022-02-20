@@ -123,10 +123,7 @@ abstract class KaptTask @Inject constructor(
 
     @get:Internal
     internal val defaultKotlinJavaToolchain: Provider<DefaultKotlinJavaToolchain> = objectFactory
-        .propertyWithNewInstance(
-            project.gradle,
-            { null }
-        )
+        .propertyWithNewInstance({ null })
 
     final override val kotlinJavaToolchainProvider: Provider<KotlinJavaToolchain> = defaultKotlinJavaToolchain.cast()
 

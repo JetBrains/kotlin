@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
 import org.jetbrains.kotlin.fir.references.FirSuperReference
-import org.jetbrains.kotlin.fir.types.ConeKotlinErrorType
+import org.jetbrains.kotlin.fir.types.ConeErrorType
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.FirUserTypeRef
 import org.jetbrains.kotlin.fir.types.coneType
@@ -26,9 +26,9 @@ object FirSuperReferenceChecker : FirQualifiedAccessExpressionChecker() {
         val typeArgumentList = delegatedTypeRef.qualifier.firstOrNull()?.typeArgumentList ?: return
         val superType = superTypeRef.coneType
 
-        if (superType !is ConeKotlinErrorType &&
+        if (superType !is ConeErrorType &&
             typeArgumentList.typeArguments.isNotEmpty() &&
-            superType.typeArguments.all { it !is ConeKotlinErrorType }
+            superType.typeArguments.all { it !is ConeErrorType }
         ) {
             reporter.reportOn(typeArgumentList.source, FirErrors.TYPE_ARGUMENTS_REDUNDANT_IN_SUPER_QUALIFIER, context)
         }

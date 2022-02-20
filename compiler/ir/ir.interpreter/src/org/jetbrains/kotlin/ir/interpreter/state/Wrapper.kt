@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.ir.interpreter.*
 import org.jetbrains.kotlin.ir.interpreter.stack.Field
 import org.jetbrains.kotlin.ir.interpreter.stack.Fields
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
-import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.capitalizeAsciiOnly
@@ -110,6 +109,8 @@ internal class Wrapper(val value: Any, override val irClass: IrClass, environmen
             "Array.kotlin.collections.copyToArrayOfAny(Boolean)" to "kotlin.collections.CollectionsKt",
         )
 
+        private val ranges = setOf("kotlin.ranges.CharRange", "kotlin.ranges.IntRange", "kotlin.ranges.LongRange")
+
         private fun IrFunction.getSignature(): String {
             val fqName = this.fqName
             val receiver = (dispatchReceiverParameter ?: extensionReceiverParameter)?.type?.getOnlyName()?.let { "$it." } ?: ""
@@ -121,9 +122,11 @@ internal class Wrapper(val value: Any, override val irClass: IrClass, environmen
         }
 
         fun mustBeHandledWithWrapper(declaration: IrDeclarationWithName): Boolean {
-            return when (declaration) {
-                is IrFunction -> declaration.getSignature() in intrinsicFunctionToHandler
-                else -> declaration.fqName.let { it in intrinsicClasses || it.startsWith("java") }
+            if (declaration is IrFunction) return declaration.getSignature() in intrinsicFunctionToHandler
+            val fqName = declaration.fqName
+            return when {
+                fqName in ranges && (declaration as IrClass).primaryConstructor!!.body == null -> true
+                else -> fqName in intrinsicClasses || fqName.startsWith("java")
             }
         }
 

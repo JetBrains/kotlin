@@ -1223,9 +1223,9 @@ object ArrayOps : TemplateGroupBase() {
                             if (primitive == PrimitiveType.Char) {
                                 // Requires comparator because default comparator of 'Array.prototype.sort' compares
                                 // string representation of values
-                                body { "this.asDynamic().sort(::primitiveCompareTo)" }
+                                body { "nativeSort(::primitiveCompareTo)" }
                             } else {
-                                body { "this.asDynamic().sort()" }
+                                body { "nativeSort()" }
                             }
                         }
                     } else {
@@ -1292,7 +1292,7 @@ object ArrayOps : TemplateGroupBase() {
             deprecate(Deprecation("Use other sorting functions from the Standard Library", warningSince = "1.6"))
             inlineOnly()
             signature("sort(noinline comparison: (a: T, b: T) -> Int)")
-            body { "asDynamic().sort(comparison)" }
+            body { "nativeSort(comparison)" }
         }
         specialFor(ArraysOfObjects) {
             deprecate(
@@ -1641,7 +1641,7 @@ object ArrayOps : TemplateGroupBase() {
                 body {
                     """
                     AbstractList.checkRangeIndexes(fromIndex, toIndex, size)
-                    this.asDynamic().fill(element, fromIndex, toIndex);
+                    nativeFill(element, fromIndex, toIndex);
                     """
                 }
             }
@@ -1654,7 +1654,8 @@ object ArrayOps : TemplateGroupBase() {
                 on(Backend.Wasm) {
                     body {
                         """
-                        for (index in fromIndex..toIndex) {
+                        AbstractList.checkRangeIndexes(fromIndex, toIndex, size)
+                        for (index in fromIndex until toIndex) {
                             this[index] = element    
                         }
                         """

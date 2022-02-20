@@ -13,8 +13,8 @@ val u3: UInt? = u1
 
 val i0: Int = <!INITIALIZER_TYPE_MISMATCH!>1u<!>
 
-val m0 = <!UNRESOLVED_REFERENCE!>-<!>1u
-val m1: UInt = <!UNRESOLVED_REFERENCE!>-<!>1u
+val m0 = <!NONE_APPLICABLE!>-<!>1u
+val m1: UInt = <!NONE_APPLICABLE!>-<!>1u
 
 val h1 = 0xFFu
 val h2: UShort = 0xFFu

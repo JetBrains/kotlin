@@ -9,7 +9,7 @@ package org.jetbrains.kotlin.gradle.plugin.mpp
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
 
-class KotlinNativeCompilationFactory(
+open class KotlinNativeCompilationFactory(
     val target: KotlinNativeTarget
 ) : KotlinCompilationFactory<KotlinNativeCompilation> {
 
@@ -17,11 +17,15 @@ class KotlinNativeCompilationFactory(
         get() = KotlinNativeCompilation::class.java
 
     override fun create(name: String): KotlinNativeCompilation =
-        // TODO: Validate compilation free args using the [CompilationFreeArgsValidator]
-        //       when the compilation and the link args are separated (see KT-33717).
-        // Note: such validation should be done in the whenEvaluate block because
+    // TODO: Validate compilation free args using the [CompilationFreeArgsValidator]
+    //       when the compilation and the link args are separated (see KT-33717).
+    // Note: such validation should be done in the whenEvaluate block because
         // a user can change args during project configuration.
-        KotlinNativeCompilation(target, target.konanTarget, name)
+
+        KotlinNativeCompilation(
+            target.konanTarget,
+            NativeCompilationDetails(target, name) { NativeCompileOptions { defaultSourceSet.languageSettings } }
+        )
 }
 
 class KotlinSharedNativeCompilationFactory(
@@ -32,5 +36,8 @@ class KotlinSharedNativeCompilationFactory(
         get() = KotlinSharedNativeCompilation::class.java
 
     override fun create(name: String): KotlinSharedNativeCompilation =
-        KotlinSharedNativeCompilation(target, konanTargets, name)
+        KotlinSharedNativeCompilation(
+            konanTargets,
+            SharedNativeCompilationDetails(target, name) { NativeCompileOptions { defaultSourceSet.languageSettings } }
+        )
 }

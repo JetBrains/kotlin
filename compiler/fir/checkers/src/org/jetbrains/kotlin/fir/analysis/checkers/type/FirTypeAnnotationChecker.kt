@@ -29,7 +29,7 @@ object FirTypeAnnotationChecker : FirTypeRefChecker() {
                 if (KotlinTarget.TYPE !in annotationTargets) {
                     val useSiteTarget = annotation.useSiteTarget
                     if (useSiteTarget == null || KotlinTarget.USE_SITE_MAPPING[useSiteTarget] !in annotationTargets) {
-                        reporter.reportOn(annotation.source, FirErrors.WRONG_ANNOTATION_TARGET, "type usage", context)
+                        reporter.reportOn(annotation.source, FirErrors.WRONG_ANNOTATION_TARGET, "type usage", it)
                     }
                 }
             }

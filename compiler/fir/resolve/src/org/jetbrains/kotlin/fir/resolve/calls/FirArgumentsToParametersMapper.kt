@@ -133,24 +133,40 @@ private class FirCallArgumentsProcessor(
     }
 
     fun processNonLambdaArguments(arguments: List<FirExpression>) {
-        for (argument in arguments) {
-            // process position argument
-            if (argument !is FirNamedArgumentExpression) {
-                if (processPositionArgument(argument, isLastArgument = argument === arguments.last())) {
-                    state = State.VARARG_POSITION
+        for ((argumentIndex, argument) in arguments.withIndex()) {
+            if (argument is FirVarargArgumentsExpression) {
+                // If the argument list was already resolved, any arguments for a vararg parameter will be in a FirVarargArgumentsExpression.
+                // This can happen when getting all the candidates for an already resolved function call.
+                val varargArguments = argument.arguments
+                for ((varargArgumentIndex, varargArgument) in varargArguments.withIndex()) {
+                    processNonLambdaArgument(
+                        varargArgument,
+                        isLastArgument = argumentIndex == arguments.lastIndex && varargArgumentIndex == varargArguments.lastIndex
+                    )
                 }
-            }
-            // process named argument
-            else {
-                if (state == State.VARARG_POSITION) {
-                    completeVarargPositionArguments()
-                }
-
-                processNamedArgument(argument)
+            } else {
+                processNonLambdaArgument(argument, isLastArgument = argumentIndex == arguments.lastIndex)
             }
         }
         if (state == State.VARARG_POSITION) {
             completeVarargPositionArguments()
+        }
+    }
+
+    private fun processNonLambdaArgument(argument: FirExpression, isLastArgument: Boolean) {
+        // process position argument
+        if (argument !is FirNamedArgumentExpression) {
+            if (processPositionArgument(argument, isLastArgument)) {
+                state = State.VARARG_POSITION
+            }
+        }
+        // process named argument
+        else {
+            if (state == State.VARARG_POSITION) {
+                completeVarargPositionArguments()
+            }
+
+            processNamedArgument(argument)
         }
     }
 

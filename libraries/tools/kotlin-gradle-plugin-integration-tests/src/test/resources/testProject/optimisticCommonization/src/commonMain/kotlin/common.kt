@@ -1,0 +1,3 @@
+fun testCommon() {
+    intPropertyInterop.unsafeProp
+}

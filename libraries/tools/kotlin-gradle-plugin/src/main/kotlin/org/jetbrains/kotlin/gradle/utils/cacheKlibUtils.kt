@@ -43,7 +43,7 @@ fun getCacheDirectory(
     return File(cacheDirectory, computeDependenciesHash(dependency))
 }
 
-private fun ByteArray.toHexString() = joinToString("") { (0xFF and it.toInt()).toString(16).padStart(2, '0') }
+internal fun ByteArray.toHexString() = joinToString("") { (0xFF and it.toInt()).toString(16).padStart(2, '0') }
 
 private fun computeDependenciesHash(dependency: ResolvedDependency): String {
     val allArtifactsPaths =

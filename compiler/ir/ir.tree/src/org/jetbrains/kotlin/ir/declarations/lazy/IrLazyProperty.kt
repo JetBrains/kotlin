@@ -25,7 +25,7 @@ class IrLazyProperty(
     override val symbol: IrPropertySymbol,
     @OptIn(ObsoleteDescriptorBasedAPI::class)
     override val descriptor: PropertyDescriptor,
-    override val name: Name,
+    override var name: Name,
     override var visibility: DescriptorVisibility,
     override val modality: Modality,
     override val isVar: Boolean,

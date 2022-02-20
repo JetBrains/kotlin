@@ -36,7 +36,7 @@ interface IrCallGenerator {
 
     fun beforeCallStart() {}
 
-    fun beforeValueParametersStart() {}
+    fun beforeValueParametersStart(contextReceiversCount: Int) {}
 
     fun afterCallEnd() {}
 

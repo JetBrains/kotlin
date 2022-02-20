@@ -15,9 +15,7 @@ import org.jetbrains.kotlin.backend.common.lower.VariableRemapper
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.lower.irNot
 import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
-import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
-import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
-import org.jetbrains.kotlin.backend.jvm.SpecialBridge
+import org.jetbrains.kotlin.backend.jvm.*
 import org.jetbrains.kotlin.backend.jvm.ir.*
 import org.jetbrains.kotlin.codegen.AsmUtil
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
@@ -345,10 +343,14 @@ internal class BridgeLowering(val context: JvmBackendContext) : FileLoweringPass
         for (override in irFunction.allOverridden()) {
             if (override.isFakeOverride) continue
 
-            val signature = override.jvmMethod
+            val target = override.mangleFunctionIfNeeded()
+
+            val signature = target.jvmMethod
             if (targetMethod != signature && signature !in blacklist) {
-                val bridge = generated.getOrPut(signature) { Bridge(override, signature) }
-                bridge.overriddenSymbols += override.symbol
+                val bridge = generated.getOrPut(signature) {
+                    Bridge(target, signature)
+                }
+                bridge.overriddenSymbols += target.symbol
             }
         }
 
@@ -358,6 +360,16 @@ internal class BridgeLowering(val context: JvmBackendContext) : FileLoweringPass
         generated.values
             .filter { it.signature !in blacklist }
             .forEach { irClass.addBridge(it, bridgeTarget) }
+    }
+
+    private fun IrSimpleFunction.mangleFunctionIfNeeded(): IrSimpleFunction {
+        if (!hasMangledReturnType && !hasMangledParameters) return this
+        val replacement = context.inlineClassReplacements.getReplacementFunction(this) ?: return this
+        if (name.asString().substringAfterLast('-') == replacement.name.asString().substringAfterLast('-')) {
+            // function is already mangled
+            return this
+        }
+        return replacement
     }
 
     private fun IrSimpleFunction.isClashingWithPotentialBridge(name: Name, signature: Method): Boolean =

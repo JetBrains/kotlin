@@ -371,10 +371,6 @@ constructor(
     val enabledLanguageFeatures: Set<String>
         @Input get() = languageSettings.enabledLanguageFeatures
 
-    @Deprecated("Unsupported and will be removed in next major releases", replaceWith = ReplaceWith("optInAnnotationsInUse"))
-    val experimentalAnnotationsInUse: Set<String>
-        @Internal get() = languageSettings.experimentalAnnotationsInUse
-
     val optInAnnotationsInUse: Set<String>
         @Input get() = languageSettings.optInAnnotationsInUse
     // endregion.
@@ -520,7 +516,8 @@ constructor(
     override val additionalCompilerOptions: Provider<Collection<String>> = project.provider {
         kotlinOptions.freeCompilerArgs +
                 compilation.kotlinOptions.freeCompilerArgs +
-                ((languageSettings as? DefaultLanguageSettingsBuilder)?.freeCompilerArgs ?: emptyList())
+                ((languageSettings as? DefaultLanguageSettingsBuilder)?.freeCompilerArgs ?: emptyList()) +
+                PropertiesProvider(project).nativeLinkArgs
     }
 
     override val kotlinOptions: KotlinCommonToolOptions = NativeLinkOptions()

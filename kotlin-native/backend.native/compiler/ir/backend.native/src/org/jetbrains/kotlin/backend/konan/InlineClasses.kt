@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.backend.konan
 
+import org.jetbrains.kotlin.backend.common.atMostOne
 import org.jetbrains.kotlin.backend.common.ir.isTopLevel
 import org.jetbrains.kotlin.backend.konan.descriptors.findPackage
 import org.jetbrains.kotlin.backend.konan.ir.getSuperClassNotAny
@@ -305,7 +306,8 @@ internal object IrTypeInlineClassesSupport : InlineClassesSupport<IrClass, IrTyp
 
     override fun getInlinedClassUnderlyingType(clazz: IrClass): IrType =
             clazz.constructors.firstOrNull { it.isPrimary }?.valueParameters?.single()?.type
-                    ?: clazz.declarations.filterIsInstance<IrProperty>().single { it.backingField != null }.backingField!!.type
+                    ?: clazz.declarations.filterIsInstance<IrProperty>().atMostOne { it.backingField != null }?.backingField?.type
+                    ?: clazz.inlineClassRepresentation!!.underlyingType
 
     override fun getPackageFqName(clazz: IrClass) =
             clazz.packageFqName

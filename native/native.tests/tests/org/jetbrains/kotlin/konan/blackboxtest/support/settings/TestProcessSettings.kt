@@ -34,17 +34,19 @@ internal class KotlinNativeClassLoader(private val lazyClassLoader: Lazy<ClassLo
     val classLoader: ClassLoader get() = lazyClassLoader.value
 }
 
-// TODO: in fact, only WITH_MODULES mode is supported now
+/**
+ * New test modes may be added as necessary.
+ */
 internal enum class TestMode(private val description: String) {
-    ONE_STAGE(
-        description = "Compile test files altogether without producing intermediate KLIBs."
-    ),
-    TWO_STAGE(
-        description = "Compile test files altogether and produce an intermediate KLIB. Then produce a program from the KLIB using -Xinclude."
-    ),
-    WITH_MODULES(
+    ONE_STAGE_MULTI_MODULE(
         description = "Compile each test file as one or many modules (depending on MODULE directives declared in the file)." +
-                " Then link the KLIBs into the single executable file."
+                " Produce a KLIB per each module except the last one." +
+                " Finally, produce an executable file by compiling the latest module with all other KLIBs passed as -library"
+    ),
+    TWO_STAGE_MULTI_MODULE(
+        description = "Compile each test file as one or many modules (depending on MODULE directives declared in the file)." +
+                " Produce a KLIB per each module." +
+                " Finally, produce an executable file by passing the latest KLIB as -Xinclude and all other KLIBs as -library."
     );
 
     override fun toString() = description
@@ -89,6 +91,16 @@ internal enum class GCType(val compilerFlag: String?) {
     NOOP("-Xgc=noop"),
     STMS("-Xgc=stms"),
     CMS("-Xgc=cms");
+
+    override fun toString() = compilerFlag?.let { "($it)" }.orEmpty()
+}
+
+internal enum class GCScheduler(val compilerFlag: String?) {
+    UNSPECIFIED(null),
+    DISABLED("-Xbinary=gcSchedulerType=disabled"),
+    WITH_TIMER("-Xbinary=gcSchedulerType=with_timer"),
+    ON_SAFE_POINTS("-Xbinary=gcSchedulerType=on_safe_points"),
+    AGGRESSIVE("-Xbinary=gcSchedulerType=aggressive");
 
     override fun toString() = compilerFlag?.let { "($it)" }.orEmpty()
 }

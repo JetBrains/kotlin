@@ -19,7 +19,9 @@ class IrInterpreterHelpersSourceFilesProvider(testServices: TestServices) : Addi
         private const val HELPERS_PATH = "./compiler/testData/ir/interpreter/helpers"
         private const val UNSIGNED_PATH = "./libraries/stdlib/unsigned/src/kotlin"
         private val RUNTIME_PATHS = arrayOf(
-            "./core/builtins/src/kotlin",
+            "./core/builtins/src/kotlin/Progressions.kt",
+            "./core/builtins/src/kotlin/ProgressionIterators.kt",
+            "./core/builtins/src/kotlin/internal/progressionUtil.kt",
             "./libraries/stdlib/jvm/runtime/kotlin/TypeAliases.kt",
             "./libraries/stdlib/jvm/runtime/kotlin/text/TypeAliases.kt",
             "./libraries/stdlib/jvm/src/kotlin/collections/TypeAliases.kt",
@@ -28,7 +30,9 @@ class IrInterpreterHelpersSourceFilesProvider(testServices: TestServices) : Addi
             "./libraries/stdlib/src/kotlin/collections/Sequence.kt",
         )
         private val ANNOTATIONS_PATHS = arrayOf(
-            "./libraries/stdlib/src/kotlin/annotations",
+            "./libraries/stdlib/src/kotlin/annotations/Experimental.kt",
+            "./libraries/stdlib/src/kotlin/annotations/ExperimentalStdlibApi.kt",
+            "./libraries/stdlib/src/kotlin/annotations/OptIn.kt",
             "./libraries/stdlib/src/kotlin/internal/Annotations.kt",
             "./libraries/stdlib/src/kotlin/experimental/inferenceMarker.kt",
             "./libraries/stdlib/jvm/runtime/kotlin/jvm/annotations/JvmPlatformAnnotations.kt",

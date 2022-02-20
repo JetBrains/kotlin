@@ -45,5 +45,5 @@ Resolved call:
 Resulting descriptor: fun String.unaryPlus(): Unit defined in Title
 
 Explicit receiver kind = EXTENSION_RECEIVER
-Dispatch receiver = TitleExt{fun Title.<anonymous>(): Unit defined in result.<anonymous>.<anonymous>}
+Dispatch receiver = TitleExt{fun Title.`<anonymous>`(): Unit defined in result.`<anonymous>`.`<anonymous>`}
 Extension receiver = "Foo" {String}

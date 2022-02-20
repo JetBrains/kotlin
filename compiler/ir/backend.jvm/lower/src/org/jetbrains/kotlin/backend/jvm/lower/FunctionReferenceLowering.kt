@@ -1021,7 +1021,7 @@ internal class FunctionReferenceLowering(private val context: JvmBackendContext)
             inlinedAdapterBlock.statements.add(inlinedAdapterResult)
 
             callee.body = null
-            return inlinedAdapterBlock
+            return inlinedAdapterBlock.patchDeclarationParents(invokeMethod)
         }
 
         private fun buildOverride(superFunction: IrSimpleFunction, newReturnType: IrType = superFunction.returnType): IrSimpleFunction =

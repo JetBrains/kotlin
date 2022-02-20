@@ -25,7 +25,7 @@ object FirWhenConditionChecker : FirWhenExpressionChecker() {
             val condition = branch.condition
             if (condition is FirElseIfTrueCondition) continue
             withSuppressedDiagnostics(condition, context) {
-                checkCondition(condition, context, reporter)
+                checkCondition(condition, it, reporter)
             }
         }
         if (expression.subject != null) {

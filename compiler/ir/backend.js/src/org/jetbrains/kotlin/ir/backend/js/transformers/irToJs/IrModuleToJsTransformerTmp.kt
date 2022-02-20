@@ -147,13 +147,16 @@ class IrModuleToJsTransformerTmp(
         modules: Iterable<IrModuleFragment>,
         exportData: Map<IrModuleFragment, Map<IrFile, List<ExportedDeclaration>>>,
     ): JsIrProgram {
-
         return JsIrProgram(
             modules.map { m ->
-                JsIrModule(m.safeName, m.externalModuleName(), m.files.map { f ->
-                    val exports = exportData[m]!![f]!!
-                    generateProgramFragment(f, exports)
-                })
+                JsIrModule(
+                    m.safeName,
+                    m.externalModuleName(),
+                    m.files.map {
+                        val exports = exportData[m]!![it]!!
+                        generateProgramFragment(it, exports)
+                    },
+                )
             }
         )
     }
@@ -172,7 +175,9 @@ class IrModuleToJsTransformerTmp(
             globalNameScope = globalNameScope
         )
 
-        val result = JsIrProgramFragment(file.fqName.asString())
+        val result = JsIrProgramFragment(file.fqName.asString()).apply {
+            polyfills.statements += backendContext.polyfills.getAllPolyfillsFor(file)
+        }
 
         val internalModuleName = ReservedJsNames.makeInternalModuleName()
         val globalNames = NameTable<String>(globalNameScope)
@@ -331,7 +336,7 @@ fun generateWrappedModuleBody(
         )
 
         val dependencies = others.map { module ->
-            val moduleName = module.moduleName
+            val moduleName = module.externalModuleName
 
             moduleName to generateSingleWrappedModuleBody(
                 moduleName,
@@ -364,7 +369,7 @@ private fun generateSingleWrappedModuleBody(
     sourceMapsInfo: SourceMapsInfo?,
     generateScriptModule: Boolean,
     generateCallToMain: Boolean,
-    crossModuleReferences: CrossModuleReferences = CrossModuleReferences.Empty
+    crossModuleReferences: CrossModuleReferences = CrossModuleReferences.Empty,
 ): CompilationOutputs {
     val program = Merger(
         moduleName,

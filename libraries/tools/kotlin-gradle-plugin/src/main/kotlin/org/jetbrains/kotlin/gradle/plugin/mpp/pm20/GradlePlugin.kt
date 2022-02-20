@@ -13,16 +13,21 @@ import org.gradle.api.component.SoftwareComponentFactory
 import org.gradle.api.plugins.JavaBasePlugin
 import org.gradle.api.publish.PublishingExtension
 import org.gradle.api.publish.maven.MavenPublication
+import org.gradle.tooling.provider.model.ToolingModelBuilderRegistry
 import org.gradle.util.GradleVersion
+import org.jetbrains.kotlin.gradle.dsl.KotlinProjectExtension
 import org.jetbrains.kotlin.gradle.dsl.KotlinTopLevelExtension
 import org.jetbrains.kotlin.gradle.dsl.pm20Extension
+import org.jetbrains.kotlin.gradle.dsl.topLevelExtensionOrNull
 import org.jetbrains.kotlin.gradle.internal.customizeKotlinDependencies
+import org.jetbrains.kotlin.gradle.kpm.idea.IdeaKotlinProjectModelBuilder
 import org.jetbrains.kotlin.gradle.utils.checkGradleCompatibility
 import org.jetbrains.kotlin.project.model.KotlinModuleIdentifier
 import javax.inject.Inject
 
 abstract class KotlinPm20GradlePlugin @Inject constructor(
-    @Inject private val softwareComponentFactory: SoftwareComponentFactory
+    @Inject private val softwareComponentFactory: SoftwareComponentFactory,
+    @Inject private val toolingModelBuilderRegistry: ToolingModelBuilderRegistry
 ) : Plugin<Project> {
     override fun apply(project: Project) {
         checkGradleCompatibility("the Kotlin Multiplatform plugin", GradleVersion.version("6.1"))
@@ -33,32 +38,9 @@ abstract class KotlinPm20GradlePlugin @Inject constructor(
         createDefaultModules(project)
         customizeKotlinDependencies(project)
         registerDefaultVariantFactories(project)
-        setupFragmentsMetadata(project)
-        setupPublication(project)
-    }
-
-    private fun registerDefaultVariantFactories(project: Project) {
-        project.pm20Extension.modules.configureEach { module ->
-            module.fragments.registerFactory(
-                KotlinJvmVariant::class.java,
-                KotlinJvmVariantFactory(module)
-            )
-
-            fun <T : KotlinNativeVariantInternal> registerNativeVariantFactory(
-                constructor: KotlinNativeVariantConstructor<T>
-            ) = module.fragments.registerFactory(
-                constructor.variantClass, KotlinNativeVariantFactory(module, constructor)
-            )
-
-            listOf(
-                // FIXME codegen, add missing native targets
-                KotlinLinuxX64Variant.constructor,
-                KotlinMacosX64Variant.constructor,
-                KotlinMacosArm64Variant.constructor,
-                KotlinIosX64Variant.constructor,
-                KotlinIosArm64Variant.constructor
-            ).forEach { constructor -> registerNativeVariantFactory(constructor) }
-        }
+        setupFragmentsMetadataForKpmModules(project)
+        setupKpmModulesPublication(project)
+        setupToolingModelBuilder()
     }
 
     private fun createDefaultModules(project: Project) {
@@ -66,19 +48,6 @@ abstract class KotlinPm20GradlePlugin @Inject constructor(
             modules.create(KotlinGradleModule.MAIN_MODULE_NAME)
             modules.create(KotlinGradleModule.TEST_MODULE_NAME)
             main { makePublic() }
-        }
-    }
-
-    private fun setupFragmentsMetadata(project: Project) {
-        project.pm20Extension.modules.all { module ->
-            configureMetadataResolutionAndBuild(module)
-            configureMetadataExposure(module)
-        }
-    }
-
-    private fun setupPublication(project: Project) {
-        project.pm20Extension.modules.all { module ->
-            setupPublicationForModule(module)
         }
     }
 
@@ -112,17 +81,21 @@ abstract class KotlinPm20GradlePlugin @Inject constructor(
             }
         }
     }
+
+    private fun setupToolingModelBuilder() {
+        toolingModelBuilderRegistry.register(IdeaKotlinProjectModelBuilder())
+    }
 }
 
 fun rootPublicationComponentName(module: KotlinGradleModule) =
     module.disambiguateName("root")
 
 open class KotlinPm20ProjectExtension(project: Project) : KotlinTopLevelExtension(project) {
-    val modules: NamedDomainObjectContainer<KotlinGradleModule> =
-        project.objects.domainObjectContainer(
-            KotlinGradleModule::class.java,
-            KotlinGradleModuleFactory(project)
-        )
+
+    internal val kpmModelContainer = DefaultKpmGradleProjectModelContainer.create(project)
+
+    val modules: NamedDomainObjectContainer<KotlinGradleModule>
+        get() = project.kpmModules
 
     @Suppress("unused") // DSL function
     fun mainAndTest(configure: KotlinGradleModule.() -> Unit) {
@@ -138,11 +111,6 @@ open class KotlinPm20ProjectExtension(project: Project) : KotlinTopLevelExtensio
 
     fun main(configure: KotlinGradleModule.() -> Unit = { }) = main.apply(configure)
     fun test(configure: KotlinGradleModule.() -> Unit = { }) = test.apply(configure)
-
-    internal val metadataCompilationRegistryByModuleId: MutableMap<KotlinModuleIdentifier, MetadataCompilationRegistry> =
-        mutableMapOf()
-
-    internal var rootPublication: MavenPublication? = null
 
     @PublishedApi
     @JvmName("isAllowCommonizer")

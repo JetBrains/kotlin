@@ -361,6 +361,13 @@ class K2NativeCompilerArguments : CommonCompilerArguments() {
     @Argument(value = "-Xmeaningful-bridge-names", description = "(Unstable) Produce meaningful names for reverse bridges. Useful only for compiler tests.")
     var meaningfulBridgeNames: Boolean = false
 
+    @Argument(
+            value = "-Xdump-tests-to",
+            valueDescription = "<path>",
+            description = "Path to a file to dump the list of all available tests"
+    )
+    var testDumpOutputPath: String? = null
+
     @Argument(value = "-Xlazy-ir-for-caches", valueDescription = "{disable|enable}", description = "Use lazy IR for cached libraries")
     var lazyIrForCaches: String? = null
 

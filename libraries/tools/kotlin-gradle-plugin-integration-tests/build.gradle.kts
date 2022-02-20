@@ -124,6 +124,29 @@ projectTest(
     if (isTeamcityBuild) finalizedBy(cleanTestKitCacheTask)
 }
 
+projectTest(
+    "testKpmModelMapping",
+    shortenTempRootName = shortenTempRootName,
+    jUnitMode = JUnitMode.JUnit5
+) {
+    systemProperty("kotlin.gradle.kpm.enableModelMapping", "true")
+    includeMppAndAndroid(true)
+    includeNative(false)
+    if (isTeamcityBuild) finalizedBy(cleanTestKitCacheTask)
+}
+
+projectTest(
+    "testAdvanceGradleVersionKpmModelMapping",
+    shortenTempRootName = shortenTempRootName,
+    jUnitMode = JUnitMode.JUnit5
+) {
+    systemProperty("kotlin.gradle.kpm.enableModelMapping", "true")
+    advanceGradleVersion()
+    includeMppAndAndroid(true)
+    includeNative(false)
+    if (isTeamcityBuild) finalizedBy(cleanTestKitCacheTask)
+}
+
 if (isTeamcityBuild) {
     projectTest(
         "testNative",

@@ -64,7 +64,7 @@ class DefaultKotlinSourceSet(
         filter.include("**/*.kts")
     }
 
-    override val languageSettings: LanguageSettingsBuilder = DefaultLanguageSettingsBuilder(project)
+    override val languageSettings: LanguageSettingsBuilder = DefaultLanguageSettingsBuilder()
 
     override val resources: SourceDirectorySet = createDefaultSourceDirectorySet(project, "$name resources")
 
@@ -249,7 +249,7 @@ internal fun KotlinSourceSet.disambiguateName(simpleName: String): String {
     return lowerCamelCaseName(*nameParts.toTypedArray())
 }
 
-private fun createDefaultSourceDirectorySet(project: Project, name: String?): SourceDirectorySet =
+internal fun createDefaultSourceDirectorySet(project: Project, name: String?): SourceDirectorySet =
     project.objects.sourceDirectorySet(name!!, name)
 
 /**

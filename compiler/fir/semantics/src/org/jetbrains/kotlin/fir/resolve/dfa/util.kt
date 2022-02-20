@@ -98,7 +98,7 @@ val FirElement.symbol: FirBasedSymbol<*>?
         is FirResolvable -> symbol
         is FirDeclaration -> symbol
         is FirWhenSubjectExpression -> whenRef.value.subject?.symbol
-        is FirSafeCallExpression -> regularQualifiedAccess.symbol
+        is FirSafeCallExpression -> selector.symbol
         else -> null
     }?.takeIf {
         (this as? FirExpression)?.unwrapSmartcastExpression() is FirThisReceiverExpression ||

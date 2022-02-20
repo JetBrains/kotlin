@@ -27,12 +27,10 @@ class K2JVMCompilerArguments : CommonCompilerArguments() {
     )
     var classpath: String? by NullableStringFreezableVar(null)
 
-    @DeprecatedOption(removeAfter = "1.5", level = DeprecationLevel.ERROR)
-    @GradleOption(DefaultValues.BooleanFalseDefault::class)
     @Argument(value = "-include-runtime", description = "Include Kotlin runtime into the resulting JAR")
     var includeRuntime: Boolean by FreezableVar(false)
 
-    @DeprecatedOption(
+    @GradleDeprecatedOption(
         message = "This option is not working well with Gradle caching and will be removed in the future.",
         removeAfter = "1.7",
         level = DeprecationLevel.WARNING
@@ -49,16 +47,12 @@ class K2JVMCompilerArguments : CommonCompilerArguments() {
     @Argument(value = "-no-jdk", description = "Don't automatically include the Java runtime into the classpath")
     var noJdk: Boolean by FreezableVar(false)
 
-    @DeprecatedOption(removeAfter = "1.6", level = DeprecationLevel.ERROR)
-    @GradleOption(DefaultValues.BooleanTrueDefault::class)
     @Argument(
         value = "-no-stdlib",
         description = "Don't automatically include the Kotlin/JVM stdlib and Kotlin reflection into the classpath"
     )
     var noStdlib: Boolean by FreezableVar(false)
 
-    @DeprecatedOption(removeAfter = "1.5", level = DeprecationLevel.ERROR)
-    @GradleOption(DefaultValues.BooleanTrueDefault::class)
     @Argument(value = "-no-reflect", description = "Don't automatically include Kotlin reflection into the classpath")
     var noReflect: Boolean by FreezableVar(false)
 
@@ -87,7 +81,7 @@ class K2JVMCompilerArguments : CommonCompilerArguments() {
     @Argument(
         value = "-jvm-target",
         valueDescription = "<version>",
-        description = "Target version of the generated JVM bytecode (1.6 (DEPRECATED), 1.8, 9, 10, 11, 12, 13, 14, 15, 16 or 17), default is 1.8"
+        description = "Target version of the generated JVM bytecode (1.6 (DEPRECATED), 1.8, 9, 10, ..., 18), default is 1.8"
     )
     var jvmTarget: String? by NullableStringFreezableVar(null)
 
@@ -97,8 +91,6 @@ class K2JVMCompilerArguments : CommonCompilerArguments() {
 
     // Advanced options
 
-    @DeprecatedOption(removeAfter = "1.6", level = DeprecationLevel.HIDDEN)
-    @GradleOption(DefaultValues.BooleanFalseDefault::class)
     @Argument(
         value = "-Xuse-ir",
         description = "Use the IR backend. This option has no effect unless the language version less than 1.5 is used"
@@ -454,7 +446,7 @@ Also sets `-jvm-target` value equal to the selected JDK version"""
         description = "Debug option: Run compiler with async profiler and save snapshots to `outputDir`; `command` is passed to async-profiler on start.\n" +
                 "`profilerPath` is a path to libasyncProfiler.so; async-profiler.jar should be on the compiler classpath.\n" +
                 "If it's not on the classpath, the compiler will attempt to load async-profiler.jar from the containing directory of profilerPath.\n" +
-                "Example: -Xprofile=<PATH_TO_ASYNC_PROFILER>/async-profiler/build/libasyncProfiler.so:event=cpu,interval=1ms,threads,start,framebuf=50000000:<SNAPSHOT_DIR_PATH>"
+                "Example: -Xprofile=<PATH_TO_ASYNC_PROFILER>/async-profiler/build/libasyncProfiler.so:event=cpu,interval=1ms,threads,start:<SNAPSHOT_DIR_PATH>"
     )
     var profileCompilerCommand: String? by NullableStringFreezableVar(null)
 
@@ -486,8 +478,8 @@ Also sets `-jvm-target` value equal to the selected JDK version"""
 
     @Argument(
         value = "-Xtype-enhancement-improvements-strict-mode",
-        description = "Enable strict mode for some improvements in the type enhancement for loaded Java types based on nullability annotations," +
-                "including freshly supported reading of the type use annotations from class files. " +
+        description = "Enable strict mode for some improvements in the type enhancement for loaded Java types based on nullability annotations,\n" +
+                "including freshly supported reading of the type use annotations from class files.\n" +
                 "See KT-45671 for more details"
     )
     var typeEnhancementImprovementsInStrictMode: Boolean by FreezableVar(false)
@@ -516,6 +508,13 @@ Also sets `-jvm-target` value equal to the selected JDK version"""
         description = "Enhance not null annotated type parameter's types to definitely not null types (@NotNull T => T & Any)"
     )
     var enhanceTypeParameterTypesToDefNotNull: Boolean by FreezableVar(false)
+
+    @Argument(
+        value = "-Xlink-via-signatures",
+        description = "Link JVM IR symbols via signatures, instead of descriptors. \n" +
+                "This mode is slower, but can be useful in troubleshooting problems with the JVM IR backend"
+    )
+    var linkViaSignatures: Boolean by FreezableVar(false)
 
     override fun configureAnalysisFlags(collector: MessageCollector, languageVersion: LanguageVersion): MutableMap<AnalysisFlag<*>, Any> {
         val result = super.configureAnalysisFlags(collector, languageVersion)

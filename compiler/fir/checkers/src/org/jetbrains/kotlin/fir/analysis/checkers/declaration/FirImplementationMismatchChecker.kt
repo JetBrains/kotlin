@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.fir.scopes.getDirectOverriddenProperties
 import org.jetbrains.kotlin.fir.scopes.impl.delegatedWrapperData
 import org.jetbrains.kotlin.fir.scopes.impl.toConeType
 import org.jetbrains.kotlin.fir.symbols.impl.*
-import org.jetbrains.kotlin.fir.types.ConeKotlinErrorType
+import org.jetbrains.kotlin.fir.types.ConeErrorType
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.fir.types.typeContext
@@ -126,7 +126,7 @@ object FirImplementationMismatchChecker : FirClassChecker() {
             it to context.returnTypeCalculator.tryCalculateReturnType(it).coneType
         }
 
-        if (withTypes.any { it.second is ConeKotlinErrorType }) return
+        if (withTypes.any { it.second is ConeErrorType }) return
 
         var delegation: FirCallableSymbol<*>? = null
         val implementations = mutableListOf<FirCallableSymbol<*>>()
@@ -218,7 +218,7 @@ object FirImplementationMismatchChecker : FirClassChecker() {
         }
 
         clashes.forEach {
-            reporter.reportOn(containingClass.source, FirErrors.CONFLICTING_INHERITED_MEMBERS, it.toList(), context)
+            reporter.reportOn(containingClass.source, FirErrors.CONFLICTING_INHERITED_MEMBERS, containingClass.symbol, it.toList(), context)
         }
     }
 

@@ -49,17 +49,20 @@ class JavaLikeCounterLoopBuilder(private val context: CommonBackendContext) {
         //      )
         val bodyBlock = newBody as? IrContainerExpression
             ?: throw AssertionError("newBody: ${newBody?.dump()}")
-        val forLoopNextBlock = bodyBlock.statements[0] as? IrContainerExpression
-            ?: throw AssertionError("bodyBlock[0]: ${bodyBlock.statements[0].dump()}")
-        if (forLoopNextBlock.origin != IrStatementOrigin.FOR_LOOP_NEXT)
-            throw AssertionError("FOR_LOOP_NEXT expected: ${forLoopNextBlock.dump()}")
+        val forLoopNextBlockIndex = bodyBlock.statements.indexOfFirst {
+            it is IrContainerExpression && it.origin == IrStatementOrigin.FOR_LOOP_NEXT
+        }
+        if (forLoopNextBlockIndex < 0) {
+            throw AssertionError("No FOR_LOOP_NEXT block in bodyBlock: ${bodyBlock.dump()}")
+        }
+        val forLoopNextBlock = bodyBlock.statements[forLoopNextBlockIndex] as IrContainerExpression
         val inductionVariableUpdate = forLoopNextBlock.statements.last() as? IrSetValue
             ?: throw AssertionError("forLoopNextBlock.last: ${forLoopNextBlock.statements.last().dump()}")
 
         val doWhileLoop = IrDoWhileLoopImpl(oldLoop.startOffset, oldLoop.endOffset, oldLoop.type, loopOrigin)
         doWhileLoop.label = oldLoop.label
 
-        bodyBlock.statements[0] = IrCompositeImpl(
+        bodyBlock.statements[forLoopNextBlockIndex] = IrCompositeImpl(
             forLoopNextBlock.startOffset, forLoopNextBlock.endOffset,
             forLoopNextBlock.type,
             forLoopNextBlock.origin,

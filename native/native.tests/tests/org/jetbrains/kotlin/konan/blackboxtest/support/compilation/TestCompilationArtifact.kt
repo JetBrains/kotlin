@@ -22,5 +22,6 @@ internal sealed interface TestCompilationArtifact {
     data class Executable(val executableFile: File) : TestCompilationArtifact {
         val path: String get() = executableFile.path
         override val logFile: File get() = executableFile.resolveSibling("${executableFile.name}.log")
+        val testDumpFile: File get() = executableFile.resolveSibling("${executableFile.name}.dump")
     }
 }

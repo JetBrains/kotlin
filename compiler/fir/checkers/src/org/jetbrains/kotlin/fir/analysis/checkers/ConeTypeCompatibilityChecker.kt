@@ -242,7 +242,7 @@ object ConeTypeCompatibilityChecker {
     private fun ConeKotlinType?.collectUpperBounds(): Set<ConeClassLikeType> {
         if (this == null) return emptySet()
         return when (this) {
-            is ConeClassErrorType -> emptySet() // Ignore error types
+            is ConeErrorType -> emptySet() // Ignore error types
             is ConeLookupTagBasedType -> when (this) {
                 is ConeClassLikeType -> setOf(this)
                 is ConeTypeVariableType -> {
@@ -255,7 +255,8 @@ object ConeTypeCompatibilityChecker {
             is ConeIntersectionType -> intersectedTypes.flatMap { it.collectUpperBounds() }.toSet()
             is ConeFlexibleType -> upperBound.collectUpperBounds()
             is ConeCapturedType -> constructor.supertypes?.flatMap { it.collectUpperBounds() }?.toSet().orEmpty()
-            is ConeStubType, is ConeIntegerLiteralType -> throw IllegalStateException("$this should not reach here")
+            is ConeIntegerConstantOperatorType -> setOf(getApproximatedType())
+            is ConeStubType, is ConeIntegerLiteralConstantType -> throw IllegalStateException("$this should not reach here")
         }
     }
 
@@ -267,7 +268,7 @@ object ConeTypeCompatibilityChecker {
     private fun ConeKotlinType?.collectLowerBounds(): Set<ConeClassLikeType> {
         if (this == null) return emptySet()
         return when (this) {
-            is ConeClassErrorType -> emptySet() // Ignore error types
+            is ConeErrorType -> emptySet() // Ignore error types
             is ConeLookupTagBasedType -> when (this) {
                 is ConeClassLikeType -> setOf(this)
                 is ConeTypeVariableType -> emptySet()
@@ -278,7 +279,8 @@ object ConeTypeCompatibilityChecker {
             is ConeIntersectionType -> intersectedTypes.flatMap { it.collectLowerBounds() }.toSet()
             is ConeFlexibleType -> lowerBound.collectLowerBounds()
             is ConeCapturedType -> constructor.supertypes?.flatMap { it.collectLowerBounds() }?.toSet().orEmpty()
-            is ConeStubType, is ConeIntegerLiteralType -> throw IllegalStateException("$this should not reach here")
+            is ConeIntegerConstantOperatorType -> setOf(getApproximatedType())
+            is ConeStubType, is ConeIntegerLiteralConstantType -> throw IllegalStateException("$this should not reach here")
         }
     }
 

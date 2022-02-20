@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.expressions.FirConstExpression
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
-import org.jetbrains.kotlin.fir.scopes.impl.FirIntegerOperatorCall
 
 object EmptyRangeChecker : FirFunctionCallChecker() {
     override fun check(expression: FirFunctionCall, context: CheckerContext, reporter: DiagnosticReporter) {
@@ -41,27 +40,12 @@ object EmptyRangeChecker : FirFunctionCallChecker() {
 
     private val FirFunctionCall.rangeLeft: Long?
         get() {
-            return if (explicitReceiver is FirIntegerOperatorCall) {
-                (explicitReceiver as? FirIntegerOperatorCall)?.asLong
-            } else {
-                (explicitReceiver as? FirConstExpression<*>)?.value as? Long
-            }
+            return (explicitReceiver as? FirConstExpression<*>)?.value as? Long
         }
 
     private val FirFunctionCall.rangeRight: Long?
         get() {
-            val arg = argumentList.arguments.getOrNull(0)
-            return if (arg is FirIntegerOperatorCall) arg.asLong
-            else (arg as? FirConstExpression<*>)?.value as? Long
-        }
-
-    // todo: add proper integer operator calls checking (e.g. (1+2)*3 transforms to 9)
-    private val FirIntegerOperatorCall.asLong: Long?
-        get() {
-            val value = (dispatchReceiver as? FirConstExpression<*>)?.value as Long? ?: return null
-            if (this.calleeReference.name.asString() == "unaryMinus") {
-                return -value
-            }
-            return value
+            val arg = argumentList.arguments.getOrNull(0) as? FirConstExpression<*>
+            return arg?.value as? Long
         }
 }

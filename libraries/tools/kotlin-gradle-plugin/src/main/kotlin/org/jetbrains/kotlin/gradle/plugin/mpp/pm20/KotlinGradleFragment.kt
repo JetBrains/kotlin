@@ -11,9 +11,13 @@ import org.gradle.api.Project
 import org.gradle.api.file.SourceDirectorySet
 import org.gradle.api.provider.Provider
 import org.gradle.util.ConfigureUtil
+import org.jetbrains.kotlin.gradle.plugin.HasKotlinDependencies
+import org.jetbrains.kotlin.gradle.kpm.KotlinExternalModelContainer
+import org.jetbrains.kotlin.gradle.kpm.KotlinMutableExternalModelContainer
 import org.jetbrains.kotlin.gradle.plugin.KotlinDependencyHandler
 import org.jetbrains.kotlin.gradle.plugin.LanguageSettingsBuilder
 import org.jetbrains.kotlin.gradle.plugin.mpp.DefaultKotlinDependencyHandler
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinDependencyConfigurationsHolder
 import org.jetbrains.kotlin.gradle.plugin.mpp.toModuleDependency
 import org.jetbrains.kotlin.gradle.plugin.sources.DefaultLanguageSettingsBuilder
 import org.jetbrains.kotlin.gradle.plugin.sources.FragmentConsistencyChecker
@@ -29,7 +33,8 @@ open class KotlinGradleFragmentInternal @Inject constructor(
     final override val containingModule: KotlinGradleModule,
     final override val fragmentName: String,
     dependencyConfigurations: KotlinFragmentDependencyConfigurations
-) : KotlinGradleFragment, KotlinFragmentDependencyConfigurations by dependencyConfigurations {
+) : KotlinGradleFragment,
+    KotlinFragmentDependencyConfigurations by dependencyConfigurations {
 
     final override fun getName(): String = fragmentName
 
@@ -39,7 +44,9 @@ open class KotlinGradleFragmentInternal @Inject constructor(
     // TODO pull up to KotlinModuleFragment
     // FIXME apply to compilation
     // FIXME check for consistency
-    override val languageSettings: LanguageSettingsBuilder = DefaultLanguageSettingsBuilder(project)
+    override val languageSettings: LanguageSettingsBuilder = DefaultLanguageSettingsBuilder()
+
+    internal val external: KotlinMutableExternalModelContainer = KotlinExternalModelContainer.mutable()
 
     override fun refines(other: KotlinGradleFragment) {
         checkCanRefine(other)
@@ -68,7 +75,9 @@ open class KotlinGradleFragmentInternal @Inject constructor(
     }
 
     private fun checkCanRefine(other: KotlinGradleFragment) {
-        check(containingModule == other.containingModule) { "Fragments can only refine each other within one module." }
+        check(containingModule == other.containingModule) {
+            "Fragments can only refine each other within one module. Can't make $this refine $other"
+        }
     }
 
     override fun dependencies(configure: KotlinDependencyHandler.() -> Unit): Unit =
@@ -80,10 +89,15 @@ open class KotlinGradleFragmentInternal @Inject constructor(
     private val _directRefinesDependencies = mutableSetOf<Provider<KotlinGradleFragment>>()
 
     override val directRefinesDependencies: Iterable<KotlinGradleFragment>
-        get() = _directRefinesDependencies.map { it.get() }
+        get() = _directRefinesDependencies.map { it.get() }.toSet()
 
+    // TODO: separate the declared module dependencies and exported module dependencies? we need this to keep implementation dependencies
+    //       out of the consumer's metadata compilations compile classpath; however, Native variants must expose implementation as API
+    //       anyway, so for now all fragments follow that behavior
     override val declaredModuleDependencies: Iterable<KotlinModuleDependency>
-        get() = project.configurations.getByName(apiConfigurationName).allDependencies.map { it.toModuleDependency(project) } // FIXME impl
+        get() = listOf(apiConfiguration, implementationConfiguration).flatMapTo(mutableSetOf()) { exportConfiguration ->
+            exportConfiguration.allDependencies.map { dependency -> dependency.toModuleDependency(project) }
+        }
 
     override val kotlinSourceRoots: SourceDirectorySet =
         project.objects.sourceDirectorySet(

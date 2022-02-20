@@ -12,12 +12,14 @@ KtSuccessCallInfo:
         symbol = /A.foo(<dispatch receiver>: A<T>, r: R): kotlin.Unit
         valueParameters = [
           KtVariableLikeSignature:
+            name = r
             receiverType = null
             returnType = kotlin.Int
             symbol = r: R
         ]
     argumentMapping = {
       1 -> (KtVariableLikeSignature:
+        name = r
         receiverType = null
         returnType = kotlin.Int
         symbol = r: R)

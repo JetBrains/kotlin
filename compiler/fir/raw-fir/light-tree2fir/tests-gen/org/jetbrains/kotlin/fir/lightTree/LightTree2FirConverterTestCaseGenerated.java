@@ -308,6 +308,11 @@ public class LightTree2FirConverterTestCaseGenerated extends AbstractLightTree2F
             runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/expressions/calls.kt");
         }
 
+        @TestMetadata("cascadeIf.kt")
+        public void testCascadeIf() throws Exception {
+            runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/expressions/cascadeIf.kt");
+        }
+
         @TestMetadata("classReference.kt")
         public void testClassReference() throws Exception {
             runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/expressions/classReference.kt");
@@ -391,6 +396,21 @@ public class LightTree2FirConverterTestCaseGenerated extends AbstractLightTree2F
         @TestMetadata("qualifierWithTypeArguments.kt")
         public void testQualifierWithTypeArguments() throws Exception {
             runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/expressions/qualifierWithTypeArguments.kt");
+        }
+
+        @TestMetadata("safeCallsWithAssignment.kt")
+        public void testSafeCallsWithAssignment() throws Exception {
+            runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/expressions/safeCallsWithAssignment.kt");
+        }
+
+        @TestMetadata("safeCallsWithAugmentedAssignment.kt")
+        public void testSafeCallsWithAugmentedAssignment() throws Exception {
+            runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/expressions/safeCallsWithAugmentedAssignment.kt");
+        }
+
+        @TestMetadata("safeCallsWithUnaryOperators.kt")
+        public void testSafeCallsWithUnaryOperators() throws Exception {
+            runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/expressions/safeCallsWithUnaryOperators.kt");
         }
 
         @TestMetadata("simpleReturns.kt")

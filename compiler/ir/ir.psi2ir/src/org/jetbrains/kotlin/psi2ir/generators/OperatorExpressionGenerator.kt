@@ -25,7 +25,9 @@ import org.jetbrains.kotlin.ir.descriptors.IrBuiltInsOverDescriptors
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
-import org.jetbrains.kotlin.ir.types.*
+import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.types.classifierOrFail
+import org.jetbrains.kotlin.ir.types.classifierOrNull
 import org.jetbrains.kotlin.ir.types.impl.originalKotlinType
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.Name
@@ -527,15 +529,19 @@ class OperatorExpressionGenerator(statementGenerator: StatementGenerator) : Stat
         }
     }
 
-    private fun generateBinaryOperatorAsCall(expression: KtBinaryExpression, origin: IrStatementOrigin?): IrExpression =
-        if (isDynamicBinaryOperator(expression))
-            generateDynamicBinaryExpression(expression)
-        else
-            CallGenerator(statementGenerator)
-                .generateCall(
-                    expression.startOffsetSkippingComments, expression.endOffset,
-                    statementGenerator.pregenerateCall(getResolvedCall(expression)!!), origin
-                )
+    private fun generateBinaryOperatorAsCall(expression: KtBinaryExpression, origin: IrStatementOrigin?): IrExpression {
+        if (isDynamicBinaryOperator(expression)) {
+            return generateDynamicBinaryExpression(expression)
+        }
+        val callBuilder = statementGenerator.pregenerateCall(getResolvedCall(expression)!!)
+        return CallGenerator(statementGenerator).generateFunctionCall(
+            callBuilder.descriptor as? FunctionDescriptor
+                ?: throw AssertionError("Operator call resolved to a non-function: ${callBuilder.descriptor}"),
+            expression.startOffsetSkippingComments, expression.endOffset,
+            origin,
+            callBuilder
+        )
+    }
 
     private fun generatePrefixOperatorAsCall(expression: KtPrefixExpression, origin: IrStatementOrigin): IrExpression {
         val resolvedCall = getResolvedCall(expression)!!

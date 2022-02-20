@@ -319,7 +319,6 @@ class FirSyntheticCallGenerator(
         val returnType = rightArgumentType.resolvedTypeFromPrototype(
             rightArgumentType.type.withAttributes(
                 ConeAttributes.create(listOf(CompilerConeAttributes.Exact)),
-                session.typeContext,
             )
         )
 

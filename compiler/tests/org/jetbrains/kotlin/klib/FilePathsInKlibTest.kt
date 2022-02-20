@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.util.KtTestUtil
 import org.jetbrains.kotlin.util.DummyLogger
 import java.io.File
+import java.nio.file.Path
 
 class FilePathsInKlibTest : CodegenTestCase() {
 
@@ -69,7 +70,7 @@ class FilePathsInKlibTest : CodegenTestCase() {
 
     private fun File.md5(): Long = readBytes().md5()
 
-    private fun File.loadKlibFilePaths(denormalize: Boolean): List<String> {
+    private fun File.loadKlibFilePaths(): List<String> {
         val libs = jsResolveLibraries(listOf(runtimeKlibPath, canonicalPath), emptyList(), DummyLogger).getFullList()
         val lib = libs.last()
         val fileSize = lib.fileCount()
@@ -82,11 +83,7 @@ class FilePathsInKlibTest : CodegenTestCase() {
             val fileProto = IrFile.parseFrom(fileStream, extReg)
             val fileName = fileProto.fileEntry.name
 
-            if (denormalize) {
-                result.add(fileName.replace("/", File.separator))
-            } else {
-                result.add(fileName)
-            }
+            result.add(fileName)
         }
 
         return result
@@ -99,14 +96,14 @@ class FilePathsInKlibTest : CodegenTestCase() {
         return createTestFilesFromFile(file, expectedText)
     }
 
-    private fun compileKlibs(testFiles: List<TestFile>, configuration: CompilerConfiguration, workingDir: File): File {
+    private fun compileKlib(testFiles: List<TestFile>, configuration: CompilerConfiguration, workingDir: File): File {
         for (testFile in testFiles) {
-            val testFileA = File(workingDir, testFile.name).also { it.parentFile.let { p -> if (!p.exists()) p.mkdirs() } }
-            testFileA.writeText(testFile.content)
+            val file = File(workingDir, testFile.name).also { it.parentFile.let { p -> if (!p.exists()) p.mkdirs() } }
+            file.writeText(testFile.content)
         }
 
-        val ktFilesA = loadKtFiles(workingDir)
-        val module = analyseKtFiles(configuration, ktFilesA)
+        val ktFiles = loadKtFiles(workingDir)
+        val module = analyseKtFiles(configuration, ktFiles)
         val artifact = File(workingDir, "$MODULE_NAME.klib")
 
         produceKlib(module, artifact)
@@ -114,111 +111,82 @@ class FilePathsInKlibTest : CodegenTestCase() {
         return artifact
     }
 
-//    @Ignore
-//    fun testAbsolutePaths() {
-//        // TODO: since the current behaviour is random (see PsiIrFileEntry::psiFileName and CoreLocalVirtualFile::getName/getPath)
-//        // this test currently disabled until normalization by default turn on
-//        val testFiles = createTestFiles()
-//        val workingPath = kotlin.io.path.createTempDirectory()
-//        val workingDirFile = workingPath.toFile().also { assert(it.isDirectory) }
-//
-//        try {
-//            val artifact = compileKlibs(testFiles, setupEnvironment(), workingDirFile)
-//            val modulePaths = artifact.loadKlibFilePaths(denormalize = false)
-//            val dirCanonicalPaths = workingDirFile.listFiles { _, name -> name.endsWith(".kt") }!!.map { it.canonicalPath }
-//
-//            assertSameElements(modulePaths, dirCanonicalPaths)
-//
-//        } finally {
-//            workingDirFile.deleteRecursively()
-//        }
-//    }
-
     fun testStableCompilation() {
-        val testFiles = createTestFiles()
+        withTempDir { dirA ->
+            withTempDir { dirB ->
+                val testFiles = createTestFiles()
+                val configuration = setupEnvironment()
 
-        val dirAPath = kotlin.io.path.createTempDirectory()
-        val dirBPath = kotlin.io.path.createTempDirectory()
+                configuration.put(CommonConfigurationKeys.KLIB_RELATIVE_PATH_BASES, listOf(dirA.canonicalPath, dirB.canonicalPath))
 
-        val dirAFile = dirAPath.toFile().also { assert(it.isDirectory) }
-        val dirBFile = dirBPath.toFile().also { assert(it.isDirectory) }
+                val moduleA = compileKlib(testFiles, configuration, dirA)
+                val moduleB = compileKlib(testFiles, configuration, dirB)
 
-        try {
-            val configuration = setupEnvironment()
-
-            configuration.put(CommonConfigurationKeys.KLIB_RELATIVE_PATH_BASES, listOf(dirAFile.canonicalPath, dirBFile.canonicalPath))
-
-            val moduleA = compileKlibs(testFiles, configuration, dirAFile)
-            val moduleB = compileKlibs(testFiles, configuration, dirBFile)
-
-            assertEquals(moduleA.md5(), moduleB.md5())
-        } finally {
-            dirAFile.deleteRecursively()
-            dirBFile.deleteRecursively()
+                assertEquals(moduleA.md5(), moduleB.md5())
+            }
         }
     }
 
     fun testRelativePaths() {
-        val testFiles = createTestFiles()
-        val workingPath = kotlin.io.path.createTempDirectory()
-        val workingDirFile = workingPath.toFile().also { assert(it.isDirectory) }
-
-        try {
+        withTempDir { testTempDir ->
+            val testFiles = createTestFiles()
             val configuration = setupEnvironment()
 
-            configuration.put(CommonConfigurationKeys.KLIB_RELATIVE_PATH_BASES, listOf(workingDirFile.canonicalPath))
+            configuration.put(CommonConfigurationKeys.KLIB_RELATIVE_PATH_BASES, listOf(testTempDir.canonicalPath))
 
-            val artifact = compileKlibs(testFiles, configuration, workingDirFile)
-            val moduleAPaths = artifact.loadKlibFilePaths(denormalize = true)
-            val dirAPaths = workingDirFile.listFiles { _, name -> name.endsWith(".kt") }!!.map { it.relativeTo(workingDirFile).path }
+            val artifact = compileKlib(testFiles, configuration, testTempDir)
+            val modulePaths = artifact.loadKlibFilePaths().map { it.replace("/", File.separator) }
+            val dirPaths = testTempDir.listFiles { _, name -> name.endsWith(".kt") }!!.map { it.relativeTo(testTempDir).path }
 
-            assertSameElements(dirAPaths, moduleAPaths)
-        } finally {
-            workingDirFile.deleteRecursively()
+            assertSameElements(modulePaths, dirPaths)
         }
     }
 
     fun testAbsoluteNormalizedPath() {
-        val testFiles = createTestFiles()
-        val workingPath = kotlin.io.path.createTempDirectory()
-        val workingDirFile = workingPath.toFile().also { assert(it.isDirectory) }
+        withTempDir { testTempDir ->
+            val testFiles = createTestFiles()
 
-        try {
             val configuration = setupEnvironment()
             configuration.put(CommonConfigurationKeys.KLIB_NORMALIZE_ABSOLUTE_PATH, true)
 
-            val artifact = compileKlibs(testFiles, configuration, workingDirFile)
-            val modulePaths = artifact.loadKlibFilePaths(denormalize = true)
-            val dirCanonicalPaths = workingDirFile.listFiles { _, name -> name.endsWith(".kt") }!!.map { it.canonicalPath }
+            val artifact = compileKlib(testFiles, configuration, testTempDir)
+            val modulePaths = artifact.loadKlibFilePaths().map { it.replace("/", File.separator) }
+            val dirCanonicalPaths = testTempDir.listFiles { _, name -> name.endsWith(".kt") }!!.map { it.canonicalPath }
 
             assertSameElements(modulePaths, dirCanonicalPaths)
-        } finally {
-            workingDirFile.deleteRecursively()
         }
     }
 
     private fun String.normalizePath(): String = replace(File.separator, "/")
 
     fun testUnrelatedBase() {
-        val testFiles = createTestFiles()
-        val workingPath = kotlin.io.path.createTempDirectory()
-        val dummyPath = kotlin.io.path.createTempDirectory()
+        withTempDir { testTempDir ->
+            val testFiles = createTestFiles()
+            val dummyPath = kotlin.io.path.createTempDirectory()
+            val dummyFile = dummyPath.toFile().also { assert(it.isDirectory) }
 
+            try {
+                val configuration = setupEnvironment()
+                configuration.put(CommonConfigurationKeys.KLIB_RELATIVE_PATH_BASES, listOf(dummyFile.canonicalPath))
+
+                val artifact = compileKlib(testFiles, configuration, testTempDir)
+                val modulePaths = artifact.loadKlibFilePaths()
+                val dirCanonicalPaths = testTempDir.listFiles { _, name -> name.endsWith(".kt") }!!.map { it.canonicalPath }
+
+                assertSameElements(modulePaths.map { it.normalizePath() }, dirCanonicalPaths.map { it.normalizePath() })
+            } finally {
+                dummyFile.deleteRecursively()
+            }
+        }
+    }
+
+    private fun withTempDir(f: (File) -> Unit) {
+        val workingPath: Path = kotlin.io.path.createTempDirectory()
         val workingDirFile = workingPath.toFile().also { assert(it.isDirectory) }
-        val dummyFile = dummyPath.toFile().also { assert(it.isDirectory) }
-
         try {
-            val configuration = setupEnvironment()
-            configuration.put(CommonConfigurationKeys.KLIB_RELATIVE_PATH_BASES, listOf(dummyFile.canonicalPath))
-
-            val artifact = compileKlibs(testFiles, configuration, workingDirFile)
-            val modulePaths = artifact.loadKlibFilePaths(denormalize = false)
-            val dirCanonicalPaths = workingDirFile.listFiles { _, name -> name.endsWith(".kt") }!!.map { it.canonicalPath }
-
-            assertSameElements(modulePaths.map { it.normalizePath() }, dirCanonicalPaths.map { it.normalizePath() })
+            f(workingDirFile)
         } finally {
             workingDirFile.deleteRecursively()
-            dummyFile.deleteRecursively()
         }
     }
 }

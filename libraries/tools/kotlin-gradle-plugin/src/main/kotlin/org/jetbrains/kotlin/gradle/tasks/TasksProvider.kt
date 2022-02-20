@@ -58,6 +58,8 @@ internal fun <T : Task> Project.registerTask(
 
 internal fun TaskProvider<*>.dependsOn(other: TaskProvider<*>) = configure { it.dependsOn(other) }
 
+internal fun TaskProvider<*>.dependsOn(other: Task) = configure { it.dependsOn(other) }
+
 internal inline fun <reified S : Task> TaskCollection<in S>.withType(): TaskCollection<S> = withType(S::class.java)
 
 /**

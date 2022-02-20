@@ -1703,7 +1703,7 @@ class CocoaPodsIT : BaseGradleIT() {
                 listOf("gem", *args)
             }
             println("Run command: ${command.joinToString(separator = " ")}")
-            val result = runProcess(command, File("."))
+            val result = runProcess(command, File("."), options = BuildOptions(forceOutputToStdout = true))
             check(result.isSuccessful) {
                 "Process 'gem ${args.joinToString(separator = " ")}' exited with error code ${result.exitCode}. See log for details."
             }

@@ -29,7 +29,7 @@ fun Candidate.computeCompletionMode(
         expectedType != null -> ConstraintSystemCompletionMode.FULL
 
         // This is questionable as null return type can be only for error call
-        currentReturnType == null || currentReturnType is ConeIntegerLiteralType -> ConstraintSystemCompletionMode.PARTIAL
+        currentReturnType == null -> ConstraintSystemCompletionMode.PARTIAL
 
         // Full if return type for call has no type variables
         csBuilder.isProperType(currentReturnType) -> ConstraintSystemCompletionMode.FULL

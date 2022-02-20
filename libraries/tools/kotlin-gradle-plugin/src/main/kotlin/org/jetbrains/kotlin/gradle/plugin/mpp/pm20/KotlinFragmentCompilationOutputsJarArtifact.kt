@@ -5,17 +5,23 @@
 
 package org.jetbrains.kotlin.gradle.plugin.mpp.pm20
 
+import org.gradle.api.artifacts.Dependency
 import org.gradle.jvm.tasks.Jar
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.disambiguateName
+import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.FragmentNameDisambiguationOmittingMain
 import org.jetbrains.kotlin.gradle.tasks.locateOrRegisterTask
-import org.jetbrains.kotlin.gradle.utils.dashSeparatedName
+import org.jetbrains.kotlin.gradle.utils.dashSeparatedLowercaseName
 
 /**
  * Registers a [Jar] task with the variant's compilation outputs and attaches this artifact to the given configuration.
  */
 val KotlinFragmentCompilationOutputsJarArtifact = FragmentArtifacts<KotlinGradleVariant> {
-    artifact(project.locateOrRegisterTask<Jar>(fragment.disambiguateName("jar")) {
+    val jar = project.locateOrRegisterTask<Jar>(fragment.outputsJarTaskName) {
         it.from(fragment.compilationOutputs.allOutputs)
-        it.archiveClassifier.set(dashSeparatedName(fragment.name, fragment.containingModule.moduleClassifier))
-    })
+        it.archiveAppendix.set(dashSeparatedLowercaseName(fragment.name, fragment.containingModule.moduleClassifier))
+    }
+    artifact(jar)
+    fragment.project.artifacts.add(Dependency.ARCHIVES_CONFIGURATION, jar)
 }
+
+internal val KotlinGradleVariant.outputsJarTaskName: String
+    get() = FragmentNameDisambiguationOmittingMain(containingModule, name).disambiguateName("jar")

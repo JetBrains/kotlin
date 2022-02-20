@@ -10,12 +10,12 @@ import org.gradle.api.Project
 import org.gradle.api.attributes.Usage
 import org.gradle.api.tasks.TaskProvider
 import org.gradle.jvm.tasks.Jar
-import org.jetbrains.kotlin.gradle.dsl.pm20Extension
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.KotlinCommonSourceSetProcessor
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.ComputedCapability
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.disambiguateName
+import org.jetbrains.kotlin.gradle.targets.metadata.KotlinMetadataTargetConfigurator
 import org.jetbrains.kotlin.gradle.targets.metadata.createGenerateProjectStructureMetadataTask
 import org.jetbrains.kotlin.gradle.targets.metadata.filesWithUnpackedArchives
 import org.jetbrains.kotlin.gradle.tasks.*
@@ -24,17 +24,25 @@ import org.jetbrains.kotlin.gradle.tasks.registerTask
 import org.jetbrains.kotlin.gradle.tasks.withType
 import org.jetbrains.kotlin.gradle.utils.addExtendsFromRelation
 import org.jetbrains.kotlin.gradle.utils.dashSeparatedName
+import org.jetbrains.kotlin.gradle.utils.filesProvider
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 import org.jetbrains.kotlin.library.KLIB_FILE_EXTENSION
 import org.jetbrains.kotlin.project.model.KotlinModuleFragment
 import java.util.concurrent.Callable
+
+internal fun setupFragmentsMetadataForKpmModules(project: Project) {
+    project.kpmModules.all { module ->
+        configureMetadataResolutionAndBuild(module)
+        configureMetadataExposure(module)
+    }
+}
 
 internal fun configureMetadataResolutionAndBuild(module: KotlinGradleModule) {
     val project = module.project
     createResolvableMetadataConfigurationForModule(module)
 
     val metadataCompilationRegistry = MetadataCompilationRegistry()
-    project.pm20Extension.metadataCompilationRegistryByModuleId[module.moduleIdentifier] =
+    project.metadataCompilationRegistryByModuleId[module.moduleIdentifier] =
         metadataCompilationRegistry
 
     configureMetadataCompilationsAndCreateRegistry(module, metadataCompilationRegistry)
@@ -145,10 +153,12 @@ private fun configureMetadataJarTask(
     }
     module.fragments.all { fragment ->
         allMetadataJar.configure { jar ->
-            val metadataOutput = project.files(Callable {
-                val compilationData = registry.byFragment(fragment)
+            val metadataOutput = project.filesProvider {
+                val compilationData = registry.getForFragmentOrNull(fragment)
+                    .takeIf { !fragment.isNativeHostSpecific() }
+                    ?: return@filesProvider emptyList<Any>()
                 project.filesWithUnpackedArchives(compilationData.output.allOutputs, setOf(KLIB_FILE_EXTENSION))
-            })
+            }
             jar.from(metadataOutput) { spec ->
                 spec.into(fragment.fragmentName)
             }
@@ -157,7 +167,7 @@ private fun configureMetadataJarTask(
 }
 
 internal fun metadataJarName(module: KotlinGradleModule) =
-    lowerCamelCaseName(module.moduleClassifier, "metadataJar")
+    lowerCamelCaseName(module.moduleClassifier, KotlinMetadataTargetConfigurator.ALL_METADATA_JAR_NAME)
 
 private fun createCommonMetadataCompilation(
     fragment: KotlinGradleFragment,

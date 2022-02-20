@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.expressions.FirElvisExpression
-import org.jetbrains.kotlin.fir.types.ConeKotlinErrorType
+import org.jetbrains.kotlin.fir.types.ConeErrorType
 import org.jetbrains.kotlin.fir.types.canBeNull
 import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.fir.types.isNullLiteral
@@ -20,10 +20,10 @@ object FirUselessElvisChecker : FirElvisExpressionChecker() {
         // If the overall expression is not resolved/completed, the corresponding error will be reported separately.
         // See [FirControlFlowStatementsResolveTransformer#transformElvisExpression],
         // where an error type is recorded as the expression's return type.
-        if (expression.typeRef.coneType is ConeKotlinErrorType) return
+        if (expression.typeRef.coneType is ConeErrorType) return
 
         val lhsType = expression.lhs.typeRef.coneType
-        if (lhsType is ConeKotlinErrorType) return
+        if (lhsType is ConeErrorType) return
         if (!lhsType.canBeNull) {
             reporter.reportOn(expression.source, FirErrors.USELESS_ELVIS, lhsType, context)
             return

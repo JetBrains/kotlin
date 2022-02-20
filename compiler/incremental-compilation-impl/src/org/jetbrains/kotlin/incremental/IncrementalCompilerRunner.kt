@@ -46,7 +46,7 @@ abstract class IncrementalCompilerRunner<
     private val workingDir: File,
     cacheDirName: String,
     protected val reporter: BuildReporter,
-    private val buildHistoryFile: File,
+    protected val buildHistoryFile: File,
     // there might be some additional output directories (e.g. for generated java in kapt)
     // to remove them correctly on rebuild, we pass them as additional argument
     private val additionalOutputFiles: Collection<File> = emptyList()
@@ -72,7 +72,7 @@ abstract class IncrementalCompilerRunner<
         // otherwise we track source files changes ourselves.
         providedChangedFiles: ChangedFiles?,
         projectDir: File? = null
-    ): ExitCode = reporter.measure(BuildTime.INCREMENTAL_COMPILATION) {
+    ): ExitCode = reporter.measure(BuildTime.INCREMENTAL_COMPILATION_DAEMON) {
         compileImpl(allSourceFiles, args, messageCollector, providedChangedFiles, projectDir)
     }
 
@@ -129,6 +129,7 @@ abstract class IncrementalCompilerRunner<
                 else -> providedChangedFiles
             }
 
+            @Suppress("MoveVariableDeclarationIntoWhen")
             val compilationMode = sourcesToCompile(caches, changedFiles, args, messageCollector, classpathAbiSnapshot)
 
             val exitCode = when (compilationMode) {
@@ -215,7 +216,7 @@ abstract class IncrementalCompilerRunner<
                 }
                 it.isFile -> {
                     reporter.reportVerbose { "  Deleting file '${it.path}'" }
-                    it.forceDeleteRecursively()
+                    it.deleteRecursivelyOrThrow()
                 }
             }
         }
@@ -313,16 +314,17 @@ abstract class IncrementalCompilerRunner<
         abiSnapshot: AbiSnapshot = AbiSnapshotImpl(mutableMapOf()),
         classpathAbiSnapshot: Map<String, AbiSnapshot> = HashMap()
     ): ExitCode {
+        if (compilationMode is CompilationMode.Rebuild) {
+            reporter.report { "Non-incremental compilation will be performed: ${compilationMode.reason}" }
+        }
+
         preBuildHook(args, compilationMode)
 
-        val buildTimeMode: BuildTime
         val dirtySources = when (compilationMode) {
             is CompilationMode.Incremental -> {
-                buildTimeMode = BuildTime.INCREMENTAL_ITERATION
                 compilationMode.dirtyFiles.toMutableList()
             }
             is CompilationMode.Rebuild -> {
-                buildTimeMode = BuildTime.NON_INCREMENTAL_ITERATION
                 reporter.addAttribute(compilationMode.reason)
                 allKotlinSources.toMutableList()
             }
@@ -360,7 +362,7 @@ abstract class IncrementalCompilerRunner<
             val bufferingMessageCollector = BufferingMessageCollector()
             val messageCollectorAdapter = MessageCollectorToOutputItemsCollectorAdapter(bufferingMessageCollector, outputItemsCollector)
 
-            exitCode = reporter.measure(buildTimeMode) {
+            exitCode = reporter.measure(BuildTime.COMPILATION_ROUND) {
                 runCompiler(sourcesToCompile.toSet(), args, caches, services, messageCollectorAdapter)
             }
 
@@ -513,9 +515,9 @@ abstract class IncrementalCompilerRunner<
     protected fun reportPerformanceData(defaultPerformanceManager: CommonCompilerPerformanceManager) {
         defaultPerformanceManager.getMeasurementResults().forEach {
             when (it) {
-                is CompilerInitializationMeasurement -> reporter.addTimeMetric(BuildTime.COMPILER_INITIALIZATION, it.milliseconds)
-                is CodeAnalysisMeasurement -> reporter.addTimeMetric(BuildTime.CODE_ANALYSIS, it.milliseconds)
-                is CodeGenerationMeasurement -> reporter.addTimeMetric(BuildTime.CODE_GENERATION, it.milliseconds)
+                is CompilerInitializationMeasurement -> reporter.addTimeMetricMs(BuildTime.COMPILER_INITIALIZATION, it.milliseconds)
+                is CodeAnalysisMeasurement -> reporter.addTimeMetricMs(BuildTime.CODE_ANALYSIS, it.milliseconds)
+                is CodeGenerationMeasurement -> reporter.addTimeMetricMs(BuildTime.CODE_GENERATION, it.milliseconds)
             }
         }
     }

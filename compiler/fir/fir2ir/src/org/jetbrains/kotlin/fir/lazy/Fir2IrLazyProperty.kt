@@ -74,8 +74,11 @@ class Fir2IrLazyProperty(
     override val isExpect: Boolean
         get() = fir.isExpect
 
-    override val name: Name
+    override var name: Name
         get() = fir.name
+        set(_) {
+            throw UnsupportedOperationException()
+        }
 
     @Suppress("SetterBackingFieldAssignment")
     override var visibility: DescriptorVisibility = components.visibilityConverter.convertToDescriptorVisibility(fir.visibility)

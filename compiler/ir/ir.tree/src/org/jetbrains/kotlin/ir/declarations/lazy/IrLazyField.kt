@@ -29,7 +29,7 @@ class IrLazyField(
     override val symbol: IrFieldSymbol,
     @OptIn(ObsoleteDescriptorBasedAPI::class)
     override val descriptor: PropertyDescriptor,
-    override val name: Name,
+    override var name: Name,
     override var visibility: DescriptorVisibility,
     override val isFinal: Boolean,
     override val isExternal: Boolean,

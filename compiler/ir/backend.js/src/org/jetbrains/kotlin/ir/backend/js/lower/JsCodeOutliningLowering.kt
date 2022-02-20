@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.ir.backend.js.lower
 
 import org.jetbrains.kotlin.backend.common.*
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
-import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
@@ -132,41 +131,23 @@ private class JsCodeOutlineTransformer(
         if (expression.symbol != backendContext.intrinsics.jsCode)
             return null
 
-        val jsCodeArg = expression.getValueArgument(0)
-            ?: compilationException(
-                "Expected js code string",
-                expression
-            )
+        val jsCodeArg = expression.getValueArgument(0) ?: compilationException("Expected js code string", expression)
         val jsStatements = translateJsCodeIntoStatementList(jsCodeArg, backendContext) ?: return null
 
         // Collect used Kotlin local variables and parameters.
-        val kotlinLocalsUsedInJs = mutableListOf<IrValueDeclaration>()
-        val processedNames = mutableSetOf<String>()
-        jsStatements.forEach { statement ->
-            object : RecursiveJsVisitor() {
-                override fun visitNameRef(nameRef: JsNameRef) {
-                    super.visitNameRef(nameRef)
-                    val name = nameRef.name
-                    // With this approach we should be able to find all usages of Kotlin variables in JS code.
-                    // We will also collect shadowed usages, but it is OK since the same shadowing will be present in generated JS code.
-                    if (name != null && nameRef.qualifier == null) {
-                        // Keeping track of processed names to avoid registering them multiple times
-                        if (processedNames.add(name.ident)) {
-                            kotlinLocalsUsedInJs.addIfNotNull(findValueDeclarationWithName(name.ident))
-                        }
-                    }
-                }
-            }.accept(statement)
-        }
+        val scope = JsScopesCollector().apply { acceptList(jsStatements) }
+        val localsUsageCollector = KotlinLocalsUsageCollector(scope, ::findValueDeclarationWithName).apply { acceptList(jsStatements) }
+        val kotlinLocalsUsedInJs = localsUsageCollector.usedLocals
+
         if (kotlinLocalsUsedInJs.isEmpty())
             return null
 
         // Building outlined IR function skeleton
         val outlinedFunction = backendContext.irFactory.buildFun {
             name = Name.identifier("outlinedJsCode$")
-            visibility = DescriptorVisibilities.LOCAL
             returnType = backendContext.dynamicType
-            origin = OUTLINED_ORIGIN
+            isExternal = true
+            origin = JsIrBackendContext.callableClosureOrigin
         }
         // We don't need this function's body. Using empty block body stub, because some code might expect all functions to have bodies.
         outlinedFunction.body = backendContext.irFactory.createBlockBody(UNDEFINED_OFFSET, UNDEFINED_OFFSET)
@@ -219,8 +200,78 @@ private class JsCodeOutlineTransformer(
             }
         }
     }
+}
 
-    companion object {
-        object OUTLINED_ORIGIN : IrDeclarationOriginImpl("OUTLINED_ORIGIN")
+class JsScopesCollector : RecursiveJsVisitor() {
+    private val functionsStack = mutableListOf(Scope(null))
+    private val functionalScopes = mutableMapOf<JsFunction?, Scope>(null to functionsStack.first())
+
+    private class Scope(val parent: Scope?) {
+        private val variables = hashSetOf<String>()
+
+        fun add(variableName: String) {
+            variables.add(variableName)
+        }
+
+        fun variableWithNameExists(variableName: String): Boolean {
+            return variables.contains(variableName) ||
+                    parent?.variableWithNameExists(variableName) == true
+        }
+    }
+
+    override fun visitVars(x: JsVars) {
+        super.visitVars(x)
+        val currentScope = functionsStack.last()
+        x.vars.forEach { currentScope.add(it.name.ident) }
+    }
+
+    override fun visitFunction(x: JsFunction) {
+        val parentScope = functionsStack.last()
+        val newScope = Scope(parentScope).apply {
+            val name = x.name?.ident
+            if (name != null) add(name)
+            x.parameters.forEach { add(it.name.ident) }
+        }
+        functionsStack.push(newScope)
+        functionalScopes[x] = newScope
+        super.visitFunction(x)
+        functionsStack.pop()
+    }
+
+    fun varWithNameExistsInScopeOf(function: JsFunction?, variableName: String): Boolean {
+        return functionalScopes[function]!!.variableWithNameExists(variableName)
+    }
+}
+
+private class KotlinLocalsUsageCollector(
+    private val scopeInfo: JsScopesCollector,
+    private val findValueDeclarationWithName: (String) -> IrValueDeclaration?
+) : RecursiveJsVisitor() {
+    private val functionStack = mutableListOf<JsFunction?>(null)
+    private val processedNames = mutableSetOf<String>()
+    private val kotlinLocalsUsedInJs = mutableListOf<IrValueDeclaration>()
+
+    val usedLocals: List<IrValueDeclaration>
+        get() = kotlinLocalsUsedInJs
+
+    override fun visitFunction(x: JsFunction) {
+        functionStack.push(x)
+        super.visitFunction(x)
+        functionStack.pop()
+    }
+
+    override fun visitNameRef(nameRef: JsNameRef) {
+        super.visitNameRef(nameRef)
+        val name = nameRef.name.takeIf { nameRef.qualifier == null } ?: return
+        // With this approach we should be able to find all usages of Kotlin variables in JS code.
+        // We will also collect shadowed usages, but it is OK since the same shadowing will be present in generated JS code.
+        // Keeping track of processed names to avoid registering them multiple times
+        if (processedNames.add(name.ident) && !name.isDeclaredInsideJsCode()) {
+            kotlinLocalsUsedInJs.addIfNotNull(findValueDeclarationWithName(name.ident))
+        }
+    }
+
+    private fun JsName.isDeclaredInsideJsCode(): Boolean {
+        return scopeInfo.varWithNameExistsInScopeOf(functionStack.peek(), ident)
     }
 }

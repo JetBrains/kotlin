@@ -1,3 +1,5 @@
+
+
 class Foo(
     val z: Boolean = true,
     val b: Byte = 0.toByte(),

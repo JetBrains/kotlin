@@ -54,7 +54,7 @@ abstract class AbstractConeSubstitutor(protected val typeContext: ConeTypeContex
 
     private fun ConeKotlinType.substituteRecursive(): ConeKotlinType? {
         return when (this) {
-            is ConeClassErrorType -> return null
+            is ConeErrorType -> return null
             is ConeClassLikeType -> this.substituteArguments()
             is ConeLookupTagBasedType -> return null
             is ConeFlexibleType -> this.substituteBounds()?.let {
@@ -105,7 +105,7 @@ abstract class AbstractConeSubstitutor(protected val typeContext: ConeTypeContex
     private fun ConeDefinitelyNotNullType.substituteOriginal(): ConeKotlinType? {
         val substituted = substituteOrNull(original)
             ?.withNullability(ConeNullability.NOT_NULL, typeContext)
-            ?.withAttributes(original.attributes, typeContext)
+            ?.withAttributes(original.attributes)
             ?: return null
         return ConeDefinitelyNotNullType.create(substituted, typeContext) ?: substituted
     }
@@ -193,7 +193,7 @@ class ConeSubstitutorByMap(
         if (type !is ConeTypeParameterType) return null
         val result =
             substitution[type.lookupTag.symbol].updateNullabilityIfNeeded(type)
-                ?.withCombinedAttributesFrom(type, useSiteSession.typeContext)
+                ?.withCombinedAttributesFrom(type)
                 ?: return null
         if (type.isUnsafeVarianceType(useSiteSession)) {
             return useSiteSession.typeApproximator.approximateToSuperType(
@@ -217,25 +217,25 @@ class ConeSubstitutorByMap(
     override fun hashCode() = hashCode
 }
 
-fun createTypeSubstitutorByTypeConstructor(map: Map<TypeConstructorMarker, ConeKotlinType>, context: ConeTypeContext): ConeSubstitutor {
+fun createTypeSubstitutorByTypeConstructor(
+    map: Map<TypeConstructorMarker, ConeKotlinType>,
+    context: ConeTypeContext,
+    approximateIntegerLiterals: Boolean
+): ConeSubstitutor {
     if (map.isEmpty()) return ConeSubstitutor.Empty
-    return object : AbstractConeSubstitutor(context), TypeSubstitutorMarker {
-        override fun substituteType(type: ConeKotlinType): ConeKotlinType? {
-            if (type !is ConeLookupTagBasedType && type !is ConeStubType) return null
-            val new = map[type.typeConstructor(context)] ?: return null
-            return new.approximateIntegerLiteralType().updateNullabilityIfNeeded(type)?.withCombinedAttributesFrom(type, context)
-        }
-    }
+    return ConeTypeSubstitutorByTypeConstructor(map, context, approximateIntegerLiterals)
 }
 
-internal class TypeSubstitutorByTypeConstructor(
+internal class ConeTypeSubstitutorByTypeConstructor(
     private val map: Map<TypeConstructorMarker, ConeKotlinType>,
-    context: ConeTypeContext
+    private val context: ConeTypeContext,
+    private val approximateIntegerLiterals: Boolean
 ) : AbstractConeSubstitutor(context), TypeSubstitutorMarker {
     override fun substituteType(type: ConeKotlinType): ConeKotlinType? {
         if (type !is ConeLookupTagBasedType && type !is ConeStubType) return null
-        val new = map[type.typeConstructor(typeContext)] ?: return null
-        return new.approximateIntegerLiteralType().updateNullabilityIfNeeded(type)?.withCombinedAttributesFrom(type, typeContext)
+        val new = map[type.typeConstructor(context)] ?: return null
+        val approximatedIntegerLiteralType = if (approximateIntegerLiterals) new.approximateIntegerLiteralType() else new
+        return approximatedIntegerLiteralType.updateNullabilityIfNeeded(type)?.withCombinedAttributesFrom(type)
     }
 }
 

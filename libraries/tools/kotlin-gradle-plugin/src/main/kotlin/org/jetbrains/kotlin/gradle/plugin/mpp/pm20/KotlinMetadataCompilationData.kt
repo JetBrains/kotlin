@@ -9,12 +9,9 @@ import org.gradle.api.DefaultTask
 import org.gradle.api.Project
 import org.gradle.api.file.FileCollection
 import org.gradle.api.file.SourceDirectorySet
-import org.gradle.api.plugins.BasePluginConvention
 import org.gradle.api.tasks.TaskProvider
-import org.jetbrains.kotlin.gradle.dsl.KotlinCommonOptions
-import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformCommonOptions
+import org.jetbrains.kotlin.gradle.dsl.*
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformCommonOptionsImpl
-import org.jetbrains.kotlin.gradle.dsl.pm20Extension
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.disambiguateName
@@ -22,6 +19,8 @@ import org.jetbrains.kotlin.gradle.targets.metadata.ResolvedMetadataFilesProvide
 import org.jetbrains.kotlin.gradle.targets.metadata.createMetadataDependencyTransformationClasspath
 import org.jetbrains.kotlin.gradle.utils.getValue
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
+import org.jetbrains.kotlin.gradle.utils.newProperty
+import org.jetbrains.kotlin.gradle.utils.setValue
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
 
@@ -41,7 +40,7 @@ internal abstract class AbstractKotlinFragmentMetadataCompilationData<T : Kotlin
 ) : KotlinMetadataCompilationData<T> {
 
     override val owner
-        get() = project.pm20Extension
+        get() = project.topLevelExtension
 
     override val compilationPurpose: String
         get() = fragment.fragmentName
@@ -58,11 +57,17 @@ internal abstract class AbstractKotlinFragmentMetadataCompilationData<T : Kotlin
     override val compileAllTaskName: String
         get() = compileAllTask.name
 
-    override val compileDependencyFiles: FileCollection by project.provider {
+    override var compileDependencyFiles: FileCollection by project.newProperty {
         createMetadataDependencyTransformationClasspath(
             project,
             resolvableMetadataConfiguration(fragment.containingModule),
-            lazy { fragment.refinesClosure.minus(fragment).map { metadataCompilationRegistry.byFragment(it).output.classesDirs } },
+            lazy {
+                fragment.refinesClosure.minus(fragment).map {
+                    val compilation = metadataCompilationRegistry.getForFragmentOrNull(it)
+                        ?: return@map project.files()
+                    compilation.output.classesDirs
+                }
+            },
             resolvedMetadataFiles
         )
     }
@@ -79,7 +84,7 @@ internal abstract class AbstractKotlinFragmentMetadataCompilationData<T : Kotlin
 
     override val moduleName: String
         get() { // FIXME deduplicate with ownModuleName
-            val baseName = project.convention.findPlugin(BasePluginConvention::class.java)?.archivesBaseName
+            val baseName = project.archivesName
                 ?: project.name
             val suffix = if (module.moduleClassifier == null) "" else "_${module.moduleClassifier}"
             return filterModuleName("$baseName$suffix")
@@ -92,7 +97,9 @@ internal abstract class AbstractKotlinFragmentMetadataCompilationData<T : Kotlin
         get() = metadataCompilationRegistry.run {
             fragment.refinesClosure.minus(fragment)
                 .map {
-                    metadataCompilationRegistry.byFragment(it).output.classesDirs
+                    val compilation = metadataCompilationRegistry.getForFragmentOrNull(it)
+                        ?: return@map project.files()
+                    compilation.output.classesDirs
                 }
         }
 }
@@ -113,7 +120,11 @@ internal open class KotlinCommonFragmentMetadataCompilationDataImpl(
     resolvedMetadataFiles), KotlinCommonFragmentMetadataCompilationData {
 
     override val isActive: Boolean
-        get() = !fragment.isNativeShared()
+        get() = !fragment.isNativeShared() &&
+                fragment.containingModule.variantsContainingFragment(fragment).run {
+                    !all { it.platformType in setOf(KotlinPlatformType.androidJvm, KotlinPlatformType.jvm) } &&
+                            mapTo(hashSetOf()) { it.platformType }.size > 1
+                }
 
     override val kotlinOptions: KotlinMultiplatformCommonOptions = KotlinMultiplatformCommonOptionsImpl()
 }
@@ -123,7 +134,9 @@ interface KotlinNativeFragmentMetadataCompilationData :
     KotlinNativeCompilationData<KotlinCommonOptions>
 
 internal fun KotlinGradleFragment.isNativeShared(): Boolean =
-    containingModule.variantsContainingFragment(this).all { it.platformType == KotlinPlatformType.native }
+    containingModule.variantsContainingFragment(this).run {
+        any() && all { it.platformType == KotlinPlatformType.native }
+    }
 
 internal fun KotlinGradleFragment.isNativeHostSpecific(): Boolean =
     this in getHostSpecificFragments(containingModule)
@@ -148,7 +161,7 @@ internal open class KotlinNativeFragmentMetadataCompilationDataImpl(
         get() = lowerCamelCaseName("compile", fragment.disambiguateName(""), "KotlinNativeMetadata")
 
     override val isActive: Boolean
-        get() = fragment.isNativeShared()
+        get() = fragment.isNativeShared() && fragment.containingModule.variantsContainingFragment(fragment).count() > 1
 
     override val kotlinOptions: NativeCompileOptions = NativeCompileOptions { languageSettings }
 
@@ -188,8 +201,8 @@ internal class MetadataCompilationRegistry {
         withAllNativeCallbacks.forEach { it.invoke(compilationData) }
     }
 
-    fun byFragment(fragment: KotlinGradleFragment): KotlinMetadataCompilationData<*> =
-        listOf(commonCompilationDataPerFragment.getValue(fragment), nativeCompilationDataPerFragment.getValue(fragment)).single {
+    fun getForFragmentOrNull(fragment: KotlinGradleFragment): AbstractKotlinFragmentMetadataCompilationData<*>? =
+        listOf(commonCompilationDataPerFragment.getValue(fragment), nativeCompilationDataPerFragment.getValue(fragment)).singleOrNull {
             it.isActive
         }
 

@@ -65,6 +65,11 @@ class WasmSymbols(
 
     internal val eagerInitialization: IrClassSymbol = getIrClass(FqName("kotlin.EagerInitialization"))
 
+    internal val isNotFirstWasmExportCall: IrPropertySymbol = symbolTable.referenceProperty(
+        getProperty(FqName.fromSegments(listOf("kotlin", "wasm", "internal", "isNotFirstWasmExportCall")))
+    )
+    internal val throwAsJsException: IrSimpleFunctionSymbol = getInternalFunction("throwAsJsException")
+
     override val throwNullPointerException = getInternalFunction("THROW_NPE")
     override val throwISE = getInternalFunction("THROW_ISE")
     override val throwTypeCastException = getInternalFunction("THROW_CCE")

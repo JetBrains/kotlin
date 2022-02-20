@@ -13,9 +13,13 @@ import org.gradle.api.internal.plugins.DslObject
 import org.gradle.jvm.toolchain.JavaToolchainSpec
 import org.gradle.util.ConfigureUtil
 import org.jetbrains.kotlin.gradle.plugin.*
+import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinAndroidTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsSingleTargetPreset
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinWithJavaTarget
+import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.DefaultKpmGradleProjectModelContainer
+import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinGradleModule
+import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinGradleModuleFactory
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinPm20ProjectExtension
 import org.jetbrains.kotlin.gradle.plugin.statistics.KotlinBuildStatsService
 import org.jetbrains.kotlin.gradle.targets.js.calculateJsCompilerType
@@ -73,9 +77,9 @@ abstract class KotlinTopLevelExtension(internal val project: Project) : KotlinTo
     /**
      * Configures [Java toolchain](https://docs.gradle.org/current/userguide/toolchains.html) both for Kotlin JVM and Java tasks.
      *
-     * @param action - action to configure [JavaToolchainSpec]. You could safely cast `Any` into `JavaToolchainSpec`.
+     * @param action - action to configure [JavaToolchainSpec]
      */
-    fun jvmToolchain(action: Action<Any>) {
+    fun jvmToolchain(action: Action<JavaToolchainSpec>) {
         toolchainSupport.applyToolchain(action)
     }
 
@@ -115,6 +119,12 @@ open class KotlinProjectExtension @Inject constructor(project: Project) : Kotlin
         internal set(value) {
             DslObject(this).extensions.add("sourceSets", value)
         }
+
+    internal val kpmModelContainer by lazy {
+        if (project.kotlinPropertiesProvider.experimentalKpmModelMapping) {
+            DefaultKpmGradleProjectModelContainer.create(project)
+        } else error("Model mapping is not enabled.")
+    }
 }
 
 abstract class KotlinSingleTargetExtension(project: Project) : KotlinProjectExtension(project) {

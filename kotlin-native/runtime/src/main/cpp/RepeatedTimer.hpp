@@ -3,15 +3,17 @@
  * that can be found in the LICENSE file.
  */
 
-#ifndef RUNTIME_REPEATED_TIMER_H
-#define RUNTIME_REPEATED_TIMER_H
+#pragma once
+
+#ifndef KONAN_NO_THREADS
 
 #include <chrono>
 #include <condition_variable>
 #include <mutex>
-#include <thread>
+#include <string_view>
 
 #include "KAssert.h"
+#include "ScopedThread.hpp"
 #include "Utils.hpp"
 
 namespace kotlin {
@@ -19,8 +21,13 @@ namespace kotlin {
 class RepeatedTimer : private Pinned {
 public:
     template <typename Rep, typename Period, typename F>
-    RepeatedTimer(std::chrono::duration<Rep, Period> interval, F f) noexcept :
-        thread_([this, interval, f]() noexcept { Run(interval, f); }) {}
+    RepeatedTimer(std::string_view name, std::chrono::duration<Rep, Period> interval, F&& f) noexcept :
+        thread_(ScopedThread::attributes().name(name), &RepeatedTimer::Run<Rep, Period, F>, this, std::move(interval), std::forward<F>(f)) {
+    }
+
+    template <typename Rep, typename Period, typename F>
+    RepeatedTimer(std::chrono::duration<Rep, Period> interval, F&& f) noexcept :
+        RepeatedTimer("Timer thread", interval, std::forward<F>(f)) {}
 
     ~RepeatedTimer() {
         {
@@ -28,7 +35,6 @@ public:
             run_ = false;
         }
         wait_.notify_all();
-        thread_.join();
     }
 
 private:
@@ -50,9 +56,9 @@ private:
     std::mutex mutex_;
     std::condition_variable wait_;
     bool run_ = true;
-    std::thread thread_;
+    ScopedThread thread_;
 };
 
 } // namespace kotlin
 
-#endif // RUNTIME_REPEATED_TIMER_H
+#endif // !KONAN_NO_THREADS

@@ -68,7 +68,7 @@ interface FirDeclarationPresenter {
                 appendRepresentation(it.original)
                 append(it.nullability.suffix)
             }
-            is ConeClassErrorType -> {
+            is ConeErrorType -> {
                 append("ERROR(")
                 append(it.diagnostic.reason)
                 append(')')
@@ -93,8 +93,12 @@ interface FirDeclarationPresenter {
                 append(it.lookupTag.name)
                 append(it.nullability.suffix)
             }
-            is ConeIntegerLiteralType -> {
+            is ConeIntegerLiteralConstantType -> {
                 append(it.value)
+                append(it.nullability.suffix)
+            }
+            is ConeIntegerConstantOperatorType -> {
+                append("IOT")
                 append(it.nullability.suffix)
             }
             is ConeFlexibleType,

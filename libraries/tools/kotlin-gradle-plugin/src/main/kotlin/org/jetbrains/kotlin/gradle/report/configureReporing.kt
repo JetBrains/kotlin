@@ -40,6 +40,7 @@ internal fun reportingSettings(rootProject: Project): ReportingSettings {
     return ReportingSettings(
         metricsOutputFile = metricsOutputFile,
         buildReportMode = buildReportMode,
+        buildReportLabel = properties.buildReportLabel,
         fileReportSettings = fileReportSettings,
         httpReportSettings = httpReportSettings,
         buildReportOutputs = buildReportOutputTypes

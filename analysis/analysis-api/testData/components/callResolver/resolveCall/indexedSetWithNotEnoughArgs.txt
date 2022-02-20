@@ -13,24 +13,29 @@ KtErrorCallInfo:
           symbol = /C.set(<dispatch receiver>: C, a: kotlin.Int, b: kotlin.String, value: kotlin.Boolean): kotlin.Unit
           valueParameters = [
             KtVariableLikeSignature:
+              name = a
               receiverType = null
               returnType = kotlin.Int
               symbol = a: kotlin.Int,
             KtVariableLikeSignature:
+              name = b
               receiverType = null
               returnType = kotlin.String
               symbol = b: kotlin.String,
             KtVariableLikeSignature:
+              name = value
               receiverType = null
               returnType = kotlin.Boolean
               symbol = value: kotlin.Boolean
           ]
       argumentMapping = {
         1 -> (KtVariableLikeSignature:
+          name = a
           receiverType = null
           returnType = kotlin.Int
           symbol = a: kotlin.Int),
         false -> (KtVariableLikeSignature:
+          name = value
           receiverType = null
           returnType = kotlin.Boolean
           symbol = value: kotlin.Boolean)

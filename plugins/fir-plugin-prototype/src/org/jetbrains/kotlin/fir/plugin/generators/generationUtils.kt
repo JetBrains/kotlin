@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.types.ConeClassLikeType
+import org.jetbrains.kotlin.fir.types.ConeKotlinTypeProjection
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
 import org.jetbrains.kotlin.name.CallableId
@@ -91,10 +92,10 @@ fun FirDeclarationGenerationExtension.buildConstructor(classId: ClassId, isInner
     }
 }
 
-fun ClassId.toSimpleConeType(): ConeClassLikeType {
+fun ClassId.toSimpleConeType(typeArguments: Array<ConeKotlinTypeProjection> = emptyArray()): ConeClassLikeType {
     return ConeClassLikeTypeImpl(
         ConeClassLikeLookupTagImpl(this),
-        emptyArray(),
+        typeArguments,
         isNullable = false
     )
 }

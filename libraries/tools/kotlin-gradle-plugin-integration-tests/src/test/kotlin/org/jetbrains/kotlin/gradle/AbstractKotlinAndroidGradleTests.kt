@@ -996,6 +996,41 @@ fun getSomething() = 10
         }
     }
 
+    // KT-51177: when experimental flag is enabled
+    @Test
+    fun testIncrementalBuildAfterResourceChangeAndroidExtensions() {
+        val project = Project("AndroidExtensionsProject")
+        project.setupWorkingDir()
+
+        project.projectDir.resolve("app/build.gradle").appendText(
+            """
+            |
+            |androidExtensions {
+            |    experimental = true
+            |}
+            """.trimMargin()
+        )
+
+        project.build("assembleDebug") {
+            assertSuccessful()
+            assertTasksExecuted(":app:compileDebugKotlin")
+        }
+
+        project.projectDir
+            .resolve("app/src/main/res/layout/activity_main.xml")
+            .modify {
+                it.replace("android:layout_width=\"wrap_content\"", "android:layout_width=\"match_parent\"")
+            }
+
+        project.build("assembleDebug") {
+            assertSuccessful()
+            assertTasksExecuted(":app:compileDebugKotlin")
+            assertContainsRegex(
+                "compilerMode=INCREMENTAL_COMPILER.*areFileChangesKnown=true.*app/build/kotlin".toRegex()
+            )
+        }
+    }
+
     @Test
     fun testAndroidDaggerIC() {
         val project = Project("AndroidDaggerProject")
@@ -1030,8 +1065,7 @@ fun getSomething() = 10
                 .filter { it.contains("[KOTLIN] compile iteration:") }
                 .drop(1)
                 .joinToString(separator = "/n")
-            val actualSources = getCompiledKotlinSources(filteredOutput).projectRelativePaths(project)
-            assertSameFiles(project.relativize(androidModuleKt), actualSources, "Compiled Kotlin files differ:\n  ")
+            assertCompiledKotlinSources(project.relativize(androidModuleKt), output = filteredOutput)
         }
     }
 

@@ -3,7 +3,7 @@ package test
 annotation class Annotation
 
 fun test() {
-  <caret>Annotation fun some() {
+  @<caret>Annotation fun some() {
   }
 }
 

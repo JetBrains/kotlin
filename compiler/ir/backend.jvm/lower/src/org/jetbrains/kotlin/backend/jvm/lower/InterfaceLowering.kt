@@ -184,7 +184,6 @@ internal class InterfaceLowering(val context: JvmBackendContext) : IrElementTran
             irClass.declarations.remove(field)
             defaultImplsIrClass.declarations.add(0, field)
             field.parent = defaultImplsIrClass
-            field.initializer?.patchDeclarationParents(defaultImplsIrClass)
         }
     }
 

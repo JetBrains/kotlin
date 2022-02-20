@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.ir.backend.js.utils.serialization
 
-import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.JsIrClassModel
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.JsIrIcClassModel
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.JsIrProgramFragment
 import org.jetbrains.kotlin.ir.backend.js.utils.emptyScope
@@ -60,6 +59,9 @@ class JsIrAstDeserializer : JsAstDeserializerBase() {
         if (proto.hasExportBlock()) {
             fragment.exports.statements += deserializeGlobalBlock(proto.exportBlock).statements
         }
+        if (proto.hasPolyfills()) {
+            fragment.polyfills.statements += deserializeGlobalBlock(proto.polyfills).statements
+        }
 
         proto.nameBindingList.associateTo(fragment.nameBindings) { nameBindingProto ->
             deserializeString(nameBindingProto.signatureId) to deserializeName(nameBindingProto.nameId)
@@ -80,7 +82,6 @@ class JsIrAstDeserializer : JsAstDeserializerBase() {
         }
 
         fragment.dts = proto.dts
-
         fragment.definitions += proto.definitionsList.map { deserializeString(it) }
 
         return fragment

@@ -385,6 +385,36 @@ __attribute__((swift_name("CoroutinesKt")))
 + (void)gc __attribute__((swift_name("gc()")));
 @end;
 
+__attribute__((objc_subclassing_restricted))
+__attribute__((swift_name("DataClassWithComponentMethods")))
+@interface KtDataClassWithComponentMethods : KtBase
+- (instancetype)initWithX:(int32_t)x y:(int32_t)y __attribute__((swift_name("init(x:y:)"))) __attribute__((objc_designated_initializer));
+- (BOOL)isEqual:(id _Nullable)other __attribute__((swift_name("isEqual(_:)")));
+- (NSUInteger)hash __attribute__((swift_name("hash()")));
+- (NSString *)description __attribute__((swift_name("description()")));
+- (int32_t)component1 __attribute__((swift_name("component1()"))) __attribute__((deprecated("use corresponding property instead")));
+- (int32_t)component2 __attribute__((swift_name("component2()"))) __attribute__((deprecated("use corresponding property instead")));
+- (KtDataClassWithComponentMethods *)doCopyX:(int32_t)x y:(int32_t)y __attribute__((swift_name("doCopy(x:y:)")));
+@property (readonly) int32_t x __attribute__((swift_name("x")));
+@property (readonly) int32_t y __attribute__((swift_name("y")));
+@end;
+
+__attribute__((objc_subclassing_restricted))
+__attribute__((swift_name("RegularClassWithComponentMethods")))
+@interface KtRegularClassWithComponentMethods : KtBase
+- (instancetype)init __attribute__((swift_name("init()"))) __attribute__((objc_designated_initializer));
++ (instancetype)new __attribute__((availability(swift, unavailable, message="use object initializers instead")));
+- (int32_t)component1 __attribute__((swift_name("component1()")));
+- (int32_t)component3 __attribute__((swift_name("component3()")));
+@end;
+
+__attribute__((objc_subclassing_restricted))
+__attribute__((swift_name("DataClassComponentMethodsKt")))
+@interface KtDataClassComponentMethodsKt : KtBase
++ (int32_t)component1 __attribute__((swift_name("component1()")));
++ (int32_t)component4 __attribute__((swift_name("component4()")));
+@end;
+
 __attribute__((swift_name("DeallocRetainBase")))
 @interface KtDeallocRetainBase : KtBase
 - (instancetype)init __attribute__((swift_name("init()"))) __attribute__((objc_designated_initializer));
@@ -962,11 +992,18 @@ __attribute__((swift_name("NoAutoreleaseSendHelper")))
 @protocol KtNoAutoreleaseSendHelper
 @required
 - (void)sendKotlinObjectKotlinObject:(KtKotlinObject *)kotlinObject __attribute__((swift_name("sendKotlinObject(kotlinObject:)")));
+- (void (^)(KtKotlinObject *))blockReceivingKotlinObject __attribute__((swift_name("blockReceivingKotlinObject()")));
 - (void)sendSwiftObjectSwiftObject:(id)swiftObject __attribute__((swift_name("sendSwiftObject(swiftObject:)")));
 - (void)sendListList:(NSArray<id> *)list __attribute__((swift_name("sendList(list:)")));
 - (void)sendStringString:(NSString *)string __attribute__((swift_name("sendString(string:)")));
 - (void)sendNumberNumber:(id)number __attribute__((swift_name("sendNumber(number:)")));
 - (void)sendBlockBlock:(KtKotlinObject *(^)(void))block __attribute__((swift_name("sendBlock(block:)")));
+
+/**
+ @note This method converts instances of CancellationException to errors.
+ Other uncaught Kotlin exceptions are fatal.
+*/
+- (void)sendCompletionWithCompletionHandler:(void (^)(id _Nullable_result, NSError * _Nullable))completionHandler __attribute__((swift_name("sendCompletion(completionHandler:)")));
 @end;
 
 __attribute__((swift_name("NoAutoreleaseReceiveHelper")))
@@ -985,11 +1022,18 @@ __attribute__((swift_name("NoAutoreleaseKotlinSendHelper")))
 @interface KtNoAutoreleaseKotlinSendHelper : KtBase <KtNoAutoreleaseSendHelper>
 - (instancetype)initWithKotlinLivenessTracker:(KtKotlinLivenessTracker *)kotlinLivenessTracker __attribute__((swift_name("init(kotlinLivenessTracker:)"))) __attribute__((objc_designated_initializer));
 - (void)sendKotlinObjectKotlinObject:(KtKotlinObject *)kotlinObject __attribute__((swift_name("sendKotlinObject(kotlinObject:)")));
+- (void (^)(KtKotlinObject *))blockReceivingKotlinObject __attribute__((swift_name("blockReceivingKotlinObject()")));
 - (void)sendSwiftObjectSwiftObject:(id)swiftObject __attribute__((swift_name("sendSwiftObject(swiftObject:)")));
 - (void)sendListList:(NSArray<id> *)list __attribute__((swift_name("sendList(list:)")));
 - (void)sendStringString:(NSString *)string __attribute__((swift_name("sendString(string:)")));
 - (void)sendNumberNumber:(id)number __attribute__((swift_name("sendNumber(number:)")));
 - (void)sendBlockBlock:(KtKotlinObject *(^)(void))block __attribute__((swift_name("sendBlock(block:)")));
+
+/**
+ @note This method converts instances of CancellationException to errors.
+ Other uncaught Kotlin exceptions are fatal.
+*/
+- (void)sendCompletionWithCompletionHandler:(void (^)(id _Nullable_result, NSError * _Nullable))completionHandler __attribute__((swift_name("sendCompletion(completionHandler:)")));
 @property (readonly) KtKotlinLivenessTracker *kotlinLivenessTracker __attribute__((swift_name("kotlinLivenessTracker")));
 @end;
 
@@ -1033,11 +1077,13 @@ __attribute__((swift_name("NoAutoreleaseKt")))
 @interface KtNoAutoreleaseKt : KtBase
 + (void)gc __attribute__((swift_name("gc()")));
 + (void)callSendKotlinObjectHelper:(id<KtNoAutoreleaseSendHelper>)helper tracker:(KtKotlinLivenessTracker *)tracker __attribute__((swift_name("callSendKotlinObject(helper:tracker:)")));
++ (void)sendKotlinObjectToBlockHelper:(id<KtNoAutoreleaseSendHelper>)helper tracker:(KtKotlinLivenessTracker *)tracker __attribute__((swift_name("sendKotlinObjectToBlock(helper:tracker:)")));
 + (void)callSendSwiftObjectHelper:(id<KtNoAutoreleaseSendHelper>)helper tracker:(KtKotlinLivenessTracker *)tracker swiftObject:(id)swiftObject __attribute__((swift_name("callSendSwiftObject(helper:tracker:swiftObject:)")));
 + (void)callSendListHelper:(id<KtNoAutoreleaseSendHelper>)helper tracker:(KtKotlinLivenessTracker *)tracker __attribute__((swift_name("callSendList(helper:tracker:)")));
 + (void)callSendStringHelper:(id<KtNoAutoreleaseSendHelper>)helper tracker:(KtKotlinLivenessTracker *)tracker __attribute__((swift_name("callSendString(helper:tracker:)")));
 + (void)callSendNumberHelper:(id<KtNoAutoreleaseSendHelper>)helper tracker:(KtKotlinLivenessTracker *)tracker __attribute__((swift_name("callSendNumber(helper:tracker:)")));
 + (void)callSendBlockHelper:(id<KtNoAutoreleaseSendHelper>)helper tracker:(KtKotlinLivenessTracker *)tracker __attribute__((swift_name("callSendBlock(helper:tracker:)")));
++ (void)callSendCompletionHelper:(id<KtNoAutoreleaseSendHelper>)helper tracker:(KtKotlinLivenessTracker *)tracker __attribute__((swift_name("callSendCompletion(helper:tracker:)")));
 + (void)callReceiveKotlinObjectHelper:(id<KtNoAutoreleaseReceiveHelper>)helper tracker:(KtKotlinLivenessTracker *)tracker __attribute__((swift_name("callReceiveKotlinObject(helper:tracker:)")));
 + (void)callReceiveSwiftObjectHelper:(id<KtNoAutoreleaseReceiveHelper>)helper tracker:(KtKotlinLivenessTracker *)tracker __attribute__((swift_name("callReceiveSwiftObject(helper:tracker:)")));
 + (void)callReceiveListHelper:(id<KtNoAutoreleaseReceiveHelper>)helper tracker:(KtKotlinLivenessTracker *)tracker __attribute__((swift_name("callReceiveList(helper:tracker:)")));
@@ -1141,7 +1187,7 @@ __attribute__((swift_name("Person.User")))
 - (BOOL)isEqual:(id _Nullable)other __attribute__((swift_name("isEqual(_:)")));
 - (NSUInteger)hash __attribute__((swift_name("hash()")));
 - (NSString *)description __attribute__((swift_name("description()")));
-- (int32_t)component1 __attribute__((swift_name("component1()")));
+- (int32_t)component1 __attribute__((swift_name("component1()"))) __attribute__((deprecated("use corresponding property instead")));
 - (KtPersonUser *)doCopyId:(int32_t)id __attribute__((swift_name("doCopy(id:)")));
 @property (readonly) int32_t id __attribute__((swift_name("id")));
 @end;
@@ -1161,7 +1207,7 @@ __attribute__((swift_name("Person.WorkerEmployee")))
 - (BOOL)isEqual:(id _Nullable)other __attribute__((swift_name("isEqual(_:)")));
 - (NSUInteger)hash __attribute__((swift_name("hash()")));
 - (NSString *)description __attribute__((swift_name("description()")));
-- (int32_t)component1 __attribute__((swift_name("component1()")));
+- (int32_t)component1 __attribute__((swift_name("component1()"))) __attribute__((deprecated("use corresponding property instead")));
 - (KtPersonWorkerEmployee *)doCopyId:(int32_t)id __attribute__((swift_name("doCopy(id:)")));
 @property (readonly) int32_t id __attribute__((swift_name("id")));
 @end;
@@ -1175,7 +1221,7 @@ __attribute__((swift_name("Person.WorkerContractor")))
 - (BOOL)isEqual:(id _Nullable)other __attribute__((swift_name("isEqual(_:)")));
 - (NSUInteger)hash __attribute__((swift_name("hash()")));
 - (NSString *)description __attribute__((swift_name("description()")));
-- (int32_t)component1 __attribute__((swift_name("component1()")));
+- (int32_t)component1 __attribute__((swift_name("component1()"))) __attribute__((deprecated("use corresponding property instead")));
 - (KtPersonWorkerContractor *)doCopyId:(int32_t)id __attribute__((swift_name("doCopy(id:)")));
 @property (readonly) int32_t id __attribute__((swift_name("id")));
 @end;
@@ -1328,9 +1374,9 @@ __attribute__((swift_name("TripleVals")))
 - (BOOL)isEqual:(id _Nullable)other __attribute__((swift_name("isEqual(_:)")));
 - (NSUInteger)hash __attribute__((swift_name("hash()")));
 - (NSString *)description __attribute__((swift_name("description()")));
-- (T _Nullable)component1 __attribute__((swift_name("component1()")));
-- (T _Nullable)component2 __attribute__((swift_name("component2()")));
-- (T _Nullable)component3 __attribute__((swift_name("component3()")));
+- (T _Nullable)component1 __attribute__((swift_name("component1()"))) __attribute__((deprecated("use corresponding property instead")));
+- (T _Nullable)component2 __attribute__((swift_name("component2()"))) __attribute__((deprecated("use corresponding property instead")));
+- (T _Nullable)component3 __attribute__((swift_name("component3()"))) __attribute__((deprecated("use corresponding property instead")));
 - (KtTripleVals<T> *)doCopyFirst:(T _Nullable)first second:(T _Nullable)second third:(T _Nullable)third __attribute__((swift_name("doCopy(first:second:third:)")));
 @property (readonly) T _Nullable first __attribute__((swift_name("first")));
 @property (readonly) T _Nullable second __attribute__((swift_name("second")));
@@ -1344,9 +1390,9 @@ __attribute__((swift_name("TripleVars")))
 - (NSString *)description __attribute__((swift_name("description()")));
 - (BOOL)isEqual:(id _Nullable)other __attribute__((swift_name("isEqual(_:)")));
 - (NSUInteger)hash __attribute__((swift_name("hash()")));
-- (T _Nullable)component1 __attribute__((swift_name("component1()")));
-- (T _Nullable)component2 __attribute__((swift_name("component2()")));
-- (T _Nullable)component3 __attribute__((swift_name("component3()")));
+- (T _Nullable)component1 __attribute__((swift_name("component1()"))) __attribute__((deprecated("use corresponding property instead")));
+- (T _Nullable)component2 __attribute__((swift_name("component2()"))) __attribute__((deprecated("use corresponding property instead")));
+- (T _Nullable)component3 __attribute__((swift_name("component3()"))) __attribute__((deprecated("use corresponding property instead")));
 - (KtTripleVars<T> *)doCopyFirst:(T _Nullable)first second:(T _Nullable)second third:(T _Nullable)third __attribute__((swift_name("doCopy(first:second:third:)")));
 @property T _Nullable first __attribute__((swift_name("first")));
 @property T _Nullable second __attribute__((swift_name("second")));
@@ -1755,9 +1801,9 @@ __attribute__((swift_name("CKeywords")))
 - (BOOL)isEqual:(id _Nullable)other __attribute__((swift_name("isEqual(_:)")));
 - (NSUInteger)hash __attribute__((swift_name("hash()")));
 - (NSString *)description __attribute__((swift_name("description()")));
-- (float)component1 __attribute__((swift_name("component1()")));
-- (int32_t)component2 __attribute__((swift_name("component2()")));
-- (BOOL)component3 __attribute__((swift_name("component3()")));
+- (float)component1 __attribute__((swift_name("component1()"))) __attribute__((deprecated("use corresponding property instead")));
+- (int32_t)component2 __attribute__((swift_name("component2()"))) __attribute__((deprecated("use corresponding property instead")));
+- (BOOL)component3 __attribute__((swift_name("component3()"))) __attribute__((deprecated("use corresponding property instead")));
 - (KtCKeywords *)doCopyFloat:(float)float_ enum:(int32_t)enum_ goto:(BOOL)goto_ __attribute__((swift_name("doCopy(float:enum:goto:)")));
 @property (readonly, getter=float) float float_ __attribute__((swift_name("float_")));
 @property (readonly, getter=enum) int32_t enum_ __attribute__((swift_name("enum_")));

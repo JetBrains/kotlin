@@ -42,6 +42,7 @@ import org.jetbrains.kotlin.kapt3.javac.KaptJavaFileObject
 import org.jetbrains.kotlin.kapt3.javac.KaptTreeMaker
 import org.jetbrains.kotlin.kapt3.stubs.ErrorTypeCorrector.TypeKind.*
 import org.jetbrains.kotlin.kapt3.util.*
+import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.load.java.sources.JavaSourceElement
 import org.jetbrains.kotlin.load.kotlin.TypeMappingMode
 import org.jetbrains.kotlin.name.FqName
@@ -50,10 +51,10 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.ArrayFqNames
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DelegatingBindingTrace
-import org.jetbrains.kotlin.resolve.calls.util.getResolvedCall
-import org.jetbrains.kotlin.resolve.calls.util.getType
 import org.jetbrains.kotlin.resolve.calls.model.DefaultValueArgument
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedValueArgument
+import org.jetbrains.kotlin.resolve.calls.util.getResolvedCall
+import org.jetbrains.kotlin.resolve.calls.util.getType
 import org.jetbrains.kotlin.resolve.constants.*
 import org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluator
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameOrNull
@@ -61,7 +62,6 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.resolve.descriptorUtil.getSuperClassOrAny
 import org.jetbrains.kotlin.resolve.descriptorUtil.isCompanionObject
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin
-import org.jetbrains.kotlin.resolve.source.PsiSourceElement
 import org.jetbrains.kotlin.resolve.source.getPsi
 import org.jetbrains.kotlin.types.ErrorUtils
 import org.jetbrains.kotlin.types.KotlinType
@@ -120,11 +120,12 @@ class ClassFileToSourceStubConverter(val kaptContext: KaptContextForStubGenerati
 
     private val mutableBindings = mutableMapOf<String, KaptJavaFileObject>()
 
+    private val isIrBackend = kaptContext.generationState.isIrBackend
+
     val bindings: Map<String, KaptJavaFileObject>
         get() = mutableBindings
 
-    private val typeMapper
-        get() = kaptContext.generationState.typeMapper
+    private val typeMapper = KaptTypeMapper
 
     val treeMaker = TreeMaker.instance(kaptContext.context) as KaptTreeMaker
 
@@ -510,7 +511,7 @@ class ClassFileToSourceStubConverter(val kaptContext: KaptContextForStubGenerati
         val declaration = kaptContext.origins[clazz]?.element as? KtClassOrObject ?: return defaultSuperTypes
         val declarationDescriptor = kaptContext.bindingContext[BindingContext.CLASS, declaration] ?: return defaultSuperTypes
 
-        if (typeMapper.mapType(declarationDescriptor) != Type.getObjectType(clazz.name)) {
+        if (typeMapper.mapType(declarationDescriptor.defaultType) != Type.getObjectType(clazz.name)) {
             return defaultSuperTypes
         }
 
@@ -651,15 +652,22 @@ class ClassFileToSourceStubConverter(val kaptContext: KaptContextForStubGenerati
         return doesInnerClassNameConflictWithOuter(clazz, containingClassForOuterClass)
     }
 
-    private fun getClassAccessFlags(clazz: ClassNode, descriptor: DeclarationDescriptor, isInner: Boolean, isNested: Boolean) = when {
-        (descriptor.containingDeclaration as? ClassDescriptor)?.kind == ClassKind.INTERFACE -> {
+    private fun getClassAccessFlags(clazz: ClassNode, descriptor: DeclarationDescriptor, isInner: Boolean, isNested: Boolean): Int {
+        if ((descriptor.containingDeclaration as? ClassDescriptor)?.kind == ClassKind.INTERFACE) {
             // Classes inside interfaces should always be public and static.
             // See com.sun.tools.javac.comp.Enter.visitClassDef for more information.
-            (clazz.access or Opcodes.ACC_PUBLIC or Opcodes.ACC_STATIC) and
+            return (clazz.access or Opcodes.ACC_PUBLIC or Opcodes.ACC_STATIC) and
                     Opcodes.ACC_PRIVATE.inv() and Opcodes.ACC_PROTECTED.inv() // Remove private and protected modifiers
         }
-        !isInner && isNested -> clazz.access or Opcodes.ACC_STATIC
-        else -> clazz.access
+        var access = clazz.access
+        if ((descriptor as? ClassDescriptor)?.kind == ClassKind.ENUM_CLASS) {
+            // Enums are final in the bytecode, but "final enum" is not allowed in Java.
+            access = access and Opcodes.ACC_FINAL.inv()
+        }
+        if (!isInner && isNested) {
+            access = access or Opcodes.ACC_STATIC
+        }
+        return access
     }
 
     private fun getClassName(clazz: ClassNode, descriptor: DeclarationDescriptor, isDefaultImpls: Boolean, packageFqName: String): String {
@@ -685,8 +693,8 @@ class ClassFileToSourceStubConverter(val kaptContext: KaptContextForStubGenerati
         val origin = kaptContext.origins[field]
         val descriptor = origin?.descriptor
 
-        val fieldAnnotations = when (descriptor) {
-            is PropertyDescriptor -> descriptor.backingField?.annotations
+        val fieldAnnotations = when {
+            !isIrBackend && descriptor is PropertyDescriptor -> descriptor.backingField?.annotations
             else -> descriptor?.annotations
         } ?: Annotations.EMPTY
 
@@ -876,8 +884,8 @@ class ClassFileToSourceStubConverter(val kaptContext: KaptContextForStubGenerati
         if (isIgnored(method.invisibleAnnotations)) return null
         val descriptor = kaptContext.origins[method]?.descriptor as? CallableDescriptor ?: return null
 
-        val isAnnotationHolderForProperty = descriptor is PropertyDescriptor && isSynthetic(method.access)
-                && isStatic(method.access) && method.name.endsWith("\$annotations")
+        val isAnnotationHolderForProperty =
+            isSynthetic(method.access) && isStatic(method.access) && method.name.endsWith(JvmAbi.ANNOTATED_PROPERTY_METHOD_NAME_SUFFIX)
 
         if (isSynthetic(method.access) && !isAnnotationHolderForProperty) return null
 
@@ -1494,7 +1502,7 @@ class ClassFileToSourceStubConverter(val kaptContext: KaptContextForStubGenerati
         }
     }
 
-    private fun convertKotlinType(type: KotlinType): Type = typeMapper.mapType(type, null, TypeMappingMode.GENERIC_ARGUMENT)
+    private fun convertKotlinType(type: KotlinType): Type = typeMapper.mapType(type, TypeMappingMode.GENERIC_ARGUMENT)
 
     private fun getFileForClass(c: ClassNode): KtFile? = kaptContext.origins[c]?.element?.containingFile as? KtFile
 

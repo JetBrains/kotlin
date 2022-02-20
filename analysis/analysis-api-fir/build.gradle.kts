@@ -1,4 +1,3 @@
-
 plugins {
     kotlin("jvm")
     id("jps-compatible")
@@ -21,6 +20,7 @@ dependencies {
     api(intellijCore())
     implementation(project(":analysis:analysis-api-providers"))
     implementation(project(":analysis:analysis-internal-utils"))
+    implementation(project(":analysis:kt-references"))
 
     testApi(projectTests(":analysis:low-level-api-fir"))
     testApi(projectTests(":compiler:tests-common"))
@@ -29,7 +29,11 @@ dependencies {
     testApi(projectTests(":compiler:tests-common-new"))
     testApi(projectTests(":compiler:fir:analysis-tests:legacy-fir-tests"))
     testApi(projectTests(":analysis:analysis-api-impl-base"))
+    testApi(projectTests(":analysis:decompiled:decompiler-to-file-stubs"))
+    testApi(project(":analysis:decompiled:decompiler-to-file-stubs"))
+    testApi(project(":analysis:decompiled:decompiler-to-psi"))
     testApi(project(":kotlin-test:kotlin-test-junit"))
+
     testApi(toolsJar())
     testApiJUnit5()
     testApi(project(":analysis:symbol-light-classes"))
@@ -80,5 +84,3 @@ val generateCode by tasks.registering(NoDebugJavaExec::class) {
 val compileKotlin by tasks
 
 compileKotlin.dependsOn(generateCode)
-
-

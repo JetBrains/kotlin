@@ -1176,6 +1176,12 @@ public class FirDiagnosticTestGenerated extends AbstractFirDiagnosticTest {
             }
 
             @Test
+            @TestMetadata("erroneousDelegatedConstructorCall.kt")
+            public void testErroneousDelegatedConstructorCall() throws Exception {
+                runTest("compiler/fir/analysis-tests/testData/resolve/constructors/erroneousDelegatedConstructorCall.kt");
+            }
+
+            @Test
             @TestMetadata("noSuperCallInSupertypes.kt")
             public void testNoSuperCallInSupertypes() throws Exception {
                 runTest("compiler/fir/analysis-tests/testData/resolve/constructors/noSuperCallInSupertypes.kt");
@@ -5805,6 +5811,12 @@ public class FirDiagnosticTestGenerated extends AbstractFirDiagnosticTest {
             @TestMetadata("EnumMapGet.kt")
             public void testEnumMapGet() throws Exception {
                 runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/problems/EnumMapGet.kt");
+            }
+
+            @Test
+            @TestMetadata("immutableName.kt")
+            public void testImmutableName() throws Exception {
+                runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/problems/immutableName.kt");
             }
 
             @Test

@@ -9,16 +9,18 @@ KtSuccessCallInfo:
       signature = KtFunctionLikeSignature:
         receiverType = null
         returnType = kotlin.Int
-        symbol = /MyMap.get(<dispatch receiver>: MyMap<kotlin.String, kotlin.Int>, k: kotlin.String): kotlin.Int
+        symbol = /MyMap.get(<dispatch receiver>: MyMap<K, V>, k: K): V
         valueParameters = [
           KtVariableLikeSignature:
+            name = k
             receiverType = null
             returnType = kotlin.String
-            symbol = k: kotlin.String
+            symbol = k: K
         ]
     argumentMapping = {
       "a" -> (KtVariableLikeSignature:
+        name = k
         receiverType = null
         returnType = kotlin.String
-        symbol = k: kotlin.String)
+        symbol = k: K)
     }

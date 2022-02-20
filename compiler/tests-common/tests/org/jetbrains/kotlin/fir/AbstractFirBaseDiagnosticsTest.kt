@@ -98,7 +98,8 @@ abstract class AbstractFirBaseDiagnosticsTest : BaseDiagnosticsTest() {
                 librariesScope = PsiBasedProjectFileSearchScope(allProjectScope),
                 lookupTracker = null,
                 providerAndScopeForIncrementalCompilation = null,
-                extensionRegistrars = emptyList()
+                extensionRegistrars = emptyList(),
+                needRegisterJavaElementFinder = true
             ) {
                 configureSession()
                 getFirExtensions()?.let {

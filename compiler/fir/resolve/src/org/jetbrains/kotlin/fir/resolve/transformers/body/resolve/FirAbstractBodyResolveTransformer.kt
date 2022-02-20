@@ -18,10 +18,7 @@ import org.jetbrains.kotlin.fir.resolve.inference.InferenceComponents
 import org.jetbrains.kotlin.fir.resolve.inference.inferenceComponents
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
-import org.jetbrains.kotlin.fir.resolve.transformers.FirAbstractPhaseTransformer
-import org.jetbrains.kotlin.fir.resolve.transformers.FirSpecificTypeResolverTransformer
-import org.jetbrains.kotlin.fir.resolve.transformers.FirSyntheticCallGenerator
-import org.jetbrains.kotlin.fir.resolve.transformers.ReturnTypeCalculator
+import org.jetbrains.kotlin.fir.resolve.transformers.*
 import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.scopes.impl.FirLocalScope
 import org.jetbrains.kotlin.fir.types.FirTypeRef
@@ -76,7 +73,7 @@ abstract class FirAbstractBodyResolveTransformer(phase: FirResolvePhase) : FirAb
     val ResolutionMode.expectedType: FirTypeRef?
         get() = expectedType(components)
 
-    class BodyResolveTransformerComponents(
+    open class BodyResolveTransformerComponents(
         override val session: FirSession,
         override val scopeSession: ScopeSession,
         val transformer: FirBodyResolveTransformer,
@@ -112,5 +109,7 @@ abstract class FirAbstractBodyResolveTransformer(phase: FirResolvePhase) : FirAb
         override val doubleColonExpressionResolver: FirDoubleColonExpressionResolver = FirDoubleColonExpressionResolver(session)
         override val outerClassManager: FirOuterClassManager = FirOuterClassManager(session, context.outerLocalClassForNested)
         override val samResolver: FirSamResolver = FirSamResolverImpl(session, scopeSession, outerClassManager)
+        override val integerLiteralAndOperatorApproximationTransformer: IntegerLiteralAndOperatorApproximationTransformer =
+            IntegerLiteralAndOperatorApproximationTransformer(session, scopeSession)
     }
 }

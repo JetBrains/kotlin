@@ -48,6 +48,8 @@ data class KotlinWebpackConfig(
     @Input
     @Optional
     var devServer: DevServer? = null,
+    @Input
+    var experiments: MutableSet<String> = mutableSetOf(),
     @Nested
     var cssSupport: KotlinWebpackCssSupport = KotlinWebpackCssSupport(),
     @Input
@@ -207,6 +209,7 @@ data class KotlinWebpackConfig(
             appendErrorPlugin()
             appendFromConfigDir()
             appendEvaluatedFileReport()
+            appendExperiments()
 
             if (export) {
                 //language=JavaScript 1.8
@@ -275,6 +278,16 @@ data class KotlinWebpackConfig(
         appendLine("// dev server")
         appendLine("config.devServer = ${json(devServer!!)};")
         appendLine()
+    }
+
+    private fun Appendable.appendExperiments() {
+        if (experiments.isEmpty()) return
+
+        appendLine("config.experiments = {")
+        for (experiment in experiments.sorted()) {
+            appendLine("    $experiment: true,")
+        }
+        appendLine("}")
     }
 
     private fun Appendable.appendSourceMaps() {

@@ -20,7 +20,10 @@ import org.jetbrains.kotlin.fir.expressions.impl.*
 import org.jetbrains.kotlin.fir.references.*
 import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.*
+import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
 import org.jetbrains.kotlin.name.Name
@@ -61,6 +64,8 @@ open class FirRenderer(builder: StringBuilder, protected val mode: RenderMode = 
         val renderDeclarationAttributes: Boolean = false,
         val renderDeclarationOrigin: Boolean = false,
         val renderPackageDirective: Boolean = false,
+        val renderNestedDeclarations: Boolean = true,
+        val renderDefaultParameterValues: Boolean = true,
     ) {
         companion object {
             val Normal = RenderMode(
@@ -104,6 +109,21 @@ open class FirRenderer(builder: StringBuilder, protected val mode: RenderMode = 
                 renderAnnotation = false,
                 renderBodies = false,
                 renderPropertyAccessors = false,
+            )
+
+            val DeclarationHeader = RenderMode(
+                renderLambdaBodies = false,
+                renderCallArguments = false,
+                renderCallableFqNames = false,
+                renderDeclarationResolvePhase = false,
+                renderAnnotation = true,
+                renderBodies = false,
+                renderPropertyAccessors = false,
+                renderDeclarationAttributes = false,
+                renderDeclarationOrigin = false,
+                renderPackageDirective = false,
+                renderNestedDeclarations = false,
+                renderDefaultParameterValues = false,
             )
 
             val WithDeclarationAttributes = RenderMode(
@@ -474,7 +494,9 @@ open class FirRenderer(builder: StringBuilder, protected val mode: RenderMode = 
     }
 
     protected open fun renderClassDeclarations(regularClass: FirRegularClass) {
-        regularClass.declarations.renderDeclarations()
+        if (mode.renderNestedDeclarations) {
+            regularClass.declarations.renderDeclarations()
+        }
     }
 
     override fun visitEnumEntry(enumEntry: FirEnumEntry) {
@@ -581,7 +603,7 @@ open class FirRenderer(builder: StringBuilder, protected val mode: RenderMode = 
         constructor.returnTypeRef.accept(this)
         val body = constructor.body
         val delegatedConstructor = constructor.delegatedConstructor
-        if (body == null) {
+        if (body == null && mode.renderBodies) {
             if (delegatedConstructor != null) {
                 renderInBraces {
                     delegatedConstructor.accept(this)
@@ -707,7 +729,7 @@ open class FirRenderer(builder: StringBuilder, protected val mode: RenderMode = 
     override fun visitSafeCallExpression(safeCallExpression: FirSafeCallExpression) {
         safeCallExpression.receiver.accept(this)
         print("?.{ ")
-        safeCallExpression.regularQualifiedAccess.accept(this)
+        safeCallExpression.selector.accept(this)
         print(" }")
     }
 
@@ -737,7 +759,11 @@ open class FirRenderer(builder: StringBuilder, protected val mode: RenderMode = 
         valueParameter.returnTypeRef.accept(this)
         valueParameter.defaultValue?.let {
             print(" = ")
-            it.accept(this)
+            if (mode.renderDefaultParameterValues) {
+                it.accept(this)
+            } else {
+                print("...")
+            }
         }
     }
 
@@ -1302,7 +1328,11 @@ open class FirRenderer(builder: StringBuilder, protected val mode: RenderMode = 
     override fun visitAugmentedArraySetCall(augmentedArraySetCall: FirAugmentedArraySetCall) {
         augmentedArraySetCall.annotations.renderAnnotations()
         print("ArraySet:[")
-        augmentedArraySetCall.assignCall.accept(this)
+        augmentedArraySetCall.lhsGetCall.accept(this)
+        print(" ")
+        print(augmentedArraySetCall.operation.operator)
+        print(" ")
+        augmentedArraySetCall.rhs.accept(this)
         print("]")
     }
 
@@ -1312,6 +1342,10 @@ open class FirRenderer(builder: StringBuilder, protected val mode: RenderMode = 
         functionCall.calleeReference.accept(this)
         functionCall.typeArguments.renderTypeArguments()
         visitCall(functionCall)
+    }
+
+    override fun visitIntegerLiteralOperatorCall(integerLiteralOperatorCall: FirIntegerLiteralOperatorCall) {
+        visitFunctionCall(integerLiteralOperatorCall)
     }
 
     override fun visitImplicitInvokeCall(implicitInvokeCall: FirImplicitInvokeCall) {

@@ -1,5 +1,4 @@
 //!LANGUAGE: +DefinitelyNonNullableTypes
-// IGNORE_BACKEND_FIR: ANY
 
 fun <T> elvisLike(x: T, y: T & Any): T & Any = x ?: y
 

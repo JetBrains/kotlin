@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.gradle.internal.tasks.allOutputFiles
 import org.jetbrains.kotlin.gradle.logging.GradleKotlinLogger
 import org.jetbrains.kotlin.gradle.logging.kotlinDebug
 import org.jetbrains.kotlin.incremental.cleanDirectoryContents
-import org.jetbrains.kotlin.incremental.forceDeleteRecursively
+import org.jetbrains.kotlin.incremental.deleteRecursivelyOrThrow
 import java.io.File
 
 fun throwGradleExceptionIfError(
@@ -63,7 +63,7 @@ internal fun cleanOutputsAndLocalState(
                 }
                 file.isFile -> {
                     log.debug("Deleting output file: $file")
-                    file.forceDeleteRecursively()
+                    file.deleteRecursivelyOrThrow()
                 }
             }
         }

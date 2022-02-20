@@ -5,9 +5,9 @@
 
 #include "Mutex.hpp"
 
-#include <thread>
-
 #include "gtest/gtest.h"
+
+#include "ScopedThread.hpp"
 #include "TestSupport.hpp"
 #include "ThreadState.hpp"
 
@@ -42,14 +42,14 @@ TYPED_TEST(MutexTestNewMM, SmokeAttachedThread) {
         ThreadState initialThreadState = TypeParam::initialState;
 
         LockUnderTest lock;
-        std::thread secondThread;
+        ScopedThread secondThread;
         std::atomic<bool> started = false;
         std::atomic<int32_t> protectedCounter = 0;
         mm::ThreadData* secondThreadData = nullptr;
 
         {
             std::unique_lock guard1(lock);
-            secondThread = std::thread([&lock, &started, &protectedCounter, &secondThreadData, &initialThreadState]() {
+            secondThread = ScopedThread([&lock, &started, &protectedCounter, &secondThreadData, &initialThreadState]() {
                 ScopedMemoryInit init;
                 SwitchThreadState(init.memoryState(), initialThreadState, /* reentrant = */ true);
 

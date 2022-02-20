@@ -512,13 +512,10 @@ extern "C" void MutationCheck(ObjHeader* obj) {
 }
 
 extern "C" RUNTIME_NOTHROW void CheckLifetimesConstraint(ObjHeader* obj, ObjHeader* pointee) {
-    // TODO: Consider making it a `RuntimeCheck`. Probably all `RuntimeCheck`s and `RuntimeAssert`s should specify
-    //       that their firing is a compiler bug and should be reported.
-    if (!obj->local() && pointee != nullptr && pointee->local()) {
-        konan::consolePrintf("Attempt to store a stack object %p into a heap object %p\n", pointee, obj);
-        konan::consolePrintf("This is a compiler bug, please report it to https://kotl.in/issue\n");
-        konan::abort();
-    }
+    RuntimeAssert(obj->local() || pointee == nullptr || !pointee->local(),
+                  "Attempt to store a stack object %p into a heap object %p. "
+                  "This is a compiler bug, please report it to https://kotl.in/issue",
+                  pointee, obj);
 }
 
 extern "C" void FreezeSubgraph(ObjHeader* obj) {

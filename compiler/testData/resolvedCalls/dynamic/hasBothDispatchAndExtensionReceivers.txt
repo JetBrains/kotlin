@@ -12,7 +12,7 @@ fun bar(a: A, b: dynamic) {
 
 Resolved call:
 
-Resulting descriptor: fun foo(): dynamic defined in bar.<anonymous>
+Resulting descriptor: fun foo(): dynamic defined in bar.`<anonymous>`
 
 Explicit receiver kind = DISPATCH_RECEIVER
 Dispatch receiver = b {dynamic}

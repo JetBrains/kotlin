@@ -28,6 +28,6 @@ fun <F> main(x: F, y: F, z: F, w: F, m: F) {
     w1.foo()
     w2.foo()
 
-    <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>expectNN<!>(m)
-    <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>expectNN<!>(m!!)
+    expectNN(m)
+    expectNN(m!!)
 }

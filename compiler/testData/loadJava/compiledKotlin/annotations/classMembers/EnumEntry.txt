@@ -3,9 +3,9 @@ package test
 public final annotation class Anno : kotlin.Annotation {
     /*primary*/ public constructor Anno(/*0*/ value: kotlin.String = ..., /*1*/ x: kotlin.Int = ...)
     public final val value: kotlin.String = "0"
-        public final fun <get-value>(): kotlin.String
+        public final fun `<get-value>`(): kotlin.String
     public final val x: kotlin.Int = 0
-        public final fun <get-x>(): kotlin.Int
+        public final fun `<get-x>`(): kotlin.Int
 }
 
 public final annotation class Bnno : kotlin.Annotation {
@@ -23,9 +23,9 @@ public final enum class Eee : kotlin.Enum<test.Eee> {
 
     /*primary*/ private constructor Eee()
     public final override /*1*/ /*fake_override*/ val name: kotlin.String
-        public final override /*1*/ /*fake_override*/ fun <get-name>(): kotlin.String
+        public final override /*1*/ /*fake_override*/ fun `<get-name>`(): kotlin.String
     public final override /*1*/ /*fake_override*/ val ordinal: kotlin.Int
-        public final override /*1*/ /*fake_override*/ fun <get-ordinal>(): kotlin.Int
+        public final override /*1*/ /*fake_override*/ fun `<get-ordinal>`(): kotlin.Int
     protected final override /*1*/ /*fake_override*/ fun clone(): kotlin.Any
     public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: test.Eee): kotlin.Int
     protected/*protected and package*/ final override /*1*/ /*fake_override*/ /*isHiddenForResolutionEverywhereBesideSupercalls*/ fun finalize(): kotlin.Unit

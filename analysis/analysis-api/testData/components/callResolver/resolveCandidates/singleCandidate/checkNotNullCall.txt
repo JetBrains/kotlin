@@ -1,0 +1,4 @@
+KtApplicableCallCandidateInfo:
+  candidate = KtCheckNotNullCall:
+    baseExpression = a
+  isInBestCandidates = true

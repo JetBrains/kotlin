@@ -14,7 +14,6 @@ import org.jetbrains.kotlin.analysis.api.symbols.KtCallableSymbol
 import org.jetbrains.kotlin.analysis.api.tokens.ValidityToken
 import org.jetbrains.kotlin.analysis.api.types.KtSubstitutor
 import org.jetbrains.kotlin.analysis.api.withValidityAssertion
-import org.jetbrains.kotlin.analysis.low.level.api.fir.api.LowLevelFirApiFacadeForResolveOnAir.getTowerContextProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFirFile
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFirOfType
 import org.jetbrains.kotlin.analysis.low.level.api.fir.resolver.ResolutionParameters
@@ -25,13 +24,16 @@ import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.FirVariable
 import org.jetbrains.kotlin.fir.expressions.FirExpression
+import org.jetbrains.kotlin.fir.expressions.FirSafeCallExpression
 import org.jetbrains.kotlin.fir.resolve.calls.ImplicitReceiverValue
 import org.jetbrains.kotlin.fir.symbols.ensureResolved
 import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.fir.types.receiverType
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.psi.KtSafeQualifiedExpression
 import org.jetbrains.kotlin.psi.KtSimpleNameExpression
+import org.jetbrains.kotlin.psi.psiUtil.getQualifiedExpressionForReceiver
 
 internal class KtFirCompletionCandidateChecker(
     analysisSession: KtFirAnalysisSession,
@@ -59,9 +61,9 @@ internal class KtFirCompletionCandidateChecker(
         possibleExplicitReceiver: KtExpression?,
     ): KtExtensionApplicabilityResult {
         val file = originalFile.getOrBuildFirFile(firResolveState)
-        val explicitReceiverExpression = possibleExplicitReceiver?.getOrBuildFirOfType<FirExpression>(firResolveState)
+        val explicitReceiverExpression = possibleExplicitReceiver?.getMatchingFirExpressionForCallReceiver()
         val resolver = SingleCandidateResolver(firResolveState.rootModuleSession, file)
-        val implicitReceivers = getImplicitReceivers(nameExpression)
+        val implicitReceivers = getImplicitReceivers(originalFile, nameExpression)
         for (implicitReceiverValue in implicitReceivers) {
             val resolutionParameters = ResolutionParameters(
                 singleCandidateResolutionMode = SingleCandidateResolutionMode.CHECK_EXTENSION_FOR_COMPLETION,
@@ -84,8 +86,11 @@ internal class KtFirCompletionCandidateChecker(
         return KtExtensionApplicabilityResult.NonApplicable(KtSubstitutor.Empty(token))
     }
 
-    private fun getImplicitReceivers(fakeNameExpression: KtSimpleNameExpression): Sequence<ImplicitReceiverValue<*>?> {
-        val towerDataContext = analysisSession.firResolveState.getTowerContextProvider()
+    private fun getImplicitReceivers(
+        originalFile: KtFile,
+        fakeNameExpression: KtSimpleNameExpression
+    ): Sequence<ImplicitReceiverValue<*>?> {
+        val towerDataContext = analysisSession.firResolveState.getTowerContextProvider(originalFile)
             .getClosestAvailableParentContext(fakeNameExpression)
             ?: error("Cannot find enclosing declaration for ${fakeNameExpression.getElementTextInContext()}")
 
@@ -93,5 +98,21 @@ internal class KtFirCompletionCandidateChecker(
             yield(null) // otherwise explicit receiver won't be checked when there are no implicit receivers in completion position
             yieldAll(towerDataContext.implicitReceiverStack)
         }
+    }
+
+    /**
+     * It is not enough to just call the `getOrBuildFirOfType` on [this] receiver expression, because for calls
+     * like `foo?.bar()` the receiver is additionally wrapped into `FirCheckedSafeCallSubject`, which is important
+     * for type-checks during resolve.
+     *
+     * @receiver PSI receiver expression in some qualified expression (e.g. `foo` in `foo?.bar()`, `a` in `a.b`)
+     * @return A FIR expression which most precisely represents the receiver for the corresponding FIR call.
+     */
+    private fun KtExpression.getMatchingFirExpressionForCallReceiver(): FirExpression {
+        val psiWholeCall = this.getQualifiedExpressionForReceiver()
+        if (psiWholeCall !is KtSafeQualifiedExpression) return this.getOrBuildFirOfType<FirExpression>(firResolveState)
+
+        val firSafeCall = psiWholeCall.getOrBuildFirOfType<FirSafeCallExpression>(firResolveState)
+        return firSafeCall.checkedSubjectRef.value
     }
 }

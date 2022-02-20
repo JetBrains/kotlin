@@ -22,10 +22,10 @@ object FirUselessTypeOperationCallChecker : FirTypeOperatorCallChecker() {
         val arg = expression.argument
 
         val candidateType = arg.typeRef.coneType.upperBoundIfFlexible().fullyExpandedType(context.session)
-        if (candidateType is ConeKotlinErrorType) return
+        if (candidateType is ConeErrorType) return
 
         val targetType = expression.conversionTypeRef.coneType.fullyExpandedType(context.session)
-        if (targetType is ConeKotlinErrorType) return
+        if (targetType is ConeErrorType) return
 
         // x as? Type <=> x as Type?
         val refinedTargetType =

@@ -1,6 +1,6 @@
 package
 
-private val privateObj: privateObj.<anonymous>.<no name provided>
+private val privateObj: privateObj.`<anonymous>`.`<no name provided>`
 public fun test(): kotlin.Unit
 
 public final class MyDelegate</*0*/ T> {

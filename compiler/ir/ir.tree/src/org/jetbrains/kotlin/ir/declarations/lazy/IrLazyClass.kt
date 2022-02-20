@@ -25,7 +25,7 @@ class IrLazyClass(
     override val symbol: IrClassSymbol,
     @OptIn(ObsoleteDescriptorBasedAPI::class)
     override val descriptor: ClassDescriptor,
-    override val name: Name,
+    override var name: Name,
     override val kind: ClassKind,
     override var visibility: DescriptorVisibility,
     override var modality: Modality,
@@ -75,6 +75,7 @@ class IrLazyClass(
     private fun shouldBuildStub(descriptor: DeclarationDescriptor): Boolean =
         descriptor !is DeclarationDescriptorWithVisibility ||
                 !DescriptorVisibilities.isPrivate(descriptor.visibility) ||
+                // This exception is needed for K/N caches usage.
                 isObject && descriptor is ClassConstructorDescriptor
 
     override var typeParameters: List<IrTypeParameter> by lazyVar(stubGenerator.lock) {

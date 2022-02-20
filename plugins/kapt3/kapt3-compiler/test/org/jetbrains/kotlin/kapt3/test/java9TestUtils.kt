@@ -26,12 +26,12 @@ import java.net.URLClassLoader
 import java.util.concurrent.TimeUnit
 
 interface CustomJdkTestLauncher {
-    fun doTestWithJdk11(mainClass: Class<*>, arg: String) {
+    fun doTestWithJdk11(mainClass: Class<*>, vararg args: String) {
         if (isJava9OrLater()) return
-        KtTestUtil.getJdk11Home().let { doTestCustomJdk(mainClass, arg, it) }
+        doTestCustomJdk(mainClass, KtTestUtil.getJdk11Home(), *args)
     }
 
-    private fun doTestCustomJdk(mainClass: Class<*>, arg: String, javaHome: File) {
+    private fun doTestCustomJdk(mainClass: Class<*>, javaHome: File, vararg args: String) {
         //TODO unmute after investigation (tests are failing on TeamCity)
         if (SystemInfoRt.isWindows) return
 
@@ -52,16 +52,21 @@ interface CustomJdkTestLauncher {
             "-classpath",
             classpath.joinToString(File.pathSeparator),
             mainClass.name,
-            arg
+            *args
         )
 
-        println("Process arguments: [${command.joinToString()}]")
-
-        val process = ProcessBuilder(*command).inheritIO().start()
-
+        val process = ProcessBuilder(*command).start()
+        val stdout = process.inputStream.bufferedReader().use { it.readText() }
+        val stderr = process.errorStream.bufferedReader().use { it.readText() }
         process.waitFor(3, TimeUnit.MINUTES)
-        if (process.exitValue() != 0) {
-            throw AssertionError("Java $javaHome test process exited with exit code ${process.exitValue()} \n")
+
+        val exitCode = process.exitValue()
+        if (exitCode != 0) {
+            throw AssertionError(
+                "Java $javaHome test process exited with exit code $exitCode\n\n" +
+                        "--- STDOUT ---\n$stdout\n\n" +
+                        "--- STDERR ---\n$stderr"
+            )
         }
     }
 
@@ -70,5 +75,4 @@ interface CustomJdkTestLauncher {
         is ClassLoader -> collectClasspath(classLoader.parent)
         else -> emptyList()
     }
-
 }

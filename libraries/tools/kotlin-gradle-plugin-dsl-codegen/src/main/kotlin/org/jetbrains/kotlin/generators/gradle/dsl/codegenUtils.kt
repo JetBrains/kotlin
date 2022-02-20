@@ -32,9 +32,18 @@ internal fun TypeName.renderErased(): String =
 internal fun TypeName.collectFqNames(): Set<String> =
     setOf(fqName) + typeArguments.flatMap { it.collectFqNames() }.toSet()
 
-internal fun String.indented(nSpaces: Int = 4): String {
+/**
+ * @param skipFirstLine if true doesn't indent first line
+ */
+internal fun String.indented(nSpaces: Int = 4, skipFirstLine: Boolean = false): String {
     val spaces = String(CharArray(nSpaces) { ' ' })
-    return lines().joinToString("\n") {
-        if (it.isNotBlank()) "$spaces$it" else it
-    }
+
+    return lines()
+        .withIndex()
+        .joinToString(separator = "\n") { (index, line) ->
+            if (skipFirstLine && index == 0) return@joinToString line
+            if (line.isNotBlank()) "$spaces$line" else line
+        }
 }
+
+internal val outputSourceRoot get() = System.getProperties()["org.jetbrains.kotlin.generators.gradle.dsl.outputSourceRoot"] as String

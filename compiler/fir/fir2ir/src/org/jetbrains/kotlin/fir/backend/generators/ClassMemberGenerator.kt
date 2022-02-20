@@ -217,7 +217,7 @@ internal class ClassMemberGenerator(
             if (initializer == null && initializerExpression != null) {
                 initializer = irFactory.createExpressionBody(
                     run {
-                        val irExpression = visitor.convertToIrExpression(initializerExpression)
+                        val irExpression = visitor.convertToIrExpression(initializerExpression, isDelegate = property.delegate != null)
                         if (property.delegate == null) {
                             with(visitor.implicitCastInserter) {
                                 irExpression.cast(initializerExpression, initializerExpression.typeRef, property.returnTypeRef)
@@ -317,7 +317,7 @@ internal class ClassMemberGenerator(
             } else {
                 IrDelegatingConstructorCallImpl(
                     startOffset, endOffset,
-                    constructedIrType,
+                    irBuiltIns.unitType,
                     irConstructorSymbol,
                     typeArgumentsCount = constructor.typeParameters.size,
                     valueArgumentsCount = irConstructorSymbol.owner.valueParameters.size

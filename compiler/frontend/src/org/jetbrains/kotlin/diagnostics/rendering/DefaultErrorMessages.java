@@ -887,6 +887,7 @@ public class DefaultErrorMessages {
                 FQ_NAMES_IN_TYPES);
 
         MAP.put(CONFLICTING_INHERITED_MEMBERS, "{0} inherits conflicting members: {1}", NAME, CommonRenderers.commaSeparated(FQ_NAMES_IN_TYPES));
+        MAP.put(CONFLICTING_INHERITED_MEMBERS_WARNING, "{0} inherits conflicting members: {1}; This warning will became error in future releases. See https://youtrack.jetbrains.com/issue/KT-51194", NAME, CommonRenderers.commaSeparated(FQ_NAMES_IN_TYPES));
         MAP.put(ABSTRACT_MEMBER_NOT_IMPLEMENTED, "{0} is not abstract and does not implement abstract member {1}", RENDER_CLASS_OR_OBJECT,
                 FQ_NAMES_IN_TYPES);
         MAP.put(ABSTRACT_CLASS_MEMBER_NOT_IMPLEMENTED, "{0} is not abstract and does not implement abstract base class member {1}",
@@ -925,11 +926,12 @@ public class DefaultErrorMessages {
                 ELEMENT_TEXT, STRING, ELEMENT_TEXT);
 
         MAP.put(OVERLOAD_RESOLUTION_AMBIGUITY, "Overload resolution ambiguity: {0}", AMBIGUOUS_CALLS);
-        MAP.put(OVERLOAD_RESOLUTION_AMBIGUITY_BECAUSE_OF_STUB_TYPES, "The builder `{0}` you are using has a type argument for type parameter(s) `{1}` that was not explicitly specified. " +
-                                                                     "Without knowing the type of `{1}` compiler cannot choose which overloaded function `{2}` to call here. " +
-                                                                     "Please, either specify the type `{1}` explicitly in `{0}` builder or use explicit cast to a specific type for parameter or receiver (see specific errors on them).", STRING, STRING, STRING);
-        MAP.put(STUB_TYPE_IN_ARGUMENT_CAUSES_AMBIGUITY, "Type of an argument hasn't inferred yet. To disambiguate this call, please use explicit cast for the parameter to {1} if you rely a type argument for type parameter(s) {2} to be inferred to {3}", RENDER_TYPE, STRING, STRING);
-        MAP.put(STUB_TYPE_IN_RECEIVER_CAUSES_AMBIGUITY, "Type of a receiver hasn't inferred yet. To disambiguate this call, please use explicit cast for the receiver to {1} if you rely a type argument for type parameter(s) {2} to be inferred to {3}", RENDER_TYPE, STRING, STRING, null);
+        MAP.put(OVERLOAD_RESOLUTION_AMBIGUITY_BECAUSE_OF_STUB_TYPES, "No type argument for type parameter(s) `{1}` of the `{0}` builder specified. " +
+                                                                     "Cannot choose which overloaded function `{2}` to call. " +
+                                                                     "To disambiguate this call, either use an explicit type cast for a parameter or a receiver (see specific errors on them) or specify the type `{1}` explicitly.",
+                STRING, STRING, STRING);
+        MAP.put(STUB_TYPE_IN_ARGUMENT_CAUSES_AMBIGUITY, "The type of an argument hasn''t been inferred yet. To disambiguate this call, explicitly cast it to `{0}` if you want the builder''s type parameter(s) `{1}` to be inferred to `{2}`.", RENDER_TYPE, STRING, STRING);
+        MAP.put(STUB_TYPE_IN_RECEIVER_CAUSES_AMBIGUITY, "The type of a receiver hasn''t been inferred yet. To disambiguate this call, explicitly cast it to `{0}` if you want the builder''s type parameter(s) `{1}` to be inferred to `{2}`.", RENDER_TYPE, STRING, STRING, null);
         MAP.put(NONE_APPLICABLE, "None of the following functions can be called with the arguments supplied: {0}", AMBIGUOUS_CALLS);
         MAP.put(CANNOT_COMPLETE_RESOLVE, "Cannot choose among the following candidates without completing type inference: {0}", AMBIGUOUS_CALLS);
         MAP.put(UNRESOLVED_REFERENCE_WRONG_RECEIVER, "Unresolved reference. None of the following candidates is applicable because of receiver type mismatch: {0}", AMBIGUOUS_CALLS);

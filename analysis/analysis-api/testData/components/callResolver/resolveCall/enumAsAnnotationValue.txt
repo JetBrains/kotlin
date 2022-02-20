@@ -9,12 +9,14 @@ KtSuccessCallInfo:
         symbol = <constructor>(color: Color): Annotation
         valueParameters = [
           KtVariableLikeSignature:
+            name = color
             receiverType = null
             returnType = Color
             symbol = color: Color
         ]
     argumentMapping = {
       Color.R -> (KtVariableLikeSignature:
+        name = color
         receiverType = null
         returnType = Color
         symbol = color: Color)

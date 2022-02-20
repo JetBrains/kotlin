@@ -340,6 +340,12 @@ public class FirOldFrontendDiagnosticsWithLightTreeTestGenerated extends Abstrac
         }
 
         @Test
+        @TestMetadata("IncDecOperatorsInExpectClass.kt")
+        public void testIncDecOperatorsInExpectClass() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/IncDecOperatorsInExpectClass.kt");
+        }
+
+        @Test
         @TestMetadata("IncorrectCharacterLiterals.kt")
         public void testIncorrectCharacterLiterals() throws Exception {
             runTest("compiler/testData/diagnostics/tests/IncorrectCharacterLiterals.kt");
@@ -2641,6 +2647,12 @@ public class FirOldFrontendDiagnosticsWithLightTreeTestGenerated extends Abstrac
             }
 
             @Test
+            @TestMetadata("callableReferenceWithMostSpecificGenericTypeParameter.kt")
+            public void testCallableReferenceWithMostSpecificGenericTypeParameter() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/callableReference/callableReferenceWithMostSpecificGenericTypeParameter.kt");
+            }
+
+            @Test
             @TestMetadata("classVsPackage.kt")
             public void testClassVsPackage() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/callableReference/classVsPackage.kt");
@@ -4583,6 +4595,12 @@ public class FirOldFrontendDiagnosticsWithLightTreeTestGenerated extends Abstrac
             }
 
             @Test
+            @TestMetadata("kt51062.kt")
+            public void testKt51062() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/checkArguments/kt51062.kt");
+            }
+
+            @Test
             @TestMetadata("overloadedFunction.kt")
             public void testOverloadedFunction() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/checkArguments/overloadedFunction.kt");
@@ -5031,6 +5049,12 @@ public class FirOldFrontendDiagnosticsWithLightTreeTestGenerated extends Abstrac
                 @TestMetadata("integers.kt")
                 public void testIntegers() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/constantEvaluator/constant/integers.kt");
+                }
+
+                @Test
+                @TestMetadata("invAsCompileTimeCall.kt")
+                public void testInvAsCompileTimeCall() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/constantEvaluator/constant/invAsCompileTimeCall.kt");
                 }
 
                 @Test
@@ -14798,6 +14822,12 @@ public class FirOldFrontendDiagnosticsWithLightTreeTestGenerated extends Abstrac
                 }
 
                 @Test
+                @TestMetadata("inferLabeledElementTypeForLambdaInReturnInCatch.kt")
+                public void testInferLabeledElementTypeForLambdaInReturnInCatch() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/inference/completion/inferLabeledElementTypeForLambdaInReturnInCatch.kt");
+                }
+
+                @Test
                 @TestMetadata("intersectionType.kt")
                 public void testIntersectionType() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/inference/completion/intersectionType.kt");
@@ -17007,6 +17037,12 @@ public class FirOldFrontendDiagnosticsWithLightTreeTestGenerated extends Abstrac
             }
 
             @Test
+            @TestMetadata("genericInlineClass.kt")
+            public void testGenericInlineClass() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/inlineClasses/genericInlineClass.kt");
+            }
+
+            @Test
             @TestMetadata("identityComparisonWithInlineClasses.kt")
             public void testIdentityComparisonWithInlineClasses() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/inlineClasses/identityComparisonWithInlineClasses.kt");
@@ -17100,6 +17136,12 @@ public class FirOldFrontendDiagnosticsWithLightTreeTestGenerated extends Abstrac
             @TestMetadata("recursiveInlineClasses.kt")
             public void testRecursiveInlineClasses() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/inlineClasses/recursiveInlineClasses.kt");
+            }
+
+            @Test
+            @TestMetadata("reifiedGenericUnderlyingType.kt")
+            public void testReifiedGenericUnderlyingType() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/inlineClasses/reifiedGenericUnderlyingType.kt");
             }
 
             @Test
@@ -17468,6 +17510,34 @@ public class FirOldFrontendDiagnosticsWithLightTreeTestGenerated extends Abstrac
                 public void testTypePosition() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/inner/qualifiedExpression/typePosition.kt");
                 }
+            }
+        }
+
+        @Nested
+        @TestMetadata("compiler/testData/diagnostics/tests/integerLiterals")
+        @TestDataPath("$PROJECT_ROOT")
+        public class IntegerLiterals {
+            @Test
+            public void testAllFilesPresentInIntegerLiterals() throws Exception {
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/integerLiterals"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
+            }
+
+            @Test
+            @TestMetadata("constantUnaryOperators.kt")
+            public void testConstantUnaryOperators() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/integerLiterals/constantUnaryOperators.kt");
+            }
+
+            @Test
+            @TestMetadata("intToLongConversion.kt")
+            public void testIntToLongConversion() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/integerLiterals/intToLongConversion.kt");
+            }
+
+            @Test
+            @TestMetadata("literalsInInference.kt")
+            public void testLiteralsInInference() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/integerLiterals/literalsInInference.kt");
             }
         }
 
@@ -19587,6 +19657,12 @@ public class FirOldFrontendDiagnosticsWithLightTreeTestGenerated extends Abstrac
             }
 
             @Test
+            @TestMetadata("samWithSuspendFunctionFromAnotherModule.kt")
+            public void testSamWithSuspendFunctionFromAnotherModule() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/multimodule/samWithSuspendFunctionFromAnotherModule.kt");
+            }
+
+            @Test
             @TestMetadata("varargConflict.kt")
             public void testVarargConflict() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/multimodule/varargConflict.kt");
@@ -19925,6 +20001,12 @@ public class FirOldFrontendDiagnosticsWithLightTreeTestGenerated extends Abstrac
             }
 
             @Test
+            @TestMetadata("expectObjectWithAbstractMember.kt")
+            public void testExpectObjectWithAbstractMember() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/multiplatform/expectObjectWithAbstractMember.kt");
+            }
+
+            @Test
             @TestMetadata("headerFunInNonHeaderClass.kt")
             public void testHeaderFunInNonHeaderClass() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/multiplatform/headerFunInNonHeaderClass.kt");
@@ -19982,6 +20064,12 @@ public class FirOldFrontendDiagnosticsWithLightTreeTestGenerated extends Abstrac
             @TestMetadata("sealedTypeAliasTopLevel.kt")
             public void testSealedTypeAliasTopLevel() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/multiplatform/sealedTypeAliasTopLevel.kt");
+            }
+
+            @Test
+            @TestMetadata("smartcastOnMemberPropertyFromCommonClass.kt")
+            public void testSmartcastOnMemberPropertyFromCommonClass() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/multiplatform/smartcastOnMemberPropertyFromCommonClass.kt");
             }
 
             @Nested
@@ -20227,6 +20315,12 @@ public class FirOldFrontendDiagnosticsWithLightTreeTestGenerated extends Abstrac
                 @TestMetadata("dontOverrideMethodsFromInterfaceInCommonCode.kt")
                 public void testDontOverrideMethodsFromInterfaceInCommonCode() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/multiplatform/headerClass/dontOverrideMethodsFromInterfaceInCommonCode.kt");
+                }
+
+                @Test
+                @TestMetadata("equalsOverrideInActualInterface.kt")
+                public void testEqualsOverrideInActualInterface() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/multiplatform/headerClass/equalsOverrideInActualInterface.kt");
                 }
 
                 @Test
@@ -28920,15 +29014,9 @@ public class FirOldFrontendDiagnosticsWithLightTreeTestGenerated extends Abstrac
                 }
 
                 @Test
-                @TestMetadata("whileWithAssertInConditionAndBreakAfter.kt")
-                public void testWhileWithAssertInConditionAndBreakAfter() throws Exception {
-                    runTest("compiler/testData/diagnostics/tests/smartCasts/loops/whileWithAssertInConditionAndBreakAfter.kt");
-                }
-
-                @Test
-                @TestMetadata("whileWithAssertInConditionAndBreakBefore.kt")
-                public void testWhileWithAssertInConditionAndBreakBefore() throws Exception {
-                    runTest("compiler/testData/diagnostics/tests/smartCasts/loops/whileWithAssertInConditionAndBreakBefore.kt");
+                @TestMetadata("whileWithAssertInConditionAndBreak.kt")
+                public void testWhileWithAssertInConditionAndBreak() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/smartCasts/loops/whileWithAssertInConditionAndBreak.kt");
                 }
             }
 
@@ -30223,6 +30311,12 @@ public class FirOldFrontendDiagnosticsWithLightTreeTestGenerated extends Abstrac
                 @TestMetadata("onTypeParameter.kt")
                 public void testOnTypeParameter() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/suppress/oneWarning/onTypeParameter.kt");
+                }
+
+                @Test
+                @TestMetadata("suppressOnDeclarationItself.kt")
+                public void testSuppressOnDeclarationItself() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/suppress/oneWarning/suppressOnDeclarationItself.kt");
                 }
             }
         }
@@ -33377,6 +33471,12 @@ public class FirOldFrontendDiagnosticsWithLightTreeTestGenerated extends Abstrac
         @TestMetadata("exitProcess.kt")
         public void testExitProcess() throws Exception {
             runTest("compiler/testData/diagnostics/testsWithStdLib/exitProcess.kt");
+        }
+
+        @Test
+        @TestMetadata("greater.kt")
+        public void testGreater() throws Exception {
+            runTest("compiler/testData/diagnostics/testsWithStdLib/greater.kt");
         }
 
         @Test

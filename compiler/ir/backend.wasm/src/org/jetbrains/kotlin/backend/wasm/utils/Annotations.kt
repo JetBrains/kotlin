@@ -29,15 +29,6 @@ fun IrAnnotationContainer.hasWasmNoOpCastAnnotation(): Boolean =
 fun IrAnnotationContainer.hasWasmAutoboxedAnnotation(): Boolean =
     hasAnnotation(FqName("kotlin.wasm.internal.WasmAutoboxed"))
 
-fun IrAnnotationContainer.getWasmImportAnnotation(): WasmImportPair? =
-    getAnnotation(FqName("kotlin.wasm.internal.WasmImport"))?.let {
-        WasmImportPair(
-            (it.getValueArgument(0) as IrConst<*>).value as String,
-            (it.getValueArgument(1) as IrConst<*>).value as String
-        )
-    }
-
-
 class WasmArrayInfo(val klass: IrClass, val isNullable: Boolean) {
     val type = klass.defaultType.let { if (isNullable) it.makeNullable() else it }
 }

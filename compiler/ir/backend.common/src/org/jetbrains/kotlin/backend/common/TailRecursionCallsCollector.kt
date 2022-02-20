@@ -16,13 +16,14 @@
 
 package org.jetbrains.kotlin.backend.common
 
+import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.types.classOrNull
-import org.jetbrains.kotlin.ir.types.IdSignatureValues
+import org.jetbrains.kotlin.ir.types.isClassWithFqName
 import org.jetbrains.kotlin.ir.types.isUnit
 import org.jetbrains.kotlin.ir.util.usesDefaultArguments
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
@@ -98,7 +99,7 @@ fun collectTailRecursionCalls(irFunction: IrFunction, followFunctionReference: (
         }
 
         private fun IrExpression.isUnitRead(): Boolean =
-            this is IrGetObjectValue && symbol.signature == IdSignatureValues.unit
+            this is IrGetObjectValue && symbol.isClassWithFqName(StandardNames.FqNames.unit)
 
         override fun visitWhen(expression: IrWhen, data: ElementKind) {
             expression.branches.forEach {

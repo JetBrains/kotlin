@@ -50,12 +50,26 @@ fun create(project: Project): ExecutorService {
     val configurables = project.testTargetConfigurables
 
     return when {
+        project.compileOnlyTests -> noopExecutor(project)
         project.hasProperty("remote") -> sshExecutor(project, testTarget)
         configurables is WasmConfigurables -> wasmExecutor(project)
         configurables is ConfigurablesWithEmulator && testTarget != HostManager.host -> emulatorExecutor(project, testTarget)
         configurables.targetTriple.isSimulator -> simulator(project)
         supportsRunningTestsOnDevice(testTarget) -> deviceLauncher(project)
         else -> localExecutorService(project)
+    }
+}
+
+private fun noopExecutor(project: Project) = object : ExecutorService {
+    override val project: Project
+        get() = project
+
+    override fun execute(action: Action<in ExecSpec>): ExecResult? = object : ExecResult {
+        override fun getExitValue(): Int = 0
+
+        override fun assertNormalExitValue(): ExecResult = this
+
+        override fun rethrowFailure(): ExecResult = this
     }
 }
 
@@ -245,7 +259,7 @@ private fun simulator(project: Project): ExecutorService = object : ExecutorServ
     }
 
     private val simctl by lazy {
-        val sdk = Xcode.current.pathToPlatformSdk(configurables.platformName())
+        val sdk = Xcode.findCurrent().pathToPlatformSdk(configurables.platformName())
         val out = ByteArrayOutputStream()
         val result = project.exec {
             commandLine("/usr/bin/xcrun", "--find", "simctl", "--sdk", sdk)
@@ -624,7 +638,7 @@ fun KonanTestExecutable.configureXcodeBuild() {
                 }
 
         val sdk = when (project.testTarget) {
-            KonanTarget.IOS_ARM32, KonanTarget.IOS_ARM64 -> Xcode.current.iphoneosSdk
+            KonanTarget.IOS_ARM32, KonanTarget.IOS_ARM64 -> Xcode.findCurrent().iphoneosSdk
             else -> error("Unsupported target: ${project.testTarget}")
         }
 

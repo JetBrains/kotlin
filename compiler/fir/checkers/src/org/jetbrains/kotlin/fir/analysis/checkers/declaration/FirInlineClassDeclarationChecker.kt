@@ -174,13 +174,21 @@ object FirInlineClassDeclarationChecker : FirRegularClassChecker() {
                                 context
                             )
 
-                        primaryConstructorParameter.returnTypeRef.isInapplicableParameterType() ->
-                            reporter.reportOn(
-                                primaryConstructorParameter.returnTypeRef.source,
-                                FirErrors.VALUE_CLASS_HAS_INAPPLICABLE_PARAMETER_TYPE,
-                                primaryConstructorParameter.returnTypeRef.coneType,
-                                context
-                            )
+                        primaryConstructorParameter.returnTypeRef.isInapplicableParameterType() -> {
+                            val inlineClassHasGenericUnderlyingType = primaryConstructorParameter.returnTypeRef.coneType.let {
+                                (it is ConeTypeParameterType || it.isGenericArrayOfTypeParameter())
+                            }
+                            if (!(context.languageVersionSettings.supportsFeature(LanguageFeature.GenericInlineClassParameter) &&
+                                        inlineClassHasGenericUnderlyingType)
+                            ) {
+                                reporter.reportOn(
+                                    primaryConstructorParameter.returnTypeRef.source,
+                                    FirErrors.VALUE_CLASS_HAS_INAPPLICABLE_PARAMETER_TYPE,
+                                    primaryConstructorParameter.returnTypeRef.coneType,
+                                    context
+                                )
+                            }
+                        }
 
                         primaryConstructorParameter.returnTypeRef.coneType.isRecursiveInlineClassType(context.session) ->
                             reporter.reportOnWithSuppression(

@@ -13,6 +13,8 @@ import org.jetbrains.kotlin.analysis.api.impl.base.test.AbstractReferenceResolve
 import org.jetbrains.kotlin.analysis.api.impl.base.test.annotations.AbstractAnalysisApiAnnotationsOnDeclarationsTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.annotations.AbstractAnalysisApiAnnotationsOnFilesTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.annotations.AbstractAnalysisApiAnnotationsOnTypesTest
+import org.jetbrains.kotlin.analysis.api.impl.base.test.components.AbstractResolveCallTest
+import org.jetbrains.kotlin.analysis.api.impl.base.test.components.AbstractResolveCandidatesTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.components.compileTimeConstantProvider.AbstractCompileTimeConstantEvaluatorTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.components.diagnosticProvider.AbstractCollectDiagnosticsTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.components.expressionInfoProvider.AbstractReturnTargetSymbolTest
@@ -28,7 +30,6 @@ import org.jetbrains.kotlin.analysis.api.impl.base.test.components.typeCreator.A
 import org.jetbrains.kotlin.analysis.api.impl.base.test.components.typeInfoProvider.AbstractFunctionClassKindTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.components.typeInfoProvider.AbstractIsDenotableTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.components.typeProvider.AbstractHasCommonSubtypeTest
-import org.jetbrains.kotlin.analysis.api.impl.base.test.fir.AbstractResolveCallTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.scopes.AbstractDelegateMemberScopeTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.scopes.AbstractFileScopeTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.scopes.AbstractMemberScopeByFqNameTest
@@ -37,6 +38,7 @@ import org.jetbrains.kotlin.analysis.api.impl.base.test.symbols.AbstractSymbolBy
 import org.jetbrains.kotlin.analysis.api.impl.base.test.symbols.AbstractSymbolByPsiTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.symbols.AbstractSymbolByReferenceTest
 import org.jetbrains.kotlin.generators.TestGroupSuite
+import org.jetbrains.kotlin.generators.tests.analysis.api.dsl.TestModuleKind
 import org.jetbrains.kotlin.generators.tests.analysis.api.dsl.component
 import org.jetbrains.kotlin.generators.tests.analysis.api.dsl.group
 import org.jetbrains.kotlin.generators.tests.analysis.api.dsl.test
@@ -50,9 +52,17 @@ fun TestGroupSuite.generateAnalysisApiTests() {
 private fun TestGroupSuite.generateAnalysisApiNonComponentsTests() {
     test(
         AbstractReferenceResolveTest::class,
+        testModuleKinds = TestModuleKind.SOURCE_AND_LIBRARY_SOURCE,
         addFe10 = false,
-    ) {
-        model("referenceResolve", pattern = TestGeneratorUtil.KT_WITHOUT_DOTS_IN_NAME)
+    ) { moduleKind ->
+        when (moduleKind) {
+            TestModuleKind.LIBRARY_SOURCE -> {
+                model("referenceResolve", pattern = TestGeneratorUtil.KT_WITHOUT_DOTS_IN_NAME, excludeDirsRecursively = listOf("withErrors"))
+            }
+            else -> {
+                model("referenceResolve", pattern = TestGeneratorUtil.KT_WITHOUT_DOTS_IN_NAME)
+            }
+        }
     }
 
     group("scopes") {
@@ -124,6 +134,11 @@ private fun TestGroupSuite.generateAnalysisApiComponentsTests() {
     component("callResolver") {
         test(AbstractResolveCallTest::class) {
             model("resolveCall")
+        }
+        test(
+            AbstractResolveCandidatesTest::class
+        ) {
+            model("resolveCandidates")
         }
     }
 

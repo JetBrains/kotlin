@@ -31,7 +31,7 @@ class IrLazyFunction(
     override var origin: IrDeclarationOrigin,
     override val symbol: IrSimpleFunctionSymbol,
     override val descriptor: FunctionDescriptor,
-    override val name: Name,
+    override var name: Name,
     override var visibility: DescriptorVisibility,
     override val modality: Modality,
     override val isInline: Boolean,

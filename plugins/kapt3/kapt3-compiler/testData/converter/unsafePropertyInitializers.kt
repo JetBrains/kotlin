@@ -1,3 +1,5 @@
+
+
 object Foo {
     const val aString: String = "foo"
     const val aInt: Int = 3

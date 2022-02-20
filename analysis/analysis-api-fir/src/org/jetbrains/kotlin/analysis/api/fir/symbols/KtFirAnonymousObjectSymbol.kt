@@ -16,12 +16,12 @@ import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtPsiBasedSymbolPointe
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtSymbolPointer
 import org.jetbrains.kotlin.analysis.api.tokens.ValidityToken
 import org.jetbrains.kotlin.analysis.api.types.KtType
-import org.jetbrains.kotlin.analysis.low.level.api.fir.api.FirModuleResolveState
+import org.jetbrains.kotlin.analysis.low.level.api.fir.api.LLFirModuleResolveState
 import org.jetbrains.kotlin.fir.symbols.impl.FirAnonymousObjectSymbol
 
 internal class KtFirAnonymousObjectSymbol(
     override val firSymbol: FirAnonymousObjectSymbol,
-    override val resolveState: FirModuleResolveState,
+    override val resolveState: LLFirModuleResolveState,
     override val token: ValidityToken,
     private val builder: KtSymbolByFirBuilder,
 ) : KtAnonymousObjectSymbol(), KtFirSymbol<FirAnonymousObjectSymbol> {

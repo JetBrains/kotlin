@@ -31,10 +31,16 @@ class ModuleIndex(val module: IrModuleFragment) {
      */
     val properties: Map<PropertyDescriptor, IrProperty>
 
+    /**
+     * Contains all enum entries declared in [module]
+     */
+    val enumEntries: Map<ClassDescriptor, IrEnumEntry>
+
     init {
         classes = mutableMapOf()
         functions = mutableMapOf()
         properties = mutableMapOf()
+        enumEntries = mutableMapOf()
 
         module.acceptVoid(object : IrElementVisitorVoid {
             override fun visitElement(element: IrElement) {
@@ -55,6 +61,11 @@ class ModuleIndex(val module: IrModuleFragment) {
             override fun visitProperty(declaration: IrProperty) {
                 super.visitProperty(declaration)
                 properties[declaration.descriptor] = declaration
+            }
+
+            override fun visitEnumEntry(declaration: IrEnumEntry) {
+                super.visitEnumEntry(declaration)
+                enumEntries[declaration.descriptor] = declaration
             }
         })
     }

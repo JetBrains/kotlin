@@ -76,7 +76,7 @@ class PropertyGenerator(declarationGenerator: DeclarationGenerator) : Declaratio
     ): IrProperty {
         val irPropertyType = propertyDescriptor.type.toIrType()
         return generateSyntheticPropertyWithInitializer(ktDeclarationContainer, propertyDescriptor, generateSyntheticAccessors) {
-            if (irValueParameter == null) null
+            if (irValueParameter == null || context.configuration.skipBodies) null
             else {
                 context.irFactory.createExpressionBody(
                     IrGetValueImpl(
@@ -205,7 +205,8 @@ class PropertyGenerator(declarationGenerator: DeclarationGenerator) : Declaratio
                                 }
                             }
 
-                            declarationGenerator.generateInitializerBody(irField.symbol, ktInitializer)
+                            if (context.configuration.skipBodies) null
+                            else declarationGenerator.generateInitializerBody(irField.symbol, ktInitializer)
                         }
                     }
                 else

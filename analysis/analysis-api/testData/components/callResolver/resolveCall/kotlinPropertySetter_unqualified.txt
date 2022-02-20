@@ -7,6 +7,7 @@ KtSuccessCallInfo:
           type: A
       extensionReceiver = null
       signature = KtVariableLikeSignature:
+        name = i
         receiverType = null
         returnType = kotlin.Int
         symbol = var i: kotlin.Int

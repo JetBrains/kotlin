@@ -12,12 +12,14 @@ KtSuccessCallInfo:
         symbol = kotlin/Any.equals(<dispatch receiver>: kotlin.Any, other: kotlin.Any?): kotlin.Boolean
         valueParameters = [
           KtVariableLikeSignature:
+            name = other
             receiverType = null
             returnType = kotlin.Any?
             symbol = other: kotlin.Any?
         ]
     argumentMapping = {
       b2 -> (KtVariableLikeSignature:
+        name = other
         receiverType = null
         returnType = kotlin.Any?
         symbol = other: kotlin.Any?)

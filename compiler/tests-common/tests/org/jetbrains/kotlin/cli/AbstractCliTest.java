@@ -27,6 +27,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.checkers.ThirdPartyAnnotationPathsKt;
 import org.jetbrains.kotlin.cli.common.CLITool;
+import org.jetbrains.kotlin.cli.common.CompilerSystemProperties;
 import org.jetbrains.kotlin.cli.common.ExitCode;
 import org.jetbrains.kotlin.cli.common.Usage;
 import org.jetbrains.kotlin.cli.js.K2JSCompiler;
@@ -102,6 +103,13 @@ public abstract class AbstractCliTest extends TestCaseWithTmpdir {
 
     private void doTest(@NotNull String fileName, @NotNull CLITool<?> compiler) {
         System.setProperty("java.awt.headless", "true");
+
+        File environmentTestConfig = new File(fileName.replaceFirst("\\.args$", ".env"));
+        if (environmentTestConfig.exists()) {
+            compiler.setReadingSettingsFromEnvironmentAllowed(true);
+            CompilerSystemProperties.LANGUAGE_VERSION_SETTINGS.setValue(FilesKt.readText(environmentTestConfig, Charsets.UTF_8));
+        }
+
         Pair<String, ExitCode> outputAndExitCode = executeCompilerGrabOutput(compiler, readArgs(fileName, tmpdir.getPath()));
         String actual = getNormalizedCompilerOutput(
                 outputAndExitCode.getFirst(), outputAndExitCode.getSecond(), new File(fileName).getParent()

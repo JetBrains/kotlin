@@ -114,6 +114,7 @@ compileKotlin {
                 "-opt-in=kotlin.contracts.ExperimentalContracts",
                 "-Xuse-14-inline-classes-mangling-scheme",
                 "-Xsuppress-deprecated-jvm-target-warning",
+                "-Xbuiltins-from-sources",
         ]
         moduleName = "kotlin-stdlib"
     }

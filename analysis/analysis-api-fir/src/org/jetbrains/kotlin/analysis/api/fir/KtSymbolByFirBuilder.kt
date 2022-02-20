@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.tokens.ValidityToken
 import org.jetbrains.kotlin.analysis.api.types.KtSubstitutor
 import org.jetbrains.kotlin.analysis.api.types.KtType
-import org.jetbrains.kotlin.analysis.low.level.api.fir.api.FirModuleResolveState
+import org.jetbrains.kotlin.analysis.low.level.api.fir.api.LLFirModuleResolveState
 import org.jetbrains.kotlin.analysis.providers.createPackageProvider
 import org.jetbrains.kotlin.builtins.functions.FunctionClassKind
 import org.jetbrains.kotlin.fir.*
@@ -53,7 +53,7 @@ import kotlin.contracts.contract
  */
 internal class KtSymbolByFirBuilder private constructor(
     private val project: Project,
-    resolveState: FirModuleResolveState,
+    resolveState: LLFirModuleResolveState,
     override val token: ValidityToken,
     val withReadOnlyCaching: Boolean,
     private val symbolsCache: BuilderCache<FirBasedSymbol<*>, KtSymbol>,
@@ -74,7 +74,7 @@ internal class KtSymbolByFirBuilder private constructor(
     val typeBuilder = TypeBuilder()
 
     constructor(
-        resolveState: FirModuleResolveState,
+        resolveState: LLFirModuleResolveState,
         project: Project,
         token: ValidityToken
     ) : this(
@@ -88,7 +88,7 @@ internal class KtSymbolByFirBuilder private constructor(
         filesCache = BuilderCache(),
     )
 
-    fun createReadOnlyCopy(newResolveState: FirModuleResolveState): KtSymbolByFirBuilder {
+    fun createReadOnlyCopy(newResolveState: LLFirModuleResolveState): KtSymbolByFirBuilder {
         check(!withReadOnlyCaching) { "Cannot create readOnly KtSymbolByFirBuilder from a readonly one" }
         return KtSymbolByFirBuilder(
             project,
@@ -106,10 +106,13 @@ internal class KtSymbolByFirBuilder private constructor(
         buildSymbol(fir.symbol)
 
     fun buildSymbol(firSymbol: FirBasedSymbol<*>): KtSymbol {
+        assertIsValidAndAccessible()
+
         return when (firSymbol) {
             is FirClassLikeSymbol<*> -> classifierBuilder.buildClassLikeSymbol(firSymbol)
             is FirTypeParameterSymbol -> classifierBuilder.buildTypeParameterSymbol(firSymbol)
             is FirCallableSymbol<*> -> callableBuilder.buildCallableSymbol(firSymbol)
+            is FirFileSymbol -> buildFileSymbol(firSymbol)
             else -> throwUnexpectedElementError(firSymbol)
         }
     }
@@ -428,12 +431,13 @@ internal class KtSymbolByFirBuilder private constructor(
                         else KtFirUsualClassType(coneType, token, this@KtSymbolByFirBuilder)
                     }
                     is ConeTypeParameterType -> KtFirTypeParameterType(coneType, token, this@KtSymbolByFirBuilder)
-                    is ConeClassErrorType -> KtFirClassErrorType(coneType, token, this@KtSymbolByFirBuilder)
+                    is ConeErrorType -> KtFirClassErrorType(coneType, token, this@KtSymbolByFirBuilder)
                     is ConeFlexibleType -> KtFirFlexibleType(coneType, token, this@KtSymbolByFirBuilder)
                     is ConeIntersectionType -> KtFirIntersectionType(coneType, token, this@KtSymbolByFirBuilder)
                     is ConeDefinitelyNotNullType -> KtFirDefinitelyNotNullType(coneType, token, this@KtSymbolByFirBuilder)
                     is ConeCapturedType -> KtFirCapturedType(coneType, token, this@KtSymbolByFirBuilder)
-                    is ConeIntegerLiteralType -> KtFirIntegerLiteralType(coneType, token, this@KtSymbolByFirBuilder)
+                    is ConeIntegerLiteralConstantType -> KtFirIntegerLiteralType(coneType, token, this@KtSymbolByFirBuilder)
+                    is ConeIntegerConstantOperatorType -> buildKtType(coneType.getApproximatedType())
                     is ConeStubTypeForChainInference -> {
                         // TODO this is a temporary hack to prevent FIR IDE from crashing on builder inference, see KT-50916
                         val typeVariable = coneType.constructor.variable as? ConeTypeParameterBasedTypeVariable
@@ -483,21 +487,62 @@ internal class KtSymbolByFirBuilder private constructor(
     }
 
     /**
+     * N.B. This functions lifts only a single layer of SUBSTITUTION_OVERRIDE at a time.
+     */
+    private inline fun <reified T : FirCallableDeclaration> T.unwrapSubstitutionOverrideIfNeeded(): T? {
+        unwrapUseSiteSubstitutionOverride()?.let { return it }
+
+        unwrapInheritanceSubstitutionOverrideIfNeeded()?.let { return it }
+
+        return null
+    }
+
+    /**
+     * Use-site substitution override happens in situations like this:
+     *
+     * ```
+     * interface List<A> { fun get(i: Int): A }
+     *
+     * fun take(list: List<String>) {
+     *   list.get(10) // this call
+     * }
+     * ```
+     *
+     * In FIR, `List::get` symbol in the example will be a substitution override with a `String` instead of `A`.
+     * We want to lift such substitution overrides.
+     *
+     * @receiver A declaration that needs to be unwrapped.
+     * @return An unsubstituted declaration ([originalForSubstitutionOverride]]) if [this] is a use-site substitution override.
+     */
+    private inline fun <reified T : FirCallableDeclaration> T.unwrapUseSiteSubstitutionOverride(): T? {
+        val originalDeclaration = originalForSubstitutionOverride ?: return null
+
+        val containingClass = getContainingClass(rootSession) ?: return null
+        val originalContainingClass = originalDeclaration.getContainingClass(rootSession) ?: return null
+
+        // If substitution override does not change the containing class of the FIR declaration,
+        // it is a use-site substitution override
+        if (containingClass != originalContainingClass) return null
+
+        return originalDeclaration
+    }
+
+    /**
      * We want to unwrap a SUBSTITUTION_OVERRIDE wrapper if it doesn't affect the declaration's signature in any way. If the signature
      * is somehow changed, then we want to keep the wrapper.
+     *
+     * Such substitute overrides happen because of inheritance.
      *
      * If the declaration references only its own type parameters, or parameters from the outer declarations, then
      * we consider that it's signature will not be changed by the SUBSTITUTION_OVERRIDE, so the wrapper can be unwrapped.
      *
      * This have a few caveats when it comes to the inner classes. TODO Provide a reference to some more in-detail description of that.
      *
-     * N.B. This functions lifts only a single layer of SUBSTITUTION_OVERRIDE at a time.
-     *
      * @receiver A declaration that needs to be unwrapped.
      * @return An unsubstituted declaration ([originalForSubstitutionOverride]]) if it exists and if it does not have any change
      * in signature; `null` otherwise.
      */
-    private inline fun <reified T : FirCallableDeclaration> T.unwrapSubstitutionOverrideIfNeeded(): T? {
+    private inline fun <reified T : FirCallableDeclaration> T.unwrapInheritanceSubstitutionOverrideIfNeeded(): T? {
         val containingClass = getContainingClass(rootSession) ?: return null
         val originalDeclaration = originalForSubstitutionOverride ?: return null
 
@@ -564,8 +609,11 @@ private class BuilderCache<From, To : Any> private constructor(
 internal fun FirElement.buildSymbol(builder: KtSymbolByFirBuilder) =
     (this as? FirDeclaration)?.symbol?.let(builder::buildSymbol)
 
-internal fun FirDeclaration.buildSymbol(builder: KtSymbolByFirBuilder) =
+internal fun FirDeclaration.buildSymbol(builder: KtSymbolByFirBuilder): KtSymbol =
     builder.buildSymbol(symbol)
+
+internal fun FirBasedSymbol<*>.buildSymbol(builder: KtSymbolByFirBuilder): KtSymbol =
+    builder.buildSymbol(this)
 
 private fun collectReferencedTypeParameters(declaration: FirCallableDeclaration): Set<ConeTypeParameterLookupTag> {
     val allUsedTypeParameters = mutableSetOf<ConeTypeParameterLookupTag>()

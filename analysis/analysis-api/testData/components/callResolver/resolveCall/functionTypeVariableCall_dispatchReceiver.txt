@@ -11,11 +11,12 @@ KtSuccessCallInfo:
       signature = KtFunctionLikeSignature:
         receiverType = null
         returnType = kotlin.Unit
-        symbol = kotlin/Function1.invoke(<dispatch receiver>: kotlin.Function1<kotlin.String, kotlin.Unit>, p1: kotlin.String): kotlin.Unit
+        symbol = kotlin/Function1.invoke(<dispatch receiver>: kotlin.Function1<P1, R>, p1: P1): R
         valueParameters = [
           KtVariableLikeSignature:
+            name = p1
             receiverType = null
             returnType = kotlin.String
-            symbol = p1: kotlin.String
+            symbol = p1: P1
         ]
     argumentMapping = {}

@@ -58,7 +58,7 @@ object FirOverrideChecker : FirClassChecker() {
             if (it is FirSimpleFunction || it is FirProperty) {
                 val callable = it as FirCallableDeclaration
                 withSuppressedDiagnostics(callable, context) {
-                    checkMember(callable.symbol, declaration, reporter, typeCheckerState, firTypeScope, context)
+                    checkMember(callable.symbol, declaration, reporter, typeCheckerState, firTypeScope, it)
                 }
             }
         }
@@ -214,7 +214,7 @@ object FirOverrideChecker : FirClassChecker() {
         val overridingReturnType = resolvedReturnTypeRef.coneType
 
         // Don't report *_ON_OVERRIDE diagnostics according to an error return type. That should be reported separately.
-        if (overridingReturnType is ConeKotlinErrorType) {
+        if (overridingReturnType is ConeErrorType) {
             return null
         }
 

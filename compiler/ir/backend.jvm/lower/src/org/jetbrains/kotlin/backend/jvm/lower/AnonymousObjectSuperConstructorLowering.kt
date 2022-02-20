@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstructorCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetValueImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrTypeOperatorCallImpl
+import org.jetbrains.kotlin.ir.util.patchDeclarationParents
 import org.jetbrains.kotlin.ir.util.transformInPlace
 
 internal val anonymousObjectSuperConstructorPhase = makeIrFilePhase(
@@ -124,8 +125,10 @@ private class AnonymousObjectSuperConstructorLowering(val context: JvmBackendCon
                     // Avoid complex expressions between `new` and `<init>`, as the inliner gets confused if
                     // an argument to `<init>` is an anonymous object. Put them in variables instead.
                     // See KT-21781 for an example; in short, it looks like `object : S({ ... })` in an inline function.
-                    for ((i, argument) in newArguments.withIndex())
+                    for ((i, argument) in newArguments.withIndex()) {
+                        argument.patchDeclarationParents(currentDeclarationParent)
                         putValueArgument(i + objectConstructorCall.valueArgumentsCount, irGet(irTemporary(argument)))
+                    }
                 }
             }
         }

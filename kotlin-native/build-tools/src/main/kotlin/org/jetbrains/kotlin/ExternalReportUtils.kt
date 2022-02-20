@@ -11,11 +11,11 @@ import java.io.PrintWriter
 
 data class ExternalTestReport(@Expose val statistics: Statistics, @Expose val groups: List<KonanTestGroupReport>)
 
-fun saveReport(reportFileName: String, statistics: Statistics, groups:List<KonanTestGroupReport>){
+fun saveReport(reportFileName: String, statistics: Statistics){
     File(reportFileName).apply {
         parentFile.mkdirs()
         PrintWriter(this).use {
-            it.append(gson.toJson(ExternalTestReport(statistics, groups)))
+            it.append(gson.toJson(ExternalTestReport(statistics, emptyList())))
         }
     }
 }

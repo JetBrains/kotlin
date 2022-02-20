@@ -2091,7 +2091,8 @@ internal val KT_DIAGNOSTIC_CONVERTER = KtDiagnosticConverterBuilder.buildConvert
     }
     add(FirErrors.CONFLICTING_INHERITED_MEMBERS) { firDiagnostic ->
         ConflictingInheritedMembersImpl(
-            firDiagnostic.a.map { firCallableSymbol ->
+            firSymbolBuilder.classifierBuilder.buildClassLikeSymbol(firDiagnostic.a),
+            firDiagnostic.b.map { firCallableSymbol ->
                 firSymbolBuilder.callableBuilder.buildCallableSymbol(firCallableSymbol)
             },
             firDiagnostic as KtPsiDiagnostic,

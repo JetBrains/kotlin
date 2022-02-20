@@ -288,13 +288,13 @@ data class LookupSymbol(val name: String, val scope: String) : Comparable<Lookup
 }
 
 /**
- * Wrapper of a [LookupMap] which tracks changes to the map after the initialization of this [TrackedLookupMap] instance, (unless
+ * Wrapper of a [LookupMap] which tracks changes to the map after the initialization of this [TrackedLookupMap] instance (unless
  * [trackChanges] is set to `false`).
  */
 private class TrackedLookupMap(private val lookupMap: LookupMap, private val trackChanges: Boolean) {
 
-    // Note that there may be multiple operations on the same key, and the following sets contain the *latest* differences with the original
-    // set of keys in the map. For example, if a key is added then removed, or vice versa, it will not be present in either set.
+    // Note that there may be multiple operations on the same key, and the following sets contain the *aggregated* differences with the
+    // original set of keys in the map. For example, if a key is added then removed, or vice versa, it will not be present in either set.
     val addedKeys = if (trackChanges) mutableSetOf<LookupSymbolKey>() else null
     val removedKeys = if (trackChanges) mutableSetOf<LookupSymbolKey>() else null
 

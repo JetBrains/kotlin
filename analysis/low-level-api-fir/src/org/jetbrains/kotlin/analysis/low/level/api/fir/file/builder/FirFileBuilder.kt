@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.fir.builder.BodyBuildingMode
 import org.jetbrains.kotlin.fir.builder.PsiHandlingMode
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.scopes.FirScopeProvider
-import org.jetbrains.kotlin.analysis.low.level.api.fir.FirPhaseRunner
+import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirPhaseRunner
 import org.jetbrains.kotlin.psi.KtFile
 
 /**
@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.psi.KtFile
 @ThreadSafe
 internal class FirFileBuilder(
     private val scopeProvider: FirScopeProvider,
-    val firPhaseRunner: FirPhaseRunner
+    val firPhaseRunner: LLFirPhaseRunner
 ) {
     /**
      * Builds a [FirFile] by given [ktFile] and records it's parenting info if it not present in [cache]

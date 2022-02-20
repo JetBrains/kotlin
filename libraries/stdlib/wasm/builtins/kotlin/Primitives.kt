@@ -854,9 +854,8 @@ public class Int private constructor(val value: Int) : Number(), Comparable<Int>
         this / other.toInt()
 
     /** Divides this value by the other value. */
-    @WasmOp(WasmOp.I32_DIV_S)
     public operator fun div(other: Int): Int =
-        implementedAsIntrinsic
+        if (this == Int.MIN_VALUE && other == -1) Int.MIN_VALUE else wasm_i32_div_s(this, other)
 
     /** Divides this value by the other value. */
     public inline operator fun div(other: Long): Long =
@@ -1252,9 +1251,8 @@ public class Long private constructor(val value: Long) : Number(), Comparable<Lo
         this / other.toLong()
 
     /** Divides this value by the other value. */
-    @WasmOp(WasmOp.I64_DIV_S)
     public operator fun div(other: Long): Long =
-        implementedAsIntrinsic
+        if (this == Long.MIN_VALUE && other == -1L) Long.MIN_VALUE else wasm_i64_div_s(this, other)
 
     /** Divides this value by the other value. */
     public inline operator fun div(other: Float): Float =
@@ -1545,8 +1543,8 @@ public class Float private constructor(public val value: Float) : Number(), Comp
         if (this > other) return 1
         if (this < other) return -1
 
-        val thisBits = this.bits()
-        val otherBits = other.bits()
+        val thisBits = this.toBits()
+        val otherBits = other.toBits()
 
         // Canonical NaN bits representation higher than any other value
         return thisBits.compareTo(otherBits)
@@ -1763,7 +1761,7 @@ public class Float private constructor(public val value: Float) : Number(), Comp
         wasm_f64_promote_f32(this)
 
     public inline fun equals(other: Float): Boolean =
-        bits() == other.bits()
+        toBits() == other.toBits()
 
     public override fun equals(other: Any?): Boolean =
         other is Float && this.equals(other)
@@ -1772,11 +1770,7 @@ public class Float private constructor(public val value: Float) : Number(), Comp
         dtoa(this.toDouble())
 
     public override inline fun hashCode(): Int =
-        bits()
-
-    @PublishedApi
-    @WasmOp(WasmOp.I32_REINTERPRET_F32)
-    internal fun bits(): Int = implementedAsIntrinsic
+        toBits()
 }
 
 /**
@@ -1872,8 +1866,8 @@ public class Double private constructor(public val value: Double) : Number(), Co
         if (this > other) return 1
         if (this < other) return -1
 
-        val thisBits = this.bits()
-        val otherBits = other.bits()
+        val thisBits = this.toBits()
+        val otherBits = other.toBits()
 
         // Canonical NaN bits representation higher than any other value
         return thisBits.compareTo(otherBits)
@@ -2086,18 +2080,13 @@ public class Double private constructor(public val value: Double) : Number(), Co
         this
 
     public inline fun equals(other: Double): Boolean =
-        this.bits() == other.bits()
+        this.toBits() == other.toBits()
 
     public override fun equals(other: Any?): Boolean =
-        other is Double && this.bits() == other.bits()
+        other is Double && this.toBits() == other.toBits()
 
     public override fun toString(): String =
         dtoa(this)
 
-    public override inline fun hashCode(): Int = bits().hashCode()
-
-    @PublishedApi
-    @WasmOp(WasmOp.I64_REINTERPRET_F64)
-    internal fun bits(): Long =
-        implementedAsIntrinsic
+    public override inline fun hashCode(): Int = toBits().hashCode()
 }

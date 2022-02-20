@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.gradle.plugin.mpp.pm20
 
 import org.gradle.api.Project
 import org.gradle.api.tasks.TaskProvider
+import org.gradle.api.tasks.compile.AbstractCompile
 import org.jetbrains.kotlin.gradle.plugin.Kotlin2JvmSourceSetProcessor
 import org.jetbrains.kotlin.gradle.plugin.KotlinNativeTargetConfigurator
 import org.jetbrains.kotlin.gradle.plugin.mpp.addCommonSourcesToKotlinCompileTask
@@ -38,9 +39,11 @@ open class KotlinCompilationTaskConfigurator(
         addSourcesToKotlinCompileTask(project, compilationData.compileKotlinTaskName, emptyList()) { allSources }
         addCommonSourcesToKotlinCompileTask(project, compilationData.compileKotlinTaskName, emptyList()) { commonSources }
 
-        return project.tasks.named(compilationData.compileKotlinTaskName, KotlinCompile::class.java) {
+        val result = project.tasks.named(compilationData.compileKotlinTaskName, KotlinCompile::class.java) {
             it.kotlinPluginData = project.compilerPluginProviderForPlatformCompilation(variant, compilationData)
         }
+        compilationData.output.classesDirs.from(result.map { it.destinationDirectory })
+        return result
     }
 
     protected fun createKotlinNativeCompilationTask(

@@ -5,16 +5,16 @@
 
 package org.jetbrains.kotlin.analysis.low.level.api.fir.sessions
 
-import org.jetbrains.kotlin.analysis.project.structure.KtSourceModule
+import org.jetbrains.kotlin.analysis.project.structure.KtModule
 import java.util.concurrent.ConcurrentHashMap
 
 @JvmInline
 internal value class LibrariesCache(
-    private val cache: ConcurrentHashMap<KtSourceModule, FirIdeLibrariesSession> = ConcurrentHashMap()
+    private val cache: ConcurrentHashMap<KtModule, LLFirLibrariesSession> = ConcurrentHashMap()
 ) {
     fun cached(
-        moduleSourceInfo: KtSourceModule,
-        create: (KtSourceModule) -> FirIdeLibrariesSession
-    ): FirIdeLibrariesSession =
-        cache.computeIfAbsent(moduleSourceInfo, create)
+        module: KtModule,
+        create: (KtModule) -> LLFirLibrariesSession
+    ): LLFirLibrariesSession =
+        cache.computeIfAbsent(module, create)
 }

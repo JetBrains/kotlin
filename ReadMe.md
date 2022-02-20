@@ -142,7 +142,7 @@ To be able to run tests from IntelliJ easily, check `Delegate IDE build/run acti
 At this time, you can use the latest released `1.6.x` version of the Kotlin plugin for working with the code. To make sure you have the latest version installed, use `Tools` -> `Kotlin` -> `Configure Kotlin Plugin Updates`.
 
 For handy work with compiler tests it's recommended to use [
-Kotlin Compiler Test Helper](https://plugins.jetbrains.com/plugin/17620-kotlin-compiler-test-helper)
+Kotlin Compiler Test Helper](https://github.com/demiurg906/test-data-helper-plugin)
 
 ### Dependency verification
 

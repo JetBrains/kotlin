@@ -71,7 +71,7 @@ interface IrTypeSystemContext : TypeSystemContext, TypeSystemCommonSuperTypesCon
 
     override fun SimpleTypeMarker.asDefinitelyNotNullType(): DefinitelyNotNullTypeMarker? = null
 
-    override fun SimpleTypeMarker.isMarkedNullable(): Boolean = (this as IrSimpleType).hasQuestionMark
+    override fun SimpleTypeMarker.isMarkedNullable(): Boolean = this is IrSimpleType && hasQuestionMark
 
     override fun KotlinTypeMarker.isMarkedNullable(): Boolean = this is IrSimpleType && hasQuestionMark
 
@@ -84,6 +84,7 @@ interface IrTypeSystemContext : TypeSystemContext, TypeSystemCommonSuperTypesCon
     override fun SimpleTypeMarker.typeConstructor(): TypeConstructorMarker = when (this) {
         is IrCapturedType -> constructor
         is IrSimpleType -> classifier
+        is IrDefinitelyNotNullType -> original.typeConstructor()
         else -> error("Unknown type constructor")
     }
 
@@ -306,7 +307,9 @@ interface IrTypeSystemContext : TypeSystemContext, TypeSystemCommonSuperTypesCon
         setOf(byteType, shortType, intType, longType)
     }
 
-    override fun TypeConstructorMarker.isIntegerLiteralTypeConstructor() = false
+    override fun TypeConstructorMarker.isIntegerLiteralTypeConstructor(): Boolean = false
+    override fun TypeConstructorMarker.isIntegerLiteralConstantTypeConstructor(): Boolean = false
+    override fun TypeConstructorMarker.isIntegerConstantOperatorTypeConstructor(): Boolean = false
 
     override fun TypeConstructorMarker.isLocalType(): Boolean {
         if (this !is IrClassSymbol) return false
@@ -481,22 +484,26 @@ interface IrTypeSystemContext : TypeSystemContext, TypeSystemCommonSuperTypesCon
             ).substitute(type as IrType)
         }
 
-    override fun TypeConstructorMarker.getPrimitiveType(): PrimitiveType? {
+    override fun TypeConstructorMarker.getPrimitiveType(): PrimitiveType? =
+        getNameForClassUnderKotlinPackage()?.let(PrimitiveType::getByShortName)
+
+    override fun TypeConstructorMarker.getPrimitiveArrayType(): PrimitiveType? =
+        getNameForClassUnderKotlinPackage()?.let(PrimitiveType::getByShortArrayName)
+
+    private fun TypeConstructorMarker.getNameForClassUnderKotlinPackage(): String? {
         if (this !is IrClassSymbol) return null
 
         val signature = signature?.asPublic()
-        if (signature == null || signature.packageFqName != "kotlin") return null
-
-        return PrimitiveType.getByShortName(signature.declarationFqName)
-    }
-
-    override fun TypeConstructorMarker.getPrimitiveArrayType(): PrimitiveType? {
-        if (this !is IrClassSymbol) return null
-
-        val signature = signature?.asPublic()
-        if (signature == null || signature.packageFqName != "kotlin") return null
-
-        return PrimitiveType.getByShortArrayName(signature.declarationFqName)
+        return if (signature != null) {
+            if (signature.packageFqName == StandardNames.BUILT_INS_PACKAGE_NAME.asString())
+                signature.declarationFqName
+            else null
+        } else {
+            val parent = owner.parent
+            if (parent is IrPackageFragment && parent.fqName == StandardNames.BUILT_INS_PACKAGE_FQ_NAME)
+                owner.name.asString()
+            else null
+        }
     }
 
     override fun TypeConstructorMarker.isUnderKotlinPackage(): Boolean {
@@ -543,7 +550,7 @@ interface IrTypeSystemContext : TypeSystemContext, TypeSystemCommonSuperTypesCon
         error("Captured type is unsupported in IR")
 
     override fun DefinitelyNotNullTypeMarker.original(): SimpleTypeMarker =
-        error("DefinitelyNotNull type is unsupported in IR")
+        (this as IrDefinitelyNotNullType).original as IrSimpleType
 
     override fun KotlinTypeMarker.makeDefinitelyNotNullOrNotNull(): KotlinTypeMarker {
         error("makeDefinitelyNotNullOrNotNull is not supported in IR")

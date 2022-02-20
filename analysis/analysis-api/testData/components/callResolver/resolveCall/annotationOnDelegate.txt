@@ -9,6 +9,7 @@ KtSuccessCallInfo:
         symbol = <constructor>(vararg names: kotlin.String): kotlin.Suppress
         valueParameters = [
           KtVariableLikeSignature:
+            name = names
             receiverType = null
             returnType = kotlin.String
             symbol = vararg names: kotlin.String

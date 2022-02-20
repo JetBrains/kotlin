@@ -6,11 +6,11 @@
 #include "MultiSourceQueue.hpp"
 
 #include <atomic>
-#include <thread>
 
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"
 
+#include "ScopedThread.hpp"
 #include "TestSupport.hpp"
 #include "Types.h"
 
@@ -193,7 +193,7 @@ TEST(MultiSourceQueueTest, ConcurrentPublish) {
     constexpr int kThreadCount = kDefaultThreadCount;
     std::atomic<bool> canStart(false);
     std::atomic<int> readyCount(0);
-    KStdVector<std::thread> threads;
+    KStdVector<ScopedThread> threads;
     KStdVector<int> expected;
 
     for (int i = 0; i < kThreadCount; ++i) {
@@ -211,9 +211,7 @@ TEST(MultiSourceQueueTest, ConcurrentPublish) {
     while (readyCount < kThreadCount) {
     }
     canStart = true;
-    for (auto& t : threads) {
-        t.join();
-    }
+    threads.clear();
 
     auto actual = Collect(queue);
     EXPECT_THAT(actual, testing::UnorderedElementsAreArray(expected));
@@ -237,7 +235,7 @@ TEST(MultiSourceQueueTest, IterWhileConcurrentPublish) {
     std::atomic<bool> canStart(false);
     std::atomic<int> readyCount(0);
     std::atomic<int> startedCount(0);
-    KStdVector<std::thread> threads;
+    KStdVector<ScopedThread> threads;
     for (int i = 0; i < kThreadCount; ++i) {
         int j = i + kStartCount;
         expectedAfter.push_back(j);
@@ -266,9 +264,7 @@ TEST(MultiSourceQueueTest, IterWhileConcurrentPublish) {
         }
     }
 
-    for (auto& t : threads) {
-        t.join();
-    }
+    threads.clear();
 
     EXPECT_THAT(actualBefore, testing::ElementsAreArray(expectedBefore));
 
@@ -283,7 +279,7 @@ TEST(MultiSourceQueueTest, ConcurrentPublishAndApplyDeletions) {
     std::atomic<bool> canStart(false);
     std::atomic<int> readyCount(0);
     std::atomic<int> startedCount(0);
-    KStdVector<std::thread> threads;
+    KStdVector<ScopedThread> threads;
     for (int i = 0; i < kThreadCount; ++i) {
         threads.emplace_back([&queue, i, &canStart, &readyCount, &startedCount]() {
             IntQueue::Producer producer(queue);
@@ -306,9 +302,7 @@ TEST(MultiSourceQueueTest, ConcurrentPublishAndApplyDeletions) {
 
     queue.ApplyDeletions();
 
-    for (auto& t : threads) {
-        t.join();
-    }
+    threads.clear();
 
     // We do not know which elements were deleted at this point. Expecting not to crash by this point.
 

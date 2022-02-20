@@ -6,12 +6,12 @@
 #include "ExtraObjectData.hpp"
 
 #include <atomic>
-#include <thread>
 
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"
 
 #include "ObjectTestSupport.hpp"
+#include "ScopedThread.hpp"
 #include "TestSupport.hpp"
 
 using namespace kotlin;
@@ -68,7 +68,7 @@ TEST_F(ExtraObjectDataTest, ConcurrentInstall) {
 
     std::atomic<bool> canStart(false);
     std::atomic<int> readyCount(0);
-    std::vector<std::thread> threads;
+    std::vector<ScopedThread> threads;
     std::vector<mm::ExtraObjectData*> actual(kThreadCount, nullptr);
 
     for (int i = 0; i < kThreadCount; ++i) {
@@ -86,9 +86,7 @@ TEST_F(ExtraObjectDataTest, ConcurrentInstall) {
     while (readyCount < kThreadCount) {
     }
     canStart = true;
-    for (auto& t : threads) {
-        t.join();
-    }
+    threads.clear();
 
     std::vector<mm::ExtraObjectData*> expected(kThreadCount, actual[0]);
 

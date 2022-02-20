@@ -121,10 +121,10 @@ private fun detectModules(targets: Iterable<KotlinTarget>, sourceSets: Iterable<
 
 @Suppress("unused")
 class GradleProjectModuleBuilder(private val addInferredSourceSetVisibilityAsExplicit: Boolean) {
-    private fun getModulesFromPm20Project(project: Project) = project.pm20Extension.modules.toList()
+    private fun getModulesFromPm20Project(project: Project) = project.kpmModules.toList()
 
     fun buildModulesFromProject(project: Project): List<KotlinModule> {
-        if (project.topLevelExtension is KotlinPm20ProjectExtension)
+        if (project.hasKpmModel)
             return getModulesFromPm20Project(project)
 
         val extension = project.multiplatformExtensionOrNull
@@ -165,7 +165,7 @@ class GradleProjectModuleBuilder(private val addInferredSourceSetVisibilityAsExp
                             ?: listOf(compilation.defaultSourceSetName)
 
                     variantNames.forEach { variantName ->
-                        val variant = BasicKotlinModuleVariant(this@apply, variantName, DefaultLanguageSettingsBuilder(project))
+                        val variant = BasicKotlinModuleVariant(this@apply, variantName, DefaultLanguageSettingsBuilder())
                         moduleByFragment[variant] = this@apply
                         variantToCompilation[variant] = compilation
                         fragments.add(variant)
@@ -300,7 +300,10 @@ class GradleModuleVariantResolver : ModuleVariantResolver {
         // FIXME check composite builds, it's likely that resolvedVariantProvider fails on them?
         val resolvedGradleVariantName = resolvedVariantProvider.getResolvedVariantName(dependencyModuleId, compileClasspath)
         val kotlinVariantName = when (dependencyModule) {
-            is KotlinGradleModule -> dependencyModule.variants.single { resolvedGradleVariantName in it.gradleVariantNames }.name
+            is KotlinGradleModule -> {
+                dependencyModule.variants.singleOrNull { resolvedGradleVariantName in it.gradleVariantNames }?.name
+                    ?: return VariantResolution.Unknown(requestingVariant, dependencyModule)
+            }
             else -> resolvedGradleVariantName?.let(::kotlinVariantNameFromPublishedVariantName)
         }
 
@@ -313,8 +316,11 @@ class GradleModuleVariantResolver : ModuleVariantResolver {
     }
 
     private fun getCompileDependenciesConfigurationForVariant(project: Project, requestingVariant: KotlinModuleVariant): Configuration =
-        when (project.topLevelExtension) {
-            is KotlinMultiplatformExtension, is KotlinSingleTargetExtension -> {
+        when {
+            project.hasKpmModel -> {
+                (requestingVariant as KotlinGradleVariant).compileDependenciesConfiguration
+            }
+            else -> {
                 val targets =
                     project.multiplatformExtensionOrNull?.targets ?: listOf((project.kotlinExtension as KotlinSingleTargetExtension).target)
 
@@ -333,10 +339,6 @@ class GradleModuleVariantResolver : ModuleVariantResolver {
 
                 project.configurations.getByName(compilation.compileDependencyConfigurationName)
             }
-            is KotlinPm20ProjectExtension -> {
-                (requestingVariant as KotlinGradleVariant).compileDependenciesConfiguration
-            }
-            else -> error("could not find the compile dependencies configuration for variant $requestingVariant")
         }
 
     companion object {

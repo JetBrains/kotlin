@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.gradle.targets.js.subtargets
 
 import org.gradle.api.Project
-import org.gradle.api.plugins.BasePluginConvention
+import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.distsDirectory
 import org.jetbrains.kotlin.gradle.targets.js.dsl.Distribution
 import org.jetbrains.kotlin.gradle.utils.property
 import java.io.File
@@ -16,13 +16,11 @@ class DefaultDistribution(
     override var name: String? = null
 ) : Distribution {
 
-    private val basePluginConvention: BasePluginConvention
-        get() = project.convention.plugins["base"] as BasePluginConvention
-
     override var directory: File by property {
         project.buildDir
             .let { buildDir ->
-                name?.let { buildDir.resolve(it) } ?: buildDir.resolve(basePluginConvention.distsDirName)
+                name?.let { buildDir.resolve(it) }
+                    ?: project.distsDirectory.asFile.get()
             }
     }
 }

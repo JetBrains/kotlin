@@ -19,8 +19,8 @@ interface KotlinJvmOptions  : org.jetbrains.kotlin.gradle.dsl.KotlinCommonOption
      var jdkHome: kotlin.String?
 
     /**
-     * Target version of the generated JVM bytecode (1.6 (DEPRECATED), 1.8, 9, 10, 11, 12, 13, 14, 15, 16 or 17), default is 1.8
-     * Possible values: "1.6", "1.8", "9", "10", "11", "12", "13", "14", "15", "16", "17"
+     * Target version of the generated JVM bytecode (1.6 (DEPRECATED), 1.8, 9, 10, ..., 18), default is 1.8
+     * Possible values: "1.6", "1.8", "9", "10", "11", "12", "13", "14", "15", "16", "17", "18"
      * Default value: null
      */
      var jvmTarget: kotlin.String?
@@ -36,20 +36,6 @@ interface KotlinJvmOptions  : org.jetbrains.kotlin.gradle.dsl.KotlinCommonOption
      * Default value: false
      */
      var noJdk: kotlin.Boolean
-
-    /**
-     * Don't automatically include the Kotlin/JVM stdlib and Kotlin reflection into the classpath
-     * Default value: true
-     */
-    @Deprecated(message = "This option has no effect and will be removed in a future release.", level = DeprecationLevel.ERROR)
-     var noStdlib: kotlin.Boolean
-
-    /**
-     * Use the IR backend. This option has no effect unless the language version less than 1.5 is used
-     * Default value: false
-     */
-    @Deprecated(message = "This option has no effect and will be removed in a future release.", level = DeprecationLevel.HIDDEN)
-     var useIR: kotlin.Boolean
 
     /**
      * Use the old JVM backend

@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.low.level.api.fir
 
+import org.jetbrains.kotlin.analysis.low.level.api.fir.state.LLFirSourceModuleResolveState
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.base.AbstractLowLevelApiSingleFileTest
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirRenderer
@@ -53,7 +54,7 @@ abstract class AbstractFirLazyDeclarationResolveTest : AbstractLowLevelApiSingle
         val rendererOption = FirRenderer.RenderMode.WithDeclarationAttributes.copy(renderDeclarationResolvePhase = true)
         val resultBuilder = StringBuilder()
         resolveWithClearCaches(ktFile) { firModuleResolveState ->
-            check(firModuleResolveState is FirModuleResolveStateImpl)
+            check(firModuleResolveState is LLFirSourceModuleResolveState)
             val declarationToResolve = firModuleResolveState
                 .getOrBuildFirFile(ktFile)
                 .findResolveMe()
@@ -67,7 +68,7 @@ abstract class AbstractFirLazyDeclarationResolveTest : AbstractLowLevelApiSingle
         }
 
         resolveWithClearCaches(ktFile) { firModuleResolveState ->
-            check(firModuleResolveState is FirModuleResolveStateImpl)
+            check(firModuleResolveState is LLFirSourceModuleResolveState)
             val firFile = firModuleResolveState.getOrBuildFirFile(ktFile)
             firFile.ensureResolved(FirResolvePhase.BODY_RESOLVE)
             resultBuilder.append("\nFILE RAW TO BODY:\n")

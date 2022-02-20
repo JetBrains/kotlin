@@ -19,13 +19,16 @@ package org.jetbrains.kotlin.cli.common
 import org.fusesource.jansi.AnsiConsole
 import org.jetbrains.kotlin.cli.common.arguments.CommonToolArguments
 import org.jetbrains.kotlin.cli.common.arguments.parseCommandLineArguments
+import org.jetbrains.kotlin.cli.common.arguments.parseCommandLineArgumentsFromEnvironment
 import org.jetbrains.kotlin.cli.common.arguments.validateArguments
 import org.jetbrains.kotlin.cli.common.messages.*
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.INFO
 import org.jetbrains.kotlin.cli.jvm.compiler.CompileEnvironmentException
 import org.jetbrains.kotlin.cli.jvm.compiler.setupIdeaStandaloneExecution
 import org.jetbrains.kotlin.config.KotlinCompilerVersion
+import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.config.Services
+import org.jetbrains.kotlin.utils.PathUtil
 import java.io.PrintStream
 import java.net.URL
 import java.net.URLConnection
@@ -47,6 +50,11 @@ abstract class CLITool<A : CommonToolArguments> {
     ): ExitCode {
         val arguments = createArguments()
         parseCommandLineArguments(args.asList(), arguments)
+
+        if (isReadingSettingsFromEnvironmentAllowed) {
+            parseCommandLineArgumentsFromEnvironment(arguments)
+        }
+
         val collector = PrintingMessageCollector(errStream, messageRenderer, arguments.verbose)
 
         try {
@@ -125,6 +133,9 @@ abstract class CLITool<A : CommonToolArguments> {
     }
 
     abstract fun executableScriptFileName(): String
+
+    var isReadingSettingsFromEnvironmentAllowed: Boolean =
+        this::class.java.classLoader.getResource(LanguageVersionSettings.RESOURCE_NAME_TO_ALLOW_READING_FROM_ENVIRONMENT) != null
 
     companion object {
         private fun defaultMessageRenderer(): MessageRenderer =

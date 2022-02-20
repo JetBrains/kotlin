@@ -7,20 +7,14 @@ package org.jetbrains.kotlin.compilerRunner
 
 import org.gradle.api.logging.Logger
 import org.jetbrains.kotlin.build.report.metrics.*
-import org.jetbrains.kotlin.cli.common.CompilerSystemProperties
-import org.jetbrains.kotlin.cli.common.CompilerSystemProperties.COMPILE_INCREMENTAL_WITH_CLASSPATH_SNAPSHOTS
 import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
-import org.jetbrains.kotlin.cli.common.toBooleanLenient
 import org.jetbrains.kotlin.config.Services
 import org.jetbrains.kotlin.daemon.common.*
 import org.jetbrains.kotlin.gradle.logging.*
 import org.jetbrains.kotlin.gradle.plugin.internal.state.TaskExecutionResults
 import org.jetbrains.kotlin.gradle.plugin.internal.state.TaskLoggers
 import org.jetbrains.kotlin.gradle.report.*
-import org.jetbrains.kotlin.gradle.report.TaskExecutionInfo
-import org.jetbrains.kotlin.gradle.report.TaskExecutionProperties.ABI_SNAPSHOT
-import org.jetbrains.kotlin.gradle.report.TaskExecutionResult
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompilerExecutionStrategy
 import org.jetbrains.kotlin.gradle.tasks.cleanOutputsAndLocalState
 import org.jetbrains.kotlin.gradle.tasks.throwGradleExceptionIfError
@@ -35,7 +29,6 @@ import java.util.*
 import java.util.concurrent.Callable
 import java.util.concurrent.Executors
 import javax.inject.Inject
-import kotlin.collections.ArrayList
 
 internal class ProjectFilesForCompilation(
     val projectRootFile: File,
@@ -134,17 +127,9 @@ internal class GradleKotlinCompilerWork @Inject constructor(
 
             throwGradleExceptionIfError(exitCode, executionStrategy)
         } finally {
-            val properties = ArrayList<TaskExecutionProperties>()
-            COMPILE_INCREMENTAL_WITH_CLASSPATH_SNAPSHOTS.value.toBooleanLenient()?.let {
-                if (it) properties.add(ABI_SNAPSHOT)
-            }
-            CompilerSystemProperties.COMPILE_INCREMENTAL_WITH_ARTIFACT_TRANSFORM.value.toBooleanLenient()?.let {
-                if (it) properties.add(TaskExecutionProperties.ARTIFACT_TRANSFORM)
-            }
-
             val taskInfo = TaskExecutionInfo(
                 changedFiles = incrementalCompilationEnvironment?.changedFiles,
-                properties = properties
+                compilerArguments = compilerArgs
             )
             val result = TaskExecutionResult(buildMetrics = metrics.getMetrics(), icLogLines = icLogLines, taskInfo = taskInfo)
             TaskExecutionResults[taskPath] = result
@@ -303,7 +288,7 @@ internal class GradleKotlinCompilerWork @Inject constructor(
         log.info("Options for KOTLIN DAEMON: $compilationOptions")
         val servicesFacade = GradleIncrementalCompilerServicesFacadeImpl(log, bufferingMessageCollector)
         val compilationResults = GradleCompilationResults(log, projectRootFile)
-        return metrics.measure(BuildTime.RUN_COMPILER) {
+        return metrics.measure(BuildTime.RUN_COMPILATION) {
             daemon.compile(sessionId, compilerArgs, compilationOptions, servicesFacade, compilationResults)
         }.also {
             metrics.addMetrics(compilationResults.buildMetrics)
@@ -324,7 +309,7 @@ internal class GradleKotlinCompilerWork @Inject constructor(
         metrics.addAttribute(BuildAttribute.IN_PROCESS_EXECUTION)
         cleanOutputsAndLocalState(outputFiles, log, metrics, reason = "in-process execution strategy is non-incremental")
 
-        metrics.startMeasure(BuildTime.NON_INCREMENTAL_COMPILATION_IN_PROCESS, System.nanoTime())
+        metrics.startMeasure(BuildTime.NON_INCREMENTAL_COMPILATION_IN_PROCESS)
         // in-process compiler should always be run in a different thread
         // to avoid leaking thread locals from compiler (see KT-28037)
         val threadPool = Executors.newSingleThreadExecutor()
@@ -338,7 +323,7 @@ internal class GradleKotlinCompilerWork @Inject constructor(
             bufferingMessageCollector.flush(messageCollector)
             threadPool.shutdown()
 
-            metrics.endMeasure(BuildTime.NON_INCREMENTAL_COMPILATION_IN_PROCESS, System.nanoTime())
+            metrics.endMeasure(BuildTime.NON_INCREMENTAL_COMPILATION_IN_PROCESS)
         }
     }
 

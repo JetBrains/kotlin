@@ -1,4 +1,3 @@
-// FIR_IDENTICAL
 inline fun <reified T : Any> Any.test1(): T? =
     if (this is T) this else null
 

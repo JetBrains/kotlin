@@ -18,10 +18,11 @@ import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.path
 import org.jetbrains.kotlin.ir.expressions.*
-import org.jetbrains.kotlin.ir.types.classifierOrNull
-import org.jetbrains.kotlin.ir.util.IdSignature
+import org.jetbrains.kotlin.ir.types.classOrNull
 import org.jetbrains.kotlin.ir.util.file
+import org.jetbrains.kotlin.ir.util.hasEqualFqName
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
+import org.jetbrains.kotlin.name.FqName
 import java.util.*
 
 class KtDiagnosticReporterWithImplicitIrBasedContext(
@@ -118,7 +119,7 @@ internal class IrBasedSuppressCache : AbstractKotlinSuppressCache<IrElement>() {
 
         private fun collectSuppressAnnotationKeys(element: IrElement): Boolean =
             (element as? IrAnnotationContainer)?.annotations?.filter {
-                it.type.classifierOrNull?.signature == SUPPRESS
+                it.type.classOrNull?.owner?.hasEqualFqName(SUPPRESS) == true
             }?.flatMap {
                 buildList {
                     fun addIfStringConst(irConst: IrConst<*>) {
@@ -153,4 +154,4 @@ internal class IrBasedSuppressCache : AbstractKotlinSuppressCache<IrElement>() {
     override fun getSuppressingStrings(annotated: IrElement): Set<String> = annotationKeys[annotated].orEmpty()
 }
 
-private val SUPPRESS = IdSignature.CommonSignature("kotlin", "Suppress", null, 0)
+private val SUPPRESS = FqName("kotlin.Suppress")

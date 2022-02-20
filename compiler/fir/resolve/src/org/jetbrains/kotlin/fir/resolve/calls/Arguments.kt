@@ -15,7 +15,8 @@ import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.createFunctionalType
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
-import org.jetbrains.kotlin.fir.resolve.inference.*
+import org.jetbrains.kotlin.fir.resolve.inference.preprocessCallableReference
+import org.jetbrains.kotlin.fir.resolve.inference.preprocessLambdaArgument
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.resultType
 import org.jetbrains.kotlin.fir.resolve.transformers.ensureResolvedTypeDeclaration
 import org.jetbrains.kotlin.fir.returnExpressions
@@ -63,8 +64,8 @@ fun Candidate.resolveArgumentExpression(
         // and then add constraint: typeOf(`$not-null-receiver$.bar()`).makeNullable() <: EXPECTED_TYPE
         // NB: argument.regularQualifiedAccess is either a call or a qualified access
         is FirSafeCallExpression -> {
-            val nestedQualifier = argument.regularQualifiedAccess
-            if (nestedQualifier is FirExpression) {
+            val nestedQualifier = argument.selector
+            if (nestedQualifier is FirQualifiedAccessExpression) {
                 resolveSubCallArgument(
                     csBuilder,
                     nestedQualifier,

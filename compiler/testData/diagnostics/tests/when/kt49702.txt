@@ -7,8 +7,8 @@ public sealed class A {
     public final fun test(/*0*/ a: A): kotlin.Unit
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 
-    public final class <no name provided> : A {
-        public constructor <no name provided>()
+    public final class `<no name provided>` : A {
+        public constructor `<no name provided>`()
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
         public final override /*1*/ /*fake_override*/ fun test(/*0*/ a: A): kotlin.Unit

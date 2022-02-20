@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.gradle.testbase.*
 import org.junit.jupiter.api.DisplayName
 import kotlin.io.path.ExperimentalPathApi
 import kotlin.io.path.readText
+import kotlin.io.path.relativeTo
 import kotlin.io.path.writeText
 
 @ExperimentalPathApi
@@ -102,33 +103,6 @@ class BuildCacheIT : KGPBaseTest() {
         }
     }
 
-    @DisplayName("Incremental compilation works with cache")
-    @GradleTest
-    fun testKotlinCompileIncrementalBuildWithoutRelocation(gradleVersion: GradleVersion) {
-        project("buildCacheSimple", gradleVersion) {
-            enableLocalBuildCache(localBuildCacheDir)
-
-            build("assemble") {
-                assertTasksPackedToCache(":compileKotlin")
-            }
-
-            build("clean", "assemble") {
-                assertTasksFromCache(":compileKotlin")
-            }
-
-            val fooKtSourceFile = kotlinSourcesDir().resolve("foo.kt")
-            fooKtSourceFile.modify { it.replace("Int = 1", "String = \"abc\"") }
-            build("assemble") {
-                assertIncrementalCompilation(modifiedFiles = setOf(fooKtSourceFile))
-            }
-
-            fooKtSourceFile.modify { it.replace("String = \"abc\"", "Int = 1") }
-            build("clean", "assemble") {
-                assertTasksFromCache(":compileKotlin")
-            }
-        }
-    }
-
     @DisplayName("Debug log level should not break build cache")
     @GradleTest
     fun testDebugLogLevelCaching(gradleVersion: GradleVersion) {
@@ -147,4 +121,29 @@ class BuildCacheIT : KGPBaseTest() {
             }
         }
     }
+
+    //doesn't work for build history files approach
+    @DisplayName("Restore from build cache should not break incremental compilation")
+    @GradleTest
+    fun testIncrementalCompilationAfterCacheHit(gradleVersion: GradleVersion) {
+        val withSnapshotProperty = "-Dkotlin.incremental.classpath.snapshot.enabled=true"
+        project("incrementalMultiproject", gradleVersion) {
+            enableLocalBuildCache(localBuildCacheDir)
+            build("assemble", withSnapshotProperty)
+            build("clean", "assemble", withSnapshotProperty) {
+                assertTasksFromCache(":lib:compileKotlin")
+                assertTasksFromCache(":app:compileKotlin")
+            }
+            val bKtSourceFile = projectPath.resolve("lib/src/main/kotlin/bar/B.kt")
+
+            bKtSourceFile.modify { it.replace("fun b() {}", "fun b() {}\nfun b2() {}") }
+
+            build("assemble", withSnapshotProperty, buildOptions = defaultBuildOptions.copy(logLevel = LogLevel.DEBUG)) {
+                assertOutputDoesNotContain("[KOTLIN] [IC] Non-incremental compilation will be performed")
+                assertCompiledKotlinSources(setOf(bKtSourceFile).map { it.relativeTo(projectPath)}, output)
+            }
+
+        }
+    }
+
 }

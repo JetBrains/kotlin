@@ -40,6 +40,10 @@ internal fun FragmentNameDisambiguation(module: KotlinModule, fragmentName: Stri
     return DefaultKotlinFragmentNameDisambiguation(module, fragmentName)
 }
 
+internal fun FragmentNameDisambiguationOmittingMain(module: KotlinModule, fragmentName: String): KotlinNameDisambiguation {
+    return DefaultKotlinFragmentNameDisambiguationOmittingMain(module, fragmentName)
+}
+
 private class DefaultKotlinFragmentNameDisambiguation(
     private val module: KotlinModule,
     private val fragmentName: String
@@ -49,10 +53,24 @@ private class DefaultKotlinFragmentNameDisambiguation(
     }
 }
 
+private class DefaultKotlinFragmentNameDisambiguationOmittingMain(
+    private val module: KotlinModule,
+    private val fragmentName: String
+) : KotlinNameDisambiguation {
+    override fun disambiguateName(simpleName: String): String {
+        return KotlinModuleFragment.disambiguateNameOmittingMain(module, fragmentName, simpleName)
+    }
+}
+
 internal fun KotlinModuleFragment.disambiguateName(simpleName: String) =
     KotlinModuleFragment.disambiguateName(containingModule, fragmentName, simpleName)
+
+internal val KotlinModuleFragment.unambiguousNameInProject
+    get() = disambiguateName("")
 
 internal fun KotlinModuleFragment.Companion.disambiguateName(module: KotlinModule, fragmentName: String, simpleName: String) =
     lowerCamelCaseName(fragmentName, module.moduleIdentifier.moduleClassifier ?: KotlinGradleModule.MAIN_MODULE_NAME, simpleName)
 
+internal fun KotlinModuleFragment.Companion.disambiguateNameOmittingMain(module: KotlinModule, fragmentName: String, simpleName: String) =
+    lowerCamelCaseName(fragmentName, module.moduleIdentifier.moduleClassifier, simpleName)
 

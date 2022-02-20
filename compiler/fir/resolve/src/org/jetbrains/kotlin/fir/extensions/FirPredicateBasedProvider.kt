@@ -18,12 +18,6 @@ import org.jetbrains.kotlin.fir.resolve.fqName
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 
 abstract class FirPredicateBasedProvider : FirSessionComponent {
-    companion object {
-        fun create(session: FirSession): FirPredicateBasedProvider {
-            return FirPredicateBasedProviderImpl(session)
-        }
-    }
-
     abstract fun getSymbolsByPredicate(predicate: DeclarationPredicate): List<FirBasedSymbol<*>>
     abstract fun getOwnersOfDeclaration(declaration: FirDeclaration): List<FirBasedSymbol<*>>?
 

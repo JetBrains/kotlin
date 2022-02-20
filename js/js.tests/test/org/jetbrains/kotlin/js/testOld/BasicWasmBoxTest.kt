@@ -11,9 +11,8 @@ import com.intellij.openapi.vfs.VirtualFileManager
 import com.intellij.psi.PsiManager
 import org.jetbrains.kotlin.backend.common.phaser.PhaseConfig
 import org.jetbrains.kotlin.backend.common.phaser.toPhaseMap
-import org.jetbrains.kotlin.backend.wasm.WasmCompilerResult
-import org.jetbrains.kotlin.backend.wasm.compileWasm
-import org.jetbrains.kotlin.backend.wasm.wasmPhases
+import org.jetbrains.kotlin.backend.wasm.*
+import org.jetbrains.kotlin.backend.wasm.dce.eliminateDeadDeclarations
 import org.jetbrains.kotlin.checkers.parseLanguageVersionSettings
 import org.jetbrains.kotlin.cli.common.messages.AnalyzerWithCompilerReport
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
@@ -21,7 +20,6 @@ import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.ir.backend.js.prepareAnalyzedSourceModule
-import org.jetbrains.kotlin.ir.backend.js.utils.sanitizeName
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
 import org.jetbrains.kotlin.js.config.JsConfig
 import org.jetbrains.kotlin.js.facade.TranslationUnit
@@ -48,27 +46,18 @@ abstract class BasicWasmBoxTest(
 
     private val COMMON_FILES_NAME = "_common"
 
-    @Suppress("UNUSED_PARAMETER")
-    fun doTestWithCoroutinesPackageReplacement(filePath: String, coroutinesPackage: String) {
-        TODO("TestWithCoroutinesPackageReplacement are not supported")
-    }
-
     fun doTest(filePath: String) = doTestWithTransformer(filePath) { it }
     fun doTestWithTransformer(filePath: String, transformer: java.util.function.Function<String, String>) {
         val file = File(filePath)
 
-        val outputDir = getOutputDir(file)
+        val outputDirBase = File(getOutputDir(file), getTestName(true))
         val fileContent = transformer.apply(KtTestUtil.doLoadFile(file))
 
         TestFileFactoryImpl().use { testFactory ->
             val inputFiles: MutableList<TestFile> = TestFiles.createTestFiles(file.name, fileContent, testFactory, true)
             val testPackage = testFactory.testPackage
-            val outputFileBase = outputDir.absolutePath + "/" + getTestName(true)
-            val outputWatFile = outputFileBase + ".wat"
-            val outputWasmFile = outputFileBase + ".wasm"
-            val outputJsFile = outputFileBase + ".js"
-            val outputBrowserDir = outputFileBase + ".browser"
-            val languageVersionSettings = inputFiles.mapNotNull { it.languageVersionSettings }.firstOrNull()
+
+            val languageVersionSettings = inputFiles.firstNotNullOfOrNull { it.languageVersionSettings }
 
             val kotlinFiles = mutableListOf<String>()
             val jsFilesBefore = mutableListOf<String>()
@@ -100,27 +89,137 @@ abstract class BasicWasmBoxTest(
 
             val psiFiles = createPsiFiles(allSourceFiles.map { File(it).canonicalPath }.sorted())
             val config = createConfig(languageVersionSettings)
-            translateFiles(
-                file,
-                psiFiles.map(TranslationUnit::SourceFile),
-                File(outputWatFile),
-                File(outputWasmFile),
-                File(outputJsFile),
-                File(outputBrowserDir),
-                config,
-                testPackage,
-                TEST_FUNCTION
+            val filesToCompile = psiFiles.map { TranslationUnit.SourceFile(it).file }
+            val debugMode = DebugMode.fromSystemProperty("kotlin.wasm.debugMode")
+
+            val phaseConfig = if (debugMode >= DebugMode.DEBUG) {
+                val allPhasesSet = if (debugMode >= DebugMode.SUPER_DEBUG) wasmPhases.toPhaseMap().values.toSet() else emptySet()
+                val dumpOutputDir = File(outputDirBase, "irdump")
+                println("\n ------ Dumping phases to file://${dumpOutputDir.absolutePath}")
+                println(" ------ KT   file://${file.absolutePath}")
+                PhaseConfig(
+                    wasmPhases,
+                    dumpToDirectory = dumpOutputDir.path,
+                    toDumpStateAfter = allPhasesSet,
+                    // toValidateStateAfter = allPhasesSet,
+                    // dumpOnlyFqName = null
+                )
+            } else {
+                PhaseConfig(wasmPhases)
+            }
+
+            val sourceModule = prepareAnalyzedSourceModule(
+                config.project,
+                filesToCompile,
+                config.configuration,
+                // TODO: Bypass the resolver fow wasm.
+                listOf(System.getProperty("kotlin.wasm.stdlib.path")!!, System.getProperty("kotlin.wasm.kotlin.test.path")!!),
+                emptyList(),
+                AnalyzerWithCompilerReport(config.configuration)
             )
 
-            ExternalTool(System.getProperty("javascript.engine.path.V8"))
-                .run(
-                    "--experimental-wasm-typed-funcref",
-                    "--experimental-wasm-gc",
-                    "--experimental-wasm-eh",
-                    *jsFilesBefore.toTypedArray(),
-                    outputJsFile,
-                    *jsFilesAfter.toTypedArray(),
-                )
+            val (allModules, backendContext) = compileToLoweredIr(
+                depsDescriptors = sourceModule,
+                phaseConfig = phaseConfig,
+                irFactory = IrFactoryImpl,
+                exportedDeclarations = setOf(FqName.fromSegments(listOfNotNull(testPackage, TEST_FUNCTION))),
+                propertyLazyInitialization = true,
+            )
+
+            val compilerResult = compileWasm(
+                allModules = allModules,
+                backendContext = backendContext,
+                emitNameSection = true,
+                allowIncompleteImplementations = false,
+            )
+
+            eliminateDeadDeclarations(allModules, backendContext)
+
+            val compilerResultWithDCE = compileWasm(
+                allModules = allModules,
+                backendContext = backendContext,
+                emitNameSection = true,
+                allowIncompleteImplementations = true,
+            )
+
+            val testJsQuiet = """
+                import exports from './index.js';
+        
+                let actualResult
+                try {
+                    actualResult = exports.box();
+                } catch(e) {
+                    console.log('Failed with exception!')
+                    console.log('Message: ' + e.message)
+                    console.log('Name:    ' + e.name)
+                    console.log('Stack:')
+                    console.log(e.stack)
+                }
+                if (actualResult !== "OK")
+                    throw `Wrong box result '${'$'}{actualResult}'; Expected "OK"`;
+            """.trimIndent()
+
+            val testJsVerbose = testJsQuiet + """
+                console.log('test passed');
+            """.trimIndent()
+
+            val testJs = if (debugMode >= DebugMode.DEBUG) testJsVerbose else testJsQuiet
+
+            fun compileAndRunD8Test(name: String, res: WasmCompilerResult) {
+                val dir = File(outputDirBase, name)
+                if (debugMode >= DebugMode.DEBUG) {
+                    val path = dir.absolutePath
+                    println(" ------ $name WAT  file://$path/index.wat")
+                    println(" ------ $name WASM file://$path/index.wasm")
+                    println(" ------ $name JS   file://$path/index.js")
+                    println(" ------ $name Test file://$path/test.js")
+                }
+
+                writeCompilationResult(res, dir, WasmLoaderKind.D8)
+                File(dir, "test.js").writeText(testJs)
+                ExternalTool(System.getProperty("javascript.engine.path.V8"))
+                    .run(
+                        "--experimental-wasm-typed-funcref",
+                        "--experimental-wasm-gc",
+                        "--experimental-wasm-eh",
+                        *jsFilesBefore.map { File(it).absolutePath }.toTypedArray(),
+                        "--module",
+                        "./test.js",
+                        *jsFilesAfter.map { File(it).absolutePath }.toTypedArray(),
+                        workingDirectory = dir
+                    )
+            }
+
+            compileAndRunD8Test("d8", compilerResult)
+            compileAndRunD8Test("d8-dce", compilerResultWithDCE)
+
+            if (debugMode >= DebugMode.SUPER_DEBUG) {
+                fun writeBrowserTest(name: String, res: WasmCompilerResult) {
+                    val dir = File(outputDirBase, name)
+                    writeCompilationResult(res, dir, WasmLoaderKind.BROWSER)
+                    File(dir, "test.js").writeText(testJsVerbose)
+                    File(dir, "index.html").writeText(
+                        """
+                            <!DOCTYPE html>
+                            <html lang="en">
+                            <body>
+                            <script src="test.js" type="module"></script>
+                            </body>
+                            </html>
+                        """.trimIndent()
+                    )
+                    val path = dir.absolutePath
+                    println(" ------ $name WAT  file://$path/index.wat")
+                    println(" ------ $name WASM file://$path/index.wasm")
+                    println(" ------ $name JS   file://$path/index.js")
+                    println(" ------ $name TEST file://$path/test.js")
+                    println(" ------ $name HTML file://$path/index.html")
+                }
+
+                writeBrowserTest("browser", compilerResult)
+                writeBrowserTest("browser-dce", compilerResultWithDCE)
+            }
+
         }
     }
 
@@ -131,118 +230,6 @@ abstract class BasicWasmBoxTest(
             .map { it.name }
             .toList().asReversed()
             .fold(testGroupOutputDir, ::File)
-    }
-
-    private fun translateFiles(
-        testFile: File,
-        units: List<TranslationUnit>,
-        outputWatFile: File,
-        outputWasmFile: File,
-        outputJsFile: File,
-        outputBrowserDir: File,
-        config: JsConfig,
-        testPackage: String?,
-        testFunction: String
-    ) {
-        val filesToCompile = units.map { (it as TranslationUnit.SourceFile).file }
-        val debugMode = DebugMode.fromSystemProperty("kotlin.wasm.debugMode")
-        val phaseConfig = if (debugMode >= DebugMode.DEBUG) {
-            val allPhasesSet = if (debugMode >= DebugMode.SUPER_DEBUG) wasmPhases.toPhaseMap().values.toSet() else emptySet()
-            val dumpOutputDir = File(outputWatFile.parent, outputWatFile.nameWithoutExtension + "-irdump")
-            println("\n ------ Dumping phases to file://$dumpOutputDir")
-            println("\n ------  KT file://${testFile.absolutePath}")
-            println("\n ------ WAT file://$outputWatFile")
-            println("\n ------ WASM file://$outputWasmFile")
-            println(" ------  JS file://$outputJsFile")
-            PhaseConfig(
-                wasmPhases,
-                dumpToDirectory = dumpOutputDir.path,
-                toDumpStateAfter = allPhasesSet,
-                // toValidateStateAfter = allPhasesSet,
-                // dumpOnlyFqName = null
-            )
-        } else {
-            PhaseConfig(wasmPhases)
-        }
-
-        val sourceModule = prepareAnalyzedSourceModule(
-            config.project,
-            filesToCompile,
-            config.configuration,
-            // TODO: Bypass the resolver fow wasm.
-            listOf(System.getProperty("kotlin.wasm.stdlib.path")!!, System.getProperty("kotlin.wasm.kotlin.test.path")!!),
-            emptyList(),
-            AnalyzerWithCompilerReport(config.configuration)
-        )
-
-        val compilerResult = compileWasm(
-            sourceModule,
-            phaseConfig = phaseConfig,
-            irFactory = IrFactoryImpl,
-            exportedDeclarations = setOf(FqName.fromSegments(listOfNotNull(testPackage, testFunction))),
-            propertyLazyInitialization = true,
-            emitNameSection = true,
-            dceEnabled = true,
-        )
-
-        outputWatFile.write(compilerResult.wat)
-        outputWasmFile.writeBytes(compilerResult.wasm)
-
-        val testRunner = """
-            const wasmBinary = read(String.raw`${outputWasmFile.absoluteFile}`, 'binary');
-            const wasmModule = new WebAssembly.Module(wasmBinary);
-            wasmInstance = new WebAssembly.Instance(wasmModule, { runtime, js_code });
-            wasmInstance.exports.__init();
-
-            const ${sanitizeName(config.moduleId)} = wasmInstance.exports;
-            
-            wasmInstance.exports.startUnitTests?.();
-
-            const actualResult = wasmInstance.exports.$testFunction();
-            if (actualResult !== "OK")
-                throw `Wrong box result '${'$'}{actualResult}'; Expected "OK"`;
-        """.trimIndent()
-
-        outputJsFile.write(compilerResult.js + "\n" + testRunner)
-
-        if (debugMode >= DebugMode.SUPER_DEBUG) {
-            createDirectoryToRunInBrowser(outputBrowserDir, compilerResult)
-        }
-    }
-
-    private fun createDirectoryToRunInBrowser(directory: File, compilerResult: WasmCompilerResult) {
-        val browserRunner =
-            """
-            const response = await fetch("index.wasm");
-            const wasmBinary = await response.arrayBuffer();
-            wasmInstance = (await WebAssembly.instantiate(wasmBinary, { runtime, js_code })).instance;
-            wasmInstance.exports.__init();
-            wasmInstance.exports.startUnitTests?.();
-
-            const actualResult = wasmInstance.exports.box();
-            if (actualResult !== "OK")
-                throw `Wrong box result '${'$'}{actualResult}'; Expected "OK"`;
-            console.log("Test passed!");    
-            """.trimIndent()
-
-        directory.mkdirs()
-
-        File(directory, "index.html").writeText(
-            """
-            <!DOCTYPE html>
-            <html lang="en">
-            <body>
-            <script src="index.js" type="module"></script>
-            </body>
-            </html>
-            """.trimIndent()
-        )
-        File(directory, "index.js").writeText(
-            compilerResult.js + "\n" + browserRunner
-        )
-        File(directory, "index.wasm").writeBytes(
-            compilerResult.wasm
-        )
     }
 
     private fun createConfig(languageVersionSettings: LanguageVersionSettings?): JsConfig {

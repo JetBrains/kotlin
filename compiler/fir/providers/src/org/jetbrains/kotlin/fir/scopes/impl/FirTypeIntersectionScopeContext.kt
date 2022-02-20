@@ -73,8 +73,8 @@ class FirTypeIntersectionScopeContext(
                 ).member as D
             }
 
-            val firstMember: D
-                get() = context.extractedOverrides.first().member
+            val mostSpecific: D
+                get() = context.mostSpecific
         }
     }
 

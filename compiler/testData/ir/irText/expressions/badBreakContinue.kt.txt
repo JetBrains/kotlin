@@ -14,7 +14,7 @@ fun test3() {
   L1@ while (true) { // BLOCK
     val lambda: Function0<Nothing> = local fun <anonymous>(): Nothing {
       error("") /* ErrorExpression */
-      error("") /* ErrorExpression */
+      return error("") /* ErrorExpression */
     }
 
   }

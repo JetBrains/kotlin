@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.gradle.testbase
 
 import org.gradle.testkit.runner.BuildResult
-import java.nio.file.Path
 
 /**
  * Asserts Gradle output contains [expectedSubString] string.
@@ -124,70 +123,6 @@ fun BuildResult.assertNoBuildWarnings(
         printBuildOutput()
 
         "Build contains following warnings:\n ${warnings.joinToString(separator = "\n")}"
-    }
-}
-
-fun BuildResult.assertIncrementalCompilation(
-    modifiedFiles: Set<Path> = emptySet(),
-    deletedFiles: Set<Path> = emptySet()
-) {
-    val incrementalCompilationOptions = output
-        .lineSequence()
-        .filter { it.trim().startsWith("Options for KOTLIN DAEMON: IncrementalCompilationOptions(") }
-        .map {
-            it
-                .removePrefix("Options for KOTLIN DAEMON: IncrementalCompilationOptions(")
-                .removeSuffix(")")
-        }
-        .toList()
-
-    assert(incrementalCompilationOptions.isNotEmpty()) {
-        printBuildOutput()
-        "No incremental compilation options were found in the build"
-    }
-
-    val modifiedFilesPath = modifiedFiles.map { it.toAbsolutePath().toString() }
-    val deletedFilesPath = deletedFiles.map { it.toAbsolutePath().toString() }
-    val hasMatch = incrementalCompilationOptions
-        .firstOrNull {
-            val optionModifiedFiles = it
-                .substringAfter("modifiedFiles=[")
-                .substringBefore("]")
-                .split(",")
-                .filter(String::isNotEmpty)
-
-            val modifiedFilesFound = if (modifiedFilesPath.isEmpty()) {
-                optionModifiedFiles.isEmpty()
-            } else {
-                modifiedFilesPath.subtract(optionModifiedFiles).isEmpty()
-            }
-
-            val optionDeletedFiles = it
-                .substringAfter("deletedFiles=[")
-                .substringBefore("]")
-                .split(",")
-                .filter(String::isNotEmpty)
-
-            val deletedFilesFound = if (deletedFilesPath.isEmpty()) {
-                optionDeletedFiles.isEmpty()
-            } else {
-                deletedFilesPath.subtract(optionDeletedFiles).isEmpty()
-            }
-
-            modifiedFilesFound && deletedFilesFound
-        } != null
-
-    assert(hasMatch) {
-        printBuildOutput()
-
-        """
-        |Expected incremental compilation options with:
-        |- modified files: ${modifiedFilesPath.joinToString()}
-        |- deleted files: ${deletedFilesPath.joinToString()}
-        |        
-        |but none of following compilation options match:
-        |${incrementalCompilationOptions.joinToString(separator = "\n")}
-        """.trimMargin()
     }
 }
 

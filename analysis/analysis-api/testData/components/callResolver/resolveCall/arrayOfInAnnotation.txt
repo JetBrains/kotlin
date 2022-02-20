@@ -10,20 +10,24 @@ KtSuccessCallInfo:
         symbol = kotlin/arrayOf(vararg elements: T): kotlin.Array<T>
         valueParameters = [
           KtVariableLikeSignature:
+            name = elements
             receiverType = null
             returnType = kotlin.Int
             symbol = vararg elements: T
         ]
     argumentMapping = {
       1 -> (KtVariableLikeSignature:
+        name = elements
         receiverType = null
         returnType = kotlin.Int
         symbol = vararg elements: T),
       2 -> (KtVariableLikeSignature:
+        name = elements
         receiverType = null
         returnType = kotlin.Int
         symbol = vararg elements: T),
       3 -> (KtVariableLikeSignature:
+        name = elements
         receiverType = null
         returnType = kotlin.Int
         symbol = vararg elements: T)

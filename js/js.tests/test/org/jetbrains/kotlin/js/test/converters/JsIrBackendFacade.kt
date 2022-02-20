@@ -128,6 +128,7 @@ class JsIrBackendFacade(
             MainModule.Klib(inputArtifact.outputFile.absolutePath),
             configuration,
             dependencyModules,
+            emptyMap(),
             irModuleFragment.irBuiltins,
             symbolTable,
             deserializer,

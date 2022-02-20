@@ -7,6 +7,9 @@ package org.jetbrains.kotlin.gradle.native
 
 import org.jetbrains.kotlin.gradle.BaseGradleIT
 import org.jetbrains.kotlin.gradle.GradleVersionRequired
+import org.jetbrains.kotlin.konan.target.HostManager
+import org.jetbrains.kotlin.konan.target.KonanTarget
+import org.junit.Assume.assumeFalse
 import org.junit.Test
 import java.io.File
 import kotlin.test.assertEquals
@@ -23,39 +26,48 @@ class NativeExternalDependenciesIT : BaseGradleIT() {
     }
 
     @Test
-    fun `ktor 1_5_4 and coroutines 1_4_3-native-mt`() = buildProjectWithDependencies(
-        "io.ktor:ktor-io:1.5.4",
-        "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.4.3-native-mt"
-    ) { externalDependenciesText ->
-        assertNotNull(externalDependenciesText)
+    fun `ktor 1_5_4 and coroutines 1_4_3-native-mt`() {
+        // These versions of Ktor and coroutines don't support macos-arm64
+        assumeFalse(hostIsMacArm64())
 
-        assertEquals(
-            """
-            |0 native-external-dependencies
-            |1 io.ktor:ktor-io,io.ktor:ktor-io-$MASKED_TARGET_NAME[1.5.4] #0[1.5.4]
-            |${'\t'}/some/path/ktor-io.klib
-            |${'\t'}/some/path/ktor-io-cinterop-bits.klib
-            |${'\t'}/some/path/ktor-io-cinterop-sockets.klib
-            |2 org.jetbrains.kotlinx:atomicfu,org.jetbrains.kotlinx:atomicfu-$MASKED_TARGET_NAME[0.15.1] #3[0.15.1] #1[0.15.1]
-            |${'\t'}/some/path/atomicfu.klib
-            |${'\t'}/some/path/atomicfu-cinterop-interop.klib
-            |3 org.jetbrains.kotlinx:kotlinx-coroutines-core,org.jetbrains.kotlinx:kotlinx-coroutines-core-$MASKED_TARGET_NAME[1.4.3-native-mt] #0[1.4.3-native-mt] #1[1.4.3-native-mt]
-            |${'\t'}/some/path/kotlinx-coroutines-core.klib
-            |
-            """.trimMargin(),
-            externalDependenciesText
-        )
+        buildProjectWithDependencies(
+            "io.ktor:ktor-io:1.5.4",
+            "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.4.3-native-mt"
+        ) { externalDependenciesText ->
+            assertNotNull(externalDependenciesText)
+
+            assertEquals(
+                """
+                |0 native-external-dependencies
+                |1 io.ktor:ktor-io,io.ktor:ktor-io-$MASKED_TARGET_NAME[1.5.4] #0[1.5.4]
+                |${'\t'}/some/path/ktor-io.klib
+                |${'\t'}/some/path/ktor-io-cinterop-bits.klib
+                |${'\t'}/some/path/ktor-io-cinterop-sockets.klib
+                |2 org.jetbrains.kotlinx:atomicfu,org.jetbrains.kotlinx:atomicfu-$MASKED_TARGET_NAME[0.15.1] #3[0.15.1] #1[0.15.1]
+                |${'\t'}/some/path/atomicfu.klib
+                |${'\t'}/some/path/atomicfu-cinterop-interop.klib
+                |3 org.jetbrains.kotlinx:kotlinx-coroutines-core,org.jetbrains.kotlinx:kotlinx-coroutines-core-$MASKED_TARGET_NAME[1.4.3-native-mt] #0[1.4.3-native-mt] #1[1.4.3-native-mt]
+                |${'\t'}/some/path/kotlinx-coroutines-core.klib
+                |
+                """.trimMargin(),
+                externalDependenciesText
+            )
+        }
     }
 
     @Test
-    fun `ktor 1_5_4 and coroutines 1_5_0-RC-native-mt`() = buildProjectWithDependencies(
-        "io.ktor:ktor-io:1.5.4",
-        "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.5.0-RC-native-mt"
-    ) { externalDependenciesText ->
-        assertNotNull(externalDependenciesText)
+    fun `ktor 1_5_4 and coroutines 1_5_0-RC-native-mt`() {
+        // These versions of Ktor and coroutines don't support macos-arm64
+        assumeFalse(hostIsMacArm64())
 
-        assertEquals(
-            """
+        buildProjectWithDependencies(
+            "io.ktor:ktor-io:1.5.4",
+            "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.5.0-RC-native-mt"
+        ) { externalDependenciesText ->
+            assertNotNull(externalDependenciesText)
+
+            assertEquals(
+                """
             |0 native-external-dependencies
             |1 io.ktor:ktor-io,io.ktor:ktor-io-$MASKED_TARGET_NAME[1.5.4] #0[1.5.4]
             |${'\t'}/some/path/ktor-io.klib
@@ -65,6 +77,32 @@ class NativeExternalDependenciesIT : BaseGradleIT() {
             |${'\t'}/some/path/atomicfu.klib
             |${'\t'}/some/path/atomicfu-cinterop-interop.klib
             |3 org.jetbrains.kotlinx:kotlinx-coroutines-core,org.jetbrains.kotlinx:kotlinx-coroutines-core-$MASKED_TARGET_NAME[1.5.0-RC-native-mt] #0[1.5.0-RC-native-mt] #1[1.4.3-native-mt]
+            |${'\t'}/some/path/kotlinx-coroutines-core.klib
+            |
+            """.trimMargin(),
+                externalDependenciesText
+            )
+        }
+    }
+
+    @Test
+    fun `ktor 1_6_5 and coroutines 1_5_2-native-mt`() = buildProjectWithDependencies(
+        "io.ktor:ktor-io:1.6.5",
+        "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.5.2-native-mt"
+    ) { externalDependenciesText ->
+        assertNotNull(externalDependenciesText)
+
+        assertEquals(
+            """
+            |0 native-external-dependencies
+            |1 io.ktor:ktor-io,io.ktor:ktor-io-$MASKED_TARGET_NAME[1.6.5] #0[1.6.5]
+            |${'\t'}/some/path/ktor-io.klib
+            |${'\t'}/some/path/ktor-io-cinterop-bits.klib
+            |${'\t'}/some/path/ktor-io-cinterop-sockets.klib
+            |2 org.jetbrains.kotlinx:atomicfu,org.jetbrains.kotlinx:atomicfu-$MASKED_TARGET_NAME[0.16.3] #3[0.16.3] #1[0.16.3]
+            |${'\t'}/some/path/atomicfu.klib
+            |${'\t'}/some/path/atomicfu-cinterop-interop.klib
+            |3 org.jetbrains.kotlinx:kotlinx-coroutines-core,org.jetbrains.kotlinx:kotlinx-coroutines-core-$MASKED_TARGET_NAME[1.5.2-native-mt] #0[1.5.2-native-mt] #1[1.5.2-native-mt]
             |${'\t'}/some/path/kotlinx-coroutines-core.klib
             |
             """.trimMargin(),
@@ -121,7 +159,9 @@ class NativeExternalDependenciesIT : BaseGradleIT() {
     }
 
     internal companion object {
-        const val MASKED_TARGET_NAME = "testTargetX64"
+        val MASKED_TARGET_NAME = "testTarget" + HostManager.host.architecture.name
+
+        fun hostIsMacArm64() = HostManager.host == KonanTarget.MACOS_ARM64
 
         fun findParameterInOutput(name: String, output: String): String? =
             output.lineSequence().mapNotNull { line ->

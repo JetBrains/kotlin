@@ -14,8 +14,8 @@ class Demo0 {
     private var state: Boolean = true
 }
 ---------------------
-object { fun foo() { println(state) // Ok } }   <v0>: <no name provided>   NEW: r(object { fun foo() { println(state) // Ok } }) -> <v0>
-true                                            <v1>: Boolean              NEW: r(true) -> <v1>
+object { fun foo() { println(state) // Ok } }   <v0>: `<no name provided>`   NEW: r(object { fun foo() { println(state) // Ok } }) -> <v0>
+true                                            <v1>: Boolean                NEW: r(true) -> <v1>
 =====================
 == foo ==
 fun foo() {
@@ -41,8 +41,8 @@ class Demo1 {
     private var state: Boolean = true
 }
 ---------------------
-object { fun foo() { if (state) state = true println(state) // must be initialized } }   <v0>: <no name provided>   NEW: r(object { fun foo() { if (state) state = true println(state) // must be initialized } }) -> <v0>
-true                                                                                     <v1>: Boolean              NEW: r(true) -> <v1>
+object { fun foo() { if (state) state = true println(state) // must be initialized } }   <v0>: `<no name provided>`   NEW: r(object { fun foo() { if (state) state = true println(state) // must be initialized } }) -> <v0>
+true                                                                                     <v1>: Boolean                NEW: r(true) -> <v1>
 =====================
 == foo ==
 fun foo() {
@@ -112,8 +112,8 @@ class Demo2 {
     private var state: Boolean = true
 }
 ---------------------
-object { fun foo() { if (state) state = true else state = false println(state) // OK } }   <v0>: <no name provided>   NEW: r(object { fun foo() { if (state) state = true else state = false println(state) // OK } }) -> <v0>
-true                                                                                       <v1>: Boolean              NEW: r(true) -> <v1>
+object { fun foo() { if (state) state = true else state = false println(state) // OK } }   <v0>: `<no name provided>`   NEW: r(object { fun foo() { if (state) state = true else state = false println(state) // OK } }) -> <v0>
+true                                                                                       <v1>: Boolean                NEW: r(true) -> <v1>
 =====================
 == foo ==
 fun foo() {
@@ -239,8 +239,8 @@ class Demo5 {
     }
 }
 ---------------------
-true                                                                    <v0>: Boolean              NEW: r(true) -> <v0>
-object { fun foo() { if (state) state = true println(state) // OK } }   <v1>: <no name provided>   NEW: r(object { fun foo() { if (state) state = true println(state) // OK } }) -> <v1>
+true                                                                    <v0>: Boolean                NEW: r(true) -> <v0>
+object { fun foo() { if (state) state = true println(state) // OK } }   <v1>: `<no name provided>`   NEW: r(object { fun foo() { if (state) state = true println(state) // OK } }) -> <v1>
 =====================
 == foo ==
 fun foo() {

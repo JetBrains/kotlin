@@ -28,14 +28,15 @@ pill {
 
 kotlin.sourceSets.all {
     languageSettings.optIn("kotlin.RequiresOptIn")
-    languageSettings.optIn("org.jetbrains.kotlin.gradle.plugin.mpp.external.ExternalVariantApi")
-    languageSettings.optIn("org.jetbrains.kotlin.gradle.plugin.mpp.external.AdvancedExternalVariantApi")
+    languageSettings.optIn("org.jetbrains.kotlin.gradle.plugin.mpp.pm20.AdvancedKotlinGradlePluginApi")
+    languageSettings.optIn("org.jetbrains.kotlin.gradle.kpm.idea.InternalKotlinGradlePluginApi")
 }
 
 dependencies {
     compileOnly(gradleKotlinDsl())
     api(project(":kotlin-gradle-plugin-api"))
     api(project(":kotlin-gradle-plugin-model"))
+    implementation(project(":kotlin-gradle-plugin-idea"))
     compileOnly(project(":compiler"))
     compileOnly(project(":compiler:incremental-compilation-impl"))
     compileOnly(project(":daemon-common"))

@@ -20,7 +20,6 @@ import org.jetbrains.kotlin.analysis.api.tokens.ValidityToken
 import org.jetbrains.kotlin.analysis.api.types.KtType
 import org.jetbrains.kotlin.analysis.api.types.KtTypeNullability
 import org.jetbrains.kotlin.analysis.api.withValidityAssertion
-import org.jetbrains.kotlin.analysis.low.level.api.fir.api.LowLevelFirApiFacadeForResolveOnAir.getTowerContextProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFir
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.throwUnexpectedFirElementError
 import org.jetbrains.kotlin.fir.FirRenderer
@@ -28,7 +27,6 @@ import org.jetbrains.kotlin.fir.analysis.checkers.ConeTypeCompatibilityChecker
 import org.jetbrains.kotlin.fir.analysis.checkers.ConeTypeCompatibilityChecker.isCompatible
 import org.jetbrains.kotlin.fir.analysis.checkers.fullyExpandedClass
 import org.jetbrains.kotlin.fir.analysis.checkers.typeParameterSymbols
-import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.utils.superConeTypes
 import org.jetbrains.kotlin.fir.expressions.FirCallableReferenceAccess
@@ -124,7 +122,7 @@ internal class KtFirTypeProvider(
     }
 
     override fun getImplicitReceiverTypesAtPosition(position: KtElement): List<KtType> {
-        return analysisSession.firResolveState.getTowerContextProvider()
+        return analysisSession.firResolveState.getTowerContextProvider(position.containingKtFile)
             .getClosestAvailableParentContext(position)?.implicitReceiverStack?.map { it.type.asKtType() } ?: emptyList()
     }
 
@@ -137,9 +135,11 @@ internal class KtFirTypeProvider(
         return when (this) {
             // We also need to collect those on `upperBound` due to nullability.
             is ConeFlexibleType -> lowerBound.getDirectSuperTypes(shouldApproximate) + upperBound.getDirectSuperTypes(shouldApproximate)
-            is ConeDefinitelyNotNullType -> original.getDirectSuperTypes(shouldApproximate).map { ConeDefinitelyNotNullType(it) }
+            is ConeDefinitelyNotNullType -> original.getDirectSuperTypes(shouldApproximate).map {
+                ConeDefinitelyNotNullType.create(it, analysisSession.rootModuleSession.typeContext) ?: it
+            }
             is ConeIntersectionType -> intersectedTypes.asSequence().flatMap { it.getDirectSuperTypes(shouldApproximate) }
-            is ConeClassErrorType -> emptySequence()
+            is ConeErrorType -> emptySequence()
             is ConeLookupTagBasedType -> getSubstitutedSuperTypes(shouldApproximate)
             else -> emptySequence()
         }.distinct()

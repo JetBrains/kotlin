@@ -53,6 +53,7 @@ import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.*
 import org.jetbrains.kotlin.fir.types.impl.*
 import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
+import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.lexer.KtTokens.*
 import org.jetbrains.kotlin.name.*
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
@@ -1937,11 +1938,7 @@ class DeclarationsConverter(
                     source = typeRefSource
                     isMarkedNullable = false
                 }
-                INTERSECTION_TYPE -> firType =
-                    buildErrorTypeRef {
-                        source = typeRefSource
-                        diagnostic = ConeSimpleDiagnostic("Intersection types are not supported yet", DiagnosticKind.Syntax)
-                    }
+                INTERSECTION_TYPE -> firType = convertIntersectionType(typeRefSource, it, false)
                 CONTEXT_RECEIVER_LIST, TokenType.ERROR_ELEMENT -> firType =
                     buildErrorTypeRef {
                         source = typeRefSource
@@ -1962,6 +1959,29 @@ class DeclarationsConverter(
     }
 
     private fun Collection<TypeModifier>.hasSuspend() = any { it.hasSuspend() }
+
+    private fun convertIntersectionType(typeRefSource: KtSourceElement, intersectionType: LighterASTNode, isNullable: Boolean): FirTypeRef {
+        val children = arrayListOf<FirTypeRef>()
+        intersectionType.forEachChildren {
+            if (it.tokenType != KtTokens.AND) { //skip in forEachChildren?
+                children.add(convertType(it))
+            }
+        }
+
+        if (children.size != 2) {
+            return buildErrorTypeRef {
+                source = typeRefSource
+                diagnostic = ConeSimpleDiagnostic("Wrong code", DiagnosticKind.Syntax)
+            }
+        }
+
+        return buildIntersectionTypeRef {
+            source = typeRefSource
+            isMarkedNullable = isNullable
+            leftType = children[0]
+            rightType = children[1]
+        }
+    }
 
     /**
      * @see org.jetbrains.kotlin.parsing.KotlinParsing.parseTypeRefContents
@@ -1997,11 +2017,7 @@ class DeclarationsConverter(
                     source = typeRefSource
                     isMarkedNullable = true
                 }
-                INTERSECTION_TYPE -> firType =
-                    buildErrorTypeRef {
-                        source = typeRefSource
-                        diagnostic = ConeSimpleDiagnostic("Intersection types are not supported yet", DiagnosticKind.Syntax)
-                    }
+                INTERSECTION_TYPE -> firType = convertIntersectionType(typeRefSource, it, isNullable)
             }
         }
 

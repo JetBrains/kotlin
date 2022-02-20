@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.backend.common.phaser.*
 import org.jetbrains.kotlin.backend.common.serialization.DescriptorByIdSignatureFinderImpl
 import org.jetbrains.kotlin.backend.jvm.intrinsics.IrIntrinsicMethods
 import org.jetbrains.kotlin.backend.jvm.ir.getKtFile
+import org.jetbrains.kotlin.backend.jvm.serialization.DisabledIdSignatureDescriptor
 import org.jetbrains.kotlin.backend.jvm.serialization.JvmIdSignatureDescriptor
 import org.jetbrains.kotlin.codegen.CodegenFactory
 import org.jetbrains.kotlin.codegen.state.GenerationState
@@ -73,14 +74,28 @@ open class JvmIrCodegenFactory(
     ) : CodegenFactory.CodegenInput
 
     override fun convertToIr(input: CodegenFactory.IrConversionInput): JvmIrBackendInput {
+        val enableIdSignatures =
+            input.configuration.getBoolean(JVMConfigurationKeys.LINK_VIA_SIGNATURES) ||
+                    input.configuration[JVMConfigurationKeys.SERIALIZE_IR, JvmSerializeIrMode.NONE] != JvmSerializeIrMode.NONE ||
+                    input.configuration[JVMConfigurationKeys.KLIB_PATHS, emptyList()].isNotEmpty()
         val (mangler, symbolTable) =
             if (externalSymbolTable != null) externalMangler!! to externalSymbolTable
             else {
                 val mangler = JvmDescriptorMangler(MainFunctionDetector(input.bindingContext, input.languageVersionSettings))
-                val symbolTable = SymbolTable(JvmIdSignatureDescriptor(mangler), IrFactoryImpl)
+                val signaturer =
+                    if (enableIdSignatures) JvmIdSignatureDescriptor(mangler)
+                    else DisabledIdSignatureDescriptor
+                val symbolTable = SymbolTable(signaturer, IrFactoryImpl)
                 mangler to symbolTable
             }
-        val psi2ir = Psi2IrTranslator(input.languageVersionSettings, Psi2IrConfiguration(input.ignoreErrors))
+        val psi2ir = Psi2IrTranslator(
+            input.languageVersionSettings,
+            Psi2IrConfiguration(
+                input.ignoreErrors,
+                allowUnboundSymbols = false,
+                input.skipBodies,
+            )
+        )
         val messageLogger = input.configuration[IrMessageLogger.IR_MESSAGE_LOGGER] ?: IrMessageLogger.None
         val psi2irContext = psi2ir.createGeneratorContext(
             input.module,
@@ -114,7 +129,8 @@ open class JvmIrCodegenFactory(
             symbolTable,
             frontEndContext,
             stubGenerator,
-            mangler
+            mangler,
+            enableIdSignatures,
         )
 
         val pluginContext by lazy {
@@ -187,7 +203,10 @@ open class JvmIrCodegenFactory(
         // We need to compile all files we reference in Klibs
         irModuleFragment.files.addAll(dependencies.flatMap { it.files })
 
-        if (!input.configuration.getBoolean(JVMConfigurationKeys.DO_NOT_CLEAR_BINDING_CONTEXT)) {
+        if (!input.configuration.getBoolean(JVMConfigurationKeys.DO_NOT_CLEAR_BINDING_CONTEXT) && !input.configuration.getBoolean(
+                JVMConfigurationKeys.USE_KAPT_WITH_JVM_IR
+            )
+        ) {
             val originalBindingContext = input.bindingContext as? CleanableBindingContext
                 ?: error("BindingContext should be cleanable in JVM IR to avoid leaking memory: ${input.bindingContext}")
             originalBindingContext.clear()

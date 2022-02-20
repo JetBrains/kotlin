@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.gradle.*
 import org.jetbrains.kotlin.gradle.embedProject
 import org.jetbrains.kotlin.gradle.native.GeneralNativeIT.Companion.containsSequentially
 import org.jetbrains.kotlin.gradle.native.GeneralNativeIT.Companion.extractNativeCommandLineArguments
+import org.jetbrains.kotlin.gradle.native.GeneralNativeIT.Companion.withNativeCommandLineArguments
 import org.jetbrains.kotlin.gradle.transformProjectWithPluginsDsl
 import org.jetbrains.kotlin.gradle.util.modify
 import org.jetbrains.kotlin.gradle.utils.NativeCompilerDownloader
@@ -18,9 +19,9 @@ import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.konan.target.presetName
 import org.jetbrains.kotlin.konan.util.DependencyDirectories
-import org.junit.Assume
-import org.junit.BeforeClass
-import org.junit.Test
+import org.junit.*
+import org.junit.rules.TemporaryFolder
+import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
 class NativePlatformLibsIT : BaseGradleIT() {
@@ -32,6 +33,16 @@ class NativePlatformLibsIT : BaseGradleIT() {
             // This test class causes build timeouts on Windows CI machines.
             // We temporary disable it for windows until a proper fix is found.
             Assume.assumeFalse(HostManager.hostIsMingw)
+        }
+
+        @field:ClassRule
+        @JvmField
+        val tempDir = TemporaryFolder()
+
+        @JvmStatic
+        @AfterClass
+        fun deleteTempDir() {
+            tempDir.delete()
         }
     }
 
@@ -81,8 +92,11 @@ class NativePlatformLibsIT : BaseGradleIT() {
         }
     }
 
-    private fun Project.buildWithLightDist(vararg tasks: String, check: CompiledProject.() -> Unit) =
-        build(*tasks, "-Pkotlin.native.distribution.type=light", check = check)
+    private fun Project.buildWithLightDist(
+        vararg tasks: String,
+        options: BuildOptions = defaultBuildOptions(),
+        check: CompiledProject.() -> Unit
+    ) = build(*tasks, "-Pkotlin.native.distribution.type=light", options = options, check = check)
 
     @Test
     fun testNoGenerationForOldCompiler() = with(platformLibrariesProject("linuxX64")) {
@@ -141,6 +155,39 @@ class NativePlatformLibsIT : BaseGradleIT() {
             buildWithLightDist("assemble") {
                 assertSuccessful()
                 assertNotContains("Generate platform libraries for ")
+            }
+        }
+    }
+
+    @Test
+    fun testLinkerArgsViaGradleProperties() {
+        with(Project("native-platform-libraries")) {
+            setupWorkingDir()
+            gradleProperties().apply {
+                configureJvmMemory()
+                appendText("\nkotlin.native.linkArgs=-Xfoo=bar -Xbaz=qux")
+            }
+            gradleBuildScript().modify(::transformBuildScriptWithPluginsDsl)
+            gradleBuildScript().appendText("""
+                kotlin.linuxX64() {
+                    binaries.sharedLib {
+                        freeCompilerArgs += "-Xmen=pool"
+                    }
+                }
+            """.trimIndent())
+            build("linkDebugSharedLinuxX64") {
+                assertSuccessful()
+                assertTasksExecuted(
+                    ":compileKotlinLinuxX64",
+                    ":linkDebugSharedLinuxX64"
+                )
+                withNativeCommandLineArguments(":linkDebugSharedLinuxX64") {
+                    assertTrue(it.contains("-Xfoo=bar"))
+                    assertTrue(it.contains("-Xbaz=qux"))
+                    assertTrue(it.contains("-Xmen=pool"))
+                }
+                assertFileExists("/build/bin/linuxX64/debugShared/libnative_platform_libraries.so")
+                assertFileExists("/build/bin/linuxX64/debugShared/libnative_platform_libraries_api.h")
             }
         }
     }
@@ -277,6 +324,52 @@ class NativePlatformLibsIT : BaseGradleIT() {
             assertSuccessful()
             assertContains("Unpack Kotlin/Native compiler to ")
             assertContains("Generate platform libraries for linux_x64")
+        }
+    }
+
+    @Test
+    fun `check offline mode is propagated to the platform libs generator`() = with(platformLibrariesProject("linuxX64")) {
+        deleteInstalledCompilers()
+
+        // Install the compiler at the first time. Don't build to reduce execution time.
+        buildWithLightDist("tasks") {
+            assertSuccessful()
+            assertContains("Generate platform libraries for linux_x64")
+        }
+
+        deleteInstalledCompilers()
+
+        // Check that --offline works when all the dependencies are already downloaded:
+        val buildOptionsOffline = defaultBuildOptions()
+            .let { it.copy(freeCommandLineArgs = it.freeCommandLineArgs + "--offline") }
+
+        buildWithLightDist("tasks", options = buildOptionsOffline) {
+            assertSuccessful()
+            assertContains("Generate platform libraries for linux_x64")
+        }
+
+        // Check that --offline fails when there are no downloaded dependencies:
+        run {
+            val customKonanDataDir = tempDir.newFolder()
+            val buildOptionsOfflineWithCustomKonanDataDir = buildOptionsOffline.withCustomKonanDataDir(customKonanDataDir)
+
+            buildWithLightDist("tasks", options = buildOptionsOfflineWithCustomKonanDataDir) {
+                assertFailed()
+                assertContains("Generate platform libraries for linux_x64")
+            }
+        }
+
+        // The build above have extracted the cached compiler to the custom KONAN_DATA_DIR; remove it:
+        run {
+            val customKonanDataDir = tempDir.newFolder()
+            val buildOptionsOfflineWithCustomKonanDataDir = buildOptionsOffline.withCustomKonanDataDir(customKonanDataDir)
+            // Check that the compiler is not extracted if it is not cached:
+            buildWithLightDist("tasks", "-Pkotlin.native.version=1.6.20-M1-9999", options = buildOptionsOfflineWithCustomKonanDataDir) {
+                assertFailed()
+                assertNotContains("Generate platform libraries for linux_x64")
+            }
+
+            assertTrue(customKonanDataDir.listFiles().isNullOrEmpty())
         }
     }
 }

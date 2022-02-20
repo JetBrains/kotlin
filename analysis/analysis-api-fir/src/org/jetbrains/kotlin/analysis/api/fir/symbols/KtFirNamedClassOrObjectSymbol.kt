@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtSymbolPointer
 import org.jetbrains.kotlin.analysis.api.tokens.ValidityToken
 import org.jetbrains.kotlin.analysis.api.types.KtType
 import org.jetbrains.kotlin.analysis.api.withValidityAssertion
-import org.jetbrains.kotlin.analysis.low.level.api.fir.api.FirModuleResolveState
+import org.jetbrains.kotlin.analysis.low.level.api.fir.api.LLFirModuleResolveState
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
@@ -33,7 +33,7 @@ import org.jetbrains.kotlin.name.Name
 
 internal class KtFirNamedClassOrObjectSymbol(
     override val firSymbol: FirRegularClassSymbol,
-    override val resolveState: FirModuleResolveState,
+    override val resolveState: LLFirModuleResolveState,
     override val token: ValidityToken,
     private val builder: KtSymbolByFirBuilder
 ) : KtNamedClassOrObjectSymbol(), KtFirSymbol<FirRegularClassSymbol> {

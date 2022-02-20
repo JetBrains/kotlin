@@ -50,11 +50,11 @@ object FirKClassWithIncorrectTypeArgumentChecker : FirCallableDeclarationChecker
             argumentType.typeParameterFromError?.let { typeParameterSymbol ->
                 return typeParameterSymbol.toConeType().isNullableType()
             }
-            return argumentType is ConeKotlinErrorType || argumentType.isNullableType()
+            return argumentType is ConeErrorType || argumentType.isNullableType()
         }
     }
 
     private val ConeKotlinType.typeParameterFromError: FirTypeParameterSymbol?
-        get() = ((this as? ConeKotlinErrorType)?.diagnostic as? ConeTypeParameterInQualifiedAccess)?.symbol
+        get() = ((this as? ConeErrorType)?.diagnostic as? ConeTypeParameterInQualifiedAccess)?.symbol
 
 }

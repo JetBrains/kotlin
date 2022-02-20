@@ -23,7 +23,6 @@ import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.types.AbstractTypeChecker
 import org.jetbrains.kotlin.types.TypeApproximatorConfiguration
-import org.jetbrains.kotlin.types.Variance
 import kotlin.reflect.KClass
 
 /**
@@ -57,11 +56,12 @@ fun checkUpperBoundViolated(
     val typeRefAndSourcesForArguments = extractArgumentsTypeRefAndSource(typeRef) ?: return
     val typeArgumentsWithSourceInfo = type.typeArguments.withIndex().map { (index, projection) ->
         val (argTypeRef, source) =
-            if (!isAbbreviatedType)
+            if (!isAbbreviatedType) {
                 typeRefAndSourcesForArguments.getOrNull(index) ?: return
-            else
+            } else {
                 // For abbreviated arguments we use the whole typeRef as a place to report
                 FirTypeRefSource(null, typeRef.source)
+            }
 
         TypeArgumentWithSourceInfo(projection, argTypeRef, source)
     }
@@ -86,8 +86,7 @@ private class FE10LikeConeSubstitutor(
         }
 
         val result =
-            projection.type!!.updateNullabilityIfNeeded(type)
-                ?.withCombinedAttributesFrom(type, useSiteSession.typeContext)
+            projection.type!!.updateNullabilityIfNeeded(type)?.withCombinedAttributesFrom(type)
                 ?: return null
 
         if (type.isUnsafeVarianceType(useSiteSession)) {
@@ -103,7 +102,7 @@ private class FE10LikeConeSubstitutor(
 
     private fun ConeKotlinType.withProjection(projection: ConeTypeProjection): ConeKotlinType {
         if (projection.kind == ProjectionKind.INVARIANT) return this
-        return withAttributes(ConeAttributes.create(listOf(OriginalProjectionTypeAttribute(projection))), useSiteSession.typeContext)
+        return withAttributes(ConeAttributes.create(listOf(OriginalProjectionTypeAttribute(projection))))
     }
 
     override fun substituteArgument(projection: ConeTypeProjection, lookupTag: ConeClassLikeLookupTag, index: Int): ConeTypeProjection? {

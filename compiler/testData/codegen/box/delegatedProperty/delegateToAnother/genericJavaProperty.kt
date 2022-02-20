@@ -1,6 +1,4 @@
 // TARGET_BACKEND: JVM
-// IGNORE_BACKEND_FIR: JVM_IR
-// FIR status: REPEATED_ANNOTATION at val y9; fir2ir produces an IrFunctionReference of type KProperty0 instead of an IrPropertyReference
 // WITH_REFLECT
 // WITH_STDLIB
 // FILE: J.java
@@ -34,6 +32,6 @@ fun box(): String {
     val y6 by @Anno() (((j2)::value))
     val y7 by (@Anno() ((j2)::value))
     val y8 by ((@Anno() (j2)::value))
-    val y9 by @Anno() ((@Anno() (j2)::value))
+    val y9 by @Anno() (j2)::value
     return x + y
 }

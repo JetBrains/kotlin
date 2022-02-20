@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.impl.AbstractClassDescriptor
 import org.jetbrains.kotlin.descriptors.impl.EnumEntrySyntheticClassDescriptor
+import org.jetbrains.kotlin.descriptors.impl.FunctionDescriptorImpl
 import org.jetbrains.kotlin.descriptors.impl.ReceiverParameterDescriptorImpl
 import org.jetbrains.kotlin.incremental.components.LookupLocation
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
@@ -177,7 +178,7 @@ class DeserializedClassDescriptor(
     override fun getInlineClassRepresentation(): InlineClassRepresentation<SimpleType>? = inlineClassRepresentation()
 
     private fun computeInlineClassRepresentation(): InlineClassRepresentation<SimpleType>? {
-        if (!isInlineClass()) return null
+        if (!isInlineOrValueClass()) return null
 
         val propertyName = when {
             classProto.hasInlineClassUnderlyingPropertyName() ->
@@ -327,7 +328,9 @@ class DeserializedClassDescriptor(
                         fromSuper: CallableMemberDescriptor,
                         fromCurrent: CallableMemberDescriptor
                     ) {
-                        // TODO report conflicts
+                        if (fromCurrent is FunctionDescriptorImpl) {
+                            fromCurrent.putInUserDataMap(DeserializedDeclarationsFromSupertypeConflictDataKey, fromSuper)
+                        }
                     }
                 })
         }

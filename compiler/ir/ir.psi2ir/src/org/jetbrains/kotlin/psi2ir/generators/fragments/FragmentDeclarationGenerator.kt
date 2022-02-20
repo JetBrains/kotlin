@@ -7,15 +7,18 @@ package org.jetbrains.kotlin.psi2ir.generators.fragments
 
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
+import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.expressions.impl.IrDelegatingConstructorCallImpl
+import org.jetbrains.kotlin.ir.expressions.impl.IrInstanceInitializerCallImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrConstructorPublicSymbolImpl
-import org.jetbrains.kotlin.ir.util.createIrClassFromDescriptor
-import org.jetbrains.kotlin.ir.util.declareSimpleFunctionWithOverrides
-import org.jetbrains.kotlin.ir.util.defaultType
-import org.jetbrains.kotlin.ir.util.withScope
+import org.jetbrains.kotlin.ir.types.classOrNull
+import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtBlockCodeFragment
+import org.jetbrains.kotlin.psi.psiUtil.pureEndOffset
+import org.jetbrains.kotlin.psi.psiUtil.pureStartOffset
 import org.jetbrains.kotlin.psi2ir.generators.Generator
 import org.jetbrains.kotlin.psi2ir.generators.GeneratorContext
 import org.jetbrains.kotlin.psi2ir.generators.createBodyGenerator
@@ -73,8 +76,20 @@ open class FragmentDeclarationGenerator(
             isExpect = false
         )
         constructor.parent = irClass
-        constructor.body = context.irFactory.createBlockBody(UNDEFINED_OFFSET, UNDEFINED_OFFSET)
+        constructor.body = context.irFactory.createBlockBody(UNDEFINED_OFFSET, UNDEFINED_OFFSET).apply {
+            statements +=
+                delegatingCallToAnyConstructor()
+        }
         irClass.addMember(constructor)
+    }
+
+    private fun delegatingCallToAnyConstructor(): IrStatement {
+        val anyConstructor = context.irBuiltIns.anyClass.descriptor.constructors.single()
+        return IrDelegatingConstructorCallImpl.fromSymbolDescriptor(
+            UNDEFINED_OFFSET, UNDEFINED_OFFSET,
+            context.irBuiltIns.unitType,
+            context.symbolTable.referenceConstructor(anyConstructor)
+        )
     }
 
     private fun generateFunctionForFragment(ktFile: KtBlockCodeFragment): IrSimpleFunction {

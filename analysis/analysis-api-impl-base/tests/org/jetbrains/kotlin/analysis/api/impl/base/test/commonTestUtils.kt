@@ -8,14 +8,14 @@ package org.jetbrains.kotlin.analysis.api.impl.base.test
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.util.Computable
 import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiReference
+import com.intellij.psi.impl.source.resolve.reference.impl.PsiMultiReference
 import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
 import org.jetbrains.kotlin.analysis.api.analyse
-import org.jetbrains.kotlin.analysis.api.symbols.KtSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.diagnostics.PsiDiagnosticUtils.offsetToLineAndColumn
-import org.jetbrains.kotlin.psi.KtDeclaration
-import org.jetbrains.kotlin.psi.KtDeclarationWithBody
-import org.jetbrains.kotlin.psi.KtElement
-import org.jetbrains.kotlin.psi.KtNamedDeclaration
+import org.jetbrains.kotlin.idea.references.KtReference
+import org.jetbrains.kotlin.psi.*
 
 inline fun <T> runReadAction(crossinline runnable: () -> T): T {
     return ApplicationManager.getApplication().runReadAction(Computable { runnable() })
@@ -50,4 +50,13 @@ fun String.indented(indent: Int): String {
 
 fun KtDeclaration.getNameWithPositionString(): String {
     return (presentation?.presentableText ?: name ?: this::class.simpleName) + "@" + position()
+}
+
+fun findReferencesAtCaret(mainKtFile: KtFile, caretPosition: Int): List<KtReference> =
+    mainKtFile.findReferenceAt(caretPosition)?.unwrapMultiReferences().orEmpty().filterIsInstance<KtReference>()
+
+fun PsiReference.unwrapMultiReferences(): List<PsiReference> = when (this) {
+    is KtReference -> listOf(this)
+    is PsiMultiReference -> references.flatMap { it.unwrapMultiReferences() }
+    else -> error("Unexpected reference $this")
 }

@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.fir.moduleData
 import org.jetbrains.kotlin.platform.SimplePlatform
 import org.jetbrains.kotlin.platform.jvm.JvmPlatform
 
-internal abstract class AbstractFirIdeDiagnosticsCollector(
+internal abstract class AbstractLLFirDiagnosticsCollector(
     session: FirSession,
     useExtendedCheckers: Boolean,
 ) : AbstractDiagnosticCollector(

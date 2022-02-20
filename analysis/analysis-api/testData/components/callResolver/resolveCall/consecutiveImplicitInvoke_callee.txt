@@ -4,6 +4,7 @@ KtSuccessCallInfo:
       dispatchReceiver = null
       extensionReceiver = null
       signature = KtVariableLikeSignature:
+        name = i
         receiverType = null
         returnType = kotlin.Int
         symbol = i: kotlin.Int

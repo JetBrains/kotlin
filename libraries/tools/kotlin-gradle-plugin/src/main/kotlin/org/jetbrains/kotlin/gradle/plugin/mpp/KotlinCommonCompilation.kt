@@ -19,11 +19,12 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompileCommon
 interface KotlinMetadataCompilation<T : KotlinCommonOptions> : KotlinCompilation<T>
 
 class KotlinCommonCompilation(
-    target: KotlinTarget,
-    name: String
-) : AbstractKotlinCompilation<KotlinMultiplatformCommonOptions>(target, name), KotlinMetadataCompilation<KotlinMultiplatformCommonOptions> {
+    compilationDetails: CompilationDetails<KotlinMultiplatformCommonOptions>
+) : AbstractKotlinCompilation<KotlinMultiplatformCommonOptions>(compilationDetails),
+    KotlinMetadataCompilation<KotlinMultiplatformCommonOptions> {
 
-    override val kotlinOptions: KotlinMultiplatformCommonOptions = KotlinMultiplatformCommonOptionsImpl()
+    override fun getName() =
+        if (compilationDetails is MetadataMappedCompilationDetails) defaultSourceSetName else super.compilationPurpose
 
     override val compileKotlinTask: KotlinCompileCommon
         get() = super.compileKotlinTask as KotlinCompileCommon
@@ -32,11 +33,4 @@ class KotlinCommonCompilation(
         get() = target.project.isKotlinGranularMetadataEnabled && !forceCompilationToKotlinMetadata
 
     internal var forceCompilationToKotlinMetadata: Boolean = false
-
-    override val friendArtifacts: FileCollection
-        get() = super.friendArtifacts.plus(run {
-            val project = target.project
-            val friendSourceSets = getVisibleSourceSetsFromAssociateCompilations(target.project, defaultSourceSet)
-            project.files(friendSourceSets.mapNotNull { target.compilations.findByName(it.name)?.output?.classesDirs })
-        })
 }

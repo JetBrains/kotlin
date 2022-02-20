@@ -226,12 +226,12 @@ class FirTypeResolverImpl(private val session: FirSession) : FirTypeResolver() {
             } else {
                 ConeUnresolvedQualifierError(typeRef.render())
             }
-            return ConeKotlinErrorType(diagnostic)
+            return ConeErrorType(diagnostic)
         }
         if (symbol is FirTypeParameterSymbol) {
             for (part in typeRef.qualifier) {
                 if (part.typeArgumentList.typeArguments.isNotEmpty()) {
-                    return ConeClassErrorType(
+                    return ConeErrorType(
                         ConeUnexpectedTypeArgumentsError("Type arguments not allowed", part.typeArgumentList.source)
                     )
                 }
@@ -304,7 +304,7 @@ class FirTypeResolverImpl(private val session: FirSession) : FirTypeResolver() {
                             allTypeArguments.add(substituted)
                         }
                     } else {
-                        return ConeClassErrorType(ConeOuterClassArgumentsRequired(parameterClass.symbol))
+                        return ConeErrorType(ConeOuterClassArgumentsRequired(parameterClass.symbol))
                     }
                 }
 
@@ -403,14 +403,14 @@ class FirTypeResolverImpl(private val session: FirSession) : FirTypeResolver() {
         symbol: FirClassLikeSymbol<*>,
         userTypeRef: FirUserTypeRef,
         qualifierPartArgumentsCount: Int?
-    ): ConeClassErrorType? {
+    ): ConeErrorType? {
         // TODO: It should be TYPE_ARGUMENTS_NOT_ALLOWED diagnostics when parameterClass is null
         val actualTypeParametersCount = getActualTypeParametersCount(parameterClass ?: symbol.fir)
 
         if (qualifierPartArgumentsCount == null || actualTypeParametersCount != qualifierPartArgumentsCount) {
             val source = getTypeArgumentsOrNameSource(userTypeRef, qualifierPartIndex)
             if (source != null) {
-                return ConeClassErrorType(
+                return ConeErrorType(
                     ConeWrongNumberOfTypeArgumentsError(
                         actualTypeParametersCount,
                         parameterClass?.symbol ?: symbol,
@@ -441,7 +441,7 @@ class FirTypeResolverImpl(private val session: FirSession) : FirTypeResolver() {
     private fun createFunctionalType(typeRef: FirFunctionTypeRef): ConeClassLikeType {
         val parameters =
             listOfNotNull(typeRef.receiverTypeRef?.coneType) +
-                    typeRef.valueParameters.map { it.returnTypeRef.coneType.withParameterNameAnnotation(it, session.typeContext) } +
+                    typeRef.valueParameters.map { it.returnTypeRef.coneType.withParameterNameAnnotation(it) } +
                     listOf(typeRef.returnTypeRef.coneType)
         val classId = if (typeRef.isSuspend) {
             StandardClassIds.SuspendFunctionN(typeRef.parametersCount)
@@ -484,7 +484,34 @@ class FirTypeResolverImpl(private val session: FirSession) : FirTypeResolver() {
                 ) to diagnostic
             }
             is FirFunctionTypeRef -> createFunctionalType(typeRef) to null
-            is FirDynamicTypeRef -> ConeKotlinErrorType(ConeUnsupportedDynamicType()) to null
+            is FirDynamicTypeRef -> ConeErrorType(ConeUnsupportedDynamicType()) to null
+            is FirIntersectionTypeRef -> {
+                val (leftType, leftDiagnostic) = resolveType(
+                    typeRef.leftType
+                        ?: return ConeErrorType(ConeSimpleDiagnostic("Problem during processing intersection type")) to null,
+                    scopeClassDeclaration,
+                    areBareTypesAllowed,
+                    isOperandOfIsOperator,
+                    useSiteFile,
+                    supertypeSupplier
+                )
+                val (rightType, _) = resolveType(
+                    typeRef.rightType
+                        ?: return ConeErrorType(ConeSimpleDiagnostic("Problem during processing intersection type")) to null,
+                    scopeClassDeclaration,
+                    areBareTypesAllowed,
+                    isOperandOfIsOperator,
+                    useSiteFile,
+                    supertypeSupplier
+                )
+
+                if (rightType.isAny && leftType is ConeTypeParameterType) {
+                    ConeDefinitelyNotNullType(leftType) to leftDiagnostic //how properly concat (leftDiagnostic + rightDiagnostic)?
+                } else {
+                    ConeErrorType(ConeUnsupported("Intersection types are not supported yet", typeRef.source)) to null
+                }
+
+            }
             else -> error(typeRef.render())
         }
     }
