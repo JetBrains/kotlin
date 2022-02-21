@@ -71,7 +71,7 @@ class ExperimentalUsageChecker(project: Project) : CallChecker {
         val defaultMessage: (FqName) -> String
     ) : ExperimentalityDiagnostic {
         override fun report(trace: BindingTrace, element: PsiElement, fqName: FqName, message: String?) {
-            trace.reportDiagnosticOnce(factory.on(element, fqName, message ?: defaultMessage(fqName)))
+            trace.reportDiagnosticOnce(factory.on(element, fqName, message?.takeIf { it.isNotBlank() } ?: defaultMessage(fqName)))
         }
     }
 
@@ -480,7 +480,7 @@ class ExperimentalUsageChecker(project: Project) : CallChecker {
                         Experimentality.Severity.ERROR -> Errors.OPT_IN_OVERRIDE_ERROR to "must"
                         Experimentality.Severity.FUTURE_ERROR -> Errors.OPT_IN_OVERRIDE_ERROR to "must"
                     }
-                    val message = experimentality.message
+                    val message = experimentality.message?.takeIf { it.isNotBlank() }
                         ?: "This declaration overrides experimental member of supertype " +
                         "'${member.containingDeclaration.name.asString()}' and $defaultMessageVerb be annotated " +
                         "with '@${experimentality.annotationFqName.asString()}'"
