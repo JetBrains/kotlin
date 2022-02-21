@@ -24,7 +24,7 @@ class MockContext(
 
     private val plugins = mutableMapOf<KClass<out DokkaPlugin>, DokkaPlugin>()
 
-    override fun <T : DokkaPlugin> plugin(kclass: KClass<T>): T? = plugins.getOrPut(kclass) {
+    override fun <T : DokkaPlugin> plugin(kclass: KClass<T>): T = plugins.getOrPut(kclass) {
         kclass.constructors.single { it.parameters.isEmpty() }.call().also { it.injectContext(this) }
     } as T
 

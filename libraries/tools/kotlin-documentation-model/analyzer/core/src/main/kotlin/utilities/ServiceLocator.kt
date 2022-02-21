@@ -65,20 +65,17 @@ object ServiceLocator {
             when (it.protocol) {
                 "file" -> it.toFile().listFiles()?.filter { it.extension == "properties" }?.map { lookupDescriptor(category, it.nameWithoutExtension) } ?: emptyList()
                 "jar" -> {
-                    val file = JarFile(URL(it.file.substringBefore("!")).toFile())
-                    try {
+                    JarFile(URL(it.file.substringBefore("!")).toFile()).use { file ->
                         val jarPath = it.file.substringAfterLast("!").removePrefix("/").removeSuffix("/")
                         file.entries()
-                                .asSequence()
-                                .filter { entry -> !entry.isDirectory && entry.path == jarPath && entry.extension == "properties" }
-                                .map { entry ->
-                                    lookupDescriptor(category, entry.fileName.substringBeforeLast("."))
-                                }.toList()
-                    } finally {
-                        file.close()
+                            .asSequence()
+                            .filter { entry -> !entry.isDirectory && entry.path == jarPath && entry.extension == "properties" }
+                            .map { entry ->
+                                lookupDescriptor(category, entry.fileName.substringBeforeLast("."))
+                            }.toList()
                     }
                 }
-                else -> emptyList<ServiceDescriptor>()
+                else -> emptyList()
             }
         }
     }

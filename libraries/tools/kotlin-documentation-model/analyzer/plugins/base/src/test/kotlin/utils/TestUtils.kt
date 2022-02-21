@@ -24,7 +24,7 @@ abstract class ModelDSL : BaseAbstractTest() {
 interface AssertDSL {
     infix fun Any?.equals(other: Any?) = assertEquals(other, this)
     infix fun Collection<Any>?.allEquals(other: Any?) =
-        this?.also { c -> c.forEach { it equals other } } ?: run { assert(false) { "Collection is empty" } }
+        this?.onEach { it equals other } ?: run { assert(false) { "Collection is empty" } }
     infix fun <T> Collection<T>?.exists(e: T) {
         assertTrue(this.orEmpty().isNotEmpty(), "Collection cannot be null or empty")
         assertTrue(this!!.any{it == e}, "Collection doesn't contain $e")

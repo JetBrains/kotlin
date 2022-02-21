@@ -92,7 +92,7 @@ class DeprecationFilterTest : BaseAbstractTest() {
         ) {
             preMergeDocumentablesTransformationStage = {
                 Assertions.assertTrue(
-                    it.first().packages.first().functions.size == 0
+                    it.first().packages.first().functions.isEmpty()
                 )
             }
         }
@@ -132,7 +132,7 @@ class DeprecationFilterTest : BaseAbstractTest() {
         ) {
             preMergeDocumentablesTransformationStage = {
                 Assertions.assertTrue(
-                    it.first().packages.first().functions.size == 0
+                    it.first().packages.first().functions.isEmpty()
                 )
             }
         }

@@ -126,7 +126,7 @@ data class DPackage(
      * e.g. this will return a human readable version for root packages.
      * Use [packageName] or `dri.packageName` instead to obtain the real packageName
      */
-    override val name: String = if (packageName.isBlank()) "[root]" else packageName
+    override val name: String = packageName.ifBlank { "[root]" }
 
     override val children: List<Documentable> = properties + functions + classlikes + typealiases
 

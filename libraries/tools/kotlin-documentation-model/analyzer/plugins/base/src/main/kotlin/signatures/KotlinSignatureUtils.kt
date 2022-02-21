@@ -26,9 +26,9 @@ object KotlinSignatureUtils : JvmSignatureUtils {
         annotationsInlineWithIgnored(d, ignoredAnnotations, strategy, listBrackets, classExtension)
 
     override fun <T : Documentable> WithExtraProperties<T>.modifiers() =
-        extra[AdditionalModifiers]?.content?.entries?.map {
+        extra[AdditionalModifiers]?.content?.entries?.associate {
             it.key to it.value.filterIsInstance<ExtraModifiers.KotlinOnlyModifiers>().toSet()
-        }?.toMap() ?: emptyMap()
+        } ?: emptyMap()
 
 
     val PrimitiveJavaType.dri: DRI get() = DRI("kotlin", name.capitalize())
