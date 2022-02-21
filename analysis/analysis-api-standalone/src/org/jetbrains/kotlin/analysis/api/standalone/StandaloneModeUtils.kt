@@ -21,9 +21,11 @@ import org.jetbrains.kotlin.analysis.project.structure.KtModuleScopeProvider
 import org.jetbrains.kotlin.analysis.project.structure.KtModuleScopeProviderImpl
 import org.jetbrains.kotlin.analysis.project.structure.ProjectStructureProvider
 import org.jetbrains.kotlin.analysis.project.structure.impl.ProjectStructureProviderByCompilerConfiguration
+import org.jetbrains.kotlin.analysis.providers.KotlinAnnotationsResolverFactory
 import org.jetbrains.kotlin.analysis.providers.KotlinDeclarationProviderFactory
 import org.jetbrains.kotlin.analysis.providers.KotlinModificationTrackerFactory
 import org.jetbrains.kotlin.analysis.providers.KotlinPackageProviderFactory
+import org.jetbrains.kotlin.analysis.providers.impl.KotlinStaticAnnotationsResolverFactory
 import org.jetbrains.kotlin.analysis.providers.impl.KotlinStaticDeclarationProviderFactory
 import org.jetbrains.kotlin.analysis.providers.impl.KotlinStaticModificationTrackerFactory
 import org.jetbrains.kotlin.analysis.providers.impl.KotlinStaticPackageProviderFactory
@@ -104,6 +106,12 @@ public fun configureProjectEnvironment(
         KotlinModificationTrackerFactory::class.qualifiedName,
         KotlinStaticModificationTrackerFactory()
     )
+
+    project.registerService(
+        KotlinAnnotationsResolverFactory::class.java,
+        KotlinStaticAnnotationsResolverFactory(ktFiles)
+    )
+
     RegisterComponentService.registerLLFirResolveStateService(project)
     project.picoContainer.registerComponentInstance(
         FirSealedClassInheritorsProcessorFactory::class.qualifiedName,
