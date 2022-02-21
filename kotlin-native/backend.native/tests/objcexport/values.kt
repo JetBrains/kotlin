@@ -578,28 +578,23 @@ class TestClashesImpl : TestClashes1, TestClashes2 {
         get() = 2
 }
 
-//class TestInvalidIdentifiers {
-//    class `$Foo`
-//    class `Bar$`
-//
-//    fun `a$d$d`(`$1`: Int, `2`: Int, `3`: Int): Int = `$1` + `2` + `3`
-//
-//    var `$status`: String = ""
-//
-//    enum class E(val value: Int) {
-//        `4$`(4),
-//        `5$`(5),
-//        `_`(6),
-//        `__`(7)
-//    }
-//
-//    companion object `Companion$` {
-//        val `42` = 42
-//    }
-//
-//    val `$` = '$'
-//    val `_` = '_'
-//}
+class TestInvalidIdentifiers {
+    fun `aSdSd`(`S1`: Int, `2`: Int, `3`: Int): Int = `S1` + `2` + `3`
+
+    enum class E(val value: Int) {
+        `4S`(4),
+        `5S`(5),
+        `_`(6),
+        `__`(7)
+    }
+
+    companion object `CompanionS` {
+        val `42` = 42
+    }
+
+    val `__` = '_'
+    val `_` = '_'
+}
 
 @Suppress("UNUSED_PARAMETER")
 open class TestDeprecation() {
