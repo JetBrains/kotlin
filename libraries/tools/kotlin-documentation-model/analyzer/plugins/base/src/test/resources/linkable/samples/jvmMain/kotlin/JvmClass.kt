@@ -5,5 +5,5 @@ class JvmClass {
     /**
      * @sample samples.SamplesJvm.exampleUsage
      */
-    fun printWithExclamation(msg: String) = println(msg + "!")
+    fun printWithExclamation(msg: String) = println("$msg!")
 }

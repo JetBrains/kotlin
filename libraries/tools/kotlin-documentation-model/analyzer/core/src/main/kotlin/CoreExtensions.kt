@@ -26,6 +26,6 @@ object CoreExtensions {
 
     private fun <T : Any> coreExtensionPoint() = object {
         operator fun provideDelegate(thisRef: CoreExtensions, property: KProperty<*>): Lazy<ExtensionPoint<T>> =
-            lazy { ExtensionPoint<T>(thisRef::class.qualifiedName!!, property.name) }
+            lazy { ExtensionPoint(thisRef::class.qualifiedName!!, property.name) }
     }
 }

@@ -175,11 +175,9 @@ class CommentTest : AbstractModelTest("/src/main/kotlin/comment/Test.kt", "comme
         ) {
             with((this / "comment" / "property").cast<DProperty>()) {
                 comments() equals "Summary\n\none: []"
-                docs().find { it is CustomTagWrapper && it.name == "one" }.let {
-                    with(it.assertNotNull("'one' entry")) {
-                        root.children counts 0
-                        root.params.keys counts 0
-                    }
+                with(docs().find { it is CustomTagWrapper && it.name == "one" }.assertNotNull("'one' entry")) {
+                    root.children counts 0
+                    root.params.keys counts 0
                 }
             }
         }

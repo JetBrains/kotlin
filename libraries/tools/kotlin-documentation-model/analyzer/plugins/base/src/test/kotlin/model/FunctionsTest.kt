@@ -44,7 +44,7 @@ class FunctionTest : AbstractModelTest("/src/main/kotlin/function/Test.kt", "fun
         ) {
             with((this / "function").cast<DPackage>()) {
                 val fn1 = functions.find {
-                    it.name == "fn" && it.parameters.isNullOrEmpty()
+                    it.name == "fn" && it.parameters.isEmpty()
                 }.assertNotNull("fn()")
                 val fn2 = functions.find {
                     it.name == "fn" && it.parameters.isNotEmpty()
@@ -81,7 +81,7 @@ class FunctionTest : AbstractModelTest("/src/main/kotlin/function/Test.kt", "fun
         ) {
             with((this / "function").cast<DPackage>()) {
                 val fn1 = functions.find {
-                    it.name == "fn" && it.parameters.isNullOrEmpty()
+                    it.name == "fn" && it.parameters.isEmpty()
                 }.assertNotNull("fn()")
                 val fn2 = functions.find {
                     it.name == "fn" && it.parameters.count() == 1
@@ -228,7 +228,7 @@ class FunctionTest : AbstractModelTest("/src/main/kotlin/function/Test.kt", "fun
             with((this / "function" / "Fancy").cast<DAnnotation>()) {
                 with(extra[Annotations]!!.directAnnotations.entries.single().value.assertNotNull("Annotations")) {
                     this counts 3
-                    with(map { it.dri.classNames to it }.toMap()) {
+                    with(associate { it.dri.classNames to it }) {
                         with(this["Target"].assertNotNull("Target")) {
                             (params["allowedTargets"].assertNotNull("allowedTargets") as ArrayValue).value equals listOf(
                                 EnumValue(
@@ -298,7 +298,7 @@ class FunctionTest : AbstractModelTest("/src/main/kotlin/function/Test.kt", "fun
 
                 with(extra[Annotations]!!.directAnnotations.entries.single().value.assertNotNull("Annotations")) {
                     this counts 3
-                    with(map { it.dri.classNames to it }.toMap()) {
+                    with(associate { it.dri.classNames to it }) {
                         with(this["Target"].assertNotNull("Target")) {
                             (params["allowedTargets"].assertNotNull("allowedTargets") as ArrayValue).value equals listOf(
                                 EnumValue(
