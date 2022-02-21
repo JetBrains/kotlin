@@ -16,6 +16,9 @@ OPTIONAL_JVM_INLINE_ANNOTATION
 value class IcAny<T>(val a: T)
 
 OPTIONAL_JVM_INLINE_ANNOTATION
+value class IcAny2<T: Any>(val a: T?)
+
+OPTIONAL_JVM_INLINE_ANNOTATION
 value class IcOverIc<T: IcLong<Long>>(val o: T)
 
 fun check(c: Class<*>, s: String) {
@@ -30,23 +33,27 @@ fun box(): String {
     val i = IcInt(0)
     val l = IcLong(0)
     val a = IcAny("foo")
+    val a2 = IcAny2("foo2")
     val o = IcOverIc(IcLong(0))
 
     check(i.javaClass, "class root.IcInt")
     check(l.javaClass, "class root.IcLong")
     check(a.javaClass, "class root.IcAny")
+    check(a2.javaClass, "class root.IcAny2")
     check(o.javaClass, "class root.IcOverIc")
     check(1u.javaClass, "class kotlin.UInt")
 
     check(i::class.java, "class root.IcInt")
     check(l::class.java, "class root.IcLong")
     check(a::class.java, "class root.IcAny")
+    check(a2::class.java, "class root.IcAny2")
     check(o::class.java, "class root.IcOverIc")
     check(1u::class.java, "class kotlin.UInt")
 
     reifiedCheck<IcInt<Int>>("class root.IcInt")
     reifiedCheck<IcLong<Long>>("class root.IcLong")
     reifiedCheck<IcAny<Any?>>("class root.IcAny")
+    reifiedCheck<IcAny2<Any>>("class root.IcAny2")
     reifiedCheck<IcOverIc<IcLong<Long>>>("class root.IcOverIc")
     reifiedCheck<UInt>("class kotlin.UInt")
 
@@ -58,6 +65,9 @@ fun box(): String {
 
     val arrA = arrayOf(a)
     check(arrA[0].javaClass, "class root.IcAny")
+
+    val arrA2 = arrayOf(a2)
+    check(arrA2[0].javaClass, "class root.IcAny2")
 
     val arrO = arrayOf(o)
     check(arrO[0].javaClass, "class root.IcOverIc")

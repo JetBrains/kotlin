@@ -5,6 +5,8 @@
 OPTIONAL_JVM_INLINE_ANNOTATION
 value class IcAny<T>(val x: T)
 OPTIONAL_JVM_INLINE_ANNOTATION
+value class IcAny2<T: Any>(val x: T?)
+OPTIONAL_JVM_INLINE_ANNOTATION
 value class IcInt<T: Int>(val x: T)
 OPTIONAL_JVM_INLINE_ANNOTATION
 value class IcLong<T: Long>(val x: T)
@@ -32,6 +34,13 @@ fun box(): String {
     if (id(IcAny(42)) != IcAny(42)) return "Error 3, 4"
     if (id(IcAny(42)) == id(IcAny(24))) return "Error 3, 5"
     if (id(IcAny(42)) != id(IcAny(42))) return "Error 3, 6"
+
+    if (IcAny2(42) == id(IcAny2(24))) return "Error 4, 1"
+    if (IcAny2(42) != id(IcAny2(42))) return "Error 4, 2"
+    if (id(IcAny2(42)) == IcAny2(24)) return "Error 4, 3"
+    if (id(IcAny2(42)) != IcAny2(42)) return "Error 4, 4"
+    if (id(IcAny2(42)) == id(IcAny2(24))) return "Error 4, 5"
+    if (id(IcAny2(42)) != id(IcAny2(42))) return "Error 4, 6"
 
     return "OK"
 }

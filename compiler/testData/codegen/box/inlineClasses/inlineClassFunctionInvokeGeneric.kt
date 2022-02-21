@@ -11,11 +11,16 @@ value class Str<T: String>(val string: T)
 OPTIONAL_JVM_INLINE_ANNOTATION
 value class NStr<T: String?>(val string: T)
 
+OPTIONAL_JVM_INLINE_ANNOTATION
+value class NStr2<T: String>(val string: T?)
+
 fun <T: Int> fooZ(x: Z<T>) = x
 
 fun <T: String> fooStr(x: Str<T>) = x
 
 fun <T: String?> fooNStr(x: NStr<T>) = x
+
+fun <T: String> fooNStr2(x: NStr2<T>) = x
 
 
 fun box(): String {
@@ -28,6 +33,10 @@ fun box(): String {
     val fnNStr: (NStr<String?>) -> NStr<String?> = ::fooNStr
     if (fnNStr.invoke(NStr(null)).string != null) throw AssertionError()
     if (fnNStr.invoke(NStr("nstr")).string != "nstr") throw AssertionError()
+
+    val fnNStr2: (NStr2<String>) -> NStr2<String> = ::fooNStr2
+    if (fnNStr2.invoke(NStr2(null)).string != null) throw AssertionError()
+    if (fnNStr2.invoke(NStr2("nstr2")).string != "nstr2") throw AssertionError()
 
     return "OK"
 }

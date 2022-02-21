@@ -22,22 +22,28 @@ OPTIONAL_JVM_INLINE_ANNOTATION
 value class IcAny<T: Any?>(val a: T)
 
 OPTIONAL_JVM_INLINE_ANNOTATION
+value class IcAny2<T: Any>(val a: T?)
+
+OPTIONAL_JVM_INLINE_ANNOTATION
 value class IcOverIc<T: IcInt<Int>>(val o: T)
 
 fun box(): String {
     val i = IcInt(1)
     val l = IcLong(2)
     val a = IcAny("string")
+    val a2 = IcAny("string2")
     val o = IcOverIc(IcInt(3))
 
     val ij = JavaClass.id(i)
     val lj = JavaClass.id(l)
     val aj = JavaClass.id(a)
+    val aj2 = JavaClass.id(a2)
     val oj = JavaClass.id(o)
 
     if (ij.i != 1) return "Fail 1"
     if (lj.l != 2L) return "Fail 2"
     if (aj.a != "string") return "Fail 3"
+    if (aj2.a != "string2") return "Fail 32"
     if (oj.o.i != 3) return "Fail 4"
 
     return "OK"

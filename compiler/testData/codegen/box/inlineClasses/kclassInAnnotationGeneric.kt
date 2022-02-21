@@ -17,6 +17,9 @@ OPTIONAL_JVM_INLINE_ANNOTATION
 value class ICIntN<T: Int?>(val i: T)
 
 OPTIONAL_JVM_INLINE_ANNOTATION
+value class ICIntN2<T: Int>(val i: T?)
+
+OPTIONAL_JVM_INLINE_ANNOTATION
 value class ICIntNArray(val i: Array<Int?>)
 
 OPTIONAL_JVM_INLINE_ANNOTATION
@@ -42,6 +45,10 @@ class CIntArray
 @Ann(ICIntN::class)
 @AnnArray([ICIntN::class])
 class CIntN
+
+@Ann(ICIntN2::class)
+@AnnArray([ICIntN2::class])
+class CIntN2
 
 @Ann(ICIntNArray::class)
 @AnnArray([ICIntNArray::class])
@@ -73,6 +80,9 @@ fun box(): String {
     klass = (CIntN::class.annotations.first() as Ann).c.toString()
     if (klass != "class test.ICIntN") return "Expected class test.ICIntN, got $klass"
 
+    klass = (CIntN2::class.annotations.first() as Ann).c.toString()
+    if (klass != "class test.ICIntN2") return "Expected class test.ICIntN2, got $klass"
+
     klass = (CIntNArray::class.annotations.first() as Ann).c.toString()
     if (klass != "class test.ICIntNArray") return "Expected class test.ICIntNArray, got $klass"
 
@@ -97,6 +107,9 @@ fun box(): String {
 
     klass = (CIntN::class.annotations.last() as AnnArray).c[0].toString()
     if (klass != "class test.ICIntN") return "Expected class test.ICIntN, got $klass"
+
+    klass = (CIntN2::class.annotations.last() as AnnArray).c[0].toString()
+    if (klass != "class test.ICIntN2") return "Expected class test.ICIntN2, got $klass"
 
     klass = (CIntNArray::class.annotations.last() as AnnArray).c[0].toString()
     if (klass != "class test.ICIntNArray") return "Expected class test.ICIntNArray, got $klass"

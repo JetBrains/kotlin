@@ -87,10 +87,8 @@ FILE fqName:<root> fileName:/kt46069.kt
                     VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE name:p0 index:0 type:kotlin.String?
                     BLOCK_BODY
                       RETURN type=kotlin.Nothing from='local final fun describedAs (p0: kotlin.String?): <root>.ObjectAssert<T of <root>.assertNotNull?>? declared in <root>.assertNotNull'
-                        TYPE_OP type=<root>.ObjectAssert<T of <root>.assertNotNull>? origin=IMPLICIT_CAST typeOperand=<root>.ObjectAssert<T of <root>.assertNotNull>?
-                          CALL 'public final fun describedAs (description: kotlin.String?, vararg args: kotlin.Any?): <root>.ObjectAssert<ACTUAL of <root>.ObjectAssert>? declared in <root>.ObjectAssert' type=<root>.ObjectAssert<T of <root>.assertNotNull?>? origin=null
-                            $this: GET_VAR 'receiver: <root>.ObjectAssert<T of <root>.assertNotNull?> declared in <root>.assertNotNull.describedAs' type=<root>.ObjectAssert<T of <root>.assertNotNull?> origin=ADAPTED_FUNCTION_REFERENCE
-                            description: GET_VAR 'p0: kotlin.String? declared in <root>.assertNotNull.describedAs' type=kotlin.String? origin=null
+                        CALL 'public final fun describedAs (description: kotlin.String?, vararg args: kotlin.Any?): <root>.ObjectAssert<ACTUAL of <root>.ObjectAssert>? declared in <root>.ObjectAssert' type=<root>.ObjectAssert<T of <root>.assertNotNull?>? origin=null
+                          $this: GET_VAR 'receiver: <root>.ObjectAssert<T of <root>.assertNotNull?> declared in <root>.assertNotNull.describedAs' type=<root>.ObjectAssert<T of <root>.assertNotNull?> origin=ADAPTED_FUNCTION_REFERENCE
+                          description: GET_VAR 'p0: kotlin.String? declared in <root>.assertNotNull.describedAs' type=kotlin.String? origin=null
                   FUNCTION_REFERENCE 'local final fun describedAs (p0: kotlin.String?): <root>.ObjectAssert<T of <root>.assertNotNull?>? declared in <root>.assertNotNull' type=kotlin.Function1<kotlin.String?, <root>.ObjectAssert<T of <root>.assertNotNull?>?> origin=ADAPTED_FUNCTION_REFERENCE reflectionTarget=public final fun describedAs (description: kotlin.String?, vararg args: kotlin.Any?): <root>.ObjectAssert<ACTUAL of <root>.ObjectAssert>? declared in <root>.ObjectAssert
-                    $receiver: TYPE_OP type=<root>.ObjectAssert<T of <root>.assertNotNull> origin=IMPLICIT_CAST typeOperand=<root>.ObjectAssert<T of <root>.assertNotNull>
-                      GET_VAR 'val assert: <root>.ObjectAssert<T of <root>.assertNotNull?> [val] declared in <root>.assertNotNull' type=<root>.ObjectAssert<T of <root>.assertNotNull?> origin=null
+                    $receiver: GET_VAR 'val assert: <root>.ObjectAssert<T of <root>.assertNotNull?> [val] declared in <root>.assertNotNull' type=<root>.ObjectAssert<T of <root>.assertNotNull?> origin=null
