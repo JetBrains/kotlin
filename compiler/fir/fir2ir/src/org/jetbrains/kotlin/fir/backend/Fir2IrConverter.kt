@@ -46,6 +46,7 @@ import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi2ir.generators.GeneratorExtensions
 import org.jetbrains.kotlin.psi2ir.generators.generateTypicalIrProviderList
 import org.jetbrains.kotlin.resolve.BindingContext
+import java.io.File
 
 class Fir2IrConverter(
     private val moduleDescriptor: FirModuleDescriptor,
@@ -167,7 +168,11 @@ class Fir2IrConverter(
     private fun registerFileAndClasses(file: FirFile, moduleFragment: IrModuleFragment) {
         val fileEntry = when (file.origin) {
             FirDeclarationOrigin.Source ->
-                file.psi?.let { PsiIrFileEntry(it as KtFile) } ?: NaiveSourceBasedFileEntryImpl(file.path ?: file.name, intArrayOf(0))
+                file.psi?.let { PsiIrFileEntry(it as KtFile) }
+                    ?: NaiveSourceBasedFileEntryImpl(
+                        file.path ?: file.name,
+                        file.path?.let { File(it).lineStartOffsets } ?: intArrayOf(0)
+                    )
             FirDeclarationOrigin.Synthetic -> NaiveSourceBasedFileEntryImpl(file.name)
             else -> error("Unsupported file origin: ${file.origin}")
         }

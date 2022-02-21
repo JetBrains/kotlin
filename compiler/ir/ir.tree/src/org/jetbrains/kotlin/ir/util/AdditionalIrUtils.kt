@@ -222,11 +222,18 @@ class NaiveSourceBasedFileEntryImpl(
     }
 
     override val maxOffset: Int
-        get() = UNDEFINED_OFFSET
+        get() = lineStartOffsets.lastOrNull() ?: UNDEFINED_OFFSET
 
-    override fun getSourceRangeInfo(beginOffset: Int, endOffset: Int): SourceRangeInfo {
-        return SourceRangeInfo(name, beginOffset, -1, -1, endOffset, -1, -1)
-    }
+    override fun getSourceRangeInfo(beginOffset: Int, endOffset: Int): SourceRangeInfo =
+        SourceRangeInfo(
+            filePath = name,
+            startOffset = beginOffset,
+            startLineNumber = getLineNumber(beginOffset),
+            startColumnNumber = getColumnNumber(beginOffset),
+            endOffset = endOffset,
+            endLineNumber = getLineNumber(endOffset),
+            endColumnNumber = getColumnNumber(endOffset)
+        )
 }
 
 private fun IrClass.getPropertyDeclaration(name: String): IrProperty? {
