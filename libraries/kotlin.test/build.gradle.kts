@@ -1,3 +1,4 @@
+import org.gradle.kotlin.dsl.support.serviceOf
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import plugins.configureDefaultPublishing
 import plugins.configureKotlinPomAttributes
@@ -91,12 +92,31 @@ val commonVariant by configurations.creating {
     }
 }
 
+fun Configuration.sourcesConsumingConfiguration() {
+    isCanBeConsumed = false
+    isCanBeResolved = true
+    attributes {
+        attribute(Category.CATEGORY_ATTRIBUTE, objects.named(Category.DOCUMENTATION))
+        attribute(DocsType.DOCS_TYPE_ATTRIBUTE, objects.named(DocsType.SOURCES))
+    }
+}
+
+val kotlinTestCommonSources by configurations.creating {
+    sourcesConsumingConfiguration()
+}
+
+val kotlinTestJvmSources by configurations.creating {
+    sourcesConsumingConfiguration()
+}
+
 dependencies {
     jvmApi(project(":kotlin-stdlib"))
     jsApiVariant("$group:kotlin-test-js:$version")
     wasmApiVariant("$group:kotlin-test-wasm:$version")
     commonVariant("$group:kotlin-test-common:$version")
     commonVariant("$group:kotlin-test-annotations-common:$version")
+    kotlinTestCommonSources(project(":kotlin-test:kotlin-test-common"))
+    kotlinTestJvmSources(project(":kotlin-test:kotlin-test-jvm"))
 }
 
 artifacts {
@@ -105,19 +125,18 @@ artifacts {
     add(jvmRuntime.name, jvmJar)
 }
 
-val kotlinTestCommonSourcesJar = tasks.getByPath(":kotlin-test:kotlin-test-common:sourcesJar") as Jar
-val kotlinTestJvmSourcesJar = tasks.getByPath(":kotlin-test:kotlin-test-jvm:sourcesJar") as Jar
-
 val combinedSourcesJar by tasks.registering(Jar::class) {
-    dependsOn(kotlinTestCommonSourcesJar, kotlinTestJvmSourcesJar)
+    dependsOn(kotlinTestCommonSources)
+    dependsOn(kotlinTestJvmSources)
     archiveClassifier.set("sources")
+    val archiveOperations = serviceOf<ArchiveOperations>()
     into("common") {
-        from(zipTree(kotlinTestCommonSourcesJar.archiveFile)) {
+        from({ archiveOperations.zipTree(kotlinTestCommonSources.singleFile) }) {
             exclude("META-INF/**")
         }
     }
     into("jvm") {
-        from(zipTree(kotlinTestJvmSourcesJar.archiveFile)) {
+        from({ archiveOperations.zipTree(kotlinTestJvmSources.singleFile) }) {
             exclude("META-INF/**")
         }
     }
