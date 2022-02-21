@@ -158,11 +158,6 @@ abstract class CommonCompilerArguments : CommonToolArguments() {
     )
     var experimental: Array<String>? = null
 
-    @Argument(
-        value = "-Xuse-experimental",
-        valueDescription = "<fq.name>",
-        description = "Enable, but don't propagate usages of experimental API for marker annotation with the given fully qualified name"
-    )
     @IDEAPluginsCompatibilityAPI(
         IDEAPlatforms._212, // maybe 211 AS used it too
         IDEAPlatforms._213,
