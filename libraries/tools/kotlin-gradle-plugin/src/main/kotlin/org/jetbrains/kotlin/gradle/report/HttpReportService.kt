@@ -16,6 +16,7 @@ import org.gradle.tooling.events.OperationCompletionListener
 import org.gradle.tooling.events.task.TaskFinishEvent
 import org.jetbrains.kotlin.gradle.plugin.stat.CompileStatisticsData
 import org.jetbrains.kotlin.gradle.plugin.statistics.KotlinBuildStatListener.Companion.prepareData
+import java.io.IOException
 import java.net.HttpURLConnection
 import java.net.URL
 import java.util.*
@@ -37,6 +38,10 @@ abstract class HttpReportService : BuildService<HttpReportService.Parameters>,
     }
 
     private val log = Logging.getLogger(this.javaClass)
+
+    //    @Volatile for one thread executor it does not need
+    private var requestPreviousFailed = false
+    private var invalidUrl = false
 
     override fun onFinish(event: FinishEvent?) {
         if (event is TaskFinishEvent) {
@@ -74,12 +79,22 @@ abstract class HttpReportService : BuildService<HttpReportService.Parameters>,
 
     fun report(data: CompileStatisticsData) {
         val elapsedTime = measureTimeMillis {
-            val connection = URL(parameters.httpSettings.url).openConnection() as HttpURLConnection
+            if (invalidUrl) {
+                return
+            }
+            val connection = try {
+                URL(parameters.httpSettings.url).openConnection() as HttpURLConnection
+            } catch (e: IOException) {
+                log.warn("Unable to open connection to ${parameters.httpSettings.url}: ${e.message}")
+                invalidUrl = true
+                return
+            }
 
             try {
                 if (parameters.httpSettings.user != null && parameters.httpSettings.password != null) {
                     val auth = Base64.getEncoder()
-                        .encode("${parameters.httpSettings.user}:${parameters.httpSettings.password}".toByteArray()).toString(Charsets.UTF_8)
+                        .encode("${parameters.httpSettings.user}:${parameters.httpSettings.password}".toByteArray())
+                        .toString(Charsets.UTF_8)
                     connection.addRequestProperty("Authorization", "Basic $auth")
                 }
                 connection.addRequestProperty("Content-Type", "application/json")
@@ -103,7 +118,13 @@ abstract class HttpReportService : BuildService<HttpReportService.Parameters>,
     private fun checkResponseAndLog(connection: HttpURLConnection) {
         val isResponseBad = connection.responseCode !in 200..299
         if (isResponseBad) {
-            log.warn("Failed to send statistic to ${connection.url}: ${connection.responseMessage}")
+            val message = "Failed to send statistic to ${connection.url} with ${connection.responseCode}: ${connection.responseMessage}"
+            if (!requestPreviousFailed) {
+                log.warn(message)
+            } else {
+                log.debug(message)
+            }
+            requestPreviousFailed = true
         }
     }
 
