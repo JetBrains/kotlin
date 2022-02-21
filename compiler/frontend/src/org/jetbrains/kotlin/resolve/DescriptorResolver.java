@@ -1082,7 +1082,17 @@ public class DescriptorResolver {
 
         if (!isPrivate || (isInlineFunction && isAnonymousReturnTypesInPrivateInlineFunctionsForbidden)) {
             if (type.getConstructor().getSupertypes().size() == 1) {
-                return type.getConstructor().getSupertypes().iterator().next();
+                KotlinType approximatingSuperType = type.getConstructor().getSupertypes().iterator().next();
+                KotlinType substitutedSuperType;
+                MemberScope memberScope = type.getMemberScope();
+
+                if (memberScope instanceof SubstitutingScope) {
+                    substitutedSuperType = ((SubstitutingScope) memberScope).substitute(approximatingSuperType);
+                } else {
+                    substitutedSuperType = approximatingSuperType;
+                }
+
+                return substitutedSuperType;
             }
             else {
                 trace.report(AMBIGUOUS_ANONYMOUS_TYPE_INFERRED.on(declaration, type.getConstructor().getSupertypes()));

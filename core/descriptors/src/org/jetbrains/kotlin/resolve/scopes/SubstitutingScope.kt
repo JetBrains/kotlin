@@ -21,7 +21,9 @@ import org.jetbrains.kotlin.descriptors.Substitutable
 import org.jetbrains.kotlin.incremental.components.LookupLocation
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.calls.inference.wrapWithCapturingSubstitution
+import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeSubstitutor
+import org.jetbrains.kotlin.types.checker.SimpleClassicTypeSystemContext.safeSubstitute
 import org.jetbrains.kotlin.utils.Printer
 import org.jetbrains.kotlin.utils.newLinkedHashSetWithExpectedSize
 import org.jetbrains.kotlin.utils.sure
@@ -34,6 +36,11 @@ class SubstitutingScope(private val workerScope: MemberScope, givenSubstitutor: 
     private var substitutedDescriptors: MutableMap<DeclarationDescriptor, DeclarationDescriptor>? = null
 
     private val _allDescriptors by lazy { substitute(workerScope.getContributedDescriptors()) }
+
+    fun substitute(type: KotlinType): KotlinType {
+        if (substitutor.isEmpty) return type
+        return substitutor.safeSubstitute(type) as KotlinType
+    }
 
     private fun <D : DeclarationDescriptor> substitute(descriptor: D): D {
         if (substitutor.isEmpty) return descriptor
