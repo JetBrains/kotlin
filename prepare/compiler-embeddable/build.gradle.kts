@@ -1,6 +1,7 @@
 import java.util.stream.Collectors
 import com.github.jengelman.gradle.plugins.shadow.transformers.Transformer
 import com.github.jengelman.gradle.plugins.shadow.transformers.TransformerContext
+import org.gradle.kotlin.dsl.support.serviceOf
 import shadow.org.apache.tools.zip.ZipEntry
 import shadow.org.apache.tools.zip.ZipOutputStream
 
@@ -56,13 +57,19 @@ val runtimeJar = runtimeJar(embeddableCompiler()) {
 sourcesJar {
     val compilerTask = project(":kotlin-compiler").tasks.named<Jar>("sourcesJar")
     dependsOn(compilerTask)
-    from(compilerTask.map { zipTree(it.archiveFile) })
+    // workaround for https://github.com/gradle/gradle/issues/17936
+    val archiveOperations = serviceOf<ArchiveOperations>()
+    val sourcesJar by lazy { compilerTask.get().archiveFile.get() }
+    from({ archiveOperations.zipTree(sourcesJar) })
 }
 
 javadocJar {
     val compilerTask = project(":kotlin-compiler").tasks.named<Jar>("javadocJar")
     dependsOn(compilerTask)
-    from(compilerTask.map { zipTree(it.archiveFile) })
+    // workaround for https://github.com/gradle/gradle/issues/17936
+    val archiveOperations = serviceOf<ArchiveOperations>()
+    val javadocJarFile by lazy { compilerTask.get().archiveFile.get() }
+    from({ archiveOperations.zipTree(javadocJarFile) })
 }
 
 projectTest {

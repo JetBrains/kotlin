@@ -56,7 +56,10 @@ task libraryJarWithIr(type: Zip, dependsOn: libraryJarWithoutIr) {
 
     duplicatesStrategy DuplicatesStrategy.FAIL
 
-    from zipTree(libraryJarWithoutIr.archiveFile)
+    // workaround for https://github.com/gradle/gradle/issues/17936
+    def archiveOperations = services.get(ArchiveOperations)
+    RegularFile libraryJarWithoutIrFile = libraryJarWithoutIr.archiveFile.get()
+    from { archiveOperations.zipTree(libraryJarWithoutIrFile) }
 
     dependsOn(":kotlin-test:kotlin-test-js-ir:compileKotlinJs")
     from {
