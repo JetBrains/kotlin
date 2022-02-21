@@ -61,7 +61,7 @@ val TestServices.compilerConfigurationProvider: CompilerConfigurationProvider by
 
 open class CompilerConfigurationProviderImpl(
     override val testRootDisposable: Disposable,
-    val configurators: List<EnvironmentConfigurator>
+    val configurators: List<AbstractEnvironmentConfigurator>
 ) : CompilerConfigurationProvider() {
     private val cache: MutableMap<TestModule, KotlinCoreEnvironment> = mutableMapOf()
 
@@ -93,7 +93,7 @@ open class CompilerConfigurationProviderImpl(
             projectEnv,
             initialConfiguration,
             configFiles
-        ).also { configurators.forEach { it.registerCompilerExtensions(project) } }
+        ).also { configurators.forEach { it.registerCompilerExtensions(project, module) } }
     }
 
     @TestInfrastructureInternals

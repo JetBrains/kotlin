@@ -30,7 +30,7 @@ class TestConfigurationImpl(
 
     sourcePreprocessors: List<Constructor<SourceFilePreprocessor>>,
     additionalMetaInfoProcessors: List<Constructor<AdditionalMetaInfoProcessor>>,
-    environmentConfigurators: List<Constructor<EnvironmentConfigurator>>,
+    environmentConfigurators: List<Constructor<AbstractEnvironmentConfigurator>>,
 
     additionalSourceProviders: List<Constructor<AdditionalSourceProvider>>,
     preAnalysisHandlers: List<Constructor<PreAnalysisHandler>>,
@@ -38,7 +38,7 @@ class TestConfigurationImpl(
     metaTestConfigurators: List<Constructor<MetaTestConfigurator>>,
     afterAnalysisCheckers: List<Constructor<AfterAnalysisChecker>>,
 
-    compilerConfigurationProvider: ((Disposable, List<EnvironmentConfigurator>) -> CompilerConfigurationProvider)?,
+    compilerConfigurationProvider: ((Disposable, List<AbstractEnvironmentConfigurator>) -> CompilerConfigurationProvider)?,
     runtimeClasspathProviders: List<Constructor<RuntimeClasspathProvider>>,
 
     override val metaInfoHandlerEnabled: Boolean,
@@ -70,7 +70,7 @@ class TestConfigurationImpl(
         }
     }
 
-    private val environmentConfigurators: List<EnvironmentConfigurator> =
+    private val environmentConfigurators: List<AbstractEnvironmentConfigurator> =
         environmentConfigurators
             .map { it.invoke(testServices) }
             .also { it.registerDirectivesAndServices() }

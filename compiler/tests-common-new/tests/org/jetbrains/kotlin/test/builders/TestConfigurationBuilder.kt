@@ -28,7 +28,7 @@ class TestConfigurationBuilder {
 
     private val sourcePreprocessors: MutableList<Constructor<SourceFilePreprocessor>> = mutableListOf()
     private val additionalMetaInfoProcessors: MutableList<Constructor<AdditionalMetaInfoProcessor>> = mutableListOf()
-    private val environmentConfigurators: MutableList<Constructor<EnvironmentConfigurator>> = mutableListOf()
+    private val environmentConfigurators: MutableList<Constructor<AbstractEnvironmentConfigurator>> = mutableListOf()
     private val preAnalysisHandlers: MutableList<Constructor<PreAnalysisHandler>> = mutableListOf()
 
     private val additionalSourceProviders: MutableList<Constructor<AdditionalSourceProvider>> = mutableListOf()
@@ -46,7 +46,7 @@ class TestConfigurationBuilder {
     private val configurationsByNegativeTestDataCondition: MutableList<Pair<Regex, TestConfigurationBuilder.() -> Unit>> = mutableListOf()
     private val additionalServices: MutableList<ServiceRegistrationData> = mutableListOf()
 
-    private var compilerConfigurationProvider: ((Disposable, List<EnvironmentConfigurator>) -> CompilerConfigurationProvider)? = null
+    private var compilerConfigurationProvider: ((Disposable, List<AbstractEnvironmentConfigurator>) -> CompilerConfigurationProvider)? = null
     private var runtimeClasspathProviders: MutableList<Constructor<RuntimeClasspathProvider>> = mutableListOf()
 
     lateinit var testInfo: KotlinTestInfo
@@ -157,7 +157,7 @@ class TestConfigurationBuilder {
         this.directives += directives
     }
 
-    fun useConfigurators(vararg environmentConfigurators: Constructor<EnvironmentConfigurator>) {
+    fun useConfigurators(vararg environmentConfigurators: Constructor<AbstractEnvironmentConfigurator>) {
         this.environmentConfigurators += environmentConfigurators
     }
 
@@ -184,7 +184,7 @@ class TestConfigurationBuilder {
     }
 
     @TestInfrastructureInternals
-    fun useCustomCompilerConfigurationProvider(provider: (Disposable, List<EnvironmentConfigurator>) -> CompilerConfigurationProvider) {
+    fun useCustomCompilerConfigurationProvider(provider: (Disposable, List<AbstractEnvironmentConfigurator>) -> CompilerConfigurationProvider) {
         compilerConfigurationProvider = provider
     }
 
@@ -256,7 +256,7 @@ class TestConfigurationBuilder {
             get() = builder.sourcePreprocessors
         val additionalMetaInfoProcessors: List<Constructor<AdditionalMetaInfoProcessor>>
             get() = builder.additionalMetaInfoProcessors
-        val environmentConfigurators: List<Constructor<EnvironmentConfigurator>>
+        val environmentConfigurators: List<Constructor<AbstractEnvironmentConfigurator>>
             get() = builder.environmentConfigurators
         val preAnalysisHandlers: List<Constructor<PreAnalysisHandler>>
             get() = builder.preAnalysisHandlers
@@ -286,7 +286,7 @@ class TestConfigurationBuilder {
         val additionalServices: List<ServiceRegistrationData>
             get() = builder.additionalServices
 
-        val compilerConfigurationProvider: ((Disposable, List<EnvironmentConfigurator>) -> CompilerConfigurationProvider)?
+        val compilerConfigurationProvider: ((Disposable, List<AbstractEnvironmentConfigurator>) -> CompilerConfigurationProvider)?
             get() = builder.compilerConfigurationProvider
         val runtimeClasspathProviders: List<Constructor<RuntimeClasspathProvider>>
             get() = builder.runtimeClasspathProviders

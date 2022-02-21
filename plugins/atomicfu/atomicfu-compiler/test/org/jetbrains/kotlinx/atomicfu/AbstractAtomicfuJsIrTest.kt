@@ -39,7 +39,7 @@ class AtomicfuRuntimeClasspathProvider(testServices: TestServices) : RuntimeClas
 }
 
 class AtomicfuEnvironmentConfigurator(testServices: TestServices) : EnvironmentConfigurator(testServices) {
-    override fun registerCompilerExtensions(project: Project) {
+    override fun registerCompilerExtensions(project: Project, module: TestModule) {
         IrGenerationExtension.registerExtension(project, AtomicfuLoweringExtension())
     }
 }
