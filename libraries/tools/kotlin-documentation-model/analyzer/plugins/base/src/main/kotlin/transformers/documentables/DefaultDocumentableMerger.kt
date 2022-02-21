@@ -34,7 +34,7 @@ internal class DefaultDocumentableMerger(val context: DokkaContext) : Documentab
                 it.sourceSetID in sourceSet.dependentSourceSets
             }.flatMap { getDependencies(it) }
 
-        return configuration.sourceSets.map { it to getDependencies(it) }.toMap()
+        return configuration.sourceSets.associateWith { getDependencies(it) }
     }
 
     private fun <T : Documentable> merge(elements: List<T>, reducer: (T, T) -> T): List<T> =
@@ -104,8 +104,7 @@ internal class DefaultDocumentableMerger(val context: DokkaContext) : Documentab
             }
             val reducedToOneDocumentableWithActualSourceSetIds =
                 groupedByOwnExpectWithActualSourceSetIds.map { it.first.reduce(reducer) to it.second }
-            val uniqueNamedDocumentables = reducedToOneDocumentableWithActualSourceSetIds.let(::mergeClashingElements)
-            return uniqueNamedDocumentables
+            return reducedToOneDocumentableWithActualSourceSetIds.let(::mergeClashingElements)
         }
 
 

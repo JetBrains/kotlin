@@ -79,10 +79,10 @@ fun <T : WithChildren<T>> T.asPrintableTree(
         nodeNameBuilder(element)
         appendLine()
         element.children.takeIf(Collection<*>::isNotEmpty)?.also { children ->
-            val newOwnPrefix = childPrefix + '\u251c' + '\u2500' + ' '
-            val lastOwnPrefix = childPrefix + '\u2514' + '\u2500' + ' '
-            val newChildPrefix = childPrefix + '\u2502' + ' ' + ' '
-            val lastChildPrefix = childPrefix + ' ' + ' ' + ' '
+            val newOwnPrefix = "$childPrefix├─ "
+            val lastOwnPrefix = "$childPrefix└─ "
+            val newChildPrefix = "$childPrefix│  "
+            val lastChildPrefix = "$childPrefix   "
             children.forEachIndexed { n, e ->
                 if (n != children.lastIndex) append(e, newOwnPrefix, newChildPrefix)
                 else append(e, lastOwnPrefix, lastChildPrefix)

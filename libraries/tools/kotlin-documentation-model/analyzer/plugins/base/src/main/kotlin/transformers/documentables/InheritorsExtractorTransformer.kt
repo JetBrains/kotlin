@@ -49,7 +49,7 @@ class InheritorsExtractorTransformer : DocumentableTransformer {
     private fun Map<DokkaSourceSet, Map<DRI, List<DRI>>>.getForDRI(dri: DRI) =
         map { (v, k) ->
             v to k[dri]
-        }.map { (k, v) -> k to v.orEmpty() }.toMap()
+        }.associate { (k, v) -> k to v.orEmpty() }
 
     private fun DModule.generateInheritanceMap() =
         getInheritanceEntriesRec().filterNot { it.second.isEmpty() }.groupBy({ it.first }) { it.second }

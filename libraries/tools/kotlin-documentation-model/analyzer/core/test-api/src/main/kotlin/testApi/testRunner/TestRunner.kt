@@ -99,14 +99,12 @@ abstract class AbstractTest<M : TestMethods, T : TestBuilder<M>, D : DokkaTestGe
             .replace("\r\n", "\n")
             .sliceAt(filePathRegex)
             .filter { it.isNotEmpty() && it.isNotBlank() && "\n" in it }
-            .map { fileDeclaration -> fileDeclaration.trim() }
-            .map { fileDeclaration ->
+            .map { fileDeclaration -> fileDeclaration.trim() }.associate { fileDeclaration ->
                 val filePathAndContent = fileDeclaration.split("\n", limit = 2)
                 val filePath = filePathAndContent.first().removePrefix("/").trim()
                 val content = filePathAndContent.last().trim()
                 filePath to content
             }
-            .toMap()
     }
 
     private fun String.sliceAt(regex: Regex): List<String> {

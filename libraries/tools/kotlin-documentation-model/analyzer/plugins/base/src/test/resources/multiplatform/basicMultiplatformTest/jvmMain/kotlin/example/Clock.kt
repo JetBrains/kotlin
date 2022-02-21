@@ -19,12 +19,6 @@ actual open class Clock {
      * ...JVM!
      */
     fun onlyJVMFunction(): Double = 2.5
-    /**
-     * Custom equals function
-     */
-    override fun equals(other: Any?): Boolean {
-        return super.equals(other)
-    }
 
     open fun getDayOfTheWeek(): String {
         TODO("not implemented")
