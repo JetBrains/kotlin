@@ -1,10 +1,4 @@
-@file:Suppress(
-    "DEPRECATED_BINARY_MOD",
-    "NO_ACTUAL_FOR_EXPECT",
-    "PHANTOM_CLASSIFIER",
-    "LEAKING_PHANTOM_TYPE",
-    "LEAKING_PHANTOM_TYPE_IN_SUPERTYPES"
-)
+@file:Suppress("DEPRECATED_BINARY_MOD")
 
 package kotlin
 
@@ -23,6 +17,8 @@ expect value class PlatformUInt internal constructor(internal val data: Platform
     inline infix fun xor(other: PlatformUInt): PlatformUInt
     inline infix fun shl(bitCount: Int): PlatformUInt
     inline infix fun shr(bitCount: Int): PlatformUInt
+    inline operator fun inc(): PlatformUInt
+    inline operator fun dec(): PlatformUInt
 
     override operator fun compareTo(other: PlatformUInt): Int
 
@@ -33,10 +29,7 @@ expect value class PlatformUInt internal constructor(internal val data: Platform
     operator fun times(other: PlatformUInt): PlatformUInt
 
     inline fun floorDiv(other: PlatformUInt): PlatformUInt
-    operator fun mod(other: UByte): UByte
-    operator fun mod(other: UShort): UShort
-    operator fun mod(other: UInt): UInt
-    operator fun mod(other: ULong): ULong
+    inline fun mod(other: PlatformUInt): PlatformUInt
 
     inline fun toByte(): Byte
     inline fun toDouble(): Double

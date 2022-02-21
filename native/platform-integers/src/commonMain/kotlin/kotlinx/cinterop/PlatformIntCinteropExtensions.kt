@@ -1,11 +1,4 @@
-@file:Suppress(
-    "NO_ACTUAL_FOR_EXPECT",
-    "FINAL_UPPER_BOUND",
-    "unused",
-    "PHANTOM_CLASSIFIER",
-    "LEAKING_PHANTOM_TYPE",
-    "LEAKING_PHANTOM_TYPE_IN_TYPE_PARAMETERS"
-)
+@file:Suppress("NO_ACTUAL_FOR_EXPECT", "FINAL_UPPER_BOUND", "unused")
 
 package kotlinx.cinterop
 

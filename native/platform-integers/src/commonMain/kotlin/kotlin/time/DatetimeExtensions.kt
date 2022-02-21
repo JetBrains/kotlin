@@ -1,4 +1,4 @@
-@file:Suppress("NO_ACTUAL_FOR_EXPECT", "PHANTOM_CLASSIFIER", "LEAKING_PHANTOM_TYPE")
+@file:Suppress("NO_ACTUAL_FOR_EXPECT")
 
 package kotlin.time
 
