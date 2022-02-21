@@ -9,6 +9,7 @@ import groovy.lang.Closure
 import org.gradle.api.file.FileCollection
 import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.tasks.*
+import org.gradle.process.ProcessForkOptions
 import org.gradle.process.internal.DefaultProcessForkOptions
 import org.gradle.util.ConfigureUtil
 import org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessagesTestExecutionSpec
@@ -22,6 +23,7 @@ import org.jetbrains.kotlin.gradle.targets.js.testing.mocha.KotlinMocha
 import org.jetbrains.kotlin.gradle.tasks.KotlinTest
 import org.jetbrains.kotlin.gradle.utils.getValue
 import org.jetbrains.kotlin.gradle.utils.newFileProperty
+import java.io.File
 import javax.inject.Inject
 
 open class KotlinJsTest
@@ -43,6 +45,9 @@ constructor(
     private val npmProjectDir by project.provider { compilation.npmProject.dir }
 
     private val projectPath = project.path
+
+    @Nested
+    var environment = mutableMapOf<String, String>()
 
     @get:Internal
     var testFramework: KotlinJsTestFramework? = null
@@ -133,10 +138,15 @@ constructor(
         KotlinKarma(compilation, { services }, path),
         body
     )
+
     fun useKarma(fn: Closure<*>) {
         useKarma {
             ConfigureUtil.configure(fn, this)
         }
+    }
+
+    fun environment(key: String, value: String) {
+        this.environment[key] = value
     }
 
     private inline fun <T : KotlinJsTestFramework> use(runner: T, body: T.() -> Unit): T {
@@ -159,6 +169,10 @@ constructor(
         val forkOptions = DefaultProcessForkOptions(fileResolver)
         forkOptions.workingDir = npmProjectDir
         forkOptions.executable = nodeExecutable
+
+        environment.forEach { (key, value) ->
+            forkOptions.environment(key, value)
+        }
 
         val nodeJsArgs = mutableListOf<String>()
 

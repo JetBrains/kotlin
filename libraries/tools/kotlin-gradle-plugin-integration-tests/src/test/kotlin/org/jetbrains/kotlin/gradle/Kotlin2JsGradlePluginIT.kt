@@ -980,6 +980,18 @@ abstract class AbstractKotlin2JsGradlePluginIT(protected val irBackend: Boolean)
         }
     }
 
+    @DisplayName("NodeJs test with custom fork options")
+    @GradleTest
+    fun testNodeJsForkOptions(gradleVersion: GradleVersion) {
+        project("kotlin-js-nodejs-custom-node-module", gradleVersion) {
+            build("build") {
+                checkIrCompilationMessage()
+
+                assertTasksExecuted(":nodeTest")
+            }
+        }
+    }
+
     @DisplayName("no dependencies from other modules are declared")
     @GradleTest
     fun testNoUnintendedDevDependencies(gradleVersion: GradleVersion) {
