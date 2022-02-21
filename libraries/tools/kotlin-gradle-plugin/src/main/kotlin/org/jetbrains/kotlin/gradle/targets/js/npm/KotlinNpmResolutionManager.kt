@@ -252,8 +252,7 @@ class KotlinNpmResolutionManager(@Transient private val nodeJsSettings: NodeJsRo
     internal fun <T> checkRequiredDependencies(task: T, services: ServiceRegistry, logger: Logger, projectPath: String)
             where T : RequiresNpmDependencies,
                   T : Task {
-        val requestedTaskDependencies = requireInstalled(services, logger, "before $task execution")[projectPath].taskRequirements
-        val targetRequired = requestedTaskDependencies[task.path]?.toSet() ?: setOf()
+        val targetRequired = resolver.taskRequirements.byTask[task.path]?.toSet() ?: setOf()
 
         task.requiredNpmDependencies.forEach {
             check(it in targetRequired) {
