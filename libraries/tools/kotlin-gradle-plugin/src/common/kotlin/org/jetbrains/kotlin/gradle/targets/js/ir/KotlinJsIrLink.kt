@@ -5,11 +5,11 @@
 
 package org.jetbrains.kotlin.gradle.targets.js.ir
 
-import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.file.FileCollection
 import org.gradle.api.file.ProjectLayout
 import org.gradle.api.model.ObjectFactory
+import org.gradle.api.provider.Property
 import org.gradle.api.tasks.*
 import org.gradle.work.NormalizeLineEndings
 import org.gradle.workers.WorkerExecutor
@@ -46,18 +46,6 @@ abstract class KotlinJsIrLink @Inject constructor(
     workerExecutor
 ) {
 
-    class Configurator(compilation: KotlinCompilationData<*>) : Kotlin2JsCompile.Configurator<KotlinJsIrLink>(compilation) {
-
-        override fun configure(task: KotlinJsIrLink) {
-            super.configure(task)
-
-            task.entryModule.fileProvider(
-                (compilation as KotlinJsIrCompilation).output.classesDirs.elements.map { it.single().asFile }
-            ).disallowChanges()
-            task.destinationDirectory.fileProvider(task.outputFileProperty.map { it.parentFile }).disallowChanges()
-        }
-    }
-
     init {
         // Not check sources, only klib module
         disallowSourceChanges()
@@ -88,11 +76,16 @@ abstract class KotlinJsIrLink @Inject constructor(
     @get:Input
     val outputGranularity: KotlinJsIrOutputGranularity = propertiesProvider.jsIrOutputGranularity
 
-    // Link tasks are not affected by compiler plugin
-    override val pluginClasspath: ConfigurableFileCollection = project.objects.fileCollection()
+    @get:Internal
+    @get:Deprecated("Please use modeProperty instead.")
+    var mode: KotlinJsBinaryMode
+        get() = modeProperty.get()
+        set(value) {
+            modeProperty.set(value)
+        }
 
-    @Input
-    lateinit var mode: KotlinJsBinaryMode
+    @get:Input
+    internal abstract val modeProperty: Property<KotlinJsBinaryMode>
 
     private val buildDir = project.buildDir
 

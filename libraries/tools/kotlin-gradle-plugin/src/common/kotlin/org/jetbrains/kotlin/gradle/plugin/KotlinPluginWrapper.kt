@@ -100,18 +100,12 @@ abstract class KotlinBasePluginWrapper : Plugin<Project> {
 
         KotlinGradleBuildServices.detectKotlinPluginLoadedInMultipleProjects(project, kotlinPluginVersion)
 
-        val buildMetricReporter = BuildMetricsReporterService.registerIfAbsent(project)
-
-        buildMetricReporter?.also { BuildEventsListenerRegistryHolder.getInstance(project).listenerRegistry.onTaskCompletion(it) }
+        BuildMetricsReporterService.registerIfAbsent(project)?.also {
+            BuildEventsListenerRegistryHolder.getInstance(project).listenerRegistry.onTaskCompletion(it)
+        }
 
         HttpReportService.registerIfAbsent(project, kotlinPluginVersion)
             ?.also { BuildEventsListenerRegistryHolder.getInstance(project).listenerRegistry.onTaskCompletion(it) }
-
-        project.tasks.withType(AbstractKotlinCompile::class.java).configureEach {
-            if (buildMetricReporter != null) {
-                it.buildMetricsReporterService.set(buildMetricReporter)
-            }
-        }
 
         project.createKotlinExtension(projectExtensionClass).apply {
             coreLibrariesVersion = kotlinPluginVersion
