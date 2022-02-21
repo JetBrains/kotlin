@@ -9,9 +9,9 @@ import com.intellij.mock.MockApplication
 import com.intellij.mock.MockProject
 import com.intellij.openapi.Disposable
 import com.intellij.psi.search.GlobalSearchScope
+import org.jetbrains.kotlin.analysis.api.fir.utils.configureOptionalTestCompilerPlugin
 import org.jetbrains.kotlin.analysis.api.impl.barebone.test.FrontendApiTestConfiguratorService
 import org.jetbrains.kotlin.analysis.api.impl.base.references.HLApiReferenceProviderService
-import org.jetbrains.kotlin.analysis.low.level.api.fir.compiler.based.registerTestServices
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.base.FirLowLevelFrontendApiTestConfiguratorService
 import org.jetbrains.kotlin.analysis.project.structure.ProjectStructureProvider
 import org.jetbrains.kotlin.config.CompilerConfiguration
@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 object FirFrontendApiTestConfiguratorService : FrontendApiTestConfiguratorService {
     override fun TestConfigurationBuilder.configureTest(disposable: Disposable) {
         with(FirLowLevelFrontendApiTestConfiguratorService) { configureTest(disposable) }
+        configureOptionalTestCompilerPlugin()
     }
 
     override fun processTestFiles(files: List<KtFile>): List<KtFile> {
