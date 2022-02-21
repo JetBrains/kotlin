@@ -24,6 +24,10 @@ internal object LazyTransformerFactory {
         firProviderInterceptor: FirProviderInterceptor?,
         checkPCE: Boolean,
     ): LLFirLazyTransformer = when (phase) {
+        FirResolvePhase.COMPANION_GENERATION -> LLFirDesignatedGeneratedCompanionObjectResolveTransformer(
+            designation = designation,
+            session = designation.firFile.moduleData.session,
+        )
         FirResolvePhase.SEALED_CLASS_INHERITORS -> LLFirLazyTransformer.DUMMY
         FirResolvePhase.SUPER_TYPES -> LLFirDesignatedSupertypeResolverTransformer(
             designation = designation,

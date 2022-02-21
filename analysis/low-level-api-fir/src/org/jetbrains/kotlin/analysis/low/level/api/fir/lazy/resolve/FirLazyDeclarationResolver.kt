@@ -174,7 +174,7 @@ internal class FirLazyDeclarationResolver(private val firFileBuilder: FirFileBui
         var currentPhase = FirResolvePhase.IMPORTS
         while (currentPhase < toPhase) {
             currentPhase = currentPhase.next
-            if (currentPhase.pluginPhase) continue
+            if (skipPhaseInLazyResolve(currentPhase)) continue
             if (checkPCE) checkCanceled()
 
             val transformersToApply = designations.mapNotNull {
@@ -358,7 +358,7 @@ internal class FirLazyDeclarationResolver(private val firFileBuilder: FirFileBui
 
         while (currentPhase < toPhase) {
             currentPhase = currentPhase.next
-            if (currentPhase.pluginPhase) continue
+            if (skipPhaseInLazyResolve(currentPhase)) continue
             if (checkPCE) checkCanceled()
 
             LazyTransformerFactory.createLazyTransformer(
@@ -396,7 +396,7 @@ internal class FirLazyDeclarationResolver(private val firFileBuilder: FirFileBui
 
         while (currentPhase < FirResolvePhase.BODY_RESOLVE) {
             currentPhase = currentPhase.next
-            if (currentPhase.pluginPhase) continue
+            if (skipPhaseInLazyResolve(currentPhase)) continue
             if (checkPCE) checkCanceled()
 
             LazyTransformerFactory.createLazyTransformer(
@@ -410,6 +410,10 @@ internal class FirLazyDeclarationResolver(private val firFileBuilder: FirFileBui
                 checkPCE = checkPCE,
             ).transformDeclaration(firFileBuilder.firPhaseRunner)
         }
+    }
+
+    private fun skipPhaseInLazyResolve(currentPhase: FirResolvePhase): Boolean {
+        return currentPhase == FirResolvePhase.ANNOTATIONS_FOR_PLUGINS
     }
 }
 
