@@ -1451,7 +1451,10 @@ class NewMultiplatformIT : BaseGradleIT() {
             )
         }
 
-        build("assemble", printOptionsTaskName) {
+        // Do not use embeddable compiler in Kotlin/Native, otherwise it would effectively enable allopen & noarg plugins for Native, and
+        // we'd be testing that the latest versions of allopen/noarg work with the fixed version of Kotlin/Native (defined in the root
+        // build.gradle.kts), which is generally not guaranteed.
+        build("assemble", "-Pkotlin.native.useEmbeddableCompilerJar=false", printOptionsTaskName) {
             assertSuccessful()
             assertTasksExecuted(*listOf("Jvm6", "NodeJs", "Linux64").map { ":compileKotlin$it" }.toTypedArray())
             assertFileExists("build/classes/kotlin/jvm6/main/com/example/Annotated.class")
