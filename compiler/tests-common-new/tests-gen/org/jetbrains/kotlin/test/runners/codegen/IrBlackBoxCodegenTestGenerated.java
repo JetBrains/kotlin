@@ -23201,6 +23201,18 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
             }
 
             @Test
+            @TestMetadata("kt51121.kt")
+            public void testKt51121() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/funInterface/kt51121.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+            }
+
+            @Test
+            @TestMetadata("kt51121_2.kt")
+            public void testKt51121_2() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/funInterface/kt51121_2.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+            }
+
+            @Test
             @TestMetadata("mangledSamWrappers.kt")
             public void testMangledSamWrappers() throws Exception {
                 runTest("compiler/testData/codegen/box/inlineClasses/funInterface/mangledSamWrappers.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());

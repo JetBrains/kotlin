@@ -20269,6 +20269,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
                 public FunInterface() {
                     register("compiler/testData/codegen/box/inlineClasses/funInterface/argumentIC.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
                     register("compiler/testData/codegen/box/inlineClasses/funInterface/argumentICGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+                    register("compiler/testData/codegen/box/inlineClasses/funInterface/kt51121.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+                    register("compiler/testData/codegen/box/inlineClasses/funInterface/kt51121_2.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
                     register("compiler/testData/codegen/box/inlineClasses/funInterface/mangledSamWrappers.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
                     register("compiler/testData/codegen/box/inlineClasses/funInterface/mangledSamWrappersGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
                     register("compiler/testData/codegen/box/inlineClasses/funInterface/returnIC.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
@@ -20298,6 +20300,20 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
                 @TestMetadata("argumentResult.kt")
                 public void testArgumentResult() throws Exception {
                     runTest("compiler/testData/codegen/box/inlineClasses/funInterface/argumentResult.kt");
+                }
+
+                @Test
+                @TestMetadata("kt51121.kt")
+                public void testKt51121() throws Exception {
+                    // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
+                    runTest("compiler/testData/codegen/box/inlineClasses/funInterface/kt51121.kt");
+                }
+
+                @Test
+                @TestMetadata("kt51121_2.kt")
+                public void testKt51121_2() throws Exception {
+                    // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
+                    runTest("compiler/testData/codegen/box/inlineClasses/funInterface/kt51121_2.kt");
                 }
 
                 @Test

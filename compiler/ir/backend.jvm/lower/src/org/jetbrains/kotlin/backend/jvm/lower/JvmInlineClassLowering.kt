@@ -122,10 +122,14 @@ private class JvmInlineClassLowering(private val context: JvmBackendContext) : F
             return null
         }
 
-        // If fun interface methods are already mangled, do not mangle them twice.
-        if (function is IrSimpleFunction && function.overriddenSymbols.any { it.owner.parentAsClass.isFun } &&
-            function.name.asString().substringAfterLast('-') == replacement.name.asString().substringAfterLast('-')
-        ) return null
+        if (function is IrSimpleFunction && function.overriddenSymbols.any { it.owner.parentAsClass.isFun }) {
+            // If fun interface methods are already mangled, do not mangle them twice.
+            val suffix = function.hashSuffix()
+            if (suffix != null && function.name.asString().endsWith(suffix)) {
+                function.transformChildrenVoid()
+                return null
+            }
+        }
 
         addBindingsFor(function, replacement)
         return when (function) {
@@ -134,6 +138,13 @@ private class JvmInlineClassLowering(private val context: JvmBackendContext) : F
             else -> throw IllegalStateException()
         }
     }
+
+    private fun IrFunction.hashSuffix(): String? =
+        InlineClassAbi.hashSuffix(
+            this,
+            context.state.functionsWithInlineClassReturnTypesMangled,
+            context.state.useOldManglingSchemeForFunctionsWithInlineClassesInSignatures
+        )
 
     private fun transformSimpleFunctionFlat(function: IrSimpleFunction, replacement: IrSimpleFunction): List<IrDeclaration> {
         replacement.valueParameters.forEach {
@@ -460,6 +471,10 @@ private class JvmInlineClassLowering(private val context: JvmBackendContext) : F
 
     override fun visitReturn(expression: IrReturn): IrExpression {
         expression.returnTargetSymbol.owner.safeAs<IrFunction>()?.let { target ->
+            val suffix = target.hashSuffix()
+            if (suffix != null && target.name.asString().endsWith(suffix))
+                return super.visitReturn(expression)
+
             context.inlineClassReplacements.getReplacementFunction(target)?.let {
                 return context.createIrBuilder(it.symbol, expression.startOffset, expression.endOffset).irReturn(
                     expression.value.transform(this, null)
