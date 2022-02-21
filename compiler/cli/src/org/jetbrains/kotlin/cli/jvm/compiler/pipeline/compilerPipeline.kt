@@ -278,7 +278,8 @@ fun compileModuleToAnalyzedFir(
             sessionProvider,
             previousStepsSymbolProviders,
             incrementalExcludesScope,
-            extendedAnalysisMode
+            extendedAnalysisMode,
+            needRegisterJavaElementFinder = false
         )
     }
 
@@ -292,7 +293,8 @@ fun compileModuleToAnalyzedFir(
         sessionProvider,
         previousStepsSymbolProviders,
         incrementalExcludesScope,
-        extendedAnalysisMode
+        extendedAnalysisMode,
+        needRegisterJavaElementFinder = true
     ) {
         if (commonSession != null) {
             sourceDependsOnDependencies(listOf(commonSession.moduleData))
@@ -372,6 +374,7 @@ fun createSession(
     previousStepsSymbolProviders: List<FirSymbolProvider>,
     incrementalExcludesScope: AbstractProjectFileSearchScope?,
     extendedAnalysisMode: Boolean,
+    needRegisterJavaElementFinder: Boolean,
     dependenciesConfigurator: DependencyListForCliModule.Builder.() -> Unit = {},
 ): FirSession {
     var librariesScope = projectEnvironment.getSearchScopeForProjectLibraries()
@@ -401,6 +404,7 @@ fun createSession(
         providerAndScopeForIncrementalCompilation,
         extensionRegistrars = (projectEnvironment as? VfsBasedProjectEnvironment)?.let { FirExtensionRegistrar.getInstances(it.project) }
             ?: emptyList(),
+        needRegisterJavaElementFinder = needRegisterJavaElementFinder,
         dependenciesConfigurator = {
             dependencies(moduleConfiguration.jvmClasspathRoots.map { it.toPath() })
             dependencies(moduleConfiguration.jvmModularRoots.map { it.toPath() })
