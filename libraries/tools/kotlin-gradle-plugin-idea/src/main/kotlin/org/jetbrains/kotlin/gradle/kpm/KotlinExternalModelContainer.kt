@@ -39,7 +39,8 @@ sealed class KotlinExternalModelContainer : Serializable {
         override fun <T : Any> contains(key: KotlinExternalModelKey<T>): Boolean = false
         override fun <T : Any> get(key: KotlinExternalModelKey<T>): T? = null
 
-
+        /* Necessary for stable serialization */
+        @Suppress("unused")
         private const val serialVersionUID = 0L
     }
 
