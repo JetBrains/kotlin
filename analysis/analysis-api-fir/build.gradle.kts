@@ -37,6 +37,10 @@ dependencies {
     testApi(toolsJar())
     testApiJUnit5()
     testApi(project(":analysis:symbol-light-classes"))
+
+    // We use 'api' instead of 'implementation' because other modules might be using these jars indirectly
+    testApi(project(":plugins:fir-plugin-prototype"))
+    testApi(projectTests(":plugins:fir-plugin-prototype"))
 }
 
 sourceSets {
@@ -48,6 +52,9 @@ projectTest(jUnitMode = JUnitMode.JUnit5) {
     dependsOn(":dist")
     workingDir = rootDir
     useJUnitPlatform()
+
+    // PluginAnnotationsProvider needs this jar during tests
+    dependsOn(":plugins:fir-plugin-prototype:plugin-annotations:jar")
 }
 
 testsJar()
