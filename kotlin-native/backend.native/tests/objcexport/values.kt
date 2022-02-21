@@ -579,25 +579,20 @@ class TestClashesImpl : TestClashes1, TestClashes2 {
 }
 
 class TestInvalidIdentifiers {
-    class `$Foo`
-    class `Bar$`
-
-    fun `a$d$d`(`$1`: Int, `2`: Int, `3`: Int): Int = `$1` + `2` + `3`
-
-    var `$status`: String = ""
+    fun `aSdSd`(`S1`: Int, `2`: Int, `3`: Int): Int = `S1` + `2` + `3`
 
     enum class E(val value: Int) {
-        `4$`(4),
-        `5$`(5),
+        `4S`(4),
+        `5S`(5),
         `_`(6),
         `__`(7)
     }
 
-    companion object `Companion$` {
+    companion object `CompanionS` {
         val `42` = 42
     }
 
-    val `$` = '$'
+    val `__` = '_'
     val `_` = '_'
 }
 

@@ -736,22 +736,16 @@ func testClashes() throws {
 func testInvalidIdentifiers() throws {
     let test = TestInvalidIdentifiers()
 
-    try assertTrue(TestInvalidIdentifiers._Foo() is TestInvalidIdentifiers._Foo)
-    try assertFalse(TestInvalidIdentifiers.Bar_() is TestInvalidIdentifiers._Foo)
+    try assertEquals(actual: 42, expected: test.aSdSd(S1: 13, _2: 14, _3: 15))
 
-    try assertEquals(actual: 42, expected: test.a_d_d(_1: 13, _2: 14, _3: 15))
-
-    test._status = "OK"
-    try assertEquals(actual: "OK", expected: test._status)
-
-    try assertEquals(actual: TestInvalidIdentifiers.E._4_.value, expected: 4)
-    try assertEquals(actual: TestInvalidIdentifiers.E._5_.value, expected: 5)
+    try assertEquals(actual: TestInvalidIdentifiers.E._4s.value, expected: 4)
+    try assertEquals(actual: TestInvalidIdentifiers.E._5s.value, expected: 5)
     try assertEquals(actual: TestInvalidIdentifiers.E.__.value, expected: 6)
     try assertEquals(actual: TestInvalidIdentifiers.E.___.value, expected: 7)
 
-    try assertEquals(actual: TestInvalidIdentifiers.Companion_()._42, expected: 42)
+    try assertEquals(actual: TestInvalidIdentifiers.CompanionS()._42, expected: 42)
 
-    try assertEquals(actual: Set([test.__, test.___]), expected: Set(["$".utf16.first, "_".utf16.first]))
+    try assertEquals(actual: Set([test.__, test.___]), expected: Set(["_".utf16.first, "_".utf16.first]))
 }
 
 class ImplementingHiddenSubclass : TestDeprecation.ImplementingHidden {

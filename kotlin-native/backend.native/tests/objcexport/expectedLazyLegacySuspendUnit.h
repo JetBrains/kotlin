@@ -2050,25 +2050,10 @@ __attribute__((swift_name("TestInvalidIdentifiers")))
 @interface KtTestInvalidIdentifiers : KtBase
 - (instancetype)init __attribute__((swift_name("init()"))) __attribute__((objc_designated_initializer));
 + (instancetype)new __attribute__((availability(swift, unavailable, message="use object initializers instead")));
-@property (class, readonly, getter=companion) KtTestInvalidIdentifiersCompanion_ *companion __attribute__((swift_name("companion")));
-- (int32_t)a_d_d_1:(int32_t)_1 _2:(int32_t)_2 _3:(int32_t)_3 __attribute__((swift_name("a_d_d(_1:_2:_3:)")));
-@property NSString *_status __attribute__((swift_name("_status")));
+@property (class, readonly, getter=companion) KtTestInvalidIdentifiersCompanionS *companion __attribute__((swift_name("companion")));
+- (int32_t)aSdSdS1:(int32_t)S1 _2:(int32_t)_2 _3:(int32_t)_3 __attribute__((swift_name("aSdSd(S1:_2:_3:)")));
 @property (readonly) unichar __ __attribute__((swift_name("__")));
 @property (readonly) unichar __ __attribute__((swift_name("__")));
-@end;
-
-__attribute__((objc_subclassing_restricted))
-__attribute__((swift_name("TestInvalidIdentifiers._Foo")))
-@interface KtTestInvalidIdentifiers_Foo : KtBase
-- (instancetype)init __attribute__((swift_name("init()"))) __attribute__((objc_designated_initializer));
-+ (instancetype)new __attribute__((availability(swift, unavailable, message="use object initializers instead")));
-@end;
-
-__attribute__((objc_subclassing_restricted))
-__attribute__((swift_name("TestInvalidIdentifiers.Bar_")))
-@interface KtTestInvalidIdentifiersBar_ : KtBase
-- (instancetype)init __attribute__((swift_name("init()"))) __attribute__((objc_designated_initializer));
-+ (instancetype)new __attribute__((availability(swift, unavailable, message="use object initializers instead")));
 @end;
 
 __attribute__((objc_subclassing_restricted))
@@ -2077,8 +2062,8 @@ __attribute__((swift_name("TestInvalidIdentifiers.E")))
 + (instancetype)alloc __attribute__((unavailable));
 + (instancetype)allocWithZone:(struct _NSZone *)zone __attribute__((unavailable));
 - (instancetype)initWithName:(NSString *)name ordinal:(int32_t)ordinal __attribute__((swift_name("init(name:ordinal:)"))) __attribute__((objc_designated_initializer)) __attribute__((unavailable));
-@property (class, readonly) KtTestInvalidIdentifiersE *_4_ __attribute__((swift_name("_4_")));
-@property (class, readonly) KtTestInvalidIdentifiersE *_5_ __attribute__((swift_name("_5_")));
+@property (class, readonly) KtTestInvalidIdentifiersE *_4s __attribute__((swift_name("_4s")));
+@property (class, readonly) KtTestInvalidIdentifiersE *_5s __attribute__((swift_name("_5s")));
 @property (class, readonly) KtTestInvalidIdentifiersE *__ __attribute__((swift_name("__")));
 @property (class, readonly) KtTestInvalidIdentifiersE *__ __attribute__((swift_name("__")));
 + (KtKotlinArray<KtTestInvalidIdentifiersE *> *)values __attribute__((swift_name("values()")));
@@ -2086,12 +2071,12 @@ __attribute__((swift_name("TestInvalidIdentifiers.E")))
 @end;
 
 __attribute__((objc_subclassing_restricted))
-__attribute__((swift_name("TestInvalidIdentifiers.Companion_")))
-@interface KtTestInvalidIdentifiersCompanion_ : KtBase
+__attribute__((swift_name("TestInvalidIdentifiers.CompanionS")))
+@interface KtTestInvalidIdentifiersCompanionS : KtBase
 + (instancetype)alloc __attribute__((unavailable));
 + (instancetype)allocWithZone:(struct _NSZone *)zone __attribute__((unavailable));
-+ (instancetype)companion_ __attribute__((swift_name("init()")));
-@property (class, readonly, getter=shared) KtTestInvalidIdentifiersCompanion_ *shared __attribute__((swift_name("shared")));
++ (instancetype)companionS __attribute__((swift_name("init()")));
+@property (class, readonly, getter=shared) KtTestInvalidIdentifiersCompanionS *shared __attribute__((swift_name("shared")));
 @property (readonly) int32_t _42 __attribute__((swift_name("_42")));
 @end;
 
