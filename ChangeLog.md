@@ -59,6 +59,7 @@
 
 - [`KT-48402`](https://youtrack.jetbrains.com/issue/KT-48402) Kapt throws "Fatal Error: Unable to find package java.lang in classpath or bootclasspath" with JDK 16 and Kotlin 1.5.30
 - [`KT-48450`](https://youtrack.jetbrains.com/issue/KT-48450) Allow to configure additional jvm arguments for 'KaptWithoutKotlincTask`
+- [`KT-41456`](https://youtrack.jetbrains.com/issue/KT-41456) Kotlin compilation failure after successful kapt causes invalid incremental builds
 
 ## 1.6.20-M1
 
