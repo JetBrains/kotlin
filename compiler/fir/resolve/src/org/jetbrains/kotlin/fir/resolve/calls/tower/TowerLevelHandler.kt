@@ -76,7 +76,6 @@ private class TowerScopeLevelProcessor(
         dispatchReceiverValue: ReceiverValue?,
         extensionReceiverValue: ReceiverValue?,
         scope: FirScope,
-        builtInExtensionFunctionReceiverValue: ReceiverValue?,
         objectsByName: Boolean
     ) {
         resultCollector.consumeCandidate(
@@ -87,7 +86,6 @@ private class TowerScopeLevelProcessor(
                 scope,
                 dispatchReceiverValue,
                 extensionReceiverValue,
-                builtInExtensionFunctionReceiverValue,
                 objectsByName
             ), candidateFactory.context
         )

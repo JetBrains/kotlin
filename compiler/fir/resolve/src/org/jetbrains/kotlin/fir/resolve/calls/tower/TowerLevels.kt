@@ -27,7 +27,6 @@ import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.name.StandardClassIds.Annotations.HidesMembers
 import org.jetbrains.kotlin.types.AbstractTypeChecker
-import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.utils.SmartList
 
 enum class ProcessResult {
@@ -59,7 +58,6 @@ abstract class TowerScopeLevel {
             dispatchReceiverValue: ReceiverValue?,
             extensionReceiverValue: ReceiverValue?,
             scope: FirScope,
-            builtInExtensionFunctionReceiverValue: ReceiverValue? = null,
             objectsByName: Boolean = false
         )
     }
@@ -76,7 +74,6 @@ class MemberScopeTowerLevel(
     private val bodyResolveComponents: BodyResolveComponents,
     val dispatchReceiverValue: ReceiverValue,
     private val extensionReceiver: ReceiverValue? = null,
-    private val implicitExtensionInvokeMode: Boolean = false,
 ) : TowerScopeLevel() {
     private val scopeSession: ScopeSession get() = bodyResolveComponents.scopeSession
     private val session: FirSession get() = bodyResolveComponents.session
@@ -106,9 +103,7 @@ class MemberScopeTowerLevel(
         val result = mutableListOf<T>()
         processScopeMembers { candidate ->
             empty = false
-            if (candidate is FirCallableSymbol<*> &&
-                (implicitExtensionInvokeMode || candidate.hasConsistentExtensionReceiver(extensionReceiver))
-            ) {
+            if (candidate is FirCallableSymbol<*> && candidate.hasConsistentExtensionReceiver(extensionReceiver)) {
                 val fir = candidate.fir
                 if ((fir as? FirConstructor)?.isInner == false) {
                     return@processScopeMembers
@@ -126,23 +121,12 @@ class MemberScopeTowerLevel(
         candidatesWithScope: List<Pair<FirScope, T>>
     ) {
         for ((scope, candidate) in candidatesWithScope) {
-            if (candidate is FirCallableSymbol<*> &&
-                (implicitExtensionInvokeMode || candidate.hasConsistentExtensionReceiver(extensionReceiver))
-            ) {
+            if (candidate is FirCallableSymbol<*> && candidate.hasConsistentExtensionReceiver(extensionReceiver)) {
                 output.consumeCandidate(
                     candidate, dispatchReceiverValue,
                     extensionReceiverValue = extensionReceiver,
                     scope
                 )
-
-                if (implicitExtensionInvokeMode) {
-                    output.consumeCandidate(
-                        candidate, dispatchReceiverValue,
-                        extensionReceiverValue = null,
-                        scope,
-                        builtInExtensionFunctionReceiverValue = this.extensionReceiver
-                    )
-                }
             } else if (candidate is FirClassLikeSymbol<*>) {
                 output.consumeCandidate(candidate, null, extensionReceiver, scope)
             }
@@ -153,10 +137,6 @@ class MemberScopeTowerLevel(
         info: CallInfo,
         processor: TowerScopeLevelProcessor<FirFunctionSymbol<*>>
     ): ProcessResult {
-        val isInvoke = info.name == OperatorNameConventions.INVOKE
-        if (implicitExtensionInvokeMode && !isInvoke) {
-            return ProcessResult.FOUND
-        }
         val lookupTracker = session.lookupTracker
         return processMembers(processor) { consumer ->
             withMemberCallLookup(lookupTracker, info) { lookupCtx ->
