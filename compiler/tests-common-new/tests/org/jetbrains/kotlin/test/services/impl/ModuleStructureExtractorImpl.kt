@@ -42,7 +42,7 @@ class ModuleStructureExtractorImpl(
     testServices: TestServices,
     additionalSourceProviders: List<AdditionalSourceProvider>,
     moduleStructureTransformers: List<ModuleStructureTransformer>,
-    private val environmentConfigurators: List<EnvironmentConfigurator>
+    private val environmentConfigurators: List<AbstractEnvironmentConfigurator>
 ) : ModuleStructureExtractor(testServices, additionalSourceProviders, moduleStructureTransformers) {
     companion object {
         private val allowedExtensionsForFiles = listOf(".kt", ".kts", ".java", ".js", ".mjs")
