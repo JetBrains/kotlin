@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.commonizer.cir.CirEntityId
 import org.jetbrains.kotlin.commonizer.cir.CirName
 import org.jetbrains.kotlin.commonizer.cir.CirPackageName
+import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.serialization.konan.impl.ForwardDeclarationsFqNames
@@ -76,4 +77,63 @@ internal val CirEntityId.isObjCInteropCallableAnnotation: Boolean
     get() = this == COMMONIZER_OBJC_INTEROP_CALLABLE_ANNOTATION_ID ||
             packageName == CINTEROP_PACKAGE && relativeNameSegments.singleOrNull() in OBJC_INTEROP_CALLABLE_ANNOTATIONS
 
+// platform integers/optimistic commonization
 
+val KOTLIN_BYTE_ID = ClassId.fromString("kotlin/Byte")
+val KOTLIN_SHORT_ID = ClassId.fromString("kotlin/Short")
+val KOTLIN_INT_ID = ClassId.fromString("kotlin/Int")
+val KOTLIN_LONG_ID = ClassId.fromString("kotlin/Long")
+
+val KOTLIN_UBYTE_ID = ClassId.fromString("kotlin/UByte")
+val KOTLIN_USHORT_ID = ClassId.fromString("kotlin/UShort")
+val KOTLIN_UINT_ID = ClassId.fromString("kotlin/UInt")
+val KOTLIN_ULONG_ID = ClassId.fromString("kotlin/ULong")
+
+val KOTLIN_FLOAT_ID = ClassId.fromString("kotlin/Float")
+val KOTLIN_DOUBLE_ID = ClassId.fromString("kotlin/Double")
+
+val BYTE_VAR_OF_ID = ClassId.fromString("kotlinx/cinterop/ByteVarOf")
+val SHORT_VAR_OF_ID = ClassId.fromString("kotlinx/cinterop/ShortVarOf")
+val INT_VAR_OF_ID = ClassId.fromString("kotlinx/cinterop/IntVarOf")
+val LONG_VAR_OF_ID = ClassId.fromString("kotlinx/cinterop/LongVarOf")
+
+val UBYTE_VAR_OF_ID = ClassId.fromString("kotlinx/cinterop/UByteVarOf")
+val USHORT_VAR_OF_ID = ClassId.fromString("kotlinx/cinterop/UShortVarOf")
+val UINT_VAR_OF_ID = ClassId.fromString("kotlinx/cinterop/UIntVarOf")
+val ULONG_VAR_OF_ID = ClassId.fromString("kotlinx/cinterop/ULongVarOf")
+
+val FLOAT_VAR_OF_ID = ClassId.fromString("kotlinx/cinterop/FloatVarOf")
+val DOUBLE_VAR_OF_ID = ClassId.fromString("kotlinx/cinterop/DoubleVarOf")
+
+val INT_ARRAY_ID = ClassId.fromString("kotlin/IntArray")
+val LONG_ARRAY_ID = ClassId.fromString("kotlin/LongArray")
+
+val UINT_ARRAY_ID = ClassId.fromString("kotlin/UIntArray")
+val ULONG_ARRAY_ID = ClassId.fromString("kotlin/ULongArray")
+
+val INT_RANGE_ID = ClassId.fromString("kotlin/ranges/IntRange")
+val LONG_RANGE_ID = ClassId.fromString("kotlin/ranges/LongRange")
+
+val UINT_RANGE_ID = ClassId.fromString("kotlin/ranges/UIntRange")
+val ULONG_RANGE_ID = ClassId.fromString("kotlin/ranges/ULongRange")
+
+val INT_PROGRESSION_ID = ClassId.fromString("kotlin/ranges/IntProgression")
+val LONG_PROGRESSION_ID = ClassId.fromString("kotlin/ranges/LongProgression")
+
+val UINT_PROGRESSION_ID = ClassId.fromString("kotlin/ranges/UIntProgression")
+val ULONG_PROGRESSION_ID = ClassId.fromString("kotlin/ranges/ULongProgression")
+
+val PLATFORM_INT_ID = ClassId.fromString("kotlin/PlatformInt")
+val PLATFORM_UINT_ID = ClassId.fromString("kotlin/PlatformUInt")
+
+val PLATFORM_INT_VAR_OF_ID = ClassId.fromString("kotlinx/cinterop/PlatformIntVarOf")
+val PLATFORM_UINT_VAR_OF_ID = ClassId.fromString("kotlinx/cinterop/PlatformUIntVarOf")
+
+val PLATFORM_INT_ARRAY_ID = ClassId.fromString("kotlin/PlatformIntArray")
+val PLATFORM_UINT_ARRAY_ID = ClassId.fromString("kotlin/PlatformUIntArray")
+
+val PLATFORM_INT_RANGE_ID = ClassId.fromString("kotlin/ranges/PlatformIntRange")
+val PLATFORM_UINT_RANGE_ID = ClassId.fromString("kotlin/ranges/PlatformUIntRange")
+
+val PLATFORM_INT_PROGRESSION_ID = ClassId.fromString("kotlin/ranges/PlatformIntProgression")
+val PLATFORM_UINT_PROGRESSION_ID = ClassId.fromString("kotlin/ranges/PlatformUIntProgression")
