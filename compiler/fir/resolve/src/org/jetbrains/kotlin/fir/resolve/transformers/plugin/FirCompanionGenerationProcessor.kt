@@ -24,7 +24,7 @@ class FirCompanionGenerationProcessor(
     override val transformer: FirTransformer<Nothing?> = FirCompanionGenerationTransformer(session)
 }
 
-private class FirCompanionGenerationTransformer(val session: FirSession) : FirTransformer<Nothing?>() {
+class FirCompanionGenerationTransformer(val session: FirSession) : FirTransformer<Nothing?>() {
     override fun <E : FirElement> transformElement(element: E, data: Nothing?): E {
         return element
     }
