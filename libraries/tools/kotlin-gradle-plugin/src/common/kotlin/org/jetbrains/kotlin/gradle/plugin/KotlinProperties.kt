@@ -36,37 +36,6 @@ import org.jetbrains.kotlin.statistics.metrics.StringMetrics
 import java.io.File
 import java.util.*
 
-internal fun PropertiesProvider.mapKotlinTaskProperties(task: AbstractKotlinCompile<*>) {
-    if (task is KotlinCompile) {
-        incrementalJvm?.let { task.incremental = it }
-        usePreciseJavaTracking?.let {
-            task.usePreciseJavaTracking = it
-        }
-        task.classpathSnapshotProperties.useClasspathSnapshot.value(useClasspathSnapshot).disallowChanges()
-        useFir?.let {
-            if (it == true) {
-                task.kotlinOptions.useFir = true
-            }
-        }
-        task.jvmTargetValidationMode.set(jvmTargetValidationMode)
-        task.useKotlinAbiSnapshot.value(useKotlinAbiSnapshot).disallowChanges()
-    }
-
-    if (task is Kotlin2JsCompile) {
-        incrementalJs?.let { task.incremental = it }
-        incrementalJsKlib?.let { task.incrementalJsKlib = it }
-    }
-}
-
-internal fun PropertiesProvider.mapKotlinDaemonProperties(task: CompileUsingKotlinDaemon) {
-    kotlinDaemonJvmArgs?.let {
-        task.kotlinDaemonJvmArguments.set(it.split("\\s+".toRegex()))
-    }
-    if (!task.compilerExecutionStrategy.isPresent) {
-        task.compilerExecutionStrategy.set(kotlinCompilerExecutionStrategy)
-    }
-}
-
 internal class PropertiesProvider private constructor(private val project: Project) {
     private val localProperties: Properties by lazy {
         Properties().apply {

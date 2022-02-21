@@ -9,6 +9,7 @@ import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.file.FileCollection
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.ListProperty
+import org.gradle.api.provider.MapProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.ProviderFactory
 import org.gradle.api.tasks.*
@@ -20,13 +21,12 @@ import org.gradle.workers.IsolationMode
 import org.gradle.workers.WorkAction
 import org.gradle.workers.WorkParameters
 import org.gradle.workers.WorkerExecutor
-import org.jetbrains.kotlin.gradle.internal.Kapt3GradleSubplugin.Companion.KAPT_WORKER_DEPENDENCIES_CONFIGURATION_NAME
 import org.jetbrains.kotlin.gradle.internal.kapt.classloaders.ClassLoadersCache
 import org.jetbrains.kotlin.gradle.internal.kapt.classloaders.rootOrSelf
 import org.jetbrains.kotlin.gradle.internal.kapt.incremental.KaptIncrementalChanges
 import org.jetbrains.kotlin.gradle.plugin.AbstractKotlinAndroidPluginWrapper
-import org.jetbrains.kotlin.gradle.tasks.CompilerPluginOptions
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+import org.jetbrains.kotlin.gradle.tasks.toSingleCompilerPluginOptions
 import org.jetbrains.kotlin.gradle.utils.isGradleVersionAtLeast
 import org.jetbrains.kotlin.utils.PathUtil
 import org.slf4j.LoggerFactory
@@ -42,16 +42,6 @@ abstract class KaptWithoutKotlincTask @Inject constructor(
     private val workerExecutor: WorkerExecutor
 ) : KaptTask(objectFactory) {
 
-    class Configurator(kotlinCompileTask: KotlinCompile): KaptTask.Configurator<KaptWithoutKotlincTask>(kotlinCompileTask) {
-        override fun configure(task: KaptWithoutKotlincTask) {
-            super.configure(task)
-            task.addJdkClassesToClasspath.value(
-                task.project.providers.provider { task.project.plugins.none { it is AbstractKotlinAndroidPluginWrapper } }
-            ).disallowChanges()
-            task.kaptJars.from(task.project.configurations.getByName(KAPT_WORKER_DEPENDENCIES_CONFIGURATION_NAME)).disallowChanges()
-        }
-    }
-
     @get:NormalizeLineEndings
     @get:Classpath
     abstract val kaptJars: ConfigurableFileCollection
@@ -66,16 +56,13 @@ abstract class KaptWithoutKotlincTask @Inject constructor(
     var mapDiagnosticLocations: Boolean = false
 
     @get:Input
-    lateinit var annotationProcessorFqNames: List<String>
-
-    @get:Internal
-    internal val processorOptions = CompilerPluginOptions()
+    abstract val annotationProcessorFqNames: ListProperty<String>
 
     @get:Input
-    lateinit var javacOptions: Map<String, String>
+    abstract val javacOptions: MapProperty<String, String>
 
     @get:Input
-    internal abstract val addJdkClassesToClasspath: Property<Boolean>
+    abstract val addJdkClassesToClasspath: Property<Boolean>
 
     @get:Internal
     internal val projectDir = project.projectDir
@@ -84,11 +71,9 @@ abstract class KaptWithoutKotlincTask @Inject constructor(
     val kaptProcessJvmArgs: ListProperty<String> = objectFactory.listProperty<String>().convention(emptyList())
 
     private fun getAnnotationProcessorOptions(): Map<String, String> {
-        val options = processorOptions.subpluginOptionsByPluginId[Kapt3GradleSubplugin.KAPT_SUBPLUGIN_ID] ?: return emptyMap()
-
         val result = mutableMapOf<String, String>()
-        for (option in options) {
-            result[option.key] = option.value
+        kaptPluginOptions.toSingleCompilerPluginOptions().subpluginOptionsByPluginId[Kapt3GradleSubplugin.KAPT_SUBPLUGIN_ID]?.forEach {
+            result[it.key] = it.value
         }
         annotationProcessorOptionProviders.forEach { providers ->
             (providers as List<*>).forEach { provider ->
@@ -104,6 +89,7 @@ abstract class KaptWithoutKotlincTask @Inject constructor(
     @TaskAction
     fun compile(inputChanges: InputChanges) {
         logger.info("Running kapt annotation processing using the Gradle Worker API")
+        checkProcessorCachingSetup()
         checkAnnotationProcessorClasspath()
 
         val incrementalChanges = getIncrementalChanges(inputChanges)
@@ -137,16 +123,16 @@ abstract class KaptWithoutKotlincTask @Inject constructor(
             incAptCache.orNull?.asFile,
             classpathChanges.toList(),
 
-            destinationDir,
-            classesDir,
+            destinationDir.get().asFile,
+            classesDir.get().asFile,
             stubsDir.asFile.get(),
 
             kaptClasspath.files.toList(),
             kaptExternalClasspath.files.toList(),
-            annotationProcessorFqNames,
+            annotationProcessorFqNames.get(),
 
             getAnnotationProcessorOptions(),
-            javacOptions,
+            javacOptions.get(),
 
             kaptFlagsForWorker,
 
@@ -154,7 +140,7 @@ abstract class KaptWithoutKotlincTask @Inject constructor(
         )
 
         // Skip annotation processing if no annotation processors were provided.
-        if (annotationProcessorFqNames.isEmpty() && kaptClasspath.isEmpty()) {
+        if (annotationProcessorFqNames.get().isEmpty() && kaptClasspath.isEmpty()) {
             logger.info("No annotation processors provided. Skip KAPT processing.")
             return
         }
@@ -257,6 +243,15 @@ abstract class KaptWithoutKotlincTask @Inject constructor(
                 parameters.kaptClasspath.toList(),
                 parameters.classloadersCacheSize.get()
             ).run()
+        }
+    }
+
+    private fun checkProcessorCachingSetup() {
+        if (includeCompileClasspath.get() && classLoadersCacheSize > 0) {
+            logger.warn(
+                "ClassLoaders cache can't be enabled together with AP discovery in compilation classpath."
+                        + "\nSet 'kapt.include.compile.classpath=false' to disable discovery"
+            )
         }
     }
 }

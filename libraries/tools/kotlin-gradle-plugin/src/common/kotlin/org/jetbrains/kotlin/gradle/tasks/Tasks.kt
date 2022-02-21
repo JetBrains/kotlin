@@ -10,7 +10,6 @@ import org.gradle.api.DefaultTask
 import org.gradle.api.GradleException
 import org.gradle.api.Project
 import org.gradle.api.Task
-import org.gradle.api.attributes.Attribute
 import org.gradle.api.file.*
 import org.gradle.api.invocation.Gradle
 import org.gradle.api.logging.Logger
@@ -46,21 +45,17 @@ import org.jetbrains.kotlin.daemon.common.MultiModuleICSettings
 import org.jetbrains.kotlin.gradle.dsl.*
 import org.jetbrains.kotlin.gradle.incremental.*
 import org.jetbrains.kotlin.gradle.internal.*
-import org.jetbrains.kotlin.gradle.internal.tasks.TaskConfigurator
 import org.jetbrains.kotlin.gradle.internal.tasks.TaskWithLocalState
 import org.jetbrains.kotlin.gradle.internal.tasks.allOutputFiles
-import org.jetbrains.kotlin.gradle.internal.transforms.ClasspathEntrySnapshotTransform
 import org.jetbrains.kotlin.gradle.logging.GradleKotlinLogger
 import org.jetbrains.kotlin.gradle.logging.GradlePrintingMessageCollector
 import org.jetbrains.kotlin.gradle.logging.kotlinDebug
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinCompilationData
 import org.jetbrains.kotlin.gradle.plugin.statistics.KotlinBuildStatsService
 import org.jetbrains.kotlin.gradle.report.BuildMetricsReporterService
 import org.jetbrains.kotlin.gradle.report.BuildReportMode
 import org.jetbrains.kotlin.gradle.report.ReportingSettings
-import org.jetbrains.kotlin.gradle.targets.js.ir.isProduceUnzippedKlib
 import org.jetbrains.kotlin.gradle.utils.*
 import org.jetbrains.kotlin.incremental.*
 import org.jetbrains.kotlin.incremental.ClasspathChanges.ClasspathSnapshotDisabled
@@ -261,42 +256,6 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments> @Inject constr
 ) : AbstractKotlinCompileTool<T>(objectFactory),
     CompileUsingKotlinDaemonWithNormalization {
 
-    open class Configurator<T : AbstractKotlinCompile<*>>(protected val compilation: KotlinCompilationData<*>) : TaskConfigurator<T> {
-        override fun configure(task: T) {
-            val project = task.project
-            task.friendPaths.from(project.provider { compilation.friendPaths })
-
-            if (compilation is KotlinCompilation<*>) {
-                task.friendSourceSets.set(project.provider { compilation.associateWithClosure.map { it.name } })
-                // FIXME support compiler plugins with PM20
-                task.pluginClasspath.from(project.configurations.getByName(compilation.pluginConfigurationName))
-            }
-            task.moduleName.set(project.provider { compilation.moduleName })
-            task.sourceSetName.set(project.provider { compilation.compilationPurpose })
-            task.multiPlatformEnabled.value(
-                project.provider {
-                    project.plugins.any {
-                        it is KotlinPlatformPluginBase ||
-                                it is AbstractKotlinMultiplatformPluginWrapper ||
-                                it is AbstractKotlinPm20PluginWrapper
-                    }
-                }
-            ).disallowChanges()
-            task.taskBuildCacheableOutputDirectory.value(getKotlinBuildDir(task).map { it.dir("cacheable") }).disallowChanges()
-            task.taskBuildLocalStateDirectory.value(getKotlinBuildDir(task).map { it.dir("local-state") }).disallowChanges()
-
-            task.localStateDirectories.from(task.taskBuildLocalStateDirectory).disallowChanges()
-
-            PropertiesProvider(task.project).mapKotlinDaemonProperties(task)
-        }
-
-        private fun getKotlinBuildDir(task: T): Provider<Directory> =
-            task.project.layout.buildDirectory.dir("$KOTLIN_BUILD_DIR_NAME/${task.name}")
-
-        protected fun getClasspathSnapshotDir(task: T): Provider<Directory> =
-            getKotlinBuildDir(task).map { it.dir("classpath-snapshot") }
-    }
-
     init {
         cacheOnlyIfEnabledForKotlin()
     }
@@ -312,7 +271,7 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments> @Inject constr
 
     // avoid creating directory in getter: this can lead to failure in parallel build
     @get:LocalState
-    internal val taskBuildLocalStateDirectory: DirectoryProperty = objectFactory.directoryProperty()
+    internal abstract val taskBuildLocalStateDirectory: DirectoryProperty
 
     @get:Internal
     internal val buildHistoryFile
@@ -342,7 +301,7 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments> @Inject constr
     internal fun reportingSettings() = buildMetricsReporterService.orNull?.parameters?.reportingSettings ?: ReportingSettings()
 
     @get:Input
-    internal val useModuleDetection: Property<Boolean> = objectFactory.property(Boolean::class.java).value(false)
+    internal abstract val useModuleDetection: Property<Boolean>
 
     @get:Internal
     protected val multiModuleICSettings: MultiModuleICSettings
@@ -350,10 +309,10 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments> @Inject constr
 
     @get:NormalizeLineEndings
     @get:Classpath
-    open val pluginClasspath: ConfigurableFileCollection = objectFactory.fileCollection()
+    abstract val pluginClasspath: ConfigurableFileCollection
 
-    @get:Internal
-    internal val pluginOptions = CompilerPluginOptions()
+    @get:Nested
+    internal abstract val pluginOptions: ListProperty<CompilerPluginOptions>
 
 
     /**
@@ -368,7 +327,7 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments> @Inject constr
     internal val javaOutputDir: DirectoryProperty = objectFactory.directoryProperty()
 
     @get:Internal
-    internal val sourceSetName: Property<String> = objectFactory.property(String::class.java)
+    internal abstract val sourceSetName: Property<String>
 
     @get:InputFiles
     @get:IgnoreEmptyDirectories
@@ -378,7 +337,7 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments> @Inject constr
     internal val commonSourceSet: ConfigurableFileCollection = objectFactory.fileCollection()
 
     @get:Input
-    internal val moduleName: Property<String> = objectFactory.property(String::class.java)
+    internal abstract val moduleName: Property<String>
 
     @get:Internal
     val abiSnapshotFile
@@ -394,11 +353,9 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments> @Inject constr
     internal val friendSourceSets = objectFactory.listProperty(String::class.java)
 
     @get:Internal // takes part in the compiler arguments
-    val friendPaths: ConfigurableFileCollection = objectFactory.fileCollection()
+    abstract val friendPaths: ConfigurableFileCollection
 
     private val kotlinLogger by lazy { GradleKotlinLogger(logger) }
-
-    abstract override val kotlinDaemonJvmArguments: ListProperty<String>
 
     @get:Internal
     protected val gradleCompileTaskProvider: Provider<GradleCompileTaskProvider> = objectFactory
@@ -473,8 +430,6 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments> @Inject constr
 
     protected open fun skipCondition(): Boolean = sources.isEmpty
 
-    private val projectDir = project.rootProject.projectDir
-
     @get:Internal
     protected open val incrementalProps: List<FileCollection>
         get() = listOfNotNull(
@@ -489,7 +444,7 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments> @Inject constr
     ) {
         val allKotlinSources = sources.asFileTree.files
 
-        logger.kotlinDebug { "All kotlin sources: ${allKotlinSources.pathsAsStringRelativeTo(projectDir)}" }
+        logger.kotlinDebug { "All kotlin sources: ${allKotlinSources.pathsAsStringRelativeTo(gradleCompileTaskProvider.get().projectDir.get())}" }
 
         if (!inputChanges.isIncremental && skipCondition()) {
             // Skip running only if non-incremental run. Otherwise, we may need to do some cleanup.
@@ -542,7 +497,7 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments> @Inject constr
     )
 
     @get:Input
-    internal val multiPlatformEnabled: Property<Boolean> = objectFactory.property(Boolean::class.java)
+    internal abstract val multiPlatformEnabled: Property<Boolean>
 
     @get:Internal
     internal val abstractKotlinCompileArgumentsContributor by lazy {
@@ -568,8 +523,7 @@ open class KotlinCompileArgumentsProvider<T : AbstractKotlinCompile<out CommonCo
     val isMultiplatform: Boolean = taskProvider.multiPlatformEnabled.get()
     private val pluginData = taskProvider.kotlinPluginData?.orNull
     val pluginClasspath: FileCollection = listOfNotNull(taskProvider.pluginClasspath, pluginData?.classpath).reduce(FileCollection::plus)
-    val pluginOptions: CompilerPluginOptions =
-        listOfNotNull(taskProvider.pluginOptions, pluginData?.options).reduce(CompilerPluginOptions::plus)
+    val pluginOptions: CompilerPluginOptions = taskProvider.pluginOptions.toSingleCompilerPluginOptions() + pluginData?.options
 }
 
 class KotlinJvmCompilerArgumentsProvider
@@ -596,101 +550,8 @@ abstract class KotlinCompile @Inject constructor(
     KotlinJvmCompile,
     UsesKotlinJavaToolchain {
 
-    internal open class Configurator<T : KotlinCompile>(
-        kotlinCompilation: KotlinCompilationData<*>,
-        private val properties: PropertiesProvider
-    ) : AbstractKotlinCompile.Configurator<T>(kotlinCompilation) {
-
-        companion object {
-            private const val TRANSFORMS_REGISTERED = "_kgp_internal_kotlin_compile_transforms_registered"
-
-            val ARTIFACT_TYPE_ATTRIBUTE: Attribute<String> = Attribute.of("artifactType", String::class.java)
-            private const val DIRECTORY_ARTIFACT_TYPE = "directory"
-            private const val JAR_ARTIFACT_TYPE = "jar"
-            const val CLASSPATH_ENTRY_SNAPSHOT_ARTIFACT_TYPE = "classpath-entry-snapshot"
-        }
-
-        /**
-         * Prepares for configuration of the task. This method must be called during build configuration, not during task configuration
-         * (which typically happens after build configuration). The reason is that some actions must be performed early (e.g., creating
-         * configurations should be done early to avoid issues with composite builds (https://issuetracker.google.com/183952598)).
-         */
-        fun runAtConfigurationTime(taskProvider: TaskProvider<T>, project: Project) {
-            if (properties.useClasspathSnapshot) {
-                registerTransformsOnce(project)
-                project.configurations.create(classpathSnapshotConfigurationName(taskProvider.name)).apply {
-                    project.dependencies.add(name, project.files(project.provider { taskProvider.get().libraries }))
-                }
-            }
-        }
-
-        private fun registerTransformsOnce(project: Project) {
-            if (project.extensions.extraProperties.has(TRANSFORMS_REGISTERED)) {
-                return
-            }
-            project.extensions.extraProperties[TRANSFORMS_REGISTERED] = true
-
-            val buildMetricsReporterService = BuildMetricsReporterService.registerIfAbsent(project)
-            project.dependencies.registerTransform(ClasspathEntrySnapshotTransform::class.java) {
-                it.from.attribute(ARTIFACT_TYPE_ATTRIBUTE, JAR_ARTIFACT_TYPE)
-                it.to.attribute(ARTIFACT_TYPE_ATTRIBUTE, CLASSPATH_ENTRY_SNAPSHOT_ARTIFACT_TYPE)
-                it.parameters.gradleUserHomeDir.set(project.gradle.gradleUserHomeDir)
-                buildMetricsReporterService?.apply { it.parameters.buildMetricsReporterService.set(this) }
-            }
-            project.dependencies.registerTransform(ClasspathEntrySnapshotTransform::class.java) {
-                it.from.attribute(ARTIFACT_TYPE_ATTRIBUTE, DIRECTORY_ARTIFACT_TYPE)
-                it.to.attribute(ARTIFACT_TYPE_ATTRIBUTE, CLASSPATH_ENTRY_SNAPSHOT_ARTIFACT_TYPE)
-                it.parameters.gradleUserHomeDir.set(project.gradle.gradleUserHomeDir)
-                buildMetricsReporterService?.apply { it.parameters.buildMetricsReporterService.set(this) }
-            }
-        }
-
-        private fun classpathSnapshotConfigurationName(taskName: String) = "_kgp_internal_${taskName}_classpath_snapshot"
-
-        override fun configure(task: T) {
-            super.configure(task)
-
-            val compileJavaTaskProvider = when (compilation) {
-                is KotlinJvmCompilation -> compilation.compileJavaTaskProvider
-                is KotlinJvmAndroidCompilation -> compilation.compileJavaTaskProvider
-                is KotlinWithJavaCompilation -> compilation.compileJavaTaskProvider
-                else -> null
-            }
-
-            if (compileJavaTaskProvider != null) {
-                task.associatedJavaCompileTaskTargetCompatibility.set(
-                    compileJavaTaskProvider.map { it.targetCompatibility }
-                )
-                task.associatedJavaCompileTaskSources.from(
-                    compileJavaTaskProvider.map { javaTask ->
-                        javaTask.source
-                    }
-                )
-                task.associatedJavaCompileTaskName.set(
-                    compileJavaTaskProvider.map { it.name }
-                )
-            }
-            task.moduleName.set(task.project.provider {
-                task.kotlinOptions.moduleName ?: task.parentKotlinOptionsImpl.orNull?.moduleName ?: compilation.moduleName
-            })
-
-            if (properties.useClasspathSnapshot) {
-                val classpathSnapshot = task.project.configurations.getByName(classpathSnapshotConfigurationName(task.name))
-                task.classpathSnapshotProperties.classpathSnapshot.from(
-                    classpathSnapshot.incoming.artifactView {
-                        it.attributes.attribute(ARTIFACT_TYPE_ATTRIBUTE, CLASSPATH_ENTRY_SNAPSHOT_ARTIFACT_TYPE)
-                    }.files
-                )
-                val classpathSnapshotDir = getClasspathSnapshotDir(task)
-                task.classpathSnapshotProperties.classpathSnapshotDir.value(classpathSnapshotDir).disallowChanges()
-            } else {
-                task.classpathSnapshotProperties.classpath.from(task.project.provider { task.libraries })
-            }
-        }
-    }
-
-    @get:Internal
-    internal val parentKotlinOptionsImpl: Property<KotlinJvmOptions> = objectFactory.property(KotlinJvmOptions::class.java)
+    @get:Internal("Takes part in compiler args.")
+    internal abstract val parentKotlinOptionsImpl: Property<KotlinJvmOptions>
 
     /** A package prefix that is used for locating Java sources in a directory structure with non-full-depth packages.
      *
@@ -1068,33 +929,6 @@ abstract class Kotlin2JsCompile @Inject constructor(
 
     init {
         incremental = true
-    }
-
-    open class Configurator<T : Kotlin2JsCompile>(compilation: KotlinCompilationData<*>) :
-        AbstractKotlinCompile.Configurator<T>(compilation) {
-
-        override fun configure(task: T) {
-            super.configure(task)
-
-            task.outputFileProperty.value(
-                task.project.provider {
-                    task.kotlinOptions.outputFile?.let(::File)
-                        ?: task.destinationDirectory.locationOnly.get().asFile.resolve("${compilation.ownModuleName}.js")
-                }
-            ).disallowChanges()
-            task.optionalOutputFile.fileProvider(
-                task.outputFileProperty.flatMap { outputFile ->
-                    task.project.provider {
-                        outputFile.takeUnless { task.kotlinOptions.isProduceUnzippedKlib() }
-                    }
-                }
-            ).disallowChanges()
-            val libraryCacheService = task.project.rootProject.gradle.sharedServices.registerIfAbsent(
-                "${LibraryFilterCachingService::class.java.canonicalName}_${LibraryFilterCachingService::class.java.classLoader.hashCode()}",
-                LibraryFilterCachingService::class.java
-            ) {}
-            task.libraryCache.set(libraryCacheService).also { task.libraryCache.disallowChanges() }
-        }
     }
 
     internal abstract class LibraryFilterCachingService : BuildService<BuildServiceParameters.None>, AutoCloseable {
