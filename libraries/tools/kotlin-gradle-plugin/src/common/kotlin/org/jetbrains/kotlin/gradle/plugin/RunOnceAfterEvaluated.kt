@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.gradle.plugin
 
 import org.gradle.api.Project
 import org.gradle.api.logging.Logging
-import org.gradle.api.tasks.TaskProvider
 
 /**
  * This class encapsulated logic which should be invoked during not before the script evaluation is ready and
@@ -45,14 +44,8 @@ internal class RunOnceAfterEvaluated(private val name: String, private val actio
     }
 }
 
-internal fun Project.runOnceAfterEvaluated(name: String, task: TaskProvider<*>, action: () -> (Unit)) {
+internal fun Project.runOnceAfterEvaluated(name: String, action: () -> (Unit)) {
     val runOnce = RunOnceAfterEvaluated(name, action)
-    runOnceAfterEvaluated(runOnce, task)
-}
-
-internal fun Project.runOnceAfterEvaluated(runOnce: RunOnceAfterEvaluated, task: TaskProvider<*>) {
     whenEvaluated { runOnce.onEvaluated() }
-    task.configure {
-        runOnce.onConfigure()
-    }
+    runOnce.onConfigure()
 }

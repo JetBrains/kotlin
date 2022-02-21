@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.gradle.tasks
 
-import org.gradle.api.Project
 import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.Provider
@@ -32,13 +31,6 @@ import org.jetbrains.kotlin.compilerRunner.OutputItemsCollectorImpl
 import org.jetbrains.kotlin.gradle.dsl.*
 import org.jetbrains.kotlin.gradle.internal.tasks.allOutputFiles
 import org.jetbrains.kotlin.gradle.logging.GradlePrintingMessageCollector
-import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
-import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
-import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
-import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinCommonCompilation
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.*
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.AbstractKotlinFragmentMetadataCompilationData
-import org.jetbrains.kotlin.gradle.plugin.sources.dependsOnClosure
 import org.jetbrains.kotlin.gradle.utils.propertyWithConvention
 import java.io.File
 import javax.inject.Inject
@@ -50,41 +42,6 @@ abstract class KotlinCompileCommon @Inject constructor(
     objectFactory: ObjectFactory
 ) : AbstractKotlinCompile<K2MetadataCompilerArguments>(objectFactory),
     KotlinCommonCompile {
-
-    class Configurator(compilation: KotlinCompilationData<*>) : AbstractKotlinCompile.Configurator<KotlinCompileCommon>(compilation) {
-        override fun configure(task: KotlinCompileCommon) {
-            super.configure(task)
-            task.refinesMetadataPaths.from(getRefinesMetadataPaths(task.project)).disallowChanges()
-            task.expectActualLinker
-                .value(task.project.provider { (compilation as? KotlinCommonCompilation)?.isKlibCompilation == true || compilation is KotlinMetadataCompilationData })
-                .disallowChanges()
-        }
-
-        private fun getRefinesMetadataPaths(project: Project): Provider<Iterable<File>> {
-            return project.provider {
-                when (compilation) {
-                    is KotlinCompilation<*> -> {
-                        val defaultKotlinSourceSet: KotlinSourceSet = compilation.defaultSourceSet
-                        val metadataTarget = compilation.owner as KotlinTarget
-                        defaultKotlinSourceSet.dependsOnClosure
-                            .mapNotNull { sourceSet -> metadataTarget.compilations.findByName(sourceSet.name)?.output?.classesDirs }
-                            .flatten()
-                    }
-                    is AbstractKotlinFragmentMetadataCompilationData -> {
-                        val fragment = compilation.fragment
-                        project.files(
-                            fragment.refinesClosure.map {
-                                val compilation = compilation.metadataCompilationRegistry.getForFragmentOrNull(it)
-                                    ?: return@map project.files()
-                                compilation.output.classesDirs
-                            }
-                        )
-                    }
-                    else -> error("unexpected compilation type")
-                }
-            }
-        }
-    }
 
     override val compilerRunner: Provider<GradleCompilerRunner> =
         objectFactory.propertyWithConvention(

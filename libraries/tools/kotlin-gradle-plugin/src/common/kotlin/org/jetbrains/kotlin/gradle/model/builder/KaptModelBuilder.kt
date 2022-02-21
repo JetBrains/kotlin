@@ -39,9 +39,9 @@ class KaptModelBuilder : ToolingModelBuilder {
                         true
                     )
                 ) KaptSourceSet.KaptSourceSetType.TEST else KaptSourceSet.KaptSourceSetType.PRODUCTION,
-                destinationDir,
-                kotlinSourcesDestinationDir,
-                classesDir
+                destinationDir.get().asFile,
+                kotlinSourcesDestinationDir.get().asFile,
+                classesDir.get().asFile
             )
         }
     }

@@ -49,14 +49,20 @@ class SubpluginEnvironment(
 
             val subpluginOptionsProvider = subplugin.applyToCompilation(kotlinCompilation)
             val subpluginId = subplugin.getCompilerPluginId()
+            val compilerOptions = subpluginOptionsProvider.map { subpluginOptions ->
+                val options = CompilerPluginOptions()
+                subpluginOptions.forEach { opt ->
+                    options.addPluginArgument(subpluginId, opt)
+                }
+                options
+            }
 
             val configureKotlinTask: (KotlinCompile<*>) -> Unit = {
-                val pluginOptions = it.getPluginOptions()
-                val subpluginOptions = subpluginOptionsProvider.get()
-                for (option in subpluginOptions) {
-                    pluginOptions.addPluginArgument(subpluginId, option)
+                when (it) {
+                    is AbstractKotlinCompile<*> -> it.pluginOptions.add(compilerOptions)
+                    is KotlinNativeCompile -> it.compilerPluginOptions.addPluginArgument(compilerOptions.get())
+                    else -> error("Unexpected task ${it.name}, class: ${it.javaClass}")
                 }
-                it.registerSubpluginOptionsAsInputs(subpluginId, subpluginOptions)
             }
 
             kotlinCompilation.compileKotlinTaskProvider.configure(configureKotlinTask)
@@ -73,12 +79,6 @@ class SubpluginEnvironment(
         }
 
         return appliedSubplugins
-    }
-
-    private fun KotlinCompile<*>.getPluginOptions(): CompilerPluginOptions = when (this) {
-        is AbstractKotlinCompile<*> -> pluginOptions
-        is KotlinNativeCompile -> compilerPluginOptions
-        else -> error("Unexpected task ${this.name}, class: ${this.javaClass}")
     }
 
     private fun Project.addMavenDependency(configuration: String, artifact: SubpluginArtifact) {
