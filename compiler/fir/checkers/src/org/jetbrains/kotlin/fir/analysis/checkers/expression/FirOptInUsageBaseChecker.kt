@@ -16,7 +16,6 @@ import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.isLocal
 import org.jetbrains.kotlin.fir.expressions.FirConstExpression
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
-import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.toFirRegularClassSymbol
 import org.jetbrains.kotlin.fir.resolve.toSymbol
@@ -207,7 +206,7 @@ object FirOptInUsageBaseChecker {
                     Experimentality.Severity.WARNING -> FirErrors.OPT_IN_USAGE to "should"
                     Experimentality.Severity.ERROR -> FirErrors.OPT_IN_USAGE_ERROR to "must"
                 }
-                val reportedMessage = message ?: "This declaration is experimental and its usage $verb be marked"
+                val reportedMessage = message?.takeIf { it.isNotBlank() } ?: "This declaration is experimental and its usage $verb be marked"
                 reporter.reportOn(element.source, diagnostic, annotationClassId.asSingleFqName(), reportedMessage, context)
             }
         }
