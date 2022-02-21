@@ -110,8 +110,8 @@ abstract class AbstractSuspendFunctionsLowering<C : CommonBackendContext>(val co
                     clazz.superTypes += functionType
 
                     context.irFactory.buildFun {
-                        startOffset = invokeFunction.startOffset
-                        endOffset = invokeFunction.endOffset
+                        startOffset = SYNTHETIC_OFFSET
+                        endOffset = SYNTHETIC_OFFSET
                         origin = DECLARATION_ORIGIN_COROUTINE_IMPL
                         name = OperatorNameConventions.INVOKE
                         visibility = DescriptorVisibilities.PROTECTED
