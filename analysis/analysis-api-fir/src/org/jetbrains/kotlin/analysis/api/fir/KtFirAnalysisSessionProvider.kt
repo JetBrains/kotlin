@@ -26,7 +26,6 @@ class KtFirAnalysisSessionProvider(project: Project) : CachingKtAnalysisSessionP
     override fun getResolveState(contextSymbol: KtSymbol): LLFirModuleResolveState {
         return when (contextSymbol) {
             is KtFirSymbol<*> -> contextSymbol.resolveState
-            is KtFirBackingFieldSymbol -> contextSymbol.resolveState
             else -> error("Invalid symbol ${contextSymbol::class}")
         }
     }

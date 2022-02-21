@@ -43,7 +43,7 @@ internal class KtToFirMapping(firElement: FirElement, recorder: FirElementsRecor
 
         val userType = when (ktElement) {
             is KtUserType -> ktElement
-            is KtNameReferenceExpression -> ktElement as? KtUserType
+            is KtNameReferenceExpression -> ktElement.parent as? KtUserType
             else -> null
         } ?: return null
 
