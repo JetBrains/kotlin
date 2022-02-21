@@ -9,6 +9,7 @@ import org.gradle.testkit.runner.BuildResult
 import org.gradle.testkit.runner.GradleRunner
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.BaseGradleIT.Companion.acceptAndroidSdkLicenses
+import org.jetbrains.kotlin.gradle.report.BuildReportType
 import org.jetbrains.kotlin.test.util.KtTestUtil
 import java.io.File
 import java.nio.file.*
@@ -143,6 +144,21 @@ fun TestProject.enableBuildCacheDebug() {
     gradleProperties.append(
         "org.gradle.caching.debug=true"
     )
+}
+
+fun TestProject.enableStatisticReports(
+    type: BuildReportType,
+    url: String?
+) {
+    gradleProperties.append(
+        "\nkotlin.build.report.output=${type.name}\n"
+    )
+
+    url?.also {
+        gradleProperties.append(
+            "\nkotlin.build.report.http.url=$url\n"
+        )
+    }
 }
 
 class TestProject(
