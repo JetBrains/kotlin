@@ -18,9 +18,11 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.api.services.PackagePartP
 import org.jetbrains.kotlin.analysis.project.structure.KtModuleScopeProvider
 import org.jetbrains.kotlin.analysis.project.structure.KtModuleScopeProviderImpl
 import org.jetbrains.kotlin.analysis.project.structure.ProjectStructureProvider
+import org.jetbrains.kotlin.analysis.providers.KotlinAnnotationsResolverFactory
 import org.jetbrains.kotlin.analysis.providers.KotlinDeclarationProviderFactory
 import org.jetbrains.kotlin.analysis.providers.KotlinModificationTrackerFactory
 import org.jetbrains.kotlin.analysis.providers.KotlinPackageProviderFactory
+import org.jetbrains.kotlin.analysis.providers.impl.KotlinStaticAnnotationsResolverFactory
 import org.jetbrains.kotlin.analysis.providers.impl.KotlinStaticDeclarationProviderFactory
 import org.jetbrains.kotlin.analysis.providers.impl.KotlinStaticModificationTrackerFactory
 import org.jetbrains.kotlin.analysis.providers.impl.KotlinStaticPackageProviderFactory
@@ -52,6 +54,7 @@ fun MockProject.registerTestServices(
         KotlinModificationTrackerFactory::class.java,
         KotlinStaticModificationTrackerFactory::class.java
     )
+    registerService(KotlinAnnotationsResolverFactory::class.java, KotlinStaticAnnotationsResolverFactory(allKtFiles))
     registerService(KotlinDeclarationProviderFactory::class.java, KotlinStaticDeclarationProviderFactory(allKtFiles))
     registerService(KotlinPackageProviderFactory::class.java, KotlinStaticPackageProviderFactory(allKtFiles))
     registerService(ProjectStructureProvider::class.java, projectStructureProvider)
