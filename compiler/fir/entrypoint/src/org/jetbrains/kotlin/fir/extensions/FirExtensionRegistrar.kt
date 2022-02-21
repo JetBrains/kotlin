@@ -9,6 +9,7 @@ import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.SessionConfiguration
 import org.jetbrains.kotlin.fir.analysis.extensions.FirAdditionalCheckersExtension
+import java.util.concurrent.atomic.AtomicBoolean
 import kotlin.reflect.KClass
 
 abstract class FirExtensionRegistrar : FirExtensionRegistrarAdapter() {
@@ -71,7 +72,14 @@ abstract class FirExtensionRegistrar : FirExtensionRegistrarAdapter() {
 
     @OptIn(PluginServicesInitialization::class)
     fun configure(): BunchOfRegisteredExtensions {
-        ExtensionRegistrarContext().configurePlugin()
+        if (isInitialized.compareAndSet(false, true)) {
+            // Extension registrars can survive FirSession recreation in IDE mode, but we don't want to
+            // call `configurePlugin` more than once, because it will lead to registering all plugins twice.
+            // Please see KT-51444 for the details.
+
+            ExtensionRegistrarContext().configurePlugin()
+        }
+
         return BunchOfRegisteredExtensions(map.values)
     }
 
@@ -82,6 +90,8 @@ abstract class FirExtensionRegistrar : FirExtensionRegistrarAdapter() {
     private val map: Map<KClass<out FirExtension>, RegisteredExtensionsFactories> = AVAILABLE_EXTENSIONS.map {
         it to RegisteredExtensionsFactories(it)
     }.toMap()
+
+    private var isInitialized: AtomicBoolean = AtomicBoolean(false)
 
     private fun <P : FirExtension> registerExtension(kClass: KClass<out P>, factory: FirExtension.Factory<P>) {
         @Suppress("UNCHECKED_CAST")
