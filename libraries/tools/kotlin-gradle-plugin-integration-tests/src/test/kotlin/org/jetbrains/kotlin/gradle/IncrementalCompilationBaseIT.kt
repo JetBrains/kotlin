@@ -16,8 +16,9 @@ abstract class IncrementalCompilationBaseIT : KGPBaseTest() {
 
     protected abstract val defaultProjectName: String
 
-    fun defaultProject(
+    open fun defaultProject(
         gradleVersion: GradleVersion,
+        buildOptions: BuildOptions = defaultBuildOptions,
         test: TestProject.() -> Unit = {}
     ): TestProject = project(
         defaultProjectName,
