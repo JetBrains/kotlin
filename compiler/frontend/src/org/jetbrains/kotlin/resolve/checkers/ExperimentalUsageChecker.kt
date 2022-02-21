@@ -118,18 +118,18 @@ class ExperimentalUsageChecker(project: Project) : CallChecker {
         private val WARNING_LEVEL = Name.identifier("WARNING")
         private val ERROR_LEVEL = Name.identifier("ERROR")
 
-        internal fun getDefaultDiagnosticMessage(prefix: String) = fun(fqName: FqName): String {
-            return "$prefix with '@${fqName.asString()}' or '@OptIn(${fqName.asString()}::class)'"
+        internal fun getDefaultDiagnosticMessage(prefix: String): (FqName) -> String = { fqName: FqName ->
+            OptInNames.buildDefaultDiagnosticMessage(prefix, fqName)
         }
 
         private val USAGE_DIAGNOSTICS = ExperimentalityDiagnostics(
             warning = ExperimentalityDiagnostic2(
                 Errors.OPT_IN_USAGE,
-                getDefaultDiagnosticMessage("This declaration is experimental and its usage should be marked")
+                getDefaultDiagnosticMessage(OptInNames.buildMessagePrefix("should"))
             ),
             error = ExperimentalityDiagnostic2(
                 Errors.OPT_IN_USAGE_ERROR,
-                getDefaultDiagnosticMessage("This declaration is experimental and its usage must be marked")
+                getDefaultDiagnosticMessage(OptInNames.buildMessagePrefix("must"))
             ),
             futureError = ExperimentalityDiagnostic2(
                 Errors.OPT_IN_USAGE_FUTURE_ERROR,

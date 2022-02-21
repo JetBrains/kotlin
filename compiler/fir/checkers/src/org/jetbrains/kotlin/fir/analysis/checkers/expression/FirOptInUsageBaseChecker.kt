@@ -206,8 +206,10 @@ object FirOptInUsageBaseChecker {
                     Experimentality.Severity.WARNING -> FirErrors.OPT_IN_USAGE to "should"
                     Experimentality.Severity.ERROR -> FirErrors.OPT_IN_USAGE_ERROR to "must"
                 }
-                val reportedMessage = message?.takeIf { it.isNotBlank() } ?: "This declaration is experimental and its usage $verb be marked"
-                reporter.reportOn(element.source, diagnostic, annotationClassId.asSingleFqName(), reportedMessage, context)
+                val fqName = annotationClassId.asSingleFqName()
+                val reportedMessage = message?.takeIf { it.isNotBlank() }
+                    ?: OptInNames.buildDefaultDiagnosticMessage(OptInNames.buildMessagePrefix(verb), fqName)
+                reporter.reportOn(element.source, diagnostic, fqName, reportedMessage, context)
             }
         }
     }
