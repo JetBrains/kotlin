@@ -5,69 +5,28 @@
 
 package org.jetbrains.kotlin.gradle
 
-import org.jetbrains.kotlin.gradle.util.getFileByName
-import org.jetbrains.kotlin.gradle.util.getFilesByNames
-import org.jetbrains.kotlin.gradle.util.modify
+import org.gradle.api.logging.LogLevel
+import org.gradle.testkit.runner.BuildResult
+import org.gradle.util.GradleVersion
+import org.jetbrains.kotlin.gradle.testbase.*
+import java.nio.file.Path
+import kotlin.io.path.relativeTo
 
-abstract class IncrementalCompilationBaseIT : BaseGradleIT() {
+abstract class IncrementalCompilationBaseIT : KGPBaseTest() {
 
-    protected abstract fun defaultProject(): Project
+    protected abstract val defaultProjectName: String
 
-    override fun defaultBuildOptions() = super.defaultBuildOptions().copy(incremental = true)
+    fun defaultProject(
+        gradleVersion: GradleVersion,
+        test: TestProject.() -> Unit = {}
+    ): TestProject = project(
+        defaultProjectName,
+        gradleVersion,
+        test = test
+    )
 
-    protected fun doTest(
-        fileToModify: String,
-        modifyFileContents: (originalContents: String) -> String,
-        expectedCompiledFileNames: Collection<String>,
-    ) {
-        doTest(
-            modifyProject = { projectDir.getFileByName(fileToModify).modify(modifyFileContents) },
-            expectedCompiledFileNames = expectedCompiledFileNames
-        )
-    }
-
-    protected fun doTest(
-        fileToModify: String,
-        modifyFileContents: (originalContents: String) -> String,
-        assertResults: CompiledProject.() -> Unit,
-    ) {
-        doTest(
-            modifyProject = { projectDir.getFileByName(fileToModify).modify(modifyFileContents) },
-            assertResults = { assertResults() }
-        )
-    }
-
-    protected fun doTest(
-        project: Project = defaultProject(),
-        task: String = "build",
-        options: BuildOptions = defaultBuildOptions(),
-        modifyProject: Project.() -> Unit,
-        expectedCompiledFileNames: Collection<String>,
-    ) {
-        doTest(
-            project, task, options, modifyProject,
-            assertResults = {
-                assertCompiledKotlinFiles(project.projectDir.getFilesByNames(*expectedCompiledFileNames.toTypedArray()))
-            }
-        )
-    }
-
-    protected fun doTest(
-        project: Project = defaultProject(),
-        task: String = "build",
-        options: BuildOptions = defaultBuildOptions(),
-        modifyProject: Project.() -> Unit,
-        assertResults: CompiledProject.() -> Unit
-    ) {
-        project.build(task, options = options) {
-            assertSuccessful()
-        }
-
-        modifyProject(project)
-
-        project.build(task, options = options) {
-            assertSuccessful()
-            assertResults()
-        }
-    }
+    override val defaultBuildOptions = super.defaultBuildOptions.copy(
+        incremental = true,
+        logLevel = LogLevel.DEBUG
+    )
 }
