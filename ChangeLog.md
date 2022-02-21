@@ -1,3 +1,65 @@
+## 1.6.20-RC
+
+### Compiler
+
+- [`KT-51302`](https://youtrack.jetbrains.com/issue/KT-51302) Kotlin/Native 1.6.20-M1 compiler fails because of assertion in NativeAnnotationImplementationTransformer
+- [`KT-51148`](https://youtrack.jetbrains.com/issue/KT-51148) "AssertionError: At this stage there should be no remaining variables with proper constraints" caused by two type parameters
+- [`KT-50970`](https://youtrack.jetbrains.com/issue/KT-50970) Kotlin/Native: use arm instruction set instead of thumb-2 for iosArm32 and watchosArm32 targets
+- [`KT-50843`](https://youtrack.jetbrains.com/issue/KT-50843) Kotlin/Native: LLVM constant merge pass does not work for Kotlin constants
+- [`KT-51157`](https://youtrack.jetbrains.com/issue/KT-51157) JVM / IR: "IndexOutOfBoundsException: Index: 1, Size: 1" caused by interface hierarchy and UInt method parameter
+- [`KT-50498`](https://youtrack.jetbrains.com/issue/KT-50498) Exception after analysing an erroneous lambda
+- [`KT-51062`](https://youtrack.jetbrains.com/issue/KT-51062) Progressions resolve changing warning isn't reported for Java methods
+- [`KT-51040`](https://youtrack.jetbrains.com/issue/KT-51040) Type inference fails on 1.6: "Cannot use 'CapturedType(*)' as reified type parameter" with EnumSet and elvis operator
+- [`KT-51022`](https://youtrack.jetbrains.com/issue/KT-51022) Fix error messages for resolution ambiguity with stub types
+
+### Native
+
+- [`KT-51359`](https://youtrack.jetbrains.com/issue/KT-51359) Native: the compiler doesn't work on macOS 12.3 Beta
+
+### Native. Runtime. Memory
+
+- [`KT-50879`](https://youtrack.jetbrains.com/issue/KT-50879) Kotlin/Native: Stabilize Concurrent Sweep GC
+- [`KT-50948`](https://youtrack.jetbrains.com/issue/KT-50948) Kotlin/Native: Concurrent Sweep GC hangs on Windows in GCStateHolder::waitEpochFinished/waitScheduled
+
+### Tools. Android Extensions
+
+- [`KT-50784`](https://youtrack.jetbrains.com/issue/KT-50784) kotlin-android-extensions produces unbound symbol under `_$_findViewCache`
+
+### Tools. CLI
+
+- [`KT-51309`](https://youtrack.jetbrains.com/issue/KT-51309) Add JVM target bytecode version 18
+- [`KT-51025`](https://youtrack.jetbrains.com/issue/KT-51025) JVM CLI compiler takes class file from classpath instead of input java source file
+
+### Tools. Daemon
+
+- [`KT-47522`](https://youtrack.jetbrains.com/issue/KT-47522) Provide reasonable resolution strategy for OutOfMemoryError during compilation
+- [`KT-51116`](https://youtrack.jetbrains.com/issue/KT-51116) OOM user-friendly message isn't displayed if there is main exception caused by out of memory
+
+### Tools. Gradle
+
+- [`KT-51177`](https://youtrack.jetbrains.com/issue/KT-51177) After updating from KGP 1.5.30 to 1.6.10, KotlinCompile is non-incremental given an Android resource change
+- [`KT-50719`](https://youtrack.jetbrains.com/issue/KT-50719) Kotlin Gradle Plugin may hang on writing statistics
+- [`KT-48849`](https://youtrack.jetbrains.com/issue/KT-48849) Cache miss due to empty directories in `KotlinCompile` inputs
+
+### Tools. Gradle. JS
+
+- [`KT-51060`](https://youtrack.jetbrains.com/issue/KT-51060) KJS / IR: Incorrect order of libraries with IC
+- [`KT-50930`](https://youtrack.jetbrains.com/issue/KT-50930) KJS / IR: Incremental compilation cache building not consider multiple artifacts
+
+### Tools. Gradle. Multiplatform
+
+- [`KT-50592`](https://youtrack.jetbrains.com/issue/KT-50592) [Gradle][MPP] Mitigate isolated KGP classpath issues
+- [`KT-51176`](https://youtrack.jetbrains.com/issue/KT-51176) CInteropCommonization: Warn users about disabled cinterop commonization when cinterops are present in hmpp
+
+### Tools. Gradle. Native
+
+- [`KT-49330`](https://youtrack.jetbrains.com/issue/KT-49330) commonizeNativeDistribution: "ClassCastException: KotlinJvmProjectExtension_Decorated cannot be cast to class org.jetbrains.kotlin.gradle.dsl.KotlinProjectExtension"
+
+### Tools. Kapt
+
+- [`KT-48402`](https://youtrack.jetbrains.com/issue/KT-48402) Kapt throws "Fatal Error: Unable to find package java.lang in classpath or bootclasspath" with JDK 16 and Kotlin 1.5.30
+- [`KT-48450`](https://youtrack.jetbrains.com/issue/KT-48450) Allow to configure additional jvm arguments for 'KaptWithoutKotlincTask`
+
 ## 1.6.20-M1
 
 ### Compiler
