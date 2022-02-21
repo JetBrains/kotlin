@@ -87,11 +87,10 @@ internal abstract class FirBaseTowerResolveTask(
     )
 
     protected fun ReceiverValue.toMemberScopeTowerLevel(
-        extensionReceiver: ReceiverValue? = null,
-        implicitExtensionInvokeMode: Boolean = false
+        extensionReceiver: ReceiverValue? = null
     ) = MemberScopeTowerLevel(
         components, this,
-        extensionReceiver, implicitExtensionInvokeMode,
+        extensionReceiver,
     )
 
     protected inline fun enumerateTowerLevels(

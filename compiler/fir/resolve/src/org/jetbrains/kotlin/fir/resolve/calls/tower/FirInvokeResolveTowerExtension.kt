@@ -424,12 +424,9 @@ private class InvokeFunctionResolveTask(
                     .InvokeResolvePriority(InvokeResolvePriority.INVOKE_EXTENSION)
 
             processLevel(
-                invokeReceiverValue.toMemberScopeTowerLevel(
-                    // Try to supply `implicitReceiverValue` as an "x" in "f.invoke(x)"
-                    extensionReceiver = implicitReceiverValue,
-                    implicitExtensionInvokeMode = true
-                ),
-                info, towerGroup,
+                invokeReceiverValue.toMemberScopeTowerLevel(),
+                // Try to supply `implicitReceiverValue` as an "x" in "f.invoke(x)"
+                info.withReceiverAsArgument(implicitReceiverValue.receiverExpression), towerGroup,
                 ExplicitReceiverKind.DISPATCH_RECEIVER
             )
         }

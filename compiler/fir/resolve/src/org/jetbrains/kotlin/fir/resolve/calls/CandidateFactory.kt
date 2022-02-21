@@ -50,7 +50,6 @@ class CandidateFactory private constructor(
         scope: FirScope?,
         dispatchReceiverValue: ReceiverValue? = null,
         extensionReceiverValue: ReceiverValue? = null,
-        builtInExtensionFunctionReceiverValue: ReceiverValue? = null,
         objectsByName: Boolean = false
     ): Candidate {
         @Suppress("NAME_SHADOWING")
@@ -59,9 +58,7 @@ class CandidateFactory private constructor(
         val result = Candidate(
             symbol, dispatchReceiverValue, extensionReceiverValue,
             explicitReceiverKind, context.inferenceComponents.constraintSystemFactory, baseSystem,
-            builtInExtensionFunctionReceiverValue?.receiverExpression?.let {
-                callInfo.withReceiverAsArgument(it)
-            } ?: callInfo,
+            callInfo,
             scope,
             isFromCompanionObjectTypeScope = when (explicitReceiverKind) {
                 ExplicitReceiverKind.EXTENSION_RECEIVER -> extensionReceiverValue.isCandidateFromCompanionObjectTypeScope()
