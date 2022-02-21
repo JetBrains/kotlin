@@ -32,6 +32,8 @@ data class BuildOptions(
     val androidVersion: String? = null,
     val jsOptions: JsOptions? = null,
     val buildReport: List<BuildReportType> = emptyList(),
+    val useFir: Boolean = false,
+    val usePreciseJavaTracking: Boolean? = null,
 ) {
     data class KaptOptions(
         val verbose: Boolean = false,
@@ -122,6 +124,14 @@ data class BuildOptions(
 
         if (buildReport.isNotEmpty()) {
             arguments.add("-Pkotlin.build.report.output=${buildReport.joinToString()}")
+        }
+
+        if (useFir) {
+            arguments.add("-Pkotlin.useFir=true")
+        }
+
+        if (usePreciseJavaTracking != null) {
+            arguments.add("-Pkotlin.incremental.usePreciseJavaTracking=$usePreciseJavaTracking")
         }
         return arguments.toList()
     }
