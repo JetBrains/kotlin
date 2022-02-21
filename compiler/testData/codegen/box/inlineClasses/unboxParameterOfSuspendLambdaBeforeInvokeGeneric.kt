@@ -17,6 +17,11 @@ value class BoxAny<T>(val value: T) {
 }
 
 OPTIONAL_JVM_INLINE_ANNOTATION
+value class BoxAny2<T: Any>(val value: T?) {
+    val intValue: Int get() = value as Int
+}
+
+OPTIONAL_JVM_INLINE_ANNOTATION
 value class BoxInt<T: Int>(val value: T)
 
 OPTIONAL_JVM_INLINE_ANNOTATION
@@ -37,6 +42,16 @@ suspend fun <T> foo(block: suspend (BoxAny<T>) -> Unit) {
 suspend fun <T> fooReceiver(block: suspend BoxAny<T>.() -> Unit) {
     BoxAny<T>(1 as T).block()
     block.startCoroutineUninterceptedOrReturn(BoxAny<T>(1 as T), EmptyContinuation())
+}
+
+suspend fun <T: Any> foo2(block: suspend (BoxAny2<T>) -> Unit) {
+    block(BoxAny2<T>(11 as T))
+    block.startCoroutineUninterceptedOrReturn(BoxAny2<T>(1 as T), EmptyContinuation())
+}
+
+suspend fun <T: Any> fooReceiver2(block: suspend BoxAny2<T>.() -> Unit) {
+    BoxAny2<T>(11 as T).block()
+    block.startCoroutineUninterceptedOrReturn(BoxAny2<T>(1 as T), EmptyContinuation())
 }
 
 suspend fun <T: Int> bar(block: suspend (BoxInt<T>) -> Unit) {
@@ -60,6 +75,13 @@ suspend fun <T: Long> bazReceiver(block: suspend BoxLong<T>.() -> Unit) {
 }
 
 suspend fun <T> BoxAny<T>.extension(block: suspend BoxAny<T>.() -> Unit) {
+    this.block()
+    block()
+
+    block.startCoroutineUninterceptedOrReturn(this, EmptyContinuation())
+}
+
+suspend fun <T: Any> BoxAny2<T>.extension(block: suspend BoxAny2<T>.() -> Unit) {
     this.block()
     block()
 
@@ -100,6 +122,12 @@ fun box(): String {
         fooReceiver<Int> {
             result += this.intValue
         }
+        foo2<Int> { boxAny2 ->
+            result += boxAny2.intValue
+        }
+        fooReceiver2<Int> {
+            result += this.intValue
+        }
 
         bar<Int> { boxInt ->
             result += boxInt.value
@@ -120,6 +148,11 @@ fun box(): String {
             result += intValue
         }
 
+        val b2 = BoxAny2(42)
+        b2.extension {
+            result += intValue
+        }
+
         val bInt = BoxInt(5)
         BoxInt(5).extension {
             result += value + bInt.value
@@ -130,5 +163,5 @@ fun box(): String {
         }
     }
 
-    return if (result == 168) "OK" else "Error: $result"
+    return if (result == 468) "OK" else "Error: $result"
 }

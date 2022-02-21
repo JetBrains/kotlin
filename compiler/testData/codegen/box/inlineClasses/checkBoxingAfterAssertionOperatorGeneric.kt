@@ -14,6 +14,10 @@ OPTIONAL_JVM_INLINE_ANNOTATION
 value class WithNullableReference<T>(val a: T)
 fun <T> takeWithNullableReference(a: WithNullableReference<T>) {}
 
+OPTIONAL_JVM_INLINE_ANNOTATION
+value class WithNullableReference2<T: Any>(val a: T?)
+fun <T: Any> takeWithNullableReference2(a: WithNullableReference2<T>) {}
+
 fun <T: Int> foo(a: WithPrimitive<T>?, b: WithPrimitive<T>) {
     takeWithPrimitive(a!!) // unbox
     takeWithPrimitive(a) // unbox
@@ -33,6 +37,13 @@ fun <T, R> baz(a: WithNullableReference<T>?, b: WithNullableReference<R>) {
     takeWithNullableReference(b!!)
 }
 
+fun <T: Any, R: Any> baz2(a: WithNullableReference2<T>?, b: WithNullableReference2<R>) {
+    takeWithNullableReference2(a!!) // unbox
+    takeWithNullableReference2(a) // unbox
+    takeWithNullableReference2(a!!) // unbox
+    takeWithNullableReference2(b!!)
+}
+
 fun box(): String {
     val a1 = WithPrimitive(1)
     val b1 = WithPrimitive(2)
@@ -47,6 +58,11 @@ fun box(): String {
     val a4 = WithNullableReference(123)
 
     baz(a3, a4)
+
+    val a32 = WithNullableReference2("test")
+    val a42 = WithNullableReference2(123)
+
+    baz2(a32, a42)
 
     return "OK"
 }

@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.serialization.deserialization.descriptors.Deserializ
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.types.*
+import org.jetbrains.kotlin.types.typeUtil.makeNullable
 
 /* Descriptors that serve purely as a view into IR structures.
    Created each time at the borderline between IR-based and descriptor-based code (such as inliner).
@@ -1149,7 +1150,8 @@ private fun makeKotlinType(
     hasQuestionMark: Boolean
 ): SimpleType =
     when (classifier) {
-        is IrTypeParameterSymbol -> classifier.toIrBasedDescriptorIfPossible().defaultType
+        is IrTypeParameterSymbol ->
+            classifier.toIrBasedDescriptorIfPossible().defaultType.makeNullableAsSpecified(hasQuestionMark)
         is IrClassSymbol -> {
             val classDescriptor = classifier.toIrBasedDescriptorIfPossible()
             val kotlinTypeArguments = arguments.mapIndexed { index, it ->

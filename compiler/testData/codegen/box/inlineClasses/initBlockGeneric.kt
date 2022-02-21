@@ -20,6 +20,16 @@ value class MultipleInitBlocks<T>(val a: T) {
 }
 
 OPTIONAL_JVM_INLINE_ANNOTATION
+value class MultipleInitBlocks2<T: Any>(val a: T?) {
+    init {
+        res = "O"
+    }
+    init {
+        res += "K"
+    }
+}
+
+OPTIONAL_JVM_INLINE_ANNOTATION
 value class Lambda<T: String>(val s: T) {
     init {
         val lambda = { res = s }
@@ -136,6 +146,10 @@ fun box(): String {
     res = "FAIL 2"
     MultipleInitBlocks(null)
     if (res != "OK") return "FAIL 21: $res"
+
+    res = "FAIL 22"
+    MultipleInitBlocks2(null)
+    if (res != "OK") return "FAIL 221: $res"
 
     res = "FAIL 3"
     Lambda("OK")

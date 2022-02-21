@@ -14,6 +14,9 @@ value class InlineNotNullReference<T: Any>(val a: T)
 OPTIONAL_JVM_INLINE_ANNOTATION
 value class InlineNullableReference<T>(val a: T)
 
+OPTIONAL_JVM_INLINE_ANNOTATION
+value class InlineNullableReference2<T: Any>(val a: T?)
+
 fun <T: Int> test1(a: InlineNotNullPrimitive<T>) {
     val a0 = a
     val a1: Any = a // box
@@ -46,16 +49,26 @@ fun <T> test4(d: InlineNullableReference<T>) {
     val d4: InlineNullableReference<T>? = d // box
 }
 
+fun <T: Any> test5(e: InlineNullableReference2<T>) {
+    val e0 = e
+    val e1: Any = e // box
+    val e2: Any? = e // box
+    val e3: InlineNullableReference2<T> = e
+    val e4: InlineNullableReference2<T>? = e // box
+}
+
 fun box(): String {
     val a = InlineNotNullPrimitive(1)
     val b = InlineNullablePrimitive(1)
     val c = InlineNotNullReference("some")
     val d = InlineNullableReference("other")
+    val e = InlineNullableReference2("other2")
 
     test1(a)
     test2(b)
     test3(c)
     test4(d)
+    test5(e)
 
     return "OK"
 }
