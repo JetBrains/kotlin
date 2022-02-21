@@ -38,4 +38,11 @@ object OptInNames {
     )
     @Suppress("unused")
     val USE_EXPERIMENTAL_FQ_NAMES = OPT_IN_FQ_NAMES
+
+    fun buildDefaultDiagnosticMessage(prefix: String, fqName: FqName): String {
+        return "$prefix with '@${fqName.asString()}' or '@OptIn(${fqName.asString()}::class)'"
+    }
+
+    fun buildMessagePrefix(verb: String): String =
+        "This declaration needs OptIn. Its usage $verb be marked"
 }

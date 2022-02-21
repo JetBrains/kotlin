@@ -1,4 +1,4 @@
-compiler/testData/cli/jvm/optInEmptyMessage.kt:8:5: error: this declaration is experimental and its usage must be marked with '@EmptyMarker' or '@OptIn(EmptyMarker::class)'
+compiler/testData/cli/jvm/optInEmptyMessage.kt:8:5: error: this declaration needs OptIn. Its usage must be marked with '@EmptyMarker' or '@OptIn(EmptyMarker::class)'
     foo()
     ^
 COMPILATION_ERROR
