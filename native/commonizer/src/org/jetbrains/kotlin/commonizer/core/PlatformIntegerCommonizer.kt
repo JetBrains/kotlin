@@ -6,11 +6,14 @@
 package org.jetbrains.kotlin.commonizer.core
 
 import org.jetbrains.kotlin.commonizer.CommonizerTarget
-import org.jetbrains.kotlin.commonizer.cir.*
+import org.jetbrains.kotlin.commonizer.cir.CirClassOrTypeAliasType
+import org.jetbrains.kotlin.commonizer.cir.CirClassType
+import org.jetbrains.kotlin.commonizer.cir.CirEntityId
+import org.jetbrains.kotlin.commonizer.cir.CirTypeProjection
 import org.jetbrains.kotlin.commonizer.mergedtree.CirKnownClassifiers
 import org.jetbrains.kotlin.commonizer.mergedtree.PlatformIntWidth
 import org.jetbrains.kotlin.commonizer.mergedtree.PlatformWidthIndex
-import org.jetbrains.kotlin.descriptors.konan.*
+import org.jetbrains.kotlin.commonizer.utils.*
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.utils.SmartList
 
