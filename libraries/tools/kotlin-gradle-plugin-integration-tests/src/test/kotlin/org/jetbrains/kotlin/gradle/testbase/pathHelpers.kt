@@ -107,3 +107,24 @@ internal fun Path.deleteRecursively() {
 }
 
 internal fun Iterable<String>.toPaths(): List<Path> = map { Paths.get(it) }
+
+/**
+ * Convert list of [expectedSourceFiles] to relate to [TestProject] paths.
+ */
+fun TestProject.sourceFilesRelativeToProject(
+    expectedSourceFiles: List<String>,
+    sourcesDir: GradleProject.() -> Path = { javaSourcesDir() },
+    subProjectName: String? = null
+): Iterable<Path> {
+    return expectedSourceFiles
+        .map {
+            if (subProjectName != null) {
+                subProject(subProjectName).sourcesDir().resolve(it)
+            } else {
+                sourcesDir().resolve(it)
+            }
+        }
+        .map {
+            it.relativeTo(projectPath)
+        }
+}
