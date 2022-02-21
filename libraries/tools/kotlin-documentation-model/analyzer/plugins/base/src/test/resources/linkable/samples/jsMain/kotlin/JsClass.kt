@@ -5,5 +5,5 @@ class JsClass {
     /**
      * @sample samples.SamplesJs.exampleUsage
      */
-    fun printWithExclamation(msg: String) = println(msg + "!")
+    fun printWithExclamation(msg: String) = println("$msg!")
 }
