@@ -127,13 +127,13 @@ class StringSignature private constructor(val value: String, b: StringSignature.
             }
         }
 
-        private fun parseType(): String {
-            if (consumeIf2('^', 'd')) return MangleConstant.DYNAMIC_TYPE_MARK
-            if (consumeIf2('^', 'e')) return MangleConstant.ERROR_TYPE_MARK
+        private fun parseType(): ParsedSignature.Type {
+            if (consumeIf2('^', 'd')) return ParsedSignature.Type.DynamicType
+            if (consumeIf2('^', 'e')) return ParsedSignature.Type.ErrorType
             if (consumeIf('^')) error("Unknown type kind \"^${value[idx]}\" in $value")
 
-            return buildString {
-                var isTypeParameter = false
+            var isTypeParameter = false
+            val classifier = buildString {
                 if (value[idx] == '{') {
                     val idx2 = value.indexOf('}', idx)
                     assert(idx2 > 0)
@@ -149,32 +149,31 @@ class StringSignature private constructor(val value: String, b: StringSignature.
                     }
                     append(cls)
                 }
-
-                if (consumeIf(MangleConstant.TYPE_ARGUMENTS.prefix)) {
-                    assert(!isTypeParameter)
-
-                    append(MangleConstant.TYPE_ARGUMENTS.prefix)
-
-                    do {
-                        if (consumeIf(MangleConstant.TYPE_ARGUMENTS.separator)) append(MangleConstant.TYPE_ARGUMENTS.separator)
-                        if (consumeIf(MangleConstant.STAR_MARK)) {
-                            append(MangleConstant.STAR_MARK)
-                        } else {
-                            if (value[idx] == '+' || value[idx] == '-') append(value[idx++])
-                            append(parseType())
-                        }
-                    } while (idx < value.length && value[idx] == MangleConstant.TYPE_ARGUMENTS.separator)
-
-                    consume(MangleConstant.TYPE_ARGUMENTS.suffix)
-                    append(MangleConstant.TYPE_ARGUMENTS.suffix)
-                }
-
-                var isNullable = false
-                if (consumeIf('?')) {
-                    append('?')
-                    isNullable = true
-                }
             }
+
+            val arguments = mutableListOf<ParsedSignature.Type.TypeArgument>()
+
+            if (consumeIf(MangleConstant.TYPE_ARGUMENTS.prefix)) {
+                assert(!isTypeParameter)
+
+                do {
+                    consumeIf(MangleConstant.TYPE_ARGUMENTS.separator)
+                    if (consumeIf(MangleConstant.STAR_MARK)) {
+                        arguments.add(ParsedSignature.Type.TypeArgument.Star)
+                    } else {
+                        var variance = ""
+                        if (consumeIf('+')) variance = "+"
+                        if (consumeIf('-')) variance = "-"
+                        val type = parseType()
+                        arguments.add(ParsedSignature.Type.TypeArgument.Arg(variance, type))
+                    }
+                } while (idx < value.length && value[idx] == MangleConstant.TYPE_ARGUMENTS.separator)
+                consume(MangleConstant.TYPE_ARGUMENTS.suffix)
+            }
+
+            val nullability = if (consumeIf('?')) "?" else ""
+
+            return ParsedSignature.Type.SimpleType(classifier, arguments, nullability)
         }
 
         private fun parseClassId(): Pair<String, String> {
@@ -316,7 +315,7 @@ class StringSignature private constructor(val value: String, b: StringSignature.
 
             checkNotEnd()
 
-            var returnType = ""
+            var returnType: ParsedSignature.Type? = null
             val valueParameters = mutableListOf<ParsedSignature.FunctionSignature.ValueParameter>()
             var isProperty = false
 
@@ -374,7 +373,7 @@ class StringSignature private constructor(val value: String, b: StringSignature.
                 returnType = parseType()
             }
 
-            assert(returnType.isNotEmpty()) { value }
+            assert(returnType != null) { value }
 
             val typeParameters = mutableListOf<ParsedSignature.TypeParameter>()
 
@@ -387,7 +386,7 @@ class StringSignature private constructor(val value: String, b: StringSignature.
                     }
                     consume(MangleConstant.UPPER_BOUNDS.prefix)
 
-                    val upperBounds = mutableListOf<String>()
+                    val upperBounds = mutableListOf<ParsedSignature.Type>()
                     do {
                         consumeIf(MangleConstant.UPPER_BOUNDS.separator)
                         upperBounds.add(parseType())
@@ -405,7 +404,7 @@ class StringSignature private constructor(val value: String, b: StringSignature.
 
             val containerSig = if (isProperty) {
                 assert(valueParameters.isEmpty()) { value }
-                ParsedSignature.PropertySignature(fileName, pkgName, declarationName, extensionReceiver, typeParameters, returnType)
+                ParsedSignature.PropertySignature(fileName, pkgName, declarationName, extensionReceiver, typeParameters, returnType!!)
             } else {
                 ParsedSignature.FunctionSignature(
                     fileName,
@@ -414,7 +413,7 @@ class StringSignature private constructor(val value: String, b: StringSignature.
                     extensionReceiver,
                     valueParameters,
                     typeParameters,
-                    returnType,
+                    returnType!!,
                     isSuspend
                 )
             }
@@ -501,17 +500,17 @@ class StringSignature private constructor(val value: String, b: StringSignature.
             override val fileName: String?,
             override val packageFqName: FqName,
             override val declarationFqn: FqName,
-            val extensionType: String?,
+            val extensionType: Type?,
             val typeParameters: List<TypeParameter>,
-            val returnType: String
+            val returnType: Type
         ) : TopLevelSignature() {
             constructor(
                 _fileName: String?,
                 _packageFqName: String,
                 _declarationFqn: String,
-                _extensionType: String?,
+                _extensionType: Type?,
                 _typeParameters: List<TypeParameter>,
-                _returnType: String
+                _returnType: Type
             ) : this(
                 _fileName,
                 FqName(_packageFqName),
@@ -530,12 +529,14 @@ class StringSignature private constructor(val value: String, b: StringSignature.
                 super.asStringTo(sb)
                 extensionType?.let {
                     sb.append(MangleConstant.EXTENSION_RECEIVER_MARK)
-                    sb.append(it)
+                    it.asString(sb)
+//                    sb.append(it)
                     sb.append(MangleConstant.EXTENSION_RECEIVER_MARK)
                 }
 
                 sb.append(MangleConstant.RETURN_TYPE_MARK)
-                sb.append(returnType)
+//                sb.append(returnType)
+                returnType.asString(sb)
 
                 if (typeParameters.isNotEmpty()) {
                     typeParameters.collectForMangler(sb, MangleConstant.TYPE_PARAMETERS) {
@@ -545,13 +546,61 @@ class StringSignature private constructor(val value: String, b: StringSignature.
             }
         }
 
-        class TypeParameter(val variance: String, val bounds: List<String>) {
-            fun asString(sb: StringBuilder) {
-                sb.append(variance)
-                bounds.collectForMangler(sb, MangleConstant.UPPER_BOUNDS) { append(it) }
+        sealed class Type {
+
+            abstract fun asString(sb: StringBuilder)
+
+            object DynamicType : Type() {
+                override fun asString(sb: StringBuilder) {
+                    sb.append("^d")
+                }
+            }
+
+            object ErrorType : Type() {
+                override fun asString(sb: StringBuilder) {
+                    sb.append("^e")
+                }
+            }
+
+            sealed class TypeArgument {
+
+                abstract fun asString(sb: StringBuilder)
+
+                object Star : TypeArgument() {
+                    override fun asString(sb: StringBuilder) {
+                        sb.append('*')
+                    }
+                }
+
+                class Arg(val variance: String, val type: Type) : TypeArgument() {
+                    override fun asString(sb: StringBuilder) {
+                        sb.append(variance)
+                        type.asString(sb)
+                    }
+                }
+            }
+
+            class SimpleType(val classifier: String, val arguments: List<TypeArgument>, val nullability: String) : Type() {
+
+                override fun asString(sb: StringBuilder) {
+                    sb.append(classifier)
+                    if (arguments.isNotEmpty()) {
+                        arguments.collectForMangler(sb, MangleConstant.TYPE_ARGUMENTS) {
+                            it.asString(sb)
+                        }
+                    }
+                    sb.append(nullability)
+                }
             }
         }
-//        class TypeArgument(val variance: String, val )
+
+        class TypeParameter(val variance: String, val bounds: List<Type>) {
+            fun asString(sb: StringBuilder) {
+                sb.append(variance)
+                bounds.collectForMangler(sb, MangleConstant.UPPER_BOUNDS) { it.asString(sb) }
+            }
+        }
+
 
         class TypeParameterSignature(val containerSig: TopLevelSignature, val idx: Int) : TopLevelSignature() {
             override val declarationFqn: FqName
@@ -574,10 +623,10 @@ class StringSignature private constructor(val value: String, b: StringSignature.
             override val fileName: String?,
             override val packageFqName: FqName,
             val classFqName: FqName,
-            val extensionType: String?,
+            val extensionType: Type?,
             val valueParameters: List<ValueParameter>,
             val typeParameters: List<TypeParameter>,
-            val returnType: String,
+            val returnType: Type,
             val isSuspend: Boolean
         ) : TopLevelSignature() {
 
@@ -595,7 +644,8 @@ class StringSignature private constructor(val value: String, b: StringSignature.
 
                 extensionType?.let {
                     sb.append(MangleConstant.EXTENSION_RECEIVER_MARK)
-                    sb.append(it)
+                    it.asString(sb)
+//                    sb.append(it)
                     sb.append(MangleConstant.EXTENSION_RECEIVER_MARK)
                 }
 
@@ -604,7 +654,8 @@ class StringSignature private constructor(val value: String, b: StringSignature.
                 }
 
                 sb.append(MangleConstant.RETURN_TYPE_MARK)
-                sb.append(returnType)
+                returnType.asString(sb)
+//                sb.append(returnType)
 
                 if (typeParameters.isNotEmpty()) {
                     typeParameters.collectForMangler(sb, MangleConstant.TYPE_PARAMETERS) {
@@ -650,10 +701,10 @@ class StringSignature private constructor(val value: String, b: StringSignature.
                 _fileName: String?,
                 _packageFqName: String,
                 _classFqName: String,
-                _extensionType: String?,
+                _extensionType: Type?,
                 _valueParameters: List<ValueParameter>,
                 _typeParameters: List<TypeParameter>,
-                _returnType: String,
+                _returnType: Type,
                 _isSuspend: Boolean
             ) : this(
                 _fileName,
@@ -666,9 +717,9 @@ class StringSignature private constructor(val value: String, b: StringSignature.
                 _isSuspend
             )
 
-            class ValueParameter(val type: String, val isVararg: Boolean) {
+            class ValueParameter(val type: Type, val isVararg: Boolean) {
                 fun asString(sb: StringBuilder) {
-                    sb.append(type)
+                    type.asString(sb)
                     if (isVararg) sb.append(MangleConstant.VAR_ARG_MARK)
                 }
             }
