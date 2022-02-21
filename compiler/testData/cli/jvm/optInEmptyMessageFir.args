@@ -1,0 +1,6 @@
+$TESTDATA_DIR$/optInEmptyMessage.kt
+-d
+$TEMP_DIR$
+-opt-in=kotlin.RequiresOptIn
+-Xuse-fir
+

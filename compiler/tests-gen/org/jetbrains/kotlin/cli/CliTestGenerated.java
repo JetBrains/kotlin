@@ -799,6 +799,16 @@ public class CliTestGenerated extends AbstractCliTest {
             runTest("compiler/testData/cli/jvm/oldBackendLv16.args");
         }
 
+        @TestMetadata("optInEmptyMessage.args")
+        public void testOptInEmptyMessage() throws Exception {
+            runTest("compiler/testData/cli/jvm/optInEmptyMessage.args");
+        }
+
+        @TestMetadata("optInEmptyMessageFir.args")
+        public void testOptInEmptyMessageFir() throws Exception {
+            runTest("compiler/testData/cli/jvm/optInEmptyMessageFir.args");
+        }
+
         @TestMetadata("pluginSimple.args")
         public void testPluginSimple() throws Exception {
             runTest("compiler/testData/cli/jvm/pluginSimple.args");
