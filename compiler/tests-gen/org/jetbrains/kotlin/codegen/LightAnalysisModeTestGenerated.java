@@ -18993,6 +18993,16 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
                 runTest("compiler/testData/codegen/box/inlineClasses/funInterface/argumentResult.kt");
             }
 
+            @TestMetadata("kt51121.kt")
+            public void ignoreKt51121() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/funInterface/kt51121.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+            }
+
+            @TestMetadata("kt51121_2.kt")
+            public void ignoreKt51121_2() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/funInterface/kt51121_2.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+            }
+
             @TestMetadata("mangledSamWrappers.kt")
             public void ignoreMangledSamWrappers() throws Exception {
                 runTest("compiler/testData/codegen/box/inlineClasses/funInterface/mangledSamWrappers.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
