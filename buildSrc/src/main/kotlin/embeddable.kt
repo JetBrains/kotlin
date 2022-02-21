@@ -7,6 +7,7 @@ import org.gradle.api.artifacts.component.ProjectComponentSelector
 import org.gradle.api.attributes.LibraryElements
 import org.gradle.api.attributes.Usage
 import org.gradle.api.file.DuplicatesStrategy
+import org.gradle.api.file.FileCollection
 import org.gradle.api.tasks.TaskProvider
 import org.gradle.jvm.tasks.Jar
 import org.gradle.kotlin.dsl.named
@@ -165,8 +166,8 @@ fun Project.rewriteDepsToShadedJar(
 
         // When Gradle traverses the inputs, reject the shaded compiler JAR,
         // which leads to the content of that JAR being excluded as well:
-        val compilerDummyJarFile = project.provider { project.configurations.getByName("compilerDummyJar").singleFile }
-        exclude { it.file == compilerDummyJarFile.get() }
+        val compilerDummyJarConfiguration: FileCollection = project.configurations.getByName("compilerDummyJar")
+        exclude { it.file == compilerDummyJarConfiguration.singleFile }
 
         archiveClassifier.set("original")
         body()
