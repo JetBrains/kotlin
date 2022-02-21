@@ -47,7 +47,7 @@ buildscript {
 
     dependencies {
         //classpath project(":kotlin-native-utils")
-        classpath 'gradle.plugin.com.github.johnrengelman:shadow:7.1.1'
+        classpath 'gradle.plugin.com.github.johnrengelman:shadow:7.1.2'
     }
 }
 import org.jetbrains.kotlin.konan.*
