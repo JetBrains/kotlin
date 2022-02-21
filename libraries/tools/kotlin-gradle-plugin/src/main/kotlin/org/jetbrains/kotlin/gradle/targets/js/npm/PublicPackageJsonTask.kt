@@ -6,10 +6,7 @@
 package org.jetbrains.kotlin.gradle.targets.js.npm
 
 import org.gradle.api.DefaultTask
-import org.gradle.api.tasks.Input
-import org.gradle.api.tasks.Nested
-import org.gradle.api.tasks.OutputFile
-import org.gradle.api.tasks.TaskAction
+import org.gradle.api.tasks.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrCompilation
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmProject.Companion.PACKAGE_JSON
@@ -32,12 +29,6 @@ constructor(
     private val compilationName = compilation.disambiguatedName
     private val projectPath = project.path
 
-    private val compilationResolution
-        get() = resolutionManager.requireInstalled(
-            services,
-            logger
-        )[projectPath][compilationName]
-
     private val packageJsonHandlers = compilation.packageJsonHandlers
 
     @get:Input
@@ -46,6 +37,12 @@ constructor(
             .apply {
                 packageJsonHandlers.forEach { it() }
             }.customFields
+
+    private val compilationResolver
+        get() = resolutionManager.resolver[projectPath][compilationName]
+
+    private val compilationResolution
+        get() = compilationResolver.getResolutionOrResolveIfForced() ?: error("Compilation resolution isn't available")
 
     @get:Nested
     internal val externalDependencies: Collection<NpmDependencyDeclaration>
