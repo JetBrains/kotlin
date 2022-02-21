@@ -332,7 +332,7 @@ open class Kapt3IT : Kapt3BaseIT() {
     @GradleTest
     fun testInheritedAnnotations(gradleVersion: GradleVersion) {
         project("inheritedAnnotations".withPrefix, gradleVersion) {
-            build("build") {
+            build("build", enableGradleDebug = true) {
                 assertKaptSuccessful()
                 assertFileExists(projectPath.resolve("build/generated/source/kapt/main/example/TestClassGenerated.java"))
                 assertFileExists(projectPath.resolve("build/generated/source/kapt/main/example/AncestorClassGenerated.java"))
