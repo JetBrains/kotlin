@@ -10,11 +10,12 @@ import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
 import org.jetbrains.kotlin.fir.plugin.FirPluginPrototypeExtensionRegistrar
 import org.jetbrains.kotlin.ir.plugin.GeneratedDeclarationsIrBodyFiller
+import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.EnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.TestServices
 
 class ExtensionRegistrarConfigurator(testServices: TestServices) : EnvironmentConfigurator(testServices) {
-    override fun registerCompilerExtensions(project: Project) {
+    override fun registerCompilerExtensions(project: Project, module: TestModule) {
         FirExtensionRegistrar.registerExtension(project, FirPluginPrototypeExtensionRegistrar())
         IrGenerationExtension.registerExtension(project, GeneratedDeclarationsIrBodyFiller())
     }

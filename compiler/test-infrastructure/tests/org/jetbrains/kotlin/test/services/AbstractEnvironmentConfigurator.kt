@@ -17,13 +17,21 @@ import org.jetbrains.kotlin.test.directives.model.singleOrZeroValue
 import org.jetbrains.kotlin.test.model.ServicesAndDirectivesContainer
 import org.jetbrains.kotlin.test.model.TestModule
 
-abstract class EnvironmentConfigurator(protected val testServices: TestServices) : ServicesAndDirectivesContainer {
+abstract class AbstractEnvironmentConfigurator : ServicesAndDirectivesContainer {
+    abstract fun configureCompileConfigurationWithAdditionalConfigurationKeys(configuration: CompilerConfiguration, module: TestModule)
+
+    abstract fun provideAdditionalAnalysisFlags(directives: RegisteredDirectives, languageVersion: LanguageVersion): Map<AnalysisFlag<*>, Any?>
+
+    abstract fun registerCompilerExtensions(project: Project, module: TestModule)
+}
+
+abstract class EnvironmentConfigurator(protected val testServices: TestServices) : AbstractEnvironmentConfigurator() {
     protected val moduleStructure: TestModuleStructure
         get() = testServices.moduleStructure
 
     protected open fun configureCompilerConfiguration(configuration: CompilerConfiguration, module: TestModule) {}
 
-    fun configureCompileConfigurationWithAdditionalConfigurationKeys(
+    final override fun configureCompileConfigurationWithAdditionalConfigurationKeys(
         configuration: CompilerConfiguration,
         module: TestModule,
     ) {
@@ -35,14 +43,14 @@ abstract class EnvironmentConfigurator(protected val testServices: TestServices)
 
     open fun DirectiveToConfigurationKeyExtractor.provideConfigurationKeys() {}
 
-    open fun provideAdditionalAnalysisFlags(
+    override fun provideAdditionalAnalysisFlags(
         directives: RegisteredDirectives,
         languageVersion: LanguageVersion
     ): Map<AnalysisFlag<*>, Any?> {
         return emptyMap()
     }
 
-    open fun registerCompilerExtensions(project: Project) {}
+    override fun registerCompilerExtensions(project: Project, module: TestModule) {}
 }
 
 class DirectiveToConfigurationKeyExtractor {
