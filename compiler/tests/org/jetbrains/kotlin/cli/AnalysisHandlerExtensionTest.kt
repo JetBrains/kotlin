@@ -34,6 +34,7 @@ private data class TestKtFile(
 
 private val classNotFound = TestKtFile("C.kt", "class C : ClassNotFound")
 private val repeatedAnalysis = TestKtFile("D.kt", "class D : Generated")
+private val library = TestKtFile("L.kt", "class L")
 
 class AnalysisHandlerExtensionTest : TestCaseWithTmpdir() {
 
@@ -78,7 +79,12 @@ class AnalysisHandlerExtensionTest : TestCaseWithTmpdir() {
     }
 
     fun testRepeatedAnalysisMetadata() {
-        runTest(K2MetadataCompiler(), repeatedAnalysis, listOf("-d", tmpdir.resolve("out").absolutePath))
+        val libKt = tmpdir.resolve(library.name).apply {
+            writeText(library.content)
+        }
+        val compiler = K2MetadataCompiler()
+        CompilerTestUtil.executeCompilerAssertSuccessful(compiler, listOf("-Xexpect-actual-linker=true", "-d", tmpdir.resolve("libOut").absolutePath, libKt.absolutePath))
+        runTest(K2MetadataCompiler(), repeatedAnalysis, listOf("-cp", tmpdir.resolve("libOut").absolutePath, "-Xexpect-actual-linker=true", "-d", tmpdir.resolve("out").absolutePath))
     }
 }
 

@@ -229,6 +229,9 @@ private class KlibMetadataDependencyContainer(
         val languageVersionSettings = configuration.languageVersionSettings
 
         val libraryModuleDescriptor = moduleDescriptorsForKotlinLibraries.getValue(library)
+        if (libraryModuleDescriptor.isInitialized) {
+            return libraryModuleDescriptor.packageFragmentProviderForModuleContentWithoutDependencies
+        }
         val packageFragmentNames = parseModuleHeader(library.moduleHeaderData).packageFragmentNameList
 
         return klibMetadataModuleDescriptorFactory.createPackageFragmentProvider(
