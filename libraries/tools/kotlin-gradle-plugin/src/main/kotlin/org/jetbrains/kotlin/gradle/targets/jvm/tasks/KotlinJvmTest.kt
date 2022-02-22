@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.gradle.targets.jvm.tasks
 
 import org.gradle.api.internal.tasks.testing.*
+import org.gradle.api.tasks.CacheableTask
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.Optional
 import org.gradle.api.tasks.testing.Test
@@ -13,6 +14,7 @@ import org.gradle.api.tasks.testing.TestFilter
 import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
 import org.jetbrains.kotlin.gradle.plugin.KotlinTestRun
 
+@CacheableTask
 open class KotlinJvmTest : Test() {
     @Input
     @Optional
