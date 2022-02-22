@@ -35,9 +35,13 @@ inline fun Builder.t2(body: Builder.() -> Unit) {
 
 val expectedLength = 1906
 
+fun doStuff(b: Builder) {
+    b.t2 { t2 { t2 { t2 { t2 { t2 { t2 { text("1") } } } } } } }
+}
+
 fun box(): String {
     val b = Builder("")
-    b.t2 { t2 { t2 { t2 { t2 { t2 { t2 { text("1") } } } } } } }
+    doStuff(b)
     if (b.content.length != expectedLength)
         return "${b.content.length}"
     else

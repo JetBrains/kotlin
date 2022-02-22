@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.codegen.optimization
 
 import org.jetbrains.kotlin.codegen.inline.ReifiedTypeInliner
+import org.jetbrains.kotlin.codegen.optimization.common.FastMethodAnalyzer
 import org.jetbrains.kotlin.codegen.optimization.common.InstructionLivenessAnalyzer
 import org.jetbrains.kotlin.codegen.optimization.common.OptimizationBasicInterpreter
 import org.jetbrains.kotlin.codegen.optimization.fixStack.top
@@ -49,22 +50,21 @@ class RedundantCheckCastEliminationMethodTransformer : MethodTransformer() {
 
         val redundantCheckCasts = ArrayList<TypeInsnNode>()
 
-        val frames = analyze(internalClassName, methodNode, interpreter)
+        val frames = FastMethodAnalyzer(internalClassName, methodNode, interpreter, pruneExceptionEdges = true).analyze()
         for (i in insns.indices) {
             val valueType = frames[i]?.top()?.type ?: continue
             val insn = insns[i]
 
-            if (insn is TypeInsnNode) {
-                val insnType = Type.getObjectType(insn.desc)
+            if (insn.opcode == Opcodes.CHECKCAST) {
+                val typeInsn = insn as TypeInsnNode
+                val insnType = Type.getObjectType(typeInsn.desc)
                 if (!isTrivialSubtype(insnType, valueType)) continue
 
                 //Keep casts to multiarray types cause dex doesn't recognize ANEWARRAY [Ljava/lang/Object; as Object [][], but Object [] type
                 //It's not clear is it bug in dex or not and maybe best to distinguish such types from MULTINEWARRRAY ones in method analyzer
                 if (isMultiArrayType(insnType)) continue
 
-                if (insn.opcode == Opcodes.CHECKCAST) {
-                    redundantCheckCasts.add(insn)
-                }
+                redundantCheckCasts.add(typeInsn)
             }
         }
 

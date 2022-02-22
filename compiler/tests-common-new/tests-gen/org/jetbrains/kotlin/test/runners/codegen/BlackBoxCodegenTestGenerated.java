@@ -8668,12 +8668,6 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
         }
 
         @Test
-        @TestMetadata("slowHtmlLikeDsl.kt")
-        public void testSlowHtmlLikeDsl() throws Exception {
-            runTest("compiler/testData/codegen/box/controlStructures/slowHtmlLikeDsl.kt");
-        }
-
-        @Test
         @TestMetadata("tcbInEliminatedCondition.kt")
         public void testTcbInEliminatedCondition() throws Exception {
             runTest("compiler/testData/codegen/box/controlStructures/tcbInEliminatedCondition.kt");
@@ -9328,6 +9322,28 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             @TestMetadata("when.kt")
             public void testWhen() throws Exception {
                 runTest("compiler/testData/codegen/box/controlStructures/returnsNothing/when.kt");
+            }
+        }
+
+        @Nested
+        @TestMetadata("compiler/testData/codegen/box/controlStructures/slowDsl")
+        @TestDataPath("$PROJECT_ROOT")
+        public class SlowDsl {
+            @Test
+            public void testAllFilesPresentInSlowDsl() throws Exception {
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/controlStructures/slowDsl"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM, true);
+            }
+
+            @Test
+            @TestMetadata("slowHtmlLikeDsl.kt")
+            public void testSlowHtmlLikeDsl() throws Exception {
+                runTest("compiler/testData/codegen/box/controlStructures/slowDsl/slowHtmlLikeDsl.kt");
+            }
+
+            @Test
+            @TestMetadata("slowHtmlLikeDslNoInline.kt")
+            public void testSlowHtmlLikeDslNoInline() throws Exception {
+                runTest("compiler/testData/codegen/box/controlStructures/slowDsl/slowHtmlLikeDslNoInline.kt");
             }
         }
 

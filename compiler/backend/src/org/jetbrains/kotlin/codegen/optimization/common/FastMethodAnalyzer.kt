@@ -47,10 +47,12 @@ import org.jetbrains.org.objectweb.asm.tree.analysis.Value
  * @see org.jetbrains.kotlin.codegen.optimization.fixStack.FastStackAnalyzer
  */
 @Suppress("DuplicatedCode")
-open class FastMethodAnalyzer<V : Value>(
+open class FastMethodAnalyzer<V : Value>
+@JvmOverloads constructor(
     private val owner: String,
-    val method: MethodNode,
-    private val interpreter: Interpreter<V>
+    private val method: MethodNode,
+    private val interpreter: Interpreter<V>,
+    private val pruneExceptionEdges: Boolean = false
 ) {
     private val insnsArray = method.instructions.toArray()
     private val nInsns = method.instructions.size()
@@ -73,6 +75,11 @@ open class FastMethodAnalyzer<V : Value>(
         checkAssertions()
         computeExceptionHandlersForEachInsn(method)
         initMergeNodes()
+
+        val isTcbStart = BooleanArray(nInsns)
+        for (tcb in method.tryCatchBlocks) {
+            isTcbStart[tcb.start.indexOf()] = true
+        }
 
         val current = newFrame(method.maxLocals, method.maxStack)
         val handler = newFrame(method.maxLocals, method.maxStack)
@@ -107,14 +114,20 @@ open class FastMethodAnalyzer<V : Value>(
                     }
                 }
 
-                handlers[insn]?.forEach { tcb ->
-                    val exnType = Type.getObjectType(tcb.type ?: "java/lang/Throwable")
-                    val jump = tcb.handler.indexOf()
+                // Jump by an exception edge clears the stack, putting exception on top.
+                // So, unless we have a store operation, anything we change on stack would be lost,
+                // and there's no need to analyze exception handler again.
+                // Add an exception edge from TCB start to make sure handler itself is still visited.
+                if (!pruneExceptionEdges || insnOpcode in Opcodes.ISTORE..Opcodes.ASTORE || insnOpcode == Opcodes.IINC || isTcbStart[insn]) {
+                    handlers[insn]?.forEach { tcb ->
+                        val exnType = Type.getObjectType(tcb.type ?: "java/lang/Throwable")
+                        val jump = tcb.handler.indexOf()
 
-                    handler.init(f)
-                    handler.clearStack()
-                    handler.push(interpreter.newValue(exnType))
-                    mergeControlFlowEdge(jump, handler)
+                        handler.init(f)
+                        handler.clearStack()
+                        handler.push(interpreter.newValue(exnType))
+                        mergeControlFlowEdge(jump, handler)
+                    }
                 }
 
             } catch (e: AnalyzerException) {
