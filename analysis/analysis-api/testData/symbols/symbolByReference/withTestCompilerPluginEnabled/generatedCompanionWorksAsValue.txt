@@ -1,0 +1,20 @@
+KtNamedClassOrObjectSymbol:
+  annotationsList: []
+  classIdIfNonLocal: test/WithGeneratedCompanion.Companion
+  classKind: COMPANION_OBJECT
+  companionObject: null
+  isData: false
+  isExternal: false
+  isFun: false
+  isInline: false
+  isInner: false
+  modality: FINAL
+  name: Companion
+  origin: PLUGIN
+  superTypes: [
+    kotlin/Any
+  ]
+  symbolKind: CLASS_MEMBER
+  typeParameters: []
+  visibility: Public
+  deprecationStatus: null

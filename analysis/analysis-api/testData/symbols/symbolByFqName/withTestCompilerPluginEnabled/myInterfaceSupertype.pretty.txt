@@ -1,0 +1,2 @@
+@org.jetbrains.kotlin.fir.plugin.MyInterfaceSupertype
+class MyClass : kotlin.Any, foo.MyInterface
