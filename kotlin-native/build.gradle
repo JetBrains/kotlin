@@ -56,7 +56,7 @@ import org.jetbrains.kotlin.konan.*
 // Run './gradlew wrapper --gradle-version <version>' to update all the wrappers.
 //apply plugin: org.jetbrains.kotlin.GradleWrappers
 //
-//wrappers.projects = ['samples', 'samples/calculator', 'samples/androidNativeActivity', 'samples/cocoapods/kotlin-library']
+//wrappers.projects = ['samples', 'samples/calculator', 'samples/cocoapods/kotlin-library']
 //wrapper.distributionType = Wrapper.DistributionType.ALL
 
 // FIXME: Remove until IDEA-231214 is fixed.
