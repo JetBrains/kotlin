@@ -8,12 +8,8 @@ package org.jetbrains.kotlin.gradle.mpp
 
 import org.gradle.api.Project
 import org.gradle.api.artifacts.Configuration
-import org.gradle.api.internal.project.ProjectInternal
 import org.gradle.api.plugins.ExtraPropertiesExtension
 import org.gradle.api.provider.Provider
-import org.gradle.testfixtures.ProjectBuilder
-import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
-import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.tasks.*
 import kotlin.test.*
@@ -293,7 +289,7 @@ internal class CompilationSpecificPluginPath {
         .getByName(taskName)
         .let {
             when (it) {
-                is AbstractKotlinNativeCompile<*, *> -> it.compilerPluginClasspath
+                is AbstractKotlinNativeCompile<*, *, *> -> it.compilerPluginClasspath
                 is AbstractKotlinCompile<*> -> it.pluginClasspath.from.single()
                 else -> error("Unexpected task type with name $taskName. Is it kotlin compile task?")
             }
