@@ -588,6 +588,46 @@ public class GetOrBuildFirTestGenerated extends AbstractGetOrBuildFirTest {
         public void testWholeType() throws Exception {
             runTest("analysis/low-level-api-fir/testdata/getOrBuildFir/types/wholeType.kt");
         }
+
+        @Nested
+        @TestMetadata("analysis/low-level-api-fir/testdata/getOrBuildFir/types/typeArgsOfInvalidRef")
+        @TestDataPath("$PROJECT_ROOT")
+        public class TypeArgsOfInvalidRef {
+            @Test
+            public void testAllFilesPresentInTypeArgsOfInvalidRef() throws Exception {
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/low-level-api-fir/testdata/getOrBuildFir/types/typeArgsOfInvalidRef"), Pattern.compile("^(.+)\\.kt$"), null, true);
+            }
+
+            @Test
+            @TestMetadata("typeArgOfBoolConst.kt")
+            public void testTypeArgOfBoolConst() throws Exception {
+                runTest("analysis/low-level-api-fir/testdata/getOrBuildFir/types/typeArgsOfInvalidRef/typeArgOfBoolConst.kt");
+            }
+
+            @Test
+            @TestMetadata("typeArgOfIntConst.kt")
+            public void testTypeArgOfIntConst() throws Exception {
+                runTest("analysis/low-level-api-fir/testdata/getOrBuildFir/types/typeArgsOfInvalidRef/typeArgOfIntConst.kt");
+            }
+
+            @Test
+            @TestMetadata("typeArgOfResolvedProperty.kt")
+            public void testTypeArgOfResolvedProperty() throws Exception {
+                runTest("analysis/low-level-api-fir/testdata/getOrBuildFir/types/typeArgsOfInvalidRef/typeArgOfResolvedProperty.kt");
+            }
+
+            @Test
+            @TestMetadata("typeArgOfUnresolvedCall.kt")
+            public void testTypeArgOfUnresolvedCall() throws Exception {
+                runTest("analysis/low-level-api-fir/testdata/getOrBuildFir/types/typeArgsOfInvalidRef/typeArgOfUnresolvedCall.kt");
+            }
+
+            @Test
+            @TestMetadata("typeArgOfUnresolvedProperty.kt")
+            public void testTypeArgOfUnresolvedProperty() throws Exception {
+                runTest("analysis/low-level-api-fir/testdata/getOrBuildFir/types/typeArgsOfInvalidRef/typeArgOfUnresolvedProperty.kt");
+            }
+        }
     }
 
     @Nested

@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
 import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.impl.FirPropertyAccessExpressionImpl
+import org.jetbrains.kotlin.fir.references.FirErrorNamedReference
 import org.jetbrains.kotlin.fir.references.FirNamedReference
 import org.jetbrains.kotlin.fir.references.builder.buildErrorNamedReference
 import org.jetbrains.kotlin.fir.references.builder.buildResolvedCallableReference
@@ -155,7 +156,11 @@ class FirCallCompletionResultsWriterTransformer(
             result.replaceLValueTypeRef(typeRef)
         }
 
-        if (declaration !is FirErrorFunction) {
+        val isErrorCall = declaration is FirErrorFunction
+                || declaration is FirErrorProperty
+                || result.calleeReference is FirErrorNamedReference
+
+        if (!isErrorCall) {
             result.replaceTypeArguments(typeArguments)
         }
         session.lookupTracker?.recordTypeResolveAsLookup(typeRef, qualifiedAccessExpression.source, null)
