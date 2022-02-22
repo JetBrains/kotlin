@@ -1,0 +1,11 @@
+package
+
+public fun box(): kotlin.String
+
+public final class Cell {
+    public constructor Cell()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public final operator fun get(/*0*/ s: kotlin.Int): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
