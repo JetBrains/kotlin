@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.js.sourceMap.SourceFilePathResolver
 import org.jetbrains.kotlin.js.sourceMap.SourceMap3Builder
 import org.jetbrains.kotlin.js.sourceMap.SourceMapBuilderConsumer
 import org.jetbrains.kotlin.js.testOld.utils.AmbiguousAstSourcePropagation
-import org.jetbrains.kotlin.js.testOld.utils.toStringWithLineNumbers
+import org.jetbrains.kotlin.js.test.utils.toStringWithLineNumbers
 import org.jetbrains.kotlin.js.util.TextOutputImpl
 import org.jetbrains.kotlin.test.backend.handlers.JsBinaryArtifactHandler
 import org.jetbrains.kotlin.test.directives.JsEnvironmentConfigurationDirectives
