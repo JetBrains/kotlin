@@ -32,6 +32,7 @@ open class FirFunctionCallImpl @FirImplementationDetail constructor(
     override var dispatchReceiver: FirExpression,
     override var extensionReceiver: FirExpression,
     override val contextReceiverArguments: MutableList<FirExpression>,
+    override var searchSynthetics: Boolean,
     override var argumentList: FirArgumentList,
     override var calleeReference: FirNamedReference,
     override val origin: FirFunctionCallOrigin,
@@ -118,6 +119,10 @@ open class FirFunctionCallImpl @FirImplementationDetail constructor(
     override fun replaceContextReceiverArguments(newContextReceiverArguments: List<FirExpression>) {
         contextReceiverArguments.clear()
         contextReceiverArguments.addAll(newContextReceiverArguments)
+    }
+
+    override fun replaceSearchSynthetics(newSearchSynthetics: Boolean) {
+        searchSynthetics = newSearchSynthetics
     }
 
     override fun replaceArgumentList(newArgumentList: FirArgumentList) {

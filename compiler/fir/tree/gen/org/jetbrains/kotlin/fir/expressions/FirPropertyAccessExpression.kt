@@ -29,6 +29,7 @@ abstract class FirPropertyAccessExpression : FirQualifiedAccessExpression() {
     abstract override val dispatchReceiver: FirExpression
     abstract override val extensionReceiver: FirExpression
     abstract override val contextReceiverArguments: List<FirExpression>
+    abstract override val searchSynthetics: Boolean
     abstract val nonFatalDiagnostics: List<ConeDiagnostic>
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitPropertyAccessExpression(this, data)
@@ -49,6 +50,8 @@ abstract class FirPropertyAccessExpression : FirQualifiedAccessExpression() {
     abstract override fun replaceExplicitReceiver(newExplicitReceiver: FirExpression?)
 
     abstract override fun replaceContextReceiverArguments(newContextReceiverArguments: List<FirExpression>)
+
+    abstract override fun replaceSearchSynthetics(newSearchSynthetics: Boolean)
 
     abstract override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirPropertyAccessExpression
 

@@ -28,6 +28,7 @@ abstract class FirVariableAssignment : FirPureAbstractElement(), FirQualifiedAcc
     abstract override val extensionReceiver: FirExpression
     abstract override val source: KtSourceElement?
     abstract override val contextReceiverArguments: List<FirExpression>
+    abstract override val searchSynthetics: Boolean
     abstract val lValue: FirReference
     abstract val lValueTypeRef: FirTypeRef
     abstract val rValue: FirExpression
@@ -48,6 +49,8 @@ abstract class FirVariableAssignment : FirPureAbstractElement(), FirQualifiedAcc
     abstract override fun replaceSource(newSource: KtSourceElement?)
 
     abstract override fun replaceContextReceiverArguments(newContextReceiverArguments: List<FirExpression>)
+
+    abstract override fun replaceSearchSynthetics(newSearchSynthetics: Boolean)
 
     abstract fun replaceLValueTypeRef(newLValueTypeRef: FirTypeRef)
 

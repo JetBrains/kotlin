@@ -28,6 +28,7 @@ internal class FirThisReceiverExpressionImpl(
     override val annotations: MutableList<FirAnnotation>,
     override val typeArguments: MutableList<FirTypeProjection>,
     override val contextReceiverArguments: MutableList<FirExpression>,
+    override var searchSynthetics: Boolean,
     override var calleeReference: FirThisReference,
     override val isImplicit: Boolean,
 ) : FirThisReceiverExpression() {
@@ -115,6 +116,10 @@ internal class FirThisReceiverExpressionImpl(
     override fun replaceContextReceiverArguments(newContextReceiverArguments: List<FirExpression>) {
         contextReceiverArguments.clear()
         contextReceiverArguments.addAll(newContextReceiverArguments)
+    }
+
+    override fun replaceSearchSynthetics(newSearchSynthetics: Boolean) {
+        searchSynthetics = newSearchSynthetics
     }
 
     override fun replaceCalleeReference(newCalleeReference: FirThisReference) {

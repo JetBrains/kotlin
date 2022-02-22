@@ -41,6 +41,7 @@ open class FirIntegerLiteralOperatorCallBuilder : FirAbstractFunctionCallBuilder
     override var dispatchReceiver: FirExpression = FirNoReceiverExpression
     override var extensionReceiver: FirExpression = FirNoReceiverExpression
     override val contextReceiverArguments: MutableList<FirExpression> = mutableListOf()
+    override var searchSynthetics: Boolean = false
     override var argumentList: FirArgumentList = FirEmptyArgumentList
     override lateinit var calleeReference: FirNamedReference
     override lateinit var origin: FirFunctionCallOrigin
@@ -55,6 +56,7 @@ open class FirIntegerLiteralOperatorCallBuilder : FirAbstractFunctionCallBuilder
             dispatchReceiver,
             extensionReceiver,
             contextReceiverArguments,
+            searchSynthetics,
             argumentList,
             calleeReference,
             origin,

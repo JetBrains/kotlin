@@ -31,6 +31,7 @@ class FirPropertyAccessExpressionImpl @FirImplementationDetail constructor(
     override var dispatchReceiver: FirExpression,
     override var extensionReceiver: FirExpression,
     override val contextReceiverArguments: MutableList<FirExpression>,
+    override var searchSynthetics: Boolean,
     override val nonFatalDiagnostics: MutableList<ConeDiagnostic>,
 ) : FirPropertyAccessExpression() {
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
@@ -117,5 +118,9 @@ class FirPropertyAccessExpressionImpl @FirImplementationDetail constructor(
     override fun replaceContextReceiverArguments(newContextReceiverArguments: List<FirExpression>) {
         contextReceiverArguments.clear()
         contextReceiverArguments.addAll(newContextReceiverArguments)
+    }
+
+    override fun replaceSearchSynthetics(newSearchSynthetics: Boolean) {
+        searchSynthetics = newSearchSynthetics
     }
 }

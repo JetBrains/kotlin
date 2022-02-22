@@ -30,6 +30,7 @@ internal class FirVariableAssignmentImpl(
     override var extensionReceiver: FirExpression,
     override var source: KtSourceElement?,
     override val contextReceiverArguments: MutableList<FirExpression>,
+    override var searchSynthetics: Boolean,
     override var rValue: FirExpression,
 ) : FirVariableAssignment() {
     override var lValue: FirReference 
@@ -126,6 +127,10 @@ internal class FirVariableAssignmentImpl(
     override fun replaceContextReceiverArguments(newContextReceiverArguments: List<FirExpression>) {
         contextReceiverArguments.clear()
         contextReceiverArguments.addAll(newContextReceiverArguments)
+    }
+
+    override fun replaceSearchSynthetics(newSearchSynthetics: Boolean) {
+        searchSynthetics = newSearchSynthetics
     }
 
     override fun replaceLValueTypeRef(newLValueTypeRef: FirTypeRef) {

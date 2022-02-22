@@ -28,6 +28,7 @@ abstract class FirThisReceiverExpression : FirQualifiedAccessExpression() {
     abstract override val dispatchReceiver: FirExpression
     abstract override val extensionReceiver: FirExpression
     abstract override val contextReceiverArguments: List<FirExpression>
+    abstract override val searchSynthetics: Boolean
     abstract override val calleeReference: FirThisReference
     abstract val isImplicit: Boolean
 
@@ -47,6 +48,8 @@ abstract class FirThisReceiverExpression : FirQualifiedAccessExpression() {
     abstract override fun replaceExplicitReceiver(newExplicitReceiver: FirExpression?)
 
     abstract override fun replaceContextReceiverArguments(newContextReceiverArguments: List<FirExpression>)
+
+    abstract override fun replaceSearchSynthetics(newSearchSynthetics: Boolean)
 
     abstract fun replaceCalleeReference(newCalleeReference: FirThisReference)
 

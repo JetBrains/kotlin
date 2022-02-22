@@ -42,6 +42,7 @@ class FirComponentCallBuilder : FirCallBuilder, FirAnnotationContainerBuilder, F
     var dispatchReceiver: FirExpression = FirNoReceiverExpression
     var extensionReceiver: FirExpression = FirNoReceiverExpression
     val contextReceiverArguments: MutableList<FirExpression> = mutableListOf()
+    var searchSynthetics: Boolean = false
     override var argumentList: FirArgumentList = FirEmptyArgumentList
     lateinit var explicitReceiver: FirExpression
     var componentIndex: Int by kotlin.properties.Delegates.notNull<Int>()
@@ -54,6 +55,7 @@ class FirComponentCallBuilder : FirCallBuilder, FirAnnotationContainerBuilder, F
             dispatchReceiver,
             extensionReceiver,
             contextReceiverArguments,
+            searchSynthetics,
             argumentList,
             explicitReceiver,
             componentIndex,

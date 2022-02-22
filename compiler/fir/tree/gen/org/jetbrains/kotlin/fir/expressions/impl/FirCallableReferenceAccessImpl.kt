@@ -30,6 +30,7 @@ internal class FirCallableReferenceAccessImpl(
     override var dispatchReceiver: FirExpression,
     override var extensionReceiver: FirExpression,
     override val contextReceiverArguments: MutableList<FirExpression>,
+    override var searchSynthetics: Boolean,
     override var calleeReference: FirNamedReference,
     override var hasQuestionMarkAtLHS: Boolean,
 ) : FirCallableReferenceAccess() {
@@ -113,6 +114,10 @@ internal class FirCallableReferenceAccessImpl(
     override fun replaceContextReceiverArguments(newContextReceiverArguments: List<FirExpression>) {
         contextReceiverArguments.clear()
         contextReceiverArguments.addAll(newContextReceiverArguments)
+    }
+
+    override fun replaceSearchSynthetics(newSearchSynthetics: Boolean) {
+        searchSynthetics = newSearchSynthetics
     }
 
     override fun replaceCalleeReference(newCalleeReference: FirNamedReference) {

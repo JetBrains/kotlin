@@ -47,6 +47,8 @@ internal class FirExpressionWithSmartcastImpl(
     // purpose only.
     override val typeRef: FirTypeRef get() = if (isStable) smartcastType else originalType
 
+    override val searchSynthetics get() = false
+
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirExpressionWithSmartcast {
         originalExpression = originalExpression.transformSingle(transformer, data)
         return this
@@ -99,6 +101,10 @@ internal class FirExpressionWithSmartcastImpl(
     }
 
     override fun replaceContextReceiverArguments(newContextReceiverArguments: List<FirExpression>) {
+        throw IllegalStateException()
+    }
+
+    override fun replaceSearchSynthetics(newSearchSynthetics: Boolean) {
         throw IllegalStateException()
     }
 }

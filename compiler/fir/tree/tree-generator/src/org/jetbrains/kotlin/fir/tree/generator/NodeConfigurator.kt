@@ -196,6 +196,7 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
             +receivers
             +field("source", sourceElementType, nullable = true, withReplace = true)
             +fieldList("contextReceiverArguments", expressionType, withReplace = true)
+            +booleanField("searchSynthetics", withReplace = true)
         }
 
         propertyAccessExpression.configure {

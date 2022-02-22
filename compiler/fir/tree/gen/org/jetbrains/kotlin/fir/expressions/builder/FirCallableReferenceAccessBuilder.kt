@@ -39,6 +39,7 @@ class FirCallableReferenceAccessBuilder : FirQualifiedAccessBuilder, FirAnnotati
     override var dispatchReceiver: FirExpression = FirNoReceiverExpression
     override var extensionReceiver: FirExpression = FirNoReceiverExpression
     override val contextReceiverArguments: MutableList<FirExpression> = mutableListOf()
+    override var searchSynthetics: Boolean = false
     lateinit var calleeReference: FirNamedReference
     var hasQuestionMarkAtLHS: Boolean = false
 
@@ -52,6 +53,7 @@ class FirCallableReferenceAccessBuilder : FirQualifiedAccessBuilder, FirAnnotati
             dispatchReceiver,
             extensionReceiver,
             contextReceiverArguments,
+            searchSynthetics,
             calleeReference,
             hasQuestionMarkAtLHS,
         )

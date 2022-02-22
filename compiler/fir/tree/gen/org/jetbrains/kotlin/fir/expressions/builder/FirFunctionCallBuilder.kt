@@ -42,6 +42,7 @@ open class FirFunctionCallBuilder : FirAbstractFunctionCallBuilder, FirAnnotatio
     override var dispatchReceiver: FirExpression = FirNoReceiverExpression
     override var extensionReceiver: FirExpression = FirNoReceiverExpression
     override val contextReceiverArguments: MutableList<FirExpression> = mutableListOf()
+    override var searchSynthetics: Boolean = false
     override var argumentList: FirArgumentList = FirEmptyArgumentList
     override lateinit var calleeReference: FirNamedReference
     override var origin: FirFunctionCallOrigin = FirFunctionCallOrigin.Regular
@@ -57,6 +58,7 @@ open class FirFunctionCallBuilder : FirAbstractFunctionCallBuilder, FirAnnotatio
             dispatchReceiver,
             extensionReceiver,
             contextReceiverArguments,
+            searchSynthetics,
             argumentList,
             calleeReference,
             origin,

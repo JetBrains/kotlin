@@ -40,6 +40,7 @@ class FirPropertyAccessExpressionBuilder : FirQualifiedAccessBuilder, FirAnnotat
     override var dispatchReceiver: FirExpression = FirNoReceiverExpression
     override var extensionReceiver: FirExpression = FirNoReceiverExpression
     override val contextReceiverArguments: MutableList<FirExpression> = mutableListOf()
+    override var searchSynthetics: Boolean = false
     val nonFatalDiagnostics: MutableList<ConeDiagnostic> = mutableListOf()
 
     @OptIn(FirImplementationDetail::class)
@@ -54,6 +55,7 @@ class FirPropertyAccessExpressionBuilder : FirQualifiedAccessBuilder, FirAnnotat
             dispatchReceiver,
             extensionReceiver,
             contextReceiverArguments,
+            searchSynthetics,
             nonFatalDiagnostics,
         )
     }
