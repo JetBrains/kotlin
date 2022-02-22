@@ -118,10 +118,10 @@ class FakeOverrideGenerator(
                 declarationStorage::getCachedIrFunction,
                 declarationStorage::createIrFunction,
                 createFakeOverrideSymbol = { firFunction, callableSymbol ->
+                    val symbol = FirFakeOverrideGenerator.createSymbolForSubstitutionOverride(callableSymbol, firClass.symbol.classId)
                     FirFakeOverrideGenerator.createSubstitutionOverrideFunction(
-                        session, firFunction, callableSymbol,
+                        session, symbol, firFunction,
                         newDispatchReceiverType = firClass.defaultType(),
-                        derivedClassId = firClass.symbol.classId,
                         isExpect = (firClass as? FirRegularClass)?.isExpect == true
                     )
                 },
@@ -142,10 +142,10 @@ class FakeOverrideGenerator(
                 declarationStorage::getCachedIrProperty,
                 declarationStorage::createIrProperty,
                 createFakeOverrideSymbol = { firProperty, callableSymbol ->
+                    val symbolForOverride = FirFakeOverrideGenerator.createSymbolForSubstitutionOverride(callableSymbol, firClass.symbol.classId)
                     FirFakeOverrideGenerator.createSubstitutionOverrideProperty(
-                        session, firProperty, callableSymbol,
+                        session, symbolForOverride, firProperty,
                         newDispatchReceiverType = firClass.defaultType(),
-                        derivedClassId = firClass.symbol.classId,
                         isExpect = (firClass as? FirRegularClass)?.isExpect == true
                     )
                 },

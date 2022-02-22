@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.substitution.substitutorByMap
 import org.jetbrains.kotlin.fir.scopes.FakeOverrideSubstitution
 import org.jetbrains.kotlin.fir.scopes.fakeOverrideSubstitution
+import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.buildImplicitTypeRef
@@ -31,27 +32,29 @@ import org.jetbrains.kotlin.utils.addToStdlib.runIf
 object FirFakeOverrideGenerator {
     fun createSubstitutionOverrideFunction(
         session: FirSession,
+        symbolForSubstitutionOverride: FirNamedFunctionSymbol,
         baseFunction: FirSimpleFunction,
-        baseSymbol: FirNamedFunctionSymbol,
         newDispatchReceiverType: ConeSimpleKotlinType?,
         newReceiverType: ConeKotlinType? = null,
         newReturnType: ConeKotlinType? = null,
         newParameterTypes: List<ConeKotlinType?>? = null,
         newTypeParameters: List<FirTypeParameter>? = null,
-        derivedClassId: ClassId? = null,
         isExpect: Boolean = baseFunction.isExpect,
         fakeOverrideSubstitution: FakeOverrideSubstitution? = null
     ): FirNamedFunctionSymbol {
-        val symbol = if (derivedClassId == null) {
-            FirNamedFunctionSymbol(baseSymbol.callableId)
-        } else {
-            FirNamedFunctionSymbol(CallableId(derivedClassId, baseFunction.name))
-        }
         createSubstitutionOverrideFunction(
-            symbol, session, baseFunction, newDispatchReceiverType, newReceiverType, newReturnType,
+            symbolForSubstitutionOverride, session, baseFunction, newDispatchReceiverType, newReceiverType, newReturnType,
             newParameterTypes, newTypeParameters, isExpect, fakeOverrideSubstitution
         )
-        return symbol
+        return symbolForSubstitutionOverride
+    }
+
+    fun createSymbolForSubstitutionOverride(baseSymbol: FirNamedFunctionSymbol, derivedClassId: ClassId? = null): FirNamedFunctionSymbol {
+        return if (derivedClassId == null) {
+            FirNamedFunctionSymbol(baseSymbol.callableId)
+        } else {
+            FirNamedFunctionSymbol(CallableId(derivedClassId, baseSymbol.callableId.callableName))
+        }
     }
 
     private fun createSubstitutionOverrideFunction(
@@ -112,7 +115,8 @@ object FirFakeOverrideGenerator {
             dispatchReceiverType = newDispatchReceiverType
             attributes = baseFunction.attributes.copy()
             typeParameters += configureAnnotationsTypeParametersAndSignature(
-                session, baseFunction, newParameterTypes, newTypeParameters, newReceiverType, newReturnType, fakeOverrideSubstitution
+                session, baseFunction, newParameterTypes, newTypeParameters,
+                newReceiverType, newReturnType, fakeOverrideSubstitution, newSymbol
             ).filterIsInstance<FirTypeParameter>()
             deprecation = baseFunction.deprecation
         }
@@ -146,7 +150,8 @@ object FirFakeOverrideGenerator {
                 newTypeParameters,
                 newReceiverType = null,
                 newReturnType,
-                fakeOverrideSubstitution
+                fakeOverrideSubstitution,
+                fakeOverrideSymbol
             )
 
             dispatchReceiverType = newDispatchReceiverType
@@ -167,7 +172,8 @@ object FirFakeOverrideGenerator {
         newTypeParameters: List<FirTypeParameterRef>?,
         newReceiverType: ConeKotlinType?,
         newReturnType: ConeKotlinType?,
-        fakeOverrideSubstitution: FakeOverrideSubstitution?
+        fakeOverrideSubstitution: FakeOverrideSubstitution?,
+        symbolForOverride: FirBasedSymbol<*>,
     ): List<FirTypeParameterRef> {
         return when {
             baseFunction.typeParameters.isEmpty() -> {
@@ -182,7 +188,7 @@ object FirFakeOverrideGenerator {
             }
             newTypeParameters == null -> {
                 val (copiedTypeParameters, substitutor) = createNewTypeParametersAndSubstitutor(
-                    useSiteSession, baseFunction, ConeSubstitutor.Empty
+                    useSiteSession, baseFunction, symbolForOverride, ConeSubstitutor.Empty
                 )
                 val copiedParameterTypes = baseFunction.valueParameters.map {
                     substitutor.substituteOrNull(it.returnTypeRef.coneType)
@@ -254,29 +260,31 @@ object FirFakeOverrideGenerator {
 
     fun createSubstitutionOverrideProperty(
         session: FirSession,
+        symbolForSubstitutionOverride: FirPropertySymbol,
         baseProperty: FirProperty,
-        baseSymbol: FirPropertySymbol,
         newDispatchReceiverType: ConeSimpleKotlinType?,
         newReceiverType: ConeKotlinType? = null,
         newReturnType: ConeKotlinType? = null,
         newTypeParameters: List<FirTypeParameter>? = null,
-        derivedClassId: ClassId? = null,
         isExpect: Boolean = baseProperty.isExpect,
         fakeOverrideSubstitution: FakeOverrideSubstitution? = null
     ): FirPropertySymbol {
-        val symbol = if (derivedClassId == null) {
-            FirPropertySymbol(baseSymbol.callableId)
-        } else {
-            FirPropertySymbol(CallableId(derivedClassId, baseProperty.name))
-        }
         createCopyForFirProperty(
-            symbol, baseProperty, session, FirDeclarationOrigin.SubstitutionOverride, isExpect,
+            symbolForSubstitutionOverride, baseProperty, session, FirDeclarationOrigin.SubstitutionOverride, isExpect,
             newDispatchReceiverType, newTypeParameters, newReceiverType, newReturnType,
             fakeOverrideSubstitution = fakeOverrideSubstitution
         ).apply {
             originalForSubstitutionOverrideAttr = baseProperty
         }
-        return symbol
+        return symbolForSubstitutionOverride
+    }
+
+    fun createSymbolForSubstitutionOverride(baseSymbol: FirPropertySymbol, derivedClassId: ClassId? = null): FirPropertySymbol {
+        return if (derivedClassId == null) {
+            FirPropertySymbol(baseSymbol.callableId)
+        } else {
+            FirPropertySymbol(CallableId(derivedClassId, baseSymbol.callableId.callableName))
+        }
     }
 
     fun createCopyForFirProperty(
@@ -333,7 +341,7 @@ object FirFakeOverrideGenerator {
             }
             newTypeParameters == null -> {
                 val (copiedTypeParameters, substitutor) = createNewTypeParametersAndSubstitutor(
-                    useSiteSession, baseProperty, ConeSubstitutor.Empty
+                    useSiteSession, baseProperty, symbol, ConeSubstitutor.Empty
                 )
                 val (copiedReceiverType, possibleReturnType) = substituteReceiverAndReturnType(
                     baseProperty, newReceiverType, newReturnType, substitutor
@@ -475,6 +483,7 @@ object FirFakeOverrideGenerator {
     fun createNewTypeParametersAndSubstitutor(
         useSiteSession: FirSession,
         member: FirTypeParameterRefsOwner,
+        symbolForOverride: FirBasedSymbol<*>,
         substitutor: ConeSubstitutor,
         forceTypeParametersRecreation: Boolean = true
     ): Pair<List<FirTypeParameterRef>, ConeSubstitutor> {
@@ -491,6 +500,7 @@ object FirFakeOverrideGenerator {
                 variance = typeParameter.variance
                 isReified = typeParameter.isReified
                 annotations += typeParameter.annotations
+                containingDeclarationSymbol = symbolForOverride
             }
         }
 
