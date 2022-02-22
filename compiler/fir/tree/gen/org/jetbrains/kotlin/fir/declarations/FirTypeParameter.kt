@@ -29,7 +29,7 @@ abstract class FirTypeParameter : FirTypeParameterRef, FirDeclaration() {
     abstract override val attributes: FirDeclarationAttributes
     abstract val name: Name
     abstract override val symbol: FirTypeParameterSymbol
-    abstract val containingDeclarationSymbol: FirBasedSymbol<*>?
+    abstract val containingDeclarationSymbol: FirBasedSymbol<*>
     abstract val variance: Variance
     abstract val isReified: Boolean
     abstract val bounds: List<FirTypeRef>

@@ -45,10 +45,7 @@ internal class KtFirSymbolContainingDeclarationProvider(
         }
         return when (symbol) {
             is KtFirTypeParameterSymbol -> {
-                symbol.firSymbol.containingDeclarationSymbol?.let { containingDeclaration ->
-                    firSymbolBuilder.buildSymbol(containingDeclaration) as KtSymbolWithKind
-                }
-
+                firSymbolBuilder.buildSymbol(symbol.firSymbol.containingDeclarationSymbol) as KtSymbolWithKind
             }
             is KtSymbolWithKind -> when (symbol.origin) {
                 KtSymbolOrigin.SOURCE, KtSymbolOrigin.SOURCE_MEMBER_GENERATED ->

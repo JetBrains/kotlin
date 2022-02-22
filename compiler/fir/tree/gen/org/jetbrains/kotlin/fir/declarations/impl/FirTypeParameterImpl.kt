@@ -33,7 +33,7 @@ internal class FirTypeParameterImpl(
     override val attributes: FirDeclarationAttributes,
     override val name: Name,
     override val symbol: FirTypeParameterSymbol,
-    override val containingDeclarationSymbol: FirBasedSymbol<*>?,
+    override val containingDeclarationSymbol: FirBasedSymbol<*>,
     override val variance: Variance,
     override val isReified: Boolean,
     override val bounds: MutableList<FirTypeRef>,

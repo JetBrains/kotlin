@@ -35,6 +35,7 @@ import org.jetbrains.kotlin.fir.resolve.constructType
 import org.jetbrains.kotlin.fir.resolve.defaultType
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.symbols.ConeTypeParameterLookupTag
+import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
@@ -89,7 +90,10 @@ class FirJavaFacade(
         return classId.relativeClassName.topLevelName() in knownNames
     }
 
-    private fun JavaTypeParameter.toFirTypeParameter(javaTypeParameterStack: JavaTypeParameterStack): FirTypeParameter {
+    private fun JavaTypeParameter.toFirTypeParameter(
+        javaTypeParameterStack: JavaTypeParameterStack,
+        containingDeclarationSymbol: FirBasedSymbol<*>
+    ): FirTypeParameter {
         return buildTypeParameter {
             moduleData = baseModuleData
             origin = FirDeclarationOrigin.Java
@@ -101,6 +105,7 @@ class FirJavaFacade(
             javaTypeParameterStack.addParameter(this@toFirTypeParameter, symbol)
             // TODO: should be lazy (in case annotations refer to the containing class)
             annotations.addFromJava(session, this@toFirTypeParameter, javaTypeParameterStack)
+            this.containingDeclarationSymbol = containingDeclarationSymbol
             for (upperBound in this@toFirTypeParameter.upperBounds) {
                 bounds += upperBound.toFirJavaTypeRef(session, javaTypeParameterStack)
             }
@@ -113,8 +118,12 @@ class FirJavaFacade(
         }
     }
 
-    private fun List<JavaTypeParameter>.convertTypeParameters(stack: JavaTypeParameterStack): List<FirTypeParameter> =
-        map { it.toFirTypeParameter(stack) }
+    private fun List<JavaTypeParameter>.convertTypeParameters(
+        stack: JavaTypeParameterStack,
+        containingDeclarationSymbol: FirBasedSymbol<*>
+    ): List<FirTypeParameter> {
+        return map { it.toFirTypeParameter(stack, containingDeclarationSymbol) }
+    }
 
     private fun JavaClass.hasMetadataAnnotation(): Boolean =
         annotations.any { it.classId?.asSingleFqName() == JvmAnnotationNames.METADATA_FQ_NAME }
@@ -235,7 +244,7 @@ class FirJavaFacade(
             val effectiveVisibility = parentEffectiveVisibility.lowerBound(selfEffectiveVisibility, session.typeContext)
             parentClassEffectiveVisibilityCache[classSymbol] = effectiveVisibility
 
-            val classTypeParameters = javaClass.typeParameters.convertTypeParameters(javaTypeParameterStack)
+            val classTypeParameters = javaClass.typeParameters.convertTypeParameters(javaTypeParameterStack, classSymbol)
             typeParameters += classTypeParameters
             if (!isStatic && parentClassSymbol != null) {
                 typeParameters += parentClassSymbol.fir.typeParameters.map {
@@ -445,7 +454,7 @@ class FirJavaFacade(
             name = methodName
             returnTypeRef = returnType.toFirJavaTypeRef(session, javaTypeParameterStack)
             isStatic = javaMethod.isStatic
-            typeParameters += javaMethod.typeParameters.convertTypeParameters(javaTypeParameterStack)
+            typeParameters += javaMethod.typeParameters.convertTypeParameters(javaTypeParameterStack, methodSymbol)
             for ((index, valueParameter) in javaMethod.valueParameters.withIndex()) {
                 valueParameters += valueParameter.toFirValueParameter(session, moduleData, index, javaTypeParameterStack)
             }
@@ -526,7 +535,7 @@ class FirJavaFacade(
             typeParameters += classTypeParameters.map { buildConstructedClassTypeParameterRef { symbol = it.symbol } }
 
             if (javaConstructor != null) {
-                this.typeParameters += javaConstructor.typeParameters.convertTypeParameters(javaTypeParameterStack)
+                this.typeParameters += javaConstructor.typeParameters.convertTypeParameters(javaTypeParameterStack, constructorSymbol)
                 annotationBuilder = { javaConstructor.convertAnnotationsToFir(session, javaTypeParameterStack) }
                 for ((index, valueParameter) in javaConstructor.valueParameters.withIndex()) {
                     valueParameters += valueParameter.toFirValueParameter(session, moduleData, index, javaTypeParameterStack)

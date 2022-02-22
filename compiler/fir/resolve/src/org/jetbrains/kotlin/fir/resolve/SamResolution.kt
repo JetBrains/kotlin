@@ -142,6 +142,7 @@ class FirSamResolverImpl(
                 variance = Variance.INVARIANT
                 isReified = false
                 annotations += declaredTypeParameter.annotations
+                containingDeclarationSymbol = symbol
             }
         }
 

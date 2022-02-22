@@ -37,7 +37,7 @@ class FirTypeParameterSymbol : FirClassifierSymbol<FirTypeParameter>() {
     val isReified: Boolean
         get() = fir.isReified
 
-    val containingDeclarationSymbol: FirBasedSymbol<*>?
+    val containingDeclarationSymbol: FirBasedSymbol<*>
         get() = fir.containingDeclarationSymbol
 }
 

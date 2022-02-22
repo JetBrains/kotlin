@@ -158,7 +158,7 @@ private fun createToFreshVariableSubstitutorAndAddInitialConstraints(
 }
 
 private fun FirTypeParameter.getTypeParameterFromExpandedClass(index: Int, session: FirSession): FirTypeParameter {
-    val containingDeclaration = containingDeclarationSymbol?.fir
+    val containingDeclaration = containingDeclarationSymbol.fir
     if (containingDeclaration is FirRegularClass) {
         return containingDeclaration.typeParameters.elementAtOrNull(index)?.symbol?.fir ?: this
     } else if (containingDeclaration is FirTypeAlias) {
