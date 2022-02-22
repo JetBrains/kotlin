@@ -19,6 +19,7 @@ abstract class FirTypeResolver : FirSessionComponent {
         scopeClassDeclaration: ScopeClassDeclaration,
         areBareTypesAllowed: Boolean,
         isOperandOfIsOperator: Boolean,
+        // Note: sometimes we don't have useSiteFile in IDE context
         useSiteFile: FirFile?,
         supertypeSupplier: SupertypeSupplier
     ): Pair<ConeKotlinType, ConeDiagnostic?>

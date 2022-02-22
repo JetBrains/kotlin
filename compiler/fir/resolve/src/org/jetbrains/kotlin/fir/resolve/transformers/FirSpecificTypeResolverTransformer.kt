@@ -145,7 +145,7 @@ class FirSpecificTypeResolverTransformer(
                     }
 
                     delegatedTypeRef = typeRef
-                type = resolvedType
+                    type = resolvedType
 
                     this.diagnostic = resolvedType.diagnostic
                 }
