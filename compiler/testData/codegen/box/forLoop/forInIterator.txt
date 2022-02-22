@@ -1,0 +1,17 @@
+@kotlin.Metadata
+public final class ForInIteratorKt {
+    // source: 'forInIterator.kt'
+    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
+    public final static method myFun(@org.jetbrains.annotations.NotNull p0: MyUIntIterator): void
+}
+
+@kotlin.Metadata
+public final class MyUIntIterator {
+    // source: 'forInIterator.kt'
+    private field count: int
+    public method <init>(): void
+    public method hasNext(): boolean
+    public synthetic bridge method next(): java.lang.Object
+    public method next-pVg5ArA(): int
+    public method remove(): void
+}
