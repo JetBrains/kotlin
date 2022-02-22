@@ -83,7 +83,7 @@ class FirSpecificTypeResolverTransformer(
             data,
             areBareTypesAllowed,
             isOperandOfIsOperator,
-            currentFile,
+            currentFile!!,
             supertypeSupplier
         )
         return transformType(typeRef, resolvedType, diagnostic)
@@ -102,7 +102,7 @@ class FirSpecificTypeResolverTransformer(
             data,
             areBareTypesAllowed,
             isOperandOfIsOperator,
-            currentFile,
+            currentFile!!,
             supertypeSupplier
         )
         val resolvedType = resolvedTypeWithDiagnostic.first.takeIfAcceptable()
@@ -145,7 +145,7 @@ class FirSpecificTypeResolverTransformer(
                     }
 
                     delegatedTypeRef = typeRef
-                type = resolvedType
+                    type = resolvedType
 
                     this.diagnostic = resolvedType.diagnostic
                 }
