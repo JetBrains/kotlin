@@ -82,13 +82,15 @@ class UninitializedStoresProcessor(private val methodNode: MethodNode) {
     private val isInSpecialMethod = methodNode.name == "<init>" || methodNode.name == "<clinit>"
 
     fun run() {
-        val interpreter = UninitializedNewValueMarkerInterpreter(methodNode.instructions)
-
         if (methodNode.instructions.toArray().none { it.opcode == Opcodes.NEW })
             return
 
-        val frames = CustomFramesMethodAnalyzer("fake", methodNode, interpreter, this::UninitializedNewValueFrame).analyze()
-
+        val interpreter = UninitializedNewValueMarkerInterpreter(methodNode.instructions)
+        val analyzer = object : FastMethodAnalyzer<BasicValue>("fake", methodNode, interpreter, pruneExceptionEdges = true) {
+            override fun newFrame(nLocals: Int, nStack: Int): Frame<BasicValue> =
+                UninitializedNewValueFrame(nLocals, nStack)
+        }
+        val frames = analyzer.analyze()
         interpreter.analyzePopInstructions(frames)
 
         for ((index, insn) in methodNode.instructions.toArray().withIndex()) {

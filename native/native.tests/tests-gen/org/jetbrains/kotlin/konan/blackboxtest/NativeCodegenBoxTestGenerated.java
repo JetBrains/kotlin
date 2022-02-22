@@ -7370,6 +7370,18 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
             }
 
             @Nested
+            @TestMetadata("compiler/testData/codegen/box/controlStructures/slowDsl")
+            @TestDataPath("$PROJECT_ROOT")
+            @Tag("codegen")
+            @UseExtTestCaseGroupProvider()
+            public class SlowDsl {
+                @Test
+                public void testAllFilesPresentInSlowDsl() throws Exception {
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/controlStructures/slowDsl"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
+                }
+            }
+
+            @Nested
             @TestMetadata("compiler/testData/codegen/box/controlStructures/tryCatchInExpressions")
             @TestDataPath("$PROJECT_ROOT")
             @Tag("codegen")

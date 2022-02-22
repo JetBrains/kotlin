@@ -6526,6 +6526,16 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
         }
 
         @Nested
+        @TestMetadata("compiler/testData/codegen/box/controlStructures/slowDsl")
+        @TestDataPath("$PROJECT_ROOT")
+        public class SlowDsl {
+            @Test
+            public void testAllFilesPresentInSlowDsl() throws Exception {
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/controlStructures/slowDsl"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS, true);
+            }
+        }
+
+        @Nested
         @TestMetadata("compiler/testData/codegen/box/controlStructures/tryCatchInExpressions")
         @TestDataPath("$PROJECT_ROOT")
         public class TryCatchInExpressions {
