@@ -133,12 +133,13 @@ private fun FirTypeAliasSymbol.findSAMConstructorForTypeAlias(
 
     if (newReturnType == null && newParameterTypes.all { it == null }) return samConstructorForClass
 
+    val symbolForOverride = FirFakeOverrideGenerator.createSymbolForSubstitutionOverride(namedSymbol, expansionRegularClass.classId)
+
     return FirFakeOverrideGenerator.createSubstitutionOverrideFunction(
-        session, samConstructorForClass, namedSymbol,
+        session, symbolForOverride, samConstructorForClass,
         newDispatchReceiverType = null,
         newReceiverType = null,
         newReturnType, newParameterTypes, typeParameters,
-        expansionRegularClass.classId,
     ).fir
 }
 
