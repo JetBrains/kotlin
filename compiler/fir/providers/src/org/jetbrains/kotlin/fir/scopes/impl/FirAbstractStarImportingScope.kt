@@ -17,9 +17,8 @@ import org.jetbrains.kotlin.name.Name
 abstract class FirAbstractStarImportingScope(
     session: FirSession,
     scopeSession: ScopeSession,
-    filter: FirImportingScopeFilter,
     lookupInFir: Boolean
-) : FirAbstractImportingScope(session, scopeSession, filter, lookupInFir) {
+) : FirAbstractImportingScope(session, scopeSession, lookupInFir) {
 
     // TODO try to hide this
     abstract val starImports: List<FirResolvedImport>
@@ -30,10 +29,12 @@ abstract class FirAbstractStarImportingScope(
         if ((!name.isSpecial && name.identifier.isEmpty()) || starImports.isEmpty() || name in absentClassifierNames) {
             return
         }
-        val symbol = findSingleClassifierSymbolByName(name, starImports)
-        if (symbol != null) {
+        var foundAny = false
+        processImportsByName(name, starImports) { symbol ->
+            foundAny = true
             processor(symbol, ConeSubstitutor.Empty)
-        } else {
+        }
+        if (!foundAny) {
             absentClassifierNames += name
         }
     }
