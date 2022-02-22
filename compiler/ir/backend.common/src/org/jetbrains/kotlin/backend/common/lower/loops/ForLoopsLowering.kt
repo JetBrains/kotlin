@@ -10,17 +10,20 @@ import org.jetbrains.kotlin.backend.common.CommonBackendContext
 import org.jetbrains.kotlin.backend.common.IrElementTransformerVoidWithContext
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
+import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
-import org.jetbrains.kotlin.ir.declarations.IrDeclaration
-import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
-import org.jetbrains.kotlin.ir.declarations.IrSymbolOwner
-import org.jetbrains.kotlin.ir.declarations.IrVariable
+import org.jetbrains.kotlin.ir.builders.irCall
+import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrCompositeImpl
-import org.jetbrains.kotlin.ir.util.dump
-import org.jetbrains.kotlin.ir.util.render
+import org.jetbrains.kotlin.ir.types.classFqName
+import org.jetbrains.kotlin.ir.types.classifierOrFail
+import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.*
+import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.utils.addToStdlib.cast
+import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 val forLoopsPhase = makeIrFilePhase(
     ::ForLoopsLowering,
@@ -175,7 +178,7 @@ private class RangeLoopTransformer(
         }
 
         val loopHeader = headerProcessor.extractHeader(iteratorVariable)
-            ?: return super.visitBlock(expression)  // The iterable in the header is not supported.
+            ?: return super.visitBlock(expression.apply { specializeIteratorIfPossible(this) }) // The iterable in the header is not supported.
         val loweredHeader = lowerHeader(iteratorVariable, loopHeader)
 
         val (newLoop, loopReplacementExpression) = lowerWhileLoop(oldLoop, loopHeader)
@@ -286,6 +289,70 @@ private class RangeLoopTransformer(
         }
 
         return loopHeader.buildLoop(context.createIrBuilder(getScopeOwnerSymbol(), loop.startOffset, loop.endOffset), loop, newBody)
+    }
+
+    /**
+     * This optimization is for the stdlib extension function in package `kotlin.collections`:
+     * ```
+     *      @kotlin.internal.InlineOnly
+     *      public inline operator fun <T> Iterator<T>.iterator(): Iterator<T> = this
+     * ```
+     * Let's say we have an instance of `MyIterator`, which directly implements [kotlin.collections.Iterator],
+     * when it is used in a for-loop like:
+     *
+     * ```
+     *      val iterator = MyIterator()
+     *      for (x in iterator)
+     *          println(x)
+     * ```
+     * Without this optimization, receiver type of call of `next` would be Iterator<T> instead of MyIterator, which
+     * is an unnecessary boxing can be optimized out.
+     */
+    private fun specializeIteratorIfPossible(irForLoopBlock: IrContainerExpression) {
+        val statements = irForLoopBlock.statements
+
+        val iterator = statements[0] as IrVariable
+        val loop = statements[1] as IrWhileLoop
+
+        // do optimization iff the initializer is call of `kotlin.collections.CollectionsKt.iterator`
+        val initializer = iterator.initializer.safeAs<IrCall>().takeIf {
+            it != null && it.symbol.owner.fqNameWhenAvailable == FqName("kotlin.collections.CollectionsKt.iterator")
+        } ?: return
+
+        // for now, we only optimize for the case where extension receiver is a direct subclass of `kotlin.collections.Iterator`
+        // we can expand the scope later, if it considered to be necessary
+        val receiverType = initializer.extensionReceiver!!.type.takeIf {
+            it.superTypes().any { superType ->
+                superType.classFqName == FqName("kotlin.collections.Iterator")
+            }
+        } ?: return
+
+        fun IrClass.findNextFunction(): IrFunction? =
+            this.functions.find {
+                it.nameForIrSerialization.asString() == "next"
+                        && it.valueParameters.isEmpty()
+                        && it.modality != Modality.ABSTRACT
+            }
+
+        val next = receiverType.classifierOrFail.owner.cast<IrClass>().findNextFunction() ?: return
+
+        val loopVariable = (loop.body as IrBlock).statements[0] as IrVariable
+        val loopCondition = loop.condition as IrCall
+
+        iterator.apply {
+            type = receiverType
+            this.initializer = initializer.extensionReceiver
+        }
+
+        loopCondition.apply {
+            dispatchReceiver = initializer.extensionReceiver!!.shallowCopy()
+        }
+
+        loopVariable.initializer = with(next) {
+            context.createIrBuilder(symbol, startOffset, endOffset).irCall(this).apply {
+                dispatchReceiver = initializer.extensionReceiver!!.shallowCopy()
+            }
+        }
     }
 
     private data class LoopVariableInfo(

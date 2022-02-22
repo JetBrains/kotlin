@@ -14031,6 +14031,18 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
         }
 
         @Nested
+        @TestMetadata("compiler/testData/codegen/box/forLoop")
+        @TestDataPath("$PROJECT_ROOT")
+        @Tag("codegen")
+        @UseExtTestCaseGroupProvider()
+        public class ForLoop {
+            @Test
+            public void testAllFilesPresentInForLoop() throws Exception {
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/forLoop"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
+            }
+        }
+
+        @Nested
         @TestMetadata("compiler/testData/codegen/box/fullJdk")
         @TestDataPath("$PROJECT_ROOT")
         @Tag("codegen")
