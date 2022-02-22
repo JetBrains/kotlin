@@ -47,6 +47,8 @@ class FirExpressionWithSmartcastToNullImpl(
     // purpose only.
     override val typeRef: FirTypeRef get() = if (isStable) smartcastType else originalType
 
+    override val searchSynthetics get() = false
+
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirExpressionWithSmartcastToNull {
         originalExpression = originalExpression.transformSingle(transformer, data)
         return this
@@ -96,5 +98,9 @@ class FirExpressionWithSmartcastToNullImpl(
 
     @FirImplementationDetail
     override fun replaceSource(newSource: KtSourceElement?) {
+    }
+
+    override fun replaceSearchSynthetics(newSearchSynthetics: Boolean) {
+        throw IllegalStateException()
     }
 }

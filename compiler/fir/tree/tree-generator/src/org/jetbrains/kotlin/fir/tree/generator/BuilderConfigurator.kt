@@ -130,6 +130,7 @@ object BuilderConfigurator : AbstractBuilderConfigurator<FirTreeBuilder>(FirTree
         builder(propertyAccessExpression) {
             parents += qualifiedAccessBuilder
             defaultNoReceivers()
+            defaultFalse("searchSynthetics")
         }
 
         builder(callableReferenceAccess) {
@@ -137,6 +138,7 @@ object BuilderConfigurator : AbstractBuilderConfigurator<FirTreeBuilder>(FirTree
             defaultNull("explicitReceiver")
             defaultNoReceivers()
             defaultFalse("hasQuestionMarkAtLHS")
+            defaultFalse("searchSynthetics")
         }
 
         builder(componentCall) {
@@ -146,6 +148,7 @@ object BuilderConfigurator : AbstractBuilderConfigurator<FirTreeBuilder>(FirTree
                 value = "FirEmptyArgumentList"
             }
             useTypes(emptyArgumentListType)
+            defaultFalse("searchSynthetics")
         }
 
         builder(whileLoop) {
@@ -184,6 +187,7 @@ object BuilderConfigurator : AbstractBuilderConfigurator<FirTreeBuilder>(FirTree
                 value = "FirEmptyArgumentList"
             }
             useTypes(emptyArgumentListType)
+            defaultFalse("searchSynthetics")
         }
 
         builder(functionCall) {
@@ -223,11 +227,13 @@ object BuilderConfigurator : AbstractBuilderConfigurator<FirTreeBuilder>(FirTree
         builder(thisReceiverExpression) {
             parents += qualifiedAccessBuilder
             default("isImplicit", "false")
+            defaultFalse("searchSynthetics")
         }
 
         builder(variableAssignment) {
             parents += qualifiedAccessBuilder
             defaultNoReceivers()
+            defaultFalse("searchSynthetics")
         }
 
         builder(anonymousFunction) {

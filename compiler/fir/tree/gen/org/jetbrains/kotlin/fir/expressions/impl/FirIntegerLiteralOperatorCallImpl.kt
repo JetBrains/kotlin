@@ -31,6 +31,7 @@ internal class FirIntegerLiteralOperatorCallImpl(
     override var explicitReceiver: FirExpression?,
     override var dispatchReceiver: FirExpression,
     override var extensionReceiver: FirExpression,
+    override var searchSynthetics: Boolean,
     override var argumentList: FirArgumentList,
     override var calleeReference: FirNamedReference,
     override val origin: FirFunctionCallOrigin,
@@ -112,6 +113,10 @@ internal class FirIntegerLiteralOperatorCallImpl(
 
     override fun replaceExplicitReceiver(newExplicitReceiver: FirExpression?) {
         explicitReceiver = newExplicitReceiver
+    }
+
+    override fun replaceSearchSynthetics(newSearchSynthetics: Boolean) {
+        searchSynthetics = newSearchSynthetics
     }
 
     override fun replaceArgumentList(newArgumentList: FirArgumentList) {

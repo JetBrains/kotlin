@@ -26,6 +26,7 @@ abstract class FirComponentCall : FirFunctionCall() {
     abstract override val typeArguments: List<FirTypeProjection>
     abstract override val dispatchReceiver: FirExpression
     abstract override val extensionReceiver: FirExpression
+    abstract override val searchSynthetics: Boolean
     abstract override val argumentList: FirArgumentList
     abstract override val calleeReference: FirNamedReference
     abstract override val origin: FirFunctionCallOrigin
@@ -44,6 +45,8 @@ abstract class FirComponentCall : FirFunctionCall() {
     abstract override fun replaceTypeRef(newTypeRef: FirTypeRef)
 
     abstract override fun replaceTypeArguments(newTypeArguments: List<FirTypeProjection>)
+
+    abstract override fun replaceSearchSynthetics(newSearchSynthetics: Boolean)
 
     abstract override fun replaceArgumentList(newArgumentList: FirArgumentList)
 

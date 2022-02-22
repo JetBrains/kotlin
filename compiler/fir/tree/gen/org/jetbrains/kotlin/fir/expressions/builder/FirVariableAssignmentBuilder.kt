@@ -36,6 +36,7 @@ class FirVariableAssignmentBuilder : FirQualifiedAccessBuilder, FirAnnotationCon
     override var dispatchReceiver: FirExpression = FirNoReceiverExpression
     override var extensionReceiver: FirExpression = FirNoReceiverExpression
     override var source: KtSourceElement? = null
+    override var searchSynthetics: Boolean = false
     lateinit var rValue: FirExpression
 
     override fun build(): FirVariableAssignment {
@@ -47,6 +48,7 @@ class FirVariableAssignmentBuilder : FirQualifiedAccessBuilder, FirAnnotationCon
             dispatchReceiver,
             extensionReceiver,
             source,
+            searchSynthetics,
             rValue,
         )
     }

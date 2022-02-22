@@ -33,6 +33,7 @@ internal class FirComponentCallImpl(
     override val typeArguments: MutableList<FirTypeProjection>,
     override var dispatchReceiver: FirExpression,
     override var extensionReceiver: FirExpression,
+    override var searchSynthetics: Boolean,
     override var argumentList: FirArgumentList,
     override var explicitReceiver: FirExpression,
     override val componentIndex: Int,
@@ -114,6 +115,10 @@ internal class FirComponentCallImpl(
     override fun replaceTypeArguments(newTypeArguments: List<FirTypeProjection>) {
         typeArguments.clear()
         typeArguments.addAll(newTypeArguments)
+    }
+
+    override fun replaceSearchSynthetics(newSearchSynthetics: Boolean) {
+        searchSynthetics = newSearchSynthetics
     }
 
     override fun replaceArgumentList(newArgumentList: FirArgumentList) {

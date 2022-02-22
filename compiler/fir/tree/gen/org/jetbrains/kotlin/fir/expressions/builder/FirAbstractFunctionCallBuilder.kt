@@ -32,6 +32,7 @@ interface FirAbstractFunctionCallBuilder : FirQualifiedAccessBuilder, FirCallBui
     abstract override var dispatchReceiver: FirExpression
     abstract override var extensionReceiver: FirExpression
     abstract override var source: KtSourceElement?
+    abstract override var searchSynthetics: Boolean
     abstract override var argumentList: FirArgumentList
     abstract var typeRef: FirTypeRef
     abstract var calleeReference: FirNamedReference

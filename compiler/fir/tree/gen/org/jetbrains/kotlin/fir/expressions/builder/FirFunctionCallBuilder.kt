@@ -41,6 +41,7 @@ open class FirFunctionCallBuilder : FirAbstractFunctionCallBuilder, FirAnnotatio
     override var explicitReceiver: FirExpression? = null
     override var dispatchReceiver: FirExpression = FirNoReceiverExpression
     override var extensionReceiver: FirExpression = FirNoReceiverExpression
+    override var searchSynthetics: Boolean = false
     override var argumentList: FirArgumentList = FirEmptyArgumentList
     override lateinit var calleeReference: FirNamedReference
     override var origin: FirFunctionCallOrigin = FirFunctionCallOrigin.Regular
@@ -55,6 +56,7 @@ open class FirFunctionCallBuilder : FirAbstractFunctionCallBuilder, FirAnnotatio
             explicitReceiver,
             dispatchReceiver,
             extensionReceiver,
+            searchSynthetics,
             argumentList,
             calleeReference,
             origin,

@@ -25,6 +25,7 @@ interface FirQualifiedAccess : FirResolvable, FirStatement {
     val dispatchReceiver: FirExpression
     val extensionReceiver: FirExpression
     override val source: KtSourceElement?
+    val searchSynthetics: Boolean
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitQualifiedAccess(this, data)
 
@@ -40,6 +41,8 @@ interface FirQualifiedAccess : FirResolvable, FirStatement {
 
     @FirImplementationDetail
     fun replaceSource(newSource: KtSourceElement?)
+
+    fun replaceSearchSynthetics(newSearchSynthetics: Boolean)
 
     override fun <D> transformCalleeReference(transformer: FirTransformer<D>, data: D): FirQualifiedAccess
 

@@ -40,6 +40,7 @@ open class FirImplicitInvokeCallBuilder : FirAbstractFunctionCallBuilder, FirAnn
     override var explicitReceiver: FirExpression? = null
     override var dispatchReceiver: FirExpression = FirNoReceiverExpression
     override var extensionReceiver: FirExpression = FirNoReceiverExpression
+    override var searchSynthetics: Boolean = false
     override var argumentList: FirArgumentList = FirEmptyArgumentList
     override lateinit var calleeReference: FirNamedReference
 
@@ -51,6 +52,7 @@ open class FirImplicitInvokeCallBuilder : FirAbstractFunctionCallBuilder, FirAnn
             explicitReceiver,
             dispatchReceiver,
             extensionReceiver,
+            searchSynthetics,
             argumentList,
             calleeReference,
         )

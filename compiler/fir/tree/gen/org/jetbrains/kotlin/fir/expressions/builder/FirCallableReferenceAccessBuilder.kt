@@ -38,6 +38,7 @@ class FirCallableReferenceAccessBuilder : FirQualifiedAccessBuilder, FirAnnotati
     override var explicitReceiver: FirExpression? = null
     override var dispatchReceiver: FirExpression = FirNoReceiverExpression
     override var extensionReceiver: FirExpression = FirNoReceiverExpression
+    override var searchSynthetics: Boolean = false
     lateinit var calleeReference: FirNamedReference
     var hasQuestionMarkAtLHS: Boolean = false
 
@@ -50,6 +51,7 @@ class FirCallableReferenceAccessBuilder : FirQualifiedAccessBuilder, FirAnnotati
             explicitReceiver,
             dispatchReceiver,
             extensionReceiver,
+            searchSynthetics,
             calleeReference,
             hasQuestionMarkAtLHS,
         )

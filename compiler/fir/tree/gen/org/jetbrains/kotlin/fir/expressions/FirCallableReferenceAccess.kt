@@ -27,6 +27,7 @@ abstract class FirCallableReferenceAccess : FirQualifiedAccessExpression() {
     abstract override val explicitReceiver: FirExpression?
     abstract override val dispatchReceiver: FirExpression
     abstract override val extensionReceiver: FirExpression
+    abstract override val searchSynthetics: Boolean
     abstract override val calleeReference: FirNamedReference
     abstract val hasQuestionMarkAtLHS: Boolean
 
@@ -44,6 +45,8 @@ abstract class FirCallableReferenceAccess : FirQualifiedAccessExpression() {
     abstract override fun replaceTypeArguments(newTypeArguments: List<FirTypeProjection>)
 
     abstract override fun replaceExplicitReceiver(newExplicitReceiver: FirExpression?)
+
+    abstract override fun replaceSearchSynthetics(newSearchSynthetics: Boolean)
 
     abstract fun replaceCalleeReference(newCalleeReference: FirNamedReference)
 

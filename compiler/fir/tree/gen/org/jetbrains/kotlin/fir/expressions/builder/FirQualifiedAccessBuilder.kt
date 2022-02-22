@@ -26,5 +26,6 @@ interface FirQualifiedAccessBuilder {
     abstract var dispatchReceiver: FirExpression
     abstract var extensionReceiver: FirExpression
     abstract var source: KtSourceElement?
+    abstract var searchSynthetics: Boolean
     fun build(): FirQualifiedAccess
 }

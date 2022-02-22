@@ -29,6 +29,7 @@ internal class FirVariableAssignmentImpl(
     override var dispatchReceiver: FirExpression,
     override var extensionReceiver: FirExpression,
     override var source: KtSourceElement?,
+    override var searchSynthetics: Boolean,
     override var rValue: FirExpression,
 ) : FirVariableAssignment() {
     override var lValue: FirReference 
@@ -120,6 +121,10 @@ internal class FirVariableAssignmentImpl(
     @FirImplementationDetail
     override fun replaceSource(newSource: KtSourceElement?) {
         source = newSource
+    }
+
+    override fun replaceSearchSynthetics(newSearchSynthetics: Boolean) {
+        searchSynthetics = newSearchSynthetics
     }
 
     override fun replaceLValueTypeRef(newLValueTypeRef: FirTypeRef) {

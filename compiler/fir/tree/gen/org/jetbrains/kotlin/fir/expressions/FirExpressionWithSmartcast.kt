@@ -29,6 +29,7 @@ abstract class FirExpressionWithSmartcast : FirQualifiedAccessExpression(), FirW
     abstract override val explicitReceiver: FirExpression?
     abstract override val dispatchReceiver: FirExpression
     abstract override val extensionReceiver: FirExpression
+    abstract override val searchSynthetics: Boolean
     abstract override val originalExpression: FirQualifiedAccessExpression
     abstract override val typesFromSmartCast: Collection<ConeKotlinType>
     abstract override val originalType: FirTypeRef
@@ -52,6 +53,8 @@ abstract class FirExpressionWithSmartcast : FirQualifiedAccessExpression(), FirW
     abstract override fun replaceTypeArguments(newTypeArguments: List<FirTypeProjection>)
 
     abstract override fun replaceExplicitReceiver(newExplicitReceiver: FirExpression?)
+
+    abstract override fun replaceSearchSynthetics(newSearchSynthetics: Boolean)
 
     abstract override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirExpressionWithSmartcast
 

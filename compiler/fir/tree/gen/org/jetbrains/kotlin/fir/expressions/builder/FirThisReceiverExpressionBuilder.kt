@@ -35,6 +35,7 @@ class FirThisReceiverExpressionBuilder : FirQualifiedAccessBuilder, FirAnnotatio
     override var typeRef: FirTypeRef = FirImplicitTypeRefImpl(null)
     override val annotations: MutableList<FirAnnotation> = mutableListOf()
     override val typeArguments: MutableList<FirTypeProjection> = mutableListOf()
+    override var searchSynthetics: Boolean = false
     lateinit var calleeReference: FirThisReference
     var isImplicit: Boolean = false
 
@@ -44,6 +45,7 @@ class FirThisReceiverExpressionBuilder : FirQualifiedAccessBuilder, FirAnnotatio
             typeRef,
             annotations,
             typeArguments,
+            searchSynthetics,
             calleeReference,
             isImplicit,
         )
