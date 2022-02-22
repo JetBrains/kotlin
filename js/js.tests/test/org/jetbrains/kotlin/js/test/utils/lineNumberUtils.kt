@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.js.testOld.utils
+package org.jetbrains.kotlin.js.test.utils
 
 import org.jetbrains.kotlin.js.backend.ast.JsProgram
 import org.jetbrains.kotlin.js.util.TextOutputImpl

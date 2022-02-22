@@ -25,6 +25,13 @@
             </array>
           </value>
         </entry>
+        <entry key="$PROJECT_DIR$/js/js.translator/testData/lineNumbers">
+          <value>
+            <array>
+              <option value="$PROJECT_DIR$/js/js.tests/build/out/lineNumbers/$TEST_DATA_FILE${-lib,}_v5{.js,.js.map,-lines.js}" />
+            </array>
+          </value>
+        </entry>
         <entry key="$PROJECT_DIR$/js/js.translator/testData/sourcemap">
           <value>
             <array>
