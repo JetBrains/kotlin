@@ -12,14 +12,14 @@ import org.jetbrains.kotlin.ir.declarations.copyAttributes
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.expressions.IrTypeOperatorCall
 import org.jetbrains.kotlin.ir.expressions.impl.IrTypeOperatorCallImpl
-import org.jetbrains.kotlin.ir.symbols.*
+import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
+import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.types.impl.IrStarProjectionImpl
 import org.jetbrains.kotlin.ir.types.impl.buildSimpleType
 import org.jetbrains.kotlin.ir.types.impl.makeTypeProjection
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
-import org.jetbrains.kotlin.name.Name
 
 internal class DeepCopyIrTreeWithSymbolsForInliner(
     val typeArguments: Map<IrTypeParameterSymbol, IrType?>?,
@@ -38,24 +38,6 @@ internal class DeepCopyIrTreeWithSymbolsForInliner(
 
         result.patchDeclarationParents(parent)
         return result
-    }
-
-    private var nameIndex = 0
-
-    private fun generateCopyName(name: Name) = Name.identifier(name.toString() + "_" + (nameIndex++).toString())
-
-    private inner class InlinerSymbolRenamer : SymbolRenamer {
-        private val map = mutableMapOf<IrSymbol, Name>()
-
-        override fun getClassName(symbol: IrClassSymbol) = map.getOrPut(symbol) { generateCopyName(symbol.owner.name) }
-        override fun getFunctionName(symbol: IrSimpleFunctionSymbol) = map.getOrPut(symbol) { generateCopyName(symbol.owner.name) }
-        override fun getFieldName(symbol: IrFieldSymbol) = symbol.owner.name
-        override fun getFileName(symbol: IrFileSymbol) = symbol.owner.fqName
-        override fun getExternalPackageFragmentName(symbol: IrExternalPackageFragmentSymbol) = symbol.owner.fqName
-        override fun getEnumEntryName(symbol: IrEnumEntrySymbol) = symbol.owner.name
-        override fun getVariableName(symbol: IrVariableSymbol) = map.getOrPut(symbol) { generateCopyName(symbol.owner.name) }
-        override fun getTypeParameterName(symbol: IrTypeParameterSymbol) = symbol.owner.name
-        override fun getValueParameterName(symbol: IrValueParameterSymbol) = symbol.owner.name
     }
 
     private inner class InlinerTypeRemapper(
@@ -157,7 +139,7 @@ internal class DeepCopyIrTreeWithSymbolsForInliner(
 
     private val symbolRemapper = SymbolRemapperImpl(NullDescriptorsRemapper)
     private val typeRemapper = InlinerTypeRemapper(symbolRemapper, typeArguments)
-    private val copier = object : DeepCopyIrTreeWithSymbols(symbolRemapper, typeRemapper, InlinerSymbolRenamer()) {
+    private val copier = object : DeepCopyIrTreeWithSymbols(symbolRemapper, typeRemapper) {
         private fun IrType.remapTypeAndErase() = typeRemapper.remapTypeAndOptionallyErase(this, erase = true)
 
         override fun visitTypeOperator(expression: IrTypeOperatorCall) =
