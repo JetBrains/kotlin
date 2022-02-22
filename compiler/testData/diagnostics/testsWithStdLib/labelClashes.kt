@@ -32,7 +32,7 @@ private typealias Extension = TypedThis
 
 class TypedThis {
     fun TypedThis.baz() {
-        this@TypedThis
+        this<!LABEL_RESOLVE_WILL_CHANGE("class TypedThis; function baz extension receiver")!>@TypedThis<!>
     }
 
     fun Extension.bar() {
