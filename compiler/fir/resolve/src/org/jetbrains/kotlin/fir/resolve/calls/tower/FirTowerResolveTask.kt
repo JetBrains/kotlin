@@ -5,17 +5,24 @@
 
 package org.jetbrains.kotlin.fir.resolve.calls.tower
 
+import org.jetbrains.kotlin.builtins.StandardNames
+import org.jetbrains.kotlin.fir.declarations.FirDeclaration
+import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.declarations.ContextReceiverGroup
 import org.jetbrains.kotlin.fir.declarations.FirTowerDataContext
-import org.jetbrains.kotlin.fir.expressions.FirExpression
-import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
-import org.jetbrains.kotlin.fir.expressions.FirResolvedQualifier
+import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.builder.buildExpressionStub
+import org.jetbrains.kotlin.fir.expressions.builder.buildPropertyAccessExpression
+import org.jetbrains.kotlin.fir.expressions.impl.FirNoReceiverExpression
+import org.jetbrains.kotlin.fir.references.builder.buildResolvedNamedReference
 import org.jetbrains.kotlin.fir.resolve.BodyResolveComponents
 import org.jetbrains.kotlin.fir.resolve.DoubleColonLHS
 import org.jetbrains.kotlin.fir.resolve.calls.*
+import org.jetbrains.kotlin.fir.resolvedSymbol
 import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.scopes.impl.FirWhenSubjectImportingScope
+import org.jetbrains.kotlin.fir.scopes.impl.SELF_NAME
+import org.jetbrains.kotlin.fir.scopes.impl.createSyntheticsScopeFor
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.impl.FirImplicitBuiltinTypeRef
 import org.jetbrains.kotlin.fir.util.asReversedFrozen
@@ -241,13 +248,38 @@ internal open class FirTowerResolveTask(
         )
     }
 
+    private fun getReceiverForSynthetics(receiver: FirExpression, info: CallInfo): Pair<FirExpression?, FirDeclaration?> {
+        val thePropertyAccess = receiver as? FirPropertyAccessExpression
+            ?: return null to null
+
+        val syntheticsOwner = thePropertyAccess.calleeReference.resolvedSymbol?.fir
+            ?: return null to null
+        val theProperty = syntheticsOwner as? FirProperty
+
+        val properReceiver = when {
+            theProperty?.delegate != null && info.name != SELF_NAME -> buildPropertyAccessExpression {
+                calleeReference = buildResolvedNamedReference {
+                    name = StandardNames.BACKING_FIELD
+                    resolvedSymbol = theProperty.delegateFieldSymbol ?: error("Should've had a delegate")
+                }
+                explicitReceiver = thePropertyAccess.explicitReceiver
+                dispatchReceiver = thePropertyAccess.dispatchReceiver
+                extensionReceiver = thePropertyAccess.extensionReceiver
+                typeRef = theProperty.delegate?.typeRef ?: error("Should've had a delegate")
+            }
+            thePropertyAccess.dispatchReceiver !is FirNoReceiverExpression -> thePropertyAccess.dispatchReceiver
+            thePropertyAccess.extensionReceiver !is FirNoReceiverExpression -> thePropertyAccess.extensionReceiver
+            else -> thePropertyAccess.explicitReceiver
+        }
+
+        return properReceiver to syntheticsOwner
+    }
+
     suspend fun runResolverForExpressionReceiver(
         info: CallInfo,
-        receiver: FirExpression,
+        explicitReceiverValue: ExpressionReceiverValue,
         parentGroup: TowerGroup = TowerGroup.EmptyRoot
     ) {
-        val explicitReceiverValue = ExpressionReceiverValue(receiver, info.searchSynthetics)
-
         processExtensionsThatHideMembers(info, explicitReceiverValue, parentGroup)
 
         // Member scope of expression receiver
@@ -279,6 +311,44 @@ internal open class FirTowerResolveTask(
                 )
             }
         )
+    }
+
+    private suspend fun runResolverForSyntheticsAccess(
+        info: CallInfo,
+        receiver: FirExpression,
+        parentGroup: TowerGroup = TowerGroup.EmptyRoot
+    ) {
+        val (properReceiver, syntheticsOwner) = getReceiverForSynthetics(receiver, info)
+
+        if (syntheticsOwner == null) {
+            error("No owning declaration for synthetic access")
+        }
+
+        if (properReceiver != null) {
+            val explicitReceiverValue = ExpressionReceiverValue(properReceiver, syntheticsOwner)
+            runResolverForExpressionReceiver(info, explicitReceiverValue, parentGroup)
+        } else {
+            processExtensionsThatHideMembers(info, explicitReceiverValue = null)
+
+            val scope = createSyntheticsScopeFor(syntheticsOwner, session, this.components.scopeSession)
+                ?: return
+
+            processLevel(
+                scope.toScopeTowerLevel(), info, parentGroup.Member,
+            )
+        }
+    }
+
+    suspend fun runResolverForExpressionReceiver(
+        info: CallInfo,
+        receiver: FirExpression,
+        parentGroup: TowerGroup = TowerGroup.EmptyRoot
+    ) {
+        if (info.searchSynthetics) {
+            runResolverForSyntheticsAccess(info, receiver, parentGroup)
+        } else {
+            runResolverForExpressionReceiver(info, ExpressionReceiverValue(receiver), parentGroup)
+        }
     }
 
     suspend fun runResolverForNoReceiver(

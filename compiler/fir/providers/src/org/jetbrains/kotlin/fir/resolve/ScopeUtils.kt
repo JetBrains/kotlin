@@ -52,9 +52,9 @@ val FirExpression.resolvedDeclaration: FirDeclaration?
         return callee.resolvedSymbol.fir
     }
 
-fun FirExpression.syntheticsScope(): FirTypeScope? {
+fun FirExpression.syntheticsScope(useSiteSession: FirSession, scopeSession: ScopeSession): FirTypeScope? {
     val declaration = resolvedDeclaration ?: return null
-    return FirSyntheticsScope(declaration)
+    return createSyntheticsScopeFor(declaration, useSiteSession, scopeSession)
 }
 
 fun ConeKotlinType.scope(
