@@ -18,12 +18,13 @@ package org.jetbrains.kotlin.types.expressions
 
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.config.LanguageFeature
+import org.jetbrains.kotlin.config.LanguageFeature.ContextReceivers
 import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.diagnostics.Errors.LABEL_NAME_CLASH
-import org.jetbrains.kotlin.diagnostics.Errors.UNRESOLVED_REFERENCE
+import org.jetbrains.kotlin.diagnostics.Errors.*
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.checkReservedYield
+import org.jetbrains.kotlin.psi.psiUtil.parents
 import org.jetbrains.kotlin.resolve.*
 import org.jetbrains.kotlin.resolve.BindingContext.*
 import org.jetbrains.kotlin.resolve.calls.context.ResolutionContext
@@ -150,9 +151,15 @@ object LabelResolver {
         labelName: Name
     ): LabeledReceiverResolutionResult {
         val referenceExpression = expression.instanceReference
-        val targetLabel = expression.getTargetLabel() ?: error(expression)
+        val targetLabelExpression = expression.getTargetLabel() ?: error(expression)
 
-        val declarationsByLabel = context.scope.getDeclarationsByLabel(labelName)
+        val scope = context.scope
+        val declarationsByLabel = scope.getDeclarationsByLabel(labelName)
+        val elementsByLabel = getElementsByLabelName(
+            labelName, targetLabelExpression,
+            classNameLabelsEnabled = expression is KtThisExpression && context.languageVersionSettings.supportsFeature(ContextReceivers)
+        )
+        val trace = context.trace
         when (declarationsByLabel.size) {
             1 -> {
                 val declarationDescriptor = declarationsByLabel.single()
@@ -163,13 +170,20 @@ object LabelResolver {
                     else -> throw UnsupportedOperationException("Unsupported descriptor: $declarationDescriptor") // TODO
                 }
 
-                val element = DescriptorToSourceUtils.descriptorToDeclaration(declarationDescriptor)
+                val declarationElement = DescriptorToSourceUtils.descriptorToDeclaration(declarationDescriptor)
                     ?: error("No PSI element for descriptor: $declarationDescriptor")
-                context.trace.record(LABEL_TARGET, targetLabel, element)
-                context.trace.record(REFERENCE_TARGET, referenceExpression, declarationDescriptor)
+                trace.record(LABEL_TARGET, targetLabelExpression, declarationElement)
+                trace.record(REFERENCE_TARGET, referenceExpression, declarationDescriptor)
+                val closestElement = elementsByLabel.firstOrNull()
+                if (closestElement != null && declarationElement in closestElement.parents) {
+                    reportLabelResolveWillChange(trace, targetLabelExpression, declarationElement, closestElement)
+                }
 
                 if (declarationDescriptor is ClassDescriptor) {
-                    if (!DescriptorResolver.checkHasOuterClassInstance(context.scope, context.trace, targetLabel, declarationDescriptor)) {
+                    if (!DescriptorResolver.checkHasOuterClassInstance(
+                            scope, trace, targetLabelExpression, declarationDescriptor
+                        )
+                    ) {
                         return LabeledReceiverResolutionResult.labelResolutionFailed()
                     }
                 }
@@ -177,14 +191,15 @@ object LabelResolver {
                 return LabeledReceiverResolutionResult.labelResolutionSuccess(thisReceiver)
             }
             0 -> {
-                val element = resolveNamedLabel(
-                    labelName, targetLabel, context.trace,
-                    classNameLabelsEnabled = expression is KtThisExpression
-                            && context.languageVersionSettings.supportsFeature(LanguageFeature.ContextReceivers)
-                )
-                val declarationDescriptor = context.trace.bindingContext[DECLARATION_TO_DESCRIPTOR, element]
+                if (elementsByLabel.size > 1) {
+                    trace.report(LABEL_NAME_CLASH.on(targetLabelExpression))
+                }
+                val element = elementsByLabel.firstOrNull()?.also {
+                    trace.record(LABEL_TARGET, targetLabelExpression, it)
+                }
+                val declarationDescriptor = trace.bindingContext[DECLARATION_TO_DESCRIPTOR, element]
                 if (declarationDescriptor is FunctionDescriptor) {
-                    val labelNameToReceiverMap = context.trace.bindingContext[
+                    val labelNameToReceiverMap = trace.bindingContext[
                             DESCRIPTOR_TO_CONTEXT_RECEIVER_MAP,
                             if (declarationDescriptor is PropertyAccessorDescriptor) declarationDescriptor.correspondingProperty else declarationDescriptor
                     ]
@@ -193,21 +208,43 @@ object LabelResolver {
                         thisReceivers.isNullOrEmpty() -> declarationDescriptor.extensionReceiverParameter
                         thisReceivers.size == 1 -> thisReceivers.single()
                         else -> {
-                            BindingContextUtils.reportAmbiguousLabel(context.trace, targetLabel, declarationsByLabel)
+                            BindingContextUtils.reportAmbiguousLabel(trace, targetLabelExpression, declarationsByLabel)
                             return LabeledReceiverResolutionResult.labelResolutionFailed()
                         }
                     }?.also {
-                        context.trace.record(LABEL_TARGET, targetLabel, element)
-                        context.trace.record(REFERENCE_TARGET, referenceExpression, declarationDescriptor)
+                        trace.record(LABEL_TARGET, targetLabelExpression, element)
+                        trace.record(REFERENCE_TARGET, referenceExpression, declarationDescriptor)
                     }
                     return LabeledReceiverResolutionResult.labelResolutionSuccess(thisReceiver)
                 } else {
-                    context.trace.report(UNRESOLVED_REFERENCE.on(targetLabel, targetLabel))
+                    trace.report(UNRESOLVED_REFERENCE.on(targetLabelExpression, targetLabelExpression))
                 }
             }
-            else -> BindingContextUtils.reportAmbiguousLabel(context.trace, targetLabel, declarationsByLabel)
+            else -> BindingContextUtils.reportAmbiguousLabel(trace, targetLabelExpression, declarationsByLabel)
         }
         return LabeledReceiverResolutionResult.labelResolutionFailed()
+    }
+
+    private fun reportLabelResolveWillChange(
+        trace: BindingTrace,
+        target: KtSimpleNameExpression,
+        declarationElement: PsiElement,
+        closestElement: KtElement
+    ) {
+        val closestDescription = when (closestElement) {
+            is KtFunctionLiteral -> "anonymous function"
+            is KtNamedFunction -> "function ${closestElement.name} context receiver"
+            is KtPropertyAccessor -> "property ${closestElement.property.name} context receiver"
+            else -> "???"
+        }
+        val declarationDescription = when (declarationElement) {
+            is KtClass -> "class ${declarationElement.name}"
+            is KtNamedFunction -> "function ${declarationElement.name}"
+            is KtProperty -> "property ${declarationElement.name}"
+            is KtNamedDeclaration -> "declaration with name ${declarationElement.name}"
+            else -> "unknown declaration"
+        }
+        trace.report(LABEL_RESOLVE_WILL_CHANGE.on(target, declarationDescription, closestDescription))
     }
 
     class LabeledReceiverResolutionResult private constructor(

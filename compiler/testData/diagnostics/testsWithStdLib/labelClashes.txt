@@ -1,0 +1,23 @@
+package
+
+public fun foo(/*0*/ f: with.() -> kotlin.Unit): kotlin.Unit
+public fun kotlin.Int.bar(): kotlin.Unit
+public fun kotlin.Int.with(): kotlin.Unit
+
+public final class TypedThis {
+    public constructor TypedThis()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    public final fun Extension /* = TypedThis */.bar(): kotlin.Unit
+    public final fun TypedThis.baz(): kotlin.Unit
+}
+
+public final class with {
+    public constructor with()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public final fun foo(): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+private typealias Extension = TypedThis

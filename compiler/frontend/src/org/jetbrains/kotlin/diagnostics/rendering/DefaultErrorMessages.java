@@ -193,6 +193,8 @@ public class DefaultErrorMessages {
         MAP.put(RETURN_NOT_ALLOWED, "'return' is not allowed here");
         MAP.put(PROJECTION_IN_IMMEDIATE_ARGUMENT_TO_SUPERTYPE, "Projections are not allowed for immediate arguments of a supertype");
         MAP.put(LABEL_NAME_CLASH, "There is more than one label with such a name in this scope");
+        MAP.put(LABEL_RESOLVE_WILL_CHANGE, "This label is now resolved to ''{0}'' but soon it will be resolved to the closest ''{1}''. " +
+                                           "Please consider introducing or changing explicit label name", TO_STRING, TO_STRING);
         MAP.put(EXPRESSION_EXPECTED_PACKAGE_FOUND, "Expression expected, but a package name found");
 
         MAP.put(CANNOT_ALL_UNDER_IMPORT_FROM_SINGLETON, "Cannot import-on-demand from object ''{0}''", NAME);
