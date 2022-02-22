@@ -61,7 +61,7 @@ internal fun PropertiesProvider.mapKotlinDaemonProperties(task: CompileUsingKotl
     }
 }
 
- internal class PropertiesProvider private constructor(private val project: Project) {
+internal class PropertiesProvider private constructor(private val project: Project) {
     private val localProperties: Properties by lazy {
         Properties().apply {
             val localPropertiesFile = project.rootProject.file("local.properties")
@@ -120,6 +120,9 @@ internal fun PropertiesProvider.mapKotlinDaemonProperties(task: CompileUsingKotl
 
     val buildReportVerbose: Boolean
         get() = booleanProperty("kotlin.build.report.verbose") ?: false
+
+    val buildReportCompilerArguments: Boolean
+        get() = booleanProperty("kotlin.build.report.compilerArguments") ?: false
 
     @Deprecated("Please use \"kotlin.build.report.file.output_dir\" property instead")
     val buildReportDir: File?
