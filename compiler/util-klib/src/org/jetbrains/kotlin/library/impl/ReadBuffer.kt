@@ -81,9 +81,11 @@ sealed class ReadBuffer {
             var tmpBuffer = weakBuffer.get()
             if (tmpBuffer == null) {
                 tmpBuffer = file.readBytes().buffer
+                val curThread = Thread.currentThread()
                 println(
                     """
                     FILE: ${file.absolutePath}
+                    THRD: ${curThread.id} ${curThread.name}
                     TMP buffer position: ${tmpBuffer.position()}
                     TMP buffer limit: ${tmpBuffer.limit()}
                     TMP buffer capacity: ${tmpBuffer.capacity()}
