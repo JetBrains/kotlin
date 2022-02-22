@@ -85,6 +85,8 @@ private:
 
     mm::ObjectFactory<SameThreadMarkAndSweep>& objectFactory_;
     GCScheduler& gcScheduler_;
+
+    KStdVector<ObjHeader*> graySet_;
 };
 
 namespace internal {
