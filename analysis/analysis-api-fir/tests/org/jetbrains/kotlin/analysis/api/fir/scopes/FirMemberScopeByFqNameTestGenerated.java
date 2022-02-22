@@ -57,4 +57,32 @@ public class FirMemberScopeByFqNameTestGenerated extends AbstractMemberScopeByFq
     public void testMutableList() throws Exception {
         runTest("analysis/analysis-api/testData/scopes/memberScopeByFqName/MutableList.kt");
     }
+
+    @Nested
+    @TestMetadata("analysis/analysis-api/testData/scopes/memberScopeByFqName/withTestCompilerPluginEnabled")
+    @TestDataPath("$PROJECT_ROOT")
+    public class WithTestCompilerPluginEnabled {
+        @Test
+        public void testAllFilesPresentInWithTestCompilerPluginEnabled() throws Exception {
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/scopes/memberScopeByFqName/withTestCompilerPluginEnabled"), Pattern.compile("^(.+)\\.kt$"), null, true);
+        }
+
+        @Test
+        @TestMetadata("customSerlializable.kt")
+        public void testCustomSerlializable() throws Exception {
+            runTest("analysis/analysis-api/testData/scopes/memberScopeByFqName/withTestCompilerPluginEnabled/customSerlializable.kt");
+        }
+
+        @Test
+        @TestMetadata("generatedCompanionWithFoo.kt")
+        public void testGeneratedCompanionWithFoo() throws Exception {
+            runTest("analysis/analysis-api/testData/scopes/memberScopeByFqName/withTestCompilerPluginEnabled/generatedCompanionWithFoo.kt");
+        }
+
+        @Test
+        @TestMetadata("nestedClassAndMaterializeMember.kt")
+        public void testNestedClassAndMaterializeMember() throws Exception {
+            runTest("analysis/analysis-api/testData/scopes/memberScopeByFqName/withTestCompilerPluginEnabled/nestedClassAndMaterializeMember.kt");
+        }
+    }
 }
