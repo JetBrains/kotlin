@@ -219,7 +219,7 @@ internal open class FirTowerResolveTask(
         receiver: FirExpression,
         parentGroup: TowerGroup = TowerGroup.EmptyRoot
     ) {
-        val explicitReceiverValue = ExpressionReceiverValue(receiver)
+        val explicitReceiverValue = ExpressionReceiverValue(receiver, info.searchSynthetics)
 
         processExtensionsThatHideMembers(info, explicitReceiverValue, parentGroup)
 

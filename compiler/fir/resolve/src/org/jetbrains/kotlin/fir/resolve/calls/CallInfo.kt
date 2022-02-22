@@ -41,6 +41,8 @@ data class CallInfo(
     val outerCSBuilder: ConstraintSystemBuilder? = null,
     val lhs: DoubleColonLHS? = null,
     val origin: FirFunctionCallOrigin = FirFunctionCallOrigin.Regular,
+
+    val searchSynthetics: Boolean = false,
 ) : AbstractCallInfo() {
     val arguments: List<FirExpression> get() = argumentList.arguments
 
