@@ -13,8 +13,8 @@
 
 using namespace kotlin;
 
-KStdVector<ObjHeader*> kotlin::gc::collectRootSet() {
-    KStdVector<ObjHeader*> graySet;
+void kotlin::gc::collectRootSet(KStdVector<ObjHeader*>& graySet) {
+    graySet.clear();
     for (auto& thread : mm::GlobalData::Instance().threadRegistry().LockForIter()) {
         // TODO: Maybe it's more efficient to do by the suspending thread?
         thread.Publish();
@@ -53,5 +53,4 @@ KStdVector<ObjHeader*> kotlin::gc::collectRootSet() {
         }
     }
     RuntimeLogDebug({kTagGC}, "Collected global root set global=%zu stableRef=%zu", global, stableRef);
-    return graySet;
 }

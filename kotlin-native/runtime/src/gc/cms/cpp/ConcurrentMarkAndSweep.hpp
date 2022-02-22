@@ -88,6 +88,8 @@ private:
     GCStateHolder state_;
     ScopedThread gcThread_;
     KStdUniquePtr<FinalizerProcessor> finalizerProcessor_;
+
+    KStdVector<ObjHeader*> graySet_;
 };
 
 } // namespace gc
