@@ -43,7 +43,8 @@ internal fun reportingSettings(rootProject: Project): ReportingSettings {
         buildReportLabel = properties.buildReportLabel,
         fileReportSettings = fileReportSettings,
         httpReportSettings = httpReportSettings,
-        buildReportOutputs = buildReportOutputTypes
+        buildReportOutputs = buildReportOutputTypes,
+        includeCompilerArguments = properties.buildReportCompilerArguments,
     )
 }
 

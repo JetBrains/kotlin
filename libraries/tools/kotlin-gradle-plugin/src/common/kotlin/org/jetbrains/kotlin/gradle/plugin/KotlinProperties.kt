@@ -94,6 +94,9 @@ internal class PropertiesProvider private constructor(private val project: Proje
     val buildReportVerbose: Boolean
         get() = booleanProperty("kotlin.build.report.verbose") ?: false
 
+    val buildReportCompilerArguments: Boolean
+        get() = booleanProperty("kotlin.build.report.compilerArguments") ?: false
+
     @Deprecated("Please use \"kotlin.build.report.file.output_dir\" property instead")
     val buildReportDir: File?
         get() = property("kotlin.build.report.dir")?.let { File(it) }
