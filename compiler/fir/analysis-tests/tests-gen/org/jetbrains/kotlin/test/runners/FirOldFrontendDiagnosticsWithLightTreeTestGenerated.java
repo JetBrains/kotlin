@@ -33570,6 +33570,12 @@ public class FirOldFrontendDiagnosticsWithLightTreeTestGenerated extends Abstrac
         }
 
         @Test
+        @TestMetadata("labelClashes.kt")
+        public void testLabelClashes() throws Exception {
+            runTest("compiler/testData/diagnostics/testsWithStdLib/labelClashes.kt");
+        }
+
+        @Test
         @TestMetadata("outstar.kt")
         public void testOutstar() throws Exception {
             runTest("compiler/testData/diagnostics/testsWithStdLib/outstar.kt");

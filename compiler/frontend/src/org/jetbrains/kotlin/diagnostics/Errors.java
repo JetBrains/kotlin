@@ -1025,6 +1025,7 @@ public interface Errors {
     // Labels
 
     DiagnosticFactory0<KtSimpleNameExpression> LABEL_NAME_CLASH = DiagnosticFactory0.create(WARNING);
+    DiagnosticFactory2<KtSimpleNameExpression, String, String> LABEL_RESOLVE_WILL_CHANGE = DiagnosticFactory2.create(WARNING);
     DiagnosticFactory0<KtSimpleNameExpression> AMBIGUOUS_LABEL = DiagnosticFactory0.create(ERROR);
 
     DiagnosticFactory0<KtExpressionWithLabel> BREAK_OR_CONTINUE_OUTSIDE_A_LOOP = DiagnosticFactory0.create(ERROR);
