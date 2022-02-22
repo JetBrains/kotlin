@@ -22,20 +22,20 @@ import org.jetbrains.kotlin.fir.scopes.impl.FirFakeOverrideGenerator
 import org.jetbrains.kotlin.fir.scopes.scopeForClass
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
-import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.fir.visibilityChecker
+import org.jetbrains.kotlin.resolve.deprecation.DeprecationLevelValue
 
 private operator fun <T> Pair<T, *>?.component1() = this?.first
 private operator fun <T> Pair<*, T>?.component2() = this?.second
 
 internal fun FirScope.processConstructorsByName(
-    name: Name,
+    callInfo: CallInfo,
     session: FirSession,
     bodyResolveComponents: BodyResolveComponents,
     includeInnerConstructors: Boolean,
     processor: (FirCallableSymbol<*>) -> Unit
 ) {
-    // TODO: Handle case with two or more accessible classifiers
-    val classifierInfo = getFirstClassifierOrNull(name)
+    val classifierInfo = getFirstClassifierOrNull(callInfo, session, bodyResolveComponents)
     if (classifierInfo != null) {
         val (matchedClassifierSymbol, substitutor) = classifierInfo
         val matchedClassSymbol = matchedClassifierSymbol as? FirClassLikeSymbol<*>
@@ -58,30 +58,60 @@ internal fun FirScope.processConstructorsByName(
 }
 
 internal fun FirScope.processFunctionsAndConstructorsByName(
-    name: Name,
+    callInfo: CallInfo,
     session: FirSession,
     bodyResolveComponents: BodyResolveComponents,
     includeInnerConstructors: Boolean,
     processor: (FirCallableSymbol<*>) -> Unit
 ) {
     processConstructorsByName(
-        name, session, bodyResolveComponents,
+        callInfo, session, bodyResolveComponents,
         includeInnerConstructors = includeInnerConstructors,
         processor
     )
 
-    processFunctionsByName(name, processor)
+    processFunctionsByName(callInfo.name, processor)
 }
 
-private fun FirScope.getFirstClassifierOrNull(name: Name): Pair<FirClassifierSymbol<*>, ConeSubstitutor>? {
+private fun FirScope.getFirstClassifierOrNull(
+    callInfo: CallInfo,
+    session: FirSession,
+    bodyResolveComponents: BodyResolveComponents
+): Pair<FirClassifierSymbol<*>, ConeSubstitutor>? {
+    var successful = false
+    var ambiguity = false
     var result: Pair<FirClassifierSymbol<*>, ConeSubstitutor>? = null
-    processClassifiersByNameWithSubstitution(name) { symbol, substitution ->
-        if (result == null) {
+    processClassifiersByNameWithSubstitution(callInfo.name) { symbol, substitution ->
+        val classifierDeclaration = symbol.fir
+        var isSuccessCandidate = true
+        if (classifierDeclaration is FirMemberDeclaration) {
+            if (!session.visibilityChecker.isVisible(
+                    classifierDeclaration,
+                    session,
+                    bodyResolveComponents.file,
+                    bodyResolveComponents.containingDeclarations,
+                    dispatchReceiver = null,
+                    isCallToPropertySetter = false
+                )
+            ) {
+                isSuccessCandidate = false
+            }
+        }
+
+        val deprecation = symbol.getDeprecationForCallSite()
+        if (deprecation != null && deprecation.deprecationLevel == DeprecationLevelValue.HIDDEN) {
+            isSuccessCandidate = false
+        }
+
+        if (result == null || (!successful && isSuccessCandidate)) {
+            successful = isSuccessCandidate
             result = symbol to substitution
+        } else {
+            ambiguity = true
         }
     }
 
-    return result
+    return result.takeUnless { ambiguity }
 }
 
 private fun processSyntheticConstructors(
