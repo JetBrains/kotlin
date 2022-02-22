@@ -73,8 +73,7 @@ object LabelResolver {
     }
 
     private fun getLabelForFunctionalExpression(element: KtExpression): Name? {
-        val parent = element.parent
-        return when (parent) {
+        return when (val parent = element.parent) {
             is KtLabeledExpression -> getLabelNamesIfAny(parent, false).singleOrNull()
             is KtBinaryExpression -> parent.operationReference.getReferencedNameAsName()
             else -> getCallerName(element)
@@ -154,19 +153,18 @@ object LabelResolver {
         val targetLabel = expression.getTargetLabel() ?: error(expression)
 
         val declarationsByLabel = context.scope.getDeclarationsByLabel(labelName)
-        val size = declarationsByLabel.size
-        when (size) {
+        when (declarationsByLabel.size) {
             1 -> {
                 val declarationDescriptor = declarationsByLabel.single()
                 val thisReceiver = when (declarationDescriptor) {
                     is ClassDescriptor -> declarationDescriptor.thisAsReceiverParameter
                     is FunctionDescriptor -> declarationDescriptor.extensionReceiverParameter
                     is PropertyDescriptor -> declarationDescriptor.extensionReceiverParameter
-                    else -> throw UnsupportedOperationException("Unsupported descriptor: " + declarationDescriptor) // TODO
+                    else -> throw UnsupportedOperationException("Unsupported descriptor: $declarationDescriptor") // TODO
                 }
 
                 val element = DescriptorToSourceUtils.descriptorToDeclaration(declarationDescriptor)
-                        ?: error("No PSI element for descriptor: " + declarationDescriptor)
+                    ?: error("No PSI element for descriptor: $declarationDescriptor")
                 context.trace.record(LABEL_TARGET, targetLabel, element)
                 context.trace.record(REFERENCE_TARGET, referenceExpression, declarationDescriptor)
 
@@ -213,7 +211,7 @@ object LabelResolver {
     }
 
     class LabeledReceiverResolutionResult private constructor(
-        val code: LabeledReceiverResolutionResult.Code,
+        val code: Code,
         private val receiverParameterDescriptor: ReceiverParameterDescriptor?
     ) {
         enum class Code {
@@ -227,7 +225,7 @@ object LabelResolver {
         }
 
         fun getReceiverParameterDescriptor(): ReceiverParameterDescriptor? {
-            assert(success()) { "Don't try to obtain the receiver when resolution failed with " + code }
+            assert(success()) { "Don't try to obtain the receiver when resolution failed with $code" }
             return receiverParameterDescriptor
         }
 
