@@ -807,6 +807,9 @@ public class DefaultErrorMessages {
         };
         MAP.put(TYPE_VARIANCE_CONFLICT, "Type parameter {0} is declared as ''{1}'' but occurs in ''{2}'' position in type {3}",
                 varianceConflictDataRenderer);
+        MAP.put(TYPE_VARIANCE_CONFLICT_WARNING, "Type parameter {0} is declared as ''{1}'' but occurs in ''{2}'' position in type {3}. " +
+                                                "This diagnostic will become an error soon. See https://youtrack.jetbrains.com/issue/KT-50947",
+                varianceConflictDataRenderer);
         MAP.put(TYPE_VARIANCE_CONFLICT_IN_EXPANDED_TYPE, "Type parameter {0} is declared as ''{1}'' but occurs in ''{2}'' position in abbreviated type {3}",
                 varianceConflictDataRenderer);
 

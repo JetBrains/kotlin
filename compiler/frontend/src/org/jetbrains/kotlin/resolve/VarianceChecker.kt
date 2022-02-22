@@ -18,6 +18,9 @@ package org.jetbrains.kotlin.resolve
 
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.builtins.StandardNames
+import org.jetbrains.kotlin.config.LanguageFeature
+import org.jetbrains.kotlin.config.LanguageFeature.ReportTypeVarianceConflictOnQualifierArguments
+import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.impl.FunctionDescriptorImpl
 import org.jetbrains.kotlin.descriptors.impl.PropertyAccessorDescriptorImpl
@@ -43,7 +46,8 @@ class ManualVariance(val descriptor: TypeParameterDescriptor, val variance: Vari
 class VarianceChecker(trace: BindingTrace) {
     private val core = VarianceCheckerCore(trace.bindingContext, trace)
 
-    fun check(c: TopDownAnalysisContext) {
+    fun check(c: TopDownAnalysisContext, languageVersionSettings: LanguageVersionSettings) {
+        core.languageVersionSettings = languageVersionSettings
         core.check(c)
     }
 }
@@ -59,6 +63,7 @@ class VarianceCheckerCore(
     private val diagnosticSink: DiagnosticSink,
     private val manualVariance: ManualVariance? = null
 ) {
+    internal var languageVersionSettings: LanguageVersionSettings? = null
 
     fun check(c: TopDownAnalysisContext) {
         checkClasses(c)
@@ -153,7 +158,17 @@ class VarianceCheckerCore(
             ) {
                 val varianceConflictDiagnosticData = VarianceConflictDiagnosticData(containingType, classifierDescriptor, position)
                 val diagnostic =
-                    if (isInAbbreviation) Errors.TYPE_VARIANCE_CONFLICT_IN_EXPANDED_TYPE else Errors.TYPE_VARIANCE_CONFLICT
+                    when {
+                        isArgumentFromQualifier -> {
+                            if (languageVersionSettings?.supportsFeature(ReportTypeVarianceConflictOnQualifierArguments) == true) {
+                                Errors.TYPE_VARIANCE_CONFLICT
+                            } else {
+                                Errors.TYPE_VARIANCE_CONFLICT_WARNING
+                            }
+                        }
+                        isInAbbreviation -> Errors.TYPE_VARIANCE_CONFLICT_IN_EXPANDED_TYPE
+                        else -> Errors.TYPE_VARIANCE_CONFLICT
+                    }
                 diagnosticSink.report(diagnostic.on(psiElement, varianceConflictDiagnosticData))
             }
             return declarationVariance.allowsPosition(position)
