@@ -171,11 +171,6 @@ class DescriptorSerializer private constructor(
             builder.companionObjectName = getSimpleNameIndex(companionObjectDescriptor.name)
         }
 
-        val typeTableProto = typeTable.serialize()
-        if (typeTableProto != null) {
-            builder.typeTable = typeTableProto
-        }
-
         val representation = classDescriptor.inlineClassRepresentation
         if (representation != null) {
             builder.inlineClassUnderlyingPropertyName = getSimpleNameIndex(representation.underlyingPropertyName)
@@ -214,10 +209,8 @@ class DescriptorSerializer private constructor(
             )
         }
 
-        val versionRequirementTableProto = versionRequirementTable.serialize()
-        if (versionRequirementTableProto != null) {
-            builder.versionRequirementTable = versionRequirementTableProto
-        }
+        typeTable.serialize()?.let { builder.typeTable = it }
+        versionRequirementTable.serialize()?.let { builder.versionRequirementTable = it }
 
         return builder
     }
@@ -423,11 +416,12 @@ class DescriptorSerializer private constructor(
             builder.addValueParameter(local.valueParameter(valueParameterDescriptor))
         }
 
+        contractSerializer.serializeContractOfFunctionIfAny(descriptor, builder, this)
+
+        extension.serializeFunction(descriptor, builder, versionRequirementTable, local)
+
         if (serializeTypeTableToFunction) {
-            val typeTableProto = typeTable.serialize()
-            if (typeTableProto != null) {
-                builder.typeTable = typeTableProto
-            }
+            typeTable.serialize()?.let { builder.typeTable = it }
         }
 
         versionRequirementTable?.run {
@@ -449,10 +443,6 @@ class DescriptorSerializer private constructor(
                 builder.addVersionRequirement(writeVersionRequirement(LanguageFeature.DefinitelyNonNullableTypes))
             }
         }
-
-        contractSerializer.serializeContractOfFunctionIfAny(descriptor, builder, this)
-
-        extension.serializeFunction(descriptor, builder, versionRequirementTable, local)
 
         return builder
     }
@@ -771,17 +761,10 @@ class DescriptorSerializer private constructor(
             }
         }
 
-        val typeTableProto = typeTable.serialize()
-        if (typeTableProto != null) {
-            builder.typeTable = typeTableProto
-        }
-
-        val versionRequirementTableProto = versionRequirementTable?.serialize()
-        if (versionRequirementTableProto != null) {
-            builder.versionRequirementTable = versionRequirementTableProto
-        }
-
         extension.serializePackage(packageFqName, builder)
+
+        typeTable.serialize()?.let { builder.typeTable = it }
+        versionRequirementTable?.serialize()?.let { builder.versionRequirementTable = it }
 
         return builder
     }
