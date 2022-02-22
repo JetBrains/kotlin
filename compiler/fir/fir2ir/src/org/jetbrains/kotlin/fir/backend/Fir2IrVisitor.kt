@@ -42,6 +42,8 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
+import org.jetbrains.kotlin.ir.symbols.IrReturnTargetSymbol
+import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionSymbolImpl
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.constructors
 import org.jetbrains.kotlin.ir.util.defaultType
@@ -413,10 +415,30 @@ class Fir2IrVisitor(
         return callGenerator.convertToIrConstructorCall(annotationCall)
     }
 
+    private val FirQualifiedAccess.deepestNonSyntheticQualifiedAccess: FirQualifiedAccess?
+        get() {
+            var next: FirQualifiedAccess? = this
+
+            while (next?.searchSynthetics == true) {
+                next = next.explicitReceiver as? FirQualifiedAccess
+            }
+
+            return next
+        }
+
+    private val FirQualifiedAccess.receiverForSynthetics: FirExpression?
+        get() {
+            val targetAccess = deepestNonSyntheticQualifiedAccess ?: return null
+            return targetAccess.explicitReceiver ?: targetAccess.dispatchReceiver
+        }
+
     override fun visitQualifiedAccessExpression(qualifiedAccessExpression: FirQualifiedAccessExpression, data: Any?): IrElement {
-        val explicitReceiverExpression = convertToIrReceiverExpression(
-            qualifiedAccessExpression.explicitReceiver, qualifiedAccessExpression.calleeReference
-        )
+        val receiver = if (qualifiedAccessExpression.searchSynthetics) {
+            qualifiedAccessExpression.receiverForSynthetics
+        } else {
+            qualifiedAccessExpression.explicitReceiver
+        }
+        val explicitReceiverExpression = convertToIrReceiverExpression(receiver, qualifiedAccessExpression.calleeReference)
         return callGenerator.convertToIrCall(qualifiedAccessExpression, qualifiedAccessExpression.typeRef, explicitReceiverExpression)
     }
 
@@ -515,9 +537,12 @@ class Fir2IrVisitor(
     }
 
     override fun visitVariableAssignment(variableAssignment: FirVariableAssignment, data: Any?): IrElement {
-        val explicitReceiverExpression = convertToIrReceiverExpression(
-            variableAssignment.explicitReceiver, variableAssignment.calleeReference
-        )
+        val receiver = if (variableAssignment.searchSynthetics) {
+            variableAssignment.receiverForSynthetics
+        } else {
+            variableAssignment.explicitReceiver
+        }
+        val explicitReceiverExpression = convertToIrReceiverExpression(receiver, variableAssignment.calleeReference)
         return callGenerator.convertToIrSetCall(variableAssignment, explicitReceiverExpression)
     }
 
