@@ -11,7 +11,6 @@ The following Kotlin Multiplatform Mobile samples used to be located in this dir
 More Kotlin Multiplatform Mobile samples can be found here: https://kotlinlang.org/docs/kmm-samples.html.
 
 The samples that are in this directory mostly illustrate the other use cases for Kotlin/Native:
-  * `androidNativeActivity` - Android Native Activity rendering 3D graphics using OpenGLES
   * `csvparser` - simple CSV file parser and analyzer
   * `echoServer` - TCP/IP echo server
   * `gitchurn` - program interoperating with `libgit2` for GIT repository analysis
