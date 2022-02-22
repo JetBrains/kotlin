@@ -73,7 +73,7 @@ class FirTypeDeserializer(
                     origin = FirDeclarationOrigin.Library
                     this.name = name
                     this.symbol = symbol
-                    this.containingDeclarationSymbol = containingSymbol
+                    this.containingDeclarationSymbol = containingSymbol ?: error("Top-level type parameter ???")
                     variance = proto.variance.convertVariance()
                     isReified = proto.reified
                 }

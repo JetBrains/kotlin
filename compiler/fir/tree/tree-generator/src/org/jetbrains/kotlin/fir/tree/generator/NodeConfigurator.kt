@@ -294,7 +294,7 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
         typeParameter.configure {
             +name
             +symbol("FirTypeParameterSymbol")
-            +field("containingDeclarationSymbol", firBasedSymbolType, "*", nullable = true).apply {
+            +field("containingDeclarationSymbol", firBasedSymbolType, "*").apply {
                 withBindThis = false
             }
             +field(varianceType)
