@@ -197,8 +197,14 @@ abstract class AbstractFirUseSiteMemberScope(
     }
 
     override fun processClassifiersByNameWithSubstitution(name: Name, processor: (FirClassifierSymbol<*>, ConeSubstitutor) -> Unit) {
-        declaredMemberScope.processClassifiersByNameWithSubstitution(name, processor)
-        supertypeScopeContext.processClassifiersByNameWithSubstitution(name, absentClassifiersFromSupertypes, processor)
+        var shadowed = false
+        declaredMemberScope.processClassifiersByNameWithSubstitution(name) { classifier, substitutor ->
+            shadowed = true
+            processor(classifier, substitutor)
+        }
+        if (!shadowed) {
+            supertypeScopeContext.processClassifiersByNameWithSubstitution(name, absentClassifiersFromSupertypes, processor)
+        }
     }
 
     override fun processDeclaredConstructors(processor: (FirConstructorSymbol) -> Unit) {
