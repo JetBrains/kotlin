@@ -760,15 +760,22 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
             return typeInfo.clearType();
         }
 
+        KtExpression deparenthesizedBaseExpression = KtPsiUtil.deparenthesize(baseExpression);
+
         // a[i]++/-- takes special treatment because it is actually let j = i, arr = a in arr.set(j, a.get(j).inc())
         if ((operationType == KtTokens.PLUSPLUS || operationType == KtTokens.MINUSMINUS) &&
-            baseExpression instanceof KtArrayAccessExpression) {
+            deparenthesizedBaseExpression instanceof KtArrayAccessExpression) {
             KtExpression stubExpression = ExpressionTypingUtils.createFakeExpressionOfType(
                     baseExpression.getProject(), context.trace, "e", type);
             TemporaryBindingTrace temporaryBindingTrace = TemporaryBindingTrace.create(
                     context.trace, "trace to resolve array access set method for unary expression", expression);
             ExpressionTypingContext newContext = context.replaceBindingTrace(temporaryBindingTrace);
-            resolveImplicitArrayAccessSetMethod((KtArrayAccessExpression) baseExpression, stubExpression, newContext, context.trace);
+            resolveImplicitArrayAccessSetMethod(
+                    (KtArrayAccessExpression) deparenthesizedBaseExpression,
+                    stubExpression,
+                    newContext,
+                    context.trace
+            );
         }
 
         // Resolve the operation reference
