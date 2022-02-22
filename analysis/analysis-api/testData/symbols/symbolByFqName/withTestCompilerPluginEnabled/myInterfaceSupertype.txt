@@ -1,0 +1,24 @@
+KtNamedClassOrObjectSymbol:
+  annotationsList: [
+    org/jetbrains/kotlin/fir/plugin/MyInterfaceSupertype()
+      psi: KtAnnotationEntry
+  ]
+  classIdIfNonLocal: foo/MyClass
+  classKind: CLASS
+  companionObject: null
+  isData: false
+  isExternal: false
+  isFun: false
+  isInline: false
+  isInner: false
+  modality: FINAL
+  name: MyClass
+  origin: SOURCE
+  superTypes: [
+    kotlin/Any
+    foo/MyInterface
+  ]
+  symbolKind: TOP_LEVEL
+  typeParameters: []
+  visibility: Public
+  deprecationStatus: null

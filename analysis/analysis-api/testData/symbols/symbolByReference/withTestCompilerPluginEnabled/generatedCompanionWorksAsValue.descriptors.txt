@@ -1,0 +1,23 @@
+KtNamedClassOrObjectSymbol:
+  annotationsList: [
+    <ERROR CLASS>()
+      psi: KtAnnotationEntry
+  ]
+  classIdIfNonLocal: test/WithGeneratedCompanion
+  classKind: CLASS
+  companionObject: null
+  isData: false
+  isExternal: false
+  isFun: false
+  isInline: false
+  isInner: false
+  modality: FINAL
+  name: WithGeneratedCompanion
+  origin: LIBRARY
+  superTypes: [
+    kotlin/Any
+  ]
+  symbolKind: TOP_LEVEL
+  typeParameters: []
+  visibility: Public
+  deprecationStatus: null
