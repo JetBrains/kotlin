@@ -17449,6 +17449,18 @@ public class FirOldFrontendDiagnosticsTestGenerated extends AbstractFirDiagnosti
             }
 
             @Test
+            @TestMetadata("typeVarianceConflict.kt")
+            public void testTypeVarianceConflict() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/inner/typeVarianceConflict.kt");
+            }
+
+            @Test
+            @TestMetadata("typeVarianceConflictFeatureOn.kt")
+            public void testTypeVarianceConflictFeatureOn() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/inner/typeVarianceConflictFeatureOn.kt");
+            }
+
+            @Test
             @TestMetadata("visibility.kt")
             public void testVisibility() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/inner/visibility.kt");
