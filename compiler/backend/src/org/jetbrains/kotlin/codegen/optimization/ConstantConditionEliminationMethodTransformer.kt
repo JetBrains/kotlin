@@ -72,8 +72,10 @@ class ConstantConditionEliminationMethodTransformer : MethodTransformer() {
                     val insn = insns[i]
                     val frame = frames[i]
 
-                    if (frame == null && insn !is LabelNode) {
-                        deadCode.add(insn)
+                    if (frame == null) {
+                        if (insn !is LabelNode) {
+                            deadCode.add(insn)
+                        }
                         continue
                     }
 
