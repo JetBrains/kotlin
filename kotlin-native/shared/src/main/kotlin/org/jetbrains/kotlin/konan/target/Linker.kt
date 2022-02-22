@@ -114,7 +114,7 @@ class AndroidLinker(targetProperties: AndroidConfigurables)
     }
     private val prefix = "$absoluteTargetToolchain/bin/${clangTarget}${Android.API}"
     private val clang = if (HostManager.hostIsMingw) "$prefix-clang.cmd" else "$prefix-clang"
-    private val ar = "$absoluteTargetToolchain/${targetProperties.targetTriple}/bin/ar"
+    private val ar = "$absoluteTargetToolchain/${targetProperties.targetTriple.withoutVendor()}/bin/ar"
 
     override val useCompilerDriverAsLinker: Boolean get() = true
 
