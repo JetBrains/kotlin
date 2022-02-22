@@ -26,7 +26,6 @@ import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsTargetDsl
 import org.jetbrains.kotlin.gradle.targets.js.npm.npmProject
 import org.jetbrains.kotlin.gradle.tasks.locateOrRegisterTask
 import org.jetbrains.kotlin.gradle.tasks.registerTask
-import org.jetbrains.kotlin.gradle.utils.listProperty
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 import org.jetbrains.kotlin.gradle.utils.setProperty
 import javax.inject.Inject
@@ -137,7 +136,7 @@ constructor(
             binary.linkSyncTaskName
         ) { task ->
             task.from(
-                project.layout.file(binary.linkTask.map { it.destinationDir })
+                project.layout.file(binary.linkTask.flatMap { it.destinationDirectory.map { it.asFile } })
             )
 
             task.from(project.tasks.named(compilation.processResourcesTaskName))

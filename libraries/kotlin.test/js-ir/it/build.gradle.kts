@@ -57,7 +57,7 @@ val compileTestDevelopmentExecutableKotlinJs = tasks.named<KotlinJsIrLink>("comp
 val populateNodeModules = tasks.register<Copy>("populateNodeModules") {
     dependsOn("compileTestDevelopmentExecutableKotlinJs")
     dependsOn(nodeModules)
-    from(compileTestDevelopmentExecutableKotlinJs.map { it.destinationDir })
+    from(compileTestDevelopmentExecutableKotlinJs.map { it.destinationDirectory })
 
     from {
         nodeModules.get().map {

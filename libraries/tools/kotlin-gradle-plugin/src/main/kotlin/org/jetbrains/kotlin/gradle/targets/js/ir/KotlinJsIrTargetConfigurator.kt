@@ -97,9 +97,9 @@ open class KotlinJsIrTargetConfigurator() :
 
                 compilation.compileKotlinTaskProvider.configure { task ->
                     val outputFilePath = outputFile ?: if (produceUnzippedKlib) {
-                        task.destinationDir.absoluteFile.normalize().absolutePath
+                        task.destinationDirectory.get().asFile.absoluteFile.normalize().absolutePath
                     } else {
-                        File(task.destinationDir, "$baseName.$KLIB_TYPE").absoluteFile.normalize().absolutePath
+                        File(task.destinationDirectory.get().asFile, "$baseName.$KLIB_TYPE").absoluteFile.normalize().absolutePath
                     }
                     outputFile = outputFilePath
 
@@ -112,7 +112,7 @@ open class KotlinJsIrTargetConfigurator() :
                                     "To fix this, consider using the default outputFile location instead of providing it explicitly."
                         )
 
-                    task.destinationDir = taskOutputDir
+                    task.destinationDirectory.set(taskOutputDir)
                 }
 
                 val klibModuleName = target.project.klibModuleName(baseName)

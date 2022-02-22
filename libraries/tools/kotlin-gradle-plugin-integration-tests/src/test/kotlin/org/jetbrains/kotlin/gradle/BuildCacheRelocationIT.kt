@@ -84,7 +84,7 @@ class BuildCacheRelocationIT : KGPBaseTest() {
             testProject.subProject("libraryProject").buildGradle.modify {
                 it.replace("/exampleapp.js", "/web/exampleapp.js")
                 // Fix assembling the JAR from the whole buildDir
-                it.replace("from buildDir", "from compileKotlin2Js.destinationDir")
+                it.replace("from buildDir", "from compileKotlin2Js.destinationDirectory")
             }
         }
 

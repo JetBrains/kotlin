@@ -9,10 +9,7 @@ import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.junit.jupiter.api.DisplayName
 import java.nio.file.Path
-import kotlin.io.path.createDirectories
-import kotlin.io.path.deleteExisting
-import kotlin.io.path.relativeTo
-import kotlin.io.path.writeText
+import kotlin.io.path.*
 import kotlin.test.assertTrue
 
 @DisplayName("Default incremental compilation with default precise java tracking")
@@ -66,9 +63,7 @@ open class IncrementalJavaChangeDefaultIT : IncrementalCompilationJavaChangesBas
             }
             build("compileKotlin", "--rerun-tasks") {
                 assertTasksExecuted(":compileKotlin")
-                val compiledKotlinClasses = kotlinClassesDir().allFilesWithExtension("class").toList()
-
-                assertTrue(compiledKotlinClasses.isEmpty())
+                assertTrue(kotlinClassesDir().notExists())
             }
         }
     }

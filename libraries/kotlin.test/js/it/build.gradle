@@ -36,7 +36,7 @@ buildDir = "$projectDir/build"
 tasks.register("populateNodeModules", Copy) {
     dependsOn(compileKotlin2Js)
     dependsOn(configurations.nodeModules)
-    from compileKotlin2Js.destinationDir
+    from compileKotlin2Js.destinationDirectory
 
     from {
         configurations.nodeModules.collect {
