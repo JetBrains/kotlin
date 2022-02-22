@@ -13,9 +13,8 @@ import org.jetbrains.kotlin.fir.resolve.ScopeSession
 open class FirExplicitStarImportingScope(
     imports: List<FirImport>,
     session: FirSession,
-    scopeSession: ScopeSession,
-    filter: FirImportingScopeFilter
-) : FirAbstractStarImportingScope(session, scopeSession, filter, lookupInFir = true) {
+    scopeSession: ScopeSession
+) : FirAbstractStarImportingScope(session, scopeSession, lookupInFir = true) {
     override val starImports = imports.filterIsInstance<FirResolvedImport>().filter { it.isAllUnder }
 
     override val scopeOwnerLookupNames: List<String> by lazy(LazyThreadSafetyMode.PUBLICATION) {

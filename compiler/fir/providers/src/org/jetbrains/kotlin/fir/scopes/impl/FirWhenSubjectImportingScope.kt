@@ -23,7 +23,7 @@ class FirWhenSubjectImportingScope(
     classId: ClassId, session: FirSession, scopeSession: ScopeSession
 ) : FirExplicitStarImportingScope(
     listOf(buildResolvedImportByClassId(classId)),
-    session, scopeSession, FirImportingScopeFilter.ALL
+    session, scopeSession
 ) {
     override fun processPropertiesByName(name: Name, processor: (FirVariableSymbol<*>) -> Unit) {
         super.processPropertiesByName(name) {

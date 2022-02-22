@@ -17,15 +17,16 @@ import org.jetbrains.kotlin.name.Name
 abstract class FirAbstractSimpleImportingScope(
     session: FirSession,
     scopeSession: ScopeSession
-) : FirAbstractImportingScope(session, scopeSession, FirImportingScopeFilter.ALL, lookupInFir = true) {
+) : FirAbstractImportingScope(session, scopeSession, lookupInFir = true) {
 
     // TODO try to hide this
     abstract val simpleImports: Map<Name, List<FirResolvedImport>>
 
     override fun processClassifiersByNameWithSubstitution(name: Name, processor: (FirClassifierSymbol<*>, ConeSubstitutor) -> Unit) {
         val imports = simpleImports[name] ?: return
-        val symbol = findSingleClassifierSymbolByName(null, imports) ?: return
-        processor(symbol, ConeSubstitutor.Empty)
+        processImportsByName(null, imports) { symbol ->
+            processor(symbol, ConeSubstitutor.Empty)
+        }
     }
 
     override fun processFunctionsByName(name: Name, processor: (FirNamedFunctionSymbol) -> Unit) {
