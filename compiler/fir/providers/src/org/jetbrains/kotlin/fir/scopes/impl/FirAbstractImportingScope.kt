@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.fir.scopes.impl
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.declarations.FirMemberDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirResolvedImport
 import org.jetbrains.kotlin.fir.declarations.utils.expandedConeType
 import org.jetbrains.kotlin.fir.moduleData
@@ -21,9 +20,6 @@ import org.jetbrains.kotlin.fir.scopes.unsubstitutedScope
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.resolve.annotations.JVM_THROWS_ANNOTATION_FQ_NAME
-import org.jetbrains.kotlin.resolve.annotations.KOTLIN_NATIVE_THROWS_ANNOTATION_FQ_NAME
-import org.jetbrains.kotlin.resolve.annotations.KOTLIN_THROWS_ANNOTATION_FQ_NAME
 
 enum class FirImportingScopeFilter {
     ALL, INVISIBLE_CLASSES, MEMBERS_AND_VISIBLE_CLASSES;
@@ -79,14 +75,8 @@ abstract class FirAbstractImportingScope(
                 ?: ClassId.topLevel(import.packageFqName.child(importedName))
             val symbol = provider.getClassLikeSymbolByClassId(classId) ?: continue
             if (!filter.check(symbol, session)) continue
-            result = when {
-                result == null || result == symbol -> symbol
-                // Importing multiple versions of the same type is normally an ambiguity, but in the case of `kotlin.Throws`,
-                // it should take precedence over platform-specific variants. This is lifted directly from `LazyImportScope`
-                // from the old backend; most likely `Throws` predates expect-actual, and this is a backwards compatibility hack.
-                // TODO: remove redundant versions of `Throws` from the standard library
-                result.classId.isJvmOrNativeThrows && symbol.classId.isCommonThrows -> symbol
-                result.classId.isCommonThrows && symbol.classId.isJvmOrNativeThrows -> result
+            result = when (result) {
+                null, symbol -> symbol
                 // TODO: if there is an ambiguity at this scope, further scopes should not be checked.
                 //  Doing otherwise causes KT-39073. Also, returning null here instead of an error symbol
                 //  or something produces poor quality diagnostics ("unresolved name" rather than "ambiguity").
@@ -128,9 +118,3 @@ abstract class FirAbstractImportingScope(
         }
     }
 }
-
-private val ClassId.isJvmOrNativeThrows: Boolean
-    get() = asSingleFqName().let { it == JVM_THROWS_ANNOTATION_FQ_NAME || it == KOTLIN_NATIVE_THROWS_ANNOTATION_FQ_NAME }
-
-private val ClassId.isCommonThrows: Boolean
-    get() = asSingleFqName() == KOTLIN_THROWS_ANNOTATION_FQ_NAME

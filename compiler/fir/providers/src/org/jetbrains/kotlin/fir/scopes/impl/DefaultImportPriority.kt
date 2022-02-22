@@ -15,7 +15,9 @@ enum class DefaultImportPriority {
             platformDependentAnalyzerServices: PlatformDependentAnalyzerServices?,
             languageVersionSettings: LanguageVersionSettings
         ): List<ImportPath>? =
-            platformDependentAnalyzerServices?.getDefaultImports(languageVersionSettings, includeLowPriorityImports = false)
+            platformDependentAnalyzerServices?.getDefaultImports(languageVersionSettings, includeLowPriorityImports = false)?.let {
+                it + ImportPath.fromString("kotlin.Throws")
+            }
     },
     LOW {
         override fun getAllDefaultImports(
