@@ -77,6 +77,7 @@ object LanguageSettingsDirectives : SimpleDirectivesContainer() {
     val DISABLE_CALL_ASSERTIONS by directive("Disable assertions on calls")
     val NO_UNIFIED_NULL_CHECKS by directive("No unified null checks")
     val PARAMETERS_METADATA by directive("Add parameters metadata for 1.8 reflection")
+    val USE_TYPE_TABLE by directive("Use type table in metadata serialization")
 
     // --------------------- Utils ---------------------
 

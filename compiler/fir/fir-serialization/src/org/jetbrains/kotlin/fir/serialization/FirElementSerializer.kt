@@ -78,17 +78,10 @@ class FirElementSerializer private constructor(
             }
         }
 
-        val typeTableProto = typeTable.serialize()
-        if (typeTableProto != null) {
-            builder.typeTable = typeTableProto
-        }
-
-        val versionRequirementTableProto = versionRequirementTable?.serialize()
-        if (versionRequirementTableProto != null) {
-            builder.versionRequirementTable = versionRequirementTableProto
-        }
-
         extension.serializePackage(packageFqName, builder)
+
+        typeTable.serialize()?.let { builder.typeTable = it }
+        versionRequirementTable?.serialize()?.let { builder.versionRequirementTable = it }
 
         return builder
     }
@@ -179,11 +172,6 @@ class FirElementSerializer private constructor(
             builder.companionObjectName = getSimpleNameIndex(companionObject.name)
         }
 
-        val typeTableProto = typeTable.serialize()
-        if (typeTableProto != null) {
-            builder.typeTable = typeTableProto
-        }
-
         val representation = (klass as? FirRegularClass)?.getInlineClassUnderlyingParameter(session)
         if (representation != null) {
             builder.inlineClassUnderlyingPropertyName = getSimpleNameIndex(representation.name)
@@ -208,10 +196,9 @@ class FirElementSerializer private constructor(
 
         writeVersionRequirementForInlineClasses(klass, builder, versionRequirementTable)
 
-        val versionRequirementTableProto = versionRequirementTable.serialize()
-        if (versionRequirementTableProto != null) {
-            builder.versionRequirementTable = versionRequirementTableProto
-        }
+        typeTable.serialize()?.let { builder.typeTable = it }
+        versionRequirementTable.serialize()?.let { builder.versionRequirementTable = it }
+
         return builder
     }
 
@@ -411,11 +398,12 @@ class FirElementSerializer private constructor(
             builder.addValueParameter(local.valueParameterProto(valueParameter))
         }
 
+        contractSerializer.serializeContractOfFunctionIfAny(function, builder, this)
+
+        extension.serializeFunction(function, builder, versionRequirementTable, local)
+
         if (serializeTypeTableToFunction) {
-            val typeTableProto = typeTable.serialize()
-            if (typeTableProto != null) {
-                builder.typeTable = typeTableProto
-            }
+            typeTable.serialize()?.let { builder.typeTable = it }
         }
 
         versionRequirementTable?.run {
@@ -429,10 +417,6 @@ class FirElementSerializer private constructor(
                 builder.addVersionRequirement(writeVersionRequirement(LanguageFeature.InlineClasses))
             }
         }
-
-        contractSerializer.serializeContractOfFunctionIfAny(function, builder, this)
-
-        extension.serializeFunction(function, builder, versionRequirementTable, local)
 
         return builder
     }

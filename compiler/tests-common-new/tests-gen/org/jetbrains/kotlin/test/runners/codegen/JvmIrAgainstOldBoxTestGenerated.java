@@ -597,6 +597,12 @@ public class JvmIrAgainstOldBoxTestGenerated extends AbstractJvmIrAgainstOldBoxT
         }
 
         @Test
+        @TestMetadata("privateConstructorWithPrivateFieldUsingTypeTable.kt")
+        public void testPrivateConstructorWithPrivateFieldUsingTypeTable() throws Exception {
+            runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/inlineClasses/privateConstructorWithPrivateFieldUsingTypeTable.kt");
+        }
+
+        @Test
         @TestMetadata("privateTopLevelValInDifferentModule.kt")
         public void testPrivateTopLevelValInDifferentModule() throws Exception {
             runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/inlineClasses/privateTopLevelValInDifferentModule.kt");
