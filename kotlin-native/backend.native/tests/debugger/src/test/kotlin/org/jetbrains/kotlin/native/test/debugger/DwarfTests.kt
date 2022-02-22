@@ -62,7 +62,7 @@ class DwarfTests {
             }
         """.trimIndent().binary("poisoned", "-g", "-l", poisonLibrary.toString(), "-l", callbackLibrary.toString(), "-l", trapLibrary.toString())
 
-        binary.dwarfDumpLookup("kfun:main\$<anonymous>_1#internal") {
+        binary.dwarfDumpLookup("kfun:main\$lambda-0#internal") {
             assertFalse(this.isEmpty())
             val subprogram = single { it.tag == DwarfTag.Tag.DW_TAG_subprogram } as DwarfTagSubprogram
             assertEquals(subprogram.file!!.name, "poison.kt")
