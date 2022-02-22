@@ -143,7 +143,7 @@ class MemberScopeTowerLevel(
         return processMembers(processor) { consumer ->
             withMemberCallLookup(lookupTracker, info) { lookupCtx ->
                 this.processFunctionsAndConstructorsByName(
-                    info.name, session, bodyResolveComponents,
+                    info, session, bodyResolveComponents,
                     includeInnerConstructors = true,
                     processor = {
                         lookupCtx.recordCallableMemberLookup(it)
@@ -313,7 +313,7 @@ class ScopeTowerLevel(
         var empty = true
         session.lookupTracker?.recordCallLookup(info, scope.scopeOwnerLookupNames)
         scope.processFunctionsAndConstructorsByName(
-            info.name,
+            info,
             session,
             bodyResolveComponents,
             includeInnerConstructors = includeInnerConstructors
