@@ -11,6 +11,6 @@
     "runOnTeamcity": "mocha --reporter mocha-teamcity-reporter",
     "test": "mocha",
     "runIrTestInNode": "node $NODE_DEBUG_OPTION runIrTestInNode.js",
-    "generateTypeScriptTests": "tsc --build typescript-export/*/"
+    "generateTypeScriptTests": "tsc --build"
   }
 }
