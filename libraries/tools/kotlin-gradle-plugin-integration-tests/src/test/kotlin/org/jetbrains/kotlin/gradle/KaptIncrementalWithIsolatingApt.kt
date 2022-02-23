@@ -306,6 +306,7 @@ class KaptIncrementalWithIsolatingApt : KaptIncrementalIT() {
             build(":mylibrary:assembleDebug") {
                 assertEquals(
                     listOf(
+                        "baseLibrary/build/tmp/kapt3/stubs/debug/error/NonExistentClass.java",
                         "mylibrary/src/main/java/com/example/lib/ExampleParcel.java",
                         "baseLibrary/src/main/java/com/example/lib2/basemodule/BaseClassParcel.java",
                     ).map { projectPath.resolve(it).toRealPath().toString() }.toSet(),
