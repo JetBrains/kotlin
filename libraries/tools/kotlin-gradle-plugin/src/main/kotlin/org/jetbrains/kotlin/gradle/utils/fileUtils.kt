@@ -18,6 +18,32 @@ internal fun File.isJavaFile() =
 internal fun File.isKotlinFile(sourceFilesExtensions: List<String>): Boolean =
     !isJavaFile() && sourceFilesExtensions.any { it.equals(extension, ignoreCase = true) }
 
+/**
+ * Create all possible case-sensitive permutations for given [String].
+ *
+ * Useful to create for [org.gradle.api.tasks.util.PatternFilterable] Ant-style patterns.
+ */
+@OptIn(ExperimentalStdlibApi::class)
+internal fun String.fileExtensionCasePermutations(): List<String> {
+    val lowercaseInput = lowercase()
+    val length = lowercaseInput.length
+    // number of permutations is 2^n
+    val max = 1 shl length
+    val result = mutableListOf<String>()
+    var combination: CharArray
+    for (i in 0 until max) {
+        combination = lowercaseInput.toCharArray()
+        for (j in 0 until length) {
+            // If j-th bit is set, we convert it to upper case
+            if (((i shr j) and 1) == 1) {
+                combination[j] = combination[j].uppercaseChar()
+            }
+        }
+        result.add(String(combination))
+    }
+    return result
+}
+
 internal fun File.relativeOrCanonical(base: File): String =
     relativeToOrNull(base)?.path ?: canonicalPath
 
