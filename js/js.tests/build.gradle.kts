@@ -171,18 +171,31 @@ val unzipV8 by task<Copy> {
 }
 
 val testDataDir = project(":js:js.translator").projectDir.resolve("testData")
+val typescriptTestsDir = testDataDir.resolve("typescript-export")
 
-val installTsDependencies by task<NpmTask> {
+val installTsDependencies = task<NpmTask>("installTsDependencies") {
     workingDir.set(testDataDir)
     args.set(listOf("install"))
 }
 
-val generateTypeScriptTests by task<NpmTask>  {
-    dependsOn(installTsDependencies)
-
-    workingDir.set(testDataDir)
-    args.set(listOf("run", "generateTypeScriptTests"))
+fun sequential(first: Task, tasks: List<Task>): Task {
+    tasks.fold(first) { previousTask, currentTask ->
+        currentTask.dependsOn(previousTask)
+    }
+    return tasks.last()
 }
+
+fun generateTypeScriptTestFor(dir: String): Task = task<NpmTask>("generate-ts-for-$dir") {
+    workingDir.set(testDataDir)
+    args.set(listOf("run", "generateTypeScriptTests", "--", "./typescript-export/$dir/tsconfig.json"))
+}
+
+val generateTypeScriptTests = sequential(
+    installTsDependencies,
+    typescriptTestsDir.listFiles()
+        .filter { it.isDirectory }
+        .map { generateTypeScriptTestFor(it.name) }
+)
 
 fun Test.setupV8() {
     dependsOn(unzipV8)
@@ -205,10 +218,9 @@ fun Test.setUpJsBoxTests(jsEnabled: Boolean, jsIrEnabled: Boolean) {
 
     dependsOn(":dist")
 
-// TODO uncomment after fixing on Windows
-//    if (!project.hasProperty("teamcity")) {
-//        dependsOn(generateTypeScriptTests)
-//    }
+    if (!project.hasProperty("teamcity")) {
+        dependsOn(generateTypeScriptTests)
+    }
 
     if (jsEnabled) {
         dependsOn(testJsRuntime)
