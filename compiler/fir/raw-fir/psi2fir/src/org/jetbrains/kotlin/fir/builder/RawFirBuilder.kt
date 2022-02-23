@@ -225,6 +225,8 @@ open class RawFirBuilder(
                 if (this is KtNameReferenceExpression ||
                     this is KtConstantExpression ||
                     this is KtHashQualifiedExpression ||
+                    this is KtThisExpression ||
+                    this is KtSuperExpression ||
                     (this is KtCallExpression && callExpressionCallee !is KtLambdaExpression) ||
                     getQualifiedExpressionForSelector() == null
                 ) {
