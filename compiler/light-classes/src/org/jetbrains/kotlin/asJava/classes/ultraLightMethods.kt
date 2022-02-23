@@ -137,8 +137,7 @@ internal abstract class KtUltraLightMethod(
     override fun equals(other: Any?): Boolean = other === this ||
             other is KtUltraLightMethod &&
             other.methodIndex == methodIndex &&
-            super.equals(other) &&
-            other.delegate == delegate
+            super.equals(other)
 
     override fun hashCode(): Int = super.hashCode().times(31).plus(methodIndex.hashCode())
 
