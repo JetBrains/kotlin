@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.backend.generators
 
+import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.backend.*
 import org.jetbrains.kotlin.fir.declarations.*
@@ -103,8 +104,9 @@ internal class ClassMemberGenerator(
                         irFunction.putParametersInScope(firFunction)
                     }
                 }
+                val annotationMode = containingClass?.classKind == ClassKind.ANNOTATION_CLASS && irFunction is IrConstructor
                 for ((valueParameter, firValueParameter) in valueParameters.zip(firFunction.valueParameters)) {
-                    valueParameter.setDefaultValue(firValueParameter)
+                    valueParameter.setDefaultValue(firValueParameter, annotationMode)
                     annotationGenerator.generate(valueParameter, firValueParameter, irFunction is IrConstructor)
                 }
                 annotationGenerator.generate(irFunction, firFunction)
@@ -345,10 +347,10 @@ internal class ClassMemberGenerator(
         }
     }
 
-    private fun IrValueParameter.setDefaultValue(firValueParameter: FirValueParameter) {
+    private fun IrValueParameter.setDefaultValue(firValueParameter: FirValueParameter, annotationMode: Boolean) {
         val firDefaultValue = firValueParameter.defaultValue
         if (firDefaultValue != null) {
-            this.defaultValue = factory.createExpressionBody(visitor.convertToIrExpression(firDefaultValue))
+            this.defaultValue = factory.createExpressionBody(visitor.convertToIrExpression(firDefaultValue, annotationMode))
         }
     }
 }
