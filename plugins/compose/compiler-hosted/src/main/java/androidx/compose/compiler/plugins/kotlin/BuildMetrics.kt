@@ -40,6 +40,7 @@ import org.jetbrains.kotlin.psi.KtParameter
 import java.io.File
 
 interface FunctionMetrics {
+    val isEmpty: Boolean get() = false
     val packageName: FqName
     val name: String
     val composable: Boolean
@@ -82,6 +83,8 @@ interface FunctionMetrics {
 }
 
 interface ModuleMetrics {
+    val isEmpty get() = false
+
     fun recordFunction(
         function: FunctionMetrics,
     )
@@ -110,6 +113,7 @@ interface ModuleMetrics {
 }
 
 object EmptyModuleMetrics : ModuleMetrics {
+    override val isEmpty: Boolean get() = true
     override fun recordFunction(function: FunctionMetrics) {}
     override fun recordClass(declaration: IrClass, marked: Boolean, stability: Stability) {}
     override fun recordLambda(composable: Boolean, memoized: Boolean, singleton: Boolean) {}
@@ -131,6 +135,7 @@ object EmptyModuleMetrics : ModuleMetrics {
 
 object EmptyFunctionMetrics : FunctionMetrics {
     private fun emptyMetricsAccessed(): Nothing = error("Empty metrics accessed")
+    override val isEmpty: Boolean get() = true
     override val packageName: FqName
         get() = emptyMetricsAccessed()
     override val name: String
