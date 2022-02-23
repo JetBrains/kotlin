@@ -913,6 +913,7 @@ abstract class BaseFirBuilder<T>(val baseSession: FirSession, val context: Conte
                     val firMemberAccess = left.convertQualified()
                     return if (firMemberAccess != null) {
                         explicitReceiver = firMemberAccess.explicitReceiver
+                        searchSynthetics = firMemberAccess.searchSynthetics
                         firMemberAccess.calleeReference
                     } else {
                         buildErrorNamedReference {

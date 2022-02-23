@@ -43,7 +43,6 @@ import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.*
 import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
-import org.jetbrains.kotlin.types.ConstantValueKind
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.types.expressions.OperatorConventions
 import org.jetbrains.kotlin.util.OperatorNameConventions
@@ -225,6 +224,7 @@ open class RawFirBuilder(
 
                 if (this is KtNameReferenceExpression ||
                     this is KtConstantExpression ||
+                    this is KtHashQualifiedExpression ||
                     (this is KtCallExpression && callExpressionCallee !is KtLambdaExpression) ||
                     getQualifiedExpressionForSelector() == null
                 ) {
@@ -2357,6 +2357,10 @@ open class RawFirBuilder(
                 )
             val firSelector = selector.toFirExpression("Incorrect selector expression")
             if (firSelector is FirQualifiedAccess) {
+                if (expression.operationSign == HASH) {
+                    firSelector.replaceSearchSynthetics(true)
+                }
+
                 val receiver = expression.receiverExpression.toFirExpression("Incorrect receiver expression")
 
                 if (expression is KtSafeQualifiedExpression) {

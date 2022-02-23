@@ -180,7 +180,8 @@ class FirCallResolver(
             session,
             components.file,
             transformer.components.containingDeclarations,
-            origin = origin
+            origin = origin,
+            searchSynthetics = qualifiedAccess.searchSynthetics,
         )
         towerResolver.reset()
         val result = towerResolver.runResolver(info, transformer.resolutionContext)
