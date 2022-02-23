@@ -196,7 +196,8 @@ class ComposableTargetAnnotationsTransformer(
 
             override fun log(node: InferenceNode?, message: String) {
                 val element = node?.element
-                metrics.log("applier inference${lineInfoOf(element)}: $message")
+                if (!metrics.isEmpty)
+                    metrics.log("applier inference${lineInfoOf(element)}: $message")
             }
         }
     )
