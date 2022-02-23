@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.fir.backend
 
+import org.jetbrains.kotlin.KtPsiSourceFileLinesMapping
+import org.jetbrains.kotlin.KtSourceFileLinesMappingFromLineStartOffsets
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.backend.common.ir.BuiltinSymbolsBase
@@ -46,7 +48,6 @@ import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi2ir.generators.GeneratorExtensions
 import org.jetbrains.kotlin.psi2ir.generators.generateTypicalIrProviderList
 import org.jetbrains.kotlin.resolve.BindingContext
-import java.io.File
 
 class Fir2IrConverter(
     private val moduleDescriptor: FirModuleDescriptor,
@@ -169,10 +170,17 @@ class Fir2IrConverter(
         val fileEntry = when (file.origin) {
             FirDeclarationOrigin.Source ->
                 file.psi?.let { PsiIrFileEntry(it as KtFile) }
-                    ?: NaiveSourceBasedFileEntryImpl(
-                        file.path ?: file.name,
-                        file.path?.let { File(it).lineStartOffsets } ?: intArrayOf(0)
-                    )
+                    ?: when (val linesMapping = file.sourceFileLinesMapping) {
+                        is KtSourceFileLinesMappingFromLineStartOffsets ->
+                            NaiveSourceBasedFileEntryImpl(
+                                file.sourceFile?.path ?: file.sourceFile?.name ?: file.name,
+                                linesMapping.lineStartOffsets,
+                                linesMapping.lastOffset
+                            )
+                        is KtPsiSourceFileLinesMapping -> PsiIrFileEntry(linesMapping.psiFile)
+                        else ->
+                            NaiveSourceBasedFileEntryImpl(file.sourceFile?.path ?: file.sourceFile?.name ?: file.name)
+                    }
             FirDeclarationOrigin.Synthetic -> NaiveSourceBasedFileEntryImpl(file.name)
             else -> error("Unsupported file origin: ${file.origin}")
         }

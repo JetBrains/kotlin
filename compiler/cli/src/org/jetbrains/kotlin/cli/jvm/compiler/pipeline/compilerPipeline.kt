@@ -308,12 +308,11 @@ fun compileModuleToAnalyzedFir(
     // raw fir
     val commonRawFir = commonSession?.buildFirViaLightTree(
         input.commonSources,
-        environment.projectEnvironment,
         diagnosticsReporter,
         countFilesAndLines
     )
     val rawFir =
-        session.buildFirViaLightTree(input.platformSources, environment.projectEnvironment, diagnosticsReporter, countFilesAndLines)
+        session.buildFirViaLightTree(input.platformSources, diagnosticsReporter, countFilesAndLines)
 
     // resolution
     commonSession?.apply {

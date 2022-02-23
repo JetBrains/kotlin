@@ -11,6 +11,7 @@ import com.intellij.openapi.vfs.VirtualFileManager
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiElementFinder
 import com.intellij.psi.search.GlobalSearchScope
+import org.jetbrains.kotlin.KtInMemoryTextSourceFile
 import org.jetbrains.kotlin.analyzer.ModuleInfo
 import org.jetbrains.kotlin.asJava.finder.JavaElementFinder
 import org.jetbrains.kotlin.checkers.BaseDiagnosticsTest
@@ -46,6 +47,7 @@ import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.AnalyzingUtils
 import org.jetbrains.kotlin.resolve.PlatformDependentAnalyzerServices
 import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatformAnalyzerServices
+import org.jetbrains.kotlin.toSourceLinesMapping
 import java.io.File
 
 abstract class AbstractFirBaseDiagnosticsTest : BaseDiagnosticsTest() {
@@ -133,7 +135,12 @@ abstract class AbstractFirBaseDiagnosticsTest : BaseDiagnosticsTest() {
         if (useLightTree) {
             val lightTreeBuilder = LightTree2Fir(session, firProvider.kotlinScopeProvider)
             ktFiles.mapTo(firFiles) {
-                val firFile = lightTreeBuilder.buildFirFile(it.text, it.name, it.virtualFilePath)
+                val firFile =
+                    lightTreeBuilder.buildFirFile(
+                        it.text,
+                        KtInMemoryTextSourceFile(it.name, it.virtualFilePath, it.text),
+                        it.text.toSourceLinesMapping()
+                    )
                 (session.firProvider as FirProviderImpl).recordFile(firFile)
                 firFile
             }

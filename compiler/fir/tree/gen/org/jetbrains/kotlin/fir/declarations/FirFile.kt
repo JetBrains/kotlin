@@ -6,6 +6,8 @@
 package org.jetbrains.kotlin.fir.declarations
 
 import org.jetbrains.kotlin.KtSourceElement
+import org.jetbrains.kotlin.KtSourceFile
+import org.jetbrains.kotlin.KtSourceFileLinesMapping
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.FirPackageDirective
@@ -29,7 +31,8 @@ abstract class FirFile : FirDeclaration() {
     abstract val imports: List<FirImport>
     abstract val declarations: List<FirDeclaration>
     abstract val name: String
-    abstract val path: String?
+    abstract val sourceFile: KtSourceFile?
+    abstract val sourceFileLinesMapping: KtSourceFileLinesMapping?
     abstract override val symbol: FirFileSymbol
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitFile(this, data)

@@ -6,6 +6,8 @@
 package org.jetbrains.kotlin.test.services.sourceProviders
 
 import com.intellij.psi.PsiFile
+import org.jetbrains.kotlin.KtPsiSourceFile
+import org.jetbrains.kotlin.KtSourceFile
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.REQUIRES_SEPARATE_PROCESS
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives.JDK_KIND
 import org.jetbrains.kotlin.test.directives.model.RegisteredDirectives
@@ -39,11 +41,12 @@ open class MainFunctionForBlackBoxTestsSourceProvider(testServices: TestServices
             return containsBoxMethod(file.originalContent)
         }
 
-        fun <T> fileContainsBoxMethod(file: T): Boolean =
-            when (file) {
-                is PsiFile -> containsBoxMethod(file.text)
-                is File -> containsBoxMethod(file.readText())
-                else -> error("Unknown file type: $file")
+        fun fileContainsBoxMethod(sourceFile: KtSourceFile): Boolean =
+            when (sourceFile) {
+                is KtPsiSourceFile -> containsBoxMethod(sourceFile.psiFile.text)
+                else -> with(sourceFile.getContentsAsStream().reader(Charsets.UTF_8)) {
+                    containsBoxMethod(this.readText())
+                }
             }
 
         fun containsBoxMethod(fileContent: String): Boolean {

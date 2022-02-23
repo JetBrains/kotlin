@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.test.backend.classic
 
+import org.jetbrains.kotlin.KtPsiSourceFile
 import org.jetbrains.kotlin.codegen.ClassBuilderFactories
 import org.jetbrains.kotlin.codegen.DefaultCodegenFactory
 import org.jetbrains.kotlin.codegen.KotlinCodegenFacade
@@ -46,7 +47,7 @@ class ClassicJvmBackendFacade(
         javaCompilerFacade.compileJavaFiles(module, configuration, generationState.factory)
         return BinaryArtifacts.Jvm(
             generationState.factory,
-            psiFiles.map { SourceFileInfo(it, JvmFileClassUtil.getFileClassInfoNoResolve(it)) }
+            psiFiles.map { SourceFileInfo(KtPsiSourceFile(it), JvmFileClassUtil.getFileClassInfoNoResolve(it)) }
         )
     }
 }

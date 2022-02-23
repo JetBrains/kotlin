@@ -6,6 +6,8 @@
 package org.jetbrains.kotlin.fir.declarations.impl
 
 import org.jetbrains.kotlin.KtSourceElement
+import org.jetbrains.kotlin.KtSourceFile
+import org.jetbrains.kotlin.KtSourceFileLinesMapping
 import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.FirPackageDirective
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
@@ -35,7 +37,8 @@ internal class FirFileImpl(
     override val imports: MutableList<FirImport>,
     override val declarations: MutableList<FirDeclaration>,
     override val name: String,
-    override val path: String?,
+    override val sourceFile: KtSourceFile?,
+    override val sourceFileLinesMapping: KtSourceFileLinesMapping?,
 ) : FirFile() {
     override val symbol: FirFileSymbol = FirFileSymbol()
 

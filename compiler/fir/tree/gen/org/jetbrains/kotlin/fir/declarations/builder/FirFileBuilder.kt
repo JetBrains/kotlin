@@ -7,6 +7,8 @@ package org.jetbrains.kotlin.fir.declarations.builder
 
 import kotlin.contracts.*
 import org.jetbrains.kotlin.KtSourceElement
+import org.jetbrains.kotlin.KtSourceFile
+import org.jetbrains.kotlin.KtSourceFileLinesMapping
 import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.FirPackageDirective
 import org.jetbrains.kotlin.fir.builder.FirAnnotationContainerBuilder
@@ -39,7 +41,8 @@ class FirFileBuilder : FirAnnotationContainerBuilder {
     val imports: MutableList<FirImport> = mutableListOf()
     val declarations: MutableList<FirDeclaration> = mutableListOf()
     lateinit var name: String
-    var path: String? = null
+    var sourceFile: KtSourceFile? = null
+    var sourceFileLinesMapping: KtSourceFileLinesMapping? = null
 
     override fun build(): FirFile {
         return FirFileImpl(
@@ -53,7 +56,8 @@ class FirFileBuilder : FirAnnotationContainerBuilder {
             imports,
             declarations,
             name,
-            path,
+            sourceFile,
+            sourceFileLinesMapping,
         )
     }
 

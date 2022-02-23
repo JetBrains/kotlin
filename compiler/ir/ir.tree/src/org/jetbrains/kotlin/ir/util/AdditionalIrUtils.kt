@@ -189,7 +189,8 @@ val IrFileEntry.lineStartOffsets: IntArray
 
 class NaiveSourceBasedFileEntryImpl(
     override val name: String,
-    private val lineStartOffsets: IntArray = intArrayOf()
+    private val lineStartOffsets: IntArray = intArrayOf(),
+    override val maxOffset: Int = UNDEFINED_OFFSET
 ) : IrFileEntry {
     val lineStartOffsetsAreEmpty: Boolean
         get() = lineStartOffsets.isEmpty()
@@ -218,11 +219,8 @@ class NaiveSourceBasedFileEntryImpl(
         if (offset == SYNTHETIC_OFFSET) return 0
         if (offset < 0) return -1
         val lineNumber = getLineNumber(offset)
-        return offset - lineStartOffsets[lineNumber]
+        return if (lineNumber < 0) -1 else offset - lineStartOffsets[lineNumber]
     }
-
-    override val maxOffset: Int
-        get() = lineStartOffsets.lastOrNull() ?: UNDEFINED_OFFSET
 
     override fun getSourceRangeInfo(beginOffset: Int, endOffset: Int): SourceRangeInfo =
         SourceRangeInfo(

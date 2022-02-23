@@ -285,7 +285,7 @@ fun IrFile.getKtFile(): KtFile? =
 fun IrFile.getIoFile(): File? =
     when (val fe = fileEntry) {
         is PsiIrFileEntry -> fe.psiFile.virtualFile?.path?.let(::File)
-        else -> File(fe.name).takeIf { it.exists() }
+        else -> File(fe.name)
     }
 
 inline fun IrElement.hasChild(crossinline block: (IrElement) -> Boolean): Boolean {

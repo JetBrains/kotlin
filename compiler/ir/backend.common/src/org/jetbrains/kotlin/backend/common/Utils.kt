@@ -18,14 +18,9 @@ package org.jetbrains.kotlin.backend.common
 
 import org.jetbrains.kotlin.AbstractKtSourceElement
 import org.jetbrains.kotlin.KtOffsetsOnlySourceElement
-import org.jetbrains.kotlin.KtRealPsiSourceElement
-import org.jetbrains.kotlin.KtSourceElement
-import org.jetbrains.kotlin.backend.common.psi.PsiSourceManager
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
-import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrFile
-import org.jetbrains.kotlin.ir.util.render
 
 fun CommonBackendContext.reportWarning(message: String, irFile: IrFile?, irElement: IrElement) {
     report(irElement, irFile, message, false)
@@ -36,12 +31,6 @@ fun <E> MutableList<E>.push(element: E) = this.add(element)
 fun <E> MutableList<E>.pop() = this.removeAt(size - 1)
 
 fun <E> MutableList<E>.peek(): E? = if (size == 0) null else this[size - 1]
-
-fun findKtSourceElement(irElement: IrElement, irDeclaration: IrDeclaration): KtSourceElement {
-    val psiElement = PsiSourceManager.findPsiElement(irElement, irDeclaration)
-        ?: throw AssertionError("No PsiElement found for '${irElement.render()}'")
-    return KtRealPsiSourceElement(psiElement)
-}
 
 fun IrElement.sourceElement(): AbstractKtSourceElement? =
     if (startOffset != UNDEFINED_OFFSET) KtOffsetsOnlySourceElement(this.startOffset, this.endOffset)

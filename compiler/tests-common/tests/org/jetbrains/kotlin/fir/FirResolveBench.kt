@@ -9,6 +9,7 @@ import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.openapi.vfs.CharsetToolkit
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.KtIoFileSourceFile
 import org.jetbrains.kotlin.fir.builder.RawFirBuilder
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.diagnostics.ConeStubDiagnostic
@@ -26,6 +27,7 @@ import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.visitors.FirDefaultVisitorVoid
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
+import org.jetbrains.kotlin.readSourceFileWithMapping
 import org.jetbrains.kotlin.utils.addToStdlib.sumByLong
 import java.io.File
 import java.io.PrintStream
@@ -139,16 +141,18 @@ class FirResolveBench(val withProgress: Boolean, val listener: BenchListener? = 
         return files.map { file ->
             val before = vmStateSnapshot()
             val firFile: FirFile
-            val code: String
             val time = measureNanoTime {
-                code = FileUtil.loadFile(file, CharsetToolkit.UTF8, true).trim()
-                firFile = builder.buildFirFile(code, file.name, file.path)
+                val sourceFile = KtIoFileSourceFile(file)
+                val (code, linesMapping) = with(file.inputStream().reader(Charsets.UTF_8)) {
+                    this.readSourceFileWithMapping()
+                }
+                totalLines += linesMapping.linesCount
+                firFile = builder.buildFirFile(code, sourceFile, linesMapping)
                 (builder.session.firProvider as FirProviderImpl).recordFile(firFile)
             }
             val after = vmStateSnapshot()
             val diff = after - before
             recordTime(builder::class, diff, time)
-            totalLines += StringUtil.countNewLines(code)
             firFile
         }.also {
             listener?.after(builder::class)
