@@ -217,7 +217,8 @@ class FirCallResolver(
             session,
             components.file,
             containingDeclarations,
-            origin = origin
+            origin = origin,
+            searchSynthetics = qualifiedAccess.searchSynthetics,
         )
         towerResolver.reset()
         val result = if (collector != null) {

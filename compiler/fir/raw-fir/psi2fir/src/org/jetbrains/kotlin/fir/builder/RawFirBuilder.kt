@@ -222,6 +222,7 @@ open class RawFirBuilder(
 
                 if (this is KtNameReferenceExpression ||
                     this is KtConstantExpression ||
+                    this is KtHashQualifiedExpression ||
                     (this is KtCallExpression && callExpressionCallee !is KtLambdaExpression) ||
                     getQualifiedExpressionForSelector() == null
                 ) {
@@ -2398,6 +2399,10 @@ open class RawFirBuilder(
 
             val firSelector = selector.toFirExpression("Incorrect selector expression")
             if (firSelector is FirQualifiedAccess) {
+                if (expression.operationSign == HASH) {
+                    firSelector.replaceSearchSynthetics(true)
+                }
+
                 if (expression is KtSafeQualifiedExpression) {
                     @OptIn(FirImplementationDetail::class)
                     firSelector.replaceSource(expression.toFirSourceElement(KtFakeSourceElementKind.DesugaredSafeCallExpression))
