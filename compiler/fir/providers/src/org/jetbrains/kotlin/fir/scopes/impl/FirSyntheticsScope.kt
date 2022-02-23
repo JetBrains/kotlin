@@ -48,9 +48,11 @@ class FirSyntheticsScope(
     }
 
     private val fieldName = Name.identifier("field")
+    private val selfName = Name.identifier("self")
 
     private fun getPropertyByName(name: Name) = when (name) {
         fieldName -> tryGetFieldProperty()?.symbol
+        selfName -> (declaration as? FirVariable)?.symbol
         else -> null
     }
 
