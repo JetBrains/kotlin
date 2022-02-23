@@ -90,6 +90,12 @@ public class FirBlackBoxCodegenTestGenerated extends AbstractFirBlackBoxCodegenT
         }
 
         @Test
+        @TestMetadata("annotationWithVarargAsDefaultValue.kt")
+        public void testAnnotationWithVarargAsDefaultValue() throws Exception {
+            runTest("compiler/testData/codegen/box/annotations/annotationWithVarargAsDefaultValue.kt");
+        }
+
+        @Test
         @TestMetadata("annotationsOnDefault.kt")
         public void testAnnotationsOnDefault() throws Exception {
             runTest("compiler/testData/codegen/box/annotations/annotationsOnDefault.kt");
