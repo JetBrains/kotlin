@@ -1,6 +1,6 @@
 class A {
     var number: String
-        field = 10
+        internal field = 10
         get() = field.toString()
         set(newValue) {
             field = newValue.length
@@ -16,6 +16,11 @@ class A {
     }
 }
 
+fun previousNumber(a: A): Int {
+    val value: Int = a.number#self#self#field#self.dec()
+    return value
+}
+
 fun box(): String {
     val a = A()
 
@@ -26,9 +31,11 @@ fun box(): String {
         a.updateNumber()
 
         append("number = ${a.number}, length = " + a.number.length)
+
+        append(", field-1 = ${previousNumber(a)}")
     }.toString()
 
-    return if (result == "number = 10, length = 2, number = 110, length = 3") {
+    return if (result == "number = 10, length = 2, number = 110, length = 3, field-1 = 109") {
         "OK"
     } else {
         "BAD: $result"

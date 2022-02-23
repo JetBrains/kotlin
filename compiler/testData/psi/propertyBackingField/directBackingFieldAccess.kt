@@ -1,6 +1,6 @@
 class A {
     var number: String
-        field = 10
+        internal field = 10
         get() = field.toString()
         set(newValue) {
             field = newValue.length
@@ -13,4 +13,9 @@ class A {
     fun represent(): String {
         return "field = " + number#field
     }
+}
+
+fun previousNumber(a: A): Int {
+    val value: Int = a.number#self#self#field#self.dec()
+    return value
 }

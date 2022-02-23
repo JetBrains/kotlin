@@ -5,7 +5,7 @@ FILE: commonUseCases.kt
         }
 
         public final var number: R|kotlin/String|
-            private <explicit backing field>: R|kotlin/Int| = Int(10)
+            internal <explicit backing field>: R|kotlin/Int| = Int(10)
             public get(): R|kotlin/String| {
                 ^ this@R|/A|.F|/A.number|.R|kotlin/Any.toString|()
             }
@@ -23,13 +23,27 @@ FILE: commonUseCases.kt
         }
 
     }
+    public final fun previousNumber(a: R|A|): R|kotlin/Int| {
+        lval value: R|kotlin/Int| = R|<local>/a|.R|/A.number|.R|/A.number|.R|/A.number|.F|/A.number|.F|/A.number|.R|kotlin/Int.dec|()
+        ^previousNumber R|<local>/value|
+    }
     public final fun box(): R|kotlin/String| {
         lval a: R|A| = R|/A.A|()
-        ^box R|java/lang/StringBuilder.StringBuilder|().R|kotlin/apply|<R|java/lang/StringBuilder|>(<L> = apply@fun R|java/lang/StringBuilder|.<anonymous>(): R|kotlin/Unit| <inline=Inline, kind=EXACTLY_ONCE>  {
+        lval result: R|kotlin/String| = R|java/lang/StringBuilder.StringBuilder|().R|kotlin/apply|<R|java/lang/StringBuilder|>(<L> = apply@fun R|java/lang/StringBuilder|.<anonymous>(): R|kotlin/Unit| <inline=Inline, kind=EXACTLY_ONCE>  {
             lvar value: R|kotlin/String| = R|<local>/a|.R|/A.number|
-            this@R|special/anonymous|.R|java/lang/StringBuilder.append|(<strcat>(String(number = ), R|<local>/value|, String(, length = )).R|kotlin/String.plus|(R|<local>/value|.R|kotlin/String.length|))
+            this@R|special/anonymous|.R|java/lang/StringBuilder.append|(<strcat>(String(number = ), R|<local>/value|, String(, length = )).R|kotlin/String.plus|(R|<local>/value|.R|kotlin/String.length|).R|kotlin/String.plus|(String(, )))
             R|<local>/a|.R|/A.updateNumber|()
             this@R|special/anonymous|.R|java/lang/StringBuilder.append|(<strcat>(String(number = ), R|<local>/a|.R|/A.number|, String(, length = )).R|kotlin/String.plus|(R|<local>/a|.R|/A.number|.R|kotlin/String.length|))
+            this@R|special/anonymous|.R|java/lang/StringBuilder.append|(<strcat>(String(, field-1 = ), R|/previousNumber|(R|<local>/a|)))
         }
         ).R|java/lang/StringBuilder.toString|()
+        ^box when () {
+            ==(R|<local>/result|, String(number = 10, length = 2, number = 110, length = 3, field-1 = 109)) ->  {
+                String(OK)
+            }
+            else ->  {
+                <strcat>(String(BAD: ), R|<local>/result|)
+            }
+        }
+
     }
