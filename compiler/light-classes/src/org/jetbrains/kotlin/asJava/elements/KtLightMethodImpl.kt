@@ -155,8 +155,7 @@ open class KtLightMethodImpl protected constructor(
             other.javaClass == javaClass &&
             other.memberIndex == memberIndex &&
             other.containingClass == containingClass &&
-            other.lightMemberOrigin == lightMemberOrigin &&
-            other.dummyDelegate == dummyDelegate
+            other.lightMemberOrigin == lightMemberOrigin
 
     override fun hashCode(): Int = name.hashCode()
         .times(31).plus(containingClass.hashCode())
