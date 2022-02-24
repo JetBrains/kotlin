@@ -78,27 +78,15 @@ object ClasspathChangesComputer {
         }
 
         return metrics.measure(BuildTime.COMPUTE_IMPACTED_SET) {
-            // Find ProgramSymbols that are impacted by the changed ProgramSymbols.
-            // Note that:
-            //   - computeImpactedSetInclusive() returns the impacted symbols + the given changed symbols.
-            //   - changed symbols = changed symbols on the previous classpath + changed symbols on the current classpath (added symbols can
-            //     also impact recompilation -- see examples in JavaClassChangesComputer)
-            // Therefore, the result should be:
-            //     computeImpactedSetInclusive(changedSymbolsOnPreviousClasspath, classesOnPreviousClasspath) +
-            //         computeImpactedSetInclusive(changedSymbolsOnCurrentClasspath, classesOnCurrentClasspath)
-            // However, here we only have changedSymbols (the combined list of changedSymbolsOnPreviousClasspath and
-            // changedSymbolsOnCurrentClasspath), and because it's okay to over-approximate the result, we will modify the above formula
-            // into:
-            //     computeImpactedSetInclusive(changedSymbols, classesOnPreviousClasspath + classesOnCurrentClasspath)
-            // The combined list of classesOnPreviousClasspath + classesOnCurrentClasspath contains:
-            //   - Added classes
-            //   - Removed classes
-            //   - Modified classes: Each modified class will have a current version and a previous version (with the same ClassIds).
-            //   - Unchanged classes: Each unchanged class will appear twice in the combined list. To avoid this, we can replace
-            //     classesOnCurrentClasspath with changedClassesOnCurrentClasspath.
-            // Note: The combined list may contain overlapping ClassIds (see modified classes above), but it won't be an issue for the
-            // computeImpactedSetInclusive() function.
-            // Finally, we arrive at the following code (variable names may have changed slightly):
+            // Note that changes may contain added symbols (they can also impact recompilation -- see examples in JavaClassChangesComputer).
+            // So ideally, the result should be:
+            //     computeImpactedSetInclusive(changes = changesOnPreviousClasspath, allClasses = classesOnPreviousClasspath) +
+            //         computeImpactedSetInclusive(changes = changesOnCurrentClasspath, allClasses = classesOnCurrentClasspath)
+            // However, here we only have the combined changes on both the previous and current classpath, and because it's okay to
+            // over-approximate the result, we will modify the above computation into:
+            //     computeImpactedSetInclusive(changes, allClasses = classesOnPreviousClasspath + classesOnCurrentClasspath)
+            // Note: `allClasses` may contain overlapping ClassIds, but it won't be an issue. Also, we will replace
+            // classesOnCurrentClasspath with changedClassesOnCurrentClasspath to avoid listing unchanged classes twice.
             computeImpactedSetInclusive(
                 changes = classChanges,
                 allClasses = (previousClassSnapshots.asSequence() + changedCurrentClasses.asSequence()).asIterable()
@@ -220,24 +208,16 @@ object ClasspathChangesComputer {
         val dirtyData = changesCollector.getDirtyData(listOf(incrementalJvmCache), EmptyICReporter)
         workingDir.deleteRecursively()
 
-        return dirtyData.normalize(currentClassSnapshots, previousClassSnapshots)
+        return dirtyData.toProgramSymbols(currentClassSnapshots, previousClassSnapshots)
     }
 
-    private fun DirtyData.normalize(
+    private fun DirtyData.toProgramSymbols(
         currentClassSnapshots: List<AccessibleClassSnapshot>,
         previousClassSnapshots: List<AccessibleClassSnapshot>
     ): ProgramSymbolSet {
-        // Convert dirtyLookupSymbols to ProgramSymbols.
         // Note that dirtyLookupSymbols may contain added symbols (they can also impact recompilation -- see examples in
-        // JavaClassChangesComputer). Therefore, the result should be:
-        //     dirtyLookupSymbolsOnPreviousClasspath.toProgramSymbolSet(classesOnPreviousClasspath) +
-        //         dirtyLookupSymbolsOnCurrentClasspath.toProgramSymbolSet(classesOnCurrentClasspath)
-        // However, here we only have dirtyLookupSymbols (the combined list of dirtyLookupSymbolsOnPreviousClasspath and
-        // dirtyLookupSymbolsOnCurrentClasspath), and because it's okay to over-approximate the result, we will modify the above formula
-        // into:
-        //     dirtyLookupSymbols.toProgramSymbolSet(classesOnPreviousClasspath + classesOnCurrentClasspath)
-        // Note: The combined list of classesOnPreviousClasspath + classesOnCurrentClasspath may contain overlapping ClassIds, but it won't
-        // be an issue for the toProgramSymbolSet() function.
+        // JavaClassChangesComputer). Therefore, we need to consider classes on both the previous and current classpath. The combined list
+        // may contain overlapping ClassIds, but it won't be an issue.
         val allClasses = (previousClassSnapshots.asSequence() + currentClassSnapshots.asSequence()).asIterable()
         return dirtyLookupSymbols.toProgramSymbolSet(allClasses).also {
             checkDirtyDataNormalization(this, it)
@@ -245,15 +225,15 @@ object ClasspathChangesComputer {
     }
 
     /**
-     * Checks whether [DirtyData.normalize] completed without any inconsistencies.
+     * Checks whether [DirtyData.toProgramSymbols] completed without any inconsistencies.
      *
      * Specifically, [DirtyData] consists of:
      *   - dirtyLookupSymbols (Collection<LookupSymbol)
      *   - dirtyClassesFqNames (Collection<FqName>)
      *   - dirtyClassesFqNamesForceRecompile (Collection<FqName>)
      *
-     * In [DirtyData.normalize], we converted only dirtyLookupSymbols to [ProgramSymbol]s as dirtyLookupSymbols should contain all the
-     * changes.
+     * In [DirtyData.toProgramSymbols], we converted only dirtyLookupSymbols to [ProgramSymbol]s as dirtyLookupSymbols should contain all
+     * the changes.
      *
      * In the following, we'll check that:
      *   1. There are no items in dirtyLookupSymbols that have not yet been converted to [ProgramSymbol]s.
