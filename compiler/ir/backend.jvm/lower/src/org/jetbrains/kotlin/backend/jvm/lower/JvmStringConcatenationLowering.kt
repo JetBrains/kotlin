@@ -80,7 +80,7 @@ private fun JvmIrBuilder.normalizeArgument(expression: IrExpression): IrExpressi
             //      upcast to 'String?'
             return irImplicitCast(expression, context.irBuiltIns.stringType.makeNullable())
         }
-        if (!(type as IrSimpleType).hasQuestionMark) {
+        if (type is IrSimpleType && !type.hasQuestionMark || type is IrDefinitelyNotNullType) {
             if (upperBound.isByte() || upperBound.isShort()) {
                 //  Expression type is not null,
                 //  T <: Byte || T <: Short =>

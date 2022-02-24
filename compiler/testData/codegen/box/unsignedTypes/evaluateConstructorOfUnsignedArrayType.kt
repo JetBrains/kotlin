@@ -1,8 +1,6 @@
 // !LANGUAGE: -ApproximateIntegerLiteralTypesInReceiverPosition
 // WITH_REFLECT
 // TARGET_BACKEND: JVM
-// KT-51458:
-// IGNORE_BACKEND_FIR: JVM_IR
 
 annotation class AnnoUB(val ub: UByteArray)
 annotation class AnnoUS(val us: UShortArray)
