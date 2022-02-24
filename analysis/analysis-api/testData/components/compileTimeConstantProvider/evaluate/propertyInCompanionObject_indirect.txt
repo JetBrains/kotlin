@@ -1,0 +1,3 @@
+expression: indirectPointer
+constant: "something"
+constantValueKind: String
