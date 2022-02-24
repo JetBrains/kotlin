@@ -47,6 +47,18 @@ public class FirCompileTimeConstantEvaluatorTestGenerated extends AbstractCompil
     }
 
     @Test
+    @TestMetadata("propertyInCompanionObject.kt")
+    public void testPropertyInCompanionObject() throws Exception {
+        runTest("analysis/analysis-api/testData/components/compileTimeConstantProvider/evaluate/propertyInCompanionObject.kt");
+    }
+
+    @Test
+    @TestMetadata("propertyInCompanionObject_indirect.kt")
+    public void testPropertyInCompanionObject_indirect() throws Exception {
+        runTest("analysis/analysis-api/testData/components/compileTimeConstantProvider/evaluate/propertyInCompanionObject_indirect.kt");
+    }
+
+    @Test
     @TestMetadata("propertyInit_Byte.kt")
     public void testPropertyInit_Byte() throws Exception {
         runTest("analysis/analysis-api/testData/components/compileTimeConstantProvider/evaluate/propertyInit_Byte.kt");
