@@ -41,6 +41,12 @@ public class FirCompileTimeConstantEvaluatorTestGenerated extends AbstractCompil
     }
 
     @Test
+    @TestMetadata("namedReference.kt")
+    public void testNamedReference() throws Exception {
+        runTest("analysis/analysis-api/testData/components/compileTimeConstantProvider/evaluate/namedReference.kt");
+    }
+
+    @Test
     @TestMetadata("propertyInit_Byte.kt")
     public void testPropertyInit_Byte() throws Exception {
         runTest("analysis/analysis-api/testData/components/compileTimeConstantProvider/evaluate/propertyInit_Byte.kt");
