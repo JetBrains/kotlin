@@ -123,6 +123,13 @@ public class DiagnosisCompilerFirTestdataTestGenerated extends AbstractDiagnosis
         }
 
         @Test
+        @TestMetadata("customStringLiterals.kt")
+        public void testCustomStringLiterals() throws Exception {
+            runTest("compiler/fir/analysis-tests/testData/resolve/customStringLiterals.kt");
+        }
+
+
+        @Test
         @TestMetadata("defaultJavaImportHiding.kt")
         public void testDefaultJavaImportHiding() throws Exception {
             runTest("compiler/fir/analysis-tests/testData/resolve/defaultJavaImportHiding.kt");

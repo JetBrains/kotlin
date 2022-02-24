@@ -39,6 +39,7 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.parsing.*
 import org.jetbrains.kotlin.psi.KtPsiUtil
+import org.jetbrains.kotlin.psi.KtStringTemplateExpression
 import org.jetbrains.kotlin.types.ConstantValueKind
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
@@ -439,6 +440,13 @@ abstract class BaseFirBuilder<T>(val baseSession: FirSession, val context: Conte
         return buildStringConcatenationCall {
             val sb = StringBuilder()
             var hasExpressions = false
+            // TODO #[custom string literals]: consider better implementation
+            when (base) {
+                is KtStringTemplateExpression -> {
+                    prefix = base.prefix
+                }
+                else -> {}
+            }
             argumentList = buildArgumentList {
                 L@ for (entry in this@toInterpolatingCall) {
                     if (entry == null) continue
@@ -466,9 +474,11 @@ abstract class BaseFirBuilder<T>(val baseSession: FirSession, val context: Conte
                     }
                 }
             }
-            source = base?.toFirSourceElement()
-            // Fast-pass if there is no non-const string expressions
-            if (!hasExpressions) return buildConstExpression(source, ConstantValueKind.String, sb.toString())
+            source = base.toFirSourceElement()
+            // Fast-pass if there is no non-const string expressions and prefix
+            if (!hasExpressions && prefix == null) {
+                return buildConstExpression(source, ConstantValueKind.String, sb.toString())
+            }
         }
     }
 

@@ -1,0 +1,6 @@
+FILE: customStringLiterals.kt
+    public final fun test(): R|kotlin/Unit| {
+        lval a: R|kotlin/Int| = Int(1)
+        lval b: R|kotlin/Int| = Int(2)
+        <strcat>"pref"(String(string template with prefix and args: ), R|<local>/a|, String(, ), R|<local>/b|)
+    }
