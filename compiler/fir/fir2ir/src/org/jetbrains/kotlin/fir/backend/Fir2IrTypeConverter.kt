@@ -20,10 +20,7 @@ import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.IrTypeArgument
 import org.jetbrains.kotlin.ir.types.IrTypeProjection
-import org.jetbrains.kotlin.ir.types.impl.IrDefinitelyNotNullTypeImpl
-import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
-import org.jetbrains.kotlin.ir.types.impl.IrStarProjectionImpl
-import org.jetbrains.kotlin.ir.types.impl.makeTypeProjection
+import org.jetbrains.kotlin.ir.types.impl.*
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.name.StandardClassIds.Annotations.ExtensionFunctionType
@@ -165,6 +162,10 @@ class Fir2IrTypeConverter(
                     hasFlexibleNullability = lowerBound.nullability != upperBound.nullability,
                     addRawTypeAnnotation = true
                 )
+            }
+            is ConeDynamicType -> {
+                val typeAnnotations = with(annotationGenerator) { annotations.toIrAnnotations() }
+                return IrDynamicTypeImpl(null, typeAnnotations, Variance.INVARIANT)
             }
             is ConeFlexibleType -> {
                 // TODO: yet we take more general type. Not quite sure it's Ok

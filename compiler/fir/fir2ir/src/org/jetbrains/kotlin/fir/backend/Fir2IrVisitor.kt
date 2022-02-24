@@ -557,7 +557,7 @@ class Fir2IrVisitor(
         calleeReference: FirReference,
         callableReferenceAccess: FirCallableReferenceAccess? = null
     ): IrExpression? {
-        return when (expression) {
+        var result = when (expression) {
             null -> return null
             is FirResolvedQualifier -> callGenerator.convertToGetObject(expression, callableReferenceAccess)
             is FirFunctionCall, is FirThisReceiverExpression, is FirCallableReferenceAccess, is FirExpressionWithSmartcast ->
@@ -573,11 +573,19 @@ class Fir2IrVisitor(
             } else {
                 convertToIrExpression(expression)
             }
-        }?.run {
-            if (expression is FirQualifiedAccessExpression && expression.calleeReference is FirSuperReference) return@run this
-
-            implicitCastInserter.implicitCastFromDispatchReceiver(this, expression.typeRef, calleeReference)
         }
+
+        if (result != null) {
+            if (result.type is IrDynamicType) {
+                result = IrDynamicMemberExpressionImpl(result.startOffset, result.endOffset, result.type, "member", result)
+            }
+
+            if (expression !is FirQualifiedAccessExpression || expression.calleeReference !is FirSuperReference) {
+                implicitCastInserter.implicitCastFromDispatchReceiver(result, expression.typeRef, calleeReference)
+            }
+        }
+
+        return result
     }
 
     private fun List<FirStatement>.mapToIrStatements(recognizePostfixIncDec: Boolean = true): List<IrStatement?> {

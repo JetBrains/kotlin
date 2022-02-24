@@ -44,6 +44,7 @@ import org.jetbrains.kotlin.psi2ir.generators.hasNoSideEffects
 import org.jetbrains.kotlin.psi2ir.generators.isUnchanging
 import org.jetbrains.kotlin.resolve.calls.NewCommonSuperTypeCalculator.commonSuperType
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
+import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 class CallAndReferenceGenerator(
     private val components: Fir2IrComponents,
@@ -284,6 +285,7 @@ class CallAndReferenceGenerator(
                 declarationStorage,
                 conversionScope
             )
+            val isDynamicAccess = calleeReference.resolvedSymbol?.origin == FirDeclarationOrigin.DynamicScope
             return qualifiedAccess.convertWithOffsets { startOffset, endOffset ->
                 if (calleeReference is FirSuperReference) {
                     if (dispatchReceiver !is FirNoReceiverExpression) {
@@ -292,7 +294,7 @@ class CallAndReferenceGenerator(
                 }
                 when (symbol) {
                     is IrConstructorSymbol -> IrConstructorCallImpl.fromSymbolOwner(startOffset, endOffset, type, symbol)
-                    is IrSimpleFunctionSymbol -> {
+                    is IrSimpleFunctionSymbol -> if (!isDynamicAccess) {
                         IrCallImpl(
                             startOffset, endOffset, type, symbol,
                             typeArgumentsCount = symbol.owner.typeParameters.size,
@@ -300,6 +302,8 @@ class CallAndReferenceGenerator(
                             origin = calleeReference.statementOrigin(),
                             superQualifierSymbol = dispatchReceiver.superQualifierSymbol()
                         )
+                    } else {
+                        IrDynamicOperatorExpressionImpl(startOffset, endOffset, type, IrDynamicOperator.INVOKE)
                     }
                     is IrLocalDelegatedPropertySymbol -> {
                         IrCallImpl(
@@ -547,6 +551,28 @@ class CallAndReferenceGenerator(
         return ConeSubstitutorByMap(map, session)
     }
 
+    private fun extractArgumentsMapping(
+        call: FirCall
+    ): Triple<List<FirValueParameter>?, Map<FirExpression, FirValueParameter>?, ConeSubstitutor> {
+        val calleeReference = when (call) {
+            is FirFunctionCall -> call.calleeReference
+            is FirDelegatedConstructorCall -> call.calleeReference
+            is FirAnnotationCall -> call.calleeReference
+            else -> null
+        }
+        val function = if (calleeReference == FirReferencePlaceholderForResolvedAnnotations) {
+            val coneClassLikeType = (call as FirAnnotation).annotationTypeRef.coneTypeSafe<ConeClassLikeType>()
+            val firClass = (coneClassLikeType?.lookupTag?.toSymbol(session) as? FirRegularClassSymbol)?.fir
+            firClass?.declarations?.filterIsInstance<FirConstructor>()?.firstOrNull()
+        } else {
+            ((calleeReference as? FirResolvedNamedReference)?.resolvedSymbol as? FirFunctionSymbol<*>)?.fir
+        }
+        val valueParameters = function?.valueParameters
+        val argumentMapping = call.resolvedArgumentMapping
+        val substitutor = (call as? FirFunctionCall)?.buildSubstitutorByCalledFunction(function) ?: ConeSubstitutor.Empty
+        return Triple(valueParameters, argumentMapping, substitutor)
+    }
+
     internal fun IrExpression.applyCallArguments(call: FirCall?, annotationMode: Boolean): IrExpression {
         if (call == null) return this
         return when (this) {
@@ -554,22 +580,7 @@ class CallAndReferenceGenerator(
                 val argumentsCount = call.arguments.size
                 if (argumentsCount <= valueArgumentsCount) {
                     apply {
-                        val calleeReference = when (call) {
-                            is FirFunctionCall -> call.calleeReference
-                            is FirDelegatedConstructorCall -> call.calleeReference
-                            is FirAnnotationCall -> call.calleeReference
-                            else -> null
-                        }
-                        val function = if (calleeReference == FirReferencePlaceholderForResolvedAnnotations) {
-                            val coneClassLikeType = (call as FirAnnotation).annotationTypeRef.coneTypeSafe<ConeClassLikeType>()
-                            val firClass = (coneClassLikeType?.lookupTag?.toSymbol(session) as? FirRegularClassSymbol)?.fir
-                            firClass?.declarations?.filterIsInstance<FirConstructor>()?.firstOrNull()
-                        } else {
-                            ((calleeReference as? FirResolvedNamedReference)?.resolvedSymbol as? FirFunctionSymbol<*>)?.fir
-                        }
-                        val valueParameters = function?.valueParameters
-                        val argumentMapping = call.resolvedArgumentMapping
-                        val substitutor = (call as? FirFunctionCall)?.buildSubstitutorByCalledFunction(function) ?: ConeSubstitutor.Empty
+                        val (valueParameters, argumentMapping, substitutor) = extractArgumentsMapping(call)
                         if (argumentMapping != null && (annotationMode || argumentMapping.isNotEmpty())) {
                             if (valueParameters != null) {
                                 return applyArgumentsWithReorderingIfNeeded(argumentMapping, valueParameters, substitutor, annotationMode)
@@ -594,6 +605,20 @@ class CallAndReferenceGenerator(
                     ).apply {
                         for (argument in call.arguments) {
                             addArgument(visitor.convertToIrExpression(argument))
+                        }
+                    }
+                }
+            }
+            is IrDynamicOperatorExpression -> apply {
+                val (valueParameters, argumentMapping, substitutor) = extractArgumentsMapping(call)
+                if (argumentMapping != null && (annotationMode || argumentMapping.isNotEmpty())) {
+                    if (valueParameters != null) {
+                        val dynamicCallVarargArgument = argumentMapping.keys.firstOrNull()
+                            ?.safeAs<FirVarargArgumentsExpression>()
+                            ?: throw Exception("Dynamic call must have a single vararg argument")
+                        for (argument in dynamicCallVarargArgument.arguments) {
+                            val irArgument = convertArgument(argument, null, substitutor, annotationMode)
+                            arguments.add(irArgument)
                         }
                     }
                 }
@@ -821,6 +846,10 @@ class CallAndReferenceGenerator(
                 if (!ownerField.isStatic) {
                     receiver = qualifiedAccess.findIrDispatchReceiver(explicitReceiverExpression)
                 }
+            }
+            is IrDynamicOperatorExpression -> {
+//                IrDynamicMemberExpressionImpl()
+                receiver = explicitReceiverExpression ?: throw Exception("No receiver for dynamic")
             }
         }
         return this
