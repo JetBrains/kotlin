@@ -72,16 +72,16 @@ object ClasspathSnapshotShrinker {
             when (clazz) {
                 is RegularKotlinClassSnapshot, is JavaClassSnapshot -> {
                     ClassSymbol(clazz.classId).toLookupSymbol() in lookupSymbols
-                            || lookupSymbols.getMembersInScope(clazz.classId.asSingleFqName()).isNotEmpty()
+                            || lookupSymbols.getLookupNamesInScope(clazz.classId.asSingleFqName()).isNotEmpty()
                 }
                 is PackageFacadeKotlinClassSnapshot, is MultifileClassKotlinClassSnapshot -> {
-                    val lookupSymbolsInScope = lookupSymbols.getMembersInScope(clazz.classId.packageFqName)
-                    if (lookupSymbolsInScope.isEmpty()) return@filter false
+                    val lookupNamesInScope = lookupSymbols.getLookupNamesInScope(clazz.classId.packageFqName)
+                    if (lookupNamesInScope.isEmpty()) return@filter false
                     val packageMemberNames = when (clazz) {
                         is PackageFacadeKotlinClassSnapshot -> clazz.packageMemberNames
                         else -> (clazz as MultifileClassKotlinClassSnapshot).constantNames
                     }
-                    packageMemberNames.any { it in lookupSymbolsInScope }
+                    packageMemberNames.any { it in lookupNamesInScope }
                 }
             }
         }

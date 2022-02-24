@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.incremental.ChangesEither
 import org.jetbrains.kotlin.incremental.LookupSymbol
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.name.parentOrNull
 
 /**
  * Similar to [LookupSymbol] but with information about its kind (i.e., whether it's a [ClassSymbol], [ClassMember], or [PackageMember]).
@@ -59,8 +58,6 @@ class ProgramSymbolSet private constructor(
                     .flatMap { (packageFqName, memberNames) -> memberNames.asSequence().map { PackageMember(packageFqName, it) } }
     }
 
-    inline fun forEach(action: (ProgramSymbol) -> Unit) = asSequence().forEach(action)
-
     /**
      * Collects [ProgramSymbol]s and returns a [ProgramSymbolSet].
      *
@@ -97,19 +94,19 @@ class ProgramSymbolSet private constructor(
     }
 }
 
-/** Compact representation for a set of [LookupSymbol]s, which allows O(1) operation for [getMembersInScope]. */
+/** Compact representation for a set of [LookupSymbol]s. It also allows O(1) operation for [getLookupNamesInScope]. */
 class LookupSymbolSet(lookupSymbols: Iterable<LookupSymbol>) {
 
-    val scopeToMembers: Map<FqName, Set<String>> = mutableMapOf<FqName, MutableSet<String>>().also { map ->
+    private val scopeToLookupNames: Map<FqName, Set<String>> = mutableMapOf<FqName, MutableSet<String>>().also { map ->
         lookupSymbols.forEach {
             map.getOrPut(FqName(it.scope)) { mutableSetOf() }.add(it.name)
         }
     }
 
-    fun getMembersInScope(scope: FqName): Set<String> = scopeToMembers[scope] ?: emptySet()
+    fun getLookupNamesInScope(scope: FqName): Set<String> = scopeToLookupNames[scope] ?: emptySet()
 
     operator fun contains(lookupSymbol: LookupSymbol): Boolean {
-        return scopeToMembers[FqName(lookupSymbol.scope)]?.contains(lookupSymbol.name) ?: false
+        return scopeToLookupNames[FqName(lookupSymbol.scope)]?.contains(lookupSymbol.name) ?: false
     }
 }
 
@@ -133,7 +130,7 @@ internal fun ProgramSymbol.toLookupSymbol(): LookupSymbol {
  *        class Bar
  *        fun Bar(x: Int) {}
  *     }
- * LookupSymbol(scope = "Foo", name = "Bar") will be converted to both ClassSymbol( "Foo.Bar") and ClassMember("Foo", "Bar").
+ * LookupSymbol(scope = "Foo", name = "Bar") will be converted to both ClassSymbol("Foo.Bar") and ClassMember("Foo", "Bar").
  *
  * If a [LookupSymbol] does not refer to any symbols in the given classes, it will be ignored.
  *
@@ -153,22 +150,21 @@ internal fun Collection<LookupSymbol>.toProgramSymbolSet(allClasses: Iterable<Ac
                 }
 
                 // Collect ClassMembers
-                // To do this correctly, we would need to get the intersection of clazz.classMembers and lookupSymbolsInScope (it's possible
-                // that two different kinds of ProgramSymbols have the same LookupSymbol/scope -- see the example in this method's kdoc).
-                // However, we don't have information about clazz.classMembers, so we'll take all of lookupSymbolsInScope (it's okay to
-                // over-approximate the result).
-                val lookupSymbolsInScope = lookupSymbols.getMembersInScope(clazz.classId.asSingleFqName())
-                collector.addClassMembers(clazz.classId, lookupSymbolsInScope)
+                // We want to get the intersection of clazz.classMemberNames and lookupNamesInScope. However, we currently don't store
+                // information about clazz.classMemberNames, so we'll take all of lookupNamesInScope (it's okay to over-approximate the
+                // result).
+                val lookupNamesInScope = lookupSymbols.getLookupNamesInScope(clazz.classId.asSingleFqName())
+                collector.addClassMembers(clazz.classId, lookupNamesInScope)
             }
             is PackageFacadeKotlinClassSnapshot, is MultifileClassKotlinClassSnapshot -> {
                 // Collect PackageMembers
-                val lookupSymbolsInScope = lookupSymbols.getMembersInScope(clazz.classId.packageFqName)
-                if (lookupSymbolsInScope.isEmpty()) return@forEach
+                val lookupNamesInScope = lookupSymbols.getLookupNamesInScope(clazz.classId.packageFqName)
+                if (lookupNamesInScope.isEmpty()) return@forEach
                 val packageMemberNames = when (clazz) {
                     is PackageFacadeKotlinClassSnapshot -> clazz.packageMemberNames
                     else -> (clazz as MultifileClassKotlinClassSnapshot).constantNames
                 }
-                collector.addPackageMembers(clazz.classId.packageFqName, packageMemberNames.intersect(lookupSymbolsInScope))
+                collector.addPackageMembers(clazz.classId.packageFqName, packageMemberNames.intersect(lookupNamesInScope))
             }
         }
     }
@@ -179,7 +175,7 @@ internal fun ProgramSymbolSet.toChangesEither(): ChangesEither.Known {
     val lookupSymbols = mutableSetOf<LookupSymbol>()
     val fqNames = mutableSetOf<FqName>()
 
-    forEach {
+    asSequence().forEach {
         lookupSymbols.add(it.toLookupSymbol())
         val fqName = when (it) {
             is ClassSymbol -> it.classId.asSingleFqName()

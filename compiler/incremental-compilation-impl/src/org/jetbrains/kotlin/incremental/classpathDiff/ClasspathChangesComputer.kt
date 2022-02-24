@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.build.report.metrics.BuildMetricsReporter
 import org.jetbrains.kotlin.build.report.metrics.BuildTime
 import org.jetbrains.kotlin.build.report.metrics.measure
 import org.jetbrains.kotlin.incremental.*
-import org.jetbrains.kotlin.incremental.classpathDiff.ImpactAnalysis.computeImpactedSet
+import org.jetbrains.kotlin.incremental.classpathDiff.ImpactAnalysis.computeImpactedSetInclusive
 import org.jetbrains.kotlin.incremental.storage.FileToCanonicalPathConverter
 import org.jetbrains.kotlin.incremental.storage.ListExternalizer
 import org.jetbrains.kotlin.incremental.storage.loadFromFile
@@ -78,11 +78,31 @@ object ClasspathChangesComputer {
         }
 
         return metrics.measure(BuildTime.COMPUTE_IMPACTED_SET) {
-            // classChanges may contain added symbols (they can also impact recompilation -- see examples in JavaClassChangesComputer), so
-            // we need to consider all classes on both the current and previous classpath. It's okay for the combined list to contain
-            // overlapping ClassIds.
-            val allClasses = (currentClassSnapshots.asSequence() + changedPreviousClasses.asSequence()).asIterable()
-            computeImpactedSet(classChanges, allClasses)
+            // Find ProgramSymbols that are impacted by the changed ProgramSymbols.
+            // Note that:
+            //   - computeImpactedSetInclusive() returns the impacted symbols + the given changed symbols.
+            //   - changed symbols = changed symbols on the previous classpath + changed symbols on the current classpath (added symbols can
+            //     also impact recompilation -- see examples in JavaClassChangesComputer)
+            // Therefore, the result should be:
+            //     computeImpactedSetInclusive(changedSymbolsOnPreviousClasspath, classesOnPreviousClasspath) +
+            //         computeImpactedSetInclusive(changedSymbolsOnCurrentClasspath, classesOnCurrentClasspath)
+            // However, here we only have changedSymbols (the combined list of changedSymbolsOnPreviousClasspath and
+            // changedSymbolsOnCurrentClasspath), and because it's okay to over-approximate the result, we will modify the above formula
+            // into:
+            //     computeImpactedSetInclusive(changedSymbols, classesOnPreviousClasspath + classesOnCurrentClasspath)
+            // The combined list of classesOnPreviousClasspath + classesOnCurrentClasspath contains:
+            //   - Added classes
+            //   - Removed classes
+            //   - Modified classes: Each modified class will have a current version and a previous version (with the same ClassIds).
+            //   - Unchanged classes: Each unchanged class will appear twice in the combined list. To avoid this, we can replace
+            //     classesOnCurrentClasspath with changedClassesOnCurrentClasspath.
+            // Note: The combined list may contain overlapping ClassIds (see modified classes above), but it won't be an issue for the
+            // computeImpactedSetInclusive() function.
+            // Finally, we arrive at the following code (variable names may have changed slightly):
+            computeImpactedSetInclusive(
+                changes = classChanges,
+                allClasses = (previousClassSnapshots.asSequence() + changedCurrentClasses.asSequence()).asIterable()
+            )
         }
     }
 
@@ -207,10 +227,18 @@ object ClasspathChangesComputer {
         currentClassSnapshots: List<AccessibleClassSnapshot>,
         previousClassSnapshots: List<AccessibleClassSnapshot>
     ): ProgramSymbolSet {
-        // DirtyData.dirtyLookupSymbols may contain added symbols (they can also impact recompilation -- see examples in
-        // JavaClassChangesComputer), so we need to consider all classes on both the current and previous classpath. It's okay for the
-        // combined list to contain overlapping ClassIds.
-        val allClasses = (currentClassSnapshots.asSequence() + previousClassSnapshots.asSequence()).asIterable()
+        // Convert dirtyLookupSymbols to ProgramSymbols.
+        // Note that dirtyLookupSymbols may contain added symbols (they can also impact recompilation -- see examples in
+        // JavaClassChangesComputer). Therefore, the result should be:
+        //     dirtyLookupSymbolsOnPreviousClasspath.toProgramSymbolSet(classesOnPreviousClasspath) +
+        //         dirtyLookupSymbolsOnCurrentClasspath.toProgramSymbolSet(classesOnCurrentClasspath)
+        // However, here we only have dirtyLookupSymbols (the combined list of dirtyLookupSymbolsOnPreviousClasspath and
+        // dirtyLookupSymbolsOnCurrentClasspath), and because it's okay to over-approximate the result, we will modify the above formula
+        // into:
+        //     dirtyLookupSymbols.toProgramSymbolSet(classesOnPreviousClasspath + classesOnCurrentClasspath)
+        // Note: The combined list of classesOnPreviousClasspath + classesOnCurrentClasspath may contain overlapping ClassIds, but it won't
+        // be an issue for the toProgramSymbolSet() function.
+        val allClasses = (previousClassSnapshots.asSequence() + currentClassSnapshots.asSequence()).asIterable()
         return dirtyLookupSymbols.toProgramSymbolSet(allClasses).also {
             checkDirtyDataNormalization(this, it)
         }
@@ -277,7 +305,7 @@ internal object ImpactAnalysis {
      *
      * The returned set includes the given changes plus the impacted ones.
      */
-    fun computeImpactedSet(changes: ProgramSymbolSet, allClasses: Iterable<AccessibleClassSnapshot>): ProgramSymbolSet {
+    fun computeImpactedSetInclusive(changes: ProgramSymbolSet, allClasses: Iterable<AccessibleClassSnapshot>): ProgramSymbolSet {
         val classIdToSubclasses = getClassIdToSubclassesMap(allClasses)
         val impactedClassesResolver = { classId: ClassId -> classIdToSubclasses[classId] ?: emptySet() }
 
