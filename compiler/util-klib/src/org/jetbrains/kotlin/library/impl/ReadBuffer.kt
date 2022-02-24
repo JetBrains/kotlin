@@ -74,7 +74,19 @@ sealed class ReadBuffer {
             set(value) {
                 val buf = ensureBuffer()
                 pos = value
-                buf.position(value)
+                try {
+                    buf.position(value)
+                } catch (t: Throwable) {
+                    println(
+                        """
+                            Tried to set $value
+                            current position is ${buf.position()}
+                        """.trimIndent()
+                    )
+                    val newBuf = ensureBuffer()
+                    newBuf.position(value)
+                    throw t
+                }
             }
 
         private fun ensureBuffer(): ByteBuffer {
