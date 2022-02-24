@@ -35,6 +35,12 @@ public class FirCompileTimeConstantEvaluatorTestGenerated extends AbstractCompil
     }
 
     @Test
+    @TestMetadata("binaryExpressionWithString.kt")
+    public void testBinaryExpressionWithString() throws Exception {
+        runTest("analysis/analysis-api/testData/components/compileTimeConstantProvider/evaluate/binaryExpressionWithString.kt");
+    }
+
+    @Test
     @TestMetadata("propertyInit_Byte.kt")
     public void testPropertyInit_Byte() throws Exception {
         runTest("analysis/analysis-api/testData/components/compileTimeConstantProvider/evaluate/propertyInit_Byte.kt");
