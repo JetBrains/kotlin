@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.cli.jvm.compiler.pipeline
 
+import org.jetbrains.kotlin.KtSourceFile
 import org.jetbrains.kotlin.backend.jvm.JvmGeneratorExtensionsImpl
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.config.CompilerConfiguration
@@ -27,9 +28,9 @@ import java.io.File
 data class ModuleCompilerInput(
     val targetId: TargetId,
     val commonPlatform: TargetPlatform,
-    val commonSources: Collection<File>,
+    val commonSources: Collection<KtSourceFile>,
     val platform: TargetPlatform,
-    val platformSources: Collection<File>,
+    val platformSources: Collection<KtSourceFile>,
     val configuration: CompilerConfiguration,
     val friendFirModules: Collection<FirModuleData> = emptyList()
 )

@@ -8,6 +8,8 @@ package org.jetbrains.kotlin.incremental
 import com.intellij.ide.highlighter.JavaFileType
 import com.intellij.openapi.util.Disposer
 import com.intellij.psi.PsiJavaModule
+import org.jetbrains.kotlin.KtSourceFile
+import org.jetbrains.kotlin.KtVirtualFileSourceFile
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.backend.jvm.JvmGeneratorExtensionsImpl
 import org.jetbrains.kotlin.backend.jvm.serialization.JvmIdSignatureDescriptor
@@ -175,12 +177,11 @@ class IncrementalFirJvmCompilerRunner(
                 createProjectEnvironment(configuration, rootDisposable, EnvironmentConfigFiles.JVM_CONFIG_FILES, messageCollector)
 
             // -sources
-            val allPlatformSourceFiles = linkedSetOf<File>() // TODO: get from caller
-            val allCommonSourceFiles = linkedSetOf<File>()
+            val allPlatformSourceFiles = linkedSetOf<KtSourceFile>() // TODO: get from caller
+            val allCommonSourceFiles = linkedSetOf<KtSourceFile>()
 
             configuration.kotlinSourceRoots.forAllFiles(configuration, projectEnvironment.project) { virtualFile, isCommon ->
-                val file = File(virtualFile.canonicalPath ?: virtualFile.path)
-                if (!file.isFile) error("TODO: better error: file not found $virtualFile")
+                val file = KtVirtualFileSourceFile(virtualFile)
                 if (isCommon) allCommonSourceFiles.add(file)
                 else allPlatformSourceFiles.add(file)
             }
@@ -203,8 +204,8 @@ class IncrementalFirJvmCompilerRunner(
 
                     val compilerInput = ModuleCompilerInput(
                         targetId,
-                        CommonPlatforms.defaultCommonPlatform, dirtySources.filter { it in allCommonSourceFiles },
-                        JvmPlatforms.unspecifiedJvmPlatform, dirtySources.filter { it in allPlatformSourceFiles },
+                        CommonPlatforms.defaultCommonPlatform, allCommonSourceFiles.filter { dirtySources.any { df -> df.path == it.path } },
+                        JvmPlatforms.unspecifiedJvmPlatform, allPlatformSourceFiles.filter { dirtySources.any { df -> df.path == it.path } },
                         configuration
                     )
 

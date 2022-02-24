@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.fir.pipeline
 
-import org.jetbrains.kotlin.KtIoFileSourceFile
+import org.jetbrains.kotlin.KtSourceFile
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.builder.PsiHandlingMode
@@ -17,10 +17,9 @@ import org.jetbrains.kotlin.fir.resolve.providers.impl.FirProviderImpl
 import org.jetbrains.kotlin.fir.session.sourcesToPathsMapper
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.readSourceFileWithMapping
-import java.io.File
 
 fun FirSession.buildFirViaLightTree(
-    files: Collection<File>,
+    files: Collection<KtSourceFile>,
     diagnosticsReporter: DiagnosticReporter? = null,
     reportFilesAndLines: ((Int, Int) -> Unit)? = null
 ): List<FirFile> {
@@ -30,16 +29,15 @@ fun FirSession.buildFirViaLightTree(
     val shouldCountLines = (reportFilesAndLines != null)
     var linesCount = 0
     val firFiles = files.map { file ->
-        val sourceFile = KtIoFileSourceFile(file)
-        val (code, linesMapping) = with(file.inputStream().reader(Charsets.UTF_8)) {
+        val (code, linesMapping) = with(file.getContentsAsStream().reader(Charsets.UTF_8)) {
             this.readSourceFileWithMapping()
         }
         if (shouldCountLines) {
             linesCount += linesMapping.lastOffset
         }
-        builder.buildFirFile(code, sourceFile, linesMapping).also { firFile ->
+        builder.buildFirFile(code, file, linesMapping).also { firFile ->
             firProvider.recordFile(firFile)
-            sourcesToPathsMapper.registerFileSource(firFile.source!!, file.path)
+            sourcesToPathsMapper.registerFileSource(firFile.source!!, file.path ?: file.name)
         }
     }
     reportFilesAndLines?.invoke(files.count(), linesCount)
