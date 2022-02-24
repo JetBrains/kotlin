@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.test.runners.ir
 
+import org.jetbrains.kotlin.platform.js.JsPlatforms
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.kotlin.test.Constructor
 import org.jetbrains.kotlin.test.TargetBackend
@@ -26,7 +27,9 @@ import org.jetbrains.kotlin.test.frontend.fir.FirFrontendFacade
 import org.jetbrains.kotlin.test.frontend.fir.FirOutputArtifact
 import org.jetbrains.kotlin.test.model.*
 import org.jetbrains.kotlin.test.runners.AbstractKotlinCompilerWithTargetBackendTest
+import org.jetbrains.kotlin.test.services.JsLibraryProvider
 import org.jetbrains.kotlin.test.services.configuration.CommonEnvironmentConfigurator
+import org.jetbrains.kotlin.test.services.configuration.JsEnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.configuration.JvmEnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.sourceProviders.AdditionalDiagnosticsSourceFilesProvider
 import org.jetbrains.kotlin.test.services.sourceProviders.CodegenHelpersSourceFilesProvider
@@ -38,6 +41,13 @@ abstract class AbstractIrTextTestBase<R : ResultingArtifact.FrontendOutput<R>> :
     abstract val frontend: FrontendKind<*>
     abstract val frontendFacade: Constructor<FrontendFacade<R>>
     abstract val converter: Constructor<Frontend2BackendConverter<R, IrBackendInput>>
+
+    open fun TestConfigurationBuilder.applyConfigurators() {
+        useConfigurators(
+            ::CommonEnvironmentConfigurator,
+            ::JvmEnvironmentConfigurator
+        )
+    }
 
     override fun TestConfigurationBuilder.configuration() {
         globalDefaults {
@@ -53,10 +63,7 @@ abstract class AbstractIrTextTestBase<R : ResultingArtifact.FrontendOutput<R>> :
             +DUMP_KT_IR
         }
 
-        useConfigurators(
-            ::CommonEnvironmentConfigurator,
-            ::JvmEnvironmentConfigurator
-        )
+        applyConfigurators()
 
         useAdditionalSourceProviders(
             ::AdditionalDiagnosticsSourceFilesProvider,
@@ -118,6 +125,29 @@ open class AbstractFir2IrTextTest : AbstractIrTextTestBase<FirOutputArtifact>() 
                 defaultDirectives {
                     LanguageSettingsDirectives.LANGUAGE with "+ExplicitBackingFields"
                 }
+            }
+        }
+    }
+}
+
+open class AbstractFir2IrJsTextTest : AbstractFir2IrTextTest() {
+    override fun TestConfigurationBuilder.applyConfigurators() {
+        useConfigurators(
+            ::CommonEnvironmentConfigurator,
+            ::JsEnvironmentConfigurator,
+        )
+
+        useAdditionalService(::JsLibraryProvider)
+    }
+
+    override fun configure(builder: TestConfigurationBuilder) {
+        super.configure(builder)
+        with(builder) {
+            globalDefaults {
+                targetPlatform = JsPlatforms.defaultJsPlatform
+                artifactKind = BinaryKind.NoArtifact
+                targetBackend = TargetBackend.JS_IR
+                dependencyKind = DependencyKind.Source
             }
         }
     }
