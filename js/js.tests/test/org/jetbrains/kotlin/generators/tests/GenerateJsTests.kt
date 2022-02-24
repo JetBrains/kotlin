@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.js.testOld.wasm.semantics.AbstractIrCodegenBoxWasmTe
 import org.jetbrains.kotlin.js.testOld.wasm.semantics.AbstractIrCodegenWasmJsInteropWasmTest
 import org.jetbrains.kotlin.js.testOld.wasm.semantics.AbstractJsTranslatorWasmTest
 import org.jetbrains.kotlin.test.TargetBackend
+import org.jetbrains.kotlin.test.runners.ir.AbstractFir2IrTextTest
 
 fun main(args: Array<String>) {
     System.setProperty("java.awt.headless", "true")
@@ -159,6 +160,12 @@ fun main(args: Array<String>) {
 
             testClass<AbstractFirIrJsCodegenBoxTest> {
                 model("codegen/box", excludeDirs = jvmOnlyBoxTests + "compileKotlinAgainstKotlin")
+            }
+
+            testClass<AbstractFir2IrTextTest>(
+                suiteTestClassName = "Fir2IrJsTextTestGenerated"
+            ) {
+                model("ir/irJsText")
             }
         }
     }
