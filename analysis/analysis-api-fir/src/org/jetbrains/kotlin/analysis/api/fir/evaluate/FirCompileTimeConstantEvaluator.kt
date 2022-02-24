@@ -115,12 +115,15 @@ internal object FirCompileTimeConstantEvaluator {
     // Unary operators
     private fun FirConstExpression<*>.evaluate(function: FirSimpleFunction): FirConstExpression<*>? {
         if (value == null) return null
-        return evalUnaryOp(
-            function.name.asString(),
-            kind.toCompileTimeType(),
-            kind.convertToNumber(value as? Number)!!
-        )?.let {
-            it.toConstantValueKind().toConstExpression(source, it)
+        // TODO: there are a couple operations on String, such as .length and .toString
+        return kind.convertToNumber(value as? Number)?.let { opr ->
+            evalUnaryOp(
+                function.name.asString(),
+                kind.toCompileTimeType(),
+                opr
+            )?.let {
+                it.toConstantValueKind().toConstExpression(source, it)
+            }
         }
     }
 
@@ -130,14 +133,19 @@ internal object FirCompileTimeConstantEvaluator {
         other: FirConstExpression<*>
     ): FirConstExpression<*>? {
         if (value == null || other.value == null) return null
-        return evalBinaryOp(
-            function.name.asString(),
-            kind.toCompileTimeType(),
-            kind.convertToNumber(value as? Number)!!,
-            other.kind.toCompileTimeType(),
-            other.kind.convertToNumber(other.value as? Number)!!
-        )?.let {
-            it.toConstantValueKind().toConstExpression(source, it)
+        // TODO: there are a couple operations on Strings, such as .compareTo, .equals, or .plus
+        return kind.convertToNumber(value as? Number)?.let { opr1 ->
+            other.kind.convertToNumber(other.value as? Number)?.let { opr2 ->
+                evalBinaryOp(
+                    function.name.asString(),
+                    kind.toCompileTimeType(),
+                    opr1,
+                    other.kind.toCompileTimeType(),
+                    opr2
+                )?.let {
+                    it.toConstantValueKind().toConstExpression(source, it)
+                }
+            }
         }
     }
 

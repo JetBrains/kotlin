@@ -1,0 +1,3 @@
+expression: "message" + msg
+constant: NOT_EVALUATED
+constantValueKind: NOT_EVALUATED
