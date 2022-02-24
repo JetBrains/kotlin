@@ -269,15 +269,12 @@ class KotlinJvmModuleBuildTarget(kotlinContext: KotlinCompileContext, jpsModuleB
         } catch (e: NoSuchFileException) {
             val parentDir = File(e.file).parentFile
             if (parentDir != null && !parentDir.exists()) {
-                try {
-                    parentDir.mkdirs()
-                } catch (e: IOException) {
-                    val message: String?
-                    if (dir == null) {
+                if (!parentDir.mkdirs()) {
+                    val message = if (dir == null) {
                         val tmpPath = System.getProperty("java.io.tmpdir", null).trim().ifEmpty { null }
-                        message = "java.io.tmpdir is set to $tmpPath and it does not exist. Attempt to create it failed with exception"
+                        "java.io.tmpdir is set to $tmpPath and it does not exist. Attempt to create it failed with exception"
                     } else {
-                        message = "kotlin.jps.dir.for.module.files is set to $dir and it does not exist. " +
+                        "kotlin.jps.dir.for.module.files is set to $dir and it does not exist. " +
                                 "Attempt to create it failed with exception"
                     }
                     throwException(e, dir, message)
