@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.resolve.jvm.checkers
 
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.KtDeclaration
@@ -30,14 +31,18 @@ class JvmInlineApplicabilityChecker : DeclarationChecker {
     override fun check(declaration: KtDeclaration, descriptor: DeclarationDescriptor, context: DeclarationCheckerContext) {
         if (descriptor !is ClassDescriptor) return
         val annotation = descriptor.annotations.findAnnotation(JVM_INLINE_ANNOTATION_FQ_NAME)
-        if (annotation != null && !descriptor.isValue) {
+        if (annotation != null && !descriptor.isValueClass) {
             val annotationEntry = DescriptorToSourceUtils.getSourceFromAnnotation(annotation) ?: return
             context.trace.report(ErrorsJvm.JVM_INLINE_WITHOUT_VALUE_CLASS.on(annotationEntry))
         }
 
-        if (descriptor.isValue && annotation == null && !descriptor.isExpect) {
+        // TODO: sealed inline class children
+        if (descriptor.isValueClass && annotation == null && !descriptor.isExpect) {
             val valueKeyword = declaration.modifierList?.getModifier(KtTokens.VALUE_KEYWORD) ?: return
             context.trace.report(ErrorsJvm.VALUE_CLASS_WITHOUT_JVM_INLINE_ANNOTATION.on(valueKeyword))
         }
     }
 }
+
+val ClassDescriptor.isValueClass: Boolean
+    get() = kind == ClassKind.CLASS && isValue

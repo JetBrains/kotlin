@@ -411,6 +411,7 @@ public interface Errors {
 
     DiagnosticFactory0<PsiElement> VALUE_CLASS_NOT_TOP_LEVEL = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory0<PsiElement> VALUE_CLASS_NOT_FINAL = DiagnosticFactory0.create(ERROR);
+    DiagnosticFactory0<PsiElement> SEALED_INLINE_CLASS_WRONG_MODIFIER = DiagnosticFactory0.create(WARNING);
     DiagnosticFactory0<PsiElement> SEALED_INLINE_CLASS_WITH_UNDERLYING_VALUE = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory0<PsiElement> INLINE_CLASS_UNDERLYING_VALUE_IS_SUBCLASS_OF_ANOTHER_UNDERLYING_VALUE = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory0<PsiElement> ABSENCE_OF_PRIMARY_CONSTRUCTOR_FOR_VALUE_CLASS = DiagnosticFactory0.create(ERROR);
@@ -427,6 +428,8 @@ public interface Errors {
     DiagnosticFactory0<PsiElement> SECONDARY_CONSTRUCTOR_WITH_BODY_INSIDE_VALUE_CLASS = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory0<PsiElement> INNER_CLASS_INSIDE_VALUE_CLASS = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory0<PsiElement> VALUE_CLASS_CANNOT_BE_CLONEABLE = DiagnosticFactory0.create(ERROR);
+    DiagnosticFactory0<PsiElement> VALUE_OBJECT_NOT_SEALED_INLINE_CHILD = DiagnosticFactory0.create(ERROR);
+    DiagnosticFactory0<PsiElement> SEALED_INLINE_CHILD_NOT_VALUE = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory0<PsiElement> INLINE_CLASS_DEPRECATED = DiagnosticFactory0.create(WARNING);
     DiagnosticFactory0<KtContextReceiverList> INLINE_CLASS_CANNOT_HAVE_CONTEXT_RECEIVERS = DiagnosticFactory0.create(ERROR);
 

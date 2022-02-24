@@ -17881,6 +17881,40 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
                     runTest("compiler/testData/diagnostics/tests/inlineClasses/sealed/with-value.kt");
                 }
             }
+
+            @Nested
+            @TestMetadata("compiler/testData/diagnostics/tests/inlineClasses/sealed-inline-class")
+            @TestDataPath("$PROJECT_ROOT")
+            public class Sealed_inline_class {
+                @Test
+                public void testAllFilesPresentInSealed_inline_class() throws Exception {
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/inlineClasses/sealed-inline-class"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
+                }
+
+                @Test
+                @TestMetadata("class-child.kt")
+                public void testClass_child() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/inlineClasses/sealed-inline-class/class-child.kt");
+                }
+
+                @Test
+                @TestMetadata("class-kind-children-forbidden.kt")
+                public void testClass_kind_children_forbidden() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/inlineClasses/sealed-inline-class/class-kind-children-forbidden.kt");
+                }
+
+                @Test
+                @TestMetadata("object-child.kt")
+                public void testObject_child() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/inlineClasses/sealed-inline-class/object-child.kt");
+                }
+
+                @Test
+                @TestMetadata("unsupported-inline.kt")
+                public void testUnsupported_inline() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/inlineClasses/sealed-inline-class/unsupported-inline.kt");
+                }
+            }
         }
 
         @Nested
