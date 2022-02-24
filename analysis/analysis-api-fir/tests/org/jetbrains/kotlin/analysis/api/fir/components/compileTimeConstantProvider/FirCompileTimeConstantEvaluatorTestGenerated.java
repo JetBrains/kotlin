@@ -41,9 +41,39 @@ public class FirCompileTimeConstantEvaluatorTestGenerated extends AbstractCompil
     }
 
     @Test
-    @TestMetadata("namedReference.kt")
-    public void testNamedReference() throws Exception {
-        runTest("analysis/analysis-api/testData/components/compileTimeConstantProvider/evaluate/namedReference.kt");
+    @TestMetadata("namedReference_const.kt")
+    public void testNamedReference_const() throws Exception {
+        runTest("analysis/analysis-api/testData/components/compileTimeConstantProvider/evaluate/namedReference_const.kt");
+    }
+
+    @Test
+    @TestMetadata("namedReference_val.kt")
+    public void testNamedReference_val() throws Exception {
+        runTest("analysis/analysis-api/testData/components/compileTimeConstantProvider/evaluate/namedReference_val.kt");
+    }
+
+    @Test
+    @TestMetadata("namedReference_var.kt")
+    public void testNamedReference_var() throws Exception {
+        runTest("analysis/analysis-api/testData/components/compileTimeConstantProvider/evaluate/namedReference_var.kt");
+    }
+
+    @Test
+    @TestMetadata("propertyInCompanionObject.kt")
+    public void testPropertyInCompanionObject() throws Exception {
+        runTest("analysis/analysis-api/testData/components/compileTimeConstantProvider/evaluate/propertyInCompanionObject.kt");
+    }
+
+    @Test
+    @TestMetadata("propertyInCompanionObject_indirect.kt")
+    public void testPropertyInCompanionObject_indirect() throws Exception {
+        runTest("analysis/analysis-api/testData/components/compileTimeConstantProvider/evaluate/propertyInCompanionObject_indirect.kt");
+    }
+
+    @Test
+    @TestMetadata("propertyInCompanionObject_indirect_twice.kt")
+    public void testPropertyInCompanionObject_indirect_twice() throws Exception {
+        runTest("analysis/analysis-api/testData/components/compileTimeConstantProvider/evaluate/propertyInCompanionObject_indirect_twice.kt");
     }
 
     @Test
