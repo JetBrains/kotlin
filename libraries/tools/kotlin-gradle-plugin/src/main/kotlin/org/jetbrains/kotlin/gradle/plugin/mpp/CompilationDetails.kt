@@ -567,9 +567,8 @@ internal open class JsCompilationDetails(
 
     protected open class JsCompilationDependenciesHolder(
         val target: KotlinTarget,
-        val compilationPurpose: String,
-        val parent: HasKotlinDependencies
-    ) : HasKotlinDependencies by parent {
+        val compilationPurpose: String
+    ) : HasKotlinDependencies {
         override val apiConfigurationName: String
             get() = disambiguateNameInPlatform(API)
 
@@ -596,10 +595,16 @@ internal open class JsCompilationDetails(
                 simpleName
             )
         }
+
+        override fun dependencies(configure: KotlinDependencyHandler.() -> Unit): Unit =
+            DefaultKotlinDependencyHandler(this, target.project).run(configure)
+
+        override fun dependencies(configureClosure: Closure<Any?>) =
+            dependencies f@{ project.configure(this@f, configureClosure) }
     }
 
     override val kotlinDependenciesHolder: HasKotlinDependencies
-        get() = JsCompilationDependenciesHolder(target, compilationPurpose, super.kotlinDependenciesHolder)
+        get() = JsCompilationDependenciesHolder(target, compilationPurpose)
 
     override val defaultSourceSetName: String
         get() {
@@ -634,14 +639,14 @@ internal class JsIrCompilationDetails(target: KotlinTarget, compilationPurpose: 
             )
         }
 
-    private class JsIrCompilationDependencyHolder(target: KotlinTarget, compilationPurpose: String, parent: HasKotlinDependencies) :
-        JsCompilationDependenciesHolder(target, compilationPurpose, parent) {
+    private class JsIrCompilationDependencyHolder(target: KotlinTarget, compilationPurpose: String) :
+        JsCompilationDependenciesHolder(target, compilationPurpose) {
         override val disambiguationClassifierInPlatform: String?
             get() = (target as KotlinJsIrTarget).disambiguationClassifierInPlatform
     }
 
     override val kotlinDependenciesHolder: HasKotlinDependencies
-        get() = JsIrCompilationDependencyHolder(target, compilationPurpose, super.kotlinDependenciesHolder)
+        get() = JsIrCompilationDependencyHolder(target, compilationPurpose)
 }
 
 internal class KotlinDependencyConfigurationsHolder(
