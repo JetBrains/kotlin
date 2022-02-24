@@ -5,8 +5,6 @@
 
 package org.jetbrains.kotlin.backend.konan.ir
 
-import org.jetbrains.kotlin.backend.common.ir.copyTo
-import org.jetbrains.kotlin.backend.common.ir.createDispatchReceiverParameter
 import org.jetbrains.kotlin.backend.konan.BinaryType
 import org.jetbrains.kotlin.backend.konan.KonanBackendContext
 import org.jetbrains.kotlin.backend.konan.KonanFqNames
@@ -22,9 +20,7 @@ import org.jetbrains.kotlin.ir.declarations.isSingleFieldValueClass
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionSymbolImpl
 import org.jetbrains.kotlin.ir.types.defaultType
-import org.jetbrains.kotlin.ir.util.deepCopyWithSymbols
-import org.jetbrains.kotlin.ir.util.functions
-import org.jetbrains.kotlin.ir.util.isAnnotationWithEqualFqName
+import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.util.OperatorNameConventions
 

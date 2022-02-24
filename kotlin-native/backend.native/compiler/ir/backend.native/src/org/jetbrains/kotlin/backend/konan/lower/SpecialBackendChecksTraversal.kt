@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.backend.konan.lower
 
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.ir.Symbols
-import org.jetbrains.kotlin.backend.common.ir.allParameters
 import org.jetbrains.kotlin.backend.common.lower.Closure
 import org.jetbrains.kotlin.backend.common.lower.ClosureAnnotator
 import org.jetbrains.kotlin.backend.common.peek

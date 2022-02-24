@@ -119,11 +119,6 @@ fun IrFunctionAccessExpression.getVarargType(index: Int): IrType? {
 
 internal fun IrFunction.getCapitalizedFileName() = this.file.name.replace(".kt", "Kt").capitalizeAsciiOnly()
 
-internal fun IrType.isUnsigned() = this.getUnsignedType() != null
-internal fun IrType.isFunction() = this.getClass()?.fqName?.startsWith("kotlin.Function") ?: false
-internal fun IrType.isKFunction() = this.getClass()?.fqName?.startsWith("kotlin.reflect.KFunction") ?: false
-internal fun IrType.isTypeParameter() = classifierOrNull is IrTypeParameterSymbol
-internal fun IrType.isThrowable() = this.getClass()?.fqName == "kotlin.Throwable"
 internal fun IrClass.isSubclassOfThrowable(): Boolean {
     return generateSequence(this) { irClass ->
         if (irClass.defaultType.isAny()) return@generateSequence null

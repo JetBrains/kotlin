@@ -5,8 +5,7 @@
 
 package org.jetbrains.kotlin.fir.backend
 
-import org.jetbrains.kotlin.backend.common.ir.addFakeOverrides
-import org.jetbrains.kotlin.backend.common.ir.createImplicitParameterDeclarationWithWrappedDescriptor
+import org.jetbrains.kotlin.backend.common.ir.addDispatchReceiver
 import org.jetbrains.kotlin.builtins.PrimitiveType
 import org.jetbrains.kotlin.builtins.UnsignedType
 import org.jetbrains.kotlin.config.LanguageVersionSettings

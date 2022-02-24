@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.backend.konan.lower
 
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
-import org.jetbrains.kotlin.backend.common.ir.simpleFunctions
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.konan.Context
 import org.jetbrains.kotlin.backend.konan.KonanFqNames
@@ -22,6 +21,7 @@ import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.util.SYNTHETIC_OFFSET
 import org.jetbrains.kotlin.ir.util.hasAnnotation
 import org.jetbrains.kotlin.ir.util.hasNonConstInitializer
+import org.jetbrains.kotlin.ir.util.simpleFunctions
 import org.jetbrains.kotlin.name.Name
 
 internal object DECLARATION_ORIGIN_MODULE_GLOBAL_INITIALIZER : IrDeclarationOriginImpl("MODULE_GLOBAL_INITIALIZER")

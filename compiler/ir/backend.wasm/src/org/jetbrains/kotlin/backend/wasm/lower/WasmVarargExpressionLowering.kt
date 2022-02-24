@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.backend.wasm.lower
 
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.IrElementTransformerVoidWithContext
-import org.jetbrains.kotlin.backend.common.ir.ir2string
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.lower.irComposite
 import org.jetbrains.kotlin.backend.wasm.WasmBackendContext

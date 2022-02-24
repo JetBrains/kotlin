@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.backend.jvm.codegen
 
 import com.intellij.openapi.util.TextRange
 import org.jetbrains.kotlin.backend.common.CodegenUtil
-import org.jetbrains.kotlin.backend.common.ir.ir2string
 import org.jetbrains.kotlin.backend.jvm.hasMangledReturnType
 import org.jetbrains.kotlin.backend.jvm.ir.*
 import org.jetbrains.kotlin.codegen.inline.*
@@ -22,10 +21,7 @@ import org.jetbrains.kotlin.ir.declarations.name
 import org.jetbrains.kotlin.ir.descriptors.toIrBasedDescriptor
 import org.jetbrains.kotlin.ir.expressions.IrFunctionAccessExpression
 import org.jetbrains.kotlin.ir.expressions.IrLoop
-import org.jetbrains.kotlin.ir.util.isSuspend
-import org.jetbrains.kotlin.ir.util.kotlinFqName
-import org.jetbrains.kotlin.ir.util.module
-import org.jetbrains.kotlin.ir.util.parentAsClass
+import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.psi.doNotAnalyze
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmBackendErrors
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature

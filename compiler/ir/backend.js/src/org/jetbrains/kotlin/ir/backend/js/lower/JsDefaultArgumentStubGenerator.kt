@@ -6,9 +6,7 @@
 package org.jetbrains.kotlin.ir.backend.js.lower
 
 import org.jetbrains.kotlin.backend.common.BodyLoweringPass
-import org.jetbrains.kotlin.backend.common.deepCopyWithVariables
-import org.jetbrains.kotlin.backend.common.ir.copyAnnotationsWhen
-import org.jetbrains.kotlin.backend.common.ir.isOverridableOrOverrides
+import org.jetbrains.kotlin.ir.deepCopyWithVariables
 import org.jetbrains.kotlin.backend.common.lower.DefaultArgumentStubGenerator
 import org.jetbrains.kotlin.ir.backend.js.JsStatementOrigins
 import org.jetbrains.kotlin.backend.common.lower.LoweredStatementOrigins
@@ -22,9 +20,7 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrFunctionReferenceImpl
-import org.jetbrains.kotlin.ir.util.deepCopyWithSymbols
-import org.jetbrains.kotlin.ir.util.isAnnotation
-import org.jetbrains.kotlin.ir.util.patchDeclarationParents
+import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.name.Name

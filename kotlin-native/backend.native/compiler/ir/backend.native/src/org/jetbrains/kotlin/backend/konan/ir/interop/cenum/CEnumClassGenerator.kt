@@ -15,13 +15,13 @@ import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.descriptors.IrBuiltInsOverDescriptors
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.impl.IrEnumConstructorCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrExpressionBodyImpl
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.psi2ir.descriptors.IrBuiltInsOverDescriptors
 import org.jetbrains.kotlin.psi2ir.generators.DeclarationGenerator
 import org.jetbrains.kotlin.psi2ir.generators.EnumClassMembersGenerator
 import org.jetbrains.kotlin.psi2ir.generators.GeneratorContext

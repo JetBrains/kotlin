@@ -1,9 +1,9 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.ir.descriptors
+package org.jetbrains.kotlin.psi2ir.descriptors
 
 import org.jetbrains.kotlin.builtins.BuiltInsPackageFragment
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
@@ -19,8 +19,11 @@ import org.jetbrains.kotlin.ir.BuiltInOperatorNames
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
+import org.jetbrains.kotlin.ir.builders.declarations.addConstructor
+import org.jetbrains.kotlin.ir.builders.declarations.buildClass
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrExternalPackageFragmentImpl
+import org.jetbrains.kotlin.ir.descriptors.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstructorCallImpl
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
@@ -33,6 +36,7 @@ import org.jetbrains.kotlin.ir.types.impl.originalKotlinType
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.types.*
@@ -69,6 +73,9 @@ class IrBuiltInsOverDescriptors(
     override val irFactory: IrFactory = symbolTable.irFactory
 
     private val builtInsModule = builtIns.builtInsModule
+
+    private val kotlinInternalPackage = StandardClassIds.BASE_INTERNAL_PACKAGE
+    private val kotlinInternalIrPackage = IrExternalPackageFragmentImpl.createEmptyExternalPackageFragment(builtInsModule, kotlinInternalPackage)
 
     private val packageFragmentDescriptor = IrBuiltinsPackageFragmentDescriptorImpl(builtInsModule, KOTLIN_INTERNAL_IR_FQN)
     override val operatorsPackageFragment: IrExternalPackageFragment =
@@ -126,7 +133,7 @@ class IrBuiltInsOverDescriptors(
 
             if (isIntrinsicConst) {
                 operator.annotations += IrConstructorCallImpl.fromSymbolDescriptor(
-                    UNDEFINED_OFFSET, UNDEFINED_OFFSET, intrinsicConstType, intrinsicConstConstructor
+                    UNDEFINED_OFFSET, UNDEFINED_OFFSET, intrinsicConstType, intrinsicConstConstructor.symbol
                 )
             }
 
@@ -237,9 +244,19 @@ class IrBuiltInsOverDescriptors(
     override val anyClass = builtIns.any.toIrSymbol()
     override val anyNType = anyType.makeNullable()
 
-    val intrinsicConst = builtIns.intrinsicConstEvaluationType
-    private val intrinsicConstType = intrinsicConst.toIrType()
-    private val intrinsicConstConstructor = symbolTable.referenceConstructor(builtIns.intrinsicConstEvaluation.constructors.single())
+    private val intrinsicConstAnnotationFqName = kotlinInternalPackage.child(Name.identifier("IntrinsicConstEvaluation"))
+    private val intrinsicConstClass = irFactory.buildClass {
+        name = intrinsicConstAnnotationFqName.shortName()
+        kind = ClassKind.ANNOTATION_CLASS
+        modality = Modality.FINAL
+    }.apply {
+        parent = kotlinInternalIrPackage
+        createImplicitParameterDeclarationWithWrappedDescriptor()
+        addConstructor() { isPrimary = true }
+        addFakeOverrides(IrTypeSystemContextImpl(this@IrBuiltInsOverDescriptors))
+    }
+    private val intrinsicConstType = intrinsicConstClass.defaultType
+    private val intrinsicConstConstructor = intrinsicConstClass.primaryConstructor as IrConstructor
 
     val bool = builtIns.booleanType
     override val booleanType = bool.toIrType()

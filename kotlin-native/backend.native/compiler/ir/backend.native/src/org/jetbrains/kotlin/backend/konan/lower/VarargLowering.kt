@@ -18,7 +18,6 @@ package org.jetbrains.kotlin.backend.konan.lower
 
 import org.jetbrains.kotlin.backend.common.DeclarationContainerLoweringPass
 import org.jetbrains.kotlin.backend.common.descriptors.synthesizedString
-import org.jetbrains.kotlin.backend.common.ir.ir2string
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.lower.irBlock
 import org.jetbrains.kotlin.backend.konan.KonanBackendContext

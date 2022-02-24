@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.ir.interpreter.state.Primitive
 import org.jetbrains.kotlin.ir.interpreter.state.State
 import org.jetbrains.kotlin.ir.util.defaultType
 import org.jetbrains.kotlin.ir.util.isFakeOverriddenFromAny
+import org.jetbrains.kotlin.ir.util.isUnsigned
 
 internal class CommonProxy private constructor(override val state: Common, override val callInterceptor: CallInterceptor) : Proxy {
     private fun defaultEquals(other: Any?): Boolean = if (other is Proxy) this.state === other.state else false

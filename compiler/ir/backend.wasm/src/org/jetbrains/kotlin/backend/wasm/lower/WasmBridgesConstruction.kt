@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.backend.wasm.lower
 
-import org.jetbrains.kotlin.backend.common.ir.isOverridableOrOverrides
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.backend.js.JsCommonBackendContext
 import org.jetbrains.kotlin.ir.backend.js.lower.BridgesConstruction
@@ -13,6 +12,7 @@ import org.jetbrains.kotlin.ir.backend.js.utils.eraseGenerics
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.util.isOverridableOrOverrides
 import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.name.Name
 

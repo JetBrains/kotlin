@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.backend.common.lower.inline
 
 import org.jetbrains.kotlin.backend.common.*
-import org.jetbrains.kotlin.backend.common.ir.setDeclarationsParent
 import org.jetbrains.kotlin.backend.common.lower.LocalClassPopupLowering
 import org.jetbrains.kotlin.backend.common.lower.LocalDeclarationsLowering
 import org.jetbrains.kotlin.ir.IrElement
@@ -18,6 +17,7 @@ import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrGetValue
 import org.jetbrains.kotlin.ir.expressions.impl.IrBlockImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrCompositeImpl
+import org.jetbrains.kotlin.ir.util.setDeclarationsParent
 import org.jetbrains.kotlin.ir.visitors.*
 
 /*

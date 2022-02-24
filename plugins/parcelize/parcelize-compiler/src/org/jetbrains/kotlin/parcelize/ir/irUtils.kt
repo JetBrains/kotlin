@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.parcelize.ir
 
-import org.jetbrains.kotlin.backend.common.ir.allOverridden
 import org.jetbrains.kotlin.backend.jvm.ir.erasedUpperBound
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.Modality

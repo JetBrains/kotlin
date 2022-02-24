@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.backend.wasm.ir2wasm
 
-import org.jetbrains.kotlin.backend.common.ir.isOverridableOrOverrides
 import org.jetbrains.kotlin.backend.wasm.WasmBackendContext
 import org.jetbrains.kotlin.backend.wasm.lower.wasmSignature
 import org.jetbrains.kotlin.backend.wasm.utils.*

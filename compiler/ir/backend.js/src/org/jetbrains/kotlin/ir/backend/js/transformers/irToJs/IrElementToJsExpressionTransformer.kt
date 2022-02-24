@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.ir.backend.js.transformers.irToJs
 
 import org.jetbrains.kotlin.backend.common.compilationException
-import org.jetbrains.kotlin.backend.common.ir.isElseBranch
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.ir.backend.js.utils.JsGenerationContext
 import org.jetbrains.kotlin.ir.backend.js.utils.Namer
@@ -16,10 +15,7 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.types.isString
 import org.jetbrains.kotlin.ir.types.isUnit
-import org.jetbrains.kotlin.ir.util.isEffectivelyExternal
-import org.jetbrains.kotlin.ir.util.isEnumClass
-import org.jetbrains.kotlin.ir.util.parentAsClass
-import org.jetbrains.kotlin.ir.util.render
+import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.js.backend.ast.*
 
 @Suppress("PARAMETER_NAME_CHANGED_ON_OVERRIDE")

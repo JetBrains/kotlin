@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.JsIrLinker
 import org.jetbrains.kotlin.ir.declarations.IrFactory
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
+import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.js.config.JSConfigurationKeys
@@ -18,6 +19,10 @@ import org.jetbrains.kotlin.konan.properties.propertyList
 import org.jetbrains.kotlin.library.KLIB_PROPERTY_DEPENDS
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.protobuf.ExtensionRegistryLite
+import org.jetbrains.kotlin.psi2ir.descriptors.IrBuiltInsOverDescriptors
+import org.jetbrains.kotlin.psi2ir.generators.TypeTranslatorImpl
+import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import java.io.File
 
 

@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.android.parcel.PARCELER_FQNAME
 import org.jetbrains.kotlin.android.parcel.PARCELIZE_CLASS_FQNAME
 import org.jetbrains.kotlin.android.parcel.serializers.ParcelableExtensionBase
 import org.jetbrains.kotlin.android.parcel.serializers.ParcelableExtensionBase.Companion.CREATOR_NAME
-import org.jetbrains.kotlin.backend.common.ir.allOverridden
 import org.jetbrains.kotlin.backend.jvm.ir.erasedUpperBound
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.builders.*

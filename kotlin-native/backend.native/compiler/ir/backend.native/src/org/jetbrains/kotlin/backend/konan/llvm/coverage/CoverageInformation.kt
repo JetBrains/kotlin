@@ -4,7 +4,6 @@
  */
 package org.jetbrains.kotlin.backend.konan.llvm.coverage
 
-import org.jetbrains.kotlin.backend.common.ir.ir2string
 import org.jetbrains.kotlin.backend.konan.llvm.column
 import org.jetbrains.kotlin.backend.konan.llvm.line
 import org.jetbrains.kotlin.backend.konan.llvm.computeSymbolName
@@ -13,6 +12,7 @@ import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.name
+import org.jetbrains.kotlin.ir.util.ir2string
 
 /**
  * The most important class in the coverage package.

@@ -5,9 +5,7 @@
 
 package org.jetbrains.kotlin.ir.backend.js.lower.coroutines
 
-import org.jetbrains.kotlin.backend.common.ir.isElseBranch
 import org.jetbrains.kotlin.backend.common.ir.isPure
-import org.jetbrains.kotlin.backend.common.ir.isSuspend
 import org.jetbrains.kotlin.backend.common.peek
 import org.jetbrains.kotlin.backend.common.pop
 import org.jetbrains.kotlin.backend.common.push
@@ -29,6 +27,8 @@ import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.isNothing
 import org.jetbrains.kotlin.ir.types.isUnit
 import org.jetbrains.kotlin.ir.util.deepCopyWithSymbols
+import org.jetbrains.kotlin.ir.util.isElseBranch
+import org.jetbrains.kotlin.ir.util.isSuspend
 import org.jetbrains.kotlin.ir.visitors.*
 
 class SuspendState(type: IrType) {

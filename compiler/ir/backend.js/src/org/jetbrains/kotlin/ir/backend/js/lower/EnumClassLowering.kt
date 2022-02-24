@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.ir.backend.js.lower
 import org.jetbrains.kotlin.backend.common.BodyLoweringPass
 import org.jetbrains.kotlin.backend.common.DeclarationTransformer
 import org.jetbrains.kotlin.backend.common.getOrPut
-import org.jetbrains.kotlin.backend.common.ir.copyParameterDeclarationsFrom
 import org.jetbrains.kotlin.backend.common.ir.isExpect
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.lower.irBlockBody

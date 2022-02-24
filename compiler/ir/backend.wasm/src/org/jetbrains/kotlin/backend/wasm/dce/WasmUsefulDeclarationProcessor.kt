@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.backend.wasm.dce
 
-import org.jetbrains.kotlin.backend.common.ir.isOverridable
 import org.jetbrains.kotlin.backend.wasm.WasmBackendContext
 import org.jetbrains.kotlin.backend.wasm.ir2wasm.*
 import org.jetbrains.kotlin.backend.wasm.utils.*

@@ -6,8 +6,6 @@
 package org.jetbrains.kotlin.backend.jvm.lower
 
 import org.jetbrains.kotlin.backend.common.ClassLoweringPass
-import org.jetbrains.kotlin.backend.common.ir.copyAnnotationsFrom
-import org.jetbrains.kotlin.backend.common.ir.passTypeArgumentsFrom
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
@@ -21,7 +19,9 @@ import org.jetbrains.kotlin.ir.builders.irDelegatingConstructorCall
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.isSingleFieldValueClass
 import org.jetbrains.kotlin.ir.util.constructors
+import org.jetbrains.kotlin.ir.util.copyAnnotationsFrom
 import org.jetbrains.kotlin.ir.util.hasDefaultValue
+import org.jetbrains.kotlin.ir.util.passTypeArgumentsFrom
 
 internal val jvmDefaultConstructorPhase = makeIrFilePhase(
     ::JvmDefaultConstructorLowering,

@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.backend.konan
 
 import org.jetbrains.kotlin.backend.common.atMostOne
-import org.jetbrains.kotlin.backend.common.ir.isTopLevel
 import org.jetbrains.kotlin.backend.konan.descriptors.findPackage
 import org.jetbrains.kotlin.backend.konan.ir.getSuperClassNotAny
 import org.jetbrains.kotlin.builtins.PrimitiveType
@@ -24,6 +23,7 @@ import org.jetbrains.kotlin.ir.types.isNullable
 import org.jetbrains.kotlin.ir.types.makeNullable
 import org.jetbrains.kotlin.ir.util.constructors
 import org.jetbrains.kotlin.ir.util.defaultType
+import org.jetbrains.kotlin.ir.util.isTopLevel
 import org.jetbrains.kotlin.ir.util.packageFqName
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName

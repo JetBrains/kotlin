@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.ir.backend.js.lower.coroutines
 
-import org.jetbrains.kotlin.backend.common.ir.isSuspend
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
@@ -21,6 +20,7 @@ import org.jetbrains.kotlin.ir.symbols.IrReturnableBlockSymbol
 import org.jetbrains.kotlin.ir.symbols.IrValueSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.isNullable
+import org.jetbrains.kotlin.ir.util.isSuspend
 import org.jetbrains.kotlin.ir.visitors.*
 
 open class SuspendableNodesCollector(private val suspendableNodes: MutableSet<IrElement>) : IrElementVisitorVoid {

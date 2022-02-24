@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.backend.konan
 
 import org.jetbrains.kotlin.backend.konan.descriptors.*
 import org.jetbrains.kotlin.backend.konan.ir.getAnnotationArgumentValue
-import org.jetbrains.kotlin.backend.konan.ir.isOverridable
 import org.jetbrains.kotlin.backend.konan.ir.parentDeclarationsWithSelf
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor

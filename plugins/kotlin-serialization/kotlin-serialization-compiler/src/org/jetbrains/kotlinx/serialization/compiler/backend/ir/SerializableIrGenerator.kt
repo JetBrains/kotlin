@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlinx.serialization.compiler.backend.ir
 
-import org.jetbrains.kotlin.backend.common.deepCopyWithVariables
+import org.jetbrains.kotlin.ir.deepCopyWithVariables
 import org.jetbrains.kotlin.backend.common.lower.irThrow
 import org.jetbrains.kotlin.codegen.CompilationException
 import org.jetbrains.kotlin.descriptors.*

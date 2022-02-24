@@ -7,8 +7,6 @@
 
 package org.jetbrains.kotlin.backend.wasm.ir2wasm
 
-import org.jetbrains.kotlin.backend.common.ir.isElseBranch
-import org.jetbrains.kotlin.backend.common.ir.isOverridable
 import org.jetbrains.kotlin.backend.common.ir.returnType
 import org.jetbrains.kotlin.backend.wasm.WasmBackendContext
 import org.jetbrains.kotlin.backend.wasm.WasmSymbols
@@ -24,10 +22,7 @@ import org.jetbrains.kotlin.ir.backend.js.utils.realOverrideTarget
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.types.*
-import org.jetbrains.kotlin.ir.util.defaultType
-import org.jetbrains.kotlin.ir.util.getInlineClassBackingField
-import org.jetbrains.kotlin.ir.util.isInterface
-import org.jetbrains.kotlin.ir.util.parentAsClass
+import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.js.config.JSConfigurationKeys

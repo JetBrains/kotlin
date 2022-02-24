@@ -8,9 +8,6 @@ package org.jetbrains.kotlin.backend.konan.llvm.objcexport
 import kotlinx.cinterop.toCValues
 import kotlinx.cinterop.toKString
 import llvm.*
-import org.jetbrains.kotlin.backend.common.ir.allParameters
-import org.jetbrains.kotlin.backend.common.ir.allParametersCount
-import org.jetbrains.kotlin.backend.common.ir.simpleFunctions
 import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.descriptors.ClassLayoutBuilder
 import org.jetbrains.kotlin.backend.konan.descriptors.OverriddenFunctionInfo
@@ -28,7 +25,6 @@ import org.jetbrains.kotlin.descriptors.konan.CompiledKlibModuleOrigin
 import org.jetbrains.kotlin.descriptors.konan.CurrentKlibModuleOrigin
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.descriptors.IrBuiltInsOverDescriptors
 import org.jetbrains.kotlin.ir.expressions.IrClassReference
 import org.jetbrains.kotlin.ir.expressions.IrVararg
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
@@ -41,6 +37,7 @@ import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.konan.target.AppleConfigurables
 import org.jetbrains.kotlin.konan.target.LinkerOutputKind
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.psi2ir.descriptors.IrBuiltInsOverDescriptors
 import org.jetbrains.kotlin.utils.DFS
 
 internal fun TypeBridge.makeNothing() = when (this) {

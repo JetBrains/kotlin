@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.ir.backend.js.lower.coroutines
 
 import org.jetbrains.kotlin.backend.common.descriptors.synthesizedName
-import org.jetbrains.kotlin.backend.common.ir.isSuspend
 import org.jetbrains.kotlin.backend.common.lower.FinallyBlocksLowering
 import org.jetbrains.kotlin.ir.backend.js.JsStatementOrigins
 import org.jetbrains.kotlin.backend.common.lower.ReturnableBlockTransformer
@@ -23,6 +22,7 @@ import org.jetbrains.kotlin.ir.symbols.IrVariableSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.isUnit
 import org.jetbrains.kotlin.ir.util.explicitParameters
+import org.jetbrains.kotlin.ir.util.isSuspend
 import org.jetbrains.kotlin.ir.util.patchDeclarationParents
 import org.jetbrains.kotlin.ir.visitors.*
 import org.jetbrains.kotlin.name.Name

@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.fir.backend.generators
 
 import org.jetbrains.kotlin.KtFakeSourceElementKind
-import org.jetbrains.kotlin.backend.common.ir.isMethodOfAny
+import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.backend.*
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.isCompanion
@@ -42,6 +42,7 @@ import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.dump
 import org.jetbrains.kotlin.ir.util.isFunctionTypeOrSubtype
 import org.jetbrains.kotlin.ir.util.isInterface
+import org.jetbrains.kotlin.ir.util.isMethodOfAny
 import org.jetbrains.kotlin.psi2ir.generators.hasNoSideEffects
 import org.jetbrains.kotlin.psi2ir.generators.isUnchanging
 import org.jetbrains.kotlin.resolve.calls.NewCommonSuperTypeCalculator.commonSuperType

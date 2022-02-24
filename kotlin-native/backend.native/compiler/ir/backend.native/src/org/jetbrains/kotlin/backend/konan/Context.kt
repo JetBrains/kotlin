@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.backend.konan
 
 import llvm.*
-import org.jetbrains.kotlin.backend.common.deepCopyWithVariables
 import org.jetbrains.kotlin.backend.konan.descriptors.*
 import org.jetbrains.kotlin.backend.konan.ir.KonanIr
 import org.jetbrains.kotlin.library.SerializedMetadata
@@ -39,15 +38,13 @@ import org.jetbrains.kotlin.resolve.scopes.receivers.ImplicitClassReceiver
 import java.lang.System.out
 import kotlin.LazyThreadSafetyMode.PUBLICATION
 import kotlin.reflect.KProperty
-import org.jetbrains.kotlin.backend.common.ir.copyTo
-import org.jetbrains.kotlin.backend.common.ir.copyToWithoutSuperTypes
-import org.jetbrains.kotlin.backend.konan.ir.getSuperClassNotAny
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCExport
 import org.jetbrains.kotlin.backend.konan.llvm.coverage.CoverageManager
 import org.jetbrains.kotlin.backend.konan.serialization.KonanIrLinker
 import org.jetbrains.kotlin.backend.konan.serialization.SerializedClassFields
 import org.jetbrains.kotlin.backend.konan.serialization.SerializedInlineFunctionReference
 import org.jetbrains.kotlin.ir.declarations.lazy.IrLazyClass
+import org.jetbrains.kotlin.ir.deepCopyWithVariables
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrFieldSymbolImpl

@@ -1,8 +1,6 @@
 package org.jetbrains.kotlin.backend.konan.lower
 
 import org.jetbrains.kotlin.backend.common.descriptors.synthesizedName
-import org.jetbrains.kotlin.backend.common.ir.isSuspend
-import org.jetbrains.kotlin.backend.common.ir.simpleFunctions
 import org.jetbrains.kotlin.backend.common.lower.*
 import org.jetbrains.kotlin.backend.konan.Context
 import org.jetbrains.kotlin.descriptors.Modality

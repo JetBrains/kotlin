@@ -9,16 +9,12 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.interpreter.IrInterpreterEnvironment
 import org.jetbrains.kotlin.ir.interpreter.exceptions.handleUserException
-import org.jetbrains.kotlin.ir.interpreter.isFunction
-import org.jetbrains.kotlin.ir.interpreter.isKFunction
 import org.jetbrains.kotlin.ir.interpreter.stack.Fields
 import org.jetbrains.kotlin.ir.interpreter.state.reflection.KFunctionState
 import org.jetbrains.kotlin.ir.interpreter.state.reflection.ReflectionState
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.types.*
-import org.jetbrains.kotlin.ir.util.defaultType
-import org.jetbrains.kotlin.ir.util.isSubclassOf
-import org.jetbrains.kotlin.ir.util.parentAsClass
+import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
 internal interface State {

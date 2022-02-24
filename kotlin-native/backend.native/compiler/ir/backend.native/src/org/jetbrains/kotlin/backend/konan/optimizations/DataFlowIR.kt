@@ -6,12 +6,8 @@
 package org.jetbrains.kotlin.backend.konan.optimizations
 
 import org.jetbrains.kotlin.backend.konan.*
-import org.jetbrains.kotlin.backend.common.ir.allParameters
-import org.jetbrains.kotlin.backend.common.ir.isFinalClass
 import org.jetbrains.kotlin.backend.konan.descriptors.*
-import org.jetbrains.kotlin.backend.konan.descriptors.OverriddenFunctionInfo
 import org.jetbrains.kotlin.backend.konan.descriptors.implementedInterfaces
-import org.jetbrains.kotlin.backend.konan.ir.isOverridableOrOverrides
 import org.jetbrains.kotlin.backend.konan.llvm.computeFunctionName
 import org.jetbrains.kotlin.backend.konan.llvm.computeSymbolName
 import org.jetbrains.kotlin.backend.konan.llvm.isExported

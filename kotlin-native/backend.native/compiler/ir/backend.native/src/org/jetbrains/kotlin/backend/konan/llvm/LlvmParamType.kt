@@ -6,14 +6,9 @@
 package org.jetbrains.kotlin.backend.konan.llvm
 
 import llvm.LLVMTypeRef
-import org.jetbrains.kotlin.backend.common.ir.allParameters
-import org.jetbrains.kotlin.backend.konan.*
-import org.jetbrains.kotlin.backend.konan.unwrapToPrimitiveOrReference
-import org.jetbrains.kotlin.builtins.UnsignedType
 import org.jetbrains.kotlin.ir.declarations.IrConstructor
 import org.jetbrains.kotlin.ir.declarations.IrFunction
-import org.jetbrains.kotlin.ir.types.IrType
-import org.jetbrains.kotlin.ir.util.classId
+import org.jetbrains.kotlin.ir.util.allParameters
 import org.jetbrains.kotlin.ir.util.isSuspend
 
 /**

@@ -5,8 +5,6 @@
 
 package org.jetbrains.kotlin.ir.backend.js.utils
 
-import org.jetbrains.kotlin.backend.common.ir.isMethodOfAny
-import org.jetbrains.kotlin.backend.common.ir.isTopLevel
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.backend.js.JsCommonBackendContext
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
@@ -22,6 +20,8 @@ import org.jetbrains.kotlin.ir.types.getClass
 import org.jetbrains.kotlin.ir.types.isNullableAny
 import org.jetbrains.kotlin.ir.util.invokeFun
 import org.jetbrains.kotlin.ir.util.isEffectivelyExternal
+import org.jetbrains.kotlin.ir.util.isMethodOfAny
+import org.jetbrains.kotlin.ir.util.isTopLevel
 import org.jetbrains.kotlin.ir.util.isTopLevelDeclaration
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.util.OperatorNameConventions

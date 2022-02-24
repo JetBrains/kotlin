@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.backend.jvm.codegen
 
-import org.jetbrains.kotlin.backend.common.ir.allParametersCount
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.intrinsics.SignatureString
 import org.jetbrains.kotlin.backend.jvm.ir.getCallableReferenceOwnerKClassType
@@ -21,6 +20,7 @@ import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.classOrNull
+import org.jetbrains.kotlin.ir.util.allParametersCount
 import org.jetbrains.kotlin.ir.util.defaultType
 import org.jetbrains.kotlin.ir.util.fqNameWhenAvailable
 import org.jetbrains.kotlin.ir.util.render

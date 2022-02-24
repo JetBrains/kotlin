@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.backend.jvm.lower
 
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
-import org.jetbrains.kotlin.backend.common.ir.simpleFunctions
 import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
 import org.jetbrains.kotlin.backend.common.phaser.makeIrModulePhase
 import org.jetbrains.kotlin.backend.jvm.CachedFieldsForObjectInstances

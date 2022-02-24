@@ -1,12 +1,10 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.ir.builders.declarations
 
-import org.jetbrains.kotlin.backend.common.descriptors.synthesizedName
-import org.jetbrains.kotlin.backend.common.ir.copyTo
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.DescriptorVisibility
 import org.jetbrains.kotlin.descriptors.Modality
@@ -19,6 +17,7 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrGetValueImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrReturnImpl
 import org.jetbrains.kotlin.ir.symbols.impl.*
 import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.util.copyTo
 import org.jetbrains.kotlin.ir.util.defaultType
 import org.jetbrains.kotlin.ir.util.parentAsClass
 import org.jetbrains.kotlin.name.Name
@@ -240,8 +239,7 @@ fun <D> buildReceiverParameter(
         it.parent = parent
     }
 
-@PublishedApi
-internal fun IrFactory.buildValueParameter(builder: IrValueParameterBuilder, parent: IrDeclarationParent): IrValueParameter =
+fun IrFactory.buildValueParameter(builder: IrValueParameterBuilder, parent: IrDeclarationParent): IrValueParameter =
     with(builder) {
         return createValueParameter(
             startOffset, endOffset, origin,
@@ -279,27 +277,6 @@ fun IrFunction.addValueParameter(name: Name, type: IrType, origin: IrDeclaration
         this.name = name
         this.type = type
         this.origin = origin
-    }
-
-inline fun IrSimpleFunction.addDispatchReceiver(builder: IrValueParameterBuilder.() -> Unit): IrValueParameter =
-    IrValueParameterBuilder().run {
-        builder()
-        index = -1
-        name = "this".synthesizedName
-        factory.buildValueParameter(this, this@addDispatchReceiver).also { receiver ->
-            dispatchReceiverParameter = receiver
-        }
-    }
-
-fun IrSimpleFunction.addExtensionReceiver(type: IrType, origin: IrDeclarationOrigin = IrDeclarationOrigin.DEFINED): IrValueParameter =
-    IrValueParameterBuilder().run {
-        this.type = type
-        this.origin = origin
-        this.index = -1
-        this.name = "receiver".synthesizedName
-        factory.buildValueParameter(this, this@addExtensionReceiver).also { receiver ->
-            extensionReceiverParameter = receiver
-        }
     }
 
 @PublishedApi

@@ -1,9 +1,5 @@
 package org.jetbrains.kotlin.backend.konan.cgen
 
-import org.jetbrains.kotlin.backend.common.ir.addFakeOverrides
-import org.jetbrains.kotlin.backend.common.ir.createDispatchReceiverParameter
-import org.jetbrains.kotlin.backend.common.ir.createParameterDeclarations
-import org.jetbrains.kotlin.backend.common.ir.simpleFunctions
 import org.jetbrains.kotlin.backend.common.lower.at
 import org.jetbrains.kotlin.backend.common.lower.irNot
 import org.jetbrains.kotlin.backend.konan.PrimitiveBinaryType

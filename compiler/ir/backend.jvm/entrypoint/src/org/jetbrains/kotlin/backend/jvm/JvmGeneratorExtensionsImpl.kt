@@ -5,8 +5,6 @@
 
 package org.jetbrains.kotlin.backend.jvm
 
-import org.jetbrains.kotlin.backend.common.ir.createImplicitParameterDeclarationWithWrappedDescriptor
-import org.jetbrains.kotlin.backend.common.ir.createParameterDeclarations
 import org.jetbrains.kotlin.backend.common.serialization.signature.PublicIdSignatureComputer
 import org.jetbrains.kotlin.backend.jvm.lower.SingletonObjectJvmStaticTransformer
 import org.jetbrains.kotlin.backend.jvm.serialization.deserializeFromByteArray
@@ -28,9 +26,7 @@ import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
 import org.jetbrains.kotlin.ir.expressions.IrDelegatingConstructorCall
 import org.jetbrains.kotlin.ir.expressions.impl.IrDelegatingConstructorCallImpl
 import org.jetbrains.kotlin.ir.symbols.impl.DescriptorlessExternalPackageFragmentSymbol
-import org.jetbrains.kotlin.ir.util.DeclarationStubGenerator
-import org.jetbrains.kotlin.ir.util.SymbolTable
-import org.jetbrains.kotlin.ir.util.constructors
+import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames
 import org.jetbrains.kotlin.load.java.descriptors.JavaCallableMemberDescriptor
 import org.jetbrains.kotlin.load.java.descriptors.JavaClassDescriptor

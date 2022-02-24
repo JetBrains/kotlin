@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.backend.wasm.ir2wasm
 
-import org.jetbrains.kotlin.backend.common.ir.isOverridableOrOverrides
 import org.jetbrains.kotlin.backend.wasm.lower.WasmSignature
 import org.jetbrains.kotlin.backend.wasm.lower.wasmSignature
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
@@ -19,6 +18,7 @@ import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.types.classifierOrFail
 import org.jetbrains.kotlin.ir.util.fqNameWhenAvailable
 import org.jetbrains.kotlin.ir.util.isInterface
+import org.jetbrains.kotlin.ir.util.isOverridableOrOverrides
 
 class ClassMetadata(
     val klass: IrClass,

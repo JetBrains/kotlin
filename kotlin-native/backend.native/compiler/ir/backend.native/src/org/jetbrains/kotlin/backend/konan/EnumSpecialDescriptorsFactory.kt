@@ -5,9 +5,6 @@
 
 package org.jetbrains.kotlin.backend.konan
 
-import org.jetbrains.kotlin.backend.common.ir.addFakeOverrides
-import org.jetbrains.kotlin.backend.common.ir.addSimpleDelegatingConstructor
-import org.jetbrains.kotlin.backend.common.ir.createParameterDeclarations
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.konan.descriptors.synthesizedName
 import org.jetbrains.kotlin.descriptors.ClassKind
@@ -31,10 +28,7 @@ import org.jetbrains.kotlin.ir.symbols.impl.IrFieldSymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionSymbolImpl
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.typeWith
-import org.jetbrains.kotlin.ir.util.constructors
-import org.jetbrains.kotlin.ir.util.defaultType
-import org.jetbrains.kotlin.ir.util.functions
-import org.jetbrains.kotlin.ir.util.module
+import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.Name
 
 

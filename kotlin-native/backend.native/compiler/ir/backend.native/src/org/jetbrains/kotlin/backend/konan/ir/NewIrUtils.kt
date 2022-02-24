@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.backend.konan.ir
 
 import org.jetbrains.kotlin.backend.common.atMostOne
-import org.jetbrains.kotlin.backend.common.ir.isFinalClass
 import org.jetbrains.kotlin.backend.konan.DECLARATION_ORIGIN_INLINE_CLASS_SPECIAL_FUNCTION
 import org.jetbrains.kotlin.backend.konan.descriptors.allOverriddenFunctions
 import org.jetbrains.kotlin.backend.konan.descriptors.isInteropLibrary
@@ -52,16 +51,6 @@ fun IrClass.getSuperInterfaces() = this.superClasses.map { it.owner }.filter { i
 // Note: psi2ir doesn't set `origin = FAKE_OVERRIDE` for fields and properties yet.
 val IrProperty.isReal: Boolean get() = this.descriptor.kind.isReal
 val IrField.isReal: Boolean get() = this.descriptor.kind.isReal
-
-val IrSimpleFunction.isOverridable: Boolean
-    get() = visibility != DescriptorVisibilities.PRIVATE
-            && modality != Modality.FINAL
-            && (parent as? IrClass)?.isFinalClass != true
-
-val IrFunction.isOverridable get() = this is IrSimpleFunction && this.isOverridable
-
-val IrFunction.isOverridableOrOverrides
-    get() = this is IrSimpleFunction && (this.isOverridable || this.overriddenSymbols.isNotEmpty())
 
 fun IrClass.isSpecialClassWithNoSupertypes() = this.isAny() || this.isNothing()
 

@@ -4,13 +4,13 @@
  */
 package org.jetbrains.kotlin.backend.konan
 
-import org.jetbrains.kotlin.backend.common.ir.addChild
 import org.jetbrains.kotlin.backend.konan.descriptors.synthesizedName
 import org.jetbrains.kotlin.backend.konan.llvm.llvmSymbolOrigin
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrModuleFragmentImpl
 import org.jetbrains.kotlin.ir.util.NaiveSourceBasedFileEntryImpl
+import org.jetbrains.kotlin.ir.util.addChild
 import org.jetbrains.kotlin.ir.util.addFile
 import org.jetbrains.kotlin.ir.util.fqNameForIrSerialization
 import org.jetbrains.kotlin.name.FqName

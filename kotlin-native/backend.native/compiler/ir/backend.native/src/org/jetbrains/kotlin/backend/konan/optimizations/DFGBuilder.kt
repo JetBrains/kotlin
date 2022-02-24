@@ -5,9 +5,6 @@
 
 package org.jetbrains.kotlin.backend.konan.optimizations
 
-import org.jetbrains.kotlin.backend.common.ir.allParameters
-import org.jetbrains.kotlin.backend.common.ir.ir2stringWhole
-import org.jetbrains.kotlin.backend.common.ir.simpleFunctions
 import org.jetbrains.kotlin.backend.common.peek
 import org.jetbrains.kotlin.backend.common.pop
 import org.jetbrains.kotlin.backend.common.push

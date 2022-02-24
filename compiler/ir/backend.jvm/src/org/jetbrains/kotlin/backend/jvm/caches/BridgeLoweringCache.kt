@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.backend.jvm.caches
 
-import org.jetbrains.kotlin.backend.common.ir.copyTo
 import org.jetbrains.kotlin.backend.common.lower.SpecialBridgeMethods
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.SpecialBridge
@@ -14,6 +13,7 @@ import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
+import org.jetbrains.kotlin.ir.util.copyTo
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.org.objectweb.asm.commons.Method
 import java.util.concurrent.ConcurrentHashMap

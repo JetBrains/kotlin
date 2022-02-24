@@ -18,7 +18,6 @@ package org.jetbrains.kotlin.backend.jvm.codegen
 
 import org.jetbrains.annotations.NotNull
 import org.jetbrains.annotations.Nullable
-import org.jetbrains.kotlin.backend.common.ir.ir2string
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.backend.jvm.JvmSymbols

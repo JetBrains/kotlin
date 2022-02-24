@@ -234,11 +234,6 @@ public abstract class KotlinBuiltIns {
     }
 
     @NotNull
-    public ClassDescriptor getIntrinsicConstEvaluation() {
-        return getBuiltInClassByFqName(new FqName("kotlin.internal.IntrinsicConstEvaluation"));
-    }
-
-    @NotNull
     private ClassDescriptor getPrimitiveClassDescriptor(@NotNull PrimitiveType type) {
         return getBuiltInClassByName(type.getTypeName().asString());
     }
@@ -506,11 +501,6 @@ public abstract class KotlinBuiltIns {
     @NotNull
     public SimpleType getNullableAnyType() {
         return getAnyType().makeNullableAsSpecified(true);
-    }
-
-    @NotNull
-    public SimpleType getIntrinsicConstEvaluationType() {
-        return getIntrinsicConstEvaluation().getDefaultType();
     }
 
     @NotNull

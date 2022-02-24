@@ -6,13 +6,13 @@
 package org.jetbrains.kotlin.backend.common.lower
 
 import org.jetbrains.kotlin.backend.common.*
-import org.jetbrains.kotlin.backend.common.ir.addChild
-import org.jetbrains.kotlin.backend.common.ir.setDeclarationsParent
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrBody
 import org.jetbrains.kotlin.ir.expressions.IrStatementContainer
 import org.jetbrains.kotlin.ir.expressions.impl.IrCompositeImpl
+import org.jetbrains.kotlin.ir.util.addChild
+import org.jetbrains.kotlin.ir.util.setDeclarationsParent
 
 //This lower takes part of old LocalDeclarationLowering job to pop up local classes from functions
 open class LocalClassPopupLowering(

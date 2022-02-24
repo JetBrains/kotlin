@@ -5,9 +5,7 @@
 
 package org.jetbrains.kotlin.backend.jvm.lower
 
-import org.jetbrains.kotlin.backend.common.ir.isFinalClass
 import org.jetbrains.kotlin.backend.common.lower.DefaultArgumentStubGenerator
-import org.jetbrains.kotlin.backend.common.lower.irIfThen
 import org.jetbrains.kotlin.backend.common.lower.irNot
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
@@ -16,6 +14,7 @@ import org.jetbrains.kotlin.backend.jvm.ir.getJvmVisibilityOfDefaultArgumentStub
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrExpression
+import org.jetbrains.kotlin.ir.util.isFinalClass
 import org.jetbrains.kotlin.ir.util.isTopLevelDeclaration
 
 class JvmDefaultArgumentStubGenerator(override val context: JvmBackendContext) : DefaultArgumentStubGenerator(context, false, false) {

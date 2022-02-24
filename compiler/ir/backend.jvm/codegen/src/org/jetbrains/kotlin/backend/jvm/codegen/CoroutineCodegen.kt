@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.backend.jvm.codegen
 
 import org.jetbrains.kotlin.backend.common.CodegenUtil
-import org.jetbrains.kotlin.backend.common.ir.allOverridden
 import org.jetbrains.kotlin.backend.jvm.InlineClassAbi
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.backend.jvm.ir.*
@@ -21,6 +20,7 @@ import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrGetValue
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
 import org.jetbrains.kotlin.ir.types.*
+import org.jetbrains.kotlin.ir.util.allOverridden
 import org.jetbrains.kotlin.ir.util.file
 import org.jetbrains.kotlin.ir.util.isSuspend
 import org.jetbrains.kotlin.ir.util.parentAsClass

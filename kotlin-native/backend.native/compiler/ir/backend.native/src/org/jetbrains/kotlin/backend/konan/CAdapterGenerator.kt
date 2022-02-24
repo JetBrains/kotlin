@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.backend.common.descriptors.allParameters
 import org.jetbrains.kotlin.backend.common.descriptors.explicitParameters
 import org.jetbrains.kotlin.backend.common.pop
 import org.jetbrains.kotlin.backend.common.push
-import org.jetbrains.kotlin.backend.konan.ir.isOverridable
 import org.jetbrains.kotlin.backend.konan.llvm.*
 import org.jetbrains.kotlin.builtins.UnsignedType
 import org.jetbrains.kotlin.descriptors.*
@@ -21,6 +20,7 @@ import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrEnumEntry
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.util.SymbolTable
+import org.jetbrains.kotlin.ir.util.isOverridable
 import org.jetbrains.kotlin.ir.util.referenceFunction
 import org.jetbrains.kotlin.konan.target.*
 import org.jetbrains.kotlin.name.isChildOf

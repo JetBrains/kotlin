@@ -6,9 +6,6 @@
 package org.jetbrains.kotlin.ir.backend.js.lower
 
 import org.jetbrains.kotlin.backend.common.DeclarationTransformer
-import org.jetbrains.kotlin.backend.common.ir.copyParameterDeclarationsFrom
-import org.jetbrains.kotlin.backend.common.ir.passTypeArgumentsFrom
-import org.jetbrains.kotlin.backend.common.ir.remapTypeParameters
 import org.jetbrains.kotlin.backend.common.lower.VariableRemapper
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.lower.irBlockBody

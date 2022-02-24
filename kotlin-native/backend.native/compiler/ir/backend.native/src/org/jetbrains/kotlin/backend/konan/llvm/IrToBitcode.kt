@@ -7,9 +7,6 @@ package org.jetbrains.kotlin.backend.konan.llvm
 
 import kotlinx.cinterop.*
 import llvm.*
-import org.jetbrains.kotlin.backend.common.ir.allParameters
-import org.jetbrains.kotlin.backend.common.ir.allParametersCount
-import org.jetbrains.kotlin.backend.common.ir.ir2string
 import org.jetbrains.kotlin.backend.common.lower.inline.InlinerExpressionLocationHint
 import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.cgen.CBridgeOrigin

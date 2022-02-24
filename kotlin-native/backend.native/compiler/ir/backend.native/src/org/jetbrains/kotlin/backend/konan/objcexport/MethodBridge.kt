@@ -6,11 +6,11 @@
 package org.jetbrains.kotlin.backend.konan.objcexport
 
 import org.jetbrains.kotlin.backend.common.descriptors.allParameters
-import org.jetbrains.kotlin.backend.common.ir.allParameters
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.ParameterDescriptor
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrValueParameter
+import org.jetbrains.kotlin.ir.util.allParameters
 
 internal sealed class TypeBridge
 internal object ReferenceBridge : TypeBridge()

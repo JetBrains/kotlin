@@ -6,13 +6,11 @@
 package org.jetbrains.kotlin.backend.konan.descriptors
 
 import llvm.LLVMStoreSizeOfType
-import org.jetbrains.kotlin.backend.common.ir.simpleFunctions
 import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.ir.*
 import org.jetbrains.kotlin.backend.konan.llvm.computeFunctionName
 import org.jetbrains.kotlin.backend.konan.llvm.getLLVMType
 import org.jetbrains.kotlin.backend.konan.llvm.localHash
-import org.jetbrains.kotlin.backend.konan.lower.InnerClassLowering
 import org.jetbrains.kotlin.backend.konan.lower.bridgeTarget
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.IrElement
@@ -24,7 +22,6 @@ import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
-import org.jetbrains.kotlin.library.isInterop
 
 internal class OverriddenFunctionInfo(
         val function: IrSimpleFunction,

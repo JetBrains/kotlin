@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.android.parcel.PARCELER_FQNAME
 import org.jetbrains.kotlin.android.parcel.ParcelableSyntheticComponent
 import org.jetbrains.kotlin.android.parcel.serializers.ParcelableExtensionBase
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
-import org.jetbrains.kotlin.backend.common.ir.createImplicitParameterDeclarationWithWrappedDescriptor
 import org.jetbrains.kotlin.backend.common.lower.DeclarationIrBuilder
 import org.jetbrains.kotlin.backend.jvm.ir.erasedUpperBound
 import org.jetbrains.kotlin.descriptors.ClassKind

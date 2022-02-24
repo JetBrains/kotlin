@@ -6,11 +6,11 @@
 package org.jetbrains.kotlin.backend.konan.llvm.objcexport
 
 import llvm.*
-import org.jetbrains.kotlin.backend.common.ir.simpleFunctions
 import org.jetbrains.kotlin.backend.konan.llvm.*
 import org.jetbrains.kotlin.backend.konan.objcexport.BlockPointerBridge
 import org.jetbrains.kotlin.descriptors.konan.CurrentKlibModuleOrigin
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
+import org.jetbrains.kotlin.ir.util.simpleFunctions
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
 internal fun ObjCExportCodeGeneratorBase.generateBlockToKotlinFunctionConverter(
