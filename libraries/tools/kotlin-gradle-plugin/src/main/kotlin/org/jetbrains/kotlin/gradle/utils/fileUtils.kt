@@ -7,9 +7,9 @@ package org.jetbrains.kotlin.gradle.utils
 
 import org.gradle.api.Project
 import java.io.File
+import java.io.IOException
 import java.nio.file.Files
 import java.nio.file.Paths
-import java.util.*
 
 internal fun File.isJavaFile() =
     extension.equals("java", ignoreCase = true)
@@ -29,10 +29,18 @@ internal fun File.relativeToRoot(project: Project): String =
 internal fun Iterable<File>.toPathsArray(): Array<String> =
     map { it.canonicalPath }.toTypedArray()
 
-internal fun newTmpFile(prefix: String, suffix: String? = null, directory: File? = null, deleteOnExit: Boolean = true): File =
-    (if (directory == null) Files.createTempFile(prefix, suffix) else Files.createTempFile(directory.toPath(), prefix, suffix))
-        .toFile()
-        .apply { if (deleteOnExit) deleteOnExit() }
+internal fun newTmpFile(prefix: String, suffix: String? = null, directory: File? = null, deleteOnExit: Boolean = true): File {
+    val tempDir = directory
+        ?: System.getProperty("java.io.tmpdir", null)?.trim()?.ifEmpty { null }?.let { Paths.get(it) }?.toFile()
+        ?: throw IOException("Temporary directory not specified")
+
+    if (tempDir.isFile) throw IOException("Temp folder $tempDir is not a directory")
+    if (!tempDir.isDirectory) {
+        if (!tempDir.mkdirs()) throw IOException("Could not create temp directory $tempDir")
+    }
+
+    return Files.createTempFile(tempDir.toPath(), prefix, suffix).toFile().apply { if (deleteOnExit) deleteOnExit() }
+}
 
 internal fun File.isParentOf(childCandidate: File, strict: Boolean = false): Boolean {
     val parentPath = Paths.get(this.absolutePath).normalize()
