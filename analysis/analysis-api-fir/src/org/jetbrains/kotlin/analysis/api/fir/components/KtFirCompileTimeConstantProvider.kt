@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.api.throwUnexpectedFirEle
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirWhenBranch
 import org.jetbrains.kotlin.fir.psi
+import org.jetbrains.kotlin.fir.references.FirNamedReference
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtExpression
 
@@ -32,6 +33,10 @@ internal class KtFirCompileTimeConstantProvider(
                 } catch (e: ArithmeticException) {
                     KtConstantValue.KtErrorConstantValue(e.localizedMessage, fir.psi as? KtElement)
                 }
+            }
+            is FirNamedReference -> {
+                // TODO: but... if it refers to a property with a constant initializer, we can retrieve that technically?
+                null
             }
             // For invalid code like the following,
             // ```
