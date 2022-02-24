@@ -1,4 +1,4 @@
-@file:Suppress("DEPRECATED_BINARY_MOD")
+@file:Suppress("DEPRECATED_BINARY_MOD", "NO_ACTUAL_FOR_EXPECT")
 
 package kotlin
 
@@ -42,3 +42,13 @@ expect value class PlatformUInt internal constructor(internal val data: Platform
     inline fun toULong(): ULong
     inline fun toUShort(): UShort
 }
+
+expect fun PlatformUInt.countLeadingZeroBits(): Int
+expect fun PlatformUInt.countOneBits(): Int
+expect fun PlatformUInt.countTrailingZeroBits(): Int
+
+expect fun PlatformUInt.rotateLeft(bitCount: Int): PlatformUInt
+expect fun PlatformUInt.rotateRight(bitCount: Int): PlatformUInt
+
+expect fun PlatformUInt.takeHighestOneBit(): PlatformUInt
+expect fun PlatformUInt.takeLowestOneBit(): PlatformUInt

@@ -14,8 +14,6 @@ expect class PlatformIntArray(size: Int) {
 expect abstract class PlatformIntIterator : Iterator<PlatformInt>
 
 expect class PlatformUIntArray(size: Int) {
-    public constructor(size: Int, init: (Int) -> PlatformUInt)
-
     public operator fun get(index: Int): PlatformUInt
     public operator fun set(index: Int, value: PlatformUInt): Unit
     public val size: Int

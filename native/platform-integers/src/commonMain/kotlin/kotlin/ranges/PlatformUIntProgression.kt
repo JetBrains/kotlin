@@ -2,13 +2,7 @@
 
 package kotlin.ranges
 
-expect open class PlatformUIntProgression
-internal constructor
-    (
-    start: PlatformUInt,
-    endInclusive: PlatformUInt,
-    step: PlatformUInt
-) : Iterable<PlatformUInt> {
+expect open class PlatformUIntProgression : Iterable<PlatformUInt> {
     val first: PlatformUInt
     val last: PlatformUInt
     val step: PlatformInt

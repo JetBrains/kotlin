@@ -2,7 +2,7 @@
 
 package kotlin.ranges
 
-expect class PlatformUIntRange : PlatformUIntProgression, ClosedRange<PlatformUInt> {
+expect class PlatformUIntRange(start: PlatformUInt, endInclusive: PlatformUInt) : PlatformUIntProgression, ClosedRange<PlatformUInt> {
     override fun isEmpty(): Boolean
 
     companion object {

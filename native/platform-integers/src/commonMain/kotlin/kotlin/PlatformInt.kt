@@ -37,3 +37,22 @@ expect class PlatformInt private constructor() : Number, Comparable<PlatformInt>
     operator fun unaryMinus(): PlatformInt
     operator fun unaryPlus(): PlatformInt
 }
+
+expect fun PlatformInt.toUByte(): UByte
+expect fun PlatformInt.toUShort(): UShort
+expect fun PlatformInt.toUInt(): UInt
+expect fun PlatformInt.toULong(): ULong
+
+expect inline fun PlatformInt.floorDiv(other: PlatformInt): PlatformInt
+
+expect fun PlatformInt.countLeadingZeroBits(): Int
+expect fun PlatformInt.countOneBits(): Int
+expect fun PlatformInt.countTrailingZeroBits(): Int
+
+@ExperimentalStdlibApi
+expect fun PlatformInt.rotateLeft(bitCount: Int): PlatformInt
+@ExperimentalStdlibApi
+expect fun PlatformInt.rotateRight(bitCount: Int): PlatformInt
+
+expect fun PlatformInt.takeHighestOneBit(): PlatformInt
+expect fun PlatformInt.takeLowestOneBit(): PlatformInt

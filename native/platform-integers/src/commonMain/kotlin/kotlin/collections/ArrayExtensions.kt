@@ -285,13 +285,13 @@ expect inline fun PlatformIntArray.sumOf(selector: (PlatformInt) -> Double): Dou
 expect inline fun PlatformIntArray.sumOf(selector: (PlatformInt) -> Int): Int
 @OptIn(kotlin.experimental.ExperimentalTypeInference::class)
 @OverloadResolutionByLambdaReturnType
-expect inline fun PlatformIntArray.sumOf(selector: (PlatformInt) -> Long): PlatformInt
+expect inline fun PlatformIntArray.sumOf(selector: (PlatformInt) -> Long): Long
 @OptIn(kotlin.experimental.ExperimentalTypeInference::class)
 @OverloadResolutionByLambdaReturnType
 expect inline fun PlatformIntArray.sumOf(selector: (PlatformInt) -> UInt): UInt
 @OptIn(kotlin.experimental.ExperimentalTypeInference::class)
 @OverloadResolutionByLambdaReturnType
-expect inline fun PlatformIntArray.sumOf(selector: (PlatformInt) -> ULong): PlatformUInt
+expect inline fun PlatformIntArray.sumOf(selector: (PlatformInt) -> ULong): ULong
 expect inline fun PlatformIntArray.partition(predicate: (PlatformInt) -> Boolean): Pair<List<PlatformInt>, List<PlatformInt>>
 expect infix fun <R> PlatformIntArray.zip(other: Array<out R>): List<Pair<PlatformInt, R>>
 expect inline fun <R, V> PlatformIntArray.zip(other: Array<out R>, transform: (a: PlatformInt, b: R) -> V): List<V>
