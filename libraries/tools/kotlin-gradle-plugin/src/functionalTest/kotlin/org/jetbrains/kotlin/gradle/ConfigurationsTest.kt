@@ -9,11 +9,15 @@ package org.jetbrains.kotlin.gradle
 
 import org.gradle.api.attributes.Category
 import org.gradle.api.attributes.Usage
+import org.gradle.kotlin.dsl.withType
+import org.jetbrains.kotlin.gradle.mpp.buildProjectWithMPP
+import org.jetbrains.kotlin.gradle.mpp.kotlin
 import org.jetbrains.kotlin.gradle.plugin.KotlinJsCompilerType
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsages
 import org.jetbrains.kotlin.gradle.targets.js.KotlinJsCompilerAttribute
+import org.jetbrains.kotlin.gradle.targets.js.KotlinJsTarget
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
@@ -119,5 +123,30 @@ class ConfigurationsTest : MultiplatformExtensionTest() {
             "commonMain configurations should not contain KotlinJsCompilerAttribute"
         )
 
+    }
+
+    @Test
+    fun `test js IR compilation dependencies`() {
+        val project = buildProjectWithMPP {
+            kotlin {
+                js(BOTH)
+                targets.withType<KotlinJsTarget> {
+                    irTarget!!.compilations.getByName("main").dependencies {
+                        api("test:compilation-dependency")
+                    }
+                }
+
+                sourceSets.getByName("jsMain").apply {
+                    dependencies {
+                        api("test:source-set-dependency")
+                    }
+                }
+            }
+        }
+        with(project.evaluate()) {
+            assertContainsDependencies("jsApi", "test:compilation-dependency", "test:source-set-dependency")
+            assertContainsDependencies("jsMainApi", "test:source-set-dependency")
+            assertNotContainsDependencies("jsMainApi", "test:compilation-dependency")
+        }
     }
 }
