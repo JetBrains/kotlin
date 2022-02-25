@@ -225,7 +225,7 @@ fun Project.publishTestJarsForIde(projectNames: List<String>) {
     idePluginDependency {
         // Compiler test infrastructure should not affect test running in IDE.
         // If required, the components should be registered on the IDE plugin side.
-        val excludedPaths = listOf("junit-platform.properties", "META-INF/services")
+        val excludedPaths = listOf("junit-platform.properties", "META-INF/services/**/*")
         publishTestJar(projectNames, excludedPaths)
     }
     configurations.all {
