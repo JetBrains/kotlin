@@ -81,9 +81,11 @@ sealed class ReadBuffer {
                         """
                             Tried to set $value
                             current position is ${buf.position()}
+                            current limit is ${buf.limit()}
                         """.trimIndent()
                     )
                     val newBuf = ensureBuffer()
+                    println("Compare to: ${newBuf.compareTo(buf)}")
                     newBuf.position(value)
                     throw t
                 }
@@ -96,7 +98,7 @@ sealed class ReadBuffer {
                 val curThread = Thread.currentThread()
                 println(
                     """
-                    FILE: ${file.absolutePath}
+                    FILE: ${file.absolutePath} (size=$size)
                     THRD: ${curThread.id} ${curThread.name}
                     TMP buffer position: ${tmpBuffer.position()}
                     TMP buffer limit: ${tmpBuffer.limit()}
