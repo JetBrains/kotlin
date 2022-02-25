@@ -286,6 +286,8 @@ class CallAndReferenceGenerator(
                 conversionScope
             )
             val isDynamicAccess = calleeReference.resolvedSymbol?.origin == FirDeclarationOrigin.DynamicScope
+            var theExplicitReceiver = explicitReceiverExpression
+
             return qualifiedAccess.convertWithOffsets { startOffset, endOffset ->
                 if (calleeReference is FirSuperReference) {
                     if (dispatchReceiver !is FirNoReceiverExpression) {
@@ -294,7 +296,13 @@ class CallAndReferenceGenerator(
                 }
                 when (symbol) {
                     is IrConstructorSymbol -> IrConstructorCallImpl.fromSymbolOwner(startOffset, endOffset, type, symbol)
-                    is IrSimpleFunctionSymbol -> if (!isDynamicAccess) {
+                    is IrSimpleFunctionSymbol -> if (explicitReceiverExpression != null && isDynamicAccess) {
+                        val name = calleeReference.resolved?.name ?: throw Exception("There must be a name")
+                        theExplicitReceiver = IrDynamicMemberExpressionImpl(
+                            startOffset, endOffset, type, name.identifier, explicitReceiverExpression
+                        )
+                        IrDynamicOperatorExpressionImpl(startOffset, endOffset, type, IrDynamicOperator.INVOKE)
+                    } else {
                         IrCallImpl(
                             startOffset, endOffset, type, symbol,
                             typeArgumentsCount = symbol.owner.typeParameters.size,
@@ -302,8 +310,6 @@ class CallAndReferenceGenerator(
                             origin = calleeReference.statementOrigin(),
                             superQualifierSymbol = dispatchReceiver.superQualifierSymbol()
                         )
-                    } else {
-                        IrDynamicOperatorExpressionImpl(startOffset, endOffset, type, IrDynamicOperator.INVOKE)
                     }
                     is IrLocalDelegatedPropertySymbol -> {
                         IrCallImpl(
@@ -340,15 +346,20 @@ class CallAndReferenceGenerator(
                         origin = IrStatementOrigin.GET_PROPERTY.takeIf { calleeReference !is FirDelegateFieldReference },
                         superQualifierSymbol = dispatchReceiver.superQualifierSymbol()
                     )
-                    is IrValueSymbol -> IrGetValueImpl(
-                        startOffset, endOffset, type, symbol,
-                        origin = if (variableAsFunctionMode) IrStatementOrigin.VARIABLE_AS_FUNCTION
-                        else calleeReference.statementOrigin()
-                    )
+                    is IrValueSymbol -> if (explicitReceiverExpression != null && isDynamicAccess) {
+                        val name = calleeReference.resolved?.name ?: throw Exception("There must be a name")
+                        IrDynamicMemberExpressionImpl(startOffset, endOffset, type, name.identifier, explicitReceiverExpression)
+                    } else {
+                        IrGetValueImpl(
+                            startOffset, endOffset, type, symbol,
+                            origin = if (variableAsFunctionMode) IrStatementOrigin.VARIABLE_AS_FUNCTION
+                            else calleeReference.statementOrigin()
+                        )
+                    }
                     is IrEnumEntrySymbol -> IrGetEnumValueImpl(startOffset, endOffset, type, symbol)
                     else -> generateErrorCallExpression(startOffset, endOffset, calleeReference, type)
                 }
-            }.applyTypeArguments(qualifiedAccess).applyReceivers(qualifiedAccess, explicitReceiverExpression)
+            }.applyTypeArguments(qualifiedAccess).applyReceivers(qualifiedAccess, theExplicitReceiver)
                 .applyCallArguments(qualifiedAccess as? FirCall, annotationMode)
         } catch (e: Throwable) {
             throw IllegalStateException(

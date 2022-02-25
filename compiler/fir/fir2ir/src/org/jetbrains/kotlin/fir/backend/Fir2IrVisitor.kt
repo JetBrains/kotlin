@@ -17,10 +17,7 @@ import org.jetbrains.kotlin.fir.backend.generators.OperatorExpressionGenerator
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.builder.buildProperty
 import org.jetbrains.kotlin.fir.declarations.impl.FirDeclarationStatusImpl
-import org.jetbrains.kotlin.fir.declarations.utils.expandedConeType
-import org.jetbrains.kotlin.fir.declarations.utils.isSealed
-import org.jetbrains.kotlin.fir.declarations.utils.isSynthetic
-import org.jetbrains.kotlin.fir.declarations.utils.visibility
+import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.impl.FirElseIfTrueCondition
 import org.jetbrains.kotlin.fir.expressions.impl.FirNoReceiverExpression
@@ -557,7 +554,7 @@ class Fir2IrVisitor(
         calleeReference: FirReference,
         callableReferenceAccess: FirCallableReferenceAccess? = null
     ): IrExpression? {
-        var result = when (expression) {
+        return when (expression) {
             null -> return null
             is FirResolvedQualifier -> callGenerator.convertToGetObject(expression, callableReferenceAccess)
             is FirFunctionCall, is FirThisReceiverExpression, is FirCallableReferenceAccess, is FirExpressionWithSmartcast ->
@@ -573,19 +570,11 @@ class Fir2IrVisitor(
             } else {
                 convertToIrExpression(expression)
             }
+        }?.run {
+            if (expression is FirQualifiedAccessExpression && expression.calleeReference is FirSuperReference) return@run this
+
+            implicitCastInserter.implicitCastFromDispatchReceiver(this, expression.typeRef, calleeReference)
         }
-
-        if (result != null) {
-            if (result.type is IrDynamicType) {
-                result = IrDynamicMemberExpressionImpl(result.startOffset, result.endOffset, result.type, "member", result)
-            }
-
-            if (expression !is FirQualifiedAccessExpression || expression.calleeReference !is FirSuperReference) {
-                implicitCastInserter.implicitCastFromDispatchReceiver(result, expression.typeRef, calleeReference)
-            }
-        }
-
-        return result
     }
 
     private fun List<FirStatement>.mapToIrStatements(recognizePostfixIncDec: Boolean = true): List<IrStatement?> {

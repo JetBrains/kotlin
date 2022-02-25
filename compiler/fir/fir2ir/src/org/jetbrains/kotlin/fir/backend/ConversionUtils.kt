@@ -170,12 +170,14 @@ private fun FirBasedSymbol<*>.toSymbolForCall(
     classifierStorage: Fir2IrClassifierStorage,
     declarationStorage: Fir2IrDeclarationStorage,
     preferGetter: Boolean,
+    conversionScope: Fir2IrConversionScope,
     explicitReceiver: FirExpression? = null
 ) = when (this) {
     is FirCallableSymbol<*> -> unwrapCallRepresentative().toSymbolForCall(
         dispatchReceiver,
         declarationStorage,
         preferGetter,
+        conversionScope,
         explicitReceiver
     )
     is FirClassifierSymbol<*> -> toSymbol(session, classifierStorage)
@@ -193,7 +195,15 @@ fun FirReference.toSymbolForCall(
 ): IrSymbol? {
     return when (this) {
         is FirResolvedNamedReference ->
-            resolvedSymbol.toSymbolForCall(dispatchReceiver, session, classifierStorage, declarationStorage, preferGetter, explicitReceiver)
+            resolvedSymbol.toSymbolForCall(
+                dispatchReceiver,
+                session,
+                classifierStorage,
+                declarationStorage,
+                preferGetter,
+                conversionScope,
+                explicitReceiver
+            )
         is FirErrorNamedReference ->
             candidateSymbol?.toSymbolForCall(
                 dispatchReceiver,
@@ -201,6 +211,7 @@ fun FirReference.toSymbolForCall(
                 classifierStorage,
                 declarationStorage,
                 preferGetter,
+                conversionScope,
                 explicitReceiver
             )
         is FirThisReference -> {
@@ -222,6 +233,7 @@ private fun FirCallableSymbol<*>.toSymbolForCall(
     dispatchReceiver: FirExpression,
     declarationStorage: Fir2IrDeclarationStorage,
     preferGetter: Boolean,
+    conversionScope: Fir2IrConversionScope,
     explicitReceiver: FirExpression? = null
 ): IrSymbol? {
     val dispatchReceiverLookupTag = when (dispatchReceiver) {
@@ -249,11 +261,15 @@ private fun FirCallableSymbol<*>.toSymbolForCall(
                     syntheticProperty.setter?.delegate?.symbol
                         ?: throw AssertionError("Written synthetic property must have a setter")
                 }
-                delegateSymbol.unwrapCallRepresentative().toSymbolForCall(dispatchReceiver, declarationStorage, preferGetter)
+                delegateSymbol.unwrapCallRepresentative().toSymbolForCall(dispatchReceiver, declarationStorage, preferGetter, conversionScope)
             } ?: declarationStorage.getIrPropertySymbol(this)
         }
         is FirFunctionSymbol<*> -> declarationStorage.getIrFunctionSymbol(this, dispatchReceiverLookupTag)
-        is FirPropertySymbol -> declarationStorage.getIrPropertySymbol(this, dispatchReceiverLookupTag)
+        is FirPropertySymbol -> if (this.resolvedReturnType !is ConeDynamicType) {
+            declarationStorage.getIrPropertySymbol(this, dispatchReceiverLookupTag)
+        } else {
+            declarationStorage.getOrCreateIrVariable(fir, conversionScope.parentFromStack(), null).symbol
+        }
         is FirFieldSymbol -> declarationStorage.getIrFieldSymbol(this)
         is FirBackingFieldSymbol -> declarationStorage.getIrBackingFieldSymbol(this)
         is FirDelegateFieldSymbol -> declarationStorage.getIrDelegateFieldSymbol(this)

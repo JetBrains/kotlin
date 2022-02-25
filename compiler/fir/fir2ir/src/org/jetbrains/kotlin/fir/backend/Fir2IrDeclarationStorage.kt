@@ -752,6 +752,15 @@ class Fir2IrDeclarationStorage(
         return createIrProperty(property, irParent, isLocal = isLocal)
     }
 
+    fun getOrCreateIrVariable(
+        variable: FirVariable,
+        irParent: IrDeclarationParent,
+        givenOrigin: IrDeclarationOrigin? = null,
+    ): IrVariable {
+        getCachedIrVariable(variable)?.let { return it }
+        return createIrVariable(variable, irParent, givenOrigin)
+    }
+
     fun getOrCreateIrPropertyByPureField(
         field: FirField,
         irParent: IrDeclarationParent
@@ -896,6 +905,8 @@ class Fir2IrDeclarationStorage(
             symbolTable.referencePropertyIfAny(signature)?.owner
         }
     }
+
+    fun getCachedIrVariable(variable: FirVariable): IrVariable? = localStorage.getVariable(variable)
 
     private inline fun <reified FC : FirCallableDeclaration, reified IC : IrDeclaration> getCachedIrCallable(
         declaration: FC,
