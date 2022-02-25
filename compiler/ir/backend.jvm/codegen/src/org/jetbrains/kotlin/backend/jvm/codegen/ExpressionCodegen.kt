@@ -292,6 +292,8 @@ class ExpressionCodegen(
             irFunction.origin == JvmLoweredDeclarationOrigin.JVM_STATIC_WRAPPER ||
             irFunction.origin == IrDeclarationOrigin.IR_BUILTINS_STUB ||
             irFunction.origin == IrDeclarationOrigin.ENUM_CLASS_SPECIAL_MEMBER ||
+            irFunction.origin == IrDeclarationOrigin.ENUM_CLASS_SPECIAL_MEMBER_ENUM_VALUES ||
+            irFunction.origin == IrDeclarationOrigin.ENUM_CLASS_SPECIAL_MEMBER_VALUES_OF ||
             irFunction.parentAsClass.origin == JvmLoweredDeclarationOrigin.CONTINUATION_CLASS ||
             irFunction.parentAsClass.origin == JvmLoweredDeclarationOrigin.SUSPEND_LAMBDA ||
             irFunction.isMultifileBridge()

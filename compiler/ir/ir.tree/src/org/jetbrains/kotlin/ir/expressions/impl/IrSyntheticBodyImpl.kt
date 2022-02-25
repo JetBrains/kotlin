@@ -19,11 +19,11 @@ package org.jetbrains.kotlin.ir.expressions.impl
 import org.jetbrains.kotlin.ir.expressions.IrSyntheticBody
 import org.jetbrains.kotlin.ir.expressions.IrSyntheticBodyKind
 
-class IrSyntheticBodyImpl(
-    override val startOffset: Int,
-    override val endOffset: Int,
-    override val kind: IrSyntheticBodyKind
-) : IrSyntheticBody() {
-    override fun toString(): String =
-        "IrSyntheticBodyImpl($kind)"
-}
+//class IrSyntheticBodyImpl(
+//    override val startOffset: Int,
+//    override val endOffset: Int,
+//    override val kind: IrSyntheticBodyKind
+//) : IrSyntheticBody() {
+//    override fun toString(): String =
+//        "IrSyntheticBodyImpl($kind)"
+//}

@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.addMember
 import org.jetbrains.kotlin.ir.expressions.IrSyntheticBodyKind
-import org.jetbrains.kotlin.ir.expressions.impl.IrSyntheticBodyImpl
+import org.jetbrains.kotlin.ir.expressions.impl.IrBlockBodyImpl
 import org.jetbrains.kotlin.ir.util.SYNTHETIC_OFFSET
 import org.jetbrains.kotlin.ir.util.declareSimpleFunctionWithOverrides
 import org.jetbrains.kotlin.resolve.scopes.findFirstFunction
@@ -43,11 +43,11 @@ class EnumClassMembersGenerator(declarationGenerator: DeclarationGenerator) : De
         irClass.addMember(
             context.symbolTable.declareSimpleFunctionWithOverrides(
                 SYNTHETIC_OFFSET, SYNTHETIC_OFFSET,
-                IrDeclarationOrigin.ENUM_CLASS_SPECIAL_MEMBER,
+                IrDeclarationOrigin.ENUM_CLASS_SPECIAL_MEMBER_ENUM_VALUES,
                 valuesFunction
             ).also { irFunction ->
                 FunctionGenerator(declarationGenerator).generateFunctionParameterDeclarationsAndReturnType(irFunction, null, null, emptyList())
-                irFunction.body = IrSyntheticBodyImpl(SYNTHETIC_OFFSET, SYNTHETIC_OFFSET, IrSyntheticBodyKind.ENUM_VALUES)
+                //irFunction.body = IrBlockBodyImpl(SYNTHETIC_OFFSET, SYNTHETIC_OFFSET, emptyList())
             }
         )
     }
@@ -62,11 +62,11 @@ class EnumClassMembersGenerator(declarationGenerator: DeclarationGenerator) : De
         irClass.addMember(
             context.symbolTable.declareSimpleFunctionWithOverrides(
                 SYNTHETIC_OFFSET, SYNTHETIC_OFFSET,
-                IrDeclarationOrigin.ENUM_CLASS_SPECIAL_MEMBER,
+                IrDeclarationOrigin.ENUM_CLASS_SPECIAL_MEMBER_VALUES_OF,
                 valueOfFunction
             ).also { irFunction ->
                 FunctionGenerator(declarationGenerator).generateFunctionParameterDeclarationsAndReturnType(irFunction, null, null, emptyList())
-                irFunction.body = IrSyntheticBodyImpl(SYNTHETIC_OFFSET, SYNTHETIC_OFFSET, IrSyntheticBodyKind.ENUM_VALUEOF)
+                //irFunction.body = IrBlockBodyImpl(SYNTHETIC_OFFSET, SYNTHETIC_OFFSET, emptyList())
             }
         )
     }

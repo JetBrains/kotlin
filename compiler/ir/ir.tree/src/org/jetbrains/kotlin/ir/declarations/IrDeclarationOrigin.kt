@@ -18,6 +18,8 @@ interface IrDeclarationOrigin {
     object DELEGATED_PROPERTY_ACCESSOR : IrDeclarationOriginImpl("DELEGATED_PROPERTY_ACCESSOR")
     object DELEGATED_MEMBER : IrDeclarationOriginImpl("DELEGATED_MEMBER")
     object ENUM_CLASS_SPECIAL_MEMBER : IrDeclarationOriginImpl("ENUM_CLASS_SPECIAL_MEMBER")
+    object ENUM_CLASS_SPECIAL_MEMBER_ENUM_VALUES : IrDeclarationOriginImpl("ENUM_CLASS_SPECIAL_MEMBER_ENUM_VALUES")
+    object ENUM_CLASS_SPECIAL_MEMBER_VALUES_OF : IrDeclarationOriginImpl("ENUM_CLASS_SPECIAL_MEMBER_VALUE_OF")
     object FUNCTION_FOR_DEFAULT_PARAMETER : IrDeclarationOriginImpl("FUNCTION_FOR_DEFAULT_PARAMETER", isSynthetic = true)
     object MASK_FOR_DEFAULT_FUNCTION : IrDeclarationOriginImpl("MASK_FOR_DEFAULT_FUNCTION", isSynthetic = true)
     object DEFAULT_CONSTRUCTOR_MARKER : IrDeclarationOriginImpl("DEFAULT_CONSTRUCTOR_MARKER", isSynthetic = true)

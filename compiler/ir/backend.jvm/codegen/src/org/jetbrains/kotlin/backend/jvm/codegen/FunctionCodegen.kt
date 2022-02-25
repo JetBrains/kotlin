@@ -172,6 +172,8 @@ class FunctionCodegen(private val irFunction: IrFunction, private val classCodeg
                     Modality.FINAL -> when {
                         origin == JvmLoweredDeclarationOrigin.CLASS_STATIC_INITIALIZER -> 0
                         origin == IrDeclarationOrigin.ENUM_CLASS_SPECIAL_MEMBER -> 0
+                        origin == IrDeclarationOrigin.ENUM_CLASS_SPECIAL_MEMBER_ENUM_VALUES -> 0
+                        origin == IrDeclarationOrigin.ENUM_CLASS_SPECIAL_MEMBER_VALUES_OF -> 0
                         parentAsClass.isInterface && body != null -> 0
                         else -> Opcodes.ACC_FINAL
                     }
@@ -318,6 +320,8 @@ class FunctionCodegen(private val irFunction: IrFunction, private val classCodeg
                 IrDeclarationOrigin.FUNCTION_FOR_DEFAULT_PARAMETER,
                 JvmLoweredDeclarationOrigin.SYNTHETIC_ACCESSOR,
                 IrDeclarationOrigin.ENUM_CLASS_SPECIAL_MEMBER,
+                IrDeclarationOrigin.ENUM_CLASS_SPECIAL_MEMBER_ENUM_VALUES,
+                IrDeclarationOrigin.ENUM_CLASS_SPECIAL_MEMBER_VALUES_OF,
                 IrDeclarationOrigin.GENERATED_SINGLE_FIELD_VALUE_CLASS_MEMBER,
                 IrDeclarationOrigin.BRIDGE,
                 IrDeclarationOrigin.BRIDGE_SPECIAL,

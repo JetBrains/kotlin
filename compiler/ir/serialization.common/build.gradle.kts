@@ -5,6 +5,7 @@ plugins {
 
 dependencies {
     api(project(":compiler:ir.tree"))
+    api(project(":compiler:ir.tree.impl"))
     api(project(":compiler:serialization"))
     api(project(":kotlin-util-klib"))
     api(project(":kotlin-util-klib-metadata"))

@@ -402,7 +402,7 @@ open class DeepCopyIrTreeWithSymbols(
         )
 
     override fun visitSyntheticBody(body: IrSyntheticBody): IrSyntheticBody =
-        IrSyntheticBodyImpl(body.startOffset, body.endOffset, body.kind)
+        error("removed")
 
     override fun visitExpression(expression: IrExpression): IrExpression =
         throw IllegalArgumentException("Unsupported expression type: $expression")

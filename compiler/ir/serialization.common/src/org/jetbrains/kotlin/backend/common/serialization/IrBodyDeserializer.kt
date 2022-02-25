@@ -57,8 +57,6 @@ import org.jetbrains.kotlin.backend.common.serialization.proto.IrSetValue as Pro
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrSpreadElement as ProtoSpreadElement
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrStatement as ProtoStatement
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrStringConcat as ProtoStringConcat
-import org.jetbrains.kotlin.backend.common.serialization.proto.IrSyntheticBody as ProtoSyntheticBody
-import org.jetbrains.kotlin.backend.common.serialization.proto.IrSyntheticBodyKind as ProtoSyntheticBodyKind
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrThrow as ProtoThrow
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrTry as ProtoTry
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrTypeOp as ProtoTypeOp
@@ -113,12 +111,12 @@ class IrBodyDeserializer(
         return IrCatchImpl(start, end, catchParameter, result)
     }
 
-    private fun deserializeSyntheticBody(proto: ProtoSyntheticBody, start: Int, end: Int): IrSyntheticBody {
-        val kind = when (proto.kind!!) {
-            ProtoSyntheticBodyKind.ENUM_VALUES -> IrSyntheticBodyKind.ENUM_VALUES
-            ProtoSyntheticBodyKind.ENUM_VALUEOF -> IrSyntheticBodyKind.ENUM_VALUEOF
-        }
-        return IrSyntheticBodyImpl(start, end, kind)
+    private fun deserializeSyntheticBody(start: Int, end: Int): IrBlockBodyImpl {
+//        val kind = when (proto.kind!!) {
+//            ProtoSyntheticBodyKind.ENUM_VALUES -> IrSyntheticBodyKind.ENUM_VALUES
+//            ProtoSyntheticBodyKind.ENUM_VALUEOF -> IrSyntheticBodyKind.ENUM_VALUEOF
+//        }
+        return IrBlockBodyImpl(start, end, emptyList())
     }
 
     internal fun deserializeStatement(proto: ProtoStatement): IrElement {
@@ -137,7 +135,7 @@ class IrBodyDeserializer(
             StatementCase.EXPRESSION // proto.hasExpression()
             -> deserializeExpression(proto.expression)
             StatementCase.SYNTHETIC_BODY // proto.hasSyntheticBody()
-            -> deserializeSyntheticBody(proto.syntheticBody, start, end)
+            -> deserializeSyntheticBody(start, end)
             else
             -> TODO("Statement deserialization not implemented: ${proto.statementCase}")
         }

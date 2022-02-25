@@ -131,9 +131,9 @@ internal class ClassMemberGenerator(
                 }
             } else if (irFunction !is IrConstructor && !irFunction.isExpect) {
                 when {
-                    irFunction.origin == IrDeclarationOrigin.ENUM_CLASS_SPECIAL_MEMBER -> {
-                        val kind = Fir2IrDeclarationStorage.ENUM_SYNTHETIC_NAMES.getValue(irFunction.name)
-                        irFunction.body = IrSyntheticBodyImpl(startOffset, endOffset, kind)
+                    irFunction.origin == IrDeclarationOrigin.ENUM_CLASS_SPECIAL_MEMBER_ENUM_VALUES || irFunction.origin == IrDeclarationOrigin.ENUM_CLASS_SPECIAL_MEMBER_VALUES_OF -> {
+                        //val kind = Fir2IrDeclarationStorage.ENUM_SYNTHETIC_NAMES.getValue(irFunction.name)
+                        //irFunction.body = IrBlockBodyImpl(startOffset, endOffset, emptyList())
                     }
                     irFunction.parent is IrClass && irFunction.parentAsClass.isData -> {
                         val lookupTag = firFunction?.symbol?.dispatchReceiverClassOrNull()

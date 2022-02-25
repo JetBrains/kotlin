@@ -152,23 +152,26 @@ private class EnumClassLowering(val context: JvmBackendContext) : ClassLoweringP
                 }
 
             override fun visitSimpleFunction(declaration: IrSimpleFunction): IrStatement {
-                val body = declaration.body?.safeAs<IrSyntheticBody>()
-                    ?: return declaration
+                val origin = declaration.origin
+                if (origin != IrDeclarationOrigin.ENUM_CLASS_SPECIAL_MEMBER_ENUM_VALUES && origin != IrDeclarationOrigin.ENUM_CLASS_SPECIAL_MEMBER_VALUES_OF) return declaration
 
                 declaration.body = context.createJvmIrBuilder(declaration.symbol).run {
                     irExprBody(
-                        when (body.kind) {
-                            IrSyntheticBodyKind.ENUM_VALUES -> {
+                        when (origin) {
+                            IrDeclarationOrigin.ENUM_CLASS_SPECIAL_MEMBER_ENUM_VALUES -> {
                                 irCall(this@EnumClassLowering.context.ir.symbols.objectCloneFunction, declaration.returnType).apply {
                                     dispatchReceiver = irGetField(null, valuesField)
                                 }
                             }
 
-                            IrSyntheticBodyKind.ENUM_VALUEOF ->
+                            IrDeclarationOrigin.ENUM_CLASS_SPECIAL_MEMBER_VALUES_OF ->
                                 irCall(backendContext.ir.symbols.enumValueOfFunction).apply {
                                     putValueArgument(0, javaClassReference(irClass.defaultType))
                                     putValueArgument(1, irGet(declaration.valueParameters[0]))
                                 }
+                            else -> {
+                                error("")
+                            }
                         }
                     )
                 }

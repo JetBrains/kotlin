@@ -155,6 +155,8 @@ internal object EnumIntrinsics : IntrinsicBase() {
 
     fun canHandleFunctionWithName(fqName: String, origin: IrDeclarationOrigin): Boolean {
         if (origin == IrDeclarationOrigin.ENUM_CLASS_SPECIAL_MEMBER) return true
+        if (origin == IrDeclarationOrigin.ENUM_CLASS_SPECIAL_MEMBER_ENUM_VALUES) return true
+        if (origin == IrDeclarationOrigin.ENUM_CLASS_SPECIAL_MEMBER_VALUES_OF) return true
         return fqName.startsWith("kotlin.Enum.")
     }
 
