@@ -1,6 +1,5 @@
 // TARGET_BACKEND: JVM
 // WITH_STDLIB
-// CHECK_BYTECODE_LISTING
 
 fun myFun(iterator: MyUIntIterator) {
     for (x in iterator) {
