@@ -31,6 +31,7 @@ data class KotlinToolingMetadata(
     data class ProjectSettings(
         val isHmppEnabled: Boolean,
         val isCompatibilityMetadataVariantEnabled: Boolean,
+        val isKPMEnabled: Boolean,
     )
 
     data class ProjectTargetMetadata(
@@ -68,7 +69,7 @@ data class KotlinToolingMetadata(
     }
 
     companion object {
-        const val currentSchemaVersion: String = "1.0.0"
+        const val currentSchemaVersion: String = "1.1.0"
     }
 }
 
