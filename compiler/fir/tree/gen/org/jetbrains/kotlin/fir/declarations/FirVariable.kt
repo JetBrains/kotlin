@@ -62,6 +62,8 @@ sealed class FirVariable : FirCallableDeclaration(), FirStatement {
 
     abstract override fun replaceDeprecation(newDeprecation: DeprecationsPerUseSite?)
 
+    abstract override fun replaceContextReceivers(newContextReceivers: List<FirContextReceiver>)
+
     abstract fun replaceInitializer(newInitializer: FirExpression?)
 
     abstract fun replaceGetter(newGetter: FirPropertyAccessor?)

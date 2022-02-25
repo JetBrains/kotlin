@@ -125,6 +125,11 @@ internal class FirErrorFunctionImpl(
         deprecation = newDeprecation
     }
 
+    override fun replaceContextReceivers(newContextReceivers: List<FirContextReceiver>) {
+        contextReceivers.clear()
+        contextReceivers.addAll(newContextReceivers)
+    }
+
     override fun replaceControlFlowGraphReference(newControlFlowGraphReference: FirControlFlowGraphReference?) {
         controlFlowGraphReference = newControlFlowGraphReference
     }

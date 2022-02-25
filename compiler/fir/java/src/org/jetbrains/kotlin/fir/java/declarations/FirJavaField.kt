@@ -159,6 +159,10 @@ class FirJavaField @FirImplementationDetail constructor(
     override fun replaceSetter(newSetter: FirPropertyAccessor?) {}
 
     override fun replaceControlFlowGraphReference(newControlFlowGraphReference: FirControlFlowGraphReference?) {}
+
+    override fun replaceContextReceivers(newContextReceivers: List<FirContextReceiver>) {
+        error("Body cannot be replaced for FirJavaField")
+    }
 }
 
 @FirBuilderDsl

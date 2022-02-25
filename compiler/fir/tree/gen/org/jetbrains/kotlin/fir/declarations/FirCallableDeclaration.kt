@@ -51,6 +51,8 @@ sealed class FirCallableDeclaration : FirMemberDeclaration() {
 
     abstract fun replaceDeprecation(newDeprecation: DeprecationsPerUseSite?)
 
+    abstract fun replaceContextReceivers(newContextReceivers: List<FirContextReceiver>)
+
     abstract override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirCallableDeclaration
 
     abstract override fun <D> transformTypeParameters(transformer: FirTransformer<D>, data: D): FirCallableDeclaration

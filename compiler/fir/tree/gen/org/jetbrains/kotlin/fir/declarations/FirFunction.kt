@@ -58,6 +58,8 @@ sealed class FirFunction : FirCallableDeclaration(), FirTargetElement, FirContro
 
     abstract override fun replaceDeprecation(newDeprecation: DeprecationsPerUseSite?)
 
+    abstract override fun replaceContextReceivers(newContextReceivers: List<FirContextReceiver>)
+
     abstract override fun replaceControlFlowGraphReference(newControlFlowGraphReference: FirControlFlowGraphReference?)
 
     abstract fun replaceValueParameters(newValueParameters: List<FirValueParameter>)

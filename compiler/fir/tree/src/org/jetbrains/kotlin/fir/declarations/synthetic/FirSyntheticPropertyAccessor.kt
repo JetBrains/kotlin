@@ -160,4 +160,8 @@ class FirSyntheticPropertyAccessor(
     override fun replaceControlFlowGraphReference(newControlFlowGraphReference: FirControlFlowGraphReference?) {
         throw AssertionError("Mutation of synthetic property accessor isn't supported")
     }
+
+    override fun replaceContextReceivers(newContextReceivers: List<FirContextReceiver>) {
+        throw AssertionError("Mutation of synthetic property accessor isn't supported")
+    }
 }

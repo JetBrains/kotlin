@@ -140,6 +140,10 @@ class FirJavaConstructor @FirImplementationDetail constructor(
         deprecation = newDeprecation
     }
 
+    override fun replaceContextReceivers(newContextReceivers: List<FirContextReceiver>) {
+        error("Context receivers cannot be replaced for FirJavaConstructor")
+    }
+
     override fun replaceControlFlowGraphReference(newControlFlowGraphReference: FirControlFlowGraphReference?) {}
 
     override fun replaceBody(newBody: FirBlock?) {

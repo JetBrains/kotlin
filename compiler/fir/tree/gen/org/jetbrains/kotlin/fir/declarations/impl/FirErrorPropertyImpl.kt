@@ -146,6 +146,11 @@ internal class FirErrorPropertyImpl(
         deprecation = newDeprecation
     }
 
+    override fun replaceContextReceivers(newContextReceivers: List<FirContextReceiver>) {
+        contextReceivers.clear()
+        contextReceivers.addAll(newContextReceivers)
+    }
+
     override fun replaceInitializer(newInitializer: FirExpression?) {}
 
     override fun replaceGetter(newGetter: FirPropertyAccessor?) {}

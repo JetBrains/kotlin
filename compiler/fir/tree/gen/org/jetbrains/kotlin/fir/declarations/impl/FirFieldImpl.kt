@@ -153,6 +153,11 @@ class FirFieldImpl @FirImplementationDetail constructor(
         deprecation = newDeprecation
     }
 
+    override fun replaceContextReceivers(newContextReceivers: List<FirContextReceiver>) {
+        contextReceivers.clear()
+        contextReceivers.addAll(newContextReceivers)
+    }
+
     override fun replaceInitializer(newInitializer: FirExpression?) {
         initializer = newInitializer
     }

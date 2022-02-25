@@ -61,6 +61,8 @@ abstract class FirEnumEntry : FirVariable() {
 
     abstract override fun replaceDeprecation(newDeprecation: DeprecationsPerUseSite?)
 
+    abstract override fun replaceContextReceivers(newContextReceivers: List<FirContextReceiver>)
+
     abstract override fun replaceInitializer(newInitializer: FirExpression?)
 
     abstract override fun replaceGetter(newGetter: FirPropertyAccessor?)

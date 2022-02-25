@@ -62,6 +62,8 @@ abstract class FirPropertyAccessor : FirFunction(), FirContractDescriptionOwner,
 
     abstract override fun replaceDeprecation(newDeprecation: DeprecationsPerUseSite?)
 
+    abstract override fun replaceContextReceivers(newContextReceivers: List<FirContextReceiver>)
+
     abstract override fun replaceControlFlowGraphReference(newControlFlowGraphReference: FirControlFlowGraphReference?)
 
     abstract override fun replaceValueParameters(newValueParameters: List<FirValueParameter>)
