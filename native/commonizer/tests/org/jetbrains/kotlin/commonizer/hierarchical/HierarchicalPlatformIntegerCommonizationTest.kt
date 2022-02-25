@@ -616,4 +616,59 @@ class HierarchicalPlatformIntegerCommonizationTest : AbstractInlineSourcesCommon
         """.trimIndent()
         )
     }
+
+    fun `test platform types from known leaf targets are commonized`() {
+        val result = commonize {
+            outputTarget("(${LINUX_X64.name}, ${IOS_ARM32.name})")
+            setting(PlatformIntegerCommonizationEnabledKey, true)
+            registerFakeStdlibIntegersDependency("(${LINUX_X64.name}, ${IOS_ARM32.name})")
+
+            LINUX_X64.name withSource """
+                val platformPropertyInOneLeafTarget: PlatformInt 
+                    get() = null!!
+                val platformPropertyInBothLeafTargets: PlatformInt 
+                    get() = null!!
+            """.trimIndent()
+
+            IOS_ARM32.name withSource """
+                val platformPropertyInOneLeafTarget: Int 
+                    get() = 42
+                val platformPropertyInBothLeafTargets: PlatformInt 
+                    get() = null!!
+            """.trimIndent()
+        }
+
+        result.assertCommonized(
+            "(${LINUX_X64.name}, ${IOS_ARM32.name})", """
+            expect val platformPropertyInOneLeafTarget: PlatformInt
+            expect val platformPropertyInBothLeafTargets: PlatformInt
+        """.trimIndent()
+        )
+    }
+
+    fun `test platform types from unknown targets are not commonized`() {
+        val result = commonize {
+            outputTarget("(unknown, ${IOS_ARM32.name})")
+            setting(PlatformIntegerCommonizationEnabledKey, true)
+            registerFakeStdlibIntegersDependency("(unknown, ${IOS_ARM32.name})")
+
+            "unknown" withSource """
+                val platformPropertyInOneLeafTarget: PlatformInt 
+                    get() = null!!
+                val platformPropertyInOtherLeafTarget: Int 
+                    get() = null!!
+            """.trimIndent()
+
+            IOS_ARM32.name withSource """
+                val platformPropertyInOneLeafTarget: Int 
+                    get() = 42
+                val platformPropertyInOtherLeafTarget: PlatformInt 
+                    get() = null!!
+            """.trimIndent()
+        }
+
+        result.assertCommonized(
+            "(unknown, ${IOS_ARM32.name})", "".trimIndent()
+        )
+    }
 }

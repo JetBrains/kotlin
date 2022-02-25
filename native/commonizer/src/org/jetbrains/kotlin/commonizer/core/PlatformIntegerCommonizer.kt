@@ -62,8 +62,8 @@ private sealed class PlatformDependentTypeCommonizer(
 
     private fun inputTypeIsKnownAndMatchesPlatformBitWidth(type: CirClassOrTypeAliasType, target: CommonizerTarget): Boolean =
         when (PlatformWidthIndex.platformWidthOf(target)) {
-            PlatformIntWidth.INT -> type.classifierId == intPlatformId
-            PlatformIntWidth.LONG -> type.classifierId == longPlatformId
+            PlatformIntWidth.INT -> type.classifierId == intPlatformId || type.classifierId == mixedPlatformId
+            PlatformIntWidth.LONG -> type.classifierId == longPlatformId || type.classifierId == mixedPlatformId
             PlatformIntWidth.MIXED -> type.classifierId == mixedPlatformId
             null -> false
         }
