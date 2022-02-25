@@ -51,3 +51,6 @@ val KotlinBuildProperties.isNativeRuntimeDebugInfoEnabled: Boolean
 
 val KotlinBuildProperties.junit5NumberOfThreadsForParallelExecution: Int?
     get() = (getOrNull("kotlin.test.junit5.maxParallelForks") as? String)?.toInt()
+
+val KotlinBuildProperties.publishGradlePluginsJavadoc: Boolean
+    get() = getBoolean("kotlin.build.gradle.publish.javadocs", false)
