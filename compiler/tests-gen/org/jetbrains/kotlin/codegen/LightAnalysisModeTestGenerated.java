@@ -7173,6 +7173,39 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
             }
         }
 
+        @TestMetadata("compiler/testData/codegen/box/controlStructures/forInIterator")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class ForInIterator extends AbstractLightAnalysisModeTest {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM, testDataFilePath);
+            }
+
+            @TestMetadata("abstractNext.kt")
+            public void testAbstractNext() throws Exception {
+                runTest("compiler/testData/codegen/box/controlStructures/forInIterator/abstractNext.kt");
+            }
+
+            public void testAllFilesPresentInForInIterator() throws Exception {
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/controlStructures/forInIterator"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM, true);
+            }
+
+            @TestMetadata("primitiveIterator.kt")
+            public void testPrimitiveIterator() throws Exception {
+                runTest("compiler/testData/codegen/box/controlStructures/forInIterator/primitiveIterator.kt");
+            }
+
+            @TestMetadata("uintIterator.kt")
+            public void testUintIterator() throws Exception {
+                runTest("compiler/testData/codegen/box/controlStructures/forInIterator/uintIterator.kt");
+            }
+
+            @TestMetadata("unrelatedExtensionFunctionNext.kt")
+            public void testUnrelatedExtensionFunctionNext() throws Exception {
+                runTest("compiler/testData/codegen/box/controlStructures/forInIterator/unrelatedExtensionFunctionNext.kt");
+            }
+        }
+
         @TestMetadata("compiler/testData/codegen/box/controlStructures/forInSequenceWithIndex")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
@@ -13926,24 +13959,6 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
         @TestMetadata("notFoundClasses.kt")
         public void testNotFoundClasses() throws Exception {
             runTest("compiler/testData/codegen/box/fir/notFoundClasses.kt");
-        }
-    }
-
-    @TestMetadata("compiler/testData/codegen/box/forLoop")
-    @TestDataPath("$PROJECT_ROOT")
-    @RunWith(JUnit3RunnerWithInners.class)
-    public static class ForLoop extends AbstractLightAnalysisModeTest {
-        private void runTest(String testDataFilePath) throws Exception {
-            KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM, testDataFilePath);
-        }
-
-        public void testAllFilesPresentInForLoop() throws Exception {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/forLoop"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM, true);
-        }
-
-        @TestMetadata("forInIterator.kt")
-        public void testForInIterator() throws Exception {
-            runTest("compiler/testData/codegen/box/forLoop/forInIterator.kt");
         }
     }
 

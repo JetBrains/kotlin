@@ -6416,6 +6416,16 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
         }
 
         @Nested
+        @TestMetadata("compiler/testData/codegen/box/controlStructures/forInIterator")
+        @TestDataPath("$PROJECT_ROOT")
+        public class ForInIterator {
+            @Test
+            public void testAllFilesPresentInForInIterator() throws Exception {
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/controlStructures/forInIterator"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS, true);
+            }
+        }
+
+        @Nested
         @TestMetadata("compiler/testData/codegen/box/controlStructures/forInSequenceWithIndex")
         @TestDataPath("$PROJECT_ROOT")
         public class ForInSequenceWithIndex {
@@ -13011,16 +13021,6 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
         @TestMetadata("falsePositiveBoundSmartcast.kt")
         public void testFalsePositiveBoundSmartcast() throws Exception {
             runTest("compiler/testData/codegen/box/fir/falsePositiveBoundSmartcast.kt");
-        }
-    }
-
-    @Nested
-    @TestMetadata("compiler/testData/codegen/box/forLoop")
-    @TestDataPath("$PROJECT_ROOT")
-    public class ForLoop {
-        @Test
-        public void testAllFilesPresentInForLoop() throws Exception {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/forLoop"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS, true);
         }
     }
 
