@@ -18,6 +18,8 @@ import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinAndroidTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
+import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.*
+import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.hasKpmModel
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsSubTargetContainerDsl
 import org.jetbrains.kotlin.gradle.targets.jvm.KotlinJvmTarget
 import org.jetbrains.kotlin.gradle.targets.metadata.isCompatibilityMetadataVariantEnabled
@@ -62,7 +64,11 @@ abstract class BuildKotlinToolingMetadataTask : DefaultTask() {
 
     @get:Internal
     internal val kotlinToolingMetadata by lazy {
-        project.kotlinExtension.getKotlinToolingMetadata()
+        if (project.hasKpmModel) {
+            project.kpmModelContainer.getKotlinToolingMetadata(project)
+        } else {
+            project.kotlinExtension.getKotlinToolingMetadata()
+        }
     }
 
     @get:Input
@@ -79,6 +85,87 @@ abstract class BuildKotlinToolingMetadataTask : DefaultTask() {
     }
 }
 
+private fun KpmGradleProjectModelContainer.getKotlinToolingMetadata(project: Project): KotlinToolingMetadata {
+    return KotlinToolingMetadata(
+        schemaVersion = KotlinToolingMetadata.currentSchemaVersion,
+        buildSystem = "Gradle",
+        buildSystemVersion = project.gradle.gradleVersion,
+        buildPlugin = project.plugins.withType(KotlinBasePluginWrapper::class.java).joinToString(";") { it.javaClass.canonicalName },
+        buildPluginVersion = project.getKotlinPluginVersion(),
+        projectSettings = project.buildProjectSettings(),
+        projectTargets = buildProjectTargets()
+    )
+}
+
+private fun Project.buildProjectSettings(): KotlinToolingMetadata.ProjectSettings {
+    return KotlinToolingMetadata.ProjectSettings(
+        isHmppEnabled = project.isKotlinGranularMetadataEnabled,
+        isCompatibilityMetadataVariantEnabled = project.isCompatibilityMetadataVariantEnabled,
+        isKPMEnabled = project.hasKpmModel
+    )
+}
+
+private fun KpmGradleProjectModelContainer.buildProjectTargets(): List<KotlinToolingMetadata.ProjectTargetMetadata> {
+    val result = mutableSetOf<KotlinToolingMetadata.ProjectTargetMetadata>()
+    val mainModules = modules.filter { it.isMain }
+
+    for (module in mainModules) {
+        result += KotlinToolingMetadata.ProjectTargetMetadata(
+            target = module.common.javaClass.canonicalName,
+            platformType = KotlinPlatformType.common.name,
+            extras = KotlinToolingMetadata.ProjectTargetMetadata.Extras()
+        )
+
+        for (variant in module.variants) {
+            result += KotlinToolingMetadata.ProjectTargetMetadata(
+                target = variant.javaClass.canonicalName,
+                platformType = variant.platformType.name,
+                extras = KotlinToolingMetadata.ProjectTargetMetadata.Extras(
+                    jvm = variant.jvmExtrasOrNull(),
+                    android = variant.androidExtrasOrNull(),
+                    js = variant.jsExtrasOrNull(),
+                    native = variant.nativeExtrasOrNull()
+                )
+            )
+        }
+    }
+
+    return result.toList()
+}
+
+private fun KotlinGradleVariant.jvmExtrasOrNull() =
+    when (this) {
+        is KotlinJvmVariant -> KotlinToolingMetadata.ProjectTargetMetadata.JvmExtras(
+                jvmTarget = compilationData.kotlinOptions.jvmTarget,
+                withJavaEnabled = false
+            )
+        is LegacyMappedVariant -> buildJvmExtrasOrNull(compilation.target)
+        else -> null
+    }
+
+private fun KotlinGradleVariant.androidExtrasOrNull() =
+    when (this) {
+        is LegacyMappedVariant -> buildAndroidExtrasOrNull(compilation.target)
+        else -> null
+    }
+
+private fun KotlinGradleVariant.jsExtrasOrNull() =
+    when (this) {
+        is LegacyMappedVariant -> buildJsExtrasOrNull(compilation.target)
+        else -> null
+    }
+
+private fun KotlinGradleVariant.nativeExtrasOrNull() =
+    when (this) {
+        is KotlinNativeVariantInternal -> KotlinToolingMetadata.ProjectTargetMetadata.NativeExtras(
+                konanTarget = konanTarget.name,
+                konanVersion = project.konanVersion.toString(),
+                konanAbiVersion = KotlinAbiVersion.CURRENT.toString()
+            )
+        is LegacyMappedVariant -> buildNativeExtrasOrNull(compilation.target)
+        else -> null
+    }
+
 private fun KotlinProjectExtension.getKotlinToolingMetadata(): KotlinToolingMetadata {
     return KotlinToolingMetadata(
         schemaVersion = KotlinToolingMetadata.currentSchemaVersion,
@@ -94,7 +181,8 @@ private fun KotlinProjectExtension.getKotlinToolingMetadata(): KotlinToolingMeta
 private fun KotlinProjectExtension.buildProjectSettings(): KotlinToolingMetadata.ProjectSettings {
     return KotlinToolingMetadata.ProjectSettings(
         isHmppEnabled = project.isKotlinGranularMetadataEnabled,
-        isCompatibilityMetadataVariantEnabled = project.isCompatibilityMetadataVariantEnabled
+        isCompatibilityMetadataVariantEnabled = project.isCompatibilityMetadataVariantEnabled,
+        isKPMEnabled = false
     )
 }
 

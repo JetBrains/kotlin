@@ -23,7 +23,9 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType.*
 import org.jetbrains.kotlin.gradle.plugin.getKotlinPluginVersion
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinAndroidTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinMetadataTarget
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTargetWithHostTests
+import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.*
 import org.jetbrains.kotlin.gradle.targets.js.KotlinJsTarget
 import org.jetbrains.kotlin.gradle.targets.jvm.KotlinJvmTarget
 import org.jetbrains.kotlin.gradle.tooling.BuildKotlinToolingMetadataTask
@@ -32,11 +34,21 @@ import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.library.KotlinAbiVersion
 import org.jetbrains.kotlin.tooling.KotlinToolingMetadata
 import org.jetbrains.kotlin.tooling.toJsonString
+import org.junit.Assume
+import org.junit.AssumptionViolatedException
+import org.junit.Before
+import org.junit.runner.RunWith
+import org.junit.runners.Parameterized
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
+@RunWith(Parameterized::class)
 class BuildKotlinToolingMetadataTest {
+
+    @Parameterized.Parameter(0)
+    @JvmField
+    val kpmModelMappingEnabled: Boolean = false
 
     private val project = ProjectBuilder.builder().build().also{ addBuildEventsListenerRegistryMock(it) } as ProjectInternal
     private val multiplatformExtension get() = project.extensions.getByType(KotlinMultiplatformExtension::class.java)
@@ -44,6 +56,11 @@ class BuildKotlinToolingMetadataTest {
 
     init {
         project.extensions.getByType(ExtraPropertiesExtension::class.java).set("kotlin.mpp.enableKotlinToolingMetadataArtifact", "true")
+    }
+
+    @Before
+    fun setup() {
+        project.enableKpmModelMapping(kpmModelMappingEnabled)
     }
 
     @Test
@@ -57,11 +74,19 @@ class BuildKotlinToolingMetadataTest {
         assertEquals(KotlinMultiplatformPluginWrapper::class.java.canonicalName, metadata.buildPlugin)
         assertEquals(project.getKotlinPluginVersion(), metadata.buildPluginVersion)
         assertEquals(1, metadata.projectTargets.size, "Expected one target (metadata)")
-        assertTrue(
-            KotlinMetadataTarget::class.java.isAssignableFrom(Class.forName(metadata.projectTargets.single().target)),
-            "Expect target to be implement ${KotlinMetadataTarget::class.simpleName}"
-        )
-        assertEquals(common.name, metadata.projectTargets.single().platformType)
+        val targetMetadata = metadata.projectTargets.single()
+        if (kpmModelMappingEnabled) {
+            assertTrue(
+                KotlinGradleFragment::class.java.isAssignableFrom(Class.forName(targetMetadata.target)),
+                "Expect target to be implement ${KotlinGradleFragment::class.simpleName}"
+            )
+        } else {
+            assertTrue(
+                KotlinMetadataTarget::class.java.isAssignableFrom(Class.forName(targetMetadata.target)),
+                "Expect target to be implement ${KotlinMetadataTarget::class.simpleName}"
+            )
+        }
+        assertEquals(common.name, targetMetadata.platformType)
         assertTrue(metadata.toJsonString().isNotBlank(), "Expected non blank json representation")
     }
 
@@ -87,35 +112,38 @@ class BuildKotlinToolingMetadataTest {
         val metadata = getKotlinToolingMetadata()
         assertEquals(KotlinMultiplatformPluginWrapper::class.java.canonicalName, metadata.buildPlugin)
 
+        val expectedTargets = if (kpmModelMappingEnabled) {
+            mapOf(
+                common to KotlinGradleFragmentInternal::class,
+                androidJvm to LegacyMappedVariantWithRuntime::class,
+                jvm to KotlinJvmVariant::class,
+                js to LegacyMappedVariantWithRuntime::class,
+                native to KotlinLinuxX64Variant::class
+            )
+        } else {
+            mapOf(
+                common to KotlinMetadataTarget::class,
+                androidJvm to KotlinAndroidTarget::class,
+                jvm to KotlinJvmTarget::class,
+                js to KotlinJsTarget::class,
+                native to KotlinNativeTargetWithHostTests::class
+            )
+        }
+
         assertEquals(
-            listOf(common, androidJvm, jvm, js, native).map { it.name }.sorted(),
+            expectedTargets.keys.map { it.name }.sorted(),
             metadata.projectTargets.map { it.platformType }.sorted()
         )
 
-        assertEquals(
-            KotlinMetadataTarget::class.java.canonicalName,
-            metadata.projectTargets.single { it.platformType == common.name }.target
-        )
+        expectedTargets.forEach { (platformType, targetClass) ->
+            assertEquals(
+                targetClass.java.canonicalName,
+                metadata.projectTargets.single { it.platformType == platformType.name }.target,
+                "Platform '$platformType' has different target class"
+            )
+        }
 
-        assertEquals(
-            KotlinAndroidTarget::class.java.canonicalName,
-            metadata.projectTargets.single { it.platformType == androidJvm.name }.target
-        )
-
-        assertEquals(
-            KotlinJvmTarget::class.java.canonicalName,
-            metadata.projectTargets.single { it.platformType == jvm.name }.target
-        )
-
-        assertEquals(
-            KotlinJsTarget::class.java.canonicalName,
-            metadata.projectTargets.single { it.platformType == js.name }.target
-        )
-
-        assertEquals(
-            KotlinNativeTargetWithHostTests::class.java.canonicalName,
-            metadata.projectTargets.single { it.platformType == native.name }.target
-        )
+        assertEquals(kpmModelMappingEnabled, metadata.projectSettings.isKPMEnabled, "projectSettings.isKPMEnabled must be set")
     }
 
     @Test
@@ -167,6 +195,7 @@ class BuildKotlinToolingMetadataTest {
 
     @Test
     fun js() {
+        Assume.assumeFalse("KPM model mapping is not yet supported in single-platform projects", kpmModelMappingEnabled)
         project.plugins.apply("org.jetbrains.kotlin.js")
         val kotlin = jsExtension
         kotlin.js { nodejs() }
@@ -181,13 +210,65 @@ class BuildKotlinToolingMetadataTest {
 
     @Test
     fun jvm() {
+        Assume.assumeFalse("KPM model mapping is not yet supported in single-platform projects", kpmModelMappingEnabled)
         project.plugins.apply("org.jetbrains.kotlin.jvm")
         val metadata = getKotlinToolingMetadata()
         assertEquals(org.jetbrains.kotlin.gradle.plugin.KotlinPluginWrapper::class.java.canonicalName, metadata.buildPlugin)
     }
 
+    @Test
+    fun `multiple native targets`() {
+        project.plugins.apply("kotlin-multiplatform")
+        val kotlin = multiplatformExtension
+        kotlin.linuxX64()
+        kotlin.linuxArm64()
+
+        val metadata = getKotlinToolingMetadata()
+        val nativeTargets = metadata.projectTargets.filter { it.platformType == native.name }.sortedBy { it.extras.native?.konanTarget }
+        assertEquals(2, nativeTargets.size, "Expected only two native targets")
+        val (linuxArm64, linuxX64) = nativeTargets
+
+        assertEquals(
+            "linux_arm64",
+            linuxArm64.extras.native?.konanTarget
+        )
+        assertEquals(
+            "linux_x64",
+            linuxX64.extras.native?.konanTarget
+        )
+
+        if (kpmModelMappingEnabled) {
+            assertEquals(
+                KotlinLinuxArm64Variant::class.java.canonicalName,
+                linuxArm64.target
+            )
+            assertEquals(
+                KotlinLinuxX64Variant::class.java.canonicalName,
+                linuxX64.target
+            )
+        } else {
+            assertEquals(
+                KotlinNativeTarget::class.java.canonicalName,
+                linuxArm64.target
+            )
+            assertEquals(
+                KotlinNativeTargetWithHostTests::class.java.canonicalName,
+                linuxX64.target
+            )
+        }
+    }
+
     private fun getKotlinToolingMetadata(): KotlinToolingMetadata {
         val task = project.buildKotlinToolingMetadataTask?.get() ?: error("No ${BuildKotlinToolingMetadataTask.defaultTaskName} task")
         return task.kotlinToolingMetadata
+    }
+
+    companion object {
+        @JvmStatic
+        @Parameterized.Parameters(name = "KPM-Model-Mapping:{0}")
+        fun parameters() = listOf(
+            arrayOf(false),
+            arrayOf(true),
+        )
     }
 }
