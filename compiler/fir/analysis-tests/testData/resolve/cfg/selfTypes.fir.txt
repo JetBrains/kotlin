@@ -1,0 +1,31 @@
+FILE: selfTypes.kt
+    @R|kotlin/Self|() public final class ReturnType<out <Self> : R|ReturnType<<Self>>|> : R|kotlin/Any| {
+        public constructor(): R|ReturnType| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final fun returnType(): R|<Self>| {
+            ^returnType this@R|/ReturnType|
+        }
+
+    }
+    @R|kotlin/Self|() public final class WithTypeParameter<T : R|WithTypeParameter<T>|, out <Self> : R|WithTypeParameter<T, <Self>>|> : R|kotlin/Any| {
+        public constructor<T : R|WithTypeParameter<T>|>(): R|WithTypeParameter<T>| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final fun withTypeParameter(): R|<Self>| {
+            ^withTypeParameter this@R|/WithTypeParameter|
+        }
+
+    }
+    @R|kotlin/Self|() public final class WithoutTypeParameter<T : <ERROR TYPE REF: Wrong number of type arguments>, out <Self> : R|WithoutTypeParameter<T, <Self>>|> : R|kotlin/Any| {
+        public constructor<T : <ERROR TYPE REF: Wrong number of type arguments>>(): R|WithoutTypeParameter<T>| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final fun withoutTypeParameter(): R|<Self>| {
+            ^withoutTypeParameter this@R|/WithoutTypeParameter|
+        }
+
+    }

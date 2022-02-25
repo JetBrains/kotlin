@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.fir.types.impl.ConeTypeParameterTypeImpl
 import org.jetbrains.kotlin.fir.types.impl.FirImplicitBuiltinTypeRef
 import org.jetbrains.kotlin.fir.visibilityChecker
 import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
@@ -118,6 +119,19 @@ class FirTypeResolverImpl(private val session: FirSession) : FirTypeResolver() {
                 val qualifier = typeRef.qualifier
                 val scopes = scopeClassDeclaration.scopes
                 val containingDeclarations = scopeClassDeclaration.containingDeclarations
+
+                var selfCl: FirBasedSymbol<*>? = null
+                for (decl in scopeClassDeclaration.containingDeclarations) {
+                    val isSelf = decl.annotations.find { it.fqName(session)?.asString() == "kotlin.Self" }
+                    if (isSelf != null && decl is FirRegularClass) {
+                        selfCl = decl.typeParameters.find { it.symbol.name == Name.special("<Self>") }?.symbol
+                        break
+                    }
+                }
+
+                if (selfCl != null) {
+                    return Triple(selfCl, null, null)
+                }
 
                 for (scope in scopes) {
                     if (acceptedSymbol != null) {

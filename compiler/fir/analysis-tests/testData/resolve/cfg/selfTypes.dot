@@ -1,0 +1,117 @@
+digraph selfTypes_kt {
+    graph [nodesep=3]
+    node [shape=box penwidth=2]
+    edge [penwidth=2]
+
+    subgraph cluster_0 {
+        color=red
+        0 [label="Enter function <init>" style="filled" fillcolor=red];
+        1 [label="Delegated constructor call: super<R|kotlin/Any|>()"];
+        2 [label="Exit function <init>" style="filled" fillcolor=red];
+    }
+    0 -> {1};
+    1 -> {2};
+
+    subgraph cluster_1 {
+        color=red
+        3 [label="Enter function returnType" style="filled" fillcolor=red];
+        subgraph cluster_2 {
+            color=blue
+            4 [label="Enter block"];
+            5 [label="Access variable this@R|/ReturnType|"];
+            6 [label="Jump: ^returnType this@R|/ReturnType|"];
+            7 [label="Stub" style="filled" fillcolor=gray];
+            8 [label="Exit block" style="filled" fillcolor=gray];
+        }
+        9 [label="Exit function returnType" style="filled" fillcolor=red];
+    }
+    3 -> {4};
+    4 -> {5};
+    5 -> {6};
+    6 -> {9};
+    6 -> {7} [style=dotted];
+    7 -> {8} [style=dotted];
+    8 -> {9} [style=dotted];
+
+    subgraph cluster_3 {
+        color=red
+        10 [label="Enter class ReturnType" style="filled" fillcolor=red];
+        11 [label="Exit class ReturnType" style="filled" fillcolor=red];
+    }
+    10 -> {11} [color=green];
+
+    subgraph cluster_4 {
+        color=red
+        12 [label="Enter function <init>" style="filled" fillcolor=red];
+        13 [label="Delegated constructor call: super<R|kotlin/Any|>()"];
+        14 [label="Exit function <init>" style="filled" fillcolor=red];
+    }
+    12 -> {13};
+    13 -> {14};
+
+    subgraph cluster_5 {
+        color=red
+        15 [label="Enter function withTypeParameter" style="filled" fillcolor=red];
+        subgraph cluster_6 {
+            color=blue
+            16 [label="Enter block"];
+            17 [label="Access variable this@R|/WithTypeParameter|"];
+            18 [label="Jump: ^withTypeParameter this@R|/WithTypeParameter|"];
+            19 [label="Stub" style="filled" fillcolor=gray];
+            20 [label="Exit block" style="filled" fillcolor=gray];
+        }
+        21 [label="Exit function withTypeParameter" style="filled" fillcolor=red];
+    }
+    15 -> {16};
+    16 -> {17};
+    17 -> {18};
+    18 -> {21};
+    18 -> {19} [style=dotted];
+    19 -> {20} [style=dotted];
+    20 -> {21} [style=dotted];
+
+    subgraph cluster_7 {
+        color=red
+        22 [label="Enter class WithTypeParameter" style="filled" fillcolor=red];
+        23 [label="Exit class WithTypeParameter" style="filled" fillcolor=red];
+    }
+    22 -> {23} [color=green];
+
+    subgraph cluster_8 {
+        color=red
+        24 [label="Enter function <init>" style="filled" fillcolor=red];
+        25 [label="Delegated constructor call: super<R|kotlin/Any|>()"];
+        26 [label="Exit function <init>" style="filled" fillcolor=red];
+    }
+    24 -> {25};
+    25 -> {26};
+
+    subgraph cluster_9 {
+        color=red
+        27 [label="Enter function withoutTypeParameter" style="filled" fillcolor=red];
+        subgraph cluster_10 {
+            color=blue
+            28 [label="Enter block"];
+            29 [label="Access variable this@R|/WithoutTypeParameter|"];
+            30 [label="Jump: ^withoutTypeParameter this@R|/WithoutTypeParameter|"];
+            31 [label="Stub" style="filled" fillcolor=gray];
+            32 [label="Exit block" style="filled" fillcolor=gray];
+        }
+        33 [label="Exit function withoutTypeParameter" style="filled" fillcolor=red];
+    }
+    27 -> {28};
+    28 -> {29};
+    29 -> {30};
+    30 -> {33};
+    30 -> {31} [style=dotted];
+    31 -> {32} [style=dotted];
+    32 -> {33} [style=dotted];
+
+    subgraph cluster_11 {
+        color=red
+        34 [label="Enter class WithoutTypeParameter" style="filled" fillcolor=red];
+        35 [label="Exit class WithoutTypeParameter" style="filled" fillcolor=red];
+    }
+    34 -> {35} [color=green];
+
+}
