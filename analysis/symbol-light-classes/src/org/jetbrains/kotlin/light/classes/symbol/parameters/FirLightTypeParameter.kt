@@ -13,21 +13,17 @@ import com.intellij.psi.impl.PsiClassImplUtil
 import com.intellij.psi.impl.light.LightElement
 import com.intellij.psi.javadoc.PsiDocComment
 import com.intellij.psi.search.SearchScope
+import org.jetbrains.kotlin.analysis.api.isValid
+import org.jetbrains.kotlin.analysis.api.symbols.KtTypeParameterSymbol
+import org.jetbrains.kotlin.analysis.api.types.KtClassErrorType
+import org.jetbrains.kotlin.analysis.api.types.KtNonErrorClassType
 import org.jetbrains.kotlin.asJava.classes.KotlinSuperTypeListBuilder
 import org.jetbrains.kotlin.asJava.classes.cannotModify
 import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.asJava.elements.KtLightAbstractAnnotation
 import org.jetbrains.kotlin.asJava.elements.KtLightDeclaration
 import org.jetbrains.kotlin.idea.KotlinLanguage
-import org.jetbrains.kotlin.analysis.api.isValid
-import org.jetbrains.kotlin.analysis.api.symbols.KtTypeParameterSymbol
-import org.jetbrains.kotlin.analysis.api.types.KtNonErrorClassType
 import org.jetbrains.kotlin.light.classes.symbol.*
-import org.jetbrains.kotlin.light.classes.symbol.FirLightTypeParameterListForSymbol
-import org.jetbrains.kotlin.light.classes.symbol.analyzeWithSymbolAsContext
-import org.jetbrains.kotlin.light.classes.symbol.basicIsEquivalentTo
-import org.jetbrains.kotlin.light.classes.symbol.invalidAccess
-import org.jetbrains.kotlin.light.classes.symbol.mapSuperType
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.psi.KtTypeParameter
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
@@ -66,8 +62,13 @@ internal class FirLightTypeParameter(
         )
         analyzeWithSymbolAsContext(typeParameterSymbol) {
             typeParameterSymbol.upperBounds
-                .filterIsInstance<KtNonErrorClassType>()
-                .filter { it.classId != StandardClassIds.Any }
+                .filter { type ->
+                    when (type) {
+                        is KtNonErrorClassType -> type.classId != StandardClassIds.Any
+                        is KtClassErrorType -> false
+                        else -> true
+                    }
+                }
                 .mapNotNull {
                     mapSuperType(it, this@FirLightTypeParameter, kotlinCollectionAsIs = true)
                 }
@@ -84,11 +85,11 @@ internal class FirLightTypeParameter(
 
     //PsiClass simple implementation
     override fun getImplementsList(): PsiReferenceList? = null
-    override fun getImplementsListTypes(): Array<PsiClassType> = PsiClassType.EMPTY_ARRAY
-    override fun getSuperClass(): PsiClass? = null
-    override fun getInterfaces(): Array<PsiClass> = PsiClass.EMPTY_ARRAY
-    override fun getSupers(): Array<PsiClass> = PsiClass.EMPTY_ARRAY
-    override fun getSuperTypes(): Array<PsiClassType> = PsiClassType.EMPTY_ARRAY
+    override fun getImplementsListTypes(): Array<PsiClassType> = PsiClassImplUtil.getImplementsListTypes(this)
+    override fun getSuperClass(): PsiClass? = PsiClassImplUtil.getSuperClass(this)
+    override fun getInterfaces(): Array<PsiClass> = PsiClassImplUtil.getInterfaces(this)
+    override fun getSupers(): Array<PsiClass> = PsiClassImplUtil.getSupers(this)
+    override fun getSuperTypes(): Array<PsiClassType> = PsiClassImplUtil.getSuperTypes(this)
     override fun getConstructors(): Array<PsiMethod> = PsiMethod.EMPTY_ARRAY
     override fun getInitializers(): Array<PsiClassInitializer> = PsiClassInitializer.EMPTY_ARRAY
     override fun getAllFields(): Array<PsiField> = PsiField.EMPTY_ARRAY

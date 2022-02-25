@@ -52,7 +52,7 @@ public abstract class C /* C*/<T>  {
 
   public  C(@org.jetbrains.annotations.NotNull() java.util.List<? extends java.lang.CharSequence>);//  .ctor(java.util.List<? extends java.lang.CharSequence>)
 
-  public final <V, U> T foo(V, @org.jetbrains.annotations.NotNull() C<V>, error.NonExistentClass);// <V, U>  foo(V, C<V>, error.NonExistentClass)
+  public final <V, U extends V> T foo(V, @org.jetbrains.annotations.NotNull() C<V>, error.NonExistentClass);// <V, U extends V>  foo(V, C<V>, error.NonExistentClass)
 
   public final Q getW(Q);//  getW(Q)
 
