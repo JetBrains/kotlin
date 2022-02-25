@@ -91,7 +91,8 @@ private fun defaultKotlinToolingMetadata(): KotlinToolingMetadata {
         buildPluginVersion = "v1.0 (build plugin)",
         projectSettings = KotlinToolingMetadata.ProjectSettings(
             isHmppEnabled = false,
-            isCompatibilityMetadataVariantEnabled = true
+            isCompatibilityMetadataVariantEnabled = true,
+            isKPMEnabled = false,
         ),
         projectTargets = emptyList()
     )
