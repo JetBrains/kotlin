@@ -17831,52 +17831,6 @@ public class FirOldFrontendDiagnosticsTestGenerated extends AbstractFirDiagnosti
             }
 
             @Nested
-            @TestMetadata("compiler/testData/diagnostics/tests/inlineClasses/sealed")
-            @TestDataPath("$PROJECT_ROOT")
-            public class Sealed {
-                @Test
-                public void testAllFilesPresentInSealed() throws Exception {
-                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/inlineClasses/sealed"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
-                }
-
-                @Test
-                @TestMetadata("child-object.kt")
-                public void testChild_object() throws Exception {
-                    runTest("compiler/testData/diagnostics/tests/inlineClasses/sealed/child-object.kt");
-                }
-
-                @Test
-                @TestMetadata("doubleSealedChild.kt")
-                public void testDoubleSealedChild() throws Exception {
-                    runTest("compiler/testData/diagnostics/tests/inlineClasses/sealed/doubleSealedChild.kt");
-                }
-
-                @Test
-                @TestMetadata("flat.kt")
-                public void testFlat() throws Exception {
-                    runTest("compiler/testData/diagnostics/tests/inlineClasses/sealed/flat.kt");
-                }
-
-                @Test
-                @TestMetadata("nested.kt")
-                public void testNested() throws Exception {
-                    runTest("compiler/testData/diagnostics/tests/inlineClasses/sealed/nested.kt");
-                }
-
-                @Test
-                @TestMetadata("sealedChild.kt")
-                public void testSealedChild() throws Exception {
-                    runTest("compiler/testData/diagnostics/tests/inlineClasses/sealed/sealedChild.kt");
-                }
-
-                @Test
-                @TestMetadata("with-value.kt")
-                public void testWith_value() throws Exception {
-                    runTest("compiler/testData/diagnostics/tests/inlineClasses/sealed/with-value.kt");
-                }
-            }
-
-            @Nested
             @TestMetadata("compiler/testData/diagnostics/tests/inlineClasses/sealed-inline-class")
             @TestDataPath("$PROJECT_ROOT")
             public class Sealed_inline_class {
@@ -17898,6 +17852,24 @@ public class FirOldFrontendDiagnosticsTestGenerated extends AbstractFirDiagnosti
                 }
 
                 @Test
+                @TestMetadata("doubleSealedChild.kt")
+                public void testDoubleSealedChild() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/inlineClasses/sealed-inline-class/doubleSealedChild.kt");
+                }
+
+                @Test
+                @TestMetadata("flat.kt")
+                public void testFlat() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/inlineClasses/sealed-inline-class/flat.kt");
+                }
+
+                @Test
+                @TestMetadata("nested.kt")
+                public void testNested() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/inlineClasses/sealed-inline-class/nested.kt");
+                }
+
+                @Test
                 @TestMetadata("object-child.kt")
                 public void testObject_child() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/inlineClasses/sealed-inline-class/object-child.kt");
@@ -17907,6 +17879,12 @@ public class FirOldFrontendDiagnosticsTestGenerated extends AbstractFirDiagnosti
                 @TestMetadata("unsupported-inline.kt")
                 public void testUnsupported_inline() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/inlineClasses/sealed-inline-class/unsupported-inline.kt");
+                }
+
+                @Test
+                @TestMetadata("with-value.kt")
+                public void testWith_value() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/inlineClasses/sealed-inline-class/with-value.kt");
                 }
             }
         }

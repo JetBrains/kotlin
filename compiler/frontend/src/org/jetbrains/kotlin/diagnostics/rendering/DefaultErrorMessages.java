@@ -770,7 +770,6 @@ public class DefaultErrorMessages {
         MAP.put(VALUE_CLASS_NOT_FINAL, "Value classes can be only final or sealed");
         MAP.put(SEALED_INLINE_CLASS_WITH_UNDERLYING_VALUE, "Sealed inline class cannot have underlying value");
         MAP.put(SEALED_INLINE_CLASS_WRONG_MODIFIER, "Sealed inline class should use 'value' modifier instead of 'inline'");
-        MAP.put(INLINE_CLASS_UNDERLYING_VALUE_IS_SUBCLASS_OF_ANOTHER_UNDERLYING_VALUE, "Sealed inline class subclass cannot have underlying value of the same type as other subclass");
         MAP.put(ABSENCE_OF_PRIMARY_CONSTRUCTOR_FOR_VALUE_CLASS, "Primary constructor is required for value class");
         MAP.put(INLINE_CLASS_CONSTRUCTOR_WRONG_PARAMETERS_SIZE, "Inline class must have exactly one primary constructor parameter");
         MAP.put(VALUE_CLASS_EMPTY_CONSTRUCTOR, "Value class must have at least one primary constructor parameter");

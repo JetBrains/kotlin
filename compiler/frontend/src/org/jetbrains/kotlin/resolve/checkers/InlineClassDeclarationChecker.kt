@@ -214,44 +214,12 @@ object SealedInlineClassChildChecker : DeclarationChecker {
             trace.report(Errors.SEALED_INLINE_CHILD_NOT_VALUE.on(declaration.valueKeyword()))
             return
         }
-
-        val isSealed = descriptor.modality == Modality.SEALED
-
-        val baseParameterType = descriptor.safeAs<ClassDescriptor>()?.defaultType?.substitutedUnderlyingTypes()?.singleOrNull()
-        val baseParameterTypeReference = declaration.primaryConstructor?.valueParameters?.singleOrNull()?.typeReference
-        if (baseParameterType != null && baseParameterTypeReference != null) {
-            // TODO: compute intersection types and check, that they are Nothing.
-            val children = parent.sealedSubclasses.filter { it.isInlineClass() }
-            for (child in children) {
-                if (child == descriptor) continue
-                val anotherType =
-                    if (child.modality == Modality.SEALED) context.moduleDescriptor.builtIns.nullableAnyType
-                    else child.defaultType.substitutedUnderlyingType()
-                if (anotherType == null) continue
-                if (baseParameterType.isSubtypeOf(anotherType)) {
-                    trace.report(
-                        Errors.INLINE_CLASS_UNDERLYING_VALUE_IS_SUBCLASS_OF_ANOTHER_UNDERLYING_VALUE.on(baseParameterTypeReference)
-                    )
-                    break
-                }
-            }
-        } else if (isSealed) {
-            if (parent.sealedSubclasses.any {
-                    it.isInlineClass() && it.modality == Modality.SEALED && it != descriptor
-                }
-            ) {
-                val sealedKeyword = declaration.modifierList?.getModifier(KtTokens.SEALED_KEYWORD) ?: declaration
-                trace.report(
-                    Errors.INLINE_CLASS_UNDERLYING_VALUE_IS_SUBCLASS_OF_ANOTHER_UNDERLYING_VALUE.on(sealedKeyword)
-                )
-            }
-        }
     }
 }
 
 private fun KtClassOrObject.valueKeyword() = modifierList?.getModifier(KtTokens.VALUE_KEYWORD) ?: this
 
-private fun ClassDescriptor.isSealedInlineClass() = isValue && modality == Modality.SEALED
+fun ClassDescriptor.isSealedInlineClass() = isValue && modality == Modality.SEALED
 
 class PropertiesWithBackingFieldsInsideInlineClass : DeclarationChecker {
     override fun check(declaration: KtDeclaration, descriptor: DeclarationDescriptor, context: DeclarationCheckerContext) {
