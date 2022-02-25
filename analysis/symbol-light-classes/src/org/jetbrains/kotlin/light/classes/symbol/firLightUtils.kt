@@ -36,7 +36,7 @@ internal fun KtAnalysisSession.mapSuperType(
     psiContext: PsiElement,
     kotlinCollectionAsIs: Boolean = false
 ): PsiClassType? {
-    if (type !is KtNonErrorClassType) return null
+    if (type is KtClassErrorType) return null
     val psiType = type.asPsiType(
         psiContext,
         if (kotlinCollectionAsIs) KtTypeMappingMode.SUPER_TYPE_KOTLIN_COLLECTIONS_AS_IS else KtTypeMappingMode.SUPER_TYPE,
