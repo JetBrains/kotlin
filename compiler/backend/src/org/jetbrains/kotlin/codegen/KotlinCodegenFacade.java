@@ -23,7 +23,6 @@ import org.jetbrains.kotlin.progress.ProgressIndicatorAndCompilationCanceledStat
 import org.jetbrains.kotlin.psi.KtFile;
 
 import java.util.Collection;
-import java.util.List;
 
 public class KotlinCodegenFacade {
     public static void compileCorrectFiles(
@@ -47,6 +46,12 @@ public class KotlinCodegenFacade {
 
         CodegenFactory.Companion.doCheckCancelled(state);
         state.getFactory().done();
+    }
+
+    // TODO: remove after cleanin up IDE counterpart
+    public static void compileCorrectFiles(@NotNull GenerationState state) {
+        CodegenFactory codegenFactory = state.getCodegenFactory();
+        compileCorrectFiles(state.getFiles(), state, codegenFactory != null ? codegenFactory : DefaultCodegenFactory.INSTANCE);
     }
 
     public static void generatePackage(@NotNull GenerationState state, @NotNull FqName packageFqName, @NotNull Collection<KtFile> files) {
