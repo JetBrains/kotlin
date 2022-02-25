@@ -7262,6 +7262,18 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
             }
 
             @Nested
+            @TestMetadata("compiler/testData/codegen/box/controlStructures/forInIterator")
+            @TestDataPath("$PROJECT_ROOT")
+            @Tag("codegen")
+            @UseExtTestCaseGroupProvider()
+            public class ForInIterator {
+                @Test
+                public void testAllFilesPresentInForInIterator() throws Exception {
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/controlStructures/forInIterator"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
+                }
+            }
+
+            @Nested
             @TestMetadata("compiler/testData/codegen/box/controlStructures/forInSequenceWithIndex")
             @TestDataPath("$PROJECT_ROOT")
             @Tag("codegen")
@@ -14027,18 +14039,6 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
             @TestMetadata("falsePositiveBoundSmartcast.kt")
             public void testFalsePositiveBoundSmartcast() throws Exception {
                 runTest("compiler/testData/codegen/box/fir/falsePositiveBoundSmartcast.kt");
-            }
-        }
-
-        @Nested
-        @TestMetadata("compiler/testData/codegen/box/forLoop")
-        @TestDataPath("$PROJECT_ROOT")
-        @Tag("codegen")
-        @UseExtTestCaseGroupProvider()
-        public class ForLoop {
-            @Test
-            public void testAllFilesPresentInForLoop() throws Exception {
-                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/forLoop"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
             }
         }
 

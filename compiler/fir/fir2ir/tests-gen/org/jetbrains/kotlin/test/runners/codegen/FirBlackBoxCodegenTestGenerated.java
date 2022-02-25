@@ -9336,6 +9336,40 @@ public class FirBlackBoxCodegenTestGenerated extends AbstractFirBlackBoxCodegenT
         }
 
         @Nested
+        @TestMetadata("compiler/testData/codegen/box/controlStructures/forInIterator")
+        @TestDataPath("$PROJECT_ROOT")
+        public class ForInIterator {
+            @Test
+            @TestMetadata("abstractNext.kt")
+            public void testAbstractNext() throws Exception {
+                runTest("compiler/testData/codegen/box/controlStructures/forInIterator/abstractNext.kt");
+            }
+
+            @Test
+            public void testAllFilesPresentInForInIterator() throws Exception {
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/controlStructures/forInIterator"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+            }
+
+            @Test
+            @TestMetadata("primitiveIterator.kt")
+            public void testPrimitiveIterator() throws Exception {
+                runTest("compiler/testData/codegen/box/controlStructures/forInIterator/primitiveIterator.kt");
+            }
+
+            @Test
+            @TestMetadata("uintIterator.kt")
+            public void testUintIterator() throws Exception {
+                runTest("compiler/testData/codegen/box/controlStructures/forInIterator/uintIterator.kt");
+            }
+
+            @Test
+            @TestMetadata("unrelatedExtensionFunctionNext.kt")
+            public void testUnrelatedExtensionFunctionNext() throws Exception {
+                runTest("compiler/testData/codegen/box/controlStructures/forInIterator/unrelatedExtensionFunctionNext.kt");
+            }
+        }
+
+        @Nested
         @TestMetadata("compiler/testData/codegen/box/controlStructures/forInSequenceWithIndex")
         @TestDataPath("$PROJECT_ROOT")
         public class ForInSequenceWithIndex {
@@ -17263,22 +17297,6 @@ public class FirBlackBoxCodegenTestGenerated extends AbstractFirBlackBoxCodegenT
         @TestMetadata("unqualifiedEnum.kt")
         public void testUnqualifiedEnum() throws Exception {
             runTest("compiler/testData/codegen/box/fir/unqualifiedEnum.kt");
-        }
-    }
-
-    @Nested
-    @TestMetadata("compiler/testData/codegen/box/forLoop")
-    @TestDataPath("$PROJECT_ROOT")
-    public class ForLoop {
-        @Test
-        public void testAllFilesPresentInForLoop() throws Exception {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/forLoop"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
-        }
-
-        @Test
-        @TestMetadata("forInIterator.kt")
-        public void testForInIterator() throws Exception {
-            runTest("compiler/testData/codegen/box/forLoop/forInIterator.kt");
         }
     }
 

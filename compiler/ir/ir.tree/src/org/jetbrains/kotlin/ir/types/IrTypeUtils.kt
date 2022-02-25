@@ -29,6 +29,9 @@ fun IrClassifierSymbol.isStrictSubtypeOfClass(superClass: IrClassSymbol): Boolea
 fun IrType.isSubtypeOfClass(superClass: IrClassSymbol): Boolean =
     this is IrSimpleType && classifier.isSubtypeOfClass(superClass)
 
+fun IrType.isStrictSubtypeOfClass(superClass: IrClassSymbol): Boolean =
+    this is IrSimpleType && classifier.isStrictSubtypeOfClass(superClass)
+
 fun IrType.isSubtypeOf(superType: IrType, typeSystem: IrTypeSystemContext): Boolean =
     AbstractTypeChecker.isSubtypeOf(createIrTypeCheckerState(typeSystem), this, superType)
 
