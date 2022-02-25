@@ -182,6 +182,10 @@ class FirJavaMethod @FirImplementationDetail constructor(
     override fun replaceContractDescription(newContractDescription: FirContractDescription) {
     }
 
+    override fun replaceContextReceivers(newContextReceivers: List<FirContextReceiver>) {
+        error("Body cannot be replaced for FirJavaMethod")
+    }
+
     override fun replaceTypeParameters(newTypeParameters: List<FirTypeParameterRef>) {
     }
 }
