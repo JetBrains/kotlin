@@ -100,7 +100,13 @@ fun Project.configureGradlePluginCommonSettings() {
                 .extensions
                 .configure<JavaPluginExtension> {
                     withSourcesJar()
-                    withJavadocJar()
+                    // Enabling publishing docs jars only on CI build
+                    // Currently dokka task runs non-incrementally and takes big amount of time
+                    if (kotlinBuildProperties.publishGradlePluginsJavadoc ||
+                        kotlinBuildProperties.isTeamcityBuild
+                    ) {
+                        withJavadocJar()
+                    }
                 }
         }
 
