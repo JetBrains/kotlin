@@ -8,8 +8,10 @@ package org.jetbrains.kotlin.analysis.api.standalone
 import com.intellij.mock.MockApplication
 import com.intellij.mock.MockProject
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.vfs.StandardFileSystems
 import com.intellij.openapi.vfs.impl.jar.CoreJarFileSystem
 import com.intellij.psi.PsiElementFinder
+import com.intellij.psi.PsiManager
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.analysis.api.InvalidWayOfUsingAnalysisSession
 import org.jetbrains.kotlin.analysis.api.KtAnalysisSessionProvider
@@ -29,6 +31,7 @@ import org.jetbrains.kotlin.analysis.providers.impl.KotlinStaticModificationTrac
 import org.jetbrains.kotlin.analysis.providers.impl.KotlinStaticPackageProviderFactory
 import org.jetbrains.kotlin.asJava.KotlinAsJavaSupport
 import org.jetbrains.kotlin.asJava.finder.JavaElementFinder
+import org.jetbrains.kotlin.cli.jvm.config.javaSourceRoots
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.fir.declarations.SealedClassInheritorsProvider
 import org.jetbrains.kotlin.fir.declarations.SealedClassInheritorsProviderImpl
@@ -39,6 +42,8 @@ import org.jetbrains.kotlin.light.classes.symbol.caches.SymbolLightClassFacadeCa
 import org.jetbrains.kotlin.load.kotlin.PackagePartProvider
 import org.jetbrains.kotlin.psi.KotlinReferenceProvidersService
 import org.jetbrains.kotlin.psi.KtFile
+import java.nio.file.Files
+import java.nio.file.Paths
 
 /**
  * Configure Application environment for Analysis API standalone mode.
@@ -87,6 +92,50 @@ public fun configureApplicationEnvironment(app: MockApplication) {
  *    pass [jarFileSystem] from [KotlinCoreEnvironment] if available.
  */
 public fun configureProjectEnvironment(
+    project: MockProject,
+    compilerConfig: CompilerConfiguration,
+    packagePartProvider: (GlobalSearchScope) -> PackagePartProvider,
+    jarFileSystem: CoreJarFileSystem = CoreJarFileSystem(),
+) {
+    val ktFiles = getKtFilesFromPaths(project, getSourceFilePaths(compilerConfig))
+    configureProjectEnvironment(project, compilerConfig, ktFiles, packagePartProvider, jarFileSystem)
+}
+
+private fun getSourceFilePaths(
+    compilerConfig: CompilerConfiguration,
+): Set<String> {
+    return buildSet {
+        compilerConfig.javaSourceRoots.forEach { srcRoot ->
+            val path = Paths.get(srcRoot)
+            if (Files.isDirectory(path)) {
+                // E.g., project/app/src
+                Files.walk(path)
+                    .filter(Files::isRegularFile)
+                    .forEach { add(it.toString()) }
+            } else {
+                // E.g., project/app/src/some/pkg/main.kt
+                add(srcRoot)
+            }
+        }
+    }
+}
+
+private fun getKtFilesFromPaths(
+    project: Project,
+    paths: Collection<String>,
+): List<KtFile> {
+    val fs = StandardFileSystems.local()
+    val psiManager = PsiManager.getInstance(project)
+    return buildList {
+        for (path in paths) {
+            val vFile = fs.findFileByPath(path) ?: continue
+            val ktFile = psiManager.findFile(vFile) as? KtFile ?: continue
+            add(ktFile)
+        }
+    }
+}
+
+internal fun configureProjectEnvironment(
     project: MockProject,
     compilerConfig: CompilerConfiguration,
     ktFiles: List<KtFile>,
