@@ -5,11 +5,13 @@
 
 package org.jetbrains.kotlin.analysis.providers.impl
 
+import com.intellij.ide.highlighter.JavaClassFileType
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.StandardFileSystems
 import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.impl.jar.CoreJarFileSystem
+import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiManager
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.util.io.URLUtil.JAR_SEPARATOR
@@ -38,7 +40,7 @@ public class KotlinStaticDeclarationProvider(
     private val jarFileSystem: CoreJarFileSystem = CoreJarFileSystem(),
 ) : KotlinDeclarationProvider() {
     private val sourceFilesInScope = sourceKtFiles.filter { scope.contains(it.virtualFile) }
-    private val ktClsFilesByPackageCache by softCachedValue(
+    private val ktClsFilesByFqNameCache by softCachedValue(
         project,
         project.createProjectWideOutOfBlockModificationTracker()
     ) {
@@ -46,19 +48,24 @@ public class KotlinStaticDeclarationProvider(
     }
     private val psiManager by lazy { PsiManager.getInstance(project) }
 
-    private fun filesByPackage(packageFqName: FqName): Sequence<KtFile> =
+    private fun sourceFilesByPackage(packageFqName: FqName): Sequence<KtFile> =
         sourceFilesInScope.asSequence()
             .filter { it.packageFqName == packageFqName }
-            .ifEmpty { getOrCreateKtClsFilesByPackage(packageFqName).asSequence() }
 
-    private fun getOrCreateKtClsFilesByPackage(packageFqName: FqName): List<KtClsFile> {
-        return ktClsFilesByPackageCache.getOrPut(packageFqName) {
-            ktClsFilesByPackage(it)
-        }
+    private fun ktClsFilesByFqName(
+        fqName: FqName,
+        isPackageName: Boolean = true,
+    ): Sequence<KtClsFile> {
+        return ktClsFilesByFqNameCache.getOrPut(fqName) {
+            decompileKtClsFilesByFqName(it, isPackageName)
+        }.asSequence()
     }
 
-    private fun ktClsFilesByPackage(packageFqName: FqName): List<KtClsFile> {
-        val packageFqNameString = packageFqName.asString()
+    private fun decompileKtClsFilesByFqName(
+        fqName: FqName,
+        isPackageName: Boolean,
+    ): List<KtClsFile> {
+        val fqNameString = fqName.asString()
         val fs = StandardFileSystems.local()
         return libraryModules
             .flatMap { libModule ->
@@ -71,21 +78,25 @@ public class KotlinStaticDeclarationProvider(
                     val files = mutableSetOf<VirtualFile>()
                     VfsUtilCore.iterateChildrenRecursively(
                         root,
-                        /*filter=*/{
+                        /*filter=*/filter@{
                             // Return `false` will skip the children.
-                            // If it is a directory, then check if its path ends with package fq name of interest
-                            // Otherwise, i.e., if it is a file, we are already in that matched directory.
-                            // But, for files at the top-level, double-check if its parent (dir) and package fq name of interest matches.
-                            it == root ||
-                                    (it.isDirectory && packageFqNameString.startsWith(relativePackageFqName(root, it))) ||
-                                    relativePackageFqName(root, it.parent).endsWith(packageFqNameString)
+                            if (it == root) return@filter true
+                            // If it is a directory, then check if its path starts with fq name of interest
+                            val relativeFqName = relativeFqName(root, it)
+                            if (it.isDirectory && fqNameString.startsWith(relativeFqName)) {
+                                return@filter true
+                            }
+                            // Otherwise, i.e., if it is a file, we are already in that matched directory (or directory in the middle).
+                            // But, for files at the top-level, double-check if its parent (dir) and fq name of interest match.
+                            if (isPackageName)
+                                relativeFqName(root, it.parent).endsWith(fqNameString)
+                            else // exact class fq name
+                                relativeFqName == fqNameString
                         },
                         /*iterator=*/{
                             // We reach here after filtering above.
                             // Directories in the middle, e.g., com/android, can reach too.
                             if (!it.isDirectory &&
-                                // Double-check if its parent (dir) and package fq name of interest matches.
-                                relativePackageFqName(root, it.parent).endsWith(packageFqNameString) &&
                                 isDecompiledKtFile(it)
                             ) {
                                 files.add(it)
@@ -101,7 +112,7 @@ public class KotlinStaticDeclarationProvider(
             }
     }
 
-    private fun relativePackageFqName(
+    private fun relativeFqName(
         root: VirtualFile,
         virtualFile: VirtualFile,
     ): String {
@@ -109,7 +120,7 @@ public class KotlinStaticDeclarationProvider(
             val fragments = buildList {
                 var cur = virtualFile
                 while (cur != root) {
-                    add(cur.name)
+                    add(cur.nameWithoutExtension)
                     cur = cur.parent
                 }
             }
@@ -123,7 +134,7 @@ public class KotlinStaticDeclarationProvider(
     private fun isDecompiledKtFile(
         virtualFile: VirtualFile,
     ): Boolean {
-        if (!virtualFile.name.endsWith(".class")) return false
+        if (virtualFile.extension?.endsWith(JavaClassFileType.INSTANCE.defaultExtension) != true) return false
         return psiManager.findViewProvider(virtualFile)?.baseLanguage == KotlinLanguage.INSTANCE
     }
 
@@ -133,40 +144,61 @@ public class KotlinStaticDeclarationProvider(
         return psiManager.findFile(virtualFile) as? KtClsFile
     }
 
+    private fun canGoInsideForClassIdLookup(psiElement: PsiElement): Boolean {
+        // Classes and type aliases in members are local, hence not available via [ClassId]
+        return psiElement is KtFile || psiElement is KtClassOrObject || psiElement is KtTypeAlias
+    }
+
     override fun getClassesByClassId(classId: ClassId): Collection<KtClassOrObject> =
-        filesByPackage(classId.packageFqName).flatMap { file ->
-            file.collectDescendantsOfType<KtClassOrObject> { ktClass ->
+        sourceFilesByPackage(classId.packageFqName).flatMap { file ->
+            file.collectDescendantsOfType<KtClassOrObject>(::canGoInsideForClassIdLookup) { ktClass ->
                 ktClass.getClassId() == classId
+            }
+        }.ifEmpty {
+            ktClsFilesByFqName(classId.asSingleFqName(), isPackageName = false).flatMap { file ->
+                file.collectDescendantsOfType<KtClassOrObject>(::canGoInsideForClassIdLookup) { ktClass ->
+                    ktClass.getClassId() == classId
+                }
             }
         }.toList()
 
     override fun getTypeAliasesByClassId(classId: ClassId): Collection<KtTypeAlias> =
-        filesByPackage(classId.packageFqName).flatMap { file ->
-            file.collectDescendantsOfType<KtTypeAlias> { typeAlias ->
+        sourceFilesByPackage(classId.packageFqName).flatMap { file ->
+            file.collectDescendantsOfType<KtTypeAlias>(::canGoInsideForClassIdLookup) { typeAlias ->
                 typeAlias.getClassId() == classId
+            }
+        }.ifEmpty {
+            ktClsFilesByFqName(classId.asSingleFqName(), isPackageName = false).flatMap { file ->
+                file.collectDescendantsOfType<KtTypeAlias>(::canGoInsideForClassIdLookup) { typeAlias ->
+                    typeAlias.getClassId() == classId
+                }
             }
         }.toList()
 
     override fun getTypeAliasNamesInPackage(packageFqName: FqName): Set<Name> =
-        filesByPackage(packageFqName)
+        sourceFilesByPackage(packageFqName)
+            .ifEmpty { ktClsFilesByFqName(packageFqName) }
             .flatMap { it.declarations }
             .filterIsInstance<KtTypeAlias>()
             .mapNotNullTo(mutableSetOf()) { it.nameAsName }
 
     override fun getPropertyNamesInPackage(packageFqName: FqName): Set<Name> =
-        filesByPackage(packageFqName)
+        sourceFilesByPackage(packageFqName)
+            .ifEmpty { ktClsFilesByFqName(packageFqName) }
             .flatMap { it.declarations }
             .filterIsInstance<KtProperty>()
             .mapNotNullTo(mutableSetOf()) { it.nameAsName }
 
     override fun getFunctionsNamesInPackage(packageFqName: FqName): Set<Name> =
-        filesByPackage(packageFqName)
+        sourceFilesByPackage(packageFqName)
+            .ifEmpty { ktClsFilesByFqName(packageFqName) }
             .flatMap { it.declarations }
             .filterIsInstance<KtNamedFunction>()
             .mapNotNullTo(mutableSetOf()) { it.nameAsName }
 
     override fun getFacadeFilesInPackage(packageFqName: FqName): Collection<KtFile> =
-        filesByPackage(packageFqName)
+        sourceFilesByPackage(packageFqName)
+            .ifEmpty { ktClsFilesByFqName(packageFqName) }
             .filter { file -> file.hasTopLevelCallables() }
             .toSet()
 
@@ -177,21 +209,32 @@ public class KotlinStaticDeclarationProvider(
     }
 
     override fun getTopLevelProperties(callableId: CallableId): Collection<KtProperty> =
-        filesByPackage(callableId.packageName)
+        sourceFilesByPackage(callableId.packageName)
+            .ifEmpty {
+                // TODO: this triggers de-compilation of all files in the package, which is too expensive.
+                //   Decompiling facade files only would be optimal.
+                ktClsFilesByFqName(callableId.packageName)
+            }
             .flatMap { it.declarations }
             .filterIsInstance<KtProperty>()
             .filter { it.nameAsName == callableId.callableName }
             .toList()
 
     override fun getTopLevelFunctions(callableId: CallableId): Collection<KtNamedFunction> =
-        filesByPackage(callableId.packageName)
+        sourceFilesByPackage(callableId.packageName)
+            .ifEmpty {
+                // TODO: this triggers de-compilation of all files in the package, which is too expensive.
+                //   Decompiling facade files only would be optimal.
+                ktClsFilesByFqName(callableId.packageName)
+            }
             .flatMap { it.declarations }
             .filterIsInstance<KtNamedFunction>()
             .filter { it.nameAsName == callableId.callableName }
             .toList()
 
     override fun getClassNamesInPackage(packageFqName: FqName): Set<Name> =
-        filesByPackage(packageFqName)
+        sourceFilesByPackage(packageFqName)
+            .ifEmpty { ktClsFilesByFqName(packageFqName) }
             .flatMap { it.declarations }
             .filterIsInstance<KtClassOrObject>()
             .mapNotNullTo(mutableSetOf()) { it.nameAsName }
