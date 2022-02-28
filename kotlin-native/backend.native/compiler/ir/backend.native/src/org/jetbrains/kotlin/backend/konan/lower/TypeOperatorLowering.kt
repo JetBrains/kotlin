@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 
 // TODO: Similar to IrType.erasedUpperBound from jvm.ir
 internal fun IrType.erasure(): IrType {
+    if (this is IrDefinitelyNotNullType) return this.original.erasure().makeNotNull()
     if (this !is IrSimpleType) return this
 
     val upperBound = when (val classifier = classifier) {
