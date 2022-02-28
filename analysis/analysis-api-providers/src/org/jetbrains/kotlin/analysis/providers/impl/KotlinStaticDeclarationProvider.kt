@@ -77,15 +77,15 @@ public class KotlinStaticDeclarationProvider(
                             // Otherwise, i.e., if it is a file, we are already in that matched directory.
                             // But, for files at the top-level, double-check if its parent (dir) and package fq name of interest matches.
                             it == root ||
-                                    (it.isDirectory && packageFqNameString.startsWith(packageFqNameAfterJarSeparator(it))) ||
-                                    packageFqNameAfterJarSeparator(it.parent).endsWith(packageFqNameString)
+                                    (it.isDirectory && packageFqNameString.startsWith(relativePackageFqName(root, it))) ||
+                                    relativePackageFqName(root, it.parent).endsWith(packageFqNameString)
                         },
                         /*iterator=*/{
                             // We reach here after filtering above.
                             // Directories in the middle, e.g., com/android, can reach too.
                             if (!it.isDirectory &&
                                 // Double-check if its parent (dir) and package fq name of interest matches.
-                                packageFqNameAfterJarSeparator(it.parent).endsWith(packageFqNameString) &&
+                                relativePackageFqName(root, it.parent).endsWith(packageFqNameString) &&
                                 isDecompiledKtFile(it)
                             ) {
                                 files.add(it)
@@ -101,11 +101,23 @@ public class KotlinStaticDeclarationProvider(
             }
     }
 
-    private fun packageFqNameAfterJarSeparator(
+    private fun relativePackageFqName(
+        root: VirtualFile,
         virtualFile: VirtualFile,
     ): String {
-        return virtualFile.path.split(JAR_SEPARATOR).lastOrNull()?.replace("/", ".")
-            ?: JAR_SEPARATOR // random string that will bother membership test.
+        return if (root.isDirectory) {
+            val fragments = buildList {
+                var cur = virtualFile
+                while (cur != root) {
+                    add(cur.name)
+                    cur = cur.parent
+                }
+            }
+            fragments.reversed().joinToString(".")
+        } else {
+            virtualFile.path.split(JAR_SEPARATOR).lastOrNull()?.replace("/", ".")
+                ?: JAR_SEPARATOR // random string that will bother membership test.
+        }
     }
 
     private fun isDecompiledKtFile(
