@@ -82,6 +82,10 @@ buildCache {
                 credentials.username = buildProperties.buildCacheUser
                 credentials.password = buildProperties.buildCachePassword
             }
+
+            // ADM-44444
+            allowUntrustedServer = true
+            allowInsecureProtocol = true
         }
     }
 }
