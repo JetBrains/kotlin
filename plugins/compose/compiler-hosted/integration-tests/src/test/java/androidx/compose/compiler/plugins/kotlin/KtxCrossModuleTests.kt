@@ -985,6 +985,40 @@ class KtxCrossModuleTests : AbstractCodegenTest() {
         }
     }
 
+    /**
+     * Test for b/221280935
+     */
+    @Test
+    fun testOverriddenSymbolParentsInDefaultParameters() = ensureSetup {
+        compile(
+            mapOf(
+                "Base" to mapOf(
+                    "base/Base.kt" to """
+                    package base
+
+                    import androidx.compose.runtime.Composable
+
+                    open class Base {
+                      fun f(block: (@Composable () -> Unit)? = null) {}
+                    }
+                    """
+                ),
+                "Main" to mapOf(
+                    "Main.kt" to """
+                    package main
+
+                    import androidx.compose.runtime.Composable
+                    import base.Base
+
+                    class Child : Base() {
+                      init { f {} }
+                    }
+                    """
+                )
+            )
+        )
+    }
+
     fun compile(
         modules: Map<String, Map<String, String>>,
         dumpClasses: Boolean = false,
