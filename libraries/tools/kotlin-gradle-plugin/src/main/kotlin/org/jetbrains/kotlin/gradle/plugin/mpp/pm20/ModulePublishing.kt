@@ -9,7 +9,7 @@ import org.gradle.api.Project
 import org.gradle.api.component.SoftwareComponentFactory
 import org.gradle.api.publish.PublishingExtension
 import org.gradle.api.publish.maven.MavenPublication
-import org.jetbrains.kotlin.gradle.dsl.pm20Extension
+import org.jetbrains.kotlin.gradle.tooling.buildKotlinToolingMetadataTask
 import javax.inject.Inject
 
 internal fun setupKpmModulesPublication(project: Project) {
@@ -44,8 +44,18 @@ internal fun setupPublicationForModule(module: KotlinGradleModule) {
                         it.fromResolutionOf(metadataDependencyConfiguration)
                     }
                 }
+                publication.setupKotlinToolingMetadataIfNeeded(project)
             }
         }
+    }
+}
+
+private fun MavenPublication.setupKotlinToolingMetadataIfNeeded(project: Project) {
+    val buildKotlinToolingMetadataTask = project.buildKotlinToolingMetadataTask ?: return
+
+    artifact(buildKotlinToolingMetadataTask.map { it.outputFile }) { artifact ->
+        artifact.classifier = "kotlin-tooling-metadata"
+        artifact.builtBy(buildKotlinToolingMetadataTask)
     }
 }
 
