@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.gradle.tooling.BuildKotlinToolingMetadataTask
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.tooling.KotlinToolingMetadata
 import org.jetbrains.kotlin.tooling.parseJsonOrThrow
+import org.junit.Assume.assumeFalse
 import org.junit.Test
 import kotlin.test.assertEquals
 
@@ -91,6 +92,7 @@ class KotlinToolingMetadataMppIT : BaseGradleIT() {
 
     @Test
     fun `kotlin-js-browser-project`() = with(transformProjectWithPluginsDsl("kotlin-js-browser-project")) {
+        assumeFalse("KPM model mapping is not yet supported in single-platform projects", isKpmModelMappingEnabled)
         projectDir.resolve("gradle.properties").appendText("\nkotlin.mpp.enableKotlinToolingMetadataArtifact=true")
         build(BuildKotlinToolingMetadataTask.defaultTaskName) {
             assertSuccessful()
