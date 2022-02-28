@@ -28,14 +28,11 @@ object Namer {
     val JS_ERROR = JsNameRef("Error")
 
     val JS_OBJECT = JsNameRef("Object")
+    val JS_UNDEFINED = JsNameRef("undefined")
     val JS_OBJECT_CREATE_FUNCTION = JsNameRef("create", JS_OBJECT)
 
     val METADATA = "\$metadata\$"
-    val METADATA_INTERFACES = "interfaces"
-    val METADATA_SIMPLE_NAME = "simpleName"
-    val METADATA_CLASS_KIND = "kind"
-    val METADATA_FAST_PROTOTYPE = "fastPrototype"
-    val METADATA_SUSPEND_ARITY = "suspendArity"
+    val METADATA_INTERFACE_ID = "interfaceId"
 
     val KCALLABLE_GET_NAME = "<get-name>"
     val KCALLABLE_NAME = "callableName"

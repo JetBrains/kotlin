@@ -18,23 +18,34 @@ internal fun getLocalDelegateReference(name: String, type: dynamic, mutable: Boo
     return getPropertyCallableRef(name, 0, type, lambda, if (mutable) lambda else null)
 }
 
-private fun getPropertyRefClass(obj: dynamic, metadata: dynamic): dynamic {
+private fun getPropertyRefClass(obj: Ctor, metadata: Metadata): dynamic {
     obj.`$metadata$` = metadata;
     obj.constructor = obj;
     return obj;
 }
 
 private fun getKPropMetadata(paramCount: Int, setter: Any?, type: dynamic): dynamic {
-    val mdata = propertyRefClassMetadataCache[paramCount][if (setter == null) 0 else 1]
-    if (mdata.interfaces.length == 0) {
-        mdata.interfaces.push(type)
+    val mdata: Metadata = propertyRefClassMetadataCache[paramCount][if (setter == null) 0 else 1]
+
+    if (mdata.interfaces.size == 0) {
+        mdata.interfaces.asDynamic().push(type)
+
+        if (mdata.interfacesCache == null) {
+            mdata.interfacesCache = generateInterfaceCache()
+        } else {
+            mdata.interfacesCache!!.isComplete = false
+        }
+
+        mdata.interfacesCache!!.extendCacheWithSingle(type)
     }
 
     return mdata
 }
 
-@Suppress("NOTHING_TO_INLINE")
-private inline fun metadataObject(): dynamic = js("{ kind: 'class', interfaces: [] }")
+private fun metadataObject(): Metadata {
+    val undef = js("undefined")
+    return classMeta(undef, undef, undef, undef, undef, undef)
+}
 
 private val propertyRefClassMetadataCache: Array<Array<dynamic>> = arrayOf<Array<dynamic>>(
     //                 immutable     ,     mutable
