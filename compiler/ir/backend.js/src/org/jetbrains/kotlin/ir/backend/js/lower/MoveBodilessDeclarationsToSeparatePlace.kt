@@ -42,7 +42,7 @@ private val BODILESS_BUILTIN_CLASSES = listOf(
     "kotlin.Function"
 ).map { FqName(it) }.toSet()
 
-private fun isBuiltInClass(declaration: IrDeclaration): Boolean =
+fun isBuiltInClass(declaration: IrDeclaration): Boolean =
     declaration is IrClass && declaration.fqNameWhenAvailable in BODILESS_BUILTIN_CLASSES
 
 private val JsPackage = FqName("kotlin.js")
