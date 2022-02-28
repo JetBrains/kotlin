@@ -105,33 +105,29 @@ private fun Project.buildProjectSettings(): KotlinToolingMetadata.ProjectSetting
     )
 }
 
-private fun KpmGradleProjectModelContainer.buildProjectTargets(): List<KotlinToolingMetadata.ProjectTargetMetadata> {
-    val result = mutableSetOf<KotlinToolingMetadata.ProjectTargetMetadata>()
-    val mainModules = modules.filter { it.isMain }
-
-    for (module in mainModules) {
-        result += KotlinToolingMetadata.ProjectTargetMetadata(
-            target = module.common.javaClass.canonicalName,
-            platformType = KotlinPlatformType.common.name,
-            extras = KotlinToolingMetadata.ProjectTargetMetadata.Extras()
-        )
-
-        for (variant in module.variants) {
-            result += KotlinToolingMetadata.ProjectTargetMetadata(
-                target = variant.javaClass.canonicalName,
-                platformType = variant.platformType.name,
-                extras = KotlinToolingMetadata.ProjectTargetMetadata.Extras(
-                    jvm = variant.jvmExtrasOrNull(),
-                    android = variant.androidExtrasOrNull(),
-                    js = variant.jsExtrasOrNull(),
-                    native = variant.nativeExtrasOrNull()
-                )
+private fun KpmGradleProjectModelContainer.buildProjectTargets(): List<KotlinToolingMetadata.ProjectTargetMetadata> =
+    modules
+        .filter { it.isMain }
+        .flatMap { module ->
+            val commonTarget = KotlinToolingMetadata.ProjectTargetMetadata(
+                target = module.common.javaClass.canonicalName,
+                platformType = KotlinPlatformType.common.name,
+                extras = KotlinToolingMetadata.ProjectTargetMetadata.Extras()
             )
-        }
-    }
 
-    return result.toList()
-}
+            module.variants.map { variant ->
+                KotlinToolingMetadata.ProjectTargetMetadata(
+                    target = variant.javaClass.canonicalName,
+                    platformType = variant.platformType.name,
+                    extras = KotlinToolingMetadata.ProjectTargetMetadata.Extras(
+                        jvm = variant.jvmExtrasOrNull(),
+                        android = variant.androidExtrasOrNull(),
+                        js = variant.jsExtrasOrNull(),
+                        native = variant.nativeExtrasOrNull()
+                    )
+                )
+            } + commonTarget
+        }.distinct()
 
 private fun KotlinGradleVariant.jvmExtrasOrNull() =
     when (this) {
