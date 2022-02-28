@@ -592,6 +592,7 @@ fun ExtractionGeneratorConfiguration.generateDeclaration(
                 }
                 return
             }
+            else -> {}
         }
 
         when {

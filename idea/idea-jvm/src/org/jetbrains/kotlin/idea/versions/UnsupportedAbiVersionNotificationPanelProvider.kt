@@ -197,6 +197,7 @@ class UnsupportedAbiVersionNotificationPanelProvider(private val project: Projec
                     is PluginUpdateStatus.LatestVersionInstalled -> {
                         link.text = KotlinJvmBundle.message("no.updates.found")
                     }
+                    else -> {}
                 }
 
                 false  // do not auto-retry update check

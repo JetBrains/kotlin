@@ -218,6 +218,7 @@ class FoldConstantLowering(
                         }
                     }
                 }
+                else -> {}
             }
         }
 
@@ -232,6 +233,7 @@ class FoldConstantLowering(
                     return kind.valueOf(const).toUInt().toString()
                 is IrConstKind.Long ->
                     return kind.valueOf(const).toULong().toString()
+                else -> {}
             }
         }
         return const.value.toString()

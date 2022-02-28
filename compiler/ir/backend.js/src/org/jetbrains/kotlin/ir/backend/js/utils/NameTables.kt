@@ -287,6 +287,7 @@ class NameTables(
         when (val signature = functionSignature(declaration)) {
             is StableNameSignature -> memberNames.declareStableName(signature, signature.name)
             is ParameterTypeBasedSignature -> memberNames.declareFreshName(signature, signature.suggestedName)
+            else -> {}
         }
     }
 

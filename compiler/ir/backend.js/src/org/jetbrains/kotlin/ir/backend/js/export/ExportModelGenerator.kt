@@ -142,6 +142,7 @@ class ExportModelGenerator(val context: JsIrBackendContext) {
         when (val exportability = classExportability(klass)) {
             is Exportability.Prohibited -> error(exportability.reason)
             is Exportability.NotNeeded -> return null
+            else -> {}
         }
 
         val members = mutableListOf<ExportedDeclaration>()

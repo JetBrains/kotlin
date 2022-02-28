@@ -87,6 +87,7 @@ class MemberVisibilityCanBePrivateInspection : AbstractKotlinInspection() {
         val descriptor = (declaration.toDescriptor() as? DeclarationDescriptorWithVisibility) ?: return false
         when (descriptor.effectiveVisibility()) {
             EffectiveVisibility.Private, EffectiveVisibility.Local -> return false
+            else -> {}
         }
 
         val entryPointsManager = EntryPointsManager.getInstance(declaration.project) as EntryPointsManagerBase

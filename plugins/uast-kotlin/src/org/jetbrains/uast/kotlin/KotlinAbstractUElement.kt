@@ -93,6 +93,7 @@ abstract class KotlinAbstractUElement(private val givenParent: UElement?) : Kotl
                 AnnotationUseSiteTarget.SETTER_PARAMETER ->
                     parent = (parentUnwrapped as? KtParameter)
                         ?.toLightSetter()?.parameterList?.parameters?.firstOrNull() ?: parent
+                else -> {}
             }
         }
         if ((psi is UastKotlinPsiVariable || psi is UastKotlinPsiParameter) && parent != null) {

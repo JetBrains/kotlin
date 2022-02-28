@@ -221,6 +221,8 @@ fun getExpectedTypePredicate(
                         typePredicates.add(typePredicate)
                     }
                 }
+
+                else -> {}
             }
         }
     }

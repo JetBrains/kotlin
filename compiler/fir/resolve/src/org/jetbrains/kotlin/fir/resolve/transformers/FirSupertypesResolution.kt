@@ -256,6 +256,7 @@ private class FirSupertypeResolverVisitor(
             is SupertypeComputationStatus.Computing -> return listOf(
                 createErrorTypeRef(classLikeDeclaration, "Loop in supertype definition for ${classLikeDeclaration.symbol.classId}")
             )
+            else -> {}
         }
 
         supertypeComputationSession.startComputingSupertypes(classLikeDeclaration)

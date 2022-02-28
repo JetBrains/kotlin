@@ -71,6 +71,7 @@ class InlinerCycleReporter(
                     return
                 }
                 VisitedState.PROCESSED -> return
+                else -> {}
             }
 
             functionVisitingState[function] = VisitedState.IN_PROCESS

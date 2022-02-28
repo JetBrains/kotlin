@@ -59,6 +59,7 @@ fun loggingReporter(severity: ScriptDiagnostic.Severity, message: String) {
         ScriptDiagnostic.Severity.ERROR -> log.error(message)
         ScriptDiagnostic.Severity.WARNING,
         ScriptDiagnostic.Severity.INFO -> log.info(message)
+        else -> {}
     }
 }
 

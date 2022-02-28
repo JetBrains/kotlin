@@ -80,6 +80,7 @@ class ResolvedAtomCompleter(
             is ResolvedLambdaAtom -> completeLambda(resolvedAtom)
             is ResolvedCallAtom -> completeResolvedCall(resolvedAtom, emptyList())
             is ResolvedSubCallArgument -> completeSubCallArgument(resolvedAtom)
+            else -> {}
         }
     }
 

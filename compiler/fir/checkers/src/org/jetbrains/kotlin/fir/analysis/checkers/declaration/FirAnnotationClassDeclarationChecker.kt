@@ -60,6 +60,7 @@ object FirAnnotationClassDeclarationChecker : FirBasicDeclarationChecker() {
                                 else if (kidsRef.get().all { it?.tokenType != VAL_KEYWORD })
                                     reporter.report(parameterSourceElement, FirErrors.MISSING_VAL_ON_ANNOTATION_PARAMETER)
                             }
+                            else -> {}
                         }
 
                         val typeRef = parameter.returnTypeRef

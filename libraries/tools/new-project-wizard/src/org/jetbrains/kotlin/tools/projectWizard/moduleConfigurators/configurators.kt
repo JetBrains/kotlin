@@ -121,6 +121,7 @@ object JvmSinglePlatformModuleConfigurator : JvmModuleConfigurator,
                 BuildSystemType.Maven -> {
                     +MavenPropertyIR("kotlin.compiler.jvmTarget", targetVersionValue)
                 }
+                else -> {}
             }
         }
 

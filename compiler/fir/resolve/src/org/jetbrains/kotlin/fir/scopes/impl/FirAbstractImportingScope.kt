@@ -67,6 +67,7 @@ abstract class FirAbstractImportingScope(
                     callableId.callableName,
                     processor
                 )
+                else -> {}
             }
         } else if (name.isSpecial || name.identifier.isNotEmpty()) {
             val symbols = provider.getTopLevelCallableSymbols(callableId.packageName, callableId.callableName)

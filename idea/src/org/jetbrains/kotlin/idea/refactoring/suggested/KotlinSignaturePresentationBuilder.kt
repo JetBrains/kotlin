@@ -71,6 +71,7 @@ internal class KotlinSignaturePresentationBuilder(
                     fragments += Leaf(": ")
                     fragments += Leaf(type, effect)
                 }
+                else -> {}
             }
         }
     }

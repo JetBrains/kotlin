@@ -101,6 +101,7 @@ class DeadCodeElimination(private val logConsumer: (DCELogLevel, String) -> Unit
                         val remapper = SourceMapLocationRemapper(sourceMap)
                         statements.forEach { remapper.remap(it) }
                     }
+                    else -> {}
                 }
                 block.statements += statements
                 file.moduleName?.let { dce.moduleMapping[block] = it }

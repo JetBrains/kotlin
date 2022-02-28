@@ -130,6 +130,7 @@ private fun StringBuilder.appendConeType(coneType: ConeKotlinType) {
             appendConeType(coneType.lowerBound)
             return
         }
+        else -> {}
     }
     append(";")
 }

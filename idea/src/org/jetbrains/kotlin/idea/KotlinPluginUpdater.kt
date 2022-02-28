@@ -112,6 +112,7 @@ class KotlinPluginUpdater : Disposable {
                 when (updateStatus) {
                     is PluginUpdateStatus.Update -> notifyPluginUpdateAvailable(updateStatus)
                     is PluginUpdateStatus.CheckFailed -> LOG.info("Plugin update check failed: ${updateStatus.message}, details: ${updateStatus.detail}")
+                    else -> {}
                 }
                 true
             }
