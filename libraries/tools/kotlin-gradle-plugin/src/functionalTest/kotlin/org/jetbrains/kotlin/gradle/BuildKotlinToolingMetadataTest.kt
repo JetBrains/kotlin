@@ -75,17 +75,15 @@ class BuildKotlinToolingMetadataTest {
         assertEquals(project.getKotlinPluginVersion(), metadata.buildPluginVersion)
         assertEquals(1, metadata.projectTargets.size, "Expected one target (metadata)")
         val targetMetadata = metadata.projectTargets.single()
-        if (kpmModelMappingEnabled) {
-            assertTrue(
-                KotlinGradleFragment::class.java.isAssignableFrom(Class.forName(targetMetadata.target)),
-                "Expect target to be implement ${KotlinGradleFragment::class.simpleName}"
-            )
+        val targetClass = if (kpmModelMappingEnabled) {
+            KotlinGradleFragment::class
         } else {
-            assertTrue(
-                KotlinMetadataTarget::class.java.isAssignableFrom(Class.forName(targetMetadata.target)),
-                "Expect target to be implement ${KotlinMetadataTarget::class.simpleName}"
-            )
+            KotlinMetadataTarget::class
         }
+        assertTrue(
+            targetClass.java.isAssignableFrom(Class.forName(targetMetadata.target)),
+            "Expect target to implement ${targetClass.simpleName}"
+        )
         assertEquals(common.name, targetMetadata.platformType)
         assertTrue(metadata.toJsonString().isNotBlank(), "Expected non blank json representation")
     }
