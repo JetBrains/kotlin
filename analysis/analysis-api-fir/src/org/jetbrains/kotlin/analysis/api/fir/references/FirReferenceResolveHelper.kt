@@ -468,9 +468,31 @@ internal object FirReferenceResolveHelper {
                     referencedClass.classId
                 }
             val qualifiedAccessSegments = qualifiedAccess.fqNameSegments() ?: return referencedSymbolsByFir
-            assert(referencedClassId.asSingleFqName().pathSegments().takeLast(qualifiedAccessSegments.size)
-                       .map { it.identifierOrNullIfSpecial } == qualifiedAccessSegments) {
-                "Referenced classId $referencedClassId should end with qualifiedAccess expression ${qualifiedAccess.text} "
+
+            fun referencedClassIdAndQualifiedAccessMatch(
+                qualifiedAccessSegments: List<String>
+            ): Boolean {
+                val referencedClassIdSegments =
+                    referencedClassId.asSingleFqName().pathSegments()
+                        .takeLast(qualifiedAccessSegments.size)
+                        .map { it.identifierOrNullIfSpecial }
+                return referencedClassIdSegments == qualifiedAccessSegments
+            }
+
+            if (!referencedClassIdAndQualifiedAccessMatch(qualifiedAccessSegments)) {
+                // Referenced ClassId and qualified access (from source PSI) could be not identical if an import alias is involved.
+                // E.g., test.pkg.R.string.hello v.s. coreR.string.hello where test.pkg.R is imported as coreR
+                // Since an import alias ends with a simple identifier (i.e., can't be non-trivial dotted qualifier), we can safely assume
+                // that the first segment of the qualified access could be the import alias if any. Then, we can still compare the
+                // remaining parts.
+                // E.g., coreR.string.hello
+                //   -> string.hello (drop the first segment)
+                //   test.pkg.R.string.hello
+                //   -> string.hello (take last two segments, where the size is determined by the size of qualified access minus 1)
+                qualifiedAccessSegments.removeAt(0)
+                assert(referencedClassIdAndQualifiedAccessMatch(qualifiedAccessSegments)) {
+                    "Referenced classId $referencedClassId should end with qualifiedAccess expression ${qualifiedAccess.text} "
+                }
             }
 
             // In the code below, we always maintain the contract that `classId` and `qualifiedAccess` should stay "in-sync", i.e. they
@@ -534,7 +556,7 @@ internal object FirReferenceResolveHelper {
      * Returns the segments of a qualified access PSI. For example, given `foo.bar.OuterClass.InnerClass`, this returns `["foo", "bar",
      * "OuterClass", "InnerClass"]`.
      */
-    private fun KtDotQualifiedExpression.fqNameSegments(): List<String>? {
+    private fun KtDotQualifiedExpression.fqNameSegments(): MutableList<String>? {
         val result: MutableList<String> = mutableListOf()
         var current: KtExpression = this
         while (current is KtDotQualifiedExpression) {

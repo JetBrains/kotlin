@@ -185,6 +185,12 @@ public class FirSourceReferenceResolveTestGenerated extends AbstractReferenceRes
     }
 
     @Test
+    @TestMetadata("importAlias.kt")
+    public void testImportAlias() throws Exception {
+        runTest("analysis/analysis-api/testData/referenceResolve/importAlias.kt");
+    }
+
+    @Test
     @TestMetadata("ImportFromRootScope.kt")
     public void testImportFromRootScope() throws Exception {
         runTest("analysis/analysis-api/testData/referenceResolve/ImportFromRootScope.kt");
