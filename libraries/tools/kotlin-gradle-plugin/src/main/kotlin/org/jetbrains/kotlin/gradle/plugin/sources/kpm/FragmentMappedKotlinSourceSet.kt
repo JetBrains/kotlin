@@ -14,15 +14,19 @@ import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
 import org.jetbrains.kotlin.gradle.plugin.KotlinDependencyHandler
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.LanguageSettingsBuilder
+import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.unambiguousNameInProject
 import org.jetbrains.kotlin.gradle.plugin.sources.createDefaultSourceDirectorySet
+import org.jetbrains.kotlin.gradle.utils.SingleWarningPerBuild
 
 class FragmentMappedKotlinSourceSet(
     private val sourceSetName: String,
-    private val project: Project,
     internal val underlyingFragment: KotlinGradleFragment
 ) : KotlinSourceSet {
+    
+    private val project: Project get() = underlyingFragment.project
+
     val displayName: String
         get() = sourceSetName
 
@@ -43,7 +47,7 @@ class FragmentMappedKotlinSourceSet(
 
     override val kotlin: SourceDirectorySet = underlyingFragment.kotlinSourceRoots
 
-    override val languageSettings: LanguageSettingsBuilder = underlyingFragment.languageSettings
+    override val languageSettings: LanguageSettingsBuilder get() = underlyingFragment.languageSettings
 
     override val resources: SourceDirectorySet = createDefaultSourceDirectorySet(project, "$name resources")
 
@@ -84,7 +88,11 @@ class FragmentMappedKotlinSourceSet(
         get() = emptySet()
 
     override fun requiresVisibilityOf(other: KotlinSourceSet) {
-        throw UnsupportedOperationException("requiresVisibilityOf is not supported for the mapped model")
+        // TODO: introduce checks similar to `requiresVisibilityOf` on the default source set
+        SingleWarningPerBuild.show(
+            project.rootProject,
+            "requiresVisibilityOf(...) has no effect with '${PropertiesProvider.PropertyNames.KOTLIN_KPM_EXPERIMENTAL_MODEL_MAPPING}'"
+        )
     }
 
     // region Ported with copy & paste

@@ -20,6 +20,6 @@ class FragmentMappedKotlinSourceSetFactory constructor(private val project: Proj
         val fragment = project.kpmModules.maybeCreate(location.moduleName).fragments.maybeCreate(location.fragmentName)
 
         /** TODO setup JS-specific attributes similar to [org.jetbrains.kotlin.gradle.plugin.sources.DefaultKotlinSourceSetFactory]*/
-        return FragmentMappedKotlinSourceSet(name, project, fragment)
+        return FragmentMappedKotlinSourceSet(name, fragment)
     }
 }
