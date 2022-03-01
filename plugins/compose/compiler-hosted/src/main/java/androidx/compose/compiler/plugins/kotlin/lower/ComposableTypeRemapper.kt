@@ -143,8 +143,7 @@ class DeepCopyIrTreeWithSymbolsPreservingMetadata(
         ) {
             symbolRemapper.visitConstructor(ownerFn)
             val newFn = super.visitConstructor(ownerFn).also {
-                it.parent = ownerFn.parent
-                it.patchDeclarationParents(it.parent)
+                it.patchDeclarationParents(ownerFn.parent)
             }
             val newCallee = symbolRemapper.getReferencedConstructor(newFn.symbol)
 
@@ -203,14 +202,13 @@ class DeepCopyIrTreeWithSymbolsPreservingMetadata(
 
             symbolRemapper.visitSimpleFunction(newFn)
             newFn = super.visitSimpleFunction(newFn).also { fn ->
-                fn.parent = newFnClass
                 fn.overriddenSymbols = ownerFn.overriddenSymbols.map { it }
                 fn.dispatchReceiverParameter = ownerFn.dispatchReceiverParameter
                 fn.extensionReceiverParameter = ownerFn.extensionReceiverParameter
                 newFn.valueParameters.forEach { p ->
                     fn.addValueParameter(p.name.identifier, p.type)
                 }
-                fn.patchDeclarationParents(fn.parent)
+                fn.patchDeclarationParents(newFnClass)
                 assert(fn.body == null) { "expected body to be null" }
             }
 
@@ -243,17 +241,15 @@ class DeepCopyIrTreeWithSymbolsPreservingMetadata(
                     visitProperty(property).also {
                         it.getter?.correspondingPropertySymbol = it.symbol
                         it.setter?.correspondingPropertySymbol = it.symbol
-                        it.parent = ownerFn.parent
-                        it.patchDeclarationParents(it.parent)
+                        it.patchDeclarationParents(ownerFn.parent)
                         it.copyAttributes(property)
                     }
                 }
             } else {
                 symbolRemapper.visitSimpleFunction(ownerFn)
                 visitSimpleFunction(ownerFn).also {
-                    it.parent = ownerFn.parent
                     it.correspondingPropertySymbol = null
-                    it.patchDeclarationParents(it.parent)
+                    it.patchDeclarationParents(ownerFn.parent)
                 }
             }
             val newCallee = symbolRemapper.getReferencedSimpleFunction(ownerFn.symbol)
@@ -271,14 +267,13 @@ class DeepCopyIrTreeWithSymbolsPreservingMetadata(
                 it.overriddenSymbols = ownerFn.overriddenSymbols.map { override ->
                     if (override.isBound) {
                         visitSimpleFunction(override.owner).apply {
-                            parent = override.owner.parent
+                            patchDeclarationParents(override.owner.parent)
                         }.symbol
                     } else {
                         override
                     }
                 }
-                it.parent = ownerFn.parent
-                it.patchDeclarationParents(it.parent)
+                it.patchDeclarationParents(ownerFn.parent)
             }
             val newCallee = symbolRemapper.getReferencedSimpleFunction(newFn.symbol)
             return shallowCopyCall(expression, newCallee).apply {
