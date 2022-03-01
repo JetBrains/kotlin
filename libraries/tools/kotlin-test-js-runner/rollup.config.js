@@ -3,9 +3,9 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-import typescript from 'rollup-plugin-typescript2';
-import nodeResolve from 'rollup-plugin-node-resolve';
-import commonjs from 'rollup-plugin-commonjs';
+import typescript from '@rollup/plugin-typescript';
+import nodeResolve from '@rollup/plugin-node-resolve';
+import commonjs from '@rollup/plugin-commonjs';
 import {terser} from "rollup-plugin-terser";
 
 const pckg = require('./package.json');
@@ -94,7 +94,6 @@ function plugins() {
                        tsconfig: "tsconfig.json"
                    }),
         terser({
-                   sourcemap: true,
                    compress: {
                        toplevel: true,
                        global_defs: {
