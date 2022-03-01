@@ -20,7 +20,7 @@ internal class LLFirDesignatedAnnotationArgumentsResolveTransformer(
     private val designation: FirDeclarationDesignationWithFile,
     session: FirSession,
     scopeSession: ScopeSession,
-) : LLFirLazyTransformer, FirAnnotationArgumentsResolveTransformer(session, scopeSession) {
+) : LLFirLazyTransformer, FirAnnotationArgumentsResolveTransformer(session, scopeSession, FirResolvePhase.ARGUMENTS_OF_ANNOTATIONS) {
 
     private fun moveNextDeclaration(designationIterator: Iterator<FirDeclaration>) {
         if (!designationIterator.hasNext()) {

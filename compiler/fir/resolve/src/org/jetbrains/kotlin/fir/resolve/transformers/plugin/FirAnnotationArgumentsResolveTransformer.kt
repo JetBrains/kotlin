@@ -19,10 +19,11 @@ import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirExpressions
 open class FirAnnotationArgumentsResolveTransformer(
     session: FirSession,
     scopeSession: ScopeSession,
+    resolvePhase: FirResolvePhase,
     outerBodyResolveContext: BodyResolveContext? = null
 ) : FirBodyResolveTransformer(
     session,
-    FirResolvePhase.ARGUMENTS_OF_ANNOTATIONS,
+    resolvePhase,
     implicitTypeOnly = false,
     scopeSession,
     outerBodyResolveContext = outerBodyResolveContext

@@ -25,11 +25,23 @@ internal abstract class FirAbstractAnnotationResolveTransformer<D, S>(
 
     protected lateinit var scopes: List<FirScope>
 
-    override fun transformFile(file: FirFile, data: D): FirFile {
+    inline fun <T> withFileScopes(file: FirFile, f: () -> T): T {
         scopes = createImportingScopes(file, session, scopeSession, useCaching = false)
         val state = beforeTransformingChildren(file)
-        file.transformDeclarations(this, data)
-        afterTransformingChildren(state)
+        try {
+            return f()
+        } finally {
+            afterTransformingChildren(state)
+        }
+    }
+
+    override fun transformFile(file: FirFile, data: D): FirFile {
+        withFileScopes(file) {
+            scopes = createImportingScopes(file, session, scopeSession, useCaching = false)
+            val state = beforeTransformingChildren(file)
+            file.transformDeclarations(this, data)
+            afterTransformingChildren(state)
+        }
         return transformDeclaration(file, data) as FirFile
     }
 
