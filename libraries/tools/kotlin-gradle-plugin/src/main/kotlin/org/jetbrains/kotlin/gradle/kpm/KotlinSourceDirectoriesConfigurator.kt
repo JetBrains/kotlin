@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.gradle.kpm
 import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtensionOrNull
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinGradleFragment
-import org.jetbrains.kotlin.gradle.plugin.sources.kpm.FragmentMappedKotlinSourceSet
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 import java.io.File
 

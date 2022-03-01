@@ -33,7 +33,7 @@ import org.jetbrains.kotlin.gradle.kpm.util.ofVariantCompileDependencies
 import org.jetbrains.kotlin.gradle.kpm.util.ofVariantRuntimeDependencies
 import org.jetbrains.kotlin.gradle.plugin.sources.defaultSourceSetLanguageSettingsChecker
 import org.jetbrains.kotlin.gradle.plugin.sources.getVisibleSourceSetsFromAssociateCompilations
-import org.jetbrains.kotlin.gradle.plugin.sources.kpm.FragmentMappedKotlinSourceSet
+import org.jetbrains.kotlin.gradle.kpm.FragmentMappedKotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.sources.resolveAllDependsOnSourceSets
 import org.jetbrains.kotlin.gradle.plugin.sources.withAllDependsOnSourceSets
 import org.jetbrains.kotlin.gradle.targets.js.KotlinJsTarget

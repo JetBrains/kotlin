@@ -21,7 +21,6 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinGradleVariant
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinGradleVariantWithRuntime
 import org.jetbrains.kotlin.gradle.kpm.util.disambiguateName
 import org.jetbrains.kotlin.gradle.plugin.mpp.publishedConfigurationName
-import org.jetbrains.kotlin.gradle.plugin.sources.kpm.FragmentMappedKotlinSourceSet
 import org.jetbrains.kotlin.gradle.utils.filesProvider
 import org.jetbrains.kotlin.project.model.KotlinAttributeKey
 import org.jetbrains.kotlin.project.model.KotlinModuleDependency

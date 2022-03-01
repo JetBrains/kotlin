@@ -1,9 +1,9 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.gradle.plugin.sources.kpm
+package org.jetbrains.kotlin.gradle.kpm
 
 import org.gradle.api.Project
 import org.jetbrains.kotlin.gradle.dsl.*
@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.gradle.dsl.topLevelExtensionOrNull
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinAndroidTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinAndroidTargetPreset
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinGradleModule
-import org.jetbrains.kotlin.gradle.kpm.kpmModules
 
 interface SourceSetMappedFragmentLocator {
     data class FragmentLocation(val moduleName: String, val fragmentName: String) {

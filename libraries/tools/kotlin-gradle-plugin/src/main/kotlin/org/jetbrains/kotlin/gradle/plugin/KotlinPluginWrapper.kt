@@ -32,7 +32,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsages
 import org.jetbrains.kotlin.gradle.kpm.KotlinPm20GradlePlugin
 import org.jetbrains.kotlin.gradle.kpm.KotlinPm20ProjectExtension
 import org.jetbrains.kotlin.gradle.plugin.sources.DefaultKotlinSourceSetFactory
-import org.jetbrains.kotlin.gradle.plugin.sources.kpm.FragmentMappedKotlinSourceSetFactory
+import org.jetbrains.kotlin.gradle.kpm.FragmentMappedKotlinSourceSetFactory
 import org.jetbrains.kotlin.gradle.plugin.statistics.KotlinBuildStatsService
 import org.jetbrains.kotlin.gradle.report.BuildMetricsReporterService
 import org.jetbrains.kotlin.gradle.report.HttpReportService
