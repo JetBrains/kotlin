@@ -413,7 +413,7 @@ internal class FirLazyDeclarationResolver(private val firFileBuilder: FirFileBui
     }
 
     private fun skipPhaseInLazyResolve(currentPhase: FirResolvePhase): Boolean {
-        return currentPhase == FirResolvePhase.ANNOTATIONS_FOR_PLUGINS
+        return currentPhase == FirResolvePhase.COMPILER_REQUIRED_ANNOTATIONS
     }
 }
 
