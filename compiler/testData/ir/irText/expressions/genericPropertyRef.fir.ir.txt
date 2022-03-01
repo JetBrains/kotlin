@@ -172,20 +172,20 @@ FILE fqName:<root> fileName:/genericPropertyRef.kt
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun <get-bar> <T> (): T of <root>.<get-bar> declared in <root>'
           GET_VAR '<this>: T of <root>.<get-bar> declared in <root>.<get-bar>' type=T of <root>.<get-bar> origin=null
-    FUN name:<set-bar> visibility:public modality:FINAL <T> ($receiver:T of <root>.<set-bar>, value:T of <root>.<get-bar>) returnType:kotlin.Unit
+    FUN name:<set-bar> visibility:public modality:FINAL <T> ($receiver:T of <root>.<set-bar>, value:T of <root>.<set-bar>) returnType:kotlin.Unit
       correspondingProperty: PROPERTY name:bar visibility:public modality:FINAL [var]
       TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false
       $receiver: VALUE_PARAMETER name:<this> type:T of <root>.<set-bar>
-      VALUE_PARAMETER name:value index:0 type:T of <root>.<get-bar>
+      VALUE_PARAMETER name:value index:0 type:T of <root>.<set-bar>
       BLOCK_BODY
         CALL 'public final fun <set-recivier> (<set-?>: kotlin.Any?): kotlin.Unit declared in <root>' type=kotlin.Unit origin=EQ
           <set-?>: GET_VAR '<this>: T of <root>.<set-bar> declared in <root>.<set-bar>' type=T of <root>.<set-bar> origin=null
         CALL 'public final fun <set-value2> (<set-?>: kotlin.Any?): kotlin.Unit declared in <root>' type=kotlin.Unit origin=EQ
-          <set-?>: GET_VAR 'value: T of <root>.<get-bar> declared in <root>.<set-bar>' type=T of <root>.<get-bar> origin=null
+          <set-?>: GET_VAR 'value: T of <root>.<set-bar> declared in <root>.<set-bar>' type=T of <root>.<get-bar> origin=null
   PROPERTY name:barRef visibility:public modality:FINAL [val]
     FIELD PROPERTY_BACKING_FIELD name:barRef type:kotlin.reflect.KMutableProperty1<kotlin.String?, kotlin.String?> visibility:private [final,static]
       EXPRESSION_BODY
-        PROPERTY_REFERENCE 'public final bar: T of <root>.<get-bar> [var]' field=null getter='public final fun <get-bar> <T> (): T of <root>.<get-bar> declared in <root>' setter='public final fun <set-bar> <T> (value: T of <root>.<get-bar>): kotlin.Unit declared in <root>' type=kotlin.reflect.KMutableProperty1<kotlin.String?, kotlin.String?> origin=null
+        PROPERTY_REFERENCE 'public final bar: T of <root>.<get-bar> [var]' field=null getter='public final fun <get-bar> <T> (): T of <root>.<get-bar> declared in <root>' setter='public final fun <set-bar> <T> (value: T of <root>.<set-bar>): kotlin.Unit declared in <root>' type=kotlin.reflect.KMutableProperty1<kotlin.String?, kotlin.String?> origin=null
           <1>: kotlin.String?
     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-barRef> visibility:public modality:FINAL <> () returnType:kotlin.reflect.KMutableProperty1<kotlin.String?, kotlin.String?>
       correspondingProperty: PROPERTY name:barRef visibility:public modality:FINAL [val]
