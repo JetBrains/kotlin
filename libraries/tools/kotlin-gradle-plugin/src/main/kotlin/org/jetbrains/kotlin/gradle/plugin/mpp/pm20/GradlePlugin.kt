@@ -51,37 +51,6 @@ abstract class KotlinPm20GradlePlugin @Inject constructor(
         }
     }
 
-    private fun setupPublicationForModule(module: KotlinGradleModule) {
-        val project = module.project
-
-        val metadataElements = project.configurations.getByName(metadataElementsConfigurationName(module))
-        val sourceElements = project.configurations.getByName(sourceElementsConfigurationName(module))
-
-        val componentName = rootPublicationComponentName(module)
-        val rootSoftwareComponent = softwareComponentFactory.adhoc(componentName).also {
-            project.components.add(it)
-            it.addVariantsFromConfiguration(metadataElements) { }
-            it.addVariantsFromConfiguration(sourceElements) { }
-        }
-
-        module.ifMadePublic {
-            val metadataDependencyConfiguration = resolvableMetadataConfiguration(module)
-            project.pluginManager.withPlugin("maven-publish") {
-                project.extensions.getByType(PublishingExtension::class.java).publications.create(
-                    componentName,
-                    MavenPublication::class.java
-                ) { publication ->
-                    publication.from(rootSoftwareComponent)
-                    publication.versionMapping { versionMapping ->
-                        versionMapping.allVariants {
-                            it.fromResolutionOf(metadataDependencyConfiguration)
-                        }
-                    }
-                }
-            }
-        }
-    }
-
     private fun setupToolingModelBuilder() {
         toolingModelBuilderRegistry.register(IdeaKotlinProjectModelBuilder())
     }
