@@ -68,6 +68,9 @@ fun addImportToFile(
                 directivePath != null && SimpleImportPathComparator.compare(directivePath, importPath) <= 0
             }
 
+
+        //TODO: make a normal fix of imports being merged without a separator
         importList.addAfter(newDirective, insertAfter)
+        importList.addAfter(psiFactory.createNewLine(), insertAfter)
     }
 }
