@@ -48,6 +48,11 @@ internal object LazyTransformerFactory {
             designation.firFile.moduleData.session,
             scopeSession,
         )
+        FirResolvePhase.COMPILER_REQUIRED_ANNOTATIONS -> LLFirDesignatedAnnotationsResolveTransformed(
+            designation,
+            designation.firFile.moduleData.session,
+            scopeSession,
+        )
         FirResolvePhase.ARGUMENTS_OF_ANNOTATIONS -> LLFirDesignatedAnnotationArgumentsResolveTransformer(
             designation,
             designation.firFile.moduleData.session,
