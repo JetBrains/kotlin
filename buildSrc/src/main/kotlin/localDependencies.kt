@@ -74,13 +74,26 @@ fun RepositoryHandler.kotlinBuildLocalRepo(project: Project): IvyArtifactReposit
     }
 }
 
+/* <used only for cooperative development for non kt-master branches> */
 @JvmOverloads
 fun Project.intellijDep(module: String? = null, forIde: Boolean = false) =
     "kotlin.build:${module ?: ideModuleName()}:${ideModuleVersion(forIde)}"
 
+
 fun Project.intellijCoreDep() = "kotlin.build:intellij-core:${rootProject.extra["versions.intellijSdk"]}"
 
 fun Project.intellijPluginDep(plugin: String, forIde: Boolean = false) = intellijDep(plugin, forIde)
+
+/* </used only for cooperative development for non kt-master branches> */
+
+
+/* <used only for cooperative development for kt-master branch> */
+fun Project.intellijMavenDep(subsystem: String, artifact: String) =
+    "com.jetbrains.$subsystem:$artifact:${ideModuleVersion(forIde = true)}"
+
+
+/* </used only for cooperative development for kt-master branch> */
+
 
 fun ModuleDependency.includeJars(vararg names: String, rootProject: Project? = null) {
     names.forEach {

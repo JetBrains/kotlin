@@ -208,9 +208,16 @@ fun prepareDeps(
     }
 }
 
-if (intellijVersionForIde != null) {
-    prepareDeps(intellijForIde, intellijCoreForIde, sourcesForIde, jpsStandaloneForIde, intellijVersionForIde)
+when(kotlinBuildProperties.getOrNull("attachedIntellijVersion")) {
+    null -> {}
+    "master" -> {} // for intellij/kt-master, intellij maven artifacts are used instead of manual unpacked dependencies
+    else -> {
+        val intellijVersionForIde = intellijVersionForIde
+            ?: error("intellijVersionForIde should not be null as attachedIntellijVersion is present")
+        prepareDeps(intellijForIde, intellijCoreForIde, sourcesForIde, jpsStandaloneForIde, intellijVersionForIde)
+    }
 }
+
 
 tasks.named<Delete>("clean") {
     delete(customDepsRepoDir)
