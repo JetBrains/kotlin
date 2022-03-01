@@ -42,7 +42,7 @@ fun kpmNativeVariantsSourceCode() = """
 
 private val fileName = "KpmNativeVariants.kt"
 
-private val packageName = "org.jetbrains.kotlin.gradle.plugin.mpp.pm20"
+private val packageName = "org.jetbrains.kotlin.gradle.kpm"
 
 private fun allKonanTargets() = KonanTarget.predefinedTargets.values
 

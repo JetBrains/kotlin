@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.gradle.kpm.KotlinExternalModelKey
 import org.jetbrains.kotlin.gradle.kpm.KotlinExternalModelSerializer.Companion.serializable
 import org.jetbrains.kotlin.gradle.kpm.external.ExternalVariantApi
 import org.jetbrains.kotlin.gradle.kpm.external.external
-import org.jetbrains.kotlin.gradle.plugin.KotlinPm20PluginWrapper
+import org.jetbrains.kotlin.gradle.plugin.KpmPluginWrapper
 import org.jetbrains.kotlin.gradle.kpm.KotlinIosX64Variant
 import org.jetbrains.kotlin.gradle.kpm.KotlinLinuxX64Variant
 import org.jetbrains.kotlin.gradle.kpm.KpmExtension
@@ -89,7 +89,7 @@ class BackwardsCompatibilityDeserializationTest {
         val unretainedModelKey = KotlinExternalModelKey<UnretainedModel>()
 
         val project = ProjectBuilder.builder().build() as ProjectInternal
-        project.plugins.apply(KotlinPm20PluginWrapper::class.java)
+        project.plugins.apply(KpmPluginWrapper::class.java)
 
         /* Setup example project */
         val kotlinExtension = project.extensions.getByType(KpmExtension::class.java)

@@ -4,7 +4,7 @@ import org.gradle.configurationcache.extensions.serviceOf
 import org.gradle.testfixtures.ProjectBuilder
 import org.gradle.tooling.provider.model.ToolingModelBuilderRegistry
 import org.jetbrains.kotlin.gradle.kpm.idea.IdeaKotlinProjectModel
-import org.jetbrains.kotlin.gradle.plugin.KotlinPm20PluginWrapper
+import org.jetbrains.kotlin.gradle.plugin.KpmPluginWrapper
 import org.jetbrains.kotlin.gradle.kpm.KpmExtension
 
 /*
@@ -19,6 +19,6 @@ fun Project.buildIdeaKotlinProjectModel(): IdeaKotlinProjectModel {
 
 fun createKpmProject(): Pair<ProjectInternal, KpmExtension> {
     val project = ProjectBuilder.builder().build() as ProjectInternal
-    project.plugins.apply(KotlinPm20PluginWrapper::class.java)
+    project.plugins.apply(KpmPluginWrapper::class.java)
     return project to project.extensions.getByType(KpmExtension::class.java)
 }

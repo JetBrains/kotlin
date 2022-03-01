@@ -29,7 +29,7 @@ import org.jetbrains.kotlin.gradle.internal.KOTLIN_MODULE_GROUP
 import org.jetbrains.kotlin.gradle.logging.kotlinDebug
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinMultiplatformPlugin
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsages
-import org.jetbrains.kotlin.gradle.kpm.KotlinPm20GradlePlugin
+import org.jetbrains.kotlin.gradle.kpm.KpmGradlePlugin
 import org.jetbrains.kotlin.gradle.kpm.KpmExtension
 import org.jetbrains.kotlin.gradle.plugin.sources.DefaultKotlinSourceSetFactory
 import org.jetbrains.kotlin.gradle.kpm.FragmentMappedKotlinSourceSetFactory
@@ -243,11 +243,11 @@ open class KotlinMultiplatformPluginWrapper : KotlinBasePluginWrapper() {
     }
 }
 
-open class KotlinPm20PluginWrapper @Inject constructor(
+open class KpmPluginWrapper @Inject constructor(
     private val objectFactory: ObjectFactory
 ) : KotlinBasePluginWrapper() {
     override fun getPlugin(project: Project): Plugin<Project> =
-        objectFactory.newInstance(KotlinPm20GradlePlugin::class.java)
+        objectFactory.newInstance(KpmGradlePlugin::class.java)
 
     override val projectExtensionClass: KClass<out KpmExtension>
         get() = KpmExtension::class

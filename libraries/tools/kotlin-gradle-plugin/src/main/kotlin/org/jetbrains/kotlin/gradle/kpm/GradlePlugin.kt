@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.gradle.kpm.idea.IdeaKotlinProjectModelBuilder
 import org.jetbrains.kotlin.gradle.utils.checkGradleCompatibility
 import javax.inject.Inject
 
-abstract class KotlinPm20GradlePlugin @Inject constructor(
+abstract class KpmGradlePlugin @Inject constructor(
     @Inject private val softwareComponentFactory: SoftwareComponentFactory,
     @Inject private val toolingModelBuilderRegistry: ToolingModelBuilderRegistry
 ) : Plugin<Project> {
@@ -127,33 +127,33 @@ fun KpmExtension.jvm(configure: KotlinFragmentSlice<KotlinJvmVariant>.() -> Unit
 }
 
 open class KotlinFragmentSlice<T : KotlinGradleFragment>(
-    val pm20ProjectExtension: KpmExtension,
+    val kpmProjectExtension: KpmExtension,
     val getOrCreateFragment: (KotlinGradleModule) -> T
 ) {
     fun inMain(configure: T.() -> Unit) {
-        pm20ProjectExtension.modules.getByName(KotlinGradleModule.MAIN_MODULE_NAME).apply {
+        kpmProjectExtension.modules.getByName(KotlinGradleModule.MAIN_MODULE_NAME).apply {
             getOrCreateFragment(this).configure()
         }
     }
 
     fun inTest(configure: T.() -> Unit) {
-        pm20ProjectExtension.modules.getByName(KotlinGradleModule.TEST_MODULE_NAME).apply {
+        kpmProjectExtension.modules.getByName(KotlinGradleModule.TEST_MODULE_NAME).apply {
             getOrCreateFragment(this).configure()
         }
     }
 
     fun inMainAndTest(configure: T.() -> Unit) {
-        pm20ProjectExtension.mainAndTest { getOrCreateFragment(this).configure() }
+        kpmProjectExtension.mainAndTest { getOrCreateFragment(this).configure() }
     }
 
     fun inAllModules(configure: T.() -> Unit) {
-        pm20ProjectExtension.modules.all {
+        kpmProjectExtension.modules.all {
             getOrCreateFragment(it).configure()
         }
     }
 
     fun inModule(moduleName: String, configure: T.() -> Unit) {
-        pm20ProjectExtension.modules.getByName(moduleName).apply { getOrCreateFragment(this).configure() }
+        kpmProjectExtension.modules.getByName(moduleName).apply { getOrCreateFragment(this).configure() }
     }
 
     fun inModule(module: NamedDomainObjectProvider<KotlinGradleModule>, configure: T.() -> Unit) {
