@@ -8,9 +8,6 @@ package org.jetbrains.kotlin.gradle.kpm
 import org.gradle.api.Project
 import org.gradle.api.provider.Provider
 import org.gradle.language.base.plugins.LifecycleBasePlugin
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinCompilationData
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinGradleFragment
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinGradleModule
 import org.jetbrains.kotlin.project.model.utils.variantsContainingFragment
 import java.io.File
 

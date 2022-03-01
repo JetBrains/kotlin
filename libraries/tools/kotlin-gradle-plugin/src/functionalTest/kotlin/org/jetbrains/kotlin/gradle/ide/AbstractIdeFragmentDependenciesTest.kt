@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.dsl.pm20Extension
 import org.jetbrains.kotlin.gradle.kpm.applyKpmPlugin
 import org.jetbrains.kotlin.gradle.plugin.ide.*
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinGradleFragment
+import org.jetbrains.kotlin.gradle.kpm.KotlinGradleFragment
 import org.jetbrains.kotlin.gradle.kpm.KotlinPm20ProjectExtension
 import org.jetbrains.kotlin.gradle.kpm.currentBuildId
 

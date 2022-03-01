@@ -9,8 +9,6 @@ import org.gradle.api.Project
 import org.gradle.api.artifacts.result.ResolvedDependencyResult
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.MetadataDependencyResolution.ChooseVisibleSourceSets.MetadataProvider.Companion.asMetadataProvider
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinGradleFragment
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinGradleVariant
 import org.jetbrains.kotlin.project.model.*
 import org.jetbrains.kotlin.utils.addToStdlib.flattenTo
 import java.io.File

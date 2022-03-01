@@ -6,8 +6,6 @@
 package org.jetbrains.kotlin.gradle.kpm
 
 import org.gradle.api.artifacts.Configuration
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinFragmentDependencyConfigurations
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinGradleModule
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import javax.inject.Inject
 

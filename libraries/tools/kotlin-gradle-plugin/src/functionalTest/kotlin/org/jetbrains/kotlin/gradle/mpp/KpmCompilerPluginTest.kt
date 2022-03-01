@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.gradle.mpp
 
 import org.gradle.api.Project
 import org.gradle.api.artifacts.Configuration
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.GradleKpmCompilerPlugin
+import org.jetbrains.kotlin.gradle.kpm.GradleKpmCompilerPlugin
 import org.jetbrains.kotlin.gradle.kpm.jvm
 import org.jetbrains.kotlin.gradle.tasks.AbstractKotlinCompile
 import org.jetbrains.kotlin.gradle.tasks.AbstractKotlinNativeCompile

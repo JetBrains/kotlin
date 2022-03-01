@@ -14,7 +14,7 @@ import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.Nested
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtensionOrNull
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinGradleModule
+import org.jetbrains.kotlin.gradle.kpm.KotlinGradleModule
 import org.jetbrains.kotlin.gradle.kpm.hasKpmModel
 import org.jetbrains.kotlin.gradle.kpm.refinesClosure
 import org.jetbrains.kotlin.gradle.plugin.sources.KotlinDependencyScope

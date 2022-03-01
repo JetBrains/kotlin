@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.gradle.kpm
 
 import org.gradle.api.tasks.TaskProvider
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinGradleVariant
 import org.jetbrains.kotlin.gradle.kpm.util.unambiguousNameInProject
 import org.jetbrains.kotlin.gradle.plugin.mpp.sourcesJarTaskNamed
 

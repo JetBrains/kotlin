@@ -14,7 +14,7 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 import org.jetbrains.kotlin.gradle.kpm.MultiplatformSourceSetMappedFragmentLocator
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinGradleModule
+import org.jetbrains.kotlin.gradle.kpm.KotlinGradleModule
 import org.jetbrains.kotlin.gradle.kpm.kpmModules
 import org.jetbrains.kotlin.gradle.kpm.SourceSetMappedFragmentLocator
 

@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.gradle.android
 
 import org.jetbrains.kotlin.gradle.kpm.KotlinGradleFragmentInternal
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinGradleModule
+import org.jetbrains.kotlin.gradle.kpm.KotlinGradleModule
 
 val KotlinGradleModule.androidCommon: KotlinGradleFragmentInternal
     get() = (fragments.findByName("android") ?: fragments.create("android") { fragment ->

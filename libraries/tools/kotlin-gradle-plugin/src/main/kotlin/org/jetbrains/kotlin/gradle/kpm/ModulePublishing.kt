@@ -9,7 +9,6 @@ import org.gradle.api.Project
 import org.gradle.api.component.SoftwareComponentFactory
 import org.gradle.api.publish.PublishingExtension
 import org.gradle.api.publish.maven.MavenPublication
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinGradleModule
 import javax.inject.Inject
 
 internal fun setupKpmModulesPublication(project: Project) {

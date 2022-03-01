@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.gradle.kpm
 
 import org.gradle.api.tasks.TaskProvider
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinGradleVariant
 
 interface KotlinCompileTaskConfigurator<in T : KotlinGradleVariant> {
     fun registerCompileTasks(variant: T): TaskProvider<*>

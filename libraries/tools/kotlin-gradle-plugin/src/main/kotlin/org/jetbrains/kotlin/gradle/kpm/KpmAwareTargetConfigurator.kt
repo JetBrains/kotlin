@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.AbstractKotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.AbstractKotlinTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.VariantMappedCompilationDetails
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.SingleMavenPublishedModuleHolder
 import java.util.concurrent.Callable
 
 internal open class KpmAwareTargetConfigurator<T : KotlinTarget>(

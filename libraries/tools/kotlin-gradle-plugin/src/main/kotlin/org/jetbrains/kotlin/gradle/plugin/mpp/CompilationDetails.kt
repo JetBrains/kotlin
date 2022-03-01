@@ -25,7 +25,6 @@ import org.jetbrains.kotlin.gradle.kpm.isMainCompilationData
 import org.jetbrains.kotlin.gradle.kpm.AbstractKotlinFragmentMetadataCompilationData
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.internal.KotlinCompilationsModuleGroups
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.*
 import org.jetbrains.kotlin.gradle.kpm.util.unambiguousNameInProject
 import org.jetbrains.kotlin.gradle.kpm.util.*
 import org.jetbrains.kotlin.gradle.kpm.util.newDependencyFilesHolder
@@ -36,6 +35,7 @@ import org.jetbrains.kotlin.gradle.plugin.sources.getVisibleSourceSetsFromAssoci
 import org.jetbrains.kotlin.gradle.kpm.FragmentMappedKotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.sources.resolveAllDependsOnSourceSets
 import org.jetbrains.kotlin.gradle.plugin.sources.withAllDependsOnSourceSets
+import org.jetbrains.kotlin.gradle.kpm.KotlinCompilationData
 import org.jetbrains.kotlin.gradle.targets.js.KotlinJsTarget
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrCompilation
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrTarget

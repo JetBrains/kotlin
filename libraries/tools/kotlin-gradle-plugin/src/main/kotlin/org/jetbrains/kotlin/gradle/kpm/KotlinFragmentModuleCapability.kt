@@ -8,8 +8,6 @@ package org.jetbrains.kotlin.gradle.kpm
 import org.gradle.api.artifacts.Configuration
 import org.gradle.api.capabilities.Capability
 import org.jetbrains.kotlin.gradle.kpm.util.ComputedCapability
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinGradleFragment
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinGradleModule
 
 val KotlinFragmentModuleCapability = FragmentCapabilities<KotlinGradleFragment> {
     capability(fragment.containingModule.moduleCapability ?: return@FragmentCapabilities)

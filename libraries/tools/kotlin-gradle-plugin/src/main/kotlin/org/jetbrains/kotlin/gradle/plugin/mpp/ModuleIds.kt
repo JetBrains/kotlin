@@ -19,8 +19,8 @@ import org.jetbrains.kotlin.gradle.kpm.currentBuildId
 import org.jetbrains.kotlin.gradle.kpm.hasKpmModel
 import org.jetbrains.kotlin.gradle.kpm.kpmModelContainer
 import org.jetbrains.kotlin.gradle.kpm.kpmModules
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.*
 import org.jetbrains.kotlin.gradle.kpm.util.ComputedCapability
+import org.jetbrains.kotlin.gradle.kpm.PublishedModuleCoordinatesProvider
 import org.jetbrains.kotlin.gradle.utils.getValue
 import org.jetbrains.kotlin.project.model.KotlinModuleIdentifier
 import org.jetbrains.kotlin.project.model.LocalModuleIdentifier

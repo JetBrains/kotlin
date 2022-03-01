@@ -11,9 +11,6 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinJvmOptionsImpl
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.filterModuleName
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinFragmentDependencyConfigurations
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinGradleModule
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinGradleVariant
 import org.jetbrains.kotlin.gradle.targets.jvm.KotlinJvmTarget
 
 open class KotlinJvmVariant(

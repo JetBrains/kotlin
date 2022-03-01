@@ -10,7 +10,7 @@ import org.gradle.api.Action
 import org.gradle.api.Named
 import org.gradle.api.file.FileCollection
 import org.jetbrains.kotlin.gradle.dsl.KotlinCommonOptions
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinCompilationData
+import org.jetbrains.kotlin.gradle.kpm.KotlinCompilationData
 
 interface CInteropSettings : Named {
 

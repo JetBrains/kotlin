@@ -11,9 +11,6 @@ import org.jetbrains.kotlin.gradle.plugin.Kotlin2JvmSourceSetProcessor
 import org.jetbrains.kotlin.gradle.plugin.KotlinNativeTargetConfigurator
 import org.jetbrains.kotlin.gradle.plugin.mpp.addCommonSourcesToKotlinCompileTask
 import org.jetbrains.kotlin.gradle.plugin.mpp.addSourcesToKotlinCompileTask
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinCompilationData
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinGradleFragment
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinGradleVariant
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.jetbrains.kotlin.gradle.tasks.KotlinNativeCompile
 import org.jetbrains.kotlin.gradle.tasks.KotlinTasksProvider

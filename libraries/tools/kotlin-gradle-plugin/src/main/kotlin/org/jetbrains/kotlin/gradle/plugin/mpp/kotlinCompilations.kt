@@ -18,8 +18,8 @@ import org.gradle.api.tasks.TaskProvider
 import org.gradle.api.tasks.TaskState
 import org.jetbrains.kotlin.gradle.dsl.*
 import org.jetbrains.kotlin.gradle.plugin.*
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.*
 import org.jetbrains.kotlin.gradle.plugin.sources.resolveAllDependsOnSourceSets
+import org.jetbrains.kotlin.gradle.kpm.KotlinCompilationData
 import org.jetbrains.kotlin.gradle.tasks.AbstractKotlinCompile
 import org.jetbrains.kotlin.gradle.tasks.locateTask
 import org.jetbrains.kotlin.gradle.utils.*

@@ -13,8 +13,6 @@ import org.gradle.jvm.tasks.Jar
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.KotlinCommonSourceSetProcessor
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinGradleFragment
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinGradleModule
 import org.jetbrains.kotlin.gradle.kpm.util.ComputedCapability
 import org.jetbrains.kotlin.gradle.kpm.util.disambiguateName
 import org.jetbrains.kotlin.gradle.targets.metadata.KotlinMetadataTargetConfigurator

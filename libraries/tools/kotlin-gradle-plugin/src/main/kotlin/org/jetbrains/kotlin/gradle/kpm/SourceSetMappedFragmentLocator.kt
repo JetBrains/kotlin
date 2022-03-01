@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.gradle.dsl.*
 import org.jetbrains.kotlin.gradle.dsl.topLevelExtensionOrNull
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinAndroidTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinAndroidTargetPreset
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinGradleModule
 
 interface SourceSetMappedFragmentLocator {
     data class FragmentLocation(val moduleName: String, val fragmentName: String) {

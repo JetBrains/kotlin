@@ -9,7 +9,6 @@ import org.gradle.api.NamedDomainObjectFactory
 import org.gradle.api.artifacts.Configuration
 import org.jetbrains.kotlin.gradle.kpm.KotlinGradleFragmentFactory.FragmentConfigurator
 import org.jetbrains.kotlin.gradle.kpm.KotlinGradleFragmentFactory.FragmentInstantiator
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinGradleFragment
 
 /**
  * Factory used by [KotlinGradleModule] to polymorphic-ally create fragments/variants.

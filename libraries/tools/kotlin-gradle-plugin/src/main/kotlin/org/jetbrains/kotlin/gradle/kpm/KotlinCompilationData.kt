@@ -12,10 +12,6 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinCommonOptions
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.GradleModuleVariantResolver
 import org.jetbrains.kotlin.gradle.plugin.mpp.isMain
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinCompilationData
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinGradleModule
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinGradleVariant
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinVariantCompilationData
 import org.jetbrains.kotlin.gradle.kpm.util.allDependencyModules
 import org.jetbrains.kotlin.gradle.kpm.util.disambiguateName
 import org.jetbrains.kotlin.gradle.utils.filesProvider

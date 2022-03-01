@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.gradle.android
 
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinGradleModule
+import org.jetbrains.kotlin.gradle.kpm.KotlinGradleModule
 import org.jetbrains.kotlin.gradle.kpm.KotlinPm20ProjectExtension
 
 val KotlinPm20ProjectExtension.instrumentedTest

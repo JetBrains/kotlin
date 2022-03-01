@@ -23,10 +23,6 @@ import org.jetbrains.kotlin.gradle.kpm.util.ComputedCapability
 import org.jetbrains.kotlin.gradle.kpm.util.copyAttributes
 import org.jetbrains.kotlin.gradle.kpm.util.copyConfigurationForPublishing
 import org.jetbrains.kotlin.gradle.kpm.util.disambiguateName
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinGradleModule
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinGradleVariant
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinGradleVariantWithRuntime
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.SingleMavenPublishedModuleHolder
 import org.jetbrains.kotlin.gradle.plugin.mpp.publishedConfigurationName
 import org.jetbrains.kotlin.gradle.plugin.usageByName
 import org.jetbrains.kotlin.gradle.tasks.withType

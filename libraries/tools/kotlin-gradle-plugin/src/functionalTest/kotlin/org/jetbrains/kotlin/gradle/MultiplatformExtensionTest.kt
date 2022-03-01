@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLI
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_MPP_HIERARCHICAL_STRUCTURE_BY_DEFAULT
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinSharedNativeCompilation
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinCompilationData
+import org.jetbrains.kotlin.gradle.kpm.KotlinCompilationData
 import org.jetbrains.kotlin.gradle.targets.native.internal.CInteropCommonizerDependent
 import org.jetbrains.kotlin.gradle.targets.native.internal.CInteropIdentifier
 import org.jetbrains.kotlin.gradle.targets.native.internal.from

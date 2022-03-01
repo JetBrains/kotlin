@@ -22,8 +22,8 @@ import org.jetbrains.kotlin.gradle.execution.KotlinAggregateExecutionSource
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinGradleFragment
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinGradleModule
+import org.jetbrains.kotlin.gradle.kpm.KotlinGradleFragment
+import org.jetbrains.kotlin.gradle.kpm.KotlinGradleModule
 import org.jetbrains.kotlin.gradle.kpm.hasKpmModel
 import org.jetbrains.kotlin.gradle.kpm.kpmModules
 import org.jetbrains.kotlin.gradle.plugin.sources.KotlinDependencyScope

@@ -32,8 +32,9 @@ import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.KOTLIN_NA
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.registerEmbedAndSignAppleFrameworkTask
 import org.jetbrains.kotlin.gradle.plugin.mpp.isMain
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.*
 import org.jetbrains.kotlin.gradle.kpm.KpmAwareTargetConfigurator
+import org.jetbrains.kotlin.gradle.kpm.KotlinCompilationData
+import org.jetbrains.kotlin.gradle.kpm.KotlinGradleVariant
 import org.jetbrains.kotlin.gradle.targets.metadata.isKotlinGranularMetadataEnabled
 import org.jetbrains.kotlin.gradle.targets.native.*
 import org.jetbrains.kotlin.gradle.targets.native.internal.commonizeCInteropTask

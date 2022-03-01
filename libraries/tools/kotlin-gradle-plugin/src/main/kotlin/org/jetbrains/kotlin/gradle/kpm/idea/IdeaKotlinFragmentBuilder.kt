@@ -6,9 +6,9 @@
 package org.jetbrains.kotlin.gradle.kpm.idea
 
 import org.jetbrains.kotlin.gradle.kpm.KotlinExternalModelContainer
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinGradleFragment
+import org.jetbrains.kotlin.gradle.kpm.KotlinGradleFragment
 import org.jetbrains.kotlin.gradle.kpm.KotlinGradleFragmentInternal
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinGradleVariant
+import org.jetbrains.kotlin.gradle.kpm.KotlinGradleVariant
 
 private typealias IdeaKotlinFragmentBuilderCache = MutableMap<KotlinGradleFragment, IdeaKotlinFragment>
 

@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.gradle.kpm.util
 
 import org.gradle.api.capabilities.Capability
 import org.gradle.api.provider.Provider
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinGradleModule
+import org.jetbrains.kotlin.gradle.kpm.KotlinGradleModule
 
 internal class ComputedCapability(
     val groupProvider: Provider<String>,

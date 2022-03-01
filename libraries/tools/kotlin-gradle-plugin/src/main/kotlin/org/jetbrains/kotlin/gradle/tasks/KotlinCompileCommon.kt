@@ -35,7 +35,7 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinCommonCompilation
 import org.jetbrains.kotlin.gradle.kpm.AbstractKotlinFragmentMetadataCompilationData
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinCompilationData
+import org.jetbrains.kotlin.gradle.kpm.KotlinCompilationData
 import org.jetbrains.kotlin.gradle.kpm.KotlinMetadataCompilationData
 import org.jetbrains.kotlin.gradle.kpm.refinesClosure
 import org.jetbrains.kotlin.gradle.plugin.sources.resolveAllDependsOnSourceSets

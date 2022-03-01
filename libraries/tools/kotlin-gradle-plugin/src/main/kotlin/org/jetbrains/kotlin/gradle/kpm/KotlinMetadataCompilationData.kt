@@ -14,9 +14,6 @@ import org.jetbrains.kotlin.gradle.dsl.*
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformCommonOptionsImpl
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinCompilationData
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinGradleFragment
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinGradleModule
 import org.jetbrains.kotlin.gradle.kpm.util.disambiguateName
 import org.jetbrains.kotlin.gradle.targets.metadata.ResolvedMetadataFilesProvider
 import org.jetbrains.kotlin.gradle.targets.metadata.createMetadataDependencyTransformationClasspath

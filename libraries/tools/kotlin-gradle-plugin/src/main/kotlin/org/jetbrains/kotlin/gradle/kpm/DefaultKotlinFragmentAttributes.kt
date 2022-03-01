@@ -17,8 +17,6 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsages.consumerApiUsage
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsages.consumerRuntimeUsage
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsages.producerApiUsage
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsages.producerRuntimeUsage
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinGradleFragment
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinGradleVariant
 import org.jetbrains.kotlin.gradle.plugin.usageByName
 import org.jetbrains.kotlin.gradle.utils.isGradleVersionAtLeast
 

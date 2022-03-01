@@ -9,7 +9,6 @@ import org.gradle.api.Named
 import org.gradle.api.Project
 import org.gradle.api.attributes.Attribute
 import org.gradle.api.attributes.AttributeContainer
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinGradleFragment
 
 /* Internal abbreviation */
 internal typealias FragmentAttributes<T> = KotlinGradleFragmentConfigurationAttributes<T>

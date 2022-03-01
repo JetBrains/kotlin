@@ -7,7 +7,7 @@
 
 package org.jetbrains.kotlin.gradle.kpm.util
 
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinGradleModule
+import org.jetbrains.kotlin.gradle.kpm.KotlinGradleModule
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 import org.jetbrains.kotlin.project.model.KotlinModule
 import org.jetbrains.kotlin.project.model.KotlinModuleFragment

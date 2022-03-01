@@ -10,7 +10,6 @@ import org.gradle.api.file.FileCollection
 import org.gradle.api.tasks.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.MetadataDependencyResolution
 import org.jetbrains.kotlin.gradle.plugin.mpp.getAllCompiledSourceSetMetadata
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinGradleFragment
 import org.jetbrains.kotlin.gradle.kpm.util.disambiguateName
 import org.jetbrains.kotlin.gradle.targets.metadata.ResolvedMetadataFilesProvider
 import org.jetbrains.kotlin.gradle.utils.getValue

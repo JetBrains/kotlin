@@ -5,8 +5,6 @@
 
 package org.jetbrains.kotlin.gradle.kpm
 
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinGradleVariant
-
 interface KotlinPublicationConfigurator<in T : KotlinGradleVariant> : KotlinGradleFragmentFactory.FragmentConfigurator<T> {
 
     object NoPublication : KotlinPublicationConfigurator<KotlinGradleVariant> {

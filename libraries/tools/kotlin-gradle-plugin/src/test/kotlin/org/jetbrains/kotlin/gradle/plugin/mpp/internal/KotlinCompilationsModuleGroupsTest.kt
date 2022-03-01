@@ -5,8 +5,7 @@
 
 package org.jetbrains.kotlin.gradle.plugin.mpp.internal
 
-import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinCompilationData
+import org.jetbrains.kotlin.gradle.kpm.KotlinCompilationData
 import org.jetbrains.kotlin.gradle.plugin.sources.MockKotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.sources.MockKotlinSourceSet
 import org.junit.Before

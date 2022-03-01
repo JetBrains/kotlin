@@ -8,8 +8,8 @@ package org.jetbrains.kotlin.gradle.kpm.util
 import org.gradle.api.Project
 import org.gradle.api.file.FileCollection
 import org.jetbrains.kotlin.gradle.kpm.AbstractKotlinFragmentMetadataCompilationData
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinGradleVariant
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinGradleVariantWithRuntime
+import org.jetbrains.kotlin.gradle.kpm.KotlinGradleVariant
+import org.jetbrains.kotlin.gradle.kpm.KotlinGradleVariantWithRuntime
 import org.jetbrains.kotlin.gradle.kpm.resolvableMetadataConfigurationName
 import org.jetbrains.kotlin.gradle.utils.filesProvider
 

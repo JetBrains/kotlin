@@ -15,10 +15,6 @@ import org.gradle.kotlin.dsl.withType
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.isMain
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinGradleFragment
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinGradleModule
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinGradleVariant
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinGradleVariantWithRuntime
 import org.jetbrains.kotlin.gradle.kpm.util.disambiguateName
 import org.jetbrains.kotlin.gradle.plugin.mpp.publishedConfigurationName
 import org.jetbrains.kotlin.gradle.utils.filesProvider

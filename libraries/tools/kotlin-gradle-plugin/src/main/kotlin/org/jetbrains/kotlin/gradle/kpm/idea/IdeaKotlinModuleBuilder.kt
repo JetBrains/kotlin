@@ -5,8 +5,8 @@
 
 package org.jetbrains.kotlin.gradle.kpm.idea
 
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinGradleFragment
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinGradleModule
+import org.jetbrains.kotlin.gradle.kpm.KotlinGradleFragment
+import org.jetbrains.kotlin.gradle.kpm.KotlinGradleModule
 
 internal fun KotlinGradleModule.toIdeaKotlinModule(): IdeaKotlinModule {
     val fragmentsCache = mutableMapOf<KotlinGradleFragment, IdeaKotlinFragment>()

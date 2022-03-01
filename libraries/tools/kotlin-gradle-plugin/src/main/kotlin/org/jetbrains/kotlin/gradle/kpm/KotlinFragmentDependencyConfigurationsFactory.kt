@@ -5,8 +5,6 @@
 
 package org.jetbrains.kotlin.gradle.kpm
 
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinFragmentDependencyConfigurations
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinGradleModule
 import org.jetbrains.kotlin.gradle.kpm.util.KotlinNameDisambiguation
 
 interface KotlinFragmentDependencyConfigurationsFactory {

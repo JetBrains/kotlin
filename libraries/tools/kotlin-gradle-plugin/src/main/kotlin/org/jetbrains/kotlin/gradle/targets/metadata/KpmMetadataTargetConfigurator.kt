@@ -15,8 +15,8 @@ import org.jetbrains.kotlin.gradle.kpm.variantsContainingFragment
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.MetadataMappedCompilationDetails
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.*
 import org.jetbrains.kotlin.gradle.plugin.whenEvaluated
+import org.jetbrains.kotlin.gradle.kpm.KotlinGradleModule
 
 internal class KpmMetadataTargetConfigurator(private val metadataTargetConfigurator: KotlinMetadataTargetConfigurator) :
     KpmAwareTargetConfigurator<KotlinMetadataTarget>(metadataTargetConfigurator) {

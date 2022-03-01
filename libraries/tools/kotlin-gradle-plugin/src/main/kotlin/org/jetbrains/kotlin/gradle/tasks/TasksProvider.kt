@@ -23,7 +23,7 @@ import org.gradle.api.tasks.TaskCollection
 import org.gradle.api.tasks.TaskProvider
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.mapKotlinTaskProperties
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinCompilationData
+import org.jetbrains.kotlin.gradle.kpm.KotlinCompilationData
 import org.jetbrains.kotlin.gradle.plugin.runOnceAfterEvaluated
 import org.jetbrains.kotlin.gradle.plugin.sources.applyLanguageSettingsToKotlinOptions
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrLink

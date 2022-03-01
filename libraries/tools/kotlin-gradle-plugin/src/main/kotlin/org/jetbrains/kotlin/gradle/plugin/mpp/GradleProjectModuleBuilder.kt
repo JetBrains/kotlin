@@ -24,10 +24,11 @@ import org.jetbrains.kotlin.gradle.kpm.hasKpmModel
 import org.jetbrains.kotlin.gradle.kpm.kpmModules
 import org.jetbrains.kotlin.gradle.kpm.moduleClassifiersFromCapabilities
 import org.jetbrains.kotlin.gradle.plugin.*
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.*
 import org.jetbrains.kotlin.gradle.plugin.sources.DefaultLanguageSettingsBuilder
 import org.jetbrains.kotlin.gradle.plugin.sources.KotlinDependencyScope
 import org.jetbrains.kotlin.gradle.plugin.sources.getVisibleSourceSetsFromAssociateCompilations
+import org.jetbrains.kotlin.gradle.kpm.KotlinGradleModule
+import org.jetbrains.kotlin.gradle.kpm.KotlinGradleVariant
 import org.jetbrains.kotlin.gradle.utils.getOrPutRootProjectProperty
 import org.jetbrains.kotlin.project.model.*
 

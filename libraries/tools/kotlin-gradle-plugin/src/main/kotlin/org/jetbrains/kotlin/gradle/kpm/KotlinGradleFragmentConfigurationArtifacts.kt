@@ -10,7 +10,6 @@ import org.gradle.api.Project
 import org.gradle.api.artifacts.ConfigurablePublishArtifact
 import org.gradle.api.artifacts.ConfigurationPublications
 import org.gradle.api.artifacts.ConfigurationVariant
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinGradleFragment
 
 /* Internal abbreviation */
 internal typealias FragmentArtifacts<T> = KotlinGradleFragmentConfigurationArtifacts<T>

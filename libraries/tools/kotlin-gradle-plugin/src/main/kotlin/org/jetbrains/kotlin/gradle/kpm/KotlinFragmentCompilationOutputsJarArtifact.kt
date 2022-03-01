@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.gradle.kpm
 
 import org.gradle.api.artifacts.Dependency
 import org.gradle.jvm.tasks.Jar
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinGradleVariant
 import org.jetbrains.kotlin.gradle.kpm.util.FragmentNameDisambiguationOmittingMain
 import org.jetbrains.kotlin.gradle.tasks.locateOrRegisterTask
 import org.jetbrains.kotlin.gradle.utils.dashSeparatedLowercaseName

@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinCompilationOutput
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.mpp.DefaultKotlinCompilationOutput
 import org.jetbrains.kotlin.gradle.plugin.mpp.MavenPublicationCoordinatesProvider
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.*
 import org.jetbrains.kotlin.gradle.kpm.util.ComputedCapability
 import org.jetbrains.kotlin.gradle.kpm.util.disambiguateName
 import org.jetbrains.kotlin.gradle.plugin.mpp.publishedConfigurationName

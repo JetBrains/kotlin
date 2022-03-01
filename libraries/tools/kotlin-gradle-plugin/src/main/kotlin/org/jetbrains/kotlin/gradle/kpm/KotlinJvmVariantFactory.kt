@@ -7,7 +7,6 @@
 
 package org.jetbrains.kotlin.gradle.kpm
 
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinGradleModule
 import org.jetbrains.kotlin.gradle.kpm.util.FragmentNameDisambiguationOmittingMain
 
 typealias KotlinJvmVariantFactory = KotlinGradleFragmentFactory<KotlinJvmVariant>

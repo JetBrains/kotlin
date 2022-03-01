@@ -7,8 +7,6 @@ package org.jetbrains.kotlin.gradle.kpm
 
 import org.gradle.api.NamedDomainObjectFactory
 import org.gradle.api.Project
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinGradleFragment
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinGradleModule
 
 open class KotlinGradleModuleFactory(private val project: Project) : NamedDomainObjectFactory<KotlinGradleModule> {
     override fun create(name: String): KotlinGradleModule {

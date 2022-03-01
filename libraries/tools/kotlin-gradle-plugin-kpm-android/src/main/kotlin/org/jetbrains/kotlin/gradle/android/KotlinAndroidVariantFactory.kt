@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.gradle.kpm.*
 import org.jetbrains.kotlin.gradle.kpm.external.ExternalVariantApi
 import org.jetbrains.kotlin.gradle.kpm.external.createExternalJvmVariant
 import org.jetbrains.kotlin.gradle.kpm.external.external
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.*
+import org.jetbrains.kotlin.gradle.kpm.KotlinGradleModule
 
 fun KotlinGradleModule.createKotlinAndroidVariant(androidVariant: BaseVariant) {
     val androidOutgoingArtifacts = FragmentArtifacts<KotlinJvmVariant> {

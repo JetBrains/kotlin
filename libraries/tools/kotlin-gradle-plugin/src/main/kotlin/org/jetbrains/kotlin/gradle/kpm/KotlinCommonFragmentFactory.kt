@@ -8,7 +8,6 @@
 package org.jetbrains.kotlin.gradle.kpm
 
 import org.jetbrains.kotlin.gradle.kpm.util.FragmentNameDisambiguation
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinGradleModule
 
 typealias KotlinCommonFragmentFactory = KotlinGradleFragmentFactory<KotlinGradleFragmentInternal>
 
