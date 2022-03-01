@@ -49,11 +49,11 @@ FILE fqName:<root> fileName:/integerCoercionToT.kt
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun <get-value> <T_INT> (): T_INT of <root>.<get-value> declared in <root>'
           CALL 'public final fun TODO (): kotlin.Nothing [inline] declared in kotlin.StandardKt' type=kotlin.Nothing origin=null
-    FUN name:<set-value> visibility:public modality:FINAL <T_INT> ($receiver:<root>.CInt32VarX<T_INT of <root>.<set-value>>, value:T_INT of <root>.<get-value>) returnType:kotlin.Unit
+    FUN name:<set-value> visibility:public modality:FINAL <T_INT> ($receiver:<root>.CInt32VarX<T_INT of <root>.<set-value>>, value:T_INT of <root>.<set-value>) returnType:kotlin.Unit
       correspondingProperty: PROPERTY name:value visibility:public modality:FINAL [var]
       TYPE_PARAMETER name:T_INT index:0 variance: superTypes:[kotlin.Int] reified:false
       $receiver: VALUE_PARAMETER name:<this> type:<root>.CInt32VarX<T_INT of <root>.<set-value>>
-      VALUE_PARAMETER name:value index:0 type:T_INT of <root>.<get-value>
+      VALUE_PARAMETER name:value index:0 type:T_INT of <root>.<set-value>
       BLOCK_BODY
   CLASS CLASS name:IdType modality:FINAL visibility:public superTypes:[<root>.CPointed]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.IdType
@@ -90,7 +90,7 @@ FILE fqName:<root> fileName:/integerCoercionToT.kt
     VALUE_PARAMETER name:value index:0 type:<root>.IdType
     VALUE_PARAMETER name:cv index:1 type:<root>.CInt32VarX<kotlin.Int>
     BLOCK_BODY
-      CALL 'public final fun <set-value> <T_INT> (value: T_INT of <root>.<get-value>): kotlin.Unit declared in <root>' type=kotlin.Unit origin=EQ
+      CALL 'public final fun <set-value> <T_INT> (value: T_INT of <root>.<set-value>): kotlin.Unit declared in <root>' type=kotlin.Unit origin=EQ
         <T_INT>: kotlin.Int
         $receiver: GET_VAR 'cv: <root>.CInt32VarX<kotlin.Int> declared in <root>.foo' type=<root>.CInt32VarX<kotlin.Int> origin=null
         value: CALL 'public final fun <get-value> (): kotlin.Int declared in <root>.IdType' type=kotlin.Int origin=GET_PROPERTY
