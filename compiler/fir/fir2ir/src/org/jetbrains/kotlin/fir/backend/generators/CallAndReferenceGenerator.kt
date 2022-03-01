@@ -40,6 +40,11 @@ import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.dump
 import org.jetbrains.kotlin.ir.util.isFunctionTypeOrSubtype
 import org.jetbrains.kotlin.ir.util.isInterface
+import org.jetbrains.kotlin.lexer.KtTokens
+import org.jetbrains.kotlin.psi
+import org.jetbrains.kotlin.psi.KtBinaryExpression
+import org.jetbrains.kotlin.psi.KtElement
+import org.jetbrains.kotlin.psi.KtUnaryExpression
 import org.jetbrains.kotlin.psi2ir.generators.hasNoSideEffects
 import org.jetbrains.kotlin.psi2ir.generators.isUnchanging
 import org.jetbrains.kotlin.resolve.calls.NewCommonSuperTypeCalculator.commonSuperType
@@ -264,6 +269,38 @@ class CallAndReferenceGenerator(
         return null
     }
 
+    private fun KtElement.getDynamicOperator(): IrDynamicOperator? {
+        return when (this) {
+            is KtUnaryExpression ->
+                when (operationToken) {
+                    KtTokens.PLUS -> IrDynamicOperator.UNARY_PLUS
+                    KtTokens.MINUS -> IrDynamicOperator.UNARY_MINUS
+                    KtTokens.EXCL -> IrDynamicOperator.EXCL
+                    else -> null
+                }
+            is KtBinaryExpression ->
+                when (operationToken) {
+                    KtTokens.PLUS -> IrDynamicOperator.BINARY_PLUS
+                    KtTokens.MINUS -> IrDynamicOperator.BINARY_MINUS
+                    KtTokens.MUL -> IrDynamicOperator.MUL
+                    KtTokens.DIV -> IrDynamicOperator.DIV
+                    KtTokens.PERC -> IrDynamicOperator.MOD
+                    KtTokens.LT -> IrDynamicOperator.LT
+                    KtTokens.LTEQ -> IrDynamicOperator.LE
+                    KtTokens.GT -> IrDynamicOperator.GT
+                    KtTokens.GTEQ -> IrDynamicOperator.GE
+                    KtTokens.ANDAND -> IrDynamicOperator.ANDAND
+                    KtTokens.OROR -> IrDynamicOperator.OROR
+                    KtTokens.EQEQ -> IrDynamicOperator.EQEQ
+                    KtTokens.EQEQEQ -> IrDynamicOperator.EQEQEQ
+                    KtTokens.EXCLEQ -> IrDynamicOperator.EXCLEQ
+                    KtTokens.EXCLEQEQEQ -> IrDynamicOperator.EXCLEQEQ
+                    else -> null
+                }
+            else -> null
+        }
+    }
+
     fun convertToIrCall(
         qualifiedAccess: FirQualifiedAccess,
         typeRef: FirTypeRef,
@@ -297,11 +334,16 @@ class CallAndReferenceGenerator(
                 when (symbol) {
                     is IrConstructorSymbol -> IrConstructorCallImpl.fromSymbolOwner(startOffset, endOffset, type, symbol)
                     is IrSimpleFunctionSymbol -> if (explicitReceiverExpression != null && isDynamicAccess) {
-                        val name = calleeReference.resolved?.name ?: throw Exception("There must be a name")
-                        theExplicitReceiver = IrDynamicMemberExpressionImpl(
-                            startOffset, endOffset, type, name.identifier, explicitReceiverExpression
-                        )
-                        IrDynamicOperatorExpressionImpl(startOffset, endOffset, type, IrDynamicOperator.INVOKE)
+                        val ktElement = qualifiedAccess.source?.psi as? KtElement
+                            ?: throw Exception("KtElement is needed here")
+                        val operator = ktElement.getDynamicOperator() ?: IrDynamicOperator.INVOKE
+                        if (operator == IrDynamicOperator.INVOKE) {
+                            val name = calleeReference.resolved?.name ?: throw Exception("There must be a name")
+                            theExplicitReceiver = IrDynamicMemberExpressionImpl(
+                                startOffset, endOffset, type, name.identifier, explicitReceiverExpression
+                            )
+                        }
+                        IrDynamicOperatorExpressionImpl(startOffset, endOffset, type, operator)
                     } else {
                         IrCallImpl(
                             startOffset, endOffset, type, symbol,
