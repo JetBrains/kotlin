@@ -6,11 +6,11 @@
 package org.jetbrains.kotlin.gradle.android
 
 import org.jetbrains.kotlin.gradle.kpm.KotlinGradleModule
-import org.jetbrains.kotlin.gradle.kpm.KotlinPm20ProjectExtension
+import org.jetbrains.kotlin.gradle.kpm.KpmExtension
 
-val KotlinPm20ProjectExtension.instrumentedTest
+val KpmExtension.instrumentedTest
     get() = modules.maybeCreate("instrumentedTest")
 
-fun KotlinPm20ProjectExtension.instrumentedTest(configure: KotlinGradleModule.() -> Unit) {
+fun KpmExtension.instrumentedTest(configure: KotlinGradleModule.() -> Unit) {
     instrumentedTest.apply(configure)
 }

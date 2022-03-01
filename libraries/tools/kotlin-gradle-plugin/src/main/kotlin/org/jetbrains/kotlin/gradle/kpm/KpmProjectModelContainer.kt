@@ -24,7 +24,7 @@ internal val Project.kpmModelContainer: KpmGradleProjectModelContainer
 
 internal val Project.kpmModelContainerOrNull: KpmGradleProjectModelContainer?
     get() = when (val ext = project.topLevelExtensionOrNull) {
-        is KotlinPm20ProjectExtension -> ext.kpmModelContainer
+        is KpmExtension -> ext.kpmModelContainer
         is KotlinProjectExtension -> if (PropertiesProvider(project).experimentalKpmModelMapping) ext.kpmModelContainer else null
         else -> null
     }

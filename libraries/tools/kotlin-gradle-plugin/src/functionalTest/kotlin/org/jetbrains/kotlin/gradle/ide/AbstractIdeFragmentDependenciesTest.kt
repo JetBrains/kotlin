@@ -13,11 +13,11 @@ import org.gradle.testfixtures.ProjectBuilder
 import org.jetbrains.kotlin.gradle.applyMultiplatformPlugin
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
-import org.jetbrains.kotlin.gradle.dsl.pm20Extension
+import org.jetbrains.kotlin.gradle.dsl.kpmExtension
 import org.jetbrains.kotlin.gradle.kpm.applyKpmPlugin
 import org.jetbrains.kotlin.gradle.plugin.ide.*
 import org.jetbrains.kotlin.gradle.kpm.KotlinGradleFragment
-import org.jetbrains.kotlin.gradle.kpm.KotlinPm20ProjectExtension
+import org.jetbrains.kotlin.gradle.kpm.KpmExtension
 import org.jetbrains.kotlin.gradle.kpm.currentBuildId
 
 @OptIn(InternalIdeApi::class)
@@ -40,12 +40,12 @@ abstract class AbstractIdeFragmentDependenciesTest {
 }
 
 internal inline fun AbstractIdeFragmentDependenciesTest.createKpmProject(
-    name: String, configure: KotlinPm20ProjectExtension.() -> Unit
-): KotlinPm20ProjectExtension {
+    name: String, configure: KpmExtension.() -> Unit
+): KpmExtension {
     val project = ProjectBuilder.builder().withName(name).withParent(rootProject).build() as ProjectInternal
     project.applyKpmPlugin()
-    project.pm20Extension.configure()
-    return project.pm20Extension
+    project.kpmExtension.configure()
+    return project.kpmExtension
 }
 
 internal inline fun AbstractIdeFragmentDependenciesTest.createMultiplatformProject(

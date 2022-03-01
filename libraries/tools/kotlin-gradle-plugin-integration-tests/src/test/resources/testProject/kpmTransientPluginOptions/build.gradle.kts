@@ -1,5 +1,5 @@
 import org.gradle.api.Project
-import org.jetbrains.kotlin.gradle.kpm.KotlinPm20ProjectExtension
+import org.jetbrains.kotlin.gradle.kpm.KpmExtension
 import org.jetbrains.kotlin.gradle.kpm.configure
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.*
 import org.jetbrains.kotlin.gradle.kpm.GradleKpmCompilerPlugin
@@ -16,7 +16,7 @@ repositories {
 
 plugins.apply(GradleKpmPluginWithTransientPluginOptions::class.java)
 
-configure<KotlinPm20ProjectExtension> {
+configure<KpmExtension> {
     main {
         jvm
     }

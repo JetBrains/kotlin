@@ -16,7 +16,7 @@ import org.gradle.api.publish.maven.MavenPublication
 import org.gradle.tooling.provider.model.ToolingModelBuilderRegistry
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.dsl.KotlinTopLevelExtension
-import org.jetbrains.kotlin.gradle.dsl.pm20Extension
+import org.jetbrains.kotlin.gradle.dsl.kpmExtension
 import org.jetbrains.kotlin.gradle.internal.customizeKotlinDependencies
 import org.jetbrains.kotlin.gradle.kpm.idea.IdeaKotlinProjectModelBuilder
 import org.jetbrains.kotlin.gradle.utils.checkGradleCompatibility
@@ -41,7 +41,7 @@ abstract class KotlinPm20GradlePlugin @Inject constructor(
     }
 
     private fun createDefaultModules(project: Project) {
-        project.pm20Extension.apply {
+        project.kpmExtension.apply {
             modules.create(KotlinGradleModule.MAIN_MODULE_NAME)
             modules.create(KotlinGradleModule.TEST_MODULE_NAME)
             main { makePublic() }
@@ -87,7 +87,7 @@ abstract class KotlinPm20GradlePlugin @Inject constructor(
 fun rootPublicationComponentName(module: KotlinGradleModule) =
     module.disambiguateName("root")
 
-open class KotlinPm20ProjectExtension(project: Project) : KotlinTopLevelExtension(project) {
+open class KpmExtension(project: Project) : KotlinTopLevelExtension(project) {
 
     internal val kpmModelContainer = DefaultKpmGradleProjectModelContainer.create(project)
 
@@ -119,7 +119,7 @@ val KotlinGradleModule.jvm: KotlinJvmVariant
 
 fun KotlinGradleModule.jvm(configure: KotlinJvmVariant.() -> Unit): KotlinJvmVariant = jvm.apply(configure)
 
-fun KotlinPm20ProjectExtension.jvm(configure: KotlinFragmentSlice<KotlinJvmVariant>.() -> Unit) {
+fun KpmExtension.jvm(configure: KotlinFragmentSlice<KotlinJvmVariant>.() -> Unit) {
     val getOrCreateVariant: KotlinGradleModule.() -> KotlinJvmVariant = { jvm }
     mainAndTest { getOrCreateVariant(this) }
     val slice = KotlinFragmentSlice(this, getOrCreateVariant)
@@ -127,7 +127,7 @@ fun KotlinPm20ProjectExtension.jvm(configure: KotlinFragmentSlice<KotlinJvmVaria
 }
 
 open class KotlinFragmentSlice<T : KotlinGradleFragment>(
-    val pm20ProjectExtension: KotlinPm20ProjectExtension,
+    val pm20ProjectExtension: KpmExtension,
     val getOrCreateFragment: (KotlinGradleModule) -> T
 ) {
     fun inMain(configure: T.() -> Unit) {

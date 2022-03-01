@@ -13,7 +13,7 @@ import kotlin.test.BeforeTest
 
 abstract class AbstractKpmExtensionTest {
     protected val project: ProjectInternal = ProjectBuilder.builder().build() as ProjectInternal
-    protected lateinit var kotlin: KotlinPm20ProjectExtension
+    protected lateinit var kotlin: KpmExtension
         private set
 
     @BeforeTest
@@ -23,9 +23,9 @@ abstract class AbstractKpmExtensionTest {
 
 }
 
-fun Project.applyKpmPlugin(): KotlinPm20ProjectExtension {
+fun Project.applyKpmPlugin(): KpmExtension {
     addBuildEventsListenerRegistryMock(project)
     plugins.apply("org.jetbrains.kotlin.multiplatform.pm20")
-    return extensions.getByName("kotlin") as KotlinPm20ProjectExtension
+    return extensions.getByName("kotlin") as KpmExtension
 }
 
