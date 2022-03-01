@@ -1,0 +1,25 @@
+FILE: 04_nestedAndTopLevel.kt
+    public abstract interface A : R|kotlin/Any| {
+    }
+    public open class Base : R|kotlin/Any| {
+        public constructor(): R|Base| {
+            super<R|kotlin/Any|>()
+        }
+
+        public abstract interface A : R|kotlin/Any| {
+        }
+
+    }
+    public final class Derived : R|Base|, R|A| {
+        public constructor(): R|Derived| {
+            super<R|Base|>()
+        }
+
+        public final class Nested : R|Base.A| {
+            public constructor(): R|Derived.Nested| {
+                super<R|kotlin/Any|>()
+            }
+
+        }
+
+    }

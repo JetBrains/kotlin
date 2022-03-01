@@ -1,0 +1,49 @@
+FILE: 1.kt
+    public open class C : R|Some.B| {
+        public constructor(): R|C| {
+            super<R|Some.B|>()
+        }
+
+        public open class DerivedNested : R|Base.A.Nested| {
+            public constructor(): R|C.DerivedNested| {
+                super<R|Base.A.Nested|>()
+            }
+
+        }
+
+    }
+FILE: 2.kt
+    public final class Some : R|Base| {
+        public constructor(): R|Some| {
+            super<R|Base|>()
+        }
+
+        public open class B : R|Base.A| {
+            public constructor(): R|Some.B| {
+                super<R|Base.A|>()
+            }
+
+        }
+
+    }
+FILE: 3.kt
+    public open class Base : R|kotlin/Any| {
+        public constructor(): R|Base| {
+            super<R|kotlin/Any|>()
+        }
+
+        public open class A : R|kotlin/Any| {
+            public constructor(): R|Base.A| {
+                super<R|kotlin/Any|>()
+            }
+
+            public open class Nested : R|kotlin/Any| {
+                public constructor(): R|Base.A.Nested| {
+                    super<R|kotlin/Any|>()
+                }
+
+            }
+
+        }
+
+    }

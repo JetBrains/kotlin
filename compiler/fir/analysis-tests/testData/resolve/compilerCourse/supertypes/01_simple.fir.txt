@@ -1,0 +1,7 @@
+FILE: 01_simple.kt
+    public abstract interface A : R|kotlin/Any| {
+    }
+    public abstract interface B : R|kotlin/Any| {
+    }
+    public abstract interface C : R|A|, R|B| {
+    }

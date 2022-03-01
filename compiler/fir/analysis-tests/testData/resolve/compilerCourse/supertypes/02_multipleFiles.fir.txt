@@ -1,0 +1,15 @@
+FILE: A.kt
+    package foo
+
+    public abstract interface A : R|kotlin/Any| {
+    }
+FILE: B.kt
+    package bar
+
+    public abstract interface B : R|kotlin/Any| {
+    }
+FILE: C.kt
+    package foo
+
+    public abstract interface C : R|foo/A|, <ERROR TYPE REF: Symbol not found for B> {
+    }

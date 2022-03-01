@@ -1511,6 +1511,68 @@ public class FirPsiDiagnosticTestGenerated extends AbstractFirPsiDiagnosticTest 
         }
 
         @Nested
+        @TestMetadata("compiler/fir/analysis-tests/testData/resolve/compilerCourse")
+        @TestDataPath("$PROJECT_ROOT")
+        public class CompilerCourse {
+            @Test
+            public void testAllFilesPresentInCompilerCourse() throws Exception {
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/compilerCourse"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+            }
+
+            @Nested
+            @TestMetadata("compiler/fir/analysis-tests/testData/resolve/compilerCourse/supertypes")
+            @TestDataPath("$PROJECT_ROOT")
+            public class Supertypes {
+                @Test
+                @TestMetadata("01_simple.kt")
+                public void test01_simple() throws Exception {
+                    runTest("compiler/fir/analysis-tests/testData/resolve/compilerCourse/supertypes/01_simple.kt");
+                }
+
+                @Test
+                @TestMetadata("02_multipleFiles.kt")
+                public void test02_multipleFiles() throws Exception {
+                    runTest("compiler/fir/analysis-tests/testData/resolve/compilerCourse/supertypes/02_multipleFiles.kt");
+                }
+
+                @Test
+                @TestMetadata("03_nestedClasses.kt")
+                public void test03_nestedClasses() throws Exception {
+                    runTest("compiler/fir/analysis-tests/testData/resolve/compilerCourse/supertypes/03_nestedClasses.kt");
+                }
+
+                @Test
+                @TestMetadata("04_nestedAndTopLevel.kt")
+                public void test04_nestedAndTopLevel() throws Exception {
+                    runTest("compiler/fir/analysis-tests/testData/resolve/compilerCourse/supertypes/04_nestedAndTopLevel.kt");
+                }
+
+                @Test
+                @TestMetadata("05_generics.kt")
+                public void test05_generics() throws Exception {
+                    runTest("compiler/fir/analysis-tests/testData/resolve/compilerCourse/supertypes/05_generics.kt");
+                }
+
+                @Test
+                @TestMetadata("06_jumps.kt")
+                public void test06_jumps() throws Exception {
+                    runTest("compiler/fir/analysis-tests/testData/resolve/compilerCourse/supertypes/06_jumps.kt");
+                }
+
+                @Test
+                @TestMetadata("07_cycles.kt")
+                public void test07_cycles() throws Exception {
+                    runTest("compiler/fir/analysis-tests/testData/resolve/compilerCourse/supertypes/07_cycles.kt");
+                }
+
+                @Test
+                public void testAllFilesPresentInSupertypes() throws Exception {
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/compilerCourse/supertypes"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+                }
+            }
+        }
+
+        @Nested
         @TestMetadata("compiler/fir/analysis-tests/testData/resolve/constVal")
         @TestDataPath("$PROJECT_ROOT")
         public class ConstVal {

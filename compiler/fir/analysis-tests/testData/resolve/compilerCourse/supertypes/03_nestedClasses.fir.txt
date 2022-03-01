@@ -1,0 +1,101 @@
+FILE: example1.kt
+    package foo
+
+    public open class Base : R|kotlin/Any| {
+        public constructor(): R|foo/Base| {
+            super<R|kotlin/Any|>()
+        }
+
+        public open class Nested : R|kotlin/Any| {
+            public constructor(): R|foo/Base.Nested| {
+                super<R|kotlin/Any|>()
+            }
+
+        }
+
+    }
+    public final class Derived : R|foo/Base| {
+        public constructor(): R|foo/Derived| {
+            super<R|foo/Base|>()
+        }
+
+        public final class NestedInDerived : R|foo/Base.Nested| {
+            public constructor(): R|foo/Derived.NestedInDerived| {
+                super<R|foo/Base.Nested|>()
+            }
+
+        }
+
+    }
+FILE: example2.kt
+    package bar
+
+    public open class Base : R|kotlin/Any| {
+        public constructor(): R|bar/Base| {
+            super<R|kotlin/Any|>()
+        }
+
+        public open class Nested : R|kotlin/Any| {
+            public constructor(): R|bar/Base.Nested| {
+                super<R|kotlin/Any|>()
+            }
+
+        }
+
+    }
+    public final class Derived : R|bar/Base| {
+        public constructor(): R|bar/Derived| {
+            super<R|bar/Base|>()
+        }
+
+        public final class Nested : <ERROR TYPE REF: Loop in supertype: bar/Derived.Nested -> bar/Derived.Nested> {
+            public constructor(): R|bar/Derived.Nested| {
+                super<R|bar/Derived.Nested|>()
+            }
+
+        }
+
+    }
+FILE: example3.kt
+    package baz
+
+    public open class Base : R|kotlin/Any| {
+        public constructor(): R|baz/Base| {
+            super<R|kotlin/Any|>()
+        }
+
+        public open class Nested : R|kotlin/Any| {
+            public constructor(): R|baz/Base.Nested| {
+                super<R|kotlin/Any|>()
+            }
+
+        }
+
+        public final companion object Companion : R|kotlin/Any| {
+            private constructor(): R|baz/Base.Companion| {
+                super<R|kotlin/Any|>()
+            }
+
+            public open class Nested : R|kotlin/Any| {
+                public constructor(): R|baz/Base.Companion.Nested| {
+                    super<R|kotlin/Any|>()
+                }
+
+            }
+
+        }
+
+    }
+    public final class Derived : R|baz/Base| {
+        public constructor(): R|baz/Derived| {
+            super<R|baz/Base|>()
+        }
+
+        public final class NestedInDerived : R|baz/Base.Nested| {
+            public constructor(): R|baz/Derived.NestedInDerived| {
+                super<R|baz/Base.Nested|>()
+            }
+
+        }
+
+    }

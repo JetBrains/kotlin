@@ -1,0 +1,41 @@
+FILE: 05_generics.kt
+    public open class Base<T> : R|kotlin/Any| {
+        public constructor<T>(): R|Base<T>| {
+            super<R|kotlin/Any|>()
+        }
+
+        public open class Nested<K> : R|kotlin/Any| {
+            public constructor<K>(): R|Base.Nested<K>| {
+                super<R|kotlin/Any|>()
+            }
+
+        }
+
+        public open inner class Inner<U, T> : R|kotlin/Any| {
+            public Base<T>.constructor<U>(): R|Base.Inner<U, T>| {
+                super<R|kotlin/Any|>()
+            }
+
+        }
+
+    }
+    public final class Derived : R|Base<kotlin/String>| {
+        public constructor(): R|Derived| {
+            super<R|Base<kotlin/String>|>()
+        }
+
+        public final class DerivedNested : R|Base.Nested<kotlin/Int>| {
+            public constructor(): R|Derived.DerivedNested| {
+                super<R|Base.Nested<kotlin/Int>|>()
+            }
+
+        }
+
+        public final inner class DerivedInner : R|Base.Inner<kotlin/Long, kotlin/String>| {
+            public Derived.constructor(): R|Derived.DerivedInner| {
+                this@R|/Derived|.super<R|Base.Inner<kotlin/Long, kotlin/String>|>()
+            }
+
+        }
+
+    }

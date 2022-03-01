@@ -1,0 +1,7 @@
+FILE: 07_cycles.kt
+    public abstract interface A : <ERROR TYPE REF: Loop in supertype: /A -> /B> {
+    }
+    public abstract interface B : <ERROR TYPE REF: Loop in supertype: /B -> /C> {
+    }
+    public abstract interface C : <ERROR TYPE REF: Loop in supertype: /C -> /A> {
+    }
