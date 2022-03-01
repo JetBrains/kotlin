@@ -23,11 +23,11 @@ import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProviderInternals
 import org.jetbrains.kotlin.fir.resolve.transformers.*
 import org.jetbrains.kotlin.name.FqName
 
-class FirPluginAnnotationsResolveProcessor(
+class FirCompilerRequiredAnnotationsResolveProcessor(
     session: FirSession,
     scopeSession: ScopeSession
 ) : FirTransformerBasedResolveProcessor(session, scopeSession) {
-    override val transformer = FirPluginAnnotationsResolveTransformer(session, scopeSession)
+    override val transformer = FirCompilerRequiredAnnotationsResolveTransformer(session, scopeSession)
 
     @OptIn(FirSymbolProviderInternals::class)
     override fun beforePhase() {
@@ -40,10 +40,10 @@ class FirPluginAnnotationsResolveProcessor(
     }
 }
 
-class FirPluginAnnotationsResolveTransformer(
+class FirCompilerRequiredAnnotationsResolveTransformer(
     override val session: FirSession,
     scopeSession: ScopeSession
-) : FirAbstractPhaseTransformer<Any?>(FirResolvePhase.ANNOTATIONS_FOR_PLUGINS) {
+) : FirAbstractPhaseTransformer<Any?>(FirResolvePhase.COMPILER_REQUIRED_ANNOTATIONS) {
     private val annotationTransformer = FirAnnotationResolveTransformer(session, scopeSession)
     private val importTransformer = FirPartialImportResolveTransformer(session)
 
@@ -83,7 +83,7 @@ class FirPluginAnnotationsResolveTransformer(
 
 private class FirPartialImportResolveTransformer(
     session: FirSession
-) : FirImportResolveTransformer(session, FirResolvePhase.ANNOTATIONS_FOR_PLUGINS) {
+) : FirImportResolveTransformer(session, FirResolvePhase.COMPILER_REQUIRED_ANNOTATIONS) {
     var acceptableFqNames: Set<FqName> = emptySet()
 
     override val FqName.isAcceptable: Boolean
