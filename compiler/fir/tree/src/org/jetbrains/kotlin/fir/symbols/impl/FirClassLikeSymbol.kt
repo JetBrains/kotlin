@@ -26,7 +26,7 @@ sealed class FirClassLikeSymbol<D : FirClassLikeDeclaration>(
 
     val deprecation: DeprecationsPerUseSite?
         get() {
-            ensureResolved(FirResolvePhase.STATUS)
+            ensureResolved(FirResolvePhase.COMPILER_REQUIRED_ANNOTATIONS)
             return fir.deprecation
         }
 

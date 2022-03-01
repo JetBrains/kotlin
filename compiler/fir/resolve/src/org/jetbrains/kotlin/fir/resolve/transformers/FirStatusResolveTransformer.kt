@@ -112,7 +112,6 @@ open class FirStatusResolveTransformer(
          */
         if (computationStatus != StatusComputationSession.StatusComputationStatus.Computed) {
             regularClass.transformStatus(this, statusResolver.resolveStatus(regularClass, containingClass, isLocal = false))
-            calculateDeprecations(regularClass)
         }
         return transformClass(regularClass, data).also {
             statusComputationSession.endComputing(regularClass)
@@ -310,7 +309,6 @@ abstract class AbstractFirStatusResolveTransformer(
     ): FirStatement {
         typeAlias.typeParameters.forEach { transformDeclaration(it, data) }
         typeAlias.transformStatus(this, statusResolver.resolveStatus(typeAlias, containingClass, isLocal = false))
-        calculateDeprecations(typeAlias)
         return transformDeclaration(typeAlias, data) as FirTypeAlias
     }
 
@@ -552,12 +550,6 @@ abstract class AbstractFirStatusResolveTransformer(
 
     override fun transformBlock(block: FirBlock, data: FirResolvedDeclarationStatus?): FirStatement {
         return block
-    }
-
-    protected fun calculateDeprecations(regularClass: FirClassLikeDeclaration) {
-        if (regularClass.deprecation == null) {
-            regularClass.replaceDeprecation(regularClass.getDeprecationInfos(session.languageVersionSettings.apiVersion))
-        }
     }
 
     protected fun calculateDeprecations(simpleFunction: FirCallableDeclaration) {
