@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase.*
-import org.jetbrains.kotlin.fir.extensions.extensionService
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirBodyResolveProcessor
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirImplicitTypeBodyResolveProcessor
@@ -21,8 +20,7 @@ class FirTotalResolveProcessor(session: FirSession) {
 
     private val processors: List<FirResolveProcessor> = createAllCompilerResolveProcessors(
         session,
-        scopeSession,
-        pluginPhasesEnabled = session.extensionService.registeredExtensionsSize > 0
+        scopeSession
     )
 
     fun process(files: List<FirFile>) {
@@ -45,23 +43,21 @@ class FirTotalResolveProcessor(session: FirSession) {
 
 fun createAllCompilerResolveProcessors(
     session: FirSession,
-    scopeSession: ScopeSession? = null,
-    pluginPhasesEnabled: Boolean = false
+    scopeSession: ScopeSession? = null
 ): List<FirResolveProcessor> {
-    return createAllResolveProcessors(scopeSession, pluginPhasesEnabled) {
+    return createAllResolveProcessors(scopeSession) {
         createCompilerProcessorByPhase(session, it)
     }
 }
 
 private inline fun <T : FirResolveProcessor> createAllResolveProcessors(
     scopeSession: ScopeSession? = null,
-    pluginPhasesEnabled: Boolean,
     creator: FirResolvePhase.(ScopeSession) -> T
 ): List<T> {
     @Suppress("NAME_SHADOWING")
     val scopeSession = scopeSession ?: ScopeSession()
     val phases = FirResolvePhase.values().filter {
-        !it.noProcessor && if (!pluginPhasesEnabled) !it.pluginPhase else true
+        !it.noProcessor
     }
     return phases.map { it.creator(scopeSession) }
 }
