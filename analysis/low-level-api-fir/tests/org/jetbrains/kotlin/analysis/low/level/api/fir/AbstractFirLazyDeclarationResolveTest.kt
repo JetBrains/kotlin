@@ -59,7 +59,7 @@ abstract class AbstractFirLazyDeclarationResolveTest : AbstractLowLevelApiSingle
                 .getOrBuildFirFile(ktFile)
                 .findResolveMe()
             for (currentPhase in FirResolvePhase.values()) {
-                if (currentPhase.pluginPhase || currentPhase == FirResolvePhase.SEALED_CLASS_INHERITORS) continue
+                if (currentPhase == FirResolvePhase.SEALED_CLASS_INHERITORS) continue
                 declarationToResolve.ensureResolved(currentPhase)
                 val firFile = firModuleResolveState.getOrBuildFirFile(ktFile)
                 resultBuilder.append("\n${currentPhase.name}:\n")
