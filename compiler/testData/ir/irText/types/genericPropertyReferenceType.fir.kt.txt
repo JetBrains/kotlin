@@ -17,7 +17,7 @@ var <T : Any?> C<T>.y: T
     return <this>.<get-x>()
   }
   set(v: T) {
-    <this> /*as C<T> */.<set-x>(<set-?> = v)
+    <this>.<set-x>(<set-?> = v)
   }
 
 fun use(p: KMutableProperty<String>) {
@@ -31,3 +31,4 @@ fun test2(a: Any) {
   a as C<String> /*~> Unit */
   use(p = a /*as C<String> */::y/*<String>()*/)
 }
+
