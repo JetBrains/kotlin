@@ -10,13 +10,12 @@ import org.gradle.api.logging.Logging
 import org.gradle.tooling.events.FinishEvent
 import org.gradle.tooling.events.OperationCompletionListener
 import org.gradle.tooling.events.task.TaskFinishEvent
-import org.jetbrains.kotlin.build.report.metrics.BuildMetricType
+import org.jetbrains.kotlin.build.report.metrics.SizeMetricType
 import org.jetbrains.kotlin.gradle.plugin.stat.CompileStatisticsData
+import org.jetbrains.kotlin.gradle.report.formatSize
 import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.utils.addToStdlib.measureTimeMillisWithResult
 import java.util.*
-import kotlin.collections.ArrayList
-import kotlin.collections.LinkedHashSet
 import kotlin.system.measureTimeMillis
 
 class BuildScanStatisticsListener(
@@ -26,9 +25,6 @@ class BuildScanStatisticsListener(
     val kotlinVersion: String,
 ) : OperationCompletionListener, AutoCloseable {
     companion object {
-        const val kbSize = 1024
-        const val mbSize = kbSize * kbSize
-        const val gbSize = kbSize * mbSize
         const val lengthLimit = 100_000
     }
 
@@ -83,7 +79,7 @@ class BuildScanStatisticsListener(
             data.buildTimesMetrics.map { (key, value) -> "${key.readableString}: ${value}ms" } //sometimes it is better to have separate variable to be able debug
         val perfData = data.performanceMetrics.map { (key, value) ->
             when (key.type) {
-                BuildMetricType.FILE_SIZE -> "${key.readableString}: ${readableFileLength(value)}"
+                SizeMetricType.BYTES -> "${key.readableString}: ${formatSize(value)}"
                 else -> "${key.readableString}: $value}"
             }
         }
@@ -111,12 +107,4 @@ class BuildScanStatisticsListener(
         splattedString.add(tempStr)
         return splattedString
     }
-
-    private fun readableFileLength(length: Long): String =
-        when {
-            length / gbSize > 0 -> "${length / gbSize} GB"
-            length / mbSize > 0 -> "${length / mbSize} MB"
-            length / kbSize > 0 -> "${length / kbSize} KB"
-            else -> "$length B"
-        }
 }

@@ -121,11 +121,32 @@ internal class PlainTextBuildReportWriter(
         val allBuildMetrics = buildMetrics.asMap()
         if (allBuildMetrics.isEmpty()) return
 
-        p.withIndent("Build performance metrics:") {
+        p.withIndent("Size metrics:") {
             for (metric in BuildPerformanceMetric.values()) {
-                allBuildMetrics[metric]?.let { p.println("${metric.readableString}: $it") }
+                allBuildMetrics[metric]?.let { printSizeMetric(metric, it) }
             }
         }
+    }
+
+    private fun printSizeMetric(sizeMetric: BuildPerformanceMetric, value: Long) {
+        fun BuildPerformanceMetric.numberOfAncestors(): Int {
+            var count = 0
+            var parent: BuildPerformanceMetric? = parent
+            while (parent != null) {
+                count++
+                parent = parent.parent
+            }
+            return count
+        }
+
+        val indentLevel = sizeMetric.numberOfAncestors()
+
+        repeat(indentLevel) { p.pushIndent() }
+        when (sizeMetric.type) {
+            SizeMetricType.BYTES -> p.println("${sizeMetric.readableString}: ${formatSize(value)}")
+            SizeMetricType.NUMBER -> p.println("${sizeMetric.readableString}: $value")
+        }
+        repeat(indentLevel) { p.popIndent() }
     }
 
     private fun printBuildAttributes(buildAttributes: BuildAttributes) {
