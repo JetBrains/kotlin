@@ -220,6 +220,7 @@ fun getExpectedTypePredicate(
                         val typePredicate = getTypePredicateForUnresolvedCallArgument(it.element, it.inputValues.indexOf(value))
                         typePredicates.add(typePredicate)
                     }
+                    else -> {}
                 }
 
                 else -> {}
