@@ -1,12 +1,9 @@
 import org.gradle.api.Project
-import org.jetbrains.kotlin.gradle.kpm.KpmExtension
-import org.jetbrains.kotlin.gradle.kpm.configure
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.*
-import org.jetbrains.kotlin.gradle.kpm.GradleKpmCompilerPlugin
+import org.jetbrains.kotlin.gradle.kpm.*
 import org.jetbrains.kotlin.project.model.*
 
 plugins {
-    kotlin("multiplatform.pm20")
+    kotlin("kpm")
 }
 
 repositories {

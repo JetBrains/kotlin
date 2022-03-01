@@ -128,11 +128,11 @@ private fun detectModules(targets: Iterable<KotlinTarget>, sourceSets: Iterable<
 
 @Suppress("unused")
 class GradleProjectModuleBuilder(private val addInferredSourceSetVisibilityAsExplicit: Boolean) {
-    private fun getModulesFromPm20Project(project: Project) = project.kpmModules.toList()
+    private fun getKpmModulesFromProject(project: Project) = project.kpmModules.toList()
 
     fun buildModulesFromProject(project: Project): List<KotlinModule> {
         if (project.hasKpmModel)
-            return getModulesFromPm20Project(project)
+            return getKpmModulesFromProject(project)
 
         val extension = project.multiplatformExtensionOrNull
             ?: project.kotlinExtension

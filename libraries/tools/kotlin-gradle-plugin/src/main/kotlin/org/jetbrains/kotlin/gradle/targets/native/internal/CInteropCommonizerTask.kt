@@ -153,7 +153,7 @@ private fun CInteropProcess.toGist(): CInteropGist {
     return CInteropGist(
         identifier = settings.identifier,
         konanTarget = konanTarget,
-        // FIXME support cinterop with PM20
+        // FIXME support cinterop with KPM
         sourceSets = project.provider { (settings.compilation as? KotlinCompilation<*>)?.kotlinSourceSetsIncludingDefault },
         libraryFile = outputFileProvider
     )

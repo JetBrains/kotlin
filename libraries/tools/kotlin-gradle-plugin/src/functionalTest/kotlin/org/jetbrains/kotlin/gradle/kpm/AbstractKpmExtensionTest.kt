@@ -25,7 +25,7 @@ abstract class AbstractKpmExtensionTest {
 
 fun Project.applyKpmPlugin(): KpmExtension {
     addBuildEventsListenerRegistryMock(project)
-    plugins.apply("org.jetbrains.kotlin.multiplatform.pm20")
+    plugins.apply("org.jetbrains.kotlin.kpm")
     return extensions.getByName("kotlin") as KpmExtension
 }
 

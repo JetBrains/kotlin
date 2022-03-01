@@ -42,7 +42,7 @@ internal const val PLATFORM_INTEGERS_SUPPORT_LIBRARY = "platform-integers"
 
 internal fun customizeKotlinDependencies(project: Project) {
     configureStdlibDefaultDependency(project)
-    if (project.topLevelExtension is KotlinProjectExtension) { // TODO: extend this logic to PM20
+    if (project.topLevelExtension is KotlinProjectExtension) { // TODO: extend this logic to KPM
         configureKotlinTestDependency(project)
     }
     configureDefaultVersionsResolutionStrategy(project)

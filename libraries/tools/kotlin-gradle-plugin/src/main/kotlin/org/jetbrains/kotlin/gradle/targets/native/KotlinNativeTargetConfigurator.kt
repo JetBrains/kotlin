@@ -187,7 +187,7 @@ open class KotlinNativeTargetConfigurator<T : KotlinNativeTarget> : AbstractKotl
         }
     }
 
-    // FIXME support creating interop tasks for PM20
+    // FIXME support creating interop tasks for KPM
     private fun Project.createCInteropTasks(
         compilation: KotlinNativeCompilation,
         cinterops: NamedDomainObjectCollection<DefaultCInteropSettings>
@@ -460,7 +460,7 @@ open class KotlinNativeTargetConfigurator<T : KotlinNativeTarget> : AbstractKotl
             }
 
             if (compilation is AbstractKotlinNativeCompilation) {
-                // FIXME: support compiler plugins for PM20
+                // FIXME: support compiler plugins for KPM
                 addCompilerPlugins(compilation)
             }
 

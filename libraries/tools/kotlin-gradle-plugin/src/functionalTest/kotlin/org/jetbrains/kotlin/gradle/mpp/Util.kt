@@ -31,7 +31,7 @@ fun buildProjectWithMPP(code: Project.() -> Unit) = buildProject {
 }
 
 fun buildProjectWithKPM(code: Project.() -> Unit) = buildProject {
-    project.plugins.apply("org.jetbrains.kotlin.multiplatform.pm20")
+    project.plugins.apply("org.jetbrains.kotlin.kpm")
     code()
 }
 
