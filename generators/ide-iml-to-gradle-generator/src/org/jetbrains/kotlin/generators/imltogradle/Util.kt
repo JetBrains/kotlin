@@ -83,22 +83,6 @@ inline fun <T> T?.orElse(block: () -> T): T = this ?: block()
 val JpsModule.dependencies: List<JpsDependencyElement>
     get() = dependenciesList.dependencies.filter { it is JpsModuleDependency || it is JpsLibraryDependency }
 
-fun fetchJsonsFromBuildserver(ideaMajorVersion: String): List<String> {
-    require(ideaMajorVersion.length == 3 && ideaMajorVersion.all { it.isDigit() }) {
-        "attachedIntellijVersion='$ideaMajorVersion' must be 3 length all digit string"
-    }
-    val urlPrefix = jsonUrlPrefixes[ideaMajorVersion] ?: error("'$ideaMajorVersion' platform is absent in mapping")
-    return listOf(
-        "$urlPrefix/ideaIU-project-structure-mapping.json",
-        "$urlPrefix/intellij-core-project-structure-mapping.json"
-    ).map { url ->
-        try {
-            URL(url).readText()
-        } catch (ex: Throwable) {
-            error("Can't access $url. Is VPN on?")
-        }
-    }
-}
 
 fun File.readProperty(propertyName: String): String {
     return inputStream().use { Properties().apply { load(it) }.getProperty(propertyName) }
