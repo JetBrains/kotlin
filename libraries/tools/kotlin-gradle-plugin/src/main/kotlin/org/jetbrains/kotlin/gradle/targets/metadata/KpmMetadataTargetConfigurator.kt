@@ -7,13 +7,15 @@ package org.jetbrains.kotlin.gradle.targets.metadata
 
 import org.jetbrains.kotlin.gradle.dsl.KotlinCommonOptions
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformCommonOptions
+import org.jetbrains.kotlin.gradle.kpm.*
+import org.jetbrains.kotlin.gradle.kpm.KpmAwareTargetConfigurator
+import org.jetbrains.kotlin.gradle.kpm.kpmModules
+import org.jetbrains.kotlin.gradle.kpm.metadataCompilationRegistryByModuleId
+import org.jetbrains.kotlin.gradle.kpm.variantsContainingFragment
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.MetadataMappedCompilationDetails
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.*
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KpmAwareTargetConfigurator
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.kpmModules
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.metadataCompilationRegistryByModuleId
 import org.jetbrains.kotlin.gradle.plugin.whenEvaluated
 
 internal class KpmMetadataTargetConfigurator(private val metadataTargetConfigurator: KotlinMetadataTargetConfigurator) :

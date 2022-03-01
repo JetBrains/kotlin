@@ -8,7 +8,6 @@
 package org.jetbrains.kotlin.gradle.kpm
 
 import org.gradle.kotlin.dsl.create
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.*
 import kotlin.test.Test
 import kotlin.test.assertTrue
 

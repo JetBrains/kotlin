@@ -9,10 +9,10 @@ package org.jetbrains.kotlin.gradle.kpm.idea
 
 import org.gradle.kotlin.dsl.create
 import org.jetbrains.kotlin.gradle.kpm.AbstractKpmExtensionTest
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinIosX64Variant
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinLinuxX64Variant
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinMacosX64Variant
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.jvm
+import org.jetbrains.kotlin.gradle.kpm.KotlinIosX64Variant
+import org.jetbrains.kotlin.gradle.kpm.KotlinLinuxX64Variant
+import org.jetbrains.kotlin.gradle.kpm.KotlinMacosX64Variant
+import org.jetbrains.kotlin.gradle.kpm.jvm
 import java.io.ByteArrayInputStream
 import java.io.ByteArrayOutputStream
 import java.io.ObjectInputStream

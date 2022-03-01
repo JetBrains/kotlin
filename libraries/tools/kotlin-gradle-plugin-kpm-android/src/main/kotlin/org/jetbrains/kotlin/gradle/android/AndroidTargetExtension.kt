@@ -13,7 +13,7 @@ import com.android.build.gradle.LibraryExtension
 import org.gradle.kotlin.dsl.findByType
 import org.jetbrains.kotlin.gradle.kpm.external.ExternalVariantApi
 import org.jetbrains.kotlin.gradle.kpm.external.project
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinPm20ProjectExtension
+import org.jetbrains.kotlin.gradle.kpm.KotlinPm20ProjectExtension
 
 fun KotlinPm20ProjectExtension.android() {
     project.extensions.findByType<AppExtension>()?.applicationVariants?.all { androidVariant ->

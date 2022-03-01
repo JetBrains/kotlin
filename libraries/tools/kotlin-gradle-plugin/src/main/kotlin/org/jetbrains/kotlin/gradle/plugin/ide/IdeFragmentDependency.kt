@@ -10,7 +10,7 @@ package org.jetbrains.kotlin.gradle.plugin.ide
 import org.gradle.api.Project
 import org.gradle.api.artifacts.component.BuildIdentifier
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinGradleFragment
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.currentBuildId
+import org.jetbrains.kotlin.gradle.kpm.currentBuildId
 import java.io.File
 
 /**

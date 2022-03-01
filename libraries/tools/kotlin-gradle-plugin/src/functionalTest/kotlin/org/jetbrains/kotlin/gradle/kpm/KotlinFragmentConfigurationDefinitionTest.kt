@@ -8,9 +8,8 @@
 package org.jetbrains.kotlin.gradle.kpm
 
 import org.gradle.api.attributes.Attribute
-import org.gradle.api.capabilities.Capability
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.*
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.FragmentNameDisambiguation
+import org.jetbrains.kotlin.gradle.kpm.util.FragmentNameDisambiguation
 import org.junit.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNull

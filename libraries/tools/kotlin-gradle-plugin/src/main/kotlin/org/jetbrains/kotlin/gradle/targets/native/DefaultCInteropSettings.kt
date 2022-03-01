@@ -16,9 +16,9 @@ import org.gradle.util.ConfigureUtil
 import org.jetbrains.kotlin.gradle.plugin.CInteropSettings
 import org.jetbrains.kotlin.gradle.plugin.CInteropSettings.IncludeDirectories
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinNativeCompilationData
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinNativeVariantCompilationData
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.disambiguateName
+import org.jetbrains.kotlin.gradle.kpm.KotlinNativeCompilationData
+import org.jetbrains.kotlin.gradle.kpm.KotlinNativeVariantCompilationData
+import org.jetbrains.kotlin.gradle.kpm.util.disambiguateName
 import org.jetbrains.kotlin.gradle.targets.native.internal.CInteropIdentifier
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 import java.io.File

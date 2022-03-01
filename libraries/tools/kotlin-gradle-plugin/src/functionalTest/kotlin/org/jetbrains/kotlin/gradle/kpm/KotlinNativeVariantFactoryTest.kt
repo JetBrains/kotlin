@@ -10,7 +10,6 @@ package org.jetbrains.kotlin.gradle.kpm
 import org.gradle.api.tasks.bundling.Zip
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.*
 import org.jetbrains.kotlin.gradle.tasks.KotlinNativeCompile
 import org.junit.runner.RunWith
 import org.junit.runners.Parameterized

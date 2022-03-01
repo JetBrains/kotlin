@@ -10,7 +10,7 @@ import org.gradle.api.artifacts.Configuration
 import org.gradle.api.artifacts.component.ProjectComponentIdentifier
 import org.gradle.api.artifacts.result.ResolvedComponentResult
 import org.gradle.api.artifacts.result.ResolvedDependencyResult
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.toSingleModuleIdentifier
+import org.jetbrains.kotlin.gradle.kpm.toSingleModuleIdentifier
 import org.jetbrains.kotlin.project.model.KotlinModuleIdentifier
 
 internal fun MppDependencyProjectStructureMetadataExtractor.Factory.create(

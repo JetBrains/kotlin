@@ -9,9 +9,9 @@ package org.jetbrains.kotlin.gradle.plugin.mpp
 import org.gradle.api.Project
 import org.jetbrains.kotlin.gradle.plugin.KotlinAndroidPlugin.Companion.dynamicallyApplyWhenAndroidPluginIsApplied
 import org.jetbrains.kotlin.gradle.plugin.KotlinTargetPreset
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.PublicationRegistrationMode
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.hasKpmModel
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.mapTargetCompilationsToKpmVariants
+import org.jetbrains.kotlin.gradle.kpm.PublicationRegistrationMode
+import org.jetbrains.kotlin.gradle.kpm.hasKpmModel
+import org.jetbrains.kotlin.gradle.kpm.mapTargetCompilationsToKpmVariants
 
 class KotlinAndroidTargetPreset(
     private val project: Project

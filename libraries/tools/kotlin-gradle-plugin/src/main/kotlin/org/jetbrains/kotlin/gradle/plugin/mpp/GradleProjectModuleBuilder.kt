@@ -17,6 +17,12 @@ import org.gradle.api.attributes.AttributeContainer
 import org.jetbrains.kotlin.gradle.dsl.*
 import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtensionOrNull
+import org.jetbrains.kotlin.gradle.kpm.*
+import org.jetbrains.kotlin.gradle.kpm.ExternalImportedKotlinModule
+import org.jetbrains.kotlin.gradle.kpm.ExternalPlainKotlinModule
+import org.jetbrains.kotlin.gradle.kpm.hasKpmModel
+import org.jetbrains.kotlin.gradle.kpm.kpmModules
+import org.jetbrains.kotlin.gradle.kpm.moduleClassifiersFromCapabilities
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.*
 import org.jetbrains.kotlin.gradle.plugin.sources.DefaultLanguageSettingsBuilder

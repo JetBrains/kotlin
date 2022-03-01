@@ -14,8 +14,8 @@ import org.gradle.api.artifacts.result.ResolvedDependencyResult
 import org.gradle.api.artifacts.result.ResolvedVariantResult
 import org.gradle.api.attributes.Usage
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.toModuleIdentifiers
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.toSingleModuleIdentifier
+import org.jetbrains.kotlin.gradle.kpm.toModuleIdentifiers
+import org.jetbrains.kotlin.gradle.kpm.toSingleModuleIdentifier
 import org.jetbrains.kotlin.gradle.plugin.usageByName
 import org.jetbrains.kotlin.gradle.utils.getOrPut
 import org.jetbrains.kotlin.project.model.KotlinModuleIdentifier

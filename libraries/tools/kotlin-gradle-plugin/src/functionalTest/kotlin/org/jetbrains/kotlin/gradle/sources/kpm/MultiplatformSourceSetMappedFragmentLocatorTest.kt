@@ -15,7 +15,7 @@ import kotlin.test.assertEquals
 import org.jetbrains.kotlin.gradle.plugin.sources.kpm.MultiplatformSourceSetMappedFragmentLocator
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinGradleModule
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.kpmModules
+import org.jetbrains.kotlin.gradle.kpm.kpmModules
 import org.jetbrains.kotlin.gradle.plugin.sources.kpm.SourceSetMappedFragmentLocator
 
 internal open class MultiplatformSourceSetMappedFragmentLocatorTest : MultiplatformExtensionTest() {

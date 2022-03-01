@@ -21,8 +21,8 @@ import org.gradle.process.internal.ExecHandleFactory
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.archivesName
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.distsDirectory
+import org.jetbrains.kotlin.gradle.kpm.archivesName
+import org.jetbrains.kotlin.gradle.kpm.distsDirectory
 import org.jetbrains.kotlin.gradle.targets.js.RequiredKotlinJsDependency
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin
 import org.jetbrains.kotlin.gradle.targets.js.npm.RequiresNpmDependencies

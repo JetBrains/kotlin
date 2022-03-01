@@ -7,10 +7,8 @@ package org.jetbrains.kotlin.gradle.plugin.mpp.internal
 
 import org.gradle.api.Project
 import org.gradle.api.plugins.ExtraPropertiesExtension
-import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
-import org.jetbrains.kotlin.gradle.plugin.mpp.isMain
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinCompilationData
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.isMainCompilationData
+import org.jetbrains.kotlin.gradle.kpm.isMainCompilationData
 
 /** This is a disjoint-set union-like approach to having a module name that is equal across associated compilations, as the compiler
  * now requires that to properly compile internal calls to friend classes. Associating a compilation with another one leads to their

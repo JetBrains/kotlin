@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.gradle.targets.js.subtargets
 
 import org.gradle.api.Project
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.distsDirectory
+import org.jetbrains.kotlin.gradle.kpm.distsDirectory
 import org.jetbrains.kotlin.gradle.targets.js.dsl.Distribution
 import org.jetbrains.kotlin.gradle.utils.property
 import java.io.File

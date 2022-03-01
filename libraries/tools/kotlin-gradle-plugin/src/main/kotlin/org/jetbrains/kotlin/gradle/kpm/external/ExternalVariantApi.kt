@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.gradle.kpm.external
 
 import org.gradle.api.Project
 import org.jetbrains.kotlin.gradle.dsl.KotlinTopLevelExtension
-import org.jetbrains.kotlin.gradle.kpm.KotlinMutableExternalModelContainer
+import org.jetbrains.kotlin.gradle.kpm.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.*
 
 @RequiresOptIn("API is intended to build external Kotlin Targets.")

@@ -7,9 +7,8 @@ package org.jetbrains.kotlin.gradle.plugin.sources.kpm
 
 import org.gradle.api.NamedDomainObjectFactory
 import org.gradle.api.Project
-import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.kpmModules
+import org.jetbrains.kotlin.gradle.kpm.kpmModules
 
 class FragmentMappedKotlinSourceSetFactory constructor(private val project: Project) :
     NamedDomainObjectFactory<KotlinSourceSet> {

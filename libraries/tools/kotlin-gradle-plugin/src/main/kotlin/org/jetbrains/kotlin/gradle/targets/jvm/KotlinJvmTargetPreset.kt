@@ -10,9 +10,9 @@ import org.gradle.api.Project
 import org.jetbrains.kotlin.gradle.plugin.AbstractKotlinTargetConfigurator
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinMappedJvmCompilationFactory
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KpmAwareTargetWithTestsConfigurator
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.hasKpmModel
+import org.jetbrains.kotlin.gradle.kpm.KotlinMappedJvmCompilationFactory
+import org.jetbrains.kotlin.gradle.kpm.KpmAwareTargetWithTestsConfigurator
+import org.jetbrains.kotlin.gradle.kpm.hasKpmModel
 import org.jetbrains.kotlin.gradle.targets.jvm.KotlinJvmTarget
 import org.jetbrains.kotlin.gradle.targets.jvm.KotlinJvmTargetConfigurator
 

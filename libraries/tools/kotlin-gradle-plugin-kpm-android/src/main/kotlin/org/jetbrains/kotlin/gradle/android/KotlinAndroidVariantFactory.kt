@@ -15,6 +15,7 @@ import com.android.build.gradle.internal.publishing.AndroidArtifacts
 import org.gradle.api.attributes.java.TargetJvmEnvironment
 import org.gradle.api.attributes.java.TargetJvmEnvironment.TARGET_JVM_ENVIRONMENT_ATTRIBUTE
 import org.gradle.kotlin.dsl.named
+import org.jetbrains.kotlin.gradle.kpm.*
 import org.jetbrains.kotlin.gradle.kpm.external.ExternalVariantApi
 import org.jetbrains.kotlin.gradle.kpm.external.createExternalJvmVariant
 import org.jetbrains.kotlin.gradle.kpm.external.external

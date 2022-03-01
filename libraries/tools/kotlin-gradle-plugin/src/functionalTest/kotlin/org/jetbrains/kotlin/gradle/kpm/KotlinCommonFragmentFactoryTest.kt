@@ -7,7 +7,6 @@
 
 package org.jetbrains.kotlin.gradle.kpm
 
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinCommonFragmentFactory
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue

@@ -5,7 +5,7 @@ import org.gradle.testfixtures.ProjectBuilder
 import org.gradle.tooling.provider.model.ToolingModelBuilderRegistry
 import org.jetbrains.kotlin.gradle.kpm.idea.IdeaKotlinProjectModel
 import org.jetbrains.kotlin.gradle.plugin.KotlinPm20PluginWrapper
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinPm20ProjectExtension
+import org.jetbrains.kotlin.gradle.kpm.KotlinPm20ProjectExtension
 
 /*
  * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.

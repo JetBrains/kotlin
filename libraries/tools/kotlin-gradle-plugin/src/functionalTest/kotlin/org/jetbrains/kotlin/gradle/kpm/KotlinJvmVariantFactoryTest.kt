@@ -10,7 +10,6 @@ package org.jetbrains.kotlin.gradle.kpm
 import org.gradle.api.attributes.Attribute
 import org.gradle.api.tasks.bundling.Zip
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.*
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import kotlin.test.Test
 import kotlin.test.assertEquals

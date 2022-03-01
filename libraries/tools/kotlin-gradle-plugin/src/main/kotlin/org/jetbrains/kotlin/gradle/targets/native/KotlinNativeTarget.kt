@@ -14,10 +14,11 @@ import org.gradle.jvm.tasks.Jar
 import org.gradle.util.WrapUtil
 import org.jetbrains.kotlin.gradle.dsl.KotlinNativeBinaryContainer
 import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
+import org.jetbrains.kotlin.gradle.kpm.KotlinNativeVariantInternal
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.*
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.isNativeShared
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.variantsContainingFragment
+import org.jetbrains.kotlin.gradle.kpm.isNativeShared
+import org.jetbrains.kotlin.gradle.kpm.variantsContainingFragment
 import org.jetbrains.kotlin.gradle.targets.metadata.*
 import org.jetbrains.kotlin.gradle.targets.metadata.filesWithUnpackedArchives
 import org.jetbrains.kotlin.gradle.targets.metadata.isKotlinGranularMetadataEnabled
