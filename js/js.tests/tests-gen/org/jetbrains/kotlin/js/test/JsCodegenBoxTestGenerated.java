@@ -2373,6 +2373,12 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             }
 
             @Test
+            @TestMetadata("kt44636_localExtension.kt")
+            public void testKt44636_localExtension() throws Exception {
+                runTest("compiler/testData/codegen/box/callableReference/bound/kt44636_localExtension.kt");
+            }
+
+            @Test
             @TestMetadata("multiCase.kt")
             public void testMultiCase() throws Exception {
                 runTest("compiler/testData/codegen/box/callableReference/bound/multiCase.kt");
@@ -4628,6 +4634,12 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
         }
 
         @Test
+        @TestMetadata("kt47894_inlineFunWithObjectWithNothing.kt")
+        public void testKt47894_inlineFunWithObjectWithNothing() throws Exception {
+            runTest("compiler/testData/codegen/box/closures/kt47894_inlineFunWithObjectWithNothing.kt");
+        }
+
+        @Test
         @TestMetadata("kt5589.kt")
         public void testKt5589() throws Exception {
             runTest("compiler/testData/codegen/box/closures/kt5589.kt");
@@ -5994,6 +6006,12 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             @TestMetadata("kt17384.kt")
             public void testKt17384() throws Exception {
                 runTest("compiler/testData/codegen/box/controlStructures/breakContinueInExpressions/kt17384.kt");
+            }
+
+            @Test
+            @TestMetadata("kt45704_elvisInInlineFun.kt")
+            public void testKt45704_elvisInInlineFun() throws Exception {
+                runTest("compiler/testData/codegen/box/controlStructures/breakContinueInExpressions/kt45704_elvisInInlineFun.kt");
             }
 
             @Test
@@ -7941,6 +7959,12 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 @TestMetadata("infixRecursiveCall.kt")
                 public void testInfixRecursiveCall() throws Exception {
                     runTest("compiler/testData/codegen/box/coroutines/featureIntersection/tailrec/infixRecursiveCall.kt");
+                }
+
+                @Test
+                @TestMetadata("kt38920_localTailrec.kt")
+                public void testKt38920_localTailrec() throws Exception {
+                    runTest("compiler/testData/codegen/box/coroutines/featureIntersection/tailrec/kt38920_localTailrec.kt");
                 }
 
                 @Test
@@ -9981,6 +10005,12 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             }
 
             @Test
+            @TestMetadata("primitiveArrays.kt")
+            public void testPrimitiveArrays() throws Exception {
+                runTest("compiler/testData/codegen/box/dataClasses/toString/primitiveArrays.kt");
+            }
+
+            @Test
             @TestMetadata("unitComponent.kt")
             public void testUnitComponent() throws Exception {
                 runTest("compiler/testData/codegen/box/dataClasses/toString/unitComponent.kt");
@@ -11573,6 +11603,12 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 @TestMetadata("insideElvis.kt")
                 public void testInsideElvis() throws Exception {
                     runTest("compiler/testData/codegen/box/diagnostics/functions/tailRecursion/insideElvis.kt");
+                }
+
+                @Test
+                @TestMetadata("kt47084_lambdaInDefaultArgument.kt")
+                public void testKt47084_lambdaInDefaultArgument() throws Exception {
+                    runTest("compiler/testData/codegen/box/diagnostics/functions/tailRecursion/kt47084_lambdaInDefaultArgument.kt");
                 }
 
                 @Test
@@ -23846,6 +23882,12 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
         }
 
         @Test
+        @TestMetadata("kt36952_identityEqualsWithBooleanInLocalFunction.kt")
+        public void testKt36952_identityEqualsWithBooleanInLocalFunction() throws Exception {
+            runTest("compiler/testData/codegen/box/primitiveTypes/kt36952_identityEqualsWithBooleanInLocalFunction.kt");
+        }
+
+        @Test
         @TestMetadata("kt37505.kt")
         public void testKt37505() throws Exception {
             runTest("compiler/testData/codegen/box/primitiveTypes/kt37505.kt");
@@ -31978,6 +32020,18 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
         }
 
         @Test
+        @TestMetadata("kt36237.kt")
+        public void testKt36237() throws Exception {
+            runTest("compiler/testData/codegen/box/reified/kt36237.kt");
+        }
+
+        @Test
+        @TestMetadata("kt39256_privateInlineWithAnonymousObject.kt")
+        public void testKt39256_privateInlineWithAnonymousObject() throws Exception {
+            runTest("compiler/testData/codegen/box/reified/kt39256_privateInlineWithAnonymousObject.kt");
+        }
+
+        @Test
         @TestMetadata("newArrayInt.kt")
         public void testNewArrayInt() throws Exception {
             runTest("compiler/testData/codegen/box/reified/newArrayInt.kt");
@@ -35386,6 +35440,12 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             @TestMetadata("kt27161_string.kt")
             public void testKt27161_string() throws Exception {
                 runTest("compiler/testData/codegen/box/when/whenSubjectVariable/kt27161_string.kt");
+            }
+
+            @Test
+            @TestMetadata("kt33641_inlineClass.kt")
+            public void testKt33641_inlineClass() throws Exception {
+                runTest("compiler/testData/codegen/box/when/whenSubjectVariable/kt33641_inlineClass.kt");
             }
 
             @Test
