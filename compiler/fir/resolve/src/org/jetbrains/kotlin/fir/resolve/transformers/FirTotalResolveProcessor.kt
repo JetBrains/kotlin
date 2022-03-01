@@ -68,7 +68,7 @@ fun FirResolvePhase.createCompilerProcessorByPhase(
 ): FirResolveProcessor {
     return when (this) {
         RAW_FIR -> throw IllegalArgumentException("Raw FIR building phase does not have a transformer")
-        ANNOTATIONS_FOR_PLUGINS -> FirPluginAnnotationsResolveProcessor(session, scopeSession)
+        COMPILER_REQUIRED_ANNOTATIONS -> FirCompilerRequiredAnnotationsResolveProcessor(session, scopeSession)
         COMPANION_GENERATION -> FirCompanionGenerationProcessor(session, scopeSession)
         IMPORTS -> FirImportResolveProcessor(session, scopeSession)
         SUPER_TYPES -> FirSupertypeResolverProcessor(session, scopeSession)
