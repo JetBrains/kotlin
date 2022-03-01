@@ -26,6 +26,12 @@ public class LocalVariableTestGenerated extends AbstractLocalVariableTest {
     }
 
     @Test
+    @TestMetadata("assignment.kt")
+    public void testAssignment() throws Exception {
+        runTest("compiler/testData/debug/localVariables/assignment.kt");
+    }
+
+    @Test
     @TestMetadata("catchClause.kt")
     public void testCatchClause() throws Exception {
         runTest("compiler/testData/debug/localVariables/catchClause.kt");
@@ -38,18 +44,6 @@ public class LocalVariableTestGenerated extends AbstractLocalVariableTest {
     }
 
     @Test
-    @TestMetadata("destructuringInFor.kt")
-    public void testDestructuringInFor() throws Exception {
-        runTest("compiler/testData/debug/localVariables/destructuringInFor.kt");
-    }
-
-    @Test
-    @TestMetadata("destructuringInLambdas.kt")
-    public void testDestructuringInLambdas() throws Exception {
-        runTest("compiler/testData/debug/localVariables/destructuringInLambdas.kt");
-    }
-
-    @Test
     @TestMetadata("doWhile.kt")
     public void testDoWhile() throws Exception {
         runTest("compiler/testData/debug/localVariables/doWhile.kt");
@@ -59,6 +53,12 @@ public class LocalVariableTestGenerated extends AbstractLocalVariableTest {
     @TestMetadata("emptyFun.kt")
     public void testEmptyFun() throws Exception {
         runTest("compiler/testData/debug/localVariables/emptyFun.kt");
+    }
+
+    @Test
+    @TestMetadata("forLoopMultiline.kt")
+    public void testForLoopMultiline() throws Exception {
+        runTest("compiler/testData/debug/localVariables/forLoopMultiline.kt");
     }
 
     @Test
@@ -212,6 +212,94 @@ public class LocalVariableTestGenerated extends AbstractLocalVariableTest {
         @TestMetadata("property.kt")
         public void testProperty() throws Exception {
             runTest("compiler/testData/debug/localVariables/constructors/property.kt");
+        }
+    }
+
+    @Nested
+    @TestMetadata("compiler/testData/debug/localVariables/destructuring")
+    @TestDataPath("$PROJECT_ROOT")
+    public class Destructuring {
+        @Test
+        public void testAllFilesPresentInDestructuring() throws Exception {
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/debug/localVariables/destructuring"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM, true);
+        }
+
+        @Test
+        @TestMetadata("assignment.kt")
+        public void testAssignment() throws Exception {
+            runTest("compiler/testData/debug/localVariables/destructuring/assignment.kt");
+        }
+
+        @Test
+        @TestMetadata("assignmentCustomComponentNs.kt")
+        public void testAssignmentCustomComponentNs() throws Exception {
+            runTest("compiler/testData/debug/localVariables/destructuring/assignmentCustomComponentNs.kt");
+        }
+
+        @Test
+        @TestMetadata("assignmentCustomComponentNsMultiline.kt")
+        public void testAssignmentCustomComponentNsMultiline() throws Exception {
+            runTest("compiler/testData/debug/localVariables/destructuring/assignmentCustomComponentNsMultiline.kt");
+        }
+
+        @Test
+        @TestMetadata("assignmentMultiline.kt")
+        public void testAssignmentMultiline() throws Exception {
+            runTest("compiler/testData/debug/localVariables/destructuring/assignmentMultiline.kt");
+        }
+
+        @Test
+        @TestMetadata("assignmentUnderscoreNames.kt")
+        public void testAssignmentUnderscoreNames() throws Exception {
+            runTest("compiler/testData/debug/localVariables/destructuring/assignmentUnderscoreNames.kt");
+        }
+
+        @Test
+        @TestMetadata("assignmentUnderscoreNamesMultiline.kt")
+        public void testAssignmentUnderscoreNamesMultiline() throws Exception {
+            runTest("compiler/testData/debug/localVariables/destructuring/assignmentUnderscoreNamesMultiline.kt");
+        }
+
+        @Test
+        @TestMetadata("forLoop.kt")
+        public void testForLoop() throws Exception {
+            runTest("compiler/testData/debug/localVariables/destructuring/forLoop.kt");
+        }
+
+        @Test
+        @TestMetadata("forLoopMultiline.kt")
+        public void testForLoopMultiline() throws Exception {
+            runTest("compiler/testData/debug/localVariables/destructuring/forLoopMultiline.kt");
+        }
+
+        @Test
+        @TestMetadata("lambda.kt")
+        public void testLambda() throws Exception {
+            runTest("compiler/testData/debug/localVariables/destructuring/lambda.kt");
+        }
+
+        @Test
+        @TestMetadata("lambdaCustomComponentNs.kt")
+        public void testLambdaCustomComponentNs() throws Exception {
+            runTest("compiler/testData/debug/localVariables/destructuring/lambdaCustomComponentNs.kt");
+        }
+
+        @Test
+        @TestMetadata("lambdaCustomComponentNsMultiline.kt")
+        public void testLambdaCustomComponentNsMultiline() throws Exception {
+            runTest("compiler/testData/debug/localVariables/destructuring/lambdaCustomComponentNsMultiline.kt");
+        }
+
+        @Test
+        @TestMetadata("lambdaMultiline.kt")
+        public void testLambdaMultiline() throws Exception {
+            runTest("compiler/testData/debug/localVariables/destructuring/lambdaMultiline.kt");
+        }
+
+        @Test
+        @TestMetadata("lambdaMultipleDestructs.kt")
+        public void testLambdaMultipleDestructs() throws Exception {
+            runTest("compiler/testData/debug/localVariables/destructuring/lambdaMultipleDestructs.kt");
         }
     }
 
