@@ -24,6 +24,7 @@ dependencies {
     api(project(":daemon-common-new"))
     api(project(":kotlin-daemon-client"))
     api(project(":kotlin-daemon"))
+    compileOnly(project(":jps:jps-platform-api-signatures"))
     testImplementation(projectTests(":generators:test-generator"))
     api(project(":compiler:frontend.java"))
     api(project(":js:js.frontend"))
