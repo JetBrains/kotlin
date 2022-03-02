@@ -59,11 +59,7 @@ class DefaultKotlinSourceSet(
     val intransitiveMetadataConfigurationName: String
         get() = lowerCamelCaseName(disambiguateName(INTRANSITIVE), METADATA_CONFIGURATION_NAME_SUFFIX)
 
-    override val kotlin: SourceDirectorySet = createDefaultSourceDirectorySet(project, "$name Kotlin source").apply {
-        filter.include("**/*.java")
-        filter.include("**/*.kt")
-        filter.include("**/*.kts")
-    }
+    override val kotlin: SourceDirectorySet = createDefaultSourceDirectorySet(project, "$name Kotlin source")
 
     override val languageSettings: LanguageSettingsBuilder = DefaultLanguageSettingsBuilder()
 

@@ -18,6 +18,7 @@ import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
+import org.gradle.api.provider.SetProperty
 import org.gradle.api.services.BuildService
 import org.gradle.api.services.BuildServiceParameters
 import org.gradle.api.specs.Spec
@@ -102,12 +103,6 @@ abstract class AbstractKotlinCompileTool<T : CommonToolArguments> @Inject constr
         .from(
             { sourceFiles.asFileTree.matching(patternFilterable) }
         )
-
-    @Deprecated("Use PatternFilterable methods to configure sources")
-    @get:Input
-    val sourceFilesExtensions: ListProperty<String> = objectFactory
-        .listProperty(String::class.java)
-        .convention(DEFAULT_KOTLIN_SOURCE_FILES_EXTENSIONS)
 
     /**
      * Sets the source for this task.
@@ -747,6 +742,7 @@ abstract class KotlinCompile @Inject constructor(
         get() = listOf(
             sources,
             javaSources,
+            scriptSources,
             commonSourceSet,
             classpathSnapshotProperties.classpath,
             classpathSnapshotProperties.classpathSnapshot
@@ -791,9 +787,46 @@ abstract class KotlinCompile @Inject constructor(
     @get:Internal
     internal abstract val jvmTargetValidationMode: Property<PropertiesProvider.JvmTargetValidationMode>
 
+    @get:Internal
+    internal val scriptDefinitions: ConfigurableFileCollection = objectFactory.fileCollection()
+
+    @get:Input
+    @get:Optional
+    internal val scriptExtensions: SetProperty<String> = objectFactory.setPropertyWithLazyValue {
+        scriptDefinitions
+            .map { definitionFile ->
+                definitionFile.readLines().filter(String::isNotBlank)
+            }
+            .flatten()
+    }
+
+    private class ScriptFilterSpec(
+        private val scriptExtensions: SetProperty<String>
+    ) : Spec<FileTreeElement> {
+        override fun isSatisfiedBy(element: FileTreeElement): Boolean {
+            val extensions = scriptExtensions.get()
+            return extensions.isNotEmpty() &&
+                    (element.isDirectory || extensions.contains(element.file.extension))
+        }
+    }
+
+    private val scriptSourceFiles = objectFactory.fileCollection()
+
+    @get:InputFiles
+    @get:SkipWhenEmpty
+    @get:IgnoreEmptyDirectories
+    @get:PathSensitive(PathSensitivity.RELATIVE)
+    internal open val scriptSources: FileCollection = scriptSourceFiles
+        .asFileTree
+        .matching { patternFilterable ->
+            patternFilterable.include(ScriptFilterSpec(scriptExtensions))
+        }
+
     init {
         incremental = true
     }
+
+    override fun skipCondition(): Boolean = sources.isEmpty && scriptSources.isEmpty
 
     override fun createCompilerArgs(): K2JVMCompilerArguments =
         K2JVMCompilerArguments()
@@ -829,6 +862,7 @@ abstract class KotlinCompile @Inject constructor(
     ) {
         validateKotlinAndJavaHasSameTargetCompatibility(args, kotlinSources)
 
+        val scriptSources = scriptSources.asFileTree.files
         val messageCollector = GradlePrintingMessageCollector(logger, args.allWarningsAsErrors)
         val outputItemCollector = OutputItemsCollectorImpl()
         val compilerRunner = compilerRunner.get()
@@ -856,12 +890,14 @@ abstract class KotlinCompile @Inject constructor(
                     - (classpathSnapshotProperties.classpathSnapshotDir.orNull?.asFile?.let { setOf(it) } ?: emptySet()),
             reportingSettings = reportingSettings(),
             incrementalCompilationEnvironment = icEnv,
-            kotlinScriptExtensions = sourceFilesExtensions.get().toTypedArray()
+            kotlinScriptExtensions = scriptExtensions.get().toTypedArray()
         )
         logger.info("Kotlin source files: ${kotlinSources.joinToString()}")
         logger.info("Java source files: ${javaSources.files.joinToString()}")
+        logger.info("Script source files: ${scriptSources.joinToString()}")
+        logger.info("Script file extensions: ${scriptExtensions.get().joinToString()}")
         compilerRunner.runJvmCompilerAsync(
-            kotlinSources.toList(),
+            (kotlinSources + scriptSources).toList(),
             commonSourceSet.toList(),
             javaSources.files, // we need here only directories where Java sources are located
             javaPackagePrefix,
@@ -951,15 +987,17 @@ abstract class KotlinCompile @Inject constructor(
                 .matching(::javaFilesPatternFilter)
         )
 
-    // override setSource to track Java sources as well
+    // override setSource to track Java and script sources as well
     override fun setSource(source: Any) {
         javaSourceFiles.from(source)
+        scriptSourceFiles.from(source)
         super.setSource(source)
     }
 
-    // override source to track Java sources as well
+    // override source to track Java and script sources as well
     override fun setSource(vararg source: Any) {
         javaSourceFiles.from(*source)
+        scriptSourceFiles.from(*source)
         super.setSource(*source)
     }
 
