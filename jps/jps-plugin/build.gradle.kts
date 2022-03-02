@@ -22,6 +22,7 @@ dependencies {
     compile(project(":daemon-common-new"))
     compile(projectRuntimeJar(":kotlin-daemon-client"))
     compile(projectRuntimeJar(":kotlin-daemon"))
+    compileOnly(project(":jps:jps-platform-api-signatures"))
     testImplementation(projectTests(":generators:test-generator")) // TODO FIX ME
     testCompile(projectTests(":generators:test-generator"))
     compile(project(":compiler:frontend.java"))
