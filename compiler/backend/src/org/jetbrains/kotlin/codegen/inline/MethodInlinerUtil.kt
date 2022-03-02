@@ -62,47 +62,31 @@ internal class FunctionalArgumentValue(
 val BasicValue?.functionalArgument
     get() = (this as? FunctionalArgumentValue)?.functionalArgument
 
-internal class FunctionalArgumentInterpreter(
-    private val inliner: MethodInliner, private val toDelete: MutableSet<AbstractInsnNode>
-) : BasicInterpreter(Opcodes.API_VERSION) {
-
+internal class FunctionalArgumentInterpreter(private val inliner: MethodInliner) : BasicInterpreter(Opcodes.API_VERSION) {
     override fun unaryOperation(insn: AbstractInsnNode, value: BasicValue): BasicValue? =
-        markInstructionIfNeeded(insn, super.unaryOperation(insn, value))
+        wrapArgumentInValueIfNeeded(insn, super.unaryOperation(insn, value))
 
-    override fun copyOperation(insn: AbstractInsnNode, value: BasicValue?): BasicValue? {
-        val basicValue = super.copyOperation(insn, value)
-        // Parameter checks are processed separately
-        if (insn.next?.opcode == Opcodes.LDC && insn.next?.next?.isCheckParameterIsNotNull() == true) {
-            return basicValue
-        }
-        if (value.functionalArgument is LambdaInfo) {
-            // SWAP and ASTORE
-            toDelete.add(insn)
-            return value
-        }
-        return markInstructionIfNeeded(insn, basicValue)
-    }
-
-    private fun markInstructionIfNeeded(
-        insn: AbstractInsnNode,
-        basicValue: BasicValue?
-    ): BasicValue? {
-        val functionalArgument = inliner.getFunctionalArgumentIfExists(insn)
-        return if (functionalArgument != null) {
-            if (functionalArgument is LambdaInfo) {
-                toDelete.add(insn)
-            }
-            FunctionalArgumentValue(functionalArgument, basicValue)
-        } else basicValue
-    }
+    override fun copyOperation(insn: AbstractInsnNode, value: BasicValue?): BasicValue? =
+        wrapArgumentInValueIfNeeded(insn, super.copyOperation(insn, value))
 
     override fun newOperation(insn: AbstractInsnNode): BasicValue? =
-        markInstructionIfNeeded(insn, super.newOperation(insn))
+        wrapArgumentInValueIfNeeded(insn, super.newOperation(insn))
+
+    private fun wrapArgumentInValueIfNeeded(
+        insn: AbstractInsnNode,
+        basicValue: BasicValue?
+    ): BasicValue? =
+        inliner.getFunctionalArgumentIfExists(insn)
+            ?.let { FunctionalArgumentValue(it, basicValue) }
+            ?: basicValue
 
     override fun merge(v: BasicValue?, w: BasicValue?): BasicValue? =
         if (v is FunctionalArgumentValue && w is FunctionalArgumentValue && v.functionalArgument == w.functionalArgument) v
         else super.merge(v, w)
 }
+
+internal fun AbstractInsnNode.isAloadBeforeCheckParameterIsNotNull(): Boolean =
+    opcode == Opcodes.ALOAD && next?.opcode == Opcodes.LDC && next?.next?.isCheckParameterIsNotNull() == true
 
 // Interpreter, that analyzes only ALOAD_0s, which are used as continuation arguments
 

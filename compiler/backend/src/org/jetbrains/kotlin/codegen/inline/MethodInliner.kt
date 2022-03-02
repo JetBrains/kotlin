@@ -33,6 +33,7 @@ import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
 import org.jetbrains.org.objectweb.asm.commons.LocalVariablesSorter
 import org.jetbrains.org.objectweb.asm.commons.MethodRemapper
 import org.jetbrains.org.objectweb.asm.tree.*
+import org.jetbrains.org.objectweb.asm.tree.analysis.BasicValue
 import org.jetbrains.org.objectweb.asm.tree.analysis.Frame
 import org.jetbrains.org.objectweb.asm.util.Printer
 import java.util.*
@@ -468,8 +469,10 @@ class MethodInliner(
 
         val toDelete = SmartSet.create<AbstractInsnNode>()
 
-        val sources = analyzeMethodNodeWithInterpreter(processingNode, FunctionalArgumentInterpreter(this, toDelete))
+        val sources = analyzeMethodNodeWithInterpreter(processingNode, FunctionalArgumentInterpreter(this))
         val instructions = processingNode.instructions
+
+        markObsoleteInstruction(instructions, toDelete, sources)
 
         var awaitClassReification = false
         var currentFinallyDeep = 0
@@ -620,6 +623,41 @@ class MethodInliner(
         processingNode.tryCatchBlocks.removeIf { it.isMeaningless() }
 
         return processingNode
+    }
+
+    private fun MethodInliner.markObsoleteInstruction(
+        instructions: InsnList,
+        toDelete: SmartSet<AbstractInsnNode>,
+        sources: Array<out Frame<BasicValue>?>
+    ) {
+        for (insn in instructions) {
+            // Parameter checks are processed separately
+            if (insn.isAloadBeforeCheckParameterIsNotNull()) continue
+            val functionalArgument = getFunctionalArgumentIfExists(insn)
+            if (functionalArgument is LambdaInfo) {
+                toDelete.add(insn)
+            } else {
+                when (insn.opcode) {
+                    Opcodes.ASTORE -> {
+                        if (sources[instructions.indexOf(insn)]?.top().functionalArgument is LambdaInfo) {
+                            toDelete.add(insn)
+                        }
+                    }
+                    Opcodes.SWAP -> {
+                        if (sources[instructions.indexOf(insn)]?.peek(0).functionalArgument is LambdaInfo ||
+                            sources[instructions.indexOf(insn)]?.peek(1).functionalArgument is LambdaInfo
+                        ) {
+                            toDelete.add(insn)
+                        }
+                    }
+                    Opcodes.ALOAD -> {
+                        if (sources[instructions.indexOf(insn)]?.getLocal((insn as VarInsnNode).`var`).functionalArgument is LambdaInfo) {
+                            toDelete.add(insn)
+                        }
+                    }
+                }
+            }
+        }
     }
 
     // Replace ALOAD 0
