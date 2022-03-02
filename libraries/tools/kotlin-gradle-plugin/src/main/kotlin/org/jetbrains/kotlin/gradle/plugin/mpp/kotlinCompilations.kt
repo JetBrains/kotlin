@@ -164,7 +164,11 @@ internal fun addSourcesToKotlinCompileTask(
         // In this call, the super-implementation of `source` adds the directories files to the roots of the union file tree,
         // so it's OK to pass just the source roots.
         setSource(Callable(sources))
-        sourceFilesExtensions.addAll(sourceFileExtensions)
+        with(sourceFileExtensions.toSet()) {
+            if (isNotEmpty()) {
+                include(flatMap { ext -> ext.fileExtensionCasePermutations().map { "**/*.$it" } })
+            }
+        }
 
         // The `commonSourceSet` is passed to the compiler as-is, converted with toList
         commonSourceSet.from(
