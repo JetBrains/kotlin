@@ -11,6 +11,18 @@ FILE: propertyWithInitializer.kt
     public? final? [RAW_FIR] val property: Int = LAZY_EXPRESSION
         [TYPES] public? get(): Int
 
+COMPILER_REQUIRED_ANNOTATIONS:
+FILE: propertyWithInitializer.kt
+    public? final? [COMPILER_REQUIRED_ANNOTATIONS] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
+    public? final? [RAW_FIR] val property: Int = LAZY_EXPRESSION
+        [TYPES] public? get(): Int
+
+COMPANION_GENERATION:
+FILE: propertyWithInitializer.kt
+    public? final? [COMPANION_GENERATION] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
+    public? final? [RAW_FIR] val property: Int = LAZY_EXPRESSION
+        [TYPES] public? get(): Int
+
 SUPER_TYPES:
 FILE: propertyWithInitializer.kt
     public? final? [SUPER_TYPES] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }

@@ -41,10 +41,52 @@ FILE: superTypes.kt
 
     }
 
-SUPER_TYPES:
+COMPILER_REQUIRED_ANNOTATIONS:
 FILE: superTypes.kt
     public? open [RAW_FIR] class A : R|kotlin/Any| {
         public? [RAW_FIR] [ContainingClassKey=A] constructor(): R|A| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public? open [RAW_FIR] class B : A {
+        public? [RAW_FIR] [ContainingClassKey=B] constructor(): R|B| {
+            super<A>()
+        }
+
+    }
+    public? open [COMPILER_REQUIRED_ANNOTATIONS] class resolveMe : A {
+        public? [COMPILER_REQUIRED_ANNOTATIONS] [ContainingClassKey=resolveMe] constructor(): R|resolveMe| {
+            super<A>()
+        }
+
+    }
+
+COMPANION_GENERATION:
+FILE: superTypes.kt
+    public? open [RAW_FIR] class A : R|kotlin/Any| {
+        public? [RAW_FIR] [ContainingClassKey=A] constructor(): R|A| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public? open [RAW_FIR] class B : A {
+        public? [RAW_FIR] [ContainingClassKey=B] constructor(): R|B| {
+            super<A>()
+        }
+
+    }
+    public? open [COMPANION_GENERATION] class resolveMe : A {
+        public? [COMPANION_GENERATION] [ContainingClassKey=resolveMe] constructor(): R|resolveMe| {
+            super<A>()
+        }
+
+    }
+
+SUPER_TYPES:
+FILE: superTypes.kt
+    public? open [COMPILER_REQUIRED_ANNOTATIONS] class A : R|kotlin/Any| {
+        public? [COMPILER_REQUIRED_ANNOTATIONS] [ContainingClassKey=A] constructor(): R|A| {
             super<R|kotlin/Any|>()
         }
 

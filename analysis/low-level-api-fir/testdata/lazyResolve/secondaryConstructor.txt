@@ -23,6 +23,30 @@ FILE: secondaryConstructor.kt
 
     }
 
+COMPILER_REQUIRED_ANNOTATIONS:
+FILE: secondaryConstructor.kt
+    public? final? [COMPILER_REQUIRED_ANNOTATIONS] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
+    public? final? [RAW_FIR] fun receive([RAW_FIR] value: A): R|kotlin/Unit| { LAZY_BLOCK }
+    public? final? [RAW_FIR] class A : R|kotlin/Any| {
+        public? [RAW_FIR] [ContainingClassKey=A] constructor([RAW_FIR] x: Int): R|A| {
+            super<R|kotlin/Any|>()
+            [RAW_FIR] lval a: <implicit> = x#
+        }
+
+    }
+
+COMPANION_GENERATION:
+FILE: secondaryConstructor.kt
+    public? final? [COMPANION_GENERATION] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
+    public? final? [RAW_FIR] fun receive([RAW_FIR] value: A): R|kotlin/Unit| { LAZY_BLOCK }
+    public? final? [RAW_FIR] class A : R|kotlin/Any| {
+        public? [RAW_FIR] [ContainingClassKey=A] constructor([RAW_FIR] x: Int): R|A| {
+            super<R|kotlin/Any|>()
+            [RAW_FIR] lval a: <implicit> = x#
+        }
+
+    }
+
 SUPER_TYPES:
 FILE: secondaryConstructor.kt
     public? final? [SUPER_TYPES] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
