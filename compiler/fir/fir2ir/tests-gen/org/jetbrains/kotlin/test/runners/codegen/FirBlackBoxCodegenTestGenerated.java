@@ -44774,6 +44774,34 @@ public class FirBlackBoxCodegenTestGenerated extends AbstractFirBlackBoxCodegenT
                 runTest("compiler/testData/codegen/box/sam/equality/simpleLambdas.kt");
             }
         }
+
+        @Nested
+        @TestMetadata("compiler/testData/codegen/box/sam/javaSamWithEqualsHashCode")
+        @TestDataPath("$PROJECT_ROOT")
+        public class JavaSamWithEqualsHashCode {
+            @Test
+            public void testAllFilesPresentInJavaSamWithEqualsHashCode() throws Exception {
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/sam/javaSamWithEqualsHashCode"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+            }
+
+            @Test
+            @TestMetadata("classImplementingFunctionInterface.kt")
+            public void testClassImplementingFunctionInterface() throws Exception {
+                runTest("compiler/testData/codegen/box/sam/javaSamWithEqualsHashCode/classImplementingFunctionInterface.kt");
+            }
+
+            @Test
+            @TestMetadata("functionReference.kt")
+            public void testFunctionReference() throws Exception {
+                runTest("compiler/testData/codegen/box/sam/javaSamWithEqualsHashCode/functionReference.kt");
+            }
+
+            @Test
+            @TestMetadata("functionalExpression.kt")
+            public void testFunctionalExpression() throws Exception {
+                runTest("compiler/testData/codegen/box/sam/javaSamWithEqualsHashCode/functionalExpression.kt");
+            }
+        }
     }
 
     @Nested

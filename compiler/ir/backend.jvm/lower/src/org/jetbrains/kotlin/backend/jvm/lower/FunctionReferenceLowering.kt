@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.backend.jvm.JvmSymbols
 import org.jetbrains.kotlin.backend.jvm.ir.*
 import org.jetbrains.kotlin.backend.jvm.lower.indy.*
 import org.jetbrains.kotlin.config.JvmClosureGenerationScheme
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
@@ -74,6 +75,9 @@ internal class FunctionReferenceLowering(private val context: JvmBackendContext)
 
     private val shouldGenerateIndyLambdas =
         context.state.lambdasScheme == JvmClosureGenerationScheme.INDY
+
+    private val isJavaSamConversionWithEqualsHashCode =
+        context.state.languageVersionSettings.supportsFeature(LanguageFeature.JavaSamConversionEqualsHashCode)
 
     override fun visitBlock(expression: IrBlock): IrExpression {
         if (!expression.origin.isLambda)
@@ -444,7 +448,7 @@ internal class FunctionReferenceLowering(private val context: JvmBackendContext)
     private fun canGenerateIndySamConversionOnFunctionalExpression(samSuperType: IrType, expression: IrExpression): Boolean {
         val samClass = samSuperType.classOrNull
             ?: throw AssertionError("Class type expected: ${samSuperType.render()}")
-        if (!samClass.owner.isFromJava())
+        if (!samClass.owner.isFromJava() || isJavaSamConversionWithEqualsHashCode)
             return false
         if (expression is IrBlock && expression.origin == IrStatementOrigin.ADAPTED_FUNCTION_REFERENCE)
             return false
@@ -595,7 +599,8 @@ internal class FunctionReferenceLowering(private val context: JvmBackendContext)
         private val isKotlinFunInterface = samInterface != null && !samInterface.isFromJava()
 
         private val needToGenerateSamEqualsHashCodeMethods =
-            isKotlinFunInterface && (isAdaptedReference || !isLambda)
+            (isKotlinFunInterface || isJavaSamConversionWithEqualsHashCode) &&
+                    (isAdaptedReference || !isLambda)
 
         private val superType =
             samSuperType

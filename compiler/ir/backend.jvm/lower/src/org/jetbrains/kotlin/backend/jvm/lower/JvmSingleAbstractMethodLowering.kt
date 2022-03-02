@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.ir.erasedUpperBound
 import org.jetbrains.kotlin.backend.jvm.ir.isInPublicInlineScope
 import org.jetbrains.kotlin.backend.jvm.ir.rawType
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
@@ -34,6 +35,10 @@ internal val singleAbstractMethodPhase = makeIrFilePhase(
 )
 
 private class JvmSingleAbstractMethodLowering(context: JvmBackendContext) : SingleAbstractMethodLowering(context) {
+
+    private val isJavaSamConversionWithEqualsHashCode =
+        context.state.languageVersionSettings.supportsFeature(LanguageFeature.JavaSamConversionEqualsHashCode)
+
     override val inInlineFunctionScope: Boolean
         get() = allScopes.any { it.irElement.safeAs<IrDeclaration>()?.isInPublicInlineScope == true }
 
@@ -56,5 +61,6 @@ private class JvmSingleAbstractMethodLowering(context: JvmBackendContext) : Sing
     private val IrType.isKotlinFunInterface: Boolean
         get() = getClass()?.origin != IrDeclarationOrigin.IR_EXTERNAL_JAVA_DECLARATION_STUB
 
-    override val IrType.needEqualsHashCodeMethods get() = isKotlinFunInterface
+    override val IrType.needEqualsHashCodeMethods
+        get() = isKotlinFunInterface || isJavaSamConversionWithEqualsHashCode
 }
