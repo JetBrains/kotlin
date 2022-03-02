@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.gradle.internal.transforms
 
 import org.gradle.api.artifacts.transform.*
+import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.file.FileSystemLocation
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
@@ -13,6 +14,7 @@ import org.gradle.api.tasks.Classpath
 import org.gradle.api.tasks.Internal
 import org.jetbrains.kotlin.build.report.metrics.*
 import org.jetbrains.kotlin.gradle.report.BuildMetricsReporterService
+import org.jetbrains.kotlin.incremental.classpathDiff.ClassSnapshotGranularity
 import org.jetbrains.kotlin.incremental.classpathDiff.ClasspathEntrySnapshotExternalizer
 import org.jetbrains.kotlin.incremental.classpathDiff.ClasspathEntrySnapshotter
 import org.jetbrains.kotlin.incremental.storage.saveToFile
@@ -24,6 +26,9 @@ abstract class ClasspathEntrySnapshotTransform : TransformAction<ClasspathEntryS
 
     abstract class Parameters : TransformParameters {
         @get:Internal
+        abstract val gradleUserHomeDir: DirectoryProperty
+
+        @get:Internal
         abstract val buildMetricsReporterService: Property<BuildMetricsReporterService>
     }
 
@@ -34,13 +39,31 @@ abstract class ClasspathEntrySnapshotTransform : TransformAction<ClasspathEntryS
     override fun transform(outputs: TransformOutputs) {
         val classpathEntryInputDirOrJar = inputArtifact.get().asFile
         val snapshotOutputFile = outputs.file(classpathEntryInputDirOrJar.name.replace('.', '_') + "-snapshot.bin")
+
+        // There are two levels of granularity when taking a snapshot:
+        //   - CLASS_LEVEL (coarse-grained): The size of the snapshot is smaller, but we will have coarse-grained classpath changes, which
+        //     means more source files will be recompiled.
+        //   - CLASS_MEMBER_LEVEL (fine-grained): The size of the snapshot is larger, but we will have fine-grained classpath changes, which
+        //     means fewer source files will be recompiled.
+        // Therefore, CLASS_LEVEL is suitable for classes that are infrequently changed (e.g., external libraries which are typically
+        // stored/transformed inside the Gradle user home, plus a few hard-coded cases below), whereas CLASS_MEMBER_LEVEL is suitable for
+        // classes that are frequently changed (e.g., classes produced by the current project).
+        val granularity = if (
+            classpathEntryInputDirOrJar.startsWith(parameters.gradleUserHomeDir.get().asFile) ||
+            classpathEntryInputDirOrJar.name == "android.jar" ||
+            classpathEntryInputDirOrJar.name.startsWith("kotlin-compiler-embeddable")
+        ) {
+            ClassSnapshotGranularity.CLASS_LEVEL
+        } else {
+            ClassSnapshotGranularity.CLASS_MEMBER_LEVEL
+        }
         val buildMetricsReporterService = parameters.buildMetricsReporterService.orNull
 
         val metricsReporter = buildMetricsReporterService?.let { BuildMetricsReporterImpl() } ?: DoNothingBuildMetricsReporter
         val startTimeMs = System.currentTimeMillis()
         var failureMessage: String? = null
         try {
-            doTransform(classpathEntryInputDirOrJar, snapshotOutputFile, metricsReporter)
+            doTransform(classpathEntryInputDirOrJar, snapshotOutputFile, granularity, metricsReporter)
         } catch (e: Throwable) {
             failureMessage = e.message
             throw e
@@ -57,9 +80,12 @@ abstract class ClasspathEntrySnapshotTransform : TransformAction<ClasspathEntryS
         }
     }
 
-    private fun doTransform(classpathEntryInputDirOrJar: File, snapshotOutputFile: File, metrics: BuildMetricsReporter) {
+    private fun doTransform(
+        classpathEntryInputDirOrJar: File, snapshotOutputFile: File,
+        granularity: ClassSnapshotGranularity, metrics: BuildMetricsReporter
+    ) {
         metrics.measure(BuildTime.CLASSPATH_ENTRY_SNAPSHOT_TRANSFORM) {
-            val snapshot = ClasspathEntrySnapshotter.snapshot(classpathEntryInputDirOrJar, metrics)
+            val snapshot = ClasspathEntrySnapshotter.snapshot(classpathEntryInputDirOrJar, granularity, metrics)
             metrics.measure(BuildTime.SAVE_CLASSPATH_ENTRY_SNAPSHOT) {
                 ClasspathEntrySnapshotExternalizer.saveToFile(snapshotOutputFile, snapshot)
             }

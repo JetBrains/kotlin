@@ -564,11 +564,13 @@ abstract class KotlinCompile @Inject constructor(
             project.dependencies.registerTransform(ClasspathEntrySnapshotTransform::class.java) {
                 it.from.attribute(ARTIFACT_TYPE_ATTRIBUTE, JAR_ARTIFACT_TYPE)
                 it.to.attribute(ARTIFACT_TYPE_ATTRIBUTE, CLASSPATH_ENTRY_SNAPSHOT_ARTIFACT_TYPE)
+                it.parameters.gradleUserHomeDir.set(project.gradle.gradleUserHomeDir)
                 buildMetricsReporterService?.apply { it.parameters.buildMetricsReporterService.set(this) }
             }
             project.dependencies.registerTransform(ClasspathEntrySnapshotTransform::class.java) {
                 it.from.attribute(ARTIFACT_TYPE_ATTRIBUTE, DIRECTORY_ARTIFACT_TYPE)
                 it.to.attribute(ARTIFACT_TYPE_ATTRIBUTE, CLASSPATH_ENTRY_SNAPSHOT_ARTIFACT_TYPE)
+                it.parameters.gradleUserHomeDir.set(project.gradle.gradleUserHomeDir)
                 buildMetricsReporterService?.apply { it.parameters.buildMetricsReporterService.set(this) }
             }
         }

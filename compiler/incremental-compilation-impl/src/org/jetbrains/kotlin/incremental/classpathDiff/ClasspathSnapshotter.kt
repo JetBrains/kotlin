@@ -30,7 +30,11 @@ object ClasspathEntrySnapshotter {
                 && !unixStyleRelativePath.equals("module-info.class", ignoreCase = true)
     }
 
-    fun snapshot(classpathEntry: File, metrics: BuildMetricsReporter = DoNothingBuildMetricsReporter): ClasspathEntrySnapshot {
+    fun snapshot(
+        classpathEntry: File,
+        granularity: ClassSnapshotGranularity,
+        metrics: BuildMetricsReporter = DoNothingBuildMetricsReporter
+    ): ClasspathEntrySnapshot {
         val classes = metrics.measure(BuildTime.LOAD_CLASSES) {
             DirectoryOrJarContentsReader
                 .read(classpathEntry, DEFAULT_CLASS_FILTER)
@@ -40,7 +44,7 @@ object ClasspathEntrySnapshotter {
         }
 
         val snapshots = metrics.measure(BuildTime.SNAPSHOT_CLASSES) {
-            ClassSnapshotter.snapshot(classes, metrics = metrics)
+            ClassSnapshotter.snapshot(classes, granularity, metrics = metrics)
         }
 
         val relativePathsToSnapshotsMap = classes.map { it.classFile.unixStyleRelativePath }.zip(snapshots).toMap(LinkedHashMap())
