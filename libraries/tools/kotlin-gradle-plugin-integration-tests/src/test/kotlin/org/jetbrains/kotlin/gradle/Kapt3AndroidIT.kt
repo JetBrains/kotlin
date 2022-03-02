@@ -1,5 +1,6 @@
 package org.jetbrains.kotlin.gradle
 
+import org.gradle.api.logging.LogLevel
 import org.gradle.api.logging.configuration.WarningMode
 import org.jetbrains.kotlin.gradle.util.*
 import org.jetbrains.kotlin.test.util.KtTestUtil
@@ -241,15 +242,18 @@ abstract class Kapt3AndroidIT : BaseGradleIT() {
 
     @Test
     fun testDbFlow() {
-        val project = Project("android-dbflow", directoryPrefix = "kapt2")
+        val project = Project(
+            "android-dbflow",
+            directoryPrefix = "kapt2",
+            minLogLevel = LogLevel.INFO
+        )
 
         project.build("assembleDebug") {
             assertSuccessful()
             assertKaptSuccessful()
             assertFileExists("app/build/generated/source/kapt/debug/com/raizlabs/android/dbflow/config/GeneratedDatabaseHolder.java")
-            assertFileExists("app/build/generated/source/kapt/debug/com/raizlabs/android/dbflow/config/AppDatabaseapp_Database.java")
+            assertFileExists("app/build/generated/source/kapt/debug/com/raizlabs/android/dbflow/config/AppDatabaseAppDatabase_Database.java")
             assertFileExists("app/build/generated/source/kapt/debug/mobi/porquenao/poc/kotlin/core/Item_Table.java")
-            assertFileExists("app/build/generated/source/kapt/debug/mobi/porquenao/poc/kotlin/core/Item_Adapter.java")
         }
     }
 
