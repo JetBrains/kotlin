@@ -526,7 +526,8 @@ if (attachedIntellijVersion == "master") {
 }
 
 include ":jps:jps-common",
-        ":jps:jps-plugin"
+        ":jps:jps-plugin",
+        ":jps:jps-platform-api-signatures"
 
 include ":generators:analysis-api-generator",
         ":analysis",
