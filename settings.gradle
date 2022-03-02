@@ -487,7 +487,8 @@ if (attachedIntellijVersion == "212") { // Latest available platform in scope of
 }
 
 include ":jps:jps-common",
-        ":jps:jps-plugin"
+        ":jps:jps-plugin",
+        ":jps:jps-platform-api-signatures"
 
 include ":generators:analysis-api-generator",
         ":analysis:low-level-api-fir",
