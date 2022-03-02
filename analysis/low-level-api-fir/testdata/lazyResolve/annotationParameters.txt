@@ -69,6 +69,76 @@ FILE: annotationParameters.kt
 
     }
 
+COMPILER_REQUIRED_ANNOTATIONS:
+FILE: annotationParameters.kt
+    public? final? [RAW_FIR] enum class X : R|kotlin/Enum<X>| {
+        private [RAW_FIR] [ContainingClassKey=X] constructor(): R|X| {
+            super<R|kotlin/Enum<X>|>()
+        }
+
+        public final static [RAW_FIR] [ContainingClassKey=X] enum entry A: R|X|
+        public final static [BODY_RESOLVE] [ContainingClassKey=X] fun values(): R|kotlin/Array<X>| {
+        }
+
+        public final static [BODY_RESOLVE] [ContainingClassKey=X] fun valueOf([BODY_RESOLVE] value: R|kotlin/String|): R|X| {
+        }
+
+    }
+    public? final? [RAW_FIR] annotation class Anno : R|kotlin/Annotation| {
+        public? [RAW_FIR] [ContainingClassKey=Anno] constructor([RAW_FIR] [CorrespondingProperty=/Anno.args] args: A.X): R|Anno| {
+            super<R|kotlin/Any|>()
+        }
+
+        public? final? [RAW_FIR] [IsFromPrimaryConstructor=true] val args: A.X = R|<local>/args|
+            [TYPES] [ContainingClassKey=Anno] public? get(): A.X
+
+    }
+    public? final? [RAW_FIR] class B : R|kotlin/Any| {
+        public? [RAW_FIR] [ContainingClassKey=B] constructor(): R|B| {
+            super<R|kotlin/Any|>()
+        }
+
+        @Anno(X#.A#) public? final? [COMPILER_REQUIRED_ANNOTATIONS] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
+
+        @Anno(X#.A#) public? final? [RAW_FIR] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
+
+    }
+
+COMPANION_GENERATION:
+FILE: annotationParameters.kt
+    public? final? [RAW_FIR] enum class X : R|kotlin/Enum<X>| {
+        private [RAW_FIR] [ContainingClassKey=X] constructor(): R|X| {
+            super<R|kotlin/Enum<X>|>()
+        }
+
+        public final static [RAW_FIR] [ContainingClassKey=X] enum entry A: R|X|
+        public final static [BODY_RESOLVE] [ContainingClassKey=X] fun values(): R|kotlin/Array<X>| {
+        }
+
+        public final static [BODY_RESOLVE] [ContainingClassKey=X] fun valueOf([BODY_RESOLVE] value: R|kotlin/String|): R|X| {
+        }
+
+    }
+    public? final? [RAW_FIR] annotation class Anno : R|kotlin/Annotation| {
+        public? [RAW_FIR] [ContainingClassKey=Anno] constructor([RAW_FIR] [CorrespondingProperty=/Anno.args] args: A.X): R|Anno| {
+            super<R|kotlin/Any|>()
+        }
+
+        public? final? [RAW_FIR] [IsFromPrimaryConstructor=true] val args: A.X = R|<local>/args|
+            [TYPES] [ContainingClassKey=Anno] public? get(): A.X
+
+    }
+    public? final? [RAW_FIR] class B : R|kotlin/Any| {
+        public? [RAW_FIR] [ContainingClassKey=B] constructor(): R|B| {
+            super<R|kotlin/Any|>()
+        }
+
+        @Anno(X#.A#) public? final? [COMPANION_GENERATION] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
+
+        @Anno(X#.A#) public? final? [RAW_FIR] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
+
+    }
+
 SUPER_TYPES:
 FILE: annotationParameters.kt
     public? final? [RAW_FIR] enum class X : R|kotlin/Enum<X>| {
@@ -119,12 +189,12 @@ FILE: annotationParameters.kt
         }
 
     }
-    public? final? [RAW_FIR] annotation class Anno : R|kotlin/Annotation| {
-        public? [RAW_FIR] [ContainingClassKey=Anno] constructor([RAW_FIR] [CorrespondingProperty=/Anno.args] args: A.X): R|Anno| {
+    public? final? [COMPILER_REQUIRED_ANNOTATIONS] annotation class Anno : R|kotlin/Annotation| {
+        public? [COMPILER_REQUIRED_ANNOTATIONS] [ContainingClassKey=Anno] constructor([RAW_FIR] [CorrespondingProperty=/Anno.args] args: A.X): R|Anno| {
             super<R|kotlin/Any|>()
         }
 
-        public? final? [RAW_FIR] [IsFromPrimaryConstructor=true] val args: A.X = R|<local>/args|
+        public? final? [COMPILER_REQUIRED_ANNOTATIONS] [IsFromPrimaryConstructor=true] val args: A.X = R|<local>/args|
             [TYPES] [ContainingClassKey=Anno] public? get(): A.X
 
     }
@@ -154,12 +224,12 @@ FILE: annotationParameters.kt
         }
 
     }
-    public? final? [RAW_FIR] annotation class Anno : R|kotlin/Annotation| {
-        public? [RAW_FIR] [ContainingClassKey=Anno] constructor([RAW_FIR] [CorrespondingProperty=/Anno.args] args: A.X): R|Anno| {
+    public? final? [COMPILER_REQUIRED_ANNOTATIONS] annotation class Anno : R|kotlin/Annotation| {
+        public? [COMPILER_REQUIRED_ANNOTATIONS] [ContainingClassKey=Anno] constructor([RAW_FIR] [CorrespondingProperty=/Anno.args] args: A.X): R|Anno| {
             super<R|kotlin/Any|>()
         }
 
-        public? final? [RAW_FIR] [IsFromPrimaryConstructor=true] val args: A.X = R|<local>/args|
+        public? final? [COMPILER_REQUIRED_ANNOTATIONS] [IsFromPrimaryConstructor=true] val args: A.X = R|<local>/args|
             [TYPES] [ContainingClassKey=Anno] public? get(): A.X
 
     }
@@ -189,12 +259,12 @@ FILE: annotationParameters.kt
         }
 
     }
-    public? final? [RAW_FIR] annotation class Anno : R|kotlin/Annotation| {
-        public? [RAW_FIR] [ContainingClassKey=Anno] constructor([RAW_FIR] [CorrespondingProperty=/Anno.args] args: A.X): R|Anno| {
+    public? final? [COMPILER_REQUIRED_ANNOTATIONS] annotation class Anno : R|kotlin/Annotation| {
+        public? [COMPILER_REQUIRED_ANNOTATIONS] [ContainingClassKey=Anno] constructor([RAW_FIR] [CorrespondingProperty=/Anno.args] args: A.X): R|Anno| {
             super<R|kotlin/Any|>()
         }
 
-        public? final? [RAW_FIR] [IsFromPrimaryConstructor=true] val args: A.X = R|<local>/args|
+        public? final? [COMPILER_REQUIRED_ANNOTATIONS] [IsFromPrimaryConstructor=true] val args: A.X = R|<local>/args|
             [TYPES] [ContainingClassKey=Anno] public? get(): A.X
 
     }
@@ -224,12 +294,12 @@ FILE: annotationParameters.kt
         }
 
     }
-    public? final? [RAW_FIR] annotation class Anno : R|kotlin/Annotation| {
-        public? [RAW_FIR] [ContainingClassKey=Anno] constructor([RAW_FIR] [CorrespondingProperty=/Anno.args] args: A.X): R|Anno| {
+    public? final? [COMPILER_REQUIRED_ANNOTATIONS] annotation class Anno : R|kotlin/Annotation| {
+        public? [COMPILER_REQUIRED_ANNOTATIONS] [ContainingClassKey=Anno] constructor([RAW_FIR] [CorrespondingProperty=/Anno.args] args: A.X): R|Anno| {
             super<R|kotlin/Any|>()
         }
 
-        public? final? [RAW_FIR] [IsFromPrimaryConstructor=true] val args: A.X = R|<local>/args|
+        public? final? [COMPILER_REQUIRED_ANNOTATIONS] [IsFromPrimaryConstructor=true] val args: A.X = R|<local>/args|
             [TYPES] [ContainingClassKey=Anno] public? get(): A.X
 
     }
@@ -260,12 +330,12 @@ FILE: annotationParameters.kt
         }
 
     }
-    public? final? [RAW_FIR] annotation class Anno : R|kotlin/Annotation| {
-        public? [RAW_FIR] [ContainingClassKey=Anno] constructor([RAW_FIR] [CorrespondingProperty=/Anno.args] args: A.X): R|Anno| {
+    public? final? [COMPILER_REQUIRED_ANNOTATIONS] annotation class Anno : R|kotlin/Annotation| {
+        public? [COMPILER_REQUIRED_ANNOTATIONS] [ContainingClassKey=Anno] constructor([RAW_FIR] [CorrespondingProperty=/Anno.args] args: A.X): R|Anno| {
             super<R|kotlin/Any|>()
         }
 
-        public? final? [RAW_FIR] [IsFromPrimaryConstructor=true] val args: A.X = R|<local>/args|
+        public? final? [COMPILER_REQUIRED_ANNOTATIONS] [IsFromPrimaryConstructor=true] val args: A.X = R|<local>/args|
             [TYPES] [ContainingClassKey=Anno] public? get(): A.X
 
     }

@@ -11,6 +11,18 @@ FILE: topLevelFunctionsWithExpressionBodyAndExplicitType.kt
     public? final? [RAW_FIR] fun receive([RAW_FIR] value: String): R|kotlin/Unit| { LAZY_BLOCK }
     public? final? [RAW_FIR] fun functionWithLazyBody(): String { LAZY_BLOCK }
 
+COMPILER_REQUIRED_ANNOTATIONS:
+FILE: topLevelFunctionsWithExpressionBodyAndExplicitType.kt
+    public? final? [COMPILER_REQUIRED_ANNOTATIONS] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
+    public? final? [RAW_FIR] fun receive([RAW_FIR] value: String): R|kotlin/Unit| { LAZY_BLOCK }
+    public? final? [RAW_FIR] fun functionWithLazyBody(): String { LAZY_BLOCK }
+
+COMPANION_GENERATION:
+FILE: topLevelFunctionsWithExpressionBodyAndExplicitType.kt
+    public? final? [COMPANION_GENERATION] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
+    public? final? [RAW_FIR] fun receive([RAW_FIR] value: String): R|kotlin/Unit| { LAZY_BLOCK }
+    public? final? [RAW_FIR] fun functionWithLazyBody(): String { LAZY_BLOCK }
+
 SUPER_TYPES:
 FILE: topLevelFunctionsWithExpressionBodyAndExplicitType.kt
     public? final? [SUPER_TYPES] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }

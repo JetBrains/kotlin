@@ -13,6 +13,20 @@ FILE: propertyWithGetter.kt
     public? final? [RAW_FIR] val withGetter: Int
         [RAW_FIR] public? get(): Int { LAZY_BLOCK }
 
+COMPILER_REQUIRED_ANNOTATIONS:
+FILE: propertyWithGetter.kt
+    public? final? [COMPILER_REQUIRED_ANNOTATIONS] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
+    public? final? [RAW_FIR] fun receive([RAW_FIR] value: Int): R|kotlin/Unit| { LAZY_BLOCK }
+    public? final? [RAW_FIR] val withGetter: Int
+        [RAW_FIR] public? get(): Int { LAZY_BLOCK }
+
+COMPANION_GENERATION:
+FILE: propertyWithGetter.kt
+    public? final? [COMPANION_GENERATION] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
+    public? final? [RAW_FIR] fun receive([RAW_FIR] value: Int): R|kotlin/Unit| { LAZY_BLOCK }
+    public? final? [RAW_FIR] val withGetter: Int
+        [RAW_FIR] public? get(): Int { LAZY_BLOCK }
+
 SUPER_TYPES:
 FILE: propertyWithGetter.kt
     public? final? [SUPER_TYPES] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }

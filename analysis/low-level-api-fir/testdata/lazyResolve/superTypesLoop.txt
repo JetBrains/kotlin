@@ -53,6 +53,60 @@ FILE: superTypesLoop.kt
 
     }
 
+COMPILER_REQUIRED_ANNOTATIONS:
+FILE: superTypesLoop.kt
+    public? open [COMPILER_REQUIRED_ANNOTATIONS] class resolveMe : C {
+        public? [COMPILER_REQUIRED_ANNOTATIONS] [ContainingClassKey=resolveMe] constructor(): R|resolveMe| {
+            super<C>()
+        }
+
+    }
+    public? open [RAW_FIR] class A : B {
+        public? [RAW_FIR] [ContainingClassKey=A] constructor(): R|A| {
+            super<B>()
+        }
+
+    }
+    public? open [RAW_FIR] class B : C {
+        public? [RAW_FIR] [ContainingClassKey=B] constructor(): R|B| {
+            super<C>()
+        }
+
+    }
+    public? open [RAW_FIR] class C : A {
+        public? [RAW_FIR] [ContainingClassKey=C] constructor(): R|C| {
+            super<A>()
+        }
+
+    }
+
+COMPANION_GENERATION:
+FILE: superTypesLoop.kt
+    public? open [COMPANION_GENERATION] class resolveMe : C {
+        public? [COMPANION_GENERATION] [ContainingClassKey=resolveMe] constructor(): R|resolveMe| {
+            super<C>()
+        }
+
+    }
+    public? open [RAW_FIR] class A : B {
+        public? [RAW_FIR] [ContainingClassKey=A] constructor(): R|A| {
+            super<B>()
+        }
+
+    }
+    public? open [RAW_FIR] class B : C {
+        public? [RAW_FIR] [ContainingClassKey=B] constructor(): R|B| {
+            super<C>()
+        }
+
+    }
+    public? open [RAW_FIR] class C : A {
+        public? [RAW_FIR] [ContainingClassKey=C] constructor(): R|C| {
+            super<A>()
+        }
+
+    }
+
 SUPER_TYPES:
 FILE: superTypesLoop.kt
     public? open [SUPER_TYPES] class resolveMe : R|C| {
@@ -61,20 +115,20 @@ FILE: superTypesLoop.kt
         }
 
     }
-    public? open [RAW_FIR] class A : <ERROR TYPE REF: Loop in supertype: /A -> /B> {
-        public? [RAW_FIR] [ContainingClassKey=A] constructor(): R|A| {
+    public? open [COMPILER_REQUIRED_ANNOTATIONS] class A : <ERROR TYPE REF: Loop in supertype: /A -> /B> {
+        public? [COMPILER_REQUIRED_ANNOTATIONS] [ContainingClassKey=A] constructor(): R|A| {
             super<B>()
         }
 
     }
-    public? open [RAW_FIR] class B : <ERROR TYPE REF: Loop in supertype: /B -> /C> {
-        public? [RAW_FIR] [ContainingClassKey=B] constructor(): R|B| {
+    public? open [COMPILER_REQUIRED_ANNOTATIONS] class B : <ERROR TYPE REF: Loop in supertype: /B -> /C> {
+        public? [COMPILER_REQUIRED_ANNOTATIONS] [ContainingClassKey=B] constructor(): R|B| {
             super<C>()
         }
 
     }
-    public? open [RAW_FIR] class C : <ERROR TYPE REF: Loop in supertype: /C -> /A> {
-        public? [RAW_FIR] [ContainingClassKey=C] constructor(): R|C| {
+    public? open [COMPILER_REQUIRED_ANNOTATIONS] class C : <ERROR TYPE REF: Loop in supertype: /C -> /A> {
+        public? [COMPILER_REQUIRED_ANNOTATIONS] [ContainingClassKey=C] constructor(): R|C| {
             super<A>()
         }
 
@@ -88,14 +142,14 @@ FILE: superTypesLoop.kt
         }
 
     }
-    public? open [RAW_FIR] class A : <ERROR TYPE REF: Loop in supertype: /A -> /B> {
-        public? [RAW_FIR] [ContainingClassKey=A] constructor(): R|A| {
+    public? open [COMPILER_REQUIRED_ANNOTATIONS] class A : <ERROR TYPE REF: Loop in supertype: /A -> /B> {
+        public? [COMPILER_REQUIRED_ANNOTATIONS] [ContainingClassKey=A] constructor(): R|A| {
             super<B>()
         }
 
     }
-    public? open [RAW_FIR] class B : <ERROR TYPE REF: Loop in supertype: /B -> /C> {
-        public? [RAW_FIR] [ContainingClassKey=B] constructor(): R|B| {
+    public? open [COMPILER_REQUIRED_ANNOTATIONS] class B : <ERROR TYPE REF: Loop in supertype: /B -> /C> {
+        public? [COMPILER_REQUIRED_ANNOTATIONS] [ContainingClassKey=B] constructor(): R|B| {
             super<C>()
         }
 
@@ -115,14 +169,14 @@ FILE: superTypesLoop.kt
         }
 
     }
-    public? open [RAW_FIR] class A : <ERROR TYPE REF: Loop in supertype: /A -> /B> {
-        public? [RAW_FIR] [ContainingClassKey=A] constructor(): R|A| {
+    public? open [COMPILER_REQUIRED_ANNOTATIONS] class A : <ERROR TYPE REF: Loop in supertype: /A -> /B> {
+        public? [COMPILER_REQUIRED_ANNOTATIONS] [ContainingClassKey=A] constructor(): R|A| {
             super<B>()
         }
 
     }
-    public? open [RAW_FIR] class B : <ERROR TYPE REF: Loop in supertype: /B -> /C> {
-        public? [RAW_FIR] [ContainingClassKey=B] constructor(): R|B| {
+    public? open [COMPILER_REQUIRED_ANNOTATIONS] class B : <ERROR TYPE REF: Loop in supertype: /B -> /C> {
+        public? [COMPILER_REQUIRED_ANNOTATIONS] [ContainingClassKey=B] constructor(): R|B| {
             super<C>()
         }
 
@@ -142,14 +196,14 @@ FILE: superTypesLoop.kt
         }
 
     }
-    public? open [RAW_FIR] class A : <ERROR TYPE REF: Loop in supertype: /A -> /B> {
-        public? [RAW_FIR] [ContainingClassKey=A] constructor(): R|A| {
+    public? open [COMPILER_REQUIRED_ANNOTATIONS] class A : <ERROR TYPE REF: Loop in supertype: /A -> /B> {
+        public? [COMPILER_REQUIRED_ANNOTATIONS] [ContainingClassKey=A] constructor(): R|A| {
             super<B>()
         }
 
     }
-    public? open [RAW_FIR] class B : <ERROR TYPE REF: Loop in supertype: /B -> /C> {
-        public? [RAW_FIR] [ContainingClassKey=B] constructor(): R|B| {
+    public? open [COMPILER_REQUIRED_ANNOTATIONS] class B : <ERROR TYPE REF: Loop in supertype: /B -> /C> {
+        public? [COMPILER_REQUIRED_ANNOTATIONS] [ContainingClassKey=B] constructor(): R|B| {
             super<C>()
         }
 
@@ -169,14 +223,14 @@ FILE: superTypesLoop.kt
         }
 
     }
-    public? open [RAW_FIR] class A : <ERROR TYPE REF: Loop in supertype: /A -> /B> {
-        public? [RAW_FIR] [ContainingClassKey=A] constructor(): R|A| {
+    public? open [COMPILER_REQUIRED_ANNOTATIONS] class A : <ERROR TYPE REF: Loop in supertype: /A -> /B> {
+        public? [COMPILER_REQUIRED_ANNOTATIONS] [ContainingClassKey=A] constructor(): R|A| {
             super<B>()
         }
 
     }
-    public? open [RAW_FIR] class B : <ERROR TYPE REF: Loop in supertype: /B -> /C> {
-        public? [RAW_FIR] [ContainingClassKey=B] constructor(): R|B| {
+    public? open [COMPILER_REQUIRED_ANNOTATIONS] class B : <ERROR TYPE REF: Loop in supertype: /B -> /C> {
+        public? [COMPILER_REQUIRED_ANNOTATIONS] [ContainingClassKey=B] constructor(): R|B| {
             super<C>()
         }
 
@@ -196,14 +250,14 @@ FILE: superTypesLoop.kt
         }
 
     }
-    public? open [RAW_FIR] class A : <ERROR TYPE REF: Loop in supertype: /A -> /B> {
-        public? [RAW_FIR] [ContainingClassKey=A] constructor(): R|A| {
+    public? open [COMPILER_REQUIRED_ANNOTATIONS] class A : <ERROR TYPE REF: Loop in supertype: /A -> /B> {
+        public? [COMPILER_REQUIRED_ANNOTATIONS] [ContainingClassKey=A] constructor(): R|A| {
             super<B>()
         }
 
     }
-    public? open [RAW_FIR] class B : <ERROR TYPE REF: Loop in supertype: /B -> /C> {
-        public? [RAW_FIR] [ContainingClassKey=B] constructor(): R|B| {
+    public? open [COMPILER_REQUIRED_ANNOTATIONS] class B : <ERROR TYPE REF: Loop in supertype: /B -> /C> {
+        public? [COMPILER_REQUIRED_ANNOTATIONS] [ContainingClassKey=B] constructor(): R|B| {
             super<C>()
         }
 
@@ -223,14 +277,14 @@ FILE: superTypesLoop.kt
         }
 
     }
-    public? open [RAW_FIR] class A : <ERROR TYPE REF: Loop in supertype: /A -> /B> {
-        public? [RAW_FIR] [ContainingClassKey=A] constructor(): R|A| {
+    public? open [COMPILER_REQUIRED_ANNOTATIONS] class A : <ERROR TYPE REF: Loop in supertype: /A -> /B> {
+        public? [COMPILER_REQUIRED_ANNOTATIONS] [ContainingClassKey=A] constructor(): R|A| {
             super<B>()
         }
 
     }
-    public? open [RAW_FIR] class B : <ERROR TYPE REF: Loop in supertype: /B -> /C> {
-        public? [RAW_FIR] [ContainingClassKey=B] constructor(): R|B| {
+    public? open [COMPILER_REQUIRED_ANNOTATIONS] class B : <ERROR TYPE REF: Loop in supertype: /B -> /C> {
+        public? [COMPILER_REQUIRED_ANNOTATIONS] [ContainingClassKey=B] constructor(): R|B| {
             super<C>()
         }
 

@@ -11,6 +11,18 @@ FILE: typeParameterOfTopSetter.kt
         [TYPES] public? get(): Int
         [RAW_FIR] public? set([RAW_FIR] resolveMe: Int): R|kotlin/Unit| { LAZY_BLOCK }
 
+COMPILER_REQUIRED_ANNOTATIONS:
+FILE: typeParameterOfTopSetter.kt
+    public? final? [COMPILER_REQUIRED_ANNOTATIONS] var x: Int = LAZY_EXPRESSION
+        [TYPES] public? get(): Int
+        [COMPILER_REQUIRED_ANNOTATIONS] public? set([RAW_FIR] resolveMe: Int): R|kotlin/Unit| { LAZY_BLOCK }
+
+COMPANION_GENERATION:
+FILE: typeParameterOfTopSetter.kt
+    public? final? [COMPANION_GENERATION] var x: Int = LAZY_EXPRESSION
+        [TYPES] public? get(): Int
+        [COMPANION_GENERATION] public? set([RAW_FIR] resolveMe: Int): R|kotlin/Unit| { LAZY_BLOCK }
+
 SUPER_TYPES:
 FILE: typeParameterOfTopSetter.kt
     public? final? [SUPER_TYPES] var x: Int = LAZY_EXPRESSION

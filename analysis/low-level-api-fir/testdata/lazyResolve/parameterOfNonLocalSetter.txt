@@ -25,6 +25,32 @@ FILE: parameterOfNonLocalSetter.kt
 
     }
 
+COMPILER_REQUIRED_ANNOTATIONS:
+FILE: parameterOfNonLocalSetter.kt
+    public? final? [RAW_FIR] class X : R|kotlin/Any| {
+        public? [RAW_FIR] [ContainingClassKey=X] constructor(): R|X| {
+            super<R|kotlin/Any|>()
+        }
+
+        public? final? [COMPILER_REQUIRED_ANNOTATIONS] var x: Int = LAZY_EXPRESSION
+            [TYPES] [ContainingClassKey=X] public? get(): Int
+            [COMPILER_REQUIRED_ANNOTATIONS] [ContainingClassKey=X] public? set([RAW_FIR] resolveMe: Int): R|kotlin/Unit| { LAZY_BLOCK }
+
+    }
+
+COMPANION_GENERATION:
+FILE: parameterOfNonLocalSetter.kt
+    public? final? [RAW_FIR] class X : R|kotlin/Any| {
+        public? [RAW_FIR] [ContainingClassKey=X] constructor(): R|X| {
+            super<R|kotlin/Any|>()
+        }
+
+        public? final? [COMPANION_GENERATION] var x: Int = LAZY_EXPRESSION
+            [TYPES] [ContainingClassKey=X] public? get(): Int
+            [COMPANION_GENERATION] [ContainingClassKey=X] public? set([RAW_FIR] resolveMe: Int): R|kotlin/Unit| { LAZY_BLOCK }
+
+    }
+
 SUPER_TYPES:
 FILE: parameterOfNonLocalSetter.kt
     public? final? [RAW_FIR] class X : R|kotlin/Any| {

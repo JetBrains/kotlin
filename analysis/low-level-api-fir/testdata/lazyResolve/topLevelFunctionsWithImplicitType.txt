@@ -11,6 +11,18 @@ FILE: topLevelFunctionsWithImplicitType.kt
     public? final? [RAW_FIR] fun receive([RAW_FIR] value: String): R|kotlin/Unit| { LAZY_BLOCK }
     public? final? [RAW_FIR] fun functionWithLazyBody(): <implicit> { LAZY_BLOCK }
 
+COMPILER_REQUIRED_ANNOTATIONS:
+FILE: topLevelFunctionsWithImplicitType.kt
+    public? final? [COMPILER_REQUIRED_ANNOTATIONS] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
+    public? final? [RAW_FIR] fun receive([RAW_FIR] value: String): R|kotlin/Unit| { LAZY_BLOCK }
+    public? final? [RAW_FIR] fun functionWithLazyBody(): <implicit> { LAZY_BLOCK }
+
+COMPANION_GENERATION:
+FILE: topLevelFunctionsWithImplicitType.kt
+    public? final? [COMPANION_GENERATION] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
+    public? final? [RAW_FIR] fun receive([RAW_FIR] value: String): R|kotlin/Unit| { LAZY_BLOCK }
+    public? final? [RAW_FIR] fun functionWithLazyBody(): <implicit> { LAZY_BLOCK }
+
 SUPER_TYPES:
 FILE: topLevelFunctionsWithImplicitType.kt
     public? final? [SUPER_TYPES] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }

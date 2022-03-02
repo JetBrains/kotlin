@@ -35,6 +35,42 @@ FILE: classMembers.kt
 
     }
 
+COMPILER_REQUIRED_ANNOTATIONS:
+FILE: classMembers.kt
+    public? final? [RAW_FIR] class A : R|kotlin/Any| {
+        public? [RAW_FIR] [ContainingClassKey=A] constructor(): R|A| {
+            super<R|kotlin/Any|>()
+        }
+
+        public? final? [COMPILER_REQUIRED_ANNOTATIONS] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
+
+        public? final? [RAW_FIR] val x: Int = LAZY_EXPRESSION
+            [RAW_FIR] [ContainingClassKey=A] public? get(): Int { LAZY_BLOCK }
+
+        public? final? [RAW_FIR] fun receive([RAW_FIR] value: String): R|kotlin/Unit| { LAZY_BLOCK }
+
+        public? final? [RAW_FIR] fun functionWithLazyBody(): String { LAZY_BLOCK }
+
+    }
+
+COMPANION_GENERATION:
+FILE: classMembers.kt
+    public? final? [RAW_FIR] class A : R|kotlin/Any| {
+        public? [RAW_FIR] [ContainingClassKey=A] constructor(): R|A| {
+            super<R|kotlin/Any|>()
+        }
+
+        public? final? [COMPANION_GENERATION] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
+
+        public? final? [RAW_FIR] val x: Int = LAZY_EXPRESSION
+            [RAW_FIR] [ContainingClassKey=A] public? get(): Int { LAZY_BLOCK }
+
+        public? final? [RAW_FIR] fun receive([RAW_FIR] value: String): R|kotlin/Unit| { LAZY_BLOCK }
+
+        public? final? [RAW_FIR] fun functionWithLazyBody(): String { LAZY_BLOCK }
+
+    }
+
 SUPER_TYPES:
 FILE: classMembers.kt
     public? final? [RAW_FIR] class A : R|kotlin/Any| {

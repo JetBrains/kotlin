@@ -57,6 +57,64 @@ FILE: delegates.kt
             D|/variableWithImplicitType|.setValue#(Null(null), ::R|/variableWithImplicitType|, R|<local>/variableWithImplicitType|)
         }
 
+COMPILER_REQUIRED_ANNOTATIONS:
+FILE: delegates.kt
+    public? final? [COMPILER_REQUIRED_ANNOTATIONS] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
+    public? final? [RAW_FIR] fun receive([RAW_FIR] value: Int): R|kotlin/Unit| { LAZY_BLOCK }
+    public? final? [RAW_FIR] val delegate: <implicit> = LAZY_EXPRESSION
+        [TYPES] public? get(): <implicit>
+    public? final? [RAW_FIR] val valueWithExplicitType: Intby LAZY_EXPRESSION
+        [RAW_FIR] public? get(): <implicit> {
+            ^ D|/valueWithExplicitType|.getValue#(Null(null), ::R|/valueWithExplicitType|)
+        }
+    public? final? [RAW_FIR] val valueWithImplicitType: <implicit>by LAZY_EXPRESSION
+        [RAW_FIR] public? get(): <implicit> {
+            ^ D|/valueWithImplicitType|.getValue#(Null(null), ::R|/valueWithImplicitType|)
+        }
+    public? final? [RAW_FIR] var variableWithExplicitType: Intby LAZY_EXPRESSION
+        [RAW_FIR] public? get(): <implicit> {
+            ^ D|/variableWithExplicitType|.getValue#(Null(null), ::R|/variableWithExplicitType|)
+        }
+        [RAW_FIR] public? set([RAW_FIR] <set-?>: <implicit>): R|kotlin/Unit| {
+            D|/variableWithExplicitType|.setValue#(Null(null), ::R|/variableWithExplicitType|, R|<local>/variableWithExplicitType|)
+        }
+    public? final? [RAW_FIR] var variableWithImplicitType: <implicit>by LAZY_EXPRESSION
+        [RAW_FIR] public? get(): <implicit> {
+            ^ D|/variableWithImplicitType|.getValue#(Null(null), ::R|/variableWithImplicitType|)
+        }
+        [RAW_FIR] public? set([RAW_FIR] <set-?>: <implicit>): R|kotlin/Unit| {
+            D|/variableWithImplicitType|.setValue#(Null(null), ::R|/variableWithImplicitType|, R|<local>/variableWithImplicitType|)
+        }
+
+COMPANION_GENERATION:
+FILE: delegates.kt
+    public? final? [COMPANION_GENERATION] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
+    public? final? [RAW_FIR] fun receive([RAW_FIR] value: Int): R|kotlin/Unit| { LAZY_BLOCK }
+    public? final? [RAW_FIR] val delegate: <implicit> = LAZY_EXPRESSION
+        [TYPES] public? get(): <implicit>
+    public? final? [RAW_FIR] val valueWithExplicitType: Intby LAZY_EXPRESSION
+        [RAW_FIR] public? get(): <implicit> {
+            ^ D|/valueWithExplicitType|.getValue#(Null(null), ::R|/valueWithExplicitType|)
+        }
+    public? final? [RAW_FIR] val valueWithImplicitType: <implicit>by LAZY_EXPRESSION
+        [RAW_FIR] public? get(): <implicit> {
+            ^ D|/valueWithImplicitType|.getValue#(Null(null), ::R|/valueWithImplicitType|)
+        }
+    public? final? [RAW_FIR] var variableWithExplicitType: Intby LAZY_EXPRESSION
+        [RAW_FIR] public? get(): <implicit> {
+            ^ D|/variableWithExplicitType|.getValue#(Null(null), ::R|/variableWithExplicitType|)
+        }
+        [RAW_FIR] public? set([RAW_FIR] <set-?>: <implicit>): R|kotlin/Unit| {
+            D|/variableWithExplicitType|.setValue#(Null(null), ::R|/variableWithExplicitType|, R|<local>/variableWithExplicitType|)
+        }
+    public? final? [RAW_FIR] var variableWithImplicitType: <implicit>by LAZY_EXPRESSION
+        [RAW_FIR] public? get(): <implicit> {
+            ^ D|/variableWithImplicitType|.getValue#(Null(null), ::R|/variableWithImplicitType|)
+        }
+        [RAW_FIR] public? set([RAW_FIR] <set-?>: <implicit>): R|kotlin/Unit| {
+            D|/variableWithImplicitType|.setValue#(Null(null), ::R|/variableWithImplicitType|, R|<local>/variableWithImplicitType|)
+        }
+
 SUPER_TYPES:
 FILE: delegates.kt
     public? final? [SUPER_TYPES] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }

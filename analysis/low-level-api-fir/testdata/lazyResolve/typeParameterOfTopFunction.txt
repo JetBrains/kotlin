@@ -7,6 +7,14 @@ IMPORTS:
 FILE: typeParameterOfTopFunction.kt
     public? final? [RAW_FIR] fun <resolveMe> ddd(): R|kotlin/Unit| { LAZY_BLOCK }
 
+COMPILER_REQUIRED_ANNOTATIONS:
+FILE: typeParameterOfTopFunction.kt
+    public? final? [COMPILER_REQUIRED_ANNOTATIONS] fun <resolveMe> ddd(): R|kotlin/Unit| { LAZY_BLOCK }
+
+COMPANION_GENERATION:
+FILE: typeParameterOfTopFunction.kt
+    public? final? [COMPANION_GENERATION] fun <resolveMe> ddd(): R|kotlin/Unit| { LAZY_BLOCK }
+
 SUPER_TYPES:
 FILE: typeParameterOfTopFunction.kt
     public? final? [SUPER_TYPES] fun <resolveMe> ddd(): R|kotlin/Unit| { LAZY_BLOCK }
