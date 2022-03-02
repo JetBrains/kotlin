@@ -10,12 +10,10 @@ internal const val INT_SIZE_BYTES = 4
 
 internal fun unsafeRawMemoryToChar(addr: Int) = wasm_i32_load16_u(addr).toChar()
 
-internal fun unsafeRawMemoryToCharArray(startAddr: Int, length: Int): CharArray {
-    val ret = CharArray(length)
-    for (i in 0 until length) {
-        ret[i] = unsafeRawMemoryToChar(startAddr + i * CHAR_SIZE_BYTES)
-    }
-    return ret
+internal fun unsafeRawMemoryToWasmCharArray(startAddr: Int, length: Int): WasmCharArray {
+    val result = WasmCharArray(length)
+    result.fill(length) { unsafeRawMemoryToChar(startAddr + it * CHAR_SIZE_BYTES) }
+    return result
 }
 
 // Returns a pointer into a temporary scratch segment in the raw wasm memory. Aligned by 4.
@@ -25,11 +23,13 @@ internal fun unsafeGetScratchRawMemory(sizeBytes: Int): Int =
     implementedAsIntrinsic
 
 // Assumes there is enough space at the destination, fails with wasm trap otherwise.
-internal fun unsafeCharArrayToRawMemory(src: CharArray, dstAddr: Int) {
+internal fun unsafeWasmCharArrayToRawMemory(src: WasmCharArray, dstAddr: Int) {
     var curAddr = dstAddr
-    for (i in src) {
-        wasm_i32_store16(curAddr, i)
+    var i = 0
+    while (i < src.len()) {
+        wasm_i32_store16(curAddr, src.get(i))
         curAddr += CHAR_SIZE_BYTES
+        i++
     }
 }
 

@@ -59,18 +59,18 @@ internal fun itoa32(inputValue: Int, radix: Int): String {
     val absValue = if (sign == 1) -inputValue else inputValue
 
     val decimals = decimalCount32(absValue) + sign
-    val buf = CharArray(decimals)
+    val buf = WasmCharArray(decimals)
     utoaDecSimple(buf, absValue, decimals)
     if (sign == 1)
-        buf[0] = CharCodes.MINUS.code.toChar()
+        buf.set(0, CharCodes.MINUS.code.toChar())
 
     return String.unsafeFromCharArray(buf)
 }
 
-private fun utoaDecSimple(buffer: CharArray, numInput: Int, offsetInput: Int) {
+private fun utoaDecSimple(buffer: WasmCharArray, numInput: Int, offsetInput: Int) {
     assert(numInput != 0)
-    assert(buffer.isNotEmpty())
-    assert(offsetInput > 0 && offsetInput <= buffer.size)
+    assert(buffer.len() > 0)
+    assert(offsetInput > 0 && offsetInput <= buffer.len())
 
     var num = numInput
     var offset = offsetInput
@@ -79,14 +79,14 @@ private fun utoaDecSimple(buffer: CharArray, numInput: Int, offsetInput: Int) {
         val r = num % 10
         num = t
         offset--
-        buffer[offset] = digitToChar(r)
+        buffer.set(offset, digitToChar(r))
     } while (num > 0)
 }
 
-private fun utoaDecSimple64(buffer: CharArray, numInput: Long, offsetInput: Int) {
+private fun utoaDecSimple64(buffer: WasmCharArray, numInput: Long, offsetInput: Int) {
     assert(numInput != 0L)
-    assert(buffer.isNotEmpty())
-    assert(offsetInput > 0 && offsetInput <= buffer.size)
+    assert(buffer.len() > 0)
+    assert(offsetInput > 0 && offsetInput <= buffer.len())
 
     var num = numInput
     var offset = offsetInput
@@ -95,7 +95,7 @@ private fun utoaDecSimple64(buffer: CharArray, numInput: Long, offsetInput: Int)
         val r = (num % 10).toInt()
         num = t
         offset--
-        buffer[offset] = digitToChar(r)
+        buffer.set(offset, digitToChar(r))
     } while (num > 0)
 }
 
@@ -139,10 +139,10 @@ internal fun itoa64(inputValue: Long, radix: Int): String {
     val absValue = if (sign == 1) -inputValue else inputValue
 
     val decimals = decimalCount64High(absValue) + sign
-    val buf = CharArray(decimals)
+    val buf = WasmCharArray(decimals)
     utoaDecSimple64(buf, absValue, decimals)
     if (sign == 1)
-        buf[0] = CharCodes.MINUS.code.toChar()
+        buf.set(0, CharCodes.MINUS.code.toChar())
 
     return String.unsafeFromCharArray(buf)
 }
@@ -174,22 +174,21 @@ internal fun dtoa(value: Double): String {
         return if (value < 0) "-Infinity" else "Infinity"
     }
 
-    val buf = CharArray(MAX_DOUBLE_LENGTH)
+    val buf = WasmCharArray(MAX_DOUBLE_LENGTH)
     val size = dtoaCore(buf, value)
-    val ret = CharArray(size)
+    val ret = WasmCharArray(size)
     buf.copyInto(ret, 0, 0, size)
     return String.unsafeFromCharArray(ret)
 }
 
-private fun dtoaCore(buffer: CharArray, valueInp: Double): Int {
+private fun dtoaCore(buffer: WasmCharArray, valueInp: Double): Int {
     var value = valueInp
 
     val sign = (value < 0).toInt()
     if (sign == 1) {
         value = -value
-        buffer[0] = CharCodes.MINUS.code.toChar()
+        buffer.set(0, CharCodes.MINUS.code.toChar())
     }
-
     var len = grisu2(value, buffer, sign)
     len = prettify(BufferWithOffset(buffer, sign), len - sign, _K)
     return len + sign
@@ -242,7 +241,7 @@ private val FRC_POWERS = longArrayOf(
     0x9E19DB92B4E31BA9UL.toLong(), 0xEB96BF6EBADF77D9UL.toLong(), 0xAF87023B9BF0EE6BUL.toLong()
 )
 
-private fun grisu2(value: Double, buffer: CharArray, sign: Int): Int {
+private fun grisu2(value: Double, buffer: WasmCharArray, sign: Int): Int {
     // frexp routine
     val uv = value.toBits()
     var exp = ((uv and 0x7FF0000000000000) ushr 52).toInt()
@@ -322,7 +321,7 @@ private fun getCachedPower(minExp: Int) {
     _exp_pow = EXP_POWERS[index].toInt()
 }
 
-private fun genDigits(buffer: CharArray, w_frc: Long, w_exp: Int, mp_frc: Long, mp_exp: Int, deltaInp: Long, sign: Int): Int {
+private fun genDigits(buffer: WasmCharArray, w_frc: Long, w_exp: Int, mp_frc: Long, mp_exp: Int, deltaInp: Long, sign: Int): Int {
     var delta = deltaInp
     val one_exp = -mp_exp
     val one_frc = 1L shl one_exp
@@ -354,7 +353,7 @@ private fun genDigits(buffer: CharArray, w_frc: Long, w_exp: Int, mp_frc: Long, 
         }
 
         if (d or len != 0)
-            buffer[len++] = digitToChar(d)
+            buffer.set(len++, digitToChar(d))
 
         --kappa
         val tmp = (p1.toLong() shl one_exp) + p2
@@ -373,7 +372,7 @@ private fun genDigits(buffer: CharArray, w_frc: Long, w_exp: Int, mp_frc: Long, 
 
         val d = p2 ushr one_exp
         if (d or len.toLong() != 0L)
-            buffer[len++] = digitToChar(d.toInt())
+            buffer.set(len++, digitToChar(d.toInt()))
 
         p2 = p2 and mask
         --kappa
@@ -385,10 +384,10 @@ private fun genDigits(buffer: CharArray, w_frc: Long, w_exp: Int, mp_frc: Long, 
     }
 }
 
-private fun grisuRound(buffer: CharArray, len: Int, delta: Long, restInp: Long, ten_kappa: Long, wp_w: Long) {
+private fun grisuRound(buffer: WasmCharArray, len: Int, delta: Long, restInp: Long, ten_kappa: Long, wp_w: Long) {
     var rest = restInp
     val lastp = len - 1
-    var digit = buffer[lastp]
+    var digit = buffer.get(lastp)
     while (
         rest < wp_w &&
         delta - rest >= ten_kappa && (
@@ -399,17 +398,38 @@ private fun grisuRound(buffer: CharArray, len: Int, delta: Long, restInp: Long, 
         --digit
         rest += ten_kappa;
     }
-    buffer[lastp] = digit
+    buffer.set(lastp, digit)
 }
 
-private class BufferWithOffset(val buf: CharArray, val off: Int) {
+private fun WasmCharArray.copyInto(destination: WasmCharArray, destinationOffset: Int, sourceOffset: Int, len: Int) {
+    var srcIndex: Int
+    var dstIndex: Int
+    var increment: Int
+    if (destinationOffset <= sourceOffset) {
+        srcIndex = sourceOffset
+        dstIndex = destinationOffset
+        increment = 1
+    } else {
+        srcIndex = sourceOffset + len - 1
+        dstIndex = destinationOffset + len - 1
+        increment = -1
+    }
+
+    repeat(len) {
+        destination.set(dstIndex, this.get(srcIndex))
+        srcIndex += increment
+        dstIndex += increment
+    }
+}
+
+private class BufferWithOffset(val buf: WasmCharArray, val off: Int) {
     operator fun set(addr: Int, value: Char) {
-        buf[off + addr] = value
+        buf.set(off + addr, value)
     }
 
     fun memoryCopy(destAddr: Int, srcAddr: Int, len: Int) {
         val startIdx = off + srcAddr
-        buf.copyInto(buf, off + destAddr, startIdx, startIdx + len)
+        buf.copyInto(buf, off + destAddr, startIdx, len)
     }
 
     fun offsetABitMore(anotherOff: Int) = BufferWithOffset(buf, off + anotherOff)

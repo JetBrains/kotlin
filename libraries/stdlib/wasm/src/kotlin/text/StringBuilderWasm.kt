@@ -5,6 +5,8 @@
 
 package kotlin.text
 
+import kotlin.wasm.internal.*
+
 internal fun insertString(array: CharArray, distIndex: Int, value: String, sourceIndex: Int, count: Int): Int {
     var arrayIdx = distIndex
     var stringIdx = sourceIndex
@@ -14,8 +16,11 @@ internal fun insertString(array: CharArray, distIndex: Int, value: String, sourc
     return count
 }
 
-internal fun unsafeStringFromCharArray(array: CharArray, start: Int, size: Int): String =
-    String.unsafeFromCharArray(array.copyOfRange(start, start + size))
+internal fun unsafeStringFromCharArray(array: CharArray, start: Int, size: Int): String {
+    val copy = WasmCharArray(size)
+    copy.fill(size) { array[it + start] }
+    return String.unsafeFromCharArray(copy)
+}
 
 internal fun insertInt(array: CharArray, start: Int, value: Int): Int {
     val valueString = value.toString()
