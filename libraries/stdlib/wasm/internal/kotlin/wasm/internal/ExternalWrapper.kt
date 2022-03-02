@@ -156,7 +156,7 @@ internal fun convertJsStringToKotlinString(x: ExternalInterfaceType): String {
     val length = stringLength(x)
     val addr = unsafeGetScratchRawMemory(INT_SIZE_BYTES + length * CHAR_SIZE_BYTES)
     jsWriteStringIntoMemory(x, addr)
-    return String.unsafeFromCharArray(unsafeRawMemoryToCharArray(addr, length))
+    return String.unsafeFromCharArray(unsafeRawMemoryToWasmCharArray(addr, length))
 }
 
 

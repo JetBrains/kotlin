@@ -14,7 +14,7 @@ internal fun exportString(src: String?): Int {
 
     val retAddr = unsafeGetScratchRawMemory(INT_SIZE_BYTES + src.length * CHAR_SIZE_BYTES)
     wasm_i32_store(retAddr, src.length)
-    unsafeCharArrayToRawMemory(src.chars, retAddr + INT_SIZE_BYTES)
+    unsafeWasmCharArrayToRawMemory(src.chars, retAddr + INT_SIZE_BYTES)
     return retAddr
 }
 

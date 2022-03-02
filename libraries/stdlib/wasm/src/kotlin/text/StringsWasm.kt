@@ -5,6 +5,8 @@
 
 package kotlin.text
 
+import kotlin.wasm.internal.*
+
 /**
  * Returns the index within this string of the first occurrence of the specified character, starting from the specified offset.
  */
@@ -70,7 +72,10 @@ public actual fun String(chars: CharArray): String =
 public actual fun String(chars: CharArray, offset: Int, length: Int): String {
     if (offset < 0 || length < 0 || offset + length > chars.size)
         throw IndexOutOfBoundsException()
-    return String.unsafeFromCharArray(chars.copyOfRange(offset, offset + length))
+
+    val copy = WasmCharArray(length)
+    copy.fill(length) { chars[it + offset] }
+    return String.unsafeFromCharArray(copy)
 }
 
 /**
@@ -78,8 +83,11 @@ public actual fun String(chars: CharArray, offset: Int, length: Int): String {
  */
 @SinceKotlin("1.4")
 @WasExperimental(ExperimentalStdlibApi::class)
-public actual fun CharArray.concatToString(): String =
-    String.unsafeFromCharArray(this.copyOf())
+public actual fun CharArray.concatToString(): String {
+    val copy = WasmCharArray(this.size)
+    copy.fill(this.size) { this[it] }
+    return String.unsafeFromCharArray(copy)
+}
 
 /**
  * Concatenates characters in this [CharArray] or its subrange into a String.
@@ -95,7 +103,11 @@ public actual fun CharArray.concatToString(): String =
 @Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
 public actual fun CharArray.concatToString(startIndex: Int = 0, endIndex: Int = this.size): String {
     AbstractList.checkBoundsIndexes(startIndex, endIndex, this.size)
-    return String.unsafeFromCharArray(this.copyOfRange(startIndex, endIndex))
+
+    val length = endIndex - startIndex
+    val copy = WasmCharArray(length)
+    copy.fill(length) { this[it + startIndex] }
+    return String.unsafeFromCharArray(copy)
 }
 
 /**
