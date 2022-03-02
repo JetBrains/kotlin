@@ -15,6 +15,22 @@ FILE: propertyWithGetterAndSetter.kt
         [RAW_FIR] public? get(): Int { LAZY_BLOCK }
         [RAW_FIR] public? set([RAW_FIR] value: Int): R|kotlin/Unit| { LAZY_BLOCK }
 
+COMPILER_REQUIRED_ANNOTATIONS:
+FILE: propertyWithGetterAndSetter.kt
+    public? final? [COMPILER_REQUIRED_ANNOTATIONS] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
+    public? final? [RAW_FIR] fun receive([RAW_FIR] value: Int): R|kotlin/Unit| { LAZY_BLOCK }
+    public? final? [RAW_FIR] var withGetterAndSetter: Int = LAZY_EXPRESSION
+        [RAW_FIR] public? get(): Int { LAZY_BLOCK }
+        [RAW_FIR] public? set([RAW_FIR] value: Int): R|kotlin/Unit| { LAZY_BLOCK }
+
+COMPANION_GENERATION:
+FILE: propertyWithGetterAndSetter.kt
+    public? final? [COMPANION_GENERATION] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
+    public? final? [RAW_FIR] fun receive([RAW_FIR] value: Int): R|kotlin/Unit| { LAZY_BLOCK }
+    public? final? [RAW_FIR] var withGetterAndSetter: Int = LAZY_EXPRESSION
+        [RAW_FIR] public? get(): Int { LAZY_BLOCK }
+        [RAW_FIR] public? set([RAW_FIR] value: Int): R|kotlin/Unit| { LAZY_BLOCK }
+
 SUPER_TYPES:
 FILE: propertyWithGetterAndSetter.kt
     public? final? [SUPER_TYPES] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }

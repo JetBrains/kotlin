@@ -9,6 +9,16 @@ FILE: annotations.kt
     @FILE:Suppress(String(1))
     @Suppress(String(2)) public? final? [RAW_FIR] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
 
+COMPILER_REQUIRED_ANNOTATIONS:
+FILE: annotations.kt
+    @FILE:Suppress(String(1))
+    @Suppress(String(2)) public? final? [COMPILER_REQUIRED_ANNOTATIONS] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
+
+COMPANION_GENERATION:
+FILE: annotations.kt
+    @FILE:Suppress(String(1))
+    @Suppress(String(2)) public? final? [COMPANION_GENERATION] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
+
 SUPER_TYPES:
 FILE: annotations.kt
     @FILE:Suppress(String(1))

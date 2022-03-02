@@ -21,6 +21,28 @@ FILE: typeParameterOfNonLocalFunction.kt
 
     }
 
+COMPILER_REQUIRED_ANNOTATIONS:
+FILE: typeParameterOfNonLocalFunction.kt
+    public? final? [RAW_FIR] class X : R|kotlin/Any| {
+        public? [RAW_FIR] [ContainingClassKey=X] constructor(): R|X| {
+            super<R|kotlin/Any|>()
+        }
+
+        public? final? [COMPILER_REQUIRED_ANNOTATIONS] fun <resolveMe> ddd(): R|kotlin/Unit| { LAZY_BLOCK }
+
+    }
+
+COMPANION_GENERATION:
+FILE: typeParameterOfNonLocalFunction.kt
+    public? final? [RAW_FIR] class X : R|kotlin/Any| {
+        public? [RAW_FIR] [ContainingClassKey=X] constructor(): R|X| {
+            super<R|kotlin/Any|>()
+        }
+
+        public? final? [COMPANION_GENERATION] fun <resolveMe> ddd(): R|kotlin/Unit| { LAZY_BLOCK }
+
+    }
+
 SUPER_TYPES:
 FILE: typeParameterOfNonLocalFunction.kt
     public? final? [RAW_FIR] class X : R|kotlin/Any| {
