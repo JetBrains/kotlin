@@ -35755,6 +35755,19 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
                 runTest("compiler/testData/codegen/box/sam/equality/simpleLambdas.kt");
             }
         }
+
+        @TestMetadata("compiler/testData/codegen/box/sam/javaSamWithEqualsHashCode")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class JavaSamWithEqualsHashCode extends AbstractLightAnalysisModeTest {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM, testDataFilePath);
+            }
+
+            public void testAllFilesPresentInJavaSamWithEqualsHashCode() throws Exception {
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/sam/javaSamWithEqualsHashCode"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM, true);
+            }
+        }
     }
 
     @TestMetadata("compiler/testData/codegen/box/sameFileInSourceAndDependencies")

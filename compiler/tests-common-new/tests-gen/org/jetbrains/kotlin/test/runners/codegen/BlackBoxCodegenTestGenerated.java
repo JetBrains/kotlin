@@ -44252,6 +44252,16 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
                 runTest("compiler/testData/codegen/box/sam/equality/simpleLambdas.kt");
             }
         }
+
+        @Nested
+        @TestMetadata("compiler/testData/codegen/box/sam/javaSamWithEqualsHashCode")
+        @TestDataPath("$PROJECT_ROOT")
+        public class JavaSamWithEqualsHashCode {
+            @Test
+            public void testAllFilesPresentInJavaSamWithEqualsHashCode() throws Exception {
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/sam/javaSamWithEqualsHashCode"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM, true);
+            }
+        }
     }
 
     @Nested

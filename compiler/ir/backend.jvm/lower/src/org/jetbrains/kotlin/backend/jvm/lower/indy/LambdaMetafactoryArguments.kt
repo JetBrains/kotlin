@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.backend.jvm.ir.getSingleAbstractMethod
 import org.jetbrains.kotlin.backend.jvm.ir.isCompiledToJvmDefault
 import org.jetbrains.kotlin.backend.jvm.lower.findInterfaceImplementation
 import org.jetbrains.kotlin.builtins.functions.BuiltInFunctionArity
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.builders.declarations.buildClass
@@ -80,6 +81,10 @@ internal class LambdaMetafactoryArgumentsBuilder(
     private val context: JvmBackendContext,
     private val crossinlineLambdas: Set<IrSimpleFunction>
 ) {
+
+    private val isJavaSamConversionWithEqualsHashCode =
+        context.state.languageVersionSettings.supportsFeature(LanguageFeature.JavaSamConversionEqualsHashCode)
+
     /**
      * @see java.lang.invoke.LambdaMetafactory
      */
@@ -99,12 +104,10 @@ internal class LambdaMetafactoryArgumentsBuilder(
 
         // Can't use JDK LambdaMetafactory for function references by default (because of 'equals').
         // TODO special mode that would generate indy everywhere?
-        if (!reference.origin.isLambda && !samClass.isFromJava()) {
+        if (!reference.origin.isLambda && (!samClass.isFromJava() || isJavaSamConversionWithEqualsHashCode)) {
             semanticsHazard = true
         }
 
-        // Don't use JDK LambdaMetafactory for serializable lambdas
-        // TODO implement support for serializable lambdas with LambdaMetafactory (requires additional code for deserialization)
         if (samClass.isInheritedFromSerializable()) {
             shouldBeSerializable = true
         }
@@ -133,7 +136,7 @@ internal class LambdaMetafactoryArgumentsBuilder(
             functionHazard = true
         }
 
-        // Can't use invokedynamic if the referenced function has to be inlined for correct semantics
+        // Can't use invokedynamic if the referenced function has to be inlined for correct semantics.
         // Also in some cases like `private inline fun` we'd need accessors, which `SyntheticAccessorLowering`
         // won't generate under the assumption that the inline function will be inlined. Plus if the function
         // is in a different module we should probably copy it anyway (and regenerate all objects in it).

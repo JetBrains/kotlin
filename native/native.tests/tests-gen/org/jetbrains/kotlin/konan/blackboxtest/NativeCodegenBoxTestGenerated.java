@@ -35331,6 +35331,18 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
                     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/sam/equality"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
                 }
             }
+
+            @Nested
+            @TestMetadata("compiler/testData/codegen/box/sam/javaSamWithEqualsHashCode")
+            @TestDataPath("$PROJECT_ROOT")
+            @Tag("codegen")
+            @UseExtTestCaseGroupProvider()
+            public class JavaSamWithEqualsHashCode {
+                @Test
+                public void testAllFilesPresentInJavaSamWithEqualsHashCode() throws Exception {
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/sam/javaSamWithEqualsHashCode"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
+                }
+            }
         }
 
         @Nested

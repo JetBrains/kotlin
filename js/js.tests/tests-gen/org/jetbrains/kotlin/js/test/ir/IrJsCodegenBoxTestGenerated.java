@@ -32392,6 +32392,16 @@ public class IrJsCodegenBoxTestGenerated extends AbstractIrJsCodegenBoxTest {
                 KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/sam/equality"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
             }
         }
+
+        @Nested
+        @TestMetadata("compiler/testData/codegen/box/sam/javaSamWithEqualsHashCode")
+        @TestDataPath("$PROJECT_ROOT")
+        public class JavaSamWithEqualsHashCode {
+            @Test
+            public void testAllFilesPresentInJavaSamWithEqualsHashCode() throws Exception {
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/sam/javaSamWithEqualsHashCode"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
+            }
+        }
     }
 
     @Nested
