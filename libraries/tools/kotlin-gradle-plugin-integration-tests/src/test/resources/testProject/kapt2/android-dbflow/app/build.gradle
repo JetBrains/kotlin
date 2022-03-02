@@ -23,7 +23,7 @@ android {
     }
 }
 
-def dbflow_version = "3.1.1"
+def dbflow_version = "4.2.4"
 
 dependencies {
     // Android Support Libraries
