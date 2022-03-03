@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.gradle.plugin.sources.kpm.SourceSetMappedFragmentLoc
 
 internal open class MultiplatformSourceSetMappedFragmentLocatorTest : MultiplatformExtensionTest() {
 
-    protected val locator = MultiplatformSourceSetMappedFragmentLocator()
+    protected val locator = MultiplatformSourceSetMappedFragmentLocator(project)
 
     @BeforeTest
     override fun setup() {
@@ -29,7 +29,7 @@ internal open class MultiplatformSourceSetMappedFragmentLocatorTest : Multiplatf
     }
 
     protected fun doTest(sourceSetName: String, checkResult: SourceSetMappedFragmentLocator.FragmentLocation.() -> Unit) {
-        val result = checkNotNull(locator.locateFragmentForSourceSet(project, sourceSetName))
+        val result = checkNotNull(locator.locateFragmentForSourceSet(sourceSetName))
         checkResult(result)
     }
 
