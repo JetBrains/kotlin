@@ -127,6 +127,13 @@ value class InlineFunThis(val s: String) {
     inline fun ok(): String = s
 }
 
+OPTIONAL_JVM_INLINE_ANNOTATION
+value class InlineClass(val s: String) {
+    init {
+        SingleInitBlock(s)
+    }
+}
+
 var res: String = "FAIL"
 
 fun box(): String {
@@ -180,6 +187,10 @@ fun box(): String {
     res = "FAIL 13"
     InlineFunThis("OK")
     if (res != "OK") return "FAIL 131: $res"
+
+    res = "FAIL 14"
+    InlineClass("OK")
+    if (res != "OK") return "FAIL 141: $res"
 
     return "OK"
 }
