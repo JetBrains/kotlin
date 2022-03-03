@@ -39,7 +39,7 @@ import org.jetbrains.kotlin.fir.declarations.SealedClassInheritorsProvider
 import org.jetbrains.kotlin.fir.declarations.SealedClassInheritorsProviderImpl
 import org.jetbrains.kotlin.idea.references.KotlinFirReferenceContributor
 import org.jetbrains.kotlin.idea.references.KotlinReferenceProviderContributor
-import org.jetbrains.kotlin.light.classes.symbol.IDEKotlinAsJavaFirSupport
+import org.jetbrains.kotlin.light.classes.symbol.KotlinAsJavaFirSupport
 import org.jetbrains.kotlin.light.classes.symbol.caches.SymbolLightClassFacadeCache
 import org.jetbrains.kotlin.load.kotlin.PackagePartProvider
 import org.jetbrains.kotlin.psi.KotlinReferenceProvidersService
@@ -74,9 +74,10 @@ public fun configureApplicationEnvironment(app: MockApplication) {
  *
  * In particular, this will register:
  *   * [KtAnalysisSessionProvider]
- *   * [KotlinAsJavaSupport] (a FIR version)
+ *   * [KotlinAsJavaFirSupport]
  *   * [SymbolLightClassFacadeCache] for FIR light class support
  *   * [KotlinModificationTrackerFactory]
+ *   * [KotlinAnnotationsResolverFactory]
  *   * [LLFirResolveStateService]
  *   * [FirSealedClassInheritorsProcessorFactory]
  *   * [KtModuleScopeProvider]
@@ -213,7 +214,7 @@ private fun reRegisterJavaElementFinder(project: Project) {
         picoContainer.unregisterComponent(KotlinAsJavaSupport::class.qualifiedName)
         picoContainer.registerComponentInstance(
             KotlinAsJavaSupport::class.qualifiedName,
-            IDEKotlinAsJavaFirSupport(project)
+            KotlinAsJavaFirSupport(project)
         )
     }
     @Suppress("DEPRECATION")
