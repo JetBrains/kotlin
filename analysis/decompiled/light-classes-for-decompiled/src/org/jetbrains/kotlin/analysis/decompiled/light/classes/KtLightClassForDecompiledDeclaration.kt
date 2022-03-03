@@ -95,9 +95,6 @@ open class KtLightClassForDecompiledDeclaration(
         lastParent: PsiElement?,
         place: PsiElement
     ): Boolean {
-        if (isEnum) {
-            if (!KotlinClassInnerStuffCache.processDeclarationsInEnum(processor, state, myInnersCache)) return false
-        }
         return PsiClassImplUtil.processDeclarationsInClass(
             this, processor, state, null,
             lastParent, place, PsiUtil.getLanguageLevel(place), false
