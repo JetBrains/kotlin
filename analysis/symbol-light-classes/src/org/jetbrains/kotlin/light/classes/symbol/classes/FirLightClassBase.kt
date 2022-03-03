@@ -66,7 +66,7 @@ abstract class FirLightClassBase protected constructor(manager: PsiManager) : Li
 
     private val myInnersCache = KotlinClassInnerStuffCache(
         myClass = this@FirLightClassBase,
-        externalDependencies = listOf(manager.project.createProjectWideOutOfBlockModificationTracker()),
+        dependencies = listOf(manager.project.createProjectWideOutOfBlockModificationTracker()),
         lazyCreator = FirLightClassesLazyCreator(project)
     )
 
