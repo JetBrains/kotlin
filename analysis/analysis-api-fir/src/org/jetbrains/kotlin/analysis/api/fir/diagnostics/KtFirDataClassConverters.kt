@@ -1911,8 +1911,8 @@ internal val KT_DIAGNOSTIC_CONVERTER = KtDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
-    add(FirErrors.TYPE_VARIANCE_CONFLICT) { firDiagnostic ->
-        TypeVarianceConflictImpl(
+    add(FirErrors.TYPE_VARIANCE_CONFLICT_ERROR) { firDiagnostic ->
+        TypeVarianceConflictErrorImpl(
             firSymbolBuilder.classifierBuilder.buildTypeParameterSymbol(firDiagnostic.a),
             firDiagnostic.b,
             firDiagnostic.c,

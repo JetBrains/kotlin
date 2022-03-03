@@ -43,6 +43,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import static org.jetbrains.kotlin.config.LanguageFeature.ReportTypeVarianceConflictOnQualifierArguments;
 import static org.jetbrains.kotlin.diagnostics.ClassicPositioningStrategies.ACTUAL_DECLARATION_NAME;
 import static org.jetbrains.kotlin.diagnostics.ClassicPositioningStrategies.INCOMPATIBLE_DECLARATION;
 import static org.jetbrains.kotlin.diagnostics.PositioningStrategies.*;
@@ -197,10 +198,8 @@ public interface Errors {
             DiagnosticFactory1.create(ERROR, VARIANCE_IN_PROJECTION);
     DiagnosticFactory1<KtTypeProjection, ClassifierDescriptor> REDUNDANT_PROJECTION =
             DiagnosticFactory1.create(WARNING, VARIANCE_IN_PROJECTION);
-    DiagnosticFactory1<PsiElement, VarianceConflictDiagnosticData> TYPE_VARIANCE_CONFLICT =
-            DiagnosticFactory1.create(ERROR, DECLARATION_SIGNATURE_OR_DEFAULT);
-    DiagnosticFactory1<PsiElement, VarianceConflictDiagnosticData> TYPE_VARIANCE_CONFLICT_WARNING =
-            DiagnosticFactory1.create(WARNING, DECLARATION_SIGNATURE_OR_DEFAULT);
+    DiagnosticFactoryForDeprecation1<PsiElement, VarianceConflictDiagnosticData> TYPE_VARIANCE_CONFLICT =
+            DiagnosticFactoryForDeprecation1.create(LanguageFeature.ReportTypeVarianceConflictOnQualifierArguments, DECLARATION_SIGNATURE_OR_DEFAULT);
     DiagnosticFactory1<PsiElement, VarianceConflictDiagnosticData> TYPE_VARIANCE_CONFLICT_IN_EXPANDED_TYPE =
             DiagnosticFactory1.create(ERROR, DECLARATION_SIGNATURE_OR_DEFAULT);
     DiagnosticFactory0<PsiElement> FINITE_BOUNDS_VIOLATION = DiagnosticFactory0.create(ERROR);

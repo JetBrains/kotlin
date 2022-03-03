@@ -1632,14 +1632,14 @@ internal class IncompatibleTypesWarningImpl(
     override val token: ValidityToken,
 ) : KtFirDiagnostic.IncompatibleTypesWarning(), KtAbstractFirDiagnostic<KtElement>
 
-internal class TypeVarianceConflictImpl(
+internal class TypeVarianceConflictErrorImpl(
     override val typeParameter: KtTypeParameterSymbol,
     override val typeParameterVariance: Variance,
     override val variance: Variance,
     override val containingType: KtType,
     override val firDiagnostic: KtPsiDiagnostic,
     override val token: ValidityToken,
-) : KtFirDiagnostic.TypeVarianceConflict(), KtAbstractFirDiagnostic<PsiElement>
+) : KtFirDiagnostic.TypeVarianceConflictError(), KtAbstractFirDiagnostic<PsiElement>
 
 internal class TypeVarianceConflictInExpandedTypeImpl(
     override val typeParameter: KtTypeParameterSymbol,

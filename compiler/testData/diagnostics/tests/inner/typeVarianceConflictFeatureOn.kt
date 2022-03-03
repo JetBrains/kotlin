@@ -7,6 +7,6 @@ class Bar<K> {
 
 abstract class Foo<in T> {
     abstract fun yuckyEventHandler(
-        fn: Bar<<!TYPE_VARIANCE_CONFLICT!>T<!>>.Inner.() -> Unit
+        fn: Bar<<!TYPE_VARIANCE_CONFLICT_ERROR!>T<!>>.Inner.() -> Unit
     ): () -> Unit
 }

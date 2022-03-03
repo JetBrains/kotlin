@@ -647,7 +647,7 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
             parameter<ConeKotlinType>("typeB")
         }
 
-        val TYPE_VARIANCE_CONFLICT by error<PsiElement>(PositioningStrategy.DECLARATION_SIGNATURE_OR_DEFAULT) {
+        val TYPE_VARIANCE_CONFLICT_ERROR by error<PsiElement>(PositioningStrategy.DECLARATION_SIGNATURE_OR_DEFAULT) {
             parameter<FirTypeParameterSymbol>("typeParameter")
             parameter<Variance>("typeParameterVariance")
             parameter<Variance>("variance")
