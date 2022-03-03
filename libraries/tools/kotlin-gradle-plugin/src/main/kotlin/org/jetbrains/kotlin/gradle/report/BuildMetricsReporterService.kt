@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinGradleBuildServices
 import org.jetbrains.kotlin.gradle.plugin.internal.state.TaskExecutionResults
 import org.jetbrains.kotlin.gradle.report.data.BuildExecutionData
 import org.jetbrains.kotlin.gradle.report.data.BuildExecutionDataProcessor
-import org.jetbrains.kotlin.gradle.report.data.TaskExecutionData
+import org.jetbrains.kotlin.gradle.report.data.BuildOperationRecord
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.ConcurrentLinkedQueue
 
@@ -39,24 +39,27 @@ abstract class BuildMetricsReporterService : BuildService<BuildMetricsReporterSe
     private val log = Logging.getLogger(this.javaClass)
 
     // Tasks and transforms' records
-    private val taskAndTransformRecords = ConcurrentLinkedQueue<TaskExecutionData>()
+    private val buildOperationRecords = ConcurrentLinkedQueue<BuildOperationRecord>()
     private val failureMessages = ConcurrentLinkedQueue<String>()
 
     // Info for tasks only
-    // The list (ConcurrentLinkedQueue) should typically contain only 1 element, but it's not important to enforce that.
-    private val taskPathToMetricsReporter = ConcurrentHashMap<String, ConcurrentLinkedQueue<BuildMetricsReporter>>()
-    private val taskPathToTaskClass = ConcurrentHashMap<String, ConcurrentLinkedQueue<String>>()
+    private val taskPathToMetricsReporter = ConcurrentHashMap<String, BuildMetricsReporter>()
+    private val taskPathToTaskClass = ConcurrentHashMap<String, String>()
 
     open fun addTask(taskPath: String, taskClass: Class<*>, metricsReporter: BuildMetricsReporter) {
-        taskPathToMetricsReporter.getOrPut(taskPath) { ConcurrentLinkedQueue() }.add(metricsReporter)
-        taskPathToTaskClass.getOrPut(taskPath) { ConcurrentLinkedQueue() }.add(taskClass.name)
+        taskPathToMetricsReporter.put(taskPath, metricsReporter).also {
+            check(it == null) { "Duplicate task path: $taskPath" }
+        }
+        taskPathToTaskClass.put(taskPath, taskClass.name).also {
+            check(it == null) { "Duplicate task path: $taskPath" }
+        }
     }
 
     open fun addTransformMetrics(
         transformPath: String, transformClass: Class<*>, isKotlinTransform: Boolean, startTimeMs: Long, totalTimeMs: Long,
         buildMetrics: BuildMetrics, failureMessage: String?
     ) {
-        taskAndTransformRecords.add(
+        buildOperationRecords.add(
             TransformRecord(transformPath, transformClass.name, isKotlinTransform, startTimeMs, totalTimeMs, buildMetrics)
         )
         failureMessage?.let { failureMessages.add(it) }
@@ -70,16 +73,16 @@ abstract class BuildMetricsReporterService : BuildService<BuildMetricsReporterSe
 
             val buildMetrics = BuildMetrics()
             buildMetrics.buildTimes.addTimeMs(BuildTime.GRADLE_TASK, totalTimeMs)
-            taskPathToMetricsReporter[taskPath]?.singleOrNull()?.let {
+            taskPathToMetricsReporter[taskPath]?.let {
                 buildMetrics.addAll(it.getMetrics())
             }
             val taskExecutionResult = TaskExecutionResults[taskPath]
             taskExecutionResult?.buildMetrics?.also { buildMetrics.addAll(it) }
 
-            taskAndTransformRecords.add(
+            buildOperationRecords.add(
                 TaskRecord(
-                    taskPath = taskPath,
-                    taskClass = taskPathToTaskClass[taskPath]?.let { it.singleOrNull() ?: "ambiguous" } ?: "unknown",
+                    path = taskPath,
+                    classFqName = taskPathToTaskClass[taskPath] ?: "unknown",
                     startTimeMs = result.startTime,
                     totalTimeMs = totalTimeMs,
                     buildMetrics = buildMetrics,
@@ -98,7 +101,7 @@ abstract class BuildMetricsReporterService : BuildService<BuildMetricsReporterSe
         val buildData = BuildExecutionData(
             startParameters = parameters.startParameters,
             failureMessages = failureMessages.toList(),
-            taskExecutionData = taskAndTransformRecords.sortedBy { it.startTimeMs }
+            buildOperationRecord = buildOperationRecords.sortedBy { it.startTimeMs }
         )
         parameters.buildDataProcessors.forEach { it.process(buildData, log) }
     }
@@ -153,31 +156,26 @@ abstract class BuildMetricsReporterService : BuildService<BuildMetricsReporterSe
 }
 
 private class TaskRecord(
-    taskPath: String,
-    taskClass: String,
+    override val path: String,
+    override val classFqName: String,
     override val startTimeMs: Long,
     override val totalTimeMs: Long,
     override val buildMetrics: BuildMetrics,
     override val didWork: Boolean,
     override val skipMessage: String?,
     override val icLogLines: List<String>
-) : TaskExecutionData {
-    override val taskOrTransformPath: String = taskPath
-    override val taskOrTransformClass: String = taskClass
-    override val isKotlinTaskOrTransform: Boolean = taskClass.startsWith("org.jetbrains.kotlin")
+) : BuildOperationRecord {
+    override val isKotlin: Boolean = classFqName.startsWith("org.jetbrains.kotlin")
 }
 
 private class TransformRecord(
-    transformPath: String,
-    transformClass: String,
-    isKotlinTransform: Boolean,
+    override val path: String,
+    override val classFqName: String,
+    override val isKotlin: Boolean,
     override val startTimeMs: Long,
     override val totalTimeMs: Long,
     override val buildMetrics: BuildMetrics
-) : TaskExecutionData {
-    override val taskOrTransformPath: String = transformPath
-    override val taskOrTransformClass: String = transformClass
-    override val isKotlinTaskOrTransform: Boolean = isKotlinTransform
+) : BuildOperationRecord {
     override val didWork: Boolean = true
     override val skipMessage: String? = null
     override val icLogLines: List<String> = emptyList()

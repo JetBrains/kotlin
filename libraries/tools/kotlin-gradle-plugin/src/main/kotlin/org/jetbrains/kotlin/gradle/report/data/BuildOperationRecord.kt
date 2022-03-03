@@ -7,11 +7,11 @@ package org.jetbrains.kotlin.gradle.report.data
 
 import org.jetbrains.kotlin.build.report.metrics.BuildMetrics
 
-/** Execution data for a task or transform. */
-interface TaskExecutionData {
-    val taskOrTransformPath: String
-    val taskOrTransformClass: String
-    val isKotlinTaskOrTransform: Boolean
+/** Data for a build operation (e.g., task or transform). */
+interface BuildOperationRecord {
+    val path: String
+    val classFqName: String
+    val isKotlin: Boolean
     val startTimeMs: Long // Measured by System.currentTimeMillis()
     val totalTimeMs: Long
     val buildMetrics: BuildMetrics

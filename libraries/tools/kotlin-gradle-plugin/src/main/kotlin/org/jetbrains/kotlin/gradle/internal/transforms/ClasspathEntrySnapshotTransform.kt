@@ -89,9 +89,9 @@ abstract class ClasspathEntrySnapshotTransform : TransformAction<ClasspathEntryS
             metrics.measure(BuildTime.SAVE_CLASSPATH_ENTRY_SNAPSHOT) {
                 ClasspathEntrySnapshotExternalizer.saveToFile(snapshotOutputFile, snapshot)
             }
+            metrics.addMetric(BuildPerformanceMetric.CLASSPATH_ENTRY_SNAPSHOT_TRANSFORM_EXECUTION_COUNT, 1)
+            metrics.addMetric(BuildPerformanceMetric.CLASSPATH_ENTRY_SIZE, classpathEntryInputDirOrJar.walk().sumOf { it.length() })
+            metrics.addMetric(BuildPerformanceMetric.CLASSPATH_ENTRY_SNAPSHOT_SIZE, snapshotOutputFile.length())
         }
-        metrics.addMetric(BuildPerformanceMetric.CLASSPATH_ENTRY_SNAPSHOT_TRANSFORM_EXECUTION_COUNT, 1)
-        metrics.addMetric(BuildPerformanceMetric.CLASSPATH_ENTRY_SIZE, classpathEntryInputDirOrJar.walk().sumOf { it.length() })
-        metrics.addMetric(BuildPerformanceMetric.CLASSPATH_ENTRY_SNAPSHOT_SIZE, snapshotOutputFile.length())
     }
 }

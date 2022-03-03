@@ -9,7 +9,7 @@ import org.gradle.api.logging.Logger
 import org.jetbrains.kotlin.build.report.metrics.*
 import org.jetbrains.kotlin.gradle.report.data.BuildExecutionData
 import org.jetbrains.kotlin.gradle.report.data.BuildExecutionDataProcessor
-import org.jetbrains.kotlin.gradle.report.data.TaskExecutionData
+import org.jetbrains.kotlin.gradle.report.data.BuildOperationRecord
 import org.jetbrains.kotlin.gradle.utils.Printer
 import java.io.File
 import java.io.Serializable
@@ -164,13 +164,13 @@ internal class PlainTextBuildReportWriter(
     private fun printTaskOverview(build: BuildExecutionData) {
         var allTasksTimeMs = 0L
         var kotlinTotalTimeMs = 0L
-        val kotlinTasks = ArrayList<TaskExecutionData>()
+        val kotlinTasks = ArrayList<BuildOperationRecord>()
 
-        for (task in build.taskExecutionData) {
+        for (task in build.buildOperationRecord) {
             val taskTimeMs = task.totalTimeMs
             allTasksTimeMs += taskTimeMs
 
-            if (task.isKotlinTaskOrTransform) {
+            if (task.isKotlin) {
                 kotlinTotalTimeMs += taskTimeMs
                 kotlinTasks.add(task)
             }
@@ -188,29 +188,29 @@ internal class PlainTextBuildReportWriter(
         for (task in kotlinTasks.sortedWith(compareBy({ -it.totalTimeMs }, { it.startTimeMs }))) {
             val timeMs = task.totalTimeMs
             val percent = (timeMs.toDouble() / kotlinTotalTimeMs * 100).asString(1)
-            table.addRow(formatTime(timeMs), "$percent %", task.taskOrTransformPath)
+            table.addRow(formatTime(timeMs), "$percent %", task.path)
         }
         table.printTo(p)
         p.println()
     }
 
     private fun printTasksLog(build: BuildExecutionData) {
-        for (task in build.taskExecutionData.sortedWith(compareBy({ -it.totalTimeMs }, { it.startTimeMs }))) {
+        for (task in build.buildOperationRecord.sortedWith(compareBy({ -it.totalTimeMs }, { it.startTimeMs }))) {
             printTaskLog(task)
             p.println()
         }
     }
 
-    private fun printTaskLog(task: TaskExecutionData) {
+    private fun printTaskLog(task: BuildOperationRecord) {
         val skipMessage = task.skipMessage
         if (skipMessage != null) {
-            p.println("Task '${task.taskOrTransformPath}' was skipped: $skipMessage")
+            p.println("Task '${task.path}' was skipped: $skipMessage")
         } else {
-            p.println("Task '${task.taskOrTransformPath}' finished in ${formatTime(task.totalTimeMs)}")
+            p.println("Task '${task.path}' finished in ${formatTime(task.totalTimeMs)}")
         }
 
         if (task.icLogLines.isNotEmpty()) {
-            p.withIndent("Compilation log for task '${task.taskOrTransformPath}':") {
+            p.withIndent("Compilation log for task '${task.path}':") {
                 task.icLogLines.forEach { p.println(it) }
             }
         }
