@@ -1049,8 +1049,12 @@ open class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransform
         val transformedLhsCall =
             augmentedArraySetCall.lhsGetCall.transformSingle(transformer, ResolutionMode.ContextIndependent).takeIf { it.isSuccessful() }
 
-        val blockForGetSetVersion: FirBlock? =
+        val isFromDynamicScope = transformedLhsCall?.calleeReference?.resolvedSymbol?.origin == FirDeclarationOrigin.DynamicScope
+        val blockForGetSetVersion: FirBlock? = if (!isFromDynamicScope) {
             transformedLhsCall?.let { augmentedArraySetCall.tryResolveAugmentedArraySetCallAsSetGetBlock(it) }
+        } else {
+            null
+        }
         val assignResolvedCall: FirFunctionCall? =
             transformedLhsCall?.let { augmentedArraySetCall.tryResolveWithOperatorAssignConvention(it) }
 
@@ -1206,8 +1210,19 @@ open class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransform
 
         if (!transformedSet.isSuccessful()) return null
 
+        val setFunction = transformedSet.calleeReference.resolvedSymbol?.fir
+            ?: throw Exception("Must have been a success!")
+
+        val argumentsList = if (setFunction.origin != FirDeclarationOrigin.DynamicScope) {
+            transformedSet.argumentList.arguments
+        } else {
+            val varargArgument = transformedSet.argumentList.arguments.last() as? FirVarargArgumentsExpression
+                ?: throw Exception("Functions from FirDynamicScope must have a single vararg argument")
+            varargArgument.arguments
+        }
+
         val transformedOperator =
-            transformedSet.argumentList.arguments.last().let {
+            argumentsList.last().let {
                 if (it is FirNamedArgumentExpression)
                     it.expression
                 else

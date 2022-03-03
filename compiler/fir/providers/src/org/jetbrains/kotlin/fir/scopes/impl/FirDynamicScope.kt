@@ -12,10 +12,9 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
-import org.jetbrains.kotlin.fir.declarations.builder.buildProperty
-import org.jetbrains.kotlin.fir.declarations.builder.buildSimpleFunction
-import org.jetbrains.kotlin.fir.declarations.builder.buildValueParameter
+import org.jetbrains.kotlin.fir.declarations.builder.*
 import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl
+import org.jetbrains.kotlin.fir.expressions.FirOperationNameConventions
 import org.jetbrains.kotlin.fir.moduleData
 import org.jetbrains.kotlin.fir.scopes.FirTypeScope
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction
@@ -99,7 +98,12 @@ class FirDynamicScope(
 
         moduleData = session.moduleData
         origin = FirDeclarationOrigin.DynamicScope
-        returnTypeRef = dynamicTypeRef
+
+        returnTypeRef = if (name in FirOperationNameConventions.ASSIGNMENT_NAMES) {
+            session.builtinTypes.unitType
+        } else {
+            dynamicTypeRef
+        }
 
         val parameter = buildValueParameter {
             moduleData = session.moduleData
