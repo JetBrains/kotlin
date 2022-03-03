@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinJvmOptionsImpl
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.filterModuleName
+import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.createAndEmbedMappedCompilation
 import org.jetbrains.kotlin.gradle.targets.jvm.KotlinJvmTarget
 
 open class KotlinJvmVariant(
@@ -55,11 +56,11 @@ internal class KotlinMappedJvmCompilationFactory(
     target: KotlinJvmTarget
 ) : KotlinJvmCompilationFactory(target) {
     override fun create(name: String): KotlinJvmCompilation {
-        val module = target.project.kpmModules.maybeCreate(name)
-        val variant = module.fragments.create(target.name, KotlinJvmVariant::class.java)
-
-        return KotlinJvmCompilation(
-            VariantMappedCompilationDetailsWithRuntime(variant, target),
+        return createAndEmbedMappedCompilation(
+            target,
+            name,
+            createVariant = { module, variantName -> module.fragments.create(variantName, KotlinJvmVariant::class.java) },
+            compilationFactory = { variant -> KotlinJvmCompilation(VariantMappedCompilationDetailsWithRuntime(variant, target)) }
         )
     }
 }

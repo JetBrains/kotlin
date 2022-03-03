@@ -21,19 +21,19 @@ interface SourceSetMappedFragmentLocator {
         }
     }
 
-    fun locateFragmentForSourceSet(project: Project, sourceSetName: String): FragmentLocation?
+    fun locateFragmentForSourceSet(sourceSetName: String): FragmentLocation?
 
     companion object {
         fun get(project: Project): SourceSetMappedFragmentLocator = when (project.topLevelExtensionOrNull) {
-            is KotlinMultiplatformExtension -> MultiplatformSourceSetMappedFragmentLocator()
+            is KotlinMultiplatformExtension -> MultiplatformSourceSetMappedFragmentLocator(project)
             is KotlinSingleTargetExtension -> error("KPM model mapping is not yet supported in single-platform projects; tried to apply to $project")
             else -> error("couldn't provide model mapping utilities for project $project")
         }
     }
 }
 
-internal class MultiplatformSourceSetMappedFragmentLocator : SourceSetMappedFragmentLocator {
-    override fun locateFragmentForSourceSet(project: Project, sourceSetName: String): SourceSetMappedFragmentLocator.FragmentLocation {
+internal class MultiplatformSourceSetMappedFragmentLocator(private val project: Project) : SourceSetMappedFragmentLocator {
+    override fun locateFragmentForSourceSet(sourceSetName: String): SourceSetMappedFragmentLocator.FragmentLocation {
         val camelCaseParts = sourceSetName.camelCaseParts()
         if (camelCaseParts.size < 2) {
             return SourceSetMappedFragmentLocator.FragmentLocation(KotlinGradleModule.MAIN_MODULE_NAME, sourceSetName)
@@ -79,7 +79,7 @@ internal class MultiplatformSourceSetMappedFragmentLocator : SourceSetMappedFrag
 }
 
 private class SingleTargetSourceSetMappedFragmentLocator : SourceSetMappedFragmentLocator {
-    override fun locateFragmentForSourceSet(project: Project, sourceSetName: String): SourceSetMappedFragmentLocator.FragmentLocation {
+    override fun locateFragmentForSourceSet(sourceSetName: String): SourceSetMappedFragmentLocator.FragmentLocation {
         return SourceSetMappedFragmentLocator.FragmentLocation(sourceSetName, SINGLE_PLATFORM_FRAGMENT_NAME)
     }
 }

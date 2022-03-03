@@ -10,9 +10,9 @@ import org.gradle.api.artifacts.Configuration
 import org.jetbrains.kotlin.gradle.dsl.KotlinCommonOptions
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.NativeCompileOptions
+import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.createAndEmbedMappedCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.publishedConfigurationName
 import org.jetbrains.kotlin.konan.target.KonanTarget
-import javax.inject.Inject
 
 abstract class KotlinNativeVariantInternal(
     containingModule: KotlinGradleModule,
@@ -100,12 +100,16 @@ internal class KotlinMappedNativeCompilationFactory(
     private val variantClass: Class<out KotlinNativeVariantInternal>
 ) : KotlinNativeCompilationFactory(target) {
     override fun create(name: String): KotlinNativeCompilation {
-        val module = target.project.kpmModules.maybeCreate(name)
-        val variant = module.fragments.create(target.name, variantClass)
-
-        return KotlinNativeCompilation(
-            target.konanTarget,
-            VariantMappedCompilationDetails(variant, target)
+        return createAndEmbedMappedCompilation(
+            target,
+            name,
+            createVariant = { module, variantName -> module.fragments.create(variantName, variantClass) },
+            compilationFactory = { variant ->
+                KotlinNativeCompilation(
+                    target.konanTarget,
+                    VariantMappedCompilationDetails(variant, target)
+                )
+            }
         )
     }
 }

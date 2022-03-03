@@ -109,14 +109,7 @@ open class DefaultCompilationDetails<T : KotlinCommonOptions>(
     override val directlyIncludedKotlinSourceSets: MutableSet<KotlinSourceSet> = mutableSetOf()
 
     override val defaultSourceSetName: String
-        get() = lowerCamelCaseName(
-            target.disambiguationClassifier.takeIf { target !is KotlinMetadataTarget },
-            when {
-                isMainCompilationData() && target is KotlinMetadataTarget ->
-                    KotlinSourceSet.COMMON_MAIN_SOURCE_SET_NAME // corner case: main compilation of the metadata target compiles commonMain
-                else -> compilationPurpose
-            }
-        )
+        get() = compilationDefaultSourceSetName(target, compilationPurpose)
 
     override val compilationClassifier: String?
         get() = target.disambiguationClassifier
@@ -322,6 +315,12 @@ open class DefaultCompilationDetails<T : KotlinCommonOptions>(
         }
     }
 }
+
+internal fun compilationDefaultSourceSetName(target: KotlinTarget, compilationName: String): String =
+    lowerCamelCaseName(
+        target.disambiguationClassifier.takeIf { target !is KotlinMetadataTarget },
+        compilationName
+    )
 
 open class DefaultCompilationDetailsWithRuntime<T : KotlinCommonOptions>(
     target: KotlinTarget,
@@ -550,6 +549,12 @@ internal class MetadataCompilationDetails(target: KotlinTarget, name: String) :
         name,
         { KotlinMultiplatformCommonOptionsImpl() }
     ) {
+
+    override val defaultSourceSetName: String
+        get() = when {
+            isMainCompilationData() -> KotlinSourceSet.COMMON_MAIN_SOURCE_SET_NAME
+            else -> super.defaultSourceSetName
+        }
 
     override val friendArtifacts: FileCollection
         get() = super.friendArtifacts.plus(run {
