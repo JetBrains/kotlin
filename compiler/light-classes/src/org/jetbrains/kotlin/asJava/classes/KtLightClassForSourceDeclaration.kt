@@ -74,7 +74,7 @@ abstract class KtLightClassForSourceDeclaration(
 
     override val myInnersCache: KotlinClassInnerStuffCache = KotlinClassInnerStuffCache(
         myClass = this,
-        externalDependencies = classOrObject.getExternalDependencies(),
+        dependencies = classOrObject.getExternalDependencies(),
         lazyCreator = LightClassesLazyCreator(project)
     )
 
