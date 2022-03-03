@@ -48741,6 +48741,18 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
             }
 
             @Test
+            @TestMetadata("notAllConditionsAreEqEqExceptElse.kt")
+            public void testNotAllConditionsAreEqEqExceptElse() throws Exception {
+                runTest("compiler/testData/codegen/box/when/enumOptimization/notAllConditionsAreEqEqExceptElse.kt");
+            }
+
+            @Test
+            @TestMetadata("notAllEntriesAreConstants.kt")
+            public void testNotAllEntriesAreConstants() throws Exception {
+                runTest("compiler/testData/codegen/box/when/enumOptimization/notAllEntriesAreConstants.kt");
+            }
+
+            @Test
             @TestMetadata("nullIsTheFirstEntry.kt")
             public void testNullIsTheFirstEntry() throws Exception {
                 runTest("compiler/testData/codegen/box/when/enumOptimization/nullIsTheFirstEntry.kt");
