@@ -21,10 +21,15 @@ class IrConstTransformer(
     private val interpreter: IrInterpreter,
     private val irFile: IrFile,
     private val mode: EvaluationMode,
+    private val onWarning: (IrElement, IrErrorExpression) -> Unit = { _, _ -> },
     private val onError: (IrElement, IrErrorExpression) -> Unit = { _, _ -> }
 ) : IrElementTransformerVoid() {
-    private fun IrExpression.replaceIfError(original: IrExpression): IrExpression {
-        return if (this !is IrErrorExpression) this else original
+    private fun IrExpression.warningIfError(original: IrExpression): IrExpression {
+        if (this is IrErrorExpression) {
+            onWarning(original, this)
+            return original
+        }
+        return this
     }
 
     private fun IrExpression.reportIfError(original: IrExpression): IrExpression {
@@ -41,7 +46,7 @@ class IrConstTransformer(
 
     override fun visitCall(expression: IrCall): IrExpression {
         if (expression.accept(IrCompileTimeChecker(mode = mode), null)) {
-            return interpreter.interpret(expression, irFile).replaceIfError(expression)
+            return interpreter.interpret(expression, irFile).warningIfError(expression)
         }
         return super.visitCall(expression)
     }
@@ -55,7 +60,7 @@ class IrConstTransformer(
         val isConst = declaration.correspondingPropertySymbol?.owner?.isConst == true
         if (isConst && expression.accept(IrCompileTimeChecker(declaration, mode), null)) {
             val result = interpreter.interpret(expression, irFile)
-            initializer.expression = if (isConst) result.reportIfError(expression) else result.replaceIfError(expression)
+            initializer.expression = result.reportIfError(expression)
         }
 
         return super.visitField(declaration)

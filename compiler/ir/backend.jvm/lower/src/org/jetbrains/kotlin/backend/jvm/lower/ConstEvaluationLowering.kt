@@ -8,7 +8,9 @@ package org.jetbrains.kotlin.backend.jvm.lower
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.phaser.makeIrModulePhase
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
+import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.IrFile
+import org.jetbrains.kotlin.ir.expressions.IrErrorExpression
 import org.jetbrains.kotlin.ir.interpreter.IrInterpreter
 import org.jetbrains.kotlin.ir.interpreter.IrInterpreterConfiguration
 import org.jetbrains.kotlin.ir.interpreter.IrInterpreterEnvironment
@@ -28,10 +30,17 @@ class ConstEvaluationLowering(val context: JvmBackendContext) : FileLoweringPass
     val interpreter = IrInterpreter(IrInterpreterEnvironment(context.irBuiltIns, configuration), emptyMap())
 
     override fun lower(irFile: IrFile) {
-        val transformer = IrConstTransformer(interpreter, irFile, mode = EvaluationMode.ONLY_INTRINSIC_CONST) { element, error ->
+        fun onError(element: IrElement, error: IrErrorExpression) {
             context.ktDiagnosticReporter.at(element, irFile)
                 .report(JvmBackendErrors.EXCEPTION_IN_CONST_VAL_INITIALIZER, error.description)
         }
+
+        fun onWarning(element: IrElement, warning: IrErrorExpression) {
+            context.ktDiagnosticReporter.at(element, irFile)
+                .report(JvmBackendErrors.EXCEPTION_IN_CONST_EXPRESSION, warning.description)
+        }
+
+        val transformer = IrConstTransformer(interpreter, irFile, mode = EvaluationMode.ONLY_INTRINSIC_CONST, ::onWarning, ::onError)
         irFile.transformChildren(transformer, null)
     }
 }
