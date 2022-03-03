@@ -560,7 +560,7 @@ class KotlinSpecificDependenciesIT : KGPBaseTest() {
         } else {
             "org.jetbrains.kotlin.gradle.tasks.AbstractKotlinCompileTool<?>"
         }
-        val expression = """(tasks.getByName("$taskName") as $taskClass).${if (isNative) "libraries" else "classpath"}.toList()"""
+        val expression = """(tasks.getByName("$taskName") as $taskClass).libraries.toList()"""
         checkPrintedItems(subproject, expression, checkModulesInClasspath, checkModulesNotInClasspath, isBuildGradleKts)
     }
 

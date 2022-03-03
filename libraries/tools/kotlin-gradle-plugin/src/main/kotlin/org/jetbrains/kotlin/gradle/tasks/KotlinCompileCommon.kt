@@ -116,7 +116,7 @@ abstract class KotlinCompileCommon @Inject constructor(
 
         if (defaultsOnly) return
 
-        val classpathList = classpath.files.filter { it.exists() }.toMutableList()
+        val classpathList = libraries.files.filter { it.exists() }.toMutableList()
 
         with(args) {
             classpath = classpathList.joinToString(File.pathSeparator)

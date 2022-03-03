@@ -59,7 +59,7 @@ class Android25ProjectHandler(
 
         val preJavaClasspathKey = variantData.registerPreJavacGeneratedBytecode(preJavaKotlinOutput)
         kotlinTask.configure { kotlinTaskInstance ->
-            kotlinTaskInstance.classpath
+            kotlinTaskInstance.libraries
                 .from(variantData.getCompileClasspath(preJavaClasspathKey))
                 .from(Callable { AndroidGradleWrapper.getRuntimeJars(androidPlugin, androidExt) })
 

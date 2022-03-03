@@ -516,7 +516,7 @@ class Kapt3GradleSubplugin @Inject internal constructor(private val registry: To
             // the configuration is not extended (via extendsFrom, which normally happens when one configuration is _added_ into another)
             // but is instead included as the (lazily) resolved files. This is needed because the class structure configuration doesn't have
             // the attributes that are potentially needed to resolve dependencies on MPP modules, and the classpath configuration does.
-            project.dependencies.add(classStructureIfIncremental.name, project.files(project.provider { kotlinCompile.get().classpath }))
+            project.dependencies.add(classStructureIfIncremental.name, project.files(project.provider { kotlinCompile.get().libraries }))
         }
 
         val kaptClasspathConfiguration = project.configurations.create("kaptClasspath_$taskName")
