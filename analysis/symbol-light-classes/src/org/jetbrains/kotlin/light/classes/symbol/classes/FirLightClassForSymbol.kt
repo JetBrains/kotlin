@@ -96,10 +96,8 @@ internal open class FirLightClassForSymbol(
             val declaredMemberScope = classOrObjectSymbol.getDeclaredMemberScope()
 
             val visibleDeclarations = declaredMemberScope.getCallableSymbols().applyIf(isEnum) {
-                // Technically, synthetic members of `enum` class, such as `values` or `valueOf`, are visible.
-                // They're just needed to be added later (to be in a backward-compatible order of members).
                 filterNot { function ->
-                    function is KtFunctionSymbol && function.origin == KtSymbolOrigin.SOURCE_MEMBER_GENERATED &&
+                    function is KtFunctionSymbol &&
                             (function.name == ENUM_VALUES || function.name == ENUM_VALUE_OF)
                 }
             }.applyIf(classOrObjectSymbol.isObject) {
@@ -122,7 +120,6 @@ internal open class FirLightClassForSymbol(
 
         addMethodsFromCompanionIfNeeded(result)
 
-        addMethodsFromEnumClass(result)
         addMethodsFromDataClass(result)
         addDelegatesToInterfaceMethods(result)
 
@@ -137,19 +134,6 @@ internal open class FirLightClassForSymbol(
                     .filter { it.hasJvmStaticAnnotation() }
                 createMethods(methods, result)
             }
-        }
-    }
-
-    private fun addMethodsFromEnumClass(result: MutableList<KtLightMethod>) {
-        if (!isEnum) return
-
-        analyzeWithSymbolAsContext(classOrObjectSymbol) {
-            val valuesAndValueOfFunctions = classOrObjectSymbol.getDeclaredMemberScope()
-                .getCallableSymbols { name -> name == ENUM_VALUES || name == ENUM_VALUE_OF }
-                .filter { it.origin == KtSymbolOrigin.SOURCE_MEMBER_GENERATED }
-                .filterIsInstance<KtFunctionSymbol>()
-
-            createMethods(valuesAndValueOfFunctions, result)
         }
     }
 
