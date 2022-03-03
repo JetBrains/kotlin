@@ -73,10 +73,37 @@ open class EnumWhenLowering(protected val context: CommonBackendContext) : IrEle
                 }
             }
         }
-
-        transformBranches(irWhen, subject, subjectOrdinalProvider)
-
+        if (possibleToGenerateJumpTable(irWhen, subject)) {
+            transformBranches(irWhen, subject, subjectOrdinalProvider)
+        }
         return expression
+    }
+
+    private fun possibleToGenerateJumpTable(irWhen: IrWhen, subject: IrVariable): Boolean {
+        for (irBranch in irWhen.branches) {
+            val condition = irBranch.condition as? IrCall ?: continue
+            if (condition.symbol != context.irBuiltIns.eqeqSymbol)
+                return false
+
+            val lhs = condition.getValueArgument(0)!!
+            val rhs = condition.getValueArgument(1)!!
+            val other = getOther(lhs, rhs, subject)
+            if (other is IrCall) {
+                return false
+            }
+        }
+        return true
+    }
+
+    private fun getOther(lhs: IrExpression, rhs: IrExpression, subject: IrVariable): IrExpression? {
+        return when {
+            lhs is IrGetValue && lhs.symbol.owner == subject ->
+                rhs
+            rhs is IrGetValue && rhs.symbol.owner == subject ->
+                lhs
+            else ->
+                return null
+        }
     }
 
     private fun transformBranches(
@@ -125,14 +152,7 @@ open class EnumWhenLowering(protected val context: CommonBackendContext) : IrEle
         }
         val lhs = expression.getValueArgument(0)!!
         val rhs = expression.getValueArgument(1)!!
-        val other = when {
-            lhs is IrGetValue && lhs.symbol.owner == subject ->
-                rhs
-            rhs is IrGetValue && rhs.symbol.owner == subject ->
-                lhs
-            else ->
-                return expression
-        }
+        val other = getOther(lhs, rhs, subject) ?: return expression
         val entryOrdinal = when {
             other is IrGetEnumValue && subject.type.classifierOrNull?.owner == other.symbol.owner.parent ->
                 mapConstEnumEntry(other.symbol.owner)

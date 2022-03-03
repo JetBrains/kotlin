@@ -17,3 +17,7 @@ fun test(e: E?) = when (e) {
 fun box(): String {
     return test(null)
 }
+
+// CHECK_BYTECODE_TEXT
+// JVM_IR_TEMPLATES
+// 1 TABLESWITCH
