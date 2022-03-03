@@ -42,6 +42,7 @@ import org.jetbrains.kotlin.ir.util.isFunctionTypeOrSubtype
 import org.jetbrains.kotlin.ir.util.isInterface
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi
+import org.jetbrains.kotlin.psi.KtArrayAccessExpression
 import org.jetbrains.kotlin.psi.KtBinaryExpression
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtUnaryExpression
@@ -295,8 +296,14 @@ class CallAndReferenceGenerator(
                     KtTokens.EQEQEQ -> IrDynamicOperator.EQEQEQ
                     KtTokens.EXCLEQ -> IrDynamicOperator.EXCLEQ
                     KtTokens.EXCLEQEQEQ -> IrDynamicOperator.EXCLEQEQ
+                    KtTokens.PLUSEQ -> IrDynamicOperator.PLUSEQ
+                    KtTokens.MINUSEQ -> IrDynamicOperator.MINUSEQ
+                    KtTokens.MULTEQ -> IrDynamicOperator.MULEQ
+                    KtTokens.DIVEQ -> IrDynamicOperator.DIVEQ
+                    KtTokens.PERCEQ -> IrDynamicOperator.MODEQ
                     else -> null
                 }
+            is KtArrayAccessExpression -> IrDynamicOperator.ARRAY_ACCESS
             else -> null
         }
     }
