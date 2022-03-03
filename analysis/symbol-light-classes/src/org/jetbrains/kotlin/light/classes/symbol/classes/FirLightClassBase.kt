@@ -47,10 +47,20 @@ abstract class FirLightClassBase protected constructor(manager: PsiManager) : Li
 
     private class FirLightClassesLazyCreator(private val project: Project) : KotlinClassInnerStuffCache.LazyCreator() {
         @OptIn(HackToForceAllowRunningAnalyzeOnEDT::class)
-        override fun <T : Any> get(initializer: () -> T, dependencies: List<Any>): Lazy<T> = lazyPub {
-            PsiCachedValueImpl(PsiManager.getInstance(project)) {
+        override fun <T : Any> get(initializer: () -> T, dependencies: List<Any>): Lazy<T> = object : Lazy<T> {
+            private val cachedValue = PsiCachedValueImpl(PsiManager.getInstance(project)) {
                 CachedValueProvider.Result.create(hackyAllowRunningOnEdt(initializer), dependencies)
-            }.value ?: error("initializer cannot return null")
+            }
+
+            override val value: T
+                get() = cachedValue.value
+                    ?: error("Unexpected null value from PsiCachedValueImpl")
+
+            override fun isInitialized(): Boolean {
+                // Lazy is a bad interface here as it has unneeded and unused in LC `isInitialized` method
+                // considering Interface Segregation Principle, Lazy should be repaced with a simpler interface with only `value` method
+                error("Should not be called for LC")
+            }
         }
     }
 
