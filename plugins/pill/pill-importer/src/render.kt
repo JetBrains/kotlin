@@ -130,7 +130,10 @@ private fun renderModule(project: PProject, module: PModule) = PFile(
                 }
             }
 
-            xml("orderEntry", "type" to "inheritedJdk")
+            when (val javaLanguageVersion = module.javaLanguageVersion) {
+                null -> xml("orderEntry", "type" to "inheritedJdk")
+                else -> xml("orderEntry", "type" to "jdk", "jdkName" to javaLanguageVersion.toString(), "jdkType" to "JavaSDK")
+            }
 
             xml("orderEntry", "type" to "sourceFolder", "forTests" to "false")
 

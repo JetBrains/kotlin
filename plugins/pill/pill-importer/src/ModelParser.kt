@@ -19,6 +19,7 @@ import org.gradle.api.internal.file.copy.CopySpecInternal
 import org.gradle.api.internal.file.copy.SingleParentCopySpec
 import org.gradle.api.provider.Property
 import org.gradle.jvm.tasks.Jar
+import org.gradle.jvm.toolchain.JavaToolchainService
 import org.gradle.kotlin.dsl.extra
 import org.gradle.kotlin.dsl.findByType
 import org.gradle.language.jvm.tasks.ProcessResources
@@ -122,6 +123,8 @@ class ModelParser(private val variant: Variant, private val modulePrefix: String
         val embeddedDependencies = project.configurations.findByName(EMBEDDED_CONFIGURATION_NAME)
             ?.let { parseDependencies(it) } ?: emptyList()
 
+        val javaLanguageVersion = getJavaLanguageVersion(project)
+
         val sourceSets = parseSourceSets(project).sortedBy { it.forTests }
         for (sourceSet in sourceSets) {
             val sourceRoots = mutableListOf<PSourceRoot>()
@@ -158,6 +161,7 @@ class ModelParser(private val variant: Variant, private val modulePrefix: String
                 moduleFile = getModuleFile(name),
                 contentRoots = contentRoots,
                 orderRoots = orderRoots,
+                javaLanguageVersion = javaLanguageVersion,
                 kotlinOptions = sourceSet.kotlinOptions,
                 moduleForProductionSources = productionModule,
                 embeddedDependencies = embeddedDependencies
@@ -177,12 +181,19 @@ class ModelParser(private val variant: Variant, private val modulePrefix: String
             moduleFile = mainModuleFileRelativePath,
             contentRoots = listOf(PContentRoot(project.projectDir, listOf(), getExcludedDirs(project, excludedProjects))),
             orderRoots = emptyList(),
+            javaLanguageVersion = null,
             kotlinOptions = null,
             moduleForProductionSources = null,
             embeddedDependencies = emptyList()
         )
 
         return modules
+    }
+
+    private fun getJavaLanguageVersion(project: Project): Int? {
+        val javaPluginExtension = project.extensions.findByType<JavaPluginExtension>() ?: return null
+        val javaToolchainService = project.extensions.findByType<JavaToolchainService>() ?: return null
+        return javaToolchainService.launcherFor(javaPluginExtension.toolchain).orNull?.metadata?.languageVersion?.asInt()
     }
 
     private fun getExcludedDirs(project: Project, excludedProjects: List<Project>): List<File> {
