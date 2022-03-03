@@ -467,12 +467,9 @@ class MethodInliner(
 
         replaceContinuationAccessesWithFakeContinuationsIfNeeded(processingNode)
 
-        val toDelete = SmartSet.create<AbstractInsnNode>()
-
         val sources = analyzeMethodNodeWithInterpreter(processingNode, FunctionalArgumentInterpreter(this))
         val instructions = processingNode.instructions
-
-        markObsoleteInstruction(instructions, toDelete, sources)
+        val toDelete = markObsoleteInstruction(instructions, sources)
 
         var awaitClassReification = false
         var currentFinallyDeep = 0
@@ -625,11 +622,9 @@ class MethodInliner(
         return processingNode
     }
 
-    private fun MethodInliner.markObsoleteInstruction(
-        instructions: InsnList,
-        toDelete: SmartSet<AbstractInsnNode>,
-        sources: Array<out Frame<BasicValue>?>
-    ) {
+    private fun markObsoleteInstruction(instructions: InsnList, sources: Array<out Frame<BasicValue>?>): SmartSet<AbstractInsnNode> {
+        val toDelete = SmartSet.create<AbstractInsnNode>()
+
         for (insn in instructions) {
             // Parameter checks are processed separately
             if (insn.isAloadBeforeCheckParameterIsNotNull()) continue
@@ -658,6 +653,8 @@ class MethodInliner(
                 }
             }
         }
+
+        return toDelete
     }
 
     // Replace ALOAD 0

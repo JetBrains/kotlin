@@ -110,10 +110,12 @@ internal class Aload0Interpreter(private val node: MethodNode) : BasicInterprete
 
 internal fun AbstractInsnNode.isAload0() = opcode == Opcodes.ALOAD && (this as VarInsnNode).`var` == 0
 
-internal fun analyzeMethodNodeWithInterpreter(node: MethodNode, interpreter: BasicInterpreter): Array<out Frame<BasicValue>?> {
-    val analyzer = object : FastMethodAnalyzer<BasicValue>("fake", node, interpreter) {
+internal fun analyzeMethodNodeWithInterpreter(
+    node: MethodNode,
+    interpreter: BasicInterpreter
+): Array<out Frame<BasicValue>?> {
+    val analyzer = object : FastMethodAnalyzer<BasicValue>("fake", node, interpreter, pruneExceptionEdges = true) {
         override fun newFrame(nLocals: Int, nStack: Int): Frame<BasicValue> {
-
             return object : Frame<BasicValue>(nLocals, nStack) {
                 @Throws(AnalyzerException::class)
                 override fun execute(insn: AbstractInsnNode, interpreter: Interpreter<BasicValue>) {

@@ -78,7 +78,7 @@ open class FastMethodAnalyzer<V : Value>
 
         val isTcbStart = BooleanArray(nInsns)
         for (tcb in method.tryCatchBlocks) {
-            isTcbStart[tcb.start.indexOf()] = true
+            isTcbStart[tcb.start.indexOf() + 1] = true
         }
 
         val current = newFrame(method.maxLocals, method.maxStack)
@@ -118,7 +118,11 @@ open class FastMethodAnalyzer<V : Value>
                 // So, unless we have a store operation, anything we change on stack would be lost,
                 // and there's no need to analyze exception handler again.
                 // Add an exception edge from TCB start to make sure handler itself is still visited.
-                if (!pruneExceptionEdges || insnOpcode in Opcodes.ISTORE..Opcodes.ASTORE || insnOpcode == Opcodes.IINC || isTcbStart[insn]) {
+                if (!pruneExceptionEdges ||
+                    insnOpcode in Opcodes.ISTORE..Opcodes.ASTORE ||
+                    insnOpcode == Opcodes.IINC ||
+                    isTcbStart[insn]
+                ) {
                     handlers[insn]?.forEach { tcb ->
                         val exnType = Type.getObjectType(tcb.type ?: "java/lang/Throwable")
                         val jump = tcb.handler.indexOf()
