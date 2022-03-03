@@ -117,6 +117,10 @@ fun main(args: Array<String>) {
             testClass<AbstractIrJsTypeScriptExportTest> {
                 model("typescript-export/", pattern = "^([^_](.+))\\.kt$")
             }
+
+            testClass<AbstractJsIrLineNumberTest> {
+                model("lineNumbers/")
+            }
         }
 
         testGroup("js/js.tests/tests-gen", "compiler/testData", testRunnerMethodName = "runTest0") {

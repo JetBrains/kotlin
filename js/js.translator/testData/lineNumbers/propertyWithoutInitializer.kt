@@ -9,4 +9,5 @@ open class A {
     }
 }
 
-// LINES: 1 2 4 7 7 8 8 4 4 4
+// LINES(JS):    1 2 4 7 7 8 8       4 4 4
+// LINES(JS_IR):       7 7 8 8 * 2 2 * 4 4
