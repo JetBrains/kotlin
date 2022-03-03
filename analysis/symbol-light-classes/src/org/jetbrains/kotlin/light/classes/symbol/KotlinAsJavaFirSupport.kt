@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtScript
 
-class IDEKotlinAsJavaFirSupport(private val project: Project) : KotlinAsJavaSupport() {
+class KotlinAsJavaFirSupport(private val project: Project) : KotlinAsJavaSupport() {
     override fun findClassOrObjectDeclarationsInPackage(
         packageFqName: FqName,
         searchScope: GlobalSearchScope
