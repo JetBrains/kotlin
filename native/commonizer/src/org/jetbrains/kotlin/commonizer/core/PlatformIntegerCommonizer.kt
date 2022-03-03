@@ -18,11 +18,9 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.utils.SmartList
 
 class PlatformIntegerCommonizer(
-    typeArgumentListCommonizer: TypeArgumentListCommonizer,
-    classifiers: CirKnownClassifiers,
+    private val typeCommonizer: TypeCommonizer,
+    private val classifiers: CirKnownClassifiers,
 ) : NullableSingleInvocationCommonizer<CirClassOrTypeAliasType> {
-    constructor(typeCommonizer: TypeCommonizer, classifiers: CirKnownClassifiers)
-            : this(TypeArgumentListCommonizer(typeCommonizer), classifiers)
 
     override fun invoke(values: List<CirClassOrTypeAliasType>): CirClassOrTypeAliasType? {
         return platformDependentTypeCommonizers.firstNotNullOfOrNull { commonizer ->
@@ -30,18 +28,19 @@ class PlatformIntegerCommonizer(
         }
     }
 
-    private val platformDependentTypeCommonizers = listOf(
-        PlatformIntCommonizer(classifiers),
-        PlatformUIntCommonizer(classifiers),
-        PlatformIntArrayCommonizer(classifiers),
-        PlatformUIntArrayCommonizer(classifiers),
-        PlatformIntRangeCommonizer(classifiers),
-        PlatformUIntRangeCommonizer(classifiers),
-        PlatformIntProgressionCommonizer(classifiers),
-        PlatformUIntProgressionCommonizer(classifiers),
-        PlatformIntVarOfCommonizer(classifiers, typeArgumentListCommonizer),
-        PlatformUIntVarOfCommonizer(classifiers, typeArgumentListCommonizer),
-    )
+    private val platformDependentTypeCommonizers: List<PlatformDependentTypeCommonizer>
+        get() = listOf(
+            PlatformIntCommonizer(classifiers),
+            PlatformUIntCommonizer(classifiers),
+            PlatformIntArrayCommonizer(classifiers),
+            PlatformUIntArrayCommonizer(classifiers),
+            PlatformIntRangeCommonizer(classifiers),
+            PlatformUIntRangeCommonizer(classifiers),
+            PlatformIntProgressionCommonizer(classifiers),
+            PlatformUIntProgressionCommonizer(classifiers),
+            PlatformIntVarOfCommonizer(classifiers, TypeArgumentListCommonizer(typeCommonizer)),
+            PlatformUIntVarOfCommonizer(classifiers, TypeArgumentListCommonizer(typeCommonizer)),
+        )
 }
 
 private sealed class PlatformDependentTypeCommonizer(
