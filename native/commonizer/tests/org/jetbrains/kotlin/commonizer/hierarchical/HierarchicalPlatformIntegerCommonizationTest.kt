@@ -671,4 +671,51 @@ class HierarchicalPlatformIntegerCommonizationTest : AbstractInlineSourcesCommon
             "(unknown, ${IOS_ARM32.name})", "".trimIndent()
         )
     }
+
+    // Issue: KT-51528
+    fun `test multiple argument function with over the edge type alias available`() {
+        val result = commonize {
+            outputTarget("(${IOS_ARM32.name}, ${IOS_ARM64.name})")
+            setting(PlatformIntegerCommonizationEnabledKey, true)
+            registerFakeStdlibIntegersDependency("(${IOS_ARM32.name}, ${IOS_ARM64.name})")
+
+            IOS_ARM32.name withSource """
+                typealias Arm32Alias = UInt
+                typealias OtherAlias = UInt
+                
+                class Box<T>
+                
+                fun fn(
+                    arg1: Box<kotlinx.cinterop.UIntVarOf<Arm32Alias>>, 
+                    arg2: Box<kotlinx.cinterop.UIntVarOf<Arm32Alias>>
+                ) {}
+            """.trimIndent()
+
+            IOS_ARM64.name withSource """
+                typealias Arm64Alias = ULong
+                typealias OtherAlias = ULong
+                
+                class Box<T>
+                
+                fun fn(
+                    arg1: Box<kotlinx.cinterop.ULongVarOf<Arm64Alias>>, 
+                    arg2: Box<kotlinx.cinterop.ULongVarOf<Arm64Alias>>
+                ) {}
+            """.trimIndent()
+        }
+
+        result.assertCommonized(
+            "(${IOS_ARM32.name}, ${IOS_ARM64.name})", """
+                @UnsafeNumber(["${IOS_ARM32.name}: kotlin.UInt", "${IOS_ARM64.name}: kotlin.ULong"])
+                typealias OtherAlias = PlatformUInt
+                
+                expect class Box<T>()
+
+                expect fun fn(
+                    arg1: Box<kotlinx.cinterop.PlatformUIntVarOf<OtherAlias>>, 
+                    arg2: Box<kotlinx.cinterop.PlatformUIntVarOf<OtherAlias>>
+                )
+            """.trimIndent()
+        )
+    }
 }
