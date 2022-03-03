@@ -4,12 +4,6 @@ public enum Direction /* Direction*/ {
   WEST,
   EAST;
 
-  @org.jetbrains.annotations.NotNull()
-  public final Direction valueOf(@org.jetbrains.annotations.NotNull() java.lang.String);//  valueOf(java.lang.String)
-
-  @org.jetbrains.annotations.NotNull()
-  public final Direction[] values();//  values()
-
   private  Direction();//  .ctor()
 
 }
@@ -20,12 +14,6 @@ public enum Color /* Color*/ {
   BLUE;
 
   private final int rgb;
-
-  @org.jetbrains.annotations.NotNull()
-  public final Color valueOf(@org.jetbrains.annotations.NotNull() java.lang.String);//  valueOf(java.lang.String)
-
-  @org.jetbrains.annotations.NotNull()
-  public final Color[] values();//  values()
 
   private  Color(int);//  .ctor(int)
 
@@ -53,12 +41,6 @@ public enum ProtocolState /* ProtocolState*/ {
 
   @org.jetbrains.annotations.NotNull()
   public abstract ProtocolState signal();//  signal()
-
-  @org.jetbrains.annotations.NotNull()
-  public final ProtocolState valueOf(@org.jetbrains.annotations.NotNull() java.lang.String);//  valueOf(java.lang.String)
-
-  @org.jetbrains.annotations.NotNull()
-  public final ProtocolState[] values();//  values()
 
   private  ProtocolState();//  .ctor()
 
@@ -96,12 +78,6 @@ public enum IntArithmetics /* IntArithmetics*/ {
 
   @org.jetbrains.annotations.NotNull()
   public IntArithmetics applyAsInt(int, int);//  applyAsInt(int, int)
-
-  @org.jetbrains.annotations.NotNull()
-  public final IntArithmetics valueOf(@org.jetbrains.annotations.NotNull() java.lang.String);//  valueOf(java.lang.String)
-
-  @org.jetbrains.annotations.NotNull()
-  public final IntArithmetics[] values();//  values()
 
   private  IntArithmetics();//  .ctor()
 
