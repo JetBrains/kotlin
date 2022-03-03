@@ -10,9 +10,9 @@ annotation class JvmInline
 
 <!VALUE_CLASS_WITHOUT_JVM_INLINE_ANNOTATION!>value<!> class Foo(val x: Int)
 
-<!VALUE_CLASS_WITHOUT_JVM_INLINE_ANNOTATION, WRONG_MODIFIER_TARGET!>value<!> annotation class InlineAnn
-<!VALUE_CLASS_WITHOUT_JVM_INLINE_ANNOTATION, WRONG_MODIFIER_TARGET!>value<!> object InlineObject
-<!VALUE_CLASS_WITHOUT_JVM_INLINE_ANNOTATION, WRONG_MODIFIER_TARGET!>value<!> enum class InlineEnum
+<!WRONG_MODIFIER_TARGET!>value<!> annotation class InlineAnn
+<!VALUE_OBJECT_NOT_SEALED_INLINE_CHILD!>value<!> object InlineObject
+<!WRONG_MODIFIER_TARGET!>value<!> enum class InlineEnum
 
 @JvmInline
 value class NotVal(<!VALUE_CLASS_CONSTRUCTOR_NOT_FINAL_READ_ONLY_PARAMETER!>x: Int<!>)

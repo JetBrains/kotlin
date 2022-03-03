@@ -179,7 +179,6 @@ object InlineClassDeclarationChecker : DeclarationChecker {
 
 object SealedInlineClassChildChecker : DeclarationChecker {
     override fun check(declaration: KtDeclaration, descriptor: DeclarationDescriptor, context: DeclarationCheckerContext) {
-        if (!context.languageVersionSettings.supportsFeature(LanguageFeature.SealedInlineClasses)) return
         if (declaration !is KtClassOrObject) return
         if (descriptor !is ClassDescriptor) return
 
