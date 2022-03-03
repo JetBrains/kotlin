@@ -45,4 +45,12 @@ object OptInNames {
 
     fun buildMessagePrefix(verb: String): String =
         "This declaration needs OptIn. Its usage $verb be marked"
+
+    fun buildOverrideMessage(supertypeName: String, markerMessage: String?, verb: String, markerName: String): String {
+        val basePrefix = "Base declaration of supertype '$supertypeName' needs OptIn. "
+        val markerMessageOrStub = markerMessage
+            ?.takeIf { it.isNotBlank() }?.let { if (it.endsWith(".")) "$it " else "$it. " } ?: ""
+        val baseSuffix = "The declaration override $verb be annotated with '@$markerName'"
+        return basePrefix + markerMessageOrStub + baseSuffix
+    }
 }

@@ -1,7 +1,7 @@
 warning: ATTENTION!
  This build uses in-dev FIR:
   -Xuse-fir
-compiler/testData/cli/jvm/optInEmptyMessage.kt:8:5: error: this declaration needs OptIn. Its usage must be marked with '@EmptyMarker' or '@OptIn(EmptyMarker::class)'
+compiler/testData/cli/jvm/optInEmptyMessageFir.kt:8:5: error: this declaration needs OptIn. Its usage must be marked with '@EmptyMarker' or '@OptIn(EmptyMarker::class)'
     foo()
     ^
 COMPILATION_ERROR

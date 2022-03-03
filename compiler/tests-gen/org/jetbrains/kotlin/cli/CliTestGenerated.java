@@ -809,6 +809,16 @@ public class CliTestGenerated extends AbstractCliTest {
             runTest("compiler/testData/cli/jvm/optInEmptyMessageFir.args");
         }
 
+        @TestMetadata("optInOverrideMessage.args")
+        public void testOptInOverrideMessage() throws Exception {
+            runTest("compiler/testData/cli/jvm/optInOverrideMessage.args");
+        }
+
+        @TestMetadata("optInOverrideMessageFir.args")
+        public void testOptInOverrideMessageFir() throws Exception {
+            runTest("compiler/testData/cli/jvm/optInOverrideMessageFir.args");
+        }
+
         @TestMetadata("pluginSimple.args")
         public void testPluginSimple() throws Exception {
             runTest("compiler/testData/cli/jvm/pluginSimple.args");
