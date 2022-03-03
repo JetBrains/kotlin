@@ -23,6 +23,18 @@ public interface KtSmartCastProviderMixIn : KtAnalysisSessionMixIn {
     public fun KtExpression.getSmartCastInfo(): KtSmartCastInfo? =
         analysisSession.smartCastProvider.getSmartCastedInfo(this)
 
+    /**
+     * Returns the list of implicit smart-casts which are required for the expression to be called. Includes only implicit
+     * smart-casts:
+     *
+     * ```kt
+     * if (this is String) {
+     *   this.substring() // 'this' receiver is explicit, so no implicit smart-cast here.
+     *
+     *   smartcast() // 'this' receiver is implicit, therefore there is implicit smart-cast involved.
+     * }
+     * ```
+     */
     public fun KtExpression.getImplicitReceiverSmartCast(): Collection<KtImplicitReceiverSmartCast> =
         analysisSession.smartCastProvider.getImplicitReceiverSmartCast(this)
 }
