@@ -6,34 +6,32 @@
 package org.jetbrains.kotlin.gradle
 
 import org.gradle.api.logging.configuration.WarningMode
+import org.gradle.testkit.runner.BuildResult
+import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.internals.MULTIPLATFORM_PROJECT_METADATA_JSON_FILE_NAME
 import org.jetbrains.kotlin.gradle.internals.parseKotlinSourceSetMetadataFromJson
-import org.jetbrains.kotlin.gradle.native.transformNativeTestProjectWithPluginDsl
 import org.jetbrains.kotlin.gradle.plugin.KotlinJsCompilerType
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinProjectStructureMetadata
 import org.jetbrains.kotlin.gradle.plugin.mpp.ModuleDependencyIdentifier
 import org.jetbrains.kotlin.gradle.plugin.mpp.SourceSetMetadataLayout
 import org.jetbrains.kotlin.gradle.plugin.sources.DefaultKotlinSourceSet
+import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.util.checkedReplace
 import org.jetbrains.kotlin.gradle.util.modify
+import org.jetbrains.kotlin.gradle.utils.minSupportedGradleVersion
 import java.io.File
 import java.util.zip.ZipFile
-import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
 import kotlin.test.assertTrue
 
-class HierarchicalMppIT : BaseGradleIT() {
-    override val defaultGradleVersion: GradleVersionRequired
-        get() = gradleVersion
+@MppGradlePluginTests
+@GradleTestVersions(minVersion = minSupportedGradleVersion)
+class HierarchicalMppIT : KGPBaseTest() {
 
-    companion object {
-        private val gradleVersion = GradleVersionRequired.FOR_MPP_SUPPORT
-    }
-
-    @Test
-    fun testPublishedModules() {
-        publishThirdPartyLib(withGranularMetadata = false)
+    @GradleTest
+    fun testPublishedModules(gradleVersion: GradleVersion) {
+        publishThirdPartyLib(withGranularMetadata = false, gradleVersion = gradleVersion)
 
         transformNativeTestProjectWithPluginDsl("my-lib-foo", gradleVersion, "hierarchical-mpp-published-modules").run {
             build("publish") {
@@ -54,9 +52,9 @@ class HierarchicalMppIT : BaseGradleIT() {
         }
     }
 
-    @Test
-    fun testNoSourceSetsVisibleIfNoVariantMatched() {
-        publishThirdPartyLib(withGranularMetadata = true)
+    @GradleTest
+    fun testNoSourceSetsVisibleIfNoVariantMatched(gradleVersion: GradleVersion) {
+        publishThirdPartyLib(withGranularMetadata = true, gradleVersion = gradleVersion)
 
         transformNativeTestProjectWithPluginDsl("my-lib-foo", gradleVersion, "hierarchical-mpp-published-modules").run {
             // --- Move the dependency from jvmAndJsMain to commonMain, where there's a linuxX64 target missing in the lib
@@ -81,9 +79,9 @@ class HierarchicalMppIT : BaseGradleIT() {
         }
     }
 
-    @Test
-    fun testDependenciesInTests() {
-        publishThirdPartyLib(withGranularMetadata = true) {
+    @GradleTest
+    fun testDependenciesInTests(gradleVersion: GradleVersion) {
+        publishThirdPartyLib(withGranularMetadata = true, gradleVersion = gradleVersion) {
             projectDir.resolve("src/jvmMain").copyRecursively(projectDir.resolve("src/linuxX64Main"))
             gradleBuildScript().appendText("\nkotlin.linuxX64()")
         }
@@ -110,7 +108,6 @@ class HierarchicalMppIT : BaseGradleIT() {
                 val existingFilesFromReports = reports.flatMap { it.useFiles }.filter { it.isFile }
                 assertTrue { existingFilesFromReports.isNotEmpty() }
                 build("clean") {
-                    assertSuccessful()
                     existingFilesFromReports.forEach { assertTrue("Expected that $it exists after clean build.") { it.isFile } }
                 }
             }
@@ -166,9 +163,9 @@ class HierarchicalMppIT : BaseGradleIT() {
         }
     }
 
-    @Test
-    fun testProjectDependencies() {
-        publishThirdPartyLib(withGranularMetadata = false)
+    @GradleTest
+    fun testProjectDependencies(gradleVersion: GradleVersion) {
+        publishThirdPartyLib(withGranularMetadata = false, gradleVersion = gradleVersion)
 
         with(transformNativeTestProjectWithPluginDsl("hierarchical-mpp-project-dependency", gradleVersion)) {
             build("publish", "assemble") {
@@ -179,58 +176,53 @@ class HierarchicalMppIT : BaseGradleIT() {
         }
     }
 
-    @Test
-    fun testHmppWithPublishedJsBothDependency() {
+    @GradleTest
+    fun testHmppWithPublishedJsBothDependency(gradleVersion: GradleVersion) {
         val directoryPrefix = "hierarchical-mpp-with-js-published-modules"
         publishThirdPartyLib(
             projectName = "third-party-lib",
             directoryPrefix = directoryPrefix,
             withGranularMetadata = true,
-            jsCompilerType = KotlinJsCompilerType.BOTH
+            jsCompilerType = KotlinJsCompilerType.BOTH,
+            gradleVersion = gradleVersion
         )
 
         with(transformNativeTestProjectWithPluginDsl("my-lib-foo", gradleVersion, directoryPrefix)) {
             build(
                 "publish",
                 "assemble",
-                options = defaultBuildOptions().copy(jsCompilerType = KotlinJsCompilerType.IR)
-            ) {
-                assertSuccessful()
-            }
+                buildOptions = defaultBuildOptions.copy(jsOptions = BuildOptions.JsOptions(jsCompilerType = KotlinJsCompilerType.IR))
+            )
         }
     }
 
-    @Test
-    fun testHmppWithProjectJsIrDependency() {
+    @GradleTest
+    fun testHmppWithProjectJsIrDependency(gradleVersion: GradleVersion) {
         with(transformNativeTestProjectWithPluginDsl("hierarchical-mpp-with-js-project-dependency", gradleVersion)) {
             build(
                 "assemble",
-                options = defaultBuildOptions().copy(jsCompilerType = KotlinJsCompilerType.IR)
-            ) {
-                assertSuccessful()
-            }
+                buildOptions = defaultBuildOptions.copy(jsOptions = BuildOptions.JsOptions(jsCompilerType = KotlinJsCompilerType.IR))
+            )
         }
     }
 
-    @Test
-    fun testMultiModulesHmppKt48370() = with(Project("hierarchical-mpp-multi-modules", GradleVersionRequired.FOR_MPP_SUPPORT)) {
+    @GradleTest
+    fun testMultiModulesHmppKt48370(gradleVersion: GradleVersion) = with(project("hierarchical-mpp-multi-modules", gradleVersion)) {
         build(
-            "assemble", options = defaultBuildOptions().copy(
-                parallelTasksInProject = true,
+            "assemble", buildOptions = defaultBuildOptions.copy(
                 warningMode = WarningMode.Summary
             )
-        ) {
-            assertSuccessful()
-        }
+        )
     }
 
-    private fun publishThirdPartyLib(
+    private fun KGPBaseTest.publishThirdPartyLib(
         projectName: String = "third-party-lib",
         directoryPrefix: String = "hierarchical-mpp-published-modules",
         withGranularMetadata: Boolean,
         jsCompilerType: KotlinJsCompilerType = KotlinJsCompilerType.LEGACY,
-        beforePublishing: Project.() -> Unit = { }
-    ): Project =
+        gradleVersion: GradleVersion,
+        beforePublishing: TestProject.() -> Unit = { }
+    ): TestProject =
         transformNativeTestProjectWithPluginDsl(projectName, gradleVersion, directoryPrefix).apply {
             beforePublishing()
 
@@ -240,18 +232,15 @@ class HierarchicalMppIT : BaseGradleIT() {
 
             build(
                 "publish",
-                options = defaultBuildOptions().copy(jsCompilerType = jsCompilerType)
-            ) {
-                assertSuccessful()
-            }
+                buildOptions = defaultBuildOptions.copy(jsOptions = BuildOptions.JsOptions(jsCompilerType = jsCompilerType))
+            )
         }
 
-    private fun checkMyLibFoo(compiledProject: CompiledProject, subprojectPrefix: String? = null) = with(compiledProject) {
-        assertSuccessful()
-        assertTasksExecuted(expectedTasks(subprojectPrefix))
+    private fun TestProject.checkMyLibFoo(compiledProject: BuildResult, subprojectPrefix: String? = null) = with(compiledProject) {
+        assertTasksExecuted(*expectedTasks(subprojectPrefix).toTypedArray())
 
         ZipFile(
-            project.projectDir.parentFile.resolve(
+            projectDir.parentFile.resolve(
                 "repo/com/example/foo/my-lib-foo/1.0/my-lib-foo-1.0-all.jar"
             )
         ).use { publishedMetadataJar ->
@@ -282,7 +271,7 @@ class HierarchicalMppIT : BaseGradleIT() {
         }
 
         ZipFile(
-            project.projectDir.parentFile.resolve(
+            projectDir.parentFile.resolve(
                 "repo/com/example/foo/my-lib-foo/1.0/my-lib-foo-1.0-sources.jar"
             )
         ).use { publishedSourcesJar ->
@@ -295,14 +284,13 @@ class HierarchicalMppIT : BaseGradleIT() {
         }
     }
 
-    private fun checkMyLibBar(compiledProject: CompiledProject, subprojectPrefix: String?) = with(compiledProject) {
+    private fun TestProject.checkMyLibBar(compiledProject: BuildResult, subprojectPrefix: String?) = with(compiledProject) {
         val taskPrefix = subprojectPrefix?.let { ":$it" }.orEmpty()
 
-        assertSuccessful()
-        assertTasksExecuted(expectedTasks(subprojectPrefix))
+        assertTasksExecuted(*expectedTasks(subprojectPrefix).toTypedArray())
 
         ZipFile(
-            project.projectDir.parentFile.resolve(
+            projectDir.parentFile.resolve(
                 "repo/com/example/bar/my-lib-bar/1.0/my-lib-bar-1.0-all.jar"
             )
         ).use { publishedMetadataJar ->
@@ -333,7 +321,7 @@ class HierarchicalMppIT : BaseGradleIT() {
         }
 
         ZipFile(
-            project.projectDir.parentFile.resolve(
+            projectDir.parentFile.resolve(
                 "repo/com/example/bar/my-lib-bar/1.0/my-lib-bar-1.0-sources.jar"
             )
         ).use { publishedSourcesJar ->
@@ -382,11 +370,9 @@ class HierarchicalMppIT : BaseGradleIT() {
         )
     }
 
-    private fun checkMyApp(compiledProject: CompiledProject, subprojectPrefix: String?) = with(compiledProject) {
+    private fun checkMyApp(compiledProject: BuildResult, subprojectPrefix: String?) = with(compiledProject) {
         val taskPrefix = subprojectPrefix?.let { ":$it" }.orEmpty()
-
-        assertSuccessful()
-        assertTasksExecuted(expectedTasks(subprojectPrefix))
+        assertTasksExecuted(*expectedTasks(subprojectPrefix).toTypedArray())
 
         checkNamesOnCompileClasspath(
             "$taskPrefix:compileKotlinMetadata",
@@ -436,7 +422,7 @@ class HierarchicalMppIT : BaseGradleIT() {
         checkNamesOnCompileClasspath("$taskPrefix:compileLinuxAndJsMainKotlinMetadata")
     }
 
-    private fun CompiledProject.checkNamesOnCompileClasspath(
+    private fun BuildResult.checkNamesOnCompileClasspath(
         taskPath: String,
         shouldInclude: Iterable<Pair<String, String>> = emptyList(),
         shouldNotInclude: Iterable<Pair<String, String>> = emptyList()
@@ -519,10 +505,10 @@ class HierarchicalMppIT : BaseGradleIT() {
         return checkNotNull(parseKotlinSourceSetMetadataFromJson(json))
     }
 
-    @Test
-    fun testCompileOnlyDependencyProcessingForMetadataCompilations() =
-        with(transformNativeTestProjectWithPluginDsl("hierarchical-mpp-project-dependency")) {
-            publishThirdPartyLib(withGranularMetadata = true)
+    @GradleTest
+    fun testCompileOnlyDependencyProcessingForMetadataCompilations(gradleVersion: GradleVersion) =
+        with(transformNativeTestProjectWithPluginDsl("hierarchical-mpp-project-dependency", gradleVersion)) {
+            publishThirdPartyLib(withGranularMetadata = true, gradleVersion = gradleVersion)
 
             gradleBuildScript("my-lib-foo").appendText("\ndependencies { \"jvmAndJsMainCompileOnly\"(kotlin(\"test-annotations-common\")) }")
             projectDir.resolve("my-lib-foo/src/jvmAndJsMain/kotlin/UseCompileOnlyDependency.kt").writeText(
@@ -536,33 +522,28 @@ class HierarchicalMppIT : BaseGradleIT() {
             """.trimIndent()
             )
 
-            build(":my-lib-foo:compileJvmAndJsMainKotlinMetadata") {
-                assertSuccessful()
-            }
+            build(":my-lib-foo:compileJvmAndJsMainKotlinMetadata")
         }
 
-    @Test
-    fun testHmppDependenciesInJsTests() {
-        val thirdPartyRepo = publishThirdPartyLib(withGranularMetadata = true).projectDir.parentFile.resolve("repo")
-        with(Project("hierarchical-mpp-js-test")) {
+    @GradleTest
+    fun testHmppDependenciesInJsTests(gradleVersion: GradleVersion) {
+        val thirdPartyRepo = publishThirdPartyLib(withGranularMetadata = true, gradleVersion = gradleVersion).projectDir.parentFile.resolve("repo")
+        with(project("hierarchical-mpp-js-test", gradleVersion)) {
             val taskToExecute = ":jsNodeTest"
             build(taskToExecute, "-PthirdPartyRepo=$thirdPartyRepo") {
-                assertSuccessful()
                 assertTasksExecuted(taskToExecute)
             }
         }
     }
 
-    @Test
-    fun testProcessingDependencyDeclaredInNonRootSourceSet() {
-        publishThirdPartyLib(withGranularMetadata = true)
+    @GradleTest
+    fun testProcessingDependencyDeclaredInNonRootSourceSet(gradleVersion: GradleVersion) {
+        publishThirdPartyLib(withGranularMetadata = true, gradleVersion = gradleVersion)
 
-        transformNativeTestProjectWithPluginDsl("my-lib-foo", gradleVersion, "hierarchical-mpp-published-modules").run {
+        transformNativeTestProjectWithPluginDsl("my-lib-foo", gradleVersion = gradleVersion, "hierarchical-mpp-published-modules").run {
             val intermediateMetadataCompileTask = ":compileJvmAndJsMainKotlinMetadata"
 
             build(intermediateMetadataCompileTask) {
-                assertSuccessful()
-
                 checkNamesOnCompileClasspath(
                     intermediateMetadataCompileTask,
                     shouldInclude = listOf(
@@ -573,11 +554,11 @@ class HierarchicalMppIT : BaseGradleIT() {
         }
     }
 
-    @Test
-    fun testDependenciesInNonPublishedSourceSets() {
-        publishThirdPartyLib(withGranularMetadata = true)
+    @GradleTest
+    fun testDependenciesInNonPublishedSourceSets(gradleVersion: GradleVersion) {
+        publishThirdPartyLib(withGranularMetadata = true, gradleVersion = gradleVersion)
 
-        transformNativeTestProjectWithPluginDsl("my-lib-foo", gradleVersion, "hierarchical-mpp-published-modules").run {
+        transformNativeTestProjectWithPluginDsl("my-lib-foo", gradleVersion = gradleVersion, "hierarchical-mpp-published-modules").run {
             testDependencyTransformations { reports ->
                 reports.single {
                     it.sourceSetName == "jvmAndJsMain" && it.scope == "api" && it.groupAndModule.startsWith("com.example")
@@ -589,20 +570,21 @@ class HierarchicalMppIT : BaseGradleIT() {
         }
     }
 
-    @Test
-    fun testTransitiveDependencyOnSelf() = with(Project("transitive-dep-on-self-hmpp")) {
-        testDependencyTransformations(subproject = "lib") { reports ->
-            reports.single {
-                it.sourceSetName == "commonTest" && it.scope == "implementation" && "libtests" in it.groupAndModule
-            }.let {
-                assertEquals(setOf("commonMain", "jvmAndJsMain"), it.allVisibleSourceSets)
+    @GradleTest
+    fun testTransitiveDependencyOnSelf(gradleVersion: GradleVersion) =
+        with(project("transitive-dep-on-self-hmpp", gradleVersion = gradleVersion)) {
+            testDependencyTransformations(subproject = "lib") { reports ->
+                reports.single {
+                    it.sourceSetName == "commonTest" && it.scope == "implementation" && "libtests" in it.groupAndModule
+                }.let {
+                    assertEquals(setOf("commonMain", "jvmAndJsMain"), it.allVisibleSourceSets)
+                }
             }
         }
-    }
 
-    @Test
-    fun testMixedScopesFilesExistKt44845() {
-        publishThirdPartyLib(withGranularMetadata = true)
+    @GradleTest
+    fun testMixedScopesFilesExistKt44845(gradleVersion: GradleVersion) {
+        publishThirdPartyLib(withGranularMetadata = true, gradleVersion = gradleVersion)
 
         transformNativeTestProjectWithPluginDsl("my-lib-foo", gradleVersion, "hierarchical-mpp-published-modules").run {
             gradleBuildScript().appendText(
@@ -617,15 +599,19 @@ class HierarchicalMppIT : BaseGradleIT() {
 
             testDependencyTransformations { reports ->
                 val reportsForJvmAndJsMain = reports.filter { it.sourceSetName == "jvmAndJsMain" }
-                val thirdPartyLib = reportsForJvmAndJsMain.single {
+                val thirdPartyLib = reportsForJvmAndJsMain.singleOrNull {
                     it.scope == "api" && it.groupAndModule.startsWith("com.example")
                 }
-                val coroutinesCore = reportsForJvmAndJsMain.single {
+                val coroutinesCore = reportsForJvmAndJsMain.singleOrNull {
                     it.scope == "implementation" && it.groupAndModule.contains("kotlinx-coroutines-core")
                 }
-                val serialization = reportsForJvmAndJsMain.single {
+                val serialization = reportsForJvmAndJsMain.singleOrNull {
                     it.scope == "compileOnly" && it.groupAndModule.contains("kotlinx-serialization-json")
                 }
+                assertNotNull(thirdPartyLib, "Expected report for third-party-lib")
+                assertNotNull(coroutinesCore, "Expected report for kotlinx-coroutines-core")
+                assertNotNull(serialization, "Expected report for kotlinx-serialization-json")
+
                 listOf(thirdPartyLib, coroutinesCore, serialization).forEach { report ->
                     assertTrue(report.newVisibleSourceSets.isNotEmpty(), "Expected visible source sets for $report")
                     assertTrue(report.useFiles.isNotEmpty(), "Expected non-empty useFiles for $report")
@@ -635,9 +621,9 @@ class HierarchicalMppIT : BaseGradleIT() {
         }
     }
 
-    @Test
-    fun testNativeLeafTestSourceSetsKt46417() {
-        with(Project("kt-46417-ios-test-source-sets")) {
+    @GradleTest
+    fun testNativeLeafTestSourceSetsKt46417(gradleVersion: GradleVersion) {
+        with(project("kt-46417-ios-test-source-sets", gradleVersion = gradleVersion)) {
             testDependencyTransformations("p2") { reports ->
                 val report = reports.singleOrNull { it.sourceSetName == "iosArm64Test" && it.scope == "implementation" }
                 assertNotNull(report, "No single report for 'iosArm64' and implementation scope")
@@ -647,12 +633,12 @@ class HierarchicalMppIT : BaseGradleIT() {
         }
     }
 
-    private fun Project.testDependencyTransformations(
+    private fun TestProject.testDependencyTransformations(
         subproject: String? = null,
-        check: CompiledProject.(reports: Iterable<DependencyTransformationReport>) -> Unit
+        check: BuildResult.(reports: Iterable<DependencyTransformationReport>) -> Unit
     ) {
-        setupWorkingDir()
         val buildGradleKts = gradleBuildScript(subproject)
+        assert(buildGradleKts.exists()) { "Kotlin scripts are not found." }
         assert(buildGradleKts.extension == "kts") { "Only Kotlin scripts are supported." }
 
         val testTaskName = "reportDependencyTransformationsForTest"
@@ -695,8 +681,6 @@ class HierarchicalMppIT : BaseGradleIT() {
         }
 
         build(":${subproject?.plus(":").orEmpty()}$testTaskName") {
-            assertSuccessful()
-
             val reports = output.lines()
                 .filter { DependencyTransformationReport.TEST_OUTPUT_MARKER in it }
                 .map { DependencyTransformationReport.parseTestOutputLine(it) }
@@ -705,7 +689,7 @@ class HierarchicalMppIT : BaseGradleIT() {
         }
     }
 
-    private data class DependencyTransformationReport(
+    internal data class DependencyTransformationReport(
         val sourceSetName: String,
         val scope: String,
         val groupAndModule: String,

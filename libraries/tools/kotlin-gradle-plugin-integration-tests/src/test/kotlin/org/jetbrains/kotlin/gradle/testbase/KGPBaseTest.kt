@@ -6,7 +6,9 @@
 package org.jetbrains.kotlin.gradle.testbase
 
 import org.jetbrains.kotlin.test.WithMuteInDatabase
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Tag
+import org.junit.jupiter.api.TestInfo
 import org.junit.jupiter.api.TestInstance
 import org.junit.jupiter.api.io.TempDir
 import java.nio.file.Path
@@ -20,6 +22,10 @@ import java.nio.file.Path
 abstract class KGPBaseTest {
     open val defaultBuildOptions = BuildOptions()
 
-    @TempDir
     lateinit var workingDir: Path
+
+    @BeforeEach
+    fun init(@TempDir tempDir: Path, testInfo: TestInfo) {
+        workingDir = tempDir.resolve(testInfo.testMethod.get().name.replace(" ", "_"))
+    }
 }
