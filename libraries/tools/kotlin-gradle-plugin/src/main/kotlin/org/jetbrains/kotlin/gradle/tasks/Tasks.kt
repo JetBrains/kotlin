@@ -743,6 +743,7 @@ abstract class KotlinCompile @Inject constructor(
             sources,
             javaSources,
             scriptSources,
+            androidLayoutResources,
             commonSourceSet,
             classpathSnapshotProperties.classpath,
             classpathSnapshotProperties.classpathSnapshot
@@ -986,6 +987,22 @@ abstract class KotlinCompile @Inject constructor(
                 .asFileTree
                 .matching(::javaFilesPatternFilter)
         )
+
+    @get:Internal
+    internal val androidLayoutResourceFiles = objectFactory.fileCollection()
+
+    /**
+     * This input is used by android-extensions plugin
+     */
+    @get:Incremental
+    @get:InputFiles
+    @get:IgnoreEmptyDirectories
+    @get:PathSensitive(PathSensitivity.RELATIVE)
+    internal open val androidLayoutResources: FileCollection = androidLayoutResourceFiles
+        .asFileTree
+        .matching { patternFilterable ->
+            patternFilterable.include("xml".fileExtensionCasePermutations().map { "**/*.$it" })
+        }
 
     // override setSource to track Java and script sources as well
     override fun setSource(source: Any) {
