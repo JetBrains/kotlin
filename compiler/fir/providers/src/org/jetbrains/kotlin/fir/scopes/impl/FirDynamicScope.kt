@@ -95,7 +95,6 @@ class FirDynamicScope(
         }
 
         this.name = name
-//        this.name = Name.identifier("KOK" + name.toString())
         this.symbol = FirNamedFunctionSymbol(CallableId(this.name))
 
         moduleData = session.moduleData
