@@ -37,17 +37,41 @@ import org.jetbrains.kotlin.utils.SmartSet
 import org.jetbrains.kotlin.utils.addIfNotNull
 
 object FirOptInUsageBaseChecker {
-    data class Experimentality(val annotationClassId: ClassId, val severity: Severity, val message: String?) {
+    data class Experimentality(
+        val annotationClassId: ClassId,
+        val severity: Severity,
+        val message: String?,
+        val supertypeName: String? = null
+    ) {
         enum class Severity { WARNING, ERROR }
         companion object {
             val DEFAULT_SEVERITY = Severity.ERROR
         }
+
+        override fun equals(other: Any?): Boolean {
+            if (this === other) return true
+            if (other !is Experimentality) return false
+
+            if (annotationClassId != other.annotationClassId) return false
+            if (severity != other.severity) return false
+            if (message != other.message) return false
+
+            return true
+        }
+
+        override fun hashCode(): Int {
+            var result = annotationClassId.hashCode()
+            result = 31 * result + severity.hashCode()
+            result = 31 * result + (message?.hashCode() ?: 0)
+            return result
+        }
     }
 
-    fun FirRegularClassSymbol.loadExperimentalityForMarkerAnnotation(): Experimentality? {
+    // Note: receiver is an OptIn marker class and parameter is an annotated member owner class / self class name
+    fun FirRegularClassSymbol.loadExperimentalityForMarkerAnnotation(annotatedOwnerClassName: String? = null): Experimentality? {
         ensureResolved(FirResolvePhase.BODY_RESOLVE)
         @OptIn(SymbolInternals::class)
-        return fir.loadExperimentalityForMarkerAnnotation()
+        return fir.loadExperimentalityForMarkerAnnotation(annotatedOwnerClassName)
     }
 
     fun FirBasedSymbol<*>.loadExperimentalitiesFromAnnotationTo(session: FirSession, result: MutableCollection<Experimentality>) {
@@ -62,10 +86,15 @@ object FirOptInUsageBaseChecker {
     ) {
         for (annotation in annotations) {
             val annotationType = annotation.annotationTypeRef.coneTypeSafe<ConeClassLikeType>()
+            val className = when (this) {
+                is FirRegularClass -> name.asString()
+                is FirCallableDeclaration -> symbol.callableId.className?.shortName()?.asString()
+                else -> null
+            }
             result.addIfNotNull(
                 annotationType?.lookupTag?.toFirRegularClassSymbol(
                     session
-                )?.loadExperimentalityForMarkerAnnotation()
+                )?.loadExperimentalityForMarkerAnnotation(className)
             )
         }
     }
@@ -183,7 +212,8 @@ object FirOptInUsageBaseChecker {
         }
     }
 
-    private fun FirRegularClass.loadExperimentalityForMarkerAnnotation(): Experimentality? {
+    // Note: receiver is an OptIn marker class and parameter is an annotated member owner class / self class name
+    private fun FirRegularClass.loadExperimentalityForMarkerAnnotation(annotatedOwnerClassName: String? = null): Experimentality? {
         val experimental = getAnnotationByClassId(OptInNames.REQUIRES_OPT_IN_CLASS_ID)
             ?: return null
 
@@ -191,7 +221,7 @@ object FirOptInUsageBaseChecker {
         val levelName = levelArgument?.calleeReference?.resolved?.name?.asString()
         val level = OptInLevel.values().firstOrNull { it.name == levelName } ?: OptInLevel.DEFAULT
         val message = (experimental.findArgumentByName(MESSAGE) as? FirConstExpression<*>)?.value as? String
-        return Experimentality(symbol.classId, level.severity, message)
+        return Experimentality(symbol.classId, level.severity, message, annotatedOwnerClassName)
     }
 
     fun reportNotAcceptedExperimentalities(
@@ -221,7 +251,7 @@ object FirOptInUsageBaseChecker {
         context: CheckerContext,
         reporter: DiagnosticReporter
     ) {
-        for ((annotationClassId, severity, _) in experimentalities) {
+        for ((annotationClassId, severity, markerMessage, supertypeName) in experimentalities) {
             if (!symbol.fir.isExperimentalityAcceptable(annotationClassId) &&
                 !isExperimentalityAcceptableInContext(annotationClassId, context)
             ) {
@@ -229,10 +259,13 @@ object FirOptInUsageBaseChecker {
                     Experimentality.Severity.WARNING -> FirErrors.OPT_IN_OVERRIDE to "should"
                     Experimentality.Severity.ERROR -> FirErrors.OPT_IN_OVERRIDE_ERROR to "must"
                 }
-                val reportedMessage = "This declaration overrides experimental member of supertype " +
-                        "'${symbol.callableId.className?.shortName()?.asString()}' and $verb be annotated " +
-                        "with '@${annotationClassId.asFqNameString()}'"
-                reporter.reportOn(symbol.source, diagnostic, annotationClassId.asSingleFqName(), reportedMessage, context)
+                val message = OptInNames.buildOverrideMessage(
+                    supertypeName ?: "???",
+                    markerMessage,
+                    verb,
+                    markerName = annotationClassId.asFqNameString()
+                )
+                reporter.reportOn(symbol.source, diagnostic, annotationClassId.asSingleFqName(), message, context)
             }
         }
     }
