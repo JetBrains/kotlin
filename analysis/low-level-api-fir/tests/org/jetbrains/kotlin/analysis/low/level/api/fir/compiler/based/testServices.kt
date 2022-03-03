@@ -30,7 +30,7 @@ import org.jetbrains.kotlin.asJava.KotlinAsJavaSupport
 import org.jetbrains.kotlin.asJava.finder.JavaElementFinder
 import org.jetbrains.kotlin.fir.declarations.SealedClassInheritorsProvider
 import org.jetbrains.kotlin.fir.declarations.SealedClassInheritorsProviderImpl
-import org.jetbrains.kotlin.light.classes.symbol.IDEKotlinAsJavaFirSupport
+import org.jetbrains.kotlin.light.classes.symbol.KotlinAsJavaFirSupport
 import org.jetbrains.kotlin.light.classes.symbol.caches.SymbolLightClassFacadeCache
 import org.jetbrains.kotlin.load.kotlin.PackagePartProvider
 import org.jetbrains.kotlin.psi.KtFile
@@ -87,7 +87,7 @@ private fun reRegisterJavaElementFinder(project: Project) {
         picoContainer.unregisterComponent(KotlinAsJavaSupport::class.qualifiedName)
         picoContainer.registerComponentInstance(
             KotlinAsJavaSupport::class.qualifiedName,
-            IDEKotlinAsJavaFirSupport(project)
+            KotlinAsJavaFirSupport(project)
         )
     }
     @Suppress("DEPRECATION")
