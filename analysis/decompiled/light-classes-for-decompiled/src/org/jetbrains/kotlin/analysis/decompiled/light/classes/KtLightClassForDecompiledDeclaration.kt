@@ -30,7 +30,7 @@ open class KtLightClassForDecompiledDeclaration(
 
     private val myInnersCache = KotlinClassInnerStuffCache(
         myClass = this,
-        externalDependencies = listOf(KotlinModificationTrackerService.getInstance(manager.project).outOfBlockModificationTracker),
+        dependencies = listOf(KotlinModificationTrackerService.getInstance(manager.project).outOfBlockModificationTracker),
         lazyCreator = LightClassesLazyCreator(project)
     )
 

@@ -32,7 +32,7 @@ abstract class KtLightClassBase protected constructor(manager: PsiManager)
     : AbstractLightClass(manager, KotlinLanguage.INSTANCE), KtLightClass, PsiExtensibleClass {
     protected open val myInnersCache = KotlinClassInnerStuffCache(
         myClass = this,
-        externalDependencies = listOf(KotlinModificationTrackerService.getInstance(manager.project).outOfBlockModificationTracker),
+        dependencies = listOf(KotlinModificationTrackerService.getInstance(manager.project).outOfBlockModificationTracker),
         lazyCreator = LightClassesLazyCreator(project)
     )
 
