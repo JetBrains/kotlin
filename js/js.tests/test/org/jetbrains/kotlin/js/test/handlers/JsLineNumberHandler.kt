@@ -5,7 +5,10 @@
 
 package org.jetbrains.kotlin.js.test.handlers
 
+import org.jetbrains.kotlin.ir.backend.js.CompilationOutputs
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.TranslationMode
+import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.safeModuleName
+import org.jetbrains.kotlin.js.backend.ast.JsProgram
 import org.jetbrains.kotlin.js.facade.TranslationResult
 import org.jetbrains.kotlin.js.test.utils.LineCollector
 import org.jetbrains.kotlin.js.test.utils.LineOutputToStringVisitor
@@ -16,50 +19,100 @@ import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.assertions
 import org.jetbrains.kotlin.test.services.configuration.JsEnvironmentConfigurator
+import org.jetbrains.kotlin.test.services.moduleStructure
+import org.jetbrains.kotlin.utils.addToStdlib.cast
 import java.io.File
 
+/**
+ * Verifies the `// LINE` comments in lineNumber tests.
+ *
+ * The test file is expected to contain the `// LINE(backend)` directive, followed by the line numbers that the corresponding JS statements
+ * are generated from.
+ *
+ * This handler traverses the JS AST and collects the actual line numbers using [LineCollector], and generates a JavaScript file
+ * with those line numbers printed as comments for ease of debugging these tests.
+ */
 class JsLineNumberHandler(testServices: TestServices) : JsBinaryArtifactHandler(testServices) {
 
-    companion object {
-        private val LINES_PATTERN = Regex("^ *// *LINES: *(.*)$", RegexOption.MULTILINE)
-    }
-
-    private val defaultTranslationMode = TranslationMode.PER_MODULE
+    private val translationModeForIr = TranslationMode.PER_MODULE
 
     override fun processAfterAllModules(someAssertionWasFailed: Boolean) {}
 
     override fun processModule(module: TestModule, info: BinaryArtifacts.Js) {
-        val translationResult = when (val artifact = info.unwrap()) {
-            is BinaryArtifacts.Js.OldJsArtifact -> artifact.translationResult as TranslationResult.Success
-            // TODO: Support JS IR
-//            is BinaryArtifacts.Js.JsIrArtifact -> artifact.compilerResult.outputs[defaultTranslationMode]!!.jsProgram!!
+        when (val artifact = info.unwrap()) {
+            is BinaryArtifacts.Js.OldJsArtifact ->
+                verifyModule(module, TranslationMode.FULL, artifact.translationResult.cast<TranslationResult.Success>().program, "JS")
+            is BinaryArtifacts.Js.JsIrArtifact -> {
+                val testModules = testServices.moduleStructure.modules
+                val moduleId2TestModule = testModules.associateBy { it.name.safeModuleName }
+
+                var verifiedModuleCount = 0
+
+                fun verifyModulesRecursively(
+                    module: TestModule,
+                    compilationOutputs: CompilationOutputs,
+                ) {
+                    for ((moduleId, dependencyOutputs) in compilationOutputs.dependencies) {
+                        moduleId2TestModule[moduleId]?.let {
+                            verifyModulesRecursively(it, dependencyOutputs)
+                        }
+                    }
+
+                    verifyModule(module, translationModeForIr, compilationOutputs.jsProgram!!, "JS_IR")
+                    verifiedModuleCount += 1
+                }
+
+                verifyModulesRecursively(module, artifact.compilerResult.outputs[translationModeForIr]!!)
+
+                // Just a sanity check to make sure we indeed verify all the needed modules.
+                assert(verifiedModuleCount == testModules.size) {
+                    "The number of verified modules ($verifiedModuleCount) must match " +
+                            "the number of all the test modules (${testModules.size})"
+                }
+            }
             else -> error("This artifact is not supported")
         }
+    }
 
-        val jsProgram = translationResult.program
-
-        val baseOutputPath = JsEnvironmentConfigurator.getJsModuleArtifactPath(testServices, module.name, defaultTranslationMode)
+    private fun verifyModule(
+        module: TestModule,
+        translationMode: TranslationMode,
+        jsProgram: JsProgram,
+        backendPattern: String
+    ) {
+        val baseOutputPath = JsEnvironmentConfigurator.getJsModuleArtifactPath(testServices, module.name, translationMode)
 
         val lineCollector = LineCollector()
         lineCollector.accept(jsProgram)
 
-        val programOutput = TextOutputImpl()
-        jsProgram.globalBlock.accept(LineOutputToStringVisitor(programOutput, lineCollector))
-        val generatedCode = programOutput.toString()
+        val generatedCode = kotlin.run {
+            val programOutput = TextOutputImpl()
+            jsProgram.globalBlock.accept(LineOutputToStringVisitor(programOutput, lineCollector))
+            programOutput.toString()
+        }
 
         with(File("$baseOutputPath-lines.js")) {
             parentFile.mkdirs()
             writeText(generatedCode)
         }
 
-        val linesMatcher = module.files
-            .firstNotNullOfOrNull { LINES_PATTERN.find(it.originalContent) }
-            ?: error("'// LINES: ' comment was not found in source file. Generated code is:\n$generatedCode")
+        val linesPattern = Regex("^ *// *LINES\\($backendPattern\\): *(.*)$", RegexOption.MULTILINE)
 
-        val expectedLines = linesMatcher.groups[1]!!.value
+        val linesMatcher = module.files
+            .firstNotNullOfOrNull { linesPattern.find(it.originalContent) }
+            ?: testServices.assertions.fail {
+                "'// LINES($backendPattern): ' comment was not found in source file. Generated code is:\n$generatedCode"
+            }
+
+        fun List<Int?>.render() = joinToString(" ") { it?.toString() ?: "*" }
+
+        val expectedLines =
+            linesMatcher.groups[1]!!.value.split(Regex("\\s+")).map { if (it == "*") null else it.toInt() }.render()
+
         val actualLines = lineCollector.lines
             .dropLastWhile { it == null }
-            .joinToString(" ") { if (it == null) "*" else (it + 1).toString() }
+            .map { lineNumber -> lineNumber?.let { it + 1 } }
+            .render()
 
         testServices.assertions.assertEquals(expectedLines, actualLines) { generatedCode }
     }

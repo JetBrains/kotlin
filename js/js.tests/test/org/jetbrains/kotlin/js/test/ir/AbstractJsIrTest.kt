@@ -110,6 +110,26 @@ open class AbstractIrJsTypeScriptExportTest : AbstractJsIrTest(
     }
 }
 
+open class AbstractJsIrLineNumberTest : AbstractJsIrTest(
+    pathToTestDir = "${JsEnvironmentConfigurator.TEST_DATA_DIR_PATH}/lineNumbers/",
+    testGroupOutputDirPrefix = "irLineNumbers/"
+) {
+    override fun configure(builder: TestConfigurationBuilder) {
+        super.configure(builder)
+        with(builder) {
+            defaultDirectives {
+                +JsEnvironmentConfigurationDirectives.KJS_WITH_FULL_RUNTIME
+                +JsEnvironmentConfigurationDirectives.NO_COMMON_FILES
+                -JsEnvironmentConfigurationDirectives.GENERATE_NODE_JS_RUNNER
+                JsEnvironmentConfigurationDirectives.DONT_RUN_GENERATED_CODE.with(listOf("JS", "JS_IR", "JS_IR_ES6"))
+            }
+            configureJsArtifactsHandlersStep {
+                useHandlers(::JsLineNumberHandler)
+            }
+        }
+    }
+}
+
 open class AbstractIrCodegenWasmJsInteropJsTest : AbstractJsIrTest(
     pathToTestDir = "compiler/testData/codegen/wasmJsInterop",
     testGroupOutputDirPrefix = "codegen/wasmJsInteropJs"

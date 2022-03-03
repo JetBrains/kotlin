@@ -6,4 +6,5 @@ class A(val x: Int) {
     }
 }
 
-// LINES: 1 1 2 2 3 5 4 4
+// LINES(JS):    1 1 2 2 3 5 4 4
+// LINES(JS_IR):     2 2 *   4 4 * 1 1 * 1 1
