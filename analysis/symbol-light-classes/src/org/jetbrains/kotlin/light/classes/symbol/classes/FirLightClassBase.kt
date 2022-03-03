@@ -31,7 +31,6 @@ import com.intellij.psi.util.CachedValueProvider
 import com.intellij.psi.util.PsiUtil
 import org.jetbrains.annotations.NonNls
 import org.jetbrains.kotlin.analysis.providers.createProjectWideOutOfBlockModificationTracker
-import org.jetbrains.kotlin.asJava.classes.KotlinClassInnerStuffCache.Companion.processDeclarationsInEnum
 import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.analysis.api.tokens.HackToForceAllowRunningAnalyzeOnEDT
 import org.jetbrains.kotlin.analysis.api.tokens.hackyAllowRunningOnEdt
@@ -96,9 +95,6 @@ abstract class FirLightClassBase protected constructor(manager: PsiManager) : Li
     override fun processDeclarations(
         processor: PsiScopeProcessor, state: ResolveState, lastParent: PsiElement?, place: PsiElement
     ): Boolean {
-
-        if (isEnum && !processDeclarationsInEnum(processor, state, myInnersCache)) return false
-
         return PsiClassImplUtil.processDeclarationsInClass(
             this,
             processor,
