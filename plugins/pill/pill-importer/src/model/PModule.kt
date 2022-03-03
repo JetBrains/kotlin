@@ -16,6 +16,7 @@ data class PModule(
     val moduleFile: File,
     val contentRoots: List<PContentRoot>,
     val orderRoots: List<POrderRoot>,
+    val javaLanguageVersion: Int?,
     val kotlinOptions: PSourceRootKotlinOptions?,
     val moduleForProductionSources: PModule? = null,
     val embeddedDependencies: List<PDependency>
