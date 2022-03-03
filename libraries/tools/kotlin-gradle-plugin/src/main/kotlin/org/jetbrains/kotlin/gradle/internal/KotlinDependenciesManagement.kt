@@ -146,7 +146,7 @@ private fun addStdlibToKpmProject(
                 KotlinPlatformType.jvm -> "kotlin-stdlib" // TODO get JDK from JVM variants
                 KotlinPlatformType.js -> "kotlin-stdlib-js"
                 KotlinPlatformType.wasm -> "kotlin-stdlib-wasm"
-                KotlinPlatformType.androidJvm -> null // TODO: expect support on the AGP side?
+                KotlinPlatformType.androidJvm -> "kotlin-stdlib" // TODO get JDK from JVM variants
                 KotlinPlatformType.native -> null
             }
             if (dependency != null) {
