@@ -480,10 +480,12 @@ class ExperimentalUsageChecker(project: Project) : CallChecker {
                         Experimentality.Severity.ERROR -> Errors.OPT_IN_OVERRIDE_ERROR to "must"
                         Experimentality.Severity.FUTURE_ERROR -> Errors.OPT_IN_OVERRIDE_ERROR to "must"
                     }
-                    val message = experimentality.message?.takeIf { it.isNotBlank() }
-                        ?: "This declaration overrides experimental member of supertype " +
-                        "'${member.containingDeclaration.name.asString()}' and $defaultMessageVerb be annotated " +
-                        "with '@${experimentality.annotationFqName.asString()}'"
+                    val message = OptInNames.buildOverrideMessage(
+                        supertypeName = member.containingDeclaration.name.asString(),
+                        markerMessage = experimentality.message,
+                        verb = defaultMessageVerb,
+                        markerName = experimentality.annotationFqName.asString()
+                    )
                     context.trace.report(diagnostic.on(reportOn, experimentality.annotationFqName, message))
                 }
             }
