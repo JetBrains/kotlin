@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.asJava.classes
 
 import com.intellij.openapi.diagnostic.Logger
-import com.intellij.openapi.util.SimpleModificationTracker
 import com.intellij.psi.*
 import com.intellij.psi.impl.PsiClassImplUtil
 import com.intellij.psi.impl.PsiImplUtil
@@ -21,12 +20,9 @@ import org.jetbrains.kotlin.utils.SmartList
 
 class KotlinClassInnerStuffCache(
     private val myClass: PsiExtensibleClass,
-    externalDependencies: List<Any>,
+    private val dependencies: List<Any>,
     private val lazyCreator: LazyCreator,
 ) {
-    private val myTracker = SimpleModificationTracker()
-    private val dependencies: List<Any> = externalDependencies + myTracker
-
     abstract class LazyCreator {
         abstract fun <T : Any> get(initializer: () -> T, dependencies: List<Any>): Lazy<T>
     }
@@ -180,10 +176,6 @@ class KotlinClassInnerStuffCache(
                 return myClass.textOffset
             }
         }
-    }
-
-    fun dropCaches() {
-        myTracker.incModificationCount()
     }
 
     companion object {
