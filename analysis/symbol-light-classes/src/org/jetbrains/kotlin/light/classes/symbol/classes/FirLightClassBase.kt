@@ -24,14 +24,12 @@ import com.intellij.openapi.util.TextRange
 import com.intellij.psi.*
 import com.intellij.psi.impl.*
 import com.intellij.psi.impl.light.LightElement
-import com.intellij.psi.impl.source.PsiExtensibleClass
 import com.intellij.psi.javadoc.PsiDocComment
 import com.intellij.psi.scope.PsiScopeProcessor
 import com.intellij.psi.util.CachedValueProvider
 import com.intellij.psi.util.PsiUtil
 import org.jetbrains.annotations.NonNls
 import org.jetbrains.kotlin.analysis.providers.createProjectWideOutOfBlockModificationTracker
-import org.jetbrains.kotlin.asJava.classes.KotlinClassInnerStuffCache.Companion.processDeclarationsInEnum
 import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.analysis.api.tokens.HackToForceAllowRunningAnalyzeOnEDT
 import org.jetbrains.kotlin.analysis.api.tokens.hackyAllowRunningOnEdt
@@ -39,9 +37,9 @@ import org.jetbrains.kotlin.asJava.classes.*
 import org.jetbrains.kotlin.light.classes.symbol.classes.checkIsInheritor
 import javax.swing.Icon
 
-abstract class FirLightClassBase protected constructor(manager: PsiManager) : LightElement(manager, KotlinLanguage.INSTANCE), PsiClass,
-    KtLightClass, PsiExtensibleClass {
-
+abstract class FirLightClassBase protected constructor(
+    manager: PsiManager
+) : LightElement(manager, KotlinLanguage.INSTANCE), PsiClass, KtExtensibleLightClass {
     override val clsDelegate: PsiClass
         get() = invalidAccess()
 
@@ -96,9 +94,6 @@ abstract class FirLightClassBase protected constructor(manager: PsiManager) : Li
     override fun processDeclarations(
         processor: PsiScopeProcessor, state: ResolveState, lastParent: PsiElement?, place: PsiElement
     ): Boolean {
-
-        if (isEnum && !processDeclarationsInEnum(processor, state, myInnersCache)) return false
-
         return PsiClassImplUtil.processDeclarationsInClass(
             this,
             processor,
