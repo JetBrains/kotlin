@@ -10,6 +10,7 @@ package org.jetbrains.kotlin.gradle.scripting.internal
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.artifacts.Configuration
+import org.gradle.api.artifacts.dsl.DependencyHandler
 import org.gradle.api.artifacts.transform.InputArtifact
 import org.gradle.api.artifacts.transform.TransformAction
 import org.gradle.api.artifacts.transform.TransformOutputs
@@ -55,23 +56,19 @@ class ScriptingGradleSubplugin : Plugin<Project> {
             val javaPluginConvention = project.convention.findPlugin(JavaPluginConvention::class.java)
             if (javaPluginConvention?.sourceSets?.isEmpty() == false) {
 
-                val configureAction: (KotlinCompile) -> (Unit) = { task ->
+                val configureAction: (KotlinCompile) -> (Unit) = ca@{ task ->
 
                     if (task !is KaptGenerateStubsTask) {
-
-                        try {
-                            val discoveryClasspathConfigurationName = getDiscoveryClasspathConfigurationName(task.sourceSetName.get())
-                            val discoveryClasspathConfiguration = project.configurations.findByName(discoveryClasspathConfigurationName)
-                            when {
-                                discoveryClasspathConfiguration == null ->
-                                    project.logger.warn("$SCRIPTING_LOG_PREFIX $project.${task.name} - configuration not found: $discoveryClasspathConfigurationName, $MISCONFIGURATION_MESSAGE_SUFFIX")
-                                discoveryClasspathConfiguration.allDependencies.isEmpty() -> {
-                                    // skip further checks - user did not configured any discovery sources
-                                }
-                                else -> task.scriptDefinitions.from(discoveryClasspathConfiguration)
-                            }
-                        } catch (e: IllegalStateException) {
-                            project.logger.warn("$SCRIPTING_LOG_PREFIX applied in the non-supported environment (error received: ${e.message})")
+                        val sourceSetName = task.sourceSetName.orNull ?: return@ca
+                        val discoveryResultsConfigurationName = getDiscoveryResultsConfigurationName(sourceSetName)
+                        val discoveryResultConfiguration = project.configurations.findByName(discoveryResultsConfigurationName)
+                        if (discoveryResultConfiguration == null) {
+                            project.logger.warn(
+                                "$SCRIPTING_LOG_PREFIX $project.${task.name} - configuration not found:" +
+                                        " $discoveryResultsConfigurationName, $MISCONFIGURATION_MESSAGE_SUFFIX"
+                            )
+                        } else {
+                            task.scriptDefinitions.from(discoveryResultConfiguration)
                         }
                     }
                 }
@@ -106,15 +103,11 @@ private fun configureDiscoveryTransformation(
 ) {
     project.configurations.maybeCreate(discoveryResultsConfigurationName).apply {
         isCanBeConsumed = false
+        isCanBeResolved = true
+        attributes.attribute(artifactType, scriptFilesExtensions)
+        extendsFrom(discoveryConfiguration)
     }
-    project.dependencies.apply {
-        add(
-            discoveryResultsConfigurationName,
-            project.withRegisteredDiscoverScriptExtensionsTransform {
-                discoveryConfiguration.discoverScriptExtensionsFiles()
-            }
-        )
-    }
+    project.dependencies.registerOnceDiscoverScriptExtensionsTransform()
 }
 
 internal abstract class DiscoverScriptExtensionsTransformAction : TransformAction<TransformParameters.None> {
@@ -136,36 +129,32 @@ internal abstract class DiscoverScriptExtensionsTransformAction : TransformActio
         if (extensions.isNotEmpty()) {
             val outputFile = outputs.file("${input.nameWithoutExtension}.discoveredScriptsExtensions.txt")
             outputFile.writeText(extensions.joinToString("\n"))
-            listOf(outputFile)
         }
     }
 }
 
-private fun Project.registerDiscoverScriptExtensionsTransform() {
-    dependencies.apply {
-        registerTransform(DiscoverScriptExtensionsTransformAction::class.java) { transformSpec ->
-            transformSpec.from.attribute(artifactType, "jar")
-            transformSpec.to.attribute(artifactType, scriptFilesExtensions)
+private fun DependencyHandler.registerDiscoverScriptExtensionsTransform() {
+    registerTransform(DiscoverScriptExtensionsTransformAction::class.java) { transformSpec ->
+        transformSpec.from.attribute(artifactType, "jar")
+        transformSpec.to.attribute(artifactType, scriptFilesExtensions)
+    }
 
-        }
-        registerTransform(DiscoverScriptExtensionsTransformAction::class.java) { transformSpec ->
-            transformSpec.from.attribute(artifactType, "classes")
-            transformSpec.to.attribute(artifactType, scriptFilesExtensions)
-        }
+    registerTransform(DiscoverScriptExtensionsTransformAction::class.java) { transformSpec ->
+        transformSpec.from.attribute(artifactType, "classes")
+        transformSpec.to.attribute(artifactType, scriptFilesExtensions)
     }
 }
 
-private fun <T> Project.withRegisteredDiscoverScriptExtensionsTransform(block: () -> T): T {
-    if (!project.extensions.extraProperties.has("DiscoverScriptExtensionsTransform")) {
+private fun DependencyHandler.registerOnceDiscoverScriptExtensionsTransform() {
+    if (!extensions.extraProperties.has("DiscoverScriptExtensionsTransform")) {
         registerDiscoverScriptExtensionsTransform()
-        project.extensions.extraProperties["DiscoverScriptExtensionsTransform"] = true
+        extensions.extraProperties["DiscoverScriptExtensionsTransform"] = true
     }
-    return block()
 }
 
 private val artifactType = Attribute.of("artifactType", String::class.java)
 
-private val scriptFilesExtensions = "script-files-extensions"
+private const val scriptFilesExtensions = "script-files-extensions"
 
 private fun Configuration.discoverScriptExtensionsFiles() =
     incoming.artifactView {
