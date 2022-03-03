@@ -218,7 +218,7 @@ class LazyTopDownAnalyzer(
 
         overrideResolver.check(c)
 
-        varianceChecker.check(c, languageVersionSettings)
+        varianceChecker.check(c)
 
         declarationResolver.resolveAnnotationsOnFiles(c, fileScopeProvider)
 

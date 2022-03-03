@@ -42,11 +42,10 @@ import org.jetbrains.kotlin.types.checker.TypeCheckingProcedure
 
 class ManualVariance(val descriptor: TypeParameterDescriptor, val variance: Variance)
 
-class VarianceChecker(trace: BindingTrace) {
-    private val core = VarianceCheckerCore(trace.bindingContext, trace)
+class VarianceChecker(trace: BindingTrace, languageVersionSettings: LanguageVersionSettings) {
+    private val core = VarianceCheckerCore(trace.bindingContext, trace, languageVersionSettings = languageVersionSettings)
 
-    fun check(c: TopDownAnalysisContext, languageVersionSettings: LanguageVersionSettings) {
-        core.languageVersionSettings = languageVersionSettings
+    fun check(c: TopDownAnalysisContext) {
         core.check(c)
     }
 }
@@ -60,10 +59,9 @@ class VarianceConflictDiagnosticData(
 class VarianceCheckerCore(
     val context: BindingContext,
     private val diagnosticSink: DiagnosticSink,
-    private val manualVariance: ManualVariance? = null
+    private val manualVariance: ManualVariance? = null,
+    private val languageVersionSettings: LanguageVersionSettings? = null
 ) {
-    internal var languageVersionSettings: LanguageVersionSettings? = null
-
     fun check(c: TopDownAnalysisContext) {
         checkClasses(c)
         checkMembers(c)
