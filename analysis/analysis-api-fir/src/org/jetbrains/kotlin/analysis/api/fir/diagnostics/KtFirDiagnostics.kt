@@ -1358,8 +1358,8 @@ sealed class KtFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI> {
         abstract val typeB: KtType
     }
 
-    abstract class TypeVarianceConflict : KtFirDiagnostic<PsiElement>() {
-        override val diagnosticClass get() = TypeVarianceConflict::class
+    abstract class TypeVarianceConflictError : KtFirDiagnostic<PsiElement>() {
+        override val diagnosticClass get() = TypeVarianceConflictError::class
         abstract val typeParameter: KtTypeParameterSymbol
         abstract val typeParameterVariance: Variance
         abstract val variance: Variance

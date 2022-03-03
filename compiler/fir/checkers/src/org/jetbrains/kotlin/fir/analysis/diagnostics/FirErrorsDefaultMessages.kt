@@ -495,7 +495,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.TYPE_PARAMETER_IN
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.TYPE_PARAMETER_IS_NOT_AN_EXPRESSION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.TYPE_PARAMETER_OF_PROPERTY_NOT_USED_IN_RECEIVER
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.TYPE_PARAMETER_ON_LHS_OF_DOT
-import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.TYPE_VARIANCE_CONFLICT
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.TYPE_VARIANCE_CONFLICT_ERROR
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.TYPE_VARIANCE_CONFLICT_IN_EXPANDED_TYPE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.UNCHECKED_CAST
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.UNDERSCORE_IS_RESERVED
@@ -1084,7 +1084,7 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         )
 
         map.put(
-            TYPE_VARIANCE_CONFLICT,
+            TYPE_VARIANCE_CONFLICT_ERROR,
             "Type parameter {0} is declared as ''{1}'' but occurs in ''{2}'' position in type {3}",
             SYMBOL, RENDER_POSITION_VARIANCE, RENDER_POSITION_VARIANCE, RENDER_TYPE
         )

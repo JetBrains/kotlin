@@ -118,7 +118,7 @@ object FirClassVarianceChecker : FirClassChecker() {
                 !fullyExpandedType.attributes.contains(CompilerConeAttributes.UnsafeVariance)
             ) {
                 val factory =
-                    if (isInAbbreviation) FirErrors.TYPE_VARIANCE_CONFLICT_IN_EXPANDED_TYPE else FirErrors.TYPE_VARIANCE_CONFLICT
+                    if (isInAbbreviation) FirErrors.TYPE_VARIANCE_CONFLICT_IN_EXPANDED_TYPE else FirErrors.TYPE_VARIANCE_CONFLICT_ERROR
                 reporter.reportOn(
                     resultSource,
                     factory,
