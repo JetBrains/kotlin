@@ -41,9 +41,21 @@ abstract class Freezable {
     private var frozen: Boolean = false
 
     internal fun getInstanceWithFreezeStatus(value: Boolean) = if (value == frozen) this else copyBean(this).apply { frozen = value }
+
+    @Deprecated(level = DeprecationLevel.HIDDEN, message = "Please use type safe extension functions")
+    fun frozen() = getInstanceWithFreezeStatus(true)
+
+    @Deprecated(level = DeprecationLevel.HIDDEN, message = "Please use type safe extension functions")
+    fun unfrozen() = getInstanceWithFreezeStatus(false)
 }
 
-@Suppress("UNCHECKED_CAST")
+@Suppress(
+    "UNCHECKED_CAST",
+    "EXTENSION_SHADOWED_BY_MEMBER" // It's false positive shadowed warning KT-21598
+)
 fun <T : Freezable> T.frozen(): T = getInstanceWithFreezeStatus(true) as T
-@Suppress("UNCHECKED_CAST")
+@Suppress(
+    "UNCHECKED_CAST",
+    "EXTENSION_SHADOWED_BY_MEMBER" // It's false positive shadowed warning KT-21598
+)
 fun <T : Freezable> T.unfrozen(): T = getInstanceWithFreezeStatus(false) as T
