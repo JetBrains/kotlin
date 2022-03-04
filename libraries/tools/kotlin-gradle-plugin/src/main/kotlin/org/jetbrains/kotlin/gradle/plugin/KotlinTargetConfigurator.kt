@@ -280,18 +280,7 @@ abstract class AbstractKotlinTargetConfigurator<KotlinTargetType : KotlinTarget>
             val target = compilation.target
             val configurations = target.project.configurations
 
-            configurations.maybeCreate(compilation.pluginConfigurationName).apply {
-                if (target.platformType == KotlinPlatformType.native) {
-                    extendsFrom(configurations.getByName(NATIVE_COMPILER_PLUGIN_CLASSPATH_CONFIGURATION_NAME))
-                    isTransitive = false
-                } else {
-                    extendsFrom(target.project.commonKotlinPluginClasspath)
-                }
-                isVisible = false
-                isCanBeConsumed = false
-                description = "Kotlin compiler plugins for $compilation"
-                reorderPluginClasspathDependencies()
-            }
+            definePluginClasspathConfiguration(compilation)
 
             val compileConfiguration = configurations.findByName(compilation.deprecatedCompileConfigurationName)?.apply {
                 isCanBeConsumed = false
@@ -370,6 +359,25 @@ abstract class AbstractKotlinTargetConfigurator<KotlinTargetType : KotlinTarget>
                     }
                     description = "Runtime classpath of $compilation."
                 }
+            }
+        }
+
+        internal fun definePluginClasspathConfiguration(
+            compilation: KotlinCompilation<*>,
+        ) {
+            val target = compilation.target
+            val project = target.project
+            project.configurations.maybeCreate(compilation.pluginConfigurationName).apply {
+                if (target.platformType == KotlinPlatformType.native) {
+                    extendsFrom(project.configurations.getByName(NATIVE_COMPILER_PLUGIN_CLASSPATH_CONFIGURATION_NAME))
+                    isTransitive = false
+                } else {
+                    extendsFrom(target.project.commonKotlinPluginClasspath)
+                }
+                isVisible = false
+                isCanBeConsumed = false
+                description = "Kotlin compiler plugins for $compilation"
+                reorderPluginClasspathDependencies()
             }
         }
     }

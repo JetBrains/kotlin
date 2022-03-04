@@ -50,6 +50,7 @@ import org.jetbrains.kotlin.gradle.logging.kotlinDebug
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinCompilationData
+import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.findCompilationInKpmMappedModel
 import org.jetbrains.kotlin.gradle.plugin.statistics.KotlinBuildStatsService
 import org.jetbrains.kotlin.gradle.report.BuildMetricsReporterService
 import org.jetbrains.kotlin.gradle.report.BuildReportMode
@@ -182,8 +183,10 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments> : AbstractKotl
 
             if (compilation is KotlinCompilation<*>) {
                 task.friendSourceSets.set(project.provider { compilation.associateWithTransitiveClosure.map { it.name } })
-                // FIXME support compiler plugins with PM20
-                task.pluginClasspath.from(project.configurations.getByName(compilation.pluginConfigurationName))
+            }
+            val compilationModelInstance = (compilation as? KotlinCompilation<*>) ?: findCompilationInKpmMappedModel(compilation)
+            if (compilationModelInstance != null) {
+                task.pluginClasspath.from(project.configurations.getByName(compilationModelInstance.pluginConfigurationName))
             }
             task.moduleName.set(project.provider { compilation.moduleName })
             task.sourceSetName.set(project.provider { compilation.compilationPurpose })

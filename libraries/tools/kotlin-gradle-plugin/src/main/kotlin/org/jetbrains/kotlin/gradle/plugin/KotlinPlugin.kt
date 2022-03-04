@@ -36,7 +36,7 @@ import org.jetbrains.kotlin.gradle.model.builder.KotlinModelBuilder
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinCompilationData
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.isMainCompilationData
-import org.jetbrains.kotlin.gradle.report.BuildMetricsReporterService
+import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.findCompilationInKpmMappedModel
 import org.jetbrains.kotlin.gradle.scripting.internal.ScriptingGradleSubplugin
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsBinaryMode
 import org.jetbrains.kotlin.gradle.targets.js.ir.*
@@ -198,8 +198,9 @@ internal class Kotlin2JvmSourceSetProcessor(
         project.whenEvaluated {
             val subpluginEnvironment = SubpluginEnvironment.loadSubplugins(project)
 
-            if (kotlinCompilation is KotlinCompilation<*>) // FIXME support compiler plugins with PM20
-                subpluginEnvironment.addSubpluginOptions(project, kotlinCompilation)
+            val compilationModelInstance = (kotlinCompilation as? KotlinCompilation<*>) ?: findCompilationInKpmMappedModel(kotlinCompilation)
+            if (compilationModelInstance != null)
+                subpluginEnvironment.addSubpluginOptions(project, compilationModelInstance)
 
             javaSourceSet?.let { java ->
                 val javaTask = project.tasks.withType<AbstractCompile>().named(java.compileJavaTaskName)

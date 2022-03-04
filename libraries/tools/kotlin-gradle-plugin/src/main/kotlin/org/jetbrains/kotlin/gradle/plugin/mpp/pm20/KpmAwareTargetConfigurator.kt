@@ -49,6 +49,8 @@ internal open class KpmAwareTargetConfigurator<T : KotlinTarget>(
     override fun configureCompilationDefaults(target: T) {
         // everything else is done in KPM, but KPM doesn't have resources processing yet
         target.compilations.all { compilation ->
+            definePluginClasspathConfiguration(compilation)
+
             if (compilation is KotlinCompilationWithResources<*>) {
                 configureResourceProcessing(
                     compilation,
