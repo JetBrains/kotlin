@@ -148,11 +148,17 @@ public class DescriptorAsmUtil {
     public static boolean isStaticMethod(OwnerKind kind, CallableMemberDescriptor functionDescriptor) {
         return isStaticKind(kind) ||
                KotlinTypeMapper.isStaticAccessor(functionDescriptor) ||
+               isSyntheticMembersInEnumClass(functionDescriptor) ||
                CodegenUtilKt.isJvmStaticInObjectOrClassOrInterface(functionDescriptor);
     }
 
     public static boolean isStaticKind(OwnerKind kind) {
         return kind == OwnerKind.PACKAGE || kind == OwnerKind.DEFAULT_IMPLS || kind == OwnerKind.ERASED_INLINE_CLASS;
+    }
+
+    public static boolean isSyntheticMembersInEnumClass(CallableMemberDescriptor functionDescriptor) {
+        return functionDescriptor.getKind() == CallableMemberDescriptor.Kind.SYNTHESIZED &&
+               isEnumClass(functionDescriptor.getContainingDeclaration());
     }
 
     public static int getMethodAsmFlags(FunctionDescriptor functionDescriptor, OwnerKind kind, GenerationState state) {

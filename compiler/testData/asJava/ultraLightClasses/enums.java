@@ -5,10 +5,10 @@ public enum Direction /* Direction*/ {
   EAST;
 
   @org.jetbrains.annotations.NotNull()
-  public final Direction valueOf(@org.jetbrains.annotations.NotNull() java.lang.String);//  valueOf(java.lang.String)
+  public static final Direction valueOf(@org.jetbrains.annotations.NotNull() java.lang.String);//  valueOf(java.lang.String)
 
   @org.jetbrains.annotations.NotNull()
-  public final Direction[] values();//  values()
+  public static final Direction[] values();//  values()
 
   private  Direction();//  .ctor()
 
@@ -22,10 +22,10 @@ public enum Color /* Color*/ {
   private final int rgb;
 
   @org.jetbrains.annotations.NotNull()
-  public final Color valueOf(@org.jetbrains.annotations.NotNull() java.lang.String);//  valueOf(java.lang.String)
+  public static final Color valueOf(@org.jetbrains.annotations.NotNull() java.lang.String);//  valueOf(java.lang.String)
 
   @org.jetbrains.annotations.NotNull()
-  public final Color[] values();//  values()
+  public static final Color[] values();//  values()
 
   private  Color(@org.jetbrains.annotations.NotNull() java.lang.String);//  .ctor(java.lang.String)
 
@@ -55,10 +55,10 @@ public enum ProtocolState /* ProtocolState*/ {
   public abstract ProtocolState signal();//  signal()
 
   @org.jetbrains.annotations.NotNull()
-  public final ProtocolState valueOf(@org.jetbrains.annotations.NotNull() java.lang.String);//  valueOf(java.lang.String)
+  public static final ProtocolState valueOf(@org.jetbrains.annotations.NotNull() java.lang.String);//  valueOf(java.lang.String)
 
   @org.jetbrains.annotations.NotNull()
-  public final ProtocolState[] values();//  values()
+  public static final ProtocolState[] values();//  values()
 
   private  ProtocolState();//  .ctor()
 
@@ -103,10 +103,10 @@ public enum IntArithmetics /* IntArithmetics*/ implements java.util.function.Bin
   };
 
   @org.jetbrains.annotations.NotNull()
-  public final IntArithmetics valueOf(@org.jetbrains.annotations.NotNull() java.lang.String);//  valueOf(java.lang.String)
+  public static final IntArithmetics valueOf(@org.jetbrains.annotations.NotNull() java.lang.String);//  valueOf(java.lang.String)
 
   @org.jetbrains.annotations.NotNull()
-  public final IntArithmetics[] values();//  values()
+  public static final IntArithmetics[] values();//  values()
 
   private  IntArithmetics();//  .ctor()
 

@@ -102,7 +102,9 @@ internal class FirLightSimpleMethodForSymbol(
 
         modifiers.add(visibility)
 
-        if (!suppressStatic && functionSymbol.hasJvmStaticAnnotation()) {
+        if (!suppressStatic &&
+            (functionSymbol.isStatic || functionSymbol.hasJvmStaticAnnotation())
+        ) {
             modifiers.add(PsiModifier.STATIC)
         }
         if (functionSymbol.hasAnnotation(STRICTFP_ANNOTATION_CLASS_ID, null)) {
