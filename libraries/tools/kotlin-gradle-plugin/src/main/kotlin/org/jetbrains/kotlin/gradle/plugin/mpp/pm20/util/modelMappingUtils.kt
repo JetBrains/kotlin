@@ -5,16 +5,37 @@
 
 package org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util
 
+import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
+import org.jetbrains.kotlin.gradle.dsl.topLevelExtension
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
+import org.jetbrains.kotlin.gradle.plugin.mpp.AbstractKotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.compilationDefaultSourceSetName
+import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinCompilationData
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinGradleModule
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinGradleVariant
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.kpmModules
 import org.jetbrains.kotlin.gradle.plugin.sources.kpm.FragmentMappedKotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.sources.kpm.SourceSetMappedFragmentLocator
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
+
+/**
+ * If this [kotlinCompilationData] is owned by a variant or a fragment's metadata compilation that is represented by a
+ * [KotlinCompilation] in the KPM-mapped model, returns the compilation object.
+ */
+internal fun findCompilationInKpmMappedModel(kotlinCompilationData: KotlinCompilationData<*>): KotlinCompilation<*>? {
+    val ext = kotlinCompilationData.project.topLevelExtension as? KotlinMultiplatformExtension
+        ?: return null
+    ext.targets.forEach { target ->
+        target.compilations.forEach { compilation ->
+            val compilationDetails = (compilation as? AbstractKotlinCompilation)?.compilationDetails
+            if (compilationDetails?.compilationData == kotlinCompilationData)
+                return compilation
+        }
+    }
+    return null
+}
 
 internal fun <V : KotlinGradleVariant, C : KotlinCompilation<*>> createAndEmbedMappedCompilation(
     target: KotlinTarget,
