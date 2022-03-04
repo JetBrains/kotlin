@@ -443,7 +443,12 @@ internal open class VariantMappedCompilationDetails<T : KotlinCommonOptions>(
         get() = variant.unambiguousNameInProject
 
     override fun source(sourceSet: KotlinSourceSet) {
-        compilation.defaultSourceSet.dependsOn(sourceSet)
+        // The variant-mapped compilation details don't store "explicitly added" source sets; instead, this class redirects the calls
+        // to `source(...)` to the default source set's `dependsOn`. It could be potentially valid to call `source(defaultSourceSet)`, as
+        // it should be idempotent, but this implementation would throw an error due to a detected dependsOn cycle (foo -> foo),
+        // so it needs to filter out calls to `source(defaultSourceSet)`.
+        if (sourceSet != compilation.defaultSourceSet)
+            compilation.defaultSourceSet.dependsOn(sourceSet)
     }
 
     override fun associateWith(other: CompilationDetails<*>) {
