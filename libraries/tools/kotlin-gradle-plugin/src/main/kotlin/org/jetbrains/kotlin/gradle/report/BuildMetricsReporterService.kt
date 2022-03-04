@@ -19,7 +19,6 @@ import org.gradle.tooling.events.task.TaskSkippedResult
 import org.jetbrains.kotlin.build.report.metrics.BuildMetrics
 import org.jetbrains.kotlin.build.report.metrics.BuildMetricsReporter
 import org.jetbrains.kotlin.build.report.metrics.BuildTime
-import org.jetbrains.kotlin.gradle.plugin.KotlinGradleBuildServices
 import org.jetbrains.kotlin.gradle.plugin.internal.state.TaskExecutionResults
 import org.jetbrains.kotlin.gradle.report.data.BuildExecutionData
 import org.jetbrains.kotlin.gradle.report.data.BuildExecutionDataProcessor
@@ -119,33 +118,34 @@ abstract class BuildMetricsReporterService : BuildService<BuildMetricsReporterSe
         }
 
         fun registerIfAbsent(project: Project): Provider<BuildMetricsReporterService>? {
-            val startParameters = getStartParameters(project)
-            val rootProject = project.gradle.rootProject
-            val reportingSettings = reportingSettings(rootProject)
+            val serviceClass = BuildMetricsReporterService::class.java
+            val serviceName = "${serviceClass.name}_${serviceClass.classLoader.hashCode()}"
 
-            val buildDataProcessors = ArrayList<BuildExecutionDataProcessor>()
-            reportingSettings.fileReportSettings?.let {
-                buildDataProcessors.add(
-                    PlainTextBuildReportWriterDataProcessor(
-                        it,
-                        rootProject.name
-                    )
-                )
+            // Return early if the service was already registered to avoid the overhead of reading the reporting settings below
+            val service = project.gradle.sharedServices.registrations.findByName(serviceName)
+            if (service != null) {
+                @Suppress("UNCHECKED_CAST")
+                return service.service as Provider<BuildMetricsReporterService>
             }
 
-            if (reportingSettings.metricsOutputFile != null) {
-                buildDataProcessors.add(MetricsWriter(reportingSettings.metricsOutputFile.absoluteFile))
-            }
-
-            if (reportingSettings.buildReportOutputs.isEmpty() && buildDataProcessors.isEmpty()) {
+            val reportingSettings = reportingSettings(project.rootProject)
+            if (reportingSettings.buildReportOutputs.isEmpty()
+                && reportingSettings.fileReportSettings == null
+                && reportingSettings.metricsOutputFile == null
+            ) {
                 return null
             }
 
-            return project.gradle.sharedServices.registerIfAbsent(
-                "build_metric_service_${KotlinGradleBuildServices::class.java.classLoader.hashCode()}",
-                BuildMetricsReporterService::class.java
-            ) {
-                it.parameters.startParameters = startParameters
+            return project.gradle.sharedServices.registerIfAbsent(serviceName, serviceClass) {
+                val buildDataProcessors = mutableListOf<BuildExecutionDataProcessor>()
+                reportingSettings.fileReportSettings?.let { fileReportSettings ->
+                    buildDataProcessors.add(PlainTextBuildReportWriterDataProcessor(fileReportSettings, project.rootProject.name))
+                }
+                reportingSettings.metricsOutputFile?.let { metricsOutputFile ->
+                    buildDataProcessors.add(MetricsWriter(metricsOutputFile.absoluteFile))
+                }
+
+                it.parameters.startParameters = getStartParameters(project)
                 it.parameters.buildDataProcessors = buildDataProcessors
                 it.parameters.reportingSettings = reportingSettings
             }!!
