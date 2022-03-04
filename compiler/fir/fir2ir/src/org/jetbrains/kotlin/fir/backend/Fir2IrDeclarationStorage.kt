@@ -1061,7 +1061,7 @@ class Fir2IrDeclarationStorage(
         skipDefaultParameter: Boolean = false,
     ): IrValueParameter = convertCatching(valueParameter) {
         val origin = valueParameter.computeIrOrigin()
-        val type = valueParameter.returnTypeRef.toIrType()
+        val type = valueParameter.returnTypeRef.toIrType(typeContext)
         val irParameter = valueParameter.convertWithOffsets { startOffset, endOffset ->
             irFactory.createValueParameter(
                 startOffset, endOffset, origin, IrValueParameterSymbolImpl(),
