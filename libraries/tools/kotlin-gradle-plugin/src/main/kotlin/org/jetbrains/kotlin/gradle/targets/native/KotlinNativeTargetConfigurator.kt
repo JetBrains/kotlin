@@ -452,7 +452,11 @@ open class KotlinNativeTargetConfigurator<T : KotlinNativeTarget> : AbstractKotl
                     it.dependsOn(compileTaskProvider)
                 }
             }
-            val shouldAddCompileOutputsToElements = compilation.owner is KotlinGradleVariant || compilation.isMainCompilationData()
+
+            val shouldAddCompileOutputsToElements =
+                compilation.owner is KotlinGradleVariant ||
+                        (compilation.owner is KotlinTarget && compilation.isMainCompilationData())
+
             if (shouldAddCompileOutputsToElements) {
                 createRegularKlibArtifact(compilation, compileTaskProvider)
             }
