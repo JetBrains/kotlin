@@ -469,7 +469,7 @@ internal open class VariantMappedCompilationDetails<T : KotlinCommonOptions>(
         get() = variant
 
     override val directlyIncludedKotlinSourceSets: Set<KotlinSourceSet>
-        get() = compilation.defaultSourceSet.dependsOn
+        get() = compilation.defaultSourceSet.let { mutableSetOf(it, *it.dependsOn.toTypedArray()) }
 }
 
 internal open class VariantMappedCompilationDetailsWithRuntime<T : KotlinCommonOptions>(
