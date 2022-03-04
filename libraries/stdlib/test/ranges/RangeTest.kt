@@ -410,6 +410,32 @@ public class RangeTest {
         assertNotEquals<Any>(1.0F..0.0F, 1.0F..<0.0F)
     }
 
+    @Test
+    fun nonEmptyRangeHashCode() {
+        fun <N : Comparable<N>> checkHashCode(range: ClosedRange<N>) {
+            assertEquals(31 * range.start.hashCode() + range.endInclusive.hashCode(), range.hashCode())
+        }
+        checkHashCode(1u..10u)
+        checkHashCode(1uL..10uL)
+        checkHashCode('a'..'z')
+    }
+
+    @Test
+    fun nonEmptyProgressionHashCode() {
+        fun checkHashCode(progression: Any, first: Any, last: Any, step: Any) {
+            assertEquals(31 * 31 * first.hashCode() + 31 * last.hashCode() + step.hashCode(), progression.hashCode())
+        }
+        (1..10 step 1).let { checkHashCode(it, it.first, it.last, it.step) }
+        (1..10 step 2).let { checkHashCode(it, it.first, it.last, it.step) }
+        (10 downTo 1).let { checkHashCode(it, it.first, it.last, it.step) }
+        (1L..10L step 1).let { checkHashCode(it, it.first, it.last, it.step) }
+        (1L..10L step 2).let { checkHashCode(it, it.first, it.last, it.step) }
+        (10L downTo 1L).let { checkHashCode(it, it.first, it.last, it.step) }
+        ('a'..'z' step 1).let { checkHashCode(it, it.first, it.last, it.step) }
+        ('a'..'z' step 2).let { checkHashCode(it, it.first, it.last, it.step) }
+        ('z' downTo 'a').let { checkHashCode(it, it.first, it.last, it.step) }
+    }
+
     @Test fun comparableRange() {
         val range = "island".."isle"
         assertEquals("island..isle", range.toString())
