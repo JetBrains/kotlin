@@ -30,17 +30,17 @@ class GenerateRanges(out: PrintWriter) : BuiltInsSourceGenerator(out) {
 
             val hashCode = when (kind) {
                 CHAR -> "=\n" +
-                "        if (isEmpty()) -1 else (31 * first.code + last.code)"
+                        "        if (isEmpty()) -1 else (31 * first.code + last.code)"
                 INT -> "=\n" +
-                "        if (isEmpty()) -1 else (31 * first + last)"
+                        "        if (isEmpty()) -1 else (31 * first + last)"
                 LONG -> "=\n" +
-                "        if (isEmpty()) -1 else (31 * ${hashLong("first")} + ${hashLong("last")}).toInt()"
+                        "        if (isEmpty()) -1 else 31 * (${hashLong("first")} + ${hashLong("last")})"
             }
 
             val toString = "\"\$first..\$last\""
 
             out.println(
-"""/**
+                """/**
  * A range of values of type `$t`.
  */
 public class $range(start: $t, endInclusive: $t) : ${t}Progression(start, endInclusive, $increment), ClosedRange<$t>, OpenEndRange<$t> {
