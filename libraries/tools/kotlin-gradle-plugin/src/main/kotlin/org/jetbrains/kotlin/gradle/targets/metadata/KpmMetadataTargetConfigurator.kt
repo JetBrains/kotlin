@@ -61,5 +61,11 @@ internal class KpmMetadataTargetConfigurator(private val metadataTargetConfigura
                 target.compilations.add(compilation)
             }
         }
+
+        /** In KPM, the legacy metadata variant is not supported; this is similar to [KotlinMetadataTargetConfigurator.configureTarget] */
+        target.compilations.getByName(KotlinCompilation.MAIN_COMPILATION_NAME).run {
+            compileDependencyFiles = target.project.files()
+            compileKotlinTaskProvider.configure { it.enabled = false }
+        }
     }
 }
