@@ -575,46 +575,21 @@ internal open class JsCompilationDetails(
     compilationPurpose: String,
 ) : DefaultCompilationDetailsWithRuntime<KotlinJsOptions>(target, compilationPurpose, { KotlinJsOptionsImpl() }) {
 
-    protected open class JsCompilationDependenciesHolder(
-        val target: KotlinTarget,
-        val compilationPurpose: String
-    ) : HasKotlinDependencies {
-        override val apiConfigurationName: String
-            get() = disambiguateNameInPlatform(API)
-
-        override val implementationConfigurationName: String
-            get() = disambiguateNameInPlatform(IMPLEMENTATION)
-
-        override val compileOnlyConfigurationName: String
-            get() = disambiguateNameInPlatform(COMPILE_ONLY)
-
-        override val runtimeOnlyConfigurationName: String
-            get() = disambiguateNameInPlatform(RUNTIME_ONLY)
-
-        protected open val disambiguationClassifierInPlatform: String?
-            get() = when (target) {
+    override val kotlinDependenciesHolder: HasKotlinDependencies
+        get() {
+            val disambiguationClassifierInPlatform: String? = when (target) {
                 is KotlinJsTarget -> target.disambiguationClassifierInPlatform
                 is KotlinJsIrTarget -> target.disambiguationClassifierInPlatform
                 else -> error("Unexpected target type of $target")
             }
-
-        private fun disambiguateNameInPlatform(simpleName: String): String {
-            return lowerCamelCaseName(
-                disambiguationClassifierInPlatform,
-                compilationPurpose.takeIf { it != KotlinCompilation.MAIN_COMPILATION_NAME },
-                simpleName
+            return KotlinDependencyConfigurationsHolder(
+                project,
+                lowerCamelCaseName(
+                    disambiguationClassifierInPlatform,
+                    compilationPurpose.takeIf { it != KotlinCompilation.MAIN_COMPILATION_NAME },
+                )
             )
         }
-
-        override fun dependencies(configure: KotlinDependencyHandler.() -> Unit): Unit =
-            DefaultKotlinDependencyHandler(this, target.project).run(configure)
-
-        override fun dependencies(configureClosure: Closure<Any?>) =
-            dependencies f@{ project.configure(this@f, configureClosure) }
-    }
-
-    override val kotlinDependenciesHolder: HasKotlinDependencies
-        get() = JsCompilationDependenciesHolder(target, compilationPurpose)
 
     override val defaultSourceSetName: String
         get() {
@@ -649,14 +624,20 @@ internal class JsIrCompilationDetails(target: KotlinTarget, compilationPurpose: 
             )
         }
 
-    private class JsIrCompilationDependencyHolder(target: KotlinTarget, compilationPurpose: String) :
-        JsCompilationDependenciesHolder(target, compilationPurpose) {
-        override val disambiguationClassifierInPlatform: String?
-            get() = (target as KotlinJsIrTarget).disambiguationClassifierInPlatform
-    }
-
     override val kotlinDependenciesHolder: HasKotlinDependencies
-        get() = JsIrCompilationDependencyHolder(target, compilationPurpose)
+        get() {
+            val disambiguationClassifierInPlatform: String? = when (target) {
+                is KotlinJsIrTarget -> target.disambiguationClassifierInPlatform
+                else -> error("Unexpected target type of $target")
+            }
+            return KotlinDependencyConfigurationsHolder(
+                project,
+                lowerCamelCaseName(
+                    disambiguationClassifierInPlatform,
+                    compilationPurpose.takeIf { it != KotlinCompilation.MAIN_COMPILATION_NAME },
+                )
+            )
+        }
 }
 
 internal class KotlinDependencyConfigurationsHolder(
