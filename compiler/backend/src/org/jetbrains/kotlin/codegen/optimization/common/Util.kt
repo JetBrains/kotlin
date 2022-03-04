@@ -16,12 +16,11 @@
 
 package org.jetbrains.kotlin.codegen.optimization.common
 
-import org.jetbrains.kotlin.codegen.inline.MaxStackFrameSizeAndLocalsCalculator
+import org.jetbrains.kotlin.codegen.FastFrameSizeCalculator
 import org.jetbrains.kotlin.codegen.inline.insnText
 import org.jetbrains.kotlin.codegen.optimization.removeNodeGetNext
 import org.jetbrains.kotlin.codegen.pseudoInsns.PseudoInsn
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
-import org.jetbrains.org.objectweb.asm.MethodVisitor
 import org.jetbrains.org.objectweb.asm.Opcodes.*
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.tree.*
@@ -89,15 +88,7 @@ fun MethodNode.prepareForEmitting() {
 
 fun MethodNode.updateMaxStack() {
     maxStack = -1
-    accept(
-        MaxStackFrameSizeAndLocalsCalculator(
-            API_VERSION, access, desc,
-            object : MethodVisitor(API_VERSION) {
-                override fun visitMaxs(maxStack: Int, maxLocals: Int) {
-                    this@updateMaxStack.maxStack = maxStack
-                }
-            })
-    )
+    FastFrameSizeCalculator(this).updateMaxStack()
 }
 
 fun MethodNode.stripOptimizationMarkers() {
