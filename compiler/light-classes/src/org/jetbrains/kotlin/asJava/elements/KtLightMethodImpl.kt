@@ -12,17 +12,14 @@ import com.intellij.psi.scope.PsiScopeProcessor
 import com.intellij.psi.util.MethodSignature
 import com.intellij.psi.util.MethodSignatureBackedByPsiMethod
 import com.intellij.psi.util.PsiTreeUtil
-import org.jetbrains.kotlin.asJava.LightClassUtil
+import org.jetbrains.kotlin.asJava.*
 import org.jetbrains.kotlin.asJava.builder.LightMemberOrigin
 import org.jetbrains.kotlin.asJava.builder.LightMemberOriginForDeclaration
 import org.jetbrains.kotlin.asJava.builder.MemberIndex
 import org.jetbrains.kotlin.asJava.builder.memberIndex
-import org.jetbrains.kotlin.asJava.checkIsMangled
 import org.jetbrains.kotlin.asJava.classes.KtLightClass
 import org.jetbrains.kotlin.asJava.classes.cannotModify
 import org.jetbrains.kotlin.asJava.classes.lazyPub
-import org.jetbrains.kotlin.asJava.propertyNameByAccessor
-import org.jetbrains.kotlin.asJava.unwrapped
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
@@ -222,8 +219,11 @@ open class KtLightMethodImpl protected constructor(
             return KtLightMethodImpl(computeRealDelegate, origin, containingClass, dummyDelegate)
         }
 
-        fun fromClsMethods(delegateClass: PsiClass, containingClass: KtLightClass) = delegateClass.methods.map {
-            KtLightMethodImpl.create(it, getOrigin(it), containingClass)
+        fun fromClsMethods(delegateClass: PsiClass, containingClass: KtLightClass): List<KtLightMethodImpl> = buildList {
+            for (method in delegateClass.methods) {
+                if (isSyntheticValuesOrValueOfMethod(method)) continue
+                this += create(method, getOrigin(method), containingClass)
+            }
         }
 
         fun getOrigin(method: PsiMethod) = adjustMethodOrigin(getMemberOrigin(method))
