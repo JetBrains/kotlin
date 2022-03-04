@@ -6,10 +6,22 @@
 package org.jetbrains.kotlin.asJava
 
 import com.intellij.psi.PsiMethod
+import com.intellij.psi.PsiModifier
 import com.intellij.psi.SyntheticElement
-import org.jetbrains.kotlin.builtins.StandardNames
 
 fun isSyntheticValuesOrValueOfMethod(method: PsiMethod): Boolean {
-    if (method !is SyntheticElement) return false
-    return StandardNames.ENUM_VALUE_OF.asString() == method.name || StandardNames.ENUM_VALUES.asString() == method.name
+    if (method is SyntheticElement) {
+        val name = method.name
+        if (name == "values" || name == "valueOf") {
+            if (method.hasModifierProperty(PsiModifier.PUBLIC) && method.hasModifierProperty(PsiModifier.STATIC)) {
+                val parameterCount = method.parameterList.parametersCount
+                when (name) {
+                    "values" -> if (parameterCount == 0) return true
+                    "valueOf" -> if (parameterCount == 1) return true
+                }
+            }
+        }
+    }
+
+    return false
 }
