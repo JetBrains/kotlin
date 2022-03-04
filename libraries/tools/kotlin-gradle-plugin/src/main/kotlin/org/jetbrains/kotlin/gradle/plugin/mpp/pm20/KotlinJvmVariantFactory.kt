@@ -32,7 +32,7 @@ data class KotlinJvmVariantConfig(
     = DefaultKotlinApiElementsDefinition + KotlinFragmentCompilationOutputsJarArtifact,
 
     val runtimeElements: KotlinGradleFragmentConfigurationDefinition<KotlinJvmVariant>
-    = DefaultKotlinRuntimeElementsDefinition,
+    = DefaultKotlinRuntimeElementsDefinition + KotlinFragmentCompilationOutputsJarArtifact,
 
     val compileTaskConfigurator: KotlinCompileTaskConfigurator<KotlinJvmVariant>
     = KotlinJvmCompileTaskConfigurator,
