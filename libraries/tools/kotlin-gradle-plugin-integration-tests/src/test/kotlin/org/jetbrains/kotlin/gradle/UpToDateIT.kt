@@ -4,6 +4,8 @@ import org.gradle.testkit.runner.BuildResult
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.junit.jupiter.api.DisplayName
+import org.junit.jupiter.api.condition.DisabledOnOs
+import org.junit.jupiter.api.condition.OS
 import java.io.File
 import java.nio.file.Path
 import kotlin.io.path.appendText
@@ -40,6 +42,7 @@ class UpToDateIT : KGPBaseTest() {
     }
 
     @DisplayName("Misc changes")
+    @DisabledOnOs(OS.WINDOWS, disabledReason = "Failed to delete project directory")
     @GradleTest
     fun testOther(gradleVersion: GradleVersion) {
         testMutations(
