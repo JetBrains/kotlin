@@ -55,8 +55,13 @@ abstract class BuildMetricsReporterService : BuildService<BuildMetricsReporterSe
     }
 
     open fun addTransformMetrics(
-        transformPath: String, transformClass: Class<*>, isKotlinTransform: Boolean, startTimeMs: Long, totalTimeMs: Long,
-        buildMetrics: BuildMetrics, failureMessage: String?
+        transformPath: String,
+        transformClass: Class<*>,
+        isKotlinTransform: Boolean,
+        startTimeMs: Long,
+        totalTimeMs: Long,
+        buildMetrics: BuildMetrics,
+        failureMessage: String?
     ) {
         buildOperationRecords.add(
             TransformRecord(transformPath, transformClass.name, isKotlinTransform, startTimeMs, totalTimeMs, buildMetrics)
@@ -122,10 +127,9 @@ abstract class BuildMetricsReporterService : BuildService<BuildMetricsReporterSe
             val serviceName = "${serviceClass.name}_${serviceClass.classLoader.hashCode()}"
 
             // Return early if the service was already registered to avoid the overhead of reading the reporting settings below
-            val service = project.gradle.sharedServices.registrations.findByName(serviceName)
-            if (service != null) {
+            project.gradle.sharedServices.registrations.findByName(serviceName)?.let {
                 @Suppress("UNCHECKED_CAST")
-                return service.service as Provider<BuildMetricsReporterService>
+                return it.service as Provider<BuildMetricsReporterService>
             }
 
             val reportingSettings = reportingSettings(project.rootProject)

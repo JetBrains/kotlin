@@ -59,8 +59,15 @@ internal class PlainTextBuildReportWriter(
     }
 
     private fun printBuildReport(build: BuildExecutionData) {
+        // NOTE: BuildExecutionData / BuildOperationRecord contains data for both tasks and transforms.
+        // Where possible, we still use the term "tasks" because saying "tasks/transforms" is a bit verbose and "build operations" may sound
+        // a bit unfamiliar.
+        // TODO: If it is confusing, consider renaming "tasks" to "build operations" in this class.
         printBuildInfo(build)
-        printMetrics(build.aggregatedMetrics, printExtraLine = true)
+        if (printMetrics) {
+            printMetrics(build.aggregatedMetrics)
+            p.println()
+        }
         printTaskOverview(build)
         printTasksLog(build)
     }
@@ -77,13 +84,10 @@ internal class PlainTextBuildReportWriter(
         }
     }
 
-    private fun printMetrics(buildMetrics: BuildMetrics, printExtraLine: Boolean = false) {
-        if (!printMetrics) return
-
+    private fun printMetrics(buildMetrics: BuildMetrics) {
         printBuildTimes(buildMetrics.buildTimes)
         printBuildPerformanceMetrics(buildMetrics.buildPerformanceMetrics)
         printBuildAttributes(buildMetrics.buildAttributes)
-        if (printExtraLine) p.println()
     }
 
     private fun printBuildTimes(buildTimes: BuildTimes) {
@@ -215,7 +219,9 @@ internal class PlainTextBuildReportWriter(
             }
         }
 
-        printMetrics(task.buildMetrics)
+        if (printMetrics) {
+            printMetrics(task.buildMetrics)
+        }
     }
 }
 
