@@ -48,10 +48,10 @@ abstract class BuildMetricsReporterService : BuildService<BuildMetricsReporterSe
 
     open fun addTask(taskPath: String, taskClass: Class<*>, metricsReporter: BuildMetricsReporter) {
         taskPathToMetricsReporter.put(taskPath, metricsReporter).also {
-            check(it == null) { "Duplicate task path: $taskPath" }
+            if (it != null) log.warn("Duplicate task path: $taskPath") // Should never happen but log it just in case
         }
         taskPathToTaskClass.put(taskPath, taskClass.name).also {
-            check(it == null) { "Duplicate task path: $taskPath" }
+            if (it != null) log.warn("Duplicate task path: $taskPath") // Should never happen but log it just in case
         }
     }
 
