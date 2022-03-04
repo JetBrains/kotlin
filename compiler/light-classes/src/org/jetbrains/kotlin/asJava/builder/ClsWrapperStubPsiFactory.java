@@ -16,8 +16,6 @@ import com.intellij.psi.stubs.StubElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import static org.jetbrains.kotlin.asJava.SyntheticElementUtilsKt.isSyntheticValuesOrValueOfMethod;
-
 public class ClsWrapperStubPsiFactory extends StubPsiFactory {
     public static final Key<LightElementOrigin> ORIGIN = Key.create("ORIGIN");
     public static final ClsWrapperStubPsiFactory INSTANCE = new ClsWrapperStubPsiFactory();
@@ -42,30 +40,6 @@ public class ClsWrapperStubPsiFactory extends StubPsiFactory {
             @Override
             public PsiClass getSourceMirrorClass() {
                 return null;
-            }
-
-            @NotNull
-            @Override
-            public PsiMethod[] getMethods() {
-                PsiMethod[] baseMethods = super.getMethods();
-                if (!isEnum()) return baseMethods;
-
-                int filteredArraySize = 0;
-                for (PsiMethod method : baseMethods) {
-                    if (!isSyntheticValuesOrValueOfMethod(method)) filteredArraySize++;
-                }
-
-                if (filteredArraySize == baseMethods.length) return baseMethods;
-
-                PsiMethod[] filteredMethods = new PsiMethod[filteredArraySize];
-                int index = 0;
-                for (PsiMethod method : baseMethods) {
-                    if (!isSyntheticValuesOrValueOfMethod(method)) {
-                        filteredMethods[index] = method;
-                        index++;
-                    }
-                }
-                return filteredMethods;
             }
         };
     }
