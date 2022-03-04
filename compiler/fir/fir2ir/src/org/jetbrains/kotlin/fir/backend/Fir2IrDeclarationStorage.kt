@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir.backend
 
 import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.KtNodeTypes
+import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.builtins.StandardNames.BUILT_INS_PACKAGE_FQ_NAMES
 import org.jetbrains.kotlin.descriptors.DescriptorVisibility
 import org.jetbrains.kotlin.descriptors.Modality
@@ -1480,8 +1481,8 @@ class Fir2IrDeclarationStorage(
 
     companion object {
         internal val ENUM_SYNTHETIC_NAMES = mapOf(
-            Name.identifier("values") to IrSyntheticBodyKind.ENUM_VALUES,
-            Name.identifier("valueOf") to IrSyntheticBodyKind.ENUM_VALUEOF
+            StandardNames.ENUM_VALUES to IrSyntheticBodyKind.ENUM_VALUES,
+            StandardNames.ENUM_VALUE_OF to IrSyntheticBodyKind.ENUM_VALUEOF
         )
     }
 
