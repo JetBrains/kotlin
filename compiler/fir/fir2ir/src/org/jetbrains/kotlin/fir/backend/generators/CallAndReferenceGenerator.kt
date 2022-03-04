@@ -344,7 +344,7 @@ class CallAndReferenceGenerator(
                         val ktElement = qualifiedAccess.source?.psi as? KtElement
                             ?: throw Exception("KtElement is needed here")
                         val operator = ktElement.getDynamicOperator() ?: IrDynamicOperator.INVOKE
-                        if (operator == IrDynamicOperator.INVOKE) {
+                        if (operator == IrDynamicOperator.INVOKE && qualifiedAccess !is FirImplicitInvokeCall) {
                             val name = calleeReference.resolved?.name ?: throw Exception("There must be a name")
                             theExplicitReceiver = IrDynamicMemberExpressionImpl(
                                 startOffset, endOffset, type, name.identifier, explicitReceiverExpression
