@@ -8,8 +8,13 @@ repositories {
 }
 
 kotlin {
-    val jvmWithoutJava = jvm("jvmWithoutJava")
-    val jvmWithJava = targetFromPreset(presets["jvmWithJava"])
+    val jvmWithoutJava = jvm("jvmWithoutJava") {
+        attributes.attribute(Attribute.of("com.example.jvmtarget", String::class.java), "withoutJava")
+    }
+    val jvmWithJava = jvm("jvmWithJava") {
+        withJava()
+        attributes.attribute(Attribute.of("com.example.jvmtarget", String::class.java), "withJava")
+    }
     val js = js {
         nodejs()
     }
@@ -25,18 +30,18 @@ kotlin {
         	}
         }
 
-        val main by getting
+        val jvmWithJavaMain by getting
         val jvmWithoutJavaMain = jvmWithoutJava.compilations["main"].defaultSourceSet
-        configure(listOf(main, jvmWithoutJavaMain)) {
+        configure(listOf(jvmWithJavaMain, jvmWithoutJavaMain)) {
         	dependencies {
         		implementation(kotlin("stdlib"))
         		implementation(kotlin("script-runtime"))
         	}
         }
 
-        val test by getting
+        val jvmWithJavaTest by getting
         val jvmWithoutJavaTest = jvmWithoutJava.compilations["test"].defaultSourceSet
-        configure(listOf(test, jvmWithoutJavaTest)) {
+        configure(listOf(jvmWithJavaTest, jvmWithoutJavaTest)) {
         	dependencies {
         		implementation(kotlin("test-junit"))
         	}
