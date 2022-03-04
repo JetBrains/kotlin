@@ -545,7 +545,7 @@ open class KotlinNativeTargetConfigurator<T : KotlinNativeTarget> : AbstractKotl
     }
 }
 
-internal class KpmNativeTargetConfigurator<T : KotlinNativeTarget>(private val nativeTargetConfigurator: KotlinNativeTargetConfigurator<T>) :
+internal open class KpmNativeTargetConfigurator<T : KotlinNativeTarget>(nativeTargetConfigurator: KotlinNativeTargetConfigurator<T>) :
     KpmAwareTargetConfigurator<T>(nativeTargetConfigurator) {
 
     override fun configureTarget(target: T) {
@@ -558,10 +558,30 @@ internal class KpmNativeTargetConfigurator<T : KotlinNativeTarget>(private val n
     }
 }
 
+internal open class KpmNativeTargetWithTestsConfigurator<
+        T : KotlinNativeTargetWithTests<TestRunType>,
+        TestRunType : KotlinNativeBinaryTestRun,
+        TaskType : KotlinNativeTest>(
+    private val nativeTargetConfigurator: KotlinNativeTargetWithTestsConfigurator<T, TestRunType, TaskType>,
+) : KpmNativeTargetConfigurator<T>(nativeTargetConfigurator), KotlinTargetWithTestsConfigurator<TestRunType, T> {
+
+    override fun configureTarget(target: T) {
+        super<KpmNativeTargetConfigurator>.configureTarget(target)
+        configureTest(target)
+    }
+
+    override val testRunClass: Class<TestRunType>
+        get() = nativeTargetConfigurator.testRunClass
+
+    override fun createTestRun(name: String, target: T): TestRunType =
+        nativeTargetConfigurator.createTestRun(name, target)
+}
+
 abstract class KotlinNativeTargetWithTestsConfigurator<
         TargetType : KotlinNativeTargetWithTests<TestRunType>,
         TestRunType : KotlinNativeBinaryTestRun,
-        TaskType : KotlinNativeTest>(
+        TaskType : KotlinNativeTest,
+        >(
 ) : KotlinNativeTargetConfigurator<TargetType>(),
     KotlinTargetWithTestsConfigurator<TestRunType, TargetType> {
 
