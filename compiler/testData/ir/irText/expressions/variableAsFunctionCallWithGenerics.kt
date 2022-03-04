@@ -1,3 +1,5 @@
+// IGNORE_BACKEND_FIR: ANY
+
 val <T : CharSequence> T.gk: () -> T
     get() = { -> this }
 
