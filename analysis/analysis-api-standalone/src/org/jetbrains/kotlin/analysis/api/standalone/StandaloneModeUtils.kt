@@ -17,20 +17,16 @@ import org.jetbrains.kotlin.analysis.api.InvalidWayOfUsingAnalysisSession
 import org.jetbrains.kotlin.analysis.api.KtAnalysisSessionProvider
 import org.jetbrains.kotlin.analysis.api.fir.KtFirAnalysisSessionProvider
 import org.jetbrains.kotlin.analysis.api.impl.base.references.HLApiReferenceProviderService
+import org.jetbrains.kotlin.analysis.decompiled.light.classes.ClsJavaStubByVirtualFileCache
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.services.FirSealedClassInheritorsProcessorFactory
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.services.PackagePartProviderFactory
 import org.jetbrains.kotlin.analysis.project.structure.KtModuleScopeProvider
 import org.jetbrains.kotlin.analysis.project.structure.KtModuleScopeProviderImpl
 import org.jetbrains.kotlin.analysis.project.structure.ProjectStructureProvider
 import org.jetbrains.kotlin.analysis.project.structure.impl.ProjectStructureProviderByCompilerConfiguration
-import org.jetbrains.kotlin.analysis.providers.KotlinAnnotationsResolverFactory
-import org.jetbrains.kotlin.analysis.providers.KotlinDeclarationProviderFactory
-import org.jetbrains.kotlin.analysis.providers.KotlinModificationTrackerFactory
-import org.jetbrains.kotlin.analysis.providers.KotlinPackageProviderFactory
-import org.jetbrains.kotlin.analysis.providers.impl.KotlinStaticAnnotationsResolverFactory
-import org.jetbrains.kotlin.analysis.providers.impl.KotlinStaticDeclarationProviderFactory
-import org.jetbrains.kotlin.analysis.providers.impl.KotlinStaticModificationTrackerFactory
-import org.jetbrains.kotlin.analysis.providers.impl.KotlinStaticPackageProviderFactory
+import org.jetbrains.kotlin.analysis.providers.*
+import org.jetbrains.kotlin.analysis.providers.impl.*
+import org.jetbrains.kotlin.analysis.providers.impl.StaticCompiledDeclarationProviderFactory
 import org.jetbrains.kotlin.asJava.KotlinAsJavaSupport
 import org.jetbrains.kotlin.asJava.finder.JavaElementFinder
 import org.jetbrains.kotlin.cli.jvm.config.javaSourceRoots
@@ -76,6 +72,7 @@ public fun configureApplicationEnvironment(app: MockApplication) {
  *   * [KtAnalysisSessionProvider]
  *   * [KotlinAsJavaFirSupport]
  *   * [SymbolLightClassFacadeCache] for FIR light class support
+ *   * [ClsJavaStubByVirtualFileCache]
  *   * [KotlinModificationTrackerFactory]
  *   * [KotlinAnnotationsResolverFactory]
  *   * [LLFirResolveStateService]
@@ -151,6 +148,9 @@ internal fun configureProjectEnvironment(
     project.registerService(
         SymbolLightClassFacadeCache::class.java
     )
+    project.registerService(
+        ClsJavaStubByVirtualFileCache::class.java
+    )
 
     project.picoContainer.registerComponentInstance(
         KotlinModificationTrackerFactory::class.qualifiedName,
@@ -176,12 +176,22 @@ internal fun configureProjectEnvironment(
         KtModuleScopeProviderImpl()
     )
 
-    project.picoContainer.registerComponentInstance(
-        ProjectStructureProvider::class.qualifiedName,
+    val projectStructureProvider =
         ProjectStructureProviderByCompilerConfiguration(
             compilerConfig,
             project,
             ktFiles,
+            jarFileSystem
+        )
+    project.picoContainer.registerComponentInstance(
+        ProjectStructureProvider::class.qualifiedName,
+        projectStructureProvider
+    )
+    project.picoContainer.registerComponentInstance(
+        CompiledDeclarationProviderFactory::class.qualifiedName,
+        StaticCompiledDeclarationProviderFactory(
+            project,
+            projectStructureProvider.libraryModules,
             jarFileSystem
         )
     )

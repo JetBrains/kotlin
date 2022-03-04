@@ -36,6 +36,7 @@ private fun FirElement.getAllowedPsi() = when (val source = source) {
 fun FirElement.findPsi(project: Project): PsiElement? =
     getAllowedPsi()
         ?: FirDeserializedDeclarationSourceProvider.findPsi(this, project)
+        ?: FirCompiledDeclarationProvider.findPsi(this, project)
 
 fun FirBasedSymbol<*>.findPsi(): PsiElement? =
     fir.findPsi(fir.moduleData.session)
@@ -51,3 +52,4 @@ fun FirElement.findPsi(session: FirSession): PsiElement? =
 fun FirDeclaration.findReferencePsi(): PsiElement? =
     psi
         ?: FirDeserializedDeclarationSourceProvider.findPsi(this, (moduleData.session as LLFirSession).project)
+        ?: FirCompiledDeclarationProvider.findPsi(this, (moduleData.session as LLFirSession).project)
