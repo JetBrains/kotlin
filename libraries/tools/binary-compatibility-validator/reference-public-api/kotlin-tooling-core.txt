@@ -1,0 +1,59 @@
+public final class org/jetbrains/kotlin/tooling/core/ClosureKt {
+	public static final fun closureTo (Ljava/util/Set;Ljava/util/Set;Ljava/util/List;Ljava/lang/Object;Lkotlin/jvm/functions/Function2;)Ljava/util/Set;
+	public static final fun createResultSet (I)Ljava/util/Set;
+	public static final fun createResultSet (Ljava/lang/Iterable;I)Ljava/util/Set;
+	public static final fun createResultSet (Ljava/lang/Object;I)Ljava/util/Set;
+}
+
+public final class org/jetbrains/kotlin/tooling/core/KotlinToolingVersion : java/io/Serializable, java/lang/Comparable {
+	public static final field Companion Lorg/jetbrains/kotlin/tooling/core/KotlinToolingVersion$Companion;
+	public synthetic fun <init> (IIILjava/lang/String;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public synthetic fun compareTo (Ljava/lang/Object;)I
+	public fun compareTo (Lorg/jetbrains/kotlin/tooling/core/KotlinToolingVersion;)I
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getClassifier ()Ljava/lang/String;
+	public final fun getMajor ()I
+	public final fun getMaturity ()Lorg/jetbrains/kotlin/tooling/core/KotlinToolingVersion$Maturity;
+	public final fun getMinor ()I
+	public final fun getPatch ()I
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class org/jetbrains/kotlin/tooling/core/KotlinToolingVersion$Companion {
+	public final fun create (IIILjava/lang/String;)Lorg/jetbrains/kotlin/tooling/core/KotlinToolingVersion;
+	public static synthetic fun create$default (Lorg/jetbrains/kotlin/tooling/core/KotlinToolingVersion$Companion;IIILjava/lang/String;ILjava/lang/Object;)Lorg/jetbrains/kotlin/tooling/core/KotlinToolingVersion;
+}
+
+public final class org/jetbrains/kotlin/tooling/core/KotlinToolingVersion$Maturity : java/lang/Enum {
+	public static final field ALPHA Lorg/jetbrains/kotlin/tooling/core/KotlinToolingVersion$Maturity;
+	public static final field BETA Lorg/jetbrains/kotlin/tooling/core/KotlinToolingVersion$Maturity;
+	public static final field DEV Lorg/jetbrains/kotlin/tooling/core/KotlinToolingVersion$Maturity;
+	public static final field MILESTONE Lorg/jetbrains/kotlin/tooling/core/KotlinToolingVersion$Maturity;
+	public static final field RC Lorg/jetbrains/kotlin/tooling/core/KotlinToolingVersion$Maturity;
+	public static final field SNAPSHOT Lorg/jetbrains/kotlin/tooling/core/KotlinToolingVersion$Maturity;
+	public static final field STABLE Lorg/jetbrains/kotlin/tooling/core/KotlinToolingVersion$Maturity;
+	public static fun valueOf (Ljava/lang/String;)Lorg/jetbrains/kotlin/tooling/core/KotlinToolingVersion$Maturity;
+	public static fun values ()[Lorg/jetbrains/kotlin/tooling/core/KotlinToolingVersion$Maturity;
+}
+
+public final class org/jetbrains/kotlin/tooling/core/KotlinToolingVersionKt {
+	public static final fun KotlinToolingVersion (Ljava/lang/String;)Lorg/jetbrains/kotlin/tooling/core/KotlinToolingVersion;
+	public static final fun KotlinToolingVersion (Lkotlin/KotlinVersion;Ljava/lang/String;)Lorg/jetbrains/kotlin/tooling/core/KotlinToolingVersion;
+	public static synthetic fun KotlinToolingVersion$default (Lkotlin/KotlinVersion;Ljava/lang/String;ILjava/lang/Object;)Lorg/jetbrains/kotlin/tooling/core/KotlinToolingVersion;
+	public static final fun compareTo (Ljava/lang/String;Lorg/jetbrains/kotlin/tooling/core/KotlinToolingVersion;)I
+	public static final fun compareTo (Lorg/jetbrains/kotlin/tooling/core/KotlinToolingVersion;Ljava/lang/String;)I
+	public static final fun getBuildNumber (Lorg/jetbrains/kotlin/tooling/core/KotlinToolingVersion;)Ljava/lang/Integer;
+	public static final fun getClassifierNumber (Lorg/jetbrains/kotlin/tooling/core/KotlinToolingVersion;)Ljava/lang/Integer;
+	public static final fun isAlpha (Lorg/jetbrains/kotlin/tooling/core/KotlinToolingVersion;)Z
+	public static final fun isBeta (Lorg/jetbrains/kotlin/tooling/core/KotlinToolingVersion;)Z
+	public static final fun isDev (Lorg/jetbrains/kotlin/tooling/core/KotlinToolingVersion;)Z
+	public static final fun isMilestone (Lorg/jetbrains/kotlin/tooling/core/KotlinToolingVersion;)Z
+	public static final fun isPreRelease (Lorg/jetbrains/kotlin/tooling/core/KotlinToolingVersion;)Z
+	public static final fun isRC (Lorg/jetbrains/kotlin/tooling/core/KotlinToolingVersion;)Z
+	public static final fun isSnapshot (Lorg/jetbrains/kotlin/tooling/core/KotlinToolingVersion;)Z
+	public static final fun isStable (Lorg/jetbrains/kotlin/tooling/core/KotlinToolingVersion;)Z
+	public static final fun toKotlinToolingVersion (Lkotlin/KotlinVersion;Ljava/lang/String;)Lorg/jetbrains/kotlin/tooling/core/KotlinToolingVersion;
+	public static synthetic fun toKotlinToolingVersion$default (Lkotlin/KotlinVersion;Ljava/lang/String;ILjava/lang/Object;)Lorg/jetbrains/kotlin/tooling/core/KotlinToolingVersion;
+	public static final fun toKotlinVersion (Lorg/jetbrains/kotlin/tooling/core/KotlinToolingVersion;)Lkotlin/KotlinVersion;
+}
