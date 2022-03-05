@@ -126,6 +126,7 @@ targetList.forEach { targetName ->
         tasks.register("${targetName}${library.taskName}Cache", KonanCacheTask::class.java) {
             target = targetName
             originalKlib = project.buildDir.resolve("$targetName${library.name}")
+            klibUniqName = library.name
             cacheRoot = project.buildDir.resolve("cache/$targetName").absolutePath
 
             cachedLibraries = mapOf(distDir.resolve("klib/common/stdlib") to
