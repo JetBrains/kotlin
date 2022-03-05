@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.publishedConfigurationName
 import org.jetbrains.kotlin.gradle.plugin.usageByName
 import org.jetbrains.kotlin.gradle.tasks.withType
 import org.jetbrains.kotlin.gradle.utils.dashSeparatedName
+import org.jetbrains.kotlin.project.model.KotlinModuleFragment
 import java.util.*
 import javax.inject.Inject
 
@@ -103,7 +104,8 @@ open class VariantPublishingConfigurator @Inject constructor(
             project.objects.newInstance(VariantPublishingConfigurator::class.java, project)
     }
 
-    open fun platformComponentName(variant: KotlinGradleVariant) = variant.disambiguateName("")
+    open fun platformComponentName(variant: KotlinGradleVariant) =
+        KotlinModuleFragment.Companion.disambiguateNameOmittingMain(variant.containingModule, variant.name, "")
 
     open fun inferMavenScope(variant: KotlinGradleVariant, configurationName: String): String? =
         when {
