@@ -236,6 +236,7 @@ include ":benchmarks",
         ":gradle:regression-benchmark-templates",
         ":gradle:regression-benchmarks",
         ":kotlin-tooling-metadata",
+        ":kotlin-tooling-core",
         ":kotlin-allopen",
         ":kotlin-noarg",
         ":kotlin-sam-with-receiver",
@@ -680,6 +681,7 @@ project(':gradle:android-test-fixes').projectDir = "$rootDir/libraries/tools/gra
 project(":gradle:regression-benchmark-templates").projectDir = "$rootDir/libraries/tools/gradle/regression-benchmark-templates" as File
 project(":gradle:regression-benchmarks").projectDir = "$rootDir/libraries/tools/gradle/regression-benchmarks" as File
 project(':kotlin-tooling-metadata').projectDir = "$rootDir/libraries/tools/kotlin-tooling-metadata" as File
+project(':kotlin-tooling-core').projectDir = "$rootDir/libraries/tools/kotlin-tooling-core" as File
 project(':kotlin-allopen').projectDir = "$rootDir/libraries/tools/kotlin-allopen" as File
 project(':kotlin-noarg').projectDir = "$rootDir/libraries/tools/kotlin-noarg" as File
 project(':kotlin-sam-with-receiver').projectDir = "$rootDir/libraries/tools/kotlin-sam-with-receiver" as File
