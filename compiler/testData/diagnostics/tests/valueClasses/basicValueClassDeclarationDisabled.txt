@@ -38,9 +38,9 @@ package kotlin {
 
         public value object InlineObject {
             private constructor InlineObject()
-            public open override /*1*/ /*synthesized*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-            public open override /*1*/ /*synthesized*/ fun hashCode(): kotlin.Int
-            public open override /*1*/ /*synthesized*/ fun toString(): kotlin.String
+            public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+            public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+            public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
         }
 
         public final annotation class JvmInline : kotlin.Annotation {
