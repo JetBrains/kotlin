@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinSharedNativeCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.kotlinSourceSetsIncludingDefault
-import org.jetbrains.kotlin.gradle.plugin.sources.resolveAllDependsOnSourceSets
+import org.jetbrains.kotlin.gradle.plugin.sources.withDependsOnClosure
 
 internal fun KotlinSharedNativeCompilation.getImplicitlyDependingNativeCompilations(): Set<KotlinNativeCompilation> {
     val multiplatformExtension = project.multiplatformExtensionOrNull ?: return emptySet()
@@ -30,5 +30,5 @@ internal fun KotlinSharedNativeCompilation.getImplicitlyDependingNativeCompilati
  * see KT-45412
  */
 private fun KotlinCompilation<*>.allParticipatingSourceSets(): Set<KotlinSourceSet> {
-    return kotlinSourceSetsIncludingDefault + kotlinSourceSetsIncludingDefault.resolveAllDependsOnSourceSets()
+    return kotlinSourceSetsIncludingDefault.withDependsOnClosure
 }

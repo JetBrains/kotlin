@@ -19,11 +19,12 @@ import org.gradle.api.tasks.TaskState
 import org.jetbrains.kotlin.gradle.dsl.*
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.*
-import org.jetbrains.kotlin.gradle.plugin.sources.resolveAllDependsOnSourceSets
+import org.jetbrains.kotlin.gradle.plugin.sources.withDependsOnClosure
 import org.jetbrains.kotlin.gradle.tasks.AbstractKotlinCompile
 import org.jetbrains.kotlin.gradle.tasks.locateTask
 import org.jetbrains.kotlin.gradle.utils.*
 import org.jetbrains.kotlin.project.model.LanguageSettings
+import org.jetbrains.kotlin.tooling.core.closure
 import java.util.*
 import java.util.concurrent.Callable
 
@@ -137,8 +138,7 @@ abstract class AbstractKotlinCompilation<T : KotlinCommonOptions>(
         get() = target
 
     override val allKotlinSourceSets: Set<KotlinSourceSet>
-        get() = compilationDetails.directlyIncludedKotlinSourceSets +
-                compilationDetails.directlyIncludedKotlinSourceSets.resolveAllDependsOnSourceSets()
+        get() = compilationDetails.directlyIncludedKotlinSourceSets.withDependsOnClosure
 
     override val relatedConfigurationNames: List<String>
         get() = compilationDetails.kotlinDependenciesHolder.relatedConfigurationNames + compileDependencyConfigurationName
@@ -181,15 +181,8 @@ internal fun addSourcesToKotlinCompileTask(
         }
 }
 
-internal val KotlinCompilation<*>.associateWithTransitiveClosure: Iterable<KotlinCompilation<*>>
-    get() = mutableSetOf<KotlinCompilation<*>>().apply {
-        fun visit(other: KotlinCompilation<*>) {
-            if (add(other)) {
-                other.associateWith.forEach(::visit)
-            }
-        }
-        associateWith.forEach(::visit)
-    }
+internal val KotlinCompilation<*>.associateWithClosure: Iterable<KotlinCompilation<*>>
+    get() = this.closure { it.associateWith }
 
 abstract class AbstractKotlinCompilationToRunnableFiles<T : KotlinCommonOptions>(
     override val compilationDetails: CompilationDetailsWithRuntime<T>,

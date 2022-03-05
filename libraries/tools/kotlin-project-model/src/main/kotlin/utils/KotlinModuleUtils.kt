@@ -8,22 +8,14 @@ package org.jetbrains.kotlin.project.model.utils
 import org.jetbrains.kotlin.project.model.KotlinModule
 import org.jetbrains.kotlin.project.model.KotlinModuleFragment
 import org.jetbrains.kotlin.project.model.KotlinModuleVariant
-import org.jetbrains.kotlin.project.model.refinesClosure
+import org.jetbrains.kotlin.project.model.withRefinesClosure
+import org.jetbrains.kotlin.tooling.core.closure
 
 fun KotlinModule.variantsContainingFragment(fragment: KotlinModuleFragment): Iterable<KotlinModuleVariant> =
-    variants.filter { fragment in it.refinesClosure }
+    variants.filter { variant -> fragment in variant.withRefinesClosure }
 
 fun KotlinModule.findRefiningFragments(fragment: KotlinModuleFragment): Iterable<KotlinModuleFragment> {
-    val refining = mutableSetOf<KotlinModuleFragment>()
-    val notRefining = mutableSetOf<KotlinModuleFragment>()
-
-    fun isRefining(other: KotlinModuleFragment): Boolean = when {
-        other in refining -> true
-        other in notRefining -> false
-        fragment in other.directRefinesDependencies -> true.also { refining.add(other) }
-        fragment.directRefinesDependencies.any { isRefining(it) } -> true.also { refining.add(other) }
-        else -> false.also { notRefining.add(other) }
+    return fragment.closure { seedFragment ->
+        fragments.filter { otherFragment -> seedFragment in otherFragment.directRefinesDependencies }
     }
-
-    return fragments.filter(::isRefining)
 }

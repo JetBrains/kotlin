@@ -5,13 +5,13 @@
 
 package org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util
 
-import org.jetbrains.kotlin.commonizer.util.transitiveClosure
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.GradleDependencyGraph
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.GradleDependencyGraphNode
 import org.jetbrains.kotlin.project.model.KotlinModule
+import org.jetbrains.kotlin.tooling.core.withClosure
 
 internal val GradleDependencyGraph.allDependencyNodes: Iterable<GradleDependencyGraphNode>
-    get() = transitiveClosure(root) { dependenciesByFragment.values.flatten() }
+    get() = root.withClosure { it.dependenciesByFragment.values.flatten() }
 
 internal val GradleDependencyGraph.allDependencyModules: Iterable<KotlinModule>
     get() = allDependencyNodes.map { it.module }

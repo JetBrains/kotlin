@@ -49,7 +49,7 @@ class DefaultModuleFragmentsResolver(
 
         val chosenFragments = chosenVariants.map { variantResolution ->
             when (variantResolution) {
-                is VariantResolution.VariantMatch -> variantResolution.chosenVariant.refinesClosure
+                is VariantResolution.VariantMatch -> variantResolution.chosenVariant.withRefinesClosure
                 else -> emptySet()
             }
         }

@@ -181,7 +181,7 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments> : AbstractKotl
             task.friendPaths.from(project.provider { compilation.friendPaths })
 
             if (compilation is KotlinCompilation<*>) {
-                task.friendSourceSets.set(project.provider { compilation.associateWithTransitiveClosure.map { it.name } })
+                task.friendSourceSets.set(project.provider { compilation.associateWithClosure.map { it.name } })
                 // FIXME support compiler plugins with PM20
                 task.pluginClasspath.from(project.configurations.getByName(compilation.pluginConfigurationName))
             }

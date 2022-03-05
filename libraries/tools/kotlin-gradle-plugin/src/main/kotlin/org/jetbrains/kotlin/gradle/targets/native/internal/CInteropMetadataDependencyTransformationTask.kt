@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.MetadataDependencyResolution.Choos
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.toModuleIdentifiers
 import org.jetbrains.kotlin.gradle.plugin.sources.DefaultKotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.sources.SourceSetMetadataStorageForIde
-import org.jetbrains.kotlin.gradle.plugin.sources.resolveAllDependsOnSourceSets
+import org.jetbrains.kotlin.gradle.plugin.sources.dependsOnClosure
 import org.jetbrains.kotlin.gradle.tasks.dependsOn
 import org.jetbrains.kotlin.gradle.tasks.locateOrRegisterTask
 import org.jetbrains.kotlin.gradle.tasks.withType
@@ -87,7 +87,7 @@ internal fun Project.locateOrRegisterCInteropMetadataDependencyTransformationTas
  */
 private fun CInteropMetadataDependencyTransformationTask.configureTaskOrder() {
     val tasksForVisibleSourceSets = Callable {
-        val allVisibleSourceSets = sourceSet.resolveAllDependsOnSourceSets() + sourceSet.getAdditionalVisibleSourceSets()
+        val allVisibleSourceSets = sourceSet.dependsOnClosure + sourceSet.getAdditionalVisibleSourceSets()
         project.tasks.withType<CInteropMetadataDependencyTransformationTask>().matching { it.sourceSet in allVisibleSourceSets }
     }
     mustRunAfter(tasksForVisibleSourceSets)
