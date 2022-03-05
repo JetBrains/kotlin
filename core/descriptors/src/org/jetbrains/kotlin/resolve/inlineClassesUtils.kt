@@ -27,6 +27,8 @@ fun DeclarationDescriptor.isMultiFieldValueClass(): Boolean =
 
 fun DeclarationDescriptor.isValueClass(): Boolean = isInlineClass() || isMultiFieldValueClass()
 
+fun DeclarationDescriptor.isSealedInlineClass(): Boolean = this is ClassDescriptor && isValue && modality == Modality.SEALED
+
 fun KotlinType.unsubstitutedUnderlyingType(): KotlinType? =
     constructor.declarationDescriptor.safeAs<ClassDescriptor>()?.inlineClassRepresentation?.underlyingType
 

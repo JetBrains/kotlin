@@ -113,19 +113,16 @@ class ClassGenerator(
 
             generateFakeOverrideMemberDeclarations(irClass, ktClassOrObject)
 
-            irClass.valueClassRepresentation = classDescriptor.valueClassRepresentation?.mapUnderlyingType { type ->
-                type.toIrType() as? IrSimpleType ?: error("Value class underlying type is not a simple type: $classDescriptor")
-            }
-
-            if (irClass.isSingleFieldValueClass && ktClassOrObject is KtClassOrObject) {
-                val representation = classDescriptor.valueClassRepresentation
-                    ?: error("Unknown representation for inline class: $classDescriptor")
-
+            if (irClass.isInline && ktClassOrObject is KtClassOrObject) {
                 irClass.valueClassRepresentation =
                     if (irClass.modality == Modality.SEALED)
                         InlineClassRepresentation(Name.identifier("\$value"), context.irBuiltIns.anyNType as IrSimpleType)
-                    else representation.mapUnderlyingType { type ->
-                        type.toIrType() as? IrSimpleType ?: error("Inline class underlying type is not a simple type: $classDescriptor")
+                    else {
+                        val representation = classDescriptor.inlineClassRepresentation
+                            ?: error("Unknown representation for inline class: $classDescriptor")
+                        representation.mapUnderlyingType { type ->
+                            type.toIrType() as? IrSimpleType ?: error("Inline class underlying type is not a simple type: $classDescriptor")
+                        }
                     }
 
                 val isSealedInlineSubclassOfSealedInlineClass =

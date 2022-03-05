@@ -1,12 +1,15 @@
-// CHECK_BYTECODE_LISTING
-// LANGUAGE: -JvmInlineValueClasses, +SealedInlineClasses
 // IGNORE_BACKEND: JVM
+// WITH_STDLIB
+// WORKS_WHEN_VALUE_CLASS
+// LANGUAGE: +ValueClasses, +SealedInlineClasses
 
-sealed inline class IC
+OPTIONAL_JVM_INLINE_ANNOTATION
+sealed value class IC
 
-inline class ICString(val s: String): IC()
+OPTIONAL_JVM_INLINE_ANNOTATION
+value class ICString(val s: String): IC()
 
-object ICO: IC()
+value object ICO: IC()
 
 fun check(ic: IC): String = when(ic) {
     is ICString -> ic.s

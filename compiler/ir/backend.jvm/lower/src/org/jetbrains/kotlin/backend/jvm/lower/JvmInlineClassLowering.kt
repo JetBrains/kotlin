@@ -88,12 +88,14 @@ private class JvmInlineClassLowering(context: JvmBackendContext) : JvmValueClass
             val inlineSubclasses = collectSubclasses(declaration) { it.owner.isInline }
             val inlineDirectSubclasses = declaration.sealedSubclasses.filter { it.owner.isInline }
             val noinlineSubclasses = collectSubclasses(declaration) { !it.owner.isInline }
+            val noinlineDirectSubclasses = declaration.sealedSubclasses.filterNot { it.owner.isInline }
 
             // TODO: Generate during Psi2Ir/Fir2Ir
             // TODO: Merge with rewriteOpenMethodsForSealed
             rewriteFunctionFromAnyForSealed(declaration, inlineSubclasses, noinlineSubclasses, "hashCode")
             rewriteFunctionFromAnyForSealed(declaration, inlineSubclasses, noinlineSubclasses, "toString")
             rewriteOpenMethodsForSealed(declaration, inlineDirectSubclasses, noinlineSubclasses)
+            buildSpecializedEqualsMethodForSealed(declaration, inlineDirectSubclasses, noinlineDirectSubclasses)
         }
     }
 
@@ -171,7 +173,9 @@ private class JvmInlineClassLowering(context: JvmBackendContext) : JvmValueClass
             methodToOverride.isOperator,
             methodToOverride.isInfix,
             methodToOverride.isExpect
-        )
+        ).also {
+            it.parent = irClass
+        }
 
         fakeOverride.overriddenSymbols += methodToOverride.symbol
         fakeOverride.dispatchReceiverParameter = irClass.thisReceiver?.copyTo(fakeOverride, type = irClass.defaultType)
@@ -629,7 +633,9 @@ private class JvmInlineClassLowering(context: JvmBackendContext) : JvmValueClass
                         isNoinline = false,
                         isHidden = false,
                         isAssignable = false
-                    )
+                    ).also {
+                        it.parent = this
+                    }
                 )
             }
             // Don't create a default argument stub for the primary constructor

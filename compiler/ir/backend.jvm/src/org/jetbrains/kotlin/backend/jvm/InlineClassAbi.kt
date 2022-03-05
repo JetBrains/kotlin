@@ -61,14 +61,14 @@ object InlineClassAbi {
     fun mangledNameFor(irFunction: IrFunction, mangleReturnTypes: Boolean, useOldMangleRules: Boolean): Name {
         if (irFunction is IrConstructor) {
             // Note that we might drop this convention and use standard mangling for constructors too, see KT-37186.
-            assert(irFunction.constructedClass.isSingleFieldValueClass) {
+            assert(irFunction.constructedClass.isInline) {
                 "Should not mangle names of non-inline class constructors: ${irFunction.render()}"
             }
             return constructorName
         }
 
         val suffix = hashSuffix(irFunction, mangleReturnTypes, useOldMangleRules)
-        if (suffix == null && ((irFunction.parent as? IrClass)?.isSingleFieldValueClass != true || irFunction.origin == IrDeclarationOrigin.IR_BUILTINS_STUB)) {
+        if (suffix == null && ((irFunction.parent as? IrClass)?.isInline != true || irFunction.origin == IrDeclarationOrigin.IR_BUILTINS_STUB)) {
             return irFunction.name
         }
 

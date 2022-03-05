@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.ir.declarations
 
 import org.jetbrains.kotlin.descriptors.InlineClassRepresentation
+import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.MultiFieldValueClassRepresentation
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
@@ -20,13 +21,13 @@ fun <D : IrAttributeContainer> D.copyAttributes(other: IrAttributeContainer?): D
 }
 
 val IrClass.isSingleFieldValueClass: Boolean
-    get() = valueClassRepresentation is InlineClassRepresentation
+    get() = this.isValue && valueClassRepresentation is InlineClassRepresentation
 
 val IrClass.isInline: Boolean
-    get() = isSingleFieldValueClass
+    get() = isSingleFieldValueClass || (isValue && modality == Modality.SEALED)
 
 val IrClass.isMultiFieldValueClass: Boolean
-    get() = valueClassRepresentation is MultiFieldValueClassRepresentation
+    get() = this.isValue && valueClassRepresentation is MultiFieldValueClassRepresentation
 
 fun IrClass.addMember(member: IrDeclaration) {
     declarations.add(member)

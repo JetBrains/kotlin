@@ -184,7 +184,7 @@ class MemoizedInlineClassReplacements(
 
     private val specializedEqualsCache = storageManager.createCacheWithNotNullValues<IrClass, IrSimpleFunction>()
     fun getSpecializedEqualsMethod(irClass: IrClass, irBuiltIns: IrBuiltIns): IrSimpleFunction {
-        require(irClass.isSingleFieldValueClass)
+        require(irClass.isInline)
         return specializedEqualsCache.computeIfAbsent(irClass) {
             irFactory.buildFun {
                 name = InlineClassDescriptorResolver.SPECIALIZED_EQUALS_NAME

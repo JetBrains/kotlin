@@ -1,15 +1,19 @@
-// LANGUAGE: -JvmInlineValueClasses, +SealedInlineClasses
 // IGNORE_BACKEND: JVM
+// WITH_STDLIB
+// WORKS_WHEN_VALUE_CLASS
+// LANGUAGE: +ValueClasses, +SealedInlineClasses
 
 var res = ""
 
-sealed inline class I {
+OPTIONAL_JVM_INLINE_ANNOTATION
+sealed value class I {
     init {
         res += "O"
     }
 }
 
-inline class IC(val s: Int): I() {
+OPTIONAL_JVM_INLINE_ANNOTATION
+value class IC(val s: Int): I() {
     init {
         res += "K"
     }

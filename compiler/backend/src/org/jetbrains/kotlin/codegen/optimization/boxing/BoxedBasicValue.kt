@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.codegen.AsmUtil
 import org.jetbrains.kotlin.codegen.optimization.common.StrictBasicValue
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.resolve.isInlineClass
+import org.jetbrains.kotlin.resolve.isSealedInlineClass
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.tree.AbstractInsnNode
@@ -118,9 +119,14 @@ fun getUnboxedType(boxedType: Type, state: GenerationState): Type {
 }
 
 fun unboxedTypeOfInlineClass(boxedType: Type, state: GenerationState): Type? {
-    val descriptor =
-        state.jvmBackendClassResolver.resolveToClassDescriptors(boxedType).singleOrNull()?.takeIf { it.isInlineClass() } ?: return null
-    return state.mapInlineClass(descriptor)
+    val descriptor = state.jvmBackendClassResolver.resolveToClassDescriptors(boxedType).singleOrNull() ?: return null
+
+    val inlineClassDescriptor =
+        if (descriptor.isInlineClass() || descriptor.isSealedInlineClass())
+            descriptor
+        else return null
+
+    return state.mapInlineClass(inlineClassDescriptor)
 }
 
 private fun isInlineClassValue(boxedType: Type): Boolean {
