@@ -836,8 +836,8 @@ class NewMultiplatformIT : BaseGradleIT() {
         gradleBuildScript().appendText(
             "\n" + """
                 kotlin.sourceSets {
-                    foo { }
-                    bar { dependsOn foo }
+                    commonMain { }
+                    fooMain { dependsOn commonMain }
                 }
             """.trimIndent()
         )
@@ -849,16 +849,15 @@ class NewMultiplatformIT : BaseGradleIT() {
         ) {
             if (initialSetupForSourceSets != null) {
                 gradleBuildScript().appendText(
-                    "\nkotlin.sourceSets.foo.${initialSetupForSourceSets}\n" + "" +
-                            "kotlin.sourceSets.bar.${initialSetupForSourceSets}",
+                    "\nkotlin.sourceSets.all { ${initialSetupForSourceSets}\n }"
                 )
             }
-            gradleBuildScript().appendText("\nkotlin.sourceSets.foo.${sourceSetConfigurationChange}")
+            gradleBuildScript().appendText("\nkotlin.sourceSets.commonMain.${sourceSetConfigurationChange}")
             build("tasks") {
                 assertFailed()
                 assertContains(expectedErrorHint)
             }
-            gradleBuildScript().appendText("\nkotlin.sourceSets.bar.${sourceSetConfigurationChange}")
+            gradleBuildScript().appendText("\nkotlin.sourceSets.all { ${sourceSetConfigurationChange} }")
             build("tasks") {
                 assertSuccessful()
             }
@@ -867,28 +866,35 @@ class NewMultiplatformIT : BaseGradleIT() {
         fun testMonotonousCheck(sourceSetConfigurationChange: String, expectedErrorHint: String): Unit =
             testMonotonousCheck(null, sourceSetConfigurationChange, expectedErrorHint)
 
+        val unitName = ifModelMappingUsedOrElse("fragment", "source set")
+
         testMonotonousCheck(
             "languageSettings.languageVersion = '1.3'",
             "languageSettings.languageVersion = '1.4'",
-            "The language version of the dependent source set must be greater than or equal to that of its dependency."
+            "The language version of the dependent $unitName must be greater than or equal to that of its dependency."
         )
 
         testMonotonousCheck(
             "languageSettings.enableLanguageFeature('InlineClasses')",
-            "The dependent source set must enable all unstable language features that its dependency has."
+            "The dependent $unitName must enable all unstable language features that its dependency has."
         )
 
         testMonotonousCheck(
             "languageSettings.optIn('kotlin.ExperimentalUnsignedTypes')",
-            "The dependent source set must use all opt-in annotations that its dependency uses."
+            "The dependent $unitName must use all opt-in annotations that its dependency uses."
         )
 
         // check that enabling a bugfix feature and progressive mode or advancing API level
         // don't require doing the same for dependent source sets:
         gradleBuildScript().appendText(
             "\n" + """
-                kotlin.sourceSets.foo.languageSettings {
-                    apiVersion = '1.4'
+                kotlin.sourceSets.all { 
+                    languageSettings { 
+                        apiVersion = '1.5'
+                    }
+                }
+                kotlin.sourceSets.commonMain.languageSettings {
+                    apiVersion = '1.6'
                     enableLanguageFeature('SoundSmartcastForEnumEntries')
                     progressiveMode = true
                 }
