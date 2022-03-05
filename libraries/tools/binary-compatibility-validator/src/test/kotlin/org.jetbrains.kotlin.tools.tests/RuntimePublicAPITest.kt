@@ -40,6 +40,10 @@ class RuntimePublicAPITest {
         )
     }
 
+    @Test fun kotlinToolingCore() {
+        snapshotAPIAndCompare("../kotlin-tooling-core/build/libs", "kotlin-tooling-core(?!-[-a-z]+)")
+    }
+
     private fun snapshotAPIAndCompare(
         basePath: String,
         jarPattern: String,
