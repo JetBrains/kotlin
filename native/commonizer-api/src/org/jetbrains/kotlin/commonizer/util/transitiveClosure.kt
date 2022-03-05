@@ -5,14 +5,7 @@
 
 package org.jetbrains.kotlin.commonizer.util
 
-/**
- * General purpose implementation of a transitive closure
- * - Recursion free
- * - Predictable amount of allocations
- * - Handles loops and self references gracefully
- * @param edges: Producer function from one node to all its children. This implementation can handle loops and self references gracefully.
- * @return Note: No guarantees given about the order ot this [Set]
- */
+
 public inline fun <reified T> transitiveClosure(seed: T, edges: T.() -> Iterable<T>): Set<T> {
     // Fast path when initial edges are empty
     val initialEdges = seed.edges()
@@ -32,7 +25,6 @@ public inline fun <reified T> transitiveClosure(seed: T, edges: T.() -> Iterable
     return results.toSet()
 }
 
-@OptIn(ExperimentalStdlibApi::class)
 @PublishedApi
 internal inline fun <reified T> deque(initialSize: Int): MutableList<T> {
     return if (KotlinVersion.CURRENT.isAtLeast(1, 4)) ArrayDeque(initialSize)
