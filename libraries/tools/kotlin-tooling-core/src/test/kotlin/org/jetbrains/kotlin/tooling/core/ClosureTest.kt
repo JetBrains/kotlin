@@ -135,7 +135,7 @@ class ClosureTest {
     }
 
     @Test
-    fun singleClosure() {
+    fun linearClosure() {
         val a = Node("a")
         val b = Node("b")
         val c = Node("c")
@@ -144,12 +144,12 @@ class ClosureTest {
         b.parent = a
 
         assertEquals(
-            listOf("b", "a"), c.singleClosure { it.parent }.map { it.value },
+            listOf("b", "a"), c.linearClosure { it.parent }.map { it.value },
         )
     }
 
     @Test
-    fun withSingleClosure() {
+    fun withLinearClosure() {
         val a = Node("a")
         val b = Node("b")
         val c = Node("c")
@@ -158,7 +158,7 @@ class ClosureTest {
         b.parent = a
 
         assertEquals(
-            listOf("c", "b", "a"), c.withSingleClosure { it.parent }.map { it.value },
+            listOf("c", "b", "a"), c.withLinearClosure { it.parent }.map { it.value },
         )
     }
 }
