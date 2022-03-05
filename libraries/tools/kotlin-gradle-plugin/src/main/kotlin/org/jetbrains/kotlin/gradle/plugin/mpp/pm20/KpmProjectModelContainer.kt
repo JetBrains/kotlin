@@ -9,6 +9,7 @@ import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.Project
 import org.gradle.api.publish.maven.MavenPublication
 import org.jetbrains.kotlin.gradle.dsl.KotlinProjectExtension
+import org.jetbrains.kotlin.gradle.dsl.KotlinSingleTargetExtension
 import org.jetbrains.kotlin.gradle.dsl.topLevelExtensionOrNull
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
 import org.jetbrains.kotlin.project.model.KotlinModuleIdentifier
@@ -24,6 +25,7 @@ internal val Project.kpmModelContainer: KpmGradleProjectModelContainer
 
 internal val Project.kpmModelContainerOrNull: KpmGradleProjectModelContainer?
     get() = when (val ext = project.topLevelExtensionOrNull) {
+        is KotlinSingleTargetExtension -> null // KPM Model Mapping is not supported in single-platform projects yet
         is KotlinPm20ProjectExtension -> ext.kpmModelContainer
         is KotlinProjectExtension -> if (PropertiesProvider(project).experimentalKpmModelMapping) ext.kpmModelContainer else null
         else -> null
