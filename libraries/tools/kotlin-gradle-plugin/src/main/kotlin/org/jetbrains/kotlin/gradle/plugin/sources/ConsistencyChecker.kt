@@ -75,6 +75,7 @@ internal class FragmentConsistencyChecker<T>(
 
         if (!check.leftExtendsRightConsistently(leftValue, rightValue)) {
             throw InvalidUserDataException(
+                // TODO: "depends on" should be rephrased to "refines" with KPM
                 "Inconsistent settings for Kotlin $unitsName: '${dependent.name()}' depends on '${dependency.name()}'\n" +
                         "'${dependent.name()}': ${check.name} is ${leftValue}\n" +
                         "'${dependency.name()}': ${check.name} is ${rightValue}\n" +
