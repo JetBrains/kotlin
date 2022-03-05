@@ -426,6 +426,8 @@ class CallAndReferenceGenerator(
                 variableAssignment.dispatchReceiver, session, classifierStorage, declarationStorage, conversionScope, preferGetter = false
             )
             val origin = variableAssignment.getIrAssignmentOrigin()
+            val isDynamicAccess = calleeReference.resolvedSymbol?.origin == FirDeclarationOrigin.DynamicScope
+            var theExplicitReceiver = explicitReceiverExpression
             return variableAssignment.convertWithOffsets { startOffset, endOffset ->
                 val assignedValue = visitor.convertToIrExpression(variableAssignment.rValue)
                 when (symbol) {
@@ -481,10 +483,20 @@ class CallAndReferenceGenerator(
                             putValueArgument(0, assignedValue)
                         }
                     }
-                    is IrVariableSymbol -> IrSetValueImpl(startOffset, endOffset, type, symbol, assignedValue, origin)
+                    is IrVariableSymbol -> if (explicitReceiverExpression != null && isDynamicAccess) {
+                        val name = calleeReference.resolved?.name ?: throw Exception("There must be a name")
+                        theExplicitReceiver = IrDynamicMemberExpressionImpl(
+                            startOffset, endOffset, type, name.identifier, explicitReceiverExpression
+                        )
+                        IrDynamicOperatorExpressionImpl(startOffset, endOffset, type, IrDynamicOperator.EQ).apply {
+                            arguments.add(assignedValue)
+                        }
+                    } else {
+                        IrSetValueImpl(startOffset, endOffset, type, symbol, assignedValue, origin)
+                    }
                     else -> generateErrorCallExpression(startOffset, endOffset, calleeReference)
                 }
-            }.applyTypeArguments(variableAssignment).applyReceivers(variableAssignment, explicitReceiverExpression)
+            }.applyTypeArguments(variableAssignment).applyReceivers(variableAssignment, theExplicitReceiver)
         } catch (e: Throwable) {
             throw IllegalStateException(
                 "Error while translating ${variableAssignment.render()} " +
