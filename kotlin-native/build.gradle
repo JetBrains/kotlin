@@ -246,9 +246,19 @@ task shadowJar(type: ShadowJar) {
 }
 
 task distCompiler(type: Copy) {
-    dependsOn ":kotlin-native:dependencies:update"
-    dependsOn ':kotlin-native:shadowJar'
-    dependsOn ":kotlin-native-compiler-embeddable:kotlin-native-compiler-embeddable"
+    // Workaround: make distCompiler no-op if we are using custom dist:
+    // the dist is already in place and has the compiler, so we don't have to
+    // build and copy the compiler to dist.
+    // Moreover, if we do copy it, it might overwrite the compiler files already loaded
+    // by this Gradle process (including the jar loaded to the custom classloader),
+    // causing hard-to-debug errors.
+    if (!UtilsKt.isDefaultNativeHome(project)) {
+        enabled = false
+    } else {
+        dependsOn ":kotlin-native:dependencies:update"
+        dependsOn ':kotlin-native:shadowJar'
+        dependsOn ":kotlin-native-compiler-embeddable:kotlin-native-compiler-embeddable"
+    }
 
     destinationDir distDir
 
