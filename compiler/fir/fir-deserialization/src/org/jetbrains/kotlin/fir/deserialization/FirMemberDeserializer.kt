@@ -428,7 +428,9 @@ class FirMemberDeserializer(private val c: FirDeserializationContext) {
     fun loadFunction(
         proto: ProtoBuf.Function,
         classProto: ProtoBuf.Class? = null,
-        classSymbol: FirClassSymbol<*>? = null
+        classSymbol: FirClassSymbol<*>? = null,
+        // TODO: introduce the similar changes for the other deserialized entities
+        deserializationOrigin: FirDeclarationOrigin = FirDeclarationOrigin.Library
     ): FirSimpleFunction {
         val flags = if (proto.hasFlags()) proto.flags else loadOldFlags(proto.oldFlags)
 
@@ -447,7 +449,7 @@ class FirMemberDeserializer(private val c: FirDeserializationContext) {
 
         val simpleFunction = buildSimpleFunction {
             moduleData = c.moduleData
-            origin = FirDeclarationOrigin.Library
+            origin = deserializationOrigin
             returnTypeRef = proto.returnType(local.typeTable).toTypeRef(local)
             receiverTypeRef = proto.receiverType(local.typeTable)?.toTypeRef(local).apply {
                 annotations += receiverAnnotations

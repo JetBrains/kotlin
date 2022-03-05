@@ -210,9 +210,9 @@ class Fir2IrDeclarationStorage(
     private fun ConeKotlinType.toIrType(typeContext: ConversionTypeContext = ConversionTypeContext.DEFAULT): IrType =
         with(typeConverter) { toIrType(typeContext) }
 
-    private fun getIrExternalOrBuiltInsPackageFragment(fqName: FqName): IrExternalPackageFragment {
+    private fun getIrExternalOrBuiltInsPackageFragment(fqName: FqName, firOrigin: FirDeclarationOrigin): IrExternalPackageFragment {
         val isBuiltIn = fqName in BUILT_INS_PACKAGE_FQ_NAMES
-        return if (isBuiltIn) getIrBuiltInsPackageFragment(fqName) else getIrExternalPackageFragment(fqName)
+        return if (isBuiltIn) getIrBuiltInsPackageFragment(fqName) else getIrExternalPackageFragment(fqName, firOrigin)
     }
 
     private fun getIrBuiltInsPackageFragment(fqName: FqName): IrExternalPackageFragment {
@@ -221,11 +221,17 @@ class Fir2IrDeclarationStorage(
         }
     }
 
-    fun getIrExternalPackageFragment(fqName: FqName): IrExternalPackageFragment {
+    fun getIrExternalPackageFragment(
+        fqName: FqName,
+        firOrigin: FirDeclarationOrigin = FirDeclarationOrigin.Library
+    ): IrExternalPackageFragment {
         return fragmentCache.getOrPut(fqName) {
             // Make sure that external package fragments have a different module descriptor. The module descriptors are compared
             // to determine if objects need regeneration because they are from different modules.
-            val externalFragmentModuleDescriptor = FirModuleDescriptor(session)
+            // But keep original module descriptor for the fragments coming from parts compiled on the previous incremental step
+            val externalFragmentModuleDescriptor =
+                if (firOrigin == FirDeclarationOrigin.Precompiled) moduleDescriptor
+                else FirModuleDescriptor(session)
             return symbolTable.declareExternalPackageFragment(FirPackageFragmentDescriptor(fqName, externalFragmentModuleDescriptor))
         }
     }
@@ -245,7 +251,8 @@ class Fir2IrDeclarationStorage(
     internal fun findIrParent(
         packageFqName: FqName,
         parentLookupTag: ConeClassLikeLookupTag?,
-        firBasedSymbol: FirBasedSymbol<*>
+        firBasedSymbol: FirBasedSymbol<*>,
+        firOrigin: FirDeclarationOrigin
     ): IrDeclarationParent? {
         return if (parentLookupTag != null) {
             findIrClass(parentLookupTag)
@@ -258,10 +265,10 @@ class Fir2IrDeclarationStorage(
 
             when {
                 containerFile != null -> fileCache[containerFile]
-                firBasedSymbol is FirCallableSymbol -> getIrExternalPackageFragment(packageFqName)
+                firBasedSymbol is FirCallableSymbol -> getIrExternalPackageFragment(packageFqName, firOrigin)
                 // TODO: All classes from BUILT_INS_PACKAGE_FQ_NAMES are considered built-ins now,
                 // which is not exact and can lead to some problems
-                else -> getIrExternalOrBuiltInsPackageFragment(packageFqName)
+                else -> getIrExternalOrBuiltInsPackageFragment(packageFqName, firOrigin)
             }
         }
     }
@@ -269,7 +276,8 @@ class Fir2IrDeclarationStorage(
     internal fun findIrParent(callableDeclaration: FirCallableDeclaration): IrDeclarationParent? {
         val firBasedSymbol = callableDeclaration.symbol
         val callableId = firBasedSymbol.callableId
-        return findIrParent(callableId.packageName, callableDeclaration.containingClass(), firBasedSymbol)
+        val callableOrigin = callableDeclaration.origin
+        return findIrParent(callableId.packageName, callableDeclaration.containingClass(), firBasedSymbol, callableOrigin)
     }
 
     private fun IrDeclaration.setAndModifyParent(irParent: IrDeclarationParent?) {
