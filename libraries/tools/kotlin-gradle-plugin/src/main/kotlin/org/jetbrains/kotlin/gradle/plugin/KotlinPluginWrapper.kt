@@ -20,7 +20,6 @@ import org.gradle.api.GradleException
 import org.gradle.api.NamedDomainObjectFactory
 import org.gradle.api.Plugin
 import org.gradle.api.Project
-import org.gradle.api.logging.Logging
 import org.gradle.api.model.ObjectFactory
 import org.gradle.tooling.provider.model.ToolingModelBuilderRegistry
 import org.jetbrains.kotlin.compilerRunner.registerCommonizerClasspathConfigurationIfNecessary
@@ -45,9 +44,11 @@ import org.jetbrains.kotlin.gradle.tasks.AbstractKotlinCompile
 import org.jetbrains.kotlin.gradle.testing.internal.KotlinTestsRegistry
 import org.jetbrains.kotlin.gradle.tooling.buildKotlinToolingMetadataTask
 import org.jetbrains.kotlin.gradle.utils.checkGradleCompatibility
+import org.jetbrains.kotlin.gradle.utils.getOrPut
 import org.jetbrains.kotlin.gradle.utils.loadPropertyFromResources
 import org.jetbrains.kotlin.gradle.utils.runProjectConfigurationHealthCheck
 import org.jetbrains.kotlin.statistics.metrics.StringMetrics
+import org.jetbrains.kotlin.tooling.core.KotlinToolingVersion
 import javax.inject.Inject
 import kotlin.reflect.KClass
 
@@ -84,7 +85,8 @@ abstract class KotlinBasePluginWrapper : Plugin<Project> {
 
         KotlinGradleBuildServices.detectKotlinPluginLoadedInMultipleProjects(project, kotlinPluginVersion)
 
-        val buildMetricReporter = BuildMetricsReporterService.registerIfAbsent(project, BuildMetricsReporterService.getStartParameters(project))
+        val buildMetricReporter =
+            BuildMetricsReporterService.registerIfAbsent(project, BuildMetricsReporterService.getStartParameters(project))
 
         buildMetricReporter?.also { BuildEventsListenerRegistryHolder.getInstance(project).listenerRegistry.onTaskCompletion(it) }
 
@@ -261,6 +263,13 @@ fun Project.getKotlinPluginVersion(): String {
     }
     return kotlinPluginVersionFromResources.value
 }
+
+@ExperimentalKotlinGradlePluginApi
+val Project.kotlinToolingVersion: KotlinToolingVersion
+    get() = extensions.extraProperties.getOrPut("kotlinToolingVersion") {
+        KotlinToolingVersion(getKotlinPluginVersion())
+    }
+
 
 private fun loadKotlinPluginVersionFromResourcesOf(any: Any) =
     any.loadPropertyFromResources("project.properties", "project.version")
