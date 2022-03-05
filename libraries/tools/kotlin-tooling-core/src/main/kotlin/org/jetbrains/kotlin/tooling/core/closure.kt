@@ -68,14 +68,14 @@ inline fun <reified T> Iterable<T>.withClosure(edges: (T) -> Iterable<T>): Set<T
  * @see closure
  * @receiver is not included in the return set
  */
-inline fun <reified T : Any> T.singleClosure(next: (T) -> T?): Set<T> =
+inline fun <reified T : Any> T.linearClosure(next: (T) -> T?): Set<T> =
     closureTo(createResultSet(), emptySet(), createDequeue(), this) { element -> next(element)?.let { add(it) } }
 
 /**
  * @see closure
  * @receiver is included in the return set
  */
-inline fun <reified T : Any> T.withSingleClosure(next: (T) -> T?): Set<T> =
+inline fun <reified T : Any> T.withLinearClosure(next: (T) -> T?): Set<T> =
     closureTo(createResultSet(this), emptySet(), createDequeue(), this) { element -> next(element)?.let { add(it) } }
 
 /* Implementation */
