@@ -56,8 +56,10 @@ abstract class KotlinPm20GradlePlugin @Inject constructor(
     }
 }
 
-fun rootPublicationComponentName(module: KotlinGradleModule) =
-    module.disambiguateName("root")
+// This name is consistent with the publication naming in the `o.j.k.multiplatform` plugin's normal behavior;
+// TODO consider injecting the naming schemes for different contexts where the KPM setup code might work (old MPP plugin, new KPM plugin)
+internal fun rootPublicationComponentName(module: KotlinGradleModule) =
+    module.disambiguateName("kotlinMultiplatform")
 
 open class KotlinPm20ProjectExtension(project: Project) : KotlinTopLevelExtension(project) {
 
