@@ -38,8 +38,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.AbstractKotlinFragmentMetadat
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinCompilationData
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinMetadataCompilationData
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.refinesClosure
-import org.jetbrains.kotlin.gradle.plugin.sources.resolveAllDependsOnSourceSets
-import org.jetbrains.kotlin.gradle.report.BuildReportMode
+import org.jetbrains.kotlin.gradle.plugin.sources.dependsOnClosure
 import org.jetbrains.kotlin.gradle.utils.propertyWithConvention
 import java.io.File
 import javax.inject.Inject
@@ -65,7 +64,7 @@ abstract class KotlinCompileCommon @Inject constructor(
                     is KotlinCompilation<*> -> {
                         val defaultKotlinSourceSet: KotlinSourceSet = compilation.defaultSourceSet
                         val metadataTarget = compilation.owner as KotlinTarget
-                        defaultKotlinSourceSet.resolveAllDependsOnSourceSets()
+                        defaultKotlinSourceSet.dependsOnClosure
                             .mapNotNull { sourceSet -> metadataTarget.compilations.findByName(sourceSet.name)?.output?.classesDirs }
                             .flatten()
                     }

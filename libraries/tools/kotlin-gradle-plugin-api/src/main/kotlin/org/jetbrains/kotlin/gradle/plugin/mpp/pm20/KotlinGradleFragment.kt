@@ -13,7 +13,7 @@ import org.gradle.api.file.SourceDirectorySet
 import org.jetbrains.kotlin.gradle.plugin.HasKotlinDependencies
 import org.jetbrains.kotlin.gradle.plugin.LanguageSettingsBuilder
 import org.jetbrains.kotlin.project.model.KotlinModuleFragment
-import org.jetbrains.kotlin.project.model.refinesClosure
+import org.jetbrains.kotlin.project.model.withRefinesClosure
 
 interface KotlinGradleFragment : KotlinModuleFragment, HasKotlinDependencies, KotlinFragmentDependencyConfigurations, Named {
     override val kotlinSourceRoots: SourceDirectorySet
@@ -59,4 +59,4 @@ interface KotlinGradleFragment : KotlinModuleFragment, HasKotlinDependencies, Ko
 }
 
 val KotlinGradleFragment.refinesClosure: Set<KotlinGradleFragment>
-    get() = (this as KotlinModuleFragment).refinesClosure.mapTo(mutableSetOf()) { it as KotlinGradleFragment }
+    get() = (this as KotlinModuleFragment).withRefinesClosure.mapTo(mutableSetOf()) { it as KotlinGradleFragment }

@@ -157,7 +157,7 @@ internal class FragmentGranularMetadataResolver(
             val relevantVariantResolution = variantResolutions
                 .filterIsInstance<VariantResolution.VariantMatch>()
                 // find some of our variants that resolved a dependency's variant containing the fragment
-                .find { hostSpecificFragment in it.chosenVariant.refinesClosure }
+                .find { hostSpecificFragment in it.chosenVariant.withRefinesClosure }
             // resolve the dependencies of that variant getting the host-specific metadata artifact
             relevantVariantResolution?.let { resolution ->
                 val configurationResolvingPlatformVariant =

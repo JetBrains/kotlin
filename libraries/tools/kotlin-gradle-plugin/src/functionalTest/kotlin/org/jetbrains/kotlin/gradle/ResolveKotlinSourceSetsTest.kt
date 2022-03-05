@@ -11,8 +11,8 @@ package org.jetbrains.kotlin.gradle
 import org.gradle.api.Project
 import org.gradle.testfixtures.ProjectBuilder
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
-import org.jetbrains.kotlin.gradle.plugin.sources.resolveAllDependsOnSourceSets
-import org.jetbrains.kotlin.gradle.plugin.sources.resolveAllSourceSetsDependingOn
+import org.jetbrains.kotlin.gradle.plugin.sources.dependsOnClosure
+import org.jetbrains.kotlin.gradle.plugin.sources.findSourceSetsDependingOn
 import org.junit.Test
 import kotlin.test.BeforeTest
 import kotlin.test.assertEquals
@@ -45,17 +45,17 @@ class ResolveKotlinSourceSetsTest {
 
         assertEquals(
             setOf(nativeMain, linuxMain, macosMain, jvmMain),
-            kotlin.resolveAllSourceSetsDependingOn(commonMain)
+            kotlin.findSourceSetsDependingOn(commonMain)
         )
 
         assertEquals(
             setOf(linuxMain, macosMain),
-            kotlin.resolveAllSourceSetsDependingOn(nativeMain)
+            kotlin.findSourceSetsDependingOn(nativeMain)
         )
 
-        assertEquals(emptySet(), kotlin.resolveAllSourceSetsDependingOn(linuxMain))
-        assertEquals(emptySet(), kotlin.resolveAllSourceSetsDependingOn(macosMain))
-        assertEquals(emptySet(), kotlin.resolveAllSourceSetsDependingOn(jvmMain))
+        assertEquals(emptySet(), kotlin.findSourceSetsDependingOn(linuxMain))
+        assertEquals(emptySet(), kotlin.findSourceSetsDependingOn(macosMain))
+        assertEquals(emptySet(), kotlin.findSourceSetsDependingOn(jvmMain))
     }
 
     @Test
@@ -72,19 +72,19 @@ class ResolveKotlinSourceSetsTest {
         macosMain.dependsOn(nativeMain)
 
         assertEquals(
-            setOf(nativeMain, commonMain), linuxMain.resolveAllDependsOnSourceSets()
+            setOf(nativeMain, commonMain), linuxMain.dependsOnClosure
         )
 
         assertEquals(
-            setOf(commonMain), nativeMain.resolveAllDependsOnSourceSets()
+            setOf(commonMain), nativeMain.dependsOnClosure
         )
 
         assertEquals(
-            emptySet(), commonMain.resolveAllDependsOnSourceSets()
+            emptySet(), commonMain.dependsOnClosure
         )
 
         assertEquals(
-            setOf(commonMain), jvmMain.resolveAllDependsOnSourceSets()
+            setOf(commonMain), jvmMain.dependsOnClosure
         )
     }
 }

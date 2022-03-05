@@ -11,10 +11,10 @@ import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.mpp.CompilationSourceSetUtil
-import org.jetbrains.kotlin.gradle.plugin.mpp.associateWithTransitiveClosure
+import org.jetbrains.kotlin.gradle.plugin.mpp.associateWithClosure
 
 fun getSourceSetsFromAssociatedCompilations(fromCompilation: KotlinCompilation<*>): Map<KotlinCompilation<*>, Set<KotlinSourceSet>> =
-    fromCompilation.associateWithTransitiveClosure.associate { it to it.allKotlinSourceSets }
+    fromCompilation.associateWithClosure.associate { it to it.allKotlinSourceSets }
 
 fun getVisibleSourceSetsFromAssociateCompilations(
     project: Project,
@@ -140,7 +140,7 @@ internal fun checkSourceSetVisibilityRequirements(
         val inferredVisibility =
             getVisibleSourceSetsFromAssociateCompilations(compilationsBySourceSet[sourceSet].orEmpty())
 
-        val requiredButNotVisible = requiredVisibility - inferredVisibility - sourceSet.withAllDependsOnSourceSets()
+        val requiredButNotVisible = requiredVisibility - inferredVisibility - sourceSet.withDependsOnClosure
 
         if (requiredButNotVisible.isNotEmpty()) {
             val compilations = compilationsBySourceSet.getValue(sourceSet)
