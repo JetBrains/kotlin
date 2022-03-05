@@ -512,6 +512,7 @@ targetList.forEach { targetName ->
         tasks.register("${targetName}StdlibCache", KonanCacheTask::class.java) {
             target = targetName
             originalKlib = project.buildDir.resolve("${targetName}Stdlib")
+            klibUniqName = "stdlib"
             cacheRoot = project.buildDir.resolve("cache/$targetName").absolutePath
 
             dependsOn("${targetName}Stdlib")

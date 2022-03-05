@@ -24,6 +24,9 @@ open class KonanCacheTask: DefaultTask() {
     var originalKlib: File? = null
 
     @get:Input
+    lateinit var klibUniqName: String
+
+    @get:Input
     lateinit var cacheRoot: String
 
     @get:Input
@@ -36,16 +39,22 @@ open class KonanCacheTask: DefaultTask() {
 
     @get:OutputDirectory
     val cacheFile: File
-        get() {
-            val konanHome = compilerDistributionPath.get().absolutePath
-            val resolver = defaultResolver(
-                    emptyList(),
-                    PlatformManager(konanHome).targetByName(target),
-                    Distribution(konanHome)
-            )
-            val klibName = resolver.resolve(originalKlib!!.absolutePath).uniqueName
-            return cacheDirectory.resolve("${klibName}-cache")
-        }
+        get() = cacheDirectory.resolve("${klibUniqName}-cache")
+
+    /**
+     * Note: we can't use this function instead of [klibUniqName] in [cacheFile],
+     * because the latter is `@OutputDirectory`, so Gradle can call it even before
+     * the task dependencies are finished, and [originalKlib] might be not build yet.
+     */
+    private fun readKlibUniqNameFromManifest(): String {
+        val konanHome = compilerDistributionPath.get().absolutePath
+        val resolver = defaultResolver(
+                emptyList(),
+                PlatformManager(konanHome).targetByName(target),
+                Distribution(konanHome)
+        )
+        return resolver.resolve(originalKlib!!.absolutePath).uniqueName
+    }
 
     @get:Input
     var cacheKind: KonanCacheKind = KonanCacheKind.STATIC
@@ -61,6 +70,10 @@ open class KonanCacheTask: DefaultTask() {
 
     @TaskAction
     fun compile() {
+        check(klibUniqName == readKlibUniqNameFromManifest()) {
+            "klibUniqName mismatch: configured '$klibUniqName', resolved '${readKlibUniqNameFromManifest()}'"
+        }
+
         // Compiler doesn't create a cache if the cacheFile already exists. So we need to remove it manually.
         if (cacheFile.exists()) {
             val deleted = cacheFile.deleteRecursively()

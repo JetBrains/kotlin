@@ -58,6 +58,7 @@ konanTargetList.forEach { target ->
     target.defFiles().forEach { df ->
         val libName = defFileToLibName(targetName, df.name)
         val fileNamePrefix = PlatformLibsInfo.namePrefix
+        val artifactName = "${fileNamePrefix}${df.name}"
 
         konanArtifacts {
             interop(
@@ -65,7 +66,7 @@ konanTargetList.forEach { target ->
                     name = libName
             ) {
                 df.file?.let { defFile(it) }
-                artifactName("${fileNamePrefix}${df.name}")
+                artifactName(artifactName)
                 noDefaultLibs(true)
                 noEndorsedLibs(true)
                 libraries {
@@ -101,6 +102,7 @@ konanTargetList.forEach { target ->
             val cacheTask = tasks.register("${libName}Cache", KonanCacheTask::class.java) {
                 this.target = targetName
                 originalKlib = klibInstallTask.get().installDir.get()
+                klibUniqName = artifactName
                 cacheRoot = file("$konanHome/klib/cache").absolutePath
 
                 dependsOn(":kotlin-native:${targetName}StdlibCache")
