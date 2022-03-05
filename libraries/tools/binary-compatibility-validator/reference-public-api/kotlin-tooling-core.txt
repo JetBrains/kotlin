@@ -6,8 +6,7 @@ public final class org/jetbrains/kotlin/tooling/core/ClosureKt {
 }
 
 public final class org/jetbrains/kotlin/tooling/core/KotlinToolingVersion : java/io/Serializable, java/lang/Comparable {
-	public static final field Companion Lorg/jetbrains/kotlin/tooling/core/KotlinToolingVersion$Companion;
-	public synthetic fun <init> (IIILjava/lang/String;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun <init> (IIILjava/lang/String;)V
 	public synthetic fun compareTo (Ljava/lang/Object;)I
 	public fun compareTo (Lorg/jetbrains/kotlin/tooling/core/KotlinToolingVersion;)I
 	public fun equals (Ljava/lang/Object;)Z
@@ -18,11 +17,6 @@ public final class org/jetbrains/kotlin/tooling/core/KotlinToolingVersion : java
 	public final fun getPatch ()I
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
-}
-
-public final class org/jetbrains/kotlin/tooling/core/KotlinToolingVersion$Companion {
-	public final fun create (IIILjava/lang/String;)Lorg/jetbrains/kotlin/tooling/core/KotlinToolingVersion;
-	public static synthetic fun create$default (Lorg/jetbrains/kotlin/tooling/core/KotlinToolingVersion$Companion;IIILjava/lang/String;ILjava/lang/Object;)Lorg/jetbrains/kotlin/tooling/core/KotlinToolingVersion;
 }
 
 public final class org/jetbrains/kotlin/tooling/core/KotlinToolingVersion$Maturity : java/lang/Enum {
@@ -57,3 +51,4 @@ public final class org/jetbrains/kotlin/tooling/core/KotlinToolingVersionKt {
 	public static synthetic fun toKotlinToolingVersion$default (Lkotlin/KotlinVersion;Ljava/lang/String;ILjava/lang/Object;)Lorg/jetbrains/kotlin/tooling/core/KotlinToolingVersion;
 	public static final fun toKotlinVersion (Lorg/jetbrains/kotlin/tooling/core/KotlinToolingVersion;)Lkotlin/KotlinVersion;
 }
+
