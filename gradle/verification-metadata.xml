@@ -23,6 +23,7 @@
          <trust group="org.jetbrains.kotlin" name="kotlin-klib-commonizer-api"/>
          <trust group="org.jetbrains.kotlin" name="kotlin-klib-commonizer-embeddable"/>
          <trust group="org.jetbrains.kotlin" name="kotlin-tooling-metadata"/>
+         <trust group="org.jetbrains.kotlin" name="kotlin-tooling-core"/>
          <trust group="org.jetbrains.kotlin" name="kotlin-native-utils"/>
          <trust group="org.jetbrains.kotlin" name="kotlin-reflect"/>
          <trust group="org.jetbrains.kotlin" name="kotlin-sam-with-receiver"/>
