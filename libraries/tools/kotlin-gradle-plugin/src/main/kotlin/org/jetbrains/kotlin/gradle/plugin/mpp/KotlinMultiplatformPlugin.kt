@@ -117,7 +117,9 @@ class KotlinMultiplatformPlugin : Plugin<Project> {
         if (!project.hasKpmModel) {
             configurePublishingWithMavenPublish(project)
         }
-        targetsContainer.withType(AbstractKotlinTarget::class.java).all { applyUserDefinedAttributes(it) }
+        project.whenEvaluated {
+            targetsContainer.withType(AbstractKotlinTarget::class.java).all { applyUserDefinedAttributes(it) }
+        }
 
         // propagate compiler plugin options to the source set language settings
         setupAdditionalCompilerArguments(project)
@@ -288,6 +290,10 @@ private fun applyUserDefinedAttributesWithKpm(
                 ?: return@forEach
             copyAttributes(from, configuration.attributes)
         }
+        copyAttributes(from, variant.compileDependenciesConfiguration.attributes)
+        if (variant is KotlinGradleVariantWithRuntime) {
+            copyAttributes(from, variant.runtimeDependenciesConfiguration.attributes)
+        }
     }
 
     val project = target.project
@@ -307,9 +313,13 @@ private fun applyUserDefinedAttributesWithKpm(
     }
 
     // Also handle the legacy-mapped variants, which are not accessible through the compilations in the loop above
-    project.kpmModules.getByName(KotlinGradleModule.MAIN_MODULE_NAME).variants.withType(LegacyMappedVariant::class.java).all { variant ->
-        val compilation = variant.compilation
-        copyAttributesToVariant(variant, compilation.attributes)
+    project.whenEvaluated {
+        project.kpmModules.all { module ->
+            module.variants.withType(LegacyMappedVariant::class.java).all { variant ->
+                val compilation = variant.compilation
+                copyAttributesToVariant(variant, compilation.attributes)
+            }
+        }
     }
 }
 
