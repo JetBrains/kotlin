@@ -10,12 +10,12 @@ import org.intellij.lang.annotations.RegExp
 import org.jetbrains.kotlin.commonizer.CommonizerTarget
 import org.jetbrains.kotlin.commonizer.SharedCommonizerTarget
 import org.jetbrains.kotlin.commonizer.parseCommonizerTarget
-import org.jetbrains.kotlin.commonizer.util.transitiveClosure
 import org.jetbrains.kotlin.gradle.BaseGradleIT
 import org.jetbrains.kotlin.gradle.BaseGradleIT.CompiledProject
 import org.jetbrains.kotlin.library.ToolingSingleFileKlibResolveStrategy
 import org.jetbrains.kotlin.library.commonizerTarget
 import org.jetbrains.kotlin.library.resolveSingleFileKlib
+import org.jetbrains.kotlin.tooling.core.singleClosure
 import java.io.File
 import javax.annotation.RegEx
 import kotlin.test.fail
@@ -50,7 +50,7 @@ data class SourceSetCommonizerDependencies(
         if (konanDataDir != null) {
             return file.startsWith(konanDataDir)
         }
-        return file.allParents.any { parentFile -> parentFile.name == ".konan" }
+        return file.parentsClosure.any { parentFile -> parentFile.name == ".konan" }
     }
 
     fun assertTargetOnAllDependencies(target: CommonizerTarget) = apply {
@@ -165,7 +165,7 @@ private fun inferCommonizerTargetOrNull(libraryFile: File): CommonizerTarget? = 
     strategy = ToolingSingleFileKlibResolveStrategy
 ).commonizerTarget?.let(::parseCommonizerTarget)
 
-private val File.allParents: Set<File> get() = transitiveClosure(this) { listOfNotNull(parentFile) }
+private val File.parentsClosure: Set<File> get() = this.singleClosure { parentFile }
 
 private const val dollar = "\$"
 
