@@ -166,7 +166,10 @@ abstract class AbstractFirDeserializedSymbolProvider(
         return getPackageParts(callableId.packageName).flatMap { part ->
             val functionIds = part.topLevelFunctionNameIndex[callableId.callableName] ?: return@flatMap emptyList()
             functionIds.map {
-                part.context.memberDeserializer.loadFunction(part.proto.getFunction(it)).symbol
+                part.context.memberDeserializer.loadFunction(
+                    part.proto.getFunction(it),
+                    deserializationOrigin = defaultDeserializationOrigin
+                ).symbol
             }
         }
     }
