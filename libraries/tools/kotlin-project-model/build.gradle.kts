@@ -9,7 +9,7 @@ standardPublicJars()
 
 dependencies {
     implementation(kotlinStdlib())
-
+    implementation(project(":kotlin-tooling-core"))
     testImplementation(kotlin("test-junit"))
 }
 

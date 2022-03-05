@@ -5,16 +5,12 @@
 
 package org.jetbrains.kotlin.commonizer.core
 
-import org.jetbrains.kotlin.commonizer.cir.CirClassType
-import org.jetbrains.kotlin.commonizer.cir.CirEntityId
-import org.jetbrains.kotlin.commonizer.cir.CirType
-import org.jetbrains.kotlin.commonizer.cir.SimpleCirSupertypesResolver
+import org.jetbrains.kotlin.commonizer.cir.*
 import org.jetbrains.kotlin.commonizer.mergedtree.CirClassifierIndex
 import org.jetbrains.kotlin.commonizer.mergedtree.CirKnownClassifiers
-import org.jetbrains.kotlin.commonizer.cir.CirProvided
 import org.jetbrains.kotlin.commonizer.mergedtree.findClass
-import org.jetbrains.kotlin.commonizer.util.transitiveClosure
 import org.jetbrains.kotlin.descriptors.ClassKind
+import org.jetbrains.kotlin.tooling.core.withClosure
 
 private typealias Supertypes = List<CirType>
 
@@ -188,12 +184,8 @@ private class TypeNode(
     val supertypes: List<TypeNode>,
     var isConsumed: Boolean = false
 ) {
-    val allNodes: List<TypeNode> by lazy {
-        val allSupertypes = transitiveClosure(this, TypeNode::supertypes)
-        ArrayList<TypeNode>(allSupertypes.size + 1).also { list ->
-            list.add(this)
-            list.addAll(allSupertypes)
-        }
+    val allNodes: Set<TypeNode> by lazy {
+        this.withClosure(TypeNode::supertypes)
     }
 
     override fun toString(): String {

@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.mpp.CompilationSourceSetUtil.compilationsBySourceSets
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinSharedNativeCompilation
-import org.jetbrains.kotlin.gradle.plugin.mpp.associateWithTransitiveClosure
+import org.jetbrains.kotlin.gradle.plugin.mpp.associateWithClosure
 import org.jetbrains.kotlin.gradle.targets.native.internal.CInteropIdentifier.Scope
 import org.jetbrains.kotlin.gradle.utils.UnsafeApi
 
@@ -59,7 +59,7 @@ internal fun CInteropCommonizerDependent.Factory.from(
      This relationship should not be declared, but we try to be lenient towards it here.
       */
     val filteredCompilations = compilations.filter { compilation ->
-        compilation.associateWithTransitiveClosure.none { associateCompilation -> associateCompilation in compilations }
+        compilation.associateWithClosure.none { associateCompilation -> associateCompilation in compilations }
     }.ifEmpty { return null }.toSet()
 
     val scopes: Set<Scope> = filteredCompilations
@@ -95,7 +95,7 @@ internal fun CInteropCommonizerDependent.Factory.fromAssociateCompilations(
         target = project.getCommonizerTarget(sourceSet) as? SharedCommonizerTarget ?: return null,
         compilations = (compilationsBySourceSets(project)[sourceSet] ?: return null)
             .filterIsInstance<KotlinNativeCompilation>()
-            .flatMap { compilation -> compilation.associateWithTransitiveClosure }
+            .flatMap { compilation -> compilation.associateWithClosure }
             .filterIsInstance<KotlinNativeCompilation>()
             .toSet()
     )

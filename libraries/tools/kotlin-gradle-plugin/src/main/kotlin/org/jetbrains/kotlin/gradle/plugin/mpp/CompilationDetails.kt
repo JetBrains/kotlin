@@ -15,7 +15,6 @@ import org.gradle.api.tasks.SourceSet
 import org.gradle.api.tasks.TaskProvider
 import org.gradle.api.tasks.bundling.AbstractArchiveTask
 import org.gradle.kotlin.dsl.withType
-import org.jetbrains.kotlin.commonizer.util.transitiveClosure
 import org.jetbrains.kotlin.gradle.dsl.*
 import org.jetbrains.kotlin.gradle.dsl.KotlinJvmOptionsImpl
 import org.jetbrains.kotlin.gradle.plugin.*
@@ -28,8 +27,8 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.unambiguousNameInProject
 import org.jetbrains.kotlin.gradle.plugin.sources.defaultSourceSetLanguageSettingsChecker
 import org.jetbrains.kotlin.gradle.plugin.sources.getVisibleSourceSetsFromAssociateCompilations
 import org.jetbrains.kotlin.gradle.plugin.sources.kpm.FragmentMappedKotlinSourceSet
-import org.jetbrains.kotlin.gradle.plugin.sources.resolveAllDependsOnSourceSets
-import org.jetbrains.kotlin.gradle.plugin.sources.withAllDependsOnSourceSets
+import org.jetbrains.kotlin.gradle.plugin.sources.dependsOnClosure
+import org.jetbrains.kotlin.gradle.plugin.sources.withDependsOnClosure
 import org.jetbrains.kotlin.gradle.targets.js.KotlinJsTarget
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrCompilation
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrTarget
@@ -37,6 +36,7 @@ import org.jetbrains.kotlin.gradle.targets.metadata.getMetadataCompilationForSou
 import org.jetbrains.kotlin.gradle.utils.*
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 import org.jetbrains.kotlin.project.model.LanguageSettings
+import org.jetbrains.kotlin.tooling.core.closure
 import java.util.*
 import java.util.concurrent.Callable
 
@@ -69,8 +69,8 @@ interface CompilationDetailsWithRuntime<T : KotlinCommonOptions> : CompilationDe
     val runtimeDependencyFilesHolder: DependencyFilesHolder
 }
 
-internal val CompilationDetails<*>.associateWithTransitiveClosure: Iterable<CompilationDetails<*>>
-    get() = transitiveClosure(this) { associateCompilations }
+internal val CompilationDetails<*>.associateCompilationsClosure: Iterable<CompilationDetails<*>>
+    get() = closure { it.associateCompilations }
 
 open class DefaultCompilationDetails<T : KotlinCommonOptions>(
     final override val target: KotlinTarget,
@@ -122,8 +122,7 @@ open class DefaultCompilationDetails<T : KotlinCommonOptions>(
         get() = target.disambiguationClassifier
 
     override val kotlinSourceDirectoriesByFragmentName: Map<String, SourceDirectorySet>
-        get() = directlyIncludedKotlinSourceSets.plus(directlyIncludedKotlinSourceSets.resolveAllDependsOnSourceSets())
-            .associate { it.name to it.kotlin }
+        get() = directlyIncludedKotlinSourceSets.withDependsOnClosure.associate { it.name to it.kotlin }
 
     override val compileKotlinTaskName: String
         get() = lowerCamelCaseName(
@@ -163,12 +162,12 @@ open class DefaultCompilationDetails<T : KotlinCommonOptions>(
 
     override val friendPaths: Iterable<FileCollection>
         get() = mutableListOf<FileCollection>().also { allCollections ->
-            associateWithTransitiveClosure.forEach { allCollections.add(it.compilationData.output.classesDirs) }
+            associateCompilationsClosure.forEach { allCollections.add(it.compilationData.output.classesDirs) }
             allCollections.add(friendArtifacts)
         }
 
     private val friendArtifactsTask: TaskProvider<AbstractArchiveTask>? by lazy {
-        if (associateWithTransitiveClosure.any { it.compilationData.isMainCompilationData() }) {
+        if (associateCompilationsClosure.any { it.compilationData.isMainCompilationData() }) {
             val archiveTasks = target.project.tasks.withType(AbstractArchiveTask::class.java)
             if (!archiveTasks.isEmpty()) {
                 try {
@@ -270,7 +269,7 @@ open class DefaultCompilationDetails<T : KotlinCommonOptions>(
     override fun source(sourceSet: KotlinSourceSet) {
         if (directlyIncludedKotlinSourceSets.add(sourceSet)) {
             target.project.whenEvaluated {
-                addExactSourceSetsEagerly(sourceSet.withAllDependsOnSourceSets())
+                addExactSourceSetsEagerly(sourceSet.withDependsOnClosure)
             }
         }
     }
@@ -389,7 +388,7 @@ internal open class SharedNativeCompilationDetails(
             val friendSourceSets = getVisibleSourceSetsFromAssociateCompilations(project, defaultSourceSet).toMutableSet().apply {
                 // TODO: implement proper dependsOn/refines compiler args for Kotlin/Native and pass the dependsOn klibs separately;
                 //       But for now, those dependencies don't have any special semantics, so passing all them as friends works, too
-                addAll(defaultSourceSet.resolveAllDependsOnSourceSets())
+                addAll(defaultSourceSet.dependsOnClosure)
             }
             project.files(friendSourceSets.mapNotNull { project.getMetadataCompilationForSourceSet(it)?.output?.classesDirs })
         })

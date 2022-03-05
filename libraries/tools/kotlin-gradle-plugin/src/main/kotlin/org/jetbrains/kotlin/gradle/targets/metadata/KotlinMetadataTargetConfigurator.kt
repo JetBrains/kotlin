@@ -23,7 +23,6 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.CompilationSourceSetUtil.compilationsBySourceSets
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.hasKpmModel
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.metadataCompilationRegistryByModuleId
 import org.jetbrains.kotlin.gradle.plugin.sources.*
 import org.jetbrains.kotlin.gradle.plugin.statistics.KotlinBuildStatsService
 import org.jetbrains.kotlin.gradle.targets.native.internal.*
@@ -257,7 +256,7 @@ class KotlinMetadataTargetConfigurator :
              * See also: [buildKotlinProjectStructureMetadata], where these dependencies must be included into the source set exported deps.
              */
             if (isSharedNativeCompilation) {
-                sourceSet.withAllDependsOnSourceSets().forEach { hierarchySourceSet ->
+                sourceSet.withDependsOnClosure.forEach { hierarchySourceSet ->
                     apiElementsConfiguration.extendsFrom(
                         sourceSetDependencyConfigurationByScope(hierarchySourceSet, KotlinDependencyScope.IMPLEMENTATION_SCOPE)
                     )
@@ -438,14 +437,14 @@ class KotlinMetadataTargetConfigurator :
         val sourceSet = compilation.defaultSourceSet
 
         val dependsOnCompilationOutputs = lazy {
-            sourceSet.withAllDependsOnSourceSets().mapNotNull { hierarchySourceSet ->
+            sourceSet.withDependsOnClosure.mapNotNull { hierarchySourceSet ->
                 val dependencyCompilation = project.getMetadataCompilationForSourceSet(hierarchySourceSet)
                 dependencyCompilation?.output?.classesDirs.takeIf { hierarchySourceSet != sourceSet }
             }
         }
 
         val resolvedMetadataFilesProviders = lazy {
-            val transformationTaskHolders = sourceSet.withAllDependsOnSourceSets().mapNotNull { hierarchySourceSet ->
+            val transformationTaskHolders = sourceSet.withDependsOnClosure.mapNotNull { hierarchySourceSet ->
                 project.locateTask<TransformKotlinGranularMetadata>(transformGranularMetadataTaskName(hierarchySourceSet.name))
             }
             transformationTaskHolders.map { SourceSetResolvedMetadataProvider(it) }
@@ -565,7 +564,7 @@ internal fun isSharedNativeSourceSet(project: Project, sourceSet: KotlinSourceSe
 }
 
 internal fun dependsOnClosureWithInterCompilationDependencies(project: Project, sourceSet: KotlinSourceSet): Set<KotlinSourceSet> =
-    sourceSet.resolveAllDependsOnSourceSets().toMutableSet().apply {
+    sourceSet.dependsOnClosure.toMutableSet().apply {
         addAll(getVisibleSourceSetsFromAssociateCompilations(project, sourceSet))
     }
 

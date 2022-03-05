@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.sources.KotlinDependencyScope.*
-import org.jetbrains.kotlin.gradle.plugin.sources.withAllDependsOnSourceSets
+import org.jetbrains.kotlin.gradle.plugin.sources.withDependsOnClosure
 import org.jetbrains.kotlin.gradle.targets.metadata.ALL_COMPILE_METADATA_CONFIGURATION_NAME
 import org.jetbrains.kotlin.gradle.targets.metadata.KotlinMetadataTargetConfigurator
 import org.jetbrains.kotlin.gradle.targets.metadata.ResolvedMetadataFilesProvider
@@ -42,7 +42,7 @@ open class TransformKotlinGranularMetadata
     }
 
     private val participatingSourceSets: Set<KotlinSourceSet>
-        get() = transformation.kotlinSourceSet.withAllDependsOnSourceSets().toMutableSet().apply {
+        get() = transformation.kotlinSourceSet.withDependsOnClosure.toMutableSet().apply {
             if (any { it.name == KotlinSourceSet.COMMON_MAIN_SOURCE_SET_NAME })
                 add(project.kotlinExtension.sourceSets.getByName(KotlinSourceSet.COMMON_MAIN_SOURCE_SET_NAME))
         }

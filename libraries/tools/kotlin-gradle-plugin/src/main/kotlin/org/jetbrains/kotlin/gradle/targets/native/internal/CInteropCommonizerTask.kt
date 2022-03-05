@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinSharedNativeCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.kotlinSourceSetsIncludingDefault
-import org.jetbrains.kotlin.gradle.plugin.sources.resolveAllDependsOnSourceSets
+import org.jetbrains.kotlin.gradle.plugin.sources.withDependsOnClosure
 import org.jetbrains.kotlin.gradle.targets.native.internal.CInteropCommonizerTask.CInteropGist
 import org.jetbrains.kotlin.gradle.tasks.CInteropProcess
 import org.jetbrains.kotlin.konan.target.KonanTarget
@@ -34,7 +34,8 @@ internal open class CInteropCommonizerTask : AbstractCInteropCommonizerTask() {
     ) {
         @Suppress("unused") // Used for UP-TO-DATE check
         @get:Input
-        val allSourceSetNames: Provider<List<String>> = sourceSets.map { it.resolveAllDependsOnSourceSets().map(Any::toString) }
+        val allSourceSetNames: Provider<List<String>> = sourceSets
+            .map { it.withDependsOnClosure.map(Any::toString) }
     }
 
     override val outputDirectory: File = project.buildDir.resolve("classes/kotlin/commonizer")

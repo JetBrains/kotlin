@@ -6,6 +6,8 @@
 package org.jetbrains.kotlin.project.model
 
 import org.jetbrains.kotlin.project.model.utils.variantsContainingFragment
+import org.jetbrains.kotlin.tooling.core.closure
+import org.jetbrains.kotlin.tooling.core.withClosure
 import java.io.File
 
 interface KotlinModuleFragment {
@@ -39,13 +41,10 @@ val KotlinModuleFragment.fragmentAttributeSets: Map<KotlinAttributeKey, Set<Stri
     }
 
 val KotlinModuleFragment.refinesClosure: Set<KotlinModuleFragment>
-    get() = mutableSetOf<KotlinModuleFragment>().apply {
-        fun visit(moduleFragment: KotlinModuleFragment) {
-            if (add(moduleFragment))
-                moduleFragment.directRefinesDependencies.forEach(::visit)
-        }
-        visit(this@refinesClosure)
-    }
+    get() = this.closure { it.directRefinesDependencies }
+
+val KotlinModuleFragment.withRefinesClosure: Set<KotlinModuleFragment>
+    get() = this.withClosure { it.directRefinesDependencies }
 
 val KotlinModuleVariant.platform get() = variantAttributes[KotlinPlatformTypeAttribute]
 
@@ -67,7 +66,7 @@ class BasicKotlinModuleVariant(
     containingModule: KotlinModule,
     fragmentName: String,
     languageSettings: LanguageSettings? = null
-) : BasicKotlinModuleFragment (
+) : BasicKotlinModuleFragment(
     containingModule,
     fragmentName,
     languageSettings

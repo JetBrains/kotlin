@@ -27,9 +27,9 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinGradleModule
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.hasKpmModel
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.kpmModules
 import org.jetbrains.kotlin.gradle.plugin.sources.KotlinDependencyScope
-import org.jetbrains.kotlin.gradle.plugin.sources.resolveAllDependsOnSourceSets
+import org.jetbrains.kotlin.gradle.plugin.sources.dependsOnClosure
 import org.jetbrains.kotlin.gradle.plugin.sources.sourceSetDependencyConfigurationByScope
-import org.jetbrains.kotlin.gradle.plugin.sources.withAllDependsOnSourceSets
+import org.jetbrains.kotlin.gradle.plugin.sources.withDependsOnClosure
 import org.jetbrains.kotlin.gradle.targets.android.findAndroidTarget
 import org.jetbrains.kotlin.gradle.targets.jvm.JvmCompilationsTestRunSource
 import org.jetbrains.kotlin.gradle.tasks.locateTask
@@ -166,7 +166,7 @@ private fun chooseAndAddStdlibDependency(
     val sourceSetDependencyConfigurations =
         KotlinDependencyScope.values().map { project.sourceSetDependencyConfigurationByScope(kotlinSourceSet, it) }
 
-    val hierarchySourceSetsDependencyConfigurations = kotlinSourceSet.resolveAllDependsOnSourceSets().flatMap { hierarchySourceSet ->
+    val hierarchySourceSetsDependencyConfigurations = kotlinSourceSet.dependsOnClosure.flatMap { hierarchySourceSet ->
         KotlinDependencyScope.values().map { scope ->
             project.sourceSetDependencyConfigurationByScope(hierarchySourceSet, scope)
         }
@@ -281,7 +281,7 @@ internal fun configureKotlinTestDependency(project: Project) {
 
             project.tryWithDependenciesIfUnresolved(configuration) { dependencies ->
                 val parentOrOwnVersions: List<String?> =
-                    kotlinSourceSet.withAllDependsOnSourceSets().filter(versionOrNullBySourceSet::contains)
+                    kotlinSourceSet.withDependsOnClosure.filter(versionOrNullBySourceSet::contains)
                         .map(versionOrNullBySourceSet::get)
 
                 finalizingDependencies = true
