@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.gradle.BaseGradleIT.CompiledProject
 import org.jetbrains.kotlin.library.ToolingSingleFileKlibResolveStrategy
 import org.jetbrains.kotlin.library.commonizerTarget
 import org.jetbrains.kotlin.library.resolveSingleFileKlib
-import org.jetbrains.kotlin.tooling.core.singleClosure
+import org.jetbrains.kotlin.tooling.core.linearClosure
 import java.io.File
 import javax.annotation.RegEx
 import kotlin.test.fail
@@ -165,7 +165,7 @@ private fun inferCommonizerTargetOrNull(libraryFile: File): CommonizerTarget? = 
     strategy = ToolingSingleFileKlibResolveStrategy
 ).commonizerTarget?.let(::parseCommonizerTarget)
 
-private val File.parentsClosure: Set<File> get() = this.singleClosure { parentFile }
+private val File.parentsClosure: Set<File> get() = this.linearClosure { parentFile }
 
 private const val dollar = "\$"
 
