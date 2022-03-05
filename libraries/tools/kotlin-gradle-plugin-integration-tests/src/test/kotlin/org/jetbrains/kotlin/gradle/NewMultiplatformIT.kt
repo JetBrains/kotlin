@@ -8,7 +8,6 @@ import org.gradle.api.logging.LogLevel
 import org.jetbrains.kotlin.gradle.native.GeneralNativeIT.Companion.withNativeCommandLineArguments
 import org.jetbrains.kotlin.gradle.native.GeneralNativeIT.Companion.containsSequentially
 import org.gradle.api.logging.configuration.WarningMode
-import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.native.*
 import org.jetbrains.kotlin.gradle.native.MPPNativeTargets
 import org.jetbrains.kotlin.gradle.native.transformNativeTestProject
@@ -85,18 +84,22 @@ class NewMultiplatformIT : BaseGradleIT() {
     )
 
     @Test
-    fun testLibAndAppWithoutHMPP() = doTestLibAndApp(
-        "sample-lib",
-        "sample-app",
-        noHMPP
-    )
+    fun testLibAndAppWithoutHMPP() = unlessModelMappingUsed {
+        doTestLibAndApp(
+            "sample-lib",
+            "sample-app",
+            noHMPP
+        )
+    }
 
     @Test
-    fun testLibAndAppWithCompatibilityArtifact() = doTestLibAndApp(
-        "sample-lib",
-        "sample-app",
-        hmppWithCompatibilityMetadataArtifact
-    )
+    fun testLibAndAppWithCompatibilityArtifact() = unlessModelMappingUsed {
+        doTestLibAndApp(
+            "sample-lib",
+            "sample-app",
+            hmppWithCompatibilityMetadataArtifact
+        )
+    }
 
     @Test
     fun testLibAndAppWithGradleKotlinDsl() = doTestLibAndApp(
@@ -338,7 +341,11 @@ class NewMultiplatformIT : BaseGradleIT() {
                 options = defaultBuildOptions().copy(jsCompilerType = jsCompilerType)
             ) {
                 assertSuccessful()
-                assertTasksSkipped(":compileCommonMainKotlinMetadata")
+
+                unlessModelMappingUsed("with KPM, there's no such task at all in the graph: commonMain is not considered common anymore") {
+                    assertTasksSkipped(":compileCommonMainKotlinMetadata")
+                }
+
                 assertTasksExecuted(*compileTasksNames.toTypedArray(), ":allMetadataJar")
 
                 val groupDir = projectDir.resolve("repo/com/example")
@@ -503,7 +510,7 @@ class NewMultiplatformIT : BaseGradleIT() {
     }
 
     @Test
-    fun testJvmWithJavaEquivalence() = doTestJvmWithJava(testJavaSupportInJvmTargets = false)
+    fun testJvmWithJavaEquivalence() = unlessModelMappingUsed { doTestJvmWithJava(testJavaSupportInJvmTargets = false) }
 
     @Test
     fun testJavaSupportInJvmTargets() = doTestJvmWithJava(testJavaSupportInJvmTargets = true)
@@ -681,23 +688,24 @@ class NewMultiplatformIT : BaseGradleIT() {
         doTestLibWithTests(this)
     }
 
-    private fun doTestLibWithTests(project: Project) = with(project) {
-        build("check") {
-            assertSuccessful()
-            assertTasksExecuted(
-                // compilation tasks:
-                ":compileKotlinJs",
-                ":compileTestKotlinJs",
-                ":compileKotlinJvmWithoutJava",
-                ":compileTestKotlinJvmWithoutJava",
-                ":compileKotlinJvmWithJava",
-                ":compileJava",
-                ":compileTestKotlinJvmWithJava",
-                ":compileTestJava",
+    private fun doTestLibWithTests(project: Project) = unlessModelMappingUsed {
+        with(project) {
+            build("check") {
+                assertSuccessful()
+                assertTasksExecuted(
+                    // compilation tasks:
+                    ":compileKotlinJs",
+                    ":compileTestKotlinJs",
+                    ":compileKotlinJvmWithoutJava",
+                    ":compileTestKotlinJvmWithoutJava",
+                    ":compileKotlinJvmWithJava",
+                    ":compileJava",
+                    ":compileTestKotlinJvmWithJava",
+                    ":compileTestJava",
                 // test tasks:
-                ":jsTest", // does not run any actual tests for now
-                ":jvmWithoutJavaTest",
-                ":test"
+                    ":jsTest", // does not run any actual tests for now
+                    ":jvmWithoutJavaTest",
+                    ":jvmWithJavaTest"
             )
 
             val expectedKotlinOutputFiles = listOf(
@@ -732,24 +740,15 @@ class NewMultiplatformIT : BaseGradleIT() {
                 }
             )
 
-            expectedKotlinOutputFiles.forEach { assertFileExists(it) }
+                expectedKotlinOutputFiles.forEach { assertFileExists(it) }
 
-            // Gradle 6.6+ slightly changed format of xml test results
-            // If, in the test project, preset name was updated,
-            // update accordingly test result output for Gradle 6.6+
-            val testGradleVersion = chooseWrapperVersionOrFinishTest()
-            val expectedTestResults = if (GradleVersion.version(testGradleVersion) < GradleVersion.version("6.6")) {
-                "testProject/new-mpp-lib-with-tests/TEST-all-pre6.6.xml"
-            } else {
-                "testProject/new-mpp-lib-with-tests/TEST-all.xml"
+                assertTestResults(
+                    "testProject/new-mpp-lib-with-tests/TEST-all.xml",
+                    "jsNodeTest",
+                    "jvmWithJavaTest",
+                    "${nativeHostTargetName}Test"
+                )
             }
-
-            assertTestResults(
-                expectedTestResults,
-                "jsNodeTest",
-                "test", // jvmTest
-                "${nativeHostTargetName}Test"
-            )
         }
     }
 
@@ -1229,10 +1228,14 @@ class NewMultiplatformIT : BaseGradleIT() {
                 sourcesDirs
             }
 
-            assertEquals(
-                setOf("commonMain", "jvm6Main", "linux64Main", "linuxMipsel32Main", "macos64Main", "mingw64Main", "mingw86Main", "nodeJsMain", "wasmMain"),
-                sourceJarSourceRoots[null]
+            val sourceFragmentNames =
+                listOf("common", "jvm6", "linux64", "linuxMipsel32", "macos64", "mingw64", "mingw86", "nodeJs", "wasm")
+            val sourceJarDirectoryNames = ifModelMappingUsedOrElse(
+                ifUsed = { sourceFragmentNames.toSet() },
+                orElse = { sourceFragmentNames.map { it + "Main" }.toSet() }
             )
+
+            assertEquals(sourceJarDirectoryNames, sourceJarSourceRoots[null])
             assertEquals(setOf("commonMain", "jvm6Main"), sourceJarSourceRoots["jvm6"])
             assertEquals(setOf("commonMain", "nodeJsMain"), sourceJarSourceRoots["nodejs"])
             assertEquals(setOf("commonMain", "linux64Main"), sourceJarSourceRoots["linux64"])
@@ -1546,25 +1549,47 @@ class NewMultiplatformIT : BaseGradleIT() {
         val originalBuildscriptContent = gradleBuildScript("app").readText()
 
         fun testDependencies() = testResolveAllConfigurations("app") {
-            assertContains(">> :app:testNonTransitiveStringNotationApiDependenciesMetadata --> junit-4.13.2.jar")
-            assertEquals(
-                1,
-                (Regex.escape(">> :app:testNonTransitiveStringNotationApiDependenciesMetadata") + " .*").toRegex().findAll(output).count()
-            )
+            ignoreFailureWithModelMapping("KPM resolved dependencies in a different way, in a single configuration per module") {
+                val configurationForNonTransitiveStringApiDependency =
+                    ifModelMappingUsedOrElse({ "testNonTransitiveStringNotationApiDependenciesMetadata" }, { TODO() })
 
-            assertContains(">> :app:testNonTransitiveDependencyNotationApiDependenciesMetadata --> kotlin-reflect-${defaultBuildOptions().kotlinVersion}.jar")
-            assertEquals(
-                1,
-                (Regex.escape(">> :app:testNonTransitiveStringNotationApiDependenciesMetadata") + " .*").toRegex().findAll(output)
-                    .count()
-            )
+                assertContains(">> :app:$configurationForNonTransitiveStringApiDependency --> junit-4.13.2.jar")
+                unlessModelMappingUsed {
+                    assertEquals(
+                        1,
+                        (Regex.escape(">> :app:$configurationForNonTransitiveStringApiDependency") + " .*").toRegex().findAll(output)
+                            .count()
+                    )
+                }
 
-            assertContains(">> :app:testExplicitKotlinVersionApiDependenciesMetadata --> kotlin-reflect-1.3.0.jar")
-            assertContains(">> :app:testExplicitKotlinVersionImplementationDependenciesMetadata --> kotlin-reflect-1.2.71.jar")
-            assertContains(">> :app:testExplicitKotlinVersionCompileOnlyDependenciesMetadata --> kotlin-reflect-1.2.70.jar")
-            assertContains(">> :app:testExplicitKotlinVersionRuntimeOnlyDependenciesMetadata --> kotlin-reflect-1.2.60.jar")
+                val configurationForNonTransitiveDependencyNotationApiDependency =
+                    ifModelMappingUsedOrElse({ "testNonTransitiveDependencyNotationApiDependenciesMetadata" }, { TODO() })
 
-            assertContains(">> :app:testProjectWithConfigurationApiDependenciesMetadata --> output.txt")
+                assertContains(">> :app:$configurationForNonTransitiveDependencyNotationApiDependency --> kotlin-reflect-${defaultBuildOptions().kotlinVersion}.jar")
+                unlessModelMappingUsed {
+                    assertEquals(
+                        1,
+                        (Regex.escape(">> :app:$configurationForNonTransitiveDependencyNotationApiDependency") + " .*").toRegex()
+                            .findAll(output)
+                            .count()
+                    )
+                }
+
+                ifModelMappingUsedOrElse(
+                    ifUsed = { TODO() },
+                    orElse = {
+                        assertContains(">> :app:testExplicitKotlinVersionApiDependenciesMetadata --> kotlin-reflect-1.3.0.jar")
+                        assertContains(">> :app:testExplicitKotlinVersionImplementationDependenciesMetadata --> kotlin-reflect-1.2.71.jar")
+                        assertContains(">> :app:testExplicitKotlinVersionCompileOnlyDependenciesMetadata --> kotlin-reflect-1.2.70.jar")
+                        assertContains(">> :app:testExplicitKotlinVersionRuntimeOnlyDependenciesMetadata --> kotlin-reflect-1.2.60.jar")
+                    }, reason = "in KPM, these dependencies are resolved together, and a single version is chosen"
+                )
+
+                val configurationForProjectWithConfigurationApiDependency =
+                    ifModelMappingUsedOrElse({ "testProjectWithConfigurationApiDependenciesMetadata" }, { TODO() })
+
+                assertContains(">> :app:$configurationForProjectWithConfigurationApiDependency --> output.txt")
+            }
         }
 
         testDependencies()
@@ -1586,18 +1611,33 @@ class NewMultiplatformIT : BaseGradleIT() {
 
     @Test
     fun testMultipleTargetsSamePlatform() = with(Project("newMppMultipleTargetsSamePlatform", gradleVersion)) {
+        ifModelMappingUsed(
+            "In KPM, the secondary compilations attempt to resolve a dependency on main, and that's ambiguous (e.g. mixed vs junit)"
+        ) {
+            setupWorkingDir()
+            gradleBuildScript("app").appendText(
+                """
+                ${'\n'}
+                configurations["mixedApiElements"].isCanBeConsumed = false
+                configurations["mixedRuntimeElements"].isCanBeConsumed = false
+            """.trimIndent()
+            )
+        }
+
         testResolveAllConfigurations("app") {
-            assertContains(">> :app:junitCompileClasspath --> lib-junit.jar")
-            assertContains(">> :app:junitCompileClasspath --> junit-4.13.2.jar")
+            val suffix = ifModelMappingUsedOrElse(ifUsed = "Dependencies", orElse = "Classpath")
 
-            assertContains(">> :app:mixedJunitCompileClasspath --> lib-junit.jar")
-            assertContains(">> :app:mixedJunitCompileClasspath --> junit-4.13.2.jar")
+            assertContains(">> :app:junitCompile$suffix --> lib-junit.jar")
+            assertContains(">> :app:junitCompile$suffix --> junit-4.13.2.jar")
 
-            assertContains(">> :app:testngCompileClasspath --> lib-testng.jar")
-            assertContains(">> :app:testngCompileClasspath --> testng-6.14.3.jar")
+            assertContains(">> :app:mixedJunitCompile$suffix --> lib-junit.jar")
+            assertContains(">> :app:mixedJunitCompile$suffix --> junit-4.13.2.jar")
 
-            assertContains(">> :app:mixedTestngCompileClasspath --> lib-testng.jar")
-            assertContains(">> :app:mixedTestngCompileClasspath --> testng-6.14.3.jar")
+            assertContains(">> :app:testngCompile$suffix --> lib-testng.jar")
+            assertContains(">> :app:testngCompile$suffix --> testng-6.14.3.jar")
+
+            assertContains(">> :app:mixedTestngCompile$suffix --> lib-testng.jar")
+            assertContains(">> :app:mixedTestngCompile$suffix --> testng-6.14.3.jar")
         }
     }
 
@@ -1775,9 +1815,12 @@ class NewMultiplatformIT : BaseGradleIT() {
             gradleBuildScript().appendText(
                 "\nkotlin.sourceSets { getByName(\"commonTest\").requiresVisibilityOf(getByName(\"commonIntegrationTest\")) }"
             )
-            build {
-                assertFailed()
-                assertContains(UnsatisfiedSourceSetVisibilityException::class.java.simpleName)
+            ignoreFailureWithModelMapping("KPM uses a different mechanism in place of associate compilations + visiblity requirements") {
+                // TODO: support requiresVisibilityOf with KPM?
+                build {
+                    assertFailed()
+                    assertContains(UnsatisfiedSourceSetVisibilityException::class.java.simpleName)
+                }
             }
         }
     }
