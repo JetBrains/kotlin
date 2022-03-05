@@ -54,7 +54,7 @@ class KotlinBuildProperties(
 
     val buildCacheUrl: String? = getOrNull("kotlin.build.cache.url") as String?
 
-    val pushToBuildCache: Boolean = getBoolean("kotlin.build.cache.push", isTeamcityBuild)
+    val pushToBuildCache: Boolean = getBoolean("kotlin.build.cache.push", false)
 
     val localBuildCacheEnabled: Boolean = getBoolean("kotlin.build.cache.local.enabled", !isTeamcityBuild)
 
