@@ -85,6 +85,7 @@ class NotFoundClasses(private val storageManager: StorageManager, private val mo
         override fun getCompanionObjectDescriptor(): ClassDescriptor? = null
         override fun getSealedSubclasses(): Collection<ClassDescriptor> = emptyList()
         override fun getInlineClassRepresentation(): InlineClassRepresentation<SimpleType>? = null
+        override fun getMultiFieldValueClassRepresentation(): MultiFieldValueClassRepresentation<SimpleType>? = null
 
         override fun toString() = "class $name (not found)"
     }

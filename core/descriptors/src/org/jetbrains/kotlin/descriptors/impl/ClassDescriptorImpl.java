@@ -181,4 +181,10 @@ public class ClassDescriptorImpl extends ClassDescriptorBase {
     public InlineClassRepresentation<SimpleType> getInlineClassRepresentation() {
         return null;
     }
+
+    @Nullable
+    @Override
+    public MultiFieldValueClassRepresentation<SimpleType> getMultiFieldValueClassRepresentation() {
+        return null;
+    }
 }

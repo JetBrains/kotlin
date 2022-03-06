@@ -7,37 +7,29 @@ package org.jetbrains.kotlin.backend.jvm
 
 import org.jetbrains.kotlin.backend.common.ir.copyTo
 import org.jetbrains.kotlin.backend.common.ir.copyTypeParameters
-import org.jetbrains.kotlin.backend.common.ir.copyTypeParametersFrom
-import org.jetbrains.kotlin.backend.common.ir.createDispatchReceiverParameter
 import org.jetbrains.kotlin.backend.jvm.ir.*
-import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.ir.IrBuiltIns
-import org.jetbrains.kotlin.ir.builders.declarations.addValueParameter
 import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.builders.declarations.buildProperty
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
-import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
-import org.jetbrains.kotlin.ir.types.impl.IrStarProjectionImpl
 import org.jetbrains.kotlin.ir.types.isInt
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.resolve.InlineClassDescriptorResolver
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import java.util.concurrent.ConcurrentHashMap
 
 /**
- * Keeps track of replacement functions and inline class box/unbox functions.
+ * Keeps track of replacement functions and multi-field value class box/unbox functions.
  */
-class MemoizedInlineClassReplacements(
-    private val mangleReturnTypes: Boolean,
+class MemoizedMultiFieldValueClassReplacements(
+    private val mangleReturnTypes: Boolean, // todo always false
     irFactory: IrFactory,
     context: JvmBackendContext
-) : MemoizedValueClassAbstractReplacements(irFactory, context) {
-    private val storageManager = LockBasedStorageManager("inline-class-replacements")
+) : MemoizedValueClassAbstractReplacements(irFactory, context) { // There is only sample logic yet
+    private val storageManager = LockBasedStorageManager("multi-field-value-class-replacements")
     private val propertyMap = ConcurrentHashMap<IrPropertySymbol, IrProperty>()
 
     val originalFunctionForStaticReplacement: MutableMap<IrFunction, IrFunction> = ConcurrentHashMap()
@@ -46,42 +38,41 @@ class MemoizedInlineClassReplacements(
     /**
      * Get a replacement for a function or a constructor.
      */
-    override val getReplacementFunction: (IrFunction) -> IrSimpleFunction? =
-        storageManager.createMemoizedFunctionWithNullableValues {
-            when {
-                // Don't mangle anonymous or synthetic functions, except for generated SAM wrapper methods
-                (it.isLocal && it is IrSimpleFunction && it.overriddenSymbols.isEmpty()) ||
-                        (it.origin == IrDeclarationOrigin.DELEGATED_PROPERTY_ACCESSOR && it.visibility == DescriptorVisibilities.LOCAL) ||
-                        it.isStaticInlineClassReplacement ||
-                        it.origin.isSynthetic && it.origin != IrDeclarationOrigin.SYNTHETIC_GENERATED_SAM_IMPLEMENTATION ->
-                    null
+    override val getReplacementFunction: (IrFunction) -> IrSimpleFunction? = storageManager.createMemoizedFunctionWithNullableValues {
+        when {
+            // Don't mangle anonymous or synthetic functions, except for generated SAM wrapper methods
+            (it.isLocal && it is IrSimpleFunction && it.overriddenSymbols.isEmpty()) ||
+                    (it.origin == IrDeclarationOrigin.DELEGATED_PROPERTY_ACCESSOR && it.visibility == DescriptorVisibilities.LOCAL) ||
+                    it.isStaticInlineClassReplacement ||
+                    it.origin.isSynthetic && it.origin != IrDeclarationOrigin.SYNTHETIC_GENERATED_SAM_IMPLEMENTATION ->
+                null
 
-                it.isInlineClassFieldGetter ->
-                    if (it.hasMangledReturnType)
-                        createMethodReplacement(it)
-                    else
-                        null
-
-                // Mangle all functions in the body of an inline class
-                it.parent.safeAs<IrClass>()?.isSingleFieldValueClass == true ->
-                    when {
-                        it.isRemoveAtSpecialBuiltinStub() ->
-                            null
-                        it.isInlineClassMemberFakeOverriddenFromJvmDefaultInterfaceMethod() ||
-                                it.origin == IrDeclarationOrigin.IR_BUILTINS_STUB ->
-                            createMethodReplacement(it)
-                        else ->
-                            createStaticReplacement(it)
-                    }
-
-                // Otherwise, mangle functions with mangled parameters, ignoring constructors
-                it is IrSimpleFunction && !it.isFromJava() && (it.hasMangledParameters || mangleReturnTypes && it.hasMangledReturnType) ->
+            it.isMultiFieldValueClassFieldGetter ->
+                if (it.hasMangledReturnType)
                     createMethodReplacement(it)
-
-                else ->
+                else
                     null
-            }
+
+            // Mangle all functions in the body of an inline class
+            it.parent.safeAs<IrClass>()?.isMultiFieldValueClass == true ->
+                when {
+                    it.isRemoveAtSpecialBuiltinStub() ->
+                        null
+                    it.isInlineClassMemberFakeOverriddenFromJvmDefaultInterfaceMethod() ||
+                            it.origin == IrDeclarationOrigin.IR_BUILTINS_STUB ->
+                        createMethodReplacement(it)
+                    else ->
+                        createStaticReplacement(it)
+                }
+
+            // Otherwise, mangle functions with mangled parameters, ignoring constructors
+            it is IrSimpleFunction && !it.isFromJava() && (it.hasMangledParameters || mangleReturnTypes && it.hasMangledReturnType) ->
+                createMethodReplacement(it)
+
+            else ->
+                null
         }
+    }
 
     private fun IrFunction.isRemoveAtSpecialBuiltinStub() =
         origin == IrDeclarationOrigin.IR_BUILTINS_STUB &&
@@ -93,7 +84,7 @@ class MemoizedInlineClassReplacements(
         if (this !is IrSimpleFunction) return false
         if (!this.isFakeOverride) return false
         val parentClass = parentClassOrNull ?: return false
-        if (!parentClass.isSingleFieldValueClass) return false
+        if (!parentClass.isMultiFieldValueClass) return false
 
         val overridden = resolveFakeOverride() ?: return false
         if (!overridden.parentAsClass.isJvmInterface) return false
@@ -106,70 +97,70 @@ class MemoizedInlineClassReplacements(
         return overridden.isFromJava() || overridden.isCompiledToJvmDefault(context.state.jvmDefaultMode)
     }
 
-    /**
-     * Get the box function for an inline class. Concretely, this is a synthetic
-     * static function named "box-impl" which takes an unboxed value and returns
-     * a boxed value.
-     */
-    val getBoxFunction: (IrClass) -> IrSimpleFunction =
-        storageManager.createMemoizedFunction { irClass ->
-            require(irClass.isSingleFieldValueClass)
-            irFactory.buildFun {
-                name = Name.identifier(KotlinTypeMapper.BOX_JVM_METHOD_NAME)
-                origin = JvmLoweredDeclarationOrigin.SYNTHETIC_INLINE_CLASS_MEMBER
-                returnType = irClass.defaultType
-            }.apply {
-                parent = irClass
-                copyTypeParametersFrom(irClass)
-                addValueParameter {
-                    name = InlineClassDescriptorResolver.BOXING_VALUE_PARAMETER_NAME
-                    type = irClass.inlineClassRepresentation!!.underlyingType
-                }
-            }
-        }
-
-    /**
-     * Get the unbox function for an inline class. Concretely, this is a synthetic
-     * member function named "unbox-impl" which returns an unboxed result.
-     */
-    val getUnboxFunction: (IrClass) -> IrSimpleFunction =
-        storageManager.createMemoizedFunction { irClass ->
-            require(irClass.isSingleFieldValueClass)
-            irFactory.buildFun {
-                name = Name.identifier(KotlinTypeMapper.UNBOX_JVM_METHOD_NAME)
-                origin = JvmLoweredDeclarationOrigin.SYNTHETIC_INLINE_CLASS_MEMBER
-                returnType = irClass.inlineClassRepresentation!!.underlyingType
-            }.apply {
-                parent = irClass
-                createDispatchReceiverParameter()
-            }
-        }
-
-    private val specializedEqualsCache = storageManager.createCacheWithNotNullValues<IrClass, IrSimpleFunction>()
-    fun getSpecializedEqualsMethod(irClass: IrClass, irBuiltIns: IrBuiltIns): IrSimpleFunction {
-        require(irClass.isSingleFieldValueClass)
-        return specializedEqualsCache.computeIfAbsent(irClass) {
-            irFactory.buildFun {
-                name = InlineClassDescriptorResolver.SPECIALIZED_EQUALS_NAME
-                // TODO: Revisit this once we allow user defined equals methods in inline classes.
-                origin = JvmLoweredDeclarationOrigin.INLINE_CLASS_GENERATED_IMPL_METHOD
-                returnType = irBuiltIns.booleanType
-            }.apply {
-                parent = irClass
-                // We ignore type arguments here, since there is no good way to go from type arguments to types in the IR anyway.
-                val typeArgument =
-                    IrSimpleTypeImpl(null, irClass.symbol, false, List(irClass.typeParameters.size) { IrStarProjectionImpl }, listOf())
-                addValueParameter {
-                    name = InlineClassDescriptorResolver.SPECIALIZED_EQUALS_FIRST_PARAMETER_NAME
-                    type = typeArgument
-                }
-                addValueParameter {
-                    name = InlineClassDescriptorResolver.SPECIALIZED_EQUALS_SECOND_PARAMETER_NAME
-                    type = typeArgument
-                }
-            }
-        }
-    }
+//    /**
+//     * Get the box function for an inline class. Concretely, this is a synthetic
+//     * static function named "box-impl" which takes an unboxed value and returns
+//     * a boxed value.
+//     */
+//    val getBoxFunction: (IrClass) -> IrSimpleFunction =
+//        storageManager.createMemoizedFunction { irClass ->
+//            require(irClass.isSingleFieldValueClass)
+//            irFactory.buildFun {
+//                name = Name.identifier(KotlinTypeMapper.BOX_JVM_METHOD_NAME)
+//                origin = JvmLoweredDeclarationOrigin.SYNTHETIC_INLINE_CLASS_MEMBER
+//                returnType = irClass.defaultType
+//            }.apply {
+//                parent = irClass
+//                copyTypeParametersFrom(irClass)
+//                addValueParameter {
+//                    name = InlineClassDescriptorResolver.BOXING_VALUE_PARAMETER_NAME
+//                    type = irClass.inlineClassRepresentation!!.underlyingType
+//                }
+//            }
+//        }
+//
+//    /**
+//     * Get the unbox function for an inline class. Concretely, this is a synthetic
+//     * member function named "unbox-impl" which returns an unboxed result.
+//     */
+//    val getUnboxFunction: (IrClass) -> IrSimpleFunction =
+//        storageManager.createMemoizedFunction { irClass ->
+//            require(irClass.isSingleFieldValueClass)
+//            irFactory.buildFun {
+//                name = Name.identifier(KotlinTypeMapper.UNBOX_JVM_METHOD_NAME)
+//                origin = JvmLoweredDeclarationOrigin.SYNTHETIC_INLINE_CLASS_MEMBER
+//                returnType = irClass.inlineClassRepresentation!!.underlyingType
+//            }.apply {
+//                parent = irClass
+//                createDispatchReceiverParameter()
+//            }
+//        }
+//
+//    private val specializedEqualsCache = storageManager.createCacheWithNotNullValues<IrClass, IrSimpleFunction>()
+//    fun getSpecializedEqualsMethod(irClass: IrClass, irBuiltIns: IrBuiltIns): IrSimpleFunction {
+//        require(irClass.isSingleFieldValueClass)
+//        return specializedEqualsCache.computeIfAbsent(irClass) {
+//            irFactory.buildFun {
+//                name = InlineClassDescriptorResolver.SPECIALIZED_EQUALS_NAME
+//                // TODO: Revisit this once we allow user defined equals methods in inline classes.
+//                origin = JvmLoweredDeclarationOrigin.INLINE_CLASS_GENERATED_IMPL_METHOD
+//                returnType = irBuiltIns.booleanType
+//            }.apply {
+//                parent = irClass
+//                // We ignore type arguments here, since there is no good way to go from type arguments to types in the IR anyway.
+//                val typeArgument =
+//                    IrSimpleTypeImpl(null, irClass.symbol, false, List(irClass.typeParameters.size) { IrStarProjectionImpl }, listOf())
+//                addValueParameter {
+//                    name = InlineClassDescriptorResolver.SPECIALIZED_EQUALS_FIRST_PARAMETER_NAME
+//                    type = typeArgument
+//                }
+//                addValueParameter {
+//                    name = InlineClassDescriptorResolver.SPECIALIZED_EQUALS_SECOND_PARAMETER_NAME
+//                    type = typeArgument
+//                }
+//            }
+//        }
+//    }
 
     private fun createMethodReplacement(function: IrFunction): IrSimpleFunction =
         buildReplacement(function, function.origin) {
@@ -234,11 +225,12 @@ class MemoizedInlineClassReplacements(
         val replacement = buildReplacementInner(function, replacementOrigin, noFakeOverride, useOldManglingScheme, body)
         // When using the new mangling scheme we might run into dependencies using the old scheme
         // for which we will fall back to the old mangling scheme as well.
-        if (!useOldManglingScheme && replacement.name.asString().contains('-') && function.parentClassId != null) {
-            val resolved = (function as? IrSimpleFunction)?.resolveFakeOverride(true)
-            if (resolved?.parentClassId?.let { classFileContainsMethod(it, replacement, context) } == false) {
-                return buildReplacementInner(function, replacementOrigin, noFakeOverride, true, body)
-            }
+        if (
+            !useOldManglingScheme &&
+            replacement.name.asString().contains("-") &&
+            function.parentClassId?.let { classFileContainsMethod(it, replacement, context) } == false
+        ) {
+            return buildReplacementInner(function, replacementOrigin, noFakeOverride, true, body)
         }
         return replacement
     }
@@ -289,11 +281,7 @@ class MemoizedInlineClassReplacements(
                         parent = propertySymbol.owner.parent
                         copyAttributes(propertySymbol.owner)
                         annotations = propertySymbol.owner.annotations
-                        // In case this property is declared in an object in another file which is not yet lowered, its backing field will
-                        // be made static later. We have to handle it here though, because this new property will be saved to the cache
-                        // and reused when lowering the same call in all subsequent files, which would be incorrect if it was unlowered.
-                        backingField = context.cachedDeclarations.getStaticBackingField(propertySymbol.owner)
-                            ?: propertySymbol.owner.backingField
+                        backingField = propertySymbol.owner.backingField
                     }
                 }
                 correspondingPropertySymbol = property.symbol

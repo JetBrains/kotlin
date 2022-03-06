@@ -95,6 +95,7 @@ class SyntheticClassOrObjectDescriptor(
     override fun getUnsubstitutedMemberScope(kotlinTypeRefiner: KotlinTypeRefiner) = unsubstitutedMemberScope
     override fun getSealedSubclasses() = emptyList<ClassDescriptor>()
     override fun getInlineClassRepresentation(): InlineClassRepresentation<SimpleType>? = null
+    override fun getMultiFieldValueClassRepresentation(): MultiFieldValueClassRepresentation<SimpleType>? = null
 
     init {
         assert(modality != Modality.SEALED) { "Implement getSealedSubclasses() for this class: ${this::class.java}" }

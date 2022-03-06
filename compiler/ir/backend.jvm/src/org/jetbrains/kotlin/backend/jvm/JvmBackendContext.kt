@@ -129,6 +129,9 @@ class JvmBackendContext(
 
     val inlineClassReplacements = MemoizedInlineClassReplacements(state.functionsWithInlineClassReturnTypesMangled, irFactory, this)
 
+    val multiFieldValueClassReplacements =
+        MemoizedMultiFieldValueClassReplacements(state.functionsWithInlineClassReturnTypesMangled, irFactory, this)
+
     val continuationClassesVarsCountByType: MutableMap<IrAttributeContainer, Map<Type, Int>> = hashMapOf()
 
     val inlineMethodGenerationLock = Any()

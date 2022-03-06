@@ -9,10 +9,7 @@ import com.intellij.psi.PsiCompiledElement
 import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.KtSourceElement
-import org.jetbrains.kotlin.descriptors.ClassKind
-import org.jetbrains.kotlin.descriptors.InlineClassRepresentation
-import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.descriptors.Visibilities
+import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.backend.generators.FakeOverrideGenerator
 import org.jetbrains.kotlin.fir.builder.buildPackageDirective
@@ -71,6 +68,7 @@ import org.jetbrains.kotlin.resolve.calls.util.isSingleUnderscore
 import org.jetbrains.kotlin.types.ConstantValueKind
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.util.OperatorNameConventions
+import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 internal fun <T : IrElement> FirElement.convertWithOffsets(
     f: (startOffset: Int, endOffset: Int) -> T
@@ -196,7 +194,15 @@ fun FirReference.toSymbolForCall(
 ): IrSymbol? {
     return when (this) {
         is FirResolvedNamedReference ->
-            resolvedSymbol.toSymbolForCall(dispatchReceiver, session, classifierStorage, declarationStorage, preferGetter, explicitReceiver, isDelegate)
+            resolvedSymbol.toSymbolForCall(
+                dispatchReceiver,
+                session,
+                classifierStorage,
+                declarationStorage,
+                preferGetter,
+                explicitReceiver,
+                isDelegate
+            )
         is FirErrorNamedReference ->
             candidateSymbol?.toSymbolForCall(
                 dispatchReceiver,
@@ -646,6 +652,16 @@ fun Fir2IrComponents.computeInlineClassRepresentation(klass: FirRegularClass): I
         parameter.name,
         underlyingType as? IrSimpleType ?: error("Inline class underlying type is not a simple type: ${klass.render()}")
     )
+}
+
+// TODO: implement multiFieldValueClassRepresentation in FirRegularClass instead.
+fun Fir2IrComponents.computeMultiFieldValueClassRepresentation(klass: FirRegularClass): MultiFieldValueClassRepresentation<IrSimpleType>? {
+    val parameters = klass.getMultiFieldValueClassUnderlyingParameters(session) ?: return null
+    return MultiFieldValueClassRepresentation(parameters.map {
+        val type = it.returnTypeRef.toIrType(typeConverter).safeAs<IrSimpleType>()
+            ?: error("Value class underlying type is not a simple type: ${klass.render()}")
+        it.name to type
+    })
 }
 
 fun FirRegularClass.getIrSymbolsForSealedSubclasses(components: Fir2IrComponents): List<IrClassSymbol> {
