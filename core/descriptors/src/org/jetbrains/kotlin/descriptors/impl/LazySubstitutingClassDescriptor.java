@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.descriptors.impl;
 
+import kotlin.Pair;
 import kotlin.collections.CollectionsKt;
 import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
@@ -328,8 +329,25 @@ public class LazySubstitutingClassDescriptor extends ModuleAwareClassDescriptor 
         //noinspection ConstantConditions
         return representation == null ? null : new InlineClassRepresentation<SimpleType>(
                 representation.getUnderlyingPropertyName(),
-                substituteSimpleType(getInlineClassRepresentation().getUnderlyingType())
+                substituteSimpleType(representation.getUnderlyingType())
         );
+    }
+
+    @Nullable
+    @Override
+    public MultiFieldValueClassRepresentation<SimpleType> getMultiFieldValueClassRepresentation() {
+        MultiFieldValueClassRepresentation<SimpleType> representation = original.getMultiFieldValueClassRepresentation();
+        if (representation == null) {
+            return null;
+        }
+        List<Pair<Name, SimpleType>> underlyingList = new ArrayList<Pair<Name, SimpleType>>(representation.getUnderlyingPropertyNamesToTypes());
+        for (int i = 0; i < underlyingList.size(); i++) {
+            Pair<Name, SimpleType> pair = underlyingList.get(i);
+            Name name = pair.getFirst();
+            SimpleType simpleType = pair.getSecond();
+            underlyingList.set(i, new Pair<Name, SimpleType>(name, substituteSimpleType(simpleType)));
+        }
+        return new MultiFieldValueClassRepresentation<SimpleType>(underlyingList);
     }
 
     @Nullable

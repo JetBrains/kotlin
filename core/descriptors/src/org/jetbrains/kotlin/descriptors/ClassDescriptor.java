@@ -104,6 +104,9 @@ public interface ClassDescriptor extends ClassifierDescriptorWithTypeParameters,
     @Nullable
     InlineClassRepresentation<SimpleType> getInlineClassRepresentation();
 
+    @Nullable
+    MultiFieldValueClassRepresentation<SimpleType> getMultiFieldValueClassRepresentation();
+
     @NotNull
     @Override
     ClassDescriptor getOriginal();

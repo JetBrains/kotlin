@@ -65,6 +65,8 @@ open class IrClassImpl(
 
     override var inlineClassRepresentation: InlineClassRepresentation<IrSimpleType>? = null
 
+    override var multiFieldValueClassRepresentation: MultiFieldValueClassRepresentation<IrSimpleType>? = null
+
     override var metadata: MetadataSource? = null
 
     override var attributeOwnerId: IrAttributeContainer = this

@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.builtins.jvm.createMappedTypeParametersSubstitution
 import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.impl.ClassDescriptorBase
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.load.java.FakePureImplementationsProvider
@@ -40,7 +39,6 @@ import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.checker.KotlinTypeRefiner
 import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
-import java.util.*
 
 class LazyJavaClassDescriptor(
     val outerContext: LazyJavaResolverContext,
@@ -199,6 +197,8 @@ class LazyJavaClassDescriptor(
     }
 
     override fun getInlineClassRepresentation(): InlineClassRepresentation<SimpleType>? = null
+
+    override fun getMultiFieldValueClassRepresentation(): MultiFieldValueClassRepresentation<SimpleType>? = null
 
     override fun toString() = "Lazy Java class ${this.fqNameUnsafe}"
 

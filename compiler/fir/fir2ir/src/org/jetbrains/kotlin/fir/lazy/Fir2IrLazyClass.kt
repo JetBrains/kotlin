@@ -139,6 +139,11 @@ class Fir2IrLazyClass(
         set(_) {
             error("Mutating Fir2Ir lazy elements is not possible")
         }
+    override var multiFieldValueClassRepresentation: MultiFieldValueClassRepresentation<IrSimpleType>?
+        get() = computeMultiFieldValueClassRepresentation(fir)
+        set(_) {
+            error("Mutating Fir2Ir lazy elements is not possible")
+        }
 
     private val fakeOverridesByName = mutableMapOf<Name, Collection<IrDeclaration>>()
 
