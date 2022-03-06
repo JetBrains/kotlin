@@ -13,8 +13,7 @@ import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
 import org.jetbrains.kotlin.backend.common.pop
 import org.jetbrains.kotlin.backend.common.push
 import org.jetbrains.kotlin.backend.jvm.*
-import org.jetbrains.kotlin.backend.jvm.ir.erasedUpperBound
-import org.jetbrains.kotlin.backend.jvm.ir.isInlineClassType
+import org.jetbrains.kotlin.backend.jvm.ir.*
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.config.ApiVersion
 import org.jetbrains.kotlin.descriptors.ClassKind
@@ -97,6 +96,27 @@ private class JvmInlineClassLowering(context: JvmBackendContext) : JvmValueClass
             rewriteOpenMethodsForSealed(declaration, inlineDirectSubclasses, noinlineSubclasses)
             buildSpecializedEqualsMethodForSealed(declaration, inlineDirectSubclasses, noinlineDirectSubclasses)
         }
+    }
+
+    override fun visitTypeOperator(expression: IrTypeOperatorCall): IrExpression {
+        // Downcasts to sealed inline class children leads to unboxing
+        if (expression.type.superTypes().any { it.isInlineClassType() } && !expression.type.isInlineClassType() &&
+            expression.argument.type.classOrNull != expression.type.classOrNull
+        ) {
+            val argument = super.visitExpression(expression.argument)
+            val top = expression.type.findTopSealedInlineSuperClass()
+            val castToTop = IrTypeOperatorCallImpl(
+                UNDEFINED_OFFSET, UNDEFINED_OFFSET,
+                top.defaultType, IrTypeOperator.IMPLICIT_CAST, argument.type, argument
+            )
+            val unbox = coerceInlineClasses(castToTop, top.defaultType, context.irBuiltIns.anyNType)
+            return IrTypeOperatorCallImpl(
+                expression.startOffset, expression.endOffset,
+                expression.type, IrTypeOperator.IMPLICIT_CAST, context.irBuiltIns.anyNType, unbox
+            )
+        }
+
+        return super.visitTypeOperator(expression)
     }
 
     // Since we cannot create objects of sealed inline class children, we remove virtual methods from the classfile.

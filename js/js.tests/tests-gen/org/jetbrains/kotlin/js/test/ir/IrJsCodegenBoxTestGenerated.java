@@ -19979,6 +19979,22 @@ public class IrJsCodegenBoxTestGenerated extends AbstractIrJsCodegenBoxTest {
             }
 
             @Nested
+            @TestMetadata("compiler/testData/codegen/box/inlineClasses/sealed/casts")
+            @TestDataPath("$PROJECT_ROOT")
+            public class Casts {
+                @Test
+                public void testAllFilesPresentInCasts() throws Exception {
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/inlineClasses/sealed/casts"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
+                }
+
+                @Test
+                @TestMetadata("object.kt")
+                public void testObject() throws Exception {
+                    runTest("compiler/testData/codegen/box/inlineClasses/sealed/casts/object.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+                }
+            }
+
+            @Nested
             @TestMetadata("compiler/testData/codegen/box/inlineClasses/sealed/constructor")
             @TestDataPath("$PROJECT_ROOT")
             public class Constructor {
@@ -20003,6 +20019,22 @@ public class IrJsCodegenBoxTestGenerated extends AbstractIrJsCodegenBoxTest {
                 @TestMetadata("result.kt")
                 public void testResult() throws Exception {
                     runTest("compiler/testData/codegen/box/inlineClasses/sealed/constructor/result.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+                }
+            }
+
+            @Nested
+            @TestMetadata("compiler/testData/codegen/box/inlineClasses/sealed/returnType")
+            @TestDataPath("$PROJECT_ROOT")
+            public class ReturnType {
+                @Test
+                public void testAllFilesPresentInReturnType() throws Exception {
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/inlineClasses/sealed/returnType"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
+                }
+
+                @Test
+                @TestMetadata("parent.kt")
+                public void testParent() throws Exception {
+                    runTest("compiler/testData/codegen/box/inlineClasses/sealed/returnType/parent.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
                 }
             }
         }

@@ -20973,6 +20973,28 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
                 KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/inlineClasses/sealed"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM, true);
             }
 
+            @TestMetadata("compiler/testData/codegen/box/inlineClasses/sealed/casts")
+            @TestDataPath("$PROJECT_ROOT")
+            @RunWith(JUnit3RunnerWithInners.class)
+            public static class Casts extends AbstractLightAnalysisModeTest {
+                @TestMetadata("object.kt")
+                public void ignoreObject() throws Exception {
+                    runTest("compiler/testData/codegen/box/inlineClasses/sealed/casts/object.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+                }
+
+                private void runTest(String testDataFilePath) throws Exception {
+                    KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM, testDataFilePath);
+                }
+
+                private void runTest(String testDataFilePath, java.util.function.Function<String, String> transformer) throws Exception {
+                    KotlinTestUtils.runTest(path -> doTestWithTransformer(path, transformer), TargetBackend.JVM, testDataFilePath);
+                }
+
+                public void testAllFilesPresentInCasts() throws Exception {
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/inlineClasses/sealed/casts"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM, true);
+                }
+            }
+
             @TestMetadata("compiler/testData/codegen/box/inlineClasses/sealed/constructor")
             @TestDataPath("$PROJECT_ROOT")
             @RunWith(JUnit3RunnerWithInners.class)
@@ -21002,6 +21024,28 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
 
                 public void testAllFilesPresentInConstructor() throws Exception {
                     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/inlineClasses/sealed/constructor"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM, true);
+                }
+            }
+
+            @TestMetadata("compiler/testData/codegen/box/inlineClasses/sealed/returnType")
+            @TestDataPath("$PROJECT_ROOT")
+            @RunWith(JUnit3RunnerWithInners.class)
+            public static class ReturnType extends AbstractLightAnalysisModeTest {
+                @TestMetadata("parent.kt")
+                public void ignoreParent() throws Exception {
+                    runTest("compiler/testData/codegen/box/inlineClasses/sealed/returnType/parent.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+                }
+
+                private void runTest(String testDataFilePath) throws Exception {
+                    KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM, testDataFilePath);
+                }
+
+                private void runTest(String testDataFilePath, java.util.function.Function<String, String> transformer) throws Exception {
+                    KotlinTestUtils.runTest(path -> doTestWithTransformer(path, transformer), TargetBackend.JVM, testDataFilePath);
+                }
+
+                public void testAllFilesPresentInReturnType() throws Exception {
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/inlineClasses/sealed/returnType"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM, true);
                 }
             }
         }

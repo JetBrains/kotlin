@@ -17691,6 +17691,28 @@ public class IrCodegenBoxWasmTestGenerated extends AbstractIrCodegenBoxWasmTest 
                 runTest("compiler/testData/codegen/box/inlineClasses/sealed/returnFromFunction.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
             }
 
+            @TestMetadata("compiler/testData/codegen/box/inlineClasses/sealed/casts")
+            @TestDataPath("$PROJECT_ROOT")
+            @RunWith(JUnit3RunnerWithInners.class)
+            public static class Casts extends AbstractIrCodegenBoxWasmTest {
+                private void runTest(String testDataFilePath) throws Exception {
+                    KotlinTestUtils.runTest0(this::doTest, TargetBackend.WASM, testDataFilePath);
+                }
+
+                private void runTest(String testDataFilePath, java.util.function.Function<String, String> transformer) throws Exception {
+                    KotlinTestUtils.runTest0(path -> doTestWithTransformer(path, transformer), TargetBackend.WASM, testDataFilePath);
+                }
+
+                public void testAllFilesPresentInCasts() throws Exception {
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/inlineClasses/sealed/casts"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+                }
+
+                @TestMetadata("object.kt")
+                public void testObject() throws Exception {
+                    runTest("compiler/testData/codegen/box/inlineClasses/sealed/casts/object.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+                }
+            }
+
             @TestMetadata("compiler/testData/codegen/box/inlineClasses/sealed/constructor")
             @TestDataPath("$PROJECT_ROOT")
             @RunWith(JUnit3RunnerWithInners.class)
@@ -17720,6 +17742,28 @@ public class IrCodegenBoxWasmTestGenerated extends AbstractIrCodegenBoxWasmTest 
                 @TestMetadata("result.kt")
                 public void testResult() throws Exception {
                     runTest("compiler/testData/codegen/box/inlineClasses/sealed/constructor/result.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+                }
+            }
+
+            @TestMetadata("compiler/testData/codegen/box/inlineClasses/sealed/returnType")
+            @TestDataPath("$PROJECT_ROOT")
+            @RunWith(JUnit3RunnerWithInners.class)
+            public static class ReturnType extends AbstractIrCodegenBoxWasmTest {
+                private void runTest(String testDataFilePath) throws Exception {
+                    KotlinTestUtils.runTest0(this::doTest, TargetBackend.WASM, testDataFilePath);
+                }
+
+                private void runTest(String testDataFilePath, java.util.function.Function<String, String> transformer) throws Exception {
+                    KotlinTestUtils.runTest0(path -> doTestWithTransformer(path, transformer), TargetBackend.WASM, testDataFilePath);
+                }
+
+                public void testAllFilesPresentInReturnType() throws Exception {
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/inlineClasses/sealed/returnType"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+                }
+
+                @TestMetadata("parent.kt")
+                public void testParent() throws Exception {
+                    runTest("compiler/testData/codegen/box/inlineClasses/sealed/returnType/parent.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
                 }
             }
         }

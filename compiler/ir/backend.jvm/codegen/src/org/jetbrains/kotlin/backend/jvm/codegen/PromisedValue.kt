@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.backend.jvm.codegen
 
 import org.jetbrains.kotlin.backend.jvm.InlineClassAbi
 import org.jetbrains.kotlin.backend.jvm.inlineClassFieldName
-import org.jetbrains.kotlin.backend.jvm.ir.eraseTypeParameters
+import org.jetbrains.kotlin.backend.jvm.ir.*
 import org.jetbrains.kotlin.backend.jvm.mapping.IrTypeMapper
 import org.jetbrains.kotlin.codegen.AsmUtil
 import org.jetbrains.kotlin.codegen.StackValue
@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.ir.declarations.IrTypeParameter
 import org.jetbrains.kotlin.ir.declarations.isInline
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.types.*
+import org.jetbrains.kotlin.ir.util.defaultType
 import org.jetbrains.kotlin.ir.util.isTypeParameter
 import org.jetbrains.kotlin.ir.util.parentAsClass
 import org.jetbrains.kotlin.load.kotlin.TypeMappingMode
@@ -32,6 +33,31 @@ abstract class PromisedValue(val codegen: ExpressionCodegen, val type: Type, val
     open fun materializeAt(target: Type, irTarget: IrType, castForReified: Boolean) {
         val erasedSourceType = irType.eraseTypeParameters()
         val erasedTargetType = irTarget.eraseTypeParameters()
+
+        val upcastFromSealedInlineClassChild =
+            !erasedSourceType.isInlineClassType() && erasedSourceType.classOrNull?.owner?.isChildOfSealedInlineClass() == true &&
+                    erasedTargetType.classOrNull != erasedSourceType.classOrNull
+
+        val downcastToSealedInlineClassChild =
+            !erasedTargetType.isInlineClassType() && erasedTargetType.classOrNull?.owner?.isChildOfSealedInlineClass() == true &&
+                    erasedTargetType.classOrNull != erasedSourceType.classOrNull
+
+        if (upcastFromSealedInlineClassChild) {
+            // Upcasts from sealed inline class children lead to boxing, if the source is
+            // not the inline class
+            val targetType = typeMapper.mapType(erasedSourceType.findTopSealedInlineSuperClass().defaultType.makeNullable())
+            StackValue.coerce(type, AsmTypes.OBJECT_TYPE, mv)
+            StackValue.boxInlineClass(AsmTypes.OBJECT_TYPE, targetType, false, mv)
+            return
+        }
+        if (downcastToSealedInlineClassChild) {
+            // Downcasts to sealed inline class children lead to unboxing, if the target is
+            // not the inline class
+            val sourceType = typeMapper.mapType(erasedTargetType.findTopSealedInlineSuperClass().defaultType.makeNullable())
+            StackValue.unboxInlineClass(type, sourceType, AsmTypes.OBJECT_TYPE, false, mv)
+            StackValue.coerce(AsmTypes.OBJECT_TYPE, target, mv)
+            return
+        }
 
         // Coerce inline classes
         val isFromTypeUnboxed = InlineClassAbi.unboxType(erasedSourceType)?.let(typeMapper::mapType) == type
