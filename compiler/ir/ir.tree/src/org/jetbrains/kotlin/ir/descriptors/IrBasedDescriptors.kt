@@ -629,6 +629,9 @@ open class IrBasedClassDescriptor(owner: IrClass) : ClassDescriptor, IrBasedDecl
     override fun getInlineClassRepresentation(): InlineClassRepresentation<SimpleType>? =
         owner.inlineClassRepresentation?.mapUnderlyingType { it.toIrBasedKotlinType() as SimpleType }
 
+    override fun getMultiFieldValueClassRepresentation(): MultiFieldValueClassRepresentation<SimpleType>? =
+        owner.multiFieldValueClassRepresentation?.mapUnderlyingType { it.toIrBasedKotlinType() as SimpleType }
+
     override fun getOriginal() = this
 
     override fun isExpect() = owner.isExpect
@@ -758,6 +761,8 @@ open class IrBasedEnumEntryDescriptor(owner: IrEnumEntry) : ClassDescriptor, IrB
     }
 
     override fun getInlineClassRepresentation(): InlineClassRepresentation<SimpleType>? = TODO("not implemented")
+
+    override fun getMultiFieldValueClassRepresentation(): MultiFieldValueClassRepresentation<SimpleType>? = TODO("not implemented")
 
     override fun getOriginal() = this
 

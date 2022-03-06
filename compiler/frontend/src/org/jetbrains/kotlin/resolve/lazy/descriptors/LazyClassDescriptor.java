@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.resolve.lazy.descriptors;
 
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiNameIdentifierOwner;
+import kotlin.Pair;
 import kotlin.annotations.jvm.ReadOnly;
 import kotlin.collections.CollectionsKt;
 import kotlin.jvm.functions.Function1;
@@ -48,6 +49,7 @@ import org.jetbrains.kotlin.storage.NullableLazyValue;
 import org.jetbrains.kotlin.storage.StorageManager;
 import org.jetbrains.kotlin.types.*;
 import org.jetbrains.kotlin.types.checker.KotlinTypeRefiner;
+import org.jetbrains.kotlin.types.checker.SimpleClassicTypeSystemContext;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -644,6 +646,28 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
         return new InlineClassRepresentation<>(
                 SpecialNames.SAFE_IDENTIFIER_FOR_NO_NAME, c.getModuleDescriptor().getBuiltIns().getAnyType()
         );
+    }
+
+    @Nullable
+    @Override
+    public MultiFieldValueClassRepresentation<SimpleType> getMultiFieldValueClassRepresentation() {
+        if (!InlineClassesUtilsKt.isValueClass(this) || InlineClassesUtilsKt.isInlineClass(this)) {
+            return null;
+        }
+
+        ClassConstructorDescriptor constructor = getUnsubstitutedPrimaryConstructor();
+        // Don't crash on invalid code. It is IC, not MFVC.
+        if (constructor == null) {
+            return null;
+        }
+        List<ValueParameterDescriptor> parameters = constructor.getValueParameters();
+        if (parameters.size() <= 1) {
+            return null;
+        }
+        List<Pair<Name, SimpleType>> properties = parameters.stream()
+                .map(parameter -> new Pair<>(parameter.getName(), (SimpleType) parameter.getType()))
+                .collect(Collectors.toList());
+        return new MultiFieldValueClassRepresentation<>(properties);
     }
 
     @Override

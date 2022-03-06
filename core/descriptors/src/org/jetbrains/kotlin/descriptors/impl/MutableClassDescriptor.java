@@ -195,6 +195,12 @@ public class MutableClassDescriptor extends ClassDescriptorBase {
         return null;
     }
 
+    @Nullable
+    @Override
+    public MultiFieldValueClassRepresentation<SimpleType> getMultiFieldValueClassRepresentation() {
+        return null;
+    }
+
     @Override
     public String toString() {
         return DeclarationDescriptorImpl.toString(this);

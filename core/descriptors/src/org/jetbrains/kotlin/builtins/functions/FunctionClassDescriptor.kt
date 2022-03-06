@@ -88,6 +88,7 @@ class FunctionClassDescriptor(
     override fun getSource(): SourceElement = SourceElement.NO_SOURCE
     override fun getSealedSubclasses() = emptyList<ClassDescriptor>()
     override fun getInlineClassRepresentation(): InlineClassRepresentation<SimpleType>? = null
+    override fun getMultiFieldValueClassRepresentation(): MultiFieldValueClassRepresentation<SimpleType>? = null
 
     override fun getDeclaredTypeParameters() = parameters
 

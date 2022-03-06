@@ -242,6 +242,19 @@ message Class {
   optional Type inline_class_underlying_type = 18;
   optional int32 inline_class_underlying_type_id = 19 [(type_id_in_table) = true];
 
+  message MultiFieldValueClassRepresentation {
+    message MultiFieldValueClassProperty {
+      required int32 name = 1;
+      oneof type_representation {
+        Type type = 2;
+        int32 type_id = 3;
+      }
+    }
+    repeated MultiFieldValueClassProperty property = 1;
+  }
+
+  optional MultiFieldValueClassRepresentation multi_field_value_class_representation = 22;
+
   optional TypeTable type_table = 30;
 
   // Index into the VersionRequirementTable

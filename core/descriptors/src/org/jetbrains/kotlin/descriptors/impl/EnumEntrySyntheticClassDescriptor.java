@@ -199,6 +199,12 @@ public class EnumEntrySyntheticClassDescriptor extends ClassDescriptorBase {
         return null;
     }
 
+    @Nullable
+    @Override
+    public MultiFieldValueClassRepresentation<SimpleType> getMultiFieldValueClassRepresentation() {
+        return null;
+    }
+
     private class EnumEntryScope extends MemberScopeImpl {
         private final MemoizedFunctionToNotNull<Name, Collection<? extends SimpleFunctionDescriptor>> functions;
         private final MemoizedFunctionToNotNull<Name, Collection<? extends PropertyDescriptor>> properties;
