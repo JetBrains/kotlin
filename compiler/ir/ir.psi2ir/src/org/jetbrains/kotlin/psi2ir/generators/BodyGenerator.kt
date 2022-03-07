@@ -103,7 +103,7 @@ class BodyGenerator(
                 valueParameter.type.toIrType(),
                 IrStatementOrigin.DESTRUCTURING_DECLARATION
             )
-            statementGenerator.declareComponentVariablesInBlock(ktDestructuringDeclaration, irBlockBody, parameterValue)
+            statementGenerator.declareComponentVariablesInBlock(ktDestructuringDeclaration, irBlockBody, parameterValue, parameterValue)
         }
 
         val ktBodyStatements = ktBody.statements

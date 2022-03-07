@@ -722,10 +722,10 @@ private class TypeOperatorLowering(private val backendContext: JvmBackendContext
                 val source = if (owner is IrFunction && owner.isDelegated()) {
                     "${owner.name.asString()}(...)"
                 } else {
-                    val (startOffset, endOffset) = expression.extents()
                     val declarationParent = parent as? IrDeclaration
                     val sourceView = declarationParent?.let(::sourceViewFor)
-                    if (sourceView != null && startOffset >= 0 && endOffset < sourceView.length) {
+                    val (startOffset, endOffset) = expression.extents()
+                    if (sourceView?.validSourcePosition(startOffset, endOffset) == true) {
                         sourceView.subSequence(startOffset, endOffset).toString()
                     } else {
                         // Fallback for inconsistent line numbers
@@ -756,6 +756,9 @@ private class TypeOperatorLowering(private val backendContext: JvmBackendContext
     private fun IrFunction.isDelegated() =
         origin == IrDeclarationOrigin.DELEGATED_PROPERTY_ACCESSOR ||
                 origin == IrDeclarationOrigin.DELEGATED_MEMBER
+
+    private fun CharSequence.validSourcePosition(startOffset: Int, endOffset: Int): Boolean =
+        startOffset in 0 until endOffset && endOffset < length
 
     private fun IrElement.extents(): Pair<Int, Int> {
         var startOffset = Int.MAX_VALUE

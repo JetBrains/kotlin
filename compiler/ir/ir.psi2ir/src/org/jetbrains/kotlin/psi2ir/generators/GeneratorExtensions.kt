@@ -48,4 +48,35 @@ open class GeneratorExtensions : StubGeneratorExtensions() {
 
     open val parametersAreAssignable: Boolean
         get() = false
+
+    /**
+     * Enables improved source offsets for the desugared IR generated for
+     * destructuring declarations.
+     *
+     * Local variables defined by destructuring, e.g.
+     *
+     *   val (x, y) = destructee()
+     *
+     * is represented in IR by
+     *
+     *  block {
+     *   val containerTmp = destructee()
+     *   val x = containerTmp.component1()
+     *   val y = containerTmp.component2()
+     *  }
+     *
+     * When [debugInfoOnlyOnVariablesInDestructuringDeclarations] is `false`, the
+     * access to `containerTmp` in the calls to `component` calls are given source
+     * positions corresponding to `destructee()` which causes multi-line
+     * destructuring declarations to step back and forth between the variables being
+     * declared and the right-hand side, implying the repeated evaluation of the
+     * right-hand side.
+     *
+     * When `true`, only the stores to `x` and `y` in the generated code are are
+     * given source offsets, the source offsets of `x` and `y` in the original
+     * declaration, giving fewer, more accurate steps, that are closer to the JVM
+     * backend in behavior.
+     */
+    open val debugInfoOnlyOnVariablesInDestructuringDeclarations: Boolean
+        get() = false
 }
