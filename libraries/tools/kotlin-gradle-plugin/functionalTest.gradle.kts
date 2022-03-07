@@ -10,6 +10,7 @@ project.extensions.getByType<KotlinJvmProjectExtension>().target.compilations {
             testClassesDirs = output.classesDirs
             classpath = sourceSets["functionalTest"].runtimeClasspath
             workingDir = projectDir
+            dependsOnKotlinGradlePluginInstall()
         }
         tasks.named("check") {
             dependsOn(functionalTest)
