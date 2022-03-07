@@ -11,7 +11,9 @@ import org.jetbrains.kotlin.konan.library.KONAN_DISTRIBUTION_PLATFORM_LIBS_DIR
 import org.jetbrains.kotlin.konan.library.KONAN_STDLIB_NAME
 import java.io.File
 
-public data class KonanDistribution(val root: File)
+public data class KonanDistribution(val root: File) {
+    public constructor(rootPath: String) : this(File(rootPath))
+}
 
 public val KonanDistribution.konanCommonLibraries: File
     get() = root.resolve(KONAN_DISTRIBUTION_KLIB_DIR).resolve(KONAN_DISTRIBUTION_COMMON_LIBS_DIR)

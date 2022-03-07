@@ -13,7 +13,9 @@ import org.gradle.api.file.SourceDirectorySet
 import org.jetbrains.kotlin.gradle.plugin.HasKotlinDependencies
 import org.jetbrains.kotlin.gradle.plugin.LanguageSettingsBuilder
 import org.jetbrains.kotlin.project.model.KotlinModuleFragment
-import org.jetbrains.kotlin.project.model.withRefinesClosure
+import org.jetbrains.kotlin.project.model.utils.variantsContainingFragment
+import org.jetbrains.kotlin.tooling.core.closure
+import org.jetbrains.kotlin.tooling.core.withClosure
 
 interface KotlinGradleFragment : KotlinModuleFragment, HasKotlinDependencies, KotlinFragmentDependencyConfigurations, Named {
     override val kotlinSourceRoots: SourceDirectorySet
@@ -58,5 +60,14 @@ interface KotlinGradleFragment : KotlinModuleFragment, HasKotlinDependencies, Ko
                 listOf(transitiveApiConfiguration.name, transitiveImplementationConfiguration.name)
 }
 
+val KotlinGradleFragment.withRefinesClosure: Set<KotlinGradleFragment>
+    get() = this.withClosure { it.directRefinesDependencies }
+
 val KotlinGradleFragment.refinesClosure: Set<KotlinGradleFragment>
-    get() = (this as KotlinModuleFragment).withRefinesClosure.mapTo(mutableSetOf()) { it as KotlinGradleFragment }
+    get() = this.closure { it.directRefinesDependencies }
+
+val KotlinGradleFragment.path: String
+    get() = "${project.path}/${containingModule.name}/$fragmentName"
+
+val KotlinGradleFragment.containingVariants: Set<KotlinGradleVariant>
+    get() = containingModule.variantsContainingFragment(this).map { it as KotlinGradleVariant }.toSet()

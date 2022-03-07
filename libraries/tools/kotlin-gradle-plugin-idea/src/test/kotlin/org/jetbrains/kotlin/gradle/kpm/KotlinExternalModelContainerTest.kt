@@ -5,8 +5,8 @@
 
 package org.jetbrains.kotlin.gradle.kpm
 
-import deserialize
-import serialize
+import org.jetbrains.kotlin.gradle.kpm.idea.testFixtures.deserialize
+import org.jetbrains.kotlin.gradle.kpm.idea.testFixtures.serialize
 import java.io.Serializable
 import kotlin.test.Test
 import kotlin.test.assertEquals

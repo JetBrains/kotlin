@@ -1,3 +1,5 @@
+package org.jetbrains.kotlin.gradle.kpm.idea.testFixtures
+
 import org.gradle.internal.io.ClassLoaderObjectInputStream
 import java.io.*
 
@@ -6,20 +8,20 @@ import java.io.*
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-internal fun Any.serialize(): ByteArray {
+fun Any.serialize(): ByteArray {
     return ByteArrayOutputStream().use { byteArrayOutputStream ->
         ObjectOutputStream(byteArrayOutputStream).writeObject(this)
         byteArrayOutputStream.toByteArray()
     }
 }
 
-internal inline fun <reified T : Serializable> ByteArray.deserialize(): T {
+inline fun <reified T : Serializable> ByteArray.deserialize(): T {
     val inputStream = ByteArrayInputStream(this)
     val objectInputStream = ObjectInputStream(inputStream)
     return objectInputStream.use { it.readObject() } as T
 }
 
-internal fun ByteArray.deserialize(classLoader: ClassLoader): Any {
+fun ByteArray.deserialize(classLoader: ClassLoader): Any {
     val inputStream = ByteArrayInputStream(this)
     val objectInputStream = ClassLoaderObjectInputStream(inputStream, classLoader)
     return objectInputStream.use { it.readObject() }

@@ -8,12 +8,14 @@ package org.jetbrains.kotlin.gradle.kpm.idea
 import java.io.Serializable
 
 interface IdeaKotlinModule : Serializable {
+    val name: String
     val moduleIdentifier: IdeaKotlinModuleIdentifier
     val fragments: List<IdeaKotlinFragment>
 }
 
 @InternalKotlinGradlePluginApi
 data class IdeaKotlinModuleImpl(
+    override val name: String,
     override val moduleIdentifier: IdeaKotlinModuleIdentifier,
     override val fragments: List<IdeaKotlinFragment>
 ) : IdeaKotlinModule {

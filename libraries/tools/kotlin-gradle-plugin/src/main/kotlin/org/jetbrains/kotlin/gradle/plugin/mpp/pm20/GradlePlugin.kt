@@ -15,14 +15,13 @@ import org.gradle.api.publish.PublishingExtension
 import org.gradle.api.publish.maven.MavenPublication
 import org.gradle.tooling.provider.model.ToolingModelBuilderRegistry
 import org.gradle.util.GradleVersion
-import org.jetbrains.kotlin.gradle.dsl.KotlinProjectExtension
 import org.jetbrains.kotlin.gradle.dsl.KotlinTopLevelExtension
 import org.jetbrains.kotlin.gradle.dsl.pm20Extension
-import org.jetbrains.kotlin.gradle.dsl.topLevelExtensionOrNull
 import org.jetbrains.kotlin.gradle.internal.customizeKotlinDependencies
 import org.jetbrains.kotlin.gradle.kpm.idea.IdeaKotlinProjectModelBuilder
+import org.jetbrains.kotlin.gradle.kpm.idea.default
+import org.jetbrains.kotlin.gradle.kpm.idea.locateOrRegisterBuildIdeaKotlinProjectModelTask
 import org.jetbrains.kotlin.gradle.utils.checkGradleCompatibility
-import org.jetbrains.kotlin.project.model.KotlinModuleIdentifier
 import javax.inject.Inject
 
 abstract class KotlinPm20GradlePlugin @Inject constructor(
@@ -40,7 +39,7 @@ abstract class KotlinPm20GradlePlugin @Inject constructor(
         registerDefaultVariantFactories(project)
         setupFragmentsMetadataForKpmModules(project)
         setupKpmModulesPublication(project)
-        setupToolingModelBuilder()
+        setupToolingModelBuilder(project)
     }
 
     private fun createDefaultModules(project: Project) {
@@ -82,8 +81,9 @@ abstract class KotlinPm20GradlePlugin @Inject constructor(
         }
     }
 
-    private fun setupToolingModelBuilder() {
-        toolingModelBuilderRegistry.register(IdeaKotlinProjectModelBuilder())
+    private fun setupToolingModelBuilder(project: Project) {
+        toolingModelBuilderRegistry.register(project.pm20Extension.ideaKotlinProjectModelBuilder)
+        project.locateOrRegisterBuildIdeaKotlinProjectModelTask()
     }
 }
 
@@ -93,6 +93,8 @@ fun rootPublicationComponentName(module: KotlinGradleModule) =
 open class KotlinPm20ProjectExtension(project: Project) : KotlinTopLevelExtension(project) {
 
     internal val kpmModelContainer = DefaultKpmGradleProjectModelContainer.create(project)
+
+    internal val ideaKotlinProjectModelBuilder by lazy { IdeaKotlinProjectModelBuilder.default(this) }
 
     val modules: NamedDomainObjectContainer<KotlinGradleModule>
         get() = project.kpmModules
