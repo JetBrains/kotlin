@@ -20,6 +20,7 @@
          <trust group="org.jetbrains.kotlin" name="kotlin-gradle-plugin-api"/>
          <trust group="org.jetbrains.kotlin" name="kotlin-gradle-plugin-model"/>
          <trust group="org.jetbrains.kotlin" name="kotlin-gradle-plugin-idea"/>
+         <trust group="org.jetbrains.kotlin" name="kotlin-gradle-plugin-idea-for-compatibility-tests"/>
          <trust group="org.jetbrains.kotlin" name="kotlin-klib-commonizer-api"/>
          <trust group="org.jetbrains.kotlin" name="kotlin-klib-commonizer-embeddable"/>
          <trust group="org.jetbrains.kotlin" name="kotlin-tooling-metadata"/>
