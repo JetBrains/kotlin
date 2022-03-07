@@ -679,6 +679,11 @@ public class CliTestGenerated extends AbstractCliTest {
             runTest("compiler/testData/cli/jvm/kt22304.args");
         }
 
+        @TestMetadata("kt48833_doNotSuppressVersionErrors.args")
+        public void testKt48833_doNotSuppressVersionErrors() throws Exception {
+            runTest("compiler/testData/cli/jvm/kt48833_doNotSuppressVersionErrors.args");
+        }
+
         @TestMetadata("kt49209.args")
         public void testKt49209() throws Exception {
             runTest("compiler/testData/cli/jvm/kt49209.args");
