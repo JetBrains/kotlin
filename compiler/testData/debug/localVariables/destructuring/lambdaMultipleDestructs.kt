@@ -1,5 +1,5 @@
-
-
+// IGNORE_BACKEND: JVM_IR
+// IGNORE_BACKEND_FIR: JVM_IR
 // FILE: test.kt
 data class A(val x: String, val y: Int)
 
@@ -30,7 +30,7 @@ fun box() {
 // test.kt:4 <init>: x:java.lang.String="K":java.lang.String, y:int=877:int
 // test.kt:9 box:
 // test.kt:6 foo: a:A=A, b:A=A, block:kotlin.jvm.functions.Function2=TestKt$box$1
-// test.kt:9 invoke:
+// test.kt:9 invoke: x:java.lang.String="O":java.lang.String, y:int=123:int, z:java.lang.String="K":java.lang.String, w:int=877:int
 // test.kt:6 foo: a:A=A, b:A=A, block:kotlin.jvm.functions.Function2=TestKt$box$1
 // test.kt:9 box:
 // test.kt:10 box:
