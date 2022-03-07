@@ -30,7 +30,6 @@ class FirAugmentedArraySetCallBuilder : FirAnnotationContainerBuilder {
     override val annotations: MutableList<FirAnnotation> = mutableListOf()
     lateinit var lhsGetCall: FirFunctionCall
     lateinit var rhs: FirExpression
-    lateinit var rhs2: FirExpression
     lateinit var operation: FirOperation
     var calleeReference: FirReference = FirStubReference
     var arrayAccessSource: KtSourceElement? = null
@@ -41,7 +40,6 @@ class FirAugmentedArraySetCallBuilder : FirAnnotationContainerBuilder {
             annotations,
             lhsGetCall,
             rhs,
-            rhs2,
             operation,
             calleeReference,
             arrayAccessSource,

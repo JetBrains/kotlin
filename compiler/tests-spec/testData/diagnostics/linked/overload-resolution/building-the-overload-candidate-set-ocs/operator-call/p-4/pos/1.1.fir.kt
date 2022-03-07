@@ -20,14 +20,14 @@ class B() {
 
     fun case7(){
         var b =B()
-        <!ASSIGN_OPERATOR_AMBIGUITY!>b+=1<!> //ASSIGN_OPERATOR_AMBIGUITY
+        b<!ASSIGN_OPERATOR_AMBIGUITY!>+=<!>1 //ASSIGN_OPERATOR_AMBIGUITY
         this <!PROPERTY_AS_OPERATOR!>+=<!> 1 //ASSIGNMENT_OPERATOR_SHOULD_RETURN_UNIT, PROPERTY_AS_OPERATOR
     }
 }
 
 fun case1() {
     var b = B()
-    <!ASSIGN_OPERATOR_AMBIGUITY!>b += 1<!> //ASSIGN_OPERATOR_AMBIGUITY
+    b <!ASSIGN_OPERATOR_AMBIGUITY!>+=<!> 1 //ASSIGN_OPERATOR_AMBIGUITY
 }
 
 // FILE: TestCase2.kt
@@ -52,7 +52,7 @@ class B() {
         b += 1 //ok
 
         var b1 = B()
-        <!ASSIGN_OPERATOR_AMBIGUITY!>b1 += 1<!> //ASSIGN_OPERATOR_AMBIGUITY
+        b1 <!ASSIGN_OPERATOR_AMBIGUITY!>+=<!> 1 //ASSIGN_OPERATOR_AMBIGUITY
 
         this += 1  //ok
     }
@@ -60,5 +60,5 @@ class B() {
 
 fun case2() {
     var b = B()
-    <!ASSIGN_OPERATOR_AMBIGUITY!>b += 1<!> //ASSIGN_OPERATOR_AMBIGUITY
+    b <!ASSIGN_OPERATOR_AMBIGUITY!>+=<!> 1 //ASSIGN_OPERATOR_AMBIGUITY
 }

@@ -24,7 +24,6 @@ internal class FirAugmentedArraySetCallImpl(
     override val annotations: MutableList<FirAnnotation>,
     override var lhsGetCall: FirFunctionCall,
     override var rhs: FirExpression,
-    override var rhs2: FirExpression,
     override val operation: FirOperation,
     override var calleeReference: FirReference,
     override val arrayAccessSource: KtSourceElement?,
@@ -33,7 +32,6 @@ internal class FirAugmentedArraySetCallImpl(
         annotations.forEach { it.accept(visitor, data) }
         lhsGetCall.accept(visitor, data)
         rhs.accept(visitor, data)
-        rhs2.accept(visitor, data)
         calleeReference.accept(visitor, data)
     }
 
@@ -41,7 +39,6 @@ internal class FirAugmentedArraySetCallImpl(
         transformAnnotations(transformer, data)
         lhsGetCall = lhsGetCall.transform(transformer, data)
         rhs = rhs.transform(transformer, data)
-        rhs2 = rhs2.transform(transformer, data)
         calleeReference = calleeReference.transform(transformer, data)
         return this
     }
