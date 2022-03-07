@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.gradle
 import org.junit.Test
 import kotlin.test.assertTrue
 
-class KpmCompilerPluginIT : BaseGradleIT() {
+class KpmCompilerPluginMppIT : BaseGradleIT() {
 
     @Test
     fun testTransientPluginOptions() {
