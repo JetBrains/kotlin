@@ -29,11 +29,14 @@ class IdeaKotlinProjectModelSerializableTest : AbstractKpmExtensionTest() {
     @Test
     fun `test - serialize and deserialize - empty project`() {
         project.evaluate()
+        project.repositories.mavenLocal()
         assertSerializeAndDeserializeEquals(kotlin.buildIdeaKotlinProjectModel())
     }
 
     @Test
     fun `test - serialize and deserialize - project with variants and fragments`() {
+        project.evaluate()
+        project.repositories.mavenLocal()
         kotlin.mainAndTest {
             val native = fragments.create("native")
             val apple = fragments.create("apple")
