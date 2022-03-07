@@ -1,4 +1,0 @@
-package
-
-public fun box(): kotlin.String
-public fun test(): kotlin.Unit

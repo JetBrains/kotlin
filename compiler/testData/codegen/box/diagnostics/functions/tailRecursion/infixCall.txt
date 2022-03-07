@@ -1,4 +1,0 @@
-package
-
-public fun box(): kotlin.String
-public tailrec infix fun kotlin.Int.test(/*0*/ x: kotlin.Int): kotlin.Int
