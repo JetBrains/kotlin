@@ -77,7 +77,7 @@ abstract class InlineCodegen<out T : BaseExpressionCodegen>(
                     .mapTo(mutableSetOf()) { parameters.getDeclarationSlot(it) }
             )
             for (info in infos) {
-                val lambda = DefaultLambda(info, sourceCompiler)
+                val lambda = DefaultLambda(info, sourceCompiler, node.name.substringBeforeLast("\$default"))
                 parameters.getParameterByDeclarationSlot(info.offset).functionalArgument = lambda
                 if (info.needReification) {
                     lambda.reifiedTypeParametersUsages.mergeAll(reifiedTypeInliner.reifyInstructions(lambda.node.node))
