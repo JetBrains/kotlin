@@ -3173,6 +3173,12 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
         }
 
         @Test
+        @TestMetadata("defaultLambda.kt")
+        public void testDefaultLambda() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/inline/defaultLambda.kt");
+        }
+
+        @Test
         @TestMetadata("deleteClassOnTransformation.kt")
         public void testDeleteClassOnTransformation() throws Exception {
             runTest("compiler/testData/codegen/bytecodeText/inline/deleteClassOnTransformation.kt");
