@@ -9,39 +9,42 @@ import org.jetbrains.kotlin.gradle.kpm.KotlinExternalModelContainer
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinGradleFragment
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinGradleFragmentInternal
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinGradleVariant
+import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.variantsContainingFragment
 
-private typealias IdeaKotlinFragmentBuilderCache = MutableMap<KotlinGradleFragment, IdeaKotlinFragment>
+internal class IdeaKotlinFragmentBuildingContext(
+    private val parent: IdeaKotlinProjectModelBuildingContext
+) : IdeaKotlinProjectModelBuildingContext by parent {
+    private val fragmentCache = mutableMapOf<KotlinGradleFragment, IdeaKotlinFragment>()
+    fun getOrPut(source: KotlinGradleFragment, builder: () -> IdeaKotlinFragment) = fragmentCache.getOrPut(source, builder)
+}
 
-internal fun KotlinGradleFragment.toIdeaKotlinFragment(
-    cache: IdeaKotlinFragmentBuilderCache = mutableMapOf()
-): IdeaKotlinFragment {
-    return cache.getOrPut(this) {
-        if (this is KotlinGradleVariant) buildIdeaKotlinVariant(cache)
-        else buildIdeaKotlinFragment(cache)
+internal fun IdeaKotlinFragmentBuildingContext.toIdeaKotlinFragment(fragment: KotlinGradleFragment): IdeaKotlinFragment {
+    return getOrPut(fragment) {
+        if (fragment is KotlinGradleVariant) buildIdeaKotlinVariant(fragment)
+        else buildIdeaKotlinFragment(fragment)
     }
 }
 
-private fun KotlinGradleFragment.buildIdeaKotlinFragment(cache: IdeaKotlinFragmentBuilderCache): IdeaKotlinFragment {
+private fun IdeaKotlinFragmentBuildingContext.buildIdeaKotlinFragment(fragment: KotlinGradleFragment): IdeaKotlinFragment {
     return IdeaKotlinFragmentImpl(
-        name = name,
-        moduleIdentifier = containingModule.moduleIdentifier.toIdeaKotlinModuleIdentifier(),
-        languageSettings = languageSettings.toIdeaKotlinLanguageSettings(),
-        dependencies = emptyList(),
-        directRefinesDependencies = directRefinesDependencies.map { refinesFragment ->
-            refinesFragment.toIdeaKotlinFragment(cache)
-        },
-        sourceDirectories = kotlinSourceRoots.sourceDirectories.files.toList().map { file ->
-            IdeaKotlinSourceDirectoryImpl(file)
-        },
+        name = fragment.name,
+        moduleIdentifier = fragment.containingModule.moduleIdentifier.toIdeaKotlinModuleIdentifier(),
+        platforms = fragment.containingModule.variantsContainingFragment(fragment)
+            .map { variant -> buildIdeaKotlinPlatform(variant) }.toSet(),
+        languageSettings = fragment.languageSettings.toIdeaKotlinLanguageSettings(),
+        dependencies = dependencyResolver.resolve(fragment).toList(),
+        directRefinesDependencies = fragment.directRefinesDependencies.map { refinesFragment -> toIdeaKotlinFragment(refinesFragment) },
+        sourceDirectories = fragment.kotlinSourceRoots.sourceDirectories.files.toList().map { file -> IdeaKotlinSourceDirectoryImpl(file) },
         resourceDirectories = emptyList(),
-        external = (this as? KotlinGradleFragmentInternal)?.external ?: KotlinExternalModelContainer.Empty
+        external = (fragment as? KotlinGradleFragmentInternal)?.external ?: KotlinExternalModelContainer.Empty
     )
 }
 
-private fun KotlinGradleVariant.buildIdeaKotlinVariant(cache: IdeaKotlinFragmentBuilderCache): IdeaKotlinVariant {
+private fun IdeaKotlinFragmentBuildingContext.buildIdeaKotlinVariant(variant: KotlinGradleVariant): IdeaKotlinVariant {
     return IdeaKotlinVariantImpl(
-        fragment = buildIdeaKotlinFragment(cache),
-        variantAttributes = variantAttributes.mapKeys { (key, _) -> key.uniqueName },
-        compilationOutputs = compilationOutputs.toIdeaKotlinCompilationOutputs()
+        fragment = buildIdeaKotlinFragment(variant),
+        platform = buildIdeaKotlinPlatform(variant),
+        variantAttributes = variant.variantAttributes.mapKeys { (key, _) -> key.uniqueName },
+        compilationOutputs = variant.compilationOutputs.toIdeaKotlinCompilationOutputs()
     )
 }

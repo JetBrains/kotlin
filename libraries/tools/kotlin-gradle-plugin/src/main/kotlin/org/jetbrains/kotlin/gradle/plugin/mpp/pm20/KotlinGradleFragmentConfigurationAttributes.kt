@@ -49,6 +49,12 @@ fun <T : KotlinGradleFragment> FragmentAttributes(
     }
 }
 
+fun <T : KotlinGradleFragment> AttributeContainer.apply(
+    attributes: KotlinGradleFragmentConfigurationAttributes<T>, fragment: T
+) {
+    attributes.setAttributes(this, fragment)
+}
+
 operator fun <T : KotlinGradleFragment> FragmentAttributes<T>.plus(other: FragmentAttributes<T>): FragmentAttributes<T> {
     if (this === KotlinGradleFragmentConfigurationAttributes.None) return other
     if (other === KotlinGradleFragmentConfigurationAttributes.None) return this

@@ -5,13 +5,13 @@
 
 package org.jetbrains.kotlin.gradle.kpm.idea
 
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinGradleFragment
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinGradleModule
 
-internal fun KotlinGradleModule.toIdeaKotlinModule(): IdeaKotlinModule {
-    val fragmentsCache = mutableMapOf<KotlinGradleFragment, IdeaKotlinFragment>()
+internal fun IdeaKotlinProjectModelBuildingContext.toIdeaKotlinModule(module: KotlinGradleModule): IdeaKotlinModule {
+    val fragmentBuildingContext = IdeaKotlinFragmentBuildingContext(this)
     return IdeaKotlinModuleImpl(
-        moduleIdentifier = moduleIdentifier.toIdeaKotlinModuleIdentifier(),
-        fragments = fragments.toList().map { fragment -> fragment.toIdeaKotlinFragment(fragmentsCache) }
+        name = module.name,
+        moduleIdentifier = module.moduleIdentifier.toIdeaKotlinModuleIdentifier(),
+        fragments = module.fragments.toList().map { fragment -> fragmentBuildingContext.toIdeaKotlinFragment(fragment) }
     )
 }

@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_MPP_ENABLE_CINTEROP_COMMONIZATION
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_MPP_HIERARCHICAL_STRUCTURE_BY_DEFAULT
+import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_STDLIB_DEFAULT_DEPENDENCY
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinSharedNativeCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinCompilationData
@@ -100,4 +101,8 @@ fun Project.enableCInteropCommonization(enabled: Boolean = true) {
 
 fun Project.enableHierarchicalStructureByDefault(enabled: Boolean = true) {
     propertiesExtension.set(KOTLIN_MPP_HIERARCHICAL_STRUCTURE_BY_DEFAULT, enabled.toString())
+}
+
+fun Project.enableDefaultStdlibDependency(enabled: Boolean = true) {
+    project.propertiesExtension.set(KOTLIN_STDLIB_DEFAULT_DEPENDENCY, enabled.toString())
 }

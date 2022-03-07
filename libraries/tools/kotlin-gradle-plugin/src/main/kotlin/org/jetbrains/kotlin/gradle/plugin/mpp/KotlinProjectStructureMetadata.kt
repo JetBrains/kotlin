@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.gradle.dsl.multiplatformExtensionOrNull
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinGradleModule
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.hasKpmModel
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.refinesClosure
+import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.withRefinesClosure
 import org.jetbrains.kotlin.gradle.plugin.sources.KotlinDependencyScope
 import org.jetbrains.kotlin.gradle.plugin.sources.sourceSetDependencyConfigurationByScope
 import org.jetbrains.kotlin.gradle.targets.metadata.dependsOnClosureWithInterCompilationDependencies
@@ -200,7 +201,7 @@ internal fun buildProjectStructureMetadata(module: KotlinGradleModule): KotlinPr
         }.toMap()
 
     val kotlinFragmentsPerKotlinVariant =
-        module.variants.associate { variant -> variant.name to variant.refinesClosure.map { it.name }.toSet() }
+        module.variants.associate { variant -> variant.name to variant.withRefinesClosure.map { it.name }.toSet() }
     val fragmentRefinesRelation =
         module.fragments.associate { it.name to it.directRefinesDependencies.map { it.fragmentName }.toSet() }
 

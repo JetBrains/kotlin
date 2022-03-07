@@ -5,11 +5,10 @@
 
 package org.jetbrains.kotlin.gradle.android
 
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinGradleFragment
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinGradleFragmentInternal
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinGradleModule
 
 val KotlinGradleModule.androidCommon: KotlinGradleFragmentInternal
-    get() = (fragments.findByName("android") ?: fragments.create("android") { fragment ->
+    get() = (fragments.findByName("androidCommon") ?: fragments.create("androidCommon") { fragment ->
         fragment.refines(common)
     }) as KotlinGradleFragmentInternal
