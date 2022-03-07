@@ -175,7 +175,6 @@ class SimpleKotlinGradleIT : KGPBaseTest() {
         project(
             projectName = "buildSrcUsingKotlinCompilationAndKotlinPlugin",
             gradleVersion,
-            forceOutput = true
         ) {
             listOf(
                 "compileClasspath",

@@ -63,8 +63,6 @@ fun BuildResult.assertTasksFromCache(vararg tasks: String) {
     tasks.forEach { task ->
         assert(task(task)?.outcome == TaskOutcome.FROM_CACHE) {
             printBuildOutput()
-            val occurrences = output.lineSequence().filter { it.contains("> Task $task") }
-            System.err.println("ZZZ: task results ${occurrences.joinToString(separator = "\n")}")
             "Task $task didn't have 'FROM-CACHE' state: ${task(task)?.outcome}"
         }
     }
