@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.gradle.util.*
 import org.junit.Test
 import kotlin.test.assertTrue
 
-class VariantAwareDependenciesIT : BaseGradleIT() {
+class VariantAwareDependenciesMppIT : BaseGradleIT() {
     private val gradleVersion = GradleVersionRequired.FOR_MPP_SUPPORT
 
     @Test
