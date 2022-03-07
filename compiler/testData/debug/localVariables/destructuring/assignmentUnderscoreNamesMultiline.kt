@@ -1,6 +1,6 @@
 // WITH_STDLIB
-
 // IGNORE_BACKEND_FIR: JVM_IR
+// IGNORE_BACKEND: JVM_IR
 // FILE: test.kt
 fun box(): String {
     val p = Triple("X","O","K")
@@ -35,7 +35,6 @@ fun box(): String {
 
 // test.kt:17 box: p:kotlin.Triple=kotlin.Triple
 // test.kt:12 box: p:kotlin.Triple=kotlin.Triple
-// test.kt:17 box: p:kotlin.Triple=kotlin.Triple, o:java.lang.String="O":java.lang.String
 // test.kt:14 box: p:kotlin.Triple=kotlin.Triple, o:java.lang.String="O":java.lang.String
 
 // test.kt:19 box: p:kotlin.Triple=kotlin.Triple, o:java.lang.String="O":java.lang.String, k:java.lang.String="K":java.lang.String
