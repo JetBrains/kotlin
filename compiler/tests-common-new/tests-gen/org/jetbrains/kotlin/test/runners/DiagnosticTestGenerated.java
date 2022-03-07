@@ -17846,6 +17846,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
                 }
 
                 @Test
+                @TestMetadata("child-implementing-interface.kt")
+                public void testChild_implementing_interface() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/inlineClasses/sealed-inline-class/child-implementing-interface.kt");
+                }
+
+                @Test
                 @TestMetadata("class-child.kt")
                 public void testClass_child() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/inlineClasses/sealed-inline-class/class-child.kt");

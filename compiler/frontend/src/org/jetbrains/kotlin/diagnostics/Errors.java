@@ -429,6 +429,7 @@ public interface Errors {
     DiagnosticFactory0<PsiElement> VALUE_CLASS_CANNOT_BE_CLONEABLE = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory0<PsiElement> VALUE_OBJECT_NOT_SEALED_INLINE_CHILD = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory0<PsiElement> SEALED_INLINE_CHILD_NOT_VALUE = DiagnosticFactory0.create(ERROR);
+    DiagnosticFactory0<PsiElement> SEALED_INLINE_CHILD_IMPLEMENTING_INTERFACE = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory0<PsiElement> INLINE_CLASS_DEPRECATED = DiagnosticFactory0.create(WARNING);
     DiagnosticFactory0<KtContextReceiverList> INLINE_CLASS_CANNOT_HAVE_CONTEXT_RECEIVERS = DiagnosticFactory0.create(ERROR);
 

@@ -4,25 +4,25 @@
 // !DIAGNOSTICS: -INLINE_CLASS_DEPRECATED
 
 /*
-+--------------------------+-------------+-------------+-------------+-------------+
-|parent\child class        |value        |ordinary     |inline       |sealed value |
-+==========================+=============+=============+=============+=============+
-|sealed value class        |yep          |nope         |yep          |yep          |
-+--------------------------+-------------+-------------+-------------+-------------+
-|value class               |nope         |nope         |nope         |nope         |
-+--------------------------+-------------+-------------+-------------+-------------+
-|inline class              |nope         |nope         |nope         |nope         |
-+--------------------------+-------------+-------------+-------------+-------------+
-|sealed interface          |yep          |OOS          |yep          |yep          |
-+--------------------------+-------------+-------------+-------------+-------------+
-|interface                 |yep          |OOS          |yep          |yep          |
-+--------------------------+-------------+-------------+-------------+-------------+
-|open class                |nope         |OOS          |nope         |nope         |
-+--------------------------+-------------+-------------+-------------+-------------+
-|sealed class              |nope         |OOS          |nope         |nope         |
-+--------------------------+-------------+-------------+-------------+-------------+
-|abstract class            |nope         |OOS          |nope         |nope         |
-+--------------------------+-------------+-------------+-------------+-------------+
++--------------------------+-------------+-------------+-------------+-------------+-------------+
+|parent\child class        |value        |ordinary     |inline       |sealed value |open value   |
++==========================+=============+=============+=============+=============+=============+
+|sealed value class        |yep          |nope         |yep          |yep          |nope         |
++--------------------------+-------------+-------------+-------------+-------------+-------------+
+|value class               |nope         |nope         |nope         |nope         |nope         |
++--------------------------+-------------+-------------+-------------+-------------+-------------+
+|inline class              |nope         |nope         |nope         |nope         |nope         |
++--------------------------+-------------+-------------+-------------+-------------+-------------+
+|sealed interface          |yep          |OOS          |yep          |yep          |nope         |
++--------------------------+-------------+-------------+-------------+-------------+-------------+
+|interface                 |yep          |OOS          |yep          |yep          |nope         |
++--------------------------+-------------+-------------+-------------+-------------+-------------+
+|open class                |nope         |OOS          |nope         |nope         |nope         |
++--------------------------+-------------+-------------+-------------+-------------+-------------+
+|sealed class              |nope         |OOS          |nope         |nope         |nope         |
++--------------------------+-------------+-------------+-------------+-------------+-------------+
+|abstract class            |nope         |OOS          |nope         |nope         |nope         |
++--------------------------+-------------+-------------+-------------+-------------+-------------+
  */
 
 package kotlin.jvm
@@ -99,3 +99,20 @@ sealed value class SVC_OC: <!VALUE_CLASS_CANNOT_EXTEND_CLASSES!>OC<!>()
 sealed value class SVC_SC: <!VALUE_CLASS_CANNOT_EXTEND_CLASSES!>SC<!>()
 @JvmInline
 sealed value class SVC_AC: <!VALUE_CLASS_CANNOT_EXTEND_CLASSES!>AC<!>()
+
+@JvmInline
+<!VALUE_CLASS_NOT_FINAL!>open<!> value class OVC_SVC: SVC()
+@JvmInline
+<!VALUE_CLASS_NOT_FINAL!>open<!> value class OVC_SI: SI
+@JvmInline
+<!VALUE_CLASS_NOT_FINAL!>open<!> value class OVC_I: I
+@JvmInline
+<!VALUE_CLASS_NOT_FINAL!>open<!> value class OVC_VC: <!FINAL_SUPERTYPE, VALUE_CLASS_CANNOT_EXTEND_CLASSES!>VC<!>("")
+@JvmInline
+<!VALUE_CLASS_NOT_FINAL!>open<!> value class OVC_IC: <!FINAL_SUPERTYPE, VALUE_CLASS_CANNOT_EXTEND_CLASSES!>IC<!>("")
+@JvmInline
+<!VALUE_CLASS_NOT_FINAL!>open<!> value class OVC_OC: <!VALUE_CLASS_CANNOT_EXTEND_CLASSES!>OC<!>()
+@JvmInline
+<!VALUE_CLASS_NOT_FINAL!>open<!> value class OVC_SC: <!VALUE_CLASS_CANNOT_EXTEND_CLASSES!>SC<!>()
+@JvmInline
+<!VALUE_CLASS_NOT_FINAL!>open<!> value class OVC_AC: <!VALUE_CLASS_CANNOT_EXTEND_CLASSES!>AC<!>()

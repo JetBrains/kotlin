@@ -4,25 +4,25 @@
 // !DIAGNOSTICS: -INLINE_CLASS_DEPRECATED
 
 /*
-+--------------------------+-------------+-------------+-------------+-------------+
-|parent\child class        |value        |ordinary     |inline       |sealed value |
-+==========================+=============+=============+=============+=============+
-|sealed value class        |yep          |nope         |yep          |yep          |
-+--------------------------+-------------+-------------+-------------+-------------+
-|value class               |nope         |nope         |nope         |nope         |
-+--------------------------+-------------+-------------+-------------+-------------+
-|inline class              |nope         |nope         |nope         |nope         |
-+--------------------------+-------------+-------------+-------------+-------------+
-|sealed interface          |yep          |OOS          |yep          |yep          |
-+--------------------------+-------------+-------------+-------------+-------------+
-|interface                 |yep          |OOS          |yep          |yep          |
-+--------------------------+-------------+-------------+-------------+-------------+
-|open class                |nope         |OOS          |nope         |nope         |
-+--------------------------+-------------+-------------+-------------+-------------+
-|sealed class              |nope         |OOS          |nope         |nope         |
-+--------------------------+-------------+-------------+-------------+-------------+
-|abstract class            |nope         |OOS          |nope         |nope         |
-+--------------------------+-------------+-------------+-------------+-------------+
++--------------------------+-------------+-------------+-------------+-------------+-------------+
+|parent\child class        |value        |ordinary     |inline       |sealed value |open value   |
++==========================+=============+=============+=============+=============+=============+
+|sealed value class        |yep          |nope         |yep          |yep          |nope         |
++--------------------------+-------------+-------------+-------------+-------------+-------------+
+|value class               |nope         |nope         |nope         |nope         |nope         |
++--------------------------+-------------+-------------+-------------+-------------+-------------+
+|inline class              |nope         |nope         |nope         |nope         |nope         |
++--------------------------+-------------+-------------+-------------+-------------+-------------+
+|sealed interface          |yep          |OOS          |yep          |yep          |nope         |
++--------------------------+-------------+-------------+-------------+-------------+-------------+
+|interface                 |yep          |OOS          |yep          |yep          |nope         |
++--------------------------+-------------+-------------+-------------+-------------+-------------+
+|open class                |nope         |OOS          |nope         |nope         |nope         |
++--------------------------+-------------+-------------+-------------+-------------+-------------+
+|sealed class              |nope         |OOS          |nope         |nope         |nope         |
++--------------------------+-------------+-------------+-------------+-------------+-------------+
+|abstract class            |nope         |OOS          |nope         |nope         |nope         |
++--------------------------+-------------+-------------+-------------+-------------+-------------+
  */
 
 package kotlin.jvm
@@ -99,3 +99,20 @@ sealed value class SVC_OC: OC()
 sealed value class SVC_SC: SC()
 @JvmInline
 sealed value class SVC_AC: AC()
+
+@JvmInline
+open value class OVC_SVC: SVC()
+@JvmInline
+open value class OVC_SI: SI
+@JvmInline
+open value class OVC_I: I
+@JvmInline
+open value class OVC_VC: VC("")
+@JvmInline
+open value class OVC_IC: IC("")
+@JvmInline
+open value class OVC_OC: OC()
+@JvmInline
+open value class OVC_SC: SC()
+@JvmInline
+open value class OVC_AC: AC()

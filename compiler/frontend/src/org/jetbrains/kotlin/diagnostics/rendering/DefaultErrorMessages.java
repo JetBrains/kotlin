@@ -786,6 +786,7 @@ public class DefaultErrorMessages {
         MAP.put(VALUE_CLASS_CANNOT_BE_CLONEABLE, "Value class cannot be Cloneable");
         MAP.put(VALUE_OBJECT_NOT_SEALED_INLINE_CHILD, "value object must be child of sealed inline class");
         MAP.put(SEALED_INLINE_CHILD_NOT_VALUE, "child of sealed inline class must be value");
+        MAP.put(SEALED_INLINE_CHILD_IMPLEMENTING_INTERFACE, "child of sealed inline class cannot implement interfaces");
         MAP.put(INLINE_CLASS_DEPRECATED, "'inline' modifier is deprecated. Use 'value' instead");
         MAP.put(INLINE_CLASS_CANNOT_HAVE_CONTEXT_RECEIVERS, "Inline classes cannot have context receivers");
 

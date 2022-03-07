@@ -184,21 +184,22 @@ object SealedInlineClassChildChecker : DeclarationChecker {
 
         val trace = context.trace
 
-        val pair = declaration.superTypeListEntries.firstNotNullOfOrNull { supertypeEntry ->
-            val typeReference = supertypeEntry.typeReference ?: return@firstNotNullOfOrNull null
-            val type = trace[BindingContext.TYPE, typeReference] ?: return@firstNotNullOfOrNull null
-            val typeDescriptor = type.constructor.declarationDescriptor as? ClassDescriptor ?: return@firstNotNullOfOrNull null
-            if (DescriptorUtils.isInterface(typeDescriptor)) return@firstNotNullOfOrNull null
+        val supertypeEntries = declaration.superTypeListEntries.mapNotNull { supertypeEntry ->
+            val typeReference = supertypeEntry.typeReference ?: return@mapNotNull null
+            val type = trace[BindingContext.TYPE, typeReference] ?: return@mapNotNull null
+            val typeDescriptor = type.constructor.declarationDescriptor as? ClassDescriptor ?: return@mapNotNull null
             typeReference to typeDescriptor
         }
 
-        if (descriptor.isValue && descriptor.kind == ClassKind.OBJECT && pair?.second?.isSealedInlineClass() != true) {
+        if (descriptor.isValue && descriptor.kind == ClassKind.OBJECT &&
+            supertypeEntries.firstOrNull()?.second?.isSealedInlineClass() != true
+        ) {
             trace.report(Errors.VALUE_OBJECT_NOT_SEALED_INLINE_CHILD.on(declaration.valueKeyword()))
         }
 
-        val (typeReference, parent) = pair ?: return
+        val (typeReference, parent) = supertypeEntries.find { it.second.kind == ClassKind.CLASS } ?: return
 
-        if (!(parent.isSealedInlineClass())) {
+        if (!parent.isSealedInlineClass()) {
             if (descriptor.isInline || descriptor.isValue) {
                 trace.report(Errors.VALUE_CLASS_CANNOT_EXTEND_CLASSES.on(typeReference))
             }
@@ -211,7 +212,12 @@ object SealedInlineClassChildChecker : DeclarationChecker {
             descriptor.kind == ClassKind.CLASS && !(descriptor.isInline || descriptor.isValue)
         ) {
             trace.report(Errors.SEALED_INLINE_CHILD_NOT_VALUE.on(declaration.valueKeyword()))
-            return
+        }
+
+        for ((decl, desc) in supertypeEntries) {
+            if (DescriptorUtils.isInterface(desc)) {
+                trace.report(Errors.SEALED_INLINE_CHILD_IMPLEMENTING_INTERFACE.on(decl))
+            }
         }
     }
 }
