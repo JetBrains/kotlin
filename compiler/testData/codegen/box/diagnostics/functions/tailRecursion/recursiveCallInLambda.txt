@@ -1,5 +1,0 @@
-package
-
-public fun bar(/*0*/ a: kotlin.Any): kotlin.Unit
-public fun box(): kotlin.String
-public tailrec fun foo(): kotlin.Unit
