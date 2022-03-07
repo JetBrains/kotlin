@@ -1,0 +1,39 @@
+@kotlin.Metadata
+public final class C {
+    // source: 'parentWithClass.kt'
+    private final @org.jetbrains.annotations.NotNull field ok: java.lang.String
+    public method <init>(@org.jetbrains.annotations.NotNull p0: java.lang.String): void
+    public method equals(@org.jetbrains.annotations.Nullable p0: java.lang.Object): boolean
+    public final @org.jetbrains.annotations.NotNull method getOk(): java.lang.String
+    public method hashCode(): int
+    public @org.jetbrains.annotations.NotNull method toString(): java.lang.String
+}
+
+@kotlin.jvm.JvmInline
+@kotlin.Metadata
+public class IC {
+    // source: 'parentWithClass.kt'
+    protected synthetic final field $value: java.lang.Object
+    protected final @org.jetbrains.annotations.Nullable method $value(): java.lang.Object
+    private method <init>(): void
+    private synthetic method <init>(p0: java.lang.Object): void
+    public synthetic method <init>(p0: java.lang.Object, p1: kotlin.jvm.internal.DefaultConstructorMarker): void
+    public synthetic method <init>(p0: kotlin.jvm.internal.DefaultConstructorMarker): void
+    public synthetic final static method box-impl(p0: java.lang.Object): IC
+    protected static @org.jetbrains.annotations.NotNull method constructor-impl(p0: java.lang.Object): java.lang.Object
+    public method equals(@org.jetbrains.annotations.Nullable p0: java.lang.Object): boolean
+    public static method equals-impl(p0: java.lang.Object, @org.jetbrains.annotations.Nullable p1: java.lang.Object): boolean
+    public final static method equals-impl0(p0: java.lang.Object, p1: java.lang.Object): boolean
+    public method hashCode(): int
+    public static method hashCode-impl(p0: java.lang.Object): int
+    public @org.jetbrains.annotations.NotNull method toString(): java.lang.String
+    public static @org.jetbrains.annotations.NotNull method toString-impl(p0: java.lang.Object): java.lang.String
+    public synthetic method unbox-impl(): java.lang.Object
+}
+
+@kotlin.Metadata
+public final class ParentWithClassKt {
+    // source: 'parentWithClass.kt'
+    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
+    public final static @org.jetbrains.annotations.NotNull method foo(): java.lang.Object
+}

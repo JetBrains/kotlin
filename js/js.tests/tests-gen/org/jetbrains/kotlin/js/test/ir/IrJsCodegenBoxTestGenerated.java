@@ -19988,6 +19988,12 @@ public class IrJsCodegenBoxTestGenerated extends AbstractIrJsCodegenBoxTest {
                 }
 
                 @Test
+                @TestMetadata("class.kt")
+                public void testClass() throws Exception {
+                    runTest("compiler/testData/codegen/box/inlineClasses/sealed/casts/class.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+                }
+
+                @Test
                 @TestMetadata("object.kt")
                 public void testObject() throws Exception {
                     runTest("compiler/testData/codegen/box/inlineClasses/sealed/casts/object.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
@@ -20032,9 +20038,27 @@ public class IrJsCodegenBoxTestGenerated extends AbstractIrJsCodegenBoxTest {
                 }
 
                 @Test
-                @TestMetadata("parent.kt")
-                public void testParent() throws Exception {
-                    runTest("compiler/testData/codegen/box/inlineClasses/sealed/returnType/parent.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+                @TestMetadata("nullableParentWithClass.kt")
+                public void testNullableParentWithClass() throws Exception {
+                    runTest("compiler/testData/codegen/box/inlineClasses/sealed/returnType/nullableParentWithClass.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+                }
+
+                @Test
+                @TestMetadata("nullableParentWithObject.kt")
+                public void testNullableParentWithObject() throws Exception {
+                    runTest("compiler/testData/codegen/box/inlineClasses/sealed/returnType/nullableParentWithObject.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+                }
+
+                @Test
+                @TestMetadata("parentWithClass.kt")
+                public void testParentWithClass() throws Exception {
+                    runTest("compiler/testData/codegen/box/inlineClasses/sealed/returnType/parentWithClass.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+                }
+
+                @Test
+                @TestMetadata("parentWithObject.kt")
+                public void testParentWithObject() throws Exception {
+                    runTest("compiler/testData/codegen/box/inlineClasses/sealed/returnType/parentWithObject.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
                 }
             }
         }

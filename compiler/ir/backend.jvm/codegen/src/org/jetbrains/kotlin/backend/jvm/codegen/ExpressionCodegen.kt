@@ -996,6 +996,16 @@ class ExpressionCodegen(
                 result.materializeAt(boxedLeftType, expression.argument.type)
                 val boxedRightType = typeMapper.boxType(typeOperand)
 
+                if (typeOperand.isNoinlineChildOfSealedInlineClass()) {
+                    if (result.irType.classOrNull != typeOperand.classOrNull) {
+                        val topType =
+                            typeMapper.mapType(typeOperand.classOrNull!!.owner.sealedInlineClassParent().defaultType.makeNullable())
+                        StackValue.unboxInlineClass(
+                            boxedLeftType, topType, OBJECT_TYPE, expression.operator == IrTypeOperator.SAFE_CAST, mv
+                        )
+                    }
+                }
+
                 if (typeOperand.isReifiedTypeParameter) {
                     val operationKind = if (expression.operator == IrTypeOperator.CAST) AS else SAFE_AS
                     putReifiedOperationMarkerIfTypeIsReifiedParameter(typeOperand, operationKind)

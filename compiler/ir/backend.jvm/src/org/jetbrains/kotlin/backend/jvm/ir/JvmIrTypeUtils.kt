@@ -133,6 +133,9 @@ fun IrClass.sealedInlineClassParent(): IrClass =
 
 fun IrClass.isChildOfSealedInlineClass(): Boolean = superTypes.any { it.isInlineClassType() }
 
+fun IrType.isNoinlineChildOfSealedInlineClass(): Boolean =
+    classOrNull?.owner?.let { !it.isInline && it.isChildOfSealedInlineClass() } == true
+
 val IrType.upperBound: IrType
     get() = erasedUpperBound.symbol.starProjectedType
 

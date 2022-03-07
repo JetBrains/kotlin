@@ -20977,6 +20977,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
             @TestDataPath("$PROJECT_ROOT")
             @RunWith(JUnit3RunnerWithInners.class)
             public static class Casts extends AbstractLightAnalysisModeTest {
+                @TestMetadata("class.kt")
+                public void ignoreClass() throws Exception {
+                    runTest("compiler/testData/codegen/box/inlineClasses/sealed/casts/class.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+                }
+
                 @TestMetadata("object.kt")
                 public void ignoreObject() throws Exception {
                     runTest("compiler/testData/codegen/box/inlineClasses/sealed/casts/object.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
@@ -21031,9 +21036,24 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
             @TestDataPath("$PROJECT_ROOT")
             @RunWith(JUnit3RunnerWithInners.class)
             public static class ReturnType extends AbstractLightAnalysisModeTest {
-                @TestMetadata("parent.kt")
-                public void ignoreParent() throws Exception {
-                    runTest("compiler/testData/codegen/box/inlineClasses/sealed/returnType/parent.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+                @TestMetadata("nullableParentWithClass.kt")
+                public void ignoreNullableParentWithClass() throws Exception {
+                    runTest("compiler/testData/codegen/box/inlineClasses/sealed/returnType/nullableParentWithClass.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+                }
+
+                @TestMetadata("nullableParentWithObject.kt")
+                public void ignoreNullableParentWithObject() throws Exception {
+                    runTest("compiler/testData/codegen/box/inlineClasses/sealed/returnType/nullableParentWithObject.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+                }
+
+                @TestMetadata("parentWithClass.kt")
+                public void ignoreParentWithClass() throws Exception {
+                    runTest("compiler/testData/codegen/box/inlineClasses/sealed/returnType/parentWithClass.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+                }
+
+                @TestMetadata("parentWithObject.kt")
+                public void ignoreParentWithObject() throws Exception {
+                    runTest("compiler/testData/codegen/box/inlineClasses/sealed/returnType/parentWithObject.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
                 }
 
                 private void runTest(String testDataFilePath) throws Exception {

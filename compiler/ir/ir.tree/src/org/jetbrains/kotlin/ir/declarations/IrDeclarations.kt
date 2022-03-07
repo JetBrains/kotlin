@@ -12,6 +12,8 @@ import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.expressions.IrExpressionBody
 import org.jetbrains.kotlin.ir.types.IrSimpleType
+import org.jetbrains.kotlin.ir.util.hasAnnotation
+import org.jetbrains.kotlin.resolve.JVM_INLINE_ANNOTATION_FQ_NAME
 import java.io.File
 
 fun <D : IrAttributeContainer> D.copyAttributes(other: IrAttributeContainer?): D = apply {
@@ -21,7 +23,8 @@ fun <D : IrAttributeContainer> D.copyAttributes(other: IrAttributeContainer?): D
 }
 
 val IrClass.isSingleFieldValueClass: Boolean
-    get() = this.isValue && valueClassRepresentation is InlineClassRepresentation
+    get() = this.isValue && annotations.hasAnnotation(JVM_INLINE_ANNOTATION_FQ_NAME) &&
+            valueClassRepresentation is InlineClassRepresentation
 
 val IrClass.isInline: Boolean
     get() = isSingleFieldValueClass || (isValue && modality == Modality.SEALED)
