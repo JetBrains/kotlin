@@ -22,7 +22,7 @@ import kotlin.test.assertTrue
 class KotlinNativeVariantFactoryTest(
     private val variantConstructor: KotlinNativeVariantConstructor<*>,
     @Suppress("unused") private val variantClassName: String
-) : AbstractKpmExtensionTest() {
+) : AbstractKpmProjectExtensionTest() {
 
     private lateinit var variant: KotlinNativeVariantInternal
 

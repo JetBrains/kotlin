@@ -11,7 +11,7 @@ import org.gradle.testfixtures.ProjectBuilder
 import org.jetbrains.kotlin.gradle.addBuildEventsListenerRegistryMock
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
-import org.jetbrains.kotlin.gradle.kpm.KpmExtension
+import org.jetbrains.kotlin.gradle.kpm.KpmProjectExtension
 
 fun buildProject(
     configBuilder: ProjectBuilder.() -> Unit = { Unit },
@@ -41,7 +41,7 @@ fun Project.kotlin(code: KotlinMultiplatformExtension.() -> Unit) {
     kotlin.code()
 }
 
-fun Project.projectModel(code: KpmExtension.() -> Unit) {
-    val extension = project.extensions.getByType(KpmExtension::class.java)
+fun Project.projectModel(code: KpmProjectExtension.() -> Unit) {
+    val extension = project.extensions.getByType(KpmProjectExtension::class.java)
     extension.code()
 }

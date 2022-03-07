@@ -11,9 +11,9 @@ import org.gradle.testfixtures.ProjectBuilder
 import org.jetbrains.kotlin.gradle.addBuildEventsListenerRegistryMock
 import kotlin.test.BeforeTest
 
-abstract class AbstractKpmExtensionTest {
+abstract class AbstractKpmProjectExtensionTest {
     protected val project: ProjectInternal = ProjectBuilder.builder().build() as ProjectInternal
-    protected lateinit var kotlin: KpmExtension
+    protected lateinit var kotlin: KpmProjectExtension
         private set
 
     @BeforeTest
@@ -23,9 +23,9 @@ abstract class AbstractKpmExtensionTest {
 
 }
 
-fun Project.applyKpmPlugin(): KpmExtension {
+fun Project.applyKpmPlugin(): KpmProjectExtension {
     addBuildEventsListenerRegistryMock(project)
     plugins.apply("org.jetbrains.kotlin.kpm")
-    return extensions.getByName("kotlin") as KpmExtension
+    return extensions.getByName("kotlin") as KpmProjectExtension
 }
 

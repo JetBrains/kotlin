@@ -7,12 +7,10 @@
 
 package org.jetbrains.kotlin.gradle.kpm
 
-import org.gradle.kotlin.dsl.creating
-import org.gradle.kotlin.dsl.provideDelegate
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
-class TransitiveRuntimeOnlyConfigurationTest : AbstractKpmExtensionTest() {
+class TransitiveRuntimeOnlyConfigurationTest : AbstractKpmProjectExtensionTest() {
 
     @Test
     fun `test transitiveRuntimeOnlyConfiguration contains dependencies from refines parents`() {

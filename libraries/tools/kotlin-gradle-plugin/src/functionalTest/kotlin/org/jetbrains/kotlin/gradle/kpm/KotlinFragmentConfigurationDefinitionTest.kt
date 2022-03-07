@@ -15,7 +15,7 @@ import kotlin.test.assertNull
 import kotlin.test.assertSame
 import kotlin.test.fail
 
-class KotlinFragmentConfigurationDefinitionTest : AbstractKpmExtensionTest() {
+class KotlinFragmentConfigurationDefinitionTest : AbstractKpmProjectExtensionTest() {
 
     private val testContext by lazy {
         val names = FragmentNameDisambiguation(kotlin.main, "test")

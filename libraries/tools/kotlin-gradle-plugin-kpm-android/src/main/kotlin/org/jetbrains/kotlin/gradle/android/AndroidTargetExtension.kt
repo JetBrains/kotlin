@@ -13,9 +13,9 @@ import com.android.build.gradle.LibraryExtension
 import org.gradle.kotlin.dsl.findByType
 import org.jetbrains.kotlin.gradle.kpm.external.ExternalVariantApi
 import org.jetbrains.kotlin.gradle.kpm.external.project
-import org.jetbrains.kotlin.gradle.kpm.KpmExtension
+import org.jetbrains.kotlin.gradle.kpm.KpmProjectExtension
 
-fun KpmExtension.android() {
+fun KpmProjectExtension.android() {
     project.extensions.findByType<AppExtension>()?.applicationVariants?.all { androidVariant ->
         main { createKotlinAndroidVariant(androidVariant) }
         test { createKotlinAndroidVariant(androidVariant.unitTestVariant ?: return@test) }

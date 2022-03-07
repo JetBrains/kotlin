@@ -16,7 +16,7 @@ import kotlin.test.assertEquals
 import kotlin.test.assertSame
 import kotlin.test.assertTrue
 
-class KotlinJvmVariantFactoryTest : AbstractKpmExtensionTest() {
+class KotlinJvmVariantFactoryTest : AbstractKpmProjectExtensionTest() {
     private val testAttribute = Attribute.of("this.test", String::class.java)
 
     @Test

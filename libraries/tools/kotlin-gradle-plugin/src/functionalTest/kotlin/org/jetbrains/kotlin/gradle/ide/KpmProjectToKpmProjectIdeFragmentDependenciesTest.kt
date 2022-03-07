@@ -17,7 +17,7 @@ class KpmProjectToKpmProjectIdeFragmentDependenciesTest : AbstractIdeFragmentDep
 
     @Test
     fun `sample - with jvm and native targets`() {
-        fun KpmExtension.setupFragmentsForTest() = mainAndTest {
+        fun KpmProjectExtension.setupFragmentsForTest() = mainAndTest {
             /* Variants */
             jvm
             val iosX64 = fragments.create("iosX64", org.jetbrains.kotlin.gradle.kpm.KotlinIosX64Variant::class.java)

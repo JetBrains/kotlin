@@ -11,7 +11,7 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
-class KotlinCommonFragmentFactoryTest : AbstractKpmExtensionTest() {
+class KotlinCommonFragmentFactoryTest : AbstractKpmProjectExtensionTest() {
     @Test
     fun `test fragmentName`() {
         val fragment = KotlinCommonFragmentFactory(kotlin.main).create("common")

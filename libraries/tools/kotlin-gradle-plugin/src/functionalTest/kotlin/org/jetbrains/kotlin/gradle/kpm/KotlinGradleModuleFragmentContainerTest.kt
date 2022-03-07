@@ -11,7 +11,7 @@ import org.gradle.kotlin.dsl.create
 import kotlin.test.Test
 import kotlin.test.assertTrue
 
-class KotlinGradleModuleFragmentContainerTest : AbstractKpmExtensionTest() {
+class KotlinGradleModuleFragmentContainerTest : AbstractKpmProjectExtensionTest() {
 
     @Test
     fun `test creating several different fragment types`() {

@@ -30,7 +30,7 @@ import org.jetbrains.kotlin.gradle.logging.kotlinDebug
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinMultiplatformPlugin
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsages
 import org.jetbrains.kotlin.gradle.kpm.KpmGradlePlugin
-import org.jetbrains.kotlin.gradle.kpm.KpmExtension
+import org.jetbrains.kotlin.gradle.kpm.KpmProjectExtension
 import org.jetbrains.kotlin.gradle.plugin.sources.DefaultKotlinSourceSetFactory
 import org.jetbrains.kotlin.gradle.kpm.FragmentMappedKotlinSourceSetFactory
 import org.jetbrains.kotlin.gradle.plugin.statistics.KotlinBuildStatsService
@@ -249,8 +249,8 @@ open class KpmPluginWrapper @Inject constructor(
     override fun getPlugin(project: Project): Plugin<Project> =
         objectFactory.newInstance(KpmGradlePlugin::class.java)
 
-    override val projectExtensionClass: KClass<out KpmExtension>
-        get() = KpmExtension::class
+    override val projectExtensionClass: KClass<out KpmProjectExtension>
+        get() = KpmProjectExtension::class
 }
 
 fun Project.getKotlinPluginVersion(): String {

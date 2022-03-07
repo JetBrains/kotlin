@@ -5,7 +5,7 @@ import org.gradle.testfixtures.ProjectBuilder
 import org.gradle.tooling.provider.model.ToolingModelBuilderRegistry
 import org.jetbrains.kotlin.gradle.kpm.idea.IdeaKotlinProjectModel
 import org.jetbrains.kotlin.gradle.plugin.KpmPluginWrapper
-import org.jetbrains.kotlin.gradle.kpm.KpmExtension
+import org.jetbrains.kotlin.gradle.kpm.KpmProjectExtension
 
 /*
  * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
@@ -17,8 +17,8 @@ fun Project.buildIdeaKotlinProjectModel(): IdeaKotlinProjectModel {
         .buildAll(IdeaKotlinProjectModel::class.java.name, this) as IdeaKotlinProjectModel
 }
 
-fun createKpmProject(): Pair<ProjectInternal, KpmExtension> {
+fun createKpmProject(): Pair<ProjectInternal, KpmProjectExtension> {
     val project = ProjectBuilder.builder().build() as ProjectInternal
     project.plugins.apply(KpmPluginWrapper::class.java)
-    return project to project.extensions.getByType(KpmExtension::class.java)
+    return project to project.extensions.getByType(KpmProjectExtension::class.java)
 }

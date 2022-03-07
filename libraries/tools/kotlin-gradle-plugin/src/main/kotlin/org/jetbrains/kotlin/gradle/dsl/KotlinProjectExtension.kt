@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinAndroidTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsSingleTargetPreset
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinWithJavaTarget
 import org.jetbrains.kotlin.gradle.kpm.DefaultKpmGradleProjectModelContainer
-import org.jetbrains.kotlin.gradle.kpm.KpmExtension
+import org.jetbrains.kotlin.gradle.kpm.KpmProjectExtension
 import org.jetbrains.kotlin.gradle.plugin.statistics.KotlinBuildStatsService
 import org.jetbrains.kotlin.gradle.targets.js.calculateJsCompilerType
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsTargetDsl
@@ -57,7 +57,7 @@ internal val Project.multiplatformExtensionOrNull: KotlinMultiplatformExtension?
 internal val Project.multiplatformExtension: KotlinMultiplatformExtension
     get() = extensions.getByName(KOTLIN_PROJECT_EXTENSION_NAME).castIsolatedKotlinPluginClassLoaderAware()
 
-internal val Project.kpmExtension: KpmExtension
+internal val Project.kpmProjectExtension: KpmProjectExtension
     get() = extensions.getByName(KOTLIN_PROJECT_EXTENSION_NAME).castIsolatedKotlinPluginClassLoaderAware()
 
 abstract class KotlinTopLevelExtension(internal val project: Project) : KotlinTopLevelExtensionConfig {

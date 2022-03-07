@@ -13,7 +13,7 @@ repositories {
 
 plugins.apply(GradleKpmPluginWithTransientPluginOptions::class.java)
 
-configure<KpmExtension> {
+configure<KpmProjectExtension> {
     main {
         jvm
     }
