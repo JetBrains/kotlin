@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fakeElement
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
+import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.declarations.FirVariable
 import org.jetbrains.kotlin.fir.declarations.builder.buildProperty
 import org.jetbrains.kotlin.fir.declarations.impl.FirDeclarationStatusImpl
@@ -25,11 +26,14 @@ import org.jetbrains.kotlin.fir.types.builder.buildImplicitTypeRef
 import org.jetbrains.kotlin.name.Name
 
 fun FirVariable.toQualifiedAccess(): FirQualifiedAccessExpression = buildPropertyAccessExpression {
+    val fakeSource = this@toQualifiedAccess.source?.fakeElement(KtFakeSourceElementKind.ReferenceInAtomicQualifiedAccess)
+    source = fakeSource
     calleeReference = buildResolvedNamedReference {
-        source = this@toQualifiedAccess.source?.fakeElement(KtFakeSourceElementKind.ReferenceInAtomicQualifiedAccess)
+        source = fakeSource
         name = this@toQualifiedAccess.name
         resolvedSymbol = this@toQualifiedAccess.symbol
     }
+    typeRef = this@toQualifiedAccess.returnTypeRef
 }
 
 fun generateTemporaryVariable(
@@ -39,7 +43,7 @@ fun generateTemporaryVariable(
     initializer: FirExpression,
     typeRef: FirTypeRef? = null,
     extractedAnnotations: Collection<FirAnnotation>? = null,
-): FirVariable =
+): FirProperty =
     buildProperty {
         this.source = source
         this.moduleData = moduleData
@@ -66,7 +70,7 @@ fun generateTemporaryVariable(
     specialName: String,
     initializer: FirExpression,
     extractedAnnotations: Collection<FirAnnotation>? = null,
-): FirVariable =
+): FirProperty =
     generateTemporaryVariable(
         moduleData,
         source,

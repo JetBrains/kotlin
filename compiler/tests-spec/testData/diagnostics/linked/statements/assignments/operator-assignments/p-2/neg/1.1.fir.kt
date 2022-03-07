@@ -15,5 +15,5 @@ class B(var a: Int) {
 // TESTCASE NUMBER: 1
 fun case1() {
     var b = B(1)
-    <!ASSIGN_OPERATOR_AMBIGUITY!>b += 1<!>
+    b <!ASSIGN_OPERATOR_AMBIGUITY!>+=<!> 1
 }

@@ -40,6 +40,6 @@ fun testMismatchingArities() {
 
     <!NO_VALUE_FOR_PARAMETER!>++MismatchingArities2[0]<!>
     <!NO_VALUE_FOR_PARAMETER!>MismatchingArities2[0]++<!>
-    <!NO_VALUE_FOR_PARAMETER!>MismatchingArities2[0]<!> <!UNRESOLVED_REFERENCE!>+=<!> 1
+    <!NO_VALUE_FOR_PARAMETER!>MismatchingArities2[0]<!> += 1
 }
 
