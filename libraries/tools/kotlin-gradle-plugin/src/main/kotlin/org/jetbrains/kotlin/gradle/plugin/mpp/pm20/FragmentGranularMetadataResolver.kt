@@ -48,7 +48,7 @@ internal class FragmentGranularMetadataResolver(
             error("unexpected failure in dependency graph resolution for $requestingFragment in $project")
 
         dependencyGraph as GradleDependencyGraph // refactor the type hierarchy to avoid this downcast? FIXME?
-        val fragmentsToInclude = requestingFragment.refinesClosure
+        val fragmentsToInclude = requestingFragment.withRefinesClosure
         val requestedDependencies = dependencyGraph.root.dependenciesByFragment.filterKeys { it in fragmentsToInclude }.values.flatten()
 
         val visited = mutableSetOf<GradleDependencyGraphNode>()

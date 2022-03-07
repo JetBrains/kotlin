@@ -1,5 +1,6 @@
 plugins {
     kotlin("jvm")
+    `java-test-fixtures`
 }
 
 object BackwardsCompatibilityTestConfiguration {
@@ -18,9 +19,14 @@ dependencies {
     testImplementation(gradleKotlinDsl())
     testImplementation(project(":kotlin-gradle-plugin"))
     testImplementation(project(":kotlin-test:kotlin-test-junit"))
+
     testImplementation("org.reflections:reflections:0.10.2") {
         because("Tests on the object graph are performed. This library will find implementations of interfaces at runtime")
     }
+
+    testFixturesImplementation(gradleApi())
+    testFixturesImplementation(gradleKotlinDsl())
+    testFixturesImplementation(project(":kotlin-test:kotlin-test-junit"))
 }
 
 publish()
@@ -39,7 +45,13 @@ run {
     val version = if (isSnapshotTest) properties["defaultSnapshotVersion"].toString()
     else BackwardsCompatibilityTestConfiguration.minimalBackwardsCompatibleVersion
 
-    val minimalBackwardsCompatibleVersionTestClasspath by configurations.creating
+    val minimalBackwardsCompatibleVersionTestClasspath by configurations.creating {
+        isCanBeResolved = true
+        isCanBeConsumed = false
+        attributes {
+            attribute(Usage.USAGE_ATTRIBUTE, objects.named(Usage.JAVA_RUNTIME))
+        }
+    }
 
     dependencies {
         minimalBackwardsCompatibleVersionTestClasspath("org.jetbrains.kotlin:kotlin-gradle-plugin-idea:$version")
@@ -51,9 +63,17 @@ run {
             if (isSnapshotTest) logger.quiet("Running test against snapshot: $version")
             else logger.quiet("Running test against $version")
 
+            val resolvedClasspath = minimalBackwardsCompatibleVersionTestClasspath.files
+            if (resolvedClasspath.none { "kotlin-gradle-plugin-idea-$version.jar" in it.path }) {
+                throw IllegalStateException(buildString {
+                    appendLine("Bad backwardsCompatibilityClasspath: $resolvedClasspath")
+                    appendLine("Dependencies:${minimalBackwardsCompatibleVersionTestClasspath.allDependencies.joinToString()}")
+                })
+            }
+
             systemProperty(
                 "backwardsCompatibilityClasspath",
-                minimalBackwardsCompatibleVersionTestClasspath.files.joinToString(";") { it.absolutePath }
+                resolvedClasspath.joinToString(";") { it.absolutePath }
             )
         }
     }

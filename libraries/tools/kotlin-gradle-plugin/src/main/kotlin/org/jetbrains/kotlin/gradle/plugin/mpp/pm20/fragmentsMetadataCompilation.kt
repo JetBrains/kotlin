@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.gradle.plugin.mpp.pm20
 
 import org.gradle.api.DefaultTask
 import org.gradle.api.Project
+import org.gradle.api.attributes.Category
 import org.gradle.api.attributes.Usage
 import org.gradle.api.tasks.TaskProvider
 import org.gradle.jvm.tasks.Jar
@@ -109,7 +110,9 @@ private fun createResolvableMetadataConfigurationForModule(module: KotlinGradleM
     project.configurations.create(module.resolvableMetadataConfigurationName).apply {
         isCanBeConsumed = false
         isCanBeResolved = true
+        attributes.attribute(KotlinPlatformType.attribute, KotlinPlatformType.common)
         attributes.attribute(Usage.USAGE_ATTRIBUTE, project.usageByName(KotlinUsages.KOTLIN_METADATA))
+        attributes.attribute(Category.CATEGORY_ATTRIBUTE, project.categoryByName(Category.LIBRARY))
         module.fragments.all { fragment ->
             project.addExtendsFromRelation(name, fragment.apiConfigurationName)
             project.addExtendsFromRelation(name, fragment.implementationConfigurationName)

@@ -1,4 +1,5 @@
 import org.gradle.api.Project
+import org.gradle.api.artifacts.verification.DependencyVerificationMode
 import org.gradle.api.internal.project.ProjectInternal
 import org.gradle.configurationcache.extensions.serviceOf
 import org.gradle.testfixtures.ProjectBuilder
@@ -20,5 +21,8 @@ fun Project.buildIdeaKotlinProjectModel(): IdeaKotlinProjectModel {
 fun createKpmProject(): Pair<ProjectInternal, KotlinPm20ProjectExtension> {
     val project = ProjectBuilder.builder().build() as ProjectInternal
     project.plugins.apply(KotlinPm20PluginWrapper::class.java)
+    project.gradle.startParameter.dependencyVerificationMode = DependencyVerificationMode.OFF
+    project.repositories.mavenLocal()
+    project.repositories.maven { it.setUrl("https://cache-redirector.jetbrains.com/maven-central") }
     return project to project.extensions.getByType(KotlinPm20ProjectExtension::class.java)
 }

@@ -59,16 +59,16 @@ internal abstract class AbstractKotlinFragmentMetadataCompilationData<T : Kotlin
 
     override var compileDependencyFiles: FileCollection by project.newProperty {
         createMetadataDependencyTransformationClasspath(
-            project,
-            resolvableMetadataConfiguration(fragment.containingModule),
-            lazy {
+            project = project,
+            fromFiles = resolvableMetadataConfiguration(fragment.containingModule),
+            parentCompiledMetadataFiles = lazy {
                 fragment.refinesClosure.minus(fragment).map {
                     val compilation = metadataCompilationRegistry.getForFragmentOrNull(it)
                         ?: return@map project.files()
                     compilation.output.classesDirs
                 }
             },
-            resolvedMetadataFiles
+            metadataResolutionProviders = resolvedMetadataFiles
         )
     }
 

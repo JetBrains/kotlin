@@ -60,3 +60,12 @@ internal fun File.canonicalPathWithoutExtension(): String =
     canonicalPath.substringBeforeLast(".")
 
 internal fun File.listFilesOrEmpty() = (if (exists()) listFiles() else null).orEmpty()
+
+internal inline fun <T> withTemporaryDirectory(prefix: String, action: (directory: File) -> T): T {
+    val directory = Files.createTempDirectory(prefix).toFile()
+    return try {
+        action(directory)
+    } finally {
+        directory.deleteRecursively()
+    }
+}

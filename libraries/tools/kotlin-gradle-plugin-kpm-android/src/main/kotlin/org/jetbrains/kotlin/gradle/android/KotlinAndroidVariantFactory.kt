@@ -18,6 +18,7 @@ import org.gradle.kotlin.dsl.named
 import org.jetbrains.kotlin.gradle.kpm.external.ExternalVariantApi
 import org.jetbrains.kotlin.gradle.kpm.external.createExternalJvmVariant
 import org.jetbrains.kotlin.gradle.kpm.external.external
+import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.*
 
 fun KotlinGradleModule.createKotlinAndroidVariant(androidVariant: BaseVariant) {
@@ -45,7 +46,11 @@ fun KotlinGradleModule.createKotlinAndroidVariant(androidVariant: BaseVariant) {
     val kotlinVariant = createExternalJvmVariant(
         "android${androidVariant.buildType.name.capitalize()}", KotlinJvmVariantConfig(
             /* Only swap out configuration that is used. Default setup shall still be applied */
-            compileDependencies = DefaultKotlinCompileDependenciesDefinition
+            compileDependencies = (DefaultKotlinCompileDependenciesDefinition +
+                    FragmentAttributes<KotlinGradleFragment> {
+                        namedAttribute(TARGET_JVM_ENVIRONMENT_ATTRIBUTE, TargetJvmEnvironment.ANDROID)
+                        attribute(KotlinPlatformType.attribute, KotlinPlatformType.androidJvm)
+                    })
                 .withConfigurationProvider { androidVariant.compileConfiguration },
 
             /* Only swap out configuration that is used. Default setup shall still be applied */
@@ -84,4 +89,5 @@ fun KotlinGradleModule.createKotlinAndroidVariant(androidVariant: BaseVariant) {
     androidDsl.androidManifest = project.file("AndroidManifest.xml")
     androidDsl.compileSdk = 23
     androidCommon.external[androidDslKey] = androidDsl
+    kotlinVariant.external[androidDslKey] = androidDsl
 }
