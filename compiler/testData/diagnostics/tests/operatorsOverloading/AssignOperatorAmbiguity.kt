@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 //KT-1820 Write test for ASSIGN_OPERATOR_AMBIGUITY
 package kt1820
 

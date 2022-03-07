@@ -745,6 +745,11 @@ public class LazyBodyIsNotTouchedTilContractsPhaseTestGenerated extends Abstract
             KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/callResolution"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
         }
 
+        @TestMetadata("arraySetWithPlusAssign.kt")
+        public void testArraySetWithPlusAssign() throws Exception {
+            runTest("compiler/fir/analysis-tests/testData/resolve/callResolution/arraySetWithPlusAssign.kt");
+        }
+
         @TestMetadata("companionInvoke.kt")
         public void testCompanionInvoke() throws Exception {
             runTest("compiler/fir/analysis-tests/testData/resolve/callResolution/companionInvoke.kt");
@@ -768,6 +773,11 @@ public class LazyBodyIsNotTouchedTilContractsPhaseTestGenerated extends Abstract
         @TestMetadata("errorCandidates.kt")
         public void testErrorCandidates() throws Exception {
             runTest("compiler/fir/analysis-tests/testData/resolve/callResolution/errorCandidates.kt");
+        }
+
+        @TestMetadata("exponentialArraySetWithPlusAssign.kt")
+        public void testExponentialArraySetWithPlusAssign() throws Exception {
+            runTest("compiler/fir/analysis-tests/testData/resolve/callResolution/exponentialArraySetWithPlusAssign.kt");
         }
 
         @TestMetadata("extensionInvokeAfterSafeCall.kt")

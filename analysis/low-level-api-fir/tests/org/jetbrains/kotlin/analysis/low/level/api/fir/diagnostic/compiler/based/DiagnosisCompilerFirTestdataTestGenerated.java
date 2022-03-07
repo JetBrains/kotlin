@@ -864,6 +864,12 @@ public class DiagnosisCompilerFirTestdataTestGenerated extends AbstractDiagnosis
             }
 
             @Test
+            @TestMetadata("arraySetWithPlusAssign.kt")
+            public void testArraySetWithPlusAssign() throws Exception {
+                runTest("compiler/fir/analysis-tests/testData/resolve/callResolution/arraySetWithPlusAssign.kt");
+            }
+
+            @Test
             @TestMetadata("companionInvoke.kt")
             public void testCompanionInvoke() throws Exception {
                 runTest("compiler/fir/analysis-tests/testData/resolve/callResolution/companionInvoke.kt");
@@ -891,6 +897,12 @@ public class DiagnosisCompilerFirTestdataTestGenerated extends AbstractDiagnosis
             @TestMetadata("errorCandidates.kt")
             public void testErrorCandidates() throws Exception {
                 runTest("compiler/fir/analysis-tests/testData/resolve/callResolution/errorCandidates.kt");
+            }
+
+            @Test
+            @TestMetadata("exponentialArraySetWithPlusAssign.kt")
+            public void testExponentialArraySetWithPlusAssign() throws Exception {
+                runTest("compiler/fir/analysis-tests/testData/resolve/callResolution/exponentialArraySetWithPlusAssign.kt");
             }
 
             @Test

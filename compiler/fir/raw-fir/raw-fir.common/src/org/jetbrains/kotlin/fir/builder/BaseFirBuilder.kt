@@ -1058,14 +1058,6 @@ abstract class BaseFirBuilder<T>(val baseSession: FirSession, val context: Conte
                 null,
                 ConeSimpleDiagnostic("No value for array set", DiagnosticKind.Syntax)
             )
-            // Second copy of rhs is used because we analyze it twice in different contexts
-            // and now they should be different expressions instances to make everything work properly.
-            // But this lead to exponential time already at FIR building stage,
-            // so we hope this hack will be removed with KT-50861
-            this.rhs2 = rhs?.convert() ?: buildErrorExpression(
-                null,
-                ConeSimpleDiagnostic("No value for array set", DiagnosticKind.Syntax)
-            )
             this.arrayAccessSource = arrayAccessSource
             this.annotations += annotations
         }

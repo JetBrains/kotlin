@@ -1,0 +1,162 @@
+FILE: exponentialArraySetWithPlusAssign.kt
+    public final class A : R|kotlin/Any| {
+        public constructor(): R|A| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final operator fun get(i: R|kotlin/Int|): R|A| {
+            ^get this@R|/A|
+        }
+
+        public final operator fun plusAssign(v: R|() -> kotlin/Unit|): R|kotlin/Unit| {
+        }
+
+    }
+    public final fun test_1(x: R|A|): R|kotlin/Unit| {
+        R|<local>/x|.R|/A.get|(Int(1)).R|/A.plusAssign|(fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+            R|/someCallInsideLambda|()
+            R|<local>/x|.R|/A.get|(Int(1)).R|/A.plusAssign|(fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+                R|/someCallInsideLambda|()
+                R|<local>/x|.R|/A.get|(Int(1)).R|/A.plusAssign|(fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+                    R|/someCallInsideLambda|()
+                    R|<local>/x|.R|/A.get|(Int(1)).R|/A.plusAssign|(fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+                        R|/someCallInsideLambda|()
+                        R|<local>/x|.R|/A.get|(Int(1)).R|/A.plusAssign|(fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+                            R|/someCallInsideLambda|()
+                            R|<local>/x|.R|/A.get|(Int(1)).R|/A.plusAssign|(fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+                                R|/someCallInsideLambda|()
+                                R|<local>/x|.R|/A.get|(Int(1)).R|/A.plusAssign|(fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+                                    R|/someCallInsideLambda|()
+                                    R|<local>/x|.R|/A.get|(Int(1)).R|/A.plusAssign|(fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+                                        R|/someCallInsideLambda|()
+                                        R|<local>/x|.R|/A.get|(Int(1)).R|/A.plusAssign|(fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+                                            R|/someCallInsideLambda|()
+                                            R|<local>/x|.R|/A.get|(Int(1)).R|/A.plusAssign|(fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+                                                R|/someCallInsideLambda|()
+                                                R|<local>/x|.R|/A.get|(Int(1)).R|/A.plusAssign|(fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+                                                    R|/someCallInsideLambda|()
+                                                    R|<local>/x|.R|/A.get|(Int(1)).R|/A.plusAssign|(fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+                                                        R|/someCallInsideLambda|()
+                                                        R|<local>/x|.R|/A.get|(Int(1)).R|/A.plusAssign|(fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+                                                            R|/someCallInsideLambda|()
+                                                            R|<local>/x|.R|/A.get|(Int(1)).R|/A.plusAssign|(fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+                                                                R|/someCallInsideLambda|()
+                                                                R|<local>/x|.R|/A.get|(Int(1)).R|/A.plusAssign|(fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+                                                                    R|/someCallInsideLambda|()
+                                                                    Q|kotlin/Unit|
+                                                                }
+                                                                )
+                                                            }
+                                                            )
+                                                        }
+                                                        )
+                                                    }
+                                                    )
+                                                }
+                                                )
+                                            }
+                                            )
+                                        }
+                                        )
+                                    }
+                                    )
+                                }
+                                )
+                            }
+                            )
+                        }
+                        )
+                    }
+                    )
+                }
+                )
+            }
+            )
+        }
+        )
+    }
+    public final class D : R|kotlin/Any| {
+        public constructor(): R|D| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final operator fun set(i: R|kotlin/Int|, x: R|D|): R|kotlin/Unit| {
+        }
+
+        public final operator fun get(i: R|kotlin/Int|): R|D| {
+            ^get this@R|/D|
+        }
+
+        public final operator fun plusAssign(x: R|() -> kotlin/Unit|): R|kotlin/Unit| {
+        }
+
+        public final operator fun plus(v: R|() -> kotlin/Unit|): R|D| {
+            ^plus this@R|/D|
+        }
+
+    }
+    public final fun test_2(x: R|D|): R|kotlin/Unit| {
+        R|<local>/x|.R|/D.get|(Int(1)).<Operator overload ambiguity. Compatible candidates: [/D.plusAssign, /D.set]>#(fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+            R|/someCallInsideLambda|()
+            R|<local>/x|.R|/D.get|(Int(1)).<Operator overload ambiguity. Compatible candidates: [/D.plusAssign, /D.set]>#(fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+                R|/someCallInsideLambda|()
+                R|<local>/x|.R|/D.get|(Int(1)).<Operator overload ambiguity. Compatible candidates: [/D.plusAssign, /D.set]>#(fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+                    R|/someCallInsideLambda|()
+                    R|<local>/x|.R|/D.get|(Int(1)).<Operator overload ambiguity. Compatible candidates: [/D.plusAssign, /D.set]>#(fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+                        R|/someCallInsideLambda|()
+                        R|<local>/x|.R|/D.get|(Int(1)).<Operator overload ambiguity. Compatible candidates: [/D.plusAssign, /D.set]>#(fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+                            R|/someCallInsideLambda|()
+                            R|<local>/x|.R|/D.get|(Int(1)).<Operator overload ambiguity. Compatible candidates: [/D.plusAssign, /D.set]>#(fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+                                R|/someCallInsideLambda|()
+                                R|<local>/x|.R|/D.get|(Int(1)).<Operator overload ambiguity. Compatible candidates: [/D.plusAssign, /D.set]>#(fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+                                    R|/someCallInsideLambda|()
+                                    R|<local>/x|.R|/D.get|(Int(1)).<Operator overload ambiguity. Compatible candidates: [/D.plusAssign, /D.set]>#(fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+                                        R|/someCallInsideLambda|()
+                                        R|<local>/x|.R|/D.get|(Int(1)).<Operator overload ambiguity. Compatible candidates: [/D.plusAssign, /D.set]>#(fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+                                            R|/someCallInsideLambda|()
+                                            R|<local>/x|.R|/D.get|(Int(1)).<Operator overload ambiguity. Compatible candidates: [/D.plusAssign, /D.set]>#(fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+                                                R|/someCallInsideLambda|()
+                                                R|<local>/x|.R|/D.get|(Int(1)).<Operator overload ambiguity. Compatible candidates: [/D.plusAssign, /D.set]>#(fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+                                                    R|/someCallInsideLambda|()
+                                                    R|<local>/x|.R|/D.get|(Int(1)).<Operator overload ambiguity. Compatible candidates: [/D.plusAssign, /D.set]>#(fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+                                                        R|/someCallInsideLambda|()
+                                                        R|<local>/x|.R|/D.get|(Int(1)).<Operator overload ambiguity. Compatible candidates: [/D.plusAssign, /D.set]>#(fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+                                                            R|/someCallInsideLambda|()
+                                                            R|<local>/x|.R|/D.get|(Int(1)).<Operator overload ambiguity. Compatible candidates: [/D.plusAssign, /D.set]>#(fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+                                                                R|/someCallInsideLambda|()
+                                                                R|<local>/x|.R|/D.get|(Int(1)).<Operator overload ambiguity. Compatible candidates: [/D.plusAssign, /D.set]>#(fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+                                                                    R|/someCallInsideLambda|()
+                                                                    Q|kotlin/Unit|
+                                                                }
+                                                                )
+                                                            }
+                                                            )
+                                                        }
+                                                        )
+                                                    }
+                                                    )
+                                                }
+                                                )
+                                            }
+                                            )
+                                        }
+                                        )
+                                    }
+                                    )
+                                }
+                                )
+                            }
+                            )
+                        }
+                        )
+                    }
+                    )
+                }
+                )
+            }
+            )
+        }
+        )
+    }
+    public final fun someCallInsideLambda(): R|kotlin/Unit| {
+    }
