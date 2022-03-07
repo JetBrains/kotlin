@@ -38,8 +38,14 @@ class VariableLValue(
     LValue,
     AssignmentReceiver {
 
-    constructor(context: IrGeneratorContext, irVariable: IrVariable, origin: IrStatementOrigin? = null) :
-            this(context, irVariable.startOffset, irVariable.endOffset, irVariable.symbol, irVariable.type, origin)
+    constructor(
+        context: IrGeneratorContext,
+        irVariable: IrVariable,
+        origin: IrStatementOrigin? = null,
+        startOffset: Int = irVariable.startOffset,
+        endOffset: Int = irVariable.endOffset
+    ) :
+            this(context, startOffset, endOffset, irVariable.symbol, irVariable.type, origin)
 
     override fun load(): IrExpression =
         IrGetValueImpl(startOffset, endOffset, type, symbol, origin)

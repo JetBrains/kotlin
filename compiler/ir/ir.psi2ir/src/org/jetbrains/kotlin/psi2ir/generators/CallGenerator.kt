@@ -463,8 +463,14 @@ fun IrExpression.isUnchanging() =
 
 fun IrExpression.hasNoSideEffects() = isUnchanging() || this is IrGetValue
 
-fun CallGenerator.generateCall(ktElement: KtElement, call: CallBuilder, origin: IrStatementOrigin? = null) =
-    generateCall(ktElement.startOffsetSkippingComments, ktElement.endOffset, call, origin)
+fun CallGenerator.generateCall(
+    ktElement: KtElement,
+    call: CallBuilder,
+    origin: IrStatementOrigin? = null,
+    startOffset: Int = ktElement.startOffsetSkippingComments,
+    endOffset: Int = ktElement.endOffset,
+) =
+    generateCall(startOffset, endOffset, call, origin)
 
 fun CallGenerator.generateCall(irExpression: IrExpression, call: CallBuilder, origin: IrStatementOrigin? = null) =
     generateCall(irExpression.startOffset, irExpression.endOffset, call, origin)

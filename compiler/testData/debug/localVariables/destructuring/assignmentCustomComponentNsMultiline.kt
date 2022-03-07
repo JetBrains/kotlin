@@ -1,5 +1,5 @@
 // IGNORE_BACKEND_FIR: JVM_IR
-// IGNORE_BACKEND: JVM_IR
+
 // FILE: test.kt
 class MyPair(val x: String, val y: String) {
     operator fun component1(): String {

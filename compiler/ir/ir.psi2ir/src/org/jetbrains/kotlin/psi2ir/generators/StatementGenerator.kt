@@ -25,14 +25,17 @@ import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
+import org.jetbrains.kotlin.ir.util.SYNTHETIC_OFFSET
 import org.jetbrains.kotlin.ir.util.referenceFunction
 import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
+import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import org.jetbrains.kotlin.psi.psiUtil.startOffsetSkippingComments
 import org.jetbrains.kotlin.psi2ir.deparenthesize
 import org.jetbrains.kotlin.psi2ir.intermediate.IntermediateValue
-import org.jetbrains.kotlin.psi2ir.intermediate.createTemporaryVariableInBlock
+import org.jetbrains.kotlin.psi2ir.intermediate.VariableLValue
+import org.jetbrains.kotlin.psi2ir.intermediate.declareTemporaryVariableInBlock
 import org.jetbrains.kotlin.psi2ir.intermediate.setExplicitReceiverValue
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.BindingContext.SMARTCAST
@@ -110,8 +113,9 @@ class StatementGenerator(
             )
         }
 
+        val sourceElement = property.nameIdentifier ?: property
         return context.symbolTable.declareVariable(
-            property.startOffsetSkippingComments, property.endOffset, IrDeclarationOrigin.DEFINED,
+            sourceElement.startOffsetSkippingComments, sourceElement.endOffset, IrDeclarationOrigin.DEFINED,
             variableDescriptor,
             variableDescriptor.type.toIrType(),
             property.initializer?.let { generateExpression(it) }
@@ -129,13 +133,20 @@ class StatementGenerator(
 
     override fun visitDestructuringDeclaration(multiDeclaration: KtDestructuringDeclaration, data: Nothing?): IrStatement {
         val irBlock = IrCompositeImpl(
-            multiDeclaration.startOffsetSkippingComments, multiDeclaration.endOffset,
+            SYNTHETIC_OFFSET, SYNTHETIC_OFFSET,
             context.irBuiltIns.unitType, IrStatementOrigin.DESTRUCTURING_DECLARATION
         )
         val ktInitializer = multiDeclaration.initializer!!
-        val containerValue = scope.createTemporaryVariableInBlock(context, generateExpression(ktInitializer), irBlock, "container")
+        val irInitializer = generateExpression(ktInitializer)
 
-        declareComponentVariablesInBlock(multiDeclaration, irBlock, containerValue)
+        val containerVariable = scope.declareTemporaryVariableInBlock(irInitializer, irBlock, nameHint = "container")
+
+        declareComponentVariablesInBlock(
+            multiDeclaration,
+            irBlock,
+            VariableLValue(context, containerVariable),
+            VariableLValue(context, containerVariable, startOffset = SYNTHETIC_OFFSET, endOffset = SYNTHETIC_OFFSET)
+        )
 
         return irBlock
     }
@@ -143,26 +154,33 @@ class StatementGenerator(
     fun declareComponentVariablesInBlock(
         multiDeclaration: KtDestructuringDeclaration,
         irBlock: IrStatementContainer,
-        containerValue: IntermediateValue
+        firstContainerValue: IntermediateValue,
+        restContainerValue: IntermediateValue
     ) {
         val callGenerator = CallGenerator(this)
+
+        // TODO: Every access to the container value causes a null check even though subsequent checks after the first can be assumed to pass.
+        var containerValue = firstContainerValue
         for ((index, ktEntry) in multiDeclaration.entries.withIndex()) {
-            val componentResolvedCall = getOrFail(BindingContext.COMPONENT_RESOLVED_CALL, ktEntry)
-
-            val componentSubstitutedCall = pregenerateCall(componentResolvedCall)
-            componentSubstitutedCall.setExplicitReceiverValue(containerValue)
-
             val componentVariable = getOrFail(BindingContext.VARIABLE, ktEntry)
 
             // componentN for '_' SHOULD NOT be evaluated
             if (componentVariable.name.isSpecial) continue
 
+            val componentResolvedCall = getOrFail(BindingContext.COMPONENT_RESOLVED_CALL, ktEntry)
+            val componentSubstitutedCall = pregenerateCall(componentResolvedCall)
+
+            componentSubstitutedCall.setExplicitReceiverValue(containerValue)
+            containerValue = restContainerValue
+
             val irComponentCall = callGenerator.generateCall(
-                ktEntry.startOffsetSkippingComments, ktEntry.endOffset, componentSubstitutedCall,
+                SYNTHETIC_OFFSET, SYNTHETIC_OFFSET,
+                componentSubstitutedCall,
                 IrStatementOrigin.COMPONENT_N.withIndex(index + 1)
             )
             val irComponentVar = context.symbolTable.declareVariable(
-                ktEntry.startOffsetSkippingComments, ktEntry.endOffset, IrDeclarationOrigin.DEFINED,
+                ktEntry.nameIdentifier!!.startOffset, ktEntry.nameIdentifier!!.endOffset,
+                IrDeclarationOrigin.DEFINED,
                 componentVariable, componentVariable.type.toIrType(), irComponentCall
             )
             irBlock.statements.add(irComponentVar)

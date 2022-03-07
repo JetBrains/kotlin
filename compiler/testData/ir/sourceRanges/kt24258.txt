@@ -18,5 +18,5 @@
               @3:27..53 PROPERTY_REFERENCE 'public final lazyNullString: kotlin.String [delegated,val]' field=null getter='public final fun <get-lazyNullString> (): kotlin.String declared in <root>' setter=null type=kotlin.reflect.KProperty0<kotlin.String> origin=PROPERTY_REFERENCE_FOR_DELEGATE
   @5:0..7:1 FUN name:testLazyNullString visibility:public modality:FINAL <> () returnType:kotlin.Unit
     @5:25..7:1 BLOCK_BODY
-      @6:4..34 VAR name:s type:kotlin.String [val]
+      @6:8..9 VAR name:s type:kotlin.String [val]
         @6:20..34 CALL 'public final fun <get-lazyNullString> (): kotlin.String declared in <root>' type=kotlin.String origin=GET_PROPERTY
