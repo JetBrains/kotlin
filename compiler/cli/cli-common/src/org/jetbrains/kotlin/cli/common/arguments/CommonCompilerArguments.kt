@@ -573,13 +573,11 @@ abstract class CommonCompilerArguments : CommonToolArguments() {
             configureLanguageFeatures(collector)
         )
 
-        if (!suppressVersionWarnings) {
-            checkLanguageVersionIsStable(languageVersion, collector)
-            checkOutdatedVersions(languageVersion, apiVersion, collector)
-            checkProgressiveMode(languageVersion, collector)
+        checkLanguageVersionIsStable(languageVersion, collector)
+        checkOutdatedVersions(languageVersion, apiVersion, collector)
+        checkProgressiveMode(languageVersion, collector)
 
-            checkIrSupport(languageVersionSettings, collector)
-        }
+        checkIrSupport(languageVersionSettings, collector)
 
         checkPlatformSpecificSettings(languageVersionSettings, collector)
 
@@ -600,7 +598,7 @@ abstract class CommonCompilerArguments : CommonToolArguments() {
     }
 
     private fun checkLanguageVersionIsStable(languageVersion: LanguageVersion, collector: MessageCollector) {
-        if (!languageVersion.isStable) {
+        if (!languageVersion.isStable && !suppressVersionWarnings) {
             collector.report(
                 CompilerMessageSeverity.STRONG_WARNING,
                 "Language version ${languageVersion.versionString} is experimental, there are no backwards compatibility guarantees for " +
@@ -619,7 +617,7 @@ abstract class CommonCompilerArguments : CommonToolArguments() {
                             "please, use version ${supportedVersion!!.versionString} or greater."
                 )
             }
-            version.isDeprecated -> {
+            version.isDeprecated && !suppressVersionWarnings -> {
                 collector.report(
                     CompilerMessageSeverity.STRONG_WARNING,
                     "${versionKind.text} version ${version.versionString} is deprecated " +
@@ -640,7 +638,7 @@ abstract class CommonCompilerArguments : CommonToolArguments() {
     }
 
     private fun checkProgressiveMode(languageVersion: LanguageVersion, collector: MessageCollector) {
-        if (progressiveMode && languageVersion < LanguageVersion.LATEST_STABLE) {
+        if (progressiveMode && languageVersion < LanguageVersion.LATEST_STABLE && !suppressVersionWarnings) {
             collector.report(
                 CompilerMessageSeverity.STRONG_WARNING,
                 "'-progressive' is meaningful only for the latest language version (${LanguageVersion.LATEST_STABLE}), " +
