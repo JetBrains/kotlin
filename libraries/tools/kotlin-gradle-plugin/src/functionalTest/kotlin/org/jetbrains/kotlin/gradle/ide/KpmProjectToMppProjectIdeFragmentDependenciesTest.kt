@@ -8,6 +8,7 @@
 
 package org.jetbrains.kotlin.gradle.ide
 
+import org.jetbrains.kotlin.gradle.kpm.*
 import org.jetbrains.kotlin.gradle.plugin.ide.IdeLocalSourceFragmentDependency
 import org.jetbrains.kotlin.gradle.plugin.ide.InternalIdeApi
 import org.jetbrains.kotlin.gradle.kpm.jvm
@@ -42,9 +43,9 @@ class KpmProjectToMppProjectIdeFragmentDependenciesTest : AbstractIdeFragmentDep
         val kpm = createKpmProject("kpm") {
             mainAndTest {
                 jvm
-                val iosX64 = fragments.create("iosX64", org.jetbrains.kotlin.gradle.kpm.KotlinIosX64Variant::class.java)
-                val iosArm64 = fragments.create("iosArm64", org.jetbrains.kotlin.gradle.kpm.KotlinIosArm64Variant::class.java)
-                val linuxX64 = fragments.create("linuxX64", org.jetbrains.kotlin.gradle.kpm.KotlinLinuxX64Variant::class.java)
+                val iosX64 = fragments.create("iosX64", KotlinIosX64Variant::class.java)
+                val iosArm64 = fragments.create("iosArm64", KotlinIosArm64Variant::class.java)
+                val linuxX64 = fragments.create("linuxX64", KotlinLinuxX64Variant::class.java)
 
                 val ios = fragments.create("ios")
                 val native = fragments.create("native")
