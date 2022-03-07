@@ -3,7 +3,7 @@ import org.jetbrains.kotlin.gradle.kpm.*
 import org.jetbrains.kotlin.project.model.*
 
 plugins {
-    kotlin("kpm")
+    kotlin("multiplatform.kpm")
 }
 
 repositories {

@@ -209,9 +209,9 @@ gradlePlugin {
             displayName = description
             implementationClass = "org.jetbrains.kotlin.gradle.plugin.cocoapods.KotlinCocoapodsPlugin"
         }
-        create("kotlinKpmPlugin") {
-            id = "org.jetbrains.kotlin.kpm"
-            description = "Kotlin Project Model Plugin"
+        create("kotlinMultiplatformKpmPlugin") {
+            id = "org.jetbrains.kotlin.multiplatform.kpm"
+            description = "Kotlin Project Model plugin for Multiplatform"
             displayName = description
             implementationClass = "org.jetbrains.kotlin.gradle.plugin.KpmPluginWrapper"
         }
