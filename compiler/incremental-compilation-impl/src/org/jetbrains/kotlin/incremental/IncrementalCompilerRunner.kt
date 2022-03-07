@@ -190,7 +190,10 @@ abstract class IncrementalCompilerRunner<
         } catch (e: Exception) { // todo: catch only cache corruption
             // todo: warn?
             reporter.report { "Rebuilding because of possible caches corruption: $e" }
-            rebuild(BuildAttribute.CACHE_CORRUPTION)
+            val exitCode = rebuild(BuildAttribute.CACHE_CORRUPTION)
+            if (exitCode == ExitCode.OK) {
+                cachesMayBeCorrupted = false
+            }
         } finally {
             if (cachesMayBeCorrupted) {
                 cleanOutputsAndLocalStateOnRebuild(args)
