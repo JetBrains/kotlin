@@ -314,6 +314,12 @@ public class IrSteppingTestGenerated extends AbstractIrSteppingTest {
     }
 
     @Test
+    @TestMetadata("localProperty.kt")
+    public void testLocalProperty() throws Exception {
+        runTest("compiler/testData/debug/stepping/localProperty.kt");
+    }
+
+    @Test
     @TestMetadata("multilineExpression.kt")
     public void testMultilineExpression() throws Exception {
         runTest("compiler/testData/debug/stepping/multilineExpression.kt");

@@ -1,5 +1,5 @@
-// IGNORE_BACKEND: JVM_IR
 // IGNORE_BACKEND_FIR: JVM_IR
+
 // FILE: test.kt
 fun box(): String {
     val

@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrLoop
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
 import org.jetbrains.kotlin.ir.expressions.impl.*
+import org.jetbrains.kotlin.ir.util.SYNTHETIC_OFFSET
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
@@ -202,10 +203,16 @@ class LoopExpressionGenerator(statementGenerator: StatementGenerator) : Statemen
         irInnerBody.statements.add(irLoopParameter)
 
         if (ktLoopDestructuringDeclaration != null) {
+            val firstContainerValue = VariableLValue(context, irLoopParameter)
             statementGenerator.declareComponentVariablesInBlock(
                 ktLoopDestructuringDeclaration,
                 irInnerBody,
-                VariableLValue(context, irLoopParameter)
+                firstContainerValue,
+                if (context.extensions.debugInfoOnlyOnVariablesInDestructuringDeclarations) {
+                    VariableLValue(context, irLoopParameter, startOffset = SYNTHETIC_OFFSET, endOffset = SYNTHETIC_OFFSET)
+                } else {
+                    firstContainerValue
+                }
             )
         }
 
