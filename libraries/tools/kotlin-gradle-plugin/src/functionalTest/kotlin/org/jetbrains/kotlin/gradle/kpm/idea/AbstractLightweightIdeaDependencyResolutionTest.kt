@@ -8,6 +8,7 @@
 package org.jetbrains.kotlin.gradle.kpm.idea
 
 import org.gradle.api.Project
+import org.gradle.api.artifacts.dsl.RepositoryHandler
 import org.gradle.api.artifacts.verification.DependencyVerificationMode
 import org.gradle.api.internal.project.ProjectInternal
 import org.gradle.testfixtures.ProjectBuilder
@@ -22,9 +23,11 @@ abstract class AbstractLightweightIdeaDependencyResolutionTest {
             project.gradle.startParameter.dependencyVerificationMode = DependencyVerificationMode.OFF
             project.enableDefaultStdlibDependency(false)
             project.repositories.mavenLocal()
-            project.repositories.maven { it.setUrl("https://cache-redirector.jetbrains.com/maven-central") }
+            project.repositories.mavenCentralCacheRedirector()
         } as ProjectInternal
     }
 
     val Project.konanDistribution get() = KonanDistribution(project.konanHome)
 }
+
+fun RepositoryHandler.mavenCentralCacheRedirector() = maven { it.setUrl("https://cache-redirector.jetbrains.com/maven-central") }
