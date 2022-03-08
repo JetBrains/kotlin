@@ -33,7 +33,8 @@ abstract class DataClassMembersGenerator(
     val symbolTable: ReferenceSymbolTable,
     val irClass: IrClass,
     val origin: IrDeclarationOrigin,
-    val forbidDirectFieldAccess: Boolean = false
+    val forbidDirectFieldAccess: Boolean = false,
+    val generateBodies: Boolean = false
 ) {
     private val irPropertiesByDescriptor: Map<PropertyDescriptor, IrProperty> =
         irClass.properties.associateBy { it.descriptor }
@@ -300,10 +301,12 @@ abstract class DataClassMembersGenerator(
     // Entry for psi2ir
     fun generateCopyFunction(function: FunctionDescriptor, constructorSymbol: IrConstructorSymbol) {
         buildMember(function) {
-            function.valueParameters.forEach { parameter ->
-                putDefault(parameter, irGetProperty(irThis(), getProperty(parameter, null)!!))
+            if (generateBodies) {
+                function.valueParameters.forEach { parameter ->
+                    putDefault(parameter, irGetProperty(irThis(), getProperty(parameter, null)!!))
+                }
+                generateCopyFunction(constructorSymbol)
             }
-            generateCopyFunction(constructorSymbol)
         }
     }
 
