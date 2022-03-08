@@ -13,8 +13,12 @@ import org.gradle.api.artifacts.verification.DependencyVerificationMode
 import org.gradle.api.internal.project.ProjectInternal
 import org.gradle.testfixtures.ProjectBuilder
 import org.jetbrains.kotlin.commonizer.KonanDistribution
+import org.jetbrains.kotlin.commonizer.platformLibsDir
 import org.jetbrains.kotlin.compilerRunner.konanHome
 import org.jetbrains.kotlin.gradle.enableDefaultStdlibDependency
+import org.jetbrains.kotlin.gradle.kpm.idea.testFixtures.IdeaKotlinDependencyMatcher
+import org.jetbrains.kotlin.gradle.plugin.mpp.enabledOnCurrentHost
+import org.jetbrains.kotlin.konan.target.KonanTarget
 
 abstract class AbstractLightweightIdeaDependencyResolutionTest {
 
@@ -28,6 +32,10 @@ abstract class AbstractLightweightIdeaDependencyResolutionTest {
     }
 
     val Project.konanDistribution get() = KonanDistribution(project.konanHome)
+
+    fun Project.nativePlatformLibraries(target: KonanTarget): IdeaKotlinDependencyMatcher? =
+        IdeaKotlinDependencyMatcher.InDirectory(project.konanDistribution.platformLibsDir.resolve(target.name))
+            .takeIf { target.enabledOnCurrentHost }
 }
 
 fun RepositoryHandler.mavenCentralCacheRedirector() = maven { it.setUrl("https://cache-redirector.jetbrains.com/maven-central") }
