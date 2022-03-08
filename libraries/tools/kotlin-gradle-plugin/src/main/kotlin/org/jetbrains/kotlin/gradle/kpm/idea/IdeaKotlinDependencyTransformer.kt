@@ -7,6 +7,14 @@ package org.jetbrains.kotlin.gradle.kpm.idea
 
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinGradleFragment
 
+/**
+ * An [IdeaKotlinDependencyTransformer] will be invoked after all [IdeaKotlinDependencyResolver] finished.
+ * The transformation step is allowed to entirely modify the resolution result. Typical applications would be dependency filtering,
+ * or grouping. Adding additional dependencies might be harmful, since other transformers might not be able to see this additional
+ * dependency, running before the addition.
+ *
+ * Transformations can be scheduled in different phases see: [IdeaKotlinProjectModelBuilder.DependencyTransformationPhase]
+ */
 fun interface IdeaKotlinDependencyTransformer {
     fun transform(
         fragment: KotlinGradleFragment, dependencies: Set<IdeaKotlinDependency>
