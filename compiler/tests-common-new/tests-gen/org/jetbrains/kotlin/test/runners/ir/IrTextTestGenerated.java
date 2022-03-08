@@ -1893,6 +1893,12 @@ public class IrTextTestGenerated extends AbstractIrTextTest {
         }
 
         @Test
+        @TestMetadata("suspendConversionForExtensionFunction.kt")
+        public void testSuspendConversionForExtensionFunction() throws Exception {
+            runTest("compiler/testData/ir/irText/expressions/suspendConversionForExtensionFunction.kt");
+        }
+
+        @Test
         @TestMetadata("suspendConversionInVararg.kt")
         public void testSuspendConversionInVararg() throws Exception {
             runTest("compiler/testData/ir/irText/expressions/suspendConversionInVararg.kt");
