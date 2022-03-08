@@ -131,6 +131,9 @@ class KotlinCoreEnvironment private constructor(
             }
 
             jarFileSystem = when {
+                configuration.getBoolean(JVMConfigurationKeys.USE_PSI_CLASS_FILES_READING) -> {
+                    applicationEnvironment.jarFileSystem
+                }
                 configuration.getBoolean(JVMConfigurationKeys.USE_FAST_JAR_FILE_SYSTEM) || configuration.getBoolean(CommonConfigurationKeys.USE_FIR) -> {
                     val fastJarFs = FastJarFileSystem.createIfUnmappingPossible()
 

@@ -1,3 +1,4 @@
+// USE_PSI_CLASS_FILES_READING
 // WITH_STDLIB
 
 package test.pkg
