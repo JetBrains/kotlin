@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.analysis.api.fir
 import com.intellij.mock.MockApplication
 import com.intellij.mock.MockProject
 import com.intellij.openapi.Disposable
+import com.intellij.openapi.vfs.impl.jar.CoreJarFileSystem
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.analysis.api.fir.utils.configureOptionalTestCompilerPlugin
 import org.jetbrains.kotlin.analysis.api.impl.barebone.test.FrontendApiTestConfiguratorService
@@ -41,14 +42,16 @@ object FirFrontendApiTestConfiguratorService : FrontendApiTestConfiguratorServic
         compilerConfig: CompilerConfiguration,
         files: List<KtFile>,
         packagePartProvider: (GlobalSearchScope) -> PackagePartProvider,
-        projectStructureProvider: ProjectStructureProvider
+        projectStructureProvider: ProjectStructureProvider,
+        jarFileSystem: CoreJarFileSystem,
     ) {
         FirLowLevelFrontendApiTestConfiguratorService.registerProjectServices(
             project,
             compilerConfig,
             files,
             packagePartProvider,
-            projectStructureProvider
+            projectStructureProvider,
+            jarFileSystem
         )
     }
 

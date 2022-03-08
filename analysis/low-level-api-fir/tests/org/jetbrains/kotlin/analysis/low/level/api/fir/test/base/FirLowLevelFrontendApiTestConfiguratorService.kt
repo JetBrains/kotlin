@@ -9,6 +9,7 @@ import com.intellij.mock.MockApplication
 import com.intellij.mock.MockProject
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.components.ServiceManager
+import com.intellij.openapi.vfs.impl.jar.CoreJarFileSystem
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.analysis.api.impl.barebone.test.FrontendApiTestConfiguratorService
 import org.jetbrains.kotlin.analysis.low.level.api.fir.compiler.based.ModuleRegistrarPreAnalysisHandler
@@ -44,7 +45,8 @@ object FirLowLevelFrontendApiTestConfiguratorService : FrontendApiTestConfigurat
         compilerConfig: CompilerConfiguration,
         files: List<KtFile>,
         packagePartProvider: (GlobalSearchScope) -> PackagePartProvider,
-        projectStructureProvider: ProjectStructureProvider
+        projectStructureProvider: ProjectStructureProvider,
+        jarFileSystem: CoreJarFileSystem,
     ) {
         project.registerTestServices(files, packagePartProvider, projectStructureProvider)
     }
