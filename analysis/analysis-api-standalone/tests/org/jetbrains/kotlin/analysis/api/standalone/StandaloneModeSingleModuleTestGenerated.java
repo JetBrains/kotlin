@@ -44,4 +44,10 @@ public class StandaloneModeSingleModuleTestGenerated extends AbstractStandaloneM
     public void testSingleFile() throws Exception {
         runTest("analysis/analysis-api/testData/standalone/singleModule/singleFile.kt");
     }
+
+    @Test
+    @TestMetadata("todo.kt")
+    public void testTodo() throws Exception {
+        runTest("analysis/analysis-api/testData/standalone/singleModule/todo.kt");
+    }
 }
