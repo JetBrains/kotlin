@@ -3,6 +3,8 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
+@file:Suppress("DuplicatedCode")
+
 package org.jetbrains.kotlin.gradle.kpm.idea.testFixtures
 
 import org.jetbrains.kotlin.gradle.kpm.idea.*
@@ -24,7 +26,7 @@ fun IdeaKotlinModule.assertContainsFragment(name: String): IdeaKotlinFragment {
 
 fun IdeaKotlinFragment.assertResolvedBinaryDependencies(
     binaryType: String,
-    matchers: Set<IdeaKotlinDependencyMatcher>
+    matchers: Set<IdeaKotlinBinaryDependencyMatcher>
 ): Set<IdeaKotlinResolvedBinaryDependency> {
     val resolvedBinaryDependencies = dependencies
         .mapNotNull { dependency ->
@@ -57,7 +59,7 @@ fun IdeaKotlinFragment.assertResolvedBinaryDependencies(
                 }
 
                 appendLine()
-                appendLine("Unexpected dependency coordinates:")
+                appendLine("${name}: Unexpected dependency coordinates:")
                 unexpectedResolvedBinaryDependencies.forEach { unexpectedDependency ->
                     appendLine("\"${unexpectedDependency.coordinates}\",")
                 }
@@ -65,14 +67,14 @@ fun IdeaKotlinFragment.assertResolvedBinaryDependencies(
 
             if (missingDependencies.isNotEmpty()) {
                 appendLine()
-                appendLine("Missing dependencies:")
+                appendLine("${name}: Missing dependencies:")
                 missingDependencies.forEach { missingDependency ->
                     appendLine(missingDependency.description)
                 }
             }
 
             appendLine()
-            appendLine("Resolved Dependency Coordinates:")
+            appendLine("${name}: Resolved Dependency Coordinates:")
             resolvedBinaryDependencies.mapNotNull { it.coordinates }.forEach { coordinates ->
                 appendLine("\"$coordinates\",")
             }
@@ -83,8 +85,61 @@ fun IdeaKotlinFragment.assertResolvedBinaryDependencies(
 @JvmName("assertResolvedBinaryDependenciesByAnyMatcher")
 fun IdeaKotlinFragment.assertResolvedBinaryDependencies(
     binaryType: String, matchers: Set<Any?>,
-) = assertResolvedBinaryDependencies(binaryType, matchers.flatMap { buildIdeaKotlinDependencyMatchers(it) }.toSet())
+) = assertResolvedBinaryDependencies(binaryType, matchers.flatMap { buildIdeaKotlinBinaryDependencyMatchers(it) }.toSet())
 
 fun IdeaKotlinFragment.assertResolvedBinaryDependencies(
     binaryType: String, vararg matchers: Any?
 ) = assertResolvedBinaryDependencies(binaryType, matchers.toSet())
+
+fun IdeaKotlinFragment.assertSourceDependencies(matchers: Set<IdeaKotlinSourceDependencyMatcher>): Set<IdeaKotlinSourceDependency> {
+    val sourceDependencies = dependencies.filterIsInstance<IdeaKotlinSourceDependency>().toSet()
+
+    val unexpectedDependencies = sourceDependencies
+        .filter { dependency -> matchers.none { matcher -> matcher.matches(dependency) } }
+
+    val missingDependencies = matchers.filter { matcher ->
+        sourceDependencies.none { dependency -> matcher.matches(dependency) }
+    }
+
+    if (unexpectedDependencies.isEmpty() && missingDependencies.isEmpty()) {
+        return sourceDependencies
+    }
+
+    fail(
+        buildString {
+            if (unexpectedDependencies.isNotEmpty()) {
+                appendLine("${name}: Unexpected source dependencies found:")
+                unexpectedDependencies.forEach { unexpectedDependency ->
+                    appendLine(unexpectedDependency)
+                }
+
+                appendLine()
+                appendLine("${name}: Unexpected source dependency paths:")
+                unexpectedDependencies.forEach { unexpectedDependency ->
+                    appendLine("\"${unexpectedDependency.path}\",")
+                }
+            }
+
+            if (missingDependencies.isNotEmpty()) {
+                appendLine()
+                appendLine("${name}: Missing fragment dependencies:")
+                missingDependencies.forEach { missingDependency ->
+                    appendLine(missingDependency.description)
+                }
+            }
+
+            appendLine()
+            appendLine("${name}: Resolved source dependency paths:")
+            sourceDependencies.forEach { dependency ->
+                appendLine("\"${dependency.path}\",")
+            }
+        }
+    )
+}
+
+@JvmName("assertSourceDependenciesByAnyMatcher")
+fun IdeaKotlinFragment.assertSourceDependencies(matchers: Set<Any?>): Set<IdeaKotlinSourceDependency> =
+    assertSourceDependencies(matchers.flatMap { buildIdeaKotlinSourceDependencyMatchers(it) }.toSet())
+
+fun IdeaKotlinFragment.assertSourceDependencies(vararg matchers: Any?) =
+    assertSourceDependencies(matchers.toSet())

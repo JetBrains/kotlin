@@ -89,6 +89,7 @@ public final class org/jetbrains/kotlin/gradle/kpm/idea/IdeaKotlinDependency$Com
 }
 
 public final class org/jetbrains/kotlin/gradle/kpm/idea/IdeaKotlinDependencyKt {
+	public static final fun getPath (Lorg/jetbrains/kotlin/gradle/kpm/idea/IdeaKotlinSourceDependency;)Ljava/lang/String;
 	public static final fun isClasspathType (Lorg/jetbrains/kotlin/gradle/kpm/idea/IdeaKotlinResolvedBinaryDependency;)Z
 	public static final fun isDocumentationType (Lorg/jetbrains/kotlin/gradle/kpm/idea/IdeaKotlinResolvedBinaryDependency;)Z
 	public static final fun isSourcesType (Lorg/jetbrains/kotlin/gradle/kpm/idea/IdeaKotlinResolvedBinaryDependency;)Z

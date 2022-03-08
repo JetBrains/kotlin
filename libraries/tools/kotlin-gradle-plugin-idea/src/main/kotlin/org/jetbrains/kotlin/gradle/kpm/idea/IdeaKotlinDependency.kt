@@ -33,6 +33,9 @@ sealed interface IdeaKotlinSourceDependency : IdeaKotlinDependency {
     val kotlinFragmentName: String
 }
 
+val IdeaKotlinSourceDependency.path: String
+    get() = "${buildId.takeIf { it != ":" }.orEmpty()}$projectPath/$kotlinModuleName/$kotlinFragmentName"
+
 sealed interface IdeaKotlinBinaryCoordinates : Serializable {
     val group: String
     val module: String
@@ -70,7 +73,7 @@ data class IdeaKotlinSourceDependencyImpl(
 ) : IdeaKotlinSourceDependency {
 
     override fun toString(): String {
-        return "project://$buildId:$projectPath:$kotlinModuleName:$kotlinFragmentName"
+        return "fragment: $path"
     }
 
     @InternalKotlinGradlePluginApi
