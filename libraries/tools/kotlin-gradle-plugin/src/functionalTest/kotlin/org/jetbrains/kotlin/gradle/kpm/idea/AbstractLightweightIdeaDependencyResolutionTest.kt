@@ -9,6 +9,7 @@ package org.jetbrains.kotlin.gradle.kpm.idea
 
 import org.gradle.api.Project
 import org.gradle.api.artifacts.dsl.RepositoryHandler
+import org.gradle.api.artifacts.repositories.MavenArtifactRepository
 import org.gradle.api.artifacts.verification.DependencyVerificationMode
 import org.gradle.api.internal.project.ProjectInternal
 import org.gradle.testfixtures.ProjectBuilder
@@ -20,6 +21,14 @@ import org.jetbrains.kotlin.gradle.kpm.idea.testFixtures.IdeaKotlinBinaryDepende
 import org.jetbrains.kotlin.gradle.plugin.mpp.enabledOnCurrentHost
 import org.jetbrains.kotlin.konan.target.KonanTarget
 
+/**
+ * Base API applicable for test cases that intend to test idea dependency resolution for kpm  model builders.
+ * This tests will be capable of resolving all kind of dependencies that do not rely on any tasks to run beforehand.
+ * This test will support dependencies previously published from kotlin.git (like stdlib), or dependencies
+ * reachable through mavenCentral (cache redirector)
+ *
+ * The intended usage is to use the [buildProject] function, setting up a suitable Gradle project.
+ */
 abstract class AbstractLightweightIdeaDependencyResolutionTest {
 
     fun buildProject(builder: ProjectBuilder.() -> Unit = {}): ProjectInternal {
@@ -38,4 +47,5 @@ abstract class AbstractLightweightIdeaDependencyResolutionTest {
             .takeIf { target.enabledOnCurrentHost }
 }
 
-fun RepositoryHandler.mavenCentralCacheRedirector() = maven { it.setUrl("https://cache-redirector.jetbrains.com/maven-central") }
+fun RepositoryHandler.mavenCentralCacheRedirector(): MavenArtifactRepository =
+    maven { it.setUrl("https://cache-redirector.jetbrains.com/maven-central") }
