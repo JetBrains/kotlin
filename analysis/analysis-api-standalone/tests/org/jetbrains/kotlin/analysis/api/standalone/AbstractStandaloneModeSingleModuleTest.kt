@@ -14,11 +14,21 @@ import org.jetbrains.kotlin.analysis.api.impl.base.test.findReferencesAtCaret
 import org.jetbrains.kotlin.analysis.api.impl.base.test.test.framework.AbstractHLApiSingleModuleTest
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
+import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.assertions
 
 abstract class AbstractStandaloneModeSingleModuleTest : AbstractHLApiSingleModuleTest() {
+    override fun configureTest(builder: TestConfigurationBuilder) {
+        super.configureTest(builder)
+        with(builder) {
+            defaultDirectives {
+                +JvmEnvironmentConfigurationDirectives.USE_PSI_CLASS_FILES_READING
+            }
+        }
+    }
 
     override fun doTestByFileStructure(ktFiles: List<KtFile>, module: TestModule, testServices: TestServices) {
         val mainKtFile = ktFiles.singleOrNull() ?: ktFiles.first { it.name == "main.kt" }
