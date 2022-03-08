@@ -1,5 +1,3 @@
-// IGNORE_BACKEND: JVM_IR
-
 interface Named {
     val name: String?
 }
