@@ -421,15 +421,15 @@ class ClassGenerator(
     }
 
     private fun generateAdditionalMembersForSingleFieldValueClasses(irClass: IrClass, ktClassOrObject: KtClassOrObject) {
-        DataClassMembersGenerator(declarationGenerator).generateSingleFieldValueClassMembers(ktClassOrObject, irClass)
+        DataClassMembersGenerator(declarationGenerator, context.configuration.generateBodies).generateSingleFieldValueClassMembers(ktClassOrObject, irClass)
     }
 
     private fun generateAdditionalMembersForMultiFieldValueClasses(irClass: IrClass, ktClassOrObject: KtClassOrObject) {
-        DataClassMembersGenerator(declarationGenerator).generateMultiFieldValueClassMembers(ktClassOrObject, irClass)
+        DataClassMembersGenerator(declarationGenerator, context.configuration.generateBodies).generateMultiFieldValueClassMembers(ktClassOrObject, irClass)
     }
 
     private fun generateAdditionalMembersForDataClass(irClass: IrClass, ktClassOrObject: KtClassOrObject) {
-        DataClassMembersGenerator(declarationGenerator).generateDataClassMembers(ktClassOrObject, irClass)
+        DataClassMembersGenerator(declarationGenerator, context.configuration.generateBodies).generateDataClassMembers(ktClassOrObject, irClass)
     }
 
     private fun generateAdditionalMembersForEnumClass(irClass: IrClass) {
