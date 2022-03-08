@@ -5,7 +5,7 @@ plugins {
 }
 
 object BackwardsCompatibilityTestConfiguration {
-    const val minimalBackwardsCompatibleVersion = "1.7.0-dev-2018"
+    const val minimalBackwardsCompatibleVersion = "1.7.0-dev-2723"
 }
 
 kotlin.sourceSets.configureEach {
@@ -28,10 +28,6 @@ dependencies {
     testFixturesImplementation(gradleApi())
     testFixturesImplementation(gradleKotlinDsl())
     testFixturesImplementation(project(":kotlin-test:kotlin-test-junit"))
-}
-
-repositories {
-    mavenLocal()
 }
 
 publish()
