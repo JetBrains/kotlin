@@ -13,4 +13,7 @@ object JvmAbiConfigurationKeys {
 
     val LEGACY_ABI_GEN: CompilerConfigurationKey<Boolean> =
         CompilerConfigurationKey.create<Boolean>(JvmAbiCommandLineProcessor.LEGACY_ABI_GEN_OPTION.description)
+
+    val DELETE_ALL_NON_PUBLIC_ABI: CompilerConfigurationKey<Boolean> =
+        CompilerConfigurationKey.create<Boolean>(JvmAbiCommandLineProcessor.DELETE_ALL_NON_PUBLIC_ABI_OPTION.description)
 }

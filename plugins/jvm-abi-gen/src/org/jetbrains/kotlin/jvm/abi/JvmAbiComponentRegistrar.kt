@@ -31,9 +31,10 @@ class JvmAbiComponentRegistrar : ComponentRegistrar {
         } else {
             // Use the single-pass implementation, using the new ABI flag in the metadata.
             configuration.put(JVMConfigurationKeys.RETAIN_OUTPUT_IN_MEMORY, true)
-            val builderExtension = JvmAbiClassBuilderInterceptor()
+            val deleteNonPublicFromAbi = configuration.get(JvmAbiConfigurationKeys.DELETE_ALL_NON_PUBLIC_ABI, false)
+            val builderExtension = JvmAbiClassBuilderInterceptor(deleteNonPublicFromAbi)
             val messageCollector = configuration.get(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY, MessageCollector.NONE)
-            val outputExtension = JvmAbiOutputExtension(File(outputPath), builderExtension.abiClassInfo, messageCollector)
+            val outputExtension = JvmAbiOutputExtension(File(outputPath), builderExtension.abiClassInfo, messageCollector, deleteNonPublicFromAbi)
             ClassBuilderInterceptorExtension.registerExtension(project, builderExtension)
             ClassFileFactoryFinalizerExtension.registerExtension(project, outputExtension)
         }

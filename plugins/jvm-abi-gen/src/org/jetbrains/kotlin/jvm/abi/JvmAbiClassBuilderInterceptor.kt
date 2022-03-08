@@ -60,7 +60,7 @@ sealed class AbiClassInfo {
  * be stripped. However, if `f` is not callable directly, we only generate a
  * single inline method `f` which should be kept.
  */
-class JvmAbiClassBuilderInterceptor : ClassBuilderInterceptorExtension {
+class JvmAbiClassBuilderInterceptor(private val deleteNonPublicFromAbi: Boolean) : ClassBuilderInterceptorExtension {
     val abiClassInfo: MutableMap<String, AbiClassInfo> = mutableMapOf()
 
     override fun interceptClassBuilderFactory(

@@ -22,6 +22,7 @@ class JvmAbiOutputExtension(
     private val outputPath: File,
     private val abiClassInfos: Map<String, AbiClassInfo>,
     private val messageCollector: MessageCollector,
+    private val deleteNonPublicFromAbi: Boolean,
 ) : ClassFileFactoryFinalizerExtension {
     override fun finalizeClassFactory(factory: ClassFileFactory) {
         // We need to wait until the end to produce any output in order to strip classes
