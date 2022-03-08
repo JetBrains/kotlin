@@ -1402,6 +1402,11 @@ public class KlibTextTestCaseGenerated extends AbstractKlibTextTestCase {
             runTest("compiler/testData/ir/irText/expressions/stringTemplates.kt");
         }
 
+        @TestMetadata("suspendConversionForExtensionFunction.kt")
+        public void testSuspendConversionForExtensionFunction() throws Exception {
+            runTest("compiler/testData/ir/irText/expressions/suspendConversionForExtensionFunction.kt");
+        }
+
         @TestMetadata("suspendConversionInVararg.kt")
         public void testSuspendConversionInVararg() throws Exception {
             runTest("compiler/testData/ir/irText/expressions/suspendConversionInVararg.kt");
