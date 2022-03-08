@@ -7,6 +7,11 @@ package org.jetbrains.kotlin.gradle.kpm.idea
 
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinGradleFragment
 
+/**
+ * An [IdeaKotlinDependencyEffect] is invoked last in the dependency resolution pipeline.
+ * It is not intended/capable of changing the resolution result, but can trigger side-effects, being sure
+ * that the dependency resolution result is final.
+ */
 fun interface IdeaKotlinDependencyEffect {
     operator fun invoke(fragment: KotlinGradleFragment, dependencies: Set<IdeaKotlinDependency>)
 }
