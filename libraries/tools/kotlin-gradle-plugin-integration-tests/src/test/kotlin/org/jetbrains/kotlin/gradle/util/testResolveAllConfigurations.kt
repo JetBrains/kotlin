@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.gradle.util
 
+import org.gradle.testkit.runner.BuildResult
 import org.jetbrains.kotlin.gradle.BaseGradleIT
 import org.jetbrains.kotlin.gradle.testbase.*
 import java.nio.file.Files
@@ -47,7 +48,9 @@ fun TestProject.testResolveAllConfigurations(
     skipSetup: Boolean = false,
     excludeConfigurations: List<String> = listOf(),
     options: BuildOptions = buildOptions,
-    withUnresolvedConfigurationNames: TestProject.(List<String>) -> Unit = { assertTrue("Unresolved configurations: $it") { it.isEmpty() } }
+    withUnresolvedConfigurationNames: TestProject.(List<String>, BuildResult) -> Unit = { conf, _ ->
+        assertTrue("Unresolved configurations: $conf") { conf.isEmpty() }
+    }
 ) {
     if (!skipSetup) {
         when {
@@ -62,7 +65,7 @@ fun TestProject.testResolveAllConfigurations(
     build(RESOLVE_ALL_CONFIGURATIONS_TASK_NAME, buildOptions = options) {
         assertTasksExecuted(":${subproject?.let { "$it:" }.orEmpty()}$RESOLVE_ALL_CONFIGURATIONS_TASK_NAME")
         val unresolvedConfigurations = unresolvedConfigurationRegex.findAll(output).map { it.groupValues[1] }.toList()
-        withUnresolvedConfigurationNames(unresolvedConfigurations)
+        withUnresolvedConfigurationNames(unresolvedConfigurations, this)
     }
 }
 
