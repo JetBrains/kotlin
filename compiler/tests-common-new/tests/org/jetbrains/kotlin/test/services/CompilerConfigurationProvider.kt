@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.test.services
 
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.vfs.impl.jar.CoreJarFileSystem
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
@@ -54,6 +55,10 @@ abstract class CompilerConfigurationProvider : TestService {
         val environment = getKotlinCoreEnvironment(module)
         val bootClasspath = mockJdk?.let { listOf(it) }
         environment.registerJavac(kotlinFiles = ktFiles, bootClasspath = bootClasspath)
+    }
+
+    fun getJarFileSystem(module: TestModule): CoreJarFileSystem {
+        return getKotlinCoreEnvironment(module).projectEnvironment.environment.jarFileSystem as CoreJarFileSystem
     }
 }
 

@@ -10,6 +10,7 @@ import com.intellij.mock.MockProject
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.util.Disposer
+import com.intellij.openapi.vfs.impl.jar.CoreJarFileSystem
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.testFramework.TestDataFile
 import junit.framework.ComparisonFailure
@@ -61,7 +62,8 @@ interface FrontendApiTestConfiguratorService {
         compilerConfig: CompilerConfiguration,
         files: List<KtFile>,
         packagePartProvider: (GlobalSearchScope) -> PackagePartProvider,
-        projectStructureProvider: ProjectStructureProvider
+        projectStructureProvider: ProjectStructureProvider,
+        jarFileSystem: CoreJarFileSystem,
     )
 
     fun registerApplicationServices(application: MockApplication)
@@ -193,14 +195,16 @@ abstract class AbstractFrontendApiTest : TestWithDisposable() {
 
         val ktFiles = getKtFilesFromModule(testServices, singleModule)
         with(project as MockProject) {
-            val compilerConfiguration = testServices.compilerConfigurationProvider.getCompilerConfiguration(singleModule)
+            val compilerConfigurationProvider = testServices.compilerConfigurationProvider
+            val compilerConfiguration = compilerConfigurationProvider.getCompilerConfiguration(singleModule)
             compilerConfiguration.addJavaSourceRoots(ktFiles.map { File(it.virtualFilePath) })
             configurator.registerProjectServices(
                 this,
                 compilerConfiguration,
                 ktFiles,
-                testServices.compilerConfigurationProvider.getPackagePartProviderFactory(singleModule),
-                KotlinProjectStructureProviderTestImpl(testServices)
+                compilerConfigurationProvider.getPackagePartProviderFactory(singleModule),
+                KotlinProjectStructureProviderTestImpl(testServices),
+                compilerConfigurationProvider.getJarFileSystem(singleModule)
             )
         }
 

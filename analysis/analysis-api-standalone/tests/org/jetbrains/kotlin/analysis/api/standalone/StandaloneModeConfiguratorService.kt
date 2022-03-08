@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.analysis.api.standalone
 import com.intellij.mock.MockApplication
 import com.intellij.mock.MockProject
 import com.intellij.openapi.Disposable
+import com.intellij.openapi.vfs.impl.jar.CoreJarFileSystem
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.analysis.api.fir.FirFrontendApiTestConfiguratorService
 import org.jetbrains.kotlin.analysis.api.impl.barebone.test.FrontendApiTestConfiguratorService
@@ -30,9 +31,16 @@ object StandaloneModeConfiguratorService : FrontendApiTestConfiguratorService {
         compilerConfig: CompilerConfiguration,
         files: List<KtFile>,
         packagePartProvider: (GlobalSearchScope) -> PackagePartProvider,
-        projectStructureProvider: ProjectStructureProvider
+        projectStructureProvider: ProjectStructureProvider,
+        jarFileSystem: CoreJarFileSystem,
     ) {
-        configureProjectEnvironment(project, compilerConfig, files, packagePartProvider)
+        configureProjectEnvironment(
+            project,
+            compilerConfig,
+            files,
+            packagePartProvider,
+            jarFileSystem
+        )
     }
 
     override fun registerApplicationServices(application: MockApplication) {
