@@ -18,29 +18,43 @@ object LibraryUtils {
      *
      * Note that, if [CoreJarFileSystem] is not given, a fresh instance will be used, which will create fresh instances of [VirtualFile],
      *   resulting in potential hash mismatch (e.g., if used in scope membership check).
+     *
+     * By default, given [jar], the root, will be included. Pass [includeRoot = false] if not needed.
+     *   Note that, thought, [JvmPackagePartProvider#addRoots] is checking if the root file is in the scope when loading Kotlin modules.
+     *   Thus, if this util is used to populate files for the scope of the Kotlin module as a library, the root should be added too.
      */
     fun getAllVirtualFilesFromJar(
         jar: Path,
         jarFileSystem: CoreJarFileSystem = CoreJarFileSystem(),
+        includeRoot: Boolean = true,
     ): Collection<VirtualFile> {
-        return jarFileSystem.refreshAndFindFileByPath(jar.toAbsolutePath().toString() + JAR_SEPARATOR)
-            ?.let { getAllVirtualFilesFromRoot(it) } ?: emptySet()
+        return jarFileSystem.refreshAndFindFileByPath(jar.toString() + JAR_SEPARATOR)
+            ?.let { getAllVirtualFilesFromRoot(it, includeRoot) } ?: emptySet()
     }
 
     /**
      * Get all [VirtualFile]s inside the given [dir] (of [Path])
+     *
+     * Note that, if [CoreJarFileSystem] is not given, a fresh instance will be used, which will create fresh instances of [VirtualFile],
+     *   resulting in potential hash mismatch (e.g., if used in scope membership check).
      */
     fun getAllVirtualFilesFromDirectory(
         dir: Path,
+        includeRoot: Boolean = true,
     ): Collection<VirtualFile> {
         val fs = StandardFileSystems.local()
-        return fs.findFileByPath(dir.toAbsolutePath().toString())?.let { getAllVirtualFilesFromRoot(it) } ?: return emptySet()
+        return fs.findFileByPath(dir.toString())
+            ?.let { getAllVirtualFilesFromRoot(it, includeRoot) } ?: emptySet()
     }
 
     private fun getAllVirtualFilesFromRoot(
-        root: VirtualFile
+        root: VirtualFile,
+        includeRoot: Boolean,
     ): Collection<VirtualFile> {
         val files = mutableSetOf<VirtualFile>()
+        if (includeRoot) {
+            files.add(root)
+        }
         VfsUtilCore.iterateChildrenRecursively(
             root,
             /*filter=*/{ true },
