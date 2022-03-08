@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.gradle.enableDefaultStdlibDependency
 import org.jetbrains.kotlin.gradle.kpm.applyKpmPlugin
 import org.jetbrains.kotlin.gradle.kpm.buildIdeaKotlinProjectModel
 import org.jetbrains.kotlin.gradle.kpm.idea.IdeaKotlinDependency.Companion.CLASSPATH_BINARY_TYPE
-import org.jetbrains.kotlin.gradle.kpm.idea.testFixtures.IdeaKotlinDependencyMatcher
+import org.jetbrains.kotlin.gradle.kpm.idea.testFixtures.IdeaKotlinBinaryDependencyMatcher
 import org.jetbrains.kotlin.gradle.kpm.idea.testFixtures.assertContainsFragment
 import org.jetbrains.kotlin.gradle.kpm.idea.testFixtures.assertIsNotEmpty
 import org.jetbrains.kotlin.gradle.kpm.idea.testFixtures.assertResolvedBinaryDependencies
@@ -58,7 +58,7 @@ class StdlibKotlinIdeaDependencyResolutionTest : AbstractLightweightIdeaDependen
             /* native fragments only references dependencies from the native distribution */
             listOf("iosCommon", "iosX64", "iosArm64").forEach { fragmentName ->
                 module.assertContainsFragment(fragmentName).assertResolvedBinaryDependencies(
-                    CLASSPATH_BINARY_TYPE, IdeaKotlinDependencyMatcher.InDirectory(project.konanDistribution.root)
+                    CLASSPATH_BINARY_TYPE, IdeaKotlinBinaryDependencyMatcher.InDirectory(project.konanDistribution.root)
                 )
             }
         }
@@ -112,7 +112,7 @@ class StdlibKotlinIdeaDependencyResolutionTest : AbstractLightweightIdeaDependen
             listOf("iosCommon", "iosX64", "iosArm64").forEach { fragmentName ->
                 module.assertContainsFragment(fragmentName).assertResolvedBinaryDependencies(
                     CLASSPATH_BINARY_TYPE,
-                    IdeaKotlinDependencyMatcher.InDirectory(project.konanDistribution.root),
+                    IdeaKotlinBinaryDependencyMatcher.InDirectory(project.konanDistribution.root),
 
                     /* Actually not correct as well, since those are jvm dependencies. Filtering is not easily possible here, as well */
                     "org.jetbrains.kotlin:kotlin-stdlib:1.6.10",
@@ -155,7 +155,7 @@ class StdlibKotlinIdeaDependencyResolutionTest : AbstractLightweightIdeaDependen
             listOf("iosCommon", "iosX64", "iosArm64").forEach { fragmentName ->
                 module.assertContainsFragment(fragmentName).assertResolvedBinaryDependencies(
                     CLASSPATH_BINARY_TYPE,
-                    IdeaKotlinDependencyMatcher.InDirectory(project.konanDistribution.root),
+                    IdeaKotlinBinaryDependencyMatcher.InDirectory(project.konanDistribution.root),
                 )
             }
         }

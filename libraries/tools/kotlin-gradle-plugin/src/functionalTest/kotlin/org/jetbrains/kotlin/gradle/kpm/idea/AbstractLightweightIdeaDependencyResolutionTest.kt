@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.commonizer.KonanDistribution
 import org.jetbrains.kotlin.commonizer.platformLibsDir
 import org.jetbrains.kotlin.compilerRunner.konanHome
 import org.jetbrains.kotlin.gradle.enableDefaultStdlibDependency
-import org.jetbrains.kotlin.gradle.kpm.idea.testFixtures.IdeaKotlinDependencyMatcher
+import org.jetbrains.kotlin.gradle.kpm.idea.testFixtures.IdeaKotlinBinaryDependencyMatcher
 import org.jetbrains.kotlin.gradle.plugin.mpp.enabledOnCurrentHost
 import org.jetbrains.kotlin.konan.target.KonanTarget
 
@@ -33,8 +33,8 @@ abstract class AbstractLightweightIdeaDependencyResolutionTest {
 
     val Project.konanDistribution get() = KonanDistribution(project.konanHome)
 
-    fun Project.nativePlatformLibraries(target: KonanTarget): IdeaKotlinDependencyMatcher? =
-        IdeaKotlinDependencyMatcher.InDirectory(project.konanDistribution.platformLibsDir.resolve(target.name))
+    fun Project.nativePlatformLibraries(target: KonanTarget): IdeaKotlinBinaryDependencyMatcher? =
+        IdeaKotlinBinaryDependencyMatcher.InDirectory(project.konanDistribution.platformLibsDir.resolve(target.name))
             .takeIf { target.enabledOnCurrentHost }
 }
 
