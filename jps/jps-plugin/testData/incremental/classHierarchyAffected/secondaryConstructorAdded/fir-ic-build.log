@@ -1,0 +1,33 @@
+================ Step #1 =================
+
+Cleaning output files:
+  out/production/module/A.class
+  out/production/module/META-INF/module.kotlin_module
+End of files
+Compiling files:
+  src/A.kt
+End of files
+Exit code: ABORT
+------------------------------------------
+COMPILATION FAILED
+Conflicting overloads: [public final fun A(x: R|kotlin/String|): R|A|
+]
+
+================ Step #2 =================
+
+Cleaning output files:
+  out/production/module/AConstructorFunctionKt.class
+End of files
+Cleaning output files:
+  out/production/module/CreateAFromStringKt.class
+End of files
+Compiling files:
+  src/A.kt
+  src/AChild.kt
+  src/AConstructorFunction.kt
+  src/createAFromInt.kt
+  src/createAFromString.kt
+  src/useA.kt
+End of files
+Exit code: OK
+------------------------------------------

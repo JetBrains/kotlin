@@ -19,5 +19,5 @@ abstract class AbstractIncrementalFirICLightTreeJvmCompilerRunnerTest : Abstract
         }
 
     override val buildLogFinder: BuildLogFinder
-        get() = BuildLogFinder(isGradleEnabled = true, isFirEnabled = true) // TODO: investigate cases that need isGradleEnabled - the combination looks fragile
+        get() = BuildLogFinder(isGradleEnabled = true, isFirEnabled = true, isFirIcEnabled = true) // TODO: investigate cases that need isGradleEnabled - the combination looks fragile
 }
