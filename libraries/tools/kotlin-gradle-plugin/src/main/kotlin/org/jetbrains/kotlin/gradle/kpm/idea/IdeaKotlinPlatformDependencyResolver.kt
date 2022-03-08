@@ -16,16 +16,35 @@ import org.jetbrains.kotlin.gradle.kpm.idea.IdeaKotlinPlatformDependencyResolver
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.FragmentAttributes
 
+/**
+ * Resolves 'platform' binary dependencies for a given variant or fragment.
+ * 'platform' binaries refer to actually linkable/executable artifacts (like .class files bundled as jar, or linkable native klibs)
+ * This resolver is capable of resolving those artifacts even for non-variant "platform-like" fragments.
+ * It will then use the [KotlinGradleFragment.transitiveApiConfiguration] and [KotlinGradleFragment.transitiveImplementationConfiguratione]'s
+ * to resolve those binaries. See [IdeaKotlinPlatformDependencyResolver.ArtifactResolution.PlatformFragment]
+ */
 class IdeaKotlinPlatformDependencyResolver(
     private val binaryType: String = IdeaKotlinDependency.CLASSPATH_BINARY_TYPE,
     private val artifactResolution: ArtifactResolution = ArtifactResolution.Variant()
 ) : IdeaKotlinDependencyResolver {
 
     sealed class ArtifactResolution {
+        /**
+         * Resolve the artifacts from a [KotlinGradleVariant] using its [KotlinGradleVariant.compileDependenciesConfiguration],
+         * which already knows how to resolve platform artifacts.
+         * @param artifactViewAttributes: Additional attributes that will be used to create an [ArtifactView] for resolving the dependencies.
+         */
         data class Variant(
             internal val artifactViewAttributes: FragmentAttributes<KotlinGradleFragment> = FragmentAttributes { }
         ) : ArtifactResolution()
 
+        /**
+         * Capable of resolving artifacts from a plain [KotlinGradleFragment] which does not have to implement [KotlinGradleVariant].
+         * Such fragments are called 'platform-like', since they still resolve the linkable platform dependencies.
+         * @param platformResolutionAttributes: Attributes describing how to resolve platform artifacts in general.
+         * @param artifactViewAttributes: Additional attributes that will be used to create an [ArtifactView] for
+         * resolving the dependencies
+         */
         data class PlatformFragment(
             internal val platformResolutionAttributes: FragmentAttributes<KotlinGradleFragment>,
             internal val artifactViewAttributes: FragmentAttributes<KotlinGradleFragment> = FragmentAttributes { },
