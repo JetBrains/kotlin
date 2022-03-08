@@ -26,9 +26,7 @@ import org.jetbrains.kotlin.gradle.internal.customizeKotlinDependencies
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinMultiplatformPlugin.Companion.sourceSetFreeCompilerArgsPropertyName
 import org.jetbrains.kotlin.gradle.plugin.mpp.internal.handleHierarchicalStructureFlagsMigration
-import org.jetbrains.kotlin.gradle.plugin.sources.CleanupStaleSourceSetMetadataEntriesService
 import org.jetbrains.kotlin.gradle.plugin.sources.DefaultLanguageSettingsBuilder
-import org.jetbrains.kotlin.gradle.plugin.sources.SourceSetMetadataStorageForIde
 import org.jetbrains.kotlin.gradle.plugin.sources.checkSourceSetVisibilityRequirements
 import org.jetbrains.kotlin.gradle.plugin.statistics.KotlinBuildStatsService
 import org.jetbrains.kotlin.gradle.scripting.internal.ScriptingGradleSubplugin
@@ -107,24 +105,6 @@ class KotlinMultiplatformPlugin : Plugin<Project> {
         project.pluginManager.apply(ScriptingGradleSubplugin::class.java)
 
         exportProjectStructureMetadataForOtherBuilds(project)
-
-        SingleActionPerBuild.run(project.rootProject, "cleanup-processed-metadata") {
-            if (isConfigurationCacheAvailable(project.gradle)) {
-                BuildEventsListenerRegistryHolder.getInstance(project).listenerRegistry.onTaskCompletion(
-                    project.gradle.sharedServices
-                        .registerIfAbsent(
-                            "cleanup-stale-sourceset-metadata",
-                            CleanupStaleSourceSetMetadataEntriesService::class.java
-                        ) {
-                            CleanupStaleSourceSetMetadataEntriesService.configure(it, project)
-                        }
-                )
-            } else {
-                project.gradle.buildFinished {
-                    SourceSetMetadataStorageForIde.cleanupStaleEntries(project)
-                }
-            }
-        }
     }
 
     private fun exportProjectStructureMetadataForOtherBuilds(

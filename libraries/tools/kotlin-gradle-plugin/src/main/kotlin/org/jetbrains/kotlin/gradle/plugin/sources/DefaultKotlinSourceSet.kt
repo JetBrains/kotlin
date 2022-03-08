@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.gradle.plugin.sources
 import groovy.lang.Closure
 import org.gradle.api.InvalidUserCodeException
 import org.gradle.api.Project
+import org.gradle.api.artifacts.component.ModuleComponentIdentifier
 import org.gradle.api.file.SourceDirectorySet
 import org.gradle.util.ConfigureUtil
 import org.jetbrains.kotlin.build.DEFAULT_KOTLIN_SOURCE_FILES_EXTENSIONS
@@ -19,6 +20,7 @@ import org.jetbrains.kotlin.gradle.plugin.LanguageSettingsBuilder
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import org.jetbrains.kotlin.gradle.utils.*
 import java.io.File
+import java.nio.file.Files
 import java.util.*
 
 const val METADATA_CONFIGURATION_NAME_SUFFIX = "DependenciesMetadata"
@@ -164,15 +166,6 @@ class DefaultKotlinSourceSet(
                 ?.associateBy { ModuleIds.fromComponent(project, it.dependency) }
                 ?: emptyMap()
 
-        val baseDir = SourceSetMetadataStorageForIde.sourceSetStorageWithScope(project, this@DefaultKotlinSourceSet.name, scope)
-
-        if (metadataDependencyResolutionByModule.values.any { it is MetadataDependencyResolution.ChooseVisibleSourceSets }) {
-            if (baseDir.isDirectory) {
-                baseDir.deleteRecursively()
-            }
-            baseDir.mkdirs()
-        }
-
         return metadataDependencyResolutionByModule.mapNotNull { (groupAndName, resolution) ->
             val (group, name) = groupAndName
             val projectPath = resolution.projectDependency?.path
@@ -184,13 +177,33 @@ class DefaultKotlinSourceSet(
 
                 is MetadataDependencyResolution.ChooseVisibleSourceSets -> {
                     val filesBySourceSet = resolution.visibleSourceSetNamesExcludingDependsOn.associateWith { visibleSourceSetName ->
-                        resolution.metadataProvider.getSourceSetCompiledMetadata(
-                            project,
-                            sourceSetName = visibleSourceSetName,
-                            outputDirectoryWhenMaterialised = baseDir,
-                            materializeFilesIfNecessary = true
-                        )
-                    }.filter { (_, files) -> files.any(File::exists) }
+                        val moduleIdentifier = resolution.dependency.id as? ModuleComponentIdentifier
+
+                        withTemporaryDirectory("kotlinGranularMetadataTransformation") { temporaryDirectory ->
+                            val files = resolution.metadataProvider.getSourceSetCompiledMetadata(
+                                project,
+                                sourceSetName = visibleSourceSetName,
+                                outputDirectoryWhenMaterialised = temporaryDirectory,
+                                materializeFilesIfNecessary = true
+                            )
+
+                            files
+                                .filter { it.exists() }
+                                .map { metadataFile ->
+                                    if (moduleIdentifier == null) return@map metadataFile
+                                    val destinationFile = project.rootDir
+                                        .resolve(".gradle").resolve("kotlin").resolve("transformedKotlinMetadata")
+                                        .resolve(moduleIdentifier.module)
+                                        .resolve(moduleIdentifier.group)
+                                        .resolve(moduleIdentifier.version)
+                                        .resolve(visibleSourceSetName)
+                                        .resolve(metadataFile.name)
+
+                                    if (!destinationFile.exists()) metadataFile.copyTo(destinationFile)
+                                    destinationFile
+                                }
+                        }
+                    }
 
                     MetadataDependencyTransformation(
                         group, name, projectPath,
@@ -276,4 +289,13 @@ internal fun Iterable<KotlinSourceSet>.resolveAllDependsOnSourceSets(): Set<Kotl
 
 internal fun KotlinMultiplatformExtension.resolveAllSourceSetsDependingOn(sourceSet: KotlinSourceSet): Set<KotlinSourceSet> {
     return transitiveClosure(sourceSet) { sourceSets.filter { otherSourceSet -> this in otherSourceSet.dependsOn } }
+}
+
+internal inline fun <T> withTemporaryDirectory(prefix: String, action: (directory: File) -> T): T {
+    val directory = Files.createTempDirectory(prefix).toFile()
+    return try {
+        action(directory)
+    } finally {
+        directory.deleteRecursively()
+    }
 }
