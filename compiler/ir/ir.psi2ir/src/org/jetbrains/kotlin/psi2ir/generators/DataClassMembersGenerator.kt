@@ -42,7 +42,8 @@ import org.jetbrains.kotlin.types.typeUtil.representativeUpperBound
  * function bodies; and provides ways to declare functions or parameters based on descriptors and binding context.
  */
 class DataClassMembersGenerator(
-    declarationGenerator: DeclarationGenerator
+    declarationGenerator: DeclarationGenerator,
+    private val generateBodies: Boolean
 ) : DeclarationGeneratorExtension(declarationGenerator) {
 
     fun generateSingleFieldValueClassMembers(ktClassOrObject: KtClassOrObject, irClass: IrClass) {
@@ -73,7 +74,8 @@ class DataClassMembersGenerator(
         val origin: IrDeclarationOrigin
     ) : DataClassMethodGenerator(ktClassOrObject, declarationGenerator.context.bindingContext) {
 
-        private val irDataClassMembersGenerator = object : DataClassMembersGenerator(context, context.symbolTable, irClass, origin) {
+        private val irDataClassMembersGenerator =
+            object : DataClassMembersGenerator(context, context.symbolTable, irClass, origin, generateBodies = generateBodies) {
             override fun declareSimpleFunction(startOffset: Int, endOffset: Int, functionDescriptor: FunctionDescriptor): IrFunction =
                 declareSimpleFunction(startOffset, endOffset, origin, functionDescriptor)
 
