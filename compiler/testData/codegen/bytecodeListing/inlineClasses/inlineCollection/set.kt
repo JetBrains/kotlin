@@ -1,3 +1,4 @@
+// WITH_STDLIB
 // IGNORE_ANNOTATIONS
 
 inline class InlineSet<T>(private val s: Set<T>) : Set<T> {

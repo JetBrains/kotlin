@@ -1,4 +1,5 @@
-// !LANGUAGE: +InlineClasses +UseGetterNameForPropertyAnnotationsMethodOnJvm
+// WITH_STDLIB
+// !LANGUAGE: +UseGetterNameForPropertyAnnotationsMethodOnJvm
 
 interface IFoo {
     fun overridingFun()

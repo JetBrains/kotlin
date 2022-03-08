@@ -1,3 +1,4 @@
+// WITH_STDLIB
 // !LANGUAGE: +InlineClasses, -JvmInlineValueClasses
 // !DIAGNOSTICS: -UNUSED_PARAMETER
 

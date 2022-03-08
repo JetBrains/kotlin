@@ -19,15 +19,13 @@ package org.jetbrains.kotlin.psi2ir.generators
 import org.jetbrains.kotlin.backend.common.CodegenUtil
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.descriptors.IrImplementingDelegateDescriptorImpl
 import org.jetbrains.kotlin.ir.expressions.IrBlockBody
-import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
-import org.jetbrains.kotlin.ir.expressions.impl.IrGetFieldImpl
-import org.jetbrains.kotlin.ir.expressions.impl.IrGetValueImpl
-import org.jetbrains.kotlin.ir.expressions.impl.IrReturnImpl
+import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.expressions.mapValueParameters
 import org.jetbrains.kotlin.ir.expressions.putTypeArguments
 import org.jetbrains.kotlin.ir.expressions.typeParametersCount
@@ -35,9 +33,10 @@ import org.jetbrains.kotlin.ir.symbols.impl.IrFieldSymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrPropertySymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionSymbolImpl
 import org.jetbrains.kotlin.ir.types.IrSimpleType
-import org.jetbrains.kotlin.ir.types.classOrNull
+import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtDelegatedSuperTypeEntry
 import org.jetbrains.kotlin.psi.KtEnumEntry
@@ -48,19 +47,17 @@ import org.jetbrains.kotlin.psi.psiUtil.pureStartOffset
 import org.jetbrains.kotlin.psi.psiUtil.startOffsetSkippingComments
 import org.jetbrains.kotlin.psi.synthetics.SyntheticClassOrObjectDescriptor
 import org.jetbrains.kotlin.psi.synthetics.findClassDescriptor
-import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.resolve.DelegationResolver
-import org.jetbrains.kotlin.resolve.DescriptorUtils
+import org.jetbrains.kotlin.resolve.*
 import org.jetbrains.kotlin.resolve.descriptorUtil.getSuperClassOrAny
 import org.jetbrains.kotlin.resolve.descriptorUtil.inlineClassRepresentation
 import org.jetbrains.kotlin.resolve.descriptorUtil.propertyIfAccessor
 import org.jetbrains.kotlin.resolve.descriptorUtil.setSingleOverridden
-import org.jetbrains.kotlin.resolve.isInlineClass
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeProjectionImpl
 import org.jetbrains.kotlin.types.TypeSubstitutor
+import org.jetbrains.kotlin.utils.addToStdlib.cast
 import org.jetbrains.kotlin.utils.newHashMapWithExpectedSize
 
 @ObsoleteDescriptorBasedAPI
@@ -95,7 +92,7 @@ class ClassGenerator(
                 classDescriptor.thisAsReceiverParameter.type.toIrType()
             )
 
-            if (irClass.isInline && irClass.modality == Modality.SEALED) {
+            if (classDescriptor.isValue && irClass.modality == Modality.SEALED) {
                 generatePropertyForSealedInlineClassOrFakeOverride(irClass)
             }
 
@@ -113,12 +110,14 @@ class ClassGenerator(
 
             generateFakeOverrideMemberDeclarations(irClass, ktClassOrObject)
 
-            if (irClass.isInline && ktClassOrObject is KtClassOrObject) {
+            if (ktClassOrObject is KtClassOrObject &&
+                (classDescriptor.isInlineClass() || classDescriptor.isValue && classDescriptor.modality == Modality.SEALED)
+            ) {
                 irClass.valueClassRepresentation =
                     if (irClass.modality == Modality.SEALED)
                         InlineClassRepresentation(Name.identifier("\$value"), context.irBuiltIns.anyNType as IrSimpleType)
                     else {
-                        val representation = classDescriptor.inlineClassRepresentation
+                        val representation = classDescriptor.valueClassRepresentation
                             ?: error("Unknown representation for inline class: $classDescriptor")
                         representation.mapUnderlyingType { type ->
                             type.toIrType() as? IrSimpleType ?: error("Inline class underlying type is not a simple type: $classDescriptor")
@@ -137,7 +136,7 @@ class ClassGenerator(
                 generateAdditionalMembersForDataClass(irClass, ktClassOrObject)
             }
 
-            if (irClass.isMultiFieldValueClass && ktClassOrObject is KtClassOrObject) {
+            if (classDescriptor.isValue && !classDescriptor.isInlineClass() && ktClassOrObject is KtClassOrObject) {
                 generateAdditionalMembersForMultiFieldValueClasses(irClass, ktClassOrObject)
             }
 
@@ -145,8 +144,47 @@ class ClassGenerator(
                 generateAdditionalMembersForEnumClass(irClass)
             }
 
+            if (classDescriptor.isInline && !classDescriptor.annotations.hasAnnotation(JVM_INLINE_ANNOTATION_FQ_NAME)) {
+                addJvmInlineAnnotation(irClass)
+            }
+
             irClass.sealedSubclasses = classDescriptor.sealedSubclasses.map { context.symbolTable.referenceClass(it) }
         }
+    }
+
+    private fun addJvmInlineAnnotation(irClass: IrClass) {
+        val jvmInlineAnnotationDescriptor =
+            context.moduleDescriptor.resolveClassByFqName(JVM_INLINE_ANNOTATION_FQ_NAME, NoLookupLocation.FROM_BACKEND)
+                ?: error("No stdlib in classpath")
+
+        val irPackageFragment =
+            context.symbolTable.declareExternalPackageFragmentIfNotExists(jvmInlineAnnotationDescriptor.containingDeclaration.cast())
+
+        val jvmInlineAnnotationIrClass = context.symbolTable.declareClassIfNotExists(jvmInlineAnnotationDescriptor) {
+            context.irFactory.createIrClassFromDescriptor(
+                UNDEFINED_OFFSET, UNDEFINED_OFFSET, IrDeclarationOrigin.DEFINED, it, jvmInlineAnnotationDescriptor,
+                context.symbolTable.nameProvider.nameForDeclaration(jvmInlineAnnotationDescriptor), DescriptorVisibilities.PUBLIC,
+                Modality.OPEN
+            ).also { clazz ->
+                clazz.parent = irPackageFragment
+            }
+        }
+
+        val irType = IrSimpleTypeImpl(jvmInlineAnnotationIrClass.symbol, false, emptyList(), emptyList())
+
+        val constructor = context.symbolTable.declareConstructorIfNotExists(jvmInlineAnnotationDescriptor.constructors.first()) {
+            context.irFactory.createConstructor(
+                UNDEFINED_OFFSET, UNDEFINED_OFFSET, IrDeclarationOrigin.DEFINED, it, SpecialNames.INIT,
+                DescriptorVisibilities.PUBLIC, irType, false, false, true, false
+            ).also { constructor ->
+                constructor.parent = jvmInlineAnnotationIrClass
+            }
+        }
+
+        irClass.annotations = irClass.annotations + IrConstructorCallImpl(
+            UNDEFINED_OFFSET, UNDEFINED_OFFSET,
+            irType, constructor.symbol, 0, 0, 0
+        )
     }
 
     private fun getEffectiveModality(ktClassOrObject: KtPureClassOrObject, classDescriptor: ClassDescriptor): Modality =

@@ -15,6 +15,7 @@ class C<T : Any?> {
 
 }
 
+@JvmInline
 value class IC<TT : Any?> {
   constructor(c: C<TT>) /* primary */ {
     super/*Any*/()

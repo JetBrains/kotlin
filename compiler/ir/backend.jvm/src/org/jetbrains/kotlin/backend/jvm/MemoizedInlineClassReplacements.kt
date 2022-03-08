@@ -72,7 +72,7 @@ class MemoizedInlineClassReplacements(
                         null
 
                 // Mangle all functions in the body of an inline class
-                it.parent.safeAs<IrClass>()?.isSingleFieldValueClass == true ->
+                it.parent.safeAs<IrClass>()?.isInline == true ->
                     when {
                         it.isRemoveAtSpecialBuiltinStub() ->
                             null
@@ -123,7 +123,7 @@ class MemoizedInlineClassReplacements(
         if (this !is IrSimpleFunction) return false
         if (!this.isFakeOverride) return false
         val parentClass = parentClassOrNull ?: return false
-        if (!parentClass.isSingleFieldValueClass) return false
+        if (!parentClass.isInline) return false
 
         val overridden = resolveFakeOverride() ?: return false
         if (!overridden.parentAsClass.isJvmInterface) return false

@@ -1,4 +1,4 @@
-// !LANGUAGE: +InlineClasses
+// WITH_STDLIB
 
 inline class Z(val x: Int)
 inline class NZ1(val nz: Z?)

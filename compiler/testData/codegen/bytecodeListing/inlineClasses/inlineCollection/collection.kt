@@ -1,3 +1,4 @@
+// WITH_STDLIB
 // IGNORE_ANNOTATIONS
 
 inline class InlineCollection<T>(private val c: Collection<T>) : Collection<T> {

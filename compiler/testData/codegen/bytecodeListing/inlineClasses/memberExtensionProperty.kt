@@ -1,3 +1,4 @@
+// WITH_STDLIB
 inline class Z1(val s: Int) {
     val String.ext: Int get() = 239
 }

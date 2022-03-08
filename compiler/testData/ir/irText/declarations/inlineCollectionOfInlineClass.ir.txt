@@ -1,5 +1,7 @@
 FILE fqName:<root> fileName:/inlineCollectionOfInlineClass.kt
   CLASS CLASS name:IT modality:FINAL visibility:public [value] superTypes:[kotlin.Any]
+    annotations:
+      JvmInline
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.IT
     CONSTRUCTOR visibility:public <> (x:kotlin.Int) returnType:<root>.IT [primary]
       VALUE_PARAMETER name:x index:0 type:kotlin.Int
@@ -66,6 +68,8 @@ FILE fqName:<root> fileName:/inlineCollectionOfInlineClass.kt
         RETURN type=kotlin.Nothing from='public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in <root>.IT'
           CONST Boolean type=kotlin.Boolean value=true
   CLASS CLASS name:InlineMutableSet modality:FINAL visibility:public [value] superTypes:[kotlin.collections.MutableSet<<root>.IT>]
+    annotations:
+      JvmInline
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.InlineMutableSet
     CONSTRUCTOR visibility:public <> (ms:kotlin.collections.MutableSet<<root>.IT>) returnType:<root>.InlineMutableSet [primary]
       VALUE_PARAMETER name:ms index:0 type:kotlin.collections.MutableSet<<root>.IT>

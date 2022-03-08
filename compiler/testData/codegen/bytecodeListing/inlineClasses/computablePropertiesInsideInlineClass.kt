@@ -1,4 +1,4 @@
-// !LANGUAGE: +InlineClasses
+// WITH_STDLIB
 
 inline class Foo(val x: Int) {
     val prop: Int get() = 1

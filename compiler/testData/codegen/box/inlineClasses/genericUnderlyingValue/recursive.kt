@@ -1,3 +1,4 @@
+// WITH_STDLIB
 // LANGUAGE: -JvmInlineValueClasses, +GenericInlineClassParameter
 // IGNORE_BACKED: JVM
 

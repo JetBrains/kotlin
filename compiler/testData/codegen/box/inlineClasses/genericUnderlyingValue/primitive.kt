@@ -1,3 +1,4 @@
+// WITH_STDLIB
 // CHECK_BYTECODE_LISTING
 // LANGUAGE: -JvmInlineValueClasses, +GenericInlineClassParameter
 // IGNORE_BACKEND: JVM

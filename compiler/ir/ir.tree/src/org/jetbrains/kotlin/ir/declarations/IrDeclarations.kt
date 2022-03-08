@@ -27,7 +27,7 @@ val IrClass.isSingleFieldValueClass: Boolean
             valueClassRepresentation is InlineClassRepresentation
 
 val IrClass.isInline: Boolean
-    get() = isSingleFieldValueClass || (isValue && modality == Modality.SEALED)
+    get() = (isSingleFieldValueClass && annotations.hasAnnotation(JVM_INLINE_ANNOTATION_FQ_NAME)) || (isValue && modality == Modality.SEALED)
 
 val IrClass.isMultiFieldValueClass: Boolean
     get() = this.isValue && valueClassRepresentation is MultiFieldValueClassRepresentation

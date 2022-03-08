@@ -1,3 +1,5 @@
+// WITH_STDLIB
+
 inline class IT(val x: Int)
 
 inline class InlineMutableSet(private val ms: MutableSet<IT>) : MutableSet<IT> {

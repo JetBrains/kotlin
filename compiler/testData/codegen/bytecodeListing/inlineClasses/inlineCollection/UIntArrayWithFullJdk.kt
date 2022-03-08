@@ -1,3 +1,4 @@
+// WITH_STDLIB
 // FULL_JDK
 
 inline class UInt(val x: Int)

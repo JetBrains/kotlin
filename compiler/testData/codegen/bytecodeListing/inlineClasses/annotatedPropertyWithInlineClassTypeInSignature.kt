@@ -1,3 +1,4 @@
+// WITH_STDLIB
 inline class Z(val x: Int) {
     @Anno
     val member: Int get() = x

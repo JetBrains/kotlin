@@ -39,8 +39,6 @@ private class JvmMultiFieldValueClassLowering(context: JvmBackendContext) : JvmV
         TODO("Not yet implemented")
     }
 
-    override fun addJvmInlineAnnotation(valueClass: IrClass) = Unit
-
     @Suppress("UNUSED_PARAMETER")
     override fun transformConstructorFlat(constructor: IrConstructor, replacement: IrSimpleFunction): List<IrDeclaration> {
         TODO()

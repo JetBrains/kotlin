@@ -1,4 +1,4 @@
-// !LANGUAGE: +InlineClasses
+// WITH_STDLIB
 
 interface IFoo<T> {
     fun foo(a: T)

@@ -274,10 +274,22 @@ class JvmSymbols(
             klass.addTypeParameter("T", irBuiltIns.anyNType, Variance.IN_VARIANCE)
         }
 
+    private val jvmInlineAnnotation: IrClassSymbol =
+        createClass(JVM_INLINE_ANNOTATION_FQ_NAME, ClassKind.ANNOTATION_CLASS).apply {
+            owner.addConstructor {
+                isPrimary = true
+            }
+        }
+
     private val resultClassStub: IrClassSymbol =
         createClass(StandardNames.RESULT_FQ_NAME, classIsValue = true) { klass ->
             klass.addTypeParameter("T", irBuiltIns.anyNType, Variance.OUT_VARIANCE)
             klass.valueClassRepresentation = InlineClassRepresentation(Name.identifier("value"), irBuiltIns.anyNType as IrSimpleType)
+
+            val jvmInlineConstructor = jvmInlineAnnotation.constructors.first()
+            klass.annotations = listOf(
+                IrConstructorCallImpl.fromSymbolOwner(jvmInlineConstructor.owner.returnType, jvmInlineConstructor)
+            )
         }
 
     val resultOfAnyType: IrType = resultClassStub.typeWith(irBuiltIns.anyNType)
@@ -441,12 +453,6 @@ class JvmSymbols(
                 origin = IrDeclarationOrigin.DEFINED
                 varargElementType = irBuiltIns.anyNType
             }
-        }
-    }
-
-    val jvmInlineAnnotation: IrClassSymbol = createClass(JVM_INLINE_ANNOTATION_FQ_NAME, ClassKind.ANNOTATION_CLASS).apply {
-        owner.addConstructor {
-            isPrimary = true
         }
     }
 

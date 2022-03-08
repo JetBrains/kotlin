@@ -74,7 +74,6 @@ internal abstract class JvmValueClassAbstractLowering(val context: JvmBackendCon
             } else {
                 buildAdditionalMethodsForSealedInlineClass(declaration)
             }
-            addJvmInlineAnnotation(declaration)
         }
 
         return declaration
@@ -139,8 +138,6 @@ internal abstract class JvmValueClassAbstractLowering(val context: JvmBackendCon
     protected abstract fun buildUnboxFunctions(valueClass: IrClass)
 
     protected abstract fun buildSpecializedEqualsMethod(valueClass: IrClass) // todo hashCode
-
-    protected abstract fun addJvmInlineAnnotation(valueClass: IrClass)
 
     final override fun visitReturn(expression: IrReturn): IrExpression {
         expression.returnTargetSymbol.owner.safeAs<IrFunction>()?.let { target ->

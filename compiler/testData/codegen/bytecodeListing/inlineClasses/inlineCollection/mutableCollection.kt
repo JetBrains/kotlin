@@ -1,3 +1,4 @@
+// WITH_STDLIB
 // IGNORE_ANNOTATIONS
 
 inline class InlineMutableCollection<T>(private val mc: MutableCollection<T>) : MutableCollection<T> {

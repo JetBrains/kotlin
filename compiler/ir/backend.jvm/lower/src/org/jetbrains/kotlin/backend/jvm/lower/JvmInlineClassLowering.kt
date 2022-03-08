@@ -240,15 +240,6 @@ private class JvmInlineClassLowering(context: JvmBackendContext) : JvmValueClass
         return collectBottoms(irClass).map { SubclassInfo(it.owner, collectSealedBetweenTopAndBottom(it)) }
     }
 
-    override fun addJvmInlineAnnotation(valueClass: IrClass) {
-        if (valueClass.hasAnnotation(JVM_INLINE_ANNOTATION_FQ_NAME)) return
-        val constructor = context.ir.symbols.jvmInlineAnnotation.constructors.first()
-        valueClass.annotations = valueClass.annotations + IrConstructorCallImpl.fromSymbolOwner(
-            constructor.owner.returnType,
-            constructor
-        )
-    }
-
     override fun transformSimpleFunctionFlat(function: IrSimpleFunction, replacement: IrSimpleFunction): List<IrDeclaration> {
         replacement.valueParameters.forEach {
             it.transformChildrenVoid()
@@ -766,7 +757,8 @@ private class JvmInlineClassLowering(context: JvmBackendContext) : JvmValueClass
         name: String
     ) {
         val replacements = context.inlineClassReplacements
-        val function = irClass.declarations.single { it is IrSimpleFunction && it.name.asString() == "$name-impl" } as IrFunction
+        val function = irClass.declarations.find { it is IrSimpleFunction && it.name.asString() == "$name-impl" } as? IrFunction
+            ?: error("BOOYA")
 
         val oldBody = function.body
 
