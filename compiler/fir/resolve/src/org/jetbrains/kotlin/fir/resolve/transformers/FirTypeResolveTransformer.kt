@@ -287,7 +287,7 @@ open class FirTypeResolveTransformer(
 
         }
 
-        val res = withScopeCleanup {
+        return withScopeCleanup {
             // ? Is it Ok to use original file session here ?
             val superTypes = lookupSuperTypes(
                 firClass,
@@ -315,7 +315,6 @@ open class FirTypeResolveTransformer(
             // again, although there's no need in it
             transformElement(firClass, data)
         }
-        return res
     }
 
     private fun resolveConstructedTypeRefForDelegatedConstructorCall(
