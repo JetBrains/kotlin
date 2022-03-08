@@ -11,6 +11,7 @@ import com.android.build.gradle.LibraryExtension
 import com.android.build.gradle.LibraryPlugin
 import org.jetbrains.kotlin.commonizer.stdlib
 import org.jetbrains.kotlin.gradle.android.androidPrototype
+import org.jetbrains.kotlin.gradle.assumeAndroidSdkAvailable
 import org.jetbrains.kotlin.gradle.kpm.applyKpmPlugin
 import org.jetbrains.kotlin.gradle.kpm.buildIdeaKotlinProjectModel
 import org.jetbrains.kotlin.gradle.kpm.idea.IdeaKotlinDependency.Companion.CLASSPATH_BINARY_TYPE
@@ -174,6 +175,7 @@ class MviKotlinIdeaDependencyResolutionTest : AbstractLightweightIdeaDependencyR
 
     @Test
     fun `test - android and jvm`() {
+        assumeAndroidSdkAvailable()
         val project = buildProject()
 
         /* Setup Android */
