@@ -55,19 +55,16 @@ class JvmAbiOutputExtension(
             }.sortedBy { it.relativePath }
 
             val classFiles = abiClassInfos.keys.sorted().mapNotNull { internalName ->
-                val outputFile = outputFiles.get("$internalName.class")
-                val abiInfo = abiClassInfos.getValue(internalName)
-                when {
-                    // Note that outputFile may be null, e.g., for empty $DefaultImpls classes in the JVM backend.
-                    outputFile == null ->
-                        null
+                // Note that outputFile may be null, e.g., for empty $DefaultImpls classes in the JVM backend.
+                val outputFile = outputFiles.get("$internalName.class") ?: return@mapNotNull null
 
-                    abiInfo is AbiClassInfo.Public ->
-                        // Copy verbatim
-                        outputFile
+                when (val abiInfo = abiClassInfos.getValue(internalName)) {
+                    is AbiClassInfo.Delete -> null // Delete the whole class
 
-                    else -> /* abiInfo is AbiClassInfo.Stripped */ {
-                        val methodInfo = (abiInfo as AbiClassInfo.Stripped).methodInfo
+                    is AbiClassInfo.Keep -> outputFile // Copy verbatim
+
+                    is AbiClassInfo.Strip -> {
+                        val methodInfo = abiInfo.methodInfo
                         val writer = ClassWriter(0)
                         ClassReader(outputFile.asByteArray()).accept(object : ClassVisitor(Opcodes.API_VERSION, writer) {
                             // Strip private fields.
@@ -91,14 +88,17 @@ class JvmAbiOutputExtension(
                                 exceptions: Array<out String>?
                             ): MethodVisitor? {
                                 val info = methodInfo[Method(name, descriptor)]
-                                    ?: return null
 
-                                val visitor = super.visitMethod(access, name, descriptor, signature, exceptions)
+                                if (info == AbiMethodInfo.KEEP || access and (Opcodes.ACC_NATIVE or Opcodes.ACC_ABSTRACT) != 0) {
+                                    return super.visitMethod(access, name, descriptor, signature, exceptions)
+                                }
 
-                                if (info == AbiMethodInfo.KEEP || access and (Opcodes.ACC_NATIVE or Opcodes.ACC_ABSTRACT) != 0)
-                                    return visitor
+                                if (info == null) {
+                                    return null
+                                }
 
-                                return object : MethodVisitor(Opcodes.API_VERSION, visitor) {
+                                return object :
+                                    MethodVisitor(Opcodes.API_VERSION, super.visitMethod(access, name, descriptor, signature, exceptions)) {
                                     override fun visitCode() {
                                         with(mv) {
                                             visitCode()
@@ -124,7 +124,7 @@ class JvmAbiOutputExtension(
 
                             // Remove inner classes which are not present in the abi jar.
                             override fun visitInnerClass(name: String?, outerName: String?, innerName: String?, access: Int) {
-                                if (name in abiClassInfos.keys) {
+                                if (abiClassInfos[name] != AbiClassInfo.Delete) {
                                     super.visitInnerClass(name, outerName, innerName, access)
                                 }
                             }

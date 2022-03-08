@@ -13,10 +13,7 @@ import org.jetbrains.kotlin.codegen.DelegatingClassBuilderFactory
 import org.jetbrains.kotlin.codegen.`when`.WhenByEnumsMapping
 import org.jetbrains.kotlin.codegen.extensions.ClassBuilderInterceptorExtension
 import org.jetbrains.kotlin.codegen.inline.coroutines.FOR_INLINE_SUFFIX
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
-import org.jetbrains.kotlin.descriptors.FunctionDescriptor
-import org.jetbrains.kotlin.descriptors.MemberDescriptor
+import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.diagnostics.DiagnosticSink
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames
 import org.jetbrains.kotlin.resolve.BindingContext
@@ -33,8 +30,9 @@ enum class AbiMethodInfo {
 }
 
 sealed class AbiClassInfo {
-    object Public : AbiClassInfo()
-    class Stripped(val methodInfo: Map<Method, AbiMethodInfo>) : AbiClassInfo()
+    object Keep : AbiClassInfo()
+    object Delete : AbiClassInfo()
+    class Strip(val methodInfo: Map<Method, AbiMethodInfo>) : AbiClassInfo()
 }
 
 /**
@@ -72,20 +70,24 @@ class JvmAbiClassBuilderInterceptor : ClassBuilderInterceptorExtension {
     ): ClassBuilderFactory = object : DelegatingClassBuilderFactory(interceptedFactory) {
         override fun newClassBuilder(origin: JvmDeclarationOrigin): DelegatingClassBuilder {
             val descriptor = origin.descriptor as? ClassDescriptor
-            val isPrivate = descriptor?.visibility?.let(DescriptorVisibilities::isPrivate) ?: false
-            return AbiInfoClassBuilder(interceptedFactory.newClassBuilder(origin), isPrivate)
+            val effectiveVisibility = descriptor?.effectiveVisibility()?.toVisibility() ?: Visibilities.Public
+
+            return AbiInfoClassBuilder(interceptedFactory.newClassBuilder(origin), effectiveVisibility)
         }
     }
 
     private inner class AbiInfoClassBuilder(
         private val delegate: ClassBuilder,
-        private val isPrivateClass: Boolean
+        private val classVisibility: Visibility,
+        private val deleteNonPublicApi: Boolean = false,
     ) : DelegatingClassBuilder() {
-        lateinit var internalName: String
-        var localOrAnonymousClass = false
-        var publicAbi = false
-        val methodInfos = mutableMapOf<Method, AbiMethodInfo>()
-        val maskedMethods = mutableSetOf<Method>() // Methods which should be stripped even if they are marked as KEEP
+        private lateinit var internalName: String
+
+        private var localOrAnonymousClass = false
+        private var keepEverything = false
+
+        private val methodInfos = mutableMapOf<Method, AbiMethodInfo>()
+        private val maskedMethods = mutableSetOf<Method>() // Methods which should be stripped even if they are marked as KEEP
 
         override fun getDelegate(): ClassBuilder = delegate
 
@@ -100,10 +102,7 @@ class JvmAbiClassBuilderInterceptor : ClassBuilderInterceptorExtension {
         ) {
             // Always keep annotation classes
             // TODO: Investigate whether there are cases where we can remove annotation classes from the ABI.
-            if (access and Opcodes.ACC_ANNOTATION != 0) {
-                publicAbi = true
-            }
-
+            keepEverything = keepEverything || access and Opcodes.ACC_ANNOTATION != 0
             internalName = name
             super.defineClass(origin, version, access, name, signature, superName, interfaces)
         }
@@ -121,9 +120,22 @@ class JvmAbiClassBuilderInterceptor : ClassBuilderInterceptorExtension {
             signature: String?,
             exceptions: Array<out String>?
         ): MethodVisitor {
-            if (publicAbi) {
+
+            if (keepEverything) {
                 return super.newMethod(origin, access, name, desc, signature, exceptions)
             }
+
+            if (name == "<clinit>") {
+                //remove all static initializers
+                return super.newMethod(origin, access, name, desc, signature, exceptions)
+            }
+
+            if (name.startsWith("access\$") && access and Opcodes.ACC_SYNTHETIC != 0) {
+                //remove all synthetic access methods
+                return super.newMethod(origin, access, name, desc, signature, exceptions)
+            }
+
+            val isPrivateClass = Visibilities.isPrivate(classVisibility)
 
             // inline suspend functions are a special case: Unless they use reified type parameters,
             // we will transform the original method and generate a $$forInline method for the inliner.
@@ -140,11 +152,15 @@ class JvmAbiClassBuilderInterceptor : ClassBuilderInterceptorExtension {
 
             // Remove private functions from the ABI jars
             val descriptor = origin.descriptor as? MemberDescriptor
-            if (
-                access and Opcodes.ACC_PRIVATE != 0 && descriptor?.visibility?.let(DescriptorVisibilities::isPrivate) == true
-                || name == "<clinit>" || name.startsWith("access\$") && access and Opcodes.ACC_SYNTHETIC != 0
-            ) {
+            if (access and Opcodes.ACC_PRIVATE != 0 && descriptor?.visibility?.let(DescriptorVisibilities::isPrivate) == true) {
                 return super.newMethod(origin, access, name, desc, signature, exceptions)
+            }
+
+            if (deleteNonPublicApi) {
+                val effectiveVisibility = descriptor?.effectiveVisibility()?.toVisibility() ?: Visibilities.Public
+                if (!effectiveVisibility.isPublicAPI) {
+                    return super.newMethod(origin, access, name, desc, signature, exceptions)
+                }
             }
 
             // Copy inline functions verbatim
@@ -159,13 +175,13 @@ class JvmAbiClassBuilderInterceptor : ClassBuilderInterceptorExtension {
         // Parse the public ABI flag from the Kotlin metadata annotation
         override fun newAnnotation(desc: String, visible: Boolean): AnnotationVisitor {
             val delegate = super.newAnnotation(desc, visible)
-            if (publicAbi || desc != JvmAnnotationNames.METADATA_DESC)
+            if (keepEverything || desc != JvmAnnotationNames.METADATA_DESC)
                 return delegate
 
             return object : AnnotationVisitor(Opcodes.API_VERSION, delegate) {
                 override fun visit(name: String?, value: Any?) {
                     if ((name == JvmAnnotationNames.METADATA_EXTRA_INT_FIELD_NAME) && (value is Int)) {
-                        publicAbi = publicAbi || value and JvmAnnotationNames.METADATA_PUBLIC_ABI_FLAG != 0
+                        keepEverything = keepEverything || value and JvmAnnotationNames.METADATA_PUBLIC_ABI_FLAG != 0
                     }
                     super.visit(name, value)
                 }
@@ -175,14 +191,15 @@ class JvmAbiClassBuilderInterceptor : ClassBuilderInterceptorExtension {
         override fun done() {
             // Remove local or anonymous classes unless they are in the scope of an inline function and
             // strip non-inline methods from all other classes.
-            when {
-                publicAbi ->
-                    abiClassInfo[internalName] = AbiClassInfo.Public
-                !localOrAnonymousClass && !isWhenMappingClass -> {
+            abiClassInfo[internalName] = when {
+                keepEverything -> AbiClassInfo.Keep
+                deleteNonPublicApi && !classVisibility.isPublicAPI -> AbiClassInfo.Delete
+                localOrAnonymousClass || isWhenMappingClass -> AbiClassInfo.Delete
+                else -> {
                     for (method in maskedMethods) {
                         methodInfos.replace(method, AbiMethodInfo.STRIP)
                     }
-                    abiClassInfo[internalName] = AbiClassInfo.Stripped(methodInfos)
+                    AbiClassInfo.Strip(methodInfos)
                 }
             }
             super.done()
