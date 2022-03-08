@@ -215,8 +215,10 @@ class ComposableTargetAnnotationsTransformer(
     }
 
     override fun visitFile(declaration: IrFile): IrFile {
-        currentFile = declaration
-        return super.visitFile(declaration).also { currentFile = null }
+        includeFileNameInExceptionTrace(declaration) {
+            currentFile = declaration
+            return super.visitFile(declaration).also { currentFile = null }
+        }
     }
 
     override fun visitFunction(declaration: IrFunction): IrStatement {

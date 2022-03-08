@@ -114,14 +114,16 @@ class DurableFunctionKeyTransformer(
     fun removeKeyMetaClasses(moduleFragment: IrModuleFragment) {
         moduleFragment.transformChildrenVoid(object : IrElementTransformerVoid() {
             override fun visitFile(declaration: IrFile): IrFile {
-                val children = declaration.declarations.toList().filterIsInstance<IrClass>()
-                for (child in children) {
-                    val keys = context.irTrace[DURABLE_FUNCTION_KEYS, child]
-                    if (keys != null) {
-                        declaration.declarations.remove(child)
+                includeFileNameInExceptionTrace(declaration) {
+                    val children = declaration.declarations.toList().filterIsInstance<IrClass>()
+                    for (child in children) {
+                        val keys = context.irTrace[DURABLE_FUNCTION_KEYS, child]
+                        if (keys != null) {
+                            declaration.declarations.remove(child)
+                        }
                     }
+                    return declaration
                 }
-                return declaration
             }
         })
     }
@@ -129,19 +131,21 @@ class DurableFunctionKeyTransformer(
     fun realizeKeyMetaAnnotations(moduleFragment: IrModuleFragment) {
         moduleFragment.transformChildrenVoid(object : IrElementTransformerVoid() {
             override fun visitFile(declaration: IrFile): IrFile {
-                val children = declaration.declarations.toList().filterIsInstance<IrClass>()
-                for (child in children) {
-                    val keys = context.irTrace[DURABLE_FUNCTION_KEYS, child]
-                    if (keys != null) {
-                        val usedKeys = keys.filter { it.used }
-                        if (usedKeys.isNotEmpty()) {
-                            child.annotations += usedKeys.map { irKeyMetaAnnotation(it) }
-                        } else {
-                            declaration.declarations.remove(child)
+                includeFileNameInExceptionTrace(declaration) {
+                    val children = declaration.declarations.toList().filterIsInstance<IrClass>()
+                    for (child in children) {
+                        val keys = context.irTrace[DURABLE_FUNCTION_KEYS, child]
+                        if (keys != null) {
+                            val usedKeys = keys.filter { it.used }
+                            if (usedKeys.isNotEmpty()) {
+                                child.annotations += usedKeys.map { irKeyMetaAnnotation(it) }
+                            } else {
+                                declaration.declarations.remove(child)
+                            }
                         }
                     }
+                    return declaration
                 }
-                return declaration
             }
         })
     }
@@ -218,18 +222,20 @@ class DurableFunctionKeyTransformer(
     }
 
     override fun visitFile(declaration: IrFile): IrFile {
-        val stringKeys = mutableSetOf<String>()
-        return root(stringKeys) {
-            val metaClass = buildClass(declaration.fileEntry.name)
-            val prev = currentKeys
-            val next = mutableListOf<KeyInfo>()
-            try {
-                currentKeys = next
-                super.visitFile(declaration)
-            } finally {
-                context.irTrace.record(DURABLE_FUNCTION_KEYS, metaClass, next)
-                declaration.addChild(metaClass)
-                currentKeys = prev
+        includeFileNameInExceptionTrace(declaration) {
+            val stringKeys = mutableSetOf<String>()
+            return root(stringKeys) {
+                val metaClass = buildClass(declaration.fileEntry.name)
+                val prev = currentKeys
+                val next = mutableListOf<KeyInfo>()
+                try {
+                    currentKeys = next
+                    super.visitFile(declaration)
+                } finally {
+                    context.irTrace.record(DURABLE_FUNCTION_KEYS, metaClass, next)
+                    declaration.addChild(metaClass)
+                    currentKeys = prev
+                }
             }
         }
     }

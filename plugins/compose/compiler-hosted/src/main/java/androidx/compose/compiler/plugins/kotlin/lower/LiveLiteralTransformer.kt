@@ -472,90 +472,92 @@ open class LiveLiteralTransformer(
     }
 
     override fun visitFile(declaration: IrFile): IrFile {
-        if (declaration.hasNoLiveLiteralsAnnotation()) return declaration
-        val filePath = declaration.fileEntry.name
-        val fileName = filePath.split('/').last()
-        val keys = makeKeySet()
-        return keyVisitor.root(keys) {
-            val prevEnabledSymbol = liveLiteralsEnabledSymbol
-            var nextEnabledSymbol: IrSimpleFunctionSymbol? = null
-            val prevClass = liveLiteralsClass
-            val nextClass = context.irFactory.buildClass {
-                kind = ClassKind.OBJECT
-                visibility = DescriptorVisibilities.INTERNAL
-                val shortName = PackagePartClassUtils.getFilePartShortName(fileName)
-                // the name of the LiveLiterals class is per-file, so we use the same name that
-                // the kotlin file class lowering produces, prefixed with `LiveLiterals$`.
-                name = Name.identifier("LiveLiterals${"$"}$shortName")
-            }.also {
-                it.createParameterDeclarations()
+        includeFileNameInExceptionTrace(declaration) {
+            if (declaration.hasNoLiveLiteralsAnnotation()) return declaration
+            val filePath = declaration.fileEntry.name
+            val fileName = filePath.split('/').last()
+            val keys = makeKeySet()
+            return keyVisitor.root(keys) {
+                val prevEnabledSymbol = liveLiteralsEnabledSymbol
+                var nextEnabledSymbol: IrSimpleFunctionSymbol? = null
+                val prevClass = liveLiteralsClass
+                val nextClass = context.irFactory.buildClass {
+                    kind = ClassKind.OBJECT
+                    visibility = DescriptorVisibilities.INTERNAL
+                    val shortName = PackagePartClassUtils.getFilePartShortName(fileName)
+                    // the name of the LiveLiterals class is per-file, so we use the same name that
+                    // the kotlin file class lowering produces, prefixed with `LiveLiterals$`.
+                    name = Name.identifier("LiveLiterals${"$"}$shortName")
+                }.also {
+                    it.createParameterDeclarations()
 
-                // store the full file path to the file that this class is associated with in an
-                // annotation on the class. This will be used by tooling to associate the keys
-                // inside of this class with actual PSI in the editor.
-                it.annotations += irLiveLiteralFileInfoAnnotation(declaration.fileEntry.name)
-                it.addConstructor {
-                    isPrimary = true
-                }.also { ctor ->
-                    ctor.body = DeclarationIrBuilder(context, it.symbol).irBlockBody {
-                        +irDelegatingConstructorCall(
-                            context
-                                .irBuiltIns
-                                .anyClass
-                                .owner
-                                .primaryConstructor!!
-                        )
-                    }
-                }
-
-                if (usePerFileEnabledFlag) {
-                    val enabledProp = it.addProperty {
-                        name = Name.identifier("enabled")
-                        visibility = DescriptorVisibilities.PRIVATE
-                    }.also { p ->
-                        p.backingField = context.irFactory.buildField {
-                            name = Name.identifier("enabled")
-                            isStatic = true
-                            type = builtIns.booleanType
-                            visibility = DescriptorVisibilities.PRIVATE
-                        }.also { f ->
-                            f.correspondingPropertySymbol = p.symbol
-                            f.parent = it
-                            f.initializer = IrExpressionBodyImpl(
-                                SYNTHETIC_OFFSET,
-                                SYNTHETIC_OFFSET,
-                                irConst(false)
+                    // store the full file path to the file that this class is associated with in an
+                    // annotation on the class. This will be used by tooling to associate the keys
+                    // inside of this class with actual PSI in the editor.
+                    it.annotations += irLiveLiteralFileInfoAnnotation(declaration.fileEntry.name)
+                    it.addConstructor {
+                        isPrimary = true
+                    }.also { ctor ->
+                        ctor.body = DeclarationIrBuilder(context, it.symbol).irBlockBody {
+                            +irDelegatingConstructorCall(
+                                context
+                                    .irBuiltIns
+                                    .anyClass
+                                    .owner
+                                    .primaryConstructor!!
                             )
                         }
-                        p.addGetter {
-                            returnType = builtIns.booleanType
+                    }
+
+                    if (usePerFileEnabledFlag) {
+                        val enabledProp = it.addProperty {
+                            name = Name.identifier("enabled")
                             visibility = DescriptorVisibilities.PRIVATE
-                            origin = IrDeclarationOrigin.DEFAULT_PROPERTY_ACCESSOR
-                        }.also { fn ->
-                            val thisParam = it.thisReceiver!!.copyTo(fn)
-                            fn.dispatchReceiverParameter = thisParam
-                            fn.body = DeclarationIrBuilder(context, fn.symbol).irBlockBody {
-                                +irReturn(irGetField(irGet(thisParam), p.backingField!!))
+                        }.also { p ->
+                            p.backingField = context.irFactory.buildField {
+                                name = Name.identifier("enabled")
+                                isStatic = true
+                                type = builtIns.booleanType
+                                visibility = DescriptorVisibilities.PRIVATE
+                            }.also { f ->
+                                f.correspondingPropertySymbol = p.symbol
+                                f.parent = it
+                                f.initializer = IrExpressionBodyImpl(
+                                    SYNTHETIC_OFFSET,
+                                    SYNTHETIC_OFFSET,
+                                    irConst(false)
+                                )
+                            }
+                            p.addGetter {
+                                returnType = builtIns.booleanType
+                                visibility = DescriptorVisibilities.PRIVATE
+                                origin = IrDeclarationOrigin.DEFAULT_PROPERTY_ACCESSOR
+                            }.also { fn ->
+                                val thisParam = it.thisReceiver!!.copyTo(fn)
+                                fn.dispatchReceiverParameter = thisParam
+                                fn.body = DeclarationIrBuilder(context, fn.symbol).irBlockBody {
+                                    +irReturn(irGetField(irGet(thisParam), p.backingField!!))
+                                }
                             }
                         }
+                        nextEnabledSymbol = enabledProp.getter?.symbol
                     }
-                    nextEnabledSymbol = enabledProp.getter?.symbol
                 }
-            }
-            try {
-                liveLiteralsClass = nextClass
-                currentFile = declaration
-                liveLiteralsEnabledSymbol = nextEnabledSymbol
-                val file = super.visitFile(declaration)
-                // if there were no constants found in the entire file, then we don't need to
-                // create this class at all
-                if (liveLiteralsEnabled && keys.isNotEmpty()) {
-                    file.addChild(nextClass)
+                try {
+                    liveLiteralsClass = nextClass
+                    currentFile = declaration
+                    liveLiteralsEnabledSymbol = nextEnabledSymbol
+                    val file = super.visitFile(declaration)
+                    // if there were no constants found in the entire file, then we don't need to
+                    // create this class at all
+                    if (liveLiteralsEnabled && keys.isNotEmpty()) {
+                        file.addChild(nextClass)
+                    }
+                    file
+                } finally {
+                    liveLiteralsClass = prevClass
+                    liveLiteralsEnabledSymbol = prevEnabledSymbol
                 }
-                file
-            } finally {
-                liveLiteralsClass = prevClass
-                liveLiteralsEnabledSymbol = prevEnabledSymbol
             }
         }
     }
