@@ -350,10 +350,6 @@ abstract class IncrementalCompilerRunner<
             //TODO(valtman) sourceToCompile calculate based on abiSnapshot
             val (sourcesToCompile, removedKotlinSources) = dirtySources.partition(File::exists)
 
-            allDirtySources.addAll(dirtySources)
-            val text = allDirtySources.joinToString(separator = System.getProperty("line.separator")) { it.canonicalPath }
-            dirtySourcesSinceLastTimeFile.writeText(text)
-
             val services = makeServices(
                 args, lookupTracker, expectActualTracker, caches,
                 dirtySources.toSet(), compilationMode is CompilationMode.Incremental
@@ -375,6 +371,10 @@ abstract class IncrementalCompilerRunner<
             }
 
             dirtySources.addAll(compiledSources)
+            allDirtySources.addAll(dirtySources)
+            val text = allDirtySources.joinToString(separator = System.getProperty("line.separator")) { it.canonicalPath }
+            dirtySourcesSinceLastTimeFile.writeText(text)
+
 
             val generatedFiles = outputItemsCollector.outputs.map(SimpleOutputItem::toGeneratedFile)
             if (compilationMode is CompilationMode.Incremental) {
