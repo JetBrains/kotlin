@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.analysis.api.descriptors.test
 import com.intellij.mock.MockApplication
 import com.intellij.mock.MockProject
 import com.intellij.openapi.Disposable
+import com.intellij.openapi.vfs.impl.jar.CoreJarFileSystem
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.analysis.api.InvalidWayOfUsingAnalysisSession
 import org.jetbrains.kotlin.analysis.api.KtAnalysisSessionProvider
@@ -52,7 +53,8 @@ object KtFe10FrontendApiTestConfiguratorService : FrontendApiTestConfiguratorSer
         compilerConfig: CompilerConfiguration,
         files: List<KtFile>,
         packagePartProvider: (GlobalSearchScope) -> PackagePartProvider,
-        projectStructureProvider: ProjectStructureProvider
+        projectStructureProvider: ProjectStructureProvider,
+        jarFileSystem: CoreJarFileSystem,
     ) {
         project.registerService(KtAnalysisSessionProvider::class.java, KtFe10AnalysisSessionProvider())
         project.registerService(Fe10AnalysisFacade::class.java, CliFe10AnalysisFacade(project))

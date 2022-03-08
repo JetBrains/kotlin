@@ -10,6 +10,7 @@ import com.intellij.mock.MockApplication
 import com.intellij.mock.MockProject
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.extensions.LoadingOrder
+import com.intellij.openapi.vfs.impl.jar.CoreJarFileSystem
 import com.intellij.psi.ClassFileViewProviderFactory
 import com.intellij.psi.FileTypeFileViewProviders
 import com.intellij.psi.compiled.ClassFileDecompilers
@@ -42,7 +43,8 @@ object LibraryFrontendApiTestConfiguratorService : FrontendApiTestConfiguratorSe
         compilerConfig: CompilerConfiguration,
         files: List<KtFile>,
         packagePartProvider: (GlobalSearchScope) -> PackagePartProvider,
-        projectStructureProvider: ProjectStructureProvider
+        projectStructureProvider: ProjectStructureProvider,
+        jarFileSystem: CoreJarFileSystem,
     ) {
         project.registerTestServices(files, packagePartProvider, projectStructureProvider)
     }
