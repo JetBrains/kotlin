@@ -455,6 +455,12 @@ public class FirLibrarySourceReferenceResolveTestGenerated extends AbstractRefer
     }
 
     @Test
+    @TestMetadata("todo.kt")
+    public void testTodo() throws Exception {
+        runTest("analysis/analysis-api/testData/referenceResolve/todo.kt");
+    }
+
+    @Test
     @TestMetadata("TopLevelClassVsLocalClassConstructor.kt")
     public void testTopLevelClassVsLocalClassConstructor() throws Exception {
         runTest("analysis/analysis-api/testData/referenceResolve/TopLevelClassVsLocalClassConstructor.kt");
