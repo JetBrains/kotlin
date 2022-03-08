@@ -37065,6 +37065,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
             runTest("compiler/testData/codegen/box/suspendConversion/chainedFunSuspendConversionForSimpleExpression.kt");
         }
 
+        @TestMetadata("kt50949_suspendConversionForExtensionFunction.kt")
+        public void ignoreKt50949_suspendConversionForExtensionFunction() throws Exception {
+            runTest("compiler/testData/codegen/box/suspendConversion/kt50949_suspendConversionForExtensionFunction.kt");
+        }
+
         @TestMetadata("overloadResolutionBySuspendModifier.kt")
         public void ignoreOverloadResolutionBySuspendModifier() throws Exception {
             runTest("compiler/testData/codegen/box/suspendConversion/overloadResolutionBySuspendModifier.kt");

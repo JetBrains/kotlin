@@ -45762,6 +45762,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
         }
 
         @Test
+        @TestMetadata("kt50949_suspendConversionForExtensionFunction.kt")
+        public void testKt50949_suspendConversionForExtensionFunction() throws Exception {
+            runTest("compiler/testData/codegen/box/suspendConversion/kt50949_suspendConversionForExtensionFunction.kt");
+        }
+
+        @Test
         @TestMetadata("overloadResolutionBySuspendModifier.kt")
         public void testOverloadResolutionBySuspendModifier() throws Exception {
             runTest("compiler/testData/codegen/box/suspendConversion/overloadResolutionBySuspendModifier.kt");

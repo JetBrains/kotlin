@@ -578,9 +578,9 @@ fun StatementGenerator.pregenerateExtensionInvokeCall(resolvedCall: ResolvedCall
             ExtensionInvokeCallReceiver(call, functionReceiverValue, extensionInvokeReceiverValue)
 
     call.irValueArgumentsByIndex[0] = null
-    resolvedCall.valueArgumentsByIndex!!.forEachIndexed { index, valueArgument ->
-        val valueParameter = call.descriptor.valueParameters[index]
-        call.irValueArgumentsByIndex[index + 1] = generateValueArgument(valueArgument, valueParameter, resolvedCall)
+    for ((valueParameter, valueArgument) in resolvedCall.valueArguments) {
+        call.irValueArgumentsByIndex[valueParameter.index + 1] =
+            generateValueArgument(valueArgument, valueParameter, resolvedCall)
     }
 
     return call
