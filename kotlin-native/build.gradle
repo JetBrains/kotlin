@@ -417,7 +417,14 @@ targetList.each { target ->
         destinationDir project.file("$distDir/$stdlib")
 
         from(project(':kotlin-native:runtime').file("build/${target}Stdlib")) {
-            include('**')
+            if (target == hostName) {
+                include('**')
+            } else {
+                // We don't want to rewrite stdlib parts as they are the same and may be already used
+                // by the other build phases like caching or endorsed libraries.
+                include('*/targets/**')
+                include('*/manifest')
+            }
             eachFile {
                 if (name == 'manifest') {
                     def existingManifest = file("$destinationDir/$path")
