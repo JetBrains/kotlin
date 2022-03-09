@@ -23,7 +23,7 @@ class A {
 import p1.*
 import p2.*
 
-fun test(a: <!UNRESOLVED_REFERENCE!>A<!>) {
+fun test(a: <!OVERLOAD_RESOLUTION_AMBIGUITY!>A<!>) {
     a.<!UNRESOLVED_REFERENCE!>m1<!>()
     a.<!UNRESOLVED_REFERENCE!>m2<!>()
 }

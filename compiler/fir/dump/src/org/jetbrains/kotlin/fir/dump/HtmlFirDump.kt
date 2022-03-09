@@ -1245,7 +1245,7 @@ class HtmlFirDump internal constructor(private var linkResolver: FirLinkResolver
             is ConeInapplicableCandidateError -> {
                 describeVerbose(diagnostic.candidate.symbol)
                 br
-                diagnostic.candidate.system.errors.forEach { callDiagnostic ->
+                diagnostic.candidate.errors.forEach { callDiagnostic ->
                     when (callDiagnostic) {
                         is NewConstraintError -> {
                             ident()

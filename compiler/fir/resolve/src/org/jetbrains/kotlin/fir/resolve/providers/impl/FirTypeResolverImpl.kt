@@ -18,6 +18,10 @@ import org.jetbrains.kotlin.fir.diagnostics.ConeUnexpectedTypeArgumentsError
 import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
 import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.resolve.*
+import org.jetbrains.kotlin.fir.resolve.calls.AbstractCallInfo
+import org.jetbrains.kotlin.fir.resolve.calls.AbstractCandidate
+import org.jetbrains.kotlin.fir.resolve.calls.ReceiverValue
+import org.jetbrains.kotlin.fir.resolve.calls.ResolutionDiagnostic
 import org.jetbrains.kotlin.fir.resolve.diagnostics.*
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
@@ -32,6 +36,8 @@ import org.jetbrains.kotlin.fir.types.impl.ConeTypeParameterTypeImpl
 import org.jetbrains.kotlin.fir.visibilityChecker
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.StandardClassIds
+import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintSystemError
+import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
 import org.jetbrains.kotlin.resolve.calls.tower.CandidateApplicability
 import org.jetbrains.kotlin.resolve.deprecation.DeprecationLevelValue
 
@@ -132,7 +138,7 @@ class FirTypeResolverImpl(private val session: FirSession) : FirTypeResolver() {
                 candidates.clear()
             }
             if (symbolApplicability == applicability) {
-                candidates.add(TypeCandidate(symbol, substitutor, diagnostic))
+                candidates.add(TypeCandidate(symbol, substitutor, diagnostic, symbolApplicability))
             }
         }
 
@@ -160,7 +166,7 @@ class FirTypeResolverImpl(private val session: FirSession) : FirTypeResolver() {
                 TypeResolutionResult.Resolved(candidate)
             }
             candidateCount > 1 -> {
-                TypeResolutionResult.Ambiguity
+                TypeResolutionResult.Ambiguity(candidates.toList())
             }
             candidateCount == 0 -> {
                 TypeResolutionResult.Unresolved
@@ -170,7 +176,7 @@ class FirTypeResolverImpl(private val session: FirSession) : FirTypeResolver() {
     }
 
     sealed class TypeResolutionResult {
-        object Ambiguity : TypeResolutionResult()
+        class Ambiguity(val typeCandidates: List<TypeCandidate>) : TypeResolutionResult()
         object Unresolved : TypeResolutionResult()
         class Resolved(val typeCandidate: TypeCandidate) : TypeResolutionResult()
     }
@@ -227,19 +233,25 @@ class FirTypeResolverImpl(private val session: FirSession) : FirTypeResolver() {
             is TypeResolutionResult.Resolved -> {
                 result.typeCandidate.symbol to result.typeCandidate.substitutor
             }
-            TypeResolutionResult.Ambiguity -> null to null
+            is TypeResolutionResult.Ambiguity -> null to null
             TypeResolutionResult.Unresolved -> null to null
         }
 
         if (symbol == null || symbol !is FirClassifierSymbol<*>) {
-            val diagnostic = if (symbol?.fir is FirEnumEntry) {
-                if (isOperandOfIsOperator) {
-                    ConeSimpleDiagnostic("'is' operator can not be applied to an enum entry.", DiagnosticKind.IsEnumEntry)
-                } else {
-                    ConeSimpleDiagnostic("An enum entry should not be used as a type.", DiagnosticKind.EnumEntryAsType)
+            val diagnostic = when {
+                symbol?.fir is FirEnumEntry -> {
+                    if (isOperandOfIsOperator) {
+                        ConeSimpleDiagnostic("'is' operator can not be applied to an enum entry.", DiagnosticKind.IsEnumEntry)
+                    } else {
+                        ConeSimpleDiagnostic("An enum entry should not be used as a type.", DiagnosticKind.EnumEntryAsType)
+                    }
                 }
-            } else {
-                ConeUnresolvedQualifierError(typeRef.render())
+                result is TypeResolutionResult.Ambiguity -> {
+                    ConeAmbiguityError(typeRef.qualifier.last().name, result.typeCandidates.first().applicability, result.typeCandidates)
+                }
+                else -> {
+                    ConeUnresolvedQualifierError(typeRef.render())
+                }
             }
             return ConeErrorType(diagnostic)
         }
@@ -516,10 +528,30 @@ class FirTypeResolverImpl(private val session: FirSession) : FirTypeResolver() {
 
 
     class TypeCandidate(
-        val symbol: FirBasedSymbol<*>,
+        override val symbol: FirBasedSymbol<*>,
         val substitutor: ConeSubstitutor?,
-        val diagnostic: ConeDiagnostic?
-    ) {
+        val diagnostic: ConeDiagnostic?,
+        override val applicability: CandidateApplicability
+    ) : AbstractCandidate() {
+
+        override val dispatchReceiverValue: ReceiverValue?
+            get() = null
+
+        override val extensionReceiverValue: ReceiverValue?
+            get() = null
+
+        override val explicitReceiverKind: ExplicitReceiverKind
+            get() = ExplicitReceiverKind.NO_EXPLICIT_RECEIVER
+
+        override val diagnostics: List<ResolutionDiagnostic>
+            get() = emptyList()
+
+        override val errors: List<ConstraintSystemError>
+            get() = emptyList()
+
+        override val callInfo: AbstractCallInfo
+            get() = throw UnsupportedOperationException("Should not be called")
+
         override fun equals(other: Any?): Boolean {
             if (this === other) return true
             if (other !is TypeCandidate) return false

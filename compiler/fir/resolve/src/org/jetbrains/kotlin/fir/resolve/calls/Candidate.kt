@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.fir.types.ConeTypeVariable
 import org.jetbrains.kotlin.resolve.calls.components.SuspendConversionStrategy
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemOperation
 import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintStorage
+import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintSystemError
 import org.jetbrains.kotlin.resolve.calls.inference.model.NewConstraintSystemImpl
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
 import org.jetbrains.kotlin.resolve.calls.tower.CandidateApplicability
@@ -37,12 +38,15 @@ class Candidate(
 ) : AbstractCandidate() {
 
     var systemInitialized: Boolean = false
-    override val system: NewConstraintSystemImpl by lazy(LazyThreadSafetyMode.NONE) {
+    val system: NewConstraintSystemImpl by lazy(LazyThreadSafetyMode.NONE) {
         val system = constraintSystemFactory.createConstraintSystem()
         system.addOtherSystem(baseSystem)
         systemInitialized = true
         system
     }
+
+    override val errors: List<ConstraintSystemError>
+        get() = system.errors
 
     lateinit var substitutor: ConeSubstitutor
     lateinit var freshVariables: List<ConeTypeVariable>

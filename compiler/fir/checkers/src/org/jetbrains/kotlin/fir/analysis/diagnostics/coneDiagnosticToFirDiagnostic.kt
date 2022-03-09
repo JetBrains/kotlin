@@ -259,8 +259,8 @@ private fun mapSystemHasContradictionError(
     qualifiedAccessSource: KtSourceElement?,
 ): List<KtDiagnostic> {
     val errorsToIgnore = mutableSetOf<ConstraintSystemError>()
-    return buildList<KtDiagnostic> {
-        for (error in diagnostic.candidate.system.errors) {
+    return buildList {
+        for (error in diagnostic.candidate.errors) {
             addIfNotNull(
                 error.toDiagnostic(
                     source,
@@ -273,7 +273,7 @@ private fun mapSystemHasContradictionError(
         }
     }.ifEmpty {
         listOfNotNull(
-            diagnostic.candidate.system.errors.firstNotNullOfOrNull {
+            diagnostic.candidate.errors.firstNotNullOfOrNull {
                 if (it in errorsToIgnore) return@firstNotNullOfOrNull null
                 val message = when (it) {
                     is NewConstraintError -> "NewConstraintError at ${it.position}: ${it.lowerType} <!: ${it.upperType}"
@@ -284,7 +284,7 @@ private fun mapSystemHasContradictionError(
                 }
 
                 if (it is NewConstraintError && it.position.from is FixVariableConstraintPosition<*>) {
-                    val morePreciseDiagnosticExists = diagnostic.candidate.system.errors.any { other ->
+                    val morePreciseDiagnosticExists = diagnostic.candidate.errors.any { other ->
                         other is NewConstraintError && other.position.from !is FixVariableConstraintPosition<*>
                     }
                     if (morePreciseDiagnosticExists) return@firstNotNullOfOrNull null
@@ -352,7 +352,7 @@ private fun ConstraintSystemError.toDiagnostic(
             }
         }
         is NotEnoughInformationForTypeParameter<*> -> {
-            val isDiagnosticRedundant = candidate.system.errors.any { otherError ->
+            val isDiagnosticRedundant = candidate.errors.any { otherError ->
                 (otherError is ConstrainingTypeIsError && otherError.typeVariable == this.typeVariable)
                         || otherError is NewConstraintError
             }
