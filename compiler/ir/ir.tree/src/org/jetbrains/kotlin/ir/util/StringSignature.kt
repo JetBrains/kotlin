@@ -9,6 +9,8 @@ import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.types.Variance
+import java.io.File
 
 private fun Char.isValidId(): Boolean {
     return this == '_' || this == '\\' || this == '-' || this.isLetterOrDigit()
@@ -18,7 +20,7 @@ private fun Char.isValidIdStart(): Boolean {
     return this == '_' || this == '\\' || this == '<' || this.isLetter()
 }
 
-class StringSignature private constructor(val value: String, b: StringSignature.() -> ParsedSignature) {
+open class StringSignature private constructor(val value: String, b: StringSignature.() -> ParsedSignature) {
 
     constructor(_value: String) : this(_value, { parseSignature() })
 
@@ -32,7 +34,9 @@ class StringSignature private constructor(val value: String, b: StringSignature.
         return other is StringSignature && value == other.value
     }
 
-    val isLocal: Boolean get() = value[0] == '$'
+    open val isLocal: Boolean get() = value[0] == '$'
+
+    open fun asOld(): IdSignature? = null
 
     fun containerSignature(): StringSignature {
         assert(!isLocal)
@@ -41,7 +45,7 @@ class StringSignature private constructor(val value: String, b: StringSignature.
         return StringSignature(container.asString()) { container }
     }
 
-    fun topLevelSignature(): StringSignature {
+    open fun topLevelSignature(): StringSignature {
         assert(!isLocal)
 
         var cur = this
@@ -445,6 +449,7 @@ class StringSignature private constructor(val value: String, b: StringSignature.
 
     sealed class ParsedSignature {
 
+        abstract fun asOldSignature(): StringSignature?
 
         protected abstract fun asStringTo(sb: StringBuilder)
         fun asString(): String = buildString { asStringTo(this) }
@@ -480,6 +485,8 @@ class StringSignature private constructor(val value: String, b: StringSignature.
             override fun containerSignature(): ParsedSignature {
                 TODO("Not yet implemented")
             }
+
+            override fun asOldSignature(): StringSignature? = null
         }
 
         class ClassSignature(override val packageFqName: FqName, private val classFqName: FqName) : TopLevelSignature() {
@@ -494,6 +501,8 @@ class StringSignature private constructor(val value: String, b: StringSignature.
                 get() = classFqName
             override val fileName: String?
                 get() = null
+
+            override fun asOldSignature(): StringSignature = StringSignature(packageFqName.asString(), classFqName.asString())
         }
 
         class PropertySignature(
@@ -530,12 +539,10 @@ class StringSignature private constructor(val value: String, b: StringSignature.
                 extensionType?.let {
                     sb.append(MangleConstant.EXTENSION_RECEIVER_MARK)
                     it.asString(sb)
-//                    sb.append(it)
                     sb.append(MangleConstant.EXTENSION_RECEIVER_MARK)
                 }
 
                 sb.append(MangleConstant.RETURN_TYPE_MARK)
-//                sb.append(returnType)
                 returnType.asString(sb)
 
                 if (typeParameters.isNotEmpty()) {
@@ -544,15 +551,51 @@ class StringSignature private constructor(val value: String, b: StringSignature.
                     }
                 }
             }
+
+            override fun asOldSignature(): StringSignature? {
+
+                // it's not a part of public API surface
+                if (fileName != null) return null
+
+                val mangleString = buildString {
+                    extensionType?.let {
+                        append(MangleConstant.EXTENSION_RECEIVER_PREFIX)
+                        it.asOldString(this)
+                    }
+
+                    var idx = 0
+
+                    typeParameters.collectForMangler(this, MangleConstant.TYPE_PARAMETERS) { tp ->
+                        append(idx++)
+                        append(MangleConstant.UPPER_BOUND_SEPARATOR)
+
+                        tp.bounds.collectForMangler(this, MangleConstant.UPPER_BOUNDS) { ub ->
+                            ub.asOldString(this)
+                        }
+                    }
+
+                    append(declarationFqn.shortName())
+                }
+
+                val hashId = mangleString.cityHash64()
+
+                return OldStringSignature(IdSignature.CommonSignature(packageFqName.asString(), declarationFqn.asString(), hashId, 0L))
+            }
         }
 
         sealed class Type {
 
             abstract fun asString(sb: StringBuilder)
 
+            abstract fun asOldString(sb: StringBuilder)
+
             object DynamicType : Type() {
                 override fun asString(sb: StringBuilder) {
                     sb.append("^d")
+                }
+
+                override fun asOldString(sb: StringBuilder) {
+                    sb.append(MangleConstant.DYNAMIC_MARK)
                 }
             }
 
@@ -560,19 +603,47 @@ class StringSignature private constructor(val value: String, b: StringSignature.
                 override fun asString(sb: StringBuilder) {
                     sb.append("^e")
                 }
+
+                override fun asOldString(sb: StringBuilder) {
+                    sb.append(MangleConstant.ERROR_MARK)
+                }
             }
 
             sealed class TypeArgument {
 
                 abstract fun asString(sb: StringBuilder)
+                abstract fun asOldString(sb: StringBuilder)
 
                 object Star : TypeArgument() {
+
+                    override fun asOldString(sb: StringBuilder) {
+                        asStringImpl(sb)
+                    }
+
                     override fun asString(sb: StringBuilder) {
-                        sb.append('*')
+                        asStringImpl(sb)
+                    }
+
+                    private fun asStringImpl(sb: StringBuilder) {
+                        sb.append(MangleConstant.STAR_MARK)
                     }
                 }
 
                 class Arg(val variance: String, val type: Type) : TypeArgument() {
+
+                    override fun asOldString(sb: StringBuilder) {
+                        if (variance.isNotEmpty()) {
+                            if (variance[0] == '+')
+                                sb.append(Variance.OUT_VARIANCE.label)
+                            if (variance[0] == '-')
+                                sb.append(Variance.IN_VARIANCE.label)
+
+                            sb.append(MangleConstant.VARIANCE_SEPARATOR)
+                        }
+
+                        type.asOldString(sb)
+                    }
+
                     override fun asString(sb: StringBuilder) {
                         sb.append(variance)
                         type.asString(sb)
@@ -582,11 +653,19 @@ class StringSignature private constructor(val value: String, b: StringSignature.
 
             class SimpleType(val classifier: String, val arguments: List<TypeArgument>, val nullability: String) : Type() {
 
+                override fun asOldString(sb: StringBuilder) {
+                    asStringImpl(sb) { this.asOldString(it) }
+                }
+
                 override fun asString(sb: StringBuilder) {
+                    asStringImpl(sb) { this.asString(it) }
+                }
+
+                private fun asStringImpl(sb: StringBuilder, taRender: TypeArgument.(StringBuilder) -> Unit) {
                     sb.append(classifier)
                     if (arguments.isNotEmpty()) {
                         arguments.collectForMangler(sb, MangleConstant.TYPE_ARGUMENTS) {
-                            it.asString(sb)
+                            it.taRender(sb)
                         }
                     }
                     sb.append(nullability)
@@ -617,6 +696,8 @@ class StringSignature private constructor(val value: String, b: StringSignature.
                 sb.append('|')
                 sb.append(idx)
             }
+
+            override fun asOldSignature(): StringSignature? = null
         }
 
         class FunctionSignature(
@@ -637,6 +718,54 @@ class StringSignature private constructor(val value: String, b: StringSignature.
             private fun constructPropertyFromSetter(propertyFqName: FqName): ParsedSignature {
                 val value_Param = valueParameters.single()
                 return PropertySignature(fileName, packageFqName, propertyFqName, extensionType, typeParameters, value_Param.type)
+            }
+
+            override fun asOldSignature(): StringSignature? {
+
+                // it's not a part of public API surface
+                if (fileName != null) return null
+
+                val functionName = classFqName.shortName()
+
+                val propertySig = if (functionName.isSpecial) {
+                    val c2 = functionName.asString()[1]
+                    if (c2 == 'g' || c2 == 's') {
+                        containerSignature().asOldSignature()
+                    } else null
+                } else null
+
+                val mangleString = buildString {
+                    append(functionName)
+                    extensionType?.let {
+                        append(MangleConstant.EXTENSION_RECEIVER_PREFIX)
+                        it.asOldString(this)
+                    }
+
+                    valueParameters.collectForMangler(this, MangleConstant.VALUE_PARAMETERS) {
+                        it.type.asOldString(this)
+                        if (it.isVararg) append(MangleConstant.VAR_ARG_MARK)
+                    }
+
+                    var idx = 0
+
+                    typeParameters.collectForMangler(this, MangleConstant.TYPE_PARAMETERS) { tp ->
+                        append(idx++)
+                        append(MangleConstant.UPPER_BOUND_SEPARATOR)
+
+                        tp.bounds.collectForMangler(this, MangleConstant.UPPER_BOUNDS) { ub ->
+                            ub.asOldString(this)
+                        }
+
+                    }
+                }
+
+                val hashId = mangleString.cityHash64()
+
+                val idSignature = IdSignature.CommonSignature(packageFqName.asString(), classFqName.asString(), hashId, 0)
+
+                return if (propertySig != null) {
+                    OldStringSignature(IdSignature.AccessorSignature(propertySig.asOld()!!, idSignature))
+                } else OldStringSignature(idSignature)
             }
 
             override fun asStringTo(sb: StringBuilder) {
@@ -743,6 +872,8 @@ class StringSignature private constructor(val value: String, b: StringSignature.
                 sb.append(MangleConstant.FIELD_MARK)
                 fieldName?.let { sb.append(it) }
             }
+
+            override fun asOldSignature(): StringSignature? = null
         }
 
 //        class LocalMethodSignature() : LocalSignature() {
@@ -757,6 +888,53 @@ class StringSignature private constructor(val value: String, b: StringSignature.
     override fun toString(): String {
         return "Signature[$value]"
     }
+}
+
+
+class OldStringSignature(val idSignature: IdSignature, s: String) : StringSignature(s) {
+
+    constructor(idSignature: IdSignature) : this(idSignature, idSignature.render())
+
+    override fun asOld(): IdSignature? = idSignature
+    override val isLocal: Boolean
+        get() = idSignature.isLocal
+
+    override fun topLevelSignature(): StringSignature {
+        val tl = idSignature.topLevelSignature()
+
+        return idToStringSignature(tl) ?: error("Has to be not-null")
+    }
+}
+
+fun idToStringSignature(idSignature: IdSignature): StringSignature? {
+    if (idSignature is IdSignature.CompositeSignature) {
+        val containerSig = idSignature.container
+        val inner = idSignature.inner
+        return if (containerSig is IdSignature.FileSignature && inner is IdSignature.CommonSignature) {
+            if (inner.id != null) {
+                val file = File(containerSig.fileName).nameWithoutExtension
+                val render = idSignature.render()
+                OldStringSignature(idSignature, "$file/$render")
+            } else {
+                StringSignature(inner.packageFqName, inner.declarationFqName)
+            }
+        } else null
+    }
+
+    if (idSignature is IdSignature.CommonSignature) {
+        return if (idSignature.id != null)
+            OldStringSignature(idSignature)
+        else {
+            StringSignature(idSignature.packageFqName, idSignature.declarationFqName)
+        }
+    }
+
+    if (idSignature is IdSignature.AccessorSignature) {
+        // probably it's error
+        return OldStringSignature(idSignature, idSignature.accessorSignature.render())
+    }
+
+    return null
 }
 
 val StringSignature.isPubliclyVisible: Boolean get() = !isLocal

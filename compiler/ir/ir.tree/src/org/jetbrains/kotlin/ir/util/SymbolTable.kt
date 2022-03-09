@@ -59,6 +59,10 @@ interface ReferenceSymbolTable {
 
     fun leaveScope(owner: IrSymbol)
     fun leaveScope(owner: IrDeclaration)
+
+    fun remapFunctions(): Map<StringSignature, StringSignature> = emptyMap()
+    fun remapConstructors(): Map<StringSignature, StringSignature> = emptyMap()
+    fun remapProperties(): Map<StringSignature, StringSignature> = emptyMap()
 }
 
 open class SymbolTable(
@@ -335,10 +339,10 @@ open class SymbolTable(
 
             currentScope = currentScope?.parent
 
-            if (currentScope != null && unboundSymbols.isNotEmpty()) {
-                @OptIn(ObsoleteDescriptorBasedAPI::class)
-                throw AssertionError("Local scope contains unbound symbols: ${unboundSymbols.joinToString { it.descriptor.toString() }}")
-            }
+//            if (currentScope != null && unboundSymbols.isNotEmpty()) {
+//                @OptIn(ObsoleteDescriptorBasedAPI::class)
+//                throw AssertionError("Local scope ${currentScope!!.owner.let { it.signature ?: if (it.hasDescriptor) it.descriptor else "UNKNOWN" }}  contains unbound symbols: ${unboundSymbols.joinToString { it.descriptor.toString() }}")
+//            }
         }
 
         fun dump(): String =
@@ -1089,6 +1093,43 @@ open class SymbolTable(
         enumEntrySymbolTable.forEachPublicSymbolImpl { block(it) }
         typeAliasSymbolTable.forEachPublicSymbolImpl { block(it) }
         fieldSymbolTable.forEachPublicSymbolImpl { block(it) }
+    }
+
+
+    @OptIn(ObsoleteDescriptorBasedAPI::class)
+    private fun <D : CallableDescriptor, S : IrBindableSymbol<D, *>> remap(oldMapping: Map<StringSignature, S>): Map<StringSignature, StringSignature> {
+        return mutableMapOf<StringSignature, StringSignature>().apply {
+            for ((sig, symbol) in oldMapping) {
+                val descriptor = symbol.descriptor
+                if (descriptor.visibility == DescriptorVisibilities.PRIVATE) {
+                    continue
+                }
+
+                sig.asOld()?.let { idSig ->
+                    val old = idToStringSignature(idSig) ?: OldStringSignature(idSig)
+                    put(old, sig)
+                }
+            }
+        }
+    }
+
+
+    private val remappedFunctions: Map<StringSignature, StringSignature> by lazy { remap(simpleFunctionSymbolTable.idSigToSymbol) }
+
+    override fun remapFunctions(): Map<StringSignature, StringSignature> {
+        return remappedFunctions
+    }
+
+    private val remappedConstructors: Map<StringSignature, StringSignature> by lazy { remap(constructorSymbolTable.idSigToSymbol) }
+
+    override fun remapConstructors(): Map<StringSignature, StringSignature> {
+        return remappedConstructors
+    }
+
+    private val remappedProperties: Map<StringSignature, StringSignature> by lazy { remap(propertySymbolTable.idSigToSymbol) }
+
+    override fun remapProperties(): Map<StringSignature, StringSignature> {
+        return remappedProperties
     }
 }
 

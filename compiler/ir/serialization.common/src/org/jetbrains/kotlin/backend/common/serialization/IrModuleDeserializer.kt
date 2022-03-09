@@ -41,13 +41,19 @@ class CompatibilityMode(val abiVersion: KotlinAbiVersion) {
             return abiVersion.minor < LAST_PRIVATE_SIG_ABI_VERSION.minor
         }
 
+    val idSignatures: Boolean
+        get() = abiVersion.minor <= LAST_ID_SIG_ABI_VERSION.minor
+
     companion object {
         val LAST_PRIVATE_SIG_ABI_VERSION = KotlinAbiVersion(1, 5, 0)
+        val LAST_ID_SIG_ABI_VERSION = KotlinAbiVersion(1, 6, 0)
 
         val WITH_PRIVATE_SIG = CompatibilityMode(LAST_PRIVATE_SIG_ABI_VERSION)
-        val WITH_COMMON_SIG = CompatibilityMode(KotlinAbiVersion.CURRENT)
+        val WITH_COMMON_SIG = CompatibilityMode(LAST_ID_SIG_ABI_VERSION)
+        val WITH_STRING_SIG = CompatibilityMode(KotlinAbiVersion.CURRENT)
 
-        val CURRENT = WITH_COMMON_SIG
+
+        val CURRENT = WITH_STRING_SIG
     }
 }
 

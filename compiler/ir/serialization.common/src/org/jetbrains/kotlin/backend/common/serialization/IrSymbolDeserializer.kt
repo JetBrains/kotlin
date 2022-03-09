@@ -15,14 +15,14 @@ import org.jetbrains.kotlin.ir.symbols.impl.IrAnonymousInitializerSymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrLocalDelegatedPropertySymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrValueParameterSymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrVariableSymbolImpl
-import org.jetbrains.kotlin.ir.util.ReferenceSymbolTable
-import org.jetbrains.kotlin.ir.util.StringSignature
+import org.jetbrains.kotlin.ir.util.*
 
 class IrSymbolDeserializer(
     val symbolTable: ReferenceSymbolTable,
     val libraryFile: IrLibraryFile,
     val fileSymbol: IrFileSymbol,
     val actuals: List<Actual>,
+    compatibilityMode: CompatibilityMode,
 //    val enqueueLocalTopLevelDeclaration: (StringSignature) -> Unit,
     val handleExpectActualMapping: (StringSignature, IrSymbol) -> IrSymbol,
     val symbolProcessor: IrSymbolDeserializer.(IrSymbol, StringSignature) -> IrSymbol = { s, _ -> s },
@@ -30,9 +30,45 @@ class IrSymbolDeserializer(
     val deserializePublicSymbol: (StringSignature, BinarySymbolData.SymbolKind) -> IrSymbol
 ) {
 
+    sealed class SignatureDeserializer {
+
+        protected abstract fun deserializeImpl(index: Int): StringSignature
+
+        val signatureCache = mutableMapOf<Int, StringSignature>()
+
+        fun deserializeSignature(index: Int): StringSignature {
+            return signatureCache.getOrPut(index) {
+                deserializeImpl(index)
+            }
+        }
+
+
+        class StringSignatureDeserializer(private val libraryFile: IrLibraryFile) : SignatureDeserializer() {
+            override fun deserializeImpl(index: Int): StringSignature {
+                return StringSignature(libraryFile.string(index))
+            }
+        }
+
+        class OldSignatureDeserializer(fileSymbol: IrFileSymbol, libraryFile: IrLibraryFile) : SignatureDeserializer() {
+            private val deserializer = IdSignatureDeserializer(libraryFile, IdSignature.FileSignature(fileSymbol))
+
+            override fun deserializeImpl(index: Int): StringSignature {
+                val idS = deserializer.deserializeIdSignature(index)
+                return idToStringSignature(idS) ?: OldStringSignature(idS)
+            }
+
+        }
+    }
+
     val deserializedSymbols: MutableMap<StringSignature, IrSymbol> = mutableMapOf()
 
-    val signatureCache = mutableMapOf<Int, StringSignature>()
+    val signatureDeserializer =
+        if (compatibilityMode.idSignatures) SignatureDeserializer.OldSignatureDeserializer(fileSymbol, libraryFile) else
+            SignatureDeserializer.StringSignatureDeserializer(libraryFile)
+
+    val signatureCache: Map<Int, StringSignature> get() = signatureDeserializer.signatureCache
+
+//    val signatureCache = mutableMapOf<Int, StringSignature>()
 
     fun deserializeIrSymbol(signature: StringSignature, symbolKind: BinarySymbolData.SymbolKind): IrSymbol {
         return deserializedSymbols.getOrPut(signature) {
@@ -84,19 +120,7 @@ class IrSymbolDeserializer(
         }
     }
 
-    fun deserializeSignature(index: Int): StringSignature {
-        return signatureCache.getOrPut(index) {
-            StringSignature(libraryFile.string(index))
-        }
-//        val r = StringSignature(libraryFile.string(index))
-//        return r
-    }
-
-//    val signatureDeserializer = IdSignatureDeserializer(libraryFile, fileSignature)
-//
-//    fun deserializeIdSignature(index: Int): IdSignature {
-//        return signatureDeserializer.deserializeIdSignature(index)
-//    }
+    fun deserializeSignature(index: Int): StringSignature = signatureDeserializer.deserializeSignature(index)
 }
 
 internal fun referenceDeserializedSymbol(

@@ -1,12 +1,12 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 @file:OptIn(ExperimentalUnsignedTypes::class)
 @file:Suppress("NAME_SHADOWING")
 
-package org.jetbrains.kotlin.backend.common.serialization
+package org.jetbrains.kotlin.ir.util
 
 private val k0 = 0xc3a5c85c97cb3127U
 private val k1 = 0xb492b66fbe98f273U
@@ -101,8 +101,8 @@ private fun hashLen17to32(s: ByteArray, pos: Int, len: Int): ULong {
     val c = fetch64(s, pos + len - 8) * mul
     val d = fetch64(s, pos + len - 16) * k2
     return hashLen16(
-            rotate(a + b, 43) + rotate(c, 30) + d,
-            a + rotate(b + k2, 18) + c, mul)
+        rotate(a + b, 43) + rotate(c, 30) + d,
+        a + rotate(b + k2, 18) + c, mul)
 }
 
 private fun weakHashLen32WithSeeds(w: ULong, x: ULong, y: ULong, z: ULong, a: ULong, b: ULong): ULongArray {
@@ -120,11 +120,11 @@ private fun weakHashLen32WithSeeds(w: ULong, x: ULong, y: ULong, z: ULong, a: UL
 
 private fun weakHashLen32WithSeeds(s: ByteArray, pos: Int, a: ULong, b: ULong): ULongArray {
     return weakHashLen32WithSeeds(
-            fetch64(s, pos + 0),
-            fetch64(s, pos + 8),
-            fetch64(s, pos + 16),
-            fetch64(s, pos + 24),
-            a, b)
+        fetch64(s, pos + 0),
+        fetch64(s, pos + 8),
+        fetch64(s, pos + 16),
+        fetch64(s, pos + 24),
+        a, b)
 }
 
 fun bswap(value: ULong): ULong {

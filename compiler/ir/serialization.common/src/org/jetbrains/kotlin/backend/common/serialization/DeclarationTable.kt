@@ -49,12 +49,12 @@ abstract class GlobalDeclarationTable(
 
     constructor(mangler: KotlinMangler.IrMangler) : this(mangler, IdSignatureClashTracker.DEFAULT_TRACKER)
 
-    protected fun loadKnownBuiltins(builtIns: IrBuiltIns) {
-        builtIns.knownBuiltins.forEach {
-            val symbol = (it as IrSymbolOwner).symbol
-//            table[it] = symbol.signature!!.also { id -> clashTracker.commit(it, id) }
-        }
-    }
+//    protected fun loadKnownBuiltins(builtIns: IrBuiltIns) {
+//        builtIns.knownBuiltins.forEach {
+//            val symbol = (it as IrSymbolOwner).symbol
+////            table[it] = symbol.signature!!.also { id -> clashTracker.commit(it, id) }
+//        }
+//    }
 
     open fun computeSignatureByDeclaration(declaration: IrDeclaration, compatibleMode: Boolean): IdSignature {
         return table.getOrPut(declaration) {

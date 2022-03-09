@@ -72,6 +72,7 @@ class FileDeserializationState(
         IrSymbolDeserializer(
             linker.symbolTable, fileReader, file.symbol,
             fileProto.actualList,
+            CompatibilityMode(moduleDeserializer.libraryAbiVersion),
             linker::handleExpectActualMapping,
             symbolProcessor = linker.symbolProcessor,
         ) { signature, symbolKind ->
