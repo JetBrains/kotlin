@@ -117,5 +117,4 @@ internal fun formatSize(sizeInBytes: Long): String = when {
     else -> "$sizeInBytes B"
 }
 
-internal fun Double.asString(decPoints: Int): String =
-    String.format("%,.${decPoints}f", this)
+internal fun Double.asString(decPoints: Int): String = "%,.${decPoints}f".format(this)

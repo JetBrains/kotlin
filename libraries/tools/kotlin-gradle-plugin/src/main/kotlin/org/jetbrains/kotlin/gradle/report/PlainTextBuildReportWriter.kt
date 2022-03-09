@@ -174,7 +174,7 @@ internal class PlainTextBuildReportWriter(
             val taskTimeMs = task.totalTimeMs
             allTasksTimeMs += taskTimeMs
 
-            if (task.isKotlin) {
+            if (task.isFromKotlinPlugin) {
                 kotlinTotalTimeMs += taskTimeMs
                 kotlinTasks.add(task)
             }

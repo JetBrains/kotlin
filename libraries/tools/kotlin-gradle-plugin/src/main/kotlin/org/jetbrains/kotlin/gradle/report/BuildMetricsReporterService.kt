@@ -169,13 +169,13 @@ private class TaskRecord(
     override val skipMessage: String?,
     override val icLogLines: List<String>
 ) : BuildOperationRecord {
-    override val isKotlin: Boolean = classFqName.startsWith("org.jetbrains.kotlin")
+    override val isFromKotlinPlugin: Boolean = classFqName.startsWith("org.jetbrains.kotlin")
 }
 
 private class TransformRecord(
     override val path: String,
     override val classFqName: String,
-    override val isKotlin: Boolean,
+    override val isFromKotlinPlugin: Boolean,
     override val startTimeMs: Long,
     override val totalTimeMs: Long,
     override val buildMetrics: BuildMetrics

@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.build.report.metrics.BuildMetrics
 interface BuildOperationRecord {
     val path: String
     val classFqName: String
-    val isKotlin: Boolean
+    val isFromKotlinPlugin: Boolean
     val startTimeMs: Long // Measured by System.currentTimeMillis()
     val totalTimeMs: Long
     val buildMetrics: BuildMetrics
