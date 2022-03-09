@@ -27,12 +27,12 @@ class JvmAbiOutputExtension(
     private val outputPath: File,
     private val abiClassInfos: Map<String, AbiClassInfo>,
     private val messageCollector: MessageCollector,
-    private val deleteNonPublicFromAbi: Boolean,
+    private val deleteNonPublicAbi: Boolean,
 ) : ClassFileFactoryFinalizerExtension {
     override fun finalizeClassFactory(factory: ClassFileFactory) {
         // We need to wait until the end to produce any output in order to strip classes
         // from the InnerClasses attributes.
-        val outputFiles = AbiOutputFiles(abiClassInfos, factory)
+        val outputFiles = AbiOutputFiles(abiClassInfos, factory, deleteNonPublicAbi)
         if (outputPath.extension == "jar") {
             // We don't include the runtime or main class in interface jars and always reset time stamps.
             CompileEnvironmentUtil.writeToJar(
@@ -49,7 +49,11 @@ class JvmAbiOutputExtension(
         }
     }
 
-    private class AbiOutputFiles(val abiClassInfos: Map<String, AbiClassInfo>, val outputFiles: OutputFileCollection) :
+    private class AbiOutputFiles(
+        val abiClassInfos: Map<String, AbiClassInfo>,
+        val outputFiles: OutputFileCollection,
+        val deleteNonPublicAbi: Boolean,
+    ) :
         OutputFileCollection {
         override fun get(relativePath: String): OutputFile? {
             error("AbiOutputFiles does not implement `get`.")
@@ -123,7 +127,7 @@ class JvmAbiOutputExtension(
                                 val delegate = super.visitAnnotation(descriptor, visible)
                                 if (descriptor != JvmAnnotationNames.METADATA_DESC)
                                     return delegate
-                                return abiMetadataProcessor(delegate)
+                                return abiMetadataProcessor(delegate, deleteNonPublicAbi)
                             }
                         }, 0)
                         SimpleOutputBinaryFile(outputFile.sourceFiles, outputFile.relativePath, writer.toByteArray())

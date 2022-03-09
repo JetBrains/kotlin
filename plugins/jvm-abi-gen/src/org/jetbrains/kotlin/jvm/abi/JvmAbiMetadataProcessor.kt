@@ -5,12 +5,28 @@
 
 package org.jetbrains.kotlin.jvm.abi
 
-import kotlinx.metadata.*
+import kotlinx.metadata.Flag
+import kotlinx.metadata.Flags
+import kotlinx.metadata.KmClassExtensionVisitor
+import kotlinx.metadata.KmClassVisitor
+import kotlinx.metadata.KmConstructorVisitor
+import kotlinx.metadata.KmExtensionType
+import kotlinx.metadata.KmFunctionVisitor
+import kotlinx.metadata.KmPackageExtensionVisitor
+import kotlinx.metadata.KmPackageVisitor
+import kotlinx.metadata.KmPropertyVisitor
+import kotlinx.metadata.KmTypeAliasVisitor
 import kotlinx.metadata.jvm.JvmClassExtensionVisitor
 import kotlinx.metadata.jvm.JvmPackageExtensionVisitor
 import kotlinx.metadata.jvm.KotlinClassHeader
 import kotlinx.metadata.jvm.KotlinClassMetadata
-import org.jetbrains.kotlin.load.java.JvmAnnotationNames.*
+import org.jetbrains.kotlin.load.java.JvmAnnotationNames.KIND_FIELD_NAME
+import org.jetbrains.kotlin.load.java.JvmAnnotationNames.METADATA_DATA_FIELD_NAME
+import org.jetbrains.kotlin.load.java.JvmAnnotationNames.METADATA_EXTRA_INT_FIELD_NAME
+import org.jetbrains.kotlin.load.java.JvmAnnotationNames.METADATA_EXTRA_STRING_FIELD_NAME
+import org.jetbrains.kotlin.load.java.JvmAnnotationNames.METADATA_PACKAGE_NAME_FIELD_NAME
+import org.jetbrains.kotlin.load.java.JvmAnnotationNames.METADATA_STRINGS_FIELD_NAME
+import org.jetbrains.kotlin.load.java.JvmAnnotationNames.METADATA_VERSION_FIELD_NAME
 import org.jetbrains.org.objectweb.asm.AnnotationVisitor
 import org.jetbrains.org.objectweb.asm.Opcodes
 
@@ -18,7 +34,7 @@ import org.jetbrains.org.objectweb.asm.Opcodes
  * Wrap the visitor for a Kotlin Metadata annotation to strip out private and local
  * functions, properties, and type aliases as well as local delegated properties.
  */
-fun abiMetadataProcessor(annotationVisitor: AnnotationVisitor): AnnotationVisitor =
+fun abiMetadataProcessor(annotationVisitor: AnnotationVisitor, deleteNonPublicAbi: Boolean): AnnotationVisitor =
     kotlinClassHeaderVisitor { header ->
         // kotlinx-metadata only supports writing Kotlin metadata of version >= 1.4, so we need to
         // update the metadata version if we encounter older metadata annotations.
@@ -31,17 +47,17 @@ fun abiMetadataProcessor(annotationVisitor: AnnotationVisitor): AnnotationVisito
         val newHeader = when (val metadata = KotlinClassMetadata.read(header)) {
             is KotlinClassMetadata.Class -> {
                 val writer = KotlinClassMetadata.Class.Writer()
-                metadata.accept(AbiKmClassVisitor(writer))
+                metadata.accept(AbiKmClassVisitor(writer, deleteNonPublicAbi))
                 writer.write(metadataVersion, header.extraInt).header
             }
             is KotlinClassMetadata.FileFacade -> {
                 val writer = KotlinClassMetadata.FileFacade.Writer()
-                metadata.accept(AbiKmPackageVisitor(writer))
+                metadata.accept(AbiKmPackageVisitor(writer, deleteNonPublicAbi))
                 writer.write(metadataVersion, header.extraInt).header
             }
             is KotlinClassMetadata.MultiFileClassPart -> {
                 val writer = KotlinClassMetadata.MultiFileClassPart.Writer()
-                metadata.accept(AbiKmPackageVisitor(writer))
+                metadata.accept(AbiKmPackageVisitor(writer, deleteNonPublicAbi))
                 writer.write(metadata.facadeClassName, metadataVersion, header.extraInt).header
             }
             else -> header
@@ -136,27 +152,27 @@ private fun AnnotationVisitor.visitKotlinMetadata(header: KotlinClassHeader) {
  * Class metadata adapter which removes private functions, properties, type aliases,
  * and local delegated properties.
  */
-private class AbiKmClassVisitor(delegate: KmClassVisitor) : KmClassVisitor(delegate) {
+private class AbiKmClassVisitor(delegate: KmClassVisitor, val deleteNonPublicAbi: Boolean) : KmClassVisitor(delegate) {
     override fun visitConstructor(flags: Flags): KmConstructorVisitor? {
-        if (!isPrivateDeclaration(flags))
+        if (!isPrivateDeclaration(flags, deleteNonPublicAbi))
             return super.visitConstructor(flags)
         return null
     }
 
     override fun visitFunction(flags: Flags, name: String): KmFunctionVisitor? {
-        if (!isPrivateDeclaration(flags))
+        if (!isPrivateDeclaration(flags, deleteNonPublicAbi))
             return super.visitFunction(flags, name)
         return null
     }
 
     override fun visitProperty(flags: Flags, name: String, getterFlags: Flags, setterFlags: Flags): KmPropertyVisitor? {
-        if (!isPrivateDeclaration(flags))
+        if (!isPrivateDeclaration(flags, deleteNonPublicAbi))
             return super.visitProperty(flags, name, getterFlags, setterFlags)
         return null
     }
 
     override fun visitTypeAlias(flags: Flags, name: String): KmTypeAliasVisitor? {
-        if (!isPrivateDeclaration(flags))
+        if (!isPrivateDeclaration(flags, deleteNonPublicAbi))
             return super.visitTypeAlias(flags, name)
         return null
     }
@@ -176,21 +192,21 @@ private class AbiKmClassVisitor(delegate: KmClassVisitor) : KmClassVisitor(deleg
  * Class metadata adapter which removes private functions, properties, type aliases,
  * and local delegated properties.
  */
-private class AbiKmPackageVisitor(delegate: KmPackageVisitor) : KmPackageVisitor(delegate) {
+private class AbiKmPackageVisitor(delegate: KmPackageVisitor, val deleteNonPublicAbi: Boolean) : KmPackageVisitor(delegate) {
     override fun visitFunction(flags: Flags, name: String): KmFunctionVisitor? {
-        if (!isPrivateDeclaration(flags))
+        if (!isPrivateDeclaration(flags, deleteNonPublicAbi))
             return super.visitFunction(flags, name)
         return null
     }
 
     override fun visitProperty(flags: Flags, name: String, getterFlags: Flags, setterFlags: Flags): KmPropertyVisitor? {
-        if (!isPrivateDeclaration(flags))
+        if (!isPrivateDeclaration(flags, deleteNonPublicAbi))
             return super.visitProperty(flags, name, getterFlags, setterFlags)
         return null
     }
 
     override fun visitTypeAlias(flags: Flags, name: String): KmTypeAliasVisitor? {
-        if (!isPrivateDeclaration(flags))
+        if (!isPrivateDeclaration(flags, deleteNonPublicAbi))
             return super.visitTypeAlias(flags, name)
         return null
     }
@@ -206,5 +222,5 @@ private class AbiKmPackageVisitor(delegate: KmPackageVisitor) : KmPackageVisitor
     }
 }
 
-private fun isPrivateDeclaration(flags: Flags): Boolean =
-    Flag.IS_PRIVATE(flags) || Flag.IS_PRIVATE_TO_THIS(flags) || Flag.IS_LOCAL(flags)
+private fun isPrivateDeclaration(flags: Flags, deleteNonPublicAbi: Boolean): Boolean =
+    Flag.IS_PRIVATE(flags) || Flag.IS_PRIVATE_TO_THIS(flags) || Flag.IS_LOCAL(flags) || (deleteNonPublicAbi && Flag.IS_INTERNAL(flags))
