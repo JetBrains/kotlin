@@ -1,3 +1,5 @@
+// !RENDER_DIAGNOSTICS_FULL_TEXT
+
 fun Int.with() {
     with("") {
         this<!LABEL_RESOLVE_WILL_CHANGE("function with; anonymous function")!>@with<!>.inc()

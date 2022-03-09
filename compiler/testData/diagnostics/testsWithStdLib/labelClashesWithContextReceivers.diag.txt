@@ -1,0 +1,13 @@
+/labelClashesWithContextReceivers.kt:8:9: warning: the expression is unused
+        this@Some
+        ^
+/labelClashesWithContextReceivers.kt:8:13: warning: this label is now resolved to 'class Some' but soon it will be resolved to the closest 'function foo context receiver'. Please consider introducing or changing explicit label name
+        this@Some
+            ^
+/labelClashesWithContextReceivers.kt:9:9: warning: the expression is unused
+        this@String
+        ^
+/labelClashesWithContextReceivers.kt:14:21: warning: this label is now resolved to 'class Some' but soon it will be resolved to the closest 'property self context receiver'. Please consider introducing or changing explicit label name
+        get() = this@Some
+                    ^
+
