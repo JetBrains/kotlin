@@ -162,7 +162,7 @@ internal class FirInvokeResolveTowerExtension(
                 continue
             }
 
-            val extensionReceiverExpression = invokeReceiverCandidate.extensionReceiverExpression()
+            val extensionReceiverExpression = invokeReceiverCandidate.chosenExtensionReceiverExpression()
             val useImplicitReceiverAsBuiltinInvokeArgument =
                 !invokeBuiltinExtensionMode && isExtensionFunctionType &&
                         invokeReceiverCandidate.explicitReceiverKind == ExplicitReceiverKind.NO_EXPLICIT_RECEIVER
@@ -389,6 +389,13 @@ private class InvokeFunctionResolveTask(
                 processLevelForRegularInvoke(
                     receiver.toMemberScopeTowerLevel(extensionReceiver = invokeReceiverValue),
                     info, group.Member,
+                    ExplicitReceiverKind.EXTENSION_RECEIVER
+                )
+            },
+            onContextReceiverGroup = { contextReceiverGroup, towerGroup ->
+                processLevelForRegularInvoke(
+                    contextReceiverGroup.toMemberScopeTowerLevel(extensionReceiver = invokeReceiverValue),
+                    info, towerGroup.Member,
                     ExplicitReceiverKind.EXTENSION_RECEIVER
                 )
             }

@@ -41,6 +41,7 @@ class ResolvedLambdaAtom(
     expectedType: ConeKotlinType?,
     val isSuspend: Boolean,
     val receiver: ConeKotlinType?,
+    val contextReceivers: List<ConeKotlinType>,
     val parameters: List<ConeKotlinType>,
     var returnType: ConeKotlinType,
     typeVariableForLambdaReturnType: ConeTypeVariableForLambdaReturnType?,

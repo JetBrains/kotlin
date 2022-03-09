@@ -81,9 +81,9 @@ val FirTypeRef.isMarkedNullable: Boolean?
 
 val FirFunctionTypeRef.parametersCount: Int
     get() = if (receiverTypeRef != null)
-        valueParameters.size + 1
+        valueParameters.size + contextReceiverTypeRefs.size + 1
     else
-        valueParameters.size
+        valueParameters.size + contextReceiverTypeRefs.size
 
 val EXTENSION_FUNCTION_ANNOTATION = ClassId.fromString("kotlin/ExtensionFunctionType")
 

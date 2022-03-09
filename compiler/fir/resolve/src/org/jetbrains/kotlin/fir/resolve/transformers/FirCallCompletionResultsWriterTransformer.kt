@@ -131,7 +131,7 @@ class FirCallCompletionResultsWriterTransformer(
         }
 
         var dispatchReceiver = subCandidate.dispatchReceiverExpression()
-        var extensionReceiver = subCandidate.extensionReceiverExpression()
+        var extensionReceiver = subCandidate.chosenExtensionReceiverExpression()
         if (!declaration.isWrappedIntegerOperator()) {
             val expectedDispatchReceiverType = (declaration as? FirCallableDeclaration)?.dispatchReceiverType
             val expectedExtensionReceiverType = (declaration as? FirCallableDeclaration)?.receiverTypeRef?.coneType
@@ -403,7 +403,7 @@ class FirCallCompletionResultsWriterTransformer(
             StoreCalleeReference,
             resolvedReference,
         ).transformDispatchReceiver(StoreReceiver, subCandidate.dispatchReceiverExpression())
-            .transformExtensionReceiver(StoreReceiver, subCandidate.extensionReceiverExpression())
+            .transformExtensionReceiver(StoreReceiver, subCandidate.chosenExtensionReceiverExpression())
     }
 
     override fun transformVariableAssignment(

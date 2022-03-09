@@ -19,7 +19,6 @@ import org.jetbrains.kotlin.resolve.calls.inference.buildAbstractResultingSubsti
 import org.jetbrains.kotlin.resolve.calls.inference.components.ConstraintSystemCompletionContext
 import org.jetbrains.kotlin.resolve.calls.inference.components.ConstraintSystemCompletionMode
 import org.jetbrains.kotlin.resolve.calls.inference.model.BuilderInferencePosition
-import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintKind
 import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintStorage
 import org.jetbrains.kotlin.resolve.calls.inference.model.NewConstraintSystemImpl
 import org.jetbrains.kotlin.resolve.calls.inference.registerTypeVariableIfNotPresent
@@ -74,7 +73,7 @@ class FirDelegatedPropertyInferenceSession(
         if (callee.candidate.system.hasContradiction) return true
 
         val hasStubType =
-            callee.candidate.extensionReceiverValue?.type?.containsStubType() ?: false
+            callee.candidate.chosenExtensionReceiverValue?.type?.containsStubType() ?: false
                     || callee.candidate.dispatchReceiverValue?.type?.containsStubType() ?: false
 
         if (!hasStubType) {

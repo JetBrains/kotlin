@@ -64,7 +64,7 @@ class FirBuilderInferenceSession(
     }
 
     private fun Candidate.isSuitableForBuilderInference(): Boolean {
-        val extensionReceiver = extensionReceiverValue
+        val extensionReceiver = chosenExtensionReceiverValue
         val dispatchReceiver = dispatchReceiverValue
         return when {
             extensionReceiver == null && dispatchReceiver == null -> false

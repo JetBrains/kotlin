@@ -82,7 +82,8 @@ object LowerPriorityToPreserveCompatibilityDiagnostic : ResolutionDiagnostic(RES
 
 object CandidateChosenUsingOverloadResolutionByLambdaAnnotation : ResolutionDiagnostic(RESOLVED)
 
-class UnstableSmartCast(val argument: FirExpressionWithSmartcast, val targetType: ConeKotlinType, val isCastToNotNull: Boolean) : ResolutionDiagnostic(UNSTABLE_SMARTCAST)
+class UnstableSmartCast(val argument: FirExpressionWithSmartcast, val targetType: ConeKotlinType, val isCastToNotNull: Boolean) :
+    ResolutionDiagnostic(UNSTABLE_SMARTCAST)
 
 class ArgumentTypeMismatch(
     val expectedType: ConeKotlinType,
@@ -108,3 +109,13 @@ class Unsupported(val message: String, val source: KtSourceElement? = null) : Re
 object PropertyAsOperator : ResolutionDiagnostic(PROPERTY_AS_OPERATOR)
 
 class DslScopeViolation(val calleeSymbol: FirBasedSymbol<*>) : ResolutionDiagnostic(DSL_SCOPE_VIOLATION)
+
+class MultipleContextReceiversApplicableForExtensionReceivers : ResolutionDiagnostic(INAPPLICABLE)
+
+class NoApplicableValueForContextReceiver(
+    val expectedContextReceiverType: ConeKotlinType
+) : ResolutionDiagnostic(INAPPLICABLE)
+
+class AmbiguousValuesForContextReceiverParameter(
+    val expectedContextReceiverType: ConeKotlinType,
+) : ResolutionDiagnostic(INAPPLICABLE)

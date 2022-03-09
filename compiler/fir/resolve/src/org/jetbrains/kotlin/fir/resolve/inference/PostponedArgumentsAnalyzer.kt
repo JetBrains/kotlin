@@ -37,6 +37,7 @@ interface LambdaAnalyzer {
     fun analyzeAndGetLambdaReturnArguments(
         lambdaAtom: ResolvedLambdaAtom,
         receiverType: ConeKotlinType?,
+        contextReceivers: List<ConeKotlinType>,
         parameters: List<ConeKotlinType>,
         expectedReturnType: ConeKotlinType?, // null means, that return type is not proper i.e. it depends on some type variables
         stubsForPostponedVariables: Map<TypeVariableMarker, StubTypeMarker>,
@@ -122,6 +123,7 @@ class PostponedArgumentsAnalyzer(
         fun substitute(type: ConeKotlinType) = currentSubstitutor.safeSubstitute(c, type) as ConeKotlinType
 
         val receiver = lambda.receiver?.let(::substitute)
+        val contextReceivers = lambda.contextReceivers.map(::substitute)
         val parameters = lambda.parameters.map(::substitute)
         val rawReturnType = lambda.returnType
 
@@ -137,6 +139,7 @@ class PostponedArgumentsAnalyzer(
         val results = lambdaAnalyzer.analyzeAndGetLambdaReturnArguments(
             lambda,
             receiver,
+            contextReceivers,
             parameters,
             expectedTypeForReturnArguments,
             stubsForPostponedVariables,

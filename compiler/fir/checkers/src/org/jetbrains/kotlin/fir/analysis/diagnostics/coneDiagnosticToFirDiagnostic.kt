@@ -186,6 +186,7 @@ private fun mapInapplicableCandidateError(
     source: KtSourceElement,
     qualifiedAccessSource: KtSourceElement?,
 ): List<KtDiagnostic> {
+    val typeContext = session.typeContext
     val genericDiagnostic = FirErrors.INAPPLICABLE_CANDIDATE.createOn(source, diagnostic.candidate.symbol)
     val diagnostics = diagnostic.candidate.diagnostics.filter { it.applicability == diagnostic.applicability }.mapNotNull { rootCause ->
         when (rootCause) {
@@ -197,7 +198,6 @@ private fun mapInapplicableCandidateError(
                 rootCause.forbiddenNamedArgumentsTarget
             )
             is ArgumentTypeMismatch -> {
-                val typeContext = session.typeContext
                 FirErrors.ARGUMENT_TYPE_MISMATCH.createOn(
                     rootCause.argument.source ?: source,
                     rootCause.expectedType.removeTypeVariableTypes(typeContext),
@@ -205,6 +205,18 @@ private fun mapInapplicableCandidateError(
                     rootCause.isMismatchDueToNullability
                 )
             }
+            is MultipleContextReceiversApplicableForExtensionReceivers ->
+                FirErrors.AMBIGUOUS_CALL_WITH_IMPLICIT_CONTEXT_RECEIVER.createOn(qualifiedAccessSource ?: source)
+            is NoApplicableValueForContextReceiver ->
+                FirErrors.NO_CONTEXT_RECEIVER.createOn(
+                    qualifiedAccessSource ?: source,
+                    rootCause.expectedContextReceiverType.removeTypeVariableTypes(typeContext)
+                )
+            is AmbiguousValuesForContextReceiverParameter ->
+                FirErrors.MULTIPLE_ARGUMENTS_APPLICABLE_FOR_CONTEXT_RECEIVER.createOn(
+                    qualifiedAccessSource ?: source,
+                    rootCause.expectedContextReceiverType.removeTypeVariableTypes(typeContext)
+                )
             is NullForNotNullType -> FirErrors.NULL_FOR_NONNULL_TYPE.createOn(
                 rootCause.argument.source ?: source
             )

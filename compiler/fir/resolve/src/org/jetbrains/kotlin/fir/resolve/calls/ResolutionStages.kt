@@ -34,6 +34,8 @@ import org.jetbrains.kotlin.fir.visibilityChecker
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.resolve.calls.inference.isSubtypeConstraintCompatible
+import org.jetbrains.kotlin.resolve.calls.inference.model.SimpleConstraintSystemConstraintPosition
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind.*
 import org.jetbrains.kotlin.resolve.calls.tower.CandidateApplicability
 import org.jetbrains.kotlin.resolve.deprecation.DeprecationLevelValue
@@ -76,18 +78,43 @@ internal object CheckExplicitReceiverConsistency : ResolutionStage() {
 object CheckExtensionReceiver : ResolutionStage() {
     override suspend fun check(candidate: Candidate, callInfo: CallInfo, sink: CheckerSink, context: ResolutionContext) {
         val expectedReceiverType = candidate.getReceiverType(context) ?: return
-
-        val argumentExtensionReceiverValue = candidate.extensionReceiverValue ?: return
         val expectedType = candidate.substitutor.substituteOrSelf(expectedReceiverType.type)
-        val argumentType = captureFromTypeParameterUpperBoundIfNeeded(
-            argumentType = argumentExtensionReceiverValue.type,
-            expectedType = expectedType,
-            session = context.session
-        )
+
+        // Probably, we should add an assertion here since we check consistency on the level of scope tower levels
+        if (candidate.givenExtensionReceiverOptions.isEmpty()) return
+
+        val preparedReceivers = candidate.givenExtensionReceiverOptions.map {
+            candidate.prepareReceivers(it, expectedType, context)
+        }
+
+        if (preparedReceivers.size == 1) {
+            resolveExtensionReceiver(preparedReceivers, candidate, expectedType, sink, context)
+            return
+        }
+
+        val successfulReceivers = preparedReceivers.filter {
+            candidate.system.isSubtypeConstraintCompatible(it.type, expectedType, SimpleConstraintSystemConstraintPosition)
+        }
+
+        when (successfulReceivers.size) {
+            0 -> sink.yieldDiagnostic(InapplicableWrongReceiver())
+            1 -> resolveExtensionReceiver(successfulReceivers, candidate, expectedType, sink, context)
+            else -> sink.yieldDiagnostic(MultipleContextReceiversApplicableForExtensionReceivers())
+        }
+    }
+
+    private suspend fun resolveExtensionReceiver(
+        receivers: List<ReceiverDescription>,
+        candidate: Candidate,
+        expectedType: ConeKotlinType,
+        sink: CheckerSink,
+        context: ResolutionContext
+    ) {
+        val receiver = receivers.single()
         candidate.resolvePlainArgumentType(
             candidate.csBuilder,
-            argumentExtensionReceiverValue.receiverExpression,
-            argumentType = argumentType,
+            receiver.expression,
+            argumentType = receiver.type,
             expectedType = expectedType,
             sink = sink,
             context = context,
@@ -108,6 +135,25 @@ object CheckExtensionReceiver : ResolutionStage() {
         return (returnTypeRef.type.typeArguments.firstOrNull() as? ConeKotlinTypeProjection)?.type
     }
 }
+
+private fun Candidate.prepareReceivers(
+    argumentExtensionReceiverValue: ReceiverValue,
+    expectedType: ConeKotlinType,
+    context: ResolutionContext,
+): ReceiverDescription {
+    val argumentType = captureFromTypeParameterUpperBoundIfNeeded(
+        argumentType = argumentExtensionReceiverValue.type,
+        expectedType = expectedType,
+        session = context.session
+    ).let { prepareCapturedType(it, context) }
+
+    return ReceiverDescription(argumentExtensionReceiverValue.receiverExpression, argumentType)
+}
+
+private class ReceiverDescription(
+    val expression: FirExpression,
+    val type: ConeKotlinType,
+)
 
 object CheckDispatchReceiver : ResolutionStage() {
     @OptIn(SymbolInternals::class)
@@ -156,6 +202,58 @@ object CheckDispatchReceiver : ResolutionStage() {
     }
 }
 
+object CheckContextReceivers : ResolutionStage() {
+    override suspend fun check(candidate: Candidate, callInfo: CallInfo, sink: CheckerSink, context: ResolutionContext) {
+        val contextReceiverExpectedTypes = (candidate.symbol as? FirCallableSymbol<*>)?.fir?.contextReceivers?.map {
+            candidate.substitutor.substituteOrSelf(it.typeRef.coneType)
+        }?.takeUnless { it.isEmpty() } ?: return
+
+        val receiverGroups: List<List<ImplicitReceiverValue<*>>> =
+            context.bodyResolveContext.towerDataContext.towerDataElements.mapNotNull { towerDataElement ->
+                towerDataElement.implicitReceiver?.let(::listOf) ?: towerDataElement.contextReceiverGroup
+            }
+
+        val resultingContextReceiverArguments = mutableListOf<FirExpression>()
+        for (expectedType in contextReceiverExpectedTypes) {
+            val matchingReceivers = candidate.findClosestMatchingReceivers(expectedType, receiverGroups, context)
+            when (matchingReceivers.size) {
+                0 -> {
+                    sink.reportDiagnostic(NoApplicableValueForContextReceiver(expectedType))
+                    return
+                }
+                1 -> {
+                    val matchingReceiver = matchingReceivers.single()
+                    resultingContextReceiverArguments.add(matchingReceiver.expression)
+                    candidate.system.addSubtypeConstraint(matchingReceiver.type, expectedType, SimpleConstraintSystemConstraintPosition)
+                }
+                else -> {
+                    sink.reportDiagnostic(AmbiguousValuesForContextReceiverParameter(expectedType))
+                    return
+                }
+            }
+        }
+
+        candidate.contextReceiverArguments = resultingContextReceiverArguments
+    }
+}
+
+private fun Candidate.findClosestMatchingReceivers(
+    expectedType: ConeKotlinType,
+    receiverGroups: List<List<ImplicitReceiverValue<*>>>,
+    context: ResolutionContext,
+): List<ReceiverDescription> {
+    for (receiverGroup in receiverGroups) {
+        val currentResult =
+            receiverGroup
+                .map { prepareReceivers(it, expectedType, context) }
+                .filter { system.isSubtypeConstraintCompatible(it.type, expectedType, SimpleConstraintSystemConstraintPosition) }
+
+        if (currentResult.isNotEmpty()) return currentResult
+    }
+
+    return emptyList()
+}
+
 /**
  * See https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-dsl-marker/ for more details and
  * /compiler/testData/diagnostics/tests/resolve/dslMarker for the test files.
@@ -176,7 +274,7 @@ object CheckDslScopeViolation : ResolutionStage() {
             }
         }
         checkReceiverValue(candidate.dispatchReceiverValue)
-        checkReceiverValue(candidate.extensionReceiverValue)
+        checkReceiverValue(candidate.chosenExtensionReceiverValue)
 
         // For value of builtin functional type with implicit extension receiver, the receiver is passed as the first argument rather than
         // an extension receiver of the `invoke` call. Hence, we need to specially handle this case.

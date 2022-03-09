@@ -218,7 +218,9 @@ private fun ConeTypeProjection.typeOrDefault(default: ConeKotlinType): ConeKotli
 
 fun ConeKotlinType.receiverType(session: FirSession): ConeKotlinType? {
     if (!isBuiltinFunctionalType(session) || !isExtensionFunctionType(session)) return null
-    return fullyExpandedType(session).typeArguments.first().typeOrDefault(session.builtinTypes.nothingType.type)
+    return fullyExpandedType(session).let { expanded ->
+        expanded.typeArguments[expanded.contextReceiversNumberForFunctionType].typeOrDefault(session.builtinTypes.nothingType.type)
+    }
 }
 
 fun ConeKotlinType.returnType(session: FirSession): ConeKotlinType {

@@ -1608,6 +1608,32 @@ internal val KT_DIAGNOSTIC_CONVERTER = KtDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
+    add(FirErrors.NO_CONTEXT_RECEIVER) { firDiagnostic ->
+        NoContextReceiverImpl(
+            firSymbolBuilder.typeBuilder.buildKtType(firDiagnostic.a),
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirErrors.MULTIPLE_ARGUMENTS_APPLICABLE_FOR_CONTEXT_RECEIVER) { firDiagnostic ->
+        MultipleArgumentsApplicableForContextReceiverImpl(
+            firSymbolBuilder.typeBuilder.buildKtType(firDiagnostic.a),
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirErrors.AMBIGUOUS_CALL_WITH_IMPLICIT_CONTEXT_RECEIVER) { firDiagnostic ->
+        AmbiguousCallWithImplicitContextReceiverImpl(
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirErrors.UNSUPPORTED_CONTEXTUAL_DECLARATION_CALL) { firDiagnostic ->
+        UnsupportedContextualDeclarationCallImpl(
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
     add(FirErrors.RECURSION_IN_IMPLICIT_TYPES) { firDiagnostic ->
         RecursionInImplicitTypesImpl(
             firDiagnostic as KtPsiDiagnostic,
