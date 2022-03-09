@@ -324,30 +324,17 @@ public class LazySubstitutingClassDescriptor extends ModuleAwareClassDescriptor 
 
     @Nullable
     @Override
-    public InlineClassRepresentation<SimpleType> getInlineClassRepresentation() {
-        InlineClassRepresentation<SimpleType> representation = original.getInlineClassRepresentation();
-        //noinspection ConstantConditions
-        return representation == null ? null : new InlineClassRepresentation<SimpleType>(
-                representation.getUnderlyingPropertyName(),
-                substituteSimpleType(representation.getUnderlyingType())
-        );
-    }
-
-    @Nullable
-    @Override
-    public MultiFieldValueClassRepresentation<SimpleType> getMultiFieldValueClassRepresentation() {
-        MultiFieldValueClassRepresentation<SimpleType> representation = original.getMultiFieldValueClassRepresentation();
+    public ValueClassRepresentation<SimpleType> getValueClassRepresentation() {
+        ValueClassRepresentation<SimpleType> representation = original.getValueClassRepresentation();
         if (representation == null) {
             return null;
         }
-        List<Pair<Name, SimpleType>> underlyingList = new ArrayList<Pair<Name, SimpleType>>(representation.getUnderlyingPropertyNamesToTypes());
-        for (int i = 0; i < underlyingList.size(); i++) {
-            Pair<Name, SimpleType> pair = underlyingList.get(i);
-            Name name = pair.getFirst();
-            SimpleType simpleType = pair.getSecond();
-            underlyingList.set(i, new Pair<Name, SimpleType>(name, substituteSimpleType(simpleType)));
-        }
-        return new MultiFieldValueClassRepresentation<SimpleType>(underlyingList);
+        return representation.mapUnderlyingType(new Function1<SimpleType, SimpleType>() {
+            @Override
+            public SimpleType invoke(SimpleType type) {
+                return substituteSimpleType(type);
+            }
+        });
     }
 
     @Nullable

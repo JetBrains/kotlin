@@ -87,8 +87,7 @@ class FunctionClassDescriptor(
     override val annotations: Annotations get() = Annotations.EMPTY
     override fun getSource(): SourceElement = SourceElement.NO_SOURCE
     override fun getSealedSubclasses() = emptyList<ClassDescriptor>()
-    override fun getInlineClassRepresentation(): InlineClassRepresentation<SimpleType>? = null
-    override fun getMultiFieldValueClassRepresentation(): MultiFieldValueClassRepresentation<SimpleType>? = null
+    override fun getValueClassRepresentation(): ValueClassRepresentation<SimpleType>? = null
 
     override fun getDeclaredTypeParameters() = parameters
 

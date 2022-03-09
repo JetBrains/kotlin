@@ -117,6 +117,7 @@ import static org.jetbrains.kotlin.resolve.BindingContext.*;
 import static org.jetbrains.kotlin.resolve.BindingContextUtils.getDelegationConstructorCall;
 import static org.jetbrains.kotlin.resolve.BindingContextUtils.isBoxedLocalCapturedInClosure;
 import static org.jetbrains.kotlin.resolve.DescriptorUtils.*;
+import static org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilsKt.getInlineClassRepresentation;
 import static org.jetbrains.kotlin.resolve.jvm.AsmTypes.*;
 import static org.jetbrains.kotlin.types.RangeUtilKt.isPrimitiveNumberClassDescriptor;
 import static org.jetbrains.kotlin.types.expressions.ExpressionTypingUtils.isFunctionExpression;
@@ -1998,8 +1999,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
                     !CoroutineCodegenUtilKt.isInvokeSuspendOfLambda(context.getFunctionDescriptor())
                 ) {
                     ClassDescriptor inlineClass = (ClassDescriptor) inlineClassType.getConstructor().getDeclarationDescriptor();
-                    InlineClassRepresentation<SimpleType> representation =
-                            inlineClass != null ? inlineClass.getInlineClassRepresentation() : null;
+                    InlineClassRepresentation<SimpleType> representation = getInlineClassRepresentation(inlineClass);
                     assert representation != null : "Not an inline class: " + inlineClassType;
                     KotlinType underlyingType = representation.getUnderlyingType();
                     return StackValue.underlyingValueOfInlineClass(typeMapper.mapType(underlyingType), underlyingType, localOrCaptured);

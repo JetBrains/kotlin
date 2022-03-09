@@ -31,6 +31,8 @@ import org.jetbrains.kotlin.resolve.constants.EnumValue
 import org.jetbrains.kotlin.resolve.constants.IntValue
 import org.jetbrains.kotlin.resolve.constants.NullValue
 import org.jetbrains.kotlin.resolve.constants.StringValue
+import org.jetbrains.kotlin.resolve.descriptorUtil.inlineClassRepresentation
+import org.jetbrains.kotlin.resolve.descriptorUtil.multiFieldValueClassRepresentation
 import org.jetbrains.kotlin.resolve.descriptorUtil.nonSourceAnnotations
 import org.jetbrains.kotlin.serialization.deserialization.ProtoEnumFlags
 import org.jetbrains.kotlin.serialization.deserialization.descriptorVisibility
@@ -92,7 +94,7 @@ class DescriptorSerializer private constructor(
             ProtoEnumFlags.modality(classDescriptor.modality),
             ProtoEnumFlags.classKind(classDescriptor.kind, classDescriptor.isCompanionObject),
             classDescriptor.isInner, classDescriptor.isData, classDescriptor.isExternal, classDescriptor.isExpect,
-            classDescriptor.isInlineOrValueClass(), classDescriptor.isFun
+            classDescriptor.isValueClass(), classDescriptor.isFun
         )
         if (flags != builder.flags) {
             builder.flags = flags
@@ -171,19 +173,28 @@ class DescriptorSerializer private constructor(
             builder.companionObjectName = getSimpleNameIndex(companionObjectDescriptor.name)
         }
 
-        val representation = classDescriptor.inlineClassRepresentation
-        if (representation != null) {
-            builder.inlineClassUnderlyingPropertyName = getSimpleNameIndex(representation.underlyingPropertyName)
+        classDescriptor.inlineClassRepresentation?.let { inlineClassRepresentation ->
+            builder.inlineClassUnderlyingPropertyName = getSimpleNameIndex(inlineClassRepresentation.underlyingPropertyName)
 
             val property = callableMembers.single {
-                it is PropertyDescriptor && it.extensionReceiverParameter == null && it.name == representation.underlyingPropertyName
+                it is PropertyDescriptor && it.extensionReceiverParameter == null && it.name == inlineClassRepresentation.underlyingPropertyName
             }
             if (!property.visibility.isPublicAPI) {
                 if (useTypeTable()) {
-                    builder.inlineClassUnderlyingTypeId = typeId(representation.underlyingType)
+                    builder.inlineClassUnderlyingTypeId = typeId(inlineClassRepresentation.underlyingType)
                 } else {
-                    builder.setInlineClassUnderlyingType(type(representation.underlyingType))
+                    builder.setInlineClassUnderlyingType(type(inlineClassRepresentation.underlyingType))
                 }
+            }
+        }
+
+        classDescriptor.multiFieldValueClassRepresentation?.let { multiFieldValueClassRepresentation ->
+            val namesToTypes = multiFieldValueClassRepresentation.underlyingPropertyNamesToTypes
+            builder.addAllMultiFieldValueClassUnderlyingName(namesToTypes.map { (name, _) -> getSimpleNameIndex(name) })
+            if (useTypeTable()) {
+                builder.addAllMultiFieldValueClassUnderlyingTypeId(namesToTypes.map { (_, kotlinType) -> typeId(kotlinType) })
+            } else {
+                builder.addAllMultiFieldValueClassUnderlyingType(namesToTypes.map { (_, kotlinType) -> type(kotlinType).build() })
             }
         }
 
@@ -513,7 +524,8 @@ class DescriptorSerializer private constructor(
         val builder = ProtoBuf.TypeAlias.newBuilder()
         val local = createChildSerializer(descriptor)
 
-        val flags = Flags.getTypeAliasFlags(hasAnnotations(descriptor), ProtoEnumFlags.descriptorVisibility(normalizeVisibility(descriptor)))
+        val flags =
+            Flags.getTypeAliasFlags(hasAnnotations(descriptor), ProtoEnumFlags.descriptorVisibility(normalizeVisibility(descriptor)))
         if (flags != builder.flags) {
             builder.flags = flags
         }

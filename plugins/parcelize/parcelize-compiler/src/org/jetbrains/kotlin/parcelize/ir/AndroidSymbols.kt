@@ -109,27 +109,27 @@ class AndroidSymbols(
 
     val kotlinUByte: IrClassSymbol =
         createClass(kotlin, "UByte", ClassKind.CLASS, Modality.FINAL, true).apply {
-            owner.inlineClassRepresentation = InlineClassRepresentation(Name.identifier("data"), irBuiltIns.byteType as IrSimpleType)
+            owner.valueClassRepresentation = InlineClassRepresentation(Name.identifier("data"), irBuiltIns.byteType as IrSimpleType)
         }
 
     val kotlinUShort: IrClassSymbol =
         createClass(kotlin, "UShort", ClassKind.CLASS, Modality.FINAL, true).apply {
-            owner.inlineClassRepresentation = InlineClassRepresentation(Name.identifier("data"), irBuiltIns.shortType as IrSimpleType)
+            owner.valueClassRepresentation = InlineClassRepresentation(Name.identifier("data"), irBuiltIns.shortType as IrSimpleType)
         }
 
     val kotlinUInt: IrClassSymbol =
         createClass(kotlin, "UInt", ClassKind.CLASS, Modality.FINAL, true).apply {
-            owner.inlineClassRepresentation = InlineClassRepresentation(Name.identifier("data"), irBuiltIns.intType as IrSimpleType)
+            owner.valueClassRepresentation = InlineClassRepresentation(Name.identifier("data"), irBuiltIns.intType as IrSimpleType)
         }
 
     val kotlinULong: IrClassSymbol =
         createClass(kotlin, "ULong", ClassKind.CLASS, Modality.FINAL, true).apply {
-            owner.inlineClassRepresentation = InlineClassRepresentation(Name.identifier("data"), irBuiltIns.longType as IrSimpleType)
+            owner.valueClassRepresentation = InlineClassRepresentation(Name.identifier("data"), irBuiltIns.longType as IrSimpleType)
         }
 
     val kotlinUByteArray: IrClassSymbol =
         createClass(kotlin, "UByteArray", ClassKind.CLASS, Modality.FINAL, true).apply {
-            owner.inlineClassRepresentation = InlineClassRepresentation(
+            owner.valueClassRepresentation = InlineClassRepresentation(
                 Name.identifier("storage"),
                 irBuiltIns.primitiveArrayForType.getValue(irBuiltIns.byteType).owner.defaultType
             )
@@ -137,7 +137,7 @@ class AndroidSymbols(
 
     val kotlinUShortArray: IrClassSymbol =
         createClass(kotlin, "UShortArray", ClassKind.CLASS, Modality.FINAL, true).apply {
-            owner.inlineClassRepresentation = InlineClassRepresentation(
+            owner.valueClassRepresentation = InlineClassRepresentation(
                 Name.identifier("storage"),
                 irBuiltIns.primitiveArrayForType.getValue(irBuiltIns.shortType).owner.defaultType
             )
@@ -145,7 +145,7 @@ class AndroidSymbols(
 
     val kotlinUIntArray: IrClassSymbol =
         createClass(kotlin, "UIntArray", ClassKind.CLASS, Modality.FINAL, true).apply {
-            owner.inlineClassRepresentation = InlineClassRepresentation(
+            owner.valueClassRepresentation = InlineClassRepresentation(
                 Name.identifier("storage"),
                 irBuiltIns.primitiveArrayForType.getValue(irBuiltIns.intType).owner.defaultType
             )
@@ -153,7 +153,7 @@ class AndroidSymbols(
 
     val kotlinULongArray: IrClassSymbol =
         createClass(kotlin, "ULongArray", ClassKind.CLASS, Modality.FINAL, true).apply {
-            owner.inlineClassRepresentation = InlineClassRepresentation(
+            owner.valueClassRepresentation = InlineClassRepresentation(
                 Name.identifier("storage"),
                 irBuiltIns.primitiveArrayForType.getValue(irBuiltIns.longType).owner.defaultType
             )

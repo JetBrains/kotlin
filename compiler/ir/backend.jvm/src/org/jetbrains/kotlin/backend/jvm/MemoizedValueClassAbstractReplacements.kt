@@ -14,4 +14,7 @@ abstract class MemoizedValueClassAbstractReplacements(protected val irFactory: I
      * Get a replacement for a function or a constructor.
      */
     abstract val getReplacementFunction: (IrFunction) -> IrSimpleFunction?
+
+    abstract val originalFunctionForStaticReplacement: MutableMap<IrFunction, IrFunction>
+
 }

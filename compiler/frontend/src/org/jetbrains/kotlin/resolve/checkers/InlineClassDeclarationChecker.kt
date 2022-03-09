@@ -77,7 +77,7 @@ object InlineClassDeclarationChecker : DeclarationChecker {
             return
         }
 
-        if (context.languageVersionSettings.supportsFeature(LanguageFeature.ValueClasses) && descriptor.isValueClass()) {
+        if (context.languageVersionSettings.supportsFeature(LanguageFeature.ValueClasses)) {
             if (primaryConstructor.valueParameters.isEmpty()) {
                 (primaryConstructor.valueParameterList ?: declaration).let {
                     trace.report(Errors.VALUE_CLASS_EMPTY_CONSTRUCTOR.on(it))
@@ -176,7 +176,7 @@ class PropertiesWithBackingFieldsInsideInlineClass : DeclarationChecker {
         if (declaration !is KtProperty) return
         if (descriptor !is PropertyDescriptor) return
 
-        if (!descriptor.containingDeclaration.isInlineOrValueClass()) return
+        if (!descriptor.containingDeclaration.isValueClass()) return
 
         if (context.trace.get(BindingContext.BACKING_FIELD_REQUIRED, descriptor) == true) {
             context.trace.report(Errors.PROPERTY_WITH_BACKING_FIELD_INSIDE_VALUE_CLASS.on(declaration))
@@ -194,7 +194,7 @@ class InnerClassInsideInlineClass : DeclarationChecker {
         if (descriptor !is ClassDescriptor) return
         if (!descriptor.isInner) return
 
-        if (!descriptor.containingDeclaration.isInlineOrValueClass()) return
+        if (!descriptor.containingDeclaration.isValueClass()) return
 
         context.trace.report(Errors.INNER_CLASS_INSIDE_VALUE_CLASS.on(declaration.modifierList!!.getModifier(KtTokens.INNER_KEYWORD)!!))
     }
@@ -208,7 +208,7 @@ class ReservedMembersAndConstructsForInlineClass : DeclarationChecker {
 
     override fun check(declaration: KtDeclaration, descriptor: DeclarationDescriptor, context: DeclarationCheckerContext) {
         val containingDeclaration = descriptor.containingDeclaration ?: return
-        if (!containingDeclaration.isInlineOrValueClass()) return
+        if (!containingDeclaration.isValueClass()) return
 
         if (descriptor !is FunctionDescriptor) return
 

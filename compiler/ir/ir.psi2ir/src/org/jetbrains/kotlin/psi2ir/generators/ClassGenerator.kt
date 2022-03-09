@@ -106,12 +106,11 @@ class ClassGenerator(
 
             generateFakeOverrideMemberDeclarations(irClass, ktClassOrObject)
 
+            irClass.valueClassRepresentation = classDescriptor.valueClassRepresentation?.mapUnderlyingType { type ->
+                type.toIrType() as? IrSimpleType ?: error("Value class underlying type is not a simple type: $classDescriptor")
+            }
+
             if (irClass.isSingleFieldValueClass && ktClassOrObject is KtClassOrObject) {
-                val representation = classDescriptor.inlineClassRepresentation
-                    ?: error("Unknown representation for inline class: $classDescriptor")
-                irClass.inlineClassRepresentation = representation.mapUnderlyingType { type ->
-                    type.toIrType() as? IrSimpleType ?: error("Inline class underlying type is not a simple type: $classDescriptor")
-                }
                 generateAdditionalMembersForSingleFieldValueClasses(irClass, ktClassOrObject)
             }
 
@@ -164,7 +163,11 @@ class ClassGenerator(
         context.extensions.getParentClassStaticScope(classDescriptor)?.run {
             for (parentStaticMember in getContributedDescriptors()) {
                 if (parentStaticMember is FunctionDescriptor &&
-                    DescriptorVisibilityUtils.isVisibleIgnoringReceiver(parentStaticMember, classDescriptor, context.languageVersionSettings)
+                    DescriptorVisibilityUtils.isVisibleIgnoringReceiver(
+                        parentStaticMember,
+                        classDescriptor,
+                        context.languageVersionSettings
+                    )
                 ) {
                     val fakeOverride = createFakeOverrideDescriptorForParentStaticMember(classDescriptor, parentStaticMember)
                     declarationGenerator.generateFakeOverrideDeclaration(fakeOverride, ktClassOrObject)?.let {
@@ -523,8 +526,10 @@ class ClassGenerator(
 
             if (!enumEntryDescriptor.isExpect) {
                 irEnumEntry.initializerExpression =
-                    context.irFactory.createExpressionBody(createBodyGenerator(irEnumEntry.symbol)
-                        .generateEnumEntryInitializer(ktEnumEntry, enumEntryDescriptor))
+                    context.irFactory.createExpressionBody(
+                        createBodyGenerator(irEnumEntry.symbol)
+                            .generateEnumEntryInitializer(ktEnumEntry, enumEntryDescriptor)
+                    )
             }
 
             if (ktEnumEntry.hasMemberDeclarations()) {

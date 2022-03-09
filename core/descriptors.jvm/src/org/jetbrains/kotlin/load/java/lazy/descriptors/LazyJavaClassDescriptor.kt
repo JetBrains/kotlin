@@ -196,9 +196,7 @@ class LazyJavaClassDescriptor(
         emptyList()
     }
 
-    override fun getInlineClassRepresentation(): InlineClassRepresentation<SimpleType>? = null
-
-    override fun getMultiFieldValueClassRepresentation(): MultiFieldValueClassRepresentation<SimpleType>? = null
+    override fun getValueClassRepresentation(): ValueClassRepresentation<SimpleType>? = null
 
     override fun toString() = "Lazy Java class ${this.fqNameUnsafe}"
 

@@ -23,8 +23,6 @@ import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.diagnostics.reportDiagnosticOnce
 import org.jetbrains.kotlin.incremental.components.InlineConstTracker
 import org.jetbrains.kotlin.lexer.KtTokens
-import org.jetbrains.kotlin.resolve.descriptorUtil.isCompanionObject
-import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.parsing.*
@@ -32,15 +30,18 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.resolve.*
 import org.jetbrains.kotlin.resolve.BindingContext.COLLECTION_LITERAL_CALL
-import org.jetbrains.kotlin.resolve.calls.util.getEffectiveExpectedType
-import org.jetbrains.kotlin.resolve.calls.util.getResolvedCall
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedValueArgument
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
+import org.jetbrains.kotlin.resolve.calls.util.getEffectiveExpectedType
+import org.jetbrains.kotlin.resolve.calls.util.getResolvedCall
 import org.jetbrains.kotlin.resolve.checkers.ExperimentalUsageChecker
 import org.jetbrains.kotlin.resolve.constants.*
 import org.jetbrains.kotlin.resolve.constants.evaluate.CompileTimeType.*
 import org.jetbrains.kotlin.resolve.descriptorUtil.classId
+import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
+import org.jetbrains.kotlin.resolve.descriptorUtil.inlineClassRepresentation
+import org.jetbrains.kotlin.resolve.descriptorUtil.isCompanionObject
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.SimpleType
 import org.jetbrains.kotlin.types.TypeUtils
@@ -52,7 +53,6 @@ import org.jetbrains.kotlin.types.typeUtil.isBoolean
 import org.jetbrains.kotlin.types.typeUtil.isSubtypeOf
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import java.math.BigInteger
-import java.util.*
 
 class ConstantExpressionEvaluator(
     internal val module: ModuleDescriptor,

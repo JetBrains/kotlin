@@ -40,7 +40,7 @@ class MemoizedInlineClassReplacements(
     private val storageManager = LockBasedStorageManager("inline-class-replacements")
     private val propertyMap = ConcurrentHashMap<IrPropertySymbol, IrProperty>()
 
-    val originalFunctionForStaticReplacement: MutableMap<IrFunction, IrFunction> = ConcurrentHashMap()
+    override val originalFunctionForStaticReplacement: MutableMap<IrFunction, IrFunction> = ConcurrentHashMap()
     internal val originalFunctionForMethodReplacement: MutableMap<IrFunction, IrFunction> = ConcurrentHashMap()
 
     /**

@@ -8513,13 +8513,44 @@ public final class ProtoBuf {
     int getInlineClassUnderlyingTypeId();
 
     /**
-     * <code>optional .org.jetbrains.kotlin.metadata.Class.MultiFieldValueClassRepresentation multi_field_value_class_representation = 22;</code>
+     * <code>repeated int32 multi_field_value_class_underlying_name = 22 [packed = true];</code>
      */
-    boolean hasMultiFieldValueClassRepresentation();
+    java.util.List<java.lang.Integer> getMultiFieldValueClassUnderlyingNameList();
     /**
-     * <code>optional .org.jetbrains.kotlin.metadata.Class.MultiFieldValueClassRepresentation multi_field_value_class_representation = 22;</code>
+     * <code>repeated int32 multi_field_value_class_underlying_name = 22 [packed = true];</code>
      */
-    org.jetbrains.kotlin.metadata.ProtoBuf.Class.MultiFieldValueClassRepresentation getMultiFieldValueClassRepresentation();
+    int getMultiFieldValueClassUnderlyingNameCount();
+    /**
+     * <code>repeated int32 multi_field_value_class_underlying_name = 22 [packed = true];</code>
+     */
+    int getMultiFieldValueClassUnderlyingName(int index);
+
+    /**
+     * <code>repeated .org.jetbrains.kotlin.metadata.Type multi_field_value_class_underlying_type = 23;</code>
+     */
+    java.util.List<org.jetbrains.kotlin.metadata.ProtoBuf.Type> 
+        getMultiFieldValueClassUnderlyingTypeList();
+    /**
+     * <code>repeated .org.jetbrains.kotlin.metadata.Type multi_field_value_class_underlying_type = 23;</code>
+     */
+    org.jetbrains.kotlin.metadata.ProtoBuf.Type getMultiFieldValueClassUnderlyingType(int index);
+    /**
+     * <code>repeated .org.jetbrains.kotlin.metadata.Type multi_field_value_class_underlying_type = 23;</code>
+     */
+    int getMultiFieldValueClassUnderlyingTypeCount();
+
+    /**
+     * <code>repeated int32 multi_field_value_class_underlying_type_id = 24 [packed = true];</code>
+     */
+    java.util.List<java.lang.Integer> getMultiFieldValueClassUnderlyingTypeIdList();
+    /**
+     * <code>repeated int32 multi_field_value_class_underlying_type_id = 24 [packed = true];</code>
+     */
+    int getMultiFieldValueClassUnderlyingTypeIdCount();
+    /**
+     * <code>repeated int32 multi_field_value_class_underlying_type_id = 24 [packed = true];</code>
+     */
+    int getMultiFieldValueClassUnderlyingTypeId(int index);
 
     /**
      * <code>optional .org.jetbrains.kotlin.metadata.TypeTable type_table = 30;</code>
@@ -8801,22 +8832,59 @@ public final class ProtoBuf {
               input.popLimit(limit);
               break;
             }
+            case 176: {
+              if (!((mutable_bitField0_ & 0x00040000) == 0x00040000)) {
+                multiFieldValueClassUnderlyingName_ = new java.util.ArrayList<java.lang.Integer>();
+                mutable_bitField0_ |= 0x00040000;
+              }
+              multiFieldValueClassUnderlyingName_.add(input.readInt32());
+              break;
+            }
             case 178: {
-              org.jetbrains.kotlin.metadata.ProtoBuf.Class.MultiFieldValueClassRepresentation.Builder subBuilder = null;
-              if (((bitField0_ & 0x00000040) == 0x00000040)) {
-                subBuilder = multiFieldValueClassRepresentation_.toBuilder();
+              int length = input.readRawVarint32();
+              int limit = input.pushLimit(length);
+              if (!((mutable_bitField0_ & 0x00040000) == 0x00040000) && input.getBytesUntilLimit() > 0) {
+                multiFieldValueClassUnderlyingName_ = new java.util.ArrayList<java.lang.Integer>();
+                mutable_bitField0_ |= 0x00040000;
               }
-              multiFieldValueClassRepresentation_ = input.readMessage(org.jetbrains.kotlin.metadata.ProtoBuf.Class.MultiFieldValueClassRepresentation.PARSER, extensionRegistry);
-              if (subBuilder != null) {
-                subBuilder.mergeFrom(multiFieldValueClassRepresentation_);
-                multiFieldValueClassRepresentation_ = subBuilder.buildPartial();
+              while (input.getBytesUntilLimit() > 0) {
+                multiFieldValueClassUnderlyingName_.add(input.readInt32());
               }
-              bitField0_ |= 0x00000040;
+              input.popLimit(limit);
+              break;
+            }
+            case 186: {
+              if (!((mutable_bitField0_ & 0x00080000) == 0x00080000)) {
+                multiFieldValueClassUnderlyingType_ = new java.util.ArrayList<org.jetbrains.kotlin.metadata.ProtoBuf.Type>();
+                mutable_bitField0_ |= 0x00080000;
+              }
+              multiFieldValueClassUnderlyingType_.add(input.readMessage(org.jetbrains.kotlin.metadata.ProtoBuf.Type.PARSER, extensionRegistry));
+              break;
+            }
+            case 192: {
+              if (!((mutable_bitField0_ & 0x00100000) == 0x00100000)) {
+                multiFieldValueClassUnderlyingTypeId_ = new java.util.ArrayList<java.lang.Integer>();
+                mutable_bitField0_ |= 0x00100000;
+              }
+              multiFieldValueClassUnderlyingTypeId_.add(input.readInt32());
+              break;
+            }
+            case 194: {
+              int length = input.readRawVarint32();
+              int limit = input.pushLimit(length);
+              if (!((mutable_bitField0_ & 0x00100000) == 0x00100000) && input.getBytesUntilLimit() > 0) {
+                multiFieldValueClassUnderlyingTypeId_ = new java.util.ArrayList<java.lang.Integer>();
+                mutable_bitField0_ |= 0x00100000;
+              }
+              while (input.getBytesUntilLimit() > 0) {
+                multiFieldValueClassUnderlyingTypeId_.add(input.readInt32());
+              }
+              input.popLimit(limit);
               break;
             }
             case 242: {
               org.jetbrains.kotlin.metadata.ProtoBuf.TypeTable.Builder subBuilder = null;
-              if (((bitField0_ & 0x00000080) == 0x00000080)) {
+              if (((bitField0_ & 0x00000040) == 0x00000040)) {
                 subBuilder = typeTable_.toBuilder();
               }
               typeTable_ = input.readMessage(org.jetbrains.kotlin.metadata.ProtoBuf.TypeTable.PARSER, extensionRegistry);
@@ -8824,13 +8892,13 @@ public final class ProtoBuf {
                 subBuilder.mergeFrom(typeTable_);
                 typeTable_ = subBuilder.buildPartial();
               }
-              bitField0_ |= 0x00000080;
+              bitField0_ |= 0x00000040;
               break;
             }
             case 248: {
-              if (!((mutable_bitField0_ & 0x00100000) == 0x00100000)) {
+              if (!((mutable_bitField0_ & 0x00400000) == 0x00400000)) {
                 versionRequirement_ = new java.util.ArrayList<java.lang.Integer>();
-                mutable_bitField0_ |= 0x00100000;
+                mutable_bitField0_ |= 0x00400000;
               }
               versionRequirement_.add(input.readInt32());
               break;
@@ -8838,9 +8906,9 @@ public final class ProtoBuf {
             case 250: {
               int length = input.readRawVarint32();
               int limit = input.pushLimit(length);
-              if (!((mutable_bitField0_ & 0x00100000) == 0x00100000) && input.getBytesUntilLimit() > 0) {
+              if (!((mutable_bitField0_ & 0x00400000) == 0x00400000) && input.getBytesUntilLimit() > 0) {
                 versionRequirement_ = new java.util.ArrayList<java.lang.Integer>();
-                mutable_bitField0_ |= 0x00100000;
+                mutable_bitField0_ |= 0x00400000;
               }
               while (input.getBytesUntilLimit() > 0) {
                 versionRequirement_.add(input.readInt32());
@@ -8850,7 +8918,7 @@ public final class ProtoBuf {
             }
             case 258: {
               org.jetbrains.kotlin.metadata.ProtoBuf.VersionRequirementTable.Builder subBuilder = null;
-              if (((bitField0_ & 0x00000100) == 0x00000100)) {
+              if (((bitField0_ & 0x00000080) == 0x00000080)) {
                 subBuilder = versionRequirementTable_.toBuilder();
               }
               versionRequirementTable_ = input.readMessage(org.jetbrains.kotlin.metadata.ProtoBuf.VersionRequirementTable.PARSER, extensionRegistry);
@@ -8858,7 +8926,7 @@ public final class ProtoBuf {
                 subBuilder.mergeFrom(versionRequirementTable_);
                 versionRequirementTable_ = subBuilder.buildPartial();
               }
-              bitField0_ |= 0x00000100;
+              bitField0_ |= 0x00000080;
               break;
             }
           }
@@ -8905,7 +8973,16 @@ public final class ProtoBuf {
         if (((mutable_bitField0_ & 0x00000100) == 0x00000100)) {
           contextReceiverTypeId_ = java.util.Collections.unmodifiableList(contextReceiverTypeId_);
         }
+        if (((mutable_bitField0_ & 0x00040000) == 0x00040000)) {
+          multiFieldValueClassUnderlyingName_ = java.util.Collections.unmodifiableList(multiFieldValueClassUnderlyingName_);
+        }
+        if (((mutable_bitField0_ & 0x00080000) == 0x00080000)) {
+          multiFieldValueClassUnderlyingType_ = java.util.Collections.unmodifiableList(multiFieldValueClassUnderlyingType_);
+        }
         if (((mutable_bitField0_ & 0x00100000) == 0x00100000)) {
+          multiFieldValueClassUnderlyingTypeId_ = java.util.Collections.unmodifiableList(multiFieldValueClassUnderlyingTypeId_);
+        }
+        if (((mutable_bitField0_ & 0x00400000) == 0x00400000)) {
           versionRequirement_ = java.util.Collections.unmodifiableList(versionRequirement_);
         }
         try {
@@ -9040,1124 +9117,6 @@ public final class ProtoBuf {
       }
 
       // @@protoc_insertion_point(enum_scope:org.jetbrains.kotlin.metadata.Class.Kind)
-    }
-
-    public interface MultiFieldValueClassRepresentationOrBuilder extends
-        // @@protoc_insertion_point(interface_extends:org.jetbrains.kotlin.metadata.Class.MultiFieldValueClassRepresentation)
-        org.jetbrains.kotlin.protobuf.MessageLiteOrBuilder {
-
-      /**
-       * <code>repeated .org.jetbrains.kotlin.metadata.Class.MultiFieldValueClassRepresentation.MultiFieldValueClassProperty property = 1;</code>
-       */
-      java.util.List<org.jetbrains.kotlin.metadata.ProtoBuf.Class.MultiFieldValueClassRepresentation.MultiFieldValueClassProperty> 
-          getPropertyList();
-      /**
-       * <code>repeated .org.jetbrains.kotlin.metadata.Class.MultiFieldValueClassRepresentation.MultiFieldValueClassProperty property = 1;</code>
-       */
-      org.jetbrains.kotlin.metadata.ProtoBuf.Class.MultiFieldValueClassRepresentation.MultiFieldValueClassProperty getProperty(int index);
-      /**
-       * <code>repeated .org.jetbrains.kotlin.metadata.Class.MultiFieldValueClassRepresentation.MultiFieldValueClassProperty property = 1;</code>
-       */
-      int getPropertyCount();
-    }
-    /**
-     * Protobuf type {@code org.jetbrains.kotlin.metadata.Class.MultiFieldValueClassRepresentation}
-     */
-    public static final class MultiFieldValueClassRepresentation extends
-        org.jetbrains.kotlin.protobuf.GeneratedMessageLite implements
-        // @@protoc_insertion_point(message_implements:org.jetbrains.kotlin.metadata.Class.MultiFieldValueClassRepresentation)
-        MultiFieldValueClassRepresentationOrBuilder {
-      // Use MultiFieldValueClassRepresentation.newBuilder() to construct.
-      private MultiFieldValueClassRepresentation(org.jetbrains.kotlin.protobuf.GeneratedMessageLite.Builder builder) {
-        super(builder);
-        this.unknownFields = builder.getUnknownFields();
-      }
-      private MultiFieldValueClassRepresentation(boolean noInit) { this.unknownFields = org.jetbrains.kotlin.protobuf.ByteString.EMPTY;}
-
-      private static final MultiFieldValueClassRepresentation defaultInstance;
-      public static MultiFieldValueClassRepresentation getDefaultInstance() {
-        return defaultInstance;
-      }
-
-      public MultiFieldValueClassRepresentation getDefaultInstanceForType() {
-        return defaultInstance;
-      }
-
-      private final org.jetbrains.kotlin.protobuf.ByteString unknownFields;
-      private MultiFieldValueClassRepresentation(
-          org.jetbrains.kotlin.protobuf.CodedInputStream input,
-          org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
-          throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
-        initFields();
-        int mutable_bitField0_ = 0;
-        org.jetbrains.kotlin.protobuf.ByteString.Output unknownFieldsOutput =
-            org.jetbrains.kotlin.protobuf.ByteString.newOutput();
-        org.jetbrains.kotlin.protobuf.CodedOutputStream unknownFieldsCodedOutput =
-            org.jetbrains.kotlin.protobuf.CodedOutputStream.newInstance(
-                unknownFieldsOutput, 1);
-        try {
-          boolean done = false;
-          while (!done) {
-            int tag = input.readTag();
-            switch (tag) {
-              case 0:
-                done = true;
-                break;
-              default: {
-                if (!parseUnknownField(input, unknownFieldsCodedOutput,
-                                       extensionRegistry, tag)) {
-                  done = true;
-                }
-                break;
-              }
-              case 10: {
-                if (!((mutable_bitField0_ & 0x00000001) == 0x00000001)) {
-                  property_ = new java.util.ArrayList<org.jetbrains.kotlin.metadata.ProtoBuf.Class.MultiFieldValueClassRepresentation.MultiFieldValueClassProperty>();
-                  mutable_bitField0_ |= 0x00000001;
-                }
-                property_.add(input.readMessage(org.jetbrains.kotlin.metadata.ProtoBuf.Class.MultiFieldValueClassRepresentation.MultiFieldValueClassProperty.PARSER, extensionRegistry));
-                break;
-              }
-            }
-          }
-        } catch (org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException e) {
-          throw e.setUnfinishedMessage(this);
-        } catch (java.io.IOException e) {
-          throw new org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException(
-              e.getMessage()).setUnfinishedMessage(this);
-        } finally {
-          if (((mutable_bitField0_ & 0x00000001) == 0x00000001)) {
-            property_ = java.util.Collections.unmodifiableList(property_);
-          }
-          try {
-            unknownFieldsCodedOutput.flush();
-          } catch (java.io.IOException e) {
-          // Should not happen
-          } finally {
-            unknownFields = unknownFieldsOutput.toByteString();
-          }
-          makeExtensionsImmutable();
-        }
-      }
-      public static org.jetbrains.kotlin.protobuf.Parser<MultiFieldValueClassRepresentation> PARSER =
-          new org.jetbrains.kotlin.protobuf.AbstractParser<MultiFieldValueClassRepresentation>() {
-        public MultiFieldValueClassRepresentation parsePartialFrom(
-            org.jetbrains.kotlin.protobuf.CodedInputStream input,
-            org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
-            throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
-          return new MultiFieldValueClassRepresentation(input, extensionRegistry);
-        }
-      };
-
-      @java.lang.Override
-      public org.jetbrains.kotlin.protobuf.Parser<MultiFieldValueClassRepresentation> getParserForType() {
-        return PARSER;
-      }
-
-      public interface MultiFieldValueClassPropertyOrBuilder extends
-          // @@protoc_insertion_point(interface_extends:org.jetbrains.kotlin.metadata.Class.MultiFieldValueClassRepresentation.MultiFieldValueClassProperty)
-          org.jetbrains.kotlin.protobuf.MessageLiteOrBuilder {
-
-        /**
-         * <code>required int32 name = 1;</code>
-         */
-        boolean hasName();
-        /**
-         * <code>required int32 name = 1;</code>
-         */
-        int getName();
-
-        /**
-         * <code>optional .org.jetbrains.kotlin.metadata.Type type = 2;</code>
-         */
-        boolean hasType();
-        /**
-         * <code>optional .org.jetbrains.kotlin.metadata.Type type = 2;</code>
-         */
-        org.jetbrains.kotlin.metadata.ProtoBuf.Type getType();
-
-        /**
-         * <code>optional int32 type_id = 3;</code>
-         */
-        boolean hasTypeId();
-        /**
-         * <code>optional int32 type_id = 3;</code>
-         */
-        int getTypeId();
-      }
-      /**
-       * Protobuf type {@code org.jetbrains.kotlin.metadata.Class.MultiFieldValueClassRepresentation.MultiFieldValueClassProperty}
-       */
-      public static final class MultiFieldValueClassProperty extends
-          org.jetbrains.kotlin.protobuf.GeneratedMessageLite implements
-          // @@protoc_insertion_point(message_implements:org.jetbrains.kotlin.metadata.Class.MultiFieldValueClassRepresentation.MultiFieldValueClassProperty)
-          MultiFieldValueClassPropertyOrBuilder {
-        // Use MultiFieldValueClassProperty.newBuilder() to construct.
-        private MultiFieldValueClassProperty(org.jetbrains.kotlin.protobuf.GeneratedMessageLite.Builder builder) {
-          super(builder);
-          this.unknownFields = builder.getUnknownFields();
-        }
-        private MultiFieldValueClassProperty(boolean noInit) { this.unknownFields = org.jetbrains.kotlin.protobuf.ByteString.EMPTY;}
-
-        private static final MultiFieldValueClassProperty defaultInstance;
-        public static MultiFieldValueClassProperty getDefaultInstance() {
-          return defaultInstance;
-        }
-
-        public MultiFieldValueClassProperty getDefaultInstanceForType() {
-          return defaultInstance;
-        }
-
-        private final org.jetbrains.kotlin.protobuf.ByteString unknownFields;
-        private MultiFieldValueClassProperty(
-            org.jetbrains.kotlin.protobuf.CodedInputStream input,
-            org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
-            throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
-          initFields();
-          int mutable_bitField0_ = 0;
-          org.jetbrains.kotlin.protobuf.ByteString.Output unknownFieldsOutput =
-              org.jetbrains.kotlin.protobuf.ByteString.newOutput();
-          org.jetbrains.kotlin.protobuf.CodedOutputStream unknownFieldsCodedOutput =
-              org.jetbrains.kotlin.protobuf.CodedOutputStream.newInstance(
-                  unknownFieldsOutput, 1);
-          try {
-            boolean done = false;
-            while (!done) {
-              int tag = input.readTag();
-              switch (tag) {
-                case 0:
-                  done = true;
-                  break;
-                default: {
-                  if (!parseUnknownField(input, unknownFieldsCodedOutput,
-                                         extensionRegistry, tag)) {
-                    done = true;
-                  }
-                  break;
-                }
-                case 8: {
-                  bitField0_ |= 0x00000001;
-                  name_ = input.readInt32();
-                  break;
-                }
-                case 18: {
-                  org.jetbrains.kotlin.metadata.ProtoBuf.Type.Builder subBuilder = null;
-                  if (typeRepresentationCase_ == 2) {
-                    subBuilder = ((org.jetbrains.kotlin.metadata.ProtoBuf.Type) typeRepresentation_).toBuilder();
-                  }
-                  typeRepresentation_ = input.readMessage(org.jetbrains.kotlin.metadata.ProtoBuf.Type.PARSER, extensionRegistry);
-                  if (subBuilder != null) {
-                    subBuilder.mergeFrom((org.jetbrains.kotlin.metadata.ProtoBuf.Type) typeRepresentation_);
-                    typeRepresentation_ = subBuilder.buildPartial();
-                  }
-                  typeRepresentationCase_ = 2;
-                  break;
-                }
-                case 24: {
-                  typeRepresentationCase_ = 3;
-                  typeRepresentation_ = input.readInt32();
-                  break;
-                }
-              }
-            }
-          } catch (org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException e) {
-            throw e.setUnfinishedMessage(this);
-          } catch (java.io.IOException e) {
-            throw new org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException(
-                e.getMessage()).setUnfinishedMessage(this);
-          } finally {
-            try {
-              unknownFieldsCodedOutput.flush();
-            } catch (java.io.IOException e) {
-            // Should not happen
-            } finally {
-              unknownFields = unknownFieldsOutput.toByteString();
-            }
-            makeExtensionsImmutable();
-          }
-        }
-        public static org.jetbrains.kotlin.protobuf.Parser<MultiFieldValueClassProperty> PARSER =
-            new org.jetbrains.kotlin.protobuf.AbstractParser<MultiFieldValueClassProperty>() {
-          public MultiFieldValueClassProperty parsePartialFrom(
-              org.jetbrains.kotlin.protobuf.CodedInputStream input,
-              org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
-              throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
-            return new MultiFieldValueClassProperty(input, extensionRegistry);
-          }
-        };
-
-        @java.lang.Override
-        public org.jetbrains.kotlin.protobuf.Parser<MultiFieldValueClassProperty> getParserForType() {
-          return PARSER;
-        }
-
-        private int bitField0_;
-        private int typeRepresentationCase_ = 0;
-        private java.lang.Object typeRepresentation_;
-        public enum TypeRepresentationCase
-            implements org.jetbrains.kotlin.protobuf.Internal.EnumLite {
-          TYPE(2),
-          TYPE_ID(3),
-          TYPEREPRESENTATION_NOT_SET(0);
-          private int value = 0;
-          private TypeRepresentationCase(int value) {
-            this.value = value;
-          }
-          public static TypeRepresentationCase valueOf(int value) {
-            switch (value) {
-              case 2: return TYPE;
-              case 3: return TYPE_ID;
-              case 0: return TYPEREPRESENTATION_NOT_SET;
-              default: throw new java.lang.IllegalArgumentException(
-                "Value is undefined for this oneof enum.");
-            }
-          }
-          public int getNumber() {
-            return this.value;
-          }
-        };
-
-        public TypeRepresentationCase
-        getTypeRepresentationCase() {
-          return TypeRepresentationCase.valueOf(
-              typeRepresentationCase_);
-        }
-
-        public static final int NAME_FIELD_NUMBER = 1;
-        private int name_;
-        /**
-         * <code>required int32 name = 1;</code>
-         */
-        public boolean hasName() {
-          return ((bitField0_ & 0x00000001) == 0x00000001);
-        }
-        /**
-         * <code>required int32 name = 1;</code>
-         */
-        public int getName() {
-          return name_;
-        }
-
-        public static final int TYPE_FIELD_NUMBER = 2;
-        /**
-         * <code>optional .org.jetbrains.kotlin.metadata.Type type = 2;</code>
-         */
-        public boolean hasType() {
-          return typeRepresentationCase_ == 2;
-        }
-        /**
-         * <code>optional .org.jetbrains.kotlin.metadata.Type type = 2;</code>
-         */
-        public org.jetbrains.kotlin.metadata.ProtoBuf.Type getType() {
-          if (typeRepresentationCase_ == 2) {
-             return (org.jetbrains.kotlin.metadata.ProtoBuf.Type) typeRepresentation_;
-          }
-          return org.jetbrains.kotlin.metadata.ProtoBuf.Type.getDefaultInstance();
-        }
-
-        public static final int TYPE_ID_FIELD_NUMBER = 3;
-        /**
-         * <code>optional int32 type_id = 3;</code>
-         */
-        public boolean hasTypeId() {
-          return typeRepresentationCase_ == 3;
-        }
-        /**
-         * <code>optional int32 type_id = 3;</code>
-         */
-        public int getTypeId() {
-          if (typeRepresentationCase_ == 3) {
-            return (java.lang.Integer) typeRepresentation_;
-          }
-          return 0;
-        }
-
-        private void initFields() {
-          name_ = 0;
-        }
-        private byte memoizedIsInitialized = -1;
-        public final boolean isInitialized() {
-          byte isInitialized = memoizedIsInitialized;
-          if (isInitialized == 1) return true;
-          if (isInitialized == 0) return false;
-
-          if (!hasName()) {
-            memoizedIsInitialized = 0;
-            return false;
-          }
-          if (hasType()) {
-            if (!getType().isInitialized()) {
-              memoizedIsInitialized = 0;
-              return false;
-            }
-          }
-          memoizedIsInitialized = 1;
-          return true;
-        }
-
-        public void writeTo(org.jetbrains.kotlin.protobuf.CodedOutputStream output)
-                            throws java.io.IOException {
-          getSerializedSize();
-          if (((bitField0_ & 0x00000001) == 0x00000001)) {
-            output.writeInt32(1, name_);
-          }
-          if (typeRepresentationCase_ == 2) {
-            output.writeMessage(2, (org.jetbrains.kotlin.metadata.ProtoBuf.Type) typeRepresentation_);
-          }
-          if (typeRepresentationCase_ == 3) {
-            output.writeInt32(
-                3, (int)((java.lang.Integer) typeRepresentation_));
-          }
-          output.writeRawBytes(unknownFields);
-        }
-
-        private int memoizedSerializedSize = -1;
-        public int getSerializedSize() {
-          int size = memoizedSerializedSize;
-          if (size != -1) return size;
-
-          size = 0;
-          if (((bitField0_ & 0x00000001) == 0x00000001)) {
-            size += org.jetbrains.kotlin.protobuf.CodedOutputStream
-              .computeInt32Size(1, name_);
-          }
-          if (typeRepresentationCase_ == 2) {
-            size += org.jetbrains.kotlin.protobuf.CodedOutputStream
-              .computeMessageSize(2, (org.jetbrains.kotlin.metadata.ProtoBuf.Type) typeRepresentation_);
-          }
-          if (typeRepresentationCase_ == 3) {
-            size += org.jetbrains.kotlin.protobuf.CodedOutputStream
-              .computeInt32Size(
-                  3, (int)((java.lang.Integer) typeRepresentation_));
-          }
-          size += unknownFields.size();
-          memoizedSerializedSize = size;
-          return size;
-        }
-
-        private static final long serialVersionUID = 0L;
-        @java.lang.Override
-        protected java.lang.Object writeReplace()
-            throws java.io.ObjectStreamException {
-          return super.writeReplace();
-        }
-
-        public static org.jetbrains.kotlin.metadata.ProtoBuf.Class.MultiFieldValueClassRepresentation.MultiFieldValueClassProperty parseFrom(
-            org.jetbrains.kotlin.protobuf.ByteString data)
-            throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
-          return PARSER.parseFrom(data);
-        }
-        public static org.jetbrains.kotlin.metadata.ProtoBuf.Class.MultiFieldValueClassRepresentation.MultiFieldValueClassProperty parseFrom(
-            org.jetbrains.kotlin.protobuf.ByteString data,
-            org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
-            throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
-          return PARSER.parseFrom(data, extensionRegistry);
-        }
-        public static org.jetbrains.kotlin.metadata.ProtoBuf.Class.MultiFieldValueClassRepresentation.MultiFieldValueClassProperty parseFrom(byte[] data)
-            throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
-          return PARSER.parseFrom(data);
-        }
-        public static org.jetbrains.kotlin.metadata.ProtoBuf.Class.MultiFieldValueClassRepresentation.MultiFieldValueClassProperty parseFrom(
-            byte[] data,
-            org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
-            throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
-          return PARSER.parseFrom(data, extensionRegistry);
-        }
-        public static org.jetbrains.kotlin.metadata.ProtoBuf.Class.MultiFieldValueClassRepresentation.MultiFieldValueClassProperty parseFrom(java.io.InputStream input)
-            throws java.io.IOException {
-          return PARSER.parseFrom(input);
-        }
-        public static org.jetbrains.kotlin.metadata.ProtoBuf.Class.MultiFieldValueClassRepresentation.MultiFieldValueClassProperty parseFrom(
-            java.io.InputStream input,
-            org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
-            throws java.io.IOException {
-          return PARSER.parseFrom(input, extensionRegistry);
-        }
-        public static org.jetbrains.kotlin.metadata.ProtoBuf.Class.MultiFieldValueClassRepresentation.MultiFieldValueClassProperty parseDelimitedFrom(java.io.InputStream input)
-            throws java.io.IOException {
-          return PARSER.parseDelimitedFrom(input);
-        }
-        public static org.jetbrains.kotlin.metadata.ProtoBuf.Class.MultiFieldValueClassRepresentation.MultiFieldValueClassProperty parseDelimitedFrom(
-            java.io.InputStream input,
-            org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
-            throws java.io.IOException {
-          return PARSER.parseDelimitedFrom(input, extensionRegistry);
-        }
-        public static org.jetbrains.kotlin.metadata.ProtoBuf.Class.MultiFieldValueClassRepresentation.MultiFieldValueClassProperty parseFrom(
-            org.jetbrains.kotlin.protobuf.CodedInputStream input)
-            throws java.io.IOException {
-          return PARSER.parseFrom(input);
-        }
-        public static org.jetbrains.kotlin.metadata.ProtoBuf.Class.MultiFieldValueClassRepresentation.MultiFieldValueClassProperty parseFrom(
-            org.jetbrains.kotlin.protobuf.CodedInputStream input,
-            org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
-            throws java.io.IOException {
-          return PARSER.parseFrom(input, extensionRegistry);
-        }
-
-        public static Builder newBuilder() { return Builder.create(); }
-        public Builder newBuilderForType() { return newBuilder(); }
-        public static Builder newBuilder(org.jetbrains.kotlin.metadata.ProtoBuf.Class.MultiFieldValueClassRepresentation.MultiFieldValueClassProperty prototype) {
-          return newBuilder().mergeFrom(prototype);
-        }
-        public Builder toBuilder() { return newBuilder(this); }
-
-        /**
-         * Protobuf type {@code org.jetbrains.kotlin.metadata.Class.MultiFieldValueClassRepresentation.MultiFieldValueClassProperty}
-         */
-        public static final class Builder extends
-            org.jetbrains.kotlin.protobuf.GeneratedMessageLite.Builder<
-              org.jetbrains.kotlin.metadata.ProtoBuf.Class.MultiFieldValueClassRepresentation.MultiFieldValueClassProperty, Builder>
-            implements
-            // @@protoc_insertion_point(builder_implements:org.jetbrains.kotlin.metadata.Class.MultiFieldValueClassRepresentation.MultiFieldValueClassProperty)
-            org.jetbrains.kotlin.metadata.ProtoBuf.Class.MultiFieldValueClassRepresentation.MultiFieldValueClassPropertyOrBuilder {
-          // Construct using org.jetbrains.kotlin.metadata.ProtoBuf.Class.MultiFieldValueClassRepresentation.MultiFieldValueClassProperty.newBuilder()
-          private Builder() {
-            maybeForceBuilderInitialization();
-          }
-
-          private void maybeForceBuilderInitialization() {
-          }
-          private static Builder create() {
-            return new Builder();
-          }
-
-          public Builder clear() {
-            super.clear();
-            name_ = 0;
-            bitField0_ = (bitField0_ & ~0x00000001);
-            typeRepresentationCase_ = 0;
-            typeRepresentation_ = null;
-            return this;
-          }
-
-          public Builder clone() {
-            return create().mergeFrom(buildPartial());
-          }
-
-          public org.jetbrains.kotlin.metadata.ProtoBuf.Class.MultiFieldValueClassRepresentation.MultiFieldValueClassProperty getDefaultInstanceForType() {
-            return org.jetbrains.kotlin.metadata.ProtoBuf.Class.MultiFieldValueClassRepresentation.MultiFieldValueClassProperty.getDefaultInstance();
-          }
-
-          public org.jetbrains.kotlin.metadata.ProtoBuf.Class.MultiFieldValueClassRepresentation.MultiFieldValueClassProperty build() {
-            org.jetbrains.kotlin.metadata.ProtoBuf.Class.MultiFieldValueClassRepresentation.MultiFieldValueClassProperty result = buildPartial();
-            if (!result.isInitialized()) {
-              throw newUninitializedMessageException(result);
-            }
-            return result;
-          }
-
-          public org.jetbrains.kotlin.metadata.ProtoBuf.Class.MultiFieldValueClassRepresentation.MultiFieldValueClassProperty buildPartial() {
-            org.jetbrains.kotlin.metadata.ProtoBuf.Class.MultiFieldValueClassRepresentation.MultiFieldValueClassProperty result = new org.jetbrains.kotlin.metadata.ProtoBuf.Class.MultiFieldValueClassRepresentation.MultiFieldValueClassProperty(this);
-            int from_bitField0_ = bitField0_;
-            int to_bitField0_ = 0;
-            if (((from_bitField0_ & 0x00000001) == 0x00000001)) {
-              to_bitField0_ |= 0x00000001;
-            }
-            result.name_ = name_;
-            if (typeRepresentationCase_ == 2) {
-              result.typeRepresentation_ = typeRepresentation_;
-            }
-            if (typeRepresentationCase_ == 3) {
-              result.typeRepresentation_ = typeRepresentation_;
-            }
-            result.bitField0_ = to_bitField0_;
-            result.typeRepresentationCase_ = typeRepresentationCase_;
-            return result;
-          }
-
-          public Builder mergeFrom(org.jetbrains.kotlin.metadata.ProtoBuf.Class.MultiFieldValueClassRepresentation.MultiFieldValueClassProperty other) {
-            if (other == org.jetbrains.kotlin.metadata.ProtoBuf.Class.MultiFieldValueClassRepresentation.MultiFieldValueClassProperty.getDefaultInstance()) return this;
-            if (other.hasName()) {
-              setName(other.getName());
-            }
-            switch (other.getTypeRepresentationCase()) {
-              case TYPE: {
-                mergeType(other.getType());
-                break;
-              }
-              case TYPE_ID: {
-                setTypeId(other.getTypeId());
-                break;
-              }
-              case TYPEREPRESENTATION_NOT_SET: {
-                break;
-              }
-            }
-            setUnknownFields(
-                getUnknownFields().concat(other.unknownFields));
-            return this;
-          }
-
-          public final boolean isInitialized() {
-            if (!hasName()) {
-              
-              return false;
-            }
-            if (hasType()) {
-              if (!getType().isInitialized()) {
-                
-                return false;
-              }
-            }
-            return true;
-          }
-
-          public Builder mergeFrom(
-              org.jetbrains.kotlin.protobuf.CodedInputStream input,
-              org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
-              throws java.io.IOException {
-            org.jetbrains.kotlin.metadata.ProtoBuf.Class.MultiFieldValueClassRepresentation.MultiFieldValueClassProperty parsedMessage = null;
-            try {
-              parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
-            } catch (org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException e) {
-              parsedMessage = (org.jetbrains.kotlin.metadata.ProtoBuf.Class.MultiFieldValueClassRepresentation.MultiFieldValueClassProperty) e.getUnfinishedMessage();
-              throw e;
-            } finally {
-              if (parsedMessage != null) {
-                mergeFrom(parsedMessage);
-              }
-            }
-            return this;
-          }
-          private int typeRepresentationCase_ = 0;
-          private java.lang.Object typeRepresentation_;
-          public TypeRepresentationCase
-              getTypeRepresentationCase() {
-            return TypeRepresentationCase.valueOf(
-                typeRepresentationCase_);
-          }
-
-          public Builder clearTypeRepresentation() {
-            typeRepresentationCase_ = 0;
-            typeRepresentation_ = null;
-            return this;
-          }
-
-          private int bitField0_;
-
-          private int name_ ;
-          /**
-           * <code>required int32 name = 1;</code>
-           */
-          public boolean hasName() {
-            return ((bitField0_ & 0x00000001) == 0x00000001);
-          }
-          /**
-           * <code>required int32 name = 1;</code>
-           */
-          public int getName() {
-            return name_;
-          }
-          /**
-           * <code>required int32 name = 1;</code>
-           */
-          public Builder setName(int value) {
-            bitField0_ |= 0x00000001;
-            name_ = value;
-            
-            return this;
-          }
-          /**
-           * <code>required int32 name = 1;</code>
-           */
-          public Builder clearName() {
-            bitField0_ = (bitField0_ & ~0x00000001);
-            name_ = 0;
-            
-            return this;
-          }
-
-          /**
-           * <code>optional .org.jetbrains.kotlin.metadata.Type type = 2;</code>
-           */
-          public boolean hasType() {
-            return typeRepresentationCase_ == 2;
-          }
-          /**
-           * <code>optional .org.jetbrains.kotlin.metadata.Type type = 2;</code>
-           */
-          public org.jetbrains.kotlin.metadata.ProtoBuf.Type getType() {
-            if (typeRepresentationCase_ == 2) {
-              return (org.jetbrains.kotlin.metadata.ProtoBuf.Type) typeRepresentation_;
-            }
-            return org.jetbrains.kotlin.metadata.ProtoBuf.Type.getDefaultInstance();
-          }
-          /**
-           * <code>optional .org.jetbrains.kotlin.metadata.Type type = 2;</code>
-           */
-          public Builder setType(org.jetbrains.kotlin.metadata.ProtoBuf.Type value) {
-            if (value == null) {
-              throw new NullPointerException();
-            }
-            typeRepresentation_ = value;
-
-            typeRepresentationCase_ = 2;
-            return this;
-          }
-          /**
-           * <code>optional .org.jetbrains.kotlin.metadata.Type type = 2;</code>
-           */
-          public Builder setType(
-              org.jetbrains.kotlin.metadata.ProtoBuf.Type.Builder builderForValue) {
-            typeRepresentation_ = builderForValue.build();
-
-            typeRepresentationCase_ = 2;
-            return this;
-          }
-          /**
-           * <code>optional .org.jetbrains.kotlin.metadata.Type type = 2;</code>
-           */
-          public Builder mergeType(org.jetbrains.kotlin.metadata.ProtoBuf.Type value) {
-            if (typeRepresentationCase_ == 2 &&
-                typeRepresentation_ != org.jetbrains.kotlin.metadata.ProtoBuf.Type.getDefaultInstance()) {
-              typeRepresentation_ = org.jetbrains.kotlin.metadata.ProtoBuf.Type.newBuilder((org.jetbrains.kotlin.metadata.ProtoBuf.Type) typeRepresentation_)
-                  .mergeFrom(value).buildPartial();
-            } else {
-              typeRepresentation_ = value;
-            }
-
-            typeRepresentationCase_ = 2;
-            return this;
-          }
-          /**
-           * <code>optional .org.jetbrains.kotlin.metadata.Type type = 2;</code>
-           */
-          public Builder clearType() {
-            if (typeRepresentationCase_ == 2) {
-              typeRepresentationCase_ = 0;
-              typeRepresentation_ = null;
-              
-            }
-            return this;
-          }
-
-          /**
-           * <code>optional int32 type_id = 3;</code>
-           */
-          public boolean hasTypeId() {
-            return typeRepresentationCase_ == 3;
-          }
-          /**
-           * <code>optional int32 type_id = 3;</code>
-           */
-          public int getTypeId() {
-            if (typeRepresentationCase_ == 3) {
-              return (java.lang.Integer) typeRepresentation_;
-            }
-            return 0;
-          }
-          /**
-           * <code>optional int32 type_id = 3;</code>
-           */
-          public Builder setTypeId(int value) {
-            typeRepresentationCase_ = 3;
-            typeRepresentation_ = value;
-            
-            return this;
-          }
-          /**
-           * <code>optional int32 type_id = 3;</code>
-           */
-          public Builder clearTypeId() {
-            if (typeRepresentationCase_ == 3) {
-              typeRepresentationCase_ = 0;
-              typeRepresentation_ = null;
-              
-            }
-            return this;
-          }
-
-          // @@protoc_insertion_point(builder_scope:org.jetbrains.kotlin.metadata.Class.MultiFieldValueClassRepresentation.MultiFieldValueClassProperty)
-        }
-
-        static {
-          defaultInstance = new MultiFieldValueClassProperty(true);
-          defaultInstance.initFields();
-        }
-
-        // @@protoc_insertion_point(class_scope:org.jetbrains.kotlin.metadata.Class.MultiFieldValueClassRepresentation.MultiFieldValueClassProperty)
-      }
-
-      public static final int PROPERTY_FIELD_NUMBER = 1;
-      private java.util.List<org.jetbrains.kotlin.metadata.ProtoBuf.Class.MultiFieldValueClassRepresentation.MultiFieldValueClassProperty> property_;
-      /**
-       * <code>repeated .org.jetbrains.kotlin.metadata.Class.MultiFieldValueClassRepresentation.MultiFieldValueClassProperty property = 1;</code>
-       */
-      public java.util.List<org.jetbrains.kotlin.metadata.ProtoBuf.Class.MultiFieldValueClassRepresentation.MultiFieldValueClassProperty> getPropertyList() {
-        return property_;
-      }
-      /**
-       * <code>repeated .org.jetbrains.kotlin.metadata.Class.MultiFieldValueClassRepresentation.MultiFieldValueClassProperty property = 1;</code>
-       */
-      public java.util.List<? extends org.jetbrains.kotlin.metadata.ProtoBuf.Class.MultiFieldValueClassRepresentation.MultiFieldValueClassPropertyOrBuilder> 
-          getPropertyOrBuilderList() {
-        return property_;
-      }
-      /**
-       * <code>repeated .org.jetbrains.kotlin.metadata.Class.MultiFieldValueClassRepresentation.MultiFieldValueClassProperty property = 1;</code>
-       */
-      public int getPropertyCount() {
-        return property_.size();
-      }
-      /**
-       * <code>repeated .org.jetbrains.kotlin.metadata.Class.MultiFieldValueClassRepresentation.MultiFieldValueClassProperty property = 1;</code>
-       */
-      public org.jetbrains.kotlin.metadata.ProtoBuf.Class.MultiFieldValueClassRepresentation.MultiFieldValueClassProperty getProperty(int index) {
-        return property_.get(index);
-      }
-      /**
-       * <code>repeated .org.jetbrains.kotlin.metadata.Class.MultiFieldValueClassRepresentation.MultiFieldValueClassProperty property = 1;</code>
-       */
-      public org.jetbrains.kotlin.metadata.ProtoBuf.Class.MultiFieldValueClassRepresentation.MultiFieldValueClassPropertyOrBuilder getPropertyOrBuilder(
-          int index) {
-        return property_.get(index);
-      }
-
-      private void initFields() {
-        property_ = java.util.Collections.emptyList();
-      }
-      private byte memoizedIsInitialized = -1;
-      public final boolean isInitialized() {
-        byte isInitialized = memoizedIsInitialized;
-        if (isInitialized == 1) return true;
-        if (isInitialized == 0) return false;
-
-        for (int i = 0; i < getPropertyCount(); i++) {
-          if (!getProperty(i).isInitialized()) {
-            memoizedIsInitialized = 0;
-            return false;
-          }
-        }
-        memoizedIsInitialized = 1;
-        return true;
-      }
-
-      public void writeTo(org.jetbrains.kotlin.protobuf.CodedOutputStream output)
-                          throws java.io.IOException {
-        getSerializedSize();
-        for (int i = 0; i < property_.size(); i++) {
-          output.writeMessage(1, property_.get(i));
-        }
-        output.writeRawBytes(unknownFields);
-      }
-
-      private int memoizedSerializedSize = -1;
-      public int getSerializedSize() {
-        int size = memoizedSerializedSize;
-        if (size != -1) return size;
-
-        size = 0;
-        for (int i = 0; i < property_.size(); i++) {
-          size += org.jetbrains.kotlin.protobuf.CodedOutputStream
-            .computeMessageSize(1, property_.get(i));
-        }
-        size += unknownFields.size();
-        memoizedSerializedSize = size;
-        return size;
-      }
-
-      private static final long serialVersionUID = 0L;
-      @java.lang.Override
-      protected java.lang.Object writeReplace()
-          throws java.io.ObjectStreamException {
-        return super.writeReplace();
-      }
-
-      public static org.jetbrains.kotlin.metadata.ProtoBuf.Class.MultiFieldValueClassRepresentation parseFrom(
-          org.jetbrains.kotlin.protobuf.ByteString data)
-          throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
-        return PARSER.parseFrom(data);
-      }
-      public static org.jetbrains.kotlin.metadata.ProtoBuf.Class.MultiFieldValueClassRepresentation parseFrom(
-          org.jetbrains.kotlin.protobuf.ByteString data,
-          org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
-          throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
-        return PARSER.parseFrom(data, extensionRegistry);
-      }
-      public static org.jetbrains.kotlin.metadata.ProtoBuf.Class.MultiFieldValueClassRepresentation parseFrom(byte[] data)
-          throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
-        return PARSER.parseFrom(data);
-      }
-      public static org.jetbrains.kotlin.metadata.ProtoBuf.Class.MultiFieldValueClassRepresentation parseFrom(
-          byte[] data,
-          org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
-          throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
-        return PARSER.parseFrom(data, extensionRegistry);
-      }
-      public static org.jetbrains.kotlin.metadata.ProtoBuf.Class.MultiFieldValueClassRepresentation parseFrom(java.io.InputStream input)
-          throws java.io.IOException {
-        return PARSER.parseFrom(input);
-      }
-      public static org.jetbrains.kotlin.metadata.ProtoBuf.Class.MultiFieldValueClassRepresentation parseFrom(
-          java.io.InputStream input,
-          org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
-          throws java.io.IOException {
-        return PARSER.parseFrom(input, extensionRegistry);
-      }
-      public static org.jetbrains.kotlin.metadata.ProtoBuf.Class.MultiFieldValueClassRepresentation parseDelimitedFrom(java.io.InputStream input)
-          throws java.io.IOException {
-        return PARSER.parseDelimitedFrom(input);
-      }
-      public static org.jetbrains.kotlin.metadata.ProtoBuf.Class.MultiFieldValueClassRepresentation parseDelimitedFrom(
-          java.io.InputStream input,
-          org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
-          throws java.io.IOException {
-        return PARSER.parseDelimitedFrom(input, extensionRegistry);
-      }
-      public static org.jetbrains.kotlin.metadata.ProtoBuf.Class.MultiFieldValueClassRepresentation parseFrom(
-          org.jetbrains.kotlin.protobuf.CodedInputStream input)
-          throws java.io.IOException {
-        return PARSER.parseFrom(input);
-      }
-      public static org.jetbrains.kotlin.metadata.ProtoBuf.Class.MultiFieldValueClassRepresentation parseFrom(
-          org.jetbrains.kotlin.protobuf.CodedInputStream input,
-          org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
-          throws java.io.IOException {
-        return PARSER.parseFrom(input, extensionRegistry);
-      }
-
-      public static Builder newBuilder() { return Builder.create(); }
-      public Builder newBuilderForType() { return newBuilder(); }
-      public static Builder newBuilder(org.jetbrains.kotlin.metadata.ProtoBuf.Class.MultiFieldValueClassRepresentation prototype) {
-        return newBuilder().mergeFrom(prototype);
-      }
-      public Builder toBuilder() { return newBuilder(this); }
-
-      /**
-       * Protobuf type {@code org.jetbrains.kotlin.metadata.Class.MultiFieldValueClassRepresentation}
-       */
-      public static final class Builder extends
-          org.jetbrains.kotlin.protobuf.GeneratedMessageLite.Builder<
-            org.jetbrains.kotlin.metadata.ProtoBuf.Class.MultiFieldValueClassRepresentation, Builder>
-          implements
-          // @@protoc_insertion_point(builder_implements:org.jetbrains.kotlin.metadata.Class.MultiFieldValueClassRepresentation)
-          org.jetbrains.kotlin.metadata.ProtoBuf.Class.MultiFieldValueClassRepresentationOrBuilder {
-        // Construct using org.jetbrains.kotlin.metadata.ProtoBuf.Class.MultiFieldValueClassRepresentation.newBuilder()
-        private Builder() {
-          maybeForceBuilderInitialization();
-        }
-
-        private void maybeForceBuilderInitialization() {
-        }
-        private static Builder create() {
-          return new Builder();
-        }
-
-        public Builder clear() {
-          super.clear();
-          property_ = java.util.Collections.emptyList();
-          bitField0_ = (bitField0_ & ~0x00000001);
-          return this;
-        }
-
-        public Builder clone() {
-          return create().mergeFrom(buildPartial());
-        }
-
-        public org.jetbrains.kotlin.metadata.ProtoBuf.Class.MultiFieldValueClassRepresentation getDefaultInstanceForType() {
-          return org.jetbrains.kotlin.metadata.ProtoBuf.Class.MultiFieldValueClassRepresentation.getDefaultInstance();
-        }
-
-        public org.jetbrains.kotlin.metadata.ProtoBuf.Class.MultiFieldValueClassRepresentation build() {
-          org.jetbrains.kotlin.metadata.ProtoBuf.Class.MultiFieldValueClassRepresentation result = buildPartial();
-          if (!result.isInitialized()) {
-            throw newUninitializedMessageException(result);
-          }
-          return result;
-        }
-
-        public org.jetbrains.kotlin.metadata.ProtoBuf.Class.MultiFieldValueClassRepresentation buildPartial() {
-          org.jetbrains.kotlin.metadata.ProtoBuf.Class.MultiFieldValueClassRepresentation result = new org.jetbrains.kotlin.metadata.ProtoBuf.Class.MultiFieldValueClassRepresentation(this);
-          int from_bitField0_ = bitField0_;
-          if (((bitField0_ & 0x00000001) == 0x00000001)) {
-            property_ = java.util.Collections.unmodifiableList(property_);
-            bitField0_ = (bitField0_ & ~0x00000001);
-          }
-          result.property_ = property_;
-          return result;
-        }
-
-        public Builder mergeFrom(org.jetbrains.kotlin.metadata.ProtoBuf.Class.MultiFieldValueClassRepresentation other) {
-          if (other == org.jetbrains.kotlin.metadata.ProtoBuf.Class.MultiFieldValueClassRepresentation.getDefaultInstance()) return this;
-          if (!other.property_.isEmpty()) {
-            if (property_.isEmpty()) {
-              property_ = other.property_;
-              bitField0_ = (bitField0_ & ~0x00000001);
-            } else {
-              ensurePropertyIsMutable();
-              property_.addAll(other.property_);
-            }
-            
-          }
-          setUnknownFields(
-              getUnknownFields().concat(other.unknownFields));
-          return this;
-        }
-
-        public final boolean isInitialized() {
-          for (int i = 0; i < getPropertyCount(); i++) {
-            if (!getProperty(i).isInitialized()) {
-              
-              return false;
-            }
-          }
-          return true;
-        }
-
-        public Builder mergeFrom(
-            org.jetbrains.kotlin.protobuf.CodedInputStream input,
-            org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
-            throws java.io.IOException {
-          org.jetbrains.kotlin.metadata.ProtoBuf.Class.MultiFieldValueClassRepresentation parsedMessage = null;
-          try {
-            parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
-          } catch (org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException e) {
-            parsedMessage = (org.jetbrains.kotlin.metadata.ProtoBuf.Class.MultiFieldValueClassRepresentation) e.getUnfinishedMessage();
-            throw e;
-          } finally {
-            if (parsedMessage != null) {
-              mergeFrom(parsedMessage);
-            }
-          }
-          return this;
-        }
-        private int bitField0_;
-
-        private java.util.List<org.jetbrains.kotlin.metadata.ProtoBuf.Class.MultiFieldValueClassRepresentation.MultiFieldValueClassProperty> property_ =
-          java.util.Collections.emptyList();
-        private void ensurePropertyIsMutable() {
-          if (!((bitField0_ & 0x00000001) == 0x00000001)) {
-            property_ = new java.util.ArrayList<org.jetbrains.kotlin.metadata.ProtoBuf.Class.MultiFieldValueClassRepresentation.MultiFieldValueClassProperty>(property_);
-            bitField0_ |= 0x00000001;
-           }
-        }
-
-        /**
-         * <code>repeated .org.jetbrains.kotlin.metadata.Class.MultiFieldValueClassRepresentation.MultiFieldValueClassProperty property = 1;</code>
-         */
-        public java.util.List<org.jetbrains.kotlin.metadata.ProtoBuf.Class.MultiFieldValueClassRepresentation.MultiFieldValueClassProperty> getPropertyList() {
-          return java.util.Collections.unmodifiableList(property_);
-        }
-        /**
-         * <code>repeated .org.jetbrains.kotlin.metadata.Class.MultiFieldValueClassRepresentation.MultiFieldValueClassProperty property = 1;</code>
-         */
-        public int getPropertyCount() {
-          return property_.size();
-        }
-        /**
-         * <code>repeated .org.jetbrains.kotlin.metadata.Class.MultiFieldValueClassRepresentation.MultiFieldValueClassProperty property = 1;</code>
-         */
-        public org.jetbrains.kotlin.metadata.ProtoBuf.Class.MultiFieldValueClassRepresentation.MultiFieldValueClassProperty getProperty(int index) {
-          return property_.get(index);
-        }
-        /**
-         * <code>repeated .org.jetbrains.kotlin.metadata.Class.MultiFieldValueClassRepresentation.MultiFieldValueClassProperty property = 1;</code>
-         */
-        public Builder setProperty(
-            int index, org.jetbrains.kotlin.metadata.ProtoBuf.Class.MultiFieldValueClassRepresentation.MultiFieldValueClassProperty value) {
-          if (value == null) {
-            throw new NullPointerException();
-          }
-          ensurePropertyIsMutable();
-          property_.set(index, value);
-
-          return this;
-        }
-        /**
-         * <code>repeated .org.jetbrains.kotlin.metadata.Class.MultiFieldValueClassRepresentation.MultiFieldValueClassProperty property = 1;</code>
-         */
-        public Builder setProperty(
-            int index, org.jetbrains.kotlin.metadata.ProtoBuf.Class.MultiFieldValueClassRepresentation.MultiFieldValueClassProperty.Builder builderForValue) {
-          ensurePropertyIsMutable();
-          property_.set(index, builderForValue.build());
-
-          return this;
-        }
-        /**
-         * <code>repeated .org.jetbrains.kotlin.metadata.Class.MultiFieldValueClassRepresentation.MultiFieldValueClassProperty property = 1;</code>
-         */
-        public Builder addProperty(org.jetbrains.kotlin.metadata.ProtoBuf.Class.MultiFieldValueClassRepresentation.MultiFieldValueClassProperty value) {
-          if (value == null) {
-            throw new NullPointerException();
-          }
-          ensurePropertyIsMutable();
-          property_.add(value);
-
-          return this;
-        }
-        /**
-         * <code>repeated .org.jetbrains.kotlin.metadata.Class.MultiFieldValueClassRepresentation.MultiFieldValueClassProperty property = 1;</code>
-         */
-        public Builder addProperty(
-            int index, org.jetbrains.kotlin.metadata.ProtoBuf.Class.MultiFieldValueClassRepresentation.MultiFieldValueClassProperty value) {
-          if (value == null) {
-            throw new NullPointerException();
-          }
-          ensurePropertyIsMutable();
-          property_.add(index, value);
-
-          return this;
-        }
-        /**
-         * <code>repeated .org.jetbrains.kotlin.metadata.Class.MultiFieldValueClassRepresentation.MultiFieldValueClassProperty property = 1;</code>
-         */
-        public Builder addProperty(
-            org.jetbrains.kotlin.metadata.ProtoBuf.Class.MultiFieldValueClassRepresentation.MultiFieldValueClassProperty.Builder builderForValue) {
-          ensurePropertyIsMutable();
-          property_.add(builderForValue.build());
-
-          return this;
-        }
-        /**
-         * <code>repeated .org.jetbrains.kotlin.metadata.Class.MultiFieldValueClassRepresentation.MultiFieldValueClassProperty property = 1;</code>
-         */
-        public Builder addProperty(
-            int index, org.jetbrains.kotlin.metadata.ProtoBuf.Class.MultiFieldValueClassRepresentation.MultiFieldValueClassProperty.Builder builderForValue) {
-          ensurePropertyIsMutable();
-          property_.add(index, builderForValue.build());
-
-          return this;
-        }
-        /**
-         * <code>repeated .org.jetbrains.kotlin.metadata.Class.MultiFieldValueClassRepresentation.MultiFieldValueClassProperty property = 1;</code>
-         */
-        public Builder addAllProperty(
-            java.lang.Iterable<? extends org.jetbrains.kotlin.metadata.ProtoBuf.Class.MultiFieldValueClassRepresentation.MultiFieldValueClassProperty> values) {
-          ensurePropertyIsMutable();
-          org.jetbrains.kotlin.protobuf.AbstractMessageLite.Builder.addAll(
-              values, property_);
-
-          return this;
-        }
-        /**
-         * <code>repeated .org.jetbrains.kotlin.metadata.Class.MultiFieldValueClassRepresentation.MultiFieldValueClassProperty property = 1;</code>
-         */
-        public Builder clearProperty() {
-          property_ = java.util.Collections.emptyList();
-          bitField0_ = (bitField0_ & ~0x00000001);
-
-          return this;
-        }
-        /**
-         * <code>repeated .org.jetbrains.kotlin.metadata.Class.MultiFieldValueClassRepresentation.MultiFieldValueClassProperty property = 1;</code>
-         */
-        public Builder removeProperty(int index) {
-          ensurePropertyIsMutable();
-          property_.remove(index);
-
-          return this;
-        }
-
-        // @@protoc_insertion_point(builder_scope:org.jetbrains.kotlin.metadata.Class.MultiFieldValueClassRepresentation)
-      }
-
-      static {
-        defaultInstance = new MultiFieldValueClassRepresentation(true);
-        defaultInstance.initFields();
-      }
-
-      // @@protoc_insertion_point(class_scope:org.jetbrains.kotlin.metadata.Class.MultiFieldValueClassRepresentation)
     }
 
     private int bitField0_;
@@ -10649,20 +9608,86 @@ public final class ProtoBuf {
       return inlineClassUnderlyingTypeId_;
     }
 
-    public static final int MULTI_FIELD_VALUE_CLASS_REPRESENTATION_FIELD_NUMBER = 22;
-    private org.jetbrains.kotlin.metadata.ProtoBuf.Class.MultiFieldValueClassRepresentation multiFieldValueClassRepresentation_;
+    public static final int MULTI_FIELD_VALUE_CLASS_UNDERLYING_NAME_FIELD_NUMBER = 22;
+    private java.util.List<java.lang.Integer> multiFieldValueClassUnderlyingName_;
     /**
-     * <code>optional .org.jetbrains.kotlin.metadata.Class.MultiFieldValueClassRepresentation multi_field_value_class_representation = 22;</code>
+     * <code>repeated int32 multi_field_value_class_underlying_name = 22 [packed = true];</code>
      */
-    public boolean hasMultiFieldValueClassRepresentation() {
-      return ((bitField0_ & 0x00000040) == 0x00000040);
+    public java.util.List<java.lang.Integer>
+        getMultiFieldValueClassUnderlyingNameList() {
+      return multiFieldValueClassUnderlyingName_;
     }
     /**
-     * <code>optional .org.jetbrains.kotlin.metadata.Class.MultiFieldValueClassRepresentation multi_field_value_class_representation = 22;</code>
+     * <code>repeated int32 multi_field_value_class_underlying_name = 22 [packed = true];</code>
      */
-    public org.jetbrains.kotlin.metadata.ProtoBuf.Class.MultiFieldValueClassRepresentation getMultiFieldValueClassRepresentation() {
-      return multiFieldValueClassRepresentation_;
+    public int getMultiFieldValueClassUnderlyingNameCount() {
+      return multiFieldValueClassUnderlyingName_.size();
     }
+    /**
+     * <code>repeated int32 multi_field_value_class_underlying_name = 22 [packed = true];</code>
+     */
+    public int getMultiFieldValueClassUnderlyingName(int index) {
+      return multiFieldValueClassUnderlyingName_.get(index);
+    }
+    private int multiFieldValueClassUnderlyingNameMemoizedSerializedSize = -1;
+
+    public static final int MULTI_FIELD_VALUE_CLASS_UNDERLYING_TYPE_FIELD_NUMBER = 23;
+    private java.util.List<org.jetbrains.kotlin.metadata.ProtoBuf.Type> multiFieldValueClassUnderlyingType_;
+    /**
+     * <code>repeated .org.jetbrains.kotlin.metadata.Type multi_field_value_class_underlying_type = 23;</code>
+     */
+    public java.util.List<org.jetbrains.kotlin.metadata.ProtoBuf.Type> getMultiFieldValueClassUnderlyingTypeList() {
+      return multiFieldValueClassUnderlyingType_;
+    }
+    /**
+     * <code>repeated .org.jetbrains.kotlin.metadata.Type multi_field_value_class_underlying_type = 23;</code>
+     */
+    public java.util.List<? extends org.jetbrains.kotlin.metadata.ProtoBuf.TypeOrBuilder> 
+        getMultiFieldValueClassUnderlyingTypeOrBuilderList() {
+      return multiFieldValueClassUnderlyingType_;
+    }
+    /**
+     * <code>repeated .org.jetbrains.kotlin.metadata.Type multi_field_value_class_underlying_type = 23;</code>
+     */
+    public int getMultiFieldValueClassUnderlyingTypeCount() {
+      return multiFieldValueClassUnderlyingType_.size();
+    }
+    /**
+     * <code>repeated .org.jetbrains.kotlin.metadata.Type multi_field_value_class_underlying_type = 23;</code>
+     */
+    public org.jetbrains.kotlin.metadata.ProtoBuf.Type getMultiFieldValueClassUnderlyingType(int index) {
+      return multiFieldValueClassUnderlyingType_.get(index);
+    }
+    /**
+     * <code>repeated .org.jetbrains.kotlin.metadata.Type multi_field_value_class_underlying_type = 23;</code>
+     */
+    public org.jetbrains.kotlin.metadata.ProtoBuf.TypeOrBuilder getMultiFieldValueClassUnderlyingTypeOrBuilder(
+        int index) {
+      return multiFieldValueClassUnderlyingType_.get(index);
+    }
+
+    public static final int MULTI_FIELD_VALUE_CLASS_UNDERLYING_TYPE_ID_FIELD_NUMBER = 24;
+    private java.util.List<java.lang.Integer> multiFieldValueClassUnderlyingTypeId_;
+    /**
+     * <code>repeated int32 multi_field_value_class_underlying_type_id = 24 [packed = true];</code>
+     */
+    public java.util.List<java.lang.Integer>
+        getMultiFieldValueClassUnderlyingTypeIdList() {
+      return multiFieldValueClassUnderlyingTypeId_;
+    }
+    /**
+     * <code>repeated int32 multi_field_value_class_underlying_type_id = 24 [packed = true];</code>
+     */
+    public int getMultiFieldValueClassUnderlyingTypeIdCount() {
+      return multiFieldValueClassUnderlyingTypeId_.size();
+    }
+    /**
+     * <code>repeated int32 multi_field_value_class_underlying_type_id = 24 [packed = true];</code>
+     */
+    public int getMultiFieldValueClassUnderlyingTypeId(int index) {
+      return multiFieldValueClassUnderlyingTypeId_.get(index);
+    }
+    private int multiFieldValueClassUnderlyingTypeIdMemoizedSerializedSize = -1;
 
     public static final int TYPE_TABLE_FIELD_NUMBER = 30;
     private org.jetbrains.kotlin.metadata.ProtoBuf.TypeTable typeTable_;
@@ -10670,7 +9695,7 @@ public final class ProtoBuf {
      * <code>optional .org.jetbrains.kotlin.metadata.TypeTable type_table = 30;</code>
      */
     public boolean hasTypeTable() {
-      return ((bitField0_ & 0x00000080) == 0x00000080);
+      return ((bitField0_ & 0x00000040) == 0x00000040);
     }
     /**
      * <code>optional .org.jetbrains.kotlin.metadata.TypeTable type_table = 30;</code>
@@ -10719,7 +9744,7 @@ public final class ProtoBuf {
      * <code>optional .org.jetbrains.kotlin.metadata.VersionRequirementTable version_requirement_table = 32;</code>
      */
     public boolean hasVersionRequirementTable() {
-      return ((bitField0_ & 0x00000100) == 0x00000100);
+      return ((bitField0_ & 0x00000080) == 0x00000080);
     }
     /**
      * <code>optional .org.jetbrains.kotlin.metadata.VersionRequirementTable version_requirement_table = 32;</code>
@@ -10747,7 +9772,9 @@ public final class ProtoBuf {
       inlineClassUnderlyingPropertyName_ = 0;
       inlineClassUnderlyingType_ = org.jetbrains.kotlin.metadata.ProtoBuf.Type.getDefaultInstance();
       inlineClassUnderlyingTypeId_ = 0;
-      multiFieldValueClassRepresentation_ = org.jetbrains.kotlin.metadata.ProtoBuf.Class.MultiFieldValueClassRepresentation.getDefaultInstance();
+      multiFieldValueClassUnderlyingName_ = java.util.Collections.emptyList();
+      multiFieldValueClassUnderlyingType_ = java.util.Collections.emptyList();
+      multiFieldValueClassUnderlyingTypeId_ = java.util.Collections.emptyList();
       typeTable_ = org.jetbrains.kotlin.metadata.ProtoBuf.TypeTable.getDefaultInstance();
       versionRequirement_ = java.util.Collections.emptyList();
       versionRequirementTable_ = org.jetbrains.kotlin.metadata.ProtoBuf.VersionRequirementTable.getDefaultInstance();
@@ -10816,8 +9843,8 @@ public final class ProtoBuf {
           return false;
         }
       }
-      if (hasMultiFieldValueClassRepresentation()) {
-        if (!getMultiFieldValueClassRepresentation().isInitialized()) {
+      for (int i = 0; i < getMultiFieldValueClassUnderlyingTypeCount(); i++) {
+        if (!getMultiFieldValueClassUnderlyingType(i).isInitialized()) {
           memoizedIsInitialized = 0;
           return false;
         }
@@ -10912,16 +9939,30 @@ public final class ProtoBuf {
       for (int i = 0; i < contextReceiverTypeId_.size(); i++) {
         output.writeInt32NoTag(contextReceiverTypeId_.get(i));
       }
-      if (((bitField0_ & 0x00000040) == 0x00000040)) {
-        output.writeMessage(22, multiFieldValueClassRepresentation_);
+      if (getMultiFieldValueClassUnderlyingNameList().size() > 0) {
+        output.writeRawVarint32(178);
+        output.writeRawVarint32(multiFieldValueClassUnderlyingNameMemoizedSerializedSize);
       }
-      if (((bitField0_ & 0x00000080) == 0x00000080)) {
+      for (int i = 0; i < multiFieldValueClassUnderlyingName_.size(); i++) {
+        output.writeInt32NoTag(multiFieldValueClassUnderlyingName_.get(i));
+      }
+      for (int i = 0; i < multiFieldValueClassUnderlyingType_.size(); i++) {
+        output.writeMessage(23, multiFieldValueClassUnderlyingType_.get(i));
+      }
+      if (getMultiFieldValueClassUnderlyingTypeIdList().size() > 0) {
+        output.writeRawVarint32(194);
+        output.writeRawVarint32(multiFieldValueClassUnderlyingTypeIdMemoizedSerializedSize);
+      }
+      for (int i = 0; i < multiFieldValueClassUnderlyingTypeId_.size(); i++) {
+        output.writeInt32NoTag(multiFieldValueClassUnderlyingTypeId_.get(i));
+      }
+      if (((bitField0_ & 0x00000040) == 0x00000040)) {
         output.writeMessage(30, typeTable_);
       }
       for (int i = 0; i < versionRequirement_.size(); i++) {
         output.writeInt32(31, versionRequirement_.get(i));
       }
-      if (((bitField0_ & 0x00000100) == 0x00000100)) {
+      if (((bitField0_ & 0x00000080) == 0x00000080)) {
         output.writeMessage(32, versionRequirementTable_);
       }
       extensionWriter.writeUntil(19000, output);
@@ -11046,11 +10087,39 @@ public final class ProtoBuf {
         }
         contextReceiverTypeIdMemoizedSerializedSize = dataSize;
       }
-      if (((bitField0_ & 0x00000040) == 0x00000040)) {
-        size += org.jetbrains.kotlin.protobuf.CodedOutputStream
-          .computeMessageSize(22, multiFieldValueClassRepresentation_);
+      {
+        int dataSize = 0;
+        for (int i = 0; i < multiFieldValueClassUnderlyingName_.size(); i++) {
+          dataSize += org.jetbrains.kotlin.protobuf.CodedOutputStream
+            .computeInt32SizeNoTag(multiFieldValueClassUnderlyingName_.get(i));
+        }
+        size += dataSize;
+        if (!getMultiFieldValueClassUnderlyingNameList().isEmpty()) {
+          size += 2;
+          size += org.jetbrains.kotlin.protobuf.CodedOutputStream
+              .computeInt32SizeNoTag(dataSize);
+        }
+        multiFieldValueClassUnderlyingNameMemoizedSerializedSize = dataSize;
       }
-      if (((bitField0_ & 0x00000080) == 0x00000080)) {
+      for (int i = 0; i < multiFieldValueClassUnderlyingType_.size(); i++) {
+        size += org.jetbrains.kotlin.protobuf.CodedOutputStream
+          .computeMessageSize(23, multiFieldValueClassUnderlyingType_.get(i));
+      }
+      {
+        int dataSize = 0;
+        for (int i = 0; i < multiFieldValueClassUnderlyingTypeId_.size(); i++) {
+          dataSize += org.jetbrains.kotlin.protobuf.CodedOutputStream
+            .computeInt32SizeNoTag(multiFieldValueClassUnderlyingTypeId_.get(i));
+        }
+        size += dataSize;
+        if (!getMultiFieldValueClassUnderlyingTypeIdList().isEmpty()) {
+          size += 2;
+          size += org.jetbrains.kotlin.protobuf.CodedOutputStream
+              .computeInt32SizeNoTag(dataSize);
+        }
+        multiFieldValueClassUnderlyingTypeIdMemoizedSerializedSize = dataSize;
+      }
+      if (((bitField0_ & 0x00000040) == 0x00000040)) {
         size += org.jetbrains.kotlin.protobuf.CodedOutputStream
           .computeMessageSize(30, typeTable_);
       }
@@ -11063,7 +10132,7 @@ public final class ProtoBuf {
         size += dataSize;
         size += 2 * getVersionRequirementList().size();
       }
-      if (((bitField0_ & 0x00000100) == 0x00000100)) {
+      if (((bitField0_ & 0x00000080) == 0x00000080)) {
         size += org.jetbrains.kotlin.protobuf.CodedOutputStream
           .computeMessageSize(32, versionRequirementTable_);
       }
@@ -11197,14 +10266,18 @@ public final class ProtoBuf {
         bitField0_ = (bitField0_ & ~0x00010000);
         inlineClassUnderlyingTypeId_ = 0;
         bitField0_ = (bitField0_ & ~0x00020000);
-        multiFieldValueClassRepresentation_ = org.jetbrains.kotlin.metadata.ProtoBuf.Class.MultiFieldValueClassRepresentation.getDefaultInstance();
+        multiFieldValueClassUnderlyingName_ = java.util.Collections.emptyList();
         bitField0_ = (bitField0_ & ~0x00040000);
-        typeTable_ = org.jetbrains.kotlin.metadata.ProtoBuf.TypeTable.getDefaultInstance();
+        multiFieldValueClassUnderlyingType_ = java.util.Collections.emptyList();
         bitField0_ = (bitField0_ & ~0x00080000);
-        versionRequirement_ = java.util.Collections.emptyList();
+        multiFieldValueClassUnderlyingTypeId_ = java.util.Collections.emptyList();
         bitField0_ = (bitField0_ & ~0x00100000);
-        versionRequirementTable_ = org.jetbrains.kotlin.metadata.ProtoBuf.VersionRequirementTable.getDefaultInstance();
+        typeTable_ = org.jetbrains.kotlin.metadata.ProtoBuf.TypeTable.getDefaultInstance();
         bitField0_ = (bitField0_ & ~0x00200000);
+        versionRequirement_ = java.util.Collections.emptyList();
+        bitField0_ = (bitField0_ & ~0x00400000);
+        versionRequirementTable_ = org.jetbrains.kotlin.metadata.ProtoBuf.VersionRequirementTable.getDefaultInstance();
+        bitField0_ = (bitField0_ & ~0x00800000);
         return this;
       }
 
@@ -11312,21 +10385,32 @@ public final class ProtoBuf {
           to_bitField0_ |= 0x00000020;
         }
         result.inlineClassUnderlyingTypeId_ = inlineClassUnderlyingTypeId_;
-        if (((from_bitField0_ & 0x00040000) == 0x00040000)) {
-          to_bitField0_ |= 0x00000040;
+        if (((bitField0_ & 0x00040000) == 0x00040000)) {
+          multiFieldValueClassUnderlyingName_ = java.util.Collections.unmodifiableList(multiFieldValueClassUnderlyingName_);
+          bitField0_ = (bitField0_ & ~0x00040000);
         }
-        result.multiFieldValueClassRepresentation_ = multiFieldValueClassRepresentation_;
-        if (((from_bitField0_ & 0x00080000) == 0x00080000)) {
-          to_bitField0_ |= 0x00000080;
+        result.multiFieldValueClassUnderlyingName_ = multiFieldValueClassUnderlyingName_;
+        if (((bitField0_ & 0x00080000) == 0x00080000)) {
+          multiFieldValueClassUnderlyingType_ = java.util.Collections.unmodifiableList(multiFieldValueClassUnderlyingType_);
+          bitField0_ = (bitField0_ & ~0x00080000);
         }
-        result.typeTable_ = typeTable_;
+        result.multiFieldValueClassUnderlyingType_ = multiFieldValueClassUnderlyingType_;
         if (((bitField0_ & 0x00100000) == 0x00100000)) {
-          versionRequirement_ = java.util.Collections.unmodifiableList(versionRequirement_);
+          multiFieldValueClassUnderlyingTypeId_ = java.util.Collections.unmodifiableList(multiFieldValueClassUnderlyingTypeId_);
           bitField0_ = (bitField0_ & ~0x00100000);
         }
-        result.versionRequirement_ = versionRequirement_;
+        result.multiFieldValueClassUnderlyingTypeId_ = multiFieldValueClassUnderlyingTypeId_;
         if (((from_bitField0_ & 0x00200000) == 0x00200000)) {
-          to_bitField0_ |= 0x00000100;
+          to_bitField0_ |= 0x00000040;
+        }
+        result.typeTable_ = typeTable_;
+        if (((bitField0_ & 0x00400000) == 0x00400000)) {
+          versionRequirement_ = java.util.Collections.unmodifiableList(versionRequirement_);
+          bitField0_ = (bitField0_ & ~0x00400000);
+        }
+        result.versionRequirement_ = versionRequirement_;
+        if (((from_bitField0_ & 0x00800000) == 0x00800000)) {
+          to_bitField0_ |= 0x00000080;
         }
         result.versionRequirementTable_ = versionRequirementTable_;
         result.bitField0_ = to_bitField0_;
@@ -11473,8 +10557,35 @@ public final class ProtoBuf {
         if (other.hasInlineClassUnderlyingTypeId()) {
           setInlineClassUnderlyingTypeId(other.getInlineClassUnderlyingTypeId());
         }
-        if (other.hasMultiFieldValueClassRepresentation()) {
-          mergeMultiFieldValueClassRepresentation(other.getMultiFieldValueClassRepresentation());
+        if (!other.multiFieldValueClassUnderlyingName_.isEmpty()) {
+          if (multiFieldValueClassUnderlyingName_.isEmpty()) {
+            multiFieldValueClassUnderlyingName_ = other.multiFieldValueClassUnderlyingName_;
+            bitField0_ = (bitField0_ & ~0x00040000);
+          } else {
+            ensureMultiFieldValueClassUnderlyingNameIsMutable();
+            multiFieldValueClassUnderlyingName_.addAll(other.multiFieldValueClassUnderlyingName_);
+          }
+          
+        }
+        if (!other.multiFieldValueClassUnderlyingType_.isEmpty()) {
+          if (multiFieldValueClassUnderlyingType_.isEmpty()) {
+            multiFieldValueClassUnderlyingType_ = other.multiFieldValueClassUnderlyingType_;
+            bitField0_ = (bitField0_ & ~0x00080000);
+          } else {
+            ensureMultiFieldValueClassUnderlyingTypeIsMutable();
+            multiFieldValueClassUnderlyingType_.addAll(other.multiFieldValueClassUnderlyingType_);
+          }
+          
+        }
+        if (!other.multiFieldValueClassUnderlyingTypeId_.isEmpty()) {
+          if (multiFieldValueClassUnderlyingTypeId_.isEmpty()) {
+            multiFieldValueClassUnderlyingTypeId_ = other.multiFieldValueClassUnderlyingTypeId_;
+            bitField0_ = (bitField0_ & ~0x00100000);
+          } else {
+            ensureMultiFieldValueClassUnderlyingTypeIdIsMutable();
+            multiFieldValueClassUnderlyingTypeId_.addAll(other.multiFieldValueClassUnderlyingTypeId_);
+          }
+          
         }
         if (other.hasTypeTable()) {
           mergeTypeTable(other.getTypeTable());
@@ -11482,7 +10593,7 @@ public final class ProtoBuf {
         if (!other.versionRequirement_.isEmpty()) {
           if (versionRequirement_.isEmpty()) {
             versionRequirement_ = other.versionRequirement_;
-            bitField0_ = (bitField0_ & ~0x00100000);
+            bitField0_ = (bitField0_ & ~0x00400000);
           } else {
             ensureVersionRequirementIsMutable();
             versionRequirement_.addAll(other.versionRequirement_);
@@ -11557,8 +10668,8 @@ public final class ProtoBuf {
             return false;
           }
         }
-        if (hasMultiFieldValueClassRepresentation()) {
-          if (!getMultiFieldValueClassRepresentation().isInitialized()) {
+        for (int i = 0; i < getMultiFieldValueClassUnderlyingTypeCount(); i++) {
+          if (!getMultiFieldValueClassUnderlyingType(i).isInitialized()) {
             
             return false;
           }
@@ -13131,63 +12242,260 @@ public final class ProtoBuf {
         return this;
       }
 
-      private org.jetbrains.kotlin.metadata.ProtoBuf.Class.MultiFieldValueClassRepresentation multiFieldValueClassRepresentation_ = org.jetbrains.kotlin.metadata.ProtoBuf.Class.MultiFieldValueClassRepresentation.getDefaultInstance();
-      /**
-       * <code>optional .org.jetbrains.kotlin.metadata.Class.MultiFieldValueClassRepresentation multi_field_value_class_representation = 22;</code>
-       */
-      public boolean hasMultiFieldValueClassRepresentation() {
-        return ((bitField0_ & 0x00040000) == 0x00040000);
+      private java.util.List<java.lang.Integer> multiFieldValueClassUnderlyingName_ = java.util.Collections.emptyList();
+      private void ensureMultiFieldValueClassUnderlyingNameIsMutable() {
+        if (!((bitField0_ & 0x00040000) == 0x00040000)) {
+          multiFieldValueClassUnderlyingName_ = new java.util.ArrayList<java.lang.Integer>(multiFieldValueClassUnderlyingName_);
+          bitField0_ |= 0x00040000;
+         }
       }
       /**
-       * <code>optional .org.jetbrains.kotlin.metadata.Class.MultiFieldValueClassRepresentation multi_field_value_class_representation = 22;</code>
+       * <code>repeated int32 multi_field_value_class_underlying_name = 22 [packed = true];</code>
        */
-      public org.jetbrains.kotlin.metadata.ProtoBuf.Class.MultiFieldValueClassRepresentation getMultiFieldValueClassRepresentation() {
-        return multiFieldValueClassRepresentation_;
+      public java.util.List<java.lang.Integer>
+          getMultiFieldValueClassUnderlyingNameList() {
+        return java.util.Collections.unmodifiableList(multiFieldValueClassUnderlyingName_);
       }
       /**
-       * <code>optional .org.jetbrains.kotlin.metadata.Class.MultiFieldValueClassRepresentation multi_field_value_class_representation = 22;</code>
+       * <code>repeated int32 multi_field_value_class_underlying_name = 22 [packed = true];</code>
        */
-      public Builder setMultiFieldValueClassRepresentation(org.jetbrains.kotlin.metadata.ProtoBuf.Class.MultiFieldValueClassRepresentation value) {
+      public int getMultiFieldValueClassUnderlyingNameCount() {
+        return multiFieldValueClassUnderlyingName_.size();
+      }
+      /**
+       * <code>repeated int32 multi_field_value_class_underlying_name = 22 [packed = true];</code>
+       */
+      public int getMultiFieldValueClassUnderlyingName(int index) {
+        return multiFieldValueClassUnderlyingName_.get(index);
+      }
+      /**
+       * <code>repeated int32 multi_field_value_class_underlying_name = 22 [packed = true];</code>
+       */
+      public Builder setMultiFieldValueClassUnderlyingName(
+          int index, int value) {
+        ensureMultiFieldValueClassUnderlyingNameIsMutable();
+        multiFieldValueClassUnderlyingName_.set(index, value);
+        
+        return this;
+      }
+      /**
+       * <code>repeated int32 multi_field_value_class_underlying_name = 22 [packed = true];</code>
+       */
+      public Builder addMultiFieldValueClassUnderlyingName(int value) {
+        ensureMultiFieldValueClassUnderlyingNameIsMutable();
+        multiFieldValueClassUnderlyingName_.add(value);
+        
+        return this;
+      }
+      /**
+       * <code>repeated int32 multi_field_value_class_underlying_name = 22 [packed = true];</code>
+       */
+      public Builder addAllMultiFieldValueClassUnderlyingName(
+          java.lang.Iterable<? extends java.lang.Integer> values) {
+        ensureMultiFieldValueClassUnderlyingNameIsMutable();
+        org.jetbrains.kotlin.protobuf.AbstractMessageLite.Builder.addAll(
+            values, multiFieldValueClassUnderlyingName_);
+        
+        return this;
+      }
+      /**
+       * <code>repeated int32 multi_field_value_class_underlying_name = 22 [packed = true];</code>
+       */
+      public Builder clearMultiFieldValueClassUnderlyingName() {
+        multiFieldValueClassUnderlyingName_ = java.util.Collections.emptyList();
+        bitField0_ = (bitField0_ & ~0x00040000);
+        
+        return this;
+      }
+
+      private java.util.List<org.jetbrains.kotlin.metadata.ProtoBuf.Type> multiFieldValueClassUnderlyingType_ =
+        java.util.Collections.emptyList();
+      private void ensureMultiFieldValueClassUnderlyingTypeIsMutable() {
+        if (!((bitField0_ & 0x00080000) == 0x00080000)) {
+          multiFieldValueClassUnderlyingType_ = new java.util.ArrayList<org.jetbrains.kotlin.metadata.ProtoBuf.Type>(multiFieldValueClassUnderlyingType_);
+          bitField0_ |= 0x00080000;
+         }
+      }
+
+      /**
+       * <code>repeated .org.jetbrains.kotlin.metadata.Type multi_field_value_class_underlying_type = 23;</code>
+       */
+      public java.util.List<org.jetbrains.kotlin.metadata.ProtoBuf.Type> getMultiFieldValueClassUnderlyingTypeList() {
+        return java.util.Collections.unmodifiableList(multiFieldValueClassUnderlyingType_);
+      }
+      /**
+       * <code>repeated .org.jetbrains.kotlin.metadata.Type multi_field_value_class_underlying_type = 23;</code>
+       */
+      public int getMultiFieldValueClassUnderlyingTypeCount() {
+        return multiFieldValueClassUnderlyingType_.size();
+      }
+      /**
+       * <code>repeated .org.jetbrains.kotlin.metadata.Type multi_field_value_class_underlying_type = 23;</code>
+       */
+      public org.jetbrains.kotlin.metadata.ProtoBuf.Type getMultiFieldValueClassUnderlyingType(int index) {
+        return multiFieldValueClassUnderlyingType_.get(index);
+      }
+      /**
+       * <code>repeated .org.jetbrains.kotlin.metadata.Type multi_field_value_class_underlying_type = 23;</code>
+       */
+      public Builder setMultiFieldValueClassUnderlyingType(
+          int index, org.jetbrains.kotlin.metadata.ProtoBuf.Type value) {
         if (value == null) {
           throw new NullPointerException();
         }
-        multiFieldValueClassRepresentation_ = value;
+        ensureMultiFieldValueClassUnderlyingTypeIsMutable();
+        multiFieldValueClassUnderlyingType_.set(index, value);
 
-        bitField0_ |= 0x00040000;
         return this;
       }
       /**
-       * <code>optional .org.jetbrains.kotlin.metadata.Class.MultiFieldValueClassRepresentation multi_field_value_class_representation = 22;</code>
+       * <code>repeated .org.jetbrains.kotlin.metadata.Type multi_field_value_class_underlying_type = 23;</code>
        */
-      public Builder setMultiFieldValueClassRepresentation(
-          org.jetbrains.kotlin.metadata.ProtoBuf.Class.MultiFieldValueClassRepresentation.Builder builderForValue) {
-        multiFieldValueClassRepresentation_ = builderForValue.build();
+      public Builder setMultiFieldValueClassUnderlyingType(
+          int index, org.jetbrains.kotlin.metadata.ProtoBuf.Type.Builder builderForValue) {
+        ensureMultiFieldValueClassUnderlyingTypeIsMutable();
+        multiFieldValueClassUnderlyingType_.set(index, builderForValue.build());
 
-        bitField0_ |= 0x00040000;
         return this;
       }
       /**
-       * <code>optional .org.jetbrains.kotlin.metadata.Class.MultiFieldValueClassRepresentation multi_field_value_class_representation = 22;</code>
+       * <code>repeated .org.jetbrains.kotlin.metadata.Type multi_field_value_class_underlying_type = 23;</code>
        */
-      public Builder mergeMultiFieldValueClassRepresentation(org.jetbrains.kotlin.metadata.ProtoBuf.Class.MultiFieldValueClassRepresentation value) {
-        if (((bitField0_ & 0x00040000) == 0x00040000) &&
-            multiFieldValueClassRepresentation_ != org.jetbrains.kotlin.metadata.ProtoBuf.Class.MultiFieldValueClassRepresentation.getDefaultInstance()) {
-          multiFieldValueClassRepresentation_ =
-            org.jetbrains.kotlin.metadata.ProtoBuf.Class.MultiFieldValueClassRepresentation.newBuilder(multiFieldValueClassRepresentation_).mergeFrom(value).buildPartial();
-        } else {
-          multiFieldValueClassRepresentation_ = value;
+      public Builder addMultiFieldValueClassUnderlyingType(org.jetbrains.kotlin.metadata.ProtoBuf.Type value) {
+        if (value == null) {
+          throw new NullPointerException();
         }
+        ensureMultiFieldValueClassUnderlyingTypeIsMutable();
+        multiFieldValueClassUnderlyingType_.add(value);
 
-        bitField0_ |= 0x00040000;
         return this;
       }
       /**
-       * <code>optional .org.jetbrains.kotlin.metadata.Class.MultiFieldValueClassRepresentation multi_field_value_class_representation = 22;</code>
+       * <code>repeated .org.jetbrains.kotlin.metadata.Type multi_field_value_class_underlying_type = 23;</code>
        */
-      public Builder clearMultiFieldValueClassRepresentation() {
-        multiFieldValueClassRepresentation_ = org.jetbrains.kotlin.metadata.ProtoBuf.Class.MultiFieldValueClassRepresentation.getDefaultInstance();
+      public Builder addMultiFieldValueClassUnderlyingType(
+          int index, org.jetbrains.kotlin.metadata.ProtoBuf.Type value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        ensureMultiFieldValueClassUnderlyingTypeIsMutable();
+        multiFieldValueClassUnderlyingType_.add(index, value);
 
-        bitField0_ = (bitField0_ & ~0x00040000);
+        return this;
+      }
+      /**
+       * <code>repeated .org.jetbrains.kotlin.metadata.Type multi_field_value_class_underlying_type = 23;</code>
+       */
+      public Builder addMultiFieldValueClassUnderlyingType(
+          org.jetbrains.kotlin.metadata.ProtoBuf.Type.Builder builderForValue) {
+        ensureMultiFieldValueClassUnderlyingTypeIsMutable();
+        multiFieldValueClassUnderlyingType_.add(builderForValue.build());
+
+        return this;
+      }
+      /**
+       * <code>repeated .org.jetbrains.kotlin.metadata.Type multi_field_value_class_underlying_type = 23;</code>
+       */
+      public Builder addMultiFieldValueClassUnderlyingType(
+          int index, org.jetbrains.kotlin.metadata.ProtoBuf.Type.Builder builderForValue) {
+        ensureMultiFieldValueClassUnderlyingTypeIsMutable();
+        multiFieldValueClassUnderlyingType_.add(index, builderForValue.build());
+
+        return this;
+      }
+      /**
+       * <code>repeated .org.jetbrains.kotlin.metadata.Type multi_field_value_class_underlying_type = 23;</code>
+       */
+      public Builder addAllMultiFieldValueClassUnderlyingType(
+          java.lang.Iterable<? extends org.jetbrains.kotlin.metadata.ProtoBuf.Type> values) {
+        ensureMultiFieldValueClassUnderlyingTypeIsMutable();
+        org.jetbrains.kotlin.protobuf.AbstractMessageLite.Builder.addAll(
+            values, multiFieldValueClassUnderlyingType_);
+
+        return this;
+      }
+      /**
+       * <code>repeated .org.jetbrains.kotlin.metadata.Type multi_field_value_class_underlying_type = 23;</code>
+       */
+      public Builder clearMultiFieldValueClassUnderlyingType() {
+        multiFieldValueClassUnderlyingType_ = java.util.Collections.emptyList();
+        bitField0_ = (bitField0_ & ~0x00080000);
+
+        return this;
+      }
+      /**
+       * <code>repeated .org.jetbrains.kotlin.metadata.Type multi_field_value_class_underlying_type = 23;</code>
+       */
+      public Builder removeMultiFieldValueClassUnderlyingType(int index) {
+        ensureMultiFieldValueClassUnderlyingTypeIsMutable();
+        multiFieldValueClassUnderlyingType_.remove(index);
+
+        return this;
+      }
+
+      private java.util.List<java.lang.Integer> multiFieldValueClassUnderlyingTypeId_ = java.util.Collections.emptyList();
+      private void ensureMultiFieldValueClassUnderlyingTypeIdIsMutable() {
+        if (!((bitField0_ & 0x00100000) == 0x00100000)) {
+          multiFieldValueClassUnderlyingTypeId_ = new java.util.ArrayList<java.lang.Integer>(multiFieldValueClassUnderlyingTypeId_);
+          bitField0_ |= 0x00100000;
+         }
+      }
+      /**
+       * <code>repeated int32 multi_field_value_class_underlying_type_id = 24 [packed = true];</code>
+       */
+      public java.util.List<java.lang.Integer>
+          getMultiFieldValueClassUnderlyingTypeIdList() {
+        return java.util.Collections.unmodifiableList(multiFieldValueClassUnderlyingTypeId_);
+      }
+      /**
+       * <code>repeated int32 multi_field_value_class_underlying_type_id = 24 [packed = true];</code>
+       */
+      public int getMultiFieldValueClassUnderlyingTypeIdCount() {
+        return multiFieldValueClassUnderlyingTypeId_.size();
+      }
+      /**
+       * <code>repeated int32 multi_field_value_class_underlying_type_id = 24 [packed = true];</code>
+       */
+      public int getMultiFieldValueClassUnderlyingTypeId(int index) {
+        return multiFieldValueClassUnderlyingTypeId_.get(index);
+      }
+      /**
+       * <code>repeated int32 multi_field_value_class_underlying_type_id = 24 [packed = true];</code>
+       */
+      public Builder setMultiFieldValueClassUnderlyingTypeId(
+          int index, int value) {
+        ensureMultiFieldValueClassUnderlyingTypeIdIsMutable();
+        multiFieldValueClassUnderlyingTypeId_.set(index, value);
+        
+        return this;
+      }
+      /**
+       * <code>repeated int32 multi_field_value_class_underlying_type_id = 24 [packed = true];</code>
+       */
+      public Builder addMultiFieldValueClassUnderlyingTypeId(int value) {
+        ensureMultiFieldValueClassUnderlyingTypeIdIsMutable();
+        multiFieldValueClassUnderlyingTypeId_.add(value);
+        
+        return this;
+      }
+      /**
+       * <code>repeated int32 multi_field_value_class_underlying_type_id = 24 [packed = true];</code>
+       */
+      public Builder addAllMultiFieldValueClassUnderlyingTypeId(
+          java.lang.Iterable<? extends java.lang.Integer> values) {
+        ensureMultiFieldValueClassUnderlyingTypeIdIsMutable();
+        org.jetbrains.kotlin.protobuf.AbstractMessageLite.Builder.addAll(
+            values, multiFieldValueClassUnderlyingTypeId_);
+        
+        return this;
+      }
+      /**
+       * <code>repeated int32 multi_field_value_class_underlying_type_id = 24 [packed = true];</code>
+       */
+      public Builder clearMultiFieldValueClassUnderlyingTypeId() {
+        multiFieldValueClassUnderlyingTypeId_ = java.util.Collections.emptyList();
+        bitField0_ = (bitField0_ & ~0x00100000);
+        
         return this;
       }
 
@@ -13196,7 +12504,7 @@ public final class ProtoBuf {
        * <code>optional .org.jetbrains.kotlin.metadata.TypeTable type_table = 30;</code>
        */
       public boolean hasTypeTable() {
-        return ((bitField0_ & 0x00080000) == 0x00080000);
+        return ((bitField0_ & 0x00200000) == 0x00200000);
       }
       /**
        * <code>optional .org.jetbrains.kotlin.metadata.TypeTable type_table = 30;</code>
@@ -13213,7 +12521,7 @@ public final class ProtoBuf {
         }
         typeTable_ = value;
 
-        bitField0_ |= 0x00080000;
+        bitField0_ |= 0x00200000;
         return this;
       }
       /**
@@ -13223,14 +12531,14 @@ public final class ProtoBuf {
           org.jetbrains.kotlin.metadata.ProtoBuf.TypeTable.Builder builderForValue) {
         typeTable_ = builderForValue.build();
 
-        bitField0_ |= 0x00080000;
+        bitField0_ |= 0x00200000;
         return this;
       }
       /**
        * <code>optional .org.jetbrains.kotlin.metadata.TypeTable type_table = 30;</code>
        */
       public Builder mergeTypeTable(org.jetbrains.kotlin.metadata.ProtoBuf.TypeTable value) {
-        if (((bitField0_ & 0x00080000) == 0x00080000) &&
+        if (((bitField0_ & 0x00200000) == 0x00200000) &&
             typeTable_ != org.jetbrains.kotlin.metadata.ProtoBuf.TypeTable.getDefaultInstance()) {
           typeTable_ =
             org.jetbrains.kotlin.metadata.ProtoBuf.TypeTable.newBuilder(typeTable_).mergeFrom(value).buildPartial();
@@ -13238,7 +12546,7 @@ public final class ProtoBuf {
           typeTable_ = value;
         }
 
-        bitField0_ |= 0x00080000;
+        bitField0_ |= 0x00200000;
         return this;
       }
       /**
@@ -13247,15 +12555,15 @@ public final class ProtoBuf {
       public Builder clearTypeTable() {
         typeTable_ = org.jetbrains.kotlin.metadata.ProtoBuf.TypeTable.getDefaultInstance();
 
-        bitField0_ = (bitField0_ & ~0x00080000);
+        bitField0_ = (bitField0_ & ~0x00200000);
         return this;
       }
 
       private java.util.List<java.lang.Integer> versionRequirement_ = java.util.Collections.emptyList();
       private void ensureVersionRequirementIsMutable() {
-        if (!((bitField0_ & 0x00100000) == 0x00100000)) {
+        if (!((bitField0_ & 0x00400000) == 0x00400000)) {
           versionRequirement_ = new java.util.ArrayList<java.lang.Integer>(versionRequirement_);
-          bitField0_ |= 0x00100000;
+          bitField0_ |= 0x00400000;
          }
       }
       /**
@@ -13340,7 +12648,7 @@ public final class ProtoBuf {
        */
       public Builder clearVersionRequirement() {
         versionRequirement_ = java.util.Collections.emptyList();
-        bitField0_ = (bitField0_ & ~0x00100000);
+        bitField0_ = (bitField0_ & ~0x00400000);
         
         return this;
       }
@@ -13350,7 +12658,7 @@ public final class ProtoBuf {
        * <code>optional .org.jetbrains.kotlin.metadata.VersionRequirementTable version_requirement_table = 32;</code>
        */
       public boolean hasVersionRequirementTable() {
-        return ((bitField0_ & 0x00200000) == 0x00200000);
+        return ((bitField0_ & 0x00800000) == 0x00800000);
       }
       /**
        * <code>optional .org.jetbrains.kotlin.metadata.VersionRequirementTable version_requirement_table = 32;</code>
@@ -13367,7 +12675,7 @@ public final class ProtoBuf {
         }
         versionRequirementTable_ = value;
 
-        bitField0_ |= 0x00200000;
+        bitField0_ |= 0x00800000;
         return this;
       }
       /**
@@ -13377,14 +12685,14 @@ public final class ProtoBuf {
           org.jetbrains.kotlin.metadata.ProtoBuf.VersionRequirementTable.Builder builderForValue) {
         versionRequirementTable_ = builderForValue.build();
 
-        bitField0_ |= 0x00200000;
+        bitField0_ |= 0x00800000;
         return this;
       }
       /**
        * <code>optional .org.jetbrains.kotlin.metadata.VersionRequirementTable version_requirement_table = 32;</code>
        */
       public Builder mergeVersionRequirementTable(org.jetbrains.kotlin.metadata.ProtoBuf.VersionRequirementTable value) {
-        if (((bitField0_ & 0x00200000) == 0x00200000) &&
+        if (((bitField0_ & 0x00800000) == 0x00800000) &&
             versionRequirementTable_ != org.jetbrains.kotlin.metadata.ProtoBuf.VersionRequirementTable.getDefaultInstance()) {
           versionRequirementTable_ =
             org.jetbrains.kotlin.metadata.ProtoBuf.VersionRequirementTable.newBuilder(versionRequirementTable_).mergeFrom(value).buildPartial();
@@ -13392,7 +12700,7 @@ public final class ProtoBuf {
           versionRequirementTable_ = value;
         }
 
-        bitField0_ |= 0x00200000;
+        bitField0_ |= 0x00800000;
         return this;
       }
       /**
@@ -13401,7 +12709,7 @@ public final class ProtoBuf {
       public Builder clearVersionRequirementTable() {
         versionRequirementTable_ = org.jetbrains.kotlin.metadata.ProtoBuf.VersionRequirementTable.getDefaultInstance();
 
-        bitField0_ = (bitField0_ & ~0x00200000);
+        bitField0_ = (bitField0_ & ~0x00800000);
         return this;
       }
 
