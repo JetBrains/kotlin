@@ -15,36 +15,36 @@ fun <T> f(lazy1: Lazy<Int>, lazy2: Lazy<CharSequence>, lazyT: Lazy<T>, lazyLazyT
     with(lazy1) {
         with(lazy2) {
             test1()
-            <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>test2<!>()
-            <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>test3<!>()
+            test2()
+            <!NO_CONTEXT_RECEIVER!>test3<!>()
         }
     }
     with(lazy2) {
         with(lazy1) {
             test1()
-            <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>test2<!>()
-            <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>test3<!>()
+            test2()
+            <!NO_CONTEXT_RECEIVER!>test3<!>()
         }
     }
     with(lazyT) {
         with(lazy1) {
-            test1()
-            <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>test2<!>()
-            <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>test3<!>()
+            <!NO_CONTEXT_RECEIVER!>test1<!>()
+            test2()
+            <!NO_CONTEXT_RECEIVER!>test3<!>()
         }
     }
     with(lazyLazyT) {
         with(lazy1) {
-            test1()
-            <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>test2<!>()
-            <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>test3<!>()
+            <!NO_CONTEXT_RECEIVER!>test1<!>()
+            test2()
+            test3()
         }
     }
     with(lazy1) {
         with(lazyLazyT) {
-            test1()
-            <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>test2<!>()
-            <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>test3<!>()
+            <!NO_CONTEXT_RECEIVER!>test1<!>()
+            test2()
+            test3()
         }
     }
 }

@@ -19,9 +19,9 @@ fun supertypeContextual() {}
 
 context(C1, C2)
 fun test() {
-    <!UNRESOLVED_REFERENCE!>supertypeMember<!>()
-    <!UNRESOLVED_REFERENCE!>member<!>()
-    <!UNRESOLVED_REFERENCE!>supertypeExtension<!>()
-    <!UNRESOLVED_REFERENCE!>supertypeExtensionGeneric<!>()
-    supertypeContextual()
+    supertypeMember()
+    <!OVERLOAD_RESOLUTION_AMBIGUITY!>member<!>()
+    <!AMBIGUOUS_CALL_WITH_IMPLICIT_CONTEXT_RECEIVER!>supertypeExtension<!>()
+    <!AMBIGUOUS_CALL_WITH_IMPLICIT_CONTEXT_RECEIVER!>supertypeExtensionGeneric<!>()
+    <!MULTIPLE_ARGUMENTS_APPLICABLE_FOR_CONTEXT_RECEIVER!>supertypeContextual<!>()
 }

@@ -4,9 +4,9 @@ fun List<Int>.f() {
 
 context(String)
 fun Int.f() {
-    this<!UNRESOLVED_LABEL!>@String<!>.length
+    this@String.length
     this<!UNRESOLVED_LABEL!>@Int<!>.toDouble()
 }
 
 context(String)
-val p: String get() = this<!UNRESOLVED_LABEL!>@String<!>
+val p: String get() = this@String
