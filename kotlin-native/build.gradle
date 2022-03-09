@@ -415,6 +415,8 @@ targetList.each { target ->
                         UtilsKt.mergeManifestsByTargets(project, file, existingManifest)
                         exclude()
                     }
+                } else if (target != hostName && name != 'targets') {
+                    exclude()
                 }
             }
         }
