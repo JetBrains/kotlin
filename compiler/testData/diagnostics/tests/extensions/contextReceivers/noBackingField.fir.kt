@@ -14,4 +14,4 @@ context(A, B)
 var b = 2
 
 context(A, B)
-val c get() = <!UNRESOLVED_REFERENCE!>a<!>() + <!UNRESOLVED_REFERENCE!>b<!>()
+val c get() = a() + b()

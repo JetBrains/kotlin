@@ -19,7 +19,7 @@ object StringMonoid : Monoid<String> {
 public inline fun <T, R> Iterable<T>.fold(initial: R, operation: (acc: R, T) -> R): R = TODO()
 
 context(Monoid<T>)
-fun <T> List<T>.sum(): T = fold(<!ARGUMENT_TYPE_MISMATCH, UNRESOLVED_REFERENCE!>unit<!>) { acc, e -> acc.<!UNRESOLVED_REFERENCE!>combine<!>(e) }
+fun <T> List<T>.sum(): T = fold(unit) { acc, e -> acc.combine(e) }
 
 fun <T> listOf(vararg items: T): List<T> = null!!
 
@@ -28,7 +28,7 @@ fun test() {
         listOf(1, 2, 3).sum()
     }
     with(StringMonoid) {
-        listOf(1, 2, 3).sum()
+        listOf(1, 2, 3).<!NO_CONTEXT_RECEIVER!>sum<!>()
         listOf("1", "2", "3").sum()
     }
 }

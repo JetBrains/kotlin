@@ -15,7 +15,7 @@ fun Receiver.baz(p: Param) {}
 
 fun main() {
     var g: context(Context) Receiver.(Param) -> Unit
-    g = ::<!UNRESOLVED_REFERENCE!>foo<!>         // OK
-    g = ::bar         // OK
-    g = Receiver::baz // OK
+    g = ::foo         // OK
+    g = ::<!UNRESOLVED_REFERENCE!>bar<!>         // OK
+    g = Receiver::<!UNRESOLVED_REFERENCE!>baz<!> // OK
 }
