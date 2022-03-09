@@ -8,9 +8,9 @@ package org.jetbrains.kotlin.jvm.abi;
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.JUnit3RunnerWithInners;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
-import org.jetbrains.kotlin.test.util.KtTestUtil;
 import org.jetbrains.kotlin.test.TargetBackend;
 import org.jetbrains.kotlin.test.TestMetadata;
+import org.jetbrains.kotlin.test.util.KtTestUtil;
 import org.junit.runner.RunWith;
 
 import java.io.File;
@@ -83,6 +83,11 @@ public class IrCompareJvmAbiTestGenerated extends AbstractIrCompareJvmAbiTest {
     @TestMetadata("inlineFunInPrivateNestedClass")
     public void testInlineFunInPrivateNestedClass() throws Exception {
         runTest("plugins/jvm-abi-gen/testData/compare/inlineFunInPrivateNestedClass/");
+    }
+
+    @TestMetadata("inlineFunctionAnonymousObject")
+    public void testInlineFunctionAnonymousObject() throws Exception {
+        runTest("plugins/jvm-abi-gen/testData/compare/inlineFunctionAnonymousObject/");
     }
 
     @TestMetadata("inlineFunctionBody")

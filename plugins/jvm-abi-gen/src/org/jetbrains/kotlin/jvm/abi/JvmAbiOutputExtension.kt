@@ -14,8 +14,13 @@ import org.jetbrains.kotlin.cli.jvm.compiler.CompileEnvironmentUtil
 import org.jetbrains.kotlin.codegen.ClassFileFactory
 import org.jetbrains.kotlin.codegen.extensions.ClassFileFactoryFinalizerExtension
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames
-import org.jetbrains.org.objectweb.asm.*
-import org.jetbrains.org.objectweb.asm.commons.Method
+import org.jetbrains.org.objectweb.asm.AnnotationVisitor
+import org.jetbrains.org.objectweb.asm.ClassReader
+import org.jetbrains.org.objectweb.asm.ClassVisitor
+import org.jetbrains.org.objectweb.asm.ClassWriter
+import org.jetbrains.org.objectweb.asm.FieldVisitor
+import org.jetbrains.org.objectweb.asm.MethodVisitor
+import org.jetbrains.org.objectweb.asm.Opcodes
 import java.io.File
 
 class JvmAbiOutputExtension(
@@ -65,10 +70,9 @@ class JvmAbiOutputExtension(
                     is AbiClassInfo.Keep -> outputFile // Copy verbatim
 
                     is AbiClassInfo.Strip -> {
-                        val methodInfo = abiInfo.methodInfo
+                        val memberInfo = abiInfo.memberInfo
                         val writer = ClassWriter(0)
                         ClassReader(outputFile.asByteArray()).accept(object : ClassVisitor(Opcodes.API_VERSION, writer) {
-                            // Strip private fields.
                             override fun visitField(
                                 access: Int,
                                 name: String?,
@@ -76,9 +80,10 @@ class JvmAbiOutputExtension(
                                 signature: String?,
                                 value: Any?
                             ): FieldVisitor? {
-                                if (access and Opcodes.ACC_PRIVATE != 0)
-                                    return null
-                                return super.visitField(access, name, descriptor, signature, value)
+                                return when (memberInfo[Member(name, descriptor)]) {
+                                    AbiMethodInfo.KEEP -> super.visitField(access, name, descriptor, signature, value)
+                                    else -> null //remove
+                                }
                             }
 
                             override fun visitMethod(
@@ -88,36 +93,19 @@ class JvmAbiOutputExtension(
                                 signature: String?,
                                 exceptions: Array<out String>?
                             ): MethodVisitor? {
-                                val info = methodInfo[Method(name, descriptor)]
-
-                                if (info == AbiMethodInfo.KEEP || access and (Opcodes.ACC_NATIVE or Opcodes.ACC_ABSTRACT) != 0) {
-                                    return super.visitMethod(access, name, descriptor, signature, exceptions)
-                                }
-
-                                if (info == null) {
-                                    return null
-                                }
-
-                                return object :
-                                    MethodVisitor(Opcodes.API_VERSION, super.visitMethod(access, name, descriptor, signature, exceptions)) {
-                                    override fun visitCode() {
-                                        with(mv) {
-                                            visitCode()
-                                            visitInsn(Opcodes.ACONST_NULL)
-                                            visitInsn(Opcodes.ATHROW)
-                                            visitMaxs(0, 0)
-                                            visitEnd()
-                                        }
-                                        // Only instructions and locals follow after `visitCode`.
-                                        mv = null
-                                    }
+                                return when (memberInfo[Member(name, descriptor)]) {
+                                    AbiMethodInfo.KEEP -> super.visitMethod(access, name, descriptor, signature, exceptions)
+                                    AbiMethodInfo.STRIP -> StrippingMethodVisitor(
+                                        super.visitMethod(access, name, descriptor, signature, exceptions)
+                                    )
+                                    null -> null //remove
                                 }
                             }
 
                             // Strip source debug extensions if there are no inline functions.
                             override fun visitSource(source: String?, debug: String?) {
                                 // TODO Normalize and strip unused line numbers from SourceDebugExtensions
-                                if (methodInfo.values.any { it == AbiMethodInfo.KEEP })
+                                if (memberInfo.values.any { it == AbiMethodInfo.KEEP })
                                     super.visitSource(source, debug)
                                 else
                                     super.visitSource(source, null)
@@ -147,3 +135,21 @@ class JvmAbiOutputExtension(
         }
     }
 }
+
+private class StrippingMethodVisitor(visitor: MethodVisitor?) : MethodVisitor(
+    Opcodes.API_VERSION,
+    visitor
+) {
+    override fun visitCode() {
+        with(mv) {
+            visitCode()
+            visitInsn(Opcodes.ACONST_NULL)
+            visitInsn(Opcodes.ATHROW)
+            visitMaxs(0, 0)
+            visitEnd()
+        }
+        // Only instructions and locals follow after `visitCode`.
+        mv = null
+    }
+}
+

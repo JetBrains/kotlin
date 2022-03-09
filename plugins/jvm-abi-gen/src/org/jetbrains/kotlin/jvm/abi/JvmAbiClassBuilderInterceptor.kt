@@ -13,16 +13,24 @@ import org.jetbrains.kotlin.codegen.DelegatingClassBuilderFactory
 import org.jetbrains.kotlin.codegen.`when`.WhenByEnumsMapping
 import org.jetbrains.kotlin.codegen.extensions.ClassBuilderInterceptorExtension
 import org.jetbrains.kotlin.codegen.inline.coroutines.FOR_INLINE_SUFFIX
-import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
+import org.jetbrains.kotlin.descriptors.FunctionDescriptor
+import org.jetbrains.kotlin.descriptors.MemberDescriptor
+import org.jetbrains.kotlin.descriptors.Visibilities
+import org.jetbrains.kotlin.descriptors.Visibility
+import org.jetbrains.kotlin.descriptors.effectiveVisibility
 import org.jetbrains.kotlin.diagnostics.DiagnosticSink
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import org.jetbrains.org.objectweb.asm.AnnotationVisitor
+import org.jetbrains.org.objectweb.asm.FieldVisitor
 import org.jetbrains.org.objectweb.asm.MethodVisitor
 import org.jetbrains.org.objectweb.asm.Opcodes
-import org.jetbrains.org.objectweb.asm.commons.Method
+
+data class Member(val name: String?, val descriptor: String?)
 
 enum class AbiMethodInfo {
     KEEP,
@@ -32,7 +40,7 @@ enum class AbiMethodInfo {
 sealed class AbiClassInfo {
     object Keep : AbiClassInfo()
     object Delete : AbiClassInfo()
-    class Strip(val methodInfo: Map<Method, AbiMethodInfo>) : AbiClassInfo()
+    class Strip(val memberInfo: Map<Member, AbiMethodInfo>) : AbiClassInfo()
 }
 
 /**
@@ -60,7 +68,7 @@ sealed class AbiClassInfo {
  * be stripped. However, if `f` is not callable directly, we only generate a
  * single inline method `f` which should be kept.
  */
-class JvmAbiClassBuilderInterceptor(private val deleteNonPublicFromAbi: Boolean) : ClassBuilderInterceptorExtension {
+class JvmAbiClassBuilderInterceptor(private val deleteNonPublicAbi: Boolean) : ClassBuilderInterceptorExtension {
     val abiClassInfo: MutableMap<String, AbiClassInfo> = mutableMapOf()
 
     override fun interceptClassBuilderFactory(
@@ -79,15 +87,14 @@ class JvmAbiClassBuilderInterceptor(private val deleteNonPublicFromAbi: Boolean)
     private inner class AbiInfoClassBuilder(
         private val delegate: ClassBuilder,
         private val classVisibility: Visibility,
-        private val deleteNonPublicApi: Boolean = false,
     ) : DelegatingClassBuilder() {
         private lateinit var internalName: String
 
         private var localOrAnonymousClass = false
         private var keepEverything = false
 
-        private val methodInfos = mutableMapOf<Method, AbiMethodInfo>()
-        private val maskedMethods = mutableSetOf<Method>() // Methods which should be stripped even if they are marked as KEEP
+        private val memberInfos = mutableMapOf<Member, AbiMethodInfo>()
+        private val maskedMethods = mutableSetOf<Member>() // Methods which should be stripped even if they are marked as KEEP
 
         override fun getDelegate(): ClassBuilder = delegate
 
@@ -110,6 +117,30 @@ class JvmAbiClassBuilderInterceptor(private val deleteNonPublicFromAbi: Boolean)
         override fun visitOuterClass(owner: String, name: String?, desc: String?) {
             localOrAnonymousClass = true
             super.visitOuterClass(owner, name, desc)
+        }
+
+        override fun newField(
+            origin: JvmDeclarationOrigin,
+            access: Int,
+            name: String,
+            desc: String,
+            signature: String?,
+            value: Any?
+        ): FieldVisitor {
+            val effectiveVisibility = (origin.descriptor as? MemberDescriptor)?.effectiveVisibility()?.toVisibility() ?: Visibilities.Public
+
+            val info: AbiMethodInfo? = when {
+                Visibilities.isPrivate(effectiveVisibility) -> null
+                !deleteNonPublicAbi -> AbiMethodInfo.KEEP
+                !effectiveVisibility.isPublicAPI -> null
+                else -> AbiMethodInfo.KEEP
+            }
+
+            if (info != null) {
+                memberInfos[Member(name, desc)] = info
+            }
+
+            return super.newField(origin, access, name, desc, signature, value)
         }
 
         override fun newMethod(
@@ -135,6 +166,11 @@ class JvmAbiClassBuilderInterceptor(private val deleteNonPublicFromAbi: Boolean)
                 return super.newMethod(origin, access, name, desc, signature, exceptions)
             }
 
+            if (access and (Opcodes.ACC_NATIVE or Opcodes.ACC_ABSTRACT) != 0) {
+                memberInfos[Member(name, desc)] = AbiMethodInfo.KEEP
+                return super.newMethod(origin, access, name, desc, signature, exceptions)
+            }
+
             val isPrivateClass = Visibilities.isPrivate(classVisibility)
 
             // inline suspend functions are a special case: Unless they use reified type parameters,
@@ -145,8 +181,8 @@ class JvmAbiClassBuilderInterceptor(private val deleteNonPublicFromAbi: Boolean)
             // original methods if there was a $$forInline version.
             if (name.endsWith(FOR_INLINE_SUFFIX) && !isPrivateClass) {
                 // Note that origin.descriptor is null on the JVM BE in this case.
-                methodInfos[Method(name, desc)] = AbiMethodInfo.KEEP
-                maskedMethods += Method(name.removeSuffix(FOR_INLINE_SUFFIX), desc)
+                memberInfos[Member(name, desc)] = AbiMethodInfo.KEEP
+                maskedMethods += Member(name.removeSuffix(FOR_INLINE_SUFFIX), desc)
                 return super.newMethod(origin, access, name, desc, signature, exceptions)
             }
 
@@ -156,7 +192,7 @@ class JvmAbiClassBuilderInterceptor(private val deleteNonPublicFromAbi: Boolean)
                 return super.newMethod(origin, access, name, desc, signature, exceptions)
             }
 
-            if (deleteNonPublicApi) {
+            if (deleteNonPublicAbi) {
                 val effectiveVisibility = descriptor?.effectiveVisibility()?.toVisibility() ?: Visibilities.Public
                 if (!effectiveVisibility.isPublicAPI) {
                     return super.newMethod(origin, access, name, desc, signature, exceptions)
@@ -165,9 +201,9 @@ class JvmAbiClassBuilderInterceptor(private val deleteNonPublicFromAbi: Boolean)
 
             // Copy inline functions verbatim
             if (origin.descriptor?.safeAs<FunctionDescriptor>()?.isInline == true && !isPrivateClass) {
-                methodInfos[Method(name, desc)] = AbiMethodInfo.KEEP
+                memberInfos[Member(name, desc)] = AbiMethodInfo.KEEP
             } else {
-                methodInfos[Method(name, desc)] = AbiMethodInfo.STRIP
+                memberInfos[Member(name, desc)] = AbiMethodInfo.STRIP
             }
             return super.newMethod(origin, access, name, desc, signature, exceptions)
         }
@@ -193,13 +229,13 @@ class JvmAbiClassBuilderInterceptor(private val deleteNonPublicFromAbi: Boolean)
             // strip non-inline methods from all other classes.
             abiClassInfo[internalName] = when {
                 keepEverything -> AbiClassInfo.Keep
-                deleteNonPublicApi && !classVisibility.isPublicAPI -> AbiClassInfo.Delete
+                deleteNonPublicAbi && !classVisibility.isPublicAPI -> AbiClassInfo.Delete
                 localOrAnonymousClass || isWhenMappingClass -> AbiClassInfo.Delete
                 else -> {
                     for (method in maskedMethods) {
-                        methodInfos.replace(method, AbiMethodInfo.STRIP)
+                        memberInfos.replace(method, AbiMethodInfo.STRIP)
                     }
-                    AbiClassInfo.Strip(methodInfos)
+                    AbiClassInfo.Strip(memberInfos)
                 }
             }
             super.done()
