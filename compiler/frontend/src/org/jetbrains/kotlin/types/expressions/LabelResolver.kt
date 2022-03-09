@@ -36,7 +36,7 @@ object LabelResolver {
         labelName: Name,
         labelExpression: KtSimpleNameExpression,
         classNameLabelsEnabled: Boolean
-    ): Pair<Set<KtElement>, KtCallableDeclaration?> {
+    ): Pair<LinkedHashSet<KtElement>, KtCallableDeclaration?> {
         val elements = linkedSetOf<KtElement>()
         var typedElement: KtCallableDeclaration? = null
         var parent: PsiElement? = labelExpression.parent
