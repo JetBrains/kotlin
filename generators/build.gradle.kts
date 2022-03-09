@@ -31,6 +31,7 @@ val (interpreterSourceSet, interpreterApi) = extraSourceSet("interpreter")
 val (protobufSourceSet, protobufApi) = extraSourceSet("protobuf")
 val (protobufCompareSourceSet, protobufCompareApi) = extraSourceSet("protobufCompare", jpsKind = SourceSet.TEST_SOURCE_SET_NAME)
 val (wasmSourceSet, wasmApi) = extraSourceSet("wasm")
+val (nativeInteropRuntimeSourceSet, nativeInteropRuntimeApi) = extraSourceSet("nativeInteropRuntime")
 
 dependencies {
     api(kotlinStdlib("jdk8"))
@@ -47,6 +48,7 @@ dependencies {
     interpreterApi(project(":compiler:ir.psi2ir"))
     protobufApi(kotlinStdlib())
     protobufCompareApi(projectTests(":kotlin-build-common"))
+    nativeInteropRuntimeApi(kotlinStdlib())
 
     testApi(builtinsSourceSet.output)
     testApi(evaluateSourceSet.output)
@@ -103,5 +105,10 @@ val generateBuiltins by generator("org.jetbrains.kotlin.generators.builtins.gene
 val generateOperationsMap by generator("org.jetbrains.kotlin.generators.evaluate.GenerateOperationsMapKt", evaluateSourceSet)
 val generateInterpreterMap by generator("org.jetbrains.kotlin.generators.interpreter.GenerateInterpreterMapKt", interpreterSourceSet)
 val generateWasmIntrinsics by generator("org.jetbrains.kotlin.generators.wasm.WasmIntrinsicGeneratorKt", wasmSourceSet)
+
+val generateNativeInteropRuntime by generator(
+    "org.jetbrains.kotlin.generators.native.interopRuntime.NativeInteropRuntimeGeneratorKt",
+    nativeInteropRuntimeSourceSet
+)
 
 testsJar()
