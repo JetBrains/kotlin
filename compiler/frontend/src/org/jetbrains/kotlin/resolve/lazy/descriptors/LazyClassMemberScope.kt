@@ -296,7 +296,7 @@ open class LazyClassMemberScope(
         }
         result.addAll(generateDelegatingDescriptors(name, EXTRACT_FUNCTIONS, result))
         generateDataClassMethods(result, name, location, fromSupertypes)
-        generateFunctionsFromAnyForInlineClass(result, name, fromSupertypes)
+        generateFunctionsFromAnyForValueClass(result, name, fromSupertypes)
         c.syntheticResolveExtension.generateSyntheticMethods(thisDescriptor, name, trace.bindingContext, fromSupertypes, result)
 
         c.additionalClassPartsProvider.generateAdditionalMethods(thisDescriptor, result, name, location, fromSupertypes)
@@ -304,12 +304,12 @@ open class LazyClassMemberScope(
         generateFakeOverrides(name, fromSupertypes, result, SimpleFunctionDescriptor::class.java)
     }
 
-    private fun generateFunctionsFromAnyForInlineClass(
+    private fun generateFunctionsFromAnyForValueClass(
         result: MutableCollection<SimpleFunctionDescriptor>,
         name: Name,
         fromSupertypes: List<SimpleFunctionDescriptor>
     ) {
-        if (!thisDescriptor.isInlineOrValueClass()) return
+        if (!thisDescriptor.isValueClass()) return
         FunctionsFromAny.addFunctionFromAnyIfNeeded(thisDescriptor, result, name, fromSupertypes)
     }
 

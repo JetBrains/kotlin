@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.resolve
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.resolve.descriptorUtil.inlineClassRepresentation
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeSubstitutor
 import org.jetbrains.kotlin.types.TypeUtils
@@ -19,16 +20,12 @@ val JVM_INLINE_ANNOTATION_CLASS_ID = ClassId.topLevel(JVM_INLINE_ANNOTATION_FQ_N
 
 // FIXME: DeserializedClassDescriptor in reflection do not have @JvmInline annotation, that we
 // FIXME: would like to check as well.
-fun DeclarationDescriptor.isInlineClass(): Boolean = when {
-    this !is ClassDescriptor -> false
-    isInline -> true
-    else -> isValue && unsubstitutedPrimaryConstructor?.valueParameters?.size?.let { it == 1 } ?: true
-}
+fun DeclarationDescriptor.isInlineClass(): Boolean = this is ClassDescriptor && this.valueClassRepresentation is InlineClassRepresentation
 
-fun DeclarationDescriptor.isValueClass(): Boolean =
-    this is ClassDescriptor && isValue
+fun DeclarationDescriptor.isMultiFieldValueClass(): Boolean =
+    this is ClassDescriptor && this.valueClassRepresentation is MultiFieldValueClassRepresentation
 
-fun DeclarationDescriptor.isInlineOrValueClass(): Boolean = isInlineClass() || isValueClass()
+fun DeclarationDescriptor.isValueClass(): Boolean = isInlineClass() || isMultiFieldValueClass()
 
 fun KotlinType.unsubstitutedUnderlyingType(): KotlinType? =
     constructor.declarationDescriptor.safeAs<ClassDescriptor>()?.inlineClassRepresentation?.underlyingType
@@ -37,7 +34,7 @@ fun KotlinType.unsubstitutedUnderlyingTypes(): List<KotlinType> {
     val declarationDescriptor = constructor.declarationDescriptor.safeAs<ClassDescriptor>() ?: return emptyList()
     return when {
         declarationDescriptor.isInlineClass() -> listOfNotNull(unsubstitutedUnderlyingType())
-        declarationDescriptor.isValueClass() ->
+        declarationDescriptor.isMultiFieldValueClass() ->
             declarationDescriptor.unsubstitutedPrimaryConstructor?.valueParameters?.map { it.type } ?: emptyList()
         else -> emptyList()
     }
@@ -56,8 +53,8 @@ fun KotlinType.isRecursiveInlineOrValueClassType(): Boolean =
     isRecursiveInlineOrValueClassTypeInner(hashSetOf())
 
 private fun KotlinType.isRecursiveInlineOrValueClassTypeInner(visited: HashSet<ClassifierDescriptor>): Boolean {
-    val types = when (val descriptor = constructor.declarationDescriptor?.original?.takeIf { it.isInlineOrValueClass() }) {
-        is ClassDescriptor -> if (descriptor.isInlineOrValueClass()) unsubstitutedUnderlyingTypes() else emptyList()
+    val types = when (val descriptor = constructor.declarationDescriptor?.original?.takeIf { it.isValueClass() }) {
+        is ClassDescriptor -> if (descriptor.isValueClass()) unsubstitutedUnderlyingTypes() else emptyList()
         is TypeParameterDescriptor -> descriptor.upperBounds
         else -> emptyList()
     }

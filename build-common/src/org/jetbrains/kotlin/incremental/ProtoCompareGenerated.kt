@@ -201,10 +201,11 @@ open class ProtoCompareGenerated(
             if (!checkEquals(oldTypeTable.getType(old.inlineClassUnderlyingTypeId), newTypeTable.getType(new.inlineClassUnderlyingTypeId))) return false
         }
 
-        if (old.hasMultiFieldValueClassRepresentation() != new.hasMultiFieldValueClassRepresentation()) return false
-        if (old.hasMultiFieldValueClassRepresentation()) {
-            if (!checkEquals(old.multiFieldValueClassRepresentation, new.multiFieldValueClassRepresentation)) return false
-        }
+        if (!checkEqualsClassMultiFieldValueClassUnderlyingName(old, new)) return false
+
+        if (!checkEqualsClassMultiFieldValueClassUnderlyingType(old, new)) return false
+
+        if (!checkEqualsClassMultiFieldValueClassUnderlyingTypeId(old, new)) return false
 
         if (!checkEqualsClassVersionRequirement(old, new)) return false
 
@@ -295,7 +296,9 @@ open class ProtoCompareGenerated(
         INLINE_CLASS_UNDERLYING_PROPERTY_NAME,
         INLINE_CLASS_UNDERLYING_TYPE,
         INLINE_CLASS_UNDERLYING_TYPE_ID,
-        MULTI_FIELD_VALUE_CLASS_REPRESENTATION,
+        MULTI_FIELD_VALUE_CLASS_UNDERLYING_NAME_LIST,
+        MULTI_FIELD_VALUE_CLASS_UNDERLYING_TYPE_LIST,
+        MULTI_FIELD_VALUE_CLASS_UNDERLYING_TYPE_ID_LIST,
         VERSION_REQUIREMENT_LIST,
         VERSION_REQUIREMENT_TABLE,
         JVM_EXT_CLASS_MODULE_NAME,
@@ -363,10 +366,11 @@ open class ProtoCompareGenerated(
             if (!checkEquals(oldTypeTable.getType(old.inlineClassUnderlyingTypeId), newTypeTable.getType(new.inlineClassUnderlyingTypeId))) result.add(ProtoBufClassKind.INLINE_CLASS_UNDERLYING_TYPE_ID)
         }
 
-        if (old.hasMultiFieldValueClassRepresentation() != new.hasMultiFieldValueClassRepresentation()) result.add(ProtoBufClassKind.MULTI_FIELD_VALUE_CLASS_REPRESENTATION)
-        if (old.hasMultiFieldValueClassRepresentation()) {
-            if (!checkEquals(old.multiFieldValueClassRepresentation, new.multiFieldValueClassRepresentation)) result.add(ProtoBufClassKind.MULTI_FIELD_VALUE_CLASS_REPRESENTATION)
-        }
+        if (!checkEqualsClassMultiFieldValueClassUnderlyingName(old, new)) result.add(ProtoBufClassKind.MULTI_FIELD_VALUE_CLASS_UNDERLYING_NAME_LIST)
+
+        if (!checkEqualsClassMultiFieldValueClassUnderlyingType(old, new)) result.add(ProtoBufClassKind.MULTI_FIELD_VALUE_CLASS_UNDERLYING_TYPE_LIST)
+
+        if (!checkEqualsClassMultiFieldValueClassUnderlyingTypeId(old, new)) result.add(ProtoBufClassKind.MULTI_FIELD_VALUE_CLASS_UNDERLYING_TYPE_ID_LIST)
 
         if (!checkEqualsClassVersionRequirement(old, new)) result.add(ProtoBufClassKind.VERSION_REQUIREMENT_LIST)
 
@@ -1026,12 +1030,6 @@ open class ProtoCompareGenerated(
         return true
     }
 
-    open fun checkEquals(old: ProtoBuf.Class.MultiFieldValueClassRepresentation, new: ProtoBuf.Class.MultiFieldValueClassRepresentation): Boolean {
-        if (!checkEqualsClassMultiFieldValueClassRepresentationProperty(old, new)) return false
-
-        return true
-    }
-
     open fun checkEquals(old: ProtoBuf.Annotation, new: ProtoBuf.Annotation): Boolean {
         if (!checkClassIdEquals(old.id, new.id)) return false
 
@@ -1251,22 +1249,6 @@ open class ProtoCompareGenerated(
         if (old.hasTypeId() != new.hasTypeId()) return false
         if (old.hasTypeId()) {
             if (!checkEquals(oldTypeTable.getType(old.typeId), newTypeTable.getType(new.typeId))) return false
-        }
-
-        return true
-    }
-
-    open fun checkEquals(old: ProtoBuf.Class.MultiFieldValueClassRepresentation.MultiFieldValueClassProperty, new: ProtoBuf.Class.MultiFieldValueClassRepresentation.MultiFieldValueClassProperty): Boolean {
-        if (old.name != new.name) return false
-
-        if (old.hasType() != new.hasType()) return false
-        if (old.hasType()) {
-            if (!checkEquals(old.type, new.type)) return false
-        }
-
-        if (old.hasTypeId() != new.hasTypeId()) return false
-        if (old.hasTypeId()) {
-            if (old.typeId != new.typeId) return false
         }
 
         return true
@@ -1498,6 +1480,36 @@ open class ProtoCompareGenerated(
         return true
     }
 
+    open fun checkEqualsClassMultiFieldValueClassUnderlyingName(old: ProtoBuf.Class, new: ProtoBuf.Class): Boolean {
+        if (old.multiFieldValueClassUnderlyingNameCount != new.multiFieldValueClassUnderlyingNameCount) return false
+
+        for(i in 0..old.multiFieldValueClassUnderlyingNameCount - 1) {
+            if (!checkStringEquals(old.getMultiFieldValueClassUnderlyingName(i), new.getMultiFieldValueClassUnderlyingName(i))) return false
+        }
+
+        return true
+    }
+
+    open fun checkEqualsClassMultiFieldValueClassUnderlyingType(old: ProtoBuf.Class, new: ProtoBuf.Class): Boolean {
+        if (old.multiFieldValueClassUnderlyingTypeCount != new.multiFieldValueClassUnderlyingTypeCount) return false
+
+        for(i in 0..old.multiFieldValueClassUnderlyingTypeCount - 1) {
+            if (!checkEquals(old.getMultiFieldValueClassUnderlyingType(i), new.getMultiFieldValueClassUnderlyingType(i))) return false
+        }
+
+        return true
+    }
+
+    open fun checkEqualsClassMultiFieldValueClassUnderlyingTypeId(old: ProtoBuf.Class, new: ProtoBuf.Class): Boolean {
+        if (old.multiFieldValueClassUnderlyingTypeIdCount != new.multiFieldValueClassUnderlyingTypeIdCount) return false
+
+        for(i in 0..old.multiFieldValueClassUnderlyingTypeIdCount - 1) {
+            if (!checkEquals(oldTypeTable.getType(old.getMultiFieldValueClassUnderlyingTypeId(i)), newTypeTable.getType(new.getMultiFieldValueClassUnderlyingTypeId(i)))) return false
+        }
+
+        return true
+    }
+
     open fun checkEqualsClassVersionRequirement(old: ProtoBuf.Class, new: ProtoBuf.Class): Boolean {
         if (old.versionRequirementCount != new.versionRequirementCount) return false
 
@@ -1683,16 +1695,6 @@ open class ProtoCompareGenerated(
 
         for(i in 0..old.versionRequirementCount - 1) {
             if (old.getVersionRequirement(i) != new.getVersionRequirement(i)) return false
-        }
-
-        return true
-    }
-
-    open fun checkEqualsClassMultiFieldValueClassRepresentationProperty(old: ProtoBuf.Class.MultiFieldValueClassRepresentation, new: ProtoBuf.Class.MultiFieldValueClassRepresentation): Boolean {
-        if (old.propertyCount != new.propertyCount) return false
-
-        for(i in 0..old.propertyCount - 1) {
-            if (!checkEquals(old.getProperty(i), new.getProperty(i))) return false
         }
 
         return true
@@ -1907,8 +1909,16 @@ fun ProtoBuf.Class.hashCode(stringIndexes: (Int) -> Int, fqNameIndexes: (Int) ->
         hashCode = 31 * hashCode + typeById(inlineClassUnderlyingTypeId).hashCode(stringIndexes, fqNameIndexes, typeById)
     }
 
-    if (hasMultiFieldValueClassRepresentation()) {
-        hashCode = 31 * hashCode + multiFieldValueClassRepresentation.hashCode(stringIndexes, fqNameIndexes, typeById)
+    for(i in 0..multiFieldValueClassUnderlyingNameCount - 1) {
+        hashCode = 31 * hashCode + stringIndexes(getMultiFieldValueClassUnderlyingName(i))
+    }
+
+    for(i in 0..multiFieldValueClassUnderlyingTypeCount - 1) {
+        hashCode = 31 * hashCode + getMultiFieldValueClassUnderlyingType(i).hashCode(stringIndexes, fqNameIndexes, typeById)
+    }
+
+    for(i in 0..multiFieldValueClassUnderlyingTypeIdCount - 1) {
+        hashCode = 31 * hashCode + typeById(getMultiFieldValueClassUnderlyingTypeId(i)).hashCode(stringIndexes, fqNameIndexes, typeById)
     }
 
     for(i in 0..versionRequirementCount - 1) {
@@ -2412,16 +2422,6 @@ fun ProtoBuf.EnumEntry.hashCode(stringIndexes: (Int) -> Int, fqNameIndexes: (Int
     return hashCode
 }
 
-fun ProtoBuf.Class.MultiFieldValueClassRepresentation.hashCode(stringIndexes: (Int) -> Int, fqNameIndexes: (Int) -> Int, typeById: (Int) -> ProtoBuf.Type): Int {
-    var hashCode = 1
-
-    for(i in 0..propertyCount - 1) {
-        hashCode = 31 * hashCode + getProperty(i).hashCode(stringIndexes, fqNameIndexes, typeById)
-    }
-
-    return hashCode
-}
-
 fun ProtoBuf.Annotation.hashCode(stringIndexes: (Int) -> Int, fqNameIndexes: (Int) -> Int, typeById: (Int) -> ProtoBuf.Type): Int {
     var hashCode = 1
 
@@ -2617,22 +2617,6 @@ fun ProtoBuf.Type.Argument.hashCode(stringIndexes: (Int) -> Int, fqNameIndexes: 
 
     if (hasTypeId()) {
         hashCode = 31 * hashCode + typeById(typeId).hashCode(stringIndexes, fqNameIndexes, typeById)
-    }
-
-    return hashCode
-}
-
-fun ProtoBuf.Class.MultiFieldValueClassRepresentation.MultiFieldValueClassProperty.hashCode(stringIndexes: (Int) -> Int, fqNameIndexes: (Int) -> Int, typeById: (Int) -> ProtoBuf.Type): Int {
-    var hashCode = 1
-
-    hashCode = 31 * hashCode + name
-
-    if (hasType()) {
-        hashCode = 31 * hashCode + type.hashCode(stringIndexes, fqNameIndexes, typeById)
-    }
-
-    if (hasTypeId()) {
-        hashCode = 31 * hashCode + typeId
     }
 
     return hashCode

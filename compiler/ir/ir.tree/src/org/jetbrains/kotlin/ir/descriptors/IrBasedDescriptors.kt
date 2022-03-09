@@ -30,7 +30,6 @@ import org.jetbrains.kotlin.serialization.deserialization.descriptors.Deserializ
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.types.*
-import org.jetbrains.kotlin.types.typeUtil.makeNullable
 
 /* Descriptors that serve purely as a view into IR structures.
    Created each time at the borderline between IR-based and descriptor-based code (such as inliner).
@@ -626,11 +625,8 @@ open class IrBasedClassDescriptor(owner: IrClass) : ClassDescriptor, IrBasedDecl
         TODO("not implemented")
     }
 
-    override fun getInlineClassRepresentation(): InlineClassRepresentation<SimpleType>? =
-        owner.inlineClassRepresentation?.mapUnderlyingType { it.toIrBasedKotlinType() as SimpleType }
-
-    override fun getMultiFieldValueClassRepresentation(): MultiFieldValueClassRepresentation<SimpleType>? =
-        owner.multiFieldValueClassRepresentation?.mapUnderlyingType { it.toIrBasedKotlinType() as SimpleType }
+    override fun getValueClassRepresentation(): ValueClassRepresentation<SimpleType>? =
+        owner.valueClassRepresentation?.mapUnderlyingType { it.toIrBasedKotlinType() as SimpleType }
 
     override fun getOriginal() = this
 
@@ -756,13 +752,9 @@ open class IrBasedEnumEntryDescriptor(owner: IrEnumEntry) : ClassDescriptor, IrB
 
     override fun getDeclaredTypeParameters(): List<TypeParameterDescriptor> = emptyList()
 
-    override fun getSealedSubclasses(): Collection<ClassDescriptor> {
-        TODO("not implemented")
-    }
+    override fun getSealedSubclasses(): Collection<ClassDescriptor> = TODO("not implemented")
 
-    override fun getInlineClassRepresentation(): InlineClassRepresentation<SimpleType>? = TODO("not implemented")
-
-    override fun getMultiFieldValueClassRepresentation(): MultiFieldValueClassRepresentation<SimpleType>? = TODO("not implemented")
+    override fun getValueClassRepresentation(): ValueClassRepresentation<SimpleType>? = TODO("not implemented")
 
     override fun getOriginal() = this
 

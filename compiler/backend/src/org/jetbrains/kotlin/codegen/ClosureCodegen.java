@@ -59,6 +59,7 @@ import static org.jetbrains.kotlin.codegen.DescriptorAsmUtil.*;
 import static org.jetbrains.kotlin.codegen.JvmCodegenUtil.isConst;
 import static org.jetbrains.kotlin.codegen.binding.CodegenBinding.CLOSURE;
 import static org.jetbrains.kotlin.codegen.serialization.JvmSerializationBindings.METHOD_FOR_FUNCTION;
+import static org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilsKt.getInlineClassRepresentation;
 import static org.jetbrains.kotlin.resolve.jvm.AsmTypes.*;
 import static org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin.NO_ORIGIN;
 import static org.jetbrains.org.objectweb.asm.Opcodes.*;
@@ -382,8 +383,7 @@ public class ClosureCodegen extends MemberCodegen<KtElement> {
             }
             if (InlineClassesCodegenUtilKt.isInlineClassWithUnderlyingTypeAnyOrAnyN(parameterType) && functionReferenceCall == null) {
                 ClassDescriptor descriptor = TypeUtils.getClassDescriptor(parameterType);
-                InlineClassRepresentation<SimpleType> representation =
-                        descriptor != null ? descriptor.getInlineClassRepresentation() : null;
+                InlineClassRepresentation<SimpleType> representation = getInlineClassRepresentation(descriptor);
                 assert representation != null : "Not an inline class type: " + parameterType;
                 parameterType = representation.getUnderlyingType();
             }

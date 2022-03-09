@@ -462,6 +462,12 @@ interface IrTypeSystemContext : TypeSystemContext, TypeSystemCommonSuperTypesCon
     override fun TypeConstructorMarker.isInlineClass(): Boolean =
         (this as? IrClassSymbol)?.owner?.isSingleFieldValueClass == true
 
+    override fun TypeConstructorMarker.isMultiFieldValueClass(): Boolean =
+        (this as? IrClassSymbol)?.owner?.isMultiFieldValueClass == true
+
+    override fun TypeConstructorMarker.valueClassRepresentationTypeMarkersList(): List<Pair<Name, SimpleTypeMarker>>? =
+        (this as? IrClassSymbol)?.owner?.valueClassRepresentation?.underlyingPropertyNamesToTypes
+
     override fun TypeConstructorMarker.isInnerClass(): Boolean =
         (this as? IrClassSymbol)?.owner?.isInner == true
 

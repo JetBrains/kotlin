@@ -6,10 +6,7 @@
 package org.jetbrains.kotlin.backend.common.serialization
 
 import org.jetbrains.kotlin.backend.common.serialization.encodings.*
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
-import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
-import org.jetbrains.kotlin.descriptors.InlineClassRepresentation
-import org.jetbrains.kotlin.descriptors.ReceiverParameterDescriptor
+import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrFileEntry
 import org.jetbrains.kotlin.ir.declarations.*
@@ -83,6 +80,7 @@ import org.jetbrains.kotlin.backend.common.serialization.proto.IrInlineClassRepr
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrInstanceInitializerCall as ProtoInstanceInitializerCall
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrLocalDelegatedProperty as ProtoLocalDelegatedProperty
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrLocalDelegatedPropertyReference as ProtoLocalDelegatedPropertyReference
+import org.jetbrains.kotlin.backend.common.serialization.proto.IrMultiFieldValueClassRepresentation as ProtoIrMultiFieldValueClassRepresentation
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrOperation as ProtoOperation
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrProperty as ProtoProperty
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrPropertyReference as ProtoPropertyReference
@@ -1031,7 +1029,8 @@ open class IrFileSerializer(
             is IrGetEnumValue -> operationProto.getEnumValue = serializeGetEnumValue(expression)
             is IrGetObjectValue -> operationProto.getObject = serializeGetObject(expression)
             is IrInstanceInitializerCall -> operationProto.instanceInitializerCall = serializeInstanceInitializerCall(expression)
-            is IrLocalDelegatedPropertyReference -> operationProto.localDelegatedPropertyReference = serializeIrLocalDelegatedPropertyReference(expression)
+            is IrLocalDelegatedPropertyReference -> operationProto.localDelegatedPropertyReference =
+                serializeIrLocalDelegatedPropertyReference(expression)
             is IrPropertyReference -> operationProto.propertyReference = serializePropertyReference(expression)
             is IrReturn -> serializeReturn(operationProto, expression)
             is IrSetField -> operationProto.setField = serializeSetField(expression)
@@ -1234,9 +1233,12 @@ open class IrFileSerializer(
             .setBase(serializeIrDeclarationBase(clazz, ClassFlags.encode(clazz)))
             .setName(serializeName(clazz.name))
 
-        val representation = clazz.inlineClassRepresentation
-        if (representation != null) {
-            proto.inlineClassRepresentation = serializeInlineClassRepresentation(representation)
+
+        when (val representation = clazz.valueClassRepresentation) {
+            is MultiFieldValueClassRepresentation ->
+                proto.multiFieldValueClassRepresentation = serializeMultiFieldValueClassRepresentation(representation)
+            is InlineClassRepresentation -> proto.inlineClassRepresentation = serializeInlineClassRepresentation(representation)
+            null -> Unit
         }
 
         clazz.declarations.forEach {
@@ -1265,6 +1267,12 @@ open class IrFileSerializer(
             underlyingPropertyName = serializeName(representation.underlyingPropertyName)
             // TODO: consider not writing type if the property is public, similarly to metadata
             underlyingPropertyType = serializeIrType(representation.underlyingType)
+        }.build()
+
+    private fun serializeMultiFieldValueClassRepresentation(representation: MultiFieldValueClassRepresentation<IrSimpleType>): ProtoIrMultiFieldValueClassRepresentation =
+        ProtoIrMultiFieldValueClassRepresentation.newBuilder().apply {
+            addAllUnderlyingPropertyName(representation.underlyingPropertyNamesToTypes.map { (name, _) -> serializeName(name) })
+            addAllUnderlyingPropertyType(representation.underlyingPropertyNamesToTypes.map { (_, irType) -> serializeIrType(irType) })
         }.build()
 
     private fun serializeIrTypeAlias(typeAlias: IrTypeAlias): ProtoTypeAlias {

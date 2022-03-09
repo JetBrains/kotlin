@@ -643,21 +643,10 @@ fun Fir2IrComponents.createTemporaryVariableForSafeCallConstruction(
 ): Pair<IrVariable, IrValueSymbol> =
     createTemporaryVariable(receiverExpression, conversionScope, "safe_receiver")
 
-// TODO: implement inlineClassRepresentation in FirRegularClass instead.
-fun Fir2IrComponents.computeInlineClassRepresentation(klass: FirRegularClass): InlineClassRepresentation<IrSimpleType>? {
-    if (!(klass.isInline && klass.primaryConstructorIfAny(session)?.valueParameterSymbols?.size == 1)) return null
-    val parameter = klass.getInlineClassUnderlyingParameter(session) ?: error("Inline class has no underlying parameter: ${klass.render()}")
-    val underlyingType = parameter.returnTypeRef.toIrType(typeConverter)
-    return InlineClassRepresentation(
-        parameter.name,
-        underlyingType as? IrSimpleType ?: error("Inline class underlying type is not a simple type: ${klass.render()}")
-    )
-}
-
-// TODO: implement multiFieldValueClassRepresentation in FirRegularClass instead.
-fun Fir2IrComponents.computeMultiFieldValueClassRepresentation(klass: FirRegularClass): MultiFieldValueClassRepresentation<IrSimpleType>? {
-    val parameters = klass.getMultiFieldValueClassUnderlyingParameters(session) ?: return null
-    return MultiFieldValueClassRepresentation(parameters.map {
+// TODO: implement valueClassRepresentation in FirRegularClass instead. zhelenskiy
+fun Fir2IrComponents.computeValueClassRepresentation(klass: FirRegularClass): ValueClassRepresentation<IrSimpleType>? {
+    val parameters = klass.getValueClassUnderlyingParameters(session) ?: return null
+    return createValueClassRepresentation(IrTypeSystemContextImpl(irBuiltIns), parameters.map {
         val type = it.returnTypeRef.toIrType(typeConverter).safeAs<IrSimpleType>()
             ?: error("Value class underlying type is not a simple type: ${klass.render()}")
         it.name to type
