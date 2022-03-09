@@ -4705,6 +4705,10 @@ task interop_sourceCodeStruct(type: KonanLocalTest) {
     source = "codegen/intrinsics/interop_sourceCodeStruct.kt"
 }
 
+task interop_alloc_value(type: KonanLocalTest) {
+    source = "runtime/interop/interop_alloc_value.kt"
+}
+
 standaloneTest("isExperimentalMM") {
     source = "codegen/intrinsics/isExperimentalMM.kt"
     flags = [ "-tr" ]
