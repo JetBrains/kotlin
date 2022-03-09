@@ -17,7 +17,6 @@ import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.metadata.deserialization.NameResolver
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedClassDescriptor
-import org.jetbrains.kotlin.types.SimpleType
 
 class IrLazyClass(
     override val startOffset: Int,
@@ -101,15 +100,10 @@ class IrLazyClass(
         }
     }
 
-    override var inlineClassRepresentation: InlineClassRepresentation<IrSimpleType>? by lazyVar(stubGenerator.lock) {
-        descriptor.inlineClassRepresentation?.mapUnderlyingType(::simplyTypeToIrOrThrow)
-    }
-
-    private fun simplyTypeToIrOrThrow(it: SimpleType) =
-        it.toIrType() as? IrSimpleType ?: error("Inline class underlying type is not a simple type: ${render()}")
-
-    override var multiFieldValueClassRepresentation: MultiFieldValueClassRepresentation<IrSimpleType>? by lazyVar(stubGenerator.lock) {
-        descriptor.multiFieldValueClassRepresentation?.mapUnderlyingType(::simplyTypeToIrOrThrow)
+    override var valueClassRepresentation: ValueClassRepresentation<IrSimpleType>? by lazyVar(stubGenerator.lock) {
+        descriptor.valueClassRepresentation?.mapUnderlyingType {
+            it.toIrType() as? IrSimpleType ?: error("Value class underlying type is not a simple type: ${render()}")
+        }
     }
 
     override var attributeOwnerId: IrAttributeContainer = this

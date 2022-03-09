@@ -38,9 +38,13 @@ abstract class IrClass :
 
     abstract var thisReceiver: IrValueParameter?
 
-    abstract var inlineClassRepresentation: InlineClassRepresentation<IrSimpleType>?
+    abstract var valueClassRepresentation: ValueClassRepresentation<IrSimpleType>?
 
-    abstract var multiFieldValueClassRepresentation: MultiFieldValueClassRepresentation<IrSimpleType>?
+    val inlineClassRepresentation: InlineClassRepresentation<IrSimpleType>?
+        get() = valueClassRepresentation as? InlineClassRepresentation<IrSimpleType>
+
+    val multiFieldValueClassRepresentation: MultiFieldValueClassRepresentation<IrSimpleType>?
+        get() = valueClassRepresentation as? MultiFieldValueClassRepresentation<IrSimpleType>
 
     abstract var sealedSubclasses: List<IrClassSymbol>
 

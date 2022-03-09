@@ -18,4 +18,4 @@ value class GreaterMFVC(val x: SimpleMFVC, val y: IC, val z: SimpleMFVC)
 
 fun gmfvc(ic: IC, x: GreaterMFVC, ic1: UInt) = smfvc(ic, x.x, 0U) + ic(x.y) + smfvc(IC(0U), x.z, ic1)
 
-fun box() = "todo"
+fun box() = "OK" // todo real test

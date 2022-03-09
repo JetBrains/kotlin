@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.backend.jvm.isMultiFieldValueClassFieldGetter
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 
-private class JvmInlineMultiFieldValueClassLowering(context: JvmBackendContext) : JvmValueClassAbstractLowering(context) {
+private class JvmMultiFieldValueClassLowering(context: JvmBackendContext) : JvmValueClassAbstractLowering(context) {
     override val replacements: MemoizedValueClassAbstractReplacements
         get() = context.multiFieldValueClassReplacements
 

@@ -79,6 +79,7 @@ import static org.jetbrains.kotlin.descriptors.CallableMemberDescriptor.Kind.DEL
 import static org.jetbrains.kotlin.descriptors.ModalityUtilsKt.isOverridable;
 import static org.jetbrains.kotlin.resolve.DescriptorToSourceUtils.getSourceFromDescriptor;
 import static org.jetbrains.kotlin.resolve.DescriptorUtils.*;
+import static org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilsKt.getInlineClassRepresentation;
 import static org.jetbrains.kotlin.resolve.inline.InlineOnlyKt.isInlineOnlyPrivateInBytecode;
 import static org.jetbrains.kotlin.resolve.jvm.AsmTypes.OBJECT_TYPE;
 import static org.jetbrains.kotlin.resolve.jvm.InlineClassManglingRulesKt.shouldHideConstructorDueToInlineClassTypeValueParameters;
@@ -378,7 +379,7 @@ public class FunctionCodegen {
         Type fieldOwnerType = typeMapper.mapClass(inlineClass);
         Method erasedMethodImpl = typeMapper.mapAsmMethod(functionDescriptor.getOriginal(), OwnerKind.ERASED_INLINE_CLASS);
 
-        InlineClassRepresentation<SimpleType> representation = inlineClass.getInlineClassRepresentation();
+        InlineClassRepresentation<SimpleType> representation = getInlineClassRepresentation(inlineClass);
         assert representation != null : "Not an inline class: " + inlineClass;
 
         generateDelegateToStaticErasedVersion(

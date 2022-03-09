@@ -82,6 +82,7 @@ import static org.jetbrains.kotlin.resolve.BindingContext.INDEXED_LVALUE_SET;
 import static org.jetbrains.kotlin.resolve.BindingContextUtils.getNotNull;
 import static org.jetbrains.kotlin.resolve.DescriptorToSourceUtils.descriptorToDeclaration;
 import static org.jetbrains.kotlin.resolve.DescriptorUtils.*;
+import static org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilsKt.getInlineClassRepresentation;
 import static org.jetbrains.kotlin.resolve.jvm.AsmTypes.OBJECT_TYPE;
 import static org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin.NO_ORIGIN;
 import static org.jetbrains.kotlin.types.Variance.INVARIANT;
@@ -276,7 +277,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
     @Override
     protected void generateUnboxMethodForInlineClass() {
         if (!(myClass instanceof KtClass)) return;
-        InlineClassRepresentation<SimpleType> inlineClassRepresentation = descriptor.getInlineClassRepresentation();
+        InlineClassRepresentation<SimpleType> inlineClassRepresentation = getInlineClassRepresentation(descriptor);
         if (inlineClassRepresentation == null) return;
 
         Type ownerType = typeMapper.mapClass(descriptor);

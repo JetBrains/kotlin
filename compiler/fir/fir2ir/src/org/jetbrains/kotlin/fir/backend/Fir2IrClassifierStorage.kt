@@ -133,9 +133,9 @@ class Fir2IrClassifierStorage(
         superTypes = klass.superTypeRefs.map { superTypeRef -> superTypeRef.toIrType() }
     }
 
-    private fun IrClass.declareInlineClassRepresentation(klass: FirRegularClass) {
+    private fun IrClass.declareValueClassRepresentation(klass: FirRegularClass) {
         if (this !is Fir2IrLazyClass) {
-            inlineClassRepresentation = computeInlineClassRepresentation(klass)
+            valueClassRepresentation = computeValueClassRepresentation(klass)
         }
     }
 
@@ -216,7 +216,7 @@ class Fir2IrClassifierStorage(
         irClass.declareTypeParameters(regularClass)
         irClass.setThisReceiver(regularClass.typeParameters)
         irClass.declareSupertypes(regularClass)
-        irClass.declareInlineClassRepresentation(regularClass)
+        irClass.declareValueClassRepresentation(regularClass)
         return irClass
     }
 

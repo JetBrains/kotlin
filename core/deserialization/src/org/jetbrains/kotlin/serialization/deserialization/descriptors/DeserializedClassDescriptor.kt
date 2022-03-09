@@ -17,7 +17,10 @@ import org.jetbrains.kotlin.incremental.record
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.metadata.deserialization.*
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.resolve.*
+import org.jetbrains.kotlin.resolve.CliSealedClassInheritorsProvider
+import org.jetbrains.kotlin.resolve.DescriptorFactory
+import org.jetbrains.kotlin.resolve.NonReportingOverrideStrategy
+import org.jetbrains.kotlin.resolve.OverridingUtil
 import org.jetbrains.kotlin.resolve.descriptorUtil.classId
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
@@ -68,9 +71,7 @@ class DeserializedClassDescriptor(
     private val constructors = c.storageManager.createLazyValue { computeConstructors() }
     private val companionObjectDescriptor = c.storageManager.createNullableLazyValue { computeCompanionObjectDescriptor() }
     private val sealedSubclasses = c.storageManager.createLazyValue { computeSubclassesForSealedClass() }
-    private val inlineClassRepresentation = c.storageManager.createNullableLazyValue { computeInlineClassRepresentation() }
-    private val multiFieldValueClassRepresentation =
-        c.storageManager.createNullableLazyValue { computeMultiFieldValueClassRepresentation() }
+    private val valueClassRepresentation = c.storageManager.createNullableLazyValue { computeValueClassRepresentation() }
 
     internal val thisAsProtoContainer: ProtoContainer.Class = ProtoContainer.Class(
         classProto, c.nameResolver, c.typeTable, sourceElement,
@@ -182,12 +183,28 @@ class DeserializedClassDescriptor(
 
     override fun getSealedSubclasses() = sealedSubclasses()
 
-    override fun getInlineClassRepresentation(): InlineClassRepresentation<SimpleType>? = inlineClassRepresentation()
-    override fun getMultiFieldValueClassRepresentation(): MultiFieldValueClassRepresentation<SimpleType>? =
-        multiFieldValueClassRepresentation()
+    override fun getValueClassRepresentation(): ValueClassRepresentation<SimpleType>? = valueClassRepresentation()
+
+    private fun computeValueClassRepresentation(): ValueClassRepresentation<SimpleType>? {
+        val inlineClassRepresentation = computeInlineClassRepresentation()
+        val multiFieldValueClassRepresentation = computeMultiFieldValueClassRepresentation()
+        return when {
+            inlineClassRepresentation != null && multiFieldValueClassRepresentation != null ->
+                throw IllegalArgumentException("Class cannot have both inline class representation and multi field class representation: $this")
+            (isValue || isInline) && inlineClassRepresentation == null && multiFieldValueClassRepresentation == null ->
+                throw IllegalArgumentException("Value class has no value class representation: $this")
+            else -> inlineClassRepresentation ?: multiFieldValueClassRepresentation
+        }
+    }
 
     private fun computeInlineClassRepresentation(): InlineClassRepresentation<SimpleType>? {
-        if (!isInlineClass()) return null
+        if (!isInline && !isValue) return null
+        if (isValue &&
+            !classProto.hasInlineClassUnderlyingPropertyName() &&
+            !classProto.hasInlineClassUnderlyingType() &&
+            !classProto.hasInlineClassUnderlyingTypeId() &&
+            classProto.multiFieldValueClassUnderlyingNameCount > 0
+        ) return null
 
         val propertyName = when {
             classProto.hasInlineClassUnderlyingPropertyName() ->
@@ -201,34 +218,27 @@ class DeserializedClassDescriptor(
             else -> error("Inline class has no underlying property name in metadata: $this")
         }
 
-        val type = classProto.inlineClassUnderlyingType(c.typeTable)?.let(c.typeDeserializer::simpleType)
-            ?: getPropertyTypeFromContributedVariables(propertyName)
+        val type = classProto.inlineClassUnderlyingType(c.typeTable)?.let(c.typeDeserializer::simpleType) ?: run {
+            val underlyingProperty = memberScope.getContributedVariables(propertyName, NoLookupLocation.FROM_DESERIALIZATION)
+                .singleOrNull { it.extensionReceiverParameter == null } ?: error("Value class has no underlying property: $this")
+            underlyingProperty.type as SimpleType
+        }
 
         return InlineClassRepresentation(propertyName, type)
     }
 
-    private fun getPropertyTypeFromContributedVariables(propertyName: Name): SimpleType {
-        val underlyingProperty = memberScope.getContributedVariables(propertyName, NoLookupLocation.FROM_DESERIALIZATION)
-            .singleOrNull { it.extensionReceiverParameter == null } ?: error("Value class has no underlying property: $this")
-        return underlyingProperty.type as SimpleType
-    }
-
     private fun computeMultiFieldValueClassRepresentation(): MultiFieldValueClassRepresentation<SimpleType>? {
-        if (!isValueClass() || isInlineClass()) return null
-        val representation = classProto.multiFieldValueClassRepresentation
-            ?: error("No multiFieldValueClassRepresentation for multi-field value class: $this")
-        val propertyList = representation.propertyList.map { valueClassProperty ->
-            val name: Name = c.nameResolver.getName(valueClassProperty.name)
-            val protoType: ProtoBuf.Type = when {
-                valueClassProperty.hasType() -> valueClassProperty.type
-                valueClassProperty.hasTypeId() -> c.typeTable[valueClassProperty.typeId]
-                else -> error("Unlike inline classes before 1.5.0, multi-field value classes always have intermediate representation")
-            }
-            name to c.typeDeserializer.simpleType(protoType)
-        }
-        require(propertyList.size > 1)
-        require(propertyList.distinctBy { (name, _) -> name }.size == propertyList.size)
-        return MultiFieldValueClassRepresentation(propertyList)
+        val names = classProto.multiFieldValueClassUnderlyingNameList.map { c.nameResolver.getName(it) }.takeIf { it.isNotEmpty() } 
+            ?: return null
+        require(isValue) { "Not a value class: $this" }
+        val typeIdCount = classProto.multiFieldValueClassUnderlyingTypeIdCount
+        val typeCount = classProto.multiFieldValueClassUnderlyingTypeCount
+        val types = when (typeIdCount to typeCount) {
+            names.size to 0 -> classProto.multiFieldValueClassUnderlyingTypeIdList.map { c.typeTable[it] }
+            0 to names.size -> classProto.multiFieldValueClassUnderlyingTypeList
+            else -> error("Illegal multi-field value class representation: $this")
+        }.map { c.typeDeserializer.simpleType(it) }
+        return MultiFieldValueClassRepresentation(names zip types)
     }
 
     override fun toString() =
@@ -283,7 +293,7 @@ class DeserializedClassDescriptor(
 
     private inner class DeserializedClassMemberScope(private val kotlinTypeRefiner: KotlinTypeRefiner) : DeserializedMemberScope(
         c, classProto.functionList, classProto.propertyList, classProto.typeAliasList,
-        classProto.nestedClassNameList.map(c.nameResolver::getName).let { list -> { list } } // workaround KT-13454
+        classProto.nestedClassNameList.map(c.nameResolver::getName).let { { it } } // workaround KT-13454
     ) {
         private val classDescriptor: DeserializedClassDescriptor get() = this@DeserializedClassDescriptor
 

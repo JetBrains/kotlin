@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.backend.common.serialization.proto.IrType.KindCase.*
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.InlineClassRepresentation
 import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.descriptors.MultiFieldValueClassRepresentation
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
@@ -23,7 +24,6 @@ import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrCompositeImpl
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.symbols.impl.IrPublicSymbolBase
-import org.jetbrains.kotlin.ir.symbols.impl.IrTypeParameterPublicSymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrTypeParameterSymbolImpl
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.types.impl.*
@@ -48,6 +48,7 @@ import org.jetbrains.kotlin.backend.common.serialization.proto.IrFunction as Pro
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrFunctionBase as ProtoFunctionBase
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrInlineClassRepresentation as ProtoIrInlineClassRepresentation
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrLocalDelegatedProperty as ProtoLocalDelegatedProperty
+import org.jetbrains.kotlin.backend.common.serialization.proto.IrMultiFieldValueClassRepresentation as ProtoIrMultiFieldValueClassRepresentation
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrProperty as ProtoProperty
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrSimpleType as ProtoSimpleType
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrStatement as ProtoStatement
@@ -347,13 +348,15 @@ class IrDeclarationDeserializer(
 
                 thisReceiver = deserializeIrValueParameter(proto.thisReceiver, -1)
 
-                inlineClassRepresentation = when {
-                    !(flags.isValue && primaryConstructor?.valueParameters?.size == 1) -> null
+                valueClassRepresentation = when {
+                    !flags.isValue -> null
+                    proto.hasMultiFieldValueClassRepresentation() && proto.hasInlineClassRepresentation() ->
+                        error("Class cannot be both inline and multi-field value: $name")
                     proto.hasInlineClassRepresentation() -> deserializeInlineClassRepresentation(proto.inlineClassRepresentation)
+                    proto.hasMultiFieldValueClassRepresentation() ->
+                        deserializeMultiFieldValueClassRepresentation(proto.multiFieldValueClassRepresentation)
                     else -> computeMissingInlineClassRepresentationForCompatibility(this)
                 }
-
-                // todo something when value classes
 
                 sealedSubclasses = proto.sealedSubclassList.map { deserializeIrSymbol(it) as IrClassSymbol }
 
@@ -366,6 +369,12 @@ class IrDeclarationDeserializer(
             deserializeName(proto.underlyingPropertyName),
             deserializeIrType(proto.underlyingPropertyType) as IrSimpleType,
         )
+
+    private fun deserializeMultiFieldValueClassRepresentation(proto: ProtoIrMultiFieldValueClassRepresentation): MultiFieldValueClassRepresentation<IrSimpleType> {
+        val names = proto.underlyingPropertyNameList.map { deserializeName(it) }
+        val types = proto.underlyingPropertyTypeList.map { deserializeIrType(it) as IrSimpleType }
+        return MultiFieldValueClassRepresentation(names zip types)
+    }
 
     private fun computeMissingInlineClassRepresentationForCompatibility(irClass: IrClass): InlineClassRepresentation<IrSimpleType> {
         // For inline classes compiled with 1.5.20 or earlier, try to reconstruct inline class representation from the single parameter of

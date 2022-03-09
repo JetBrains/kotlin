@@ -121,14 +121,6 @@ internal abstract class JvmValueClassAbstractLowering(val context: JvmBackendCon
 
     protected abstract fun addJvmInlineAnnotation(valueClass: IrClass)
 
-//    abstract override fun visitFunctionReference(expression: IrFunctionReference): IrExpression
-
-//    abstract override fun visitFunctionAccess(expression: IrFunctionAccessExpression): IrExpression
-
-//    abstract override fun visitCall(expression: IrCall): IrExpression
-
-//    abstract override fun visitGetField(expression: IrGetField): IrExpression
-
     final override fun visitReturn(expression: IrReturn): IrExpression {
         expression.returnTargetSymbol.owner.safeAs<IrFunction>()?.let { target ->
             val suffix = target.hashSuffix()

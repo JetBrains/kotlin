@@ -242,18 +242,9 @@ message Class {
   optional Type inline_class_underlying_type = 18;
   optional int32 inline_class_underlying_type_id = 19 [(type_id_in_table) = true];
 
-  message MultiFieldValueClassRepresentation {
-    message MultiFieldValueClassProperty {
-      required int32 name = 1;
-      oneof type_representation {
-        Type type = 2;
-        int32 type_id = 3;
-      }
-    }
-    repeated MultiFieldValueClassProperty property = 1;
-  }
-
-  optional MultiFieldValueClassRepresentation multi_field_value_class_representation = 22;
+  repeated int32 multi_field_value_class_underlying_name = 22 [packed = true, (name_id_in_table) = true];
+  repeated Type multi_field_value_class_underlying_type = 23;
+  repeated int32 multi_field_value_class_underlying_type_id = 24 [packed = true, (type_id_in_table) = true];
 
   optional TypeTable type_table = 30;
 

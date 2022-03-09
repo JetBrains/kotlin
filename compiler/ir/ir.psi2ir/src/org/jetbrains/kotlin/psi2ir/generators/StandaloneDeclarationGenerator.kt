@@ -97,7 +97,7 @@ class StandaloneDeclarationGenerator(private val context: GeneratorContext) {
                 descriptor.thisAsReceiverParameter.type.toIrType()
             ).also { it.parent = irClass }
 
-            irClass.inlineClassRepresentation = descriptor.inlineClassRepresentation?.mapUnderlyingType { it.toIrType() as IrSimpleType }
+            irClass.valueClassRepresentation = descriptor.valueClassRepresentation?.mapUnderlyingType { it.toIrType() as IrSimpleType }
         }
 
         return irClass

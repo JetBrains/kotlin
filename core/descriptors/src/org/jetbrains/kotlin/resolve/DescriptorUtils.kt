@@ -30,7 +30,6 @@ import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 import org.jetbrains.kotlin.types.checker.KotlinTypeRefiner
 import org.jetbrains.kotlin.types.checker.REFINER_CAPABILITY
 import org.jetbrains.kotlin.types.checker.TypeRefinementSupport
-import org.jetbrains.kotlin.types.TypeRefinement
 import org.jetbrains.kotlin.types.typeUtil.contains
 import org.jetbrains.kotlin.types.typeUtil.isAnyOrNullableAny
 import org.jetbrains.kotlin.types.typeUtil.makeNullable
@@ -450,3 +449,9 @@ fun <D : CallableDescriptor> D.shouldBeSubstituteWithStubTypes() =
             && dispatchReceiverParameter?.type?.isError != true
             && extensionReceiverParameter?.type?.isError != true
             && containsStubTypes()
+
+val ClassDescriptor?.inlineClassRepresentation: InlineClassRepresentation<SimpleType>?
+    get() = this?.valueClassRepresentation as? InlineClassRepresentation<SimpleType>
+
+val ClassDescriptor?.multiFieldValueClassRepresentation: MultiFieldValueClassRepresentation<SimpleType>?
+    get() = this?.valueClassRepresentation as? MultiFieldValueClassRepresentation<SimpleType>

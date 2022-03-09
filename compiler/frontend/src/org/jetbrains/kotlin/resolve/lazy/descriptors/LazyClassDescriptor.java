@@ -19,7 +19,6 @@ import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.annotations.Annotations;
 import org.jetbrains.kotlin.descriptors.impl.ClassDescriptorBase;
 import org.jetbrains.kotlin.descriptors.impl.FunctionDescriptorImpl;
-import org.jetbrains.kotlin.descriptors.impl.ReceiverParameterDescriptorImpl;
 import org.jetbrains.kotlin.diagnostics.DiagnosticFactory0;
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation;
 import org.jetbrains.kotlin.lexer.KtTokens;
@@ -41,7 +40,6 @@ import org.jetbrains.kotlin.resolve.lazy.declarations.ClassMemberDeclarationProv
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope;
 import org.jetbrains.kotlin.resolve.scopes.MemberScope;
 import org.jetbrains.kotlin.resolve.scopes.StaticScopeForKotlinEnum;
-import org.jetbrains.kotlin.resolve.scopes.receivers.ContextClassReceiver;
 import org.jetbrains.kotlin.resolve.source.KotlinSourceElementKt;
 import org.jetbrains.kotlin.storage.MemoizedFunctionToNotNull;
 import org.jetbrains.kotlin.storage.NotNullLazyValue;
@@ -631,43 +629,49 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
 
     @Nullable
     @Override
-    public InlineClassRepresentation<SimpleType> getInlineClassRepresentation() {
-        if (!InlineClassesUtilsKt.isInlineClass(this)) return null;
-
-        ClassConstructorDescriptor constructor = getUnsubstitutedPrimaryConstructor();
-        if (constructor != null) {
-            ValueParameterDescriptor parameter = firstOrNull(constructor.getValueParameters());
-            if (parameter != null) {
-                return new InlineClassRepresentation<>(parameter.getName(), (SimpleType) parameter.getType());
-            }
+    public ValueClassRepresentation<SimpleType> getValueClassRepresentation() {
+        if (!this.isValue && !this.isInline) {
+            return null;
         }
 
+        ClassConstructorDescriptor constructor = getUnsubstitutedPrimaryConstructor();
         // Don't crash on invalid code.
-        return new InlineClassRepresentation<>(
+        InlineClassRepresentation<SimpleType> invalidValueClassRepresentation = new InlineClassRepresentation<>(
                 SpecialNames.SAFE_IDENTIFIER_FOR_NO_NAME, c.getModuleDescriptor().getBuiltIns().getAnyType()
         );
-    }
-
-    @Nullable
-    @Override
-    public MultiFieldValueClassRepresentation<SimpleType> getMultiFieldValueClassRepresentation() {
-        if (!InlineClassesUtilsKt.isValueClass(this) || InlineClassesUtilsKt.isInlineClass(this)) {
-            return null;
-        }
-
-        ClassConstructorDescriptor constructor = getUnsubstitutedPrimaryConstructor();
-        // Don't crash on invalid code. It is IC, not MFVC.
         if (constructor == null) {
-            return null;
+            return invalidValueClassRepresentation;
         }
         List<ValueParameterDescriptor> parameters = constructor.getValueParameters();
-        if (parameters.size() <= 1) {
-            return null;
+        SimpleClassicTypeSystemContext context = SimpleClassicTypeSystemContext.INSTANCE;
+        if (isRecursiveInlineClass(constructor, new HashSet<>())) {
+            return new InlineClassRepresentation<>(parameters.get(0).getName(), (SimpleType) parameters.get(0).getType());
         }
-        List<Pair<Name, SimpleType>> properties = parameters.stream()
+        if (parameters.size() == 0) {
+            return invalidValueClassRepresentation;
+        }
+        List<Pair<Name, SimpleType>> fields = parameters.stream()
                 .map(parameter -> new Pair<>(parameter.getName(), (SimpleType) parameter.getType()))
                 .collect(Collectors.toList());
-        return new MultiFieldValueClassRepresentation<>(properties);
+        return ValueClassRepresentationKt.createValueClassRepresentation(context, fields);
+    }
+
+    private static boolean isRecursiveInlineClass(@Nullable ClassConstructorDescriptor constructor, @NotNull Set<ClassDescriptor> visited) {
+        if (constructor == null || constructor.getValueParameters().size() != 1 ||
+            !(constructor.getConstructedClass().isValue() || constructor.getConstructedClass().isInline())) {
+            return false;
+        }
+        if (!visited.add(constructor.getConstructedClass())) {
+            return true;
+        }
+        SimpleType type = (SimpleType) constructor.getValueParameters().get(0).getType();
+
+        ClassifierDescriptor descriptor = type.getConstructor().getDeclarationDescriptor();
+        if (descriptor instanceof ClassDescriptor) {
+            ClassConstructorDescriptor newConstructor = ((ClassDescriptor) descriptor).getUnsubstitutedPrimaryConstructor();
+            return isRecursiveInlineClass(newConstructor, visited);
+        }
+        return false;
     }
 
     @Override

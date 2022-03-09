@@ -63,9 +63,7 @@ open class IrClassImpl(
 
     override var superTypes: List<IrType> = emptyList()
 
-    override var inlineClassRepresentation: InlineClassRepresentation<IrSimpleType>? = null
-
-    override var multiFieldValueClassRepresentation: MultiFieldValueClassRepresentation<IrSimpleType>? = null
+    override var valueClassRepresentation: ValueClassRepresentation<IrSimpleType>? = null
 
     override var metadata: MetadataSource? = null
 
