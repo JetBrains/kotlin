@@ -528,6 +528,7 @@ class DeclarationsConverter(
                     )
                     //parse primary constructor
                     val primaryConstructorWrapper = convertPrimaryConstructor(
+                        classNode,
                         primaryConstructor,
                         selfType.source,
                         classWrapper,
@@ -670,6 +671,7 @@ class DeclarationsConverter(
                     )
                     //parse primary constructor
                     convertPrimaryConstructor(
+                        objectDeclaration,
                         primaryConstructor,
                         delegatedSelfType.source,
                         classWrapper,
@@ -760,6 +762,7 @@ class DeclarationsConverter(
                         )
                         superTypeRefs += enumClassWrapper.delegatedSuperTypeRef
                         convertPrimaryConstructor(
+                            enumEntry,
                             null,
                             enumEntry.toFirSourceElement(),
                             enumClassWrapper,
@@ -822,6 +825,7 @@ class DeclarationsConverter(
      * primaryConstructor branch
      */
     private fun convertPrimaryConstructor(
+        classNode: LighterASTNode,
         primaryConstructor: LighterASTNode?,
         selfTypeSource: KtSourceElement?,
         classWrapper: ClassWrapper,
@@ -896,6 +900,7 @@ class DeclarationsConverter(
                 this.valueParameters += valueParameters.map { it.firValueParameter }
                 delegatedConstructor = firDelegatedCall
                 this.body = null
+                this.contextReceivers.addAll(convertContextReceivers(classNode))
             }.apply {
                 containingClassForStaticMemberAttr = currentDispatchReceiverType()!!.lookupTag
             }, valueParameters
