@@ -1,3 +1,5 @@
+// !RENDER_DIAGNOSTICS_FULL_TEXT
+
 fun Int.with() {
     with("") {
         <!ARGUMENT_TYPE_MISMATCH!>this@with.<!UNRESOLVED_REFERENCE!>inc<!>()<!>

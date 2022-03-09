@@ -1,9 +1,10 @@
 // !LANGUAGE: +ContextReceivers
+// !RENDER_DIAGNOSTICS_FULL_TEXT
 
 class Some {
     context(Some, String)
     fun foo() {
-        this<!UNRESOLVED_LABEL!>@foo<!>
+        //this@foo
         this@Some
         this<!UNRESOLVED_LABEL!>@String<!>
     }

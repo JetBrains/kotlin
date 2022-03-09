@@ -1,9 +1,10 @@
 // !LANGUAGE: +ContextReceivers
+// !RENDER_DIAGNOSTICS_FULL_TEXT
 
 class Some {
     context(Some, String)
     fun foo() {
-        <!NO_THIS!>this@foo<!>
+        //this@foo
         this<!LABEL_RESOLVE_WILL_CHANGE("class Some; function foo context receiver")!>@Some<!>
         this@String
     }

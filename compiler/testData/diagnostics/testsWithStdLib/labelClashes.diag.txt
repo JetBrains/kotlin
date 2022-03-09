@@ -1,0 +1,24 @@
+/labelClashes.kt:5:13: warning: this label is now resolved to 'function with' but soon it will be resolved to the closest 'anonymous function'. Please consider introducing or changing explicit label name
+        this@with.inc()
+            ^
+/labelClashes.kt:11:13: warning: this label is now resolved to 'function bar' but soon it will be resolved to the closest 'anonymous function'. Please consider introducing or changing explicit label name
+        this@bar.inc()
+            ^
+/labelClashes.kt:15:9: warning: parameter 'f' is never used
+fun foo(f: with.() -> Unit) {}
+        ^
+/labelClashes.kt:20:17: warning: this label is now resolved to 'class with' but soon it will be resolved to the closest 'anonymous function'. Please consider introducing or changing explicit label name
+            this@with.foo()
+                ^
+/labelClashes.kt:24:17: warning: this label is now resolved to 'class with' but soon it will be resolved to the closest 'anonymous function'. Please consider introducing or changing explicit label name
+            this@with.foo()
+                ^
+/labelClashes.kt:37:9: warning: the expression is unused
+        this@TypedThis
+        ^
+/labelClashes.kt:37:13: warning: this label is now resolved to 'class TypedThis' but soon it will be resolved to the closest 'function baz extension receiver'. Please consider introducing or changing explicit label name
+        this@TypedThis
+            ^
+/labelClashes.kt:41:9: warning: the expression is unused
+        this@TypedThis
+        ^
