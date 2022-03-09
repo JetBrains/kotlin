@@ -73,10 +73,12 @@ class TreesCompareTest : AbstractRawFirBuilderTestCase() {
             val ktFile = createPsiFile(FileUtil.getNameWithoutExtension(PathUtil.getFileName(file.path)), text.toString().trim()) as KtFile
             val firFileFromPsi = ktFile.toFirFile()
             val treeFromPsi = StringBuilder().also { FirRenderer(it).visitFile(firFileFromPsi) }.toString()
+                .replace("<ERROR TYPE REF:.*?>".toRegex(), "<ERROR TYPE REF>")
 
             //light tree
             val firFileFromLightTree = lightTreeConverter.buildFirFile(text, KtIoFileSourceFile(file), linesMapping)
             val treeFromLightTree = StringBuilder().also { FirRenderer(it).visitFile(firFileFromLightTree) }.toString()
+                .replace("<ERROR TYPE REF:.*?>".toRegex(), "<ERROR TYPE REF>")
 
             return@compareBase treeFromLightTree == treeFromPsi
         }
@@ -104,6 +106,7 @@ class TreesCompareTest : AbstractRawFirBuilderTestCase() {
             val firFileFromPsi = ktFile.toFirFile()
             val treeFromPsi = StringBuilder().also { FirRenderer(it).visitFile(firFileFromPsi) }.toString()
                 .replace("<Unsupported LValue.*?>".toRegex(), "<Unsupported LValue>")
+                .replace("<ERROR TYPE REF:.*?>".toRegex(), "<ERROR TYPE REF>")
 
             //light tree
             val firFileFromLightTree =
@@ -114,6 +117,7 @@ class TreesCompareTest : AbstractRawFirBuilderTestCase() {
                 )
             val treeFromLightTree = StringBuilder().also { FirRenderer(it).visitFile(firFileFromLightTree) }.toString()
                 .replace("<Unsupported LValue.*?>".toRegex(), "<Unsupported LValue>")
+                .replace("<ERROR TYPE REF:.*?>".toRegex(), "<ERROR TYPE REF>")
 
             return@compareBase treeFromLightTree == treeFromPsi
         }
