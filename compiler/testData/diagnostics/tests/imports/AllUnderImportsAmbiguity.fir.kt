@@ -14,4 +14,4 @@ package c
 import a.*
 import b.*
 
-class Y : <!UNRESOLVED_REFERENCE!>X<!>
+class Y : <!OVERLOAD_RESOLUTION_AMBIGUITY!>X<!>

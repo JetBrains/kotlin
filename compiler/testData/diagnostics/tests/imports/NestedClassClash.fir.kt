@@ -17,7 +17,7 @@ class D {
 import a.A.<!CONFLICTING_IMPORT!>B<!>
 import a.D.<!CONFLICTING_IMPORT!>B<!>
 
-fun test(b: <!UNRESOLVED_REFERENCE!>B<!>) {
+fun test(b: <!OVERLOAD_RESOLUTION_AMBIGUITY!>B<!>) {
     <!UNRESOLVED_REFERENCE!>B<!>()
 }
 
@@ -26,6 +26,6 @@ import a.A.*
 import a.D.*
 
 // todo ambiguvity here
-fun test2(b: <!UNRESOLVED_REFERENCE!>B<!>) {
+fun test2(b: <!OVERLOAD_RESOLUTION_AMBIGUITY!>B<!>) {
     <!UNRESOLVED_REFERENCE!>B<!>()
 }
