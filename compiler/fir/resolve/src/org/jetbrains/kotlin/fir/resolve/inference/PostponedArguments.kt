@@ -66,7 +66,8 @@ fun Candidate.preprocessLambdaArgument(
             if (resolvedArgument.coerceFirstParameterToExtensionReceiver) parameters.drop(1) else parameters,
             resolvedArgument.receiver,
             resolvedArgument.returnType,
-            isSuspend = resolvedArgument.isSuspend
+            isSuspend = resolvedArgument.isSuspend,
+            contextReceivers = resolvedArgument.contextReceivers,
         )
 
         val position = ConeArgumentConstraintPosition(resolvedArgument.atom)
@@ -124,6 +125,10 @@ private fun extractLambdaInfo(
         it.returnTypeRef.coneTypeSafe<ConeKotlinType>() ?: nothingType
     }
 
+    val contextReceivers = argument.contextReceivers.map {
+        it.typeRef.coneTypeSafe<ConeKotlinType>() ?: nothingType
+    }
+
     val newTypeVariableUsed = returnType == typeVariable.defaultType
     if (newTypeVariableUsed) csBuilder.registerVariable(typeVariable)
 
@@ -132,6 +137,7 @@ private fun extractLambdaInfo(
         expectedType,
         isSuspend,
         receiverType,
+        contextReceivers,
         parameters,
         returnType,
         typeVariable.takeIf { newTypeVariableUsed },

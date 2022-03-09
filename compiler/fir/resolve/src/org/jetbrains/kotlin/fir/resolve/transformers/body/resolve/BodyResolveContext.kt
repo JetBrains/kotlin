@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyAccessor
 import org.jetbrains.kotlin.fir.declarations.utils.isCompanion
 import org.jetbrains.kotlin.fir.declarations.utils.isInner
-import org.jetbrains.kotlin.fir.declarations.primaryConstructorIfAny
 import org.jetbrains.kotlin.fir.expressions.FirCallableReferenceAccess
 import org.jetbrains.kotlin.fir.expressions.FirWhenExpression
 import org.jetbrains.kotlin.fir.resolve.*
@@ -228,6 +227,8 @@ class BodyResolveContext(
         holder: SessionHolder,
         f: () -> T
     ): T = withTowerDataCleanup {
+        replaceTowerDataContext(towerDataContext.addContextReceiverGroup(owner.createContextReceiverValues(holder)))
+
         if (type != null) {
             val receiver = ImplicitExtensionReceiverValue(
                 owner.symbol,
@@ -450,6 +451,7 @@ class BodyResolveContext(
         val forMembersResolution =
             staticsAndCompanion
                 .addReceiver(labelName, towerElementsForClass.thisReceiver)
+                .addContextReceiverGroup(towerElementsForClass.contextReceivers)
                 .addNonLocalScopeIfNotNull(typeParameterScope)
 
         val scopeForConstructorHeader =

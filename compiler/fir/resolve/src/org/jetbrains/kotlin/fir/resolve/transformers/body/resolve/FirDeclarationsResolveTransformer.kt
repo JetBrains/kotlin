@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.fakeElement
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.builder.buildAnonymousFunctionCopy
+import org.jetbrains.kotlin.fir.declarations.builder.buildContextReceiver
 import org.jetbrains.kotlin.fir.declarations.builder.buildValueParameter
 import org.jetbrains.kotlin.fir.declarations.impl.FirDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyAccessor
@@ -34,7 +35,6 @@ import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeLocalVariableNoTypeOrIni
 import org.jetbrains.kotlin.fir.resolve.inference.FirStubTypeTransformer
 import org.jetbrains.kotlin.fir.resolve.inference.ResolvedLambdaAtom
 import org.jetbrains.kotlin.fir.resolve.inference.extractLambdaInfoFromFunctionalType
-import org.jetbrains.kotlin.fir.types.isSuspendFunctionType
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.substitution.createTypeSubstitutorByTypeConstructor
 import org.jetbrains.kotlin.fir.resolve.transformers.*
@@ -809,6 +809,19 @@ open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransfor
         lambda = buildAnonymousFunctionCopy(lambda) {
             receiverTypeRef = lambda.receiverTypeRef?.takeIf { it !is FirImplicitTypeRef }
                 ?: resolvedLambdaAtom?.receiver?.let { lambda.receiverTypeRef?.resolvedTypeFromPrototype(it) }
+
+            contextReceivers.clear()
+            contextReceivers.addAll(
+                lambda.contextReceivers.takeIf { it.isNotEmpty() }
+                    ?: resolvedLambdaAtom?.contextReceivers?.map { receiverType ->
+                        buildContextReceiver {
+                            this.typeRef = buildResolvedTypeRef {
+                                type = receiverType
+                            }
+                        }
+                    }.orEmpty()
+            )
+
             this.valueParameters.clear()
             this.valueParameters.addAll(valueParameters)
             returnTypeRef = (lambda.returnTypeRef as? FirResolvedTypeRef)

@@ -45,7 +45,7 @@ internal class TowerLevelHandler {
             CallKind.VariableAccess -> {
                 processResult += towerLevel.processPropertiesByName(info, processor)
 
-                if (!collector.isSuccess() && towerLevel is ScopeTowerLevel && towerLevel.extensionReceiver == null) {
+                if (!collector.isSuccess() && towerLevel is ScopeTowerLevel && !towerLevel.areThereExtensionReceiverOptions()) {
                     processResult += towerLevel.processObjectsByName(info, processor)
                 }
             }
@@ -74,7 +74,7 @@ private class TowerScopeLevelProcessor(
     override fun consumeCandidate(
         symbol: FirBasedSymbol<*>,
         dispatchReceiverValue: ReceiverValue?,
-        extensionReceiverValue: ReceiverValue?,
+        givenExtensionReceiverOptions: List<ReceiverValue>,
         scope: FirScope,
         objectsByName: Boolean
     ) {
@@ -85,7 +85,7 @@ private class TowerScopeLevelProcessor(
                 explicitReceiverKind,
                 scope,
                 dispatchReceiverValue,
-                extensionReceiverValue,
+                givenExtensionReceiverOptions,
                 objectsByName
             ), candidateFactory.context
         )

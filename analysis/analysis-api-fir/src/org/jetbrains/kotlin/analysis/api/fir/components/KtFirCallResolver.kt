@@ -335,14 +335,14 @@ internal class KtFirCallResolver(
                 // Implicit invoke (e.g., `x()`) will have a different callee symbol (e.g., `x`) than the candidate (e.g., `invoke`).
                 createKtPartiallyAppliedSymbolForImplicitInvoke(
                     candidate.dispatchReceiverValue?.receiverExpression ?: FirNoReceiverExpression,
-                    candidate.extensionReceiverValue?.receiverExpression ?: FirNoReceiverExpression,
+                    candidate.chosenExtensionReceiverValue?.receiverExpression ?: FirNoReceiverExpression,
                     candidate.explicitReceiverKind
                 )
             } else {
                 KtPartiallyAppliedSymbol(
                     unsubstitutedKtSignature.substitute(substitutor),
                     candidate.dispatchReceiverValue?.receiverExpression?.toKtReceiverValue(),
-                    candidate.extensionReceiverValue?.receiverExpression?.toKtReceiverValue(),
+                    candidate.chosenExtensionReceiverValue?.receiverExpression?.toKtReceiverValue(),
                 )
             }
         } else if (fir is FirQualifiedAccess) {

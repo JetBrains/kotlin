@@ -28,9 +28,11 @@ import org.jetbrains.kotlin.resolve.calls.tower.isSuccess
 class Candidate(
     override val symbol: FirBasedSymbol<*>,
     override val dispatchReceiverValue: ReceiverValue?,
-    override val extensionReceiverValue: ReceiverValue?,
+    // In most cases, it contains zero or single element
+    // More than one, only in case of context receiver group
+    val givenExtensionReceiverOptions: List<ReceiverValue>,
     override val explicitReceiverKind: ExplicitReceiverKind,
-    val constraintSystemFactory: InferenceComponents.ConstraintSystemFactory,
+    private val constraintSystemFactory: InferenceComponents.ConstraintSystemFactory,
     private val baseSystem: ConstraintStorage,
     override val callInfo: CallInfo,
     val originScope: FirScope?,
@@ -73,6 +75,10 @@ class Candidate(
     var currentApplicability = CandidateApplicability.RESOLVED
         private set
 
+    override var chosenExtensionReceiverValue: ReceiverValue? = givenExtensionReceiverOptions.singleOrNull()
+
+    var contextReceiverArguments: List<FirExpression>? = null
+
     override val applicability: CandidateApplicability
         get() = currentApplicability
 
@@ -95,8 +101,8 @@ class Candidate(
     fun dispatchReceiverExpression(): FirExpression =
         dispatchReceiverValue?.receiverExpression?.takeIf { it !is FirExpressionStub } ?: FirNoReceiverExpression
 
-    fun extensionReceiverExpression(): FirExpression =
-        extensionReceiverValue?.receiverExpression?.takeIf { it !is FirExpressionStub } ?: FirNoReceiverExpression
+    fun chosenExtensionReceiverExpression(): FirExpression =
+        chosenExtensionReceiverValue?.receiverExpression?.takeIf { it !is FirExpressionStub } ?: FirNoReceiverExpression
 
     var hasVisibleBackingField = false
 

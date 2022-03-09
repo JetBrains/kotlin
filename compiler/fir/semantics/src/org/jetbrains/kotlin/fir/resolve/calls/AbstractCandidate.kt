@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.resolve.calls.tower.CandidateApplicability
 abstract class AbstractCandidate {
     abstract val symbol: FirBasedSymbol<*>
     abstract val dispatchReceiverValue: ReceiverValue?
-    abstract val extensionReceiverValue: ReceiverValue?
+    abstract val chosenExtensionReceiverValue: ReceiverValue?
     abstract val explicitReceiverKind: ExplicitReceiverKind
     abstract val callInfo: AbstractCallInfo
     abstract val diagnostics: List<ResolutionDiagnostic>

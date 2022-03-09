@@ -1373,6 +1373,28 @@ internal class NextAmbiguityImpl(
     override val token: ValidityToken,
 ) : KtFirDiagnostic.NextAmbiguity(), KtAbstractFirDiagnostic<PsiElement>
 
+internal class NoContextReceiverImpl(
+    override val contextReceiverRepresentation: KtType,
+    override val firDiagnostic: KtPsiDiagnostic,
+    override val token: ValidityToken,
+) : KtFirDiagnostic.NoContextReceiver(), KtAbstractFirDiagnostic<KtElement>
+
+internal class MultipleArgumentsApplicableForContextReceiverImpl(
+    override val contextReceiverRepresentation: KtType,
+    override val firDiagnostic: KtPsiDiagnostic,
+    override val token: ValidityToken,
+) : KtFirDiagnostic.MultipleArgumentsApplicableForContextReceiver(), KtAbstractFirDiagnostic<KtElement>
+
+internal class AmbiguousCallWithImplicitContextReceiverImpl(
+    override val firDiagnostic: KtPsiDiagnostic,
+    override val token: ValidityToken,
+) : KtFirDiagnostic.AmbiguousCallWithImplicitContextReceiver(), KtAbstractFirDiagnostic<KtElement>
+
+internal class UnsupportedContextualDeclarationCallImpl(
+    override val firDiagnostic: KtPsiDiagnostic,
+    override val token: ValidityToken,
+) : KtFirDiagnostic.UnsupportedContextualDeclarationCall(), KtAbstractFirDiagnostic<KtElement>
+
 internal class RecursionInImplicitTypesImpl(
     override val firDiagnostic: KtPsiDiagnostic,
     override val token: ValidityToken,

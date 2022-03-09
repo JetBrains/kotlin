@@ -49,19 +49,20 @@ class CandidateFactory private constructor(
         explicitReceiverKind: ExplicitReceiverKind,
         scope: FirScope?,
         dispatchReceiverValue: ReceiverValue? = null,
-        extensionReceiverValue: ReceiverValue? = null,
+        givenExtensionReceiverOptions: List<ReceiverValue> = emptyList(),
         objectsByName: Boolean = false
     ): Candidate {
         @Suppress("NAME_SHADOWING")
         val symbol = symbol.unwrapIntegerOperatorSymbolIfNeeded(callInfo)
 
         val result = Candidate(
-            symbol, dispatchReceiverValue, extensionReceiverValue,
+            symbol, dispatchReceiverValue, givenExtensionReceiverOptions,
             explicitReceiverKind, context.inferenceComponents.constraintSystemFactory, baseSystem,
             callInfo,
             scope,
             isFromCompanionObjectTypeScope = when (explicitReceiverKind) {
-                ExplicitReceiverKind.EXTENSION_RECEIVER -> extensionReceiverValue.isCandidateFromCompanionObjectTypeScope()
+                ExplicitReceiverKind.EXTENSION_RECEIVER ->
+                    givenExtensionReceiverOptions.singleOrNull().isCandidateFromCompanionObjectTypeScope()
                 ExplicitReceiverKind.DISPATCH_RECEIVER -> dispatchReceiverValue.isCandidateFromCompanionObjectTypeScope()
                 // The following cases are not applicable for companion objects.
                 ExplicitReceiverKind.NO_EXPLICIT_RECEIVER, ExplicitReceiverKind.BOTH_RECEIVERS -> false
@@ -121,7 +122,7 @@ class CandidateFactory private constructor(
         return Candidate(
             symbol,
             dispatchReceiverValue = null,
-            extensionReceiverValue = null,
+            givenExtensionReceiverOptions = emptyList(),
             explicitReceiverKind = ExplicitReceiverKind.NO_EXPLICIT_RECEIVER,
             context.inferenceComponents.constraintSystemFactory,
             baseSystem,

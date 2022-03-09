@@ -47,9 +47,10 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.resolve.ForbiddenNamedArgumentsTarget
-import org.jetbrains.kotlin.types.ConstantValueKind
 import org.jetbrains.kotlin.resolve.calls.tower.CandidateApplicability
+import org.jetbrains.kotlin.types.ConstantValueKind
 import org.jetbrains.kotlin.types.SmartcastStability
+import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.contract
@@ -73,7 +74,10 @@ fun FirFunction.constructFunctionalType(isSuspend: Boolean = false): ConeLookupT
     }
     val rawReturnType = (this as FirCallableDeclaration).returnTypeRef.coneType
 
-    return createFunctionalType(parameters, receiverTypeRef?.coneType, rawReturnType, isSuspend = isSuspend)
+    return createFunctionalType(
+        parameters, receiverTypeRef?.coneType, rawReturnType, isSuspend = isSuspend,
+        contextReceivers = contextReceivers.map { it.typeRef.coneType }
+    )
 }
 
 fun FirFunction.constructFunctionalTypeRef(isSuspend: Boolean = false): FirResolvedTypeRef {
@@ -88,9 +92,16 @@ fun createFunctionalType(
     receiverType: ConeKotlinType?,
     rawReturnType: ConeKotlinType,
     isSuspend: Boolean,
+    contextReceivers: List<ConeKotlinType> = emptyList(),
     isKFunctionType: Boolean = false
 ): ConeLookupTagBasedType {
-    val receiverAndParameterTypes = listOfNotNull(receiverType) + parameters + listOf(rawReturnType)
+    val receiverAndParameterTypes =
+        buildList {
+            addAll(contextReceivers)
+            addIfNotNull(receiverType)
+            addAll(parameters)
+            add(rawReturnType)
+        }
 
     val kind = if (isSuspend) {
         if (isKFunctionType) FunctionClassKind.KSuspendFunction else FunctionClassKind.SuspendFunction
@@ -99,7 +110,18 @@ fun createFunctionalType(
     }
 
     val functionalTypeId = ClassId(kind.packageFqName, kind.numberedClassName(receiverAndParameterTypes.size - 1))
-    val attributes = if (receiverType != null) ConeAttributes.WithExtensionFunctionType else ConeAttributes.Empty
+    val attributes = when {
+        contextReceivers.isNotEmpty() -> ConeAttributes.create(
+            buildList {
+                add(CompilerConeAttributes.ContextFunctionTypeParams(contextReceivers.size))
+                if (receiverType != null) {
+                    add(CompilerConeAttributes.ExtensionFunctionType)
+                }
+            }
+        )
+        receiverType != null -> ConeAttributes.WithExtensionFunctionType
+        else -> ConeAttributes.Empty
+    }
     return ConeClassLikeTypeImpl(
         ConeClassLikeLookupTagImpl(functionalTypeId),
         receiverAndParameterTypes.toTypedArray(),

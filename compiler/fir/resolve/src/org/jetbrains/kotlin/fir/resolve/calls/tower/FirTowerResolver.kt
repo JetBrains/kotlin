@@ -116,7 +116,7 @@ class FirTowerResolver(
                     ExplicitReceiverKind.NO_EXPLICIT_RECEIVER,
                     scope,
                     dispatchReceiver,
-                    extensionReceiverValue = null
+                    givenExtensionReceiverOptions = emptyList()
                 ),
                 context
             )

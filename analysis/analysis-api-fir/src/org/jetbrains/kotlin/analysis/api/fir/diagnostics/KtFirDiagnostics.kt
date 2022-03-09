@@ -1145,6 +1145,24 @@ sealed class KtFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI> {
         abstract val candidates: List<KtSymbol>
     }
 
+    abstract class NoContextReceiver : KtFirDiagnostic<KtElement>() {
+        override val diagnosticClass get() = NoContextReceiver::class
+        abstract val contextReceiverRepresentation: KtType
+    }
+
+    abstract class MultipleArgumentsApplicableForContextReceiver : KtFirDiagnostic<KtElement>() {
+        override val diagnosticClass get() = MultipleArgumentsApplicableForContextReceiver::class
+        abstract val contextReceiverRepresentation: KtType
+    }
+
+    abstract class AmbiguousCallWithImplicitContextReceiver : KtFirDiagnostic<KtElement>() {
+        override val diagnosticClass get() = AmbiguousCallWithImplicitContextReceiver::class
+    }
+
+    abstract class UnsupportedContextualDeclarationCall : KtFirDiagnostic<KtElement>() {
+        override val diagnosticClass get() = UnsupportedContextualDeclarationCall::class
+    }
+
     abstract class RecursionInImplicitTypes : KtFirDiagnostic<PsiElement>() {
         override val diagnosticClass get() = RecursionInImplicitTypes::class
     }

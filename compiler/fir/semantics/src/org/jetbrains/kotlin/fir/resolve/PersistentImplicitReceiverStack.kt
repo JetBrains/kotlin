@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.resolve
 
 import kotlinx.collections.immutable.*
+import org.jetbrains.kotlin.fir.resolve.calls.ContextReceiverValue
 import org.jetbrains.kotlin.fir.resolve.calls.ImplicitDispatchReceiverValue
 import org.jetbrains.kotlin.fir.resolve.calls.ImplicitReceiverValue
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
@@ -16,7 +17,7 @@ import org.jetbrains.kotlin.name.Name
 class PersistentImplicitReceiverStack private constructor(
     private val stack: PersistentList<ImplicitReceiverValue<*>>,
     // This multi-map holds indexes of the stack ^
-    private val indexesPerLabel: PersistentSetMultimap<Name, Int>,
+    private val receiversPerLabel: PersistentSetMultimap<Name, ImplicitReceiverValue<*>>,
     private val indexesPerSymbol: PersistentMap<FirBasedSymbol<*>, Int>,
     private val originalTypes: PersistentList<ConeKotlinType>,
 ) : ImplicitReceiverStack(), Iterable<ImplicitReceiverValue<*>> {
@@ -33,16 +34,42 @@ class PersistentImplicitReceiverStack private constructor(
         return receivers.fold(this) { acc, value -> acc.add(name = null, value) }
     }
 
-    fun add(name: Name?, value: ImplicitReceiverValue<*>): PersistentImplicitReceiverStack {
+    fun addAllContextReceivers(receivers: List<ContextReceiverValue<*>>): PersistentImplicitReceiverStack {
+        return receivers.fold(this) { acc, value -> acc.addContextReceiver(value) }
+    }
+
+    fun add(name: Name?, value: ImplicitReceiverValue<*>, aliasLabel: Name? = null): PersistentImplicitReceiverStack {
         val stack = stack.add(value)
         val originalTypes = originalTypes.add(value.originalType)
         val index = stack.size - 1
-        val indexesPerLabel = name?.let { indexesPerLabel.put(it, index) } ?: indexesPerLabel
+        val receiversPerLabel = name?.let { receiversPerLabel.put(it, value) } ?: receiversPerLabel
         val indexesPerSymbol = indexesPerSymbol.put(value.boundSymbol, index)
 
         return PersistentImplicitReceiverStack(
             stack,
-            indexesPerLabel,
+            receiversPerLabel,
+            indexesPerSymbol,
+            originalTypes
+        )
+    }
+
+    fun addContextReceiver(value: ContextReceiverValue<*>): PersistentImplicitReceiverStack {
+        val labelName = value.labelName ?: return this
+
+        val receiversPerLabel = receiversPerLabel.put(labelName, value)
+        return PersistentImplicitReceiverStack(
+            stack,
+            receiversPerLabel,
+            indexesPerSymbol,
+            originalTypes
+        )
+    }
+
+    fun addReceiverLabelAlias(aliasLabel: Name, value: ImplicitReceiverValue<*>): PersistentImplicitReceiverStack {
+        val receiversPerLabel = receiversPerLabel.put(aliasLabel, value)
+        return PersistentImplicitReceiverStack(
+            stack,
+            receiversPerLabel,
             indexesPerSymbol,
             originalTypes
         )
@@ -50,7 +77,7 @@ class PersistentImplicitReceiverStack private constructor(
 
     override operator fun get(name: String?): ImplicitReceiverValue<*>? {
         if (name == null) return stack.lastOrNull()
-        return indexesPerLabel[Name.identifier(name)].lastOrNull()?.let { stack[it] }
+        return receiversPerLabel[Name.identifier(name)].lastOrNull()
     }
 
     override fun lastDispatchReceiver(): ImplicitDispatchReceiverValue? {
@@ -85,7 +112,7 @@ class PersistentImplicitReceiverStack private constructor(
     fun createSnapshot(): PersistentImplicitReceiverStack {
         return PersistentImplicitReceiverStack(
             stack.map { it.createSnapshot() }.toPersistentList(),
-            indexesPerLabel,
+            receiversPerLabel,
             indexesPerSymbol,
             originalTypes
         )
