@@ -109,6 +109,12 @@ public class ClsStubBuilderTestGenerated extends AbstractClsStubBuilderTest {
     }
 
     @Test
+    @TestMetadata("DefinitelyNotNullTypes")
+    public void testDefinitelyNotNullTypes() throws Exception {
+        runTest("analysis/decompiled/decompiler-to-file-stubs/testData/clsFileStubBuilder/DefinitelyNotNullTypes/");
+    }
+
+    @Test
     @TestMetadata("Delegation")
     public void testDelegation() throws Exception {
         runTest("analysis/decompiled/decompiler-to-file-stubs/testData/clsFileStubBuilder/Delegation/");
