@@ -1,9 +1,10 @@
-apply plugin: "kotlin"
+plugins {
+    id "org.jetbrains.kotlin.jvm"
+}
 
 dependencies {
     implementation 'com.google.guava:guava:12.0'
     testImplementation 'org.testng:testng:6.8'
-    implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
 }
 
 test {

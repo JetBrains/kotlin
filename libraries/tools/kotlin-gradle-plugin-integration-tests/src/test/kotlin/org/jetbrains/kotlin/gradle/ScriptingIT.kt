@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.gradle
 
 import org.gradle.api.logging.LogLevel
 import org.gradle.util.GradleVersion
+import org.jetbrains.kotlin.gradle.scripting.internal.ScriptingGradleSubplugin
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.condition.DisabledOnOs
@@ -97,4 +98,15 @@ class ScriptingIT : KGPBaseTest() {
             }
         }
     }
+
+    @DisplayName("KT-31124: No scripting warning")
+    @GradleTest
+    fun testNoScriptingWarning(gradleVersion: GradleVersion) {
+        project("simpleProject", gradleVersion) {
+            build("help") {
+                assertOutputDoesNotContain(ScriptingGradleSubplugin.MISCONFIGURATION_MESSAGE_SUFFIX)
+            }
+        }
+    }
+
 }

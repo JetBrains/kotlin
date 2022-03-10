@@ -8,6 +8,10 @@ package org.jetbrains.kotlin.gradle
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.junit.jupiter.api.DisplayName
+import kotlin.io.path.appendText
+import kotlin.io.path.readLines
+import kotlin.io.path.readText
+import kotlin.test.assertTrue
 
 @DisplayName("Artifacts publication")
 @JvmGradlePluginTests
@@ -20,6 +24,87 @@ class PublishingIT : KGPBaseTest() {
     internal fun shouldPublishCorrectlyWithOmittedVersion(gradleVersion: GradleVersion) {
         project("withBom".fullProjectName, gradleVersion) {
             build("publishToMavenLocal")
+        }
+    }
+
+    @DisplayName("Publishes Kotlin api dependencies as compile")
+    @GradleTest
+    fun testKotlinJvmProjectPublishesKotlinApiDependenciesAsCompile(gradleVersion: GradleVersion) {
+        project("simpleProject", gradleVersion) {
+            buildGradle.appendText(
+                //language=Groovy
+                """
+                
+                dependencies {
+                    api 'org.jetbrains.kotlin:kotlin-reflect'
+                }
+                
+                plugins.apply('maven-publish')
+                
+                group "com.example"
+                version "1.0"
+                publishing {
+                    repositories { maven { url file("${'$'}buildDir/repo").toURI() } }
+                    publications { maven(MavenPublication) { from components.java } }
+                }
+                """.trimIndent()
+            )
+
+            build("publish") {
+                val pomText = projectPath
+                    .resolve("build/repo/com/example/simpleProject/1.0/simpleProject-1.0.pom")
+                    .readText()
+                    .replace("\\s+|\\n".toRegex(), "")
+                assertTrue {
+                    pomText.contains(
+                        "<groupId>org.jetbrains.kotlin</groupId>" +
+                                "<artifactId>kotlin-reflect</artifactId>" +
+                                "<version>${buildOptions.kotlinVersion}</version>" +
+                                "<scope>compile</scope>"
+                    )
+                }
+            }
+        }
+    }
+
+    @DisplayName("Publishing includes stdlib version")
+    @GradleTest
+    fun testOmittedStdlibVersion(gradleVersion: GradleVersion) {
+        project("kotlinProject", gradleVersion) {
+            buildGradle.appendText(
+                //language=Groovy
+                """
+
+                plugins.apply('maven-publish')
+                            
+                group = "com.example"
+                version = "1.0"
+                
+                publishing {
+                    publications {
+                       myLibrary(MavenPublication) {
+                           from components.kotlin
+                       }
+                    }
+                    repositories {
+                        maven {
+                            url = "${'$'}buildDir/repo"
+                        }
+                    }
+                }
+                """.trimIndent()
+            )
+
+            build(
+                "build",
+                "publishAllPublicationsToMavenRepository",
+            ) {
+                assertTasksExecuted(":compileKotlin", ":compileTestKotlin")
+                val pomLines = projectPath.resolve("build/publications/myLibrary/pom-default.xml").readLines()
+                val stdlibVersionLineNumber = pomLines.indexOfFirst { "<artifactId>kotlin-stdlib-jdk8</artifactId>" in it } + 1
+                val versionLine = pomLines[stdlibVersionLineNumber]
+                assertTrue { "<version>${buildOptions.kotlinVersion}</version>" in versionLine }
+            }
         }
     }
 }
