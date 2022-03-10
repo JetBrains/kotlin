@@ -14,9 +14,7 @@ import generators.unicode.mappings.string.StringLowercaseGenerator
 import generators.unicode.mappings.string.StringUppercaseGenerator
 import generators.unicode.ranges.OtherLowercaseRangesGenerator
 import generators.unicode.ranges.OtherUppercaseRangesGenerator
-import templates.COPYRIGHT_NOTICE
 import templates.KotlinTarget
-import templates.readCopyrightNoticeFromProfile
 import java.io.File
 import java.net.URL
 import kotlin.system.exitProcess
@@ -166,9 +164,6 @@ fun main(args: Array<String>) {
             exitProcess(1)
         }
     }
-
-    COPYRIGHT_NOTICE =
-        readCopyrightNoticeFromProfile { Thread.currentThread().contextClassLoader.getResourceAsStream("apache.xml").reader() }
 
     categoryRangesGenerators.forEach {
         bmpUnicodeDataLines.forEach { line -> it.appendLine(line) }
