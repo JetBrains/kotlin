@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.codegen.optimization.temporaryVals.TemporaryVariable
 import org.jetbrains.kotlin.codegen.pseudoInsns.PseudoInsn
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.load.java.JvmAbi
+import org.jetbrains.kotlin.resolve.isNoinlineChildOfSealedInlineClass
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes.OBJECT_TYPE
 import org.jetbrains.kotlin.utils.SmartList
@@ -255,6 +256,9 @@ class MethodInliner(
                     var valueParamShift = max(nextLocalIndex, markerShift) + expectedParameters.sumOf { it.size }
                     for (index in argumentCount - 1 downTo 0) {
                         val type = expectedParameters[index]
+                        if (expectedKotlinParameters[index]?.isNoinlineChildOfSealedInlineClass() == true) {
+                            inliningContext.root.sourceCompilerForInline.unboxSealedInlineClass(info, index, this)
+                        }
                         StackValue.coerce(AsmTypes.OBJECT_TYPE, nullableAnyType, type, expectedKotlinParameters[index], this)
                         valueParamShift -= type.size
                         store(valueParamShift, type)

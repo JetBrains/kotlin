@@ -1026,6 +1026,13 @@ class ExpressionCodegen(
             IrTypeOperator.INSTANCEOF -> {
                 expression.argument.accept(this, data).materializeAt(context.irBuiltIns.anyNType)
                 val type = typeMapper.boxType(typeOperand)
+
+                if (typeOperand.isNoinlineChildOfSealedInlineClass()) {
+                    val topIrType = typeOperand.classOrNull!!.owner.sealedInlineClassParent().defaultType.makeNullable()
+                    val topType = typeMapper.mapType(topIrType)
+                    StackValue.unboxInlineClass(OBJECT_TYPE, topType, OBJECT_TYPE, true, mv)
+                }
+
                 if (typeOperand.isReifiedTypeParameter) {
                     putReifiedOperationMarkerIfTypeIsReifiedParameter(typeOperand, ReifiedTypeInliner.OperationKind.IS)
                     mv.instanceOf(type)

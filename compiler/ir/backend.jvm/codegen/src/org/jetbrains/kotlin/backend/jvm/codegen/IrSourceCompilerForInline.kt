@@ -9,6 +9,7 @@ import com.intellij.openapi.util.TextRange
 import org.jetbrains.kotlin.backend.common.CodegenUtil
 import org.jetbrains.kotlin.backend.jvm.hasMangledReturnType
 import org.jetbrains.kotlin.backend.jvm.ir.*
+import org.jetbrains.kotlin.codegen.StackValue
 import org.jetbrains.kotlin.codegen.inline.*
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.diagnostics.DiagnosticUtils
@@ -20,8 +21,10 @@ import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.descriptors.toIrBasedDescriptor
 import org.jetbrains.kotlin.ir.expressions.IrFunctionAccessExpression
 import org.jetbrains.kotlin.ir.expressions.IrLoop
+import org.jetbrains.kotlin.ir.types.makeNullable
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.psi.doNotAnalyze
+import org.jetbrains.kotlin.resolve.jvm.AsmTypes
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmBackendErrors
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature
 import org.jetbrains.org.objectweb.asm.Label
@@ -130,6 +133,14 @@ class IrSourceCompilerForInline(
         codegen.context.ktDiagnosticReporter
             .at(callElement.symbol.owner as IrDeclaration)
             .report(JvmBackendErrors.SUSPENSION_POINT_INSIDE_MONITOR, stackTraceElement)
+    }
+
+    override fun unboxSealedInlineClass(lambdaInfo: LambdaInfo, argumentIndex: Int, mv: InstructionAdapter) {
+        val parameters = (lambdaInfo as? IrExpressionLambdaImpl)?.function?.allParameters ?: return
+        val irType = parameters[argumentIndex].type
+        val topIrType = irType.findTopSealedInlineSuperClass().defaultType
+        val topType = codegen.typeMapper.mapType(topIrType.makeNullable())
+        StackValue.unboxInlineClass(AsmTypes.OBJECT_TYPE, topType, AsmTypes.OBJECT_TYPE, false, mv)
     }
 }
 

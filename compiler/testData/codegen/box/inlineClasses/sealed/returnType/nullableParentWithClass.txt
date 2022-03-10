@@ -3,10 +3,10 @@ public final class C {
     // source: 'nullableParentWithClass.kt'
     private final @org.jetbrains.annotations.NotNull field ok: java.lang.String
     public method <init>(@org.jetbrains.annotations.NotNull p0: java.lang.String): void
-    public method equals(p0: java.lang.Object): boolean
+    public method equals(@org.jetbrains.annotations.Nullable p0: java.lang.Object): boolean
     public final @org.jetbrains.annotations.NotNull method getOk(): java.lang.String
     public method hashCode(): int
-    public method toString(): java.lang.String
+    public @org.jetbrains.annotations.NotNull method toString(): java.lang.String
 }
 
 @kotlin.jvm.JvmInline
