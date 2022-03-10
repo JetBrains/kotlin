@@ -453,6 +453,12 @@ public class FirDiagnosticsWithLightTreeTestGenerated extends AbstractFirDiagnos
         }
 
         @Test
+        @TestMetadata("recursiveTypeAlias.kt")
+        public void testRecursiveTypeAlias() throws Exception {
+            runTest("compiler/fir/analysis-tests/testData/resolve/recursiveTypeAlias.kt");
+        }
+
+        @Test
         @TestMetadata("sealedClass.kt")
         public void testSealedClass() throws Exception {
             runTest("compiler/fir/analysis-tests/testData/resolve/sealedClass.kt");

@@ -590,11 +590,18 @@ class SupertypeComputationSession {
                 checkIsInLoop(supertypeFir)
 
                 if (isTypeAlias) {
-                    for (typeArgument in supertypeRef.type.typeArguments) {
-                        if (typeArgument is ConeClassLikeType) {
-                            checkIsInLoop(typeArgument.lookupTag.toSymbol(session)?.fir)
+                    fun checkTypeArgumentsRecursively(type: ConeKotlinType, visitedTypes: MutableSet<ConeKotlinType>) {
+                        if (type in visitedTypes) return
+                        visitedTypes += type
+                        for (typeArgument in type.typeArguments) {
+                            if (typeArgument is ConeClassLikeType) {
+                                checkIsInLoop(typeArgument.lookupTag.toSymbol(session)?.fir)
+                                checkTypeArgumentsRecursively(typeArgument, visitedTypes)
+                            }
                         }
                     }
+
+                    checkTypeArgumentsRecursively(supertypeRef.type, mutableSetOf())
                 }
 
                 resultSupertypeRefs.add(

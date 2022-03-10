@@ -384,6 +384,11 @@ public class LazyBodyIsNotTouchedTilContractsPhaseTestGenerated extends Abstract
         runTest("compiler/fir/analysis-tests/testData/resolve/recursiveCallOnWhenWithSealedClass.kt");
     }
 
+    @TestMetadata("recursiveTypeAlias.kt")
+    public void testRecursiveTypeAlias() throws Exception {
+        runTest("compiler/fir/analysis-tests/testData/resolve/recursiveTypeAlias.kt");
+    }
+
     @TestMetadata("sealedClass.kt")
     public void testSealedClass() throws Exception {
         runTest("compiler/fir/analysis-tests/testData/resolve/sealedClass.kt");
