@@ -434,6 +434,11 @@ public class LazyBodyIsNotTouchedTilContractsPhaseTestGenerated extends Abstract
         runTest("compiler/fir/analysis-tests/testData/resolve/throwableSubclass.kt");
     }
 
+    @TestMetadata("topLevelDestruction.kt")
+    public void testTopLevelDestruction() throws Exception {
+        runTest("compiler/fir/analysis-tests/testData/resolve/topLevelDestruction.kt");
+    }
+
     @TestMetadata("treeSet.kt")
     public void testTreeSet() throws Exception {
         runTest("compiler/fir/analysis-tests/testData/resolve/treeSet.kt");

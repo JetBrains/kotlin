@@ -64,7 +64,7 @@ internal class LLFirDesignatedAnnotationsResolveTransformed(
         when (declaration) {
             is FirClass, is FirTypeAlias ->
                 declaration.ensurePhase(FirResolvePhase.COMPILER_REQUIRED_ANNOTATIONS)
-            is FirFunction, is FirProperty, is FirEnumEntry, is FirField, is FirAnonymousInitializer ->
+            is FirFunction, is FirProperty, is FirEnumEntry, is FirField, is FirAnonymousInitializer, is FirErrorProperty ->
                 Unit
             else ->
                 error("Unexpected type: ${declaration::class.simpleName}")

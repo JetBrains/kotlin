@@ -513,6 +513,12 @@ public class DiagnosisCompilerFirTestdataTestGenerated extends AbstractDiagnosis
         }
 
         @Test
+        @TestMetadata("topLevelDestruction.kt")
+        public void testTopLevelDestruction() throws Exception {
+            runTest("compiler/fir/analysis-tests/testData/resolve/topLevelDestruction.kt");
+        }
+
+        @Test
         @TestMetadata("treeSet.kt")
         public void testTreeSet() throws Exception {
             runTest("compiler/fir/analysis-tests/testData/resolve/treeSet.kt");

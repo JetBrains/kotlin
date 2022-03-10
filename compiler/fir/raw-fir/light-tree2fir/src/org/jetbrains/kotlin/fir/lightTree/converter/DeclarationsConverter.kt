@@ -8,11 +8,8 @@ package org.jetbrains.kotlin.fir.lightTree.converter
 import com.intellij.lang.LighterASTNode
 import com.intellij.psi.TokenType
 import com.intellij.util.diff.FlyweightCapableTreeStructure
+import org.jetbrains.kotlin.*
 import org.jetbrains.kotlin.ElementTypeUtils.isExpression
-import org.jetbrains.kotlin.KtFakeSourceElementKind
-import org.jetbrains.kotlin.KtLightSourceElement
-import org.jetbrains.kotlin.KtSourceElement
-import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.KtNodeTypes.*
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.builtins.StandardNames.DEFAULT_VALUE_PARAMETER
@@ -22,7 +19,6 @@ import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget.*
-import org.jetbrains.kotlin.fakeElement
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.builder.*
 import org.jetbrains.kotlin.fir.contracts.FirContractDescription
@@ -94,18 +90,20 @@ class DeclarationsConverter(
         val firDeclarationList = mutableListOf<FirDeclaration>()
         context.packageFqName = FqName.ROOT
         var packageDirective: FirPackageDirective? = null
-        file.forEachChildren {
-            when (it.tokenType) {
-                FILE_ANNOTATION_LIST -> fileAnnotationList += convertFileAnnotationList(it)
+        file.forEachChildren { child ->
+            @Suppress("RemoveRedundantQualifierName")
+            when (child.tokenType) {
+                FILE_ANNOTATION_LIST -> fileAnnotationList += convertFileAnnotationList(child)
                 PACKAGE_DIRECTIVE -> {
-                    packageDirective = convertPackageDirective(it).also { context.packageFqName = it.packageFqName }
+                    packageDirective = convertPackageDirective(child).also { context.packageFqName = it.packageFqName }
                 }
-                IMPORT_LIST -> importList += convertImportDirectives(it)
-                CLASS -> firDeclarationList += convertClass(it)
-                FUN -> firDeclarationList += convertFunctionDeclaration(it) as FirDeclaration
-                KtNodeTypes.PROPERTY -> firDeclarationList += convertPropertyDeclaration(it)
-                TYPEALIAS -> firDeclarationList += convertTypeAlias(it)
-                OBJECT_DECLARATION -> firDeclarationList += convertClass(it)
+                IMPORT_LIST -> importList += convertImportDirectives(child)
+                CLASS -> firDeclarationList += convertClass(child)
+                FUN -> firDeclarationList += convertFunctionDeclaration(child) as FirDeclaration
+                KtNodeTypes.PROPERTY -> firDeclarationList += convertPropertyDeclaration(child)
+                TYPEALIAS -> firDeclarationList += convertTypeAlias(child)
+                OBJECT_DECLARATION -> firDeclarationList += convertClass(child)
+                DESTRUCTURING_DECLARATION -> firDeclarationList += buildErrorTopLevelDestructuringDeclaration(child.toFirSourceElement())
                 SCRIPT -> {
                     // TODO: scripts aren't supported yet
                 }
@@ -134,6 +132,7 @@ class DeclarationsConverter(
 
     fun convertBlockExpressionWithoutBuilding(block: LighterASTNode): FirBlockBuilder {
         val firStatements = block.forEachChildrenReturnList<FirStatement> { node, container ->
+            @Suppress("RemoveRedundantQualifierName")
             when (node.tokenType) {
                 CLASS, OBJECT_DECLARATION -> container += convertClass(node) as FirStatement
                 FUN -> container += convertFunctionDeclaration(node)
@@ -791,6 +790,7 @@ class DeclarationsConverter(
      */
     private fun convertClassBody(classBody: LighterASTNode, classWrapper: ClassWrapper): List<FirDeclaration> {
         return classBody.forEachChildrenReturnList { node, container ->
+            @Suppress("RemoveRedundantQualifierName")
             when (node.tokenType) {
                 ENUM_ENTRY -> container += convertEnumEntry(node, classWrapper)
                 CLASS -> container += convertClass(node)
