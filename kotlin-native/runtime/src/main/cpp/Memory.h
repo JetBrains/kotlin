@@ -498,6 +498,14 @@ private:
     bool reentrant_;
 };
 
+class CurrentFrameGuard : Pinned {
+public:
+    CurrentFrameGuard() : frame_(getCurrentFrame()) {}
+    ~CurrentFrameGuard() { SetCurrentFrame(reinterpret_cast<ObjHeader**>(frame_)); }
+private:
+    FrameOverlay* frame_;
+};
+
 template <ThreadState state, typename R, typename... Args>
 ALWAYS_INLINE inline R CallWithThreadState(R(*function)(Args...), Args... args) {
     ThreadStateGuard guard(state);
