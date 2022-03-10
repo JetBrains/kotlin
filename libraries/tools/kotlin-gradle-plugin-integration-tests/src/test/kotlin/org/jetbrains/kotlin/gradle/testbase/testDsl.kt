@@ -257,6 +257,23 @@ class TestProject(
             """.trimIndent()
         )
     }
+
+    fun includeOtherProjectAsIncludedBuild(
+        otherProjectName: String,
+        pathPrefix: String
+    ) {
+        val otherProjectPath = "$pathPrefix/$otherProjectName".testProjectPath
+        otherProjectPath.copyRecursively(projectPath.resolve(otherProjectName))
+
+        projectPath.resolve(otherProjectName).addDefaultBuildFiles()
+
+        settingsGradle.append(
+            """
+            
+            includeBuild '$otherProjectName'
+            """.trimIndent()
+        )
+    }
 }
 
 private fun commonBuildSetup(
