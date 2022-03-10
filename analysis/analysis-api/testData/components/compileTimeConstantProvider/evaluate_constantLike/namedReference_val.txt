@@ -1,0 +1,3 @@
+expression: bar
+constant: 42
+constantValueKind: Int
