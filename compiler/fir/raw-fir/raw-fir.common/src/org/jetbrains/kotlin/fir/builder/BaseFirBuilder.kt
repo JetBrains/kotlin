@@ -1261,6 +1261,17 @@ abstract class BaseFirBuilder<T>(val baseSession: FirSession, val context: Conte
         }
     }
 
+    protected fun buildErrorTopLevelDestructuringDeclaration(source: KtSourceElement) = buildErrorProperty {
+        this.source = source
+        moduleData = baseModuleData
+        origin = FirDeclarationOrigin.Source
+        name = Name.special("<destructuring>")
+        diagnostic = ConeSimpleDiagnostic(
+            "Destructuring declarations are only allowed for local variables/values", DiagnosticKind.Syntax
+        )
+        symbol = FirErrorPropertySymbol(diagnostic)
+    }
+
     enum class ValueParameterDeclaration {
         OTHER,
         LAMBDA,

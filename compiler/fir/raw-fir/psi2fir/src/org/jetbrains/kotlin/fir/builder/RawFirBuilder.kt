@@ -929,9 +929,12 @@ open class RawFirBuilder(
                     }
                 }
                 for (declaration in file.declarations) {
-                    // TODO: scripts aren't supported yet
-                    if (declaration is KtScript) continue
-                    declarations += declaration.convert<FirDeclaration>()
+                    declarations += when (declaration) {
+                        // TODO: scripts aren't supported yet
+                        is KtScript -> continue
+                        is KtDestructuringDeclaration -> buildErrorTopLevelDestructuringDeclaration(declaration.toFirSourceElement())
+                        else -> declaration.convert()
+                    }
                 }
             }
         }
