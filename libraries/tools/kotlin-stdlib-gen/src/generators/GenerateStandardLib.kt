@@ -35,9 +35,6 @@ fun main(args: Array<String>) {
         ComparableOps
     )
 
-    COPYRIGHT_NOTICE =
-        readCopyrightNoticeFromProfile { Thread.currentThread().contextClassLoader.getResourceAsStream("apache.xml")!!.reader() }
-
     val targetBaseDirs = mutableMapOf<KotlinTarget, File>()
 
     when (args.size) {
