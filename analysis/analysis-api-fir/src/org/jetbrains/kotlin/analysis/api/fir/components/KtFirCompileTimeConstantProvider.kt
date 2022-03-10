@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.analysis.api.fir.components
 
 import org.jetbrains.kotlin.analysis.api.base.KtConstantValue
 import org.jetbrains.kotlin.analysis.api.components.KtCompileTimeConstantProvider
+import org.jetbrains.kotlin.analysis.api.components.KtConstantEvaluationMode
 import org.jetbrains.kotlin.analysis.api.fir.KtFirAnalysisSession
 import org.jetbrains.kotlin.analysis.api.fir.evaluate.FirCompileTimeConstantEvaluator
 import org.jetbrains.kotlin.analysis.api.tokens.ValidityToken
@@ -15,6 +16,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFir
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.throwUnexpectedFirElementError
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
+import org.jetbrains.kotlin.fir.declarations.utils.isConst
 import org.jetbrains.kotlin.fir.declarations.utils.referredPropertySymbol
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirPropertyAccessExpression
@@ -30,14 +32,21 @@ internal class KtFirCompileTimeConstantProvider(
     override val token: ValidityToken,
 ) : KtCompileTimeConstantProvider(), KtFirAnalysisSessionComponent {
 
-    override fun evaluate(expression: KtExpression): KtConstantValue? = withValidityAssertion {
-        evaluateFir(expression.getOrBuildFir(firResolveState), expression)
+    override fun evaluate(
+        expression: KtExpression,
+        mode: KtConstantEvaluationMode,
+    ): KtConstantValue? = withValidityAssertion {
+        evaluateFir(expression.getOrBuildFir(firResolveState), expression, mode)
     }
 
-    private fun evaluateFir(fir: FirElement?, context: KtExpression): KtConstantValue? = withValidityAssertion {
+    private fun evaluateFir(
+        fir: FirElement?,
+        context: KtExpression,
+        mode: KtConstantEvaluationMode,
+    ): KtConstantValue? = withValidityAssertion {
         when (fir) {
             is FirPropertyAccessExpression -> {
-                fir.referredPropertySymbol?.toKtConstantValue(context)
+                fir.referredPropertySymbol?.toKtConstantValue(context, mode)
             }
             is FirExpression -> {
                 try {
@@ -48,7 +57,7 @@ internal class KtFirCompileTimeConstantProvider(
             }
             is FirNamedReference -> {
                 when (val resolvedSymbol = fir.resolvedSymbol) {
-                    is FirPropertySymbol -> resolvedSymbol.toKtConstantValue(context)
+                    is FirPropertySymbol -> resolvedSymbol.toKtConstantValue(context, mode)
                     else -> null
                 }
             }
@@ -65,11 +74,18 @@ internal class KtFirCompileTimeConstantProvider(
         }
     }
 
-    private fun FirPropertySymbol.toKtConstantValue(context: KtExpression): KtConstantValue? = withValidityAssertion {
+    private fun FirPropertySymbol.toKtConstantValue(
+        context: KtExpression,
+        mode: KtConstantEvaluationMode,
+    ): KtConstantValue? = withValidityAssertion {
         if (isVal && hasInitializer) {
-            // NB: the initializer could be [FirLazyExpression] in [BodyBuildingMode.LAZY_BODIES].
-            this.ensureResolved(FirResolvePhase.BODY_RESOLVE) // to unwrap lazy body
-            evaluateFir(fir.initializer, context)
+            if (mode == KtConstantEvaluationMode.CONSTANT_EXPRESSION_EVALUATION && !isConst) {
+                null
+            } else {
+                // NB: the initializer could be [FirLazyExpression] in [BodyBuildingMode.LAZY_BODIES].
+                this.ensureResolved(FirResolvePhase.BODY_RESOLVE) // to unwrap lazy body
+                evaluateFir(fir.initializer, context, mode)
+            }
         } else null
     }
 }
