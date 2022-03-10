@@ -9,6 +9,11 @@ import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.junit.jupiter.api.DisplayName
 import java.nio.file.Path
+import kotlin.io.path.createDirectories
+import kotlin.io.path.deleteExisting
+import kotlin.io.path.relativeTo
+import kotlin.io.path.writeText
+import kotlin.test.assertTrue
 
 @DisplayName("Default incremental compilation with default precise java tracking")
 open class IncrementalJavaChangeDefaultIT : IncrementalCompilationJavaChangesBase(usePreciseJavaTracking = null) {
@@ -41,6 +46,51 @@ open class IncrementalJavaChangeDefaultIT : IncrementalCompilationJavaChangesBas
 
             build("assemble") {
                 assertCompiledKotlinSources(emptyList(), output)
+            }
+        }
+    }
+
+    @DisplayName("KT-38692: should clean all outputs after removing all Kotlin sources")
+    @GradleTest
+    fun testIncrementalWhenNoKotlinSources(gradleVersion: GradleVersion) {
+        project("kotlinProject", gradleVersion) {
+            build(":compileKotlin") {
+                assertTasksExecuted(":compileKotlin")
+            }
+
+            // Remove all Kotlin sources and force non-incremental run
+            projectPath.allKotlinFiles.forEach { it.deleteExisting() }
+            javaSourcesDir().resolve("Sample.java").also {
+                it.parent.createDirectories()
+                it.writeText("public class Sample {}")
+            }
+            build("compileKotlin", "--rerun-tasks") {
+                assertTasksExecuted(":compileKotlin")
+                val compiledKotlinClasses = kotlinClassesDir().allFilesWithExtension("class").toList()
+
+                assertTrue(compiledKotlinClasses.isEmpty())
+            }
+        }
+    }
+
+    @DisplayName("Type alias change is incremental")
+    @GradleTest
+    fun testTypeAliasIncremental(gradleVersion: GradleVersion) {
+        project("typeAlias", gradleVersion) {
+            build("build")
+
+            val curryKt = kotlinSourcesDir().resolve("Curry.kt")
+            val useCurryKt = kotlinSourcesDir().resolve("UseCurry.kt")
+
+            curryKt.modify {
+                it.replace("class Curry", "internal class Curry")
+            }
+
+            build("build") {
+                assertCompiledKotlinSources(
+                    listOf(curryKt, useCurryKt).map { it.relativeTo(projectPath) },
+                    output
+                )
             }
         }
     }
