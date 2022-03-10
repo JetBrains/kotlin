@@ -238,7 +238,7 @@ object FirOptInUsageBaseChecker {
                 }
                 val fqName = annotationClassId.asSingleFqName()
                 val reportedMessage = message?.takeIf { it.isNotBlank() }
-                    ?: OptInNames.buildDefaultDiagnosticMessage(OptInNames.buildMessagePrefix(verb), fqName)
+                    ?: OptInNames.buildDefaultDiagnosticMessage(OptInNames.buildMessagePrefix(verb), fqName.asString())
                 reporter.reportOn(element.source, diagnostic, fqName, reportedMessage, context)
             }
         }
