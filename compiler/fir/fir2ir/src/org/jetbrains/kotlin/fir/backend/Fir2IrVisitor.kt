@@ -19,10 +19,9 @@ import org.jetbrains.kotlin.fir.declarations.builder.buildProperty
 import org.jetbrains.kotlin.fir.declarations.impl.FirDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.expressions.*
-import org.jetbrains.kotlin.fir.expressions.impl.FirElseIfTrueCondition
-import org.jetbrains.kotlin.fir.expressions.impl.FirNoReceiverExpression
-import org.jetbrains.kotlin.fir.expressions.impl.FirStubStatement
-import org.jetbrains.kotlin.fir.expressions.impl.FirUnitExpression
+import org.jetbrains.kotlin.fir.expressions.builder.buildFunctionCall
+import org.jetbrains.kotlin.fir.expressions.builder.buildVarargArgumentsExpression
+import org.jetbrains.kotlin.fir.expressions.impl.*
 import org.jetbrains.kotlin.fir.references.FirReference
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.references.FirSuperReference
@@ -38,7 +37,7 @@ import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
-import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
+import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.constructors
 import org.jetbrains.kotlin.ir.util.defaultType
@@ -653,7 +652,81 @@ class Fir2IrVisitor(
             return this == IrStatementOrigin.DO_WHILE_LOOP || this == IrStatementOrigin.WHILE_LOOP || this == IrStatementOrigin.FOR_LOOP
         }
 
+    private inline fun <reified K> List<*>.findFirst() = firstOrNull { it is K } as? K
+
+    private inline fun <reified K> List<*>.findLast() = lastOrNull { it is K } as? K
+
+    private fun extractDynamicArgumentsFromInitializers(
+        functionCall: FirFunctionCall,
+    ): FirResolvedArgumentList {
+        val mapping = functionCall.resolvedArgumentMapping?.mapKeys { (key, _) ->
+            val originalVararg = key as? FirVarargArgumentsExpression ?: return@mapKeys key
+
+            return@mapKeys buildVarargArgumentsExpression {
+                varargElementType = session.builtinTypes.nullableAnyType
+
+                originalVararg.arguments.forEach {
+                    val that = (it as? FirPropertyAccessExpression)?.calleeReference?.resolvedSymbol?.fir as? FirProperty
+                        ?: return@forEach
+                    val initializer = that.initializer
+                        ?: return@forEach
+                    arguments.add(initializer)
+                }
+            }
+        }
+
+        return buildResolvedArgumentList(LinkedHashMap(mapping), functionCall.calleeReference.source)
+    }
+
+    private fun buildFakeReceiverForDynamicIncrementOrDecrementArrayAccess(
+        receiver: FirExpression,
+        arrayAccess: FirFunctionCall,
+    ): FirFunctionCall {
+        return buildFunctionCall {
+            calleeReference = arrayAccess.calleeReference
+            source = arrayAccess.calleeReference.source
+            this.origin = arrayAccess.origin
+            typeRef = arrayAccess.typeRef
+            explicitReceiver = receiver
+            this.argumentList = extractDynamicArgumentsFromInitializers(arrayAccess)
+        }
+    }
+
+    private fun extractOperationFromDynamicSetCall(functionCall: FirFunctionCall) =
+        (functionCall.arguments.firstOrNull() as? FirVarargArgumentsExpression)?.arguments?.lastOrNull() as? FirFunctionCall
+
+    private fun FirBlock.convertIncrementOrDecrementToIr(): IrExpression? {
+        val receiver = statements.findFirst<FirProperty>()?.initializer ?: return null
+        val valueSavingCall = statements.findLast<FirProperty>()?.initializer as? FirFunctionCall ?: return null
+        val valueSavingCallReceiver = valueSavingCall.explicitReceiver
+
+        // Is prefix
+        val (arrayAccess, operationCall) = if (valueSavingCallReceiver is FirFunctionCall) {
+            valueSavingCallReceiver to valueSavingCall
+        } else {
+            val setCall = statements.findLast<FirFunctionCall>() ?: return null
+            val operation = extractOperationFromDynamicSetCall(setCall) ?: return null
+            valueSavingCall to operation
+        }
+
+        val newReceiver = buildFakeReceiverForDynamicIncrementOrDecrementArrayAccess(receiver, arrayAccess)
+
+        val newFunctionCall = buildFunctionCall {
+            calleeReference = operationCall.calleeReference
+            typeRef = operationCall.typeRef
+            source = operationCall.source
+            explicitReceiver = newReceiver
+        }
+
+        return convertToIrCall(newFunctionCall, false)
+    }
+
     private fun FirBlock.convertToIrExpressionOrBlock(origin: IrStatementOrigin? = null): IrExpression {
+        if (this.source?.kind == KtFakeSourceElementKind.DesugaredIncrementOrDecrement) {
+            convertIncrementOrDecrementToIr()?.let {
+                return it
+            }
+        }
         return statements.convertToIrExpressionOrBlock(source, origin)
     }
 

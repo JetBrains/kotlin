@@ -45,6 +45,8 @@ import org.jetbrains.kotlin.psi
 import org.jetbrains.kotlin.psi.KtArrayAccessExpression
 import org.jetbrains.kotlin.psi.KtBinaryExpression
 import org.jetbrains.kotlin.psi.KtElement
+import org.jetbrains.kotlin.psi.KtPostfixExpression
+import org.jetbrains.kotlin.psi.KtPrefixExpression
 import org.jetbrains.kotlin.psi.KtUnaryExpression
 import org.jetbrains.kotlin.psi2ir.generators.hasNoSideEffects
 import org.jetbrains.kotlin.psi2ir.generators.isUnchanging
@@ -272,8 +274,19 @@ class CallAndReferenceGenerator(
 
     private fun KtElement.getDynamicOperator(): IrDynamicOperator? {
         return when (this) {
-            is KtUnaryExpression ->
+            is KtPrefixExpression ->
                 when (operationToken) {
+                    KtTokens.PLUSPLUS -> IrDynamicOperator.PREFIX_INCREMENT
+                    KtTokens.MINUSMINUS -> IrDynamicOperator.PREFIX_DECREMENT
+                    KtTokens.PLUS -> IrDynamicOperator.UNARY_PLUS
+                    KtTokens.MINUS -> IrDynamicOperator.UNARY_MINUS
+                    KtTokens.EXCL -> IrDynamicOperator.EXCL
+                    else -> null
+                }
+            is KtPostfixExpression ->
+                when (operationToken) {
+                    KtTokens.PLUSPLUS -> IrDynamicOperator.POSTFIX_INCREMENT
+                    KtTokens.MINUSMINUS -> IrDynamicOperator.POSTFIX_DECREMENT
                     KtTokens.PLUS -> IrDynamicOperator.UNARY_PLUS
                     KtTokens.MINUS -> IrDynamicOperator.UNARY_MINUS
                     KtTokens.EXCL -> IrDynamicOperator.EXCL
