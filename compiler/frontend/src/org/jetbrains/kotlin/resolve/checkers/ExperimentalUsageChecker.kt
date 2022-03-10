@@ -119,7 +119,7 @@ class ExperimentalUsageChecker(project: Project) : CallChecker {
         private val ERROR_LEVEL = Name.identifier("ERROR")
 
         internal fun getDefaultDiagnosticMessage(prefix: String): (FqName) -> String = { fqName: FqName ->
-            OptInNames.buildDefaultDiagnosticMessage(prefix, fqName)
+            OptInNames.buildDefaultDiagnosticMessage(prefix, fqName.asString())
         }
 
         private val USAGE_DIAGNOSTICS = ExperimentalityDiagnostics(
