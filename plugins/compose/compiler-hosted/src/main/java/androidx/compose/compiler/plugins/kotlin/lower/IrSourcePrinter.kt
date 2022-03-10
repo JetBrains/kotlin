@@ -173,8 +173,10 @@ class IrSourcePrinterVisitor(
     }
 
     override fun visitFile(declaration: IrFile) {
-//        println("// FILE: ${declaration.fileEntry.name}")
-        declaration.declarations.printJoin("\n")
+        includeFileNameInExceptionTrace(declaration) {
+//          println("// FILE: ${declaration.fileEntry.name}")
+            declaration.declarations.printJoin("\n")
+        }
     }
 
     override fun visitValueParameter(declaration: IrValueParameter) {

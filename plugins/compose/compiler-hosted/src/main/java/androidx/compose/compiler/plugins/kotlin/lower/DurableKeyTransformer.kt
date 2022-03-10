@@ -110,9 +110,11 @@ open class DurableKeyTransformer(
     }
 
     override fun visitFile(declaration: IrFile): IrFile {
-        val filePath = declaration.fileEntry.name
-        val fileName = filePath.split('/').last()
-        return enter("file-$fileName") { super.visitFile(declaration) }
+        includeFileNameInExceptionTrace(declaration) {
+            val filePath = declaration.fileEntry.name
+            val fileName = filePath.split('/').last()
+            return enter("file-$fileName") { super.visitFile(declaration) }
+        }
     }
 
     override fun visitPackageFragment(declaration: IrPackageFragment): IrPackageFragment {
