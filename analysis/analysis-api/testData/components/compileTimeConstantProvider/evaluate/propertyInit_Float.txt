@@ -1,0 +1,9 @@
+expression: 3.14f
+
+CONSTANT_EXPRESSION_EVALUATION
+constant: 3.14f
+constantValueKind: Float
+
+CONSTANT_LIKE_EXPRESSION_EVALUATION
+constantLike: 3.14f
+constantLikeValueKind: Float
