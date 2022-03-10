@@ -1,3 +1,0 @@
-expression: someField
-constant: "something"
-constantValueKind: String
