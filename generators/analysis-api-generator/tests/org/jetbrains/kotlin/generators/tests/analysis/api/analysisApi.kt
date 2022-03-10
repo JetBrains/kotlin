@@ -15,8 +15,7 @@ import org.jetbrains.kotlin.analysis.api.impl.base.test.annotations.AbstractAnal
 import org.jetbrains.kotlin.analysis.api.impl.base.test.annotations.AbstractAnalysisApiAnnotationsOnTypesTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.components.AbstractResolveCallTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.components.AbstractResolveCandidatesTest
-import org.jetbrains.kotlin.analysis.api.impl.base.test.components.compileTimeConstantProvider.AbstractCompileTimeConstantEvaluatorConstantLikeTest
-import org.jetbrains.kotlin.analysis.api.impl.base.test.components.compileTimeConstantProvider.AbstractCompileTimeConstantEvaluatorConstantTest
+import org.jetbrains.kotlin.analysis.api.impl.base.test.components.compileTimeConstantProvider.AbstractCompileTimeConstantEvaluatorTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.components.diagnosticProvider.AbstractCollectDiagnosticsTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.components.expressionInfoProvider.AbstractReturnTargetSymbolTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.components.expressionInfoProvider.AbstractWhenMissingCasesTest
@@ -144,11 +143,8 @@ private fun TestGroupSuite.generateAnalysisApiComponentsTests() {
     }
 
     component("compileTimeConstantProvider") {
-        test(AbstractCompileTimeConstantEvaluatorConstantTest::class) {
-            model("evaluate_constant")
-        }
-        test(AbstractCompileTimeConstantEvaluatorConstantLikeTest::class) {
-            model("evaluate_constantLike")
+        test(AbstractCompileTimeConstantEvaluatorTest::class) {
+            model("evaluate")
         }
     }
 
