@@ -83,6 +83,12 @@ internal open class MultiplatformSourceSetMappedFragmentLocatorTest : Multiplatf
         project.kpmModules.create(moduleSuffixName)
         doTest(nameForMain, "foo", moduleSuffixName)
     }
+
+    @Test
+    fun `source set name matching module name`() {
+        val nameForTest = "main"
+        doTest(nameForTest, "main", "main")
+    }
 }
 
 internal class MultiplatformSourceSetMappedFragmentLocatorTestWithAndroid : MultiplatformSourceSetMappedFragmentLocatorTest() {
