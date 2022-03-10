@@ -1106,21 +1106,18 @@ JobKind Worker::processQueueElement(bool blocking) {
       ObjHolder argumentHolder;
       ObjHolder resultHolder;
       KRef argument = AdoptStablePointer(job.regularJob.argument, argumentHolder.slot());
-      #if !KONAN_NO_EXCEPTIONS
-        FrameOverlay* currentFrame = getCurrentFrame();
-      #else
-        #error "Exceptions aren't supported!"
-      #endif
       try {
         #if KONAN_OBJC_INTEROP
           konan::AutoreleasePool autoreleasePool;
         #endif
-          job.regularJob.function(argument, resultHolder.slot());
+          {
+              CurrentFrameGuard guard;
+              job.regularJob.function(argument, resultHolder.slot());
+          }
           argumentHolder.clear();
           // Transfer the result.
           result = transfer(&resultHolder, job.regularJob.transferMode);
       } catch (ExceptionObjHolder& e) {
-        SetCurrentFrame(reinterpret_cast<ObjHeader**>(currentFrame));
         ok = false;
         switch (exceptionHandling()) {
             case WorkerExceptionHandling::kIgnore:
