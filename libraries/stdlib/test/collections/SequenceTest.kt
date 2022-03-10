@@ -5,6 +5,8 @@
 
 package test.collections
 
+import test.assertIsNegativeZero
+import test.assertIsPositiveZero
 import kotlin.random.Random
 import kotlin.test.*
 
@@ -632,6 +634,106 @@ public class SequenceTest {
         assertEquals(listOf(1, 2, 3), ints)
         assertEquals(listOf('a', 'b', 'c'), chars)
     }
+
+    private fun <T : Comparable<T>> expectMinMax(min: T, max: T, elements: Sequence<T>) {
+        assertEquals(min, elements.minOrNull())
+        assertEquals(max, elements.maxOrNull())
+        assertEquals(min, elements.min())
+        assertEquals(max, elements.max())
+    }
+
+    @Test
+    fun minMax() {
+        expectMinMax(1, 1, sequenceOf(1))
+        expectMinMax(2, 3, sequenceOf(2, 3))
+        expectMinMax(2, 3, sequenceOf(3, 2))
+        expectMinMax(2000000000000, 3000000000000, sequenceOf(3000000000000, 2000000000000))
+        expectMinMax('a', 'b', sequenceOf('a', 'b'))
+        expectMinMax("a", "b", sequenceOf("a", "b"))
+    }
+
+    @Test
+    fun minMaxEmpty() {
+        val empty = emptySequence<Int>()
+        assertNull(empty.minOrNull())
+        assertNull(empty.maxOrNull())
+        assertFailsWith<NoSuchElementException> { empty.min() }
+        assertFailsWith<NoSuchElementException> { empty.max() }
+    }
+
+    @Test
+    fun minMaxFloatingPoint() {
+        val doubleZeroes = sequenceOf(0.0, -0.0)
+        val floatZeroes = sequenceOf(0.0F, -0.0F)
+        val doubleNaN = sequenceOf(0.0, Double.NaN)
+        val floatNaN = sequenceOf(0.0F, Float.NaN)
+
+        assertIsNegativeZero(doubleZeroes.shuffled().min())
+        assertIsNegativeZero(doubleZeroes.shuffled().minOrNull()!!)
+        assertIsNegativeZero(floatZeroes.shuffled().min().toDouble())
+        assertIsNegativeZero(floatZeroes.shuffled().minOrNull()!!.toDouble())
+        assertTrue(doubleNaN.shuffled().min().isNaN())
+        assertTrue(doubleNaN.shuffled().minOrNull()!!.isNaN())
+        assertTrue(floatNaN.shuffled().min().isNaN())
+        assertTrue(floatNaN.shuffled().minOrNull()!!.isNaN())
+
+        assertIsPositiveZero(doubleZeroes.shuffled().max())
+        assertIsPositiveZero(doubleZeroes.shuffled().maxOrNull()!!)
+        assertIsPositiveZero(floatZeroes.shuffled().max().toDouble())
+        assertIsPositiveZero(floatZeroes.shuffled().maxOrNull()!!.toDouble())
+        assertTrue(doubleNaN.shuffled().max().isNaN())
+        assertTrue(doubleNaN.shuffled().maxOrNull()!!.isNaN())
+        assertTrue(floatNaN.shuffled().max().isNaN())
+        assertTrue(floatNaN.shuffled().maxOrNull()!!.isNaN())
+    }
+
+    private fun <T> expectMinMaxWith(min: T, max: T, elements: Sequence<T>, comparator: Comparator<T>) {
+        assertEquals(min, elements.minWithOrNull(comparator))
+        assertEquals(max, elements.maxWithOrNull(comparator))
+        assertEquals(min, elements.minWith(comparator))
+        assertEquals(max, elements.maxWith(comparator))
+    }
+
+    @Test
+    fun minMaxWith() {
+        expectMinMaxWith(1, 1, sequenceOf(1), naturalOrder())
+        expectMinMaxWith("a", "B", sequenceOf("a", "B"), String.CASE_INSENSITIVE_ORDER)
+    }
+
+    @Test
+    fun minMaxWithEmpty() {
+        val empty = emptySequence<Int>()
+        assertNull(empty.minWithOrNull(naturalOrder()))
+        assertNull(empty.maxWithOrNull(naturalOrder()))
+        assertFailsWith<NoSuchElementException> { empty.minWith(naturalOrder()) }
+        assertFailsWith<NoSuchElementException> { empty.maxWith(naturalOrder()) }
+    }
+
+    private inline fun <T, K : Comparable<K>> expectMinMaxBy(min: T, max: T, elements: Sequence<T>, selector: (T) -> K) {
+        assertEquals(min, elements.minBy(selector))
+        assertEquals(min, elements.minByOrNull(selector))
+        assertEquals(max, elements.maxByOrNull(selector))
+        assertEquals(max, elements.maxByOrNull(selector))
+    }
+
+    @Test
+    fun minMaxBy() {
+        expectMinMaxBy(1, 1, sequenceOf(1), { it })
+        expectMinMaxBy(3, 2, sequenceOf(2, 3), { -it })
+        expectMinMaxBy('a', 'b', sequenceOf('a', 'b'), { "x$it" })
+        expectMinMaxBy("b", "abc", sequenceOf("abc", "b"), { it.length })
+    }
+    
+    @Test
+    fun minMaxByEmpty() {
+        val empty = emptySequence<Int>()
+        val selector = Int::toString
+        assertNull(empty.minByOrNull(selector))
+        assertNull(empty.maxByOrNull(selector))
+        assertFailsWith<NoSuchElementException> { empty.minBy(selector) }
+        assertFailsWith<NoSuchElementException> { empty.maxBy(selector) }
+    }
+
 
     @Test fun sorted() {
         sequenceOf(3, 7, 5).let {

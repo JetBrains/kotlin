@@ -10,7 +10,6 @@ import test.assertIsPositiveZero
 import test.assertStaticAndRuntimeTypeIs
 import kotlin.test.*
 import test.collections.behaviors.*
-import test.comparisons.STRING_CASE_INSENSITIVE_ORDER
 import kotlin.math.pow
 import kotlin.random.Random
 
@@ -833,66 +832,104 @@ class CollectionTest {
         assertTrue(hashSetOf(45, 14, 13).toIterable().contains(14))
     }
 
-    @Test fun minOrNull() {
-        expect(null, { listOf<Int>().minOrNull() })
-        expect(1, { listOf(1).minOrNull() })
-        expect(2, { listOf(2, 3).minOrNull() })
-        expect(2000000000000, { listOf(3000000000000, 2000000000000).minOrNull() })
-        expect('a', { listOf('a', 'b').minOrNull() })
-        expect("a", { listOf("a", "b").minOrNull() })
-        expect(null, { listOf<Int>().asSequence().minOrNull() })
-        expect(2, { listOf(2, 3).asSequence().minOrNull() })
 
-        assertIsNegativeZero(listOf(0.0, -0.0).shuffled().minOrNull()!!)
-        assertIsNegativeZero(listOf(0.0F, -0.0F).shuffled().minOrNull()!!.toDouble())
+    private fun <T : Comparable<T>> expectMinMax(min: T, max: T, elements: Iterable<T>) {
+        assertEquals(min, elements.minOrNull())
+        assertEquals(max, elements.maxOrNull())
+        assertEquals(min, elements.min())
+        assertEquals(max, elements.max())
     }
 
-    @Test fun max() {
-        expect(null, { listOf<Int>().maxOrNull() })
-        expect(1, { listOf(1).maxOrNull() })
-        expect(3, { listOf(2, 3).maxOrNull() })
-        expect(3000000000000, { listOf(3000000000000, 2000000000000).maxOrNull() })
-        expect('b', { listOf('a', 'b').maxOrNull() })
-        expect("b", { listOf("a", "b").maxOrNull() })
-        expect(null, { listOf<Int>().asSequence().maxOrNull() })
-        expect(3, { listOf(2, 3).asSequence().maxOrNull() })
-
-        assertIsPositiveZero(listOf(0.0, -0.0).shuffled().maxOrNull()!!)
-        assertIsPositiveZero(listOf(0.0F, -0.0F).shuffled().maxOrNull()!!.toDouble())
+    @Test
+    fun minMax() {
+        expectMinMax(1, 1, listOf(1))
+        expectMinMax(2, 3, listOf(2, 3))
+        expectMinMax(2, 3, listOf(3, 2))
+        expectMinMax(2000000000000, 3000000000000, listOf(3000000000000, 2000000000000))
+        expectMinMax('a', 'b', listOf('a', 'b'))
+        expectMinMax("a", "b", listOf("a", "b"))
     }
 
-    @Test fun minWithOrNull() {
-        expect(null, { listOf<Int>().minWithOrNull(naturalOrder()) })
-        expect(1, { listOf(1).minWithOrNull(naturalOrder()) })
-        expect("a", { listOf("a", "B").minWithOrNull(STRING_CASE_INSENSITIVE_ORDER) })
-        expect("a", { listOf("a", "B").asSequence().minWithOrNull(STRING_CASE_INSENSITIVE_ORDER) })
+    @Test
+    fun minMaxEmpty() {
+        val empty = emptyList<Int>()
+        assertNull(empty.minOrNull())
+        assertNull(empty.maxOrNull())
+        assertFailsWith<NoSuchElementException> { empty.min() }
+        assertFailsWith<NoSuchElementException> { empty.max() }
     }
 
-    @Test fun maxWithOrNull() {
-        expect(null, { listOf<Int>().maxWithOrNull(naturalOrder()) })
-        expect(1, { listOf(1).maxWithOrNull(naturalOrder()) })
-        expect("B", { listOf("a", "B").maxWithOrNull(STRING_CASE_INSENSITIVE_ORDER) })
-        expect("B", { listOf("a", "B").asSequence().maxWithOrNull(STRING_CASE_INSENSITIVE_ORDER) })
+    @Test
+    fun minMaxFloatingPoint() {
+        val doubleZeroes = listOf(0.0, -0.0)
+        val floatZeroes = listOf(0.0F, -0.0F)
+        val doubleNaN = listOf(0.0, Double.NaN)
+        val floatNaN = listOf(0.0F, Float.NaN)
+
+        assertIsNegativeZero(doubleZeroes.shuffled().min())
+        assertIsNegativeZero(doubleZeroes.shuffled().minOrNull()!!)
+        assertIsNegativeZero(floatZeroes.shuffled().min().toDouble())
+        assertIsNegativeZero(floatZeroes.shuffled().minOrNull()!!.toDouble())
+        assertTrue(doubleNaN.shuffled().min().isNaN())
+        assertTrue(doubleNaN.shuffled().minOrNull()!!.isNaN())
+        assertTrue(floatNaN.shuffled().min().isNaN())
+        assertTrue(floatNaN.shuffled().minOrNull()!!.isNaN())
+
+        assertIsPositiveZero(doubleZeroes.shuffled().max())
+        assertIsPositiveZero(doubleZeroes.shuffled().maxOrNull()!!)
+        assertIsPositiveZero(floatZeroes.shuffled().max().toDouble())
+        assertIsPositiveZero(floatZeroes.shuffled().maxOrNull()!!.toDouble())
+        assertTrue(doubleNaN.shuffled().max().isNaN())
+        assertTrue(doubleNaN.shuffled().maxOrNull()!!.isNaN())
+        assertTrue(floatNaN.shuffled().max().isNaN())
+        assertTrue(floatNaN.shuffled().maxOrNull()!!.isNaN())
     }
 
-    @Test fun minByOrNull() {
-        expect(null, { listOf<Int>().minByOrNull { it } })
-        expect(1, { listOf(1).minByOrNull { it } })
-        expect(3, { listOf(2, 3).minByOrNull { -it } })
-        expect('a', { listOf('a', 'b').minByOrNull { "x$it" } })
-        expect("b", { listOf("b", "abc").minByOrNull { it.length } })
-        expect(null, { listOf<Int>().asSequence().minByOrNull { it } })
-        expect(3, { listOf(2, 3).asSequence().minByOrNull { -it } })
+    private fun <T> expectMinMaxWith(min: T, max: T, elements: Iterable<T>, comparator: Comparator<T>) {
+        assertEquals(min, elements.minWithOrNull(comparator))
+        assertEquals(max, elements.maxWithOrNull(comparator))
+        assertEquals(min, elements.minWith(comparator))
+        assertEquals(max, elements.maxWith(comparator))
     }
 
-    @Test fun maxByOrNull() {
-        expect(null, { listOf<Int>().maxByOrNull { it } })
-        expect(1, { listOf(1).maxByOrNull { it } })
-        expect(2, { listOf(2, 3).maxByOrNull { -it } })
-        expect('b', { listOf('a', 'b').maxByOrNull { "x$it" } })
-        expect("abc", { listOf("b", "abc").maxByOrNull { it.length } })
-        expect(null, { listOf<Int>().asSequence().maxByOrNull { it } })
-        expect(2, { listOf(2, 3).asSequence().maxByOrNull { -it } })
+    @Test
+    fun minMaxWith() {
+        expectMinMaxWith(1, 1, listOf(1), naturalOrder())
+        expectMinMaxWith("a", "B", listOf("a", "B"), String.CASE_INSENSITIVE_ORDER)
+    }
+
+    @Test
+    fun minMaxWithEmpty() {
+        val empty = emptyList<Int>()
+        assertNull(empty.minWithOrNull(naturalOrder()))
+        assertNull(empty.maxWithOrNull(naturalOrder()))
+        assertFailsWith<NoSuchElementException> { empty.minWith(naturalOrder()) }
+        assertFailsWith<NoSuchElementException> { empty.maxWith(naturalOrder()) }
+    }
+
+    private inline fun <T, K : Comparable<K>> expectMinMaxBy(min: T, max: T, elements: Iterable<T>, selector: (T) -> K) {
+        assertEquals(min, elements.minBy(selector))
+        assertEquals(min, elements.minByOrNull(selector))
+        assertEquals(max, elements.maxByOrNull(selector))
+        assertEquals(max, elements.maxByOrNull(selector))
+    }
+
+    @Test
+    fun minMaxBy() {
+        expectMinMaxBy(1, 1, listOf(1), { it })
+        expectMinMaxBy(3, 2, listOf(2, 3), { -it })
+        expectMinMaxBy('a', 'b', listOf('a', 'b'), { "x$it" })
+        expectMinMaxBy("b", "abc", listOf("abc", "b"), { it.length })
+    }
+
+    @Test
+    fun minMaxByEmpty() {
+        val empty = emptyList<Int>()
+        val selector = Int::toString
+        assertNull(empty.minByOrNull(selector))
+        assertNull(empty.maxByOrNull(selector))
+        assertFailsWith<NoSuchElementException> { empty.minBy(selector) }
+        assertFailsWith<NoSuchElementException> { empty.maxBy(selector) }
     }
 
     @Test fun minByOrNullEvaluateOnce() {

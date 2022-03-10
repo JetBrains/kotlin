@@ -421,35 +421,38 @@ class UnsignedArraysTest {
     }
 
     @Test
-    fun minOrNull() {
-        expect(null) { arrayOf<UByte>().minOrNull() }
-        expect(1u) { arrayOf<UShort>(1).minOrNull() }
-        expect(2u) { arrayOf<UInt>(2, 3).minOrNull() }
-        expect(2uL) { arrayOf<ULong>(3, 2).minOrNull() }
+    fun minMaxArrayOfUnsigned() = with(MinMaxOperations.ArrayT) {
+        expectMinMax(1u, 1u, arrayOf(1u))
+        expectMinMax(1u, UInt.MAX_VALUE, arrayOf(1u, UInt.MAX_VALUE))
+        expectMinMax(1uL, ULong.MAX_VALUE, arrayOf(1uL, ULong.MAX_VALUE))
     }
 
     @Test
-    fun minOrNullInUnsignedArrays() {
-        expect(null) { ubyteArrayOf().minOrNull() }
-        expect(1u) { ushortArrayOf(1).minOrNull() }
-        expect(2u) { uintArrayOf(2, 3).minOrNull() }
-        expect(2uL) { ulongArrayOf(3, 2).minOrNull() }
+    fun minMaxUIntArray() = with(MinMaxOperations.AUInt) {
+        expectMinMaxEmpty(uintArrayOf())
+        expectMinMax(1, 1, uintArrayOf(1))
+        expectMinMax(1, UInt.MAX_VALUE, uintArrayOf(1, UInt.MAX_VALUE))
     }
 
     @Test
-    fun maxOrNull() {
-        expect(null) { arrayOf<UByte>().maxOrNull() }
-        expect(1u) { arrayOf<UShort>(1).maxOrNull() }
-        expect(3u) { arrayOf<UInt>(2, 3).maxOrNull() }
-        expect(3uL) { arrayOf<ULong>(3, 2).maxOrNull() }
+    fun minMaxULongArray() = with(MinMaxOperations.AULong) {
+        expectMinMaxEmpty(ulongArrayOf())
+        expectMinMax(1, 1, ulongArrayOf(1))
+        expectMinMax(1, ULong.MAX_VALUE, ulongArrayOf(1, ULong.MAX_VALUE))
     }
 
     @Test
-    fun maxOrNullInUnsignedArrays() {
-        expect(null) { ubyteArrayOf().maxOrNull() }
-        expect(1u) { ushortArrayOf(1).maxOrNull() }
-        expect(3u) { uintArrayOf(2, 3).maxOrNull() }
-        expect(3uL) { ulongArrayOf(3, 2).maxOrNull() }
+    fun minMaxUShortArray() = with(MinMaxOperations.AUShort) {
+        expectMinMaxEmpty(ushortArrayOf())
+        expectMinMax(1, 1, ushortArrayOf(1))
+        expectMinMax(1, 2, ushortArrayOf(1, 2))
+    }
+
+    @Test
+    fun minMaxUByteArray() = with(MinMaxOperations.AUByte) {
+        expectMinMaxEmpty(ubyteArrayOf())
+        expectMinMax(1, 1, ubyteArrayOf(1))
+        expectMinMax(1, 2, ubyteArrayOf(1, 2))
     }
 
     @Test

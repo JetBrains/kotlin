@@ -7,10 +7,11 @@
 
 package test.collections
 
+import test.assertIsNegativeZero
+import test.assertIsPositiveZero
 import test.assertStaticTypeIs
 import test.assertTypeEquals
 import test.collections.behaviors.*
-import test.comparisons.STRING_CASE_INSENSITIVE_ORDER
 import test.text.isAsciiLetter
 import kotlin.test.*
 import kotlin.random.Random
@@ -347,14 +348,163 @@ class ArraysTest {
 
 
 
-    @Test fun minOrNull() {
-        expect(null, { arrayOf<Int>().minOrNull() })
-        expect(1, { arrayOf(1).minOrNull() })
-        expect(2, { arrayOf(2, 3).minOrNull() })
-        expect(2000000000000, { arrayOf(3000000000000, 2000000000000).minOrNull() })
-        expect('a', { arrayOf('a', 'b').minOrNull() })
-        expect("a", { arrayOf("a", "b").minOrNull() })
+
+    @Test
+    fun minMax() = with(MinMaxOperations.ArrayT) {
+        expectMinMax(1, 1, arrayOf(1))
+        expectMinMax(2, 3, arrayOf(2, 3))
+        expectMinMax(2, 3, arrayOf(3, 2))
+        expectMinMax(2000000000000, 3000000000000, arrayOf(3000000000000, 2000000000000))
+        expectMinMax('a', 'b', arrayOf('a', 'b'))
+        expectMinMax("a", "b", arrayOf("a", "b"))
+
+        MinMaxOperations.ArrayT<Int>().expectMinMaxEmpty(emptyArray())
     }
+
+    @Test
+    fun minMaxIntArray() = with(MinMaxOperations.AInt) {
+        expectMinMaxEmpty(intArrayOf())
+        expectMinMax(1, 1, intArrayOf(1))
+        expectMinMax(1, 2, intArrayOf(1, 2))
+    }
+
+    @Test
+    fun minMaxLongArray() = with(MinMaxOperations.ALong) {
+        expectMinMaxEmpty(longArrayOf())
+        expectMinMax(1, 1, longArrayOf(1))
+        expectMinMax(1, 2, longArrayOf(1, 2))
+    }
+
+    @Test
+    fun minMaxShortArray() = with(MinMaxOperations.AShort) {
+        expectMinMaxEmpty(shortArrayOf())
+        expectMinMax(1, 1, shortArrayOf(1))
+        expectMinMax(1, 2, shortArrayOf(1, 2))
+    }
+
+    @Test
+    fun minMaxByteArray() = with(MinMaxOperations.AByte) {
+        expectMinMaxEmpty(byteArrayOf())
+        expectMinMax(1, 1, byteArrayOf(1))
+        expectMinMax(1, 2, byteArrayOf(1, 2))
+    }
+
+    @Test
+    fun minMaxFloatArray() = with(MinMaxOperations.AFloat) {
+        expectMinMaxEmpty(floatArrayOf())
+        expectMinMax(1F, 1F, floatArrayOf(1F))
+        expectMinMax(1F, 2F, floatArrayOf(1F, 2F))
+    }
+    
+    @Test
+    fun minMaxDoubleArray() = with(MinMaxOperations.ADouble) {
+        expectMinMaxEmpty(doubleArrayOf())
+        expectMinMax(1.0, 1.0, doubleArrayOf(1.0))
+        expectMinMax(1.0, 2.0, doubleArrayOf(1.0, 2.0))
+    }
+
+    @Test
+    fun minMaxCharArray() = with(MinMaxOperations.AChar) {
+        expectMinMaxEmpty(charArrayOf())
+        expectMinMax('a', 'a', charArrayOf('a'))
+        expectMinMax('a', 'b', charArrayOf('a', 'b'))
+    }
+
+    @Test
+    fun minMaxFloatingPoint() {
+        val doubleZeroes = arrayOf(0.0, -0.0).also { it.shuffle() }
+        val floatZeroes = arrayOf(0.0F, -0.0F).also { it.shuffle() }
+        val doubleNaN = arrayOf(0.0, Double.NaN).also { it.shuffle() }
+        val floatNaN = arrayOf(0.0F, Float.NaN).also { it.shuffle() }
+
+        assertIsNegativeZero(doubleZeroes.min())
+        assertIsNegativeZero(doubleZeroes.minOrNull()!!)
+        assertIsNegativeZero(floatZeroes.min().toDouble())
+        assertIsNegativeZero(floatZeroes.minOrNull()!!.toDouble())
+        assertTrue(doubleNaN.min().isNaN())
+        assertTrue(doubleNaN.minOrNull()!!.isNaN())
+        assertTrue(floatNaN.min().isNaN())
+        assertTrue(floatNaN.minOrNull()!!.isNaN())
+
+        assertIsPositiveZero(doubleZeroes.max())
+        assertIsPositiveZero(doubleZeroes.maxOrNull()!!)
+        assertIsPositiveZero(floatZeroes.max().toDouble())
+        assertIsPositiveZero(floatZeroes.maxOrNull()!!.toDouble())
+        assertTrue(doubleNaN.max().isNaN())
+        assertTrue(doubleNaN.maxOrNull()!!.isNaN())
+        assertTrue(floatNaN.max().isNaN())
+        assertTrue(floatNaN.maxOrNull()!!.isNaN())
+    }
+
+    @Test
+    fun minMaxPrimitiveFloatingPoint() {
+        val doubleZeroes = doubleArrayOf(0.0, -0.0).also { it.shuffle() }
+        val floatZeroes = floatArrayOf(0.0F, -0.0F).also { it.shuffle() }
+        val doubleNaN = doubleArrayOf(0.0, Double.NaN).also { it.shuffle() }
+        val floatNaN = floatArrayOf(0.0F, Float.NaN).also { it.shuffle() }
+
+        assertIsNegativeZero(doubleZeroes.min())
+        assertIsNegativeZero(doubleZeroes.minOrNull()!!)
+        assertIsNegativeZero(floatZeroes.min().toDouble())
+        assertIsNegativeZero(floatZeroes.minOrNull()!!.toDouble())
+        assertTrue(doubleNaN.min().isNaN())
+        assertTrue(doubleNaN.minOrNull()!!.isNaN())
+        assertTrue(floatNaN.min().isNaN())
+        assertTrue(floatNaN.minOrNull()!!.isNaN())
+
+        assertIsPositiveZero(doubleZeroes.max())
+        assertIsPositiveZero(doubleZeroes.maxOrNull()!!)
+        assertIsPositiveZero(floatZeroes.max().toDouble())
+        assertIsPositiveZero(floatZeroes.maxOrNull()!!.toDouble())
+        assertTrue(doubleNaN.max().isNaN())
+        assertTrue(doubleNaN.maxOrNull()!!.isNaN())
+        assertTrue(floatNaN.max().isNaN())
+        assertTrue(floatNaN.maxOrNull()!!.isNaN())
+    }
+
+//    private fun <T> expectMinMaxWith(min: T, max: T, elements: Array<T>, comparator: Comparator<T>) {
+//        assertEquals(min, elements.minWithOrNull(comparator))
+//        assertEquals(max, elements.maxWithOrNull(comparator))
+//        assertEquals(min, elements.minWith(comparator))
+//        assertEquals(max, elements.maxWith(comparator))
+//    }
+
+    @Test
+    fun minMaxWith() = with(MinMaxOperationsWith.ArrayT) {
+        expectMinMaxWith(1, 1, arrayOf(1), naturalOrder())
+        expectMinMaxWith("a", "B", arrayOf("a", "B"), String.CASE_INSENSITIVE_ORDER)
+    }
+
+    @Test
+    fun minMaxWithEmpty() = with(MinMaxOperationsWith.ArrayT<Int>()) {
+        expectMinMaxWithEmpty(emptyArray(), naturalOrder())
+    }
+
+    private inline fun <T, K : Comparable<K>> expectMinMaxBy(min: T, max: T, elements: Array<T>, selector: (T) -> K) {
+        assertEquals(min, elements.minBy(selector))
+        assertEquals(min, elements.minByOrNull(selector))
+        assertEquals(max, elements.maxByOrNull(selector))
+        assertEquals(max, elements.maxByOrNull(selector))
+    }
+
+    @Test
+    fun minMaxBy() {
+        expectMinMaxBy(1, 1, arrayOf(1), { it })
+        expectMinMaxBy(3, 2, arrayOf(2, 3), { -it })
+        expectMinMaxBy('a', 'b', arrayOf('a', 'b'), { "x$it" })
+        expectMinMaxBy("b", "abc", arrayOf("abc", "b"), { it.length })
+    }
+
+    @Test
+    fun minMaxByEmpty() {
+        val empty = emptyArray<Int>()
+        val selector = Int::toString
+        assertNull(empty.minByOrNull(selector))
+        assertNull(empty.maxByOrNull(selector))
+        assertFailsWith<NoSuchElementException> { empty.minBy(selector) }
+        assertFailsWith<NoSuchElementException> { empty.maxBy(selector) }
+    }
+
 
     @Test fun minOrNullInPrimitiveArrays() {
         expect(null, { intArrayOf().minOrNull() })
@@ -368,14 +518,6 @@ class ArraysTest {
         expect('a', { charArrayOf('a', 'b').minOrNull() })
     }
 
-    @Test fun maxOrNull() {
-        expect(null, { arrayOf<Int>().maxOrNull() })
-        expect(1, { arrayOf(1).maxOrNull() })
-        expect(3, { arrayOf(2, 3).maxOrNull() })
-        expect(3000000000000, { arrayOf(3000000000000, 2000000000000).maxOrNull() })
-        expect('b', { arrayOf('a', 'b').maxOrNull() })
-        expect("b", { arrayOf("a", "b").maxOrNull() })
-    }
 
     @Test fun maxOrNullInPrimitiveArrays() {
         expect(null, { intArrayOf().maxOrNull() })
@@ -389,10 +531,6 @@ class ArraysTest {
         expect('b', { charArrayOf('a', 'b').maxOrNull() })
     }
 
-    @Test fun minWithOrNull() {
-        assertEquals(null, arrayOf<Int>().minWithOrNull(naturalOrder()))
-        assertEquals("a", arrayOf("a", "B").minWithOrNull(STRING_CASE_INSENSITIVE_ORDER))
-    }
 
     @Test fun minWithOrNullInPrimitiveArrays() {
         expect(null, { intArrayOf().minWithOrNull(naturalOrder()) })
@@ -400,23 +538,10 @@ class ArraysTest {
         expect(4, { intArrayOf(2, 3, 4).minWithOrNull(compareBy { it % 4 }) })
     }
 
-    @Test fun maxWithOrNull() {
-        assertEquals(null, arrayOf<Int>().maxWithOrNull(naturalOrder()))
-        assertEquals("B", arrayOf("a", "B").maxWithOrNull(STRING_CASE_INSENSITIVE_ORDER))
-    }
-
     @Test fun maxWithOrNullInPrimitiveArrays() {
         expect(null, { intArrayOf().maxWithOrNull(naturalOrder()) })
         expect(1, { intArrayOf(1).maxWithOrNull(naturalOrder()) })
         expect(-4, { intArrayOf(2, 3, -4).maxWithOrNull(compareBy { it * it }) })
-    }
-
-    @Test fun minByOrNull() {
-        expect(null, { arrayOf<Int>().minByOrNull { it } })
-        expect(1, { arrayOf(1).minByOrNull { it } })
-        expect(3, { arrayOf(2, 3).minByOrNull { -it } })
-        expect('a', { arrayOf('a', 'b').minByOrNull { "x$it" } })
-        expect("b", { arrayOf("b", "abc").minByOrNull { it.length } })
     }
 
     @Test fun minByOrNullInPrimitiveArrays() {
@@ -428,14 +553,6 @@ class ArraysTest {
         expect(3, { shortArrayOf(3, 2).minByOrNull { "a" } })
         expect(2.0F, { floatArrayOf(3.0F, 2.0F).minByOrNull { it.toString() } })
         expect(2.0, { doubleArrayOf(2.0, 3.0).minByOrNull { it * it } })
-    }
-
-    @Test fun maxByOrNull() {
-        expect(null, { arrayOf<Int>().maxByOrNull { it } })
-        expect(1, { arrayOf(1).maxByOrNull { it } })
-        expect(2, { arrayOf(2, 3).maxByOrNull { -it } })
-        expect('b', { arrayOf('a', 'b').maxByOrNull { "x$it" } })
-        expect("abc", { arrayOf("b", "abc").maxByOrNull { it.length } })
     }
 
     @Test fun maxByOrNullInPrimitiveArrays() {
