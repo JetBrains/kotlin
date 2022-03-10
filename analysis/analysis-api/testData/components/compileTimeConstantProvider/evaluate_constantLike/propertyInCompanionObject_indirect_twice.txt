@@ -1,3 +1,0 @@
-expression: oneMore
-constant: "something"
-constantValueKind: String

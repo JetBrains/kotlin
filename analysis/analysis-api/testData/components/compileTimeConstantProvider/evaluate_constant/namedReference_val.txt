@@ -1,3 +1,0 @@
-expression: bar
-constant: NOT_EVALUATED
-constantValueKind: NOT_EVALUATED

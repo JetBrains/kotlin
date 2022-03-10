@@ -15,9 +15,7 @@ import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.assertions
 
-abstract class AbstractCompileTimeConstantEvaluatorTest(
-    private val mode: KtConstantEvaluationMode
-) : AbstractHLApiSingleFileTest() {
+abstract class AbstractCompileTimeConstantEvaluatorTest : AbstractHLApiSingleFileTest() {
     override fun doTestByFileStructure(ktFile: KtFile, module: TestModule, testServices: TestServices) {
         val element = testServices.expressionMarkerProvider.getSelectedElement(ktFile)
         val expression = when (element) {
@@ -27,13 +25,24 @@ abstract class AbstractCompileTimeConstantEvaluatorTest(
         } ?: testServices.assertions.fail { "Unsupported expression: $element" }
         val constantValue = executeOnPooledThreadInReadAction {
             analyseForTest(expression) {
-                expression.evaluate(mode)
+                expression.evaluate(KtConstantEvaluationMode.CONSTANT_EXPRESSION_EVALUATION)
+            }
+        }
+        val constantLikeValue = executeOnPooledThreadInReadAction {
+            analyseForTest(expression) {
+                expression.evaluate(KtConstantEvaluationMode.CONSTANT_LIKE_EXPRESSION_EVALUATION)
             }
         }
         val actual = buildString {
             appendLine("expression: ${expression.text}")
+            appendLine()
+            appendLine("CONSTANT_EXPRESSION_EVALUATION")
             appendLine("constant: ${constantValue?.renderAsKotlinConstant() ?: "NOT_EVALUATED"}")
             appendLine("constantValueKind: ${constantValue?.constantValueKind ?: "NOT_EVALUATED"}")
+            appendLine()
+            appendLine("CONSTANT_LIKE_EXPRESSION_EVALUATION")
+            appendLine("constantLike: ${constantLikeValue?.renderAsKotlinConstant() ?: "NOT_EVALUATED"}")
+            appendLine("constantLikeValueKind: ${constantLikeValue?.constantValueKind ?: "NOT_EVALUATED"}")
         }
         testServices.assertions.assertEqualsToTestDataFileSibling(actual)
     }
