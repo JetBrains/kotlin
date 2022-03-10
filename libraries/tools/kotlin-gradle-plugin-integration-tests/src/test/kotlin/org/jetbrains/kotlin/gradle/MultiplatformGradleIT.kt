@@ -23,8 +23,10 @@ import org.jetbrains.kotlin.gradle.internals.KOTLIN_12X_MPP_DEPRECATION_WARNING
 import org.jetbrains.kotlin.gradle.plugin.EXPECTED_BY_CONFIG_NAME
 import org.jetbrains.kotlin.gradle.plugin.IMPLEMENT_CONFIG_NAME
 import org.jetbrains.kotlin.gradle.plugin.IMPLEMENT_DEPRECATION_WARNING
+import org.jetbrains.kotlin.gradle.util.AGPVersion
 import org.jetbrains.kotlin.gradle.util.getFileByName
 import org.jetbrains.kotlin.gradle.util.modify
+import org.jetbrains.kotlin.test.util.KtTestUtil
 import org.junit.Test
 import java.io.File
 import kotlin.test.assertTrue
@@ -345,6 +347,32 @@ class MultiplatformGradleIT : BaseGradleIT() {
         build("assemble") {
             assertSuccessful()
             assertNotContains("no duplicate handling strategy has been set")
+        }
+    }
+
+    @Test
+    fun testKtKt35942InternalsFromMainInTestViaTransitiveDeps() = with(Project("kt-35942-jvm", GradleVersionRequired.FOR_MPP_SUPPORT)) {
+        build(":lib1:compileTestKotlin") {
+            assertSuccessful()
+            assertTasksExecuted(":lib1:compileKotlin", ":lib2:jar")
+        }
+    }
+
+    @Test
+    fun testKtKt35942InternalsFromMainInTestViaTransitiveDepsAndroid() = with(
+        Project(
+            projectName = "kt-35942-android"
+        )
+    ) {
+        build(
+            ":lib1:compileDebugUnitTestKotlin",
+            options = defaultBuildOptions().copy(
+                androidGradlePluginVersion = AGPVersion.v4_2_0,
+                androidHome = KtTestUtil.findAndroidSdk().also { acceptAndroidSdkLicenses(it) },
+            ),
+        ) {
+            assertSuccessful()
+            assertTasksExecuted(":lib1:compileDebugKotlin")
         }
     }
 }

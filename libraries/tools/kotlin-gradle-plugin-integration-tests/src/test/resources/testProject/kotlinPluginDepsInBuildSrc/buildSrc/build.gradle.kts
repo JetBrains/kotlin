@@ -1,5 +1,5 @@
 plugins {
-    kotlin("jvm") version "<pluginMarkerVersion>"
+    kotlin("jvm")
 }
 
 repositories {
@@ -7,8 +7,9 @@ repositories {
     mavenLocal()
 }
 
+val kotlin_version: String by extra
 allprojects {
     dependencies {
-        implementation("org.jetbrains.kotlin:kotlin-gradle-plugin-api:<pluginMarkerVersion>")
+        implementation("org.jetbrains.kotlin:kotlin-gradle-plugin-api:$kotlin_version")
     }
 }

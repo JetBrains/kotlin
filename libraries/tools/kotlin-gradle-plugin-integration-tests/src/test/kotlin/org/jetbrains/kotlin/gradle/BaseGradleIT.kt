@@ -371,25 +371,6 @@ abstract class BaseGradleIT {
 
         fun relativize(vararg files: File): List<String> =
             files.map { it.relativeTo(projectDir).path }
-
-        fun performModifications() {
-            for (file in projectDir.walk()) {
-                if (!file.isFile) continue
-
-                val fileWithoutExt = File(file.parentFile, file.nameWithoutExtension)
-
-                when (file.extension) {
-                    "new" -> {
-                        file.copyTo(fileWithoutExt, overwrite = true)
-                        file.delete()
-                    }
-                    "delete" -> {
-                        fileWithoutExt.delete()
-                        file.delete()
-                    }
-                }
-            }
-        }
     }
 
     class CompiledProject(val project: Project, val output: String, val resultCode: Int)
