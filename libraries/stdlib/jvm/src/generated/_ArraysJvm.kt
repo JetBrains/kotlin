@@ -2733,6 +2733,402 @@ public fun <T> Array<out T>.toSortedSet(comparator: Comparator<in T>): java.util
     return toCollection(java.util.TreeSet<T>(comparator))
 }
 
+@Deprecated("Use maxOrNull instead.", ReplaceWith("this.maxOrNull()"))
+@DeprecatedSinceKotlin(warningSince = "1.4", errorSince = "1.5", hiddenSince = "1.6")
+@SinceKotlin("1.1")
+@Suppress("CONFLICTING_OVERLOADS")
+public fun Array<out Double>.max(): Double? {
+    return maxOrNull()
+}
+
+@Deprecated("Use maxOrNull instead.", ReplaceWith("this.maxOrNull()"))
+@DeprecatedSinceKotlin(warningSince = "1.4", errorSince = "1.5", hiddenSince = "1.6")
+@SinceKotlin("1.1")
+@Suppress("CONFLICTING_OVERLOADS")
+public fun Array<out Float>.max(): Float? {
+    return maxOrNull()
+}
+
+@Deprecated("Use maxOrNull instead.", ReplaceWith("this.maxOrNull()"))
+@DeprecatedSinceKotlin(warningSince = "1.4", errorSince = "1.5", hiddenSince = "1.6")
+@Suppress("CONFLICTING_OVERLOADS")
+public fun <T : Comparable<T>> Array<out T>.max(): T? {
+    return maxOrNull()
+}
+
+@Deprecated("Use maxOrNull instead.", ReplaceWith("this.maxOrNull()"))
+@DeprecatedSinceKotlin(warningSince = "1.4", errorSince = "1.5", hiddenSince = "1.6")
+@Suppress("CONFLICTING_OVERLOADS")
+public fun ByteArray.max(): Byte? {
+    return maxOrNull()
+}
+
+@Deprecated("Use maxOrNull instead.", ReplaceWith("this.maxOrNull()"))
+@DeprecatedSinceKotlin(warningSince = "1.4", errorSince = "1.5", hiddenSince = "1.6")
+@Suppress("CONFLICTING_OVERLOADS")
+public fun ShortArray.max(): Short? {
+    return maxOrNull()
+}
+
+@Deprecated("Use maxOrNull instead.", ReplaceWith("this.maxOrNull()"))
+@DeprecatedSinceKotlin(warningSince = "1.4", errorSince = "1.5", hiddenSince = "1.6")
+@Suppress("CONFLICTING_OVERLOADS")
+public fun IntArray.max(): Int? {
+    return maxOrNull()
+}
+
+@Deprecated("Use maxOrNull instead.", ReplaceWith("this.maxOrNull()"))
+@DeprecatedSinceKotlin(warningSince = "1.4", errorSince = "1.5", hiddenSince = "1.6")
+@Suppress("CONFLICTING_OVERLOADS")
+public fun LongArray.max(): Long? {
+    return maxOrNull()
+}
+
+@Deprecated("Use maxOrNull instead.", ReplaceWith("this.maxOrNull()"))
+@DeprecatedSinceKotlin(warningSince = "1.4", errorSince = "1.5", hiddenSince = "1.6")
+@Suppress("CONFLICTING_OVERLOADS")
+public fun FloatArray.max(): Float? {
+    return maxOrNull()
+}
+
+@Deprecated("Use maxOrNull instead.", ReplaceWith("this.maxOrNull()"))
+@DeprecatedSinceKotlin(warningSince = "1.4", errorSince = "1.5", hiddenSince = "1.6")
+@Suppress("CONFLICTING_OVERLOADS")
+public fun DoubleArray.max(): Double? {
+    return maxOrNull()
+}
+
+@Deprecated("Use maxOrNull instead.", ReplaceWith("this.maxOrNull()"))
+@DeprecatedSinceKotlin(warningSince = "1.4", errorSince = "1.5", hiddenSince = "1.6")
+@Suppress("CONFLICTING_OVERLOADS")
+public fun CharArray.max(): Char? {
+    return maxOrNull()
+}
+
+@Deprecated("Use maxByOrNull instead.", ReplaceWith("this.maxByOrNull(selector)"))
+@DeprecatedSinceKotlin(warningSince = "1.4", errorSince = "1.5", hiddenSince = "1.6")
+@Suppress("CONFLICTING_OVERLOADS")
+public inline fun <T, R : Comparable<R>> Array<out T>.maxBy(selector: (T) -> R): T? {
+    return maxByOrNull(selector)
+}
+
+@Deprecated("Use maxByOrNull instead.", ReplaceWith("this.maxByOrNull(selector)"))
+@DeprecatedSinceKotlin(warningSince = "1.4", errorSince = "1.5", hiddenSince = "1.6")
+@Suppress("CONFLICTING_OVERLOADS")
+public inline fun <R : Comparable<R>> ByteArray.maxBy(selector: (Byte) -> R): Byte? {
+    return maxByOrNull(selector)
+}
+
+@Deprecated("Use maxByOrNull instead.", ReplaceWith("this.maxByOrNull(selector)"))
+@DeprecatedSinceKotlin(warningSince = "1.4", errorSince = "1.5", hiddenSince = "1.6")
+@Suppress("CONFLICTING_OVERLOADS")
+public inline fun <R : Comparable<R>> ShortArray.maxBy(selector: (Short) -> R): Short? {
+    return maxByOrNull(selector)
+}
+
+@Deprecated("Use maxByOrNull instead.", ReplaceWith("this.maxByOrNull(selector)"))
+@DeprecatedSinceKotlin(warningSince = "1.4", errorSince = "1.5", hiddenSince = "1.6")
+@Suppress("CONFLICTING_OVERLOADS")
+public inline fun <R : Comparable<R>> IntArray.maxBy(selector: (Int) -> R): Int? {
+    return maxByOrNull(selector)
+}
+
+@Deprecated("Use maxByOrNull instead.", ReplaceWith("this.maxByOrNull(selector)"))
+@DeprecatedSinceKotlin(warningSince = "1.4", errorSince = "1.5", hiddenSince = "1.6")
+@Suppress("CONFLICTING_OVERLOADS")
+public inline fun <R : Comparable<R>> LongArray.maxBy(selector: (Long) -> R): Long? {
+    return maxByOrNull(selector)
+}
+
+@Deprecated("Use maxByOrNull instead.", ReplaceWith("this.maxByOrNull(selector)"))
+@DeprecatedSinceKotlin(warningSince = "1.4", errorSince = "1.5", hiddenSince = "1.6")
+@Suppress("CONFLICTING_OVERLOADS")
+public inline fun <R : Comparable<R>> FloatArray.maxBy(selector: (Float) -> R): Float? {
+    return maxByOrNull(selector)
+}
+
+@Deprecated("Use maxByOrNull instead.", ReplaceWith("this.maxByOrNull(selector)"))
+@DeprecatedSinceKotlin(warningSince = "1.4", errorSince = "1.5", hiddenSince = "1.6")
+@Suppress("CONFLICTING_OVERLOADS")
+public inline fun <R : Comparable<R>> DoubleArray.maxBy(selector: (Double) -> R): Double? {
+    return maxByOrNull(selector)
+}
+
+@Deprecated("Use maxByOrNull instead.", ReplaceWith("this.maxByOrNull(selector)"))
+@DeprecatedSinceKotlin(warningSince = "1.4", errorSince = "1.5", hiddenSince = "1.6")
+@Suppress("CONFLICTING_OVERLOADS")
+public inline fun <R : Comparable<R>> BooleanArray.maxBy(selector: (Boolean) -> R): Boolean? {
+    return maxByOrNull(selector)
+}
+
+@Deprecated("Use maxByOrNull instead.", ReplaceWith("this.maxByOrNull(selector)"))
+@DeprecatedSinceKotlin(warningSince = "1.4", errorSince = "1.5", hiddenSince = "1.6")
+@Suppress("CONFLICTING_OVERLOADS")
+public inline fun <R : Comparable<R>> CharArray.maxBy(selector: (Char) -> R): Char? {
+    return maxByOrNull(selector)
+}
+
+@Deprecated("Use maxWithOrNull instead.", ReplaceWith("this.maxWithOrNull(comparator)"))
+@DeprecatedSinceKotlin(warningSince = "1.4", errorSince = "1.5", hiddenSince = "1.6")
+@Suppress("CONFLICTING_OVERLOADS")
+public fun <T> Array<out T>.maxWith(comparator: Comparator<in T>): T? {
+    return maxWithOrNull(comparator)
+}
+
+@Deprecated("Use maxWithOrNull instead.", ReplaceWith("this.maxWithOrNull(comparator)"))
+@DeprecatedSinceKotlin(warningSince = "1.4", errorSince = "1.5", hiddenSince = "1.6")
+@Suppress("CONFLICTING_OVERLOADS")
+public fun ByteArray.maxWith(comparator: Comparator<in Byte>): Byte? {
+    return maxWithOrNull(comparator)
+}
+
+@Deprecated("Use maxWithOrNull instead.", ReplaceWith("this.maxWithOrNull(comparator)"))
+@DeprecatedSinceKotlin(warningSince = "1.4", errorSince = "1.5", hiddenSince = "1.6")
+@Suppress("CONFLICTING_OVERLOADS")
+public fun ShortArray.maxWith(comparator: Comparator<in Short>): Short? {
+    return maxWithOrNull(comparator)
+}
+
+@Deprecated("Use maxWithOrNull instead.", ReplaceWith("this.maxWithOrNull(comparator)"))
+@DeprecatedSinceKotlin(warningSince = "1.4", errorSince = "1.5", hiddenSince = "1.6")
+@Suppress("CONFLICTING_OVERLOADS")
+public fun IntArray.maxWith(comparator: Comparator<in Int>): Int? {
+    return maxWithOrNull(comparator)
+}
+
+@Deprecated("Use maxWithOrNull instead.", ReplaceWith("this.maxWithOrNull(comparator)"))
+@DeprecatedSinceKotlin(warningSince = "1.4", errorSince = "1.5", hiddenSince = "1.6")
+@Suppress("CONFLICTING_OVERLOADS")
+public fun LongArray.maxWith(comparator: Comparator<in Long>): Long? {
+    return maxWithOrNull(comparator)
+}
+
+@Deprecated("Use maxWithOrNull instead.", ReplaceWith("this.maxWithOrNull(comparator)"))
+@DeprecatedSinceKotlin(warningSince = "1.4", errorSince = "1.5", hiddenSince = "1.6")
+@Suppress("CONFLICTING_OVERLOADS")
+public fun FloatArray.maxWith(comparator: Comparator<in Float>): Float? {
+    return maxWithOrNull(comparator)
+}
+
+@Deprecated("Use maxWithOrNull instead.", ReplaceWith("this.maxWithOrNull(comparator)"))
+@DeprecatedSinceKotlin(warningSince = "1.4", errorSince = "1.5", hiddenSince = "1.6")
+@Suppress("CONFLICTING_OVERLOADS")
+public fun DoubleArray.maxWith(comparator: Comparator<in Double>): Double? {
+    return maxWithOrNull(comparator)
+}
+
+@Deprecated("Use maxWithOrNull instead.", ReplaceWith("this.maxWithOrNull(comparator)"))
+@DeprecatedSinceKotlin(warningSince = "1.4", errorSince = "1.5", hiddenSince = "1.6")
+@Suppress("CONFLICTING_OVERLOADS")
+public fun BooleanArray.maxWith(comparator: Comparator<in Boolean>): Boolean? {
+    return maxWithOrNull(comparator)
+}
+
+@Deprecated("Use maxWithOrNull instead.", ReplaceWith("this.maxWithOrNull(comparator)"))
+@DeprecatedSinceKotlin(warningSince = "1.4", errorSince = "1.5", hiddenSince = "1.6")
+@Suppress("CONFLICTING_OVERLOADS")
+public fun CharArray.maxWith(comparator: Comparator<in Char>): Char? {
+    return maxWithOrNull(comparator)
+}
+
+@Deprecated("Use minOrNull instead.", ReplaceWith("this.minOrNull()"))
+@DeprecatedSinceKotlin(warningSince = "1.4", errorSince = "1.5", hiddenSince = "1.6")
+@SinceKotlin("1.1")
+@Suppress("CONFLICTING_OVERLOADS")
+public fun Array<out Double>.min(): Double? {
+    return minOrNull()
+}
+
+@Deprecated("Use minOrNull instead.", ReplaceWith("this.minOrNull()"))
+@DeprecatedSinceKotlin(warningSince = "1.4", errorSince = "1.5", hiddenSince = "1.6")
+@SinceKotlin("1.1")
+@Suppress("CONFLICTING_OVERLOADS")
+public fun Array<out Float>.min(): Float? {
+    return minOrNull()
+}
+
+@Deprecated("Use minOrNull instead.", ReplaceWith("this.minOrNull()"))
+@DeprecatedSinceKotlin(warningSince = "1.4", errorSince = "1.5", hiddenSince = "1.6")
+@Suppress("CONFLICTING_OVERLOADS")
+public fun <T : Comparable<T>> Array<out T>.min(): T? {
+    return minOrNull()
+}
+
+@Deprecated("Use minOrNull instead.", ReplaceWith("this.minOrNull()"))
+@DeprecatedSinceKotlin(warningSince = "1.4", errorSince = "1.5", hiddenSince = "1.6")
+@Suppress("CONFLICTING_OVERLOADS")
+public fun ByteArray.min(): Byte? {
+    return minOrNull()
+}
+
+@Deprecated("Use minOrNull instead.", ReplaceWith("this.minOrNull()"))
+@DeprecatedSinceKotlin(warningSince = "1.4", errorSince = "1.5", hiddenSince = "1.6")
+@Suppress("CONFLICTING_OVERLOADS")
+public fun ShortArray.min(): Short? {
+    return minOrNull()
+}
+
+@Deprecated("Use minOrNull instead.", ReplaceWith("this.minOrNull()"))
+@DeprecatedSinceKotlin(warningSince = "1.4", errorSince = "1.5", hiddenSince = "1.6")
+@Suppress("CONFLICTING_OVERLOADS")
+public fun IntArray.min(): Int? {
+    return minOrNull()
+}
+
+@Deprecated("Use minOrNull instead.", ReplaceWith("this.minOrNull()"))
+@DeprecatedSinceKotlin(warningSince = "1.4", errorSince = "1.5", hiddenSince = "1.6")
+@Suppress("CONFLICTING_OVERLOADS")
+public fun LongArray.min(): Long? {
+    return minOrNull()
+}
+
+@Deprecated("Use minOrNull instead.", ReplaceWith("this.minOrNull()"))
+@DeprecatedSinceKotlin(warningSince = "1.4", errorSince = "1.5", hiddenSince = "1.6")
+@Suppress("CONFLICTING_OVERLOADS")
+public fun FloatArray.min(): Float? {
+    return minOrNull()
+}
+
+@Deprecated("Use minOrNull instead.", ReplaceWith("this.minOrNull()"))
+@DeprecatedSinceKotlin(warningSince = "1.4", errorSince = "1.5", hiddenSince = "1.6")
+@Suppress("CONFLICTING_OVERLOADS")
+public fun DoubleArray.min(): Double? {
+    return minOrNull()
+}
+
+@Deprecated("Use minOrNull instead.", ReplaceWith("this.minOrNull()"))
+@DeprecatedSinceKotlin(warningSince = "1.4", errorSince = "1.5", hiddenSince = "1.6")
+@Suppress("CONFLICTING_OVERLOADS")
+public fun CharArray.min(): Char? {
+    return minOrNull()
+}
+
+@Deprecated("Use minByOrNull instead.", ReplaceWith("this.minByOrNull(selector)"))
+@DeprecatedSinceKotlin(warningSince = "1.4", errorSince = "1.5", hiddenSince = "1.6")
+@Suppress("CONFLICTING_OVERLOADS")
+public inline fun <T, R : Comparable<R>> Array<out T>.minBy(selector: (T) -> R): T? {
+    return minByOrNull(selector)
+}
+
+@Deprecated("Use minByOrNull instead.", ReplaceWith("this.minByOrNull(selector)"))
+@DeprecatedSinceKotlin(warningSince = "1.4", errorSince = "1.5", hiddenSince = "1.6")
+@Suppress("CONFLICTING_OVERLOADS")
+public inline fun <R : Comparable<R>> ByteArray.minBy(selector: (Byte) -> R): Byte? {
+    return minByOrNull(selector)
+}
+
+@Deprecated("Use minByOrNull instead.", ReplaceWith("this.minByOrNull(selector)"))
+@DeprecatedSinceKotlin(warningSince = "1.4", errorSince = "1.5", hiddenSince = "1.6")
+@Suppress("CONFLICTING_OVERLOADS")
+public inline fun <R : Comparable<R>> ShortArray.minBy(selector: (Short) -> R): Short? {
+    return minByOrNull(selector)
+}
+
+@Deprecated("Use minByOrNull instead.", ReplaceWith("this.minByOrNull(selector)"))
+@DeprecatedSinceKotlin(warningSince = "1.4", errorSince = "1.5", hiddenSince = "1.6")
+@Suppress("CONFLICTING_OVERLOADS")
+public inline fun <R : Comparable<R>> IntArray.minBy(selector: (Int) -> R): Int? {
+    return minByOrNull(selector)
+}
+
+@Deprecated("Use minByOrNull instead.", ReplaceWith("this.minByOrNull(selector)"))
+@DeprecatedSinceKotlin(warningSince = "1.4", errorSince = "1.5", hiddenSince = "1.6")
+@Suppress("CONFLICTING_OVERLOADS")
+public inline fun <R : Comparable<R>> LongArray.minBy(selector: (Long) -> R): Long? {
+    return minByOrNull(selector)
+}
+
+@Deprecated("Use minByOrNull instead.", ReplaceWith("this.minByOrNull(selector)"))
+@DeprecatedSinceKotlin(warningSince = "1.4", errorSince = "1.5", hiddenSince = "1.6")
+@Suppress("CONFLICTING_OVERLOADS")
+public inline fun <R : Comparable<R>> FloatArray.minBy(selector: (Float) -> R): Float? {
+    return minByOrNull(selector)
+}
+
+@Deprecated("Use minByOrNull instead.", ReplaceWith("this.minByOrNull(selector)"))
+@DeprecatedSinceKotlin(warningSince = "1.4", errorSince = "1.5", hiddenSince = "1.6")
+@Suppress("CONFLICTING_OVERLOADS")
+public inline fun <R : Comparable<R>> DoubleArray.minBy(selector: (Double) -> R): Double? {
+    return minByOrNull(selector)
+}
+
+@Deprecated("Use minByOrNull instead.", ReplaceWith("this.minByOrNull(selector)"))
+@DeprecatedSinceKotlin(warningSince = "1.4", errorSince = "1.5", hiddenSince = "1.6")
+@Suppress("CONFLICTING_OVERLOADS")
+public inline fun <R : Comparable<R>> BooleanArray.minBy(selector: (Boolean) -> R): Boolean? {
+    return minByOrNull(selector)
+}
+
+@Deprecated("Use minByOrNull instead.", ReplaceWith("this.minByOrNull(selector)"))
+@DeprecatedSinceKotlin(warningSince = "1.4", errorSince = "1.5", hiddenSince = "1.6")
+@Suppress("CONFLICTING_OVERLOADS")
+public inline fun <R : Comparable<R>> CharArray.minBy(selector: (Char) -> R): Char? {
+    return minByOrNull(selector)
+}
+
+@Deprecated("Use minWithOrNull instead.", ReplaceWith("this.minWithOrNull(comparator)"))
+@DeprecatedSinceKotlin(warningSince = "1.4", errorSince = "1.5", hiddenSince = "1.6")
+@Suppress("CONFLICTING_OVERLOADS")
+public fun <T> Array<out T>.minWith(comparator: Comparator<in T>): T? {
+    return minWithOrNull(comparator)
+}
+
+@Deprecated("Use minWithOrNull instead.", ReplaceWith("this.minWithOrNull(comparator)"))
+@DeprecatedSinceKotlin(warningSince = "1.4", errorSince = "1.5", hiddenSince = "1.6")
+@Suppress("CONFLICTING_OVERLOADS")
+public fun ByteArray.minWith(comparator: Comparator<in Byte>): Byte? {
+    return minWithOrNull(comparator)
+}
+
+@Deprecated("Use minWithOrNull instead.", ReplaceWith("this.minWithOrNull(comparator)"))
+@DeprecatedSinceKotlin(warningSince = "1.4", errorSince = "1.5", hiddenSince = "1.6")
+@Suppress("CONFLICTING_OVERLOADS")
+public fun ShortArray.minWith(comparator: Comparator<in Short>): Short? {
+    return minWithOrNull(comparator)
+}
+
+@Deprecated("Use minWithOrNull instead.", ReplaceWith("this.minWithOrNull(comparator)"))
+@DeprecatedSinceKotlin(warningSince = "1.4", errorSince = "1.5", hiddenSince = "1.6")
+@Suppress("CONFLICTING_OVERLOADS")
+public fun IntArray.minWith(comparator: Comparator<in Int>): Int? {
+    return minWithOrNull(comparator)
+}
+
+@Deprecated("Use minWithOrNull instead.", ReplaceWith("this.minWithOrNull(comparator)"))
+@DeprecatedSinceKotlin(warningSince = "1.4", errorSince = "1.5", hiddenSince = "1.6")
+@Suppress("CONFLICTING_OVERLOADS")
+public fun LongArray.minWith(comparator: Comparator<in Long>): Long? {
+    return minWithOrNull(comparator)
+}
+
+@Deprecated("Use minWithOrNull instead.", ReplaceWith("this.minWithOrNull(comparator)"))
+@DeprecatedSinceKotlin(warningSince = "1.4", errorSince = "1.5", hiddenSince = "1.6")
+@Suppress("CONFLICTING_OVERLOADS")
+public fun FloatArray.minWith(comparator: Comparator<in Float>): Float? {
+    return minWithOrNull(comparator)
+}
+
+@Deprecated("Use minWithOrNull instead.", ReplaceWith("this.minWithOrNull(comparator)"))
+@DeprecatedSinceKotlin(warningSince = "1.4", errorSince = "1.5", hiddenSince = "1.6")
+@Suppress("CONFLICTING_OVERLOADS")
+public fun DoubleArray.minWith(comparator: Comparator<in Double>): Double? {
+    return minWithOrNull(comparator)
+}
+
+@Deprecated("Use minWithOrNull instead.", ReplaceWith("this.minWithOrNull(comparator)"))
+@DeprecatedSinceKotlin(warningSince = "1.4", errorSince = "1.5", hiddenSince = "1.6")
+@Suppress("CONFLICTING_OVERLOADS")
+public fun BooleanArray.minWith(comparator: Comparator<in Boolean>): Boolean? {
+    return minWithOrNull(comparator)
+}
+
+@Deprecated("Use minWithOrNull instead.", ReplaceWith("this.minWithOrNull(comparator)"))
+@DeprecatedSinceKotlin(warningSince = "1.4", errorSince = "1.5", hiddenSince = "1.6")
+@Suppress("CONFLICTING_OVERLOADS")
+public fun CharArray.minWith(comparator: Comparator<in Char>): Char? {
+    return minWithOrNull(comparator)
+}
+
 /**
  * Returns the sum of all values produced by [selector] function applied to each element in the array.
  */
