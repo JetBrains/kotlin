@@ -11,7 +11,8 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinAndroidPlugin.Companion.dynamica
 import org.jetbrains.kotlin.gradle.plugin.KotlinTargetPreset
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.PublicationRegistrationMode
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.hasKpmModel
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.mapTargetCompilationsToKpmVariants
+import org.jetbrains.kotlin.gradle.plugin.sources.kpm.AndroidTestFragmentLocator
+import org.jetbrains.kotlin.gradle.plugin.sources.kpm.SourceSetMappedFragmentLocator
 
 class KotlinAndroidTargetPreset(
     private val project: Project
@@ -25,6 +26,9 @@ class KotlinAndroidTargetPreset(
             preset = this@KotlinAndroidTargetPreset
             targetUnderConstruction = this
         }
+
+        if (project.hasKpmModel)
+            SourceSetMappedFragmentLocator.get(project).registerLocator(AndroidTestFragmentLocator(result))
 
         project.dynamicallyApplyWhenAndroidPluginIsApplied({ result })
 
