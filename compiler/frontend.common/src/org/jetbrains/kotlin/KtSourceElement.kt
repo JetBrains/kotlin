@@ -221,7 +221,7 @@ class KtOffsetsOnlySourceElement(
 
 // TODO: consider renaming to something like AstBasedSourceElement
 sealed class KtSourceElement : AbstractKtSourceElement() {
-    abstract val elementType: IElementType
+    abstract val elementType: IElementType?
     abstract val kind: KtSourceElementKind
     abstract val lighterASTNode: LighterASTNode
     abstract val treeStructure: FlyweightCapableTreeStructure<LighterASTNode>
@@ -233,11 +233,11 @@ sealed class KtSourceElement : AbstractKtSourceElement() {
     abstract override fun equals(other: Any?): Boolean
 }
 
-// NB: in certain situations, psi.node could be null
+// NB: in certain situations, psi.node could be null (see e.g. KT-44152)
 // Potentially exceptions can be provoked by elementType / lighterASTNode
 sealed class KtPsiSourceElement(val psi: PsiElement) : KtSourceElement() {
-    override val elementType: IElementType
-        get() = psi.node.elementType
+    override val elementType: IElementType?
+        get() = psi.node?.elementType
 
     override val startOffset: Int
         get() = psi.textRange.startOffset
