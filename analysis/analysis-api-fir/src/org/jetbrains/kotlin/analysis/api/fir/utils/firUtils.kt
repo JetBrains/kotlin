@@ -8,6 +8,7 @@ import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.analysis.api.KtConstantInitializerValue
 import org.jetbrains.kotlin.analysis.api.KtInitializerValue
 import org.jetbrains.kotlin.analysis.api.KtNonConstantInitializerValue
+import org.jetbrains.kotlin.analysis.api.components.KtConstantEvaluationMode
 import org.jetbrains.kotlin.analysis.api.fir.evaluate.FirCompileTimeConstantEvaluator
 import org.jetbrains.kotlin.analysis.api.fir.getCandidateSymbols
 import org.jetbrains.kotlin.analysis.api.types.KtTypeNullability
@@ -28,7 +29,6 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
 import org.jetbrains.kotlin.fir.types.ConeErrorType
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.ConeNullability
-import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.*
 
@@ -91,7 +91,9 @@ internal fun FirCallableSymbol<*>.computeImportableName(useSiteSession: FirSessi
 
 internal fun FirExpression.asKtInitializerValue(): KtInitializerValue {
     val ktExpression = psi as? KtExpression
-    return when (val evaluated = FirCompileTimeConstantEvaluator.evaluateAsKtConstantExpression(this)) {
+    val evaluated =
+        FirCompileTimeConstantEvaluator.evaluateAsKtConstantValue(this, KtConstantEvaluationMode.CONSTANT_EXPRESSION_EVALUATION)
+    return when (evaluated) {
         null -> KtNonConstantInitializerValue(ktExpression)
         else -> KtConstantInitializerValue(evaluated, ktExpression)
     }

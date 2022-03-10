@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.analysis.api.fir.evaluate
 
 import org.jetbrains.kotlin.analysis.api.annotations.*
 import org.jetbrains.kotlin.analysis.api.base.KtConstantValueFactory
+import org.jetbrains.kotlin.analysis.api.components.KtConstantEvaluationMode
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.checkers.getContainingClassSymbol
@@ -145,6 +146,7 @@ internal object FirAnnotationValueConverter {
                 }
             }
             else -> null
-        } ?: FirCompileTimeConstantEvaluator.evaluate(this)?.convertConstantExpression()
+        } ?: FirCompileTimeConstantEvaluator.evaluate(this, KtConstantEvaluationMode.CONSTANT_EXPRESSION_EVALUATION)
+            ?.convertConstantExpression()
     }
 }
