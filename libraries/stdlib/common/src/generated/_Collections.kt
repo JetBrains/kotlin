@@ -1859,30 +1859,92 @@ public inline fun <T> Iterable<T>.forEachIndexed(action: (index: Int, T) -> Unit
     for (item in this) action(checkIndexOverflow(index++), item)
 }
 
-@Deprecated("Use maxOrNull instead.", ReplaceWith("this.maxOrNull()"))
-@DeprecatedSinceKotlin(warningSince = "1.4", errorSince = "1.5", hiddenSince = "1.6")
-@SinceKotlin("1.1")
-public fun Iterable<Double>.max(): Double? {
-    return maxOrNull()
+/**
+ * Returns the largest element.
+ * 
+ * If any of elements is `NaN` returns `NaN`.
+ * 
+ * @throws NoSuchElementException if the collection is empty.
+ */
+@SinceKotlin("1.7")
+@kotlin.jvm.JvmName("maxNotEmpty")
+@Suppress("CONFLICTING_OVERLOADS")
+public fun Iterable<Double>.max(): Double {
+    val iterator = iterator()
+    if (!iterator.hasNext()) throw NoSuchElementException()
+    var max = iterator.next()
+    while (iterator.hasNext()) {
+        val e = iterator.next()
+        max = maxOf(max, e)
+    }
+    return max
 }
 
-@Deprecated("Use maxOrNull instead.", ReplaceWith("this.maxOrNull()"))
-@DeprecatedSinceKotlin(warningSince = "1.4", errorSince = "1.5", hiddenSince = "1.6")
-@SinceKotlin("1.1")
-public fun Iterable<Float>.max(): Float? {
-    return maxOrNull()
+/**
+ * Returns the largest element.
+ * 
+ * If any of elements is `NaN` returns `NaN`.
+ * 
+ * @throws NoSuchElementException if the collection is empty.
+ */
+@SinceKotlin("1.7")
+@kotlin.jvm.JvmName("maxNotEmpty")
+@Suppress("CONFLICTING_OVERLOADS")
+public fun Iterable<Float>.max(): Float {
+    val iterator = iterator()
+    if (!iterator.hasNext()) throw NoSuchElementException()
+    var max = iterator.next()
+    while (iterator.hasNext()) {
+        val e = iterator.next()
+        max = maxOf(max, e)
+    }
+    return max
 }
 
-@Deprecated("Use maxOrNull instead.", ReplaceWith("this.maxOrNull()"))
-@DeprecatedSinceKotlin(warningSince = "1.4", errorSince = "1.5", hiddenSince = "1.6")
-public fun <T : Comparable<T>> Iterable<T>.max(): T? {
-    return maxOrNull()
+/**
+ * Returns the largest element.
+ * 
+ * @throws NoSuchElementException if the collection is empty.
+ */
+@SinceKotlin("1.7")
+@kotlin.jvm.JvmName("maxNotEmpty")
+@Suppress("CONFLICTING_OVERLOADS")
+public fun <T : Comparable<T>> Iterable<T>.max(): T {
+    val iterator = iterator()
+    if (!iterator.hasNext()) throw NoSuchElementException()
+    var max = iterator.next()
+    while (iterator.hasNext()) {
+        val e = iterator.next()
+        if (max < e) max = e
+    }
+    return max
 }
 
-@Deprecated("Use maxByOrNull instead.", ReplaceWith("this.maxByOrNull(selector)"))
-@DeprecatedSinceKotlin(warningSince = "1.4", errorSince = "1.5", hiddenSince = "1.6")
-public inline fun <T, R : Comparable<R>> Iterable<T>.maxBy(selector: (T) -> R): T? {
-    return maxByOrNull(selector)
+/**
+ * Returns the first element yielding the largest value of the given function.
+ * 
+ * @throws NoSuchElementException if the collection is empty.
+ * 
+ * @sample samples.collections.Collections.Aggregates.maxBy
+ */
+@SinceKotlin("1.7")
+@kotlin.jvm.JvmName("maxByNotEmpty")
+@Suppress("CONFLICTING_OVERLOADS")
+public inline fun <T, R : Comparable<R>> Iterable<T>.maxBy(selector: (T) -> R): T {
+    val iterator = iterator()
+    if (!iterator.hasNext()) throw NoSuchElementException()
+    var maxElem = iterator.next()
+    if (!iterator.hasNext()) return maxElem
+    var maxValue = selector(maxElem)
+    do {
+        val e = iterator.next()
+        val v = selector(e)
+        if (maxValue < v) {
+            maxElem = e
+            maxValue = v
+        }
+    } while (iterator.hasNext())
+    return maxElem
 }
 
 /**
@@ -2133,10 +2195,23 @@ public fun <T : Comparable<T>> Iterable<T>.maxOrNull(): T? {
     return max
 }
 
-@Deprecated("Use maxWithOrNull instead.", ReplaceWith("this.maxWithOrNull(comparator)"))
-@DeprecatedSinceKotlin(warningSince = "1.4", errorSince = "1.5", hiddenSince = "1.6")
-public fun <T> Iterable<T>.maxWith(comparator: Comparator<in T>): T? {
-    return maxWithOrNull(comparator)
+/**
+ * Returns the first element having the largest value according to the provided [comparator].
+ * 
+ * @throws NoSuchElementException if the collection is empty.
+ */
+@SinceKotlin("1.7")
+@kotlin.jvm.JvmName("maxWithNotEmpty")
+@Suppress("CONFLICTING_OVERLOADS")
+public fun <T> Iterable<T>.maxWith(comparator: Comparator<in T>): T {
+    val iterator = iterator()
+    if (!iterator.hasNext()) throw NoSuchElementException()
+    var max = iterator.next()
+    while (iterator.hasNext()) {
+        val e = iterator.next()
+        if (comparator.compare(max, e) < 0) max = e
+    }
+    return max
 }
 
 /**
@@ -2154,30 +2229,92 @@ public fun <T> Iterable<T>.maxWithOrNull(comparator: Comparator<in T>): T? {
     return max
 }
 
-@Deprecated("Use minOrNull instead.", ReplaceWith("this.minOrNull()"))
-@DeprecatedSinceKotlin(warningSince = "1.4", errorSince = "1.5", hiddenSince = "1.6")
-@SinceKotlin("1.1")
-public fun Iterable<Double>.min(): Double? {
-    return minOrNull()
+/**
+ * Returns the smallest element.
+ * 
+ * If any of elements is `NaN` returns `NaN`.
+ * 
+ * @throws NoSuchElementException if the collection is empty.
+ */
+@SinceKotlin("1.7")
+@kotlin.jvm.JvmName("minNotEmpty")
+@Suppress("CONFLICTING_OVERLOADS")
+public fun Iterable<Double>.min(): Double {
+    val iterator = iterator()
+    if (!iterator.hasNext()) throw NoSuchElementException()
+    var min = iterator.next()
+    while (iterator.hasNext()) {
+        val e = iterator.next()
+        min = minOf(min, e)
+    }
+    return min
 }
 
-@Deprecated("Use minOrNull instead.", ReplaceWith("this.minOrNull()"))
-@DeprecatedSinceKotlin(warningSince = "1.4", errorSince = "1.5", hiddenSince = "1.6")
-@SinceKotlin("1.1")
-public fun Iterable<Float>.min(): Float? {
-    return minOrNull()
+/**
+ * Returns the smallest element.
+ * 
+ * If any of elements is `NaN` returns `NaN`.
+ * 
+ * @throws NoSuchElementException if the collection is empty.
+ */
+@SinceKotlin("1.7")
+@kotlin.jvm.JvmName("minNotEmpty")
+@Suppress("CONFLICTING_OVERLOADS")
+public fun Iterable<Float>.min(): Float {
+    val iterator = iterator()
+    if (!iterator.hasNext()) throw NoSuchElementException()
+    var min = iterator.next()
+    while (iterator.hasNext()) {
+        val e = iterator.next()
+        min = minOf(min, e)
+    }
+    return min
 }
 
-@Deprecated("Use minOrNull instead.", ReplaceWith("this.minOrNull()"))
-@DeprecatedSinceKotlin(warningSince = "1.4", errorSince = "1.5", hiddenSince = "1.6")
-public fun <T : Comparable<T>> Iterable<T>.min(): T? {
-    return minOrNull()
+/**
+ * Returns the smallest element.
+ * 
+ * @throws NoSuchElementException if the collection is empty.
+ */
+@SinceKotlin("1.7")
+@kotlin.jvm.JvmName("minNotEmpty")
+@Suppress("CONFLICTING_OVERLOADS")
+public fun <T : Comparable<T>> Iterable<T>.min(): T {
+    val iterator = iterator()
+    if (!iterator.hasNext()) throw NoSuchElementException()
+    var min = iterator.next()
+    while (iterator.hasNext()) {
+        val e = iterator.next()
+        if (min > e) min = e
+    }
+    return min
 }
 
-@Deprecated("Use minByOrNull instead.", ReplaceWith("this.minByOrNull(selector)"))
-@DeprecatedSinceKotlin(warningSince = "1.4", errorSince = "1.5", hiddenSince = "1.6")
-public inline fun <T, R : Comparable<R>> Iterable<T>.minBy(selector: (T) -> R): T? {
-    return minByOrNull(selector)
+/**
+ * Returns the first element yielding the smallest value of the given function.
+ * 
+ * @throws NoSuchElementException if the collection is empty.
+ * 
+ * @sample samples.collections.Collections.Aggregates.minBy
+ */
+@SinceKotlin("1.7")
+@kotlin.jvm.JvmName("minByNotEmpty")
+@Suppress("CONFLICTING_OVERLOADS")
+public inline fun <T, R : Comparable<R>> Iterable<T>.minBy(selector: (T) -> R): T {
+    val iterator = iterator()
+    if (!iterator.hasNext()) throw NoSuchElementException()
+    var minElem = iterator.next()
+    if (!iterator.hasNext()) return minElem
+    var minValue = selector(minElem)
+    do {
+        val e = iterator.next()
+        val v = selector(e)
+        if (minValue > v) {
+            minElem = e
+            minValue = v
+        }
+    } while (iterator.hasNext())
+    return minElem
 }
 
 /**
@@ -2428,10 +2565,23 @@ public fun <T : Comparable<T>> Iterable<T>.minOrNull(): T? {
     return min
 }
 
-@Deprecated("Use minWithOrNull instead.", ReplaceWith("this.minWithOrNull(comparator)"))
-@DeprecatedSinceKotlin(warningSince = "1.4", errorSince = "1.5", hiddenSince = "1.6")
-public fun <T> Iterable<T>.minWith(comparator: Comparator<in T>): T? {
-    return minWithOrNull(comparator)
+/**
+ * Returns the first element having the smallest value according to the provided [comparator].
+ * 
+ * @throws NoSuchElementException if the collection is empty.
+ */
+@SinceKotlin("1.7")
+@kotlin.jvm.JvmName("minWithNotEmpty")
+@Suppress("CONFLICTING_OVERLOADS")
+public fun <T> Iterable<T>.minWith(comparator: Comparator<in T>): T {
+    val iterator = iterator()
+    if (!iterator.hasNext()) throw NoSuchElementException()
+    var min = iterator.next()
+    while (iterator.hasNext()) {
+        val e = iterator.next()
+        if (comparator.compare(min, e) > 0) min = e
+    }
+    return min
 }
 
 /**
