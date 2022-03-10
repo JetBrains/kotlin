@@ -18,6 +18,7 @@ package androidx.compose.compiler.plugins.kotlin.lower.decoys
 
 import androidx.compose.compiler.plugins.kotlin.ModuleMetrics
 import androidx.compose.compiler.plugins.kotlin.lower.AbstractComposeLowering
+import androidx.compose.compiler.plugins.kotlin.lower.includeFileNameInExceptionTrace
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.backend.common.serialization.signature.IdSignatureSerializer
 import org.jetbrains.kotlin.ir.declarations.IrFile
@@ -38,12 +39,15 @@ abstract class AbstractDecoysLowering(
 ), DecoyTransformBase {
 
     override fun visitFile(declaration: IrFile): IrFile {
-        var file: IrFile = declaration
-        // since kotlin 1.6.0-RC2 signatureBuilder needs to "know" fileSignature available within
-        // inFile scope. It's necessary to ensure signatures calc for private top level decoys.
-        signatureBuilder.inFile(file = declaration.symbol) {
-            file = super.visitFile(declaration)
+        includeFileNameInExceptionTrace(declaration) {
+            var file: IrFile = declaration
+            // since kotlin 1.6.0-RC2 signatureBuilder needs to "know" fileSignature available
+            // within inFile scope. It's necessary to ensure signatures calc for private top level
+            // decoys.
+            signatureBuilder.inFile(file = declaration.symbol) {
+                file = super.visitFile(declaration)
+            }
+            return file
         }
-        return file
     }
 }

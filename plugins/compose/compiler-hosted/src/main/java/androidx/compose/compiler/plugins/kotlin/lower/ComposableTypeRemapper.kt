@@ -122,9 +122,11 @@ class DeepCopyIrTreeWithSymbolsPreservingMetadata(
     }
 
     override fun visitFile(declaration: IrFile): IrFile {
-        return super.visitFile(declaration).also {
-            if (it is IrFileImpl) {
-                it.metadata = declaration.metadata
+        includeFileNameInExceptionTrace(declaration) {
+            return super.visitFile(declaration).also {
+                if (it is IrFileImpl) {
+                    it.metadata = declaration.metadata
+                }
             }
         }
     }

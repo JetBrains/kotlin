@@ -345,22 +345,24 @@ class ComposerLambdaMemoization(
     }
 
     override fun visitFile(declaration: IrFile): IrFile {
-        val prevFile = currentFile
-        val prevClass = composableSingletonsClass
-        try {
-            currentFile = declaration
-            composableSingletonsClass = null
-            val file = super.visitFile(declaration)
-            // if there were no constants found in the entire file, then we don't need to
-            // create this class at all
-            val resultingClass = composableSingletonsClass
-            if (resultingClass != null && resultingClass.declarations.isNotEmpty()) {
-                file.addChild(resultingClass)
+        includeFileNameInExceptionTrace(declaration) {
+            val prevFile = currentFile
+            val prevClass = composableSingletonsClass
+            try {
+                currentFile = declaration
+                composableSingletonsClass = null
+                val file = super.visitFile(declaration)
+                // if there were no constants found in the entire file, then we don't need to
+                // create this class at all
+                val resultingClass = composableSingletonsClass
+                if (resultingClass != null && resultingClass.declarations.isNotEmpty()) {
+                    file.addChild(resultingClass)
+                }
+                return file
+            } finally {
+                currentFile = prevFile
+                composableSingletonsClass = prevClass
             }
-            return file
-        } finally {
-            currentFile = prevFile
-            composableSingletonsClass = prevClass
         }
     }
 
