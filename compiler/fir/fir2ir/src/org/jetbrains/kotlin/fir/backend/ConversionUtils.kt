@@ -326,7 +326,9 @@ private fun ConstantValueKind<*>.toIrConstKind(): IrConstKind<*> = when (this) {
 
 internal tailrec fun FirCallableSymbol<*>.unwrapSubstitutionAndIntersectionOverrides(): FirCallableSymbol<*> {
     val originalForSubstitutionOverride = originalForSubstitutionOverride
-    if (originalForSubstitutionOverride != null) return originalForSubstitutionOverride.unwrapSubstitutionAndIntersectionOverrides()
+    if (originalForSubstitutionOverride != null && originalForSubstitutionOverride != this) {
+        return originalForSubstitutionOverride.unwrapSubstitutionAndIntersectionOverrides()
+    }
 
     val baseForIntersectionOverride = baseForIntersectionOverride
     if (baseForIntersectionOverride != null) return baseForIntersectionOverride.unwrapSubstitutionAndIntersectionOverrides()
