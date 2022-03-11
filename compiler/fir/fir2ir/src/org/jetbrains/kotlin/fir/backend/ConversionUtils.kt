@@ -83,13 +83,9 @@ internal fun <T : IrElement> KtSourceElement?.convertWithOffsets(
 internal fun <T : IrElement> FirQualifiedAccess.convertWithOffsets(
     f: (startOffset: Int, endOffset: Int) -> T
 ): T {
-    val psi = psi
+    val psi = calleeReference.psi
     if (psi is PsiCompiledElement) return f(UNDEFINED_OFFSET, UNDEFINED_OFFSET)
-    val startOffset = if (psi is KtQualifiedExpression) {
-        (psi.selectorExpression ?: psi).startOffsetSkippingComments
-    } else {
-        psi?.startOffsetSkippingComments ?: source?.startOffset ?: UNDEFINED_OFFSET
-    }
+    val startOffset = psi?.startOffsetSkippingComments ?: calleeReference.source ?.startOffset ?: UNDEFINED_OFFSET
     val endOffset = source?.endOffset ?: UNDEFINED_OFFSET
     return f(startOffset, endOffset)
 }
