@@ -21,6 +21,9 @@ class KotlinJvmAndroidCompilation(
     compilationDetails: AndroidCompilationDetails
 ) : AbstractKotlinCompilationToRunnableFiles<KotlinJvmOptions>(compilationDetails) {
 
+    override val target: KotlinAndroidTarget
+        get() = super.target as KotlinAndroidTarget
+
     lateinit var androidVariant: BaseVariant
         internal set
 

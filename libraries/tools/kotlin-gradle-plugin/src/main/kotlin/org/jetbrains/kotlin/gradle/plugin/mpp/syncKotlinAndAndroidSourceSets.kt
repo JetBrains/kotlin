@@ -5,24 +5,19 @@
 
 package org.jetbrains.kotlin.gradle.plugin.mpp
 
-import com.android.build.gradle.BaseExtension
 import com.android.build.gradle.api.AndroidSourceSet
-import org.gradle.api.Project
 import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
 import org.jetbrains.kotlin.gradle.internal.Kapt3GradleSubplugin
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.AbstractAndroidProjectHandler.Companion.kotlinSourceSetNameForAndroidSourceSet
 import org.jetbrains.kotlin.gradle.plugin.addConvention
-import org.jetbrains.kotlin.gradle.plugin.sources.KotlinSourceSetFactory
 import org.jetbrains.kotlin.gradle.plugin.sources.KotlinSourceSetFactory.Companion.defaultSourceFolder
-import java.io.File
 
-internal fun syncKotlinAndAndroidSourceSets(target: KotlinAndroidTarget) {
+internal fun ensureKotlinSourceSetPresentForAndroid(target: KotlinAndroidTarget, androidSourceSet: AndroidSourceSet) {
     val project = target.project
-    val android = project.extensions.getByName("android") as BaseExtension
 
-    android.sourceSets.all { androidSourceSet ->
-        val kotlinSourceSetName = kotlinSourceSetNameForAndroidSourceSet(target, androidSourceSet.name)
+    val kotlinSourceSetName = kotlinSourceSetNameForAndroidSourceSet(target, androidSourceSet.name)
+    if (project.kotlinExtension.sourceSets.findByName(kotlinSourceSetName) == null) {
         val kotlinSourceSet = project.kotlinExtension.sourceSets.maybeCreate(kotlinSourceSetName)
         androidSourceSet.kotlinSourceSet = kotlinSourceSet
 

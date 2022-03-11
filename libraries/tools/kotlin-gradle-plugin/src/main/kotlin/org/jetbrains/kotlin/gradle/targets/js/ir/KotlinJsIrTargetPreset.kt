@@ -79,14 +79,6 @@ open class KotlinJsIrTargetPreset(
     override fun createKotlinTargetConfigurator(): AbstractKotlinTargetConfigurator<KotlinJsIrTarget> =
         KotlinJsIrTargetConfigurator()
 
-    override fun createTarget(name: String): KotlinJsIrTarget {
-        val result = super.createTarget(name)
-        if (project.hasKpmModel) {
-            mapTargetCompilationsToKpmVariants(result, PublicationRegistrationMode.IMMEDIATE)
-        }
-        return result
-    }
-
     override fun getName(): String = when (platformType) {
         KotlinPlatformType.wasm -> WASM_PRESET_NAME
         KotlinPlatformType.js -> JS_PRESET_NAME

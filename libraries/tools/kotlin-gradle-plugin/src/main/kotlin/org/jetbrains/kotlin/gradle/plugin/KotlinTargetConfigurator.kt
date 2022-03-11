@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinCommonOptions
 import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
 import org.jetbrains.kotlin.gradle.internal.reorderPluginClasspathDependencies
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
+import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.hasKpmModel
 import org.jetbrains.kotlin.gradle.targets.js.KotlinJsCompilerAttribute
 import org.jetbrains.kotlin.gradle.targets.js.KotlinJsTarget
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrTarget
@@ -108,9 +109,18 @@ abstract class AbstractKotlinTargetConfigurator<KotlinTargetType : KotlinTarget>
         val project = target.project
 
         target.compilations.all { compilation ->
-            if (createDefaultSourceSets) {
+            if (
+                createDefaultSourceSets &&
+                !project.hasKpmModel // With KPM model mapping the default source sets are created in mapTargetCompilationsToKpmVariants
+            ) {
                 project.kotlinExtension.sourceSets.maybeCreate(compilation.defaultSourceSetName).also { sourceSet ->
                     compilation.source(sourceSet) // also adds dependencies, requires the configurations for target and source set to exist at this point
+                }
+            }
+            // The code above may not create the source set with KPM model mapping; then it will be created later; react to that:
+            if (target !is KotlinMetadataTarget) {
+                target.project.kotlinExtension.sourceSets.matching { it.name == compilation.defaultSourceSetName }.all { sourceSet ->
+                    compilation.source(sourceSet)
                 }
             }
         }

@@ -102,14 +102,6 @@ open class KotlinJsTargetPreset(
     companion object {
         const val PRESET_NAME = "js"
     }
-
-    override fun createTarget(name: String): KotlinJsTarget {
-        val result = super.createTarget(name)
-        if (project.hasKpmModel) {
-            mapTargetCompilationsToKpmVariants(result, PublicationRegistrationMode.IMMEDIATE)
-        }
-        return result
-    }
 }
 
 class KotlinJsSingleTargetPreset(

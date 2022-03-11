@@ -822,8 +822,6 @@ abstract class AbstractAndroidProjectHandler(private val kotlinConfigurationTool
     )
 
     fun configureTarget(kotlinAndroidTarget: KotlinAndroidTarget) {
-        syncKotlinAndAndroidSourceSets(kotlinAndroidTarget)
-
         val project = kotlinAndroidTarget.project
         val ext = project.extensions.getByName("android") as BaseExtension
 
@@ -864,6 +862,11 @@ abstract class AbstractAndroidProjectHandler(private val kotlinConfigurationTool
 
                 @Suppress("UNCHECKED_CAST")
                 (kotlinAndroidTarget.compilations as NamedDomainObjectCollection<in KotlinJvmAndroidCompilation>).add(compilation)
+
+                // Do this only after the compilation is added to the target.compilations.
+                // This is needed to ensure that compilations are defined prior to their default source sets, and decisions about the
+                // source set (e.g. location in the KPM model) may be based on the presence of the compilation
+                setupAndroidSourceSetsForCompilation(compilation)
             }
 
         }
@@ -1014,8 +1017,6 @@ abstract class AbstractAndroidProjectHandler(private val kotlinConfigurationTool
         val variantDataName = getVariantName(variantData)
         logger.kotlinDebug("Process variant [$variantDataName]")
 
-        val defaultSourceSet = project.kotlinExtension.sourceSets.maybeCreate(compilation.defaultSourceSetName)
-
         val kotlinTaskName = compilation.compileKotlinTaskName
 
         tasksProvider.registerKotlinJVMTask(project, kotlinTaskName, compilation) {
@@ -1026,7 +1027,14 @@ abstract class AbstractAndroidProjectHandler(private val kotlinConfigurationTool
             it.description = "Compiles the $variantDataName kotlin."
         }
 
-        // Register the source only after the task is created, because the task is required for that:
+    }
+
+    private fun setupAndroidSourceSetsForCompilation(
+        compilation: KotlinJvmAndroidCompilation
+    ) {
+        compilation.androidVariant.sourceSets.forEach { ensureKotlinSourceSetPresentForAndroid(compilation.target, it as AndroidSourceSet) }
+
+        val defaultSourceSet = compilation.target.project.kotlinExtension.sourceSets.maybeCreate(compilation.defaultSourceSetName)
         compilation.source(defaultSourceSet)
 
         compilation.androidVariant.forEachKotlinSourceSet { kotlinSourceSet -> compilation.source(kotlinSourceSet) }

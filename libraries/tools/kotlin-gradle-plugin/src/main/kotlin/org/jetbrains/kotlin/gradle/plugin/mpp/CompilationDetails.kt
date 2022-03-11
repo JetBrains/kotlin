@@ -514,7 +514,7 @@ internal class WithJavaCompilationDetails<T : KotlinCommonOptions>(
 }
 
 class AndroidCompilationDetails(
-    target: KotlinTarget,
+    target: KotlinAndroidTarget,
     compilationPurpose: String,
     /** Workaround mutual creation order: a compilation is not added to the target's compilations collection until some point, pass it here */
     private val getCompilationInstance: () -> KotlinJvmAndroidCompilation
