@@ -32,7 +32,8 @@ interface KlibResolvedModuleDescriptorsFactory {
         languageVersionSettings: LanguageVersionSettings,
         friendModuleFiles: Set<File>,
         includedLibraryFiles: Set<File>,
-        additionalDependencyModules: Iterable<ModuleDescriptorImpl>
+        additionalDependencyModules: Iterable<ModuleDescriptorImpl>,
+        isForMetadataCompilation: Boolean,
     ): KotlinResolvedModuleDescriptors
 }
 
