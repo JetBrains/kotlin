@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsages
+import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.hasKpmModel
 import org.jetbrains.kotlin.gradle.tasks.KotlinTasksProvider
 import org.jetbrains.kotlin.gradle.tasks.locateTask
 import org.jetbrains.kotlin.gradle.tasks.registerTask
@@ -60,7 +61,10 @@ open class KotlinJsTargetConfigurator :
         target.compilations.all { compilation ->
             defineConfigurationsForCompilation(compilation)
 
-            if (createDefaultSourceSets) {
+            if (
+                createDefaultSourceSets &&
+                !project.hasKpmModel // With KPM model mapping the default source sets are created in mapTargetCompilationsToKpmVariants
+            ) {
                 project.kotlinExtension.sourceSets.maybeCreate(compilation.defaultSourceSetName).also { sourceSet ->
                     compilation.source(sourceSet) // also adds dependencies, requires the configurations for target and source set to exist at this point
                 }

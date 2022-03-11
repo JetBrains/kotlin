@@ -39,6 +39,8 @@ import org.jetbrains.kotlin.gradle.plugin.sources.SourceSetMetadataStorageForIde
 import org.jetbrains.kotlin.gradle.plugin.sources.checkSourceSetVisibilityRequirements
 import org.jetbrains.kotlin.gradle.plugin.statistics.KotlinBuildStatsService
 import org.jetbrains.kotlin.gradle.scripting.internal.ScriptingGradleSubplugin
+import org.jetbrains.kotlin.gradle.targets.js.KotlinJsTarget
+import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrTarget
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrTargetPreset
 import org.jetbrains.kotlin.gradle.targets.native.tasks.artifact.registerKotlinArtifactsExtension
 import org.jetbrains.kotlin.gradle.tasks.locateTask
@@ -107,6 +109,21 @@ class KotlinMultiplatformPlugin : Plugin<Project> {
 
         setupDefaultPresets(project)
         customizeKotlinDependencies(project)
+
+        if (project.hasKpmModel) {
+            fun shouldMapTargetWithLegacyMapping(target: AbstractKotlinTarget) = when (target) {
+                is KotlinAndroidTarget, is KotlinJsIrTarget, is KotlinJsTarget -> true
+                else -> false
+            }
+            targetsContainer.withType(AbstractKotlinTarget::class.java).matching(::shouldMapTargetWithLegacyMapping).all { target ->
+                val publicationRegistrationMode = when (target) {
+                    is KotlinAndroidTarget -> PublicationRegistrationMode.WHEN_EVALUATED
+                    else -> PublicationRegistrationMode.IMMEDIATE
+                }
+                mapTargetCompilationsToKpmVariants(target, publicationRegistrationMode)
+            }
+        }
+
         configureSourceSets(project)
 
         // set up metadata publishing

@@ -17,26 +17,29 @@ import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.file.FileCollection
 import org.gradle.api.file.SourceDirectorySet
 import org.gradle.kotlin.dsl.withType
+import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.isMain
+import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.FragmentNameDisambiguationOmittingMain
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.disambiguateName
 import org.jetbrains.kotlin.gradle.plugin.mpp.publishedConfigurationName
+import org.jetbrains.kotlin.gradle.plugin.sources.DefaultLanguageSettingsBuilder
 import org.jetbrains.kotlin.gradle.plugin.sources.kpm.FragmentMappedKotlinSourceSet
+import org.jetbrains.kotlin.gradle.plugin.sources.kpm.SourceSetMappedFragmentLocator
+import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrTarget
 import org.jetbrains.kotlin.gradle.utils.filesProvider
 import org.jetbrains.kotlin.project.model.KotlinAttributeKey
 import org.jetbrains.kotlin.project.model.KotlinModuleDependency
-import org.jetbrains.kotlin.project.model.KotlinModuleFragment
 
 internal open class LegacyMappedVariant(
+    override val fragmentName: String,
+    override val containingModule: KotlinGradleModule,
     internal val compilation: KotlinCompilation<*>,
-) : KotlinGradleVariant {
+    dependencyConfigurations: KotlinFragmentDependencyConfigurations,
+) : KotlinGradleVariant, KotlinFragmentDependencyConfigurations by dependencyConfigurations {
+
     override fun toString(): String = "variant mapped to $compilation"
-
-    private val fragmentForDefaultSourceSet =
-        (compilation.defaultSourceSet as FragmentMappedKotlinSourceSet).underlyingFragment
-
-    override val containingModule: KotlinGradleModule get() = fragmentForDefaultSourceSet.containingModule
 
     override val platformType: KotlinPlatformType
         get() = compilation.platformType
@@ -74,68 +77,53 @@ internal open class LegacyMappedVariant(
                     else -> emptyList()
                 }
             }
-            val compilationUsages = allTargetUsages.filterIsInstance<DefaultKotlinUsageContext>().filter { it.compilation == compilation }
+            val compilationUsages = allTargetUsages.filterIsInstance<DefaultKotlinUsageContext>().filter {
+                val usageCompilation = it.compilation
+                val target = usageCompilation.target
+                usageCompilation == compilation ||
+                        (target as? KotlinJsIrTarget)?.legacyTarget?.compilations?.findByName(usageCompilation.name) == compilation
+            }
             return compilationUsages.filter { it.includeIntoProjectStructureMetadata }
                 .flatMap { listOf(it.dependencyConfigurationName, publishedConfigurationName(it.dependencyConfigurationName)) }
                 .toSet()
         }
 
-    override val kotlinSourceRoots: SourceDirectorySet
-        get() = compilation.defaultSourceSet.kotlin
+    override val kotlinSourceRoots: SourceDirectorySet by lazy {
+        project.objects.sourceDirectorySet(
+            "$fragmentName.kotlin", "Kotlin sources for fragment $fragmentName"
+        )
+    }
 
-    override val languageSettings: LanguageSettingsBuilder
-        get() = compilation.defaultSourceSet.languageSettings
+    override val languageSettings: LanguageSettingsBuilder by lazy { DefaultLanguageSettingsBuilder() }
 
     override fun refines(other: KotlinGradleFragment) {
-        fragmentForDefaultSourceSet.refines(other)
+        refinesContainer.refines(other)
     }
 
     override fun refines(other: NamedDomainObjectProvider<KotlinGradleFragment>) {
-        fragmentForDefaultSourceSet.refines(other)
+        refinesContainer.refines(other)
     }
+
+    private val refinesContainer by lazy { RefinesContainer(this) }
 
     override fun dependencies(configure: KotlinDependencyHandler.() -> Unit) {
-        fragmentForDefaultSourceSet.dependencies(configure)
+        compilation.dependencies(configure)
     }
 
-    //FIXME map to the original name, require that the fragment for source set does not exist yet?
-    override val fragmentName: String
-        get() = fragmentForDefaultSourceSet.fragmentName + "Variant"
-
     override val directRefinesDependencies: Iterable<KotlinGradleFragment>
-        get() = fragmentForDefaultSourceSet.directRefinesDependencies
+        get() = refinesContainer.directRefinesDependencies
 
     override val declaredModuleDependencies: Iterable<KotlinModuleDependency>
-        get() = fragmentForDefaultSourceSet.declaredModuleDependencies
-
-    /** This configuration includes the dependencies from the refines-parents */
-    override val transitiveApiConfiguration: Configuration
-        get() = TODO("Not yet implemented")
-
-    /** This configuration includes the dependencies from the refines-parents */
-    override val transitiveImplementationConfiguration: Configuration
-        get() = TODO("Not yet implemented")
-
-    override val transitiveRuntimeOnlyConfiguration: Configuration
-        get() = TODO("Not yet implemented")
-
-    override val apiConfiguration: Configuration
-        get() = project.configurations.getByName(apiConfigurationName)
-    override val implementationConfiguration: Configuration
-        get() = project.configurations.getByName(implementationConfigurationName)
-    override val compileOnlyConfiguration: Configuration
-        get() = project.configurations.getByName(compileOnlyConfigurationName)
-    override val runtimeOnlyConfiguration: Configuration
-        get() = project.configurations.getByName(runtimeOnlyConfigurationName)
+        get() = FragmentDeclaredModuleDependenciesBuilder().buildDeclaredModuleDependencies(this)
 
     override val apiConfigurationName: String
-        get() = fragmentForDefaultSourceSet.apiConfigurationName
+        get() = compilation.apiConfigurationName
     override val implementationConfigurationName: String
-        get() = fragmentForDefaultSourceSet.implementationConfigurationName
+        get() = compilation.implementationConfigurationName
     override val compileOnlyConfigurationName: String
-        get() = fragmentForDefaultSourceSet.compileOnlyConfigurationName
+        get() = compilation.compileOnlyConfigurationName
     override val runtimeOnlyConfigurationName: String
-        get() = fragmentForDefaultSourceSet.runtimeOnlyConfigurationName
+        get() = compilation.runtimeOnlyConfigurationName
 
     override val variantAttributes: Map<KotlinAttributeKey, String>
         // TODO handle user attributes
@@ -145,8 +133,13 @@ internal open class LegacyMappedVariant(
         }
 }
 
-internal class LegacyMappedVariantWithRuntime(private val compilationWithRuntime: KotlinCompilationToRunnableFiles<*>) :
-    LegacyMappedVariant(compilationWithRuntime),
+internal class LegacyMappedVariantWithRuntime(
+    fragmentName: String,
+    containingModule: KotlinGradleModule,
+    dependencyConfigurations: KotlinFragmentDependencyConfigurations,
+    private val compilationWithRuntime: KotlinCompilationToRunnableFiles<*>,
+) :
+    LegacyMappedVariant(fragmentName, containingModule, compilationWithRuntime, dependencyConfigurations),
     KotlinGradleVariantWithRuntime {
 
     override val runtimeDependenciesConfiguration: Configuration
@@ -168,75 +161,123 @@ internal class LegacyMappedVariantWithRuntime(private val compilationWithRuntime
 }
 
 internal enum class PublicationRegistrationMode {
-    IMMEDIATE, AFTER_EVALUATE
+    IMMEDIATE, WHEN_EVALUATED
 }
 
 internal fun mapTargetCompilationsToKpmVariants(target: AbstractKotlinTarget, publicationRegistration: PublicationRegistrationMode) {
+    val project = target.project
     target.compilations.all { compilation ->
+        val defaultSourceSetName = compilation.defaultSourceSetName
+        val isSourceSetCreatedEarly = project.kotlinExtension.sourceSets.findByName(defaultSourceSetName) != null
+
+        val variantLocation: SourceSetMappedFragmentLocator.FragmentLocation = if (isSourceSetCreatedEarly) {
+            val underlyingFragment = (compilation.defaultSourceSet as FragmentMappedKotlinSourceSet).underlyingFragment
+            SourceSetMappedFragmentLocator.FragmentLocation(
+                underlyingFragment.containingModule.name,
+                underlyingFragment.fragmentName + "Variant"
+            )
+        } else {
+            val location = SourceSetMappedFragmentLocator.get(project).locateFragmentForSourceSet(defaultSourceSetName)
+            checkNotNull(location) { "Unexpected failure to place the model entity (fragment) for $compilation" }
+            location
+        }
+        val module = project.kpmModules.getByName(variantLocation.moduleName)
+
+        val dependencyConfigurations = LegacyMappedVariantDependencyConfigurationsFactory(compilation)
+            .create(module, FragmentNameDisambiguationOmittingMain(module, variantLocation.fragmentName))
+
         val variant = if (compilation is KotlinCompilationToRunnableFiles)
-            LegacyMappedVariantWithRuntime(compilation)
-        else LegacyMappedVariant(compilation)
+            LegacyMappedVariantWithRuntime(variantLocation.fragmentName, module, dependencyConfigurations, compilation)
+        else LegacyMappedVariant(variantLocation.fragmentName, module, compilation, dependencyConfigurations)
 
-        val defaultSourceSetFragment = (compilation.defaultSourceSet as FragmentMappedKotlinSourceSet).underlyingFragment
-        variant.refines(defaultSourceSetFragment)
+        if (isSourceSetCreatedEarly) {
+            val sourceSet = compilation.defaultSourceSet as FragmentMappedKotlinSourceSet
+            val defaultSourceSetFragment = (sourceSet).underlyingFragment
+            variant.refines(defaultSourceSetFragment)
+            // TODO: deprecate and drop support for such cases or provide proper support by proper name derivation support in mapped variant
+        } else {
+            DefaultKotlinSourceDirectoriesConfigurator.configure(variant)
+            val result = FragmentMappedKotlinSourceSet(defaultSourceSetName, variant)
+            project.kotlinExtension.sourceSets.add(result)
+        }
 
-        val module = defaultSourceSetFragment.containingModule
+        DefaultKotlinSourceDirectoriesConfigurator.configure(variant)
+
         module.fragments.add(variant)
     }
 
     fun whenPublicationShouldRegister(action: () -> Unit) =
         when (publicationRegistration) {
             PublicationRegistrationMode.IMMEDIATE -> action()
-            PublicationRegistrationMode.AFTER_EVALUATE -> target.project.whenEvaluated { action() }
+            PublicationRegistrationMode.WHEN_EVALUATED -> target.project.whenEvaluated { action() }
         }
 
     whenPublicationShouldRegister {
-        val mainModule = target.project.kpmModules.getByName(KotlinGradleModule.MAIN_MODULE_NAME)
+        // The variants of JS IR targets in the "both" mode get propagated to the legacy target, registering them would lead to duplication errors
+        if (target is KotlinJsIrTarget && target.legacyTarget != null)
+            return@whenPublicationShouldRegister
+
+        val mainModule = project.kpmModules.getByName(KotlinGradleModule.MAIN_MODULE_NAME)
         target.kotlinComponents.forEach { kotlinComponent ->
-            val moduleHolder = DefaultSingleMavenPublishedModuleHolder(
-                mainModule,
-                kotlinComponent.defaultArtifactId.removePrefix(target.project.name.toLowerCase() + "-")
-            )
-            val usages = when (kotlinComponent) { // unfortunately, there's no common supertype with `usages`
-                is KotlinVariant -> kotlinComponent.usages
-                is JointAndroidKotlinTargetComponent -> kotlinComponent.usages
-                else -> error("unexpected type of kotlinComponent in legacy variant mapping: ${kotlinComponent.javaClass}")
-            }
-
-            moduleHolder.whenPublicationAssigned { publication ->
-                // Include Sources
-                kotlinComponent.sourcesArtifacts.forEach {
-                    publication.artifact(it)
-                }
-
-                // Support the `mavenPublication { ... }` DSL in target:
-                target.publicationConfigureActions.all { action ->
-                    action.execute(publication)
-                }
-            }
-
-            // FIXME: include additional variants into project structure metadata?
-
-            val request = BasicPlatformPublicationToMavenRequest(
-                kotlinComponent.name,
-                mainModule,
-                moduleHolder,
-                usages.map { usage ->
-                    val variant = mainModule.variants.withType<LegacyMappedVariant>().single {
-                        it.compilation == usage.compilation
-                    }
-                    (usage as? DefaultKotlinUsageContext) ?: error("unexpected KotlinUsageContext type: ${usage.javaClass}")
-                    AdvancedVariantPublicationRequest(
-                        variant,
-                        target.project.configurations.getByName(usage.dependencyConfigurationName),
-                        usage.overrideConfigurationAttributes,
-                        usage.overrideConfigurationArtifacts,
-                        usage.includeIntoProjectStructureMetadata
-                    )
-                }
-            )
-
-            VariantPublishingConfigurator.get(target.project).configurePublishing(request)
+            publishKotlinComponent(mainModule, kotlinComponent)
         }
     }
+}
+
+private fun publishKotlinComponent(
+    mainModule: KotlinGradleModule,
+    kotlinComponent: KotlinTargetComponent,
+) {
+    val target = kotlinComponent.target as AbstractKotlinTarget
+    val project = target.project
+
+    val moduleHolder = DefaultSingleMavenPublishedModuleHolder(
+        mainModule,
+        kotlinComponent.defaultArtifactId.removePrefix(project.name.toLowerCase() + "-")
+    )
+    val usages = when (kotlinComponent) { // unfortunately, there's no common supertype with `usages`
+        is KotlinVariant -> kotlinComponent.usages
+        is JointAndroidKotlinTargetComponent -> kotlinComponent.usages
+        else -> error("unexpected type of kotlinComponent in legacy variant mapping: ${kotlinComponent.javaClass}")
+    }
+
+    moduleHolder.whenPublicationAssigned { publication ->
+        // Include Sources
+        kotlinComponent.sourcesArtifacts.forEach {
+            publication.artifact(it)
+        }
+
+        // Support the `mavenPublication { ... }` DSL in target:
+        target.publicationConfigureActions.all { action ->
+            action.execute(publication)
+        }
+    }
+
+    val request = BasicPlatformPublicationToMavenRequest(
+        kotlinComponent.name,
+        mainModule,
+        moduleHolder,
+        usages.map { usage ->
+            val publishCompilation = usage.compilation
+            val variant = mainModule.variants.withType<LegacyMappedVariant>().run {
+                singleOrNull { variant ->
+                    variant.compilation == publishCompilation
+                } ?: singleOrNull { variant ->
+                    variant.compilation == (publishCompilation.target as? KotlinJsIrTarget)?.legacyTarget?.compilations?.findByName(
+                        publishCompilation.name
+                    )
+                } ?: error("Couldn't find the variant to represent $publishCompilation for publishing")
+            }
+            (usage as? DefaultKotlinUsageContext) ?: error("unexpected KotlinUsageContext type: ${usage.javaClass}")
+            AdvancedVariantPublicationRequest(
+                variant,
+                project.configurations.getByName(usage.dependencyConfigurationName),
+                usage.overrideConfigurationAttributes,
+                usage.overrideConfigurationArtifacts,
+                usage.includeIntoProjectStructureMetadata
+            )
+        }
+    )
+
+    VariantPublishingConfigurator.get(project).configurePublishing(request)
 }
