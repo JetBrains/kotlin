@@ -14,7 +14,7 @@ fun <T> id(x: T) = x
 fun main() {
     var newValue = A()
     newValue <!ASSIGN_OPERATOR_AMBIGUITY!>+=<!> id { total -> A() }
-    <!ASSIGN_OPERATOR_AMBIGUITY!>newValue<!> += id(fun(total) = A())
+    newValue <!ASSIGN_OPERATOR_AMBIGUITY!>+=<!> id(fun(total) = A())
     newValue <!ASSIGN_OPERATOR_AMBIGUITY!>+=<!> id(fun(total): A { return A() })
     newValue <!ASSIGN_OPERATOR_AMBIGUITY!>+=<!> id(::foo)
 }
