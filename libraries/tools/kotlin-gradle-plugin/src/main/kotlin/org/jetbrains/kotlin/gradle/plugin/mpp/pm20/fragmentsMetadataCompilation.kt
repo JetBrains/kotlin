@@ -283,7 +283,7 @@ private fun disableMetadataCompilationIfNotYetSupported(
     metadataCompilationData: AbstractKotlinFragmentMetadataCompilationData<*>
 ) {
     val fragment = metadataCompilationData.fragment
-    val platforms = fragment.containingModule.variantsContainingFragment(fragment).map { it.platformType }.toSet()
+    val platforms = fragment.containingVariants.map { it.platformType }.toSet()
     if (platforms != setOf(KotlinPlatformType.native) && platforms.size == 1
         || platforms == setOf(KotlinPlatformType.jvm, KotlinPlatformType.androidJvm)
     ) {

@@ -42,7 +42,7 @@ internal open class TransformKotlinGranularMetadataForFragment
     @get:Input
     internal val inputFragmentsAndVariants: Map<String, Iterable<String>> by project.provider {
         val participatingFragments = fragment.refinesClosure
-        participatingFragments.associateWith { it.containingModule.variantsContainingFragment(it) }
+        participatingFragments.associateWith { it.containingVariants }
             .entries.associate { (fragment, variants) ->
                 fragment.name to variants.map { it.fragmentName }.sorted()
             }
@@ -52,7 +52,7 @@ internal open class TransformKotlinGranularMetadataForFragment
     @get:Input
     internal val inputVariantDependencies: Map<String, Set<List<String?>>> by project.provider {
         val participatingFragments = fragment.refinesClosure
-        val participatingCompilations = participatingFragments.flatMap { it.containingModule.variantsContainingFragment(it) }
+        val participatingCompilations = participatingFragments.flatMap { it.containingVariants }
         participatingCompilations.associate { variant ->
             variant.fragmentName to variant.compileDependenciesConfiguration
                 .allDependencies.map { listOf(it.group, it.name, it.version) }.toSet()
