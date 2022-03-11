@@ -28,22 +28,14 @@ fun box(): String {
     val four = Z(4)
     val seven = Z(7)
 
-    assertFailsWith<IllegalArgumentException>("Remove assertFailsWith and try again, as this problem may have been fixed.") {
-        assertEquals(seven, C::foo.call(one, 2, four))
-    }
-    assertFailsWith<IllegalArgumentException>("Remove assertFailsWith and try again, as this problem may have been fixed.") {
-        assertEquals(seven, (I)::bar.call(1, two, four))
-    }
+    assertEquals(seven, C::foo.call(one, 2, four))
+    assertEquals(seven, (I)::bar.call(1, two, four))
 
     val unboundFoo = C::class.members.single { it.name == "foo" } as KFunction<*>
-    assertFailsWith<IllegalArgumentException>("Remove assertFailsWith and try again, as this problem may have been fixed.") {
-        assertEquals(seven, unboundFoo.call(C, one, 2, four))
-    }
+    assertEquals(seven, unboundFoo.call(C, one, 2, four))
 
     val unboundBar = I.Companion::class.members.single { it.name == "bar" } as KFunction<*>
-    assertFailsWith<IllegalArgumentException>("Remove assertFailsWith and try again, as this problem may have been fixed.") {
-        assertEquals(seven, unboundBar.call(I, 1, two, four))
-    }
+    assertEquals(seven, unboundBar.call(I, 1, two, four))
 
     return "OK"
 }

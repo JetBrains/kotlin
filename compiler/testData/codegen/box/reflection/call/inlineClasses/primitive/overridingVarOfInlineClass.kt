@@ -88,14 +88,10 @@ fun box(): String {
     assertFailsWith<IllegalArgumentException>("Remove assertFailsWith and try again, as this problem may have been fixed.") {
         assertEquals(zOne, zOne::nullableTest.getter.call())
     }
-    assertFailsWith<IllegalArgumentException>("Remove assertFailsWith and try again, as this problem may have been fixed.") {
-        Z::nullableTest.setter.call(zOne, zTwo)
-        assertEquals(zThree, global)
-    }
-    assertFailsWith<IllegalArgumentException>("Remove assertFailsWith and try again, as this problem may have been fixed.") {
-        zOne::nullableTest.setter.call(zThree)
-        assertEquals(zFour, global)
-    }
+    Z::nullableTest.setter.call(zOne, zTwo)
+    assertEquals(zThree, global)
+    zOne::nullableTest.setter.call(zThree)
+    assertEquals(zFour, global)
 
     global = zZero
     assertEquals(zOne, S::nonNullTest.call(sOne))
@@ -120,14 +116,10 @@ fun box(): String {
     assertFailsWith<IllegalArgumentException>("Remove assertFailsWith and try again, as this problem may have been fixed.") {
         assertEquals(zOne, sOne::nullableTest.getter.call())
     }
-    assertFailsWith<IllegalArgumentException>("Remove assertFailsWith and try again, as this problem may have been fixed.") {
-        S::nullableTest.setter.call(sOne, zTwo)
-        assertEquals(zThree, global)
-    }
-    assertFailsWith<IllegalArgumentException>("Remove assertFailsWith and try again, as this problem may have been fixed.") {
-        sOne::nullableTest.setter.call(zThree)
-        assertEquals(zFour, global)
-    }
+    S::nullableTest.setter.call(sOne, zTwo)
+    assertEquals(zThree, global)
+    sOne::nullableTest.setter.call(zThree)
+    assertEquals(zFour, global)
 
     global = zZero
     assertEquals(zOne, A::nonNullTest.call(aOne))
@@ -152,14 +144,10 @@ fun box(): String {
     assertFailsWith<IllegalArgumentException>("Remove assertFailsWith and try again, as this problem may have been fixed.") {
         assertEquals(zOne, aOne::nullableTest.getter.call())
     }
-    assertFailsWith<IllegalArgumentException>("Remove assertFailsWith and try again, as this problem may have been fixed.") {
-        A::nullableTest.setter.call(aOne, zTwo)
-        assertEquals(zThree, global)
-    }
-    assertFailsWith<IllegalArgumentException>("Remove assertFailsWith and try again, as this problem may have been fixed.") {
-        aOne::nullableTest.setter.call(zThree)
-        assertEquals(zFour, global)
-    }
+    A::nullableTest.setter.call(aOne, zTwo)
+    assertEquals(zThree, global)
+    aOne::nullableTest.setter.call(zThree)
+    assertEquals(zFour, global)
 
     return "OK"
 }

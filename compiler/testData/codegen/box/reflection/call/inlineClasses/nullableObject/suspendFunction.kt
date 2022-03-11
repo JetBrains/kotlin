@@ -54,11 +54,9 @@ fun box(): String {
         }.let { assertEquals("nonNull_nullable", it) }
     }
 
-    assertFailsWith<IllegalArgumentException>("Remove assertFailsWith and try again, as this problem may have been fixed.") {
-        run0 {
-            C::nullable_nonNullConsumeAndProduce.callSuspend(c, S("nullable_nonNull")).value!!
-        }.let { assertEquals("nullable_nonNull", it) }
-    }
+    run0 {
+        C::nullable_nonNullConsumeAndProduce.callSuspend(c, S("nullable_nonNull")).value!!
+    }.let { assertEquals("nullable_nonNull", it) }
 
     assertFailsWith<IllegalArgumentException>("Remove assertFailsWith and try again, as this problem may have been fixed.") {
         run0 {

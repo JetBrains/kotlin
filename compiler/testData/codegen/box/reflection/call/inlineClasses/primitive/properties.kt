@@ -90,11 +90,9 @@ fun box(): String {
     }
 
     val nullable_nonNullMemExt = C::class.members.single { it.name == "nullable_nonNullMemExt" } as KMutableProperty2<C, Z?, Z>
-    assertFailsWith<IllegalArgumentException>("Remove assertFailsWith and try again, as this problem may have been fixed.") {
-        assertEquals(Unit, nullable_nonNullMemExt.setter.call(c, Z(0), two))
-        assertEquals(three, nullable_nonNullMemExt.call(c, one))
-        assertEquals(three, nullable_nonNullMemExt.getter.call(c, one))
-    }
+    assertEquals(Unit, nullable_nonNullMemExt.setter.call(c, Z(0), two))
+    assertEquals(three, nullable_nonNullMemExt.call(c, one))
+    assertEquals(three, nullable_nonNullMemExt.getter.call(c, one))
 
     val nullable_nullableMemExt = C::class.members.single { it.name == "nullable_nullableMemExt" } as KMutableProperty2<C, Z?, Z?>
     assertFailsWith<IllegalArgumentException>("Remove assertFailsWith and try again, as this problem may have been fixed.") {
@@ -123,11 +121,9 @@ fun box(): String {
         assertEquals(three, Z::nonNull_nullableExt.getter.call(one))
     }
 
-    assertFailsWith<IllegalArgumentException>("Remove assertFailsWith and try again, as this problem may have been fixed.") {
-        assertEquals(Unit, Z?::nullable_nonNullExt.setter.call(Z(0), two))
-        assertEquals(three, Z?::nullable_nonNullExt.call(one))
-        assertEquals(three, Z?::nullable_nonNullExt.getter.call(one))
-    }
+    assertEquals(Unit, Z?::nullable_nonNullExt.setter.call(Z(0), two))
+    assertEquals(three, Z?::nullable_nonNullExt.call(one))
+    assertEquals(three, Z?::nullable_nonNullExt.getter.call(one))
 
     assertFailsWith<IllegalArgumentException>("Remove assertFailsWith and try again, as this problem may have been fixed.") {
         assertEquals(Unit, Z?::nullable_nullableExt.setter.call(Z(0), two))
