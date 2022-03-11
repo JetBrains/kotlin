@@ -40,7 +40,8 @@ class KlibResolvedModuleDescriptorsFactoryImpl(
         languageVersionSettings: LanguageVersionSettings,
         friendModuleFiles: Set<File>,
         includedLibraryFiles: Set<File>,
-        additionalDependencyModules: Iterable<ModuleDescriptorImpl>
+        additionalDependencyModules: Iterable<ModuleDescriptorImpl>,
+        isForMetadataCompilation: Boolean,
     ): KotlinResolvedModuleDescriptors {
 
         val moduleDescriptors = mutableListOf<ModuleDescriptorImpl>()
@@ -69,7 +70,20 @@ class KlibResolvedModuleDescriptorsFactoryImpl(
             }
         }
 
-        val forwardDeclarationsModule = createForwardDeclarationsModule(builtIns, storageManager)
+        val forwardDeclarationsModule = createForwardDeclarationsModule(
+            builtIns,
+            storageManager,
+            // If we are compiling metadata, make synthetic forward declarations `expect`,
+            // because otherwise `getFirstClassifierDiscriminateHeaders` would prefer it over a
+            // "real" `expect` declaration from a commonized interop library, which would ruin
+            // the whole idea of using synthetic forward declarations only when no proper definitions
+            // are found.
+            //
+            // If we are compiling for the actual native platform, continue using non-expect
+            // forward declarations (to prevent getting non-actualized expects into the backend,
+            // and to prevent related klib signature changes).
+            isExpect = isForMetadataCompilation,
+        )
 
         // Set inter-dependencies between module descriptors, add forwarding declarations module.
         for (module in moduleDescriptors) {
@@ -88,7 +102,8 @@ class KlibResolvedModuleDescriptorsFactoryImpl(
 
     fun createForwardDeclarationsModule(
         builtIns: KotlinBuiltIns?,
-        storageManager: StorageManager
+        storageManager: StorageManager,
+        isExpect: Boolean
     ): ModuleDescriptorImpl {
 
         val module = createDescriptorOptionalBuiltsIns(FORWARD_DECLARATIONS_MODULE_NAME, storageManager, builtIns, SyntheticModulesOrigin)
@@ -99,7 +114,8 @@ class KlibResolvedModuleDescriptorsFactoryImpl(
                 module,
                 fqName,
                 Name.identifier(supertypeName),
-                classKind
+                classKind,
+                isExpect
             )
 
         val packageFragmentProvider = PackageFragmentProviderImpl(
@@ -150,7 +166,8 @@ class ForwardDeclarationsPackageFragmentDescriptor(
     module: ModuleDescriptor,
     fqName: FqName,
     supertypeName: Name,
-    classKind: ClassKind
+    classKind: ClassKind,
+    isExpect: Boolean
 ) : PackageFragmentDescriptorImpl(module, fqName) {
 
     private val memberScope = object : MemberScopeImpl() {
@@ -166,7 +183,7 @@ class ForwardDeclarationsPackageFragmentDescriptor(
         }
 
         private fun createDeclaration(name: Name): ClassDescriptor {
-            return ClassDescriptorImpl(
+            return object : ClassDescriptorImpl(
                 this@ForwardDeclarationsPackageFragmentDescriptor,
                 name,
                 Modality.FINAL,
@@ -175,7 +192,9 @@ class ForwardDeclarationsPackageFragmentDescriptor(
                 SourceElement.NO_SOURCE,
                 false,
                 LockBasedStorageManager.NO_LOCKS
-            ).apply {
+            ) {
+                override fun isExpect(): Boolean = isExpect
+            }.apply {
                 this.initialize(MemberScope.Empty, emptySet(), null)
             }
         }
