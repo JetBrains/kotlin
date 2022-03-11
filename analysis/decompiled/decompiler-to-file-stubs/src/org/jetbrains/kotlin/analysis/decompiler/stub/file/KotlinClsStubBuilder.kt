@@ -35,7 +35,7 @@ import org.jetbrains.kotlin.serialization.deserialization.getClassId
 open class KotlinClsStubBuilder : ClsStubBuilder() {
     override fun getStubVersion() = ClassFileStubBuilder.STUB_VERSION + KotlinStubVersions.CLASSFILE_STUB_VERSION
 
-    override fun buildFileStub(content: FileContent): PsiFileStub<*>? {
+    override fun buildFileStub(content: FileContent): PsiFileStub<KtFile>? {
         val virtualFile = content.file
 
         if (ClsClassFinder.isKotlinInternalCompiledFile(virtualFile, content.content)) {

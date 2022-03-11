@@ -9,6 +9,7 @@ import com.intellij.mock.MockApplication
 import com.intellij.mock.MockProject
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.StandardFileSystems
+import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.impl.jar.CoreJarFileSystem
 import com.intellij.psi.PsiElementFinder
 import com.intellij.psi.PsiManager
@@ -17,7 +18,9 @@ import org.jetbrains.kotlin.analysis.api.InvalidWayOfUsingAnalysisSession
 import org.jetbrains.kotlin.analysis.api.KtAnalysisSessionProvider
 import org.jetbrains.kotlin.analysis.api.fir.KtFirAnalysisSessionProvider
 import org.jetbrains.kotlin.analysis.api.impl.base.references.HLApiReferenceProviderService
-import org.jetbrains.kotlin.analysis.decompiled.light.classes.ClsJavaStubByVirtualFileCache
+import org.jetbrains.kotlin.analysis.decompiler.stub.file.CachedAttributeData
+import org.jetbrains.kotlin.analysis.decompiler.stub.file.ClsKotlinBinaryClassCache
+import org.jetbrains.kotlin.analysis.decompiler.stub.file.FileAttributeService
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.services.FirSealedClassInheritorsProcessorFactory
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.services.PackagePartProviderFactory
 import org.jetbrains.kotlin.analysis.project.structure.KtModuleScopeProvider
@@ -26,7 +29,6 @@ import org.jetbrains.kotlin.analysis.project.structure.ProjectStructureProvider
 import org.jetbrains.kotlin.analysis.project.structure.impl.ProjectStructureProviderByCompilerConfiguration
 import org.jetbrains.kotlin.analysis.providers.*
 import org.jetbrains.kotlin.analysis.providers.impl.*
-import org.jetbrains.kotlin.analysis.providers.impl.StaticCompiledDeclarationProviderFactory
 import org.jetbrains.kotlin.asJava.KotlinAsJavaSupport
 import org.jetbrains.kotlin.asJava.finder.JavaElementFinder
 import org.jetbrains.kotlin.cli.jvm.config.javaSourceRoots
@@ -40,6 +42,8 @@ import org.jetbrains.kotlin.light.classes.symbol.caches.SymbolLightClassFacadeCa
 import org.jetbrains.kotlin.load.kotlin.PackagePartProvider
 import org.jetbrains.kotlin.psi.KotlinReferenceProvidersService
 import org.jetbrains.kotlin.psi.KtFile
+import java.io.DataInput
+import java.io.DataOutput
 import java.nio.file.Files
 import java.nio.file.Paths
 
@@ -49,6 +53,8 @@ import java.nio.file.Paths
  * In particular, this will register:
  *   * [KotlinReferenceProvidersService]
  *   * [KotlinReferenceProviderContributor]
+ *   * [ClsKotlinBinaryClassCache]
+ *   * [FileAttributeService]
  */
 public fun configureApplicationEnvironment(app: MockApplication) {
     if (app.getServiceIfCreated(KotlinReferenceProvidersService::class.java) == null) {
@@ -63,6 +69,20 @@ public fun configureApplicationEnvironment(app: MockApplication) {
             KotlinFirReferenceContributor::class.java
         )
     }
+    if (app.getServiceIfCreated(ClsKotlinBinaryClassCache::class.java) == null) {
+        app.registerService(ClsKotlinBinaryClassCache::class.java)
+        app.registerService(FileAttributeService::class.java, DummyFileAttributeService)
+    }
+}
+
+private object DummyFileAttributeService : FileAttributeService {
+    override fun <T> write(file: VirtualFile, id: String, value: T, writeValueFun: (DataOutput, T) -> Unit): CachedAttributeData<T> {
+        return CachedAttributeData(value, 0)
+    }
+
+    override fun <T> read(file: VirtualFile, id: String, readValueFun: (DataInput) -> T): CachedAttributeData<T>? {
+        return null
+    }
 }
 
 /**
@@ -72,7 +92,6 @@ public fun configureApplicationEnvironment(app: MockApplication) {
  *   * [KtAnalysisSessionProvider]
  *   * [KotlinAsJavaFirSupport]
  *   * [SymbolLightClassFacadeCache] for FIR light class support
- *   * [ClsJavaStubByVirtualFileCache]
  *   * [KotlinModificationTrackerFactory]
  *   * [KotlinAnnotationsResolverFactory]
  *   * [LLFirResolveStateService]
@@ -148,9 +167,6 @@ internal fun configureProjectEnvironment(
     project.registerService(
         SymbolLightClassFacadeCache::class.java
     )
-    project.registerService(
-        ClsJavaStubByVirtualFileCache::class.java
-    )
 
     project.picoContainer.registerComponentInstance(
         KotlinModificationTrackerFactory::class.qualifiedName,
@@ -188,8 +204,8 @@ internal fun configureProjectEnvironment(
         projectStructureProvider
     )
     project.picoContainer.registerComponentInstance(
-        CompiledDeclarationProviderFactory::class.qualifiedName,
-        StaticCompiledDeclarationProviderFactory(
+        KotlinCompiledDeclarationProviderFactory::class.qualifiedName,
+        KotlinStaticCompiledDeclarationProviderFactory(
             project,
             projectStructureProvider.libraryModules,
             jarFileSystem
