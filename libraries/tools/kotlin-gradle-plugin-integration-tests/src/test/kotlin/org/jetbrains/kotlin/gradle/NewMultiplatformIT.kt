@@ -945,22 +945,24 @@ class NewMultiplatformIT : BaseGradleIT() {
             )
             val metadataDependencyRegex = "$pathPrefix(.*?)->(.*)".toRegex()
 
-            build("printMetadataFiles") {
-                assertSuccessful()
+            ignoreFailureWithModelMapping("This test resolves *DependenciesMetadata configurations; we need to rewrite it for KPM") {
+                build("printMetadataFiles") {
+                    assertSuccessful()
 
-                val expectedFileName = "sample-lib-${KotlinMultiplatformPlugin.METADATA_TARGET_NAME}-1.0.jar"
+                    val expectedFileName = "sample-lib-${KotlinMultiplatformPlugin.METADATA_TARGET_NAME}-1.0.jar"
 
-                val paths = metadataDependencyRegex
-                    .findAll(output).map { it.groupValues[1] to it.groupValues[2] }
-                    .filter { (_, f) -> "sample-lib" in f }
-                    .toSet()
+                    val paths = metadataDependencyRegex
+                        .findAll(output).map { it.groupValues[1] to it.groupValues[2] }
+                        .filter { (_, f) -> "sample-lib" in f }
+                        .toSet()
 
-                Assert.assertEquals(
-                    listOf("Api", "Implementation", "CompileOnly", "RuntimeOnly").map {
-                        "commonMain$it$METADATA_CONFIGURATION_NAME_SUFFIX" to expectedFileName
-                    }.toSet(),
-                    paths
-                )
+                    Assert.assertEquals(
+                        listOf("Api", "Implementation", "CompileOnly", "RuntimeOnly").map {
+                            "commonMain$it$METADATA_CONFIGURATION_NAME_SUFFIX" to expectedFileName
+                        }.toSet(),
+                        paths
+                    )
+                }
             }
         }
     }
@@ -978,7 +980,9 @@ class NewMultiplatformIT : BaseGradleIT() {
         testResolveJsPartOfMppLibDependencyToMetadata(noHMPP)
 
 
-    private fun testResolveJsPartOfMppLibDependencyToMetadata(hmppFlags: HmppFlags) {
+    private fun testResolveJsPartOfMppLibDependencyToMetadata(hmppFlags: HmppFlags) = ignoreFailureWithModelMapping(
+        "This test resolves *DependenciesMetadata configurations. KPM doesn't have them, so this test needs rewriting"
+    ) {
         val libProject = Project("sample-lib", gradleVersion, "new-mpp-lib-and-app")
         val appProject = Project("sample-app", gradleVersion, "new-mpp-lib-and-app")
 
@@ -1076,9 +1080,11 @@ class NewMultiplatformIT : BaseGradleIT() {
                         """.trimIndent()
             }
 
-            build("printMetadataFiles") {
-                assertSuccessful()
-                assertContains(pathPrefix + "sample-lib-metadata-1.0.jar")
+            ignoreFailureWithModelMapping("This test resolves *DependenciesMetadata configuraitons. We need to rewrite it for KPM") {
+                build("printMetadataFiles") {
+                    assertSuccessful()
+                    assertContains(pathPrefix + "sample-lib-metadata-1.0.jar")
+                }
             }
         }
     }
