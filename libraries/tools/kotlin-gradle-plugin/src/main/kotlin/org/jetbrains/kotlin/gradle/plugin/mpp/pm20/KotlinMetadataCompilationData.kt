@@ -121,7 +121,7 @@ internal open class KotlinCommonFragmentMetadataCompilationDataImpl(
 
     override val isActive: Boolean
         get() = !fragment.isNativeShared() &&
-                fragment.containingModule.variantsContainingFragment(fragment).run {
+                fragment.containingVariants.run {
                     !all { it.platformType in setOf(KotlinPlatformType.androidJvm, KotlinPlatformType.jvm) } &&
                             mapTo(hashSetOf()) { it.platformType }.size > 1
                 }
@@ -161,14 +161,14 @@ internal open class KotlinNativeFragmentMetadataCompilationDataImpl(
         get() = lowerCamelCaseName("compile", fragment.disambiguateName(""), "KotlinNativeMetadata")
 
     override val isActive: Boolean
-        get() = fragment.isNativeShared() && fragment.containingModule.variantsContainingFragment(fragment).count() > 1
+        get() = fragment.isNativeShared() && fragment.containingVariants.count() > 1
 
     override val kotlinOptions: NativeCompileOptions = NativeCompileOptions { languageSettings }
 
     override val konanTarget: KonanTarget
         get() {
             val nativeVariants =
-                fragment.containingModule.variantsContainingFragment(fragment).filterIsInstance<KotlinNativeVariantInternal>()
+                fragment.containingVariants.filterIsInstance<KotlinNativeVariantInternal>()
             return nativeVariants.firstOrNull { it.konanTarget.enabledOnCurrentHost }?.konanTarget
                 ?: nativeVariants.firstOrNull()?.konanTarget
                 ?: HostManager.host
