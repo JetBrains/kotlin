@@ -32,7 +32,7 @@ kotlin {
     }
     val jvmTest by getting {
       dependencies {
-        implementation(kotlin("test-junit"))
+        implementation(kotlin("test-junit5"))
       }
     }
     val jsTest by getting {
@@ -47,6 +47,10 @@ kotlin {
       dependsOn(commonTest)
     }
   }
+}
+
+tasks.withType<Test> {
+  useJUnitPlatform()
 }
 
 configure<com.bnorm.power.PowerAssertGradleExtension> {

@@ -17,7 +17,7 @@
 package com.bnorm.power
 
 import org.jetbrains.kotlin.name.FqName
-import org.junit.Test
+import kotlin.test.Test
 
 class LamdaTest {
   @Test

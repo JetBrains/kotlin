@@ -19,10 +19,10 @@ package com.bnorm.power
 import com.tschuchort.compiletesting.KotlinCompilation
 import com.tschuchort.compiletesting.SourceFile
 import org.jetbrains.kotlin.name.FqName
-import org.junit.Test
 import java.io.ByteArrayOutputStream
 import java.io.PrintStream
 import java.lang.reflect.InvocationTargetException
+import kotlin.test.Test
 import kotlin.test.assertEquals
 
 class DebugFunctionTest {

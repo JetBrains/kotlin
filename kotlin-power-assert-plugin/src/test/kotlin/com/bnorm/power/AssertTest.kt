@@ -17,9 +17,9 @@
 package com.bnorm.power
 
 import org.jetbrains.kotlin.name.FqName
-import org.junit.Test
+import kotlin.test.Test
 
-class CompilerTest {
+class AssertTest {
   @Test
   fun memberFunctions() {
     assertMessage(
@@ -74,6 +74,23 @@ assert(1 == 2) { "Not equal" }
          |
          false
 """.trimIndent()
+    )
+  }
+
+  @Test
+  fun customLocalVariableMessage() {
+    assertMessage(
+      """
+fun main() {
+  val lambda = { "Not equal" }
+  assert(1 == 2, lambda) 
+}""",
+      """
+      Not equal
+      assert(1 == 2, lambda)
+               |
+               false
+      """.trimIndent()
     )
   }
 

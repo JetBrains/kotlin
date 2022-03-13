@@ -16,13 +16,17 @@
 
 package com.bnorm.power.delegate
 
+import com.bnorm.power.irLambda
 import org.jetbrains.kotlin.ir.builders.IrBuilderWithScope
+import org.jetbrains.kotlin.ir.builders.irReturn
+import org.jetbrains.kotlin.ir.builders.typeOperator
 import org.jetbrains.kotlin.ir.declarations.IrValueParameter
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
+import org.jetbrains.kotlin.ir.expressions.IrTypeOperator
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 
-class SimpleFunctionDelegate(
+class SamConversionLambdaFunctionDelegate(
   private val overload: IrSimpleFunctionSymbol,
   override val messageParameter: IrValueParameter,
 ) : FunctionDelegate {
@@ -33,5 +37,11 @@ class SimpleFunctionDelegate(
     original: IrCall,
     arguments: List<IrExpression?>,
     message: IrExpression
-  ): IrExpression = builder.irCallCopy(overload, original, arguments, message)
+  ): IrExpression = with(builder) {
+    val lambda = irLambda(context.irBuiltIns.stringType, messageParameter.type) {
+      +irReturn(message)
+    }
+    val expression = typeOperator(messageParameter.type, lambda, IrTypeOperator.SAM_CONVERSION, messageParameter.type)
+    irCallCopy(overload, original, arguments, expression)
+  }
 }

@@ -15,13 +15,17 @@ dependencies {
   kapt("com.google.auto.service:auto-service:1.0.1")
   compileOnly("com.google.auto.service:auto-service-annotations:1.0.1")
 
-  testImplementation(kotlin("test-junit"))
+  testImplementation(kotlin("test-junit5"))
   testImplementation("org.jetbrains.kotlin:kotlin-compiler-embeddable")
   testImplementation("com.github.tschuchortdev:kotlin-compile-testing:1.4.6")
 }
 
 tasks.withType<KotlinCompile> {
   kotlinOptions.jvmTarget = "1.8"
+}
+
+tasks.withType<Test> {
+  useJUnitPlatform()
 }
 
 tasks.dokka {
