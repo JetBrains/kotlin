@@ -1481,7 +1481,9 @@ class Fir2IrDeclarationStorage(
     private fun IrMutableAnnotationContainer.convertAnnotationsForNonDeclaredMembers(
         firAnnotationContainer: FirAnnotationContainer, origin: IrDeclarationOrigin,
     ) {
-        if ((firAnnotationContainer as? FirDeclaration)?.isFromLibrary == true || origin == IrDeclarationOrigin.FAKE_OVERRIDE) {
+        if ((firAnnotationContainer as? FirDeclaration)?.let { it.isFromLibrary || it.isPrecompiled } == true
+            || origin == IrDeclarationOrigin.FAKE_OVERRIDE
+        ) {
             annotationGenerator.generate(this, firAnnotationContainer)
         }
     }

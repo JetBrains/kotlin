@@ -50,6 +50,8 @@ inline val FirDeclaration.isJava: Boolean
     get() = origin == FirDeclarationOrigin.Java
 inline val FirDeclaration.isFromLibrary: Boolean
     get() = origin == FirDeclarationOrigin.Library
+inline val FirDeclaration.isPrecompiled: Boolean
+    get() = origin == FirDeclarationOrigin.Precompiled
 inline val FirDeclaration.isSynthetic: Boolean
     get() = origin == FirDeclarationOrigin.Synthetic
 
