@@ -119,6 +119,33 @@ kotlinPowerAssert {
 }
 ```
 
+You can also exclude Gradle source sets from being transformed by the plugin,
+where those source sets can be specified by name.
+
+```kotlin
+// Kotlin DSL
+configure<com.bnorm.power.PowerAssertGradleExtension> {
+  excludedSourceSets = listOf(
+    "commonMain",
+    "jvmMain",
+    "jsMain",
+    "nativeMain"
+  )
+}
+```
+
+```groovy
+// Groovy
+kotlinPowerAssert {
+  excludedSourceSets = [
+    "commonMain",
+    "jvmMain",
+    "jsMain",
+    "nativeMain"
+  ]
+}
+```
+
 ## Compatibility
 
 The Kotlin compiler plugin API is unstable and each new version of Kotlin can

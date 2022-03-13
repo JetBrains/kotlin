@@ -20,6 +20,11 @@ data class Person(
   val firstName: String,
   val lastName: String,
 ) {
+  init {
+    require(firstName.isNotBlank())
+    require(lastName.isNotBlank())
+  }
+
   companion object {
     val UNKNOWN = listOf(Person("John", "Doe"), Person("Jane", "Doe"))
     override fun toString() = "Person.Companion"
