@@ -31,6 +31,8 @@ import org.jetbrains.kotlin.ir.expressions.IrConstKind
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrMemberAccessExpression
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
+import org.jetbrains.kotlin.ir.expressions.IrTypeOperator
+import org.jetbrains.kotlin.ir.expressions.IrTypeOperatorCall
 
 fun IrBuilderWithScope.irDiagramString(
   file: IrFile,
@@ -161,8 +163,17 @@ private fun findDisplayOffset(
   expression: IrExpression,
   source: String
 ): Int {
-  if (expression !is IrMemberAccessExpression<*>) return 0
+  return when (expression) {
+    is IrMemberAccessExpression<*> -> memberAccessOffset(expression, source)
+    is IrTypeOperatorCall -> typeOperatorOffset(expression, source)
+    else -> 0
+  }
+}
 
+private fun memberAccessOffset(
+  expression: IrMemberAccessExpression<*>,
+  source: String
+): Int {
   if (expression.origin == IrStatementOrigin.EXCLEQ || expression.origin == IrStatementOrigin.EXCLEQEQ) {
     // special case to handle `value != null`
     return source.indexOf("!=")
@@ -194,6 +205,17 @@ private fun findDisplayOffset(
   }
 
   return 0
+}
+
+private fun typeOperatorOffset(
+  expression: IrTypeOperatorCall,
+  source: String
+): Int {
+  return when (expression.operator) {
+    IrTypeOperator.INSTANCEOF -> source.indexOf(" is ") + 1
+    IrTypeOperator.NOT_INSTANCEOF -> source.indexOf(" !is ") + 1
+    else -> 0
+  }
 }
 
 fun String.substring(expression: IrElement) = substring(expression.startOffset, expression.endOffset)
