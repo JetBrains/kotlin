@@ -21,6 +21,7 @@ import com.tschuchort.compiletesting.SourceFile
 import org.intellij.lang.annotations.Language
 import org.jetbrains.kotlin.compiler.plugin.ComponentRegistrar
 import org.jetbrains.kotlin.name.FqName
+import java.io.OutputStream
 import java.lang.reflect.InvocationTargetException
 import kotlin.test.assertEquals
 import kotlin.test.fail
@@ -36,7 +37,15 @@ fun compile(
   return KotlinCompilation().apply {
     sources = list
     useIR = true
-    messageOutputStream = System.out
+    messageOutputStream = object : OutputStream() {
+      override fun write(b: Int) {
+        // black hole all writes
+      }
+
+      override fun write(b: ByteArray, off: Int, len: Int) {
+        // black hole all writes
+      }
+    }
     compilerPlugins = plugins.toList()
     inheritClassPath = true
   }.compile()

@@ -23,6 +23,8 @@ import org.jetbrains.kotlin.ir.expressions.IrContainerExpression
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrFunctionExpression
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
+import org.jetbrains.kotlin.ir.expressions.IrTypeOperator
+import org.jetbrains.kotlin.ir.expressions.IrTypeOperatorCall
 import org.jetbrains.kotlin.ir.expressions.IrWhen
 import org.jetbrains.kotlin.ir.util.dumpKotlinLike
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
@@ -100,6 +102,16 @@ fun buildTree(expression: IrExpression): Node? {
       }
 
       super.visitContainerExpression(expression, data)
+    }
+
+    override fun visitTypeOperator(expression: IrTypeOperatorCall, data: Node) {
+      val node = data as? ExpressionNode ?: ExpressionNode().also { data.addChild(it) }
+      if (expression.operator in setOf(IrTypeOperator.INSTANCEOF, IrTypeOperator.NOT_INSTANCEOF)) {
+        // Only include `is` and `!is` checks
+        node.add(expression)
+      }
+
+      expression.acceptChildren(this, node)
     }
 
     override fun visitCall(expression: IrCall, data: Node) {
