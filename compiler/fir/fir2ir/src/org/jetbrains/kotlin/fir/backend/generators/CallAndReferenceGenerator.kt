@@ -314,6 +314,7 @@ class CallAndReferenceGenerator(
                     KtTokens.MULTEQ -> IrDynamicOperator.MULEQ
                     KtTokens.DIVEQ -> IrDynamicOperator.DIVEQ
                     KtTokens.PERCEQ -> IrDynamicOperator.MODEQ
+                    KtTokens.EQ -> IrDynamicOperator.EQ
                     else -> null
                 }
             is KtArrayAccessExpression -> IrDynamicOperator.ARRAY_ACCESS

@@ -5,9 +5,7 @@
 
 package org.jetbrains.kotlin.fir.backend
 
-import org.jetbrains.kotlin.KtFakeSourceElementKind
-import org.jetbrains.kotlin.KtNodeTypes
-import org.jetbrains.kotlin.KtSourceElement
+import org.jetbrains.kotlin.*
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
@@ -45,8 +43,8 @@ import org.jetbrains.kotlin.ir.util.parentClassOrNull
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
-import org.jetbrains.kotlin.psi
 import org.jetbrains.kotlin.psi.KtBinaryExpression
+import org.jetbrains.kotlin.psi.KtDotQualifiedExpression
 import org.jetbrains.kotlin.psi.KtForExpression
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
@@ -367,7 +365,73 @@ class Fir2IrVisitor(
             )
         } else convertToIrExpression(this, annotationMode)
 
+    private fun extractArrayAccessKeysFromSetCall(functionCall: FirFunctionCall): List<FirExpression> {
+        val arguments = functionCall.dynamicVarargArguments ?: return emptyList()
+        val keys = mutableListOf<FirExpression>()
+
+        for (it in 0 until arguments.size - 1) {
+            keys += arguments[it]
+        }
+
+        return keys
+    }
+
+    private fun generateArgumentsForDynamicArrayAccess(
+        keys: List<FirExpression>, source: KtSourceElement?,
+        valueParameter: FirValueParameter,
+    ): FirResolvedArgumentList {
+        val arguments = buildVarargArgumentsExpression {
+            varargElementType = session.builtinTypes.nullableAnyType
+            arguments.addAll(keys)
+        }
+
+        val mapping = mapOf(arguments to valueParameter)
+        return buildResolvedArgumentList(LinkedHashMap(mapping), source)
+    }
+
+    private fun generateArrayAccessFromSetCall(functionCall: FirFunctionCall) = buildFunctionCall {
+        val function = functionCall.calleeReference.resolvedSymbol?.fir as? FirFunction
+        val varargParameter = function?.valueParameters?.firstOrNull()
+            ?: throw Exception("Must be known")
+
+        val setValue = functionCall.dynamicVarargArguments?.last()
+            ?: throw Exception("Must be known")
+
+        calleeReference = functionCall.calleeReference
+        typeRef = functionCall.typeRef
+        source = functionCall.source
+        origin = functionCall.origin
+
+        argumentList = generateArgumentsForDynamicArrayAccess(
+            listOf(setValue),
+            functionCall.source,
+            varargParameter,
+        )
+
+        explicitReceiver = buildFunctionCall {
+            // This will be ignored
+            calleeReference = functionCall.calleeReference
+            explicitReceiver = functionCall.explicitReceiver
+            typeRef = functionCall.typeRef
+            origin = functionCall.origin
+            source = functionCall.source?.let { it.psi?.children?.firstOrNull()?.toKtPsiSourceElement(it.kind) }
+
+            argumentList = generateArgumentsForDynamicArrayAccess(
+                extractArrayAccessKeysFromSetCall(functionCall),
+                functionCall.dynamicVararg?.source,
+                varargParameter,
+            )
+        }
+    }
+
     private fun convertToIrCall(functionCall: FirFunctionCall, annotationMode: Boolean): IrExpression {
+        if (
+            functionCall.calleeReference.name == OperatorNameConventions.SET &&
+            functionCall.dynamicVarargArguments?.size != 1 &&
+            functionCall.source?.psi !is KtDotQualifiedExpression
+        ) {
+            return convertToIrCall(generateArrayAccessFromSetCall(functionCall), annotationMode)
+        }
         val explicitReceiverExpression = convertToIrReceiverExpression(
             functionCall.explicitReceiver, functionCall.calleeReference
         )
