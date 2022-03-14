@@ -10,6 +10,7 @@ import com.intellij.openapi.diagnostic.Logger
 
 object IdeaStandaloneExecutionSetup {
     private val LOG: Logger = Logger.getInstance(IdeaStandaloneExecutionSetup::class.java)
+    // Copy-pasted from com.intellij.openapi.util.BuildNumber#FALLBACK_VERSION
     private const val FALLBACK_IDEA_BUILD_NUMBER = "999.SNAPSHOT"
 
     fun doSetup() {
