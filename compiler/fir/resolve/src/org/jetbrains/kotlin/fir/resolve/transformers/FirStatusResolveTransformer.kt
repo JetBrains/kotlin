@@ -112,6 +112,9 @@ open class FirStatusResolveTransformer(
          */
         if (computationStatus != StatusComputationSession.StatusComputationStatus.Computed) {
             regularClass.transformStatus(this, statusResolver.resolveStatus(regularClass, containingClass, isLocal = false))
+            if (regularClass.status.isInline) {
+                regularClass.valueClassRepresentation = computeValueClassRepresentation(regularClass, session)
+            }
         }
         return transformClass(regularClass, data).also {
             statusComputationSession.endComputing(regularClass)

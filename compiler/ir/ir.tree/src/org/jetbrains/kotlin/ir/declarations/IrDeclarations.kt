@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.descriptors.MultiFieldValueClassRepresentation
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.expressions.IrExpressionBody
+import org.jetbrains.kotlin.ir.types.IrSimpleType
 import java.io.File
 
 fun <D : IrAttributeContainer> D.copyAttributes(other: IrAttributeContainer?): D = apply {
@@ -55,3 +56,10 @@ val IrFunction.isStaticMethodOfClass: Boolean
 
 val IrFunction.isPropertyAccessor: Boolean
     get() = this is IrSimpleFunction && correspondingPropertySymbol != null
+
+
+val IrClass.multiFieldValueClassRepresentation: MultiFieldValueClassRepresentation<IrSimpleType>?
+    get() = valueClassRepresentation as? MultiFieldValueClassRepresentation<IrSimpleType>
+
+val IrClass.inlineClassRepresentation: InlineClassRepresentation<IrSimpleType>?
+    get() = valueClassRepresentation as? InlineClassRepresentation<IrSimpleType>
