@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.resultType
 import org.jetbrains.kotlin.fir.resolve.typeForQualifier
 import org.jetbrains.kotlin.fir.scopes.FirScope
+import org.jetbrains.kotlin.fir.scopes.FirTypeScope
 import org.jetbrains.kotlin.fir.scopes.impl.FirDefaultStarImportingScope
 import org.jetbrains.kotlin.fir.scopes.impl.importedFromObjectData
 import org.jetbrains.kotlin.fir.scopes.processClassifiersByName
@@ -90,9 +91,26 @@ class MemberScopeTowerLevel(
         output: TowerScopeLevelProcessor<T>,
         processScopeMembers: FirScope.(processor: (T) -> Unit) -> Unit
     ): ProcessResult {
-        var empty = true
         val scope = dispatchReceiverValue.scope(session, scopeSession) ?: return ProcessResult.SCOPE_EMPTY
-        scope.processScopeMembers { candidate ->
+        var (empty, candidates) = scope.collectCandidates(processScopeMembers)
+        consumeCandidates(output, candidates.map { scope to it })
+
+        if (extensionReceiver == null) {
+            val withSynthetic = FirSyntheticPropertiesScope(session, scope)
+            withSynthetic.processScopeMembers { symbol ->
+                empty = false
+                output.consumeCandidate(symbol, dispatchReceiverValue, null, scope)
+            }
+        }
+        return if (empty) ProcessResult.SCOPE_EMPTY else ProcessResult.FOUND
+    }
+
+    private fun <T : FirBasedSymbol<*>> FirTypeScope.collectCandidates(
+        processScopeMembers: FirScope.(processor: (T) -> Unit) -> Unit
+    ): Pair<Boolean, List<T>> {
+        var empty = true
+        val result = mutableListOf<T>()
+        processScopeMembers { candidate ->
             empty = false
             if (candidate is FirCallableSymbol<*> &&
                 (implicitExtensionInvokeMode || candidate.hasConsistentExtensionReceiver(extensionReceiver))
@@ -101,7 +119,22 @@ class MemberScopeTowerLevel(
                 if ((fir as? FirConstructor)?.isInner == false) {
                     return@processScopeMembers
                 }
+                result += candidate
+            } else if (candidate is FirClassLikeSymbol<*>) {
+                result += candidate
+            }
+        }
+        return empty to result
+    }
 
+    private fun <T : FirBasedSymbol<*>> consumeCandidates(
+        output: TowerScopeLevelProcessor<T>,
+        candidatesWithScope: List<Pair<FirScope, T>>
+    ) {
+        for ((scope, candidate) in candidatesWithScope) {
+            if (candidate is FirCallableSymbol<*> &&
+                (implicitExtensionInvokeMode || candidate.hasConsistentExtensionReceiver(extensionReceiver))
+            ) {
                 output.consumeCandidate(
                     candidate, dispatchReceiverValue,
                     extensionReceiverValue = extensionReceiver,
@@ -120,15 +153,6 @@ class MemberScopeTowerLevel(
                 output.consumeCandidate(candidate, null, extensionReceiver, scope)
             }
         }
-
-        if (extensionReceiver == null) {
-            val withSynthetic = FirSyntheticPropertiesScope(session, scope)
-            withSynthetic.processScopeMembers { symbol ->
-                empty = false
-                output.consumeCandidate(symbol, dispatchReceiverValue, null, scope)
-            }
-        }
-        return if (empty) ProcessResult.SCOPE_EMPTY else ProcessResult.FOUND
     }
 
     override fun processFunctionsByName(
