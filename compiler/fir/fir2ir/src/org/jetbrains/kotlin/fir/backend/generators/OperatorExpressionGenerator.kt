@@ -7,17 +7,14 @@ package org.jetbrains.kotlin.fir.backend.generators
 
 import org.jetbrains.kotlin.fir.backend.*
 import org.jetbrains.kotlin.fir.expressions.*
-import org.jetbrains.kotlin.fir.types.isMarkedNullable
-import org.jetbrains.kotlin.fir.types.isNullable
+import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.ir.builders.primitiveOp1
 import org.jetbrains.kotlin.ir.builders.primitiveOp2
 import org.jetbrains.kotlin.ir.expressions.*
-import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
-import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
-import org.jetbrains.kotlin.ir.expressions.impl.IrGetValueImpl
-import org.jetbrains.kotlin.ir.expressions.impl.IrTypeOperatorCallImpl
+import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
+import org.jetbrains.kotlin.ir.types.IrDynamicType
 import org.jetbrains.kotlin.ir.types.IrSimpleType
 import org.jetbrains.kotlin.ir.types.classifierOrFail
 import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
@@ -102,6 +99,37 @@ internal class OperatorExpressionGenerator(
         else -> error("Unexpected operation: $operation")
     }
 
+    private fun IrStatementOrigin.toIrDynamicOperator() = when (this) {
+        is IrStatementOrigin.EQEQ -> IrDynamicOperator.EQEQ
+        is IrStatementOrigin.EXCLEQ -> IrDynamicOperator.EXCLEQ
+        is IrStatementOrigin.EQEQEQ -> IrDynamicOperator.EQEQEQ
+        is IrStatementOrigin.EXCLEQEQ -> IrDynamicOperator.EXCLEQEQ
+        else -> null
+    }
+
+    private fun tryGenerateDynamicOperatorCall(
+        startOffset: Int,
+        endOffset: Int,
+        firstArgument: IrExpression,
+        secondArgument: IrExpression,
+        origin: IrStatementOrigin,
+    ) = if (firstArgument.type is IrDynamicType) {
+        val dynamicOperator = origin.toIrDynamicOperator()
+            ?: throw Exception("Couldn't convert to the corresponding IrDynamicOperator")
+
+        IrDynamicOperatorExpressionImpl(
+            startOffset,
+            endOffset,
+            irBuiltIns.booleanType,
+            dynamicOperator,
+        ).apply {
+            receiver = firstArgument
+            arguments.add(secondArgument)
+        }
+    } else {
+        null
+    }
+
     private fun transformEqualityOperatorCall(
         startOffset: Int, endOffset: Int, operation: FirOperation, arguments: List<FirExpression>
     ): IrExpression {
@@ -111,6 +139,17 @@ internal class OperatorExpressionGenerator(
             else -> error("Not an equality operation: $operation")
         }
         val comparisonInfo = inferPrimitiveNumericComparisonInfo(arguments[0], arguments[1])
+
+        tryGenerateDynamicOperatorCall(
+            startOffset,
+            endOffset,
+            arguments[0].convertToIrExpression(comparisonInfo, isLeftType = false),
+            arguments[1].convertToIrExpression(comparisonInfo, isLeftType = false),
+            origin,
+        )?.let {
+            return it
+        }
+
         val comparisonType = comparisonInfo?.comparisonType
         val eqeqSymbol = comparisonType?.let { typeConverter.classIdToSymbolMap[it.lookupTag.classId] }
             ?.let { irBuiltIns.ieee754equalsFunByOperandType[it] } ?: irBuiltIns.eqeqSymbol
@@ -138,6 +177,15 @@ internal class OperatorExpressionGenerator(
             FirOperation.IDENTITY -> IrStatementOrigin.EQEQEQ
             FirOperation.NOT_IDENTITY -> IrStatementOrigin.EXCLEQEQ
             else -> error("Not an identity operation: $operation")
+        }
+        tryGenerateDynamicOperatorCall(
+            startOffset,
+            endOffset,
+            visitor.convertToIrExpression(arguments[0]),
+            visitor.convertToIrExpression(arguments[1]),
+            origin,
+        )?.let {
+            return it
         }
         val identityCall = primitiveOp2(
             startOffset, endOffset,
