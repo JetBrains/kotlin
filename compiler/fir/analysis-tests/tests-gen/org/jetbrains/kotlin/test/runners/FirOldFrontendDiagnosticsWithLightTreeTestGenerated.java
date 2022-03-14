@@ -12821,6 +12821,12 @@ public class FirOldFrontendDiagnosticsWithLightTreeTestGenerated extends Abstrac
             }
 
             @Test
+            @TestMetadata("DoubleImports.kt")
+            public void testDoubleImports() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/imports/DoubleImports.kt");
+            }
+
+            @Test
             @TestMetadata("ExplicitImportsAmbiguity.kt")
             public void testExplicitImportsAmbiguity() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/imports/ExplicitImportsAmbiguity.kt");
