@@ -8,11 +8,17 @@ package org.jetbrains.kotlin.gradle.plugin.mpp
 import org.gradle.api.Project
 import org.gradle.api.attributes.*
 import org.gradle.api.attributes.Usage.*
+import org.gradle.kotlin.dsl.findByType
+import org.gradle.kotlin.dsl.hasPlugin
+import org.jetbrains.kotlin.gradle.dsl.KotlinCommonProjectExtension
+import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
+import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
+import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformCommonPlugin
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
-import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType.androidJvm
-import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType.jvm
+import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType.*
 import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
 import org.jetbrains.kotlin.gradle.plugin.usageByName
+import org.jetbrains.kotlin.gradle.targets.metadata.isCompatibilityMetadataVariantEnabled
 import org.jetbrains.kotlin.gradle.targets.metadata.isKotlinGranularMetadataEnabled
 
 object KotlinUsages {
@@ -27,8 +33,11 @@ object KotlinUsages {
     private val jvmPlatformTypes: Set<KotlinPlatformType> = setOf(jvm, androidJvm)
 
     internal fun consumerApiUsage(project: Project, platformType: KotlinPlatformType) = project.usageByName(
-        when (platformType) {
-            in jvmPlatformTypes -> JAVA_API
+        when {
+            platformType in jvmPlatformTypes -> JAVA_API
+            platformType == common
+                    && project.kotlinExtension is KotlinMultiplatformExtension
+                    && !project.isCompatibilityMetadataVariantEnabled -> KOTLIN_METADATA
             else -> KOTLIN_API
         }
     )
