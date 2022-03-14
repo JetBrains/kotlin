@@ -6435,6 +6435,12 @@ public class BoxJsTestGenerated extends AbstractBoxJsTest {
         }
 
         @Test
+        @TestMetadata("sameExternalNames.kt")
+        public void testSameExternalNames() throws Exception {
+            runTest("js/js.translator/testData/box/jsModule/sameExternalNames.kt");
+        }
+
+        @Test
         @TestMetadata("topLevelVarargFun.kt")
         public void testTopLevelVarargFun() throws Exception {
             runTest("js/js.translator/testData/box/jsModule/topLevelVarargFun.kt");
