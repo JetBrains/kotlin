@@ -1,5 +1,3 @@
-// IGNORE_BACKEND: JVM_IR
-
 package test.another
 
 annotation class Anno(val value: String)

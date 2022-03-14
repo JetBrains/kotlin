@@ -27,12 +27,12 @@ public final class AnnotationsTest {
     @Anno(value = "top-level-fun")
     public static final void topLevelFun(@org.jetbrains.annotations.NotNull()
     @Anno(value = "top-level-fun-receiver")
-    java.lang.String p0) {
+    java.lang.String $this$topLevelFun) {
     }
 
     @org.jetbrains.annotations.NotNull()
     public static final java.lang.String getTopLevelVal(@Anno(value = "top-level-val-receiver")
-    int p0) {
+    int $this$topLevelVal) {
         return null;
     }
 
