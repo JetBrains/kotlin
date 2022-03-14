@@ -62,6 +62,7 @@ fun deserializeFromByteArray(
         irLibraryFile,
         fileSymbol = dummyIrFile.symbol,
         actuals = emptyList(),
+        compatibilityMode = CompatibilityMode.CURRENT,
         handleExpectActualMapping = { _, symbol -> symbol } // no expect declarations
     ) { idSignature, symbolKind ->
         referencePublicSymbol(symbolTable, idSignature, symbolKind)
