@@ -73,6 +73,10 @@ abstract class JsAstDeserializerBase {
             block
         }
 
+        JsAstProtoBuf.Statement.StatementCase.VIRTUAL_BLOCK -> {
+            JsVirtualBlock(proto.virtualBlock.statementList.map { deserialize(it) })
+        }
+
         JsAstProtoBuf.Statement.StatementCase.GLOBAL_BLOCK -> {
             deserializeGlobalBlock(proto.globalBlock)
         }

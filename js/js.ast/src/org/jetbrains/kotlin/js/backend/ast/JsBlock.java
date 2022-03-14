@@ -47,6 +47,8 @@ public class JsBlock extends SourceInfoAwareJsNode implements JsStatement {
         return false;
     }
 
+    public boolean isVirtualBlock() { return false; }
+
     @Override
     public void accept(JsVisitor v) {
         v.visitBlock(this);

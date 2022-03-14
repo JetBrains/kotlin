@@ -67,14 +67,22 @@ abstract class JsAstSerializerBase {
             }
 
             override fun visitBlock(x: JsBlock) {
-                if (x is JsGlobalBlock) {
-                    builder.globalBlock = serializeBlock(x)
-                } else {
-                    val blockBuilder = JsAstProtoBuf.Block.newBuilder()
-                    for (part in x.statements) {
-                        blockBuilder.addStatement(serialize(part))
+                when (x) {
+                    is JsGlobalBlock -> { builder.globalBlock = serializeBlock(x) }
+                    is JsVirtualBlock -> {
+                        val virtualBlockBuilder = JsAstProtoBuf.VirtualBlock.newBuilder()
+                        for (part in x.statements) {
+                            virtualBlockBuilder.addStatement(serialize(part))
+                        }
+                        builder.virtualBlock = virtualBlockBuilder.build()
                     }
-                    builder.block = blockBuilder.build()
+                    else -> {
+                        val blockBuilder = JsAstProtoBuf.Block.newBuilder()
+                        for (part in x.statements) {
+                            blockBuilder.addStatement(serialize(part))
+                        }
+                        builder.block = blockBuilder.build()
+                    }
                 }
             }
 
