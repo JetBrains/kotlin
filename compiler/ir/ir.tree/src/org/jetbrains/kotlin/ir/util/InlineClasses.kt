@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.ir.util
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrField
 import org.jetbrains.kotlin.ir.declarations.IrProperty
+import org.jetbrains.kotlin.ir.declarations.inlineClassRepresentation
 import org.jetbrains.kotlin.ir.types.IrSimpleType
 
 fun getInlineClassUnderlyingType(irClass: IrClass): IrSimpleType {

@@ -17,5 +17,5 @@ class MultiFieldValueClassRepresentation<Type : SimpleTypeMarker>(
     }
 
     override fun containsPropertyWithName(name: Name): Boolean = name in map
-    override fun propertyTypeByName(name: Name): Type? = map[name]
+    override fun getPropertyTypeByName(name: Name): Type? = map[name]
 }
