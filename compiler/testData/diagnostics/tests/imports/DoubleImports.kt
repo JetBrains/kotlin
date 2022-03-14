@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // FILE: StarImported.kt
 
 package star
