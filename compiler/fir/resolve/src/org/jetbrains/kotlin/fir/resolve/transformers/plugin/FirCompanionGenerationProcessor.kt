@@ -34,6 +34,7 @@ class FirCompanionGenerationTransformer(val session: FirSession) : FirTransforme
     }
 
     override fun transformFile(file: FirFile, data: Nothing?): FirFile {
+        // I don't want to use laziness here to prevent possible multi-threading problems
         generatedDeclarationProvider = session.generatedDeclarationsSymbolProvider ?: return file
         return file.transformDeclarations(this, data)
     }

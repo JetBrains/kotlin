@@ -24,7 +24,7 @@ abstract class FirAbstractSimpleImportingScope(
 
     override fun processClassifiersByNameWithSubstitution(name: Name, processor: (FirClassifierSymbol<*>, ConeSubstitutor) -> Unit) {
         val imports = simpleImports[name] ?: return
-        processImportsByName(null, imports) { symbol ->
+        processImportsByName(name = null, imports) { symbol ->
             processor(symbol, ConeSubstitutor.Empty)
         }
     }
