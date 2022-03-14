@@ -20030,6 +20030,12 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 }
 
                 @Test
+                @TestMetadata("interface.kt")
+                public void testInterface() throws Exception {
+                    runTest("compiler/testData/codegen/box/inlineClasses/sealed/casts/interface.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+                }
+
+                @Test
                 @TestMetadata("object.kt")
                 public void testObject() throws Exception {
                     runTest("compiler/testData/codegen/box/inlineClasses/sealed/casts/object.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
