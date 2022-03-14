@@ -40,12 +40,6 @@ abstract class IrClass :
 
     abstract var valueClassRepresentation: ValueClassRepresentation<IrSimpleType>?
 
-    val inlineClassRepresentation: InlineClassRepresentation<IrSimpleType>?
-        get() = valueClassRepresentation as? InlineClassRepresentation<IrSimpleType>
-
-    val multiFieldValueClassRepresentation: MultiFieldValueClassRepresentation<IrSimpleType>?
-        get() = valueClassRepresentation as? MultiFieldValueClassRepresentation<IrSimpleType>
-
     abstract var sealedSubclasses: List<IrClassSymbol>
 
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =

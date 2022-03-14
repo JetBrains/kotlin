@@ -172,18 +172,18 @@ class FirElementSerializer private constructor(
             builder.companionObjectName = getSimpleNameIndex(companionObject.name)
         }
 
-        val representation = (klass as? FirRegularClass)?.getInlineClassUnderlyingParameter(session)
+        val representation = (klass as? FirRegularClass)?.inlineClassRepresentation
         if (representation != null) {
-            builder.inlineClassUnderlyingPropertyName = getSimpleNameIndex(representation.name)
+            builder.inlineClassUnderlyingPropertyName = getSimpleNameIndex(representation.underlyingPropertyName)
 
             val property = callableMembers.single {
-                it is FirProperty && it.receiverTypeRef == null && it.name == representation.name
+                it is FirProperty && it.receiverTypeRef == null && it.name == representation.underlyingPropertyName
             }
             if (!property.visibility.isPublicAPI) {
                 if (useTypeTable()) {
-                    builder.inlineClassUnderlyingTypeId = typeId(representation.returnTypeRef)
+                    builder.inlineClassUnderlyingTypeId = typeId(representation.underlyingType)
                 } else {
-                    builder.setInlineClassUnderlyingType(typeProto(representation.returnTypeRef))
+                    builder.setInlineClassUnderlyingType(typeProto(representation.underlyingType))
                 }
             }
         }

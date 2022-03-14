@@ -643,14 +643,13 @@ fun Fir2IrComponents.createTemporaryVariableForSafeCallConstruction(
 ): Pair<IrVariable, IrValueSymbol> =
     createTemporaryVariable(receiverExpression, conversionScope, "safe_receiver")
 
-// TODO: implement valueClassRepresentation in FirRegularClass instead. zhelenskiy
 fun Fir2IrComponents.computeValueClassRepresentation(klass: FirRegularClass): ValueClassRepresentation<IrSimpleType>? {
-    val parameters = klass.getValueClassUnderlyingParameters(session) ?: return null
-    return createValueClassRepresentation(IrTypeSystemContextImpl(irBuiltIns), parameters.map {
-        val type = it.returnTypeRef.toIrType(typeConverter).safeAs<IrSimpleType>()
-            ?: error("Value class underlying type is not a simple type: ${klass.render()}")
-        it.name to type
-    })
+    require((klass.valueClassRepresentation != null) == klass.isInline)
+    return klass.valueClassRepresentation?.mapUnderlyingType {
+        with(typeConverter) {
+            it.toIrType() as? IrSimpleType?: error("Value class underlying type is not a simple type: ${klass.render()}")
+        }
+    }
 }
 
 fun FirRegularClass.getIrSymbolsForSealedSubclasses(components: Fir2IrComponents): List<IrClassSymbol> {

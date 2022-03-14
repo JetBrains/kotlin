@@ -749,7 +749,7 @@ interface ClassicTypeSystemContext : TypeSystemInferenceExtensionContext, TypeSy
         return (declarationDescriptor as? ClassDescriptor)?.valueClassRepresentation is MultiFieldValueClassRepresentation
     }
 
-    override fun TypeConstructorMarker.valueClassRepresentationTypeMarkersList(): List<Pair<Name, SimpleTypeMarker>>? {
+    override fun TypeConstructorMarker.getValueClassProperties(): List<Pair<Name, SimpleTypeMarker>>? {
         require(this is TypeConstructor, this::errorMessage)
         return (declarationDescriptor as? ClassDescriptor)?.valueClassRepresentation?.underlyingPropertyNamesToTypes
     }
