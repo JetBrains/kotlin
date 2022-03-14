@@ -17,10 +17,10 @@ const val floatMinExponent = <!EVALUATED: `-126`!>{ java.lang.Float.MIN_EXPONENT
 const val floatNegInfinity = <!EVALUATED: `-Infinity`!>{ java.lang.Float.NEGATIVE_INFINITY }()<!>
 const val floatPosInfinity = <!EVALUATED: `Infinity`!>{ java.lang.Float.POSITIVE_INFINITY }()<!>
 
-const val booleanFalse = { java.lang.Boolean.FALSE }().<!EVALUATED: `false`!>toString()<!>
-const val booleanTrue = { java.lang.Boolean.TRUE }().<!EVALUATED: `true`!>toString()<!>
+const val booleanFalse = <!EVALUATED: `false`!>{ java.lang.Boolean.FALSE }().toString()<!>
+const val booleanTrue = <!EVALUATED: `true`!>{ java.lang.Boolean.TRUE }().toString()<!>
 
-const val charMax = { java.lang.Character.MAX_VALUE }().<!EVALUATED: `65535`!>toInt()<!>
-const val charMin = { java.lang.Character.MIN_VALUE }().<!EVALUATED: `0`!>toInt()<!>
+const val charMax = <!EVALUATED: `65535`!>{ java.lang.Character.MAX_VALUE }().toInt()<!>
+const val charMin = <!EVALUATED: `0`!>{ java.lang.Character.MIN_VALUE }().toInt()<!>
 const val charSize = <!EVALUATED: `16`!>{ java.lang.Character.SIZE }()<!>
 const val charBytes = <!EVALUATED: `2`!>{ java.lang.Character.BYTES }()<!>

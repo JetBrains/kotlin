@@ -39,7 +39,7 @@ open class IrInterpreterBackendHandler(testServices: TestServices) : AbstractIrH
 private class Evaluator(private val interpreter: IrInterpreter, private val globalMetadataInfoHandler: GlobalMetadataInfoHandler) {
     fun evaluate(irFile: IrFile, testFile: TestFile) {
         object : IrElementTransformerVoid() {
-            private fun IrExpression.report(original: IrExpression): IrExpression {
+            private fun IrExpression.report(original: IrExpression, startOffsetForDiagnostic: Int? = null): IrExpression {
                 if (this == original) return this
                 val isError = this is IrErrorExpression
                 val message = when (this) {
@@ -48,9 +48,10 @@ private class Evaluator(private val interpreter: IrInterpreter, private val glob
                     else -> TODO("unsupported type ${this::class.java}")
                 }
                 val startOffset = when {
+                    startOffsetForDiagnostic != null -> startOffsetForDiagnostic
                     // this additional check is needed to unify rendering from old and new frontends
                     original is IrCall && original.symbol.owner.fqNameWhenAvailable?.asString() == "kotlin.internal.ir.CHECK_NOT_NULL" -> endOffset - 2
-                    else -> startOffset
+                    else -> original.startOffset
                 }
                 val metaInfo = IrInterpreterCodeMetaInfo(startOffset, this.endOffset, message, isError)
                 globalMetadataInfoHandler.addMetadataInfosForFile(testFile, listOf(metaInfo))
@@ -82,7 +83,10 @@ private class Evaluator(private val interpreter: IrInterpreter, private val glob
                 if (expression is IrConst<*>) return declaration
 
                 val isConst = declaration.correspondingPropertySymbol?.owner?.isConst == true
-                if (isConst) initializer.expression = interpreter.interpret(expression, irFile).report(expression)
+                if (isConst) {
+                    val startOffsetForDiagnostic = declaration.startOffset + "const val  = ".length + declaration.name.asString().length
+                    initializer.expression = interpreter.interpret(expression, irFile).report(expression, startOffsetForDiagnostic)
+                }
                 return declaration
             }
         }.visitFile(irFile)

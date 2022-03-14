@@ -1,6 +1,6 @@
 import kotlin.sequences.*
 
-const val a = sequenceOf(1, 2, 3).iterator().<!EVALUATED: `1`!>next()<!>
-const val b = sequenceOf(2, 3).iterator().<!EVALUATED: `2`!>next()<!>
-const val c = sequenceOf<Int>().iterator().<!EVALUATED: `false`!>hasNext()<!>
-const val d = generateSequence() { 42 }.iterator().<!EVALUATED: `42`!>next()<!>
+const val a = <!EVALUATED: `1`!>sequenceOf(1, 2, 3).iterator().next()<!>
+const val b = <!EVALUATED: `2`!>sequenceOf(2, 3).iterator().next()<!>
+const val c = <!EVALUATED: `false`!>sequenceOf<Int>().iterator().hasNext()<!>
+const val d = <!EVALUATED: `42`!>generateSequence() { 42 }.iterator().next()<!>

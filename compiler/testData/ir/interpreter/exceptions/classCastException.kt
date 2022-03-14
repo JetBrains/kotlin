@@ -49,25 +49,25 @@ const val c2 = <!WAS_NOT_EVALUATED: `
 Exception java.lang.ClassCastException: kotlin.Int cannot be cast to kotlin.String
 	at ClassCastExceptionKt.<clinit>(classCastException.kt:48)`!>unsafeClassCast<String>()<!>
 
-const val d1 = A<Int>().<!EVALUATED: `1`!>unsafeCast()<!>
-const val d2 = A<String>().<!WAS_NOT_EVALUATED: `
+const val d1 = <!EVALUATED: `1`!>A<Int>().unsafeCast()<!>
+const val d2 = <!WAS_NOT_EVALUATED: `
 Exception java.lang.ClassCastException: kotlin.Int cannot be cast to kotlin.String
-	at ClassCastExceptionKt.<clinit>(classCastException.kt:51)`!>unsafeCast()<!>
+	at ClassCastExceptionKt.<clinit>(classCastException.kt:51)`!>A<String>().unsafeCast()<!>
 
-const val stringList = getIntList<List<String>>().<!WAS_NOT_EVALUATED: `
+const val stringList = <!WAS_NOT_EVALUATED: `
 Exception java.lang.ClassCastException: kotlin.Int cannot be cast to kotlin.String
 	at ClassCastExceptionKt.stringList.<anonymous>(classCastException.kt:54)
 	at ClassCastExceptionKt.stringList.Function$0.invoke(classCastException.kt:0)
 	at StandardKt.kotlin.let(Standard.kt:32)
-	at ClassCastExceptionKt.<clinit>(classCastException.kt:53)`!>let {
+	at ClassCastExceptionKt.<clinit>(classCastException.kt:53)`!>getIntList<List<String>>().let {
     it[0].length
 }<!>
-const val nullableStringList = getStringNullableList<List<String>>().<!WAS_NOT_EVALUATED: `
+const val nullableStringList = <!WAS_NOT_EVALUATED: `
 Exception java.lang.NullPointerException
 	at ClassCastExceptionKt.nullableStringList.<anonymous>(classCastException.kt)
 	at ClassCastExceptionKt.nullableStringList.Function$0.invoke(classCastException.kt:0)
 	at StandardKt.kotlin.let(Standard.kt:32)
-	at ClassCastExceptionKt.<clinit>(classCastException.kt:56)`!>let { it[0].length }<!>
+	at ClassCastExceptionKt.<clinit>(classCastException.kt:56)`!>getStringNullableList<List<String>>().let { it[0].length }<!>
 const val nullableStringLength = <!WAS_NOT_EVALUATED: `
 Exception java.lang.IllegalArgumentException: Parameter specified as non-null is null: method ClassCastExceptionKt.getLength, parameter str
 	at ClassCastExceptionKt.<clinit>(classCastException.kt:31)`!>getLength(getStringNullableList<List<String>>()[0])<!>

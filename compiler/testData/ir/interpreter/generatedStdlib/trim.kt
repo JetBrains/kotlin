@@ -1,5 +1,5 @@
 import kotlin.text.*
 
-const val trimmed = "  1  ".<!EVALUATED: `1`!>trim()<!>
-const val trimmedWithPredicate = ("  2  " as CharSequence).trim { it.isWhitespace() }.<!EVALUATED: `2`!>toString()<!>
-const val charSequenceTrim = ("  3  " as CharSequence).trim().<!EVALUATED: `3`!>toString()<!>
+const val trimmed = <!EVALUATED: `1`!>"  1  ".trim()<!>
+const val trimmedWithPredicate = <!EVALUATED: `2`!>("  2  " as CharSequence).trim { it.isWhitespace() }.toString()<!>
+const val charSequenceTrim = <!EVALUATED: `3`!>("  3  " as CharSequence).trim().toString()<!>

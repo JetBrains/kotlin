@@ -17,7 +17,7 @@ fun changeAndReturnSumForObject(array: Array<A>, index: Int, newValue: A): Int {
     return sum
 }
 
-const val a = arrayOf(1, 2, 3).<!EVALUATED: `3`!>size<!>
+const val a = <!EVALUATED: `3`!>arrayOf(1, 2, 3).size<!>
 const val b = <!EVALUATED: `15`!>changeAndReturnSum(intArrayOf(1, 2, 3), 0, 10)<!>
-const val c = emptyArray<Int>().<!EVALUATED: `0`!>size<!>
+const val c = <!EVALUATED: `0`!>emptyArray<Int>().size<!>
 const val d = <!EVALUATED: `15`!>changeAndReturnSumForObject(arrayOf(A(1), A(2), A(3)), 0, A(10))<!>

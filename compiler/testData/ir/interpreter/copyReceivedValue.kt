@@ -5,4 +5,4 @@ fun Int.minusOne(): Int {
     return this
 }
 
-const val a = 5.<!EVALUATED: `5`!>minusOne()<!>
+const val a = <!EVALUATED: `5`!>5.minusOne()<!>

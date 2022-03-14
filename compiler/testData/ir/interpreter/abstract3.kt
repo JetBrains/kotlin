@@ -41,9 +41,9 @@ fun getClassDAsD(num: Int): D {
     return D(num)
 }
 
-const val numA1 = getClassDAsA(1).<!EVALUATED: `3`!>getInt()<!>
-const val numB1 = getClassDAsB(1).<!EVALUATED: `3`!>getInt()<!>
-const val numC1 = getClassDAsC(1).<!EVALUATED: `3`!>getInt()<!>
-const val numC2 = getClassDAsC(1).<!EVALUATED: `1`!>getString()<!>
-const val numD1 = getClassDAsD(1).<!EVALUATED: `3`!>getInt()<!>
-const val numD2 = getClassDAsD(1).<!EVALUATED: `1`!>getString()<!>
+const val numA1 = <!EVALUATED: `3`!>getClassDAsA(1).getInt()<!>
+const val numB1 = <!EVALUATED: `3`!>getClassDAsB(1).getInt()<!>
+const val numC1 = <!EVALUATED: `3`!>getClassDAsC(1).getInt()<!>
+const val numC2 = <!EVALUATED: `1`!>getClassDAsC(1).getString()<!>
+const val numD1 = <!EVALUATED: `3`!>getClassDAsD(1).getInt()<!>
+const val numD2 = <!EVALUATED: `1`!>getClassDAsD(1).getString()<!>

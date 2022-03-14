@@ -10,5 +10,5 @@ class B(val b: Int) : A() {
     }
 }
 
-const val a = A().<!EVALUATED: `11`!>inc(10)<!>
-const val b = B(10).<!EVALUATED: `21`!>inc(11)<!>
+const val a = <!EVALUATED: `11`!>A().inc(10)<!>
+const val b = <!EVALUATED: `21`!>B(10).inc(11)<!>

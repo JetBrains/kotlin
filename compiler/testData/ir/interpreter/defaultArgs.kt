@@ -20,9 +20,9 @@ const val sumBasedOnPrevious1 = <!EVALUATED: `11`!>sumBasedOnPrevious()<!>
 const val sumBasedOnPrevious2 = <!EVALUATED: `5`!>sumBasedOnPrevious(b = 1, c = 1)<!>
 const val sumBasedOnPrevious3 = <!EVALUATED: `8`!>sumBasedOnPrevious(a = 1, c = 1)<!>
 
-const val sumInInterfaceDefault1 = B().<!EVALUATED: `42`!>foo(1)<!>
-const val sumInInterfaceDefault2 = B().<!EVALUATED: `4`!>foo(x = 1, y = 2)<!>
-const val sumInInterfaceDefault3 = B().<!EVALUATED: `-1`!>foo(x = 1, y = 2, z = -1)<!>
+const val sumInInterfaceDefault1 = <!EVALUATED: `42`!>B().foo(1)<!>
+const val sumInInterfaceDefault2 = <!EVALUATED: `4`!>B().foo(x = 1, y = 2)<!>
+const val sumInInterfaceDefault3 = <!EVALUATED: `-1`!>B().foo(x = 1, y = 2, z = -1)<!>
 
 const val someConstProp = 0
 @CompileTimeCalculation
@@ -38,12 +38,12 @@ class Outer {
     }
 }
 
-const val inner1 = Outer().Inner().<!EVALUATED: `100`!>withInner(100)<!>
-const val inner2 = Outer().Inner().<!EVALUATED: `-1`!>withInner()<!>
-const val inner3 = Outer().Inner().<!EVALUATED: `100`!>withOuter(100)<!>
-const val inner4 = Outer().Inner().<!EVALUATED: `-2`!>withOuter()<!>
-const val inner5 = Outer().Inner().<!EVALUATED: `100`!>withGlobal(100)<!>
-const val inner6 = Outer().Inner().<!EVALUATED: `0`!>withGlobal()<!>
+const val inner1 = <!EVALUATED: `100`!>Outer().Inner().withInner(100)<!>
+const val inner2 = <!EVALUATED: `-1`!>Outer().Inner().withInner()<!>
+const val inner3 = <!EVALUATED: `100`!>Outer().Inner().withOuter(100)<!>
+const val inner4 = <!EVALUATED: `-2`!>Outer().Inner().withOuter()<!>
+const val inner5 = <!EVALUATED: `100`!>Outer().Inner().withGlobal(100)<!>
+const val inner6 = <!EVALUATED: `0`!>Outer().Inner().withGlobal()<!>
 
 @CompileTimeCalculation
 interface I<T> {
@@ -59,5 +59,5 @@ open class C<T> {
 @CompileTimeCalculation
 class D(override val prop: Int): C<Int>(), I<Int> {}
 
-const val fooB1 = D(10).<!EVALUATED: `10`!>foo()<!>
-const val fooB2 = D(10).<!EVALUATED: `-1`!>foo(-1)<!>
+const val fooB1 = <!EVALUATED: `10`!>D(10).foo()<!>
+const val fooB2 = <!EVALUATED: `-1`!>D(10).foo(-1)<!>

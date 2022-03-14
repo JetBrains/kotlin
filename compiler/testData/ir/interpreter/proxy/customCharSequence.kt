@@ -7,6 +7,6 @@ class MyCharSequence(val str: String): CharSequence {
     override fun subSequence(startIndex: Int, endIndex: Int) = str.subSequence(startIndex, endIndex)
 }
 
-const val sbSize = StringBuilder(MyCharSequence("MyString")).<!EVALUATED: `8`!>length<!>
-const val appendSize = StringBuilder().append(MyCharSequence("MyString")).<!EVALUATED: `8`!>length<!>
-const val subSequenceSize = StringBuilder(StringBuilder(MyCharSequence("MyString")).subSequence(0, 4)).<!EVALUATED: `4`!>length<!>
+const val sbSize = <!EVALUATED: `8`!>StringBuilder(MyCharSequence("MyString")).length<!>
+const val appendSize = <!EVALUATED: `8`!>StringBuilder().append(MyCharSequence("MyString")).length<!>
+const val subSequenceSize = <!EVALUATED: `4`!>StringBuilder(StringBuilder(MyCharSequence("MyString")).subSequence(0, 4)).length<!>

@@ -20,11 +20,11 @@ class Outer {
     }
 }
 
-const val a1 = Outer().<!EVALUATED: `outer foo`!>foo()<!>
-const val a2 = Outer().Middle().<!EVALUATED: `middle foo`!>foo()<!>
-const val a3 = Outer().Middle().Inner().<!EVALUATED: `inner foo with outer bar = "bar"`!>foo()<!>
+const val a1 = <!EVALUATED: `outer foo`!>Outer().foo()<!>
+const val a2 = <!EVALUATED: `middle foo`!>Outer().Middle().foo()<!>
+const val a3 = <!EVALUATED: `inner foo with outer bar = "bar"`!>Outer().Middle().Inner().foo()<!>
 
-const val b = Outer().Middle().Inner().<!EVALUATED: `From inner: 3; from middle: 2; from outer: 1`!>getAllNums()<!>
+const val b = <!EVALUATED: `From inner: 3; from middle: 2; from outer: 1`!>Outer().Middle().Inner().getAllNums()<!>
 
 open class A(val s: String) {
     val z = s
@@ -45,4 +45,4 @@ open class A(val s: String) {
     }
 }
 
-const val c = A("Fail").B("OK").<!EVALUATED: `OK`!>testB()<!>
+const val c = <!EVALUATED: `OK`!>A("Fail").B("OK").testB()<!>
