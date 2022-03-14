@@ -692,8 +692,14 @@ class Fir2IrVisitor(
         }
     }
 
+    private val FirFunctionCall.dynamicVararg: FirVarargArgumentsExpression?
+        get() = arguments.firstOrNull() as? FirVarargArgumentsExpression
+
+    private val FirFunctionCall.dynamicVarargArguments: List<FirExpression>?
+        get() = dynamicVararg?.arguments
+
     private fun extractOperationFromDynamicSetCall(functionCall: FirFunctionCall) =
-        (functionCall.arguments.firstOrNull() as? FirVarargArgumentsExpression)?.arguments?.lastOrNull() as? FirFunctionCall
+        functionCall.dynamicVarargArguments?.lastOrNull() as? FirFunctionCall
 
     private fun FirBlock.convertIncrementOrDecrementToIr(): IrExpression? {
         val receiver = statements.findFirst<FirProperty>()?.initializer ?: return null
