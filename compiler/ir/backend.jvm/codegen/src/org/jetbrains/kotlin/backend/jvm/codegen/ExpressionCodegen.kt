@@ -221,29 +221,34 @@ class ExpressionCodegen(
     fun generate() {
         mv.visitCode()
         val startLabel = markNewLabel()
-        if (irFunction.isMultifileBridge()) {
-            // Multifile bridges need to have line number 1 to be filtered out by the intellij debugging filters.
-            mv.visitLineNumber(1, startLabel)
-        }
         val info = BlockInfo()
-        val body = irFunction.body
-            ?: error("Function has no body: ${irFunction.render()}")
-
-        generateNonNullAssertions()
-        generateFakeContinuationConstructorIfNeeded()
-        val result = body.accept(this, info)
-        // If this function has an expression body, return the result of that expression.
-        // Otherwise, if it does not end in a return statement, it must be void-returning,
-        // and an explicit return instruction at the end is still required to pass validation.
-        if (body !is IrStatementContainer || body.statements.lastOrNull() !is IrReturn) {
-            // Allow setting a breakpoint on the closing brace of a void-returning function
-            // without an explicit return, or the `class Something(` line of a primary constructor.
-            if (irFunction.origin != JvmLoweredDeclarationOrigin.CLASS_STATIC_INITIALIZER) {
-                irFunction.markLineNumber(startOffset = irFunction is IrConstructor && irFunction.isPrimary)
+        if (context.state.classBuilderMode.generateBodies) {
+            if (irFunction.isMultifileBridge()) {
+                // Multifile bridges need to have line number 1 to be filtered out by the intellij debugging filters.
+                mv.visitLineNumber(1, startLabel)
             }
-            val (returnType, returnIrType) = irFunction.returnAsmAndIrTypes()
-            result.materializeAt(returnType, returnIrType)
-            mv.areturn(returnType)
+            val body = irFunction.body
+                ?: error("Function has no body: ${irFunction.render()}")
+
+            generateNonNullAssertions()
+            generateFakeContinuationConstructorIfNeeded()
+            val result = body.accept(this, info)
+            // If this function has an expression body, return the result of that expression.
+            // Otherwise, if it does not end in a return statement, it must be void-returning,
+            // and an explicit return instruction at the end is still required to pass validation.
+            if (body !is IrStatementContainer || body.statements.lastOrNull() !is IrReturn) {
+                // Allow setting a breakpoint on the closing brace of a void-returning function
+                // without an explicit return, or the `class Something(` line of a primary constructor.
+                if (irFunction.origin != JvmLoweredDeclarationOrigin.CLASS_STATIC_INITIALIZER) {
+                    irFunction.markLineNumber(startOffset = irFunction is IrConstructor && irFunction.isPrimary)
+                }
+                val (returnType, returnIrType) = irFunction.returnAsmAndIrTypes()
+                result.materializeAt(returnType, returnIrType)
+                mv.areturn(returnType)
+            }
+        } else {
+            mv.aconst(null)
+            mv.athrow()
         }
         val endLabel = markNewLabel()
         writeLocalVariablesInTable(info, endLabel)
