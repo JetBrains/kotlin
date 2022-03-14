@@ -72,6 +72,7 @@ android {
     lintOptions {
         disable("SyntheticAccessor")
     }
+    namespace "androidx.compose.runtime.tests"
 }
 
 tasks.withType(KotlinCompile).configureEach {
