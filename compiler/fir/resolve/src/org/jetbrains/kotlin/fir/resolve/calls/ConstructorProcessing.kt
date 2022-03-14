@@ -78,8 +78,8 @@ private fun FirScope.getFirstClassifierOrNull(
     session: FirSession,
     bodyResolveComponents: BodyResolveComponents
 ): Pair<FirClassifierSymbol<*>, ConeSubstitutor>? {
-    var successful = false
-    var ambiguity = false
+    var isSuccessResult = false
+    var isAmbiguousResult = false
     var result: Pair<FirClassifierSymbol<*>, ConeSubstitutor>? = null
     processClassifiersByNameWithSubstitution(callInfo.name) { symbol, substitution ->
         val classifierDeclaration = symbol.fir
@@ -103,15 +103,15 @@ private fun FirScope.getFirstClassifierOrNull(
             isSuccessCandidate = false
         }
 
-        if (result == null || (!successful && isSuccessCandidate)) {
-            successful = isSuccessCandidate
+        if (result == null || (!isSuccessResult && isSuccessCandidate)) {
+            isSuccessResult = isSuccessCandidate
             result = symbol to substitution
         } else {
-            ambiguity = true
+            isAmbiguousResult = true
         }
     }
 
-    return result.takeUnless { ambiguity }
+    return result.takeUnless { isAmbiguousResult }
 }
 
 private fun processSyntheticConstructors(
