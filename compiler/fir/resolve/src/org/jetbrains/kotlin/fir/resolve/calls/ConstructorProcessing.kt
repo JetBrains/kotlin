@@ -107,8 +107,9 @@ private fun FirScope.getFirstClassifierOrNull(
 
         when {
             isSuccessCandidate && !isSuccessResult -> {
-                // any result is better than no result
+                // successful result is better than unsuccessful
                 isSuccessResult = true
+                isAmbiguousResult = false
                 result = SymbolWithSubstitutor(symbol, substitutor)
             }
             result?.symbol === symbol -> {
@@ -116,8 +117,12 @@ private fun FirScope.getFirstClassifierOrNull(
                 return@processClassifiersByNameWithSubstitution
             }
             result != null -> {
-                // results are similar => ambiguity
-                isAmbiguousResult = true
+                if (isSuccessResult == isSuccessCandidate) {
+                    // results are similar => ambiguity
+                    isAmbiguousResult = true
+                } else {
+                    // ignore unsuccessful result if we have successful one
+                }
             }
             else -> {
                 // result == null: any result is better than no result
