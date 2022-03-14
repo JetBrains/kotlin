@@ -131,10 +131,10 @@ const val decrement = <!EVALUATED: `2`!>dec(3L)<!>
 const val unaryPlus = <!EVALUATED: `3`!>unaryPlus(3L)<!>
 const val unaryMinus = <!EVALUATED: `-3`!>unaryMinus(3L)<!>
 
-const val rangeTo1 = rangeTo(5L, 1.toByte()).<!EVALUATED: `1`!>last<!>
-const val rangeTo2 = rangeTo(5L, 2.toShort()).<!EVALUATED: `2`!>last<!>
-const val rangeTo3 = rangeTo(5L, 3).<!EVALUATED: `3`!>last<!>
-const val rangeTo4 = rangeTo(5L, 4L).<!EVALUATED: `4`!>last<!>
+const val rangeTo1 = <!EVALUATED: `1`!>rangeTo(5L, 1.toByte()).last<!>
+const val rangeTo2 = <!EVALUATED: `2`!>rangeTo(5L, 2.toShort()).last<!>
+const val rangeTo3 = <!EVALUATED: `3`!>rangeTo(5L, 3).last<!>
+const val rangeTo4 = <!EVALUATED: `4`!>rangeTo(5L, 4L).last<!>
 
 const val shiftLeft = <!EVALUATED: `16`!>shl(8L, 1)<!>
 const val shiftRight = <!EVALUATED: `2`!>shr(8L, 2)<!>

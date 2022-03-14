@@ -10,5 +10,5 @@ class B : A() {
     override fun String.getSize() = -1
 }
 
-const val a = A().<!EVALUATED: `4`!>returnSizeOf("1234")<!>
-const val b = B().<!EVALUATED: `-1`!>returnSizeOf("1234")<!>
+const val a = <!EVALUATED: `4`!>A().returnSizeOf("1234")<!>
+const val b = <!EVALUATED: `-1`!>B().returnSizeOf("1234")<!>

@@ -21,8 +21,8 @@ object ObjectWithConst {
     fun concat(first: String, second: Any) = "$first$second"
 }
 
-const val num = A().<!EVALUATED: `10`!>a<!>
-const val numStatic = A.<!EVALUATED: `-10`!>static<!>
-const val numStaticFromFun = A.<!EVALUATED: `2147483647`!>getStaticNumber()<!>
-const val valFromObject = ObjectWithConst.<!EVALUATED: `Value in a: 100`!>b<!>
-const val valFnonConstFromObject = ObjectWithConst.<!EVALUATED: `Not const field in compile time object`!>nonConst<!>
+const val num = <!EVALUATED: `10`!>A().a<!>
+const val numStatic = <!EVALUATED: `-10`!>A.static<!>
+const val numStaticFromFun = <!EVALUATED: `2147483647`!>A.getStaticNumber()<!>
+const val valFromObject = <!EVALUATED: `Value in a: 100`!>ObjectWithConst.b<!>
+const val valFnonConstFromObject = <!EVALUATED: `Not const field in compile time object`!>ObjectWithConst.nonConst<!>

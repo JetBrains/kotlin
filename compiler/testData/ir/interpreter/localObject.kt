@@ -15,5 +15,5 @@ class A(val a: Int) {
     }
 }
 
-const val a = getLocalObject(10).<!EVALUATED: `10`!>getNum()<!>
-const val b = A(2).localObject.<!EVALUATED: `2`!>getNum()<!>
+const val a = <!EVALUATED: `10`!>getLocalObject(10).getNum()<!>
+const val b = <!EVALUATED: `2`!>A(2).localObject.getNum()<!>

@@ -34,4 +34,4 @@ class ImplementIterator constructor(val i: Int) : ComplexIterator(i) {
 @CompileTimeCalculation
 fun getIterator(i: Int): ComplexIterator = ImplementIterator(i)
 
-const val next = getIterator(10).<!EVALUATED: `31`!>complexNext()<!>
+const val next = <!EVALUATED: `31`!>getIterator(10).complexNext()<!>

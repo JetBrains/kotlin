@@ -32,7 +32,7 @@ const val a3 = <!EVALUATED: `8`!>minus('9', '1')<!>
 const val a4 = <!EVALUATED: `8`!>minus('9', 1)<!>
 const val a5 = <!EVALUATED: `2`!>inc('1')<!>
 const val a6 = <!EVALUATED: `0`!>dec('1')<!>
-const val a7 = rangeTo('9', '1').<!EVALUATED: `1`!>last<!>
+const val a7 = <!EVALUATED: `1`!>rangeTo('9', '1').last<!>
 
 const val b1 = <!EVALUATED: `49`!>toByte('1')<!>
 const val b2 = <!EVALUATED: `2`!>toChar('2')<!>

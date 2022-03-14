@@ -27,11 +27,11 @@ fun testIterator(mutableList: MutableList<Byte>): String {
     return "Sum = " + sum
 }
 
-const val emptyMutableListSize = mutableListOf<Any>().<!EVALUATED: `0`!>size<!>
-const val mutableListSize = mutableListOf(1, 2, 3).<!EVALUATED: `3`!>size<!>
+const val emptyMutableListSize = <!EVALUATED: `0`!>mutableListOf<Any>().size<!>
+const val mutableListSize = <!EVALUATED: `3`!>mutableListOf(1, 2, 3).size<!>
 const val mutableListAdd = <!EVALUATED: `After add new size is 4`!>testAdd(mutableListOf(1, 2, 3), 4)<!>
 const val mutableListRemove1 = <!EVALUATED: `After remove new size is 2`!>testRemove(mutableListOf("1", "2", "3"), "1")<!>
 const val mutableListRemove2 = <!EVALUATED: `After remove new size is 3`!>testRemove(mutableListOf("1", "2", "3"), "4")<!>
 const val mutableListAddAll = <!EVALUATED: `After addAll new size is 5`!>testAddAll(mutableListOf(1.0, 2.0, 3.0), listOf(4.333, -5.5))<!>
 const val mutableListSum = <!EVALUATED: `Sum = 136`!>testIterator(mutableListOf<Byte>(1, (-2).toByte(), 127, 10, 0))<!>
-const val mutableListSubList = mutableListOf(1, 2, 3, 4).subList(0, 2).<!EVALUATED: `2`!>size<!>
+const val mutableListSubList = <!EVALUATED: `2`!>mutableListOf(1, 2, 3, 4).subList(0, 2).size<!>

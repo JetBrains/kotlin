@@ -2,7 +2,7 @@
 @CompileTimeCalculation internal class IntProgressionIterator(first: Int, last: Int, val step: Int) : IntIterator()
 @CompileTimeCalculation public class IntRange(start: Int, endInclusive: Int) : IntProgression(start, endInclusive, 1), ClosedRange<Int>
 
-const val range = (1..10).<!EVALUATED: `1`!>first<!>
+const val range = <!EVALUATED: `1`!>(1..10).first<!>
 
 @CompileTimeCalculation
 fun getIterator(first: Int, last: Int): Int {
