@@ -38,7 +38,7 @@ abstract class FirScope {
     open val scopeOwnerLookupNames: List<String> get() = emptyList()
 }
 
-fun FirScope.getSingleClassifier(name: Name): FirClassifierSymbol<*>? = mutableListOf<FirClassifierSymbol<*>>().apply {
+fun FirScope.getSingleClassifier(name: Name): FirClassifierSymbol<*>? = mutableSetOf<FirClassifierSymbol<*>>().apply {
     processClassifiersByName(name, this::add)
 }.singleOrNull()
 

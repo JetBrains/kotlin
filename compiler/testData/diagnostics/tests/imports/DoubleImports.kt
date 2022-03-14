@@ -3,7 +3,9 @@
 
 package star
 
-class SomeClass
+class SomeClass {
+    class Nested
+}
 
 fun foo() {}
 
@@ -31,6 +33,8 @@ import explicit.gau
 import explicit.gau
 
 fun useSomeClass(): SomeClass = SomeClass()
+
+fun useNested(): SomeClass.Nested = SomeClass.Nested()
 
 fun useAnotherClass(): AnotherClass = AnotherClass()
 
