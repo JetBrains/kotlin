@@ -7,12 +7,17 @@ package org.jetbrains.kotlin.ir.backend.js.transformers.irToJs
 
 import org.jetbrains.kotlin.backend.common.compilationException
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
+import org.jetbrains.kotlin.ir.backend.js.JsLoweredDeclarationOrigin
 import org.jetbrains.kotlin.ir.backend.js.utils.JsGenerationContext
 import org.jetbrains.kotlin.ir.backend.js.utils.emptyScope
+import org.jetbrains.kotlin.ir.backend.js.utils.isTheLastReturnStatementIn
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrVariable
 import org.jetbrains.kotlin.ir.expressions.*
+import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrReturnableBlockSymbol
+import org.jetbrains.kotlin.ir.types.classOrNull
+import org.jetbrains.kotlin.ir.types.classifierOrNull
 import org.jetbrains.kotlin.ir.types.isAny
 import org.jetbrains.kotlin.ir.util.constructedClassType
 import org.jetbrains.kotlin.ir.util.file
@@ -37,14 +42,29 @@ class IrElementToJsStatementTransformer : BaseIrElementToJsNodeTransformer<JsSta
             context.newFile(it.owner.file, context.currentFunction, context.localNames)
         } ?: context
 
-        val block = JsBlock(expression.statements.map { it.accept(this, newContext) })
+        val statements = expression.statements.map { it.accept(this, newContext) }
 
-        if (expression is IrReturnableBlock) {
+        return if (expression is IrReturnableBlock) {
             val label = context.getNameForReturnableBlock(expression)
-            if (label != null) return JsLabel(label, block)
-        }
+            val wrappedStatements = statements.wrapInCommentsInlineFunctionCall(expression)
 
-        return block
+            return if (label != null) {
+                JsLabel(label, JsBlock(wrappedStatements))
+            } else {
+                JsVirtualBlock(wrappedStatements)
+            }
+        } else {
+            JsBlock(statements)
+        }
+    }
+
+    private fun List<JsStatement>.wrapInCommentsInlineFunctionCall(expression: IrReturnableBlock): List<JsStatement> {
+        val inlineFunctionSymbol = expression.inlineFunctionSymbol ?: return this
+        val owner = inlineFunctionSymbol.owner
+        val receiver = (owner.dispatchReceiverParameter ?: owner.extensionReceiverParameter)?.type?.classOrNull?.owner
+        val receiverName = receiver?.name?.asString()?.plus(".") ?: ""
+        val funName = "$receiverName${owner.name}"
+        return listOf(JsSingleLineComment(" Inline function '$funName' call")) + this
     }
 
     override fun visitComposite(expression: IrComposite, context: JsGenerationContext): JsStatement {
@@ -94,7 +114,11 @@ class IrElementToJsStatementTransformer : BaseIrElementToJsNodeTransformer<JsSta
         val lastStatementTransformer: (JsExpression) -> JsStatement =
             if (targetSymbol is IrReturnableBlockSymbol) {
                 // TODO assert that value is Unit?
-                { JsBreak(context.getNameForReturnableBlock(targetSymbol.owner)!!.makeRef()) }
+                {
+                    context.getNameForReturnableBlock(targetSymbol.owner)
+                        .takeIf { !expression.isTheLastReturnStatementIn(targetSymbol) }
+                        ?.run { JsBreak(makeRef()) } ?: JsEmpty
+                }
             } else {
                 { JsReturn(it) }
             }
@@ -133,14 +157,21 @@ class IrElementToJsStatementTransformer : BaseIrElementToJsNodeTransformer<JsSta
     }
 
     override fun visitCall(expression: IrCall, data: JsGenerationContext): JsStatement {
+        if (expression.symbol.isPureFunction(data)) {
+            return JsEmpty
+        }
         if (data.checkIfJsCode(expression.symbol) || data.checkIfAnnotatedWithJsFunc(expression.symbol)) {
             return JsCallTransformer(expression, data).generateStatement()
         }
         return translateCall(expression, data, IrElementToJsExpressionTransformer()).withSource(expression, data).makeStmt()
     }
 
-    override fun visitInstanceInitializerCall(expression: IrInstanceInitializerCall, context: JsGenerationContext): JsStatement {
+    private fun IrFunctionSymbol.isPureFunction(context: JsGenerationContext): Boolean {
+       return owner.origin === JsLoweredDeclarationOrigin.OBJECT_GET_INSTANCE_FUNCTION &&
+               owner.returnType.classifierOrNull === context.staticContext.backendContext.irBuiltIns.unitClass
+    }
 
+    override fun visitInstanceInitializerCall(expression: IrInstanceInitializerCall, context: JsGenerationContext): JsStatement {
         // TODO: implement
         return JsEmpty
     }

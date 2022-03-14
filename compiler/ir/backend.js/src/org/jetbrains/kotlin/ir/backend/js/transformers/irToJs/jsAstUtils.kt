@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.expressions.*
+import org.jetbrains.kotlin.ir.expressions.impl.IrBlockImpl
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
@@ -37,13 +38,43 @@ fun <T : JsNode> IrWhen.toJsNode(
     implicitElse: T? = null
 ): T? =
     branches.foldRight(implicitElse) { br, n ->
-        val body = br.result.accept(tr, data)
+        val body = br.squashIfPossible().result.accept(tr, data)
         if (isElseBranch(br)) body
         else {
             val condition = br.condition.accept(IrElementToJsExpressionTransformer(), data)
             node(condition, body, n)
         }
     }
+
+fun IrElement?.isSyntheticIf(): Boolean =
+    this is IrWhen &&
+        (origin === IrStatementOrigin.ANDAND || origin === IrStatementOrigin.OROR) &&
+         branches.size == 1 &&
+         isElseBranch(branches.first())
+
+fun IrBranch.couldBeSquash(): Boolean {
+    val block = result as? IrBlock ?: return false
+    return isElseBranch(this) &&
+            block.statements.size == 1 &&
+            block.statements.first().isSyntheticIf()
+}
+
+fun IrBranch.squashIfPossible(): IrBranch {
+    val block = result as? IrBlock ?: return this
+    val syntheticIf = block.statements.firstOrNull().takeIf {
+        couldBeSquash() && it.isSyntheticIf()
+    } as? IrWhen ?: return this
+
+    return apply {
+        result = IrBlockImpl(
+            syntheticIf.startOffset,
+            syntheticIf.endOffset,
+            block.type,
+            block.origin,
+            (syntheticIf.branches.first().result as IrBlock).statements
+        )
+    }
+}
 
 fun jsElementAccess(name: String, receiver: JsExpression?): JsExpression =
     if (receiver == null || name.isValidES5Identifier()) {

@@ -1275,7 +1275,7 @@ public class JsToStringGenerationVisitor extends JsVisitor {
 
         sourceLocationConsumer.pushSourceInfo(null);
 
-        boolean needBraces = !x.isGlobalBlock();
+        boolean needBraces = !x.isGlobalBlock() && !x.isVirtualBlock();
         if (needBraces) {
             blockOpen();
         }

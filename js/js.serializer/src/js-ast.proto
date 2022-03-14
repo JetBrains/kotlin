@@ -254,6 +254,7 @@ message Statement {
         Try try_statement = 37;
         Empty empty = 38;
         SingleLineComment single_line_comment = 39;
+        VirtualBlock virtual_block = 40;
     }
 }
 
@@ -299,6 +300,10 @@ message Block {
 }
 
 message GlobalBlock {
+    repeated Statement statement = 1;
+}
+
+message VirtualBlock {
     repeated Statement statement = 1;
 }
 

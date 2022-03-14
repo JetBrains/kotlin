@@ -321,8 +321,12 @@ class LocalNameGenerator(val variableNames: NameTable<IrDeclaration>) : IrElemen
 
     override fun visitBreak(jump: IrBreak) {
         val loop = jump.loop
-        if (loop.label == null && loop != jumpableDeque.firstOrNull()) {
+        val label = loop.label
+
+        if (label == null && loop != jumpableDeque.firstOrNull()) {
             persistLoopName(SYNTHETIC_LOOP_LABEL, loop)
+        } else if (label != null) {
+            persistLoopName(label, loop)
         }
 
         super.visitBreak(jump)
@@ -330,8 +334,12 @@ class LocalNameGenerator(val variableNames: NameTable<IrDeclaration>) : IrElemen
 
     override fun visitContinue(jump: IrContinue) {
         val loop = jump.loop
-        if (loop.label == null && loop != jumpableDeque.firstOrNull()) {
+        val label = loop.label
+
+        if (label == null && loop != jumpableDeque.firstOrNull()) {
             persistLoopName(SYNTHETIC_LOOP_LABEL, loop)
+        } else if (label != null) {
+            persistLoopName(label, loop)
         }
 
         super.visitContinue(jump)
@@ -339,7 +347,8 @@ class LocalNameGenerator(val variableNames: NameTable<IrDeclaration>) : IrElemen
 
     override fun visitReturn(expression: IrReturn) {
         val targetSymbol = expression.returnTargetSymbol
-        if (targetSymbol is IrReturnableBlockSymbol) {
+
+        if (targetSymbol is IrReturnableBlockSymbol && !expression.isTheLastReturnStatementIn(targetSymbol)) {
             persistReturnableBlockName(SYNTHETIC_BLOCK_LABEL, targetSymbol.owner)
         }
 
@@ -352,20 +361,6 @@ class LocalNameGenerator(val variableNames: NameTable<IrDeclaration>) : IrElemen
         super.visitWhen(expression)
 
         jumpableDeque.pop()
-    }
-
-    override fun visitLoop(loop: IrLoop) {
-        jumpableDeque.push(loop)
-
-        super.visitLoop(loop)
-
-        jumpableDeque.pop()
-
-        val label = loop.label
-
-        if (label != null) {
-            persistLoopName(label, loop)
-        }
     }
 
     private fun persistLoopName(label: String, loop: IrLoop) {
