@@ -10,6 +10,8 @@ import com.intellij.openapi.diagnostic.Logger
 
 object IdeaStandaloneExecutionSetup {
     private val LOG: Logger = Logger.getInstance(IdeaStandaloneExecutionSetup::class.java)
+    // Copy-pasted from com.intellij.openapi.util.BuildNumber#FALLBACK_VERSION
+    private const val FALLBACK_IDEA_BUILD_NUMBER = "999.SNAPSHOT"
 
     fun doSetup() {
         checkInHeadlessMode()
@@ -20,7 +22,10 @@ object IdeaStandaloneExecutionSetup {
         System.getProperties().setProperty("ide.hide.excluded.files", "false")
         System.getProperties().setProperty("ast.loading.filter", "false")
         System.getProperties().setProperty("idea.ignore.disabled.plugins", "true")
-        System.getProperties().setProperty("idea.home.path", System.getProperty("java.io.tmpdir"))
+        // Setting the build number explicitly avoids the command-line compiler
+        // reading /tmp/build.txt in an attempt to get a build number from there.
+        // See intellij platform PluginManagerCore.getBuildNumber.
+        System.getProperties().setProperty("idea.plugins.compatible.build", FALLBACK_IDEA_BUILD_NUMBER)
     }
 
     private fun checkInHeadlessMode() {
