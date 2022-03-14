@@ -73,15 +73,17 @@ internal fun FirScope.processFunctionsAndConstructorsByName(
     processFunctionsByName(callInfo.name, processor)
 }
 
+private data class SymbolWithSubstitutor(val symbol: FirClassifierSymbol<*>, val substitutor: ConeSubstitutor)
+
 private fun FirScope.getFirstClassifierOrNull(
     callInfo: CallInfo,
     session: FirSession,
     bodyResolveComponents: BodyResolveComponents
-): Pair<FirClassifierSymbol<*>, ConeSubstitutor>? {
+): SymbolWithSubstitutor? {
     var isSuccessResult = false
     var isAmbiguousResult = false
-    var result: Pair<FirClassifierSymbol<*>, ConeSubstitutor>? = null
-    processClassifiersByNameWithSubstitution(callInfo.name) { symbol, substitution ->
+    var result: SymbolWithSubstitutor? = null
+    processClassifiersByNameWithSubstitution(callInfo.name) { symbol, substitutor ->
         val classifierDeclaration = symbol.fir
         var isSuccessCandidate = true
         if (classifierDeclaration is FirMemberDeclaration) {
@@ -103,11 +105,25 @@ private fun FirScope.getFirstClassifierOrNull(
             isSuccessCandidate = false
         }
 
-        if (result == null || (!isSuccessResult && isSuccessCandidate)) {
-            isSuccessResult = isSuccessCandidate
-            result = symbol to substitution
-        } else {
-            isAmbiguousResult = true
+        when {
+            isSuccessCandidate && !isSuccessResult -> {
+                // any result is better than no result
+                isSuccessResult = true
+                result = SymbolWithSubstitutor(symbol, substitutor)
+            }
+            result?.symbol === symbol -> {
+                // miss identical results
+                return@processClassifiersByNameWithSubstitution
+            }
+            result != null -> {
+                // results are similar => ambiguity
+                isAmbiguousResult = true
+            }
+            else -> {
+                // result == null: any result is better than no result
+                isSuccessResult = isSuccessCandidate
+                result = SymbolWithSubstitutor(symbol, substitutor)
+            }
         }
     }
 
