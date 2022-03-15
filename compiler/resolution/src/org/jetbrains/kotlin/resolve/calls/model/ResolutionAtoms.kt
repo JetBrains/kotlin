@@ -174,7 +174,7 @@ class ResolvedLambdaAtom(
         setAnalyzedResults(subResolvedAtoms)
     }
 
-    override val inputTypes: Collection<UnwrappedType> get() = receiver?.let { parameters + it } ?: parameters
+    override val inputTypes: Collection<UnwrappedType> get() = parameters + listOfNotNull(receiver) + contextReceivers
     override val outputType: UnwrappedType get() = returnType
 }
 

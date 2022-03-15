@@ -16659,6 +16659,12 @@ public class FirBlackBoxCodegenTestGenerated extends AbstractFirBlackBoxCodegenT
             }
 
             @Test
+            @TestMetadata("parameterizedContextualLambda.kt")
+            public void testParameterizedContextualLambda() throws Exception {
+                runTest("compiler/testData/codegen/box/extensionFunctions/contextReceivers/parameterizedContextualLambda.kt");
+            }
+
+            @Test
             @TestMetadata("passingLambdaToContextualParam.kt")
             public void testPassingLambdaToContextualParam() throws Exception {
                 runTest("compiler/testData/codegen/box/extensionFunctions/contextReceivers/passingLambdaToContextualParam.kt");

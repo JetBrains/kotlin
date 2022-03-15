@@ -10848,6 +10848,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
                 }
 
                 @Test
+                @TestMetadata("parameterizedContextualLambda.kt")
+                public void testParameterizedContextualLambda() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/extensions/contextReceivers/parameterizedContextualLambda.kt");
+                }
+
+                @Test
                 @TestMetadata("plusMatrix.kt")
                 public void testPlusMatrix() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/extensions/contextReceivers/plusMatrix.kt");

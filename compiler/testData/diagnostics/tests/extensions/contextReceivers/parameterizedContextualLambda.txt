@@ -1,0 +1,5 @@
+package
+
+public fun main(): kotlin.Unit
+public fun </*0*/ T> test(/*0*/ action: context(T) () -> kotlin.Unit): kotlin.Unit
+public fun </*0*/ T> test2(/*0*/ actionWithArg: context(T) (T) -> kotlin.Unit): kotlin.Unit
