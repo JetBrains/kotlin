@@ -489,6 +489,11 @@ public class LazyBodyIsNotTouchedTilContractsPhaseTestGenerated extends Abstract
         runTest("compiler/fir/analysis-tests/testData/resolve/varargInPrimaryConstructor.kt");
     }
 
+    @TestMetadata("visibleVsInvisibleQualifier.kt")
+    public void testVisibleVsInvisibleQualifier() throws Exception {
+        runTest("compiler/fir/analysis-tests/testData/resolve/visibleVsInvisibleQualifier.kt");
+    }
+
     @TestMetadata("whenAsReceiver.kt")
     public void testWhenAsReceiver() throws Exception {
         runTest("compiler/fir/analysis-tests/testData/resolve/whenAsReceiver.kt");

@@ -579,6 +579,12 @@ public class FirDiagnosticsWithLightTreeTestGenerated extends AbstractFirDiagnos
         }
 
         @Test
+        @TestMetadata("visibleVsInvisibleQualifier.kt")
+        public void testVisibleVsInvisibleQualifier() throws Exception {
+            runTest("compiler/fir/analysis-tests/testData/resolve/visibleVsInvisibleQualifier.kt");
+        }
+
+        @Test
         @TestMetadata("whenAsReceiver.kt")
         public void testWhenAsReceiver() throws Exception {
             runTest("compiler/fir/analysis-tests/testData/resolve/whenAsReceiver.kt");
