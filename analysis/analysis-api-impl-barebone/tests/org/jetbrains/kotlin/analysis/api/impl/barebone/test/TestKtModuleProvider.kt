@@ -26,6 +26,10 @@ class TestKtModuleProvider(
 
     fun getModule(moduleName: String): TestKtModule =
         cache.getValue(moduleName)
+
+    fun getLibraryModules(): Collection<TestKtLibraryModule> {
+        return cache.values.filterIsInstance<TestKtLibraryModule>()
+    }
 }
 
 val TestServices.projectModuleProvider: TestKtModuleProvider by TestServices.testServiceAccessor()

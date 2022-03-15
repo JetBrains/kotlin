@@ -80,6 +80,5 @@ internal tailrec fun FirDeclaration.ktSymbolOrigin(): KtSymbolOrigin = when (ori
     }
 }
 
-
 class InvalidFirDeclarationOriginForSymbol(declaration: FirDeclaration) :
     IllegalStateException("Invalid FirDeclarationOrigin ${declaration.origin::class.simpleName} for ${declaration.render()}")
