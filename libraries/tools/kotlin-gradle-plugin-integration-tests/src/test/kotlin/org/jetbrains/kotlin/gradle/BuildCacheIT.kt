@@ -27,7 +27,7 @@ import kotlin.io.path.writeText
 
 @ExperimentalPathApi
 @DisplayName("Local build cache")
-@SimpleGradlePluginTests
+@JvmGradlePluginTests
 class BuildCacheIT : KGPBaseTest() {
 
     override val defaultBuildOptions: BuildOptions =

@@ -12,6 +12,7 @@ import org.junit.jupiter.api.DisplayName
 
 @DisplayName("Configuration cache in Android project")
 @GradleTestVersions(minVersion = TestVersions.Gradle.G_6_7)
+@JvmGradlePluginTests
 class ConfigurationCacheForAndroidIT : AbstractConfigurationCacheIT() {
     override val defaultBuildOptions = super.defaultBuildOptions.copy(
         androidVersion = AGP_42

@@ -25,13 +25,13 @@ import org.junit.jupiter.api.DisplayName
 import kotlin.io.path.createDirectory
 
 @DisplayName("Build cache relocation")
-@SimpleGradlePluginTests
 class BuildCacheRelocationIT : KGPBaseTest() {
 
     override val defaultBuildOptions = super.defaultBuildOptions.copy(buildCacheEnabled = true)
 
     private val localBuildCacheDir get() = workingDir.resolve("remote-jdk-build-cache")
 
+    @JvmGradlePluginTests
     @DisplayName("works for Kotlin simple project")
     @GradleTest
     fun testRelocationSimpleProject(gradleVersion: GradleVersion) {
@@ -45,6 +45,7 @@ class BuildCacheRelocationIT : KGPBaseTest() {
         )
     }
 
+    @OtherGradlePluginTests
     @DisplayName("works for Kotlin with Kapt simple project")
     @GradleTest
     fun testRelocationSimpleKapt(gradleVersion: GradleVersion) {
@@ -68,6 +69,7 @@ class BuildCacheRelocationIT : KGPBaseTest() {
         )
     }
 
+    @JsGradlePluginTests
     @DisplayName("works with JS/DCE project")
     @GradleTest
     fun testRelocationKotlin2JsDce(gradleVersion: GradleVersion) {
@@ -94,6 +96,7 @@ class BuildCacheRelocationIT : KGPBaseTest() {
         )
     }
 
+    @MppGradlePluginTests
     @DisplayName("works with Multiplatform")
     @GradleTest
     fun testRelocationMultiplatform(gradleVersion: GradleVersion) {
@@ -119,6 +122,7 @@ class BuildCacheRelocationIT : KGPBaseTest() {
         )
     }
 
+    @JvmGradlePluginTests
     @DisplayName("works with Android project")
     @GradleTestVersions(minVersion = TestVersions.Gradle.G_6_7)
     @GradleTest
@@ -143,6 +147,7 @@ class BuildCacheRelocationIT : KGPBaseTest() {
         )
     }
 
+    @JvmGradlePluginTests
     @DisplayName("Test relocation for Android with dagger project")
     @GradleTestVersions(minVersion = TestVersions.Gradle.G_6_7)
     @GradleTest
@@ -167,6 +172,7 @@ class BuildCacheRelocationIT : KGPBaseTest() {
         )
     }
 
+    @JvmGradlePluginTests
     @DisplayName("KT-48617: Kapt ignores empty directories from Android variant")
     @GradleTestVersions(minVersion = TestVersions.Gradle.G_6_8)
     @GradleTest
@@ -194,6 +200,7 @@ class BuildCacheRelocationIT : KGPBaseTest() {
         )
     }
 
+    @JvmGradlePluginTests
     @DisplayName("KT-48849: Kotlin compile should ignore empty layout resource directories added by kotlin android extensions")
     @GradleTestVersions(minVersion = TestVersions.Gradle.G_6_8)
     @GradleTest
@@ -227,6 +234,7 @@ class BuildCacheRelocationIT : KGPBaseTest() {
         )
     }
 
+    @OtherGradlePluginTests // TODO: change to native tag
     @DisplayName("with native project")
     @GradleTest
     fun testRelocationNative(gradleVersion: GradleVersion) {
@@ -262,6 +270,7 @@ class BuildCacheRelocationIT : KGPBaseTest() {
         )
     }
 
+    @OtherGradlePluginTests
     @DisplayName("Kapt incremental compilation works with cache")
     @GradleTest
     fun testKaptCachingIncrementalBuildWithoutRelocation(gradleVersion: GradleVersion) {
@@ -272,6 +281,7 @@ class BuildCacheRelocationIT : KGPBaseTest() {
         }
     }
 
+    @OtherGradlePluginTests
     @DisplayName("Kapt incremental compilation build does not break relocated build cache")
     @GradleTest
     fun testKaptCachingIncrementalBuildWithRelocation(gradleVersion: GradleVersion) {
@@ -320,6 +330,7 @@ class BuildCacheRelocationIT : KGPBaseTest() {
         }
     }
 
+    @JvmGradlePluginTests
     @DisplayName("Kotlin incremental compilation should work correctly")
     @GradleTest
     fun testKotlinIncrementalCompilation(gradleVersion: GradleVersion) {
@@ -328,6 +339,7 @@ class BuildCacheRelocationIT : KGPBaseTest() {
         }
     }
 
+    @JvmGradlePluginTests
     @DisplayName("Kotlin incremental compilation with `kotlin.incremental.useClasspathSnapshot` feature should work correctly")
     @GradleTest
     fun testKotlinIncrementalCompilation_withGradleClasspathSnapshot(gradleVersion: GradleVersion) {

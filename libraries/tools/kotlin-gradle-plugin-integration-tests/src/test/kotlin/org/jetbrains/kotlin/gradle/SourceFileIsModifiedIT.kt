@@ -9,7 +9,7 @@ import kotlin.test.assertNull
 import kotlin.test.assertTrue
 
 @DisplayName("Source file modifications")
-@SimpleGradlePluginTests
+@JvmGradlePluginTests
 class SourceFileIsModifiedIT : KGPBaseTest() {
 
     @DisplayName("Removed in non-incremental compilation")
