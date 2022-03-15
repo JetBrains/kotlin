@@ -29,6 +29,8 @@ class FinalizerProcessor;
 // TODO: Also make mark concurrent.
 class ConcurrentMarkAndSweep : private Pinned {
 public:
+    // This implementation of mark queue allocates memory during collection.
+    using MarkQueue = KStdVector<ObjHeader*>;
 
     class ObjectData {
     public:
@@ -89,7 +91,7 @@ private:
     ScopedThread gcThread_;
     KStdUniquePtr<FinalizerProcessor> finalizerProcessor_;
 
-    KStdVector<ObjHeader*> graySet_;
+    MarkQueue markQueue_;
 };
 
 } // namespace gc

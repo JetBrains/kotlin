@@ -23,17 +23,28 @@ using namespace kotlin;
 namespace {
 
 struct MarkTraits {
-    static bool IsMarked(ObjHeader* object) noexcept {
-        auto& objectData = mm::ObjectFactory<gc::SameThreadMarkAndSweep>::NodeRef::From(object).GCObjectData();
-        return objectData.color() == gc::SameThreadMarkAndSweep::ObjectData::Color::kBlack;
+    using MarkQueue = gc::SameThreadMarkAndSweep::MarkQueue;
+
+    static bool isEmpty(const MarkQueue& queue) noexcept {
+        return queue.empty();
     }
 
-    static bool TryMark(ObjHeader* object) noexcept {
+    static void clear(MarkQueue& queue) noexcept {
+        queue.clear();
+    }
+
+    static ObjHeader* dequeue(MarkQueue& queue) noexcept {
+        auto top = queue.back();
+        queue.pop_back();
+        return top;
+    }
+
+    static void enqueue(MarkQueue& queue, ObjHeader* object) noexcept {
         auto& objectData = mm::ObjectFactory<gc::SameThreadMarkAndSweep>::NodeRef::From(object).GCObjectData();
-        if (objectData.color() == gc::SameThreadMarkAndSweep::ObjectData::Color::kBlack) return false;
+        if (objectData.color() == gc::SameThreadMarkAndSweep::ObjectData::Color::kBlack) return;
         objectData.setColor(gc::SameThreadMarkAndSweep::ObjectData::Color::kBlack);
-        return true;
-    };
+        queue.push_back(object);
+    }
 };
 
 struct SweepTraits {
@@ -104,7 +115,7 @@ NO_INLINE void gc::SameThreadMarkAndSweep::ThreadData::SafePointSlowPath(Safepoi
 gc::SameThreadMarkAndSweep::SameThreadMarkAndSweep(
         mm::ObjectFactory<SameThreadMarkAndSweep>& objectFactory, GCScheduler& gcScheduler) noexcept :
     objectFactory_(objectFactory), gcScheduler_(gcScheduler) {
-    graySet_.reserve(1000);
+    markQueue_.reserve(1000);
     gcScheduler_.SetScheduleGC([]() {
         // TODO: CMS is also responsible for avoiding scheduling while GC hasn't started running.
         //       Investigate, if it's possible to move this logic into the scheduler.
@@ -143,17 +154,17 @@ bool gc::SameThreadMarkAndSweep::PerformFullGC() noexcept {
 
         RuntimeLogInfo(
                 {kTagGC}, "Started GC epoch %zu. Time since last GC %" PRIu64 " microseconds", epoch_, timeStartUs - lastGCTimestampUs_);
-        collectRootSet(graySet_);
+        gc::collectRootSet<MarkTraits>(markQueue_);
         auto timeRootSetUs = konan::getTimeMicros();
         // Can be unsafe, because we've stopped the world.
         auto objectsCountBefore = objectFactory_.GetSizeUnsafe();
 
         RuntimeLogInfo(
-                {kTagGC}, "Collected root set of size %zu in %" PRIu64 " microseconds", graySet_.size(),
+                {kTagGC}, "Collected root set of size %zu in %" PRIu64 " microseconds", markQueue_.size(),
                 timeRootSetUs - timeSuspendUs);
-        auto markStats = gc::Mark<MarkTraits>(graySet_);
+        auto markStats = gc::Mark<MarkTraits>(markQueue_);
         auto timeMarkUs = konan::getTimeMicros();
-        RuntimeLogDebug({kTagGC}, "Marked %zu objects in %" PRIu64 " microseconds. Processed %zu duplicate entries in the gray set", markStats.aliveHeapSet, timeMarkUs - timeRootSetUs, markStats.duplicateEntries);
+        RuntimeLogDebug({kTagGC}, "Marked %zu objects in %" PRIu64 " microseconds", markStats.aliveHeapSet, timeMarkUs - timeRootSetUs);
         scheduler.gcData().UpdateAliveSetBytes(markStats.aliveHeapSetBytes);
         gc::SweepExtraObjects<SweepTraits>(mm::GlobalData::Instance().extraObjectDataFactory());
         auto timeSweepExtraObjectsUs = konan::getTimeMicros();
