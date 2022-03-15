@@ -13,6 +13,11 @@ public abstract class ProjectStructureProvider {
      * For a given [PsiElement] get a [KtModule] to which [PsiElement] belongs.
      */
     public abstract fun getKtModuleForKtElement(element: PsiElement): KtModule
+
+    /**
+     * Returns all [KtLibraryModule]s in this project.
+     */
+    public abstract fun getKtLibraryModules(): Collection<KtLibraryModule>
 }
 
 /**

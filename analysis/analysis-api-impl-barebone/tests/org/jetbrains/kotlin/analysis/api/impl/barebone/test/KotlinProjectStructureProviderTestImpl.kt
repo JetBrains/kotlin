@@ -11,10 +11,14 @@ import org.jetbrains.kotlin.analysis.project.structure.ProjectStructureProvider
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.services.TestServices
 
-class KotlinProjectStructureProviderTestImpl(testServices: TestServices) : ProjectStructureProvider() {
+class KotlinProjectStructureProviderTestImpl(private val testServices: TestServices) : ProjectStructureProvider() {
     private val moduleInfoProvider = testServices.projectModuleProvider
     override fun getKtModuleForKtElement(element: PsiElement): KtModule {
         val containingFile = element.containingFile as KtFile
         return moduleInfoProvider.getModuleInfoByKtFile(containingFile) as KtModule
+    }
+
+    override fun getKtLibraryModules(): Collection<TestKtLibraryModule> {
+        return moduleInfoProvider.getLibraryModules()
     }
 }
