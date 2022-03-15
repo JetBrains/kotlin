@@ -6,10 +6,8 @@
 package org.jetbrains.kotlin.gradle.plugin.mpp.pm20
 
 import org.gradle.api.Project
-import org.gradle.api.file.FileCollection
 import org.gradle.api.provider.Provider
 import org.gradle.language.base.plugins.LifecycleBasePlugin
-import org.jetbrains.kotlin.project.model.utils.variantsContainingFragment
 import java.io.File
 
 typealias SourceRoots = Iterable<File>
@@ -33,7 +31,7 @@ open class FragmentSourcesProvider {
         getSourcesFromFragmentsAsMap(module.fragments)
 
     open fun getSourcesFromRefinesClosureAsMap(fragment: KotlinGradleFragment): SourceRootsProvidersByFragment =
-        getSourcesFromFragmentsAsMap(fragment.refinesClosure)
+        getSourcesFromFragmentsAsMap(fragment.withRefinesClosure)
 
     open fun getSourcesFromRefinesClosure(fragment: KotlinGradleFragment): MultipleSourceRootsProvider =
         fragment.project.provider { getSourcesFromRefinesClosureAsMap(fragment).values }
@@ -43,9 +41,9 @@ open class FragmentSourcesProvider {
         val project = containingModule.project
         getSourcesFromRefinesClosureAsMap(fragment)
         return project.provider {
-            fragment.refinesClosure.filter {
+            fragment.withRefinesClosure.filter {
                 // Every fragment refined by some other fragment should be considered common, even if it is included in just one variant
-                containingModule.variantsContainingFragment(it).toSet() != setOf(it)
+                it.containingVariants != setOf(it)
             }.map { project.provider { it.kotlinSourceRoots } }
         }
     }
