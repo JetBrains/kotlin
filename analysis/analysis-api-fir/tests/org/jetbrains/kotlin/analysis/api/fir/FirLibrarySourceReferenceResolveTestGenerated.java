@@ -143,6 +143,18 @@ public class FirLibrarySourceReferenceResolveTestGenerated extends AbstractRefer
     }
 
     @Test
+    @TestMetadata("explicitFunctionalInterfaceInvoke_globalVal.kt")
+    public void testExplicitFunctionalInterfaceInvoke_globalVal() throws Exception {
+        runTest("analysis/analysis-api/testData/referenceResolve/explicitFunctionalInterfaceInvoke_globalVal.kt");
+    }
+
+    @Test
+    @TestMetadata("explicitFunctionalInterfaceInvoke_parameter.kt")
+    public void testExplicitFunctionalInterfaceInvoke_parameter() throws Exception {
+        runTest("analysis/analysis-api/testData/referenceResolve/explicitFunctionalInterfaceInvoke_parameter.kt");
+    }
+
+    @Test
     @TestMetadata("ExternalCompanionObject.kt")
     public void testExternalCompanionObject() throws Exception {
         runTest("analysis/analysis-api/testData/referenceResolve/ExternalCompanionObject.kt");
@@ -506,6 +518,12 @@ public class FirLibrarySourceReferenceResolveTestGenerated extends AbstractRefer
     @TestMetadata("TopLevelObjectVsLocalClassConstructor3.kt")
     public void testTopLevelObjectVsLocalClassConstructor3() throws Exception {
         runTest("analysis/analysis-api/testData/referenceResolve/TopLevelObjectVsLocalClassConstructor3.kt");
+    }
+
+    @Test
+    @TestMetadata("TopLevelObjectVsLocalClassConstructor4.kt")
+    public void testTopLevelObjectVsLocalClassConstructor4() throws Exception {
+        runTest("analysis/analysis-api/testData/referenceResolve/TopLevelObjectVsLocalClassConstructor4.kt");
     }
 
     @Test
