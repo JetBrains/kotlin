@@ -62,7 +62,7 @@ internal abstract class AbstractKotlinFragmentMetadataCompilationData<T : Kotlin
             project = project,
             fromFiles = resolvableMetadataConfiguration(fragment.containingModule),
             parentCompiledMetadataFiles = lazy {
-                fragment.refinesClosure.minus(fragment).map {
+                fragment.refinesClosure.map {
                     val compilation = metadataCompilationRegistry.getForFragmentOrNull(it)
                         ?: return@map project.files()
                     compilation.output.classesDirs
@@ -95,7 +95,7 @@ internal abstract class AbstractKotlinFragmentMetadataCompilationData<T : Kotlin
 
     override val friendPaths: Iterable<FileCollection>
         get() = metadataCompilationRegistry.run {
-            fragment.refinesClosure.minus(fragment)
+            fragment.refinesClosure
                 .map {
                     val compilation = metadataCompilationRegistry.getForFragmentOrNull(it)
                         ?: return@map project.files()
@@ -134,7 +134,7 @@ interface KotlinNativeFragmentMetadataCompilationData :
     KotlinNativeCompilationData<KotlinCommonOptions>
 
 internal fun KotlinGradleFragment.isNativeShared(): Boolean =
-    containingModule.variantsContainingFragment(this).run {
+    containingVariants.run {
         any() && all { it.platformType == KotlinPlatformType.native }
     }
 

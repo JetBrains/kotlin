@@ -251,7 +251,7 @@ private class MetadataCompilationTasksConfigurator(project: Project) : KotlinCom
 }
 
 private fun resolvedMetadataProviders(fragment: KotlinGradleFragment) =
-    fragment.refinesClosure.map {
+    fragment.withRefinesClosure.map {
         FragmentResolvedMetadataProvider(
             fragment.project.tasks.withType<TransformKotlinGranularMetadataForFragment>().named(transformFragmentMetadataTaskName(it))
         )
@@ -269,7 +269,7 @@ private fun createExtractMetadataTask(
         transformation
     ).configure { task ->
         task.dependsOn(Callable {
-            fragment.refinesClosure.mapNotNull { refined ->
+            fragment.withRefinesClosure.mapNotNull { refined ->
                 if (refined !== fragment)
                     project.tasks.named(transformFragmentMetadataTaskName(refined))
                 else null
