@@ -8,10 +8,15 @@
 
 #include "ExtraObjectData.hpp"
 #include "FinalizerHooks.hpp"
+#include "GlobalData.hpp"
+#include "Logging.hpp"
 #include "Memory.h"
 #include "ObjectOps.hpp"
 #include "ObjectTraversal.hpp"
+#include "RootSet.hpp"
 #include "Runtime.h"
+#include "StableRefRegistry.hpp"
+#include "ThreadData.hpp"
 #include "Types.h"
 
 namespace kotlin {
@@ -22,41 +27,33 @@ struct MarkStats {
     size_t aliveHeapSet = 0;
     // How many objects are alive in bytes. Note: this does not include overhead of malloc/mimalloc itself.
     size_t aliveHeapSetBytes = 0;
-    // How many times a marked object was found in the mark queue.
-    size_t duplicateEntries = 0;
 };
 
-// TODO: Because of `graySet` this implementation may allocate heap memory during GC.
 template <typename Traits>
-MarkStats Mark(KStdVector<ObjHeader*>& graySet) noexcept {
+MarkStats Mark(typename Traits::MarkQueue& markQueue) noexcept {
     MarkStats stats;
-    while (!graySet.empty()) {
-        ObjHeader* top = graySet.back();
-        graySet.pop_back();
+    while (!Traits::isEmpty(markQueue)) {
+        ObjHeader* top = Traits::dequeue(markQueue);
 
-        RuntimeAssert(!isNullOrMarker(top), "Got invalid reference %p in gray set", top);
+        RuntimeAssert(!isNullOrMarker(top), "Got invalid reference %p in mark queue", top);
+        RuntimeAssert(top->heap(), "Got non-heap reference %p in mark queue, permanent=%d stack=%d", top, top->permanent(), top->local());
 
-        if (top->heap()) {
-            if (!Traits::TryMark(top)) {
-                ++stats.duplicateEntries;
-                continue;
+        stats.aliveHeapSet++;
+        stats.aliveHeapSetBytes += mm::GetAllocatedHeapSize(top);
+
+        traverseReferredObjects(top, [&](ObjHeader* field) noexcept {
+            if (!isNullOrMarker(field) && field->heap()) {
+                Traits::enqueue(markQueue, field);
             }
-            stats.aliveHeapSet++;
-            stats.aliveHeapSetBytes += mm::GetAllocatedHeapSize(top);
-        }
-
-        if (top->heap() || top->local()) {
-            traverseReferredObjects(top, [&graySet](ObjHeader* field) noexcept {
-                if (!isNullOrMarker(field) && field->heap() && !Traits::IsMarked(field)) {
-                    graySet.push_back(field);
-                }
-            });
-        }
+        });
 
         if (auto* extraObjectData = mm::ExtraObjectData::Get(top)) {
             auto weakCounter = extraObjectData->GetWeakReferenceCounter();
             if (!isNullOrMarker(weakCounter)) {
-                graySet.push_back(weakCounter);
+                RuntimeAssert(
+                        weakCounter->heap(), "Weak counter must be a heap object. object=%p counter=%p permanent=%d local=%d", top,
+                        weakCounter, weakCounter->permanent(), weakCounter->local());
+                Traits::enqueue(markQueue, weakCounter);
             }
         }
     }
@@ -111,7 +108,71 @@ typename Traits::ObjectFactory::FinalizerQueue Sweep(typename Traits::ObjectFact
     return Sweep<Traits>(iter);
 }
 
-void collectRootSet(KStdVector<ObjHeader*>& graySet);
+// TODO: This needs some tests now.
+template <typename Traits>
+void collectRootSet(typename Traits::MarkQueue& markQueue) noexcept {
+    Traits::clear(markQueue);
+    for (auto& thread : mm::GlobalData::Instance().threadRegistry().LockForIter()) {
+        // TODO: Maybe it's more efficient to do by the suspending thread?
+        thread.Publish();
+        thread.gc().OnStoppedForGC();
+        size_t stack = 0;
+        size_t tls = 0;
+        for (auto value : mm::ThreadRootSet(thread)) {
+            auto* object = value.object;
+            if (!isNullOrMarker(object)) {
+                if (object->heap()) {
+                    Traits::enqueue(markQueue, object);
+                } else {
+                    traverseReferredObjects(object, [&](ObjHeader* field) noexcept {
+                        // Each permanent and stack object has own entry in the root set.
+                        if (field->heap() && !isNullOrMarker(field)) {
+                            Traits::enqueue(markQueue, field);
+                        }
+                    });
+                    RuntimeAssert(!object->has_meta_object(), "Non-heap object %p may not have an extra object data", object);
+                }
+                switch (value.source) {
+                    case mm::ThreadRootSet::Source::kStack:
+                        ++stack;
+                        break;
+                    case mm::ThreadRootSet::Source::kTLS:
+                        ++tls;
+                        break;
+                }
+            }
+        }
+        RuntimeLogDebug({kTagGC}, "Collected root set for thread stack=%zu tls=%zu", stack, tls);
+    }
+    mm::StableRefRegistry::Instance().ProcessDeletions();
+    size_t global = 0;
+    size_t stableRef = 0;
+    for (auto value : mm::GlobalRootSet()) {
+        auto* object = value.object;
+        if (!isNullOrMarker(object)) {
+            if (object->heap()) {
+                Traits::enqueue(markQueue, object);
+            } else {
+                traverseReferredObjects(object, [&](ObjHeader* field) noexcept {
+                    // Each permanent and stack object has own entry in the root set.
+                    if (field->heap() && !isNullOrMarker(field)) {
+                        Traits::enqueue(markQueue, field);
+                    }
+                });
+                RuntimeAssert(!object->has_meta_object(), "Non-heap object %p may not have an extra object data", object);
+            }
+            switch (value.source) {
+                case mm::GlobalRootSet::Source::kGlobal:
+                    ++global;
+                    break;
+                case mm::GlobalRootSet::Source::kStableRef:
+                    ++stableRef;
+                    break;
+            }
+        }
+    }
+    RuntimeLogDebug({kTagGC}, "Collected global root set global=%zu stableRef=%zu", global, stableRef);
+}
 
 } // namespace gc
 } // namespace kotlin
