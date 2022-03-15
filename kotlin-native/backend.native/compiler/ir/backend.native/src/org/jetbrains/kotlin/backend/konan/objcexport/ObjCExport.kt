@@ -136,7 +136,7 @@ internal class ObjCExport(val context: Context, symbolTable: SymbolTable) {
             |    export *
             |    module * { export * }
             |
-            |    use "Foundation"
+            |    use Foundation
             |}
         """.trimMargin()
 
