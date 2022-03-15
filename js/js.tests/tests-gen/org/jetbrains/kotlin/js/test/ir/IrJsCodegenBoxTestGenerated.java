@@ -9768,6 +9768,12 @@ public class IrJsCodegenBoxTestGenerated extends AbstractIrJsCodegenBoxTest {
         }
 
         @Test
+        @TestMetadata("kt49715.kt")
+        public void testKt49715() throws Exception {
+            runTest("compiler/testData/codegen/box/dataClasses/kt49715.kt");
+        }
+
+        @Test
         @TestMetadata("mixedParams.kt")
         public void testMixedParams() throws Exception {
             runTest("compiler/testData/codegen/box/dataClasses/mixedParams.kt");
