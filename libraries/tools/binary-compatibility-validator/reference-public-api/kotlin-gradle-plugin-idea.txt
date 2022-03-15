@@ -54,7 +54,7 @@ public abstract class org/jetbrains/kotlin/gradle/kpm/KotlinMutableExternalModel
 	public abstract fun set (Lorg/jetbrains/kotlin/gradle/kpm/KotlinExternalModelKey;Ljava/lang/Object;)V
 }
 
-public abstract interface class org/jetbrains/kotlin/gradle/kpm/idea/IdeaKotlinBinaryCoordinates : java/io/Serializable {
+public abstract interface class org/jetbrains/kotlin/gradle/kpm/idea/IdeaKotlinBinaryCoordinates : org/jetbrains/kotlin/gradle/kpm/idea/IdeaKotlinDependencyCoordinates {
 	public abstract fun getGroup ()Ljava/lang/String;
 	public abstract fun getKotlinFragmentName ()Ljava/lang/String;
 	public abstract fun getKotlinModuleName ()Ljava/lang/String;
@@ -79,6 +79,7 @@ public abstract interface class org/jetbrains/kotlin/gradle/kpm/idea/IdeaKotlinD
 	public static final field Companion Lorg/jetbrains/kotlin/gradle/kpm/idea/IdeaKotlinDependency$Companion;
 	public static final field DOCUMENTATION_BINARY_TYPE Ljava/lang/String;
 	public static final field SOURCES_BINARY_TYPE Ljava/lang/String;
+	public abstract fun getCoordinates ()Lorg/jetbrains/kotlin/gradle/kpm/idea/IdeaKotlinDependencyCoordinates;
 	public abstract fun getExternal ()Lorg/jetbrains/kotlin/gradle/kpm/KotlinExternalModelContainer;
 }
 
@@ -88,8 +89,11 @@ public final class org/jetbrains/kotlin/gradle/kpm/idea/IdeaKotlinDependency$Com
 	public static final field SOURCES_BINARY_TYPE Ljava/lang/String;
 }
 
+public abstract interface class org/jetbrains/kotlin/gradle/kpm/idea/IdeaKotlinDependencyCoordinates : java/io/Serializable {
+}
+
 public final class org/jetbrains/kotlin/gradle/kpm/idea/IdeaKotlinDependencyKt {
-	public static final fun getPath (Lorg/jetbrains/kotlin/gradle/kpm/idea/IdeaKotlinSourceDependency;)Ljava/lang/String;
+	public static final fun getPath (Lorg/jetbrains/kotlin/gradle/kpm/idea/IdeaKotlinSourceCoordinates;)Ljava/lang/String;
 	public static final fun isClasspathType (Lorg/jetbrains/kotlin/gradle/kpm/idea/IdeaKotlinResolvedBinaryDependency;)Z
 	public static final fun isDocumentationType (Lorg/jetbrains/kotlin/gradle/kpm/idea/IdeaKotlinResolvedBinaryDependency;)Z
 	public static final fun isSourcesType (Lorg/jetbrains/kotlin/gradle/kpm/idea/IdeaKotlinResolvedBinaryDependency;)Z
@@ -198,13 +202,20 @@ public abstract interface class org/jetbrains/kotlin/gradle/kpm/idea/IdeaKotlinR
 	public abstract fun getFile ()Ljava/io/File;
 }
 
-public abstract interface class org/jetbrains/kotlin/gradle/kpm/idea/IdeaKotlinSourceDependency : org/jetbrains/kotlin/gradle/kpm/idea/IdeaKotlinDependency {
+public abstract interface class org/jetbrains/kotlin/gradle/kpm/idea/IdeaKotlinSourceCoordinates : org/jetbrains/kotlin/gradle/kpm/idea/IdeaKotlinDependencyCoordinates {
 	public abstract fun getBuildId ()Ljava/lang/String;
 	public abstract fun getKotlinFragmentName ()Ljava/lang/String;
 	public abstract fun getKotlinModuleClassifier ()Ljava/lang/String;
 	public abstract fun getKotlinModuleName ()Ljava/lang/String;
 	public abstract fun getProjectName ()Ljava/lang/String;
 	public abstract fun getProjectPath ()Ljava/lang/String;
+}
+
+public final class org/jetbrains/kotlin/gradle/kpm/idea/IdeaKotlinSourceCoordinatesImpl$Companion {
+}
+
+public abstract interface class org/jetbrains/kotlin/gradle/kpm/idea/IdeaKotlinSourceDependency : org/jetbrains/kotlin/gradle/kpm/idea/IdeaKotlinDependency {
+	public abstract fun getCoordinates ()Lorg/jetbrains/kotlin/gradle/kpm/idea/IdeaKotlinSourceCoordinates;
 }
 
 public abstract interface class org/jetbrains/kotlin/gradle/kpm/idea/IdeaKotlinSourceDirectory : java/io/Serializable {
