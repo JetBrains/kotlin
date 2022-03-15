@@ -204,7 +204,7 @@ private class ReturnTypeCalculatorWithJump(
         returnTypeCalculator: ReturnTypeCalculator,
         outerBodyResolveContext: BodyResolveContext?
     ) -> FirDesignatedBodyResolveTransformerForReturnTypeCalculator = ::FirDesignatedBodyResolveTransformerForReturnTypeCalculator,
-) : ReturnTypeCalculator {
+) : ReturnTypeCalculator() {
 
     @OptIn(PrivateForInline::class)
     var outerBodyResolveContext: BodyResolveContext? = null

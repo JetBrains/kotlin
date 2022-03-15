@@ -21,7 +21,7 @@ class SimpleDiagnosticsCollector(
         return CheckerRunningDiagnosticCollectorVisitor(
             MutableCheckerContext(
                 this,
-                ReturnTypeCalculatorForFullBodyResolve()
+                ReturnTypeCalculatorForFullBodyResolve
             ),
             components
         )
