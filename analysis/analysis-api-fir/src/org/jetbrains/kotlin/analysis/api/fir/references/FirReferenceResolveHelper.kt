@@ -340,19 +340,13 @@ internal object FirReferenceResolveHelper {
         if (expression is KtLabelReferenceExpression && fir is FirPropertyAccessExpression && fir.calleeReference is FirSuperReference) {
             return listOfNotNull((fir.dispatchReceiver.typeRef as? FirResolvedTypeRef)?.toTargetSymbol(session, symbolBuilder))
         }
-        val calleeReference =
-            if (fir is FirFunctionCall &&
-                fir.isImplicitFunctionCall() &&
-                expression is KtNameReferenceExpression
-            ) {
-                // we are resolving implicit invoke call, like
-                // fun foo(a: () -> Unit) {
-                //     <expression>a</expression>()
-                // }
-                val receiver =
-                    fir.dispatchReceiver as? FirQualifiedAccessExpression ?: fir.extensionReceiver as FirQualifiedAccessExpression
-                receiver.calleeReference
-            } else fir.calleeReference
+        val implicitInvokeReceiver = if (fir is FirImplicitInvokeCall) {
+            fir.explicitReceiver as? FirQualifiedAccessExpression
+        } else {
+            null
+        }
+        val calleeReference = implicitInvokeReceiver?.calleeReference ?: fir.calleeReference
+
         return calleeReference.toTargetSymbol(session, symbolBuilder, isInLabelReference = expression is KtLabelReferenceExpression)
     }
 
