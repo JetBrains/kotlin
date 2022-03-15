@@ -108,6 +108,8 @@ public:
 
 class ScopedMarkTraits : private Pinned {
 public:
+    using MarkQueue = KStdVector<ObjHeader*>;
+
     ScopedMarkTraits() {
         RuntimeAssert(instance_ == nullptr, "Only one ScopedMarkTraits is allowed");
         instance_ = this;
@@ -120,8 +122,26 @@ public:
 
     const KStdUnorderedSet<ObjHeader*>& marked() const { return marked_; }
 
-    static bool TryMark(ObjHeader* object) noexcept { return instance_->marked_.insert(object).second; }
-    static bool IsMarked(ObjHeader* object) noexcept { return instance_->marked_.find(object) != instance_->marked_.end(); }
+    static bool isEmpty(const MarkQueue& queue) noexcept {
+        return queue.empty();
+    }
+
+    static void clear(MarkQueue& queue) noexcept {
+        queue.clear();
+    }
+
+    static ObjHeader* dequeue(MarkQueue& queue) noexcept {
+        auto top = queue.back();
+        queue.pop_back();
+        return top;
+    }
+
+    static void enqueue(MarkQueue& queue, ObjHeader* object) noexcept {
+        auto result = instance_->marked_.insert(object);
+        if (result.second) {
+            queue.push_back(object);
+        }
+    }
 
 private:
     static ScopedMarkTraits* instance_;
@@ -146,7 +166,7 @@ public:
 
     gc::MarkStats Mark(std::initializer_list<std::reference_wrapper<BaseObject>> graySet) {
         KStdVector<ObjHeader*> objects;
-        for (auto& object : graySet) objects.push_back(object.get().GetObjHeader());
+        for (auto& object : graySet) ScopedMarkTraits::enqueue(objects, object.get().GetObjHeader());
         return gc::Mark<ScopedMarkTraits>(objects);
     }
 
@@ -177,7 +197,6 @@ TEST_F(MarkAndSweepUtilsMarkTest, MarkNothing) {
     auto stats = Mark({});
 
     EXPECT_MARKED(stats);
-    EXPECT_THAT(stats.duplicateEntries, 0);
 }
 
 TEST_F(MarkAndSweepUtilsMarkTest, MarkSingleObject) {
@@ -186,7 +205,6 @@ TEST_F(MarkAndSweepUtilsMarkTest, MarkSingleObject) {
     auto stats = Mark({object});
 
     EXPECT_MARKED(stats, object);
-    EXPECT_THAT(stats.duplicateEntries, 0);
 }
 
 TEST_F(MarkAndSweepUtilsMarkTest, MarkSingleObjectArray) {
@@ -195,8 +213,6 @@ TEST_F(MarkAndSweepUtilsMarkTest, MarkSingleObjectArray) {
     auto stats = Mark({array});
 
     EXPECT_MARKED(stats, array);
-
-    EXPECT_THAT(stats.duplicateEntries, 0);
 }
 
 TEST_F(MarkAndSweepUtilsMarkTest, MarkSingleCharArray) {
@@ -205,70 +221,7 @@ TEST_F(MarkAndSweepUtilsMarkTest, MarkSingleCharArray) {
     auto stats = Mark({array});
 
     EXPECT_MARKED(stats, array);
-
-    EXPECT_THAT(stats.duplicateEntries, 0);
 }
-
-TEST_F(MarkAndSweepUtilsMarkTest, MarkSinglePermanentObject) {
-    Object object{BaseObject::Kind::kPermanent};
-
-    auto stats = Mark({object});
-
-    EXPECT_MARKED(stats);
-
-    EXPECT_THAT(stats.duplicateEntries, 0);
-}
-
-TEST_F(MarkAndSweepUtilsMarkTest, MarkSinglePermanentObjectArray) {
-    ObjectArray array{BaseObject::Kind::kPermanent};
-
-    auto stats = Mark({array});
-
-    EXPECT_MARKED(stats);
-
-    EXPECT_THAT(stats.duplicateEntries, 0);
-}
-
-TEST_F(MarkAndSweepUtilsMarkTest, MarkSinglePermanentCharArray) {
-    CharArray array{BaseObject::Kind::kPermanent};
-
-    auto stats = Mark({array});
-
-    EXPECT_MARKED(stats);
-
-    EXPECT_THAT(stats.duplicateEntries, 0);
-}
-
-TEST_F(MarkAndSweepUtilsMarkTest, MarkSingleStackObject) {
-    Object object{BaseObject::Kind::kStackLocal};
-
-    auto stats = Mark({object});
-
-    EXPECT_MARKED(stats);
-
-    EXPECT_THAT(stats.duplicateEntries, 0);
-}
-
-TEST_F(MarkAndSweepUtilsMarkTest, MarkSingleStackObjectArray) {
-    ObjectArray array{BaseObject::Kind::kStackLocal};
-
-    auto stats = Mark({array});
-
-    EXPECT_MARKED(stats);
-
-    EXPECT_THAT(stats.duplicateEntries, 0);
-}
-
-TEST_F(MarkAndSweepUtilsMarkTest, MarkSingleStackCharArray) {
-    CharArray array{BaseObject::Kind::kStackLocal};
-
-    auto stats = Mark({array});
-
-    EXPECT_MARKED(stats);
-
-    EXPECT_THAT(stats.duplicateEntries, 0);
-}
-
 
 TEST_F(MarkAndSweepUtilsMarkTest, MarkSingleObjectWithInvalidFields) {
     Object object;
@@ -277,8 +230,6 @@ TEST_F(MarkAndSweepUtilsMarkTest, MarkSingleObjectWithInvalidFields) {
     auto stats = Mark({object});
 
     EXPECT_MARKED(stats, object);
-
-    EXPECT_THAT(stats.duplicateEntries, 0);
 }
 
 TEST_F(MarkAndSweepUtilsMarkTest, MarkSingleObjectArrayWithInvalidFields) {
@@ -288,8 +239,6 @@ TEST_F(MarkAndSweepUtilsMarkTest, MarkSingleObjectArrayWithInvalidFields) {
     auto stats = Mark({array});
 
     EXPECT_MARKED(stats, array);
-
-    EXPECT_THAT(stats.duplicateEntries, 0);
 }
 
 TEST_F(MarkAndSweepUtilsMarkTest, MarkSingleCharArrayWithSomeData) {
@@ -301,8 +250,6 @@ TEST_F(MarkAndSweepUtilsMarkTest, MarkSingleCharArrayWithSomeData) {
     auto stats = Mark({array});
 
     EXPECT_MARKED(stats, array);
-
-    EXPECT_THAT(stats.duplicateEntries, 0);
 }
 
 TEST_F(MarkAndSweepUtilsMarkTest, MarkSingleObjectWithExtraData) {
@@ -312,8 +259,6 @@ TEST_F(MarkAndSweepUtilsMarkTest, MarkSingleObjectWithExtraData) {
     auto stats = Mark({object});
 
     EXPECT_MARKED(stats, object);
-
-    EXPECT_THAT(stats.duplicateEntries, 0);
 }
 
 TEST_F(MarkAndSweepUtilsMarkTest, MarkSingleObjectArrayWithExtraData) {
@@ -323,8 +268,6 @@ TEST_F(MarkAndSweepUtilsMarkTest, MarkSingleObjectArrayWithExtraData) {
     auto stats = Mark({array});
 
     EXPECT_MARKED(stats, array);
-
-    EXPECT_THAT(stats.duplicateEntries, 0);
 }
 
 TEST_F(MarkAndSweepUtilsMarkTest, MarkSingleCharArrayWithExtraData) {
@@ -334,8 +277,6 @@ TEST_F(MarkAndSweepUtilsMarkTest, MarkSingleCharArrayWithExtraData) {
     auto stats = Mark({array});
 
     EXPECT_MARKED(stats, array);
-
-    EXPECT_THAT(stats.duplicateEntries, 0);
 }
 
 TEST_F(MarkAndSweepUtilsMarkTest, MarkSingleObjectWithWeakCounter) {
@@ -347,8 +288,6 @@ TEST_F(MarkAndSweepUtilsMarkTest, MarkSingleObjectWithWeakCounter) {
     auto stats = Mark({object});
 
     EXPECT_MARKED(stats, object, weakCounter);
-
-    EXPECT_THAT(stats.duplicateEntries, 0);
 }
 
 TEST_F(MarkAndSweepUtilsMarkTest, MarkSingleObjectArrayWithWeakCounter) {
@@ -360,8 +299,6 @@ TEST_F(MarkAndSweepUtilsMarkTest, MarkSingleObjectArrayWithWeakCounter) {
     auto stats = Mark({array});
 
     EXPECT_MARKED(stats, array, weakCounter);
-
-    EXPECT_THAT(stats.duplicateEntries, 0);
 }
 
 TEST_F(MarkAndSweepUtilsMarkTest, MarkSingleCharArrayWithWeakCounter) {
@@ -373,8 +310,6 @@ TEST_F(MarkAndSweepUtilsMarkTest, MarkSingleCharArrayWithWeakCounter) {
     auto stats = Mark({array});
 
     EXPECT_MARKED(stats, array, weakCounter);
-
-    EXPECT_THAT(stats.duplicateEntries, 0);
 }
 
 TEST_F(MarkAndSweepUtilsMarkTest, MarkSingleObjectWithInvalidFieldsWithWeakCounter) {
@@ -387,8 +322,6 @@ TEST_F(MarkAndSweepUtilsMarkTest, MarkSingleObjectWithInvalidFieldsWithWeakCount
     auto stats = Mark({object});
 
     EXPECT_MARKED(stats, object, weakCounter);
-
-    EXPECT_THAT(stats.duplicateEntries, 0);
 }
 
 TEST_F(MarkAndSweepUtilsMarkTest, MarkSingleObjectArrayWithInvalidFieldsWithWeakCounter) {
@@ -401,8 +334,6 @@ TEST_F(MarkAndSweepUtilsMarkTest, MarkSingleObjectArrayWithInvalidFieldsWithWeak
     auto stats = Mark({array});
 
     EXPECT_MARKED(stats, array, weakCounter);
-
-    EXPECT_THAT(stats.duplicateEntries, 0);
 }
 
 TEST_F(MarkAndSweepUtilsMarkTest, MarkSingleCharArrayWithSomeDataWithWeakCounter) {
@@ -417,8 +348,6 @@ TEST_F(MarkAndSweepUtilsMarkTest, MarkSingleCharArrayWithSomeDataWithWeakCounter
     auto stats = Mark({array});
 
     EXPECT_MARKED(stats, array, weakCounter);
-
-    EXPECT_THAT(stats.duplicateEntries, 0);
 }
 
 TEST_F(MarkAndSweepUtilsMarkTest, MarkTree) {
@@ -443,105 +372,6 @@ TEST_F(MarkAndSweepUtilsMarkTest, MarkTree) {
     EXPECT_MARKED(
             stats, root, root_field1, root_field1_field1, root_field1_field2, root_field3, root_field3_element1, root_field3_element2,
             root_field3_element3);
-
-    EXPECT_THAT(stats.duplicateEntries, 0);
-}
-
-TEST_F(MarkAndSweepUtilsMarkTest, MarkTreeWithPermanentRoot) {
-    Object root{BaseObject::Kind::kPermanent};
-    Object root_field1{BaseObject::Kind::kPermanent};
-    Object root_field1_field1{BaseObject::Kind::kPermanent};
-    Object root_field1_field2{BaseObject::Kind::kPermanent};
-    ObjectArray root_field3{BaseObject::Kind::kPermanent};
-    Object root_field3_element1{BaseObject::Kind::kPermanent};
-    ObjectArray root_field3_element2{BaseObject::Kind::kPermanent};
-    CharArray root_field3_element3{BaseObject::Kind::kPermanent};
-    root->field1 = root_field1.header();
-    root_field1->field1 = root_field1_field1.header();
-    root_field1->field2 = root_field1_field2.header();
-    root->field3 = root_field3.header();
-    root_field3.elements()[0] = root_field3_element1.header();
-    root_field3.elements()[1] = root_field3_element2.header();
-    root_field3.elements()[2] = root_field3_element3.header();
-
-    auto stats = Mark({root});
-
-    EXPECT_MARKED(stats);
-
-    EXPECT_THAT(stats.duplicateEntries, 0);
-}
-
-TEST_F(MarkAndSweepUtilsMarkTest, MarkTreeWithPermanentMiddle) {
-    Object root;
-    Object root_field1{BaseObject::Kind::kPermanent};
-    Object root_field1_field1{BaseObject::Kind::kPermanent};
-    Object root_field1_field2{BaseObject::Kind::kPermanent};
-    ObjectArray root_field3;
-    Object root_field3_element1;
-    ObjectArray root_field3_element2;
-    CharArray root_field3_element3;
-    root->field1 = root_field1.header();
-    root_field1->field1 = root_field1_field1.header();
-    root_field1->field2 = root_field1_field2.header();
-    root->field3 = root_field3.header();
-    root_field3.elements()[0] = root_field3_element1.header();
-    root_field3.elements()[1] = root_field3_element2.header();
-    root_field3.elements()[2] = root_field3_element3.header();
-
-    auto stats = Mark({root});
-
-    EXPECT_MARKED(stats, root, root_field3, root_field3_element1, root_field3_element2, root_field3_element3);
-
-    EXPECT_THAT(stats.duplicateEntries, 0);
-}
-
-TEST_F(MarkAndSweepUtilsMarkTest, MarkTreeWithPermanentLeaf) {
-    Object root;
-    Object root_field1;
-    Object root_field1_field1{BaseObject::Kind::kPermanent};
-    Object root_field1_field2;
-    ObjectArray root_field3;
-    Object root_field3_element1;
-    ObjectArray root_field3_element2;
-    CharArray root_field3_element3;
-    root->field1 = root_field1.header();
-    root_field1->field1 = root_field1_field1.header();
-    root_field1->field2 = root_field1_field2.header();
-    root->field3 = root_field3.header();
-    root_field3.elements()[0] = root_field3_element1.header();
-    root_field3.elements()[1] = root_field3_element2.header();
-    root_field3.elements()[2] = root_field3_element3.header();
-
-    auto stats = Mark({root});
-
-    EXPECT_MARKED(
-            stats, root, root_field1, root_field1_field2, root_field3, root_field3_element1, root_field3_element2, root_field3_element3);
-
-    EXPECT_THAT(stats.duplicateEntries, 0);
-}
-
-TEST_F(MarkAndSweepUtilsMarkTest, MarkTreeWithStackRoot) {
-    Object root{BaseObject::Kind::kStackLocal};
-    Object root_field1{BaseObject::Kind::kPermanent};
-    Object root_field1_field1{BaseObject::Kind::kPermanent};
-    Object root_field1_field2{BaseObject::Kind::kPermanent};
-    ObjectArray root_field3{BaseObject::Kind::kStackLocal};
-    Object root_field3_element1{BaseObject::Kind::kHeapLike};
-    ObjectArray root_field3_element2{BaseObject::Kind::kHeapLike};
-    CharArray root_field3_element3{BaseObject::Kind::kPermanent};
-    root->field1 = root_field1.header();
-    root_field1->field1 = root_field1_field1.header();
-    root_field1->field2 = root_field1_field2.header();
-    root->field3 = root_field3.header();
-    root_field3.elements()[0] = root_field3_element1.header();
-    root_field3.elements()[1] = root_field3_element2.header();
-    root_field3.elements()[2] = root_field3_element3.header();
-
-    auto stats = Mark({root, root_field3});
-
-    EXPECT_MARKED(stats, root_field3_element1, root_field3_element2);
-
-    EXPECT_THAT(stats.duplicateEntries, 0);
 }
 
 TEST_F(MarkAndSweepUtilsMarkTest, MarkRecursiveTree) {
@@ -555,45 +385,7 @@ TEST_F(MarkAndSweepUtilsMarkTest, MarkRecursiveTree) {
     auto stats = Mark({root});
 
     EXPECT_MARKED(stats, root, inner1, inner2);
-
-    EXPECT_THAT(stats.duplicateEntries, 0);
 }
-
-TEST_F(MarkAndSweepUtilsMarkTest, MarkRecursiveTreeWithPermanentRoot) {
-    Object root{BaseObject::Kind::kPermanent};
-    Object inner1{BaseObject::Kind::kPermanent};
-    ObjectArray inner2{BaseObject::Kind::kPermanent};
-    root->field1 = inner1.header();
-    inner1->field1 = inner2.header();
-    inner2.elements()[0] = root.header();
-
-    auto stats = Mark({root});
-
-    EXPECT_MARKED(stats);
-
-    EXPECT_THAT(stats.duplicateEntries, 0);
-}
-
-TEST_F(MarkAndSweepUtilsMarkTest, MarkRecursiveTreeWithStackRoot) {
-    Object root{BaseObject::Kind::kStackLocal};
-    Object inner1{BaseObject::Kind::kStackLocal};
-    ObjectArray inner2{BaseObject::Kind::kStackLocal};
-    Object inner3{BaseObject::Kind::kHeapLike};
-    Object inner2_element1{BaseObject::Kind::kHeapLike};
-    root->field1 = inner1.header();
-    inner1->field1 = inner2.header();
-    inner2.elements()[0] = root.header();
-    inner2.elements()[1] = inner2_element1.header();
-    root->field2 = inner3.header();
-    inner3->field1 = inner2.header();
-
-    auto stats = Mark({root, inner1, inner2});
-
-    EXPECT_MARKED(stats, inner3, inner2_element1);
-
-    EXPECT_THAT(stats.duplicateEntries, 0);
-}
-
 
 TEST_F(MarkAndSweepUtilsMarkTest, MarkForest) {
     Object root1;
@@ -603,44 +395,6 @@ TEST_F(MarkAndSweepUtilsMarkTest, MarkForest) {
     auto stats = Mark({root1, root2, root3});
 
     EXPECT_MARKED(stats, root1, root2, root3);
-
-    EXPECT_THAT(stats.duplicateEntries, 0);
-}
-
-TEST_F(MarkAndSweepUtilsMarkTest, MarkForestWithPermanentFirst) {
-    Object root1{BaseObject::Kind::kPermanent};
-    ObjectArray root2;
-    Object root3;
-
-    auto stats = Mark({root1, root2, root3});
-
-    EXPECT_MARKED(stats, root2, root3);
-
-    EXPECT_THAT(stats.duplicateEntries, 0);
-}
-
-TEST_F(MarkAndSweepUtilsMarkTest, MarkForestWithPermanentSecond) {
-    Object root1;
-    ObjectArray root2{BaseObject::Kind::kPermanent};
-    Object root3;
-
-    auto stats = Mark({root1, root2, root3});
-
-    EXPECT_MARKED(stats, root1, root3);
-
-    EXPECT_THAT(stats.duplicateEntries, 0);
-}
-
-TEST_F(MarkAndSweepUtilsMarkTest, MarkForestWithPermanentThird) {
-    Object root1;
-    ObjectArray root2;
-    Object root3{BaseObject::Kind::kPermanent};
-
-    auto stats = Mark({root1, root2, root3});
-
-    EXPECT_MARKED(stats, root1, root2);
-
-    EXPECT_THAT(stats.duplicateEntries, 0);
 }
 
 TEST_F(MarkAndSweepUtilsMarkTest, MarkForestWithInterconnectedRoots) {
@@ -655,6 +409,4 @@ TEST_F(MarkAndSweepUtilsMarkTest, MarkForestWithInterconnectedRoots) {
     auto stats = Mark({root1, root2, root3});
 
     EXPECT_MARKED(stats, root1, root2, root3);
-
-    EXPECT_THAT(stats.duplicateEntries, 2);
 }
