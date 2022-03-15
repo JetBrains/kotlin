@@ -8,10 +8,9 @@ package org.jetbrains.kotlin.gradle.kpm.idea
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinGradleModule
 
 internal fun IdeaKotlinProjectModelBuildingContext.toIdeaKotlinModule(module: KotlinGradleModule): IdeaKotlinModule {
-    val fragmentBuildingContext = IdeaKotlinFragmentBuildingContext(this)
     return IdeaKotlinModuleImpl(
         name = module.name,
         moduleIdentifier = module.moduleIdentifier.toIdeaKotlinModuleIdentifier(),
-        fragments = module.fragments.toList().map { fragment -> fragmentBuildingContext.toIdeaKotlinFragment(fragment) }
+        fragments = module.fragments.toList().map { fragment -> toIdeaKotlinFragment(fragment) }
     )
 }

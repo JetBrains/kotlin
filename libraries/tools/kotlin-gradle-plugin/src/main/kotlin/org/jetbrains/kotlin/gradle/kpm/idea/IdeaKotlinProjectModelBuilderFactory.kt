@@ -19,6 +19,13 @@ internal fun IdeaKotlinProjectModelBuilder.Companion.default(
     val fragmentMetadataResolverFactory = FragmentGranularMetadataResolverFactory()
 
     registerDependencyResolver(
+        resolver = IdeaKotlinRefinesDependencyResolver,
+        constraint = IdeaKotlinProjectModelBuilder.FragmentConstraint.unconstrained,
+        phase = IdeaKotlinProjectModelBuilder.DependencyResolutionPhase.SourceDependencyResolution,
+        level = IdeaKotlinProjectModelBuilder.DependencyResolutionLevel.Default
+    )
+
+    registerDependencyResolver(
         resolver = IdeaKotlinSourceDependencyResolver(fragmentMetadataResolverFactory),
         constraint = IdeaKotlinProjectModelBuilder.FragmentConstraint.unconstrained,
         phase = IdeaKotlinProjectModelBuilder.DependencyResolutionPhase.SourceDependencyResolution,

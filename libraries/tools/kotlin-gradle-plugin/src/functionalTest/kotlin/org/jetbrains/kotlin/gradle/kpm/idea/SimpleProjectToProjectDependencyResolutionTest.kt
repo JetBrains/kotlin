@@ -82,75 +82,114 @@ class SimpleProjectToProjectDependencyResolutionTest : AbstractLightweightIdeaDe
             fun ifTestModule(vararg any: Any?) =
                 listOf(*any).takeIf { module.name == KotlinGradleModule.TEST_MODULE_NAME }
 
+            fun ifMainModule(vararg any: Any?) =
+                listOf(*any).takeIf { module.name == KotlinGradleModule.MAIN_MODULE_NAME }
+
             module.assertContainsFragment("common").assertSourceDependencies(
-                ":producer/main/common",
-                ifTestModule(":consumer/main/common")
+                "regular::producer/main/common",
+                ifTestModule("friend::consumer/main/common")
             )
 
             module.assertContainsFragment("jvm").assertSourceDependencies(
-                ":producer/main/jvm",
-                ":producer/main/common",
+                "regular::producer/main/jvm",
+                "regular::producer/main/common",
+                ifMainModule(
+                    "refines::consumer/main/common",
+                ),
                 ifTestModule(
-                    ":consumer/main/common",
-                    ":consumer/main/jvm"
+                    "friend::consumer/main/common",
+                    "friend::consumer/main/jvm",
+                    "refines::consumer/test/common",
                 )
             )
 
             module.assertContainsFragment("nativeCommon").assertSourceDependencies(
-                ":producer/main/common",
-                ":producer/main/nativeCommon",
+                "regular::producer/main/common",
+                "regular::producer/main/nativeCommon",
+                ifMainModule(
+                    "refines::consumer/main/common"
+                ),
                 ifTestModule(
-                    ":consumer/main/common",
-                    ":consumer/main/nativeCommon"
+                    "friend::consumer/main/common",
+                    "friend::consumer/main/nativeCommon",
+                    "refines::consumer/test/common",
                 )
             )
 
             module.assertContainsFragment("appleCommon").assertSourceDependencies(
-                ":producer/main/common",
-                ":producer/main/appleCommon",
-                ":producer/main/nativeCommon",
+                "regular::producer/main/common",
+                "regular::producer/main/appleCommon",
+                "regular::producer/main/nativeCommon",
+                ifMainModule(
+                    "refines::consumer/main/common",
+                    "refines::consumer/main/nativeCommon"
+                ),
                 ifTestModule(
-                    ":consumer/main/common",
-                    ":consumer/main/nativeCommon",
-                    ":consumer/main/appleCommon"
+                    "friend::consumer/main/common",
+                    "friend::consumer/main/nativeCommon",
+                    "friend::consumer/main/appleCommon",
+                    "refines::consumer/test/common",
+                    "refines::consumer/test/nativeCommon"
                 )
             )
 
             module.assertContainsFragment("linuxX64").assertSourceDependencies(
-                ":producer/main/common",
-                ":producer/main/nativeCommon",
-                ":producer/main/linuxX64",
+                "regular::producer/main/common",
+                "regular::producer/main/nativeCommon",
+                "regular::producer/main/linuxX64",
+                ifMainModule(
+                    "refines::consumer/main/common",
+                    "refines::consumer/main/nativeCommon",
+                ),
                 ifTestModule(
-                    ":consumer/main/common",
-                    ":consumer/main/nativeCommon",
-                    ":consumer/main/linuxX64"
+                    "friend::consumer/main/common",
+                    "friend::consumer/main/nativeCommon",
+                    "friend::consumer/main/linuxX64",
+                    "refines::consumer/test/common",
+                    "refines::consumer/test/nativeCommon"
                 )
             )
 
             module.assertContainsFragment("macosX64").assertSourceDependencies(
-                ":producer/main/macosX64",
-                ":producer/main/common",
-                ":producer/main/appleCommon",
-                ":producer/main/nativeCommon",
+                "regular::producer/main/macosX64",
+                "regular::producer/main/common",
+                "regular::producer/main/appleCommon",
+                "regular::producer/main/nativeCommon",
+                ifMainModule(
+                    "refines::consumer/main/common",
+                    "refines::consumer/main/nativeCommon",
+                    "refines::consumer/main/appleCommon"
+                ),
                 ifTestModule(
-                    ":consumer/main/common",
-                    ":consumer/main/nativeCommon",
-                    ":consumer/main/appleCommon",
-                    ":consumer/main/macosX64"
+                    "friend::consumer/main/common",
+                    "friend::consumer/main/nativeCommon",
+                    "friend::consumer/main/appleCommon",
+                    "friend::consumer/main/macosX64",
+                    "refines::consumer/test/common",
+                    "refines::consumer/test/nativeCommon",
+                    "refines::consumer/test/appleCommon"
                 )
             )
 
             module.assertContainsFragment("iosX64").assertSourceDependencies(
-                ":producer/main/iosX64",
-                ":producer/main/common",
-                ":producer/main/iosMain",
-                ":producer/main/appleCommon",
-                ":producer/main/nativeCommon",
+                "regular::producer/main/iosX64",
+                "regular::producer/main/common",
+                "regular::producer/main/iosMain",
+                "regular::producer/main/appleCommon",
+                "regular::producer/main/nativeCommon",
+                ifMainModule(
+                    "refines::consumer/main/common",
+                    "refines::consumer/main/nativeCommon",
+                    "refines::consumer/main/appleCommon"
+                ),
                 ifTestModule(
-                    ":consumer/main/common",
-                    ":consumer/main/nativeCommon",
-                    ":consumer/main/appleCommon",
-                    ":consumer/main/iosX64"
+                    "friend::consumer/main/common",
+                    "friend::consumer/main/nativeCommon",
+                    "friend::consumer/main/appleCommon",
+                    "friend::consumer/main/iosX64",
+                    "refines::consumer/test/common",
+                    "refines::consumer/test/nativeCommon",
+                    "refines::consumer/test/appleCommon"
                 )
             )
         }

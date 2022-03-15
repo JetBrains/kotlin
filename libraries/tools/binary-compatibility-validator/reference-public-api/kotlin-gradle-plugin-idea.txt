@@ -101,7 +101,6 @@ public final class org/jetbrains/kotlin/gradle/kpm/idea/IdeaKotlinDependencyKt {
 
 public abstract interface class org/jetbrains/kotlin/gradle/kpm/idea/IdeaKotlinFragment : java/io/Serializable {
 	public abstract fun getDependencies ()Ljava/util/List;
-	public abstract fun getDirectRefinesDependencies ()Ljava/util/List;
 	public abstract fun getExternal ()Lorg/jetbrains/kotlin/gradle/kpm/KotlinExternalModelContainer;
 	public abstract fun getLanguageSettings ()Lorg/jetbrains/kotlin/gradle/kpm/idea/IdeaKotlinLanguageSettings;
 	public abstract fun getModuleIdentifier ()Lorg/jetbrains/kotlin/gradle/kpm/idea/IdeaKotlinModuleIdentifier;
@@ -216,6 +215,16 @@ public final class org/jetbrains/kotlin/gradle/kpm/idea/IdeaKotlinSourceCoordina
 
 public abstract interface class org/jetbrains/kotlin/gradle/kpm/idea/IdeaKotlinSourceDependency : org/jetbrains/kotlin/gradle/kpm/idea/IdeaKotlinDependency {
 	public abstract fun getCoordinates ()Lorg/jetbrains/kotlin/gradle/kpm/idea/IdeaKotlinSourceCoordinates;
+	public abstract fun getType ()Lorg/jetbrains/kotlin/gradle/kpm/idea/IdeaKotlinSourceDependency$Type;
+}
+
+public final class org/jetbrains/kotlin/gradle/kpm/idea/IdeaKotlinSourceDependency$Type : java/lang/Enum, java/io/Serializable {
+	public static final field Companion Lorg/jetbrains/kotlin/gradle/kpm/idea/IdeaKotlinSourceDependency$Type$Companion;
+	public static final field Friend Lorg/jetbrains/kotlin/gradle/kpm/idea/IdeaKotlinSourceDependency$Type;
+	public static final field Refines Lorg/jetbrains/kotlin/gradle/kpm/idea/IdeaKotlinSourceDependency$Type;
+	public static final field Regular Lorg/jetbrains/kotlin/gradle/kpm/idea/IdeaKotlinSourceDependency$Type;
+	public static fun valueOf (Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/kpm/idea/IdeaKotlinSourceDependency$Type;
+	public static fun values ()[Lorg/jetbrains/kotlin/gradle/kpm/idea/IdeaKotlinSourceDependency$Type;
 }
 
 public abstract interface class org/jetbrains/kotlin/gradle/kpm/idea/IdeaKotlinSourceDirectory : java/io/Serializable {
