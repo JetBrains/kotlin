@@ -116,7 +116,7 @@ fun IdeaKotlinFragment.assertSourceDependencies(matchers: Set<IdeaKotlinSourceDe
                 appendLine()
                 appendLine("${name}: Unexpected source dependency paths:")
                 unexpectedDependencies.forEach { unexpectedDependency ->
-                    appendLine("\"${unexpectedDependency.path}\",")
+                    appendLine("\"${unexpectedDependency.coordinates.path}\",")
                 }
             }
 
@@ -131,7 +131,7 @@ fun IdeaKotlinFragment.assertSourceDependencies(matchers: Set<IdeaKotlinSourceDe
             appendLine()
             appendLine("${name}: Resolved source dependency paths:")
             sourceDependencies.forEach { dependency ->
-                appendLine("\"${dependency.path}\",")
+                appendLine("\"${dependency.coordinates.path}\",")
             }
         }
     )

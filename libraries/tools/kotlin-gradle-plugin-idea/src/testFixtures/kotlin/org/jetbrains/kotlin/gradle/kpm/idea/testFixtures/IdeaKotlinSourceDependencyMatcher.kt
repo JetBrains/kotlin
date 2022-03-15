@@ -18,7 +18,7 @@ interface IdeaKotlinSourceDependencyMatcher : IdeaKotlinDependencyMatcher<IdeaKo
         override val description: String = path
 
         override fun matches(dependency: IdeaKotlinSourceDependency): Boolean {
-            return path == dependency.path
+            return path == dependency.coordinates.path
         }
     }
 
@@ -26,7 +26,7 @@ interface IdeaKotlinSourceDependencyMatcher : IdeaKotlinDependencyMatcher<IdeaKo
         override val description: String = pathRegex.pattern
 
         override fun matches(dependency: IdeaKotlinSourceDependency): Boolean {
-            return pathRegex.matches(dependency.path)
+            return pathRegex.matches(dependency.coordinates.path)
         }
     }
 }
