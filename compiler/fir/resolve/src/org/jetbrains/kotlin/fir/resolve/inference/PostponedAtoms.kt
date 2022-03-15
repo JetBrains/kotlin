@@ -19,9 +19,9 @@ import org.jetbrains.kotlin.resolve.calls.model.LambdaWithTypeVariableAsExpected
 import org.jetbrains.kotlin.resolve.calls.model.PostponedCallableReferenceMarker
 import org.jetbrains.kotlin.resolve.calls.model.PostponedResolvedAtomMarker
 import org.jetbrains.kotlin.types.model.KotlinTypeMarker
+import org.jetbrains.kotlin.utils.addIfNotNull
 
 //  --------------------------- Variables ---------------------------
-
 
 
 //  -------------------------- Atoms --------------------------
@@ -62,7 +62,16 @@ class ResolvedLambdaAtom(
 
     lateinit var returnStatements: Collection<FirStatement>
 
-    override val inputTypes: Collection<ConeKotlinType> get() = receiver?.let { parameters + it } ?: parameters
+    override val inputTypes: Collection<ConeKotlinType>
+        get() {
+            if (receiver == null && contextReceivers.isEmpty()) return parameters
+            return ArrayList<ConeKotlinType>(parameters.size + contextReceivers.size + (if (receiver != null) 1 else 0)).apply {
+                addAll(parameters)
+                addIfNotNull(receiver)
+                addAll(contextReceivers)
+            }
+        }
+
     override val outputType: ConeKotlinType get() = returnType
 
     fun replaceExpectedType(expectedType: ConeKotlinType, newReturnType: ConeTypeVariableType) {

@@ -8,20 +8,26 @@ package org.jetbrains.kotlin.resolve.calls.model
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.resolve.calls.components.*
+import org.jetbrains.kotlin.resolve.calls.components.ReturnArgumentsInfo
+import org.jetbrains.kotlin.resolve.calls.components.TypeArgumentsToParametersMapper
+import org.jetbrains.kotlin.resolve.calls.components.candidate.CallableReferenceResolutionCandidate
+import org.jetbrains.kotlin.resolve.calls.components.candidate.ResolutionCandidate
+import org.jetbrains.kotlin.resolve.calls.components.extractInputOutputTypesFromCallableReferenceExpectedType
+import org.jetbrains.kotlin.resolve.calls.inference.NewConstraintSystem
 import org.jetbrains.kotlin.resolve.calls.inference.components.FreshVariableNewTypeSubstitutor
 import org.jetbrains.kotlin.resolve.calls.inference.components.NewTypeSubstitutor
-import org.jetbrains.kotlin.resolve.calls.inference.model.*
+import org.jetbrains.kotlin.resolve.calls.inference.model.NewConstraintError
+import org.jetbrains.kotlin.resolve.calls.inference.model.NewConstraintMismatch
+import org.jetbrains.kotlin.resolve.calls.inference.model.NewConstraintWarning
+import org.jetbrains.kotlin.resolve.calls.inference.model.TypeVariableForLambdaReturnType
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
-import org.jetbrains.kotlin.resolve.calls.components.candidate.ResolutionCandidate
-import org.jetbrains.kotlin.resolve.calls.components.candidate.CallableReferenceResolutionCandidate
-import org.jetbrains.kotlin.resolve.calls.inference.NewConstraintSystem
 import org.jetbrains.kotlin.resolve.constants.IntegerValueTypeConstant
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeConstructor
 import org.jetbrains.kotlin.types.UnwrappedType
 import org.jetbrains.kotlin.types.model.KotlinTypeMarker
 import org.jetbrains.kotlin.types.typeUtil.unCapture
+import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 /**
@@ -174,7 +180,16 @@ class ResolvedLambdaAtom(
         setAnalyzedResults(subResolvedAtoms)
     }
 
-    override val inputTypes: Collection<UnwrappedType> get() = receiver?.let { parameters + it } ?: parameters
+    override val inputTypes: Collection<UnwrappedType>
+        get() {
+            if (receiver == null && contextReceivers.isEmpty()) return parameters
+            return ArrayList<UnwrappedType>(parameters.size + contextReceivers.size + (if (receiver != null) 1 else 0)).apply {
+                addAll(parameters)
+                addIfNotNull(receiver)
+                addAll(contextReceivers)
+            }
+        }
+
     override val outputType: UnwrappedType get() = returnType
 }
 
@@ -230,8 +245,7 @@ class CallableReferenceWithRevisedExpectedTypeAtom(
 class PostponedCallableReferenceAtom(
     eagerCallableReferenceAtom: EagerCallableReferenceAtom
 ) : AbstractPostponedCallableReferenceAtom(eagerCallableReferenceAtom.atom, eagerCallableReferenceAtom.expectedType),
-    PostponedCallableReferenceMarker
-{
+    PostponedCallableReferenceMarker {
     override var revisedExpectedType: UnwrappedType? = null
         private set
 
