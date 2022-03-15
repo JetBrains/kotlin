@@ -8,15 +8,10 @@ package org.jetbrains.kotlin.analysis.api.fir
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
 import com.intellij.psi.search.GlobalSearchScope
-import org.jetbrains.kotlin.KtFakeSourceElement
-import org.jetbrains.kotlin.KtFakeSourceElementKind
-import org.jetbrains.kotlin.KtRealPsiSourceElement
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.KtDeclarationAndFirDeclarationEqualityChecker
-import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSession
 import org.jetbrains.kotlin.analysis.providers.createDeclarationProvider
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -25,7 +20,6 @@ import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtFunction
 import org.jetbrains.kotlin.psi.KtNamedFunction
-
 
 //todo introduce LibraryModificationTracker based cache?
 internal object FirDeserializedDeclarationSourceProvider {
@@ -137,39 +131,3 @@ internal object FirDeserializedDeclarationSourceProvider {
         StandardClassIds.FunctionN(i) to ClassId(FqName("kotlin.jvm.functions"), Name.identifier("Function$i"))
     }
 }
-
-private fun KtElement.isCompiled(): Boolean = containingKtFile.isCompiled
-
-private val allowedFakeElementKinds = setOf(
-    KtFakeSourceElementKind.FromUseSiteTarget,
-    KtFakeSourceElementKind.PropertyFromParameter,
-    KtFakeSourceElementKind.ItLambdaParameter,
-    KtFakeSourceElementKind.EnumGeneratedDeclaration,
-    KtFakeSourceElementKind.DataClassGeneratedMembers,
-    KtFakeSourceElementKind.ImplicitConstructor,
-)
-
-private fun FirElement.getAllowedPsi() = when (val source = source) {
-    null -> null
-    is KtRealPsiSourceElement -> source.psi
-    is KtFakeSourceElement -> if (source.kind in allowedFakeElementKinds) psi else null
-    else -> null
-}
-
-fun FirElement.findPsi(project: Project): PsiElement? =
-    getAllowedPsi() ?: FirDeserializedDeclarationSourceProvider.findPsi(this, project)
-
-
-fun FirBasedSymbol<*>.findPsi(): PsiElement? =
-    fir.findPsi(fir.moduleData.session)
-
-fun FirElement.findPsi(session: FirSession): PsiElement? =
-    findPsi((session as LLFirSession).project)
-
-/**
- * Finds [PsiElement] which will be used as go-to referenced element for [KtPsiReference]
- * For data classes & enums generated members like `copy` `componentN`, `values` it will return corresponding enum/data class
- * Otherwise, behaves the same way as [findPsi] returns exact PSI declaration corresponding to passed [FirDeclaration]
- */
-fun FirDeclaration.findReferencePsi(): PsiElement? =
-    psi ?: FirDeserializedDeclarationSourceProvider.findPsi(this, (moduleData.session as LLFirSession).project)
