@@ -7,7 +7,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompilerExecutionStrategy
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.junit.jupiter.api.DisplayName
 
-@SimpleGradlePluginTests
+@JvmGradlePluginTests
 @DisplayName("KGP simple tests")
 class SimpleKotlinGradleIT : KGPBaseTest() {
 

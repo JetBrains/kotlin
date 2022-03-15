@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.gradle.testbase.*
 import org.junit.jupiter.api.DisplayName
 
 @DisplayName("Build statistics")
-@SimpleGradlePluginTests
+@JvmGradlePluginTests
 class BuildStatisticsIT : KGPBaseTest() {
 
     @DisplayName("Http build report url problems are logged only ones")
