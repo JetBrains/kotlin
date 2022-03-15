@@ -8549,6 +8549,11 @@ public class IrCodegenBoxWasmTestGenerated extends AbstractIrCodegenBoxWasmTest 
             runTest("compiler/testData/codegen/box/dataClasses/genericParam.kt");
         }
 
+        @TestMetadata("kt49715.kt")
+        public void testKt49715() throws Exception {
+            runTest("compiler/testData/codegen/box/dataClasses/kt49715.kt");
+        }
+
         @TestMetadata("mixedParams.kt")
         public void testMixedParams() throws Exception {
             runTest("compiler/testData/codegen/box/dataClasses/mixedParams.kt");
