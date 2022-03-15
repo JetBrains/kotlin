@@ -3,7 +3,7 @@ FILE fqName:<root> fileName:/kt45236.kt
     sealedSubclasses:
       CLASS CLASS name:Error modality:FINAL visibility:public [data] superTypes:[<root>.NetRequestStatus<T of <root>.NetRequestStatus.Error>]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.NetRequestStatus<T of <root>.NetRequestStatus>
-    TYPE_PARAMETER name:T index:0 variance:out superTypes:[kotlin.Any]
+    TYPE_PARAMETER name:T index:0 variance:out superTypes:[kotlin.Any] reified:false
     CONSTRUCTOR visibility:protected <> () returnType:<root>.NetRequestStatus<T of <root>.NetRequestStatus> [primary]
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
@@ -14,7 +14,7 @@ FILE fqName:<root> fileName:/kt45236.kt
         $this: VALUE_PARAMETER name:<this> type:<root>.NetRequestStatus<T of <root>.NetRequestStatus>
     CLASS CLASS name:Error modality:FINAL visibility:public [data] superTypes:[<root>.NetRequestStatus<T of <root>.NetRequestStatus.Error>]
       $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.NetRequestStatus.Error<T of <root>.NetRequestStatus.Error>
-      TYPE_PARAMETER name:T index:0 variance:out superTypes:[kotlin.Any]
+      TYPE_PARAMETER name:T index:0 variance:out superTypes:[kotlin.Any] reified:false
       CONSTRUCTOR visibility:public <> (error:kotlin.Throwable, value:T of <root>.NetRequestStatus.Error?) returnType:<root>.NetRequestStatus.Error<T of <root>.NetRequestStatus.Error> [primary]
         VALUE_PARAMETER name:error index:0 type:kotlin.Throwable
         VALUE_PARAMETER name:value index:1 type:T of <root>.NetRequestStatus.Error?
@@ -182,14 +182,14 @@ FILE fqName:<root> fileName:/kt45236.kt
   FUN name:isError visibility:public modality:FINAL <T> ($receiver:<root>.NetRequestStatus<T of <root>.isError>) returnType:kotlin.Boolean
     annotations:
       OptIn(markerClass = [CLASS_REFERENCE 'CLASS IR_EXTERNAL_DECLARATION_STUB ANNOTATION_CLASS name:ExperimentalContracts modality:FINAL visibility:public superTypes:[kotlin.Annotation]' type=kotlin.reflect.KClass<kotlin.contracts.ExperimentalContracts>])
-    TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any]
+    TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any] reified:false
     $receiver: VALUE_PARAMETER name:<this> type:<root>.NetRequestStatus<T of <root>.isError>
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun isError <T> (): kotlin.Boolean declared in <root>'
         TYPE_OP type=kotlin.Boolean origin=INSTANCEOF typeOperand=<root>.NetRequestStatus.Error<T of <root>.isError>
           GET_VAR '<this>: <root>.NetRequestStatus<T of <root>.isError> declared in <root>.isError' type=<root>.NetRequestStatus<T of <root>.isError> origin=null
   FUN name:successOrThrow visibility:public modality:FINAL <T> () returnType:kotlin.Unit
-    TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any]
+    TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any] reified:false
     BLOCK_BODY
       VAR name:nextTerminal type:<root>.NetRequestStatus<T of <root>.successOrThrow> [val]
         CONSTRUCTOR_CALL 'public constructor <init> (error: kotlin.Throwable, value: T of <root>.NetRequestStatus.Error?) [primary] declared in <root>.NetRequestStatus.Error' type=<root>.NetRequestStatus.Error<T of <root>.successOrThrow> origin=null

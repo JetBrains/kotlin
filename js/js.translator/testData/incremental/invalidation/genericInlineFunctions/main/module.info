@@ -3,6 +3,7 @@ STEP 0:
     dirty: m.kt
 STEP 1:
     dependencies: stdlib, lib1
+    dirty: m.kt
 STEP 2:
     dependencies: stdlib, lib1
     dirty: m.kt
@@ -20,6 +21,7 @@ STEP 6:
     dirty: m.kt
 STEP 7:
     dependencies: stdlib, lib1
+    dirty: m.kt
 STEP 8:
     dependencies: stdlib, lib1, libProxy
     modifications:
@@ -27,6 +29,7 @@ STEP 8:
     dirty: m.kt
 STEP 9:
     dependencies: stdlib, lib1, libProxy
+    dirty: m.kt
 STEP 10:
     dependencies: stdlib, lib1, libProxy
     dirty: m.kt
@@ -44,11 +47,13 @@ STEP 14:
     dirty: m.kt
 STEP 15:
     dependencies: stdlib, lib1, libProxy
+    dirty: m.kt
 STEP 16:
     dependencies: stdlib, lib1, libProxy
     dirty: m.kt
 STEP 17:
     dependencies: stdlib, lib1, libProxy
+    dirty: m.kt
 STEP 18:
     dependencies: stdlib, lib1, libProxy
     dirty: m.kt
@@ -66,3 +71,4 @@ STEP 22:
     dirty: m.kt
 STEP 23:
     dependencies: stdlib, lib1, libProxy
+    dirty: m.kt

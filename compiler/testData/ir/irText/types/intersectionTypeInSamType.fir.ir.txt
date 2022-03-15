@@ -67,7 +67,7 @@ FILE fqName:<root> fileName:/intersectionTypeInSamType.kt
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
   CLASS INTERFACE name:IFoo modality:ABSTRACT visibility:public [fun] superTypes:[kotlin.Any]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.IFoo<T of <root>.IFoo>
-    TYPE_PARAMETER name:T index:0 variance: superTypes:[<root>.X]
+    TYPE_PARAMETER name:T index:0 variance: superTypes:[<root>.X] reified:false
     FUN name:foo visibility:public modality:ABSTRACT <> ($this:<root>.IFoo<T of <root>.IFoo>, t:T of <root>.IFoo) returnType:kotlin.Unit
       $this: VALUE_PARAMETER name:<this> type:<root>.IFoo<T of <root>.IFoo>
       VALUE_PARAMETER name:t index:0 type:T of <root>.IFoo
@@ -86,7 +86,7 @@ FILE fqName:<root> fileName:/intersectionTypeInSamType.kt
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
   CLASS INTERFACE name:IBar1 modality:ABSTRACT visibility:public [fun] superTypes:[kotlin.Any]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.IBar1<T of <root>.IBar1>
-    TYPE_PARAMETER name:T index:0 variance: superTypes:[<root>.X; <root>.Z]
+    TYPE_PARAMETER name:T index:0 variance: superTypes:[<root>.X; <root>.Z] reified:false
     FUN name:bar visibility:public modality:ABSTRACT <> ($this:<root>.IBar1<T of <root>.IBar1>, t:T of <root>.IBar1) returnType:kotlin.Unit
       $this: VALUE_PARAMETER name:<this> type:<root>.IBar1<T of <root>.IBar1>
       VALUE_PARAMETER name:t index:0 type:T of <root>.IBar1
@@ -105,7 +105,7 @@ FILE fqName:<root> fileName:/intersectionTypeInSamType.kt
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
   CLASS INTERFACE name:IBar2 modality:ABSTRACT visibility:public [fun] superTypes:[kotlin.Any]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.IBar2<T of <root>.IBar2>
-    TYPE_PARAMETER name:T index:0 variance: superTypes:[<root>.X; <root>.Z]
+    TYPE_PARAMETER name:T index:0 variance: superTypes:[<root>.X; <root>.Z] reified:false
     FUN name:bar visibility:public modality:ABSTRACT <> ($this:<root>.IBar2<T of <root>.IBar2>, t:T of <root>.IBar2) returnType:kotlin.Unit
       $this: VALUE_PARAMETER name:<this> type:<root>.IBar2<T of <root>.IBar2>
       VALUE_PARAMETER name:t index:0 type:T of <root>.IBar2
@@ -123,7 +123,7 @@ FILE fqName:<root> fileName:/intersectionTypeInSamType.kt
         public open fun toString (): kotlin.String declared in kotlin.Any
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
   FUN name:sel visibility:public modality:FINAL <T> (x:T of <root>.sel, y:T of <root>.sel) returnType:T of <root>.sel
-    TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?]
+    TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false
     VALUE_PARAMETER name:x index:0 type:T of <root>.sel
     VALUE_PARAMETER name:y index:1 type:T of <root>.sel
     BLOCK_BODY
@@ -131,7 +131,7 @@ FILE fqName:<root> fileName:/intersectionTypeInSamType.kt
         GET_VAR 'x: T of <root>.sel declared in <root>.sel' type=T of <root>.sel origin=null
   CLASS CLASS name:G1 modality:FINAL visibility:public superTypes:[kotlin.Any]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.G1<T of <root>.G1>
-    TYPE_PARAMETER name:T index:0 variance: superTypes:[<root>.X]
+    TYPE_PARAMETER name:T index:0 variance: superTypes:[<root>.X] reified:false
     CONSTRUCTOR visibility:public <> () returnType:<root>.G1<T of <root>.G1> [primary]
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
@@ -155,7 +155,7 @@ FILE fqName:<root> fileName:/intersectionTypeInSamType.kt
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
   CLASS CLASS name:G2 modality:FINAL visibility:public superTypes:[kotlin.Any]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.G2<T of <root>.G2>
-    TYPE_PARAMETER name:T index:0 variance: superTypes:[<root>.X; <root>.Z]
+    TYPE_PARAMETER name:T index:0 variance: superTypes:[<root>.X; <root>.Z] reified:false
     CONSTRUCTOR visibility:public <> () returnType:<root>.G2<T of <root>.G2> [primary]
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'

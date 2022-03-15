@@ -1,7 +1,7 @@
 FILE fqName:<root> fileName:/readWriteProperty.kt
   CLASS CLASS name:SettingType modality:FINAL visibility:public superTypes:[kotlin.Any]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.SettingType<V of <root>.SettingType>
-    TYPE_PARAMETER name:V index:0 variance:out superTypes:[kotlin.Any]
+    TYPE_PARAMETER name:V index:0 variance:out superTypes:[kotlin.Any] reified:false
     CONSTRUCTOR visibility:public <> (type:kotlin.reflect.KClass<out V of <root>.SettingType>) returnType:<root>.SettingType<V of <root>.SettingType> [primary]
       VALUE_PARAMETER name:type index:0 type:kotlin.reflect.KClass<out V of <root>.SettingType>
       BLOCK_BODY
@@ -33,8 +33,8 @@ FILE fqName:<root> fileName:/readWriteProperty.kt
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
   CLASS CLASS name:SettingReference modality:FINAL visibility:public superTypes:[kotlin.Any]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.SettingReference<V of <root>.SettingReference, T of <root>.SettingReference>
-    TYPE_PARAMETER name:V index:0 variance: superTypes:[kotlin.Any]
-    TYPE_PARAMETER name:T index:1 variance: superTypes:[<root>.SettingType<V of <root>.SettingReference>]
+    TYPE_PARAMETER name:V index:0 variance: superTypes:[kotlin.Any] reified:false
+    TYPE_PARAMETER name:T index:1 variance: superTypes:[<root>.SettingType<V of <root>.SettingReference>] reified:false
     CONSTRUCTOR visibility:public <> (t:T of <root>.SettingReference, v:V of <root>.SettingReference) returnType:<root>.SettingReference<V of <root>.SettingReference, T of <root>.SettingReference> [primary]
       VALUE_PARAMETER name:t index:0 type:T of <root>.SettingReference
       VALUE_PARAMETER name:v index:1 type:V of <root>.SettingReference
@@ -135,8 +135,8 @@ FILE fqName:<root> fileName:/readWriteProperty.kt
             property: PROPERTY_REFERENCE 'public final projectTemplate: kotlin.Int? [delegated,var]' field=null getter='public final fun <get-projectTemplate> (): kotlin.Int? declared in <root>.IdeWizard' setter='public final fun <set-projectTemplate> (<set-?>: kotlin.Int?): kotlin.Unit declared in <root>.IdeWizard' type=kotlin.reflect.KMutableProperty1<<root>.IdeWizard, kotlin.Int?> origin=PROPERTY_REFERENCE_FOR_DELEGATE
             value: GET_VAR '<set-?>: kotlin.Int? declared in <root>.IdeWizard.<set-projectTemplate>' type=kotlin.Int? origin=null
     FUN name:setting visibility:private modality:FINAL <V, T> ($this:<root>.IdeWizard, reference:<root>.SettingReference<V of <root>.IdeWizard.setting, T of <root>.IdeWizard.setting>) returnType:<root>.IdeWizard.setting.<no name provided><V of <root>.IdeWizard.setting, T of <root>.IdeWizard.setting>
-      TYPE_PARAMETER name:V index:0 variance: superTypes:[kotlin.Any]
-      TYPE_PARAMETER name:T index:1 variance: superTypes:[<root>.SettingType<V of <root>.IdeWizard.setting>]
+      TYPE_PARAMETER name:V index:0 variance: superTypes:[kotlin.Any] reified:false
+      TYPE_PARAMETER name:T index:1 variance: superTypes:[<root>.SettingType<V of <root>.IdeWizard.setting>] reified:false
       $this: VALUE_PARAMETER name:<this> type:<root>.IdeWizard
       VALUE_PARAMETER name:reference index:0 type:<root>.SettingReference<V of <root>.IdeWizard.setting, T of <root>.IdeWizard.setting>
       BLOCK_BODY

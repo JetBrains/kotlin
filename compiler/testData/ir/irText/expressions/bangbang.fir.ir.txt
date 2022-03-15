@@ -26,7 +26,7 @@ FILE fqName:<root> fileName:/bangbang.kt
                 then: CALL 'public open fun hashCode (): kotlin.Int declared in kotlin.Any' type=kotlin.Int origin=null
                   $this: GET_VAR 'val tmp_0: kotlin.Any? [val] declared in <root>.test2' type=kotlin.Any? origin=null
   FUN name:test3 visibility:public modality:FINAL <X> (a:X of <root>.test3) returnType:{X of <root>.test3 & Any}
-    TYPE_PARAMETER name:X index:0 variance: superTypes:[kotlin.Any?]
+    TYPE_PARAMETER name:X index:0 variance: superTypes:[kotlin.Any?] reified:false
     VALUE_PARAMETER name:a index:0 type:X of <root>.test3
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun test3 <X> (a: X of <root>.test3): {X of <root>.test3 & Any} declared in <root>'
@@ -37,7 +37,7 @@ FILE fqName:<root> fileName:/bangbang.kt
     VALUE_PARAMETER name:s index:0 type:kotlin.String
     BLOCK_BODY
   FUN name:test4 visibility:public modality:FINAL <X> (a:X of <root>.test4) returnType:kotlin.Unit
-    TYPE_PARAMETER name:X index:0 variance: superTypes:[kotlin.Any?]
+    TYPE_PARAMETER name:X index:0 variance: superTypes:[kotlin.Any?] reified:false
     VALUE_PARAMETER name:a index:0 type:X of <root>.test4
     BLOCK_BODY
       WHEN type=kotlin.Unit origin=IF

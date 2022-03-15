@@ -21,7 +21,7 @@ FILE fqName:<root> fileName:/funInterfaceConstructorReference.kt
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
   CLASS INTERFACE name:KSupplier modality:ABSTRACT visibility:public [fun] superTypes:[kotlin.Any]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.KSupplier<T of <root>.KSupplier>
-    TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?]
+    TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false
     FUN name:get visibility:public modality:ABSTRACT <> ($this:<root>.KSupplier<T of <root>.KSupplier>) returnType:T of <root>.KSupplier
       $this: VALUE_PARAMETER name:<this> type:<root>.KSupplier<T of <root>.KSupplier>
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
@@ -39,7 +39,7 @@ FILE fqName:<root> fileName:/funInterfaceConstructorReference.kt
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
   CLASS INTERFACE name:KConsumer modality:ABSTRACT visibility:public [fun] superTypes:[kotlin.Any]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.KConsumer<T of <root>.KConsumer>
-    TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?]
+    TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false
     FUN name:accept visibility:public modality:ABSTRACT <> ($this:<root>.KConsumer<T of <root>.KConsumer>, x:T of <root>.KConsumer) returnType:kotlin.Unit
       $this: VALUE_PARAMETER name:<this> type:<root>.KConsumer<T of <root>.KConsumer>
       VALUE_PARAMETER name:x index:0 type:T of <root>.KConsumer

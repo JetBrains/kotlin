@@ -1,6 +1,6 @@
 FILE fqName:<root> fileName:/stringVsTXString.kt
   FUN name:useTX visibility:public modality:FINAL <T> (x:T of <root>.useTX, fn:kotlin.Function0<T of <root>.useTX>) returnType:T of <root>.useTX
-    TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?]
+    TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false
     VALUE_PARAMETER name:x index:0 type:T of <root>.useTX
     VALUE_PARAMETER name:fn index:1 type:kotlin.Function0<T of <root>.useTX>
     BLOCK_BODY

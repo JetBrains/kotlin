@@ -1,7 +1,7 @@
 FILE fqName:<root> fileName:/genericPropertyReferenceType.kt
   CLASS CLASS name:C modality:FINAL visibility:public superTypes:[kotlin.Any]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.C<T of <root>.C>
-    TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?]
+    TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false
     CONSTRUCTOR visibility:public <> (x:T of <root>.C) returnType:<root>.C<T of <root>.C> [primary]
       VALUE_PARAMETER name:x index:0 type:T of <root>.C
       BLOCK_BODY
@@ -42,7 +42,7 @@ FILE fqName:<root> fileName:/genericPropertyReferenceType.kt
   PROPERTY name:y visibility:public modality:FINAL [var]
     FUN name:<get-y> visibility:public modality:FINAL <T> ($receiver:<root>.C<T of <root>.<get-y>>) returnType:T of <root>.<get-y>
       correspondingProperty: PROPERTY name:y visibility:public modality:FINAL [var]
-      TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?]
+      TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false
       $receiver: VALUE_PARAMETER name:<this> type:<root>.C<T of <root>.<get-y>>
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun <get-y> <T> (): T of <root>.<get-y> declared in <root>'
@@ -50,7 +50,7 @@ FILE fqName:<root> fileName:/genericPropertyReferenceType.kt
             $this: GET_VAR '<this>: <root>.C<T of <root>.<get-y>> declared in <root>.<get-y>' type=<root>.C<T of <root>.<get-y>> origin=null
     FUN name:<set-y> visibility:public modality:FINAL <T> ($receiver:<root>.C<T of <root>.<set-y>>, v:T of <root>.<get-y>) returnType:kotlin.Unit
       correspondingProperty: PROPERTY name:y visibility:public modality:FINAL [var]
-      TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?]
+      TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false
       $receiver: VALUE_PARAMETER name:<this> type:<root>.C<T of <root>.<set-y>>
       VALUE_PARAMETER name:v index:0 type:T of <root>.<get-y>
       BLOCK_BODY

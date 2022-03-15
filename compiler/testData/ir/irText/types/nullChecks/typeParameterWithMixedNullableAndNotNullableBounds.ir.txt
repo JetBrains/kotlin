@@ -1,6 +1,6 @@
 FILE fqName:<root> fileName:/typeParameterWithMixedNullableAndNotNullableBounds.kt
   FUN name:f visibility:public modality:FINAL <T> (x:T of <root>.f) returnType:kotlin.Int
-    TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.CharSequence?; kotlin.Comparable<T of <root>.f>]
+    TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.CharSequence?; kotlin.Comparable<T of <root>.f>] reified:false
     VALUE_PARAMETER name:x index:0 type:T of <root>.f
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun f <T> (x: T of <root>.f): kotlin.Int declared in <root>'

@@ -1,7 +1,7 @@
 FILE fqName:<root> fileName:/ImplicitReceiverStack.kt
   CLASS INTERFACE name:SymbolOwner modality:ABSTRACT visibility:public superTypes:[kotlin.Any]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.SymbolOwner<E of <root>.SymbolOwner>
-    TYPE_PARAMETER name:E index:0 variance: superTypes:[<root>.SymbolOwner<E of <root>.SymbolOwner>]
+    TYPE_PARAMETER name:E index:0 variance: superTypes:[<root>.SymbolOwner<E of <root>.SymbolOwner>] reified:false
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
         public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in kotlin.Any
@@ -17,7 +17,7 @@ FILE fqName:<root> fileName:/ImplicitReceiverStack.kt
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
   CLASS INTERFACE name:Symbol modality:ABSTRACT visibility:public superTypes:[kotlin.Any]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Symbol<E of <root>.Symbol>
-    TYPE_PARAMETER name:E index:0 variance: superTypes:[<root>.SymbolOwner<E of <root>.Symbol>]
+    TYPE_PARAMETER name:E index:0 variance: superTypes:[<root>.SymbolOwner<E of <root>.Symbol>] reified:false
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
         public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in kotlin.Any
@@ -52,7 +52,7 @@ FILE fqName:<root> fileName:/ImplicitReceiverStack.kt
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
   CLASS CLASS name:ImplicitReceiverValue modality:FINAL visibility:public superTypes:[<root>.ReceiverValue]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.ImplicitReceiverValue<S of <root>.ImplicitReceiverValue>
-    TYPE_PARAMETER name:S index:0 variance: superTypes:[<root>.Symbol<*>]
+    TYPE_PARAMETER name:S index:0 variance: superTypes:[<root>.Symbol<*>] reified:false
     CONSTRUCTOR visibility:public <> (boundSymbol:S of <root>.ImplicitReceiverValue?, type:kotlin.String) returnType:<root>.ImplicitReceiverValue<S of <root>.ImplicitReceiverValue> [primary]
       VALUE_PARAMETER name:boundSymbol index:0 type:S of <root>.ImplicitReceiverValue?
       VALUE_PARAMETER name:type index:1 type:kotlin.String

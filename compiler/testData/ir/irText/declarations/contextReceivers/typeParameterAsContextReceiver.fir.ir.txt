@@ -1,6 +1,6 @@
 FILE fqName:<root> fileName:/typeParameterAsContextReceiver.kt
   FUN name:useContext visibility:public modality:FINAL <T> (block:kotlin.Function1<T of <root>.useContext, kotlin.Unit>) returnType:kotlin.Unit
-    TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?]
+    TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false
     VALUE_PARAMETER name:block index:0 type:kotlin.Function1<T of <root>.useContext, kotlin.Unit>
     BLOCK_BODY
   FUN name:test visibility:public modality:FINAL <> () returnType:kotlin.Unit

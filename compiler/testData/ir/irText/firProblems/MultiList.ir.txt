@@ -1,7 +1,7 @@
 FILE fqName:<root> fileName:/MultiList.kt
   CLASS CLASS name:Some modality:FINAL visibility:public [data] superTypes:[kotlin.Any]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Some<T of <root>.Some>
-    TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?]
+    TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false
     CONSTRUCTOR visibility:public <> (value:T of <root>.Some) returnType:<root>.Some<T of <root>.Some> [primary]
       VALUE_PARAMETER name:value index:0 type:T of <root>.Some
       BLOCK_BODY
@@ -101,7 +101,7 @@ FILE fqName:<root> fileName:/MultiList.kt
           CONST Boolean type=kotlin.Boolean value=true
   CLASS INTERFACE name:MyList modality:ABSTRACT visibility:public superTypes:[kotlin.collections.List<<root>.Some<T of <root>.MyList>>]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.MyList<T of <root>.MyList>
-    TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?]
+    TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false
     PROPERTY FAKE_OVERRIDE name:size visibility:public modality:ABSTRACT [fake_override,val]
       overridden:
         public abstract size: kotlin.Int [val]
@@ -190,7 +190,7 @@ FILE fqName:<root> fileName:/MultiList.kt
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
   CLASS CLASS name:SomeList modality:OPEN visibility:public superTypes:[<root>.MyList<T of <root>.SomeList>; java.util.ArrayList<<root>.Some<T of <root>.SomeList>>]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.SomeList<T of <root>.SomeList>
-    TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?]
+    TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false
     CONSTRUCTOR visibility:public <> () returnType:<root>.SomeList<T of <root>.SomeList> [primary]
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in java.util.ArrayList'
@@ -349,7 +349,7 @@ FILE fqName:<root> fileName:/MultiList.kt
     FUN FAKE_OVERRIDE name:toArray visibility:public modality:OPEN <T> ($this:java.util.ArrayList<<root>.Some<T of <root>.SomeList>>, p0:@[FlexibleNullability] kotlin.Array<out @[FlexibleNullability] T of <root>.SomeList.toArray?>?) returnType:@[FlexibleNullability] kotlin.Array<out @[FlexibleNullability] T of <root>.SomeList.toArray?>? [fake_override]
       overridden:
         public open fun toArray <T> (p0: @[FlexibleNullability] kotlin.Array<out @[FlexibleNullability] T of java.util.ArrayList.toArray?>?): @[FlexibleNullability] kotlin.Array<out @[FlexibleNullability] T of java.util.ArrayList.toArray?>? declared in java.util.ArrayList
-      TYPE_PARAMETER name:T index:0 variance: superTypes:[@[FlexibleNullability] kotlin.Any?]
+      TYPE_PARAMETER name:T index:0 variance: superTypes:[@[FlexibleNullability] kotlin.Any?] reified:false
       $this: VALUE_PARAMETER name:<this> type:java.util.ArrayList<<root>.Some<T of <root>.SomeList>>
       VALUE_PARAMETER name:p0 index:0 type:@[FlexibleNullability] kotlin.Array<out @[FlexibleNullability] T of <root>.SomeList.toArray?>?
     FUN FAKE_OVERRIDE name:removeIf visibility:public modality:OPEN <> ($this:java.util.ArrayList<<root>.Some<T of <root>.SomeList>>, p0:@[EnhancedNullability] java.util.function.Predicate<in @[EnhancedNullability] <root>.Some<T of <root>.SomeList>>) returnType:kotlin.Boolean [fake_override]
@@ -541,7 +541,7 @@ FILE fqName:<root> fileName:/MultiList.kt
     FUN FAKE_OVERRIDE name:toArray visibility:public modality:OPEN <T> ($this:java.util.ArrayList<<root>.Some<kotlin.String>>, p0:@[FlexibleNullability] kotlin.Array<out @[FlexibleNullability] T of <root>.FinalList.toArray?>?) returnType:@[FlexibleNullability] kotlin.Array<out @[FlexibleNullability] T of <root>.FinalList.toArray?>? [fake_override]
       overridden:
         public open fun toArray <T> (p0: @[FlexibleNullability] kotlin.Array<out @[FlexibleNullability] T of <root>.SomeList.toArray?>?): @[FlexibleNullability] kotlin.Array<out @[FlexibleNullability] T of <root>.SomeList.toArray?>? [fake_override] declared in <root>.SomeList
-      TYPE_PARAMETER name:T index:0 variance: superTypes:[@[FlexibleNullability] kotlin.Any?]
+      TYPE_PARAMETER name:T index:0 variance: superTypes:[@[FlexibleNullability] kotlin.Any?] reified:false
       $this: VALUE_PARAMETER name:<this> type:java.util.ArrayList<<root>.Some<kotlin.String>>
       VALUE_PARAMETER name:p0 index:0 type:@[FlexibleNullability] kotlin.Array<out @[FlexibleNullability] T of <root>.FinalList.toArray?>?
     FUN FAKE_OVERRIDE name:removeIf visibility:public modality:OPEN <> ($this:java.util.ArrayList<<root>.Some<kotlin.String>>, p0:@[EnhancedNullability] java.util.function.Predicate<in @[EnhancedNullability] <root>.Some<kotlin.String>>) returnType:kotlin.Boolean [fake_override]

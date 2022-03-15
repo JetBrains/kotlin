@@ -9,7 +9,7 @@ FILE fqName:<root> fileName:/kt45934.kt
     FUN DELEGATED_MEMBER name:foo visibility:public modality:OPEN <C> ($this:<root>.C) returnType:@[FlexibleNullability] kotlin.collections.List<@[FlexibleNullability] C of <root>.C.foo?>?
       overridden:
         public abstract fun foo <C> (): @[FlexibleNullability] kotlin.collections.List<@[FlexibleNullability] C of <root>.I.foo?>? declared in <root>.I
-      TYPE_PARAMETER name:C index:0 variance: superTypes:[@[FlexibleNullability] kotlin.Any?]
+      TYPE_PARAMETER name:C index:0 variance: superTypes:[@[FlexibleNullability] kotlin.Any?] reified:false
       $this: VALUE_PARAMETER name:<this> type:<root>.C
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public open fun foo <C> (): @[FlexibleNullability] kotlin.collections.List<@[FlexibleNullability] C of <root>.C.foo?>? declared in <root>.C'

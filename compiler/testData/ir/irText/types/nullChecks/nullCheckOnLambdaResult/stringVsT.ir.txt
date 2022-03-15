@@ -1,6 +1,6 @@
 FILE fqName:<root> fileName:/stringVsT.kt
   FUN name:useT visibility:public modality:FINAL <T> (fn:kotlin.Function0<T of <root>.useT>) returnType:T of <root>.useT
-    TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?]
+    TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false
     VALUE_PARAMETER name:fn index:0 type:kotlin.Function0<T of <root>.useT>
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun useT <T> (fn: kotlin.Function0<T of <root>.useT>): T of <root>.useT declared in <root>'

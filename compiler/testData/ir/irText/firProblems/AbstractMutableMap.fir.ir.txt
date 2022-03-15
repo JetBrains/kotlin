@@ -1,8 +1,8 @@
 FILE fqName:<root> fileName:/AbstractMutableMap.kt
   CLASS CLASS name:MyMap modality:FINAL visibility:public superTypes:[kotlin.collections.AbstractMutableMap<K of <root>.MyMap, V of <root>.MyMap>]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.MyMap<K of <root>.MyMap, V of <root>.MyMap>
-    TYPE_PARAMETER name:K index:0 variance: superTypes:[kotlin.Any]
-    TYPE_PARAMETER name:V index:1 variance: superTypes:[kotlin.Any]
+    TYPE_PARAMETER name:K index:0 variance: superTypes:[kotlin.Any] reified:false
+    TYPE_PARAMETER name:V index:1 variance: superTypes:[kotlin.Any] reified:false
     CONSTRUCTOR visibility:public <> () returnType:<root>.MyMap<K of <root>.MyMap, V of <root>.MyMap> [primary]
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'protected constructor <init> () [primary] declared in kotlin.collections.AbstractMutableMap'

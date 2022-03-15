@@ -1,6 +1,6 @@
 FILE fqName:<root> fileName:/typeParametersInImplicitCast.kt
   FUN name:problematic visibility:public modality:FINAL <T> (lss:kotlin.collections.List<kotlin.collections.List<T of <root>.problematic>>) returnType:kotlin.collections.List<T of <root>.problematic>
-    TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?]
+    TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false
     VALUE_PARAMETER name:lss index:0 type:kotlin.collections.List<kotlin.collections.List<T of <root>.problematic>>
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun problematic <T> (lss: kotlin.collections.List<kotlin.collections.List<T of <root>.problematic>>): kotlin.collections.List<T of <root>.problematic> declared in <root>'

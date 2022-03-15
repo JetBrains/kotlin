@@ -2,7 +2,7 @@ FILE fqName:<root> fileName:/genericPropertyCall.kt
   PROPERTY name:id visibility:public modality:FINAL [val]
     FUN name:<get-id> visibility:public modality:FINAL <T> ($receiver:T of <root>.<get-id>) returnType:T of <root>.<get-id>
       correspondingProperty: PROPERTY name:id visibility:public modality:FINAL [val]
-      TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?]
+      TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false
       $receiver: VALUE_PARAMETER name:<this> type:T of <root>.<get-id>
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun <get-id> <T> (): T of <root>.<get-id> declared in <root>'

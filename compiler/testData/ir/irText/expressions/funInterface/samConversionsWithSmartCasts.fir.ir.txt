@@ -17,7 +17,7 @@ FILE fqName:<root> fileName:/samConversionsWithSmartCasts.kt
         public open fun toString (): kotlin.String declared in kotlin.Any
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
   FUN name:id visibility:public modality:FINAL <T> (x:T of <root>.id) returnType:T of <root>.id
-    TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?]
+    TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false
     VALUE_PARAMETER name:x index:0 type:T of <root>.id
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun id <T> (x: T of <root>.id): T of <root>.id declared in <root>'
@@ -30,7 +30,7 @@ FILE fqName:<root> fileName:/samConversionsWithSmartCasts.kt
     VALUE_PARAMETER name:r2 index:1 type:<root>.KRunnable
     BLOCK_BODY
   FUN name:test0 visibility:public modality:FINAL <T> (a:T of <root>.test0) returnType:kotlin.Unit
-    TYPE_PARAMETER name:T index:0 variance: superTypes:[<root>.KRunnable; kotlin.Function0<kotlin.Unit>]
+    TYPE_PARAMETER name:T index:0 variance: superTypes:[<root>.KRunnable; kotlin.Function0<kotlin.Unit>] reified:false
     VALUE_PARAMETER name:a index:0 type:T of <root>.test0
     BLOCK_BODY
       CALL 'public final fun run1 (r: <root>.KRunnable): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
@@ -125,7 +125,7 @@ FILE fqName:<root> fileName:/samConversionsWithSmartCasts.kt
           TYPE_OP type=kotlin.Function0<kotlin.Unit> origin=IMPLICIT_CAST typeOperand=kotlin.Function0<kotlin.Unit>
             GET_VAR 'a: kotlin.Function1<kotlin.Int, kotlin.Int> declared in <root>.test7' type=kotlin.Function1<kotlin.Int, kotlin.Int> origin=null
   FUN name:test7a visibility:public modality:FINAL <T> (a:T of <root>.test7a) returnType:kotlin.Unit
-    TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Function1<kotlin.Int, kotlin.Int>]
+    TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Function1<kotlin.Int, kotlin.Int>] reified:false
     VALUE_PARAMETER name:a index:0 type:T of <root>.test7a
     BLOCK_BODY
       TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
@@ -136,7 +136,7 @@ FILE fqName:<root> fileName:/samConversionsWithSmartCasts.kt
           TYPE_OP type=kotlin.Function0<kotlin.Unit> origin=IMPLICIT_CAST typeOperand=kotlin.Function0<kotlin.Unit>
             GET_VAR 'a: T of <root>.test7a declared in <root>.test7a' type=T of <root>.test7a origin=null
   FUN name:test7b visibility:public modality:FINAL <T> (a:T of <root>.test7b) returnType:kotlin.Unit
-    TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Function1<kotlin.Int, kotlin.Unit>; kotlin.Function0<kotlin.Unit>]
+    TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Function1<kotlin.Int, kotlin.Unit>; kotlin.Function0<kotlin.Unit>] reified:false
     VALUE_PARAMETER name:a index:0 type:T of <root>.test7b
     BLOCK_BODY
       CALL 'public final fun run1 (r: <root>.KRunnable): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
@@ -158,7 +158,7 @@ FILE fqName:<root> fileName:/samConversionsWithSmartCasts.kt
         public open fun toString (): kotlin.String declared in kotlin.Any
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
   FUN name:test7c visibility:public modality:FINAL <T> (a:T of <root>.test7c) returnType:kotlin.Unit
-    TYPE_PARAMETER name:T index:0 variance: superTypes:[<root>.Unrelated; kotlin.Function0<kotlin.Unit>]
+    TYPE_PARAMETER name:T index:0 variance: superTypes:[<root>.Unrelated; kotlin.Function0<kotlin.Unit>] reified:false
     VALUE_PARAMETER name:a index:0 type:T of <root>.test7c
     BLOCK_BODY
       CALL 'public final fun run1 (r: <root>.KRunnable): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null

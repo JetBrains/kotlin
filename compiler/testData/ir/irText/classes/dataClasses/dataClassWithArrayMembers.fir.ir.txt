@@ -461,7 +461,7 @@ FILE fqName:<root> fileName:/dataClassWithArrayMembers.kt
             CONST String type=kotlin.String value=")"
   CLASS CLASS name:Test2 modality:FINAL visibility:public [data] superTypes:[kotlin.Any]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Test2<T of <root>.Test2>
-    TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?]
+    TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false
     CONSTRUCTOR visibility:public <> (genericArray:kotlin.Array<T of <root>.Test2>) returnType:<root>.Test2<T of <root>.Test2> [primary]
       VALUE_PARAMETER name:genericArray index:0 type:kotlin.Array<T of <root>.Test2>
       BLOCK_BODY

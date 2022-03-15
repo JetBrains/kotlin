@@ -16,7 +16,7 @@ FILE fqName:com.example fileName:/47424.kt
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
   CLASS INTERFACE name:Ab modality:ABSTRACT visibility:public superTypes:[com.example.Aa]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:com.example.Ab<T of com.example.Ab>
-    TYPE_PARAMETER name:T index:0 variance: superTypes:[com.example.Ab<T of com.example.Ab>]
+    TYPE_PARAMETER name:T index:0 variance: superTypes:[com.example.Ab<T of com.example.Ab>] reified:false
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
         public open fun equals (other: kotlin.Any?): kotlin.Boolean [fake_override,operator] declared in com.example.Aa
@@ -47,7 +47,7 @@ FILE fqName:com.example fileName:/47424.kt
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
   CLASS INTERFACE name:Bb modality:ABSTRACT visibility:public superTypes:[com.example.Ab<T of com.example.Bb>; com.example.Ba]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:com.example.Bb<T of com.example.Bb>
-    TYPE_PARAMETER name:T index:0 variance: superTypes:[com.example.Bb<T of com.example.Bb>]
+    TYPE_PARAMETER name:T index:0 variance: superTypes:[com.example.Bb<T of com.example.Bb>] reified:false
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
         public open fun equals (other: kotlin.Any?): kotlin.Boolean [fake_override,operator] declared in com.example.Ab
