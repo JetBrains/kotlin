@@ -288,9 +288,9 @@ class FirCallResolver(
                     qualifiedAccess.source,
                     qualifiedAccess.typeArguments,
                     nonFatalDiagnosticFromExpression,
+                    session,
                     components
-                )
-                ?.let { return it }
+                )?.let { return it }
         }
 
         var result = basicResult
