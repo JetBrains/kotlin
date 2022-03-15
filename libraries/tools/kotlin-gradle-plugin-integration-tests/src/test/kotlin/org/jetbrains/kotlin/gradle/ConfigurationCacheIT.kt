@@ -16,12 +16,14 @@ class ConfigurationCacheIT : AbstractConfigurationCacheIT() {
 
     @DisplayName("works in simple Kotlin project")
     @GradleTest
+    @JvmGradlePluginTests
     fun testSimpleKotlinJvmProject(gradleVersion: GradleVersion) {
         project("kotlinProject", gradleVersion) {
             testConfigurationCacheOf(":compileKotlin")
         }
     }
 
+    @JvmGradlePluginTests
     @DisplayName("works with publishing")
     @GradleTest
     fun testJvmWithMavenPublish(gradleVersion: GradleVersion) {
@@ -56,6 +58,7 @@ class ConfigurationCacheIT : AbstractConfigurationCacheIT() {
         }
     }
 
+    @MppGradlePluginTests
     @DisplayName("works with MPP publishing")
     @GradleTest
     @OptIn(ExperimentalStdlibApi::class)
@@ -71,6 +74,7 @@ class ConfigurationCacheIT : AbstractConfigurationCacheIT() {
         }
     }
 
+    @OtherGradlePluginTests
     @DisplayName("with project using incremental kapt")
     @GradleTest
     fun testIncrementalKaptProject(gradleVersion: GradleVersion) {
@@ -94,6 +98,7 @@ class ConfigurationCacheIT : AbstractConfigurationCacheIT() {
     }
 
     // Set min Gradle version to 6.8 because of using DependencyResolutionManagement API to add repositories.
+    @JvmGradlePluginTests
     @DisplayName("with instance execution")
     @GradleTestVersions(minVersion = TestVersions.Gradle.G_6_8)
     @GradleTest
@@ -106,6 +111,7 @@ class ConfigurationCacheIT : AbstractConfigurationCacheIT() {
         }
     }
 
+    @JvmGradlePluginTests
     @DisplayName("KT-43605: instant execution with buildSrc")
     @GradleTest
     fun testInstantExecutionWithBuildSrc(gradleVersion: GradleVersion) {
@@ -117,6 +123,7 @@ class ConfigurationCacheIT : AbstractConfigurationCacheIT() {
         }
     }
 
+    @JvmGradlePluginTests
     @DisplayName("instant execution works with included build plugin")
     @GradleTestVersions(minVersion = TestVersions.Gradle.G_6_8)
     @GradleTest
@@ -129,12 +136,14 @@ class ConfigurationCacheIT : AbstractConfigurationCacheIT() {
         }
     }
 
+    @JsGradlePluginTests
     @DisplayName("works with Dukat")
     @GradleTest
     fun testConfigurationCacheDukatSrc(gradleVersion: GradleVersion) {
         testConfigurationCacheDukat(gradleVersion)
     }
 
+    @JsGradlePluginTests
     @DisplayName("works with Dukat binaries")
     @GradleTest
     fun testConfigurationCacheDukatBinaries(gradleVersion: GradleVersion) {
@@ -160,6 +169,7 @@ class ConfigurationCacheIT : AbstractConfigurationCacheIT() {
         )
     }
 
+    @MppGradlePluginTests
     @DisplayName("works in MPP withJava project")
     @GradleTestVersions(minVersion = TestVersions.Gradle.G_7_0, maxVersion = TestVersions.Gradle.G_7_1)
     @GradleTest
@@ -173,6 +183,7 @@ class ConfigurationCacheIT : AbstractConfigurationCacheIT() {
         }
     }
 
+    @JvmGradlePluginTests
     @DisplayName("with build report")
     @GradleTest
     fun testBuildReportSmokeTestForConfigurationCache(gradleVersion: GradleVersion) {
@@ -189,7 +200,6 @@ class ConfigurationCacheIT : AbstractConfigurationCacheIT() {
     }
 }
 
-@SimpleGradlePluginTests
 abstract class AbstractConfigurationCacheIT : KGPBaseTest() {
     override val defaultBuildOptions =
         super.defaultBuildOptions.copy(configurationCache = true)
