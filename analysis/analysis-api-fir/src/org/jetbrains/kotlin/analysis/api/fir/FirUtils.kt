@@ -29,21 +29,6 @@ import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 /**
- * Checks if the function call is an implicit invoke call with a simple qualified receiver, or looks like it.
- *
- * For example, `foo()` and `foo.bar()` have simple qualified receivers, while `foo!!()`, `{}()` and `(foo ?: bar)()` - don't.
- *
- * @return `true` if the function call has a simple qualified receiver and is an implicit invoke call,
- * or looks like it and resolves to the `invoke` function.
- */
-fun FirFunctionCall.isImplicitFunctionCall(): Boolean {
-    if (extensionReceiver !is FirQualifiedAccessExpression && dispatchReceiver !is FirQualifiedAccessExpression) return false
-
-    return this is FirImplicitInvokeCall ||
-            calleeReference.getCandidateSymbols().any(FirBasedSymbol<*>::isInvokeFunction)
-}
-
-/**
  * Returns `true` if the symbol is for a function named `invoke`.
  */
 internal fun FirBasedSymbol<*>.isInvokeFunction() =
