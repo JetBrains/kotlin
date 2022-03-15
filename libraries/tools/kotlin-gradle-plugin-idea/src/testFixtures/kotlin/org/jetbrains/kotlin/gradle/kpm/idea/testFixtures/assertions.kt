@@ -105,33 +105,30 @@ fun IdeaKotlinFragment.assertSourceDependencies(matchers: Set<IdeaKotlinSourceDe
         return sourceDependencies
     }
 
+    val fragmentIdentifier = "${moduleIdentifier.moduleClassifier?.plus("/").orEmpty()}${name}"
+
     fail(
         buildString {
             if (unexpectedDependencies.isNotEmpty()) {
-                appendLine("${name}: Unexpected source dependencies found:")
-                unexpectedDependencies.forEach { unexpectedDependency ->
-                    appendLine(unexpectedDependency)
-                }
-
                 appendLine()
-                appendLine("${name}: Unexpected source dependency paths:")
+                appendLine("${fragmentIdentifier}: Unexpected source dependency found:")
                 unexpectedDependencies.forEach { unexpectedDependency ->
-                    appendLine("\"${unexpectedDependency.coordinates.path}\",")
+                    appendLine("\"${unexpectedDependency}\",")
                 }
             }
 
             if (missingDependencies.isNotEmpty()) {
                 appendLine()
-                appendLine("${name}: Missing fragment dependencies:")
+                appendLine("${fragmentIdentifier}: Missing fragment dependencies:")
                 missingDependencies.forEach { missingDependency ->
                     appendLine(missingDependency.description)
                 }
             }
 
             appendLine()
-            appendLine("${name}: Resolved source dependency paths:")
+            appendLine("${fragmentIdentifier}: Resolved source dependency paths:")
             sourceDependencies.forEach { dependency ->
-                appendLine("\"${dependency.coordinates.path}\",")
+                appendLine("\"${dependency}\",")
             }
         }
     )

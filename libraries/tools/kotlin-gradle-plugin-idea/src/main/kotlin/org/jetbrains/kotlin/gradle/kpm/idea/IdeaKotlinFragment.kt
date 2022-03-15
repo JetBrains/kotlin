@@ -14,7 +14,6 @@ interface IdeaKotlinFragment : Serializable {
     val platforms: Set<IdeaKotlinPlatform>
     val languageSettings: IdeaKotlinLanguageSettings?
     val dependencies: List<IdeaKotlinDependency>
-    val directRefinesDependencies: List<IdeaKotlinFragment>
     val sourceDirectories: List<IdeaKotlinSourceDirectory>
     val resourceDirectories: List<IdeaKotlinResourceDirectory>
     val external: KotlinExternalModelContainer
@@ -27,7 +26,6 @@ data class IdeaKotlinFragmentImpl(
     override val platforms: Set<IdeaKotlinPlatform>,
     override val languageSettings: IdeaKotlinLanguageSettings?,
     override val dependencies: List<IdeaKotlinDependency>,
-    override val directRefinesDependencies: List<IdeaKotlinFragment>,
     override val sourceDirectories: List<IdeaKotlinSourceDirectory>,
     override val resourceDirectories: List<IdeaKotlinResourceDirectory>,
     override val external: KotlinExternalModelContainer

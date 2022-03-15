@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.gradle.kpm.idea.IdeaKotlinDependency.Companion.DOCUM
 import org.jetbrains.kotlin.gradle.kpm.idea.IdeaKotlinDependency.Companion.SOURCES_BINARY_TYPE
 import java.io.File
 import java.io.Serializable
+import java.util.*
 
 sealed interface IdeaKotlinDependency : Serializable {
     val coordinates: IdeaKotlinDependencyCoordinates?
@@ -37,6 +38,16 @@ sealed interface IdeaKotlinSourceCoordinates : IdeaKotlinDependencyCoordinates {
 }
 
 sealed interface IdeaKotlinSourceDependency : IdeaKotlinDependency {
+    enum class Type : Serializable {
+        Regular, Friend, Refines;
+
+        @InternalKotlinGradlePluginApi
+        companion object {
+            private const val serialVersionUID = 0L
+        }
+    }
+
+    val type: Type
     override val coordinates: IdeaKotlinSourceCoordinates
 }
 
@@ -67,12 +78,14 @@ val IdeaKotlinResolvedBinaryDependency.isClasspathType get() = binaryType == CLA
 
 @InternalKotlinGradlePluginApi
 data class IdeaKotlinSourceDependencyImpl(
+    override val type: IdeaKotlinSourceDependency.Type,
     override val coordinates: IdeaKotlinSourceCoordinates,
-    override val external: KotlinExternalModelContainer = KotlinExternalModelContainer.Empty
+    override val external: KotlinExternalModelContainer = KotlinExternalModelContainer.Empty,
 ) : IdeaKotlinSourceDependency {
 
     override fun toString(): String {
-        return "source: $coordinates"
+        @Suppress("DEPRECATION")
+        return "${type.name.toLowerCase(Locale.ROOT)}:$coordinates"
     }
 
     @InternalKotlinGradlePluginApi

@@ -1,7 +1,6 @@
 package org.jetbrains.kotlin.gradle.kpm.idea.testFixtures
 
 import org.jetbrains.kotlin.gradle.kpm.idea.IdeaKotlinSourceDependency
-import org.jetbrains.kotlin.gradle.kpm.idea.path
 
 fun buildIdeaKotlinSourceDependencyMatchers(notation: Any?): List<IdeaKotlinSourceDependencyMatcher> {
     return when (notation) {
@@ -14,19 +13,19 @@ fun buildIdeaKotlinSourceDependencyMatchers(notation: Any?): List<IdeaKotlinSour
 }
 
 interface IdeaKotlinSourceDependencyMatcher : IdeaKotlinDependencyMatcher<IdeaKotlinSourceDependency> {
-    class FragmentPath(private val path: String) : IdeaKotlinSourceDependencyMatcher {
-        override val description: String = path
+    class FragmentPath(private val dependency: String) : IdeaKotlinSourceDependencyMatcher {
+        override val description: String = dependency
 
         override fun matches(dependency: IdeaKotlinSourceDependency): Boolean {
-            return path == dependency.coordinates.path
+            return this.dependency == dependency.toString()
         }
     }
 
-    class FragmentPathRegex(private val pathRegex: Regex) : IdeaKotlinSourceDependencyMatcher {
-        override val description: String = pathRegex.pattern
+    class FragmentPathRegex(private val dependencyRegex: Regex) : IdeaKotlinSourceDependencyMatcher {
+        override val description: String = dependencyRegex.pattern
 
         override fun matches(dependency: IdeaKotlinSourceDependency): Boolean {
-            return pathRegex.matches(dependency.coordinates.path)
+            return dependencyRegex.matches(dependency.toString())
         }
     }
 }
