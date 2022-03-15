@@ -22,5 +22,5 @@ import first.*
 import second.*
 
 fun test() {
-    <!NO_COMPANION_OBJECT!>Some<!>.foo()
+    Some.foo()
 }
