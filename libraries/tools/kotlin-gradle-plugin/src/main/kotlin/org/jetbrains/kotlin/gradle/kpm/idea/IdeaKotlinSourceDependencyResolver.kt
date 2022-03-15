@@ -27,12 +27,14 @@ internal class IdeaKotlinSourceDependencyResolver(
         val kotlinModuleIdentifier = resolution.dependency.toModuleDependency().moduleIdentifier
         return resolution.allVisibleSourceSetNames.map { visibleFragmentName ->
             IdeaKotlinSourceDependencyImpl(
-                buildId = gradleProjectIdentifier.build.name,
-                projectPath = gradleProjectIdentifier.projectPath,
-                projectName = gradleProjectIdentifier.projectName,
-                kotlinModuleName = kotlinModuleIdentifier.moduleName,
-                kotlinModuleClassifier = kotlinModuleIdentifier.moduleClassifier,
-                kotlinFragmentName = visibleFragmentName
+                IdeaKotlinSourceCoordinatesImpl(
+                    buildId = gradleProjectIdentifier.build.name,
+                    projectPath = gradleProjectIdentifier.projectPath,
+                    projectName = gradleProjectIdentifier.projectName,
+                    kotlinModuleName = kotlinModuleIdentifier.moduleName,
+                    kotlinModuleClassifier = kotlinModuleIdentifier.moduleClassifier,
+                    kotlinFragmentName = visibleFragmentName
+                )
             )
         }
     }
