@@ -10,7 +10,7 @@ internal class FragmentGranularMetadataResolverFactory {
 
     fun getOrCreate(fragment: KotlinGradleFragment): FragmentGranularMetadataResolver = resolvers.getOrPut(fragment) {
         FragmentGranularMetadataResolver(fragment, lazy {
-            fragment.refinesClosure.minus(fragment).map { refinesFragment ->
+            fragment.refinesClosure.map { refinesFragment ->
                 getOrCreate(refinesFragment)
             }
         })

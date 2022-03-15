@@ -23,8 +23,6 @@ import org.jetbrains.kotlin.gradle.plugin.sources.FragmentConsistencyChecks
 import org.jetbrains.kotlin.gradle.utils.addExtendsFromRelation
 import org.jetbrains.kotlin.gradle.utils.runProjectConfigurationHealthCheckWhenEvaluated
 import org.jetbrains.kotlin.project.model.KotlinModuleDependency
-import org.jetbrains.kotlin.project.model.KotlinModuleFragment
-import org.jetbrains.kotlin.project.model.withRefinesClosure
 import javax.inject.Inject
 
 open class KotlinGradleFragmentInternal @Inject constructor(
@@ -114,6 +112,3 @@ open class KotlinGradleFragmentInternal @Inject constructor(
             ).allChecks
         )
 }
-
-val KotlinGradleFragment.refinesClosure: Set<KotlinGradleFragment>
-    get() = (this as KotlinModuleFragment).withRefinesClosure.map { it as KotlinGradleFragment }.toSet()
