@@ -5,10 +5,14 @@
 
 package org.jetbrains.kotlin.fir.scopes
 
+import org.jetbrains.kotlin.descriptors.Visibilities
+import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.FirSessionComponent
 import org.jetbrains.kotlin.fir.declarations.FirProperty
+import org.jetbrains.kotlin.fir.declarations.FirPropertyAccessor
 import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
+import org.jetbrains.kotlin.fir.declarations.utils.visibility
 import org.jetbrains.kotlin.fir.scopes.impl.buildSubstitutorForOverridesCheck
 import org.jetbrains.kotlin.fir.scopes.impl.similarFunctionsOrBothProperties
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
@@ -124,6 +128,8 @@ class FirOverrideService(val session: FirSession) : FirSessionComponent {
         val aFir = a.fir
         val bFir = b.fir
 
+        if (!isVisibilityMoreSpecific(aFir.visibility, bFir.visibility)) return false
+
         val substitutor = buildSubstitutorForOverridesCheck(aFir, bFir, session) ?: return false
         // NB: these lines throw CCE in modularized tests when changed to just .coneType (FirImplicitTypeRef)
         val aReturnType = a.fir.returnTypeRef.coneTypeSafe<ConeKotlinType>()?.let(substitutor::substituteOrSelf) ?: return false
@@ -140,7 +146,9 @@ class FirOverrideService(val session: FirSession) : FirSessionComponent {
         }
         if (aFir is FirProperty) {
             require(bFir is FirProperty) { "b is " + b.javaClass }
-            // TODO: if (!OverridingUtil.isAccessorMoreSpecific(pa.getSetter(), pb.getSetter())) return false
+
+            if (!isAccessorMoreSpecific(aFir.setter, bFir.setter)) return false
+
             return if (aFir.isVar && bFir.isVar) {
                 AbstractTypeChecker.equalTypes(typeCheckerState, aReturnType, bReturnType)
             } else { // both vals or var vs val: val can't be more specific then var
@@ -152,6 +160,16 @@ class FirOverrideService(val session: FirSession) : FirSessionComponent {
 
     private fun isTypeMoreSpecific(a: ConeKotlinType, b: ConeKotlinType, typeCheckerState: TypeCheckerState): Boolean =
         AbstractTypeChecker.isSubtypeOf(typeCheckerState, a, b)
+
+    private fun isAccessorMoreSpecific(a: FirPropertyAccessor?, b: FirPropertyAccessor?): Boolean {
+        if (a == null || b == null) return true
+        return isVisibilityMoreSpecific(a.visibility, b.visibility)
+    }
+
+    private fun isVisibilityMoreSpecific(a: Visibility, b: Visibility): Boolean {
+        val result = Visibilities.compare(a, b)
+        return result == null || result >= 0
+    }
 }
 
 val FirSession.overrideService: FirOverrideService by FirSession.sessionComponentAccessor()
