@@ -20,7 +20,8 @@ open class TCServiceMessagesTestExecutionSpec(
     val forkOptions: ProcessForkOptions,
     val args: List<String>,
     val checkExitCode: Boolean,
-    val clientSettings: TCServiceMessagesClientSettings
+    val clientSettings: TCServiceMessagesClientSettings,
+    val dryRunArgs: List<String>? = null,
 ) : TestExecutionSpec {
     internal open fun createClient(testResultProcessor: TestResultProcessor, log: Logger): TCServiceMessagesClient =
         TCServiceMessagesClient(testResultProcessor, clientSettings, log)
@@ -47,6 +48,19 @@ class TCServiceMessagesTestExecutor(
             val rootOperation = buildOperationExecutor.currentOperation.parentId!!
 
             val client = spec.createClient(testResultProcessor, log)
+
+            if (spec.dryRunArgs != null) {
+                val exec = execHandleFactory.newExec()
+                spec.forkOptions.copyTo(exec)
+                exec.args = spec.args
+                execHandle = exec.build()
+
+                execHandle.start()
+                val result: ExecResult = execHandle.waitForFinish()
+                if (result.exitValue != 0) {
+                    error(client.testFailedMessage(execHandle, result.exitValue))
+                }
+            }
 
             try {
                 val exec = execHandleFactory.newExec()
