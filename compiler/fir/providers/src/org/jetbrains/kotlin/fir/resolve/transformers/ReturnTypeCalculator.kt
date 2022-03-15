@@ -10,7 +10,11 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
 
 abstract class ReturnTypeCalculator {
-    abstract fun tryCalculateReturnType(declaration: FirTypedDeclaration): FirResolvedTypeRef
+    abstract fun tryCalculateReturnTypeOrNull(declaration: FirTypedDeclaration): FirResolvedTypeRef?
+
+    fun tryCalculateReturnType(declaration: FirTypedDeclaration): FirResolvedTypeRef {
+        return tryCalculateReturnTypeOrNull(declaration)!!
+    }
 
     fun tryCalculateReturnType(symbol: FirCallableSymbol<*>): FirResolvedTypeRef {
         return tryCalculateReturnType(symbol.fir)
