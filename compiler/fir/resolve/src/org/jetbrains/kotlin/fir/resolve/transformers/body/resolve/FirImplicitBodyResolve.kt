@@ -215,7 +215,7 @@ private class ReturnTypeCalculatorWithJump(
 
     var outerTowerDataContexts: FirRegularTowerDataContexts? = null
 
-    override fun tryCalculateReturnType(declaration: FirTypedDeclaration): FirResolvedTypeRef {
+    override fun tryCalculateReturnTypeOrNull(declaration: FirTypedDeclaration): FirResolvedTypeRef {
         if (declaration is FirValueParameter && declaration.returnTypeRef is FirImplicitTypeRef) {
             // TODO?
             declaration.transformReturnTypeRef(

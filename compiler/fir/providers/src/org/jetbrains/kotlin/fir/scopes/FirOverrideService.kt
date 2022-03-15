@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.declarations.FirPropertyAccessor
 import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
 import org.jetbrains.kotlin.fir.declarations.utils.visibility
+import org.jetbrains.kotlin.fir.resolve.transformers.ReturnTypeCalculator
 import org.jetbrains.kotlin.fir.scopes.impl.buildSubstitutorForOverridesCheck
 import org.jetbrains.kotlin.fir.scopes.impl.similarFunctionsOrBothProperties
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
@@ -28,7 +29,8 @@ import java.util.*
 class FirOverrideService(val session: FirSession) : FirSessionComponent {
     fun <D : FirCallableSymbol<*>> selectMostSpecificInEachOverridableGroup(
         members: Collection<MemberWithBaseScope<D>>,
-        overrideChecker: FirOverrideChecker
+        overrideChecker: FirOverrideChecker,
+        returnTypeCalculator: ReturnTypeCalculator
     ): Collection<MemberWithBaseScope<D>> {
         if (members.size <= 1) return members
         val queue = LinkedList(members)
@@ -46,10 +48,10 @@ class FirOverrideService(val session: FirSession) : FirSessionComponent {
                 continue
             }
 
-            val mostSpecific = selectMostSpecificMember(overridableGroup)
+            val mostSpecific = selectMostSpecificMember(overridableGroup, returnTypeCalculator)
 
             overridableGroup.filterNotTo(conflictedHandles) {
-                isMoreSpecific(mostSpecific.member, it.member)
+                isMoreSpecific(mostSpecific.member, it.member, returnTypeCalculator)
             }
 
             if (conflictedHandles.isNotEmpty()) {
@@ -87,7 +89,10 @@ class FirOverrideService(val session: FirSession) : FirSessionComponent {
         return result
     }
 
-    fun <D : FirCallableSymbol<*>> selectMostSpecificMember(overridables: Collection<MemberWithBaseScope<D>>): MemberWithBaseScope<D> {
+    fun <D : FirCallableSymbol<*>> selectMostSpecificMember(
+        overridables: Collection<MemberWithBaseScope<D>>,
+        returnTypeCalculator: ReturnTypeCalculator
+    ): MemberWithBaseScope<D> {
         require(overridables.isNotEmpty()) { "Should have at least one overridable symbol" }
         if (overridables.size == 1) {
             return overridables.first()
@@ -97,12 +102,12 @@ class FirOverrideService(val session: FirSession) : FirSessionComponent {
         var transitivelyMostSpecific: MemberWithBaseScope<D> = overridables.first()
 
         for (candidate in overridables) {
-            if (overridables.all { isMoreSpecific(candidate.member, it.member) }) {
+            if (overridables.all { isMoreSpecific(candidate.member, it.member, returnTypeCalculator) }) {
                 candidates.add(candidate)
             }
 
-            if (isMoreSpecific(candidate.member, transitivelyMostSpecific.member) &&
-                !isMoreSpecific(transitivelyMostSpecific.member, candidate.member)
+            if (isMoreSpecific(candidate.member, transitivelyMostSpecific.member, returnTypeCalculator) &&
+                !isMoreSpecific(transitivelyMostSpecific.member, candidate.member, returnTypeCalculator)
             ) {
                 transitivelyMostSpecific = candidate
             }
@@ -123,7 +128,8 @@ class FirOverrideService(val session: FirSession) : FirSessionComponent {
 
     private fun isMoreSpecific(
         a: FirCallableSymbol<*>,
-        b: FirCallableSymbol<*>
+        b: FirCallableSymbol<*>,
+        returnTypeCalculator: ReturnTypeCalculator
     ): Boolean {
         val aFir = a.fir
         val bFir = b.fir
@@ -132,8 +138,8 @@ class FirOverrideService(val session: FirSession) : FirSessionComponent {
 
         val substitutor = buildSubstitutorForOverridesCheck(aFir, bFir, session) ?: return false
         // NB: these lines throw CCE in modularized tests when changed to just .coneType (FirImplicitTypeRef)
-        val aReturnType = a.fir.returnTypeRef.coneTypeSafe<ConeKotlinType>()?.let(substitutor::substituteOrSelf) ?: return false
-        val bReturnType = b.fir.returnTypeRef.coneTypeSafe<ConeKotlinType>() ?: return false
+        val aReturnType = returnTypeCalculator.tryCalculateReturnTypeOrNull(a.fir)?.type?.let(substitutor::substituteOrSelf) ?: return false
+        val bReturnType = returnTypeCalculator.tryCalculateReturnTypeOrNull(b.fir)?.type ?: return false
 
         val typeCheckerState = session.typeContext.newTypeCheckerState(
             errorTypesEqualToAnything = false,

@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.fir.declarations.utils.isExpect
 import org.jetbrains.kotlin.fir.declarations.utils.modality
 import org.jetbrains.kotlin.fir.declarations.utils.visibility
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
+import org.jetbrains.kotlin.fir.resolve.transformers.ReturnTypeCalculatorForFullBodyResolve
 import org.jetbrains.kotlin.fir.scopes.*
 import org.jetbrains.kotlin.fir.scopes.impl.FirIntersectionOverrideStorage.ContextForIntersectionOverrideConstruction
 import org.jetbrains.kotlin.fir.scopes.impl.FirTypeIntersectionScopeContext.ResultOfIntersection
@@ -163,7 +164,10 @@ class FirTypeIntersectionScopeContext(
             }.takeIf { it.isNotEmpty() } ?: extractBothWaysWithPrivate
             val baseMembersForIntersection = extractedOverrides.calcBaseMembersForIntersectionOverride()
             if (baseMembersForIntersection.size > 1) {
-                val (mostSpecific, scopeForMostSpecific) = overrideService.selectMostSpecificMember(baseMembersForIntersection)
+                val (mostSpecific, scopeForMostSpecific) = overrideService.selectMostSpecificMember(
+                    baseMembersForIntersection,
+                    ReturnTypeCalculatorForFullBodyResolve
+                )
                 val intersectionOverrideContext = ContextForIntersectionOverrideConstruction(
                     mostSpecific,
                     this,
@@ -216,7 +220,7 @@ class FirTypeIntersectionScopeContext(
         // we should just take most specific member without creating intersection
         // A typical sample here is inheritance of the same class in different places of hierarchy
         if (unwrappedMemberSet.size == 1) {
-            return listOf(overrideService.selectMostSpecificMember(this))
+            return listOf(overrideService.selectMostSpecificMember(this, ReturnTypeCalculatorForFullBodyResolve))
         }
 
         val baseMembers = mutableSetOf<S>()
