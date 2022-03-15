@@ -13,11 +13,11 @@ import org.jetbrains.kotlin.fir.expressions.FirResolvedQualifier
 import org.jetbrains.kotlin.fir.expressions.builder.buildResolvedQualifier
 import org.jetbrains.kotlin.fir.references.impl.FirSimpleNamedReference
 import org.jetbrains.kotlin.fir.resolve.BodyResolveComponents
+import org.jetbrains.kotlin.fir.resolve.calls.getSingleVisibleClassifier
 import org.jetbrains.kotlin.fir.resolve.createCurrentScopeList
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeDeprecated
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.resultType
 import org.jetbrains.kotlin.fir.resolve.typeForQualifier
-import org.jetbrains.kotlin.fir.scopes.getSingleClassifier
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.FirTypeProjection
@@ -45,7 +45,7 @@ fun BodyResolveComponents.resolveRootPartOfQualifier(
     }
 
     for (scope in createCurrentScopeList()) {
-        scope.getSingleClassifier(name)?.let {
+        scope.getSingleVisibleClassifier(session, this, name)?.let {
             if (it is FirRegularClassSymbol) {
                 val isVisible = session.visibilityChecker.isVisible(
                     it.fir,
@@ -88,6 +88,7 @@ fun FirResolvedQualifier.continueQualifier(
     source: KtSourceElement?,
     typeArguments: List<FirTypeProjection>,
     nonFatalDiagnosticsFromExpression: List<ConeDiagnostic>?,
+    session: FirSession,
     components: BodyResolveComponents,
 ): FirResolvedQualifier? {
     val name = namedReference.name
@@ -95,7 +96,7 @@ fun FirResolvedQualifier.continueQualifier(
         val firClass = outerClassSymbol.fir
         if (firClass !is FirClass) return null
         return firClass.scopeProvider.getNestedClassifierScope(firClass, components.session, components.scopeSession)
-            ?.getSingleClassifier(name)
+            ?.getSingleVisibleClassifier(session, components, name)
             ?.takeIf { it is FirClassLikeSymbol<*> }
             ?.let { nestedClassSymbol ->
                 buildResolvedQualifier {
