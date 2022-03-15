@@ -20,7 +20,6 @@ import org.jetbrains.kotlin.fir.resolve.transformers.FirProviderInterceptor
 import org.jetbrains.kotlin.fir.resolve.transformers.ReturnTypeCalculator
 import org.jetbrains.kotlin.fir.resolve.transformers.ReturnTypeCalculatorForFullBodyResolve
 import org.jetbrains.kotlin.fir.resolve.transformers.ScopeClassDeclaration
-import org.jetbrains.kotlin.fir.scopes.FirCompositeScope
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 
@@ -29,7 +28,7 @@ open class FirBodyResolveTransformer(
     phase: FirResolvePhase,
     override var implicitTypeOnly: Boolean,
     scopeSession: ScopeSession,
-    val returnTypeCalculator: ReturnTypeCalculator = ReturnTypeCalculatorForFullBodyResolve(),
+    val returnTypeCalculator: ReturnTypeCalculator = ReturnTypeCalculatorForFullBodyResolve,
     outerBodyResolveContext: BodyResolveContext? = null,
     val firTowerDataContextCollector: FirTowerDataContextCollector? = null,
     val firProviderInterceptor: FirProviderInterceptor? = null,
