@@ -94,7 +94,7 @@ FILE fqName:<root> fileName:/ArrayListOverrides.kt
     FUN FAKE_OVERRIDE name:toArray visibility:public modality:OPEN <T> ($this:java.util.ArrayList<kotlin.String>, p0:@[FlexibleNullability] kotlin.Array<out @[FlexibleNullability] T of <root>.A1.toArray?>?) returnType:@[FlexibleNullability] kotlin.Array<out @[FlexibleNullability] T of <root>.A1.toArray?>? [fake_override]
       overridden:
         public open fun toArray <T> (p0: @[FlexibleNullability] kotlin.Array<out @[FlexibleNullability] T of java.util.ArrayList.toArray?>?): @[FlexibleNullability] kotlin.Array<out @[FlexibleNullability] T of java.util.ArrayList.toArray?>? declared in java.util.ArrayList
-      TYPE_PARAMETER name:T index:0 variance: superTypes:[@[FlexibleNullability] kotlin.Any?]
+      TYPE_PARAMETER name:T index:0 variance: superTypes:[@[FlexibleNullability] kotlin.Any?] reified:false
       $this: VALUE_PARAMETER name:<this> type:java.util.ArrayList<kotlin.String>
       VALUE_PARAMETER name:p0 index:0 type:@[FlexibleNullability] kotlin.Array<out @[FlexibleNullability] T of <root>.A1.toArray?>?
     FUN FAKE_OVERRIDE name:removeIf visibility:public modality:OPEN <> ($this:java.util.ArrayList<kotlin.String>, p0:@[EnhancedNullability] java.util.function.Predicate<in @[EnhancedNullability] kotlin.String>) returnType:kotlin.Boolean [fake_override]
@@ -289,7 +289,7 @@ FILE fqName:<root> fileName:/ArrayListOverrides.kt
     FUN FAKE_OVERRIDE name:toArray visibility:public modality:OPEN <T> ($this:java.util.ArrayList<kotlin.String>, p0:@[FlexibleNullability] kotlin.Array<out @[FlexibleNullability] T of <root>.A2.toArray?>?) returnType:@[FlexibleNullability] kotlin.Array<out @[FlexibleNullability] T of <root>.A2.toArray?>? [fake_override]
       overridden:
         public open fun toArray <T> (p0: @[FlexibleNullability] kotlin.Array<out @[FlexibleNullability] T of java.util.ArrayList.toArray?>?): @[FlexibleNullability] kotlin.Array<out @[FlexibleNullability] T of java.util.ArrayList.toArray?>? declared in java.util.ArrayList
-      TYPE_PARAMETER name:T index:0 variance: superTypes:[@[FlexibleNullability] kotlin.Any?]
+      TYPE_PARAMETER name:T index:0 variance: superTypes:[@[FlexibleNullability] kotlin.Any?] reified:false
       $this: VALUE_PARAMETER name:<this> type:java.util.ArrayList<kotlin.String>
       VALUE_PARAMETER name:p0 index:0 type:@[FlexibleNullability] kotlin.Array<out @[FlexibleNullability] T of <root>.A2.toArray?>?
     FUN FAKE_OVERRIDE name:removeIf visibility:public modality:OPEN <> ($this:java.util.ArrayList<kotlin.String>, p0:@[EnhancedNullability] java.util.function.Predicate<in @[EnhancedNullability] kotlin.String>) returnType:kotlin.Boolean [fake_override]

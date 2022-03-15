@@ -1,6 +1,6 @@
 FILE fqName:<root> fileName:/nnStringVsTAny.kt
   FUN name:useTAny visibility:public modality:FINAL <T> (fn:kotlin.Function0<T of <root>.useTAny>) returnType:T of <root>.useTAny
-    TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any]
+    TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any] reified:false
     VALUE_PARAMETER name:fn index:0 type:kotlin.Function0<T of <root>.useTAny>
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun useTAny <T> (fn: kotlin.Function0<T of <root>.useTAny>): T of <root>.useTAny declared in <root>'

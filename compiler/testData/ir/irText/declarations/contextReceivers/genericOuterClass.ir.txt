@@ -1,7 +1,7 @@
 FILE fqName:<root> fileName:/genericOuterClass.kt
   CLASS CLASS name:A modality:FINAL visibility:public superTypes:[kotlin.Any]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.A<T of <root>.A>
-    TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?]
+    TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false
     FIELD FIELD_FOR_CLASS_CONTEXT_RECEIVER name:contextReceiverField0 type:T of <root>.A visibility:private [final]
     CONSTRUCTOR visibility:public <> (<this>:T of <root>.A) returnType:<root>.A<T of <root>.A> [primary]
       VALUE_PARAMETER name:<this> index:0 type:T of <root>.A
@@ -26,7 +26,7 @@ FILE fqName:<root> fileName:/genericOuterClass.kt
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
   CLASS CLASS name:B modality:FINAL visibility:public superTypes:[kotlin.Any]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.B<P of <root>.B>
-    TYPE_PARAMETER name:P index:0 variance: superTypes:[kotlin.Any?]
+    TYPE_PARAMETER name:P index:0 variance: superTypes:[kotlin.Any?] reified:false
     FIELD FIELD_FOR_CLASS_CONTEXT_RECEIVER name:contextReceiverField0 type:kotlin.collections.Collection<P of <root>.B> visibility:private [final]
     CONSTRUCTOR visibility:public <> (<this>:kotlin.collections.Collection<P of <root>.B>) returnType:<root>.B<P of <root>.B> [primary]
       VALUE_PARAMETER name:<this> index:0 type:kotlin.collections.Collection<P of <root>.B>

@@ -1,7 +1,7 @@
 FILE fqName:<root> fileName:/main.kt
   CLASS INTERFACE name:B modality:ABSTRACT visibility:public superTypes:[<root>.A<T1 of <root>.B>]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.B<T1 of <root>.B>
-    TYPE_PARAMETER name:T1 index:0 variance: superTypes:[kotlin.Any?]
+    TYPE_PARAMETER name:T1 index:0 variance: superTypes:[kotlin.Any?] reified:false
     FUN name:foo visibility:public modality:ABSTRACT <> ($this:<root>.B<T1 of <root>.B>, x:T1 of <root>.B) returnType:T1 of <root>.B
       overridden:
         public abstract fun foo (x: @[FlexibleNullability] T of <root>.A?): @[FlexibleNullability] T of <root>.A? declared in <root>.A

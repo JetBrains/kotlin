@@ -375,7 +375,7 @@ FILE fqName:<root> fileName:/kt44814.kt
       CLASS CLASS name:FirPsiModifier modality:FINAL visibility:public superTypes:[<root>.FirModifier<<root>.ASTNode>]
       CLASS CLASS name:FirLightModifier modality:FINAL visibility:public superTypes:[<root>.FirModifier<<root>.LighterASTNode>]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.FirModifier<Node of <root>.FirModifier>
-    TYPE_PARAMETER name:Node index:0 variance: superTypes:[kotlin.Any]
+    TYPE_PARAMETER name:Node index:0 variance: superTypes:[kotlin.Any] reified:false
     CONSTRUCTOR visibility:protected <> (node:Node of <root>.FirModifier, token:<root>.KtModifierKeywordToken) returnType:<root>.FirModifier<Node of <root>.FirModifier> [primary]
       VALUE_PARAMETER name:node index:0 type:Node of <root>.FirModifier
       VALUE_PARAMETER name:token index:1 type:<root>.KtModifierKeywordToken

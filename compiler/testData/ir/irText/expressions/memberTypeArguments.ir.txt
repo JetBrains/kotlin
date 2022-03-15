@@ -1,7 +1,7 @@
 FILE fqName:<root> fileName:/memberTypeArguments.kt
   CLASS CLASS name:GenericClass modality:FINAL visibility:public superTypes:[kotlin.Any]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.GenericClass<T of <root>.GenericClass>
-    TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?]
+    TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false
     CONSTRUCTOR visibility:public <> (value:T of <root>.GenericClass) returnType:<root>.GenericClass<T of <root>.GenericClass> [primary]
       VALUE_PARAMETER name:value index:0 type:T of <root>.GenericClass
       BLOCK_BODY

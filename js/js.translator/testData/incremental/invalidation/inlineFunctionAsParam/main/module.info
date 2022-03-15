@@ -16,3 +16,13 @@ STEP 5:
     dirty: m.kt
 STEP 6:
     dependencies: stdlib, lib1
+    dirty: m.kt
+STEP 7:
+    dependencies: stdlib, lib1
+    dirty: m.kt
+STEP 8:
+    dependencies: stdlib, lib1
+    dirty: m.kt
+STEP 9:
+    dependencies: stdlib, lib1
+    dirty: m.kt

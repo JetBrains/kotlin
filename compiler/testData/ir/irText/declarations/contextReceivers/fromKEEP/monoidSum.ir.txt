@@ -1,7 +1,7 @@
 FILE fqName:<root> fileName:/monoidSum.kt
   CLASS INTERFACE name:Semigroup modality:ABSTRACT visibility:public superTypes:[kotlin.Any]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Semigroup<T of <root>.Semigroup>
-    TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?]
+    TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false
     FUN name:combine visibility:public modality:ABSTRACT <> ($this:<root>.Semigroup<T of <root>.Semigroup>, $receiver:T of <root>.Semigroup, other:T of <root>.Semigroup) returnType:T of <root>.Semigroup [infix]
       $this: VALUE_PARAMETER name:<this> type:<root>.Semigroup<T of <root>.Semigroup>
       $receiver: VALUE_PARAMETER name:<this> type:T of <root>.Semigroup
@@ -21,7 +21,7 @@ FILE fqName:<root> fileName:/monoidSum.kt
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
   CLASS INTERFACE name:Monoid modality:ABSTRACT visibility:public superTypes:[<root>.Semigroup<T of <root>.Monoid>]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Monoid<T of <root>.Monoid>
-    TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?]
+    TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false
     PROPERTY name:unit visibility:public modality:ABSTRACT [val]
       FUN DEFAULT_PROPERTY_ACCESSOR name:<get-unit> visibility:public modality:ABSTRACT <> ($this:<root>.Monoid<T of <root>.Monoid>) returnType:T of <root>.Monoid
         correspondingProperty: PROPERTY name:unit visibility:public modality:ABSTRACT [val]
@@ -136,7 +136,7 @@ FILE fqName:<root> fileName:/monoidSum.kt
         public open fun toString (): kotlin.String [fake_override] declared in <root>.Monoid
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
   FUN name:sum visibility:public modality:FINAL <T> ($receiver:kotlin.collections.List<T of <root>.sum>, <this>:<root>.Monoid<T of <root>.sum>) returnType:T of <root>.sum
-    TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?]
+    TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false
     contextReceiverParametersCount: 1
     $receiver: VALUE_PARAMETER name:<this> type:kotlin.collections.List<T of <root>.sum>
     VALUE_PARAMETER name:<this> index:0 type:<root>.Monoid<T of <root>.sum>

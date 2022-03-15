@@ -1,6 +1,6 @@
 FILE fqName:<root> fileName:/nnStringVsTConstrained.kt
   FUN name:useTConstrained visibility:public modality:FINAL <T> (xs:kotlin.Array<T of <root>.useTConstrained>, fn:kotlin.Function0<T of <root>.useTConstrained>) returnType:T of <root>.useTConstrained
-    TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?]
+    TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false
     VALUE_PARAMETER name:xs index:0 type:kotlin.Array<T of <root>.useTConstrained>
     VALUE_PARAMETER name:fn index:1 type:kotlin.Function0<T of <root>.useTConstrained>
     BLOCK_BODY

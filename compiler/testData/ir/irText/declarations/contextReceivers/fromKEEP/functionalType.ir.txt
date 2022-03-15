@@ -79,7 +79,7 @@ FILE fqName:<root> fileName:/functionalType.kt
         public open fun toString (): kotlin.String declared in kotlin.Any
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
   FUN name:f visibility:public modality:FINAL <T> ($receiver:<root>.K, <this>:<root>.O, g:@[ExtensionFunctionType] @[ContextFunctionTypeParams(count = '1')] kotlin.Function3<<root>.O, <root>.K, <root>.Param, T of <root>.f>) returnType:T of <root>.f
-    TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?]
+    TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false
     contextReceiverParametersCount: 1
     $receiver: VALUE_PARAMETER name:<this> type:<root>.K
     VALUE_PARAMETER name:<this> index:0 type:<root>.O

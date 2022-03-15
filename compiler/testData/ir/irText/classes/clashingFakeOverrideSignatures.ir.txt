@@ -1,7 +1,7 @@
 FILE fqName:<root> fileName:/clashingFakeOverrideSignatures.kt
   CLASS CLASS name:Base modality:OPEN visibility:public superTypes:[kotlin.Any]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Base<T of <root>.Base>
-    TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?]
+    TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false
     CONSTRUCTOR visibility:public <> () returnType:<root>.Base<T of <root>.Base> [primary]
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
@@ -163,8 +163,8 @@ FILE fqName:<root> fileName:/clashingFakeOverrideSignatures.kt
         y: CONST String type=kotlin.String value=""
   CLASS CLASS name:BaseXY modality:OPEN visibility:public superTypes:[kotlin.Any]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.BaseXY<X of <root>.BaseXY, Y of <root>.BaseXY>
-    TYPE_PARAMETER name:X index:0 variance: superTypes:[kotlin.Any?]
-    TYPE_PARAMETER name:Y index:1 variance: superTypes:[kotlin.Any?]
+    TYPE_PARAMETER name:X index:0 variance: superTypes:[kotlin.Any?] reified:false
+    TYPE_PARAMETER name:Y index:1 variance: superTypes:[kotlin.Any?] reified:false
     CONSTRUCTOR visibility:public <> () returnType:<root>.BaseXY<X of <root>.BaseXY, Y of <root>.BaseXY> [primary]
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
@@ -229,7 +229,7 @@ FILE fqName:<root> fileName:/clashingFakeOverrideSignatures.kt
     BLOCK_BODY
       CLASS CLASS name:LocalBase modality:OPEN visibility:local superTypes:[kotlin.Any]
         $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.outerFun.LocalBase<T of <root>.outerFun.LocalBase>
-        TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?]
+        TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false
         CONSTRUCTOR visibility:public <> () returnType:<root>.outerFun.LocalBase<T of <root>.outerFun.LocalBase> [primary]
           BLOCK_BODY
             DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
@@ -391,7 +391,7 @@ FILE fqName:<root> fileName:/clashingFakeOverrideSignatures.kt
             y: CONST String type=kotlin.String value=""
   CLASS CLASS name:Outer modality:OPEN visibility:public superTypes:[kotlin.Any]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Outer<T of <root>.Outer>
-    TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?]
+    TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false
     CONSTRUCTOR visibility:public <> () returnType:<root>.Outer<T of <root>.Outer> [primary]
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'

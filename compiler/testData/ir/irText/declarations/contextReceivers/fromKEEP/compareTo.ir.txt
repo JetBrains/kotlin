@@ -1,8 +1,8 @@
 FILE fqName:<root> fileName:/compareTo.kt
   CLASS CLASS name:Pair modality:FINAL visibility:public [data] superTypes:[kotlin.Any]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Pair<A of <root>.Pair, B of <root>.Pair>
-    TYPE_PARAMETER name:A index:0 variance: superTypes:[kotlin.Any?]
-    TYPE_PARAMETER name:B index:1 variance: superTypes:[kotlin.Any?]
+    TYPE_PARAMETER name:A index:0 variance: superTypes:[kotlin.Any?] reified:false
+    TYPE_PARAMETER name:B index:1 variance: superTypes:[kotlin.Any?] reified:false
     CONSTRUCTOR visibility:public <> (first:A of <root>.Pair, second:B of <root>.Pair) returnType:<root>.Pair<A of <root>.Pair, B of <root>.Pair> [primary]
       VALUE_PARAMETER name:first index:0 type:A of <root>.Pair
       VALUE_PARAMETER name:second index:1 type:B of <root>.Pair
@@ -158,7 +158,7 @@ FILE fqName:<root> fileName:/compareTo.kt
         RETURN type=kotlin.Nothing from='public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in <root>.Pair'
           CONST Boolean type=kotlin.Boolean value=true
   FUN name:compareTo visibility:public modality:FINAL <T> ($receiver:T of <root>.compareTo, <this>:java.util.Comparator<T of <root>.compareTo>{ kotlin.TypeAliasesKt.Comparator<T of <root>.compareTo> }, other:T of <root>.compareTo) returnType:kotlin.Int [operator,infix]
-    TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?]
+    TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false
     contextReceiverParametersCount: 1
     $receiver: VALUE_PARAMETER name:<this> type:T of <root>.compareTo
     VALUE_PARAMETER name:<this> index:0 type:java.util.Comparator<T of <root>.compareTo>{ kotlin.TypeAliasesKt.Comparator<T of <root>.compareTo> }
@@ -172,7 +172,7 @@ FILE fqName:<root> fileName:/compareTo.kt
   PROPERTY name:min visibility:public modality:FINAL [val]
     FUN name:<get-min> visibility:public modality:FINAL <T> ($receiver:<root>.Pair<T of <root>.<get-min>, T of <root>.<get-min>>, <this>:java.util.Comparator<T of <root>.<get-min>>{ kotlin.TypeAliasesKt.Comparator<T of <root>.<get-min>> }) returnType:T of <root>.<get-min>
       correspondingProperty: PROPERTY name:min visibility:public modality:FINAL [val]
-      TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?]
+      TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false
       contextReceiverParametersCount: 1
       $receiver: VALUE_PARAMETER name:<this> type:<root>.Pair<T of <root>.<get-min>, T of <root>.<get-min>>
       VALUE_PARAMETER name:<this> index:0 type:java.util.Comparator<T of <root>.<get-min>>{ kotlin.TypeAliasesKt.Comparator<T of <root>.<get-min>> }

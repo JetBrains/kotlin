@@ -1,7 +1,7 @@
 FILE fqName:<root> fileName:/thisOfGenericOuterClass.kt
   CLASS CLASS name:Outer modality:FINAL visibility:public superTypes:[kotlin.Any]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Outer<T of <root>.Outer>
-    TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?]
+    TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false
     CONSTRUCTOR visibility:public <> (x:T of <root>.Outer) returnType:<root>.Outer<T of <root>.Outer> [primary]
       VALUE_PARAMETER name:x index:0 type:T of <root>.Outer
       BLOCK_BODY

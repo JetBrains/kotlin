@@ -2,13 +2,13 @@ Module: m1
 FILE fqName:<root> fileName:/BaseFirBuilder.kt
   CLASS CLASS name:BaseFirBuilder modality:ABSTRACT visibility:public superTypes:[kotlin.Any]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.BaseFirBuilder<T of <root>.BaseFirBuilder>
-    TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?]
+    TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false
     CONSTRUCTOR visibility:public <> () returnType:<root>.BaseFirBuilder<T of <root>.BaseFirBuilder> [primary]
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:BaseFirBuilder modality:ABSTRACT visibility:public superTypes:[kotlin.Any]'
     FUN name:withCapturedTypeParameters visibility:public modality:FINAL <T> ($this:<root>.BaseFirBuilder<T of <root>.BaseFirBuilder>, block:kotlin.Function0<T of <root>.BaseFirBuilder.withCapturedTypeParameters>) returnType:T of <root>.BaseFirBuilder.withCapturedTypeParameters [inline]
-      TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?]
+      TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false
       $this: VALUE_PARAMETER name:<this> type:<root>.BaseFirBuilder<T of <root>.BaseFirBuilder>
       VALUE_PARAMETER name:block index:0 type:kotlin.Function0<T of <root>.BaseFirBuilder.withCapturedTypeParameters>
       BLOCK_BODY
@@ -40,7 +40,7 @@ FILE fqName:<root> fileName:/FirBuilder.kt
     FUN FAKE_OVERRIDE name:withCapturedTypeParameters visibility:public modality:FINAL <T> ($this:<root>.BaseFirBuilder<kotlin.Any>, block:kotlin.Function0<T of <root>.BaseConverter.withCapturedTypeParameters>) returnType:T of <root>.BaseConverter.withCapturedTypeParameters [inline,fake_override]
       overridden:
         public final fun withCapturedTypeParameters <T> (block: kotlin.Function0<T of <root>.BaseFirBuilder.withCapturedTypeParameters>): T of <root>.BaseFirBuilder.withCapturedTypeParameters [inline] declared in <root>.BaseFirBuilder
-      TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?]
+      TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false
       $this: VALUE_PARAMETER name:<this> type:<root>.BaseFirBuilder<kotlin.Any>
       VALUE_PARAMETER name:block index:0 type:kotlin.Function0<T of <root>.BaseConverter.withCapturedTypeParameters>
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
@@ -65,7 +65,7 @@ FILE fqName:<root> fileName:/FirBuilder.kt
     FUN FAKE_OVERRIDE name:withCapturedTypeParameters visibility:public modality:FINAL <T> ($this:<root>.BaseFirBuilder<kotlin.Any>, block:kotlin.Function0<T of <root>.DeclarationsConverter.withCapturedTypeParameters>) returnType:T of <root>.DeclarationsConverter.withCapturedTypeParameters [inline,fake_override]
       overridden:
         public final fun withCapturedTypeParameters <T> (block: kotlin.Function0<T of <root>.BaseConverter.withCapturedTypeParameters>): T of <root>.BaseConverter.withCapturedTypeParameters [inline,fake_override] declared in <root>.BaseConverter
-      TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?]
+      TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false
       $this: VALUE_PARAMETER name:<this> type:<root>.BaseFirBuilder<kotlin.Any>
       VALUE_PARAMETER name:block index:0 type:kotlin.Function0<T of <root>.DeclarationsConverter.withCapturedTypeParameters>
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]

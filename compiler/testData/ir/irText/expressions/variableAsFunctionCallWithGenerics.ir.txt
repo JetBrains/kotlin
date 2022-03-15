@@ -2,7 +2,7 @@ FILE fqName:<root> fileName:/variableAsFunctionCallWithGenerics.kt
   PROPERTY name:gk visibility:public modality:FINAL [val]
     FUN name:<get-gk> visibility:public modality:FINAL <T> ($receiver:T of <root>.<get-gk>) returnType:kotlin.Function0<T of <root>.<get-gk>>
       correspondingProperty: PROPERTY name:gk visibility:public modality:FINAL [val]
-      TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.CharSequence]
+      TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.CharSequence] reified:false
       $receiver: VALUE_PARAMETER name:<this> type:T of <root>.<get-gk>
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun <get-gk> <T> (): kotlin.Function0<T of <root>.<get-gk>> declared in <root>'
@@ -22,7 +22,7 @@ FILE fqName:<root> fileName:/variableAsFunctionCallWithGenerics.kt
   PROPERTY name:kt26531Val visibility:public modality:FINAL [val]
     FUN name:<get-kt26531Val> visibility:public modality:FINAL <T> ($receiver:T of <root>.<get-kt26531Val>) returnType:kotlin.Function0<T of <root>.<get-kt26531Val>>
       correspondingProperty: PROPERTY name:kt26531Val visibility:public modality:FINAL [val]
-      TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?]
+      TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false
       $receiver: VALUE_PARAMETER name:<this> type:T of <root>.<get-kt26531Val>
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun <get-kt26531Val> <T> (): kotlin.Function0<T of <root>.<get-kt26531Val>> declared in <root>'
