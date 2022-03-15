@@ -141,7 +141,8 @@ object CodegenUtil {
                         function.modality != Modality.FINAL &&
                         areParametersOk(function.valueParameters) &&
                         function.returnType != null &&
-                        isReturnTypeOk(function.returnType!!)
+                        isReturnTypeOk(function.returnType!!) &&
+                        function.extensionReceiverParameter == null
                     }
 
 
