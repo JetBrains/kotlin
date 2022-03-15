@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.MetadataDependencyResolution.Choos
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.FragmentGranularMetadataResolverFactory
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinGradleFragment
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinGradleModule.Companion.moduleName
+import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.currentBuildId
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.toModuleDependency
 
 internal class IdeaKotlinSourceDependencyResolver(
@@ -18,16 +19,21 @@ internal class IdeaKotlinSourceDependencyResolver(
     override fun resolve(fragment: KotlinGradleFragment): Set<IdeaKotlinDependency> {
         return fragmentGranularMetadataResolverFactory.getOrCreate(fragment).resolutions
             .filterIsInstance<ChooseVisibleSourceSets>()
-            .flatMap { resolution -> resolve(resolution) }
+            .flatMap { resolution -> resolve(fragment, resolution) }
             .toSet()
     }
 
-    private fun resolve(resolution: ChooseVisibleSourceSets): Iterable<IdeaKotlinDependency> {
+    private fun resolve(fragment: KotlinGradleFragment, resolution: ChooseVisibleSourceSets): Iterable<IdeaKotlinDependency> {
         val gradleProjectIdentifier = resolution.dependency.id as? ProjectComponentIdentifier ?: return emptyList()
         val kotlinModuleIdentifier = resolution.dependency.toModuleDependency().moduleIdentifier
         return resolution.allVisibleSourceSetNames.map { visibleFragmentName ->
             IdeaKotlinSourceDependencyImpl(
-                IdeaKotlinSourceCoordinatesImpl(
+                type = if (
+                    gradleProjectIdentifier.build == fragment.project.currentBuildId() &&
+                    gradleProjectIdentifier.projectPath == fragment.project.path
+                ) IdeaKotlinSourceDependency.Type.Friend
+                else IdeaKotlinSourceDependency.Type.Regular,
+                coordinates = IdeaKotlinSourceCoordinatesImpl(
                     buildId = gradleProjectIdentifier.build.name,
                     projectPath = gradleProjectIdentifier.projectPath,
                     projectName = gradleProjectIdentifier.projectName,
