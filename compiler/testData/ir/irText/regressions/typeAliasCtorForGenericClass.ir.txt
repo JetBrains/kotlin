@@ -1,7 +1,7 @@
 FILE fqName:<root> fileName:/typeAliasCtorForGenericClass.kt
   CLASS CLASS name:A modality:FINAL visibility:public superTypes:[kotlin.Any]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.A<Q of <root>.A>
-    TYPE_PARAMETER name:Q index:0 variance: superTypes:[kotlin.Any?]
+    TYPE_PARAMETER name:Q index:0 variance: superTypes:[kotlin.Any?] reified:false
     CONSTRUCTOR visibility:public <> (q:Q of <root>.A) returnType:<root>.A<Q of <root>.A> [primary]
       VALUE_PARAMETER name:q index:0 type:Q of <root>.A
       BLOCK_BODY
@@ -32,9 +32,9 @@ FILE fqName:<root> fileName:/typeAliasCtorForGenericClass.kt
         public open fun toString (): kotlin.String declared in kotlin.Any
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
   TYPEALIAS name:B visibility:public expandedType:<root>.A<X of <root>.B>
-    TYPE_PARAMETER name:X index:0 variance: superTypes:[kotlin.Any?]
+    TYPE_PARAMETER name:X index:0 variance: superTypes:[kotlin.Any?] reified:false
   TYPEALIAS name:B2 visibility:public expandedType:<root>.A<<root>.A<T of <root>.B2>>
-    TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?]
+    TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false
   FUN name:bar visibility:public modality:FINAL <> () returnType:kotlin.Unit
     BLOCK_BODY
       VAR name:b type:<root>.A<kotlin.Int>{ <root>.B<kotlin.Int> } [val]

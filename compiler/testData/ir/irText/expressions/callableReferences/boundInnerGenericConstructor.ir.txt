@@ -1,14 +1,14 @@
 FILE fqName:test fileName:/boundInnerGenericConstructor.kt
   CLASS CLASS name:Foo modality:FINAL visibility:public superTypes:[kotlin.Any]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:test.Foo<T of test.Foo>
-    TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?]
+    TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false
     CONSTRUCTOR visibility:public <> () returnType:test.Foo<T of test.Foo> [primary]
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Foo modality:FINAL visibility:public superTypes:[kotlin.Any]'
     CLASS CLASS name:Inner modality:FINAL visibility:public [inner] superTypes:[kotlin.Any]
       $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:test.Foo.Inner<P of test.Foo.Inner, T of test.Foo>
-      TYPE_PARAMETER name:P index:0 variance: superTypes:[kotlin.Any?]
+      TYPE_PARAMETER name:P index:0 variance: superTypes:[kotlin.Any?] reified:false
       CONSTRUCTOR visibility:public <> ($this:test.Foo<T of test.Foo>, a:T of test.Foo, b:P of test.Foo.Inner) returnType:test.Foo.Inner<P of test.Foo.Inner, T of test.Foo> [primary]
         $outer: VALUE_PARAMETER name:<this> type:test.Foo<T of test.Foo>
         VALUE_PARAMETER name:a index:0 type:T of test.Foo
@@ -65,8 +65,8 @@ FILE fqName:test fileName:/boundInnerGenericConstructor.kt
         public open fun toString (): kotlin.String declared in kotlin.Any
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
   FUN name:foo visibility:public modality:FINAL <A, B> (a:A of test.foo, b:B of test.foo, x:kotlin.Function2<A of test.foo, B of test.foo, test.Foo.Inner<B of test.foo, A of test.foo>>) returnType:test.Foo.Inner<B of test.foo, A of test.foo> [inline]
-    TYPE_PARAMETER name:A index:0 variance: superTypes:[kotlin.Any?]
-    TYPE_PARAMETER name:B index:1 variance: superTypes:[kotlin.Any?]
+    TYPE_PARAMETER name:A index:0 variance: superTypes:[kotlin.Any?] reified:false
+    TYPE_PARAMETER name:B index:1 variance: superTypes:[kotlin.Any?] reified:false
     VALUE_PARAMETER name:a index:0 type:A of test.foo
     VALUE_PARAMETER name:b index:1 type:B of test.foo
     VALUE_PARAMETER name:x index:2 type:kotlin.Function2<A of test.foo, B of test.foo, test.Foo.Inner<B of test.foo, A of test.foo>>

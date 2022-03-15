@@ -9,8 +9,8 @@ import org.jetbrains.kotlin.backend.common.phaser.PhaseConfig
 import org.jetbrains.kotlin.backend.common.phaser.PhaserState
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
-import org.jetbrains.kotlin.ir.backend.js.ic.ModuleCache
-import org.jetbrains.kotlin.ir.backend.js.ic.PersistentCacheConsumer
+import org.jetbrains.kotlin.ir.backend.js.ic.ArtifactCache
+import org.jetbrains.kotlin.ir.backend.js.ic.KLibArtifact
 import org.jetbrains.kotlin.ir.backend.js.lower.collectNativeImplementations
 import org.jetbrains.kotlin.ir.backend.js.lower.generateJsTests
 import org.jetbrains.kotlin.ir.backend.js.lower.moveBodilessDeclarationsToSeparatePlace
@@ -49,7 +49,7 @@ fun compileWithIC(
     safeExternalBoolean: Boolean = false,
     safeExternalBooleanDiagnostic: RuntimeDiagnostic? = null,
     filesToLower: Set<String>?,
-    cacheConsumer: PersistentCacheConsumer,
+    artifactCache: ArtifactCache,
 ) {
 
     val mainModule = module
@@ -101,7 +101,7 @@ fun compileWithIC(
 
     val ast = transformer.generateBinaryAst(dirtyFiles, allModules)
 
-    ast.entries.forEach { (path, bytes) -> cacheConsumer.commitBinaryAst(path, bytes) }
+    ast.entries.forEach { (path, bytes) -> artifactCache.saveBinaryAst(path, bytes) }
 }
 
 fun lowerPreservingTags(modules: Iterable<IrModuleFragment>, context: JsIrBackendContext, phaseConfig: PhaseConfig, controller: WholeWorldStageController) {
@@ -125,16 +125,18 @@ fun generateJsFromAst(
     moduleKind: ModuleKind,
     sourceMapsInfo: SourceMapsInfo?,
     translationModes: Set<TranslationMode>,
-    caches: Map<String, ModuleCache>,
+    caches: List<KLibArtifact>,
     relativeRequirePath: Boolean = false,
 ): CompilerResult {
     fun compilationOutput(multiModule: Boolean): CompilationOutputs {
         val deserializer = JsIrAstDeserializer()
-        val jsIrProgram = JsIrProgram(caches.values.map {
+        val jsIrProgram = JsIrProgram(caches.map { cacheArtifact ->
             JsIrModule(
-                it.name.safeModuleName,
-                sanitizeName(it.name.safeModuleName),
-                it.asts.values.sortedBy { it.name }.mapNotNull { it.ast?.let { deserializer.deserialize(ByteArrayInputStream(it)) } })
+                cacheArtifact.moduleName.safeModuleName,
+                sanitizeName(cacheArtifact.moduleName.safeModuleName),
+                cacheArtifact.fileArtifacts.sortedBy { it.srcFilePath }.mapNotNull { srcFileArtifact ->
+                    srcFileArtifact.astFileArtifact.fetchBinaryAst()?.let { deserializer.deserialize(ByteArrayInputStream(it)) }
+                })
         })
 
         return generateWrappedModuleBody(

@@ -1,7 +1,7 @@
 FILE fqName:<root> fileName:/inStarProjectionInReceiverType.kt
   CLASS INTERFACE name:Foo modality:ABSTRACT visibility:public superTypes:[kotlin.Any]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Foo<T of <root>.Foo>
-    TYPE_PARAMETER name:T index:0 variance:in superTypes:[kotlin.Any?]
+    TYPE_PARAMETER name:T index:0 variance:in superTypes:[kotlin.Any?] reified:false
     PROPERTY name:x visibility:public modality:ABSTRACT [val]
       FUN DEFAULT_PROPERTY_ACCESSOR name:<get-x> visibility:public modality:ABSTRACT <> ($this:<root>.Foo<T of <root>.Foo>) returnType:kotlin.Int
         correspondingProperty: PROPERTY name:x visibility:public modality:ABSTRACT [val]

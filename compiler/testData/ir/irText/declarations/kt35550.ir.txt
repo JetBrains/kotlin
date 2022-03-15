@@ -4,7 +4,7 @@ FILE fqName:<root> fileName:/kt35550.kt
     PROPERTY name:id visibility:public modality:OPEN [val]
       FUN name:<get-id> visibility:public modality:OPEN <T> ($this:<root>.I, $receiver:T of <root>.I.<get-id>) returnType:T of <root>.I.<get-id>
         correspondingProperty: PROPERTY name:id visibility:public modality:OPEN [val]
-        TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?]
+        TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false
         $this: VALUE_PARAMETER name:<this> type:<root>.I
         $receiver: VALUE_PARAMETER name:<this> type:T of <root>.I.<get-id>
         BLOCK_BODY
@@ -40,7 +40,7 @@ FILE fqName:<root> fileName:/kt35550.kt
         correspondingProperty: PROPERTY DELEGATED_MEMBER name:id visibility:public modality:OPEN [val]
         overridden:
           public open fun <get-id> <T> (): T of <root>.I.<get-id> declared in <root>.I
-        TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?]
+        TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false
         $this: VALUE_PARAMETER name:<this> type:<root>.A
         $receiver: VALUE_PARAMETER name:<this> type:T of <root>.A.<get-id>
         BLOCK_BODY

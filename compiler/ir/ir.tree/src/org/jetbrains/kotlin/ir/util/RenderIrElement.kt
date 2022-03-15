@@ -506,7 +506,8 @@ class RenderIrElementVisitor(private val normalizeNames: Boolean = false, privat
         declaration.runTrimEnd {
             "TYPE_PARAMETER ${renderOriginIfNonTrivial()}" +
                     "name:$name index:$index variance:$variance " +
-                    "superTypes:[${superTypes.joinToString(separator = "; ") { it.render() }}]"
+                    "superTypes:[${superTypes.joinToString(separator = "; ") { it.render() }}] " +
+                    "reified:$isReified"
         }
 
     override fun visitValueParameter(declaration: IrValueParameter, data: Nothing?): String =

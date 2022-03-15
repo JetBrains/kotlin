@@ -1,7 +1,7 @@
 FILE fqName:<root> fileName:/dataClassesGeneric.kt
   CLASS CLASS name:Test1 modality:FINAL visibility:public [data] superTypes:[kotlin.Any]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Test1<T of <root>.Test1>
-    TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?]
+    TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false
     CONSTRUCTOR visibility:public <> (x:T of <root>.Test1) returnType:<root>.Test1<T of <root>.Test1> [primary]
       VALUE_PARAMETER name:x index:0 type:T of <root>.Test1
       BLOCK_BODY
@@ -101,7 +101,7 @@ FILE fqName:<root> fileName:/dataClassesGeneric.kt
           CONST Boolean type=kotlin.Boolean value=true
   CLASS CLASS name:Test2 modality:FINAL visibility:public [data] superTypes:[kotlin.Any]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Test2<T of <root>.Test2>
-    TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Number]
+    TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Number] reified:false
     CONSTRUCTOR visibility:public <> (x:T of <root>.Test2) returnType:<root>.Test2<T of <root>.Test2> [primary]
       VALUE_PARAMETER name:x index:0 type:T of <root>.Test2
       BLOCK_BODY
@@ -192,7 +192,7 @@ FILE fqName:<root> fileName:/dataClassesGeneric.kt
           CONST Boolean type=kotlin.Boolean value=true
   CLASS CLASS name:Test3 modality:FINAL visibility:public [data] superTypes:[kotlin.Any]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Test3<T of <root>.Test3>
-    TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?]
+    TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false
     CONSTRUCTOR visibility:public <> (x:kotlin.collections.List<T of <root>.Test3>) returnType:<root>.Test3<T of <root>.Test3> [primary]
       VALUE_PARAMETER name:x index:0 type:kotlin.collections.List<T of <root>.Test3>
       BLOCK_BODY

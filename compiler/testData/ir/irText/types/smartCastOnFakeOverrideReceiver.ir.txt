@@ -137,7 +137,7 @@ FILE fqName:<root> fileName:/smartCastOnFakeOverrideReceiver.kt
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
   CLASS CLASS name:GA modality:OPEN visibility:public superTypes:[kotlin.Any]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.GA<T of <root>.GA>
-    TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?]
+    TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false
     CONSTRUCTOR visibility:public <> () returnType:<root>.GA<T of <root>.GA> [primary]
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
@@ -173,8 +173,8 @@ FILE fqName:<root> fileName:/smartCastOnFakeOverrideReceiver.kt
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
   CLASS CLASS name:GB modality:FINAL visibility:public superTypes:[<root>.GA<T of <root>.GB>]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.GB<T of <root>.GB, S of <root>.GB>
-    TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?]
-    TYPE_PARAMETER name:S index:1 variance: superTypes:[kotlin.Any?]
+    TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false
+    TYPE_PARAMETER name:S index:1 variance: superTypes:[kotlin.Any?] reified:false
     CONSTRUCTOR visibility:public <> () returnType:<root>.GB<T of <root>.GB, S of <root>.GB> [primary]
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.GA'

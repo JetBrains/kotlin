@@ -10,63 +10,39 @@ import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.util.IdSignature
-import org.jetbrains.kotlin.ir.util.dump
 import org.jetbrains.kotlin.ir.util.file
 import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
-import org.jetbrains.kotlin.utils.DFS
-import java.security.MessageDigest
 
-fun ByteArray.md5(): Hash {
-    val d = MessageDigest.getInstance("MD5").digest(this)!!
-    return ((d[0].toLong() and 0xFFL)
-            or ((d[1].toLong() and 0xFFL) shl 8)
-            or ((d[2].toLong() and 0xFFL) shl 16)
-            or ((d[3].toLong() and 0xFFL) shl 24)
-            or ((d[4].toLong() and 0xFFL) shl 32)
-            or ((d[5].toLong() and 0xFFL) shl 40)
-            or ((d[6].toLong() and 0xFFL) shl 48)
-            or ((d[7].toLong() and 0xFFL) shl 56))
-}
 
 class InlineFunctionFlatHashBuilder : IrElementVisitorVoid {
     override fun visitElement(element: IrElement) {
         element.acceptChildren(this, null)
     }
 
-
-    private val fileToHash: MutableMap<IrFile, MutableMap<IrSimpleFunction, FlatHash>> = mutableMapOf()
-
-    private var currentMap: MutableMap<IrSimpleFunction, FlatHash>? = null
-
-    override fun visitFile(declaration: IrFile) {
-        currentMap = fileToHash.getOrPut(declaration) { mutableMapOf() }
-        declaration.acceptChildren(this, null)
-        currentMap = null
-    }
-
     override fun visitSimpleFunction(declaration: IrSimpleFunction) {
         if (declaration.isInline) {
-            val m = currentMap ?: error("No graph map set for ${declaration.render()}")
-            m[declaration] = declaration.dump().toByteArray().md5()
+            flatHashes[declaration] = declaration.irElementHashForIC()
         }
-        // do not go deeper since local declaration cannot be public api
+        // go deeper since local inline special declarations (like a reference adaptor) may appear
+        declaration.acceptChildren(this, null)
     }
 
-    val idToHashMap: Map<IrSimpleFunction, FlatHash> get() = fileToHash.values.flatMap { it.entries }.map { it.key to it.value }.toMap()
+    private val flatHashes = mutableMapOf<IrSimpleFunction, ICHash>()
 
+    fun getFlatHashes() = flatHashes
 }
 
 interface InlineFunctionHashProvider {
-    fun hashForExternalFunction(declaration: IrSimpleFunction): TransHash?
+    fun hashForExternalFunction(declaration: IrSimpleFunction): ICHash?
 }
 
 class InlineFunctionHashBuilder(
     private val hashProvider: InlineFunctionHashProvider,
-    private val flatHashes: Map<IrSimpleFunction, FlatHash>
+    private val flatHashes: Map<IrSimpleFunction, ICHash>
 ) {
-    private val inlineGraph: MutableMap<IrSimpleFunction, Set<IrSimpleFunction>> = mutableMapOf()
+    private val inlineFunctionCallGraph: MutableMap<IrSimpleFunction, Set<IrSimpleFunction>> = mutableMapOf()
 
     private inner class GraphBuilder : IrElementVisitor<Unit, MutableSet<IrSimpleFunction>> {
 
@@ -76,7 +52,7 @@ class InlineFunctionHashBuilder(
 
         override fun visitSimpleFunction(declaration: IrSimpleFunction, data: MutableSet<IrSimpleFunction>) {
             val newGraph = mutableSetOf<IrSimpleFunction>()
-            inlineGraph[declaration] = newGraph
+            inlineFunctionCallGraph[declaration] = newGraph
             declaration.acceptChildren(this, newGraph)
         }
 
@@ -92,95 +68,69 @@ class InlineFunctionHashBuilder(
         }
     }
 
+    private inner class InlineFunctionHashProcessor {
+        private val computedHashes = mutableMapOf<IrSimpleFunction, ICHash>()
+        private val processingFunctions = mutableSetOf<IrSimpleFunction>()
 
-    private fun topologicalOrder(): List<IrSimpleFunction> {
-        return DFS.topologicalOrder(inlineGraph.keys) {
-            inlineGraph[it]?.filter { f -> f in inlineGraph } ?: run {
-//                assert() not in current module
-                emptySet()
+        private fun processInlineFunction(f: IrSimpleFunction): ICHash = computedHashes.getOrPut(f) {
+            if (!processingFunctions.add(f)) {
+                error("Inline circle through function ${f.render()} detected")
             }
+            val callees = inlineFunctionCallGraph[f] ?: error("Internal error: Inline function is missed in inline graph ${f.render()}")
+            val flatHash = flatHashes[f] ?: error("Internal error: No flat hash for ${f.render()}")
+            var functionInlineHash = flatHash
+            for (callee in callees) {
+                functionInlineHash = functionInlineHash.combineWith(processCallee(callee))
+            }
+            processingFunctions.remove(f)
+            functionInlineHash
+        }
+
+        private fun processCallee(callee: IrSimpleFunction): ICHash {
+            if (callee in flatHashes) {
+                return processInlineFunction(callee)
+            }
+            return hashProvider.hashForExternalFunction(callee) ?: error("Internal error: No hash found for ${callee.render()}")
+        }
+
+        fun process(): Map<IrSimpleFunction, ICHash> {
+            for ((f, callees) in inlineFunctionCallGraph.entries) {
+                if (f.isInline) {
+                    processInlineFunction(f)
+                } else {
+                    callees.forEach(::processCallee)
+                }
+            }
+            return computedHashes
         }
     }
 
-    private fun checkCircles() {
-
-        val visited = mutableSetOf<IrSimpleFunction>()
-
-        // TODO: check whether algorithm is correct
-        for (f in inlineGraph.keys) {
-
-            fun walk(current: IrSimpleFunction) {
-                if (!visited.add(current)) {
-                    error("Inline circle detected: ${current.render()} into ${f.render()}")
-                }
-
-                inlineGraph[current]?.let {
-                    it.forEach { callee -> walk(callee) }
-                }
-
-                visited.remove(current)
-            }
-
-            walk(f)
-
-            assert(visited.isEmpty())
-        }
-    }
-
-
-    fun buildHashes(dirtyFiles: Collection<IrFile>): Map<IrSimpleFunction, TransHash> {
-
+    fun buildHashes(dirtyFiles: Collection<IrFile>): Map<IrSimpleFunction, ICHash> {
         dirtyFiles.forEach { it.acceptChildren(GraphBuilder(), mutableSetOf()) }
-
-        checkCircles()
-
-        val rpo = topologicalOrder()
-
-        val computedHashes = mutableMapOf<IrSimpleFunction, TransHash>()
-
-        fun transHash(callee: IrSimpleFunction): TransHash {
-            return computedHashes[callee] ?: hashProvider.hashForExternalFunction(callee)
-            ?: error("Internal error: No has found for ${callee.render()}")
-        }
-
-        for (f in rpo.asReversed()) {
-            if (!f.isInline) continue
-            val stringHash = buildString {
-                val callees = inlineGraph[f]
-                    ?: error("Expected to be in")
-                // TODO: should it be a kind of stable order?
-                for (callee in callees) {
-                    val hash = transHash(callee)
-                    append(hash.toString(Character.MAX_RADIX))
-                }
-
-                append(flatHashes[f] ?: error("Internal error: No flat hash for ${f.render()}"))
-            }
-
-            computedHashes[f] = stringHash.toByteArray().md5()
-        }
-
-        return computedHashes
+        return InlineFunctionHashProcessor().process()
     }
 
-    fun buildInlineGraph(computedHashed: Map<IrSimpleFunction, TransHash>): Map<IrFile, Collection<Pair<IdSignature, TransHash>>> {
-        val perFileInlineGraph = inlineGraph.entries.groupBy({ it.key.file }) {
+    fun buildInlineGraph(computedHashed: Map<IrSimpleFunction, ICHash>): Map<IrFile, Map<IdSignature, ICHash>> {
+        val perFileInlineGraph = inlineFunctionCallGraph.entries.groupBy({ it.key.file }) {
             it.value
         }
 
-        return perFileInlineGraph.map {
-            it.key to it.value.flatMap { edges ->
-                edges.mapNotNull { callee ->
-                    // TODO: use resolved FO
+        return perFileInlineGraph.entries.associate {
+            val usedInlineFunctions = mutableMapOf<IdSignature, ICHash>()
+            it.value.forEach { edges ->
+                edges.forEach { callee ->
                     if (!callee.isFakeOverride) {
                         val signature = callee.symbol.signature // ?: error("Expecting signature for ${callee.render()}")
                         if (signature?.visibleCrossFile == true) {
-                            signature to (computedHashed[callee] ?: hashProvider.hashForExternalFunction(callee)
-                            ?: error("Internal error: No has found for ${callee.render()}"))
-                        } else null
-                    } else null
+                            val calleeHash = computedHashed[callee]
+                                ?: hashProvider.hashForExternalFunction(callee)
+                                ?: error("Internal error: No has found for ${callee.render()}")
+                            usedInlineFunctions[signature] = calleeHash
+                        }
+                    }
                 }
             }
-        }.toMap()
+            it.key to usedInlineFunctions
+        }
     }
 }

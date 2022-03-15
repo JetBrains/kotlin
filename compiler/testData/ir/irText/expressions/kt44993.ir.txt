@@ -32,7 +32,7 @@ FILE fqName:<root> fileName:/kt44993.kt
                   receiver: GET_VAR 'val tmp_0: <root>.JavaBox? [val] declared in <root>.f' type=<root>.JavaBox? origin=null
   CLASS CLASS name:KotlinBox modality:FINAL visibility:public superTypes:[kotlin.Any]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.KotlinBox<T of <root>.KotlinBox>
-    TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?]
+    TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false
     CONSTRUCTOR visibility:public <> (data:T of <root>.KotlinBox?) returnType:<root>.KotlinBox<T of <root>.KotlinBox> [primary]
       VALUE_PARAMETER name:data index:0 type:T of <root>.KotlinBox?
       BLOCK_BODY

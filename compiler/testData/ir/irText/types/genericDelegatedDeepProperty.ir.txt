@@ -1,8 +1,8 @@
 FILE fqName:<root> fileName:/genericDelegatedDeepProperty.kt
   CLASS CLASS name:Value modality:FINAL visibility:public superTypes:[kotlin.Any]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Value<T of <root>.Value, IT of <root>.Value>
-    TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?]
-    TYPE_PARAMETER name:IT index:1 variance: superTypes:[<root>.IR<T of <root>.Value>]
+    TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false
+    TYPE_PARAMETER name:IT index:1 variance: superTypes:[<root>.IR<T of <root>.Value>] reified:false
     CONSTRUCTOR visibility:public <> (value1:T of <root>.Value, value2:IT of <root>.Value) returnType:<root>.Value<T of <root>.Value, IT of <root>.Value> [primary]
       VALUE_PARAMETER name:value1 index:0 type:T of <root>.Value
       VALUE_PARAMETER name:value2 index:1 type:IT of <root>.Value
@@ -54,8 +54,8 @@ FILE fqName:<root> fileName:/genericDelegatedDeepProperty.kt
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
   CLASS INTERFACE name:IDelegate1 modality:ABSTRACT visibility:public superTypes:[kotlin.Any]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.IDelegate1<T1 of <root>.IDelegate1, R1 of <root>.IDelegate1>
-    TYPE_PARAMETER name:T1 index:0 variance: superTypes:[kotlin.Any?]
-    TYPE_PARAMETER name:R1 index:1 variance: superTypes:[kotlin.Any?]
+    TYPE_PARAMETER name:T1 index:0 variance: superTypes:[kotlin.Any?] reified:false
+    TYPE_PARAMETER name:R1 index:1 variance: superTypes:[kotlin.Any?] reified:false
     FUN name:getValue visibility:public modality:ABSTRACT <> ($this:<root>.IDelegate1<T1 of <root>.IDelegate1, R1 of <root>.IDelegate1>, t:T1 of <root>.IDelegate1, p:kotlin.reflect.KProperty<*>) returnType:R1 of <root>.IDelegate1 [operator]
       $this: VALUE_PARAMETER name:<this> type:<root>.IDelegate1<T1 of <root>.IDelegate1, R1 of <root>.IDelegate1>
       VALUE_PARAMETER name:t index:0 type:T1 of <root>.IDelegate1
@@ -75,8 +75,8 @@ FILE fqName:<root> fileName:/genericDelegatedDeepProperty.kt
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
   CLASS INTERFACE name:IDelegate2 modality:ABSTRACT visibility:public superTypes:[kotlin.Any]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.IDelegate2<T2 of <root>.IDelegate2, R2 of <root>.IDelegate2>
-    TYPE_PARAMETER name:T2 index:0 variance: superTypes:[kotlin.Any?]
-    TYPE_PARAMETER name:R2 index:1 variance: superTypes:[kotlin.Any?]
+    TYPE_PARAMETER name:T2 index:0 variance: superTypes:[kotlin.Any?] reified:false
+    TYPE_PARAMETER name:R2 index:1 variance: superTypes:[kotlin.Any?] reified:false
     FUN name:getValue visibility:public modality:ABSTRACT <> ($this:<root>.IDelegate2<T2 of <root>.IDelegate2, R2 of <root>.IDelegate2>, t:T2 of <root>.IDelegate2, p:kotlin.reflect.KProperty<*>) returnType:R2 of <root>.IDelegate2 [operator]
       $this: VALUE_PARAMETER name:<this> type:<root>.IDelegate2<T2 of <root>.IDelegate2, R2 of <root>.IDelegate2>
       VALUE_PARAMETER name:t index:0 type:T2 of <root>.IDelegate2
@@ -96,7 +96,7 @@ FILE fqName:<root> fileName:/genericDelegatedDeepProperty.kt
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
   CLASS INTERFACE name:IR modality:ABSTRACT visibility:public superTypes:[kotlin.Any]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.IR<R of <root>.IR>
-    TYPE_PARAMETER name:R index:0 variance: superTypes:[kotlin.Any?]
+    TYPE_PARAMETER name:R index:0 variance: superTypes:[kotlin.Any?] reified:false
     FUN name:foo visibility:public modality:ABSTRACT <> ($this:<root>.IR<R of <root>.IR>) returnType:R of <root>.IR
       $this: VALUE_PARAMETER name:<this> type:<root>.IR<R of <root>.IR>
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
@@ -114,7 +114,7 @@ FILE fqName:<root> fileName:/genericDelegatedDeepProperty.kt
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
   CLASS CLASS name:CR modality:FINAL visibility:public superTypes:[<root>.IR<R of <root>.CR>]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.CR<R of <root>.CR>
-    TYPE_PARAMETER name:R index:0 variance: superTypes:[kotlin.Any?]
+    TYPE_PARAMETER name:R index:0 variance: superTypes:[kotlin.Any?] reified:false
     CONSTRUCTOR visibility:public <> (r:R of <root>.CR) returnType:<root>.CR<R of <root>.CR> [primary]
       VALUE_PARAMETER name:r index:0 type:R of <root>.CR
       BLOCK_BODY
@@ -154,8 +154,8 @@ FILE fqName:<root> fileName:/genericDelegatedDeepProperty.kt
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
   CLASS CLASS name:P modality:FINAL visibility:public superTypes:[kotlin.Any]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.P<P1 of <root>.P, P2 of <root>.P>
-    TYPE_PARAMETER name:P1 index:0 variance: superTypes:[kotlin.Any?]
-    TYPE_PARAMETER name:P2 index:1 variance: superTypes:[kotlin.Any?]
+    TYPE_PARAMETER name:P1 index:0 variance: superTypes:[kotlin.Any?] reified:false
+    TYPE_PARAMETER name:P2 index:1 variance: superTypes:[kotlin.Any?] reified:false
     CONSTRUCTOR visibility:public <> (p1:P1 of <root>.P, p2:P2 of <root>.P) returnType:<root>.P<P1 of <root>.P, P2 of <root>.P> [primary]
       VALUE_PARAMETER name:p1 index:0 type:P1 of <root>.P
       VALUE_PARAMETER name:p2 index:1 type:P2 of <root>.P
@@ -208,14 +208,14 @@ FILE fqName:<root> fileName:/genericDelegatedDeepProperty.kt
                 DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
                 INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:<no name provided> modality:FINAL visibility:local superTypes:[<root>.IDelegate1<<root>.Value<kotlin.Any?, <root>.CR<kotlin.Any?>>, <root>.P<kotlin.Any?, kotlin.Any?>>]'
             FUN name:qux11 visibility:public modality:FINAL <F11T> ($this:<root>.additionalText$delegate.<no name provided><kotlin.Any?>, t:F11T of <root>.additionalText$delegate.<no name provided>.qux11) returnType:F11T of <root>.additionalText$delegate.<no name provided>.qux11
-              TYPE_PARAMETER name:F11T index:0 variance: superTypes:[kotlin.Any?]
+              TYPE_PARAMETER name:F11T index:0 variance: superTypes:[kotlin.Any?] reified:false
               $this: VALUE_PARAMETER name:<this> type:<root>.additionalText$delegate.<no name provided><kotlin.Any?>
               VALUE_PARAMETER name:t index:0 type:F11T of <root>.additionalText$delegate.<no name provided>.qux11
               BLOCK_BODY
                 RETURN type=kotlin.Nothing from='public final fun qux11 <F11T> (t: F11T of <root>.additionalText$delegate.<no name provided>.qux11): F11T of <root>.additionalText$delegate.<no name provided>.qux11 declared in <root>.additionalText$delegate.<no name provided>'
                   GET_VAR 't: F11T of <root>.additionalText$delegate.<no name provided>.qux11 declared in <root>.additionalText$delegate.<no name provided>.qux11' type=F11T of <root>.additionalText$delegate.<no name provided>.qux11 origin=null
             FUN name:qux12 visibility:public modality:FINAL <F12T> ($this:<root>.additionalText$delegate.<no name provided><kotlin.Any?>, t:F12T of <root>.additionalText$delegate.<no name provided>.qux12) returnType:kotlin.Any?
-              TYPE_PARAMETER name:F12T index:0 variance: superTypes:[<root>.IR<kotlin.Any?>]
+              TYPE_PARAMETER name:F12T index:0 variance: superTypes:[<root>.IR<kotlin.Any?>] reified:false
               $this: VALUE_PARAMETER name:<this> type:<root>.additionalText$delegate.<no name provided><kotlin.Any?>
               VALUE_PARAMETER name:t index:0 type:F12T of <root>.additionalText$delegate.<no name provided>.qux12
               BLOCK_BODY
@@ -245,14 +245,14 @@ FILE fqName:<root> fileName:/genericDelegatedDeepProperty.kt
                               CALL 'public final fun <get-value1> (): T of <root>.Value declared in <root>.Value' type=kotlin.Any? origin=GET_PROPERTY
                                 $this: GET_VAR 't: <root>.Value<kotlin.Any?, <root>.CR<kotlin.Any?>> declared in <root>.additionalText$delegate.<no name provided>.deepO$delegate.<no name provided>.getValue' type=<root>.Value<kotlin.Any?, <root>.CR<kotlin.Any?>> origin=null
                       FUN name:qux21 visibility:public modality:FINAL <F21T> ($this:<root>.additionalText$delegate.<no name provided>.deepO$delegate.<no name provided><kotlin.Any?>, t:F21T of <root>.additionalText$delegate.<no name provided>.deepO$delegate.<no name provided>.qux21) returnType:F21T of <root>.additionalText$delegate.<no name provided>.deepO$delegate.<no name provided>.qux21
-                        TYPE_PARAMETER name:F21T index:0 variance: superTypes:[kotlin.Any?]
+                        TYPE_PARAMETER name:F21T index:0 variance: superTypes:[kotlin.Any?] reified:false
                         $this: VALUE_PARAMETER name:<this> type:<root>.additionalText$delegate.<no name provided>.deepO$delegate.<no name provided><kotlin.Any?>
                         VALUE_PARAMETER name:t index:0 type:F21T of <root>.additionalText$delegate.<no name provided>.deepO$delegate.<no name provided>.qux21
                         BLOCK_BODY
                           RETURN type=kotlin.Nothing from='public final fun qux21 <F21T> (t: F21T of <root>.additionalText$delegate.<no name provided>.deepO$delegate.<no name provided>.qux21): F21T of <root>.additionalText$delegate.<no name provided>.deepO$delegate.<no name provided>.qux21 declared in <root>.additionalText$delegate.<no name provided>.deepO$delegate.<no name provided>'
                             GET_VAR 't: F21T of <root>.additionalText$delegate.<no name provided>.deepO$delegate.<no name provided>.qux21 declared in <root>.additionalText$delegate.<no name provided>.deepO$delegate.<no name provided>.qux21' type=F21T of <root>.additionalText$delegate.<no name provided>.deepO$delegate.<no name provided>.qux21 origin=null
                       FUN name:qux22 visibility:public modality:FINAL <F22T> ($this:<root>.additionalText$delegate.<no name provided>.deepO$delegate.<no name provided><kotlin.Any?>, t:F22T of <root>.additionalText$delegate.<no name provided>.deepO$delegate.<no name provided>.qux22) returnType:kotlin.Any?
-                        TYPE_PARAMETER name:F22T index:0 variance: superTypes:[<root>.IR<kotlin.Any?>]
+                        TYPE_PARAMETER name:F22T index:0 variance: superTypes:[<root>.IR<kotlin.Any?>] reified:false
                         $this: VALUE_PARAMETER name:<this> type:<root>.additionalText$delegate.<no name provided>.deepO$delegate.<no name provided><kotlin.Any?>
                         VALUE_PARAMETER name:t index:0 type:F22T of <root>.additionalText$delegate.<no name provided>.deepO$delegate.<no name provided>.qux22
                         BLOCK_BODY
@@ -369,7 +369,7 @@ FILE fqName:<root> fileName:/genericDelegatedDeepProperty.kt
           CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.additionalText$delegate.<no name provided>' type=<root>.additionalText$delegate.<no name provided><kotlin.Any?> origin=OBJECT_LITERAL
     FUN DELEGATED_PROPERTY_ACCESSOR name:<get-additionalText> visibility:public modality:FINAL <T> ($receiver:<root>.Value<T of <root>.<get-additionalText>, <root>.CR<T of <root>.<get-additionalText>>>) returnType:<root>.P<T of <root>.<get-additionalText>, T of <root>.<get-additionalText>>
       correspondingProperty: PROPERTY name:additionalText visibility:public modality:FINAL [delegated,val]
-      TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?]
+      TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false
       $receiver: VALUE_PARAMETER name:<this> type:<root>.Value<T of <root>.<get-additionalText>, <root>.CR<T of <root>.<get-additionalText>>>
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun <get-additionalText> <T> (): <root>.P<T of <root>.<get-additionalText>, T of <root>.<get-additionalText>> declared in <root>'

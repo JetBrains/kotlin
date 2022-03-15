@@ -1,7 +1,7 @@
 FILE fqName:<root> fileName:/intersectionType1.kt
   CLASS CLASS name:In modality:FINAL visibility:public superTypes:[kotlin.Any]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.In<I of <root>.In>
-    TYPE_PARAMETER name:I index:0 variance:in superTypes:[kotlin.Any?]
+    TYPE_PARAMETER name:I index:0 variance:in superTypes:[kotlin.Any?] reified:false
     CONSTRUCTOR visibility:public <> () returnType:<root>.In<I of <root>.In> [primary]
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
@@ -20,14 +20,14 @@ FILE fqName:<root> fileName:/intersectionType1.kt
         public open fun toString (): kotlin.String declared in kotlin.Any
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
   FUN name:select visibility:public modality:FINAL <S> (x:S of <root>.select, y:S of <root>.select) returnType:S of <root>.select
-    TYPE_PARAMETER name:S index:0 variance: superTypes:[kotlin.Any?]
+    TYPE_PARAMETER name:S index:0 variance: superTypes:[kotlin.Any?] reified:false
     VALUE_PARAMETER name:x index:0 type:S of <root>.select
     VALUE_PARAMETER name:y index:1 type:S of <root>.select
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun select <S> (x: S of <root>.select, y: S of <root>.select): S of <root>.select declared in <root>'
         GET_VAR 'x: S of <root>.select declared in <root>.select' type=S of <root>.select origin=null
   FUN name:foo visibility:public modality:FINAL <T> (a:kotlin.Array<<root>.In<T of <root>.foo>>, b:kotlin.Array<<root>.In<kotlin.String>>) returnType:kotlin.Boolean
-    TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?]
+    TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false
     VALUE_PARAMETER name:a index:0 type:kotlin.Array<<root>.In<T of <root>.foo>>
     VALUE_PARAMETER name:b index:1 type:kotlin.Array<<root>.In<kotlin.String>>
     BLOCK_BODY
@@ -42,7 +42,7 @@ FILE fqName:<root> fileName:/intersectionType1.kt
             index: CONST Int type=kotlin.Int value=0
           y: CONST Boolean type=kotlin.Boolean value=true
   FUN name:ofType visibility:public modality:FINAL <K> ($receiver:<root>.In<K of <root>.ofType>, y:kotlin.Any?) returnType:kotlin.Boolean [inline]
-    TYPE_PARAMETER name:K index:0 variance: superTypes:[kotlin.Any?]
+    TYPE_PARAMETER name:K index:0 variance: superTypes:[kotlin.Any?] reified:true
     $receiver: VALUE_PARAMETER name:<this> type:<root>.In<K of <root>.ofType>
     VALUE_PARAMETER name:y index:0 type:kotlin.Any?
     BLOCK_BODY

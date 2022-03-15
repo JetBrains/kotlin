@@ -33,3 +33,18 @@ STEP 6:
     modifications:
         U : l1.kt.6.txt -> l1.kt
     dirty: l1.kt
+STEP 7:
+    dependencies: stdlib
+    modifications:
+        U : l1.kt.7.txt -> l1.kt
+    dirty: l1.kt
+STEP 8:
+    dependencies: stdlib
+    modifications:
+        U : l1.kt.8.txt -> l1.kt
+    dirty: l1.kt
+STEP 9:
+    dependencies: stdlib
+    modifications:
+        U : l1.kt.9.txt -> l1.kt
+    dirty: l1.kt

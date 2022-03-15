@@ -111,7 +111,7 @@ FILE fqName:<root> fileName:/TypeParameterBounds.kt
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
   CLASS INTERFACE name:Generic modality:ABSTRACT visibility:public superTypes:[kotlin.Any]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Generic<G of <root>.Generic>
-    TYPE_PARAMETER name:G index:0 variance: superTypes:[kotlin.Any?]
+    TYPE_PARAMETER name:G index:0 variance: superTypes:[kotlin.Any?] reified:false
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
         public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in kotlin.Any
@@ -127,7 +127,7 @@ FILE fqName:<root> fileName:/TypeParameterBounds.kt
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
   CLASS CLASS name:GenericClass modality:FINAL visibility:public superTypes:[kotlin.Any]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.GenericClass<G of <root>.GenericClass>
-    TYPE_PARAMETER name:G index:0 variance: superTypes:[kotlin.Any?]
+    TYPE_PARAMETER name:G index:0 variance: superTypes:[kotlin.Any?] reified:false
     CONSTRUCTOR visibility:public <> () returnType:<root>.GenericClass<G of <root>.GenericClass> [primary]
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
@@ -147,7 +147,7 @@ FILE fqName:<root> fileName:/TypeParameterBounds.kt
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
   CLASS CLASS name:SimpleParameter modality:FINAL visibility:public superTypes:[kotlin.Any]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.SimpleParameter<T of <root>.SimpleParameter>
-    TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?]
+    TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false
       annotations:
         TypeParameterAnn
         TypeParameterAnnBinary
@@ -170,7 +170,7 @@ FILE fqName:<root> fileName:/TypeParameterBounds.kt
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
   CLASS CLASS name:InterfaceBound modality:FINAL visibility:public superTypes:[kotlin.Any]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.InterfaceBound<T of <root>.InterfaceBound>
-    TYPE_PARAMETER name:T index:0 variance: superTypes:[@[TypeAnn(name = 'Simple')] <root>.Simple]
+    TYPE_PARAMETER name:T index:0 variance: superTypes:[@[TypeAnn(name = 'Simple')] <root>.Simple] reified:false
       annotations:
         TypeParameterAnn
     CONSTRUCTOR visibility:public <> () returnType:<root>.InterfaceBound<T of <root>.InterfaceBound> [primary]
@@ -192,7 +192,7 @@ FILE fqName:<root> fileName:/TypeParameterBounds.kt
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
   CLASS CLASS name:ClassBound modality:FINAL visibility:public superTypes:[kotlin.Any]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.ClassBound<T of <root>.ClassBound>
-    TYPE_PARAMETER name:T index:0 variance: superTypes:[@[TypeAnn(name = 'Simple')] <root>.SimpleClass]
+    TYPE_PARAMETER name:T index:0 variance: superTypes:[@[TypeAnn(name = 'Simple')] <root>.SimpleClass] reified:false
       annotations:
         TypeParameterAnn
     CONSTRUCTOR visibility:public <> () returnType:<root>.ClassBound<T of <root>.ClassBound> [primary]
@@ -214,7 +214,7 @@ FILE fqName:<root> fileName:/TypeParameterBounds.kt
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
   CLASS CLASS name:InterfaceBoundGeneric modality:FINAL visibility:public superTypes:[kotlin.Any]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.InterfaceBoundGeneric<T of <root>.InterfaceBoundGeneric>
-    TYPE_PARAMETER name:T index:0 variance: superTypes:[@[TypeAnn(name = 'Generic')] <root>.Generic<@[TypeAnn(name = 'Simple')] <root>.Simple>]
+    TYPE_PARAMETER name:T index:0 variance: superTypes:[@[TypeAnn(name = 'Generic')] <root>.Generic<@[TypeAnn(name = 'Simple')] <root>.Simple>] reified:false
     CONSTRUCTOR visibility:public <> () returnType:<root>.InterfaceBoundGeneric<T of <root>.InterfaceBoundGeneric> [primary]
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
@@ -234,7 +234,7 @@ FILE fqName:<root> fileName:/TypeParameterBounds.kt
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
   CLASS CLASS name:ClassBoundGeneric modality:FINAL visibility:public superTypes:[kotlin.Any]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.ClassBoundGeneric<T of <root>.ClassBoundGeneric>
-    TYPE_PARAMETER name:T index:0 variance: superTypes:[@[TypeAnn(name = 'GenericClass')] <root>.GenericClass<@[TypeAnn(name = 'SimpleClass')] <root>.SimpleClass>]
+    TYPE_PARAMETER name:T index:0 variance: superTypes:[@[TypeAnn(name = 'GenericClass')] <root>.GenericClass<@[TypeAnn(name = 'SimpleClass')] <root>.SimpleClass>] reified:false
     CONSTRUCTOR visibility:public <> () returnType:<root>.ClassBoundGeneric<T of <root>.ClassBoundGeneric> [primary]
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
@@ -254,8 +254,8 @@ FILE fqName:<root> fileName:/TypeParameterBounds.kt
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
   CLASS CLASS name:TypeParameterAsBound modality:FINAL visibility:public superTypes:[kotlin.Any]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.TypeParameterAsBound<Y of <root>.TypeParameterAsBound, T of <root>.TypeParameterAsBound>
-    TYPE_PARAMETER name:Y index:0 variance: superTypes:[kotlin.Any?]
-    TYPE_PARAMETER name:T index:1 variance: superTypes:[@[TypeAnn(name = 'Y as Bound')] Y of <root>.TypeParameterAsBound]
+    TYPE_PARAMETER name:Y index:0 variance: superTypes:[kotlin.Any?] reified:false
+    TYPE_PARAMETER name:T index:1 variance: superTypes:[@[TypeAnn(name = 'Y as Bound')] Y of <root>.TypeParameterAsBound] reified:false
       annotations:
         TypeParameterAnn
     CONSTRUCTOR visibility:public <> () returnType:<root>.TypeParameterAsBound<Y of <root>.TypeParameterAsBound, T of <root>.TypeParameterAsBound> [primary]

@@ -1,27 +1,27 @@
 FILE fqName:<root> fileName:/delegatedGenericImplementation.kt
   CLASS INTERFACE name:IBase modality:ABSTRACT visibility:public superTypes:[kotlin.Any]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.IBase<A of <root>.IBase>
-    TYPE_PARAMETER name:A index:0 variance: superTypes:[kotlin.Any?]
+    TYPE_PARAMETER name:A index:0 variance: superTypes:[kotlin.Any?] reified:false
     FUN name:foo visibility:public modality:ABSTRACT <B> ($this:<root>.IBase<A of <root>.IBase>, a:A of <root>.IBase, b:B of <root>.IBase.foo) returnType:kotlin.Unit
-      TYPE_PARAMETER name:B index:0 variance: superTypes:[kotlin.Any?]
+      TYPE_PARAMETER name:B index:0 variance: superTypes:[kotlin.Any?] reified:false
       $this: VALUE_PARAMETER name:<this> type:<root>.IBase<A of <root>.IBase>
       VALUE_PARAMETER name:a index:0 type:A of <root>.IBase
       VALUE_PARAMETER name:b index:1 type:B of <root>.IBase.foo
     PROPERTY name:id visibility:public modality:ABSTRACT [val]
       FUN DEFAULT_PROPERTY_ACCESSOR name:<get-id> visibility:public modality:ABSTRACT <C> ($this:<root>.IBase<A of <root>.IBase>, $receiver:C of <root>.IBase.<get-id>) returnType:kotlin.collections.Map<A of <root>.IBase, C of <root>.IBase.<get-id>>?
         correspondingProperty: PROPERTY name:id visibility:public modality:ABSTRACT [val]
-        TYPE_PARAMETER name:C index:0 variance: superTypes:[kotlin.Any?]
+        TYPE_PARAMETER name:C index:0 variance: superTypes:[kotlin.Any?] reified:false
         $this: VALUE_PARAMETER name:<this> type:<root>.IBase<A of <root>.IBase>
         $receiver: VALUE_PARAMETER name:<this> type:C of <root>.IBase.<get-id>
     PROPERTY name:x visibility:public modality:ABSTRACT [var]
       FUN DEFAULT_PROPERTY_ACCESSOR name:<get-x> visibility:public modality:ABSTRACT <D> ($this:<root>.IBase<A of <root>.IBase>, $receiver:kotlin.collections.List<D of <root>.IBase.<get-x>>) returnType:D of <root>.IBase.<get-x>?
         correspondingProperty: PROPERTY name:x visibility:public modality:ABSTRACT [var]
-        TYPE_PARAMETER name:D index:0 variance: superTypes:[kotlin.Any?]
+        TYPE_PARAMETER name:D index:0 variance: superTypes:[kotlin.Any?] reified:false
         $this: VALUE_PARAMETER name:<this> type:<root>.IBase<A of <root>.IBase>
         $receiver: VALUE_PARAMETER name:<this> type:kotlin.collections.List<D of <root>.IBase.<get-x>>
       FUN DEFAULT_PROPERTY_ACCESSOR name:<set-x> visibility:public modality:ABSTRACT <D> ($this:<root>.IBase<A of <root>.IBase>, $receiver:kotlin.collections.List<D of <root>.IBase.<set-x>>, <set-?>:D of <root>.IBase.<set-x>?) returnType:kotlin.Unit
         correspondingProperty: PROPERTY name:x visibility:public modality:ABSTRACT [var]
-        TYPE_PARAMETER name:D index:0 variance: superTypes:[kotlin.Any?]
+        TYPE_PARAMETER name:D index:0 variance: superTypes:[kotlin.Any?] reified:false
         $this: VALUE_PARAMETER name:<this> type:<root>.IBase<A of <root>.IBase>
         $receiver: VALUE_PARAMETER name:<this> type:kotlin.collections.List<D of <root>.IBase.<set-x>>
         VALUE_PARAMETER name:<set-?> index:0 type:D of <root>.IBase.<set-x>?
@@ -40,7 +40,7 @@ FILE fqName:<root> fileName:/delegatedGenericImplementation.kt
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
   CLASS CLASS name:Test1 modality:FINAL visibility:public superTypes:[<root>.IBase<E of <root>.Test1>]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Test1<E of <root>.Test1>
-    TYPE_PARAMETER name:E index:0 variance: superTypes:[kotlin.Any?]
+    TYPE_PARAMETER name:E index:0 variance: superTypes:[kotlin.Any?] reified:false
     CONSTRUCTOR visibility:public <> (i:<root>.IBase<E of <root>.Test1>) returnType:<root>.Test1<E of <root>.Test1> [primary]
       VALUE_PARAMETER name:i index:0 type:<root>.IBase<E of <root>.Test1>
       BLOCK_BODY
@@ -56,7 +56,7 @@ FILE fqName:<root> fileName:/delegatedGenericImplementation.kt
         correspondingProperty: PROPERTY DELEGATED_MEMBER name:id visibility:public modality:OPEN [val]
         overridden:
           public abstract fun <get-id> <C> (): kotlin.collections.Map<A of <root>.IBase, C of <root>.IBase.<get-id>>? declared in <root>.IBase
-        TYPE_PARAMETER name:C index:0 variance: superTypes:[kotlin.Any?]
+        TYPE_PARAMETER name:C index:0 variance: superTypes:[kotlin.Any?] reified:false
         $this: VALUE_PARAMETER name:<this> type:<root>.Test1<E of <root>.Test1>
         $receiver: VALUE_PARAMETER name:<this> type:C of <root>.Test1.<get-id>
         BLOCK_BODY
@@ -73,7 +73,7 @@ FILE fqName:<root> fileName:/delegatedGenericImplementation.kt
         correspondingProperty: PROPERTY DELEGATED_MEMBER name:x visibility:public modality:OPEN [var]
         overridden:
           public abstract fun <get-x> <D> (): D of <root>.IBase.<get-x>? declared in <root>.IBase
-        TYPE_PARAMETER name:D index:0 variance: superTypes:[kotlin.Any?]
+        TYPE_PARAMETER name:D index:0 variance: superTypes:[kotlin.Any?] reified:false
         $this: VALUE_PARAMETER name:<this> type:<root>.Test1<E of <root>.Test1>
         $receiver: VALUE_PARAMETER name:<this> type:kotlin.collections.List<D of <root>.Test1.<get-x>>
         BLOCK_BODY
@@ -87,7 +87,7 @@ FILE fqName:<root> fileName:/delegatedGenericImplementation.kt
         correspondingProperty: PROPERTY DELEGATED_MEMBER name:x visibility:public modality:OPEN [var]
         overridden:
           public abstract fun <set-x> <D> (<set-?>: D of <root>.IBase.<set-x>?): kotlin.Unit declared in <root>.IBase
-        TYPE_PARAMETER name:D index:0 variance: superTypes:[kotlin.Any?]
+        TYPE_PARAMETER name:D index:0 variance: superTypes:[kotlin.Any?] reified:false
         $this: VALUE_PARAMETER name:<this> type:<root>.Test1<E of <root>.Test1>
         $receiver: VALUE_PARAMETER name:<this> type:kotlin.collections.List<D of <root>.Test1.<set-x>>
         VALUE_PARAMETER name:<set-?> index:0 type:D of <root>.Test1.<set-x>?
@@ -101,7 +101,7 @@ FILE fqName:<root> fileName:/delegatedGenericImplementation.kt
     FUN DELEGATED_MEMBER name:foo visibility:public modality:OPEN <B> ($this:<root>.Test1<E of <root>.Test1>, a:E of <root>.Test1, b:B of <root>.Test1.foo) returnType:kotlin.Unit
       overridden:
         public abstract fun foo <B> (a: A of <root>.IBase, b: B of <root>.IBase.foo): kotlin.Unit declared in <root>.IBase
-      TYPE_PARAMETER name:B index:0 variance: superTypes:[kotlin.Any?]
+      TYPE_PARAMETER name:B index:0 variance: superTypes:[kotlin.Any?] reified:false
       $this: VALUE_PARAMETER name:<this> type:<root>.Test1<E of <root>.Test1>
       VALUE_PARAMETER name:a index:0 type:E of <root>.Test1
       VALUE_PARAMETER name:b index:1 type:B of <root>.Test1.foo
@@ -161,7 +161,7 @@ FILE fqName:<root> fileName:/delegatedGenericImplementation.kt
         correspondingProperty: PROPERTY DELEGATED_MEMBER name:id visibility:public modality:OPEN [val]
         overridden:
           public abstract fun <get-id> <C> (): kotlin.collections.Map<A of <root>.IBase, C of <root>.IBase.<get-id>>? declared in <root>.IBase
-        TYPE_PARAMETER name:C index:0 variance: superTypes:[kotlin.Any?]
+        TYPE_PARAMETER name:C index:0 variance: superTypes:[kotlin.Any?] reified:false
         $this: VALUE_PARAMETER name:<this> type:<root>.Test2
         $receiver: VALUE_PARAMETER name:<this> type:C of <root>.Test2.<get-id>
         BLOCK_BODY
@@ -178,7 +178,7 @@ FILE fqName:<root> fileName:/delegatedGenericImplementation.kt
         correspondingProperty: PROPERTY DELEGATED_MEMBER name:x visibility:public modality:OPEN [var]
         overridden:
           public abstract fun <get-x> <D> (): D of <root>.IBase.<get-x>? declared in <root>.IBase
-        TYPE_PARAMETER name:D index:0 variance: superTypes:[kotlin.Any?]
+        TYPE_PARAMETER name:D index:0 variance: superTypes:[kotlin.Any?] reified:false
         $this: VALUE_PARAMETER name:<this> type:<root>.Test2
         $receiver: VALUE_PARAMETER name:<this> type:kotlin.collections.List<D of <root>.Test2.<get-x>>
         BLOCK_BODY
@@ -192,7 +192,7 @@ FILE fqName:<root> fileName:/delegatedGenericImplementation.kt
         correspondingProperty: PROPERTY DELEGATED_MEMBER name:x visibility:public modality:OPEN [var]
         overridden:
           public abstract fun <set-x> <D> (<set-?>: D of <root>.IBase.<set-x>?): kotlin.Unit declared in <root>.IBase
-        TYPE_PARAMETER name:D index:0 variance: superTypes:[kotlin.Any?]
+        TYPE_PARAMETER name:D index:0 variance: superTypes:[kotlin.Any?] reified:false
         $this: VALUE_PARAMETER name:<this> type:<root>.Test2
         $receiver: VALUE_PARAMETER name:<this> type:kotlin.collections.List<D of <root>.Test2.<set-x>>
         VALUE_PARAMETER name:<set-?> index:0 type:D of <root>.Test2.<set-x>?
@@ -206,7 +206,7 @@ FILE fqName:<root> fileName:/delegatedGenericImplementation.kt
     FUN DELEGATED_MEMBER name:foo visibility:public modality:OPEN <B> ($this:<root>.Test2, a:kotlin.String, b:B of <root>.Test2.foo) returnType:kotlin.Unit
       overridden:
         public abstract fun foo <B> (a: A of <root>.IBase, b: B of <root>.IBase.foo): kotlin.Unit declared in <root>.IBase
-      TYPE_PARAMETER name:B index:0 variance: superTypes:[kotlin.Any?]
+      TYPE_PARAMETER name:B index:0 variance: superTypes:[kotlin.Any?] reified:false
       $this: VALUE_PARAMETER name:<this> type:<root>.Test2
       VALUE_PARAMETER name:a index:0 type:kotlin.String
       VALUE_PARAMETER name:b index:1 type:B of <root>.Test2.foo

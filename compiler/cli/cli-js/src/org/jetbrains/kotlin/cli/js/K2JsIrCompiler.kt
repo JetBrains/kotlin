@@ -210,22 +210,37 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
 
             var start = System.currentTimeMillis()
 
-            actualizeCaches(
+            val cacheUpdater = CacheUpdater(
                 includes,
-                configurationJs,
                 libraries,
+                configurationJs,
                 cacheDirectories,
                 { IrFactoryImplForJsIC(WholeWorldStageController()) },
                 mainCallArguments,
-                ::buildCacheForModuleFiles,
-            ) { updateStatus, updatedModule ->
+                ::buildCacheForModuleFiles
+            )
+            cacheUpdater.actualizeCaches { updateStatus, updatedModule ->
                 val now = System.currentTimeMillis()
-                val strStatus = when (updateStatus) {
-                    CacheUpdateStatus.FAST_PATH -> "up-to-date; fast check"
-                    CacheUpdateStatus.NO_DIRTY_FILES -> "up-to-date; full check"
-                    CacheUpdateStatus.DIRTY -> "dirty; cache building"
+                fun reportCacheStatus(status: String, removed: Set<String> = emptySet(), updated: Set<String> = emptySet()) {
+                    messageCollector.report(INFO, "IC per-file is $status duration ${now - start}ms; module [${File(updatedModule).name}]")
+                    removed.forEach { messageCollector.report(INFO, "  Removed: $it") }
+                    updated.forEach { messageCollector.report(INFO, "  Updated: $it") }
                 }
-                messageCollector.report(INFO, "IC per-file is $strStatus duration ${now - start}ms; module [${File(updatedModule).name}]")
+                when (updateStatus) {
+                    is CacheUpdateStatus.FastPath -> reportCacheStatus("up-to-date; fast check")
+                    is CacheUpdateStatus.NoDirtyFiles -> reportCacheStatus("up-to-date; full check", updateStatus.removed)
+                    is CacheUpdateStatus.Dirty -> {
+                        var updated = updateStatus.updated
+                        val status = StringBuilder("dirty").apply {
+                            if (updateStatus.updatedAll) {
+                                append("; all ${updated.size} sources updated")
+                                updated = emptySet()
+                            }
+                            append("; cache building")
+                        }.toString()
+                        reportCacheStatus(status, updateStatus.removed, updated)
+                    }
+                }
                 start = now
             }
         } else emptyList()
@@ -274,7 +289,6 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
 
                 val beforeIc2Js = System.currentTimeMillis()
 
-                val caches = loadModuleCaches(icCaches)
                 val moduleKind = configurationJs[JSConfigurationKeys.MODULE_KIND]!!
 
                 val translationMode = TranslationMode.fromFlags(false, arguments.irPerModule)
@@ -284,7 +298,7 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
                     moduleKind,
                     SourceMapsInfo.from(configurationJs),
                     setOf(translationMode),
-                    caches,
+                    icCaches,
                     relativeRequirePath = true
                 )
 

@@ -6,7 +6,7 @@ FILE fqName:<root> fileName:/putIfAbsent.kt
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Owner modality:FINAL visibility:public superTypes:[kotlin.Any]'
     FUN name:foo visibility:public modality:FINAL <T> ($this:<root>.Owner, x:T of <root>.Owner.foo, y:T of <root>.Owner.foo) returnType:kotlin.Unit
-      TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?]
+      TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false
       $this: VALUE_PARAMETER name:<this> type:<root>.Owner
       VALUE_PARAMETER name:x index:0 type:T of <root>.Owner.foo
       VALUE_PARAMETER name:y index:1 type:T of <root>.Owner.foo

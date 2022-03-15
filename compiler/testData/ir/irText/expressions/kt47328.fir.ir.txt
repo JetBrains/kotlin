@@ -57,7 +57,7 @@ FILE fqName:<root> fileName:/kt47328.kt
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
   CLASS CLASS name:C modality:FINAL visibility:public superTypes:[kotlin.Any]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.C<D of <root>.C>
-    TYPE_PARAMETER name:D index:0 variance: superTypes:[<root>.A]
+    TYPE_PARAMETER name:D index:0 variance: superTypes:[<root>.A] reified:false
     CONSTRUCTOR visibility:public <> (d:D of <root>.C) returnType:<root>.C<D of <root>.C> [primary]
       VALUE_PARAMETER name:d index:0 type:D of <root>.C
       BLOCK_BODY

@@ -1,7 +1,7 @@
 FILE fqName:<root> fileName:/genericDelegatedProperty.kt
   CLASS CLASS name:C modality:FINAL visibility:public superTypes:[kotlin.Any]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.C<T of <root>.C>
-    TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?]
+    TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false
     CONSTRUCTOR visibility:public <> () returnType:<root>.C<T of <root>.C> [primary]
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
@@ -57,7 +57,7 @@ FILE fqName:<root> fileName:/genericDelegatedProperty.kt
         GET_OBJECT 'CLASS OBJECT name:Delegate modality:FINAL visibility:public superTypes:[kotlin.Any]' type=<root>.Delegate
     FUN DELEGATED_PROPERTY_ACCESSOR name:<get-genericDelegatedProperty> visibility:public modality:FINAL <T> ($receiver:<root>.C<T of <root>.<get-genericDelegatedProperty>>) returnType:kotlin.Int
       correspondingProperty: PROPERTY name:genericDelegatedProperty visibility:public modality:FINAL [delegated,var]
-      TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?]
+      TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false
       $receiver: VALUE_PARAMETER name:<this> type:<root>.C<T of <root>.<get-genericDelegatedProperty>>
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun <get-genericDelegatedProperty> <T> (): kotlin.Int declared in <root>'
@@ -68,7 +68,7 @@ FILE fqName:<root> fileName:/genericDelegatedProperty.kt
               <1>: <none>
     FUN DELEGATED_PROPERTY_ACCESSOR name:<set-genericDelegatedProperty> visibility:public modality:FINAL <T> ($receiver:<root>.C<T of <root>.<set-genericDelegatedProperty>>, <set-?>:kotlin.Int) returnType:kotlin.Unit
       correspondingProperty: PROPERTY name:genericDelegatedProperty visibility:public modality:FINAL [delegated,var]
-      TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?]
+      TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false
       $receiver: VALUE_PARAMETER name:<this> type:<root>.C<T of <root>.<set-genericDelegatedProperty>>
       VALUE_PARAMETER name:<set-?> index:0 type:kotlin.Int
       BLOCK_BODY

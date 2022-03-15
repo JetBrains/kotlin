@@ -1,7 +1,7 @@
 FILE fqName:<root> fileName:/JCTreeUser.kt
   CLASS CLASS name:Owner modality:FINAL visibility:public superTypes:[kotlin.Any]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Owner<T of <root>.Owner>
-    TYPE_PARAMETER name:T index:0 variance:out superTypes:[<root>.JCTree]
+    TYPE_PARAMETER name:T index:0 variance:out superTypes:[<root>.JCTree] reified:false
     CONSTRUCTOR visibility:public <> (tree:T of <root>.Owner) returnType:<root>.Owner<T of <root>.Owner> [primary]
       VALUE_PARAMETER name:tree index:0 type:T of <root>.Owner
       BLOCK_BODY

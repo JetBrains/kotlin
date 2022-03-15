@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.ir.backend.js.WholeWorldStageController
 import org.jetbrains.kotlin.ir.backend.js.ic.*
 import org.jetbrains.kotlin.ir.backend.js.moduleName
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImplForJsIC
-import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.js.test.handlers.JsBoxRunner
 import org.jetbrains.kotlin.konan.properties.propertyList
 import org.jetbrains.kotlin.library.KLIB_PROPERTY_DEPENDS
@@ -25,103 +24,16 @@ import org.jetbrains.kotlin.test.services.configuration.JsEnvironmentConfigurato
 import org.jetbrains.kotlin.test.services.jsLibraryProvider
 import java.io.File
 
-class TestModuleCache(val files: MutableMap<String, FileCache>) {
-
-    constructor() : this(mutableMapOf())
-
-    private lateinit var storedModuleName: String
-
-    fun cacheProvider(): PersistentCacheProvider {
-        return object : PersistentCacheProvider {
-            override fun fileFingerPrint(path: String): Hash {
-                return 0L
-            }
-
-            override fun inlineGraphForFile(path: String, sigResolver: (Int) -> IdSignature): Collection<Pair<IdSignature, TransHash>> {
-                error("Is not supported")
-            }
-
-            override fun inlineHashes(path: String, sigResolver: (Int) -> IdSignature): Map<IdSignature, TransHash> {
-                error("Is not supported")
-            }
-
-            override fun allInlineHashes(sigResolver: (String, Int) -> IdSignature): Map<IdSignature, TransHash> {
-                error("Is not supported")
-            }
-
-            override fun binaryAst(path: String): ByteArray? {
-                return files[path]?.ast ?: ByteArray(0)
-            }
-
-            override fun dts(path: String): ByteArray? {
-                return files[path]?.dts
-            }
-
-            override fun sourceMap(path: String): ByteArray? {
-                return files[path]?.sourceMap
-            }
-
-            override fun filePaths(): Iterable<String> {
-                return files.keys
-            }
-
-            override fun moduleName(): String {
-                return storedModuleName
-            }
+private class TestArtifactCache(var moduleName: String? = null) : ArtifactCache() {
+    override fun fetchArtifacts() = KLibArtifact(
+        moduleName = moduleName ?: error("Module name is not set"),
+        fileArtifacts = binaryAsts.entries.map {
+            SrcFileArtifact(it.key, "", it.value)
         }
-    }
+    )
 
-    fun cacheConsumer(): PersistentCacheConsumer {
-        return object : PersistentCacheConsumer {
-            override fun commitInlineFunctions(
-                path: String,
-                hashes: Collection<Pair<IdSignature, TransHash>>,
-                sigResolver: (IdSignature) -> Int
-            ) {
-
-            }
-
-            override fun commitFileFingerPrint(path: String, fingerprint: Hash) {
-
-            }
-
-            override fun commitInlineGraph(
-                path: String,
-                hashes: Collection<Pair<IdSignature, TransHash>>,
-                sigResolver: (IdSignature) -> Int
-            ) {
-
-            }
-
-            override fun commitBinaryAst(path: String, astData: ByteArray) {
-                val storage = files.getOrPut(path) { FileCache(path, null, null, null) }
-                storage.ast = astData
-            }
-
-            override fun commitBinaryDts(path: String, dstData: ByteArray) {
-                val storage = files.getOrPut(path) { FileCache(path, null, null, null) }
-                storage.dts = dstData
-            }
-
-            override fun commitSourceMap(path: String, mapData: ByteArray) {
-                val storage = files.getOrPut(path) { FileCache(path, null, null, null) }
-                storage.sourceMap = mapData
-            }
-
-            override fun invalidateForFile(path: String) {
-                files.remove(path)
-            }
-
-            override fun invalidate() {
-            }
-
-            override fun commitLibraryInfo(libraryPath: String, moduleName: String, flatHash: ULong, transHash: ULong, configHash: ULong) {
-                storedModuleName = moduleName
-            }
-        }
-    }
-
-    fun createModuleCache(): ModuleCache = ModuleCache(storedModuleName, files)
+    fun invalidateForFile(srcPath: String) = binaryAsts.remove(srcPath)
+    fun getAst(srcPath: String) = binaryAsts[srcPath]
 }
 
 class JsIrIncrementalDataProvider(private val testServices: TestServices) : TestService {
@@ -129,17 +41,15 @@ class JsIrIncrementalDataProvider(private val testServices: TestServices) : Test
     private val defaultRuntimeKlib = System.getProperty("kotlin.js.reduced.stdlib.path")
     private val kotlinTestKLib = System.getProperty("kotlin.js.kotlin.test.path")
 
-    private val predefinedKlibHasIcCache = mutableMapOf<String, TestModuleCache?>(
+    private val predefinedKlibHasIcCache = mutableMapOf<String, TestArtifactCache?>(
         File(fullRuntimeKlib).absolutePath to null,
         File(kotlinTestKLib).absolutePath to null,
         File(defaultRuntimeKlib).absolutePath to null
     )
 
-    private val icCache: MutableMap<String, TestModuleCache> = mutableMapOf()
+    private val icCache: MutableMap<String, TestArtifactCache> = mutableMapOf()
 
-    fun getCaches(): Map<String, ModuleCache> {
-        return icCache.map { it.key to it.value.createModuleCache() }.toMap()
-    }
+    fun getCaches() = icCache.map { it.value.fetchArtifacts() }
 
     fun getCacheForModule(module: TestModule): Map<String, ByteArray> {
         val path = JsEnvironmentConfigurator.getJsKlibArtifactPath(testServices, module.name)
@@ -147,14 +57,12 @@ class JsIrIncrementalDataProvider(private val testServices: TestServices) : Test
         val moduleCache = icCache[canonicalPath] ?: error("No cache found for $path")
 
         val oldBinaryAsts = mutableMapOf<String, ByteArray>()
-        val dataProvider = moduleCache.cacheProvider()
-        val dataConsumer = moduleCache.cacheConsumer()
 
         for (testFile in module.files) {
             if (JsEnvironmentConfigurationDirectives.RECOMPILE in testFile.directives) {
                 val fileName = "/${testFile.name}"
-                oldBinaryAsts[fileName] = dataProvider.binaryAst(fileName) ?: error("No AST found for $fileName")
-                dataConsumer.invalidateForFile(fileName)
+                oldBinaryAsts[fileName] = moduleCache.getAst(fileName) ?: error("No AST found for $fileName")
+                moduleCache.invalidateForFile(fileName)
             }
         }
 
@@ -202,11 +110,11 @@ class JsIrIncrementalDataProvider(private val testServices: TestServices) : Test
         var moduleCache = predefinedKlibHasIcCache[canonicalPath]
 
         if (moduleCache == null) {
-            moduleCache = icCache[canonicalPath] ?: TestModuleCache()
+            moduleCache = icCache[canonicalPath] ?: TestArtifactCache()
 
             val libs = allDependencies.associateBy { File(it.libraryFile.path).canonicalPath }
 
-            val nameToKotlinLibrary: Map<ModuleName, KotlinLibrary> = libs.values.associateBy { it.moduleName }
+            val nameToKotlinLibrary: Map<String, KotlinLibrary> = libs.values.associateBy { it.moduleName }
 
             val dependencyGraph = libs.values.associateWith {
                 it.manifestProperties.propertyList(KLIB_PROPERTY_DEPENDS, escapeInQuotes = true).map { depName ->
@@ -218,12 +126,12 @@ class JsIrIncrementalDataProvider(private val testServices: TestServices) : Test
 
             val testPackage = extractTestPackage(testServices)
 
-            rebuildCacheForDirtyFiles(
+            moduleCache.moduleName = rebuildCacheForDirtyFiles(
                 currentLib,
                 configuration,
                 dependencyGraph,
                 dirtyFiles,
-                moduleCache.cacheConsumer(),
+                moduleCache,
                 IrFactoryImplForJsIC(WholeWorldStageController()),
                 setOf(FqName.fromSegments(listOfNotNull(testPackage, JsBoxRunner.TEST_FUNCTION))),
                 mainArguments,

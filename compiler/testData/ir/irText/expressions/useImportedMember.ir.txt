@@ -1,9 +1,9 @@
 FILE fqName:<root> fileName:/useImportedMember.kt
   CLASS INTERFACE name:I modality:ABSTRACT visibility:public superTypes:[kotlin.Any]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.I<G of <root>.I>
-    TYPE_PARAMETER name:G index:0 variance: superTypes:[kotlin.Any?]
+    TYPE_PARAMETER name:G index:0 variance: superTypes:[kotlin.Any?] reified:false
     FUN name:fromInterface visibility:public modality:OPEN <T> ($this:<root>.I<G of <root>.I>, $receiver:T of <root>.I.fromInterface) returnType:T of <root>.I.fromInterface
-      TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?]
+      TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false
       $this: VALUE_PARAMETER name:<this> type:<root>.I<G of <root>.I>
       $receiver: VALUE_PARAMETER name:<this> type:T of <root>.I.fromInterface
       BLOCK_BODY
@@ -37,7 +37,7 @@ FILE fqName:<root> fileName:/useImportedMember.kt
     PROPERTY name:fromClass visibility:public modality:FINAL [val]
       FUN name:<get-fromClass> visibility:public modality:FINAL <T> ($this:<root>.BaseClass, $receiver:T of <root>.BaseClass.<get-fromClass>) returnType:T of <root>.BaseClass.<get-fromClass>
         correspondingProperty: PROPERTY name:fromClass visibility:public modality:FINAL [val]
-        TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?]
+        TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false
         $this: VALUE_PARAMETER name:<this> type:<root>.BaseClass
         $receiver: VALUE_PARAMETER name:<this> type:T of <root>.BaseClass.<get-fromClass>
         BLOCK_BODY
@@ -108,7 +108,7 @@ FILE fqName:<root> fileName:/useImportedMember.kt
           RETURN type=kotlin.Nothing from='public final fun <get-ext> (): kotlin.Int declared in <root>.C'
             CONST Int type=kotlin.Int value=6
     FUN name:g1 visibility:public modality:FINAL <T> ($this:<root>.C, t:T of <root>.C.g1) returnType:T of <root>.C.g1
-      TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?]
+      TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false
       $this: VALUE_PARAMETER name:<this> type:<root>.C
       VALUE_PARAMETER name:t index:0 type:T of <root>.C.g1
       BLOCK_BODY
@@ -117,7 +117,7 @@ FILE fqName:<root> fileName:/useImportedMember.kt
     PROPERTY name:g2 visibility:public modality:FINAL [val]
       FUN name:<get-g2> visibility:public modality:FINAL <T> ($this:<root>.C, $receiver:T of <root>.C.<get-g2>) returnType:T of <root>.C.<get-g2>
         correspondingProperty: PROPERTY name:g2 visibility:public modality:FINAL [val]
-        TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?]
+        TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false
         $this: VALUE_PARAMETER name:<this> type:<root>.C
         $receiver: VALUE_PARAMETER name:<this> type:T of <root>.C.<get-g2>
         BLOCK_BODY
@@ -130,7 +130,7 @@ FILE fqName:<root> fileName:/useImportedMember.kt
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:fromClass visibility:public modality:FINAL [fake_override,val]
         overridden:
           public final fun <get-fromClass> <T> (): T of <root>.BaseClass.<get-fromClass> declared in <root>.BaseClass
-        TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?]
+        TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false
         $this: VALUE_PARAMETER name:<this> type:<root>.BaseClass
         $receiver: VALUE_PARAMETER name:<this> type:T of <root>.C.<get-fromClass>
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
@@ -152,7 +152,7 @@ FILE fqName:<root> fileName:/useImportedMember.kt
     FUN FAKE_OVERRIDE name:fromInterface visibility:public modality:OPEN <T> ($this:<root>.I<kotlin.String>, $receiver:T of <root>.C.fromInterface) returnType:T of <root>.C.fromInterface [fake_override]
       overridden:
         public open fun fromInterface <T> (): T of <root>.I.fromInterface declared in <root>.I
-      TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?]
+      TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false
       $this: VALUE_PARAMETER name:<this> type:<root>.I<kotlin.String>
       $receiver: VALUE_PARAMETER name:<this> type:T of <root>.C.fromInterface
     FUN FAKE_OVERRIDE name:genericFromSuper visibility:public modality:OPEN <> ($this:<root>.I<kotlin.String>, g:kotlin.String) returnType:kotlin.String [fake_override]
