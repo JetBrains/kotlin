@@ -5,141 +5,292 @@
 
 package org.jetbrains.kotlin.gradle
 
-import org.jetbrains.kotlin.gradle.util.AGPVersion
-import org.jetbrains.kotlin.gradle.util.modify
-import org.jetbrains.kotlin.test.util.KtTestUtil
-import kotlin.test.Test
+import org.gradle.api.logging.configuration.WarningMode
+import org.gradle.util.GradleVersion
+import org.jetbrains.kotlin.gradle.testbase.*
+import org.junit.jupiter.api.DisplayName
+import org.junit.jupiter.api.extension.ExtensionContext
+import org.junit.jupiter.params.ParameterizedTest
+import org.junit.jupiter.params.provider.*
+import java.nio.file.Path
+import java.util.UUID
+import java.util.stream.Stream
+import kotlin.io.path.appendText
+import kotlin.streams.asStream
+import kotlin.streams.toList
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
-class KotlinSpecificDependenciesIT : BaseGradleIT() {
+@DisplayName("Kotlin default dependencies")
+class KotlinSpecificDependenciesIT : KGPBaseTest() {
 
-    override val defaultGradleVersion: GradleVersionRequired
-        get() = GradleVersionRequired.FOR_MPP_SUPPORT
-
-    override fun defaultBuildOptions(): BuildOptions =
-        super.defaultBuildOptions().copy(androidGradlePluginVersion = AGPVersion.v3_6_0, androidHome = KtTestUtil.findAndroidSdk())
-
-    private fun Project.prepare() { // call this when reusing a project after a test, too, in order to remove any added dependencies
-        setupWorkingDir()
-        gradleSettingsScript().takeIf { it.exists() }?.modify(::transformBuildScriptWithPluginsDsl)
-        gradleBuildScript().modify {
-            transformBuildScriptWithPluginsDsl(it).lines().filter { line ->
-                "stdlib" !in line && "kotlin(\"test" !in line && "kotlin-test" !in line
-            }.joinToString("\n")
+    @JvmGradlePluginTests
+    @DisplayName("JVM: kotlin-stdlib dependency is added by default")
+    @GradleTest
+    fun testStdlibByDefaultJvm(gradleVersion: GradleVersion) {
+        project("simpleProject", gradleVersion) {
+            removeDependencies(buildGradle)
+            checkTaskCompileClasspath("compileKotlin", listOf("kotlin-stdlib" /*any of them*/))
         }
     }
 
-    private fun jsProject() = Project("kotlin-js-plugin-project").apply {
-        // TODO: remove settings.gradle from test project after migrating to the new test DSL
-        setupWorkingDir()
-        gradleBuildScript().modify { it.lines().filter { "html" !in it }.joinToString("\n") }
-        projectFile("Main.kt").modify { "fun f() = listOf(1, 2, 3).joinToString()" }
-        prepare()
+    @JvmGradlePluginTests
+    @DisplayName("JVM: kotlin-stdlib dependency is not added when disabled via properties")
+    @GradleTest
+    fun testStdlibNotAddedJvm(gradleVersion: GradleVersion) {
+        project("simpleProject", gradleVersion) {
+            removeDependencies(buildGradle)
+            gradleProperties.appendText(
+                "\nkotlin.stdlib.default.dependency=false"
+            )
+            checkTaskCompileClasspath(
+                "compileKotlin",
+                listOf(),
+                checkModulesNotInClasspath = listOf("kotlin-stdlib" /*any of them*/)
+            )
+        }
     }
 
-    private fun androidProject() = Project("AndroidLibraryKotlinProject").apply { prepare() }
+    @JsGradlePluginTests
+    @DisplayName("JS: kotlin-stdlib dependency is added by default")
+    @GradleTest
+    fun testStdlibByDefaultJs(gradleVersion: GradleVersion) {
+        project(
+            "kotlin-js-plugin-project",
+            gradleVersion,
+            buildOptions = defaultBuildOptions.copy(warningMode = WarningMode.Summary)
+        ) {
+            buildGradleKts.modify { it.lines().filter { "html" !in it }.joinToString("\n") }
+            kotlinSourcesDir().resolve("Main.kt").modify { "fun f() = listOf(1, 2, 3).joinToString()" }
+            removeDependencies(buildGradleKts)
 
-    private fun mppProject() = Project("jvm-and-js-hmpp").apply {
-        setupWorkingDir()
-        prepare()
+            checkTaskCompileClasspath(
+                "compileKotlinJs",
+                listOf("kotlin-stdlib"),
+                isBuildGradleKts = true
+            )
+        }
     }
 
-    private fun jvmProject() = Project("simpleProject").apply {
-        prepare()
-        gradleBuildScript().modify { it.lines().filter { "testng" !in it }.joinToString("\n") }
+    @JsGradlePluginTests
+    @DisplayName("JS: kotlin-stdlib dependency is not added when disabled via properties")
+    @GradleTest
+    fun testStdlibDisabledJs(gradleVersion: GradleVersion) {
+        project(
+            "kotlin-js-plugin-project",
+            gradleVersion,
+            buildOptions = defaultBuildOptions.copy(warningMode = WarningMode.Summary)
+        ) {
+            buildGradleKts.modify { it.lines().filter { "html" !in it }.joinToString("\n") }
+            kotlinSourcesDir().resolve("Main.kt").modify { "fun f() = listOf(1, 2, 3).joinToString()" }
+            removeDependencies(buildGradleKts)
+
+            gradleProperties.appendText(
+                "\nkotlin.stdlib.default.dependency=false"
+            )
+            checkTaskCompileClasspath(
+                "compileKotlinJs",
+                listOf(),
+                checkModulesNotInClasspath = listOf("kotlin-stdlib" /*any of them*/),
+                isBuildGradleKts = true
+            )
+        }
     }
 
-    @Test
-    fun testStdlibByDefault() {
-        listOf( // projects and tasks:
-            androidProject() to listOf("compileDebugKotlin"),
-            jvmProject() to listOf("compileKotlin"),
-            jsProject() to listOf("compileKotlinJs"),
-            mppProject() to listOf(
+    @JvmGradlePluginTests
+    @DisplayName("Android: kotlin-stdlib dependency is added by default")
+    @GradleTest
+    fun testStdlibDefaultAndroid(gradleVersion: GradleVersion) {
+        project(
+            "AndroidLibraryKotlinProject",
+            gradleVersion,
+            buildOptions = defaultBuildOptions.copy(androidVersion = TestVersions.AGP.AGP_42)
+        ) {
+            removeDependencies(buildGradle)
+            checkTaskCompileClasspath("compileDebugKotlin", listOf("kotlin-stdlib" /*any of them*/))
+        }
+    }
+
+    @JvmGradlePluginTests
+    @DisplayName("Android: kotlin-stdlib dependency is not added when disabled via properties")
+    @GradleTest
+    fun testStdlibDisabledAndroid(gradleVersion: GradleVersion) {
+        project(
+            "AndroidLibraryKotlinProject",
+            gradleVersion,
+            buildOptions = defaultBuildOptions.copy(androidVersion = TestVersions.AGP.AGP_42)
+        ) {
+            removeDependencies(buildGradle)
+            gradleProperties.appendText(
+                "\nkotlin.stdlib.default.dependency=false"
+            )
+            checkTaskCompileClasspath(
+                "compileDebugKotlin",
+                emptyList(),
+                checkModulesNotInClasspath = listOf("kotlin-stdlib" /*any of them*/),
+            )
+        }
+    }
+
+    @MppGradlePluginTests
+    @DisplayName("MPP: kotlin-stdlib is added by default")
+    @GradleTest
+    fun kotlinStdlibDefaultMpp(gradleVersion: GradleVersion) {
+        project("jvm-and-js-hmpp", gradleVersion) {
+            removeDependencies(buildGradleKts)
+
+            listOf(
                 "compileKotlinJvm",
                 "compileKotlinJs",
                 "compileCommonMainKotlinMetadata",
                 "compileJvmAndJsMainKotlinMetadata"
-            )
-        ).forEach { (project, tasks) ->
-            with(project) {
-                prepare()
-                tasks.forEach { task ->
-                    project.checkTaskCompileClasspath(task, listOf("kotlin-stdlib" /*any of them*/))
-                }
-                projectDir.resolve("gradle.properties").appendText(
-                    "\nkotlin.stdlib.default.dependency=false"
-                )
-                tasks.forEach { task ->
-                    project.checkTaskCompileClasspath(task, listOf(), checkModulesNotInClasspath = listOf("kotlin-stdlib" /*any of them*/))
-                }
+            ).forEach { task ->
+                checkTaskCompileClasspath(task, listOf("kotlin-stdlib"), isBuildGradleKts = true)
             }
         }
     }
 
-    @Test
-    fun testStdlibBasedOnJdk() = with(jvmProject()) {
-        prepare()
-        gradleBuildScript().modify { "$it\nkotlin.target.compilations[\"main\"].kotlinOptions { jvmTarget = \"1.6\" }" }
-        val version = defaultBuildOptions().kotlinVersion
-        checkTaskCompileClasspath(
-            "compileKotlin",
-            listOf("kotlin-stdlib-$version"),
-            listOf("kotlin-stdlib-jdk7", "kotlin-stdlib-jdk8")
-        )
-        gradleBuildScript().modify { "$it\nkotlin.target.compilations[\"main\"].kotlinOptions { jvmTarget = \"11\" }" }
-        checkTaskCompileClasspath(
-            "compileKotlin",
-            listOf("kotlin-stdlib", "kotlin-stdlib-jdk7", "kotlin-stdlib-jdk8"),
-        )
+    @MppGradlePluginTests
+    @DisplayName("MPP: kotlin-stdlib is not added when disabled in properties")
+    @GradleTest
+    fun kotlinStdlibDisabledMpp(gradleVersion: GradleVersion) {
+        project("jvm-and-js-hmpp", gradleVersion) {
+            removeDependencies(buildGradleKts)
+            gradleProperties.appendText(
+                "\nkotlin.stdlib.default.dependency=false"
+            )
+
+            listOf(
+                "compileKotlinJvm",
+                "compileKotlinJs",
+                "compileCommonMainKotlinMetadata",
+                "compileJvmAndJsMainKotlinMetadata"
+            ).forEach { task ->
+                checkTaskCompileClasspath(
+                    task,
+                    emptyList(),
+                    checkModulesNotInClasspath = listOf("kotlin-stdlib"),
+                    isBuildGradleKts = true
+                )
+            }
+        }
     }
 
-    @Test
-    fun testOverrideStdlib() = with(jvmProject().apply { prepare() }) {
-        gradleBuildScript().appendText(
-            "\n" + """
-            kotlin.target.compilations["main"].kotlinOptions.jvmTarget = "1.8"
-            dependencies { implementation("org.jetbrains.kotlin:kotlin-stdlib") }
-            """.trimIndent()
-        )
-        // Check that the explicit stdlib overrides the plugin's choice of stdlib-jdk8
-        checkTaskCompileClasspath(
-            "compileKotlin",
-            listOf("kotlin-stdlib-${defaultBuildOptions().kotlinVersion}"),
-            listOf("kotlin-stdlib-jdk8")
-        )
+    @DisplayName("Adds kotlin-stdlib variant based on jvmTarget value")
+    @JvmGradlePluginTests
+    @GradleTest
+    fun testStdlibBasedOnJdk(gradleVersion: GradleVersion) {
+        project("simpleProject", gradleVersion) {
+            removeDependencies(buildGradle)
+            buildGradle.modify { "$it\nkotlin.target.compilations[\"main\"].kotlinOptions { jvmTarget = \"1.6\" }" }
+            val version = defaultBuildOptions.kotlinVersion
+            checkTaskCompileClasspath(
+                "compileKotlin",
+                listOf("kotlin-stdlib-$version"),
+                listOf("kotlin-stdlib-jdk7", "kotlin-stdlib-jdk8")
+            )
+
+            buildGradle.modify { "$it\nkotlin.target.compilations[\"main\"].kotlinOptions { jvmTarget = \"11\" }" }
+            checkTaskCompileClasspath(
+                "compileKotlin",
+                listOf("kotlin-stdlib", "kotlin-stdlib-jdk7", "kotlin-stdlib-jdk8"),
+            )
+        }
     }
 
-    private val kotlinTestMultiplatformDependency = "org.jetbrains.kotlin:kotlin-test"
+    @JvmGradlePluginTests
+    @DisplayName("Explicit kotlin-stdlib version overrides default one")
+    @GradleTest
+    fun testOverrideStdlib(gradleVersion: GradleVersion) {
+        project("simpleProject", gradleVersion) {
+            removeDependencies(buildGradle)
+            buildGradle.appendText(
+                """
+                
+                kotlin.target.compilations["main"].kotlinOptions.jvmTarget = "1.8"
+                dependencies { implementation("org.jetbrains.kotlin:kotlin-stdlib") }
+                """.trimIndent()
+            )
 
-    @Test
-    fun testKotlinTestSingleDependency() {
-        data class TestCase(
-            val project: Project,
-            val configurationsToAddDependency: List<String>,
-            val classpathElementsExpectedByTask: Map<String, List<String>>,
-            val filesExpectedByConfiguration: Map<String, List<String>> = emptyMap()
-        )
+            // Check that the explicit stdlib overrides the plugin's choice of stdlib-jdk8
+            checkTaskCompileClasspath(
+                "compileKotlin",
+                listOf("kotlin-stdlib-${defaultBuildOptions.kotlinVersion}"),
+                listOf("kotlin-stdlib-jdk8")
+            )
+        }
+    }
 
-        listOf(
-            TestCase(
-                androidProject(),
+    @JvmGradlePluginTests
+    @DisplayName("Android: Kotlin test single dependency in unit tests")
+    @GradleTest
+    fun kotlinTestSingleDependencyAndroidUnitTests(gradleVersion: GradleVersion) {
+        project(
+            "AndroidLibraryKotlinProject",
+            gradleVersion,
+            buildOptions = defaultBuildOptions.copy(androidVersion = TestVersions.AGP.AGP_42)
+        ) {
+            assertKotlinTestDependency(
                 listOf("testImplementation"),
                 mapOf(
                     "compileDebugUnitTestKotlin" to listOf("kotlin-test-junit"),
                     "compileReleaseUnitTestKotlin" to listOf("kotlin-test-junit")
                 )
-            ),
-            TestCase(
-                androidProject(),
+            )
+        }
+    }
+
+    @JvmGradlePluginTests
+    @DisplayName("Android: Kotlin test single dependency in ui tests")
+    @GradleTest
+    fun kotlinTestSingleDependencyAndroidUiTests(gradleVersion: GradleVersion) {
+        project(
+            "AndroidLibraryKotlinProject",
+            gradleVersion,
+            buildOptions = defaultBuildOptions.copy(androidVersion = TestVersions.AGP.AGP_42)
+        ) {
+            assertKotlinTestDependency(
                 listOf("androidTestImplementation"),
                 mapOf("compileDebugAndroidTestKotlin" to listOf("kotlin-test-junit"))
-            ),
-            TestCase(jvmProject(), listOf("testImplementation"), mapOf("compileTestKotlin" to listOf("kotlin-test-testng"))),
-            TestCase(jsProject(), listOf("testImplementation"), mapOf("compileTestKotlinJs" to listOf("kotlin-test-js"))),
-            TestCase(
-                mppProject(),
+            )
+        }
+    }
+
+    @JvmGradlePluginTests
+    @DisplayName("JVM: Kotlin test single dependency")
+    @GradleTest
+    fun kotlinTestSingleDependencyJvm(gradleVersion: GradleVersion) {
+        project("simpleProject", gradleVersion) {
+            assertKotlinTestDependency(
+                listOf("testImplementation"),
+                mapOf("compileTestKotlin" to listOf("kotlin-test-testng"))
+            )
+        }
+    }
+
+    @JsGradlePluginTests
+    @DisplayName("JS: Kotlin test single dependency")
+    @GradleTest
+    fun kotlinTestSingleDependencyJs(gradleVersion: GradleVersion) {
+        project(
+            "kotlin-js-plugin-project",
+            gradleVersion,
+            buildOptions = defaultBuildOptions.copy(warningMode = WarningMode.Summary)
+        ) {
+            assertKotlinTestDependency(
+                listOf("testImplementation"),
+                mapOf("compileTestKotlinJs" to listOf("kotlin-test-js")),
+                isBuildGradleKts = true
+            )
+        }
+    }
+
+    @MppGradlePluginTests
+    @DisplayName("MPP: Kotlin test single dependency in common")
+    @GradleTest
+    fun kotlinTestSingleDependencyMppCommon(gradleVersion: GradleVersion) {
+        project("jvm-and-js-hmpp", gradleVersion) {
+            assertKotlinTestDependency(
                 listOf("commonTestImplementation"),
                 mapOf(
                     "compileTestKotlinJvm" to listOf("kotlin-test-junit"),
@@ -148,10 +299,18 @@ class KotlinSpecificDependenciesIT : BaseGradleIT() {
                 mapOf(
                     "commonTestImplementationDependenciesMetadata" to listOf("kotlin-test-common", "kotlin-test-annotations-common"),
                     "commonTestApiDependenciesMetadata" to listOf("!kotlin-test-common", "!kotlin-test-annotations-common"),
-                )
-            ),
-            TestCase(
-                mppProject(),
+                ),
+                isBuildGradleKts = true
+            )
+        }
+    }
+
+    @MppGradlePluginTests
+    @DisplayName("MPP: Kotlin test single dependency in JVM and JS variants")
+    @GradleTest
+    fun kotlinTestSingleDependencyMppJvmJs(gradleVersion: GradleVersion) {
+        project("jvm-and-js-hmpp", gradleVersion) {
+            assertKotlinTestDependency(
                 listOf("jvmAndJsTestApi", "jvmAndJsTestCompileOnly"), // add to the intermediate source set, and to two scopes
                 mapOf(
                     "compileTestKotlinJvm" to listOf("kotlin-test-junit"),
@@ -163,184 +322,313 @@ class KotlinSpecificDependenciesIT : BaseGradleIT() {
                     "jvmAndJsTestApiDependenciesMetadata" to listOf("kotlin-test-common"),
                     "jvmAndJsTestCompileOnlyDependenciesMetadata" to listOf("kotlin-test-common"),
                     "jvmAndJsTestImplementationDependenciesMetadata" to listOf("!kotlin-test-common"),
-                )
-            ),
-            TestCase(
-                /**
-                 * Check that in a single-platform project the common metadata configurations resolve the
-                 * framework-specific dependency (inferred as JUnit) correctly to the common artifact
-                 * KTIJ-6098
-                 */
-                Project("mpp-single-jvm-target"),
+                ),
+                isBuildGradleKts = true
+            )
+        }
+    }
+
+    @MppGradlePluginTests
+    @DisplayName("MPP (KTIJ-6098): in single platform project common metadata configurations resolve the framework-specific dependency ")
+    @GradleTest
+    fun kotlinTestSingleDependencyMppCommonSinglePlatform(gradleVersion: GradleVersion) {
+        project("jvm-and-js-hmpp", gradleVersion) {
+            assertKotlinTestDependency(
                 listOf("commonTestImplementation"),
                 mapOf(
                     "compileTestKotlinJvm" to listOf("kotlin-test-junit"),
                 ),
                 mapOf(
                     "commonTestImplementationDependenciesMetadata" to listOf("kotlin-test-common", "kotlin-test-annotations-common")
-                )
+                ),
+                isBuildGradleKts = true
             )
-        ).forEach { testCase ->
-            with(testCase) {
-                project.prepare()
-                project.gradleBuildScript().appendText(
-                    configurationsToAddDependency.joinToString("\n", "\n") { configuration ->
-                        "\ndependencies { \"$configuration\"(\"$kotlinTestMultiplatformDependency\") }"
-                    }
-                )
-                classpathElementsExpectedByTask.forEach { (task, expected) ->
-                    val (notInClasspath, inClasspath) = expected.partition { it.startsWith("!") }
-                    project.checkTaskCompileClasspath(task, inClasspath, notInClasspath.map { it.removePrefix("!") })
-                }
-                filesExpectedByConfiguration.forEach { (configuration, expected) ->
-                    val (notInItems, inItems) = expected.partition { it.startsWith("!") }
-                    project.checkConfigurationContent(configuration, subproject = null, inItems, notInItems.map { it.removePrefix("!") })
-                }
-            }
         }
     }
 
-    @Test
-    fun testFrameworkSelection() {
-        data class TestCase(
-            val project: Project,
-            val testTaskName: String,
-            val compileTaskName: String,
-            val configurationToAddDependency: String
-        )
+    @JvmGradlePluginTests
+    @DisplayName("JVM: test framework variant proper selection")
+    @GradleTestVersions
+    @ParameterizedTest(name = "{1} with {0}: {displayName}")
+    @ArgumentsSource(GradleAndTestFrameworksArgumentsProvider::class)
+    fun testFrameworkSelectionJvm(
+        gradleVersion: GradleVersion,
+        testFramework: Pair<String, String>
+    ) {
+        project("simpleProject", gradleVersion) {
+            removeDependencies(buildGradle)
+            buildGradle.appendText("""${'\n'}dependencies { "testImplementation"("$kotlinTestMultiplatformDependency") }""")
+            buildGradle.appendText("\n(tasks.getByName(\"test\") as Test).${testFramework.first}")
 
-        val frameworks = listOf("useJUnit()" to "junit", "useTestNG()" to "testng", "useJUnitPlatform()" to "junit5")
-        listOf(
-            TestCase(jvmProject(), "test", "compileTestKotlin", "testImplementation"),
-            TestCase(mppProject(), "jvmTest", "compileTestKotlinJvm", "commonTestImplementation"),
-            TestCase(mppProject(), "jvmTest", "compileTestKotlinJvm", "jvmAndJsTestImplementation")
-        ).forEach { (project, testTaskName, compileTaskName, configuration) ->
-            project.prepare()
-            project.gradleBuildScript().appendText("""${'\n'}dependencies { "$configuration"("$kotlinTestMultiplatformDependency") }""")
+            val expectedModule = "kotlin-test-${testFramework.second}-"
+            checkTaskCompileClasspath(
+                "compileTestKotlin",
+                listOf(expectedModule),
+                testFrameworks.map { "kotlin-test-" + it.second + "-" } - expectedModule
+            )
+        }
+    }
 
-            frameworks.forEach { (setup, frameworkName) ->
-                with(project) {
-                    gradleBuildScript().appendText("\n(tasks.getByName(\"$testTaskName\") as Test).$setup")
-                    val expectedModule = "kotlin-test-$frameworkName-"
-                    checkTaskCompileClasspath(
-                        compileTaskName,
-                        listOf(expectedModule),
-                        frameworks.map { "kotlin-test-" + it.second + "-" } - expectedModule
-                    )
+    @MppGradlePluginTests
+    @DisplayName("MPP common: test framework variant proper selection")
+    @GradleTestVersions
+    @ParameterizedTest(name = "{1} with {0}: {displayName}")
+    @ArgumentsSource(GradleAndTestFrameworksArgumentsProvider::class)
+    fun testFrameworkSelectionMppJvm(
+        gradleVersion: GradleVersion,
+        testFramework: Pair<String, String>
+    ) {
+        project("jvm-and-js-hmpp", gradleVersion) {
+            removeDependencies(buildGradleKts)
+            buildGradleKts.appendText("""${'\n'}dependencies { "jvmAndJsTestImplementation"("$kotlinTestMultiplatformDependency") }""")
+            buildGradleKts.appendText("\n(tasks.getByName(\"jvmTest\") as Test).${testFramework.first}")
+
+            val expectedModule = "kotlin-test-${testFramework.second}-"
+            checkTaskCompileClasspath(
+                "compileTestKotlinJvm",
+                listOf(expectedModule),
+                testFrameworks.map { "kotlin-test-" + it.second + "-" } - expectedModule,
+                isBuildGradleKts = true
+            )
+        }
+    }
+
+    @MppGradlePluginTests
+    @DisplayName("MPP jvm: test framework variant proper selection")
+    @GradleTestVersions
+    @ParameterizedTest(name = "{1} with {0}: {displayName}")
+    @ArgumentsSource(GradleAndTestFrameworksArgumentsProvider::class)
+    fun testFrameworkSelectionMppCommon(
+        gradleVersion: GradleVersion,
+        testFramework: Pair<String, String>
+    ) {
+        project("jvm-and-js-hmpp", gradleVersion) {
+            removeDependencies(buildGradleKts)
+            buildGradleKts.appendText("""${'\n'}dependencies { "commonTestImplementation"("$kotlinTestMultiplatformDependency") }""")
+            buildGradleKts.appendText("\n(tasks.getByName(\"jvmTest\") as Test).${testFramework.first}")
+
+            val expectedModule = "kotlin-test-${testFramework.second}-"
+            checkTaskCompileClasspath(
+                "compileTestKotlinJvm",
+                listOf(expectedModule),
+                testFrameworks.map { "kotlin-test-" + it.second + "-" } - expectedModule,
+                isBuildGradleKts = true
+            )
+        }
+    }
+
+    @JvmGradlePluginTests
+    @DisplayName("Possible to remove 'kotlin-test' dependency from configuration")
+    @GradleTest
+    fun testRemoveKotlinTestDependency(gradleVersion: GradleVersion) {
+        project("simpleProject", gradleVersion) {
+            removeDependencies(buildGradle)
+
+            buildGradle.appendText(
+                """
+                
+                dependencies { testImplementation("$kotlinTestMultiplatformDependency") }
+                configurations.getByName("testImplementation").dependencies.removeAll { it.name == "kotlin-test" }
+                """.trimIndent()
+            )
+            checkTaskCompileClasspath("compileTestKotlin", checkModulesNotInClasspath = listOf("kotlin-test"))
+
+            // Add it back after removal:
+            buildGradle.appendText(
+                """
+                
+                dependencies { testImplementation("$kotlinTestMultiplatformDependency") }
+                """.trimIndent()
+            )
+            checkTaskCompileClasspath("compileTestKotlin", checkModulesInClasspath = listOf("kotlin-test"))
+        }
+    }
+
+    @JvmGradlePluginTests
+    @DisplayName("coreLibrariesVersion override default version")
+    @GradleTest
+    fun testCoreLibraryVersionsDsl(gradleVersion: GradleVersion) {
+        project("simpleProject", gradleVersion) {
+            removeDependencies(buildGradle)
+            val customVersion = TestVersions.Kotlin.STABLE_RELEASE
+            buildGradle.appendText(
+                """
+                
+                kotlin.coreLibrariesVersion = "$customVersion"
+                dependencies {
+                    testImplementation("org.jetbrains.kotlin:kotlin-reflect")
+                    testImplementation("org.jetbrains.kotlin:kotlin-test")
                 }
-            }
+                test.useJUnit()
+                """.trimIndent()
+            )
+
+            checkTaskCompileClasspath(
+                "compileTestKotlin",
+                listOf("kotlin-stdlib-", "kotlin-reflect-", "kotlin-test-").map { it + customVersion }
+            )
         }
     }
 
-    @Test
-    fun testRemoveKotlinTestDependency() = with(jvmProject().apply { prepare() }) {
-        gradleBuildScript().appendText(
-            "\n" + """
-            dependencies { testImplementation("$kotlinTestMultiplatformDependency") }
-            configurations.getByName("testImplementation").dependencies.removeAll { it.name == "kotlin-test" }
-            """.trimIndent()
-        )
-        checkTaskCompileClasspath("compileTestKotlin", checkModulesNotInClasspath = listOf("kotlin-test"))
-
-        // Add it back after removal:
-        gradleBuildScript().appendText(
-            "\n" + """
-            dependencies { testImplementation("$kotlinTestMultiplatformDependency") }
-            """
-        )
-        checkTaskCompileClasspath("compileTestKotlin", checkModulesInClasspath = listOf("kotlin-test"))
-    }
-
-    @Test
-    fun testCoreLibraryVersionsDsl() = with(jvmProject().apply { prepare() }) {
-        val customVersion = "1.3.70"
-        gradleBuildScript().appendText(
-            "\n" + """
-            kotlin.coreLibrariesVersion = "$customVersion"
-            dependencies {
-                testImplementation("org.jetbrains.kotlin:kotlin-reflect")
-                testImplementation("org.jetbrains.kotlin:kotlin-test")
+    @JvmGradlePluginTests
+    @DisplayName("No failure if configuration is observed")
+    @GradleTest
+    fun testNoFailureIfConfigurationIsObserved(gradleVersion: GradleVersion) {
+        project("simpleProject", gradleVersion) {
+            removeDependencies(buildGradle)
+            buildGradle.modify {
+                //language=Groovy
+                """
+                $it
+                
+                configurations {
+                     apiTest
+                     api.extendsFrom(apiTest)
+                }
+                
+                dependencies {
+                    apiTest("org.jetbrains.kotlin:kotlin-reflect")
+                }
+                println(configurations.apiTest.incoming.resolutionResult.allDependencies)
+                println(configurations.apiTest.incoming.dependencies.toList())
+                """.trimIndent()
             }
-            test.useJUnit()
-        """.trimIndent()
-        )
-        checkTaskCompileClasspath(
-            "compileTestKotlin",
-            listOf("kotlin-stdlib-", "kotlin-reflect-", "kotlin-test-").map { it + customVersion }
-        )
-    }
 
-    @Test
-    fun testNoFailureIfConfigurationIsObserved() = with(jvmProject()) {
-        gradleBuildScript().modify {
-            //language=Groovy
-            """
-            $it
-            
-            configurations {
-                 apiTest
-                 api.extendsFrom(apiTest)
-            }
-            
-            dependencies {
-                apiTest("org.jetbrains.kotlin:kotlin-reflect")
-            }
-            println(configurations.apiTest.incoming.resolutionResult.allDependencies)
-            println(configurations.apiTest.incoming.dependencies.toList())
-            """.trimIndent()
+            checkTaskCompileClasspath("compileKotlin", listOf("kotlin-reflect"))
         }
-        checkTaskCompileClasspath("compileKotlin", listOf("kotlin-reflect"))
     }
 
-    private fun Project.checkConfigurationContent(
+    private fun TestProject.assertKotlinTestDependency(
+        configurationsToAddDependency: List<String>,
+        classpathElementsExpectedByTask: Map<String, List<String>>,
+        filesExpectedByConfiguration: Map<String, List<String>> = emptyMap(),
+        isBuildGradleKts: Boolean = false
+    ) {
+        val buildFile = if (isBuildGradleKts) buildGradleKts else buildGradle
+        removeDependencies(buildFile)
+        buildFile.appendText(
+            configurationsToAddDependency.joinToString("\n", "\n") { configuration ->
+                "\ndependencies { \"$configuration\"(\"$kotlinTestMultiplatformDependency\") }"
+            }
+        )
+        classpathElementsExpectedByTask.forEach { (task, expected) ->
+            val (notInClasspath, inClasspath) = expected.partition { it.startsWith("!") }
+            checkTaskCompileClasspath(
+                task,
+                inClasspath,
+                notInClasspath.map { it.removePrefix("!") },
+                isBuildGradleKts = isBuildGradleKts
+            )
+        }
+        filesExpectedByConfiguration.forEach { (configuration, expected) ->
+            val (notInItems, inItems) = expected.partition { it.startsWith("!") }
+            checkConfigurationContent(
+                configuration,
+                inItems,
+                notInItems.map { it.removePrefix("!") },
+                isBuildGradleKts
+            )
+        }
+    }
+
+    private fun TestProject.checkConfigurationContent(
         configurationName: String,
-        subproject: String? = null,
         checkModulesInResolutionResult: List<String> = emptyList(),
-        checkModulesNotInResolutionResult: List<String> = emptyList()
+        checkModulesNotInResolutionResult: List<String> = emptyList(),
+        isBuildGradleKts: Boolean
     ) {
         val expression = """configurations["$configurationName"].toList()"""
-        checkPrintedItems(subproject, expression, checkModulesInResolutionResult, checkModulesNotInResolutionResult)
+        checkPrintedItems(
+            null,
+            expression,
+            checkModulesInResolutionResult,
+            checkModulesNotInResolutionResult,
+            isBuildGradleKts
+        )
     }
-}
 
-private var testBuildRunId = 0
+    private fun TestProject.checkTaskCompileClasspath(
+        taskPath: String,
+        checkModulesInClasspath: List<String> = emptyList(),
+        checkModulesNotInClasspath: List<String> = emptyList(),
+        isNative: Boolean = false,
+        isBuildGradleKts: Boolean = false
+    ) {
+        val subproject = taskPath.substringBeforeLast(":").takeIf { it.isNotEmpty() && it != taskPath }
+        val taskName = taskPath.removePrefix(subproject.orEmpty())
+        val taskClass = if (isNative) "org.jetbrains.kotlin.gradle.tasks.AbstractKotlinNativeCompile<*, *>" else "AbstractCompile"
+        val expression = """(tasks.getByName("$taskName") as $taskClass).${if (isNative) "libraries" else "classpath"}.toList()"""
+        checkPrintedItems(subproject, expression, checkModulesInClasspath, checkModulesNotInClasspath, isBuildGradleKts)
+    }
 
-fun BaseGradleIT.Project.checkTaskCompileClasspath(
-    taskPath: String,
-    checkModulesInClasspath: List<String> = emptyList(),
-    checkModulesNotInClasspath: List<String> = emptyList(),
-    isNative: Boolean = false
-) {
-    val subproject = taskPath.substringBeforeLast(":").takeIf { it.isNotEmpty() && it != taskPath }
-    val taskName = taskPath.removePrefix(subproject.orEmpty())
-    val taskClass = if (isNative) "org.jetbrains.kotlin.gradle.tasks.AbstractKotlinNativeCompile<*, *>" else "AbstractCompile"
-    val expression = """(tasks.getByName("$taskName") as $taskClass).${if (isNative) "libraries" else "classpath"}.toList()"""
-    checkPrintedItems(subproject, expression, checkModulesInClasspath, checkModulesNotInClasspath)
-}
-
-private fun BaseGradleIT.Project.checkPrintedItems(
-    subproject: String?,
-    itemsExpression: String,
-    checkAnyItemsContains: List<String>,
-    checkNoItemContains: List<String>
-) = with(testCase) {
-    setupWorkingDir()
-    val printingTaskName = "printItems${testBuildRunId++}"
-    gradleBuildScript(subproject).appendText(
-        """
-        ${'\n'}
-        tasks.create("$printingTaskName") {
-            doLast {
-                println("###$printingTaskName" + $itemsExpression)
-            }
+    private fun TestProject.checkPrintedItems(
+        subproject: String?,
+        itemsExpression: String,
+        checkAnyItemsContains: List<String>,
+        checkNoItemContains: List<String>,
+        isBuildGradleKts: Boolean
+    ) {
+        val printingTaskName = "printItems${UUID.randomUUID()}"
+        val buildFile = if (subproject != null) {
+            subProject(subproject).run { if (isBuildGradleKts) buildGradleKts else buildGradle }
+        } else {
+            if (isBuildGradleKts) buildGradleKts else buildGradle
         }
-        """.trimIndent()
-    )
-    build("${subproject?.prependIndent(":").orEmpty()}:$printingTaskName") {
-        assertSuccessful()
-        val itemsLine = output.lines().single { "###$printingTaskName" in it }.substringAfter(printingTaskName)
-        val items = itemsLine.removeSurrounding("[", "]").split(", ").toSet()
-        checkAnyItemsContains.forEach { pattern -> assertTrue { items.any { pattern in it } } }
-        checkNoItemContains.forEach { pattern -> assertFalse { items.any { pattern in it } } }
+        buildFile.appendText(
+            """
+
+            tasks.create("$printingTaskName") {
+                doLast {
+                    println("###$printingTaskName " + $itemsExpression)
+                }
+            }
+            """.trimIndent()
+        )
+
+        build("${subproject?.prependIndent(":").orEmpty()}:$printingTaskName") {
+            val itemsLine = output.lines().single { "###$printingTaskName" in it }.substringAfter(printingTaskName)
+            val items = itemsLine.removeSurrounding("[", "]").split(", ").toSet()
+            checkAnyItemsContains.forEach { pattern -> assertTrue { items.any { pattern in it } } }
+            checkNoItemContains.forEach { pattern -> assertFalse { items.any { pattern in it } } }
+        }
+    }
+
+    private fun removeDependencies(
+        buildGradleFile: Path
+    ) {
+        buildGradleFile.modify {
+            it.lines()
+                .filter { line ->
+                    "stdlib" !in line && "kotlin(\"test" !in line && "kotlin-test" !in line
+                }
+                .joinToString("\n")
+        }
+    }
+
+    internal class GradleAndTestFrameworksArgumentsProvider : GradleArgumentsProvider() {
+        override fun provideArguments(
+            context: ExtensionContext
+        ): Stream<out Arguments> {
+            val gradleVersions = super.provideArguments(context).map { it.get().first() as GradleVersion }.toList()
+            return testFrameworks
+                .flatMap { testFramework ->
+                    gradleVersions.map { it to testFramework }
+                }
+                .asSequence()
+                .map {
+                    Arguments.of(it.first, it.second)
+                }
+                .asStream()
+        }
+    }
+
+    companion object {
+        private const val kotlinTestMultiplatformDependency = "org.jetbrains.kotlin:kotlin-test"
+
+        private val testFrameworks = listOf(
+            "useJUnit()" to "junit",
+            "useTestNG()" to "testng",
+            "useJUnitPlatform()" to "junit5"
+        )
     }
 }
