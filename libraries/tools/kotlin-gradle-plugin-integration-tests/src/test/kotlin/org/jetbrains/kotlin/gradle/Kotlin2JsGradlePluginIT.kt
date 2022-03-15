@@ -1109,6 +1109,31 @@ abstract class AbstractKotlin2JsGradlePluginIT(protected val irBackend: Boolean)
         }
     }
 
+    @DisplayName("mocha fails on module not found")
+    @GradleTest
+    fun testMochaFailedModuleNotFound(gradleVersion: GradleVersion) {
+        project("kotlin-js-nodejs-project", gradleVersion) {
+            projectPath.resolve("src/test/kotlin/Tests.kt").appendText(
+                "\n" + """
+                |
+                |@JsModule("foo")
+                |@JsNonModule
+                |external val foo: dynamic
+                |
+                |class Tests2 {
+                |   @Test
+                |   fun testHello() {
+                |       foo
+                |   }
+                |}
+                """.trimMargin()
+            )
+            buildAndFail("nodeTest") {
+                assertTasksFailed(":nodeTest")
+            }
+        }
+    }
+
     @DisplayName("webpack configuration is valid")
     @GradleTest
     fun testWebpackConfig(gradleVersion: GradleVersion) {

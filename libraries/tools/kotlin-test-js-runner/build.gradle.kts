@@ -40,6 +40,7 @@ tasks {
         inputs.dir("src")
         inputs.files(
             "nodejs.ts",
+            "nodejs-empty.ts",
             "nodejs-idle.ts",
             "karma.ts",
             "karma-kotlin-reporter.js",

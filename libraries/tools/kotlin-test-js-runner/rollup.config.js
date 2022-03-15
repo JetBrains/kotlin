@@ -22,6 +22,16 @@ export default [
         plugins: plugins()
     },
     {
+        input: './nodejs-empty.ts',
+        output: {
+            file: 'lib/kotlin-test-nodejs-empty-runner.js',
+            format: 'cjs',
+            banner: '#!/usr/bin/env node',
+            sourcemap: true
+        },
+        plugins: plugins()
+    },
+    {
         input: './karma.ts',
         output: {
             file: 'lib/kotlin-test-karma-runner.js',

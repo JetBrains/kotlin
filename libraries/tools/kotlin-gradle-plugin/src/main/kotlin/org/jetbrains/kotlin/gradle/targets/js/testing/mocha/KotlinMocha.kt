@@ -79,7 +79,7 @@ class KotlinMocha(@Transient override val compilation: KotlinJsCompilation, priv
 
         val file = task.inputFileProperty.get().asFile.toString()
 
-        val adapter = createAdapterJs(file)
+        val adapter = createAdapterJs(file, "kotlin-test-nodejs-runner", ADAPTER_NODEJS)
 
         val args = mutableListOf(
             "--require",
@@ -102,11 +102,26 @@ class KotlinMocha(@Transient override val compilation: KotlinJsCompilation, priv
             }
         }
 
+        val dryRunArgs = mutableListOf(
+            "--require",
+            npmProject.require("source-map-support/register.js")
+        ).apply {
+            if (debug) {
+                add("--inspect-brk")
+            }
+            add(createAdapterJs(file, "kotlin-test-nodejs-empty-runner", ADAPTER_EMPTY_NODEJS).canonicalPath)
+            addAll(cliArgs.toList())
+            if (platformType == KotlinPlatformType.wasm) {
+                addAll(cliArg("-n", "experimental-wasm-typed-funcref,experimental-wasm-gc,experimental-wasm-eh"))
+            }
+        }
+
         return TCServiceMessagesTestExecutionSpec(
             forkOptions,
             args,
             false,
-            clientSettings
+            clientSettings,
+            dryRunArgs
         )
     }
 
@@ -115,14 +130,16 @@ class KotlinMocha(@Transient override val compilation: KotlinJsCompilation, priv
     }
 
     private fun createAdapterJs(
-        file: String
+        file: String,
+        adapter: String,
+        adapterName: String
     ): File {
-        val adapterJs = npmProject.dir.resolve(ADAPTER_NODEJS)
+        val adapterJs = npmProject.dir.resolve(adapterName)
         adapterJs.printWriter().use { writer ->
-            val adapter = npmProject.require("kotlin-test-js-runner/kotlin-test-nodejs-runner.js")
+            val adapterFile = npmProject.require("kotlin-test-js-runner/$adapter.js")
             val escapedFile = file.jsQuoted()
 
-            writer.println("require(${adapter.jsQuoted()})")
+            writer.println("require(${adapterFile.jsQuoted()})")
 
             writer.println("module.exports = require($escapedFile)")
         }
@@ -132,6 +149,7 @@ class KotlinMocha(@Transient override val compilation: KotlinJsCompilation, priv
 
     companion object {
         const val ADAPTER_NODEJS = "adapter-nodejs.js"
+        const val ADAPTER_EMPTY_NODEJS = "adapter-empty-nodejs.js"
 
         private const val DEFAULT_TIMEOUT = "2s"
     }
