@@ -32,6 +32,16 @@ class IdeaKotlinProjectModelObjectGraphTest(private val node: KClass<*>, @Suppre
     }
 
     @Test
+    fun `test - node is sealed`() {
+        if (node.java.isInterface) {
+            assertTrue(
+                node.isSealed,
+                "Expected $node to be sealed interface"
+            )
+        }
+    }
+
+    @Test
     fun `test - node implementations contain serialVersionUID`() {
         if (!node.java.isInterface && !Modifier.isAbstract(node.java.modifiers)) {
             val serialVersionUID = assertNotNull(

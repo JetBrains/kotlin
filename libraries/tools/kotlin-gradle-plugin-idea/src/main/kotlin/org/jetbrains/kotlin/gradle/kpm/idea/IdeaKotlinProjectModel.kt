@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.gradle.kpm.idea
 import java.io.File
 import java.io.Serializable
 
-interface IdeaKotlinProjectModel : Serializable {
+sealed interface IdeaKotlinProjectModel : Serializable {
     val gradlePluginVersion: String
     val coreLibrariesVersion: String
     val explicitApiModeCliOption: String?
