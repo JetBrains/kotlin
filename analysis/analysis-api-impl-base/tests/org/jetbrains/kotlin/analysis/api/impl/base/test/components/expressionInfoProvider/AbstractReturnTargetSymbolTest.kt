@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.analysis.api.impl.base.test.components.expressionIn
 import com.intellij.psi.PsiComment
 import com.intellij.psi.PsiElement
 import com.intellij.psi.impl.source.tree.LeafPsiElement
-import org.jetbrains.kotlin.analysis.test.framework.base.AbstractHLApiSingleFileTest
+import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiSingleFileTest
 import org.jetbrains.kotlin.analysis.test.framework.utils.getNameWithPositionString
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtReturnExpression
@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.assertions
 
-abstract class AbstractReturnTargetSymbolTest : AbstractHLApiSingleFileTest() {
+abstract class AbstractReturnTargetSymbolTest : AbstractAnalysisApiSingleFileTest() {
     val commentRegex = Regex("""/\* (.+@\(.+\)|null) \*/""")
     override fun doTestByFileStructure(ktFile: KtFile, module: TestModule, testServices: TestServices) {
         val original = ktFile.text

@@ -6,9 +6,7 @@
 package org.jetbrains.kotlin.analysis.api.impl.base.test.symbols
 
 import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
-import org.jetbrains.kotlin.analysis.test.framework.FrontendApiTestConfiguratorService
 import org.jetbrains.kotlin.analysis.api.impl.base.test.SymbolByFqName
-import org.jetbrains.kotlin.analysis.api.symbols.KtSymbol
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.directives.ConfigurationDirectives

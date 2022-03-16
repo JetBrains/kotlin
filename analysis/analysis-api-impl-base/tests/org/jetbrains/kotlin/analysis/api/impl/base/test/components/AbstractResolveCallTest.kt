@@ -8,14 +8,14 @@ package org.jetbrains.kotlin.analysis.api.impl.base.test.components
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
 import org.jetbrains.kotlin.analysis.api.calls.KtCallInfo
-import org.jetbrains.kotlin.analysis.test.framework.base.AbstractHLApiSingleModuleTest
+import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedSingleModuleTest
 import org.jetbrains.kotlin.analysis.test.framework.services.expressionMarkerProvider
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.assertions
 
-abstract class AbstractResolveCallTest : AbstractHLApiSingleModuleTest() {
+abstract class AbstractResolveCallTest : AbstractAnalysisApiBasedSingleModuleTest() {
     override fun doTestByFileStructure(ktFiles: List<KtFile>, module: TestModule, testServices: TestServices) {
         val ktFile = ktFiles.first()
         val expression = testServices.expressionMarkerProvider.getSelectedElement(ktFile)

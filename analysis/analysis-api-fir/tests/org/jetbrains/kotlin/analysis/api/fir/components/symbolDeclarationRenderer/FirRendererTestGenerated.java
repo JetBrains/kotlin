@@ -8,8 +8,8 @@ package org.jetbrains.kotlin.analysis.api.fir.components.symbolDeclarationRender
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.util.KtTestUtil;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.analysis.test.framework.FrontendApiTestConfiguratorService;
-import org.jetbrains.kotlin.analysis.api.fir.FirFrontendApiTestConfiguratorService;
+import org.jetbrains.kotlin.analysis.test.framework.AnalysisApiTestConfiguratorService;
+import org.jetbrains.kotlin.analysis.api.fir.FirAnalysisApiTestConfiguratorService;
 import org.jetbrains.kotlin.analysis.api.impl.base.test.components.symbolDeclarationRenderer.AbstractRendererTest;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.jupiter.api.Nested;
@@ -25,8 +25,8 @@ import java.util.regex.Pattern;
 public class FirRendererTestGenerated extends AbstractRendererTest {
     @NotNull
     @Override
-    public FrontendApiTestConfiguratorService getConfigurator() {
-        return FirFrontendApiTestConfiguratorService.INSTANCE;
+    public AnalysisApiTestConfiguratorService getConfigurator() {
+        return FirAnalysisApiTestConfiguratorService.INSTANCE;
     }
 
     @Test

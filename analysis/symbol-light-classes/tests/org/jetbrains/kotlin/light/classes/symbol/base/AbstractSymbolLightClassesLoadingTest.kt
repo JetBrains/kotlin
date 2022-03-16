@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.light.classes.symbol.base
 
 import com.intellij.openapi.project.Project
 import com.intellij.psi.SyntaxTraverser
-import org.jetbrains.kotlin.analysis.test.framework.FrontendApiTestConfiguratorService
+import org.jetbrains.kotlin.analysis.test.framework.AnalysisApiTestConfiguratorService
 import org.jetbrains.kotlin.asJava.KotlinAsJavaSupport
 import org.jetbrains.kotlin.asJava.classes.KtLightClass
 import org.jetbrains.kotlin.asJava.renderClass
@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.test.model.TestModule
 import java.nio.file.Path
 
 abstract class AbstractSymbolLightClassesLoadingTest(
-    configurator: FrontendApiTestConfiguratorService,
+    configurator: AnalysisApiTestConfiguratorService,
     override val currentExtension: String,
     override val stopIfCompilationErrorDirectivePresent: Boolean,
 ) : AbstractSymbolLightClassesTestBase(configurator) {

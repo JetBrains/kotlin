@@ -6,13 +6,11 @@
 package org.jetbrains.kotlin.light.classes.symbol.decompiled
 
 import org.jetbrains.kotlin.light.classes.symbol.base.AbstractSymbolLightClassesFacadeTest
-import org.jetbrains.kotlin.light.classes.symbol.decompiled.service.SymbolLightClassesForLibraryFrontendApiTestConfiguratorService
-import org.junit.jupiter.api.parallel.Execution
-import org.junit.jupiter.api.parallel.ExecutionMode
+import org.jetbrains.kotlin.light.classes.symbol.decompiled.service.SymbolLightClassesForLibraryAnalysisApiTestConfiguratorService
 
 abstract class AbstractSymbolLightClassesFacadeForLibraryTest :
     AbstractSymbolLightClassesFacadeTest(
-        SymbolLightClassesForLibraryFrontendApiTestConfiguratorService,
+        SymbolLightClassesForLibraryAnalysisApiTestConfiguratorService,
         EXTENSIONS.LIB_JAVA,
         stopIfCompilationErrorDirectivePresent = true
     )

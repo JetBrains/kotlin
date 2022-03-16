@@ -7,8 +7,7 @@ package org.jetbrains.kotlin.analysis.api.impl.base.test.components.typeProvider
 
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.analysis.test.framework.FrontendApiTestConfiguratorService
-import org.jetbrains.kotlin.analysis.test.framework.base.AbstractHLApiSingleFileTest
+import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiSingleFileTest
 import org.jetbrains.kotlin.psi.KtCallExpression
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtTreeVisitorVoid
@@ -22,7 +21,7 @@ import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.assertions
 import java.io.File
 
-abstract class AbstractHasCommonSubtypeTest : AbstractHLApiSingleFileTest() {
+abstract class AbstractHasCommonSubtypeTest : AbstractAnalysisApiSingleFileTest() {
     override fun doTestByFileStructure(ktFile: KtFile, module: TestModule, testServices: TestServices) {
         val errors = mutableListOf<String>()
         val originalText = ktFile.text

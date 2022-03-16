@@ -8,13 +8,13 @@ package org.jetbrains.kotlin.analysis.api.impl.base.test.components.symbolDeclar
 import org.jetbrains.kotlin.analysis.api.components.KtDeclarationRendererOptions
 import org.jetbrains.kotlin.analysis.api.components.KtTypeRendererOptions
 import org.jetbrains.kotlin.analysis.api.symbols.KtDeclarationSymbol
-import org.jetbrains.kotlin.analysis.test.framework.base.AbstractHLApiSingleFileTest
+import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiSingleFileTest
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.assertions
 
-abstract class AbstractRendererTest : AbstractHLApiSingleFileTest() {
+abstract class AbstractRendererTest : AbstractAnalysisApiSingleFileTest() {
     override fun doTestByFileStructure(ktFile: KtFile, module: TestModule, testServices: TestServices) {
         val options = KtDeclarationRendererOptions.DEFAULT.copy(
             approximateTypes = true,

@@ -10,9 +10,8 @@ import com.intellij.psi.PsiClass
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiElementVisitor
 import org.jetbrains.kotlin.analysis.api.analyse
-import org.jetbrains.kotlin.analysis.api.fir.FirFrontendApiTestConfiguratorService
 import org.jetbrains.kotlin.analysis.test.framework.services.expressionMarkerProvider
-import org.jetbrains.kotlin.analysis.test.framework.base.AbstractHLApiSingleFileTest
+import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiSingleFileTest
 import org.jetbrains.kotlin.asJava.KotlinAsJavaSupport
 import org.jetbrains.kotlin.asJava.classes.KtLightClass
 import org.jetbrains.kotlin.asJava.elements.KtLightElement
@@ -27,7 +26,7 @@ import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.assertions
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 
-abstract class AbstractPsiTypeProviderTest : AbstractHLApiSingleFileTest(){
+abstract class AbstractPsiTypeProviderTest : AbstractAnalysisApiSingleFileTest(){
     override fun doTestByFileStructure(ktFile: KtFile, module: TestModule, testServices: TestServices) {
         val declaration = testServices.expressionMarkerProvider.getElementOfTypAtCaret<KtDeclaration>(ktFile)
         val containingClass =

@@ -8,11 +8,10 @@ package org.jetbrains.kotlin.analysis.api.fir.org.jetbrains.kotlin.analysis.api.
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.util.KtTestUtil;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.analysis.test.framework.FrontendApiTestConfiguratorService;
-import org.jetbrains.kotlin.analysis.api.fir.FirFrontendApiTestConfiguratorService;
+import org.jetbrains.kotlin.analysis.test.framework.AnalysisApiTestConfiguratorService;
+import org.jetbrains.kotlin.analysis.api.fir.FirAnalysisApiTestConfiguratorService;
 import org.jetbrains.kotlin.analysis.api.fir.components.typeProvider.AbstractFirGetSuperTypesTest;
 import org.jetbrains.kotlin.test.TestMetadata;
-import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
@@ -25,8 +24,8 @@ import java.util.regex.Pattern;
 public class FirFirGetSuperTypesTestGenerated extends AbstractFirGetSuperTypesTest {
     @NotNull
     @Override
-    public FrontendApiTestConfiguratorService getConfigurator() {
-        return FirFrontendApiTestConfiguratorService.INSTANCE;
+    public AnalysisApiTestConfiguratorService getConfigurator() {
+        return FirAnalysisApiTestConfiguratorService.INSTANCE;
     }
 
     @Test
