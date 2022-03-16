@@ -23,26 +23,14 @@ fun S.extension3(): String = value!!
 fun S?.extension4(): String = this!!.value!!
 
 fun box(): String {
-    assertFailsWith<IllegalArgumentException>("Remove assertFailsWith and try again, as this problem may have been fixed.") {
-        assertEquals(S("abc"), C::member.call(C(), S("a"), "b", S("c")))
-    }
-    assertFailsWith<IllegalArgumentException>("Remove assertFailsWith and try again, as this problem may have been fixed.") {
-        assertEquals(S("def"), ::topLevel.call("d", S("e"), S("f")))
-    }
-    assertFailsWith<IllegalArgumentException>("Remove assertFailsWith and try again, as this problem may have been fixed.") {
-        assertEquals(S("ghi"), S::extension1.call(S("g"), S("h"), S("i")))
-    }
-    assertFailsWith<IllegalArgumentException>("Remove assertFailsWith and try again, as this problem may have been fixed.") {
-        assertEquals(S("jkl"), S::extension2.call(S("j"), S("k"), S("l")))
-    }
+    assertEquals(S("abc"), C::member.call(C(), S("a"), "b", S("c")))
+    assertEquals(S("def"), ::topLevel.call("d", S("e"), S("f")))
+    assertEquals(S("ghi"), S::extension1.call(S("g"), S("h"), S("i")))
+    assertEquals(S("jkl"), S::extension2.call(S("j"), S("k"), S("l")))
     assertEquals("_", S::extension3.call(S("_")))
-    assertFailsWith<IllegalArgumentException>("Remove assertFailsWith and try again, as this problem may have been fixed.") {
-        assertEquals("_", S?::extension4.call(S("_")))
-    }
+    assertEquals("_", S?::extension4.call(S("_")))
 
-    assertFailsWith<IllegalArgumentException>("Remove assertFailsWith and try again, as this problem may have been fixed.") {
-        assertEquals(S("mno"), C()::member.call(S("m"), "n", S("o")))
-    }
+    assertEquals(S("mno"), C()::member.call(S("m"), "n", S("o")))
     assertFailsWith<IllegalArgumentException>("Remove assertFailsWith and try again, as this problem may have been fixed.") {
         assertEquals(S("pqr"), S("p")::extension1.call(S("q"), "r"))
     }

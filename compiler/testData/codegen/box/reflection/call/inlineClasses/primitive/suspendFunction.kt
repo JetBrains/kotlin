@@ -39,12 +39,10 @@ fun box(): String {
         }.let { assertEquals(1, it) }
     }
 
-    assertFailsWith<IllegalArgumentException>("Remove assertFailsWith and try again, as this problem may have been fixed.") {
-        run0 {
-            C::nullableConsume.callSuspend(c, Z(2))
-            C::nullableProduce.callSuspend(c)!!.value
-        }.let { assertEquals(2, it) }
-    }
+    run0 {
+        C::nullableConsume.callSuspend(c, Z(2))
+        C::nullableProduce.callSuspend(c)!!.value
+    }.let { assertEquals(2, it) }
 
     assertFailsWith<IllegalArgumentException>("Remove assertFailsWith and try again, as this problem may have been fixed.") {
         run0 {
@@ -52,11 +50,9 @@ fun box(): String {
         }.let { assertEquals(3, it) }
     }
 
-    assertFailsWith<IllegalArgumentException>("Remove assertFailsWith and try again, as this problem may have been fixed.") {
-        run0 {
-            C::nonNull_nullableConsumeAndProduce.callSuspend(c, Z(4))!!.value
-        }.let { assertEquals(4, it) }
-    }
+    run0 {
+        C::nonNull_nullableConsumeAndProduce.callSuspend(c, Z(4))!!.value
+    }.let { assertEquals(4, it) }
 
     assertFailsWith<IllegalArgumentException>("Remove assertFailsWith and try again, as this problem may have been fixed.") {
         run0 {
@@ -64,11 +60,9 @@ fun box(): String {
         }.let { assertEquals(5, it) }
     }
 
-    assertFailsWith<IllegalArgumentException>("Remove assertFailsWith and try again, as this problem may have been fixed.") {
-        run0 {
-            C::nullable_nullableConsumeAndProduce.callSuspend(c, Z(6))!!.value
-        }.let { assertEquals(6, it) }
-    }
+    run0 {
+        C::nullable_nullableConsumeAndProduce.callSuspend(c, Z(6))!!.value
+    }.let { assertEquals(6, it) }
 
     return "OK"
 }

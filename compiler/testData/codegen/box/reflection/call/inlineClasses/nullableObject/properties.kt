@@ -3,7 +3,6 @@
 
 import kotlin.reflect.KMutableProperty2
 import kotlin.test.assertEquals
-import kotlin.test.assertFailsWith
 
 inline class S(val value: String?) {
     operator fun plus(other: S): S = S(this.value!! + other.value!!)
@@ -61,17 +60,13 @@ fun box(): String {
     assertEquals(S("cd"), c::nonNullMember.call())
     assertEquals(S("cd"), c::nonNullMember.getter.call())
 
-    assertFailsWith<IllegalArgumentException>("Remove assertFailsWith and try again, as this problem may have been fixed.") {
-        assertEquals(Unit, C::nullableMember.setter.call(c, S("ab")))
-        assertEquals(S("ab"), C::nullableMember.call(c))
-        assertEquals(S("ab"), C::nullableMember.getter.call(c))
-    }
+    assertEquals(Unit, C::nullableMember.setter.call(c, S("ab")))
+    assertEquals(S("ab"), C::nullableMember.call(c))
+    assertEquals(S("ab"), C::nullableMember.getter.call(c))
 
-    assertFailsWith<IllegalArgumentException>("Remove assertFailsWith and try again, as this problem may have been fixed.") {
-        assertEquals(Unit, c::nullableMember.setter.call(S("cd")))
-        assertEquals(S("cd"), c::nullableMember.call())
-        assertEquals(S("cd"), c::nullableMember.getter.call())
-    }
+    assertEquals(Unit, c::nullableMember.setter.call(S("cd")))
+    assertEquals(S("cd"), c::nullableMember.call())
+    assertEquals(S("cd"), c::nullableMember.getter.call())
 
     val nonNull_nonNullMemExt = C::class.members.single { it.name == "nonNull_nonNullMemExt" } as KMutableProperty2<C, S, S>
     assertEquals(Unit, nonNull_nonNullMemExt.setter.call(c, S(""), S("f")))
@@ -79,57 +74,43 @@ fun box(): String {
     assertEquals(S("ef"), nonNull_nonNullMemExt.getter.call(c, S("e")))
 
     val nonNull_nullableMemExt = C::class.members.single { it.name == "nonNull_nullableMemExt" } as KMutableProperty2<C, S, S?>
-    assertFailsWith<IllegalArgumentException>("Remove assertFailsWith and try again, as this problem may have been fixed.") {
-        assertEquals(Unit, nonNull_nullableMemExt.setter.call(c, S(""), S("f")))
-        assertEquals(S("ef"), nonNull_nullableMemExt.call(c, S("e")))
-        assertEquals(S("ef"), nonNull_nullableMemExt.getter.call(c, S("e")))
-    }
+    assertEquals(Unit, nonNull_nullableMemExt.setter.call(c, S(""), S("f")))
+    assertEquals(S("ef"), nonNull_nullableMemExt.call(c, S("e")))
+    assertEquals(S("ef"), nonNull_nullableMemExt.getter.call(c, S("e")))
 
     val nullable_nonNullMemExt = C::class.members.single { it.name == "nullable_nonNullMemExt" } as KMutableProperty2<C, S?, S>
-    assertFailsWith<IllegalArgumentException>("Remove assertFailsWith and try again, as this problem may have been fixed.") {
-        assertEquals(Unit, nullable_nonNullMemExt.setter.call(c, S(""), S("f")))
-        assertEquals(S("ef"), nullable_nonNullMemExt.call(c, S("e")))
-        assertEquals(S("ef"), nullable_nonNullMemExt.getter.call(c, S("e")))
-    }
+    assertEquals(Unit, nullable_nonNullMemExt.setter.call(c, S(""), S("f")))
+    assertEquals(S("ef"), nullable_nonNullMemExt.call(c, S("e")))
+    assertEquals(S("ef"), nullable_nonNullMemExt.getter.call(c, S("e")))
 
     val nullable_nullableMemExt = C::class.members.single { it.name == "nullable_nullableMemExt" } as KMutableProperty2<C, S?, S?>
-    assertFailsWith<IllegalArgumentException>("Remove assertFailsWith and try again, as this problem may have been fixed.") {
-        assertEquals(Unit, nullable_nullableMemExt.setter.call(c, S(""), S("f")))
-        assertEquals(S("ef"), nullable_nullableMemExt.call(c, S("e")))
-        assertEquals(S("ef"), nullable_nullableMemExt.getter.call(c, S("e")))
-    }
+    assertEquals(Unit, nullable_nullableMemExt.setter.call(c, S(""), S("f")))
+    assertEquals(S("ef"), nullable_nullableMemExt.call(c, S("e")))
+    assertEquals(S("ef"), nullable_nullableMemExt.getter.call(c, S("e")))
 
     assertEquals(Unit, ::nonNullTopLevel.setter.call(S("gh")))
     assertEquals(S("gh"), ::nonNullTopLevel.call())
     assertEquals(S("gh"), ::nonNullTopLevel.getter.call())
 
-    assertFailsWith<IllegalArgumentException>("Remove assertFailsWith and try again, as this problem may have been fixed.") {
-        assertEquals(Unit, ::nullableTopLevel.setter.call(S("gh")))
-        assertEquals(S("gh"), ::nullableTopLevel.call())
-        assertEquals(S("gh"), ::nullableTopLevel.getter.call())
-    }
+    assertEquals(Unit, ::nullableTopLevel.setter.call(S("gh")))
+    assertEquals(S("gh"), ::nullableTopLevel.call())
+    assertEquals(S("gh"), ::nullableTopLevel.getter.call())
 
     assertEquals(Unit, S::nonNull_nonNullExt.setter.call(S(""), S("j")))
     assertEquals(S("ij"), S::nonNull_nonNullExt.call(S("i")))
     assertEquals(S("ij"), S::nonNull_nonNullExt.getter.call(S("i")))
 
-    assertFailsWith<IllegalArgumentException>("Remove assertFailsWith and try again, as this problem may have been fixed.") {
-        assertEquals(Unit, S::nonNull_nullableExt.setter.call(S(""), S("j")))
-        assertEquals(S("ij"), S::nonNull_nullableExt.call(S("i")))
-        assertEquals(S("ij"), S::nonNull_nullableExt.getter.call(S("i")))
-    }
+    assertEquals(Unit, S::nonNull_nullableExt.setter.call(S(""), S("j")))
+    assertEquals(S("ij"), S::nonNull_nullableExt.call(S("i")))
+    assertEquals(S("ij"), S::nonNull_nullableExt.getter.call(S("i")))
 
-    assertFailsWith<IllegalArgumentException>("Remove assertFailsWith and try again, as this problem may have been fixed.") {
-        assertEquals(Unit, S?::nullable_nonNullExt.setter.call(S(""), S("j")))
-        assertEquals(S("ij"), S?::nullable_nonNullExt.call(S("i")))
-        assertEquals(S("ij"), S?::nullable_nonNullExt.getter.call(S("i")))
-    }
+    assertEquals(Unit, S?::nullable_nonNullExt.setter.call(S(""), S("j")))
+    assertEquals(S("ij"), S?::nullable_nonNullExt.call(S("i")))
+    assertEquals(S("ij"), S?::nullable_nonNullExt.getter.call(S("i")))
 
-    assertFailsWith<IllegalArgumentException>("Remove assertFailsWith and try again, as this problem may have been fixed.") {
-        assertEquals(Unit, S?::nullable_nullableExt.setter.call(S(""), S("j")))
-        assertEquals(S("ij"), S?::nullable_nullableExt.call(S("i")))
-        assertEquals(S("ij"), S?::nullable_nullableExt.getter.call(S("i")))
-    }
+    assertEquals(Unit, S?::nullable_nullableExt.setter.call(S(""), S("j")))
+    assertEquals(S("ij"), S?::nullable_nullableExt.call(S("i")))
+    assertEquals(S("ij"), S?::nullable_nullableExt.getter.call(S("i")))
 
     return "OK"
 }
