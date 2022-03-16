@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.gradle.kpm.idea
 
 import java.io.Serializable
 
-interface IdeaKotlinVariant : IdeaKotlinFragment, Serializable {
+sealed interface IdeaKotlinVariant : IdeaKotlinFragment, Serializable {
     val platform: IdeaKotlinPlatform
     val variantAttributes: Map<String, String>
     val compilationOutputs: IdeaKotlinCompilationOutput

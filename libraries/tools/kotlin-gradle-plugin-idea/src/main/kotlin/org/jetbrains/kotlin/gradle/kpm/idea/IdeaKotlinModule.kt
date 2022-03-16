@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.gradle.kpm.idea
 
 import java.io.Serializable
 
-interface IdeaKotlinModule : Serializable {
+sealed interface IdeaKotlinModule : Serializable {
     val coordinates: IdeaKotlinModuleCoordinates
     val fragments: List<IdeaKotlinFragment>
 }

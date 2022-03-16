@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.gradle.kpm.idea
 import java.io.File
 import java.io.Serializable
 
-interface IdeaKotlinSourceDirectory : Serializable {
+sealed interface IdeaKotlinSourceDirectory : Serializable {
     val file: File
 }
 
