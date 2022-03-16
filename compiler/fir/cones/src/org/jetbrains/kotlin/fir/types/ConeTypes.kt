@@ -178,7 +178,7 @@ fun ConeKotlinType.lowerBoundIfFlexible(): ConeSimpleKotlinType {
 open class ConeDynamicType(
     lowerBound: ConeSimpleKotlinType,
     upperBound: ConeSimpleKotlinType
-) : ConeFlexibleType(lowerBound, upperBound)
+) : ConeFlexibleType(lowerBound, upperBound), DynamicTypeMarker
 
 fun ConeSimpleKotlinType.unwrapDefinitelyNotNull(): ConeSimpleKotlinType {
     return when (this) {
