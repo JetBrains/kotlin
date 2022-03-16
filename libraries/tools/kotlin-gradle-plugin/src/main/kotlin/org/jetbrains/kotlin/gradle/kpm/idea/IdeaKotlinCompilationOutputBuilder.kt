@@ -7,9 +7,9 @@ package org.jetbrains.kotlin.gradle.kpm.idea
 
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilationOutput
 
-internal fun KotlinCompilationOutput.toIdeaKotlinCompilationOutputs(): IdeaKotlinCompilationOutput {
+internal fun IdeaKotlinCompilationOutput(compilation: KotlinCompilationOutput): IdeaKotlinCompilationOutput {
     return IdeaKotlinCompilationOutputImpl(
-        classesDirs = this.classesDirs.toSet(),
-        resourcesDir = this.resourcesDir
+        classesDirs = compilation.classesDirs.toSet(),
+        resourcesDir = compilation.resourcesDir
     )
 }
