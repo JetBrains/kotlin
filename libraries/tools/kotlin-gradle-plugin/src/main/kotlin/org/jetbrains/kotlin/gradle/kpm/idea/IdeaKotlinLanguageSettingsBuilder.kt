@@ -8,15 +8,15 @@ package org.jetbrains.kotlin.gradle.kpm.idea
 import org.jetbrains.kotlin.gradle.plugin.sources.DefaultLanguageSettingsBuilder
 import org.jetbrains.kotlin.project.model.LanguageSettings
 
-internal fun LanguageSettings.toIdeaKotlinLanguageSettings(): IdeaKotlinLanguageSettings {
+internal fun IdeaKotlinLanguageSettings(languageSettings: LanguageSettings): IdeaKotlinLanguageSettings {
     return IdeaKotlinLanguageSettingsImpl(
-        languageVersion = languageVersion,
-        apiVersion = apiVersion,
-        isProgressiveMode = progressiveMode,
-        enabledLanguageFeatures = enabledLanguageFeatures.toSet(),
-        optInAnnotationsInUse = optInAnnotationsInUse.toSet(),
-        compilerPluginArguments = (this as? DefaultLanguageSettingsBuilder)?.compilerPluginArguments?.toList().orEmpty(),
-        compilerPluginClasspath = (this as? DefaultLanguageSettingsBuilder)?.compilerPluginClasspath?.toList().orEmpty(),
-        freeCompilerArgs = (this as? DefaultLanguageSettingsBuilder)?.freeCompilerArgs?.toList().orEmpty()
+        languageVersion = languageSettings.languageVersion,
+        apiVersion = languageSettings.apiVersion,
+        isProgressiveMode = languageSettings.progressiveMode,
+        enabledLanguageFeatures = languageSettings.enabledLanguageFeatures.toSet(),
+        optInAnnotationsInUse = languageSettings.optInAnnotationsInUse.toSet(),
+        compilerPluginArguments = (languageSettings as? DefaultLanguageSettingsBuilder)?.compilerPluginArguments?.toList().orEmpty(),
+        compilerPluginClasspath = (languageSettings as? DefaultLanguageSettingsBuilder)?.compilerPluginClasspath?.toList().orEmpty(),
+        freeCompilerArgs = (languageSettings as? DefaultLanguageSettingsBuilder)?.freeCompilerArgs?.toList().orEmpty()
     )
 }

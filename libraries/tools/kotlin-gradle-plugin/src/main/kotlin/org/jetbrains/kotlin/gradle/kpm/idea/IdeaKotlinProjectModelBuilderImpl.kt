@@ -71,7 +71,7 @@ internal class IdeaKotlinProjectModelBuilderImpl @UnsafeApi("Use factory methods
     }
 
     override fun buildIdeaKotlinProjectModel(): IdeaKotlinProjectModel {
-        return Context().toIdeaKotlinProjectModel(extension)
+        return Context().IdeaKotlinProjectModel(extension)
     }
 
     override fun canBuild(modelName: String): Boolean =

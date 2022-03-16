@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.konan.target.HostManager
 
 @Suppress("unused")
 /* Receiver acts as scope, or key to that function */
-internal fun IdeaKotlinProjectModelBuildingContext.buildIdeaKotlinPlatform(variant: KotlinGradleVariant): IdeaKotlinPlatform {
+internal fun IdeaKotlinProjectModelBuildingContext.IdeaKotlinPlatform(variant: KotlinGradleVariant): IdeaKotlinPlatform {
     when (variant) {
         is KotlinJvmVariant -> return IdeaKotlinPlatform.jvm(variant.compilationData.kotlinOptions.jvmTarget ?: JvmTarget.DEFAULT.name)
         is KotlinNativeVariantInternal -> return IdeaKotlinPlatform.native(variant.konanTarget.name)
