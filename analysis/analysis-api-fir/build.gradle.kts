@@ -33,6 +33,7 @@ dependencies {
     testApi(project(":analysis:decompiled:decompiler-to-file-stubs"))
     testApi(project(":analysis:decompiled:decompiler-to-psi"))
     testApi(project(":kotlin-test:kotlin-test-junit"))
+    testImplementation(projectTests(":analysis:analysis-test-framework"))
 
     testApi(toolsJar())
     testApiJUnit5()

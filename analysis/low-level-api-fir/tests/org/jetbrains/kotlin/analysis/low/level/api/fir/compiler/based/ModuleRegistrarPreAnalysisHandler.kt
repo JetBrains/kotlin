@@ -7,13 +7,13 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.compiler.based
 
 import com.intellij.mock.MockProject
 import com.intellij.openapi.Disposable
-import org.jetbrains.kotlin.analysis.api.impl.barebone.test.KotlinProjectStructureProviderTestImpl
-import org.jetbrains.kotlin.analysis.api.impl.barebone.test.TestKtSourceModule
-import org.jetbrains.kotlin.analysis.api.impl.barebone.test.getKtFilesFromModule
-import org.jetbrains.kotlin.analysis.api.impl.barebone.test.projectModuleProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFirFile
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getResolveState
 import org.jetbrains.kotlin.analysis.project.structure.ProjectStructureProvider
+import org.jetbrains.kotlin.analysis.test.framework.project.structure.KotlinProjectStructureProviderTestImpl
+import org.jetbrains.kotlin.analysis.test.framework.project.structure.TestKtSourceModule
+import org.jetbrains.kotlin.analysis.test.framework.project.structure.getKtFilesFromModule
+import org.jetbrains.kotlin.analysis.test.framework.project.structure.projectModuleProvider
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.resolve.ScopeSession

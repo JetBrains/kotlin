@@ -6,8 +6,8 @@
 package org.jetbrains.kotlin.analysis.api.impl.base.test.annotations
 
 import org.jetbrains.kotlin.analysis.api.annotations.KtAnnotationsList
-import org.jetbrains.kotlin.analysis.api.impl.base.test.indented
 import org.jetbrains.kotlin.analysis.api.symbols.DebugSymbolRenderer
+import org.jetbrains.kotlin.analysis.test.framework.utils.indented
 
 object TestAnnotationRenderer {
     fun renderAnnotations(annotations: KtAnnotationsList) = buildString {
