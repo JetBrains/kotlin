@@ -172,8 +172,8 @@ class IrToJs(
             it.accept(IrFileToJsTransformer(), staticContext).statements
         }
 
-        val preDeclarationBlock = JsGlobalBlock()
-        val postDeclarationBlock = JsGlobalBlock()
+        val preDeclarationBlock = JsCompositeBlock()
+        val postDeclarationBlock = JsCompositeBlock()
         processClassModels(staticContext.classModels, preDeclarationBlock, postDeclarationBlock)
 
         val statements = mutableListOf<JsStatement>()
@@ -421,7 +421,7 @@ private val IrModuleFragment.jsModuleName: String
     get() = name.asString().dropWhile { it == '<' }.dropLastWhile { it == '>' }
 
 private fun List<JsStatement>.toJsCodeString(): String =
-    JsGlobalBlock().also { it.statements += this }.toString()
+    JsCompositeBlock().also { it.statements += this }.toString()
 
 enum class JsGenerationGranularity {
     WHOLE_PROGRAM,

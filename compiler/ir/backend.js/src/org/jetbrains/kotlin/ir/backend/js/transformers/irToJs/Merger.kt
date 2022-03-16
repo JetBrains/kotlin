@@ -161,14 +161,14 @@ class Merger(
 
         val moduleBody = mutableListOf<JsStatement>()
 
-        val preDeclarationBlock = JsGlobalBlock()
-        val postDeclarationBlock = JsGlobalBlock()
-        val polyfillDeclarationBlock = JsGlobalBlock()
+        val preDeclarationBlock = JsCompositeBlock()
+        val postDeclarationBlock = JsCompositeBlock()
+        val polyfillDeclarationBlock = JsCompositeBlock()
 
         moduleBody.addWithComment("block: pre-declaration", preDeclarationBlock)
 
         val classModels = mutableMapOf<JsName, JsIrIcClassModel>()
-        val initializerBlock = JsGlobalBlock()
+        val initializerBlock = JsCompositeBlock()
 
         fragments.forEach {
             moduleBody += it.declarations.statements

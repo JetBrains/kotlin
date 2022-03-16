@@ -19,17 +19,12 @@ package org.jetbrains.kotlin.serialization.js.ast
 import org.jetbrains.kotlin.js.backend.ast.*
 import org.jetbrains.kotlin.js.backend.ast.JsImportedModule
 import org.jetbrains.kotlin.js.backend.ast.metadata.*
-import org.jetbrains.kotlin.js.backend.ast.metadata.LocalAlias
-import org.jetbrains.kotlin.js.backend.ast.metadata.SpecialFunction
 import org.jetbrains.kotlin.protobuf.CodedInputStream
 import org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.*
-import org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.Expression.ExpressionCase
-import org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.Statement.StatementCase
 import java.io.File
 import java.io.FileInputStream
 import java.io.InputStream
 import java.io.InputStreamReader
-import java.util.*
 
 class JsAstDeserializer(program: JsProgram, private val sourceRoots: Iterable<File>) : JsAstDeserializerBase() {
 
@@ -68,13 +63,13 @@ class JsAstDeserializer(program: JsProgram, private val sourceRoots: Iterable<Fi
         }
 
         if (proto.hasDeclarationBlock()) {
-            fragment.declarationBlock.statements += deserializeGlobalBlock(proto.declarationBlock).statements
+            fragment.declarationBlock.statements += deserializeCompositeBlock(proto.declarationBlock).statements
         }
         if (proto.hasInitializerBlock()) {
-            fragment.initializerBlock.statements += deserializeGlobalBlock(proto.initializerBlock).statements
+            fragment.initializerBlock.statements += deserializeCompositeBlock(proto.initializerBlock).statements
         }
         if (proto.hasExportBlock()) {
-            fragment.exportBlock.statements += deserializeGlobalBlock(proto.exportBlock).statements
+            fragment.exportBlock.statements += deserializeCompositeBlock(proto.exportBlock).statements
         }
 
         fragment.nameBindings += proto.nameBindingList.map { nameBindingProto ->
@@ -103,7 +98,7 @@ class JsAstDeserializer(program: JsProgram, private val sourceRoots: Iterable<Fi
         }
 
         proto.inlinedLocalDeclarationsList.forEach {
-            fragment.inlinedLocalDeclarations[deserializeString(it.tag)] = deserializeGlobalBlock(it.block)
+            fragment.inlinedLocalDeclarations[deserializeString(it.tag)] = deserializeCompositeBlock(it.block)
         }
 
         return fragment
@@ -114,7 +109,7 @@ class JsAstDeserializer(program: JsProgram, private val sourceRoots: Iterable<Fi
         return JsClassModel(deserializeName(proto.nameId), superName).apply {
             proto.interfaceNameIdList.mapTo(interfaces) { deserializeName(it) }
             if (proto.hasPostDeclarationBlock()) {
-                postDeclarationBlock.statements += deserializeGlobalBlock(proto.postDeclarationBlock).statements
+                postDeclarationBlock.statements += deserializeCompositeBlock(proto.postDeclarationBlock).statements
             }
         }
     }

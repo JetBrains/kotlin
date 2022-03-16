@@ -97,7 +97,7 @@ private fun mergeStdlibParts(outputFile: File, wrapperFile: File, baseDir: File,
 }
 
 private fun List<JsStatement>.createInsertionPlace(): JsBlock {
-    val block = JsGlobalBlock()
+    val block = JsCompositeBlock()
 
     val visitor = object : JsVisitorWithContextImpl() {
         override fun visit(x: JsExpressionStatement, ctx: JsContext<in JsStatement>): Boolean {

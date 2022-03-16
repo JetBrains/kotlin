@@ -1275,14 +1275,15 @@ public class JsToStringGenerationVisitor extends JsVisitor {
 
         sourceLocationConsumer.pushSourceInfo(null);
 
-        boolean needBraces = !x.isGlobalBlock() && !x.isVirtualBlock();
+        boolean needBraces = !x.isTransparent();
+
         if (needBraces) {
             blockOpen();
         }
 
         Iterator<JsStatement> iterator = x.getStatements().iterator();
         while (iterator.hasNext()) {
-            boolean isGlobal = x.isGlobalBlock() || globalBlocks.contains(x);
+            boolean isGlobal = x.isTransparent() || globalBlocks.contains(x);
 
             JsStatement statement = iterator.next();
             if (statement instanceof JsEmpty) {
