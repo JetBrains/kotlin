@@ -8,15 +8,14 @@ package org.jetbrains.kotlin.gradle.kpm.idea
 import org.jetbrains.kotlin.gradle.kpm.KotlinExternalModelContainer
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.*
 
-internal fun IdeaKotlinProjectModelBuildingContext.toIdeaKotlinFragment(fragment: KotlinGradleFragment): IdeaKotlinFragment {
+internal fun IdeaKotlinProjectModelBuildingContext.IdeaKotlinFragment(fragment: KotlinGradleFragment): IdeaKotlinFragment {
     return if (fragment is KotlinGradleVariant) buildIdeaKotlinVariant(fragment)
     else buildIdeaKotlinFragment(fragment)
 }
 
 private fun IdeaKotlinProjectModelBuildingContext.buildIdeaKotlinFragment(fragment: KotlinGradleFragment): IdeaKotlinFragment {
     return IdeaKotlinFragmentImpl(
-        name = fragment.name,
-        moduleIdentifier = fragment.containingModule.moduleIdentifier.toIdeaKotlinModuleIdentifier(),
+        coordinates = IdeaKotlinFragmentCoordinates(fragment),
         platforms = fragment.containingVariants.map { variant -> buildIdeaKotlinPlatform(variant) }.toSet(),
         languageSettings = fragment.languageSettings.toIdeaKotlinLanguageSettings(),
         dependencies = dependencyResolver.resolve(fragment).toList(),

@@ -63,10 +63,10 @@ class BackwardsCompatibilityDeserializationTest {
         run {
             val deserializedModelProxy = createProxyInstance<IdeaKotlinProjectModel>(deserializedModel)
 
-            val deserializedMainModuleProxy = deserializedModelProxy.modules.firstOrNull { it.moduleIdentifier.moduleClassifier == null }
+            val deserializedMainModuleProxy = deserializedModelProxy.modules.firstOrNull { it.coordinates.moduleClassifier == null }
                 ?: fail("Missing main module")
 
-            val deserializedTestModuleProxy = deserializedModelProxy.modules.firstOrNull { it.moduleIdentifier.moduleClassifier == "test" }
+            val deserializedTestModuleProxy = deserializedModelProxy.modules.firstOrNull { it.coordinates.moduleClassifier == "test" }
                 ?: fail("Missing test module")
 
             listOf(deserializedMainModuleProxy, deserializedTestModuleProxy).forEach { module ->
@@ -100,7 +100,7 @@ class BackwardsCompatibilityDeserializationTest {
         val deserializedModel = deserializeModelWithBackwardsCompatibleClasses(model)
         val deserializedModelProxy = createProxyInstance<IdeaKotlinProjectModel>(deserializedModel)
 
-        val deserializedMainModuleProxy = deserializedModelProxy.modules.find { it.moduleIdentifier.moduleClassifier == null }
+        val deserializedMainModuleProxy = deserializedModelProxy.modules.find { it.coordinates.moduleClassifier == null }
             ?: fail("Missing main module")
 
         val deserializedCommonFragmentProxy = deserializedMainModuleProxy.fragments.find { it.name == "common" }

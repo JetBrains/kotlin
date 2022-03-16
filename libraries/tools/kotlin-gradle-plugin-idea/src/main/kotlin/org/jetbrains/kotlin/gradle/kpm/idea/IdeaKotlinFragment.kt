@@ -9,8 +9,7 @@ import org.jetbrains.kotlin.gradle.kpm.KotlinExternalModelContainer
 import java.io.Serializable
 
 interface IdeaKotlinFragment : Serializable {
-    val name: String
-    val moduleIdentifier: IdeaKotlinModuleIdentifier
+    val coordinates: IdeaKotlinFragmentCoordinates
     val platforms: Set<IdeaKotlinPlatform>
     val languageSettings: IdeaKotlinLanguageSettings?
     val dependencies: List<IdeaKotlinDependency>
@@ -19,10 +18,11 @@ interface IdeaKotlinFragment : Serializable {
     val external: KotlinExternalModelContainer
 }
 
+val IdeaKotlinFragment.name get() = coordinates.fragmentName
+
 @InternalKotlinGradlePluginApi
 data class IdeaKotlinFragmentImpl(
-    override val name: String,
-    override val moduleIdentifier: IdeaKotlinModuleIdentifier,
+    override val coordinates: IdeaKotlinFragmentCoordinates,
     override val platforms: Set<IdeaKotlinPlatform>,
     override val languageSettings: IdeaKotlinLanguageSettings?,
     override val dependencies: List<IdeaKotlinDependency>,
@@ -36,3 +36,4 @@ data class IdeaKotlinFragmentImpl(
         private const val serialVersionUID = 0L
     }
 }
+

@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinGradleModule.Companion.
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.currentBuildId
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.toModuleDependency
 
-internal class IdeaKotlinSourceDependencyResolver(
+internal class IdeaKotlinGranularFragmentDependencyResolver(
     private val fragmentGranularMetadataResolverFactory: FragmentGranularMetadataResolverFactory
 ) : IdeaKotlinDependencyResolver {
     override fun resolve(fragment: KotlinGradleFragment): Set<IdeaKotlinDependency> {
@@ -27,19 +27,21 @@ internal class IdeaKotlinSourceDependencyResolver(
         val gradleProjectIdentifier = resolution.dependency.id as? ProjectComponentIdentifier ?: return emptyList()
         val kotlinModuleIdentifier = resolution.dependency.toModuleDependency().moduleIdentifier
         return resolution.allVisibleSourceSetNames.map { visibleFragmentName ->
-            IdeaKotlinSourceDependencyImpl(
+            IdeaKotlinFragmentDependencyImpl(
                 type = if (
                     gradleProjectIdentifier.build == fragment.project.currentBuildId() &&
                     gradleProjectIdentifier.projectPath == fragment.project.path
-                ) IdeaKotlinSourceDependency.Type.Friend
-                else IdeaKotlinSourceDependency.Type.Regular,
-                coordinates = IdeaKotlinSourceCoordinatesImpl(
-                    buildId = gradleProjectIdentifier.build.name,
-                    projectPath = gradleProjectIdentifier.projectPath,
-                    projectName = gradleProjectIdentifier.projectName,
-                    kotlinModuleName = kotlinModuleIdentifier.moduleName,
-                    kotlinModuleClassifier = kotlinModuleIdentifier.moduleClassifier,
-                    kotlinFragmentName = visibleFragmentName
+                ) IdeaKotlinFragmentDependency.Type.Friend
+                else IdeaKotlinFragmentDependency.Type.Regular,
+                coordinates = IdeaKotlinFragmentCoordinatesImpl(
+                    module = IdeaKotlinModuleCoordinatesImpl(
+                        buildId = gradleProjectIdentifier.build.name,
+                        projectPath = gradleProjectIdentifier.projectPath,
+                        projectName = gradleProjectIdentifier.projectName,
+                        moduleName = kotlinModuleIdentifier.moduleName,
+                        moduleClassifier = kotlinModuleIdentifier.moduleClassifier,
+                    ),
+                    fragmentName = visibleFragmentName
                 )
             )
         }

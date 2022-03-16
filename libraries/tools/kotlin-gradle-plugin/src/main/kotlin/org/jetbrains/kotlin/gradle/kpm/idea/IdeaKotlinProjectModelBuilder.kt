@@ -135,7 +135,7 @@ internal fun IdeaKotlinProjectModelBuildingContext.toIdeaKotlinProjectModel(exte
         coreLibrariesVersion = extension.coreLibrariesVersion,
         explicitApiModeCliOption = extension.explicitApi?.cliOption,
         kotlinNativeHome = File(extension.project.konanHome).absoluteFile,
-        modules = extension.modules.map { module -> toIdeaKotlinModule(module) }
+        modules = extension.modules.map { module -> IdeaKotlinModule(module) }
     )
 }
 

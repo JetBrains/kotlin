@@ -33,7 +33,7 @@ fun IdeaKotlinFragment.assertResolvedBinaryDependencies(
             when (dependency) {
                 is IdeaKotlinResolvedBinaryDependencyImpl -> dependency
                 is IdeaKotlinUnresolvedBinaryDependencyImpl -> fail("Unexpected unresolved dependency: $dependency")
-                is IdeaKotlinSourceDependencyImpl -> null
+                is IdeaKotlinFragmentDependencyImpl -> null
             }
         }
         .filter { it.binaryType == binaryType }
@@ -91,8 +91,8 @@ fun IdeaKotlinFragment.assertResolvedBinaryDependencies(
     binaryType: String, vararg matchers: Any?
 ) = assertResolvedBinaryDependencies(binaryType, matchers.toSet())
 
-fun IdeaKotlinFragment.assertSourceDependencies(matchers: Set<IdeaKotlinSourceDependencyMatcher>): Set<IdeaKotlinSourceDependency> {
-    val sourceDependencies = dependencies.filterIsInstance<IdeaKotlinSourceDependency>().toSet()
+fun IdeaKotlinFragment.assertFragmentDependencies(matchers: Set<IdeaKotlinFragmentDependencyMatcher>): Set<IdeaKotlinFragmentDependency> {
+    val sourceDependencies = dependencies.filterIsInstance<IdeaKotlinFragmentDependency>().toSet()
 
     val unexpectedDependencies = sourceDependencies
         .filter { dependency -> matchers.none { matcher -> matcher.matches(dependency) } }
@@ -105,13 +105,11 @@ fun IdeaKotlinFragment.assertSourceDependencies(matchers: Set<IdeaKotlinSourceDe
         return sourceDependencies
     }
 
-    val fragmentIdentifier = "${moduleIdentifier.moduleClassifier?.plus("/").orEmpty()}${name}"
-
     fail(
         buildString {
             if (unexpectedDependencies.isNotEmpty()) {
                 appendLine()
-                appendLine("${fragmentIdentifier}: Unexpected source dependency found:")
+                appendLine("${coordinates.path}: Unexpected source dependency found:")
                 unexpectedDependencies.forEach { unexpectedDependency ->
                     appendLine("\"${unexpectedDependency}\",")
                 }
@@ -119,14 +117,14 @@ fun IdeaKotlinFragment.assertSourceDependencies(matchers: Set<IdeaKotlinSourceDe
 
             if (missingDependencies.isNotEmpty()) {
                 appendLine()
-                appendLine("${fragmentIdentifier}: Missing fragment dependencies:")
+                appendLine("${coordinates.path}: Missing fragment dependencies:")
                 missingDependencies.forEach { missingDependency ->
                     appendLine(missingDependency.description)
                 }
             }
 
             appendLine()
-            appendLine("${fragmentIdentifier}: Resolved source dependency paths:")
+            appendLine("${coordinates.path}: Resolved source dependency paths:")
             sourceDependencies.forEach { dependency ->
                 appendLine("\"${dependency}\",")
             }
@@ -135,8 +133,8 @@ fun IdeaKotlinFragment.assertSourceDependencies(matchers: Set<IdeaKotlinSourceDe
 }
 
 @JvmName("assertSourceDependenciesByAnyMatcher")
-fun IdeaKotlinFragment.assertSourceDependencies(matchers: Set<Any?>): Set<IdeaKotlinSourceDependency> =
-    assertSourceDependencies(matchers.flatMap { buildIdeaKotlinSourceDependencyMatchers(it) }.toSet())
+fun IdeaKotlinFragment.assertFragmentDependencies(matchers: Set<Any?>): Set<IdeaKotlinFragmentDependency> =
+    assertFragmentDependencies(matchers.flatMap { buildIdeaKotlinFragmentDependencyMatchers(it) }.toSet())
 
-fun IdeaKotlinFragment.assertSourceDependencies(vararg matchers: Any?) =
-    assertSourceDependencies(matchers.toSet())
+fun IdeaKotlinFragment.assertFragmentDependencies(vararg matchers: Any?) =
+    assertFragmentDependencies(matchers.toSet())
