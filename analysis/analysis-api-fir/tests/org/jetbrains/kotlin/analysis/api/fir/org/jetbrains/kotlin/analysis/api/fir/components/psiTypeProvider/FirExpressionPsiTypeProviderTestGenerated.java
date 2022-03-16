@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.analysis.api.fir.org.jetbrains.kotlin.analysis.api.
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.util.KtTestUtil;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.analysis.api.impl.barebone.test.FrontendApiTestConfiguratorService;
+import org.jetbrains.kotlin.analysis.test.framework.FrontendApiTestConfiguratorService;
 import org.jetbrains.kotlin.analysis.api.fir.FirFrontendApiTestConfiguratorService;
 import org.jetbrains.kotlin.analysis.api.fir.components.psiTypeProvider.AbstractExpressionPsiTypeProviderTest;
 import org.jetbrains.kotlin.test.TestMetadata;

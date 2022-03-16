@@ -3,22 +3,20 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.analysis.api.impl.base.test.test.framework
+package org.jetbrains.kotlin.analysis.test.framework.base
 
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.util.Computable
 import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
 import org.jetbrains.kotlin.analysis.api.analyse
 import org.jetbrains.kotlin.analysis.api.analyseInDependedAnalysisSession
-import org.jetbrains.kotlin.analysis.api.impl.barebone.test.AbstractFrontendApiTest
-import org.jetbrains.kotlin.analysis.api.impl.barebone.test.FrontendApiTestConfiguratorService
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestModuleStructure
 import org.jetbrains.kotlin.test.services.TestServices
 
-abstract class AbstractHLApiSingleModuleTest : AbstractFrontendApiTest() {
+abstract class AbstractHLApiSingleModuleTest : AnalysisApiBasedTest() {
     final override fun doTestByFileStructure(ktFiles: List<KtFile>, moduleStructure: TestModuleStructure, testServices: TestServices) {
         val singleModule = moduleStructure.modules.single()
         doTestByFileStructure(ktFiles, singleModule, testServices)
@@ -37,7 +35,6 @@ abstract class AbstractHLApiSingleModuleTest : AbstractFrontendApiTest() {
 
     protected inline fun <R> executeOnPooledThreadInReadAction(crossinline action: () -> R): R =
         ApplicationManager.getApplication().executeOnPooledThread<R> { runReadAction(action) }.get()
-
 
     protected fun <R> analyseForTest(contextElement: KtElement, action: KtAnalysisSession.() -> R): R {
         return if (useDependedAnalysisSession) {

@@ -8,9 +8,9 @@ package org.jetbrains.kotlin.analysis.api.impl.base.test.components.symbolDeclar
 import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
 import org.jetbrains.kotlin.analysis.api.components.KtTypeRendererOptions
 import org.jetbrains.kotlin.analysis.api.impl.barebone.parentsOfType
-import org.jetbrains.kotlin.analysis.api.impl.barebone.test.FrontendApiTestConfiguratorService
-import org.jetbrains.kotlin.analysis.api.impl.barebone.test.expressionMarkerProvider
-import org.jetbrains.kotlin.analysis.api.impl.base.test.test.framework.AbstractHLApiSingleModuleTest
+import org.jetbrains.kotlin.analysis.test.framework.FrontendApiTestConfiguratorService
+import org.jetbrains.kotlin.analysis.test.framework.services.expressionMarkerProvider
+import org.jetbrains.kotlin.analysis.test.framework.base.AbstractHLApiSingleModuleTest
 import org.jetbrains.kotlin.analysis.api.symbols.KtCallableSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtFunctionSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtSyntheticJavaPropertySymbol

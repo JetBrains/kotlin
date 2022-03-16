@@ -5,14 +5,9 @@
 
 package org.jetbrains.kotlin.analysis.api.impl.base.test.annotations
 
-import org.jetbrains.kotlin.analysis.api.annotations.annotations
-import org.jetbrains.kotlin.analysis.api.impl.barebone.test.FrontendApiTestConfiguratorService
-import org.jetbrains.kotlin.analysis.api.impl.barebone.test.expressionMarkerProvider
-import org.jetbrains.kotlin.analysis.api.impl.base.test.annotations.TestAnnotationRenderer
-import org.jetbrains.kotlin.analysis.api.impl.base.test.indented
-import org.jetbrains.kotlin.analysis.api.impl.base.test.test.framework.AbstractHLApiSingleFileTest
-import org.jetbrains.kotlin.analysis.api.symbols.DebugSymbolRenderer
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KtAnnotatedSymbol
+import org.jetbrains.kotlin.analysis.test.framework.base.AbstractHLApiSingleFileTest
+import org.jetbrains.kotlin.analysis.test.framework.services.expressionMarkerProvider
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.model.TestModule
