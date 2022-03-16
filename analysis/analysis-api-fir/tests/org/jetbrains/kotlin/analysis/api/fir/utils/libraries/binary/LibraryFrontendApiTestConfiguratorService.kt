@@ -16,8 +16,7 @@ import com.intellij.psi.FileTypeFileViewProviders
 import com.intellij.psi.compiled.ClassFileDecompilers
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.analysis.api.fir.FirFrontendApiTestConfiguratorService
-import org.jetbrains.kotlin.analysis.api.impl.barebone.test.FrontendApiTestConfiguratorService
-import org.jetbrains.kotlin.analysis.api.impl.base.test.utils.libraries.LibraryEnvironmentConfigurator
+import org.jetbrains.kotlin.analysis.test.framework.FrontendApiTestConfiguratorService
 import org.jetbrains.kotlin.analysis.decompiler.psi.KotlinBuiltInDecompiler
 import org.jetbrains.kotlin.analysis.decompiler.psi.KotlinClassFileDecompiler
 import org.jetbrains.kotlin.analysis.decompiler.stub.file.ClsKotlinBinaryClassCache
@@ -25,6 +24,7 @@ import org.jetbrains.kotlin.analysis.decompiler.stub.file.FileAttributeService
 import org.jetbrains.kotlin.analysis.decompiler.stub.files.DummyFileAttributeService
 import org.jetbrains.kotlin.analysis.low.level.api.fir.compiler.based.registerTestServices
 import org.jetbrains.kotlin.analysis.project.structure.ProjectStructureProvider
+import org.jetbrains.kotlin.analysis.test.framework.services.libraries.LibraryEnvironmentConfigurator
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.load.kotlin.PackagePartProvider
 import org.jetbrains.kotlin.psi.KtFile

@@ -1,24 +1,26 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.analysis.api.impl.barebone.test
+package org.jetbrains.kotlin.analysis.test.framework.base
 
 import com.intellij.mock.MockApplication
 import com.intellij.mock.MockProject
-import com.intellij.openapi.Disposable
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.util.Disposer
-import com.intellij.openapi.vfs.impl.jar.CoreJarFileSystem
-import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.testFramework.TestDataFile
 import junit.framework.ComparisonFailure
-import org.jetbrains.kotlin.analysis.project.structure.ProjectStructureProvider
+import org.jetbrains.kotlin.analysis.test.framework.FrontendApiTestConfiguratorService
+import org.jetbrains.kotlin.analysis.test.framework.TestWithDisposable
+import org.jetbrains.kotlin.analysis.test.framework.project.structure.KotlinProjectStructureProviderTestImpl
+import org.jetbrains.kotlin.analysis.test.framework.project.structure.TestKtModuleProvider
+import org.jetbrains.kotlin.analysis.test.framework.services.ExpressionMarkerProvider
+import org.jetbrains.kotlin.analysis.test.framework.services.ExpressionMarkersSourceFilePreprocessor
+import org.jetbrains.kotlin.analysis.test.framework.utils.SkipTestException
+import org.jetbrains.kotlin.analysis.test.framework.project.structure.getKtFilesFromModule
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.cli.jvm.config.addJavaSourceRoots
-import org.jetbrains.kotlin.config.CompilerConfiguration
-import org.jetbrains.kotlin.load.kotlin.PackagePartProvider
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.ExecutionListenerBasedDisposableProvider
@@ -30,7 +32,6 @@ import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirective
 import org.jetbrains.kotlin.test.model.DependencyKind
 import org.jetbrains.kotlin.test.model.FrontendKinds
 import org.jetbrains.kotlin.test.model.ResultingArtifact
-import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.runners.AbstractKotlinCompilerTest
 import org.jetbrains.kotlin.test.services.*
 import org.jetbrains.kotlin.test.services.configuration.CommonEnvironmentConfigurator
@@ -45,38 +46,7 @@ import java.util.concurrent.ExecutionException
 import kotlin.io.path.exists
 import kotlin.io.path.nameWithoutExtension
 
-interface FrontendApiTestConfiguratorService {
-    val testPrefix: String?
-        get() = null
-
-    val allowDependedAnalysisSession: Boolean
-        get() = true
-
-    fun TestConfigurationBuilder.configureTest(disposable: Disposable)
-
-    fun processTestFiles(files: List<KtFile>): List<KtFile> = files
-
-    fun getOriginalFile(file: KtFile): KtFile = file
-
-    fun registerProjectServices(
-        project: MockProject,
-        compilerConfig: CompilerConfiguration,
-        files: List<KtFile>,
-        packagePartProvider: (GlobalSearchScope) -> PackagePartProvider,
-        projectStructureProvider: ProjectStructureProvider,
-        jarFileSystem: CoreJarFileSystem,
-    )
-
-    fun registerApplicationServices(application: MockApplication)
-
-    fun prepareTestFiles(files: List<KtFile>, module: TestModule, testServices: TestServices) {}
-
-    fun doOutOfBlockModification(file: KtFile)
-
-    fun preprocessTestDataPath(path: Path): Path = path
-}
-
-abstract class AbstractFrontendApiTest : TestWithDisposable() {
+abstract class AnalysisApiBasedTest : TestWithDisposable() {
     abstract val configurator: FrontendApiTestConfiguratorService
 
     protected open val enableTestInDependedMode: Boolean
@@ -157,7 +127,7 @@ abstract class AbstractFrontendApiTest : TestWithDisposable() {
         configureTest(this)
 
         startingArtifactFactory = { ResultingArtifact.Source() }
-        this.testInfo = this@AbstractFrontendApiTest.testInfo
+        this.testInfo = this@AnalysisApiBasedTest.testInfo
     }
 
     protected open fun handleInitializationError(exception: Throwable, moduleStructure: TestModuleStructure): InitializationErrorAction =
@@ -198,16 +168,14 @@ abstract class AbstractFrontendApiTest : TestWithDisposable() {
 
         val ktFiles = getKtFilesFromModule(testServices, singleModule)
         with(project as MockProject) {
-            val compilerConfigurationProvider = testServices.compilerConfigurationProvider
-            val compilerConfiguration = compilerConfigurationProvider.getCompilerConfiguration(singleModule)
+            val compilerConfiguration = testServices.compilerConfigurationProvider.getCompilerConfiguration(singleModule)
             compilerConfiguration.addJavaSourceRoots(ktFiles.map { File(it.virtualFilePath) })
             configurator.registerProjectServices(
                 this,
                 compilerConfiguration,
                 ktFiles,
-                compilerConfigurationProvider.getPackagePartProviderFactory(singleModule),
-                KotlinProjectStructureProviderTestImpl(testServices),
-                compilerConfigurationProvider.getJarFileSystem(singleModule)
+                testServices.compilerConfigurationProvider.getPackagePartProviderFactory(singleModule),
+                KotlinProjectStructureProviderTestImpl(testServices)
             )
         }
 
@@ -262,15 +230,5 @@ abstract class AbstractFrontendApiTest : TestWithDisposable() {
 
     companion object {
         val DISABLE_DEPENDED_MODE_DIRECTIVE = "DISABLE_DEPENDED_MODE"
-    }
-}
-
-fun getKtFilesFromModule(testServices: TestServices, testModule: TestModule): List<KtFile> {
-    val moduleInfoProvider = testServices.projectModuleProvider
-    return when (val moduleInfo = moduleInfoProvider.getModule(testModule.name)) {
-        is TestKtSourceModule -> moduleInfo.testFilesToKtFiles.filterKeys { testFile -> !testFile.isAdditional }.values.toList()
-        is TestKtLibraryModule -> moduleInfo.ktFiles.toList()
-        is TestKtLibrarySourceModule -> moduleInfo.ktFiles.toList()
-        else -> error("Unexpected $moduleInfo")
     }
 }

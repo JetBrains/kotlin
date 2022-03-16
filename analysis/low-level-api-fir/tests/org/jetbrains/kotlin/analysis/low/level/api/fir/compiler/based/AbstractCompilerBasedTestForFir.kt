@@ -5,14 +5,15 @@
 
 package org.jetbrains.kotlin.analysis.low.level.api.fir.compiler.based
 
-import org.jetbrains.kotlin.analysis.api.impl.barebone.test.AbstractCompilerBasedTest
-import org.jetbrains.kotlin.analysis.api.impl.barebone.test.TestKtModuleProvider
-import org.jetbrains.kotlin.analysis.api.impl.barebone.test.TestKtSourceModule
-import org.jetbrains.kotlin.analysis.api.impl.barebone.test.projectModuleProvider
+
+import org.jetbrains.kotlin.analysis.test.framework.AbstractCompilerBasedTest
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.DiagnosticCheckerFilter
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFirFile
 import org.jetbrains.kotlin.analysis.low.level.api.fir.createResolveStateForNoCaching
 import org.jetbrains.kotlin.analysis.low.level.api.fir.transformers.LLFirLazyTransformer
+import org.jetbrains.kotlin.analysis.test.framework.project.structure.TestKtModuleProvider
+import org.jetbrains.kotlin.analysis.test.framework.project.structure.TestKtSourceModule
+import org.jetbrains.kotlin.analysis.test.framework.project.structure.projectModuleProvider
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.kotlin.test.ExecutionListenerBasedDisposableProvider
 import org.jetbrains.kotlin.test.bind

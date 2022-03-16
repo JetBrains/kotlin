@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.analysis.api.standalone;
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.util.KtTestUtil;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.analysis.api.impl.barebone.test.FrontendApiTestConfiguratorService;
+import org.jetbrains.kotlin.analysis.test.framework.FrontendApiTestConfiguratorService;
 import org.jetbrains.kotlin.analysis.api.standalone.StandaloneModeConfiguratorService;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.jupiter.api.Nested;

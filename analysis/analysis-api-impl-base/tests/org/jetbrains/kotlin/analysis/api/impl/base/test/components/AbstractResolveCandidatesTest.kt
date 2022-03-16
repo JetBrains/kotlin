@@ -8,8 +8,8 @@ package org.jetbrains.kotlin.analysis.api.impl.base.test.components
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
 import org.jetbrains.kotlin.analysis.api.calls.KtCallCandidateInfo
-import org.jetbrains.kotlin.analysis.api.impl.barebone.test.expressionMarkerProvider
-import org.jetbrains.kotlin.analysis.api.impl.base.test.test.framework.AbstractHLApiSingleModuleTest
+import org.jetbrains.kotlin.analysis.test.framework.base.AbstractHLApiSingleModuleTest
+import org.jetbrains.kotlin.analysis.test.framework.services.expressionMarkerProvider
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestServices

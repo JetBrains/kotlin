@@ -7,8 +7,8 @@ package org.jetbrains.kotlin.analysis.api.fir.components.psiTypeProvider
 
 import org.jetbrains.kotlin.analysis.api.analyse
 import org.jetbrains.kotlin.analysis.api.fir.FirFrontendApiTestConfiguratorService
-import org.jetbrains.kotlin.analysis.api.impl.barebone.test.expressionMarkerProvider
-import org.jetbrains.kotlin.analysis.api.impl.base.test.test.framework.AbstractHLApiSingleFileTest
+import org.jetbrains.kotlin.analysis.test.framework.services.expressionMarkerProvider
+import org.jetbrains.kotlin.analysis.test.framework.base.AbstractHLApiSingleFileTest
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.model.TestModule
