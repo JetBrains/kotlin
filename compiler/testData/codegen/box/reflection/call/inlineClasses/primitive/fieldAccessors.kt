@@ -3,7 +3,6 @@
 
 import kotlin.reflect.jvm.isAccessible
 import kotlin.test.assertEquals
-import kotlin.test.assertFailsWith
 
 inline class S(val value: Int) {
     operator fun plus(other: S): S = S(this.value + other.value)
@@ -36,17 +35,13 @@ fun box(): String {
     assertEquals(one, c.nonNullBoundRef().call())
     assertEquals(one, c.nonNullBoundRef().getter.call())
 
-    assertFailsWith<IllegalArgumentException>("Remove assertFailsWith and try again, as this problem may have been fixed.") {
-        assertEquals(Unit, c.nullableUnboundRef().setter.call(c, zero))
-        assertEquals(zero, c.nullableUnboundRef().call(c))
-        assertEquals(zero, c.nullableUnboundRef().getter.call(c))
-    }
+    assertEquals(Unit, c.nullableUnboundRef().setter.call(c, zero))
+    assertEquals(zero, c.nullableUnboundRef().call(c))
+    assertEquals(zero, c.nullableUnboundRef().getter.call(c))
 
-    assertFailsWith<IllegalArgumentException>("Remove assertFailsWith and try again, as this problem may have been fixed.") {
-        assertEquals(Unit, c.nullableBoundRef().setter.call(one))
-        assertEquals(one, c.nullableBoundRef().call())
-        assertEquals(one, c.nullableBoundRef().getter.call())
-    }
+    assertEquals(Unit, c.nullableBoundRef().setter.call(one))
+    assertEquals(one, c.nullableBoundRef().call())
+    assertEquals(one, c.nullableBoundRef().getter.call())
 
     val nonNullTopLevel = ::nonNullTopLevel.apply { isAccessible = true }
     assertEquals(Unit, nonNullTopLevel.setter.call(two))
@@ -54,11 +49,9 @@ fun box(): String {
     assertEquals(two, nonNullTopLevel.getter.call())
 
     val nullableTopLevel = ::nullableTopLevel.apply { isAccessible = true }
-    assertFailsWith<IllegalArgumentException>("Remove assertFailsWith and try again, as this problem may have been fixed.") {
-        assertEquals(Unit, nullableTopLevel.setter.call(two))
-        assertEquals(two, nullableTopLevel.call())
-        assertEquals(two, nullableTopLevel.getter.call())
-    }
+    assertEquals(Unit, nullableTopLevel.setter.call(two))
+    assertEquals(two, nullableTopLevel.call())
+    assertEquals(two, nullableTopLevel.getter.call())
 
     return "OK"
 }

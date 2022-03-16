@@ -2,7 +2,6 @@
 // WITH_REFLECT
 
 import kotlin.test.assertEquals
-import kotlin.test.assertFailsWith
 
 inline class Z(val x: Int)
 
@@ -32,28 +31,20 @@ fun box(): String {
     val z3 = Z(3)
     val z4 = Z(4)
 
-    assertFailsWith<IllegalArgumentException>("Remove assertFailsWith and try again, as this problem may have been fixed.") {
-        val outer = ::Outer.call(z1, z2)
-        assertEquals(z1, outer.z1)
-        assertEquals(z2, outer.z2)
+    val outer = ::Outer.call(z1, z2)
+    assertEquals(z1, outer.z1)
+    assertEquals(z2, outer.z2)
 
-        assertFailsWith<IllegalArgumentException>("Remove assertFailsWith and try again, as this problem may have been fixed.") {
-            assertEquals("Z(x=1) Z(x=2) Z(x=3) Z(x=4)", Outer::Inner.call(outer, z3, z4).test)
-            assertEquals("Z(x=1) Z(x=2) Z(x=2) Z(x=4)", outer::Inner.call(z2, z4).test)
-        }
-    }
+    assertEquals("Z(x=1) Z(x=2) Z(x=3) Z(x=4)", Outer::Inner.call(outer, z3, z4).test)
+    assertEquals("Z(x=1) Z(x=2) Z(x=2) Z(x=4)", outer::Inner.call(z2, z4).test)
 
     val inlineNonNullOuter = InlineNonNullOuter(z1)
-    assertFailsWith<IllegalArgumentException>("Remove assertFailsWith and try again, as this problem may have been fixed.") {
-        assertEquals("Z(x=1) Z(x=2) Z(x=3)", InlineNonNullOuter::Inner.call(inlineNonNullOuter, z2, z3).test)
-        assertEquals("Z(x=1) Z(x=2) Z(x=2)", inlineNonNullOuter::Inner.call(z2, z2).test)
-    }
+    assertEquals("Z(x=1) Z(x=2) Z(x=3)", InlineNonNullOuter::Inner.call(inlineNonNullOuter, z2, z3).test)
+    assertEquals("Z(x=1) Z(x=2) Z(x=2)", inlineNonNullOuter::Inner.call(z2, z2).test)
 
     val inlineNullableOuter = InlineNullableOuter(z1)
-    assertFailsWith<IllegalArgumentException>("Remove assertFailsWith and try again, as this problem may have been fixed.") {
-        assertEquals("Z(x=1) Z(x=2) Z(x=3)", InlineNullableOuter::Inner.call(inlineNullableOuter, z2, z3).test)
-        assertEquals("Z(x=1) Z(x=2) Z(x=2)", inlineNullableOuter::Inner.call(z2, z2).test)
-    }
+    assertEquals("Z(x=1) Z(x=2) Z(x=3)", InlineNullableOuter::Inner.call(inlineNullableOuter, z2, z3).test)
+    assertEquals("Z(x=1) Z(x=2) Z(x=2)", inlineNullableOuter::Inner.call(z2, z2).test)
 
     return "OK"
 }

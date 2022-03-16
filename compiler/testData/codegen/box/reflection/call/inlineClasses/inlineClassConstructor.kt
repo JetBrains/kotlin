@@ -4,7 +4,6 @@
 
 import kotlin.reflect.KCallable
 import kotlin.test.assertEquals
-import kotlin.test.assertFailsWith
 
 inline class Z(val x: Int) {
     constructor(a: Int, b: Int) : this(a + b)
@@ -53,9 +52,7 @@ fun box(): String {
     assertEquals(A("abc"), (ctorA2 as KCallable<A>).call("a", "bc"))
 
     assertEquals(Z2(Z(42)), ::Z2.call(Z(42)))
-    assertFailsWith<IllegalArgumentException>("Remove assertFailsWith and try again, as this problem may have been fixed.") {
-        assertEquals(Z3(Z(42)), ::Z3.call(Z(42)))
-    }
+    assertEquals(Z3(Z(42)), ::Z3.call(Z(42)))
 
     return "OK"
 }

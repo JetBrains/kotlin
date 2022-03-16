@@ -5,7 +5,6 @@
 import kotlin.reflect.KMutableProperty1
 import kotlin.reflect.jvm.isAccessible
 import kotlin.test.assertEquals
-import kotlin.test.assertFailsWith
 
 inline class S(val value: String?) {
     operator fun plus(other: S): S = S(this.value!! + other.value!!)
@@ -31,11 +30,9 @@ fun box(): String {
 
     val nullableUnboundRef = C::class.members.single { it.name == "p2" } as KMutableProperty1<C, S?>
     nullableUnboundRef.isAccessible = true
-    assertFailsWith<IllegalArgumentException>("Remove assertFailsWith and try again, as this problem may have been fixed.") {
-        assertEquals(Unit, nullableUnboundRef.setter.call(C, S("ab")))
-        assertEquals(S("ab"), nullableUnboundRef.call(C))
-        assertEquals(S("ab"), nullableUnboundRef.getter.call(C))
-    }
+    assertEquals(Unit, nullableUnboundRef.setter.call(C, S("ab")))
+    assertEquals(S("ab"), nullableUnboundRef.call(C))
+    assertEquals(S("ab"), nullableUnboundRef.getter.call(C))
 
     val nonNullBoundRef = C.nonNullBoundRef()
     assertEquals(Unit, nonNullBoundRef.setter.call(S("cd")))
@@ -43,11 +40,9 @@ fun box(): String {
     assertEquals(S("cd"), nonNullBoundRef.getter.call())
 
     val nullableBoundRef = C.nullableBoundRef()
-    assertFailsWith<IllegalArgumentException>("Remove assertFailsWith and try again, as this problem may have been fixed.") {
-        assertEquals(Unit, nullableBoundRef.setter.call(S("cd")))
-        assertEquals(S("cd"), nullableBoundRef.call())
-        assertEquals(S("cd"), nullableBoundRef.getter.call())
-    }
+    assertEquals(Unit, nullableBoundRef.setter.call(S("cd")))
+    assertEquals(S("cd"), nullableBoundRef.call())
+    assertEquals(S("cd"), nullableBoundRef.getter.call())
 
     return "OK"
 }

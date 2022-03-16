@@ -5,7 +5,6 @@
 import kotlin.coroutines.startCoroutine
 import kotlin.reflect.full.callSuspend
 import kotlin.test.assertEquals
-import kotlin.test.assertFailsWith
 import helpers.*
 
 inline class S(val value: String?)
@@ -37,34 +36,26 @@ fun box(): String {
         C::nonNullProduce.callSuspend(c).value!!
     }.let { assertEquals("nonNull", it) }
 
-    assertFailsWith<IllegalArgumentException>("Remove assertFailsWith and try again, as this problem may have been fixed.") {
-        run0 {
-            C::nullableConsume.callSuspend(c, S("nullable"))
-            C::nullableProduce.callSuspend(c)!!.value!!
-        }.let { assertEquals("nullable", it) }
-    }
+    run0 {
+        C::nullableConsume.callSuspend(c, S("nullable"))
+        C::nullableProduce.callSuspend(c)!!.value!!
+    }.let { assertEquals("nullable", it) }
 
     run0 {
         C::nonNull_nonNullConsumeAndProduce.callSuspend(c, S("nonNull_nonNull")).value!!
     }.let { assertEquals("nonNull_nonNull", it) }
 
-    assertFailsWith<IllegalArgumentException>("Remove assertFailsWith and try again, as this problem may have been fixed.") {
-        run0 {
-            C::nonNull_nullableConsumeAndProduce.callSuspend(c, S("nonNull_nullable"))!!.value!!
-        }.let { assertEquals("nonNull_nullable", it) }
-    }
+    run0 {
+        C::nonNull_nullableConsumeAndProduce.callSuspend(c, S("nonNull_nullable"))!!.value!!
+    }.let { assertEquals("nonNull_nullable", it) }
 
-    assertFailsWith<IllegalArgumentException>("Remove assertFailsWith and try again, as this problem may have been fixed.") {
-        run0 {
-            C::nullable_nonNullConsumeAndProduce.callSuspend(c, S("nullable_nonNull")).value!!
-        }.let { assertEquals("nullable_nonNull", it) }
-    }
+    run0 {
+        C::nullable_nonNullConsumeAndProduce.callSuspend(c, S("nullable_nonNull")).value!!
+    }.let { assertEquals("nullable_nonNull", it) }
 
-    assertFailsWith<IllegalArgumentException>("Remove assertFailsWith and try again, as this problem may have been fixed.") {
-        run0 {
-            C::nullable_nullableConsumeAndProduce.callSuspend(c, S("nullable_nullable"))!!.value!!
-        }.let { assertEquals("nullable_nullable", it) }
-    }
+    run0 {
+        C::nullable_nullableConsumeAndProduce.callSuspend(c, S("nullable_nullable"))!!.value!!
+    }.let { assertEquals("nullable_nullable", it) }
 
     return "OK"
 }

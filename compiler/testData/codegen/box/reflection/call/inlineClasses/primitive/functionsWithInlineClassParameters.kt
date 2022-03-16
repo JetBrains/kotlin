@@ -29,32 +29,16 @@ fun box(): String {
     val four = S(4)
     val seven = S(7)
 
-    assertFailsWith<IllegalArgumentException>("Remove assertFailsWith and try again, as this problem may have been fixed.") {
-        assertEquals(seven, C::member.call(C(), one, 2, four))
-    }
-    assertFailsWith<IllegalArgumentException>("Remove assertFailsWith and try again, as this problem may have been fixed.") {
-        assertEquals(seven, ::topLevel.call(1, two, four))
-    }
-    assertFailsWith<IllegalArgumentException>("Remove assertFailsWith and try again, as this problem may have been fixed.") {
-        assertEquals(seven, S::extension1.call(one, two, four))
-    }
-    assertFailsWith<IllegalArgumentException>("Remove assertFailsWith and try again, as this problem may have been fixed.") {
-        assertEquals(seven, S::extension2.call(one, two, four))
-    }
+    assertEquals(seven, C::member.call(C(), one, 2, four))
+    assertEquals(seven, ::topLevel.call(1, two, four))
+    assertEquals(seven, S::extension1.call(one, two, four))
+    assertEquals(seven, S::extension2.call(one, two, four))
     assertEquals(0, S::extension3.call(zero))
-    assertFailsWith<IllegalArgumentException>("Remove assertFailsWith and try again, as this problem may have been fixed.") {
-        assertEquals(0, S?::extension4.call(zero))
-    }
+    assertEquals(0, S?::extension4.call(zero))
 
-    assertFailsWith<IllegalArgumentException>("Remove assertFailsWith and try again, as this problem may have been fixed.") {
-        assertEquals(seven, C()::member.call(one, 2, four))
-    }
-    assertFailsWith<IllegalArgumentException>("Remove assertFailsWith and try again, as this problem may have been fixed.") {
-        assertEquals(seven, one::extension1.call(two, four))
-    }
-    assertFailsWith<IllegalArgumentException>("Remove assertFailsWith and try again, as this problem may have been fixed.") {
-        assertEquals(seven, one::extension2.call(two, four))
-    }
+    assertEquals(seven, C()::member.call(one, 2, four))
+    assertEquals(seven, one::extension1.call(two, four))
+    assertEquals(seven, one::extension2.call(two, four))
     assertEquals(0, zero::extension3.call())
     assertFailsWith<IllegalArgumentException>("Remove assertFailsWith and try again, as this problem may have been fixed.") {
         assertEquals(0, zero::extension4.call(zero))
