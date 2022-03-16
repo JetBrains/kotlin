@@ -9,7 +9,7 @@ import com.google.gwt.dev.js.rhino.CodePosition
 import com.google.gwt.dev.js.rhino.ErrorReporter
 import org.jetbrains.kotlin.js.backend.JsToStringGenerationVisitor
 import org.jetbrains.kotlin.js.backend.ast.JsBlock
-import org.jetbrains.kotlin.js.backend.ast.JsGlobalBlock
+import org.jetbrains.kotlin.js.backend.ast.JsCompositeBlock
 import org.jetbrains.kotlin.js.backend.ast.JsNode
 import org.jetbrains.kotlin.js.backend.ast.JsProgram
 import org.jetbrains.kotlin.js.dce.Context.Node
@@ -78,7 +78,7 @@ class DeadCodeElimination(
 
             var hasErrors = false
             val blocks = inputFiles.map { file ->
-                val block = JsGlobalBlock()
+                val block = JsCompositeBlock()
                 val code = file.resource.reader().let { InputStreamReader(it, "UTF-8") }.use { it.readText() }
                 val statements = parse(code, Reporter(file.resource.name, logConsumer), program.scope, file.resource.name) ?: run {
                     hasErrors = true

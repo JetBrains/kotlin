@@ -7,15 +7,15 @@ import org.jetbrains.kotlin.js.util.AstUtil;
 
 
 /**
- * Represents a JavaScript block in the global scope.
+ * Represents a JavaScript block which could not be rendered into a material one.
  */
-class JsVirtualBlock(statements: List<JsStatement> = emptyList()) : JsBlock(statements) {
-    override fun isVirtualBlock(): Boolean {
+class JsCompositeBlock(statements: List<JsStatement> = mutableListOf()) : JsBlock(statements) {
+    override fun isTransparent(): Boolean {
         return true
     }
 
-    override fun deepCopy(): JsVirtualBlock  {
-        val globalBlockCopy = JsVirtualBlock()
+    override fun deepCopy(): JsCompositeBlock {
+        val globalBlockCopy = JsCompositeBlock()
         val statementscopy = AstUtil.deepCopy(statements);
         globalBlockCopy.statements.addAll(statementscopy);
         return globalBlockCopy.withMetadataFrom(this);

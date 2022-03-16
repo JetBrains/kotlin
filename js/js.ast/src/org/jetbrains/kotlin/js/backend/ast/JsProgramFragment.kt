@@ -9,13 +9,13 @@ import java.util.*
 class JsProgramFragment(val scope: JsScope, val packageFqn: String) {
     val importedModules = mutableListOf<JsImportedModule>()
     val imports: MutableMap<String, JsExpression> = LinkedHashMap()
-    val declarationBlock = JsGlobalBlock()
-    val exportBlock = JsGlobalBlock()
-    val initializerBlock = JsGlobalBlock()
+    val declarationBlock = JsCompositeBlock()
+    val exportBlock = JsCompositeBlock()
+    val initializerBlock = JsCompositeBlock()
     val nameBindings = mutableListOf<JsNameBinding>()
     val classes: MutableMap<JsName, JsClassModel> = LinkedHashMap()
     val inlineModuleMap: MutableMap<String, JsExpression> = LinkedHashMap()
     var tests: JsStatement? = null
     var mainFunction: JsStatement? = null
-    val inlinedLocalDeclarations = mutableMapOf<String, JsGlobalBlock>()
+    val inlinedLocalDeclarations = mutableMapOf<String, JsCompositeBlock>()
 }

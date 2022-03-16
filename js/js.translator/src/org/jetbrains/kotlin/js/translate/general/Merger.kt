@@ -43,12 +43,12 @@ class Merger(
     private val nameTable = mutableMapOf<String, JsName>()
 
     private val importedModuleTable = mutableMapOf<JsImportedModuleKey, JsName>()
-    private val importBlock = JsGlobalBlock()
-    private val declarationBlock = JsGlobalBlock()
-    private val initializerBlock = JsGlobalBlock()
+    private val importBlock = JsCompositeBlock()
+    private val declarationBlock = JsCompositeBlock()
+    private val initializerBlock = JsCompositeBlock()
     private val testsMap = mutableMapOf<String, JsStatement>()
     private var mainFn: Pair<String, JsStatement>? = null
-    private val exportBlock = JsGlobalBlock()
+    private val exportBlock = JsCompositeBlock()
     private val declaredImports = mutableSetOf<String>()
     private val classes = mutableMapOf<JsName, JsClassModel>()
     private val importedModulesImpl = mutableListOf<JsImportedModule>()

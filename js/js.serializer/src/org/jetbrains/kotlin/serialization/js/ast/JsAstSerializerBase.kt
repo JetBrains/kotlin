@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.serialization.js.ast
 
 import org.jetbrains.kotlin.js.backend.ast.*
 import org.jetbrains.kotlin.js.backend.ast.metadata.*
-import java.io.File
 import java.util.*
 
 abstract class JsAstSerializerBase {
@@ -68,14 +67,7 @@ abstract class JsAstSerializerBase {
 
             override fun visitBlock(x: JsBlock) {
                 when (x) {
-                    is JsGlobalBlock -> { builder.globalBlock = serializeBlock(x) }
-                    is JsVirtualBlock -> {
-                        val virtualBlockBuilder = JsAstProtoBuf.VirtualBlock.newBuilder()
-                        for (part in x.statements) {
-                            virtualBlockBuilder.addStatement(serialize(part))
-                        }
-                        builder.virtualBlock = virtualBlockBuilder.build()
-                    }
+                    is JsCompositeBlock -> { builder.compositeBlock = serializeBlock(x) }
                     else -> {
                         val blockBuilder = JsAstProtoBuf.Block.newBuilder()
                         for (part in x.statements) {
@@ -384,8 +376,8 @@ abstract class JsAstSerializerBase {
         return parameterBuilder.build()
     }
 
-    protected fun serializeBlock(block: JsGlobalBlock): JsAstProtoBuf.GlobalBlock {
-        val blockBuilder = JsAstProtoBuf.GlobalBlock.newBuilder()
+    protected fun serializeBlock(block: JsCompositeBlock): JsAstProtoBuf.CompositeBlock {
+        val blockBuilder = JsAstProtoBuf.CompositeBlock.newBuilder()
         for (part in block.statements) {
             blockBuilder.addStatement(serialize(part))
         }

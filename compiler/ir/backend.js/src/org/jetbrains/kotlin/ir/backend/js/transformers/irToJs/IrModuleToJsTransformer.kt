@@ -293,8 +293,8 @@ class IrModuleToJsTransformer(
     private fun generateModuleBody(modules: Iterable<IrModuleFragment>, staticContext: JsStaticContext): List<JsStatement> {
         val statements = mutableListOf<JsStatement>()
 
-        val preDeclarationBlock = JsGlobalBlock()
-        val postDeclarationBlock = JsGlobalBlock()
+        val preDeclarationBlock = JsCompositeBlock()
+        val postDeclarationBlock = JsCompositeBlock()
 
         statements.addWithComment("block: pre-declaration", preDeclarationBlock)
 

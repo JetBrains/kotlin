@@ -10,18 +10,18 @@ import org.jetbrains.kotlin.js.backend.ast.*
 
 class JsIrProgramFragment(val packageFqn: String) {
     val nameBindings = mutableMapOf<String, JsName>()
-    val declarations = JsGlobalBlock()
-    val exports = JsGlobalBlock()
+    val declarations = JsCompositeBlock()
+    val exports = JsCompositeBlock()
     val importedModules = mutableListOf<JsImportedModule>()
     val imports = mutableMapOf<String, JsExpression>()
     var dts: String? = null
     val classes = mutableMapOf<JsName, JsIrIcClassModel>()
-    val initializers = JsGlobalBlock()
+    val initializers = JsCompositeBlock()
     var mainFunction: JsStatement? = null
     var testFunInvocation: JsStatement? = null
     var suiteFn: JsName? = null
     val definitions = mutableSetOf<String>()
-    val polyfills = JsGlobalBlock()
+    val polyfills = JsCompositeBlock()
 }
 
 class JsIrModule(

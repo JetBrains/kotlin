@@ -51,16 +51,16 @@ class JsIrAstDeserializer : JsAstDeserializerBase() {
         }
 
         if (proto.hasDeclarationBlock()) {
-            fragment.declarations.statements += deserializeGlobalBlock(proto.declarationBlock).statements
+            fragment.declarations.statements += deserializeCompositeBlock(proto.declarationBlock).statements
         }
         if (proto.hasInitializerBlock()) {
-            fragment.initializers.statements += deserializeGlobalBlock(proto.initializerBlock).statements
+            fragment.initializers.statements += deserializeCompositeBlock(proto.initializerBlock).statements
         }
         if (proto.hasExportBlock()) {
-            fragment.exports.statements += deserializeGlobalBlock(proto.exportBlock).statements
+            fragment.exports.statements += deserializeCompositeBlock(proto.exportBlock).statements
         }
         if (proto.hasPolyfills()) {
-            fragment.polyfills.statements += deserializeGlobalBlock(proto.polyfills).statements
+            fragment.polyfills.statements += deserializeCompositeBlock(proto.polyfills).statements
         }
 
         proto.nameBindingList.associateTo(fragment.nameBindings) { nameBindingProto ->
@@ -90,10 +90,10 @@ class JsIrAstDeserializer : JsAstDeserializerBase() {
     private fun deserialize(proto: IrClassModel): Pair<JsName, JsIrIcClassModel> {
         return deserializeName(proto.nameId) to JsIrIcClassModel(proto.superClassesList.map { deserializeName(it) }).apply {
             if (proto.hasPreDeclarationBlock()) {
-                preDeclarationBlock.statements += deserializeGlobalBlock(proto.preDeclarationBlock).statements
+                preDeclarationBlock.statements += deserializeCompositeBlock(proto.preDeclarationBlock).statements
             }
             if (proto.hasPostDeclarationBlock()) {
-                postDeclarationBlock.statements += deserializeGlobalBlock(proto.postDeclarationBlock).statements
+                postDeclarationBlock.statements += deserializeCompositeBlock(proto.postDeclarationBlock).statements
             }
         }
     }

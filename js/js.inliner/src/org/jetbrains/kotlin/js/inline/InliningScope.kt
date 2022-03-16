@@ -177,7 +177,7 @@ class ImportIntoFragmentInliningScope private constructor(
 
     override fun addInlinedDeclaration(tag: String?, declaration: JsStatement) {
         if (tag != null) {
-            fragment.inlinedLocalDeclarations.computeIfAbsent(tag) { JsGlobalBlock() }.statements.add(declaration)
+            fragment.inlinedLocalDeclarations.computeIfAbsent(tag) { JsCompositeBlock() }.statements.add(declaration)
         } else {
             additionalDeclarations.add(declaration)
         }
