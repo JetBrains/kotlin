@@ -116,9 +116,9 @@ fun KaptContext.doAnnotationProcessing(
             logger.info("Annotation processing complete, errors: $errorCount, warnings: $warningCount")
         }
 
-        val showProcessorTimings = options[KaptFlag.SHOW_PROCESSOR_STATS]
-        if (logger.isVerbose || showProcessorTimings) {
-            val loggerFun = if (showProcessorTimings) logger::warn else logger::info
+        val showProcessorStats = options[KaptFlag.SHOW_PROCESSOR_STATS]
+        if (logger.isVerbose || showProcessorStats) {
+            val loggerFun = if (showProcessorStats) logger::warn else logger::info
             showProcessorStats(wrappedProcessors, loggerFun)
         }
 
@@ -141,6 +141,10 @@ private fun showProcessorStats(wrappedProcessors: List<ProcessorWrapper>, logger
     logger("Annotation processor stats:")
     wrappedProcessors.forEach { processor ->
         logger(processor.renderSpentTime())
+    }
+    logger("Generated files report:")
+    wrappedProcessors.forEach { processor ->
+        logger(processor.renderGenerations())
     }
 }
 
