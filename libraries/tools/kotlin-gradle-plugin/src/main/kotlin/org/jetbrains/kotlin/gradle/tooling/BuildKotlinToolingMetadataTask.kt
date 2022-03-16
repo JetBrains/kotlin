@@ -8,7 +8,9 @@ package org.jetbrains.kotlin.gradle.tooling
 import com.android.build.gradle.BaseExtension
 import org.gradle.api.DefaultTask
 import org.gradle.api.Project
+import org.gradle.api.Task
 import org.gradle.api.internal.GeneratedSubclass
+import org.gradle.api.provider.Property
 import org.gradle.api.tasks.*
 import org.jetbrains.kotlin.compilerRunner.konanVersion
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
@@ -16,6 +18,7 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinProjectExtension
 import org.jetbrains.kotlin.gradle.dsl.KotlinSingleTargetExtension
 import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
 import org.jetbrains.kotlin.gradle.plugin.*
+import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinAndroidTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.*
@@ -24,28 +27,91 @@ import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsSubTargetContainerDsl
 import org.jetbrains.kotlin.gradle.targets.jvm.KotlinJvmTarget
 import org.jetbrains.kotlin.gradle.targets.metadata.isCompatibilityMetadataVariantEnabled
 import org.jetbrains.kotlin.gradle.targets.metadata.isKotlinGranularMetadataEnabled
-import org.jetbrains.kotlin.gradle.tasks.locateTask
-import org.jetbrains.kotlin.gradle.tasks.registerTask
+import org.jetbrains.kotlin.gradle.tasks.dependsOn
+import org.jetbrains.kotlin.gradle.tasks.locateOrRegisterTask
+import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 import org.jetbrains.kotlin.library.KotlinAbiVersion
 import org.jetbrains.kotlin.tooling.KotlinToolingMetadata
 import org.jetbrains.kotlin.tooling.toJsonString
 import java.io.File
 
 /**
+ * Register
+ */
+internal fun Project.registerBuildKotlinToolingMetadataTask() {
+    if (!project.kotlinPropertiesProvider.enableKotlinToolingMetadataArtifact) return
+
+    if (hasKpmModel) {
+        buildKotlinToolingMetadataForAllKpmModulesTask
+    } else {
+        buildKotlinToolingMetadataTask
+    }
+}
+
+internal val Project.buildKotlinToolingMetadataForMainKpmModuleTask: TaskProvider<BuildKotlinToolingMetadataTask.FromKpmModule>?
+    get() {
+        require(hasKpmModel)
+        val mainModule = kpmModules.getByName(KotlinGradleModule.MAIN_MODULE_NAME)
+        return mainModule.buildKotlinToolingMetadataTask
+    }
+
+private val Project.buildKotlinToolingMetadataForAllKpmModulesTask
+    get() = locateOrRegisterTask<Task>(BuildKotlinToolingMetadataTask.defaultTaskName) { task ->
+        task.group = "build"
+        task.description = "Build metadata json file containing information about the used Kotlin tooling"
+    }
+
+/**
  * The default task managed by the Kotlin Gradle plugin or `null` if the task is disabled.
  * @see [PropertiesProvider.enableKotlinToolingMetadataArtifact]
  */
-internal val Project.buildKotlinToolingMetadataTask: TaskProvider<BuildKotlinToolingMetadataTask>?
+internal val Project.buildKotlinToolingMetadataTask: TaskProvider<BuildKotlinToolingMetadataTask.FromKotlinExtension>?
     get() {
-        if (!PropertiesProvider(this).enableKotlinToolingMetadataArtifact) return null
-        locateTask<BuildKotlinToolingMetadataTask>(BuildKotlinToolingMetadataTask.defaultTaskName)?.let { return it }
-        return registerTask(BuildKotlinToolingMetadataTask.defaultTaskName) { task ->
+        if (!kotlinPropertiesProvider.enableKotlinToolingMetadataArtifact) return null
+        val taskName = BuildKotlinToolingMetadataTask.defaultTaskName
+        return locateOrRegisterTask(taskName) { task ->
             task.group = "build"
             task.description = "Build metadata json file containing information about the used Kotlin tooling"
         }
     }
 
+internal val KotlinGradleModule.buildKotlinToolingMetadataTask: TaskProvider<BuildKotlinToolingMetadataTask.FromKpmModule>?
+    get() {
+        if (!project.kotlinPropertiesProvider.enableKotlinToolingMetadataArtifact) return null
+        val taskName = BuildKotlinToolingMetadataTask.taskNameForKotlinModule(name)
+
+        return project.locateOrRegisterTask<BuildKotlinToolingMetadataTask.FromKpmModule>(taskName) { task ->
+            task.module.set(this)
+
+            task.group = "build"
+            task.description = "Build metadata json file containing information about the used Kotlin tooling in module $name"
+        }.also { task ->
+            project.buildKotlinToolingMetadataForAllKpmModulesTask.dependsOn(task)
+        }
+    }
+
+
+
 abstract class BuildKotlinToolingMetadataTask : DefaultTask() {
+
+    abstract class FromKpmModule : BuildKotlinToolingMetadataTask() {
+
+        @get:Internal
+        abstract val module: Property<KotlinGradleModule>
+
+        override val outputDirectory: File
+            get() = project.buildDir.resolve("kotlinToolingMetadata").resolve(module.get().name)
+
+        override fun buildKotlinToolingMetadata() = module.get().getKotlinToolingMetadata()
+    }
+
+    abstract class FromKotlinExtension : BuildKotlinToolingMetadataTask() {
+
+        override val outputDirectory: File
+            get() = project.buildDir.resolve("kotlinToolingMetadata")
+
+        override fun buildKotlinToolingMetadata() = project.kotlinExtension.getKotlinToolingMetadata()
+    }
 
     companion object {
         /**
@@ -54,26 +120,27 @@ abstract class BuildKotlinToolingMetadataTask : DefaultTask() {
          * @see PropertiesProvider.enableKotlinToolingMetadataArtifact
          */
         const val defaultTaskName: String = "buildKotlinToolingMetadata"
+
+        /**
+         * The name of the default [FromKpmModule] task of the given [KotlinGradleModule]'s name
+         */
+        fun taskNameForKotlinModule(moduleName: String): String = lowerCamelCaseName(defaultTaskName, moduleName)
     }
 
     @get:OutputDirectory
-    val outputDirectory: File = project.buildDir.resolve("kotlinToolingMetadata")
+    abstract val outputDirectory: File
 
     @get:Internal /* Covered by 'outputDirectory' */
-    val outputFile: File = outputDirectory.resolve("kotlin-tooling-metadata.json")
+    val outputFile: File get() = outputDirectory.resolve("kotlin-tooling-metadata.json")
 
     @get:Internal
-    internal val kotlinToolingMetadata by lazy {
-        if (project.hasKpmModel) {
-            project.kpmModelContainer.getKotlinToolingMetadata(project)
-        } else {
-            project.kotlinExtension.getKotlinToolingMetadata()
-        }
-    }
+    internal val kotlinToolingMetadata by lazy { buildKotlinToolingMetadata() }
 
     @get:Input
     internal val kotlinToolingMetadataJson
         get() = kotlinToolingMetadata.toJsonString()
+
+    protected abstract fun buildKotlinToolingMetadata(): KotlinToolingMetadata
 
     @TaskAction
     internal fun createToolingMetadataFile() {
@@ -85,7 +152,7 @@ abstract class BuildKotlinToolingMetadataTask : DefaultTask() {
     }
 }
 
-private fun KpmGradleProjectModelContainer.getKotlinToolingMetadata(project: Project): KotlinToolingMetadata {
+private fun KotlinGradleModule.getKotlinToolingMetadata(): KotlinToolingMetadata {
     return KotlinToolingMetadata(
         schemaVersion = KotlinToolingMetadata.currentSchemaVersion,
         buildSystem = "Gradle",
@@ -105,36 +172,26 @@ private fun Project.buildProjectSettings(): KotlinToolingMetadata.ProjectSetting
     )
 }
 
-private fun KpmGradleProjectModelContainer.buildProjectTargets(): List<KotlinToolingMetadata.ProjectTargetMetadata> =
-    modules
-        .filter { it.isMain }
-        .flatMap { module ->
-            val commonTarget = KotlinToolingMetadata.ProjectTargetMetadata(
-                target = module.common.javaClass.canonicalName,
-                platformType = KotlinPlatformType.common.name,
-                extras = KotlinToolingMetadata.ProjectTargetMetadata.Extras()
+private fun KotlinGradleModule.buildProjectTargets(): List<KotlinToolingMetadata.ProjectTargetMetadata> =
+    variants.map { variant ->
+        KotlinToolingMetadata.ProjectTargetMetadata(
+            target = variant.javaClass.canonicalName,
+            platformType = variant.platformType.name,
+            extras = KotlinToolingMetadata.ProjectTargetMetadata.Extras(
+                jvm = variant.jvmExtrasOrNull(),
+                android = variant.androidExtrasOrNull(),
+                js = variant.jsExtrasOrNull(),
+                native = variant.nativeExtrasOrNull()
             )
-
-            module.variants.map { variant ->
-                KotlinToolingMetadata.ProjectTargetMetadata(
-                    target = variant.javaClass.canonicalName,
-                    platformType = variant.platformType.name,
-                    extras = KotlinToolingMetadata.ProjectTargetMetadata.Extras(
-                        jvm = variant.jvmExtrasOrNull(),
-                        android = variant.androidExtrasOrNull(),
-                        js = variant.jsExtrasOrNull(),
-                        native = variant.nativeExtrasOrNull()
-                    )
-                )
-            } + commonTarget
-        }.distinct()
+        )
+    }.distinct() // some variants may look identical. e.g. androidRelease and androidDebug, so just keep one of them.
 
 private fun KotlinGradleVariant.jvmExtrasOrNull() =
     when (this) {
         is KotlinJvmVariant -> KotlinToolingMetadata.ProjectTargetMetadata.JvmExtras(
-                jvmTarget = compilationData.kotlinOptions.jvmTarget,
-                withJavaEnabled = false
-            )
+            jvmTarget = compilationData.kotlinOptions.jvmTarget,
+            withJavaEnabled = false
+        )
         is LegacyMappedVariant -> buildJvmExtrasOrNull(compilation.target)
         else -> null
     }
@@ -154,10 +211,10 @@ private fun KotlinGradleVariant.jsExtrasOrNull() =
 private fun KotlinGradleVariant.nativeExtrasOrNull() =
     when (this) {
         is KotlinNativeVariantInternal -> KotlinToolingMetadata.ProjectTargetMetadata.NativeExtras(
-                konanTarget = konanTarget.name,
-                konanVersion = project.konanVersion.toString(),
-                konanAbiVersion = KotlinAbiVersion.CURRENT.toString()
-            )
+            konanTarget = konanTarget.name,
+            konanVersion = project.konanVersion.toString(),
+            konanAbiVersion = KotlinAbiVersion.CURRENT.toString()
+        )
         is LegacyMappedVariant -> buildNativeExtrasOrNull(compilation.target)
         else -> null
     }

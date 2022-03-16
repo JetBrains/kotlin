@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.gradle
 
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
+import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinGradleModule
 import org.jetbrains.kotlin.gradle.tooling.BuildKotlinToolingMetadataTask
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.tooling.KotlinToolingMetadata
@@ -17,7 +18,19 @@ import kotlin.test.assertEquals
 class KotlinToolingMetadataMppIT : BaseGradleIT() {
     override val defaultGradleVersion: GradleVersionRequired = GradleVersionRequired.FOR_MPP_SUPPORT
 
-    private val defaultKotlinToolingMetadataJsonPath = "build/kotlinToolingMetadata/kotlin-tooling-metadata.json"
+    private val defaultKotlinToolingMetadataJsonPath get() =
+        if (isKpmModelMappingEnabled) {
+            "build/kotlinToolingMetadata/main/kotlin-tooling-metadata.json"
+        } else {
+            "build/kotlinToolingMetadata/kotlin-tooling-metadata.json"
+        }
+
+    private val buildKotlinToolingMetadataTaskName get() =
+        if (isKpmModelMappingEnabled) {
+            BuildKotlinToolingMetadataTask.taskNameForKotlinModule(KotlinGradleModule.MAIN_MODULE_NAME)
+        } else {
+            BuildKotlinToolingMetadataTask.defaultTaskName
+        }
 
     @Test
     fun `new-mpp-published`() = with(transformProjectWithPluginsDsl("new-mpp-published")) {
@@ -25,17 +38,17 @@ class KotlinToolingMetadataMppIT : BaseGradleIT() {
 
         build("publish") {
             assertSuccessful()
-            assertTasksExecuted(
-                ":${BuildKotlinToolingMetadataTask.defaultTaskName}"
-            )
+            assertTasksExecuted(":$buildKotlinToolingMetadataTaskName")
             /* Check metadata file in build dir */
             assertFileExists(defaultKotlinToolingMetadataJsonPath)
             val metadataJson = projectDir.resolve(defaultKotlinToolingMetadataJsonPath).readText()
             val metadata = KotlinToolingMetadata.parseJsonOrThrow(metadataJson)
             assertEquals(
-                listOf(
-                    KotlinPlatformType.common.name, KotlinPlatformType.jvm.name,
-                    KotlinPlatformType.js.name, KotlinPlatformType.native.name
+                listOfNotNull(
+                    KotlinPlatformType.common.name.takeIf { !isKpmModelMappingEnabled },
+                    KotlinPlatformType.jvm.name,
+                    KotlinPlatformType.js.name,
+                    KotlinPlatformType.native.name
                 ).sorted(),
                 metadata.projectTargets.map { it.platformType }.sorted()
             )
@@ -55,7 +68,7 @@ class KotlinToolingMetadataMppIT : BaseGradleIT() {
         build("publish") {
             assertSuccessful()
             // Nothing changed. Should be up-to-date
-            assertTasksUpToDate(":${BuildKotlinToolingMetadataTask.defaultTaskName}")
+            assertTasksUpToDate(":$buildKotlinToolingMetadataTaskName")
         }
 
         // Adding macos target
@@ -68,7 +81,7 @@ class KotlinToolingMetadataMppIT : BaseGradleIT() {
 
         build("publish") {
             assertSuccessful()
-            assertTasksExecuted(":${BuildKotlinToolingMetadataTask.defaultTaskName}")
+            assertTasksExecuted(":$buildKotlinToolingMetadataTaskName")
             val metadata = KotlinToolingMetadata.parseJsonOrThrow(projectDir.resolve(defaultKotlinToolingMetadataJsonPath).readText())
             assertEquals(
                 listOf(KonanTarget.LINUX_X64.name, KonanTarget.MACOS_X64.name).sorted(),
@@ -85,7 +98,7 @@ class KotlinToolingMetadataMppIT : BaseGradleIT() {
             assertSuccessful()
             assertNoSuchFile(defaultKotlinToolingMetadataJsonPath)
             assertTasksNotRealized(
-                ":${BuildKotlinToolingMetadataTask.defaultTaskName}"
+                ":$buildKotlinToolingMetadataTaskName"
             )
         }
     }
@@ -96,9 +109,9 @@ class KotlinToolingMetadataMppIT : BaseGradleIT() {
         projectDir.resolve("gradle.properties").appendText("\nkotlin.mpp.enableKotlinToolingMetadataArtifact=true")
         build(BuildKotlinToolingMetadataTask.defaultTaskName) {
             assertSuccessful()
-            assertTasksExecuted(":app:${BuildKotlinToolingMetadataTask.defaultTaskName}")
-            assertTasksExecuted(":base:${BuildKotlinToolingMetadataTask.defaultTaskName}")
-            assertTasksExecuted(":lib:${BuildKotlinToolingMetadataTask.defaultTaskName}")
+            assertTasksExecuted(":app:$buildKotlinToolingMetadataTaskName")
+            assertTasksExecuted(":base:$buildKotlinToolingMetadataTaskName")
+            assertTasksExecuted(":lib:$buildKotlinToolingMetadataTaskName")
         }
     }
 }
