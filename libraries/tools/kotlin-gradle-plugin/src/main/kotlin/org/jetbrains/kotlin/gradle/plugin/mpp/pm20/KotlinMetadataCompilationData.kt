@@ -182,8 +182,8 @@ internal open class KotlinNativeFragmentMetadataCompilationDataImpl(
 // TODO think about more generic case: a fragment that can be compiled by an arbitrary compiler
 //      what tasks should we create? should there be a generic task for that?
 internal class MetadataCompilationRegistry {
-    private val commonCompilationDataPerFragment = mutableMapOf<KotlinGradleFragment, KotlinCommonFragmentMetadataCompilationDataImpl>()
-    private val nativeCompilationDataPerFragment = mutableMapOf<KotlinGradleFragment, KotlinNativeFragmentMetadataCompilationDataImpl>()
+    private val commonCompilationDataPerFragment = LinkedHashMap<KotlinGradleFragment, KotlinCommonFragmentMetadataCompilationDataImpl>()
+    private val nativeCompilationDataPerFragment = LinkedHashMap<KotlinGradleFragment, KotlinNativeFragmentMetadataCompilationDataImpl>()
 
     fun registerCommon(fragment: KotlinGradleFragment, compilationData: KotlinCommonFragmentMetadataCompilationDataImpl) {
         commonCompilationDataPerFragment.compute(fragment) { _, existing ->
