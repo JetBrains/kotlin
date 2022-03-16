@@ -26,18 +26,7 @@ sealed interface IdeaKotlinDependency : Serializable {
     }
 }
 
-sealed interface IdeaKotlinDependencyCoordinates : Serializable
-
-sealed interface IdeaKotlinSourceCoordinates : IdeaKotlinDependencyCoordinates {
-    val buildId: String
-    val projectPath: String
-    val projectName: String
-    val kotlinModuleName: String
-    val kotlinModuleClassifier: String?
-    val kotlinFragmentName: String
-}
-
-sealed interface IdeaKotlinSourceDependency : IdeaKotlinDependency {
+sealed interface IdeaKotlinFragmentDependency : IdeaKotlinDependency {
     enum class Type : Serializable {
         Regular, Friend, Refines;
 
@@ -48,15 +37,7 @@ sealed interface IdeaKotlinSourceDependency : IdeaKotlinDependency {
     }
 
     val type: Type
-    override val coordinates: IdeaKotlinSourceCoordinates
-}
-
-sealed interface IdeaKotlinBinaryCoordinates : IdeaKotlinDependencyCoordinates {
-    val group: String
-    val module: String
-    val version: String
-    val kotlinModuleName: String?
-    val kotlinFragmentName: String?
+    override val coordinates: IdeaKotlinFragmentCoordinates
 }
 
 sealed interface IdeaKotlinBinaryDependency : IdeaKotlinDependency {
@@ -77,11 +58,11 @@ val IdeaKotlinResolvedBinaryDependency.isDocumentationType get() = binaryType ==
 val IdeaKotlinResolvedBinaryDependency.isClasspathType get() = binaryType == CLASSPATH_BINARY_TYPE
 
 @InternalKotlinGradlePluginApi
-data class IdeaKotlinSourceDependencyImpl(
-    override val type: IdeaKotlinSourceDependency.Type,
-    override val coordinates: IdeaKotlinSourceCoordinates,
+data class IdeaKotlinFragmentDependencyImpl(
+    override val type: IdeaKotlinFragmentDependency.Type,
+    override val coordinates: IdeaKotlinFragmentCoordinates,
     override val external: KotlinExternalModelContainer = KotlinExternalModelContainer.Empty,
-) : IdeaKotlinSourceDependency {
+) : IdeaKotlinFragmentDependency {
 
     override fun toString(): String {
         @Suppress("DEPRECATION")
@@ -93,46 +74,6 @@ data class IdeaKotlinSourceDependencyImpl(
         private const val serialVersionUID = 0L
     }
 }
-
-@InternalKotlinGradlePluginApi
-data class IdeaKotlinBinaryCoordinatesImpl(
-    override val group: String,
-    override val module: String,
-    override val version: String,
-    override val kotlinModuleName: String? = null,
-    override val kotlinFragmentName: String? = null
-) : IdeaKotlinBinaryCoordinates {
-
-    override fun toString(): String {
-        return "$group:$module:$version" +
-                (if (kotlinModuleName != null) ":$kotlinModuleName" else "") +
-                (if (kotlinFragmentName != null) ":$kotlinFragmentName" else "")
-    }
-
-    companion object {
-        private const val serialVersionUID = 0L
-    }
-}
-
-@InternalKotlinGradlePluginApi
-data class IdeaKotlinSourceCoordinatesImpl(
-    override val buildId: String,
-    override val projectPath: String,
-    override val projectName: String,
-    override val kotlinModuleName: String,
-    override val kotlinModuleClassifier: String?,
-    override val kotlinFragmentName: String
-) : IdeaKotlinSourceCoordinates {
-
-    override fun toString(): String = path
-
-    companion object {
-        private const val serialVersionUID = 0L
-    }
-}
-
-val IdeaKotlinSourceCoordinates.path: String
-    get() = "${buildId.takeIf { it != ":" }.orEmpty()}$projectPath/$kotlinModuleName/$kotlinFragmentName"
 
 @InternalKotlinGradlePluginApi
 data class IdeaKotlinResolvedBinaryDependencyImpl(

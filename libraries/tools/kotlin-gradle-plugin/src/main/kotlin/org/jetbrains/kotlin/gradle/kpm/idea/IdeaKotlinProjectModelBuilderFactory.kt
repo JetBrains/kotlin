@@ -26,7 +26,7 @@ internal fun IdeaKotlinProjectModelBuilder.Companion.default(
     )
 
     registerDependencyResolver(
-        resolver = IdeaKotlinSourceDependencyResolver(fragmentMetadataResolverFactory),
+        resolver = IdeaKotlinGranularFragmentDependencyResolver(fragmentMetadataResolverFactory),
         constraint = IdeaKotlinProjectModelBuilder.FragmentConstraint.unconstrained,
         phase = IdeaKotlinProjectModelBuilder.DependencyResolutionPhase.SourceDependencyResolution,
         level = IdeaKotlinProjectModelBuilder.DependencyResolutionLevel.Default

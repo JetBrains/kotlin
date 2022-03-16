@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.gradle.kpm.idea
 
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinGradleFragment
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.currentBuildId
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.refinesClosure
 
 internal object IdeaKotlinRefinesDependencyResolver : IdeaKotlinDependencyResolver {
@@ -14,16 +13,9 @@ internal object IdeaKotlinRefinesDependencyResolver : IdeaKotlinDependencyResolv
         .map { refinesDependencyFragment -> createRefinesDependency(refinesDependencyFragment) }.toSet()
 
     private fun createRefinesDependency(fragment: KotlinGradleFragment): IdeaKotlinDependency {
-        return IdeaKotlinSourceDependencyImpl(
-            type = IdeaKotlinSourceDependency.Type.Refines,
-            coordinates = IdeaKotlinSourceCoordinatesImpl(
-                buildId = fragment.project.currentBuildId().name,
-                projectPath = fragment.project.path,
-                projectName = fragment.project.name,
-                kotlinModuleName = fragment.containingModule.name,
-                kotlinModuleClassifier = fragment.containingModule.moduleClassifier,
-                kotlinFragmentName = fragment.name
-            )
+        return IdeaKotlinFragmentDependencyImpl(
+            type = IdeaKotlinFragmentDependency.Type.Refines,
+            coordinates = IdeaKotlinFragmentCoordinates(fragment)
         )
     }
 }
