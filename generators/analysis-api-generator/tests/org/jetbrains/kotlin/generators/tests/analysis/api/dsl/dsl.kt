@@ -5,10 +5,10 @@
 
 package org.jetbrains.kotlin.generators.tests.analysis.api.dsl
 
-import org.jetbrains.kotlin.analysis.api.descriptors.test.KtFe10FrontendApiTestConfiguratorService
-import org.jetbrains.kotlin.analysis.api.fir.FirFrontendApiTestConfiguratorService
-import org.jetbrains.kotlin.analysis.api.fir.utils.libraries.binary.LibraryFrontendApiTestConfiguratorService
-import org.jetbrains.kotlin.analysis.api.fir.utils.libraries.source.LibrarySourceFrontendApiTestConfiguratorService
+import org.jetbrains.kotlin.analysis.api.descriptors.test.KtFe10AnalysisApiTestConfiguratorService
+import org.jetbrains.kotlin.analysis.api.fir.FirAnalysisApiTestConfiguratorService
+import org.jetbrains.kotlin.analysis.api.fir.utils.libraries.binary.LibraryAnalysisApiTestConfiguratorService
+import org.jetbrains.kotlin.analysis.api.fir.utils.libraries.source.LibrarySourceAnalysisApiTestConfiguratorService
 import org.jetbrains.kotlin.analysis.api.impl.barebone.test.FrontendApiTestConfiguratorService
 import org.jetbrains.kotlin.analysis.api.standalone.StandaloneModeConfiguratorService
 import org.jetbrains.kotlin.generators.TestGroup
@@ -144,13 +144,13 @@ internal fun createConfigurator(
     moduleKind: TestModuleKind
 ): KClass<out FrontendApiTestConfiguratorService> = when (frontend) {
     Frontend.FIR -> when (moduleKind) {
-        TestModuleKind.SOURCE -> FirFrontendApiTestConfiguratorService::class
-        TestModuleKind.LIBRARY -> LibraryFrontendApiTestConfiguratorService::class
-        TestModuleKind.LIBRARY_SOURCE -> LibrarySourceFrontendApiTestConfiguratorService::class
+        TestModuleKind.SOURCE -> FirAnalysisApiTestConfiguratorService::class
+        TestModuleKind.LIBRARY -> LibraryAnalysisApiTestConfiguratorService::class
+        TestModuleKind.LIBRARY_SOURCE -> LibrarySourceAnalysisApiTestConfiguratorService::class
         TestModuleKind.STANDALONE_MODE -> StandaloneModeConfiguratorService::class
     }
     Frontend.FE10 -> when (moduleKind) {
-        TestModuleKind.SOURCE -> KtFe10FrontendApiTestConfiguratorService::class
+        TestModuleKind.SOURCE -> KtFe10AnalysisApiTestConfiguratorService::class
         TestModuleKind.LIBRARY -> TODO("TestModuleKind.LIBRARY is unsupported for fe10")
         TestModuleKind.LIBRARY_SOURCE -> TODO("TestModuleKind.LIBRARY_SOURCE is unsupported for fe10")
         TestModuleKind.STANDALONE_MODE -> TODO("TestModuleKind.STANDALONE_MODE is unsupported for fe10")

@@ -3,41 +3,32 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.analysis.low.level.api.fir.test.base
+package org.jetbrains.kotlin.analysis.api.fir.utils.libraries.source
 
 import com.intellij.mock.MockApplication
 import com.intellij.mock.MockProject
 import com.intellij.openapi.Disposable
-import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.vfs.impl.jar.CoreJarFileSystem
 import com.intellij.psi.search.GlobalSearchScope
-import org.jetbrains.kotlin.analysis.low.level.api.fir.compiler.based.ModuleRegistrarPreAnalysisHandler
+import org.jetbrains.kotlin.analysis.api.fir.FirAnalysisApiTestConfiguratorService
+import org.jetbrains.kotlin.analysis.test.framework.AnalysisApiTestConfiguratorService
 import org.jetbrains.kotlin.analysis.low.level.api.fir.compiler.based.registerTestServices
-import org.jetbrains.kotlin.analysis.low.level.api.fir.util.originalKtFile
 import org.jetbrains.kotlin.analysis.project.structure.ProjectStructureProvider
-import org.jetbrains.kotlin.analysis.providers.KotlinModificationTrackerFactory
-import org.jetbrains.kotlin.analysis.test.framework.FrontendApiTestConfiguratorService
+import org.jetbrains.kotlin.analysis.test.framework.services.libraries.CompiledLibraryProvider
+import org.jetbrains.kotlin.analysis.test.framework.services.libraries.LibraryEnvironmentConfigurator
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.load.kotlin.PackagePartProvider
 import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.test.bind
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
+import org.jetbrains.kotlin.test.services.ServiceRegistrationData
 
-object FirLowLevelFrontendApiTestConfiguratorService : FrontendApiTestConfiguratorService {
+object LibrarySourceAnalysisApiTestConfiguratorService : AnalysisApiTestConfiguratorService {
+    override val allowDependedAnalysisSession: Boolean get() = false
+
     override fun TestConfigurationBuilder.configureTest(disposable: Disposable) {
-        usePreAnalysisHandlers(::ModuleRegistrarPreAnalysisHandler.bind(disposable, false))
-    }
-
-    override fun processTestFiles(files: List<KtFile>): List<KtFile> {
-        return files.map {
-            val fakeFile = it.copy() as KtFile
-            fakeFile.originalKtFile = it
-            fakeFile
-        }
-    }
-
-    override fun getOriginalFile(file: KtFile): KtFile {
-        return file.originalKtFile!!
+        useConfigurators(::LibraryEnvironmentConfigurator)
+        usePreAnalysisHandlers(::LibrarySourceModuleRegistrarPreAnalysisHandler)
+        useAdditionalServices(ServiceRegistrationData(CompiledLibraryProvider::class, ::CompiledLibraryProvider))
     }
 
     override fun registerProjectServices(
@@ -51,10 +42,11 @@ object FirLowLevelFrontendApiTestConfiguratorService : FrontendApiTestConfigurat
         project.registerTestServices(files, packagePartProvider, projectStructureProvider)
     }
 
-    override fun registerApplicationServices(application: MockApplication) {}
+    override fun registerApplicationServices(application: MockApplication) {
+        FirAnalysisApiTestConfiguratorService.registerApplicationServices(application)
+    }
 
     override fun doOutOfBlockModification(file: KtFile) {
-        ServiceManager.getService(file.project, KotlinModificationTrackerFactory::class.java)
-            .incrementModificationsCount()
+        FirAnalysisApiTestConfiguratorService.doOutOfBlockModification(file)
     }
 }

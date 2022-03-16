@@ -5,16 +5,15 @@
 
 package org.jetbrains.kotlin.analysis.api.impl.base.test.components.expressionInfoProvider
 
-import org.jetbrains.kotlin.analysis.test.framework.FrontendApiTestConfiguratorService
 import org.jetbrains.kotlin.analysis.test.framework.services.expressionMarkerProvider
-import org.jetbrains.kotlin.analysis.test.framework.base.AbstractHLApiSingleFileTest
+import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiSingleFileTest
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtWhenExpression
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.assertions
 
-abstract class AbstractWhenMissingCasesTest : AbstractHLApiSingleFileTest() {
+abstract class AbstractWhenMissingCasesTest : AbstractAnalysisApiSingleFileTest() {
     override fun doTestByFileStructure(ktFile: KtFile, module: TestModule, testServices: TestServices) {
         val whenExpression = testServices.expressionMarkerProvider.getElementOfTypAtCaret<KtWhenExpression>(ktFile)
 

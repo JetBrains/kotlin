@@ -8,11 +8,10 @@ package org.jetbrains.kotlin.analysis.api.fe10.annotations;
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.util.KtTestUtil;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.analysis.test.framework.FrontendApiTestConfiguratorService;
-import org.jetbrains.kotlin.analysis.api.descriptors.test.KtFe10FrontendApiTestConfiguratorService;
+import org.jetbrains.kotlin.analysis.test.framework.AnalysisApiTestConfiguratorService;
+import org.jetbrains.kotlin.analysis.api.descriptors.test.KtFe10AnalysisApiTestConfiguratorService;
 import org.jetbrains.kotlin.analysis.api.impl.base.test.annotations.AbstractAnalysisApiAnnotationsOnTypesTest;
 import org.jetbrains.kotlin.test.TestMetadata;
-import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
@@ -25,8 +24,8 @@ import java.util.regex.Pattern;
 public class Fe10AnalysisApiAnnotationsOnTypesTestGenerated extends AbstractAnalysisApiAnnotationsOnTypesTest {
     @NotNull
     @Override
-    public FrontendApiTestConfiguratorService getConfigurator() {
-        return KtFe10FrontendApiTestConfiguratorService.INSTANCE;
+    public AnalysisApiTestConfiguratorService getConfigurator() {
+        return KtFe10AnalysisApiTestConfiguratorService.INSTANCE;
     }
 
     @Test

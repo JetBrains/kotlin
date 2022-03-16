@@ -5,14 +5,13 @@
 
 package org.jetbrains.kotlin.analysis.api.fir.components.importOptimizer
 
-import org.jetbrains.kotlin.analysis.api.fir.FirFrontendApiTestConfiguratorService
-import org.jetbrains.kotlin.analysis.test.framework.base.AbstractHLApiSingleModuleTest
+import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedSingleModuleTest
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.assertions
 
-abstract class AbstractHLImportOptimizerTest : AbstractHLApiSingleModuleTest(){
+abstract class AbstractHLImportOptimizerTest : AbstractAnalysisApiBasedSingleModuleTest(){
     override fun doTestByFileStructure(ktFiles: List<KtFile>, module: TestModule, testServices: TestServices) {
         val mainKtFile = ktFiles.singleOrNull() ?: ktFiles.first { it.name == "main.kt" }
         val unusedImports = analyseForTest(mainKtFile) { analyseImports(mainKtFile).unusedImports }
