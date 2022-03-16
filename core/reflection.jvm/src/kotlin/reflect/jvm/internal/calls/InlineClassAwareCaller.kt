@@ -5,14 +5,13 @@
 
 package kotlin.reflect.jvm.internal.calls
 
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.load.java.JvmAbi
+import org.jetbrains.kotlin.resolve.*
 import org.jetbrains.kotlin.resolve.descriptorUtil.classId
-import org.jetbrains.kotlin.resolve.isGetterOfUnderlyingPropertyOfInlineClass
-import org.jetbrains.kotlin.resolve.isInlineClass
-import org.jetbrains.kotlin.resolve.isInlineClassType
-import org.jetbrains.kotlin.resolve.isUnderlyingPropertyOfInlineClass
 import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.types.TypeUtils
 import java.lang.reflect.Member
 import java.lang.reflect.Method
 import java.lang.reflect.Type
@@ -176,8 +175,18 @@ internal fun Class<*>.getBoxMethod(descriptor: CallableMemberDescriptor): Method
         throw KotlinReflectionInternalError("No box method found in inline class: $this (calling $descriptor)")
     }
 
-internal fun KotlinType.toInlineClass(): Class<*>? =
-    constructor.declarationDescriptor.toInlineClass()
+internal fun KotlinType.toInlineClass(): Class<*>? {
+    // See computeExpandedTypeForInlineClass.
+    // TODO: add tests on type parameters with inline class bounds.
+    // TODO: add tests on usages of inline classes in Java.
+    val klass = constructor.declarationDescriptor.toInlineClass() ?: return null
+    if (!TypeUtils.isNullableType(this)) return klass
+
+    val expandedUnderlyingType = unsubstitutedUnderlyingType() ?: return null
+    if (!TypeUtils.isNullableType(expandedUnderlyingType) && !KotlinBuiltIns.isPrimitiveType(expandedUnderlyingType)) return klass
+
+    return null
+}
 
 internal fun DeclarationDescriptor?.toInlineClass(): Class<*>? =
     if (this is ClassDescriptor && isInlineClass())

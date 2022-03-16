@@ -3,7 +3,6 @@
 
 import kotlin.reflect.KMutableProperty2
 import kotlin.test.assertEquals
-import kotlin.test.assertFailsWith
 
 inline class Z(val value: Int) {
     operator fun plus(other: Z): Z = Z(this.value + other.value)
@@ -65,17 +64,13 @@ fun box(): String {
     assertEquals(two, c::nonNullMember.call())
     assertEquals(two, c::nonNullMember.getter.call())
 
-    assertFailsWith<IllegalArgumentException>("Remove assertFailsWith and try again, as this problem may have been fixed.") {
-        assertEquals(Unit, C::nullableMember.setter.call(c, one))
-        assertEquals(one, C::nullableMember.call(c))
-        assertEquals(one, C::nullableMember.getter.call(c))
-    }
+    assertEquals(Unit, C::nullableMember.setter.call(c, one))
+    assertEquals(one, C::nullableMember.call(c))
+    assertEquals(one, C::nullableMember.getter.call(c))
 
-    assertFailsWith<IllegalArgumentException>("Remove assertFailsWith and try again, as this problem may have been fixed.") {
-        assertEquals(Unit, c::nullableMember.setter.call(two))
-        assertEquals(two, c::nullableMember.call())
-        assertEquals(two, c::nullableMember.getter.call())
-    }
+    assertEquals(Unit, c::nullableMember.setter.call(two))
+    assertEquals(two, c::nullableMember.call())
+    assertEquals(two, c::nullableMember.getter.call())
 
     val nonNull_nonNullMemExt = C::class.members.single { it.name == "nonNull_nonNullMemExt" } as KMutableProperty2<C, Z, Z>
     assertEquals(Unit, nonNull_nonNullMemExt.setter.call(c, Z(0), two))
@@ -83,57 +78,43 @@ fun box(): String {
     assertEquals(three, nonNull_nonNullMemExt.getter.call(c, one))
 
     val nonNull_nullableMemExt = C::class.members.single { it.name == "nonNull_nullableMemExt" } as KMutableProperty2<C, Z, Z?>
-    assertFailsWith<IllegalArgumentException>("Remove assertFailsWith and try again, as this problem may have been fixed.") {
-        assertEquals(Unit, nonNull_nullableMemExt.setter.call(c, Z(0), two))
-        assertEquals(three, nonNull_nullableMemExt.call(c, one))
-        assertEquals(three, nonNull_nullableMemExt.getter.call(c, one))
-    }
+    assertEquals(Unit, nonNull_nullableMemExt.setter.call(c, Z(0), two))
+    assertEquals(three, nonNull_nullableMemExt.call(c, one))
+    assertEquals(three, nonNull_nullableMemExt.getter.call(c, one))
 
     val nullable_nonNullMemExt = C::class.members.single { it.name == "nullable_nonNullMemExt" } as KMutableProperty2<C, Z?, Z>
-    assertFailsWith<IllegalArgumentException>("Remove assertFailsWith and try again, as this problem may have been fixed.") {
-        assertEquals(Unit, nullable_nonNullMemExt.setter.call(c, Z(0), two))
-        assertEquals(three, nullable_nonNullMemExt.call(c, one))
-        assertEquals(three, nullable_nonNullMemExt.getter.call(c, one))
-    }
+    assertEquals(Unit, nullable_nonNullMemExt.setter.call(c, Z(0), two))
+    assertEquals(three, nullable_nonNullMemExt.call(c, one))
+    assertEquals(three, nullable_nonNullMemExt.getter.call(c, one))
 
     val nullable_nullableMemExt = C::class.members.single { it.name == "nullable_nullableMemExt" } as KMutableProperty2<C, Z?, Z?>
-    assertFailsWith<IllegalArgumentException>("Remove assertFailsWith and try again, as this problem may have been fixed.") {
-        assertEquals(Unit, nullable_nullableMemExt.setter.call(c, Z(0), two))
-        assertEquals(three, nullable_nullableMemExt.call(c, one))
-        assertEquals(three, nullable_nullableMemExt.getter.call(c, one))
-    }
+    assertEquals(Unit, nullable_nullableMemExt.setter.call(c, Z(0), two))
+    assertEquals(three, nullable_nullableMemExt.call(c, one))
+    assertEquals(three, nullable_nullableMemExt.getter.call(c, one))
 
     assertEquals(Unit, ::nonNullTopLevel.setter.call(one))
     assertEquals(one, ::nonNullTopLevel.call())
     assertEquals(one, ::nonNullTopLevel.getter.call())
 
-    assertFailsWith<IllegalArgumentException>("Remove assertFailsWith and try again, as this problem may have been fixed.") {
-        assertEquals(Unit, ::nullableTopLevel.setter.call(one))
-        assertEquals(one, ::nullableTopLevel.call())
-        assertEquals(one, ::nullableTopLevel.getter.call())
-    }
+    assertEquals(Unit, ::nullableTopLevel.setter.call(one))
+    assertEquals(one, ::nullableTopLevel.call())
+    assertEquals(one, ::nullableTopLevel.getter.call())
 
     assertEquals(Unit, Z::nonNull_nonNullExt.setter.call(Z(0), two))
     assertEquals(three, Z::nonNull_nonNullExt.call(one))
     assertEquals(three, Z::nonNull_nonNullExt.getter.call(one))
 
-    assertFailsWith<IllegalArgumentException>("Remove assertFailsWith and try again, as this problem may have been fixed.") {
-        assertEquals(Unit, Z::nonNull_nullableExt.setter.call(Z(0), two))
-        assertEquals(three, Z::nonNull_nullableExt.call(one))
-        assertEquals(three, Z::nonNull_nullableExt.getter.call(one))
-    }
+    assertEquals(Unit, Z::nonNull_nullableExt.setter.call(Z(0), two))
+    assertEquals(three, Z::nonNull_nullableExt.call(one))
+    assertEquals(three, Z::nonNull_nullableExt.getter.call(one))
 
-    assertFailsWith<IllegalArgumentException>("Remove assertFailsWith and try again, as this problem may have been fixed.") {
-        assertEquals(Unit, Z?::nullable_nonNullExt.setter.call(Z(0), two))
-        assertEquals(three, Z?::nullable_nonNullExt.call(one))
-        assertEquals(three, Z?::nullable_nonNullExt.getter.call(one))
-    }
+    assertEquals(Unit, Z?::nullable_nonNullExt.setter.call(Z(0), two))
+    assertEquals(three, Z?::nullable_nonNullExt.call(one))
+    assertEquals(three, Z?::nullable_nonNullExt.getter.call(one))
 
-    assertFailsWith<IllegalArgumentException>("Remove assertFailsWith and try again, as this problem may have been fixed.") {
-        assertEquals(Unit, Z?::nullable_nullableExt.setter.call(Z(0), two))
-        assertEquals(three, Z?::nullable_nullableExt.call(one))
-        assertEquals(three, Z?::nullable_nullableExt.getter.call(one))
-    }
+    assertEquals(Unit, Z?::nullable_nullableExt.setter.call(Z(0), two))
+    assertEquals(three, Z?::nullable_nullableExt.call(one))
+    assertEquals(three, Z?::nullable_nullableExt.getter.call(one))
 
     return "OK"
 }
