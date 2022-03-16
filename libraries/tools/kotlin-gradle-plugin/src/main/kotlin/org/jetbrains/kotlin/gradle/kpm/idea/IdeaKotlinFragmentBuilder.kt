@@ -16,8 +16,8 @@ internal fun IdeaKotlinProjectModelBuildingContext.IdeaKotlinFragment(fragment: 
 private fun IdeaKotlinProjectModelBuildingContext.buildIdeaKotlinFragment(fragment: KotlinGradleFragment): IdeaKotlinFragment {
     return IdeaKotlinFragmentImpl(
         coordinates = IdeaKotlinFragmentCoordinates(fragment),
-        platforms = fragment.containingVariants.map { variant -> buildIdeaKotlinPlatform(variant) }.toSet(),
-        languageSettings = fragment.languageSettings.toIdeaKotlinLanguageSettings(),
+        platforms = fragment.containingVariants.map { variant -> IdeaKotlinPlatform(variant) }.toSet(),
+        languageSettings = IdeaKotlinLanguageSettings(fragment.languageSettings),
         dependencies = dependencyResolver.resolve(fragment).toList(),
         sourceDirectories = fragment.kotlinSourceRoots.sourceDirectories.files.toList().map { file -> IdeaKotlinSourceDirectoryImpl(file) },
         resourceDirectories = emptyList(),
@@ -28,8 +28,8 @@ private fun IdeaKotlinProjectModelBuildingContext.buildIdeaKotlinFragment(fragme
 private fun IdeaKotlinProjectModelBuildingContext.buildIdeaKotlinVariant(variant: KotlinGradleVariant): IdeaKotlinVariant {
     return IdeaKotlinVariantImpl(
         fragment = buildIdeaKotlinFragment(variant),
-        platform = buildIdeaKotlinPlatform(variant),
+        platform = IdeaKotlinPlatform(variant),
         variantAttributes = variant.variantAttributes.mapKeys { (key, _) -> key.uniqueName },
-        compilationOutputs = variant.compilationOutputs.toIdeaKotlinCompilationOutputs()
+        compilationOutputs = IdeaKotlinCompilationOutput(variant.compilationOutputs)
     )
 }

@@ -129,7 +129,7 @@ interface IdeaKotlinProjectModelBuilder {
     companion object
 }
 
-internal fun IdeaKotlinProjectModelBuildingContext.toIdeaKotlinProjectModel(extension: KotlinPm20ProjectExtension): IdeaKotlinProjectModel {
+internal fun IdeaKotlinProjectModelBuildingContext.IdeaKotlinProjectModel(extension: KotlinPm20ProjectExtension): IdeaKotlinProjectModel {
     return IdeaKotlinProjectModelImpl(
         gradlePluginVersion = extension.project.getKotlinPluginVersion(),
         coreLibrariesVersion = extension.coreLibrariesVersion,
