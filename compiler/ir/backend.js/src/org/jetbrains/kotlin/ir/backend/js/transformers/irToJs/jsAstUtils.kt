@@ -48,9 +48,29 @@ fun <T : JsNode> IrWhen.toJsNode(
 
 fun IrElement?.isSyntheticIf(): Boolean =
     this is IrWhen &&
-        branches.size == 1 &&
-        isElseBranch(branches.first())
+            branches.size == 1 &&
+            isElseBranch(branches.first())
 
+
+/*
+ The code detects next branches of code to squash it:
+ ```
+    if (CONDITION) {
+      ...
+    } else {
+      // Our generated branch from ANDAND and OROR operators on FIR level
+      if (true) {
+        USER_CODE
+      }
+    }
+ ```
+ It could be transformed into the next code (with saving offsets for source maps):
+    if (CONDITION) {
+      ...
+    } else {
+      USER_CODE
+    }
+ */
 fun IrBranch.couldBeSquash(): Boolean {
     val block = result as? IrBlock ?: return false
     return isElseBranch(this) &&
