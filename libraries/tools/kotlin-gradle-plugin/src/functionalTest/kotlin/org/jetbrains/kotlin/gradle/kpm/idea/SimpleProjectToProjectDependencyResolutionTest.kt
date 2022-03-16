@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.gradle.kpm.applyKpmPlugin
 import org.jetbrains.kotlin.gradle.kpm.buildIdeaKotlinProjectModel
 import org.jetbrains.kotlin.gradle.kpm.idea.testFixtures.assertContainsFragment
 import org.jetbrains.kotlin.gradle.kpm.idea.testFixtures.assertIsNotEmpty
-import org.jetbrains.kotlin.gradle.kpm.idea.testFixtures.assertSourceDependencies
+import org.jetbrains.kotlin.gradle.kpm.idea.testFixtures.assertFragmentDependencies
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.*
 import org.junit.Test
 
@@ -85,12 +85,12 @@ class SimpleProjectToProjectDependencyResolutionTest : AbstractLightweightIdeaDe
             fun ifMainModule(vararg any: Any?) =
                 listOf(*any).takeIf { module.name == KotlinGradleModule.MAIN_MODULE_NAME }
 
-            module.assertContainsFragment("common").assertSourceDependencies(
+            module.assertContainsFragment("common").assertFragmentDependencies(
                 "regular::producer/main/common",
                 ifTestModule("friend::consumer/main/common")
             )
 
-            module.assertContainsFragment("jvm").assertSourceDependencies(
+            module.assertContainsFragment("jvm").assertFragmentDependencies(
                 "regular::producer/main/jvm",
                 "regular::producer/main/common",
                 ifMainModule(
@@ -103,7 +103,7 @@ class SimpleProjectToProjectDependencyResolutionTest : AbstractLightweightIdeaDe
                 )
             )
 
-            module.assertContainsFragment("nativeCommon").assertSourceDependencies(
+            module.assertContainsFragment("nativeCommon").assertFragmentDependencies(
                 "regular::producer/main/common",
                 "regular::producer/main/nativeCommon",
                 ifMainModule(
@@ -116,7 +116,7 @@ class SimpleProjectToProjectDependencyResolutionTest : AbstractLightweightIdeaDe
                 )
             )
 
-            module.assertContainsFragment("appleCommon").assertSourceDependencies(
+            module.assertContainsFragment("appleCommon").assertFragmentDependencies(
                 "regular::producer/main/common",
                 "regular::producer/main/appleCommon",
                 "regular::producer/main/nativeCommon",
@@ -133,7 +133,7 @@ class SimpleProjectToProjectDependencyResolutionTest : AbstractLightweightIdeaDe
                 )
             )
 
-            module.assertContainsFragment("linuxX64").assertSourceDependencies(
+            module.assertContainsFragment("linuxX64").assertFragmentDependencies(
                 "regular::producer/main/common",
                 "regular::producer/main/nativeCommon",
                 "regular::producer/main/linuxX64",
@@ -150,7 +150,7 @@ class SimpleProjectToProjectDependencyResolutionTest : AbstractLightweightIdeaDe
                 )
             )
 
-            module.assertContainsFragment("macosX64").assertSourceDependencies(
+            module.assertContainsFragment("macosX64").assertFragmentDependencies(
                 "regular::producer/main/macosX64",
                 "regular::producer/main/common",
                 "regular::producer/main/appleCommon",
@@ -171,7 +171,7 @@ class SimpleProjectToProjectDependencyResolutionTest : AbstractLightweightIdeaDe
                 )
             )
 
-            module.assertContainsFragment("iosX64").assertSourceDependencies(
+            module.assertContainsFragment("iosX64").assertFragmentDependencies(
                 "regular::producer/main/iosX64",
                 "regular::producer/main/common",
                 "regular::producer/main/iosMain",

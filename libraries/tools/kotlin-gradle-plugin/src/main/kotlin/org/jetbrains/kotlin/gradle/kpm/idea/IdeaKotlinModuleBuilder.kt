@@ -7,10 +7,9 @@ package org.jetbrains.kotlin.gradle.kpm.idea
 
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinGradleModule
 
-internal fun IdeaKotlinProjectModelBuildingContext.toIdeaKotlinModule(module: KotlinGradleModule): IdeaKotlinModule {
+internal fun IdeaKotlinProjectModelBuildingContext.IdeaKotlinModule(module: KotlinGradleModule): IdeaKotlinModule {
     return IdeaKotlinModuleImpl(
-        name = module.name,
-        moduleIdentifier = module.moduleIdentifier.toIdeaKotlinModuleIdentifier(),
-        fragments = module.fragments.toList().map { fragment -> toIdeaKotlinFragment(fragment) }
+        coordinates = IdeaKotlinModuleCoordinates(module),
+        fragments = module.fragments.toList().map { fragment -> IdeaKotlinFragment(fragment) }
     )
 }

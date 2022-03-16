@@ -93,21 +93,46 @@ public abstract interface class org/jetbrains/kotlin/gradle/kpm/idea/IdeaKotlinD
 }
 
 public final class org/jetbrains/kotlin/gradle/kpm/idea/IdeaKotlinDependencyKt {
-	public static final fun getPath (Lorg/jetbrains/kotlin/gradle/kpm/idea/IdeaKotlinSourceCoordinates;)Ljava/lang/String;
 	public static final fun isClasspathType (Lorg/jetbrains/kotlin/gradle/kpm/idea/IdeaKotlinResolvedBinaryDependency;)Z
 	public static final fun isDocumentationType (Lorg/jetbrains/kotlin/gradle/kpm/idea/IdeaKotlinResolvedBinaryDependency;)Z
 	public static final fun isSourcesType (Lorg/jetbrains/kotlin/gradle/kpm/idea/IdeaKotlinResolvedBinaryDependency;)Z
 }
 
 public abstract interface class org/jetbrains/kotlin/gradle/kpm/idea/IdeaKotlinFragment : java/io/Serializable {
+	public abstract fun getCoordinates ()Lorg/jetbrains/kotlin/gradle/kpm/idea/IdeaKotlinFragmentCoordinates;
 	public abstract fun getDependencies ()Ljava/util/List;
 	public abstract fun getExternal ()Lorg/jetbrains/kotlin/gradle/kpm/KotlinExternalModelContainer;
 	public abstract fun getLanguageSettings ()Lorg/jetbrains/kotlin/gradle/kpm/idea/IdeaKotlinLanguageSettings;
-	public abstract fun getModuleIdentifier ()Lorg/jetbrains/kotlin/gradle/kpm/idea/IdeaKotlinModuleIdentifier;
-	public abstract fun getName ()Ljava/lang/String;
 	public abstract fun getPlatforms ()Ljava/util/Set;
 	public abstract fun getResourceDirectories ()Ljava/util/List;
 	public abstract fun getSourceDirectories ()Ljava/util/List;
+}
+
+public abstract interface class org/jetbrains/kotlin/gradle/kpm/idea/IdeaKotlinFragmentCoordinates : java/io/Serializable, org/jetbrains/kotlin/gradle/kpm/idea/IdeaKotlinDependencyCoordinates {
+	public abstract fun getFragmentName ()Ljava/lang/String;
+	public abstract fun getModule ()Lorg/jetbrains/kotlin/gradle/kpm/idea/IdeaKotlinModuleCoordinates;
+}
+
+public final class org/jetbrains/kotlin/gradle/kpm/idea/IdeaKotlinFragmentCoordinatesKt {
+	public static final fun getPath (Lorg/jetbrains/kotlin/gradle/kpm/idea/IdeaKotlinFragmentCoordinates;)Ljava/lang/String;
+}
+
+public abstract interface class org/jetbrains/kotlin/gradle/kpm/idea/IdeaKotlinFragmentDependency : org/jetbrains/kotlin/gradle/kpm/idea/IdeaKotlinDependency {
+	public abstract fun getCoordinates ()Lorg/jetbrains/kotlin/gradle/kpm/idea/IdeaKotlinFragmentCoordinates;
+	public abstract fun getType ()Lorg/jetbrains/kotlin/gradle/kpm/idea/IdeaKotlinFragmentDependency$Type;
+}
+
+public final class org/jetbrains/kotlin/gradle/kpm/idea/IdeaKotlinFragmentDependency$Type : java/lang/Enum, java/io/Serializable {
+	public static final field Companion Lorg/jetbrains/kotlin/gradle/kpm/idea/IdeaKotlinFragmentDependency$Type$Companion;
+	public static final field Friend Lorg/jetbrains/kotlin/gradle/kpm/idea/IdeaKotlinFragmentDependency$Type;
+	public static final field Refines Lorg/jetbrains/kotlin/gradle/kpm/idea/IdeaKotlinFragmentDependency$Type;
+	public static final field Regular Lorg/jetbrains/kotlin/gradle/kpm/idea/IdeaKotlinFragmentDependency$Type;
+	public static fun valueOf (Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/kpm/idea/IdeaKotlinFragmentDependency$Type;
+	public static fun values ()[Lorg/jetbrains/kotlin/gradle/kpm/idea/IdeaKotlinFragmentDependency$Type;
+}
+
+public final class org/jetbrains/kotlin/gradle/kpm/idea/IdeaKotlinFragmentKt {
+	public static final fun getName (Lorg/jetbrains/kotlin/gradle/kpm/idea/IdeaKotlinFragment;)Ljava/lang/String;
 }
 
 public abstract interface class org/jetbrains/kotlin/gradle/kpm/idea/IdeaKotlinJsPlatformDetails : org/jetbrains/kotlin/gradle/kpm/idea/IdeaKotlinPlatformDetails {
@@ -129,24 +154,26 @@ public abstract interface class org/jetbrains/kotlin/gradle/kpm/idea/IdeaKotlinL
 	public abstract fun isProgressiveMode ()Z
 }
 
-public abstract interface class org/jetbrains/kotlin/gradle/kpm/idea/IdeaKotlinLocalModuleIdentifier : org/jetbrains/kotlin/gradle/kpm/idea/IdeaKotlinModuleIdentifier {
-	public abstract fun getBuildId ()Ljava/lang/String;
-	public abstract fun getProjectId ()Ljava/lang/String;
-}
-
-public abstract interface class org/jetbrains/kotlin/gradle/kpm/idea/IdeaKotlinMavenModuleIdentifier : org/jetbrains/kotlin/gradle/kpm/idea/IdeaKotlinModuleIdentifier {
-	public abstract fun getGroup ()Ljava/lang/String;
-	public abstract fun getName ()Ljava/lang/String;
-}
-
 public abstract interface class org/jetbrains/kotlin/gradle/kpm/idea/IdeaKotlinModule : java/io/Serializable {
+	public abstract fun getCoordinates ()Lorg/jetbrains/kotlin/gradle/kpm/idea/IdeaKotlinModuleCoordinates;
 	public abstract fun getFragments ()Ljava/util/List;
-	public abstract fun getModuleIdentifier ()Lorg/jetbrains/kotlin/gradle/kpm/idea/IdeaKotlinModuleIdentifier;
-	public abstract fun getName ()Ljava/lang/String;
 }
 
-public abstract interface class org/jetbrains/kotlin/gradle/kpm/idea/IdeaKotlinModuleIdentifier : java/io/Serializable {
+public abstract interface class org/jetbrains/kotlin/gradle/kpm/idea/IdeaKotlinModuleCoordinates : java/io/Serializable {
+	public abstract fun getBuildId ()Ljava/lang/String;
 	public abstract fun getModuleClassifier ()Ljava/lang/String;
+	public abstract fun getModuleName ()Ljava/lang/String;
+	public abstract fun getProjectName ()Ljava/lang/String;
+	public abstract fun getProjectPath ()Ljava/lang/String;
+}
+
+public final class org/jetbrains/kotlin/gradle/kpm/idea/IdeaKotlinModuleCoordinatesKt {
+	public static final fun getPath (Lorg/jetbrains/kotlin/gradle/kpm/idea/IdeaKotlinModuleCoordinates;)Ljava/lang/String;
+}
+
+public final class org/jetbrains/kotlin/gradle/kpm/idea/IdeaKotlinModuleKt {
+	public static final fun getModuleClassifier (Lorg/jetbrains/kotlin/gradle/kpm/idea/IdeaKotlinModule;)Ljava/lang/String;
+	public static final fun getName (Lorg/jetbrains/kotlin/gradle/kpm/idea/IdeaKotlinModule;)Ljava/lang/String;
 }
 
 public abstract interface class org/jetbrains/kotlin/gradle/kpm/idea/IdeaKotlinNativePlatformDetails : org/jetbrains/kotlin/gradle/kpm/idea/IdeaKotlinPlatformDetails {
@@ -199,32 +226,6 @@ public abstract interface class org/jetbrains/kotlin/gradle/kpm/idea/IdeaKotlinR
 
 public abstract interface class org/jetbrains/kotlin/gradle/kpm/idea/IdeaKotlinResourceDirectory : java/io/Serializable {
 	public abstract fun getFile ()Ljava/io/File;
-}
-
-public abstract interface class org/jetbrains/kotlin/gradle/kpm/idea/IdeaKotlinSourceCoordinates : org/jetbrains/kotlin/gradle/kpm/idea/IdeaKotlinDependencyCoordinates {
-	public abstract fun getBuildId ()Ljava/lang/String;
-	public abstract fun getKotlinFragmentName ()Ljava/lang/String;
-	public abstract fun getKotlinModuleClassifier ()Ljava/lang/String;
-	public abstract fun getKotlinModuleName ()Ljava/lang/String;
-	public abstract fun getProjectName ()Ljava/lang/String;
-	public abstract fun getProjectPath ()Ljava/lang/String;
-}
-
-public final class org/jetbrains/kotlin/gradle/kpm/idea/IdeaKotlinSourceCoordinatesImpl$Companion {
-}
-
-public abstract interface class org/jetbrains/kotlin/gradle/kpm/idea/IdeaKotlinSourceDependency : org/jetbrains/kotlin/gradle/kpm/idea/IdeaKotlinDependency {
-	public abstract fun getCoordinates ()Lorg/jetbrains/kotlin/gradle/kpm/idea/IdeaKotlinSourceCoordinates;
-	public abstract fun getType ()Lorg/jetbrains/kotlin/gradle/kpm/idea/IdeaKotlinSourceDependency$Type;
-}
-
-public final class org/jetbrains/kotlin/gradle/kpm/idea/IdeaKotlinSourceDependency$Type : java/lang/Enum, java/io/Serializable {
-	public static final field Companion Lorg/jetbrains/kotlin/gradle/kpm/idea/IdeaKotlinSourceDependency$Type$Companion;
-	public static final field Friend Lorg/jetbrains/kotlin/gradle/kpm/idea/IdeaKotlinSourceDependency$Type;
-	public static final field Refines Lorg/jetbrains/kotlin/gradle/kpm/idea/IdeaKotlinSourceDependency$Type;
-	public static final field Regular Lorg/jetbrains/kotlin/gradle/kpm/idea/IdeaKotlinSourceDependency$Type;
-	public static fun valueOf (Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/kpm/idea/IdeaKotlinSourceDependency$Type;
-	public static fun values ()[Lorg/jetbrains/kotlin/gradle/kpm/idea/IdeaKotlinSourceDependency$Type;
 }
 
 public abstract interface class org/jetbrains/kotlin/gradle/kpm/idea/IdeaKotlinSourceDirectory : java/io/Serializable {
