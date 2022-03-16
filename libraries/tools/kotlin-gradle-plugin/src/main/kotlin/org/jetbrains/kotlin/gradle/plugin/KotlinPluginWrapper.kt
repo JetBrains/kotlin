@@ -42,7 +42,7 @@ import org.jetbrains.kotlin.gradle.targets.js.npm.addNpmDependencyExtension
 import org.jetbrains.kotlin.gradle.targets.native.internal.CInteropKlibLibraryElements
 import org.jetbrains.kotlin.gradle.tasks.AbstractKotlinCompile
 import org.jetbrains.kotlin.gradle.testing.internal.KotlinTestsRegistry
-import org.jetbrains.kotlin.gradle.tooling.buildKotlinToolingMetadataTask
+import org.jetbrains.kotlin.gradle.tooling.registerBuildKotlinToolingMetadataTask
 import org.jetbrains.kotlin.gradle.utils.checkGradleCompatibility
 import org.jetbrains.kotlin.gradle.utils.getOrPut
 import org.jetbrains.kotlin.gradle.utils.loadPropertyFromResources
@@ -120,7 +120,7 @@ abstract class KotlinBasePluginWrapper : Plugin<Project> {
 
         project.addNpmDependencyExtension()
 
-        project.buildKotlinToolingMetadataTask
+        project.registerBuildKotlinToolingMetadataTask()
     }
 
     private fun addKotlinCompilerConfiguration(project: Project) {

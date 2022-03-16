@@ -44,14 +44,14 @@ internal fun setupPublicationForModule(module: KotlinGradleModule) {
                         it.fromResolutionOf(metadataDependencyConfiguration)
                     }
                 }
-                publication.setupKotlinToolingMetadataIfNeeded(project)
+                publication.setupKotlinToolingMetadataIfNeeded(module)
             }
         }
     }
 }
 
-private fun MavenPublication.setupKotlinToolingMetadataIfNeeded(project: Project) {
-    val buildKotlinToolingMetadataTask = project.buildKotlinToolingMetadataTask ?: return
+private fun MavenPublication.setupKotlinToolingMetadataIfNeeded(module: KotlinGradleModule) {
+    val buildKotlinToolingMetadataTask = module.buildKotlinToolingMetadataTask ?: return
 
     artifact(buildKotlinToolingMetadataTask.map { it.outputFile }) { artifact ->
         artifact.classifier = "kotlin-tooling-metadata"

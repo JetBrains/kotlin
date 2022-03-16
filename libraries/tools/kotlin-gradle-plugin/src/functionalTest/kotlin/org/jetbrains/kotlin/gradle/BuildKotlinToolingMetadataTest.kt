@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.*
 import org.jetbrains.kotlin.gradle.targets.js.KotlinJsTarget
 import org.jetbrains.kotlin.gradle.targets.jvm.KotlinJvmTarget
 import org.jetbrains.kotlin.gradle.tooling.BuildKotlinToolingMetadataTask
+import org.jetbrains.kotlin.gradle.tooling.buildKotlinToolingMetadataForMainKpmModuleTask
 import org.jetbrains.kotlin.gradle.tooling.buildKotlinToolingMetadataTask
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.library.KotlinAbiVersion
@@ -41,6 +42,7 @@ import org.junit.runner.RunWith
 import org.junit.runners.Parameterized
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
 @RunWith(Parameterized::class)
@@ -73,18 +75,18 @@ class BuildKotlinToolingMetadataTest {
         assertEquals(project.gradle.gradleVersion, metadata.buildSystemVersion)
         assertEquals(KotlinMultiplatformPluginWrapper::class.java.canonicalName, metadata.buildPlugin)
         assertEquals(project.getKotlinPluginVersion(), metadata.buildPluginVersion)
-        assertEquals(1, metadata.projectTargets.size, "Expected one target (metadata)")
-        val targetMetadata = metadata.projectTargets.single()
-        val targetClass = if (kpmModelMappingEnabled) {
-            KotlinGradleFragment::class
+        if (kpmModelMappingEnabled) {
+            assertEquals(0, metadata.projectTargets.size, "Expected no targets in KPM")
         } else {
-            KotlinMetadataTarget::class
+            assertEquals(1, metadata.projectTargets.size, "Expected one target (metadata)")
+            val targetMetadata = metadata.projectTargets.single()
+            val targetClass = KotlinMetadataTarget::class
+            assertTrue(
+                targetClass.java.isAssignableFrom(Class.forName(targetMetadata.target)),
+                "Expect target to implement ${targetClass.simpleName}"
+            )
+            assertEquals(common.name, targetMetadata.platformType)
         }
-        assertTrue(
-            targetClass.java.isAssignableFrom(Class.forName(targetMetadata.target)),
-            "Expect target to implement ${targetClass.simpleName}"
-        )
-        assertEquals(common.name, targetMetadata.platformType)
         assertTrue(metadata.toJsonString().isNotBlank(), "Expected non blank json representation")
     }
 
@@ -110,9 +112,14 @@ class BuildKotlinToolingMetadataTest {
         val metadata = getKotlinToolingMetadata()
         assertEquals(KotlinMultiplatformPluginWrapper::class.java.canonicalName, metadata.buildPlugin)
 
+        if (kpmModelMappingEnabled) {
+            assertFalse("Kotlin Tooling Metadata generated from KPM should not contain target of 'common' platform") {
+                metadata.projectTargets.any { it.platformType == common.name }
+            }
+        }
+
         val expectedTargets = if (kpmModelMappingEnabled) {
             mapOf(
-                common to KotlinGradleFragmentInternal::class,
                 androidJvm to LegacyMappedVariantWithRuntime::class,
                 jvm to KotlinJvmVariant::class,
                 js to LegacyMappedVariantWithRuntime::class,
@@ -257,8 +264,15 @@ class BuildKotlinToolingMetadataTest {
     }
 
     private fun getKotlinToolingMetadata(): KotlinToolingMetadata {
-        val task = project.buildKotlinToolingMetadataTask?.get() ?: error("No ${BuildKotlinToolingMetadataTask.defaultTaskName} task")
-        return task.kotlinToolingMetadata
+        if (!kpmModelMappingEnabled) {
+            val task = project.buildKotlinToolingMetadataTask?.get() ?: error("No ${BuildKotlinToolingMetadataTask.defaultTaskName} task")
+            return task.kotlinToolingMetadata
+        } else {
+            val task = project.buildKotlinToolingMetadataForMainKpmModuleTask
+                ?.get()
+                ?: error("No ${BuildKotlinToolingMetadataTask.defaultTaskName} for Main module task")
+            return task.kotlinToolingMetadata
+        }
     }
 
     companion object {
