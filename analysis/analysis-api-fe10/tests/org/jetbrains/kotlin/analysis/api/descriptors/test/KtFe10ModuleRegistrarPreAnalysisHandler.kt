@@ -7,14 +7,14 @@ package org.jetbrains.kotlin.analysis.api.descriptors.test
 
 import com.intellij.mock.MockProject
 import com.intellij.openapi.Disposable
-import org.jetbrains.kotlin.analysis.api.impl.barebone.test.TestKtSourceModule
-import org.jetbrains.kotlin.analysis.api.impl.barebone.test.projectModuleProvider
 import org.jetbrains.kotlin.analysis.providers.KotlinDeclarationProviderFactory
 import org.jetbrains.kotlin.analysis.providers.KotlinModificationTrackerFactory
 import org.jetbrains.kotlin.analysis.providers.KotlinPackageProviderFactory
 import org.jetbrains.kotlin.analysis.providers.impl.KotlinStaticDeclarationProviderFactory
 import org.jetbrains.kotlin.analysis.providers.impl.KotlinStaticModificationTrackerFactory
 import org.jetbrains.kotlin.analysis.providers.impl.KotlinStaticPackageProviderFactory
+import org.jetbrains.kotlin.analysis.test.framework.project.structure.TestKtSourceModule
+import org.jetbrains.kotlin.analysis.test.framework.project.structure.projectModuleProvider
 import org.jetbrains.kotlin.test.services.*
 
 class KtFe10ModuleRegistrarPreAnalysisHandler(

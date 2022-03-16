@@ -19,6 +19,7 @@ dependencies {
     testApi(projectTests(":compiler:test-infrastructure"))
     testApi(projectTests(":compiler:tests-common-new"))
     testApi(projectTests(":analysis:analysis-api-impl-barebone"))
+    testApi(projectTests(":analysis:analysis-test-framework"))
     testImplementation(project(":kotlin-reflect"))
     testImplementation(toolsJar())
 }
