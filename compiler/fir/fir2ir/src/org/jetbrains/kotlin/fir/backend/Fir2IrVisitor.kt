@@ -756,12 +756,6 @@ class Fir2IrVisitor(
         }
     }
 
-    private val FirFunctionCall.dynamicVararg: FirVarargArgumentsExpression?
-        get() = arguments.firstOrNull() as? FirVarargArgumentsExpression
-
-    private val FirFunctionCall.dynamicVarargArguments: List<FirExpression>?
-        get() = dynamicVararg?.arguments
-
     private fun extractOperationFromDynamicSetCall(functionCall: FirFunctionCall) =
         functionCall.dynamicVarargArguments?.lastOrNull() as? FirFunctionCall
 

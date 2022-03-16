@@ -45,6 +45,12 @@ inline val FirCall.arguments: List<FirExpression> get() = argumentList.arguments
 
 inline val FirCall.argument: FirExpression get() = argumentList.arguments.first()
 
+inline val FirCall.dynamicVararg: FirVarargArgumentsExpression?
+    get() = arguments.firstOrNull() as? FirVarargArgumentsExpression
+
+inline val FirCall.dynamicVarargArguments: List<FirExpression>?
+    get() = dynamicVararg?.arguments
+
 inline val FirCall.resolvedArgumentMapping: Map<FirExpression, FirValueParameter>?
     get() = when (val argumentList = argumentList) {
         is FirResolvedArgumentList -> argumentList.mapping
