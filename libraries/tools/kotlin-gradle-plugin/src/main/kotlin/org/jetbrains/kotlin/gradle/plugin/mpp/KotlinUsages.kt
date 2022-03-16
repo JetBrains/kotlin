@@ -36,6 +36,7 @@ object KotlinUsages {
         when {
             platformType in jvmPlatformTypes -> JAVA_API
             platformType == common
+                    /** The kotlinExtension check below can be removed when legacy [KotlinPlatformCommonPlugin] is also removed. */
                     && project.kotlinExtension is KotlinMultiplatformExtension
                     && !project.isCompatibilityMetadataVariantEnabled -> KOTLIN_METADATA
             else -> KOTLIN_API
