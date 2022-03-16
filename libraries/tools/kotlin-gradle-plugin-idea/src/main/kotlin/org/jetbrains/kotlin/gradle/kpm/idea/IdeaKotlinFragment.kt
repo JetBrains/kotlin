@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.gradle.kpm.idea
 import org.jetbrains.kotlin.gradle.kpm.KotlinExternalModelContainer
 import java.io.Serializable
 
-interface IdeaKotlinFragment : Serializable {
+sealed interface IdeaKotlinFragment : Serializable {
     val coordinates: IdeaKotlinFragmentCoordinates
     val platforms: Set<IdeaKotlinPlatform>
     val languageSettings: IdeaKotlinLanguageSettings?

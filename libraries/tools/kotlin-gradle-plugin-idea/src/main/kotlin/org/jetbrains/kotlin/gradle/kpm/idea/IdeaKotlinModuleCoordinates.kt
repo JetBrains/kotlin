@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.gradle.kpm.idea
 
 import java.io.Serializable
 
-interface IdeaKotlinModuleCoordinates : Serializable {
+sealed interface IdeaKotlinModuleCoordinates : Serializable {
     val buildId: String
     val projectPath: String
     val projectName: String

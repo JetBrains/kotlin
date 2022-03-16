@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.gradle.kpm.idea
 import java.io.File
 import java.io.Serializable
 
-interface IdeaKotlinLanguageSettings : Serializable {
+sealed interface IdeaKotlinLanguageSettings : Serializable {
     val languageVersion: String?
     val apiVersion: String?
     val isProgressiveMode: Boolean
