@@ -6,16 +6,15 @@
 package org.jetbrains.kotlin.analysis.api.fir.components.psiTypeProvider
 
 import org.jetbrains.kotlin.analysis.api.analyse
-import org.jetbrains.kotlin.analysis.api.fir.FirFrontendApiTestConfiguratorService
 import org.jetbrains.kotlin.analysis.test.framework.services.expressionMarkerProvider
-import org.jetbrains.kotlin.analysis.test.framework.base.AbstractHLApiSingleFileTest
+import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiSingleFileTest
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.assertions
 
-abstract class AbstractExpressionPsiTypeProviderTest : AbstractHLApiSingleFileTest(){
+abstract class AbstractExpressionPsiTypeProviderTest : AbstractAnalysisApiSingleFileTest(){
     override fun doTestByFileStructure(ktFile: KtFile, module: TestModule, testServices: TestServices) {
         val declarationAtCaret = testServices.expressionMarkerProvider.getSelectedElement(ktFile) as KtExpression
         val actual = analyse(ktFile) {

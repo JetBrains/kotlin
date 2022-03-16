@@ -10,20 +10,20 @@ import com.intellij.mock.MockProject
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.vfs.impl.jar.CoreJarFileSystem
 import com.intellij.psi.search.GlobalSearchScope
-import org.jetbrains.kotlin.analysis.api.fir.utils.libraries.binary.LibraryFrontendApiTestConfiguratorService
-import org.jetbrains.kotlin.analysis.test.framework.FrontendApiTestConfiguratorService
-import org.jetbrains.kotlin.analysis.api.impl.base.test.utils.libraries.CompiledLibraryProvider
+import org.jetbrains.kotlin.analysis.api.fir.utils.libraries.binary.LibraryAnalysisApiTestConfiguratorService
+import org.jetbrains.kotlin.analysis.test.framework.AnalysisApiTestConfiguratorService
 import org.jetbrains.kotlin.analysis.decompiled.light.classes.ClsJavaStubByVirtualFileCache
 import org.jetbrains.kotlin.analysis.project.structure.ProjectStructureProvider
+import org.jetbrains.kotlin.analysis.test.framework.services.libraries.CompiledLibraryProvider
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.load.kotlin.PackagePartProvider
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.services.ServiceRegistrationData
 
-internal object SymbolLightClassesForLibraryFrontendApiTestConfiguratorService : FrontendApiTestConfiguratorService {
+internal object SymbolLightClassesForLibraryAnalysisApiTestConfiguratorService : AnalysisApiTestConfiguratorService {
     override fun TestConfigurationBuilder.configureTest(disposable: Disposable) {
-        with(LibraryFrontendApiTestConfiguratorService) {
+        with(LibraryAnalysisApiTestConfiguratorService) {
             configureTest(disposable)
         }
         useAdditionalServices(ServiceRegistrationData(CompiledLibraryProvider::class, ::CompiledLibraryProvider))
@@ -37,7 +37,7 @@ internal object SymbolLightClassesForLibraryFrontendApiTestConfiguratorService :
         projectStructureProvider: ProjectStructureProvider,
         jarFileSystem: CoreJarFileSystem,
     ) {
-        LibraryFrontendApiTestConfiguratorService.registerProjectServices(
+        LibraryAnalysisApiTestConfiguratorService.registerProjectServices(
             project,
             compilerConfig,
             files,
@@ -49,10 +49,10 @@ internal object SymbolLightClassesForLibraryFrontendApiTestConfiguratorService :
     }
 
     override fun registerApplicationServices(application: MockApplication) {
-        LibraryFrontendApiTestConfiguratorService.registerApplicationServices(application)
+        LibraryAnalysisApiTestConfiguratorService.registerApplicationServices(application)
     }
 
     override fun doOutOfBlockModification(file: KtFile) {
-        LibraryFrontendApiTestConfiguratorService.doOutOfBlockModification(file)
+        LibraryAnalysisApiTestConfiguratorService.doOutOfBlockModification(file)
     }
 }

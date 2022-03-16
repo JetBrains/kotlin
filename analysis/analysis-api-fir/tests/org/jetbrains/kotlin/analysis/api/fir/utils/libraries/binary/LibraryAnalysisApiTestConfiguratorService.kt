@@ -15,8 +15,8 @@ import com.intellij.psi.ClassFileViewProviderFactory
 import com.intellij.psi.FileTypeFileViewProviders
 import com.intellij.psi.compiled.ClassFileDecompilers
 import com.intellij.psi.search.GlobalSearchScope
-import org.jetbrains.kotlin.analysis.api.fir.FirFrontendApiTestConfiguratorService
-import org.jetbrains.kotlin.analysis.test.framework.FrontendApiTestConfiguratorService
+import org.jetbrains.kotlin.analysis.api.fir.FirAnalysisApiTestConfiguratorService
+import org.jetbrains.kotlin.analysis.test.framework.AnalysisApiTestConfiguratorService
 import org.jetbrains.kotlin.analysis.decompiler.psi.KotlinBuiltInDecompiler
 import org.jetbrains.kotlin.analysis.decompiler.psi.KotlinClassFileDecompiler
 import org.jetbrains.kotlin.analysis.decompiler.stub.file.ClsKotlinBinaryClassCache
@@ -30,7 +30,7 @@ import org.jetbrains.kotlin.load.kotlin.PackagePartProvider
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 
-object LibraryFrontendApiTestConfiguratorService : FrontendApiTestConfiguratorService {
+object LibraryAnalysisApiTestConfiguratorService : AnalysisApiTestConfiguratorService {
     override val allowDependedAnalysisSession: Boolean get() = false
 
     override fun TestConfigurationBuilder.configureTest(disposable: Disposable) {
@@ -50,7 +50,7 @@ object LibraryFrontendApiTestConfiguratorService : FrontendApiTestConfiguratorSe
     }
 
     override fun registerApplicationServices(application: MockApplication) {
-        FirFrontendApiTestConfiguratorService.registerApplicationServices(application)
+        FirAnalysisApiTestConfiguratorService.registerApplicationServices(application)
         if (application.getServiceIfCreated(ClsKotlinBinaryClassCache::class.java) != null) return
         application.registerService(ClsKotlinBinaryClassCache::class.java)
         application.registerService(FileAttributeService::class.java, DummyFileAttributeService)
@@ -68,6 +68,6 @@ object LibraryFrontendApiTestConfiguratorService : FrontendApiTestConfiguratorSe
     }
 
     override fun doOutOfBlockModification(file: KtFile) {
-        FirFrontendApiTestConfiguratorService.doOutOfBlockModification(file)
+        FirAnalysisApiTestConfiguratorService.doOutOfBlockModification(file)
     }
 }

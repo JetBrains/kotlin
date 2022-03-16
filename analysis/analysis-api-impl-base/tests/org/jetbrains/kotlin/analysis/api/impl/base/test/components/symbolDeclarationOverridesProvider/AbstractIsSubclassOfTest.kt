@@ -6,14 +6,14 @@
 package org.jetbrains.kotlin.analysis.api.impl.base.test.components.symbolDeclarationOverridesProvider
 
 import org.jetbrains.kotlin.analysis.test.framework.services.expressionMarkerProvider
-import org.jetbrains.kotlin.analysis.test.framework.base.AbstractHLApiSingleModuleTest
+import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedSingleModuleTest
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.assertions
 
-abstract class AbstractIsSubclassOfTest : AbstractHLApiSingleModuleTest() {
+abstract class AbstractIsSubclassOfTest : AbstractAnalysisApiBasedSingleModuleTest() {
     override fun doTestByFileStructure(ktFiles: List<KtFile>, module: TestModule, testServices: TestServices) {
         val subClass = testServices.expressionMarkerProvider.getElementOfTypAtCaret<KtClassOrObject>(ktFiles.first(), "sub")
         val superClass = testServices.expressionMarkerProvider.getElementOfTypAtCaret<KtClassOrObject>(ktFiles.first(), "super")

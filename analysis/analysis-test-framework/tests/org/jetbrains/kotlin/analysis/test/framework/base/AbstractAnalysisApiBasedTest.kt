@@ -11,7 +11,7 @@ import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.util.Disposer
 import com.intellij.testFramework.TestDataFile
 import junit.framework.ComparisonFailure
-import org.jetbrains.kotlin.analysis.test.framework.FrontendApiTestConfiguratorService
+import org.jetbrains.kotlin.analysis.test.framework.AnalysisApiTestConfiguratorService
 import org.jetbrains.kotlin.analysis.test.framework.TestWithDisposable
 import org.jetbrains.kotlin.analysis.test.framework.project.structure.KotlinProjectStructureProviderTestImpl
 import org.jetbrains.kotlin.analysis.test.framework.project.structure.TestKtModuleProvider
@@ -46,8 +46,8 @@ import java.util.concurrent.ExecutionException
 import kotlin.io.path.exists
 import kotlin.io.path.nameWithoutExtension
 
-abstract class AnalysisApiBasedTest : TestWithDisposable() {
-    abstract val configurator: FrontendApiTestConfiguratorService
+abstract class AbstractAnalysisApiBasedTest : TestWithDisposable() {
+    abstract val configurator: AnalysisApiTestConfiguratorService
 
     protected open val enableTestInDependedMode: Boolean
         get() = configurator.allowDependedAnalysisSession
@@ -127,7 +127,7 @@ abstract class AnalysisApiBasedTest : TestWithDisposable() {
         configureTest(this)
 
         startingArtifactFactory = { ResultingArtifact.Source() }
-        this.testInfo = this@AnalysisApiBasedTest.testInfo
+        this.testInfo = this@AbstractAnalysisApiBasedTest.testInfo
     }
 
     protected open fun handleInitializationError(exception: Throwable, moduleStructure: TestModuleStructure): InitializationErrorAction =

@@ -5,15 +5,14 @@
 
 package org.jetbrains.kotlin.analysis.api.impl.base.test.scopes
 
-import org.jetbrains.kotlin.analysis.test.framework.FrontendApiTestConfiguratorService
-import org.jetbrains.kotlin.analysis.test.framework.base.AbstractHLApiSingleFileTest
+import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiSingleFileTest
 import org.jetbrains.kotlin.analysis.api.symbols.DebugSymbolRenderer
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.assertions
 
-abstract class AbstractFileScopeTest : AbstractHLApiSingleFileTest() {
+abstract class AbstractFileScopeTest : AbstractAnalysisApiSingleFileTest() {
     override fun doTestByFileStructure(ktFile: KtFile, module: TestModule, testServices: TestServices) {
         val actual = executeOnPooledThreadInReadAction {
             analyseForTest(ktFile) {
