@@ -5,10 +5,10 @@
 
 package org.jetbrains.kotlin.analysis.low.level.api.fir.test.base
 
-import org.jetbrains.kotlin.analysis.test.framework.FrontendApiTestConfiguratorService
-import org.jetbrains.kotlin.analysis.test.framework.base.AnalysisApiBasedTest
+import org.jetbrains.kotlin.analysis.test.framework.AnalysisApiTestConfiguratorService
+import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedTest
 
 
-abstract class AbstractLowLevelApiSingleModuleTest : AnalysisApiBasedTest() {
-    override val configurator: FrontendApiTestConfiguratorService get() = FirLowLevelFrontendApiTestConfiguratorService
+abstract class AbstractLowLevelApiSingleModuleTest : AbstractAnalysisApiBasedTest() {
+    override val configurator: AnalysisApiTestConfiguratorService get() = FirLowLevelAnalysisApiTestConfiguratorService
 }

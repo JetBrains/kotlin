@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestServices
 import java.nio.file.Path
 
-interface FrontendApiTestConfiguratorService {
+interface AnalysisApiTestConfiguratorService {
     val testPrefix: String? get() = null
     val allowDependedAnalysisSession: Boolean get() = true
 

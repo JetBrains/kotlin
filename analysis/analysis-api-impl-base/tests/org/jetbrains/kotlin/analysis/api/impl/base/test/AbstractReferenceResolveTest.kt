@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.analysis.api.components.KtDeclarationRendererOptions
 import org.jetbrains.kotlin.analysis.api.components.RendererModifier
 import org.jetbrains.kotlin.analysis.api.impl.base.test.TestReferenceResolveResultRenderer.renderResolvedTo
 import org.jetbrains.kotlin.analysis.api.symbols.*
-import org.jetbrains.kotlin.analysis.test.framework.base.AbstractHLApiSingleModuleTest
+import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedSingleModuleTest
 import org.jetbrains.kotlin.analysis.test.framework.services.expressionMarkerProvider
 import org.jetbrains.kotlin.analysis.test.framework.utils.unwrapMultiReferences
 import org.jetbrains.kotlin.idea.references.KtReference
@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.assertions
 
-abstract class AbstractReferenceResolveTest : AbstractHLApiSingleModuleTest() {
+abstract class AbstractReferenceResolveTest : AbstractAnalysisApiBasedSingleModuleTest() {
     override fun configureTest(builder: TestConfigurationBuilder) {
         super.configureTest(builder)
         with(builder) {

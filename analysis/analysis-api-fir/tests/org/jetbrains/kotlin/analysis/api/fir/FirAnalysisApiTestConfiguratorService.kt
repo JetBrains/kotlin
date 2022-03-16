@@ -12,9 +12,9 @@ import com.intellij.openapi.vfs.impl.jar.CoreJarFileSystem
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.analysis.api.fir.utils.configureOptionalTestCompilerPlugin
 import org.jetbrains.kotlin.analysis.api.impl.base.references.HLApiReferenceProviderService
-import org.jetbrains.kotlin.analysis.low.level.api.fir.test.base.FirLowLevelFrontendApiTestConfiguratorService
+import org.jetbrains.kotlin.analysis.low.level.api.fir.test.base.FirLowLevelAnalysisApiTestConfiguratorService
 import org.jetbrains.kotlin.analysis.project.structure.ProjectStructureProvider
-import org.jetbrains.kotlin.analysis.test.framework.FrontendApiTestConfiguratorService
+import org.jetbrains.kotlin.analysis.test.framework.AnalysisApiTestConfiguratorService
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.idea.references.KotlinFirReferenceContributor
 import org.jetbrains.kotlin.idea.references.KotlinReferenceProviderContributor
@@ -23,18 +23,18 @@ import org.jetbrains.kotlin.psi.KotlinReferenceProvidersService
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 
-object FirFrontendApiTestConfiguratorService : FrontendApiTestConfiguratorService {
+object FirAnalysisApiTestConfiguratorService : AnalysisApiTestConfiguratorService {
     override fun TestConfigurationBuilder.configureTest(disposable: Disposable) {
-        with(FirLowLevelFrontendApiTestConfiguratorService) { configureTest(disposable) }
+        with(FirLowLevelAnalysisApiTestConfiguratorService) { configureTest(disposable) }
         configureOptionalTestCompilerPlugin()
     }
 
     override fun processTestFiles(files: List<KtFile>): List<KtFile> {
-        return FirLowLevelFrontendApiTestConfiguratorService.processTestFiles(files)
+        return FirLowLevelAnalysisApiTestConfiguratorService.processTestFiles(files)
     }
 
     override fun getOriginalFile(file: KtFile): KtFile {
-        return FirLowLevelFrontendApiTestConfiguratorService.getOriginalFile(file)
+        return FirLowLevelAnalysisApiTestConfiguratorService.getOriginalFile(file)
     }
 
     override fun registerProjectServices(
@@ -45,7 +45,7 @@ object FirFrontendApiTestConfiguratorService : FrontendApiTestConfiguratorServic
         projectStructureProvider: ProjectStructureProvider,
         jarFileSystem: CoreJarFileSystem,
     ) {
-        FirLowLevelFrontendApiTestConfiguratorService.registerProjectServices(
+        FirLowLevelAnalysisApiTestConfiguratorService.registerProjectServices(
             project,
             compilerConfig,
             files,
@@ -56,7 +56,7 @@ object FirFrontendApiTestConfiguratorService : FrontendApiTestConfiguratorServic
     }
 
     override fun registerApplicationServices(application: MockApplication) {
-        FirLowLevelFrontendApiTestConfiguratorService.registerApplicationServices(application)
+        FirLowLevelAnalysisApiTestConfiguratorService.registerApplicationServices(application)
         if (application.getServiceIfCreated(KotlinReferenceProvidersService::class.java) == null) {
             application.registerService(KotlinReferenceProvidersService::class.java, HLApiReferenceProviderService::class.java)
             application.registerService(KotlinReferenceProviderContributor::class.java, KotlinFirReferenceContributor::class.java)
@@ -64,6 +64,6 @@ object FirFrontendApiTestConfiguratorService : FrontendApiTestConfiguratorServic
     }
 
     override fun doOutOfBlockModification(file: KtFile) {
-        FirLowLevelFrontendApiTestConfiguratorService.doOutOfBlockModification(file)
+        FirLowLevelAnalysisApiTestConfiguratorService.doOutOfBlockModification(file)
     }
 }
