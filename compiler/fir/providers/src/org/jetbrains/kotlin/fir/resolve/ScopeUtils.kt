@@ -81,7 +81,7 @@ private fun ConeKotlinType.scope(useSiteSession: FirSession, scopeSession: Scope
             }
         }
         is ConeRawType -> lowerBound.scope(useSiteSession, scopeSession, requiredPhase)
-        is ConeDynamicType -> FirDynamicScope(useSiteSession)
+        is ConeDynamicType -> FirDynamicScope(useSiteSession, scopeSession)
         is ConeFlexibleType -> lowerBound.scope(useSiteSession, scopeSession, requiredPhase)
         is ConeIntersectionType -> FirTypeIntersectionScope.prepareIntersectionScope(
             useSiteSession,

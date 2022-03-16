@@ -16,6 +16,9 @@ import org.jetbrains.kotlin.fir.declarations.builder.*
 import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.expressions.FirOperationNameConventions
 import org.jetbrains.kotlin.fir.moduleData
+import org.jetbrains.kotlin.fir.resolve.ScopeSession
+import org.jetbrains.kotlin.fir.resolve.scope
+import org.jetbrains.kotlin.fir.scopes.FakeOverrideTypeCalculator
 import org.jetbrains.kotlin.fir.scopes.FirTypeScope
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction
 import org.jetbrains.kotlin.fir.symbols.impl.*
@@ -29,6 +32,7 @@ import org.jetbrains.kotlin.name.StandardClassIds
 
 class FirDynamicScope(
     private val session: FirSession,
+    private val scopeSession: ScopeSession,
 ) : FirTypeScope() {
     override fun processDirectOverriddenFunctionsWithBaseScope(
         functionSymbol: FirNamedFunctionSymbol,
@@ -44,10 +48,25 @@ class FirDynamicScope(
 
     override fun getClassifierNames(): Set<Name> = emptySet()
 
+    private val anyTypeScope by lazy {
+        session.builtinTypes.anyType.type.scope(session, scopeSession, FakeOverrideTypeCalculator.DoNothing)
+    }
+
     override fun processFunctionsByName(
         name: Name,
         processor: (FirNamedFunctionSymbol) -> Unit
     ) {
+        var foundMemberInAny = false
+
+        anyTypeScope?.processFunctionsByName(name) {
+            foundMemberInAny = true
+            processor(it)
+        }
+
+        if (foundMemberInAny) {
+            return
+        }
+
         val function = pseudoFunctions.getOrPut(name) {
             buildPseudoFunctionByName(name)
         }
@@ -59,6 +78,17 @@ class FirDynamicScope(
         name: Name,
         processor: (FirVariableSymbol<*>) -> Unit
     ) {
+        var foundMemberInAny = false
+
+        anyTypeScope?.processPropertiesByName(name) {
+            foundMemberInAny = true
+            processor(it)
+        }
+
+        if (foundMemberInAny) {
+            return
+        }
+
         val property = pseudoProperties.getOrPut(name) {
             buildPseudoPropertyByName(name)
         }
