@@ -2,7 +2,6 @@
 // WITH_REFLECT
 
 import kotlin.test.assertEquals
-import kotlin.test.assertFailsWith
 
 inline class S(val value: String?) {
     operator fun plus(other: S): S = S(this.value + other.value)
@@ -31,16 +30,10 @@ fun box(): String {
     assertEquals("_", S?::extension4.call(S("_")))
 
     assertEquals(S("mno"), C()::member.call(S("m"), "n", S("o")))
-    assertFailsWith<IllegalArgumentException>("Remove assertFailsWith and try again, as this problem may have been fixed.") {
-        assertEquals(S("pqr"), S("p")::extension1.call(S("q"), "r"))
-    }
-    assertFailsWith<IllegalArgumentException>("Remove assertFailsWith and try again, as this problem may have been fixed.") {
-        assertEquals(S("stu"), S("s")::extension2.call(S("t"), "u"))
-    }
+    assertEquals(S("pqr"), S("p")::extension1.call(S("q"), S("r")))
+    assertEquals(S("stu"), S("s")::extension2.call(S("t"), S("u")))
     assertEquals("_", S("_")::extension3.call())
-    assertFailsWith<IllegalArgumentException>("Remove assertFailsWith and try again, as this problem may have been fixed.") {
-        assertEquals("_", S("_")::extension4.call(S("_")))
-    }
+    assertEquals("_", S("_")::extension4.call())
 
     return "OK"
 }
