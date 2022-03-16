@@ -85,7 +85,7 @@ internal class KFunctionProxy(
         if (!state.hasTheSameFieldsWith(other.state)) return false
 
         return when {
-            state.irFunction.isAdapter() && other.state.irFunction.isAdapter() -> state.irFunction.eqaulsByAdapteeCall(other.state.irFunction)
+            state.irFunction.isAdapter() && other.state.irFunction.isAdapter() -> state.irFunction.equalsByAdapteeCall(other.state.irFunction)
             else -> state.irFunction == other.state.irFunction
         }
     }
@@ -114,7 +114,7 @@ internal class KFunctionProxy(
         return (call as? IrFunctionAccessExpression)?.symbol
     }
 
-    private fun IrFunction.eqaulsByAdapteeCall(other: IrFunction): Boolean {
+    private fun IrFunction.equalsByAdapteeCall(other: IrFunction): Boolean {
         if (!this.isAdapter() || !other.isAdapter()) return false
 
         val statement = this.body!!.statements.single()
