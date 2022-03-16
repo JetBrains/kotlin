@@ -44,6 +44,24 @@ internal class OperatorExpressionGenerator(
         comparisonExpression: FirComparisonExpression
     ): IrExpression {
         val operation = comparisonExpression.operation
+        val receiver = comparisonExpression.compareToCall.explicitReceiver
+
+        if (receiver?.typeRef?.coneType is ConeDynamicType) {
+            val dynamicOperator = operation.toIrDynamicOperator()
+                ?: throw Exception("Can't convert to the corresponding IrDynamicOperator")
+            val argument = comparisonExpression.compareToCall.dynamicVarargArguments?.firstOrNull()
+                ?: throw Exception("Comparison with a dynamic function should have a vararg with the rhs-argument")
+
+            return IrDynamicOperatorExpressionImpl(
+                startOffset,
+                endOffset,
+                irBuiltIns.booleanType,
+                dynamicOperator,
+            ).apply {
+                this.receiver = receiver.accept(visitor, null) as IrExpression
+                arguments.add(argument.accept(visitor, null) as IrExpression)
+            }
+        }
 
         fun fallbackToRealCall(): IrExpression {
             val (symbol, origin) = getSymbolAndOriginForComparison(operation, irBuiltIns.intType.classifierOrFail)
@@ -89,6 +107,14 @@ internal class OperatorExpressionGenerator(
             FirOperation.GT_EQ -> irBuiltIns.greaterOrEqualFunByOperandType[classifier] to IrStatementOrigin.GTEQ
             else -> error("Unexpected comparison operation: $operation")
         }
+    }
+
+    private fun FirOperation.toIrDynamicOperator() = when (this) {
+        FirOperation.LT -> IrDynamicOperator.LT
+        FirOperation.LT_EQ -> IrDynamicOperator.LE
+        FirOperation.GT -> IrDynamicOperator.GT
+        FirOperation.GT_EQ -> IrDynamicOperator.GE
+        else -> null
     }
 
     private fun generateEqualityOperatorCall(

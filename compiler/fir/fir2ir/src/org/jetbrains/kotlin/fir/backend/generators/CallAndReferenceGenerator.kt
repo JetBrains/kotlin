@@ -322,6 +322,14 @@ class CallAndReferenceGenerator(
         }
     }
 
+    private val IrDynamicOperator.isBinary: Boolean
+        get() = this == IrDynamicOperator.LT
+                || this == IrDynamicOperator.LE
+                || this == IrDynamicOperator.GT
+                || this == IrDynamicOperator.GE
+                || this == IrDynamicOperator.EQEQ
+                || this == IrDynamicOperator.EQEQEQ
+
     fun convertToIrCall(
         qualifiedAccess: FirQualifiedAccess,
         typeRef: FirTypeRef,
@@ -358,13 +366,18 @@ class CallAndReferenceGenerator(
                         val ktElement = qualifiedAccess.source?.psi as? KtElement
                             ?: throw Exception("KtElement is needed here")
                         val operator = ktElement.getDynamicOperator() ?: IrDynamicOperator.INVOKE
+                        val theType = if (operator.isBinary) {
+                            session.builtinTypes.booleanType.toIrType()
+                        } else {
+                            type
+                        }
                         if (operator == IrDynamicOperator.INVOKE && qualifiedAccess !is FirImplicitInvokeCall) {
                             val name = calleeReference.resolved?.name ?: throw Exception("There must be a name")
                             theExplicitReceiver = IrDynamicMemberExpressionImpl(
                                 startOffset, endOffset, type, name.identifier, explicitReceiverExpression
                             )
                         }
-                        IrDynamicOperatorExpressionImpl(startOffset, endOffset, type, operator)
+                        IrDynamicOperatorExpressionImpl(startOffset, endOffset, theType, operator)
                     } else {
                         IrCallImpl(
                             startOffset, endOffset, type, symbol,

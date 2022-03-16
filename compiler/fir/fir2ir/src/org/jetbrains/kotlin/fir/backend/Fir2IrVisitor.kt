@@ -1294,11 +1294,26 @@ class Fir2IrVisitor(
         return callGenerator.convertToGetObject(resolvedQualifier)
     }
 
+    private fun LogicOperationKind.toIrDynamicOperator() = when (this) {
+        LogicOperationKind.AND -> IrDynamicOperator.ANDAND
+        LogicOperationKind.OR -> IrDynamicOperator.OROR
+    }
+
     override fun visitBinaryLogicExpression(binaryLogicExpression: FirBinaryLogicExpression, data: Any?): IrElement {
         return binaryLogicExpression.convertWithOffsets<IrElement> { startOffset, endOffset ->
             val leftOperand = binaryLogicExpression.leftOperand.accept(this, data) as IrExpression
             val rightOperand = binaryLogicExpression.rightOperand.accept(this, data) as IrExpression
-            when (binaryLogicExpression.kind) {
+            if (leftOperand.type is IrDynamicType) {
+                IrDynamicOperatorExpressionImpl(
+                    startOffset,
+                    endOffset,
+                    irBuiltIns.booleanType,
+                    binaryLogicExpression.kind.toIrDynamicOperator(),
+                ).apply {
+                    receiver = leftOperand
+                    arguments.add(rightOperand)
+                }
+            } else when (binaryLogicExpression.kind) {
                 LogicOperationKind.AND -> {
                     IrIfThenElseImpl(startOffset, endOffset, irBuiltIns.booleanType, IrStatementOrigin.ANDAND).apply {
                         branches.add(IrBranchImpl(leftOperand, rightOperand))
