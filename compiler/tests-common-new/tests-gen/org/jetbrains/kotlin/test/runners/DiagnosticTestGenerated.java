@@ -8087,6 +8087,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
             }
 
             @Test
+            @TestMetadata("kt48546.kt")
+            public void testKt48546() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/delegatedProperty/kt48546.kt");
+            }
+
+            @Test
             @TestMetadata("localVariable.kt")
             public void testLocalVariable() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/delegatedProperty/localVariable.kt");
@@ -8528,6 +8534,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
             @TestMetadata("kt44843.kt")
             public void testKt44843() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/delegation/kt44843.kt");
+            }
+
+            @Test
+            @TestMetadata("kt48546.kt")
+            public void testKt48546() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/delegation/kt48546.kt");
             }
 
             @Test

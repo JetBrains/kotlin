@@ -8081,6 +8081,18 @@ public class DiagnosisCompilerTestFE10TestdataTestGenerated extends AbstractDiag
             }
 
             @Test
+            @TestMetadata("kt48546.kt")
+            public void testKt48546() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/delegatedProperty/kt48546.kt");
+            }
+
+            @Test
+            @TestMetadata("kt48546Strict.kt")
+            public void testKt48546Strict() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/delegatedProperty/kt48546Strict.kt");
+            }
+
+            @Test
             @TestMetadata("localVariable.kt")
             public void testLocalVariable() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/delegatedProperty/localVariable.kt");
@@ -8522,6 +8534,12 @@ public class DiagnosisCompilerTestFE10TestdataTestGenerated extends AbstractDiag
             @TestMetadata("kt44843.kt")
             public void testKt44843() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/delegation/kt44843.kt");
+            }
+
+            @Test
+            @TestMetadata("kt48546.kt")
+            public void testKt48546() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/delegation/kt48546.kt");
             }
 
             @Test
@@ -25048,6 +25066,12 @@ public class DiagnosisCompilerTestFE10TestdataTestGenerated extends AbstractDiag
             @TestMetadata("inferenceInLinkedLambdasDependentOnExpectedType.kt")
             public void testInferenceInLinkedLambdasDependentOnExpectedType() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/resolve/inferenceInLinkedLambdasDependentOnExpectedType.kt");
+            }
+
+            @Test
+            @TestMetadata("kt28109.kt")
+            public void testKt28109() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/resolve/kt28109.kt");
             }
 
             @Test

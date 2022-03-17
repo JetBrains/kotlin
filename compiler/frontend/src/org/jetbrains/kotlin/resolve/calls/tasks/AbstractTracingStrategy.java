@@ -138,6 +138,13 @@ public abstract class AbstractTracingStrategy implements TracingStrategy {
     }
 
     @Override
+    public void recursiveType(@NotNull BindingTrace trace) {
+        KtExpression expression = call.getCalleeExpression();
+        if (expression == null) return;
+        trace.report(TYPECHECKER_HAS_RUN_INTO_RECURSIVE_PROBLEM.getErrorFactory().on(expression));
+    }
+
+    @Override
     public void abstractSuperCall(@NotNull BindingTrace trace) {
         trace.report(ABSTRACT_SUPER_CALL.on(reference));
     }

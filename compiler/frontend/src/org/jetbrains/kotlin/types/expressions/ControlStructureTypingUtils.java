@@ -585,6 +585,11 @@ public class ControlStructureTypingUtils {
         }
 
         @Override
+        public void recursiveType(@NotNull BindingTrace trace) {
+            logError();
+        }
+
+        @Override
         public <D extends CallableDescriptor> void unresolvedReferenceWrongReceiver(
                 @NotNull BindingTrace trace, @NotNull Collection<? extends ResolvedCall<D>> candidates
         ) {
