@@ -809,6 +809,8 @@ tasks {
         dependsOn(":tools:kotlinp:test")
         dependsOn(":native:kotlin-klib-commonizer:test")
         dependsOn(":native:kotlin-klib-commonizer-api:test")
+        dependsOn(":kotlin-tooling-core:check")
+        dependsOn(":kotlin-tooling-metadata:check")
     }
 
     register("examplesTest") {
