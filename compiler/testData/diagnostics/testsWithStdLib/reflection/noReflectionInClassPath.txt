@@ -15,7 +15,7 @@ public fun n11(): kotlin.Unit
 public fun y01(): kotlin.reflect.KProperty1.Getter<Foo, kotlin.Any>
 public fun y02(): kotlin.collections.Collection<kotlin.reflect.KCallable<*>>
 public fun y03(): kotlin.String?
-public fun y04(): [ERROR : Error function type]
+public fun y04(): [Error type: Return type for function cannot be resolved]
 
 public final class Foo {
     public constructor Foo(/*0*/ prop: kotlin.Any)

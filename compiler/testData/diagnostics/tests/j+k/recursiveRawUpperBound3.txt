@@ -1,10 +1,10 @@
 package
 
-public fun main(/*0*/ xyz: XYZ<*, *, *>): XYZ<(raw) [ERROR : Cyclic upper bounds], (raw) [ERROR : Cyclic upper bounds], (raw) [ERROR : Cyclic upper bounds]>!
+public fun main(/*0*/ xyz: XYZ<*, *, *>): XYZ<(raw) [Error type: Cyclic upper bounds], (raw) [Error type: Cyclic upper bounds], (raw) [Error type: Cyclic upper bounds]>!
 
-public interface XYZ</*0*/ X : Y!, /*1*/ Y : [ERROR : Cyclic upper bounds], /*2*/ Z : [ERROR : Cyclic upper bounds]> {
+public interface XYZ</*0*/ X : Y!, /*1*/ Y : [Error type: Cyclic upper bounds], /*2*/ Z : [Error type: Cyclic upper bounds]> {
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-    public abstract fun foo(): XYZ<(raw) [ERROR : Cyclic upper bounds], (raw) [ERROR : Cyclic upper bounds], (raw) [ERROR : Cyclic upper bounds]>!
+    public abstract fun foo(): XYZ<(raw) [Error type: Cyclic upper bounds], (raw) [Error type: Cyclic upper bounds], (raw) [Error type: Cyclic upper bounds]>!
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }

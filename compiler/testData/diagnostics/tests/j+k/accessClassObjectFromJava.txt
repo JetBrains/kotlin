@@ -11,7 +11,7 @@ public final class Foo {
         public final val bar: kotlin.Int = 1
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
-        public final fun test(/*0*/ a: [ERROR : Foo.`object`]): kotlin.Unit
+        public final fun test(/*0*/ a: [Error type: Unresolved type for Foo.`object`]): kotlin.Unit
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
     }
 }

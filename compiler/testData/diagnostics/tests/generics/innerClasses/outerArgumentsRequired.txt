@@ -36,12 +36,12 @@ public final class A</*0*/ T> {
 
     public final class Nested {
         public constructor Nested()
-        public final val c: [ERROR : C]<kotlin.Int>?
-        public final val d: [ERROR : D]?
-        public final val innerMost: [ERROR : Innermost]<kotlin.String>?
-        public final val x: [ERROR : B]<kotlin.String>?
-        public final val y: [ERROR : C]<kotlin.String, kotlin.String>?
-        public final val z: [ERROR : D]<kotlin.String>?
+        public final val c: [Error type: Type for error type constructor (C)]<kotlin.Int>?
+        public final val d: [Error type: Type for error type constructor (D)]?
+        public final val innerMost: [Error type: Type for error type constructor (Innermost)]<kotlin.String>?
+        public final val x: [Error type: Type for error type constructor (B)]<kotlin.String>?
+        public final val y: [Error type: Type for error type constructor (C)]<kotlin.String, kotlin.String>?
+        public final val z: [Error type: Type for error type constructor (D)]<kotlin.String>?
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String

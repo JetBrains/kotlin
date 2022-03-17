@@ -17,7 +17,7 @@ public final class Outer</*0*/ T> {
     public final class Nested {
         public constructor Nested()
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-        public final fun foo(/*0*/ t: [ERROR : T]): [ERROR : T]
+        public final fun foo(/*0*/ t: [Error type: Unresolved type for T]): [Error type: Unresolved type for T]
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
     }

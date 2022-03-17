@@ -1,6 +1,6 @@
 package
 
 public fun b(): kotlin.Boolean
-public fun foo1(): [ERROR : Error function type]
-public fun foo2(): [ERROR : Error function type]
+public fun foo1(): [Error type: Return type for function cannot be resolved]
+public fun foo2(): [Error type: Return type for function cannot be resolved]
 public fun foo3(): kotlin.Int

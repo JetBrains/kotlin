@@ -2,7 +2,7 @@ package
 
 public final class A {
     public constructor A()
-    public final val x: kotlin.collections.ArrayList<([ERROR : A]<[ERROR : No type element]>) -> kotlin.Unit> /* = java.util.ArrayList<([ERROR : A]<[ERROR : No type element]>) -> kotlin.Unit> */
+    public final val x: kotlin.collections.ArrayList<([Error type: Type for error type constructor (A)]<[Error type: No type specified for unknown element]>) -> kotlin.Unit> /* = java.util.ArrayList<([Error type: Type for error type constructor (A)]<[Error type: No type specified for unknown element]>) -> kotlin.Unit> */
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public final fun foo(): kotlin.Unit
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int

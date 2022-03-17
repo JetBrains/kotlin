@@ -1,4 +1,4 @@
 package
 
-public val </*0*/ T : [ERROR : Cyclic upper bounds]> prop: [ERROR : ?]
-public fun </*0*/ T : [ERROR : Cyclic upper bounds]> foo(): kotlin.Unit
+public val </*0*/ T : [Error type: Cyclic upper bounds]> prop: [Error type: Error type parameter]
+public fun </*0*/ T : [Error type: Cyclic upper bounds]> foo(): kotlin.Unit

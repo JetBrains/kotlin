@@ -2,9 +2,9 @@ package
 
 public fun </*0*/ S> select(/*0*/ vararg args: S /*kotlin.Array<out S>*/): S
 
-public final class Bar</*0*/ B : [ERROR : Cyclic upper bounds]> : Foo<B> {
-    public constructor Bar</*0*/ B : [ERROR : Cyclic upper bounds]>()
-    public final val v: [ERROR : from type constructor([ERROR : Cyclic upper bounds])]
+public final class Bar</*0*/ B : [Error type: Cyclic upper bounds]> : Foo<B> {
+    public constructor Bar</*0*/ B : [Error type: Cyclic upper bounds]>()
+    public final val v: [Error type: Resolution error type (from type constructor [Error type: Cyclic upper bounds])]
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun getSum(): B
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int

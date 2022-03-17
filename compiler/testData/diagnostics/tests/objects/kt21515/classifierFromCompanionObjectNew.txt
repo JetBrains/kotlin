@@ -2,23 +2,23 @@ package
 
 public final class C : O.B {
     public constructor C()
-    public final val a: [ERROR : A]?
-    public final val b: [ERROR : B]?
+    public final val a: [Error type: Unresolved type for A]?
+    public final val b: [Error type: Unresolved type for B]?
     public final val c: O.A.FromA? = null
     public final val d: O.B.FromB? = null
-    public final val e: [ERROR : FromCompanionA]?
-    public final val f: [ERROR : FromCompanionB]?
-    public final val g: [ERROR : Alpha]?
-    public final val h: [ERROR : Beta]?
-    public final val i: [ERROR : Gamma]?
-    public final val k: [ERROR : FromAlpha]?
-    public final val l: [ERROR : FromBeta]?
-    public final val m: [ERROR : FromGamma]?
+    public final val e: [Error type: Unresolved type for FromCompanionA]?
+    public final val f: [Error type: Unresolved type for FromCompanionB]?
+    public final val g: [Error type: Unresolved type for Alpha]?
+    public final val h: [Error type: Unresolved type for Beta]?
+    public final val i: [Error type: Unresolved type for Gamma]?
+    public final val k: [Error type: Unresolved type for FromAlpha]?
+    public final val l: [Error type: Unresolved type for FromBeta]?
+    public final val m: [Error type: Unresolved type for FromGamma]?
     public final val n: C.Companion.FromCompanionC? = null
-    public final val o: [ERROR : FromCompanionAlpha]?
-    public final val p: [ERROR : FromCompanionBeta]?
-    public final val q: [ERROR : FromCompanionGamma]?
-    public final val r: [ERROR : FromDelta]?
+    public final val o: [Error type: Unresolved type for FromCompanionAlpha]?
+    public final val p: [Error type: Unresolved type for FromCompanionBeta]?
+    public final val q: [Error type: Unresolved type for FromCompanionGamma]?
+    public final val r: [Error type: Unresolved type for FromDelta]?
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String

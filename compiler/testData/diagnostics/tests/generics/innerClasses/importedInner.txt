@@ -1,6 +1,6 @@
 package
 
-public fun bar(/*0*/ x: [ERROR : Inner]): kotlin.Unit
+public fun bar(/*0*/ x: [Error type: Type for error type constructor (Inner)]): kotlin.Unit
 
 public final class E {
     public constructor E()
@@ -25,7 +25,7 @@ public final class Outer</*0*/ E> {
 
     public final class Nested {
         public constructor Nested()
-        public final fun bar(/*0*/ x: [ERROR : Inner]): kotlin.Unit
+        public final fun bar(/*0*/ x: [Error type: Type for error type constructor (Inner)]): kotlin.Unit
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String

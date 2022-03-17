@@ -8,7 +8,7 @@ public object WithFunctionInBase {
 
     public final class C {
         public constructor C()
-        public final val data: [ERROR : <ERROR CLASS: Data>]
+        public final val data: [Error type: Type for error type constructor (<Error class: Data>)]
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
@@ -16,7 +16,7 @@ public object WithFunctionInBase {
         public open class Base {
             public constructor Base()
             public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-            public final fun foo(): [ERROR : <ERROR CLASS: Int>]
+            public final fun foo(): [Error type: Type for error type constructor (<Error class: Int>)]
             public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
             public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
         }
@@ -24,7 +24,7 @@ public object WithFunctionInBase {
         public companion object Companion : WithFunctionInBase.DerivedAbstract {
             private constructor Companion()
             public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-            public final override /*1*/ /*fake_override*/ fun foo(): [ERROR : <ERROR CLASS: Int>]
+            public final override /*1*/ /*fake_override*/ fun foo(): [Error type: Type for error type constructor (<Error class: Int>)]
             public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
             public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
         }
@@ -40,7 +40,7 @@ public object WithFunctionInBase {
     public abstract class DerivedAbstract : WithFunctionInBase.C.Base {
         public constructor DerivedAbstract()
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-        public final override /*1*/ /*fake_override*/ fun foo(): [ERROR : <ERROR CLASS: Int>]
+        public final override /*1*/ /*fake_override*/ fun foo(): [Error type: Type for error type constructor (<Error class: Int>)]
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
     }
@@ -54,14 +54,14 @@ public object WithPropertyInBase {
 
     public final class C {
         public constructor C()
-        public final val data: [ERROR : <ERROR CLASS: Data>]
+        public final val data: [Error type: Type for error type constructor (<Error class: Data>)]
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 
         public open class Base {
             public constructor Base()
-            public final val foo: [ERROR : <ERROR CLASS: Int>]
+            public final val foo: [Error type: Type for error type constructor (<Error class: Int>)]
             public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
             public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
             public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
@@ -69,7 +69,7 @@ public object WithPropertyInBase {
 
         public companion object Companion : WithPropertyInBase.DerivedAbstract {
             private constructor Companion()
-            public final override /*1*/ /*fake_override*/ val foo: [ERROR : <ERROR CLASS: Int>]
+            public final override /*1*/ /*fake_override*/ val foo: [Error type: Type for error type constructor (<Error class: Int>)]
             public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
             public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
             public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
@@ -85,7 +85,7 @@ public object WithPropertyInBase {
 
     public abstract class DerivedAbstract : WithPropertyInBase.C.Base {
         public constructor DerivedAbstract()
-        public final override /*1*/ /*fake_override*/ val foo: [ERROR : <ERROR CLASS: Int>]
+        public final override /*1*/ /*fake_override*/ val foo: [Error type: Type for error type constructor (<Error class: Int>)]
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
@@ -107,7 +107,7 @@ public object WithPropertyInBaseDifferentOrder {
 
         public open class Base {
             public constructor Base()
-            public final val foo: [ERROR : Int]
+            public final val foo: [Error type: Unresolved type for Int]
             public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
             public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
             public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
@@ -115,7 +115,7 @@ public object WithPropertyInBaseDifferentOrder {
 
         public companion object Companion : WithPropertyInBaseDifferentOrder.DerivedAbstract {
             private constructor Companion()
-            public final override /*1*/ /*fake_override*/ val foo: [ERROR : Int]
+            public final override /*1*/ /*fake_override*/ val foo: [Error type: Unresolved type for Int]
             public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
             public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
             public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
@@ -131,7 +131,7 @@ public object WithPropertyInBaseDifferentOrder {
 
     public abstract class DerivedAbstract : WithPropertyInBaseDifferentOrder.C.Base {
         public constructor DerivedAbstract()
-        public final override /*1*/ /*fake_override*/ val foo: [ERROR : Int]
+        public final override /*1*/ /*fake_override*/ val foo: [Error type: Unresolved type for Int]
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String

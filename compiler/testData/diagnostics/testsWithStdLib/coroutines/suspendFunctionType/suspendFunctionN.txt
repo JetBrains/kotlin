@@ -1,5 +1,5 @@
 package
 
-public typealias Test1 = [ERROR : SuspendFunction0<Unit>]<kotlin.Unit>
-public typealias Test2 = [ERROR : kotlin.SuspendFunction0<Unit>]<kotlin.Unit>
+public typealias Test1 = [Error type: Unresolved type for SuspendFunction0<Unit>]<kotlin.Unit>
+public typealias Test2 = [Error type: Unresolved type for kotlin.SuspendFunction0<Unit>]<kotlin.Unit>
 public typealias Test3 = suspend () -> kotlin.Unit

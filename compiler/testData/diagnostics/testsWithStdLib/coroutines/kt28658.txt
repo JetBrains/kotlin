@@ -3,7 +3,7 @@ package
 public fun </*0*/ T> f1(/*0*/ f: Foo<T>.() -> kotlin.Unit): kotlin.Unit
 @kotlin.OptIn(markerClass = {kotlin.experimental.ExperimentalTypeInference::class}) public fun </*0*/ T> f2(/*0*/ @kotlin.BuilderInference f: Foo<T>.() -> kotlin.Unit): kotlin.Unit
 public fun test1(): kotlin.Unit
-public fun test2(): [ERROR : Error function type]
+public fun test2(): [Error type: Return type for function cannot be resolved]
 public fun test3(): kotlin.Unit
 
 public final class Foo</*0*/ T> {

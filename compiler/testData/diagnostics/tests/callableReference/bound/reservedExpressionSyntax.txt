@@ -24,10 +24,10 @@ package test {
         public final fun </*0*/ T> kotlin.collections.List<T>.testClassLiteral1(): kotlin.reflect.KClass<out kotlin.Int>
         public final fun </*0*/ T> kotlin.collections.List<T>.testClassLiteral2(): kotlin.reflect.KClass<out kotlin.Int?>
         public final fun </*0*/ T> kotlin.collections.List<T>.testClassLiteral3(): kotlin.reflect.KClass<out kotlin.Int?>
-        public final fun </*0*/ T> kotlin.collections.List<T>.testUnresolved1(): [ERROR : Error function type]
+        public final fun </*0*/ T> kotlin.collections.List<T>.testUnresolved1(): [Error type: Return type for function cannot be resolved]
         public final fun </*0*/ T> kotlin.collections.List<T>.testUnresolved2(): kotlin.reflect.KFunction0<kotlin.Unit>
         public final fun </*0*/ T> kotlin.collections.List<T>.testUnresolved3(): kotlin.reflect.KFunction0<kotlin.Unit>
-        public final fun </*0*/ T> kotlin.collections.List<T>.testUnresolved4(): [ERROR : Error function type]
+        public final fun </*0*/ T> kotlin.collections.List<T>.testUnresolved4(): [Error type: Return type for function cannot be resolved]
     }
 
     public final class a</*0*/ T> {

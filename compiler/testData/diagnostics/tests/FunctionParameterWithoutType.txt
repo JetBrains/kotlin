@@ -3,10 +3,10 @@ package
 public val bar: (???) -> kotlin.Unit
 public val la: (???) -> kotlin.Unit
 public val las: (kotlin.Int) -> kotlin.Unit
-public fun test(/*0*/ a: [ERROR : Type annotation was missing for parameter a], /*1*/ b: [ERROR : Type annotation was missing for parameter b], /*2*/ c: [ERROR : Type annotation was missing for parameter c]): kotlin.Unit
+public fun test(/*0*/ a: [Error type: Missed a type for a value parameter a], /*1*/ b: [Error type: Missed a type for a value parameter b], /*2*/ c: [Error type: Missed a type for a value parameter c]): kotlin.Unit
 
 public final class A {
-    public constructor A(/*0*/ a: [ERROR : Type annotation was missing for parameter a])
+    public constructor A(/*0*/ a: [Error type: Missed a type for a value parameter a])
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String

@@ -4,10 +4,10 @@ public fun </*0*/ T> delegateFactory(/*0*/ p: kotlin.Any): Delegate
 
 public final class C {
     public constructor C(/*0*/ p: kotlin.Any, /*1*/ v: kotlin.Any)
-    public final val test1: [ERROR : Error function type]
+    public final val test1: [Error type: Return type for function cannot be resolved]
     public final val test2: kotlin.Any
-    public final val test4: [ERROR : No type, no body]
-    public final var test5: [ERROR : No type, no body]
+    public final val test4: [Error type: Return type for property test4 cannot be resolved]
+    public final var test5: [Error type: Return type for property test5 cannot be resolved]
     public final val v: kotlin.Any
     public final val </*0*/ T> kotlin.collections.List<T>.test3: kotlin.String
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean

@@ -4,7 +4,7 @@ public val a1: kotlin.reflect.KClass<A?>
 public val a2: kotlin.reflect.KClass<A?>
 public val l1: kotlin.reflect.KClass<kotlin.collections.List<kotlin.String>?>
 public val l2: kotlin.reflect.KClass<kotlin.collections.List<*>?>
-public val m: [ERROR : Unresolved class]
+public val m: [Error type: Unresolved class Map<String>::class]
 public inline fun </*0*/ reified T : kotlin.Any> bar(): kotlin.Unit
 public fun </*0*/ T : kotlin.Any> foo(): kotlin.Unit
 

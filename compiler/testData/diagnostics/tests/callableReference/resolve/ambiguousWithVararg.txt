@@ -1,8 +1,8 @@
 package
 
-public val ref1: [ERROR : Type for ::fun1]
-public val ref2: [ERROR : Type for ::fun2]
-public val ref3: [ERROR : Type for ::fun3]
+public val ref1: [Error type: Not found recorded type for ::fun1]
+public val ref2: [Error type: Not found recorded type for ::fun2]
+public val ref3: [Error type: Not found recorded type for ::fun3]
 public fun fun1(): kotlin.Unit
 public fun fun1(/*0*/ x: kotlin.Int): kotlin.Unit
 public fun fun2(/*0*/ x: kotlin.Int): kotlin.Unit

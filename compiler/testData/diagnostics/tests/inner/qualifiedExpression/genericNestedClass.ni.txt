@@ -1,8 +1,8 @@
 package
 
-public fun manyArguments(): [ERROR : Error function type]
+public fun manyArguments(): [Error type: Return type for function cannot be resolved]
 public fun nested(): Outer.Nested<kotlin.Int>
-public fun noArguments(): [ERROR : Error function type]
+public fun noArguments(): [Error type: Return type for function cannot be resolved]
 public fun noArgumentsExpectedType(): Outer.Nested<kotlin.String>
 
 public final class Outer {

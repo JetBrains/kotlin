@@ -1,15 +1,16 @@
 package
 
-public val `<no name provided>`: [ERROR : No type, no body]
-public var `<no name provided>`: [ERROR : No type, no body]
+public val `<no name provided>`: [Error type: Return type for property <no name provided> cannot be resolved]
+public var `<no name provided>`: [Error type: Return type for property <no name provided> cannot be resolved]
 public fun baz(): kotlin.Unit
 public fun foo(): kotlin.Unit
 
 public final class A {
-    public constructor A(/*0*/ `<no name provided>`: [ERROR : Type annotation was missing for parameter <no name provided>], /*1*/ x: kotlin.Int, /*2*/ private: [ERROR : Type annotation was missing for parameter private], /*3*/ z: kotlin.Int, /*4*/ `<no name provided>`: [ERROR : Type annotation was missing for parameter <no name provided>])
-    public final val `<no name provided>`: [ERROR : Annotation is absent]
-    public final val `<no name provided>`: [ERROR : Annotation is absent]
-    public final val private: [ERROR : Annotation is absent]
+    public constructor A(/*0*/ `<no name provided>`: [Error type: Missed a type for a value parameter <no name provided>], /*1*/ x: kotlin.Int, /*2*/ private: [Error type: Missed a type for a value parameter private], /*3*/ z: kotlin.Int, /*4*/ `<no name provided>`: [Error type: Missed a type for a value parameter <no name provided>])
+    public final val `<no name provided>`: [Error type: No type specified for val]
+    public final val `<no name provided>`: [Error type: No type specified for val]
+    public final val private: [Error type: No type specified for val
+        private]
     public final val x: kotlin.Int
     public final val z: kotlin.Int
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
@@ -19,7 +20,7 @@ public final class A {
 
 public final class B {
     public constructor B()
-    public final val `<no name provided>`: [ERROR : No type, no body]
+    public final val `<no name provided>`: [Error type: Return type for property <no name provided> cannot be resolved]
     public final fun bar(): kotlin.Unit
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public final fun foo(): kotlin.Unit
@@ -28,10 +29,11 @@ public final class B {
 }
 
 public final class C {
-    public constructor C(/*0*/ `<no name provided>`: [ERROR : Type annotation was missing for parameter <no name provided>], /*1*/ x: kotlin.Int, /*2*/ private: [ERROR : Type annotation was missing for parameter private], /*3*/ z: kotlin.Int, /*4*/ `<no name provided>`: [ERROR : Type annotation was missing for parameter <no name provided>])
-    public final var `<no name provided>`: [ERROR : Annotation is absent]
-    public final var `<no name provided>`: [ERROR : Annotation is absent]
-    public final var private: [ERROR : Annotation is absent]
+    public constructor C(/*0*/ `<no name provided>`: [Error type: Missed a type for a value parameter <no name provided>], /*1*/ x: kotlin.Int, /*2*/ private: [Error type: Missed a type for a value parameter private], /*3*/ z: kotlin.Int, /*4*/ `<no name provided>`: [Error type: Missed a type for a value parameter <no name provided>])
+    public final var `<no name provided>`: [Error type: No type specified for var]
+    public final var `<no name provided>`: [Error type: No type specified for var]
+    public final var private: [Error type: No type specified for var
+        private]
     public final val x: kotlin.Int
     public final val z: kotlin.Int
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
@@ -41,7 +43,7 @@ public final class C {
 
 public final class D {
     public constructor D()
-    public final var `<no name provided>`: [ERROR : No type, no body]
+    public final var `<no name provided>`: [Error type: Return type for property <no name provided> cannot be resolved]
     public final fun bar(): kotlin.Unit
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public final fun foo(): kotlin.Unit

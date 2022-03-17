@@ -1,7 +1,7 @@
 package
 
 public final class Tree</*0*/ T> {
-    public constructor Tree</*0*/ T>(/*0*/ T: [ERROR : Type annotation was missing for parameter T], /*1*/ `<no name provided>`: Tree<T>, /*2*/ left: [ERROR : Type annotation was missing for parameter left], /*3*/ `<no name provided>`: Tree<T>, /*4*/ right: [ERROR : Type annotation was missing for parameter right])
+    public constructor Tree</*0*/ T>(/*0*/ T: [Error type: Missed a type for a value parameter T], /*1*/ `<no name provided>`: Tree<T>, /*2*/ left: [Error type: Missed a type for a value parameter left], /*3*/ `<no name provided>`: Tree<T>, /*4*/ right: [Error type: Missed a type for a value parameter right])
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String

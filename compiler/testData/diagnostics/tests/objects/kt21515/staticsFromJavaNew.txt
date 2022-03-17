@@ -22,7 +22,7 @@ package test {
         public constructor Derived()
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
-        public final fun test(/*0*/ javaStaticInTypePosition: [ERROR : Classifier]): kotlin.Unit
+        public final fun test(/*0*/ javaStaticInTypePosition: [Error type: Unresolved type for Classifier]): kotlin.Unit
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 
         public final class JavaStaticInSupertypeList {

@@ -43,12 +43,12 @@ public interface Test</*0*/ in I, /*1*/ out O, /*2*/ P> {
     public abstract fun neOk12(/*0*/ i: Inv<out O>): kotlin.Unit
     public abstract fun neOk2(/*0*/ i: In<I>): kotlin.Unit
     public abstract fun neOk3(/*0*/ i: In<In<O>>): kotlin.Unit
-    public abstract fun neOk30(/*0*/ i: [ERROR : Pair]<O>): kotlin.Unit
-    public abstract fun neOk31(/*0*/ i: Pair<O, [ERROR : Inv]>): kotlin.Unit
-    public abstract fun neOk32(/*0*/ i: [ERROR : Inv]): kotlin.Unit
-    public abstract fun neOk33(/*0*/ i: Inv<[ERROR : No type element]>): kotlin.Unit
-    public abstract fun neOk34(/*0*/ i: Inv<[ERROR : C]>): kotlin.Unit
-    public abstract fun neOk35(/*0*/ i: [ERROR : Inv]<P, P>): kotlin.Unit
+    public abstract fun neOk30(/*0*/ i: [Error type: Type for error type constructor (Pair)]<O>): kotlin.Unit
+    public abstract fun neOk31(/*0*/ i: Pair<O, [Error type: Type for error type constructor (Inv)]>): kotlin.Unit
+    public abstract fun neOk32(/*0*/ i: [Error type: Type for error type constructor (Inv)]): kotlin.Unit
+    public abstract fun neOk33(/*0*/ i: Inv<[Error type: No type specified for unknown element]>): kotlin.Unit
+    public abstract fun neOk34(/*0*/ i: Inv<[Error type: Unresolved type for C]>): kotlin.Unit
+    public abstract fun neOk35(/*0*/ i: [Error type: Type for error type constructor (Inv)]<P, P>): kotlin.Unit
     public abstract fun neOk4(/*0*/ i: Inv<I>): kotlin.Unit
     public abstract fun neOk5(/*0*/ i: Inv<O>): kotlin.Unit
     public abstract fun neOk6(/*0*/ i: In<In<O>>): kotlin.Unit

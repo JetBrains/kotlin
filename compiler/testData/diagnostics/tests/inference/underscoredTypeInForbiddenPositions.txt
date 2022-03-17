@@ -2,10 +2,10 @@ package
 
 public fun </*0*/ _> bar(): Foo<_>
 public fun </*0*/ K, /*1*/ T> foo(/*0*/ x: (K) -> T): kotlin.Pair<K, T>
-public fun foo1(/*0*/ x: [ERROR : _]): kotlin.Unit
-public fun foo2(/*0*/ x: Foo<[ERROR : _]>): kotlin.Unit
-public fun foo3(): [ERROR : _]
-public fun foo5(): Foo<[ERROR : _]>
+public fun foo1(/*0*/ x: [Error type: Unresolved type for _]): kotlin.Unit
+public fun foo2(/*0*/ x: Foo<[Error type: Unresolved type for _]>): kotlin.Unit
+public fun foo3(): [Error type: Unresolved type for _]
+public fun foo5(): Foo<[Error type: Unresolved type for _]>
 public fun </*0*/ K, /*1*/ _> foo6(): Foo<_>
 public fun </*0*/ K : _, /*1*/ _> foo7(): Foo<_>
 public fun test(): kotlin.Unit
@@ -17,7 +17,7 @@ public final class AA1 {
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-public final class AA2 : Foo<[ERROR : _]> {
+public final class AA2 : Foo<[Error type: Unresolved type for _]> {
     public constructor AA2()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
@@ -39,8 +39,8 @@ public final class Bar0</*0*/ K> {
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-public final class Bar1</*0*/ K : Foo<[ERROR : _]>> {
-    public constructor Bar1</*0*/ K : Foo<[ERROR : _]>>()
+public final class Bar1</*0*/ K : Foo<[Error type: Unresolved type for _]>> {
+    public constructor Bar1</*0*/ K : Foo<[Error type: Unresolved type for _]>>()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
@@ -74,7 +74,8 @@ public final class Foo</*0*/ K> {
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 public typealias A1</*0*/ _> = _
-public typealias A2</*0*/ T> = Foo<[ERROR : _]>
-public typealias A3</*0*/ T> = ([ERROR : _]) -> T
-public typealias A4</*0*/ T> = (T) -> () -> [ERROR : _]
-public typealias A5</*0*/ T> = (T) -> ([ERROR : _]) -> T
+public typealias A2</*0*/ T> = Foo<[Error type: Unresolved type for _]>
+public typealias A3</*0*/ T> = ([Error type: Unresolved type for _]) -> T
+public typealias A4</*0*/ T> = (T) -> () -> [Error type: Unresolved type for _]
+public typealias A5</*0*/ T> = (T) -> ([Error type: Unresolved type for _]) -> T
+

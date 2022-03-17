@@ -129,7 +129,7 @@ class DoubleColonExpressionResolver(
             }
         }
 
-        return createTypeInfo(ErrorUtils.createErrorType(ErrorTypeKind.UNRESOLVED_CLASS_TYPE, expression.toString()), c)
+        return createTypeInfo(ErrorUtils.createErrorType(ErrorTypeKind.UNRESOLVED_CLASS_TYPE, expression.text), c)
     }
 
     private fun checkClassLiteral(

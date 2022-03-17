@@ -193,8 +193,8 @@ fun <!IMPLICIT_NOTHING_RETURN_TYPE!>case_13<!>(x: <!UNRESOLVED_REFERENCE!>otherp
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Nothing")!>if (<!DEPRECATED_IDENTITY_EQUALS!>(<!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>x<!> <!DEBUG_INFO_MISSING_UNRESOLVED!>==<!> <!USELESS_IS_CHECK!>null !is Boolean<!>) !== true<!>) {
         throw Exception()
     } else {
-        <!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE, DEBUG_INFO_EXPRESSION_TYPE("[ERROR : otherpackage.Case13]?")!>x<!>
-        <!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE, DEBUG_INFO_EXPRESSION_TYPE("[ERROR : otherpackage.Case13]?")!>x<!>.<!DEBUG_INFO_MISSING_UNRESOLVED!>equals<!>(<!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>x<!>)
+        <!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE, DEBUG_INFO_EXPRESSION_TYPE("[Error type: Unresolved type for otherpackage.Case13]?")!>x<!>
+        <!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE, DEBUG_INFO_EXPRESSION_TYPE("[Error type: Unresolved type for otherpackage.Case13]?")!>x<!>.<!DEBUG_INFO_MISSING_UNRESOLVED!>equals<!>(<!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>x<!>)
     }<!>
 
 // TESTCASE NUMBER: 14
@@ -225,8 +225,8 @@ fun case_14() {
                                                         if (<!IMPLICIT_BOXING_IN_IDENTITY_EQUALS!>a.<!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>x<!> !== <!USELESS_IS_CHECK!>null is Boolean<!><!>) {
                                                             if (a.<!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>x<!> <!DEBUG_INFO_MISSING_UNRESOLVED!>!=<!> <!USELESS_IS_CHECK!>null is Boolean<!>) {
                                                                 if ((<!IMPLICIT_BOXING_IN_IDENTITY_EQUALS!>a.<!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>x<!> !== <!USELESS_IS_CHECK!>null !is Boolean<!><!>) == false) {
-                                                                    <!DEBUG_INFO_EXPRESSION_TYPE("[ERROR : otherpackage.Case14]?")!>a.<!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>x<!><!>
-                                                                    <!DEBUG_INFO_EXPRESSION_TYPE("[ERROR : otherpackage.Case14]?")!>a.<!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>x<!><!>.<!DEBUG_INFO_MISSING_UNRESOLVED!>equals<!>(a.<!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>x<!>)
+                                                                    <!DEBUG_INFO_EXPRESSION_TYPE("[Error type: Unresolved type for otherpackage.Case14]?")!>a.<!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>x<!><!>
+                                                                    <!DEBUG_INFO_EXPRESSION_TYPE("[Error type: Unresolved type for otherpackage.Case14]?")!>a.<!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>x<!><!>.<!DEBUG_INFO_MISSING_UNRESOLVED!>equals<!>(a.<!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>x<!>)
                                                                 }
                                                             }
                                                         }

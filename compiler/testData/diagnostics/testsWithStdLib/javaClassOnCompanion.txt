@@ -7,7 +7,7 @@ package test {
     public val a3: java.lang.Class<test.A>
     public val a4: java.lang.Class<test.A>
     public val a5: java.lang.Class<test.A.Companion>
-    public val e0: [ERROR : Type for E.javaClass]
+    public val e0: [Error type: Not found recorded type for E.javaClass]
     public val e1: java.lang.Class<test.E>
     public val e2: java.lang.Class<test.E>
     public val int0: java.lang.Class<kotlin.Int.Companion>

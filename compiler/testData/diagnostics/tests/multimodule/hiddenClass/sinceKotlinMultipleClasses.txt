@@ -43,6 +43,6 @@ package p3 {
 // -- Module: <m4> --
 package
 
-public fun test(/*0*/ a: [ERROR : A]): kotlin.Unit
+public fun test(/*0*/ a: [Error type: Unresolved type for A]): kotlin.Unit
 public fun test(/*0*/ a: p2.A): kotlin.Unit
 

@@ -433,7 +433,7 @@ public typealias ExceptionAlias = kotlin.Exception
 public typealias IllegalStateExceptionAlias = kotlin.IllegalStateException
 public typealias RuntimeExceptionAlias = kotlin.RuntimeException
 public typealias ThrowableAlias = kotlin.Throwable
-public typealias UEAlias = [ERROR : UE]
+public typealias UEAlias = [Error type: Unresolved type for UE]
 
 package kotlin {
 

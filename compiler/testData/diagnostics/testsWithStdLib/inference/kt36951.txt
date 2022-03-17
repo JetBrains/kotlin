@@ -1,7 +1,7 @@
 package
 
-public final class Base</*0*/ T : [ERROR : Cyclic upper bounds]> : kotlin.collections.HashSet<T> /* = java.util.HashSet<T> */ {
-    public constructor Base</*0*/ T : [ERROR : Cyclic upper bounds]>()
+public final class Base</*0*/ T : [Error type: Cyclic upper bounds]> : kotlin.collections.HashSet<T> /* = java.util.HashSet<T> */ {
+    public constructor Base</*0*/ T : [Error type: Cyclic upper bounds]>()
     invisible_fake final override /*1*/ /*fake_override*/ var map: java.util.HashMap<T!, kotlin.Any!>!
     public open override /*1*/ /*fake_override*/ val size: kotlin.Int
     public open override /*1*/ /*fake_override*/ fun add(/*0*/ element: T): kotlin.Boolean

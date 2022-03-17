@@ -36,8 +36,8 @@ public final class CustomDelegate3 {
 
 public final class Example {
     public constructor Example()
-    public final var a: [ERROR : Type from delegate]
-    public final val aval: [ERROR : Type from delegate]
+    public final var a: [Error type: Error delegation type for CustomDelegate()]
+    public final val aval: [Error type: Error delegation type for CustomDelegate()]
     public final var b: kotlin.String
     public final var c: kotlin.Int
     public final var d: kotlin.Int

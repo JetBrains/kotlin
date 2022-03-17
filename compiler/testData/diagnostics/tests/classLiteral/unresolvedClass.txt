@@ -1,4 +1,4 @@
 package
 
-public val g: [ERROR : Unresolved class]
-public val u: [ERROR : Unresolved class]
+public val g: [Error type: Unresolved class UnresolvedGeneric<UnresolvedTypeArg>::class]
+public val u: [Error type: Unresolved class Unresolved::class]

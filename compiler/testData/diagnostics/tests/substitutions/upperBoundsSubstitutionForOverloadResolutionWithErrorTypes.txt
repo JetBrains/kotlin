@@ -1,6 +1,6 @@
 package
 
-public fun </*0*/ T> f1(/*0*/ l: [ERROR : List1<T>]<T>): T
-public fun </*0*/ T> f1(/*0*/ l: [ERROR : List2<T>]<T>): T
+public fun </*0*/ T> f1(/*0*/ l: [Error type: Unresolved type for List1<T>]<T>): T
+public fun </*0*/ T> f1(/*0*/ l: [Error type: Unresolved type for List2<T>]<T>): T
 public fun </*0*/ T> f1(/*0*/ c: kotlin.collections.Collection<T>): T
 public fun </*0*/ T> test(/*0*/ l: kotlin.collections.List<T>): kotlin.Unit

@@ -24,8 +24,8 @@ object C {
 operator fun X.invoke() = println("Hello!")
 ---------------------
 println             !<v1>: *
-"Hello!"            <v0>: *                                    NEW: r("Hello!") -> <v0>
-println("Hello!")   <v2>: {<: [ERROR : Error function type]}   NEW: magic[UNRESOLVED_CALL](println("Hello!")|<v0>, !<v1>) -> <v2>
+"Hello!"            <v0>: *                                                                NEW: r("Hello!") -> <v0>
+println("Hello!")   <v2>: {<: [Error type: Return type for function cannot be resolved]}   NEW: magic[UNRESOLVED_CALL](println("Hello!")|<v0>, !<v1>) -> <v2>
 =====================
 == with ==
 inline fun <T, R> with(receiver: T, block: T.() -> R): R = receiver.block()
@@ -44,9 +44,9 @@ fun use() = with(C) {
     }
 }
 ---------------------
-C                                 <v0>: C                                    NEW: r(C) -> <v0>
-{ with(B) { A.foo() } }           <v1>: {<: C.() -> ???}                     NEW: r({ with(B) { A.foo() } }) -> <v1>
-with(C) { with(B) { A.foo() } }   <v2>: {<: [ERROR : Error function type]}   NEW: call(with(C) { with(B) { A.foo() } }, with|<v0>, <v1>) -> <v2>
+C                                 <v0>: C                                                                NEW: r(C) -> <v0>
+{ with(B) { A.foo() } }           <v1>: {<: C.() -> ???}                                                 NEW: r({ with(B) { A.foo() } }) -> <v1>
+with(C) { with(B) { A.foo() } }   <v2>: {<: [Error type: Return type for function cannot be resolved]}   NEW: call(with(C) { with(B) { A.foo() } }, with|<v0>, <v1>) -> <v2>
 =====================
 == anonymous_0 ==
 {

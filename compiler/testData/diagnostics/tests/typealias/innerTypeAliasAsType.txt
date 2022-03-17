@@ -1,19 +1,19 @@
 package
 
-public fun test1(/*0*/ x: [ERROR : NestedAlias]<kotlin.Int>): [ERROR : NestedAlias]<kotlin.Int>
+public fun test1(/*0*/ x: [Error type: Type for error type constructor (NestedAlias)]<kotlin.Int>): [Error type: Type for error type constructor (NestedAlias)]<kotlin.Int>
 public fun test10(/*0*/ x: Outer<kotlin.Int>.InnerAlias /* = Outer<kotlin.Int>.Inner */): Outer<kotlin.Int>.InnerAlias /* = Outer<kotlin.Int>.Inner */
 public fun </*0*/ T> test11(/*0*/ x: Outer<T>.InnerAlias /* = Outer<T>.Inner */): Outer<T>.InnerAlias /* = Outer<T>.Inner */
-public fun test12(/*0*/ x: [ERROR : GenericInnerAlias]<kotlin.Int>): [ERROR : GenericInnerAlias]<kotlin.Int>
+public fun test12(/*0*/ x: [Error type: Type for error type constructor (GenericInnerAlias)]<kotlin.Int>): [Error type: Type for error type constructor (GenericInnerAlias)]<kotlin.Int>
 public fun test13(/*0*/ x: Outer<kotlin.Int>.GenericInnerAlias<kotlin.Int> /* = Outer<kotlin.Int>.GenericInner<kotlin.Int> */): Outer<kotlin.Int>.GenericInnerAlias<kotlin.Int> /* = Outer<kotlin.Int>.GenericInner<kotlin.Int> */
 public fun </*0*/ T> test14(/*0*/ x: Outer<T>.GenericInnerAlias<kotlin.Int> /* = Outer<T>.GenericInner<kotlin.Int> */): Outer<T>.GenericInnerAlias<kotlin.Int> /* = Outer<T>.GenericInner<kotlin.Int> */
-public fun </*0*/ T> test2(/*0*/ x: [ERROR : NestedAlias]<T>): [ERROR : NestedAlias]<T>
+public fun </*0*/ T> test2(/*0*/ x: [Error type: Type for error type constructor (NestedAlias)]<T>): [Error type: Type for error type constructor (NestedAlias)]<T>
 public fun test3(/*0*/ x: Outer.NestedAlias /* = Outer.Nested */): Outer.NestedAlias /* = Outer.Nested */
-public fun test4(/*0*/ x: [ERROR : GenericNestedAlias]<kotlin.Int, kotlin.Int>): [ERROR : GenericNestedAlias]<kotlin.Int, kotlin.Int>
-public fun </*0*/ T> test5(/*0*/ x: [ERROR : GenericNestedAlias]<T, kotlin.Int>): [ERROR : GenericNestedAlias]<T, kotlin.Int>
-public fun </*0*/ T> test6(/*0*/ x: [ERROR : GenericNestedAlias]<kotlin.Int, T>): [ERROR : GenericNestedAlias]<kotlin.Int, T>
+public fun test4(/*0*/ x: [Error type: Type for error type constructor (GenericNestedAlias)]<kotlin.Int, kotlin.Int>): [Error type: Type for error type constructor (GenericNestedAlias)]<kotlin.Int, kotlin.Int>
+public fun </*0*/ T> test5(/*0*/ x: [Error type: Type for error type constructor (GenericNestedAlias)]<T, kotlin.Int>): [Error type: Type for error type constructor (GenericNestedAlias)]<T, kotlin.Int>
+public fun </*0*/ T> test6(/*0*/ x: [Error type: Type for error type constructor (GenericNestedAlias)]<kotlin.Int, T>): [Error type: Type for error type constructor (GenericNestedAlias)]<kotlin.Int, T>
 public fun test7(/*0*/ x: Outer.GenericNestedAlias<kotlin.Int> /* = Outer.GenericNested<kotlin.Int> */): Outer.GenericNestedAlias<kotlin.Int> /* = Outer.GenericNested<kotlin.Int> */
 public fun </*0*/ T> test8(/*0*/ x: Outer.GenericNestedAlias<T> /* = Outer.GenericNested<T> */): Outer.GenericNestedAlias<T> /* = Outer.GenericNested<T> */
-public fun test9(/*0*/ x: [ERROR : InnerAlias]): [ERROR : InnerAlias]
+public fun test9(/*0*/ x: [Error type: Type for error type constructor (InnerAlias)]): [Error type: Type for error type constructor (InnerAlias)]
 
 public final class Outer</*0*/ T> {
     public constructor Outer</*0*/ T>()
@@ -59,3 +59,4 @@ public final class Outer</*0*/ T> {
     public typealias InnerAlias /*captured type parameters: /*0*/ T*/ = Outer<T>.Inner
     public typealias NestedAlias = Outer.Nested
 }
+

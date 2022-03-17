@@ -1,4 +1,4 @@
 package
 
 public fun test1(): kotlin.Unit
-public fun test2(/*0*/ l: kotlin.collections.List<[ERROR : AA]>): kotlin.Unit
+public fun test2(/*0*/ l: kotlin.collections.List<[Error type: Unresolved type for AA]>): kotlin.Unit

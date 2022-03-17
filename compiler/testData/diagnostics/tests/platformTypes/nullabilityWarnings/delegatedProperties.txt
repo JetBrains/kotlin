@@ -1,7 +1,7 @@
 package
 
 public var A: kotlin.String!
-public var B: [ERROR : Type from delegate]
+public var B: [Error type: Error delegation type for J.staticN]
 public var C: kotlin.String!
 
 public open class J {

@@ -16,5 +16,5 @@ package second {
 }
 
 package test {
-    public val a12: [ERROR : Type from delegate]
+    public val a12: [Error type: Error delegation type for A()]
 }

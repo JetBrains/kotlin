@@ -1,7 +1,7 @@
 package
 
-public val ff: [ERROR : Type for f()]
-public val vv: [ERROR : Type for v]
+public val ff: [Error type: Not found recorded type for f()]
+public val vv: [Error type: Not found recorded type for v]
 
 package a {
     public val v: kotlin.Int = 1

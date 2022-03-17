@@ -1,6 +1,6 @@
 package
 
-public val foo: [ERROR : Type from delegate]
+public val foo: [Error type: Error delegation type for ValueWrapper()]
 
 public final class ValueWrapper {
     public constructor ValueWrapper()
