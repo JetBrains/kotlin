@@ -40,5 +40,5 @@ abstract class AbstractFirOnAirResolveTest : AbstractLowLevelApiSingleFileTest()
         }
     }
 
-    override val enableTestInDependedMode: Boolean get() = false
+//    override val enableTestInDependedMode: Boolean get() = false
 }

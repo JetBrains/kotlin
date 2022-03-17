@@ -10,6 +10,7 @@ import com.intellij.mock.MockProject
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.vfs.impl.jar.CoreJarFileSystem
 import com.intellij.psi.search.GlobalSearchScope
+import org.jetbrains.kotlin.analysis.api.fir.FirAnalysisApiNormalModeTestConfiguratorService
 import org.jetbrains.kotlin.analysis.api.fir.FirAnalysisApiTestConfiguratorService
 import org.jetbrains.kotlin.analysis.test.framework.AnalysisApiTestConfiguratorService
 import org.jetbrains.kotlin.analysis.project.structure.ProjectStructureProvider
@@ -19,11 +20,10 @@ import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 
 object StandaloneModeConfiguratorService : AnalysisApiTestConfiguratorService {
-    override val allowDependedAnalysisSession: Boolean
-        get() = false
+    override val analyseInDependentSession: Boolean get() = false
 
     override fun TestConfigurationBuilder.configureTest(disposable: Disposable) {
-        with(FirAnalysisApiTestConfiguratorService) { configureTest(disposable) }
+        with(FirAnalysisApiNormalModeTestConfiguratorService) { configureTest(disposable) }
     }
 
     override fun registerProjectServices(
@@ -48,6 +48,6 @@ object StandaloneModeConfiguratorService : AnalysisApiTestConfiguratorService {
     }
 
     override fun doOutOfBlockModification(file: KtFile) {
-        FirAnalysisApiTestConfiguratorService.doOutOfBlockModification(file)
+        FirAnalysisApiNormalModeTestConfiguratorService.doOutOfBlockModification(file)
     }
 }
