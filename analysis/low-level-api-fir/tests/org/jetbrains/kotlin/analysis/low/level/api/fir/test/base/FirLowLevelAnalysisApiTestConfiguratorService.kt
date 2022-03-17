@@ -24,6 +24,8 @@ import org.jetbrains.kotlin.test.bind
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 
 object FirLowLevelAnalysisApiTestConfiguratorService : AnalysisApiTestConfiguratorService {
+    override val analyseInDependentSession: Boolean get() = false
+
     override fun TestConfigurationBuilder.configureTest(disposable: Disposable) {
         usePreAnalysisHandlers(::ModuleRegistrarPreAnalysisHandler.bind(disposable, false))
     }

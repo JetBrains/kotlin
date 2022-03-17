@@ -20,7 +20,8 @@ import java.nio.file.Path
 
 interface AnalysisApiTestConfiguratorService {
     val testPrefix: String? get() = null
-    val allowDependedAnalysisSession: Boolean get() = true
+
+    val analyseInDependentSession: Boolean
 
     fun TestConfigurationBuilder.configureTest(disposable: Disposable)
     fun processTestFiles(files: List<KtFile>): List<KtFile> = files
