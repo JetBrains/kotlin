@@ -42,20 +42,19 @@ class KotlinToolingVersion(
         SNAPSHOT, DEV, MILESTONE, ALPHA, BETA, RC, STABLE
     }
 
-    val maturity: Maturity
-        get() {
-            val classifier = this.classifier?.toLowerCase(Locale.ROOT)
-            return when {
-                classifier == null || classifier.matches(Regex("""(release-)?\d+""")) -> Maturity.STABLE
-                classifier.matches(Regex("""(rc)(\d*)?(-release)?-?\d*""")) -> Maturity.RC
-                classifier.matches(Regex("""beta(\d*)?(-release)?-?\d*""")) -> Maturity.BETA
-                classifier.matches(Regex("""alpha(\d*)?(-release)?-?\d*""")) -> Maturity.ALPHA
-                classifier.matches(Regex("""m\d+(-release)?(-\d*)?""")) -> Maturity.MILESTONE
-                classifier.matches(Regex("""dev-?\d*""")) -> Maturity.DEV
-                classifier == "snapshot" -> Maturity.SNAPSHOT
-                else -> throw IllegalArgumentException("Can't infer maturity of KotlinVersion $this")
-            }
+    val maturity: Maturity = run {
+        val classifier = this.classifier?.toLowerCase(Locale.ROOT)
+        when {
+            classifier == null || classifier.matches(Regex("""(release-)?\d+""")) -> Maturity.STABLE
+            classifier.matches(Regex("""(rc)(\d*)?(-release)?-?\d*""")) -> Maturity.RC
+            classifier.matches(Regex("""beta(\d*)?(-release)?-?\d*""")) -> Maturity.BETA
+            classifier.matches(Regex("""alpha(\d*)?(-release)?-?\d*""")) -> Maturity.ALPHA
+            classifier.matches(Regex("""m\d+(-release)?(-\d*)?""")) -> Maturity.MILESTONE
+            classifier.matches(Regex("""dev-?\d*""")) -> Maturity.DEV
+            classifier == "snapshot" -> Maturity.SNAPSHOT
+            else -> throw IllegalArgumentException("Can't infer maturity of KotlinVersion $this")
         }
+    }
 
     override fun compareTo(other: KotlinToolingVersion): Int {
         if (this == other) return 0
