@@ -5,8 +5,8 @@
 
 package org.jetbrains.kotlin.commonizer.core
 
-import org.jetbrains.kotlin.commonizer.cir.CirClassType
-import org.jetbrains.kotlin.commonizer.cir.CirEntityId
+import org.jetbrains.kotlin.commonizer.cir.*
+import org.jetbrains.kotlin.commonizer.cir.CirClassType.Companion.copyInterned
 import org.jetbrains.kotlin.commonizer.utils.*
 
 private typealias BitWidth = Int
@@ -72,25 +72,19 @@ private val floatingPointVars = SubstitutableNumbers(
 
 internal object OptimisticNumbersTypeCommonizer : AssociativeCommonizer<CirClassType> {
     override fun commonize(first: CirClassType, second: CirClassType): CirClassType? {
-        return signedIntegers.choose(first, second)
+        val result = signedIntegers.choose(first, second)
             ?: unsignedIntegers.choose(first, second)
             ?: floatingPoints.choose(first, second)
             ?: signedVarIntegers.choose(first, second)
             ?: unsignedVarIntegers.choose(first, second)
             ?: floatingPointVars.choose(first, second)
+
+        return result?.withMarker()
     }
 
-    fun isOptimisticallySubstitutable(classId: CirEntityId): Boolean {
-        val firstPackageSegment = classId.packageName.segments.firstOrNull()
-        if (firstPackageSegment != "kotlinx" && firstPackageSegment != "kotlin") {
-            return false
-        }
+    private fun CirClassType.withMarker(): CirClassType = this.copyInterned(
+        attachments = attachments + OptimisticCommonizationMarker
+    )
 
-        return classId in signedIntegers
-                || classId in unsignedIntegers
-                || classId in floatingPoints
-                || classId in signedVarIntegers
-                || classId in unsignedVarIntegers
-                || classId in floatingPointVars
-    }
+    internal object OptimisticCommonizationMarker : CirTypeAttachment
 }
