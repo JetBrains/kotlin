@@ -34,6 +34,8 @@ dependencies {
     testRuntimeOnly(commonDependency("org.jetbrains.intellij.deps.fastutil:intellij-deps-fastutil"))
 
     testRuntimeOnly(toolsJar())
+    testRuntimeOnly(files("/home/nikita/.m2/repository/org/jetbrains/kotlinx/dataframe/0.8.0-dev/dataframe-0.8.0-dev.jar"))
+
 }
 
 tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
