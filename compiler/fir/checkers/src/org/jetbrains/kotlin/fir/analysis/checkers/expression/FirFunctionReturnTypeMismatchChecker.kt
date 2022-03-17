@@ -5,14 +5,16 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers.expression
 
+import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
+import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.isSubtypeForTypeMismatch
-import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.NULL_FOR_NONNULL_TYPE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.RETURN_TYPE_MISMATCH
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.SMARTCAST_IMPOSSIBLE
-import org.jetbrains.kotlin.diagnostics.reportOn
-import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
+import org.jetbrains.kotlin.fir.declarations.FirAnonymousFunction
+import org.jetbrains.kotlin.fir.declarations.FirConstructor
+import org.jetbrains.kotlin.fir.declarations.FirErrorFunction
 import org.jetbrains.kotlin.fir.expressions.FirExpressionWithSmartcast
 import org.jetbrains.kotlin.fir.expressions.FirReturnExpression
 import org.jetbrains.kotlin.fir.expressions.FirWhenExpression
@@ -23,12 +25,19 @@ object FirFunctionReturnTypeMismatchChecker : FirReturnExpressionChecker() {
     override fun check(expression: FirReturnExpression, context: CheckerContext, reporter: DiagnosticReporter) {
         if (expression.source == null) return
         val targetElement = expression.target.labeledElement
-        if (targetElement !is FirSimpleFunction) return
+        if (targetElement is FirErrorFunction ||
+            targetElement is FirAnonymousFunction && targetElement.isLambda && expression.target.labelName == null
+        ) {
+            return
+        }
         val resultExpression = expression.result
         // To avoid duplications with NO_ELSE_IN_WHEN or INVALID_IF_AS_EXPRESSION
         if (resultExpression is FirWhenExpression && !resultExpression.isExhaustive) return
 
-        val functionReturnType = targetElement.returnTypeRef.coneType
+        val functionReturnType = if (targetElement is FirConstructor)
+            context.session.builtinTypes.unitType.coneType
+        else
+            targetElement.returnTypeRef.coneType
         val typeContext = context.session.typeContext
         val returnExpressionType = resultExpression.typeRef.coneTypeSafe<ConeKotlinType>() ?: return
 
