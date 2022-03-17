@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.resolve.calls.checkers.AdditionalTypeChecker
 import org.jetbrains.kotlin.resolve.calls.context.ResolutionContext
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.ErrorsJvm
 import org.jetbrains.kotlin.types.*
+import org.jetbrains.kotlin.types.error.ErrorUtils
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 import org.jetbrains.kotlin.types.checker.TypeCheckingProcedure
 
@@ -41,7 +42,7 @@ object JavaGenericVarianceViolationTypeChecker : AdditionalTypeChecker {
             c: ResolutionContext<*>
     ) {
         val expectedType = c.expectedType
-        if (TypeUtils.noExpectedType(expectedType) || ErrorUtils.containsErrorType(expectedType) || ErrorUtils.containsUninferredParameter(expectedType)) return
+        if (TypeUtils.noExpectedType(expectedType) || ErrorUtils.containsErrorType(expectedType) || ErrorUtils.containsUninferredTypeVariable(expectedType)) return
 
         // optimization: if no arguments or flexibility, everything is OK
         if (expectedType.arguments.isEmpty() || !expectedType.isFlexible()) return

@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.descriptors.ClassDescriptor;
 import org.jetbrains.kotlin.descriptors.ClassifierDescriptor;
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor;
-import org.jetbrains.kotlin.descriptors.annotations.Annotations;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.name.FqNameUnsafe;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
@@ -25,13 +24,16 @@ import org.jetbrains.kotlin.resolve.scopes.MemberScope;
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker;
 import org.jetbrains.kotlin.types.checker.KotlinTypeRefiner;
 import org.jetbrains.kotlin.types.checker.NewTypeVariableConstructor;
+import org.jetbrains.kotlin.types.error.ErrorTypeKind;
+import org.jetbrains.kotlin.types.error.ErrorUtils;
 import org.jetbrains.kotlin.utils.SmartSet;
 
 import java.util.*;
 
 public class TypeUtils {
-    public static final SimpleType DONT_CARE = ErrorUtils.createErrorTypeWithCustomDebugName("DONT_CARE");
-    public static final SimpleType CANT_INFER_FUNCTION_PARAM_TYPE = ErrorUtils.createErrorType("Cannot be inferred");
+    public static final SimpleType DONT_CARE = ErrorUtils.createErrorType(ErrorTypeKind.DONT_CARE);
+    public static final SimpleType CANNOT_INFER_FUNCTION_PARAM_TYPE =
+            ErrorUtils.createErrorType(ErrorTypeKind.UNINFERRED_LAMBDA_PARAMETER_TYPE);
 
     public static class SpecialType extends DelegatingSimpleType {
         private final String name;
@@ -207,7 +209,7 @@ public class TypeUtils {
             Function1<KotlinTypeRefiner, SimpleType> refinedTypeFactory
     ) {
         if (ErrorUtils.isError(classifierDescriptor)) {
-            return ErrorUtils.createErrorType("Unsubstituted type for " + classifierDescriptor);
+            return ErrorUtils.createErrorType(ErrorTypeKind.UNABLE_TO_SUBSTITUTE_TYPE, classifierDescriptor.toString());
         }
         TypeConstructor typeConstructor = classifierDescriptor.getTypeConstructor();
         return makeUnsubstitutedType(typeConstructor, unsubstitutedMemberScope, refinedTypeFactory);

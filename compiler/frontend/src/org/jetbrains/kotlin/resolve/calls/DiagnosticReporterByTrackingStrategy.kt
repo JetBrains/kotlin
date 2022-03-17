@@ -35,7 +35,7 @@ import org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluat
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedCallableMemberDescriptor
-import org.jetbrains.kotlin.types.ErrorUtils
+import org.jetbrains.kotlin.types.error.ErrorUtils
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.checker.intersectWrappedTypes
@@ -656,7 +656,7 @@ class DiagnosticReporterByTrackingStrategy(
     }
 
     private fun KotlinType.containsUninferredTypeParameter(uninferredTypeVariable: TypeVariableMarker) = contains {
-        ErrorUtils.isUninferredParameter(it) || it == TypeUtils.DONT_CARE
+        ErrorUtils.isUninferredTypeVariable(it) || it == TypeUtils.DONT_CARE
                 || it.constructor == uninferredTypeVariable.freshTypeConstructor(typeSystemContext)
     }
 

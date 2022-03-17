@@ -63,7 +63,8 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.getSuperClassOrAny
 import org.jetbrains.kotlin.resolve.descriptorUtil.isCompanionObject
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin
 import org.jetbrains.kotlin.resolve.source.getPsi
-import org.jetbrains.kotlin.types.ErrorUtils
+import org.jetbrains.kotlin.types.error.ErrorTypeKind
+import org.jetbrains.kotlin.types.error.ErrorUtils
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.isError
 import org.jetbrains.kotlin.types.typeUtil.isEnum
@@ -530,7 +531,7 @@ class ClassFileToSourceStubConverter(val kaptContext: KaptContextForStubGenerati
             assert(correctErrorTypes)
 
             return getNonErrorType<JCExpression>(
-                ErrorUtils.createErrorType("Error super class"),
+                ErrorUtils.createErrorType(ErrorTypeKind.ERROR_SUPER_TYPE),
                 ErrorTypeCorrector.TypeKind.SUPER_TYPE,
                 ref
             ) { throw SuperTypeCalculationFailure() }

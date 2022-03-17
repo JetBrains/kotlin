@@ -24,10 +24,9 @@ import org.jetbrains.kotlin.psi.KtTypeReference;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.BindingTrace;
 import org.jetbrains.kotlin.resolve.PossiblyBareType;
-import org.jetbrains.kotlin.types.ErrorUtils;
-import org.jetbrains.kotlin.types.KotlinType;
-import org.jetbrains.kotlin.types.TypeConstructor;
-import org.jetbrains.kotlin.types.TypeReconstructionResult;
+import org.jetbrains.kotlin.types.*;
+import org.jetbrains.kotlin.types.error.ErrorUtils;
+import org.jetbrains.kotlin.types.error.ErrorTypeKind;
 
 import static org.jetbrains.kotlin.diagnostics.Errors.NO_TYPE_ARGUMENTS_ON_RHS;
 
@@ -60,7 +59,7 @@ public class TypeReconstructionUtil {
             return targetType;
         }
 
-        return ErrorUtils.createErrorType("Failed to reconstruct type: " + right.getText());
+        return ErrorUtils.createErrorType(ErrorTypeKind.ERROR_WHILE_RECONSTRUCTING_BARE_TYPE, right.getText());
     }
 
     @NotNull

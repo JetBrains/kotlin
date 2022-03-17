@@ -22,12 +22,9 @@ import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemBuilder
 import org.jetbrains.kotlin.resolve.calls.inference.components.NewTypeSubstitutor
 import org.jetbrains.kotlin.resolve.calls.inference.model.*
 import org.jetbrains.kotlin.resolve.calls.model.*
-import org.jetbrains.kotlin.types.AbstractTypeChecker
-import org.jetbrains.kotlin.types.ErrorUtils
-import org.jetbrains.kotlin.types.KotlinType
-import org.jetbrains.kotlin.types.UnwrappedType
-import org.jetbrains.kotlin.types.model.TypeVariance
-import org.jetbrains.kotlin.types.model.convertVariance
+import org.jetbrains.kotlin.types.*
+import org.jetbrains.kotlin.types.error.ErrorUtils
+import org.jetbrains.kotlin.types.error.ErrorTypeKind
 import org.jetbrains.kotlin.types.typeUtil.builtIns
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
@@ -119,7 +116,7 @@ private fun extraLambdaInfo(
             contextReceiverType
         } else {
             diagnosticsHolder.addDiagnostic(NotEnoughInformationForLambdaParameter(argument, index))
-            ErrorUtils.createErrorType("<Unknown lambda context receiver type>")
+            ErrorUtils.createErrorType(ErrorTypeKind.UNINFERRED_LAMBDA_CONTEXT_RECEIVER_TYPE)
         }
     } ?: emptyList()
     val parameters = argument.parametersTypes?.mapIndexed { index, parameterType ->
@@ -127,7 +124,7 @@ private fun extraLambdaInfo(
             parameterType
         } else {
             diagnosticsHolder.addDiagnostic(NotEnoughInformationForLambdaParameter(argument, index))
-            ErrorUtils.createErrorType("<Unknown lambda parameter type>")
+            ErrorUtils.createErrorType(ErrorTypeKind.UNINFERRED_LAMBDA_PARAMETER_TYPE)
         }
     } ?: emptyList()
 

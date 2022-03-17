@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.analysis.api.symbols.KtClassLikeSymbol
 import org.jetbrains.kotlin.analysis.api.types.KtClassErrorType
 import org.jetbrains.kotlin.analysis.api.types.KtTypeNullability
 import org.jetbrains.kotlin.analysis.api.withValidityAssertion
-import org.jetbrains.kotlin.types.ErrorType
+import org.jetbrains.kotlin.types.error.ErrorType
 
 internal class KtFe10ClassErrorType(
     override val type: ErrorType,
@@ -23,7 +23,7 @@ internal class KtFe10ClassErrorType(
     override fun asStringForDebugging(): String = withValidityAssertion { type.asStringForDebugging() }
 
     override val error: String
-        get() = withValidityAssertion { "Type \"${type.presentableName}\" is unresolved" }
+        get() = withValidityAssertion { "Type \"${type.debugMessage}\" is unresolved" }
 
     override val candidateClassSymbols: Collection<KtClassLikeSymbol>
         get() = withValidityAssertion { emptyList() }

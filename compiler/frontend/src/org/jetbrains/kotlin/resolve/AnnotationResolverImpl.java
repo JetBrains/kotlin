@@ -42,7 +42,8 @@ import org.jetbrains.kotlin.resolve.lazy.descriptors.LazyAnnotationDescriptor;
 import org.jetbrains.kotlin.resolve.lazy.descriptors.LazyAnnotationsContextImpl;
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope;
 import org.jetbrains.kotlin.storage.StorageManager;
-import org.jetbrains.kotlin.types.ErrorUtils;
+import org.jetbrains.kotlin.types.error.ErrorTypeKind;
+import org.jetbrains.kotlin.types.error.ErrorUtils;
 import org.jetbrains.kotlin.types.KotlinType;
 
 import javax.inject.Inject;
@@ -119,12 +120,12 @@ public class AnnotationResolverImpl extends AnnotationResolver {
     ) {
         KtTypeReference typeReference = entryElement.getTypeReference();
         if (typeReference == null) {
-            return ErrorUtils.createErrorType("No type reference: " + entryElement.getText());
+            return ErrorUtils.createErrorType(ErrorTypeKind.UNRESOLVED_TYPE, entryElement.getText());
         }
 
         KotlinType type = typeResolver.resolveType(scope, typeReference, trace, true);
         if (!(type.getConstructor().getDeclarationDescriptor() instanceof ClassDescriptor)) {
-            return ErrorUtils.createErrorType("Not an annotation: " + type);
+            return ErrorUtils.createErrorType(ErrorTypeKind.NOT_ANNOTATION_TYPE_IN_ANNOTATION_CONTEXT, type.toString());
         }
         return type;
     }

@@ -21,7 +21,9 @@ import org.jetbrains.kotlin.incremental.components.LookupLocation
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.scopes.*
-import org.jetbrains.kotlin.types.ErrorUtils
+import org.jetbrains.kotlin.types.error.ErrorClassDescriptor
+import org.jetbrains.kotlin.types.error.ErrorEntity
+import org.jetbrains.kotlin.types.error.ErrorUtils
 import org.jetbrains.kotlin.util.collectionUtils.concat
 import org.jetbrains.kotlin.utils.Printer
 import org.jetbrains.kotlin.utils.SmartList
@@ -303,7 +305,7 @@ class ErrorLexicalScope : LexicalScope {
         override val parent: HierarchicalScope? = null
 
         override fun printStructure(p: Printer) {
-            p.print("<FAKE PARENT FOR ERROR LEXICAL SCOPE>")
+            p.print(ErrorEntity.PARENT_OF_ERROR_SCOPE.debugText)
         }
 
         override fun getContributedClassifier(name: Name, location: LookupLocation): ClassifierDescriptor? = null
@@ -319,10 +321,11 @@ class ErrorLexicalScope : LexicalScope {
     }
 
     override fun printStructure(p: Printer) {
-        p.print("<ERROR_SCOPE>")
+        p.print(ErrorEntity.ERROR_SCOPE.debugText)
     }
 
-    override val ownerDescriptor: DeclarationDescriptor = ErrorUtils.createErrorClass("<ERROR CLASS FOR ERROR SCOPE>")
+    override val ownerDescriptor: DeclarationDescriptor =
+        ErrorClassDescriptor(Name.special(ErrorEntity.ERROR_CLASS.debugText.format("unknown")))
     override val isOwnerDescriptorAccessibleByLabel: Boolean = false
     override val implicitReceiver: ReceiverParameterDescriptor? = null
     override val contextReceiversGroup: List<ReceiverParameterDescriptor> = emptyList()

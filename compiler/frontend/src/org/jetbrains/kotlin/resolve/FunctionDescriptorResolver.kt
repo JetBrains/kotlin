@@ -58,15 +58,14 @@ import org.jetbrains.kotlin.resolve.scopes.LexicalWritableScope
 import org.jetbrains.kotlin.resolve.scopes.TraceBasedLocalRedeclarationChecker
 import org.jetbrains.kotlin.resolve.source.toSourceElement
 import org.jetbrains.kotlin.storage.StorageManager
-import org.jetbrains.kotlin.types.ErrorUtils
-import org.jetbrains.kotlin.types.KotlinType
-import org.jetbrains.kotlin.types.TypeUtils
+import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
+import org.jetbrains.kotlin.types.error.ErrorTypeKind
+import org.jetbrains.kotlin.types.error.ErrorUtils
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingServices
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingUtils
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingUtils.isFunctionExpression
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingUtils.isFunctionLiteral
-import org.jetbrains.kotlin.types.isError
 import org.jetbrains.kotlin.types.typeUtil.replaceAnnotations
 import java.util.*
 
@@ -166,7 +165,7 @@ class FunctionDescriptorResolver(
                     trace, scope, dataFlowInfo, function, functionDescriptor, inferenceSession
                 )
             else ->
-                ErrorUtils.createErrorType("No type, no body")
+                ErrorUtils.createErrorType(ErrorTypeKind.RETURN_TYPE, functionDescriptor.name.asString())
         }
         functionDescriptor.setReturnType(inferredReturnType)
     }
@@ -486,10 +485,10 @@ class FunctionDescriptorResolver(
                         trace.report(CANNOT_INFER_PARAMETER_TYPE.on(valueParameter))
                     }
 
-                    expectedType ?: TypeUtils.CANT_INFER_FUNCTION_PARAM_TYPE
+                    expectedType ?: TypeUtils.CANNOT_INFER_FUNCTION_PARAM_TYPE
                 } else {
                     trace.report(VALUE_PARAMETER_WITH_NO_TYPE_ANNOTATION.on(valueParameter))
-                    ErrorUtils.createErrorType("Type annotation was missing for parameter ${valueParameter.nameAsSafeName}")
+                    ErrorUtils.createErrorType(ErrorTypeKind.MISSED_TYPE_FOR_PARAMETER, valueParameter.nameAsSafeName.toString())
                 }
             }
 

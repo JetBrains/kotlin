@@ -31,6 +31,8 @@ import org.jetbrains.kotlin.resolve.scopes.TypeIntersectionScope;
 import org.jetbrains.kotlin.storage.NotNullLazyValue;
 import org.jetbrains.kotlin.storage.StorageManager;
 import org.jetbrains.kotlin.types.*;
+import org.jetbrains.kotlin.types.error.ErrorTypeKind;
+import org.jetbrains.kotlin.types.error.ErrorUtils;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -221,7 +223,7 @@ public abstract class AbstractTypeParameterDescriptor extends DeclarationDescrip
         @Nullable
         @Override
         protected KotlinType defaultSupertypeIfEmpty() {
-            return ErrorUtils.createErrorType("Cyclic upper bounds");
+            return ErrorUtils.createErrorType(ErrorTypeKind.CYCLIC_UPPER_BOUNDS);
         }
 
         @Override

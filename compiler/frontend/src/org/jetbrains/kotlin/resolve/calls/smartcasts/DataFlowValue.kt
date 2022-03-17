@@ -17,7 +17,8 @@
 package org.jetbrains.kotlin.resolve.calls.smartcasts
 
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import org.jetbrains.kotlin.types.ErrorUtils
+import org.jetbrains.kotlin.types.error.ErrorTypeKind
+import org.jetbrains.kotlin.types.error.ErrorUtils
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils
 
@@ -122,6 +123,6 @@ class DataFlowValue(
         fun nullValue(builtIns: KotlinBuiltIns) = DataFlowValue(IdentifierInfo.NULL, builtIns.nullableNothingType, Nullability.NULL)
 
         @JvmField
-        val ERROR = DataFlowValue(IdentifierInfo.ERROR, ErrorUtils.createErrorType("Error type for data flow"), Nullability.IMPOSSIBLE)
+        val ERROR = DataFlowValue(IdentifierInfo.ERROR, ErrorUtils.createErrorType(ErrorTypeKind.ERROR_DATA_FLOW_TYPE), Nullability.IMPOSSIBLE)
     }
 }

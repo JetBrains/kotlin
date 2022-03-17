@@ -25,10 +25,14 @@ import org.jetbrains.kotlin.resolve.calls.inference.isCaptured
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.checker.*
+import org.jetbrains.kotlin.types.error.ErrorType
 import org.jetbrains.kotlin.types.model.SimpleTypeMarker
 import org.jetbrains.kotlin.types.model.TypeArgumentMarker
 import org.jetbrains.kotlin.types.model.TypeVariableTypeConstructorMarker
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
+import org.jetbrains.kotlin.types.error.ErrorUtils
+import kotlin.contracts.ExperimentalContracts
+import kotlin.contracts.contract
 
 enum class TypeNullability {
     NOT_NULL,
@@ -399,3 +403,11 @@ fun KotlinType.isStubTypeForBuilderInference(): Boolean =
     this is StubTypeForBuilderInference || isDefNotNullStubType<StubTypeForBuilderInference>()
 
 private inline fun <reified S : AbstractStubType> KotlinType.isDefNotNullStubType() = this is DefinitelyNotNullType && this.original is S
+
+@OptIn(ExperimentalContracts::class)
+fun isUnresolvedType(type: KotlinType): Boolean {
+    contract {
+        returns(true) implies (type is ErrorType)
+    }
+    return type is ErrorType && type.kind.isUnresolved
+}

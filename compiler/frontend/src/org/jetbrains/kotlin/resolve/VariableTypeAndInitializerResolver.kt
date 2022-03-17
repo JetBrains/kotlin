@@ -21,6 +21,8 @@ import org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluat
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope
 import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.types.*
+import org.jetbrains.kotlin.types.error.ErrorUtils
+import org.jetbrains.kotlin.types.error.ErrorTypeKind
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingServices
 import org.jetbrains.kotlin.types.expressions.PreliminaryDeclarationVisitor
 
@@ -37,8 +39,9 @@ class VariableTypeAndInitializerResolver(
     private val anonymousTypeTransformers: Iterable<DeclarationSignatureAnonymousTypeTransformer>
 ) {
     companion object {
-        @JvmField
-        val STUB_FOR_PROPERTY_WITHOUT_TYPE = ErrorUtils.createErrorType("No type, no body")
+        @JvmStatic
+        fun getTypeForPropertyWithoutReturnType(property: String): SimpleType =
+            ErrorUtils.createErrorType(ErrorTypeKind.RETURN_TYPE_FOR_PROPERTY, property)
     }
 
     fun resolveType(
@@ -58,7 +61,7 @@ class VariableTypeAndInitializerResolver(
             trace.report(VARIABLE_WITH_NO_TYPE_NO_INITIALIZER.on(variable))
         }
 
-        return STUB_FOR_PROPERTY_WITHOUT_TYPE
+        return getTypeForPropertyWithoutReturnType(variableDescriptor.name.asString())
     }
 
     fun resolveTypeNullable(
@@ -165,7 +168,7 @@ class VariableTypeAndInitializerResolver(
         )
 
         val delegatedType = getterReturnType?.let { approximateType(it, local) }
-            ?: ErrorUtils.createErrorType("Type from delegate")
+            ?: ErrorUtils.createErrorType(ErrorTypeKind.TYPE_FOR_DELEGATION, delegateExpression.text)
 
         transformAnonymousTypeIfNeeded(
             variableDescriptor, property, delegatedType, trace, anonymousTypeTransformers, languageVersionSettings

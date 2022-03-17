@@ -28,7 +28,8 @@ import org.jetbrains.kotlin.resolve.calls.util.getResolvedCall
 import org.jetbrains.kotlin.resolve.calls.util.getType
 import org.jetbrains.kotlin.resolve.sam.SamConstructorDescriptor
 import org.jetbrains.kotlin.resolve.sam.getFunctionTypeForAbstractMethod
-import org.jetbrains.kotlin.types.ErrorUtils
+import org.jetbrains.kotlin.types.error.ErrorTypeKind
+import org.jetbrains.kotlin.types.error.ErrorUtils
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.checker.intersectWrappedTypes
 import org.jetbrains.kotlin.types.typeUtil.makeNullable
@@ -73,7 +74,7 @@ class KtFe10ExpressionTypeProvider(
             if (typeReference != null) {
                 val bindingContext = analysisContext.analyze(typeReference, AnalysisMode.PARTIAL)
                 val kotlinType = bindingContext[BindingContext.TYPE, typeReference]
-                    ?: ErrorUtils.createErrorType("Return type \"${typeReference.text}\" cannot be resolved")
+                    ?: ErrorUtils.createErrorType(ErrorTypeKind.RETURN_TYPE, typeReference.text)
 
                 return kotlinType.toKtType(analysisContext)
             }
@@ -82,7 +83,7 @@ class KtFe10ExpressionTypeProvider(
         if (declaration is KtFunction && declaration !is KtConstructor<*> && declaration.equalsToken != null) {
             val bindingContext = analysisContext.analyze(declaration)
             val kotlinType = bindingContext[BindingContext.FUNCTION, declaration]?.returnType
-                ?: ErrorUtils.createErrorType("Implicit return type for function \"${declaration.name}\" cannot be resolved")
+                ?: ErrorUtils.createErrorType(ErrorTypeKind.IMPLICIT_RETURN_TYPE_FOR_FUNCTION, declaration.name ?: "<unknown>")
 
             return kotlinType.toKtType(analysisContext)
         }
@@ -90,7 +91,7 @@ class KtFe10ExpressionTypeProvider(
         if (declaration is KtProperty) {
             val bindingContext = analysisContext.analyze(declaration)
             val kotlinType = bindingContext[BindingContext.VARIABLE, declaration]?.returnType
-                ?: ErrorUtils.createErrorType("Implicit return type for property \"${declaration.name}\" cannot be resolved")
+                ?: ErrorUtils.createErrorType(ErrorTypeKind.IMPLICIT_RETURN_TYPE_FOR_PROPERTY, declaration.name ?: "<unknown>")
 
             return kotlinType.toKtType(analysisContext)
         }
@@ -98,7 +99,9 @@ class KtFe10ExpressionTypeProvider(
         if (declaration is KtPropertyAccessor) {
             val bindingContext = analysisContext.analyze(declaration)
             val kotlinType = bindingContext[BindingContext.PROPERTY_ACCESSOR, declaration]?.returnType
-                ?: ErrorUtils.createErrorType("Return type for property accessor \"${declaration.property.name}\" cannot be resolved")
+                ?: ErrorUtils.createErrorType(
+                    ErrorTypeKind.IMPLICIT_RETURN_TYPE_FOR_PROPERTY_ACCESSOR, declaration.property.name ?: "<unknown>"
+                )
 
             return kotlinType.toKtType(analysisContext)
         }
@@ -112,7 +115,7 @@ class KtFe10ExpressionTypeProvider(
                 if (property != null && property.setter == propertyAccessor) {
                     val bindingContext = analysisContext.analyze(property)
                     val kotlinType = bindingContext[BindingContext.VARIABLE, property]?.returnType
-                        ?: ErrorUtils.createErrorType("Return type for property \"${declaration.name}\" cannot be resolved")
+                        ?: ErrorUtils.createErrorType(ErrorTypeKind.RETURN_TYPE_FOR_PROPERTY, declaration.name ?: "<unknown>")
 
                     return kotlinType.toKtType(analysisContext)
                 }
@@ -122,7 +125,9 @@ class KtFe10ExpressionTypeProvider(
         if (declaration is KtConstructor<*>) {
             val bindingContext = analysisContext.analyze(declaration)
             val kotlinType = bindingContext[BindingContext.CONSTRUCTOR, declaration]?.returnType
-                ?: ErrorUtils.createErrorType("Return type for constructor \"${declaration.containingClass()?.name}\" cannot be resolved")
+                ?: ErrorUtils.createErrorType(
+                    ErrorTypeKind.RETURN_TYPE_FOR_CONSTRUCTOR, declaration.containingClass()?.name ?: "<unknown>"
+                )
             return kotlinType.toKtType(analysisContext)
         }
 
@@ -146,7 +151,8 @@ class KtFe10ExpressionTypeProvider(
         }
 
         val errorMessage = "Descriptor not found for function \"${declaration.name}\""
-        return ErrorUtils.createErrorTypeWithCustomConstructor(errorMessage, function.typeConstructor).toKtType(analysisContext)
+        return ErrorUtils.createErrorType(ErrorTypeKind.NOT_FOUND_DESCRIPTOR_FOR_FUNCTION, function.typeConstructor, errorMessage)
+            .toKtType(analysisContext)
     }
 
     override fun getExpectedType(expression: PsiElement): KtType? = withValidityAssertion {

@@ -37,11 +37,10 @@ import org.jetbrains.kotlin.resolve.scopes.LexicalWritableScope;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver;
 import org.jetbrains.kotlin.resolve.scopes.receivers.TransientReceiver;
 import org.jetbrains.kotlin.serialization.deserialization.SuspendFunctionTypeUtilKt;
-import org.jetbrains.kotlin.types.CommonSupertypes;
-import org.jetbrains.kotlin.types.ErrorUtils;
-import org.jetbrains.kotlin.types.KotlinType;
-import org.jetbrains.kotlin.types.TypeUtils;
+import org.jetbrains.kotlin.types.*;
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker;
+import org.jetbrains.kotlin.types.error.ErrorTypeKind;
+import org.jetbrains.kotlin.types.error.ErrorUtils;
 import org.jetbrains.kotlin.types.expressions.ControlStructureTypingUtils.ResolveConstruct;
 import org.jetbrains.kotlin.types.expressions.typeInfoFactory.TypeInfoFactoryKt;
 
@@ -60,9 +59,6 @@ import static org.jetbrains.kotlin.types.expressions.ExpressionTypingServices.ge
 import static org.jetbrains.kotlin.types.expressions.ExpressionTypingUtils.*;
 
 public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
-
-    private static final String RETURN_NOT_ALLOWED_MESSAGE = "Return not allowed";
-
     protected ControlStructureTypingVisitor(@NotNull ExpressionTypingInternals facade) {
         super(facade);
     }
@@ -433,7 +429,7 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
             loopScope.addVariableDescriptor(variableDescriptor);
             KtDestructuringDeclaration multiParameter = loopParameter.getDestructuringDeclaration();
             if (multiParameter != null) {
-                KotlinType elementType = expectedParameterType == null ? ErrorUtils.createErrorType("Loop range has no type") : expectedParameterType;
+                KotlinType elementType = expectedParameterType == null ? ErrorUtils.createErrorType(ErrorTypeKind.NO_TYPE_FOR_LOOP_RANGE) : expectedParameterType;
                 TransientReceiver iteratorNextAsReceiver = new TransientReceiver(elementType);
                 components.annotationResolver.resolveAnnotationsWithArguments(loopScope, loopParameter.getModifierList(), context.trace);
                 components.destructuringDeclarationResolver.defineLocalVariablesFromDestructuringDeclaration(
@@ -479,7 +475,7 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
         }
         else {
             if (expectedParameterType == null) {
-                expectedParameterType = ErrorUtils.createErrorType("Error");
+                expectedParameterType = ErrorUtils.createErrorType(ErrorTypeKind.NO_TYPE_FOR_LOOP_PARAMETER);
             }
             variableDescriptor = components.descriptorResolver.
                     resolveLocalVariableDescriptor(loopParameter, expectedParameterType, context.trace, context.scope);
@@ -852,7 +848,7 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
                     isClassInitializer(containingFunInfo)) {
                     // Unqualified, in a function literal
                     context.trace.report(RETURN_NOT_ALLOWED.on(expression));
-                    resultType = ErrorUtils.createErrorType(RETURN_NOT_ALLOWED_MESSAGE);
+                    resultType = ErrorUtils.createErrorType(ErrorTypeKind.RETURN_NOT_ALLOWED);
                 }
 
                 expectedType = getFunctionExpectedReturnType(containingFunctionDescriptor, (KtElement) containingFunInfo.getSecond(), context);
@@ -861,7 +857,7 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
             else {
                 // Outside a function
                 context.trace.report(RETURN_NOT_ALLOWED.on(expression));
-                resultType = ErrorUtils.createErrorType(RETURN_NOT_ALLOWED_MESSAGE);
+                resultType = ErrorUtils.createErrorType(ErrorTypeKind.RETURN_NOT_ALLOWED);
             }
         }
         else if (labelTargetElement != null) {
@@ -872,7 +868,7 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
                 if (!InlineUtil.checkNonLocalReturnUsage(functionDescriptor, expression, context)) {
                     // Qualified, non-local
                     context.trace.report(RETURN_NOT_ALLOWED.on(expression));
-                    resultType = ErrorUtils.createErrorType(RETURN_NOT_ALLOWED_MESSAGE);
+                    resultType = ErrorUtils.createErrorType(ErrorTypeKind.RETURN_NOT_ALLOWED);
                 }
                 else if (labelTargetElement instanceof KtFunctionLiteral
                          && Objects.equals(expression.getLabelName(), "suspend")) {

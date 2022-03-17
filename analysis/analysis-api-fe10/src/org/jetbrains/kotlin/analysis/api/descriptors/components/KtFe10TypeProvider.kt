@@ -45,6 +45,9 @@ import org.jetbrains.kotlin.resolve.scopes.utils.getImplicitReceiversHierarchy
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.checker.NewCapturedType
 import org.jetbrains.kotlin.types.checker.NewTypeVariableConstructor
+import org.jetbrains.kotlin.types.error.ErrorType
+import org.jetbrains.kotlin.types.error.ErrorTypeKind
+import org.jetbrains.kotlin.types.error.ErrorUtils
 import org.jetbrains.kotlin.types.typeUtil.isNothing
 import org.jetbrains.kotlin.util.containingNonLocalDeclaration
 
@@ -71,7 +74,7 @@ internal class KtFe10TypeProvider(
 
     override fun buildSelfClassType(symbol: KtNamedClassOrObjectSymbol): KtType = withValidityAssertion {
         val kotlinType = (getSymbolDescriptor(symbol) as? ClassDescriptor)?.defaultType
-            ?: ErrorUtils.createErrorType("Cannot get class type for unresolved class ${symbol.nameOrAnonymous}")
+            ?: ErrorUtils.createErrorType(ErrorTypeKind.UNRESOLVED_CLASS_TYPE, symbol.nameOrAnonymous.toString())
 
         return kotlinType.toKtType(analysisContext)
     }
@@ -84,7 +87,7 @@ internal class KtFe10TypeProvider(
     override fun getKtType(ktTypeReference: KtTypeReference): KtType = withValidityAssertion {
         val bindingContext = analysisContext.analyze(ktTypeReference, AnalysisMode.PARTIAL)
         val kotlinType = bindingContext[BindingContext.TYPE, ktTypeReference]
-            ?: ErrorUtils.createErrorType("Cannot resolve type reference ${ktTypeReference.text}")
+            ?: ErrorUtils.createErrorType(ErrorTypeKind.UNRESOLVED_TYPE, ktTypeReference.text)
         return kotlinType.toKtType(analysisContext)
     }
 

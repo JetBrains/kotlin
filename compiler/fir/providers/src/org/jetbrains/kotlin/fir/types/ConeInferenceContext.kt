@@ -368,8 +368,8 @@ interface ConeInferenceContext : TypeSystemInferenceExtensionContext, ConeTypeCo
         return ConeErrorType(ConeIntermediateDiagnostic(debugName))
     }
 
-    override fun createErrorTypeWithCustomConstructor(debugName: String, constructor: TypeConstructorMarker): KotlinTypeMarker {
-        return ConeErrorType(ConeIntermediateDiagnostic("$debugName c: $constructor"))
+    override fun createUninferredType(constructor: TypeConstructorMarker): KotlinTypeMarker {
+        return ConeErrorType(ConeIntermediateDiagnostic("Uninferred type c: $constructor"))
     }
 
     override fun CapturedTypeMarker.captureStatus(): CaptureStatus {

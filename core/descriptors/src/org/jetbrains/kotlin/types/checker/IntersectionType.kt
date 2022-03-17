@@ -18,8 +18,10 @@ package org.jetbrains.kotlin.types.checker
 
 import org.jetbrains.kotlin.resolve.constants.IntegerLiteralTypeConstructor
 import org.jetbrains.kotlin.types.*
+import org.jetbrains.kotlin.types.error.ErrorTypeKind
 import java.util.*
 import kotlin.collections.LinkedHashSet
+import org.jetbrains.kotlin.types.error.ErrorUtils
 
 fun intersectWrappedTypes(types: Collection<KotlinType>) = intersectTypes(types.map { it.unwrap() })
 
@@ -46,7 +48,7 @@ fun intersectTypes(types: List<UnwrappedType>): UnwrappedType {
         }
     }
     if (hasErrorType) {
-        return ErrorUtils.createErrorType("Intersection of error types: $types")
+        return ErrorUtils.createErrorType(ErrorTypeKind.INTERSECTION_OF_ERROR_TYPES, types.toString())
     }
 
     if (!hasFlexibleTypes) {

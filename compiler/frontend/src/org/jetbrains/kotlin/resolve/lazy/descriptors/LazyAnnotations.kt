@@ -35,7 +35,8 @@ import org.jetbrains.kotlin.resolve.source.toSourceElement
 import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.storage.getValue
 import org.jetbrains.kotlin.types.AbbreviatedType
-import org.jetbrains.kotlin.types.ErrorUtils
+import org.jetbrains.kotlin.types.error.ErrorTypeKind
+import org.jetbrains.kotlin.types.error.ErrorUtils
 import org.jetbrains.kotlin.types.typeUtil.replaceAnnotations
 
 abstract class LazyAnnotationsContext(
@@ -97,7 +98,7 @@ class LazyAnnotationDescriptor(
             annotationType
         },
         onRecursiveCall = {
-            ErrorUtils.createErrorType("Recursion in type of annotation detected")
+            ErrorUtils.createErrorType(ErrorTypeKind.RECURSIVE_ANNOTATION_TYPE)
         }
     )
 

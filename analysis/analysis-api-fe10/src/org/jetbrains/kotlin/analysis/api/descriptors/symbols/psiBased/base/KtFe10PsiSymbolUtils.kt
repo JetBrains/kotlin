@@ -26,12 +26,11 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
 import org.jetbrains.kotlin.psi.psiUtil.hasBody
-import org.jetbrains.kotlin.psi.psiUtil.isTopLevelInFileOrScript
 import org.jetbrains.kotlin.psi.psiUtil.parentsWithSelf
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope
-import org.jetbrains.kotlin.types.ErrorType
-import org.jetbrains.kotlin.types.ErrorUtils
+import org.jetbrains.kotlin.types.error.ErrorTypeKind
+import org.jetbrains.kotlin.types.error.ErrorUtils
 
 internal val KtDeclaration.ktVisibility: Visibility?
     get() = when {
@@ -149,6 +148,6 @@ internal fun PsiElement.getResolutionScope(bindingContext: BindingContext): Lexi
 
 
 internal fun KtFe10Symbol.createErrorType(): KtType {
-    val type = ErrorUtils.createErrorType("Type is unavailable for declaration $psi") as ErrorType
+    val type = ErrorUtils.createErrorType(ErrorTypeKind.UNAVAILABLE_TYPE_FOR_DECLARATION, psi.toString())
     return KtFe10ClassErrorType(type, analysisContext)
 }

@@ -5,10 +5,13 @@
 
 package org.jetbrains.kotlin.types
 
-import org.jetbrains.kotlin.descriptors.annotations.Annotations
+import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.types.checker.KotlinTypeRefiner
 import org.jetbrains.kotlin.types.checker.NewTypeVariableConstructor
+import org.jetbrains.kotlin.types.error.ErrorScopeKind
+import org.jetbrains.kotlin.types.error.ErrorTypeKind
 import org.jetbrains.kotlin.types.model.StubTypeMarker
+import org.jetbrains.kotlin.types.error.ErrorUtils
 
 class StubTypeForBuilderInference(
     originalTypeVariable: NewTypeVariableConstructor,
@@ -18,7 +21,7 @@ class StubTypeForBuilderInference(
     override fun materialize(newNullability: Boolean): AbstractStubType =
         StubTypeForBuilderInference(originalTypeVariable, newNullability, constructor)
 
-    override val memberScope = originalTypeVariable.builtIns.anyType.memberScope
+    override val memberScope: MemberScope = originalTypeVariable.builtIns.anyType.memberScope
 
     override fun toString(): String {
         // BI means builder inference
@@ -54,7 +57,7 @@ class StubTypeForProvideDelegateReceiver(
 }
 
 abstract class AbstractStubType(val originalTypeVariable: NewTypeVariableConstructor, override val isMarkedNullable: Boolean) : SimpleType() {
-    override val memberScope = ErrorUtils.createErrorScope("Scope for stub type: $originalTypeVariable")
+    override val memberScope: MemberScope = ErrorUtils.createErrorScope(ErrorScopeKind.STUB_TYPE_SCOPE, originalTypeVariable.toString())
 
     override val arguments: List<TypeProjection>
         get() = emptyList()
@@ -75,6 +78,6 @@ abstract class AbstractStubType(val originalTypeVariable: NewTypeVariableConstru
 
     companion object {
         fun createConstructor(originalTypeVariable: NewTypeVariableConstructor) =
-            ErrorUtils.createErrorTypeConstructor("Constructor for stub type: $originalTypeVariable")
+            ErrorUtils.createErrorTypeConstructor(ErrorTypeKind.STUB_TYPE, originalTypeVariable.toString())
     }
 }

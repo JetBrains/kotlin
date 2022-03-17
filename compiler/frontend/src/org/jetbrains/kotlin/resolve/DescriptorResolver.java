@@ -61,6 +61,8 @@ import org.jetbrains.kotlin.resolve.source.KotlinSourceElementKt;
 import org.jetbrains.kotlin.storage.StorageManager;
 import org.jetbrains.kotlin.types.*;
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker;
+import org.jetbrains.kotlin.types.error.ErrorTypeKind;
+import org.jetbrains.kotlin.types.error.ErrorUtils;
 import org.jetbrains.kotlin.types.expressions.*;
 import org.jetbrains.kotlin.types.typeUtil.TypeUtilsKt;
 
@@ -222,7 +224,7 @@ public class DescriptorResolver {
                 }
             }
             else {
-                result.add(ErrorUtils.createErrorType("No type reference"));
+                result.add(ErrorUtils.createErrorType(ErrorTypeKind.UNRESOLVED_TYPE, delegationSpecifier.getText()));
             }
         }
         return result;
@@ -691,7 +693,7 @@ public class DescriptorResolver {
         }
         else {
             // Error is reported by the parser
-            type = ErrorUtils.createErrorType("Annotation is absent");
+            type = ErrorUtils.createErrorType(ErrorTypeKind.NO_TYPE_SPECIFIED, parameter.getText());
         }
         if (parameter.hasModifier(VARARG_KEYWORD)) {
             return getVarargParameterType(type);
@@ -765,8 +767,8 @@ public class DescriptorResolver {
         if (typeReference == null) {
             typeAliasDescriptor.initialize(
                     typeParameterDescriptors,
-                    ErrorUtils.createErrorType(name.asString()),
-                    ErrorUtils.createErrorType(name.asString()));
+                    ErrorUtils.createErrorType(ErrorTypeKind.UNRESOLVED_TYPE_ALIAS, name.asString()),
+                    ErrorUtils.createErrorType(ErrorTypeKind.UNRESOLVED_TYPE_ALIAS, name.asString()));
         }
         else if (!languageVersionSettings.supportsFeature(LanguageFeature.TypeAliases)) {
             typeResolver.resolveAbbreviatedType(scopeWithTypeParameters, typeReference, trace);
@@ -775,19 +777,19 @@ public class DescriptorResolver {
                                                 TuplesKt.to(LanguageFeature.TypeAliases, languageVersionSettings)));
             typeAliasDescriptor.initialize(
                     typeParameterDescriptors,
-                    ErrorUtils.createErrorType(name.asString()),
-                    ErrorUtils.createErrorType(name.asString()));
+                    ErrorUtils.createErrorType(ErrorTypeKind.UNRESOLVED_TYPE_ALIAS, name.asString()),
+                    ErrorUtils.createErrorType(ErrorTypeKind.UNRESOLVED_TYPE_ALIAS, name.asString()));
         }
         else {
             typeAliasDescriptor.initialize(
                     typeParameterDescriptors,
                     storageManager.createRecursionTolerantLazyValue(
                             () -> typeResolver.resolveAbbreviatedType(scopeWithTypeParameters, typeReference, trace),
-                            ErrorUtils.createErrorType("Recursive type alias expansion for " + typeAliasDescriptor.getName().asString())
+                            ErrorUtils.createErrorType(ErrorTypeKind.RECURSIVE_TYPE_ALIAS, typeAliasDescriptor.getName().asString())
                     ),
                     storageManager.createRecursionTolerantLazyValue(
                             () -> typeResolver.resolveExpandedTypeForTypeAlias(typeAliasDescriptor),
-                            ErrorUtils.createErrorType("Recursive type alias expansion for " + typeAliasDescriptor.getName().asString())
+                            ErrorUtils.createErrorType(ErrorTypeKind.RECURSIVE_TYPE_ALIAS, typeAliasDescriptor.getName().asString())
                     )
             );
         }
@@ -1232,7 +1234,7 @@ public class DescriptorResolver {
             getterType = propertyTypeIfKnown;
         }
 
-        getterDescriptor.initialize(getterType != null ? getterType : VariableTypeAndInitializerResolver.STUB_FOR_PROPERTY_WITHOUT_TYPE);
+        getterDescriptor.initialize(getterType != null ? getterType : VariableTypeAndInitializerResolver.getTypeForPropertyWithoutReturnType(propertyDescriptor.getName().asString()));
 
         return getterDescriptor;
     }

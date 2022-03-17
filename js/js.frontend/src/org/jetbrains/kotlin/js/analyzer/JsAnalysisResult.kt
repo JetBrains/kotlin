@@ -19,8 +19,6 @@ package org.jetbrains.kotlin.js.analyzer
 import org.jetbrains.kotlin.analyzer.AnalysisResult
 import org.jetbrains.kotlin.resolve.BindingTrace
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
-import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.types.ErrorUtils
 import java.io.File
 
 open class JsAnalysisResult(

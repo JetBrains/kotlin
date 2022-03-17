@@ -43,8 +43,10 @@ import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValueWithSmartCastInfo
 import org.jetbrains.kotlin.resolve.scopes.utils.getImplicitReceiversHierarchy
 import org.jetbrains.kotlin.types.*
+import org.jetbrains.kotlin.types.error.ErrorUtils
 import org.jetbrains.kotlin.types.TypeUtils.DONT_CARE
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
+import org.jetbrains.kotlin.types.error.ErrorScopeKind
 import org.jetbrains.kotlin.types.expressions.OperatorConventions
 import org.jetbrains.kotlin.types.typeUtil.contains
 import org.jetbrains.kotlin.util.buildNotFixedVariablesToPossibleResultType
@@ -58,8 +60,9 @@ enum class ResolveArgumentsMode {
 
 fun hasUnknownFunctionParameter(type: KotlinType): Boolean {
     assert(ReflectionTypes.isCallableType(type) || type.isSuspendFunctionType) { "type $type is not a function or property" }
-    return getParameterArgumentsOfCallableType(type).any {
-        it.type.contains { TypeUtils.isDontCarePlaceholder(it) } || ErrorUtils.containsUninferredParameter(it.type)
+    return getParameterArgumentsOfCallableType(type).any { typeProjection ->
+        typeProjection.type.contains { TypeUtils.isDontCarePlaceholder(it) }
+                || ErrorUtils.containsUninferredTypeVariable(typeProjection.type)
     }
 }
 
@@ -136,7 +139,7 @@ fun getErasedReceiverType(receiverParameterDescriptor: ReceiverParameterDescript
 
     return KotlinTypeFactory.simpleTypeWithNonTrivialMemberScope(
         receiverType.attributes, receiverTypeConstructor, fakeTypeArguments,
-        receiverType.isMarkedNullable, ErrorUtils.createErrorScope("Error scope for erased receiver type", /*throwExceptions=*/true)
+        receiverType.isMarkedNullable, ErrorUtils.createErrorScope(ErrorScopeKind.ERASED_RECEIVER_TYPE_SCOPE, throwExceptions = true)
     )
 }
 

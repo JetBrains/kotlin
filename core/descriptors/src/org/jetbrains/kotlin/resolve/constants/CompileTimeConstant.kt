@@ -19,9 +19,10 @@ package org.jetbrains.kotlin.resolve.constants
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
-import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.findClassAcrossModuleDependencies
 import org.jetbrains.kotlin.types.*
+import org.jetbrains.kotlin.types.error.ErrorScopeKind
+import org.jetbrains.kotlin.types.error.ErrorUtils
 
 interface CompileTimeConstant<out T> {
     val isError: Boolean
@@ -198,7 +199,7 @@ class IntegerValueTypeConstant(
 
     val unknownIntegerType = KotlinTypeFactory.simpleTypeWithNonTrivialMemberScope(
         TypeAttributes.Empty, typeConstructor, emptyList(), false,
-        ErrorUtils.createErrorScope("Scope for number value type ($typeConstructor)", true)
+        ErrorUtils.createErrorScope(ErrorScopeKind.INTEGER_LITERAL_TYPE_SCOPE, throwExceptions = true, typeConstructor.toString())
     )
 
     fun getType(expectedType: KotlinType): KotlinType =
