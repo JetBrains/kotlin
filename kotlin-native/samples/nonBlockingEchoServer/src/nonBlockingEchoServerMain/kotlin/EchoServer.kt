@@ -177,6 +177,7 @@ fun acceptClientsAndRun(serverFd: Int, block: suspend Client.() -> Unit) {
                                 waitingFor.continuation.resumeWithException(IOException(getUnixError()))
                             waitingFor.continuation.resume(Unit)
                         }
+                        else -> throw Error("No operation for $waitingFor is defined")
                     }
                 }
             }
