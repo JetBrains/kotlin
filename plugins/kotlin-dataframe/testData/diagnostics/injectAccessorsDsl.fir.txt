@@ -1,0 +1,220 @@
+FILE: injectAccessorsDsl.kt
+    public final fun test(df: R|org/jetbrains/kotlinx/dataframe/DataFrame<*>|): R|kotlin/Unit| {
+        R|<local>/df|.R|org/jetbrains/kotlinx/dataframe/api/add|<R|kotlin/Any?|>(<L> = add@fun R|org/jetbrains/kotlinx/dataframe/api/AddDsl<kotlin/Any?>|.<anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+            (this@R|special/anonymous|, String(col1)).R|SubstitutionOverride<org/jetbrains/kotlinx/dataframe/api/AddDsl.from: R|kotlin/Boolean|>|<R|kotlin/Int|>(from@fun R|org/jetbrains/kotlinx/dataframe/DataRow<kotlin/Any?>|.<anonymous>(it: R|org/jetbrains/kotlinx/dataframe/DataRow<kotlin/Any?>|): R|kotlin/Int| <inline=NoInline, kind=UNKNOWN>  {
+                ^ Int(5)
+            }
+            )
+        }
+        )
+        (this@R|/test|, R|<local>/df|).R|org/jetbrains/kotlinx/dataframe/0f2697db-081d-4c6f-94c3-703004281247.col1|
+    }
+FILE: __GENERATED DECLARATIONS__.kt
+    package org.jetbrains.kotlinx.dataframe
+
+    local final class 682d810b-753b-402e-8fb2-b7cd25f31c00 {
+    }
+    local final class 49ef4f57-1eb3-4f40-90e7-1114ab55a829 {
+    }
+    local final class c02161d1-8da6-42cd-a970-fe1d9f3d18b2 {
+    }
+    local final class c23df898-17f5-475f-9560-dfdde187264f {
+    }
+    local final class 8e142f3e-1a18-4670-9d1d-6cec2509f382 {
+    }
+    local final class 403ecb8a-0622-48ab-98ac-fc1a34d1bec8 {
+    }
+    local final class e77ee05a-b31b-45f1-a855-5ae2dd1939b8 {
+    }
+    local final class 9ca1a10e-8578-425c-931a-f9f3992010f1 {
+    }
+    local final class 050628d0-a110-41e0-885d-544fdc32b373 {
+    }
+    local final class dabfad69-e92c-446f-b8b8-d804cdb94a62 {
+    }
+    local final class c0093aa5-bfd7-4e1d-aa0d-d59bc04e01e9 {
+    }
+    local final class 25c40f83-b062-41f2-9b11-a3b7f19836f3 {
+    }
+    local final class fe02b426-786f-4da9-8f81-2a77435d93aa {
+    }
+    local final class ee06553a-a997-4873-ae72-131aa1af64c4 {
+    }
+    local final class 64f10db3-4591-49ea-a049-a090d729e037 {
+    }
+    local final class 2521d899-e258-4b66-8baa-7f6925875c22 {
+    }
+    local final class fa6f796e-831e-48bb-9d1e-ce28763add59 {
+    }
+    local final class f2145513-d1a6-4a51-8ffd-375d114b0b33 {
+    }
+    local final class 89515079-6d35-4bc5-bb4e-67ff42e00481 {
+    }
+    local final class 651adc35-97e5-4c6e-ab8e-89fcba18a6cd {
+    }
+    local final class 9b29fb19-9325-4fa3-afa0-9b06a90568e8 {
+    }
+    local final class dbaf2536-dc53-496a-a6d4-7505e28eb229 {
+    }
+    local final class df177ee7-91c9-4989-9d73-b478468b5775 {
+    }
+    local final class 3524be73-9ab4-4444-ab2d-2b25ea32faf0 {
+    }
+    local final class 51b91744-55ec-4d71-922f-9a62a86d51e2 {
+    }
+    local final class 75e22bcb-57bf-432f-a162-58760c1bbcba {
+    }
+    local final class f0ce3a56-2740-4aa1-b4d6-bc43a825e66d {
+    }
+    local final class 4199047f-77dd-4ad0-800c-50a602b3abe9 {
+    }
+    local final class 1c37beda-85db-4249-b0db-ed9383d36d07 {
+    }
+    local final class 1fd33f0d-3e7e-4629-b120-0e4c8c19ae28 {
+    }
+    local final class 0fafc7aa-90b5-4cae-be13-b1eb5b7738ab {
+    }
+    local final class a65b0c1c-fd36-4dd6-b915-365a9bdc28f9 {
+    }
+    local final class c4e9ec65-f1a0-4f87-a551-97ff61084925 {
+    }
+    local final class ce32d917-ce06-45eb-a076-a2867a74d2b7 {
+    }
+    local final class 590c7872-c98d-4e02-be6c-b140f345f425 {
+    }
+    local final class 31afa83c-411c-489d-b806-6382bd2c8b9a {
+    }
+    local final class ba856f20-10c7-4dd0-bfda-9509b39e5c86 {
+    }
+    local final class 431d039e-dc62-4253-a525-1e7d396c9801 {
+    }
+    local final class efc8e4bb-cd84-4b78-9034-958bec432c54 {
+    }
+    local final class c7db0853-87d2-40a0-994f-f8d298298dd5 {
+    }
+    local final class 6c451c30-e2d1-4bfc-b8a0-57c896bdfc1a {
+    }
+    local final class 0921428d-89df-4936-a83e-c06e3d23dc31 {
+    }
+    local final class 45f04242-4a41-4d79-84aa-070f16523b2d {
+    }
+    local final class 1ad9369b-5866-4429-8d11-5590d5f903fc {
+    }
+    local final class 7d2bb3d1-ecfb-4d2c-a5b2-41504a68e67e {
+    }
+    local final class d7f4cf0d-0ee3-48c2-b9b3-d253cb0ce299 {
+    }
+    local final class cc78562e-ef97-4c7d-975c-cc29b6cb6a26 {
+    }
+    local final class 19f7e782-c49d-427c-8533-0dee5f9b0ea5 {
+    }
+    local final class 48e79e13-288f-4582-9b9a-e971333d87e9 {
+    }
+    local final class 64c362bf-92e9-44fb-b412-6c07f05a0a32 {
+    }
+    local final class 95fb864d-cc68-4a7f-8f9a-5aa2303544aa {
+    }
+    local final class c975c58d-ee9f-49da-b43a-01e0c4527030 {
+    }
+    local final class 7225c77a-e913-4fc1-9a9f-db28737b460e {
+    }
+    local final class b51edae9-50c0-4aa8-8878-53c6be0ada05 {
+    }
+    local final class 6fc8ff58-232f-4d3a-a0a7-4ff261146e51 {
+    }
+    local final class e3c177a5-b86d-4f21-9f2f-0390ad5b9c87 {
+    }
+    local final class d6993aab-da27-46c0-83e6-a51dcc2a38d3 {
+    }
+    local final class dd082c25-9e9f-447e-a1c5-64429fd50a2e {
+    }
+    local final class e6722948-8c1d-4552-a2ee-9032967cc52b {
+    }
+    local final class 9ee10788-87c0-4b5a-9e7f-8750259f1346 {
+    }
+    local final class d2da3d51-03bb-497f-982a-2fce039cbe32 {
+    }
+    local final class 9955d81a-84a7-4b96-9b96-d382f26330b6 {
+    }
+    local final class e9fe033b-8eb7-4aaf-ac40-daab88bd44e2 {
+    }
+    local final class 2cdf4c85-086f-4f02-8bfd-53d8e0e7cf6b {
+    }
+    local final class 378d5fd0-ab16-49cf-a28b-765d68b776e8 {
+    }
+    local final class 1892659b-5254-40be-af2a-fcbf607f85ea {
+    }
+    local final class baee5869-b713-4ab1-9484-8c4aedc0370c {
+    }
+    local final class 94909cba-c85d-4fb9-8ca9-c0257f6375e1 {
+    }
+    local final class c4713f77-91b5-4db6-8317-8a89cc6c5779 {
+    }
+    local final class 593d80f2-943f-4faa-b13c-3c1105b14216 {
+    }
+    local final class edef41d0-3ac3-4cd4-a211-7ebe666049c4 {
+    }
+    local final class e3b2cc55-29f9-4882-b838-cd7aea6f5cb9 {
+    }
+    local final class 996181ed-df06-498b-ab59-bf632f42cb70 {
+    }
+    local final class 3ba228aa-995a-49ee-8cba-52de66e8d35e {
+    }
+    local final class b30006dd-89ba-44f8-a33d-dad46a0e0a89 {
+    }
+    local final class 50ba52e5-7ef3-43bb-9c9c-8018bc55d61e {
+    }
+    local final class 630c4642-996d-42d6-b2cc-65407afa2477 {
+    }
+    local final class 20674b9d-55b4-44c0-8527-892067b40cae {
+    }
+    local final class a72590bd-ec76-48fe-b4cf-01b8a9cdf940 {
+    }
+    local final class cb1af839-a210-4851-8ce9-c1777f3b1d24 {
+    }
+    local final class b91b40d9-3ef4-4c7d-80ec-e646eaff453f {
+    }
+    local final class e2f277dd-e2c5-4d4c-9f49-17ebeba30856 {
+    }
+    local final class 65aebea2-2899-437a-bf98-9e24a64a2136 {
+    }
+    local final class d211806c-977e-4f28-b3f4-78119550cb22 {
+    }
+    local final class a6f4d5c1-dcc7-4a79-92af-7bb50c0f5aca {
+    }
+    local final class d247bbd1-82f6-4571-953a-09531ab2ddb9 {
+    }
+    local final class 32647149-15b3-49f7-89e9-1854c7ec8bca {
+    }
+    local final class 51533257-9c36-42e5-82a1-d22bbe10b3c8 {
+    }
+    local final class 95df70f7-5076-4e59-98de-d62625111aaa {
+    }
+    local final class a5f8fb70-89e0-46fb-b8da-d9307db84b59 {
+    }
+    local final class d1b56607-4c6c-4121-a95f-71422759b169 {
+    }
+    local final class f9dc8b56-4588-44f6-ae0d-b6400921b051 {
+    }
+    local final class 069b1867-d571-4ca4-be44-46ec9dfaddf8 {
+    }
+    local final class 7207f43c-d89a-4fec-a2f1-813e2fcaffa2 {
+    }
+    local final class 066aa069-31a9-4cb1-aca3-7c2f84b429db {
+    }
+    local final class 364fd7da-0c12-4c5a-9ecd-6180303794ad {
+    }
+    local final class 90eee2ed-04ef-4007-b767-ff7b1f44269d {
+    }
+    local final class ac810dda-58e9-45ab-bbb4-26fd83334106 {
+    }
+    local final class b3a0771e-7a97-42df-a65f-26e5907fd18b {
+    }
+    local final class 0f2697db-081d-4c6f-94c3-703004281247 {
+        public final val R|org/jetbrains/kotlinx/dataframe/DataRow<kotlin/Any?>|.col1: R|kotlin/Int|
+            public get(): R|kotlin/Int|
+
+        public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<kotlin/Any?>|.col1: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|
+            public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|
+
+    }

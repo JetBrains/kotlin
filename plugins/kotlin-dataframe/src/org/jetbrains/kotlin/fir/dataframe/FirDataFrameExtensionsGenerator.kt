@@ -5,15 +5,18 @@
 
 package org.jetbrains.kotlin.fir.dataframe
 
+import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.EffectiveVisibility
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
+import org.jetbrains.kotlin.fir.FirFunctionTarget
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirPluginKey
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.builder.buildProperty
 import org.jetbrains.kotlin.fir.declarations.builder.buildPropertyAccessor
+import org.jetbrains.kotlin.fir.declarations.builder.buildRegularClass
 import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.extensions.FirDeclarationGenerationExtension
 import org.jetbrains.kotlin.fir.extensions.FirDeclarationPredicateRegistrar
@@ -22,18 +25,23 @@ import org.jetbrains.kotlin.fir.extensions.predicate.has
 import org.jetbrains.kotlin.fir.extensions.predicateBasedProvider
 import org.jetbrains.kotlin.fir.moduleData
 import org.jetbrains.kotlin.fir.resolve.constructType
+import org.jetbrains.kotlin.fir.scopes.FirKotlinScopeProvider
 import org.jetbrains.kotlin.fir.symbols.impl.*
-import org.jetbrains.kotlin.fir.types.coneType
+import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
 import org.jetbrains.kotlin.fir.types.impl.FirResolvedTypeRefImpl
-import org.jetbrains.kotlin.fir.types.toTypeProjection
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.Variance
 
-class FirDataFrameExtensionsGenerator(session: FirSession) : FirDeclarationGenerationExtension(session) {
+class FirDataFrameExtensionsGenerator(
+    session: FirSession,
+    private val ids: Set<ClassId>,
+    private val state: Map<ClassId, SchemaContext>
+) :
+    FirDeclarationGenerationExtension(session) {
     private val predicateBasedProvider = session.predicateBasedProvider
     private val matchedClasses by lazy {
         predicateBasedProvider.getSymbolsByPredicate(predicate).filterIsInstance<FirRegularClassSymbol>()
@@ -65,88 +73,185 @@ class FirDataFrameExtensionsGenerator(session: FirSession) : FirDeclarationGener
     }
 
     override fun generateProperties(callableId: CallableId, owner: FirClassSymbol<*>?): List<FirPropertySymbol> {
-        if (owner != null) return emptyList()
-        return fields.filter { it.callableId == callableId }.flatMap { (owner, property, callableId) ->
-            val classTypeProjection = owner.constructType(arrayOf(), isNullable = false).toTypeProjection(Variance.INVARIANT)
-            val rowExtension = buildProperty {
-                val rowClassId = ClassId(FqName.fromSegments(listOf("org", "jetbrains", "dataframe")), Name.identifier("DataRowBase"))
-                val receiverType =
-                    ConeClassLikeTypeImpl(ConeClassLikeLookupTagImpl(rowClassId), arrayOf(classTypeProjection), isNullable = false)
+        return when (owner) {
+            null -> fields.filter { it.callableId == callableId }.flatMap { (owner, property, callableId) ->
 
-                val typeRef = FirResolvedTypeRefImpl(null, mutableListOf(), receiverType, null)
+                val resolvedReturnTypeRef = property.resolvedReturnTypeRef
+                val propertyName = property.name
+                firPropertySymbols(
+                    resolvedReturnTypeRef,
+                    propertyName,
+                    callableId,
+                    owner.constructType(arrayOf(), isNullable = false).toTypeProjection(Variance.INVARIANT)
+                )
+            }
+            else -> state
+                .flatMap { (classId, schemaContext) ->
+                    schemaContext.properties.filter { CallableId(classId, Name.identifier(it.name)) == callableId }
+                }
+                .flatMap { schemaProperty ->
+                    firPropertySymbols(
+                        schemaProperty.type.toFirResolvedTypeRef(),
+                        Name.identifier(schemaProperty.name),
+                        callableId,
+                        schemaProperty.coneTypeProjection
+                    )
+                }
+        }
+    }
+
+    fun firPropertySymbols(
+        resolvedReturnTypeRef: FirResolvedTypeRef,
+        propertyName: Name,
+        callableId: CallableId,
+        classTypeProjection: ConeTypeProjection
+    ): List<FirPropertySymbol> {
+
+        val rowExtension = buildProperty {
+            val rowClassId = ClassId(FqName.fromSegments(listOf("org", "jetbrains", "kotlinx", "dataframe")), Name.identifier("DataRow"))
+            val receiverType =
+                ConeClassLikeTypeImpl(ConeClassLikeLookupTagImpl(rowClassId), arrayOf(classTypeProjection), isNullable = false)
+
+            val typeRef = FirResolvedTypeRefImpl(null, mutableListOf(), receiverType, null)
+            moduleData = session.moduleData
+            resolvePhase = FirResolvePhase.ANALYZED_DEPENDENCIES
+            origin = FirDeclarationOrigin.Plugin(DataFramePlugin)
+            returnTypeRef = resolvedReturnTypeRef
+            receiverTypeRef = typeRef
+            status = FirResolvedDeclarationStatusImpl(
+                Visibilities.Public,
+                Modality.FINAL,
+                EffectiveVisibility.Public
+            )
+            val target = FirFunctionTarget(null, false)
+            getter = buildPropertyAccessor {
                 moduleData = session.moduleData
-                resolvePhase = FirResolvePhase.ANALYZED_DEPENDENCIES
                 origin = FirDeclarationOrigin.Plugin(DataFramePlugin)
-                returnTypeRef = property.resolvedReturnTypeRef
-                receiverTypeRef = typeRef
+                returnTypeRef = resolvedReturnTypeRef
+                dispatchReceiverType = receiverType
+                symbol = FirPropertyAccessorSymbol()
+                isGetter = true
                 status = FirResolvedDeclarationStatusImpl(
                     Visibilities.Public,
                     Modality.FINAL,
                     EffectiveVisibility.Public
                 )
-                getter = buildPropertyAccessor {
-                    moduleData = session.moduleData
-                    origin = FirDeclarationOrigin.Plugin(DataFramePlugin)
-                    returnTypeRef = property.resolvedReturnTypeRef
-                    dispatchReceiverType = receiverType
-                    symbol = FirPropertyAccessorSymbol()
-                    isGetter = true
-                    status = FirResolvedDeclarationStatusImpl(
-                        Visibilities.Public,
-                        Modality.FINAL,
-                        EffectiveVisibility.Public
-                    )
-                }
-                name = property.name
-                symbol = FirPropertySymbol(callableId)
-                isVar = false
-                isLocal = false
-            }
+//                body = buildBlock {
+//                    statements += buildReturnExpression {
+//                        result = buildTypeOperatorCall {
+////                            buildResolvedArgumentList()
+//                            argumentList = buildUnaryArgumentList(argument = buildFunctionCall {
+//                                this.typeRef = FirResolvedTypeRefImpl(null, mutableListOf(), session.builtinTypes.nullableAnyType.type, null)
+//                                explicitReceiver = buildThisReceiverExpression {
+//                                    this.typeRef = typeRef
+//                                    calleeReference = buildExplicitThisReference()
+//                                }
+//                                dispatchReceiver = buildThisReceiverExpression {
+//                                    this.typeRef = typeRef
+//                                    calleeReference = buildExplicitThisReference()
+//                                }
+//                                argumentList = buildUnaryArgumentList(
+//                                    argument = buildConstExpression(null, ConstantValueKind.String, propertyName.asString())
+//                                )
+//                                calleeReference = buildSimpleNamedReference {
+//                                    name = Name.identifier("get")
+//                                }
+//                            })
+//                            operation = FirOperation.AS
+//                            conversionTypeRef = resolvedReturnTypeRef
+//                        }.transformOtherChildren(object : FirTransformer<Nothing?>() {
+//                            override fun <E : FirElement> transformElement(element: E, data: Nothing?): E {
+//                                if (element is FirImplicitTypeRef) {
+//                                    @Suppress("UNCHECKED_CAST")
+//                                    return resolvedReturnTypeRef as E
+//                                }
+//
+//                                return element
+//                            }
+//
+//                            override fun transformImplicitTypeRef(implicitTypeRef: FirImplicitTypeRef, data: Nothing?): FirTypeRef {
+//                                return resolvedReturnTypeRef
+//                            }
+//                        }, null)
+//                        this.target = target
+//                    }
+//                }
+            }.also { target.bind(it) }
+            name = propertyName
+            symbol = FirPropertySymbol(callableId)
+            isVar = false
+            isLocal = false
+        }
 
-            val frameExtension = buildProperty {
-                val frameClassId = ClassId(FqName.fromSegments(listOf("org", "jetbrains", "dataframe")), Name.identifier("DataFrameBase"))
-                val receiverType =
-                    ConeClassLikeTypeImpl(ConeClassLikeLookupTagImpl(frameClassId), arrayOf(classTypeProjection), isNullable = false)
-                val typeRef = FirResolvedTypeRefImpl(null, mutableListOf(), receiverType, null)
+        val frameExtension = buildProperty {
+            val frameClassId =
+                ClassId(FqName.fromSegments(listOf("org", "jetbrains", "kotlinx", "dataframe")), Name.identifier("ColumnsContainer"))
+            val receiverType =
+                ConeClassLikeTypeImpl(ConeClassLikeLookupTagImpl(frameClassId), arrayOf(classTypeProjection), isNullable = false)
+            val typeRef = FirResolvedTypeRefImpl(null, mutableListOf(), receiverType, null)
 
-                val columnClassId = ClassId(
-                    FqName.fromSegments(listOf("org", "jetbrains", "dataframe", "columns")),
-                    Name.identifier("DataColumn")
-                )
-                val typeProjection = property.resolvedReturnTypeRef.coneType.toTypeProjection(Variance.INVARIANT)
-                val returnType =
-                    ConeClassLikeTypeImpl(ConeClassLikeLookupTagImpl(columnClassId), arrayOf(typeProjection), isNullable = false)
-                val retTypeRef = FirResolvedTypeRefImpl(null, mutableListOf(), returnType, null)
+            val columnClassId = ClassId(
+                FqName.fromSegments(listOf("org", "jetbrains", "kotlinx", "dataframe")),
+                Name.identifier("DataColumn")
+            )
+            val typeProjection = resolvedReturnTypeRef.coneType.toTypeProjection(Variance.INVARIANT)
+            val returnType =
+                ConeClassLikeTypeImpl(ConeClassLikeLookupTagImpl(columnClassId), arrayOf(typeProjection), isNullable = false)
+            val retTypeRef = FirResolvedTypeRefImpl(null, mutableListOf(), returnType, null)
+            moduleData = session.moduleData
+            resolvePhase = FirResolvePhase.ANALYZED_DEPENDENCIES
+            origin = FirDeclarationOrigin.Plugin(DataFramePlugin)
+            returnTypeRef = retTypeRef
+            receiverTypeRef = typeRef
+            status = FirResolvedDeclarationStatusImpl(
+                Visibilities.Public,
+                Modality.FINAL,
+                EffectiveVisibility.Public
+            )
+            getter = buildPropertyAccessor {
                 moduleData = session.moduleData
-                resolvePhase = FirResolvePhase.ANALYZED_DEPENDENCIES
                 origin = FirDeclarationOrigin.Plugin(DataFramePlugin)
                 returnTypeRef = retTypeRef
-                receiverTypeRef = typeRef
+                dispatchReceiverType = receiverType
+                symbol = FirPropertyAccessorSymbol()
+                isGetter = true
                 status = FirResolvedDeclarationStatusImpl(
                     Visibilities.Public,
                     Modality.FINAL,
                     EffectiveVisibility.Public
                 )
-                getter = buildPropertyAccessor {
-                    moduleData = session.moduleData
-                    origin = FirDeclarationOrigin.Plugin(DataFramePlugin)
-                    returnTypeRef = retTypeRef
-                    dispatchReceiverType = receiverType
-                    symbol = FirPropertyAccessorSymbol()
-                    isGetter = true
-                    status = FirResolvedDeclarationStatusImpl(
-                        Visibilities.Public,
-                        Modality.FINAL,
-                        EffectiveVisibility.Public
-                    )
-                }
-                name = property.name
-                symbol = FirPropertySymbol(callableId)
-                isVar = false
-                isLocal = false
             }
-            listOf(rowExtension.symbol, frameExtension.symbol)
+            name = propertyName
+            symbol = FirPropertySymbol(callableId)
+            isVar = false
+            isLocal = false
         }
+        return listOf(rowExtension.symbol, frameExtension.symbol)
+    }
+
+    override fun getTopLevelClassIds(): Set<ClassId> {
+        return ids
+    }
+
+    override fun generateClassLikeDeclaration(classId: ClassId): FirClassLikeSymbol<*>? {
+        if (classId !in ids) return null
+        val klass = buildRegularClass {
+            moduleData = session.moduleData
+            resolvePhase = FirResolvePhase.BODY_RESOLVE
+            origin = FirDeclarationOrigin.Plugin(FirDataFrameReceiverInjector.DataFramePluginKey)
+            status = FirResolvedDeclarationStatusImpl(Visibilities.Local, Modality.FINAL, EffectiveVisibility.Local)
+            classKind = ClassKind.CLASS
+            scopeProvider = FirKotlinScopeProvider()
+            name = classId.shortClassName
+            symbol = FirRegularClassSymbol(classId)
+        }
+        return klass.symbol
+    }
+
+    override fun getCallableNamesForClass(classSymbol: FirClassSymbol<*>): Set<Name> {
+        return state[classSymbol.classId]?.let {
+            it.properties.map { Name.identifier(it.name) }.toSet()
+        } ?: emptySet()
     }
 
     override fun FirDeclarationPredicateRegistrar.registerPredicates() {

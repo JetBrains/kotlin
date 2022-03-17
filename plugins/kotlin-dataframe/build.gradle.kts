@@ -34,7 +34,8 @@ dependencies {
     testRuntimeOnly(commonDependency("org.jetbrains.intellij.deps.fastutil:intellij-deps-fastutil"))
 
     testRuntimeOnly(toolsJar())
-    testRuntimeOnly(files("/home/nikita/.m2/repository/org/jetbrains/kotlinx/dataframe/0.8.0-dev/dataframe-0.8.0-dev.jar"))
+    testRuntimeOnly(files("/home/nikitak/.m2/repository/org/jetbrains/kotlinx/dataframe/0.8.0-dev/dataframe-0.8.0-dev.jar"))
+    implementation(files("/home/nikitak/.m2/repository/org/jetbrains/kotlinx/dataframe/0.8.0-dev/dataframe-0.8.0-dev.jar"))
 
 }
 

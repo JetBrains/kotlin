@@ -5,13 +5,14 @@
 
 package org.jetbrains.kotlin.fir.dataframe
 
-import org.jetbrains.kotlin.cli.jvm.config.addJvmClasspathRoot
+import org.jetbrains.kotlin.cli.jvm.config.addJvmClasspathRoots
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.EnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.assertions
 import java.io.File
+import kotlin.script.experimental.jvm.util.classpathFromClassloader
 
 class DataFramePluginAnnotationsProvider(testServices: TestServices) : EnvironmentConfigurator(testServices) {
     companion object {
@@ -22,6 +23,7 @@ class DataFramePluginAnnotationsProvider(testServices: TestServices) : Environme
     override fun configureCompilerConfiguration(configuration: CompilerConfiguration, module: TestModule) {
         val jar = File(ANNOTATIONS_JAR)
         testServices.assertions.assertTrue(jar.exists()) { "Jar with annotations does not exist. Please run :plugins:kotlin-dataframe:plugin-annotations:jar" }
-        configuration.addJvmClasspathRoot(jar)
+//        configuration.addJvmClasspathRoots(jar)
+        configuration.addJvmClasspathRoots(classpathFromClassloader(javaClass.classLoader) ?: error("no classpath"))
     }
 }

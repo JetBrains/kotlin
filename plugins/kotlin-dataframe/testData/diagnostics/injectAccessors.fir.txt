@@ -1,0 +1,240 @@
+FILE: injectAccessors.kt
+    public abstract interface Cars : R|kotlin/Any| {
+    }
+    public final val R|org/jetbrains/kotlinx/dataframe/DataRow<Cars>|.year: R|kotlin/Int|
+        public get(): R|kotlin/Int| {
+            ^ (this@R|/year|.R|SubstitutionOverride<org/jetbrains/kotlinx/dataframe/DataRow.get: R|kotlin/Any?|>|(String(age)) as R|kotlin/Int|)
+        }
+    public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<Cars>|.year: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|
+        public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>| {
+            ^ (this@R|/year|.R|SubstitutionOverride<org/jetbrains/kotlinx/dataframe/ColumnsContainer.get: R|org/jetbrains/kotlinx/dataframe/AnyCol|>|(String(age)) as R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|)
+        }
+    public final fun Name is evaluated to age(df: R|org/jetbrains/kotlinx/dataframe/DataFrame<Cars>|): R|kotlin/Unit| {
+        lval df1: R|org/jetbrains/kotlinx/dataframe/DataFrame<Cars>| = R|<local>/df|.R|org/jetbrains/kotlinx/dataframe/api/add|<R|kotlin/Int|, R|Cars|>(String(age), <L> = add@fun R|org/jetbrains/kotlinx/dataframe/api/AddDataRow<Cars>|.<anonymous>(it: R|org/jetbrains/kotlinx/dataframe/api/AddDataRow<Cars>|): R|kotlin/Int| <inline=NoInline, kind=UNKNOWN>  {
+            ^ Int(2022).R|kotlin/Int.minus|(this@R|special/anonymous|.R|/year|)
+        }
+        )
+        lval col: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>| = (this@R|/Name is evaluated to age|, R|<local>/df1|).R|org/jetbrains/kotlinx/dataframe/0e6ac6a8-92a0-45cd-b713-428e7e73d9ef.age|
+    }
+    public final fun ReturnType is evaluated to Int(df: R|org/jetbrains/kotlinx/dataframe/DataFrame<Cars>|): R|kotlin/Unit| {
+        lval df1: R|org/jetbrains/kotlinx/dataframe/DataFrame<Cars>| = R|<local>/df|.R|org/jetbrains/kotlinx/dataframe/api/add|<R|kotlin/Int|, R|Cars|>(String(age), <L> = add@fun R|org/jetbrains/kotlinx/dataframe/api/AddDataRow<Cars>|.<anonymous>(it: R|org/jetbrains/kotlinx/dataframe/api/AddDataRow<Cars>|): R|kotlin/Int| <inline=NoInline, kind=UNKNOWN>  {
+            ^ Int(2022).R|kotlin/Int.minus|(this@R|special/anonymous|.R|/year|)
+        }
+        )
+        lval col: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>| = (this@R|/ReturnType is evaluated to Int|, R|<local>/df1|).R|org/jetbrains/kotlinx/dataframe/5211bbc8-fe70-4284-9266-d4fa95a31e03.age|
+    }
+FILE: __GENERATED DECLARATIONS__.kt
+    package org.jetbrains.kotlinx.dataframe
+
+    local final class bcc4533d-214f-4a27-a67b-6af169faccdd {
+    }
+    local final class a063256f-3b67-45e7-80f8-2df7f70f8423 {
+    }
+    local final class d3712e15-52d3-4ab2-a056-8daee91a531d {
+    }
+    local final class 898a7599-f286-46e7-875d-a8ce6975091d {
+    }
+    local final class 87515742-d8e2-4cdc-8f95-d8b7d9520ff4 {
+    }
+    local final class d9cbada9-b4b8-4330-aff1-5659e050e47f {
+    }
+    local final class b6969e54-d8ce-4885-88ba-31fa4f7ca9da {
+    }
+    local final class 625602d8-d783-4500-9671-827a4cdb7480 {
+    }
+    local final class 1928bcc7-620a-4222-a372-57255c2b89bd {
+    }
+    local final class 007260e0-ff87-4fd6-a8eb-794374ae9a27 {
+    }
+    local final class c3ee9095-d507-411f-9d0a-043dcaee68a2 {
+    }
+    local final class f2c2ce6f-134d-4226-8db9-5fd392171be5 {
+    }
+    local final class 83703b31-d808-4678-8e2e-9a115095923f {
+    }
+    local final class 2da38d55-b8c3-419e-a6bd-f7d263288cd5 {
+    }
+    local final class 50c3baf3-7db3-4b8a-9cdc-e8ec4979ce3d {
+    }
+    local final class fcae49dc-64f4-4162-aa84-e5cb4e3f4290 {
+    }
+    local final class 3c8665c0-7c5b-4d4b-96ba-3a540e4177b0 {
+    }
+    local final class 20640e07-59d5-4be7-8b50-4601d806ef4c {
+    }
+    local final class f807320f-607e-4d99-97c5-f60065c95617 {
+    }
+    local final class 9d386774-409a-4551-a095-a59a68d1567e {
+    }
+    local final class 45c0c1f0-bdaa-45e5-957f-1ec677ffe46a {
+    }
+    local final class 962a8ac2-3095-493d-a037-313ced43150f {
+    }
+    local final class 15445b10-570b-47a6-8206-3588a61c5952 {
+    }
+    local final class 4f482794-4f87-46c0-b4c8-862854f5c112 {
+    }
+    local final class c185df3a-304d-4b9b-8054-cd42294e02ef {
+    }
+    local final class 133e73f0-c534-42db-8681-1a8df82f9866 {
+    }
+    local final class 2ec419ea-2f27-448d-91b9-16b9dc9211b1 {
+    }
+    local final class 117b7260-1f39-44f0-8666-302756d1ffd1 {
+    }
+    local final class f277781f-7813-4d96-9fca-ce1b1b99bcb0 {
+    }
+    local final class 5657b84b-4ddc-4d69-8d66-3a48a922961f {
+    }
+    local final class 4e9af29d-98e9-49a4-aecc-d6e82567c056 {
+    }
+    local final class bc34ee8d-4c70-4e95-b216-a9866a34766a {
+    }
+    local final class e43ef3d3-04d7-44ea-a1ee-b156bf1b767a {
+    }
+    local final class 59230874-328f-4960-865b-d93056d8df11 {
+    }
+    local final class 172a18f7-18b2-4b77-a911-263cc2e26637 {
+    }
+    local final class 1869a410-8d95-4a82-93e2-919748263aec {
+    }
+    local final class 8fac2ea3-f762-4a6b-af3d-67cb1d7c62c2 {
+    }
+    local final class 83045426-1327-4e27-89dc-a09650efb630 {
+    }
+    local final class 13340e70-464d-4fa5-996a-649a0deffccd {
+    }
+    local final class 39a92ca0-54c4-4453-a5f4-3a9e143ddeb3 {
+    }
+    local final class 90698aee-17ec-4e8a-be62-07b5cdb7a790 {
+    }
+    local final class 9e8e2f25-ee21-4129-9f65-53260ad80b01 {
+    }
+    local final class 4dc1b524-d88d-439c-8f1c-a9906c653316 {
+    }
+    local final class 8f3cffdb-12bf-48d1-8b6e-9ce6e1866485 {
+    }
+    local final class 774b5a6d-3ead-4f13-9b74-2ab2350154d6 {
+    }
+    local final class 8f5bd832-4055-4821-8b78-dac25af2f2ec {
+    }
+    local final class c4725ff3-b750-4857-a22f-247bec780aff {
+    }
+    local final class 8dbed99c-a5e5-478b-bfe5-311457c68a7a {
+    }
+    local final class 8cb255cc-186a-42c5-9111-c238df4a08fe {
+    }
+    local final class c76e82fd-fc60-4951-92cc-4198a12c3110 {
+    }
+    local final class e9dff719-5089-4670-9998-2def446df022 {
+    }
+    local final class 07261a1d-e076-4b2f-8ed7-db75ee15bfc3 {
+    }
+    local final class bd4b2f08-b63f-4009-bce2-9d6c5056dab0 {
+    }
+    local final class 3280edae-aa6c-4bea-8586-b72d2e534030 {
+    }
+    local final class a9898f7f-44eb-4fe9-b850-07a016b4f316 {
+    }
+    local final class 41d1bd23-7bd6-4ce1-ac21-4fd89468cfce {
+    }
+    local final class df01bfe5-a0d3-4ea0-8902-d19a7d52f401 {
+    }
+    local final class 068ea60a-00d0-421b-b715-af27f4cee5bc {
+    }
+    local final class 26ee28e1-0188-469c-8ecc-3b44a36aaefe {
+    }
+    local final class 09d7e264-fe00-4cf5-ad41-d27ec1f4cf8d {
+    }
+    local final class c3a79977-efa5-4d2b-8ca2-e451cf4a2d0e {
+    }
+    local final class a4e03463-e6c3-41b1-8f5b-f67a2e1521cd {
+    }
+    local final class ceeac5a4-7166-4bd6-bcb6-71f6de35f3a9 {
+    }
+    local final class 22938de6-9863-41e6-ad29-81c8ff13cf6f {
+    }
+    local final class 6955689f-8fa6-4ccd-a1f3-f7bbbccbfc06 {
+    }
+    local final class 258c6b24-1312-4a6f-89e8-3e5da53d4feb {
+    }
+    local final class f9c110a9-3c01-4604-8650-2cc55c8e7675 {
+    }
+    local final class 116f0123-3813-4e47-bd6a-2e3d16884884 {
+    }
+    local final class c92c3b16-de8e-4934-8290-729a41109bc4 {
+    }
+    local final class 2dfa9613-b792-4b26-adcd-db2b2d0df00d {
+    }
+    local final class 6f9159e6-2661-4fed-ad1f-05cd59f3a53d {
+    }
+    local final class cff4c5e0-55f4-4a2b-b42c-a04fe4b3337f {
+    }
+    local final class 67ec300b-5e4e-477e-aed9-b33302037f8f {
+    }
+    local final class 91c21416-5597-4cbc-88e9-283b039c5404 {
+    }
+    local final class 4ee77115-ca2e-45cc-bca4-507a40d1c91c {
+    }
+    local final class 7b256a88-a2cf-47f5-8d56-323d4d5cfc00 {
+    }
+    local final class c8ad8e55-2f22-43a6-83bc-7145e63cd830 {
+    }
+    local final class 4a845b90-7958-4fb0-85e5-8fb3e4353dcb {
+    }
+    local final class d2f0b0dc-58c8-4358-8995-48b5efe919c9 {
+    }
+    local final class 9962bdae-6c4b-46b7-ab28-a1e90b059300 {
+    }
+    local final class 5bec9fd3-4062-4c55-863a-ff0e01aaeff3 {
+    }
+    local final class e0426050-1cf7-4998-ad66-6f7be8b1230a {
+    }
+    local final class 4f8defa9-1566-421d-bbf6-ee82976df8d8 {
+    }
+    local final class bf640f8b-bf86-4f0d-b2ec-a555c3cc2278 {
+    }
+    local final class 128bdefe-418d-4b27-837d-baae610b38ce {
+    }
+    local final class 288e8d1d-6f62-4ff9-a0eb-cba2146d543a {
+    }
+    local final class 16a4084b-078e-49f2-b00a-08c2ca7024bd {
+    }
+    local final class 3c2049ff-3a7b-4a97-ab09-5bf1c25bb8d1 {
+    }
+    local final class ee5f7f92-6e06-4d7c-9fd1-13934b5a210d {
+    }
+    local final class 13c9602b-b232-4faf-ad91-f9bbd0c545e4 {
+    }
+    local final class 681773e4-e05d-44c4-af0f-96338db50382 {
+    }
+    local final class 625dceb7-ee16-4eb1-a9ed-3a66ddb9b825 {
+    }
+    local final class 404543f7-fe9e-4966-9d58-4681e1bde2f2 {
+    }
+    local final class c8db9013-4880-4947-93b2-233175f5c1ac {
+    }
+    local final class bb242a26-523a-4f92-a840-97546ef623fa {
+    }
+    local final class 6051078d-2ccc-4451-a6ed-02efe8a3cf83 {
+    }
+    local final class af00af27-6b96-4509-a674-3d84022bd602 {
+    }
+    local final class c1538713-9a4c-4799-a381-b428ee66671f {
+    }
+    local final class 5211bbc8-fe70-4284-9266-d4fa95a31e03 {
+        public final val R|org/jetbrains/kotlinx/dataframe/DataRow<Cars>|.age: R|kotlin/Int|
+            public get(): R|kotlin/Int|
+
+        public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<Cars>|.age: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|
+            public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|
+
+    }
+    local final class 0e6ac6a8-92a0-45cd-b713-428e7e73d9ef {
+        public final val R|org/jetbrains/kotlinx/dataframe/DataRow<Cars>|.age: R|kotlin/Int|
+            public get(): R|kotlin/Int|
+
+        public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<Cars>|.age: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|
+            public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|
+
+    }
