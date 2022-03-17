@@ -78,8 +78,6 @@ abstract class AbstractFirLazyDeclarationResolveTest : AbstractLowLevelApiSingle
         testServices.assertions.assertEqualsToTestDataFileSibling(resultBuilder.toString())
     }
 
-    override val enableTestInDependedMode: Boolean = false
-
     override fun configureTest(builder: TestConfigurationBuilder) {
         super.configureTest(builder)
         with(builder) {

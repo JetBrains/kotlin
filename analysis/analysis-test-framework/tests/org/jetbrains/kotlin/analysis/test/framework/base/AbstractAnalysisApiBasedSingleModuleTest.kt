@@ -35,19 +35,4 @@ abstract class AbstractAnalysisApiBasedSingleModuleTest : AbstractAnalysisApiBas
 
     protected inline fun <R> executeOnPooledThreadInReadAction(crossinline action: () -> R): R =
         ApplicationManager.getApplication().executeOnPooledThread<R> { runReadAction(action) }.get()
-
-    protected fun <R> analyseForTest(contextElement: KtElement, action: KtAnalysisSession.() -> R): R {
-        return if (useDependedAnalysisSession) {
-            // Depended mode does not support analysing a KtFile.
-            // See org.jetbrains.kotlin.analysis.low.level.api.fir.api.LowLevelFirApiFacadeForResolveOnAir#getResolveStateForDependentCopy
-            if (contextElement is KtFile) {
-                throw SkipDependedModeException()
-            }
-
-            require(!contextElement.isPhysical)
-            analyseInDependedAnalysisSession(configurator.getOriginalFile(contextElement.containingKtFile), contextElement, action)
-        } else {
-            analyse(contextElement, action)
-        }
-    }
 }

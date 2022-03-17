@@ -37,11 +37,10 @@ import kotlin.io.path.extension
 import kotlin.io.path.nameWithoutExtension
 
 object KtFe10AnalysisApiTestConfiguratorService : AnalysisApiTestConfiguratorService {
+    override val analyseInDependentSession: Boolean get() = false
+
     override val testPrefix: String
         get() = "descriptors"
-
-    override val allowDependedAnalysisSession: Boolean
-        get() = false
 
     override fun TestConfigurationBuilder.configureTest(disposable: Disposable) {
         usePreAnalysisHandlers(::KtFe10ModuleRegistrarPreAnalysisHandler.bind(disposable))
@@ -64,7 +63,10 @@ object KtFe10AnalysisApiTestConfiguratorService : AnalysisApiTestConfiguratorSer
     override fun registerApplicationServices(application: MockApplication) {
         if (application.getServiceIfCreated(KotlinReferenceProvidersService::class.java) == null) {
             application.registerService(KotlinReferenceProvidersService::class.java, HLApiReferenceProviderService::class.java)
-            application.registerService(KotlinReferenceProviderContributor::class.java, KtFe10KotlinReferenceProviderContributor::class.java)
+            application.registerService(
+                KotlinReferenceProviderContributor::class.java,
+                KtFe10KotlinReferenceProviderContributor::class.java
+            )
         }
     }
 

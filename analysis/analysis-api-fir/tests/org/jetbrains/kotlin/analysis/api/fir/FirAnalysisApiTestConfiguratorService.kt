@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.psi.KotlinReferenceProvidersService
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 
-object FirAnalysisApiTestConfiguratorService : AnalysisApiTestConfiguratorService {
+open class FirAnalysisApiTestConfiguratorService(override val analyseInDependentSession: Boolean) : AnalysisApiTestConfiguratorService {
     override fun TestConfigurationBuilder.configureTest(disposable: Disposable) {
         with(FirLowLevelAnalysisApiTestConfiguratorService) { configureTest(disposable) }
         configureOptionalTestCompilerPlugin()
@@ -67,3 +67,6 @@ object FirAnalysisApiTestConfiguratorService : AnalysisApiTestConfiguratorServic
         FirLowLevelAnalysisApiTestConfiguratorService.doOutOfBlockModification(file)
     }
 }
+
+object FirAnalysisApiDependentModeTestConfiguratorService: FirAnalysisApiTestConfiguratorService(analyseInDependentSession = true)
+object FirAnalysisApiNormalModeTestConfiguratorService: FirAnalysisApiTestConfiguratorService(analyseInDependentSession = false)

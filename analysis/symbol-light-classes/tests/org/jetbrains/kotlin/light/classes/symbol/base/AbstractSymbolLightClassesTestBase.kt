@@ -31,8 +31,6 @@ abstract class AbstractSymbolLightClassesTestBase(
     override val configurator: AnalysisApiTestConfiguratorService
 ) : AbstractAnalysisApiBasedSingleModuleTest() {
 
-    override val enableTestInDependedMode: Boolean get() = false
-
     override fun configureTest(builder: TestConfigurationBuilder) {
         super.configureTest(builder)
         with(builder) {
