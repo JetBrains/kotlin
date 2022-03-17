@@ -27,6 +27,7 @@ internal class FirThisReceiverExpressionImpl(
     override var typeRef: FirTypeRef,
     override val annotations: MutableList<FirAnnotation>,
     override val typeArguments: MutableList<FirTypeProjection>,
+    override val contextReceiverArguments: MutableList<FirExpression>,
     override var calleeReference: FirThisReference,
     override val isImplicit: Boolean,
 ) : FirThisReceiverExpression() {
@@ -109,6 +110,11 @@ internal class FirThisReceiverExpressionImpl(
 
     override fun replaceExplicitReceiver(newExplicitReceiver: FirExpression?) {
         explicitReceiver = newExplicitReceiver
+    }
+
+    override fun replaceContextReceiverArguments(newContextReceiverArguments: List<FirExpression>) {
+        contextReceiverArguments.clear()
+        contextReceiverArguments.addAll(newContextReceiverArguments)
     }
 
     override fun replaceCalleeReference(newCalleeReference: FirThisReference) {

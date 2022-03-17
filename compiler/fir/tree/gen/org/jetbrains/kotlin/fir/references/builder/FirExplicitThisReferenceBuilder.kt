@@ -22,11 +22,13 @@ import org.jetbrains.kotlin.fir.visitors.*
 class FirExplicitThisReferenceBuilder {
     var source: KtSourceElement? = null
     var labelName: String? = null
+    var contextReceiverNumber: Int = -1
 
     fun build(): FirThisReference {
         return FirExplicitThisReference(
             source,
             labelName,
+            contextReceiverNumber,
         )
     }
 

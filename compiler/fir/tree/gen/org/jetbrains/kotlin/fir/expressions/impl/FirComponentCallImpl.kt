@@ -33,6 +33,7 @@ internal class FirComponentCallImpl(
     override val typeArguments: MutableList<FirTypeProjection>,
     override var dispatchReceiver: FirExpression,
     override var extensionReceiver: FirExpression,
+    override val contextReceiverArguments: MutableList<FirExpression>,
     override var argumentList: FirArgumentList,
     override var explicitReceiver: FirExpression,
     override val componentIndex: Int,
@@ -114,6 +115,11 @@ internal class FirComponentCallImpl(
     override fun replaceTypeArguments(newTypeArguments: List<FirTypeProjection>) {
         typeArguments.clear()
         typeArguments.addAll(newTypeArguments)
+    }
+
+    override fun replaceContextReceiverArguments(newContextReceiverArguments: List<FirExpression>) {
+        contextReceiverArguments.clear()
+        contextReceiverArguments.addAll(newContextReceiverArguments)
     }
 
     override fun replaceArgumentList(newArgumentList: FirArgumentList) {

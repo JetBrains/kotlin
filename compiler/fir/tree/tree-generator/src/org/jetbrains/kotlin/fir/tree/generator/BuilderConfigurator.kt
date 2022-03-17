@@ -225,6 +225,14 @@ object BuilderConfigurator : AbstractBuilderConfigurator<FirTreeBuilder>(FirTree
             default("isImplicit", "false")
         }
 
+        builder(thisReference, "FirExplicitThisReference") {
+            default("contextReceiverNumber", "-1")
+        }
+
+        builder(thisReference, "FirImplicitThisReference") {
+            default("contextReceiverNumber", "-1")
+        }
+
         builder(variableAssignment) {
             parents += qualifiedAccessBuilder
             defaultNoReceivers()

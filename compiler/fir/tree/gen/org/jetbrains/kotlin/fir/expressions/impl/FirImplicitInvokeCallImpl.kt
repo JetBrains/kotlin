@@ -31,6 +31,7 @@ internal class FirImplicitInvokeCallImpl(
     override var explicitReceiver: FirExpression?,
     override var dispatchReceiver: FirExpression,
     override var extensionReceiver: FirExpression,
+    override val contextReceiverArguments: MutableList<FirExpression>,
     override var argumentList: FirArgumentList,
     override var calleeReference: FirNamedReference,
 ) : FirImplicitInvokeCall() {
@@ -114,6 +115,11 @@ internal class FirImplicitInvokeCallImpl(
 
     override fun replaceExplicitReceiver(newExplicitReceiver: FirExpression?) {
         explicitReceiver = newExplicitReceiver
+    }
+
+    override fun replaceContextReceiverArguments(newContextReceiverArguments: List<FirExpression>) {
+        contextReceiverArguments.clear()
+        contextReceiverArguments.addAll(newContextReceiverArguments)
     }
 
     override fun replaceArgumentList(newArgumentList: FirArgumentList) {

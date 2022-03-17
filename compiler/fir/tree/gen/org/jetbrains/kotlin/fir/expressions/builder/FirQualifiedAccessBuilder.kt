@@ -26,5 +26,7 @@ interface FirQualifiedAccessBuilder {
     abstract var dispatchReceiver: FirExpression
     abstract var extensionReceiver: FirExpression
     abstract var source: KtSourceElement?
+    abstract val contextReceiverArguments: MutableList<FirExpression>
+
     fun build(): FirQualifiedAccess
 }

@@ -21,10 +21,12 @@ import org.jetbrains.kotlin.fir.visitors.*
 @FirBuilderDsl
 class FirImplicitThisReferenceBuilder {
     var boundSymbol: FirBasedSymbol<*>? = null
+    var contextReceiverNumber: Int = -1
 
     fun build(): FirThisReference {
         return FirImplicitThisReference(
             boundSymbol,
+            contextReceiverNumber,
         )
     }
 
