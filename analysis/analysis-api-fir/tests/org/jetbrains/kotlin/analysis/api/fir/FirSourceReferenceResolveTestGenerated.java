@@ -287,6 +287,12 @@ public class FirSourceReferenceResolveTestGenerated extends AbstractReferenceRes
     }
 
     @Test
+    @TestMetadata("JavaStaticMethod.kt")
+    public void testJavaStaticMethod() throws Exception {
+        runTest("analysis/analysis-api/testData/referenceResolve/JavaStaticMethod.kt");
+    }
+
+    @Test
     @TestMetadata("KotlinPropertyAssignment.kt")
     public void testKotlinPropertyAssignment() throws Exception {
         runTest("analysis/analysis-api/testData/referenceResolve/KotlinPropertyAssignment.kt");
