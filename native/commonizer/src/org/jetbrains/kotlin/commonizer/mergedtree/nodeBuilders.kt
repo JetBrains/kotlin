@@ -130,7 +130,7 @@ internal fun buildTypeAliasNode(
     storageManager = storageManager,
     size = size,
     nodeRelationship = null,
-    commonizerProducer = { TypeAliasCommonizer(TypeCommonizer(classifiers, settings), classifiers, settings = settings).asCommonizer() },
+    commonizerProducer = { TypeAliasCommonizer(classifiers, settings, TypeCommonizer(classifiers, settings)).asCommonizer() },
     recursionMarker = CirTypeAliasRecursionMarker,
     nodeProducer = { targetDeclarations, commonDeclaration ->
         CirTypeAliasNode(typeAliasId, targetDeclarations, commonDeclaration).also {
