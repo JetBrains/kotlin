@@ -18,8 +18,8 @@ package a {
     internal fun invalidFun4(): kotlin.Unit
     private fun invalidFun4(): kotlin.Unit
     public fun invalidFun4(): kotlin.Unit
-    public fun useInvalidFun0(): [ERROR : Error function type]
-    public fun useInvalidProp0(): [ERROR : Error function type]
+    public fun useInvalidFun0(): [Error type: Return type for function cannot be resolved]
+    public fun useInvalidProp0(): [Error type: Return type for function cannot be resolved]
     private fun validFun(): kotlin.Unit
     private fun validFun(): kotlin.Unit
     public fun validFun2(/*0*/ a: a.A): a.A

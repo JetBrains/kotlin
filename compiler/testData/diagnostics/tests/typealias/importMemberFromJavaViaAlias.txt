@@ -1,6 +1,6 @@
 package
 
-public fun foo(/*0*/ sample: [ERROR : JavaSample], /*1*/ alias: test.kot.JavaAlias /* = test.jv.JavaSample */): kotlin.Unit
+public fun foo(/*0*/ sample: [Error type: Unresolved type for JavaSample], /*1*/ alias: test.kot.JavaAlias /* = test.jv.JavaSample */): kotlin.Unit
 
 package test {
 

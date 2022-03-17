@@ -1,7 +1,7 @@
 package
 
 package bar {
-    public val prop: [ERROR : No type, no body]
+    public val prop: [Error type: Return type for property prop cannot be resolved]
     public fun func(): kotlin.Unit
 
     @bar.baz public final class C {

@@ -1,7 +1,7 @@
 package
 
 package aa {
-    public fun bar(/*0*/ f: ([ERROR : A]) -> kotlin.Unit): kotlin.Unit
+    public fun bar(/*0*/ f: ([Error type: Unresolved type for A]) -> kotlin.Unit): kotlin.Unit
     public fun </*0*/ T, /*1*/ R> foo(/*0*/ block: (T) -> R): (T) -> R
     public fun test1(): kotlin.Unit
     public fun test2(): kotlin.Unit

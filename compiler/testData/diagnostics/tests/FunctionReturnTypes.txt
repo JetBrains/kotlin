@@ -1,6 +1,6 @@
 package
 
-public val a: [ERROR : Return not allowed]
+public val a: [Error type: Return not allowed]
 public fun bbb(): kotlin.Unit
 public fun blockAndAndMismatch(): kotlin.Int
 public fun blockAndAndMismatch1(): kotlin.Int

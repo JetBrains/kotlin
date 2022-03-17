@@ -1,7 +1,7 @@
 package
 
 public val x: WithVariance<kotlin.Int, kotlin.Int> /* = kotlin.Int */ = 0
-public typealias WithBounds1</*0*/ T : [ERROR : Cyclic upper bounds]> = kotlin.Int
-public typealias WithBounds2</*0*/ X : [ERROR : Cyclic upper bounds], /*1*/ Y : [ERROR : Cyclic upper bounds]> = kotlin.Int
+public typealias WithBounds1</*0*/ T : [Error type: Cyclic upper bounds]> = kotlin.Int
+public typealias WithBounds2</*0*/ X : [Error type: Cyclic upper bounds], /*1*/ Y : [Error type: Cyclic upper bounds]> = kotlin.Int
 public typealias WithBounds3</*0*/ X> = kotlin.Int
 public typealias WithVariance</*0*/ in X, /*1*/ out Y> = kotlin.Int

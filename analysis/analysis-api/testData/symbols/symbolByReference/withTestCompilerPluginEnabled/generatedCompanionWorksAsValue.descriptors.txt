@@ -1,6 +1,6 @@
 KtNamedClassOrObjectSymbol:
   annotationsList: [
-    <ERROR CLASS>()
+    <Error class: unknown class>()
       psi: KtAnnotationEntry
   ]
   classIdIfNonLocal: test/WithGeneratedCompanion

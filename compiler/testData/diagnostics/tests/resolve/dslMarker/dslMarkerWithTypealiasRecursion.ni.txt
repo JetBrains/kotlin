@@ -2,7 +2,7 @@ package
 
 public fun test(): kotlin.Unit
 public fun Foo.foo(/*0*/ body: Foo.() -> kotlin.Unit): kotlin.Unit
-public fun Foo.zbar(/*0*/ body: [ERROR : Recursive type alias: ZBar].() -> kotlin.Unit): kotlin.Unit
+public fun Foo.zbar(/*0*/ body: [Error type: Recursive type alias ZBar].() -> kotlin.Unit): kotlin.Unit
 
 public final class Bar {
     public constructor Bar()

@@ -2,7 +2,7 @@
 val s = mutableListOf<String>()
 ---------------------
 mutableListOf             !<v0>: *
-mutableListOf<String>()   <v1>: {<: [ERROR : Type for mutableListOf<String>()]}   NEW: magic[UNRESOLVED_CALL](mutableListOf<String>()|!<v0>) -> <v1>
+mutableListOf<String>()   <v1>: {<: [Error type: Not found recorded type for mutableListOf<String>()]}   NEW: magic[UNRESOLVED_CALL](mutableListOf<String>()|!<v0>) -> <v1>
 =====================
 == test ==
 fun test(name: String?, flag: Boolean): Boolean {

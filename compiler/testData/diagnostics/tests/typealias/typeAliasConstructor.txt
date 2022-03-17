@@ -4,11 +4,11 @@ public val test1: C
 public val test2: TC /* = C */
 public val test3: C
 public val test4: TC /* = C */
-public val test5: [ERROR : Type for TC("", "")]
-public val test6: [ERROR : Type for TI()]
-public val test6a: [ERROR : Type for Interface()]
-public val test7: [ERROR : Type for TO()]
-public val test7a: [ERROR : Type for AnObject()]
+public val test5: [Error type: Not found recorded type for TC("", "")]
+public val test6: [Error type: Not found recorded type for TI()]
+public val test6a: [Error type: Not found recorded type for Interface()]
+public val test7: [Error type: Not found recorded type for TO()]
+public val test7a: [Error type: Not found recorded type for AnObject()]
 
 public object AnObject {
     private constructor AnObject()

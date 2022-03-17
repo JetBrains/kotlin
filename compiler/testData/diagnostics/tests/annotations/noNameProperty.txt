@@ -1,8 +1,8 @@
 package
 
 public final annotation class Ann : kotlin.Annotation {
-    public constructor Ann(/*0*/ x: kotlin.Int, /*1*/ `<no name provided>`: [ERROR : Type annotation was missing for parameter <no name provided>])
-    public final val `<no name provided>`: [ERROR : Annotation is absent]
+    public constructor Ann(/*0*/ x: kotlin.Int, /*1*/ `<no name provided>`: [Error type: Missed a type for a value parameter <no name provided>])
+    public final val `<no name provided>`: [Error type: No type specified for val]
     public final val x: kotlin.Int
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int

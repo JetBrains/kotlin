@@ -150,8 +150,8 @@ public final class Main</*0*/ L> {
     public final val x164: Bar<L & Any>
     public final val x170: Bar<L>
     public final val x171: Bar<L>
-    public final val x180: [ERROR : <ERROR FUNCTION RETURN TYPE>]
-    public final val x181: [ERROR : <ERROR FUNCTION RETURN TYPE>]
+    public final val x180: [Error type: Return type for function cannot be resolved]
+    public final val x181: [Error type: Return type for function cannot be resolved]
     public final val x20: Foo<Bar<L>>
     public final val x200: L
     public final val x201: L

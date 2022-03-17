@@ -1,7 +1,7 @@
 package
 
-public fun test(/*0*/ x: [ERROR : Derived.Nested]): [ERROR : Derived.Nested]
-public fun Base.testWithImplicitReceiver(/*0*/ x: [ERROR : Nested]): kotlin.Unit
+public fun test(/*0*/ x: [Error type: Unresolved type for Derived.Nested]): [Error type: Unresolved type for Derived.Nested]
+public fun Base.testWithImplicitReceiver(/*0*/ x: [Error type: Unresolved type for Nested]): kotlin.Unit
 
 public open class Base {
     public constructor Base()

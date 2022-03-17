@@ -2,7 +2,7 @@ package
 
 public fun </*0*/ T1> A<T1>.foo(): X1
 public fun </*0*/ T2> A<out T2>.foo(): X2
-public fun </*0*/ T> A<out T>.test(): [ERROR : Error function type]
+public fun </*0*/ T> A<out T>.test(): [Error type: Return type for function cannot be resolved]
 
 public final class A</*0*/ T> {
     public constructor A</*0*/ T>()

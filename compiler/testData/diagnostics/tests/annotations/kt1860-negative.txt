@@ -1,11 +1,11 @@
 package
 
-@setparam:[ERROR : varargs] /* annotation class not found */ public var bar: kotlin.Int
+@setparam:[Error type: Unresolved type for varargs] /* annotation class not found */ public var bar: kotlin.Int
 public val x: (kotlin.Int) -> kotlin.Int
-public fun foo(/*0*/ @[ERROR : varargs] /* annotation class not found */ f: kotlin.Int): kotlin.Unit
+public fun foo(/*0*/ @[Error type: Unresolved type for varargs] /* annotation class not found */ f: kotlin.Int): kotlin.Unit
 
 public final class Hello {
-    public constructor Hello(/*0*/ @[ERROR : varargs] /* annotation class not found */ args: kotlin.Any)
+    public constructor Hello(/*0*/ @[Error type: Unresolved type for varargs] /* annotation class not found */ args: kotlin.Any)
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String

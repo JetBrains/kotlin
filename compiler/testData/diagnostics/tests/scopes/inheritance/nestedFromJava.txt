@@ -43,14 +43,14 @@ public open class C : B, A {
 
 public final class X : A {
     public constructor X()
-    public final val a_s: [ERROR : A_S]
+    public final val a_s: [Error type: Unresolved type for A_S]
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 
     public object xD {
         private constructor xD()
-        public final val a_: [ERROR : A_S]
+        public final val a_: [Error type: Unresolved type for A_S]
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
@@ -77,7 +77,7 @@ public final class Y : B {
 
 public final class Z : C {
     public constructor Z()
-    public final val a_s: [ERROR : A_S]
+    public final val a_s: [Error type: Unresolved type for A_S]
     public final val b_: B.B_
     public final val b_s: B.B_S
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
@@ -86,7 +86,7 @@ public final class Z : C {
 
     public object X {
         private constructor X()
-        public final val a_s: [ERROR : A_S]
+        public final val a_s: [Error type: Unresolved type for A_S]
         public final val b_: B.B_
         public final val b_s: B.B_S
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean

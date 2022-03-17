@@ -6,7 +6,7 @@ fun test() {
     <!DEBUG_INFO_EXPRESSION_TYPE("In<Bound1>")!>testIn()<!>
     <!DEBUG_INFO_EXPRESSION_TYPE("Out<Bound1>")!>testOut()<!>
     <!DEBUG_INFO_EXPRESSION_TYPE("BiParam<Bound1, Inv<*>>")!>testStarProjection()<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("[ERROR : Error function type]")!>testErrorType()<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("[Error type: Return type for function cannot be resolved]")!>testErrorType()<!>
     <!DEBUG_INFO_EXPRESSION_TYPE("Inv<in Bound1>")!>testInProjection()<!>
     <!DEBUG_INFO_EXPRESSION_TYPE("Inv<out Bound1>")!>testOutProjection()<!>
     <!DEBUG_INFO_EXPRESSION_TYPE("Inv<Inv<Inv<Bound1>>>")!>testDeeplyNested()<!>

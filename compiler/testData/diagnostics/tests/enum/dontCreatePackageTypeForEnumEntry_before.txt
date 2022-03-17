@@ -5,7 +5,7 @@ public fun f1(): kotlin.Unit
 public fun f2(): kotlin.Unit
 public fun f3(): kotlin.Unit
 public fun f4(): kotlin.Unit
-public fun f5(): [ERROR : Error function type]
+public fun f5(): [Error type: Return type for function cannot be resolved]
 
 public final enum class E : kotlin.Enum<E> {
     enum entry FIRST

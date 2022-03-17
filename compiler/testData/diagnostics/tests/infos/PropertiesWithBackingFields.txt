@@ -51,7 +51,7 @@ public final class TestPCParameters : Super {
     public final val y: kotlin.Int
     public final var z: kotlin.Int
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-    public final fun foo(): [ERROR : Error function type]
+    public final fun foo(): [Error type: Return type for function cannot be resolved]
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }

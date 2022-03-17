@@ -40,12 +40,12 @@ public interface Test</*0*/ in I, /*1*/ out O, /*2*/ P> {
     public abstract var neOk22: Inv<out O>
     public abstract var neOk23: Inv<out I>
     public abstract var neOk3: In<In<O>>
-    public abstract var neOk30: [ERROR : Pair]<I>
-    public abstract var neOk31: Pair<I, [ERROR : Inv]>
-    public abstract var neOk32: [ERROR : Inv]
-    public abstract var neOk33: Inv<[ERROR : No type element]>
-    public abstract var neOk34: Inv<[ERROR : C]>
-    public abstract var neOk35: [ERROR : Inv]<P, P>
+    public abstract var neOk30: [Error type: Type for error type constructor (Pair)]<I>
+    public abstract var neOk31: Pair<I, [Error type: Type for error type constructor (Inv)]>
+    public abstract var neOk32: [Error type: Type for error type constructor (Inv)]
+    public abstract var neOk33: Inv<[Error type: No type specified for unknown element]>
+    public abstract var neOk34: Inv<[Error type: Unresolved type for C]>
+    public abstract var neOk35: [Error type: Type for error type constructor (Inv)]<P, P>
     public abstract var neOk4: Inv<I>
     public abstract var neOk5: Inv<O>
     public abstract var neOk6: In<In<O>>

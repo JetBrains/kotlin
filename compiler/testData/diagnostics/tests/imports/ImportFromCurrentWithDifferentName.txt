@@ -3,7 +3,7 @@ package
 package a {
 
     public interface A {
-        public abstract val a: [ERROR : A]
+        public abstract val a: [Error type: Unresolved type for A]
         public abstract val b: a.A
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int

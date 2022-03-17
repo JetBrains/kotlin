@@ -1,6 +1,6 @@
 package
 
-public fun f(): [ERROR : Error function type]
+public fun f(): [Error type: Return type for function cannot be resolved]
 
 public final enum class E : kotlin.Enum<E> {
     enum entry FIRST

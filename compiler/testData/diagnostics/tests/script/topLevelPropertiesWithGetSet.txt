@@ -7,7 +7,7 @@ public final class TopLevelPropertiesWithGetSet : kotlin.script.templates.standa
     public final val testValLineBreak: kotlin.Int
     public final val testValLineBreakNoType: kotlin.Int
     public final val testValLineBreakSemi: kotlin.Int
-    public final val testValLineBreakSemiNoType: [ERROR : No type, no body]
+    public final val testValLineBreakSemiNoType: [Error type: Return type for property testValLineBreakSemiNoType cannot be resolved]
     public final val testValNoType: kotlin.Int
     public final var testVar: kotlin.Int
     public final var testVarLineBreak: kotlin.Int

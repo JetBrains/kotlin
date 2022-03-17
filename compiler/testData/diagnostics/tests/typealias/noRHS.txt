@@ -1,7 +1,7 @@
 package
 
-public typealias `<no name provided>` = [ERROR : No type element]
-public typealias A1 = [ERROR : No type element]
-public typealias A2 = [ERROR : No type element]
+public typealias `<no name provided>` = [Error type: No type specified for unknown element]
+public typealias A1 = [Error type: No type specified for unknown element]
+public typealias A2 = [Error type: No type specified for unknown element]
 public typealias Valid = kotlin.String
 

@@ -1,7 +1,7 @@
 package
 
 public val a01: kotlin.reflect.KClass<kotlin.Array<*>>
-public val a02: kotlin.reflect.KClass<kotlin.Array<[ERROR : Array]>>
+public val a02: kotlin.reflect.KClass<kotlin.Array<[Error type: Type for error type constructor (Array)]>>
 public val a03: kotlin.reflect.KClass<kotlin.Array<kotlin.Any?>>
 public val a04: kotlin.reflect.KClass<kotlin.Array<kotlin.Array<kotlin.Any?>?>>
 public val a05: kotlin.reflect.KClass<kotlin.Array<kotlin.IntArray?>>

@@ -1,14 +1,14 @@
 package
 
-public final class Class1</*0*/ T : Class2<Class1<[ERROR : X]>>> {
-    public constructor Class1</*0*/ T : Class2<Class1<[ERROR : X]>>>()
+public final class Class1</*0*/ T : Class2<Class1<[Error type: Unresolved type for X]>>> {
+    public constructor Class1</*0*/ T : Class2<Class1<[Error type: Unresolved type for X]>>>()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-public final class Class2</*0*/ T : Class1<Class2<[ERROR : X]>>> {
-    public constructor Class2</*0*/ T : Class1<Class2<[ERROR : X]>>>()
+public final class Class2</*0*/ T : Class1<Class2<[Error type: Unresolved type for X]>>> {
+    public constructor Class2</*0*/ T : Class1<Class2<[Error type: Unresolved type for X]>>>()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String

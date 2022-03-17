@@ -1,4 +1,4 @@
 package
 
-public val p: [ERROR : Type for ::p]
-public fun foo(): [ERROR : Error function type]
+public val p: [Error type: Not found recorded type for ::p]
+public fun foo(): [Error type: Return type for function cannot be resolved]

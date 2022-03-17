@@ -1,10 +1,9 @@
 package
 
-public fun </*0*/ T : A, /*1*/ R : T> emptyStrangeMap(): kotlin.collections.Map<T, R>
-public fun test(): [Error type: Return type for function cannot be resolved]
-public fun test7(): kotlin.collections.Map<A, A>
-
-public interface A {
+public object DelegateTest {
+    private constructor DelegateTest()
+    public final val f: kotlin.String
+    public final var result: kotlin.String
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String

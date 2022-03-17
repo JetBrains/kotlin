@@ -4,7 +4,7 @@ package c {
 
     public abstract class Foo {
         public constructor Foo()
-        protected abstract val prop: [ERROR : No type, no body]
+        protected abstract val prop: [Error type: Return type for property prop cannot be resolved]
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String

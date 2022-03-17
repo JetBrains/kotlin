@@ -1,9 +1,9 @@
 package
 
 public interface T {
-    public abstract val x: [ERROR : ErrorType]
+    public abstract val x: [Error type: Unresolved type for ErrorType]
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-    public abstract fun getX(): [ERROR : ErrorType1]
+    public abstract fun getX(): [Error type: Unresolved type for ErrorType1]
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }

@@ -3,7 +3,7 @@ package
 public fun foo(): C
 
 public open class C {
-    public constructor C</*0*/ T : [ERROR : Cyclic upper bounds]>(/*0*/ t: T!)
+    public constructor C</*0*/ T : [Error type: Cyclic upper bounds]>(/*0*/ t: T!)
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String

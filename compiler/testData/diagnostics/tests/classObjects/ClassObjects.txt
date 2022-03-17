@@ -2,9 +2,9 @@ package
 
 package Jet86 {
     public val a: kotlin.Int = 1
-    public val c: [ERROR : Type for B.x]
-    public val d: [ERROR : Type for b.x]
-    public val s: [ERROR : Type for System]
+    public val c: [Error type: Not found recorded type for B.x]
+    public val d: [Error type: Not found recorded type for b.x]
+    public val s: [Error type: Not found recorded type for System]
     public fun test(): kotlin.Unit
 
     public final class A {

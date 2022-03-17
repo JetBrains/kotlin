@@ -1,8 +1,8 @@
 package 
 
-public val a: [ERROR : Type for A]
+public val a: [Error type: Not found recorded type for A]
 public val b: B.Companion
-public val c: [ERROR : Type for C]
+public val c: [Error type: Not found recorded type for C]
 public val d: D.Companion
 public val e: kotlin.Int
 

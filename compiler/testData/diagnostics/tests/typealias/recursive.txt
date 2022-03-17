@@ -1,6 +1,6 @@
 package
 
-public val x: F3 /* = (F1 /* = (kotlin.Int) -> F2 /* = ([ERROR : Recursive type alias: F1]) -> kotlin.Int */ */) -> kotlin.Int */
+public val x: F3 /* = (F1 /* = (kotlin.Int) -> F2 /* = ([Error type: Recursive type alias F1]) -> kotlin.Int */ */) -> kotlin.Int */
 public typealias A = B
 public typealias B = A
 public typealias F1 = (kotlin.Int) -> F2

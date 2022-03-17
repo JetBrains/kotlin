@@ -2,7 +2,7 @@ package
 
 package a {
     public fun test1(): a.x.S.B!
-    public fun test2(): [ERROR : Error function type]
+    public fun test2(): [Error type: Return type for function cannot be resolved]
     public fun test3(): kotlin.String!
 
     public open class x {

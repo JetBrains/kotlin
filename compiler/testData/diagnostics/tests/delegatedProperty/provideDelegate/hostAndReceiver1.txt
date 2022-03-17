@@ -2,7 +2,7 @@ package
 
 public object T1 {
     private constructor T1()
-    public final val test2: [ERROR : Type from delegate]
+    public final val test2: [Error type: Error delegation type for 1]
     public final val kotlin.String.test1: kotlin.Double
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int

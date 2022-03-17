@@ -2,10 +2,10 @@ package
 
 public abstract class A {
     public constructor A()
-    private final val `<no name provided>`: [ERROR : No type, no body]
-    private final val `<no name provided>`: [ERROR : No type, no body]
-    private final val `<no name provided>`: [ERROR : No type, no body]
-    private final val private: [ERROR : No type, no body]
+    private final val `<no name provided>`: [Error type: Return type for property <no name provided> cannot be resolved]
+    private final val `<no name provided>`: [Error type: Return type for property <no name provided> cannot be resolved]
+    private final val `<no name provided>`: [Error type: Return type for property <no name provided> cannot be resolved]
+    private final val private: [Error type: Return type for property private cannot be resolved]
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public final fun foo(): kotlin.Unit
     private final fun foo1(): kotlin.Unit

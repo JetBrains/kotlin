@@ -1,5 +1,5 @@
 package
 
 package c {
-    public val i: [ERROR : No type, no body]
+    public val i: [Error type: Return type for property i cannot be resolved]
 }

@@ -21,7 +21,7 @@ package b {
 }
 
 package c {
-    public fun test(): [ERROR : x]
+    public fun test(): [Error type: Unresolved type for x]
 
     public open class d {
         public constructor d()

@@ -1,7 +1,7 @@
 package
 
-public val [ERROR : G].bar: kotlin.Int
-public fun [ERROR : G].foo(): kotlin.Unit
+public val [Error type: Type for error type constructor (G)].bar: kotlin.Int
+public fun [Error type: Type for error type constructor (G)].foo(): kotlin.Unit
 
 public interface G</*0*/ T> {
     public abstract val bar: kotlin.Int

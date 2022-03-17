@@ -1,4 +1,4 @@
 package
 
 public fun f(): kotlin.Unit
-public fun g(/*0*/ a1: kotlin.Array<kotlin.Int>, /*1*/ a2: [ERROR : Array<Int>]<kotlin.Int>): kotlin.Unit
+public fun g(/*0*/ a1: kotlin.Array<kotlin.Int>, /*1*/ a2: [Error type: Unresolved type for Array<Int>]<kotlin.Int>): kotlin.Unit

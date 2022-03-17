@@ -27,6 +27,6 @@ public final class NotImported {
 
 package pkg {
     public val v: Klass.Nested
-    public val x: [ERROR : NotImported]
+    public val x: [Error type: Unresolved type for NotImported]
     public fun foo(): Klass
 }

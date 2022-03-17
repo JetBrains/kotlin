@@ -1,12 +1,12 @@
 package
 
-public fun foo(/*0*/ intDTO: DTO?, /*1*/ p: [ERROR : KProperty1<*, Int>]<out [ERROR : *], kotlin.Int>): kotlin.Unit
+public fun foo(/*0*/ intDTO: DTO?, /*1*/ p: [Error type: Unresolved type for KProperty1<*, Int>]<out [Error type: Error type projection], kotlin.Int>): kotlin.Unit
 
 public final class DTO {
     public constructor DTO()
     public final val q: kotlin.Int = 0
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-    public final operator fun get(/*0*/ prop: [ERROR : KProperty1<*, Int>]<out [ERROR : *], kotlin.Int>): kotlin.Int
+    public final operator fun get(/*0*/ prop: [Error type: Unresolved type for KProperty1<*, Int>]<out [Error type: Error type projection], kotlin.Int>): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }

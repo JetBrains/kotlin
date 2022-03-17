@@ -13,7 +13,7 @@ public val value_18: kotlin.Float = 8.8888888E7.toFloat()
 public val value_19: kotlin.Double
 public val value_2: kotlin.Double = 0.0.toDouble()
 public val value_20: kotlin.Float = Infinity.toFloat()
-public val value_21: [ERROR : Type for 1_2_3_4_5_6_7_8_9.2_3_4_5_6_7_8_9e_-_0]
+public val value_21: [Error type: Not found recorded type for 1_2_3_4_5_6_7_8_9.2_3_4_5_6_7_8_9e_-_0]
 public val value_22: kotlin.Float = Infinity.toFloat()
 public val value_23: kotlin.Float = 4560000.0.toFloat()
 public val value_24: kotlin.Double = 0.0654765.toDouble()

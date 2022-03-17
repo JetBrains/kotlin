@@ -1,6 +1,6 @@
 package
 
-public val b: [ERROR : B]<out [ERROR : *]>
+public val b: [Error type: Type for error type constructor (B)]<out [Error type: Error type projection]>
 
 public final class B {
     public constructor B()

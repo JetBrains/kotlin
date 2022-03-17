@@ -84,8 +84,8 @@ package test {
     }
 
     public final annotation class Ann9 : kotlin.Annotation {
-        public constructor Ann9(/*0*/ error: [ERROR : Unresolved] = ...)
-        public final val error: [ERROR : Unresolved]
+        public constructor Ann9(/*0*/ error: [Error type: Unresolved type for Unresolved] = ...)
+        public final val error: [Error type: Unresolved type for Unresolved]
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String

@@ -1,6 +1,6 @@
 package
 
-public val test1: [ERROR : Type for generate {
+public val test1: [Error type: Not found recorded type for generate {
     yield(A)
 }]
 public val test2: kotlin.Int

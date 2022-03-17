@@ -1,6 +1,6 @@
 package
 
-public val bar2: [ERROR : <ERROR FUNCTION RETURN TYPE>]
+public val bar2: [Error type: Return type for function cannot be resolved]
 
 package lt {
 
@@ -10,7 +10,7 @@ package lt {
 
             public final class Foo {
                 public constructor Foo()
-                public final val bar: [ERROR : <ERROR FUNCTION RETURN TYPE>]
+                public final val bar: [Error type: Return type for function cannot be resolved]
                 public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
                 public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
                 public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
