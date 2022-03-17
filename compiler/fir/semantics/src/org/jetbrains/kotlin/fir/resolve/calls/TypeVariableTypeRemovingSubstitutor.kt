@@ -1,9 +1,9 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.fir.analysis.diagnostics
+package org.jetbrains.kotlin.fir.resolve.calls
 
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeUnknownLambdaParameterTypeDiagnostic
 import org.jetbrains.kotlin.fir.resolve.substitution.AbstractConeSubstitutor
@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.fir.symbols.ConeTypeParameterLookupTag
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.impl.ConeTypeParameterTypeImpl
 
-internal fun ConeKotlinType.removeTypeVariableTypes(typeContext: ConeTypeContext): ConeKotlinType {
+fun ConeKotlinType.removeTypeVariableTypes(typeContext: ConeTypeContext): ConeKotlinType {
     val substitutor = TypeVariableTypeRemovingSubstitutor(typeContext)
     return substitutor.substituteOrSelf(this)
 }
