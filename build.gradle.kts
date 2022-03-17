@@ -1084,3 +1084,7 @@ afterEvaluate {
         }
     }
 }
+
+afterEvaluate {
+    checkExpectedGradlePropertyValues()
+}
