@@ -257,8 +257,17 @@ class BuildKotlinToolingMetadataTest {
     }
 
     private fun getKotlinToolingMetadata(): KotlinToolingMetadata {
-        val task = project.buildKotlinToolingMetadataTask?.get() ?: error("No ${BuildKotlinToolingMetadataTask.defaultTaskName} task")
-        return task.kotlinToolingMetadata
+        if (!kpmModelMappingEnabled) {
+            val task = project.buildKotlinToolingMetadataTask?.get() ?: error("No ${BuildKotlinToolingMetadataTask.defaultTaskName} task")
+            return task.kotlinToolingMetadata
+        } else {
+            val mainModule = project.kpmModules.getByName(KotlinGradleModule.MAIN_MODULE_NAME)
+            val task = mainModule
+                .buildKotlinToolingMetadataTask
+                ?.get()
+                ?: error("No ${BuildKotlinToolingMetadataTask.taskNameForKotlinModule(mainModule)} task")
+            return task.kotlinToolingMetadata
+        }
     }
 
     companion object {

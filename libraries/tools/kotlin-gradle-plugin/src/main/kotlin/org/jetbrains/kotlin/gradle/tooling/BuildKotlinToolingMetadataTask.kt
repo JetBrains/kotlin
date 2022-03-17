@@ -48,6 +48,13 @@ internal fun Project.registerBuildKotlinToolingMetadataTask() {
     }
 }
 
+internal val Project.buildKotlinToolingMetadataForMainKpmModuleTask: TaskProvider<BuildKotlinToolingMetadataTask.FromKpmModule>?
+    get() {
+        require(hasKpmModel)
+        val mainModule = kpmModules.getByName(KotlinGradleModule.MAIN_MODULE_NAME)
+        return mainModule.buildKotlinToolingMetadataTask
+    }
+
 private val Project.buildKotlinToolingMetadataForAllKpmModulesTask
     get() = locateOrRegisterTask<Task>(BuildKotlinToolingMetadataTask.defaultTaskName) { task ->
         task.group = "build"
