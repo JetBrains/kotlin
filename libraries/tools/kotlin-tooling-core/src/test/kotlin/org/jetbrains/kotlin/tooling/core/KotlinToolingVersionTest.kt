@@ -190,6 +190,39 @@ class KotlinToolingVersionTest {
     }
 
     @Test
+    fun maturityWithAdditionalReleaseSuffix() {
+        assertEquals(
+            KotlinToolingVersion.Maturity.MILESTONE,
+            KotlinToolingVersion("1.6.20-M1-release").maturity
+        )
+
+        assertEquals(
+            KotlinToolingVersion.Maturity.MILESTONE,
+            KotlinToolingVersion("1.6.20-M1-release-22").maturity
+        )
+
+        assertEquals(
+            KotlinToolingVersion.Maturity.ALPHA,
+            KotlinToolingVersion("1.6.20-alpha-release").maturity
+        )
+
+        assertEquals(
+            KotlinToolingVersion.Maturity.ALPHA,
+            KotlinToolingVersion("1.6.20-alpha-release39").maturity
+        )
+
+        assertEquals(
+            KotlinToolingVersion.Maturity.BETA,
+            KotlinToolingVersion("1.6.20-beta2-release").maturity
+        )
+
+        assertEquals(
+            KotlinToolingVersion.Maturity.RC,
+            KotlinToolingVersion("1.6.20-rc1-release").maturity
+        )
+    }
+
+    @Test
     fun invalidMilestoneVersion() {
         val exception = assertFailsWith<IllegalArgumentException> { KotlinToolingVersion("1.6.20-M") }
         assertTrue("maturity" in exception.message.orEmpty().toLowerCase(), "Expected 'maturity' issue mentioned in error message")
@@ -203,6 +236,10 @@ class KotlinToolingVersionTest {
         assertEquals(510, KotlinToolingVersion("1.6.20-beta1-510").buildNumber)
         assertEquals(510, KotlinToolingVersion("1.6.20-alpha1-510").buildNumber)
         assertEquals(510, KotlinToolingVersion("1.6.20-m1-510").buildNumber)
+        assertEquals(510, KotlinToolingVersion("1.6.20-m1-release-510").buildNumber)
+        assertEquals(510, KotlinToolingVersion("1.6.20-rc1-release-510").buildNumber)
+        assertEquals(510, KotlinToolingVersion("1.6.20-beta1-release-510").buildNumber)
+        assertEquals(510, KotlinToolingVersion("1.6.20-alpha1-release-510").buildNumber)
     }
 
     @Test
@@ -216,6 +253,18 @@ class KotlinToolingVersionTest {
         assertEquals(2, KotlinToolingVersion("1.6.20-beta2").classifierNumber)
         assertEquals(2, KotlinToolingVersion("1.6.20-alpha2").classifierNumber)
         assertEquals(2, KotlinToolingVersion("1.6.20-m2").classifierNumber)
+
+        assertEquals(2, KotlinToolingVersion("1.6.20-rc2-release").classifierNumber)
+        assertEquals(2, KotlinToolingVersion("1.6.20-rc2-release-510").classifierNumber)
+        assertEquals(2, KotlinToolingVersion("1.6.20-beta2-release").classifierNumber)
+        assertEquals(2, KotlinToolingVersion("1.6.20-beta2-release-510").classifierNumber)
+        assertEquals(2, KotlinToolingVersion("1.6.20-alpha2").classifierNumber)
+        assertEquals(2, KotlinToolingVersion("1.6.20-alpha2-release").classifierNumber)
+        assertEquals(2, KotlinToolingVersion("1.6.20-alpha2-release-510").classifierNumber)
+        assertEquals(2, KotlinToolingVersion("1.6.20-m2").classifierNumber)
+        assertEquals(2, KotlinToolingVersion("1.6.20-m2-release").classifierNumber)
+        assertEquals(2, KotlinToolingVersion("1.6.20-m2-release-510").classifierNumber)
+
     }
 
     @Test

@@ -47,10 +47,10 @@ class KotlinToolingVersion(
             val classifier = this.classifier?.toLowerCase(Locale.ROOT)
             return when {
                 classifier == null || classifier.matches(Regex("""(release-)?\d+""")) -> Maturity.STABLE
-                classifier.matches(Regex("""(rc)(\d*)?-?\d*""")) -> Maturity.RC
-                classifier.matches(Regex("""beta(\d*)?-?\d*""")) -> Maturity.BETA
-                classifier.matches(Regex("""alpha(\d*)?-?\d*""")) -> Maturity.ALPHA
-                classifier.matches(Regex("""m\d+(-\d*)?""")) -> Maturity.MILESTONE
+                classifier.matches(Regex("""(rc)(\d*)?(-release)?-?\d*""")) -> Maturity.RC
+                classifier.matches(Regex("""beta(\d*)?(-release)?-?\d*""")) -> Maturity.BETA
+                classifier.matches(Regex("""alpha(\d*)?(-release)?-?\d*""")) -> Maturity.ALPHA
+                classifier.matches(Regex("""m\d+(-release)?(-\d*)?""")) -> Maturity.MILESTONE
                 classifier.matches(Regex("""dev-?\d*""")) -> Maturity.DEV
                 classifier == "snapshot" -> Maturity.SNAPSHOT
                 else -> throw IllegalArgumentException("Can't infer maturity of KotlinVersion $this")
@@ -177,9 +177,9 @@ val KotlinToolingVersion.buildNumber: Int?
             return classifier.toIntOrNull()
         }
 
-        val classifierRegex = Regex("""(.+?)(\d*)?-?(\d*)?""")
+        val classifierRegex = Regex("""(.+?)(\d*)?(-release)?-?(\d*)?""")
         val classifierMatch = classifierRegex.matchEntire(classifier) ?: return null
-        return classifierMatch.groupValues.getOrNull(3)?.toIntOrNull()
+        return classifierMatch.groupValues.getOrNull(4)?.toIntOrNull()
     }
 
 val KotlinToolingVersion.classifierNumber: Int?
@@ -195,7 +195,7 @@ val KotlinToolingVersion.classifierNumber: Int?
         }
 
 
-        val classifierRegex = Regex("""(.+?)(\d*)?-?(\d*)?""")
+        val classifierRegex = Regex("""(.+?)(\d*)?(-release)?-?(\d*)?""")
         val classifierMatch = classifierRegex.matchEntire(classifier) ?: return null
         return classifierMatch.groupValues.getOrNull(2)?.toIntOrNull()
     }
