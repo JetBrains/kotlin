@@ -7,6 +7,7 @@ package test.collections
 
 import kotlin.test.*
 import test.*
+import kotlin.math.pow
 
 class MapTest {
 
@@ -603,4 +604,166 @@ class MapTest {
     @Test fun plusAssignEmptySet() = testIdempotentAssign { it += setOf() }
 
 
+    private fun <K, V> expectMinMaxWith(min: Pair<K, V>, max: Pair<K, V>, elements: Map<K, V>, comparator: Comparator<Map.Entry<K, V>>) {
+        assertEquals(min, elements.minWithOrNull(comparator)?.toPair())
+        assertEquals(max, elements.maxWithOrNull(comparator)?.toPair())
+        assertEquals(min, elements.minWith(comparator).toPair())
+        assertEquals(max, elements.maxWith(comparator).toPair())
+    }
+
+    @Test
+    fun minMaxWith() {
+        val map = listOf("a", "bcd", "Ef").associateWith { it.length }
+        expectMinMaxWith("Ef" to 2, "bcd" to 3, map, compareBy { it.key })
+        expectMinMaxWith("a" to 1, "Ef" to 2, map, compareBy(String.CASE_INSENSITIVE_ORDER) { it.key })
+        expectMinMaxWith("a" to 1, "bcd" to 3, map, compareBy { it.value })
+
+    }
+
+    @Test
+    fun minMaxWithEmpty() {
+        val empty = mapOf<Int, Int>()
+        val comparator = compareBy<Map.Entry<Int, Int>> { it.value }
+        assertNull(empty.minWithOrNull(comparator))
+        assertNull(empty.maxWithOrNull(comparator))
+        assertFailsWith<NoSuchElementException> { empty.minWith(comparator) }
+        assertFailsWith<NoSuchElementException> { empty.maxWith(comparator) }
+    }
+
+
+    private inline fun <K, V, R : Comparable<R>> expectMinMaxBy(min: Pair<K, V>, max: Pair<K, V>, elements: Map<K, V>, selector: (Map.Entry<K, V>) -> R) {
+        assertEquals(min, elements.minBy(selector).toPair())
+        assertEquals(min, elements.minByOrNull(selector)?.toPair())
+        assertEquals(max, elements.maxBy(selector).toPair())
+        assertEquals(max, elements.maxByOrNull(selector)?.toPair())
+    }
+
+    @Test
+    fun minMaxBy() {
+        val map = listOf("a", "bcd", "Ef").associateWith { it.length }
+        expectMinMaxBy("Ef" to 2, "bcd" to 3, map, { it.key })
+        expectMinMaxBy("a" to 1, "Ef" to 2, map, { it.key.lowercase() })
+        expectMinMaxBy("a" to 1, "bcd" to 3, map, { it.value })
+    }
+
+    @Test
+    fun minMaxByEmpty() {
+        val empty = mapOf<Int, Int>()
+        assertNull(empty.minByOrNull { it.toString() })
+        assertNull(empty.maxByOrNull { it.toString() })
+        assertFailsWith<NoSuchElementException> { empty.minBy { it.toString() } }
+        assertFailsWith<NoSuchElementException> { empty.maxBy { it.toString() } }
+    }
+
+    @Test fun minBySelectorEvaluateOnce() {
+        val source = listOf(1, 2, 3).associateWith { it }
+        var c = 0
+        source.minBy { c++ }
+        assertEquals(3, c)
+        c = 0
+        source.minByOrNull { c++ }
+        assertEquals(3, c)
+    }
+
+    @Test fun maxBySelectorEvaluateOnce() {
+        val source = listOf(1, 2, 3).associateWith { it }
+        var c = 0
+        source.maxBy { c++ }
+        assertEquals(3, c)
+        c = 0
+        source.maxByOrNull { c++ }
+        assertEquals(3, c)
+    }
+
+    private inline fun <K, V, R : Comparable<R>> expectMinMaxOf(min: R, max: R, elements: Map<K, V>, selector: (Map.Entry<K, V>) -> R) {
+        assertEquals(min, elements.minOf(selector))
+        assertEquals(min, elements.minOfOrNull(selector))
+        assertEquals(max, elements.maxOf(selector))
+        assertEquals(max, elements.maxOfOrNull(selector))
+    }
+
+    @Test
+    fun minMaxOf() {
+        val maps = (1..3).map { size -> listOf("a", "bcd", "Ef").take(size).associateWith { it.length } }
+
+        expectMinMaxOf("a=1", "a=1", maps[0], { it.toString() })
+        expectMinMaxOf("a=1", "bcd=3", maps[1], { it.toString() })
+        expectMinMaxOf("Ef=2", "bcd=3",  maps[2], { it.toString() })
+    }
+
+    @Test
+    fun minMaxOfDouble() {
+        val items = mapOf("a" to 0.0, "b" to 1.0, "c" to -1.0)
+        assertTrue(items.minOf { it.value.pow(0.5) }.isNaN())
+        assertTrue(items.minOfOrNull { it.value.pow(0.5) }!!.isNaN())
+        assertTrue(items.maxOf { it.value.pow(0.5) }.isNaN())
+        assertTrue(items.maxOfOrNull { it.value.pow(0.5) }!!.isNaN())
+
+        assertIsNegativeZero(items.minOf { it.value * 0.0 })
+        assertIsNegativeZero(items.minOfOrNull { it.value * 0.0 }!!)
+        assertIsPositiveZero(items.maxOf { it.value * 0.0 })
+        assertIsPositiveZero(items.maxOfOrNull { it.value * 0.0 }!!)
+    }
+
+    @Test
+    fun minMaxOfFloat() {
+        val items = mapOf("a" to 0.0F, "b" to 1.0F, "c" to -1.0F)
+        assertTrue(items.minOf { it.value.pow(0.5F) }.isNaN())
+        assertTrue(items.minOfOrNull { it.value.pow(0.5F) }!!.isNaN())
+        assertTrue(items.maxOf { it.value.pow(0.5F) }.isNaN())
+        assertTrue(items.maxOfOrNull { it.value.pow(0.5F) }!!.isNaN())
+
+        assertIsNegativeZero(items.minOf { it.value * 0.0F }.toDouble())
+        assertIsNegativeZero(items.minOfOrNull { it.value * 0.0F }!!.toDouble())
+        assertIsPositiveZero(items.maxOf { it.value * 0.0F }.toDouble())
+        assertIsPositiveZero(items.maxOfOrNull { it.value * 0.0F }!!.toDouble())
+    }
+
+    @Test
+    fun minMaxOfEmpty() {
+        val empty = mapOf<Int, Int>()
+
+        assertNull(empty.minOfOrNull { it.toString() })
+        assertNull(empty.maxOfOrNull { it.toString() })
+        assertFailsWith<NoSuchElementException> { empty.minOf { it.toString() } }
+        assertFailsWith<NoSuchElementException> { empty.maxOf { it.toString() } }
+
+
+        assertNull(empty.minOfOrNull { 0.0 })
+        assertNull(empty.maxOfOrNull { 0.0 })
+        assertFailsWith<NoSuchElementException> { empty.minOf { 0.0 } }
+        assertFailsWith<NoSuchElementException> { empty.maxOf { 0.0 } }
+
+
+        assertNull(empty.minOfOrNull { 0.0F })
+        assertNull(empty.maxOfOrNull { 0.0F })
+        assertFailsWith<NoSuchElementException> { empty.minOf { 0.0F } }
+        assertFailsWith<NoSuchElementException> { empty.maxOf { 0.0F } }
+    }
+
+
+    private inline fun <K, V, R> expectMinMaxOfWith(min: R, max: R, elements: Map<K, V>, comparator: Comparator<R>, selector: (Map.Entry<K, V>) -> R) {
+        assertEquals(min, elements.minOfWith(comparator, selector))
+        assertEquals(min, elements.minOfWithOrNull(comparator, selector))
+        assertEquals(max, elements.maxOfWith(comparator, selector))
+        assertEquals(max, elements.maxOfWithOrNull(comparator, selector))
+    }
+
+    @Test
+    fun minMaxOfWith() {
+        val maps = (1..3).map { size -> listOf("a", "bcd", "Ef").take(size).associateWith { it.length } }
+        val comparator = String.CASE_INSENSITIVE_ORDER
+        expectMinMaxOfWith("a=1", "a=1", maps[0], comparator, { it.toString() })
+        expectMinMaxOfWith("a=1", "bcd=3", maps[1], comparator, { it.toString() })
+        expectMinMaxOfWith("a=1", "Ef=2", maps[2], comparator, { it.toString() })
+    }
+
+    @Test
+    fun minMaxOfWithEmpty() {
+        val empty = mapOf<Int, Int>()
+        assertNull(empty.minOfWithOrNull(naturalOrder()) { it.toString() })
+        assertNull(empty.maxOfWithOrNull(naturalOrder()) { it.toString() })
+        assertFailsWith<NoSuchElementException> { empty.minOfWith(naturalOrder()) { it.toString() } }
+        assertFailsWith<NoSuchElementException> { empty.maxOfWith(naturalOrder()) { it.toString() } }
+    }
 }
