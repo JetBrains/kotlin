@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.analysis.decompiler.stub.file.ClsKotlinBinaryClassCa
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
 import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmMetadataVersion
-import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.types.asFlexibleType
 import org.jetbrains.kotlin.types.isFlexible
@@ -33,7 +32,7 @@ fun buildDecompiledTextForClassFile(
     }
 
     fun buildText(declarations: List<DeclarationDescriptor>) = buildDecompiledText(
-        classHeader.packageName?.let(::FqName) ?: classId.packageFqName,
+        classHeader.packageNameWithFallback,
         declarations, decompilerRendererForClassFiles, listOf(ByDescriptorIndexer, BySignatureIndexer)
     )
 
