@@ -41,7 +41,8 @@ import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.descriptorUtil.*
 import org.jetbrains.kotlin.resolve.extensions.SyntheticResolveExtension
 import org.jetbrains.kotlin.resolve.source.PsiSourceElement
-import org.jetbrains.kotlin.types.ErrorUtils
+import org.jetbrains.kotlin.types.error.ErrorTypeKind
+import org.jetbrains.kotlin.types.error.ErrorUtils
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.SimpleType
 
@@ -141,7 +142,7 @@ open class ParcelizeResolveExtension : SyntheticResolveExtension {
             && result.none { it.isWriteToParcel() }
         ) {
             val builtIns = thisDescriptor.builtIns
-            val parcelClassType = resolveParcelClassType(thisDescriptor.module) ?: ErrorUtils.createErrorType("Unresolved 'Parcel' type")
+            val parcelClassType = resolveParcelClassType(thisDescriptor.module) ?: ErrorUtils.createErrorType(ErrorTypeKind.UNRESOLVED_PARCEL_TYPE)
             result += createMethod(
                 thisDescriptor, WRITE_TO_PARCEL, Modality.OPEN,
                 builtIns.unitType, "parcel" to parcelClassType, "flags" to builtIns.intType

@@ -25,7 +25,8 @@ import org.jetbrains.kotlin.resolve.calls.context.CallPosition;
 import org.jetbrains.kotlin.resolve.scopes.LexicalScopeKind;
 import org.jetbrains.kotlin.resolve.scopes.LexicalWritableScope;
 import org.jetbrains.kotlin.types.DeferredType;
-import org.jetbrains.kotlin.types.ErrorUtils;
+import org.jetbrains.kotlin.types.error.ErrorTypeKind;
+import org.jetbrains.kotlin.types.error.ErrorUtils;
 import org.jetbrains.kotlin.types.KotlinType;
 import org.jetbrains.kotlin.types.expressions.typeInfoFactory.TypeInfoFactoryKt;
 import org.jetbrains.kotlin.util.KotlinFrontEndException;
@@ -124,7 +125,7 @@ public abstract class ExpressionTypingVisitorDispatcher extends KtVisitor<Kotlin
             return typeInfo;
         }
         return typeInfo
-                .replaceType(ErrorUtils.createErrorType("Type for " + expression.getText()))
+                .replaceType(ErrorUtils.createErrorType(ErrorTypeKind.NO_RECORDED_TYPE, expression.getText()))
                 .replaceDataFlowInfo(context.dataFlowInfo);
     }
 
@@ -223,7 +224,7 @@ public abstract class ExpressionTypingVisitorDispatcher extends KtVisitor<Kotlin
                 context.trace.report(Errors.EXCEPTION_FROM_ANALYZER.on(expression, e));
                 logOrThrowException(expression, e);
                 return TypeInfoFactoryKt.createTypeInfo(
-                        ErrorUtils.createErrorType(e.getClass().getSimpleName() + " from analyzer"),
+                        ErrorUtils.createErrorType(ErrorTypeKind.TYPE_FOR_COMPILER_EXCEPTION, e.getClass().getSimpleName()),
                         context
                 );
             }

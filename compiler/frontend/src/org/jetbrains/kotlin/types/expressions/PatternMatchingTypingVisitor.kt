@@ -37,8 +37,10 @@ import org.jetbrains.kotlin.resolve.checkers.PrimitiveNumericComparisonCallCheck
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope
 import org.jetbrains.kotlin.resolve.scopes.LexicalScopeKind
 import org.jetbrains.kotlin.types.*
+import org.jetbrains.kotlin.types.error.ErrorUtils
 import org.jetbrains.kotlin.types.TypeUtils.NO_EXPECTED_TYPE
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
+import org.jetbrains.kotlin.types.error.ErrorTypeKind
 import org.jetbrains.kotlin.types.expressions.ControlStructureTypingUtils.*
 import org.jetbrains.kotlin.types.expressions.typeInfoFactory.createTypeInfo
 import org.jetbrains.kotlin.types.expressions.typeInfoFactory.noTypeInfo
@@ -92,7 +94,7 @@ class PatternMatchingTypingVisitor internal constructor(facade: ExpressionTyping
         val element: KtElement?,
         val typeInfo: KotlinTypeInfo?,
         val scopeWithSubject: LexicalScope?,
-        val type: KotlinType = typeInfo?.type ?: ErrorUtils.createErrorType("Unknown type")
+        val type: KotlinType = typeInfo?.type ?: ErrorUtils.createErrorType(ErrorTypeKind.UNKNOWN_TYPE)
     ) {
 
         protected abstract fun createDataFlowValue(contextAfterSubject: ExpressionTypingContext, builtIns: KotlinBuiltIns): DataFlowValue

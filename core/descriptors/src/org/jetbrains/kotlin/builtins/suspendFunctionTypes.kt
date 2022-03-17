@@ -18,12 +18,13 @@ import org.jetbrains.kotlin.descriptors.impl.TypeParameterDescriptorImpl
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.types.*
+import org.jetbrains.kotlin.types.error.ErrorUtils
 import org.jetbrains.kotlin.types.typeUtil.asTypeProjection
 import org.jetbrains.kotlin.types.typeUtil.builtIns
 
 private val FAKE_CONTINUATION_CLASS_DESCRIPTOR =
     MutableClassDescriptor(
-        EmptyPackageFragmentDescriptor(ErrorUtils.getErrorModule(), COROUTINES_PACKAGE_FQ_NAME),
+        EmptyPackageFragmentDescriptor(ErrorUtils.errorModule, COROUTINES_PACKAGE_FQ_NAME),
         ClassKind.INTERFACE, /* isInner = */ false, /* isExternal = */ false,
         CONTINUATION_INTERFACE_FQ_NAME.shortName(), SourceElement.NO_SOURCE, LockBasedStorageManager.NO_LOCKS
     ).apply {

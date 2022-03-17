@@ -52,6 +52,8 @@ import org.jetbrains.kotlin.types.TypeUtils.NO_EXPECTED_TYPE
 import org.jetbrains.kotlin.types.TypeUtils.noExpectedType
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 import org.jetbrains.kotlin.types.checker.NewTypeVariableConstructor
+import org.jetbrains.kotlin.types.error.ErrorTypeKind
+import org.jetbrains.kotlin.types.error.ErrorUtils
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingContext
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingServices
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingUtils.createFakeExpressionOfType
@@ -737,7 +739,7 @@ class DelegatedPropertyResolver(
         val pretendReturnType = call.getResolvedCall(trace.bindingContext)?.resultingDescriptor?.returnType
         return pretendReturnType?.takeIf { it.isProperType() }
             ?: delegateType.takeIf { it.isProperType() }
-            ?: ErrorUtils.createErrorType("Type for ${delegateExpression.text}")
+            ?: ErrorUtils.createErrorType(ErrorTypeKind.TYPE_FOR_DELEGATION, delegateExpression.text)
     }
 
     private fun KotlinType.isProperType(): Boolean {

@@ -19,7 +19,7 @@ package org.jetbrains.kotlin.types.checker
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.ClassifierDescriptor
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
-import org.jetbrains.kotlin.descriptors.annotations.Annotations
+import org.jetbrains.kotlin.types.error.ErrorUtils
 import org.jetbrains.kotlin.resolve.calls.inference.CapturedTypeConstructor
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.types.*
@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.types.FlexibleTypeBoundsChecker.areTypesMayBeLowerAn
 import org.jetbrains.kotlin.types.model.CaptureStatus
 import org.jetbrains.kotlin.types.model.CapturedTypeMarker
 import org.jetbrains.kotlin.types.TypeRefinement
+import org.jetbrains.kotlin.types.error.ErrorScopeKind
 import org.jetbrains.kotlin.types.typeUtil.asTypeProjection
 import org.jetbrains.kotlin.types.typeUtil.builtIns
 
@@ -210,7 +211,7 @@ class NewCapturedType(
     override val arguments: List<TypeProjection> get() = listOf()
 
     override val memberScope: MemberScope // todo what about foo().bar() where foo() return captured type?
-        get() = ErrorUtils.createErrorScope("No member resolution should be done on captured type!", true)
+        get() = ErrorUtils.createErrorScope(ErrorScopeKind.CAPTURED_TYPE_SCOPE, throwExceptions = true)
 
     override fun replaceAttributes(newAttributes: TypeAttributes): SimpleType =
         NewCapturedType(captureStatus, constructor, lowerType, newAttributes, isMarkedNullable, isProjectionNotNull)

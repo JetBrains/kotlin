@@ -9,6 +9,8 @@ import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.types.*
+import org.jetbrains.kotlin.types.error.ErrorUtils
+import org.jetbrains.kotlin.types.error.ErrorTypeKind
 import org.jetbrains.kotlin.types.typeUtil.extractTypeParametersFromUpperBounds
 import org.jetbrains.kotlin.types.typeUtil.replaceArgumentsWithStarProjectionOrMapped
 import org.jetbrains.kotlin.types.typeUtil.replaceArgumentsWithStarProjections
@@ -16,7 +18,7 @@ import org.jetbrains.kotlin.types.typeUtil.replaceArgumentsWithStarProjections
 internal class TypeParameterUpperBoundEraser(rawSubstitution: RawSubstitution? = null) {
     private val storage = LockBasedStorageManager("Type parameter upper bound erasion results")
     private val erroneousErasedBound by lazy {
-        ErrorUtils.createErrorType("Can't compute erased upper bound of type parameter `$this`")
+        ErrorUtils.createErrorType(ErrorTypeKind.CANNOT_COMPUTE_ERASED_BOUND, this.toString())
     }
     private val rawSubstitution = rawSubstitution ?: RawSubstitution(this)
 

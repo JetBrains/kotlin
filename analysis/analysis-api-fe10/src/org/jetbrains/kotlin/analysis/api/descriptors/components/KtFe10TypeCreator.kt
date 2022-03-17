@@ -26,6 +26,9 @@ import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.types.*
+import org.jetbrains.kotlin.types.error.ErrorType
+import org.jetbrains.kotlin.types.error.ErrorTypeKind
+import org.jetbrains.kotlin.types.error.ErrorUtils
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 
 internal class KtFe10TypeCreator(
@@ -48,8 +51,8 @@ internal class KtFe10TypeCreator(
         }
 
         if (descriptor == null) {
-            val kotlinType = ErrorUtils.createErrorType("Cannot build class type, descriptor not found for builder $builder")
-            return KtFe10ClassErrorType(kotlinType as ErrorType, analysisContext)
+            val kotlinType = ErrorUtils.createErrorType(ErrorTypeKind.NOT_FOUND_DESCRIPTOR_FOR_CLASS, builder.toString())
+            return KtFe10ClassErrorType(kotlinType, analysisContext)
         }
 
         val typeParameters = descriptor.typeConstructor.parameters
@@ -77,7 +80,7 @@ internal class KtFe10TypeCreator(
             }
         }
         val kotlinType = descriptor?.defaultType
-            ?: ErrorUtils.createErrorType("Cannot build type parameter type, descriptor not found for builder $builder")
+            ?: ErrorUtils.createErrorType(ErrorTypeKind.NOT_FOUND_DESCRIPTOR_FOR_TYPE_PARAMETER, builder.toString())
         return kotlinType.toKtType(analysisContext) as KtTypeParameterType
     }
 }

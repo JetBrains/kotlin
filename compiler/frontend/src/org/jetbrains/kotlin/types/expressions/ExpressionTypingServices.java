@@ -28,7 +28,8 @@ import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValue;
 import org.jetbrains.kotlin.resolve.calls.tower.KotlinResolutionCallbacksImpl;
 import org.jetbrains.kotlin.resolve.calls.tower.LambdaContextInfo;
 import org.jetbrains.kotlin.resolve.scopes.*;
-import org.jetbrains.kotlin.types.ErrorUtils;
+import org.jetbrains.kotlin.types.error.ErrorTypeKind;
+import org.jetbrains.kotlin.types.error.ErrorUtils;
 import org.jetbrains.kotlin.types.KotlinType;
 import org.jetbrains.kotlin.types.expressions.typeInfoFactory.TypeInfoFactoryKt;
 import org.jetbrains.kotlin.util.slicedMap.WritableSlice;
@@ -79,7 +80,7 @@ public class ExpressionTypingServices {
     ) {
         KotlinType type = getType(scope, expression, expectedType, dataFlowInfo, inferenceSession, trace);
 
-        return type != null ? type : ErrorUtils.createErrorType("Type for " + expression.getText());
+        return type != null ? type : ErrorUtils.createErrorType(ErrorTypeKind.NO_RECORDED_TYPE, expression.getText());
     }
 
     @NotNull
@@ -244,7 +245,7 @@ public class ExpressionTypingServices {
             return type;
         }
         else {
-            return ErrorUtils.createErrorType("Error function type");
+            return ErrorUtils.createErrorType(ErrorTypeKind.RETURN_TYPE_FOR_FUNCTION);
         }
     }
 

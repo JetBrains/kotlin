@@ -33,7 +33,8 @@ import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.resolve.constants.*
 import org.jetbrains.kotlin.resolve.descriptorUtil.annotationClass
 import org.jetbrains.kotlin.storage.getValue
-import org.jetbrains.kotlin.types.ErrorUtils
+import org.jetbrains.kotlin.types.error.ErrorTypeKind
+import org.jetbrains.kotlin.types.error.ErrorUtils
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.types.isError
 
@@ -47,7 +48,8 @@ class LazyJavaAnnotationDescriptor(
     }
 
     override val type by c.storageManager.createLazyValue {
-        val fqName = fqName ?: return@createLazyValue ErrorUtils.createErrorType("No fqName: $javaAnnotation")
+        val fqName = fqName
+            ?: return@createLazyValue ErrorUtils.createErrorType(ErrorTypeKind.NOT_FOUND_FQNAME_FOR_JAVA_ANNOTATION, javaAnnotation.toString())
         val annotationClass = JavaToKotlinClassMapper.mapJavaToKotlin(fqName, c.module.builtIns)
             ?: javaAnnotation.resolve()?.let { javaClass -> c.components.moduleClassResolver.resolveClass(javaClass) }
             ?: createTypeForMissingDependencies(fqName)
@@ -86,7 +88,7 @@ class LazyJavaAnnotationDescriptor(
             // Try to load annotation arguments even if the annotation class is not found
                 ?: c.components.module.builtIns.getArrayType(
                     Variance.INVARIANT,
-                    ErrorUtils.createErrorType("Unknown array element type")
+                    ErrorUtils.createErrorType(ErrorTypeKind.UNKNOWN_ARRAY_ELEMENT_TYPE_OF_ANNOTATION_ARGUMENT)
                 )
 
         val values = elements.map { argument ->

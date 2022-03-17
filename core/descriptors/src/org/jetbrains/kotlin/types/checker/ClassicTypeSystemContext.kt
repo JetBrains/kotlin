@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.resolve.isInlineClass
 import org.jetbrains.kotlin.resolve.substitutedUnderlyingType
 import org.jetbrains.kotlin.resolve.unsubstitutedUnderlyingType
 import org.jetbrains.kotlin.types.*
+import org.jetbrains.kotlin.types.error.ErrorTypeKind
 import org.jetbrains.kotlin.types.model.*
 import org.jetbrains.kotlin.types.typeUtil.*
 import org.jetbrains.kotlin.utils.addIfNotNull
@@ -33,6 +34,7 @@ import org.jetbrains.kotlin.types.typeUtil.isSignedOrUnsignedNumberType as class
 import org.jetbrains.kotlin.types.typeUtil.isStubTypeForVariableInSubtyping as isSimpleTypeStubTypeForVariableInSubtyping
 import org.jetbrains.kotlin.types.typeUtil.isStubTypeForBuilderInference as isSimpleTypeStubTypeForBuilderInference
 import org.jetbrains.kotlin.types.typeUtil.isStubType as isSimpleTypeStubType
+import org.jetbrains.kotlin.types.error.ErrorUtils
 
 interface ClassicTypeSystemContext : TypeSystemInferenceExtensionContext, TypeSystemCommonBackendContext {
     override fun TypeConstructorMarker.isDenotable(): Boolean {
@@ -87,12 +89,12 @@ interface ClassicTypeSystemContext : TypeSystemInferenceExtensionContext, TypeSy
 
     override fun TypeConstructorMarker.toErrorType(): SimpleTypeMarker {
         require(this is TypeConstructor && ErrorUtils.isError(declarationDescriptor), this::errorMessage)
-        return ErrorUtils.createErrorType("from type constructor(${toString()})")
+        return ErrorUtils.createErrorType(ErrorTypeKind.RESOLUTION_ERROR_TYPE, "from type constructor $this")
     }
 
     override fun KotlinTypeMarker.isUninferredParameter(): Boolean {
         require(this is KotlinType, this::errorMessage)
-        return ErrorUtils.isUninferredParameter(this)
+        return ErrorUtils.isUninferredTypeVariable(this)
     }
 
     override fun SimpleTypeMarker.isStubType(): Boolean {
@@ -698,12 +700,11 @@ interface ClassicTypeSystemContext : TypeSystemInferenceExtensionContext, TypeSy
     }
 
     override fun createErrorType(debugName: String): SimpleTypeMarker {
-        return ErrorUtils.createErrorType(debugName)
+        return ErrorUtils.createErrorType(ErrorTypeKind.RESOLUTION_ERROR_TYPE, debugName)
     }
 
-    override fun createErrorTypeWithCustomConstructor(debugName: String, constructor: TypeConstructorMarker): KotlinTypeMarker {
-        require(constructor is TypeConstructor, constructor::errorMessage)
-        return ErrorUtils.createErrorTypeWithCustomConstructor(debugName, constructor)
+    override fun createUninferredType(constructor: TypeConstructorMarker): KotlinTypeMarker {
+        return ErrorUtils.createErrorType(ErrorTypeKind.UNINFERRED_TYPE_VARIABLE, constructor as TypeConstructor, constructor.toString())
     }
 
     override fun TypeConstructorMarker.isCapturedTypeConstructor(): Boolean {

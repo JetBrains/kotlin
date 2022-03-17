@@ -14,6 +14,8 @@ import org.jetbrains.kotlin.resolve.lazy.ResolveSession
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.checker.ClassicTypeSystemContext
 import org.jetbrains.kotlin.types.checker.NewTypeVariableConstructor
+import org.jetbrains.kotlin.types.error.ErrorTypeKind
+import org.jetbrains.kotlin.types.error.ErrorUtils
 import org.jetbrains.kotlin.types.model.KotlinTypeMarker
 import org.jetbrains.kotlin.types.model.SimpleTypeMarker
 import org.jetbrains.kotlin.types.model.TypeConstructorMarker
@@ -43,7 +45,8 @@ internal class KtFe10TypeSystemCommonBackendContextForTypeMapping(
 
     override fun TypeConstructorMarker.defaultType(): KotlinTypeMarker {
         require(this is TypeConstructor)
-        val declaration = declarationDescriptor ?: return ErrorUtils.createErrorType("Unresolved declaration descriptor ($this)")
+        val declaration = declarationDescriptor
+            ?: return ErrorUtils.createErrorType(ErrorTypeKind.UNRESOLVED_DECLARATION, this.toString())
         return declaration.defaultType
     }
 
@@ -78,7 +81,7 @@ internal class KtFe10TypeSystemCommonBackendContextForTypeMapping(
         val declaration = declarationDescriptor
         if (declaration == null) {
             val errorArguments = arguments.map { TypeProjectionImpl(it as KotlinType) }
-            return ErrorUtils.createErrorTypeWithArguments("Unresolved type constructor $this", errorArguments)
+            return ErrorUtils.createErrorTypeWithArguments(ErrorTypeKind.UNRESOLVED_TYPE, errorArguments, this.toString())
         }
 
         val substitutions = LinkedHashMap<TypeConstructor, TypeProjection>(parameters.size)
@@ -106,7 +109,8 @@ internal class KtFe10TypeSystemCommonBackendContextForTypeMapping(
     override fun continuationTypeConstructor(): TypeConstructorMarker {
         val continuationFqName = StandardClassIds.Continuation.asSingleFqName()
         val foundClasses = resolveSession.getTopLevelClassifierDescriptors(continuationFqName, NoLookupLocation.FROM_IDE)
-        return foundClasses.firstOrNull()?.typeConstructor ?: ErrorUtils.createErrorTypeConstructor("Cannot find $continuationFqName")
+        return foundClasses.firstOrNull()?.typeConstructor
+            ?: ErrorUtils.createErrorTypeConstructor(ErrorTypeKind.NOT_FOUND_FQNAME, continuationFqName.toString())
     }
 
     override fun functionNTypeConstructor(n: Int): TypeConstructorMarker {

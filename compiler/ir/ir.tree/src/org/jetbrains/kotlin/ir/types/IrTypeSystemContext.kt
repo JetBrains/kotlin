@@ -422,7 +422,7 @@ interface IrTypeSystemContext : TypeSystemContext, TypeSystemCommonSuperTypesCon
         TODO("IrTypeSystemContext doesn't support constraint system resolution")
     }
 
-    override fun createErrorTypeWithCustomConstructor(debugName: String, constructor: TypeConstructorMarker): KotlinTypeMarker =
+    override fun createUninferredType(constructor: TypeConstructorMarker): KotlinTypeMarker =
         TODO("IrTypeSystemContext doesn't support constraint system resolution")
 
     override fun nullableAnyType() = irBuiltIns.anyNType as IrSimpleType

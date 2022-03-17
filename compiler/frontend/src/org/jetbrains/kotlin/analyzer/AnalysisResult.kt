@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.analyzer
 
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.types.ErrorUtils
+import org.jetbrains.kotlin.types.error.ErrorUtils
 import java.io.File
 
 open class AnalysisResult protected constructor(
@@ -58,12 +58,12 @@ open class AnalysisResult protected constructor(
         }
     }
 
-    private class CompilationError(bindingContext: BindingContext) : AnalysisResult(bindingContext, ErrorUtils.getErrorModule())
+    private class CompilationError(bindingContext: BindingContext) : AnalysisResult(bindingContext, ErrorUtils.errorModule)
 
     private class InternalError(
         bindingContext: BindingContext,
         val exception: Throwable
-    ) : AnalysisResult(bindingContext, ErrorUtils.getErrorModule())
+    ) : AnalysisResult(bindingContext, ErrorUtils.errorModule)
 
     class RetryWithAdditionalRoots(
         bindingContext: BindingContext,
@@ -75,7 +75,7 @@ open class AnalysisResult protected constructor(
     ) : AnalysisResult(bindingContext, moduleDescriptor)
 
     companion object {
-        val EMPTY: AnalysisResult = success(BindingContext.EMPTY, ErrorUtils.getErrorModule())
+        val EMPTY: AnalysisResult = success(BindingContext.EMPTY, ErrorUtils.errorModule)
 
         @JvmStatic
         fun success(bindingContext: BindingContext, module: ModuleDescriptor): AnalysisResult {

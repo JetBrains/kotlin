@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.resolve.calls.inference.model.ExpectedTypeConstraint
 import org.jetbrains.kotlin.resolve.calls.model.*
 import org.jetbrains.kotlin.resolve.calls.tower.CandidateFactory
 import org.jetbrains.kotlin.resolve.calls.tower.forceResolution
-import org.jetbrains.kotlin.types.ErrorUtils
+import org.jetbrains.kotlin.types.error.ErrorUtils
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.UnwrappedType
 import org.jetbrains.kotlin.types.model.safeSubstitute

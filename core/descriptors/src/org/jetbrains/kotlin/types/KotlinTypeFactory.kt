@@ -28,6 +28,10 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.getKotlinTypeRefiner
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.types.checker.KotlinTypeRefiner
+import org.jetbrains.kotlin.types.error.ErrorScope
+import org.jetbrains.kotlin.types.error.ErrorScopeKind
+import org.jetbrains.kotlin.types.error.ErrorUtils
+import org.jetbrains.kotlin.types.error.ThrowingScope
 
 typealias RefinedTypeFactory = (KotlinTypeRefiner) -> SimpleType?
 
@@ -54,7 +58,9 @@ object KotlinTypeFactory {
                         refinerToUse
                     )
             }
-            is TypeAliasDescriptor -> ErrorUtils.createErrorScope("Scope for abbreviation: ${descriptor.name}", true)
+            is TypeAliasDescriptor -> ErrorUtils.createErrorScope(
+                ErrorScopeKind.SCOPE_FOR_ABBREVIATION_TYPE, throwExceptions = true, descriptor.name.toString()
+            )
             else -> {
                 if (constructor is IntersectionTypeConstructor) {
                     return constructor.createScopeForKotlinType()
@@ -192,7 +198,7 @@ object KotlinTypeFactory {
         constructor,
         emptyList(),
         nullable,
-        ErrorUtils.createErrorScope("Scope for integer literal type", true)
+        ErrorUtils.createErrorScope(ErrorScopeKind.INTEGER_LITERAL_TYPE_SCOPE, throwExceptions = true, "unknown integer literal type")
     )
 }
 
@@ -220,7 +226,7 @@ private class SimpleTypeImpl(
     }
 
     init {
-        if (memberScope is ErrorUtils.ErrorScope) {
+        if (memberScope is ErrorScope && memberScope !is ThrowingScope) {
             throw IllegalStateException("SimpleTypeImpl should not be created for error type: $memberScope\n$constructor")
         }
     }

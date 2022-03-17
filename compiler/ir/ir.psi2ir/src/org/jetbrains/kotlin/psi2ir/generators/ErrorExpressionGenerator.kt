@@ -22,7 +22,8 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrErrorExpressionImpl
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.startOffsetSkippingComments
-import org.jetbrains.kotlin.types.ErrorUtils
+import org.jetbrains.kotlin.types.error.ErrorTypeKind
+import org.jetbrains.kotlin.types.error.ErrorUtils
 
 class ErrorExpressionGenerator(statementGenerator: StatementGenerator) : StatementGeneratorExtension(statementGenerator) {
     private val ignoreErrors: Boolean get() = context.configuration.ignoreErrors
@@ -39,7 +40,7 @@ class ErrorExpressionGenerator(statementGenerator: StatementGenerator) : Stateme
                 if (ktElement is KtExpression)
                     getErrorExpressionType(ktElement)
                 else
-                    ErrorUtils.createErrorType("")
+                    ErrorUtils.createErrorType(ErrorTypeKind.TYPE_FOR_GENERATED_ERROR_EXPRESSION)
             IrErrorExpressionImpl(
                 ktElement.startOffsetSkippingComments, ktElement.endOffset,
                 errorExpressionType.toIrType(),
@@ -66,7 +67,7 @@ class ErrorExpressionGenerator(statementGenerator: StatementGenerator) : Stateme
     }
 
     private fun getErrorExpressionType(ktExpression: KtExpression) =
-        getTypeInferredByFrontend(ktExpression) ?: ErrorUtils.createErrorType("")
+        getTypeInferredByFrontend(ktExpression) ?: ErrorUtils.createErrorType(ErrorTypeKind.ERROR_EXPRESSION_TYPE)
 
     fun generateErrorSimpleName(ktName: KtSimpleNameExpression): IrExpression = generateErrorExpression(ktName) {
         val type = getErrorExpressionType(ktName).toIrType()

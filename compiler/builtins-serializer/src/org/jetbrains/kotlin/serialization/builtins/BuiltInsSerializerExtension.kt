@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.serialization.AnnotationSerializer
 import org.jetbrains.kotlin.serialization.KotlinSerializerExtensionBase
 import org.jetbrains.kotlin.serialization.deserialization.builtins.BuiltInSerializerProtocol
 import org.jetbrains.kotlin.types.KotlinType
-import org.jetbrains.kotlin.types.UnresolvedType
+import org.jetbrains.kotlin.types.typeUtil.isUnresolvedType
 
 class BuiltInsSerializerExtension : KotlinSerializerExtensionBase(BuiltInSerializerProtocol) {
     private val shortNameToClassId = mapOf(
@@ -52,9 +52,9 @@ class BuiltInsSerializerExtension : KotlinSerializerExtensionBase(BuiltInSeriali
     private val KotlinType.presentableName: String
         get() {
             val unwrapped = unwrap()
-            if (unwrapped !is UnresolvedType) {
-                throw UnsupportedOperationException("Error types which are not UnresolvedType instances are not supported here: $unwrapped")
+            if (!isUnresolvedType(unwrapped)) {
+                throw UnsupportedOperationException("Error types which are not unresolved type instances are not supported here: $unwrapped")
             }
-            return unwrapped.presentableName
+            return unwrapped.debugMessage.removePrefix("Unresolved type for ")
         }
 }

@@ -40,8 +40,10 @@ import org.jetbrains.kotlin.resolve.scopes.receivers.Receiver
 import org.jetbrains.kotlin.resolve.scopes.receivers.TransientReceiver
 import org.jetbrains.kotlin.resolve.source.toSourceElement
 import org.jetbrains.kotlin.types.*
+import org.jetbrains.kotlin.types.error.ErrorUtils
 import org.jetbrains.kotlin.types.TypeUtils.NO_EXPECTED_TYPE
 import org.jetbrains.kotlin.types.checker.KotlinTypeRefiner
+import org.jetbrains.kotlin.types.error.ErrorTypeKind
 import org.jetbrains.kotlin.types.expressions.FunctionWithBigAritySupport.LanguageVersionDependent
 import org.jetbrains.kotlin.types.expressions.typeInfoFactory.createTypeInfo
 import org.jetbrains.kotlin.types.expressions.typeInfoFactory.noTypeInfo
@@ -127,7 +129,7 @@ class DoubleColonExpressionResolver(
             }
         }
 
-        return createTypeInfo(ErrorUtils.createErrorType("Unresolved class"), c)
+        return createTypeInfo(ErrorUtils.createErrorType(ErrorTypeKind.UNRESOLVED_CLASS_TYPE, expression.toString()), c)
     }
 
     private fun checkClassLiteral(
@@ -479,7 +481,7 @@ class DoubleColonExpressionResolver(
         val classifier = qualifierResolutionResult.classifierDescriptor
         if (classifier == null) {
             typeResolver.resolveTypeProjections(
-                typeResolutionContext, ErrorUtils.createErrorType("No type").constructor, qualifierResolutionResult.allProjections
+                typeResolutionContext, ErrorUtils.createErrorType(ErrorTypeKind.UNRESOLVED_TYPE, expression.text).constructor, qualifierResolutionResult.allProjections
             )
             return null
         }
@@ -534,7 +536,7 @@ class DoubleColonExpressionResolver(
         if (callableReference.getReferencedName().isEmpty()) {
             if (!expression.isEmptyLHS) resolveDoubleColonLHS(expression, c)
             c.trace.report(UNRESOLVED_REFERENCE.on(callableReference, callableReference))
-            val errorType = ErrorUtils.createErrorType("Empty callable reference")
+            val errorType = ErrorUtils.createErrorType(ErrorTypeKind.EMPTY_CALLABLE_REFERENCE)
             return dataFlowAnalyzer.createCheckedTypeInfo(errorType, c, expression)
         }
 

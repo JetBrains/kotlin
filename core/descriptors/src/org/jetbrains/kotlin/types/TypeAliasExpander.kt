@@ -8,10 +8,11 @@ package org.jetbrains.kotlin.types
 import org.jetbrains.kotlin.descriptors.TypeAliasDescriptor
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
-import org.jetbrains.kotlin.descriptors.annotations.composeAnnotations
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
+import org.jetbrains.kotlin.types.error.ErrorTypeKind
 import org.jetbrains.kotlin.types.typeUtil.containsTypeAliasParameters
 import org.jetbrains.kotlin.types.typeUtil.requiresTypeAliasExpansion
+import org.jetbrains.kotlin.types.error.ErrorUtils
 
 class TypeAliasExpander(
     private val reportStrategy: TypeAliasExpansionReportStrategy,
@@ -188,7 +189,8 @@ class TypeAliasExpander(
                     reportStrategy.recursiveTypeAlias(typeDescriptor)
                     return TypeProjectionImpl(
                         Variance.INVARIANT,
-                        ErrorUtils.createErrorType("Recursive type alias: ${typeDescriptor.name}")
+                        ErrorUtils.createErrorType(
+                            ErrorTypeKind.RECURSIVE_TYPE_ALIAS, typeDescriptor.name.toString())
                     )
                 }
 

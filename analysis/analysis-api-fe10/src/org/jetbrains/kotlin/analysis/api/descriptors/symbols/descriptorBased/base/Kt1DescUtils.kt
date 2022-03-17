@@ -50,6 +50,9 @@ import org.jetbrains.kotlin.synthetic.SyntheticJavaPropertyDescriptor
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.checker.NewCapturedType
 import org.jetbrains.kotlin.types.checker.NewTypeVariableConstructor
+import org.jetbrains.kotlin.types.error.ErrorType
+import org.jetbrains.kotlin.types.error.ErrorTypeKind
+import org.jetbrains.kotlin.types.error.ErrorUtils
 
 internal val MemberDescriptor.ktSymbolKind: KtSymbolKind
     get() {
@@ -229,7 +232,7 @@ internal fun KotlinType.toKtType(analysisContext: Fe10AnalysisContext): KtType {
                 return if (newTypeParameterDescriptor != null) {
                     KtFe10TypeParameterType(unwrappedType, newTypeParameterDescriptor, analysisContext)
                 } else {
-                    KtFe10ClassErrorType(ErrorUtils.createErrorType("Unresolved type parameter type") as ErrorType, analysisContext)
+                    KtFe10ClassErrorType(ErrorUtils.createErrorType(ErrorTypeKind.UNRESOLVED_TYPE_PARAMETER_TYPE), analysisContext)
                 }
             }
 
@@ -241,8 +244,8 @@ internal fun KotlinType.toKtType(analysisContext: Fe10AnalysisContext): KtType {
                 is FunctionClassDescriptor -> KtFe10FunctionalType(unwrappedType, typeDeclaration, analysisContext)
                 is ClassDescriptor -> KtFe10UsualClassType(unwrappedType, typeDeclaration, analysisContext)
                 else -> {
-                    val errorType = ErrorUtils.createErrorTypeWithCustomConstructor("Unresolved class type", typeConstructor)
-                    KtFe10ClassErrorType(errorType as ErrorType, analysisContext)
+                    val errorType = ErrorUtils.createErrorType(ErrorTypeKind.UNRESOLVED_CLASS_TYPE, typeConstructor, typeDeclaration.toString())
+                    KtFe10ClassErrorType(errorType, analysisContext)
                 }
             }
 

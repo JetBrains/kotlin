@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.metadata.ProtoBuf.Annotation.Argument.Value.Type
 import org.jetbrains.kotlin.metadata.deserialization.Flags
 import org.jetbrains.kotlin.resolve.constants.*
 import org.jetbrains.kotlin.resolve.descriptorUtil.annotationClass
-import org.jetbrains.kotlin.types.ErrorUtils
+import org.jetbrains.kotlin.types.error.ErrorUtils
 import org.jetbrains.kotlin.types.KotlinType
 
 open class AnnotationSerializer(private val stringTable: DescriptorAwareStringTable) {

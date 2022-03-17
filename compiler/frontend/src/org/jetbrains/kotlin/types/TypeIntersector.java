@@ -27,6 +27,8 @@ import org.jetbrains.kotlin.resolve.calls.inference.CallHandle;
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystem;
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemBuilderImpl;
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker;
+import org.jetbrains.kotlin.types.error.ErrorTypeKind;
+import org.jetbrains.kotlin.types.error.ErrorUtils;
 
 import java.util.*;
 
@@ -68,7 +70,7 @@ public class TypeIntersector {
 
         if (nullabilityStripped.isEmpty()) {
             // All types were errors
-            return ErrorUtils.createErrorType("Intersection of error types: " + types);
+            return ErrorUtils.createErrorType(ErrorTypeKind.INTERSECTION_OF_ERROR_TYPES, types.toString());
         }
 
         KotlinTypeChecker typeChecker = KotlinTypeChecker.DEFAULT;

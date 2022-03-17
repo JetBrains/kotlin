@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.metadata.serialization.StringTable
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.resolve.descriptorUtil.classId
-import org.jetbrains.kotlin.types.ErrorUtils
+import org.jetbrains.kotlin.types.error.ErrorUtils
 
 interface DescriptorAwareStringTable : StringTable {
     fun getQualifiedClassNameIndex(classId: ClassId): Int =

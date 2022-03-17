@@ -45,19 +45,17 @@ import org.jetbrains.kotlin.resolve.calls.util.CallMaker
 import org.jetbrains.kotlin.resolve.calls.util.FakeCallableDescriptorForObject
 import org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluator
 import org.jetbrains.kotlin.resolve.scopes.receivers.*
-import org.jetbrains.kotlin.types.ErrorUtils
-import org.jetbrains.kotlin.types.KotlinType
-import org.jetbrains.kotlin.types.TypeUtils
+import org.jetbrains.kotlin.types.*
+import org.jetbrains.kotlin.types.error.ErrorUtils
 import org.jetbrains.kotlin.types.TypeUtils.NO_EXPECTED_TYPE
 import org.jetbrains.kotlin.types.checker.KotlinTypeRefiner
+import org.jetbrains.kotlin.types.error.ErrorTypeKind
 import org.jetbrains.kotlin.types.expressions.DataFlowAnalyzer
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingContext
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingServices
 import org.jetbrains.kotlin.types.expressions.KotlinTypeInfo
 import org.jetbrains.kotlin.types.expressions.typeInfoFactory.createTypeInfo
 import org.jetbrains.kotlin.types.expressions.typeInfoFactory.noTypeInfo
-import org.jetbrains.kotlin.types.isError
-import org.jetbrains.kotlin.types.TypeRefinement
 import javax.inject.Inject
 
 class CallExpressionResolver(
@@ -276,7 +274,7 @@ class CallExpressionResolver(
                 context.trace.report(
                     FUNCTION_EXPECTED.on(
                         calleeExpression, calleeExpression,
-                        type ?: ErrorUtils.createErrorType("")
+                        type ?: ErrorUtils.createErrorType(ErrorTypeKind.ERROR_EXPECTED_TYPE)
                     )
                 )
                 argumentTypeResolver.analyzeArgumentsAndRecordTypes(
@@ -456,7 +454,8 @@ class CallExpressionResolver(
         for (element in elementChain) {
             val receiverType = receiverTypeInfo.type
                 ?: ErrorUtils.createErrorType(
-                    "Type for " + when (val receiver = element.receiver) {
+                    ErrorTypeKind.ERROR_RECEIVER_TYPE,
+                    when (val receiver = element.receiver) {
                         is KtNameReferenceExpression -> receiver.getReferencedName()
                         else -> receiver.text
                     }

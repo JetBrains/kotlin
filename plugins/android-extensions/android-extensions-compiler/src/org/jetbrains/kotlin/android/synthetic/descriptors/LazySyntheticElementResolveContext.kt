@@ -24,7 +24,8 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.storage.StorageManager
-import org.jetbrains.kotlin.types.ErrorUtils
+import org.jetbrains.kotlin.types.error.ErrorTypeKind
+import org.jetbrains.kotlin.types.error.ErrorUtils
 import org.jetbrains.kotlin.types.SimpleType
 import java.util.*
 
@@ -67,7 +68,7 @@ internal class SyntheticElementResolveContext(
         val layoutContainer: SimpleType?
 ) {
     companion object {
-        private fun errorType() = ErrorUtils.createErrorType("")
+        private fun errorType() = ErrorUtils.createErrorType(ErrorTypeKind.SYNTHETIC_ELEMENT_ERROR_TYPE)
         val ERROR_CONTEXT = SyntheticElementResolveContext(errorType(), errorType(), null, errorType(), null, null, null)
     }
 

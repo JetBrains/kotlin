@@ -10,12 +10,14 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.descriptors.*;
-import org.jetbrains.kotlin.descriptors.annotations.Annotations;
 import org.jetbrains.kotlin.renderer.DescriptorRenderer;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
 import org.jetbrains.kotlin.resolve.scopes.MemberScope;
+import org.jetbrains.kotlin.types.error.ErrorScopeKind;
+import org.jetbrains.kotlin.types.error.ErrorTypeKind;
 import org.jetbrains.kotlin.types.typeUtil.TypeUtilsKt;
 import org.jetbrains.kotlin.utils.DFS;
+import org.jetbrains.kotlin.types.error.ErrorUtils;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -112,7 +114,7 @@ public class CommonSupertypes {
                 iterator.remove();
             }
             if (KotlinTypeKt.isError(type)) {
-                return ErrorUtils.createErrorType("Supertype of error type " + type);
+                return ErrorUtils.createErrorType(ErrorTypeKind.SUPER_TYPE_FOR_ERROR_TYPE, type.toString());
             }
             nullable |= type.isMarkedNullable();
         }
@@ -270,7 +272,7 @@ public class CommonSupertypes {
             newScope = classifier.getDefaultType().getMemberScope();
         }
         else {
-            newScope = ErrorUtils.createErrorScope("A scope for common supertype which is not a normal classifier", true);
+            newScope = ErrorUtils.createErrorScope(ErrorScopeKind.NON_CLASSIFIER_SUPER_TYPE_SCOPE, true);
         }
         return KotlinTypeFactory.simpleTypeWithNonTrivialMemberScope(TypeAttributes.Companion.getEmpty(), constructor, newProjections, nullable, newScope);
     }

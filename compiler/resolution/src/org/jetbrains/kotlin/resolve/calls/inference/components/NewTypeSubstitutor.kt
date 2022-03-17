@@ -10,9 +10,11 @@ import org.jetbrains.kotlin.resolve.calls.inference.isCaptured
 import org.jetbrains.kotlin.resolve.calls.inference.model.TypeVariableFromCallableDescriptor
 import org.jetbrains.kotlin.resolve.calls.inference.substitute
 import org.jetbrains.kotlin.types.*
+import org.jetbrains.kotlin.types.error.ErrorUtils
 import org.jetbrains.kotlin.types.checker.NewCapturedType
 import org.jetbrains.kotlin.types.checker.NewCapturedTypeConstructor
 import org.jetbrains.kotlin.types.checker.intersectTypes
+import org.jetbrains.kotlin.types.error.ErrorTypeKind
 import org.jetbrains.kotlin.types.model.TypeSubstitutorMarker
 
 interface NewTypeSubstitutor : TypeSubstitutorMarker {
@@ -185,7 +187,7 @@ interface NewTypeSubstitutor : TypeSubstitutorMarker {
         val arguments = type.arguments
         if (parameters.size != arguments.size) {
             // todo error type or exception?
-            return ErrorUtils.createErrorType("Inconsistent type: $type (parameters.size = ${parameters.size}, arguments.size = ${arguments.size})")
+            return ErrorUtils.createErrorType(ErrorTypeKind.TYPE_WITH_MISMATCHED_TYPE_ARGUMENTS_AND_PARAMETERS, type.toString(), parameters.size.toString(), arguments.size.toString())
         }
         val newArguments = arrayOfNulls<TypeProjection?>(arguments.size)
 

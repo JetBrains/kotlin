@@ -243,7 +243,7 @@ internal class FunctionsTypingVisitor(facade: ExpressionTypingInternals) : Expre
                 return components.builtIns.unitType
             }
         }
-        return returnType ?: CANT_INFER_FUNCTION_PARAM_TYPE
+        return returnType ?: CANNOT_INFER_FUNCTION_PARAM_TYPE
     }
 
     private fun computeUnsafeReturnType(

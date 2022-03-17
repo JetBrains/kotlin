@@ -12,6 +12,8 @@ import org.jetbrains.kotlin.resolve.calls.components.transformToResolvedLambda
 import org.jetbrains.kotlin.resolve.calls.inference.model.*
 import org.jetbrains.kotlin.resolve.calls.model.*
 import org.jetbrains.kotlin.types.*
+import org.jetbrains.kotlin.types.error.ErrorTypeKind
+import org.jetbrains.kotlin.types.error.ErrorUtils
 import org.jetbrains.kotlin.types.model.TypeConstructorMarker
 import org.jetbrains.kotlin.types.model.TypeVariableMarker
 import org.jetbrains.kotlin.types.model.safeSubstitute
@@ -327,15 +329,15 @@ class KotlinConstraintSystemCompleter(
 
         val resultErrorType = when {
             typeVariable is TypeVariableFromCallableDescriptor -> {
-                ErrorUtils.createUninferredParameterType(typeVariable.originalTypeParameter)
+                ErrorUtils.createErrorType(ErrorTypeKind.UNINFERRED_TYPE_VARIABLE, typeVariable.originalTypeParameter.name.asString())
             }
             typeVariable is TypeVariableForLambdaParameterType && typeVariable.atom is LambdaKotlinCallArgument -> {
                 diagnosticsHolder.addDiagnostic(
                     NotEnoughInformationForLambdaParameter(typeVariable.atom, typeVariable.index)
                 )
-                ErrorUtils.createErrorType("Cannot infer lambda parameter type")
+                ErrorUtils.createErrorType(ErrorTypeKind.UNINFERRED_LAMBDA_PARAMETER_TYPE)
             }
-            else -> ErrorUtils.createErrorType("Cannot infer type variable $typeVariable")
+            else -> ErrorUtils.createErrorType(ErrorTypeKind.UNINFERRED_TYPE_VARIABLE, typeVariable.toString())
         }
 
         fixVariable(typeVariable, resultErrorType, FixVariableConstraintPositionImpl(typeVariable, resolvedAtom))

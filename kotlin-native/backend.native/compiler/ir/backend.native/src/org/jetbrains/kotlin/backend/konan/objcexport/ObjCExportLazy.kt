@@ -36,7 +36,7 @@ import org.jetbrains.kotlin.resolve.scopes.LexicalScopeKind
 import org.jetbrains.kotlin.resolve.scopes.LexicalWritableScope
 import org.jetbrains.kotlin.resolve.scopes.LocalRedeclarationChecker
 import org.jetbrains.kotlin.resolve.source.PsiSourceFile
-import org.jetbrains.kotlin.types.ErrorUtils
+import org.jetbrains.kotlin.types.error.ErrorUtils
 
 interface ObjCExportLazy {
     interface Configuration {

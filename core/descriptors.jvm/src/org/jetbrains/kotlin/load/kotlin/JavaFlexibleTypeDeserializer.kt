@@ -21,15 +21,14 @@ import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.metadata.jvm.JvmProtoBuf
 import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmProtoBufUtil
 import org.jetbrains.kotlin.serialization.deserialization.FlexibleTypeDeserializer
-import org.jetbrains.kotlin.types.ErrorUtils
-import org.jetbrains.kotlin.types.KotlinType
-import org.jetbrains.kotlin.types.KotlinTypeFactory
-import org.jetbrains.kotlin.types.SimpleType
+import org.jetbrains.kotlin.types.*
+import org.jetbrains.kotlin.types.error.ErrorUtils
+import org.jetbrains.kotlin.types.error.ErrorTypeKind
 
 object JavaFlexibleTypeDeserializer : FlexibleTypeDeserializer {
     override fun create(proto: ProtoBuf.Type, flexibleId: String, lowerBound: SimpleType, upperBound: SimpleType): KotlinType {
         if (flexibleId != JvmProtoBufUtil.PLATFORM_TYPE_ID) {
-            return ErrorUtils.createErrorType("Error java flexible type with id: $flexibleId. ($lowerBound..$upperBound)")
+            return ErrorUtils.createErrorType(ErrorTypeKind.ERROR_FLEXIBLE_TYPE, flexibleId, lowerBound.toString(), upperBound.toString())
         }
         if (proto.hasExtension(JvmProtoBuf.isRaw)) {
             return RawTypeImpl(lowerBound, upperBound)

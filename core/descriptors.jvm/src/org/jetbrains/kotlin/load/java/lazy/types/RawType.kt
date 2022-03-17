@@ -19,7 +19,6 @@ package org.jetbrains.kotlin.load.java.lazy.types
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
-import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.load.java.components.TypeUsage
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.renderer.DescriptorRendererOptions
@@ -30,6 +29,8 @@ import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 import org.jetbrains.kotlin.types.checker.KotlinTypeRefiner
 import org.jetbrains.kotlin.types.TypeRefinement
+import org.jetbrains.kotlin.types.error.ErrorUtils
+import org.jetbrains.kotlin.types.error.ErrorTypeKind
 import org.jetbrains.kotlin.types.typeUtil.builtIns
 
 class RawTypeImpl private constructor(lowerBound: SimpleType, upperBound: SimpleType, disableAssertion: Boolean) :
@@ -149,7 +150,9 @@ internal class RawSubstitution(typeParameterUpperBoundEraser: TypeParameterUpper
             ) to false
         }
 
-        if (type.isError) return ErrorUtils.createErrorType("Raw error type: ${type.constructor}") to false
+        if (type.isError) {
+            return ErrorUtils.createErrorType(ErrorTypeKind.ERROR_RAW_TYPE, type.constructor.toString()) to false
+        }
 
         val memberScope = declaration.getMemberScope(this)
         return KotlinTypeFactory.simpleTypeWithNonTrivialMemberScope(

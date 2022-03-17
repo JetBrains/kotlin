@@ -31,7 +31,8 @@ import org.jetbrains.kotlin.resolve.checkers.TrailingCommaChecker
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope
 import org.jetbrains.kotlin.resolve.scopes.LexicalWritableScope
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
-import org.jetbrains.kotlin.types.ErrorUtils
+import org.jetbrains.kotlin.types.error.ErrorTypeKind
+import org.jetbrains.kotlin.types.error.ErrorUtils
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
@@ -93,7 +94,7 @@ class DestructuringDeclarationResolver(
         receiver: ReceiverValue?,
         initializer: KtExpression?
     ): KotlinType {
-        fun errorType() = ErrorUtils.createErrorType("$componentName() return type")
+        fun errorType() = ErrorUtils.createErrorType(ErrorTypeKind.ERROR_TYPE_FOR_DESTRUCTURING_COMPONENT, componentName.toString())
 
         if (receiver == null) return errorType()
 

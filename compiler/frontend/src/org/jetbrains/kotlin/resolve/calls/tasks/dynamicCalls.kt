@@ -224,7 +224,7 @@ class DynamicCallableDescriptors(private val storageManager: StorageManager, bui
                 for (funLiteralArg in call.functionLiteralArguments) {
                     addParameter(
                         funLiteralArg,
-                        funLiteralArg.getLambdaExpression()?.let { getFunctionType(it) } ?: TypeUtils.CANT_INFER_FUNCTION_PARAM_TYPE,
+                        funLiteralArg.getLambdaExpression()?.let { getFunctionType(it) } ?: TypeUtils.CANNOT_INFER_FUNCTION_PARAM_TYPE,
                         null)
                 }
 

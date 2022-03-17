@@ -34,6 +34,8 @@ import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.source.getPsi
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.checker.SimpleClassicTypeSystemContext
+import org.jetbrains.kotlin.types.error.ErrorUtils
+import org.jetbrains.kotlin.types.error.ErrorTypeKind
 
 private typealias SubstitutionMap = Map<String, Pair<KtTypeParameter, KtTypeProjection>>
 
@@ -137,7 +139,7 @@ class ErrorTypeCorrector(
         if (arguments.isEmpty()) return baseExpression
 
         val typeReference = PsiTreeUtil.getParentOfType(type, KtTypeReference::class.java, true)
-        val kotlinType = bindingContext[BindingContext.TYPE, typeReference] ?: ErrorUtils.createErrorType("Kapt error type")
+        val kotlinType = bindingContext[BindingContext.TYPE, typeReference] ?: ErrorUtils.createErrorType(ErrorTypeKind.KAPT_ERROR_TYPE)
 
         val typeSystem = SimpleClassicTypeSystemContext
         val typeMappingMode = when (typeKind) {

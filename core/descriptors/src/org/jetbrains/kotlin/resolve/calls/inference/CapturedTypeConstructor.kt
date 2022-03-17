@@ -18,10 +18,10 @@ package org.jetbrains.kotlin.resolve.calls.inference
 
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
-import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.types.*
+import org.jetbrains.kotlin.types.error.ErrorUtils
 import org.jetbrains.kotlin.types.Variance.IN_VARIANCE
 import org.jetbrains.kotlin.types.Variance.OUT_VARIANCE
 import org.jetbrains.kotlin.types.checker.KotlinTypeRefiner
@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.types.checker.NewCapturedTypeConstructor
 import org.jetbrains.kotlin.types.model.CapturedTypeConstructorMarker
 import org.jetbrains.kotlin.types.model.CapturedTypeMarker
 import org.jetbrains.kotlin.types.TypeRefinement
+import org.jetbrains.kotlin.types.error.ErrorScopeKind
 import org.jetbrains.kotlin.types.typeUtil.builtIns
 
 interface CapturedTypeConstructor : CapturedTypeConstructorMarker, TypeConstructor {
@@ -83,7 +84,8 @@ class CapturedType(
 
     override val memberScope: MemberScope
         get() = ErrorUtils.createErrorScope(
-            "No member resolution should be done on captured type, it used only during constraint system resolution", true
+            ErrorScopeKind.CAPTURED_TYPE_SCOPE,
+            throwExceptions = true
         )
 
     override val subTypeRepresentative: KotlinType
