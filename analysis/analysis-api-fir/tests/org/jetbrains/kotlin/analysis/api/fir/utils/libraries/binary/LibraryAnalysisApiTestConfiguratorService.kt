@@ -15,7 +15,7 @@ import com.intellij.psi.ClassFileViewProviderFactory
 import com.intellij.psi.FileTypeFileViewProviders
 import com.intellij.psi.compiled.ClassFileDecompilers
 import com.intellij.psi.search.GlobalSearchScope
-import org.jetbrains.kotlin.analysis.api.fir.FirAnalysisApiTestConfiguratorService
+import org.jetbrains.kotlin.analysis.api.fir.FirAnalysisApiNormalModeTestConfiguratorService
 import org.jetbrains.kotlin.analysis.test.framework.AnalysisApiTestConfiguratorService
 import org.jetbrains.kotlin.analysis.decompiler.psi.KotlinBuiltInDecompiler
 import org.jetbrains.kotlin.analysis.decompiler.psi.KotlinClassFileDecompiler
@@ -31,7 +31,7 @@ import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 
 object LibraryAnalysisApiTestConfiguratorService : AnalysisApiTestConfiguratorService {
-    override val allowDependedAnalysisSession: Boolean get() = false
+    override val analyseInDependentSession: Boolean get() = false
 
     override fun TestConfigurationBuilder.configureTest(disposable: Disposable) {
         useConfigurators(::LibraryEnvironmentConfigurator)
@@ -50,7 +50,7 @@ object LibraryAnalysisApiTestConfiguratorService : AnalysisApiTestConfiguratorSe
     }
 
     override fun registerApplicationServices(application: MockApplication) {
-        FirAnalysisApiTestConfiguratorService.registerApplicationServices(application)
+        FirAnalysisApiNormalModeTestConfiguratorService.registerApplicationServices(application)
         if (application.getServiceIfCreated(ClsKotlinBinaryClassCache::class.java) != null) return
         application.registerService(ClsKotlinBinaryClassCache::class.java)
         application.registerService(FileAttributeService::class.java, DummyFileAttributeService)
@@ -68,6 +68,6 @@ object LibraryAnalysisApiTestConfiguratorService : AnalysisApiTestConfiguratorSe
     }
 
     override fun doOutOfBlockModification(file: KtFile) {
-        FirAnalysisApiTestConfiguratorService.doOutOfBlockModification(file)
+        FirAnalysisApiNormalModeTestConfiguratorService.doOutOfBlockModification(file)
     }
 }

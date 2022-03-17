@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.services.ServiceRegistrationData
 
 internal object SymbolLightClassesForLibraryAnalysisApiTestConfiguratorService : AnalysisApiTestConfiguratorService {
+    override val analyseInDependentSession: Boolean get() = false
     override fun TestConfigurationBuilder.configureTest(disposable: Disposable) {
         with(LibraryAnalysisApiTestConfiguratorService) {
             configureTest(disposable)

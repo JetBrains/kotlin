@@ -11,6 +11,9 @@ import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.util.Disposer
 import com.intellij.testFramework.TestDataFile
 import junit.framework.ComparisonFailure
+import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
+import org.jetbrains.kotlin.analysis.api.analyse
+import org.jetbrains.kotlin.analysis.api.analyseInDependedAnalysisSession
 import org.jetbrains.kotlin.analysis.test.framework.AnalysisApiTestConfiguratorService
 import org.jetbrains.kotlin.analysis.test.framework.TestWithDisposable
 import org.jetbrains.kotlin.analysis.test.framework.project.structure.KotlinProjectStructureProviderTestImpl
@@ -22,6 +25,7 @@ import org.jetbrains.kotlin.analysis.test.framework.project.structure.getKtFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.cli.jvm.config.addJavaSourceRoots
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
+import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.ExecutionListenerBasedDisposableProvider
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
@@ -42,20 +46,14 @@ import org.junit.jupiter.api.TestInfo
 import java.io.File
 import java.nio.file.Path
 import java.nio.file.Paths
-import java.util.concurrent.ExecutionException
 import kotlin.io.path.exists
 import kotlin.io.path.nameWithoutExtension
 
 abstract class AbstractAnalysisApiBasedTest : TestWithDisposable() {
     abstract val configurator: AnalysisApiTestConfiguratorService
 
-    protected open val enableTestInDependedMode: Boolean
-        get() = configurator.allowDependedAnalysisSession
-
     protected lateinit var testInfo: KotlinTestInfo
         private set
-
-    protected var useDependedAnalysisSession: Boolean = false
 
     protected lateinit var testDataPath: Path
         private set
@@ -192,21 +190,15 @@ abstract class AbstractAnalysisApiBasedTest : TestWithDisposable() {
 
         configurator.prepareTestFiles(ktFiles, singleModule, testServices)
         doTestByFileStructure(ktFiles, moduleStructure, testServices)
-        if (!enableTestInDependedMode || ktFiles.any {
-                InTextDirectivesUtils.isDirectiveDefined(it.text, DISABLE_DEPENDED_MODE_DIRECTIVE)
-            }) {
-            return
-        }
-        try {
-            useDependedAnalysisSession = true
-            doTestByFileStructure(configurator.processTestFiles(ktFiles), moduleStructure, testServices)
-        } catch (e: SkipDependedModeException) {
-            // Skip the test if needed
-        } catch (e: ExecutionException) {
-            if (e.cause !is SkipDependedModeException)
-                throw Exception("Test succeeded in normal analysis mode but failed in depended analysis mode.", e)
-        } catch (e: Exception) {
-            throw Exception("Test succeeded in normal analysis mode but failed in depended analysis mode.", e)
+    }
+
+    protected fun <R> analyseForTest(contextElement: KtElement, action: KtAnalysisSession.() -> R): R {
+        return if (configurator.analyseInDependentSession) {
+            require(!contextElement.isPhysical)
+            val originalFile = configurator.getOriginalFile(contextElement.containingKtFile)
+            analyseInDependedAnalysisSession(originalFile, contextElement, action)
+        } else {
+            analyse(contextElement, action)
         }
     }
 
@@ -225,8 +217,6 @@ abstract class AbstractAnalysisApiBasedTest : TestWithDisposable() {
             tags = testInfo.tags
         )
     }
-
-    protected class SkipDependedModeException : Exception()
 
     companion object {
         val DISABLE_DEPENDED_MODE_DIRECTIVE = "DISABLE_DEPENDED_MODE"
