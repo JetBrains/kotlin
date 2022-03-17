@@ -59,6 +59,9 @@ class ConeEquivalentCallConflictResolver(
         if (first.receiverTypeRef?.coneType != second.receiverTypeRef?.coneType) {
             return false
         }
+        if (first is FirVariable != second is FirVariable) {
+            return false
+        }
         val firstSignature = createFlatSignature(firstCandidate, first)
         val secondSignature = createFlatSignature(secondCandidate, second)
         return compareCallsByUsedArguments(firstSignature, secondSignature, false) &&

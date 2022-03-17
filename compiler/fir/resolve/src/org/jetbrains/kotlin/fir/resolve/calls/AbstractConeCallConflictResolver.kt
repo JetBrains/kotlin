@@ -7,12 +7,8 @@ package org.jetbrains.kotlin.fir.resolve.calls
 
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.isExpect
-import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
-import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
 import org.jetbrains.kotlin.fir.resolve.inference.InferenceComponents
-import org.jetbrains.kotlin.fir.symbols.ConeTypeParameterLookupTag
 import org.jetbrains.kotlin.fir.types.*
-import org.jetbrains.kotlin.fir.types.impl.ConeTypeParameterTypeImpl
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.resolve.calls.results.*
 import org.jetbrains.kotlin.types.model.KotlinTypeMarker
@@ -116,7 +112,7 @@ abstract class AbstractConeCallConflictResolver(
         return FlatSignature(
             call,
             (variable as? FirProperty)?.typeParameters?.map { it.symbol.toLookupTag() }.orEmpty(),
-            listOfNotNull(variable.receiverTypeRef?.coneType),
+            computeSignatureTypes(call, variable),
             variable.receiverTypeRef != null,
             0, // TODO
             false,
@@ -130,7 +126,7 @@ abstract class AbstractConeCallConflictResolver(
         return FlatSignature(
             call,
             constructor.typeParameters.map { it.symbol.toLookupTag() },
-            computeParameterTypes(call, constructor),
+            computeSignatureTypes(call, constructor),
             //constructor.receiverTypeRef != null,
             false,
             0, // TODO
@@ -145,7 +141,7 @@ abstract class AbstractConeCallConflictResolver(
         return FlatSignature(
             call,
             function.typeParameters.map { it.symbol.toLookupTag() },
-            computeParameterTypes(call, function),
+            computeSignatureTypes(call, function),
             function.receiverTypeRef != null,
             0, // TODO
             function.valueParameters.any { it.isVararg },
@@ -161,27 +157,18 @@ abstract class AbstractConeCallConflictResolver(
         return type
     }
 
-    private fun computeParameterTypes(
+    private fun computeSignatureTypes(
         call: Candidate,
-        function: FirFunction
+        called: FirCallableDeclaration
     ): List<ConeKotlinType> {
         return buildList {
-            addIfNotNull(function.receiverTypeRef?.coneType)
+            addIfNotNull(called.receiverTypeRef?.coneType)
             val typeForCallableReference = call.resultingTypeForCallableReference
             if (typeForCallableReference != null) {
-                typeForCallableReference.typeArguments
+                // Return type isn't needed here       v
+                typeForCallableReference.typeArguments.dropLast(1)
                     .mapTo(this) {
-                        when (it) {
-                            is ConeTypeVariableType -> {
-                                val typeParameterLookupTag = it.lookupTag.originalTypeParameter as ConeTypeParameterLookupTag?
-                                if (typeParameterLookupTag == null) {
-                                    ConeErrorType(ConeSimpleDiagnostic("no type parameter for type variable", DiagnosticKind.Other))
-                                } else {
-                                    ConeTypeParameterTypeImpl(typeParameterLookupTag, it.isNullable)
-                                }
-                            }
-                            else -> it as ConeKotlinType
-                        }
+                        (it as ConeKotlinType).removeTypeVariableTypes(inferenceComponents.session.typeContext)
                     }
             } else {
                 call.argumentMapping?.mapTo(this) { it.value.argumentType() }
