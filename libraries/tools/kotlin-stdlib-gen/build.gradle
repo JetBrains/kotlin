@@ -36,6 +36,14 @@ task run(type: JavaExec) {
     systemProperty 'line.separator', '\n'
 }
 
+task generateStdlibTests(type: JavaExec) {
+    group 'application'
+    main 'generators.GenerateStandardLibTestsKt'
+    classpath sourceSets.main.runtimeClasspath
+    args = ["${rootDir}"]
+    systemProperty 'line.separator', '\n'
+}
+
 task generateUnicodeData(type: JavaExec) {
     group 'application'
     main 'generators.unicode.GenerateUnicodeDataKt'

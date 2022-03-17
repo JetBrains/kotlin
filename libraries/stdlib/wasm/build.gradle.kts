@@ -62,6 +62,9 @@ val commonTestSources by task<Sync> {
     sources.forEach { path ->
         from("$rootDir/$path") {
             into(path.dropLastWhile { it != '/' })
+            // exclusions due to KT-51647
+            exclude("generated/minmax")
+            exclude("collections/MapTest.kt")
         }
     }
 
