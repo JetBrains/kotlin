@@ -82,6 +82,9 @@ public interface TracingStrategy {
         ) {}
 
         @Override
+        public void recursiveType(@NotNull BindingTrace trace) {}
+
+        @Override
         public void instantiationOfAbstractClass(@NotNull BindingTrace trace) {}
 
         @Override
@@ -143,6 +146,8 @@ public interface TracingStrategy {
             @NotNull BindingTrace trace,
             @NotNull Collection<? extends ResolvedCall<D>> descriptors
     );
+
+    void recursiveType(@NotNull BindingTrace trace);
 
     void instantiationOfAbstractClass(@NotNull BindingTrace trace);
 

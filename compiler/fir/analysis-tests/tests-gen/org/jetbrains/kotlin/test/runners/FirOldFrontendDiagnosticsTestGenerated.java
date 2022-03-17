@@ -8081,6 +8081,12 @@ public class FirOldFrontendDiagnosticsTestGenerated extends AbstractFirDiagnosti
             }
 
             @Test
+            @TestMetadata("kt48546.kt")
+            public void testKt48546() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/delegatedProperty/kt48546.kt");
+            }
+
+            @Test
             @TestMetadata("localVariable.kt")
             public void testLocalVariable() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/delegatedProperty/localVariable.kt");
@@ -8522,6 +8528,12 @@ public class FirOldFrontendDiagnosticsTestGenerated extends AbstractFirDiagnosti
             @TestMetadata("kt44843.kt")
             public void testKt44843() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/delegation/kt44843.kt");
+            }
+
+            @Test
+            @TestMetadata("kt48546.kt")
+            public void testKt48546() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/delegation/kt48546.kt");
             }
 
             @Test
