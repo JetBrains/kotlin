@@ -194,7 +194,7 @@ class FirControlFlowStatementsResolveTransformer(transformer: FirBodyResolveTran
                 ResolutionMode.ContextDependent
             }
             else -> {
-                ResolutionMode.WithExpectedType(expectedTypeRef)
+                ResolutionMode.WithExpectedType(expectedTypeRef, expectedTypeMismatchIsReportedInChecker = true)
             }
         }
 

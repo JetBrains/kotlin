@@ -5,7 +5,7 @@ val a: () -> Int = <!INITIALIZER_TYPE_MISMATCH!>l@ {
 }<!>
 
 val b: () -> Unit = l@ {
-    if (flag) return@l 4
+    if (flag) return@l <!RETURN_TYPE_MISMATCH!>4<!>
 }
 
 val c: () -> Any = l@ {

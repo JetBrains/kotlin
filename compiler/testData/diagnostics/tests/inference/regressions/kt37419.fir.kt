@@ -15,18 +15,18 @@ class SomeClass {
     val e = E.VALUE
 
     val withoutType: LambdaWithReceiver
-        get() = when (e) {
+        get() = <!RETURN_TYPE_MISMATCH!>when (e) {
             E.VALUE -> { param ->
                 <!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>method<!>(param)
             }
-        }
+        }<!>
 
     val withExplicitType: LambdaWithReceiver
-        get() = when (e) {
+        get() = <!RETURN_TYPE_MISMATCH!>when (e) {
             E.VALUE -> { param: Parameter ->
                 <!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>method<!>(param)
             }
-        }
+        }<!>
 }
 
 class OtherClass {
@@ -38,8 +38,8 @@ class OtherClass {
 
 val e2 = E.VALUE
 val staticWithExplicitType: LambdaWithReceiver
-    get() = when (e2) {
+    get() = <!RETURN_TYPE_MISMATCH!>when (e2) {
         E.VALUE -> { param: Parameter ->
             <!UNRESOLVED_REFERENCE!>method<!>(param)
         }
-    }
+    }<!>

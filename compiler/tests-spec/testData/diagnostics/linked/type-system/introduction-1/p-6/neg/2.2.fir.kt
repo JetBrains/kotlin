@@ -30,7 +30,7 @@ class Case6 {
 
 // TESTCASE NUMBER: 7
 class Case7 {
-    val x: Int get() = null
+    val x: Int get() = <!NULL_FOR_NONNULL_TYPE!>null<!>
 }
 
 // TESTCASE NUMBER: 8

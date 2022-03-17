@@ -27,7 +27,7 @@ fun testResultOfAnonFun2() =
 
 fun testReturnFromAnonFun() =
         run(fun () {
-            return if (true) 42 else println()
+            return <!RETURN_TYPE_MISMATCH!>if (true) 42 else println()<!>
         })
 
 fun testReturn1() =

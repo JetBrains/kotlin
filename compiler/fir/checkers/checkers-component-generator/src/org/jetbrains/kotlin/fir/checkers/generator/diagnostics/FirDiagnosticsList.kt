@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.diagnostics.WhenMissingCase
 import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.PrivateForInline
 import org.jetbrains.kotlin.fir.checkers.generator.diagnostics.model.*
-import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
+import org.jetbrains.kotlin.fir.declarations.FirFunction
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
@@ -624,7 +624,7 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
         val RETURN_TYPE_MISMATCH by error<KtExpression>(PositioningStrategy.WHOLE_ELEMENT) {
             parameter<ConeKotlinType>("expectedType")
             parameter<ConeKotlinType>("actualType")
-            parameter<FirSimpleFunction>("targetFunction")
+            parameter<FirFunction>("targetFunction")
             parameter<Boolean>("isMismatchDueToNullability")
         }
 

@@ -103,7 +103,7 @@ fun main() {
     select(
         id { x, y -> <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int")!>x<!>.inv() + <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number")!>y<!>.toByte() },
         id<(Int, Number) -> Int> { x, y -> x.inv() },
-        {} as (Number, Number) -> Int
+        <!RETURN_TYPE_MISMATCH!>{}<!> as (Number, Number) -> Int
     )
 
     // Inferring lambda parameter types by a few expected types (a few upper constraints)

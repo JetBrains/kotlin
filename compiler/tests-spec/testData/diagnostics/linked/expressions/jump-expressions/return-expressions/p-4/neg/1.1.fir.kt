@@ -9,4 +9,4 @@ fun case1(a: Boolean) = run { println("d"); return <!RETURN_TYPE_MISMATCH!>true<
 
 // TESTCASE NUMBER: 2
 val case2
-get() = run { println("d"); return true }
+get() = run { println("d"); return <!RETURN_TYPE_MISMATCH!>true<!> }

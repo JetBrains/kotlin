@@ -11,8 +11,8 @@ fun main() {
 
     val a0: () -> Int = <!INITIALIZER_TYPE_MISMATCH!>fun(): String = "1"<!>
     val a1: () -> Int = <!INITIALIZER_TYPE_MISMATCH!>(fun() = "1")<!>
-    val a2: () -> Unit = (fun() = "1")
-    val a3: Unit = <!INITIALIZER_TYPE_MISMATCH!>(fun() = "1")<!>
+    val a2: () -> Unit = (fun() = <!RETURN_TYPE_MISMATCH!>"1"<!>)
+    val a3: Unit = <!INITIALIZER_TYPE_MISMATCH!>(fun() = <!RETURN_TYPE_MISMATCH!>"1"<!>)<!>
     val a4 = (fun() = "1")
     val a5 = (fun(): String = "1")
     val a6: () -> Int = (fun() = 1)

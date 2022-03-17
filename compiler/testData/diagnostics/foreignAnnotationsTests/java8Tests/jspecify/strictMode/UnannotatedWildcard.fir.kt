@@ -15,4 +15,4 @@ public interface J2 {
 }
 
 // FILE: main.kt
-fun baz(j2: J2): Any = <!RETURN_TYPE_MISMATCH, TYPE_MISMATCH!>j2.bar().foo()<!> // Any..Any?
+fun baz(j2: J2): Any = <!RETURN_TYPE_MISMATCH!>j2.bar().foo()<!> // Any..Any?

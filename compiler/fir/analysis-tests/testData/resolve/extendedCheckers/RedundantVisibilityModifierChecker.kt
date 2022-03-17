@@ -81,7 +81,7 @@ open class J {
         }
 
     var bar = <!PROPERTY_INITIALIZER_NO_BACKING_FIELD!>0<!>
-        get() = 3.1415926535
+        get() = <!RETURN_TYPE_MISMATCH!>3.1415926535<!>
         set(value) {}
 }
 
