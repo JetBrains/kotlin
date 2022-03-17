@@ -12,44 +12,28 @@ import org.jetbrains.kotlin.commonizer.allLeaves
 import org.jetbrains.kotlin.commonizer.cir.*
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 
-internal fun <T : CirHasAnnotations> createUnsafeNumberAnnotationIfNecessary(
+fun createUnsafeNumberAnnotationIfNecessary(
     targets: List<CommonizerTarget>,
     settings: CommonizerSettings,
-    values: List<T>,
-    getTypeIdFromDeclarationForCheck: (declaration: T) -> CirEntityId?,
+    inputDeclarations: List<CirHasAnnotations>,
+    inputTypes: List<CirType>,
+    commonizedType: CirType,
 ): CirAnnotation? {
-    val isOptimisticCommonizationEnabled = settings.getSetting(OptimisticNumberCommonizationEnabledKey)
-
-    if (!isOptimisticCommonizationEnabled)
+    if (!shouldCreateAnnotation(settings, commonizedType, inputDeclarations))
         return null
 
-    val typeIds = values.map { annotated -> getTypeIdFromDeclarationForCheck(annotated) }
+    val actualPlatformTypes = mutableMapOf<String, RenderedType>()
 
-    // All typealias have to be potentially substitutable (aka have to be some kind of number type)
-    if (!typeIds.all { it != null && OptimisticNumbersTypeCommonizer.isOptimisticallySubstitutable(it) }) {
-        return null
+    inputTypes.zip(targets).forEach { (type, target) ->
+        target.allLeaves().forEach { leafCommonizerTarget ->
+            actualPlatformTypes[leafCommonizerTarget.name] = renderTypeForUnsafeNumberAnnotation(type)
+        }
     }
 
-    return createUnsafeNumberAnnotation(targets, values, getTypeIdFromDeclarationForCheck)
-}
-
-private fun <T : CirHasAnnotations> createUnsafeNumberAnnotation(
-    targets: List<CommonizerTarget>,
-    values: List<T>,
-    getTypeIdFromDeclaration: (declaration: T) -> CirEntityId?,
-): CirAnnotation? {
-    val actualPlatformTypes = mutableMapOf<String, CirEntityId>()
-
-    values.forEachIndexed forEach@{ index, annotated ->
+    inputDeclarations.forEach { annotated ->
         val existingAnnotation = annotated.annotations.firstIsInstanceOrNull<UnsafeNumberAnnotation>()
         if (existingAnnotation != null) {
             actualPlatformTypes.putAll(existingAnnotation.actualPlatformTypes)
-            return@forEach
-        }
-
-        targets[index].allLeaves().forEach { target ->
-            actualPlatformTypes[target.name] = getTypeIdFromDeclaration(annotated)
-                ?: throw IllegalStateException("Expect class or type alias type")
         }
     }
 
@@ -60,14 +44,43 @@ private fun <T : CirHasAnnotations> createUnsafeNumberAnnotation(
     return null
 }
 
-private class UnsafeNumberAnnotation(val actualPlatformTypes: Map<String, CirEntityId>) : CirAnnotation {
+private fun shouldCreateAnnotation(
+    settings: CommonizerSettings,
+    commonizedType: CirType,
+    inputDeclarations: List<CirHasAnnotations>,
+): Boolean {
+    if (!settings.getSetting(OptimisticNumberCommonizationEnabledKey))
+        return false
+
+    val annotatedInputDeclarationPresent = inputDeclarations.any { declaration ->
+        declaration.annotations.any { annotation -> annotation is UnsafeNumberAnnotation }
+    }
+
+    if (annotatedInputDeclarationPresent)
+        return true
+
+    var isMarkedTypeFound = false
+
+    commonizedType.accept(object : BasicCirTypeVisitor() {
+        override fun visit(classType: CirClassType) {
+            classType.getAttachment<OptimisticNumbersTypeCommonizer.OptimisticCommonizationMarker>()?.let { isMarkedTypeFound = true }
+                ?: super.visit(classType)
+        }
+    })
+
+    return isMarkedTypeFound
+}
+
+private typealias RenderedType = String
+
+private class UnsafeNumberAnnotation(val actualPlatformTypes: Map<String, RenderedType>) : CirAnnotation {
     override val type: CirClassType = UnsafeNumberAnnotation.type
     override val annotationValueArguments: Map<CirName, CirAnnotation> = emptyMap()
 
     override val constantValueArguments: Map<CirName, CirConstantValue> = mapOf(
         CirName.create("actualPlatformTypes") to CirConstantValue.ArrayValue(
             actualPlatformTypes.toSortedMap().map { (platform, type) ->
-                CirConstantValue.StringValue("$platform: ${type.toQualifiedNameString()}")
+                CirConstantValue.StringValue("$platform: $type")
             }
         )
     )

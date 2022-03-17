@@ -595,7 +595,7 @@ class HierarchicalOptimisticNumbersTypeCommonizerTest : AbstractInlineSourcesCom
 
         result.assertCommonized(
             "(a, b)", """
-                @UnsafeNumber(["a: kotlinx.cinterop.UIntVarOf", "b: kotlinx.cinterop.ULongVarOf"])
+                @UnsafeNumber(["a: kotlinx.cinterop.UIntVarOf<kotlin.UInt>", "b: kotlinx.cinterop.ULongVarOf<kotlin.ULong>"])
                 typealias X = kotlinx.cinterop.UIntVarOf<UInt>
             """.trimIndent()
         )
@@ -612,7 +612,7 @@ class HierarchicalOptimisticNumbersTypeCommonizerTest : AbstractInlineSourcesCom
 
         result.assertCommonized(
             "(a, b)", """
-                @UnsafeNumber(["a: kotlinx.cinterop.IntVarOf", "b: kotlinx.cinterop.LongVarOf"])
+                @UnsafeNumber(["a: kotlinx.cinterop.IntVarOf<kotlin.Int>", "b: kotlinx.cinterop.LongVarOf<kotlin.Long>"])
                 typealias X = kotlinx.cinterop.IntVarOf<Int>
             """.trimIndent()
         )
@@ -744,6 +744,7 @@ class HierarchicalOptimisticNumbersTypeCommonizerTest : AbstractInlineSourcesCom
             "(a, b)", """
                 @UnsafeNumber(["a: kotlin.UShort", "b: kotlin.ULong"])
                 typealias X = UShort
+                @UnsafeNumber(["a: kotlin.UShort", "b: kotlin.ULong"])
                 expect val x: X 
             """.trimIndent()
         )
@@ -864,6 +865,78 @@ class HierarchicalOptimisticNumbersTypeCommonizerTest : AbstractInlineSourcesCom
             
             @UnsafeNumber(["a: kotlin.Int", "b: kotlin.Long"])
             expect val implicitReturnType: Int
+        """.trimIndent()
+        )
+    }
+
+    fun `test optimistic commonization inside parameterized types`() {
+        val result = commonize {
+            outputTarget("(a, b)", "(c, d)", "(a, b, c, d)")
+            setting(OptimisticNumberCommonizationEnabledKey, true)
+            registerFakeStdlibIntegersDependency("(a, b)", "(c, d)", "(a, b, c, d)")
+
+            "a" withSource """
+                typealias TA = Int
+                class Box<T>
+                
+                fun x(): Box<TA> = Box<TA>()
+                fun y(a: TA) {}
+            """.trimIndent()
+
+            "b" withSource """
+                typealias TA = Long
+                class Box<T>
+                
+                fun x(): Box<TA> = Box<TA>()
+                fun y(a: TA) {}
+            """.trimIndent()
+
+            "c" withSource """
+                class Box<T>
+                fun x(): Box<Int> = Box<Int>()
+                fun y(a: Int) {}
+            """.trimIndent()
+
+            "d" withSource """
+                class Box<T>
+                fun x(): Box<Long> = Box<Long>()
+                fun y(a: Long) {}
+            """.trimIndent()
+        }
+
+        result.assertCommonized(
+            "(a, b)", """
+            import kotlinx.cinterop.*
+
+            expect class Box<T>()
+            @UnsafeNumber(["a: kotlin.Int", "b: kotlin.Long"])
+            typealias TA = Int
+            
+            @UnsafeNumber(["a: Box<kotlin.Int>", "b: Box<kotlin.Long>"])
+            expect fun x(): Box<TA>
+            expect fun y(a: TA)
+        """.trimIndent()
+        )
+
+        result.assertCommonized(
+            "(c, d)", """
+            import kotlinx.cinterop.*
+
+            expect class Box<T>()
+            
+            @UnsafeNumber(["c: Box<kotlin.Int>", "d: Box<kotlin.Long>"])
+            expect fun x(): Box<Int>
+        """.trimIndent()
+        )
+
+        result.assertCommonized(
+            "(a, b, c, d)", """
+            import kotlinx.cinterop.*
+
+            expect class Box<T>()
+            
+            @UnsafeNumber(["a: Box<kotlin.Int>", "b: Box<kotlin.Long>", "c: Box<kotlin.Int>", "d: Box<kotlin.Long>"])
+            expect fun x(): Box<Int>
         """.trimIndent()
         )
     }

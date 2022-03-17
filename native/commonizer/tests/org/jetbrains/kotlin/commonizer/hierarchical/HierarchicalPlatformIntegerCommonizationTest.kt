@@ -60,7 +60,6 @@ class HierarchicalPlatformIntegerCommonizationTest : AbstractInlineSourcesCommon
             "(${LINUX_ARM64.name}, ${LINUX_ARM32_HFP.name})", """
             @UnsafeNumber(["${LINUX_ARM32_HFP.name}: kotlin.Long", "${LINUX_ARM64.name}: kotlin.Int"])
             typealias X = Int
-            @UnsafeNumber(["${LINUX_ARM32_HFP.name}: kotlin.Int", "${LINUX_ARM64.name}: kotlin.Long"])
             typealias Y = PlatformInt
         """.trimIndent()
         )
@@ -87,7 +86,6 @@ class HierarchicalPlatformIntegerCommonizationTest : AbstractInlineSourcesCommon
             "(${LINUX_ARM64.name}, ${LINUX_ARM32_HFP.name})", """
             @UnsafeNumber(["${LINUX_ARM32_HFP.name}: kotlin.ULong", "${LINUX_ARM64.name}: kotlin.UInt"])
             typealias X = UInt
-            @UnsafeNumber(["${LINUX_ARM32_HFP.name}: kotlin.UInt", "${LINUX_ARM64.name}: kotlin.ULong"])
             typealias Y = PlatformUInt
         """.trimIndent()
         )
@@ -124,11 +122,9 @@ class HierarchicalPlatformIntegerCommonizationTest : AbstractInlineSourcesCommon
             
             @UnsafeNumber(["${LINUX_ARM32_HFP.name}: kotlin.Long", "${LINUX_ARM64.name}: kotlin.Int"])
             typealias AX = Int
-            @UnsafeNumber(["${LINUX_ARM32_HFP.name}: kotlin.Int", "${LINUX_ARM64.name}: kotlin.Long"])
             typealias AY = PlatformInt
-            @UnsafeNumber(["${LINUX_ARM32_HFP.name}: kotlinx.cinterop.LongVarOf", "${LINUX_ARM64.name}: kotlinx.cinterop.IntVarOf"])
+            @UnsafeNumber(["${LINUX_ARM32_HFP.name}: kotlinx.cinterop.LongVarOf<kotlin.Long>", "${LINUX_ARM64.name}: kotlinx.cinterop.IntVarOf<kotlin.Int>"])
             typealias X = IntVarOf<AX>
-            @UnsafeNumber(["${LINUX_ARM32_HFP.name}: kotlinx.cinterop.IntVarOf", "${LINUX_ARM64.name}: kotlinx.cinterop.LongVarOf"])
             typealias Y = PlatformIntVarOf<AY>
         """.trimIndent()
         )
@@ -165,11 +161,9 @@ class HierarchicalPlatformIntegerCommonizationTest : AbstractInlineSourcesCommon
             
             @UnsafeNumber(["${LINUX_ARM32_HFP.name}: kotlin.ULong", "${LINUX_ARM64.name}: kotlin.UInt"])
             typealias AX = UInt
-            @UnsafeNumber(["${LINUX_ARM32_HFP.name}: kotlin.UInt", "${LINUX_ARM64.name}: kotlin.ULong"])
             typealias AY = PlatformUInt
-            @UnsafeNumber(["${LINUX_ARM32_HFP.name}: kotlinx.cinterop.ULongVarOf", "${LINUX_ARM64.name}: kotlinx.cinterop.UIntVarOf"])
+            @UnsafeNumber(["${LINUX_ARM32_HFP.name}: kotlinx.cinterop.ULongVarOf<kotlin.ULong>", "${LINUX_ARM64.name}: kotlinx.cinterop.UIntVarOf<kotlin.UInt>"])
             typealias X = UIntVarOf<AX>
-            @UnsafeNumber(["${LINUX_ARM32_HFP.name}: kotlinx.cinterop.UIntVarOf", "${LINUX_ARM64.name}: kotlinx.cinterop.ULongVarOf"])
             typealias Y = PlatformUIntVarOf<AY>
         """.trimIndent()
         )
@@ -386,9 +380,7 @@ class HierarchicalPlatformIntegerCommonizationTest : AbstractInlineSourcesCommon
             import kotlinx.cinterop.*
             
             expect class C() {
-                @UnsafeNumber(["${LINUX_ARM32_HFP.name}: kotlin.Int", "${LINUX_ARM64.name}: kotlin.Long"])
                 val i: PlatformInt
-                @UnsafeNumber(["${LINUX_ARM32_HFP.name}: kotlinx.cinterop.IntVarOf", "${LINUX_ARM64.name}: kotlinx.cinterop.LongVarOf"])
                 fun v(): PlatformIntVarOf<PlatformInt>
                 fun r(): PlatformIntRange
             }
@@ -549,9 +541,7 @@ class HierarchicalPlatformIntegerCommonizationTest : AbstractInlineSourcesCommon
             "($intTarget3, $longTarget3)", """
             import kotlinx.cinterop.*
             
-            @UnsafeNumber(["${LINUX_MIPSEL32.name}: kotlin.Int", "${MACOS_X64.name}: kotlin.Long"])
             typealias X = PlatformInt
-            @UnsafeNumber(["${LINUX_MIPSEL32.name}: kotlinx.cinterop.IntVarOf", "${MACOS_X64.name}: kotlinx.cinterop.LongVarOf"])
             typealias XV = PlatformIntVarOf<X>
         """.trimIndent()
         )
@@ -560,15 +550,7 @@ class HierarchicalPlatformIntegerCommonizationTest : AbstractInlineSourcesCommon
             "($intTarget1, $intTarget2, $longTarget1, $longTarget2)", """
             import kotlinx.cinterop.*
             
-            @UnsafeNumber([
-                "${LINUX_ARM32_HFP.name}: kotlin.Int", "${LINUX_ARM64.name}: kotlin.Long", 
-                "${LINUX_MIPS32.name}: kotlin.Int", "${LINUX_X64.name}: kotlin.Long"
-            ])
             typealias X = PlatformInt
-            @UnsafeNumber([
-                "${LINUX_ARM32_HFP.name}: kotlinx.cinterop.IntVarOf", "${LINUX_ARM64.name}: kotlinx.cinterop.LongVarOf",
-                "${LINUX_MIPS32.name}: kotlinx.cinterop.IntVarOf", "${LINUX_X64.name}: kotlinx.cinterop.LongVarOf"
-            ])
             typealias XV = PlatformIntVarOf<X>
         """.trimIndent()
         )
@@ -577,15 +559,7 @@ class HierarchicalPlatformIntegerCommonizationTest : AbstractInlineSourcesCommon
             "($intTarget1, $intTarget2, $intTarget3, $longTarget1)", """
             import kotlinx.cinterop.*
             
-            @UnsafeNumber([
-                "${LINUX_ARM32_HFP.name}: kotlin.Int", "${LINUX_MIPS32.name}: kotlin.Int", 
-                "${LINUX_MIPSEL32.name}: kotlin.Int", "${LINUX_X64.name}: kotlin.Long"
-            ])
             typealias X = PlatformInt
-            @UnsafeNumber([
-                "${LINUX_ARM32_HFP.name}: kotlinx.cinterop.IntVarOf", "${LINUX_MIPS32.name}: kotlinx.cinterop.IntVarOf", 
-                "${LINUX_MIPSEL32.name}: kotlinx.cinterop.IntVarOf", "${LINUX_X64.name}: kotlinx.cinterop.LongVarOf"
-            ])
             typealias XV = PlatformIntVarOf<X>
         """.trimIndent()
         )
@@ -594,15 +568,7 @@ class HierarchicalPlatformIntegerCommonizationTest : AbstractInlineSourcesCommon
             "($longTarget1, $longTarget2, $longTarget3, $intTarget1)", """
             import kotlinx.cinterop.*
             
-            @UnsafeNumber([
-                "${LINUX_ARM32_HFP.name}: kotlin.Int", "${LINUX_ARM64.name}: kotlin.Long", 
-                "${LINUX_X64.name}: kotlin.Long", "${MACOS_X64.name}: kotlin.Long"
-            ])
             typealias X = PlatformInt
-            @UnsafeNumber([
-                "${LINUX_ARM32_HFP.name}: kotlinx.cinterop.IntVarOf", "${LINUX_ARM64.name}: kotlinx.cinterop.LongVarOf",
-                "${LINUX_X64.name}: kotlinx.cinterop.LongVarOf", "${MACOS_X64.name}: kotlinx.cinterop.LongVarOf" 
-            ])
             typealias XV = PlatformIntVarOf<X>
         """.trimIndent()
         )
@@ -706,7 +672,6 @@ class HierarchicalPlatformIntegerCommonizationTest : AbstractInlineSourcesCommon
 
         result.assertCommonized(
             "(${IOS_ARM32.name}, ${IOS_ARM64.name})", """
-                @UnsafeNumber(["${IOS_ARM32.name}: kotlin.UInt", "${IOS_ARM64.name}: kotlin.ULong"])
                 typealias OtherAlias = PlatformUInt
                 
                 expect class Box<T>()

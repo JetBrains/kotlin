@@ -10,9 +10,9 @@ import org.jetbrains.kotlin.commonizer.cir.*
 import org.jetbrains.kotlin.commonizer.mergedtree.CirKnownClassifiers
 
 class TypeAliasCommonizer(
-    typeCommonizer: TypeCommonizer,
     private val classifiers: CirKnownClassifiers,
     private val settings: CommonizerSettings,
+    typeCommonizer: TypeCommonizer,
 ) : NullableSingleInvocationCommonizer<CirTypeAlias> {
 
     private val typeCommonizer = typeCommonizer.withContext {
@@ -30,18 +30,20 @@ class TypeAliasCommonizer(
 
         val visibility = VisibilityCommonizer.lowering().commonize(values) ?: return null
 
+        val unsafeNumberAnnotation = createUnsafeNumberAnnotationIfNecessary(
+            classifiers.classifierIndices.targets, settings,
+            inputDeclarations = values,
+            inputTypes = values.map { it.underlyingType },
+            commonizedType = underlyingType,
+        )
+
         return CirTypeAlias.create(
             name = name,
             typeParameters = typeParameters,
             visibility = visibility,
             underlyingType = underlyingType,
             expandedType = underlyingType.expandedType(),
-            annotations = listOfNotNull(
-                createUnsafeNumberAnnotationIfNecessary(
-                    classifiers.classifierIndices.targets, settings, values,
-                    getTypeIdFromDeclarationForCheck = { typeAlias -> typeAlias.expandedType.classifierId }
-                )
-            )
+            annotations = listOfNotNull(unsafeNumberAnnotation),
         )
     }
 }
