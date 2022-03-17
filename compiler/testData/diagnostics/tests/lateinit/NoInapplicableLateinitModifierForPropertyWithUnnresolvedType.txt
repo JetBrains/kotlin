@@ -1,0 +1,4 @@
+package
+
+public lateinit var x: [Error type: Unresolved type for UnresolvedType]
+

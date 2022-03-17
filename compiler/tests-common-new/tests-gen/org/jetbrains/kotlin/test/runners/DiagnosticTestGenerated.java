@@ -19413,6 +19413,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
             }
 
             @Test
+            @TestMetadata("NoInapplicableLateinitModifierForPropertyWithUnnresolvedType.kt")
+            public void testNoInapplicableLateinitModifierForPropertyWithUnnresolvedType() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/lateinit/NoInapplicableLateinitModifierForPropertyWithUnnresolvedType.kt");
+            }
+
+            @Test
             @TestMetadata("setter.kt")
             public void testSetter() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/lateinit/setter.kt");

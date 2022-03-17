@@ -15,14 +15,11 @@ import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyGetter
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertySetter
 import org.jetbrains.kotlin.fir.declarations.utils.hasExplicitBackingField
 import org.jetbrains.kotlin.fir.declarations.utils.isLateInit
-import org.jetbrains.kotlin.fir.types.ConeTypeParameterType
-import org.jetbrains.kotlin.fir.types.coneType
-import org.jetbrains.kotlin.fir.types.isNullable
-import org.jetbrains.kotlin.fir.types.isPrimitiveOrNullablePrimitive
+import org.jetbrains.kotlin.fir.types.*
 
 object FirInapplicableLateinitChecker : FirPropertyChecker() {
     override fun check(declaration: FirProperty, context: CheckerContext, reporter: DiagnosticReporter) {
-        if (!declaration.isLateInit) {
+        if (!declaration.isLateInit || declaration.returnTypeRef is FirErrorTypeRef) {
             return
         }
 
