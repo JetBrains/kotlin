@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.load.kotlin.KotlinJvmBinaryClass
 import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
 import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmMetadataVersion
 import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.FqName
 
 class ClsKotlinBinaryClassCache {
     class KotlinBinaryClassHeaderData(
@@ -24,7 +25,10 @@ class ClsKotlinBinaryClassCache {
         val metadataVersion: JvmMetadataVersion,
         val partNamesIfMultifileFacade: List<String>,
         val packageName: String?
-    )
+    ) {
+        val packageNameWithFallback: FqName
+            get() = packageName?.let(::FqName) ?: classId.packageFqName
+    }
 
     data class KotlinBinaryData(val isKotlinBinary: Boolean, val timestamp: Long, val headerData: KotlinBinaryClassHeaderData?)
 
