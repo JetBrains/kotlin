@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.ir.builders.declarations.addConstructor
 import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrFunctionImpl
+import org.jetbrains.kotlin.ir.declarations.impl.IrVariableImpl
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
@@ -90,17 +91,46 @@ private class JvmInlineClassLowering(context: JvmBackendContext) : JvmValueClass
     }
 
     override fun visitTypeOperator(expression: IrTypeOperatorCall): IrExpression {
-        if (expression.operator == IrTypeOperator.INSTANCEOF && expression.typeOperand.isInlineChildOfSealedInlineClass()) {
+        if ((currentClass?.irElement as? IrClass)?.isInline == true) {
+            return super.visitTypeOperator(expression)
+        }
+
+        if (expression.typeOperand.isInlineChildOfSealedInlineClass()) {
             val top = expression.typeOperand.findTopSealedInlineSuperClass()
             val isCheck = context.inlineClassReplacements.getIsSealedInlineChildFunction(top to expression.typeOperand.classOrNull!!.owner)
+            val underlyingType = expression.typeOperand.unboxInlineClass()
 
-            val coerce = coerceInlineClasses(expression.argument, top.defaultType, context.irBuiltIns.anyNType)
+            expression.argument.transformChildrenVoid()
 
-            return IrCallImpl(
-                expression.startOffset, expression.endOffset,
-                context.irBuiltIns.booleanType, isCheck.symbol, top.typeParameters.size, isCheck.valueParameters.size
-            ).also {
-                it.putValueArgument(0, coerce)
+            if (expression.operator == IrTypeOperator.INSTANCEOF) {
+                return IrCallImpl(
+                    expression.startOffset, expression.endOffset,
+                    context.irBuiltIns.booleanType, isCheck.symbol, top.typeParameters.size, isCheck.valueParameters.size
+                ).also {
+                    it.putValueArgument(0, coerceInlineClasses(expression.argument, top.defaultType, context.irBuiltIns.anyNType))
+                }
+            } else if (expression.operator == IrTypeOperator.CAST) {
+                with(context.createIrBuilder((currentFunction!!.irElement as IrFunction).symbol)) {
+                    return irComposite {
+                        val tmp = irTemporary(coerceInlineClasses(expression.argument, top.defaultType, context.irBuiltIns.anyNType))
+                        +irWhen(
+                            expression.type, listOf(
+                                irBranch(
+                                    irCall(isCheck.symbol).also { it.putValueArgument(0, irGet(tmp)) },
+                                    coerceInlineClasses(irImplicitCast(irGet(tmp), underlyingType), underlyingType, expression.typeOperand)
+                                ),
+                                irBranch(
+                                    irTrue(),
+                                    irCall(this@JvmInlineClassLowering.context.ir.symbols.throwTypeCastException).also {
+                                        it.putValueArgument(
+                                            0,
+                                            irString("Cannot cast to sealed inline class child ${expression.typeOperand.asClass().name}")
+                                        )
+                                    })
+                            )
+                        )
+                    }
+                }
             }
         }
         return super.visitTypeOperator(expression)
@@ -113,12 +143,14 @@ private class JvmInlineClassLowering(context: JvmBackendContext) : JvmValueClass
 
             with(context.createIrBuilder(function.symbol)) {
                 function.body = irBlockBody {
-                    fun param(): IrExpression =
-                        coerceInlineClasses(irGet(function.valueParameters.first()), context.irBuiltIns.anyNType, info.top.defaultType)
+                    fun param(): IrExpression = irGet(function.valueParameters.first())
 
                     val branches = info.noinlineSubclasses.map {
                         irBranch(
-                            irIs(param(), it.symbol.owner.defaultType),
+                            irIs(
+                                coerceInlineClasses(param(), context.irBuiltIns.anyNType, info.top.defaultType),
+                                it.symbol.owner.defaultType
+                            ),
                             irReturn(irFalse())
                         )
                     } + irBranch(
