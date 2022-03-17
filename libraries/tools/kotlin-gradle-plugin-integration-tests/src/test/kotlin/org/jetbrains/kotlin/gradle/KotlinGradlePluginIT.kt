@@ -960,6 +960,31 @@ class KotlinGradleIT : BaseGradleIT() {
         }
     }
 
+    @Test //KT-51501
+    fun testWithGradleInit() = with(Project("simpleProject")) {
+        setupWorkingDir()
+        val initGradleFile = projectDir.resolve("init.gradle")
+        initGradleFile.createNewFile()
+        initGradleFile.modify {
+            """initscript {
+                    repositories {
+                         maven { url = 'https://plugins.gradle.org/m2/' }
+                    }
+
+                    dependencies {
+                        classpath 'com.gradle:gradle-enterprise-gradle-plugin:3.8.1'
+                    }
+                }
+                beforeSettings {
+                    it.pluginManager.apply(com.gradle.enterprise.gradleplugin.GradleEnterprisePlugin)
+                }"""
+        }
+
+        build("-I", "init.gradle") {
+            assertSuccessful()
+        }
+    }
+
 
     @Test
     fun testKt29971() = with(Project("kt-29971", GradleVersionRequired.FOR_MPP_SUPPORT)) {

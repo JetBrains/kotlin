@@ -58,7 +58,7 @@ internal abstract class KotlinGradleBuildServices : BuildService<KotlinGradleBui
             ) { service ->
                 service.parameters.rootDir = project.rootProject.rootDir
                 service.parameters.buildDir = project.rootProject.buildDir
-                if (!kotlinStatisticEnabled) {
+                if (kotlinStatisticEnabled) {
                     addListeners(project)
                 }
             }
@@ -67,13 +67,14 @@ internal abstract class KotlinGradleBuildServices : BuildService<KotlinGradleBui
         fun addListeners(project: Project) {
             project.rootProject.extensions.findByName("buildScan")
                 ?.also {
-                    val listeners = project.rootProject.objects.listProperty(ReportStatistics::class.java)
-                        .value(listOf<ReportStatistics>(ReportStatisticsToElasticSearch))
-                    listeners.add(ReportStatisticsToBuildScan(it as BuildScanExtension))
-                    val statListener = KotlinBuildStatListener(project.rootProject.name, listeners.get())
                     val listenerRegistryHolder = BuildEventsListenerRegistryHolder.getInstance(project)
 
-                    listenerRegistryHolder.listenerRegistry.onTaskCompletion(project.provider { statListener })
+                    listenerRegistryHolder.listenerRegistry.onTaskCompletion(project.provider {
+                        val listeners = project.rootProject.objects.listProperty(ReportStatistics::class.java)
+                            .value(listOf<ReportStatistics>(ReportStatisticsToElasticSearch))
+                        listeners.add(ReportStatisticsToBuildScan(it as BuildScanExtension))
+                        KotlinBuildStatListener(project.rootProject.name, listeners.get())
+                    })
                 }
         }
 
