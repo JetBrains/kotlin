@@ -182,6 +182,29 @@ class MemoizedInlineClassReplacements(
             }
         }
 
+    /**
+     * Get the is-check function for sealed inline class child. The function checks, that
+     * underlying value of sealed inline class has the same underlying type of the child.
+     *
+     * Note, that for noinline sealed inline class children are checked as usual.
+     */
+    val getIsSealedInlineChildFunction: (Pair<IrClass, IrClass>) -> IrSimpleFunction =
+        storageManager.createMemoizedFunction { (top, child) ->
+            require(top.isInline && top.modality == Modality.SEALED && child.superTypes.any { it.isInlineClassType() })
+            irFactory.buildFun {
+                name = Name.identifier("is-${child.name}")
+                origin = JvmLoweredDeclarationOrigin.SYNTHETIC_INLINE_CLASS_MEMBER
+                returnType = context.irBuiltIns.booleanType
+            }.apply {
+                parent = top
+                copyTypeParametersFrom(top)
+                addValueParameter {
+                    name = InlineClassDescriptorResolver.BOXING_VALUE_PARAMETER_NAME
+                    type = context.irBuiltIns.anyNType
+                }
+            }
+        }
+
     private val specializedEqualsCache = storageManager.createCacheWithNotNullValues<IrClass, IrSimpleFunction>()
     fun getSpecializedEqualsMethod(irClass: IrClass, irBuiltIns: IrBuiltIns): IrSimpleFunction {
         require(irClass.isInline)

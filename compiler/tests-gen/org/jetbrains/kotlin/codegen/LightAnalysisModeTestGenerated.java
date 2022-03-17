@@ -20982,6 +20982,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
                     runTest("compiler/testData/codegen/box/inlineClasses/sealed/casts/class.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
                 }
 
+                @TestMetadata("inlineClass.kt")
+                public void ignoreInlineClass() throws Exception {
+                    runTest("compiler/testData/codegen/box/inlineClasses/sealed/casts/inlineClass.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+                }
+
                 @TestMetadata("interface.kt")
                 public void ignoreInterface() throws Exception {
                     runTest("compiler/testData/codegen/box/inlineClasses/sealed/casts/interface.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());

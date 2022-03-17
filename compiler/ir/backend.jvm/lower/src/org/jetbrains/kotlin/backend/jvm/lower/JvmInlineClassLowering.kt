@@ -33,15 +33,11 @@ import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionSymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrValueParameterSymbolImpl
 import org.jetbrains.kotlin.ir.transformStatement
-import org.jetbrains.kotlin.ir.types.IrType
-import org.jetbrains.kotlin.ir.types.classOrNull
-import org.jetbrains.kotlin.ir.types.isNullable
-import org.jetbrains.kotlin.ir.types.makeNotNull
+import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.resolve.JVM_INLINE_ANNOTATION_FQ_NAME
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
@@ -84,39 +80,57 @@ private class JvmInlineClassLowering(context: JvmBackendContext) : JvmValueClass
         if (declaration.modality == Modality.SEALED) {
             patchReceiverParameterOfValueGetter(declaration)
 
-            val inlineSubclasses = collectSubclasses(declaration) { it.owner.isInline }
-            val inlineDirectSubclasses = declaration.sealedSubclasses.filter { it.owner.isInline }
-            val noinlineSubclasses = collectSubclasses(declaration) { !it.owner.isInline }
-            val noinlineDirectSubclasses = declaration.sealedSubclasses.filterNot { it.owner.isInline }
-
-            // TODO: Generate during Psi2Ir/Fir2Ir
-            // TODO: Merge with rewriteOpenMethodsForSealed
-            rewriteFunctionFromAnyForSealed(declaration, inlineSubclasses, noinlineSubclasses, "hashCode")
-            rewriteFunctionFromAnyForSealed(declaration, inlineSubclasses, noinlineSubclasses, "toString")
-            rewriteOpenMethodsForSealed(declaration, inlineDirectSubclasses, noinlineSubclasses)
-            buildSpecializedEqualsMethodForSealed(declaration, inlineDirectSubclasses, noinlineDirectSubclasses)
+            val info = SealedInlineClassInfo.analyze(declaration)
+            buildIsMethodsForSealedInlineClass(info)
+            rewriteFunctionFromAnyForSealed(info, "hashCode")
+            rewriteFunctionFromAnyForSealed(info, "toString")
+            rewriteOpenMethodsForSealed(info)
+            buildSpecializedEqualsMethodForSealed(info)
         }
     }
 
     override fun visitTypeOperator(expression: IrTypeOperatorCall): IrExpression {
-        // Downcasts to sealed inline class children leads to unboxing
-        if (expression.type.superTypes().any { it.isInlineClassType() } && !expression.type.isInlineClassType() &&
-            expression.argument.type.classOrNull != expression.type.classOrNull
-        ) {
-            val argument = super.visitExpression(expression.argument)
-            val top = expression.type.findTopSealedInlineSuperClass()
-            val castToTop = IrTypeOperatorCallImpl(
-                UNDEFINED_OFFSET, UNDEFINED_OFFSET,
-                top.defaultType, IrTypeOperator.IMPLICIT_CAST, argument.type, argument
-            )
-            val unbox = coerceInlineClasses(castToTop, top.defaultType, context.irBuiltIns.anyNType)
-            return IrTypeOperatorCallImpl(
-                expression.startOffset, expression.endOffset,
-                expression.type, IrTypeOperator.IMPLICIT_CAST, context.irBuiltIns.anyNType, unbox
-            )
-        }
+        if (expression.operator == IrTypeOperator.INSTANCEOF && expression.typeOperand.isInlineChildOfSealedInlineClass()) {
+            val top = expression.typeOperand.findTopSealedInlineSuperClass()
+            val isCheck = context.inlineClassReplacements.getIsSealedInlineChildFunction(top to expression.typeOperand.classOrNull!!.owner)
 
+            val coerce = coerceInlineClasses(expression.argument, top.defaultType, context.irBuiltIns.anyNType)
+
+            return IrCallImpl(
+                expression.startOffset, expression.endOffset,
+                context.irBuiltIns.booleanType, isCheck.symbol, top.typeParameters.size, isCheck.valueParameters.size
+            ).also {
+                it.putValueArgument(0, coerce)
+            }
+        }
         return super.visitTypeOperator(expression)
+    }
+
+    private fun buildIsMethodsForSealedInlineClass(info: SealedInlineClassInfo) {
+        for (childInfo in info.inlineSubclasses) {
+            val child = childInfo.symbol.owner
+            val function = context.inlineClassReplacements.getIsSealedInlineChildFunction(info.top to child)
+
+            with(context.createIrBuilder(function.symbol)) {
+                function.body = irBlockBody {
+                    fun param(): IrExpression =
+                        coerceInlineClasses(irGet(function.valueParameters.first()), context.irBuiltIns.anyNType, info.top.defaultType)
+
+                    val branches = info.noinlineSubclasses.map {
+                        irBranch(
+                            irIs(param(), it.symbol.owner.defaultType),
+                            irReturn(irFalse())
+                        )
+                    } + irBranch(
+                        irTrue(),
+                        irReturn(irIs(param(), child.inlineClassRepresentation!!.underlyingType))
+                    )
+                    +irReturn(irWhen(context.irBuiltIns.booleanType, branches))
+                }
+            }
+
+            info.top.addMember(function)
+        }
     }
 
     // Since we cannot create objects of sealed inline class children, we remove virtual methods from the classfile.
@@ -214,32 +228,6 @@ private class JvmInlineClassLowering(context: JvmBackendContext) : JvmValueClass
         irClass.declarations.removeIf { it is IrField }
     }
 
-    private fun collectSubclasses(irClass: IrClass, predicate: (IrClassSymbol) -> Boolean): List<SubclassInfo> {
-        fun collectBottoms(irClass: IrClass): List<IrClassSymbol> =
-            irClass.sealedSubclasses.flatMap {
-                when {
-                    it.owner.modality == Modality.SEALED -> collectBottoms(it.owner)
-                    predicate(it) -> listOf(it)
-                    else -> emptyList()
-                }
-            }
-
-        fun collectSealedBetweenTopAndBottom(bottom: IrClassSymbol): List<IrClassSymbol> {
-            fun superClass(symbol: IrClassSymbol): IrClassSymbol =
-                symbol.owner.superTypes.single { it.classOrNull?.owner?.kind == ClassKind.CLASS }.classOrNull!!
-
-            val result = mutableListOf<IrClassSymbol>()
-            var cursor = superClass(bottom)
-            while (cursor != irClass.symbol) {
-                result += cursor
-                cursor = superClass(cursor)
-            }
-            return result
-        }
-
-        return collectBottoms(irClass).map { SubclassInfo(it.owner, collectSealedBetweenTopAndBottom(it)) }
-    }
-
     override fun transformSimpleFunctionFlat(function: IrSimpleFunction, replacement: IrSimpleFunction): List<IrDeclaration> {
         replacement.valueParameters.forEach {
             it.transformChildrenVoid()
@@ -286,23 +274,7 @@ private class JvmInlineClassLowering(context: JvmBackendContext) : JvmValueClass
             // If fake override overrides function from sealed inline class, call the overridden function
             createBridgeBody(replacement, overriddenFromSealedInline.owner)
             // However, if the fake override is overridden, generate when in it, calling its children.
-            if (replacement.parentAsClass.modality == Modality.SEALED) {
-                @Suppress("NAME_SHADOWING")
-                val function = replacement.attributeOwnerId as IrSimpleFunction
-                val irClass = function.parentAsClass
-                val inlineSubclasses = irClass.sealedSubclasses.filter { it.owner.isInline }
-                val noinlineSubclasses = collectSubclasses(irClass) { !it.owner.isInline }
-                val overridesInNoinline = mapOverriddenToOverrides(noinlineSubclasses, listOf(function.symbol))
-                val overridesInInline =
-                    mapOverriddenToOverrides(inlineSubclasses.map { SubclassInfo(it.owner, emptyList()) }, listOf(function.symbol))
-                rewriteSingleMethod(
-                    replacement,
-                    overridesInInline.getOrElse(function.symbol) { emptySet() }
-                        .filterNot { it.owner.isFakeOverride && it.owner.parentAsClass.modality != Modality.SEALED },
-                    overridesInNoinline.getOrElse(function.symbol) { emptySet() }
-                        .filterNot { it.owner.isFakeOverride || it.owner.parentAsClass.isInline }
-                )
-            }
+            // TODO: Rewrite SIC methods
         } else {
             // Fake overrides redirect from the replacement to the original function, which is in turn replaced during interfacePhase.
             createBridgeBody(replacement, bridgeFunction)
@@ -750,12 +722,11 @@ private class JvmInlineClassLowering(context: JvmBackendContext) : JvmValueClass
         irClass.declarations += function
     }
 
-    private fun rewriteFunctionFromAnyForSealed(
-        irClass: IrClass,
-        inlineSubclasses: List<SubclassInfo>,
-        noinlineSubclasses: List<SubclassInfo>,
-        name: String
-    ) {
+    private fun rewriteFunctionFromAnyForSealed(info: SealedInlineClassInfo, name: String) {
+        val irClass = info.top
+        val inlineSubclasses = info.inlineSubclasses
+        val noinlineSubclasses = info.noinlineSubclasses
+
         val replacements = context.inlineClassReplacements
         val function = irClass.declarations.find { it is IrSimpleFunction && it.name.asString() == "$name-impl" } as? IrFunction
             ?: error("BOOYA")
@@ -779,21 +750,21 @@ private class JvmInlineClassLowering(context: JvmBackendContext) : JvmValueClass
                     .single { it is IrSimpleFunction && it.name.asString() == name } as IrFunction
                 val branches = noinlineSubclasses
                     .filter { info ->
-                        info.bottom.isFunctionDeclared() || info.sealedParents.any { it.owner.isFunctionDeclared() }
+                        info.symbol.owner.isFunctionDeclared()
                     }.map {
                         irBranch(
-                            irIs(irGet(tmp), it.bottom.defaultType),
+                            irIs(irGet(tmp), it.symbol.owner.defaultType),
                             irReturn(irCall(funFromObject.symbol).apply {
                                 dispatchReceiver = irGet(tmp)
                             })
                         )
                     } + inlineSubclasses.map {
                     val delegate =
-                        it.bottom.declarations
+                        it.symbol.owner.declarations
                             .find { f -> f is IrSimpleFunction && f.name.asString() == name }.safeAs<IrFunction>()
                             ?.let { f -> replacements.getReplacementFunction(f) }
-                            ?: it.bottom.functions.single { f -> f.name.asString() == "$name-impl" }
-                    val underlyingType = getInlineClassUnderlyingType(it.bottom)
+                            ?: it.symbol.owner.functions.single { f -> f.name.asString() == "$name-impl" }
+                    val underlyingType = getInlineClassUnderlyingType(it.symbol.owner)
 
                     irBranch(
                         irIs(irGet(tmp), underlyingType),
@@ -802,7 +773,7 @@ private class JvmInlineClassLowering(context: JvmBackendContext) : JvmValueClass
                                 0, coerceInlineClasses(
                                     irImplicitCast(irGet(tmp), underlyingType),
                                     underlyingType,
-                                    it.bottom.defaultType
+                                    it.symbol.owner.defaultType
                                 )
                             )
                         })
@@ -821,11 +792,11 @@ private class JvmInlineClassLowering(context: JvmBackendContext) : JvmValueClass
         }
     }
 
-    private fun rewriteOpenMethodsForSealed(
-        irClass: IrClass,
-        inlineSubclasses: List<IrClassSymbol>,
-        noinlineSubclasses: List<SubclassInfo>
-    ) {
+    private fun rewriteOpenMethodsForSealed(info: SealedInlineClassInfo) {
+        val irClass = info.top
+        val inlineSubclasses = irClass.sealedSubclasses.filter { it.owner.isInline }
+        val noinlineSubclasses = info.noinlineSubclasses
+
         val openMethods = irClass.functions.filter {
             it.origin == JvmLoweredDeclarationOrigin.STATIC_INLINE_CLASS_REPLACEMENT && it.modality == Modality.OPEN
         }.map { (it.attributeOwnerId as IrSimpleFunction).symbol }.toList()
@@ -833,7 +804,9 @@ private class JvmInlineClassLowering(context: JvmBackendContext) : JvmValueClass
         if (openMethods.isEmpty()) return
 
         val overridesInNoinline = mapOverriddenToOverrides(noinlineSubclasses, openMethods)
-        val overridesInInline = mapOverriddenToOverrides(inlineSubclasses.map { SubclassInfo(it.owner, emptyList()) }, openMethods)
+        val overridesInInline = mapOverriddenToOverrides(
+            inlineSubclasses.map { SealedInlineClassInfo.SubclassInfo(it, true, emptyList()) }, openMethods
+        )
 
         for (function in openMethods) {
             // TODO: Remove
@@ -955,12 +928,12 @@ private class JvmInlineClassLowering(context: JvmBackendContext) : JvmValueClass
     // Go from bottom to top and collect classes, in which a function is overridden, preserving order,
     // since we need to check for INSTANCEOF, return map from overridden function to all overrides
     private fun mapOverriddenToOverrides(
-        subclasses: List<SubclassInfo>,
+        subclasses: Collection<SealedInlineClassInfo.SubclassInfo>,
         openMethods: List<IrSimpleFunctionSymbol>
     ): Map<IrSimpleFunctionSymbol, Set<IrSimpleFunctionSymbol>> {
         val result = mutableMapOf<IrSimpleFunctionSymbol, MutableSet<IrSimpleFunctionSymbol>>()
         for (info in subclasses) {
-            result.putOverriddenToOverridesFromSingleClass(info.bottom, openMethods)
+            result.putOverriddenToOverridesFromSingleClass(info.symbol.owner, openMethods)
             for (sealedParent in info.sealedParents) {
                 result.putOverriddenToOverridesFromSingleClass(sealedParent.owner, openMethods)
             }
@@ -1010,11 +983,11 @@ private class JvmInlineClassLowering(context: JvmBackendContext) : JvmValueClass
         valueClass.declarations += function
     }
 
-    private fun buildSpecializedEqualsMethodForSealed(
-        irClass: IrClass,
-        inlineSubclasses: List<IrClassSymbol>,
-        noinlineSubclasses: List<IrClassSymbol>
-    ) {
+    private fun buildSpecializedEqualsMethodForSealed(info: SealedInlineClassInfo) {
+        val irClass = info.top
+        val inlineSubclasses = info.inlineSubclasses
+        val noinlineSubclasses = info.noinlineSubclasses
+
         val boolAnd = context.ir.symbols.getBinaryOperator(
             OperatorNameConventions.AND, context.irBuiltIns.booleanType, context.irBuiltIns.booleanType
         )
@@ -1044,15 +1017,15 @@ private class JvmInlineClassLowering(context: JvmBackendContext) : JvmValueClass
                     irBranch(
                         irCallOp(
                             boolAnd, context.irBuiltIns.booleanType,
-                            irIs(irGet(left), it.owner.defaultType),
-                            irIs(irGet(right), it.owner.defaultType),
+                            irIs(irGet(left), it.symbol.owner.defaultType),
+                            irIs(irGet(right), it.symbol.owner.defaultType),
                         ),
                         irReturn(irCallOp(equals, context.irBuiltIns.booleanType, irGet(left), irGet(right)))
                     )
                 } + inlineSubclasses.map {
                     val eq = this@JvmInlineClassLowering.context.inlineClassReplacements
-                        .getSpecializedEqualsMethod(it.owner, context.irBuiltIns)
-                    val underlyingType = getInlineClassUnderlyingType(it.owner)
+                        .getSpecializedEqualsMethod(it.symbol.owner, context.irBuiltIns)
+                    val underlyingType = getInlineClassUnderlyingType(it.symbol.owner)
                     irBranch(
                         irCallOp(
                             boolAnd, context.irBuiltIns.booleanType,
@@ -1065,14 +1038,14 @@ private class JvmInlineClassLowering(context: JvmBackendContext) : JvmValueClass
                                     0, coerceInlineClasses(
                                         irImplicitCast(irGet(left), underlyingType),
                                         underlyingType,
-                                        it.owner.defaultType
+                                        it.symbol.owner.defaultType
                                     )
                                 )
                                 putValueArgument(
                                     1, coerceInlineClasses(
                                         irImplicitCast(irGet(right), underlyingType),
                                         underlyingType,
-                                        it.owner.defaultType
+                                        it.symbol.owner.defaultType
                                     )
                                 )
                             }
@@ -1087,11 +1060,47 @@ private class JvmInlineClassLowering(context: JvmBackendContext) : JvmValueClass
     }
 }
 
-private class SubclassInfo(
-    // The bottom class
-    val bottom: IrClass,
-    // Sealed subclasses from top to the bottom
-    val sealedParents: List<IrClassSymbol>
-)
-
 internal fun IrClass.isChildOfSealedInlineClass(): Boolean = superTypes.any { it.isInlineClassType() }
+
+private class SealedInlineClassInfo(
+    val top: IrClass,
+    val inlineSubclasses: Set<SubclassInfo>,
+    val noinlineSubclasses: Set<SubclassInfo>
+) {
+    data class SubclassInfo(
+        val symbol: IrClassSymbol,
+        val isBottom: Boolean,
+        val sealedParents: List<IrClassSymbol>
+    )
+
+    companion object {
+        fun analyze(top: IrClass): SealedInlineClassInfo {
+            fun collectSealedParents(irClass: IrClass): List<IrClassSymbol> {
+                var current = irClass.superTypes.first { it.isInlineClassType() }.classOrNull
+                val res = mutableListOf<IrClassSymbol>()
+                while (current != null && current != top.symbol) {
+                    res += current
+                    current = current.superTypes().first { it.isInlineClassType() }.classOrNull
+                }
+                return res
+            }
+
+            fun analyzeHierarchy(irClass: IrClass, predicate: (IrClassSymbol) -> Boolean): Set<SubclassInfo> =
+                irClass.sealedSubclasses.flatMap {
+                    when {
+                        it.owner.modality == Modality.SEALED -> {
+                            val res = analyzeHierarchy(it.owner, predicate).toMutableSet()
+                            if (predicate(it)) {
+                                res += SubclassInfo(it, false, collectSealedParents(it.owner))
+                            }
+                            res
+                        }
+                        predicate(it) -> setOf(SubclassInfo(it, true, collectSealedParents(it.owner)))
+                        else -> emptySet()
+                    }
+                }.toSet()
+
+            return SealedInlineClassInfo(top, analyzeHierarchy(top) { it.owner.isInline }, analyzeHierarchy(top) { !it.owner.isInline })
+        }
+    }
+}

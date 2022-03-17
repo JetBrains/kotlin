@@ -34,11 +34,11 @@ abstract class PromisedValue(val codegen: ExpressionCodegen, val type: Type, val
         val erasedSourceType = irType.eraseTypeParameters()
         val erasedTargetType = irTarget.eraseTypeParameters()
 
-        val upcastFromSealedInlineClassChild =
+        val upcastFromNoinlineSealedInlineClassChild =
             erasedSourceType.classOrNull?.owner?.let { !it.isInline && it.isChildOfSealedInlineClass() } == true &&
                     erasedTargetType.classOrNull != erasedSourceType.classOrNull
 
-        val downcastToSealedInlineClassChild =
+        val downcastToNoinlineSealedInlineClassChild =
             erasedTargetType.classOrNull?.owner?.let { !it.isInline && it.isChildOfSealedInlineClass() } == true &&
                     erasedTargetType.classOrNull != erasedSourceType.classOrNull
 
@@ -46,7 +46,7 @@ abstract class PromisedValue(val codegen: ExpressionCodegen, val type: Type, val
         val isFromTypeUnboxed = InlineClassAbi.unboxType(erasedSourceType)?.let(typeMapper::mapType) == type
         val isToTypeUnboxed = InlineClassAbi.unboxType(erasedTargetType)?.let(typeMapper::mapType) == target
 
-        if (upcastFromSealedInlineClassChild) {
+        if (upcastFromNoinlineSealedInlineClassChild) {
             StackValue.coerce(type, AsmTypes.OBJECT_TYPE, mv)
             if (!isToTypeUnboxed) {
                 // Upcasts from sealed inline class children lead to boxing, if the source is
@@ -56,7 +56,7 @@ abstract class PromisedValue(val codegen: ExpressionCodegen, val type: Type, val
             }
             return
         }
-        if (downcastToSealedInlineClassChild) {
+        if (downcastToNoinlineSealedInlineClassChild) {
             // Downcasts to sealed inline class children lead to unboxing, if the target is
             // not the inline class
             if (!isFromTypeUnboxed) {

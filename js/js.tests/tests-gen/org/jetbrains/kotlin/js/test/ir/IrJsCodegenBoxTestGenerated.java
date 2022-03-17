@@ -19994,6 +19994,12 @@ public class IrJsCodegenBoxTestGenerated extends AbstractIrJsCodegenBoxTest {
                 }
 
                 @Test
+                @TestMetadata("inlineClass.kt")
+                public void testInlineClass() throws Exception {
+                    runTest("compiler/testData/codegen/box/inlineClasses/sealed/casts/inlineClass.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+                }
+
+                @Test
                 @TestMetadata("interface.kt")
                 public void testInterface() throws Exception {
                     runTest("compiler/testData/codegen/box/inlineClasses/sealed/casts/interface.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
