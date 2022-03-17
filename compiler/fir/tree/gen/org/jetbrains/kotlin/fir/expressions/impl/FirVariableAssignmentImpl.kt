@@ -29,6 +29,7 @@ internal class FirVariableAssignmentImpl(
     override var dispatchReceiver: FirExpression,
     override var extensionReceiver: FirExpression,
     override var source: KtSourceElement?,
+    override val contextReceiverArguments: MutableList<FirExpression>,
     override var rValue: FirExpression,
 ) : FirVariableAssignment() {
     override var lValue: FirReference 
@@ -120,6 +121,11 @@ internal class FirVariableAssignmentImpl(
     @FirImplementationDetail
     override fun replaceSource(newSource: KtSourceElement?) {
         source = newSource
+    }
+
+    override fun replaceContextReceiverArguments(newContextReceiverArguments: List<FirExpression>) {
+        contextReceiverArguments.clear()
+        contextReceiverArguments.addAll(newContextReceiverArguments)
     }
 
     override fun replaceLValueTypeRef(newLValueTypeRef: FirTypeRef) {

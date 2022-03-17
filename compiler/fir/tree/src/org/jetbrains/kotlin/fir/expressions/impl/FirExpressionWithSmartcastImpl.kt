@@ -37,6 +37,7 @@ internal class FirExpressionWithSmartcastImpl(
     override val explicitReceiver: FirExpression? get() = originalExpression.explicitReceiver
     override val dispatchReceiver: FirExpression get() = originalExpression.dispatchReceiver
     override val extensionReceiver: FirExpression get() = originalExpression.extensionReceiver
+    override val contextReceiverArguments: List<FirExpression> get() = originalExpression.contextReceiverArguments
     override val calleeReference: FirReference get() = originalExpression.calleeReference
     override val originalType: FirTypeRef get() = originalExpression.typeRef
     override val isStable: Boolean get() = smartcastStability == SmartcastStability.STABLE_VALUE
@@ -95,5 +96,9 @@ internal class FirExpressionWithSmartcastImpl(
 
     @FirImplementationDetail
     override fun replaceSource(newSource: KtSourceElement?) {
+    }
+
+    override fun replaceContextReceiverArguments(newContextReceiverArguments: List<FirExpression>) {
+        throw IllegalStateException()
     }
 }
