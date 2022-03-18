@@ -75,7 +75,11 @@ class DiagnosticReporterByTrackingStrategy(
                 trace,
                 (diagnostic as NoValueForParameter).parameterDescriptor
             )
-            TypeCheckerHasRanIntoRecursion::class.java -> tracingStrategy.recursiveType(trace)
+            TypeCheckerHasRanIntoRecursion::class.java -> {
+                val shouldReportErrorsOnRecursiveTypeInsidePlusAssignment =
+                    context.languageVersionSettings.supportsFeature(LanguageFeature.ReportErrorsOnRecursiveTypeInsidePlusAssignment)
+                tracingStrategy.recursiveType(trace, shouldReportErrorsOnRecursiveTypeInsidePlusAssignment)
+            }
             InstantiationOfAbstractClass::class.java -> tracingStrategy.instantiationOfAbstractClass(trace)
             AbstractSuperCall::class.java -> {
                 val superExpression = (diagnostic as AbstractSuperCall).receiver.psiExpression as? KtSuperExpression

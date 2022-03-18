@@ -8087,6 +8087,12 @@ public class FirOldFrontendDiagnosticsTestGenerated extends AbstractFirDiagnosti
             }
 
             @Test
+            @TestMetadata("kt48546Strict.kt")
+            public void testKt48546Strict() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/delegatedProperty/kt48546Strict.kt");
+            }
+
+            @Test
             @TestMetadata("localVariable.kt")
             public void testLocalVariable() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/delegatedProperty/localVariable.kt");

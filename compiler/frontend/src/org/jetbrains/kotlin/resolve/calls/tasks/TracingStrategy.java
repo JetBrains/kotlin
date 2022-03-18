@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.resolve.calls.tasks;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.kotlin.config.LanguageVersionSettings;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.psi.Call;
 import org.jetbrains.kotlin.resolve.BindingTrace;
@@ -82,7 +83,7 @@ public interface TracingStrategy {
         ) {}
 
         @Override
-        public void recursiveType(@NotNull BindingTrace trace) {}
+        public void recursiveType(@NotNull BindingTrace trace, boolean shouldReportErrorsOnRecursiveTypeInsidePlusAssignment) {}
 
         @Override
         public void instantiationOfAbstractClass(@NotNull BindingTrace trace) {}
@@ -147,7 +148,7 @@ public interface TracingStrategy {
             @NotNull Collection<? extends ResolvedCall<D>> descriptors
     );
 
-    void recursiveType(@NotNull BindingTrace trace);
+    void recursiveType(@NotNull BindingTrace trace, boolean shouldReportErrorsOnRecursiveTypeInsidePlusAssignment);
 
     void instantiationOfAbstractClass(@NotNull BindingTrace trace);
 

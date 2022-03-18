@@ -585,7 +585,7 @@ public class ControlStructureTypingUtils {
         }
 
         @Override
-        public void recursiveType(@NotNull BindingTrace trace) {
+        public void recursiveType(@NotNull BindingTrace trace, boolean shouldReportErrorsOnRecursiveTypeInsidePlusAssignment) {
             logError();
         }
 
