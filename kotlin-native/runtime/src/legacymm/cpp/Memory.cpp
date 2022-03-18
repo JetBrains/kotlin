@@ -3767,19 +3767,19 @@ void CheckGlobalsAccessible() {
         ThrowIncorrectDereferenceException();
 }
 
-ALWAYS_INLINE RUNTIME_NOTHROW void Kotlin_mm_switchThreadStateNative() {
+CODEGEN_INLINE_POLICY RUNTIME_NOTHROW void Kotlin_mm_switchThreadStateNative() {
     // no-op, used by the new MM only.
 }
 
-ALWAYS_INLINE RUNTIME_NOTHROW void Kotlin_mm_switchThreadStateRunnable() {
+CODEGEN_INLINE_POLICY RUNTIME_NOTHROW void Kotlin_mm_switchThreadStateRunnable() {
     // no-op, used by the new MM only.
 }
 
-ALWAYS_INLINE RUNTIME_NOTHROW void Kotlin_mm_safePointFunctionPrologue() {
+CODEGEN_INLINE_POLICY RUNTIME_NOTHROW void Kotlin_mm_safePointFunctionPrologue() {
     // no-op, used by the new MM only.
 }
 
-ALWAYS_INLINE RUNTIME_NOTHROW void Kotlin_mm_safePointWhileLoopBody() {
+CODEGEN_INLINE_POLICY RUNTIME_NOTHROW void Kotlin_mm_safePointWhileLoopBody() {
     // no-op, used by the new MM only.
 }
 

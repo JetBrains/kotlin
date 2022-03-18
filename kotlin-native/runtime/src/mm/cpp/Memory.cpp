@@ -568,23 +568,23 @@ extern "C" void CheckGlobalsAccessible() {
     // Always accessible
 }
 
-extern "C" RUNTIME_NOTHROW ALWAYS_INLINE void Kotlin_mm_safePointFunctionPrologue() {
+extern "C" RUNTIME_NOTHROW CODEGEN_INLINE_POLICY void Kotlin_mm_safePointFunctionPrologue() {
     auto* threadData = mm::ThreadRegistry::Instance().CurrentThreadData();
     AssertThreadState(threadData, ThreadState::kRunnable);
     threadData->gc().SafePointFunctionPrologue();
 }
 
-extern "C" RUNTIME_NOTHROW ALWAYS_INLINE void Kotlin_mm_safePointWhileLoopBody() {
+extern "C" RUNTIME_NOTHROW CODEGEN_INLINE_POLICY void Kotlin_mm_safePointWhileLoopBody() {
     auto* threadData = mm::ThreadRegistry::Instance().CurrentThreadData();
     AssertThreadState(threadData, ThreadState::kRunnable);
     threadData->gc().SafePointLoopBody();
 }
 
-extern "C" ALWAYS_INLINE RUNTIME_NOTHROW void Kotlin_mm_switchThreadStateNative() {
+extern "C" CODEGEN_INLINE_POLICY RUNTIME_NOTHROW void Kotlin_mm_switchThreadStateNative() {
     SwitchThreadState(mm::ThreadRegistry::Instance().CurrentThreadData(), ThreadState::kNative);
 }
 
-extern "C" ALWAYS_INLINE RUNTIME_NOTHROW void Kotlin_mm_switchThreadStateRunnable() {
+extern "C" CODEGEN_INLINE_POLICY RUNTIME_NOTHROW void Kotlin_mm_switchThreadStateRunnable() {
     SwitchThreadState(mm::ThreadRegistry::Instance().CurrentThreadData(), ThreadState::kRunnable);
 }
 

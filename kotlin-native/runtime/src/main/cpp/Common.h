@@ -25,7 +25,15 @@
 #define RUNTIME_WEAK __attribute__((weak))
 #define RUNTIME_NODEBUG __attribute__((nodebug))
 
-#define ALWAYS_INLINE __attribute__((always_inline))
+#if KONAN_ARM32 && (KONAN_IOS || KONAN_WATCHOS)
+  // On the one hand, ALWAYS_INLINE forces many performance-critical function to be, well,
+  // inlined. Which is good for performance, of course.
+  // On the other hand, 32-bit Mach-O object files can't be really big.
+  // As a compromise, we let the compiler decide what should be inlined or not.
+  #define ALWAYS_INLINE
+#else
+  #define ALWAYS_INLINE __attribute__((always_inline))
+#endif
 #define NO_INLINE __attribute__((noinline))
 
 #define NO_EXTERNAL_CALLS_CHECK __attribute__((annotate("no_external_calls_check")))

@@ -26,6 +26,14 @@
 #include "PointerBits.h"
 #include "Utils.hpp"
 
+#if KONAN_ARM32 && (KONAN_IOS || KONAN_WATCHOS)
+  // Currently, codegen places a lot of unnecessary calls to MM functions.
+  // By forcing NO_INLINE on these functions we keep binaries from growing too big.
+  #define CODEGEN_INLINE_POLICY NO_INLINE
+#else
+  #define CODEGEN_INLINE_POLICY ALWAYS_INLINE
+#endif
+
 typedef enum {
   // Must match to permTag() in Kotlin.
   OBJECT_TAG_PERMANENT_CONTAINER = 1 << 0,
@@ -327,13 +335,13 @@ void AdoptReferenceFromSharedVariable(ObjHeader* object);
 void CheckGlobalsAccessible();
 
 // Sets state of the current thread to NATIVE (used by the new MM).
-ALWAYS_INLINE RUNTIME_NOTHROW void Kotlin_mm_switchThreadStateNative();
+CODEGEN_INLINE_POLICY RUNTIME_NOTHROW void Kotlin_mm_switchThreadStateNative();
 // Sets state of the current thread to RUNNABLE (used by the new MM).
-ALWAYS_INLINE RUNTIME_NOTHROW void Kotlin_mm_switchThreadStateRunnable();
+CODEGEN_INLINE_POLICY RUNTIME_NOTHROW void Kotlin_mm_switchThreadStateRunnable();
 
 // Safe point callbacks from Kotlin code generator.
-void Kotlin_mm_safePointFunctionPrologue() RUNTIME_NOTHROW;
-void Kotlin_mm_safePointWhileLoopBody() RUNTIME_NOTHROW;
+CODEGEN_INLINE_POLICY void Kotlin_mm_safePointFunctionPrologue() RUNTIME_NOTHROW;
+CODEGEN_INLINE_POLICY void Kotlin_mm_safePointWhileLoopBody() RUNTIME_NOTHROW;
 
 #ifdef __cplusplus
 }
