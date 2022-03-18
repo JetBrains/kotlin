@@ -51,8 +51,8 @@ class CocoaPodsIT : BaseGradleIT() {
     override fun defaultBuildOptions(): BuildOptions =
         super.defaultBuildOptions().copy(customEnvironmentVariables = getEnvs())
 
-    val PODFILE_IMPORT_DIRECTIVE_PLACEHOLDER = "<import_mode_directive>"
-    val PODFILE_IMPORT_POD_PLACEHOLDER = "#import_pod_directive"
+    private val PODFILE_IMPORT_DIRECTIVE_PLACEHOLDER = "<import_mode_directive>"
+    private val PODFILE_IMPORT_POD_PLACEHOLDER = "#import_pod_directive"
 
     private val cocoapodsSingleKtPod = "native-cocoapods-single"
     private val cocoapodsMultipleKtPods = "native-cocoapods-multiple"
@@ -464,7 +464,7 @@ class CocoaPodsIT : BaseGradleIT() {
     fun testUTDTargetAdded() {
         with(project.gradleBuildScript()) {
             addPod(defaultPodName, produceGitBlock(defaultPodRepo))
-            appendToCocoapodsBlock("osx.deploymentTarget = \"13.5\"")
+            appendToCocoapodsBlock("osx.deploymentTarget = \"10.15\"")
         }
         project.testImport(listOf(defaultPodRepo))
 
@@ -635,7 +635,7 @@ class CocoaPodsIT : BaseGradleIT() {
         val anotherTarget = "MacosX64"
         val anotherSdk = "macosx"
         with(project.gradleBuildScript()) {
-            appendToCocoapodsBlock("osx.deploymentTarget = \"13.5\"")
+            appendToCocoapodsBlock("osx.deploymentTarget = \"10.15\"")
             appendToKotlinBlock(anotherTarget.decapitalize() + "()")
         }
         val anotherSdkDefaultPodTaskName = podBuildFullTaskName(sdkName = anotherSdk)
@@ -1623,7 +1623,7 @@ class CocoaPodsIT : BaseGradleIT() {
             if (cocoapodsInstallationRequired) {
                 if (cocoapodsInstallationAllowed) {
                     println("Installing CocoaPods...")
-                    gem("install", "--install-dir", cocoapodsInstallationRoot.absolutePath, "cocoapods", "cocoapods-generate")
+                    gem("install", "--install-dir", cocoapodsInstallationRoot.absolutePath, "cocoapods")
                     if (hostIsArmMac) {
                         // Force running CocoaPods via `arch -x86_64` on ARM MacOS to workaround problems with libffi.
                         // https://stackoverflow.com/questions/64901180/running-cocoapods-on-apple-silicon-m1
@@ -1641,9 +1641,9 @@ class CocoaPodsIT : BaseGradleIT() {
                 } else {
                     fail(
                         """
-                            Running CocoaPods integration tests requires cocoapods and cocoapods-generate to be installed.
+                            Running CocoaPods integration tests requires cocoapods to be installed.
                             Please install them manually:
-                                gem install cocoapods cocoapods-generate
+                                gem install cocoapods
                             Or re-run the tests with the 'installCocoapods=true' Gradle property.
                         """.trimIndent()
                     )
@@ -1652,7 +1652,7 @@ class CocoaPodsIT : BaseGradleIT() {
         }
 
         private val cocoapodsInstallationRequired: Boolean by lazy {
-            !isCocoapodsInstalled() || !isPodGenInstalled()
+            !isCocoapodsInstalled()
         }
         private val cocoapodsInstallationAllowed: Boolean = System.getProperty("installCocoapods").toBoolean()
 
@@ -1687,11 +1687,6 @@ class CocoaPodsIT : BaseGradleIT() {
             } catch (e: IOException) {
                 false
             }
-        }
-
-        private fun isPodGenInstalled(): Boolean {
-            val installed = gem("list", "--no-versions").lines()
-            return "cocoapods-generate" in installed
         }
 
         private fun gem(vararg args: String): String {

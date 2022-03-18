@@ -452,6 +452,7 @@ open class KotlinCocoapodsPlugin : Plugin<Project> {
             project.tasks.register(family.toPodGenTaskName, PodGenTask::class.java) {
                 it.description = "Сreates a synthetic Xcode project to retrieve CocoaPods dependencies"
                 it.podspec = podspecTaskProvider.map { task -> task.outputFile }
+                it.podName = project.provider { cocoapodsExtension.name }
                 it.useLibraries = project.provider { cocoapodsExtension.useLibraries }
                 it.specRepos = project.provider { cocoapodsExtension.specRepos }
                 it.family = family
@@ -694,14 +695,7 @@ open class KotlinCocoapodsPlugin : Plugin<Project> {
             registerPodImportTask(project, kotlinExtension)
             registerPodPublishTasks(project, cocoapodsExtension)
 
-            if (HostManager.hostIsMac && !isAvailableToProduceSynthetic) {
-                logger.quiet(
-                    """
-                        Dependency on pods requires cocoapods-generate plugin to be installed.
-                        If you plan to add dependencies on third party pods, don't forget to install it by executing 'gem install cocoapods-generate' in terminal.
-                    """.trimIndent()
-                )
-            } else if (!HostManager.hostIsMac) {
+            if (!HostManager.hostIsMac) {
                 logger.warn(
                     """
                         Kotlin Cocoapods Plugin is fully supported on mac machines only. Gradle tasks that can not run on non-mac hosts will be skipped.
@@ -739,18 +733,5 @@ open class KotlinCocoapodsPlugin : Plugin<Project> {
         const val FRAMEWORK_PATHS_PROPERTY = "kotlin.native.cocoapods.paths.frameworks"
 
         const val GENERATE_WRAPPER_PROPERTY = "kotlin.native.cocoapods.generate.wrapper"
-
-        val isAvailableToProduceSynthetic: Boolean by lazy {
-            if (!HostManager.hostIsMac) {
-                return@lazy false
-            }
-
-            val gemListProcess = ProcessBuilder("gem", "list").start()
-            val gemListRetCode = gemListProcess.waitFor()
-            val gemListOutput = gemListProcess.inputStream.use {
-                it.reader().readText()
-            }
-            gemListRetCode == 0 && gemListOutput.contains("cocoapods-generate")
-        }
     }
 }
