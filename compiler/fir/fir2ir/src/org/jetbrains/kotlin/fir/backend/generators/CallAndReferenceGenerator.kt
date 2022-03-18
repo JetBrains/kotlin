@@ -403,6 +403,16 @@ class CallAndReferenceGenerator(
                         }
                         IrDynamicOperatorExpressionImpl(startOffset, endOffset, theType, operator)
                     } else {
+                        if (explicitReceiverExpression?.type is IrDynamicType) {
+                            theExplicitReceiver = IrTypeOperatorCallImpl(
+                                startOffset,
+                                endOffset,
+                                typeConverter.irBuiltIns.anyType,
+                                IrTypeOperator.IMPLICIT_DYNAMIC_CAST,
+                                typeConverter.irBuiltIns.anyType,
+                                explicitReceiverExpression,
+                            )
+                        }
                         IrCallImpl(
                             startOffset, endOffset, type, symbol,
                             typeArgumentsCount = symbol.owner.typeParameters.size,
