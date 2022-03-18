@@ -39,6 +39,14 @@ enum class Bar {
     fun bay() = name
 }
 
+@JsExport
+class OuterClass {
+    enum class NestedEnum {
+        A,
+        B;
+    }
+}
+
 // FILE: test.js
 function box() {
     if (this["export_enum_class"].Foo.A !== this["export_enum_class"].Foo.A) return "fail1"
@@ -81,6 +89,12 @@ function box() {
 
     if (this["export_enum_class"].Foo.A.ordinal !== 0) return "fail25"
     if (this["export_enum_class"].Foo.B.ordinal !== 1) return "fail26"
+
+    if (this["export_enum_class"].OuterClass.NestedEnum.A.name !== "A") return "fail27"
+    if (this["export_enum_class"].OuterClass.NestedEnum.B.name !== "B") return "fail28"
+
+    if (this["export_enum_class"].OuterClass.NestedEnum.A.ordinal !== 0) return "fail29"
+    if (this["export_enum_class"].OuterClass.NestedEnum.B.ordinal !== 1) return "fail30"
 
     return "OK"
 }
