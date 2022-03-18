@@ -28,7 +28,7 @@ internal fun ThrowArrayIndexOutOfBoundsException(): Nothing {
 @ExportForCppRuntime
 fun ThrowClassCastException(instance: Any, typeInfo: NativePtr): Nothing {
     val clazz = KClassImpl<Any>(typeInfo)
-    throw ClassCastException("${instance::class.qualifiedName} cannot be cast to ${clazz.qualifiedName}")
+    throw ClassCastException("${instance::class} cannot be cast to $clazz")
 }
 
 @ExportForCppRuntime

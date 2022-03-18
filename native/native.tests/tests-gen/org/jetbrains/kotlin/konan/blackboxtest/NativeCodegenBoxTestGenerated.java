@@ -3738,6 +3738,42 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
                     runTest("compiler/testData/codegen/box/casts/mutableCollections/weirdMutableCasts.kt");
                 }
             }
+
+            @Nested
+            @TestMetadata("compiler/testData/codegen/box/casts/nativeCCEMessage")
+            @TestDataPath("$PROJECT_ROOT")
+            @Tag("codegen")
+            @UseExtTestCaseGroupProvider()
+            public class NativeCCEMessage {
+                @Test
+                public void testAllFilesPresentInNativeCCEMessage() throws Exception {
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/casts/nativeCCEMessage"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
+                }
+
+                @Test
+                @TestMetadata("castAnonymousClass.kt")
+                public void testCastAnonymousClass() throws Exception {
+                    runTest("compiler/testData/codegen/box/casts/nativeCCEMessage/castAnonymousClass.kt");
+                }
+
+                @Test
+                @TestMetadata("castGlobalClass.kt")
+                public void testCastGlobalClass() throws Exception {
+                    runTest("compiler/testData/codegen/box/casts/nativeCCEMessage/castGlobalClass.kt");
+                }
+
+                @Test
+                @TestMetadata("castLocalClass.kt")
+                public void testCastLocalClass() throws Exception {
+                    runTest("compiler/testData/codegen/box/casts/nativeCCEMessage/castLocalClass.kt");
+                }
+
+                @Test
+                @TestMetadata("castToLocalClass.kt")
+                public void testCastToLocalClass() throws Exception {
+                    runTest("compiler/testData/codegen/box/casts/nativeCCEMessage/castToLocalClass.kt");
+                }
+            }
         }
 
         @Nested
