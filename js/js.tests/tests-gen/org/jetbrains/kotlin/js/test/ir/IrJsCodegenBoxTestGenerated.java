@@ -3656,6 +3656,16 @@ public class IrJsCodegenBoxTestGenerated extends AbstractIrJsCodegenBoxTest {
                 runTest("compiler/testData/codegen/box/casts/mutableCollections/weirdMutableCasts.kt");
             }
         }
+
+        @Nested
+        @TestMetadata("compiler/testData/codegen/box/casts/nativeCCEMessage")
+        @TestDataPath("$PROJECT_ROOT")
+        public class NativeCCEMessage {
+            @Test
+            public void testAllFilesPresentInNativeCCEMessage() throws Exception {
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/casts/nativeCCEMessage"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
+            }
+        }
     }
 
     @Nested
