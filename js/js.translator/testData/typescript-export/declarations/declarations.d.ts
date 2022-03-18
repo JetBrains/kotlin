@@ -142,5 +142,25 @@ declare namespace JS_TESTS {
             readonly __doNotUseIt: __doNotImplementIt;
         }
         function processInterface(test: foo.TestInterface): string;
+        class OuterClass {
+            constructor();
+        }
+        namespace OuterClass {
+            abstract class NestedEnum {
+                private constructor();
+                static get A(): foo.OuterClass.NestedEnum & {
+                    get name(): "A";
+                    get ordinal(): 0;
+                };
+                static get B(): foo.OuterClass.NestedEnum & {
+                    get name(): "B";
+                    get ordinal(): 1;
+                };
+                static values(): Array<foo.OuterClass.NestedEnum>;
+                static valueOf(value: string): foo.OuterClass.NestedEnum;
+                get name(): "A" | "B";
+                get ordinal(): 0 | 1;
+            }
+        }
     }
 }
