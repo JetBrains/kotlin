@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.fir.declarations.impl.FirDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.builder.buildFunctionCall
+import org.jetbrains.kotlin.fir.expressions.builder.buildPropertyAccessExpression
 import org.jetbrains.kotlin.fir.expressions.builder.buildVarargArgumentsExpression
 import org.jetbrains.kotlin.fir.expressions.impl.*
 import org.jetbrains.kotlin.fir.references.FirReference
@@ -47,6 +48,7 @@ import org.jetbrains.kotlin.psi.KtBinaryExpression
 import org.jetbrains.kotlin.psi.KtDotQualifiedExpression
 import org.jetbrains.kotlin.psi.KtForExpression
 import org.jetbrains.kotlin.util.OperatorNameConventions
+import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 class Fir2IrVisitor(
     private val components: Fir2IrComponents,
@@ -756,24 +758,61 @@ class Fir2IrVisitor(
         }
     }
 
+    private fun buildFakeReceiverForDynamicIncrementOrDecrement(
+        receiver: FirExpression,
+        operationReceiver: FirExpression,
+    ) = when (operationReceiver) {
+        is FirPropertyAccessExpression -> buildPropertyAccessExpression {
+            calleeReference = operationReceiver.calleeReference
+            typeRef = operationReceiver.typeRef
+            source = operationReceiver.source
+            explicitReceiver = receiver
+        }
+        is FirFunctionCall -> buildFunctionCall {
+            calleeReference = operationReceiver.calleeReference
+            typeRef = operationReceiver.typeRef
+            source = operationReceiver.source
+            explicitReceiver = receiver
+            argumentList = operationReceiver.argumentList
+        }
+        else -> receiver
+    }
+
     private fun extractOperationFromDynamicSetCall(functionCall: FirFunctionCall) =
         functionCall.dynamicVarargArguments?.lastOrNull() as? FirFunctionCall
 
-    private fun FirBlock.convertIncrementOrDecrementToIr(): IrExpression? {
-        val receiver = statements.findFirst<FirProperty>()?.initializer ?: return null
-        val valueSavingCall = statements.findLast<FirProperty>()?.initializer as? FirFunctionCall ?: return null
-        val valueSavingCallReceiver = valueSavingCall.explicitReceiver
-
-        // Is prefix
-        val (arrayAccess, operationCall) = if (valueSavingCallReceiver is FirFunctionCall) {
-            valueSavingCallReceiver to valueSavingCall
-        } else {
-            val setCall = statements.findLast<FirFunctionCall>() ?: return null
-            val operation = extractOperationFromDynamicSetCall(setCall) ?: return null
-            valueSavingCall to operation
+    private val FirExpression.isIncrementOrDecrementCall: Boolean
+        get() {
+            val name = safeAs<FirFunctionCall>()?.calleeReference?.resolved?.name
+            return name == OperatorNameConventions.INC || name == OperatorNameConventions.DEC
         }
 
-        val newReceiver = buildFakeReceiverForDynamicIncrementOrDecrementArrayAccess(receiver, arrayAccess)
+    private fun FirBlock.convertIncrementOrDecrementToIr(): IrExpression? {
+        val receiver = statements.findFirst<FirProperty>() ?: return null
+        val receiverValue = receiver.initializer ?: return null
+
+        val savedValue = statements.findLast<FirProperty>()?.initializer ?: return null
+        val isPrefix = savedValue.isIncrementOrDecrementCall
+
+        val (operationReceiver, operationCall) = if (isPrefix) {
+            val operation = savedValue as? FirFunctionCall ?: return null
+            val operationReceiver = operation.explicitReceiver ?: return null
+            operationReceiver to operation
+        } else {
+            val operation = statements.findLast<FirVariableAssignment>()?.rValue as? FirFunctionCall
+                ?: statements.findLast<FirFunctionCall>()?.let { extractOperationFromDynamicSetCall(it) }
+                ?: return null
+            savedValue to operation
+        }
+
+        val isArrayAccess = receiver.name.toString().contains("array")
+
+        val newReceiver = if (isArrayAccess) {
+            val arrayAccess = operationReceiver as? FirFunctionCall ?: return null
+            buildFakeReceiverForDynamicIncrementOrDecrementArrayAccess(receiverValue, arrayAccess)
+        } else {
+            buildFakeReceiverForDynamicIncrementOrDecrement(receiverValue, operationReceiver)
+        }
 
         val newFunctionCall = buildFunctionCall {
             calleeReference = operationCall.calleeReference
