@@ -379,8 +379,7 @@ private fun runCommand(
 }
 
 /**
- * The task takes the path to the .podspec file and calls `pod gen`
- * to create synthetic xcode project and workspace.
+ * The task generates a synthetic project with all cocoapods dependencies
  */
 open class PodGenTask : CocoapodsTask() {
 
@@ -393,6 +392,9 @@ open class PodGenTask : CocoapodsTask() {
     @get:PathSensitive(PathSensitivity.ABSOLUTE)
     @get:InputFile
     internal lateinit var podspec: Provider<File>
+
+    @get:Input
+    internal lateinit var podName: Provider<String>
 
     @get:Input
     internal lateinit var useLibraries: Provider<Boolean>
@@ -410,7 +412,6 @@ open class PodGenTask : CocoapodsTask() {
     internal val podsXcodeProjDir: Provider<File>
         get() = project.provider {
             project.cocoapodsBuildDirs.synthetic(family)
-                .resolve(podspec.get().nameWithoutExtension)
                 .resolve("Pods")
                 .resolve("Pods.xcodeproj")
         }
@@ -418,28 +419,39 @@ open class PodGenTask : CocoapodsTask() {
     @TaskAction
     fun generate() {
         val syntheticDir = project.cocoapodsBuildDirs.synthetic(family).apply { mkdirs() }
-        val localPodspecPaths = pods.get().mapNotNull { it.source?.getLocalPath(project, it.name) }
-
         val specRepos = specRepos.get().getAll()
 
-        val podGenProcessArgs = listOfNotNull(
-            "pod", "gen",
-            "--use-libraries".takeIf { useLibraries.get() },
-            "--platforms=${family.platformLiteral}",
-            "--gen-directory=${syntheticDir.absolutePath}",
-            localPodspecPaths.takeIf { it.isNotEmpty() }?.joinToString(separator = ",")?.let { "--local-sources=$it" },
-            specRepos.takeIf { it.isNotEmpty() }?.joinToString(separator = ",")?.let { "--sources=$it" },
-            podspec.get().absolutePath
-        )
+        val projResource = "/cocoapods/project.pbxproj"
+        val projDestination = syntheticDir.resolve("synthetic.xcodeproj").resolve("project.pbxproj")
+
+        projDestination.parentFile.mkdirs()
+        projDestination.outputStream().use { file ->
+            javaClass.getResourceAsStream(projResource).use { resource ->
+                resource.copyTo(file)
+            }
+        }
+
+        val podfile = syntheticDir.resolve("Podfile")
+        podfile.createNewFile()
+
+        val podfileContent = getPodfileContent(specRepos, family.platformLiteral)
+        podfile.writeText(podfileContent)
+        val podInstallCommand = listOf("pod", "install")
 
         runCommand(
-            podGenProcessArgs,
+            podInstallCommand,
             project.logger,
             exceptionHandler = { e: IOException ->
-                CocoapodsErrorHandlingUtil.handle(e, podGenProcessArgs)
+                CocoapodsErrorHandlingUtil.handle(e, podInstallCommand)
             },
             errorHandler = { retCode, output, _ ->
-                CocoapodsErrorHandlingUtil.handlePodGenError(podGenProcessArgs.joinToString(" "), retCode, output, family)
+                CocoapodsErrorHandlingUtil.handlePodInstallSyntheticError(
+                    podInstallCommand.joinToString(" "),
+                    retCode,
+                    output,
+                    family,
+                    podName.get()
+                )
             },
             processConfiguration = {
                 directory(syntheticDir)
@@ -447,9 +459,42 @@ open class PodGenTask : CocoapodsTask() {
 
         val podsXcprojFile = podsXcodeProjDir.get()
         check(podsXcprojFile.exists() && podsXcprojFile.isDirectory) {
-            "The directory '${podsXcprojFile.path}' was not created as a result of the `pod gen` call."
+            "Synthetic project '${podsXcprojFile.path}' was not created."
         }
     }
+
+    private fun getPodfileContent(specRepos: Collection<String>, xcodeTarget: String) =
+        buildString {
+
+            specRepos.forEach {
+                appendLine("source '$it'")
+            }
+
+            appendLine("target '$xcodeTarget' do")
+            if (useLibraries.get().not()) {
+                appendLine("\tuse_frameworks!")
+            }
+            pods.get().mapNotNull {
+                buildString {
+                    append("pod '${it.name}'")
+
+                    val pathType = when (it.source) {
+                        is Path -> "path"
+                        is Url -> "path"
+                        is Git -> "git"
+                        else -> null
+                    }
+
+                    val path = it.source?.getLocalPath(project, it.name)
+
+                    if (path != null && pathType != null) {
+                        append(", :$pathType => '$path'")
+                    }
+
+                }
+            }.forEach { appendLine("\t$it") }
+            appendLine("end\n")
+        }
 }
 
 
@@ -628,12 +673,11 @@ private object CocoapodsErrorHandlingUtil {
                |        Full command: ${command.joinToString(" ")}
                |        
                |        Possible reason: CocoaPods is not installed
-               |        Please check that CocoaPods v1.10 or above and cocoapods-generate plugin are installed.
+               |        Please check that CocoaPods v1.10 or above is installed.
                |        
                |        To check CocoaPods version type 'pod --version' in the terminal
                |        
                |        To install CocoaPods execute 'sudo gem install cocoapods'
-               |        To install cocoapod-generate execute 'sudo gem install cocoapods-generate'
                |
             """.trimMargin()
             throw IllegalStateException(message)
@@ -650,7 +694,7 @@ private object CocoapodsErrorHandlingUtil {
             "'pod install' command failed with code $retCode.",
             "Full command: $command",
             "Error message:",
-            error,
+            error.lines().filter { it.isNotBlank() }.joinToString("\n"),
             specReposMessages?.let {
                 """
                     |        Please, check that podfile contains following lines in header:
@@ -669,9 +713,9 @@ private object CocoapodsErrorHandlingUtil {
         ).joinToString("\n")
     }
 
-    fun handlePodGenError(command: String, retCode: Int, error: String, family: Family): String? {
+    fun handlePodInstallSyntheticError(command: String, retCode: Int, error: String, family: Family, podName: String): String? {
         var message = """
-            |'pod gen' command failed with return code: $retCode
+            |'pod install' command on the synthetic project failed with return code: $retCode
             |
             |        Full command: $command
             |
@@ -679,28 +723,20 @@ private object CocoapodsErrorHandlingUtil {
             |       
         """.trimMargin()
 
-        if (error.contains("Unknown command: `gen`")) {
-            message += """
-                |
-                |       Possible reason: cocoapod-generate is not installed
-                |       To install cocoapod-generate execute 'sudo gem install cocoapods-generate' in the terminal
-                |       
-            """.trimMargin()
-            return message
-        } else if (
+        if (
             error.contains("deployment target") ||
-            error.contains("requested platforms:") ||
-            error.contains("no platform was specified")
+            error.contains("no platform was specified") ||
+            error.contains(Regex("The platform of the target .+ is not compatible with `$podName"))
         ) {
             message += """
                 |
-                |       Possible reason: ${family.name.toLowerCase()} deployment target is not configured
-                |       Configure deployment_target for ALL targets as follows:
-                |       cocoapods {
-                |          ...
-                |          ${family.name.toLowerCase()}.deploymentTarget = "..."
-                |          ...
-                |       }
+                |        Possible reason: ${family.name.toLowerCase()} deployment target is not configured
+                |        Configure deployment_target for ALL targets as follows:
+                |        cocoapods {
+                |           ...
+                |           ${family.name.toLowerCase()}.deploymentTarget = "..."
+                |           ...
+                |        }
                 |       
             """.trimMargin()
             return message
