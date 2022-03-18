@@ -8,4 +8,3 @@ suspend fun box() {
   }
 )
 }
-

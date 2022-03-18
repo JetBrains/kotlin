@@ -359,7 +359,7 @@ internal class AdapterGenerator(
                             reifiedVarargElementType = adaptedType.getArgumentTypeAt(index)
                             reifiedVarargType = IrSimpleTypeImpl(
                                 parameterType.classifier,
-                                parameterType.hasQuestionMark,
+                                parameterType.nullability,
                                 listOf(makeTypeProjection(reifiedVarargElementType, Variance.OUT_VARIANCE)),
                                 parameterType.annotations,
                                 parameterType.abbreviation

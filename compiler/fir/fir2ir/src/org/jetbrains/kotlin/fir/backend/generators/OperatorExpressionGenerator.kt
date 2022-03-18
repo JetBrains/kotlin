@@ -18,10 +18,8 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrGetValueImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrTypeOperatorCallImpl
 import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
-import org.jetbrains.kotlin.ir.types.IrSimpleType
-import org.jetbrains.kotlin.ir.types.classifierOrFail
+import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
-import org.jetbrains.kotlin.ir.types.isDoubleOrFloatWithoutNullability
 import org.jetbrains.kotlin.ir.util.getSimpleFunction
 
 internal class OperatorExpressionGenerator(
@@ -173,19 +171,14 @@ internal class OperatorExpressionGenerator(
                 if (noImplicitCast && !isDoubleOrFloatWithoutNullability && irExpression.operator == IrTypeOperator.IMPLICIT_CAST) {
                     return irExpression.argument
                 } else {
-                    val simpleType = irExpression.type as? IrSimpleType
+                    val expressionType = irExpression.type
                     if (isDoubleOrFloatWithoutNullability &&
                         isOriginalNullable &&
-                        simpleType?.hasQuestionMark == false
+                        expressionType is IrSimpleType &&
+                        !expressionType.isNullable()
                     ) {
                         // Make it compatible with IR lowering
-                        val nullableDoubleOrFloatType = IrSimpleTypeImpl(
-                            simpleType.classifier,
-                            true,
-                            simpleType.arguments,
-                            simpleType.annotations,
-                            simpleType.abbreviation
-                        )
+                        val nullableDoubleOrFloatType = expressionType.makeNullable()
                         return IrTypeOperatorCallImpl(
                             irExpression.startOffset,
                             irExpression.endOffset,

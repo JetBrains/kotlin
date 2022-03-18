@@ -50,7 +50,9 @@ import org.jetbrains.kotlin.backend.common.serialization.proto.IrInlineClassRepr
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrLocalDelegatedProperty as ProtoLocalDelegatedProperty
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrMultiFieldValueClassRepresentation as ProtoIrMultiFieldValueClassRepresentation
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrProperty as ProtoProperty
+import org.jetbrains.kotlin.backend.common.serialization.proto.IrSimpleTypeNullability as ProtoSimpleTypeNullablity
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrSimpleType as ProtoSimpleType
+import org.jetbrains.kotlin.backend.common.serialization.proto.IrSimpleTypeLegacy as ProtoSimpleTypeLegacy
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrStatement as ProtoStatement
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrType as ProtoType
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrTypeAbbreviation as ProtoTypeAbbreviation
@@ -110,6 +112,12 @@ class IrDeclarationDeserializer(
         }
     }
 
+    private fun deserializeSimpleTypeNullability(proto: ProtoSimpleTypeNullablity) = when (proto) {
+        ProtoSimpleTypeNullablity.MARKED_NULLABLE -> SimpleTypeNullability.MARKED_NULLABLE
+        ProtoSimpleTypeNullablity.NOT_SPECIFIED -> SimpleTypeNullability.NOT_SPECIFIED
+        ProtoSimpleTypeNullablity.DEFINITELY_NOT_NULL -> SimpleTypeNullability.DEFINITELY_NOT_NULL
+    }
+
     private fun deserializeSimpleType(proto: ProtoSimpleType): IrSimpleType {
         val symbol = checkSymbolType<IrClassifierSymbol>(deserializeIrSymbolAndRemap(proto.classifier))
 
@@ -119,7 +127,23 @@ class IrDeclarationDeserializer(
         return IrSimpleTypeImpl(
             null,
             symbol,
-            proto.hasQuestionMark,
+            deserializeSimpleTypeNullability(proto.nullability),
+            arguments,
+            annotations,
+            if (proto.hasAbbreviation()) deserializeTypeAbbreviation(proto.abbreviation) else null
+        )
+    }
+
+    private fun deserializeLegacySimpleType(proto: ProtoSimpleTypeLegacy): IrSimpleType {
+        val symbol = checkSymbolType<IrClassifierSymbol>(deserializeIrSymbolAndRemap(proto.classifier))
+
+        val arguments = proto.argumentList.map { deserializeIrTypeArgument(it) }
+        val annotations = deserializeAnnotations(proto.annotationList)
+
+        return IrSimpleTypeImpl(
+            null,
+            symbol,
+            SimpleTypeNullability.fromHasQuestionMark(proto.hasQuestionMark),
             arguments,
             annotations,
             if (proto.hasAbbreviation()) deserializeTypeAbbreviation(proto.abbreviation) else null
@@ -145,16 +169,17 @@ class IrDeclarationDeserializer(
         return IrErrorTypeImpl(null, annotations, Variance.INVARIANT)
     }
 
-    private fun deserializeDefinitelyNotNullType(proto: ProtoDefinitelyNotNullType): IrDefinitelyNotNullType {
+    private fun deserializeDefinitelyNotNullType(proto: ProtoDefinitelyNotNullType): IrSimpleType {
         assert(proto.typesCount == 1) { "Only DefinitelyNotNull type is now supported" }
         // TODO support general case of intersection type
-        return IrDefinitelyNotNullTypeImpl(null, deserializeIrType(proto.typesList[0]))
+        return deserializeIrType(proto.typesList[0]).makeNotNull() as IrSimpleType
     }
 
     private fun deserializeIrTypeData(proto: ProtoType): IrType {
         return when (proto.kindCase) {
             DNN -> deserializeDefinitelyNotNullType(proto.dnn)
             SIMPLE -> deserializeSimpleType(proto.simple)
+            LEGACYSIMPLE -> deserializeLegacySimpleType(proto.legacySimple)
             DYNAMIC -> deserializeDynamicType(proto.dynamic)
             ERROR -> deserializeErrorType(proto.error)
             else -> error("Unexpected IrType kind: ${proto.kindCase}")

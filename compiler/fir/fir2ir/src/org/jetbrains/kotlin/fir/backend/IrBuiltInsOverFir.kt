@@ -69,7 +69,7 @@ class IrBuiltInsOverFir(
     }
     override val anyClass: IrClassSymbol get() = any.klass
     override val anyType: IrType get() = any.type
-    override val anyNType by lazy { anyType.withHasQuestionMark(true) }
+    override val anyNType by lazy { anyType.makeNullable() }
 
     private val number by createClass(kotlinIrPackage, IdSignatureValues.number, build = { modality = Modality.ABSTRACT }) {
         configureSuperTypes()
@@ -84,7 +84,7 @@ class IrBuiltInsOverFir(
     private val nothing by createClass(kotlinIrPackage, IdSignatureValues.nothing)
     override val nothingClass: IrClassSymbol get() = nothing.klass
     override val nothingType: IrType get() = nothing.type
-    override val nothingNType: IrType by lazy { nothingType.withHasQuestionMark(true) }
+    override val nothingNType: IrType by lazy { nothingType.makeNullable() }
 
     private val unit by createClass(kotlinIrPackage, IdSignatureValues.unit, build = { kind = ClassKind.OBJECT; modality = Modality.FINAL })
     override val unitClass: IrClassSymbol get() = unit.klass
@@ -401,7 +401,7 @@ class IrBuiltInsOverFir(
 
                 createFunction(
                     fqName, "CHECK_NOT_NULL",
-                    IrSimpleTypeImpl(typeParameter.symbol, hasQuestionMark = false, emptyList(), emptyList()),
+                    IrSimpleTypeImpl(typeParameter.symbol, SimpleTypeNullability.DEFINITELY_NOT_NULL, emptyList(), emptyList()),
                     arrayOf("" to IrSimpleTypeImpl(typeParameter.symbol, hasQuestionMark = true, emptyList(), emptyList())),
                     origin = BUILTIN_OPERATOR
                 ).also {
@@ -471,7 +471,7 @@ class IrBuiltInsOverFir(
     override val extensionStringPlus: IrSimpleFunctionSymbol by lazy {
         findFunctions(kotlinPackage, OperatorNameConventions.PLUS).single { function ->
             val isStringExtension =
-                function.owner.extensionReceiverParameter?.let { receiver -> receiver.type == stringType.withHasQuestionMark(true) }
+                function.owner.extensionReceiverParameter?.let { receiver -> receiver.type == stringType.makeNullable() }
                     ?: false
             isStringExtension && function.owner.valueParameters.size == 1 && function.owner.valueParameters[0].type == anyNType
         }

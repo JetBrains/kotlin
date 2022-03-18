@@ -30,7 +30,7 @@ FILE fqName:<root> fileName:/definitelyNonNullSAM.kt
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun foo (): <root>.FIn<{S of <root>.Test & Any}> declared in <root>.Test'
           TYPE_OP type=<root>.FIn<{S of <root>.Test & Any}> origin=SAM_CONVERSION typeOperand=<root>.FIn<{S of <root>.Test & Any}>
-            FUN_EXPR type=kotlin.Function1<@[ParameterName(name = 'x')] {@[ParameterName(name = 'x')] S of <root>.Test & Any}, kotlin.Unit> origin=LAMBDA
+            FUN_EXPR type=kotlin.Function1<@[ParameterName(name = 'x')] {S of <root>.Test & Any}, kotlin.Unit> origin=LAMBDA
               FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (sx:{S of <root>.Test & Any}) returnType:kotlin.Unit
                 VALUE_PARAMETER name:sx index:0 type:{S of <root>.Test & Any}
                 BLOCK_BODY

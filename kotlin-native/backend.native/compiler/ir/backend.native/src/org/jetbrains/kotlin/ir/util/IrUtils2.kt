@@ -192,9 +192,7 @@ fun IrType.substitute(map: Map<IrTypeParameterSymbol, IrType>): IrType {
     val classifier = this.classifier
     return when (classifier) {
         is IrTypeParameterSymbol ->
-            map[classifier]?.let { if (this.hasQuestionMark) it.makeNullable() else it }
-                    ?: this
-
+            map[classifier]?.mergeNullability(this) ?: this
         is IrClassSymbol -> if (this.arguments.isEmpty()) {
             this // Fast path.
         } else {
@@ -205,7 +203,7 @@ fun IrType.substitute(map: Map<IrTypeParameterSymbol, IrType>): IrType {
                     else -> error(it)
                 }
             }
-            IrSimpleTypeImpl(classifier, hasQuestionMark, newArguments, annotations)
+            IrSimpleTypeImpl(classifier, nullability, newArguments, annotations)
         }
         else -> error(classifier)
     }
@@ -367,9 +365,6 @@ fun IrValueParameter.copy(newDescriptor: ParameterDescriptor): IrValueParameter 
         isHidden = false, isAssignable = false
     )
 }
-
-val IrType.isSimpleTypeWithQuestionMark: Boolean
-    get() = this is IrSimpleType && this.hasQuestionMark
 
 fun IrClass.defaultOrNullableType(hasQuestionMark: Boolean) =
         if (hasQuestionMark) this.defaultType.makeNullable() else this.defaultType

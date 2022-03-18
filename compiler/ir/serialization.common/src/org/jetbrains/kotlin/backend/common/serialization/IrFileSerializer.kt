@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.backend.common.serialization
 
 import org.jetbrains.kotlin.backend.common.serialization.encodings.*
+import org.jetbrains.kotlin.backend.common.serialization.proto.IrSimpleTypeNullability
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrFileEntry
@@ -52,7 +53,6 @@ import org.jetbrains.kotlin.backend.common.serialization.proto.IrConstructorCall
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrContinue as ProtoContinue
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrDeclaration as ProtoDeclaration
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrDeclarationBase as ProtoDeclarationBase
-import org.jetbrains.kotlin.backend.common.serialization.proto.IrDefinitelyNotNullType as ProtoDefinitelyNotNullType
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrDelegatingConstructorCall as ProtoDelegatingConstructorCall
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrDoWhile as ProtoDoWhile
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrDynamicMemberExpression as ProtoDynamicMemberExpression
@@ -378,11 +378,19 @@ open class IrFileSerializer(
         }
     }
 
+    private fun serializeNullability(nullability: SimpleTypeNullability) = when (nullability) {
+        SimpleTypeNullability.MARKED_NULLABLE -> IrSimpleTypeNullability.MARKED_NULLABLE
+        SimpleTypeNullability.NOT_SPECIFIED -> IrSimpleTypeNullability.NOT_SPECIFIED
+        SimpleTypeNullability.DEFINITELY_NOT_NULL -> IrSimpleTypeNullability.DEFINITELY_NOT_NULL
+    }
+
     private fun serializeSimpleType(type: IrSimpleType): ProtoSimpleType {
         val proto = ProtoSimpleType.newBuilder()
             .addAllAnnotation(serializeAnnotations(type.annotations))
             .setClassifier(serializeIrSymbol(type.classifier))
-            .setHasQuestionMark(type.hasQuestionMark)
+        if (type.nullability != SimpleTypeNullability.NOT_SPECIFIED) {
+            proto.setNullability(serializeNullability(type.nullability))
+        }
         type.abbreviation?.let { ta ->
             proto.setAbbreviation(serializeIrTypeAbbreviation(ta))
         }
@@ -411,17 +419,10 @@ open class IrFileSerializer(
         .addAllAnnotation(serializeAnnotations(type.annotations))
         .build()
 
-    private fun serializeDefinitelyNotNullType(type: IrDefinitelyNotNullType): ProtoDefinitelyNotNullType =
-        ProtoDefinitelyNotNullType.newBuilder()
-            .addTypes(serializeIrType(type.original))
-//            .addTypes(serializeIrType(kotlin.Any))
-            .build()
 
     private fun serializeIrTypeData(type: IrType): ProtoType {
         val proto = ProtoType.newBuilder()
         when (type) {
-            is IrDefinitelyNotNullType ->
-                proto.dnn = serializeDefinitelyNotNullType(type)
             is IrSimpleType ->
                 proto.simple = serializeSimpleType(type)
             is IrDynamicType ->
@@ -437,7 +438,6 @@ open class IrFileSerializer(
         SIMPLE,
         DYNAMIC,
         ERROR,
-        DEFINITELY_NOT_NULL
     }
 
     enum class IrTypeArgumentKind {
@@ -449,7 +449,7 @@ open class IrFileSerializer(
     data class IrTypeKey(
         val kind: IrTypeKind,
         val classifier: IrClassifierSymbol?,
-        val hasQuestionMark: Boolean?,
+        val nullability: SimpleTypeNullability?,
         val arguments: List<IrTypeArgumentKey>?,
         val annotations: List<IrConstructorCall>,
         val abbreviation: IrTypeAbbreviation?
@@ -463,17 +463,16 @@ open class IrFileSerializer(
 
     private val IrType.toIrTypeKey: IrTypeKey
         get() {
-            var type = this
+            val type = this
             return IrTypeKey(
                 kind = when (this) {
-                    is IrDefinitelyNotNullType -> IrTypeKind.DEFINITELY_NOT_NULL.also { type = original }
                     is IrSimpleType -> IrTypeKind.SIMPLE
                     is IrDynamicType -> IrTypeKind.DYNAMIC
                     is IrErrorType -> IrTypeKind.ERROR
                     else -> error("Unexpected IrType kind: $this")
                 },
                 classifier = type.classifierOrNull,
-                hasQuestionMark = (type as? IrSimpleType)?.hasQuestionMark,
+                nullability = (type as? IrSimpleType)?.nullability,
                 arguments = (type as? IrSimpleType)?.arguments?.map { it.toIrTypeArgumentKey },
                 annotations = type.annotations,
                 abbreviation = (type as? IrSimpleType)?.abbreviation

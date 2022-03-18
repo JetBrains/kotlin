@@ -80,10 +80,24 @@ message Actual {
 // Note: IrTypeArgument [63..2 - IrType index | 1..0 - Variance]
 // If x...xxx00 -> *
 
-message IrSimpleType {
+message IrSimpleTypeLegacy {
   repeated IrConstructorCall annotation = 1;
   required int64 classifier = 2;
   required bool has_question_mark = 3;
+  repeated int64 argument = 4 [packed=true]; // 0 - STAR, otherwise [63..2 - IrType index | 1..0 - Variance]
+  optional IrTypeAbbreviation abbreviation = 5;
+}
+
+enum IrSimpleTypeNullability {
+  MARKED_NULLABLE = 0;
+  NOT_SPECIFIED = 1;
+  DEFINITELY_NOT_NULL = 2;
+}
+
+message IrSimpleType {
+  repeated IrConstructorCall annotation = 1;
+  required int64 classifier = 2;
+  optional IrSimpleTypeNullability nullability = 3 [default=NOT_SPECIFIED];
   repeated int64 argument = 4 [packed=true]; // 0 - STAR, otherwise [63..2 - IrType index | 1..0 - Variance]
   optional IrTypeAbbreviation abbreviation = 5;
 }
@@ -110,10 +124,11 @@ message IrErrorType {
 
 message IrType {
   oneof kind {
-    IrSimpleType simple = 1;
+    IrSimpleTypeLegacy legacySimple = 1;
     IrDynamicType dynamic = 2;
     IrErrorType error = 3;
     IrDefinitelyNotNullType dnn = 4;
+    IrSimpleType simple = 5;
   }
 }
 

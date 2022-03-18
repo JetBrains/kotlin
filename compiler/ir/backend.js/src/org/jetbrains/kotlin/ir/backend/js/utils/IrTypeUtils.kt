@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.ir.symbols.IrScriptSymbol
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.fqNameWhenAvailable
-import org.jetbrains.kotlin.ir.util.getInlineClassUnderlyingType
 import org.jetbrains.kotlin.ir.util.isEffectivelyExternal
 import org.jetbrains.kotlin.js.backend.ast.JsNameRef
 import org.jetbrains.kotlin.types.Variance
@@ -26,7 +25,11 @@ fun IrType.asString(): String = when (this) {
     is IrDynamicType -> "dynamic"
     is IrSimpleType ->
         classifier.asString() +
-                (if (hasQuestionMark) "?" else "") +
+                when (nullability) {
+                    SimpleTypeNullability.MARKED_NULLABLE -> "?"
+                    SimpleTypeNullability.NOT_SPECIFIED -> ""
+                    SimpleTypeNullability.DEFINITELY_NOT_NULL -> if (classifier is IrTypeParameterSymbol) " & Any" else ""
+                } +
                 (arguments.ifNotEmpty {
                     joinToString(separator = ",", prefix = "<", postfix = ">") { it.asString() }
                 } ?: "")

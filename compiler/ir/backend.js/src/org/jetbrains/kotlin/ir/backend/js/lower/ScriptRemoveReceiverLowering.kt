@@ -74,7 +74,7 @@ class ScriptRemoveReceiverLowering(val context: CommonBackendContext) : FileLowe
                             endOffset,
                             IrSimpleTypeImpl(
                                 context.ir.symbols.functionN(newN),
-                                (type as IrSimpleType).hasQuestionMark,
+                                (type as IrSimpleType).nullability,
                                 arguments,
                                 type.annotations
                             ),
@@ -111,7 +111,7 @@ class ScriptRemoveReceiverLowering(val context: CommonBackendContext) : FileLowe
                             endOffset,
                             IrSimpleTypeImpl(
                                 (if (setter == null) getPropertyN(newN) else getMutablePropertyN(newN)),
-                                (type as IrSimpleType).hasQuestionMark,
+                                (type as IrSimpleType).nullability,
                                 arguments,
                                 type.annotations
                             ),

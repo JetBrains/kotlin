@@ -32,15 +32,56 @@ abstract class IrErrorType(kotlinType: KotlinType?) : IrTypeBase(kotlinType)
 
 abstract class IrDynamicType(kotlinType: KotlinType?) : IrTypeBase(kotlinType), DynamicTypeMarker
 
-abstract class IrDefinitelyNotNullType(kotlinType: KotlinType?) : IrTypeBase(kotlinType), DefinitelyNotNullTypeMarker {
-    abstract val original: IrType
+enum class SimpleTypeNullability {
+    MARKED_NULLABLE,
+    NOT_SPECIFIED,
+    DEFINITELY_NOT_NULL;
+
+    companion object {
+        fun fromHasQuestionMark(hasQuestionMark: Boolean) = if (hasQuestionMark) MARKED_NULLABLE else NOT_SPECIFIED
+    }
 }
 
 abstract class IrSimpleType(kotlinType: KotlinType?) : IrTypeBase(kotlinType), SimpleTypeMarker, TypeArgumentListMarker {
     abstract val classifier: IrClassifierSymbol
-    abstract val hasQuestionMark: Boolean
+
+    /**
+     * If type is explicitly marked as nullable, [nullability] is [SimpleTypeNullability.MARKED_NULLABLE]
+     *
+     * If classifier is type parameter, not marked as nullable, but can store null values,
+     * if corresponding argument would be nullable, [nullability] is [SimpleTypeNullability.NOT_SPECIFIED]
+     *
+     * If type can't store null values, [nullability] is [SimpleTypeNullability.DEFINITELY_NOT_NULL]
+     *
+     * Direct usages of this property should be avoided in most cases. Use relevant util functions instead.
+     *
+     * In most cases one of following is needed:
+     *
+     * Use [IrType.isNullable] to check if null value is possible for this type
+     *
+     * Use [IrType.isMarkedNullable] to check if type is marked with question mark in code
+     *
+     * Use [IrType.mergeNullability] to apply nullability of type parameter to actual type argument in type substitutions
+     *
+     * Use [IrType.makeNotNull] or [IrType.makeNullable] to transfer nullability from one type to another
+     */
+    abstract val nullability: SimpleTypeNullability
     abstract val arguments: List<IrTypeArgument>
     abstract val abbreviation: IrTypeAbbreviation?
+
+    /**
+     * This property was deprecated and replaced with [nullability] property.
+     *
+     * Anyway, in most cases one of utils function would be more suitable, than direct usage.
+     *
+     * Check [nullability] property documentation for details
+     */
+    @Deprecated(
+        level = DeprecationLevel.WARNING,
+        message = "hasQuestionMark has ambiguous meaning. Use isNullable() or isMarkedNullable() instead.",
+    )
+    val hasQuestionMark: Boolean
+        get() = nullability == SimpleTypeNullability.MARKED_NULLABLE
 }
 
 interface IrTypeArgument : TypeArgumentMarker {

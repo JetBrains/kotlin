@@ -17,9 +17,7 @@ import org.jetbrains.kotlin.ir.descriptors.IrBasedTypeParameterDescriptor
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstructorCallImpl
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
-import org.jetbrains.kotlin.ir.types.IrType
-import org.jetbrains.kotlin.ir.types.IrTypeAbbreviation
-import org.jetbrains.kotlin.ir.types.IrTypeProjection
+import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.types.impl.*
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.typeUtil.replaceArgumentsWithStarProjections
@@ -101,7 +99,7 @@ abstract class TypeTranslator(
             approximatedType.isDynamic() ->
                 return IrDynamicTypeImpl(approximatedType, translateTypeAnnotations(approximatedType), variance)
             supportDefinitelyNotNullTypes && approximatedType is DefinitelyNotNullType ->
-                return makeTypeProjection(IrDefinitelyNotNullTypeImpl(approximatedType, translateType(approximatedType.original)), variance)
+                return makeTypeProjection(translateType(approximatedType.original).makeNotNull(), variance)
         }
 
         val upperType = approximatedType.upperIfFlexible()
@@ -121,7 +119,7 @@ abstract class TypeTranslator(
 
         return IrSimpleTypeBuilder().apply {
             this.kotlinType = approximatedType
-            this.hasQuestionMark = upperType.isMarkedNullable
+            this.nullability = SimpleTypeNullability.fromHasQuestionMark(upperType.isMarkedNullable)
             this.variance = variance
             this.abbreviation = upperType.getAbbreviation()?.toIrTypeAbbreviation()
 

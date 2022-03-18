@@ -19,7 +19,6 @@ import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
 import org.jetbrains.kotlin.ir.types.impl.IrStarProjectionImpl
 import org.jetbrains.kotlin.ir.types.impl.makeTypeProjection
-import org.jetbrains.kotlin.ir.util.defaultType
 import org.jetbrains.kotlin.ir.util.isLocal
 import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
@@ -41,9 +40,9 @@ fun IrType.eraseTypeParameters(): IrType = when (this) {
         when (val owner = classifier.owner) {
             is IrScript -> {
                 assert(arguments.isEmpty()) { "Script can't be generic: " + owner.render() }
-                IrSimpleTypeImpl(classifier, hasQuestionMark, emptyList(), annotations)
+                IrSimpleTypeImpl(classifier, nullability, emptyList(), annotations)
             }
-            is IrClass -> IrSimpleTypeImpl(classifier, hasQuestionMark, arguments.map { it.eraseTypeParameters() }, annotations)
+            is IrClass -> IrSimpleTypeImpl(classifier, nullability, arguments.map { it.eraseTypeParameters() }, annotations)
             is IrTypeParameter -> {
                 val upperBound = owner.erasedUpperBound
                 IrSimpleTypeImpl(
@@ -56,8 +55,6 @@ fun IrType.eraseTypeParameters(): IrType = when (this) {
             }
             else -> error("Unknown IrSimpleType classifier kind: $owner")
         }
-    is IrDefinitelyNotNullType ->
-        this.original.eraseTypeParameters()
     is IrErrorType ->
         this
     else -> error("Unknown IrType kind: $this")
@@ -88,15 +85,12 @@ val IrTypeParameter.erasedUpperBound: IrClass
 
 val IrType.erasedUpperBound: IrClass
     get() =
-        if (this is IrDefinitelyNotNullType)
-            this.original.erasedUpperBound
-        else
-            when (val classifier = classifierOrNull) {
-                is IrClassSymbol -> classifier.owner
-                is IrTypeParameterSymbol -> classifier.owner.erasedUpperBound
-                is IrScriptSymbol -> classifier.owner.targetClass!!.owner
-                else -> error(render())
-            }
+        when (val classifier = classifierOrNull) {
+            is IrClassSymbol -> classifier.owner
+            is IrTypeParameterSymbol -> classifier.owner.erasedUpperBound
+            is IrScriptSymbol -> classifier.owner.targetClass!!.owner
+            else -> error(render())
+        }
 
 /**
  * Get the default null/0 value for the type.
@@ -111,7 +105,7 @@ fun IrType.defaultValue(startOffset: Int, endOffset: Int, context: JvmBackendCon
         return classifier.owner.representativeUpperBound.defaultValue(startOffset, endOffset, context)
     }
 
-    if (this !is IrSimpleType || hasQuestionMark || classOrNull?.owner?.isSingleFieldValueClass != true)
+    if (this !is IrSimpleType || this.isMarkedNullable() || classOrNull?.owner?.isSingleFieldValueClass != true)
         return IrConstImpl.defaultValueForType(startOffset, endOffset, this)
 
     val underlyingType = unboxInlineClass()
@@ -137,13 +131,13 @@ fun IrType.eraseToScope(visibleTypeParameters: Set<IrTypeParameter>): IrType {
     return when (classifier) {
         is IrClassSymbol ->
             IrSimpleTypeImpl(
-                classifier, hasQuestionMark, arguments.map { it.eraseToScope(visibleTypeParameters) }, annotations
+                classifier, nullability, arguments.map { it.eraseToScope(visibleTypeParameters) }, annotations
             )
         is IrTypeParameterSymbol ->
             if (classifier.owner in visibleTypeParameters)
                 this
             else
-                upperBound.withHasQuestionMark(this.hasQuestionMark)
+                upperBound.mergeNullability(this)
         else -> error("unknown IrType classifier kind: ${classifier.owner.render()}")
     }
 }

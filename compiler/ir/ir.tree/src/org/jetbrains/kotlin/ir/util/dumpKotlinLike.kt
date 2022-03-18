@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
+import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.name.Name
@@ -422,13 +423,13 @@ private class KotlinLikeDumper(val p: Printer, val options: KotlinLikeDumpOption
         // TODO don't print `Any?` as upper bound?
         printAnnotationsWithNoIndent()
         when (this) {
-            is IrDefinitelyNotNullType -> {
-                p.printWithNoIndent("(")
-                original.printTypeWithNoIndent()
-                p.printWithNoIndent(" & Any)")
-            }
             is IrSimpleType -> {
                 // TODO abbreviation
+
+                val dnn = classifier is IrTypeParameterSymbol && nullability == SimpleTypeNullability.DEFINITELY_NOT_NULL
+                if (dnn) {
+                    p.printWithNoIndent("(")
+                }
 
                 p.printWithNoIndent((classifier.owner as IrDeclarationWithName).name.asString())
 
@@ -442,7 +443,11 @@ private class KotlinLikeDumper(val p: Printer, val options: KotlinLikeDumpOption
                     p.printWithNoIndent(">")
                 }
 
-                if (hasQuestionMark) p.printWithNoIndent("?")
+                if (dnn) {
+                    p.printWithNoIndent(" & Any)")
+                }
+
+                if (isMarkedNullable()) p.printWithNoIndent("?")
             }
             is IrDynamicType ->
                 p.printWithNoIndent("dynamic")

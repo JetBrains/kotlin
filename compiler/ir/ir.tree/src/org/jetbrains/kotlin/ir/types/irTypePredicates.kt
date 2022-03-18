@@ -48,15 +48,15 @@ object IdSignatureValues {
     @JvmField val sequence = IdSignature.CommonSignature("kotlin.sequences", "Sequence", null, 0)
 }
 
-private fun IrType.isNotNullClassType(signature: IdSignature.CommonSignature) = isClassType(signature, hasQuestionMark = false)
-private fun IrType.isNullableClassType(signature: IdSignature.CommonSignature) = isClassType(signature, hasQuestionMark = true)
+private fun IrType.isNotNullClassType(signature: IdSignature.CommonSignature) = isClassType(signature, nullable = false)
+private fun IrType.isNullableClassType(signature: IdSignature.CommonSignature) = isClassType(signature, nullable = true)
 
 fun getPublicSignature(packageFqName: FqName, name: String) =
     IdSignature.CommonSignature(packageFqName.asString(), name, null, 0)
 
-private fun IrType.isClassType(signature: IdSignature.CommonSignature, hasQuestionMark: Boolean? = null): Boolean {
+private fun IrType.isClassType(signature: IdSignature.CommonSignature, nullable: Boolean? = null): Boolean {
     if (this !is IrSimpleType) return false
-    if (hasQuestionMark != null && this.hasQuestionMark != hasQuestionMark) return false
+    if (nullable != null && this.isMarkedNullable() != nullable) return false
     return signature == classifier.signature ||
             classifier.owner.let { it is IrClass && it.hasFqNameEqualToSignature(signature) }
 }
@@ -109,16 +109,16 @@ fun IrType.isCollection(): Boolean = isNotNullClassType(IdSignatureValues.collec
 fun IrType.isNothing(): Boolean = isNotNullClassType(IdSignatureValues.nothing)
 fun IrType.isNullableNothing(): Boolean = isNullableClassType(IdSignatureValues.nothing)
 
-fun IrType.isPrimitiveType(hasQuestionMark: Boolean = false): Boolean =
-    this is IrSimpleType && hasQuestionMark == this.hasQuestionMark && getPrimitiveType() != null
+fun IrType.isPrimitiveType(nullable: Boolean = false): Boolean =
+    nullable == this.isMarkedNullable() && getPrimitiveType() != null
 
 fun IrType.isNullablePrimitiveType(): Boolean = isPrimitiveType(true)
 
 fun IrType.getPrimitiveType(): PrimitiveType? =
     getPrimitiveOrUnsignedType(idSignatureToPrimitiveType, shortNameToPrimitiveType)
 
-fun IrType.isUnsignedType(hasQuestionMark: Boolean = false): Boolean =
-    this is IrSimpleType && hasQuestionMark == this.hasQuestionMark && getUnsignedType() != null
+fun IrType.isUnsignedType(nullable: Boolean = false): Boolean =
+    nullable == this.isMarkedNullable() && getUnsignedType() != null
 
 fun IrType.getUnsignedType(): UnsignedType? =
     getPrimitiveOrUnsignedType(idSignatureToUnsignedType, shortNameToUnsignedType)
@@ -134,7 +134,8 @@ fun <T : Enum<T>> IrType.getPrimitiveOrUnsignedType(byIdSignature: Map<IdSignatu
     return byShortName[klass.name]
 }
 
-fun IrType.isMarkedNullable() = (this as? IrSimpleType)?.hasQuestionMark ?: false
+fun IrType.isMarkedNullable() = (this as? IrSimpleType)?.nullability == SimpleTypeNullability.MARKED_NULLABLE
+fun IrSimpleType.isMarkedNullable() = nullability == SimpleTypeNullability.MARKED_NULLABLE
 
 fun IrType.isUnit() = isNotNullClassType(IdSignatureValues.unit)
 
@@ -152,8 +153,8 @@ fun IrType.isFloat(): Boolean = isNotNullClassType(IdSignatureValues._float)
 fun IrType.isDouble(): Boolean = isNotNullClassType(IdSignatureValues._double)
 fun IrType.isNumber(): Boolean = isNotNullClassType(IdSignatureValues.number)
 fun IrType.isDoubleOrFloatWithoutNullability(): Boolean {
-    return isClassType(IdSignatureValues._double, hasQuestionMark = null) ||
-            isClassType(IdSignatureValues._float, hasQuestionMark = null)
+    return isClassType(IdSignatureValues._double, nullable = null) ||
+            isClassType(IdSignatureValues._float, nullable = null)
 }
 
 fun IrType.isComparable(): Boolean = isNotNullClassType(IdSignatureValues.comparable)
@@ -170,9 +171,9 @@ fun IrType.isLongArray(): Boolean = isNotNullClassType(primitiveArrayTypesSignat
 fun IrType.isFloatArray(): Boolean = isNotNullClassType(primitiveArrayTypesSignatures[PrimitiveType.FLOAT]!!)
 fun IrType.isDoubleArray(): Boolean = isNotNullClassType(primitiveArrayTypesSignatures[PrimitiveType.DOUBLE]!!)
 
-fun IrType.isClassType(fqName: FqNameUnsafe, hasQuestionMark: Boolean): Boolean {
+fun IrType.isClassType(fqName: FqNameUnsafe, nullable: Boolean): Boolean {
     if (this !is IrSimpleType) return false
-    if (this.hasQuestionMark != hasQuestionMark) return false
+    if (this.isMarkedNullable() != nullable) return false
     return classifier.isClassWithFqName(fqName)
 }
 

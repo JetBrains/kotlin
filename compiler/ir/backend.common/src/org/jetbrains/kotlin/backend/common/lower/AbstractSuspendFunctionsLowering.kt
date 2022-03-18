@@ -335,7 +335,7 @@ abstract class AbstractSuspendFunctionsLowering<C : CommonBackendContext>(val co
                 val constructor = coroutine.coroutineConstructor
                 generateCoroutineStart(coroutine.stateMachineFunction,
                                        irCallConstructor(constructor.symbol, irFunction.typeParameters.map {
-                                           IrSimpleTypeImpl(it.symbol, true, emptyList(), emptyList())
+                                           it.defaultType.makeNullable()
                                        }).apply {
                                            val functionParameters = irFunction.explicitParameters
                                            functionParameters.forEachIndexed { index, argument ->

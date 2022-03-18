@@ -12,4 +12,3 @@ inline fun <reified T : CharSequence?> implicitAsFoo(x: Any): Int {
     else -> x /*as (T & Any) */.<get-length>()
   }
 }
-

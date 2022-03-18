@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrValueParameterSymbolImpl
 import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.types.SimpleTypeNullability
 import org.jetbrains.kotlin.ir.types.impl.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.FqName
@@ -329,7 +330,7 @@ class IrDescriptorBasedFunctionFactory(
         return with(IrSimpleTypeBuilder()) {
             classifier =
                 symbolTable.referenceClassifier(kotlinType.constructor.declarationDescriptor ?: error("No classifier for type $kotlinType"))
-            hasQuestionMark = kotlinType.isMarkedNullable
+            nullability = SimpleTypeNullability.fromHasQuestionMark(kotlinType.isMarkedNullable)
             arguments = kotlinType.arguments.map {
                 if (it.isStarProjection) IrStarProjectionImpl
                 else makeTypeProjection(toIrType(it.type), it.projectionKind)

@@ -27,4 +27,3 @@ fun <X : Any?> test4(a: X) {
     a is String? -> useString(s = CHECK_NOT_NULL<X>(arg0 = a) /*as String */)
   }
 }
-

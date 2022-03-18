@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.types.IrSimpleType
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.IrTypeSystemContext
+import org.jetbrains.kotlin.ir.types.isMarkedNullable as irIsMarkedNullable
 import org.jetbrains.kotlin.types.model.FlexibleTypeMarker
 import org.jetbrains.kotlin.types.model.KotlinTypeMarker
 import org.jetbrains.kotlin.types.model.SimpleTypeMarker
@@ -35,5 +36,5 @@ class JvmIrTypeSystemContext(override val irBuiltIns: IrBuiltIns) : IrTypeSystem
     }
 
     override fun KotlinTypeMarker.isMarkedNullable(): Boolean =
-        this is IrSimpleType && !isWithFlexibleNullability() && hasQuestionMark
+        this is IrSimpleType && !isWithFlexibleNullability() && irIsMarkedNullable()
 }

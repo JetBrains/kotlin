@@ -3,8 +3,8 @@
 
 package org.jetbrains.kotlin.backend.common.serialization.proto;
 
-public interface IrSimpleTypeOrBuilder extends
-    // @@protoc_insertion_point(interface_extends:org.jetbrains.kotlin.backend.common.serialization.proto.IrSimpleType)
+public interface IrSimpleTypeLegacyOrBuilder extends
+    // @@protoc_insertion_point(interface_extends:org.jetbrains.kotlin.backend.common.serialization.proto.IrSimpleTypeLegacy)
     org.jetbrains.kotlin.protobuf.MessageLiteOrBuilder {
 
   /**
@@ -31,13 +31,13 @@ public interface IrSimpleTypeOrBuilder extends
   long getClassifier();
 
   /**
-   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrSimpleTypeNullability nullability = 3 [default = NOT_SPECIFIED];</code>
+   * <code>required bool has_question_mark = 3;</code>
    */
-  boolean hasNullability();
+  boolean hasHasQuestionMark();
   /**
-   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrSimpleTypeNullability nullability = 3 [default = NOT_SPECIFIED];</code>
+   * <code>required bool has_question_mark = 3;</code>
    */
-  org.jetbrains.kotlin.backend.common.serialization.proto.IrSimpleTypeNullability getNullability();
+  boolean getHasQuestionMark();
 
   /**
    * <code>repeated int64 argument = 4 [packed = true];</code>

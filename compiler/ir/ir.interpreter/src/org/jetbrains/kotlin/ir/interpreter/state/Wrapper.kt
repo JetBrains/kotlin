@@ -172,7 +172,7 @@ internal class Wrapper(val value: Any, override val irClass: IrClass, environmen
 
         fun getStaticGetter(field: IrField): MethodHandle {
             val jvmClass = field.parentAsClass.defaultType.getClass(true)
-            val returnType = field.type.let { it.getClass((it as IrSimpleType).hasQuestionMark) }
+            val returnType = field.type.let { it.getClass(it.isNullable()) }
             return MethodHandles.lookup().findStaticGetter(jvmClass, field.name.asString(), returnType)
         }
 
