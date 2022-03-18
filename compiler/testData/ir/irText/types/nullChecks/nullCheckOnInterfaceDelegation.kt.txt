@@ -37,4 +37,3 @@ class Delegated : IFoo {
 fun testReturnValue(): String {
   return Delegated().foo()
 }
-

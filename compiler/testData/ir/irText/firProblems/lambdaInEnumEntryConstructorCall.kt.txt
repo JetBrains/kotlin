@@ -30,4 +30,3 @@ enum class ConfigurationParameter : Enum<ConfigurationParameter> {
   fun valueOf(value: String): ConfigurationParameter /* Synthetic body for ENUM_VALUEOF */
 
 }
-

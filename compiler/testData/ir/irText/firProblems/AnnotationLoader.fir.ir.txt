@@ -96,7 +96,7 @@ FILE fqName:<root> fileName:/AnnotationLoader.kt
                 $this: VALUE_PARAMETER name:<this> type:<root>.AnnotationLoader.loadAnnotation.<no name provided>
                 BLOCK_BODY
                   VAR name:visitor type:<root>.Visitor [val]
-                    CALL 'public final fun CHECK_NOT_NULL <T0> (arg0: T0 of kotlin.internal.ir.CHECK_NOT_NULL?): T0 of kotlin.internal.ir.CHECK_NOT_NULL declared in kotlin.internal.ir' type=<root>.Visitor origin=EXCLEXCL
+                    CALL 'public final fun CHECK_NOT_NULL <T0> (arg0: T0 of kotlin.internal.ir.CHECK_NOT_NULL?): {T0 of kotlin.internal.ir.CHECK_NOT_NULL & Any} declared in kotlin.internal.ir' type=<root>.Visitor origin=EXCLEXCL
                       <T0>: <root>.Visitor
                       arg0: CALL 'public final fun loadAnnotation (): <root>.Visitor? declared in <root>.AnnotationLoader' type=<root>.Visitor? origin=null
                         $this: GET_VAR '<this>: <root>.AnnotationLoader declared in <root>.AnnotationLoader.loadAnnotation' type=<root>.AnnotationLoader origin=null

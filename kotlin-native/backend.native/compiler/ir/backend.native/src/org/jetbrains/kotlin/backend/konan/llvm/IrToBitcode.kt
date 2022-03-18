@@ -1515,8 +1515,7 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
                !this.isChar()
     }
 
-    private fun IrType.isUnsignedInteger(): Boolean =
-            this is IrSimpleType && !this.hasQuestionMark &&
+    private fun IrType.isUnsignedInteger(): Boolean = !isNullable() &&
                     UnsignedType.values().any { it.classId == this.getClass()?.descriptor?.classId }
 
     private fun evaluateIntegerCoercion(value: IrTypeOperatorCall): LLVMValueRef {

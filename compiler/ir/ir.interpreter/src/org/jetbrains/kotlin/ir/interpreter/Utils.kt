@@ -194,7 +194,11 @@ internal fun IrFunction.getArgsForMethodInvocation(
 
 internal fun IrType.getOnlyName(): String {
     if (this !is IrSimpleType) return this.render()
-    return (this.classifierOrFail.owner as IrDeclarationWithName).name.asString() + (if (this.hasQuestionMark) "?" else "")
+    return (this.classifierOrFail.owner as IrDeclarationWithName).name.asString() + when (nullability) {
+        SimpleTypeNullability.MARKED_NULLABLE -> "?"
+        SimpleTypeNullability.NOT_SPECIFIED -> ""
+        SimpleTypeNullability.DEFINITELY_NOT_NULL -> if (this.classifierOrNull is IrTypeParameterSymbol) " & Any" else ""
+    }
 }
 
 internal fun IrFieldAccessExpression.accessesTopLevelOrObjectField(): Boolean {
@@ -251,7 +255,7 @@ internal fun IrType.getTypeIfReified(getType: (IrClassifierSymbol) -> IrType): I
     val owner = this.classifierOrNull?.owner
     if (owner is IrTypeParameter && owner.isReified) {
         return (getType(owner.symbol) as IrSimpleType)
-            .buildSimpleType { hasQuestionMark = this.hasQuestionMark || this@getTypeIfReified.hasQuestionMark }
+            .mergeNullability(this)
     }
 
     val newArguments = this.arguments.map {
@@ -261,7 +265,6 @@ internal fun IrType.getTypeIfReified(getType: (IrClassifierSymbol) -> IrType): I
         type.getTypeIfReified(getType) as IrTypeArgument
     }
     return this.buildSimpleType {
-        hasQuestionMark = this.hasQuestionMark || this@getTypeIfReified.hasQuestionMark
         arguments = newArguments
     }
 }

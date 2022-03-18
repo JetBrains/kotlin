@@ -98,16 +98,13 @@ internal class DeepCopyIrTreeWithSymbolsForInliner(
 
                 erasedParameters.remove(classifier)
 
-                return if (type.hasQuestionMark) erasedUpperBound.makeNullable() else erasedUpperBound
+                return erasedUpperBound.mergeNullability(type)
             }
 
             if (substitutedType is IrDynamicType) return substitutedType
 
             if (substitutedType is IrSimpleType) {
-                return substitutedType.buildSimpleType {
-                    kotlinType = null
-                    hasQuestionMark = type.hasQuestionMark or substitutedType.isMarkedNullable()
-                }
+                return substitutedType.mergeNullability(type)
             }
 
             return type.buildSimpleType {

@@ -29,4 +29,3 @@ value class Test {
   }
 
 }
-

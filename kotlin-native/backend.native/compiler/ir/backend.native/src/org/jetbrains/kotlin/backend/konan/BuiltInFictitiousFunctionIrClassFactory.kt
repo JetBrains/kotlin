@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.*
 import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.types.SimpleTypeNullability
 import org.jetbrains.kotlin.ir.types.classOrNull
 import org.jetbrains.kotlin.ir.types.defaultType
 import org.jetbrains.kotlin.ir.types.impl.*
@@ -289,7 +290,7 @@ internal class BuiltInFictitiousFunctionIrClassFactory(
         val kotlinType = wrapped.unwrap()
         return with(IrSimpleTypeBuilder()) {
             classifier = symbolTable.referenceClassifier(kotlinType.constructor.declarationDescriptor ?: error("No classifier for type $kotlinType"))
-            hasQuestionMark = kotlinType.isMarkedNullable
+            nullability = SimpleTypeNullability.fromHasQuestionMark(kotlinType.isMarkedNullable)
             arguments = kotlinType.arguments.map {
                 if (it.isStarProjection) IrStarProjectionImpl
                 else makeTypeProjection(toIrType(it.type), it.projectionKind)

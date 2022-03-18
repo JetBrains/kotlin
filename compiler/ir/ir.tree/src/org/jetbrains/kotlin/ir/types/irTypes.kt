@@ -20,27 +20,29 @@ import org.jetbrains.kotlin.ir.types.impl.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.types.*
-import org.jetbrains.kotlin.types.typeUtil.makeNotNullable
-import org.jetbrains.kotlin.types.typeUtil.makeNullable
-import org.jetbrains.kotlin.utils.addToStdlib.cast
-import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
-fun IrType.withHasQuestionMark(newHasQuestionMark: Boolean): IrType =
+private fun IrType.withNullability(newNullability: Boolean): IrType =
     when (this) {
-        is IrSimpleType -> withHasQuestionMark(newHasQuestionMark)
+        is IrSimpleType -> withNullability(newNullability)
         else -> this
     }
 
-fun IrSimpleType.withHasQuestionMark(newHasQuestionMark: Boolean): IrSimpleType =
-    if (this.hasQuestionMark == newHasQuestionMark)
+private fun IrSimpleType.withNullability(newNullability: Boolean): IrSimpleType {
+    val requiredNullability = if (newNullability) SimpleTypeNullability.MARKED_NULLABLE else SimpleTypeNullability.DEFINITELY_NOT_NULL
+    return if (nullability == requiredNullability)
         this
     else
         buildSimpleType {
-            hasQuestionMark = newHasQuestionMark
+            nullability = requiredNullability
             kotlinType = originalKotlinType?.run {
-                if (newHasQuestionMark) makeNullable() else makeNotNullable()
+                if (newNullability) {
+                    TypeUtils.makeNullable(this)
+                } else {
+                    DefinitelyNotNullType.makeDefinitelyNotNull(this.unwrap()) ?: TypeUtils.makeNotNullable(this)
+                }
             }
         }
+}
 
 fun IrType.addAnnotations(newAnnotations: List<IrConstructorCall>): IrType =
     if (newAnnotations.isEmpty())
@@ -86,7 +88,6 @@ val IrType.classifierOrFail: IrClassifierSymbol
 val IrType.classifierOrNull: IrClassifierSymbol?
     get() = when (this) {
         is IrSimpleType -> classifier
-        is IrDefinitelyNotNullType -> original.classifierOrNull
         else -> null
     }
 
@@ -103,34 +104,18 @@ val IrType.classFqName: FqName?
 
 val IrTypeArgument.typeOrNull: IrType? get() = (this as? IrTypeProjection)?.type
 
-fun IrType.makeNotNull() =
-    if (this is IrSimpleType && this.hasQuestionMark) {
-        buildSimpleType {
-            kotlinType = originalKotlinType?.makeNotNullable()
-            hasQuestionMark = false
-        }
-    } else {
-        this
-    }
+fun IrType.makeNotNull() = withNullability(false)
 
-fun IrType.makeNullable(): IrType =
-    when (this) {
-        is IrSimpleType -> {
-            if (this.hasQuestionMark)
-                this
-            else
-                buildSimpleType {
-                    kotlinType = originalKotlinType?.makeNullable()
-                    hasQuestionMark = true
-                }
-        }
-        is IrDefinitelyNotNullType -> {
-            // '{ T & Any }?' => 'T?'
-            this.original.makeNullable()
-        }
-        else ->
-            this
+fun IrType.makeNullable() = withNullability(true)
+
+fun IrType.mergeNullability(other: IrType) = when (other) {
+    is IrSimpleType -> when (other.nullability) {
+        SimpleTypeNullability.MARKED_NULLABLE -> makeNullable()
+        SimpleTypeNullability.NOT_SPECIFIED -> this
+        SimpleTypeNullability.DEFINITELY_NOT_NULL -> makeNotNull()
     }
+    else -> this
+}
 
 @ObsoleteDescriptorBasedAPI
 fun IrType.toKotlinType(): KotlinType {
@@ -139,7 +124,7 @@ fun IrType.toKotlinType(): KotlinType {
     }
 
     return when (this) {
-        is IrSimpleType -> makeKotlinType(classifier, arguments, hasQuestionMark)
+        is IrSimpleType -> makeKotlinType(classifier, arguments, nullability == SimpleTypeNullability.MARKED_NULLABLE)
         else -> TODO(toString())
     }
 }
@@ -181,7 +166,7 @@ val IrClassifierSymbol.defaultType: IrType
 val IrTypeParameter.defaultType: IrType
     get() = IrSimpleTypeImpl(
         symbol,
-        hasQuestionMark = false,
+        SimpleTypeNullability.NOT_SPECIFIED,
         arguments = emptyList(),
         annotations = emptyList()
     )
@@ -189,7 +174,7 @@ val IrTypeParameter.defaultType: IrType
 val IrClassSymbol.starProjectedType: IrSimpleType
     get() = IrSimpleTypeImpl(
         this,
-        hasQuestionMark = false,
+        SimpleTypeNullability.NOT_SPECIFIED,
         arguments = owner.typeConstructorParameters.map { IrStarProjectionImpl }.toList(),
         annotations = emptyList()
     )
@@ -230,13 +215,13 @@ fun IrClassifierSymbol.typeWith(vararg arguments: IrType): IrSimpleType = typeWi
 fun IrClassifierSymbol.typeWith(arguments: List<IrType>): IrSimpleType =
     IrSimpleTypeImpl(
         this,
-        false,
+        SimpleTypeNullability.NOT_SPECIFIED,
         arguments.map { makeTypeProjection(it, Variance.INVARIANT) },
         emptyList()
     )
 
 fun IrClassifierSymbol.typeWithArguments(arguments: List<IrTypeArgument>): IrSimpleType =
-    IrSimpleTypeImpl(this, false, arguments, emptyList())
+    IrSimpleTypeImpl(this, SimpleTypeNullability.NOT_SPECIFIED, arguments, emptyList())
 
 fun IrClass.typeWith(arguments: List<IrType>) = this.symbol.typeWith(arguments)
 

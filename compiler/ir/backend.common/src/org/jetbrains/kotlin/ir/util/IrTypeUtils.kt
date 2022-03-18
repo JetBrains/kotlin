@@ -95,10 +95,7 @@ fun IrType.substitute(substitutionMap: Map<IrTypeParameterSymbol, IrType>): IrTy
     substitutionMap[classifier]?.let { substitutedType ->
         // Add nullability and annotations from original type
         return substitutedType
-            .withHasQuestionMark(
-                hasQuestionMark ||
-                        substitutedType is IrSimpleType && substitutedType.hasQuestionMark
-            )
+            .mergeNullability(this)
             .addAnnotations(newAnnotations)
     }
 
@@ -112,7 +109,7 @@ fun IrType.substitute(substitutionMap: Map<IrTypeParameterSymbol, IrType>): IrTy
 
     return IrSimpleTypeImpl(
         classifier,
-        hasQuestionMark,
+        nullability,
         newArguments,
         newAnnotations
     )

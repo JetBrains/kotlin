@@ -42,7 +42,7 @@ FILE fqName:<root> fileName:/definitelyNotNullAsArgument.kt
     BLOCK_BODY
       CALL 'public abstract fun input (t: T of <root>.I): kotlin.Unit declared in <root>.I' type=kotlin.Unit origin=null
         $this: GET_VAR 'i: <root>.I<in {T of <root>.qux & Any}> declared in <root>.qux' type=<root>.I<in {T of <root>.qux & Any}> origin=null
-        t: CALL 'public final fun CHECK_NOT_NULL <T0> (arg0: T0 of kotlin.internal.ir.CHECK_NOT_NULL?): T0 of kotlin.internal.ir.CHECK_NOT_NULL declared in kotlin.internal.ir' type=T of <root>.qux origin=EXCLEXCL
+        t: CALL 'public final fun CHECK_NOT_NULL <T0> (arg0: T0 of kotlin.internal.ir.CHECK_NOT_NULL?): {T0 of kotlin.internal.ir.CHECK_NOT_NULL & Any} declared in kotlin.internal.ir' type=T of <root>.qux origin=EXCLEXCL
           <T0>: T of <root>.qux
           arg0: GET_VAR 't: T of <root>.qux declared in <root>.qux' type=T of <root>.qux origin=null
   CLASS CLASS name:C modality:FINAL visibility:public superTypes:[<root>.I<{TT of <root>.C & Any}>]
@@ -76,7 +76,7 @@ FILE fqName:<root> fileName:/definitelyNotNullAsArgument.kt
       $this: VALUE_PARAMETER name:<this> type:<root>.C<TT of <root>.C>
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public open fun output (): {TT of <root>.C & Any} declared in <root>.C'
-          CALL 'public final fun CHECK_NOT_NULL <T0> (arg0: T0 of kotlin.internal.ir.CHECK_NOT_NULL?): T0 of kotlin.internal.ir.CHECK_NOT_NULL declared in kotlin.internal.ir' type=TT of <root>.C origin=EXCLEXCL
+          CALL 'public final fun CHECK_NOT_NULL <T0> (arg0: T0 of kotlin.internal.ir.CHECK_NOT_NULL?): {T0 of kotlin.internal.ir.CHECK_NOT_NULL & Any} declared in kotlin.internal.ir' type=TT of <root>.C origin=EXCLEXCL
             <T0>: TT of <root>.C
             arg0: CALL 'public final fun <get-t> (): TT of <root>.C declared in <root>.C' type=TT of <root>.C origin=GET_PROPERTY
               $this: GET_VAR '<this>: <root>.C<TT of <root>.C> declared in <root>.C.output' type=<root>.C<TT of <root>.C> origin=null
@@ -102,6 +102,6 @@ FILE fqName:<root> fileName:/definitelyNotNullAsArgument.kt
       CALL 'public abstract fun input (t: T of <root>.I): kotlin.Unit declared in <root>.I' type=kotlin.Unit origin=null
         $this: TYPE_OP type=<root>.I<{T1 of <root>.foo2 & Any}> origin=IMPLICIT_CAST typeOperand=<root>.I<{T1 of <root>.foo2 & Any}>
           GET_VAR 'p2: T2 of <root>.foo2 declared in <root>.foo2' type=T2 of <root>.foo2 origin=null
-        t: CALL 'public final fun CHECK_NOT_NULL <T0> (arg0: T0 of kotlin.internal.ir.CHECK_NOT_NULL?): T0 of kotlin.internal.ir.CHECK_NOT_NULL declared in kotlin.internal.ir' type=T1 of <root>.foo2 origin=EXCLEXCL
+        t: CALL 'public final fun CHECK_NOT_NULL <T0> (arg0: T0 of kotlin.internal.ir.CHECK_NOT_NULL?): {T0 of kotlin.internal.ir.CHECK_NOT_NULL & Any} declared in kotlin.internal.ir' type=T1 of <root>.foo2 origin=EXCLEXCL
           <T0>: T1 of <root>.foo2
           arg0: GET_VAR 'p1: T1 of <root>.foo2 declared in <root>.foo2' type=T1 of <root>.foo2 origin=null

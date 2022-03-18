@@ -9,12 +9,9 @@ import org.jetbrains.kotlin.backend.jvm.JvmSymbols
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.declarations.IrClass
-import org.jetbrains.kotlin.ir.types.IrSimpleType
-import org.jetbrains.kotlin.ir.types.IrType
-import org.jetbrains.kotlin.ir.types.classFqName
+import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.types.impl.IrStarProjectionImpl
 import org.jetbrains.kotlin.ir.types.impl.buildSimpleType
-import org.jetbrains.kotlin.ir.types.removeAnnotations
 import org.jetbrains.kotlin.ir.util.fqNameWhenAvailable
 import org.jetbrains.kotlin.ir.util.hasAnnotation
 import org.jetbrains.kotlin.ir.util.render
@@ -35,7 +32,7 @@ private class IrJvmFlexibleTypeImpl(
 ) : IrJvmFlexibleType {
     override val lowerBound: IrSimpleType
         get() = irType.buildSimpleType {
-            if (nullability) hasQuestionMark = false
+            if (this@IrJvmFlexibleTypeImpl.nullability) nullability = SimpleTypeNullability.NOT_SPECIFIED
             // No change in classifier is needed for mutability because type's classifier is set to the lower bound anyway
             // (see TypeTranslator.translateType).
             kotlinType = null
@@ -43,7 +40,7 @@ private class IrJvmFlexibleTypeImpl(
 
     override val upperBound: IrSimpleType
         get() = irType.buildSimpleType {
-            if (nullability) hasQuestionMark = true
+            if (this@IrJvmFlexibleTypeImpl.nullability) nullability = SimpleTypeNullability.MARKED_NULLABLE
             if (mutability) {
                 val klass = classifier?.owner as? IrClass
                     ?: error("Mutability-flexible type's classifier is not a class: ${irType.render()}")

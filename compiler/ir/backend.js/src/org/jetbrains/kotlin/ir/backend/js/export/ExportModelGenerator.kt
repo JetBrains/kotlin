@@ -469,7 +469,7 @@ class ExportModelGenerator(
             return ExportedType.ErrorType("NonSimpleType ${type.render()}")
 
         val classifier = type.classifier
-        val isNullable = type.hasQuestionMark
+        val isMarkedNullable = type.isMarkedNullable()
         val nonNullType = type.makeNotNull() as IrSimpleType
 
         val exportedType = when {
@@ -528,7 +528,7 @@ class ExportModelGenerator(
             else -> error("Unexpected classifier $classifier")
         }
 
-        return exportedType.withNullability(isNullable)
+        return exportedType.withNullability(isMarkedNullable)
     }
 
     private fun IrClass.getExportableName(): String {

@@ -31,4 +31,3 @@ fun <T : S?, S : Any?> test5(x: T, fn: Function1<S, Unit>) {
     EQEQ(arg0 = x, arg1 = null).not() -> fn.invoke(p1 = x)
   }
 }
-

@@ -329,13 +329,13 @@ fun IrType.remapTypeParameters(
                             target.typeParameters[classifier.index]
                         else
                             classifier
-                    IrSimpleTypeImpl(newClassifier.symbol, hasQuestionMark, arguments, annotations)
+                    IrSimpleTypeImpl(newClassifier.symbol, nullability, arguments, annotations)
                 }
 
                 classifier is IrClass ->
                     IrSimpleTypeImpl(
                         classifier.symbol,
-                        hasQuestionMark,
+                        nullability,
                         arguments.map {
                             when (it) {
                                 is IrTypeProjection -> makeTypeProjection(

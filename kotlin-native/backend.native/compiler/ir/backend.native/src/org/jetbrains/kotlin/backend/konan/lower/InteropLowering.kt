@@ -1114,8 +1114,9 @@ private class InteropTransformer(val context: Context, override val irFile: IrFi
                     val receiverType = expression.symbol.owner.extensionReceiverParameter!!.type
                     val source = receiverType.classifierOrFail as IrClassSymbol
                     require(source in integerClasses) { renderCompilerError(expression) }
-                    require(typeOperand is IrSimpleType && typeOperand.classifier in integerClasses
-                            && !typeOperand.hasQuestionMark) { renderCompilerError(expression) }
+                    require(typeOperand is IrSimpleType && !typeOperand.isNullable() && typeOperand.classifier in integerClasses) {
+                        renderCompilerError(expression)
+                    }
 
                     val target = typeOperand.classifier as IrClassSymbol
                     val valueToConvert = expression.extensionReceiver!!

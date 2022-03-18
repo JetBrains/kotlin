@@ -8,13 +8,13 @@ public interface IrTypeOrBuilder extends
     org.jetbrains.kotlin.protobuf.MessageLiteOrBuilder {
 
   /**
-   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrSimpleType simple = 1;</code>
+   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrSimpleTypeLegacy legacySimple = 1;</code>
    */
-  boolean hasSimple();
+  boolean hasLegacySimple();
   /**
-   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrSimpleType simple = 1;</code>
+   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrSimpleTypeLegacy legacySimple = 1;</code>
    */
-  org.jetbrains.kotlin.backend.common.serialization.proto.IrSimpleType getSimple();
+  org.jetbrains.kotlin.backend.common.serialization.proto.IrSimpleTypeLegacy getLegacySimple();
 
   /**
    * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrDynamicType dynamic = 2;</code>
@@ -42,4 +42,13 @@ public interface IrTypeOrBuilder extends
    * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrDefinitelyNotNullType dnn = 4;</code>
    */
   org.jetbrains.kotlin.backend.common.serialization.proto.IrDefinitelyNotNullType getDnn();
+
+  /**
+   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrSimpleType simple = 5;</code>
+   */
+  boolean hasSimple();
+  /**
+   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrSimpleType simple = 5;</code>
+   */
+  org.jetbrains.kotlin.backend.common.serialization.proto.IrSimpleType getSimple();
 }

@@ -23,9 +23,8 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 
 internal fun IrType.isCEnumType(): Boolean {
-    val simpleType = this as? IrSimpleType ?: return false
-    if (simpleType.hasQuestionMark) return false
-    val enumClass = simpleType.classifier.owner as? IrClass ?: return false
+    if (isNullable()) return false
+    val enumClass = classOrNull?.owner ?: return false
     if (!enumClass.isEnumClass) return false
 
     return enumClass.superTypes
@@ -53,11 +52,10 @@ internal fun IrSimpleFunction.objCReturnsRetained() = hasCCallAnnotation("Return
 internal fun IrClass.getCStructSpelling(): String? =
         getAnnotationArgumentValue(FqName("kotlinx.cinterop.internal.CStruct"), "spelling")
 
-internal fun IrType.isTypeOfNullLiteral(): Boolean = this is IrSimpleType && hasQuestionMark
-        && classifier.isClassWithFqName(StandardNames.FqNames.nothing)
+internal fun IrType.isTypeOfNullLiteral(): Boolean = isNullableNothing()
 
 internal fun IrType.isVector(): Boolean {
-    if (this is IrSimpleType && !this.hasQuestionMark) {
+    if (this is IrSimpleType && !this.isNullable()) {
         return classifier.isClassWithFqName(KonanFqNames.Vector128.toUnsafe())
     }
     return false

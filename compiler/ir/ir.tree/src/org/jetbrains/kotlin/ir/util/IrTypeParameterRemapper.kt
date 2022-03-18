@@ -29,7 +29,7 @@ class IrTypeParameterRemapper(
             IrSimpleTypeImpl(
                 null,
                 type.classifier.remap(),
-                type.hasQuestionMark,
+                type.nullability,
                 type.arguments.map { it.remap() },
                 type.annotations,
                 type.abbreviation?.remap()

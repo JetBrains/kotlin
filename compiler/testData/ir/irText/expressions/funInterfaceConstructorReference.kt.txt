@@ -95,4 +95,3 @@ fun test3b(): KFunction<KConsumer<String>> {
     ::KConsumer
   }
 }
-

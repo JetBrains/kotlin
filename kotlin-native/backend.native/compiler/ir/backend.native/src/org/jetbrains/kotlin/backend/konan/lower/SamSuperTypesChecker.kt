@@ -34,7 +34,7 @@ internal class SamSuperTypesChecker(private val context: Context,
         if (this !is IrSimpleType) return this
         return buildSimpleType {
             this.classifier = this@eraseProjections.classifier
-            this.hasQuestionMark = this@eraseProjections.hasQuestionMark
+            this.nullability = this@eraseProjections.nullability
             this.annotations = this@eraseProjections.annotations
             this.arguments = this@eraseProjections.arguments.mapIndexed { index, argument ->
                 if (argument !is IrTypeProjection)

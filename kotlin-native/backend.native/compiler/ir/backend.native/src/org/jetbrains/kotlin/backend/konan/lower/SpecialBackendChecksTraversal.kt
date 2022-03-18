@@ -452,7 +452,7 @@ private class BackendChecker(val context: Context, val irFile: IrFile) : IrEleme
                 val typeOperand = expression.getTypeArgument(0)!!
                 val receiverType = expression.symbol.owner.extensionReceiverParameter!!.type
 
-                if (typeOperand !is IrSimpleType || typeOperand.classifier !in integerClasses || typeOperand.hasQuestionMark)
+                if (typeOperand !is IrSimpleType || typeOperand.classifier !in integerClasses || typeOperand.isNullable())
                     reportError(expression, "unable to convert ${receiverType.toKotlinType()} to ${typeOperand.toKotlinType()}")
             }
             IntrinsicType.WORKER_EXECUTE -> {

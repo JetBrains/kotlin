@@ -33,7 +33,7 @@ class SimpleTypeRemapper(
                 IrSimpleTypeImpl(
                     null,
                     symbol,
-                    type.hasQuestionMark,
+                    type.nullability,
                     arguments,
                     type.annotations,
                     type.abbreviation?.remapTypeAbbreviation()

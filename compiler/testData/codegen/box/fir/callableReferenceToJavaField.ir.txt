@@ -42,7 +42,7 @@ FILE fqName:foo fileName:/main.kt
       $this: VALUE_PARAMETER name:<this> type:foo.Derived
       BLOCK_BODY
         CALL 'public open fun set (p0: @[FlexibleNullability] kotlin.Any?, p1: @[FlexibleNullability] kotlin.Any?): kotlin.Unit [operator] declared in java.lang.reflect.Field' type=kotlin.Unit origin=EQ
-          $this: CALL 'public final fun CHECK_NOT_NULL <T0> (arg0: T0 of kotlin.internal.ir.CHECK_NOT_NULL?): T0 of kotlin.internal.ir.CHECK_NOT_NULL declared in kotlin.internal.ir' type=java.lang.reflect.Field origin=EXCLEXCL
+          $this: CALL 'public final fun CHECK_NOT_NULL <T0> (arg0: T0 of kotlin.internal.ir.CHECK_NOT_NULL?): {T0 of kotlin.internal.ir.CHECK_NOT_NULL & Any} declared in kotlin.internal.ir' type=java.lang.reflect.Field origin=EXCLEXCL
             <T0>: java.lang.reflect.Field
             arg0: CALL 'public final fun <get-javaField> (): java.lang.reflect.Field? declared in kotlin.reflect.jvm.ReflectJvmMapping' type=java.lang.reflect.Field? origin=GET_PROPERTY
               $receiver: PROPERTY_REFERENCE 'protected/*protected and package*/ final a [fake_override,var]' field='FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:a type:@[FlexibleNullability] foo.A? visibility:protected/*protected and package*/' getter=null setter=null type=kotlin.reflect.KMutableProperty1<foo.Derived, @[FlexibleNullability] foo.A?> origin=null

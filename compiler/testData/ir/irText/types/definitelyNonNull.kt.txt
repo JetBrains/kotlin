@@ -14,4 +14,3 @@ fun main() {
   elvisLike<String>(x = "", y = "").<get-length>() /*~> Unit */
   elvisLike<String?>(x = null, y = "").<get-length>() /*~> Unit */
 }
-

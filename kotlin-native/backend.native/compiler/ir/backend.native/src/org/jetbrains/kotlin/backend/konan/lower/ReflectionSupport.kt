@@ -71,7 +71,7 @@ internal class KTypeGenerator(
             return irKTypeImpl(
                     kClassifier = kClassifier,
                     irTypeArguments = type.arguments,
-                    isMarkedNullable = type.hasQuestionMark,
+                    isMarkedNullable = type.isMarkedNullable(),
                     leaveReifiedForLater = leaveReifiedForLater,
                     seenTypeParameters = seenTypeParameters,
                     type = type,

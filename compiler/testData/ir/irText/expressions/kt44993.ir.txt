@@ -3,7 +3,7 @@ FILE fqName:<root> fileName:/kt44993.kt
     VALUE_PARAMETER name:r index:0 type:<root>.KotlinBox<<root>.JavaBox>
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun f (r: <root>.KotlinBox<<root>.JavaBox>): kotlin.String declared in <root>'
-        CALL 'public final fun CHECK_NOT_NULL <T0> (arg0: T0 of kotlin.internal.ir.CHECK_NOT_NULL?): T0 of kotlin.internal.ir.CHECK_NOT_NULL declared in kotlin.internal.ir' type=kotlin.String origin=EXCLEXCL
+        CALL 'public final fun CHECK_NOT_NULL <T0> (arg0: T0 of kotlin.internal.ir.CHECK_NOT_NULL?): {T0 of kotlin.internal.ir.CHECK_NOT_NULL & Any} declared in kotlin.internal.ir' type=kotlin.String origin=EXCLEXCL
           <T0>: kotlin.String
           arg0: BLOCK type=@[FlexibleNullability] kotlin.String? origin=SAFE_CALL
             VAR IR_TEMPORARY_VARIABLE name:tmp_0 type:<root>.JavaBox? [val]

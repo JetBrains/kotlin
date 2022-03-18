@@ -16,8 +16,8 @@ import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.types.classifierOrFail
+import org.jetbrains.kotlin.ir.types.isNullable
 import org.jetbrains.kotlin.ir.util.irCall
-import org.jetbrains.kotlin.ir.util.isSimpleTypeWithQuestionMark
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 
 internal class DataClassOperatorsLowering(val context: Context) : FileLoweringPass, IrElementTransformer<IrFunction?> {
@@ -56,7 +56,7 @@ internal class DataClassOperatorsLowering(val context: Context) : FileLoweringPa
             // TODO: use more precise type arguments.
             val typeArguments = (0 until newCallee.typeParameters.size).map { irBuiltins.anyNType }
 
-            if (!argument.type.isSimpleTypeWithQuestionMark) {
+            if (!argument.type.isNullable()) {
                 irCall(newCallee, typeArguments).apply {
                     extensionReceiver = argument
                 }

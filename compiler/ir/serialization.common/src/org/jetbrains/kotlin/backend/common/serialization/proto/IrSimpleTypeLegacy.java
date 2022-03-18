@@ -4,30 +4,30 @@
 package org.jetbrains.kotlin.backend.common.serialization.proto;
 
 /**
- * Protobuf type {@code org.jetbrains.kotlin.backend.common.serialization.proto.IrSimpleType}
+ * Protobuf type {@code org.jetbrains.kotlin.backend.common.serialization.proto.IrSimpleTypeLegacy}
  */
-public final class IrSimpleType extends
+public final class IrSimpleTypeLegacy extends
     org.jetbrains.kotlin.protobuf.GeneratedMessageLite implements
-    // @@protoc_insertion_point(message_implements:org.jetbrains.kotlin.backend.common.serialization.proto.IrSimpleType)
-    IrSimpleTypeOrBuilder {
-  // Use IrSimpleType.newBuilder() to construct.
-  private IrSimpleType(org.jetbrains.kotlin.protobuf.GeneratedMessageLite.Builder builder) {
+    // @@protoc_insertion_point(message_implements:org.jetbrains.kotlin.backend.common.serialization.proto.IrSimpleTypeLegacy)
+    IrSimpleTypeLegacyOrBuilder {
+  // Use IrSimpleTypeLegacy.newBuilder() to construct.
+  private IrSimpleTypeLegacy(org.jetbrains.kotlin.protobuf.GeneratedMessageLite.Builder builder) {
     super(builder);
     this.unknownFields = builder.getUnknownFields();
   }
-  private IrSimpleType(boolean noInit) { this.unknownFields = org.jetbrains.kotlin.protobuf.ByteString.EMPTY;}
+  private IrSimpleTypeLegacy(boolean noInit) { this.unknownFields = org.jetbrains.kotlin.protobuf.ByteString.EMPTY;}
 
-  private static final IrSimpleType defaultInstance;
-  public static IrSimpleType getDefaultInstance() {
+  private static final IrSimpleTypeLegacy defaultInstance;
+  public static IrSimpleTypeLegacy getDefaultInstance() {
     return defaultInstance;
   }
 
-  public IrSimpleType getDefaultInstanceForType() {
+  public IrSimpleTypeLegacy getDefaultInstanceForType() {
     return defaultInstance;
   }
 
   private final org.jetbrains.kotlin.protobuf.ByteString unknownFields;
-  private IrSimpleType(
+  private IrSimpleTypeLegacy(
       org.jetbrains.kotlin.protobuf.CodedInputStream input,
       org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
       throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
@@ -67,15 +67,8 @@ public final class IrSimpleType extends
             break;
           }
           case 24: {
-            int rawValue = input.readEnum();
-            org.jetbrains.kotlin.backend.common.serialization.proto.IrSimpleTypeNullability value = org.jetbrains.kotlin.backend.common.serialization.proto.IrSimpleTypeNullability.valueOf(rawValue);
-            if (value == null) {
-              unknownFieldsCodedOutput.writeRawVarint32(tag);
-              unknownFieldsCodedOutput.writeRawVarint32(rawValue);
-            } else {
-              bitField0_ |= 0x00000002;
-              nullability_ = value;
-            }
+            bitField0_ |= 0x00000002;
+            hasQuestionMark_ = input.readBool();
             break;
           }
           case 32: {
@@ -136,18 +129,18 @@ public final class IrSimpleType extends
       makeExtensionsImmutable();
     }
   }
-  public static org.jetbrains.kotlin.protobuf.Parser<IrSimpleType> PARSER =
-      new org.jetbrains.kotlin.protobuf.AbstractParser<IrSimpleType>() {
-    public IrSimpleType parsePartialFrom(
+  public static org.jetbrains.kotlin.protobuf.Parser<IrSimpleTypeLegacy> PARSER =
+      new org.jetbrains.kotlin.protobuf.AbstractParser<IrSimpleTypeLegacy>() {
+    public IrSimpleTypeLegacy parsePartialFrom(
         org.jetbrains.kotlin.protobuf.CodedInputStream input,
         org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
         throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
-      return new IrSimpleType(input, extensionRegistry);
+      return new IrSimpleTypeLegacy(input, extensionRegistry);
     }
   };
 
   @java.lang.Override
-  public org.jetbrains.kotlin.protobuf.Parser<IrSimpleType> getParserForType() {
+  public org.jetbrains.kotlin.protobuf.Parser<IrSimpleTypeLegacy> getParserForType() {
     return PARSER;
   }
 
@@ -202,19 +195,19 @@ public final class IrSimpleType extends
     return classifier_;
   }
 
-  public static final int NULLABILITY_FIELD_NUMBER = 3;
-  private org.jetbrains.kotlin.backend.common.serialization.proto.IrSimpleTypeNullability nullability_;
+  public static final int HAS_QUESTION_MARK_FIELD_NUMBER = 3;
+  private boolean hasQuestionMark_;
   /**
-   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrSimpleTypeNullability nullability = 3 [default = NOT_SPECIFIED];</code>
+   * <code>required bool has_question_mark = 3;</code>
    */
-  public boolean hasNullability() {
+  public boolean hasHasQuestionMark() {
     return ((bitField0_ & 0x00000002) == 0x00000002);
   }
   /**
-   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrSimpleTypeNullability nullability = 3 [default = NOT_SPECIFIED];</code>
+   * <code>required bool has_question_mark = 3;</code>
    */
-  public org.jetbrains.kotlin.backend.common.serialization.proto.IrSimpleTypeNullability getNullability() {
-    return nullability_;
+  public boolean getHasQuestionMark() {
+    return hasQuestionMark_;
   }
 
   public static final int ARGUMENT_FIELD_NUMBER = 4;
@@ -270,7 +263,7 @@ public final class IrSimpleType extends
   private void initFields() {
     annotation_ = java.util.Collections.emptyList();
     classifier_ = 0L;
-    nullability_ = org.jetbrains.kotlin.backend.common.serialization.proto.IrSimpleTypeNullability.NOT_SPECIFIED;
+    hasQuestionMark_ = false;
     argument_ = java.util.Collections.emptyList();
     abbreviation_ = org.jetbrains.kotlin.backend.common.serialization.proto.IrTypeAbbreviation.getDefaultInstance();
   }
@@ -281,6 +274,10 @@ public final class IrSimpleType extends
     if (isInitialized == 0) return false;
 
     if (!hasClassifier()) {
+      memoizedIsInitialized = 0;
+      return false;
+    }
+    if (!hasHasQuestionMark()) {
       memoizedIsInitialized = 0;
       return false;
     }
@@ -310,7 +307,7 @@ public final class IrSimpleType extends
       output.writeInt64(2, classifier_);
     }
     if (((bitField0_ & 0x00000002) == 0x00000002)) {
-      output.writeEnum(3, nullability_.getNumber());
+      output.writeBool(3, hasQuestionMark_);
     }
     if (getArgumentList().size() > 0) {
       output.writeRawVarint32(34);
@@ -341,7 +338,7 @@ public final class IrSimpleType extends
     }
     if (((bitField0_ & 0x00000002) == 0x00000002)) {
       size += org.jetbrains.kotlin.protobuf.CodedOutputStream
-        .computeEnumSize(3, nullability_.getNumber());
+        .computeBoolSize(3, hasQuestionMark_);
     }
     {
       int dataSize = 0;
@@ -373,53 +370,53 @@ public final class IrSimpleType extends
     return super.writeReplace();
   }
 
-  public static org.jetbrains.kotlin.backend.common.serialization.proto.IrSimpleType parseFrom(
+  public static org.jetbrains.kotlin.backend.common.serialization.proto.IrSimpleTypeLegacy parseFrom(
       org.jetbrains.kotlin.protobuf.ByteString data)
       throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
     return PARSER.parseFrom(data);
   }
-  public static org.jetbrains.kotlin.backend.common.serialization.proto.IrSimpleType parseFrom(
+  public static org.jetbrains.kotlin.backend.common.serialization.proto.IrSimpleTypeLegacy parseFrom(
       org.jetbrains.kotlin.protobuf.ByteString data,
       org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
       throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
     return PARSER.parseFrom(data, extensionRegistry);
   }
-  public static org.jetbrains.kotlin.backend.common.serialization.proto.IrSimpleType parseFrom(byte[] data)
+  public static org.jetbrains.kotlin.backend.common.serialization.proto.IrSimpleTypeLegacy parseFrom(byte[] data)
       throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
     return PARSER.parseFrom(data);
   }
-  public static org.jetbrains.kotlin.backend.common.serialization.proto.IrSimpleType parseFrom(
+  public static org.jetbrains.kotlin.backend.common.serialization.proto.IrSimpleTypeLegacy parseFrom(
       byte[] data,
       org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
       throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
     return PARSER.parseFrom(data, extensionRegistry);
   }
-  public static org.jetbrains.kotlin.backend.common.serialization.proto.IrSimpleType parseFrom(java.io.InputStream input)
+  public static org.jetbrains.kotlin.backend.common.serialization.proto.IrSimpleTypeLegacy parseFrom(java.io.InputStream input)
       throws java.io.IOException {
     return PARSER.parseFrom(input);
   }
-  public static org.jetbrains.kotlin.backend.common.serialization.proto.IrSimpleType parseFrom(
+  public static org.jetbrains.kotlin.backend.common.serialization.proto.IrSimpleTypeLegacy parseFrom(
       java.io.InputStream input,
       org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
       throws java.io.IOException {
     return PARSER.parseFrom(input, extensionRegistry);
   }
-  public static org.jetbrains.kotlin.backend.common.serialization.proto.IrSimpleType parseDelimitedFrom(java.io.InputStream input)
+  public static org.jetbrains.kotlin.backend.common.serialization.proto.IrSimpleTypeLegacy parseDelimitedFrom(java.io.InputStream input)
       throws java.io.IOException {
     return PARSER.parseDelimitedFrom(input);
   }
-  public static org.jetbrains.kotlin.backend.common.serialization.proto.IrSimpleType parseDelimitedFrom(
+  public static org.jetbrains.kotlin.backend.common.serialization.proto.IrSimpleTypeLegacy parseDelimitedFrom(
       java.io.InputStream input,
       org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
       throws java.io.IOException {
     return PARSER.parseDelimitedFrom(input, extensionRegistry);
   }
-  public static org.jetbrains.kotlin.backend.common.serialization.proto.IrSimpleType parseFrom(
+  public static org.jetbrains.kotlin.backend.common.serialization.proto.IrSimpleTypeLegacy parseFrom(
       org.jetbrains.kotlin.protobuf.CodedInputStream input)
       throws java.io.IOException {
     return PARSER.parseFrom(input);
   }
-  public static org.jetbrains.kotlin.backend.common.serialization.proto.IrSimpleType parseFrom(
+  public static org.jetbrains.kotlin.backend.common.serialization.proto.IrSimpleTypeLegacy parseFrom(
       org.jetbrains.kotlin.protobuf.CodedInputStream input,
       org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
       throws java.io.IOException {
@@ -428,21 +425,21 @@ public final class IrSimpleType extends
 
   public static Builder newBuilder() { return Builder.create(); }
   public Builder newBuilderForType() { return newBuilder(); }
-  public static Builder newBuilder(org.jetbrains.kotlin.backend.common.serialization.proto.IrSimpleType prototype) {
+  public static Builder newBuilder(org.jetbrains.kotlin.backend.common.serialization.proto.IrSimpleTypeLegacy prototype) {
     return newBuilder().mergeFrom(prototype);
   }
   public Builder toBuilder() { return newBuilder(this); }
 
   /**
-   * Protobuf type {@code org.jetbrains.kotlin.backend.common.serialization.proto.IrSimpleType}
+   * Protobuf type {@code org.jetbrains.kotlin.backend.common.serialization.proto.IrSimpleTypeLegacy}
    */
   public static final class Builder extends
       org.jetbrains.kotlin.protobuf.GeneratedMessageLite.Builder<
-        org.jetbrains.kotlin.backend.common.serialization.proto.IrSimpleType, Builder>
+        org.jetbrains.kotlin.backend.common.serialization.proto.IrSimpleTypeLegacy, Builder>
       implements
-      // @@protoc_insertion_point(builder_implements:org.jetbrains.kotlin.backend.common.serialization.proto.IrSimpleType)
-      org.jetbrains.kotlin.backend.common.serialization.proto.IrSimpleTypeOrBuilder {
-    // Construct using org.jetbrains.kotlin.backend.common.serialization.proto.IrSimpleType.newBuilder()
+      // @@protoc_insertion_point(builder_implements:org.jetbrains.kotlin.backend.common.serialization.proto.IrSimpleTypeLegacy)
+      org.jetbrains.kotlin.backend.common.serialization.proto.IrSimpleTypeLegacyOrBuilder {
+    // Construct using org.jetbrains.kotlin.backend.common.serialization.proto.IrSimpleTypeLegacy.newBuilder()
     private Builder() {
       maybeForceBuilderInitialization();
     }
@@ -459,7 +456,7 @@ public final class IrSimpleType extends
       bitField0_ = (bitField0_ & ~0x00000001);
       classifier_ = 0L;
       bitField0_ = (bitField0_ & ~0x00000002);
-      nullability_ = org.jetbrains.kotlin.backend.common.serialization.proto.IrSimpleTypeNullability.NOT_SPECIFIED;
+      hasQuestionMark_ = false;
       bitField0_ = (bitField0_ & ~0x00000004);
       argument_ = java.util.Collections.emptyList();
       bitField0_ = (bitField0_ & ~0x00000008);
@@ -472,20 +469,20 @@ public final class IrSimpleType extends
       return create().mergeFrom(buildPartial());
     }
 
-    public org.jetbrains.kotlin.backend.common.serialization.proto.IrSimpleType getDefaultInstanceForType() {
-      return org.jetbrains.kotlin.backend.common.serialization.proto.IrSimpleType.getDefaultInstance();
+    public org.jetbrains.kotlin.backend.common.serialization.proto.IrSimpleTypeLegacy getDefaultInstanceForType() {
+      return org.jetbrains.kotlin.backend.common.serialization.proto.IrSimpleTypeLegacy.getDefaultInstance();
     }
 
-    public org.jetbrains.kotlin.backend.common.serialization.proto.IrSimpleType build() {
-      org.jetbrains.kotlin.backend.common.serialization.proto.IrSimpleType result = buildPartial();
+    public org.jetbrains.kotlin.backend.common.serialization.proto.IrSimpleTypeLegacy build() {
+      org.jetbrains.kotlin.backend.common.serialization.proto.IrSimpleTypeLegacy result = buildPartial();
       if (!result.isInitialized()) {
         throw newUninitializedMessageException(result);
       }
       return result;
     }
 
-    public org.jetbrains.kotlin.backend.common.serialization.proto.IrSimpleType buildPartial() {
-      org.jetbrains.kotlin.backend.common.serialization.proto.IrSimpleType result = new org.jetbrains.kotlin.backend.common.serialization.proto.IrSimpleType(this);
+    public org.jetbrains.kotlin.backend.common.serialization.proto.IrSimpleTypeLegacy buildPartial() {
+      org.jetbrains.kotlin.backend.common.serialization.proto.IrSimpleTypeLegacy result = new org.jetbrains.kotlin.backend.common.serialization.proto.IrSimpleTypeLegacy(this);
       int from_bitField0_ = bitField0_;
       int to_bitField0_ = 0;
       if (((bitField0_ & 0x00000001) == 0x00000001)) {
@@ -500,7 +497,7 @@ public final class IrSimpleType extends
       if (((from_bitField0_ & 0x00000004) == 0x00000004)) {
         to_bitField0_ |= 0x00000002;
       }
-      result.nullability_ = nullability_;
+      result.hasQuestionMark_ = hasQuestionMark_;
       if (((bitField0_ & 0x00000008) == 0x00000008)) {
         argument_ = java.util.Collections.unmodifiableList(argument_);
         bitField0_ = (bitField0_ & ~0x00000008);
@@ -514,8 +511,8 @@ public final class IrSimpleType extends
       return result;
     }
 
-    public Builder mergeFrom(org.jetbrains.kotlin.backend.common.serialization.proto.IrSimpleType other) {
-      if (other == org.jetbrains.kotlin.backend.common.serialization.proto.IrSimpleType.getDefaultInstance()) return this;
+    public Builder mergeFrom(org.jetbrains.kotlin.backend.common.serialization.proto.IrSimpleTypeLegacy other) {
+      if (other == org.jetbrains.kotlin.backend.common.serialization.proto.IrSimpleTypeLegacy.getDefaultInstance()) return this;
       if (!other.annotation_.isEmpty()) {
         if (annotation_.isEmpty()) {
           annotation_ = other.annotation_;
@@ -529,8 +526,8 @@ public final class IrSimpleType extends
       if (other.hasClassifier()) {
         setClassifier(other.getClassifier());
       }
-      if (other.hasNullability()) {
-        setNullability(other.getNullability());
+      if (other.hasHasQuestionMark()) {
+        setHasQuestionMark(other.getHasQuestionMark());
       }
       if (!other.argument_.isEmpty()) {
         if (argument_.isEmpty()) {
@@ -555,6 +552,10 @@ public final class IrSimpleType extends
         
         return false;
       }
+      if (!hasHasQuestionMark()) {
+        
+        return false;
+      }
       for (int i = 0; i < getAnnotationCount(); i++) {
         if (!getAnnotation(i).isInitialized()) {
           
@@ -574,11 +575,11 @@ public final class IrSimpleType extends
         org.jetbrains.kotlin.protobuf.CodedInputStream input,
         org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
-      org.jetbrains.kotlin.backend.common.serialization.proto.IrSimpleType parsedMessage = null;
+      org.jetbrains.kotlin.backend.common.serialization.proto.IrSimpleTypeLegacy parsedMessage = null;
       try {
         parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
       } catch (org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException e) {
-        parsedMessage = (org.jetbrains.kotlin.backend.common.serialization.proto.IrSimpleType) e.getUnfinishedMessage();
+        parsedMessage = (org.jetbrains.kotlin.backend.common.serialization.proto.IrSimpleTypeLegacy) e.getUnfinishedMessage();
         throw e;
       } finally {
         if (parsedMessage != null) {
@@ -746,37 +747,34 @@ public final class IrSimpleType extends
       return this;
     }
 
-    private org.jetbrains.kotlin.backend.common.serialization.proto.IrSimpleTypeNullability nullability_ = org.jetbrains.kotlin.backend.common.serialization.proto.IrSimpleTypeNullability.NOT_SPECIFIED;
+    private boolean hasQuestionMark_ ;
     /**
-     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrSimpleTypeNullability nullability = 3 [default = NOT_SPECIFIED];</code>
+     * <code>required bool has_question_mark = 3;</code>
      */
-    public boolean hasNullability() {
+    public boolean hasHasQuestionMark() {
       return ((bitField0_ & 0x00000004) == 0x00000004);
     }
     /**
-     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrSimpleTypeNullability nullability = 3 [default = NOT_SPECIFIED];</code>
+     * <code>required bool has_question_mark = 3;</code>
      */
-    public org.jetbrains.kotlin.backend.common.serialization.proto.IrSimpleTypeNullability getNullability() {
-      return nullability_;
+    public boolean getHasQuestionMark() {
+      return hasQuestionMark_;
     }
     /**
-     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrSimpleTypeNullability nullability = 3 [default = NOT_SPECIFIED];</code>
+     * <code>required bool has_question_mark = 3;</code>
      */
-    public Builder setNullability(org.jetbrains.kotlin.backend.common.serialization.proto.IrSimpleTypeNullability value) {
-      if (value == null) {
-        throw new NullPointerException();
-      }
+    public Builder setHasQuestionMark(boolean value) {
       bitField0_ |= 0x00000004;
-      nullability_ = value;
+      hasQuestionMark_ = value;
       
       return this;
     }
     /**
-     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrSimpleTypeNullability nullability = 3 [default = NOT_SPECIFIED];</code>
+     * <code>required bool has_question_mark = 3;</code>
      */
-    public Builder clearNullability() {
+    public Builder clearHasQuestionMark() {
       bitField0_ = (bitField0_ & ~0x00000004);
-      nullability_ = org.jetbrains.kotlin.backend.common.serialization.proto.IrSimpleTypeNullability.NOT_SPECIFIED;
+      hasQuestionMark_ = false;
       
       return this;
     }
@@ -935,13 +933,13 @@ public final class IrSimpleType extends
       return this;
     }
 
-    // @@protoc_insertion_point(builder_scope:org.jetbrains.kotlin.backend.common.serialization.proto.IrSimpleType)
+    // @@protoc_insertion_point(builder_scope:org.jetbrains.kotlin.backend.common.serialization.proto.IrSimpleTypeLegacy)
   }
 
   static {
-    defaultInstance = new IrSimpleType(true);
+    defaultInstance = new IrSimpleTypeLegacy(true);
     defaultInstance.initFields();
   }
 
-  // @@protoc_insertion_point(class_scope:org.jetbrains.kotlin.backend.common.serialization.proto.IrSimpleType)
+  // @@protoc_insertion_point(class_scope:org.jetbrains.kotlin.backend.common.serialization.proto.IrSimpleTypeLegacy)
 }

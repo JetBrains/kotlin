@@ -39,4 +39,3 @@ class C<TT : Any?> : I<(TT & Any)> {
 fun <T1 : Any?, T2 : I<(T1 & Any)>> foo2(p1: T1, p2: T2) {
   p2 /*as I<(T1 & Any)> */.input(t = CHECK_NOT_NULL<T1>(arg0 = p1))
 }
-

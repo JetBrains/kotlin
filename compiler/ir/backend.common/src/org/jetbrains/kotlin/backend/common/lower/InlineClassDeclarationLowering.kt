@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.transformStatement
+import org.jetbrains.kotlin.ir.types.SimpleTypeNullability
 import org.jetbrains.kotlin.ir.types.extractTypeParameters
 import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
 import org.jetbrains.kotlin.ir.util.*
@@ -293,7 +294,7 @@ class InlineClassLowering(val context: CommonBackendContext) {
 
                             val typeParameters = extractTypeParameters(function.parentAsClass) + function.typeParameters
                             for ((index, typeParameter) in typeParameters.withIndex()) {
-                                putTypeArgument(index, IrSimpleTypeImpl(typeParameter.symbol, false, emptyList(), emptyList()))
+                                putTypeArgument(index, IrSimpleTypeImpl(typeParameter.symbol, SimpleTypeNullability.NOT_SPECIFIED, emptyList(), emptyList()))
                             }
                         }
                     )

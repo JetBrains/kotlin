@@ -28,6 +28,9 @@ import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.types.TypeCheckerState
 import org.jetbrains.kotlin.types.TypeSystemCommonBackendContext
 import org.jetbrains.kotlin.types.Variance
+import org.jetbrains.kotlin.ir.types.makeNotNull as irMakeNotNull
+import org.jetbrains.kotlin.ir.types.makeNullable as irMakeNullable
+import org.jetbrains.kotlin.ir.types.isMarkedNullable as irIsMarkedNullable
 import org.jetbrains.kotlin.types.model.*
 import org.jetbrains.kotlin.ir.types.isPrimitiveType as irTypePredicates_isPrimitiveType
 
@@ -71,20 +74,18 @@ interface IrTypeSystemContext : TypeSystemContext, TypeSystemCommonSuperTypesCon
 
     override fun SimpleTypeMarker.asDefinitelyNotNullType(): DefinitelyNotNullTypeMarker? = null
 
-    override fun SimpleTypeMarker.isMarkedNullable(): Boolean = this is IrSimpleType && hasQuestionMark
+    override fun SimpleTypeMarker.isMarkedNullable(): Boolean = this is IrSimpleType && this.irIsMarkedNullable()
 
-    override fun KotlinTypeMarker.isMarkedNullable(): Boolean = this is IrSimpleType && hasQuestionMark
+    override fun KotlinTypeMarker.isMarkedNullable(): Boolean = this is IrSimpleType && this.irIsMarkedNullable()
 
     override fun SimpleTypeMarker.withNullability(nullable: Boolean): SimpleTypeMarker {
         val simpleType = this as IrSimpleType
-        return if (simpleType.hasQuestionMark == nullable) simpleType
-        else simpleType.run { IrSimpleTypeImpl(classifier, nullable, arguments, annotations) }
+        return (if (nullable) simpleType.irMakeNullable() else simpleType.irMakeNotNull()) as IrSimpleType
     }
 
     override fun SimpleTypeMarker.typeConstructor(): TypeConstructorMarker = when (this) {
         is IrCapturedType -> constructor
         is IrSimpleType -> classifier
-        is IrDefinitelyNotNullType -> original.typeConstructor()
         else -> error("Unknown type constructor")
     }
 
@@ -290,7 +291,7 @@ interface IrTypeSystemContext : TypeSystemContext, TypeSystemCommonSuperTypesCon
             }
         }
 
-        return IrSimpleTypeImpl(type.classifier, type.hasQuestionMark, newArguments, type.annotations)
+        return IrSimpleTypeImpl(type.classifier, type.nullability, newArguments, type.annotations)
     }
 
     override fun SimpleTypeMarker.asArgumentList() = this as IrSimpleType
@@ -341,7 +342,7 @@ interface IrTypeSystemContext : TypeSystemContext, TypeSystemCommonSuperTypesCon
         require(ourAnnotations?.size == attributes?.size)
         return IrSimpleTypeImpl(
             constructor as IrClassifierSymbol,
-            nullable,
+            if (nullable) SimpleTypeNullability.MARKED_NULLABLE else SimpleTypeNullability.DEFINITELY_NOT_NULL,
             arguments.map { it as IrTypeArgument },
             ourAnnotations ?: emptyList()
         )
@@ -556,7 +557,7 @@ interface IrTypeSystemContext : TypeSystemContext, TypeSystemCommonSuperTypesCon
         error("Captured type is unsupported in IR")
 
     override fun DefinitelyNotNullTypeMarker.original(): SimpleTypeMarker =
-        (this as IrDefinitelyNotNullType).original as IrSimpleType
+        error("DefinitelyNotNullTypeMarker.original() type is unsupported in IR")
 
     override fun KotlinTypeMarker.makeDefinitelyNotNullOrNotNull(): KotlinTypeMarker {
         error("makeDefinitelyNotNullOrNotNull is not supported in IR")

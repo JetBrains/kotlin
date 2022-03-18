@@ -26,7 +26,6 @@ import org.jetbrains.kotlin.ir.declarations.impl.IrExternalPackageFragmentImpl
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
-import org.jetbrains.kotlin.ir.symbols.impl.IrTypeParameterSymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrValueParameterSymbolImpl
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeBuilder
@@ -186,14 +185,14 @@ class IrBuiltInsOverDescriptors(
             val returnIrType = IrSimpleTypeBuilder().run {
                 classifier = typeParameterSymbol
                 kotlinType = returnKotlinType
-                hasQuestionMark = false
+                nullability = SimpleTypeNullability.DEFINITELY_NOT_NULL
                 buildSimpleType()
             }
 
             val valueIrType = IrSimpleTypeBuilder().run {
                 classifier = typeParameterSymbol
                 kotlinType = valueKotlinType
-                hasQuestionMark = true
+                nullability = SimpleTypeNullability.MARKED_NULLABLE
                 buildSimpleType()
             }
 
@@ -232,7 +231,7 @@ class IrBuiltInsOverDescriptors(
     val any = builtIns.anyType
     override val anyType = any.toIrType()
     override val anyClass = builtIns.any.toIrSymbol()
-    override val anyNType = anyType.withHasQuestionMark(true)
+    override val anyNType = anyType.makeNullable()
 
     val bool = builtIns.booleanType
     override val booleanType = bool.toIrType()
@@ -273,7 +272,7 @@ class IrBuiltInsOverDescriptors(
     val nothing = builtIns.nothingType
     override val nothingType = nothing.toIrType()
     override val nothingClass = builtIns.nothing.toIrSymbol()
-    override val nothingNType = nothingType.withHasQuestionMark(true)
+    override val nothingNType = nothingType.makeNullable()
 
     val unit = builtIns.unitType
     override val unitType = unit.toIrType()

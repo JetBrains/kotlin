@@ -12,10 +12,7 @@ import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
-import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
-import org.jetbrains.kotlin.ir.symbols.IrSymbol
-import org.jetbrains.kotlin.ir.symbols.IrTypeAliasSymbol
-import org.jetbrains.kotlin.ir.symbols.IrVariableSymbol
+import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.types.impl.ReturnTypeIsNotInitializedException
 import org.jetbrains.kotlin.ir.types.impl.originalKotlinType
@@ -113,9 +110,9 @@ class RenderIrElementVisitor(private val normalizeNames: Boolean = false, privat
 
             is IrErrorType -> "IrErrorType(${if (verboseErrorTypes) originalKotlinType else null})"
 
-            is IrDefinitelyNotNullType -> "{${original.render()} & Any}"
-
             is IrSimpleType -> buildTrimEnd {
+                val isDefinitelyNotNullType = classifier is IrTypeParameterSymbol && nullability == SimpleTypeNullability.DEFINITELY_NOT_NULL
+                if (isDefinitelyNotNullType) append("{")
                 append(classifier.renderClassifierFqn())
                 if (arguments.isNotEmpty()) {
                     append(
@@ -124,7 +121,9 @@ class RenderIrElementVisitor(private val normalizeNames: Boolean = false, privat
                         }
                     )
                 }
-                if (hasQuestionMark) {
+                if (isDefinitelyNotNullType) {
+                    append(" & Any}")
+                } else if (isMarkedNullable()) {
                     append('?')
                 }
                 abbreviation?.let {

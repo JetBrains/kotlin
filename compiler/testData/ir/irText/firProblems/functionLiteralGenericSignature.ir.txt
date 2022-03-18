@@ -61,7 +61,7 @@ FILE fqName:<root> fileName:/functionLiteralGenericSignature.kt
             VALUE_PARAMETER name:l index:0 type:kotlin.collections.MutableList<kotlin.Double>
             BLOCK_BODY
               RETURN type=kotlin.Nothing from='local final fun <no name provided> (l: kotlin.collections.MutableList<kotlin.Double>): kotlin.collections.MutableList<kotlin.Int> declared in <root>.mutableListFun'
-                CALL 'public final fun CHECK_NOT_NULL <T0> (arg0: T0 of kotlin.internal.ir.CHECK_NOT_NULL?): T0 of kotlin.internal.ir.CHECK_NOT_NULL declared in kotlin.internal.ir' type=kotlin.Nothing origin=EXCLEXCL
+                CALL 'public final fun CHECK_NOT_NULL <T0> (arg0: T0 of kotlin.internal.ir.CHECK_NOT_NULL?): {T0 of kotlin.internal.ir.CHECK_NOT_NULL & Any} declared in kotlin.internal.ir' type=kotlin.Nothing origin=EXCLEXCL
                   <T0>: kotlin.Nothing
                   arg0: CONST Null type=kotlin.Nothing? value=null
     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-mutableListFun> visibility:public modality:FINAL <> () returnType:kotlin.Function1<kotlin.collections.MutableList<kotlin.Double>, kotlin.collections.MutableList<kotlin.Int>>

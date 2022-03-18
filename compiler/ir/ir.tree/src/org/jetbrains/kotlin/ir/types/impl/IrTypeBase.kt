@@ -103,7 +103,7 @@ class IrCapturedType(
     override val classifier: IrClassifierSymbol get() = error("Captured Type does not have a classifier")
     override val arguments: List<IrTypeArgument> get() = emptyList()
     override val abbreviation: IrTypeAbbreviation? get () = null
-    override val hasQuestionMark: Boolean get() = false
+    override val nullability: SimpleTypeNullability get() = SimpleTypeNullability.DEFINITELY_NOT_NULL
     override val annotations: List<IrConstructorCall> get() = emptyList()
 
     override fun equals(other: Any?): Boolean {

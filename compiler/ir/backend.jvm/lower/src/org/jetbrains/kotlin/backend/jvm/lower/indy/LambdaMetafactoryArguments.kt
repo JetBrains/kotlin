@@ -548,9 +548,7 @@ internal class LambdaMetafactoryArgumentsBuilder(
         )
     }
 
-    private fun computeParameterTypeAdaptationConstraint(adapteeType0: IrType, expectedType0: IrType): TypeAdaptationConstraint? {
-        val adapteeType = adapteeType0.unwrapDefinitelyNotNullType()
-        val expectedType = expectedType0.unwrapDefinitelyNotNullType()
+    private fun computeParameterTypeAdaptationConstraint(adapteeType: IrType, expectedType: IrType): TypeAdaptationConstraint? {
         if (adapteeType !is IrSimpleType)
             throw AssertionError("Simple type expected: ${adapteeType.render()}")
         if (expectedType !is IrSimpleType)
@@ -582,7 +580,7 @@ internal class LambdaMetafactoryArgumentsBuilder(
             // Inline classes mapped to non-null reference types are a special case because they can't be boxed trivially.
             // TODO consider adding a special type annotation to force boxing on an inline class type regardless of its underlying type.
             val underlyingAdapteeType = getInlineClassUnderlyingType(erasedAdapteeClass)
-            if (!underlyingAdapteeType.hasQuestionMark && !underlyingAdapteeType.isPrimitiveType()) {
+            if (!underlyingAdapteeType.isNullable() && !underlyingAdapteeType.isPrimitiveType()) {
                 return TypeAdaptationConstraint.CONFLICT
             }
 
