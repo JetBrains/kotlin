@@ -1,3 +1,28 @@
+## 1.6.20-RC2
+
+### Compiler
+
+#### Fixes
+
+- [`KT-51352`](https://youtrack.jetbrains.com/issue/KT-51352) "ClassCastException: class ScopeCoroutine cannot be cast to class Iterable" caused by coroutines and context receivers
+- [`KT-51271`](https://youtrack.jetbrains.com/issue/KT-51271) "ArrayIndexOutOfBoundsException: Index 3 out of bounds for length 3" with inlining of context function
+- [`KT-50520`](https://youtrack.jetbrains.com/issue/KT-50520) "NPE: containingDeclaration.ac…lDeclarationType.REGULAR) must not be null" with implicit type on self-referencing lambda in a builder
+- [`KT-51471`](https://youtrack.jetbrains.com/issue/KT-51471) Native: incorrect debug information when inheriting suspend fun invoke implementation
+- [`KT-51353`](https://youtrack.jetbrains.com/issue/KT-51353) IncompatibleClassChangeError: Expected non-static field com.soywiz.korim.color.Colors.BLACK
+
+### Native. Runtime
+
+- [`KT-51586`](https://youtrack.jetbrains.com/issue/KT-51586) SIGSEGV on worker7 test
+
+### Tools. JPS
+
+- [`KT-51434`](https://youtrack.jetbrains.com/issue/KT-51434) Language version 1.7 is absent in Kotlin Compiler settings
+
+### Tools. Gradle
+
+- [`KT-51588`](https://youtrack.jetbrains.com/issue/KT-51588) Restoring from build cache breaks Kotlin incremental compilation
+
+
 ## 1.6.20-RC
 
 ### Compiler
