@@ -22,6 +22,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.diagnostics.Diagnostic;
+import org.jetbrains.kotlin.diagnostics.DiagnosticFactory0;
 import org.jetbrains.kotlin.diagnostics.DiagnosticUtilsKt;
 import org.jetbrains.kotlin.lexer.KtToken;
 import org.jetbrains.kotlin.lexer.KtTokens;
@@ -138,10 +139,16 @@ public abstract class AbstractTracingStrategy implements TracingStrategy {
     }
 
     @Override
-    public void recursiveType(@NotNull BindingTrace trace) {
+    public void recursiveType(@NotNull BindingTrace trace, boolean shouldReportErrorsOnRecursiveTypeInsidePlusAssignment) {
         KtExpression expression = call.getCalleeExpression();
         if (expression == null) return;
-        trace.report(TYPECHECKER_HAS_RUN_INTO_RECURSIVE_PROBLEM.getErrorFactory().on(expression));
+        DiagnosticFactory0<KtExpression> factory;
+        if (shouldReportErrorsOnRecursiveTypeInsidePlusAssignment) {
+            factory = TYPECHECKER_HAS_RUN_INTO_RECURSIVE_PROBLEM.getErrorFactory();
+        } else {
+            factory = TYPECHECKER_HAS_RUN_INTO_RECURSIVE_PROBLEM.getWarningFactory();
+        }
+        trace.report(factory.on(expression));
     }
 
     @Override

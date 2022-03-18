@@ -273,7 +273,7 @@ class KotlinCallCompleter(
         constraintSystem.errors.forEach(diagnosticsHolder::addError)
 
         if (returnType is ErrorType && returnType.kind == ErrorTypeKind.RECURSIVE_TYPE) {
-            diagnosticsHolder.addDiagnostic(TypeCheckerHasRanIntoRecursion(resolvedCallAtom))
+            diagnosticsHolder.addDiagnostic(TypeCheckerHasRanIntoRecursion)
         }
     }
 

@@ -796,7 +796,8 @@ public interface Errors {
     DiagnosticFactory1<PsiElement, String> NAME_SHADOWING = DiagnosticFactory1.create(WARNING, PositioningStrategies.FOR_REDECLARATION);
     DiagnosticFactory0<PsiElement> ACCESSOR_PARAMETER_NAME_SHADOWING = DiagnosticFactory0.create(WARNING);
 
-    DiagnosticFactoryForDeprecation0<KtExpression> TYPECHECKER_HAS_RUN_INTO_RECURSIVE_PROBLEM = DiagnosticFactoryForDeprecation0.create(LanguageFeature.ForbidRecursiveDelegateExpressions);
+    DiagnosticFactoryForDeprecation0<KtExpression> TYPECHECKER_HAS_RUN_INTO_RECURSIVE_PROBLEM =
+            DiagnosticFactoryForDeprecation0.create(LanguageFeature.ForbidRecursiveDelegateExpressions);
 
     // Checking call arguments
 
