@@ -392,7 +392,7 @@ class CallAndReferenceGenerator(
                             ?: throw Exception("KtElement is needed here")
                         val operator = name.dynamicOperator ?: ktElement.getDynamicOperator() ?: IrDynamicOperator.INVOKE
                         val theType = if (name == OperatorNameConventions.COMPARE_TO) {
-                            session.builtinTypes.booleanType.toIrType()
+                            typeConverter.irBuiltIns.booleanType
                         } else {
                             type
                         }
