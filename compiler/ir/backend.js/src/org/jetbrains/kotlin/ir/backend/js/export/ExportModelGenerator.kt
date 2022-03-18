@@ -61,16 +61,16 @@ class ExportModelGenerator(
         return when (candidate) {
             is IrSimpleFunction -> exportFunction(candidate)
             is IrProperty -> exportProperty(candidate)
-            is IrClass -> {
-                if (candidate.isEnumClass) {
-                    exportEnumClass(candidate)
-                } else {
-                    exportClass(candidate)
-                }
-            }
+            is IrClass -> exportClass(candidate)
             is IrField -> null
             else -> error("Can't export declaration $candidate")
         }
+    }
+
+    private fun exportClass(candidate: IrClass) = if (candidate.isEnumClass) {
+        exportEnumClass(candidate)
+    } else {
+        exportOrdinaryClass(candidate)
     }
 
     private fun exportFunction(function: IrSimpleFunction): ExportedDeclaration? {
@@ -221,7 +221,7 @@ class ExportModelGenerator(
         return Exportability.Allowed
     }
 
-    private fun exportClass(
+    private fun exportOrdinaryClass(
         klass: IrClass
     ): ExportedDeclaration? {
         when (val exportability = classExportability(klass)) {

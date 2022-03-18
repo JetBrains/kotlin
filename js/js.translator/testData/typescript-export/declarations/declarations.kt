@@ -206,3 +206,11 @@ class TestInterfaceImpl(override val value: String) : TestInterface {
 fun processInterface(test: TestInterface): String {
     return "Owner ${test.getOwnerName()} has value '${test.value}'"
 }
+
+@JsExport
+class OuterClass {
+    enum class NestedEnum {
+        A,
+        B
+    }
+}
