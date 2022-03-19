@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.ir.backend.js.transformers.irToJs
 
-import org.jetbrains.kotlin.backend.common.compilationException
+import org.jetbrains.kotlin.ir.backend.js.utils.isTheLastReturnStatementIn
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.backend.js.utils.JsGenerationContext
 import org.jetbrains.kotlin.ir.backend.js.utils.emptyScope
@@ -94,7 +94,11 @@ class IrElementToJsStatementTransformer : BaseIrElementToJsNodeTransformer<JsSta
         val lastStatementTransformer: (JsExpression) -> JsStatement =
             if (targetSymbol is IrReturnableBlockSymbol) {
                 // TODO assert that value is Unit?
-                { JsBreak(context.getNameForReturnableBlock(targetSymbol.owner)!!.makeRef()) }
+                {
+                    context.getNameForReturnableBlock(targetSymbol.owner)
+                    .takeIf { !expression.isTheLastReturnStatementIn(targetSymbol) }
+                    ?.run { JsBreak(makeRef()) } ?: JsEmpty
+                }
             } else {
                 { JsReturn(it) }
             }

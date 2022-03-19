@@ -5223,6 +5223,12 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
         }
 
         @Test
+        @TestMetadata("lastLabeledReturn.kt")
+        public void testLastLabeledReturn() throws Exception {
+            runTest("js/js.translator/testData/box/inline/lastLabeledReturn.kt");
+        }
+
+        @Test
         @TestMetadata("localDeclarationsClash.kt")
         public void testLocalDeclarationsClash() throws Exception {
             runTest("js/js.translator/testData/box/inline/localDeclarationsClash.kt");
