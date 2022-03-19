@@ -50,6 +50,7 @@ import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtFunction
 import org.jetbrains.kotlin.psi.KtFunctionLiteral
+import org.jetbrains.kotlin.psi.KtLabeledExpression
 import org.jetbrains.kotlin.psi.KtLambdaArgument
 import org.jetbrains.kotlin.psi.KtLambdaExpression
 import org.jetbrains.kotlin.psi.KtProperty
@@ -349,9 +350,18 @@ class ComposableTargetChecker : CallChecker, StorageComponentContainerContributo
         return PsiElementNode(element, bindingContext)
     }
 
-    private fun lambdaOrNull(element: PsiElement): KtFunctionLiteral? =
-        (element as? KtLambdaArgument)?.children?.firstOrNull()?.children
-            ?.firstOrNull() as KtFunctionLiteral?
+    private fun lambdaOrNull(element: PsiElement): KtFunctionLiteral? {
+        var container = (element as? KtLambdaArgument)?.children?.singleOrNull()
+        while (true) {
+            container = when (container) {
+                null -> return null
+                is KtLabeledExpression -> container.lastChild
+                is KtFunctionLiteral -> return container
+                is KtLambdaExpression -> container.children.single()
+                else -> throw Error("Unknown type: ${container.javaClass}")
+            }
+        }
+    }
 
     private fun descriptorToInferenceNode(
         descriptor: CallableDescriptor,
