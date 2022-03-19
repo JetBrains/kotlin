@@ -57,4 +57,21 @@ class SanityCheckCodegenTests : AbstractCodegenTest() {
         """
         )
     }
+
+    // Regression test for b/222979253
+    fun testLabeledLambda() = ensureSetup {
+        testCompile(
+            """
+                import androidx.compose.runtime.Composable
+
+                @Composable
+                fun test(): Unit {
+                    Box box@{}
+                }
+
+                @Composable
+                fun Box(content: @Composable () -> Unit) {}
+        """
+        )
+    }
 }
