@@ -339,7 +339,7 @@ class LocalNameGenerator(val variableNames: NameTable<IrDeclaration>) : IrElemen
 
     override fun visitReturn(expression: IrReturn) {
         val targetSymbol = expression.returnTargetSymbol
-        if (targetSymbol is IrReturnableBlockSymbol) {
+        if (targetSymbol is IrReturnableBlockSymbol && !expression.isTheLastReturnStatementIn(targetSymbol)) {
             persistReturnableBlockName(SYNTHETIC_BLOCK_LABEL, targetSymbol.owner)
         }
 
