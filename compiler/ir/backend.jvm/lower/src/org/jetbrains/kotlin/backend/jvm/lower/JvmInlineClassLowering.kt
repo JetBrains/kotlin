@@ -102,61 +102,106 @@ private class JvmInlineClassLowering(context: JvmBackendContext) : JvmValueClass
 
             expression.argument.transformChildrenVoid()
 
-            if (expression.operator == IrTypeOperator.INSTANCEOF) {
-                return IrCallImpl(
-                    expression.startOffset, expression.endOffset,
-                    context.irBuiltIns.booleanType, isCheck.symbol, top.typeParameters.size, isCheck.valueParameters.size
-                ).also {
-                    it.putValueArgument(0, coerceInlineClasses(expression.argument, top.defaultType, context.irBuiltIns.anyNType))
-                }
-            } else if (expression.operator == IrTypeOperator.CAST) {
-                with(context.createIrBuilder((currentFunction!!.irElement as IrFunction).symbol)) {
-                    return irComposite {
-                        val tmp = irTemporary(coerceInlineClasses(expression.argument, top.defaultType, context.irBuiltIns.anyNType))
-                        +irWhen(
-                            expression.type, listOf(
-                                irBranch(
-                                    irCall(isCheck.symbol).also { it.putValueArgument(0, irGet(tmp)) },
-                                    coerceInlineClasses(irImplicitCast(irGet(tmp), underlyingType), underlyingType, expression.typeOperand)
-                                ),
-                                irBranch(
-                                    irTrue(),
-                                    irCall(this@JvmInlineClassLowering.context.ir.symbols.throwTypeCastException).also {
-                                        it.putValueArgument(
-                                            0,
-                                            irString("Cannot cast to sealed inline class child ${expression.typeOperand.asClass().name}")
-                                        )
-                                    })
-                            )
-                        )
+            when (expression.operator) {
+                IrTypeOperator.INSTANCEOF -> {
+                    // Top.is-Child(top)
+                    return IrCallImpl(
+                        expression.startOffset, expression.endOffset,
+                        context.irBuiltIns.booleanType, isCheck.symbol, top.typeParameters.size, isCheck.valueParameters.size
+                    ).also {
+                        it.putValueArgument(0, coerceInlineClasses(expression.argument, top.defaultType, context.irBuiltIns.anyNType))
                     }
+                }
+                IrTypeOperator.CAST -> {
+                    // if (Top.is-Child(top)) top else CCE
+                    return generateAsCheck(expression, top, isCheck, underlyingType) {
+                        irCall(this@JvmInlineClassLowering.context.ir.symbols.throwTypeCastException).also {
+                            it.putValueArgument(
+                                0,
+                                irString("Cannot cast to sealed inline class child ${expression.typeOperand.asClass().name}")
+                            )
+                        }
+                    }
+                }
+                IrTypeOperator.SAFE_CAST -> {
+                    // if (Top.is-Child(top)) top else null
+                    return generateAsCheck(expression, top, isCheck, underlyingType) { irNull() }
+                }
+                else -> {
+                    // FALLTHRU
                 }
             }
         }
         return super.visitTypeOperator(expression)
     }
 
+    private fun generateAsCheck(
+        expression: IrTypeOperatorCall,
+        top: IrClass,
+        isCheck: IrSimpleFunction,
+        underlyingType: IrType,
+        onFail: IrBuilderWithScope.() -> IrExpression
+    ): IrExpression {
+        with(context.createIrBuilder((currentFunction!!.irElement as IrFunction).symbol)) {
+            return irBlock {
+                val tmp = irTemporary(expression.argument)
+                +irIfNull(
+                    expression.type, irGet(tmp), onFail(),
+                    irBlock {
+                        val unboxedTmp = irTemporary(coerceInlineClasses(irGet(tmp), top.defaultType, context.irBuiltIns.anyNType))
+                        +irWhen(
+                            expression.type, listOf(
+                                irBranch(
+                                    irCall(isCheck.symbol).also { it.putValueArgument(0, irGet(unboxedTmp)) },
+                                    coerceInlineClasses(
+                                        irImplicitCast(irGet(unboxedTmp), underlyingType),
+                                        underlyingType,
+                                        expression.typeOperand
+                                    )
+                                ),
+                                irBranch(irTrue(), onFail())
+                            )
+                        )
+                    }
+                )
+            }
+        }
+    }
+
     private fun buildIsMethodsForSealedInlineClass(info: SealedInlineClassInfo) {
         for (childInfo in info.inlineSubclasses) {
             val child = childInfo.symbol.owner
             val function = context.inlineClassReplacements.getIsSealedInlineChildFunction(info.top to child)
+            val underlyingType = child.inlineClassRepresentation!!.underlyingType
 
             with(context.createIrBuilder(function.symbol)) {
                 function.body = irBlockBody {
                     fun param(): IrExpression = irGet(function.valueParameters.first())
 
-                    val branches = info.noinlineSubclasses.map {
-                        irBranch(
+                    val branches = mutableListOf<IrBranch>()
+
+                    if (!underlyingType.isNullable()) {
+                        branches += irBranch(
+                            irEqeqeq(param(), irNull()),
+                            irReturn(irFalse())
+                        )
+                    }
+
+                    for (noinline in info.noinlineSubclasses) {
+                        branches += irBranch(
                             irIs(
                                 coerceInlineClasses(param(), context.irBuiltIns.anyNType, info.top.defaultType),
-                                it.symbol.owner.defaultType
+                                noinline.symbol.owner.defaultType
                             ),
                             irReturn(irFalse())
                         )
-                    } + irBranch(
+                    }
+
+                    branches += irBranch(
                         irTrue(),
-                        irReturn(irIs(param(), child.inlineClassRepresentation!!.underlyingType))
+                        irReturn(irIs(param(), underlyingType))
                     )
+
                     +irReturn(irWhen(context.irBuiltIns.booleanType, branches))
                 }
             }
