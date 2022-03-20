@@ -105,14 +105,15 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
                             val index = receiverStack.getReceiverIndex(symbol) ?: return
                             val info = flow.getTypeStatement(variable)
 
-                            if (info == null) {
-                                receiverStack.replaceReceiverType(index, receiverStack.getOriginalType(index))
+                            val type = if (info == null) {
+                                receiverStack.getOriginalType(index)
                             } else {
                                 val types = info.exactType.toMutableList().also {
                                     it += receiverStack.getOriginalType(index)
                                 }
-                                receiverStack.replaceReceiverType(index, context.intersectTypesOrNull(types)!!)
+                                context.intersectTypesOrNull(types)!!
                             }
+                            receiverStack.replaceReceiverType(index, type)
                         }
 
                         override fun updateAllReceivers(flow: PersistentFlow) {
@@ -282,6 +283,7 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
         // TODO: questionable
         postponedLambdaEnterNode?.mergeIncomingFlow()
         functionEnterNode.mergeIncomingFlow()
+        logicSystem.updateAllReceivers(functionEnterNode.flow)
     }
 
     private fun exitAnonymousFunction(anonymousFunction: FirAnonymousFunction): FirControlFlowGraphReference {
