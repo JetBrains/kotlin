@@ -27933,6 +27933,12 @@ public class FirOldFrontendDiagnosticsWithLightTreeTestGenerated extends Abstrac
             }
 
             @Test
+            @TestMetadata("implicitThisOnRefInLambdaInSmartcast.kt")
+            public void testImplicitThisOnRefInLambdaInSmartcast() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/smartCasts/implicitThisOnRefInLambdaInSmartcast.kt");
+            }
+
+            @Test
             @TestMetadata("implicitToGrandSon.kt")
             public void testImplicitToGrandSon() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/smartCasts/implicitToGrandSon.kt");
