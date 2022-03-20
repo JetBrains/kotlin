@@ -180,12 +180,20 @@ private class FirShorteningContext(val analysisSession: KtFirAnalysisSession) {
         return null
     }
 
-    fun findFunctionsInScopes(scopes: List<FirScope>, name: Name): List<AvailableSymbol<FirNamedFunctionSymbol>> {
+    fun findFunctionsInScopes(scopes: List<FirScope>, name: Name): List<AvailableSymbol<FirFunctionSymbol<*>>> {
         return scopes.flatMap { scope ->
             val importKind = ImportKind.fromScope(scope)
-            scope.getFunctions(name).map {
+            val resultList: MutableList<AvailableSymbol<FirFunctionSymbol<*>>> = scope.getFunctions(name).map {
                 AvailableSymbol(it, importKind)
+            }.toMutableList()
+
+            val classCandidate = scope.findFirstClassifierByName(name)?.fir as? FirClass
+            if (classCandidate != null) {
+                val constructorCandidates = classCandidate.constructors(firSession)
+                constructorCandidates.forEach { constructor -> resultList.add(AvailableSymbol(constructor, importKind)) }
             }
+
+            resultList
         }
     }
 
