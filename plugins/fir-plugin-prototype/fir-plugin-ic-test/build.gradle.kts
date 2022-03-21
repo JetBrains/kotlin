@@ -45,11 +45,9 @@ if (kotlinBuildProperties.isInJpsBuildIdeaSync) {
     }
 }
 
-projectTest(parallel = true, jUnitMode = JUnitMode.JUnit4) {
+projectTest(parallel = true, jUnitMode = JUnitMode.JUnit4, maxHeapSizeMb = 3072) {
     workingDir = rootDir
     useJUnitPlatform()
-    jvmArgs!!.removeIf { it.contains("-Xmx") }
-    maxHeapSize = "3g"
     dependsOn(":plugins:fir-plugin-prototype:jar")
     dependsOn(":plugins:fir-plugin-prototype:plugin-annotations:jar")
 }

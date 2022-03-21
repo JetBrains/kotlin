@@ -43,12 +43,9 @@ sourceSets {
     "test" { projectDefault() }
 }
 
-projectTest {
+projectTest(minHeapSizeMb = 8192, maxHeapSizeMb = 8192, reservedCodeCacheSizeMb = 512) {
     systemProperties(project.properties.filterKeys { it.startsWith("fir.") })
     workingDir = rootDir
-    jvmArgs!!.removeIf { it.contains("-Xmx") || it.contains("-Xms") || it.contains("ReservedCodeCacheSize") }
-    minHeapSize = "8g"
-    maxHeapSize = "8g"
     dependsOn(":dist")
 
     run {
@@ -58,7 +55,6 @@ projectTest {
             jvmArgs(paramRegex.findAll(argsExt).map { it.groupValues[1] }.toList())
         }
     }
-    jvmArgs("-XX:ReservedCodeCacheSize=512m")
 }
 
 testsJar()

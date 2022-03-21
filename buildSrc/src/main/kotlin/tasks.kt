@@ -7,6 +7,7 @@
 // usages in build scripts are not tracked properly
 @file:Suppress("unused")
 
+import com.sun.management.OperatingSystemMXBean
 import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.api.artifacts.ProjectDependency
@@ -20,6 +21,7 @@ import org.gradle.kotlin.dsl.support.serviceOf
 import java.io.File
 import java.lang.Character.isLowerCase
 import java.lang.Character.isUpperCase
+import java.lang.management.ManagementFactory
 import java.nio.file.Files
 import java.nio.file.Path
 
@@ -99,6 +101,9 @@ fun Project.projectTest(
     parallel: Boolean = false,
     shortenTempRootName: Boolean = false,
     jUnitMode: JUnitMode = JUnitMode.JUnit4,
+    maxHeapSizeMb: Int? = null,
+    minHeapSizeMb: Int? = null,
+    reservedCodeCacheSizeMb: Int = 256,
     body: Test.() -> Unit = {}
 ): TaskProvider<Test> {
     val shouldInstrument = project.providers.gradleProperty("kotlin.test.instrumentation.disable")
@@ -170,11 +175,24 @@ fun Project.projectTest(
             "-ea",
             "-XX:+HeapDumpOnOutOfMemoryError",
             "-XX:+UseCodeCacheFlushing",
-            "-XX:ReservedCodeCacheSize=256m",
+            "-XX:ReservedCodeCacheSize=${reservedCodeCacheSizeMb}m",
             "-Djna.nosys=true"
         )
 
-        maxHeapSize = "1600m"
+        val junit5ParallelTestWorkers =
+            project.kotlinBuildProperties.junit5NumberOfThreadsForParallelExecution ?: Runtime.getRuntime().availableProcessors()
+
+        val memoryPerTestProcessMb = maxHeapSizeMb ?: if (jUnitMode == JUnitMode.JUnit5)
+            totalMaxMemoryForTestsMb.coerceAtMost(defaultMaxMemoryPerTestWorkerMb * junit5ParallelTestWorkers)
+        else
+            defaultMaxMemoryPerTestWorkerMb
+
+        maxHeapSize = "${memoryPerTestProcessMb}m"
+
+        if (minHeapSizeMb != null) {
+            minHeapSize = "${minHeapSizeMb}m"
+        }
+
         systemProperty("idea.is.unit.test", "true")
         systemProperty("idea.home.path", project.ideaHomePathForTests().canonicalPath)
         systemProperty("idea.use.native.fs.for.win", false)
@@ -222,12 +240,22 @@ fun Project.projectTest(
         }
 
         if (parallel && jUnitMode != JUnitMode.JUnit5) {
+            val forks = (totalMaxMemoryForTestsMb / memoryPerTestProcessMb).coerceAtMost(16)
             maxParallelForks =
                 project.providers.gradleProperty("kotlin.test.maxParallelForks").forUseAtConfigurationTime().orNull?.toInt()
-                    ?: (Runtime.getRuntime().availableProcessors() / if (project.kotlinBuildProperties.isTeamcityBuild) 2 else 4).coerceAtLeast(1)
+                    ?: forks.coerceAtMost(Runtime.getRuntime().availableProcessors())
         }
     }.apply { configure(body) }
 }
+
+val defaultMaxMemoryPerTestWorkerMb = 1600
+val reservedMemoryMb = 9000 // system processes, gradle daemon, kotlin daemon, etc ...
+
+val totalMaxMemoryForTestsMb: Int
+    get() {
+        val mxbean = ManagementFactory.getOperatingSystemMXBean() as OperatingSystemMXBean
+        return (mxbean.totalPhysicalMemorySize / 1048576 - reservedMemoryMb).toInt()
+    }
 
 val Test.commandLineIncludePatterns: Set<String>
     get() = (filter as? DefaultTestFilter)?.commandLineIncludePatterns.orEmpty()

@@ -47,11 +47,9 @@ if (kotlinBuildProperties.isInJpsBuildIdeaSync) {
     }
 }
 
-projectTest(parallel = true) {
+projectTest(parallel = true, maxHeapSizeMb = 3072) {
     dependsOn(":dist")
     workingDir = rootDir
-    jvmArgs!!.removeIf { it.contains("-Xmx") }
-    maxHeapSize = "3g"
 }
 
 testsJar()

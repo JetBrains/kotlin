@@ -208,7 +208,9 @@ if (isTeamcityBuild) {
 }
 
 val KGP_TEST_TASKS_GROUP = "Kotlin Gradle Plugin Verification"
-val maxParallelTestForks = (Runtime.getRuntime().availableProcessors() / 4).coerceAtLeast(1)
+val memoryPerGradleTestWorkerMb = 6000
+val maxParallelTestForks =
+    (totalMaxMemoryForTestsMb / memoryPerGradleTestWorkerMb).coerceAtMost(Runtime.getRuntime().availableProcessors())
 
 val allParallelTestsTask = tasks.register<Test>("kgpAllParallelTests") {
     group = KGP_TEST_TASKS_GROUP

@@ -274,7 +274,6 @@ fun Test.setUpBoxTests() {
 
 projectTest(parallel = true, jUnitMode = JUnitMode.JUnit5) {
     setUpJsBoxTests(jsEnabled = true, jsIrEnabled = true)
-    maxHeapSize = "3g"
 
     inputs.dir(rootDir.resolve("compiler/cli/cli-common/resources")) // compiler.xml
 
@@ -294,19 +293,16 @@ projectTest(parallel = true, jUnitMode = JUnitMode.JUnit5) {
 
 projectTest("jsTest", parallel = true, jUnitMode = JUnitMode.JUnit5) {
     setUpJsBoxTests(jsEnabled = true, jsIrEnabled = false)
-    maxHeapSize = "3g"
     useJUnitPlatform()
 }
 
 projectTest("jsIrTest", true, jUnitMode = JUnitMode.JUnit5) {
     setUpJsBoxTests(jsEnabled = false, jsIrEnabled = true)
-    maxHeapSize = "3g"
     useJUnitPlatform()
 }
 
 projectTest("quickTest", parallel = true, jUnitMode = JUnitMode.JUnit5) {
     setUpJsBoxTests(jsEnabled = true, jsIrEnabled = false)
-    maxHeapSize = "3g"
     systemProperty("kotlin.js.skipMinificationTest", "true")
     useJUnitPlatform()
 }
