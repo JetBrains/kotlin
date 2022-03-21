@@ -1,0 +1,1 @@
+rootProject.name = "my-multimodule-kpm-lib"

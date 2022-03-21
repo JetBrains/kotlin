@@ -181,10 +181,6 @@ class DeserializeStringTest {
                     "konanAbiVersion": "1.4.2"
                   }
                 }
-              },
-              {
-                "target": "org.jetbrains.kotlin.gradle.plugin.mpp.KotlinMetadataTarget",
-                "platformType": "common"
               }
             ]
         }
@@ -199,7 +195,7 @@ class DeserializeStringTest {
         assertFalse(metadata.projectSettings.isHmppEnabled)
         assertTrue(metadata.projectSettings.isCompatibilityMetadataVariantEnabled)
         assertTrue(metadata.projectSettings.isKPMEnabled)
-        assertEquals(5, metadata.projectTargets.size, "Expected exactly 4 targets")
+        assertEquals(4, metadata.projectTargets.size, "Expected exactly 4 targets")
 
         val androidJvmTarget = metadata.projectTargets.single { it.platformType == "androidJvm" }
         assertEquals("org.jetbrains.kotlin.gradle.plugin.mpp.KotlinAndroidTarget", androidJvmTarget.target)
@@ -234,13 +230,6 @@ class DeserializeStringTest {
         assertNull(nativeTarget.extras.android)
         assertNull(nativeTarget.extras.jvm)
         assertNull(nativeTarget.extras.js)
-
-        val commonTarget = metadata.projectTargets.single { it.platformType == "common" }
-        assertEquals("org.jetbrains.kotlin.gradle.plugin.mpp.KotlinMetadataTarget", commonTarget.target)
-        assertNull(commonTarget.extras.android)
-        assertNull(commonTarget.extras.jvm)
-        assertNull(commonTarget.extras.js)
-        assertNull(commonTarget.extras.native)
 }
 
 }

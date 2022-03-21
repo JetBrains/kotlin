@@ -34,10 +34,8 @@ import org.jetbrains.kotlin.library.KotlinAbiVersion
 import org.jetbrains.kotlin.tooling.KotlinToolingMetadata
 import org.jetbrains.kotlin.tooling.toJsonString
 import java.io.File
+import javax.inject.Inject
 
-/**
- * Register
- */
 internal fun Project.registerBuildKotlinToolingMetadataTask() {
     if (!project.kotlinPropertiesProvider.enableKotlinToolingMetadataArtifact) return
 
@@ -80,29 +78,26 @@ internal val KotlinGradleModule.buildKotlinToolingMetadataTask: TaskProvider<Bui
         if (!project.kotlinPropertiesProvider.enableKotlinToolingMetadataArtifact) return null
         val taskName = BuildKotlinToolingMetadataTask.taskNameForKotlinModule(name)
 
-        return project.locateOrRegisterTask<BuildKotlinToolingMetadataTask.FromKpmModule>(taskName) { task ->
-            task.module.set(this)
-
-            task.group = "build"
-            task.description = "Build metadata json file containing information about the used Kotlin tooling in module $name"
-        }.also { task ->
-            project.buildKotlinToolingMetadataForAllKpmModulesTask.dependsOn(task)
-        }
+        return project.locateOrRegisterTask(
+            name = taskName,
+            args = listOf(this),
+            invokeWhenRegistered = { project.buildKotlinToolingMetadataForAllKpmModulesTask.dependsOn(this) },
+            configureTask = {
+                group = "build"
+                description = "Build metadata json file containing information about the used Kotlin tooling in module $name"
+            }
+        )
     }
-
-
 
 abstract class BuildKotlinToolingMetadataTask : DefaultTask() {
 
-    abstract class FromKpmModule : BuildKotlinToolingMetadataTask() {
-
-        @get:Internal
-        abstract val module: Property<KotlinGradleModule>
+    abstract class FromKpmModule
+    @Inject constructor (@get:Internal val module: KotlinGradleModule) : BuildKotlinToolingMetadataTask() {
 
         override val outputDirectory: File
-            get() = project.buildDir.resolve("kotlinToolingMetadata").resolve(module.get().name)
+            get() = project.buildDir.resolve("kotlinToolingMetadata").resolve(module.name)
 
-        override fun buildKotlinToolingMetadata() = module.get().getKotlinToolingMetadata()
+        override fun buildKotlinToolingMetadata() = module.getKotlinToolingMetadata()
     }
 
     abstract class FromKotlinExtension : BuildKotlinToolingMetadataTask() {
