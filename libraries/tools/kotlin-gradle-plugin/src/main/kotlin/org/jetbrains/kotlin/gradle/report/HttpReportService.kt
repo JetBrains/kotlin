@@ -56,11 +56,14 @@ abstract class HttpReportService : BuildService<HttpReportService.Parameters>,
 
     companion object {
 
+        private val log = Logging.getLogger(HttpReportService::class.java)
+
         fun registerIfAbsent(project: Project, kotlinVersion: String): Provider<HttpReportService>? {
             val rootProject = project.gradle.rootProject
             val reportingSettings = reportingSettings(rootProject)
 
             return reportingSettings.httpReportSettings?.let { httpSettings ->
+                log.debug("Statistics http service is registered")
                 project.gradle.sharedServices.registerIfAbsent(
                     "build_http_metric_service_${HttpReportService::class.java.classLoader.hashCode()}",
                     HttpReportService::class.java

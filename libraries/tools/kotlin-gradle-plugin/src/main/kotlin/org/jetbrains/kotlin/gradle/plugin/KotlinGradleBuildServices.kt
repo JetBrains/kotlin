@@ -47,6 +47,8 @@ internal abstract class KotlinGradleBuildServices : BuildService<KotlinGradleBui
     }
 
     companion object {
+        private val log = Logging.getLogger(KotlinGradleBuildServices::class.java)
+
         fun registerIfAbsent(project: Project, kotlinVersion: String): Provider<KotlinGradleBuildServices> =
             project.gradle.sharedServices.registerIfAbsent(
                 "kotlin-build-service-${KotlinGradleBuildServices::class.java.canonicalName}_${KotlinGradleBuildServices::class.java.classLoader.hashCode()}",
@@ -74,6 +76,7 @@ internal abstract class KotlinGradleBuildServices : BuildService<KotlinGradleBui
                                 )
                             }
                         )
+                        log.debug("Statistics build scan listener is registered")
                     }
                 }
         }
