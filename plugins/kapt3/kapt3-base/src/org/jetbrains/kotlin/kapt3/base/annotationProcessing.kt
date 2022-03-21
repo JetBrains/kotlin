@@ -122,7 +122,7 @@ fun KaptContext.doAnnotationProcessing(
             showProcessorStats(wrappedProcessors, loggerFun)
         }
 
-        options.processorsStatsReportFile?.let { dumpProcessorStats(wrappedProcessors, options.processorsStatsReportFile, logger::info) }
+        options.processorsStatsReportFile?.let { dumpProcessorStats(wrappedProcessors, it, logger::info) }
 
         if (logger.isVerbose) {
             filer.displayState()
@@ -264,8 +264,9 @@ private class ProcessorWrapper(private val delegate: IncrementalProcessor) : Pro
             numSourcesGenerated = sources?.size ?: -1
         } catch (e: Exception) {
             // Not much we can do
+        } finally {
+            sourcesGenerated.add(numSourcesGenerated)
         }
-        sourcesGenerated.add(numSourcesGenerated)
     }
 }
 
