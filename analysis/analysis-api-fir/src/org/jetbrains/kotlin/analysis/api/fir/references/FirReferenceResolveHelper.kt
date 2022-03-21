@@ -7,7 +7,10 @@ package org.jetbrains.kotlin.idea.references
 
 import com.intellij.psi.tree.TokenSet
 import org.jetbrains.kotlin.KtFakeSourceElementKind
-import org.jetbrains.kotlin.analysis.api.fir.*
+import org.jetbrains.kotlin.analysis.api.fir.KtFirAnalysisSession
+import org.jetbrains.kotlin.analysis.api.fir.KtSymbolByFirBuilder
+import org.jetbrains.kotlin.analysis.api.fir.buildSymbol
+import org.jetbrains.kotlin.analysis.api.fir.getCandidateSymbols
 import org.jetbrains.kotlin.analysis.api.fir.symbols.KtFirPackageSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtSymbol
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFir
@@ -201,7 +204,7 @@ internal object FirReferenceResolveHelper {
             }
             is FirReturnExpression -> getSymbolsByReturnExpression(expression, fir, symbolBuilder)
             is FirErrorNamedReference -> getSymbolsByErrorNamedReference(fir, symbolBuilder)
-            is FirVariableAssignment -> getSymbolsByVariableAssignment(fir, session, symbolBuilder)
+            is FirVariableAssignment -> getSymbolsByVariableAssignment(fir, expression, session, symbolBuilder)
             is FirResolvedNamedReference -> getSymbolByResolvedNameReference(fir, expression, analysisSession, session, symbolBuilder)
             is FirDelegatedConstructorCall ->
                 getSymbolByDelegatedConstructorCall(expression, adjustedResolutionExpression, fir, session, symbolBuilder)
@@ -268,12 +271,29 @@ internal object FirReferenceResolveHelper {
         else -> false
     }
 
-    @OptIn(ExperimentalStdlibApi::class)
     private fun getSymbolsByVariableAssignment(
         fir: FirVariableAssignment,
+        expression: KtSimpleNameExpression,
         session: FirSession,
-        symbolBuilder: KtSymbolByFirBuilder
-    ): Collection<KtSymbol> = fir.calleeReference.toTargetSymbol(session, symbolBuilder)
+        symbolBuilder: KtSymbolByFirBuilder,
+    ): Collection<KtSymbol> {
+        if (expression is KtNameReferenceExpression) {
+            return fir.calleeReference.toTargetSymbol(session, symbolBuilder)
+        }
+
+        val assignmentRValue = fir.rValue
+        if (expression is KtOperationReferenceExpression &&
+            assignmentRValue.source?.kind is KtFakeSourceElementKind.DesugaredCompoundAssignment
+        ) {
+            require(assignmentRValue is FirResolvable) {
+                "Rvalue of desugared compound assignment should be resolvable, but it was ${assignmentRValue::class}"
+            }
+
+            return assignmentRValue.calleeReference.toTargetSymbol(session, symbolBuilder)
+        }
+
+        return emptyList()
+    }
 
     private fun getSymbolsByNameArgumentExpression(
         expression: KtSimpleNameExpression,

@@ -335,6 +335,24 @@ public class FirLibrarySourceReferenceResolveTestGenerated extends AbstractRefer
     }
 
     @Test
+    @TestMetadata("PlusAssignByHand.kt")
+    public void testPlusAssignByHand() throws Exception {
+        runTest("analysis/analysis-api/testData/referenceResolve/PlusAssignByHand.kt");
+    }
+
+    @Test
+    @TestMetadata("PlusAssignOperator.kt")
+    public void testPlusAssignOperator() throws Exception {
+        runTest("analysis/analysis-api/testData/referenceResolve/PlusAssignOperator.kt");
+    }
+
+    @Test
+    @TestMetadata("PlusAssignViaPlusOperator.kt")
+    public void testPlusAssignViaPlusOperator() throws Exception {
+        runTest("analysis/analysis-api/testData/referenceResolve/PlusAssignViaPlusOperator.kt");
+    }
+
+    @Test
     @TestMetadata("ReferenceInClassWhereConstraint.kt")
     public void testReferenceInClassWhereConstraint() throws Exception {
         runTest("analysis/analysis-api/testData/referenceResolve/ReferenceInClassWhereConstraint.kt");
