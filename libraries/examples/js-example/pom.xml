@@ -77,7 +77,7 @@
                 <version>3.2.2</version>
                 <executions>
                     <execution>
-                        <id>main jar</id>
+                        <id>default-jar</id>
                         <goals>
                             <goal>jar</goal>
                         </goals>
