@@ -122,11 +122,12 @@ private fun getClassLoaderForBackwardsCompatibilityTest(): ClassLoader {
 }
 
 private fun getClasspathForBackwardsCompatibilityTest(): List<File> {
-    val backwardsCompatibilityClasspathString = System.getProperty("backwardsCompatibilityClasspath")
-        ?: error("Missing backwardsCompatibilityClasspath system property")
+    val compatibilityTestClasspath = System.getProperty("compatibilityTestClasspath")
+        ?: error("Missing compatibilityTestClasspath system property")
 
-    return backwardsCompatibilityClasspathString.split(";").map { path -> File(path) }
+    return compatibilityTestClasspath.split(";").map { path -> File(path) }
         .onEach { file -> if (!file.exists()) println("[WARNING] Missing $file") }
+        .flatMap { file -> if(file.isDirectory) file.listFiles().orEmpty().toList() else listOf(file) }
 }
 
 private fun deserializeModelWithBackwardsCompatibleClasses(model: IdeaKotlinProjectModel): Any {

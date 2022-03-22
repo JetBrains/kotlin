@@ -4,10 +4,6 @@ plugins {
     `maven-publish`
 }
 
-object BackwardsCompatibilityTestConfiguration {
-    const val minimalBackwardsCompatibleVersion = "1.7.0-dev-2723"
-}
-
 kotlin.sourceSets.configureEach {
     languageSettings.apiVersion = "1.4"
     languageSettings.languageVersion = "1.4"
@@ -36,69 +32,22 @@ sourcesJar()
 
 //region Setup: Backwards compatibility tests
 
-/*
-A special publication is necessary for later downloading such artifact from within this module.
-If we wanted to download a publication with the same coordinates, Gradle would always rewrite
-the dependency to a local project dependency (knowing, that the coodriantes belong to this project)
- */
-publishing {
-    publications.create<MavenPublication>("for-compatibility-tests") {
-        artifactId = "kotlin-gradle-plugin-idea-for-compatibility-tests"
-        artifact(tasks.named("jar"))
-    }
-}
-
-/* Setup Backwards Compatibility Test */
 run {
-    /* When -Pkgp-idea-snapshot is set, then the test runs against a locally installed snapshot version (./gradlew install) */
-    val isSnapshotTest = project.providers.gradleProperty("kotlin-gradle-plugin-idea.snapshot").isPresent
-
-    repositories {
-        if (isSnapshotTest) mavenLocal()
-    }
-
-    val version = if (isSnapshotTest) properties["defaultSnapshotVersion"].toString()
-    else BackwardsCompatibilityTestConfiguration.minimalBackwardsCompatibleVersion
-
-    val minimalBackwardsCompatibleVersionTestClasspath by configurations.creating {
+    val compatibilityTestClasspath by configurations.creating {
         isCanBeResolved = true
         isCanBeConsumed = false
+        attributes.attribute(Usage.USAGE_ATTRIBUTE, objects.named(Usage.JAVA_RUNTIME))
+        attributes.attribute(Category.CATEGORY_ATTRIBUTE, objects.named(Category.LIBRARY))
     }
 
     dependencies {
-        minimalBackwardsCompatibleVersionTestClasspath(
-            "org.jetbrains.kotlin:kotlin-gradle-plugin-idea-for-compatibility-tests:$version"
-        )
-
-        minimalBackwardsCompatibleVersionTestClasspath(
-            "org.jetbrains.kotlin:kotlin-stdlib:$version"
-        )
+        compatibilityTestClasspath(project(":kotlin-gradle-plugin-idea-for-compatibility-tests"))
     }
 
     tasks.test {
         dependsOnKotlinGradlePluginInstall()
-        inputs.files(minimalBackwardsCompatibleVersionTestClasspath)
-        doFirst {
-            if (isSnapshotTest) logger.quiet("Running test against snapshot: $version")
-            else logger.quiet("Running test against $version")
-
-            /*
-             Perform a check on the resolved classpath to ensure, that indeed the requested version is resolved.
-             This is a last line of defense against some unexpected Gradle resolution (like back resolving to this original project)
-             */
-            val resolvedClasspath = minimalBackwardsCompatibleVersionTestClasspath.files
-            if (resolvedClasspath.none { "kotlin-gradle-plugin-idea-for-compatibility-tests-$version.jar" in it.path }) {
-                throw IllegalStateException(buildString {
-                    appendLine("Bad backwardsCompatibilityClasspath: $resolvedClasspath")
-                    appendLine("Dependencies:${minimalBackwardsCompatibleVersionTestClasspath.allDependencies.joinToString()}")
-                })
-            }
-
-            systemProperty(
-                "backwardsCompatibilityClasspath",
-                resolvedClasspath.joinToString(";") { it.absolutePath }
-            )
-        }
+        inputs.files(compatibilityTestClasspath)
+        doFirst { systemProperty("compatibilityTestClasspath", compatibilityTestClasspath.files.joinToString(";") { it.absolutePath }) }
     }
 }
 
