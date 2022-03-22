@@ -40,6 +40,7 @@ fun KGPBaseTest.project(
     projectPathAdditionalSuffix: String = "",
     buildJdk: File? = null,
     directoryPrefix: String? = null,
+    parentDir: String = "",
     test: TestProject.() -> Unit = {}
 ): TestProject {
     val projectPath = setupProjectFromTestResources(
@@ -47,7 +48,8 @@ fun KGPBaseTest.project(
         gradleVersion,
         workingDir,
         projectPathAdditionalSuffix,
-        directoryPrefix
+        directoryPrefix,
+        parentDir = parentDir
     )
     projectPath.addDefaultBuildFiles()
     if (enableCacheRedirector) projectPath.enableCacheRedirector()
@@ -361,15 +363,16 @@ private fun setupProjectFromTestResources(
     tempDir: Path,
     optionalSubDir: String,
     directoryPrefix: String? = null,
-    parentDir: String? = null
+    parentDir: String = ""
 ): Path {
     val testProjectPath = directoryPrefix?.let { "$directoryPrefix/$projectName".testProjectPath } ?: projectName.testProjectPath
-    assertTrue("Test project exists") { Files.exists(testProjectPath) }
-    assertTrue("Test project path is a directory") { Files.isDirectory(testProjectPath) }
+    assertTrue("Test project doesn't exists") { Files.exists(testProjectPath) }
+    assertTrue("Test project path isn't a directory") { Files.isDirectory(testProjectPath) }
 
     return tempDir
         .resolve(gradleVersion.version)
-        .resolve(parentDir ?: projectName)
+        .resolve(parentDir)
+        .resolve(projectName)
         .resolve(optionalSubDir)
         .also {
             testProjectPath.copyRecursively(it)

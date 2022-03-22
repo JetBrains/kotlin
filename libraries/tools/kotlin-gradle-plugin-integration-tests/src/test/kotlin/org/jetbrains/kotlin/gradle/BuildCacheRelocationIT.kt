@@ -302,12 +302,12 @@ class BuildCacheRelocationIT : KGPBaseTest() {
         buildOptions: BuildOptions = defaultBuildOptions,
         additionalConfiguration: (TestProject) -> Unit = {}
     ): Pair<TestProject, TestProject> {
-        val firstProject = project(projectName, gradleVersion, buildOptions) {
+        val firstProject = project(projectName, gradleVersion, buildOptions, parentDir = "first") {
             enableLocalBuildCache(localBuildCacheDir)
             additionalConfiguration(this)
         }
 
-        val secondProject = project(projectName, gradleVersion, buildOptions) {
+        val secondProject = project(projectName, gradleVersion, buildOptions, parentDir = "second") {
             enableLocalBuildCache(localBuildCacheDir)
             additionalConfiguration(this)
         }
