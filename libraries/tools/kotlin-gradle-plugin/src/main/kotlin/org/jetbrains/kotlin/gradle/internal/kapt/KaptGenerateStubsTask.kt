@@ -47,12 +47,8 @@ abstract class KaptGenerateStubsTask @Inject constructor(
     internal class Configurator(
         private val kotlinCompileTaskProvider: TaskProvider<KotlinCompile>,
         kotlinCompilation: KotlinCompilationData<*>,
-        properties: PropertiesProvider,
-        private val classpathSnapshotDir: File
+        properties: PropertiesProvider
     ) : KotlinCompile.Configurator<KaptGenerateStubsTask>(kotlinCompilation, properties) {
-
-        override fun getClasspathSnapshotDir(task: KaptGenerateStubsTask): Provider<Directory> =
-            task.project.objects.directoryProperty().fileValue(classpathSnapshotDir)
 
         override fun configure(task: KaptGenerateStubsTask) {
             super.configure(task)

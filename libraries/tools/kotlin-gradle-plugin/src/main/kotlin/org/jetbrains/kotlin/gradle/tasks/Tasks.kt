@@ -292,8 +292,8 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments> @Inject constr
         private fun getKotlinBuildDir(task: T): Provider<Directory> =
             task.project.layout.buildDirectory.dir("$KOTLIN_BUILD_DIR_NAME/${task.name}")
 
-        protected open fun getClasspathSnapshotDir(task: T): Provider<Directory> =
-            task.project.layout.buildDirectory.dir("$KOTLIN_BUILD_DIR_NAME/classpath-snapshot/${task.name}")
+        protected fun getClasspathSnapshotDir(task: T): Provider<Directory> =
+            getKotlinBuildDir(task).map { it.dir("classpath-snapshot") }
     }
 
     init {
