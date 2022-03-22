@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.incremental.classpathDiff
 
-import org.jetbrains.kotlin.build.report.metrics.DoNothingBuildMetricsReporter
+import org.jetbrains.kotlin.build.report.DoNothingBuildReporter
 import org.jetbrains.kotlin.incremental.ChangesEither
 import org.jetbrains.kotlin.incremental.LookupSymbol
 import org.jetbrains.kotlin.incremental.classpathDiff.ClassSnapshotGranularity.CLASS_LEVEL
@@ -437,7 +437,7 @@ private fun computeClasspathChanges(
     return ClasspathChangesComputer.computeChangedAndImpactedSet(
         currentClasspathSnapshot.removeDuplicateAndInaccessibleClasses(),
         previousClasspathSnapshot.removeDuplicateAndInaccessibleClasses(),
-        DoNothingBuildMetricsReporter
+        ClasspathSnapshotBuildReporter(DoNothingBuildReporter)
     ).normalize()
 }
 

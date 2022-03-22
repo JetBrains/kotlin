@@ -86,16 +86,16 @@ class IncrementalCompilationOptions(
 
     override fun toString(): String {
         return "IncrementalCompilationOptions(" +
-               "super=${super.toString()}, " +
-               "areFileChangesKnown=$areFileChangesKnown, " +
-               "modifiedFiles=$modifiedFiles, " +
-               "deletedFiles=$deletedFiles, " +
-               "classpathChanges=$classpathChanges, " +
-               "workingDir=$workingDir, " +
-               "multiModuleICSettings=$multiModuleICSettings, " +
-               "usePreciseJavaTracking=$usePreciseJavaTracking" +
-               "outputFiles=$outputFiles" +
-               ")"
+                "super=${super.toString()}, " +
+                "areFileChangesKnown=$areFileChangesKnown, " +
+                "modifiedFiles=$modifiedFiles, " +
+                "deletedFiles=$deletedFiles, " +
+                "classpathChanges=${classpathChanges::class.simpleName}, " +
+                "workingDir=$workingDir, " +
+                "multiModuleICSettings=$multiModuleICSettings, " +
+                "usePreciseJavaTracking=$usePreciseJavaTracking" +
+                "outputFiles=$outputFiles" +
+                ")"
     }
 }
 

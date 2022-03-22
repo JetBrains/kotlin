@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.build.report.metrics.BuildMetricsReporter
 import org.jetbrains.kotlin.build.report.metrics.BuildTime
 import org.jetbrains.kotlin.build.report.metrics.measure
 import org.jetbrains.kotlin.incremental.*
+import org.jetbrains.kotlin.incremental.classpathDiff.ClasspathSnapshotShrinker.shrinkClasspath
 import org.jetbrains.kotlin.incremental.classpathDiff.ImpactAnalysis.computeImpactedSetInclusive
 import org.jetbrains.kotlin.incremental.storage.FileToCanonicalPathConverter
 import org.jetbrains.kotlin.incremental.storage.ListExternalizer
@@ -17,28 +18,53 @@ import org.jetbrains.kotlin.incremental.storage.loadFromFile
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 import org.jetbrains.kotlin.resolve.sam.SAM_LOOKUP_NAME
-import java.io.File
 import java.util.*
 
 /** Computes changes between two [ClasspathSnapshot]s .*/
 object ClasspathChangesComputer {
 
     /**
-     * Computes changes between the current and previous shrunk [ClasspathSnapshot]s, plus unchanged elements that are impacted by the
-     * changes.
+     * Computes changes between the current and previous classpath, plus unchanged elements that are impacted by the changes.
      *
-     * NOTE: The original classpath may contain duplicate classes, but the shrunk classpath must not contain duplicate classes.
+     * NOTE: We shrink the classpath first before comparing them. The original classpath may contain duplicate classes, but the shrunk
+     * classpath must not contain duplicate classes.
      */
-    fun computeChangedAndImpactedSet(
-        shrunkCurrentClasspathSnapshot: List<AccessibleClassSnapshot>,
-        shrunkPreviousClasspathSnapshotFile: File,
-        metrics: BuildMetricsReporter
+    fun computeClasspathChanges(
+        classpathSnapshotFiles: ClasspathSnapshotFiles,
+        lookupStorage: LookupStorage,
+        storeCurrentClasspathSnapshotForReuse: (currentClasspathSnapshot: List<AccessibleClassSnapshot>, shrunkCurrentClasspathAgainstPreviousLookups: List<AccessibleClassSnapshot>) -> Unit,
+        reporter: ClasspathSnapshotBuildReporter
     ): ProgramSymbolSet {
-        val shrunkPreviousClasspathSnapshot = metrics.measure(BuildTime.LOAD_SHRUNK_PREVIOUS_CLASSPATH_SNAPSHOT) {
-            ListExternalizer(AccessibleClassSnapshotExternalizer).loadFromFile(shrunkPreviousClasspathSnapshotFile)
+        val currentClasspathSnapshot = reporter.measure(BuildTime.LOAD_CURRENT_CLASSPATH_SNAPSHOT) {
+            val classpathSnapshot = CachedClasspathSnapshotSerializer.load(classpathSnapshotFiles.currentClasspathEntrySnapshotFiles)
+            reporter.measure(BuildTime.REMOVE_DUPLICATE_CLASSES) {
+                classpathSnapshot.removeDuplicateAndInaccessibleClasses()
+            }
         }
-        return metrics.measure(BuildTime.COMPUTE_CHANGED_AND_IMPACTED_SET) {
-            computeChangedAndImpactedSet(shrunkCurrentClasspathSnapshot, shrunkPreviousClasspathSnapshot, metrics)
+        val shrunkCurrentClasspathAgainstPreviousLookups = reporter.measure(BuildTime.SHRINK_CURRENT_CLASSPATH_SNAPSHOT) {
+            shrinkClasspath(
+                currentClasspathSnapshot, lookupStorage,
+                ClasspathSnapshotShrinker.MetricsReporter(
+                    reporter,
+                    BuildTime.GET_LOOKUP_SYMBOLS, BuildTime.FIND_REFERENCED_CLASSES, BuildTime.FIND_TRANSITIVELY_REFERENCED_CLASSES
+                )
+            )
+        }
+        reporter.reportVerbose {
+            "Shrunk current classpath snapshot for diffing," +
+                    " retained ${shrunkCurrentClasspathAgainstPreviousLookups.size} / ${currentClasspathSnapshot.size} classes"
+        }
+        storeCurrentClasspathSnapshotForReuse(currentClasspathSnapshot, shrunkCurrentClasspathAgainstPreviousLookups)
+
+        val shrunkPreviousClasspathSnapshot = reporter.measure(BuildTime.LOAD_SHRUNK_PREVIOUS_CLASSPATH_SNAPSHOT) {
+            ListExternalizer(AccessibleClassSnapshotExternalizer).loadFromFile(classpathSnapshotFiles.shrunkPreviousClasspathSnapshotFile)
+        }
+        reporter.reportVerbose {
+            "Loaded shrunk previous classpath snapshot for diffing, found ${shrunkPreviousClasspathSnapshot.size} classes"
+        }
+
+        return reporter.measure(BuildTime.COMPUTE_CHANGED_AND_IMPACTED_SET) {
+            computeChangedAndImpactedSet(shrunkCurrentClasspathAgainstPreviousLookups, shrunkPreviousClasspathSnapshot, reporter)
         }
     }
 
@@ -50,7 +76,7 @@ object ClasspathChangesComputer {
     fun computeChangedAndImpactedSet(
         currentClassSnapshots: List<AccessibleClassSnapshot>,
         previousClassSnapshots: List<AccessibleClassSnapshot>,
-        metrics: BuildMetricsReporter
+        reporter: ClasspathSnapshotBuildReporter
     ): ProgramSymbolSet {
         val currentClasses: Map<ClassId, AccessibleClassSnapshot> = currentClassSnapshots.associateBy { it.classId }
         val previousClasses: Map<ClassId, AccessibleClassSnapshot> = previousClassSnapshots.associateBy { it.classId }
@@ -69,15 +95,16 @@ object ClasspathChangesComputer {
             } else null
         }
 
-        val classChanges = metrics.measure(BuildTime.COMPUTE_CLASS_CHANGES) {
-            computeClassChanges(changedCurrentClasses, changedPreviousClasses, metrics)
+        val changedSet = reporter.measure(BuildTime.COMPUTE_CLASS_CHANGES) {
+            computeClassChanges(changedCurrentClasses, changedPreviousClasses, reporter)
+        }
+        reporter.reportVerboseWithLimit { "Changed set = ${changedSet.toDebugString()}" }
+
+        if (changedSet.isEmpty()) {
+            return changedSet
         }
 
-        if (classChanges.isEmpty()) {
-            return classChanges
-        }
-
-        return metrics.measure(BuildTime.COMPUTE_IMPACTED_SET) {
+        val changedAndImpactedSet = reporter.measure(BuildTime.COMPUTE_IMPACTED_SET) {
             // Note that changes may contain added symbols (they can also impact recompilation -- see examples in JavaClassChangesComputer).
             // So ideally, the result should be:
             //     computeImpactedSetInclusive(changes = changesOnPreviousClasspath, allClasses = classesOnPreviousClasspath) +
@@ -88,10 +115,16 @@ object ClasspathChangesComputer {
             // Note: `allClasses` may contain overlapping ClassIds, but it won't be an issue. Also, we will replace
             // classesOnCurrentClasspath with changedClassesOnCurrentClasspath to avoid listing unchanged classes twice.
             computeImpactedSetInclusive(
-                changes = classChanges,
+                changes = changedSet,
                 allClasses = (previousClassSnapshots.asSequence() + changedCurrentClasses.asSequence()).asIterable()
             )
         }
+        reporter.reportVerboseWithLimit {
+            "Impacted classes = " +
+                    (changedAndImpactedSet.run { classes + classMembers.keys } - changedSet.run { classes + classMembers.keys })
+        }
+
+        return changedAndImpactedSet
     }
 
     /**

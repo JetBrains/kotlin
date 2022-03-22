@@ -17,8 +17,9 @@ enum class BuildPerformanceMetric(val parent: BuildPerformanceMetric? = null, va
 
     // Metrics for the `kotlin.incremental.useClasspathSnapshot` feature
     CLASSPATH_ENTRY_SNAPSHOT_TRANSFORM_EXECUTION_COUNT(parent = null, "Number of times 'ClasspathEntrySnapshotTransform' ran", type = SizeMetricType.NUMBER),
-        JAR_CLASSPATH_ENTRY_SIZE(parent = CLASSPATH_ENTRY_SNAPSHOT_TRANSFORM_EXECUTION_COUNT, "Size of classpath entry (if it's a jar)", type = SizeMetricType.BYTES),
-        CLASSPATH_ENTRY_SNAPSHOT_SIZE(parent = CLASSPATH_ENTRY_SNAPSHOT_TRANSFORM_EXECUTION_COUNT, "Size of classpath entry (directory or jar)'s snapshot", type = SizeMetricType.BYTES),
+        JAR_CLASSPATH_ENTRY_SIZE(parent = CLASSPATH_ENTRY_SNAPSHOT_TRANSFORM_EXECUTION_COUNT, "Size of jar classpath entry", type = SizeMetricType.BYTES),
+        JAR_CLASSPATH_ENTRY_SNAPSHOT_SIZE(parent = CLASSPATH_ENTRY_SNAPSHOT_TRANSFORM_EXECUTION_COUNT, "Size of jar classpath entry's snapshot", type = SizeMetricType.BYTES),
+        DIRECTORY_CLASSPATH_ENTRY_SNAPSHOT_SIZE(parent = CLASSPATH_ENTRY_SNAPSHOT_TRANSFORM_EXECUTION_COUNT, "Size of directory classpath entry's snapshot", type = SizeMetricType.BYTES),
     SHRINK_AND_SAVE_CLASSPATH_SNAPSHOT_EXECUTION_COUNT(parent = null, "Number of times classpath snapshot is shrunk and saved after compilation", type = SizeMetricType.NUMBER),
         CLASSPATH_ENTRY_COUNT(parent = SHRINK_AND_SAVE_CLASSPATH_SNAPSHOT_EXECUTION_COUNT, "Number of classpath entries", type = SizeMetricType.NUMBER),
         CLASSPATH_SNAPSHOT_SIZE(parent = SHRINK_AND_SAVE_CLASSPATH_SNAPSHOT_EXECUTION_COUNT, "Size of classpath snapshot", type = SizeMetricType.BYTES),

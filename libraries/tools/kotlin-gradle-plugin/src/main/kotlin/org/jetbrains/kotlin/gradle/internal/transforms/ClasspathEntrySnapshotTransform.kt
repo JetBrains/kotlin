@@ -95,8 +95,11 @@ abstract class ClasspathEntrySnapshotTransform : TransformAction<ClasspathEntryS
             metrics.addMetric(BuildPerformanceMetric.CLASSPATH_ENTRY_SNAPSHOT_TRANSFORM_EXECUTION_COUNT, 1)
             if (classpathEntryInputDirOrJar.extension.equals("jar", ignoreCase = true)) {
                 metrics.addMetric(BuildPerformanceMetric.JAR_CLASSPATH_ENTRY_SIZE, classpathEntryInputDirOrJar.length())
+                metrics.addMetric(BuildPerformanceMetric.JAR_CLASSPATH_ENTRY_SNAPSHOT_SIZE, snapshotOutputFile.length())
+            } else {
+                // Only compute the size of the snapshot, not the size of the input directory as walking the file tree has a small overhead
+                metrics.addMetric(BuildPerformanceMetric.DIRECTORY_CLASSPATH_ENTRY_SNAPSHOT_SIZE, snapshotOutputFile.length())
             }
-            metrics.addMetric(BuildPerformanceMetric.CLASSPATH_ENTRY_SNAPSHOT_SIZE, snapshotOutputFile.length())
         }
     }
 }

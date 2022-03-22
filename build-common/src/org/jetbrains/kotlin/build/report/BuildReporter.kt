@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.build.report
 
 import org.jetbrains.kotlin.build.report.metrics.BuildMetricsReporter
+import org.jetbrains.kotlin.build.report.metrics.DoNothingBuildMetricsReporter
 import org.jetbrains.kotlin.build.report.metrics.RemoteBuildMetricsReporter
 
 open class BuildReporter(
@@ -22,3 +23,5 @@ class RemoteBuildReporter(
         buildMetricsReporter.flush()
     }
 }
+
+object DoNothingBuildReporter : BuildReporter(DoNothingICReporter, DoNothingBuildMetricsReporter)
