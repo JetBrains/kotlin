@@ -174,17 +174,26 @@ private fun ClasspathSnapshot.getNonDuplicateClassSnapshots(): List<ClassSnapsho
 
 /** Used by [shrinkAndSaveClasspathSnapshot]. */
 private sealed class ShrinkMode {
-    object NoChanges : ShrinkMode()
+    object UnchangedLookupsUnchangedClasspath : ShrinkMode()
 
-    class IncrementalNoNewLookups(
-        val shrunkCurrentClasspathAgainstPreviousLookups: List<AccessibleClassSnapshot>,
-    ) : ShrinkMode()
-
-    class Incremental(
+    class UnchangedLookupsChangedClasspath(
         val currentClasspathSnapshot: List<AccessibleClassSnapshot>,
-        val shrunkCurrentClasspathAgainstPreviousLookups: List<AccessibleClassSnapshot>,
-        val addedLookupSymbols: Set<LookupSymbolKey>
+        val shrunkCurrentClasspathAgainstPreviousLookups: List<AccessibleClassSnapshot>
     ) : ShrinkMode()
+
+    sealed class ChangedLookups : ShrinkMode() {
+        abstract val addedLookupSymbols: Set<LookupSymbolKey>
+    }
+
+    class ChangedLookupsUnchangedClasspath(
+        override val addedLookupSymbols: Set<LookupSymbolKey>
+    ) : ChangedLookups()
+
+    class ChangedLookupsChangedClasspath(
+        override val addedLookupSymbols: Set<LookupSymbolKey>,
+        val currentClasspathSnapshot: List<AccessibleClassSnapshot>,
+        val shrunkCurrentClasspathAgainstPreviousLookups: List<AccessibleClassSnapshot>
+    ) : ChangedLookups()
 
     object NonIncremental : ShrinkMode()
 }
@@ -192,9 +201,9 @@ private sealed class ShrinkMode {
 internal fun shrinkAndSaveClasspathSnapshot(
     classpathChanges: ClasspathChanges.ClasspathSnapshotEnabled,
     lookupStorage: LookupStorage,
-    currentClasspathSnapshot: List<AccessibleClassSnapshot>?, // Not null iff classpathChanges is ToBeComputedByIncrementalCompiler
-    shrunkCurrentClasspathAgainstPreviousLookups: List<AccessibleClassSnapshot>?, // Same as above
-    metrics: BuildMetricsReporter
+    precomputedCurrentClasspathSnapshot: List<AccessibleClassSnapshot>?, // Not null iff classpathChanges is ToBeComputedByIncrementalCompiler
+    precomputedShrunkCurrentClasspathAgainstPreviousLookups: List<AccessibleClassSnapshot>?, // Not null iff classpathChanges is ToBeComputedByIncrementalCompiler
+    reporter: ClasspathSnapshotBuildReporter
 ) {
     // In the following, we'll try to shrink the classpath snapshot incrementally when possible.
     // For incremental shrinking, we currently use only lookupStorage.addedLookupSymbols, not lookupStorage.removedLookupSymbols. It is
@@ -204,72 +213,94 @@ internal fun shrinkAndSaveClasspathSnapshot(
         is NoChanges -> {
             val addedLookupSymbols = lookupStorage.addedLookupSymbols
             if (addedLookupSymbols.isEmpty()) {
-                ShrinkMode.NoChanges
+                ShrinkMode.UnchangedLookupsUnchangedClasspath
             } else {
-                val shrunkPreviousClasspathAgainstPreviousLookups =
-                    metrics.measure(BuildTime.INCREMENTAL_LOAD_SHRUNK_PREVIOUS_CLASSPATH_SNAPSHOT) {
-                        ListExternalizer(AccessibleClassSnapshotExternalizer)
-                            .loadFromFile(classpathChanges.classpathSnapshotFiles.shrunkPreviousClasspathSnapshotFile)
-                    }
-                ShrinkMode.Incremental(
-                    currentClasspathSnapshot = metrics.measure(BuildTime.INCREMENTAL_LOAD_CURRENT_CLASSPATH_SNAPSHOT) {
-                        CachedClasspathSnapshotSerializer
-                            .load(classpathChanges.classpathSnapshotFiles.currentClasspathEntrySnapshotFiles)
-                            .removeDuplicateAndInaccessibleClasses()
-                    },
-                    // In the current case, there are no classpath changes, so
-                    // shrunk[*Current*]ClasspathAgainstPreviousLookups == shrunk[*Previous*]ClasspathAgainstPreviousLookups
-                    shrunkCurrentClasspathAgainstPreviousLookups = shrunkPreviousClasspathAgainstPreviousLookups,
-                    addedLookupSymbols = addedLookupSymbols
-                )
+                ShrinkMode.ChangedLookupsUnchangedClasspath(addedLookupSymbols)
             }
         }
         is ToBeComputedByIncrementalCompiler -> {
             val addedLookupSymbols = lookupStorage.addedLookupSymbols
             if (addedLookupSymbols.isEmpty()) {
-                ShrinkMode.IncrementalNoNewLookups(shrunkCurrentClasspathAgainstPreviousLookups!!)
+                ShrinkMode.UnchangedLookupsChangedClasspath(
+                    precomputedCurrentClasspathSnapshot!!,
+                    precomputedShrunkCurrentClasspathAgainstPreviousLookups!!
+                )
             } else {
-                ShrinkMode.Incremental(currentClasspathSnapshot!!, shrunkCurrentClasspathAgainstPreviousLookups!!, addedLookupSymbols)
+                ShrinkMode.ChangedLookupsChangedClasspath(
+                    addedLookupSymbols,
+                    precomputedCurrentClasspathSnapshot!!,
+                    precomputedShrunkCurrentClasspathAgainstPreviousLookups!!
+                )
             }
         }
         is NotAvailableDueToMissingClasspathSnapshot, is NotAvailableForNonIncrementalRun -> ShrinkMode.NonIncremental
     }
 
     // Shrink current classpath against current lookups
-    val shrunkCurrentClasspath: List<AccessibleClassSnapshot>? = when (shrinkMode) {
-        is ShrinkMode.NoChanges -> null
-        is ShrinkMode.IncrementalNoNewLookups -> {
-            // There are no new lookups, so
-            // shrunkCurrentClasspathAgainst[*Current*]Lookups == shrunkCurrentClasspathAgainst[*Previous*]Lookups
-            shrinkMode.shrunkCurrentClasspathAgainstPreviousLookups
+    val (currentClasspath: List<AccessibleClassSnapshot>?, shrunkCurrentClasspath: List<AccessibleClassSnapshot>?) = when (shrinkMode) {
+        is ShrinkMode.UnchangedLookupsUnchangedClasspath -> {
+            // There are no changes in the lookups and classpath, so there will be no changes in the shrunk classpath snapshot compared to
+            // the previous run. Return null here as we don't need to compute this.
+            null to null
         }
-        is ShrinkMode.Incremental -> metrics.measure(BuildTime.INCREMENTAL_SHRINK_CURRENT_CLASSPATH_SNAPSHOT) {
-            val shrunkClasses = shrinkMode.shrunkCurrentClasspathAgainstPreviousLookups.mapTo(mutableSetOf()) { it.classId }
-            val notYetShrunkClasses = shrinkMode.currentClasspathSnapshot.filter { it.classId !in shrunkClasses }
-            val addedLookupSymbols = shrinkMode.addedLookupSymbols
-            val shrunkRemainingClassesAgainstNewLookups = shrinkClasses(notYetShrunkClasses, addedLookupSymbols)
+        is ShrinkMode.UnchangedLookupsChangedClasspath -> {
+            // There are no changes in the lookups, so
+            // shrunkCurrentClasspathAgainst[*Current*]Lookups == shrunkCurrentClasspathAgainst[*Previous*]Lookups
+            shrinkMode.currentClasspathSnapshot to shrinkMode.shrunkCurrentClasspathAgainstPreviousLookups
+        }
+        is ShrinkMode.ChangedLookups -> reporter.measure(BuildTime.INCREMENTAL_SHRINK_CURRENT_CLASSPATH_SNAPSHOT) {
+            // There are changes in the lookups, so we will shrink incrementally.
+            val currentClasspath = reporter.measure(BuildTime.INCREMENTAL_LOAD_CURRENT_CLASSPATH_SNAPSHOT) {
+                when (shrinkMode) {
+                    is ShrinkMode.ChangedLookupsUnchangedClasspath ->
+                        CachedClasspathSnapshotSerializer
+                            .load(classpathChanges.classpathSnapshotFiles.currentClasspathEntrySnapshotFiles)
+                            .removeDuplicateAndInaccessibleClasses()
+                    is ShrinkMode.ChangedLookupsChangedClasspath -> shrinkMode.currentClasspathSnapshot
+                }
+            }
+            val shrunkCurrentClasspathAgainstPreviousLookups =
+                reporter.measure(BuildTime.INCREMENTAL_LOAD_SHRUNK_CURRENT_CLASSPATH_SNAPSHOT_AGAINST_PREVIOUS_LOOKUPS) {
+                    when (shrinkMode) {
+                        is ShrinkMode.ChangedLookupsUnchangedClasspath -> {
+                            // There are no changes in the classpath, so
+                            // shrunk[*Current*]ClasspathAgainstPreviousLookups == shrunk[*Previous*]ClasspathAgainstPreviousLookups
+                            ListExternalizer(AccessibleClassSnapshotExternalizer)
+                                .loadFromFile(classpathChanges.classpathSnapshotFiles.shrunkPreviousClasspathSnapshotFile)
+                        }
+                        is ShrinkMode.ChangedLookupsChangedClasspath -> shrinkMode.shrunkCurrentClasspathAgainstPreviousLookups
+                    }
+                }
 
-            shrinkMode.shrunkCurrentClasspathAgainstPreviousLookups + shrunkRemainingClassesAgainstNewLookups
+            val shrunkClasses = shrunkCurrentClasspathAgainstPreviousLookups.mapTo(mutableSetOf()) { it.classId }
+            val notYetShrunkClasses = currentClasspath.filter { it.classId !in shrunkClasses }
+            val shrunkRemainingClassesAgainstNewLookups = shrinkClasses(notYetShrunkClasses, shrinkMode.addedLookupSymbols)
+
+            val shrunkCurrentClasspath = shrunkCurrentClasspathAgainstPreviousLookups + shrunkRemainingClassesAgainstNewLookups
+            currentClasspath to shrunkCurrentClasspath
         }
         is ShrinkMode.NonIncremental -> {
-            val classpathSnapshot = metrics.measure(BuildTime.NON_INCREMENTAL_LOAD_CURRENT_CLASSPATH_SNAPSHOT) {
-                CachedClasspathSnapshotSerializer
-                    .load(classpathChanges.classpathSnapshotFiles.currentClasspathEntrySnapshotFiles)
-                    .removeDuplicateAndInaccessibleClasses()
-            }
-            metrics.measure(BuildTime.NON_INCREMENTAL_SHRINK_CURRENT_CLASSPATH_SNAPSHOT) {
-                shrinkClasspath(classpathSnapshot, lookupStorage)
+            // Changes in the lookups and classpath are not available, so we will shrink non-incrementally.
+            reporter.measure(BuildTime.NON_INCREMENTAL_SHRINK_CURRENT_CLASSPATH_SNAPSHOT) {
+                val currentClasspath = reporter.measure(BuildTime.NON_INCREMENTAL_LOAD_CURRENT_CLASSPATH_SNAPSHOT) {
+                    CachedClasspathSnapshotSerializer
+                        .load(classpathChanges.classpathSnapshotFiles.currentClasspathEntrySnapshotFiles)
+                        .removeDuplicateAndInaccessibleClasses()
+                }
+                val shrunkCurrentClasspath = shrinkClasspath(currentClasspath, lookupStorage)
+                currentClasspath to shrunkCurrentClasspath
             }
         }
     }
 
-    if (shrinkMode == ShrinkMode.NoChanges) {
-        // There are no updates to the file so just check that it exists
-        check(classpathChanges.classpathSnapshotFiles.shrunkPreviousClasspathSnapshotFile.exists()) {
+    if (shrinkMode == ShrinkMode.UnchangedLookupsUnchangedClasspath) {
+        // There are no changes in the lookups and classpath, so there will be no changes in the shrunk classpath snapshot compared to the
+        // previous run. Just double-check that the file still exists.
+        check(classpathChanges.classpathSnapshotFiles.shrunkPreviousClasspathSnapshotFile.isFile) {
             "File '${classpathChanges.classpathSnapshotFiles.shrunkPreviousClasspathSnapshotFile.path}' does not exist"
         }
     } else {
-        metrics.measure(BuildTime.SAVE_SHRUNK_CURRENT_CLASSPATH_SNAPSHOT) {
+        reporter.measure(BuildTime.SAVE_SHRUNK_CURRENT_CLASSPATH_SNAPSHOT) {
             ListExternalizer(AccessibleClassSnapshotExternalizer).saveToFile(
                 classpathChanges.classpathSnapshotFiles.shrunkPreviousClasspathSnapshotFile,
                 shrunkCurrentClasspath!!
@@ -277,16 +308,23 @@ internal fun shrinkAndSaveClasspathSnapshot(
         }
     }
 
-    metrics.addMetric(BuildPerformanceMetric.SHRINK_AND_SAVE_CLASSPATH_SNAPSHOT_EXECUTION_COUNT, 1)
-    metrics.addMetric(
+    reporter.reportVerbose {
+        "Shrunk current classpath snapshot after compilation (shrink mode = ${shrinkMode::class.simpleName})" + when (shrinkMode) {
+            is ShrinkMode.UnchangedLookupsUnchangedClasspath -> ", no updates since previous run"
+            else -> ", retained ${shrunkCurrentClasspath!!.size} / ${currentClasspath!!.size} classes"
+        }
+    }
+
+    reporter.addMetric(BuildPerformanceMetric.SHRINK_AND_SAVE_CLASSPATH_SNAPSHOT_EXECUTION_COUNT, 1)
+    reporter.addMetric(
         BuildPerformanceMetric.CLASSPATH_ENTRY_COUNT,
         classpathChanges.classpathSnapshotFiles.currentClasspathEntrySnapshotFiles.size.toLong()
     )
-    metrics.addMetric(
+    reporter.addMetric(
         BuildPerformanceMetric.CLASSPATH_SNAPSHOT_SIZE,
         classpathChanges.classpathSnapshotFiles.currentClasspathEntrySnapshotFiles.sumOf { it.length() }
     )
-    metrics.addMetric(
+    reporter.addMetric(
         BuildPerformanceMetric.SHRUNK_CLASSPATH_SNAPSHOT_SIZE,
         classpathChanges.classpathSnapshotFiles.shrunkPreviousClasspathSnapshotFile.length()
     )

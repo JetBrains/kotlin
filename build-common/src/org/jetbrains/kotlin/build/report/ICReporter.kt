@@ -18,4 +18,11 @@ interface ICReporter {
     fun reportMarkDirty(affectedFiles: Iterable<File>, reason: String)
 }
 
-
+object DoNothingICReporter : ICReporter {
+    override fun report(message: () -> String) {}
+    override fun reportVerbose(message: () -> String) {}
+    override fun reportCompileIteration(incremental: Boolean, sourceFiles: Collection<File>, exitCode: ExitCode) {}
+    override fun reportMarkDirtyClass(affectedFiles: Iterable<File>, classFqName: String) {}
+    override fun reportMarkDirtyMember(affectedFiles: Iterable<File>, scope: String, name: String) {}
+    override fun reportMarkDirty(affectedFiles: Iterable<File>, reason: String) {}
+}
