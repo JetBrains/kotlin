@@ -1089,12 +1089,20 @@ if (disableVerificationTasks) {
 
 plugins.withType(org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin::class) {
     extensions.configure(org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootExtension::class.java) {
-        nodeVersion = "16.13.0"
+        nodeVersion = "18.0.0-v8-canary20220323849445f546"
+        nodeDownloadBaseUrl = "https://nodejs.org/download/v8-canary/"
+
         npmInstallTaskProvider?.configure {
             args += listOf("--network-concurrency", "1", "--mutex", "network")
         } ?: error("kotlinNpmInstall task should exist inside NodeJsRootExtension")
     }
 }
+
+//plugins.withType(org.jetbrains.kotlin.gradle.targets.js.yarn.YarnPlugin::class) {
+//    extensions.configure(org.jetbrains.kotlin.gradle.targets.js.yarn.YarnRootExtension::class.java) {
+//        ignoreEngines = true
+//    }
+//}
 
 afterEvaluate {
     val cacheRedirectorEnabled = findProperty("cacheRedirectorEnabled")?.toString()?.toBoolean() == true

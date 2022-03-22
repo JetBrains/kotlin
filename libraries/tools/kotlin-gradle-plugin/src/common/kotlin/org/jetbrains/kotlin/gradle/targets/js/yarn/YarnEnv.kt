@@ -17,4 +17,5 @@ data class YarnEnv(
     val ivyDependency: String,
     val standalone: Boolean,
     val ignoreScripts: Boolean,
+    val extraArgs: List<String>
 ) : Serializable

@@ -43,6 +43,7 @@ open class YarnRootExtension(
     var lockFileDirectory: File by Property(project.rootDir.resolve("kotlin-js-store"))
 
     var ignoreScripts by Property(true)
+    var ignoreEngines by Property(false)
 
     val yarnSetupTaskProvider: TaskProvider<YarnSetupTask>
         get() = project.tasks
@@ -99,6 +100,10 @@ open class YarnRootExtension(
             else
                 finalCommand
         }
+        val extraArgs = mutableListOf<String>()
+        if (ignoreEngines)
+            extraArgs += "--ignore-enignes"
+
         return YarnEnv(
             downloadUrl = downloadBaseUrl,
             cleanableStore = cleanableStore,
@@ -107,6 +112,7 @@ open class YarnRootExtension(
             standalone = !download,
             ivyDependency = "com.yarnpkg:yarn:$version@tar.gz",
             ignoreScripts = ignoreScripts,
+            extraArgs = extraArgs
         )
     }
 

@@ -41,7 +41,8 @@ abstract class YarnBasics : NpmApi {
                 )
                 .plus(
                     if (yarn.ignoreScripts) "--ignore-scripts" else ""
-                ).filter { it.isNotEmpty() }
+                ).filter { it.isNotEmpty() } + yarn.extraArgs
+
 
             val nodeExecutable = nodeJs.nodeExecutable
             if (!yarn.ignoreScripts) {
