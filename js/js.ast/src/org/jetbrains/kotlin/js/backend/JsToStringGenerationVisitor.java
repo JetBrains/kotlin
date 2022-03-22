@@ -1134,6 +1134,7 @@ public class JsToStringGenerationVisitor extends JsVisitor {
 
     @Override
     public void visitDocComment(@NotNull JsDocComment comment) {
+        needSemi = false;
         boolean asSingleLine = comment.getTags().size() == 1;
         if (!asSingleLine) {
             newlineOpt();
@@ -1150,13 +1151,16 @@ public class JsToStringGenerationVisitor extends JsVisitor {
         for (Map.Entry<String, Object> entry : comment.getTags().entrySet()) {
             if (notFirst) {
                 newline();
-                p.print(' ');
-                p.print('*');
-            }
-            else {
+            } else {
                 notFirst = true;
             }
 
+            if (!asSingleLine) {
+                p.print(' ');
+                p.print('*');
+            }
+
+            space();
             p.print('@');
             p.print(entry.getKey());
             Object value = entry.getValue();
@@ -1169,24 +1173,18 @@ public class JsToStringGenerationVisitor extends JsVisitor {
                     visitNameRef((JsNameRef) value);
                 }
             }
-
-            if (!asSingleLine) {
-                newline();
-            }
         }
 
         if (asSingleLine) {
             space();
-        }
-        else {
+        } else {
             newlineOpt();
         }
 
         p.print('*');
         p.print('/');
-        if (asSingleLine) {
-            spaceOpt();
-        }
+
+        newline();
     }
 
     private void newlineOpt() {

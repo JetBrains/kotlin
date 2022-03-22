@@ -163,7 +163,7 @@ class CrossModuleReferences(
         val tagToName = module.fragments.flatMap { it.nameBindings.entries }.associate { it.key to it.value }
         jsImports = imports.entries.associate {
             val importedAs = tagToName[it.key] ?: error("Internal error: cannot find imported name for symbol ${it.key.prettyTag()}")
-            val exportRef = JsNameRef(it.value.exportedAs, ReservedJsNames.makeCrossModuleNameRef(it.value.moduleExporter))
+            val exportRef = jsElementAccess(it.value.exportedAs, ReservedJsNames.makeCrossModuleNameRef(it.value.moduleExporter), true)
             it.key to JsVars.JsVar(importedAs, exportRef)
         }
     }

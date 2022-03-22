@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.ir.backend.js.*
 import org.jetbrains.kotlin.ir.backend.js.dce.eliminateDeadDeclarations
 import org.jetbrains.kotlin.ir.backend.js.export.*
+import org.jetbrains.kotlin.ir.backend.js.gcc.optimize
 import org.jetbrains.kotlin.ir.backend.js.lower.StaticMembersLowering
 import org.jetbrains.kotlin.ir.backend.js.utils.*
 import org.jetbrains.kotlin.ir.backend.js.utils.serialization.JsIrAstSerializer
@@ -119,7 +120,7 @@ class IrModuleToJsTransformerTmp(
                 backendContext.fieldDataCache.clear()
                 backendContext.minimizedNameGenerator.clear()
             }
-            result[it] = compilationOutput(it.perModule, it.minimizedMemberNames)
+            result[it] = compilationOutput(it.perModule, it.minimizedMemberNames).optimize(backendContext)
         }
 
         return CompilerResult(result, dts)

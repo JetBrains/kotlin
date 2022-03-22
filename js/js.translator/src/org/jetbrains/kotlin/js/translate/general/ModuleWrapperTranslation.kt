@@ -117,12 +117,7 @@ object ModuleWrapperTranslation {
             statements += addModuleValidation(moduleId, program, importedModule)
         }
 
-        statements += if (Namer.requiresEscaping(moduleId)) {
-            JsAstUtils.assignment(makePlainModuleRef(moduleId, program), invocation).makeStmt()
-        }
-        else {
-            JsAstUtils.newVar(program.rootScope.declareName(moduleId), invocation)
-        }
+        statements += JsAstUtils.assignment(JsArrayAccess(JsThisRef(), JsStringLiteral(moduleId)), invocation).makeStmt()
 
         return statements
     }

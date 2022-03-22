@@ -23,7 +23,8 @@ import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
-import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.ir.util.isInterface
+import org.jetbrains.kotlin.js.common.isValidES5Identifier
 import org.jetbrains.kotlin.serialization.js.ModuleKind
 import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.keysToMap
@@ -461,7 +462,7 @@ class ExportModelGenerator(
         )
     }
 
-    private fun exportType(type: IrType): ExportedType {
+    fun exportType(type: IrType, withImplicitExport: Boolean = true): ExportedType {
         if (type is IrDynamicType)
             return ExportedType.Primitive.Any
 
@@ -504,8 +505,8 @@ class ExportModelGenerator(
 
             classifier is IrClassSymbol -> {
                 val klass = classifier.owner
-                val isImplicitlyExported = !klass.isExported(context) && !klass.isExternal
-                val name = klass.getExportableName()
+                val isImplicitlyExported = withImplicitExport && !klass.isExported(context) && !klass.isExternal
+                val name = if (generateNamespacesForPackages) klass.fqNameWhenAvailable!!.asString() else klass.name.asString()
 
                 when (klass.kind) {
                     ClassKind.ANNOTATION_CLASS,
@@ -689,6 +690,16 @@ fun IrOverridableDeclaration<*>.isOverriddenExported(context: JsIrBackendContext
 fun IrDeclaration.isExported(context: JsIrBackendContext): Boolean {
     val candidate = getExportCandidate(this) ?: return false
     return shouldDeclarationBeExported(candidate, context)
+}
+
+fun IrSimpleFunction.isMangled(context: JsGenerationContext): Boolean {
+    return parentAsClass.isExported(context.staticContext.backendContext) &&
+            visibility.isPublicAPI && hasMangledName() &&
+            correspondingPropertySymbol == null
+}
+
+private fun IrSimpleFunction.hasMangledName(): Boolean {
+    return getJsName() == null && !name.asString().isValidES5Identifier()
 }
 
 private fun DescriptorVisibility.toExportedVisibility() =

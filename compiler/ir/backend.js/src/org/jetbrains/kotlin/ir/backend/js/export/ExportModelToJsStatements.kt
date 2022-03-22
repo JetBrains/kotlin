@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.ir.backend.js.export
 
+import org.jetbrains.kotlin.ir.backend.js.gcc.withJsDocForExported
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.JsAstUtils
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.defineProperty
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.jsAssignment
@@ -44,7 +45,7 @@ class ExportModelToJsStatements(
                     val newNamespace = "$currentNamespace$$element"
                     val newNameSpaceRef = namespaceToRefMap.getOrPut(newNamespace) {
                         val varName = JsName(declareNewNamespace(newNamespace), false)
-                        val namespaceRef = jsElementAccess(element, currentRef)
+                        val namespaceRef = jsElementAccess(element, currentRef, isForExport = true)
                         statements += JsVars(
                             JsVars.JsVar(
                                 varName,
@@ -73,7 +74,7 @@ class ExportModelToJsStatements(
                     if (namespace != null) {
                         listOf(
                             jsAssignment(
-                                jsElementAccess(declaration.name, namespace),
+                                jsElementAccess(declaration.name, namespace, isForExport = true),
                                 JsNameRef(name)
                             ).makeStmt()
                         )
@@ -99,7 +100,7 @@ class ExportModelToJsStatements(
             is ExportedClass -> {
                 if (declaration.isInterface) return emptyList()
                 val newNameSpace = if (namespace != null)
-                    jsElementAccess(declaration.name, namespace)
+                    jsElementAccess(declaration.name, namespace, isForExport = true)
                 else
                     JsNameRef(Namer.PROTOTYPE_NAME, namer.getNameForClass(declaration.ir).makeRef())
                 val name = namer.getNameForStaticDeclaration(declaration.ir)
@@ -151,19 +152,17 @@ class ExportModelToJsStatements(
         if (companionObject != null) {
             val companionName = companionObject.getJsNameOrKotlinName().identifier
             blockStatements.add(
-                jsAssignment(
-                    JsNameRef(companionName, bindConstructor.makeRef()),
-                    JsNameRef(companionName, innerClassRef),
-                ).makeStmt()
+                jsAssignment(JsNameRef(companionName, bindConstructor.makeRef()), JsNameRef(companionName, innerClassRef))
+                    .makeStmt()
+                    .withJsDocForExported()
             )
         }
 
         secondaryConstructors.forEach {
             val currentFunRef = namer.getNameForStaticDeclaration(it.ir).makeRef()
-            val assignment = jsAssignment(
-                JsNameRef(it.name, bindConstructor.makeRef()),
-                currentFunRef.bindToThis()
-            ).makeStmt()
+            val assignment = jsAssignment(JsNameRef(it.name, bindConstructor.makeRef()), currentFunRef.bindToThis())
+                .makeStmt()
+                .withJsDocForExported()
 
             blockStatements.add(assignment)
         }

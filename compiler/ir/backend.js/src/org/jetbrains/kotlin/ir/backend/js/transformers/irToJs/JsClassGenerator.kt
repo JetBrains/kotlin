@@ -10,7 +10,11 @@ import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.backend.js.export.isAllowedFakeOverriddenDeclaration
 import org.jetbrains.kotlin.ir.backend.js.export.isExported
+import org.jetbrains.kotlin.ir.backend.js.export.isMangled
 import org.jetbrains.kotlin.ir.backend.js.export.isOverriddenExported
+import org.jetbrains.kotlin.ir.backend.js.gcc.withJsDoc
+import org.jetbrains.kotlin.ir.backend.js.gcc.withJsDocForConstructor
+import org.jetbrains.kotlin.ir.backend.js.gcc.withJsDocForExported
 import org.jetbrains.kotlin.ir.backend.js.utils.*
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
@@ -72,7 +76,7 @@ class JsClassGenerator(private val irClass: IrClass, val context: JsGenerationCo
                             }
                         }
                     } else {
-                        classBlock.statements += declaration.accept(transformer, context)
+                        classBlock.statements += declaration.accept(transformer, context).withJsDoc(declaration, context)
                         classModel.preDeclarationBlock.statements += generateInheritanceCode()
                     }
                 }
@@ -85,14 +89,18 @@ class JsClassGenerator(private val irClass: IrClass, val context: JsGenerationCo
                         declaration.generateAssignmentIfMangled(memberRef)
                     } else {
                         val (memberRef, function) = generateMemberFunction(declaration)
-                        function?.let { classBlock.statements += jsAssignment(memberRef, it.apply { name = null }).makeStmt() }
+                        function?.let {
+                            classBlock.statements += jsAssignment(memberRef, it.apply { name = null })
+                                .makeStmt()
+                                .withJsDoc(declaration, context)
+                        }
                         declaration.generateAssignmentIfMangled(memberRef)
                     }
                 }
                 is IrClass -> {
 //                    classBlock.statements += JsClassGenerator(declaration, context).generate()
                 }
-                is IrField -> {
+                is IrField, is IrProperty -> {
                 }
                 else -> {
                     compilationException(
@@ -192,6 +200,7 @@ class JsClassGenerator(private val irClass: IrClass, val context: JsGenerationCo
                             }
                         }
 
+                    classBlock.statements += property.generatePropertyAccessorDefinition()
                     classBlock.statements += JsExpressionStatement(
                         defineProperty(
                             classPrototypeRef,
@@ -241,17 +250,9 @@ class JsClassGenerator(private val irClass: IrClass, val context: JsGenerationCo
         }
 
     private fun IrSimpleFunction.generateAssignmentIfMangled(memberRef: JsExpression) {
-        if (
-            irClass.isExported(context.staticContext.backendContext) &&
-            visibility.isPublicAPI && hasMangledName() &&
-            correspondingPropertySymbol == null
-        ) {
+        if (isMangled(context)) {
             classBlock.statements += jsAssignment(prototypeAccessRef(), memberRef).makeStmt()
         }
-    }
-
-    private fun IrSimpleFunction.hasMangledName(): Boolean {
-        return getJsName() == null && !name.asString().isValidES5Identifier()
     }
 
     private fun IrSimpleFunction.prototypeAccessRef(): JsExpression {
@@ -321,9 +322,10 @@ class JsClassGenerator(private val irClass: IrClass, val context: JsGenerationCo
 
     private fun maybeGeneratePrimaryConstructor() {
         if (!irClass.declarations.any { it is IrConstructor }) {
-            val func = JsFunction(emptyScope, JsBlock(), "Ctor for ${irClass.name}")
-            func.name = className
-            classBlock.statements += func.makeStmt()
+            val func = JsFunction(emptyScope, JsBlock(), "Ctor for ${irClass.name}").apply {
+                name = className
+            }
+            classBlock.statements += func.makeStmt().withJsDocForConstructor(null, irClass, context)
             classModel.preDeclarationBlock.statements += generateInheritanceCode()
         }
     }
@@ -366,7 +368,9 @@ class JsClassGenerator(private val irClass: IrClass, val context: JsGenerationCo
                 .map { it ?: Namer.JS_UNDEFINED }
         )
 
-        return jsAssignment(JsNameRef(Namer.METADATA, classNameRef), constructorCall).makeStmt()
+        return jsAssignment(JsNameRef(Namer.METADATA, classNameRef), constructorCall)
+            .makeStmt()
+            .withJsDocForExported()
     }
 
     private fun isCoroutineClass(): Boolean = irClass.superTypes.any { it.isSuspendFunctionTypeOrSubtype() }
@@ -406,6 +410,16 @@ class JsClassGenerator(private val irClass: IrClass, val context: JsGenerationCo
 
     private fun IrType.isFunctionType() = isFunctionOrKFunction() || isSuspendFunctionOrKFunction()
 
+    private fun IrProperty.generatePropertyAccessorDefinition(): JsStatement {
+        if (backingField?.type == null) return JsEmpty
+
+        val prototype = prototypeOf(classNameRef)
+        val name = context.getNameForProperty(this)
+        return JsNameRef(name, prototype)
+            .makeStmt()
+            .withJsDoc(this, context)
+    }
+
     private fun generateAssociatedObjectKey(): JsIntLiteral? {
         return context.getAssociatedObjectKey(irClass)?.let { JsIntLiteral(it) }
     }
@@ -428,7 +442,6 @@ class JsClassGenerator(private val irClass: IrClass, val context: JsGenerationCo
     }
 }
 
-private val IrClassifierSymbol.isInterface get() = (owner as? IrClass)?.isInterface == true
 private val IrClassifierSymbol.isEffectivelyExternal get() = (owner as? IrDeclaration)?.isEffectivelyExternal() == true
 
 class JsIrClassModel(val klass: IrClass) {

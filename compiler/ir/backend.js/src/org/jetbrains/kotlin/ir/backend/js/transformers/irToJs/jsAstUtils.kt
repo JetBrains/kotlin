@@ -45,11 +45,11 @@ fun <T : JsNode> IrWhen.toJsNode(
         }
     }
 
-fun jsElementAccess(name: String, receiver: JsExpression?): JsExpression =
-    if (receiver == null || name.isValidES5Identifier()) {
-        JsNameRef(JsName(name, false), receiver)
-    } else {
+fun jsElementAccess(name: String, receiver: JsExpression?, isForExport: Boolean = false): JsExpression =
+    if (isForExport || receiver != null && !name.isValidES5Identifier()) {
         JsArrayAccess(receiver, JsStringLiteral(name))
+    } else {
+        JsNameRef(JsName(name, false), receiver)
     }
 
 fun jsAssignment(left: JsExpression, right: JsExpression) = JsBinaryOperation(JsBinaryOperator.ASG, left, right)
@@ -129,7 +129,7 @@ fun translateCall(
             val propertyName = context.getNameForProperty(property)
             val nameRef = when (jsDispatchReceiver) {
                 null -> JsNameRef(propertyName)
-                else -> jsElementAccess(propertyName.ident, jsDispatchReceiver)
+                else -> jsElementAccess(propertyName.ident, jsDispatchReceiver, property.isEffectivelyExternal())
             }
             return when (function) {
                 property.getter -> nameRef

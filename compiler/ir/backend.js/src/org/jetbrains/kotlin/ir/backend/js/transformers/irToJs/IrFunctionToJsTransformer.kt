@@ -31,7 +31,7 @@ class IrFunctionToJsTransformer : BaseIrElementToJsNodeTransformer<JsFunction, J
     }
 
     override fun visitConstructor(declaration: IrConstructor, context: JsGenerationContext): JsFunction {
-        assert(declaration.isPrimary)
+        assert(declaration.isPrimary || declaration.isExternal)
         val funcName = context.getNameForConstructor(declaration)
         return translateFunction(declaration, funcName, context)
     }

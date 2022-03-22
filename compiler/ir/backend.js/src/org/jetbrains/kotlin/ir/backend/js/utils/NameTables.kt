@@ -350,7 +350,11 @@ class LocalNameGenerator(val variableNames: NameTable<IrDeclaration>) : IrElemen
 
     override fun visitBreak(jump: IrBreak) {
         val loop = jump.loop
-        if (loop.label == null && loop != jumpableDeque.firstOrNull()) {
+        val label = loop.label
+
+        if (label != null) {
+            persistLoopName(label, loop)
+        } else if (loop != jumpableDeque.firstOrNull()) {
             persistLoopName(SYNTHETIC_LOOP_LABEL, loop)
         }
 
@@ -359,7 +363,11 @@ class LocalNameGenerator(val variableNames: NameTable<IrDeclaration>) : IrElemen
 
     override fun visitContinue(jump: IrContinue) {
         val loop = jump.loop
-        if (loop.label == null && loop != jumpableDeque.firstOrNull()) {
+        val label = loop.label
+
+        if (label != null) {
+            persistLoopName(label, loop)
+        } else if (loop != jumpableDeque.firstOrNull()) {
             persistLoopName(SYNTHETIC_LOOP_LABEL, loop)
         }
 
@@ -389,12 +397,6 @@ class LocalNameGenerator(val variableNames: NameTable<IrDeclaration>) : IrElemen
         super.visitLoop(loop)
 
         jumpableDeque.pop()
-
-        val label = loop.label
-
-        if (label != null) {
-            persistLoopName(label, loop)
-        }
     }
 
     private fun persistLoopName(label: String, loop: IrLoop) {

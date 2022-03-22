@@ -11,7 +11,9 @@ import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationWithVisibility
 import org.jetbrains.kotlin.ir.expressions.IrReturn
+import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
 import org.jetbrains.kotlin.ir.symbols.IrReturnableBlockSymbol
+import org.jetbrains.kotlin.ir.util.isInterface
 import org.jetbrains.kotlin.ir.util.parentClassOrNull
 
 fun IrDeclaration.isExportedMember() =
@@ -30,3 +32,5 @@ fun IrDeclaration.isExportedInterfaceMember() =
 fun IrReturn.isTheLastReturnStatementIn(target: IrReturnableBlockSymbol): Boolean {
     return target.owner.statements.lastOrNull() === this
 }
+
+val IrClassifierSymbol.isInterface get() = (owner as? IrClass)?.isInterface == true
