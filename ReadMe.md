@@ -50,6 +50,7 @@ so you could either download them manually and provide path to installation via 
 use following SDK managers:
 - [Asdf-vm](https://asdf-vm.com/)
 - [Jabba](https://github.com/shyiko/jabba)
+- [Jenv](https://github.com/jenv/jenv)
 - [SDKMAN!](https://sdkman.io/)
 
 Alternatively, it is still possible to only provide required JDKs via environment variables 
