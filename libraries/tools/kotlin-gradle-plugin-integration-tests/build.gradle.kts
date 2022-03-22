@@ -204,19 +204,6 @@ val allParallelTestsTask = tasks.register<Test>("kgpAllParallelTests") {
     if (isTeamcityBuild) finalizedBy(cleanTestKitCacheTask)
 }
 
-val simpleTestsTask = tasks.register<Test>("kgpSimpleTests") {
-    group = KGP_TEST_TASKS_GROUP
-    description = "Run only simple tests for Kotlin Gradle Plugin (deprecated)"
-    maxParallelForks = maxParallelTestForks
-
-    useJUnitPlatform {
-        includeTags("SimpleKGP")
-        includeEngines("junit-jupiter")
-    }
-
-    if (isTeamcityBuild) finalizedBy(cleanTestKitCacheTask)
-}
-
 val jvmTestsTask = tasks.register<Test>("kgpJvmTests") {
     group = KGP_TEST_TASKS_GROUP
     description = "Run tests for Kotlin/JVM part of Gradle plugin"
@@ -246,8 +233,6 @@ val daemonsTestsTask = tasks.register<Test>("kgpDaemonTests") {
     group = KGP_TEST_TASKS_GROUP
     description = "Run only Gradle and Kotlin daemon tests for Kotlin Gradle Plugin"
     maxParallelForks = 1
-
-    mustRunAfter(simpleTestsTask)
 
     useJUnitPlatform {
         includeTags("DaemonsKGP")
@@ -296,7 +281,7 @@ val androidTestsTask = tasks.register<Test>("kgpAndroidTests") {
 
 tasks.named<Task>("check") {
     dependsOn("testAdvanceGradleVersion")
-    dependsOn(simpleTestsTask, jvmTestsTask, jsTestsTask, daemonsTestsTask, otherPluginsTestTask, mppTestsTask, androidTestsTask)
+    dependsOn(jvmTestsTask, jsTestsTask, daemonsTestsTask, otherPluginsTestTask, mppTestsTask, androidTestsTask)
     if (isTeamcityBuild) {
         dependsOn("testAdvanceGradleVersionMppAndAndroid")
         dependsOn("testMppAndAndroid")
@@ -346,7 +331,6 @@ tasks.withType<Test> {
 
     val shouldApplyJunitPlatform = name !in setOf(
         allParallelTestsTask.name,
-        simpleTestsTask.name,
         jvmTestsTask.name,
         jsTestsTask.name,
         daemonsTestsTask.name,
