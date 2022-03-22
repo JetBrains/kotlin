@@ -291,9 +291,6 @@ private fun BodyResolveComponents.typeFromSymbol(symbol: FirBasedSymbol<*>, make
 fun BodyResolveComponents.transformQualifiedAccessUsingSmartcastInfo(
     qualifiedAccessExpression: FirQualifiedAccessExpression
 ): FirQualifiedAccessExpression {
-    if (qualifiedAccessExpression.typeRef.coneType is ConeDynamicType) {
-        return qualifiedAccessExpression
-    }
     val builder = transformExpressionUsingSmartcastInfo(
         qualifiedAccessExpression,
         dataFlowAnalyzer::getTypeUsingSmartcastInfo,

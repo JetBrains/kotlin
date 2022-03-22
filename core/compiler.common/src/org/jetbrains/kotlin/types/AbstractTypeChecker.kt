@@ -248,6 +248,10 @@ object AbstractTypeChecker {
         with(state.typeSystemContext) {
             if (a === b) return true
 
+            if (a.isDynamic() || b.isDynamic()) {
+                return a.isDynamic() && b.isDynamic()
+            }
+
             if (isCommonDenotableType(a) && isCommonDenotableType(b)) {
                 val refinedA = state.prepareType(state.refineType(a))
                 val refinedB = state.prepareType(state.refineType(b))

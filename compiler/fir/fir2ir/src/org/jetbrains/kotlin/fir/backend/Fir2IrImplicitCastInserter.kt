@@ -325,11 +325,17 @@ class Fir2IrImplicitCastInserter(
 
     companion object {
         private fun implicitCast(original: IrExpression, castType: IrType): IrExpression {
+            val typeOperator = if (original.type is IrDynamicType) {
+                IrTypeOperator.IMPLICIT_DYNAMIC_CAST
+            } else {
+                IrTypeOperator.IMPLICIT_CAST
+            }
+
             return IrTypeOperatorCallImpl(
                 original.startOffset,
                 original.endOffset,
                 castType,
-                IrTypeOperator.IMPLICIT_CAST,
+                typeOperator,
                 castType,
                 original
             )

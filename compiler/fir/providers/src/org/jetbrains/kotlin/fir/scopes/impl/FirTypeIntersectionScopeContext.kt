@@ -116,21 +116,41 @@ class FirTypeIntersectionScopeContext(
     }
 
     @OptIn(PrivateForInline::class)
+    inline fun <D : FirCallableSymbol<*>> mapScope(
+        scope: FirTypeScope,
+        name: Name,
+        processCallables: FirScope.(Name, (D) -> Unit) -> Unit,
+    ): Pair<FirTypeScope, List<D>>? {
+        val resultForScope = mutableListOf<D>()
+
+        scope.processCallables(name) {
+            if (it !is FirConstructorSymbol) {
+                resultForScope.add(it)
+            }
+        }
+
+        return resultForScope.takeIf { it.isNotEmpty() }?.let {
+            scope to it
+        }
+    }
+
+    @OptIn(PrivateForInline::class)
     inline fun <D : FirCallableSymbol<*>> collectMembersByScope(
         name: Name,
         processCallables: FirScope.(Name, (D) -> Unit) -> Unit
     ): MembersByScope<D> {
-        return scopes.mapNotNull { scope ->
-            val resultForScope = mutableListOf<D>()
-            scope.processCallables(name) {
-                if (it !is FirConstructorSymbol) {
-                    resultForScope.add(it)
-                }
-            }
+        val (dynamics, nonDynamics) = scopes.partition { it is FirDynamicScope }
 
-            resultForScope.takeIf { it.isNotEmpty() }?.let {
-                scope to it
-            }
+        val resultForNonDynamics = nonDynamics.mapNotNull {
+            mapScope(it, name, processCallables)
+        }
+
+        if (resultForNonDynamics.isNotEmpty()) {
+            return resultForNonDynamics
+        }
+
+        return dynamics.mapNotNull {
+            mapScope(it, name, processCallables)
         }
     }
 
