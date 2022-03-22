@@ -58,6 +58,10 @@ class ProgramSymbolSet private constructor(
                     .flatMap { (packageFqName, memberNames) -> memberNames.asSequence().map { PackageMember(packageFqName, it) } }
     }
 
+    fun toDebugString(): String {
+        return "${ProgramSymbolSet::class.simpleName}(classes = $classes, classMembers = $classMembers, packageMembers = $packageMembers)"
+    }
+
     /**
      * Collects [ProgramSymbol]s and returns a [ProgramSymbolSet].
      *

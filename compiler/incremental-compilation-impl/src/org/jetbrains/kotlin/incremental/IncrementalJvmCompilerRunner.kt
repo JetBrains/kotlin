@@ -51,9 +51,11 @@ import org.jetbrains.kotlin.incremental.ClasspathChanges.ClasspathSnapshotEnable
 import org.jetbrains.kotlin.incremental.ClasspathChanges.ClasspathSnapshotEnabled.NotAvailableDueToMissingClasspathSnapshot
 import org.jetbrains.kotlin.incremental.ClasspathChanges.ClasspathSnapshotEnabled.NotAvailableForNonIncrementalRun
 import org.jetbrains.kotlin.incremental.ClasspathChanges.NotAvailableForJSCompiler
-import org.jetbrains.kotlin.incremental.classpathDiff.*
-import org.jetbrains.kotlin.incremental.classpathDiff.ClasspathChangesComputer.computeChangedAndImpactedSet
-import org.jetbrains.kotlin.incremental.classpathDiff.ClasspathSnapshotShrinker.shrinkClasspath
+import org.jetbrains.kotlin.incremental.classpathDiff.AccessibleClassSnapshot
+import org.jetbrains.kotlin.incremental.classpathDiff.ClasspathChangesComputer.computeClasspathChanges
+import org.jetbrains.kotlin.incremental.classpathDiff.ClasspathSnapshotBuildReporter
+import org.jetbrains.kotlin.incremental.classpathDiff.shrinkAndSaveClasspathSnapshot
+import org.jetbrains.kotlin.incremental.classpathDiff.toChangesEither
 import org.jetbrains.kotlin.incremental.components.ExpectActualTracker
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.incremental.multiproject.EmptyModulesApiHistory
@@ -235,32 +237,24 @@ class IncrementalJvmCompilerRunner(
         val dirtyFiles = DirtyFilesContainer(caches, reporter, kotlinSourceFilesExtensions)
         initDirtyFiles(dirtyFiles, changedFiles)
 
+        reporter.reportVerbose { "Classpath changes info passed from Gradle task: ${classpathChanges::class.simpleName}" }
         val classpathChanges = when (classpathChanges) {
             // Note: classpathChanges is deserialized, so they are no longer singleton objects and need to be compared using `is` (not `==`)
             is NoChanges -> ChangesEither.Known(emptySet(), emptySet())
             is ToBeComputedByIncrementalCompiler -> reporter.measure(BuildTime.COMPUTE_CLASSPATH_CHANGES) {
-                check(currentClasspathSnapshot == null)
-                currentClasspathSnapshot = reporter.measure(BuildTime.LOAD_CURRENT_CLASSPATH_SNAPSHOT) {
-                    val classpathSnapshot =
-                        CachedClasspathSnapshotSerializer.load(classpathChanges.classpathSnapshotFiles.currentClasspathEntrySnapshotFiles)
-                    reporter.measure(BuildTime.REMOVE_DUPLICATE_CLASSES) {
-                        classpathSnapshot.removeDuplicateAndInaccessibleClasses()
+                val storeCurrentClasspathSnapshotForReuse =
+                    { currentClasspathSnapshotArg: List<AccessibleClassSnapshot>,
+                      shrunkCurrentClasspathAgainstPreviousLookupsArg: List<AccessibleClassSnapshot> ->
+                        check(currentClasspathSnapshot == null)
+                        check(shrunkCurrentClasspathAgainstPreviousLookups == null)
+                        currentClasspathSnapshot = currentClasspathSnapshotArg
+                        shrunkCurrentClasspathAgainstPreviousLookups = shrunkCurrentClasspathAgainstPreviousLookupsArg
                     }
-                }
-                check(shrunkCurrentClasspathAgainstPreviousLookups == null)
-                shrunkCurrentClasspathAgainstPreviousLookups = reporter.measure(BuildTime.SHRINK_CURRENT_CLASSPATH_SNAPSHOT) {
-                    shrinkClasspath(
-                        currentClasspathSnapshot!!, caches.lookupCache,
-                        ClasspathSnapshotShrinker.MetricsReporter(
-                            reporter,
-                            BuildTime.GET_LOOKUP_SYMBOLS, BuildTime.FIND_REFERENCED_CLASSES, BuildTime.FIND_TRANSITIVELY_REFERENCED_CLASSES
-                        )
-                    )
-                }
-                computeChangedAndImpactedSet(
-                    shrunkCurrentClasspathAgainstPreviousLookups!!,
-                    classpathChanges.classpathSnapshotFiles.shrunkPreviousClasspathSnapshotFile,
-                    reporter
+                computeClasspathChanges(
+                    classpathChanges.classpathSnapshotFiles,
+                    caches.lookupCache,
+                    storeCurrentClasspathSnapshotForReuse,
+                    ClasspathSnapshotBuildReporter(reporter)
                 ).toChangesEither()
             }
             is NotAvailableDueToMissingClasspathSnapshot -> ChangesEither.Unknown(BuildAttribute.CLASSPATH_SNAPSHOT_NOT_FOUND)
@@ -491,7 +485,7 @@ class IncrementalJvmCompilerRunner(
             reporter.measure(BuildTime.SHRINK_AND_SAVE_CURRENT_CLASSPATH_SNAPSHOT_AFTER_COMPILATION) {
                 shrinkAndSaveClasspathSnapshot(
                     classpathChanges, caches.lookupCache, currentClasspathSnapshot, shrunkCurrentClasspathAgainstPreviousLookups,
-                    reporter
+                    ClasspathSnapshotBuildReporter(reporter)
                 )
             }
         }

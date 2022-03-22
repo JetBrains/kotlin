@@ -1,0 +1,28 @@
+/*
+ * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
+ */
+
+package org.jetbrains.kotlin.incremental.classpathDiff
+
+import org.jetbrains.kotlin.build.report.BuildReporter
+import org.jetbrains.kotlin.build.report.ICReporter
+import org.jetbrains.kotlin.build.report.metrics.BuildMetricsReporter
+
+class ClasspathSnapshotBuildReporter(private val buildReporter: BuildReporter) :
+    ICReporter by buildReporter, BuildMetricsReporter by buildReporter {
+
+    override fun reportVerbose(message: () -> String) {
+        buildReporter.reportVerbose { "[ClasspathSnapshot] ${message()}" }
+    }
+
+    fun reportVerboseWithLimit(maxLength: Int = 1000, message: () -> String) {
+        reportVerbose {
+            message().let {
+                if (it.length > maxLength) {
+                    it.substring(0, maxLength) + "... (string too long, showing $maxLength / ${it.length} chars)"
+                } else it
+            }
+        }
+    }
+}
