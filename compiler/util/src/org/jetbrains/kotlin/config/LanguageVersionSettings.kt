@@ -434,9 +434,9 @@ interface LanguageOrApiVersion : DescriptionAware {
 
     override val description: String
         get() = when {
-            !isStable -> "$versionString (EXPERIMENTAL)"
-            isDeprecated -> "$versionString (DEPRECATED)"
-            isUnsupported -> "$versionString (UNSUPPORTED)"
+            !isStable -> "$versionString (experimental)"
+            isDeprecated -> "$versionString (deprecated)"
+            isUnsupported -> "$versionString (unsupported)"
             else -> versionString
         }
 }
