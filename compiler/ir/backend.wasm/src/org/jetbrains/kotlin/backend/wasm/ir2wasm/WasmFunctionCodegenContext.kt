@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.wasm.ir.WasmInstr
 import org.jetbrains.kotlin.wasm.ir.WasmLocal
 
 enum class LoopLabelType { BREAK, CONTINUE }
+enum class SyntheticLocalType { IS_INTERFACE_PARAMETER }
 
 interface WasmFunctionCodegenContext : WasmBaseCodegenContext {
     val irFunction: IrFunction
@@ -20,6 +21,7 @@ interface WasmFunctionCodegenContext : WasmBaseCodegenContext {
     fun defineLocal(irValueDeclaration: IrValueSymbol)
     fun referenceLocal(irValueDeclaration: IrValueSymbol): WasmLocal
     fun referenceLocal(index: Int): WasmLocal
+    fun referenceLocal(type: SyntheticLocalType): WasmLocal
 
     fun defineLoopLevel(irLoop: IrLoop, labelType: LoopLabelType, level: Int)
     fun referenceLoopLevel(irLoop: IrLoop, labelType: LoopLabelType): Int

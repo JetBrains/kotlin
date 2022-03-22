@@ -374,6 +374,7 @@ enum class WasmOp(
     BR_ON_CAST("br_on_cast", 0xFB_42, listOf(LABEL_IDX)),
 
     BR_ON_CAST_FAIL("br_on_cast_fail", 0xfb43, listOf(LABEL_IDX)),
+    BR_ON_CAST_STATIC_FAIL("br_on_cast_static_fail", 0xfb47, listOf(LABEL_IDX, STRUCT_TYPE_IDX)),
 
     REF_IS_FUNC("ref.is_func", 0xfb50),
     REF_IS_DATA("ref.is_data", 0xfb51),

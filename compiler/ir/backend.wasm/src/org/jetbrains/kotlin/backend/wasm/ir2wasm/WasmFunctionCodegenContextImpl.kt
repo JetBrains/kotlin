@@ -27,6 +27,7 @@ class WasmFunctionCodegenContextImpl(
         get() = 0
 
     private val wasmLocals = LinkedHashMap<IrValueSymbol, WasmLocal>()
+    private val wasmSyntheticLocals = LinkedHashMap<SyntheticLocalType, WasmLocal>()
     private val loopLevels = LinkedHashMap<Pair<IrLoop, LoopLabelType>, Int>()
 
     override fun defineLocal(irValueDeclaration: IrValueSymbol) {
@@ -50,6 +51,17 @@ class WasmFunctionCodegenContextImpl(
 
     override fun referenceLocal(index: Int): WasmLocal {
         return wasmFunction.locals[index]
+    }
+
+    override fun referenceLocal(type: SyntheticLocalType): WasmLocal = wasmSyntheticLocals.getOrPut(type) {
+        WasmLocal(
+            wasmFunction.locals.size,
+            type.name,
+            WasmRefNullType(WasmHeapType.Type(referenceGcType(backendContext.irBuiltIns.anyClass))),
+            isParameter = false
+        ).also {
+            wasmFunction.locals += it
+        }
     }
 
     override fun defineLoopLevel(irLoop: IrLoop, labelType: LoopLabelType, level: Int) {

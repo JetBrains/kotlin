@@ -97,11 +97,8 @@ internal class WasmUsefulDeclarationProcessor(
             val isSuperCall = expression.superQualifierSymbol != null
             if (function is IrSimpleFunction && function.isOverridable && !isSuperCall) {
                 val klass = function.parentAsClass
-                if (!klass.isInterface) {
-                    context.wasmSymbols.getVirtualMethodId.owner.enqueue(data, "call on class receiver")
-                } else {
+                if (klass.isInterface) {
                     klass.enqueue(data, "receiver class")
-                    context.wasmSymbols.getInterfaceImplId.owner.enqueue(data, "call on interface receiver")
                 }
                 function.enqueue(data, "method call")
             }
@@ -134,7 +131,7 @@ internal class WasmUsefulDeclarationProcessor(
     }
 
     private fun IrType.enqueueRuntimeClassOrAny(from: IrDeclaration, info: String): Unit =
-        (this.getRuntimeClass ?: context.wasmSymbols.any.owner).enqueue(from, info, isContagious = false)
+        this.getRuntimeClass(context.irBuiltIns).enqueue(from, info, isContagious = false)
 
     private fun IrType.enqueueType(from: IrDeclaration, info: String) {
         getInlinedValueTypeIfAny()

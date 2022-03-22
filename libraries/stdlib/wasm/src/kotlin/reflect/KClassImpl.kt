@@ -7,7 +7,7 @@ package kotlin.reflect.wasm.internal
 import kotlin.reflect.*
 import kotlin.wasm.internal.TypeInfoData
 import kotlin.wasm.internal.getSuperTypeId
-import kotlin.wasm.internal.isInterface
+import kotlin.wasm.internal.isInterfaceById
 
 internal object NothingKClassImpl : KClass<Nothing> {
     override val simpleName: String = "Nothing"
@@ -38,7 +38,7 @@ internal class KClassImpl<T : Any>(private val typeData: TypeInfoData) : KClass<
     }
 
     override fun isInstance(value: Any?): Boolean = value?.let {
-        if (typeData.isInterface) isInterface(it, typeData.typeId) else checkSuperTypeInstance(it)
+        if (typeData.isInterface) isInterfaceById(it, typeData.typeId) else checkSuperTypeInstance(it)
     } ?: false
 
     override fun equals(other: Any?): Boolean =

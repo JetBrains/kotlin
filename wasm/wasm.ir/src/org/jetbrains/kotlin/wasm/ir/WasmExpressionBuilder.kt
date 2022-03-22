@@ -34,15 +34,19 @@ abstract class WasmExpressionBuilder {
     }
 
     @Suppress("UNUSED_PARAMETER")
-    fun buildBlock(label: String?, resultType: WasmType? = null) {
+    inline fun buildBlock(label: String?, resultType: WasmType? = null, body: (Int) -> Unit) {
         numberOfNestedBlocks++
         buildInstr(WasmOp.BLOCK, WasmImmediate.BlockType.Value(resultType))
+        body(numberOfNestedBlocks)
+        buildEnd()
     }
 
     @Suppress("UNUSED_PARAMETER")
-    fun buildLoop(label: String?, resultType: WasmType? = null) {
+    inline fun buildLoop(label: String?, resultType: WasmType? = null, body: (Int) -> Unit) {
         numberOfNestedBlocks++
         buildInstr(WasmOp.LOOP, WasmImmediate.BlockType.Value(resultType))
+        body(numberOfNestedBlocks)
+        buildEnd()
     }
 
     @Suppress("UNUSED_PARAMETER")
@@ -60,10 +64,21 @@ abstract class WasmExpressionBuilder {
         buildInstr(WasmOp.END)
     }
 
-    fun buildBr(absoluteBlockLevel: Int) {
+
+    fun buildBrInstr(brOp: WasmOp, absoluteBlockLevel: Int) {
         val relativeLevel = numberOfNestedBlocks - absoluteBlockLevel
         assert(relativeLevel >= 0) { "Negative relative block index" }
-        buildInstr(WasmOp.BR, WasmImmediate.LabelIdx(relativeLevel))
+        buildInstr(brOp, WasmImmediate.LabelIdx(relativeLevel))
+    }
+
+    fun buildBrInstr(brOp: WasmOp, absoluteBlockLevel: Int, symbol: WasmSymbolReadOnly<WasmTypeDeclaration>) {
+        val relativeLevel = numberOfNestedBlocks - absoluteBlockLevel
+        assert(relativeLevel >= 0) { "Negative relative block index" }
+        buildInstr(brOp, WasmImmediate.LabelIdx(relativeLevel), WasmImmediate.TypeIdx(symbol))
+    }
+
+    fun buildBr(absoluteBlockLevel: Int) {
+        buildBrInstr(WasmOp.BR, absoluteBlockLevel)
     }
 
     fun buildThrow(tagIdx: Int) {
@@ -81,9 +96,7 @@ abstract class WasmExpressionBuilder {
     }
 
     fun buildBrIf(absoluteBlockLevel: Int) {
-        val relativeLevel = numberOfNestedBlocks - absoluteBlockLevel
-        assert(relativeLevel >= 0) { "Negative relative block index" }
-        buildInstr(WasmOp.BR_IF, WasmImmediate.LabelIdx(relativeLevel))
+        buildBrInstr(WasmOp.BR_IF, absoluteBlockLevel)
     }
 
     fun buildCall(symbol: WasmSymbol<WasmFunction>) {
@@ -126,7 +139,7 @@ abstract class WasmExpressionBuilder {
     }
 
     fun buildStructNew(struct: WasmSymbol<WasmTypeDeclaration>) {
-        buildInstr(WasmOp.STRUCT_NEW_WITH_RTT, WasmImmediate.GcType(struct))
+        buildInstr(WasmOp.STRUCT_NEW, WasmImmediate.GcType(struct))
     }
 
     fun buildStructSet(struct: WasmSymbol<WasmTypeDeclaration>, fieldId: WasmSymbol<Int>) {
@@ -142,8 +155,8 @@ abstract class WasmExpressionBuilder {
         buildInstr(WasmOp.REF_CAST)
     }
 
-    fun buildRefCastStatic(type: WasmSymbolReadOnly<WasmTypeDeclaration>) {
-        buildInstr(WasmOp.REF_CAST_STATIC, WasmImmediate.TypeIdx(type))
+    fun buildRefCastStatic(toType: WasmSymbolReadOnly<WasmTypeDeclaration>) {
+        buildInstr(WasmOp.REF_CAST_STATIC, WasmImmediate.TypeIdx(toType))
     }
 
     fun buildRefNull(type: WasmHeapType) {

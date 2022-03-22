@@ -101,9 +101,6 @@ class WasmBaseTypeOperatorTransformer(val context: WasmBackendContext) : IrEleme
     private val IrType.eraseToClassOrInterface: IrClass
         get() = this.erasedUpperBound ?: builtIns.anyClass.owner
 
-    private val IrType.eraseToClass: IrClass
-        get() = this.getRuntimeClass ?: builtIns.anyClass.owner
-
     private fun generateTypeCheck(
         valueProvider: () -> IrExpression,
         toType: IrType
@@ -302,19 +299,16 @@ class WasmBaseTypeOperatorTransformer(val context: WasmBackendContext) : IrEleme
     }
 
     private fun generateIsInterface(argument: IrExpression, toType: IrType): IrExpression {
-        val interfaceId = builder.irCall(symbols.wasmInterfaceId).apply {
-            putTypeArgument(0, toType)
-        }
         return builder.irCall(symbols.isInterface).apply {
             putValueArgument(0, argument)
-            putValueArgument(1, interfaceId)
+            putTypeArgument(0, toType)
         }
     }
 
     private fun generateIsSubClass(argument: IrExpression, toType: IrType): IrExpression {
         val fromType = argument.type
-        val fromTypeErased = fromType.eraseToClass
-        val toTypeErased = toType.eraseToClass
+        val fromTypeErased = fromType.getRuntimeClass(context.irBuiltIns)
+        val toTypeErased = toType.getRuntimeClass(context.irBuiltIns)
         if (fromTypeErased.isSubclassOf(toTypeErased)) {
             return builder.irTrue()
         }

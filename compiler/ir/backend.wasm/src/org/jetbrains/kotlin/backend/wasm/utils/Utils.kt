@@ -5,7 +5,9 @@
 
 package org.jetbrains.kotlin.backend.wasm.utils
 
+import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.IrBuiltIns
+import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.expressions.IrTry
 
 // Backed codegen can only handle try/catch in canonical form.
@@ -16,6 +18,9 @@ import org.jetbrains.kotlin.ir.expressions.IrTry
 //   ...exprs
 // }
 // no-finally
-fun IrTry.isCanonical(builtIns: IrBuiltIns) =
+internal fun IrTry.isCanonical(builtIns: IrBuiltIns) =
     catches.singleOrNull()?.catchParameter?.symbol?.owner?.type == builtIns.throwableType &&
     finallyExpression == null
+
+internal val IrClass.isAbstractOrSealed
+    get() = modality == Modality.ABSTRACT || modality == Modality.SEALED

@@ -21,7 +21,6 @@ class WasmIrExpressionBuilder(
         }
     }
 
-
     override var numberOfNestedBlocks: Int = 0
         set(value) {
             assert(value >= 0) { "end without matching block" }

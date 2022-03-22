@@ -80,6 +80,7 @@ fun compileWasm(
 ): WasmCompilerResult {
     val compiledWasmModule = WasmCompiledModuleFragment(backendContext.irBuiltIns)
     val codeGenerator = WasmModuleFragmentGenerator(backendContext, compiledWasmModule, allowIncompleteImplementations = allowIncompleteImplementations)
+    allModules.forEach { codeGenerator.collectInterfaceTables(it) }
     allModules.forEach { codeGenerator.generateModule(it) }
 
     val linkedModule = compiledWasmModule.linkWasmCompiledFragments()

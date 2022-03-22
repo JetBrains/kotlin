@@ -10,9 +10,7 @@ package org.jetbrains.kotlin.backend.wasm.ir2wasm
 import org.jetbrains.kotlin.backend.common.ir.returnType
 import org.jetbrains.kotlin.backend.wasm.WasmBackendContext
 import org.jetbrains.kotlin.backend.wasm.WasmSymbols
-import org.jetbrains.kotlin.backend.wasm.utils.getWasmArrayAnnotation
-import org.jetbrains.kotlin.backend.wasm.utils.getWasmOpAnnotation
-import org.jetbrains.kotlin.backend.wasm.utils.hasWasmNoOpCastAnnotation
+import org.jetbrains.kotlin.backend.wasm.utils.*
 import org.jetbrains.kotlin.backend.wasm.utils.isCanonical
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.IrElement
@@ -29,7 +27,10 @@ import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.js.config.JSConfigurationKeys
 import org.jetbrains.kotlin.wasm.ir.*
 
-class BodyGenerator(val context: WasmFunctionCodegenContext) : IrElementVisitorVoid {
+class BodyGenerator(
+    val context: WasmFunctionCodegenContext,
+    private val hierarchyDisjointUnions: DisjointUnions<IrClassSymbol>
+) : IrElementVisitorVoid {
     val body: WasmExpressionBuilder = context.bodyGen
 
     // Shortcuts
@@ -117,7 +118,7 @@ class BodyGenerator(val context: WasmFunctionCodegenContext) : IrElementVisitorV
                 generateInstanceFieldAccess(field)
             }
         } else {
-            body.buildGetGlobal(context.referenceGlobal(field.symbol))
+            body.buildGetGlobal(context.referenceGlobalField(field.symbol))
         }
     }
 
@@ -154,7 +155,7 @@ class BodyGenerator(val context: WasmFunctionCodegenContext) : IrElementVisitorV
             )
         } else {
             generateExpression(expression.value)
-            body.buildSetGlobal(context.referenceGlobal(expression.symbol))
+            body.buildSetGlobal(context.referenceGlobalField(expression.symbol))
         }
 
         body.buildGetUnit()
@@ -203,6 +204,14 @@ class BodyGenerator(val context: WasmFunctionCodegenContext) : IrElementVisitorV
             return
         }
 
+        //ClassITable and VTable load
+        body.buildGetGlobal(context.referenceGlobalVTable(klass.symbol))
+        if (klass.hasInterfaceForClass()) {
+            body.buildGetGlobal(context.referenceGlobalClassITable(klass.symbol))
+        } else {
+            body.buildRefNull(WasmHeapType.Simple.Data)
+        }
+
         val wasmClassId = context.referenceClassId(klass.symbol)
 
         val irFields: List<IrField> = klass.allFields(backendContext.irBuiltIns)
@@ -214,7 +223,6 @@ class BodyGenerator(val context: WasmFunctionCodegenContext) : IrElementVisitorV
                 generateDefaultInitializerForType(context.transformType(field.type), body)
         }
 
-        generateClassRTT(klass.symbol)
         body.buildStructNew(wasmGcType)
         generateCall(expression)
     }
@@ -236,16 +244,21 @@ class BodyGenerator(val context: WasmFunctionCodegenContext) : IrElementVisitorV
         // Box intrinsic has an additional klass ID argument.
         // Processing it separately
         if (call.symbol == wasmSymbols.boxIntrinsic) {
-            val toType = call.getTypeArgument(0)!!
-            val klass = toType.getRuntimeClass!!
-            val structTypeName = context.referenceGcType(klass.symbol)
-            val klassId = context.referenceClassId(klass.symbol)
+            val klass = call.getTypeArgument(0)!!.getRuntimeClass(irBuiltIns)
+            val klassSymbol = klass.symbol
 
-            body.buildConstI32Symbol(klassId)
+            //ClassITable and VTable load
+            body.buildGetGlobal(context.referenceGlobalVTable(klassSymbol))
+            if (klass.hasInterfaceForClass()) {
+                body.buildGetGlobal(context.referenceGlobalClassITable(klassSymbol))
+            } else {
+                body.buildRefNull(WasmHeapType.Simple.Data)
+            }
+
+            body.buildConstI32Symbol(context.referenceClassId(klassSymbol))
             body.buildConstI32(0) // Any::_hashCode
             generateExpression(call.getValueArgument(0)!!)
-            generateClassRTT(klass.symbol)
-            body.buildStructNew(structTypeName)
+            body.buildStructNew(context.referenceGcType(klassSymbol))
             return
         }
 
@@ -296,20 +309,35 @@ class BodyGenerator(val context: WasmFunctionCodegenContext) : IrElementVisitorV
                 val vfSlot = classMetadata.virtualMethods.indexOfFirst { it.function == function }
                 // Dispatch receiver should be simple and without side effects at this point
                 // TODO: Verify
-                generateExpression(call.dispatchReceiver!!)
-                body.buildConstI32(vfSlot)
-                body.buildCall(context.referenceFunction(wasmSymbols.getVirtualMethodId))
-                body.buildCallIndirect(
-                    symbol = context.referenceFunctionType(function.symbol)
-                )
+                val receiver = call.dispatchReceiver!!
+                generateExpression(receiver)
+
+                if (!receiver.type.getRuntimeClass(irBuiltIns).isSubclassOf(klass)) {
+                    body.buildRefCastStatic(toType = context.referenceGcType(klass.symbol))
+                }
+
+                body.buildStructGet(context.referenceGcType(klass.symbol), WasmSymbol(0))
+                body.buildStructGet(context.referenceVTableGcType(klass.symbol), WasmSymbol(vfSlot))
+                body.buildInstr(WasmOp.CALL_REF)
             } else {
-                generateExpression(call.dispatchReceiver!!)
-                body.buildConstI32Symbol(context.referenceInterfaceId(klass.symbol))
-                body.buildCall(context.referenceFunction(wasmSymbols.getInterfaceImplId))
-                body.buildCallIndirect(
-                    tableIdx = WasmSymbolIntWrapper(context.referenceInterfaceTable(function.symbol)),
-                    symbol = context.referenceFunctionType(function.symbol)
-                )
+                val symbol = klass.symbol
+                if (symbol in hierarchyDisjointUnions) {
+                    generateExpression(call.dispatchReceiver!!)
+
+                    body.buildStructGet(context.referenceGcType(irBuiltIns.anyClass), WasmSymbol(1))
+
+                    val classITableReference = context.referenceClassITableGcType(symbol)
+                    body.buildRefCastStatic(classITableReference)
+                    body.buildStructGet(classITableReference, context.referenceClassITableInterfaceSlot(symbol))
+
+                    val vfSlot = context.getInterfaceMetadata(symbol).methods
+                        .indexOfFirst { it.function == function }
+
+                    body.buildStructGet(context.referenceVTableGcType(symbol), WasmSymbol(vfSlot))
+                    body.buildInstr(WasmOp.CALL_REF)
+                } else {
+                    body.buildUnreachable()
+                }
             }
 
         } else {
@@ -322,13 +350,14 @@ class BodyGenerator(val context: WasmFunctionCodegenContext) : IrElementVisitorV
             body.buildGetUnit()
     }
 
-    private fun generateTypeRTT(type: IrType) {
-        val klass = type.getRuntimeClass?.symbol ?: context.backendContext.irBuiltIns.anyClass
-        generateClassRTT(klass)
+    private fun generateRefCast(type: IrType) {
+        body.buildRefCastStatic(
+            context.referenceGcType(type.getRuntimeClass(irBuiltIns).symbol)
+        )
     }
 
-    private fun generateClassRTT(klass: IrClassSymbol) {
-        body.buildRttCanon(context.referenceGcType(klass))
+    private fun generateTypeRTT(type: IrType) {
+        body.buildRttCanon(context.referenceGcType(type.getRuntimeClass(irBuiltIns).symbol))
     }
 
     // Return true if generated.
@@ -356,10 +385,35 @@ class BodyGenerator(val context: WasmFunctionCodegenContext) : IrElementVisitorV
                 body.buildConstI32Symbol(context.referenceInterfaceId(irInterface.symbol))
             }
 
+            wasmSymbols.isInterface -> {
+                val irInterface = call.getTypeArgument(0)!!.getClass()
+                    ?: error("No interface given for wasmInterfaceId intrinsic")
+                assert(irInterface.isInterface)
+                if (irInterface.symbol in hierarchyDisjointUnions) {
+                    val classITable = context.referenceClassITableGcType(irInterface.symbol)
+                    val parameterLocal = context.referenceLocal(SyntheticLocalType.IS_INTERFACE_PARAMETER)
+                    body.buildSetLocal(parameterLocal)
+                    body.buildBlock("isInterface", WasmI32) { outerLabel ->
+                        body.buildBlock("isInterface", WasmRefNullType(WasmHeapType.Simple.Data)) { innerLabel ->
+                            body.buildGetLocal(parameterLocal)
+                            body.buildStructGet(context.referenceGcType(irBuiltIns.anyClass), WasmSymbol(1))
+                            body.buildBrInstr(WasmOp.BR_ON_CAST_STATIC_FAIL, innerLabel, classITable)
+                            body.buildStructGet(classITable, context.referenceClassITableInterfaceSlot(irInterface.symbol))
+                            body.buildInstr(WasmOp.REF_IS_NULL)
+                            body.buildInstr(WasmOp.I32_EQZ)
+                            body.buildBr(outerLabel)
+                        }
+                        body.buildDrop()
+                        body.buildConstI32(0)
+                    }
+                } else {
+                    body.buildDrop()
+                    body.buildConstI32(0)
+                }
+            }
+
             wasmSymbols.wasmRefCast -> {
-                val toType = call.getTypeArgument(0)!!
-                generateTypeRTT(toType)
-                body.buildRefCast()
+                generateRefCast(call.getTypeArgument(0)!!)
             }
 
             wasmSymbols.refTest -> {
@@ -443,7 +497,8 @@ class BodyGenerator(val context: WasmFunctionCodegenContext) : IrElementVisitorV
 
     override fun visitReturn(expression: IrReturn) {
         if (expression.returnTargetSymbol.owner.returnType(backendContext) == irBuiltIns.unitType &&
-            expression.returnTargetSymbol.owner != unitGetInstance) {
+            expression.returnTargetSymbol.owner != unitGetInstance
+        ) {
             generateStatement(expression.value)
         } else {
             generateExpression(expression.value)
@@ -499,24 +554,17 @@ class BodyGenerator(val context: WasmFunctionCodegenContext) : IrElementVisitorV
 
         val label = loop.label
 
-        body.buildLoop(label)
-        val wasmLoop = body.numberOfNestedBlocks
-
-        body.buildBlock("BREAK_$label")
-        val wasmBreakBlock = body.numberOfNestedBlocks
-
-        body.buildBlock("CONTINUE_$label")
-        val wasmContinueBlock = body.numberOfNestedBlocks
-
-        context.defineLoopLevel(loop, LoopLabelType.BREAK, wasmBreakBlock)
-        context.defineLoopLevel(loop, LoopLabelType.CONTINUE, wasmContinueBlock)
-
-        loop.body?.let { generateStatement(it) }
-        body.buildEnd()
-        generateExpression(loop.condition)
-        body.buildBrIf(wasmLoop)
-        body.buildEnd()
-        body.buildEnd()
+        body.buildLoop(label) { wasmLoop ->
+            body.buildBlock("BREAK_$label") { wasmBreakBlock ->
+                body.buildBlock("CONTINUE_$label") { wasmContinueBlock ->
+                    context.defineLoopLevel(loop, LoopLabelType.BREAK, wasmBreakBlock)
+                    context.defineLoopLevel(loop, LoopLabelType.CONTINUE, wasmContinueBlock)
+                    loop.body?.let { generateStatement(it) }
+                }
+                generateExpression(loop.condition)
+                body.buildBrIf(wasmLoop)
+            }
+        }
 
         body.buildGetUnit()
     }
@@ -530,24 +578,20 @@ class BodyGenerator(val context: WasmFunctionCodegenContext) : IrElementVisitorV
 
         val label = loop.label
 
-        body.buildLoop(label)
-        val wasmLoop = body.numberOfNestedBlocks
+        body.buildLoop(label) { wasmLoop ->
+            body.buildBlock("BREAK_$label") { wasmBreakBlock ->
+                context.defineLoopLevel(loop, LoopLabelType.BREAK, wasmBreakBlock)
+                context.defineLoopLevel(loop, LoopLabelType.CONTINUE, wasmLoop)
 
-        body.buildBlock("BREAK_$label")
-        val wasmBreakBlock = body.numberOfNestedBlocks
-
-        context.defineLoopLevel(loop, LoopLabelType.BREAK, wasmBreakBlock)
-        context.defineLoopLevel(loop, LoopLabelType.CONTINUE, wasmLoop)
-
-        generateExpression(loop.condition)
-        body.buildInstr(WasmOp.I32_EQZ)
-        body.buildBrIf(wasmBreakBlock)
-        loop.body?.let {
-            generateStatement(it)
+                generateExpression(loop.condition)
+                body.buildInstr(WasmOp.I32_EQZ)
+                body.buildBrIf(wasmBreakBlock)
+                loop.body?.let {
+                    generateStatement(it)
+                }
+                body.buildBr(wasmLoop)
+            }
         }
-        body.buildBr(wasmLoop)
-        body.buildEnd()
-        body.buildEnd()
 
         body.buildGetUnit()
     }
@@ -564,7 +608,7 @@ class BodyGenerator(val context: WasmFunctionCodegenContext) : IrElementVisitorV
     }
 
     // Return true if function is recognized as intrinsic.
-    fun tryToGenerateWasmOpIntrinsicCall(call: IrFunctionAccessExpression, function: IrFunction): Boolean {
+    private fun tryToGenerateWasmOpIntrinsicCall(call: IrFunctionAccessExpression, function: IrFunction): Boolean {
         if (function.hasWasmNoOpCastAnnotation()) {
             return true
         }

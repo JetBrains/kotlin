@@ -6,9 +6,16 @@
 package org.jetbrains.kotlin.backend.wasm.ir2wasm
 
 import org.jetbrains.kotlin.backend.wasm.WasmBackendContext
-import org.jetbrains.kotlin.ir.declarations.IrDeclaration
+import org.jetbrains.kotlin.backend.wasm.utils.DisjointUnions
+import org.jetbrains.kotlin.backend.wasm.utils.getWasmArrayAnnotation
+import org.jetbrains.kotlin.backend.wasm.utils.isAbstractOrSealed
+import org.jetbrains.kotlin.ir.IrElement
+import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
-import org.jetbrains.kotlin.ir.declarations.IrPackageFragment
+import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
+import org.jetbrains.kotlin.ir.util.isAnnotationClass
+import org.jetbrains.kotlin.ir.util.isInterface
+import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
 
 class WasmModuleFragmentGenerator(
@@ -16,28 +23,49 @@ class WasmModuleFragmentGenerator(
     wasmModuleFragment: WasmCompiledModuleFragment,
     allowIncompleteImplementations: Boolean,
 ) {
+    private val hierarchyDisjointUnions = DisjointUnions<IrClassSymbol>()
+
     private val declarationGenerator =
         DeclarationGenerator(
             WasmModuleCodegenContextImpl(
                 backendContext,
                 wasmModuleFragment,
             ),
-            allowIncompleteImplementations
+            allowIncompleteImplementations,
+            hierarchyDisjointUnions,
         )
 
+    private val interfaceCollector = object : IrElementVisitorVoid {
+        override fun visitElement(element: IrElement) { }
+
+        override fun visitClass(declaration: IrClass) {
+            if (declaration.isAnnotationClass) return
+            if (declaration.isExternal) return
+            if (declaration.getWasmArrayAnnotation() != null) return
+            if (declaration.isInterface) return
+            if (declaration.isAbstractOrSealed) return
+
+            val classMetadata = declarationGenerator.context.getClassMetadata(declaration.symbol)
+            if (classMetadata.interfaces.isNotEmpty()) {
+                hierarchyDisjointUnions.addUnion(classMetadata.interfaces.map { it.symbol })
+            }
+        }
+    }
+
+    fun collectInterfaceTables(irModuleFragment: IrModuleFragment) {
+        acceptVisitor(irModuleFragment, interfaceCollector)
+        hierarchyDisjointUnions.compress()
+    }
+
     fun generateModule(irModuleFragment: IrModuleFragment) {
+        acceptVisitor(irModuleFragment, declarationGenerator)
+    }
+
+    private fun acceptVisitor(irModuleFragment: IrModuleFragment, visitor: IrElementVisitorVoid) {
         for (irFile in irModuleFragment.files) {
-            generatePackageFragment(irFile)
+            for (irDeclaration in irFile.declarations) {
+                irDeclaration.acceptVoid(visitor)
+            }
         }
-    }
-
-    fun generatePackageFragment(irPackageFragment: IrPackageFragment) {
-        for (irDeclaration in irPackageFragment.declarations) {
-            generateDeclaration(irDeclaration)
-        }
-    }
-
-    fun generateDeclaration(irDeclaration: IrDeclaration) {
-        irDeclaration.acceptVoid(declarationGenerator)
     }
 }
