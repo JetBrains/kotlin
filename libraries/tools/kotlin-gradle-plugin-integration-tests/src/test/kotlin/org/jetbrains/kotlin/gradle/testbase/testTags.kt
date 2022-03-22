@@ -8,15 +8,6 @@ package org.jetbrains.kotlin.gradle.testbase
 import org.junit.jupiter.api.Tag
 
 /**
- * Add it to test classes performing simple KGP checks (deprecated).
- */
-@Target(AnnotationTarget.CLASS, AnnotationTarget.ANNOTATION_CLASS, AnnotationTarget.FUNCTION)
-@Retention(AnnotationRetention.RUNTIME)
-@Tag("SimpleKGP")
-@Deprecated("will be removed soon", level = DeprecationLevel.ERROR)
-annotation class SimpleGradlePluginTests
-
-/**
  * Add it to test classes performing Gradle or Kotlin daemon checks.
  */
 @Target(AnnotationTarget.CLASS, AnnotationTarget.ANNOTATION_CLASS, AnnotationTarget.FUNCTION)
