@@ -215,7 +215,7 @@ class HierarchicalMppIT : KGPBaseTest() {
         )
     }
 
-    private fun KGPBaseTest.publishThirdPartyLib(
+    private fun publishThirdPartyLib(
         projectName: String = "third-party-lib",
         directoryPrefix: String = "hierarchical-mpp-published-modules",
         withGranularMetadata: Boolean,
@@ -237,7 +237,7 @@ class HierarchicalMppIT : KGPBaseTest() {
         }
 
     private fun TestProject.checkMyLibFoo(compiledProject: BuildResult, subprojectPrefix: String? = null) = with(compiledProject) {
-        assertTasksExecuted(*expectedTasks(subprojectPrefix).toTypedArray())
+        assertTasksExecuted(expectedTasks(subprojectPrefix))
 
         ZipFile(
             projectDir.parentFile.resolve(
@@ -287,7 +287,7 @@ class HierarchicalMppIT : KGPBaseTest() {
     private fun TestProject.checkMyLibBar(compiledProject: BuildResult, subprojectPrefix: String?) = with(compiledProject) {
         val taskPrefix = subprojectPrefix?.let { ":$it" }.orEmpty()
 
-        assertTasksExecuted(*expectedTasks(subprojectPrefix).toTypedArray())
+        assertTasksExecuted(expectedTasks(subprojectPrefix))
 
         ZipFile(
             projectDir.parentFile.resolve(
@@ -372,7 +372,7 @@ class HierarchicalMppIT : KGPBaseTest() {
 
     private fun checkMyApp(compiledProject: BuildResult, subprojectPrefix: String?) = with(compiledProject) {
         val taskPrefix = subprojectPrefix?.let { ":$it" }.orEmpty()
-        assertTasksExecuted(*expectedTasks(subprojectPrefix).toTypedArray())
+        assertTasksExecuted(expectedTasks(subprojectPrefix))
 
         checkNamesOnCompileClasspath(
             "$taskPrefix:compileKotlinMetadata",
@@ -531,7 +531,7 @@ class HierarchicalMppIT : KGPBaseTest() {
         with(project("hierarchical-mpp-js-test", gradleVersion)) {
             val taskToExecute = ":jsNodeTest"
             build(taskToExecute, "-PthirdPartyRepo=$thirdPartyRepo") {
-                assertTasksExecuted(taskToExecute)
+                assertTaskExecuted(taskToExecute)
             }
         }
     }

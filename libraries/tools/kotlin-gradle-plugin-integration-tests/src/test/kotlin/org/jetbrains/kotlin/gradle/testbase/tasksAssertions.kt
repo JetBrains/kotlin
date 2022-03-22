@@ -9,28 +9,44 @@ import org.gradle.testkit.runner.BuildResult
 import org.gradle.testkit.runner.TaskOutcome
 
 /**
+ * Asserts given [task] have 'SUCCESS' execution state.
+ */
+fun BuildResult.assertTaskExecuted(task: String) {
+    assert(task(task)?.outcome == TaskOutcome.SUCCESS) {
+        printBuildOutput()
+        "Task $task didn't have 'SUCCESS' state: ${task(task)?.outcome}"
+    }
+}
+
+/**
  * Asserts given [tasks] have 'SUCCESS' execution state.
  */
-fun BuildResult.assertTasksExecuted(vararg tasks: String) {
-    tasks.forEach { task ->
-        assert(task(task)?.outcome == TaskOutcome.SUCCESS) {
-            printBuildOutput()
-            "Task $task didn't have 'SUCCESS' state: ${task(task)?.outcome}"
-        }
+fun BuildResult.assertTasksExecuted(vararg tasks: String) = tasks.forEach { task -> assertTaskExecuted(task) }
+
+/**
+ * Asserts given [tasks] have 'SUCCESS' execution state.
+ */
+fun BuildResult.assertTasksExecuted(tasks: Iterable<String>) = tasks.forEach { task -> assertTaskExecuted(task) }
+
+/**
+ * Asserts given [task] have 'FAILED' execution state.
+ */
+fun BuildResult.assertTaskFailed(task: String) {
+    assert(task(task)?.outcome == TaskOutcome.FAILED) {
+        printBuildOutput()
+        "Task $task didn't have 'FAILED' state: ${task(task)?.outcome}"
     }
 }
 
 /**
  * Asserts given [tasks] have 'FAILED' execution state.
  */
-fun BuildResult.assertTasksFailed(vararg tasks: String) {
-    tasks.forEach { task ->
-        assert(task(task)?.outcome == TaskOutcome.FAILED) {
-            printBuildOutput()
-            "Task $task didn't have 'FAILED' state: ${task(task)?.outcome}"
-        }
-    }
-}
+fun BuildResult.assertTasksFailed(vararg tasks: String) = tasks.forEach { task -> assertTaskFailed(task) }
+
+/**
+ * Asserts given [tasks] have 'FAILED' execution state.
+ */
+fun BuildResult.assertTasksFailed(tasks: Iterable<String>) = tasks.forEach { task -> assertTaskFailed(task) }
 
 /**
  * Asserts given [tasks] have 'UP-TO-DATE' execution state.
