@@ -10,6 +10,10 @@
 - [`KT-51471`](https://youtrack.jetbrains.com/issue/KT-51471) Native: incorrect debug information when inheriting suspend fun invoke implementation
 - [`KT-51353`](https://youtrack.jetbrains.com/issue/KT-51353) IncompatibleClassChangeError: Expected non-static field com.soywiz.korim.color.Colors.BLACK
 
+### Native
+
+- [`KT-37368`](https://youtrack.jetbrains.com/issue/KT-37368) Native compiler fails to compile big projects
+
 ### Native. Runtime
 
 - [`KT-51586`](https://youtrack.jetbrains.com/issue/KT-51586) SIGSEGV on worker7 test
