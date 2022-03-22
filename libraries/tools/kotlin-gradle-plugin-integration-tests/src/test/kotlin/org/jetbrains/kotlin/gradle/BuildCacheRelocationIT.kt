@@ -285,11 +285,11 @@ class BuildCacheRelocationIT : KGPBaseTest() {
     @DisplayName("Kapt incremental compilation build does not break relocated build cache")
     @GradleTest
     fun testKaptCachingIncrementalBuildWithRelocation(gradleVersion: GradleVersion) {
-        val firstProject = project("kapt2/kaptAvoidance", gradleVersion) {
+        val firstProject = project("kapt2/kaptAvoidance", gradleVersion, parentDir = "first") {
             enableLocalBuildCache(localBuildCacheDir)
         }
 
-        val secondProject = project("kapt2/kaptAvoidance", gradleVersion) {
+        val secondProject = project("kapt2/kaptAvoidance", gradleVersion, parentDir = "second") {
             enableLocalBuildCache(localBuildCacheDir)
         }
 
