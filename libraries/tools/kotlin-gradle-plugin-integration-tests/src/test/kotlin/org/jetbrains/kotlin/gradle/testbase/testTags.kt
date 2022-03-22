@@ -32,6 +32,14 @@ annotation class JvmGradlePluginTests
 annotation class JsGradlePluginTests
 
 /**
+ * Add it to tests covering Kotlin Gradle Plugin/Native platform.
+ */
+@Target(AnnotationTarget.CLASS, AnnotationTarget.ANNOTATION_CLASS, AnnotationTarget.FUNCTION)
+@Retention(AnnotationRetention.RUNTIME)
+@Tag("NativeKGP")
+annotation class NativeGradlePluginTests
+
+/**
  * Add it to tests covering Kotlin Multiplatform Gradle plugin.
  */
 @Target(AnnotationTarget.CLASS, AnnotationTarget.ANNOTATION_CLASS, AnnotationTarget.FUNCTION)
@@ -56,3 +64,4 @@ annotation class AndroidGradlePluginTests
 @Retention(AnnotationRetention.RUNTIME)
 @Tag("OtherKGP")
 annotation class OtherGradlePluginTests
+
