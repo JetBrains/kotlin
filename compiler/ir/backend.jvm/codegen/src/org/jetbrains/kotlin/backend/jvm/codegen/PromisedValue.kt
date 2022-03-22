@@ -70,6 +70,13 @@ abstract class PromisedValue(val codegen: ExpressionCodegen, val type: Type, val
         }
 
         if (isFromTypeUnboxed && !isToTypeUnboxed) {
+            if (irType.isInlineChildOfSealedInlineClass()) {
+                val top = irType.findTopSealedInlineSuperClass()
+                val boxed = typeMapper.mapType(top.defaultType.makeNullable())
+                StackValue.boxInlineClass(AsmTypes.OBJECT_TYPE, boxed, erasedSourceType.isNullable(), mv)
+                return
+            }
+
             val boxed = typeMapper.mapType(erasedSourceType, TypeMappingMode.CLASS_DECLARATION)
             StackValue.boxInlineClass(type, boxed, erasedSourceType.isNullable(), mv)
             return
@@ -83,12 +90,22 @@ abstract class PromisedValue(val codegen: ExpressionCodegen, val type: Type, val
                 // Use getfield instead of unbox-impl inside inline classes
                 codegen.mv.getfield(boxed.internalName, irClass.inlineClassFieldName.asString(), target.descriptor)
             } else {
+                if (irTarget.isInlineChildOfSealedInlineClass()) {
+                    val top = irTarget.findTopSealedInlineSuperClass()
+                    val boxedTop = typeMapper.mapType(top.defaultType.makeNullable())
+                    StackValue.unboxInlineClass(type, boxedTop, AsmTypes.OBJECT_TYPE, erasedTargetType.isNullable(), mv)
+                    StackValue.coerce(AsmTypes.OBJECT_TYPE, target, mv)
+                    return
+                }
+
                 StackValue.unboxInlineClass(type, boxed, target, erasedTargetType.isNullable(), mv)
             }
             return
         }
 
-        if (type != target || (castForReified && irType.anyTypeArgument { it.isReified })) {
+        if ((type != target || (castForReified && irType.anyTypeArgument { it.isReified })) &&
+            !(irTarget == irType && (irTarget.isInlineChildOfSealedInlineClass() || irType.isInlineChildOfSealedInlineClass()))
+        ) {
             StackValue.coerce(type, target, mv, type == target)
         }
     }

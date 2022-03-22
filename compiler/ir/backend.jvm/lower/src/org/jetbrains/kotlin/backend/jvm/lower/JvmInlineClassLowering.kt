@@ -118,7 +118,7 @@ private class JvmInlineClassLowering(context: JvmBackendContext) : JvmValueClass
                         irCall(this@JvmInlineClassLowering.context.ir.symbols.throwTypeCastException).also {
                             it.putValueArgument(
                                 0,
-                                irString("Cannot cast to sealed inline class child ${expression.typeOperand.asClass().name}")
+                                irString("Cannot cast to sealed inline class child ${expression.typeOperand.classFqName}")
                             )
                         }
                     }

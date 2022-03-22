@@ -175,7 +175,11 @@ class MethodSignatureMapper(private val context: JvmBackendContext) {
     private fun mapReturnType(declaration: IrDeclaration, returnType: IrType, sw: JvmSignatureWriter?): Type {
         val isAnnotationMethod = declaration.parent.let { it is IrClass && it.isAnnotationClass }
         if (sw == null || sw.skipGenericSignature()) {
-            return typeMapper.mapType(returnType, TypeMappingMode.getModeForReturnTypeNoGeneric(isAnnotationMethod), sw)
+            return typeMapper.mapType(
+                returnType.sealedInlineClassTypeIfNeeded(),
+                TypeMappingMode.getModeForReturnTypeNoGeneric(isAnnotationMethod),
+                sw
+            )
         }
 
         val typeMappingModeFromAnnotation =
@@ -188,8 +192,14 @@ class MethodSignatureMapper(private val context: JvmBackendContext) {
 
         val mappingMode = typeSystem.getOptimalModeForReturnType(returnType, isAnnotationMethod)
 
-        return typeMapper.mapType(returnType, mappingMode, sw)
+        return typeMapper.mapType(returnType.sealedInlineClassTypeIfNeeded(), mappingMode, sw)
     }
+
+    private fun IrType.sealedInlineClassTypeIfNeeded(): IrType =
+        if (isInlineChildOfSealedInlineClass() && isNullable() &&
+            classOrNull?.owner?.inlineClassRepresentation?.underlyingType?.isNullable() == true
+        ) findTopSealedInlineSuperClass().defaultType.makeNullable()
+        else this
 
     private fun hasVoidReturnType(function: IrFunction): Boolean =
         function is IrConstructor || (function.returnType.isUnit() && !function.isGetter)

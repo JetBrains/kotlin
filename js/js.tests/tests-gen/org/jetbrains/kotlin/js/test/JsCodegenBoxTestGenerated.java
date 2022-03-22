@@ -20046,6 +20046,40 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 public void testObject() throws Exception {
                     runTest("compiler/testData/codegen/box/inlineClasses/sealed/casts/object.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
                 }
+
+                @Nested
+                @TestMetadata("compiler/testData/codegen/box/inlineClasses/sealed/casts/returnType")
+                @TestDataPath("$PROJECT_ROOT")
+                public class ReturnType {
+                    @Test
+                    public void testAllFilesPresentInReturnType() throws Exception {
+                        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/inlineClasses/sealed/casts/returnType"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS, true);
+                    }
+
+                    @Test
+                    @TestMetadata("class.kt")
+                    public void testClass() throws Exception {
+                        runTest("compiler/testData/codegen/box/inlineClasses/sealed/casts/returnType/class.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+                    }
+
+                    @Test
+                    @TestMetadata("inlineClass.kt")
+                    public void testInlineClass() throws Exception {
+                        runTest("compiler/testData/codegen/box/inlineClasses/sealed/casts/returnType/inlineClass.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+                    }
+
+                    @Test
+                    @TestMetadata("inlineClassNullable.kt")
+                    public void testInlineClassNullable() throws Exception {
+                        runTest("compiler/testData/codegen/box/inlineClasses/sealed/casts/returnType/inlineClassNullable.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+                    }
+
+                    @Test
+                    @TestMetadata("object.kt")
+                    public void testObject() throws Exception {
+                        runTest("compiler/testData/codegen/box/inlineClasses/sealed/casts/returnType/object.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+                    }
+                }
             }
 
             @Nested

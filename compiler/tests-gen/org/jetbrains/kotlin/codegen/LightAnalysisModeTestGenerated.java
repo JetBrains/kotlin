@@ -21008,6 +21008,43 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
                 public void testAllFilesPresentInCasts() throws Exception {
                     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/inlineClasses/sealed/casts"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM, true);
                 }
+
+                @TestMetadata("compiler/testData/codegen/box/inlineClasses/sealed/casts/returnType")
+                @TestDataPath("$PROJECT_ROOT")
+                @RunWith(JUnit3RunnerWithInners.class)
+                public static class ReturnType extends AbstractLightAnalysisModeTest {
+                    @TestMetadata("class.kt")
+                    public void ignoreClass() throws Exception {
+                        runTest("compiler/testData/codegen/box/inlineClasses/sealed/casts/returnType/class.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+                    }
+
+                    @TestMetadata("inlineClass.kt")
+                    public void ignoreInlineClass() throws Exception {
+                        runTest("compiler/testData/codegen/box/inlineClasses/sealed/casts/returnType/inlineClass.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+                    }
+
+                    @TestMetadata("inlineClassNullable.kt")
+                    public void ignoreInlineClassNullable() throws Exception {
+                        runTest("compiler/testData/codegen/box/inlineClasses/sealed/casts/returnType/inlineClassNullable.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+                    }
+
+                    @TestMetadata("object.kt")
+                    public void ignoreObject() throws Exception {
+                        runTest("compiler/testData/codegen/box/inlineClasses/sealed/casts/returnType/object.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+                    }
+
+                    private void runTest(String testDataFilePath) throws Exception {
+                        KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM, testDataFilePath);
+                    }
+
+                    private void runTest(String testDataFilePath, java.util.function.Function<String, String> transformer) throws Exception {
+                        KotlinTestUtils.runTest(path -> doTestWithTransformer(path, transformer), TargetBackend.JVM, testDataFilePath);
+                    }
+
+                    public void testAllFilesPresentInReturnType() throws Exception {
+                        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/inlineClasses/sealed/casts/returnType"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM, true);
+                    }
+                }
             }
 
             @TestMetadata("compiler/testData/codegen/box/inlineClasses/sealed/constructor")

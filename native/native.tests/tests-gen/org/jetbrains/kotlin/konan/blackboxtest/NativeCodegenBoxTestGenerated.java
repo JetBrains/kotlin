@@ -22656,6 +22656,53 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
                         // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
                         runTest("compiler/testData/codegen/box/inlineClasses/sealed/casts/object.kt");
                     }
+
+                    @Nested
+                    @TestMetadata("compiler/testData/codegen/box/inlineClasses/sealed/casts/returnType")
+                    @TestDataPath("$PROJECT_ROOT")
+                    @Tag("codegen")
+                    @UseExtTestCaseGroupProvider()
+                    public class ReturnType {
+                        public ReturnType() {
+                            register("compiler/testData/codegen/box/inlineClasses/sealed/casts/returnType/class.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+                            register("compiler/testData/codegen/box/inlineClasses/sealed/casts/returnType/inlineClass.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+                            register("compiler/testData/codegen/box/inlineClasses/sealed/casts/returnType/inlineClassNullable.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+                            register("compiler/testData/codegen/box/inlineClasses/sealed/casts/returnType/object.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+                        }
+
+                        @Test
+                        public void testAllFilesPresentInReturnType() throws Exception {
+                            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/inlineClasses/sealed/casts/returnType"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
+                        }
+
+                        @Test
+                        @TestMetadata("class.kt")
+                        public void testClass() throws Exception {
+                            // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
+                            runTest("compiler/testData/codegen/box/inlineClasses/sealed/casts/returnType/class.kt");
+                        }
+
+                        @Test
+                        @TestMetadata("inlineClass.kt")
+                        public void testInlineClass() throws Exception {
+                            // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
+                            runTest("compiler/testData/codegen/box/inlineClasses/sealed/casts/returnType/inlineClass.kt");
+                        }
+
+                        @Test
+                        @TestMetadata("inlineClassNullable.kt")
+                        public void testInlineClassNullable() throws Exception {
+                            // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
+                            runTest("compiler/testData/codegen/box/inlineClasses/sealed/casts/returnType/inlineClassNullable.kt");
+                        }
+
+                        @Test
+                        @TestMetadata("object.kt")
+                        public void testObject() throws Exception {
+                            // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
+                            runTest("compiler/testData/codegen/box/inlineClasses/sealed/casts/returnType/object.kt");
+                        }
+                    }
                 }
 
                 @Nested

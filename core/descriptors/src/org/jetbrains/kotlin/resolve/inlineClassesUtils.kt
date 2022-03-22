@@ -55,6 +55,11 @@ fun KotlinType.isNoinlineChildOfSealedInlineClass(): Boolean =
         it.safeAs<ClassDescriptor>()?.getSuperClassOrAny()?.isInlineClass() == true && !it.isInlineClass()
     } == true
 
+fun KotlinType.isInlineChildOfSealedInlineClass(): Boolean =
+    constructor.declarationDescriptor?.let {
+        it.safeAs<ClassDescriptor>()?.getSuperClassOrAny()?.isInlineClass() == true && it.isInlineClass()
+    } == true
+
 fun KotlinType.substitutedUnderlyingType(): KotlinType? =
     unsubstitutedUnderlyingType()?.let { TypeSubstitutor.create(this).substitute(it, Variance.INVARIANT) }
 
