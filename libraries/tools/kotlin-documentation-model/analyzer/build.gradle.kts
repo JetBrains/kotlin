@@ -67,14 +67,6 @@ subprojects {
     }
 }
 
-// Workaround for https://github.com/bintray/gradle-bintray-plugin/issues/267
-//  Manually disable bintray tasks added to the root project
-tasks.whenTaskAdded {
-    if ("bintray" in name) {
-        enabled = false
-    }
-}
-
 println("Publication version: $dokka_version")
 tasks.register<ValidatePublications>("validatePublications")
 
