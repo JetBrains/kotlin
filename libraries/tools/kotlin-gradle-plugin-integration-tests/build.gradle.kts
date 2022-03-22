@@ -228,6 +228,18 @@ val jsTestsTask = tasks.register<Test>("kgpJsTests") {
     if (isTeamcityBuild) finalizedBy(cleanTestKitCacheTask)
 }
 
+val nativeTestsTask = tasks.register<Test>("kgpNativeTests") {
+    group = KGP_TEST_TASKS_GROUP
+    description = "Run tests for Kotlin/Native part of Gradle plugin"
+    maxParallelForks = maxParallelTestForks
+    useJUnitPlatform {
+        includeTags("NativeKGP")
+        includeEngines("junit-jupiter")
+    }
+
+    if (isTeamcityBuild) finalizedBy(cleanTestKitCacheTask)
+}
+
 // Daemon tests could run only sequentially as they could not be shared between parallel test builds
 val daemonsTestsTask = tasks.register<Test>("kgpDaemonTests") {
     group = KGP_TEST_TASKS_GROUP
@@ -281,7 +293,7 @@ val androidTestsTask = tasks.register<Test>("kgpAndroidTests") {
 
 tasks.named<Task>("check") {
     dependsOn("testAdvanceGradleVersion")
-    dependsOn(jvmTestsTask, jsTestsTask, daemonsTestsTask, otherPluginsTestTask, mppTestsTask, androidTestsTask)
+    dependsOn(jvmTestsTask, jsTestsTask, nativeTestsTask, daemonsTestsTask, otherPluginsTestTask, mppTestsTask, androidTestsTask)
     if (isTeamcityBuild) {
         dependsOn("testAdvanceGradleVersionMppAndAndroid")
         dependsOn("testMppAndAndroid")
@@ -333,6 +345,7 @@ tasks.withType<Test> {
         allParallelTestsTask.name,
         jvmTestsTask.name,
         jsTestsTask.name,
+        nativeTestsTask.name,
         daemonsTestsTask.name,
         otherPluginsTestTask.name,
         mppTestsTask.name,
