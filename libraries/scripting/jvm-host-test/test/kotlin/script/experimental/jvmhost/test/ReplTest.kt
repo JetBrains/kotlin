@@ -68,6 +68,30 @@ class ReplTest : TestCase() {
     }
 
     @Test
+    fun testCaptureFromPreviousSnippets() {
+        val out = captureOut {
+            checkEvaluateInRepl(
+                sequenceOf(
+                    "val x = 3",
+                    "fun b() = x",
+                    "b()",
+                    "println(\"b() = \${b()}\")",
+                    "val y = x + 2",
+                    "y",
+                    "class Nested { fun c() = x + 4 }",
+                    "Nested().c()",
+                    "inner class Inner { fun d() = x + 6 }",
+                    "Inner().d()",
+                    "class TwoLevel { inner class Inner { fun e() = x + 8 } }",
+                    "TwoLevel().Inner().e()",
+                ),
+                sequenceOf(null, null, 3, null, null, 5, null, 7, null, 9, null, 11)
+            )
+        }
+        Assert.assertEquals("b() = 3", out)
+    }
+
+    @Test
     fun testEvalWithResult() {
         checkEvaluateInRepl(
             sequenceOf(
