@@ -99,7 +99,9 @@ class ScriptGenerator(declarationGenerator: DeclarationGenerator) : DeclarationG
                 ).also { it.parent = irScript }
             }
 
-            irScript.earlierScriptsParameter = descriptor.earlierScriptsConstructorParameter?.let(::createValueParameter)
+            if (context.extensions.lowerScriptToClass) {
+                irScript.earlierScriptsParameter = descriptor.earlierScriptsConstructorParameter?.let(::createValueParameter)
+            }
 
             irScript.explicitCallParameters = descriptor.explicitConstructorParameters.map(::createValueParameter)
 

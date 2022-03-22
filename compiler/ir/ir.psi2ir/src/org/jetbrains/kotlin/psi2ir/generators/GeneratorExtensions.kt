@@ -40,6 +40,7 @@ open class GeneratorExtensions : StubGeneratorExtensions() {
         get() = false
 
     open fun getPreviousScripts(): List<IrScriptSymbol>? = null
+    open val lowerScriptToClass: Boolean get() = true
 
     open fun unwrapSyntheticJavaProperty(descriptor: PropertyDescriptor): Pair<FunctionDescriptor, FunctionDescriptor?>? = null
 

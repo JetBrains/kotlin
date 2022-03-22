@@ -73,6 +73,7 @@ class JsCoreScriptingCompiler(
             if (replCompilerState == null) GeneratorExtensions()
             else object : GeneratorExtensions() {
                 override fun getPreviousScripts() = replCompilerState.history.map { it.item.scriptSymbol }
+                override val lowerScriptToClass: Boolean = false
             }
 
         val psi2irContext = psi2ir.createGeneratorContext(module, bindingContext, symbolTable, generatorExtensions)
