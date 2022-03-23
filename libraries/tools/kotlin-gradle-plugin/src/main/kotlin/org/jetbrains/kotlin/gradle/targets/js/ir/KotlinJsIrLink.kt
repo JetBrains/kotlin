@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.gradle.targets.js.ir
 
 import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.file.DirectoryProperty
-import org.gradle.api.file.FileCollection
 import org.gradle.api.file.ProjectLayout
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.tasks.*
@@ -26,6 +25,7 @@ import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsBinaryMode.DEVELOPMENT
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsBinaryMode.PRODUCTION
 import org.jetbrains.kotlin.gradle.tasks.Kotlin2JsCompile
 import org.jetbrains.kotlin.gradle.utils.getValue
+import org.jetbrains.kotlin.gradle.utils.property
 import org.jetbrains.kotlin.gradle.utils.toHexString
 import org.jetbrains.kotlin.statistics.metrics.BooleanMetrics
 import org.jetbrains.kotlin.statistics.metrics.StringMetrics
@@ -57,18 +57,6 @@ abstract class KotlinJsIrLink @Inject constructor(
         }
     }
 
-    init {
-        // Not check sources, only klib module
-        disallowSourceChanges()
-    }
-
-    @get:Internal
-    override val sources: FileCollection = super.sources
-
-    override fun skipCondition(): Boolean {
-        return !entryModule.get().asFile.exists()
-    }
-
     @Transient
     @get:Internal
     internal lateinit var compilation: KotlinCompilationData<*>
@@ -93,6 +81,10 @@ abstract class KotlinJsIrLink @Inject constructor(
     @Input
     lateinit var mode: KotlinJsBinaryMode
 
+    // Not check sources, only klib module
+    @get:Internal
+    abstract override val sources: ConfigurableFileCollection
+
     private val buildDir = project.buildDir
 
     @get:SkipWhenEmpty
@@ -101,23 +93,22 @@ abstract class KotlinJsIrLink @Inject constructor(
     @get:PathSensitive(PathSensitivity.RELATIVE)
     internal abstract val entryModule: DirectoryProperty
 
-    @get:Internal
-    override val destinationDirectory: DirectoryProperty = objectFactory.directoryProperty()
-
-    @get:OutputDirectory
-    val normalizedDestinationDirectory: DirectoryProperty = objectFactory
-        .directoryProperty()
-        .apply {
+    override val destinationDirectory: DirectoryProperty
+        get() = objectFactory.directoryProperty().apply {
             set(
-                destinationDirectory.map { dir ->
-                    if (kotlinOptions.outputFile != null) {
-                        projectLayout.dir(outputFileProperty.map { it.parentFile }).get()
+                destinationDirectory.flatMap { dir ->
+                    if (kotlinOptions.outputFile == null) {
+                        objectFactory.property(dir)
                     } else {
-                        dir
+                        projectLayout.dir(outputFileProperty.map { it.parentFile })
                     }
                 }
             )
         }
+
+    override fun skipCondition(): Boolean {
+        return !entryModule.get().asFile.exists()
+    }
 
     @get:Internal
     val rootCacheDirectory by lazy {

@@ -18,7 +18,6 @@ package org.jetbrains.kotlin.gradle.tasks
 
 import org.gradle.api.Project
 import org.gradle.api.file.ConfigurableFileCollection
-import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.*
 import org.gradle.work.InputChanges
@@ -47,10 +46,8 @@ import javax.inject.Inject
 @CacheableTask
 abstract class KotlinCompileCommon @Inject constructor(
     override val kotlinOptions: KotlinMultiplatformCommonOptions,
-    workerExecutor: WorkerExecutor,
-    objectFactory: ObjectFactory
-) : AbstractKotlinCompile<K2MetadataCompilerArguments>(objectFactory),
-    KotlinCommonCompile {
+    workerExecutor: WorkerExecutor
+) : AbstractKotlinCompile<K2MetadataCompilerArguments>(), KotlinCommonCompile {
 
     class Configurator(compilation: KotlinCompilationData<*>) : AbstractKotlinCompile.Configurator<KotlinCompileCommon>(compilation) {
         override fun configure(task: KotlinCompileCommon) {
@@ -88,7 +85,7 @@ abstract class KotlinCompileCommon @Inject constructor(
     }
 
     override val compilerRunner: Provider<GradleCompilerRunner> =
-        objectFactory.propertyWithConvention(
+        objects.propertyWithConvention(
             gradleCompileTaskProvider.map {
                 GradleCompilerRunnerWithWorkers(
                     it,
@@ -103,6 +100,9 @@ abstract class KotlinCompileCommon @Inject constructor(
 
     override fun createCompilerArgs(): K2MetadataCompilerArguments =
         K2MetadataCompilerArguments()
+
+    override fun getSourceRoots(): SourceRoots =
+        SourceRoots.KotlinOnly.create(sources, sourceFilesExtensions.get())
 
     override fun setupCompilerArgs(args: K2MetadataCompilerArguments, defaultsOnly: Boolean, ignoreClasspathResolutionErrors: Boolean) {
         args.apply { fillDefaultValues() }
@@ -132,14 +132,14 @@ abstract class KotlinCompileCommon @Inject constructor(
     @get:PathSensitive(PathSensitivity.RELATIVE)
     @get:IgnoreEmptyDirectories
     @get:InputFiles
-    internal val refinesMetadataPaths: ConfigurableFileCollection = objectFactory.fileCollection()
+    internal val refinesMetadataPaths: ConfigurableFileCollection = objects.fileCollection()
 
     @get:Internal
-    internal val expectActualLinker = objectFactory.property(Boolean::class.java)
+    internal val expectActualLinker = objects.property(Boolean::class.java)
 
     override fun callCompilerAsync(
         args: K2MetadataCompilerArguments,
-        kotlinSources: Set<File>,
+        sourceRoots: SourceRoots,
         inputChanges: InputChanges,
         taskOutputsBackup: TaskOutputsBackup?
     ) {
@@ -152,7 +152,7 @@ abstract class KotlinCompileCommon @Inject constructor(
             outputFiles = allOutputFiles()
         )
         compilerRunner.runMetadataCompilerAsync(
-            kotlinSources.toList(),
+            sourceRoots.kotlinSourceFiles.files.toList(),
             commonSourceSet.files.toList(),
             args,
             environment

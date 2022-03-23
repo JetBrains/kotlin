@@ -136,11 +136,7 @@ constructor(
             binary.linkSyncTaskName
         ) { task ->
             task.from(
-                project.layout.file(
-                    binary.linkTask.flatMap { linkTask ->
-                        linkTask.normalizedDestinationDirectory.map { it.asFile }
-                    }
-                )
+                project.layout.file(binary.linkTask.flatMap { it.destinationDirectory.map { it.asFile } })
             )
 
             task.from(project.tasks.named(compilation.processResourcesTaskName))
