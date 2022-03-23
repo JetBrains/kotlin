@@ -224,29 +224,23 @@ constructor(
         compilation.platformType
     }
 
-    /**
-     * [forNpmDependencies] is used to avoid querying [destinationDirectory] before task execution.
-     * Otherwise, Gradle will fail the build.
-     */
-    private fun createWebpackConfig(forNpmDependencies: Boolean = false) = KotlinWebpackConfig(
-        mode = mode,
-        entry = if (forNpmDependencies) null else entry,
-        reportEvaluatedConfigFile = if (!forNpmDependencies && saveEvaluatedConfigFile) evaluatedConfigFile else null,
-        output = output,
-        outputPath = if (forNpmDependencies) null else destinationDirectory,
-        outputFileName = outputFileName,
-        configDirectory = configDirectory,
-        bundleAnalyzerReportDir = if (!forNpmDependencies && report) reportDir else null,
-        cssSupport = cssSupport,
-        devServer = devServer,
-        devtool = devtool,
-        sourceMaps = sourceMaps,
-        resolveFromModulesFirst = resolveFromModulesFirst,
-        webpackMajorVersion = webpackMajorVersion
-    )
-
     private fun createRunner(): KotlinWebpackRunner {
-        val config = createWebpackConfig()
+        val config = KotlinWebpackConfig(
+            mode = mode,
+            entry = entry,
+            reportEvaluatedConfigFile = if (saveEvaluatedConfigFile) evaluatedConfigFile else null,
+            output = output,
+            outputPath = destinationDirectory,
+            outputFileName = outputFileName,
+            configDirectory = configDirectory,
+            bundleAnalyzerReportDir = if (report) reportDir else null,
+            cssSupport = cssSupport,
+            devServer = devServer,
+            devtool = devtool,
+            sourceMaps = sourceMaps,
+            resolveFromModulesFirst = resolveFromModulesFirst,
+            webpackMajorVersion = webpackMajorVersion
+        )
 
         if (platformType == KotlinPlatformType.wasm) {
             config.experiments += listOf(
@@ -274,7 +268,7 @@ constructor(
         @Internal get() = true
 
     override val requiredNpmDependencies: Set<RequiredKotlinJsDependency>
-        @Internal get() = createWebpackConfig(true).getRequiredDependencies(versions)
+        @Internal get() = createRunner().config.getRequiredDependencies(versions)
 
     private val isContinuous = project.gradle.startParameter.isContinuous
 

@@ -106,6 +106,8 @@ tasks.compileJava {
 
 tasks.compileKotlin {
     kotlinOptions.jvmTarget = "1.8"
+    sourceCompatibility = "1.8"
+    targetCompatibility = "1.8"
 }
 
 projectTest(parallel = true) {

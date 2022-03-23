@@ -35,6 +35,7 @@ import org.jetbrains.kotlin.gradle.utils.isParentOf
 import org.jetbrains.kotlin.incremental.classpathAsList
 import org.jetbrains.kotlin.incremental.destinationAsFile
 import java.io.File
+import java.util.concurrent.Callable
 import javax.inject.Inject
 
 @CacheableTask
@@ -62,7 +63,7 @@ abstract class KaptGenerateStubsTask @Inject constructor(
             val providerFactory = kotlinCompileTask.project.providers
             task.useModuleDetection.value(kotlinCompileTask.useModuleDetection).disallowChanges()
             task.moduleName.value(kotlinCompileTask.moduleName).disallowChanges()
-            task.classpath.from(kotlinCompileTask.classpath)
+            task.classpath = task.project.files(Callable { kotlinCompileTask.classpath })
             task.kotlinTaskPluginClasspath.from(
                 providerFactory.provider { kotlinCompileTask.pluginClasspath }
             )
@@ -118,17 +119,16 @@ abstract class KaptGenerateStubsTask @Inject constructor(
     @get:Incremental
     abstract val additionalSources: ConfigurableFileCollection
 
-    override fun setSource(vararg source: Any) {
-        super.setSource(sourceRootsContainer.add(sources))
+    override fun source(vararg sources: Any): SourceTask {
+        return super.source(sourceRootsContainer.add(sources))
     }
 
-    override fun setSource(source: Any) {
+    override fun setSource(sources: Any) {
         super.setSource(sourceRootsContainer.set(sources))
     }
 
-    // TODO: prevent querying destinationDirectory on configuration time
     private fun isSourceRootAllowed(source: File): Boolean =
-        !destinationDirectory.get().asFile.isParentOf(source) &&
+        !destinationDir.isParentOf(source) &&
                 !stubsDir.asFile.get().isParentOf(source) &&
                 generatedSourcesDirs.none { it.isParentOf(source) }
 
@@ -146,7 +146,7 @@ abstract class KaptGenerateStubsTask @Inject constructor(
 
         args.verbose = verbose.get()
         args.classpathAsList = this.classpath.filter { it.exists() }.toList()
-        args.destinationAsFile = this.destinationDirectory.get().asFile
+        args.destinationAsFile = this.destinationDir
     }
 
     @get:Internal

@@ -175,7 +175,7 @@ open class KotlinPlatformImplementationPluginBase(platformName: String) : Kotlin
 
             val commonSources = getKotlinSourceDirectorySetSafe(commonSourceSet)!!
             for (platformTask in platformTasks) {
-                platformTask.setSource(commonSources)
+                platformTask.source(commonSources)
                 platformTask.commonSourceSet.from(commonSources)
             }
         }
