@@ -84,7 +84,7 @@ abstract class KotlinJsDce @Inject constructor(
 
     @get:Incremental
     @get:InputFiles
-    abstract override val libraries: ConfigurableFileCollection
+    abstract override val classpath: ConfigurableFileCollection
 
     private val buildDir = project.layout.buildDirectory
 
@@ -103,11 +103,11 @@ abstract class KotlinJsDce @Inject constructor(
         val shouldPerformIncrementalCopy = isDevMode && !isExplicitDevModeAllStrategy
 
         val classpathFiles = if (shouldPerformIncrementalCopy) {
-            inputChanges.getFileChanges(libraries)
+            inputChanges.getFileChanges(classpath)
                 .filter { it.changeType == ChangeType.MODIFIED || it.changeType == ChangeType.ADDED }
                 .map { it.file }
         } else {
-            libraries.asFileTree.files
+            classpath.asFileTree.files
         }
 
         val inputFiles = sources.asFileTree.files.plus(classpathFiles)

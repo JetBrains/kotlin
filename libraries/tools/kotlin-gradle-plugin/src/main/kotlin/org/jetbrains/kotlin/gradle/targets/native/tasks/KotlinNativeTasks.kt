@@ -159,12 +159,10 @@ abstract class AbstractKotlinNativeCompile<
     }
 
     @get:Classpath
-    override val libraries: ConfigurableFileCollection by project.provider {
+    val libraries: FileCollection by project.provider {
         // Avoid resolving these dependencies during task graph construction when we can't build the target:
         if (konanTarget.enabledOnCurrentHost)
-            objectFactory.fileCollection().from(
-                compilation.compileDependencyFiles.filterOutPublishableInteropLibs(project)
-            )
+            compilation.compileDependencyFiles.filterOutPublishableInteropLibs(project)
         else objectFactory.fileCollection()
     }
 
@@ -172,6 +170,10 @@ abstract class AbstractKotlinNativeCompile<
     protected val friendModule: FileCollection by project.provider {
         project.files(compilation.friendPaths)
     }
+
+    @Deprecated("For native tasks use 'libraries' instead", ReplaceWith("libraries"))
+    override val classpath: ConfigurableFileCollection
+        get() = objectFactory.fileCollection().from(libraries)
 
     @get:Input
     val target: String by project.provider { compilation.konanTarget.name }
