@@ -14,7 +14,6 @@ import org.gradle.api.file.*
 import org.gradle.api.invocation.Gradle
 import org.gradle.api.logging.Logger
 import org.gradle.api.model.ObjectFactory
-import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 import org.gradle.api.provider.SetProperty
@@ -77,7 +76,7 @@ const val USING_JS_IR_BACKEND_MESSAGE = "Using Kotlin/JS IR backend"
 abstract class AbstractKotlinCompileTool<T : CommonToolArguments> @Inject constructor(
     objectFactory: ObjectFactory
 ) : DefaultTask(),
-    PatternFilterable,
+    KotlinCompileTool,
     CompilerArgumentAwareWithInput<T>,
     TaskWithLocalState {
 
@@ -91,30 +90,17 @@ abstract class AbstractKotlinCompileTool<T : CommonToolArguments> @Inject constr
 
     private val sourceFiles = objectFactory.fileCollection()
 
-    @get:InputFiles
-    @get:SkipWhenEmpty
-    @get:NormalizeLineEndings
-    @get:IgnoreEmptyDirectories
-    @get:PathSensitive(PathSensitivity.RELATIVE)
-    open val sources: FileCollection = objectFactory.fileCollection()
+    override val sources: FileCollection = objectFactory.fileCollection()
         .from(
             { sourceFiles.asFileTree.matching(patternFilterable) }
         )
 
-    /**
-     * Sets the source for this task.
-     * The given source object is evaluated as per [org.gradle.api.Project.files].
-     */
-    open fun setSource(source: Any) {
-        sourceFiles.from(source)
+    override fun source(vararg sources: Any) {
+        sourceFiles.from(sources)
     }
 
-    /**
-     * Sets the source for this task.
-     * The given source object is evaluated as per [org.gradle.api.Project.files].
-     */
-    open fun setSource(vararg source: Any) {
-        sourceFiles.from(source)
+    override fun setSource(vararg sources: Any) {
+        sourceFiles.from(sources)
     }
 
     fun disallowSourceChanges() {
@@ -166,14 +152,6 @@ abstract class AbstractKotlinCompileTool<T : CommonToolArguments> @Inject constr
     final override fun exclude(excludeSpec: Closure<*>): PatternFilterable = also {
         patternFilterable.exclude(excludeSpec)
     }
-
-    @get:Classpath
-    @get:NormalizeLineEndings
-    @get:Incremental
-    abstract val libraries: ConfigurableFileCollection
-
-    @get:OutputDirectory
-    abstract val destinationDirectory: DirectoryProperty
 
     @get:Internal
     override val metrics: Property<BuildMetricsReporter> = project.objects
@@ -254,7 +232,8 @@ abstract class GradleCompileTaskProvider @Inject constructor(
 abstract class AbstractKotlinCompile<T : CommonCompilerArguments> @Inject constructor(
     objectFactory: ObjectFactory
 ) : AbstractKotlinCompileTool<T>(objectFactory),
-    CompileUsingKotlinDaemonWithNormalization {
+    CompileUsingKotlinDaemonWithNormalization,
+    BaseKotlinCompile {
 
     init {
         cacheOnlyIfEnabledForKotlin()
@@ -300,20 +279,9 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments> @Inject constr
 
     internal fun reportingSettings() = buildMetricsReporterService.orNull?.parameters?.reportingSettings ?: ReportingSettings()
 
-    @get:Input
-    internal abstract val useModuleDetection: Property<Boolean>
-
     @get:Internal
     protected val multiModuleICSettings: MultiModuleICSettings
         get() = MultiModuleICSettings(buildHistoryFile.get().asFile, useModuleDetection.get())
-
-    @get:NormalizeLineEndings
-    @get:Classpath
-    abstract val pluginClasspath: ConfigurableFileCollection
-
-    @get:Nested
-    internal abstract val pluginOptions: ListProperty<CompilerPluginOptions>
-
 
     /**
      * Plugin Data provided by [KpmCompilerPlugin]
@@ -326,18 +294,12 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments> @Inject constr
     @get:Internal
     internal val javaOutputDir: DirectoryProperty = objectFactory.directoryProperty()
 
-    @get:Internal
-    internal abstract val sourceSetName: Property<String>
-
     @get:InputFiles
     @get:IgnoreEmptyDirectories
     @get:NormalizeLineEndings
     @get:Incremental
     @get:PathSensitive(PathSensitivity.RELATIVE)
     internal val commonSourceSet: ConfigurableFileCollection = objectFactory.fileCollection()
-
-    @get:Input
-    internal abstract val moduleName: Property<String>
 
     @get:Internal
     val abiSnapshotFile
@@ -351,9 +313,6 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments> @Inject constr
 
     @get:Internal
     internal val friendSourceSets = objectFactory.listProperty(String::class.java)
-
-    @get:Internal // takes part in the compiler arguments
-    abstract val friendPaths: ConfigurableFileCollection
 
     private val kotlinLogger by lazy { GradleKotlinLogger(logger) }
 
@@ -496,9 +455,6 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments> @Inject constr
         taskOutputsBackup: TaskOutputsBackup?
     )
 
-    @get:Input
-    internal abstract val multiPlatformEnabled: Property<Boolean>
-
     @get:Internal
     internal val abstractKotlinCompileArgumentsContributor by lazy {
         AbstractKotlinCompileArgumentsContributor(
@@ -533,7 +489,7 @@ class KotlinJvmCompilerArgumentsProvider
     val compileClasspath: Iterable<File> = taskProvider.libraries
     val destinationDir: File = taskProvider.destinationDirectory.get().asFile
     internal val kotlinOptions: List<KotlinJvmOptionsImpl> = listOfNotNull(
-        taskProvider.parentKotlinOptionsImpl.orNull as? KotlinJvmOptionsImpl,
+        taskProvider.parentKotlinOptions.orNull as? KotlinJvmOptionsImpl,
         taskProvider.kotlinOptions as KotlinJvmOptionsImpl
     )
 }
@@ -549,9 +505,6 @@ abstract class KotlinCompile @Inject constructor(
 ) : AbstractKotlinCompile<K2JVMCompilerArguments>(objectFactory),
     KotlinJvmCompile,
     UsesKotlinJavaToolchain {
-
-    @get:Internal("Takes part in compiler args.")
-    internal abstract val parentKotlinOptionsImpl: Property<KotlinJvmOptions>
 
     /** A package prefix that is used for locating Java sources in a directory structure with non-full-depth packages.
      *
@@ -575,16 +528,16 @@ abstract class KotlinCompile @Inject constructor(
         "Replaced with 'libraries' input",
         replaceWith = ReplaceWith("libraries")
     )
-    @Internal
-    fun getClasspath(): FileCollection = libraries
+    fun setClasspath(classpath: FileCollection) {
+        libraries.setFrom(classpath)
+    }
 
     @Deprecated(
         "Replaced with 'libraries' input",
         replaceWith = ReplaceWith("libraries")
     )
-    fun setClasspath(configuration: FileCollection) {
-        libraries.setFrom(configuration)
-    }
+    @Internal
+    fun getClasspath(): FileCollection = libraries
 
     @get:Input
     abstract val useKotlinAbiSnapshot: Property<Boolean>
@@ -881,17 +834,17 @@ abstract class KotlinCompile @Inject constructor(
         }
 
     // override setSource to track Java and script sources as well
-    override fun setSource(source: Any) {
-        javaSourceFiles.from(source)
-        scriptSourceFiles.from(source)
-        super.setSource(source)
+    override fun source(vararg sources: Any) {
+        javaSourceFiles.from(sources)
+        scriptSourceFiles.from(sources)
+        super.setSource(sources)
     }
 
     // override source to track Java and script sources as well
-    override fun setSource(vararg source: Any) {
-        javaSourceFiles.from(*source)
-        scriptSourceFiles.from(*source)
-        super.setSource(*source)
+    override fun setSource(vararg sources: Any) {
+        javaSourceFiles.from(*sources)
+        scriptSourceFiles.from(*sources)
+        super.setSource(*sources)
     }
 
     private fun getClasspathChanges(inputChanges: InputChanges): ClasspathChanges = when {

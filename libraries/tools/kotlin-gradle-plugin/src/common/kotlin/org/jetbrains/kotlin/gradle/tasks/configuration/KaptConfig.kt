@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -15,7 +15,6 @@ import org.gradle.api.file.FileCollection
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.TaskProvider
 import org.gradle.util.GradleVersion
-import org.jetbrains.kotlin.gradle.dsl.KotlinTopLevelExtension
 import org.jetbrains.kotlin.gradle.dsl.topLevelExtension
 import org.jetbrains.kotlin.gradle.internal.*
 import org.jetbrains.kotlin.gradle.internal.Kapt3GradleSubplugin.Companion.KAPT_SUBPLUGIN_ID
@@ -26,47 +25,26 @@ import org.jetbrains.kotlin.gradle.internal.Kapt3GradleSubplugin.Companion.isInc
 import org.jetbrains.kotlin.gradle.internal.kapt.incremental.CLASS_STRUCTURE_ARTIFACT_TYPE
 import org.jetbrains.kotlin.gradle.internal.kapt.incremental.StructureTransformAction
 import org.jetbrains.kotlin.gradle.internal.kapt.incremental.StructureTransformLegacyAction
-import org.jetbrains.kotlin.gradle.plugin.AbstractKotlinAndroidPluginWrapper
-import org.jetbrains.kotlin.gradle.plugin.KaptExtension
-import org.jetbrains.kotlin.gradle.plugin.SubpluginOption
-import org.jetbrains.kotlin.gradle.plugin.getKotlinPluginVersion
+import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.tasks.CompilerPluginOptions
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+import org.jetbrains.kotlin.gradle.tasks.toCompilerPluginOptions
 import org.jetbrains.kotlin.gradle.utils.isConfigurationCacheAvailable
 import org.jetbrains.kotlin.gradle.utils.listProperty
 import java.io.File
 import java.util.concurrent.Callable
 
-internal open class KaptConfigAction<TASK : KaptTask>(
+internal open class KaptConfig<TASK : KaptTask>(
     project: Project,
     protected val ext: KaptExtension,
 ) : TaskConfigAction<TASK>(project) {
 
-    internal constructor(kotlinCompileTask: KotlinCompile, ext: KaptExtension) : this(kotlinCompileTask.project, ext) {
+    init {
         configureTaskProvider { taskProvider ->
             val kaptClasspathSnapshot = getKaptClasspathSnapshot(taskProvider)
 
             taskProvider.configure { task ->
-                task.classpath.from(kotlinCompileTask.libraries)
-                task.compiledSources.from(
-                    kotlinCompileTask.destinationDirectory,
-                    Callable { kotlinCompileTask.javaOutputDir.takeIf { it.isPresent } })
-                    .disallowChanges()
-                task.sourceSetName.value(kotlinCompileTask.sourceSetName).disallowChanges()
-
-                val kaptSources = objectFactory
-                    .fileCollection()
-                    .from(kotlinCompileTask.javaSources, task.stubsDir)
-                    .asFileTree
-                    .matching { it.include("**/*.java") }
-                    .filter {
-                        it.exists() &&
-                                !isAncestor(task.destinationDir.get().asFile, it) &&
-                                !isAncestor(task.classesDir.get().asFile, it)
-                    }
-                task.source.from(kaptSources).disallowChanges()
                 task.verbose.set(KaptTask.queryKaptVerboseProperty(project))
-                task.compilerClasspath.from(providers.provider { kotlinCompileTask.defaultCompilerClasspath })
 
                 task.isIncremental = project.isIncrementalKapt()
                 task.useBuildCache = ext.useBuildCache
@@ -80,6 +58,29 @@ internal open class KaptConfigAction<TASK : KaptTask>(
                     it.includeCompileClasspath.get() || !it.kaptClasspath.isEmpty
                 }
             }
+        }
+    }
+
+    internal constructor(kotlinCompileTask: KotlinCompile, ext: KaptExtension) : this(kotlinCompileTask.project, ext) {
+        configureTask { task ->
+            task.classpath.from(kotlinCompileTask.libraries)
+            task.compiledSources.from(
+                kotlinCompileTask.destinationDirectory,
+                Callable { kotlinCompileTask.javaOutputDir.takeIf { it.isPresent } })
+                .disallowChanges()
+            task.sourceSetName.value(kotlinCompileTask.sourceSetName).disallowChanges()
+
+
+            val kaptSources = objectFactory.fileCollection()
+                .from(kotlinCompileTask.javaSources, task.stubsDir)
+                .asFileTree
+                .matching { it.include("**/*.java") }
+                .filter {
+                    it.exists() &&
+                            !isAncestor(task.destinationDir.get().asFile, it) &&
+                            !isAncestor(task.classesDir.get().asFile, it)
+                }
+            task.source.from(kaptSources).disallowChanges()
         }
     }
 
@@ -173,12 +174,9 @@ private fun isAncestor(dir: File, file: File): Boolean {
     }
 }
 
-internal class KaptWithoutKotlincConfigAction(kotlinCompileTask: KotlinCompile, ext: KaptExtension) :
-    KaptConfigAction<KaptWithoutKotlincTask>(kotlinCompileTask, ext) {
+internal class KaptWithoutKotlincConfig : KaptConfig<KaptWithoutKotlincTask> {
 
     init {
-        initKaptWorkersConfiguration(project.topLevelExtension)
-
         configureTask { task ->
             task.addJdkClassesToClasspath.set(
                 project.providers.provider {
@@ -194,7 +192,7 @@ internal class KaptWithoutKotlincConfigAction(kotlinCompileTask: KotlinCompile, 
         }
     }
 
-    private fun initKaptWorkersConfiguration(kotlinExt: KotlinTopLevelExtension) {
+    constructor(kotlinCompileTask: KotlinCompile, ext: KaptExtension) : super(kotlinCompileTask, ext) {
         project.configurations.findByName(Kapt3GradleSubplugin.KAPT_WORKER_DEPENDENCIES_CONFIGURATION_NAME)
             ?: project.configurations.create(Kapt3GradleSubplugin.KAPT_WORKER_DEPENDENCIES_CONFIGURATION_NAME).apply {
                 dependencies.addAllLater(project.listProperty {
@@ -203,16 +201,33 @@ internal class KaptWithoutKotlincConfigAction(kotlinCompileTask: KotlinCompile, 
                         project.dependencies.create(kaptDependency),
                         project.kotlinDependency(
                             "kotlin-stdlib",
-                            kotlinExt.coreLibrariesVersion
+                            project.topLevelExtension.coreLibrariesVersion
                         )
                     )
                 })
             }
+
+        configureTask { task ->
+            task.addJdkClassesToClasspath.set(
+                project.providers.provider {
+                    project.plugins.none { it is AbstractKotlinAndroidPluginWrapper }
+                }
+            )
+            task.kaptJars.from(project.configurations.getByName(Kapt3GradleSubplugin.KAPT_WORKER_DEPENDENCIES_CONFIGURATION_NAME))
+        }
+    }
+
+    constructor(project: Project, ext: KaptExtension) : super(project, ext) {
+        configureTask { task ->
+            val kotlinSourceDir = objectFactory.fileCollection().from(task.kotlinSourcesDestinationDir)
+            val nonAndroidDslOptions = getNonAndroidDslApOptions(ext, project, kotlinSourceDir, null, null)
+            task.kaptPluginOptions.add(nonAndroidDslOptions.toCompilerPluginOptions())
+        }
     }
 }
 
-internal class KaptWithKotlincConfigAction(kotlinCompileTask: KotlinCompile, ext: KaptExtension) :
-    KaptConfigAction<KaptWithKotlincTask>(kotlinCompileTask, ext) {
+internal class KaptWithKotlincConfig(kotlinCompileTask: KotlinCompile, ext: KaptExtension) :
+    KaptConfig<KaptWithKotlincTask>(kotlinCompileTask, ext) {
 
     init {
         configureTask { task ->
@@ -227,6 +242,7 @@ internal class KaptWithKotlincConfigAction(kotlinCompileTask: KotlinCompile, ext
                 task.kaptPluginOptions.add(incAptCacheOption)
             }
 
+            task.compilerClasspath.from(providers.provider { kotlinCompileTask.defaultCompilerClasspath })
             task.pluginClasspath.from(kotlinCompileTask.pluginClasspath)
             task.additionalPluginOptionsAsInputs.value(kotlinCompileTask.pluginOptions).disallowChanges()
             task.compileKotlinArgumentsContributor.set(providers.provider { kotlinCompileTask.compilerArgumentsContributor })

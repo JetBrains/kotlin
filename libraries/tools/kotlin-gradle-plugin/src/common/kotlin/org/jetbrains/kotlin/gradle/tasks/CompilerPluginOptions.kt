@@ -17,9 +17,11 @@
 package org.jetbrains.kotlin.gradle.tasks
 
 import org.gradle.api.provider.ListProperty
-import org.gradle.api.tasks.Input
+import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.Internal
-import org.jetbrains.kotlin.gradle.plugin.*
+import org.jetbrains.kotlin.gradle.internal.Kapt3GradleSubplugin
+import org.jetbrains.kotlin.gradle.plugin.CompilerPluginConfig
+import org.jetbrains.kotlin.gradle.plugin.SubpluginOption
 
 class CompilerPluginOptions() : CompilerPluginConfig() {
 
@@ -51,44 +53,6 @@ class CompilerPluginOptions() : CompilerPluginConfig() {
         return newOptions
     }
 
-    @Input
-    fun getAsTaskInputArgs(): Map<String, String> {
-        val result = mutableMapOf<String, String>()
-        subpluginOptionsByPluginId.forEach { (id, subpluginOptions) ->
-            result += computeForSubpluginId(id, subpluginOptions)
-        }
-        return result
-    }
-
-    private fun computeForSubpluginId(subpluginId: String, subpluginOptions: List<SubpluginOption>): Map<String, String> {
-        // There might be several options with the same key. We group them together
-        // and add an index to the Gradle input property name to resolve possible duplication:
-        val result = mutableMapOf<String, String>()
-        val pluginOptionsGrouped = subpluginOptions.groupBy { it.key }
-        for ((optionKey, optionsGroup) in pluginOptionsGrouped) {
-            optionsGroup.forEachIndexed { index, option ->
-                val indexSuffix = if (optionsGroup.size > 1) ".$index" else ""
-                when (option) {
-                    is InternalSubpluginOption -> return@forEachIndexed
-
-                    is CompositeSubpluginOption -> {
-                        val subpluginIdWithWrapperKey = "$subpluginId.$optionKey$indexSuffix"
-                        result += computeForSubpluginId(subpluginIdWithWrapperKey, option.originalOptions)
-                    }
-
-                    is FilesSubpluginOption -> when (option.kind) {
-                        FilesOptionKind.INTERNAL -> Unit
-                    }.run { /* exhaustive when */ }
-
-                    else -> {
-                        result["$subpluginId." + option.key + indexSuffix] = option.value
-                    }
-                }
-            }
-        }
-        return result
-    }
-
     private fun copyOptionsFrom(options: CompilerPluginConfig) {
         options.allOptions().forEach { entry ->
             optionsByPluginId[entry.key] = entry.value.toMutableList()
@@ -96,7 +60,16 @@ class CompilerPluginOptions() : CompilerPluginConfig() {
     }
 }
 
-internal fun ListProperty<CompilerPluginOptions>.toSingleCompilerPluginOptions(): CompilerPluginOptions {
-    val values = this.orNull ?: return CompilerPluginOptions()
-    return values.reduceOrNull(CompilerPluginOptions::plus) ?: CompilerPluginOptions()
+internal fun ListProperty<out CompilerPluginConfig>.toSingleCompilerPluginOptions(): CompilerPluginOptions {
+    var res = CompilerPluginOptions()
+    this.get().forEach { res += it }
+    return res
+}
+
+internal fun Provider<List<SubpluginOption>>.toCompilerPluginOptions(): Provider<CompilerPluginOptions> {
+    return map {
+        val res = CompilerPluginOptions()
+        it.forEach { res.addPluginArgument(Kapt3GradleSubplugin.KAPT_SUBPLUGIN_ID, it) }
+        return@map res
+    }
 }
