@@ -12,16 +12,25 @@ import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassifierSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 
 abstract class FirAbstractStarImportingScope(
     session: FirSession,
     scopeSession: ScopeSession,
-    lookupInFir: Boolean
+    lookupInFir: Boolean,
+    val excludedImportNames: Set<FqName>
 ) : FirAbstractImportingScope(session, scopeSession, lookupInFir) {
 
     // TODO try to hide this
     abstract val starImports: List<FirResolvedImport>
+
+    override fun isExcluded(import: FirResolvedImport, name: Name): Boolean {
+        if (excludedImportNames.isNotEmpty()) {
+            return import.importedFqName!!.child(name) in excludedImportNames
+        }
+        return false
+    }
 
     private val absentClassifierNames = mutableSetOf<Name>()
 

@@ -41,6 +41,8 @@ abstract class FirAbstractImportingScope(
     fun getStaticsScope(classId: ClassId): FirContainingNamesAwareScope? =
         provider.getClassLikeSymbolByClassId(classId)?.fullyExpandedSymbol?.getStaticsScope()
 
+    protected abstract fun isExcluded(import: FirResolvedImport, name: Name): Boolean
+
     protected fun processImportsByName(
         name: Name?,
         imports: List<FirResolvedImport>,
@@ -48,6 +50,7 @@ abstract class FirAbstractImportingScope(
     ) {
         for (import in imports) {
             val importedName = name ?: import.importedName ?: continue
+            if (isExcluded(import, importedName)) continue
             val classId = import.resolvedParentClassId?.createNestedClassId(importedName)
                 ?: ClassId.topLevel(import.packageFqName.child(importedName))
             val symbol = provider.getClassLikeSymbolByClassId(classId) ?: continue
@@ -58,6 +61,7 @@ abstract class FirAbstractImportingScope(
     protected fun processFunctionsByName(name: Name?, imports: List<FirResolvedImport>, processor: (FirNamedFunctionSymbol) -> Unit) {
         for (import in imports) {
             val importedName = name ?: import.importedName ?: continue
+            if (isExcluded(import, importedName)) continue
             val staticsScope = import.resolvedParentClassId?.let(::getStaticsScope)
             if (staticsScope != null) {
                 staticsScope.processFunctionsByName(importedName, processor)
@@ -73,6 +77,7 @@ abstract class FirAbstractImportingScope(
     protected fun processPropertiesByName(name: Name?, imports: List<FirResolvedImport>, processor: (FirVariableSymbol<*>) -> Unit) {
         for (import in imports) {
             val importedName = name ?: import.importedName ?: continue
+            if (isExcluded(import, importedName)) continue
             val staticsScope = import.resolvedParentClassId?.let(::getStaticsScope)
             if (staticsScope != null) {
                 staticsScope.processPropertiesByName(importedName, processor)
