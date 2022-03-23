@@ -101,10 +101,9 @@ open class KotlinBrowserJsIr @Inject constructor(target: KotlinJsIrTarget) :
                     ),
                     listOf(compilation)
                 ) { task ->
-                    val entryFileProvider = binary.linkSyncTask.flatMap { syncTask ->
-                        binary.linkTask.map {
-                            syncTask.destinationDir.resolve(it.outputFileProperty.get().name)
-                        }
+                    val entryFileProvider = binary.linkSyncTask.map {
+                        it.destinationDir
+                            .resolve(binary.linkTask.get().outputFileProperty.get().name)
                     }
 
                     webpackMajorVersion.choose(

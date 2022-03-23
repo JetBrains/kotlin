@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.gradle.tasks
 
-import groovy.lang.Closure
 import org.gradle.api.DefaultTask
 import org.gradle.api.GradleException
 import org.gradle.api.Project
@@ -20,12 +19,10 @@ import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 import org.gradle.api.services.BuildService
 import org.gradle.api.services.BuildServiceParameters
-import org.gradle.api.specs.Spec
 import org.gradle.api.tasks.*
 import org.gradle.api.tasks.compile.AbstractCompile
 import org.gradle.api.tasks.compile.JavaCompile
 import org.gradle.api.tasks.util.PatternFilterable
-import org.gradle.api.tasks.util.PatternSet
 import org.gradle.work.ChangeType
 import org.gradle.work.Incremental
 import org.gradle.work.InputChanges
@@ -60,10 +57,13 @@ import org.jetbrains.kotlin.gradle.report.BuildReportMode
 import org.jetbrains.kotlin.gradle.report.ReportingSettings
 import org.jetbrains.kotlin.gradle.targets.js.ir.isProduceUnzippedKlib
 import org.jetbrains.kotlin.gradle.utils.*
-import org.jetbrains.kotlin.incremental.*
+import org.jetbrains.kotlin.incremental.ChangedFiles
+import org.jetbrains.kotlin.incremental.ClasspathChanges
 import org.jetbrains.kotlin.incremental.ClasspathChanges.ClasspathSnapshotDisabled
 import org.jetbrains.kotlin.incremental.ClasspathChanges.ClasspathSnapshotEnabled.*
 import org.jetbrains.kotlin.incremental.ClasspathChanges.ClasspathSnapshotEnabled.IncrementalRun.*
+import org.jetbrains.kotlin.incremental.ClasspathSnapshotFiles
+import org.jetbrains.kotlin.incremental.IncrementalCompilerRunner
 import org.jetbrains.kotlin.library.impl.isKotlinLibrary
 import org.jetbrains.kotlin.statistics.metrics.BooleanMetrics
 import org.jetbrains.kotlin.utils.JsLibraryUtils
@@ -77,44 +77,24 @@ const val USING_JVM_INCREMENTAL_COMPILATION_MESSAGE = "Using Kotlin/JVM incremen
 const val USING_JS_INCREMENTAL_COMPILATION_MESSAGE = "Using Kotlin/JS incremental compilation"
 const val USING_JS_IR_BACKEND_MESSAGE = "Using Kotlin/JS IR backend"
 
-abstract class AbstractKotlinCompileTool<T : CommonToolArguments> @Inject constructor(
-    objectFactory: ObjectFactory
-) : DefaultTask(),
-    PatternFilterable,
+abstract class AbstractKotlinCompileTool<T : CommonToolArguments>
+    : DefaultTask(),
+    //PatternFilterable,
     CompilerArgumentAwareWithInput<T>,
     TaskWithLocalState {
-
-    private val patternFilterable = PatternSet()
-
-    init {
-        patternFilterable.include(
-            DEFAULT_KOTLIN_SOURCE_FILES_EXTENSIONS.flatMap { ext -> ext.fileExtensionCasePermutations().map { "**/*.$it" } }
-        )
-    }
-
-    private val sourceFiles = objectFactory.fileCollection()
 
     @get:InputFiles
     @get:SkipWhenEmpty
     @get:IgnoreEmptyDirectories
     @get:PathSensitive(PathSensitivity.RELATIVE)
-    open val sources: FileCollection = objectFactory.fileCollection()
-        .from(
-            { sourceFiles.asFileTree.matching(patternFilterable) }
-        )
-
-    @Deprecated("Use PatternFilterable methods to configure sources")
-    @get:Input
-    val sourceFilesExtensions: ListProperty<String> = objectFactory
-        .listProperty(String::class.java)
-        .convention(DEFAULT_KOTLIN_SOURCE_FILES_EXTENSIONS)
+    abstract val sources: ConfigurableFileCollection
 
     /**
      * Sets the source for this task.
      * The given source object is evaluated as per [org.gradle.api.Project.files].
      */
     open fun setSource(source: Any) {
-        sourceFiles.from(source)
+        sources.from(source)
     }
 
     /**
@@ -122,57 +102,7 @@ abstract class AbstractKotlinCompileTool<T : CommonToolArguments> @Inject constr
      * The given source object is evaluated as per [org.gradle.api.Project.files].
      */
     open fun setSource(vararg source: Any) {
-        sourceFiles.from(source)
-    }
-
-    fun disallowSourceChanges() {
-        sourceFiles.disallowChanges()
-    }
-
-    @Internal
-    final override fun getIncludes(): MutableSet<String> = patternFilterable.includes
-
-    @Internal
-    final override fun getExcludes(): MutableSet<String> = patternFilterable.excludes
-
-    final override fun setIncludes(includes: Iterable<String>): PatternFilterable = also {
-        patternFilterable.setIncludes(includes)
-    }
-
-    final override fun setExcludes(excludes: Iterable<String>): PatternFilterable = also {
-        patternFilterable.setExcludes(excludes)
-    }
-
-    final override fun include(vararg includes: String?): PatternFilterable = also {
-        patternFilterable.include(*includes)
-    }
-
-    final override fun include(includes: Iterable<String>): PatternFilterable = also {
-        patternFilterable.include(includes)
-    }
-
-    final override fun include(includeSpec: Spec<FileTreeElement>): PatternFilterable = also {
-        patternFilterable.include(includeSpec)
-    }
-
-    final override fun include(includeSpec: Closure<*>): PatternFilterable = also {
-        patternFilterable.include(includeSpec)
-    }
-
-    final override fun exclude(vararg excludes: String?): PatternFilterable = also {
-        patternFilterable.exclude(*excludes)
-    }
-
-    final override fun exclude(excludes: Iterable<String>): PatternFilterable = also {
-        patternFilterable.exclude(excludes)
-    }
-
-    final override fun exclude(excludeSpec: Spec<FileTreeElement>): PatternFilterable = also {
-        patternFilterable.exclude(excludeSpec)
-    }
-
-    final override fun exclude(excludeSpec: Closure<*>): PatternFilterable = also {
-        patternFilterable.exclude(excludeSpec)
+        sources.from(source)
     }
 
     @get:Classpath
@@ -257,9 +187,7 @@ abstract class GradleCompileTaskProvider @Inject constructor(
     )
 }
 
-abstract class AbstractKotlinCompile<T : CommonCompilerArguments> @Inject constructor(
-    objectFactory: ObjectFactory
-) : AbstractKotlinCompileTool<T>(objectFactory),
+abstract class AbstractKotlinCompile<T : CommonCompilerArguments> : AbstractKotlinCompileTool<T>(),
     CompileUsingKotlinDaemonWithNormalization {
 
     open class Configurator<T : AbstractKotlinCompile<*>>(protected val compilation: KotlinCompilationData<*>) : TaskConfigurator<T> {
@@ -310,13 +238,16 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments> @Inject constr
     @get:Inject
     internal abstract val fileSystemOperations: FileSystemOperations
 
+    @get:Internal
+    protected val objects: ObjectFactory = project.objects
+
     // avoid creating directory in getter: this can lead to failure in parallel build
     @get:OutputDirectory
-    internal val taskBuildCacheableOutputDirectory: DirectoryProperty = objectFactory.directoryProperty()
+    internal val taskBuildCacheableOutputDirectory: DirectoryProperty = objects.directoryProperty()
 
     // avoid creating directory in getter: this can lead to failure in parallel build
     @get:LocalState
-    internal val taskBuildLocalStateDirectory: DirectoryProperty = objectFactory.directoryProperty()
+    internal val taskBuildLocalStateDirectory: DirectoryProperty = objects.directoryProperty()
 
     @get:Internal
     internal val buildHistoryFile
@@ -346,18 +277,20 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments> @Inject constr
     internal fun reportingSettings() = buildMetricsReporterService.orNull?.parameters?.reportingSettings ?: ReportingSettings()
 
     @get:Input
-    internal val useModuleDetection: Property<Boolean> = objectFactory.property(Boolean::class.java).value(false)
+    internal val useModuleDetection: Property<Boolean> = objects.property(Boolean::class.java).value(false)
 
     @get:Internal
     protected val multiModuleICSettings: MultiModuleICSettings
         get() = MultiModuleICSettings(buildHistoryFile.get().asFile, useModuleDetection.get())
 
     @get:Classpath
-    open val pluginClasspath: ConfigurableFileCollection = objectFactory.fileCollection()
+    open val pluginClasspath: ConfigurableFileCollection = objects.fileCollection()
 
     @get:Internal
     internal val pluginOptions = CompilerPluginOptions()
 
+    @get:Input
+    val sourceFilesExtensions: ListProperty<String> = objects.listProperty(String::class.java).value(DEFAULT_KOTLIN_SOURCE_FILES_EXTENSIONS)
 
     /**
      * Plugin Data provided by [KpmCompilerPlugin]
@@ -369,52 +302,52 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments> @Inject constr
 
     // Input is needed to force rebuild even if source files are not changed
     @get:Input
-    internal val coroutines: Property<Coroutines> = objectFactory.property(Coroutines::class.java)
+    internal val coroutines: Property<Coroutines> = objects.property(Coroutines::class.java)
 
     @get:Internal
-    internal val javaOutputDir: DirectoryProperty = objectFactory.directoryProperty()
+    internal val javaOutputDir: DirectoryProperty = objects.directoryProperty()
 
     @get:Internal
-    internal val sourceSetName: Property<String> = objectFactory.property(String::class.java)
+    internal val sourceSetName: Property<String> = objects.property(String::class.java)
 
     @get:InputFiles
     @get:IgnoreEmptyDirectories
     @get:Incremental
     @get:PathSensitive(PathSensitivity.RELATIVE)
-    internal val commonSourceSet: ConfigurableFileCollection = objectFactory.fileCollection()
+    internal val commonSourceSet: ConfigurableFileCollection = objects.fileCollection()
 
     @get:Input
-    internal val moduleName: Property<String> = objectFactory.property(String::class.java)
+    internal val moduleName: Property<String> = objects.property(String::class.java)
 
     @get:Internal
     val abiSnapshotFile
         get() = taskBuildCacheableOutputDirectory.file(IncrementalCompilerRunner.ABI_SNAPSHOT_FILE_NAME)
 
     @get:Input
-    val abiSnapshotRelativePath: Property<String> = objectFactory.property(String::class.java).value(
+    val abiSnapshotRelativePath: Property<String> = objects.property(String::class.java).value(
         //TODO update to support any jar changes
         "$name/${IncrementalCompilerRunner.ABI_SNAPSHOT_FILE_NAME}"
     )
 
     @get:Internal
-    internal val friendSourceSets = objectFactory.listProperty(String::class.java)
+    internal val friendSourceSets = objects.listProperty(String::class.java)
 
     @get:Internal // takes part in the compiler arguments
-    val friendPaths: ConfigurableFileCollection = objectFactory.fileCollection()
+    val friendPaths: ConfigurableFileCollection = objects.fileCollection()
 
     private val kotlinLogger by lazy { GradleKotlinLogger(logger) }
 
     abstract override val kotlinDaemonJvmArguments: ListProperty<String>
 
     @get:Internal
-    protected val gradleCompileTaskProvider: Provider<GradleCompileTaskProvider> = objectFactory
+    protected val gradleCompileTaskProvider: Provider<GradleCompileTaskProvider> = objects
         .property(
-            objectFactory.newInstance<GradleCompileTaskProvider>(project.gradle, this, project)
+            objects.newInstance<GradleCompileTaskProvider>(project.gradle, this, project)
         )
 
     @get:Internal
     internal open val compilerRunner: Provider<GradleCompilerRunner> =
-        objectFactory.propertyWithConvention(
+        objects.propertyWithConvention(
             gradleCompileTaskProvider.map {
                 GradleCompilerRunner(
                     it,
@@ -477,7 +410,8 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments> @Inject constr
         buildMetricsReporterService.orNull?.also { it.addTask(path, this.javaClass, buildMetrics) }
     }
 
-    protected open fun skipCondition(): Boolean = sources.isEmpty
+    protected open fun skipCondition(): Boolean =
+        getSourceRoots().kotlinSourceFiles.isEmpty()
 
     private val projectDir = project.rootProject.projectDir
 
@@ -493,7 +427,8 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments> @Inject constr
         inputChanges: InputChanges,
         taskOutputsBackup: TaskOutputsBackup?
     ) {
-        val allKotlinSources = sources.asFileTree.files
+        val sourceRoots = getSourceRoots()
+        val allKotlinSources = sourceRoots.kotlinSourceFiles
 
         logger.kotlinDebug { "All kotlin sources: ${allKotlinSources.pathsAsStringRelativeTo(projectDir)}" }
 
@@ -503,12 +438,13 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments> @Inject constr
             return
         }
 
+        sourceRoots.log(this.name, logger)
         val args = prepareCompilerArguments()
         taskBuildCacheableOutputDirectory.get().asFile.mkdirs()
         taskBuildLocalStateDirectory.get().asFile.mkdirs()
         callCompilerAsync(
             args,
-            allKotlinSources,
+            sourceRoots,
             inputChanges,
             taskOutputsBackup
         )
@@ -536,19 +472,22 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments> @Inject constr
             }
     }
 
+    @Internal
+    internal abstract fun getSourceRoots(): SourceRoots
+
     /**
      * Compiler might be executed asynchronously. Do not do anything requiring end of compilation after this function is called.
      * @see [GradleKotlinCompilerWork]
      */
     internal abstract fun callCompilerAsync(
         args: T,
-        kotlinSources: Set<File>,
+        sourceRoots: SourceRoots,
         inputChanges: InputChanges,
         taskOutputsBackup: TaskOutputsBackup?
     )
 
     @get:Input
-    internal val multiPlatformEnabled: Property<Boolean> = objectFactory.property(Boolean::class.java)
+    internal val multiPlatformEnabled: Property<Boolean> = objects.property(Boolean::class.java)
 
     @get:Internal
     internal val abstractKotlinCompileArgumentsContributor by lazy {
@@ -597,9 +536,8 @@ internal inline val <reified T : Task> T.thisTaskProvider: TaskProvider<out T>
 @CacheableTask
 abstract class KotlinCompile @Inject constructor(
     override val kotlinOptions: KotlinJvmOptions,
-    workerExecutor: WorkerExecutor,
-    private val objectFactory: ObjectFactory
-) : AbstractKotlinCompile<K2JVMCompilerArguments>(objectFactory),
+    workerExecutor: WorkerExecutor
+) : AbstractKotlinCompile<K2JVMCompilerArguments>(),
     KotlinJvmCompile,
     UsesKotlinJavaToolchain {
 
@@ -697,7 +635,16 @@ abstract class KotlinCompile @Inject constructor(
     }
 
     @get:Internal
-    internal val parentKotlinOptionsImpl: Property<KotlinJvmOptions> = objectFactory.property(KotlinJvmOptions::class.java)
+    internal val parentKotlinOptionsImpl: Property<KotlinJvmOptions> = objects.property(KotlinJvmOptions::class.java)
+
+    @get:Internal
+    @field:Transient
+    internal open val sourceRootsContainer = FilteringSourceRootsContainer(objects)
+
+    private val jvmSourceRoots by project.provider {
+        // serialize in the task state for configuration caching; avoid building anew in task execution, as it may access the project model
+        SourceRoots.ForJvm.create(sources, sourceRootsContainer, sourceFilesExtensions.get())
+    }
 
     /** A package prefix that is used for locating Java sources in a directory structure with non-full-depth packages.
      *
@@ -744,29 +691,23 @@ abstract class KotlinCompile @Inject constructor(
     }
 
     override val incrementalProps: List<FileCollection>
-        get() = listOf(
-            sources,
-            javaSources,
-            commonSourceSet,
-            classpathSnapshotProperties.classpath,
-            classpathSnapshotProperties.classpathSnapshot
-        )
+        get() = listOf(sources, commonSourceSet, classpathSnapshotProperties.classpath, classpathSnapshotProperties.classpathSnapshot)
 
     // Exclude classpathSnapshotDir from TaskOutputsBackup (see TaskOutputsBackup's kdoc for more info). */
     override val taskOutputsBackupExcludes: List<File>
         get() = classpathSnapshotProperties.classpathSnapshotDir.orNull?.asFile?.let { listOf(it) } ?: emptyList()
 
     @get:Internal
-    internal val defaultKotlinJavaToolchain: Provider<DefaultKotlinJavaToolchain> = objectFactory
+    internal val defaultKotlinJavaToolchain: Provider<DefaultKotlinJavaToolchain> = objects
         .propertyWithNewInstance({ this })
 
     final override val kotlinJavaToolchainProvider: Provider<KotlinJavaToolchain> = defaultKotlinJavaToolchain.cast()
 
     @get:Internal
-    override val compilerRunner: Provider<GradleCompilerRunner> = objectFactory.propertyWithConvention(
+    override val compilerRunner: Provider<GradleCompilerRunner> = objects.propertyWithConvention(
         // From Gradle 6.6 better to replace flatMap with provider.zip()
         defaultKotlinJavaToolchain.flatMap { toolchain ->
-            objectFactory.property(gradleCompileTaskProvider.map {
+            objects.property(gradleCompileTaskProvider.map {
                 GradleCompilerRunnerWithWorkers(
                     it,
                     toolchain.currentJvmJdkToolsJar.orNull,
@@ -821,13 +762,17 @@ abstract class KotlinCompile @Inject constructor(
         KotlinJvmCompilerArgumentsContributor(KotlinJvmCompilerArgumentsProvider(this))
     }
 
+    override fun getSourceRoots(): SourceRoots.ForJvm = jvmSourceRoots
+
     override fun callCompilerAsync(
         args: K2JVMCompilerArguments,
-        kotlinSources: Set<File>,
+        sourceRoots: SourceRoots,
         inputChanges: InputChanges,
         taskOutputsBackup: TaskOutputsBackup?
     ) {
-        validateKotlinAndJavaHasSameTargetCompatibility(args, kotlinSources)
+        sourceRoots as SourceRoots.ForJvm
+
+        validateKotlinAndJavaHasSameTargetCompatibility(args, sourceRoots)
 
         val messageCollector = GradlePrintingMessageCollector(logger, args.allWarningsAsErrors)
         val outputItemCollector = OutputItemsCollectorImpl()
@@ -846,7 +791,7 @@ abstract class KotlinCompile @Inject constructor(
             )
         } else null
 
-        @Suppress("ConvertArgumentToSet", "DEPRECATION")
+        @Suppress("ConvertArgumentToSet")
         val environment = GradleCompilerEnvironment(
             defaultCompilerClasspath, messageCollector, outputItemCollector,
             // In the incremental compiler, outputFiles will be cleaned on rebuild. However, because classpathSnapshotDir is not included in
@@ -858,12 +803,10 @@ abstract class KotlinCompile @Inject constructor(
             incrementalCompilationEnvironment = icEnv,
             kotlinScriptExtensions = sourceFilesExtensions.get().toTypedArray()
         )
-        logger.info("Kotlin source files: ${kotlinSources.joinToString()}")
-        logger.info("Java source files: ${javaSources.files.joinToString()}")
         compilerRunner.runJvmCompilerAsync(
-            kotlinSources.toList(),
+            sourceRoots.kotlinSourceFiles.files.toList(),
             commonSourceSet.toList(),
-            javaSources.files, // we need here only directories where Java sources are located
+            sourceRoots.javaSourceRoots,
             javaPackagePrefix,
             args,
             environment,
@@ -872,12 +815,8 @@ abstract class KotlinCompile @Inject constructor(
         )
     }
 
-    private fun validateKotlinAndJavaHasSameTargetCompatibility(
-        args: K2JVMCompilerArguments,
-        kotlinSources: Set<File>
-    ) {
-        val mixedSourcesArePresent = !associatedJavaCompileTaskSources.isEmpty &&
-                kotlinSources.isNotEmpty()
+    private fun validateKotlinAndJavaHasSameTargetCompatibility(args: K2JVMCompilerArguments, sourceRoots: SourceRoots.ForJvm) {
+        val mixedSourcesArePresent = !associatedJavaCompileTaskSources.isEmpty && !sourceRoots.kotlinSourceFiles.isEmpty
         if (mixedSourcesArePresent) {
             associatedJavaCompileTaskTargetCompatibility.orNull?.let { targetCompatibility ->
                 val normalizedJavaTarget = when (targetCompatibility) {
@@ -915,7 +854,7 @@ abstract class KotlinCompile @Inject constructor(
                 if (it is AbstractCompile &&
                     it !is JavaCompile &&
                     it !is AbstractKotlinCompile<*> &&
-                    javaOutputDir.get().asFile.isParentOf(it.destinationDirectory.get().asFile)
+                    javaOutputDir.get().asFile.isParentOf(it.destinationDir)
                 ) {
                     illegalTaskOrNull = illegalTaskOrNull ?: it
                 }
@@ -924,7 +863,7 @@ abstract class KotlinCompile @Inject constructor(
                 val illegalTask = illegalTaskOrNull!!
                 logger.info(
                     "Kotlin inter-project IC is disabled: " +
-                            "unknown task '$illegalTask' destination dir ${illegalTask.destinationDirectory.get().asFile} " +
+                            "unknown task '$illegalTask' destination dir ${illegalTask.destinationDir} " +
                             "intersects with java destination dir $javaOutputDir"
                 )
             }
@@ -932,34 +871,15 @@ abstract class KotlinCompile @Inject constructor(
         }
     }
 
-    private val javaSourceFiles = objectFactory.fileCollection()
-
-    private fun javaFilesPatternFilter(patternFilterable: PatternFilterable) {
-        patternFilterable.include(
-            "java".fileExtensionCasePermutations().map { "**/*.$it" }
-        )
-    }
-
-    @get:Incremental
-    @get:InputFiles
-    @get:IgnoreEmptyDirectories
-    @get:PathSensitive(PathSensitivity.RELATIVE)
-    open val javaSources: FileCollection = objectFactory.fileCollection()
-        .from(
-            javaSourceFiles
-                .asFileTree
-                .matching(::javaFilesPatternFilter)
-        )
-
-    // override setSource to track Java sources as well
+    // override setSource to track source directory sets and files (for generated android folders)
     override fun setSource(source: Any) {
-        javaSourceFiles.from(source)
+        sourceRootsContainer.set(source)
         super.setSource(source)
     }
 
-    // override source to track Java sources as well
+    // override source to track source directory sets and files (for generated android folders)
     override fun setSource(vararg source: Any) {
-        javaSourceFiles.from(*source)
+        sourceRootsContainer.add(*source)
         super.setSource(*source)
     }
 
@@ -993,8 +913,7 @@ abstract class Kotlin2JsCompile @Inject constructor(
     override val kotlinOptions: KotlinJsOptions,
     objectFactory: ObjectFactory,
     workerExecutor: WorkerExecutor
-) : AbstractKotlinCompile<K2JSCompilerArguments>(objectFactory),
-    KotlinJsCompile {
+) : AbstractKotlinCompile<K2JSCompilerArguments>(), KotlinJsCompile {
 
     init {
         incremental = true
@@ -1078,7 +997,7 @@ abstract class Kotlin2JsCompile @Inject constructor(
     abstract val optionalOutputFile: RegularFileProperty
 
     override val compilerRunner: Provider<GradleCompilerRunner> =
-        objectFactory.propertyWithConvention(
+        objects.propertyWithConvention(
             gradleCompileTaskProvider.map {
                 GradleCompilerRunnerWithWorkers(
                     it,
@@ -1111,6 +1030,8 @@ abstract class Kotlin2JsCompile @Inject constructor(
 
         (kotlinOptions as KotlinJsOptionsImpl).updateArguments(args)
     }
+
+    override fun getSourceRoots() = SourceRoots.KotlinOnly.create(sources, sourceFilesExtensions.get())
 
     @get:InputFiles
     @get:IgnoreEmptyDirectories
@@ -1200,11 +1121,14 @@ abstract class Kotlin2JsCompile @Inject constructor(
 
     override fun callCompilerAsync(
         args: K2JSCompilerArguments,
-        kotlinSources: Set<File>,
+        sourceRoots: SourceRoots,
         inputChanges: InputChanges,
         taskOutputsBackup: TaskOutputsBackup?
     ) {
+        sourceRoots as SourceRoots.KotlinOnly
+
         logger.debug("Calling compiler")
+        //destinationDir.mkdirs()
 
         if (kotlinOptions.isIrBackendEnabled()) {
             logger.info(USING_JS_IR_BACKEND_MESSAGE)
@@ -1250,7 +1174,7 @@ abstract class Kotlin2JsCompile @Inject constructor(
         )
         processArgs(args)
         compilerRunner.runJsCompilerAsync(
-            kotlinSources.toList(),
+            sourceRoots.kotlinSourceFiles.files.toList(),
             commonSourceSet.toList(),
             args,
             environment,

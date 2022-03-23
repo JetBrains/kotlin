@@ -33,7 +33,6 @@ import org.jetbrains.kotlin.gradle.model.builder.KaptModelBuilder
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.AbstractKotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJvmAndroidCompilation
-import org.jetbrains.kotlin.gradle.tasks.AbstractKotlinCompileTool
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.jetbrains.kotlin.gradle.tasks.locateTask
 import org.jetbrains.kotlin.gradle.tasks.registerTask
@@ -577,7 +576,8 @@ class Kapt3GradleSubplugin @Inject internal constructor(private val registry: To
         kotlinCompilation.output.classesDirs.from(kaptTaskProvider.map { it.classesDir })
 
         kotlinCompilation.compileKotlinTaskProvider.configure {
-            (it as AbstractKotlinCompileTool<*>).setSource(sourcesOutputDir, kotlinSourcesOutputDir)
+            it as SourceTask
+            it.source(sourcesOutputDir, kotlinSourcesOutputDir)
         }
 
         if (javaCompile != null) {
