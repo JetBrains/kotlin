@@ -37,7 +37,7 @@ import javax.inject.Inject
 
 @CacheableTask
 abstract class KotlinJsIrLink @Inject constructor(
-    private val objectFactory: ObjectFactory,
+    objectFactory: ObjectFactory,
     workerExecutor: WorkerExecutor,
     private val projectLayout: ProjectLayout
 ) : Kotlin2JsCompile(
