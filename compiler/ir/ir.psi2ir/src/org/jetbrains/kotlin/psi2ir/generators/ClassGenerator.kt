@@ -34,6 +34,7 @@ import org.jetbrains.kotlin.ir.symbols.impl.IrPropertySymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionSymbolImpl
 import org.jetbrains.kotlin.ir.types.IrSimpleType
 import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
+import org.jetbrains.kotlin.ir.types.makeNullable
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
@@ -57,6 +58,7 @@ import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeProjectionImpl
 import org.jetbrains.kotlin.types.TypeSubstitutor
+import org.jetbrains.kotlin.types.typeUtil.isPrimitiveNumberType
 import org.jetbrains.kotlin.utils.addToStdlib.cast
 import org.jetbrains.kotlin.utils.newHashMapWithExpectedSize
 
@@ -120,7 +122,15 @@ class ClassGenerator(
                         val representation = classDescriptor.valueClassRepresentation
                             ?: error("Unknown representation for inline class: $classDescriptor")
                         representation.mapUnderlyingType { type ->
-                            type.toIrType() as? IrSimpleType ?: error("Inline class underlying type is not a simple type: $classDescriptor")
+                            val irType = type.toIrType() as? IrSimpleType
+                                ?: error("Inline class underlying type is not a simple type: $classDescriptor")
+
+                            if (classDescriptor.isInlineClass() && classDescriptor.getSuperClassOrAny().isSealedInlineClass() &&
+                                type.isPrimitiveNumberType()
+                            )
+                                irType.makeNullable() as? IrSimpleType
+                                    ?: error("Inline class underlying type is not a simple type: $classDescriptor")
+                            else irType
                         }
                     }
 

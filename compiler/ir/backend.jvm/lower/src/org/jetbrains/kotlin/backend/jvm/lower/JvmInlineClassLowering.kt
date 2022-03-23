@@ -603,7 +603,11 @@ private class JvmInlineClassLowering(context: JvmBackendContext) : JvmValueClass
             // since the underlying representations are the same.
             expression.symbol.owner.isInlineClassFieldGetter -> {
                 val arg = expression.dispatchReceiver!!.transform(this, null)
-                coerceInlineClasses(arg, expression.symbol.owner.dispatchReceiverParameter!!.type, expression.type)
+                val type =
+                    if (expression.symbol.owner.parentAsClass.isChildOfSealedInlineClass() && expression.type.isPrimitiveType())
+                        expression.type.makeNullable()
+                    else expression.type
+                coerceInlineClasses(arg, expression.symbol.owner.dispatchReceiverParameter!!.type, type)
             }
             // Specialize calls to equals when the left argument is a value of inline class type.
             expression.isSpecializedInlineClassEqEq -> {
@@ -640,9 +644,12 @@ private class JvmInlineClassLowering(context: JvmBackendContext) : JvmValueClass
             field.name == parent.inlineClassFieldName
         ) {
             val receiver = expression.receiver!!.transform(this, null)
+            val type =
+                if (field.parentAsClass.isChildOfSealedInlineClass() && field.type.isPrimitiveType()) field.type.makeNullable()
+                else field.type
             // If we get the field of nullable variable, we can be sure, that type is not null,
             // since we first generate null check.
-            return coerceInlineClasses(receiver, receiver.type.makeNotNull(), field.type)
+            return coerceInlineClasses(receiver, receiver.type.makeNotNull(), type)
         }
         return super.visitGetField(expression)
     }

@@ -22667,6 +22667,7 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
                             register("compiler/testData/codegen/box/inlineClasses/sealed/casts/returnType/class.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
                             register("compiler/testData/codegen/box/inlineClasses/sealed/casts/returnType/inlineClass.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
                             register("compiler/testData/codegen/box/inlineClasses/sealed/casts/returnType/inlineClassNullable.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+                            register("compiler/testData/codegen/box/inlineClasses/sealed/casts/returnType/inlineClassPrimitive.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
                             register("compiler/testData/codegen/box/inlineClasses/sealed/casts/returnType/object.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
                         }
 
@@ -22694,6 +22695,13 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
                         public void testInlineClassNullable() throws Exception {
                             // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
                             runTest("compiler/testData/codegen/box/inlineClasses/sealed/casts/returnType/inlineClassNullable.kt");
+                        }
+
+                        @Test
+                        @TestMetadata("inlineClassPrimitive.kt")
+                        public void testInlineClassPrimitive() throws Exception {
+                            // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
+                            runTest("compiler/testData/codegen/box/inlineClasses/sealed/casts/returnType/inlineClassPrimitive.kt");
                         }
 
                         @Test
