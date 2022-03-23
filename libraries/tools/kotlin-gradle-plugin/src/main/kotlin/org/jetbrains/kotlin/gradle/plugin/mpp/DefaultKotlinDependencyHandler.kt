@@ -76,8 +76,9 @@ class DefaultKotlinDependencyHandler(
         val dependency = when (dependencyNotation) {
             is KotlinGradleModule -> project.dependencies.create(dependencyNotation.project).apply {
                 (this as ModuleDependency).capabilities {
-                    if (dependencyNotation.moduleClassifier != null) {
-                        it.requireCapability(ComputedCapability.fromModule(dependencyNotation))
+                    val capability = ComputedCapability.forProjectDependenciesOnModule(dependencyNotation)
+                    if (capability != null) {
+                        it.requireCapability(capability)
                     }
                 }
             }

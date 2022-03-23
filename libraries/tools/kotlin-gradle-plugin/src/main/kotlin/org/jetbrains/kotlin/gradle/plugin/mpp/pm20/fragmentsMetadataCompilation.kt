@@ -67,7 +67,7 @@ internal fun configureMetadataExposure(module: KotlinGradleModule) {
             // FIXME: native api-implementation
             project.addExtendsFromRelation(name, fragment.apiConfigurationName)
         }
-        setModuleCapability(this, module)
+        setGradleProjectModuleCapability(this, module)
     }
 
     val sourcesArtifactAppendix = dashSeparatedName(module.moduleClassifier, "all", "sources")
@@ -78,8 +78,11 @@ internal fun configureMetadataExposure(module: KotlinGradleModule) {
         sourcesArtifactAppendix
     )
     DocumentationVariantConfigurator().createSourcesElementsConfiguration(
-        project, sourceElementsConfigurationName(module),
-        sourcesArtifact.get(), "sources", ComputedCapability.fromModuleOrNull(module)
+        project,
+        sourceElementsConfigurationName(module),
+        sourcesArtifact.get(),
+        "sources",
+        ComputedCapability.forProjectDependenciesOnModule(module)
     )
 }
 

@@ -280,7 +280,7 @@ open class DocumentationVariantConfigurator {
             configurationName,
             sourcesArtifactTask.get(),
             artifactClassifier,
-            ComputedCapability.fromModuleOrNull(variant.containingModule)
+            ComputedCapability.forProjectDependenciesOnModule(variant.containingModule)
         )
     }
 }

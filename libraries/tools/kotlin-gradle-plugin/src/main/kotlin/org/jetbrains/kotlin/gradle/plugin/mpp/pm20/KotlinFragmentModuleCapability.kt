@@ -13,9 +13,19 @@ val KotlinFragmentModuleCapability = FragmentCapabilities<KotlinGradleFragment> 
     capability(fragment.containingModule.moduleCapability ?: return@FragmentCapabilities)
 }
 
+internal fun setGradleProjectModuleCapability(configuration: Configuration, module: KotlinGradleModule) {
+    val capability = ComputedCapability.forProjectDependenciesOnModule(module) ?: return
+    configuration.outgoing.capability(capability)
+}
+
+internal fun setGradlePublishedModuleCapability(configuration: Configuration, module: KotlinGradleModule) {
+    val capability = ComputedCapability.forPublishedModule(module) ?: return
+    configuration.outgoing.capability(capability)
+}
+
 internal fun setModuleCapability(configuration: Configuration, module: KotlinGradleModule) {
     configuration.outgoing.capability(module.moduleCapability ?: return)
 }
 
 internal val KotlinGradleModule.moduleCapability: Capability?
-    get() = if (moduleClassifier != null) ComputedCapability.fromModule(this) else null
+    get() = ComputedCapability.forProjectDependenciesOnModule(this) // TODO NOW: consider cleaning stack up a bit
