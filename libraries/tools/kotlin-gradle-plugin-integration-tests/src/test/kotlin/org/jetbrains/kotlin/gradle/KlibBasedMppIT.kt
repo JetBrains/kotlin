@@ -94,7 +94,8 @@ class KlibBasedMppIT : BaseGradleIT() {
                 "published-producer-commonMain.klib",
                 "published-dependency-$hostSpecificSourceSet.klib",
                 "published-dependency-commonMain.klib"
-            )
+            ),
+            isNative = true
         )
     }
 
@@ -317,12 +318,13 @@ class KlibBasedMppIT : BaseGradleIT() {
     private fun BaseGradleIT.Project.checkTaskCompileClasspath(
         taskPath: String,
         checkModulesInClasspath: List<String> = emptyList(),
-        checkModulesNotInClasspath: List<String> = emptyList()
+        checkModulesNotInClasspath: List<String> = emptyList(),
+        isNative: Boolean = false
     ) {
         val subproject = taskPath.substringBeforeLast(":").takeIf { it.isNotEmpty() && it != taskPath }
         val taskName = taskPath.removePrefix(subproject.orEmpty())
-        val taskClass = "org.jetbrains.kotlin.gradle.tasks.AbstractKotlinCompileTool<*>"
-        val expression = """(tasks.getByName("$taskName") as $taskClass).libraries.toList()"""
+        val taskClass = if (isNative) "org.jetbrains.kotlin.gradle.tasks.AbstractKotlinNativeCompile<*, *>" else "AbstractCompile"
+        val expression = """(tasks.getByName("$taskName") as $taskClass).${if (isNative) "libraries" else "classpath"}.toList()"""
         checkPrintedItems(subproject, expression, checkModulesInClasspath, checkModulesNotInClasspath)
     }
 

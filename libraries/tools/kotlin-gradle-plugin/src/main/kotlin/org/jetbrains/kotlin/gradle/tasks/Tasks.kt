@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.gradle.tasks
 
-import org.gradle.api.DefaultTask
 import org.gradle.api.GradleException
 import org.gradle.api.Project
 import org.gradle.api.Task
@@ -14,6 +13,7 @@ import org.gradle.api.file.*
 import org.gradle.api.invocation.Gradle
 import org.gradle.api.logging.Logger
 import org.gradle.api.model.ObjectFactory
+import org.gradle.api.model.ReplacedBy
 import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
@@ -22,7 +22,6 @@ import org.gradle.api.services.BuildServiceParameters
 import org.gradle.api.tasks.*
 import org.gradle.api.tasks.compile.AbstractCompile
 import org.gradle.api.tasks.compile.JavaCompile
-import org.gradle.api.tasks.util.PatternFilterable
 import org.gradle.work.ChangeType
 import org.gradle.work.Incremental
 import org.gradle.work.InputChanges
@@ -78,39 +77,25 @@ const val USING_JS_INCREMENTAL_COMPILATION_MESSAGE = "Using Kotlin/JS incrementa
 const val USING_JS_IR_BACKEND_MESSAGE = "Using Kotlin/JS IR backend"
 
 abstract class AbstractKotlinCompileTool<T : CommonToolArguments>
-    : DefaultTask(),
-    //PatternFilterable,
+    : AbstractCompile(),
     CompilerArgumentAwareWithInput<T>,
     TaskWithLocalState {
+
+    @ReplacedBy("stableSources")
+    override fun getSource() = super.getSource()
 
     @get:InputFiles
     @get:SkipWhenEmpty
     @get:IgnoreEmptyDirectories
     @get:PathSensitive(PathSensitivity.RELATIVE)
-    abstract val sources: ConfigurableFileCollection
+    internal val stableSources: FileCollection = project.files(
+        { source }
+    )
 
-    /**
-     * Sets the source for this task.
-     * The given source object is evaluated as per [org.gradle.api.Project.files].
-     */
-    open fun setSource(source: Any) {
-        sources.from(source)
+    @Incremental
+    override fun getClasspath(): FileCollection {
+        return super.getClasspath()
     }
-
-    /**
-     * Sets the source for this task.
-     * The given source object is evaluated as per [org.gradle.api.Project.files].
-     */
-    open fun setSource(vararg source: Any) {
-        sources.from(source)
-    }
-
-    @get:Classpath
-    @get:Incremental
-    abstract val classpath: ConfigurableFileCollection
-
-    @get:OutputDirectory
-    abstract val destinationDirectory: DirectoryProperty
 
     @get:Internal
     override val metrics: Property<BuildMetricsReporter> = project.objects
@@ -418,7 +403,7 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments> : AbstractKotl
     @get:Internal
     protected open val incrementalProps: List<FileCollection>
         get() = listOfNotNull(
-            sources,
+            stableSources,
             classpath,
             commonSourceSet
         )
@@ -523,7 +508,7 @@ class KotlinJvmCompilerArgumentsProvider
     val moduleName: String = taskProvider.moduleName.get()
     val friendPaths: FileCollection = taskProvider.friendPaths
     val compileClasspath: Iterable<File> = taskProvider.classpath
-    val destinationDir: File = taskProvider.destinationDirectory.get().asFile
+    val destinationDir: File = taskProvider.destinationDir
     internal val kotlinOptions: List<KotlinJvmOptionsImpl> = listOfNotNull(
         taskProvider.parentKotlinOptionsImpl.orNull as? KotlinJvmOptionsImpl,
         taskProvider.kotlinOptions as KotlinJvmOptionsImpl
@@ -643,7 +628,7 @@ abstract class KotlinCompile @Inject constructor(
 
     private val jvmSourceRoots by project.provider {
         // serialize in the task state for configuration caching; avoid building anew in task execution, as it may access the project model
-        SourceRoots.ForJvm.create(sources, sourceRootsContainer, sourceFilesExtensions.get())
+        SourceRoots.ForJvm.create(source, sourceRootsContainer, sourceFilesExtensions.get())
     }
 
     /** A package prefix that is used for locating Java sources in a directory structure with non-full-depth packages.
@@ -661,8 +646,10 @@ abstract class KotlinCompile @Inject constructor(
             logger.kotlinDebug { "Set $this.usePreciseJavaTracking=$value" }
         }
 
-    @get:Internal // To support compile avoidance (ClasspathSnapshotProperties.classpathSnapshot will be used as input instead)
-    override abstract val classpath: ConfigurableFileCollection
+    @Internal // To support compile avoidance (ClasspathSnapshotProperties.classpathSnapshot will be used as input instead)
+    override fun getClasspath(): FileCollection {
+        return super.getClasspath()
+    }
 
     @get:Input
     abstract val useKotlinAbiSnapshot: Property<Boolean>
@@ -691,7 +678,7 @@ abstract class KotlinCompile @Inject constructor(
     }
 
     override val incrementalProps: List<FileCollection>
-        get() = listOf(sources, commonSourceSet, classpathSnapshotProperties.classpath, classpathSnapshotProperties.classpathSnapshot)
+        get() = listOf(stableSources, commonSourceSet, classpathSnapshotProperties.classpath, classpathSnapshotProperties.classpathSnapshot)
 
     // Exclude classpathSnapshotDir from TaskOutputsBackup (see TaskOutputsBackup's kdoc for more info). */
     override val taskOutputsBackupExcludes: List<File>
@@ -872,15 +859,15 @@ abstract class KotlinCompile @Inject constructor(
     }
 
     // override setSource to track source directory sets and files (for generated android folders)
-    override fun setSource(source: Any) {
-        sourceRootsContainer.set(source)
-        super.setSource(source)
+    override fun setSource(sources: Any) {
+        sourceRootsContainer.set(sources)
+        super.setSource(sources)
     }
 
     // override source to track source directory sets and files (for generated android folders)
-    override fun setSource(vararg source: Any) {
-        sourceRootsContainer.add(*source)
-        super.setSource(*source)
+    override fun source(vararg sources: Any): SourceTask {
+        sourceRootsContainer.add(*sources)
+        return super.source(*sources)
     }
 
     private fun getClasspathChanges(inputChanges: InputChanges): ClasspathChanges = when {
@@ -1031,7 +1018,7 @@ abstract class Kotlin2JsCompile @Inject constructor(
         (kotlinOptions as KotlinJsOptionsImpl).updateArguments(args)
     }
 
-    override fun getSourceRoots() = SourceRoots.KotlinOnly.create(sources, sourceFilesExtensions.get())
+    override fun getSourceRoots() = SourceRoots.KotlinOnly.create(getSource(), sourceFilesExtensions.get())
 
     @get:InputFiles
     @get:IgnoreEmptyDirectories
@@ -1128,7 +1115,7 @@ abstract class Kotlin2JsCompile @Inject constructor(
         sourceRoots as SourceRoots.KotlinOnly
 
         logger.debug("Calling compiler")
-        //destinationDir.mkdirs()
+        destinationDir.mkdirs()
 
         if (kotlinOptions.isIrBackendEnabled()) {
             logger.info(USING_JS_IR_BACKEND_MESSAGE)

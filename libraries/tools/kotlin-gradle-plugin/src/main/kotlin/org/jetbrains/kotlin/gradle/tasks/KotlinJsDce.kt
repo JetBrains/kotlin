@@ -16,11 +16,14 @@
 
 package org.jetbrains.kotlin.gradle.tasks
 
+import org.gradle.api.file.FileCollection
+import org.gradle.api.file.FileTree
 import org.gradle.api.tasks.CacheableTask
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.TaskAction
 import org.gradle.work.ChangeType
+import org.gradle.work.Incremental
 import org.gradle.work.InputChanges
 import org.jetbrains.kotlin.cli.common.arguments.DevModeOverwritingStrategies
 import org.jetbrains.kotlin.cli.common.arguments.K2JSDceArguments
@@ -70,6 +73,11 @@ abstract class KotlinJsDce : AbstractKotlinCompileTool<K2JSDceArguments>(), Kotl
     @Input
     var jvmArgs = mutableListOf<String>()
 
+    @Incremental
+    override fun getClasspath(): FileCollection {
+        return super.getClasspath()
+    }
+
     private val buildDir by lazy {
         project.buildDir
     }
@@ -93,12 +101,13 @@ abstract class KotlinJsDce : AbstractKotlinCompileTool<K2JSDceArguments>(), Kotl
                 .filter { it.changeType == ChangeType.MODIFIED || it.changeType == ChangeType.ADDED }
                 .map { it.file }
         } else {
-            classpath.asFileTree.files
+            classpath
         }
-        // TODO: use PatternFilterable here!
-        val inputFiles = sources.asFileTree.files.plus(classpathFiles)
+        val inputFiles = (listOf(source) + classpathFiles
             .filter { !kotlinFilesOnly || isDceCandidate(it) }
-            .map { it.path }
+            .map { objects.fileCollection().from(it).asFileTree })
+            .reduce(FileTree::plus)
+            .files.map { it.path }
 
         val outputDirArgs = arrayOf("-output-dir", destinationDirectory.get().asFile.path)
 

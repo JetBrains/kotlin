@@ -30,7 +30,7 @@ internal sealed class SourceRoots(val kotlinSourceFiles: FileCollection) {
 
         companion object {
             fun create(
-                taskSource: FileCollection,
+                taskSource: FileTree,
                 sourceRoots: FilteringSourceRootsContainer,
                 sourceFilesExtensions: List<String>
             ): ForJvm {
@@ -58,7 +58,7 @@ internal sealed class SourceRoots(val kotlinSourceFiles: FileCollection) {
     class KotlinOnly(kotlinSourceFiles: FileCollection) : SourceRoots(kotlinSourceFiles) {
         companion object {
             fun create(
-                taskSource: FileCollection,
+                taskSource: FileTree,
                 sourceFilesExtensions: List<String>
             ) = KotlinOnly(
                 taskSource.filter { it.isKotlinFile(sourceFilesExtensions) }

@@ -80,7 +80,7 @@ internal fun addSourcesToKotlinNativeCompileTask(
     addAsCommonSources: Lazy<Boolean>
 ) {
     project.tasks.withType(KotlinNativeCompile::class.java).matching { it.name == taskName }.configureEach { task ->
-        task.setSource(sourceFiles)
+        task.source(sourceFiles)
         task.commonSources.from(project.files(Callable { if (addAsCommonSources.value) sourceFiles() else emptyList() }))
     }
 

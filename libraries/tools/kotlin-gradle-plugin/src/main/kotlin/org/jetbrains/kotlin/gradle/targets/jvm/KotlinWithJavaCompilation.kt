@@ -6,11 +6,13 @@
 @file:Suppress("PackageDirectoryMismatch") // Old package for compatibility
 package org.jetbrains.kotlin.gradle.plugin.mpp
 
+import org.gradle.api.file.FileCollection
 import org.gradle.api.tasks.SourceSet
 import org.gradle.api.tasks.TaskProvider
 import org.gradle.api.tasks.compile.JavaCompile
-import org.gradle.kotlin.dsl.named
 import org.jetbrains.kotlin.gradle.dsl.KotlinCommonOptions
+import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
+import org.jetbrains.kotlin.gradle.plugin.KotlinCompilationOutput
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilationWithResources
 import org.jetbrains.kotlin.gradle.tasks.AbstractKotlinCompile
 
@@ -43,9 +45,7 @@ class KotlinWithJavaCompilation<KotlinOptionsType : KotlinCommonOptions>(
     fun source(javaSourceSet: SourceSet) {
         with(target.project) {
             afterEvaluate {
-                tasks.named<AbstractKotlinCompile<*>>(compileKotlinTaskName).configure {
-                    it.setSource(javaSourceSet.java)
-                }
+                (tasks.getByName(compileKotlinTaskName) as AbstractKotlinCompile<*>).source(javaSourceSet.java)
             }
         }
     }

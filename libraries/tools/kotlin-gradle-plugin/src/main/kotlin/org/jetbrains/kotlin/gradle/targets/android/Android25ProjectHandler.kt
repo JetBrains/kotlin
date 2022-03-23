@@ -17,6 +17,7 @@ import org.gradle.api.attributes.Attribute
 import org.gradle.api.attributes.Category
 import org.gradle.api.file.FileCollection
 import org.gradle.api.specs.Spec
+import org.gradle.api.tasks.PathSensitivity
 import org.gradle.api.tasks.TaskProvider
 import org.gradle.api.tasks.bundling.AbstractArchiveTask
 import org.gradle.api.tasks.compile.AbstractCompile
@@ -48,7 +49,7 @@ class Android25ProjectHandler(
     ) {
         val preJavaKotlinOutput = project.files(project.provider {
             mutableListOf<File>().apply {
-                add(kotlinTask.get().destinationDirectory.get().asFile)
+                add(kotlinTask.get().destinationDir)
                 if (Kapt3GradleSubplugin.isEnabled(project)) {
                     // Add Kapt3 output as well, since there's no SyncOutputTask with the new API
                     val kaptClasssesDir = Kapt3GradleSubplugin.getKaptGeneratedClassesDir(project, getVariantName(variantData))
@@ -59,7 +60,7 @@ class Android25ProjectHandler(
 
         val preJavaClasspathKey = variantData.registerPreJavacGeneratedBytecode(preJavaKotlinOutput)
         kotlinTask.configure { kotlinTaskInstance ->
-            kotlinTaskInstance.classpath
+            kotlinTaskInstance.classpath = project.files()
                 .from(variantData.getCompileClasspath(preJavaClasspathKey))
                 .from(Callable { AndroidGradleWrapper.getRuntimeJars(androidPlugin, androidExt) })
 

@@ -90,7 +90,7 @@ class KotlinModelBuilder(private val kotlinPluginVersion: String, private val an
                     friendSourceSets.get(),
                     kotlinSourceSet.kotlin.srcDirs,
                     javaSourceSet.resources.srcDirs,
-                    destinationDirectory.get().asFile,
+                    destinationDir,
                     javaSourceSet.output.resourcesDir!!,
                     createCompilerArguments()
                 )
@@ -116,7 +116,7 @@ class KotlinModelBuilder(private val kotlinPluginVersion: String, private val an
                 friendSourceSets.get(),
                 sources,
                 resources,
-                destinationDirectory.get().asFile,
+                destinationDir,
                 compilation.output.resourcesDir,
                 createCompilerArguments()
             )
