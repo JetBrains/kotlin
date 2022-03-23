@@ -125,6 +125,9 @@ abstract class KaptGenerateStubsTask @Inject constructor(
     @get:Internal
     override val scriptSources: FileCollection = objectFactory.fileCollection()
 
+    @get:Internal
+    override val androidLayoutResources: FileCollection = objectFactory.fileCollection()
+
     override val incrementalProps: List<FileCollection>
         get() = listOf(
             sources,
