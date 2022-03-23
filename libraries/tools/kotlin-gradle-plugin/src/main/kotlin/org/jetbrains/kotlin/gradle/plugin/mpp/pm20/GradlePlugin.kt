@@ -127,6 +127,10 @@ abstract class KotlinPm20GradlePlugin @Inject constructor(
                         val mainPublication = publishing.publications.withType(MavenPublication::class.java).getByName(rootSoftwareComponent.name)
                         publicationHolder?.assignMavenPublication(mainPublication)
                     }
+                    Embedded -> {
+                        val mainPublication = publishing.publications.withType(MavenPublication::class.java).getByName(rootSoftwareComponent.name)
+                        publicationHolder?.assignMavenPublication(mainPublication)
+                    }
                 }
             }
         }
