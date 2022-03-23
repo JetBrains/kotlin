@@ -345,8 +345,7 @@ fun String.splitCommaSeparatedOption(optionName: String) =
 
 data class Commit(val revision: String, val developer: String, val webUrlWithDescription: String)
 
-val teamCityUrl = "http://buildserver.labs.intellij.net"
-
+val teamCityUrl = "https://buildserver.labs.intellij.net"
 
 fun buildsUrl(buildLocator: String) =
         "$teamCityUrl/app/rest/builds/?locator=$buildLocator"
