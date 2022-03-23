@@ -26,7 +26,6 @@ import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpack
 import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackConfig
 import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackConfig.Mode
 import org.jetbrains.kotlin.gradle.targets.js.webpack.WebpackDevtool
-import org.jetbrains.kotlin.gradle.targets.js.webpack.WebpackMajorVersion
 import org.jetbrains.kotlin.gradle.targets.js.webpack.WebpackMajorVersion.Companion.choose
 import org.jetbrains.kotlin.gradle.tasks.dependsOn
 import org.jetbrains.kotlin.gradle.tasks.registerTask
@@ -266,9 +265,13 @@ open class KotlinBrowserJs @Inject constructor(target: KotlinJsTarget) :
         }
 
         entryProperty.set(
-            project.layout.file(actualDceTaskProvider.map {
-                it.destinationDir.resolve(compilation.compileKotlinTask.outputFileProperty.get().name)
-            })
+            project.layout.file(
+                actualDceTaskProvider
+                    .map {
+                        it.destinationDirectory.file(compilation.compileKotlinTask.outputFileProperty.get().name)
+                    }
+                    .flatMap { it.map { it.asFile } }
+            )
         )
 
         resolveFromModulesFirst = true
@@ -305,12 +308,14 @@ open class KotlinBrowserJs @Inject constructor(target: KotlinJsTarget) :
 
             it.kotlinFilesOnly = true
 
-            it.classpath = project.configurations.getByName(compilation.runtimeDependencyConfigurationName)
-            it.destinationDir = it.dceOptions.outputDirectory?.let { File(it) }
-                ?: compilation.npmProject.dir.resolve(if (dev) DCE_DEV_DIR else DCE_DIR)
+            it.classpath.from(project.configurations.getByName(compilation.runtimeDependencyConfigurationName))
+            it.destinationDirectory.set(
+                it.dceOptions.outputDirectory?.let { File(it) }
+                    ?: compilation.npmProject.dir.resolve(if (dev) DCE_DEV_DIR else DCE_DIR)
+            )
             it.defaultCompilerClasspath.setFrom(project.configurations.named(COMPILER_CLASSPATH_CONFIGURATION_NAME))
 
-            it.source(kotlinTask.map { it.outputFileProperty.get() })
+            it.setSource(kotlinTask.map { it.outputFileProperty })
         }
     }
 

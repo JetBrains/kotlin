@@ -2,7 +2,6 @@ package org.jetbrains.kotlin.gradle.plugin
 
 import org.gradle.api.Project
 import org.gradle.api.tasks.TaskProvider
-import org.gradle.api.tasks.compile.AbstractCompile
 import org.gradle.api.tasks.compile.JavaCompile
 import org.jetbrains.kotlin.gradle.dsl.KotlinCompile
 import org.jetbrains.kotlin.gradle.logging.kotlinDebug
@@ -13,6 +12,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinWithJavaCompilation
 import org.jetbrains.kotlin.gradle.targets.js.ir.JsIrBinary
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrCompilation
 import org.jetbrains.kotlin.gradle.tasks.AbstractKotlinCompile
+import org.jetbrains.kotlin.gradle.tasks.AbstractKotlinCompileTool
 import org.jetbrains.kotlin.gradle.tasks.CompilerPluginOptions
 import org.jetbrains.kotlin.gradle.tasks.KotlinNativeCompile
 
@@ -89,13 +89,20 @@ class SubpluginEnvironment(
     }
 }
 
-internal fun addCompilationSourcesToExternalCompileTask(compilation: KotlinCompilation<*>, task: TaskProvider<out AbstractCompile>) {
+internal fun addCompilationSourcesToExternalCompileTask(
+    compilation: KotlinCompilation<*>,
+    task: TaskProvider<out AbstractKotlinCompileTool<*>>
+) {
     if (compilation is KotlinJvmAndroidCompilation) {
-        compilation.androidVariant.forEachKotlinSourceSet { sourceSet -> task.configure { it.source(sourceSet.kotlin) } }
-        compilation.androidVariant.forEachJavaSourceDir { sources -> task.configure { it.source(sources.dir) } }
+        compilation.androidVariant.forEachKotlinSourceSet { sourceSet ->
+            task.configure { it.setSource(sourceSet.kotlin) }
+        }
+        compilation.androidVariant.forEachJavaSourceDir { sources ->
+            task.configure { it.setSource(sources.dir) }
+        }
     } else {
         task.configure { taskInstance ->
-            compilation.allKotlinSourceSets.forEach { sourceSet -> taskInstance.source(sourceSet.kotlin) }
+            compilation.allKotlinSourceSets.forEach { sourceSet -> taskInstance.setSource(sourceSet.kotlin) }
         }
     }
 }

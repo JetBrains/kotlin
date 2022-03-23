@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.gradle.plugin.mpp.pm20
 
 import org.gradle.api.Project
 import org.gradle.api.tasks.TaskProvider
-import org.gradle.api.tasks.compile.AbstractCompile
 import org.jetbrains.kotlin.gradle.plugin.Kotlin2JvmSourceSetProcessor
 import org.jetbrains.kotlin.gradle.plugin.KotlinNativeTargetConfigurator
 import org.jetbrains.kotlin.gradle.plugin.mpp.addCommonSourcesToKotlinCompileTask
@@ -57,7 +56,7 @@ open class KotlinCompilationTaskConfigurator(
         val commonSources = getCommonSourcesForFragmentCompilation(fragment)
 
         compileTask.configure {
-            it.source(allSources)
+            it.setSource(allSources)
             it.commonSources.from(commonSources)
 
             it.configure()

@@ -7,10 +7,9 @@ package org.jetbrains.kotlin.gradle.targets.js.ir
 
 import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.file.DirectoryProperty
-import org.gradle.api.file.FileTree
+import org.gradle.api.file.ProjectLayout
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.tasks.*
-import org.gradle.internal.hash.FileHasher
 import org.gradle.workers.WorkerExecutor
 import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.parseCommandLineArguments
@@ -26,6 +25,7 @@ import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsBinaryMode.DEVELOPMENT
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsBinaryMode.PRODUCTION
 import org.jetbrains.kotlin.gradle.tasks.Kotlin2JsCompile
 import org.jetbrains.kotlin.gradle.utils.getValue
+import org.jetbrains.kotlin.gradle.utils.property
 import org.jetbrains.kotlin.gradle.utils.toHexString
 import org.jetbrains.kotlin.statistics.metrics.BooleanMetrics
 import org.jetbrains.kotlin.statistics.metrics.StringMetrics
@@ -36,8 +36,9 @@ import javax.inject.Inject
 
 @CacheableTask
 abstract class KotlinJsIrLink @Inject constructor(
-    objectFactory: ObjectFactory,
-    workerExecutor: WorkerExecutor
+    private val objectFactory: ObjectFactory,
+    workerExecutor: WorkerExecutor,
+    private val projectLayout: ProjectLayout
 ) : Kotlin2JsCompile(
     KotlinJsOptionsImpl(),
     objectFactory,
@@ -81,8 +82,8 @@ abstract class KotlinJsIrLink @Inject constructor(
     lateinit var mode: KotlinJsBinaryMode
 
     // Not check sources, only klib module
-    @Internal
-    override fun getSource(): FileTree = super.getSource()
+    @get:Internal
+    abstract override val sources: ConfigurableFileCollection
 
     private val buildDir = project.buildDir
 
@@ -92,13 +93,18 @@ abstract class KotlinJsIrLink @Inject constructor(
     @get:PathSensitive(PathSensitivity.RELATIVE)
     internal abstract val entryModule: DirectoryProperty
 
-    override fun getDestinationDir(): File {
-        return if (kotlinOptions.outputFile == null) {
-            super.getDestinationDir()
-        } else {
-            outputFile.parentFile
+    override val destinationDirectory: DirectoryProperty
+        get() = objectFactory.directoryProperty().apply {
+            set(
+                destinationDirectory.flatMap { dir ->
+                    if (kotlinOptions.outputFile == null) {
+                        objectFactory.property(dir)
+                    } else {
+                        projectLayout.dir(outputFileProperty.map { it.parentFile })
+                    }
+                }
+            )
         }
-    }
 
     override fun skipCondition(): Boolean {
         return !entryModule.get().asFile.exists()

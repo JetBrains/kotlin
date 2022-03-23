@@ -300,7 +300,7 @@ internal open class GradleCompilerRunner(
                         task.buildHistoryFile.get().asFile,
                         task.abiSnapshotFile.get().asFile
                     )
-                    dirToModule[task.destinationDir] = module
+                    dirToModule[task.destinationDirectory.get().asFile] = module
                     task.javaOutputDir.orNull?.asFile?.let { dirToModule[it] = module }
                     nameToModules.getOrPut(module.name) { HashSet() }.add(module)
 

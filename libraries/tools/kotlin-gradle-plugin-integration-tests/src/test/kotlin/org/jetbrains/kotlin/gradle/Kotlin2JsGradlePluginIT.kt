@@ -1176,7 +1176,14 @@ class GeneralKotlin2JsGradlePluginIT : KGPBaseTest() {
     @DisplayName("nodejs up-to-date check works")
     @GradleTest
     fun testNodeJsAndYarnDownload(gradleVersion: GradleVersion) {
-        project("cleanTask", gradleVersion) {
+        project(
+            "cleanTask",
+            gradleVersion,
+            buildOptions = defaultBuildOptions.copy(
+                // bug in Gradle: https://github.com/gradle/gradle/issues/15796
+                warningMode = if (gradleVersion < GradleVersion.version("7.0")) WarningMode.None else defaultBuildOptions.warningMode
+            )
+        ) {
             build("checkDownloadedFolder")
 
             build("checkIfLastModifiedNotNow", "--rerun-tasks")

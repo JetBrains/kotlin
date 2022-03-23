@@ -30,7 +30,7 @@ kotlin {
             // Creating static library with a custom name.
             staticLib('customNameForiosSimLib') {
                 outputDirectory = file("fooCustomNameForiosSimLib") // outputDir is a `val` property.
-                linkTask.destinationDir = file("fooCustomNameForiosSimLib")
+                linkTask.destinationDirectory = file("fooCustomNameForiosSimLib")
             }
         }
     }

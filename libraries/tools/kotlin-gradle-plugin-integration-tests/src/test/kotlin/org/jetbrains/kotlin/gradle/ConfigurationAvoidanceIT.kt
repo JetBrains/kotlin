@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.gradle
 
+import org.gradle.api.logging.configuration.WarningMode
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.junit.jupiter.api.DisplayName
@@ -127,14 +128,23 @@ class ConfigurationAvoidanceIT : KGPBaseTest() {
     @DisplayName("JS early configuration resolution")
     @GradleTest
     fun testEarlyConfigurationsResolutionKotlinJs(gradleVersion: GradleVersion) {
-        testEarlyConfigurationsResolution("kotlin-js-browser-project", gradleVersion, kts = true)
+        testEarlyConfigurationsResolution(
+            "kotlin-js-browser-project",
+            gradleVersion,
+            kts = true,
+            buildOptions = defaultBuildOptions.copy(
+                // bug in Gradle: https://github.com/gradle/gradle/issues/15796
+                warningMode = if (gradleVersion < GradleVersion.version("7.0")) WarningMode.Summary else defaultBuildOptions.warningMode
+            )
+        )
     }
 
     private fun testEarlyConfigurationsResolution(
         projectName: String,
         gradleVersion: GradleVersion,
-        kts: Boolean
-    ) = project(projectName, gradleVersion) {
+        kts: Boolean,
+        buildOptions: BuildOptions = defaultBuildOptions
+    ) = project(projectName, gradleVersion, buildOptions = buildOptions) {
         (if (kts) buildGradleKts else buildGradle).appendText(
             //language=Gradle
             """${'\n'}

@@ -102,7 +102,7 @@ abstract class KotlinCompileCommon @Inject constructor(
         K2MetadataCompilerArguments()
 
     override fun getSourceRoots(): SourceRoots =
-        SourceRoots.KotlinOnly.create(getSource(), sourceFilesExtensions.get())
+        SourceRoots.KotlinOnly.create(sources, sourceFilesExtensions.get())
 
     override fun setupCompilerArgs(args: K2MetadataCompilerArguments, defaultsOnly: Boolean, ignoreClasspathResolutionErrors: Boolean) {
         args.apply { fillDefaultValues() }
@@ -120,7 +120,7 @@ abstract class KotlinCompileCommon @Inject constructor(
 
         with(args) {
             classpath = classpathList.joinToString(File.pathSeparator)
-            destination = destinationDir.canonicalPath
+            destination = destinationDirectory.get().asFile.canonicalPath
 
             friendPaths = this@KotlinCompileCommon.friendPaths.files.map { it.absolutePath }.toTypedArray()
             refinesPaths = refinesMetadataPaths.map { it.absolutePath }.toTypedArray()
