@@ -172,7 +172,7 @@ abstract class AbstractKotlinCompileTool<T : CommonToolArguments> @Inject constr
 
     @get:Classpath
     @get:Incremental
-    abstract val libraries: ConfigurableFileCollection
+    abstract val classpath: ConfigurableFileCollection
 
     @get:OutputDirectory
     abstract val destinationDirectory: DirectoryProperty
@@ -480,7 +480,7 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments> @Inject constr
     protected open val incrementalProps: List<FileCollection>
         get() = listOfNotNull(
             sources,
-            libraries,
+            classpath,
             commonSourceSet
         )
 
@@ -578,7 +578,7 @@ class KotlinJvmCompilerArgumentsProvider
     (taskProvider: KotlinCompile) : KotlinCompileArgumentsProvider<KotlinCompile>(taskProvider) {
     val moduleName: String = taskProvider.moduleName.get()
     val friendPaths: FileCollection = taskProvider.friendPaths
-    val compileClasspath: Iterable<File> = taskProvider.libraries
+    val compileClasspath: Iterable<File> = taskProvider.classpath
     val destinationDir: File = taskProvider.destinationDirectory.get().asFile
     internal val kotlinOptions: List<KotlinJvmOptionsImpl> = listOfNotNull(
         taskProvider.parentKotlinOptionsImpl.orNull as? KotlinJvmOptionsImpl,
@@ -621,7 +621,7 @@ abstract class KotlinCompile @Inject constructor(
             if (properties.useClasspathSnapshot) {
                 registerTransformsOnce(project)
                 project.configurations.create(classpathSnapshotConfigurationName(taskProvider.name)).apply {
-                    project.dependencies.add(name, project.files(project.provider { taskProvider.get().libraries }))
+                    project.dependencies.add(name, project.files(project.provider { taskProvider.get().classpath }))
                 }
             }
         }
@@ -686,7 +686,7 @@ abstract class KotlinCompile @Inject constructor(
                 val classpathSnapshotDir = getClasspathSnapshotDir(task)
                 task.classpathSnapshotProperties.classpathSnapshotDir.value(classpathSnapshotDir).disallowChanges()
             } else {
-                task.classpathSnapshotProperties.classpath.from(task.project.provider { task.libraries })
+                task.classpathSnapshotProperties.classpath.from(task.project.provider { task.classpath })
             }
         }
     }
@@ -710,22 +710,7 @@ abstract class KotlinCompile @Inject constructor(
         }
 
     @get:Internal // To support compile avoidance (ClasspathSnapshotProperties.classpathSnapshot will be used as input instead)
-    abstract override val libraries: ConfigurableFileCollection
-
-    @Deprecated(
-        "Replaced with 'libraries' input",
-        replaceWith = ReplaceWith("libraries")
-    )
-    @Internal
-    fun getClasspath(): FileCollection = libraries
-
-    @Deprecated(
-        "Replaced with 'libraries' input",
-        replaceWith = ReplaceWith("libraries")
-    )
-    fun setClasspath(configuration: FileCollection) {
-        libraries.setFrom(configuration)
-    }
+    override abstract val classpath: ConfigurableFileCollection
 
     @get:Input
     abstract val useKotlinAbiSnapshot: Property<Boolean>
@@ -1280,7 +1265,7 @@ abstract class Kotlin2JsCompile @Inject constructor(
             logger.info(USING_JS_IR_BACKEND_MESSAGE)
         }
 
-        val dependencies = libraries
+        val dependencies = classpath
             .filter { it.exists() && libraryFilter(it) }
             .map { it.canonicalPath }
 

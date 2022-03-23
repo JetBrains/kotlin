@@ -122,7 +122,7 @@ internal abstract class KotlinSourceSetProcessor<T : AbstractKotlinCompile<*>>(
         return register(project, name) {
             it.description = taskDescription
             it.destinationDirectory.set(defaultKotlinDestinationDir)
-            it.libraries.from({ kotlinCompilation.compileDependencyFiles })
+            it.classpath.from({ kotlinCompilation.compileDependencyFiles })
         }
     }
 
