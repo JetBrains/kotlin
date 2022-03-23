@@ -51,8 +51,12 @@ abstract class KotlinGradleVariantInternal(
 }
 
 class DefaultSingleMavenPublishedModuleHolder(
-    private var module: KotlinGradleModule, override val defaultPublishedModuleSuffix: String?
+    private var module: KotlinGradleModule, private val defaultPublishedModuleSuffixProvider: () -> String?
 ) : SingleMavenPublishedModuleHolder {
+
+    override val defaultPublishedModuleSuffix: String?
+        get() = defaultPublishedModuleSuffixProvider()
+
     private val project get() = module.project
 
     private var assignedMavenPublication: MavenPublication? = null
@@ -72,8 +76,8 @@ class DefaultSingleMavenPublishedModuleHolder(
     override val publishedMavenModuleCoordinates: PublishedModuleCoordinatesProvider = MavenPublicationCoordinatesProvider(
         project,
         { assignedMavenPublication },
-        defaultPublishedModuleSuffix,
-        capabilities = listOfNotNull(ComputedCapability.capabilityStringFromModule(module))
+        defaultPublishedModuleSuffix
+
     )
 }
 
@@ -106,8 +110,11 @@ abstract class KotlinGradleVariantWithRuntimeInternal(
         project.files(listOf({ compilationOutputs.allOutputs }, { runtimeDependencyFiles }))
 }
 
-private fun defaultModuleSuffix(module: KotlinGradleModule, variantName: String): String =
-    dashSeparatedName(variantName, module.moduleClassifier)
+internal fun defaultModuleSuffix(module: KotlinGradleModule, variantName: String): String =
+    dashSeparatedName(
+        variantName.toLowerCase(),
+        (module.publicationMode as? Standalone)?.defaultArtifactIdSuffix ?: module.moduleClassifier
+    )
 
 abstract class KotlinGradlePublishedVariantWithRuntime(
     containingModule: KotlinGradleModule, fragmentName: String,
@@ -125,7 +132,7 @@ abstract class KotlinGradlePublishedVariantWithRuntime(
     runtimeDependenciesConfiguration = runtimeDependencyConfiguration,
     runtimeElementsConfiguration = runtimeElementsConfiguration
 ), SingleMavenPublishedModuleHolder by DefaultSingleMavenPublishedModuleHolder(
-    containingModule, defaultModuleSuffix(containingModule, fragmentName)
+    containingModule,{ defaultModuleSuffix(containingModule, fragmentName) }
 ) {
     override val gradleVariantNames: Set<String>
         get() = listOf(apiElementsConfiguration.name, runtimeElementsConfiguration.name).flatMapTo(mutableSetOf()) {
