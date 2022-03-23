@@ -5,6 +5,7 @@ import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.util.checkedReplace
 import org.junit.jupiter.api.DisplayName
+import java.io.File
 import java.nio.file.Path
 import kotlin.io.path.*
 
@@ -62,6 +63,44 @@ open class IncrementalCompilationJvmMultiProjectIT : BaseIncrementalCompilationM
                 )
             }
         }
+    }
+
+    @DisplayName("Reflect plugin")
+    @GradleTest
+    fun testReflectPlugin(gradleVersion: GradleVersion) {
+        project("reflectProject", gradleVersion){
+            val src = projectPath.resolve("src")
+            val expectedSources = src.allKotlinSources
+            build("build") {
+                assertCompiledKotlinSources(expectedSources, output)
+            }
+            val newClassWithAnnotation = kotlinSourcesDir().resolve("new.kt")
+            newClassWithAnnotation.writeText(
+                """
+                @A
+                object D:B
+                """.trimIndent()
+            )
+
+            build {
+                assertIncrementalCompilation(
+                    listOf(kotlinSourcesDir().resolve("new.kt"), kotlinSourcesDir().resolve("app.kt"))
+                        .map {
+                            it.relativeTo(projectPath).toString()
+                        })
+            }
+        }
+//        val project = Project("reflectProject")
+//        project.build("build") {
+//            assertSuccessful()
+//        }
+//
+//
+//
+//        project.build("build") {
+//            assertSuccessful()
+//            assertCompiledKotlinSources(listOf("src/main/kotlin/new.kt", "src/main/kotlin/app.kt"))
+//        }
     }
 
     @DisplayName(
