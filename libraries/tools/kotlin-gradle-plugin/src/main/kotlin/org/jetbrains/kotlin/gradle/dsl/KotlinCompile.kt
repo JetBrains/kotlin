@@ -18,12 +18,32 @@ package org.jetbrains.kotlin.gradle.dsl
 
 import groovy.lang.Closure
 import org.gradle.api.Task
+import org.gradle.api.file.ConfigurableFileCollection
+import org.gradle.api.file.FileCollection
+import org.gradle.api.tasks.Classpath
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.Internal
 
 interface KotlinJsCompile : KotlinCompile<KotlinJsOptions>
 
-interface KotlinJvmCompile : KotlinCompile<KotlinJvmOptions>
+interface KotlinJvmCompile : KotlinCompile<KotlinJvmOptions> {
+
+    fun setSource(sources: Any)
+
+    fun source(vararg sources: Any)
+
+    @get:Internal
+    val friendPaths: ConfigurableFileCollection
+
+    /** Using setter to match signature of Gradle's [org.gradle.api.tasks.compile.AbstractCompile] task. */
+    fun setClasspath(classpath: FileCollection)
+
+    /** Using getter to match signature of Gradle's [org.gradle.api.tasks.compile.AbstractCompile] task. */
+    @Classpath
+    fun getClasspath(): FileCollection
+
+
+}
 
 interface KotlinCommonCompile : KotlinCompile<KotlinMultiplatformCommonOptions>
 

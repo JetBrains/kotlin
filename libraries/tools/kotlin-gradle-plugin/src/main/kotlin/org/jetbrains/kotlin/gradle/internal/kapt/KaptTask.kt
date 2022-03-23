@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.gradle.internal.kapt.incremental.KaptClasspathChange
 import org.jetbrains.kotlin.gradle.internal.kapt.incremental.KaptIncrementalChanges
 import org.jetbrains.kotlin.gradle.internal.kapt.incremental.UnknownSnapshot
 import org.jetbrains.kotlin.gradle.internal.tasks.TaskWithLocalState
+import org.jetbrains.kotlin.gradle.plugin.CompilerPluginConfig
 import org.jetbrains.kotlin.gradle.tasks.*
 import org.jetbrains.kotlin.gradle.utils.*
 import org.jetbrains.kotlin.utils.addToStdlib.cast
@@ -31,7 +32,8 @@ abstract class KaptTask @Inject constructor(
     objectFactory: ObjectFactory
 ) : DefaultTask(),
     TaskWithLocalState,
-    UsesKotlinJavaToolchain {
+    UsesKotlinJavaToolchain,
+    BaseKaptTaskApi{
 
     init {
         cacheOnlyIfEnabledForKotlin()
@@ -39,23 +41,6 @@ abstract class KaptTask @Inject constructor(
         val reason = "Caching is disabled for kapt with 'kapt.useBuildCache'"
         outputs.cacheIf(reason) { useBuildCache }
     }
-
-    @get:Internal
-    internal abstract val stubsDir: DirectoryProperty
-
-    @get:Classpath
-    abstract val kaptClasspath: ConfigurableFileCollection
-
-    //part of kaptClasspath consisting from external artifacts only
-    //basically kaptClasspath = kaptExternalClasspath + artifacts built locally
-    @get:Classpath
-    abstract val kaptExternalClasspath: ConfigurableFileCollection
-
-    @get:Classpath
-    abstract val compilerClasspath: ConfigurableFileCollection
-
-    @get:Internal
-    internal abstract val kaptClasspathConfigurationNames: ListProperty<String>
 
     @get:PathSensitive(PathSensitivity.NONE)
     @get:Incremental
@@ -65,38 +50,18 @@ abstract class KaptTask @Inject constructor(
     abstract val classpathStructure: ConfigurableFileCollection
 
     @get:Internal
-    abstract val kaptPluginOptions: ListProperty<CompilerPluginOptions>
-
-    /**
-     * Output directory that contains caches necessary to support incremental annotation processing.
-     */
-    @get:LocalState
-    abstract val incAptCache: DirectoryProperty
-
-    @get:OutputDirectory
-    internal abstract val classesDir: DirectoryProperty
-
-    @get:OutputDirectory
-    abstract val destinationDir: DirectoryProperty
-
-    /** Used in the model builder only. */
-    @get:OutputDirectory
-    abstract val kotlinSourcesDestinationDir: DirectoryProperty
+    abstract val kaptPluginOptions: ListProperty<CompilerPluginConfig>
 
     @get:Nested
-    internal val annotationProcessorOptionProviders: MutableList<Any> = mutableListOf()
+    override val annotationProcessorOptionProviders: MutableList<Any> = mutableListOf()
 
     @get:Input
-    internal val includeCompileClasspath: Property<Boolean> = objectFactory
+    override val includeCompileClasspath: Property<Boolean> = objectFactory
         .propertyWithConvention(true)
         .chainedFinalizeValueOnRead()
 
     @get:Input
     internal var isIncremental = true
-
-    // @Internal because _abiClasspath and _nonAbiClasspath are used for actual checks
-    @get:Internal
-    abstract val classpath: ConfigurableFileCollection
 
     @get:Internal
     internal val defaultKotlinJavaToolchain: Provider<DefaultKotlinJavaToolchain> = objectFactory
@@ -130,25 +95,12 @@ abstract class KaptTask @Inject constructor(
     @get:Internal
     var useBuildCache: Boolean = false
 
-    /** Needed for the model builder. */
-    @get:Internal
-    abstract val sourceSetName: Property<String>
-
-    @get:InputFiles
-    @get:IgnoreEmptyDirectories
-    @get:Incremental
-    @get:PathSensitive(PathSensitivity.RELATIVE)
-    abstract val source: ConfigurableFileCollection
-
     @get:Internal
     override val metrics: Property<BuildMetricsReporter> = objectFactory
         .property(BuildMetricsReporterImpl())
 
     @get:Input
     abstract val verbose: Property<Boolean>
-
-    @get:Internal
-    abstract val defaultJavaSourceCompatibility: Property<String>
 
     protected fun checkAnnotationProcessorClasspath() {
         if (!includeCompileClasspath.get()) return
@@ -178,10 +130,6 @@ abstract class KaptTask @Inject constructor(
 
         }
     }
-
-    // TODO(gavra): Here we assume that kotlinc and javac output is available for incremental runs. We should insert some checks.
-    @get:Internal
-    internal abstract val compiledSources: ConfigurableFileCollection
 
     protected fun getIncrementalChanges(inputChanges: InputChanges): KaptIncrementalChanges {
         return if (isIncremental) {

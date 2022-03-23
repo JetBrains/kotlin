@@ -23,6 +23,7 @@ import org.gradle.workers.WorkerExecutor
 import org.jetbrains.kotlin.gradle.internal.kapt.classloaders.ClassLoadersCache
 import org.jetbrains.kotlin.gradle.internal.kapt.classloaders.rootOrSelf
 import org.jetbrains.kotlin.gradle.internal.kapt.incremental.KaptIncrementalChanges
+import org.jetbrains.kotlin.gradle.tasks.KaptTaskApi
 import org.jetbrains.kotlin.gradle.tasks.toSingleCompilerPluginOptions
 import org.jetbrains.kotlin.gradle.utils.isGradleVersionAtLeast
 import org.jetbrains.kotlin.utils.PathUtil
@@ -37,10 +38,8 @@ abstract class KaptWithoutKotlincTask @Inject constructor(
     objectFactory: ObjectFactory,
     private val providerFactory: ProviderFactory,
     private val workerExecutor: WorkerExecutor
-) : KaptTask(objectFactory) {
+) : KaptTask(objectFactory), KaptTaskApi {
 
-    @get:Classpath
-    abstract val kaptJars: ConfigurableFileCollection
 
     @get:Input
     var classLoadersCacheSize: Int = 0
@@ -56,9 +55,6 @@ abstract class KaptWithoutKotlincTask @Inject constructor(
 
     @get:Input
     abstract val javacOptions: MapProperty<String, String>
-
-    @get:Input
-    abstract val addJdkClassesToClasspath: Property<Boolean>
 
     @get:Internal
     internal val projectDir = project.projectDir

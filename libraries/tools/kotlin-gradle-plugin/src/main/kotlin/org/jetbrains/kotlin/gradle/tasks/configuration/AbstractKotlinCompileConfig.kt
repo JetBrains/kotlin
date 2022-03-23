@@ -8,9 +8,11 @@ package org.jetbrains.kotlin.gradle.tasks.configuration
 import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.api.model.ObjectFactory
+import org.gradle.api.provider.Provider
 import org.gradle.api.provider.ProviderFactory
 import org.gradle.api.tasks.TaskProvider
 import org.jetbrains.kotlin.gradle.dsl.Coroutines
+import org.jetbrains.kotlin.gradle.dsl.KotlinTopLevelExtension
 import org.jetbrains.kotlin.gradle.dsl.topLevelExtension
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
@@ -20,6 +22,7 @@ import org.jetbrains.kotlin.gradle.plugin.sources.applyLanguageSettingsToKotlinO
 import org.jetbrains.kotlin.gradle.report.BuildMetricsReporterService
 import org.jetbrains.kotlin.gradle.tasks.AbstractKotlinCompile
 import org.jetbrains.kotlin.gradle.tasks.KOTLIN_BUILD_DIR_NAME
+import org.jetbrains.kotlin.project.model.LanguageSettings
 import java.util.concurrent.Callable
 
 /**
@@ -30,40 +33,25 @@ import java.util.concurrent.Callable
  */
 internal abstract class AbstractKotlinCompileConfig<TASK : AbstractKotlinCompile<*>>(
     project: Project,
+    private val ext: KotlinTopLevelExtension,
+    private val languageSettings: Provider<LanguageSettings>
 ) : TaskConfigAction<TASK>(project) {
 
-    constructor(compilation: KotlinCompilationData<*>) : this(compilation.project) {
-        val ext = compilation.project.topLevelExtension
-
+    init {
         configureTaskProvider { taskProvider ->
             project.runOnceAfterEvaluated("apply properties and language settings to ${taskProvider.name}") {
                 taskProvider.configure {
                     applyLanguageSettingsToKotlinOptions(
-                        compilation.languageSettings, (it as org.jetbrains.kotlin.gradle.dsl.KotlinCompile<*>).kotlinOptions
+                        languageSettings.get(), (it as org.jetbrains.kotlin.gradle.dsl.KotlinCompile<*>).kotlinOptions
                     )
                 }
             }
         }
 
         configureTask { task ->
-            task.friendPaths.from(Callable { compilation.friendPaths })
-            if (compilation is KotlinCompilation<*>) {
-                task.friendSourceSets.value(providers.provider { compilation.associateWithClosure.map { it.name } })
-                    .disallowChanges()
-                task.pluginClasspath.from(compilation.project.configurations.getByName(compilation.pluginConfigurationName))
-            }
-            task.moduleName.set(providers.provider { compilation.moduleName })
-            task.sourceSetName.value(providers.provider { compilation.compilationPurpose })
-            task.multiPlatformEnabled.value(
-                providers.provider {
-                    compilation.project.plugins.any { it is KotlinPlatformPluginBase || it is KotlinMultiplatformPluginWrapper || it is KotlinPm20PluginWrapper }
-                }
-            )
-            val propertiesProvider = project.kotlinPropertiesProvider
             task.coroutines.value(providers.provider {
                 ext.experimental.coroutines ?: propertiesProvider.coroutines ?: Coroutines.DEFAULT
             })
-
             task.taskBuildCacheableOutputDirectory.value(project.layout.buildDirectory.dir("$KOTLIN_BUILD_DIR_NAME/${task.name}/cacheable"))
                 .disallowChanges()
             task.taskBuildLocalStateDirectory.value(project.layout.buildDirectory.dir("$KOTLIN_BUILD_DIR_NAME/${task.name}/localstate"))
@@ -81,9 +69,28 @@ internal abstract class AbstractKotlinCompileConfig<TASK : AbstractKotlinCompile
             }
             task.compilerExecutionStrategy.value(propertiesProvider.kotlinCompilerExecutionStrategy)
 
-            // Default values
             task.incremental = false
             task.useModuleDetection.convention(false)
+        }
+    }
+
+    constructor(compilation: KotlinCompilationData<*>) : this(
+        compilation.project, compilation.project.topLevelExtension, compilation.project.provider { compilation.languageSettings }
+    ) {
+        configureTask { task ->
+            task.friendPaths.from(Callable { compilation.friendPaths })
+            if (compilation is KotlinCompilation<*>) {
+                task.friendSourceSets.value(providers.provider { compilation.associateWithClosure.map { it.name } })
+                    .disallowChanges()
+                task.pluginClasspath.from(compilation.project.configurations.getByName(compilation.pluginConfigurationName))
+            }
+            task.moduleName.set(providers.provider { compilation.moduleName })
+            task.sourceSetName.value(providers.provider { compilation.compilationPurpose })
+            task.multiPlatformEnabled.value(
+                providers.provider {
+                    compilation.project.plugins.any { it is KotlinPlatformPluginBase || it is KotlinMultiplatformPluginWrapper || it is KotlinPm20PluginWrapper }
+                }
+            )
         }
     }
 }

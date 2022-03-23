@@ -29,8 +29,7 @@ import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.AbstractKotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJvmAndroidCompilation
 import org.jetbrains.kotlin.gradle.tasks.AbstractKotlinCompileTool
-import org.jetbrains.kotlin.gradle.tasks.CompilerPluginOptions
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+import org.jetbrains.kotlin.gradle.tasks.*
 import org.jetbrains.kotlin.gradle.tasks.configuration.*
 import org.jetbrains.kotlin.gradle.tasks.locateTask
 import org.jetbrains.kotlin.gradle.tasks.registerTask
@@ -386,9 +385,9 @@ class Kapt3GradleSubplugin @Inject internal constructor(private val registry: To
         val androidOptions = androidVariantData?.annotationProcessorOptions ?: emptyMap()
         val androidSubpluginOptions = androidOptions.toList().map { SubpluginOption(it.first, it.second) }
 
-        androidSubpluginOptions + kaptExtension.getAdditionalArguments(project, androidVariantData, androidExtension).toList()
-            .map { SubpluginOption(it.first, it.second) } +
-                FilesSubpluginOption(KAPT_KOTLIN_GENERATED, listOf(kotlinSourcesOutputDir))
+        androidSubpluginOptions + getNonAndroidDslApOptions(
+            kaptExtension, project, listOf(kotlinSourcesOutputDir), androidVariantData, androidExtension
+        ).get()
     }
 
     private fun Kapt3SubpluginContext.createKaptKotlinTask(useWorkerApi: Boolean): TaskProvider<out KaptTask> {
@@ -396,9 +395,9 @@ class Kapt3GradleSubplugin @Inject internal constructor(private val registry: To
         val taskName = getKaptTaskName("kapt")
 
         val taskConfigAction = if (taskClass == KaptWithoutKotlincTask::class.java ) {
-            KaptWithoutKotlincConfigAction(kotlinCompilation.compileKotlinTaskProvider.get() as KotlinCompile, kaptExtension)
+            KaptWithoutKotlincConfig(kotlinCompilation.compileKotlinTaskProvider.get() as KotlinCompile, kaptExtension)
         } else {
-            KaptWithKotlincConfigAction(kotlinCompilation.compileKotlinTaskProvider.get() as KotlinCompile, kaptExtension)
+            KaptWithKotlincConfig(kotlinCompilation.compileKotlinTaskProvider.get() as KotlinCompile, kaptExtension)
         }
 
         val kaptClasspathConfiguration = project.configurations.create("kaptClasspath_$taskName")
@@ -452,22 +451,18 @@ class Kapt3GradleSubplugin @Inject internal constructor(private val registry: To
             } else {
                 check(taskClass == KaptWithoutKotlincTask::class.java)
                 getDslKaptApOptions()
-            }.map {
-                val res = CompilerPluginOptions()
-                it.forEach { res.addPluginArgument(KAPT_SUBPLUGIN_ID, it) }
-                return@map res
-            }
+            }.toCompilerPluginOptions()
 
             task.kaptPluginOptions.add(pluginOptions)
         }
 
         return if (taskClass == KaptWithoutKotlincTask::class.java) {
-            taskConfigAction as KaptWithoutKotlincConfigAction
+            taskConfigAction as KaptWithoutKotlincConfig
             project.registerTask(taskName, KaptWithoutKotlincTask::class.java, emptyList()).also {
                 taskConfigAction.execute(it)
             }
         } else {
-            taskConfigAction as KaptWithKotlincConfigAction
+            taskConfigAction as KaptWithKotlincConfig
             project.registerTask(taskName, KaptWithKotlincTask::class.java, emptyList()).also {
                 taskConfigAction.execute(it)
             }
@@ -587,6 +582,21 @@ internal fun buildKaptSubpluginOptions(
     }
 
     return pluginOptions
+}
+
+/* Returns AP options from KAPT static DSL. */
+internal fun getNonAndroidDslApOptions(
+    kaptExtension: KaptExtension,
+    project: Project,
+    kotlinSourcesOutputDir: Iterable<File>,
+    variantData: BaseVariant?,
+    androidExtension: BaseExtension?
+): Provider<List<SubpluginOption>> {
+    return project.provider {
+        kaptExtension.getAdditionalArguments(project, variantData, androidExtension).toList()
+            .map { SubpluginOption(it.first, it.second) } +
+                FilesSubpluginOption(Kapt3GradleSubplugin.KAPT_KOTLIN_GENERATED, kotlinSourcesOutputDir)
+    }
 }
 
 private fun encodeList(options: Map<String, String>): String {

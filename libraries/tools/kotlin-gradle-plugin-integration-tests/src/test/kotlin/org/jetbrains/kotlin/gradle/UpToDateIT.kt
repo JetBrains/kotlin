@@ -51,8 +51,10 @@ class UpToDateIT : KGPBaseTest() {
                 emptyMutation,
                 OptionMutation("compileKotlin.kotlinOptions.jvmTarget", "'1.8'", "'11'"),
                 OptionMutation("compileKotlin.kotlinOptions.freeCompilerArgs", "[]", "['-Xallow-kotlin-package']"),
+                OptionMutation("kotlin.experimental.coroutines", "'error'", "'enable'"),
                 OptionMutation("archivesBaseName", "'someName'", "'otherName'"),
                 subpluginOptionMutation,
+                subpluginOptionMutationWithKapt,
                 externalOutputMutation,
                 compilerClasspathMutation
             )
@@ -136,7 +138,9 @@ class UpToDateIT : KGPBaseTest() {
         }
 
         override fun checkAfterRebuild(buildResult: BuildResult) = with(buildResult) {
-            assertTasksExecuted(":compileKotlin", ":kaptGenerateStubsKotlin", ":kaptKotlin")
+            assertTasksExecuted(":compileKotlin", ":kaptGenerateStubsKotlin")
+            // KAPT with workers is not impacted by compiler classpath changes.
+            assertTasksUpToDate(":kaptKotlin")
         }
     }
 
@@ -159,6 +163,29 @@ class UpToDateIT : KGPBaseTest() {
 
         override fun checkAfterRebuild(buildResult: BuildResult) = with(buildResult) {
             assertTasksExecuted(":compileKotlin")
+        }
+    }
+
+    private val subpluginOptionMutationWithKapt = object : ProjectMutation {
+        override val name: String get() = "subpluginOptionMutationWithKapt"
+
+        override fun initProject(project: TestProject) = with(project) {
+            buildGradle.appendText(
+                "\n" + """
+                apply plugin: 'kotlin-kapt'
+                plugins.apply("org.jetbrains.kotlin.plugin.allopen")
+                allOpen { annotation("allopen.Foo"); annotation("allopen.Bar") }
+            """.trimIndent()
+            )
+        }
+
+        override fun mutateProject(project: TestProject) = with(project) {
+            buildGradle.modify { it.replace("allopen.Foo", "allopen.Baz") }
+        }
+
+        override fun checkAfterRebuild(buildResult: BuildResult) = with(buildResult) {
+            assertTasksExecuted(":compileKotlin", ":kaptGenerateStubsKotlin")
+            assertTasksUpToDate(":kaptKotlin")
         }
     }
 

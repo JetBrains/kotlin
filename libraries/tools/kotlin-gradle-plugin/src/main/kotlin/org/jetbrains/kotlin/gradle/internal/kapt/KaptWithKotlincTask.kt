@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.gradle.internal.kapt.incremental.KaptIncrementalChan
 import org.jetbrains.kotlin.gradle.internal.tasks.allOutputFiles
 import org.jetbrains.kotlin.gradle.logging.GradleKotlinLogger
 import org.jetbrains.kotlin.gradle.logging.GradlePrintingMessageCollector
+import org.jetbrains.kotlin.gradle.plugin.CompilerPluginConfig
 import org.jetbrains.kotlin.gradle.report.ReportingSettings
 import org.jetbrains.kotlin.gradle.tasks.*
 import org.jetbrains.kotlin.gradle.utils.newInstance
@@ -37,6 +38,9 @@ abstract class KaptWithKotlincTask @Inject constructor(
     @get:Classpath
     abstract val pluginClasspath: ConfigurableFileCollection
 
+    @get:Classpath
+    abstract val compilerClasspath: ConfigurableFileCollection
+
     @get:Internal
     val taskProvider: Provider<GradleCompileTaskProvider> = objectFactory.property(
         objectFactory.newInstance<GradleCompileTaskProvider>(project.gradle, this, project)
@@ -44,7 +48,7 @@ abstract class KaptWithKotlincTask @Inject constructor(
 
     /** Used only as task input, actual values come from [compileKotlinArgumentsContributor]. */
     @get:Nested
-    internal abstract val additionalPluginOptionsAsInputs: ListProperty<CompilerPluginOptions>
+    internal abstract val additionalPluginOptionsAsInputs: ListProperty<CompilerPluginConfig>
 
     override fun createCompilerArgs(): K2JVMCompilerArguments = K2JVMCompilerArguments()
 
