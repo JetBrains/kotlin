@@ -36,7 +36,6 @@ import org.jetbrains.kotlin.gradle.model.builder.KotlinModelBuilder
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinCompilationData
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.isMainCompilationData
-import org.jetbrains.kotlin.gradle.report.BuildMetricsReporterService
 import org.jetbrains.kotlin.gradle.scripting.internal.ScriptingGradleSubplugin
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsBinaryMode
 import org.jetbrains.kotlin.gradle.targets.js.ir.*
@@ -65,7 +64,7 @@ val KOTLIN_DSL_NAME = "kotlin"
 val KOTLIN_JS_DSL_NAME = "kotlin2js"
 val KOTLIN_OPTIONS_DSL_NAME = "kotlinOptions"
 
-abstract class KotlinCompilationProcessor<out T : SourceTask>(
+abstract class KotlinCompilationProcessor<out T : AbstractKotlinCompileTool<*>>(
     open val kotlinCompilation: KotlinCompilationData<*>
 ) {
     abstract val kotlinTask: TaskProvider<out T>
@@ -123,7 +122,7 @@ internal abstract class KotlinSourceSetProcessor<T : AbstractKotlinCompile<*>>(
         return register(project, name) {
             it.description = taskDescription
             it.destinationDirectory.set(defaultKotlinDestinationDir)
-            it.classpath = project.files({ kotlinCompilation.compileDependencyFiles })
+            it.classpath.from({ kotlinCompilation.compileDependencyFiles })
         }
     }
 
@@ -1049,7 +1048,7 @@ abstract class AbstractAndroidProjectHandler(private val kotlinConfigurationTool
         val kotlinTask = compilation.compileKotlinTaskProvider
         compilation.androidVariant.forEachJavaSourceDir { sources ->
             kotlinTask.configure {
-                it.source(sources.dir)
+                it.setSource(sources.dir)
                 it.dependsOn(sources)
             }
         }

@@ -144,7 +144,7 @@ class KpmCompilerPluginTest {
         .let {
             when (it) {
                 is AbstractKotlinCompile<*> -> it.kotlinPluginData
-                is AbstractKotlinNativeCompile<*, *> -> it.kotlinPluginData
+                is AbstractKotlinNativeCompile<*, *, *> -> it.kotlinPluginData
                 else -> error("Unknown task type: $it")
             }
         }

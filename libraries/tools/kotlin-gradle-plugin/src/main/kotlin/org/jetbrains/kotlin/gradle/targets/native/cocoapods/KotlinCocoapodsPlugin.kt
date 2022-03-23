@@ -220,7 +220,7 @@ open class KotlinCocoapodsPlugin : Plugin<Project> {
         check(targets.size == 1) { "The project has more than one target for the requested platform: `${requestedPlatform.visibleName}`" }
 
         val frameworkLinkTask = targets.single().binaries.getFramework(POD_FRAMEWORK_PREFIX, requestedBuildType).linkTaskProvider
-        project.createSyncFrameworkTask(frameworkLinkTask.map { it.destinationDir }, frameworkLinkTask)
+        project.createSyncFrameworkTask(frameworkLinkTask.flatMap { it.destinationDirectory.map { it.asFile }}, frameworkLinkTask)
     }
 
     private fun createSyncTask(
