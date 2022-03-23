@@ -104,7 +104,6 @@ class PublicIdSignatureComputer(val mangler: KotlinMangler.IrMangler) : IdSignat
 
         private val IrDeclarationWithVisibility.isTopLevelPrivate: Boolean
             get() = visibility == DescriptorVisibilities.PRIVATE && !checkIfPlatformSpecificExport() &&
-                    this is IrOverridableMember &&
                     (parent is IrPackageFragment || parent.isFacadeClass)
 
         override fun visitClass(declaration: IrClass) {
