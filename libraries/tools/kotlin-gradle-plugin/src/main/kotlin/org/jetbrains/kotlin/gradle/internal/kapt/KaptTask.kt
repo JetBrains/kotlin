@@ -1,10 +1,10 @@
 package org.jetbrains.kotlin.gradle.internal
 
+import org.gradle.api.DefaultTask
 import org.gradle.api.Project
 import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.file.FileCollection
-import org.gradle.api.internal.ConventionTask
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Property
@@ -31,20 +31,16 @@ import javax.inject.Inject
 @CacheableTask
 abstract class KaptTask @Inject constructor(
     objectFactory: ObjectFactory
-) : ConventionTask(),
+) : DefaultTask(),
     TaskWithLocalState,
     UsesKotlinJavaToolchain {
 
     open class Configurator<T: KaptTask>(protected val kotlinCompileTask: KotlinCompile) : TaskConfigurator<T> {
         override fun configure(task: T) {
             val objectFactory = task.project.objects
-            val providerFactory = task.project.providers
 
             task.compilerClasspath.from({ kotlinCompileTask.defaultCompilerClasspath })
             task.classpath.from(kotlinCompileTask.classpath)
-            task.kotlinSourceRoots.value(
-                providerFactory.provider { kotlinCompileTask.sourceRootsContainer.sourceRoots }
-            ).disallowChanges()
             task.compiledSources.from(
                 kotlinCompileTask.destinationDirectory,
                 Callable { kotlinCompileTask.javaOutputDir.takeIf { it.isPresent } }
@@ -52,7 +48,10 @@ abstract class KaptTask @Inject constructor(
             task.sourceSetName.value(kotlinCompileTask.sourceSetName).disallowChanges()
             task.localStateDirectories.from(Callable { task.incAptCache.orNull }).disallowChanges()
             task.source.from(
-                objectFactory.fileCollection().from(task.kotlinSourceRoots, task.stubsDir).asFileTree
+                objectFactory.fileCollection().from(
+                    kotlinCompileTask.javaSources,
+                    task.stubsDir
+                ).asFileTree
                     .matching { it.include("**/*.java") }
                     .filter { f -> task.isRootAllowed(f) }
             ).disallowChanges()
@@ -152,9 +151,6 @@ abstract class KaptTask @Inject constructor(
 
     @get:Internal
     var useBuildCache: Boolean = false
-
-    @get:Internal
-    abstract val kotlinSourceRoots: ListProperty<File>
 
     /** Needed for the model builder. */
     @get:Internal
