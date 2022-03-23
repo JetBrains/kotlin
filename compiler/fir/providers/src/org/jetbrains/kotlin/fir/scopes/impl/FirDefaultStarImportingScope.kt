@@ -15,15 +15,18 @@ import org.jetbrains.kotlin.fir.moduleData
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 
 class FirDefaultStarImportingScope(
     session: FirSession,
     scopeSession: ScopeSession,
-    priority: DefaultImportPriority
+    priority: DefaultImportPriority,
+    excludedImportNames: Set<FqName>
 ) : FirAbstractStarImportingScope(
     session, scopeSession,
-    lookupInFir = session.languageVersionSettings.getFlag(AnalysisFlags.allowKotlinPackage)
+    lookupInFir = session.languageVersionSettings.getFlag(AnalysisFlags.allowKotlinPackage),
+    excludedImportNames
 ) {
     // TODO: put languageVersionSettings into FirSession?
     override val starImports = run {

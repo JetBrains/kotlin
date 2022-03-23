@@ -13,10 +13,13 @@ import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.scopeSessionKey
 import org.jetbrains.kotlin.fir.scopes.impl.*
 import org.jetbrains.kotlin.fir.symbols.ensureResolved
+import org.jetbrains.kotlin.name.FqName
 
 private val ALL_IMPORTS = scopeSessionKey<FirFile, ListStorageFirScope>()
-private val DEFAULT_STAR_IMPORT = scopeSessionKey<DefaultImportPriority, FirDefaultStarImportingScope>()
+private val DEFAULT_STAR_IMPORT = scopeSessionKey<DefaultStarImportKey, FirDefaultStarImportingScope>()
 private val DEFAULT_SIMPLE_IMPORT = scopeSessionKey<DefaultImportPriority, FirDefaultSimpleImportingScope>()
+
+private data class DefaultStarImportKey(val priority: DefaultImportPriority, val excludedImportNames: Set<FqName>)
 
 fun createImportingScopes(
     file: FirFile,
@@ -37,14 +40,16 @@ private fun doCreateImportingScopes(
     scopeSession: ScopeSession
 ): List<FirScope> {
     file.ensureResolved(FirResolvePhase.IMPORTS)
+    val excludedImportNames =
+        file.imports.filter { it.aliasName != null }.mapNotNullTo(hashSetOf()) { it.importedFqName }.ifEmpty { emptySet() }
     return listOf(
-        scopeSession.getOrBuild(DefaultImportPriority.LOW, DEFAULT_STAR_IMPORT) {
-            FirDefaultStarImportingScope(session, scopeSession, DefaultImportPriority.LOW)
+        scopeSession.getOrBuild(DefaultStarImportKey(DefaultImportPriority.LOW, excludedImportNames), DEFAULT_STAR_IMPORT) {
+            FirDefaultStarImportingScope(session, scopeSession, DefaultImportPriority.LOW, excludedImportNames)
         },
-        scopeSession.getOrBuild(DefaultImportPriority.HIGH, DEFAULT_STAR_IMPORT) {
-            FirDefaultStarImportingScope(session, scopeSession, DefaultImportPriority.HIGH)
+        scopeSession.getOrBuild(DefaultStarImportKey(DefaultImportPriority.HIGH, excludedImportNames), DEFAULT_STAR_IMPORT) {
+            FirDefaultStarImportingScope(session, scopeSession, DefaultImportPriority.HIGH, excludedImportNames)
         },
-        FirExplicitStarImportingScope(file.imports, session, scopeSession),
+        FirExplicitStarImportingScope(file.imports, session, scopeSession, excludedImportNames),
 
         scopeSession.getOrBuild(DefaultImportPriority.LOW, DEFAULT_SIMPLE_IMPORT) {
             FirDefaultSimpleImportingScope(session, scopeSession, priority = DefaultImportPriority.LOW)

@@ -9,12 +9,14 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirImport
 import org.jetbrains.kotlin.fir.declarations.FirResolvedImport
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
+import org.jetbrains.kotlin.name.FqName
 
 open class FirExplicitStarImportingScope(
     imports: List<FirImport>,
     session: FirSession,
-    scopeSession: ScopeSession
-) : FirAbstractStarImportingScope(session, scopeSession, lookupInFir = true) {
+    scopeSession: ScopeSession,
+    excludedImportNames: Set<FqName>
+) : FirAbstractStarImportingScope(session, scopeSession, lookupInFir = true, excludedImportNames) {
     override val starImports = imports.filterIsInstance<FirResolvedImport>().filter { it.isAllUnder }
 
     override val scopeOwnerLookupNames: List<String> by lazy(LazyThreadSafetyMode.PUBLICATION) {
