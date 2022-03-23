@@ -40,7 +40,7 @@ abstract class KaptTask @Inject constructor(
             val objectFactory = task.project.objects
 
             task.compilerClasspath.from({ kotlinCompileTask.defaultCompilerClasspath })
-            task.classpath.from(kotlinCompileTask.classpath)
+            task.classpath.from(kotlinCompileTask.libraries)
             task.compiledSources.from(
                 kotlinCompileTask.destinationDirectory,
                 Callable { kotlinCompileTask.javaOutputDir.takeIf { it.isPresent } }

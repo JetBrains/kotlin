@@ -308,7 +308,7 @@ open class KotlinBrowserJs @Inject constructor(target: KotlinJsTarget) :
 
             it.kotlinFilesOnly = true
 
-            it.classpath.from(project.configurations.getByName(compilation.runtimeDependencyConfigurationName))
+            it.libraries.from(project.configurations.getByName(compilation.runtimeDependencyConfigurationName))
             it.destinationDirectory.set(
                 it.dceOptions.outputDirectory?.let { File(it) }
                     ?: compilation.npmProject.dir.resolve(if (dev) DCE_DEV_DIR else DCE_DIR)

@@ -61,7 +61,7 @@ abstract class KaptGenerateStubsTask @Inject constructor(
             val providerFactory = kotlinCompileTask.project.providers
             task.useModuleDetection.value(kotlinCompileTask.useModuleDetection).disallowChanges()
             task.moduleName.value(kotlinCompileTask.moduleName).disallowChanges()
-            task.classpath.from(kotlinCompileTask.classpath)
+            task.libraries.from(kotlinCompileTask.libraries)
             task.kotlinTaskPluginClasspath.from(
                 providerFactory.provider { kotlinCompileTask.pluginClasspath }
             )
@@ -163,7 +163,7 @@ abstract class KaptGenerateStubsTask @Inject constructor(
         args.pluginOptions = (pluginOptionsWithKapt.arguments + args.pluginOptions!!).toTypedArray()
 
         args.verbose = verbose.get()
-        args.classpathAsList = this.classpath.filter { it.exists() }.toList()
+        args.classpathAsList = this.libraries.filter { it.exists() }.toList()
         args.destinationAsFile = this.destinationDirectory.get().asFile
     }
 }

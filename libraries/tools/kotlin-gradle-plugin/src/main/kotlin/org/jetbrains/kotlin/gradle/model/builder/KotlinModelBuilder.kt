@@ -126,7 +126,7 @@ class KotlinModelBuilder(private val kotlinPluginVersion: String, private val an
             return CompilerArgumentsImpl(
                 serializedCompilerArguments,
                 defaultSerializedCompilerArguments,
-                classpath.toList()
+                libraries.toList()
             )
         }
 
