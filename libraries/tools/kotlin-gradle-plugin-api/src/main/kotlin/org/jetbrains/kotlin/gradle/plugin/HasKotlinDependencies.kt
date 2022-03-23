@@ -162,10 +162,11 @@ interface KotlinDependencyHandler {
     ): Dependency
 }
 
-interface HasKotlinDependencies {
-    fun dependencies(configure: KotlinDependencyHandler.() -> Unit)
-    fun dependencies(configureClosure: Closure<Any?>)
+interface KpmKotlinDependencyHandler : KotlinDependencyHandler {
+    fun kotlinAuxiliaryModule(dependencyNotation: Any, moduleName: String): Dependency
+}
 
+interface HasKotlinDependencyConfigurations {
     val apiConfigurationName: String
     val implementationConfigurationName: String
     val compileOnlyConfigurationName: String
@@ -173,4 +174,14 @@ interface HasKotlinDependencies {
 
     val relatedConfigurationNames: List<String>
         get() = listOf(apiConfigurationName, implementationConfigurationName, compileOnlyConfigurationName, runtimeOnlyConfigurationName)
+}
+
+interface HasKotlinDependencies : HasKotlinDependencyConfigurations {
+    fun dependencies(configure: KotlinDependencyHandler.() -> Unit)
+    fun dependencies(configureClosure: Closure<Any?>)
+}
+
+interface HasKpmKotlinDependencies : HasKotlinDependencyConfigurations {
+    fun dependencies(configure: KpmKotlinDependencyHandler.() -> Unit)
+    fun dependencies(configureClosure: Closure<Any?>)
 }

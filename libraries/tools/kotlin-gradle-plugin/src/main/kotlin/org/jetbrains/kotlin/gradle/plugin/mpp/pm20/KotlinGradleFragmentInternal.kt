@@ -14,8 +14,10 @@ import org.gradle.util.ConfigureUtil
 import org.jetbrains.kotlin.gradle.kpm.KotlinExternalModelContainer
 import org.jetbrains.kotlin.gradle.kpm.KotlinMutableExternalModelContainer
 import org.jetbrains.kotlin.gradle.plugin.KotlinDependencyHandler
+import org.jetbrains.kotlin.gradle.plugin.KpmKotlinDependencyHandler
 import org.jetbrains.kotlin.gradle.plugin.LanguageSettingsBuilder
 import org.jetbrains.kotlin.gradle.plugin.mpp.DefaultKotlinDependencyHandler
+import org.jetbrains.kotlin.gradle.plugin.mpp.KpmKotlinDependencyHandlerImpl
 import org.jetbrains.kotlin.gradle.plugin.mpp.toModuleDependency
 import org.jetbrains.kotlin.gradle.plugin.sources.DefaultLanguageSettingsBuilder
 import org.jetbrains.kotlin.gradle.plugin.sources.FragmentConsistencyChecker
@@ -76,8 +78,8 @@ open class KotlinGradleFragmentInternal @Inject constructor(
         }
     }
 
-    override fun dependencies(configure: KotlinDependencyHandler.() -> Unit): Unit =
-        DefaultKotlinDependencyHandler(this, project).run(configure)
+    override fun dependencies(configure: KpmKotlinDependencyHandler.() -> Unit) =
+        KpmKotlinDependencyHandlerImpl(this, project).run(configure)
 
     override fun dependencies(configureClosure: Closure<Any?>) =
         dependencies f@{ ConfigureUtil.configure(configureClosure, this@f) }

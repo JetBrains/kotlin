@@ -66,7 +66,7 @@ abstract class KotlinPm20GradlePlugin @Inject constructor(
 fun rootPublicationComponentName(module: KotlinGradleModule) =
     module.disambiguateName("root")
 
-open class KotlinPm20ProjectExtension(project: Project) : KotlinTopLevelExtension(project) {
+open class KotlinPm20ProjectExtension(project: Project) : KotlinTopLevelExtension(project), HasKotlinDependencies {
 
     internal val kpmModelContainer = DefaultKpmGradleProjectModelContainer.create(project)
 
@@ -93,6 +93,14 @@ open class KotlinPm20ProjectExtension(project: Project) : KotlinTopLevelExtensio
     @PublishedApi
     @JvmName("isAllowCommonizer")
     internal fun isAllowCommonizerForIde(@Suppress("UNUSED_PARAMETER") project: Project): Boolean = false
+
+    override fun dependencies(configure: KotlinDependencyHandler.() -> Unit) = main.dependencies(configure)
+    override fun dependencies(configureClosure: Closure<Any?>) = main.dependencies(configureClosure)
+
+    override val apiConfigurationName: String get() = main.apiConfigurationName
+    override val implementationConfigurationName: String get() = main.implementationConfigurationName
+    override val compileOnlyConfigurationName: String get() = main.compileOnlyConfigurationName
+    override val runtimeOnlyConfigurationName: String get() = main.runtimeOnlyConfigurationName
 }
 
 val KotlinGradleModule.jvm: KotlinJvmVariant

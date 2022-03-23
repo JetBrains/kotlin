@@ -10,13 +10,13 @@ import org.gradle.api.ExtensiblePolymorphicDomainObjectContainer
 import org.gradle.api.Named
 import org.gradle.api.NamedDomainObjectSet
 import org.gradle.api.Project
-import org.jetbrains.kotlin.gradle.plugin.HasKotlinDependencies
-import org.jetbrains.kotlin.gradle.plugin.KotlinDependencyHandler
+import org.jetbrains.kotlin.gradle.plugin.HasKpmKotlinDependencies
+import org.jetbrains.kotlin.gradle.plugin.KpmKotlinDependencyHandler
 import org.jetbrains.kotlin.project.model.KotlinModule
 import org.jetbrains.kotlin.project.model.KotlinModuleIdentifier
 import org.jetbrains.kotlin.project.model.KpmCompilerPlugin
 
-interface KotlinGradleModule : KotlinModule, Named, HasKotlinDependencies {
+interface KotlinGradleModule : KotlinModule, Named, HasKpmKotlinDependencies {
     val project: Project
     val moduleClassifier: String?
 
@@ -54,7 +54,7 @@ interface KotlinGradleModule : KotlinModule, Named, HasKotlinDependencies {
     fun common(configure: KotlinGradleFragment.() -> Unit) =
         common.configure()
 
-    override fun dependencies(configure: KotlinDependencyHandler.() -> Unit) =
+    override fun dependencies(configure: KpmKotlinDependencyHandler.() -> Unit) =
         common.dependencies(configure)
 
     override fun dependencies(configureClosure: Closure<Any?>) =
