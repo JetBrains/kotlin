@@ -933,7 +933,7 @@ abstract class AbstractAndroidProjectHandler(private val kotlinConfigurationTool
 
         val configAction = KotlinCompileConfig(compilation)
         configAction.configureTask { task ->
-            task.parentKotlinOptionsImpl.value(rootKotlinOptions).disallowChanges()
+            task.parentKotlinOptions.value(rootKotlinOptions).disallowChanges()
             task.useModuleDetection.value(true).disallowChanges()
             // store kotlin classes in separate directory. They will serve as class-path to java compiler
             task.destinationDirectory.set(project.layout.buildDirectory.dir("tmp/kotlin-classes/$variantDataName"))

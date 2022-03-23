@@ -23,6 +23,10 @@ import org.gradle.api.tasks.Internal
 
 interface KotlinJsCompile : KotlinCompile<KotlinJsOptions>
 
+@Deprecated(
+    message = "Moved into API artifact",
+    replaceWith = ReplaceWith("KotlinJvmCompile", "org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile")
+)
 interface KotlinJvmCompile : KotlinCompile<KotlinJvmOptions>
 
 interface KotlinCommonCompile : KotlinCompile<KotlinMultiplatformCommonOptions>

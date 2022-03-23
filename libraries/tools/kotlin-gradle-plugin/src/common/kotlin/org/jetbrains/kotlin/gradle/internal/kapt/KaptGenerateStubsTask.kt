@@ -19,7 +19,6 @@ package org.jetbrains.kotlin.gradle.internal
 import org.gradle.api.file.*
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.file.ConfigurableFileCollection
-import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.*
 import org.gradle.work.Incremental
@@ -27,9 +26,10 @@ import org.gradle.work.NormalizeLineEndings
 import org.gradle.workers.WorkerExecutor
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.kotlin.gradle.dsl.KotlinJvmOptionsImpl
+import org.jetbrains.kotlin.gradle.tasks.KaptGenerateStubs
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
-import org.jetbrains.kotlin.gradle.utils.isParentOf
 import org.jetbrains.kotlin.gradle.tasks.toSingleCompilerPluginOptions
+import org.jetbrains.kotlin.gradle.utils.isParentOf
 import org.jetbrains.kotlin.incremental.classpathAsList
 import org.jetbrains.kotlin.incremental.destinationAsFile
 import java.io.File
@@ -43,13 +43,12 @@ abstract class KaptGenerateStubsTask @Inject constructor(
     KotlinJvmOptionsImpl(),
     workerExecutor,
     objectFactory
-) {
+), KaptGenerateStubs {
 
-    @get:OutputDirectory
-    abstract val stubsDir: DirectoryProperty
-
-    @get:Internal("Not an input, just passed as kapt args. ")
-    abstract val kaptClasspath: ConfigurableFileCollection
+    // Bug in Gradle - without this override Gradle complains @Internal is not
+    // compatible with @Classpath and @Incremental annotations
+    @get:Internal
+    abstract override val libraries: ConfigurableFileCollection
 
     /* Used as input as empty kapt classpath should not trigger stub generation, but a non-empty one should. */
     @Input
@@ -88,10 +87,10 @@ abstract class KaptGenerateStubsTask @Inject constructor(
         }
 
     @get:Internal
-    abstract override val scriptSources: FileCollection
+    override val scriptSources: FileCollection = objectFactory.fileCollection()
 
     @get:Internal
-    abstract override val androidLayoutResources: FileCollection
+    override val androidLayoutResources: FileCollection = objectFactory.fileCollection()
 
     override val incrementalProps: List<FileCollection>
         get() = listOf(
