@@ -122,6 +122,18 @@ abstract class KaptGenerateStubsTask @Inject constructor(
             patternFilterable.include { it.isDirectory || it.file.isSourceRootAllowed() }
         }
 
+    @get:Internal
+    override val scriptSources: FileCollection = objectFactory.fileCollection()
+
+    override val incrementalProps: List<FileCollection>
+        get() = listOf(
+            sources,
+            javaSources,
+            commonSourceSet,
+            classpathSnapshotProperties.classpath,
+            classpathSnapshotProperties.classpathSnapshot
+        )
+
     override val javaSources: FileCollection = super.javaSources
         .asFileTree
         .matching { patternFilterable ->

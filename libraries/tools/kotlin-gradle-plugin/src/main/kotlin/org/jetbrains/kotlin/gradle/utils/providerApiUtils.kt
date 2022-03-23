@@ -15,6 +15,7 @@ import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 import org.gradle.api.provider.SetProperty
 import org.gradle.api.tasks.TaskProvider
+import org.gradle.kotlin.dsl.setProperty
 import java.io.File
 import kotlin.properties.ReadOnlyProperty
 import kotlin.reflect.KProperty
@@ -47,6 +48,14 @@ internal inline fun <reified T : Any?> ObjectFactory.property() = property(T::cl
 internal inline fun <reified T : Any?> ObjectFactory.property(initialValue: T) = property<T>().value(initialValue)
 
 internal inline fun <reified T : Any?> ObjectFactory.property(initialValue: Provider<T>) = property<T>().value(initialValue)
+
+internal inline fun <reified T : Any?> ObjectFactory.setPropertyWithValue(
+    initialValue: Provider<Iterable<T>>
+) = setProperty<T>().value(initialValue)
+
+internal inline fun <reified T : Any?> ObjectFactory.setPropertyWithLazyValue(
+    noinline lazyValue: () -> Iterable<T>
+) = setPropertyWithValue(providerWithLazyConvention(lazyValue))
 
 internal inline fun <reified T : Any?> ObjectFactory.propertyWithConvention(
     conventionValue: Provider<T>

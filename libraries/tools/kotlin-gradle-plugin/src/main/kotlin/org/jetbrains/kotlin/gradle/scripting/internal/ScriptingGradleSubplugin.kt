@@ -68,7 +68,7 @@ class ScriptingGradleSubplugin : Plugin<Project> {
                                 discoveryClasspathConfiguration.allDependencies.isEmpty() -> {
                                     // skip further checks - user did not configured any discovery sources
                                 }
-                                else -> configureScriptsExtensions(project, javaPluginConvention, task.sourceSetName.get())
+                                else -> task.scriptDefinitions.from(discoveryClasspathConfiguration)
                             }
                         } catch (e: IllegalStateException) {
                             project.logger.warn("$SCRIPTING_LOG_PREFIX applied in the non-supported environment (error received: ${e.message})")
@@ -85,39 +85,6 @@ class ScriptingGradleSubplugin : Plugin<Project> {
             }
         }
     }
-
-    private fun configureScriptsExtensions(
-        project: Project,
-        javaPluginConvention: JavaPluginConvention,
-        sourceSetName: String
-    ) {
-        javaPluginConvention.sourceSets.findByName(sourceSetName)?.let { sourceSet ->
-
-            val discoveryResultsConfigurationName = getDiscoveryResultsConfigurationName(sourceSetName)
-
-            val kotlinSourceSet = sourceSet.getConvention(KOTLIN_DSL_NAME) as? KotlinSourceSet
-            if (kotlinSourceSet == null) {
-                project.logger.warn("$SCRIPTING_LOG_PREFIX kotlin source set not found: $project.$sourceSet, $MISCONFIGURATION_MESSAGE_SUFFIX")
-            } else {
-                val extensions by lazy {
-                    val discoveryResultsConfiguration = project.configurations.findByName(discoveryResultsConfigurationName)
-                    if (discoveryResultsConfiguration == null) {
-                        project.logger.warn("$SCRIPTING_LOG_PREFIX discovery results not found: $project.$discoveryResultsConfigurationName, $MISCONFIGURATION_MESSAGE_SUFFIX")
-                        emptySet<String>()
-                    } else {
-                        discoveryResultsConfiguration.files.flatMapTo(HashSet()) {
-                            it.readLines().filter(String::isNotBlank)
-                        }.also {
-                            kotlinSourceSet.addCustomSourceFilesExtensions(it.toList())
-                            project.logger.debug("$SCRIPTING_LOG_PREFIX $project.$sourceSet: discovered script extensions: $it")
-                        }
-                    }
-                }
-                kotlinSourceSet.kotlin.filter.include { it.file.extension in extensions }
-            }
-        }
-    }
-
 }
 
 private const val MAIN_CONFIGURATION_NAME = "kotlinScriptDef"
