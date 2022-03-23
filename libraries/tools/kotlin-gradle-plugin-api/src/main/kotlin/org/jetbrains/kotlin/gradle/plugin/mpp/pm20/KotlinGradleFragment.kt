@@ -14,10 +14,13 @@ import org.jetbrains.kotlin.gradle.plugin.HasKotlinDependencies
 import org.jetbrains.kotlin.gradle.plugin.LanguageSettingsBuilder
 import org.jetbrains.kotlin.project.model.KotlinModuleFragment
 import org.jetbrains.kotlin.project.model.utils.variantsContainingFragment
+import org.jetbrains.kotlin.tooling.core.HasMutableExtras
+import org.jetbrains.kotlin.tooling.core.MutableExtras
 import org.jetbrains.kotlin.tooling.core.closure
 import org.jetbrains.kotlin.tooling.core.withClosure
 
-interface KotlinGradleFragment : KotlinModuleFragment, HasKotlinDependencies, KotlinFragmentDependencyConfigurations, Named {
+interface KotlinGradleFragment :
+    KotlinModuleFragment, HasKotlinDependencies, HasMutableExtras, KotlinFragmentDependencyConfigurations, Named {
     override val kotlinSourceRoots: SourceDirectorySet
 
     override val containingModule: KotlinGradleModule
@@ -26,8 +29,11 @@ interface KotlinGradleFragment : KotlinModuleFragment, HasKotlinDependencies, Ko
 
     override val languageSettings: LanguageSettingsBuilder
 
+    override val extras: MutableExtras
+
     val project: Project
         get() = containingModule.project
+
 
     fun refines(other: KotlinGradleFragment)
 

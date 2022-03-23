@@ -13,10 +13,6 @@ import createProxyInstance
 import org.gradle.api.internal.project.ProjectInternal
 import org.gradle.kotlin.dsl.create
 import org.gradle.testfixtures.ProjectBuilder
-import org.jetbrains.kotlin.gradle.kpm.KotlinExternalModelKey
-import org.jetbrains.kotlin.gradle.kpm.KotlinExternalModelSerializer.Companion.serializable
-import org.jetbrains.kotlin.gradle.kpm.external.ExternalVariantApi
-import org.jetbrains.kotlin.gradle.kpm.external.external
 import org.jetbrains.kotlin.gradle.kpm.idea.testFixtures.deserialize
 import org.jetbrains.kotlin.gradle.kpm.idea.testFixtures.serialize
 import org.jetbrains.kotlin.gradle.plugin.KotlinPm20PluginWrapper
@@ -24,6 +20,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinIosX64Variant
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinLinuxX64Variant
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinPm20ProjectExtension
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.jvm
+import org.jetbrains.kotlin.tooling.core.extraKey
 import unwrapProxyInstance
 import java.io.File
 import java.io.Serializable
@@ -41,6 +38,9 @@ import kotlin.test.*
  * - Assert the deserialized model is healthy
  */
 class BackwardsCompatibilityDeserializationTest {
+
+    data class RetainedModel(val id: Int) : Serializable
+    data class UnretainedModel(val id: Int)
 
     @Test
     fun `test - simple project`() {
@@ -79,22 +79,18 @@ class BackwardsCompatibilityDeserializationTest {
         }
     }
 
-    @OptIn(ExternalVariantApi::class)
     @Test
-    fun `test - attaching serializable models`() {
-        data class RetainedModel(val id: Int) : Serializable
-        data class UnretainedModel(val id: Int)
-
-        val retainedModelKey = KotlinExternalModelKey<RetainedModel>(serializable())
-        val unretainedModelKey = KotlinExternalModelKey<UnretainedModel>()
+    fun `test - attaching serializable extras`() {
+        val retainedModelKey = extraKey<RetainedModel>().withCapability(IdeaKotlinExtraSerializer.serializable())
+        val unretainedModelKey = extraKey<UnretainedModel>()
 
         val project = ProjectBuilder.builder().build() as ProjectInternal
         project.plugins.apply(KotlinPm20PluginWrapper::class.java)
 
         /* Setup example project */
         val kotlinExtension = project.extensions.getByType(KotlinPm20ProjectExtension::class.java)
-        kotlinExtension.main.common.external[retainedModelKey] = RetainedModel(2411)
-        kotlinExtension.main.common.external[unretainedModelKey] = UnretainedModel(510)
+        kotlinExtension.main.common.extras[retainedModelKey] = RetainedModel(2411)
+        kotlinExtension.main.common.extras[unretainedModelKey] = UnretainedModel(510)
 
         val model = project.buildIdeaKotlinProjectModel()
         val deserializedModel = deserializeModelWithBackwardsCompatibleClasses(model)
@@ -108,10 +104,10 @@ class BackwardsCompatibilityDeserializationTest {
 
         run {
             val deserializedCommonFragment = unwrapProxyInstance(deserializedCommonFragmentProxy)
-            val external = deserializedCommonFragment.serialize().deserialize<IdeaKotlinFragment>().external
-            assertEquals(1, external.ids.size)
-            assertEquals(RetainedModel(2411), external[retainedModelKey])
-            assertNull(external[unretainedModelKey])
+            val extras = deserializedCommonFragment.serialize().deserialize<IdeaKotlinFragment>().extras
+            assertEquals(1, extras.ids.size)
+            assertEquals(RetainedModel(2411), extras[retainedModelKey])
+            assertNull(extras[unretainedModelKey])
         }
     }
 }

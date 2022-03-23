@@ -17,7 +17,6 @@ import org.gradle.api.attributes.java.TargetJvmEnvironment.TARGET_JVM_ENVIRONMEN
 import org.gradle.kotlin.dsl.named
 import org.jetbrains.kotlin.gradle.kpm.external.ExternalVariantApi
 import org.jetbrains.kotlin.gradle.kpm.external.createExternalJvmVariant
-import org.jetbrains.kotlin.gradle.kpm.external.external
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.*
 
@@ -88,6 +87,5 @@ fun KotlinGradleModule.createKotlinAndroidVariant(androidVariant: BaseVariant) {
     val androidDsl = AndroidDsl()
     androidDsl.androidManifest = project.file("AndroidManifest.xml")
     androidDsl.compileSdk = 23
-    androidCommon.external[androidDslKey] = androidDsl
-    kotlinVariant.external[androidDslKey] = androidDsl
+    kotlinVariant.extras[androidDslKey] = androidDsl
 }

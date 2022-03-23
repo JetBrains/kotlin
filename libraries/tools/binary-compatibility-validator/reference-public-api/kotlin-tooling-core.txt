@@ -1,8 +1,96 @@
+public abstract class org/jetbrains/kotlin/tooling/core/AbstractIterableExtras : org/jetbrains/kotlin/tooling/core/IterableExtras {
+	public fun <init> ()V
+	public fun equals (Ljava/lang/Object;)Z
+	public fun hashCode ()I
+	public fun isEmpty ()Z
+	public fun isNotEmpty ()Z
+	public fun iterator ()Ljava/util/Iterator;
+	public fun toString ()Ljava/lang/String;
+}
+
 public final class org/jetbrains/kotlin/tooling/core/ClosureKt {
 	public static final fun closureTo (Ljava/util/Set;Ljava/util/Set;Ljava/util/List;Ljava/lang/Object;Lkotlin/jvm/functions/Function2;)Ljava/util/Set;
 	public static final fun createResultSet (I)Ljava/util/Set;
 	public static final fun createResultSet (Ljava/lang/Iterable;I)Ljava/util/Set;
 	public static final fun createResultSet (Ljava/lang/Object;I)Ljava/util/Set;
+}
+
+public abstract interface class org/jetbrains/kotlin/tooling/core/Extras {
+	public abstract fun contains (Lorg/jetbrains/kotlin/tooling/core/Extras$Id;)Z
+	public abstract fun get (Lorg/jetbrains/kotlin/tooling/core/Extras$Key;)Ljava/lang/Object;
+	public abstract fun getIds ()Ljava/util/Set;
+}
+
+public final class org/jetbrains/kotlin/tooling/core/Extras$Entry {
+	public fun <init> (Lorg/jetbrains/kotlin/tooling/core/Extras$Key;Ljava/lang/Object;)V
+	public final fun component1 ()Lorg/jetbrains/kotlin/tooling/core/Extras$Key;
+	public final fun component2 ()Ljava/lang/Object;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getKey ()Lorg/jetbrains/kotlin/tooling/core/Extras$Key;
+	public final fun getValue ()Ljava/lang/Object;
+	public fun hashCode ()I
+}
+
+public final class org/jetbrains/kotlin/tooling/core/Extras$Id : java/io/Serializable {
+	public fun <init> (Lorg/jetbrains/kotlin/tooling/core/ReifiedTypeSignature;Ljava/lang/String;)V
+	public synthetic fun <init> (Lorg/jetbrains/kotlin/tooling/core/ReifiedTypeSignature;Ljava/lang/String;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getName ()Ljava/lang/String;
+	public final fun getType ()Lorg/jetbrains/kotlin/tooling/core/ReifiedTypeSignature;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class org/jetbrains/kotlin/tooling/core/Extras$Key {
+	public fun <init> (Lorg/jetbrains/kotlin/tooling/core/Extras$Id;Ljava/util/Set;)V
+	public synthetic fun <init> (Lorg/jetbrains/kotlin/tooling/core/Extras$Id;Ljava/util/Set;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getCapabilities ()Ljava/util/Set;
+	public final fun getId ()Lorg/jetbrains/kotlin/tooling/core/Extras$Id;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+	public final fun withCapability (Lorg/jetbrains/kotlin/tooling/core/Extras$Key$Capability;)Lorg/jetbrains/kotlin/tooling/core/Extras$Key;
+}
+
+public abstract interface class org/jetbrains/kotlin/tooling/core/Extras$Key$Capability {
+}
+
+public final class org/jetbrains/kotlin/tooling/core/ExtrasKt {
+	public static final fun remove (Lorg/jetbrains/kotlin/tooling/core/MutableExtras;Lorg/jetbrains/kotlin/tooling/core/Extras$Key;)Ljava/lang/Object;
+}
+
+public final class org/jetbrains/kotlin/tooling/core/ExtrasUtilsKt {
+	public static final fun emptyExtras ()Lorg/jetbrains/kotlin/tooling/core/IterableExtras;
+	public static final fun extrasOf ()Lorg/jetbrains/kotlin/tooling/core/IterableExtras;
+	public static final fun extrasOf ([Lorg/jetbrains/kotlin/tooling/core/Extras$Entry;)Lorg/jetbrains/kotlin/tooling/core/IterableExtras;
+	public static final fun mutableExtrasOf ()Lorg/jetbrains/kotlin/tooling/core/MutableExtras;
+	public static final fun mutableExtrasOf ([Lorg/jetbrains/kotlin/tooling/core/Extras$Entry;)Lorg/jetbrains/kotlin/tooling/core/MutableExtras;
+	public static final fun plus (Lorg/jetbrains/kotlin/tooling/core/IterableExtras;Ljava/lang/Iterable;)Lorg/jetbrains/kotlin/tooling/core/IterableExtras;
+	public static final fun plus (Lorg/jetbrains/kotlin/tooling/core/IterableExtras;Lorg/jetbrains/kotlin/tooling/core/Extras$Entry;)Lorg/jetbrains/kotlin/tooling/core/IterableExtras;
+	public static final fun toExtras (Ljava/lang/Iterable;)Lorg/jetbrains/kotlin/tooling/core/IterableExtras;
+	public static final fun toMutableExtras (Ljava/lang/Iterable;)Lorg/jetbrains/kotlin/tooling/core/MutableExtras;
+	public static final fun withValue (Lorg/jetbrains/kotlin/tooling/core/Extras$Key;Ljava/lang/Object;)Lorg/jetbrains/kotlin/tooling/core/Extras$Entry;
+}
+
+public abstract interface class org/jetbrains/kotlin/tooling/core/HasExtras {
+	public abstract fun getExtras ()Lorg/jetbrains/kotlin/tooling/core/Extras;
+}
+
+public abstract interface class org/jetbrains/kotlin/tooling/core/HasMutableExtras {
+	public abstract fun getExtras ()Lorg/jetbrains/kotlin/tooling/core/MutableExtras;
+}
+
+public abstract interface class org/jetbrains/kotlin/tooling/core/IterableExtras : java/lang/Iterable, kotlin/jvm/internal/markers/KMappedMarker, org/jetbrains/kotlin/tooling/core/Extras {
+	public abstract fun getEntries ()Ljava/util/Set;
+	public abstract fun isEmpty ()Z
+	public abstract fun isNotEmpty ()Z
+	public abstract fun iterator ()Ljava/util/Iterator;
+}
+
+public final class org/jetbrains/kotlin/tooling/core/IterableExtras$DefaultImpls {
+	public static fun isEmpty (Lorg/jetbrains/kotlin/tooling/core/IterableExtras;)Z
+	public static fun isNotEmpty (Lorg/jetbrains/kotlin/tooling/core/IterableExtras;)Z
+	public static fun iterator (Lorg/jetbrains/kotlin/tooling/core/IterableExtras;)Ljava/util/Iterator;
 }
 
 public final class org/jetbrains/kotlin/tooling/core/KotlinToolingVersion : java/io/Serializable, java/lang/Comparable {
@@ -50,5 +138,31 @@ public final class org/jetbrains/kotlin/tooling/core/KotlinToolingVersionKt {
 	public static final fun toKotlinToolingVersion (Lkotlin/KotlinVersion;Ljava/lang/String;)Lorg/jetbrains/kotlin/tooling/core/KotlinToolingVersion;
 	public static synthetic fun toKotlinToolingVersion$default (Lkotlin/KotlinVersion;Ljava/lang/String;ILjava/lang/Object;)Lorg/jetbrains/kotlin/tooling/core/KotlinToolingVersion;
 	public static final fun toKotlinVersion (Lorg/jetbrains/kotlin/tooling/core/KotlinToolingVersion;)Lkotlin/KotlinVersion;
+}
+
+public abstract interface class org/jetbrains/kotlin/tooling/core/MutableExtras : org/jetbrains/kotlin/tooling/core/IterableExtras {
+	public abstract fun set (Lorg/jetbrains/kotlin/tooling/core/Extras$Key;Ljava/lang/Object;)Ljava/lang/Object;
+}
+
+public final class org/jetbrains/kotlin/tooling/core/MutableExtras$DefaultImpls {
+	public static fun isEmpty (Lorg/jetbrains/kotlin/tooling/core/MutableExtras;)Z
+	public static fun isNotEmpty (Lorg/jetbrains/kotlin/tooling/core/MutableExtras;)Z
+	public static fun iterator (Lorg/jetbrains/kotlin/tooling/core/MutableExtras;)Ljava/util/Iterator;
+}
+
+public final class org/jetbrains/kotlin/tooling/core/ReifiedTypeSignature : java/io/Serializable {
+	public fun <init> (Ljava/lang/String;)V
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getSignature ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class org/jetbrains/kotlin/tooling/core/ReifiedTypeSignatureKt {
+	public static final fun reifiedTypeSignatureOf (Lkotlin/reflect/KType;)Ljava/lang/String;
+}
+
+public abstract interface annotation class org/jetbrains/kotlin/tooling/core/UnsafeApi : java/lang/annotation/Annotation {
+	public abstract fun message ()Ljava/lang/String;
 }
 

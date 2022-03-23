@@ -114,7 +114,12 @@ class IdeaKotlinProjectModelObjectGraphTest(private val node: KClass<*>, @Suppre
                 }
             }
 
-            return classes.map { clazz -> arrayOf(clazz, checkNotNull(clazz.simpleName)) }
+            fun KClass<*>.displayName() = java.name
+                .removePrefix("org.jetbrains.kotlin")
+                .removePrefix(".gradle.kpm")
+                .removePrefix(".")
+
+            return classes.map { clazz -> arrayOf(clazz, checkNotNull(clazz.displayName())) }
         }
 
         private fun KClass<*>.resolveReachableClasses(): Set<KClass<*>> {

@@ -27,6 +27,8 @@ import org.jetbrains.kotlin.gradle.utils.filesProvider
 import org.jetbrains.kotlin.project.model.KotlinAttributeKey
 import org.jetbrains.kotlin.project.model.KotlinModuleDependency
 import org.jetbrains.kotlin.project.model.KotlinModuleFragment
+import org.jetbrains.kotlin.tooling.core.MutableExtras
+import org.jetbrains.kotlin.tooling.core.mutableExtrasOf
 
 internal open class LegacyMappedVariant(
     internal val compilation: KotlinCompilation<*>,
@@ -85,6 +87,8 @@ internal open class LegacyMappedVariant(
 
     override val languageSettings: LanguageSettingsBuilder
         get() = compilation.defaultSourceSet.languageSettings
+
+    override val extras: MutableExtras = mutableExtrasOf()
 
     override fun refines(other: KotlinGradleFragment) {
         fragmentForDefaultSourceSet.refines(other)

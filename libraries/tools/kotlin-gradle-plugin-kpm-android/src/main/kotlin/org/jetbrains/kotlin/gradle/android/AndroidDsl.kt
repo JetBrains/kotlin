@@ -7,13 +7,16 @@
 
 package org.jetbrains.kotlin.gradle.android
 
-import org.jetbrains.kotlin.gradle.kpm.KotlinExternalModelKey
-import org.jetbrains.kotlin.gradle.kpm.KotlinExternalModelSerializer
+import org.jetbrains.kotlin.gradle.kpm.idea.IdeaKotlinExtraSerializer
 import org.jetbrains.kotlin.gradle.kpm.idea.InternalKotlinGradlePluginApi
+import org.jetbrains.kotlin.tooling.core.HasExtras
+import org.jetbrains.kotlin.tooling.core.HasMutableExtras
+import org.jetbrains.kotlin.tooling.core.extraKey
 import java.io.File
 import java.io.Serializable
 
-val androidDslKey = KotlinExternalModelKey<AndroidDsl>(KotlinExternalModelSerializer.serializable())
+internal val androidDslKey = extraKey<AndroidDsl>()
+    .withCapability(IdeaKotlinExtraSerializer.serializable())
 
 class AndroidDsl : Serializable {
     var compileSdk = 0

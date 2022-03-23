@@ -6,7 +6,17 @@
  */
 val testedVersion = "1.7.0-dev-2723"
 
+val isSnapshotTest = properties.contains("kgp-idea.snapshot_test")
+val resolvedTestedVersion = if (isSnapshotTest) properties["defaultSnapshotVersion"].toString() else testedVersion
+
 //region Download and prepare classpath for specified tested version
+
+if (isSnapshotTest) {
+    repositories {
+        clear()
+        mavenLocal()
+    }
+}
 
 val classpathDestination = layout.buildDirectory.dir("classpath")
 
@@ -18,16 +28,18 @@ val incomingClasspath by configurations.creating {
 }
 
 dependencies {
-    incomingClasspath(kotlin("gradle-plugin-idea", testedVersion))
+    incomingClasspath(kotlin("gradle-plugin-idea", resolvedTestedVersion))
 }
 
 val syncClasspath by tasks.register<Sync>("syncClasspath") {
+    if (isSnapshotTest) dependsOnKotlinGradlePluginInstall()
+
     from(incomingClasspath)
     into(classpathDestination)
 
     /* Test if the correct version was resolved */
     doLast {
-        val expectedJar = destinationDir.resolve("kotlin-gradle-plugin-idea-$testedVersion.jar")
+        val expectedJar = destinationDir.resolve("kotlin-gradle-plugin-idea-$resolvedTestedVersion.jar")
         check(expectedJar.exists()) { "Expected $expectedJar in classpath. Found ${destinationDir.listFiles().orEmpty()}" }
     }
 }

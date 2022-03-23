@@ -7,17 +7,17 @@
 
 package org.jetbrains.kotlin.gradle.kpm.idea
 
-import org.jetbrains.kotlin.gradle.kpm.KotlinExternalModelContainer
 import org.jetbrains.kotlin.gradle.kpm.idea.IdeaKotlinDependency.Companion.CLASSPATH_BINARY_TYPE
 import org.jetbrains.kotlin.gradle.kpm.idea.IdeaKotlinDependency.Companion.DOCUMENTATION_BINARY_TYPE
 import org.jetbrains.kotlin.gradle.kpm.idea.IdeaKotlinDependency.Companion.SOURCES_BINARY_TYPE
+import org.jetbrains.kotlin.tooling.core.HasExtras
 import java.io.File
 import java.io.Serializable
 import java.util.*
 
-sealed interface IdeaKotlinDependency : Serializable {
+sealed interface IdeaKotlinDependency : HasExtras, Serializable {
     val coordinates: IdeaKotlinDependencyCoordinates?
-    val external: KotlinExternalModelContainer
+    override val extras: IdeaKotlinExtras
 
     companion object {
         const val CLASSPATH_BINARY_TYPE = "org.jetbrains.binary.type.classpath"
@@ -61,7 +61,7 @@ val IdeaKotlinResolvedBinaryDependency.isClasspathType get() = binaryType == CLA
 data class IdeaKotlinFragmentDependencyImpl(
     override val type: IdeaKotlinFragmentDependency.Type,
     override val coordinates: IdeaKotlinFragmentCoordinates,
-    override val external: KotlinExternalModelContainer = KotlinExternalModelContainer.Empty,
+    override val extras: IdeaKotlinExtras = IdeaKotlinExtras()
 ) : IdeaKotlinFragmentDependency {
 
     override fun toString(): String {
@@ -80,7 +80,7 @@ data class IdeaKotlinResolvedBinaryDependencyImpl(
     override val coordinates: IdeaKotlinBinaryCoordinates?,
     override val binaryType: String,
     override val binaryFile: File,
-    override val external: KotlinExternalModelContainer = KotlinExternalModelContainer.Empty
+    override val extras: IdeaKotlinExtras = IdeaKotlinExtras()
 ) : IdeaKotlinResolvedBinaryDependency {
 
     override fun toString(): String {
@@ -97,7 +97,7 @@ data class IdeaKotlinResolvedBinaryDependencyImpl(
 data class IdeaKotlinUnresolvedBinaryDependencyImpl(
     override val cause: String?,
     override val coordinates: IdeaKotlinBinaryCoordinates?,
-    override val external: KotlinExternalModelContainer = KotlinExternalModelContainer.Empty
+    override val extras: IdeaKotlinExtras = IdeaKotlinExtras()
 ) : IdeaKotlinUnresolvedBinaryDependency {
 
     @InternalKotlinGradlePluginApi
