@@ -168,11 +168,11 @@ class FirTowerDataContext private constructor(
         )
     }
 
-    fun addReceiver(name: Name?, implicitReceiverValue: ImplicitReceiverValue<*>): FirTowerDataContext {
+    fun addReceiver(name: Name?, implicitReceiverValue: ImplicitReceiverValue<*>, additionalLabName: Name? = null): FirTowerDataContext {
         val element = implicitReceiverValue.asTowerDataElement()
         return FirTowerDataContext(
             towerDataElements.add(element),
-            implicitReceiverStack.add(name, implicitReceiverValue),
+            implicitReceiverStack.add(name, implicitReceiverValue, additionalLabName),
             localScopes,
             nonLocalTowerDataElements.add(element)
         )

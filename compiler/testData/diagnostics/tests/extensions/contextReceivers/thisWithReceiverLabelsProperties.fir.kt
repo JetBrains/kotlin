@@ -37,7 +37,7 @@ context(A<Int>, A<String>, B) val C.p: Int
     get() {
         this@A.a.length
         this@B.b
-        this<!UNRESOLVED_LABEL!>@C<!>.c
+        this@C.c
         this@p.c
         this.c
         return 1

@@ -6,7 +6,7 @@ class Some {
     fun foo() {
         //this@foo
         this@Some
-        this<!UNRESOLVED_LABEL!>@String<!>
+        this@String
     }
 
     context(Some)
