@@ -25,8 +25,11 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.checkReservedYield
 import org.jetbrains.kotlin.psi.psiUtil.parents
-import org.jetbrains.kotlin.resolve.*
 import org.jetbrains.kotlin.resolve.BindingContext.*
+import org.jetbrains.kotlin.resolve.BindingContextUtils
+import org.jetbrains.kotlin.resolve.BindingTrace
+import org.jetbrains.kotlin.resolve.DescriptorResolver
+import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.resolve.calls.context.ResolutionContext
 import org.jetbrains.kotlin.resolve.scopes.utils.getDeclarationsByLabel
 import org.jetbrains.kotlin.utils.addIfNotNull
@@ -64,6 +67,12 @@ object LabelResolver {
             is KtFunctionLiteral -> return getLabelNamesIfAny(element.parent, false)
             is KtLambdaExpression -> result.addIfNotNull(getLabelForFunctionalExpression(element))
         }
+
+        if (element is KtClass) {
+            element.contextReceivers
+                .mapNotNullTo(result) { it.name()?.let { s -> Name.identifier(s) } }
+        }
+
         val functionOrProperty = when (element) {
             is KtNamedFunction -> {
                 result.addIfNotNull(element.nameAsName ?: getLabelForFunctionalExpression(element))
@@ -210,14 +219,15 @@ object LabelResolver {
                     trace.record(LABEL_TARGET, targetLabelExpression, it)
                 }
                 val declarationDescriptor = trace.bindingContext[DECLARATION_TO_DESCRIPTOR, element]
-                if (declarationDescriptor is FunctionDescriptor) {
+                if (declarationDescriptor is FunctionDescriptor || declarationDescriptor is ClassDescriptor) {
                     val labelNameToReceiverMap = trace.bindingContext[
                             DESCRIPTOR_TO_CONTEXT_RECEIVER_MAP,
                             if (declarationDescriptor is PropertyAccessorDescriptor) declarationDescriptor.correspondingProperty else declarationDescriptor
                     ]
                     val thisReceivers = labelNameToReceiverMap?.get(labelName.identifier)
                     val thisReceiver = when {
-                        thisReceivers.isNullOrEmpty() -> declarationDescriptor.extensionReceiverParameter
+                        thisReceivers.isNullOrEmpty() ->
+                            (declarationDescriptor as? FunctionDescriptor)?.extensionReceiverParameter
                         thisReceivers.size == 1 -> thisReceivers.single()
                         else -> {
                             BindingContextUtils.reportAmbiguousLabel(trace, targetLabelExpression, declarationsByLabel)

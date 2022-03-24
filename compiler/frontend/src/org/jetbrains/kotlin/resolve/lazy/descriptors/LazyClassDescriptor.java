@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.resolve.lazy.descriptors;
 
+import com.google.common.collect.HashMultimap;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiNameIdentifierOwner;
 import kotlin.Pair;
@@ -305,7 +306,8 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
             if (classOrObject == null) {
                 return CollectionsKt.emptyList();
             }
-            return classOrObject.getContextReceivers().stream()
+            List<KtContextReceiver> contextReceivers = classOrObject.getContextReceivers();
+            List<ReceiverParameterDescriptor> contextReceiverDescriptors = contextReceivers.stream()
                     .map(KtContextReceiver::typeReference)
                     .filter(Objects::nonNull)
                     .map(typeReference -> {
@@ -316,7 +318,19 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
                                 kotlinType,
                                 Annotations.Companion.getEMPTY()
                         );
-            }).collect(Collectors.toList());
+                    }).collect(Collectors.toList());
+
+            if (c.getLanguageVersionSettings().supportsFeature(LanguageFeature.ContextReceivers)) {
+                HashMultimap<String, ReceiverParameterDescriptor> labelNameToReceiverMap = HashMultimap.create();
+
+                for (int i = 0; i < contextReceivers.size(); i++) {
+                    labelNameToReceiverMap.put(contextReceivers.get(i).name(), contextReceiverDescriptors.get(i));
+                }
+
+                c.getTrace().record(BindingContext.DESCRIPTOR_TO_CONTEXT_RECEIVER_MAP, this, labelNameToReceiverMap);
+            }
+
+            return contextReceiverDescriptors;
         });
     }
 

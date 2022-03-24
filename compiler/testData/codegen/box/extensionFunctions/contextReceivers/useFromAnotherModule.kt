@@ -22,11 +22,16 @@ class Foo {
     fun four(dummy: Any?) = this@Int
 }
 
+context(Int)
+class Bar {
+    fun five() = this@Int
+}
+
 // MODULE: main(lib)
 // FILE: B.kt
 
 fun box(): String {
     return with(1) {
-        if (a.one(null) + a.two + a.Foo().three + a.Foo().four(null) == 4) "OK" else "fail"
+        if (a.one(null) + a.two + a.Foo().three + a.Foo().four(null) + a.Bar().five() == 5) "OK" else "fail"
     }
 }

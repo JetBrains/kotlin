@@ -6,7 +6,7 @@ class A {
 }
 
 context(A) class B {
-    val prop = x + this<!UNRESOLVED_REFERENCE!>@A<!>.<!DEBUG_INFO_MISSING_UNRESOLVED!>x<!>
+    val prop = x + this@A.x
 
-    fun f() = x + this<!UNRESOLVED_REFERENCE!>@A<!>.<!DEBUG_INFO_MISSING_UNRESOLVED!>x<!>
+    fun f() = x + this@A.x
 }
