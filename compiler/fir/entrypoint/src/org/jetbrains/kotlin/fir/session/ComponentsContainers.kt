@@ -38,6 +38,7 @@ import org.jetbrains.kotlin.fir.resolve.transformers.plugin.GeneratedClassIndex
 import org.jetbrains.kotlin.fir.scopes.FirOverrideService
 import org.jetbrains.kotlin.fir.scopes.FirPlatformClassMapper
 import org.jetbrains.kotlin.fir.scopes.impl.FirDeclaredMemberScopeProvider
+import org.jetbrains.kotlin.fir.scopes.impl.FirDynamicMembersStorage
 import org.jetbrains.kotlin.fir.scopes.impl.FirIntersectionOverrideStorage
 import org.jetbrains.kotlin.fir.scopes.impl.FirSubstitutionOverrideStorage
 import org.jetbrains.kotlin.fir.symbols.FirPhaseManager
@@ -66,6 +67,7 @@ fun FirSession.registerCommonComponents(languageVersionSettings: LanguageVersion
     register(FirIntersectionOverrideStorage::class, FirIntersectionOverrideStorage(this))
     register(FirSamConstructorStorage::class, FirSamConstructorStorage(this))
     register(FirOverrideService::class, FirOverrideService(this))
+    register(FirDynamicMembersStorage::class, FirDynamicMembersStorage(this))
 }
 
 @OptIn(SessionConfiguration::class)

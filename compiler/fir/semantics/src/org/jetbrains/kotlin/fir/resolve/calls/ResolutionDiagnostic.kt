@@ -89,6 +89,8 @@ class UnsafeCall(val actualType: ConeKotlinType) : ResolutionDiagnostic(UNSAFE_C
 
 object LowerPriorityToPreserveCompatibilityDiagnostic : ResolutionDiagnostic(RESOLVED_NEED_PRESERVE_COMPATIBILITY)
 
+object LowerPriorityForDynamic : ResolutionDiagnostic(RESOLVED_LOW_PRIORITY)
+
 object CandidateChosenUsingOverloadResolutionByLambdaAnnotation : ResolutionDiagnostic(RESOLVED)
 
 class UnstableSmartCast(val argument: FirExpressionWithSmartcast, val targetType: ConeKotlinType, val isCastToNotNull: Boolean) :
