@@ -10,8 +10,8 @@ pill {
 }
 
 dependencies {
-    compileOnly(project(":kotlin-gradle-plugin"))
-    compileOnly(project(":kotlin-compiler-embeddable"))
+    commonCompileOnly(project(":kotlin-gradle-plugin"))
+    commonCompileOnly(project(":kotlin-compiler-embeddable"))
 
     embedded(project(":kotlinx-serialization-compiler-plugin")) { isTransitive = false }
 }
