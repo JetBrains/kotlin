@@ -1,33 +1,41 @@
 import org.jetbrains.kotlin.gradle.dsl.KotlinJvmProjectExtension
 
-project.extensions.getByType<KotlinJvmProjectExtension>().target.compilations {
-    val main by getting
-    create("functionalTest") {
-        associateWith(main)
-        val functionalTest by tasks.register<Test>("functionalTest") {
-            group = JavaBasePlugin.VERIFICATION_GROUP
-            description = "Runs functional tests"
-            testClassesDirs = output.classesDirs
-            classpath = sourceSets["functionalTest"].runtimeClasspath
-            workingDir = projectDir
-            dependsOnKotlinGradlePluginInstall()
+val mainSourceSet: SourceSet = sourceSets["main"]
+val functionalTestSourceSet: SourceSet = sourceSets.create("functionalTest") {
+    compileClasspath += mainSourceSet.output
+    runtimeClasspath += mainSourceSet.output
 
-            testLogging {
-                events("passed", "skipped", "failed")
-            }
-        }
-        tasks.named("check") {
-            dependsOn(functionalTest)
-        }
+    configurations.getByName(implementationConfigurationName) {
+        extendsFrom(configurations.getByName(mainSourceSet.implementationConfigurationName))
+        extendsFrom(configurations.getByName("testImplementation"))
+    }
+
+    configurations.getByName(runtimeOnlyConfigurationName) {
+        extendsFrom(configurations.getByName(mainSourceSet.runtimeOnlyConfigurationName))
+        extendsFrom(configurations.getByName("testRuntimeOnly"))
     }
 }
 
-configurations.getByName("functionalTestImplementation") {
-    extendsFrom(configurations.getByName("implementation"))
-    extendsFrom(configurations.getByName("testImplementation"))
+project.extensions.getByType<KotlinJvmProjectExtension>().target.compilations {
+    named(functionalTestSourceSet.name) {
+        associateWith(this@compilations.getByName("main"))
+        associateWith(this@compilations.getByName("common"))
+    }
 }
 
-configurations.getByName("functionalTestRuntimeOnly") {
-    extendsFrom(configurations.getByName("runtimeOnly"))
-    extendsFrom(configurations.getByName("testRuntimeOnly"))
+val functionalTest by tasks.register<Test>("functionalTest") {
+    group = JavaBasePlugin.VERIFICATION_GROUP
+    description = "Runs functional tests"
+    testClassesDirs = functionalTestSourceSet.output.classesDirs
+    classpath = functionalTestSourceSet.runtimeClasspath
+    workingDir = projectDir
+    dependsOnKotlinGradlePluginInstall()
+
+    testLogging {
+        events("passed", "skipped", "failed")
+    }
+}
+
+tasks.named("check") {
+    dependsOn(functionalTest)
 }
