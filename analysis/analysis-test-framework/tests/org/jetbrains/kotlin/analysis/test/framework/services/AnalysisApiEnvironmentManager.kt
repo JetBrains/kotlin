@@ -15,10 +15,7 @@ import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreProjectEnvironment
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.test.ApplicationEnvironmentDisposer
-import org.jetbrains.kotlin.test.services.TestService
-import org.jetbrains.kotlin.test.services.TestServices
-import org.jetbrains.kotlin.test.services.compilerConfigurationProvider
-import org.jetbrains.kotlin.test.services.moduleStructure
+import org.jetbrains.kotlin.test.services.*
 
 abstract class AnalysisApiEnvironmentManager : TestService {
     abstract val testServices: TestServices
@@ -43,7 +40,7 @@ class AnalysisApiEnvironmentManagerImpl(
     private val _projectEnvironment: KotlinCoreProjectEnvironment by lazy {
         StandaloneProjectFactory.createProjectEnvironment(
             testRootDisposable,
-            ApplicationEnvironmentDisposer.ROOT_DISPOSABLE
+            testServices.applicationDisposableProvider.getApplicationRootDisposable(),
         )
     }
 
@@ -66,7 +63,7 @@ class AnalysisApiEnvironmentManagerImpl(
             useSiteCompilerConfiguration.get(JVMConfigurationKeys.JDK_HOME)?.toPath(),
         )
 
-        testServices.compilerConfigurationProvider.registerCompilerExtensions(getProject(), useSiteModule)
+        testServices.compilerConfigurationProvider.registerCompilerExtensions(getProject(), useSiteModule, useSiteCompilerConfiguration)
     }
 
     override fun getProjectEnvironment(): KotlinCoreProjectEnvironment =

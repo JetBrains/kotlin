@@ -36,7 +36,6 @@ import org.jetbrains.kotlin.test.model.TestModule
 import java.io.File
 
 abstract class CompilerConfigurationProvider(val testServices: TestServices) : TestService {
-    abstract val testServices: TestServices
     abstract val testRootDisposable: Disposable
     abstract val configurators: List<AbstractEnvironmentConfigurator>
 
@@ -46,8 +45,8 @@ abstract class CompilerConfigurationProvider(val testServices: TestServices) : T
         return getKotlinCoreEnvironment(module).project
     }
 
-    fun registerCompilerExtensions(project: Project, module: TestModule) {
-        configurators.forEach { it.registerCompilerExtensions(project, module) }
+    fun registerCompilerExtensions(project: Project, module: TestModule, configuration: CompilerConfiguration) {
+        configurators.forEach { it.registerCompilerExtensions(project, module, configuration) }
     }
 
     open fun getPackagePartProviderFactory(module: TestModule): (GlobalSearchScope) -> JvmPackagePartProvider {
@@ -72,7 +71,7 @@ abstract class CompilerConfigurationProvider(val testServices: TestServices) : T
 val TestServices.compilerConfigurationProvider: CompilerConfigurationProvider by TestServices.testServiceAccessor()
 
 open class CompilerConfigurationProviderImpl(
-    override val testServices: TestServices,
+    testServices: TestServices,
     override val testRootDisposable: Disposable,
     override val configurators: List<AbstractEnvironmentConfigurator>
 ) : CompilerConfigurationProvider(testServices) {
@@ -100,6 +99,7 @@ open class CompilerConfigurationProviderImpl(
             configFiles
         ).also { registerCompilerExtensions(projectEnv.project, module, configuration) }
     }
+
 
     @OptIn(TestInfrastructureInternals::class)
     fun createCompilerConfiguration(module: TestModule): CompilerConfiguration {
