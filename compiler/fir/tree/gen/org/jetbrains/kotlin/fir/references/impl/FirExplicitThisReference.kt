@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.fir.visitors.*
 internal class FirExplicitThisReference(
     override val source: KtSourceElement?,
     override val labelName: String?,
-    override val contextReceiverNumber: Int,
+    override var contextReceiverNumber: Int,
 ) : FirThisReference() {
     override var boundSymbol: FirBasedSymbol<*>? = null
 
@@ -30,5 +30,9 @@ internal class FirExplicitThisReference(
 
     override fun replaceBoundSymbol(newBoundSymbol: FirBasedSymbol<*>?) {
         boundSymbol = newBoundSymbol
+    }
+
+    override fun replaceContextReceiverNumber(newContextReceiverNumber: Int) {
+        contextReceiverNumber = newContextReceiverNumber
     }
 }

@@ -623,7 +623,7 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
         thisReference.configure {
             +stringField("labelName", nullable = true)
             +field("boundSymbol", firBasedSymbolType, "*", nullable = true, withReplace = true)
-            +intField("contextReceiverNumber")
+            +intField("contextReceiverNumber", withReplace = true)
         }
 
         typeRef.configure {
