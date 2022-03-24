@@ -9,11 +9,11 @@ repositories {
 }
 
 dependencies {
-    compileOnly(gradleKotlinDsl())
-    compileOnly("com.android.tools.build:gradle:3.4.0")
-    compileOnly("com.android.tools.build:gradle-api:3.4.0")
-    compileOnly("com.android.tools.build:builder:3.4.0")
-    compileOnly("com.android.tools.build:builder-model:3.4.0")
+    commonCompileOnly(gradleKotlinDsl())
+    commonCompileOnly("com.android.tools.build:gradle:3.4.0")
+    commonCompileOnly("com.android.tools.build:gradle-api:3.4.0")
+    commonCompileOnly("com.android.tools.build:builder:3.4.0")
+    commonCompileOnly("com.android.tools.build:builder-model:3.4.0")
 }
 
 gradlePlugin {
