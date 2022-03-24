@@ -14,10 +14,7 @@ import org.jetbrains.kotlin.fir.resolve.substitution.substitutorByMap
 import org.jetbrains.kotlin.fir.scopes.FakeOverrideTypeCalculator
 import org.jetbrains.kotlin.fir.scopes.FirTypeScope
 import org.jetbrains.kotlin.fir.scopes.FirUnstableSmartcastTypeScope
-import org.jetbrains.kotlin.fir.scopes.impl.FirScopeWithFakeOverrideTypeCalculator
-import org.jetbrains.kotlin.fir.scopes.impl.FirStandardOverrideChecker
-import org.jetbrains.kotlin.fir.scopes.impl.FirTypeIntersectionScope
-import org.jetbrains.kotlin.fir.scopes.impl.getOrBuildScopeForIntegerConstantOperatorType
+import org.jetbrains.kotlin.fir.scopes.impl.*
 import org.jetbrains.kotlin.fir.scopes.scopeForClass
 import org.jetbrains.kotlin.fir.symbols.ensureResolved
 import org.jetbrains.kotlin.fir.symbols.impl.ConeClassLikeLookupTagImpl
@@ -81,6 +78,7 @@ private fun ConeKotlinType.scope(useSiteSession: FirSession, scopeSession: Scope
             }
         }
         is ConeRawType -> lowerBound.scope(useSiteSession, scopeSession, requiredPhase)
+        is ConeDynamicType -> useSiteSession.dynamicMembersStorage.getDynamicScopeFor(scopeSession)
         is ConeFlexibleType -> lowerBound.scope(useSiteSession, scopeSession, requiredPhase)
         is ConeIntersectionType -> FirTypeIntersectionScope.prepareIntersectionScope(
             useSiteSession,
