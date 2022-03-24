@@ -8,12 +8,12 @@ package org.jetbrains.kotlin.analysis.api.fe10
 import org.jetbrains.kotlin.analysis.test.framework.*
 
 object AnalysisApiFe10TestConfiguratorFactory : AnalysisApiTestConfiguratorFactory() {
-    override fun createConfigurator(data: AnalysisApiTestConfiguratorFactoryData): AnalysisApiTestConfiguratorService {
+    override fun createConfigurator(data: AnalysisApiTestConfiguratorFactoryData): AnalysisApiTestConfigurator {
         require(supportMode(data))
 
         return when (data.moduleKind) {
             TestModuleKind.Source -> when (data.analysisSessionMode) {
-                AnalysisSessionMode.Normal -> KtFe10AnalysisApiTestConfiguratorService
+                AnalysisSessionMode.Normal -> AnalysisApiFirTestConfigurator
                 AnalysisSessionMode.Dependent -> error("Unsupported AnalysisSessionMode.Dependent for fe10")
             }
 

@@ -8,12 +8,12 @@ package org.jetbrains.kotlin.analysis.api.standalone
 import org.jetbrains.kotlin.analysis.test.framework.*
 
 object AnalysisApiFirStandaloneModeTestConfiguratorFactory : AnalysisApiTestConfiguratorFactory() {
-    override fun createConfigurator(data: AnalysisApiTestConfiguratorFactoryData): AnalysisApiTestConfiguratorService {
+    override fun createConfigurator(data: AnalysisApiTestConfiguratorFactoryData): AnalysisApiTestConfigurator {
         requireSupported(data)
 
         return when (data.moduleKind) {
             TestModuleKind.Source -> when (data.analysisSessionMode) {
-                AnalysisSessionMode.Normal -> StandaloneModeConfiguratorService
+                AnalysisSessionMode.Normal -> StandaloneModeConfigurator
                 AnalysisSessionMode.Dependent -> unsupportedModeError(data)
             }
 

@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.light.classes.symbol.base
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiClass
 import com.intellij.psi.search.GlobalSearchScope
-import org.jetbrains.kotlin.analysis.test.framework.AnalysisApiTestConfiguratorService
+import org.jetbrains.kotlin.analysis.test.framework.AnalysisApiTestConfigurator
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedSingleModuleTest
 import org.jetbrains.kotlin.analysis.test.framework.services.libraries.CompilerExecutor
 import org.jetbrains.kotlin.asJava.finder.JavaElementFinder
@@ -28,7 +28,7 @@ import kotlin.io.path.exists
 import kotlin.io.path.nameWithoutExtension
 
 abstract class AbstractSymbolLightClassesTestBase(
-    override val configurator: AnalysisApiTestConfiguratorService
+    override val configurator: AnalysisApiTestConfigurator
 ) : AbstractAnalysisApiBasedSingleModuleTest() {
 
     override fun configureTest(builder: TestConfigurationBuilder) {
