@@ -1,11 +1,11 @@
 fun List<Int>.f() {
-    this<!UNRESOLVED_LABEL!>@List<!>.size
+    this@List.size
 }
 
 context(String)
 fun Int.f() {
     this@String.length
-    this<!UNRESOLVED_LABEL!>@Int<!>.toDouble()
+    this@Int.toDouble()
 }
 
 context(String)

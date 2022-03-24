@@ -23,7 +23,7 @@ context(A<Int>, A<String>, B) fun f() {
 context(A<Int>, A<String>, B) fun C.f() {
     this@A.a.length
     this@B.b
-    this<!UNRESOLVED_LABEL!>@C<!>.c
+    this@C.c
     this@f.c
     this.c
 }

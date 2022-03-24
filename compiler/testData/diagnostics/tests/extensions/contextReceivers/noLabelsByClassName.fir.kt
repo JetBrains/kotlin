@@ -1,27 +1,27 @@
 fun Int.f() {
-    this<!UNRESOLVED_LABEL!>@Int<!>
+    this@Int
 }
 
 var Int.p: Int
     get() {
-        this<!UNRESOLVED_LABEL!>@Int<!>
+        this@Int
         <!RETURN_NOT_ALLOWED!>return@p<!> 42
     }
     set(value) {
-        this<!UNRESOLVED_LABEL!>@Int<!>
+        this@Int
     }
 
 class X {
     var Int.p: Int
         get() {
-            this<!UNRESOLVED_LABEL!>@Int<!>
+            this@Int
             <!RETURN_NOT_ALLOWED!>return@p<!> 42
         }
         set(value) {
-            this<!UNRESOLVED_LABEL!>@Int<!>
+            this@Int
         }
 
     fun Int.f() {
-        this<!UNRESOLVED_LABEL!>@Int<!>
+        this@Int
     }
 }

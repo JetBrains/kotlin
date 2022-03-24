@@ -42,7 +42,7 @@ class PersistentImplicitReceiverStack private constructor(
         val stack = stack.add(value)
         val originalTypes = originalTypes.add(value.originalType)
         val index = stack.size - 1
-        val receiversPerLabel = name?.let { receiversPerLabel.put(it, value) } ?: receiversPerLabel
+        val receiversPerLabel = receiversPerLabel.putIfNameIsNotNull(name, value).putIfNameIsNotNull(aliasLabel, value)
         val indexesPerSymbol = indexesPerSymbol.put(value.boundSymbol, index)
 
         return PersistentImplicitReceiverStack(
@@ -52,6 +52,12 @@ class PersistentImplicitReceiverStack private constructor(
             originalTypes
         )
     }
+
+    private fun PersistentSetMultimap<Name, ImplicitReceiverValue<*>>.putIfNameIsNotNull(name: Name?, value: ImplicitReceiverValue<*>) =
+        if (name != null)
+            put(name, value)
+        else
+            this
 
     fun addContextReceiver(value: ContextReceiverValue<*>): PersistentImplicitReceiverStack {
         val labelName = value.labelName ?: return this
