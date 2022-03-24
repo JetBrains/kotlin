@@ -9,12 +9,14 @@ import com.intellij.mock.MockApplication
 import com.intellij.mock.MockProject
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.util.Disposer
+import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.testFramework.TestDataFile
 import junit.framework.ComparisonFailure
 import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
 import org.jetbrains.kotlin.analysis.api.analyse
 import org.jetbrains.kotlin.analysis.api.analyseInDependedAnalysisSession
 import org.jetbrains.kotlin.analysis.test.framework.AnalysisApiTestConfiguratorService
+import org.jetbrains.kotlin.analysis.test.framework.AnalysisApiTestDirectives
 import org.jetbrains.kotlin.analysis.test.framework.TestWithDisposable
 import org.jetbrains.kotlin.analysis.test.framework.project.structure.KotlinProjectStructureProviderTestImpl
 import org.jetbrains.kotlin.analysis.test.framework.project.structure.TestKtModuleProvider
@@ -54,6 +56,9 @@ abstract class AbstractAnalysisApiBasedTest : TestWithDisposable() {
         private set
 
     protected lateinit var testDataPath: Path
+        private set
+
+    private lateinit var moduleStructure: TestModuleStructure
         private set
 
     protected open fun configureTest(builder: TestConfigurationBuilder) {
@@ -118,6 +123,7 @@ abstract class AbstractAnalysisApiBasedTest : TestWithDisposable() {
         useSourcePreprocessor(::ExpressionMarkersSourceFilePreprocessor)
         useAdditionalService { ExpressionMarkerProvider() }
         useAdditionalService(::TestKtModuleProvider)
+        useDirectives(AnalysisApiTestDirectives)
         configureTest(this)
 
         startingArtifactFactory = { ResultingArtifact.Source() }
@@ -140,6 +146,7 @@ abstract class AbstractAnalysisApiBasedTest : TestWithDisposable() {
             path,
             testConfiguration.directives,
         )
+        this.moduleStructure = moduleStructure
         val singleModule = moduleStructure.modules.single()
         val project = try {
             testServices.compilerConfigurationProvider.getProject(singleModule)
@@ -189,10 +196,12 @@ abstract class AbstractAnalysisApiBasedTest : TestWithDisposable() {
     }
 
     protected fun <R> analyseForTest(contextElement: KtElement, action: KtAnalysisSession.() -> R): R {
-        return if (configurator.analyseInDependentSession) {
-            require(!contextElement.isPhysical)
-            val originalFile = configurator.getOriginalFile(contextElement.containingKtFile)
-            analyseInDependedAnalysisSession(originalFile, contextElement, action)
+        return if (configurator.analyseInDependentSession
+            && AnalysisApiTestDirectives.DISABLE_DEPENDED_MODE !in this.moduleStructure.allDirectives
+        ) {
+            val originalContainingFile = contextElement.containingKtFile
+            val fileCopy = originalContainingFile.copy() as KtFile
+            analyseInDependedAnalysisSession(originalContainingFile, PsiTreeUtil.findSameElementInCopy(contextElement, fileCopy), action)
         } else {
             analyse(contextElement, action)
         }
@@ -212,9 +221,5 @@ abstract class AbstractAnalysisApiBasedTest : TestWithDisposable() {
             methodName = testInfo.testMethod.orElseGet(null)?.name ?: "_testUndefined_",
             tags = testInfo.tags
         )
-    }
-
-    companion object {
-        val DISABLE_DEPENDED_MODE_DIRECTIVE = "DISABLE_DEPENDED_MODE"
     }
 }

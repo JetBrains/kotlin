@@ -3,7 +3,7 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.analysis.api.descriptors.test
+package org.jetbrains.kotlin.analysis.api.fe10
 
 import com.intellij.mock.MockApplication
 import com.intellij.mock.MockProject

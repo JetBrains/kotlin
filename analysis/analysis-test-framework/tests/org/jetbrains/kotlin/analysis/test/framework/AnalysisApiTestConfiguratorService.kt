@@ -24,9 +24,7 @@ interface AnalysisApiTestConfiguratorService {
     val analyseInDependentSession: Boolean
 
     fun TestConfigurationBuilder.configureTest(disposable: Disposable)
-    fun processTestFiles(files: List<KtFile>): List<KtFile> = files
 
-    fun getOriginalFile(file: KtFile): KtFile = file
     fun registerProjectServices(
         project: MockProject,
         compilerConfig: CompilerConfiguration,
