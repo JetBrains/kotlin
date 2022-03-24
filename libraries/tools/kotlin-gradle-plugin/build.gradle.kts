@@ -28,58 +28,55 @@ kotlin.sourceSets.all {
 }
 
 dependencies {
-    compileOnly(gradleKotlinDsl())
-    api(project(":kotlin-gradle-plugin-api"))
-    api(project(":kotlin-gradle-plugin-model"))
-    api(project(":kotlin-tooling-core"))
+    commonApi(project(":kotlin-gradle-plugin-api"))
+    commonApi(project(":kotlin-gradle-plugin-model"))
+    commonApi(project(":kotlin-tooling-core"))
 
-    implementation(project(":kotlin-gradle-plugin-idea"))
-    compileOnly(project(":compiler"))
-    compileOnly(project(":compiler:incremental-compilation-impl"))
-    compileOnly(project(":daemon-common"))
+    commonCompileOnly(gradleKotlinDsl())
+    commonCompileOnly(project(":compiler"))
+    commonCompileOnly(project(":compiler:incremental-compilation-impl"))
+    commonCompileOnly(project(":daemon-common"))
+    commonCompileOnly(project(":native:kotlin-native-utils"))
+    commonCompileOnly(project(":kotlin-reflect-api"))
+    commonCompileOnly(project(":kotlin-android-extensions"))
+    commonCompileOnly(project(":kotlin-build-common"))
+    commonCompileOnly(project(":kotlin-compiler-runner"))
+    commonCompileOnly(project(":kotlin-annotation-processing"))
+    commonCompileOnly(project(":kotlin-annotation-processing-gradle"))
+    commonCompileOnly(project(":kotlin-scripting-compiler"))
+    commonCompileOnly(project(":kotlin-gradle-statistics"))
+    commonCompileOnly(project(":kotlin-gradle-build-metrics"))
+    commonCompileOnly("com.android.tools.build:gradle:3.6.4")
+    commonCompileOnly("com.android.tools.build:gradle-api:3.6.4")
+    commonCompileOnly("com.android.tools.build:builder:3.6.4")
+    commonCompileOnly("com.android.tools.build:builder-model:3.6.4")
+    commonCompileOnly("org.codehaus.groovy:groovy-all:2.4.12")
+    commonCompileOnly(project(":kotlin-reflect"))
+    commonCompileOnly(intellijCore())
+    commonCompileOnly(commonDependency("org.jetbrains.teamcity:serviceMessages"))
+    commonCompileOnly("com.gradle:gradle-enterprise-gradle-plugin:3.6.3")
 
-    implementation(project(":kotlin-util-klib"))
-    implementation(project(":native:kotlin-klib-commonizer-api"))
-    implementation(project(":kotlin-tooling-metadata"))
-    implementation(project(":kotlin-project-model"))
-    compileOnly(project(":native:kotlin-native-utils"))
-    compileOnly(project(":kotlin-reflect-api"))
-    compileOnly(project(":kotlin-android-extensions"))
-    compileOnly(project(":kotlin-build-common"))
-    compileOnly(project(":kotlin-compiler-runner"))
-    compileOnly(project(":kotlin-annotation-processing"))
-    compileOnly(project(":kotlin-annotation-processing-gradle"))
-    compileOnly(project(":kotlin-scripting-compiler"))
-    compileOnly(project(":kotlin-gradle-statistics"))
-    embedded(project(":kotlin-gradle-statistics"))
-    compileOnly(project(":kotlin-gradle-build-metrics"))
-    embedded(project(":kotlin-gradle-build-metrics"))
-
-    implementation(commonDependency("com.google.code.gson:gson"))
-    implementation(commonDependency("com.google.guava:guava"))
-
-    implementation("de.undercouch:gradle-download-task:4.1.1")
-    implementation("com.github.gundy:semver4j:0.16.4:nodeps") {
+    commonImplementation(project(":kotlin-gradle-plugin-idea"))
+    commonImplementation(project(":kotlin-util-klib"))
+    commonImplementation(project(":native:kotlin-klib-commonizer-api"))
+    commonImplementation(project(":kotlin-tooling-metadata"))
+    commonImplementation(project(":kotlin-project-model"))
+    commonImplementation(commonDependency("com.google.code.gson:gson"))
+    commonImplementation(commonDependency("com.google.guava:guava"))
+    commonImplementation("de.undercouch:gradle-download-task:4.1.1")
+    commonImplementation("com.github.gundy:semver4j:0.16.4:nodeps") {
         exclude(group = "*")
     }
 
-    compileOnly("com.android.tools.build:gradle:3.6.4")
-    compileOnly("com.android.tools.build:gradle-api:3.6.4")
-    compileOnly("com.android.tools.build:builder:3.6.4")
-    compileOnly("com.android.tools.build:builder-model:3.6.4")
-    compileOnly("org.codehaus.groovy:groovy-all:2.4.12")
-    compileOnly(project(":kotlin-reflect"))
-    compileOnly(intellijCore())
+    commonRuntimeOnly(project(":kotlin-compiler-embeddable"))
+    commonRuntimeOnly(project(":kotlin-annotation-processing-gradle"))
+    commonRuntimeOnly(project(":kotlin-android-extensions"))
+    commonRuntimeOnly(project(":kotlin-compiler-runner"))
+    commonRuntimeOnly(project(":kotlin-scripting-compiler-embeddable"))
+    commonRuntimeOnly(project(":kotlin-scripting-compiler-impl-embeddable"))
 
-    runtimeOnly(project(":kotlin-compiler-embeddable"))
-    runtimeOnly(project(":kotlin-annotation-processing-gradle"))
-    runtimeOnly(project(":kotlin-android-extensions"))
-    runtimeOnly(project(":kotlin-compiler-runner"))
-    runtimeOnly(project(":kotlin-scripting-compiler-embeddable"))
-    runtimeOnly(project(":kotlin-scripting-compiler-impl-embeddable"))
-
-    compileOnly(commonDependency("org.jetbrains.teamcity:serviceMessages"))
-
+    embedded(project(":kotlin-gradle-build-metrics"))
+    embedded(project(":kotlin-gradle-statistics"))
     embedded(commonDependency("org.jetbrains.intellij.deps:asm-all")) { isTransitive = false }
     embedded(commonDependency("com.google.code.gson:gson")) { isTransitive = false }
     embedded(commonDependency("com.google.guava:guava")) { isTransitive = false }
@@ -94,28 +91,26 @@ dependencies {
         "functionalTestImplementation"(testFixtures(project(":kotlin-gradle-plugin-idea")))
     }
 
-    testImplementation(commonDependency("org.jetbrains.teamcity:serviceMessages"))
-
     testCompileOnly(project(":compiler"))
+    testCompileOnly(project(":kotlin-reflect-api"))
+    testCompileOnly(project(":kotlin-annotation-processing"))
+    testCompileOnly(project(":kotlin-annotation-processing-gradle"))
+
+    testImplementation(commonDependency("org.jetbrains.teamcity:serviceMessages"))
     testImplementation(projectTests(":kotlin-build-common"))
     testImplementation(project(":kotlin-android-extensions"))
     testImplementation(project(":kotlin-compiler-runner"))
     testImplementation(project(":kotlin-test:kotlin-test-junit"))
     testImplementation(commonDependency("junit:junit"))
     testImplementation(project(":kotlin-gradle-statistics"))
-    testCompileOnly(project(":kotlin-reflect-api"))
-    testCompileOnly(project(":kotlin-annotation-processing"))
-    testCompileOnly(project(":kotlin-annotation-processing-gradle"))
-
-    compileOnly("com.gradle:gradle-enterprise-gradle-plugin:3.6.3")
 }
 
 if (kotlinBuildProperties.isInJpsBuildIdeaSync) {
-    configurations.api.get().exclude("com.android.tools.external.com-intellij", "intellij-core")
+    configurations.commonApi.get().exclude("com.android.tools.external.com-intellij", "intellij-core")
 }
 
 tasks {
-    named<ProcessResources>("processResources") {
+    named<ProcessResources>("processCommonResources") {
         val propertiesToExpand = mapOf(
             "projectVersion" to project.version,
             "kotlinNativeVersion" to project.kotlinNativeVersion
