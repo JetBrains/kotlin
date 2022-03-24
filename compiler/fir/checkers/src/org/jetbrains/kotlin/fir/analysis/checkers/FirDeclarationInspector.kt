@@ -161,6 +161,10 @@ interface FirDeclarationPresenter {
     }
 
     fun represent(it: FirSimpleFunction) = buildString {
+        it.contextReceivers.forEach {
+            appendRepresentation(it)
+            append(',')
+        }
         append('<')
         it.typeParameters.forEach {
             appendRepresentation(it)
@@ -195,6 +199,10 @@ interface FirDeclarationPresenter {
     }
 
     fun represent(it: FirConstructor, owner: FirRegularClass) = buildString {
+        it.contextReceivers.forEach {
+            appendRepresentation(it)
+            append(',')
+        }
         append('<')
         it.typeParameters.forEach {
             appendRepresentation(it)
