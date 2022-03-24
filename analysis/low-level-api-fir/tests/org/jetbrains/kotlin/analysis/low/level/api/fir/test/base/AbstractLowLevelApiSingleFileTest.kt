@@ -5,13 +5,16 @@
 
 package org.jetbrains.kotlin.analysis.low.level.api.fir.test.base
 
+import org.jetbrains.kotlin.analysis.test.framework.project.structure.ktModuleProvider
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.services.TestModuleStructure
 import org.jetbrains.kotlin.test.services.TestServices
 
 abstract class AbstractLowLevelApiSingleFileTest : AbstractLowLevelApiSingleModuleTest() {
-    final override fun doTestByFileStructure(ktFiles: List<KtFile>, moduleStructure: TestModuleStructure, testServices: TestServices) {
-        doTestByFileStructure(ktFiles.single(), moduleStructure, testServices)
+    final override fun doTestByFileStructure(moduleStructure: TestModuleStructure, testServices: TestServices) {
+        val singleModule = moduleStructure.modules.single()
+        val singleFile = testServices.ktModuleProvider.getModuleFiles(singleModule).filterIsInstance<KtFile>().single()
+        doTestByFileStructure(singleFile, moduleStructure, testServices)
     }
 
     abstract fun doTestByFileStructure(ktFile: KtFile, moduleStructure: TestModuleStructure, testServices: TestServices)

@@ -6,11 +6,11 @@
 package org.jetbrains.kotlin.light.classes.symbol.decompiled
 
 import org.jetbrains.kotlin.light.classes.symbol.base.AbstractSymbolLightClassesFacadeTest
-import org.jetbrains.kotlin.light.classes.symbol.decompiled.service.SymbolLightClassesForLibraryAnalysisApiTestConfigurator
+import org.jetbrains.kotlin.light.classes.symbol.decompiled.test.configurators.AnalysisApiSymbolLightClassesDecompiledTestConfigurator
 
 abstract class AbstractSymbolLightClassesFacadeForLibraryTest :
     AbstractSymbolLightClassesFacadeTest(
-        SymbolLightClassesForLibraryAnalysisApiTestConfigurator,
+        AnalysisApiSymbolLightClassesDecompiledTestConfigurator,
         EXTENSIONS.LIB_JAVA,
         stopIfCompilationErrorDirectivePresent = true
     )

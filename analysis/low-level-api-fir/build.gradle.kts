@@ -36,6 +36,7 @@ dependencies {
     testApi(projectTests(":compiler:fir:analysis-tests:legacy-fir-tests"))
     testApi(projectTests(":analysis:analysis-api-impl-barebone"))
     testApi(projectTests(":analysis:analysis-test-framework"))
+    testApi(projectTests(":analysis:analysis-api-impl-base"))
     testApi(project(":kotlin-test:kotlin-test-junit"))
     testApiJUnit5()
     testApi(project(":kotlin-reflect"))
