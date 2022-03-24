@@ -18,7 +18,7 @@ linkerOpts = -fvisibility-inlines-hidden \
     -pedantic -Wno-long-long -Wcovered-switch-default -Wnon-virtual-dtor -Wdelete-non-virtual-dtor \
     -std=c++17 \
     -DNDEBUG -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D__STDC_LIMIT_MACROS \
-    -ldebugInfo -lcoverageMapping
+    -ldebugInfo -lllvmext
 
 # ./llvm-config --libs analysis bitreader bitwriter core linker target coverage analysis ipo instrumentation lto objcarcopts arm aarch64 webassembly x86 mips
 linkerOpts.osx = \

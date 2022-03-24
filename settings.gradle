@@ -768,7 +768,7 @@ if (buildProperties.isKotlinNativeEnabled) {
     include ':kotlin-native:klib'
     include ':kotlin-native:common'
     include ':kotlin-native:runtime'
-    include ':kotlin-native:llvmCoverageMappingC'
+    include ':kotlin-native:libllvmext'
     include ':kotlin-native:llvmDebugInfoC'
     include ':kotlin-native:utilities'
     include ':kotlin-native:platformLibs'
