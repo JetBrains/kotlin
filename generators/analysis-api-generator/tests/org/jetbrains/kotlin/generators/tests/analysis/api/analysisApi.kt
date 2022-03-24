@@ -37,65 +37,72 @@ import org.jetbrains.kotlin.analysis.api.impl.base.test.scopes.AbstractSubstitut
 import org.jetbrains.kotlin.analysis.api.impl.base.test.symbols.AbstractSymbolByFqNameTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.symbols.AbstractSymbolByPsiTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.symbols.AbstractSymbolByReferenceTest
-import org.jetbrains.kotlin.generators.TestGroupSuite
-import org.jetbrains.kotlin.generators.tests.analysis.api.dsl.TestModuleKind
+import org.jetbrains.kotlin.analysis.test.framework.AnalysisSessionMode
+import org.jetbrains.kotlin.analysis.test.framework.FrontendKind
+import org.jetbrains.kotlin.analysis.test.framework.TestModuleKind
+import org.jetbrains.kotlin.generators.tests.analysis.api.dsl.*
+import org.jetbrains.kotlin.generators.tests.analysis.api.dsl.AnalysisApiTestGroup
 import org.jetbrains.kotlin.generators.tests.analysis.api.dsl.component
-import org.jetbrains.kotlin.generators.tests.analysis.api.dsl.group
-import org.jetbrains.kotlin.generators.tests.analysis.api.dsl.test
 import org.jetbrains.kotlin.generators.util.TestGeneratorUtil
 
-fun TestGroupSuite.generateAnalysisApiTests() {
-    generateAnalysisApiComponentsTests()
-    generateAnalysisApiNonComponentsTests()
-}
-
-private fun TestGroupSuite.generateAnalysisApiNonComponentsTests() {
+internal fun AnalysisApiTestGroup.generateAnalysisApiTests() {
     test(
         AbstractReferenceResolveTest::class,
-        testModuleKinds = TestModuleKind.SOURCE_AND_LIBRARY_SOURCE,
-        addFe10 = false,
-    ) { moduleKind ->
-        when (moduleKind) {
-            TestModuleKind.LIBRARY_SOURCE -> {
-                model("referenceResolve", pattern = TestGeneratorUtil.KT_WITHOUT_DOTS_IN_NAME, excludeDirsRecursively = listOf("withErrors"))
+        filter = frontendIs(FrontendKind.Fir) and testModuleKindIs(TestModuleKind.Source, TestModuleKind.LibrarySource),
+    ) { data ->
+        when (data.moduleKind) {
+            TestModuleKind.LibrarySource -> {
+                model(
+                    "referenceResolve",
+                    pattern = TestGeneratorUtil.KT_WITHOUT_DOTS_IN_NAME,
+                    excludeDirsRecursively = listOf("withErrors")
+                )
             }
+
             else -> {
                 model("referenceResolve", pattern = TestGeneratorUtil.KT_WITHOUT_DOTS_IN_NAME)
             }
         }
     }
 
-    group("scopes") {
+    group(filter = testModuleKindIs(TestModuleKind.Source)) {
+        generateAnalysisApiComponentsTests()
+        generateAnalysisApiNonComponentsTests()
+    }
+}
+
+private fun AnalysisApiTestGroup.generateAnalysisApiNonComponentsTests() {
+    group("scopes", filter = analysisSessionModeIs(AnalysisSessionMode.Normal)) {
         test(
             AbstractSubstitutionOverridesUnwrappingTest::class,
-            generateFe10 = false,
+            filter = frontendIs(FrontendKind.Fir),
         ) {
             model("substitutionOverridesUnwrapping")
         }
 
         test(
             AbstractMemberScopeByFqNameTest::class,
-            generateFe10 = false,
+            filter = frontendIs(FrontendKind.Fir),
         ) {
             model("memberScopeByFqName")
         }
 
         test(
             AbstractFileScopeTest::class,
-            generateFe10 = false,
+            filter = frontendIs(FrontendKind.Fir),
         ) {
             model("fileScopeTest", extension = "kt")
         }
 
         test(
             AbstractDelegateMemberScopeTest::class,
-            generateFe10 = false,
+            filter = frontendIs(FrontendKind.Fir),
         ) {
             model("delegatedMemberScope")
         }
     }
 
-    group("symbols") {
+    group("symbols", filter = analysisSessionModeIs(AnalysisSessionMode.Normal)) {
         test(AbstractSymbolByPsiTest::class) {
             model("symbolByPsi")
         }
@@ -122,7 +129,7 @@ private fun TestGroupSuite.generateAnalysisApiNonComponentsTests() {
 
         test(
             AbstractAnalysisApiAnnotationsOnFilesTest::class,
-            generateFe10 = false // TODO "fails with Rewrite at slice ANNOTATION key"
+            filter = frontendIs(FrontendKind.Fir) and analysisSessionModeIs(AnalysisSessionMode.Normal), // TODO "fe10 fails with Rewrite at slice ANNOTATION key"
         ) {
             model("annotationsOnFiles")
         }
@@ -130,8 +137,8 @@ private fun TestGroupSuite.generateAnalysisApiNonComponentsTests() {
 }
 
 
-private fun TestGroupSuite.generateAnalysisApiComponentsTests() {
-    component("callResolver") {
+private fun AnalysisApiTestGroup.generateAnalysisApiComponentsTests() {
+    component("callResolver", filter = analysisSessionModeIs(AnalysisSessionMode.Normal)) {
         test(AbstractResolveCallTest::class) {
             model("resolveCall")
         }
@@ -176,7 +183,7 @@ private fun TestGroupSuite.generateAnalysisApiComponentsTests() {
         }
     }
 
-    component("diagnosticsProvider") {
+    component("diagnosticsProvider", filter = analysisSessionModeIs(AnalysisSessionMode.Normal)) {
         test(AbstractCollectDiagnosticsTest::class) {
             model("diagnostics")
         }
@@ -185,18 +192,18 @@ private fun TestGroupSuite.generateAnalysisApiComponentsTests() {
     component("importOptimizer") {
         test(
             AbstractHLImportOptimizerTest::class,
-            generateFe10 = false,
+            filter = frontendIs(FrontendKind.Fir) and analysisSessionModeIs(AnalysisSessionMode.Normal),
         ) {
             model("analyseImports", pattern = TestGeneratorUtil.KT_WITHOUT_DOTS_IN_NAME)
         }
     }
 
     component("psiTypeProvider") {
-        test(AbstractPsiTypeProviderTest::class, generateFe10 = false) {
+        test(AbstractPsiTypeProviderTest::class, filter = frontendIs(FrontendKind.Fir)) {
             model("psiType/forDeclaration")
         }
 
-        test(AbstractExpressionPsiTypeProviderTest::class, generateFe10 = false) {
+        test(AbstractExpressionPsiTypeProviderTest::class, filter = frontendIs(FrontendKind.Fir)) {
             model("psiType/forExpression")
         }
     }
@@ -230,10 +237,10 @@ private fun TestGroupSuite.generateAnalysisApiComponentsTests() {
     }
 
     component("typeInfoProvider") {
-        test(AbstractFunctionClassKindTest::class, generateFe10 = false) {
+        test(AbstractFunctionClassKindTest::class, filter = frontendIs(FrontendKind.Fir)) {
             model("functionClassKind")
         }
-        test(AbstractFirGetSuperTypesTest::class, generateFe10 = false) {
+        test(AbstractFirGetSuperTypesTest::class, filter = frontendIs(FrontendKind.Fir)) {
             model("superTypes")
         }
         test(AbstractIsDenotableTest::class) {
@@ -242,8 +249,10 @@ private fun TestGroupSuite.generateAnalysisApiComponentsTests() {
     }
 
     component("typeProvider") {
-        test(AbstractHasCommonSubtypeTest::class) {
-            model("haveCommonSubtype")
+        group(filter = analysisSessionModeIs(AnalysisSessionMode.Normal)) {
+            test(AbstractHasCommonSubtypeTest::class) {
+                model("haveCommonSubtype")
+            }
         }
     }
 }

@@ -44,9 +44,7 @@ abstract class AbstractReferenceResolveTest : AbstractAnalysisApiBasedSingleModu
         }
 
         val resolvedTo =
-            analyseForTest(
-                PsiTreeUtil.findElementOfClassAtOffset(mainKtFile, caretPosition, KtDeclaration::class.java, false) ?: mainKtFile
-            ) {
+            analyseForTest(ktReferences.first().element) {
                 val symbols = ktReferences.flatMap { it.resolveToSymbols() }
                 checkReferenceResultForValidity(ktReferences, module, testServices, symbols)
                 renderResolvedTo(symbols, renderingOptions)
