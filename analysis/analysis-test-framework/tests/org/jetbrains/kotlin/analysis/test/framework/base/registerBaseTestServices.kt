@@ -6,13 +6,18 @@
 package org.jetbrains.kotlin.analysis.test.framework.base
 
 import com.intellij.openapi.Disposable
+import org.jetbrains.kotlin.analysis.test.framework.AnalysisApiTestDirectives
 import org.jetbrains.kotlin.analysis.test.framework.project.structure.AnalysisApiKtModuleProvider
 import org.jetbrains.kotlin.analysis.test.framework.project.structure.AnalysisApiKtModuleProviderImpl
 import org.jetbrains.kotlin.analysis.test.framework.services.*
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiTestConfigurator
+import org.jetbrains.kotlin.test.ExecutionListenerBasedDisposableProvider
 import org.jetbrains.kotlin.test.TestInfrastructureInternals
 import org.jetbrains.kotlin.test.bind
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
+import org.jetbrains.kotlin.test.services.ApplicationDisposableProvider
+import org.jetbrains.kotlin.test.services.KotlinStandardLibrariesPathProvider
+import org.jetbrains.kotlin.test.services.StandardLibrariesPathProviderForKotlinProject
 
 @OptIn(TestInfrastructureInternals::class)
 fun TestConfigurationBuilder.registerAnalysisApiBaseTestServices(
@@ -22,7 +27,10 @@ fun TestConfigurationBuilder.registerAnalysisApiBaseTestServices(
     useAdditionalService<TestDisposableProvider>(::TestDisposableProviderImpl)
     useAdditionalService<AnalysisApiKtModuleProvider>(::AnalysisApiKtModuleProviderImpl)
     useAdditionalService<AnalysisApiEnvironmentManager>(::AnalysisApiEnvironmentManagerImpl.bind(testDisposable))
+    useAdditionalService<ApplicationDisposableProvider> { ExecutionListenerBasedDisposableProvider() }
+    useAdditionalService<KotlinStandardLibrariesPathProvider> { StandardLibrariesPathProviderForKotlinProject }
 
     useCustomCompilerConfigurationProvider(::AnalysisApiTestCompilerConfiguratorProvider)
     usePreAnalysisHandlers(::ProjectStructureInitialisationPreAnalysisHandler.bind(configurator))
+    useDirectives(AnalysisApiTestDirectives)
 }
