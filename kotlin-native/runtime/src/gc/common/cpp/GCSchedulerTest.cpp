@@ -710,5 +710,131 @@ TEST_F(GCSchedulerDataWithTimerTest, TuneTargetHeap) {
     EXPECT_THAT(config.targetHeapBytes.load(), 5);
 }
 
+// These tests require a stack trace to contain call site addresses but
+// on Windows a trace contains function addresses instead.
+// So skip these tests on Windows.
+#if (__MINGW32__ || __MINGW64__)
+#define SKIP_ON_WINDOWS() do { GTEST_SKIP() << "Skip on Windows"; } while(false)
+#else
+#define SKIP_ON_WINDOWS() do { } while(false)
+#endif
+
+TEST(SafePointTrackerTest, RegisterSafePoints) {
+    SKIP_ON_WINDOWS();
+    []() OPTNONE {
+        internal::SafePointTracker<> tracker;
+
+        for (size_t i = 0; i < 10; i++) {
+            bool registered1 = tracker.registerCurrentSafePoint(0);
+            bool registered2 = tracker.registerCurrentSafePoint(0);
+
+            bool expected = (i == 0);
+
+            EXPECT_THAT(registered1, expected);
+            EXPECT_THAT(registered2, expected);
+        }
+    }();
+}
+
+template <size_t SafePointStackSize>
+OPTNONE bool registerCurrentSafePoint(internal::SafePointTracker<SafePointStackSize>& tracker) {
+    return tracker.registerCurrentSafePoint(0);
+}
+
+TEST(SafePointTrackerTest, TrackTopFramesOnly) {
+    SKIP_ON_WINDOWS();
+    []() OPTNONE {
+        internal::SafePointTracker<16> longTracker;
+        internal::SafePointTracker<1> shortTracker;
+
+        bool longRegistered1 = registerCurrentSafePoint(longTracker);
+        bool longRegistered2 = registerCurrentSafePoint(longTracker);
+
+        EXPECT_THAT(longRegistered1, true);
+        EXPECT_THAT(longRegistered2, true);
+
+        bool shortRegistered1 = registerCurrentSafePoint(shortTracker);
+        bool shortRegistered2 = registerCurrentSafePoint(shortTracker);
+
+        EXPECT_THAT(shortRegistered1, true);
+        EXPECT_THAT(shortRegistered2, false);
+    }();
+}
+
+TEST(SafePointTrackerTest, CleanOnSizeLimit) {
+    SKIP_ON_WINDOWS();
+    []() OPTNONE {
+        internal::SafePointTracker<> tracker(2);
+
+        ASSERT_THAT(tracker.size(), 0);
+        ASSERT_THAT(tracker.maxSize(), 2);
+
+        for (size_t i = 0; i < 3; i++) {
+            bool registered1 = tracker.registerCurrentSafePoint(0);
+
+            EXPECT_THAT(registered1, true);
+            EXPECT_THAT(tracker.size(), 1);
+
+            bool registered2 = tracker.registerCurrentSafePoint(0);
+
+            EXPECT_THAT(registered2, true);
+            EXPECT_THAT(tracker.size(), 2);
+        }
+    }();
+}
+
+TEST(AggressiveSchedulerTest, TriggerGCOnUniqueSafePoint) {
+    SKIP_ON_WINDOWS();
+    []() OPTNONE {
+        testing::MockFunction<void()> scheduleGC;
+
+        GCSchedulerConfig config;
+        gc::internal::GCSchedulerDataAggressive scheduler(config, scheduleGC.AsStdFunction());
+        ASSERT_EQ(config.threshold, 1);
+
+        GCSchedulerThreadData threadSchedulerData(config, [](GCSchedulerThreadData&){});
+
+        EXPECT_CALL(scheduleGC, Call()).Times(1);
+        for (int i = 0; i < 10; i++) {
+            scheduler.UpdateFromThreadData(threadSchedulerData);
+        }
+        testing::Mock::VerifyAndClearExpectations(&scheduleGC);
+
+        EXPECT_CALL(scheduleGC, Call()).Times(1);
+        scheduler.UpdateFromThreadData(threadSchedulerData);
+        testing::Mock::VerifyAndClearExpectations(&scheduleGC);
+    }();
+}
+
+TEST(AggressiveSchedulerTest, TriggerGCOnAllocationThreshold) {
+    SKIP_ON_WINDOWS();
+    []() OPTNONE {
+        testing::MockFunction<void()> scheduleGC;
+
+        GCSchedulerConfig config;
+        gc::internal::GCSchedulerDataAggressive scheduler(config, scheduleGC.AsStdFunction());
+        GCSchedulerThreadData threadSchedulerData(config, [&scheduler](GCSchedulerThreadData& data){
+            scheduler.UpdateFromThreadData(data);
+        });
+
+        ASSERT_EQ(config.allocationThresholdBytes, 1);
+
+        config.autoTune = false;
+        config.targetHeapBytes = 10;
+
+        int i = 0;
+        // We trigger GC on the first iteration, when the unique allocation point is faced,
+        // and on the last iteration when target heap size is reached.
+        EXPECT_CALL(scheduleGC, Call())
+            .WillOnce([&i]() { EXPECT_THAT(i, 0); })
+            .WillOnce([&i]() { EXPECT_THAT(i, 9); });
+
+        for (; i < 10; i++) {
+            threadSchedulerData.OnSafePointAllocation(1);
+        }
+        testing::Mock::VerifyAndClearExpectations(&scheduleGC);
+    }();
+}
+
 } // namespace gc
 } // namespace kotlin

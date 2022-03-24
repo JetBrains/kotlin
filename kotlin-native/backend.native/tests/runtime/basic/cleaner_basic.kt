@@ -222,8 +222,12 @@ fun testCleanerCleansWithoutGC() {
     waitCleanerWorker()
 
     assertTrue(called.value)
-    // If this fails, GC has somehow ran on the cleaners worker.
-    assertNotNull(funBoxWeak!!.value)
+
+    // Only for legacy MM.
+    if (Platform.memoryModel != MemoryModel.EXPERIMENTAL) {
+        // If this fails, GC has somehow ran on the cleaners worker.
+        assertNotNull(funBoxWeak!!.value)
+    }
 }
 
 val globalInt = AtomicInt(0)
