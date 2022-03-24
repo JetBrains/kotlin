@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.analysis.test.framework
 
 abstract class AnalysisApiTestConfiguratorFactory {
-    abstract fun createConfigurator(data: AnalysisApiTestConfiguratorFactoryData): AnalysisApiTestConfiguratorService
+    abstract fun createConfigurator(data: AnalysisApiTestConfiguratorFactoryData): AnalysisApiTestConfigurator
 
     abstract fun supportMode(data: AnalysisApiTestConfiguratorFactoryData): Boolean
 
