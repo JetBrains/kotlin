@@ -265,7 +265,7 @@ private fun FirCallableSymbol<*>.toSymbolForCall(
             } ?: declarationStorage.getIrPropertySymbol(this)
         }
         is FirFunctionSymbol<*> -> declarationStorage.getIrFunctionSymbol(this, dispatchReceiverLookupTag)
-        is FirPropertySymbol -> if (this.resolvedReturnType !is ConeDynamicType) {
+        is FirPropertySymbol -> if (this.origin !is FirDeclarationOrigin.DynamicScope) {
             declarationStorage.getIrPropertySymbol(this, dispatchReceiverLookupTag)
         } else {
             declarationStorage.getOrCreateIrVariable(fir, conversionScope.parentFromStack(), null).symbol
