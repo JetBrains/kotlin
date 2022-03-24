@@ -25,10 +25,12 @@ import org.gradle.kotlin.dsl.create
 import org.jetbrains.kotlin.gradle.plugin.*
 import kotlin.test.*
 
-private fun Project.kotlinToolingMetadataOfModule(moduleName: String = KotlinGradleModule.MAIN_MODULE_NAME): KotlinToolingMetadata {
+private fun Project.kotlinToolingMetadataOfModule(moduleName: String): KotlinToolingMetadata {
     val module = kpmModules.getByName(moduleName)
     return module.buildKotlinToolingMetadataTask!!.get().kotlinToolingMetadata
 }
+
+private val Project.kotlinToolingMetadataOfMainModule get() = kotlinToolingMetadataOfModule(KotlinGradleModule.MAIN_MODULE_NAME)
 
 class BuildKotlinToolingMetadataTest : AbstractKpmExtensionTest() {
     @Test
@@ -45,7 +47,7 @@ class BuildKotlinToolingMetadataTest : AbstractKpmExtensionTest() {
         }
 
         // When
-        val metadata = project.kotlinToolingMetadataOfModule()
+        val metadata = project.kotlinToolingMetadataOfMainModule
 
         // Then
         assertEquals("Gradle", metadata.buildSystem)
@@ -57,16 +59,21 @@ class BuildKotlinToolingMetadataTest : AbstractKpmExtensionTest() {
         val jvmTarget = metadata.projectTargets.single { it.platformType == jvm.name }
         assertEquals(KotlinJvmVariant::class.java.canonicalName, jvmTarget.target)
 
-        val nativeTargets = metadata.projectTargets.filter { it.platformType == native.name }.sortedBy { it.platformType }
-        assertEquals(KotlinLinuxArm64Variant::class.java.canonicalName, nativeTargets[0].target)
-        assertEquals(KotlinLinuxX64Variant::class.java.canonicalName, nativeTargets[1].target)
+        val nativeTargets = metadata.projectTargets.filter { it.platformType == native.name }.map { it.target }.toSet()
+        assertEquals(
+            setOf(
+                KotlinLinuxArm64Variant::class.java.canonicalName,
+                KotlinLinuxX64Variant::class.java.canonicalName
+            ),
+            nativeTargets
+        )
     }
 }
 
 class KotlinToolingMetadataWithModelMappingTest {
     private val project = ProjectBuilder.builder().build().also { addBuildEventsListenerRegistryMock(it) } as ProjectInternal
     private val multiplatformExtension get() = project.extensions.getByType(KotlinMultiplatformExtension::class.java)
-    private fun getKotlinToolingMetadata() = project.kotlinToolingMetadataOfModule()
+    private fun getKotlinToolingMetadata() = project.kotlinToolingMetadataOfMainModule
 
     @BeforeTest
     fun setup() {
