@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.incremental.classpathDiff
 
 import com.intellij.util.io.DataExternalizer
+import org.jetbrains.kotlin.build.report.metrics.BuildPerformanceMetric
 import org.jetbrains.kotlin.incremental.KotlinClassInfo
 import org.jetbrains.kotlin.incremental.storage.*
 import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
@@ -19,9 +20,16 @@ object CachedClasspathSnapshotSerializer {
     private val cache = ConcurrentHashMap<File, ClasspathEntrySnapshot>()
     private const val RECOMMENDED_MAX_CACHE_SIZE = 100
 
-    fun load(classpathEntrySnapshotFiles: List<File>): ClasspathSnapshot {
+    fun load(classpathEntrySnapshotFiles: List<File>, reporter: ClasspathSnapshotBuildReporter): ClasspathSnapshot {
         return ClasspathSnapshot(classpathEntrySnapshotFiles.map { snapshotFile ->
+            // Note: This cache is shared across builds, so we need to be careful if the snapshot file's path hasn't changed but its
+            // contents have changed. Luckily, each snapshot file is the output of a Gradle transform and Gradle has the hash of the file's
+            // contents encoded in the file's path. Therefore, if the file's path hasn't changed, then its contents must also not have
+            // changed, and we can reuse the cache entry.
+            // TODO: Make this code safer (not relying on how the snapshot files are produced and whether Gradle maintains the above
+            // guarantee). For example, maybe we can write the file's content hash in the file's name or to another file next to it.
             cache.computeIfAbsent(snapshotFile) {
+                reporter.addMetric(BuildPerformanceMetric.LOAD_CLASSPATH_SNAPSHOT_CACHE_MISSES, 1)
                 ClasspathEntrySnapshotExternalizer.loadFromFile(it)
             }
         }).also {
