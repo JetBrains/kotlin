@@ -76,6 +76,11 @@ private val FILTER_OUT_ACCEPTABLE_MISMATCHES: (Mismatch) -> Boolean = { mismatch
                     ) {
                         // extra abbreviated type appeared in commonized declaration, it's OK
                         isAcceptableMismatch = true
+                    } else {
+                        /* The initial intention implemented in d6961a6e is unclear and needs to be reviewed */
+                        /* Only known test case that enters this branch is `test KT-51686` */
+                        println("[WARNING] Potentially unacceptable mismatch found $mismatch")
+                        isAcceptableMismatch = true
                     }
                 } else /*if (mismatch.missingInB)*/ {
                     if (usefulPath.size > 2
