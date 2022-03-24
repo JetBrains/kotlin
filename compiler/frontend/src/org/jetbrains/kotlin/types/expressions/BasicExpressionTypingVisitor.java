@@ -404,7 +404,9 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
                 context.trace.report(NO_THIS.on(expression));
                 break;
             case SUCCESS:
-                result = resolutionResult.getReceiverParameterDescriptor().getType();
+                ReceiverParameterDescriptor descriptor = resolutionResult.getReceiverParameterDescriptor();
+                context.trace.record(THIS_REFERENCE_TARGET, expression.getInstanceReference(), descriptor);
+                result = descriptor.getType();
                 context.trace.recordType(expression.getInstanceReference(), result);
                 break;
         }

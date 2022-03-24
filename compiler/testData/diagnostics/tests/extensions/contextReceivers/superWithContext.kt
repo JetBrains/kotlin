@@ -15,7 +15,7 @@ class B : A() {
     inner class C {
         fun g() {
             super@B.f()
-            <!DEBUG_INFO_MISSING_UNRESOLVED!>super<!><!UNRESOLVED_REFERENCE!>@Context<!>.<!DEBUG_INFO_MISSING_UNRESOLVED!>h<!>()
+            <!SUPERCLASS_NOT_ACCESSIBLE_FROM_INTERFACE!>super@Context<!>.<!UNRESOLVED_REFERENCE!>h<!>()
         }
     }
 }

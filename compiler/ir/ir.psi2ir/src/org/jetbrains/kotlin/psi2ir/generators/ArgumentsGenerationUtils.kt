@@ -121,20 +121,7 @@ fun StatementGenerator.generateReceiver(defaultStartOffset: Int, defaultEndOffse
                             context.symbolTable.referenceValueParameter(receiverClassDescriptor.thisAsReceiverParameter)
                         )
                 }
-                is ContextClassReceiver -> {
-                    val receiverClassDescriptor = receiver.classDescriptor
-                    val thisAsReceiverParameter = receiverClassDescriptor.thisAsReceiverParameter
-                    val thisReceiver = IrGetValueImpl(
-                        defaultStartOffset, defaultEndOffset,
-                        thisAsReceiverParameter.type.toIrType(),
-                        context.symbolTable.referenceValue(thisAsReceiverParameter)
-                    )
-                    IrGetFieldImpl(
-                        defaultStartOffset, defaultEndOffset,
-                        context.additionalDescriptorStorage.getSyntheticField(receiver).symbol,
-                        irReceiverType, thisReceiver
-                    )
-                }
+                is ContextClassReceiver -> loadContextReceiver(receiver, defaultStartOffset, defaultEndOffset)
                 is ThisClassReceiver ->
                     generateThisOrSuperReceiver(receiver, receiver.classDescriptor)
                 is SuperCallReceiverValue ->
@@ -160,6 +147,26 @@ fun StatementGenerator.generateReceiver(defaultStartOffset: Int, defaultEndOffse
             }
     }
 }
+
+fun StatementGenerator.loadContextReceiver(
+    receiver: ContextClassReceiver,
+    defaultStartOffset: Int, defaultEndOffset: Int,
+): IrGetFieldImpl {
+    val receiverClassDescriptor = receiver.classDescriptor
+    val thisAsReceiverParameter = receiverClassDescriptor.thisAsReceiverParameter
+    val thisReceiver = IrGetValueImpl(
+        defaultStartOffset, defaultEndOffset,
+        thisAsReceiverParameter.type.toIrType(),
+        context.symbolTable.referenceValue(thisAsReceiverParameter)
+    )
+
+    return IrGetFieldImpl(
+        defaultStartOffset, defaultEndOffset,
+        context.additionalDescriptorStorage.getSyntheticField(receiver).symbol,
+        receiver.type.toIrType(), thisReceiver
+    )
+}
+
 
 fun StatementGenerator.generateSingletonReference(
     descriptor: ClassDescriptor,

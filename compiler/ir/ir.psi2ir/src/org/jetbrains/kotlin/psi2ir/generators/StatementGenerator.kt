@@ -17,10 +17,7 @@
 package org.jetbrains.kotlin.psi2ir.generators
 
 import org.jetbrains.kotlin.backend.common.BackendException
-import org.jetbrains.kotlin.descriptors.CallableDescriptor
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
-import org.jetbrains.kotlin.descriptors.VariableDescriptorWithAccessors
+import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.builders.Scope
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
@@ -46,6 +43,7 @@ import org.jetbrains.kotlin.resolve.calls.model.VariableAsFunctionResolvedCall
 import org.jetbrains.kotlin.resolve.calls.tasks.isDynamic
 import org.jetbrains.kotlin.resolve.constants.CompileTimeConstant
 import org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluator
+import org.jetbrains.kotlin.resolve.scopes.receivers.ContextClassReceiver
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingUtils
 import org.jetbrains.kotlin.util.OperatorNameConventions
@@ -415,23 +413,26 @@ class StatementGenerator(
 
     override fun visitThisExpression(expression: KtThisExpression, data: Nothing?): IrExpression {
         val referenceTarget = getOrFail(BindingContext.REFERENCE_TARGET, expression.instanceReference) { "No reference target for this" }
+        val receiverParameter =
+            getOrFail<KtReferenceExpression, ReceiverParameterDescriptor>(
+                BindingContext.THIS_REFERENCE_TARGET, expression.instanceReference
+            ) { "No reference target for this" }
         val startOffset = expression.startOffsetSkippingComments
         val endOffset = expression.endOffset
         return when (referenceTarget) {
             is ClassDescriptor ->
-                generateThisReceiver(startOffset, endOffset, referenceTarget.thisAsReceiverParameter.type, referenceTarget)
-
+                when (receiverParameter.value) {
+                    is ContextClassReceiver -> loadContextReceiver(receiverParameter.value as ContextClassReceiver, startOffset, endOffset)
+                    else -> generateThisReceiver(
+                        startOffset, endOffset, referenceTarget.thisAsReceiverParameter.type, referenceTarget
+                    )
+                }
             is CallableDescriptor -> {
-                val resolvedCall = getResolvedCall(expression)
-                val receivers = listOfNotNull(referenceTarget.extensionReceiverParameter) + referenceTarget.contextReceiverParameters
-                val receiver = receivers.find {
-                    it == resolvedCall?.candidateDescriptor
-                } ?: referenceTarget.extensionReceiverParameter ?: error("No receiver: $referenceTarget")
-                val receiverType = receiver.type.toIrType()
+                val receiverType = receiverParameter.type.toIrType()
                 IrGetValueImpl(
                     startOffset, endOffset,
                     receiverType,
-                    context.symbolTable.referenceValueParameter(receiver)
+                    context.symbolTable.referenceValueParameter(receiverParameter)
                 )
             }
 
