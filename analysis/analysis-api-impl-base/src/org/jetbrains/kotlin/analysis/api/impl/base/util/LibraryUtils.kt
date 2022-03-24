@@ -5,10 +5,13 @@
 
 package org.jetbrains.kotlin.analysis.api.impl.base.util
 
+import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.StandardFileSystems
 import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.impl.jar.CoreJarFileSystem
+import com.intellij.psi.PsiFile
+import com.intellij.psi.PsiManager
 import com.intellij.util.io.URLUtil.JAR_SEPARATOR
 import java.nio.file.Path
 
@@ -30,6 +33,19 @@ object LibraryUtils {
     ): Collection<VirtualFile> {
         return jarFileSystem.refreshAndFindFileByPath(jar.toString() + JAR_SEPARATOR)
             ?.let { getAllVirtualFilesFromRoot(it, includeRoot) } ?: emptySet()
+    }
+
+    fun getAllPsiFilesFromTheJar(
+        jar: Path,
+        project: Project,
+        jarFileSystem: CoreJarFileSystem = CoreJarFileSystem(),
+        includeRoot: Boolean = true,
+    ): List<PsiFile> {
+        val virtualFiles = getAllVirtualFilesFromJar(jar, jarFileSystem, includeRoot)
+        return virtualFiles
+            .mapNotNull { virtualFile ->
+                PsiManager.getInstance(project).findFile(virtualFile)
+            }
     }
 
     /**

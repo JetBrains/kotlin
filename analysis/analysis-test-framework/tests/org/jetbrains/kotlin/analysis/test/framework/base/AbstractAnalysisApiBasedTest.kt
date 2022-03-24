@@ -5,9 +5,6 @@
 
 package org.jetbrains.kotlin.analysis.test.framework.base
 
-import com.intellij.mock.MockApplication
-import com.intellij.mock.MockProject
-import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.util.Disposer
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.testFramework.TestDataFile
@@ -15,17 +12,13 @@ import junit.framework.ComparisonFailure
 import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
 import org.jetbrains.kotlin.analysis.api.analyse
 import org.jetbrains.kotlin.analysis.api.analyseInDependedAnalysisSession
-import org.jetbrains.kotlin.analysis.test.framework.AnalysisApiTestConfigurator
 import org.jetbrains.kotlin.analysis.test.framework.AnalysisApiTestDirectives
 import org.jetbrains.kotlin.analysis.test.framework.TestWithDisposable
-import org.jetbrains.kotlin.analysis.test.framework.project.structure.KotlinProjectStructureProviderTestImpl
-import org.jetbrains.kotlin.analysis.test.framework.project.structure.TestKtModuleProvider
+import org.jetbrains.kotlin.analysis.test.framework.project.structure.ktModuleProvider
 import org.jetbrains.kotlin.analysis.test.framework.services.ExpressionMarkerProvider
 import org.jetbrains.kotlin.analysis.test.framework.services.ExpressionMarkersSourceFilePreprocessor
-import org.jetbrains.kotlin.analysis.test.framework.utils.SkipTestException
-import org.jetbrains.kotlin.analysis.test.framework.project.structure.getKtFilesFromModule
-import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
-import org.jetbrains.kotlin.cli.jvm.config.addJavaSourceRoots
+import org.jetbrains.kotlin.analysis.test.framework.services.libraries.LibraryWasNotCompiledDueToExpectedCompilationError
+import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiTestConfigurator
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtFile
@@ -45,7 +38,6 @@ import org.jetbrains.kotlin.test.services.configuration.JvmEnvironmentConfigurat
 import org.jetbrains.kotlin.test.services.impl.TemporaryDirectoryManagerImpl
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.TestInfo
-import java.io.File
 import java.nio.file.Path
 import java.nio.file.Paths
 import kotlin.io.path.exists
@@ -55,7 +47,6 @@ abstract class AbstractAnalysisApiBasedTest : TestWithDisposable() {
     abstract val configurator: AnalysisApiTestConfigurator
 
     private lateinit var testInfo: KotlinTestInfo
-        private set
 
     protected lateinit var testDataPath: Path
         private set
@@ -63,12 +54,10 @@ abstract class AbstractAnalysisApiBasedTest : TestWithDisposable() {
     private lateinit var moduleStructure: TestModuleStructure
 
     protected open fun configureTest(builder: TestConfigurationBuilder) {
-        with(configurator) {
-            builder.configureTest(disposable)
-        }
+        configurator.configureTest(builder, disposable)
     }
 
-    protected abstract fun doTestByFileStructure(ktFiles: List<KtFile>, moduleStructure: TestModuleStructure, testServices: TestServices)
+    protected abstract fun doTestByFileStructure(moduleStructure: TestModuleStructure, testServices: TestServices)
 
     protected fun AssertionsService.assertEqualsToTestDataFileSibling(actual: String, extension: String = ".txt") {
         val testPrefix = configurator.testPrefix
@@ -123,10 +112,14 @@ abstract class AbstractAnalysisApiBasedTest : TestWithDisposable() {
 
         useSourcePreprocessor(::ExpressionMarkersSourceFilePreprocessor)
         useAdditionalService { ExpressionMarkerProvider() }
+
+        registerAnalysisApiBaseTestServices(disposable, configurator)
+
         useAdditionalService(::TestKtModuleProvider)
         useAdditionalService<ApplicationDisposableProvider> { ExecutionListenerBasedDisposableProvider() }
         useAdditionalService<KotlinStandardLibrariesPathProvider> { StandardLibrariesPathProviderForKotlinProject }
         useDirectives(AnalysisApiTestDirectives)
+
         configureTest(this)
 
         startingArtifactFactory = { ResultingArtifact.Source() }
@@ -145,58 +138,30 @@ abstract class AbstractAnalysisApiBasedTest : TestWithDisposable() {
         val testConfiguration = testConfiguration(path, configure)
         Disposer.register(disposable, testConfiguration.rootDisposable)
         val testServices = testConfiguration.testServices
-        val moduleStructure = testConfiguration.moduleStructureExtractor.splitTestDataByModules(
-            path,
-            testConfiguration.directives,
-        )
+        val moduleStructure =
+            testConfiguration.moduleStructureExtractor.splitTestDataByModules(path, testConfiguration.directives)
+        testServices.register(TestModuleStructure::class, moduleStructure)
         this.moduleStructure = moduleStructure
-        val singleModule = moduleStructure.modules.single()
-        val project = try {
-            testServices.compilerConfigurationProvider.getProject(singleModule)
-        } catch (_: SkipTestException) {
+        testConfiguration.testServices.register(TestModuleStructure::class, moduleStructure)
+
+        try {
+            testConfiguration.preAnalysisHandlers.forEach { preprocessor -> preprocessor.preprocessModuleStructure(moduleStructure) }
+        } catch(ignored: LibraryWasNotCompiledDueToExpectedCompilationError) {
             return
         }
 
-        registerApplicationServices()
-        testConfiguration.testServices.register(TestModuleStructure::class, moduleStructure)
         testConfiguration.preAnalysisHandlers.forEach { preprocessor ->
-            try {
-                preprocessor.preprocessModuleStructure(moduleStructure)
-            } catch (exception: Throwable) {
-                when (handleInitializationError(exception, moduleStructure)) {
-                    InitializationErrorAction.IGNORE -> {}
-                    InitializationErrorAction.THROW -> throw exception
-                }
-            }
+            preprocessor.prepareSealedClassInheritors(moduleStructure)
         }
 
-        val ktFiles = getKtFilesFromModule(testServices, singleModule)
-        with(project as MockProject) {
-            val compilerConfiguration = testServices.compilerConfigurationProvider.getCompilerConfiguration(singleModule)
-            compilerConfiguration.addJavaSourceRoots(ktFiles.map { File(it.virtualFilePath) })
-            configurator.registerProjectServices(
-                this,
-                compilerConfiguration,
-                ktFiles,
-                testServices.compilerConfigurationProvider.getPackagePartProviderFactory(singleModule),
-                KotlinProjectStructureProviderTestImpl(testServices)
-            )
+        moduleStructure.modules.forEach { module ->
+            val files = testServices.ktModuleProvider.getModuleFiles(module)
+            configurator.prepareFilesInModule(files, module, testServices)
         }
 
-        testConfiguration.preAnalysisHandlers.forEach { preprocessor ->
-            try {
-                preprocessor.prepareSealedClassInheritors(moduleStructure)
-            } catch (exception: Throwable) {
-                when (handleInitializationError(exception, moduleStructure)) {
-                    InitializationErrorAction.IGNORE -> {}
-                    InitializationErrorAction.THROW -> throw exception
-                }
-            }
-        }
-
-        configurator.prepareTestFiles(ktFiles, singleModule, testServices)
-        doTestByFileStructure(ktFiles, moduleStructure, testServices)
+        doTestByFileStructure(moduleStructure, testServices)
     }
+
 
     protected fun <R> analyseForTest(contextElement: KtElement, action: KtAnalysisSession.() -> R): R {
         return if (configurator.analyseInDependentSession
@@ -207,13 +172,6 @@ abstract class AbstractAnalysisApiBasedTest : TestWithDisposable() {
             analyseInDependedAnalysisSession(originalContainingFile, PsiTreeUtil.findSameElementInCopy(contextElement, fileCopy), action)
         } else {
             analyse(contextElement, action)
-        }
-    }
-
-    private fun registerApplicationServices() {
-        val application = ApplicationManager.getApplication() as MockApplication
-        KotlinCoreEnvironment.underApplicationLock {
-            configurator.registerApplicationServices(application)
         }
     }
 

@@ -14,6 +14,7 @@ dependencies {
     testApi(projectTests(":compiler:tests-common-new"))
     testApi(project(":analysis:analysis-api-providers"))
     testApi(project(":analysis:analysis-api"))
+    testApi(project(":analysis:analysis-api-standalone:analysis-api-standalone-base"))
     testApi(project(":analysis:analysis-api-impl-barebone"))
 }
 
@@ -24,6 +25,7 @@ sourceSets {
 
 projectTest(jUnitMode = JUnitMode.JUnit5) {
     dependsOn(":dist")
+    dependsOn(":plugins:fir-plugin-prototype:plugin-annotations:jar")
     workingDir = rootDir
     useJUnitPlatform()
 }
