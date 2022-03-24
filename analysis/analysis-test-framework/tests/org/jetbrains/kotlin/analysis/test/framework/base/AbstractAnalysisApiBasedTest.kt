@@ -10,12 +10,16 @@ import com.intellij.openapi.util.Disposer
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.testFramework.TestDataFile
 import junit.framework.ComparisonFailure
+import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
+import org.jetbrains.kotlin.analysis.api.analyse
+import org.jetbrains.kotlin.analysis.api.analyseInDependedAnalysisSession
 import org.jetbrains.kotlin.analysis.api.*
 import org.jetbrains.kotlin.analysis.test.framework.AnalysisApiTestDirectives
 import org.jetbrains.kotlin.analysis.test.framework.TestWithDisposable
 import org.jetbrains.kotlin.analysis.test.framework.project.structure.ktModuleProvider
 import org.jetbrains.kotlin.analysis.test.framework.services.ExpressionMarkerProvider
 import org.jetbrains.kotlin.analysis.test.framework.services.ExpressionMarkersSourceFilePreprocessor
+import org.jetbrains.kotlin.analysis.test.framework.services.libraries.LibraryWasNotCompiledDueToExpectedCompilationError
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiTestConfigurator
 import org.jetbrains.kotlin.analysis.test.framework.utils.SkipTestException
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
@@ -114,12 +118,6 @@ abstract class AbstractAnalysisApiBasedTest : TestWithDisposable() {
         useAdditionalService { ExpressionMarkerProvider() }
 
         registerAnalysisApiBaseTestServices(disposable, configurator)
-
-        useAdditionalService(::TestKtModuleProvider)
-        useAdditionalService<ApplicationDisposableProvider> { ExecutionListenerBasedDisposableProvider() }
-        useAdditionalService<KotlinStandardLibrariesPathProvider> { StandardLibrariesPathProviderForKotlinProject }
-        useDirectives(AnalysisApiTestDirectives)
-
         configureTest(this)
 
         startingArtifactFactory = { ResultingArtifact.Source() }

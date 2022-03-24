@@ -46,14 +46,7 @@ abstract class AbstractCompilerBasedTestForFir : AbstractCompilerBasedTest() {
 
         configureTest()
         defaultConfiguration(this)
-        registerAnalysisApiBaseTestServices(disposable, FirLowLevelAnalysisApiTestConfigurator)
-
-        useAdditionalService<ApplicationDisposableProvider> { ExecutionListenerBasedDisposableProvider() }
-        useAdditionalService<KotlinStandardLibrariesPathProvider> { StandardLibrariesPathProviderForKotlinProject }
-        useAdditionalService(::TestKtModuleProvider)
-        usePreAnalysisHandlers(::ModuleRegistrarPreAnalysisHandler.bind(disposable, true))
-        usePreAnalysisHandlers(::SealedClassesInheritorsCaclulatorPreAnalysisHandler)
-
+        registerAnalysisApiBaseTestServices(disposable, FirLowLevelCompilerBasedTestConfigurator)
 
         firHandlersStep {
             useHandlers(::LLDiagnosticParameterChecker)

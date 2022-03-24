@@ -21,10 +21,10 @@ import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.*
 
 class AnalysisApiTestCompilerConfiguratorProvider(
-    override val testServices: TestServices,
+    testServices: TestServices,
     override val testRootDisposable: Disposable,
     override val configurators: List<AbstractEnvironmentConfigurator>
-) : CompilerConfigurationProvider() {
+) : CompilerConfigurationProvider(testServices) {
     private val configurationCache: MutableMap<TestModule, CompilerConfiguration> = mutableMapOf()
 
     private val allProjectBinaryRoots by lazy {
