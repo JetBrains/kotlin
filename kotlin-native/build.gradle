@@ -282,7 +282,7 @@ task distCompiler(type: Copy) {
         into('konan/nativelib')
     }
 
-    from(project(':kotlin-native:llvmCoverageMappingC').file('build/libs/coverageMapping/shared')) {
+    from(project(':kotlin-native:libllvmext').file('build/libs/llvmext/shared')) {
         into('konan/nativelib')
     }
 

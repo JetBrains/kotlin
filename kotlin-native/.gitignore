@@ -57,7 +57,7 @@ backend.native/tests/teamcity-test.property
 samples/**/*.kt.bc-build
 
 # CMake
-llvmCoverageMappingC/CMakeLists.txt
+libllvmext/CMakeLists.txt
 tools/performance-server/node_modules
 tools/performance-server/server
 tools/performance-server/ui/js

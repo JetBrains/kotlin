@@ -57,7 +57,7 @@ native {
     }
     val objSet = sourceSets["main"]!!.transform(".cpp" to ".$obj")
 
-    target(lib("coverageMapping"), objSet) {
+    target(lib("llvmext"), objSet) {
         tool(*platformManager.hostPlatform.clangForJni.llvmAr("").toTypedArray())
         flags("-qv", ruleOut(), *ruleInAll())
     }
