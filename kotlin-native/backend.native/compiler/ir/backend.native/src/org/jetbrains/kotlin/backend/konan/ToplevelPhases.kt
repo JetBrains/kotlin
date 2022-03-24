@@ -545,6 +545,7 @@ private val bitcodePostprocessingPhase = NamedCompilerPhase(
         lower = checkExternalCallsPhase then
                 bitcodeOptimizationPhase then
                 coveragePhase then
+                removeRedundantSafepointsPhase then
                 optimizeTLSDataLoadsPhase then
                 rewriteExternalCallsCheckerGlobals
 )
@@ -643,6 +644,8 @@ internal fun PhaseConfig.konanPhasesConfig(config: KonanConfig) {
 
         disableUnless(fileInitializersPhase, getBoolean(KonanConfigKeys.PROPERTY_LAZY_INITIALIZATION))
         disableUnless(removeRedundantCallsToFileInitializersPhase, getBoolean(KonanConfigKeys.PROPERTY_LAZY_INITIALIZATION))
+
+        disableUnless(removeRedundantSafepointsPhase, config.configuration.get(BinaryOptions.memoryModel) == MemoryModel.EXPERIMENTAL)
 
         val isDescriptorsOnlyLibrary = config.metadataKlib == true
         disableIf(psiToIrPhase, isDescriptorsOnlyLibrary)
