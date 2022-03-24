@@ -17727,6 +17727,48 @@ public class IrCodegenBoxWasmTestGenerated extends AbstractIrCodegenBoxWasmTest 
                     runTest("compiler/testData/codegen/box/inlineClasses/sealed/casts/object.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
                 }
 
+                @TestMetadata("compiler/testData/codegen/box/inlineClasses/sealed/casts/param")
+                @TestDataPath("$PROJECT_ROOT")
+                @RunWith(JUnit3RunnerWithInners.class)
+                public static class Param extends AbstractIrCodegenBoxWasmTest {
+                    private void runTest(String testDataFilePath) throws Exception {
+                        KotlinTestUtils.runTest0(this::doTest, TargetBackend.WASM, testDataFilePath);
+                    }
+
+                    private void runTest(String testDataFilePath, java.util.function.Function<String, String> transformer) throws Exception {
+                        KotlinTestUtils.runTest0(path -> doTestWithTransformer(path, transformer), TargetBackend.WASM, testDataFilePath);
+                    }
+
+                    public void testAllFilesPresentInParam() throws Exception {
+                        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/inlineClasses/sealed/casts/param"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+                    }
+
+                    @TestMetadata("class.kt")
+                    public void testClass() throws Exception {
+                        runTest("compiler/testData/codegen/box/inlineClasses/sealed/casts/param/class.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+                    }
+
+                    @TestMetadata("inlineClass.kt")
+                    public void testInlineClass() throws Exception {
+                        runTest("compiler/testData/codegen/box/inlineClasses/sealed/casts/param/inlineClass.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+                    }
+
+                    @TestMetadata("inlineClassNullable.kt")
+                    public void testInlineClassNullable() throws Exception {
+                        runTest("compiler/testData/codegen/box/inlineClasses/sealed/casts/param/inlineClassNullable.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+                    }
+
+                    @TestMetadata("inlineClassPrimitive.kt")
+                    public void testInlineClassPrimitive() throws Exception {
+                        runTest("compiler/testData/codegen/box/inlineClasses/sealed/casts/param/inlineClassPrimitive.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+                    }
+
+                    @TestMetadata("object.kt")
+                    public void testObject() throws Exception {
+                        runTest("compiler/testData/codegen/box/inlineClasses/sealed/casts/param/object.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+                    }
+                }
+
                 @TestMetadata("compiler/testData/codegen/box/inlineClasses/sealed/casts/returnType")
                 @TestDataPath("$PROJECT_ROOT")
                 @RunWith(JUnit3RunnerWithInners.class)

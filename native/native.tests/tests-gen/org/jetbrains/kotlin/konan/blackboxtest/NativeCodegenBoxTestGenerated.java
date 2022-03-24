@@ -22658,6 +22658,61 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
                     }
 
                     @Nested
+                    @TestMetadata("compiler/testData/codegen/box/inlineClasses/sealed/casts/param")
+                    @TestDataPath("$PROJECT_ROOT")
+                    @Tag("codegen")
+                    @UseExtTestCaseGroupProvider()
+                    public class Param {
+                        public Param() {
+                            register("compiler/testData/codegen/box/inlineClasses/sealed/casts/param/class.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+                            register("compiler/testData/codegen/box/inlineClasses/sealed/casts/param/inlineClass.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+                            register("compiler/testData/codegen/box/inlineClasses/sealed/casts/param/inlineClassNullable.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+                            register("compiler/testData/codegen/box/inlineClasses/sealed/casts/param/inlineClassPrimitive.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+                            register("compiler/testData/codegen/box/inlineClasses/sealed/casts/param/object.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+                        }
+
+                        @Test
+                        public void testAllFilesPresentInParam() throws Exception {
+                            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/inlineClasses/sealed/casts/param"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
+                        }
+
+                        @Test
+                        @TestMetadata("class.kt")
+                        public void testClass() throws Exception {
+                            // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
+                            runTest("compiler/testData/codegen/box/inlineClasses/sealed/casts/param/class.kt");
+                        }
+
+                        @Test
+                        @TestMetadata("inlineClass.kt")
+                        public void testInlineClass() throws Exception {
+                            // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
+                            runTest("compiler/testData/codegen/box/inlineClasses/sealed/casts/param/inlineClass.kt");
+                        }
+
+                        @Test
+                        @TestMetadata("inlineClassNullable.kt")
+                        public void testInlineClassNullable() throws Exception {
+                            // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
+                            runTest("compiler/testData/codegen/box/inlineClasses/sealed/casts/param/inlineClassNullable.kt");
+                        }
+
+                        @Test
+                        @TestMetadata("inlineClassPrimitive.kt")
+                        public void testInlineClassPrimitive() throws Exception {
+                            // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
+                            runTest("compiler/testData/codegen/box/inlineClasses/sealed/casts/param/inlineClassPrimitive.kt");
+                        }
+
+                        @Test
+                        @TestMetadata("object.kt")
+                        public void testObject() throws Exception {
+                            // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
+                            runTest("compiler/testData/codegen/box/inlineClasses/sealed/casts/param/object.kt");
+                        }
+                    }
+
+                    @Nested
                     @TestMetadata("compiler/testData/codegen/box/inlineClasses/sealed/casts/returnType")
                     @TestDataPath("$PROJECT_ROOT")
                     @Tag("codegen")

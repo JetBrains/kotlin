@@ -1,0 +1,48 @@
+@kotlin.jvm.JvmInline
+@kotlin.Metadata
+public final class C {
+    // source: 'inlineClassNullable.kt'
+    public static @org.jetbrains.annotations.NotNull method constructor-impl(@org.jetbrains.annotations.Nullable p0: java.lang.String): java.lang.String
+    public static method equals-impl(p0: java.lang.String, p1: java.lang.Object): boolean
+    public final static method equals-impl0(p0: java.lang.String, p1: java.lang.String): boolean
+    public static method hashCode-impl(p0: java.lang.String): int
+    public static method toString-impl(p0: java.lang.String): java.lang.String
+}
+
+@kotlin.jvm.JvmInline
+@kotlin.Metadata
+public class IC {
+    // source: 'inlineClassNullable.kt'
+    protected synthetic final field $value: java.lang.Object
+    protected final @org.jetbrains.annotations.Nullable method $value(): java.lang.Object
+    private method <init>(): void
+    private synthetic method <init>(p0: java.lang.Object): void
+    public synthetic method <init>(p0: java.lang.Object, p1: kotlin.jvm.internal.DefaultConstructorMarker): void
+    public synthetic method <init>(p0: kotlin.jvm.internal.DefaultConstructorMarker): void
+    public synthetic final static method box-impl(p0: java.lang.Object): IC
+    protected static @org.jetbrains.annotations.NotNull method constructor-impl(p0: java.lang.Object): java.lang.Object
+    public method equals(@org.jetbrains.annotations.Nullable p0: java.lang.Object): boolean
+    public static method equals-impl(p0: java.lang.Object, @org.jetbrains.annotations.Nullable p1: java.lang.Object): boolean
+    public final static method equals-impl0(p0: java.lang.Object, p1: java.lang.Object): boolean
+    public method hashCode(): int
+    public static method hashCode-impl(p0: java.lang.Object): int
+    public synthetic final static method is-C(p0: java.lang.Object): boolean
+    public @org.jetbrains.annotations.NotNull method toString(): java.lang.String
+    public static @org.jetbrains.annotations.NotNull method toString-impl(p0: java.lang.Object): java.lang.String
+    public synthetic method unbox-impl(): java.lang.Object
+}
+
+@kotlin.Metadata
+public final class InlineClassNullableKt {
+    // source: 'inlineClassNullable.kt'
+    public final static method any(@org.jetbrains.annotations.NotNull p0: java.lang.Object): void
+    public final static method anyN(@org.jetbrains.annotations.Nullable p0: java.lang.Object): void
+    public final static method anyNN(@org.jetbrains.annotations.Nullable p0: java.lang.Object): void
+    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
+    public final static method c-8N5YUaI(@org.jetbrains.annotations.NotNull p0: java.lang.String): void
+    public final static method cn-NJEY_ek(@org.jetbrains.annotations.Nullable p0: IC): void
+    public final static method cnn-NJEY_ek(@org.jetbrains.annotations.Nullable p0: IC): void
+    public final static method ic-K5cTq2M(@org.jetbrains.annotations.NotNull p0: java.lang.Object): void
+    public final static method icn-6iVyXxs(@org.jetbrains.annotations.Nullable p0: IC): void
+    public final static method icnn-6iVyXxs(@org.jetbrains.annotations.Nullable p0: IC): void
+}

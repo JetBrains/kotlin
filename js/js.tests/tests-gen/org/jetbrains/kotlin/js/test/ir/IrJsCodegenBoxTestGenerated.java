@@ -20012,6 +20012,46 @@ public class IrJsCodegenBoxTestGenerated extends AbstractIrJsCodegenBoxTest {
                 }
 
                 @Nested
+                @TestMetadata("compiler/testData/codegen/box/inlineClasses/sealed/casts/param")
+                @TestDataPath("$PROJECT_ROOT")
+                public class Param {
+                    @Test
+                    public void testAllFilesPresentInParam() throws Exception {
+                        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/inlineClasses/sealed/casts/param"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
+                    }
+
+                    @Test
+                    @TestMetadata("class.kt")
+                    public void testClass() throws Exception {
+                        runTest("compiler/testData/codegen/box/inlineClasses/sealed/casts/param/class.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+                    }
+
+                    @Test
+                    @TestMetadata("inlineClass.kt")
+                    public void testInlineClass() throws Exception {
+                        runTest("compiler/testData/codegen/box/inlineClasses/sealed/casts/param/inlineClass.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+                    }
+
+                    @Test
+                    @TestMetadata("inlineClassNullable.kt")
+                    public void testInlineClassNullable() throws Exception {
+                        runTest("compiler/testData/codegen/box/inlineClasses/sealed/casts/param/inlineClassNullable.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+                    }
+
+                    @Test
+                    @TestMetadata("inlineClassPrimitive.kt")
+                    public void testInlineClassPrimitive() throws Exception {
+                        runTest("compiler/testData/codegen/box/inlineClasses/sealed/casts/param/inlineClassPrimitive.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+                    }
+
+                    @Test
+                    @TestMetadata("object.kt")
+                    public void testObject() throws Exception {
+                        runTest("compiler/testData/codegen/box/inlineClasses/sealed/casts/param/object.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+                    }
+                }
+
+                @Nested
                 @TestMetadata("compiler/testData/codegen/box/inlineClasses/sealed/casts/returnType")
                 @TestDataPath("$PROJECT_ROOT")
                 public class ReturnType {

@@ -26,7 +26,6 @@ import org.jetbrains.kotlin.ir.builders.declarations.addConstructor
 import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrFunctionImpl
-import org.jetbrains.kotlin.ir.declarations.impl.IrVariableImpl
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
@@ -96,25 +95,24 @@ private class JvmInlineClassLowering(context: JvmBackendContext) : JvmValueClass
         }
 
         if (expression.typeOperand.isInlineChildOfSealedInlineClass()) {
-            val top = expression.typeOperand.findTopSealedInlineSuperClass()
-            val isCheck = context.inlineClassReplacements.getIsSealedInlineChildFunction(top to expression.typeOperand.classOrNull!!.owner)
-            val underlyingType = expression.typeOperand.unboxInlineClass()
+            val transformed = super.visitTypeOperator(expression) as IrTypeOperatorCall
+            val top = transformed.typeOperand.findTopSealedInlineSuperClass()
+            val isCheck = context.inlineClassReplacements.getIsSealedInlineChildFunction(top to transformed.typeOperand.classOrNull!!.owner)
+            val underlyingType = transformed.typeOperand.unboxInlineClass()
 
-            expression.argument.transformChildrenVoid()
-
-            when (expression.operator) {
+            when (transformed.operator) {
                 IrTypeOperator.INSTANCEOF -> {
                     // Top.is-Child(top)
                     return IrCallImpl(
-                        expression.startOffset, expression.endOffset,
+                        transformed.startOffset, transformed.endOffset,
                         context.irBuiltIns.booleanType, isCheck.symbol, top.typeParameters.size, isCheck.valueParameters.size
                     ).also {
-                        it.putValueArgument(0, coerceInlineClasses(expression.argument, top.defaultType, context.irBuiltIns.anyNType))
+                        it.putValueArgument(0, coerceInlineClasses(transformed.argument, top.defaultType, context.irBuiltIns.anyNType))
                     }
                 }
                 IrTypeOperator.CAST -> {
                     // if (Top.is-Child(top)) top else CCE
-                    return generateAsCheck(expression, top, isCheck, underlyingType) {
+                    return generateAsCheck(transformed, top, isCheck, underlyingType) {
                         irCall(this@JvmInlineClassLowering.context.ir.symbols.throwTypeCastException).also {
                             it.putValueArgument(
                                 0,
@@ -125,10 +123,10 @@ private class JvmInlineClassLowering(context: JvmBackendContext) : JvmValueClass
                 }
                 IrTypeOperator.SAFE_CAST -> {
                     // if (Top.is-Child(top)) top else null
-                    return generateAsCheck(expression, top, isCheck, underlyingType) { irNull() }
+                    return generateAsCheck(transformed, top, isCheck, underlyingType) { irNull() }
                 }
                 else -> {
-                    // FALLTHRU
+                    return transformed
                 }
             }
         }

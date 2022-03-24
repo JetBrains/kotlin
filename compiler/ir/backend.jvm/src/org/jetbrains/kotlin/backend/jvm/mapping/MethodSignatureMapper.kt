@@ -352,7 +352,7 @@ class MethodSignatureMapper(private val context: JvmBackendContext) {
             if (type.isInlineClassType() && declaration.isFromJava()) {
                 typeMapper.mapType(type, TypeMappingMode.GENERIC_ARGUMENT, sw)
             } else {
-                typeMapper.mapType(type, TypeMappingMode.DEFAULT, sw)
+                typeMapper.mapType(type.sealedInlineClassTypeIfNeeded(), TypeMappingMode.DEFAULT, sw)
             }
             return
         }
@@ -368,7 +368,7 @@ class MethodSignatureMapper(private val context: JvmBackendContext) {
                 }
         }
 
-        typeMapper.mapType(type, mode, sw)
+        typeMapper.mapType(type.sealedInlineClassTypeIfNeeded(), mode, sw)
     }
 
     private val IrDeclaration.isMethodWithDeclarationSiteWildcards: Boolean
