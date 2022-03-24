@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.incremental.classpathDiff
 
 import com.intellij.openapi.util.io.FileUtil
+import org.jetbrains.kotlin.build.report.DoNothingICReporter
 import org.jetbrains.kotlin.build.report.metrics.BuildMetricsReporter
 import org.jetbrains.kotlin.build.report.metrics.BuildTime
 import org.jetbrains.kotlin.build.report.metrics.measure
@@ -238,7 +239,7 @@ object ClasspathChangesComputer {
         incrementalJvmCache.clearCacheForRemovedClasses(changesCollector)
 
         // Normalize the changes and clean up
-        val dirtyData = changesCollector.getDirtyData(listOf(incrementalJvmCache), EmptyICReporter)
+        val dirtyData = changesCollector.getDirtyData(listOf(incrementalJvmCache), DoNothingICReporter)
         workingDir.deleteRecursively()
 
         return dirtyData.toProgramSymbols(currentClassSnapshots, previousClassSnapshots)
