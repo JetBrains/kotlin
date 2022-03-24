@@ -189,6 +189,17 @@ class FirElementSerializer private constructor(
             }
         }
 
+        if (klass is FirRegularClass) {
+            for (contextReceiver in klass.contextReceivers) {
+                val typeRef = contextReceiver.typeRef
+                if (useTypeTable()) {
+                    builder.addContextReceiverTypeId(typeId(typeRef))
+                } else {
+                    builder.addContextReceiverType(typeProto(contextReceiver.typeRef))
+                }
+            }
+        }
+
         if (versionRequirementTable == null) error("Version requirements must be serialized for classes: ${klass.render()}")
 
         builder.addAllVersionRequirement(versionRequirementTable.serializeVersionRequirements(klass))
@@ -312,6 +323,15 @@ class FirElementSerializer private constructor(
             builder.addTypeParameter(local.typeParameterProto(typeParameter))
         }
 
+        for (contextReceiver in property.contextReceivers) {
+            val typeRef = contextReceiver.typeRef
+            if (useTypeTable()) {
+                builder.addContextReceiverTypeId(typeId(typeRef))
+            } else {
+                builder.addContextReceiverType(typeProto(contextReceiver.typeRef))
+            }
+        }
+
         val receiverTypeRef = property.receiverTypeRef
         if (receiverTypeRef != null) {
             if (useTypeTable()) {
@@ -384,6 +404,15 @@ class FirElementSerializer private constructor(
         for (typeParameter in function.typeParameters) {
             if (typeParameter !is FirTypeParameter) continue
             builder.addTypeParameter(local.typeParameterProto(typeParameter))
+        }
+
+        for (contextReceiver in function.contextReceivers) {
+            val typeRef = contextReceiver.typeRef
+            if (useTypeTable()) {
+                builder.addContextReceiverTypeId(typeId(typeRef))
+            } else {
+                builder.addContextReceiverType(typeProto(contextReceiver.typeRef))
+            }
         }
 
         val receiverTypeRef = function.receiverTypeRef
