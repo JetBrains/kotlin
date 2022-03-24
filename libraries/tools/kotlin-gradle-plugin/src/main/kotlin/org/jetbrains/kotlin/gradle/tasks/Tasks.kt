@@ -200,7 +200,7 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments> : AbstractKotl
                 }
             ).disallowChanges()
             task.taskBuildCacheableOutputDirectory.value(getKotlinBuildDir(task).map { it.dir("cacheable") }).disallowChanges()
-            task.taskBuildLocalStateDirectory.value(getKotlinBuildDir(task).map { it.dir("localstate") }).disallowChanges()
+            task.taskBuildLocalStateDirectory.value(getKotlinBuildDir(task).map { it.dir("local-state") }).disallowChanges()
 
             task.localStateDirectories.from(task.taskBuildLocalStateDirectory).disallowChanges()
 
@@ -210,7 +210,7 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments> : AbstractKotl
         private fun getKotlinBuildDir(task: T): Provider<Directory> =
             task.project.layout.buildDirectory.dir("$KOTLIN_BUILD_DIR_NAME/${task.name}")
 
-        protected open fun getClasspathSnapshotDir(task: T): Provider<Directory> =
+        protected fun getClasspathSnapshotDir(task: T): Provider<Directory> =
             getKotlinBuildDir(task).map { it.dir("classpath-snapshot") }
     }
 
