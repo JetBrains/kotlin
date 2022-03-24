@@ -14,9 +14,7 @@ import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.resolve.calls.*
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConePropertyAsOperator
 import org.jetbrains.kotlin.fir.symbols.impl.*
-import org.jetbrains.kotlin.fir.types.ConeClassLikeType
-import org.jetbrains.kotlin.fir.types.coneTypeUnsafe
-import org.jetbrains.kotlin.fir.types.isExtensionFunctionType
+import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
 import org.jetbrains.kotlin.resolve.calls.tower.CandidateApplicability
 import org.jetbrains.kotlin.util.OperatorNameConventions
@@ -153,7 +151,6 @@ internal class FirInvokeResolveTowerExtension(
             if (invokeBuiltinExtensionMode && !isExtensionFunctionType) {
                 continue
             }
-
 
             val extensionReceiverExpression = invokeReceiverCandidate.extensionReceiverExpression()
             val useImplicitReceiverAsBuiltinInvokeArgument =

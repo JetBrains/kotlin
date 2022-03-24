@@ -19,6 +19,7 @@ sealed class CallKind(vararg resolutionSequence: ResolutionStage) {
         CheckDslScopeViolation,
         CheckLowPriorityInOverloadResolution,
         PostponedVariablesInitializerResolutionStage,
+        LowerPriorityIfDynamic,
         ConstraintSystemForks
     )
 
@@ -49,6 +50,7 @@ sealed class CallKind(vararg resolutionSequence: ResolutionStage) {
         EagerResolveOfCallableReferences,
         CheckLowPriorityInOverloadResolution,
         PostponedVariablesInitializerResolutionStage,
+        LowerPriorityIfDynamic,
         ConstraintSystemForks,
     )
 
