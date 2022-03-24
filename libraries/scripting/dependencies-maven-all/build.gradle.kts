@@ -46,6 +46,11 @@ javadocJar()
 val mavenPackagesToRelocate = listOf(
     "org.eclipse",
     "org.codehaus",
+    "org.jsoup",
+    "afu",
+    "org.aopalliance",
+    "org.checkerframework",
+    "org.sonatype"
 )
 
 val relocatedJar by task<ShadowJar> {
