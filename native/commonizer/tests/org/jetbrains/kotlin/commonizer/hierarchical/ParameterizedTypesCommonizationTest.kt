@@ -582,7 +582,7 @@ class ParameterizedTypesCommonizationTest : AbstractInlineSourcesCommonizationTe
         )
     }
 
-    fun `test KT-51686`() {
+    fun `test KT-51686 - type argument is parameterized class`() {
         val result = commonize {
             outputTarget("(a, b)")
             "a" withSource """
@@ -615,6 +615,101 @@ class ParameterizedTypesCommonizationTest : AbstractInlineSourcesCommonizationTe
                 typealias CPointerVar<T> = CPointerVarOf<CPointer<T>> 
                 
                 expect fun x(x: CPointer<CPointerVar<ByteVar>>)
+            """.trimIndent()
+        )
+    }
+
+    fun `test KT-51686 - type argument is parameterized class - nullability - 0`() {
+        val result = commonize {
+            outputTarget("(a, b)")
+            "a" withSource """
+                class A
+                class Y<T>
+                class X<T>
+                typealias TA<T> = X<Y<T>>
+                fun f(): TA<A>? = null!!
+            """.trimIndent()
+
+            "b" withSource """
+                class A
+                class Y<T>
+                class X<T>
+                typealias TA<T> = X<Y<T>>
+                fun f(): TA<A>? = null!!
+            """.trimIndent()
+        }
+
+        result.assertCommonized(
+            "(a, b)", """
+                expect class A()
+                expect class Y<T>()
+                expect class X<T>()
+                typealias TA<T> = X<Y<T>>
+                expect fun f(): TA<A>?
+            """.trimIndent()
+        )
+    }
+
+    fun `test KT-51686 - type argument is parameterized class - nullability - 1`() {
+        val result = commonize {
+            outputTarget("(a, b)")
+            "a" withSource """
+                class A<T>
+                class X<T>
+                typealias TA1<T> = X<T>
+                typealias TA2<T> = X<T>?
+                                
+                val p1: A<TA1<Unit>> get() = null!!
+                val p2: A<TA1<Unit?> get() = null!!
+                val p3: A<TA1<Unit>?> get() = null!!
+                val p4: A<TA2<Unit>> get() = null!!
+                val p5: A<TA2<Unit?>> get() = null!!
+                val p6: A<TA2<Unit>?> get() = null!!
+                val p7: A<TA1<Unit>>? get() = null!!
+                val p8: TA2<A<Unit>> get() = null!!
+                val p9: TA2<A<Unit>?> get() = null!!
+                val p10: TA2<Unit> get() = null!!
+                fun<T> f1(): A<TA1<TA2<T>>> = null!! 
+            """.trimIndent()
+
+            "b" withSource """
+                class A<T>
+                class X<T>
+                typealias TA1<T> = X<T>
+                typealias TA2<T> = X<T>?
+                                
+                val p1: A<TA1<Unit>> get() = null!!
+                val p2: A<TA1<Unit?> get() = null!!
+                val p3: A<TA1<Unit>?> get() = null!!
+                val p4: A<TA2<Unit>> get() = null!!
+                val p5: A<TA2<Unit?>> get() = null!!
+                val p6: A<TA2<Unit>?> get() = null!!
+                val p7: A<TA1<Unit>>? get() = null!!
+                val p8: TA2<A<Unit>> get() = null!!
+                val p9: TA2<A<Unit>?> get() = null!!
+                val p10: TA2<Unit> get() = null!!
+                fun<T> f1(): A<TA1<TA2<T>>> = null!! 
+            """.trimIndent()
+        }
+
+        result.assertCommonized(
+            "(a, b)", """
+                expect class A<T>()
+                expect class X<T>()
+                typealias TA1<T> = X<T>
+                typealias TA2<T> = X<T>?
+                
+                expect val p1: A<TA1<Unit>> 
+                expect val p2: A<TA1<Unit?> 
+                expect val p3: A<TA1<Unit>?>
+                expect val p4: A<TA2<Unit>?>
+                expect val p5: A<TA2<Unit?>?>
+                expect val p6: A<TA2<Unit>?>
+                expect val p7: A<TA1<Unit>>?
+                expect val p8: TA2<A<Unit>>?
+                expect val p9: TA2<A<Unit>?>?
+                expect val p10: TA2<Unit>?
+                expect fun<T> f1(): A<TA1<TA2<T>?>>
             """.trimIndent()
         )
     }
