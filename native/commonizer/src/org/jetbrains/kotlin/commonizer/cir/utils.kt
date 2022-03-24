@@ -85,27 +85,25 @@ internal tailrec fun computeExpandedType(underlyingType: CirClassOrTypeAliasType
 internal inline fun CirDeclaration.unsupported(): Nothing = error("This method should never be called on ${this::class.java}, $this")
 
 internal fun CirClassOrTypeAliasType.withParentArguments(
-    parentArguments: List<CirTypeProjection>, parentIsMarkedNullable: Boolean
+    parentArguments: List<CirTypeProjection>
 ): CirClassOrTypeAliasType {
-    val newIsMarkedNullable = isMarkedNullable || parentIsMarkedNullable
-
     val newArguments = arguments.map { oldArgument ->
         if (oldArgument !is CirRegularTypeProjection) return@map oldArgument
 
         when (val type = oldArgument.type) {
             is CirTypeParameterType -> parentArguments[type.index]
             is CirClassOrTypeAliasType -> CirRegularTypeProjection(
-                oldArgument.projectionKind, type.withParentArguments(parentArguments, parentIsMarkedNullable)
+                oldArgument.projectionKind, type.withParentArguments(parentArguments)
             )
             else -> oldArgument
         }
     }
 
-    return when (val newType = makeNullableIfNecessary(newIsMarkedNullable).withArguments(newArguments)) {
+    return when (val newType = withArguments(newArguments)) {
         this -> this
         is CirClassType -> newType
         is CirTypeAliasType -> newType.withUnderlyingType(
-            newType.underlyingType.withParentArguments(parentArguments, newIsMarkedNullable)
+            newType.underlyingType.withParentArguments(parentArguments)
         )
     }
 }

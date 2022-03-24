@@ -90,7 +90,8 @@ internal class ClassOrTypeAliasTypeCommonizer(
                 arguments = arguments,
                 isMarkedNullable = isMarkedNullable,
                 underlyingType = dependencyClassifier.underlyingType.toCirClassOrTypeAliasTypeOrNull(classifiers.commonDependencies)
-                    ?.withParentArguments(arguments, isMarkedNullable) ?: return null
+                    ?.makeNullableIfNecessary(isMarkedNullable)
+                    ?.withParentArguments(arguments) ?: return null
             )
 
             else -> Unit
@@ -114,7 +115,9 @@ internal class ClassOrTypeAliasTypeCommonizer(
                 typeAliasId = classifierId,
                 arguments = arguments,
                 isMarkedNullable = isMarkedNullable,
-                underlyingType = commonizedClassifier.underlyingType.withParentArguments(arguments, isMarkedNullable)
+                underlyingType = commonizedClassifier.underlyingType
+                    .makeNullableIfNecessary(isMarkedNullable)
+                    .withParentArguments(arguments)
             )
 
             else -> null
