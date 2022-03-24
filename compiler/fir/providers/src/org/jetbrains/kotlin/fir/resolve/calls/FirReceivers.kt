@@ -79,6 +79,7 @@ sealed class ImplicitReceiverValue<S : FirBasedSymbol<*>>(
     protected val useSiteSession: FirSession,
     protected val scopeSession: ScopeSession,
     private val mutable: Boolean,
+    val contextReceiverNumber: Int = -1,
 ) : ReceiverValue {
     final override var type: ConeKotlinType = type
         private set
@@ -92,7 +93,7 @@ sealed class ImplicitReceiverValue<S : FirBasedSymbol<*>>(
 
     override fun scope(useSiteSession: FirSession, scopeSession: ScopeSession): FirTypeScope? = implicitScope
 
-    private val originalReceiverExpression: FirThisReceiverExpression = receiverExpression(boundSymbol, type)
+    private val originalReceiverExpression: FirThisReceiverExpression = receiverExpression(boundSymbol, type, contextReceiverNumber)
     final override var receiverExpression: FirExpression = originalReceiverExpression
         private set
 
@@ -119,13 +120,18 @@ sealed class ImplicitReceiverValue<S : FirBasedSymbol<*>>(
     abstract fun createSnapshot(): ImplicitReceiverValue<S>
 }
 
-private fun receiverExpression(symbol: FirBasedSymbol<*>, type: ConeKotlinType): FirThisReceiverExpression =
+private fun receiverExpression(
+    symbol: FirBasedSymbol<*>,
+    type: ConeKotlinType,
+    contextReceiverNumber: Int,
+): FirThisReceiverExpression =
     buildThisReceiverExpression {
         // NB: we can't use `symbol.fir.source` as the source of `this` receiver. For instance, if this is an implicit receiver for a class,
         // the entire class itself will be set as a source. If combined with an implicit type operation, a certain assertion, like null
         // check assertion, will retrieve source as an assertion message, which is literally the entire class (!).
         calleeReference = buildImplicitThisReference {
             boundSymbol = symbol
+            this.contextReceiverNumber = contextReceiverNumber
         }
         typeRef = buildResolvedTypeRef {
             this.type = type
@@ -193,8 +199,9 @@ sealed class ContextReceiverValue<S : FirBasedSymbol<*>>(
     useSiteSession: FirSession,
     scopeSession: ScopeSession,
     mutable: Boolean = true,
+    contextReceiverNumber: Int,
 ) : ImplicitReceiverValue<S>(
-    boundSymbol, type, useSiteSession, scopeSession, mutable
+    boundSymbol, type, useSiteSession, scopeSession, mutable, contextReceiverNumber,
 ) {
     abstract override fun createSnapshot(): ContextReceiverValue<S>
 }
@@ -206,11 +213,12 @@ class ContextReceiverValueForCallable(
     useSiteSession: FirSession,
     scopeSession: ScopeSession,
     mutable: Boolean = true,
+    contextReceiverNumber: Int,
 ) : ContextReceiverValue<FirCallableSymbol<*>>(
-    boundSymbol, type, labelName, useSiteSession, scopeSession, mutable
+    boundSymbol, type, labelName, useSiteSession, scopeSession, mutable, contextReceiverNumber
 ) {
     override fun createSnapshot(): ContextReceiverValue<FirCallableSymbol<*>> =
-        ContextReceiverValueForCallable(boundSymbol, type, labelName, useSiteSession, scopeSession, mutable = false)
+        ContextReceiverValueForCallable(boundSymbol, type, labelName, useSiteSession, scopeSession, mutable = false, contextReceiverNumber)
 
     override val isContextReceiver: Boolean
         get() = true
@@ -223,11 +231,12 @@ class ContextReceiverValueForClass(
     useSiteSession: FirSession,
     scopeSession: ScopeSession,
     mutable: Boolean = true,
+    contextReceiverNumber: Int,
 ) : ContextReceiverValue<FirClassSymbol<*>>(
-    boundSymbol, type, labelName, useSiteSession, scopeSession, mutable
+    boundSymbol, type, labelName, useSiteSession, scopeSession, mutable, contextReceiverNumber
 ) {
     override fun createSnapshot(): ContextReceiverValue<FirClassSymbol<*>> =
-        ContextReceiverValueForClass(boundSymbol, type, labelName, useSiteSession, scopeSession, mutable = false)
+        ContextReceiverValueForClass(boundSymbol, type, labelName, useSiteSession, scopeSession, mutable = false, contextReceiverNumber)
 
     override val isContextReceiver: Boolean
         get() = true

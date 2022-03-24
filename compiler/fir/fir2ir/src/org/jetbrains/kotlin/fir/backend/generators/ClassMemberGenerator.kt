@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolvedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
 import org.jetbrains.kotlin.fir.types.*
+import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrFieldAccessExpression
@@ -104,8 +105,9 @@ internal class ClassMemberGenerator(
                         irFunction.putParametersInScope(firFunction)
                     }
                 }
+                val irParameters = valueParameters.drop(firFunction.contextReceivers.size)
                 val annotationMode = containingClass?.classKind == ClassKind.ANNOTATION_CLASS && irFunction is IrConstructor
-                for ((valueParameter, firValueParameter) in valueParameters.zip(firFunction.valueParameters)) {
+                for ((valueParameter, firValueParameter) in irParameters.zip(firFunction.valueParameters)) {
                     valueParameter.setDefaultValue(firValueParameter, annotationMode)
                     annotationGenerator.generate(valueParameter, firValueParameter, irFunction is IrConstructor)
                 }
@@ -118,12 +120,42 @@ internal class ClassMemberGenerator(
                     val irDelegatingConstructorCall = delegatedConstructor.toIrDelegatingConstructorCall()
                     body.statements += irDelegatingConstructorCall
                 }
+                val irClass = parent as IrClass
                 if (delegatedConstructor?.isThis == false) {
                     val instanceInitializerCall = IrInstanceInitializerCallImpl(
-                        startOffset, endOffset, (parent as IrClass).symbol, irFunction.constructedClassType
+                        startOffset, endOffset, irClass.symbol, irFunction.constructedClassType
                     )
                     body.statements += instanceInitializerCall
                 }
+
+                if (containingClass is FirRegularClass && containingClass.contextReceivers.isNotEmpty()) {
+                    val contextReceiverFields =
+                        components.classifierStorage.getFieldsWithContextReceiversForClass(irClass)
+                            ?: error("Not found context receiver fields")
+
+                    val thisParameter =
+                        conversionScope.dispatchReceiverParameter(irClass) ?: error("No found this parameter for $irClass")
+
+                    val receiver = IrGetValueImpl(
+                        UNDEFINED_OFFSET, UNDEFINED_OFFSET,
+                        thisParameter.type,
+                        thisParameter.symbol,
+                    )
+
+                    for (index in containingClass.contextReceivers.indices) {
+                        val irValueParameter = valueParameters[index]
+                        body.statements.add(
+                            IrSetFieldImpl(
+                                UNDEFINED_OFFSET, UNDEFINED_OFFSET,
+                                contextReceiverFields[index].symbol,
+                                receiver,
+                                IrGetValueImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, irValueParameter.type, irValueParameter.symbol),
+                                components.irBuiltIns.unitType,
+                            )
+                        )
+                    }
+                }
+
                 val regularBody = firFunction.body?.let { visitor.convertToIrBlockBody(it) }
                 if (regularBody != null) {
                     body.statements += regularBody.statements

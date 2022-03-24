@@ -90,7 +90,7 @@ class AnnotationGenerator(private val components: Fir2IrComponents) : Fir2IrComp
             propertyAccessor.annotations += property.annotations
                 .filter { it.useSiteTarget == AnnotationUseSiteTarget.PROPERTY_SETTER }
                 .toIrAnnotations()
-            val parameter = propertyAccessor.valueParameters.single()
+            val parameter = propertyAccessor.valueParameters.last()
             parameter.annotations += property.annotations
                 .filter { it.useSiteTarget == AnnotationUseSiteTarget.SETTER_PARAMETER }
                 .toIrAnnotations()

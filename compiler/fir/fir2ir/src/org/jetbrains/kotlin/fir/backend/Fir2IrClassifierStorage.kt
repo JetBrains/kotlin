@@ -58,6 +58,8 @@ class Fir2IrClassifierStorage(
 
     private val enumEntryCache = mutableMapOf<FirEnumEntry, IrEnumEntry>()
 
+    private val fieldsForContextReceivers = mutableMapOf<IrClass, List<IrField>>()
+
     private val localStorage = Fir2IrLocalStorage()
 
     private fun FirTypeRef.toIrType(typeContext: ConversionTypeContext = ConversionTypeContext.DEFAULT): IrType =
@@ -126,8 +128,38 @@ class Fir2IrClassifierStorage(
         if (klass is FirRegularClass) {
             preCacheTypeParameters(klass)
             setTypeParameters(klass)
+            val fieldsForContextReceiversOfCurrentClass = createContextReceiverFields(klass)
+            if (fieldsForContextReceiversOfCurrentClass.isNotEmpty()) {
+                declarations.addAll(fieldsForContextReceiversOfCurrentClass)
+                fieldsForContextReceivers[this] = fieldsForContextReceiversOfCurrentClass
+            }
         }
     }
+
+    fun IrClass.createContextReceiverFields(klass: FirRegularClass): List<IrField> {
+        if (klass.contextReceivers.isEmpty()) return emptyList()
+
+        val contextReceiverFields = mutableListOf<IrField>()
+        for ((index, contextReceiver) in klass.contextReceivers.withIndex()) {
+            val irField = components.irFactory.createField(
+                UNDEFINED_OFFSET, UNDEFINED_OFFSET,
+                IrDeclarationOrigin.FIELD_FOR_CLASS_CONTEXT_RECEIVER,
+                IrFieldSymbolImpl(),
+                Name.identifier("contextReceiverField$index"),
+                contextReceiver.typeRef.toIrType(),
+                DescriptorVisibilities.PRIVATE,
+                isFinal = true,
+                isExternal = false,
+                isStatic = false
+            )
+            irField.parent = this@createContextReceiverFields
+            contextReceiverFields.add(irField)
+        }
+
+        return contextReceiverFields
+    }
+
+    fun getFieldsWithContextReceiversForClass(irClass: IrClass): List<IrField>? = fieldsForContextReceivers[irClass]
 
     private fun IrClass.declareSupertypes(klass: FirClass) {
         superTypes = klass.superTypeRefs.map { superTypeRef -> superTypeRef.toIrType() }

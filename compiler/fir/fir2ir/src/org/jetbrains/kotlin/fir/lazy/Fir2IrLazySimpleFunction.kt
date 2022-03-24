@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.lazy
 
 import org.jetbrains.kotlin.fir.backend.Fir2IrComponents
+import org.jetbrains.kotlin.fir.backend.contextReceiversForFunctionOrContainingProperty
 import org.jetbrains.kotlin.fir.backend.generateOverriddenFunctionSymbols
 import org.jetbrains.kotlin.fir.backend.toIrType
 import org.jetbrains.kotlin.fir.declarations.FirFunction
@@ -64,15 +65,24 @@ class Fir2IrLazySimpleFunction(
         }
     }
 
-    override var contextReceiverParametersCount: Int = 0
+    override var contextReceiverParametersCount: Int = fir.contextReceiversForFunctionOrContainingProperty().size
 
     override var valueParameters: List<IrValueParameter> by lazyVar(lock) {
         declarationStorage.enterScope(this)
-        fir.valueParameters.mapIndexed { index, valueParameter ->
-            declarationStorage.createIrParameter(
-                valueParameter, index, skipDefaultParameter = isFakeOverride
-            ).apply {
-                this.parent = this@Fir2IrLazySimpleFunction
+
+        buildList {
+            declarationStorage.addContextReceiverParametersTo(
+                fir.contextReceiversForFunctionOrContainingProperty(),
+                this@Fir2IrLazySimpleFunction,
+                this@buildList,
+            )
+
+            fir.valueParameters.mapIndexedTo(this) { index, valueParameter ->
+                declarationStorage.createIrParameter(
+                    valueParameter, index, skipDefaultParameter = isFakeOverride
+                ).apply {
+                    this.parent = this@Fir2IrLazySimpleFunction
+                }
             }
         }.apply {
             declarationStorage.leaveScope(this@Fir2IrLazySimpleFunction)

@@ -5,10 +5,7 @@
 
 package org.jetbrains.kotlin.fir.lazy
 
-import org.jetbrains.kotlin.fir.backend.ConversionTypeContext
-import org.jetbrains.kotlin.fir.backend.Fir2IrComponents
-import org.jetbrains.kotlin.fir.backend.generateOverriddenAccessorSymbols
-import org.jetbrains.kotlin.fir.backend.toIrType
+import org.jetbrains.kotlin.fir.backend.*
 import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.declarations.FirPropertyAccessor
@@ -76,21 +73,32 @@ class Fir2IrLazyPropertyAccessor(
         }
     }
 
-    override var contextReceiverParametersCount: Int = 0
+    override var contextReceiverParametersCount: Int = fir.contextReceiversForFunctionOrContainingProperty().size
 
     override var valueParameters: List<IrValueParameter> by lazyVar(lock) {
-        if (!isSetter) emptyList()
+        if (!isSetter && contextReceiverParametersCount == 0) emptyList()
         else {
             declarationStorage.enterScope(this)
-            listOf(
-                declarationStorage.createDefaultSetterParameter(
-                    startOffset, endOffset,
-                    (firAccessor?.valueParameters?.firstOrNull()?.returnTypeRef ?: firParentProperty.returnTypeRef).toIrType(
-                        typeConverter, conversionTypeContext
-                    ),
-                    parent = this@Fir2IrLazyPropertyAccessor
+
+            buildList {
+                declarationStorage.addContextReceiverParametersTo(
+                    fir.contextReceiversForFunctionOrContainingProperty(),
+                    this@Fir2IrLazyPropertyAccessor,
+                    this@buildList,
                 )
-            ).apply {
+
+                if (isSetter) {
+                    add(
+                        declarationStorage.createDefaultSetterParameter(
+                            startOffset, endOffset,
+                            (firAccessor?.valueParameters?.firstOrNull()?.returnTypeRef ?: firParentProperty.returnTypeRef).toIrType(
+                                typeConverter, conversionTypeContext
+                            ),
+                            parent = this@Fir2IrLazyPropertyAccessor
+                        )
+                    )
+                }
+            }.apply {
                 declarationStorage.leaveScope(this@Fir2IrLazyPropertyAccessor)
             }
         }

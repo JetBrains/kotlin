@@ -7,19 +7,21 @@ package org.jetbrains.kotlin.fir.backend.generators
 
 import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.backend.common.ir.isMethodOfAny
-import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.backend.*
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.isCompanion
+import org.jetbrains.kotlin.fir.dispatchReceiverClassOrNull
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.builder.buildAnnotationCall
 import org.jetbrains.kotlin.fir.expressions.impl.FirNoReceiverExpression
+import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.references.FirDelegateFieldReference
 import org.jetbrains.kotlin.fir.references.FirReference
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.references.FirSuperReference
 import org.jetbrains.kotlin.fir.references.builder.buildResolvedNamedReference
 import org.jetbrains.kotlin.fir.references.impl.FirReferencePlaceholderForResolvedAnnotations
+import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.resolve.calls.FirSyntheticFunctionSymbol
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
@@ -318,7 +320,7 @@ class CallAndReferenceGenerator(
                             getter != null -> IrCallImpl(
                                 startOffset, endOffset, type, getter.symbol,
                                 typeArgumentsCount = getter.typeParameters.size,
-                                valueArgumentsCount = 0,
+                                valueArgumentsCount = getter.valueParameters.size,
                                 origin = IrStatementOrigin.GET_PROPERTY,
                                 superQualifierSymbol = dispatchReceiver.superQualifierSymbol()
                             )
@@ -346,7 +348,7 @@ class CallAndReferenceGenerator(
                     else -> generateErrorCallExpression(startOffset, endOffset, calleeReference, type)
                 }
             }.applyTypeArguments(qualifiedAccess).applyReceivers(qualifiedAccess, explicitReceiverExpression)
-                .applyCallArguments(qualifiedAccess as? FirCall, annotationMode)
+                .applyCallArguments(qualifiedAccess, annotationMode)
         } catch (e: Throwable) {
             throw IllegalStateException(
                 "Error while translating ${qualifiedAccess.render()} " +
@@ -375,10 +377,11 @@ class CallAndReferenceGenerator(
                             setter != null -> IrCallImpl(
                                 startOffset, endOffset, type, setter.symbol,
                                 typeArgumentsCount = setter.typeParameters.size,
-                                valueArgumentsCount = 1,
+                                valueArgumentsCount = setter.valueParameters.size,
                                 origin = origin,
                                 superQualifierSymbol = variableAssignment.dispatchReceiver.superQualifierSymbol()
                             ).apply {
+                                putContextReceiverArguments(variableAssignment)
                                 putValueArgument(0, assignedValue)
                             }
                             else -> generateErrorCallExpression(startOffset, endOffset, calleeReference)
@@ -392,11 +395,11 @@ class CallAndReferenceGenerator(
                             setter != null -> IrCallImpl(
                                 startOffset, endOffset, type, setter.symbol,
                                 typeArgumentsCount = setter.typeParameters.size,
-                                valueArgumentsCount = 1,
+                                valueArgumentsCount = setter.valueParameters.size,
                                 origin = origin,
                                 superQualifierSymbol = variableAssignment.dispatchReceiver.superQualifierSymbol()
                             ).apply {
-                                putValueArgument(0, assignedValue)
+                                putValueArgument(putContextReceiverArguments(variableAssignment), assignedValue)
                             }
                             backingField != null -> IrSetFieldImpl(
                                 startOffset, endOffset, backingField.symbol, type,
@@ -548,10 +551,16 @@ class CallAndReferenceGenerator(
         return ConeSubstitutorByMap(map, session)
     }
 
-    internal fun IrExpression.applyCallArguments(call: FirCall?, annotationMode: Boolean): IrExpression {
-        if (call == null) return this
+    internal fun IrExpression.applyCallArguments(
+        statement: FirStatement?,
+        annotationMode: Boolean
+    ): IrExpression {
+        val qualifiedAccess = statement as? FirQualifiedAccess
+        val call = statement as? FirCall
         return when (this) {
             is IrMemberAccessExpression<*> -> {
+                val contextReceiverCount = putContextReceiverArguments(qualifiedAccess)
+                if (call == null) return this
                 val argumentsCount = call.arguments.size
                 if (argumentsCount <= valueArgumentsCount) {
                     apply {
@@ -573,7 +582,10 @@ class CallAndReferenceGenerator(
                         val substitutor = (call as? FirFunctionCall)?.buildSubstitutorByCalledFunction(function) ?: ConeSubstitutor.Empty
                         if (argumentMapping != null && (annotationMode || argumentMapping.isNotEmpty())) {
                             if (valueParameters != null) {
-                                return applyArgumentsWithReorderingIfNeeded(argumentMapping, valueParameters, substitutor, annotationMode)
+                                return applyArgumentsWithReorderingIfNeeded(
+                                    argumentMapping, valueParameters, substitutor, annotationMode,
+                                    contextReceiverCount,
+                                )
                             }
                         }
                         // Case without argument mapping (deserialized annotation)
@@ -584,7 +596,10 @@ class CallAndReferenceGenerator(
                                 else -> null
                             } ?: valueParameters?.get(index)
                             val argumentExpression = convertArgument(argument, valueParameter, substitutor)
-                            putValueArgument(valueParameters?.indexOf(valueParameter)?.takeIf { it >= 0 } ?: index, argumentExpression)
+                            putValueArgument(
+                                (valueParameters?.indexOf(valueParameter)?.takeIf { it >= 0 } ?: index) + contextReceiverCount,
+                                argumentExpression
+                            )
                         }
                     }
                 } else {
@@ -600,7 +615,7 @@ class CallAndReferenceGenerator(
                 }
             }
             is IrErrorCallExpressionImpl -> apply {
-                for (argument in call.arguments) {
+                for (argument in call?.arguments.orEmpty()) {
                     addArgument(visitor.convertToIrExpression(argument))
                 }
             }
@@ -608,11 +623,26 @@ class CallAndReferenceGenerator(
         }
     }
 
+    private fun IrMemberAccessExpression<*>.putContextReceiverArguments(statement: FirStatement?): Int {
+        val contextReceiverCount = (statement as? FirQualifiedAccess)?.contextReceiverArguments?.size ?: 0
+        if (statement is FirQualifiedAccess && contextReceiverCount > 0) {
+            for (index in 0 until contextReceiverCount) {
+                putValueArgument(
+                    index,
+                    visitor.convertToIrExpression(statement.contextReceiverArguments[index]),
+                )
+            }
+        }
+
+        return contextReceiverCount
+    }
+
     private fun IrMemberAccessExpression<*>.applyArgumentsWithReorderingIfNeeded(
         argumentMapping: Map<FirExpression, FirValueParameter>,
         valueParameters: List<FirValueParameter>,
         substitutor: ConeSubstitutor,
-        annotationMode: Boolean
+        annotationMode: Boolean,
+        contextReceiverCount: Int,
     ): IrExpression {
         val converted = argumentMapping.entries.map { (argument, parameter) ->
             parameter to convertArgument(argument, parameter, substitutor, annotationMode)
@@ -633,13 +663,16 @@ class CallAndReferenceGenerator(
                 dispatchReceiver = dispatchReceiver?.freeze("\$this")
                 extensionReceiver = extensionReceiver?.freeze("\$receiver")
                 for ((parameter, irArgument) in converted) {
-                    putValueArgument(valueParameters.indexOf(parameter), irArgument.freeze(parameter.name.asString()))
+                    putValueArgument(
+                        valueParameters.indexOf(parameter) + contextReceiverCount,
+                        irArgument.freeze(parameter.name.asString())
+                    )
                 }
                 statements.add(this@applyArgumentsWithReorderingIfNeeded)
             }
         } else {
             for ((parameter, irArgument) in converted) {
-                putValueArgument(valueParameters.indexOf(parameter), irArgument)
+                putValueArgument(valueParameters.indexOf(parameter) + contextReceiverCount, irArgument)
             }
             if (annotationMode) {
                 for ((index, parameter) in valueParameters.withIndex()) {
