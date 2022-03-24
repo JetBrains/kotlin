@@ -5,16 +5,16 @@ class B(val b: Any)
 class C(val c: Any)
 
 context(A<String>) fun A<Int>.f() {
-    this@A.a.length
+    this@A.a.<!UNRESOLVED_REFERENCE!>length<!>
 }
 
-<!CONFLICTING_OVERLOADS!>context(A<String>, B) fun f()<!> {
+context(A<String>, B) fun f() {
     this@A.a.length
     this@B.b
     <!NO_THIS!>this<!>
 }
 
-<!CONFLICTING_OVERLOADS!>context(A<Int>, A<String>, B) fun f()<!> {
+context(A<Int>, A<String>, B) fun f() {
     this@A.a.length
     this@B.b
     <!NO_THIS!>this<!>

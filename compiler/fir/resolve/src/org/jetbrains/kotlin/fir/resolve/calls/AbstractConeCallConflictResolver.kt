@@ -41,6 +41,9 @@ abstract class AbstractConeCallConflictResolver(
         if (!call1.isExpect && call2.isExpect) return true
         if (call1.isExpect && !call2.isExpect) return false
 
+        if (call1.contextReceiverCount > call2.contextReceiverCount) return true
+        if (call1.contextReceiverCount < call2.contextReceiverCount) return false
+
         return createEmptyConstraintSystem().isSignatureNotLessSpecific(
             call1,
             call2,
@@ -114,7 +117,7 @@ abstract class AbstractConeCallConflictResolver(
             (variable as? FirProperty)?.typeParameters?.map { it.symbol.toLookupTag() }.orEmpty(),
             computeSignatureTypes(call, variable),
             variable.receiverTypeRef != null,
-            0, // TODO
+            variable.contextReceivers.size,
             false,
             0,
             (variable as? FirProperty)?.isExpect == true,
@@ -129,7 +132,7 @@ abstract class AbstractConeCallConflictResolver(
             computeSignatureTypes(call, constructor),
             //constructor.receiverTypeRef != null,
             false,
-            0, // TODO
+            constructor.contextReceivers.size,
             constructor.valueParameters.any { it.isVararg },
             call.numDefaults,
             constructor.isExpect,
@@ -143,7 +146,7 @@ abstract class AbstractConeCallConflictResolver(
             function.typeParameters.map { it.symbol.toLookupTag() },
             computeSignatureTypes(call, function),
             function.receiverTypeRef != null,
-            0, // TODO
+            function.contextReceivers.size,
             function.valueParameters.any { it.isVararg },
             call.numDefaults,
             function.isExpect,
@@ -171,6 +174,7 @@ abstract class AbstractConeCallConflictResolver(
                         (it as ConeKotlinType).removeTypeVariableTypes(inferenceComponents.session.typeContext)
                     }
             } else {
+                called.contextReceivers.mapTo(this) { it.typeRef.coneType }
                 call.argumentMapping?.mapTo(this) { it.value.argumentType() }
             }
         }

@@ -28,7 +28,7 @@ class A {
 fun useWithContextReceivers() {
     with(42) {
         with("") {
-            <!OVERLOAD_RESOLUTION_AMBIGUITY!>f<!>({}, 42)
+            f({}, 42)
             sameAsFWithoutNonContextualCounterpart({}, 42)
             p
             val a = A()
