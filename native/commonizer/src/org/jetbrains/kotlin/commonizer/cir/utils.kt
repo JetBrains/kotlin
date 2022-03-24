@@ -91,15 +91,21 @@ internal fun CirClassOrTypeAliasType.withParentArguments(
 
     val newArguments = arguments.map { oldArgument ->
         if (oldArgument !is CirRegularTypeProjection) return@map oldArgument
-        if (oldArgument.type !is CirTypeParameterType) return@map oldArgument
-        parentArguments[oldArgument.type.index]
+
+        when (val type = oldArgument.type) {
+            is CirTypeParameterType -> parentArguments[type.index]
+            is CirClassOrTypeAliasType -> CirRegularTypeProjection(
+                oldArgument.projectionKind, type.withParentArguments(parentArguments, parentIsMarkedNullable)
+            )
+            else -> oldArgument
+        }
     }
 
-    return when (val newUnderlyingType = makeNullableIfNecessary(newIsMarkedNullable).withArguments(newArguments)) {
+    return when (val newType = makeNullableIfNecessary(newIsMarkedNullable).withArguments(newArguments)) {
         this -> this
-        is CirClassType -> newUnderlyingType
-        is CirTypeAliasType -> newUnderlyingType.withUnderlyingType(
-            newUnderlyingType.underlyingType.withParentArguments(parentArguments, newIsMarkedNullable)
+        is CirClassType -> newType
+        is CirTypeAliasType -> newType.withUnderlyingType(
+            newType.underlyingType.withParentArguments(parentArguments, newIsMarkedNullable)
         )
     }
 }
