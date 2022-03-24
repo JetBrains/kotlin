@@ -205,6 +205,13 @@ class Fir2IrImplicitCastInserter(
             expectedType.isUnit -> {
                 coerceToUnitIfNeeded(this, irBuiltIns)
             }
+            valueType.coneType is ConeDynamicType -> {
+                if (expectedType.coneType !is ConeDynamicType && !expectedType.isNullableAny) {
+                    implicitCast(this, expectedType.toIrType())
+                } else {
+                    this
+                }
+            }
             typeCanBeEnhancedOrFlexibleNullable(valueType) && !expectedType.acceptsNullValues() -> {
                 insertImplicitNotNullCastIfNeeded(expression)
             }
