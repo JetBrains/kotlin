@@ -49,6 +49,10 @@ open class BasicOptimizationAnnotations {
         jsDoc.appendTag("interface")
     }
 
+    fun record() {
+        jsDoc.appendTag("record")
+    }
+
     fun template(types: Iterable<String>) {
         jsDoc.appendTag("template", description = types.joinToString(", "))
     }

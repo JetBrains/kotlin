@@ -111,6 +111,14 @@ class JsClassGenerator(private val irClass: IrClass, val context: JsGenerationCo
             }
         }
 
+        if (irClass.isExternal) {
+            return classBlock.apply {
+                statements += irClass.declarations
+                    .filterIsInstance<IrProperty>()
+                    .map { it.generatePropertyAccessorDefinition() }
+            }
+        }
+
         classBlock.statements += generateClassMetadata()
 
         if (!irClass.isInterface) {
@@ -212,6 +220,7 @@ class JsClassGenerator(private val irClass: IrClass, val context: JsGenerationCo
                 }
             }
         }
+
         context.staticContext.classModels[irClass.symbol] = classModel
         return classBlock
     }
@@ -411,7 +420,7 @@ class JsClassGenerator(private val irClass: IrClass, val context: JsGenerationCo
     private fun IrType.isFunctionType() = isFunctionOrKFunction() || isSuspendFunctionOrKFunction()
 
     private fun IrProperty.generatePropertyAccessorDefinition(): JsStatement {
-        if (backingField?.type == null) return JsEmpty
+        if (!parentAsClass.isExternal && backingField?.type == null) return JsEmpty
 
         val prototype = prototypeOf(classNameRef)
         val name = context.getNameForProperty(this)

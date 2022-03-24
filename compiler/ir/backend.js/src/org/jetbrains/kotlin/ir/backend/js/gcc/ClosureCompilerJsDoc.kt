@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
 import org.jetbrains.kotlin.ir.overrides.isOverridableMemberOrAccessor
 import org.jetbrains.kotlin.ir.types.classifierOrFail
 import org.jetbrains.kotlin.ir.types.isAny
+import org.jetbrains.kotlin.ir.util.isEffectivelyExternal
 import org.jetbrains.kotlin.ir.util.isInterface
 import org.jetbrains.kotlin.ir.util.parentAsClass
 import org.jetbrains.kotlin.ir.util.parentClassOrNull
@@ -61,12 +62,15 @@ fun JsStatement.withJsDocForInitializer(setField: IrSetField, context: JsGenerat
 
 fun JsStatement.withJsDocForProperty(property: IrProperty, context: JsGenerationContext) =
     annotateWithContext(context) {
-        val type = property.backingField?.type
+        val type = property.backingField?.type ?: property.getter?.returnType ?: return@annotateWithContext
 
-        if (type != null) {
+        if (property.isExternal) {
+            public()
+        } else {
             export()
-            mutability(isMutable = property.isVar, type)
         }
+
+        mutability(isMutable = property.isVar, type)
     }
 
 fun JsStatement.withJsDocForFunction(function: IrSimpleFunction, context: JsGenerationContext) =
@@ -94,7 +98,11 @@ fun JsStatement.withJsDocForConstructor(constructor: IrFunction?, parentClass: I
         val baseClass = parentClass.superTypes.firstOrNull { !it.classifierOrFail.isInterface }
         val interfaces = parentClass.superTypes.filter { it !== baseClass && !it.isAny() }
         if (parentClass.isInterface) {
-            interface_()
+            if (parentClass.isEffectivelyExternal()) {
+                record()
+            } else {
+                interface_()
+            }
             extends(interfaces)
         } else {
             constructor()

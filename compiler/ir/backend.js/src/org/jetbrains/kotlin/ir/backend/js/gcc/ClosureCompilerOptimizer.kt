@@ -18,11 +18,13 @@ import org.jetbrains.kotlin.ir.backend.js.utils.JsGenerationContext
 import org.jetbrains.kotlin.ir.backend.js.utils.JsStaticContext
 import org.jetbrains.kotlin.ir.backend.js.utils.NameTable
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
+import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.declarations.IrProperty
 import org.jetbrains.kotlin.ir.declarations.impl.IrFileImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrFileSymbolImpl
 import org.jetbrains.kotlin.ir.util.file
+import org.jetbrains.kotlin.ir.util.fileEntry
 import org.jetbrains.kotlin.js.backend.JsToStringGenerationVisitor
 import org.jetbrains.kotlin.js.backend.ast.JsGlobalBlock
 import org.jetbrains.kotlin.js.util.TextOutputImpl
@@ -76,7 +78,8 @@ private class ClosureCompilerOptimizer(output: String, context: JsIrBackendConte
         )
         val externs = JsGlobalBlock().apply {
             statements += externalPackageFragment.asSequence().filter {
-                !it.value.module.isCommonStdLib(this@generateUserLandExterns) && !it.value.module.isJsStdLib(this@generateUserLandExterns)
+                val ctx = this@generateUserLandExterns
+                (!it.value.module.isJsStdLib(ctx) || it.value.isTypeCheckUtils(ctx))
             }.flatMap { it.value.declarations }.mapNotNull {
                 when (it) {
                     is IrProperty -> it.backingField
@@ -104,8 +107,8 @@ private class ClosureCompilerOptimizer(output: String, context: JsIrBackendConte
         return context.intrinsics.jsCode.owner.file.module === this
     }
 
-    private fun IrModuleFragment.isCommonStdLib(context: JsIrBackendContext): Boolean {
-        return context.irBuiltIns.annotationClass.owner.file.module === this
+    private fun IrFile.isTypeCheckUtils(context: JsIrBackendContext): Boolean {
+        return context.intrinsics.metadataClassConstructorSymbol.owner.fileEntry === fileEntry
     }
 
     private fun getCompilerOptions(): CompilerOptions {
