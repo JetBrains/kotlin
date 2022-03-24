@@ -10,21 +10,21 @@ pill {
 }
 
 dependencies {
-    api(project(":kotlin-gradle-plugin-model"))
+    commonApi(project(":kotlin-gradle-plugin-model"))
 
-    compileOnly(project(":compiler"))
-    compileOnly(project(":kotlin-sam-with-receiver-compiler-plugin"))
-
-    testApi(commonDependency("junit"))
+    commonCompileOnly(project(":compiler"))
+    commonCompileOnly(project(":kotlin-sam-with-receiver-compiler-plugin"))
 
     embedded(project(":kotlin-sam-with-receiver-compiler-plugin")) { isTransitive = false }
+
+    testImplementation(commonDependency("junit"))
 }
 
 gradlePlugin {
     plugins {
         create("samWithReceiver") {
             id = "org.jetbrains.kotlin.plugin.sam.with.receiver"
-            displayName = ""
+            displayName = "Kotlin Sam-with-receiver compiler plugin"
             description = displayName
             implementationClass = "org.jetbrains.kotlin.samWithReceiver.gradle.SamWithReceiverGradleSubplugin"
         }
