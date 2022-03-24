@@ -16,12 +16,21 @@ configureCommonPublicationSettingsForGradle()
 configureKotlinCompileTasksGradleCompatibility()
 extensions.extraProperties["kotlin.stdlib.default.dependency"] = "false"
 
-configureGradlePluginCommonSettings()
+val commonSourceSet = createGradleCommonSourceSet()
+reconfigureMainSourcesSetForGradlePlugin(commonSourceSet)
+
+// Used for Gradle 7.0+ versions
+createGradlePluginVariant(
+    GradlePluginVariant.GRADLE_70,
+    commonSourceSet = commonSourceSet,
+    isGradlePlugin = false
+)
 
 publishing {
     publications {
         register<MavenPublication>(DEFAULT_MAIN_PUBLICATION_NAME) {
             from(components["java"])
+            suppressAllPomMetadataWarnings() // Don't warn about additional published variants
         }
     }
 }
