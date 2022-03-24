@@ -10,10 +10,10 @@ pill {
 }
 
 dependencies {
-    api(project(":kotlin-gradle-plugin-model"))
+    commonApi(project(":kotlin-gradle-plugin-model"))
 
-    compileOnly(project(":compiler"))
-    compileOnly(project(":kotlin-noarg-compiler-plugin"))
+    commonCompileOnly(project(":compiler"))
+    commonCompileOnly(project(":kotlin-noarg-compiler-plugin"))
 
     testImplementation(gradleApi())
     testImplementation(commonDependency("junit"))
