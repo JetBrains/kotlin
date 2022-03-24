@@ -15,7 +15,7 @@ import junit.framework.ComparisonFailure
 import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
 import org.jetbrains.kotlin.analysis.api.analyse
 import org.jetbrains.kotlin.analysis.api.analyseInDependedAnalysisSession
-import org.jetbrains.kotlin.analysis.test.framework.AnalysisApiTestConfiguratorService
+import org.jetbrains.kotlin.analysis.test.framework.AnalysisApiTestConfigurator
 import org.jetbrains.kotlin.analysis.test.framework.AnalysisApiTestDirectives
 import org.jetbrains.kotlin.analysis.test.framework.TestWithDisposable
 import org.jetbrains.kotlin.analysis.test.framework.project.structure.KotlinProjectStructureProviderTestImpl
@@ -52,16 +52,15 @@ import kotlin.io.path.exists
 import kotlin.io.path.nameWithoutExtension
 
 abstract class AbstractAnalysisApiBasedTest : TestWithDisposable() {
-    abstract val configurator: AnalysisApiTestConfiguratorService
+    abstract val configurator: AnalysisApiTestConfigurator
 
-    protected lateinit var testInfo: KotlinTestInfo
+    private lateinit var testInfo: KotlinTestInfo
         private set
 
     protected lateinit var testDataPath: Path
         private set
 
     private lateinit var moduleStructure: TestModuleStructure
-        private set
 
     protected open fun configureTest(builder: TestConfigurationBuilder) {
         with(configurator) {

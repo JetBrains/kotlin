@@ -5,10 +5,10 @@
 
 package org.jetbrains.kotlin.generators.tests.analysis.api
 
-import org.jetbrains.kotlin.analysis.api.fir.components.importOptimizer.AbstractHLImportOptimizerTest
-import org.jetbrains.kotlin.analysis.api.fir.components.psiTypeProvider.AbstractExpressionPsiTypeProviderTest
-import org.jetbrains.kotlin.analysis.api.fir.components.psiTypeProvider.AbstractPsiTypeProviderTest
-import org.jetbrains.kotlin.analysis.api.fir.components.typeProvider.AbstractFirGetSuperTypesTest
+import org.jetbrains.kotlin.analysis.api.impl.base.test.components.importOptimizer.AbstractAnalysisApiImportOptimizerTest
+import org.jetbrains.kotlin.analysis.api.impl.base.test.components.psiTypeProvider.AbstractAnalysisApiExpressionPsiTypeProviderTest
+import org.jetbrains.kotlin.analysis.api.impl.base.test.components.psiTypeProvider.AbstractAnalysisApiPsiTypeProviderTest
+import org.jetbrains.kotlin.analysis.api.impl.base.test.components.typeProvider.AbstractAnalysisApiGetSuperTypesTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.AbstractReferenceResolveTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.annotations.AbstractAnalysisApiAnnotationsOnDeclarationsTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.annotations.AbstractAnalysisApiAnnotationsOnFilesTest
@@ -191,7 +191,7 @@ private fun AnalysisApiTestGroup.generateAnalysisApiComponentsTests() {
 
     component("importOptimizer") {
         test(
-            AbstractHLImportOptimizerTest::class,
+            AbstractAnalysisApiImportOptimizerTest::class,
             filter = frontendIs(FrontendKind.Fir) and analysisSessionModeIs(AnalysisSessionMode.Normal),
         ) {
             model("analyseImports", pattern = TestGeneratorUtil.KT_WITHOUT_DOTS_IN_NAME)
@@ -199,11 +199,11 @@ private fun AnalysisApiTestGroup.generateAnalysisApiComponentsTests() {
     }
 
     component("psiTypeProvider") {
-        test(AbstractPsiTypeProviderTest::class, filter = frontendIs(FrontendKind.Fir)) {
+        test(AbstractAnalysisApiPsiTypeProviderTest::class, filter = frontendIs(FrontendKind.Fir)) {
             model("psiType/forDeclaration")
         }
 
-        test(AbstractExpressionPsiTypeProviderTest::class, filter = frontendIs(FrontendKind.Fir)) {
+        test(AbstractAnalysisApiExpressionPsiTypeProviderTest::class, filter = frontendIs(FrontendKind.Fir)) {
             model("psiType/forExpression")
         }
     }
@@ -240,7 +240,7 @@ private fun AnalysisApiTestGroup.generateAnalysisApiComponentsTests() {
         test(AbstractFunctionClassKindTest::class, filter = frontendIs(FrontendKind.Fir)) {
             model("functionClassKind")
         }
-        test(AbstractFirGetSuperTypesTest::class, filter = frontendIs(FrontendKind.Fir)) {
+        test(AbstractAnalysisApiGetSuperTypesTest::class, filter = frontendIs(FrontendKind.Fir)) {
             model("superTypes")
         }
         test(AbstractIsDenotableTest::class) {

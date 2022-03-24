@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.generators.tests.analysis.api.dsl
 import org.jetbrains.annotations.NotNull
 import org.jetbrains.kotlin.analysis.test.framework.AnalysisApiTestConfiguratorFactory
 import org.jetbrains.kotlin.analysis.test.framework.AnalysisApiTestConfiguratorFactoryData
-import org.jetbrains.kotlin.analysis.test.framework.AnalysisApiTestConfiguratorService
+import org.jetbrains.kotlin.analysis.test.framework.AnalysisApiTestConfigurator
 import org.jetbrains.kotlin.analysis.test.framework.FrontendKind
 import org.jetbrains.kotlin.generators.MethodGenerator
 import org.jetbrains.kotlin.generators.model.MethodModel
@@ -21,7 +21,7 @@ object FrontendConfiguratorTestGenerator : MethodGenerator<FrontendConfiguratorT
     override fun generateSignature(method: FrontendConfiguratorTestModel, p: Printer): Unit = with(p) {
         println("@NotNull")
         println("@Override")
-        print("public AnalysisApiTestConfiguratorService getConfigurator()")
+        print("public ${AnalysisApiTestConfigurator::class.simpleName} getConfigurator()")
     }
 
     override fun generateBody(method: FrontendConfiguratorTestModel, p: Printer): Unit = with(p) {
@@ -64,7 +64,7 @@ class FrontendConfiguratorTestModel(
             add(NotNull::class.java)
             add(frontendConfiguratorFactoryClass.java)
             add(AnalysisApiTestConfiguratorFactoryData::class.java)
-            add(AnalysisApiTestConfiguratorService::class.java)
+            add(AnalysisApiTestConfigurator::class.java)
             add(data.moduleKind::class.java)
 
             add(data.frontend::class.java)

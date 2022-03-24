@@ -5,28 +5,28 @@
 
 package org.jetbrains.kotlin.analysis.api.fir
 
-import org.jetbrains.kotlin.analysis.api.fir.utils.libraries.binary.LibraryAnalysisApiTestConfiguratorService
-import org.jetbrains.kotlin.analysis.api.fir.utils.libraries.source.LibrarySourceAnalysisApiTestConfiguratorService
+import org.jetbrains.kotlin.analysis.api.fir.utils.libraries.binary.LibraryAnalysisApiTestConfigurator
+import org.jetbrains.kotlin.analysis.api.fir.utils.libraries.source.LibrarySourceAnalysisApiTestConfigurator
 import org.jetbrains.kotlin.analysis.test.framework.*
 
 object AnalysisApiFirTestConfiguratorFactory : AnalysisApiTestConfiguratorFactory() {
-    override fun createConfigurator(data: AnalysisApiTestConfiguratorFactoryData): AnalysisApiTestConfiguratorService {
+    override fun createConfigurator(data: AnalysisApiTestConfiguratorFactoryData): AnalysisApiTestConfigurator {
         require(supportMode(data))
 
         return when (data.moduleKind) {
             TestModuleKind.Source -> when (data.analysisSessionMode) {
-                AnalysisSessionMode.Normal -> FirAnalysisApiNormalModeTestConfiguratorService
-                AnalysisSessionMode.Dependent -> FirAnalysisApiDependentModeTestConfiguratorService
+                AnalysisSessionMode.Normal -> AnalysisApiFirTestConfigurator(analyseInDependentSession = false)
+                AnalysisSessionMode.Dependent -> AnalysisApiFirTestConfigurator(analyseInDependentSession = true)
             }
 
             TestModuleKind.LibraryBinary -> {
                 require(data.analysisSessionMode == AnalysisSessionMode.Normal)
-                LibraryAnalysisApiTestConfiguratorService
+                LibraryAnalysisApiTestConfigurator
             }
 
             TestModuleKind.LibrarySource -> {
                 require(data.analysisSessionMode == AnalysisSessionMode.Normal)
-                LibrarySourceAnalysisApiTestConfiguratorService
+                LibrarySourceAnalysisApiTestConfigurator
             }
         }
     }
