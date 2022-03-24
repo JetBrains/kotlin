@@ -21,9 +21,6 @@ class CompiledLibraryProvider(private val testServices: TestServices) : TestServ
         val librarySourcesJar = TestModuleCompiler.compileTestModuleToLibrarySources(module, testServices)
         return CompiledLibrary(libraryJar, librarySourcesJar).also { libraries[module.name] = it }
     }
-
-    fun getCompiledLibrary(module: TestModule): CompiledLibrary =
-        libraries.getValue(module.name)
 }
 
 val TestServices.compiledLibraryProvider: CompiledLibraryProvider by TestServices.testServiceAccessor()

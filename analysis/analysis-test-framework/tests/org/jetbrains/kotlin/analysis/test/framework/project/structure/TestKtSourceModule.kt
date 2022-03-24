@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.analysis.test.framework.project.structure
 
 import com.intellij.openapi.project.Project
+import com.intellij.psi.PsiFile
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.search.ProjectScope
 import org.jetbrains.kotlin.analysis.project.structure.KtLibraryModule
@@ -21,7 +22,6 @@ import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.PlatformDependentAnalyzerServices
 import org.jetbrains.kotlin.test.frontend.fir.getAnalyzerServices
-import org.jetbrains.kotlin.test.model.TestFile
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.compilerConfigurationProvider
@@ -34,10 +34,10 @@ import java.nio.file.Paths
 abstract class TestKtModule(
     val project: Project,
     val testModule: TestModule,
-    val ktFiles: Set<KtFile>,
+    val psiFiles: List<PsiFile>,
     testServices: TestServices,
 ) {
-    private val moduleProvider = testServices.projectModuleProvider
+    private val moduleProvider = testServices.ktModuleProvider
     private val compilerConfigurationProvider = testServices.compilerConfigurationProvider
     private val configuration = compilerConfigurationProvider.getCompilerConfiguration(testModule)
 
@@ -47,7 +47,7 @@ abstract class TestKtModule(
 
     val directRegularDependencies: List<KtModule> by lazy(LazyThreadSafetyMode.PUBLICATION) {
         buildList {
-            testModule.allDependencies.mapTo(this) { moduleProvider.getModule(it.moduleName) as KtModule }
+            testModule.allDependencies.mapTo(this) { moduleProvider.getModule(it.moduleName) }
             addIfNotNull(
                 libraryByRoots(
                     (configuration.jvmModularRoots + configuration.jvmClasspathRoots).map(File::toPath)
@@ -58,12 +58,12 @@ abstract class TestKtModule(
 
     val directRefinementDependencies: List<KtModule> by lazy(LazyThreadSafetyMode.PUBLICATION) {
         testModule.dependsOnDependencies
-            .map { moduleProvider.getModule(it.moduleName) as KtModule }
+            .map { moduleProvider.getModule(it.moduleName) }
     }
 
     val directFriendDependencies: List<KtModule> by lazy(LazyThreadSafetyMode.PUBLICATION) {
         buildList {
-            testModule.friendDependencies.mapTo(this) { moduleProvider.getModule(it.moduleName) as KtModule }
+            testModule.friendDependencies.mapTo(this) { moduleProvider.getModule(it.moduleName) }
             addIfNotNull(
                 libraryByRoots(configuration[JVMConfigurationKeys.FRIEND_PATHS].orEmpty().map(Paths::get))
             )
@@ -94,40 +94,41 @@ abstract class TestKtModule(
 class TestKtSourceModule(
     project: Project,
     testModule: TestModule,
-    val testFilesToKtFiles: Map<TestFile, KtFile>,
+    psiFiles: List<PsiFile>,
     testServices: TestServices
-) : TestKtModule(project, testModule, testFilesToKtFiles.values.toSet(), testServices), KtSourceModule {
+) : TestKtModule(project, testModule, psiFiles, testServices), KtSourceModule {
     override val ktModule: KtModule get() = this
 
     override val contentScope: GlobalSearchScope =
-        TopDownAnalyzerFacadeForJVM.newModuleSearchScope(project, testFilesToKtFiles.values)
+        TopDownAnalyzerFacadeForJVM.newModuleSearchScope(project, psiFiles.filterIsInstance<KtFile>())
 }
 
 class TestKtLibraryModule(
     project: Project,
     testModule: TestModule,
-    ktFiles: Collection<KtFile>,
+    psiFiles: List<PsiFile>,
+    private val binaryRoots: List<Path>,
     testServices: TestServices
-) : TestKtModule(project, testModule, ktFiles.toSet(), testServices), KtLibraryModule {
+) : TestKtModule(project, testModule, psiFiles, testServices), KtLibraryModule {
     override val ktModule: KtModule get() = this
     override val libraryName: String get() = testModule.name
     override val librarySources: KtLibrarySourceModule? get() = null
 
-    override fun getBinaryRoots(): Collection<Path> = ktFiles.map { it.virtualFile.toNioPath() }
+    override fun getBinaryRoots(): Collection<Path> = binaryRoots
 
     override val contentScope: GlobalSearchScope =
-        GlobalSearchScope.filesScope(project, ktFiles.map { it.virtualFile })
+        GlobalSearchScope.filesScope(project, psiFiles.map { it.virtualFile })
 }
 
 class TestKtLibrarySourceModule(
     project: Project,
     testModule: TestModule,
-    ktFilesFromSourceJar: Set<KtFile>,
+    psiFiles: List<PsiFile>,
     testServices: TestServices,
     override val binaryLibrary: KtLibraryModule,
-) : TestKtModule(project, testModule, ktFilesFromSourceJar, testServices), KtLibrarySourceModule {
+) : TestKtModule(project, testModule, psiFiles, testServices), KtLibrarySourceModule {
     override val ktModule: KtModule get() = this
-    override val contentScope: GlobalSearchScope get() = GlobalSearchScope.filesScope(project, ktFiles.map { it.virtualFile })
+    override val contentScope: GlobalSearchScope get() = GlobalSearchScope.filesScope(project, psiFiles.map { it.virtualFile })
 
     override val libraryName: String get() = testModule.name
 }

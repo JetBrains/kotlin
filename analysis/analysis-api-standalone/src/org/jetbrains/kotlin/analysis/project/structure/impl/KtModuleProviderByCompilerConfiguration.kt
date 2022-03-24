@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.analysis.project.structure.ProjectStructureProvider
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.psi.KtFile
 
-internal class ProjectStructureProviderByCompilerConfiguration(
+internal class KtModuleProviderByCompilerConfiguration(
     compilerConfig: CompilerConfiguration,
     project: Project,
     ktFiles: List<KtFile>,

@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.generators.tests.analysis.api.dsl
 
-import org.jetbrains.kotlin.analysis.test.framework.*
+import org.jetbrains.kotlin.analysis.test.framework.test.configurators.*
 
 typealias TestFilter = (AnalysisApiTestConfiguratorFactoryData) -> Boolean
 

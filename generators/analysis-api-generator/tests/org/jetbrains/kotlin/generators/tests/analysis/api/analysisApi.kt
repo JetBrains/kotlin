@@ -37,9 +37,10 @@ import org.jetbrains.kotlin.analysis.api.impl.base.test.scopes.AbstractSubstitut
 import org.jetbrains.kotlin.analysis.api.impl.base.test.symbols.AbstractSymbolByFqNameTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.symbols.AbstractSymbolByPsiTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.symbols.AbstractSymbolByReferenceTest
-import org.jetbrains.kotlin.analysis.test.framework.AnalysisSessionMode
-import org.jetbrains.kotlin.analysis.test.framework.FrontendKind
-import org.jetbrains.kotlin.analysis.test.framework.TestModuleKind
+import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiMode
+import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisSessionMode
+import org.jetbrains.kotlin.analysis.test.framework.test.configurators.FrontendKind
+import org.jetbrains.kotlin.analysis.test.framework.test.configurators.TestModuleKind
 import org.jetbrains.kotlin.generators.tests.analysis.api.dsl.*
 import org.jetbrains.kotlin.generators.tests.analysis.api.dsl.AnalysisApiTestGroup
 import org.jetbrains.kotlin.generators.tests.analysis.api.dsl.component
@@ -48,7 +49,9 @@ import org.jetbrains.kotlin.generators.util.TestGeneratorUtil
 internal fun AnalysisApiTestGroup.generateAnalysisApiTests() {
     test(
         AbstractReferenceResolveTest::class,
-        filter = frontendIs(FrontendKind.Fir) and testModuleKindIs(TestModuleKind.Source, TestModuleKind.LibrarySource),
+        filter = frontendIs(FrontendKind.Fir) and
+                testModuleKindIs(TestModuleKind.Source, TestModuleKind.LibrarySource) and
+                analysisApiModeIs(AnalysisApiMode.Ide, AnalysisApiMode.Standalone),
     ) { data ->
         when (data.moduleKind) {
             TestModuleKind.LibrarySource -> {

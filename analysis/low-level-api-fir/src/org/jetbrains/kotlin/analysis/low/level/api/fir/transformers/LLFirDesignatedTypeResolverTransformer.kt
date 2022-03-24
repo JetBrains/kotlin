@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.api.FirDeclarationDesigna
 import org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.ResolveTreeBuilder
 import org.jetbrains.kotlin.analysis.low.level.api.fir.transformers.LLFirLazyTransformer.Companion.updatePhaseDeep
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.ensurePhase
+import org.jetbrains.kotlin.fir.diagnostics.FirDiagnosticHolder
 
 /**
  * Transform designation into TYPES phase. Affects only for designation, target declaration and it's children
@@ -78,6 +79,7 @@ internal class LLFirDesignatedTypeResolverTransformer(
             is FirField -> check(declaration.returnTypeRef is FirResolvedTypeRef || declaration.returnTypeRef is FirImplicitTypeRef)
             is FirClass, is FirTypeAlias, is FirAnonymousInitializer -> Unit
             is FirEnumEntry -> check(declaration.returnTypeRef is FirResolvedTypeRef)
+            is FirDiagnosticHolder -> {}
             else -> error("Unexpected type: ${declaration::class.simpleName}")
         }
     }
