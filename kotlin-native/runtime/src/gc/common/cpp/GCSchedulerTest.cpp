@@ -709,5 +709,76 @@ TEST_F(GCSchedulerDataWithTimerTest, TuneTargetHeap) {
     EXPECT_THAT(config.targetHeapBytes.load(), 5);
 }
 
+TEST(SafePointTrackerTest, RegisterSafePoints) {
+    []() OPTNONE {
+        internal::SafePointTracker<> tracker;
+
+        for (size_t i = 0; i < 10; i++) {
+            bool registered1 = tracker.registerCurrentSafePoint(0);
+            bool registered2 = tracker.registerCurrentSafePoint(0);
+
+            bool expected = (i == 0);
+
+            EXPECT_THAT(registered1, expected);
+            EXPECT_THAT(registered2, expected);
+        }
+    }();
+}
+
+template <size_t SafePointStackSize>
+OPTNONE bool registerCurrentSafePoint(internal::SafePointTracker<SafePointStackSize>& tracker) {
+    return tracker.registerCurrentSafePoint(0);
+}
+
+TEST(SafePointTrackerTest, TrackTopFramesOnly) {
+    []() OPTNONE {
+        internal::SafePointTracker<16> longTracker;
+        internal::SafePointTracker<1> shortTracker;
+
+        bool longRegistered1 = registerCurrentSafePoint(longTracker);
+        bool longRegistered2 = registerCurrentSafePoint(longTracker);
+
+        EXPECT_THAT(longRegistered1, true);
+        EXPECT_THAT(longRegistered2, true);
+
+        bool shortRegistered1 = registerCurrentSafePoint(shortTracker);
+        bool shortRegistered2 = registerCurrentSafePoint(shortTracker);
+
+        EXPECT_THAT(shortRegistered1, true);
+        EXPECT_THAT(shortRegistered2, false);
+    }();
+}
+
+TEST(SafePointTrackerTest, CleanOnSizeLimit) {
+    []() OPTNONE {
+        internal::SafePointTracker<> tracker(2);
+
+        ASSERT_THAT(tracker.size(), 0);
+        ASSERT_THAT(tracker.maxSize(), 2);
+
+        for (size_t i = 0; i < 3; i++) {
+            bool registered1 = tracker.registerCurrentSafePoint(0);
+
+            EXPECT_THAT(registered1, true);
+            EXPECT_THAT(tracker.size(), 1);
+
+            bool registered2 = tracker.registerCurrentSafePoint(0);
+
+            EXPECT_THAT(registered2, true);
+            EXPECT_THAT(tracker.size(), 2);
+        }
+    }();
+}
+
+/*
+ * TODO: Tests
+ *
+ * Scheduler
+ *  - triggers GC on first unique safe point.
+ *  - triggers GC on allocation/heap limit.
+ *
+ *
+ */
+
 } // namespace gc
 } // namespace kotlin
