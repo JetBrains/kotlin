@@ -20,10 +20,12 @@ enum class BuildPerformanceMetric(val parent: BuildPerformanceMetric? = null, va
         JAR_CLASSPATH_ENTRY_SIZE(parent = CLASSPATH_ENTRY_SNAPSHOT_TRANSFORM_EXECUTION_COUNT, "Size of jar classpath entry", type = SizeMetricType.BYTES),
         JAR_CLASSPATH_ENTRY_SNAPSHOT_SIZE(parent = CLASSPATH_ENTRY_SNAPSHOT_TRANSFORM_EXECUTION_COUNT, "Size of jar classpath entry's snapshot", type = SizeMetricType.BYTES),
         DIRECTORY_CLASSPATH_ENTRY_SNAPSHOT_SIZE(parent = CLASSPATH_ENTRY_SNAPSHOT_TRANSFORM_EXECUTION_COUNT, "Size of directory classpath entry's snapshot", type = SizeMetricType.BYTES),
+    COMPUTE_CLASSPATH_CHANGES_EXECUTION_COUNT(parent = null, "Number of times classpath changes are computed", type = SizeMetricType.NUMBER),
     SHRINK_AND_SAVE_CLASSPATH_SNAPSHOT_EXECUTION_COUNT(parent = null, "Number of times classpath snapshot is shrunk and saved after compilation", type = SizeMetricType.NUMBER),
         CLASSPATH_ENTRY_COUNT(parent = SHRINK_AND_SAVE_CLASSPATH_SNAPSHOT_EXECUTION_COUNT, "Number of classpath entries", type = SizeMetricType.NUMBER),
         CLASSPATH_SNAPSHOT_SIZE(parent = SHRINK_AND_SAVE_CLASSPATH_SNAPSHOT_EXECUTION_COUNT, "Size of classpath snapshot", type = SizeMetricType.BYTES),
         SHRUNK_CLASSPATH_SNAPSHOT_SIZE(parent = SHRINK_AND_SAVE_CLASSPATH_SNAPSHOT_EXECUTION_COUNT, "Size of shrunk classpath snapshot", type = SizeMetricType.BYTES),
+    LOAD_CLASSPATH_SNAPSHOT_CACHE_MISSES(parent = null, "Number of cache misses when loading classpath snapshot", type = SizeMetricType.NUMBER),
     ;
 
     companion object {

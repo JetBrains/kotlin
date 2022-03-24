@@ -37,7 +37,8 @@ object ClasspathChangesComputer {
         reporter: ClasspathSnapshotBuildReporter
     ): ProgramSymbolSet {
         val currentClasspathSnapshot = reporter.measure(BuildTime.LOAD_CURRENT_CLASSPATH_SNAPSHOT) {
-            val classpathSnapshot = CachedClasspathSnapshotSerializer.load(classpathSnapshotFiles.currentClasspathEntrySnapshotFiles)
+            val classpathSnapshot =
+                CachedClasspathSnapshotSerializer.load(classpathSnapshotFiles.currentClasspathEntrySnapshotFiles, reporter)
             reporter.measure(BuildTime.REMOVE_DUPLICATE_CLASSES) {
                 classpathSnapshot.removeDuplicateAndInaccessibleClasses()
             }

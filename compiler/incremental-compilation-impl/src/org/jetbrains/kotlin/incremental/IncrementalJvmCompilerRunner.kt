@@ -29,10 +29,7 @@ import org.jetbrains.kotlin.build.GeneratedJvmClass
 import org.jetbrains.kotlin.build.report.BuildReporter
 import org.jetbrains.kotlin.build.report.DoNothingICReporter
 import org.jetbrains.kotlin.build.report.ICReporter
-import org.jetbrains.kotlin.build.report.metrics.BuildAttribute
-import org.jetbrains.kotlin.build.report.metrics.BuildTime
-import org.jetbrains.kotlin.build.report.metrics.DoNothingBuildMetricsReporter
-import org.jetbrains.kotlin.build.report.metrics.measure
+import org.jetbrains.kotlin.build.report.metrics.*
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
@@ -213,8 +210,10 @@ class IncrementalJvmCompilerRunner(
         return abiSnapshots
     }
 
-    // Used by `calculateSourcesToCompileImpl` and `performWorkAfterSuccessfulCompilation` methods below.
-    // Thread safety: There is no concurrent access to these variables.
+    // There are 2 steps where we need to load the current classpath snapshot and shrink it:
+    //   - Before classpath diffing when `classpathChanges` is ToBeComputedByIncrementalCompiler (see `calculateSourcesToCompileImpl`)
+    //   - After compilation (see `performWorkAfterSuccessfulCompilation`)
+    // To avoid duplicated work, we store the snapshots after the first step for reuse (if the first step is executed).
     private var currentClasspathSnapshot: List<AccessibleClassSnapshot>? = null
     private var shrunkCurrentClasspathAgainstPreviousLookups: List<AccessibleClassSnapshot>? = null
 
@@ -233,11 +232,10 @@ class IncrementalJvmCompilerRunner(
             // Note: classpathChanges is deserialized, so they are no longer singleton objects and need to be compared using `is` (not `==`)
             is NoChanges -> ChangesEither.Known(emptySet(), emptySet())
             is ToBeComputedByIncrementalCompiler -> reporter.measure(BuildTime.COMPUTE_CLASSPATH_CHANGES) {
+                reporter.addMetric(BuildPerformanceMetric.COMPUTE_CLASSPATH_CHANGES_EXECUTION_COUNT, 1)
                 val storeCurrentClasspathSnapshotForReuse =
                     { currentClasspathSnapshotArg: List<AccessibleClassSnapshot>,
                       shrunkCurrentClasspathAgainstPreviousLookupsArg: List<AccessibleClassSnapshot> ->
-                        check(currentClasspathSnapshot == null)
-                        check(shrunkCurrentClasspathAgainstPreviousLookups == null)
                         currentClasspathSnapshot = currentClasspathSnapshotArg
                         shrunkCurrentClasspathAgainstPreviousLookups = shrunkCurrentClasspathAgainstPreviousLookupsArg
                     }
