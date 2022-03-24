@@ -1,3 +1,5 @@
+// DISABLE_DEPENDED_MODE
+
 class Generic<T> {
     inner class Nested
 }
@@ -7,4 +9,5 @@ class C {
 }
 
 class Foo
+
 

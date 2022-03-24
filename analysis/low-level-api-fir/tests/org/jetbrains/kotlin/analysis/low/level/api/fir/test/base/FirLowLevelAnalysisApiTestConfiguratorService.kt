@@ -30,18 +30,6 @@ object FirLowLevelAnalysisApiTestConfiguratorService : AnalysisApiTestConfigurat
         usePreAnalysisHandlers(::ModuleRegistrarPreAnalysisHandler.bind(disposable, false))
     }
 
-    override fun processTestFiles(files: List<KtFile>): List<KtFile> {
-        return files.map {
-            val fakeFile = it.copy() as KtFile
-            fakeFile.originalKtFile = it
-            fakeFile
-        }
-    }
-
-    override fun getOriginalFile(file: KtFile): KtFile {
-        return file.originalKtFile!!
-    }
-
     override fun registerProjectServices(
         project: MockProject,
         compilerConfig: CompilerConfiguration,
