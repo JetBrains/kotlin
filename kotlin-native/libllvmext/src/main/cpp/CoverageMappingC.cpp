@@ -20,7 +20,6 @@
 #include <llvm/IR/LegacyPassManager.h>
 #include <llvm/Analysis/TargetLibraryInfo.h>
 #include <llvm/Transforms/Instrumentation.h>
-#include <llvm/Transforms/ObjCARC.h>
 #include <llvm/Support/FileSystem.h>
 #include <llvm/Support/Path.h>
 
@@ -231,40 +230,4 @@ void LLVMAddInstrProfPass(LLVMPassManagerRef passManagerRef, const char* outputF
 void LLVMKotlinAddTargetLibraryInfoWrapperPass(LLVMPassManagerRef passManagerRef, const char* targetTriple) {
   legacy::PassManagerBase *passManager = unwrap(passManagerRef);
   passManager->add(new TargetLibraryInfoWrapperPass(Triple(targetTriple)));
-}
-
-void LLVMAddObjCARCContractPass(LLVMPassManagerRef passManagerRef) {
-    legacy::PassManagerBase *passManager = unwrap(passManagerRef);
-    passManager->add(createObjCARCContractPass());
-}
-
-void LLVMKotlinInitializeTargets() {
-#define INIT_LLVM_TARGET(TargetName) \
-    LLVMInitialize##TargetName##TargetInfo();\
-    LLVMInitialize##TargetName##Target();\
-    LLVMInitialize##TargetName##TargetMC();
-#if KONAN_MACOS
-    INIT_LLVM_TARGET(AArch64)
-    INIT_LLVM_TARGET(ARM)
-    INIT_LLVM_TARGET(Mips)
-    INIT_LLVM_TARGET(X86)
-    INIT_LLVM_TARGET(WebAssembly)
-#elif KONAN_LINUX
-    INIT_LLVM_TARGET(AArch64)
-    INIT_LLVM_TARGET(ARM)
-    INIT_LLVM_TARGET(Mips)
-    INIT_LLVM_TARGET(X86)
-    INIT_LLVM_TARGET(WebAssembly)
-#elif KONAN_WINDOWS
-    INIT_LLVM_TARGET(AArch64)
-    INIT_LLVM_TARGET(ARM)
-    INIT_LLVM_TARGET(X86)
-    INIT_LLVM_TARGET(WebAssembly)
-#endif
-
-#undef INIT_LLVM_TARGET
-}
-
-void LLVMSetNoTailCall(LLVMValueRef Call) {
-  unwrap<CallInst>(Call)->setTailCallKind(CallInst::TCK_NoTail);
 }

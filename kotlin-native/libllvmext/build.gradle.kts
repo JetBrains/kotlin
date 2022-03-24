@@ -62,3 +62,10 @@ native {
         flags("-qv", ruleOut(), *ruleInAll())
     }
 }
+
+
+val printLlvmDir by tasks.registering {
+    doLast {
+        println(project.findProperty("llvmDir"))
+    }
+}
