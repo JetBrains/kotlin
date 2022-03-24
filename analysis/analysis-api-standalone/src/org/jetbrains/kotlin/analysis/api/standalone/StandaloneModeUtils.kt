@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.api.services.PackagePartP
 import org.jetbrains.kotlin.analysis.project.structure.KtModuleScopeProvider
 import org.jetbrains.kotlin.analysis.project.structure.KtModuleScopeProviderImpl
 import org.jetbrains.kotlin.analysis.project.structure.ProjectStructureProvider
-import org.jetbrains.kotlin.analysis.project.structure.impl.ProjectStructureProviderByCompilerConfiguration
+import org.jetbrains.kotlin.analysis.project.structure.impl.KtModuleProviderByCompilerConfiguration
 import org.jetbrains.kotlin.analysis.providers.*
 import org.jetbrains.kotlin.analysis.providers.impl.*
 import org.jetbrains.kotlin.asJava.KotlinAsJavaSupport
@@ -177,7 +177,7 @@ internal fun configureProjectEnvironment(
 
     project.picoContainer.registerComponentInstance(
         ProjectStructureProvider::class.qualifiedName,
-        ProjectStructureProviderByCompilerConfiguration(
+        KtModuleProviderByCompilerConfiguration(
             compilerConfig,
             project,
             ktFiles,

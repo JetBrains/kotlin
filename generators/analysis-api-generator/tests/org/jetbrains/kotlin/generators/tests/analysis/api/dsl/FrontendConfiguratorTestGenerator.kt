@@ -6,10 +6,9 @@
 package org.jetbrains.kotlin.generators.tests.analysis.api.dsl
 
 import org.jetbrains.annotations.NotNull
-import org.jetbrains.kotlin.analysis.test.framework.AnalysisApiTestConfiguratorFactory
-import org.jetbrains.kotlin.analysis.test.framework.AnalysisApiTestConfiguratorFactoryData
-import org.jetbrains.kotlin.analysis.test.framework.AnalysisApiTestConfigurator
-import org.jetbrains.kotlin.analysis.test.framework.FrontendKind
+import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiTestConfiguratorFactory
+import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiTestConfiguratorFactoryData
+import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiTestConfigurator
 import org.jetbrains.kotlin.generators.MethodGenerator
 import org.jetbrains.kotlin.generators.model.MethodModel
 import org.jetbrains.kotlin.utils.Printer

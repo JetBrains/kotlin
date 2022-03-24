@@ -3,9 +3,9 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.analysis.api.fe10
+package org.jetbrains.kotlin.analysis.api.fe10.test.configurator
 
-import org.jetbrains.kotlin.analysis.test.framework.*
+import org.jetbrains.kotlin.analysis.test.framework.test.configurators.*
 
 object AnalysisApiFe10TestConfiguratorFactory : AnalysisApiTestConfiguratorFactory() {
     override fun createConfigurator(data: AnalysisApiTestConfiguratorFactoryData): AnalysisApiTestConfigurator {
@@ -13,7 +13,7 @@ object AnalysisApiFe10TestConfiguratorFactory : AnalysisApiTestConfiguratorFacto
 
         return when (data.moduleKind) {
             TestModuleKind.Source -> when (data.analysisSessionMode) {
-                AnalysisSessionMode.Normal -> AnalysisApiFirTestConfigurator
+                AnalysisSessionMode.Normal -> AnalysisApiFe10TestConfigurator
                 AnalysisSessionMode.Dependent -> error("Unsupported AnalysisSessionMode.Dependent for fe10")
             }
 

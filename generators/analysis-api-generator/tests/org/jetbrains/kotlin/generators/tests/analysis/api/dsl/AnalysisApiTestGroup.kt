@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.generators.tests.analysis.api.dsl
 
-import org.jetbrains.kotlin.analysis.test.framework.AnalysisApiTestConfiguratorFactoryData
+import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiTestConfiguratorFactoryData
 import org.jetbrains.kotlin.generators.TestGroup
 import org.jetbrains.kotlin.generators.TestGroupSuite
 import org.jetbrains.kotlin.generators.getDefaultSuiteTestClassName

@@ -431,6 +431,7 @@ private fun List<KtModule>.extractLibraryPaths(): List<Path> =
     asSequence()
         .filterIsInstance<KtBinaryModule>()
         .flatMap { it.getBinaryRoots() }
+        .map { it.toAbsolutePath() }
         .toList()
 
 @Deprecated(

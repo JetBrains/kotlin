@@ -5,12 +5,12 @@
 
 package org.jetbrains.kotlin.light.classes.symbol.source
 
-import org.jetbrains.kotlin.analysis.api.fir.AnalysisApiFirTestConfigurator
+import org.jetbrains.kotlin.analysis.api.fir.test.configurators.source.AnalysisApiFirSourceTestConfigurator
 import org.jetbrains.kotlin.light.classes.symbol.base.AbstractSymbolLightClassesLoadingTest
 
 abstract class AbstractSymbolLightClassesLoadingForSourceTest :
     AbstractSymbolLightClassesLoadingTest(
-        AnalysisApiFirTestConfigurator(analyseInDependentSession = false),
+        AnalysisApiFirSourceTestConfigurator(analyseInDependentSession = false),
         EXTENSIONS.FIR_JAVA,
         stopIfCompilationErrorDirectivePresent = false
     )
