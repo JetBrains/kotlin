@@ -35,10 +35,8 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinCommonCompilation
+import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.AbstractKotlinFragmentMetadataCompilationData
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinCompilationData
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinMetadataCompilationData
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.withRefinesClosure
 import org.jetbrains.kotlin.gradle.plugin.sources.dependsOnClosure
 import org.jetbrains.kotlin.gradle.utils.propertyWithConvention
 import java.io.File
@@ -74,7 +72,7 @@ abstract class KotlinCompileCommon @Inject constructor(
                     is AbstractKotlinFragmentMetadataCompilationData -> {
                         val fragment = compilation.fragment
                         project.files(
-                            fragment.withRefinesClosure.map {
+                            fragment.refinesClosure.map {
                                 val compilation = compilation.metadataCompilationRegistry.getForFragmentOrNull(it)
                                     ?: return@map project.files()
                                 compilation.output.classesDirs
