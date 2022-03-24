@@ -27,8 +27,8 @@ import org.jetbrains.kotlin.build.DEFAULT_KOTLIN_SOURCE_FILES_EXTENSIONS
 import org.jetbrains.kotlin.build.GeneratedFile
 import org.jetbrains.kotlin.build.GeneratedJvmClass
 import org.jetbrains.kotlin.build.report.BuildReporter
+import org.jetbrains.kotlin.build.report.DoNothingICReporter
 import org.jetbrains.kotlin.build.report.ICReporter
-import org.jetbrains.kotlin.build.report.ICReporterBase
 import org.jetbrains.kotlin.build.report.metrics.BuildAttribute
 import org.jetbrains.kotlin.build.report.metrics.BuildTime
 import org.jetbrains.kotlin.build.report.metrics.DoNothingBuildMetricsReporter
@@ -77,7 +77,7 @@ fun makeIncrementally(
     sourceRoots: Iterable<File>,
     args: K2JVMCompilerArguments,
     messageCollector: MessageCollector = MessageCollector.NONE,
-    reporter: ICReporter = EmptyICReporter
+    reporter: ICReporter = DoNothingICReporter
 ) {
     val kotlinExtensions = DEFAULT_KOTLIN_SOURCE_FILES_EXTENSIONS
     val allExtensions = kotlinExtensions + "java"
@@ -102,15 +102,6 @@ fun makeIncrementally(
         )
         compiler.compile(sourceFiles, args, messageCollector, providedChangedFiles = null)
     }
-}
-
-object EmptyICReporter : ICReporterBase() {
-    override fun report(message: () -> String) {}
-    override fun reportVerbose(message: () -> String) {}
-    override fun reportCompileIteration(incremental: Boolean, sourceFiles: Collection<File>, exitCode: ExitCode) {}
-    override fun reportMarkDirtyClass(affectedFiles: Iterable<File>, classFqName: String) {}
-    override fun reportMarkDirtyMember(affectedFiles: Iterable<File>, scope: String, name: String) {}
-    override fun reportMarkDirty(affectedFiles: Iterable<File>, reason: String) {}
 }
 
 @Suppress("DEPRECATION")
