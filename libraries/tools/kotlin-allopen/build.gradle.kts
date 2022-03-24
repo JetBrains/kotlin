@@ -10,10 +10,10 @@ pill {
 }
 
 dependencies {
-    api(project(":kotlin-gradle-plugin-model"))
+    commonApi(project(":kotlin-gradle-plugin-model"))
 
-    compileOnly(project(":kotlin-compiler-embeddable"))
-    compileOnly(project(":kotlin-allopen-compiler-plugin"))
+    commonCompileOnly(project(":kotlin-compiler-embeddable"))
+    commonCompileOnly(project(":kotlin-allopen-compiler-plugin"))
 
     embedded(project(":kotlin-allopen-compiler-plugin")) { isTransitive = false }
 }
