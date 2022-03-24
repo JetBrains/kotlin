@@ -29,14 +29,6 @@ open class FirAnalysisApiTestConfiguratorService(override val analyseInDependent
         configureOptionalTestCompilerPlugin()
     }
 
-    override fun processTestFiles(files: List<KtFile>): List<KtFile> {
-        return FirLowLevelAnalysisApiTestConfiguratorService.processTestFiles(files)
-    }
-
-    override fun getOriginalFile(file: KtFile): KtFile {
-        return FirLowLevelAnalysisApiTestConfiguratorService.getOriginalFile(file)
-    }
-
     override fun registerProjectServices(
         project: MockProject,
         compilerConfig: CompilerConfiguration,

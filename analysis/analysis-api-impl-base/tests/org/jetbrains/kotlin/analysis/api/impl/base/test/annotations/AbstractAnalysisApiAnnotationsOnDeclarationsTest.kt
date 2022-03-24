@@ -19,7 +19,7 @@ abstract class AbstractAnalysisApiAnnotationsOnDeclarationsTest : AbstractAnalys
     override fun doTestByFileStructure(ktFile: KtFile, module: TestModule, testServices: TestServices) {
         val ktDeclaration = testServices.expressionMarkerProvider
             .getElementOfTypAtCaret<KtDeclaration>(ktFile)
-        val actual = analyseForTest(ktFile) {
+        val actual = analyseForTest(ktDeclaration) {
             val declarationSymbol = ktDeclaration.getSymbol() as KtAnnotatedSymbol
             buildString {
                 appendLine("KtDeclaration: ${ktDeclaration::class.simpleName} ${ktDeclaration.name}")

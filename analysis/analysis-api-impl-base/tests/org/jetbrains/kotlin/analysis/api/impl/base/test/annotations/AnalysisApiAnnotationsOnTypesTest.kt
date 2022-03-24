@@ -21,7 +21,7 @@ abstract class AbstractAnalysisApiAnnotationsOnTypesTest : AbstractAnalysisApiSi
     override fun doTestByFileStructure(ktFile: KtFile, module: TestModule, testServices: TestServices) {
         val ktTypeReference = testServices.expressionMarkerProvider
             .getElementOfTypAtCaret<KtTypeReference>(ktFile)
-        val actual = analyseForTest(ktFile) {
+        val actual = analyseForTest(ktTypeReference) {
             val ktType = ktTypeReference.getKtType()
             val annotations = ktType.annotations
             buildString {
