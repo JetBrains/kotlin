@@ -147,6 +147,11 @@ open class FirJvmMangleComputer(
             builder.appendSignature(MangleConstant.STATIC_MEMBER_MARK)
         }
 
+        contextReceivers.forEach {
+            builder.appendSignature(MangleConstant.CONTEXT_RECEIVER_PREFIX)
+            mangleType(builder, it.typeRef.coneType)
+        }
+
         receiverTypeRef?.let {
             builder.appendSignature(MangleConstant.EXTENSION_RECEIVER_PREFIX)
             mangleType(builder, it.coneType)

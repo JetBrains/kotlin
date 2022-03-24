@@ -97,8 +97,11 @@ open class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransform
             is FirThisReference -> {
                 val labelName = callee.labelName
                 val implicitReceiver = implicitReceiverStack[labelName]
-                implicitReceiver?.boundSymbol?.let {
-                    callee.replaceBoundSymbol(it)
+                implicitReceiver?.let {
+                    callee.replaceBoundSymbol(it.boundSymbol)
+                    if (it is ContextReceiverValue) {
+                        callee.replaceContextReceiverNumber(it.contextReceiverNumber)
+                    }
                 }
                 val implicitType = implicitReceiver?.originalType
                 qualifiedAccessExpression.resultType = when {
@@ -598,6 +601,7 @@ open class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransform
                     (leftArgument as? FirQualifiedAccess)?.let {
                         dispatchReceiver = it.dispatchReceiver
                         extensionReceiver = it.extensionReceiver
+                        contextReceiverArguments.addAll(it.contextReceiverArguments)
                     }
                     annotations += assignmentOperatorStatement.annotations
                 }

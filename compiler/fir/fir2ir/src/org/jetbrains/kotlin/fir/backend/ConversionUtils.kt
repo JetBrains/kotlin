@@ -721,3 +721,9 @@ fun FirVariableAssignment.getIrAssignmentOrigin(): IrStatementOrigin {
     }
     return IrStatementOrigin.EQ
 }
+
+fun FirCallableDeclaration.contextReceiversForFunctionOrContainingProperty(): List<FirContextReceiver> =
+    if (this is FirPropertyAccessor)
+        this.propertySymbol?.fir?.contextReceivers.orEmpty()
+    else
+        this.contextReceivers

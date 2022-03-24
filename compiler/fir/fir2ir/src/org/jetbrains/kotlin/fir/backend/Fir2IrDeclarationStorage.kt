@@ -28,7 +28,6 @@ import org.jetbrains.kotlin.fir.lazy.Fir2IrLazyConstructor
 import org.jetbrains.kotlin.fir.lazy.Fir2IrLazyProperty
 import org.jetbrains.kotlin.fir.lazy.Fir2IrLazySimpleFunction
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.isLocalClassOrAnonymousObject
-import org.jetbrains.kotlin.fir.types.isSuspendFunctionType
 import org.jetbrains.kotlin.fir.resolve.isKFunctionInvoke
 import org.jetbrains.kotlin.fir.resolve.providers.firProvider
 import org.jetbrains.kotlin.fir.resolve.toSymbol
@@ -335,14 +334,21 @@ class Fir2IrDeclarationStorage(
             val type = function.valueParameters.first().returnTypeRef.toIrType(ConversionTypeContext.DEFAULT.inSetter())
             declareDefaultSetterParameter(type)
         } else if (function != null) {
-            valueParameters = function.valueParameters.mapIndexed { index, valueParameter ->
-                createIrParameter(
-                    valueParameter, index,
-                    useStubForDefaultValueStub = function !is FirConstructor || containingClass?.name != Name.identifier("Enum"),
-                    typeContext,
-                    skipDefaultParameter = isFakeOverride
-                ).apply {
-                    this.parent = parent
+            val contextReceivers = function.contextReceiversForFunctionOrContainingProperty()
+
+            contextReceiverParametersCount = contextReceivers.size
+            valueParameters = buildList {
+                addContextReceiverParametersTo(contextReceivers, parent, this)
+
+                function.valueParameters.mapIndexedTo(this) { index, valueParameter ->
+                    createIrParameter(
+                        valueParameter, index + contextReceiverParametersCount,
+                        useStubForDefaultValueStub = function !is FirConstructor || containingClass?.name != Name.identifier("Enum"),
+                        typeContext,
+                        skipDefaultParameter = isFakeOverride
+                    ).apply {
+                        this.parent = parent
+                    }
                 }
             }
         }
@@ -391,6 +397,18 @@ class Fir2IrDeclarationStorage(
         }
     }
 
+    fun addContextReceiverParametersTo(
+        contextReceivers: List<FirContextReceiver>,
+        parent: IrFunction,
+        result: MutableList<IrValueParameter>,
+    ) {
+        contextReceivers.mapIndexedTo(result) { index, contextReceiver ->
+            createIrParameterFromContextReceiver(contextReceiver, index).apply {
+                this.parent = parent
+            }
+        }
+    }
+
     private fun <T : IrFunction> T.bindAndDeclareParameters(
         function: FirFunction?,
         irParent: IrDeclarationParent?,
@@ -404,7 +422,9 @@ class Fir2IrDeclarationStorage(
     }
 
     fun <T : IrFunction> T.putParametersInScope(function: FirFunction): T {
-        for ((firParameter, irParameter) in function.valueParameters.zip(valueParameters)) {
+        val contextReceivers = function.contextReceiversForFunctionOrContainingProperty()
+
+        for ((firParameter, irParameter) in function.valueParameters.zip(valueParameters.drop(contextReceivers.size))) {
             localStorage.putParameter(firParameter, irParameter)
         }
         return this
@@ -1053,6 +1073,22 @@ class Fir2IrDeclarationStorage(
         }
         localStorage.putParameter(valueParameter, irParameter)
         return irParameter
+    }
+
+    private fun createIrParameterFromContextReceiver(
+        contextReceiver: FirContextReceiver,
+        index: Int,
+    ): IrValueParameter = convertCatching(contextReceiver) {
+        val type = contextReceiver.typeRef.toIrType()
+        return contextReceiver.convertWithOffsets { startOffset, endOffset ->
+            irFactory.createValueParameter(
+                startOffset, endOffset, IrDeclarationOrigin.DEFINED, IrValueParameterSymbolImpl(),
+                Name.identifier("_context_receiver_$index"), index, type,
+                null,
+                isCrossinline = false, isNoinline = false,
+                isHidden = false, isAssignable = false
+            )
+        }
     }
 
     private var lastTemporaryIndex: Int = 0

@@ -104,6 +104,9 @@ class Candidate(
     fun chosenExtensionReceiverExpression(): FirExpression =
         chosenExtensionReceiverValue?.receiverExpression?.takeIf { it !is FirExpressionStub } ?: FirNoReceiverExpression
 
+    fun contextReceiverArguments(): List<FirExpression> =
+        contextReceiverArguments ?: emptyList()
+
     var hasVisibleBackingField = false
 
     override fun equals(other: Any?): Boolean {

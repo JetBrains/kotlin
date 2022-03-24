@@ -197,6 +197,10 @@ class Fir2IrLazyClass(
             }
         }
 
+        with(classifierStorage) {
+            result.addAll(this@Fir2IrLazyClass.createContextReceiverFields(fir))
+        }
+
         for (name in scope.getCallableNames()) {
             result += getFakeOverridesByName(name)
         }
