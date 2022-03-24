@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.commonizer.hierarchical
 
 import org.jetbrains.kotlin.commonizer.AbstractInlineSourcesCommonizationTest
 import org.jetbrains.kotlin.commonizer.assertCommonized
+import org.junit.Test
 
 
 class ParameterizedTypesCommonizationTest : AbstractInlineSourcesCommonizationTest() {
@@ -521,6 +522,99 @@ class ParameterizedTypesCommonizationTest : AbstractInlineSourcesCommonizationTe
             "(a, b)", """
                 expect class Foo<T1, T2, T3>() 
                 expect fun<T1, T2, T3> x(x: Foo<T1, T2, T3>)
+            """.trimIndent()
+        )
+    }
+
+    fun `test nested arguments`() {
+        val result = commonize {
+            outputTarget("(a, b)")
+            "a" withSource """
+                class X<T>
+                class Y<T>
+                fun<T> x(x: X<Y<T>>) = Unit
+            """.trimIndent()
+
+            "b" withSource """
+                class X<T>
+                class Y<T>
+                fun<T> x(x: X<Y<T>>) = Unit
+            """.trimIndent()
+        }
+
+        result.assertCommonized(
+            "(a, b)", """
+                expect class X<T>()
+                expect class Y<T>()
+                expect fun<T> x(x: X<Y<T>>)
+            """.trimIndent()
+        )
+    }
+
+    fun `test nested arguments - with typealias`() {
+        val result = commonize {
+            outputTarget("(a, b)")
+            "a" withSource """
+                class X<T>
+                class Y<T>
+                typealias TA<T> = Y<T>
+                fun<T> x(x: X<TA<T>>) = Unit
+                fun y(x: X<TA<Unit>>) = Unit
+            """.trimIndent()
+
+            "b" withSource """
+                class X<T>
+                class Y<T>
+                typealias TA<T> = Y<T>
+                fun<T> x(x: X<TA<T>>) = Unit
+                fun y(x: X<TA<Unit>>) = Unit
+            """.trimIndent()
+        }
+
+        result.assertCommonized(
+            "(a, b)", """
+                expect class X<T>()
+                expect class Y<T>()
+                typealias TA<T> = Y<T>
+                expect fun<T> x(x: X<TA<T>>)
+                expect fun y(x: X<TA<Unit>>)
+            """.trimIndent()
+        )
+    }
+
+    fun `test KT-51686`() {
+        val result = commonize {
+            outputTarget("(a, b)")
+            "a" withSource """
+                class CPointer<T>
+                class CPointerVarOf<T: CPointer<*>>
+                class ByteVarOf<T: Byte>
+                typealias ByteVar = ByteVarOf<Byte>
+                typealias CPointerVar<T> = CPointerVarOf<CPointer<T>> 
+                
+                fun x(x: CPointer<CPointerVar<ByteVar>>) = Unit
+            """.trimIndent()
+
+            "b" withSource """
+                class CPointer<T>
+                class CPointerVarOf<T: CPointer<*>>
+                class ByteVarOf<T: Byte>
+                typealias ByteVar = ByteVarOf<Byte>
+                typealias CPointerVar<T> = CPointerVarOf<CPointer<T>> 
+                
+                fun x(x: CPointer<CPointerVar<ByteVar>>) = Unit
+            """.trimIndent()
+        }
+
+        result.assertCommonized(
+            "(a, b)", """
+                expect class CPointer<T>()
+                expect class CPointerVarOf<T: CPointer<*>>()
+                expect class ByteVarOf<T: Byte>()
+                typealias ByteVar = ByteVarOf<Byte>
+                typealias CPointerVar<T> = CPointerVarOf<CPointer<T>> 
+                
+                expect fun x(x: CPointer<CPointerVar<ByteVar>>)
             """.trimIndent()
         )
     }
