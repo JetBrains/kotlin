@@ -10,11 +10,6 @@ dependencies {
     testImplementation(commonDependency("junit:junit"))
 }
 
-sourceSets {
-    "main" { projectDefault() }
-    "test" { projectDefault() }
-}
-
 projectTest {
     workingDir = rootDir
 }
