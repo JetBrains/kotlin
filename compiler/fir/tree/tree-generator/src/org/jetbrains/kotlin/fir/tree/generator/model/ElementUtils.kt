@@ -38,8 +38,8 @@ fun stringField(name: String, nullable: Boolean = false): Field {
     return field(name, AbstractFirTreeBuilder.string, null, null, nullable)
 }
 
-fun intField(name: String): Field {
-    return field(name, AbstractFirTreeBuilder.int, null)
+fun intField(name: String, withReplace: Boolean = false): Field {
+    return field(name, AbstractFirTreeBuilder.int, null, withReplace = withReplace)
 }
 
 // ----------- Fir field -----------

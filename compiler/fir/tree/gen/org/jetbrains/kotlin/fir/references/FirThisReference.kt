@@ -28,4 +28,6 @@ abstract class FirThisReference : FirReference() {
         transformer.transformThisReference(this, data) as E
 
     abstract fun replaceBoundSymbol(newBoundSymbol: FirBasedSymbol<*>?)
+
+    abstract fun replaceContextReceiverNumber(newContextReceiverNumber: Int)
 }
