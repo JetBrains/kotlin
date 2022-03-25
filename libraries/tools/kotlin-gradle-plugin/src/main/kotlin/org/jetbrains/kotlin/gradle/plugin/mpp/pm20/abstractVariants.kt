@@ -72,8 +72,7 @@ class DefaultSingleMavenPublishedModuleHolder(
     override val publishedMavenModuleCoordinates: PublishedModuleCoordinatesProvider = MavenPublicationCoordinatesProvider(
         project,
         { assignedMavenPublication },
-        defaultPublishedModuleSuffix,
-        capabilities = listOfNotNull(ComputedCapability.capabilityStringFromModule(module))
+        defaultPublishedModuleSuffix
     )
 }
 
