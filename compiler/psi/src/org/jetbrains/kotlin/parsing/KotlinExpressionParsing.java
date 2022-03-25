@@ -1691,10 +1691,17 @@ public class KotlinExpressionParsing extends AbstractKotlinParsing {
      * IDENTIFIER "@"
      */
     void parseLabelDefinition() {
+        assert isAtLabelDefinitionOrMissingIdentifier() : "Callers must check that current token is IDENTIFIER followed with '@'";
+
         PsiBuilder.Marker labelWrap = mark();
         PsiBuilder.Marker mark = mark();
 
-        assert _at(IDENTIFIER) && myBuilder.rawLookup(1) == AT : "Callers must check that current token is IDENTIFIER followed with '@'";
+        if (at(AT)) {
+            errorAndAdvance("Expecting identifier before '@' in label definition");
+            labelWrap.drop();
+            mark.drop();
+            return;
+        }
 
         advance(); // IDENTIFIER
         advance(); // AT

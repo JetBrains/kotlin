@@ -1,0 +1,27 @@
+KtFile: ContextReceiversWithLabel_ERR.kt
+  PACKAGE_DIRECTIVE
+    <empty list>
+  IMPORT_LIST
+    <empty list>
+  FUN
+    CONTEXT_RECEIVER_LIST
+      PsiElement(context)('context')
+      PsiElement(LPAR)('(')
+      CONTEXT_RECEIVER
+        PsiErrorElement:Expecting identifier before '@' in label definition
+          PsiElement(AT)('@')
+        TYPE_REFERENCE
+          PsiErrorElement:Type expected
+            <empty list>
+      PsiElement(RPAR)(')')
+    PsiWhiteSpace('\n')
+    PsiElement(fun)('fun')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('a')
+    VALUE_PARAMETER_LIST
+      PsiElement(LPAR)('(')
+      PsiElement(RPAR)(')')
+    PsiWhiteSpace(' ')
+    BLOCK
+      PsiElement(LBRACE)('{')
+      PsiElement(RBRACE)('}')

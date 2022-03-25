@@ -136,6 +136,11 @@ public class ParsingTestGenerated extends AbstractParsingTest {
             runTest("compiler/testData/psi/Constructors.kt");
         }
 
+        @TestMetadata("ContextReceiversWithLabel_ERR.kt")
+        public void testContextReceiversWithLabel_ERR() throws Exception {
+            runTest("compiler/testData/psi/ContextReceiversWithLabel_ERR.kt");
+        }
+
         @TestMetadata("ControlStructures.kt")
         public void testControlStructures() throws Exception {
             runTest("compiler/testData/psi/ControlStructures.kt");

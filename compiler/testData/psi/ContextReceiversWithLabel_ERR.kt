@@ -1,0 +1,2 @@
+context(@)
+fun a() {}
