@@ -306,9 +306,9 @@ Kotlin.Long.prototype.toString = function(opt_radix) {
     }
   }
 
-  // Do several (6) digits each time through the loop, so as to
+  // Do several (5) digits each time through the loop, so as to
   // minimize the calls to the very expensive emulated div.
-  var radixToPower = Kotlin.Long.fromNumber(Math.pow(radix, 6));
+  var radixToPower = Kotlin.Long.fromNumber(Math.pow(radix, 5));
 
   var rem = this;
   var result = '';
@@ -321,7 +321,7 @@ Kotlin.Long.prototype.toString = function(opt_radix) {
     if (rem.isZero()) {
       return digits + result;
     } else {
-      while (digits.length < 6) {
+      while (digits.length < 5) {
         digits = '0' + digits;
       }
       result = '' + digits + result;
