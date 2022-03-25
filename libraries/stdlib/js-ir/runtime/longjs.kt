@@ -46,9 +46,16 @@ internal fun Long.toStringImpl(radix: Int): String {
         }
     }
 
-    // Do several (6) digits each time through the loop, so as to
+    // Do several digits each time through the loop, so as to
     // minimize the calls to the very expensive emulated div.
-    val radixToPower = fromNumber(JsMath.pow(radix.toDouble(), 6.0))
+    val digitsPerTime = when {
+        radix == 2 -> 31
+        radix <= 10 -> 9
+        radix <= 21 -> 7
+        radix <= 35 -> 6
+        else -> 5
+    }
+    val radixToPower = fromNumber(JsMath.pow(radix.toDouble(), digitsPerTime.toDouble()))
 
     var rem = this
     var result = ""
@@ -61,7 +68,7 @@ internal fun Long.toStringImpl(radix: Int): String {
         if (rem.isZero()) {
             return digits + result
         } else {
-            while (digits.length < 6) {
+            while (digits.length < digitsPerTime) {
                 digits = "0" + digits
             }
             result = digits + result

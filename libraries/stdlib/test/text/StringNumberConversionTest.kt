@@ -309,7 +309,50 @@ class StringNumberConversionTest {
     @Test fun longToStringWithRadix() {
         assertEquals("7f11223344556677", 0x7F11223344556677.toString(radix = 16))
         assertEquals("hazelnut", 1356099454469L.toString(radix = 36))
-        assertEquals("-8000000000000000", Long.MIN_VALUE.toString(radix = 16))
+
+        val values = listOf(Int.MAX_VALUE.toLong(), Int.MIN_VALUE.toLong(), Int.MAX_VALUE + 2L, Long.MAX_VALUE, Long.MIN_VALUE)
+        val expected = listOf(
+            2 to listOf("1111111111111111111111111111111", "-10000000000000000000000000000000", "10000000000000000000000000000001", "111111111111111111111111111111111111111111111111111111111111111", "-1000000000000000000000000000000000000000000000000000000000000000"),
+            3 to listOf("12112122212110202101", "-12112122212110202102", "12112122212110202110", "2021110011022210012102010021220101220221", "-2021110011022210012102010021220101220222"),
+            4 to listOf("1333333333333333", "-2000000000000000", "2000000000000001", "13333333333333333333333333333333", "-20000000000000000000000000000000"),
+            5 to listOf("13344223434042", "-13344223434043", "13344223434044", "1104332401304422434310311212", "-1104332401304422434310311213"),
+            6 to listOf("553032005531", "-553032005532", "553032005533", "1540241003031030222122211", "-1540241003031030222122212"),
+            7 to listOf("104134211161", "-104134211162", "104134211163", "22341010611245052052300", "-22341010611245052052301"),
+            8 to listOf("17777777777", "-20000000000", "20000000001", "777777777777777777777", "-1000000000000000000000"),
+            9 to listOf("5478773671", "-5478773672", "5478773673", "67404283172107811827", "-67404283172107811828"),
+            10 to listOf("2147483647", "-2147483648", "2147483649", "9223372036854775807", "-9223372036854775808"),
+            11 to listOf("a02220281", "-a02220282", "a02220283", "1728002635214590697", "-1728002635214590698"),
+            12 to listOf("4bb2308a7", "-4bb2308a8", "4bb2308a9", "41a792678515120367", "-41a792678515120368"),
+            13 to listOf("282ba4aaa", "-282ba4aab", "282ba4aac", "10b269549075433c37", "-10b269549075433c38"),
+            14 to listOf("1652ca931", "-1652ca932", "1652ca933", "4340724c6c71dc7a7", "-4340724c6c71dc7a8"),
+            15 to listOf("c87e66b7", "-c87e66b8", "c87e66b9", "160e2ad3246366807", "-160e2ad3246366808"),
+            16 to listOf("7fffffff", "-80000000", "80000001", "7fffffffffffffff", "-8000000000000000"),
+            17 to listOf("53g7f548", "-53g7f549", "53g7f54a", "33d3d8307b214008", "-33d3d8307b214009"),
+            18 to listOf("3928g3h1", "-3928g3h2", "3928g3h3", "16agh595df825fa7", "-16agh595df825fa8"),
+            19 to listOf("27c57h32", "-27c57h33", "27c57h34", "ba643dci0ffeehh", "-ba643dci0ffeehi"),
+            20 to listOf("1db1f927", "-1db1f928", "1db1f929", "5cbfjia3fh26ja7", "-5cbfjia3fh26ja8"),
+            21 to listOf("140h2d91", "-140h2d92", "140h2d93", "2heiciiie82dh97", "-2heiciiie82dh98"),
+            22 to listOf("ikf5bf1", "-ikf5bf2", "ikf5bf3", "1adaibb21dckfa7", "-1adaibb21dckfa8"),
+            23 to listOf("ebelf95", "-ebelf96", "ebelf97", "i6k448cf4192c2", "-i6k448cf4192c3"),
+            24 to listOf("b5gge57", "-b5gge58", "b5gge59", "acd772jnc9l0l7", "-acd772jnc9l0l8"),
+            25 to listOf("8jmdnkm", "-8jmdnkn", "8jmdnko", "64ie1focnn5g77", "-64ie1focnn5g78"),
+            26 to listOf("6oj8ion", "-6oj8ioo", "6oj8iop", "3igoecjbmca687", "-3igoecjbmca688"),
+            27 to listOf("5ehncka", "-5ehnckb", "5ehnckc", "27c48l5b37oaop", "-27c48l5b37oaoq"),
+            28 to listOf("4clm98f", "-4clm98g", "4clm98h", "1bk39f3ah3dmq7", "-1bk39f3ah3dmq8"),
+            29 to listOf("3hk7987", "-3hk7988", "3hk7989", "q1se8f0m04isb", "-q1se8f0m04isc"),
+            30 to listOf("2sb6cs7", "-2sb6cs8", "2sb6cs9", "hajppbc1fc207", "-hajppbc1fc208"),
+            31 to listOf("2d09uc1", "-2d09uc2", "2d09uc3", "bm03i95hia437", "-bm03i95hia438"),
+            32 to listOf("1vvvvvv", "-2000000", "2000001", "7vvvvvvvvvvvv", "-8000000000000"),
+            33 to listOf("1lsqtl1", "-1lsqtl2", "1lsqtl3", "5hg4ck9jd4u37", "-5hg4ck9jd4u38"),
+            34 to listOf("1d8xqrp", "-1d8xqrq", "1d8xqrr", "3tdtk1v8j6tpp", "-3tdtk1v8j6tpq"),
+            35 to listOf("15v22um", "-15v22un", "15v22uo", "2pijmikexrxp7", "-2pijmikexrxp8"),
+            36 to listOf("zik0zj", "-zik0zk", "zik0zl", "1y2p0ij32e8e7", "-1y2p0ij32e8e8"),
+        )
+        for ((base, expectedValues) in expected) {
+            for ((index, value) in values.withIndex()) {
+                assertEquals(expectedValues[index], value.toString(base), "$value in base $base")
+            }
+        }
 
         assertFailsWith<IllegalArgumentException>("Expected to fail with radix 37") { 37L.toString(radix = 37) }
         assertFailsWith<IllegalArgumentException>("Expected to fail with radix 1") { 1L.toString(radix = 1) }
