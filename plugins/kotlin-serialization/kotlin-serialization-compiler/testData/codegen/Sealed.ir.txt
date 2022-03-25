@@ -308,12 +308,12 @@ final class Result$Companion$$cachedSerializer$delegate$1 : kotlin/jvm/internal/
           ASTORE (1)
           ALOAD (1)
           ICONST_0
-          LDC (LResult$OK;)
+          LDC (LResult$Err;)
           INVOKESTATIC (kotlin/jvm/internal/Reflection, getOrCreateKotlinClass, (Ljava/lang/Class;)Lkotlin/reflect/KClass;)
           AASTORE
           ALOAD (1)
           ICONST_1
-          LDC (LResult$Err;)
+          LDC (LResult$OK;)
           INVOKESTATIC (kotlin/jvm/internal/Reflection, getOrCreateKotlinClass, (Ljava/lang/Class;)Lkotlin/reflect/KClass;)
           AASTORE
           ALOAD (1)
@@ -322,16 +322,16 @@ final class Result$Companion$$cachedSerializer$delegate$1 : kotlin/jvm/internal/
           ASTORE (1)
           ALOAD (1)
           ICONST_0
-          GETSTATIC (Result$OK$$serializer, INSTANCE, LResult$OK$$serializer;)
-          CHECKCAST (kotlinx/serialization/KSerializer)
-          AASTORE
-          ALOAD (1)
-          ICONST_1
           NEW (kotlinx/serialization/internal/ObjectSerializer)
           DUP
           LDC (Result.Err)
           GETSTATIC (Result$Err, INSTANCE, LResult$Err;)
           INVOKESPECIAL (kotlinx/serialization/internal/ObjectSerializer, <init>, (Ljava/lang/String;Ljava/lang/Object;)V)
+          CHECKCAST (kotlinx/serialization/KSerializer)
+          AASTORE
+          ALOAD (1)
+          ICONST_1
+          GETSTATIC (Result$OK$$serializer, INSTANCE, LResult$OK$$serializer;)
           CHECKCAST (kotlinx/serialization/KSerializer)
           AASTORE
           ALOAD (1)
@@ -841,12 +841,12 @@ public final class X$Companion : java/lang/Object {
           ASTORE (1)
           ALOAD (1)
           ICONST_0
-          LDC (LResult$OK;)
+          LDC (LResult$Err;)
           INVOKESTATIC (kotlin/jvm/internal/Reflection, getOrCreateKotlinClass, (Ljava/lang/Class;)Lkotlin/reflect/KClass;)
           AASTORE
           ALOAD (1)
           ICONST_1
-          LDC (LResult$Err;)
+          LDC (LResult$OK;)
           INVOKESTATIC (kotlin/jvm/internal/Reflection, getOrCreateKotlinClass, (Ljava/lang/Class;)Lkotlin/reflect/KClass;)
           AASTORE
           ALOAD (1)
@@ -855,16 +855,16 @@ public final class X$Companion : java/lang/Object {
           ASTORE (1)
           ALOAD (1)
           ICONST_0
-          GETSTATIC (Result$OK$$serializer, INSTANCE, LResult$OK$$serializer;)
-          CHECKCAST (kotlinx/serialization/KSerializer)
-          AASTORE
-          ALOAD (1)
-          ICONST_1
           NEW (kotlinx/serialization/internal/ObjectSerializer)
           DUP
           LDC (Result.Err)
           GETSTATIC (Result$Err, INSTANCE, LResult$Err;)
           INVOKESPECIAL (kotlinx/serialization/internal/ObjectSerializer, <init>, (Ljava/lang/String;Ljava/lang/Object;)V)
+          CHECKCAST (kotlinx/serialization/KSerializer)
+          AASTORE
+          ALOAD (1)
+          ICONST_1
+          GETSTATIC (Result$OK$$serializer, INSTANCE, LResult$OK$$serializer;)
           CHECKCAST (kotlinx/serialization/KSerializer)
           AASTORE
           ALOAD (1)

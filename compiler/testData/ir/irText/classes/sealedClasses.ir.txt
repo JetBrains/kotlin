@@ -2,8 +2,8 @@ FILE fqName:<root> fileName:/sealedClasses.kt
   CLASS CLASS name:Expr modality:SEALED visibility:public superTypes:[kotlin.Any]
     sealedSubclasses:
       CLASS CLASS name:Const modality:FINAL visibility:public superTypes:[<root>.Expr]
-      CLASS CLASS name:Sum modality:FINAL visibility:public superTypes:[<root>.Expr]
       CLASS OBJECT name:NotANumber modality:FINAL visibility:public superTypes:[<root>.Expr]
+      CLASS CLASS name:Sum modality:FINAL visibility:public superTypes:[<root>.Expr]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Expr
     CONSTRUCTOR visibility:protected <> () returnType:<root>.Expr [primary]
       BLOCK_BODY
