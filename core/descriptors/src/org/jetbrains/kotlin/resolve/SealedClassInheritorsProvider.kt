@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
 import org.jetbrains.kotlin.descriptors.TypeAliasDescriptor
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
+import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.resolve.descriptorUtil.parents
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
@@ -78,7 +79,7 @@ object CliSealedClassInheritorsProvider : SealedClassInheritorsProvider() {
             )
         }
         collectSubclasses(sealedClass.unsubstitutedInnerClassesScope, collectNested = true)
-        return result
+        return result.sortedBy { it.fqNameSafe.asString() }
     }
 
 }

@@ -191,7 +191,7 @@ class LazyJavaClassDescriptor(
         val attributes = TypeUsage.COMMON.toAttributes()
         jClass.permittedTypes.mapNotNull {
             c.typeResolver.transformJavaType(it, attributes).constructor.declarationDescriptor as? ClassDescriptor
-        }
+        }.sortedBy { it.fqNameSafe.asString() }
     } else {
         emptyList()
     }

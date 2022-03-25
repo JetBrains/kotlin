@@ -36,7 +36,7 @@ fun FirRegularClass.getSealedClassInheritors(session: FirSession): List<ClassId>
 @OptIn(SealedClassInheritorsProviderInternals::class)
 fun FirRegularClass.setSealedClassInheritors(inheritors: List<ClassId>) {
     require(this.isSealed)
-    sealedInheritorsAttr = inheritors
+    sealedInheritorsAttr = inheritors.sortedBy { it.asFqNameString() }
 }
 
 private object SealedClassInheritorsKey : FirDeclarationDataKey()
