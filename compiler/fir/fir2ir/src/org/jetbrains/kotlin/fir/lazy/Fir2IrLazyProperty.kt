@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.ir.expressions.IrExpressionBody
 import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
+import org.jetbrains.kotlin.ir.util.IdSignature
 
 class Fir2IrLazyProperty(
     components: Fir2IrComponents,
@@ -160,7 +161,12 @@ class Fir2IrLazyProperty(
 
     override var getter: IrSimpleFunction? by lazyVar(lock) {
         if (fir.isConst) return@lazyVar null
-        val signature = signatureComposer.composeAccessorSignature(fir, isSetter = false, containingClass?.symbol?.toLookupTag())!!
+        val signature = signatureComposer.composeAccessorSignature(
+            fir,
+            isSetter = false,
+            containingClass?.symbol?.toLookupTag(),
+            forceTopLevelPrivate = symbol.signature is IdSignature.CompositeSignature
+        )!!
         symbolTable.declareSimpleFunction(signature, symbolFactory = { Fir2IrSimpleFunctionSymbol(signature) }) { symbol ->
             Fir2IrLazyPropertyAccessor(
                 components, startOffset, endOffset,
@@ -189,7 +195,12 @@ class Fir2IrLazyProperty(
     override var setter: IrSimpleFunction? by lazyVar(lock) {
         if (!fir.isVar) null
         else {
-            val signature = signatureComposer.composeAccessorSignature(fir, isSetter = true, containingClass?.symbol?.toLookupTag())!!
+            val signature = signatureComposer.composeAccessorSignature(
+                fir,
+                isSetter = true,
+                containingClass?.symbol?.toLookupTag(),
+                forceTopLevelPrivate = symbol.signature is IdSignature.CompositeSignature
+            )!!
             symbolTable.declareSimpleFunction(signature, symbolFactory = { Fir2IrSimpleFunctionSymbol(signature) }) { symbol ->
                 Fir2IrLazyPropertyAccessor(
                     components, startOffset, endOffset,

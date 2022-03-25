@@ -35,7 +35,6 @@ import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.ir.util.parentAsClass
-import org.jetbrains.kotlin.ir.util.withScope
 import org.jetbrains.kotlin.load.java.JavaDescriptorVisibilities
 import org.jetbrains.kotlin.name.Name
 
@@ -232,7 +231,8 @@ class FakeOverrideGenerator(
             // have the same signature.
             // Now we avoid this problem by signature caching,
             // so both FIR overrides correspond to one IR fake override
-            signatureComposer.composeSignature(fakeOverrideFirDeclaration)
+            val isTopLevelPrivate = irClass.symbol.signature is IdSignature.CompositeSignature
+            signatureComposer.composeSignature(fakeOverrideFirDeclaration, forceTopLevelPrivate = isTopLevelPrivate)
         }?.takeIf { it.parent == irClass }
             ?: createIrDeclaration(
                 fakeOverrideFirDeclaration,
