@@ -49,10 +49,11 @@ class SerializationPluginContext(baseContext: IrPluginContext, val metadataPlugi
 
 private class SerializerClassLowering(
     baseContext: IrPluginContext,
-    metadataPlugin: SerializationDescriptorSerializerPlugin?
+    metadataPlugin: SerializationDescriptorSerializerPlugin?,
+    moduleFragment: IrModuleFragment
 ) : IrElementTransformerVoid(), ClassLoweringPass {
     val context: SerializationPluginContext = SerializationPluginContext(baseContext, metadataPlugin)
-    private val serialInfoJvmGenerator = SerialInfoImplJvmIrGenerator(context).also { context.serialInfoImplJvmIrGenerator = it }
+    private val serialInfoJvmGenerator = SerialInfoImplJvmIrGenerator(context, moduleFragment).also { context.serialInfoImplJvmIrGenerator = it }
 
     override fun lower(irClass: IrClass) {
         SerializableIrGenerator.generate(irClass, context, context.bindingContext)
@@ -72,7 +73,7 @@ open class SerializationLoweringExtension @JvmOverloads constructor(
         moduleFragment: IrModuleFragment,
         pluginContext: IrPluginContext
     ) {
-        val serializerClassLowering = SerializerClassLowering(pluginContext, metadataPlugin)
+        val serializerClassLowering = SerializerClassLowering(pluginContext, metadataPlugin, moduleFragment)
         for (file in moduleFragment.files)
             serializerClassLowering.runOnFileInOrder(file)
     }
