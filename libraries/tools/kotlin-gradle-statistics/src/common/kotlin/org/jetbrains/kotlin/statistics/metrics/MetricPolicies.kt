@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.statistics.metrics
 import org.jetbrains.kotlin.statistics.ValueAnonymizer
 import org.jetbrains.kotlin.statistics.anonymizeComponentVersion
 import org.jetbrains.kotlin.statistics.sha256
+import kotlin.math.abs
 
 
 enum class StringOverridePolicy: IMetricContainerFactory<String> {
@@ -105,10 +106,22 @@ enum class NumberAnonymizationPolicy : ValueAnonymizer<Long> {
         override fun anonymize(t: Long) = t
     },
     RANDOM_10_PERCENT {
-        override fun anonymize(t: Long) = (t + t * 0.1 * Math.random()).toLong()
-    },
-    RANDOM_01_PERCENT {
-        override fun anonymize(t: Long) = (t + t * 0.01 * Math.random()).toLong()
+        override fun anonymize(t: Long): Long {
+            if (abs(t) < 10) return t
+            val sign = if (t < 0)
+                -1
+            else
+                1
+            val absT = t * sign
+            var div: Long = 1
+            while (div * 10 < absT) {
+                div *= 10
+            }
+            return sign * if (absT / div < 2)
+                absT - absT % (div / 10)
+            else
+                absT - absT % div
+        }
     }
 }
 
