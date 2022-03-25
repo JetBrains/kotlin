@@ -13,17 +13,37 @@ pill {
 val kotlinGradlePluginTest = project(":kotlin-gradle-plugin").sourceSets.named("test").map { it.output }
 
 dependencies {
-    testImplementation(project(":kotlin-gradle-plugin"))
+    testImplementation(project(":kotlin-gradle-plugin")) {
+        capabilities {
+            requireCapability("org.jetbrains.kotlin:kotlin-gradle-plugin-common")
+        }
+    }
+    testImplementation(project(":kotlin-allopen")) {
+        capabilities {
+            requireCapability("org.jetbrains.kotlin:kotlin-allopen-common")
+        }
+    }
+    testImplementation(project(":kotlin-noarg")) {
+        capabilities {
+            requireCapability("org.jetbrains.kotlin:kotlin-noarg-common")
+        }
+    }
+    testImplementation(project(":kotlin-lombok")) {
+        capabilities {
+            requireCapability("org.jetbrains.kotlin:kotlin-lombok-common")
+        }
+    }
+    testImplementation(project(":kotlin-sam-with-receiver")) {
+        capabilities {
+            requireCapability("org.jetbrains.kotlin:kotlin-sam-with-receiver-common")
+        }
+    }
     testImplementation(project(":kotlin-gradle-plugin-model"))
     testImplementation(project(":kotlin-gradle-build-metrics"))
     testImplementation(project(":kotlin-project-model"))
     testImplementation(project(":kotlin-tooling-metadata"))
     testImplementation(kotlinGradlePluginTest)
     testImplementation(project(":kotlin-gradle-subplugin-example"))
-    testImplementation(project(":kotlin-allopen"))
-    testImplementation(project(":kotlin-noarg"))
-    testImplementation(project(":kotlin-lombok"))
-    testImplementation(project(":kotlin-sam-with-receiver"))
     testImplementation(project(":kotlin-test:kotlin-test-jvm"))
     testImplementation(project(":native:kotlin-native-utils"))
     testImplementation(project(":native:kotlin-klib-commonizer-api"))
