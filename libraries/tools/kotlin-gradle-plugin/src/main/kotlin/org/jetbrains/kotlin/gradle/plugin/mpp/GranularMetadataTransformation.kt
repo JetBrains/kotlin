@@ -15,16 +15,19 @@ import org.gradle.api.attributes.Attribute
 import org.gradle.api.file.FileCollection
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.mpp.MetadataDependencyResolution.ChooseVisibleSourceSets.MetadataProvider.Companion.asMetadataProvider
+import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.resolvedDependencies
+import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.toModuleIdentifier
 import org.jetbrains.kotlin.gradle.plugin.sources.KotlinDependencyScope
 import org.jetbrains.kotlin.gradle.plugin.sources.sourceSetDependencyConfigurationByScope
 import org.jetbrains.kotlin.gradle.targets.metadata.ALL_COMPILE_METADATA_CONFIGURATION_NAME
 import org.jetbrains.kotlin.gradle.targets.metadata.ALL_RUNTIME_METADATA_CONFIGURATION_NAME
 import org.jetbrains.kotlin.gradle.targets.metadata.dependsOnClosureWithInterCompilationDependencies
+import org.jetbrains.kotlin.project.model.KotlinModuleIdentifier
 import java.util.*
 
 internal sealed class MetadataDependencyResolution(
     @field:Transient // can't be used with Gradle Instant Execution, but fortunately not needed when deserialized
-    val dependency: ResolvedComponentResult,
+    val dependency: ResolvedDependencyResult,
     @field:Transient
     val projectDependency: Project?
 ) {
@@ -41,17 +44,17 @@ internal sealed class MetadataDependencyResolution(
     }
 
     class KeepOriginalDependency(
-        dependency: ResolvedComponentResult,
+        dependency: ResolvedDependencyResult,
         projectDependency: Project?
     ) : MetadataDependencyResolution(dependency, projectDependency)
 
     class ExcludeAsUnrequested(
-        dependency: ResolvedComponentResult,
+        dependency: ResolvedDependencyResult,
         projectDependency: Project?
     ) : MetadataDependencyResolution(dependency, projectDependency)
 
     class ChooseVisibleSourceSets internal constructor(
-        dependency: ResolvedComponentResult,
+        dependency: ResolvedDependencyResult,
         projectDependency: Project?,
         val projectStructureMetadata: KotlinProjectStructureMetadata,
         val allVisibleSourceSetNames: Set<String>,
@@ -96,8 +99,8 @@ internal class GranularMetadataTransformation(
     // Keep parents of each dependency, too. We need a dependency's parent when it's an MPP's metadata module dependency:
     // in this case, the parent is the MPP's root module.
     private data class ResolvedDependencyWithParent(
-        val dependency: ResolvedComponentResult,
-        val parent: ResolvedComponentResult?
+        val dependency: ResolvedDependencyResult,
+        val parent: ResolvedDependencyResult?
     )
 
     private val requestedDependencies: Iterable<Dependency> by lazy {
@@ -114,9 +117,9 @@ internal class GranularMetadataTransformation(
     private fun doTransform(): Iterable<MetadataDependencyResolution> {
         val result = mutableListOf<MetadataDependencyResolution>()
 
-        val parentResolutions =
+        val parentResolutions: Map<KotlinModuleIdentifier, List<MetadataDependencyResolution>> =
             parentTransformations.value.flatMap { it.metadataDependencyResolutions }.groupBy {
-                ModuleIds.fromComponent(project, it.dependency)
+                it.dependency.toModuleIdentifier()
             }
 
         val allRequestedDependencies = requestedDependencies
@@ -126,52 +129,51 @@ internal class GranularMetadataTransformation(
             configurationToResolve.incoming.resolutionResult.allDependencies.filterIsInstance<ResolvedDependencyResult>()
 
         val resolvedDependencyQueue: Queue<ResolvedDependencyWithParent> = ArrayDeque<ResolvedDependencyWithParent>().apply {
-            val requestedModules: Set<ModuleDependencyIdentifier> = allRequestedDependencies.mapTo(mutableSetOf()) {
-                ModuleIds.fromDependency(it)
+            val requestedModules: Set<KotlinModuleIdentifier> = allRequestedDependencies.mapTo(mutableSetOf()) {
+                it.toModuleDependency(project).moduleIdentifier
             }
 
             addAll(
                 resolutionResult.root.dependencies
-                    .filter { ModuleIds.fromComponentSelector(project, it.requested) in requestedModules }
                     .filterIsInstance<ResolvedDependencyResult>()
-                    .map { ResolvedDependencyWithParent(it.selected, null) }
+                    .filter { it.toModuleIdentifier() in requestedModules }
+                    .map { ResolvedDependencyWithParent(it, null) }
             )
         }
 
-        val visitedDependencies = mutableSetOf<ResolvedComponentResult>()
+        val visitedDependencies = mutableSetOf<ResolvedDependencyResult>()
 
         while (resolvedDependencyQueue.isNotEmpty()) {
-            val (resolvedDependency: ResolvedComponentResult, parent: ResolvedComponentResult?) = resolvedDependencyQueue.poll()
+            val (resolvedDependency: ResolvedDependencyResult, parent: ResolvedDependencyResult?) = resolvedDependencyQueue.poll()
 
             visitedDependencies.add(resolvedDependency)
 
             val dependencyResult = processDependency(
                 resolvedDependency,
-                parentResolutions[ModuleIds.fromComponent(project, resolvedDependency)].orEmpty(),
+                parentResolutions[resolvedDependency.toModuleIdentifier()].orEmpty(),
                 parent
             )
 
             result.add(dependencyResult)
 
             val transitiveDependenciesToVisit = when (dependencyResult) {
-                is MetadataDependencyResolution.KeepOriginalDependency ->
-                    resolvedDependency.dependencies.filterIsInstance<ResolvedDependencyResult>()
+                is MetadataDependencyResolution.KeepOriginalDependency -> resolvedDependency.resolvedDependencies
                 is MetadataDependencyResolution.ChooseVisibleSourceSets -> dependencyResult.visibleTransitiveDependencies
                 is MetadataDependencyResolution.ExcludeAsUnrequested -> error("a visited dependency is erroneously considered unrequested")
             }
 
             resolvedDependencyQueue.addAll(
-                transitiveDependenciesToVisit.filter { it.selected !in visitedDependencies }
-                    .map { ResolvedDependencyWithParent(it.selected, resolvedDependency) }
+                transitiveDependenciesToVisit
+                    .filter { it !in visitedDependencies }
+                    .map { ResolvedDependencyWithParent(it, resolvedDependency) }
             )
         }
 
         allModuleDependencies.forEach { resolvedDependency ->
-            if (resolvedDependency.selected !in visitedDependencies) {
-//                val files = resolvedDependency.moduleArtifacts.map { it.file }
+            if (resolvedDependency !in visitedDependencies) {
                 result.add(
                     MetadataDependencyResolution.ExcludeAsUnrequested(
-                        resolvedDependency.selected,
+                        resolvedDependency,
                         (resolvedDependency.selected.id as? ProjectComponentIdentifier)
                             ?.takeIf { it.build.isCurrentBuild() }
                             ?.let { project.project(it.projectPath) }
@@ -198,9 +200,9 @@ internal class GranularMetadataTransformation(
      *   source sets in *S*, then consider only these transitive dependencies, ignore the others;
      */
     private fun processDependency(
-        module: ResolvedComponentResult,
+        module: ResolvedDependencyResult,
         parentResolutionsForModule: Iterable<MetadataDependencyResolution>,
-        parent: ResolvedComponentResult?
+        parent: ResolvedDependencyResult?
     ): MetadataDependencyResolution {
         val mppDependencyMetadataExtractor = MppDependencyProjectStructureMetadataExtractor.create(
             project, module, configurationToResolve,
@@ -234,13 +236,12 @@ internal class GranularMetadataTransformation(
             mutableSetOf<ModuleDependencyIdentifier>().apply {
                 projectStructureMetadata.sourceSetModuleDependencies.forEach { (sourceSetName, moduleDependencies) ->
                     if (sourceSetName in allVisibleSourceSets) {
-                        addAll(moduleDependencies.map { ModuleDependencyIdentifier(it.groupId, it.moduleId) })
+                        addAll(moduleDependencies.map { ModuleDependencyIdentifier(it.group, it.name) })
                     }
                 }
             }
 
-        val transitiveDependenciesToVisit = module.dependencies
-            .filterIsInstance<ResolvedDependencyResult>()
+        val transitiveDependenciesToVisit = module.resolvedDependencies
             .filterTo(mutableSetOf()) { ModuleIds.fromComponent(project, it.selected) in requestedTransitiveDependencies }
 
         val visibleSourceSetsExcludingDependsOn = allVisibleSourceSets.filterTo(mutableSetOf()) { it !in sourceSetsVisibleInParents }
@@ -252,7 +253,7 @@ internal class GranularMetadataTransformation(
             )
 
             is JarMppDependencyProjectStructureMetadataExtractor -> CompositeMetadataJar(
-                moduleIdentifier = ModuleIds.fromComponent(project, module).toString(),
+                moduleIdentifier = module.toModuleIdentifier().toString(), // TODO NOW: this is totally wrong, as it will be used as path on disk.
                 projectStructureMetadata = projectStructureMetadata,
                 primaryArtifactFile = mppDependencyMetadataExtractor.primaryArtifactFile,
                 hostSpecificArtifactsBySourceSet = sourceSetVisibility.hostSpecificMetadataArtifactBySourceSet,
@@ -272,12 +273,14 @@ internal class GranularMetadataTransformation(
 }
 
 internal fun ResolvedComponentResult.toProjectOrNull(currentProject: Project): Project? {
-    val identifier = id
+    val componentId = id
     return when {
-        identifier is ProjectComponentIdentifier && identifier.build.isCurrentBuild -> currentProject.project(identifier.projectPath)
+        componentId is ProjectComponentIdentifier && componentId.build.isCurrentBuild -> currentProject.project(componentId.projectPath)
         else -> null
     }
 }
+
+internal fun ResolvedDependencyResult.toProjectOrNull(currentProject: Project): Project? = selected.toProjectOrNull(currentProject)
 
 internal fun resolvableMetadataConfiguration(
     project: Project,
