@@ -65,5 +65,6 @@ interface PublishedModuleCoordinatesProvider {
     val group: String
     val name: String
     val version: String
-    val capabilities: Iterable<String>
 }
+
+fun PublishedModuleCoordinatesProvider.notation(): String = "$group:$name:$version"
