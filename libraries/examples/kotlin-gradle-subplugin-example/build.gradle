@@ -2,9 +2,10 @@ import plugins.KotlinBuildPublishingPlugin
 
 plugins {
     id("java-gradle-plugin")
-    id("gradle-plugin-common-configuration")
+    id("org.jetbrains.kotlin.jvm")
     id("com.gradle.plugin-publish")
     id("jps-compatible")
+    id("maven-publish")
 }
 
 repositories {
@@ -33,6 +34,64 @@ dependencies {
 
     compileOnly project(':dependencies:intellij-core')
 }
+
+GradleCommonKt.configureCommonPublicationSettingsForGradle(project)
+GradleCommonKt.configureKotlinCompileTasksGradleCompatibility(project)
+GradleCommonKt.excludeGradleCommonDependencies(project, sourceSets.main)
+
+extensions.extraProperties["kotlin.stdlib.default.dependency"] = "false"
+
+// You should configure your own Gradle plugin publication!
+//extensions.configure(GradlePluginDevelopmentExtension) {
+//    it.setAutomatedPublishing(false)
+//}
+
+def sourceSet = sourceSets.main
+def jarTask = tasks.named(sourceSet.jarTaskName, Jar)
+def shadowJarTask = EmbeddableKt.embeddableCompilerDummyForDependenciesRewriting(
+    project,
+    "${EmbeddableKt.EMBEDDABLE_COMPILER_TASK_NAME}${sourceSet.jarTaskName.capitalize()}"
+) {
+    ArtifactsKt.setupPublicJar(
+        it,
+        jarTask.flatMap { it.archiveBaseName },
+        jarTask.flatMap { it.archiveClassifier }
+    )
+    ArtifactsKt.addEmbeddedRuntime(it)
+    it.from(sourceSet.output)
+
+    // When Gradle traverses the inputs, reject the shaded compiler JAR,
+    // which leads to the content of that JAR being excluded as well:
+    def compilerDummyJarFile = project.provider { project.configurations.getByName("compilerDummyJar").singleFile }
+    it.exclude { it.file == compilerDummyJarFile.get() }
+}
+
+// Removing artifact produced by Jar task
+configurations[sourceSet.runtimeElementsConfigurationName].artifacts.removeAll { true }
+configurations[sourceSet.apiElementsConfigurationName].artifacts.removeAll { true }
+
+// Adding instead artifact from shadow jar task
+configurations {
+    artifacts {
+        add(sourceSet.runtimeElementsConfigurationName, shadowJarTask)
+        add(sourceSet.apiElementsConfigurationName, shadowJarTask)
+    }
+}
+
+publishing {
+    publications {
+        it.withType(MavenPublication).configureEach {
+            if (name.endsWith("PluginMarkerMaven")) {
+                pom {
+                    // https://github.com/gradle/gradle/issues/8754
+                    // and https://github.com/gradle/gradle/issues/6155
+                    packaging = "pom"
+                }
+            }
+        }
+    }
+}
+
 
 gradlePlugin {
     plugins {
