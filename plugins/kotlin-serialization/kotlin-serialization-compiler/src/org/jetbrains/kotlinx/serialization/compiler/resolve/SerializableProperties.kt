@@ -29,7 +29,6 @@ class SerializableProperties(private val serializableClass: ClassDescriptor, val
     val isExternallySerializable: Boolean
     private val primaryConstructorProperties: Map<PropertyDescriptor, Boolean>
 
-
     init {
         val descriptorsSequence = serializableClass.unsubstitutedMemberScope.getContributedDescriptors(DescriptorKindFilter.VARIABLES)
             .asSequence()

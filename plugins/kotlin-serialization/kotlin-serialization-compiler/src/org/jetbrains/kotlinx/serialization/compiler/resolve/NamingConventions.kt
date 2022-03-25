@@ -31,6 +31,7 @@ object SerializationAnnotations {
     // Also implicitly used in kotlin-native.compiler.backend.native/CodeGenerationInfo.kt
     internal val serialInfoFqName = FqName("kotlinx.serialization.SerialInfo")
     internal val inheritableSerialInfoFqName = FqName("kotlinx.serialization.InheritableSerialInfo")
+    internal val metaSerializableAnnotationFqName = FqName("kotlinx.serialization.MetaSerializable")
     internal val encodeDefaultFqName = FqName("kotlinx.serialization.EncodeDefault")
 
     internal val contextualFqName = FqName("kotlinx.serialization.ContextualSerialization") // this one is deprecated
@@ -51,6 +52,7 @@ object SerialEntityNames {
     const val CACHED_SERIALIZER_PROPERTY = "\$cachedSerializer"
 
     // classes
+    val KCLASS_NAME_FQ = FqName("kotlin.reflect.KClass")
     val KSERIALIZER_NAME = Name.identifier(KSERIALIZER_CLASS)
     val SERIAL_CTOR_MARKER_NAME = Name.identifier("SerializationConstructorMarker")
     val KSERIALIZER_NAME_FQ = SerializationPackages.packageFqName.child(KSERIALIZER_NAME)

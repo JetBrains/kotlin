@@ -52,17 +52,21 @@ class SerializableIrGenerator(
 
     private val addElementFun = serialDescImplClass.referenceFunctionSymbol(CallingConventions.addElement)
 
-    private fun IrClass.hasSerializableAnnotationWithoutArgs(): Boolean {
-        val annot = getAnnotation(SerializationAnnotations.serializableAnnotationFqName) ?: return false
-
-        for (i in 0 until annot.valueArgumentsCount) {
-            if (annot.getValueArgument(i) != null) return false
+    private fun IrClass.hasSerializableOrMetaAnnotationWithoutArgs(): Boolean {
+        val annot = getAnnotation(SerializationAnnotations.serializableAnnotationFqName)
+        if (annot != null) {
+            for (i in 0 until annot.valueArgumentsCount) {
+                if (annot.getValueArgument(i) != null) return false
+            }
+            return true
         }
-
-        return true
+        val metaAnnotation = annotations
+            .flatMap { it.symbol.owner.constructedClass.annotations }
+            .find { it.isAnnotation(SerializationAnnotations.metaSerializableAnnotationFqName) }
+        return metaAnnotation != null
     }
 
-    private val IrClass.isInternalSerializable: Boolean get() = kind == ClassKind.CLASS && hasSerializableAnnotationWithoutArgs()
+    private val IrClass.isInternalSerializable: Boolean get() = kind == ClassKind.CLASS && hasSerializableOrMetaAnnotationWithoutArgs()
 
     override fun generateInternalConstructor(constructorDescriptor: ClassConstructorDescriptor) =
         irClass.contributeConstructor(constructorDescriptor) { ctor ->

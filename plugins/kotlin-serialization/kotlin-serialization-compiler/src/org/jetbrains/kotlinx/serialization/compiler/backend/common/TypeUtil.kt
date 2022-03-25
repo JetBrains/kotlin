@@ -44,7 +44,7 @@ fun AbstractSerialGenerator.findAddOnSerializer(propertyType: KotlinType, module
 }
 
 fun KotlinType.isGeneratedSerializableObject() =
-    toClassDescriptor?.run { kind == ClassKind.OBJECT && hasSerializableAnnotationWithoutArgs } == true
+    toClassDescriptor?.run { kind == ClassKind.OBJECT && hasSerializableOrMetaAnnotationWithoutArgs } == true
 
 @Suppress("FunctionName", "LocalVariableName")
 fun AbstractSerialGenerator.getSerialTypeInfo(property: SerializableProperty): SerialTypeInfo {
