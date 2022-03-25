@@ -18,7 +18,6 @@ import org.jetbrains.kotlin.fir.declarations.utils.visibility
 import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
 import org.jetbrains.kotlin.ir.util.IdSignature
-import org.jetbrains.kotlin.name.ClassId
 
 // @NoMutableState -- we'll restore this annotation once we get rid of withFileSignature().
 class FirBasedSignatureComposer(override val mangler: FirMangler) : Fir2IrSignatureComposer {
@@ -76,7 +75,11 @@ class FirBasedSignatureComposer(override val mangler: FirMangler) : Fir2IrSignat
         }
     }
 
-    override fun composeSignature(declaration: FirDeclaration, containingClass: ConeClassLikeLookupTag?): IdSignature? {
+    override fun composeSignature(
+        declaration: FirDeclaration,
+        containingClass: ConeClassLikeLookupTag?,
+        forceTopLevelPrivate: Boolean
+    ): IdSignature? {
         if (declaration is FirAnonymousObject || declaration is FirAnonymousFunction) return null
         if (declaration is FirRegularClass && declaration.classId.isLocal) return null
         if (declaration is FirCallableDeclaration) {
@@ -118,7 +121,7 @@ class FirBasedSignatureComposer(override val mangler: FirMangler) : Fir2IrSignat
             }
             else -> error("Unsupported FIR declaration in signature composer: ${declaration.render()}")
         }
-        return if (isTopLevelPrivate(declaration, containingClass)) {
+        return if (isTopLevelPrivate(declaration, containingClass) || forceTopLevelPrivate) {
             val fileSig = fileSignature ?: return null
             IdSignature.CompositeSignature(fileSig, publicSignature)
         } else
@@ -140,11 +143,12 @@ class FirBasedSignatureComposer(override val mangler: FirMangler) : Fir2IrSignat
     override fun composeAccessorSignature(
         property: FirProperty,
         isSetter: Boolean,
-        containingClass: ConeClassLikeLookupTag?
+        containingClass: ConeClassLikeLookupTag?,
+        forceTopLevelPrivate: Boolean
     ): IdSignature? {
         val propSig: IdSignature.CommonSignature
         val fileSig: IdSignature.FileSignature?
-        when (val propertySignature = composeSignature(property, containingClass)) {
+        when (val propertySignature = composeSignature(property, containingClass, forceTopLevelPrivate)) {
             is IdSignature.CompositeSignature -> {
                 propSig = propertySignature.inner as? IdSignature.CommonSignature ?: return null
                 fileSig = propertySignature.container as? IdSignature.FileSignature ?: return null
@@ -175,7 +179,7 @@ class FirBasedSignatureComposer(override val mangler: FirMangler) : Fir2IrSignat
     }
 
     private fun isTopLevelPrivate(declaration: FirDeclaration, containingClass: ConeClassLikeLookupTag?): Boolean =
-        containingClass == null && declaration is FirCallableDeclaration && declaration.visibility == Visibilities.Private
+        containingClass == null && declaration is FirMemberDeclaration && declaration.visibility == Visibilities.Private
 
     private fun FirProperty.getterOrDefault() =
         getter ?: FirDefaultPropertyGetter(

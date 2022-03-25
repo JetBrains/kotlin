@@ -42065,6 +42065,12 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
             }
 
             @Test
+            @TestMetadata("nestedInPrivateClass2.kt")
+            public void testNestedInPrivateClass2() throws Exception {
+                runTest("compiler/testData/codegen/boxInline/private/nestedInPrivateClass2.kt");
+            }
+
+            @Test
             @TestMetadata("privateClass.kt")
             public void testPrivateClass() throws Exception {
                 runTest("compiler/testData/codegen/boxInline/private/privateClass.kt");

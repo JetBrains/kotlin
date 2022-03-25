@@ -481,10 +481,11 @@ class Fir2IrClassifierStorage(
     fun createIrEnumEntry(
         enumEntry: FirEnumEntry,
         irParent: IrClass?,
-        predefinedOrigin: IrDeclarationOrigin? = null
+        predefinedOrigin: IrDeclarationOrigin? = null,
+        forceTopLevelPrivate: Boolean = false,
     ): IrEnumEntry {
         return enumEntry.convertWithOffsets { startOffset, endOffset ->
-            val signature = signatureComposer.composeSignature(enumEntry)
+            val signature = signatureComposer.composeSignature(enumEntry, forceTopLevelPrivate = forceTopLevelPrivate)
             val result = declareIrEnumEntry(signature) { symbol ->
                 val origin = enumEntry.computeIrOrigin(predefinedOrigin)
                 irFactory.createEnumEntry(
@@ -522,13 +523,13 @@ class Fir2IrClassifierStorage(
         }
     }
 
-    fun getIrClassSymbol(firClassSymbol: FirClassSymbol<*>): IrClassSymbol {
+    fun getIrClassSymbol(firClassSymbol: FirClassSymbol<*>, forceTopLevelPrivate: Boolean = false): IrClassSymbol {
         val firClass = firClassSymbol.fir
         getCachedIrClass(firClass)?.let { return it.symbol }
         if (firClass is FirAnonymousObject || firClass is FirRegularClass && firClass.visibility == Visibilities.Local) {
             return createLocalIrClassOnTheFly(firClass).symbol
         }
-        val signature = signatureComposer.composeSignature(firClass)!!
+        val signature = signatureComposer.composeSignature(firClass, forceTopLevelPrivate = forceTopLevelPrivate)!!
         val symbol = symbolTable.referenceClass(signature)
         if (symbol.isBound) {
             val irClass = symbol.owner

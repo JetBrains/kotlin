@@ -477,9 +477,16 @@ class Fir2IrDeclarationStorage(
         function: FirSimpleFunction,
         irParent: IrDeclarationParent?,
         isLocal: Boolean = false,
+        forceTopLevelPrivate: Boolean = false,
     ): IrSimpleFunction {
         getCachedIrFunction(function)?.let { return it }
-        return createIrFunction(function, irParent, containingClass = function.containingClass(), isLocal = isLocal)
+        return createIrFunction(
+            function,
+            irParent,
+            containingClass = function.containingClass(),
+            isLocal = isLocal,
+            forceTopLevelPrivate = forceTopLevelPrivate
+        )
     }
 
     fun createIrFunction(
@@ -489,6 +496,7 @@ class Fir2IrDeclarationStorage(
         predefinedOrigin: IrDeclarationOrigin? = null,
         isLocal: Boolean = false,
         containingClass: ConeClassLikeLookupTag? = null,
+        forceTopLevelPrivate: Boolean = false,
     ): IrSimpleFunction = convertCatching(function) {
         val simpleFunction = function as? FirSimpleFunction
         val isLambda = function.source?.elementType.let { it == KtNodeTypes.FUNCTION_LITERAL || it == KtNodeTypes.LAMBDA_EXPRESSION }
@@ -504,7 +512,7 @@ class Fir2IrDeclarationStorage(
                     function.origin == FirDeclarationOrigin.Enhancement -> IrDeclarationOrigin.IR_EXTERNAL_JAVA_DECLARATION_STUB
             else -> function.computeIrOrigin(predefinedOrigin)
         }
-        val signature = if (isLocal) null else signatureComposer.composeSignature(function, containingClass)
+        val signature = if (isLocal) null else signatureComposer.composeSignature(function, containingClass, forceTopLevelPrivate)
         if (irParent is Fir2IrLazyClass && signature != null) {
             // For private functions signature is null, fallback to non-lazy function
             return createIrLazyFunction(function as FirSimpleFunction, signature, irParent, updatedOrigin)
@@ -598,11 +606,12 @@ class Fir2IrDeclarationStorage(
         constructor: FirConstructor,
         irParent: IrClass,
         predefinedOrigin: IrDeclarationOrigin? = null,
-        isLocal: Boolean = false
+        isLocal: Boolean = false,
+        forceTopLevelPrivate: Boolean = false,
     ): IrConstructor = convertCatching(constructor) {
         val origin = constructor.computeIrOrigin(predefinedOrigin)
         val isPrimary = constructor.isPrimary
-        val signature = if (isLocal) null else signatureComposer.composeSignature(constructor)
+        val signature = if (isLocal) null else signatureComposer.composeSignature(constructor, forceTopLevelPrivate = forceTopLevelPrivate)
         val created = constructor.convertWithOffsets { startOffset, endOffset ->
             declareIrConstructor(signature) { symbol ->
                 classifierStorage.preCacheTypeParameters(constructor, symbol)
@@ -627,10 +636,11 @@ class Fir2IrDeclarationStorage(
         constructor: FirConstructor,
         irParent: IrClass,
         predefinedOrigin: IrDeclarationOrigin? = null,
-        isLocal: Boolean = false
+        isLocal: Boolean = false,
+        forceTopLevelPrivate: Boolean = false,
     ): IrConstructor {
         getCachedIrConstructor(constructor)?.let { return it }
-        return createIrConstructor(constructor, irParent, predefinedOrigin, isLocal)
+        return createIrConstructor(constructor, irParent, predefinedOrigin, isLocal, forceTopLevelPrivate = forceTopLevelPrivate)
     }
 
     private fun declareIrAccessor(
@@ -657,9 +667,10 @@ class Fir2IrDeclarationStorage(
         isLocal: Boolean = false,
         containingClass: ConeClassLikeLookupTag? = null,
         propertyAccessorForAnnotations: FirPropertyAccessor? = propertyAccessor,
+        forceTopLevelPrivate: Boolean = false,
     ): IrSimpleFunction = convertCatching(propertyAccessor ?: property) {
         val prefix = if (isSetter) "set" else "get"
-        val signature = if (isLocal) null else signatureComposer.composeAccessorSignature(property, isSetter, containingClass)
+        val signature = if (isLocal) null else signatureComposer.composeAccessorSignature(property, isSetter, containingClass, forceTopLevelPrivate)
         val containerSource = (correspondingProperty as? IrProperty)?.containerSource
         return declareIrAccessor(
             signature,
@@ -779,9 +790,10 @@ class Fir2IrDeclarationStorage(
         property: FirProperty,
         irParent: IrDeclarationParent?,
         isLocal: Boolean = false,
+        forceTopLevelPrivate: Boolean = false,
     ): IrProperty {
         getCachedIrProperty(property)?.let { return it }
-        return createIrProperty(property, irParent, isLocal = isLocal)
+        return createIrProperty(property, irParent, isLocal = isLocal, forceTopLevelPrivate = forceTopLevelPrivate)
     }
 
     fun getOrCreateIrPropertyByPureField(
@@ -822,9 +834,10 @@ class Fir2IrDeclarationStorage(
         predefinedOrigin: IrDeclarationOrigin? = null,
         isLocal: Boolean = false,
         containingClass: ConeClassLikeLookupTag? = (irParent as? IrClass)?.classId?.let { ConeClassLikeLookupTagImpl(it) },
+        forceTopLevelPrivate: Boolean = false,
     ): IrProperty = convertCatching(property) {
         val origin = property.computeIrOrigin(predefinedOrigin)
-        val signature = if (isLocal) null else signatureComposer.composeSignature(property, containingClass)
+        val signature = if (isLocal) null else signatureComposer.composeSignature(property, containingClass, forceTopLevelPrivate)
         if (irParent is Fir2IrLazyClass && signature != null) {
             // For private functions signature is null, fallback to non-lazy property
             return createIrLazyProperty(property, signature, irParent, origin)
@@ -898,6 +911,7 @@ class Fir2IrDeclarationStorage(
                         },
                         startOffset, endOffset, isLocal, containingClass,
                         property.unwrapFakeOverrides().getter,
+                        forceTopLevelPrivate = forceTopLevelPrivate,
                     )
                     if (property.isVar) {
                         this.setter = createIrPropertyAccessor(
@@ -909,6 +923,7 @@ class Fir2IrDeclarationStorage(
                             },
                             startOffset, endOffset, isLocal, containingClass,
                             property.unwrapFakeOverrides().setter,
+                            forceTopLevelPrivate = forceTopLevelPrivate,
                         )
                     }
                     leaveScope(this)
@@ -1199,13 +1214,15 @@ class Fir2IrDeclarationStorage(
         }
     }
 
-    fun getIrConstructorSymbol(firConstructorSymbol: FirConstructorSymbol): IrConstructorSymbol {
+    fun getIrConstructorSymbol(firConstructorSymbol: FirConstructorSymbol, forceTopLevelPrivate: Boolean = false): IrConstructorSymbol {
         val fir = firConstructorSymbol.fir
         return getIrCallableSymbol(
             firConstructorSymbol,
             dispatchReceiverLookupTag = null,
             getCachedIrDeclaration = { constructor: FirConstructor, _, calculator -> getCachedIrConstructor(constructor, calculator) },
-            createIrDeclaration = { parent, origin -> createIrConstructor(fir, parent as IrClass, predefinedOrigin = origin) },
+            createIrDeclaration = { parent, origin ->
+                createIrConstructor(fir, parent as IrClass, predefinedOrigin = origin, forceTopLevelPrivate = forceTopLevelPrivate)
+            },
             createIrLazyDeclaration = { signature, lazyParent, declarationOrigin ->
                 val symbol = Fir2IrConstructorSymbol(signature)
                 val irConstructor = fir.convertWithOffsets { startOffset, endOffset ->
@@ -1221,13 +1238,15 @@ class Fir2IrDeclarationStorage(
                 // NB: this is needed to prevent recursions in case of self bounds
                 (irConstructor as Fir2IrLazyConstructor).prepareTypeParameters()
                 irConstructor
-            }
+            },
+            forceTopLevelPrivate = forceTopLevelPrivate
         ) as IrConstructorSymbol
     }
 
     fun getIrFunctionSymbol(
         firFunctionSymbol: FirFunctionSymbol<*>,
-        dispatchReceiverLookupTag: ConeClassLikeLookupTag? = null
+        dispatchReceiverLookupTag: ConeClassLikeLookupTag? = null,
+        forceTopLevelPrivate: Boolean = false,
     ): IrFunctionSymbol {
         return when (val fir = firFunctionSymbol.fir) {
             is FirAnonymousFunction -> {
@@ -1247,11 +1266,12 @@ class Fir2IrDeclarationStorage(
                     dispatchReceiverLookupTag,
                     getCachedIrDeclaration = ::getCachedIrFunction,
                     createIrDeclaration = { parent, origin ->
-                        createIrFunction(fir, parent, predefinedOrigin = origin)
+                        createIrFunction(fir, parent, predefinedOrigin = origin, forceTopLevelPrivate = forceTopLevelPrivate)
                     },
                     createIrLazyDeclaration = { signature, lazyParent, declarationOrigin ->
                         createIrLazyFunction(fir, signature, lazyParent, declarationOrigin)
-                    }
+                    },
+                    forceTopLevelPrivate = forceTopLevelPrivate
                 ) as IrFunctionSymbol
                 if (unmatchedReceiver && dispatchReceiverLookupTag is ConeClassLookupTagWithFixedSymbol) {
                     val originalFunction = originalSymbol.owner as IrSimpleFunction
@@ -1261,7 +1281,7 @@ class Fir2IrDeclarationStorage(
                 }
             }
             is FirConstructor -> {
-                getIrConstructorSymbol(fir.symbol)
+                getIrConstructorSymbol(fir.symbol, forceTopLevelPrivate = forceTopLevelPrivate)
             }
             else -> error("Unknown kind of function: ${fir::class.java}: ${fir.render()}")
         }
@@ -1296,7 +1316,8 @@ class Fir2IrDeclarationStorage(
 
     fun getIrPropertySymbol(
         firPropertySymbol: FirPropertySymbol,
-        dispatchReceiverLookupTag: ConeClassLikeLookupTag? = null
+        dispatchReceiverLookupTag: ConeClassLikeLookupTag? = null,
+        forceTopLevelPrivate: Boolean = false,
     ): IrSymbol {
         val fir = firPropertySymbol.fir
         if (fir.isLocal) {
@@ -1312,10 +1333,15 @@ class Fir2IrDeclarationStorage(
             firPropertySymbol,
             dispatchReceiverLookupTag = this,
             getCachedIrDeclaration = ::getCachedIrProperty,
-            createIrDeclaration = { parent, origin -> createIrProperty(fir, parent, predefinedOrigin = origin) },
+            createIrDeclaration = { parent, origin ->
+                createIrProperty(
+                    fir, parent, predefinedOrigin = origin, forceTopLevelPrivate = forceTopLevelPrivate
+                )
+            },
             createIrLazyDeclaration = { signature, lazyParent, declarationOrigin ->
                 createIrLazyProperty(fir, signature, lazyParent, declarationOrigin)
-            }
+            },
+            forceTopLevelPrivate = forceTopLevelPrivate
         )
 
         val originalSymbol = dispatchReceiverLookupTag.getIrCallableSymbol()
@@ -1400,10 +1426,11 @@ class Fir2IrDeclarationStorage(
         getCachedIrDeclaration: (firDeclaration: F, dispatchReceiverLookupTag: ConeClassLikeLookupTag?, () -> IdSignature?) -> I?,
         createIrDeclaration: (parent: IrDeclarationParent?, origin: IrDeclarationOrigin) -> I,
         createIrLazyDeclaration: (signature: IdSignature, lazyOwner: IrDeclarationParent, origin: IrDeclarationOrigin) -> I,
+        forceTopLevelPrivate: Boolean = false,
     ): IrSymbol {
         val fir = firSymbol.fir as F
         val irParent by lazy { findIrParent(fir) }
-        val signature by lazy { signatureComposer.composeSignature(fir, dispatchReceiverLookupTag) }
+        val signature by lazy { signatureComposer.composeSignature(fir, dispatchReceiverLookupTag, forceTopLevelPrivate) }
         synchronized(symbolTable.lock) {
             getCachedIrDeclaration(fir, dispatchReceiverLookupTag.takeIf { it !is ConeClassLookupTagWithFixedSymbol }) {
                 // Parent calculation provokes declaration calculation for some members from IrBuiltIns

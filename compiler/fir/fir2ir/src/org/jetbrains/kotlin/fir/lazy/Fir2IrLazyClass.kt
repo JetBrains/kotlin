@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.ir.types.IrSimpleType
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
 import org.jetbrains.kotlin.ir.util.DeserializableClass
+import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.utils.addIfNotNull
@@ -149,17 +150,18 @@ class Fir2IrLazyClass(
     }
 
     override val declarations: MutableList<IrDeclaration> by lazyVar(lock) {
+        val isTopLevelPrivate = symbol.signature is IdSignature.CompositeSignature
         val result = mutableListOf<IrDeclaration>()
         // NB: it's necessary to take all callables from scope,
         // e.g. to avoid accessing un-enhanced Java declarations with FirJavaTypeRef etc. inside
         val scope = fir.unsubstitutedScope(session, scopeSession, withForcedTypeCalculator = true)
         scope.processDeclaredConstructors {
-            result += declarationStorage.getIrConstructorSymbol(it).owner
+            result += declarationStorage.getIrConstructorSymbol(it, forceTopLevelPrivate = isTopLevelPrivate).owner
         }
 
         for (declaration in fir.declarations) {
             if (declaration is FirRegularClass) {
-                val nestedSymbol = classifierStorage.getIrClassSymbol(declaration.symbol)
+                val nestedSymbol = classifierStorage.getIrClassSymbol(declaration.symbol, forceTopLevelPrivate = isTopLevelPrivate)
                 result += nestedSymbol.owner
             }
         }
@@ -174,7 +176,7 @@ class Fir2IrLazyClass(
                 if (declaration.source == null && declaration.origin != FirDeclarationOrigin.Java ||
                     declaration.source?.kind == KtFakeSourceElementKind.EnumGeneratedDeclaration
                 ) {
-                    result += declarationStorage.getIrFunctionSymbol(declaration.symbol).owner
+                    result += declarationStorage.getIrFunctionSymbol(declaration.symbol, forceTopLevelPrivate = isTopLevelPrivate).owner
                 }
             }
         }
@@ -187,13 +189,15 @@ class Fir2IrLazyClass(
                     if (it.isAbstractMethodOfAny()) {
                         return@processFunctionsByName
                     }
-                    result += declarationStorage.getIrFunctionSymbol(it).owner
+                    result += declarationStorage.getIrFunctionSymbol(it, forceTopLevelPrivate = isTopLevelPrivate).owner
                 }
             }
             scope.processPropertiesByName(name) {
                 if (it.isSubstitutionOrIntersectionOverride) return@processPropertiesByName
                 if (it is FirPropertySymbol && it.dispatchReceiverClassOrNull() == ownerLookupTag) {
-                    result.addIfNotNull(declarationStorage.getIrPropertySymbol(it).owner as? IrDeclaration)
+                    result.addIfNotNull(
+                        declarationStorage.getIrPropertySymbol(it, forceTopLevelPrivate = isTopLevelPrivate).owner as? IrDeclaration
+                    )
                 }
             }
         }
