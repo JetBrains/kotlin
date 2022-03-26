@@ -121,7 +121,7 @@ class FirBasedSignatureComposer(override val mangler: FirMangler) : Fir2IrSignat
             }
             else -> error("Unsupported FIR declaration in signature composer: ${declaration.render()}")
         }
-        return if (isTopLevelPrivate(declaration, containingClass) || forceTopLevelPrivate) {
+        return if (isTopLevelPrivate(declaration) || forceTopLevelPrivate) {
             val fileSig = fileSignature ?: return null
             IdSignature.CompositeSignature(fileSig, publicSignature)
         } else
@@ -178,8 +178,8 @@ class FirBasedSignatureComposer(override val mangler: FirMangler) : Fir2IrSignat
         } else accessorSig
     }
 
-    private fun isTopLevelPrivate(declaration: FirDeclaration, containingClass: ConeClassLikeLookupTag?): Boolean =
-        containingClass == null && declaration is FirMemberDeclaration && declaration.visibility == Visibilities.Private
+    private fun isTopLevelPrivate(declaration: FirDeclaration): Boolean =
+        declaration.symbol.getOwnerLookupTag() == null && declaration is FirMemberDeclaration && declaration.visibility == Visibilities.Private
 
     private fun FirProperty.getterOrDefault() =
         getter ?: FirDefaultPropertyGetter(
