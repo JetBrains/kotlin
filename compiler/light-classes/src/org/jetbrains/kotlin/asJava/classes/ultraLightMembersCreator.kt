@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.asJava.builder.LightMemberOriginForDeclaration
 import org.jetbrains.kotlin.asJava.elements.KtLightField
 import org.jetbrains.kotlin.asJava.elements.KtLightMethod
 import org.jetbrains.kotlin.asJava.elements.convertToLightAnnotationMemberValue
-import org.jetbrains.kotlin.builtins.StandardNames.DEFAULT_VALUE_PARAMETER
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotated
@@ -514,7 +513,7 @@ internal class UltraLightMembersCreator(
                     )
                 else
                     KtUltraLightParameterForSetterParameter(
-                        name = DEFAULT_VALUE_PARAMETER.identifier,
+                        name = SpecialNames.IMPLICIT_SET_PARAMETER.asString(),
                         property = declaration,
                         support = support,
                         method = setterWrapper,
