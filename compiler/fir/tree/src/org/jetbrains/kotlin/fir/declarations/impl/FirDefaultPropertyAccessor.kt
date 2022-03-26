@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
 import org.jetbrains.kotlin.fir.types.ConeSimpleKotlinType
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.types.impl.FirImplicitUnitTypeRef
+import org.jetbrains.kotlin.name.SpecialNames
 
 @OptIn(FirImplementationDetail::class)
 abstract class FirDefaultPropertyAccessor(
@@ -143,7 +144,7 @@ class FirDefaultPropertySetter(
             this@builder.moduleData = moduleData
             this@builder.origin = origin
             this@builder.returnTypeRef = propertyTypeRef
-            this@builder.symbol = FirValueParameterSymbol(StandardNames.DEFAULT_VALUE_PARAMETER)
+            this@builder.symbol = FirValueParameterSymbol(SpecialNames.IMPLICIT_SET_PARAMETER)
             this@builder.annotations += parameterAnnotations
         }
     ),

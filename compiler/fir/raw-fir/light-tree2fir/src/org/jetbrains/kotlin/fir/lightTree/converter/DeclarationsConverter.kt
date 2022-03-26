@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.*
 import org.jetbrains.kotlin.ElementTypeUtils.isExpression
 import org.jetbrains.kotlin.KtNodeTypes.*
 import org.jetbrains.kotlin.builtins.StandardNames
-import org.jetbrains.kotlin.builtins.StandardNames.DEFAULT_VALUE_PARAMETER
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
@@ -1327,7 +1326,7 @@ class DeclarationsConverter(
             moduleData = baseModuleData
             origin = FirDeclarationOrigin.Source
             returnTypeRef = propertyTypeRefToUse
-            symbol = FirValueParameterSymbol(DEFAULT_VALUE_PARAMETER)
+            symbol = FirValueParameterSymbol(SpecialNames.IMPLICIT_SET_PARAMETER)
         }
         var block: LighterASTNode? = null
         var expression: LighterASTNode? = null
