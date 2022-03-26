@@ -262,6 +262,7 @@ enum class LanguageFeature(
     SynchronizedSuspendError(KOTLIN_1_8),
     EnableDfaWarningsInK2(KOTLIN_1_8, kind = OTHER), // KT-50965
     ReportNonVarargSpreadOnGenericCalls(KOTLIN_1_8, kind = BUG_FIX), // KT-48162
+    AllowExpressionAfterTypeReferenceWithoutSpacing(KOTLIN_1_8, kind = BUG_FIX), // KT-35811
 
     // 1.9
 
