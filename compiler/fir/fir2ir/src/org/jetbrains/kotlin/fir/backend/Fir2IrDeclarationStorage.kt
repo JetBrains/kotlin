@@ -303,7 +303,7 @@ class Fir2IrDeclarationStorage(
     ): IrValueParameter {
         return irFactory.createValueParameter(
             startOffset, endOffset, IrDeclarationOrigin.DEFINED, IrValueParameterSymbolImpl(),
-            Name.special("<set-?>"), 0, type,
+            SpecialNames.IMPLICIT_SET_PARAMETER, 0, type,
             varargElementType = null,
             isCrossinline = false, isNoinline = false,
             isHidden = false, isAssignable = false
