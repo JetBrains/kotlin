@@ -51,6 +51,7 @@ private val DEFAULT_DECLARATION_CHECKERS = listOf(
     SubtypingBetweenContextReceiversChecker,
     ValueParameterUsageInDefaultArgumentChecker,
     CyclicAnnotationsChecker,
+    ExpressionAfterTypeParameterWithoutSpacingChecker,
 )
 
 private val DEFAULT_CALL_CHECKERS = listOf(

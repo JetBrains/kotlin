@@ -30,7 +30,7 @@ import org.jetbrains.kotlin.lexer.KtTokens;
 import static org.jetbrains.kotlin.lexer.KtTokens.*;
 
 public class SemanticWhitespaceAwarePsiBuilderImpl extends PsiBuilderAdapter implements SemanticWhitespaceAwarePsiBuilder {
-    private final TokenSet complexTokens = TokenSet.create(SAFE_ACCESS, ELVIS, EXCLEXCL);
+    private final TokenSet complexTokens = TokenSet.create(SAFE_ACCESS, ELVIS, EXCLEXCL, GTEQ);
     private final Stack<Boolean> joinComplexTokens = new Stack<>();
 
     private final Stack<Boolean> newlinesEnabled = new Stack<>();
@@ -155,6 +155,10 @@ public class SemanticWhitespaceAwarePsiBuilderImpl extends PsiBuilderAdapter imp
             IElementType nextRawToken = rawLookup(rawLookupSteps);
             if (nextRawToken == EXCL) return EXCLEXCL;
         }
+        else if (rawTokenType == GT){
+            IElementType nextRawToken = rawLookup(rawLookupSteps);
+            if (nextRawToken == EQ) return GTEQ;
+        }
         return rawTokenType;
     }
 
@@ -181,9 +185,11 @@ public class SemanticWhitespaceAwarePsiBuilderImpl extends PsiBuilderAdapter imp
         if (!joinComplexTokens()) return super.getTokenText();
         IElementType tokenType = getTokenType();
         if (complexTokens.contains(tokenType)) {
-                if (tokenType == ELVIS) return "?:";
-                if (tokenType == SAFE_ACCESS) return "?.";
-            }
+            if (tokenType == ELVIS) return "?:";
+            if (tokenType == SAFE_ACCESS) return "?.";
+            if (tokenType == EXCLEXCL) return "!!";
+            if (tokenType == GTEQ) return ">=";
+        }
         return super.getTokenText();
     }
 
