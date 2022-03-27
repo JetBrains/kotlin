@@ -629,7 +629,7 @@ constructor(
         }
 
         val externalDependenciesArgs = ExternalDependenciesBuilder(project, compilation).buildCompilerArgs()
-        val cacheArgs = CacheBuilder(project, binary, konanTarget, externalDependenciesArgs).buildCompilerArgs()
+        val cacheArgs = CacheBuilder(project, binary, konanTarget, localKotlinOptions, externalDependenciesArgs).buildCompilerArgs()
 
         val buildArgs = buildKotlinNativeBinaryLinkerArgs(
             output,
@@ -837,6 +837,7 @@ internal class CacheBuilder(
     val project: Project,
     val binary: NativeBinary,
     val konanTarget: KonanTarget,
+    val kotlinOptions: KotlinCommonToolOptions,
     val externalDependenciesArgs: List<String>
 ) {
 
@@ -870,11 +871,15 @@ internal class CacheBuilder(
         getRootCacheDirectory(File(project.konanHome), konanTarget, debuggable, konanCacheKind)
     }
 
-    private fun getCacheDirectory(
-        dependency: ResolvedDependency
-    ): File {
-        return getCacheDirectory(rootCacheDirectory, dependency)
-    }
+    private val partialLinkage: Boolean
+        get() = PARTIAL_LINKAGE in kotlinOptions.freeCompilerArgs
+
+    private fun getCacheDirectory(dependency: ResolvedDependency): File = getCacheDirectory(
+        rootCacheDirectory = rootCacheDirectory,
+        dependency = dependency,
+        artifact = null,
+        partialLinkage = partialLinkage
+    )
 
     private fun needCache(libraryPath: String) =
         libraryPath.startsWith(project.gradle.gradleUserHomeDir.absolutePath) && libraryPath.endsWith(".klib")
@@ -889,8 +894,10 @@ internal class CacheBuilder(
         if (artifactsToAddToCache.isEmpty()) return
 
         val dependenciesCacheDirectories = getDependenciesCacheDirectories(
-            rootCacheDirectory,
-            dependency
+            rootCacheDirectory = rootCacheDirectory,
+            dependency = dependency,
+            considerArtifact = false,
+            partialLinkage = partialLinkage
         ) ?: return
 
         val cacheDirectory = getCacheDirectory(dependency)
@@ -933,10 +940,10 @@ internal class CacheBuilder(
                 "-p", konanCacheKind.produce!!,
                 "-target", target
             )
-            if (debuggable)
-                args += "-g"
+            if (debuggable) args += "-g"
             args += konanPropertiesService.additionalCacheFlags(konanTarget)
             args += externalDependenciesArgs
+            if (partialLinkage) args += PARTIAL_LINKAGE
             args += "-Xadd-cache=${library.libraryFile.absolutePath}"
             args += "-Xcache-directory=${cacheDirectory.absolutePath}"
             args += "-Xcache-directory=${rootCacheDirectory.absolutePath}"
@@ -1045,6 +1052,8 @@ internal class CacheBuilder(
             cacheKind.outputKind?.let {
                 "${baseName}-cache"
             } ?: error("No output for kind $cacheKind")
+
+        private const val PARTIAL_LINKAGE = "-Xpartial-linkage"
     }
 }
 
