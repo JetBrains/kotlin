@@ -6,13 +6,17 @@
 package org.jetbrains.kotlin.analysis.api.components
 
 import com.intellij.openapi.util.TextRange
+import com.intellij.psi.SmartPsiElementPointer
 import org.jetbrains.kotlin.analysis.api.components.ShortenOption.Companion.defaultCallableShortenOption
 import org.jetbrains.kotlin.analysis.api.components.ShortenOption.Companion.defaultClassShortenOption
 import org.jetbrains.kotlin.analysis.api.symbols.KtCallableSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtClassLikeSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtEnumEntrySymbol
+import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.psi.KtDotQualifiedExpression
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.psi.KtUserType
 
 public enum class ShortenOption {
     /** Skip shortening references to this symbol. */
@@ -79,7 +83,32 @@ public interface KtReferenceShortenerMixIn : KtAnalysisSessionMixIn {
         )
 }
 
+/**
+ * A group of *members*.
+ *
+ * This is a class representing results of KtReferenceShortener work: the command, invoking shortening, and used extracted data for it.
+ *
+ * @property targetFile The file in which the qualifiers to shorten is located
+ * @property importsToAdd The necessary explicit imports to make
+ * while shortening qualified symbols to retain them within reach after the shortening
+ * @property starImportsToAdd The necessary star imports to make
+ * while shortening qualified symbols to retain them within reach after the shortening
+ * @property typesToShorten The list of qualified type usages in declarations to shorten
+ * @property qualifiersToShorten the list of qualified type usages in expressions with dot
+ * @property isEmpty The flag responsible for detection if any shortening is applicable
+ */
+
 public interface ShortenCommand {
-    public fun invokeShortening()
+
+    public val targetFile: KtFile?
+    public val importsToAdd: List<FqName>?
+    public val starImportsToAdd: List<FqName>?
+    public val typesToShorten: List<SmartPsiElementPointer<KtUserType>>?
+    public val qualifiersToShorten: List<SmartPsiElementPointer<KtDotQualifiedExpression>>?
     public val isEmpty: Boolean
+
+    /**
+     * Launches reference shortening using the information stored in properties of this class
+     */
+    public fun invokeShortening()
 }

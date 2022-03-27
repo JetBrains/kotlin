@@ -623,11 +623,11 @@ private class ElementsToShortenCollector(
 }
 
 private class ShortenCommandImpl(
-    val targetFile: KtFile,
-    val importsToAdd: List<FqName>,
-    val starImportsToAdd: List<FqName>,
-    val typesToShorten: List<SmartPsiElementPointer<KtUserType>>,
-    val qualifiersToShorten: List<SmartPsiElementPointer<KtDotQualifiedExpression>>,
+    override val targetFile: KtFile,
+    override val importsToAdd: List<FqName>,
+    override val starImportsToAdd: List<FqName>,
+    override val typesToShorten: List<SmartPsiElementPointer<KtUserType>>,
+    override val qualifiersToShorten: List<SmartPsiElementPointer<KtDotQualifiedExpression>>,
 ) : ShortenCommand {
 
     override fun invokeShortening() {
