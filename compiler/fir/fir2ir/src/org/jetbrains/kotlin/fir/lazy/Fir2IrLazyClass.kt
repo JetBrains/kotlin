@@ -8,9 +8,7 @@ package org.jetbrains.kotlin.fir.lazy
 import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.fir.backend.*
-import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
-import org.jetbrains.kotlin.fir.declarations.FirRegularClass
-import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
+import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.dispatchReceiverClassOrNull
 import org.jetbrains.kotlin.fir.isNewPlaceForBodyGeneration
@@ -30,6 +28,7 @@ import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
 import org.jetbrains.kotlin.ir.util.DeserializableClass
 import org.jetbrains.kotlin.ir.util.IdSignature
+import org.jetbrains.kotlin.ir.util.isObject
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.utils.addIfNotNull
@@ -156,11 +155,13 @@ class Fir2IrLazyClass(
         // e.g. to avoid accessing un-enhanced Java declarations with FirJavaTypeRef etc. inside
         val scope = fir.unsubstitutedScope(session, scopeSession, withForcedTypeCalculator = true)
         scope.processDeclaredConstructors {
-            result += declarationStorage.getIrConstructorSymbol(it, forceTopLevelPrivate = isTopLevelPrivate).owner
+            if (shouldBuildStub(it.fir)) {
+                result += declarationStorage.getIrConstructorSymbol(it, forceTopLevelPrivate = isTopLevelPrivate).owner
+            }
         }
 
         for (declaration in fir.declarations) {
-            if (declaration is FirRegularClass) {
+            if (declaration is FirRegularClass && shouldBuildStub(declaration)) {
                 val nestedSymbol = classifierStorage.getIrClassSymbol(declaration.symbol, forceTopLevelPrivate = isTopLevelPrivate)
                 result += nestedSymbol.owner
             }
@@ -169,7 +170,7 @@ class Fir2IrLazyClass(
         // Handle generated methods for enum classes (values(), valueOf(String)).
         if (fir.classKind == ClassKind.ENUM_CLASS) {
             for (declaration in fir.declarations) {
-                if (declaration !is FirSimpleFunction || !declaration.isStatic) continue
+                if (declaration !is FirSimpleFunction || !declaration.isStatic || !shouldBuildStub(declaration)) continue
                 // TODO we also come here for all deserialized / enhanced static enum members (with declaration.source == null).
                 //  For such members we currently can't tell whether they are compiler-generated methods or not.
                 // Note: we must drop declarations from Java here to avoid FirJavaTypeRefs inside
@@ -185,6 +186,7 @@ class Fir2IrLazyClass(
         for (name in scope.getCallableNames()) {
             scope.processFunctionsByName(name) {
                 if (it.isSubstitutionOrIntersectionOverride) return@processFunctionsByName
+                if (!shouldBuildStub(it.fir)) return@processFunctionsByName
                 if (it.dispatchReceiverClassOrNull() == ownerLookupTag) {
                     if (it.isAbstractMethodOfAny()) {
                         return@processFunctionsByName
@@ -194,6 +196,7 @@ class Fir2IrLazyClass(
             }
             scope.processPropertiesByName(name) {
                 if (it.isSubstitutionOrIntersectionOverride) return@processPropertiesByName
+                if (!shouldBuildStub(it.fir)) return@processPropertiesByName
                 if (it is FirPropertySymbol && it.dispatchReceiverClassOrNull() == ownerLookupTag) {
                     result.addIfNotNull(
                         declarationStorage.getIrPropertySymbol(it, forceTopLevelPrivate = isTopLevelPrivate).owner as? IrDeclaration
@@ -212,6 +215,12 @@ class Fir2IrLazyClass(
 
         result
     }
+
+    private fun shouldBuildStub(fir: FirDeclaration): Boolean =
+        fir !is FirMemberDeclaration ||
+                !Visibilities.isPrivate(fir.visibility) ||
+                // This exception is needed for K/N caches usage
+                (isObject && fir is FirConstructor)
 
     override var metadata: MetadataSource?
         get() = null
@@ -237,6 +246,6 @@ class Fir2IrLazyClass(
 
     override fun loadIr(): Boolean {
         assert(parent is IrPackageFragment)
-        return irLoaded ?: extensions.deserializeToplevelClass(this, this)
+        return irLoaded ?: extensions.deserializeToplevelClass(this, this).also { irLoaded = it }
     }
 }
