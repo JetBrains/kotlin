@@ -17,8 +17,8 @@ import java.security.MessageDigest
 fun getCacheDirectory(
     rootCacheDirectory: File,
     dependency: ResolvedDependency,
-    artifact: ResolvedArtifact? = null,
-    libraryFilter: (ResolvedArtifact) -> Boolean = { it.file.absolutePath.endsWith(".klib") }
+    artifact: ResolvedArtifact?,
+    partialLinkage: Boolean
 ): File {
     val moduleCacheDirectory = File(rootCacheDirectory, dependency.moduleName)
     val versionCacheDirectory = File(moduleCacheDirectory, dependency.moduleVersion)
@@ -40,38 +40,42 @@ fun getCacheDirectory(
         versionCacheDirectory.resolve(hash)
     } else versionCacheDirectory
 
-    return File(cacheDirectory, computeDependenciesHash(dependency))
+    return File(cacheDirectory, computeDependenciesHash(dependency, partialLinkage))
 }
 
 internal fun ByteArray.toHexString() = joinToString("") { (0xFF and it.toInt()).toString(16).padStart(2, '0') }
 
-private fun computeDependenciesHash(dependency: ResolvedDependency): String {
-    val allArtifactsPaths =
+private fun computeDependenciesHash(dependency: ResolvedDependency, partialLinkage: Boolean): String {
+    val hashedValue = buildString {
+        if (partialLinkage) append("#__PL__#")
+
         (dependency.moduleArtifacts + getAllDependencies(dependency).flatMap { it.moduleArtifacts })
             .map { it.file.absolutePath }
             .distinct()
             .sortedBy { it }
-            .joinToString("|") { it }
+            .joinTo(this, separator = "|")
+    }
+
     val digest = MessageDigest.getInstance("SHA-256")
-    val hash = digest.digest(allArtifactsPaths.toByteArray(StandardCharsets.UTF_8))
+    val hash = digest.digest(hashedValue.toByteArray(StandardCharsets.UTF_8))
     return hash.toHexString()
 }
 
 fun getDependenciesCacheDirectories(
     rootCacheDirectory: File,
     dependency: ResolvedDependency,
-    libraryFilter: (ResolvedArtifact) -> Boolean = { it.file.absolutePath.endsWith(".klib") },
-    considerArtifact: Boolean = false
+    considerArtifact: Boolean,
+    partialLinkage: Boolean
 ): List<File>? {
     return getAllDependencies(dependency)
         .flatMap { childDependency ->
             childDependency.moduleArtifacts.map {
                 if (libraryFilter(it)) {
                     val cacheDirectory = getCacheDirectory(
-                        rootCacheDirectory,
-                        childDependency,
-                        if (considerArtifact) it else null,
-                        libraryFilter
+                        rootCacheDirectory = rootCacheDirectory,
+                        dependency = childDependency,
+                        artifact = if (considerArtifact) it else null,
+                        partialLinkage = partialLinkage
                     )
                     if (!cacheDirectory.exists()) return null
                     cacheDirectory
@@ -104,3 +108,5 @@ internal class GradleLoggerAdapter(private val gradleLogger: Logger) : org.jetbr
     override fun error(message: String) = kotlin.error(message)
     override fun fatal(message: String): Nothing = kotlin.error(message)
 }
+
+private fun libraryFilter(artifact: ResolvedArtifact): Boolean = artifact.file.absolutePath.endsWith(".klib")
