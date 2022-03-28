@@ -279,6 +279,7 @@ open class KotlinPlatformJvmPlugin : KotlinPlatformImplementationPluginBase("jvm
 
 open class KotlinPlatformJsPlugin : KotlinPlatformImplementationPluginBase("js") {
     override fun apply(project: Project) {
+        @Suppress("DEPRECATION_ERROR")
         project.applyPlugin<Kotlin2JsPluginWrapper>()
         super.apply(project)
     }

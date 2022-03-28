@@ -1,4 +1,4 @@
-apply plugin: 'kotlin2js'
+apply plugin: 'org.jetbrains.kotlin.platform.js'
 
 dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-js:$kotlin_version"

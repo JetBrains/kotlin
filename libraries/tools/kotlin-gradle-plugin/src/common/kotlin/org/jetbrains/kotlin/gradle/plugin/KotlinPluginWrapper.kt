@@ -199,9 +199,15 @@ open class KotlinAndroidPluginWrapper @Inject constructor(
         get() = KotlinAndroidProjectExtension::class
 }
 
+@Deprecated(
+    message = "Should be removed with JS platform plugin",
+    level = DeprecationLevel.ERROR
+)
 open class Kotlin2JsPluginWrapper @Inject constructor(
     protected val registry: ToolingModelBuilderRegistry
 ) : KotlinBasePluginWrapper() {
+
+    @Suppress("DEPRECATION_ERROR")
     override fun getPlugin(project: Project): Plugin<Project> =
         Kotlin2JsPlugin(registry)
 

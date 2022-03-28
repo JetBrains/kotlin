@@ -8,7 +8,7 @@ buildscript {
     }
 }
 
-apply plugin: "kotlin2js"
+apply plugin: 'org.jetbrains.kotlin.platform.js'
 
 repositories {
     mavenLocal()

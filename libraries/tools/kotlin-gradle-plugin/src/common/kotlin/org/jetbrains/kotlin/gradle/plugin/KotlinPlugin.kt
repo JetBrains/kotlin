@@ -39,7 +39,6 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.isMainCompilationData
 import org.jetbrains.kotlin.gradle.scripting.internal.ScriptingGradleSubplugin
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsBinaryMode
 import org.jetbrains.kotlin.gradle.targets.js.ir.*
-import org.jetbrains.kotlin.gradle.targets.js.jsPluginDeprecationMessage
 import org.jetbrains.kotlin.gradle.targets.jvm.KotlinJvmTarget
 import org.jetbrains.kotlin.gradle.tasks.*
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
@@ -693,13 +692,16 @@ internal open class KotlinCommonPlugin(
     }
 }
 
+@Deprecated(
+    message = "Should be removed with Js platform plugin",
+    level = DeprecationLevel.ERROR
+)
 internal open class Kotlin2JsPlugin(
     registry: ToolingModelBuilderRegistry
 ) : AbstractKotlinPlugin(KotlinTasksProvider(), registry) {
 
     companion object {
         private const val targetName = "2Js"
-        internal const val NOWARN_2JS_FLAG = "kotlin.2js.nowarn"
     }
 
     override fun buildSourceSetProcessor(
@@ -709,9 +711,6 @@ internal open class Kotlin2JsPlugin(
         Kotlin2JsSourceSetProcessor(tasksProvider, compilation)
 
     override fun apply(project: Project) {
-        if (!PropertiesProvider(project).noWarn2JsPlugin) {
-            project.logger.warn(jsPluginDeprecationMessage("kotlin2js"))
-        }
         val target = KotlinWithJavaTarget<KotlinJsOptions>(project, KotlinPlatformType.js, targetName, { KotlinJsOptionsImpl() })
 
         (project.kotlinExtension as Kotlin2JsProjectExtension).target = target
