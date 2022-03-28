@@ -33,10 +33,8 @@ public final class org/jetbrains/kotlin/tooling/core/Extras$Entry {
 
 public final class org/jetbrains/kotlin/tooling/core/Extras$Id : java/io/Serializable {
 	public fun <init> (Lorg/jetbrains/kotlin/tooling/core/ReifiedTypeSignature;Ljava/lang/String;)V
-	public synthetic fun <init> (Lorg/jetbrains/kotlin/tooling/core/ReifiedTypeSignature;Ljava/lang/String;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getName ()Ljava/lang/String;
-	public final fun getType ()Lorg/jetbrains/kotlin/tooling/core/ReifiedTypeSignature;
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
 }

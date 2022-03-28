@@ -11,13 +11,14 @@ import kotlin.reflect.KType
 import kotlin.reflect.KVariance
 import kotlin.reflect.typeOf
 
-inline fun <reified T> reifiedTypeSignatureOf(): ReifiedTypeSignature<T> {
+@PublishedApi
+internal inline fun <reified T> reifiedTypeSignatureOf(): ReifiedTypeSignature<T> {
     @OptIn(UnsafeApi::class, ExperimentalStdlibApi::class)
     return ReifiedTypeSignature(reifiedTypeSignatureOf(typeOf<T>()))
 }
 
 @PublishedApi
-@UnsafeApi
+@UnsafeApi("Use 'reifiedTypeSignatureOf' instead")
 internal fun reifiedTypeSignatureOf(type: KType): String {
     val classifier = type.classifier ?: throw IllegalArgumentException("Expected denotable type, found $type")
     val classifierClass = classifier as? KClass<*> ?: throw IllegalArgumentException("Expected class type, found $type")
@@ -53,7 +54,8 @@ internal fun reifiedTypeSignatureOf(type: KType): String {
     }
 }
 
-class ReifiedTypeSignature<T>
+@PublishedApi
+internal class ReifiedTypeSignature<T>
 @UnsafeApi("Use 'reifiedTypeSignatureOf' instead")
 @PublishedApi internal constructor(val signature: String) : Serializable {
 

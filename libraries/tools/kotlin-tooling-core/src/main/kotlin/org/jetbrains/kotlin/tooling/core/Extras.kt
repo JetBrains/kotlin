@@ -8,8 +8,8 @@ package org.jetbrains.kotlin.tooling.core
 import java.io.Serializable
 
 interface Extras {
-    class Id<T : Any> constructor(
-        val type: ReifiedTypeSignature<T>,
+    class Id<T : Any> @PublishedApi internal constructor(
+        internal val type: ReifiedTypeSignature<T>,
         val name: String? = null,
     ) : Serializable {
         override fun equals(other: Any?): Boolean {
