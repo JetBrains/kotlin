@@ -5931,6 +5931,7 @@ Task fileCheckTest(String name, Closure<FileCheckTest> configureClosure) {
                         if (!isCrossCompiling) {
                             extraOpts project.globalTestArgs
                         }
+                        extraOpts task.extraOpts
                         extraOpts "-Xtemporary-files-dir=$testOutputFileCheck/$name/$target"
                         extraOpts "-Xsave-llvm-ir-after=${task.phaseToCheck}"
                         if (lib != null) {
@@ -5974,6 +5975,14 @@ if (HostManager.@Companion.hostIsMac) {
         // Perform check after optimization pipeline because
         // LLVM might infer attributes.
         phaseToCheck = "BitcodeOptimization"
+    }
+
+    fileCheckTest("filecheck_redundant_safepoints_removal") {
+        enabled = isExperimentalMM && project.globalTestArgs.contains("-opt")
+        annotatedSource = project.file('filecheck/redundant_safepoints.kt')
+        targetName = "watchos_arm32"
+        extraOpts = ["-Xbinary=memoryModel=experimental", "-opt"]
+        phaseToCheck = "RemoveRedundantSafepoints"
     }
 }
 

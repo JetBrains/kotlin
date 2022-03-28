@@ -69,6 +69,9 @@ open class FileCheckTest : DefaultTask() {
     @get:Optional
     var additionalFileCheckFlags: List<String>? = null
 
+    @get:Input
+    var extraOpts: List<String> = emptyList()
+
     @get:Optional
     @get:Input
     var targetName: String = project.testTarget.name
