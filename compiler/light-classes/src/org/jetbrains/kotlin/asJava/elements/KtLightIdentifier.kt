@@ -24,11 +24,21 @@ import com.intellij.psi.impl.light.LightIdentifier
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
 
-open class KtLightIdentifier(
+abstract class KtLightIdentifierBase(
     private val lightOwner: PsiElement,
+    text: String?
+) : LightIdentifier(lightOwner.manager, text), PsiElementWithOrigin<PsiElement> {
+    override fun isPhysical() = true
+    override fun getParent() = lightOwner
+    override fun getContainingFile() = lightOwner.containingFile
+    override fun getTextRange() = origin?.textRange ?: TextRange.EMPTY_RANGE
+    override fun getTextOffset(): Int = origin?.textOffset ?: -1
+}
+
+open class KtLightIdentifierWithOrigin(
+    lightOwner: PsiElement,
     private val ktDeclaration: KtDeclaration?
-) : LightIdentifier(lightOwner.manager, ktDeclaration?.name ?: ""), PsiCompiledElement,
-    PsiElementWithOrigin<PsiElement> {
+) : KtLightIdentifierBase(lightOwner, ktDeclaration?.name) {
     override val origin: PsiElement?
         get() = when (ktDeclaration) {
             is KtSecondaryConstructor -> ktDeclaration.getConstructorKeyword()
@@ -39,12 +49,12 @@ open class KtLightIdentifier(
             is KtNamedDeclaration -> ktDeclaration.nameIdentifier
             else -> null
         }
+}
+
+class KtLightIdentifier(
+    private val lightOwner: PsiElement,
+    ktDeclaration: KtDeclaration?
+) : KtLightIdentifierWithOrigin(lightOwner, ktDeclaration), PsiCompiledElement {
 
     override fun getMirror() = ((lightOwner as? KtLightElement<*, *>)?.clsDelegate as? PsiNameIdentifierOwner)?.nameIdentifier
-
-    override fun isPhysical() = true
-    override fun getParent() = lightOwner
-    override fun getContainingFile() = lightOwner.containingFile
-    override fun getTextRange() = origin?.textRange ?: TextRange.EMPTY_RANGE
-    override fun getTextOffset(): Int = origin?.textOffset ?: -1
 }
