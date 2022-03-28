@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 
 fun testArrayIncrementDecrement(d: dynamic) {
     val t1 = ++d["prefixIncr"]
