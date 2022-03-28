@@ -7,6 +7,8 @@ package org.jetbrains.kotlin.gradle.kpm.idea
 
 import org.jetbrains.kotlin.tooling.core.*
 import java.io.Serializable
+import java.util.concurrent.locks.ReentrantReadWriteLock
+import kotlin.concurrent.withLock
 
 sealed interface IdeaKotlinExtras : Extras, Serializable
 
@@ -25,8 +27,8 @@ fun IdeaKotlinExtras(extras: IterableExtras): IdeaKotlinExtras {
 @InternalKotlinGradlePluginApi
 private class IdeaKotlinExtrasImpl(private val extras: IterableExtras) : IdeaKotlinExtras, AbstractIterableExtras() {
     override val ids: Set<Extras.Id<*>> get() = extras.ids
-    override fun <T : Any> get(key: Extras.Key<T>): T? = extras[key]
     override val entries: Set<Extras.Entry<*>> = extras.entries
+    override fun <T : Any> get(key: Extras.Key<T>): T? = extras[key]
     override fun isEmpty(): Boolean = extras.isEmpty()
 
     @Suppress("unchecked_cast")
@@ -37,8 +39,8 @@ private class IdeaKotlinExtrasImpl(private val extras: IterableExtras) : IdeaKot
 
 @WriteReplacedModel(replacedBy = EmptyIdeaKotlinExtras.Surrogate::class)
 private object EmptyIdeaKotlinExtras : IdeaKotlinExtras, AbstractIterableExtras() {
-    override val entries: Set<Extras.Entry<*>> = emptySet()
     override val ids: Set<Extras.Id<*>> = emptySet()
+    override val entries: Set<Extras.Entry<*>> = emptySet()
     override fun <T : Any> get(key: Extras.Key<T>): T? = null
 
     object Surrogate : Serializable {
@@ -67,6 +69,9 @@ private class IdeaKotlinExtrasSurrogate(
 private class SerializedIdeaKotlinExtras(
     private val serializedExtras: MutableMap<Extras.Id<*>, ByteArray>
 ) : IdeaKotlinExtras {
+    private val lock = ReentrantReadWriteLock()
+    private val readLock = lock.readLock()
+    private val writeLock = lock.writeLock()
     private val deserializedNulls = mutableSetOf<Extras.Id<*>>()
     private val deserializedExtras = mutableExtrasOf()
     override val ids: Set<Extras.Id<*>> = serializedExtras.keys.toSet()
@@ -80,27 +85,33 @@ private class SerializedIdeaKotlinExtras(
         */
         val serializer = key.capability<IdeaKotlinExtraSerializer<T>>() ?: return null
 
-        /* Check previous results */
-        deserializedExtras[key]?.let { return it }
-        if (key.id in deserializedNulls) return null
+        readLock.withLock {
+            /* Check previous results */
+            deserializedExtras[key]?.let { return it }
+            if (key.id in deserializedNulls) return null
+        }
 
-        /* try to deserialize */
-        val data = serializedExtras[key.id] ?: return null
-        return serializer.deserialize(data).also { value ->
-            /* Release memory in favor of deserialized value cache */
-            serializedExtras.remove(key.id)
+        writeLock.withLock {
+            /* try to deserialize */
+            val data = serializedExtras[key.id] ?: return null
+            return serializer.deserialize(data).also { value ->
+                /* Release memory in favor of deserialized value cache */
+                serializedExtras.remove(key.id)
 
-            /* Cache serialization result */
-            if (value == null) deserializedNulls.add(key.id)
-            else deserializedExtras[key] = value
+                /* Cache serialization result */
+                if (value == null) deserializedNulls.add(key.id)
+                else deserializedExtras[key] = value
+            }
         }
     }
 
     @Synchronized
     private fun writeReplace(): Any {
-        return IdeaKotlinExtrasSurrogate(
-            serializedExtras + serialize(deserializedExtras.entries)
-        )
+        readLock.withLock {
+            return IdeaKotlinExtrasSurrogate(
+                serializedExtras + serialize(deserializedExtras.entries)
+            )
+        }
     }
 }
 
