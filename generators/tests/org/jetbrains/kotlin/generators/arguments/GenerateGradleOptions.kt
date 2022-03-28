@@ -40,8 +40,8 @@ interface AdditionalGradleProperties {
 }
 
 fun generateKotlinGradleOptions(withPrinterToFile: (targetFile: File, Printer.() -> Unit) -> Unit) {
-    val apiSrcDir = File("libraries/tools/kotlin-gradle-plugin-api/src/main/kotlin")
-    val srcDir = File("libraries/tools/kotlin-gradle-plugin/src/main/kotlin")
+    val apiSrcDir = File("libraries/tools/kotlin-gradle-plugin-api/src/common/kotlin")
+    val srcDir = File("libraries/tools/kotlin-gradle-plugin/src/common/kotlin")
 
     // common interface
     val commonInterfaceFqName = FqName("org.jetbrains.kotlin.gradle.dsl.KotlinCommonToolOptions")
