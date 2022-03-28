@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
 import org.jetbrains.kotlin.ir.backend.js.lower.JsInnerClassesSupport
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.JsPolyfills
 import org.jetbrains.kotlin.ir.backend.js.utils.JsInlineClassesUtils
+import org.jetbrains.kotlin.ir.backend.js.utils.MinimizedNameGenerator
 import org.jetbrains.kotlin.ir.backend.js.utils.OperatorNames
 import org.jetbrains.kotlin.ir.builders.declarations.addFunction
 import org.jetbrains.kotlin.ir.declarations.*
@@ -71,6 +72,11 @@ class JsIrBackendContext(
 
     val localClassNames: MutableMap<IrClass, String> = mutableMapOf()
     val extractedLocalClasses: MutableSet<IrClass> = hashSetOf()
+
+    val minimizedNameGenerator: MinimizedNameGenerator =
+        MinimizedNameGenerator()
+
+    val fieldDataCache = mutableMapOf<IrClass, Map<IrField, String>>()
 
     override val builtIns = module.builtIns
 

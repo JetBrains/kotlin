@@ -68,7 +68,7 @@ class IrModuleToJsTransformer(
 
         val code = EnumMap<TranslationMode, CompilationOutputs>(TranslationMode::class.java)
 
-        if (fullJs) code[TranslationMode.fromFlags(false, multiModule)] = generateWrappedModuleBody(modules, exportedModule, namer)
+        if (fullJs) code[TranslationMode.fromFlags(false, multiModule, false)] = generateWrappedModuleBody(modules, exportedModule, namer)
 
         if (dceJs) {
             eliminateDeadDeclarations(modules, backendContext, removeUnusedAssociatedObjects)
@@ -76,7 +76,7 @@ class IrModuleToJsTransformer(
             // TODO: is this mode relevant for scripting? If yes, refactor so that the external name tables are used here when needed.
             val namer = NameTables(emptyList(), context = backendContext)
             namer.merge(modules.flatMap { it.files }, additionalPackages)
-            code[TranslationMode.fromFlags(true, multiModule)] = generateWrappedModuleBody(modules, exportedModule, namer)
+            code[TranslationMode.fromFlags(true, multiModule, false)] = generateWrappedModuleBody(modules, exportedModule, namer)
         }
 
         return CompilerResult(code, dts)

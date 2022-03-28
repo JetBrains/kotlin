@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.ir.backend.js.transformers.irToJs
 
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
+import org.jetbrains.kotlin.ir.backend.js.export.isExported
 import org.jetbrains.kotlin.ir.backend.js.utils.*
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
@@ -17,13 +18,15 @@ import org.jetbrains.kotlin.js.backend.ast.*
 import org.jetbrains.kotlin.utils.DFS
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
-class JsNameLinkingNamer(private val context: JsIrBackendContext) : IrNamerBase() {
+class JsNameLinkingNamer(private val context: JsIrBackendContext, private val minimizedMemberNames: Boolean) : IrNamerBase() {
 
     val nameMap = mutableMapOf<IrDeclaration, JsName>()
 
     private fun IrDeclarationWithName.getName(prefix: String = ""): JsName {
         return nameMap.getOrPut(this) {
-            val name = (this as? IrClass)?.let { context.localClassNames[this] } ?: getJsNameOrKotlinName().asString()
+            val name = (this as? IrClass)?.let { context.localClassNames[this] } ?: let {
+                this.nameIfPropertyAccessor() ?: getJsNameOrKotlinName().asString()
+            }
             JsName(sanitizeName(prefix + name), true)
         }
     }
@@ -82,7 +85,11 @@ class JsNameLinkingNamer(private val context: JsIrBackendContext) : IrNamerBase(
     override fun getNameForMemberFunction(function: IrSimpleFunction): JsName {
         require(function.dispatchReceiverParameter != null)
         val signature = jsFunctionSignature(function, context)
-        return signature.toJsName()
+        val result = if (minimizedMemberNames && !function.hasStableJsName(context)) {
+            function.parentAsClass.fieldData()
+            context.minimizedNameGenerator.nameBySignature(signature)
+        } else signature
+        return result.toJsName()
     }
 
     override fun getNameForMemberField(field: IrField): JsName {
@@ -91,10 +98,8 @@ class JsNameLinkingNamer(private val context: JsIrBackendContext) : IrNamerBase(
         return JsName(field.parentAsClass.fieldData()[field]!!, false)
     }
 
-    private val fieldDataCache = mutableMapOf<IrClass, Map<IrField, String>>()
-
     private fun IrClass.fieldData(): Map<IrField, String> {
-        return fieldDataCache.getOrPut(this) {
+        return context.fieldDataCache.getOrPut(this) {
             val nameCnt = mutableMapOf<String, Int>()
 
             val allClasses = DFS.topologicalOrder(listOf(this)) { node ->
@@ -105,11 +110,37 @@ class JsNameLinkingNamer(private val context: JsIrBackendContext) : IrNamerBase(
 
             val result = mutableMapOf<IrField, String>()
 
+            if (minimizedMemberNames) {
+                allClasses.reversed().forEach {
+                    it.declarations.forEach { declaration ->
+                        when {
+                            declaration is IrFunction && declaration.dispatchReceiverParameter != null -> {
+                                val property = (declaration as? IrSimpleFunction)?.correspondingPropertySymbol?.owner
+                                if (property?.isExported(context) == true || property?.isEffectivelyExternal() == true) {
+                                    context.minimizedNameGenerator.reserveName(property.name.asString())
+                                }
+                                if (declaration.hasStableJsName(context)) {
+                                    val signature = jsFunctionSignature(declaration, context)
+                                    context.minimizedNameGenerator.reserveName(signature)
+                                }
+                            }
+                            declaration is IrProperty -> {
+                                if (declaration.isExported(context)) {
+                                    context.minimizedNameGenerator.reserveName(declaration.name.asString())
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
             allClasses.reversed().forEach {
                 it.declarations.forEach {
                     when {
                         it is IrField -> {
-                            val safeName = it.safeName()
+                            val safeName = if (minimizedMemberNames) {
+                                context.minimizedNameGenerator.generateNextName()
+                            } else it.safeName()
                             val suffix = nameCnt.getOrDefault(safeName, 0) + 1
                             nameCnt[safeName] = suffix
                             result[it] = safeName + "_$suffix"
@@ -121,7 +152,7 @@ class JsNameLinkingNamer(private val context: JsIrBackendContext) : IrNamerBase(
                 }
             }
 
-            return result
+            result
         }
     }
 }

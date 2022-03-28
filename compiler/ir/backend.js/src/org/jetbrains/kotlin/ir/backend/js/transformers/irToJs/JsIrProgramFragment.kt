@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.ir.backend.js.transformers.irToJs
 
-import org.jetbrains.kotlin.ir.backend.js.utils.sanitizeName
+import org.jetbrains.kotlin.ir.backend.js.utils.toJsIdentifier
 import org.jetbrains.kotlin.js.backend.ast.*
 
 class JsIrProgramFragment(val packageFqn: String) {
@@ -75,19 +75,15 @@ private class JsIrModuleCrossModuleReferecenceBuilder(val module: JsIrModule, va
     val exports = mutableSetOf<String>()
     var transitiveJsExportFrom = emptyList<JsIrModule>()
 
-    private lateinit var exportNames: Map<String, String> // tag -> name
+    private lateinit var exportNames: Map<String, String> // tag -> index
 
     private fun buildUniqueNames() {
-        val names = module.fragments.flatMap { it.nameBindings.entries }.associate { it.key to sanitizeName(it.value.ident) }
-        val nameToCnt = mutableMapOf<String, Int>()
-
         val result = mutableMapOf<String, String>()
 
+        var index = 0
+
         exports.sorted().forEach { tag ->
-            val suggestedName = names[tag] ?: error("Name not found for tag $tag")
-            val suffix = nameToCnt[suggestedName]?.let { "_$it" } ?: ""
-            nameToCnt[suggestedName] = nameToCnt.getOrDefault(suggestedName, 0) + 1
-            result[tag] = suggestedName + suffix
+            result[tag] = index++.toJsIdentifier()
         }
 
         exportNames = result
@@ -132,7 +128,7 @@ private class JsIrModuleCrossModuleReferecenceBuilder(val module: JsIrModule, va
 class CrossModuleReferences(
     val importedModules: List<JsImportedModule>, // additional Kotlin imported modules
     val imports: Map<String, JsVars.JsVar>, // tag -> import statement
-    val exports: Map<String, String>, // tag -> name
+    val exports: Map<String, String>, // tag -> index
     val transitiveJsExportFrom: List<JsName> // the list of modules which provide their js exports for transitive export
 ) {
     companion object {

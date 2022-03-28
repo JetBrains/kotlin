@@ -12,6 +12,6 @@ class ReservedJsNames {
     companion object {
         fun makeInternalModuleName() = JsName("_", false)
         fun makeJsExporterName() = JsName("\$jsExportAll\$", false)
-        fun makeCrossModuleNameRef(moduleName: JsName) = JsNameRef("\$crossModule\$", moduleName.makeRef())
+        fun makeCrossModuleNameRef(moduleName: JsName) = JsNameRef("\$_\$", moduleName.makeRef())
     }
 }
