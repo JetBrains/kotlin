@@ -299,12 +299,12 @@ class Kotlin2JsGradlePluginIT : AbstractKotlin2JsGradlePluginIT(false) {
     @DisplayName("DCE minifies output file")
     @GradleTest
     fun testDce(gradleVersion: GradleVersion) {
-        project("kotlin2JsDceProject", gradleVersion) {
+        project("kotlin-js-dce", gradleVersion) {
             build("runRhino") {
-                val pathPrefix = "mainProject/build/kotlin-js-min/main"
+                val pathPrefix = "mainProject/build/kotlin-js-min"
                 assertFileInProjectExists("$pathPrefix/exampleapp.js.map")
                 assertFileInProjectExists("$pathPrefix/examplelib.js.map")
-                assertFileInProjectContains("$pathPrefix/exampleapp.js.map", "\"../../../src/main/kotlin/exampleapp/main.kt\"")
+                assertFileInProjectContains("$pathPrefix/exampleapp.js.map", "\"../../src/main/kotlin/exampleapp/main.kt\"")
 
                 val kotlinJs = projectPath.resolve("$pathPrefix/kotlin.js")
                 assertFileExists(kotlinJs)
@@ -319,14 +319,20 @@ class Kotlin2JsGradlePluginIT : AbstractKotlin2JsGradlePluginIT(false) {
     @DisplayName("DCE output directory can be changed")
     @GradleTest
     fun testDceOutputPath(gradleVersion: GradleVersion) {
-        project("kotlin2JsDceProject", gradleVersion) {
+        project("kotlin-js-dce", gradleVersion) {
             subProject("mainProject").buildGradle.modify { originalScript ->
                 buildString {
-                    append(originalScript)
+                    append(
+                        originalScript
+                            .lines()
+                            .filterNot { it.contains("destinationDirectory") }
+                            .joinToString(separator = "\n")
+                    )
                     append(
                         """
-                        |
-                        |runDceKotlinJs.dceOptions.outputDirectory = "${'$'}{buildDir}/min"
+                        |tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinJsDce).configureEach {
+                        |    destinationDirectory = project.layout.buildDirectory.dir("min")
+                        |}
                         |runRhino.args = ["-f", "min/kotlin.js", "-f", "min/examplelib.js", "-f", "min/exampleapp.js", "-f", "../check.js"]
                         """.trimMargin()
                     )
@@ -348,19 +354,18 @@ class Kotlin2JsGradlePluginIT : AbstractKotlin2JsGradlePluginIT(false) {
     @DisplayName("DCE in dev mode doesn't minify output file")
     @GradleTest
     fun testDceDevMode(gradleVersion: GradleVersion) {
-        project("kotlin2JsDceProject", gradleVersion) {
-            subProject("mainProject").buildGradle.appendText(
-                """
-                |
-                |runDceKotlinJs.dceOptions.devMode = true
-                |    
-                """.trimMargin()
-            )
+        project("kotlin-js-dce", gradleVersion) {
+            subProject("mainProject").buildGradle.modify {
+                it.replace(
+                    "browser()",
+                    "browser { dceTask { dceOptions.devMode = true }}"
+                )
+            }
 
             build("runRhino") {
-                val pathPrefix = "mainProject/build/kotlin-js-min/main"
+                val pathPrefix = "mainProject/build/kotlin-js-min"
                 assertFileInProjectExists("$pathPrefix/examplelib.js.map")
-                assertFileInProjectContains("$pathPrefix/exampleapp.js.map", "\"../../../src/main/kotlin/exampleapp/main.kt\"")
+                assertFileInProjectContains("$pathPrefix/exampleapp.js.map", "\"../../src/main/kotlin/exampleapp/main.kt\"")
 
                 val kotlinJs = projectPath.resolve("$pathPrefix/kotlin.js")
                 assertFileExists(kotlinJs)
@@ -372,15 +377,15 @@ class Kotlin2JsGradlePluginIT : AbstractKotlin2JsGradlePluginIT(false) {
     @DisplayName("DCE minifies FileCollection dependencies")
     @GradleTest
     fun testDceFileCollectionDependency(gradleVersion: GradleVersion) {
-        project("kotlin2JsDceProject", gradleVersion) {
+        project("kotlin-js-dce", gradleVersion) {
             subProject("mainProject").buildGradle.modify {
                 it.replace("compile project(\":libraryProject\")", "compile project(\":libraryProject\").sourceSets.main.output")
             }
 
             build("runRhino") {
-                val pathPrefix = "mainProject/build/kotlin-js-min/main"
+                val pathPrefix = "mainProject/build/kotlin-js-min"
                 assertFileInProjectExists("$pathPrefix/examplelib.js.map")
-                assertFileInProjectContains("$pathPrefix/exampleapp.js.map", "\"../../../src/main/kotlin/exampleapp/main.kt\"")
+                assertFileInProjectContains("$pathPrefix/exampleapp.js.map", "\"../../src/main/kotlin/exampleapp/main.kt\"")
 
                 val kotlinJs = projectPath.resolve("$pathPrefix/kotlin.js")
                 assertFileExists(kotlinJs)
@@ -693,10 +698,10 @@ abstract class AbstractKotlin2JsGradlePluginIT(protected val irBackend: Boolean)
     )
     fun testNewKotlinJsPlugin(gradleVersion: GradleVersion) {
         project("kotlin-js-plugin-project", gradleVersion) {
-            build("publish", "runDceKotlin", "test", "runDceBenchmarkKotlin") {
+            build("publish", "processDceKotlinJs", "test", "processDceBenchmarkKotlinJs") {
                 assertTasksExecuted(
                     ":compileKotlinJs", ":compileTestKotlinJs", ":compileBenchmarkKotlinJs",
-                    ":runDceKotlin", ":runDceBenchmarkKotlin"
+                    ":processDceKotlinJs", ":processDceBenchmarkKotlinJs"
                 )
 
                 val moduleDir = projectPath.resolve("build/repo/com/example/kotlin-js-plugin/1.0/")
@@ -710,7 +715,7 @@ abstract class AbstractKotlin2JsGradlePluginIT(protected val irBackend: Boolean)
                 val publishedPom = moduleDir.resolve("kotlin-js-plugin-1.0.pom")
                 val kotlinVersion = defaultBuildOptions.kotlinVersion
                 val pomText = publishedPom.readText().replace(Regex("\\s+"), "")
-                assertTrue { "kotlinx-html-js</artifactId><version>0.6.12</version><scope>compile</scope>" in pomText }
+                assertTrue { "kotlinx-html-js</artifactId><version>0.7.5</version><scope>compile</scope>" in pomText }
                 assertTrue { "kotlin-stdlib-js</artifactId><version>$kotlinVersion</version><scope>runtime</scope>" in pomText }
 
                 assertFileExists(moduleDir.resolve("kotlin-js-plugin-1.0-sources.jar"))
@@ -726,12 +731,7 @@ abstract class AbstractKotlin2JsGradlePluginIT(protected val irBackend: Boolean)
                 assertFileInProjectExists("build/js/node_modules/kotlin-js-plugin-test/kotlin/kotlin-js-plugin-test.js")
                 assertFileInProjectExists("build/js/node_modules/kotlin-js-plugin-test/kotlin/kotlin-js-plugin-test.js.map")
 
-                // Gradle 6.6+ slightly changed format of xml test results
-                if (gradleVersion < GradleVersion.version("6.6")) {
-                    assertTestResults(projectPath.resolve("tests_pre6.6.xml"), "nodeTest")
-                } else {
-                    assertTestResults(projectPath.resolve("tests.xml"), "nodeTest")
-                }
+                assertTestResults(projectPath.resolve("tests.xml"), "nodeTest")
             }
         }
     }

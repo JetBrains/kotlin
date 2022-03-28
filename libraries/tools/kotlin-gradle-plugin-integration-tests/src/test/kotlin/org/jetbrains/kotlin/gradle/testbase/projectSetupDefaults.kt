@@ -50,9 +50,6 @@ internal val DEFAULT_GROOVY_SETTINGS_FILE =
                     case "com.android.feature":
                         useModule("com.android.tools.build:gradle:${'$'}android_tools_version")
                         break
-                    case "kotlin-dce-js":
-                        useModule("org.jetbrains.kotlin:kotlin-gradle-plugin:${'$'}kotlin_version")        
-                        break
                     case "kotlin2js":
                         useModule("org.jetbrains.kotlin:kotlin-gradle-plugin:${'$'}kotlin_version")
                         break
@@ -106,7 +103,6 @@ internal val DEFAULT_KOTLIN_SETTINGS_FILE =
                     "com.android.lint",
                     "com.android.instantapp",
                     "com.android.feature" -> useModule("com.android.tools.build:gradle:${'$'}android_tools_version")
-                    "kotlin-dce-js" -> useModule("org.jetbrains.kotlin:kotlin-gradle-plugin:${'$'}kotlin_version")
                     "kotlin2js" -> useModule("org.jetbrains.kotlin:kotlin-gradle-plugin:${'$'}kotlin_version")
                 }
             }

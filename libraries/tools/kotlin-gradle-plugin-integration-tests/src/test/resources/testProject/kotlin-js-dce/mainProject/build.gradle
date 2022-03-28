@@ -1,0 +1,45 @@
+plugins {
+    id("org.jetbrains.kotlin.js")
+}
+
+repositories {
+    mavenLocal()
+    mavenCentral()
+}
+
+dependencies {
+    implementation project(":libraryProject")
+    implementation "org.mozilla:rhino:1.7.7.1"
+}
+
+kotlin {
+    js {
+        browser()
+    }
+}
+
+def compileKotlinJs = tasks.named('compileKotlinJs') {
+    kotlinOptions {
+        sourceMap = true
+        outputFile = "${buildDir}/app/exampleapp.js"
+        suppressWarnings = true
+        verbose = true
+    }
+}
+
+tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinJsDce).configureEach {
+    keep("exampleapp.exampleapp.status")
+    destinationDirectory = project.layout.buildDirectory.dir("kotlin-js-min")
+}
+
+tasks.register('runRhino', JavaExec) {
+    dependsOn(tasks.named('processDceKotlinJs'))
+    classpath = configurations.runtimeClasspath
+    workingDir = "${buildDir}"
+    mainClass = 'org.mozilla.javascript.tools.shell.Main'
+    args = ["-opt", "-1",
+            "-f", "kotlin-js-min/kotlin.js",
+            "-f", "kotlin-js-min/examplelib.js",
+            "-f", "kotlin-js-min/exampleapp.js",
+            "-f", "../check.js"]
+}

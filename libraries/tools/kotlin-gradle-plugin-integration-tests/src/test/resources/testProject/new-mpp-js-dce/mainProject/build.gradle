@@ -9,36 +9,44 @@ buildscript {
 }
 
 apply plugin: "kotlin-multiplatform"
-apply plugin: "kotlin-dce-js"
 
 repositories {
     mavenLocal()
     mavenCentral()
 }
 
-kotlin.targets.fromPreset(kotlin.presets.js, 'nodeJs')
+kotlin.targets.fromPreset(kotlin.presets.js, 'browser') {
+    browser()
+}
 
 dependencies {
-    nodeJsImplementation project(":libraryProject")
-    nodeJsImplementation "org.jetbrains.kotlin:kotlin-stdlib-js"
-    nodeJsImplementation "org.mozilla:rhino:1.7.7.1"
+    browserImplementation project(":libraryProject")
+    browserImplementation "org.jetbrains.kotlin:kotlin-stdlib-js"
+    browserImplementation "org.mozilla:rhino:1.7.7.1"
 }
 
-compileKotlinNodeJs.kotlinOptions.sourceMap = true
-compileKotlinNodeJs.kotlinOptions.outputFile = "${buildDir}/exampleapp.js"
-compileKotlinNodeJs.kotlinOptions.suppressWarnings = true
-compileKotlinNodeJs.kotlinOptions.verbose = true
-runDceNodeJsKotlin.keep("exampleapp.exampleapp.status")
+tasks.named('compileKotlinBrowser') {
+    kotlinOptions {
+        sourceMap = true
+        outputFile = "${buildDir}/web/exampleapp.js"
+        suppressWarnings = true
+        verbose = true
+    }
+}
+
+tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinJsDce).configureEach {
+    keep("exampleapp.exampleapp.status")
+    destinationDirectory = project.layout.buildDirectory.dir("kotlin-js-min")
+}
 
 task runRhino(type: JavaExec) {
-    classpath = kotlin.targets.nodeJs.compilations.main.runtimeDependencyFiles
+    dependsOn(tasks.named('processDceBrowserKotlinJs'))
+    classpath = kotlin.targets.browser.compilations.main.runtimeDependencyFiles
     workingDir = "${buildDir}"
-    main = 'org.mozilla.javascript.tools.shell.Main'
+    mainClass = 'org.mozilla.javascript.tools.shell.Main'
     args = ["-opt", "-1",
-            "-f", "kotlin-js-min/nodeJs/main/kotlin.js",
-            "-f", "kotlin-js-min/nodeJs/main/examplelib.js",
-            "-f", "kotlin-js-min/nodeJs/main/exampleapp.js",
+            "-f", "kotlin-js-min/kotlin.js",
+            "-f", "kotlin-js-min/examplelib.js",
+            "-f", "kotlin-js-min/exampleapp.js",
             "-f", "../check.js"]
 }
-
-runRhino.dependsOn(runDceNodeJsKotlin)

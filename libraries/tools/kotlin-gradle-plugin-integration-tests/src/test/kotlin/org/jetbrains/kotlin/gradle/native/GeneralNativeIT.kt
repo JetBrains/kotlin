@@ -6,11 +6,9 @@
 package org.jetbrains.kotlin.gradle.native
 
 import com.intellij.testFramework.TestDataFile
-import org.gradle.util.GradleVersion
 import org.jdom.input.SAXBuilder
 import org.jetbrains.kotlin.gradle.BaseGradleIT
 import org.jetbrains.kotlin.gradle.GradleVersionRequired
-import org.jetbrains.kotlin.gradle.chooseWrapperVersionOrFinishTest
 import org.jetbrains.kotlin.gradle.internals.DISABLED_NATIVE_TARGETS_REPORTER_DISABLE_WARNING_PROPERTY_NAME
 import org.jetbrains.kotlin.gradle.internals.DISABLED_NATIVE_TARGETS_REPORTER_WARNING_PREFIX
 import org.jetbrains.kotlin.gradle.internals.NO_NATIVE_STDLIB_PROPERTY_WARNING
@@ -737,25 +735,11 @@ class GeneralNativeIT : BaseGradleIT() {
                 }
             }
 
-            // Gradle 6.6+ slightly changed format of xml test results
-            // If, in the test project, preset name was updated,
-            // update accordingly test result output for Gradle6.6+
-            val testGradleVersion = project.chooseWrapperVersionOrFinishTest()
-            val expectedHostTestResult: String
-            val expectedIOSTestResults: List<String>
-            if (GradleVersion.version(testGradleVersion) < GradleVersion.version("6.6")) {
-                expectedHostTestResult = "testProject/native-tests/TEST-TestKt_pre6.6.xml"
-                expectedIOSTestResults = listOf(
-                    "testProject/native-tests/TEST-TestKt_pre6.6.xml",
-                    "testProject/native-tests/TEST-TestKt-iOSsim_pre6.6.xml",
-                )
-            } else {
-                expectedHostTestResult = "testProject/native-tests/TEST-TestKt.xml"
-                expectedIOSTestResults = listOf(
-                    "testProject/native-tests/TEST-TestKt-iOSsim.xml",
-                    "testProject/native-tests/TEST-TestKt-iOSArm64sim.xml",
-                )
-            }
+            val expectedHostTestResult = "testProject/native-tests/TEST-TestKt.xml"
+            val expectedIOSTestResults = listOf(
+                "testProject/native-tests/TEST-TestKt-iOSsim.xml",
+                "testProject/native-tests/TEST-TestKt-iOSArm64sim.xml",
+            )
 
             assertTestResults(expectedHostTestResult, hostTestTask)
             // K/N doesn't report line numbers correctly on Linux (see KT-35408).
