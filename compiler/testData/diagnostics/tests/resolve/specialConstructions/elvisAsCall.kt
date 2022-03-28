@@ -13,7 +13,7 @@ fun testElvis(a: Int?, b: Int?) {
     if (a != null) {
         doInt(b ?: <!DEBUG_INFO_SMARTCAST!>a<!>)
     }
-    <!INFERRED_TYPE_VARIABLE_INTO_EMPTY_INTERSECTION_WARNING!>doList<!>(getList() ?: emptyListOfA()) //should be an error
+    doList(getList() ?: emptyListOfA()) //should be an error
     doList(getList() ?: strangeList { doInt(it) }) //lambda was not analyzed
 }
 

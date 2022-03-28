@@ -8,12 +8,12 @@ package org.jetbrains.kotlin.resolve.calls.inference.components
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemBuilder
+import org.jetbrains.kotlin.resolve.calls.inference.NewConstraintSystem
 import org.jetbrains.kotlin.resolve.calls.inference.model.*
 import org.jetbrains.kotlin.resolve.calls.model.PostponedAtomWithRevisableExpectedType
 import org.jetbrains.kotlin.resolve.calls.model.PostponedResolvedAtomMarker
-import org.jetbrains.kotlin.types.model.KotlinTypeMarker
-import org.jetbrains.kotlin.types.model.TypeConstructorMarker
-import org.jetbrains.kotlin.types.model.TypeVariableMarker
+import org.jetbrains.kotlin.types.AbstractTypeChecker.isRelatedBySubtypingTo
+import org.jetbrains.kotlin.types.model.*
 
 abstract class ConstraintSystemCompletionContext : VariableFixationFinder.Context, ResultTypeResolver.Context {
     abstract val allTypeVariables: Map<TypeConstructorMarker, TypeVariableMarker>
@@ -36,6 +36,50 @@ abstract class ConstraintSystemCompletionContext : VariableFixationFinder.Contex
 
     abstract fun couldBeResolvedWithUnrestrictedBuilderInference(): Boolean
     abstract fun processForkConstraints()
+
+    private fun TypeConstructorMarker.isDefinitelyClass() = isClassTypeConstructor() && !isInterface()
+
+    private fun KotlinTypeMarker.containsTypeParameter() = contains { it.typeConstructor().isTypeParameterTypeConstructor() }
+
+    fun Collection<KotlinTypeMarker>.isEmptyIntersection(constraintSystem: NewConstraintSystem?): Boolean {
+        val indexedComponents = withIndex()
+        return indexedComponents.any firstTypes@{ (i, first) ->
+            val firstTypeConstructor = first.typeConstructor()
+            indexedComponents.any secondTypes@{ (j, second) ->
+                if (i >= j) return@secondTypes false
+
+                val secondTypeConstructor = second.typeConstructor()
+
+                if (!firstTypeConstructor.isDefinitelyClass() && !firstTypeConstructor.isTypeParameterTypeConstructor())
+                    return@secondTypes false
+                if (!secondTypeConstructor.isDefinitelyClass() && !secondTypeConstructor.isTypeParameterTypeConstructor())
+                    return@secondTypes false
+
+                if (!first.containsTypeParameter() && !second.containsTypeParameter()) {
+                    return@secondTypes !isRelatedBySubtypingTo(this@ConstraintSystemCompletionContext, first, second)
+                }
+
+                if (constraintSystem == null) return false
+
+                val completerContext = constraintSystem.asConstraintSystemCompleterContext()
+                val substitutionMap = completerContext.allTypeVariables.entries.associate { (key, value) ->
+                    val typeParameter = (key as TypeVariableTypeConstructorMarker).typeParameter
+                    require(typeParameter != null) {
+                        "Constraint system for checking type parameters for intersection emptiness" +
+                                "should be build with type variables which refer to those type parameters"
+                    }
+                    typeParameter.getTypeConstructor() to value.defaultType()
+                }
+                val substitutor = typeSubstitutorByTypeConstructor(substitutionMap)
+
+                completerContext.getBuilder().addSubtypeConstraint(
+                    substitutor.safeSubstitute(first), substitutor.safeSubstitute(second), TypeParametersIntersectionEmptyCheckingPosition
+                )
+
+                constraintSystem.hasContradiction
+            }
+        }
+    }
 
     fun <A : PostponedResolvedAtomMarker> analyzeArgumentWithFixedParameterTypes(
         languageVersionSettings: LanguageVersionSettings,

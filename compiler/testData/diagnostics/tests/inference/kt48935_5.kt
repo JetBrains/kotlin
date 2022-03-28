@@ -1,5 +1,4 @@
 // FIR_IDENTICAL
-// RENDER_DIAGNOSTICS_FULL_TEXT
 interface Base
 
 class DoesNotImplementBase

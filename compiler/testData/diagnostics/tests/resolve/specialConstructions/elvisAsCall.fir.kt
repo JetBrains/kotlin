@@ -13,7 +13,7 @@ fun testElvis(a: Int?, b: Int?) {
     if (a != null) {
         doInt(b ?: a)
     }
-    <!INFERRED_TYPE_VARIABLE_INTO_EMPTY_INTERSECTION!>doList<!>(getList() ?: emptyListOfA()) //should be an error
+    doList(getList() ?: emptyListOfA()) //should be an error
     doList(getList() ?: strangeList { doInt(it) }) //lambda was not analyzed
 }
 

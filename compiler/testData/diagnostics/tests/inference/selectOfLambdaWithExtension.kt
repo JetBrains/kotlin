@@ -14,7 +14,7 @@ val a1: A = select(
     { a: Int -> myPrint(a + this.length + 2) }
 )
 
-val a2 = <!INFERRED_TYPE_VARIABLE_INTO_EMPTY_INTERSECTION_WARNING!>select<!>(
+val a2 = select(
     { a: Int -> myPrint(a + this.length + 1) },
     fun CharSequence.(a: Int) { myPrint(a + this.length + 2) },
     { a: Int -> myPrint(a + this.length + 3) }

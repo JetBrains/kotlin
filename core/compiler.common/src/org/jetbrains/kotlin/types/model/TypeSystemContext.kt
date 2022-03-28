@@ -178,26 +178,6 @@ interface TypeSystemInferenceExtensionContext : TypeSystemContext, TypeSystemBui
 
     fun KotlinTypeMarker.isFinal(): Boolean
 
-    fun Collection<KotlinTypeMarker>.isEmptyIntersection(): Boolean {
-        val expandedTypes = buildSet {
-            for (type in this@isEmptyIntersection) {
-                val typeConstructor = type.typeConstructor()
-                when {
-                    typeConstructor.isClassTypeConstructor() -> add(type)
-                    typeConstructor.isTypeParameterTypeConstructor() -> addAll(typeConstructor.supertypes())
-                }
-            }
-        }.takeIf { it.isNotEmpty() } ?: return false
-
-        return expandedTypes.any { first ->
-            expandedTypes.any { second ->
-                first !== second &&
-                        first.isFinal() &&
-                        !AbstractTypeChecker.isSubtypeOf(this@TypeSystemInferenceExtensionContext, first, second)
-            }
-        }
-    }
-
     fun KotlinTypeMarker.removeAnnotations(): KotlinTypeMarker
     fun KotlinTypeMarker.removeExactAnnotation(): KotlinTypeMarker
 

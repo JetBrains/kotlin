@@ -1,8 +1,7 @@
 // FIR_IDENTICAL
-// RENDER_DIAGNOSTICS_FULL_TEXT
 interface Base
 
-class DoesNotImplementBase
+interface DoesNotImplementBase
 
 fun <T, V> exampleGenericFunction(func: V) where T: Base, V: (T) -> Unit {
 
