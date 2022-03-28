@@ -1,6 +1,8 @@
 // IGNORE_BACKEND_FIR: JVM_IR
 // FIR status: not supported in JVM IR
 // IGNORE_BACKEND: JVM_IR
+// IGNORE_BACKEND: NATIVE
+// Native: https://youtrack.jetbrains.com/issue/KT-48749
 
 import kotlin.reflect.KProperty
 
