@@ -233,4 +233,39 @@ class ExtrasTest {
             extraKey<Int>().withCapability(capabilityA).withCapability(capabilityB)
         )
     }
+
+    @Test
+    fun `test - add two extras`() {
+        val capability = object : Extras.Key.Capability<Int> {}
+
+        val keyA = extraKey<Int>("a")
+        val keyB = extraKey<Int>("b")
+        val keyC = extraKey<Int>("c")
+        val keyD = extraKey<Int>()
+        val keyE = extraKey<Int>() + capability
+
+        val extras1 = extrasOf(
+            keyA withValue 0,
+            keyB withValue 1,
+            keyC withValue 2,
+            keyD withValue 3
+        )
+
+        val extras2 = extrasOf(
+            keyC withValue 4,
+            keyE withValue 5
+        )
+
+        val combinedExtras = extras1 + extras2
+
+        assertEquals(
+            extrasOf(
+                keyA withValue 0,
+                keyB withValue 1,
+                keyC withValue 4,
+                keyE withValue 5
+            ),
+            combinedExtras
+        )
+    }
 }
