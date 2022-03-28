@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 fun test1(d: dynamic) = d.member(1, 2, 3)
 
 fun test2(d: dynamic) = d?.member(1, 2, 3)
