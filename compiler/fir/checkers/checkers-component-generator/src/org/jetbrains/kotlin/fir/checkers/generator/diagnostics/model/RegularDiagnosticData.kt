@@ -113,7 +113,7 @@ enum class PositioningStrategy(private val strategy: String? = null) {
     DECLARATION_START_TO_NAME,
     REDUNDANT_NULLABLE,
     INLINE_FUN_MODIFIER,
-
+    CALL_ELEMENT_WITH_DOT,
     ;
 
     val expressionToCreate get() = "SourceElementPositioningStrategies.${strategy ?: name}"
