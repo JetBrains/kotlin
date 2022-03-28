@@ -1,0 +1,85 @@
+data class MyContainer {
+  constructor(i: Int) /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  var i: Int
+    field = i
+    get
+    set
+
+  operator fun component1(): Int {
+    return <this>.#i
+  }
+
+  fun copy(i: Int = <this>.#i): MyContainer {
+    return MyContainer(i = i)
+  }
+
+  override fun equals(other: Any?): Boolean {
+    when {
+      EQEQEQ(arg0 = <this>, arg1 = other) -> return true
+    }
+    when {
+      other !is MyContainer -> return false
+    }
+    val tmp0_other_with_cast: MyContainer = other as MyContainer
+    when {
+      EQEQ(arg0 = <this>.#i, arg1 = tmp0_other_with_cast.#i).not() -> return false
+    }
+    return true
+  }
+
+  override fun hashCode(): Int {
+    return <this>.#i.hashCode()
+  }
+
+  override fun toString(): String {
+    return "MyContainer(" + "i=" + <this>.#i + ")"
+  }
+
+}
+
+var operationScore: Int
+  field = 0
+  get
+  set
+
+operator fun MyContainer.get(_context_receiver_0: Int, index: Int): Int {
+  <set-operationScore>(<set-?> = <get-operationScore>().plus(other = _context_receiver_0))
+  return when {
+    EQEQ(arg0 = index, arg1 = 0) -> <this>.<get-i>()
+    else -> -1
+  }
+}
+
+operator fun MyContainer.plusAssign(_context_receiver_0: Int, other: MyContainer) {
+  <set-operationScore>(<set-?> = <get-operationScore>().plus(other = _context_receiver_0))
+  <this>.<set-i>(<set-?> = <this>.<get-i>().plus(other = other.<get-i>()))
+}
+
+operator fun MyContainer.inc(_context_receiver_0: Int): MyContainer {
+  <set-operationScore>(<set-?> = <get-operationScore>().plus(other = _context_receiver_0))
+  return MyContainer(i = <this>.<get-i>().plus(other = 1))
+}
+
+fun box(): String {
+  var myContainer: MyContainer = MyContainer(i = 0)
+  with<Int, Unit>(receiver = 1, block = local fun Int.<anonymous>() {
+    myContainer.plusAssign(_context_receiver_0 = $this$with, other = MyContainer(i = { // BLOCK
+      val <unary>: MyContainer = myContainer
+      myContainer = <unary>.inc(_context_receiver_0 = $this$with)
+      <unary>
+    }.get(_context_receiver_0 = $this$with, index = 0)))
+  }
+)
+  return when {
+    when {
+      EQEQ(arg0 = myContainer.<get-i>(), arg1 = 1) -> EQEQ(arg0 = <get-operationScore>(), arg1 = 3)
+      else -> false
+    } -> "OK"
+    else -> "fail"
+  }
+}

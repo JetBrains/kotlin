@@ -1,0 +1,90 @@
+data class Pair<A : Any?, B : Any?> {
+  constructor(first: A, second: B) /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  val first: A
+    field = first
+    get
+
+  val second: B
+    field = second
+    get
+
+  operator fun component1(): A {
+    return <this>.#first
+  }
+
+  operator fun component2(): B {
+    return <this>.#second
+  }
+
+  fun copy(first: A = <this>.#first, second: B = <this>.#second): Pair<A, B> {
+    return Pair<Any, Any>(first = first, second = second)
+  }
+
+  override fun equals(other: Any?): Boolean {
+    when {
+      EQEQEQ(arg0 = <this>, arg1 = other) -> return true
+    }
+    when {
+      other !is Pair<A, B> -> return false
+    }
+    val tmp0_other_with_cast: Pair<A, B> = other as Pair<A, B>
+    when {
+      EQEQ(arg0 = <this>.#first, arg1 = tmp0_other_with_cast.#first).not() -> return false
+    }
+    when {
+      EQEQ(arg0 = <this>.#second, arg1 = tmp0_other_with_cast.#second).not() -> return false
+    }
+    return true
+  }
+
+  override fun hashCode(): Int {
+    var result: Int = when {
+      EQEQ(arg0 = <this>.#first, arg1 = null) -> 0
+      else -> <this>.#first.hashCode()
+    }
+    result = result.times(other = 31).plus(other = when {
+      EQEQ(arg0 = <this>.#second, arg1 = null) -> 0
+      else -> <this>.#second.hashCode()
+    })
+    return result
+  }
+
+  override fun toString(): String {
+    return "Pair(" + "first=" + <this>.#first + ", " + "second=" + <this>.#second + ")"
+  }
+
+}
+
+infix operator fun <T : Any?> T.compareTo(_context_receiver_0: Comparator<T>, other: T): Int {
+  return _context_receiver_0.compare(p0 = <this>, p1 = other)
+}
+
+val <T : Any?> Pair<T, T>.min: T
+  get(_context_receiver_0: Comparator<T>): T {
+    return when {
+      less(arg0 = <this>.<get-first>().compareTo<T>(_context_receiver_0 = _context_receiver_0, other = <this>.<get-second>()), arg1 = 0) -> <this>.<get-first>()
+      else -> <this>.<get-second>()
+    }
+  }
+
+fun box(): String {
+  val comparator: Comparator<@FlexibleNullability String?> = local fun <anonymous>(a: @FlexibleNullability String?, b: @FlexibleNullability String?): Int {
+    return when {
+      when {
+        EQEQ(arg0 = a, arg1 = null) -> true
+        else -> EQEQ(arg0 = b, arg1 = null)
+      } -> 0
+      else -> a.<get-length>().compareTo(other = b.<get-length>())
+    }
+  }
+ /*-> Comparator<@FlexibleNullability String?> */
+  return with<Comparator<@FlexibleNullability String?>, String>(receiver = comparator, block = local fun Comparator<@FlexibleNullability String?>.<anonymous>(): String {
+    return Pair<String, String>(first = "OK", second = "fail").<get-min><String>(_context_receiver_0 = $this$with)
+  }
+)
+}
