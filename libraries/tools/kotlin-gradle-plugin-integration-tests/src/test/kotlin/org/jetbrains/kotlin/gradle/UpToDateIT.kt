@@ -99,8 +99,13 @@ class UpToDateIT : KGPBaseTest() {
         val originalPaths get() = originalCompilerCp.map { it.replace("\\", "/") }.joinToString(", ") { "'$it'" }
 
         override fun initProject(project: TestProject) = with(project) {
+            val pluginSuffix = if (project.gradleVersion < GradleVersion.version("7.0")) {
+                "kotlin_gradle_plugin"
+            } else {
+                "kotlin_gradle_plugin_gradle70"
+            }
             buildGradle.appendText(
-                "\nafterEvaluate { println 'compiler_cp=' + compileKotlin.getDefaultCompilerClasspath\$kotlin_gradle_plugin().toList() }"
+                "\nafterEvaluate { println 'compiler_cp=' + compileKotlin.getDefaultCompilerClasspath\$$pluginSuffix().toList() }"
             )
             build("clean") {
                 originalCompilerCp = compilerClasspathRegex.find(output)!!.groupValues[1].split(", ")
@@ -111,9 +116,9 @@ class UpToDateIT : KGPBaseTest() {
                 
                 // Add Kapt to the project to test its input checks as well:
                 apply plugin: 'kotlin-kapt'
-                compileKotlin.getDefaultCompilerClasspath${'$'}kotlin_gradle_plugin().setFrom(files($originalPaths).toList())
+                compileKotlin.getDefaultCompilerClasspath${'$'}$pluginSuffix().setFrom(files($originalPaths).toList())
                 afterEvaluate {
-                    kaptGenerateStubsKotlin.getDefaultCompilerClasspath${'$'}kotlin_gradle_plugin().setFrom(files($originalPaths).toList())
+                    kaptGenerateStubsKotlin.getDefaultCompilerClasspath${'$'}$pluginSuffix().setFrom(files($originalPaths).toList())
                 }
                 """.trimIndent()
             )

@@ -1,7 +1,7 @@
 plugins {
-    id "kotlin2js"
     id "maven-publish"
     id "org.jetbrains.kotlin.plugin.serialization"
+    id "org.jetbrains.kotlin.js"
 }
 
 group = "com.example"
@@ -27,15 +27,4 @@ if (project.findProperty("mppProjectDependency") == "true") {
         api "com.example:mpp-lib:1.0"
     }
 
-}
-
-publishing {
-    publications {
-        main(MavenPublication) {
-            from components.java
-        }
-    }
-    repositories {
-        maven { setUrl("${rootProject.buildDir}/repo") }
-    }
 }

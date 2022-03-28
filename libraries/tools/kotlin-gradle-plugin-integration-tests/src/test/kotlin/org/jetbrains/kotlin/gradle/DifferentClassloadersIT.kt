@@ -84,8 +84,8 @@ class DifferentClassloadersIT : KGPBaseTest() {
         }
         subProject("js-app").buildGradle.modify {
             it.checkedReplace(
-                "id \"kotlin2js\"",
-                "id \"kotlin2js\" version \"${TestVersions.Kotlin.CURRENT}\""
+                "id \"org.jetbrains.kotlin.js\"",
+                "id \"org.jetbrains.kotlin.js\" version \"${TestVersions.Kotlin.CURRENT}\""
             )
         }
 
