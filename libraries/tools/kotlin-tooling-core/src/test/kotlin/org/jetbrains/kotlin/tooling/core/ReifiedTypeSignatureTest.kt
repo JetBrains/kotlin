@@ -54,7 +54,7 @@ class ReifiedTypeSignatureTest {
     @Test
     fun `test - sample 5 - inner class`() {
         assertEquals(
-            "org.jetbrains.kotlin.tooling.core.KotlinReifiedTypeSignatureTest.Outer.Inner",
+            "org.jetbrains.kotlin.tooling.core.ReifiedTypeSignatureTest.Outer.Inner",
             reifiedTypeSignatureOf<Outer.Inner>().signature
         )
     }
@@ -62,18 +62,18 @@ class ReifiedTypeSignatureTest {
     @Test
     fun `test - sample 6 - recursive types`() {
         assertEquals(
-            "org.jetbrains.kotlin.tooling.core.KotlinReifiedTypeSignatureTest.Recursive<*>",
+            "org.jetbrains.kotlin.tooling.core.ReifiedTypeSignatureTest.Recursive<*>",
             reifiedTypeSignatureOf<Recursive<*>>().signature
         )
 
         assertEquals(
-            "org.jetbrains.kotlin.tooling.core.KotlinReifiedTypeSignatureTest.AnyRecursive",
+            "org.jetbrains.kotlin.tooling.core.ReifiedTypeSignatureTest.AnyRecursive",
             reifiedTypeSignatureOf<AnyRecursive>().signature
         )
 
         assertEquals(
-            "org.jetbrains.kotlin.tooling.core.KotlinReifiedTypeSignatureTest" +
-                    ".Recursive<org.jetbrains.kotlin.tooling.core.KotlinReifiedTypeSignatureTest.AnyRecursive>",
+            "org.jetbrains.kotlin.tooling.core.ReifiedTypeSignatureTest" +
+                    ".Recursive<org.jetbrains.kotlin.tooling.core.ReifiedTypeSignatureTest.AnyRecursive>",
             reifiedTypeSignatureOf<Recursive<AnyRecursive>>().signature
         )
     }
@@ -87,11 +87,11 @@ class ReifiedTypeSignatureTest {
     @Test
     fun `test sample 8 - variance`() {
         assertEquals(
-            "org.jetbrains.kotlin.tooling.core.KotlinReifiedTypeSignatureTest.Box<out kotlin.Int>",
+            "org.jetbrains.kotlin.tooling.core.ReifiedTypeSignatureTest.Box<out kotlin.Int>",
             reifiedTypeSignatureOf<Box<out Int>>().signature
         )
         assertEquals(
-            "org.jetbrains.kotlin.tooling.core.KotlinReifiedTypeSignatureTest.Box<in kotlin.Int>",
+            "org.jetbrains.kotlin.tooling.core.ReifiedTypeSignatureTest.Box<in kotlin.Int>",
             reifiedTypeSignatureOf<Box<in Int>>().signature
         )
     }
