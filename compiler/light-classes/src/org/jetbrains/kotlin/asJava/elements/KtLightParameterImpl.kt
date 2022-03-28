@@ -37,7 +37,9 @@ internal class KtLightParameterImpl(
 
     private val lightModifierList by lazyPub { KtLightSimpleModifierList(this, emptySet()) }
 
-    private var lightIdentifier: KtLightIdentifier? = null
+    private val lightIdentifier: KtLightIdentifier? by lazyPub {
+        KtLightIdentifier(this, kotlinOrigin)
+    }
 
     override val kotlinOrigin: KtParameter?
         get() {
@@ -87,12 +89,7 @@ internal class KtLightParameterImpl(
 
     override fun getTextRange(): TextRange = kotlinOrigin?.textRange ?: TextRange.EMPTY_RANGE
 
-    override fun getNameIdentifier(): PsiIdentifier? {
-        if (lightIdentifier == null) {
-            lightIdentifier = KtLightIdentifier(this, kotlinOrigin)
-        }
-        return lightIdentifier
-    }
+    override fun getNameIdentifier(): PsiIdentifier? = lightIdentifier
 
     override fun getParent(): PsiElement = method.parameterList
 
