@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
 import org.jetbrains.kotlin.ir.util.DeserializableClass
 import org.jetbrains.kotlin.ir.util.IdSignature
+import org.jetbrains.kotlin.ir.util.isEnumClass
 import org.jetbrains.kotlin.ir.util.isObject
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.util.OperatorNameConventions
@@ -220,7 +221,9 @@ class Fir2IrLazyClass(
         fir !is FirMemberDeclaration ||
                 !Visibilities.isPrivate(fir.visibility) ||
                 // This exception is needed for K/N caches usage
-                (isObject && fir is FirConstructor)
+                (isObject && fir is FirConstructor) ||
+                // Needed for enums
+                (this.isEnumClass && fir is FirConstructor)
 
     override var metadata: MetadataSource?
         get() = null
