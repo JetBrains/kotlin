@@ -209,7 +209,7 @@ class ClassicFrontendFacade(
             lookupTracker = LookupTracker.DO_NOTHING,
             expectActualTracker = ExpectActualTracker.DoNothing,
             inlineConstTracker = InlineConstTracker.DoNothing,
-            reflectTracker = ReflektTracker.DoNothing,
+            reflektTracker = ReflektTracker.DoNothing,
             packagePartProvider = packagePartProviderFactory(moduleContentScope),
             languageVersionSettings = module.languageVersionSettings,
             useBuiltInsProvider = true

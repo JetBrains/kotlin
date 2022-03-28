@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.frontend.js.di.createTopDownAnalyzerForJs
 import org.jetbrains.kotlin.incremental.components.ExpectActualTracker
 import org.jetbrains.kotlin.incremental.components.InlineConstTracker
 import org.jetbrains.kotlin.incremental.components.LookupTracker
+import org.jetbrains.kotlin.incremental.components.ReflektTracker
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.BindingContext
@@ -56,6 +57,7 @@ abstract class AbstractJsScriptlikeCodeAnalyser(
         val lookupTracker = LookupTracker.DO_NOTHING
         val expectActualTracker = ExpectActualTracker.DoNothing
         val inlineConstTracker = InlineConstTracker.DoNothing
+        val reflektTracker = ReflektTracker.DoNothing
         val additionalPackages = emptyList<PackageFragmentProvider>()
         val moduleDescriptor = moduleContext.module
 
@@ -68,6 +70,7 @@ abstract class AbstractJsScriptlikeCodeAnalyser(
             lookupTracker,
             expectActualTracker,
             inlineConstTracker,
+            reflektTracker,
             additionalPackages,
             CompilerEnvironment,
         )
