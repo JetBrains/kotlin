@@ -53,7 +53,7 @@ class JsBoxRunner(testServices: TestServices) : AbstractJsArtifactsCollector(tes
         val globalDirectives = testServices.moduleStructure.allDirectives
 
         val esmOutputDir = JsEnvironmentConfigurator.getJsArtifactsOutputDir(testServices).esModulesSubDir
-        val esmDceOutputDir = JsEnvironmentConfigurator.getJsArtifactsOutputDir(testServices, TranslationMode.FULL_DCE).esModulesSubDir
+        val esmDceOutputDir = JsEnvironmentConfigurator.getJsArtifactsOutputDir(testServices, TranslationMode.FULL_DCE_MINIMIZED_NAMES).esModulesSubDir
 
         val dontSkipRegularMode = JsEnvironmentConfigurationDirectives.SKIP_REGULAR_MODE !in globalDirectives
         val runIrDce = JsEnvironmentConfigurationDirectives.RUN_IR_DCE in globalDirectives

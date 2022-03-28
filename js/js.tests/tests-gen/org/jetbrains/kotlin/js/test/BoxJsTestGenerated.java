@@ -2089,6 +2089,12 @@ public class BoxJsTestGenerated extends AbstractBoxJsTest {
         }
 
         @Test
+        @TestMetadata("exportClassWithInternal.kt")
+        public void testExportClassWithInternal() throws Exception {
+            runTest("js/js.translator/testData/box/export/exportClassWithInternal.kt");
+        }
+
+        @Test
         @TestMetadata("exportEnumClass.kt")
         public void testExportEnumClass() throws Exception {
             runTest("js/js.translator/testData/box/export/exportEnumClass.kt");

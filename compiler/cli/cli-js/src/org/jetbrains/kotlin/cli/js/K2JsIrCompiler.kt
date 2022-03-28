@@ -291,7 +291,7 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
 
                 val moduleKind = configurationJs[JSConfigurationKeys.MODULE_KIND]!!
 
-                val translationMode = TranslationMode.fromFlags(false, arguments.irPerModule)
+                val translationMode = TranslationMode.fromFlags(false, arguments.irPerModule, false)
 
                 val compiledModule = generateJsFromAst(
                     moduleName,
@@ -410,7 +410,10 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
                         moduleToName = ir.moduleFragmentToUniqueName
                     )
 
-                    transformer.generateModule(ir.allModules, setOf(TranslationMode.fromFlags(arguments.irDce, arguments.irPerModule)))
+                    transformer.generateModule(
+                        ir.allModules,
+                        setOf(TranslationMode.fromFlags(arguments.irDce, arguments.irPerModule, arguments.irMinimizedMemberNames))
+                    )
                 } else {
                     val transformer = IrModuleToJsTransformer(
                         ir.context,

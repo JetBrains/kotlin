@@ -52,10 +52,11 @@ class JsBridgesConstruction(context: JsIrBackendContext) : BridgesConstruction<J
         }
 
     override fun getBridgeOrigin(bridge: IrSimpleFunction): IrDeclarationOrigin =
-        if (bridge.hasStableJsName(context))
-            JsLoweredDeclarationOrigin.BRIDGE_WITH_STABLE_NAME
-        else
-            JsLoweredDeclarationOrigin.BRIDGE_WITHOUT_STABLE_NAME
+        when {
+            bridge.hasStableJsName(context) -> JsLoweredDeclarationOrigin.BRIDGE_WITH_STABLE_NAME
+            bridge.correspondingPropertySymbol != null -> JsLoweredDeclarationOrigin.BRIDGE_PROPERTY_ACCESSOR
+            else -> JsLoweredDeclarationOrigin.BRIDGE_WITHOUT_STABLE_NAME
+        }
 
     override fun extractValueParameters(
         blockBodyBuilder: IrBlockBodyBuilder,

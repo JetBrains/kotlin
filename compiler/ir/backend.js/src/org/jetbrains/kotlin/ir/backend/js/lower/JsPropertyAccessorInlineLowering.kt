@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.ir.backend.js.lower
 
+import org.jetbrains.kotlin.backend.common.ir.isTopLevel
 import org.jetbrains.kotlin.backend.common.lower.optimizations.PropertyAccessorInlineLowering
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.backend.js.codegen.JsGenerationGranularity
@@ -18,6 +19,9 @@ class JsPropertyAccessorInlineLowering(
     override fun IrProperty.isSafeToInline(accessContainer: IrDeclaration): Boolean {
         if (!isSafeToInlineInClosedWorld())
             return false
+
+        // Member properties could be safely inlined, because initialization processed via parent declaration
+        if (!isTopLevel) return true
 
         // TODO: teach the deserializer to load constant property initializers
         if (context.icCompatibleIr2Js) {

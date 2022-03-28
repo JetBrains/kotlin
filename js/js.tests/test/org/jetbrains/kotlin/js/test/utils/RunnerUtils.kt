@@ -129,7 +129,7 @@ fun getAllFilesForRunner(
     } else {
         // Old BE and ES modules
         val outputDir = JsEnvironmentConfigurator.getJsArtifactsOutputDir(testServices)
-        val dceOutputDir = JsEnvironmentConfigurator.getJsArtifactsOutputDir(testServices, TranslationMode.FULL_DCE)
+        val dceOutputDir = JsEnvironmentConfigurator.getJsArtifactsOutputDir(testServices, TranslationMode.FULL_DCE_MINIMIZED_NAMES)
 
         val artifactsPaths = modulesToArtifact.values.map { it.outputFile.absolutePath }.filter { !File(it).isDirectory }
         val allJsFiles = additionalFiles + inputJsFilesBefore +artifactsPaths + commonFiles + additionalMainFiles + inputJsFilesAfter
@@ -141,7 +141,7 @@ fun getAllFilesForRunner(
         if (runIrDce) {
             val dceJsFiles = artifactsPaths.map { it.replace(outputDir.absolutePath, dceOutputDir.absolutePath) }
             val dceAllJsFiles = additionalFiles + inputJsFilesBefore + dceJsFiles + commonFiles + additionalMainFiles + inputJsFilesAfter
-            result[TranslationMode.FULL_DCE] = dceAllJsFiles
+            result[TranslationMode.FULL_DCE_MINIMIZED_NAMES] = dceAllJsFiles
         }
 
         return result

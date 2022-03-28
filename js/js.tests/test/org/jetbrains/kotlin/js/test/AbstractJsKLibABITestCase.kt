@@ -76,9 +76,9 @@ abstract class AbstractJsKLibABITestCase : AbstractKlibABITestCase() {
             relativeRequirePath = false
         )
 
-        val compiledResult = transformer.generateModule(ir.allModules, setOf(TranslationMode.FULL_DCE))
+        val compiledResult = transformer.generateModule(ir.allModules, setOf(TranslationMode.FULL_DCE_MINIMIZED_NAMES))
 
-        val dceOutput = compiledResult.outputs[TranslationMode.FULL_DCE] ?: error("No DCE output")
+        val dceOutput = compiledResult.outputs[TranslationMode.FULL_DCE_MINIMIZED_NAMES] ?: error("No DCE output")
 
         val binariesDir = File(buildDir, BIN_DIR_NAME).also { it.mkdirs() }
 

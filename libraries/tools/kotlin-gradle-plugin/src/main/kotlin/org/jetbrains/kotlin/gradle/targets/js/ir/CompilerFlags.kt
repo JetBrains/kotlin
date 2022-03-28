@@ -22,6 +22,8 @@ internal const val PRODUCE_JS = "-Xir-produce-js"
 internal const val PRODUCE_UNZIPPED_KLIB = "-Xir-produce-klib-dir"
 internal const val PRODUCE_ZIPPED_KLIB = "-Xir-produce-klib-file"
 
+internal const val MINIMIZED_MEMBER_NAMES = "-Xir-minimized-member-names"
+
 internal const val MODULE_NAME = "-Xir-module-name"
 
 internal const val PER_MODULE = "-Xir-per-module"

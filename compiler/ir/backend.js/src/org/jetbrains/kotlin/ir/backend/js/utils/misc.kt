@@ -8,17 +8,16 @@ package org.jetbrains.kotlin.ir.backend.js.utils
 import org.jetbrains.kotlin.backend.common.ir.isMethodOfAny
 import org.jetbrains.kotlin.backend.common.ir.isTopLevel
 import org.jetbrains.kotlin.ir.IrElement
-import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.backend.js.JsCommonBackendContext
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.backend.js.JsLoweredDeclarationOrigin
 import org.jetbrains.kotlin.ir.backend.js.export.isExported
 import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.expressions.*
-import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
-import org.jetbrains.kotlin.ir.expressions.impl.IrVarargImpl
-import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.expressions.IrBlockBody
+import org.jetbrains.kotlin.ir.expressions.IrBody
+import org.jetbrains.kotlin.ir.expressions.IrCall
+import org.jetbrains.kotlin.ir.expressions.IrExpressionBody
 import org.jetbrains.kotlin.ir.types.getClass
 import org.jetbrains.kotlin.ir.types.isNullableAny
 import org.jetbrains.kotlin.ir.util.isEffectivelyExternal
@@ -38,7 +37,8 @@ fun IrFunction.hasStableJsName(context: JsIrBackendContext): Boolean {
     if (
         origin == JsLoweredDeclarationOrigin.JS_SHADOWED_EXPORT ||
         origin == IrDeclarationOrigin.FUNCTION_FOR_DEFAULT_PARAMETER ||
-        origin == JsLoweredDeclarationOrigin.BRIDGE_WITHOUT_STABLE_NAME
+        origin == JsLoweredDeclarationOrigin.BRIDGE_WITHOUT_STABLE_NAME ||
+        origin == JsLoweredDeclarationOrigin.BRIDGE_PROPERTY_ACCESSOR
     ) {
         return false
     }

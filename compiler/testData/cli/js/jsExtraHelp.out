@@ -17,6 +17,7 @@ where advanced options include:
                              Print declarations' reachability info to stdout during performing DCE
   -Xir-dce-runtime-diagnostic={log|exception}
                              Enable runtime diagnostics when performing DCE instead of removing declarations
+  -Xir-minimized-member-names Perform minimization for names of members
   -Xir-module-name=<name>    Specify a compilation module name for IR backend
   -Xir-new-ir2js             New fragment-based ir2js
   -Xir-only                  Disables pre-IR backend

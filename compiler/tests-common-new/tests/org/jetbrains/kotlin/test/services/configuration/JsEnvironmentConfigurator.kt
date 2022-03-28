@@ -56,9 +56,9 @@ class JsEnvironmentConfigurator(testServices: TestServices) : EnvironmentConfigu
         // Keep names short to keep path lengths under 255 for Windows
         private val outputDirByMode = mapOf(
             TranslationMode.FULL to "out",
-            TranslationMode.FULL_DCE to "outMin",
+            TranslationMode.FULL_DCE_MINIMIZED_NAMES to "outMin",
             TranslationMode.PER_MODULE to "outPm",
-            TranslationMode.PER_MODULE_DCE to "outPmMin"
+            TranslationMode.PER_MODULE_DCE_MINIMIZED_NAMES to "outPmMin"
         )
 
         private const val OUTPUT_KLIB_DIR_NAME = "outputKlibDir"

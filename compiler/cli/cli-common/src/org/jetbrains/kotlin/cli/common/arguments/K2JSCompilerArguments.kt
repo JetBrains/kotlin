@@ -137,6 +137,9 @@ class K2JSCompilerArguments : CommonCompilerArguments() {
     @Argument(value = "-Xir-property-lazy-initialization", description = "Perform lazy initialization for properties")
     var irPropertyLazyInitialization: Boolean by FreezableVar(true)
 
+    @Argument(value = "-Xir-minimized-member-names", description = "Perform minimization for names of members")
+    var irMinimizedMemberNames: Boolean by FreezableVar(false)
+
     @Argument(value = "-Xir-only", description = "Disables pre-IR backend")
     var irOnly: Boolean by FreezableVar(false)
 
