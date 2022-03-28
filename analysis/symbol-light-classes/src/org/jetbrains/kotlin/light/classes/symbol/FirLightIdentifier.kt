@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.light.classes.symbol
 
 import com.intellij.openapi.util.TextRange
-import com.intellij.psi.PsiCompiledElement
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.impl.light.LightIdentifier
@@ -25,7 +24,7 @@ internal class FirLightIdentifier(
 ) : LightIdentifier(
     lightOwner.manager,
     (firSymbol as? KtNamedSymbol)?.name?.identifierOrNullIfSpecial
-), PsiCompiledElement, PsiElementWithOrigin<PsiElement> {
+), PsiElementWithOrigin<PsiElement> {
 
     override val origin: PsiElement?
         get() = when (val ktDeclaration = firSymbol?.psi) {
@@ -38,7 +37,6 @@ internal class FirLightIdentifier(
             else -> null
         }
 
-    override fun getMirror(): PsiElement? = null
     override fun isPhysical(): Boolean = true
     override fun getParent(): PsiElement = lightOwner
     override fun getContainingFile(): PsiFile = lightOwner.containingFile
