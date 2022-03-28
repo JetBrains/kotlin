@@ -93,9 +93,8 @@ interface Extras {
     operator fun <T : Any> get(key: Key<T>): T?
 }
 
-interface IterableExtras : Extras, Iterable<Extras.Entry<*>> {
+interface IterableExtras : Extras, Collection<Extras.Entry<*>> {
     val entries: Set<Extras.Entry<*>>
-    fun isEmpty() = entries.isEmpty()
     fun isNotEmpty() = !isEmpty()
     override fun iterator(): Iterator<Extras.Entry<*>> = entries.iterator()
 }

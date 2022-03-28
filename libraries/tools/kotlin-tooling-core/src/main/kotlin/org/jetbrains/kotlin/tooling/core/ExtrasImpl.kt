@@ -19,6 +19,9 @@ internal class MutableExtrasImpl(
     override val entries: Set<Extras.Entry<*>>
         get() = extras.values.toSet()
 
+    override val size: Int
+        get() = extras.size
+
     override fun isEmpty(): Boolean = extras.isEmpty()
 
     override fun <T : Any> set(key: Extras.Key<T>, value: T?): T? {
@@ -41,6 +44,8 @@ internal class ImmutableExtrasImpl(
 
     override fun isEmpty(): Boolean = extras.isEmpty()
 
+    override val size: Int = extras.size
+
     override val entries: Set<Extras.Entry<*>> = extras.values.toSet()
 
     override fun <T : Any> get(key: Extras.Key<T>): T? {
@@ -49,6 +54,17 @@ internal class ImmutableExtrasImpl(
 }
 
 abstract class AbstractIterableExtras : IterableExtras {
+
+    override val size: Int get() = entries.size
+
+    override fun isEmpty(): Boolean = entries.isEmpty()
+
+    override fun contains(element: Extras.Entry<*>): Boolean =
+        entries.contains(element)
+
+    override fun containsAll(elements: Collection<Extras.Entry<*>>): Boolean =
+        entries.containsAll(elements)
+
     override fun equals(other: Any?): Boolean {
         if (other === this) return true
         if (other !is IterableExtras) return false
@@ -66,7 +82,9 @@ abstract class AbstractIterableExtras : IterableExtras {
 }
 
 internal object EmptyExtras : AbstractIterableExtras() {
+    override val size: Int = 0
     override val ids: Set<Extras.Id<*>> = emptySet()
     override val entries: Set<Extras.Entry<*>> = emptySet()
+    override fun isEmpty(): Boolean = true
     override fun <T : Any> get(key: Extras.Key<T>): T? = null
 }
