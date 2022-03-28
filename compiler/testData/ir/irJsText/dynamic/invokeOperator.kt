@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 fun invoke() {}
 
 fun test1(a: dynamic) = a(1)
