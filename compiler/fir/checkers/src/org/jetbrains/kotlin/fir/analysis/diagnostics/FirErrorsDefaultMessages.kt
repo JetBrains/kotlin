@@ -1693,7 +1693,13 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         map.put(NOT_NULL_ASSERTION_ON_LAMBDA_EXPRESSION, "Non-null assertion (!!) is called on a lambda expression")
         map.put(NOT_NULL_ASSERTION_ON_CALLABLE_REFERENCE, "Non-null assertion (!!) is called on a callable reference expression")
         map.put(UNNECESSARY_SAFE_CALL, "Unnecessary safe call on a non-null receiver of type {0}", RENDER_TYPE)
-        map.put(SAFE_CALL_WILL_CHANGE_NULLABILITY, "Safe call on a non-null receiver will have nullable type in future releases")
+        map.put(
+            SAFE_CALL_WILL_CHANGE_NULLABILITY,
+            """
+                |Safe call on a non-null receiver will have nullable type in future releases
+                |  Right now safe call on non nullable receiver has not null type: SomeType
+                |  In future releases all safe calls will have nullable type: SomeType?""".trimMargin()
+        )
         map.put(UNEXPECTED_SAFE_CALL, "Safe-call is not allowed here")
         map.put(USELESS_ELVIS, "Elvis operator (?:) always returns the left operand of non-nullable type {0}", RENDER_TYPE)
         map.put(USELESS_ELVIS_RIGHT_IS_NULL, "Right operand of elvis operator (?:) is useless if it is null")
