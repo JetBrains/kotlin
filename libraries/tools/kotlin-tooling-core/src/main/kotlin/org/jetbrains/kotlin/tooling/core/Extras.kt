@@ -88,7 +88,6 @@ interface Extras {
 
     val ids: Set<Id<*>>
     operator fun <T : Any> get(key: Key<T>): T?
-    operator fun <T : Any> contains(id: Id<T>): Boolean
 }
 
 interface IterableExtras : Extras, Iterable<Extras.Entry<*>> {
@@ -111,8 +110,8 @@ interface HasExtras {
     val extras: Extras
 }
 
-interface HasMutableExtras {
-    val extras: MutableExtras
+interface HasMutableExtras: HasExtras {
+    override val extras: MutableExtras
 }
 
 /**
