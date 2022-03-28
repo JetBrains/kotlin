@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.frontend.js.di.createContainerForJS
 import org.jetbrains.kotlin.incremental.components.ExpectActualTracker
 import org.jetbrains.kotlin.incremental.components.InlineConstTracker
 import org.jetbrains.kotlin.incremental.components.LookupTracker
+import org.jetbrains.kotlin.incremental.components.ReflektTracker
 import org.jetbrains.kotlin.incremental.js.IncrementalDataProvider
 import org.jetbrains.kotlin.js.analyzer.JsAnalysisResult
 import org.jetbrains.kotlin.js.config.ErrorTolerancePolicy
@@ -107,6 +108,7 @@ abstract class AbstractTopDownAnalyzerFacadeForJS {
         val lookupTracker = configuration.get(CommonConfigurationKeys.LOOKUP_TRACKER) ?: LookupTracker.DO_NOTHING
         val expectActualTracker = configuration.get(CommonConfigurationKeys.EXPECT_ACTUAL_TRACKER) ?: ExpectActualTracker.DoNothing
         val inlineConstTracker = configuration.get(CommonConfigurationKeys.INLINE_CONST_TRACKER) ?: InlineConstTracker.DoNothing
+        val reflektTracker = configuration.get(CommonConfigurationKeys.REFLEKT_TRACKER) ?: ReflektTracker.DoNothing
         val languageVersionSettings = configuration.languageVersionSettings
         val packageFragment = configuration[JSConfigurationKeys.INCREMENTAL_DATA_PROVIDER]?.let {
             loadIncrementalCacheMetadata(it, moduleContext, lookupTracker, languageVersionSettings)
@@ -119,6 +121,7 @@ abstract class AbstractTopDownAnalyzerFacadeForJS {
             lookupTracker,
             expectActualTracker,
             inlineConstTracker,
+            reflektTracker,
             additionalPackages + listOfNotNull(packageFragment),
             targetEnvironment,
         )

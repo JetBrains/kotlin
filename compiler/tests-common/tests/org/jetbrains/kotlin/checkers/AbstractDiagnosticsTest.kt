@@ -43,6 +43,7 @@ import org.jetbrains.kotlin.frontend.java.di.initJvmBuiltInsForTopDownAnalysis
 import org.jetbrains.kotlin.incremental.components.ExpectActualTracker
 import org.jetbrains.kotlin.incremental.components.InlineConstTracker
 import org.jetbrains.kotlin.incremental.components.LookupTracker
+import org.jetbrains.kotlin.incremental.components.ReflektTracker
 import org.jetbrains.kotlin.load.java.lazy.SingleModuleClassResolver
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -255,7 +256,8 @@ abstract class AbstractDiagnosticsTest : BaseDiagnosticsTest() {
         KotlinTestUtils.assertEqualsToFile(getExpectedDiagnosticsFile(testDataFile), actualText)
     }
 
-    private fun StringBuilder.cleanupInferenceDiagnostics(): String = replace(Regex("NI;([\\S]*), OI;\\1([,!])")) { it.groupValues[1] + it.groupValues[2] }
+    private fun StringBuilder.cleanupInferenceDiagnostics(): String =
+        replace(Regex("NI;([\\S]*), OI;\\1([,!])")) { it.groupValues[1] + it.groupValues[2] }
 
     protected open fun getExpectedDiagnosticsFile(testDataFile: File): File {
         return testDataFile
@@ -428,7 +430,10 @@ abstract class AbstractDiagnosticsTest : BaseDiagnosticsTest() {
             moduleContentScope,
             moduleClassResolver,
             CompilerEnvironment,
-            LookupTracker.DO_NOTHING, ExpectActualTracker.DoNothing, InlineConstTracker.DoNothing,
+            LookupTracker.DO_NOTHING,
+            ExpectActualTracker.DoNothing,
+            InlineConstTracker.DoNothing,
+            ReflektTracker.DoNothing,
             environment.createPackagePartProvider(moduleContentScope),
             languageVersionSettings,
             useBuiltInsProvider = true
@@ -464,7 +469,7 @@ abstract class AbstractDiagnosticsTest : BaseDiagnosticsTest() {
         for (dependency in dependencies) {
             if (dependency.platform.isCommon()) {
                 val files = dependency.getCapability(MODULE_FILES)
-                        ?: error("MODULE_FILES should have been set for the common module: $dependency")
+                    ?: error("MODULE_FILES should have been set for the common module: $dependency")
                 result.addAll(files)
             }
         }

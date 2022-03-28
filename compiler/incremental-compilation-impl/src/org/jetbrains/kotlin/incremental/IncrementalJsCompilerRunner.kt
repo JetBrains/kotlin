@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.config.IncrementalCompilation
 import org.jetbrains.kotlin.config.Services
 import org.jetbrains.kotlin.incremental.components.ExpectActualTracker
 import org.jetbrains.kotlin.incremental.components.LookupTracker
+import org.jetbrains.kotlin.incremental.components.ReflektTracker
 import org.jetbrains.kotlin.incremental.js.*
 import org.jetbrains.kotlin.incremental.multiproject.EmptyModulesApiHistory
 import org.jetbrains.kotlin.incremental.multiproject.ModulesApiHistory
@@ -159,11 +160,12 @@ class IncrementalJsCompilerRunner(
         args: K2JSCompilerArguments,
         lookupTracker: LookupTracker,
         expectActualTracker: ExpectActualTracker,
+        reflektTracker: ReflektTracker,
         caches: IncrementalJsCachesManager,
         dirtySources: Set<File>,
         isIncremental: Boolean
     ): Services.Builder =
-        super.makeServices(args, lookupTracker, expectActualTracker, caches, dirtySources, isIncremental).apply {
+        super.makeServices(args, lookupTracker, expectActualTracker, reflektTracker, caches, dirtySources, isIncremental).apply {
             if (isIncremental) {
                 if (scopeExpansion == CompileScopeExpansionMode.ALWAYS) {
                     val nextRoundChecker = IncrementalNextRoundCheckerImpl(caches, dirtySources)

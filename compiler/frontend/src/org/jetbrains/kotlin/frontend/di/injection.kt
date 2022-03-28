@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.idea.MainFunctionDetector
 import org.jetbrains.kotlin.incremental.components.ExpectActualTracker
 import org.jetbrains.kotlin.incremental.components.InlineConstTracker
 import org.jetbrains.kotlin.incremental.components.LookupTracker
+import org.jetbrains.kotlin.incremental.components.ReflektTracker
 import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.platform.TargetPlatformVersion
 import org.jetbrains.kotlin.platform.isCommon
@@ -130,10 +131,11 @@ fun StorageComponentContainer.configureStandardResolveComponents() {
     useImpl<AnnotationResolverImpl>()
 }
 
-fun StorageComponentContainer.configureIncrementalCompilation(lookupTracker: LookupTracker, expectActualTracker: ExpectActualTracker, inlineConstTracker: InlineConstTracker) {
+fun StorageComponentContainer.configureIncrementalCompilation(lookupTracker: LookupTracker, expectActualTracker: ExpectActualTracker, inlineConstTracker: InlineConstTracker, reflektTracker: ReflektTracker) {
     useInstance(lookupTracker)
     useInstance(expectActualTracker)
     useInstance(inlineConstTracker)
+    useInstance(reflektTracker)
 }
 
 fun createContainerForBodyResolve(

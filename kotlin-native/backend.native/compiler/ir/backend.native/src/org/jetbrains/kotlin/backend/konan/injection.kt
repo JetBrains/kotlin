@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.descriptors.impl.CompositePackageFragmentProvider
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.incremental.components.InlineConstTracker
 import org.jetbrains.kotlin.frontend.di.configureModule
+import org.jetbrains.kotlin.incremental.components.ReflektTracker
 import org.jetbrains.kotlin.platform.konan.NativePlatforms
 import org.jetbrains.kotlin.resolve.*
 import org.jetbrains.kotlin.resolve.konan.platform.NativePlatformAnalyzerServices
@@ -40,6 +41,7 @@ fun createTopDownAnalyzerProviderForKonan(
         useImpl<LazyTopDownAnalyzer>()
         useInstance(InlineConstTracker.DoNothing)
 
+        useInstance(ReflektTracker.DoNothing)
         initContainer()
     }.apply {
         val packagePartProviders = mutableListOf(get<KotlinCodeAnalyzer>().packageFragmentProvider)

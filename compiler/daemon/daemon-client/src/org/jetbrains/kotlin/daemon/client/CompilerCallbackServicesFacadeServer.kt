@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.incremental.components.ExpectActualTracker
 import org.jetbrains.kotlin.incremental.components.InlineConstTracker
 import org.jetbrains.kotlin.incremental.components.LookupInfo
 import org.jetbrains.kotlin.incremental.components.LookupTracker
+import org.jetbrains.kotlin.incremental.components.ReflektTracker
 import org.jetbrains.kotlin.incremental.js.IncrementalDataProvider
 import org.jetbrains.kotlin.incremental.js.IncrementalResultsConsumer
 import org.jetbrains.kotlin.incremental.js.JsInlineFunctionHash
@@ -38,6 +39,7 @@ open class CompilerCallbackServicesFacadeServer(
     val compilationCanceledStatus: CompilationCanceledStatus? = null,
     val expectActualTracker: ExpectActualTracker? = null,
     val inlineConstTracker: InlineConstTracker? = null,
+    val reflektTracker: ReflektTracker? = null,
     val incrementalResultsConsumer: IncrementalResultsConsumer? = null,
     val incrementalDataProvider: IncrementalDataProvider? = null,
     port: Int = SOCKET_ANY_FREE_PORT
@@ -56,6 +58,8 @@ open class CompilerCallbackServicesFacadeServer(
     override fun hasExpectActualTracker(): Boolean = expectActualTracker != null
 
     override fun hasInlineConstTracker(): Boolean = inlineConstTracker != null
+
+    override fun hasReflektTracker(): Boolean = reflektTracker != null
 
     override fun hasIncrementalResultsConsumer(): Boolean = incrementalResultsConsumer != null
 
@@ -122,6 +126,11 @@ open class CompilerCallbackServicesFacadeServer(
 
     override fun inlineConstTracker_report(filePath: String, owner: String, name: String, constType: String) {
         inlineConstTracker?.report(filePath, owner, name, constType) ?: throw NullPointerException("inlineConstTracker was not initialized")
+    }
+
+    override fun reflektTracker_report(fileSearchedByReflect: String, reflektUsageFile: String) {
+        reflektTracker?.report(File(fileSearchedByReflect), File(reflektUsageFile))
+            ?: throw NullPointerException("reflektTracker was not initialized")
     }
 
     override fun incrementalResultsConsumer_processHeader(headerMetadata: ByteArray) {

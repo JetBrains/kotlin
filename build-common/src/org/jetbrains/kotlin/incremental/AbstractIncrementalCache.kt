@@ -41,8 +41,9 @@ interface IncrementalCacheCommon {
     fun getComplementaryFilesRecursive(dirtyFiles: Collection<File>): Collection<File>
     fun updateComplementaryFiles(dirtyFiles: Collection<File>, expectActualTracker: ExpectActualTrackerImpl)
     fun dump(): String
-
     fun isSealed(className: FqName): Boolean?
+    fun `get all files with reflekt usage and all searched classes`(): List<File>
+    fun updateReflektDependencyMap(dirtyFiles: Collection<File>, reflektTrackerImpl: ReflektTrackerImpl)
 }
 
 /**
@@ -58,8 +59,11 @@ abstract class AbstractIncrementalCache<ClassName>(
         private val SUPERTYPES = "supertypes"
         private val CLASS_FQ_NAME_TO_SOURCE = "class-fq-name-to-source"
         private val COMPLEMENTARY_FILES = "complementary-files"
+        private val REFLEKT_DEPENDENCY = "reflekt-dependency"
+
         @JvmStatic
         protected val SOURCE_TO_CLASSES = "source-to-classes"
+
         @JvmStatic
         protected val DIRTY_OUTPUT_CLASSES = "dirty-output-classes"
     }
@@ -81,6 +85,7 @@ abstract class AbstractIncrementalCache<ClassName>(
     protected val classFqNameToSourceMap = registerMap(ClassFqNameToSourceMap(CLASS_FQ_NAME_TO_SOURCE.storageFile, pathConverter))
     internal abstract val sourceToClassesMap: AbstractSourceToOutputMap<ClassName>
     internal abstract val dirtyOutputClassesMap: AbstractDirtyClassesMap<ClassName>
+
     /**
      * A file X is a complementary to a file Y if they contain corresponding expect/actual declarations.
      * Complementary files should be compiled together during IC so the compiler does not complain
@@ -88,6 +93,7 @@ abstract class AbstractIncrementalCache<ClassName>(
      * TODO: provide a better solution (maintain an index of expect/actual declarations akin to IncrementalPackagePartProvider)
      */
     private val complementaryFilesMap = registerMap(ComplementarySourceFilesMap(COMPLEMENTARY_FILES.storageFile, pathConverter))
+    private val reflektDependencyMap = registerMap(ReflektDependencyMap(REFLEKT_DEPENDENCY.storageFile, pathConverter))
 
     override fun classesFqNamesBySources(files: Iterable<File>): Collection<FqName> =
         files.flatMapTo(HashSet()) { sourceToClassesMap.getFqNames(it) }
@@ -228,6 +234,18 @@ abstract class AbstractIncrementalCache<ClassName>(
 
         for ((actual, expects) in actualToExpect) {
             complementaryFilesMap[actual] = expects
+        }
+    }
+
+    override fun `get all files with reflekt usage and all searched classes`() = reflektDependencyMap.getAllFiles()
+
+    override fun updateReflektDependencyMap(dirtyFiles: Collection<File>, reflektTrackerImpl: ReflektTrackerImpl) {
+        dirtyFiles.forEach {
+            reflektDependencyMap.remove(it)
+        }
+
+        for ((file, reflektUsage) in reflektTrackerImpl.fileToReflektUsageMap) {
+            reflektDependencyMap[file] = reflektUsage
         }
     }
 }

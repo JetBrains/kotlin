@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.compilerRunner.toGeneratedFile
 import org.jetbrains.kotlin.config.Services
 import org.jetbrains.kotlin.incremental.components.ExpectActualTracker
 import org.jetbrains.kotlin.incremental.components.LookupTracker
+import org.jetbrains.kotlin.incremental.components.ReflektTracker
 import org.jetbrains.kotlin.incremental.parsing.classesFqNames
 import org.jetbrains.kotlin.incremental.util.BufferingMessageCollector
 import org.jetbrains.kotlin.name.FqName
@@ -286,6 +287,7 @@ abstract class IncrementalCompilerRunner<
         args: Args,
         lookupTracker: LookupTracker,
         expectActualTracker: ExpectActualTracker,
+        reflektTracker: ReflektTracker,
         caches: CacheManager,
         dirtySources: Set<File>,
         isIncremental: Boolean
@@ -293,6 +295,7 @@ abstract class IncrementalCompilerRunner<
         Services.Builder().apply {
             register(LookupTracker::class.java, lookupTracker)
             register(ExpectActualTracker::class.java, expectActualTracker)
+            register(ReflektTracker::class.java, reflektTracker)
             register(CompilationCanceledStatus::class.java, EmptyCompilationCanceledStatus)
         }
 
@@ -339,12 +342,14 @@ abstract class IncrementalCompilerRunner<
 
         while (dirtySources.any() || runWithNoDirtyKotlinSources(caches)) {
             val complementaryFiles = caches.platformCache.getComplementaryFilesRecursive(dirtySources)
-            dirtySources.addAll(complementaryFiles)
+            val reflektFiles = caches.platformCache.`get all files with reflekt usage and all searched classes`()
+            dirtySources.addAll(complementaryFiles + reflektFiles)
             caches.platformCache.markDirty(dirtySources)
             caches.inputsCache.removeOutputForSourceFiles(dirtySources)
 
             val lookupTracker = LookupTrackerImpl(LookupTracker.DO_NOTHING)
             val expectActualTracker = ExpectActualTrackerImpl()
+            val reflektTracker = ReflektTrackerImpl()
             //TODO(valtman) sourceToCompile calculate based on abiSnapshot
             val (sourcesToCompile, removedKotlinSources) = dirtySources.partition(File::exists)
 
@@ -353,7 +358,7 @@ abstract class IncrementalCompilerRunner<
             dirtySourcesSinceLastTimeFile.writeText(text)
 
             val services = makeServices(
-                args, lookupTracker, expectActualTracker, caches,
+                args, lookupTracker, expectActualTracker, reflektTracker, caches,
                 dirtySources.toSet(), compilationMode is CompilationMode.Incremental
             ).build()
 
@@ -390,6 +395,7 @@ abstract class IncrementalCompilerRunner<
                 caches.platformCache.updateComplementaryFiles(dirtySources, expectActualTracker)
                 caches.inputsCache.registerOutputForSourceFiles(generatedFiles)
                 caches.lookupCache.update(lookupTracker, sourcesToCompile, removedKotlinSources)
+                caches.platformCache.updateReflektDependencyMap(dirtySources, reflektTracker)
                 updateCaches(services, caches, generatedFiles, changesCollector)
             }
             if (compilationMode is CompilationMode.Rebuild) {

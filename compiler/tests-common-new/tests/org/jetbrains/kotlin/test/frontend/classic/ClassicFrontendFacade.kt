@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.frontend.java.di.initJvmBuiltInsForTopDownAnalysis
 import org.jetbrains.kotlin.incremental.components.ExpectActualTracker
 import org.jetbrains.kotlin.incremental.components.InlineConstTracker
 import org.jetbrains.kotlin.incremental.components.LookupTracker
+import org.jetbrains.kotlin.incremental.components.ReflektTracker
 import org.jetbrains.kotlin.ir.backend.js.JsFactories
 import org.jetbrains.kotlin.ir.backend.js.TopDownAnalyzerFacadeForJSIR
 import org.jetbrains.kotlin.ir.backend.js.jsResolveLibraries
@@ -208,6 +209,7 @@ class ClassicFrontendFacade(
             lookupTracker = LookupTracker.DO_NOTHING,
             expectActualTracker = ExpectActualTracker.DoNothing,
             inlineConstTracker = InlineConstTracker.DoNothing,
+            reflectTracker = ReflektTracker.DoNothing,
             packagePartProvider = packagePartProviderFactory(moduleContentScope),
             languageVersionSettings = module.languageVersionSettings,
             useBuiltInsProvider = true

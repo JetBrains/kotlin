@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.frontend.di.configureStandardResolveComponents
 import org.jetbrains.kotlin.incremental.components.ExpectActualTracker
 import org.jetbrains.kotlin.incremental.components.InlineConstTracker
 import org.jetbrains.kotlin.incremental.components.LookupTracker
+import org.jetbrains.kotlin.incremental.components.ReflektTracker
 import org.jetbrains.kotlin.js.resolve.JsPlatformAnalyzerServices
 import org.jetbrains.kotlin.platform.js.JsPlatforms
 import org.jetbrains.kotlin.resolve.BindingTrace
@@ -47,6 +48,7 @@ fun createContainerForJS(
     lookupTracker: LookupTracker,
     expectActualTracker: ExpectActualTracker,
     inlineConstTracker: InlineConstTracker,
+    reflektTracker: ReflektTracker,
     additionalPackages: List<PackageFragmentProvider>,
     targetEnvironment: TargetEnvironment,
 ): StorageComponentContainer {
@@ -59,7 +61,7 @@ fun createContainerForJS(
             languageVersionSettings
         )
 
-        configureIncrementalCompilation(lookupTracker, expectActualTracker, inlineConstTracker)
+        configureIncrementalCompilation(lookupTracker, expectActualTracker, inlineConstTracker, reflektTracker)
         configureStandardResolveComponents()
 
         useInstance(declarationProviderFactory)
@@ -83,11 +85,12 @@ fun createTopDownAnalyzerForJs(
     lookupTracker: LookupTracker,
     expectActualTracker: ExpectActualTracker,
     inlineConstTracker: InlineConstTracker,
+    reflektTracker: ReflektTracker,
     additionalPackages: List<PackageFragmentProvider>,
     targetEnvironment: TargetEnvironment,
 ): LazyTopDownAnalyzer {
     return createContainerForJS(
         moduleContext, bindingTrace, declarationProviderFactory, languageVersionSettings,
-        lookupTracker, expectActualTracker, inlineConstTracker, additionalPackages, targetEnvironment
+        lookupTracker, expectActualTracker, inlineConstTracker, reflektTracker, additionalPackages, targetEnvironment
     ).get<LazyTopDownAnalyzer>()
 }

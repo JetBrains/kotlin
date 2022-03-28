@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.frontend.java.di.createContainerForLazyResolveWithJa
 import org.jetbrains.kotlin.incremental.components.ExpectActualTracker
 import org.jetbrains.kotlin.incremental.components.InlineConstTracker
 import org.jetbrains.kotlin.incremental.components.LookupTracker
+import org.jetbrains.kotlin.incremental.components.ReflektTracker
 import org.jetbrains.kotlin.load.java.lazy.ModuleClassResolverImpl
 import org.jetbrains.kotlin.load.java.structure.JavaClass
 import org.jetbrains.kotlin.load.kotlin.PackagePartProvider
@@ -114,6 +115,7 @@ class JvmResolverForModuleFactory(
             lookupTracker,
             ExpectActualTracker.DoNothing,
             InlineConstTracker.DoNothing,
+            ReflektTracker.DoNothing,
             packagePartProvider,
             languageVersionSettings,
             sealedInheritorsProvider = sealedInheritorsProvider,
