@@ -955,20 +955,23 @@ class ControlFlowInformationProviderImpl private constructor(
         for (element in instruction.owner.getValueElements(value)) {
             if (element !is KtIfExpression) continue
 
-            if (element.isUsedAsExpression(trace.bindingContext)) {
-                val thenExpression = element.then
-                val elseExpression = element.`else`
+            val thenExpression = element.then
+            val elseExpression = element.`else`
+            val isEhxaustive = thenExpression != null && elseExpression != null
 
-                if (thenExpression == null || elseExpression == null) {
+            if (element.isUsedAsExpression(trace.bindingContext)) {
+                if (!isEhxaustive) {
                     trace.report(INVALID_IF_AS_EXPRESSION.on(element.ifKeyword))
                 } else {
                     checkImplicitCastOnConditionalExpression(element)
                 }
             } else if (!languageVersionSettings.supportsFeature(LanguageFeature.ProhibitNonExhaustiveIfInRhsOfElvis)) {
-                val parent = element.deparenthesizedParent
-                if (parent is KtBinaryExpression) {
-                    if (parent.operationToken === KtTokens.ELVIS) {
-                        trace.report(INVALID_IF_AS_EXPRESSION_WARNING.on(element.getIfKeyword()))
+                if (!isEhxaustive) {
+                    val parent = element.deparenthesizedParent
+                    if (parent is KtBinaryExpression) {
+                        if (parent.operationToken === KtTokens.ELVIS) {
+                            trace.report(INVALID_IF_AS_EXPRESSION_WARNING.on(element.getIfKeyword()))
+                        }
                     }
                 }
             }
@@ -1067,6 +1070,7 @@ class ControlFlowInformationProviderImpl private constructor(
                 if (
                     !usedAsExpression &&
                     missingCases.isNotEmpty() &&
+                    elseEntry == null &&
                     !languageVersionSettings.supportsFeature(LanguageFeature.ProhibitNonExhaustiveIfInRhsOfElvis)
                 ) {
                     val parent = element.deparenthesizedParent
