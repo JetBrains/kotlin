@@ -1,0 +1,14 @@
+interface A {
+  abstract fun a(): Int
+
+}
+
+interface B {
+  abstract fun b(): Int
+
+}
+
+val c: Int
+  get(_context_receiver_0: A, _context_receiver_1: B): Int {
+    return _context_receiver_0.a().plus(other = _context_receiver_1.b())
+  }

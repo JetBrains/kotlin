@@ -1,0 +1,55 @@
+class A<T : Any?> {
+  constructor(a: T) /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  val a: T
+    field = a
+    get
+
+}
+
+class B {
+  constructor(b: Any) /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  val b: Any
+    field = b
+    get
+
+}
+
+class C {
+  constructor(c: Any) /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  val c: Any
+    field = c
+    get
+
+}
+
+fun f(_context_receiver_0: A<Int>, _context_receiver_1: A<String>, _context_receiver_2: B) {
+  _context_receiver_0.<get-a>().toFloat() /*~> Unit */
+  _context_receiver_1.<get-a>().<get-length>() /*~> Unit */
+  _context_receiver_2.<get-b>() /*~> Unit */
+}
+
+val C.p: Int
+  get(_context_receiver_0: A<Int>, _context_receiver_1: A<String>, _context_receiver_2: B): Int {
+    _context_receiver_0.<get-a>().toFloat() /*~> Unit */
+    _context_receiver_1.<get-a>().<get-length>() /*~> Unit */
+    _context_receiver_2.<get-b>() /*~> Unit */
+    <this>.<get-c>() /*~> Unit */
+    <this>.<get-c>() /*~> Unit */
+    <this>.<get-c>() /*~> Unit */
+    return 1
+  }

@@ -1,6 +1,5 @@
 // !LANGUAGE: +ContextReceivers
 // TARGET_BACKEND: JVM_IR
-// IGNORE_BACKEND_FIR: JVM_IR
 
 class Context {
     fun c() = 1
