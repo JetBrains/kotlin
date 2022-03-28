@@ -87,12 +87,14 @@ afterEvaluate {
 // compileDebugKotlin.noStdlib == false
 ```
 
-### kotlin2js
+### Kotlin/JS
 
 How to apply:
 
 ```
-apply plugin: 'kotlin2js'
+plugins {
+    id 'org.jetbrains.kotlin.js'
+}
 ```
 
 Tasks:
@@ -106,7 +108,7 @@ Tasks:
 Each [KotlinJsCompile] task provides `kotlinOptions` ([KotlinJsOptions]) extension:
 
 ```
-compileKotlin2Js {
+compileKotlinJs {
     kotlinOptions {
         noStdlib = true
     }

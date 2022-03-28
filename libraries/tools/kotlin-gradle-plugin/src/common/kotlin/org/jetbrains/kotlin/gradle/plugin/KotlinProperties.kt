@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.cli.common.CompilerSystemProperties
 import org.jetbrains.kotlin.cli.common.toBooleanLenient
 import org.jetbrains.kotlin.gradle.dsl.NativeCacheKind
 import org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessageOutputStreamHandler.Companion.IGNORE_TCSM_OVERFLOW
-import org.jetbrains.kotlin.gradle.plugin.Kotlin2JsPlugin.Companion.NOWARN_2JS_FLAG
 import org.jetbrains.kotlin.gradle.plugin.KotlinJsCompilerType.Companion.jsCompilerProperty
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_ABI_SNAPSHOT
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_MPP_ENABLE_CINTEROP_COMMONIZATION
@@ -417,9 +416,6 @@ internal class PropertiesProvider private constructor(private val project: Proje
             KotlinBuildStatsService.getInstance()
                 ?.report(StringMetrics.JS_GENERATE_EXECUTABLE_DEFAULT, it.toString())
         }
-
-    val noWarn2JsPlugin: Boolean
-        get() = booleanProperty(NOWARN_2JS_FLAG) ?: false
 
     val stdlibDefaultDependency: Boolean
         get() = booleanProperty(KOTLIN_STDLIB_DEFAULT_DEPENDENCY) ?: true
