@@ -62,6 +62,9 @@ interface Extras {
             return Key(id = id, capabilities + capability)
         }
 
+        operator fun plus(capability: Capability<T>) =
+            withCapability(capability)
+
         inline fun <reified C : Capability<T>> capability(): C? {
             return capabilities.lastOrNull { capability -> capability is C }?.let { it as C }
         }
@@ -110,7 +113,7 @@ interface HasExtras {
     val extras: Extras
 }
 
-interface HasMutableExtras: HasExtras {
+interface HasMutableExtras : HasExtras {
     override val extras: MutableExtras
 }
 

@@ -44,6 +44,7 @@ public final class org/jetbrains/kotlin/tooling/core/Extras$Key {
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getId ()Lorg/jetbrains/kotlin/tooling/core/Extras$Id;
 	public fun hashCode ()I
+	public final fun plus (Lorg/jetbrains/kotlin/tooling/core/Extras$Key$Capability;)Lorg/jetbrains/kotlin/tooling/core/Extras$Key;
 	public fun toString ()Ljava/lang/String;
 	public final fun withCapability (Lorg/jetbrains/kotlin/tooling/core/Extras$Key$Capability;)Lorg/jetbrains/kotlin/tooling/core/Extras$Key;
 }
