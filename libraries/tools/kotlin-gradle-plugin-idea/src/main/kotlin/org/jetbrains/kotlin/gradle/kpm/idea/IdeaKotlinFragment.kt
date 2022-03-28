@@ -5,17 +5,15 @@
 
 package org.jetbrains.kotlin.gradle.kpm.idea
 
-import org.jetbrains.kotlin.tooling.core.HasExtras
 import java.io.Serializable
 
-sealed interface IdeaKotlinFragment : Serializable, HasExtras {
+sealed interface IdeaKotlinFragment : IdeaKotlinHasExtras, Serializable {
     val coordinates: IdeaKotlinFragmentCoordinates
     val platforms: Set<IdeaKotlinPlatform>
     val languageSettings: IdeaKotlinLanguageSettings?
     val dependencies: List<IdeaKotlinDependency>
     val sourceDirectories: List<IdeaKotlinSourceDirectory>
     val resourceDirectories: List<IdeaKotlinResourceDirectory>
-    override val extras: IdeaKotlinExtras
 }
 
 val IdeaKotlinFragment.name get() = coordinates.fragmentName

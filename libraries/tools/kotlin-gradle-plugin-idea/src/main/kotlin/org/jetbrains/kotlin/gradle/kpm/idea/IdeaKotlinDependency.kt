@@ -10,14 +10,12 @@ package org.jetbrains.kotlin.gradle.kpm.idea
 import org.jetbrains.kotlin.gradle.kpm.idea.IdeaKotlinDependency.Companion.CLASSPATH_BINARY_TYPE
 import org.jetbrains.kotlin.gradle.kpm.idea.IdeaKotlinDependency.Companion.DOCUMENTATION_BINARY_TYPE
 import org.jetbrains.kotlin.gradle.kpm.idea.IdeaKotlinDependency.Companion.SOURCES_BINARY_TYPE
-import org.jetbrains.kotlin.tooling.core.HasExtras
 import java.io.File
 import java.io.Serializable
 import java.util.*
 
-sealed interface IdeaKotlinDependency : HasExtras, Serializable {
+sealed interface IdeaKotlinDependency : IdeaKotlinHasExtras, Serializable {
     val coordinates: IdeaKotlinDependencyCoordinates?
-    override val extras: IdeaKotlinExtras
 
     companion object {
         const val CLASSPATH_BINARY_TYPE = "org.jetbrains.binary.type.classpath"

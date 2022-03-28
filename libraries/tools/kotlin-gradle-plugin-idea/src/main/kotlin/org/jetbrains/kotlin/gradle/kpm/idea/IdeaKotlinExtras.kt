@@ -10,6 +10,10 @@ import java.io.Serializable
 
 sealed interface IdeaKotlinExtras : Extras, Serializable
 
+sealed interface IdeaKotlinHasExtras : HasExtras {
+    override val extras: IdeaKotlinExtras
+}
+
 fun IdeaKotlinExtras(): IdeaKotlinExtras = EmptyIdeaKotlinExtras
 
 fun IdeaKotlinExtras(extras: IterableExtras): IdeaKotlinExtras {
