@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 val d: dynamic = 1
 
 val p: Int = d
