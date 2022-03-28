@@ -9,7 +9,9 @@
 
 
 void kotlin::gc::FinalizerProcessor::StartFinalizerThreadIfNone() noexcept {
+    std::unique_lock guard(threadCreatingMutex_);
     if (finalizerThread_.joinable()) return;
+
     finalizerThread_ = ScopedThread(ScopedThread::attributes().name("GC finalizer processor"), [this] {
         Kotlin_initRuntimeIfNeeded();
         {
