@@ -37,7 +37,7 @@ interface Extras {
     }
 
     class Key<T : Any>(
-        val id: Id<T>, val capabilities: Set<Capability<T>> = emptySet()
+        val id: Id<T>, @PublishedApi internal val capabilities: Set<Capability<T>> = emptySet()
     ) {
 
         interface Capability<T>
