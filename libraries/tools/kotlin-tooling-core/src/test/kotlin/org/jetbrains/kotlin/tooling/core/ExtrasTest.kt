@@ -42,24 +42,6 @@ class ExtrasTest {
     }
 
     @Test
-    fun `test - contains`() {
-        val extras = mutableExtrasOf()
-        val key = extraKey<String>()
-        val keyA = extraKey<String>("a")
-
-        assertFalse(key.id in extras)
-        assertFalse(keyA.id in extras)
-
-        extras[key] = "value"
-        assertTrue(key.id in extras)
-        assertFalse(keyA.id in extras)
-
-        extras[keyA] = "value a"
-        assertTrue(key.id in extras)
-        assertTrue(keyA.id in extras)
-    }
-
-    @Test
     fun `test - ids`() {
         val stringKey = extraKey<String>()
         val stringKeyA = extraKey<String>("a")

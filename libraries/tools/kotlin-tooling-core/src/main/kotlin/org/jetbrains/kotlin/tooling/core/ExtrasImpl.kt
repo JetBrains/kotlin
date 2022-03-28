@@ -29,10 +29,6 @@ internal class MutableExtrasImpl(
     override fun <T : Any> get(key: Extras.Key<T>): T? {
         return extras[key.id]?.let { it.value as T }
     }
-
-    override fun <T : Any> contains(id: Extras.Id<T>): Boolean {
-        return ids.contains(id)
-    }
 }
 
 @Suppress("unchecked_cast")
@@ -50,8 +46,6 @@ internal class ImmutableExtrasImpl(
     override fun <T : Any> get(key: Extras.Key<T>): T? {
         return extras[key.id]?.let { it.value as T }
     }
-
-    override fun <T : Any> contains(id: Extras.Id<T>): Boolean = id in ids
 }
 
 abstract class AbstractIterableExtras : IterableExtras {
@@ -75,5 +69,4 @@ internal object EmptyExtras : AbstractIterableExtras() {
     override val ids: Set<Extras.Id<*>> = emptySet()
     override val entries: Set<Extras.Entry<*>> = emptySet()
     override fun <T : Any> get(key: Extras.Key<T>): T? = null
-    override fun <T : Any> contains(id: Extras.Id<T>): Boolean = false
 }

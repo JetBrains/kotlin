@@ -26,7 +26,6 @@ fun IdeaKotlinExtras(extras: IterableExtras): IdeaKotlinExtras {
 private class IdeaKotlinExtrasImpl(private val extras: IterableExtras) : IdeaKotlinExtras, AbstractIterableExtras() {
     override val ids: Set<Extras.Id<*>> get() = extras.ids
     override fun <T : Any> get(key: Extras.Key<T>): T? = extras[key]
-    override fun <T : Any> contains(id: Extras.Id<T>): Boolean = id in extras
     override val entries: Set<Extras.Entry<*>> = extras.entries
     override fun isEmpty(): Boolean = extras.isEmpty()
 
@@ -41,7 +40,6 @@ private object EmptyIdeaKotlinExtras : IdeaKotlinExtras, AbstractIterableExtras(
     override val entries: Set<Extras.Entry<*>> = emptySet()
     override val ids: Set<Extras.Id<*>> = emptySet()
     override fun <T : Any> get(key: Extras.Key<T>): T? = null
-    override fun <T : Any> contains(id: Extras.Id<T>): Boolean = false
 
     object Surrogate : Serializable {
         @Suppress("unused")
@@ -72,8 +70,6 @@ private class SerializedIdeaKotlinExtras(
     private val deserializedNulls = mutableSetOf<Extras.Id<*>>()
     private val deserializedExtras = mutableExtrasOf()
     override val ids: Set<Extras.Id<*>> = serializedExtras.keys.toSet()
-
-    override fun <T : Any> contains(id: Extras.Id<T>): Boolean = id in ids
 
     @Synchronized
     override fun <T : Any> get(key: Extras.Key<T>): T? {

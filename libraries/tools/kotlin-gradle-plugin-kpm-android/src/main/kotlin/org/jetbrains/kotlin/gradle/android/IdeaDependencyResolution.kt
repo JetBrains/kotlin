@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.gradle.android
 import com.android.build.gradle.internal.publishing.AndroidArtifacts
 import org.gradle.api.attributes.Usage
 import org.jetbrains.kotlin.gradle.kpm.external.ExternalVariantApi
- import org.jetbrains.kotlin.gradle.kpm.external.project
+import org.jetbrains.kotlin.gradle.kpm.external.project
 import org.jetbrains.kotlin.gradle.kpm.idea.IdeaKotlinDependency.Companion.CLASSPATH_BINARY_TYPE
 import org.jetbrains.kotlin.gradle.kpm.idea.IdeaKotlinProjectModelBuilder.FragmentConstraint
 import org.jetbrains.kotlin.gradle.kpm.idea.IdeaKotlinResolvedBinaryDependencyImpl
@@ -18,16 +18,14 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinPm20ProjectExtension
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.containingVariants
 
-@OptIn(ExternalVariantApi::class)
 val isAndroidFragment = FragmentConstraint { fragment ->
-    fragment.containingVariants.all { variant -> androidDslKey.id in variant.extras }
+    fragment.containingVariants.all { variant -> variant.androidDsl != null }
 }
 
-@OptIn(ExternalVariantApi::class)
 val isAndroidAndJvmSharedFragment = FragmentConstraint constraint@{ fragment ->
     val variants = fragment.containingVariants
     if (variants.any { it.platformType != KotlinPlatformType.jvm }) return@constraint false
-    variants.any { androidDslKey.id in it.extras } && variants.any { androidDslKey.id !in it.extras }
+    variants.any { it.androidDsl != null } && variants.any { it.androidDsl == null }
 }
 
 @OptIn(ExternalVariantApi::class, InternalKotlinGradlePluginApi::class)
