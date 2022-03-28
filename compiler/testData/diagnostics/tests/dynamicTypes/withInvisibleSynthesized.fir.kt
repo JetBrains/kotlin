@@ -21,8 +21,8 @@ import p.*
 
 class K: J.C() {
     fun <!UNSUPPORTED!>dynamic<!>.test() {
-        <!INVISIBLE_REFERENCE!>sam<!>(null)
-        <!INVISIBLE_REFERENCE!>sam<!>(
+        sam(null)
+        sam(
             name = null,
             name = null
         )
