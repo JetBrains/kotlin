@@ -140,7 +140,7 @@ abstract class AbstractIrTextTestCase : AbstractIrGeneratorTestCase() {
     }
 
     private fun verify(irFile: IrFile) {
-        IrVerifier(JUnit4Assertions).verifyWithAssert(irFile)
+        IrVerifier(JUnit4Assertions, isFir = false).verifyWithAssert(irFile)
     }
 
     internal class Expectations(val regexps: List<RegexpInText>, val irTreeFileLabels: List<IrTreeFileLabel>)

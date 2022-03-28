@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.test.backend.ir.IrBackendInput
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.EXTERNAL_FILE
 import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
+import org.jetbrains.kotlin.test.model.FrontendKinds
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestServices
 
@@ -27,7 +28,7 @@ class IrTreeVerifierHandler(testServices: TestServices) : AbstractIrHandler(test
         for ((testFile, irFile) in testFileToIrFile) {
             if (testFile?.directives?.contains(EXTERNAL_FILE) == true) continue
 
-            IrVerifier(assertions).verifyWithAssert(irFile)
+            IrVerifier(assertions, module.frontendKind == FrontendKinds.FIR).verifyWithAssert(irFile)
 
             val actualDump = irFile.dumpTreesFromLineNumber(lineNumber = 0, normalizeNames = true)
 

@@ -16,7 +16,10 @@ import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.test.Assertions
 
-class IrVerifier(private val assertions: Assertions) : IrElementVisitorVoid {
+class IrVerifier(
+    private val assertions: Assertions,
+    private val isFir: Boolean,
+) : IrElementVisitorVoid {
     private val errors = ArrayList<String>()
 
     private val symbolForDeclaration = HashMap<IrElement, IrSymbol>()
@@ -94,6 +97,10 @@ class IrVerifier(private val assertions: Assertions) : IrElementVisitorVoid {
     @OptIn(ObsoleteDescriptorBasedAPI::class)
     override fun visitFunction(declaration: IrFunction) {
         visitDeclaration(declaration)
+
+        // For FIR, we don't use descriptors to build IR, but vice versa
+        // And at some points, like context descriptors, they might differ
+        if (isFir) return
 
         val functionDescriptor = declaration.descriptor
 
