@@ -738,7 +738,12 @@ public class DefaultErrorMessages {
         MAP.put(EXCEPTION_FROM_ANALYZER, "Internal Error occurred while analyzing this expression:\n{0}", THROWABLE);
         MAP.put(MISSING_STDLIB, "{0}. Ensure you have the standard Kotlin library in dependencies", STRING);
         MAP.put(UNNECESSARY_SAFE_CALL, "Unnecessary safe call on a non-null receiver of type {0}", RENDER_TYPE);
-        MAP.put(SAFE_CALL_WILL_CHANGE_NULLABILITY, "Safe call on a non-null receiver will have nullable type in future releases");
+        MAP.put(
+                SAFE_CALL_WILL_CHANGE_NULLABILITY,
+                "Safe call on a non-null receiver will have nullable type in future releases\n" +
+                "  Right now safe call on non nullable receiver has not null type: `\"hello\"?.length` has type Int\n" +
+                "  In future releases all safe calls will have nullable type: `\"hello\"?.length` will have type Int?"
+        );
         MAP.put(UNEXPECTED_SAFE_CALL, "Safe-call is not allowed here");
         MAP.put(UNNECESSARY_NOT_NULL_ASSERTION, "Unnecessary non-null assertion (!!) on a non-null receiver of type {0}", RENDER_TYPE);
         MAP.put(NOT_NULL_ASSERTION_ON_LAMBDA_EXPRESSION, "Non-null assertion (!!) is called on a lambda expression");
