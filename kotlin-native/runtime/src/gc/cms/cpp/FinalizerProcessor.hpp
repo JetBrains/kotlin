@@ -38,6 +38,8 @@ private:
     std::mutex initializedMutex_;
     std::condition_variable initializedCondVar_;
     bool initialized_ = false;
+
+    std::mutex threadCreatingMutex_;
 };
 
 } // namespace kotlin::gc
