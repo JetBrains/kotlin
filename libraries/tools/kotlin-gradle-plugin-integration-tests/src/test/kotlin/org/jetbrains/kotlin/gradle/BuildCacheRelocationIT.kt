@@ -72,27 +72,18 @@ class BuildCacheRelocationIT : KGPBaseTest() {
     @JsGradlePluginTests
     @DisplayName("works with JS/DCE project")
     @GradleTest
-    fun testRelocationKotlin2JsDce(gradleVersion: GradleVersion) {
+    fun testRelocationKotlinJs(gradleVersion: GradleVersion) {
         val (firstProject, secondProject) = prepareTestProjects(
-            "kotlin2JsDceProject",
-            gradleVersion
-        ) { testProject ->
-            // Fix the problem that the destinationDir of compile task (i.e. buildDir) contains files from other tasks:
-            testProject.subProject("mainProject").buildGradle.modify {
-                it.replace("/exampleapp.js", "/web/exampleapp.js")
-            }
-            testProject.subProject("libraryProject").buildGradle.modify {
-                it.replace("/exampleapp.js", "/web/exampleapp.js")
-                // Fix assembling the JAR from the whole buildDir
-                it.replace("from buildDir", "from compileKotlin2Js.destinationDirectory")
-            }
-        }
+            "kotlin-js-dce",
+            gradleVersion,
+            buildOptions = defaultBuildOptions.copy(warningMode = WarningMode.Summary) // Jar tasks produces deprecation warnings
+        )
 
         checkBuildCacheRelocation(
             firstProject,
             secondProject,
-            listOf("assemble", "runDceKotlinJs"),
-            listOf(":libraryProject:compileKotlin2Js", ":mainProject:compileKotlin2Js", ":mainProject:runDceKotlinJs")
+            listOf("assemble"),
+            listOf(":libraryProject:compileKotlinJs", ":mainProject:compileKotlinJs", ":mainProject:processDceKotlinJs")
         )
     }
 

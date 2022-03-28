@@ -68,6 +68,11 @@ internal fun readAndCleanupTestResults(
         e.attributes.forEach {
             if (it.name in skipAttrs) {
                 it.value = "..."
+            } else if (it.name == "name" &&
+                e.name == "testcase" &&
+                it.value.contains("[browser")
+            ) {
+                it.value = it.value.replace("\\[browser,.*]".toRegex(), "[browser]")
             }
         }
         if (e.name == "system-out") {

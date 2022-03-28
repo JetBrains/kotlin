@@ -1484,12 +1484,12 @@ class NewMultiplatformIT : BaseGradleIT() {
     fun testJsDceInMpp() = with(Project("new-mpp-js-dce", gradleVersion)) {
         build("runRhino", options = defaultBuildOptions().copy(warningMode = WarningMode.Summary)) {
             assertSuccessful()
-            assertTasksExecuted(":mainProject:runDceNodeJsKotlin")
+            assertTasksExecuted(":mainProject:processDceBrowserKotlinJs")
 
-            val pathPrefix = "mainProject/build/kotlin-js-min/nodeJs/main"
+            val pathPrefix = "mainProject/build/kotlin-js-min/"
             assertFileExists("$pathPrefix/exampleapp.js.map")
             assertFileExists("$pathPrefix/examplelib.js.map")
-            assertFileContains("$pathPrefix/exampleapp.js.map", "\"../../../../src/nodeJsMain/kotlin/exampleapp/main.kt\"")
+            assertFileContains("$pathPrefix/exampleapp.js.map", "\"../../src/browserMain/kotlin/exampleapp/main.kt\"")
 
             assertFileExists("$pathPrefix/kotlin.js")
             assertTrue(fileInWorkingDir("$pathPrefix/kotlin.js").length() < 500 * 1000, "Looks like kotlin.js file was not minified by DCE")

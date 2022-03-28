@@ -14,6 +14,8 @@ import org.jetbrains.kotlin.gradle.plugin.COMPILER_CLASSPATH_CONFIGURATION_NAME
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
+import org.jetbrains.kotlin.gradle.plugin.mpp.isMain
+import org.jetbrains.kotlin.gradle.plugin.mpp.isTest
 import org.jetbrains.kotlin.gradle.targets.js.KotlinJsTarget
 import org.jetbrains.kotlin.gradle.targets.js.dsl.*
 import org.jetbrains.kotlin.gradle.targets.js.ir.executeTaskBaseName
@@ -90,15 +92,12 @@ open class KotlinBrowserJs @Inject constructor(target: KotlinJsTarget) :
     }
 
     override fun configureMain(compilation: KotlinJsCompilation) {
-        val dceTaskProvider = configureDce(
-            compilation = compilation,
-            dev = false
-        )
+        val (dceTaskProvider, devDceTaskProvider) = compilation.configureDceTasks()
 
-        val devDceTaskProvider = configureDce(
-            compilation = compilation,
-            dev = true
-        )
+        // Adding dce tasks to additional JS compilations
+        target.compilations.configureEach {
+            if (!it.isMain() && !it.isTest()) it.configureDceTasks()
+        }
 
         configureRun(
             compilation = compilation,
@@ -110,6 +109,20 @@ open class KotlinBrowserJs @Inject constructor(target: KotlinJsTarget) :
             dceTaskProvider = dceTaskProvider,
             devDceTaskProvider = devDceTaskProvider
         )
+    }
+
+    private fun KotlinJsCompilation.configureDceTasks(): Pair<TaskProvider<KotlinJsDceTask>, TaskProvider<KotlinJsDceTask>> {
+        val dceTaskProvider = configureDce(
+            compilation = this,
+            dev = false
+        )
+
+        val devDceTaskProvider = configureDce(
+            compilation = this,
+            dev = true
+        )
+
+        return dceTaskProvider to devDceTaskProvider
     }
 
     private fun configureRun(

@@ -15,7 +15,9 @@ repositories {
     mavenCentral()
 }
 
-kotlin.targets.fromPreset(kotlin.presets.js, 'nodeJs')
+kotlin.targets.fromPreset(kotlin.presets.js, 'nodeJs') {
+    nodejs()
+}
 
 dependencies {
     nodeJsMainApi "org.jetbrains.kotlin:kotlin-stdlib-js:$kotlin_version"

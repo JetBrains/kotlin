@@ -38,6 +38,9 @@ internal fun KotlinCompilation<*>.composeName(prefix: String? = null, suffix: St
 internal fun KotlinCompilation<*>.isMain(): Boolean =
     name == KotlinCompilation.MAIN_COMPILATION_NAME
 
+internal fun KotlinCompilation<*>.isTest(): Boolean =
+    name == KotlinCompilation.TEST_COMPILATION_NAME
+
 /**
  * see https://youtrack.jetbrains.com/issue/KT-45412
  * Some implementations of [KotlinCompilation] are not including their [KotlinCompilation.defaultSourceSet] into [kotlinSourceSet]s
