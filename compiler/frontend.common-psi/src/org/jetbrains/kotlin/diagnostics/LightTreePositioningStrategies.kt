@@ -1120,6 +1120,30 @@ object LightTreePositioningStrategies {
             return markElement(byKeyword, startOffset, endOffset, tree, node)
         }
     }
+
+    val CALL_ELEMENT_WITH_DOT: LightTreePositioningStrategy = object : LightTreePositioningStrategy() {
+        override fun mark(
+            node: LighterASTNode,
+            startOffset: Int,
+            endOffset: Int,
+            tree: FlyweightCapableTreeStructure<LighterASTNode>
+        ): List<TextRange> {
+            val callElementRanges = SELECTOR_BY_QUALIFIED.mark(node, startOffset, endOffset, tree)
+            val callElementRange = when (callElementRanges.size) {
+                1 -> callElementRanges.first()
+                else -> return callElementRanges
+            }
+
+            val dotRanges = SAFE_ACCESS.mark(node, startOffset, endOffset, tree)
+            val dotRange = when (dotRanges.size) {
+                1 -> dotRanges.first()
+                else -> return dotRanges
+            }
+
+            return listOf(TextRange(dotRange.startOffset, callElementRange.endOffset))
+        }
+    }
+
 }
 
 fun KtSourceElement.hasValOrVar(): Boolean =

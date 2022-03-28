@@ -21177,6 +21177,12 @@ public class FirOldFrontendDiagnosticsWithLightTreeTestGenerated extends Abstrac
             }
 
             @Test
+            @TestMetadata("safeCallOnNotNullableType.kt")
+            public void testSafeCallOnNotNullableType() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/nullableTypes/safeCallOnNotNullableType.kt");
+            }
+
+            @Test
             @TestMetadata("safeCallOnTypeWithNullableUpperBound.kt")
             public void testSafeCallOnTypeWithNullableUpperBound() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/nullableTypes/safeCallOnTypeWithNullableUpperBound.kt");

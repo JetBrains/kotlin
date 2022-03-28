@@ -500,6 +500,25 @@ object PositioningStrategies {
     }
 
     @JvmField
+    val CALL_ELEMENT_WITH_DOT: PositioningStrategy<KtQualifiedExpression> = object : PositioningStrategy<KtQualifiedExpression>() {
+        override fun mark(element: KtQualifiedExpression): List<TextRange> {
+            val callElementRanges = SELECTOR_BY_QUALIFIED.mark(element)
+            val callElementRange = when (callElementRanges.size) {
+                1 -> callElementRanges.first()
+                else -> return callElementRanges
+            }
+
+            val dotRanges = SAFE_ACCESS.mark(element)
+            val dotRange = when (dotRanges.size) {
+                1 -> dotRanges.first()
+                else -> return dotRanges
+            }
+
+            return listOf(TextRange(dotRange.startOffset, callElementRange.endOffset))
+        }
+    }
+
+    @JvmField
     val DECLARATION_WITH_BODY: PositioningStrategy<KtDeclarationWithBody> = object : PositioningStrategy<KtDeclarationWithBody>() {
         override fun mark(element: KtDeclarationWithBody): List<TextRange> {
             val lastBracketRange = element.bodyBlockExpression?.lastBracketRange
