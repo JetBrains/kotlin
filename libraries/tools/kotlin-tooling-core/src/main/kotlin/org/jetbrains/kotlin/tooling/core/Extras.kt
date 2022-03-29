@@ -7,6 +7,68 @@ package org.jetbrains.kotlin.tooling.core
 
 import java.io.Serializable
 
+/**
+ * A generic container holding typed and scoped values.
+ * ### Attaching and getting simple typed values:
+ * ```kotlin
+ * val extras = mutableExtrasOf()
+ * extras[extrasKeyOf<Int>()] = 42 // Attach arbitrary Int value
+ * extras[extrasKeyOf<String>()] = "Hello" // Attach arbitrary String value
+ *
+ * extras[extrasKeyOf<Int>()] // -> returns 42
+ * extras[extrasKeyOf<String>] // -> returns "Hello"
+ * ```
+ *
+ * ### Attaching multiple values with the same type by naming the keys
+ * ```kotlin
+ * val extras = mutableExtrasOf()
+ * extras[extrasKeyOf<Int>("a")] = 1 // Attach Int with name 'a'
+ * extras[extrasKeyOf<Int>("b")] = 2 // Attach Int with name 'b'
+ *
+ * extras[extrasKeyOf<Int>("a")] // -> returns 1
+ * extras[extrasKeyOf<Int>("b")] // -> returns 2
+ * ```
+ *
+ * ### Creating immutable extras
+ * ```kotlin
+ * val extras = extrasOf(
+ *     extrasKeyOf<Int>() withValue 1,
+ *     extrasKeyOf<String>() withValue "Hello"
+ * )
+ * ```
+ *
+ * ### Converting to immutable extras
+ * ```kotlin
+ * val extras = mutableExtrasOf(
+ *     extrasKeyOf<Int>() withValue 0
+ * )
+ *
+ * // Captures the content, similar to `.toList()` or `.toSet()`
+ * val immutableExtras = extras.toExtras()
+ * ```
+ *
+ * ### Use case example: Filtering Extras
+ * ```kotlin
+ * val extras = extrasOf(
+ *     extrasKeyOf<Int>() withValue 0,
+ *     extrasKeyOf<Int>("keep") withValue 1,
+ *     extrasKeyOf<String>() withValue "Hello"
+ * )
+ *
+ * val filteredExtras = extras
+ *     .filter { (key, value) -> key.id.name == "keep" || value is String }
+ *     .toExtras()
+ * ```
+ *
+ * ## [IterableExtras] vs [Extras]
+ * Most factories like [extrasOf] or [mutableExtrasOf] will return [IterableExtras].
+ * Such an [IterableExtras] container will have all keys materialized and is capable of
+ * iterating through all its values. This implementations will also provide a proper [equals] and [hashCode] function
+ *
+ * However, some implementations might not be able to promise this and will only be able to provide
+ * a value when the actual/proper key is provided. One example for this case would be container that previously
+ * were serialized and got de-serialized, unable to provide the keys without additional [Key.Capability]
+ */
 interface Extras {
     class Id<T : Any> @PublishedApi internal constructor(
         internal val type: ReifiedTypeSignature<T>,
