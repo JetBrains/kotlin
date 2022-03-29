@@ -10,6 +10,8 @@ import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.atMostOne
 import org.jetbrains.kotlin.backend.common.ir.copyTo
 import org.jetbrains.kotlin.backend.common.lower.*
+import org.jetbrains.kotlin.backend.common.lower.inline.DefaultInlineFunctionResolver
+import org.jetbrains.kotlin.backend.common.lower.inline.FunctionInlining
 import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.cgen.hasCCallAnnotation
 import org.jetbrains.kotlin.backend.konan.ir.*
@@ -49,11 +51,22 @@ internal class Autoboxing(val context: Context) : FileLoweringPass {
 
 }
 
+internal class AutoboxingInline(val context: Context) : FileLoweringPass {
+
+    private val inliner = FunctionInlining(context, DefaultInlineFunctionResolver(context)) { func ->
+        func.origin == DECLARATION_ORIGIN_INLINE_CLASS_SPECIAL_FUNCTION
+    }
+
+    override fun lower(irFile: IrFile) {
+        inliner.lower(irFile)
+    }
+
+}
+
 private class AutoboxingTransformer(val context: Context) : AbstractValueUsageTransformer(
         context.ir.symbols,
         context.irBuiltIns
 ) {
-
     // TODO: should we handle the cases when expression type
     // is not equal to e.g. called function return type?
 
@@ -70,6 +83,7 @@ private class AutoboxingTransformer(val context: Context) : AbstractValueUsageTr
     private var currentFunction: IrFunction? = null
 
     override fun visitFunction(declaration: IrFunction): IrStatement {
+
         currentFunction = declaration
         val result = super.visitFunction(declaration)
         currentFunction = null

@@ -408,6 +408,13 @@ internal val autoboxPhase = makeKonanFileLoweringPhase(
         prerequisite = setOf(bridgesPhase, coroutinesPhase)
 )
 
+internal val autoboxInlinePhase = makeKonanModuleOpPhase(
+        name = "AutoboxInline",
+        description = "Inline box/unbox",
+        prerequisite = setOf(autoboxPhase),
+        op = { context, irModule -> irModule.files.forEach { AutoboxingInline(context).lower(it) } }
+)
+
 internal val expressionBodyTransformPhase = makeKonanFileLoweringPhase(
         ::ExpressionBodyTransformer,
         name = "ExpressionBodyTransformer",

@@ -202,7 +202,7 @@ internal val dcePhase = makeKonanModuleOpPhase(
             context.irModule!!.transformChildrenVoid(object: IrElementTransformerVoid() {
                 override fun visitFile(declaration: IrFile): IrFile {
                     declaration.declarations.removeAll {
-                        (it is IrFunction && !referencedFunctions.contains(it))
+                        (it is IrFunction && !referencedFunctions.contains(it) && it.origin != DECLARATION_ORIGIN_INLINE_CLASS_SPECIAL_FUNCTION)
                     }
                     return super.visitFile(declaration)
                 }

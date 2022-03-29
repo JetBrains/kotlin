@@ -75,7 +75,8 @@ class FunctionInlining(
     val context: CommonBackendContext,
     val inlineFunctionResolver: InlineFunctionResolver,
     val innerClassesSupport: InnerClassesSupport? = null,
-    val insertAdditionalImplicitCasts: Boolean = false
+    val insertAdditionalImplicitCasts: Boolean = false,
+    val customStrategy: ((IrFunction) -> Boolean)? = null
 ) : IrElementTransformerVoidWithContext(), BodyLoweringPass {
 
     constructor(context: CommonBackendContext) : this(context, DefaultInlineFunctionResolver(context), null)
@@ -131,7 +132,7 @@ class FunctionInlining(
         return inliner.inline()
     }
 
-    private val IrFunction.needsInlining get() = this.isInline && !this.isExternal
+    private val IrFunction.needsInlining get() = (customStrategy?.invoke(this) == true) || (this.isInline && !this.isExternal)
 
     private inner class Inliner(
         val callSite: IrFunctionAccessExpression,
