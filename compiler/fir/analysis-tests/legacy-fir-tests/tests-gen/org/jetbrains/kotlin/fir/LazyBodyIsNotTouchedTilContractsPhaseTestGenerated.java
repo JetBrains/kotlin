@@ -2849,6 +2849,11 @@ public class LazyBodyIsNotTouchedTilContractsPhaseTestGenerated extends Abstract
             runTest("compiler/fir/analysis-tests/testData/resolve/problems/doubleGenericDiamond.kt");
         }
 
+        @TestMetadata("expectConstructor.kt")
+        public void testExpectConstructor() throws Exception {
+            runTest("compiler/fir/analysis-tests/testData/resolve/problems/expectConstructor.kt");
+        }
+
         @TestMetadata("fakeTypeMismatchOnExtensionReference.kt")
         public void testFakeTypeMismatchOnExtensionReference() throws Exception {
             runTest("compiler/fir/analysis-tests/testData/resolve/problems/fakeTypeMismatchOnExtensionReference.kt");

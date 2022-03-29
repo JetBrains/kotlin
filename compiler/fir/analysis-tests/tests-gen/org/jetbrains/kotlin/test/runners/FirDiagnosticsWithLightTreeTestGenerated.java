@@ -3232,6 +3232,12 @@ public class FirDiagnosticsWithLightTreeTestGenerated extends AbstractFirDiagnos
             }
 
             @Test
+            @TestMetadata("expectConstructor.kt")
+            public void testExpectConstructor() throws Exception {
+                runTest("compiler/fir/analysis-tests/testData/resolve/problems/expectConstructor.kt");
+            }
+
+            @Test
             @TestMetadata("fakeTypeMismatchOnExtensionReference.kt")
             public void testFakeTypeMismatchOnExtensionReference() throws Exception {
                 runTest("compiler/fir/analysis-tests/testData/resolve/problems/fakeTypeMismatchOnExtensionReference.kt");

@@ -1,9 +1,7 @@
 Module: m1-common
 FILE: common.kt
     public open expect class A : R|kotlin/Any| {
-        public expect constructor(): R|A| {
-            super<R|kotlin/Any|>()
-        }
+        public expect constructor(): R|A|
 
         public final expect fun foo(): R|kotlin/Unit|
 
