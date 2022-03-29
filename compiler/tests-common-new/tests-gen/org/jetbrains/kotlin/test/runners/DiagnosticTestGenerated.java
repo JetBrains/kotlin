@@ -6547,6 +6547,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
             }
 
             @Test
+            @TestMetadata("modifierFormBuiltinSuspendFun.kt")
+            public void testModifierFormBuiltinSuspendFun() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/coroutines/modifierFormBuiltinSuspendFun.kt");
+            }
+
+            @Test
             @TestMetadata("suspendInvokeInsideTry.kt")
             public void testSuspendInvokeInsideTry() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/coroutines/suspendInvokeInsideTry.kt");
