@@ -45,6 +45,7 @@ class IdeaKotlinSerializableExtrasSerializerTest {
         assertNull(serializer.deserialize(key, data))
         logStream.flush()
         assertTrue(byteStream.toByteArray().decodeToString().contains("Failed to deserialize"))
+        assertTrue(byteStream.toByteArray().decodeToString().contains("This class cannot be deserialized!"))
     }
 
     @Test
