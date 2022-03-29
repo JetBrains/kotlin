@@ -2,11 +2,26 @@
 // RUN_PLAIN_BOX_FUNCTION
 // SKIP_MINIFICATION
 // SKIP_NODE_JS
+// KJS_WITH_FULL_RUNTIME
 // INFER_MAIN_MODULE
 // MODULE: JS_TESTS
+// FILE: qualified.kt
+@file:JsQualifier("WebAssembly")
+package qualified
+
+external interface CompileError
+
+// FILE: notQualified.kt
+package notQualified
+
+external interface Console
+
 // FILE: declarations.kt
 
 package foo
+
+import notQualified.Console
+import qualified.CompileError
 
 interface NonExportedInterface
 interface NonExportedGenericInterface<T>
@@ -53,3 +68,21 @@ class G : NonExportedGenericInterface<NonExportedType>
 
 @JsExport
 class H : NonExportedGenericType<NonExportedType>(NonExportedType(42))
+
+@JsExport
+fun foo(a: Int): kotlin.js.Promise<Int> {
+    return kotlin.js.Promise<Int> { res, rej -> res(a) }
+}
+
+@JsExport
+fun bar(): Throwable {
+    return Throwable("Test Error")
+}
+
+@JsExport
+val console: Console
+    get() = js("console")
+
+@JsExport
+val error: CompileError
+    get() = js("{}")
