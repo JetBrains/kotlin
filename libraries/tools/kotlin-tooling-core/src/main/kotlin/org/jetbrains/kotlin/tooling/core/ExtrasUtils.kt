@@ -5,10 +5,8 @@
 
 package org.jetbrains.kotlin.tooling.core
 
-inline fun <reified T : Any> extraKey(
-    name: String? = null, capabilities: Set<Extras.Key.Capability<T>> = emptySet()
-): Extras.Key<T> {
-    return Extras.Key(Extras.Id(reifiedTypeSignatureOf(), name), capabilities)
+inline fun <reified T : Any> extraKey(name: String? = null): Extras.Key<T> {
+    return Extras.Key(Extras.Id(reifiedTypeSignatureOf(), name))
 }
 
 fun emptyExtras(): IterableExtras = EmptyExtras

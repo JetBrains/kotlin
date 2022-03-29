@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.tooling.core.*
 import java.io.Serializable
 import java.util.concurrent.locks.ReentrantReadWriteLock
 import kotlin.concurrent.withLock
+import kotlin.reflect.typeOf
 
 sealed interface IdeaKotlinExtras : Extras, Serializable
 

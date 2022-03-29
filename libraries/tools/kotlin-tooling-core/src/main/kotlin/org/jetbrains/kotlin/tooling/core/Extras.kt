@@ -36,9 +36,10 @@ interface Extras {
         }
     }
 
-    class Key<T : Any>(
-        val id: Id<T>, @PublishedApi internal val capabilities: Set<Capability<T>> = emptySet()
+    class Key<T : Any> internal constructor(
+        val id: Id<T>, @PublishedApi internal val capabilities: Set<Capability<T>>
     ) {
+        constructor(id: Id<T>) : this(id, emptySet())
 
         interface Capability<T>
 
@@ -58,12 +59,7 @@ interface Extras {
 
         override fun toString(): String = "Key($id)"
 
-        fun withCapability(capability: Capability<T>): Key<T> {
-            return Key(id = id, capabilities + capability)
-        }
-
-        operator fun plus(capability: Capability<T>) =
-            withCapability(capability)
+        operator fun plus(capability: Capability<T>) = Key(id = id, capabilities + capability)
 
         inline fun <reified C : Capability<T>> capability(): C? {
             return capabilities.lastOrNull { capability -> capability is C }?.let { it as C }

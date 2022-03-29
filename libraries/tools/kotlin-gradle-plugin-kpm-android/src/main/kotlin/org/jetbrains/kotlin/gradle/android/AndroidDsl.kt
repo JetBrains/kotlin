@@ -7,15 +7,14 @@
 package org.jetbrains.kotlin.gradle.android
 
 import org.jetbrains.kotlin.gradle.kpm.idea.IdeaKotlinExtraSerializer
-import org.jetbrains.kotlin.tooling.core.HasExtras
+import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinGradleFragment
 import org.jetbrains.kotlin.tooling.core.extraKey
 import java.io.File
 import java.io.Serializable
 
-internal val androidDslKey = extraKey<AndroidDsl>()
-    .withCapability(IdeaKotlinExtraSerializer.serializable())
+internal val androidDslKey = extraKey<AndroidDsl>() + IdeaKotlinExtraSerializer.serializable()
 
-val HasExtras.androidDsl: AndroidDsl? get() = this.extras[androidDslKey]
+val KotlinGradleFragment.androidDsl: AndroidDsl? get() = this.extras[androidDslKey]
 
 class AndroidDsl : Serializable {
     var compileSdk = 0

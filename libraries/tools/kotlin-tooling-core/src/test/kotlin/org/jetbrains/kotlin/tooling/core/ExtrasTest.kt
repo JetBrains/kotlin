@@ -179,7 +179,7 @@ class ExtrasTest {
         val capability = object : Extras.Key.Capability<Int> {}
 
         val keyA = extraKey<Int>()
-        val keyB = extraKey<Int>().withCapability(capability)
+        val keyB = extraKey<Int>() + capability
 
         val extras = mutableExtrasOf()
         extras[keyA] = 0
@@ -195,7 +195,7 @@ class ExtrasTest {
         val capability = object : Extras.Key.Capability<Int> {}
 
         val keyA = extraKey<Int>()
-        val keyB = extraKey<Int>().withCapability(capability)
+        val keyB = extraKey<Int>() + capability
 
         val extras = extrasOf()
         val extras1 = extras + (keyA withValue 1)
@@ -219,18 +219,18 @@ class ExtrasTest {
         val capabilityA = object : Extras.Key.Capability<Int> {}
         val capabilityB = object : Extras.Key.Capability<Int> {}
 
-        assertNotEquals(extraKey<Int>().withCapability(capabilityA), extraKey<Int>())
-        assertNotEquals(extraKey<Int>(), extraKey<Int>().withCapability(capabilityA))
-        assertEquals(extraKey<Int>().withCapability(capabilityA), extraKey<Int>().withCapability(capabilityA))
+        assertNotEquals(extraKey<Int>() + capabilityA, extraKey<Int>())
+        assertNotEquals(extraKey<Int>(), extraKey<Int>() + capabilityA)
+        assertEquals(extraKey<Int>() + capabilityA, extraKey<Int>() + capabilityA)
 
         assertEquals(
-            extraKey<Int>().withCapability(capabilityA),
-            extraKey<Int>().withCapability(capabilityA).withCapability(capabilityA)
+            extraKey<Int>() + capabilityA,
+            extraKey<Int>() + capabilityA + capabilityA
         )
 
         assertNotEquals(
-            extraKey<Int>().withCapability(capabilityA),
-            extraKey<Int>().withCapability(capabilityA).withCapability(capabilityB)
+            extraKey<Int>() + capabilityA,
+            extraKey<Int>() + capabilityA + capabilityB
         )
     }
 

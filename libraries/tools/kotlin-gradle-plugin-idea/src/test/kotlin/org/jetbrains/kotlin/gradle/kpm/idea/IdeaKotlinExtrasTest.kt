@@ -3,6 +3,8 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
+@file:Suppress("RemoveExplicitTypeArguments")
+
 package org.jetbrains.kotlin.gradle.kpm.idea
 
 import org.jetbrains.kotlin.gradle.kpm.idea.testFixtures.deserialize
@@ -16,9 +18,9 @@ class IdeaKotlinExtrasTest {
     private data class RetainedModel(val value: Int) : Serializable
     private data class UnretainedModel(val value: Int)
 
-    private val retainedModelKey = extraKey<RetainedModel>().withCapability(IdeaKotlinExtraSerializer.serializable())
-    private val retainedModelKeyFoo = extraKey<RetainedModel>("foo").withCapability(IdeaKotlinExtraSerializer.serializable())
-    private val retainedModelKeyBar = extraKey<RetainedModel>("bar").withCapability(IdeaKotlinExtraSerializer.serializable())
+    private val retainedModelKey = extraKey<RetainedModel>() + IdeaKotlinExtraSerializer.serializable()
+    private val retainedModelKeyFoo = extraKey<RetainedModel>("foo") + IdeaKotlinExtraSerializer.serializable()
+    private val retainedModelKeyBar = extraKey<RetainedModel>("bar") + IdeaKotlinExtraSerializer.serializable()
 
     private val unretainedModelKey = extraKey<UnretainedModel>()
     private val unretainedModelKeyFoo = extraKey<UnretainedModel>("foo")
