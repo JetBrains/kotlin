@@ -79,14 +79,6 @@ public final class org/jetbrains/kotlin/tooling/core/ExtrasUtilsKt {
 	public static final fun withValue (Lorg/jetbrains/kotlin/tooling/core/Extras$Key;Ljava/lang/Object;)Lorg/jetbrains/kotlin/tooling/core/Extras$Entry;
 }
 
-public abstract interface class org/jetbrains/kotlin/tooling/core/HasExtras {
-	public abstract fun getExtras ()Lorg/jetbrains/kotlin/tooling/core/Extras;
-}
-
-public abstract interface class org/jetbrains/kotlin/tooling/core/HasMutableExtras : org/jetbrains/kotlin/tooling/core/HasExtras {
-	public abstract fun getExtras ()Lorg/jetbrains/kotlin/tooling/core/MutableExtras;
-}
-
 public abstract interface class org/jetbrains/kotlin/tooling/core/IterableExtras : java/util/Collection, kotlin/jvm/internal/markers/KMappedMarker, org/jetbrains/kotlin/tooling/core/Extras {
 	public abstract fun getEntries ()Ljava/util/Set;
 	public abstract fun isNotEmpty ()Z

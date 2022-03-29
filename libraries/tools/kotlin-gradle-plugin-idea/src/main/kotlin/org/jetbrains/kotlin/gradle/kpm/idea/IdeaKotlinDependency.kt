@@ -14,8 +14,9 @@ import java.io.File
 import java.io.Serializable
 import java.util.*
 
-sealed interface IdeaKotlinDependency : IdeaKotlinHasExtras, Serializable {
+sealed interface IdeaKotlinDependency : Serializable {
     val coordinates: IdeaKotlinDependencyCoordinates?
+    val extras: IdeaKotlinExtras
 
     companion object {
         const val CLASSPATH_BINARY_TYPE = "org.jetbrains.binary.type.classpath"

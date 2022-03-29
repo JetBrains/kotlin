@@ -18,12 +18,13 @@ public abstract interface class org/jetbrains/kotlin/gradle/kpm/idea/IdeaKotlinC
 	public abstract fun getResourcesDir ()Ljava/io/File;
 }
 
-public abstract interface class org/jetbrains/kotlin/gradle/kpm/idea/IdeaKotlinDependency : java/io/Serializable, org/jetbrains/kotlin/gradle/kpm/idea/IdeaKotlinHasExtras {
+public abstract interface class org/jetbrains/kotlin/gradle/kpm/idea/IdeaKotlinDependency : java/io/Serializable {
 	public static final field CLASSPATH_BINARY_TYPE Ljava/lang/String;
 	public static final field Companion Lorg/jetbrains/kotlin/gradle/kpm/idea/IdeaKotlinDependency$Companion;
 	public static final field DOCUMENTATION_BINARY_TYPE Ljava/lang/String;
 	public static final field SOURCES_BINARY_TYPE Ljava/lang/String;
 	public abstract fun getCoordinates ()Lorg/jetbrains/kotlin/gradle/kpm/idea/IdeaKotlinDependencyCoordinates;
+	public abstract fun getExtras ()Lorg/jetbrains/kotlin/gradle/kpm/idea/IdeaKotlinExtras;
 }
 
 public final class org/jetbrains/kotlin/gradle/kpm/idea/IdeaKotlinDependency$Companion {
@@ -70,9 +71,10 @@ public final class org/jetbrains/kotlin/gradle/kpm/idea/IdeaKotlinExtrasSerializ
 	public fun onDeserializationFailure (Lorg/jetbrains/kotlin/tooling/core/Extras$Key;Ljava/lang/Throwable;)Ljava/lang/Object;
 }
 
-public abstract interface class org/jetbrains/kotlin/gradle/kpm/idea/IdeaKotlinFragment : java/io/Serializable, org/jetbrains/kotlin/gradle/kpm/idea/IdeaKotlinHasExtras {
+public abstract interface class org/jetbrains/kotlin/gradle/kpm/idea/IdeaKotlinFragment : java/io/Serializable {
 	public abstract fun getCoordinates ()Lorg/jetbrains/kotlin/gradle/kpm/idea/IdeaKotlinFragmentCoordinates;
 	public abstract fun getDependencies ()Ljava/util/List;
+	public abstract fun getExtras ()Lorg/jetbrains/kotlin/gradle/kpm/idea/IdeaKotlinExtras;
 	public abstract fun getLanguageSettings ()Lorg/jetbrains/kotlin/gradle/kpm/idea/IdeaKotlinLanguageSettings;
 	public abstract fun getPlatforms ()Ljava/util/Set;
 	public abstract fun getResourceDirectories ()Ljava/util/List;
@@ -104,10 +106,6 @@ public final class org/jetbrains/kotlin/gradle/kpm/idea/IdeaKotlinFragmentDepend
 
 public final class org/jetbrains/kotlin/gradle/kpm/idea/IdeaKotlinFragmentKt {
 	public static final fun getName (Lorg/jetbrains/kotlin/gradle/kpm/idea/IdeaKotlinFragment;)Ljava/lang/String;
-}
-
-public abstract interface class org/jetbrains/kotlin/gradle/kpm/idea/IdeaKotlinHasExtras : org/jetbrains/kotlin/tooling/core/HasExtras {
-	public abstract fun getExtras ()Lorg/jetbrains/kotlin/gradle/kpm/idea/IdeaKotlinExtras;
 }
 
 public abstract interface class org/jetbrains/kotlin/gradle/kpm/idea/IdeaKotlinJsPlatformDetails : org/jetbrains/kotlin/gradle/kpm/idea/IdeaKotlinPlatformDetails {

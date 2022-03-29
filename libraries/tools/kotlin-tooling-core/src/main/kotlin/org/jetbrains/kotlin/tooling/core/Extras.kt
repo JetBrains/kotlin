@@ -97,7 +97,6 @@ interface IterableExtras : Extras, Collection<Extras.Entry<*>> {
     override fun iterator(): Iterator<Extras.Entry<*>> = entries.iterator()
 }
 
-
 interface MutableExtras : IterableExtras {
     /**
      * @return The previous value or null if no previous value was set
@@ -117,12 +116,4 @@ interface MutableExtras : IterableExtras {
     fun putAll(from: Iterable<Extras.Entry<*>>)
 
     fun clear()
-}
-
-interface HasExtras {
-    val extras: Extras
-}
-
-interface HasMutableExtras : HasExtras {
-    override val extras: MutableExtras
 }

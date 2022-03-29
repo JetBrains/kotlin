@@ -7,13 +7,14 @@ package org.jetbrains.kotlin.gradle.kpm.idea
 
 import java.io.Serializable
 
-sealed interface IdeaKotlinFragment : IdeaKotlinHasExtras, Serializable {
+sealed interface IdeaKotlinFragment : Serializable {
     val coordinates: IdeaKotlinFragmentCoordinates
     val platforms: Set<IdeaKotlinPlatform>
     val languageSettings: IdeaKotlinLanguageSettings?
     val dependencies: List<IdeaKotlinDependency>
     val sourceDirectories: List<IdeaKotlinSourceDirectory>
     val resourceDirectories: List<IdeaKotlinResourceDirectory>
+    val extras: IdeaKotlinExtras
 }
 
 val IdeaKotlinFragment.name get() = coordinates.fragmentName
