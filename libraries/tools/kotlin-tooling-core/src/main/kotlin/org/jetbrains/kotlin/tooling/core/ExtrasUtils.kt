@@ -5,6 +5,25 @@
 
 package org.jetbrains.kotlin.tooling.core
 
+/**
+ *  Creates a value based key for accessing any [Extras] container
+ *
+ * @param T The type of data that is stored in the extras container
+ * ```kotlin
+ * extrasKeyOf<Int>() == extrasKeyOf<Int>()
+ * extrasKeyOf<Int>() != extrasKeyOf<String>()
+ * extrasKeyOf<List<Int>>() == extrasKeyOf<List<Int>>()
+ * extrasKeyOf<List<*>>() != extrasKeyOf<List<Int>>()
+ * ```
+ *
+ * @param name This typed keys can also be distinguished with an additional name. In this case
+ * ```kotlin
+ * extrasKeyOf<Int>() != extrasKeyOf<Int>("a")
+ * extrasKeyOf<Int>("a") == extrasKeyOf<Int>("a")
+ * extrasKeyOf<Int>("b") != extrasKeyOf<Int>("a")
+ * extrasKeyOf<String>("a") != extrasKeyOf<Int>("a")
+ * ```
+ */
 inline fun <reified T : Any> extrasKeyOf(name: String? = null): Extras.Key<T> =
     Extras.Key(extrasIdOf(name))
 
