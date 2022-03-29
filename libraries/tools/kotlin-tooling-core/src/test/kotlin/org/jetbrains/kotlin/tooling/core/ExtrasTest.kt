@@ -1,6 +1,7 @@
 @file:Suppress("RemoveExplicitTypeArguments")
 
-import org.jetbrains.kotlin.tooling.core.*
+package org.jetbrains.kotlin.tooling.core
+
 import kotlin.test.*
 
 class ExtrasTest {
@@ -266,6 +267,78 @@ class ExtrasTest {
                 keyE withValue 5
             ),
             combinedExtras
+        )
+    }
+
+    @Test
+    fun `test - mutable extras - remove`() {
+        val extras = mutableExtrasOf(
+            extrasKeyOf<String>() withValue "2",
+            extrasKeyOf<String>("other") withValue "4",
+            extrasKeyOf<Int>() withValue 1,
+            extrasKeyOf<Int>("cash") withValue 1
+        )
+
+        extras.remove(extrasKeyOf<Int>("sunny"))
+        assertEquals(1, extras[extrasKeyOf<Int>("cash")])
+
+        assertEquals(1, extras.remove(extrasKeyOf<Int>("cash")))
+        assertNull(extras[extrasKeyOf<Int>("cash")])
+
+        assertEquals(1, extras.remove(extrasKeyOf<Int>()))
+        assertNull(extras[extrasKeyOf<Int>()])
+
+        assertEquals(
+            extrasKeyOf<String>("other") withValue "4",
+            extras.remove(extrasIdOf<String>("other"))
+        )
+
+        assertNull(extras[extrasKeyOf<String>("other")])
+
+        assertEquals(
+            extrasOf(extrasKeyOf<String>() withValue "2"),
+            extras.toExtras()
+        )
+    }
+
+    @Test
+    fun `test - mutable extras - clear`() {
+        val extras = mutableExtrasOf(
+            extrasKeyOf<String>() withValue "2",
+            extrasKeyOf<String>("other") withValue "4",
+            extrasKeyOf<Int>() withValue 1,
+            extrasKeyOf<Int>("cash") withValue 1
+        )
+
+        assertFalse(extras.isEmpty(), "Expected non-empty extras")
+        extras.clear()
+        assertTrue(extras.isEmpty(), "Expected extras to be empty")
+
+        assertEquals(emptyExtras(), extras)
+        assertEquals(emptyExtras(), extras.toExtras())
+    }
+
+    @Test
+    fun `test mutable extras - putAll`() {
+        val extras = mutableExtrasOf(
+            extrasKeyOf<String>() withValue "1",
+            extrasKeyOf<String>("overwrite") withValue "2"
+        )
+
+        extras.putAll(
+            extrasOf(
+                extrasKeyOf<String>("overwrite") withValue "3",
+                extrasKeyOf<Int>() withValue 1
+            )
+        )
+
+        assertEquals(
+            extrasOf(
+                extrasKeyOf<String>() withValue "1",
+                extrasKeyOf<String>("overwrite") withValue "3",
+                extrasKeyOf<Int>() withValue 1
+            ),
+            extras
         )
     }
 }

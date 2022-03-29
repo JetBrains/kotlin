@@ -98,10 +98,23 @@ interface IterableExtras : Extras, Collection<Extras.Entry<*>> {
 
 interface MutableExtras : IterableExtras {
     /**
-     * @param value: The new value, or null if the value shall be removed
      * @return The previous value or null if no previous value was set
      */
-    operator fun <T : Any> set(key: Extras.Key<T>, value: T?): T?
+    operator fun <T : Any> set(key: Extras.Key<T>, value: T): T?
+
+    /**
+     * Removes the value from this container if *and only if* it was stored with this key
+     */
+    fun <T : Any> remove(key: Extras.Key<T>): T?
+
+    /**
+     * Removes the corresponding entry (regardless of which key was used) from this map
+     */
+    fun <T : Any> remove(id: Extras.Id<T>): Extras.Entry<T>?
+
+    fun putAll(from: Iterable<Extras.Entry<*>>)
+
+    fun clear()
 }
 
 interface HasExtras {
@@ -110,11 +123,4 @@ interface HasExtras {
 
 interface HasMutableExtras : HasExtras {
     override val extras: MutableExtras
-}
-
-/**
- * @return the previously set value, when present
- */
-fun <T : Any> MutableExtras.remove(key: Extras.Key<T>): T? {
-    return set(key, null)
 }

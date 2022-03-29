@@ -24,13 +24,32 @@ internal class MutableExtrasImpl(
 
     override fun isEmpty(): Boolean = extras.isEmpty()
 
-    override fun <T : Any> set(key: Extras.Key<T>, value: T?): T? {
-        return if (value == null) extras.remove(key.id)?.let { it.value as T }
-        else extras.put(key.id, key withValue value)?.let { it.value as T }
+    override fun <T : Any> set(key: Extras.Key<T>, value: T): T? {
+        return extras.put(key.id, key withValue value)?.let { it.value as T }
+    }
+
+    override fun putAll(from: Iterable<Extras.Entry<*>>) {
+        this.extras.putAll(from.associateBy { it.key.id })
     }
 
     override fun <T : Any> get(key: Extras.Key<T>): T? {
         return extras[key.id]?.let { it.value as T }
+    }
+
+    override fun <T : Any> remove(id: Extras.Id<T>): Extras.Entry<T>? {
+        return extras.remove(id)?.let { it as Extras.Entry<T> }
+    }
+
+    override fun <T : Any> remove(key: Extras.Key<T>): T? {
+        val entry = extras[key.id]
+        if (entry?.key == key) {
+            return remove(key.id)?.value
+        }
+        return null
+    }
+
+    override fun clear() {
+        extras.clear()
     }
 }
 

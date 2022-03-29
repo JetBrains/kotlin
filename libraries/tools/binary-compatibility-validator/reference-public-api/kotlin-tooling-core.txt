@@ -1,10 +1,25 @@
 public abstract class org/jetbrains/kotlin/tooling/core/AbstractIterableExtras : org/jetbrains/kotlin/tooling/core/IterableExtras {
 	public fun <init> ()V
+	public synthetic fun add (Ljava/lang/Object;)Z
+	public fun add (Lorg/jetbrains/kotlin/tooling/core/Extras$Entry;)Z
+	public fun addAll (Ljava/util/Collection;)Z
+	public fun clear ()V
+	public final fun contains (Ljava/lang/Object;)Z
+	public fun contains (Lorg/jetbrains/kotlin/tooling/core/Extras$Entry;)Z
+	public fun containsAll (Ljava/util/Collection;)Z
 	public fun equals (Ljava/lang/Object;)Z
+	public fun getSize ()I
 	public fun hashCode ()I
 	public fun isEmpty ()Z
 	public fun isNotEmpty ()Z
 	public fun iterator ()Ljava/util/Iterator;
+	public fun remove (Ljava/lang/Object;)Z
+	public fun removeAll (Ljava/util/Collection;)Z
+	public fun removeIf (Ljava/util/function/Predicate;)Z
+	public fun retainAll (Ljava/util/Collection;)Z
+	public final fun size ()I
+	public fun toArray ()[Ljava/lang/Object;
+	public fun toArray ([Ljava/lang/Object;)[Ljava/lang/Object;
 	public fun toString ()Ljava/lang/String;
 }
 
@@ -39,21 +54,15 @@ public final class org/jetbrains/kotlin/tooling/core/Extras$Id : java/io/Seriali
 }
 
 public final class org/jetbrains/kotlin/tooling/core/Extras$Key {
-	public fun <init> (Lorg/jetbrains/kotlin/tooling/core/Extras$Id;Ljava/util/Set;)V
-	public synthetic fun <init> (Lorg/jetbrains/kotlin/tooling/core/Extras$Id;Ljava/util/Set;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun <init> (Lorg/jetbrains/kotlin/tooling/core/Extras$Id;)V
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getId ()Lorg/jetbrains/kotlin/tooling/core/Extras$Id;
 	public fun hashCode ()I
 	public final fun plus (Lorg/jetbrains/kotlin/tooling/core/Extras$Key$Capability;)Lorg/jetbrains/kotlin/tooling/core/Extras$Key;
 	public fun toString ()Ljava/lang/String;
-	public final fun withCapability (Lorg/jetbrains/kotlin/tooling/core/Extras$Key$Capability;)Lorg/jetbrains/kotlin/tooling/core/Extras$Key;
 }
 
 public abstract interface class org/jetbrains/kotlin/tooling/core/Extras$Key$Capability {
-}
-
-public final class org/jetbrains/kotlin/tooling/core/ExtrasKt {
-	public static final fun remove (Lorg/jetbrains/kotlin/tooling/core/MutableExtras;Lorg/jetbrains/kotlin/tooling/core/Extras$Key;)Ljava/lang/Object;
 }
 
 public final class org/jetbrains/kotlin/tooling/core/ExtrasUtilsKt {
@@ -77,15 +86,13 @@ public abstract interface class org/jetbrains/kotlin/tooling/core/HasMutableExtr
 	public abstract fun getExtras ()Lorg/jetbrains/kotlin/tooling/core/MutableExtras;
 }
 
-public abstract interface class org/jetbrains/kotlin/tooling/core/IterableExtras : java/lang/Iterable, kotlin/jvm/internal/markers/KMappedMarker, org/jetbrains/kotlin/tooling/core/Extras {
+public abstract interface class org/jetbrains/kotlin/tooling/core/IterableExtras : java/util/Collection, kotlin/jvm/internal/markers/KMappedMarker, org/jetbrains/kotlin/tooling/core/Extras {
 	public abstract fun getEntries ()Ljava/util/Set;
-	public abstract fun isEmpty ()Z
 	public abstract fun isNotEmpty ()Z
 	public abstract fun iterator ()Ljava/util/Iterator;
 }
 
 public final class org/jetbrains/kotlin/tooling/core/IterableExtras$DefaultImpls {
-	public static fun isEmpty (Lorg/jetbrains/kotlin/tooling/core/IterableExtras;)Z
 	public static fun isNotEmpty (Lorg/jetbrains/kotlin/tooling/core/IterableExtras;)Z
 	public static fun iterator (Lorg/jetbrains/kotlin/tooling/core/IterableExtras;)Ljava/util/Iterator;
 }
@@ -138,11 +145,14 @@ public final class org/jetbrains/kotlin/tooling/core/KotlinToolingVersionKt {
 }
 
 public abstract interface class org/jetbrains/kotlin/tooling/core/MutableExtras : org/jetbrains/kotlin/tooling/core/IterableExtras {
+	public abstract fun clear ()V
+	public abstract fun putAll (Ljava/lang/Iterable;)V
+	public abstract fun remove (Lorg/jetbrains/kotlin/tooling/core/Extras$Id;)Lorg/jetbrains/kotlin/tooling/core/Extras$Entry;
+	public abstract fun remove (Lorg/jetbrains/kotlin/tooling/core/Extras$Key;)Ljava/lang/Object;
 	public abstract fun set (Lorg/jetbrains/kotlin/tooling/core/Extras$Key;Ljava/lang/Object;)Ljava/lang/Object;
 }
 
 public final class org/jetbrains/kotlin/tooling/core/MutableExtras$DefaultImpls {
-	public static fun isEmpty (Lorg/jetbrains/kotlin/tooling/core/MutableExtras;)Z
 	public static fun isNotEmpty (Lorg/jetbrains/kotlin/tooling/core/MutableExtras;)Z
 	public static fun iterator (Lorg/jetbrains/kotlin/tooling/core/MutableExtras;)Ljava/util/Iterator;
 }
