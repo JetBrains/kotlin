@@ -54,7 +54,7 @@ internal class MutableExtrasImpl(
 }
 
 @Suppress("unchecked_cast")
-internal class ImmutableExtrasImpl(
+internal class ImmutableExtrasImpl private constructor(
     private val extras: Map<Extras.Id<*>, Extras.Entry<*>>
 ) : AbstractIterableExtras() {
     constructor(extras: Iterable<Extras.Entry<*>>) : this(extras.associateBy { it.key.id })
