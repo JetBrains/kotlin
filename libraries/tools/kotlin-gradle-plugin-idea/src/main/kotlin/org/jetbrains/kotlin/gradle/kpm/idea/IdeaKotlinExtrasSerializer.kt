@@ -16,10 +16,23 @@ interface IdeaKotlinExtrasSerializer<T : Any> : Extras.Key.Capability<T> {
         fun onDeserializationFailure(key: Extras.Key<T>, error: Throwable): T?
 
         class StreamLogger<T : Any>(private val stream: PrintStream = System.err) : ErrorHandler<T> {
+
             override fun onDeserializationFailure(key: Extras.Key<T>, error: Throwable): T? {
                 stream.println("Failed to deserialize $key: ${error.message}")
                 error.printStackTrace(stream)
                 return null
+            }
+
+            override fun equals(other: Any?): Boolean {
+                if (this === other) return true
+                if (javaClass != other?.javaClass) return false
+                other as StreamLogger<*>
+                if (stream != other.stream) return false
+                return true
+            }
+
+            override fun hashCode(): Int {
+                return stream.hashCode()
             }
         }
     }
@@ -35,7 +48,7 @@ interface IdeaKotlinExtrasSerializer<T : Any> : Extras.Key.Capability<T> {
     }
 }
 
-private class IdeaKotlinSerializableExtrasSerializer<T : Serializable>(
+private data class IdeaKotlinSerializableExtrasSerializer<T : Serializable>(
     private val clazz: Class<T>,
     private val errorHandler: IdeaKotlinExtrasSerializer.ErrorHandler<T>
 ) : IdeaKotlinExtrasSerializer<T>,

@@ -68,6 +68,8 @@ public final class org/jetbrains/kotlin/gradle/kpm/idea/IdeaKotlinExtrasSerializ
 	public fun <init> ()V
 	public fun <init> (Ljava/io/PrintStream;)V
 	public synthetic fun <init> (Ljava/io/PrintStream;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun equals (Ljava/lang/Object;)Z
+	public fun hashCode ()I
 	public fun onDeserializationFailure (Lorg/jetbrains/kotlin/tooling/core/Extras$Key;Ljava/lang/Throwable;)Ljava/lang/Object;
 }
 
