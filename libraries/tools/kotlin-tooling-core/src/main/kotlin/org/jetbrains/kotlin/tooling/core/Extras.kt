@@ -63,11 +63,11 @@ import java.io.Serializable
  * ## [IterableExtras] vs [Extras]
  * Most factories like [extrasOf] or [mutableExtrasOf] will return [IterableExtras].
  * Such an [IterableExtras] container will have all keys materialized and is capable of
- * iterating through all its values. This implementations will also provide a proper [equals] and [hashCode] function
+ * iterating through all its values. This implementations will also provide a proper [equals] and [hashCode] functions
  *
  * However, some implementations might not be able to promise this and will only be able to provide
  * a value when the actual/proper key is provided. One example for this case would be container that previously
- * were serialized and got de-serialized, unable to provide the keys without additional [Key.Capability]
+ * was serialized and got de-serialized, unable to provide the keys without additional [Key.Capability]
  */
 interface Extras {
     class Id<T : Any> @PublishedApi internal constructor(
