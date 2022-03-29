@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.fir.scopes.impl
 
 import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
-import org.jetbrains.kotlin.fir.declarations.FirTypedDeclaration
 import org.jetbrains.kotlin.fir.isIntersectionOverride
 import org.jetbrains.kotlin.fir.isSubstitutionOverride
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
@@ -74,8 +73,7 @@ class FirScopeWithFakeOverrideTypeCalculator(
         return delegate.getClassifierNames()
     }
 
-    private fun updateReturnType(declaration: FirTypedDeclaration) {
-        if (declaration !is FirCallableDeclaration) return
+    private fun updateReturnType(declaration: FirCallableDeclaration) {
         if (declaration.isSubstitutionOverride || declaration.isIntersectionOverride) {
             fakeOverrideTypeCalculator.computeReturnType(declaration)
         }

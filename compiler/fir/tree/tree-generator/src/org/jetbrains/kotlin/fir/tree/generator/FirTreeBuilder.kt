@@ -31,8 +31,7 @@ object FirTreeBuilder : AbstractFirTreeBuilder() {
     val typeParametersOwner by sealedElement(Declaration, typeParameterRefsOwner)
     val memberDeclaration by sealedElement(Declaration, declaration, typeParameterRefsOwner)
     val anonymousInitializer by element(Declaration, declaration, controlFlowGraphOwner)
-    val typedDeclaration by sealedElement(Declaration, memberDeclaration)
-    val callableDeclaration by sealedElement(Declaration, typedDeclaration)
+    val callableDeclaration by sealedElement(Declaration, memberDeclaration)
     val typeParameterRef by element(Declaration)
     val typeParameter by element(Declaration, typeParameterRef, declaration)
 

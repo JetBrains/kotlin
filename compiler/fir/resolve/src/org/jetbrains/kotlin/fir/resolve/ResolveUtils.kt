@@ -71,7 +71,7 @@ fun FirFunction.constructFunctionalType(isSuspend: Boolean = false): ConeLookupT
             )
         )
     }
-    val rawReturnType = (this as FirTypedDeclaration).returnTypeRef.coneType
+    val rawReturnType = (this as FirCallableDeclaration).returnTypeRef.coneType
 
     return createFunctionalType(parameters, receiverTypeRef?.coneType, rawReturnType, isSuspend = isSuspend)
 }

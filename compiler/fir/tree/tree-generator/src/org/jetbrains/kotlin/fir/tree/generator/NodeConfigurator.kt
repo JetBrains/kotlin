@@ -79,11 +79,8 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
             shouldBeAbstractClass()
         }
 
-        typedDeclaration.configure {
-            +field("returnTypeRef", typeRef, withReplace = true).withTransform()
-        }
-
         callableDeclaration.configure {
+            +field("returnTypeRef", typeRef, withReplace = true).withTransform()
             +field("receiverTypeRef", typeRef, nullable = true, withReplace = true).withTransform()
             +field("deprecation", deprecationsPerUseSiteType, nullable = true).withReplace().apply { isMutable = true }
             +symbol("FirCallableSymbol", "out FirCallableDeclaration")

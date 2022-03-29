@@ -23,7 +23,7 @@ object FirProjectionRelationChecker : FirBasicDeclarationChecker() {
             return
         }
 
-        if (declaration is FirTypedDeclaration) {
+        if (declaration is FirCallableDeclaration) {
             checkTypeRef(declaration.returnTypeRef, context, reporter)
         }
 

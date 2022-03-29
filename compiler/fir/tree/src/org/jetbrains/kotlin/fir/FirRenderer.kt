@@ -737,10 +737,6 @@ open class FirRenderer(builder: StringBuilder, protected val mode: RenderMode = 
         print("\$subj\$")
     }
 
-    override fun visitTypedDeclaration(typedDeclaration: FirTypedDeclaration) {
-        visitDeclaration(typedDeclaration)
-    }
-
     override fun visitValueParameter(valueParameter: FirValueParameter) {
         valueParameter.renderDeclarationData()
         valueParameter.annotations.renderAnnotations()

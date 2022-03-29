@@ -563,8 +563,8 @@ fun ConeKotlinType.isSubtypeOf(superType: ConeKotlinType, session: FirSession): 
         this, superType,
     )
 
-fun FirTypedDeclaration.isSubtypeOf(
-    other: FirTypedDeclaration,
+fun FirCallableDeclaration.isSubtypeOf(
+    other: FirCallableDeclaration,
     typeCheckerContext: TypeCheckerState
 ): Boolean {
     return AbstractTypeChecker.isSubtypeOf(

@@ -22,7 +22,6 @@ import org.jetbrains.kotlin.fir.declarations.FirTypeParameterRefsOwner
 import org.jetbrains.kotlin.fir.declarations.FirTypeParametersOwner
 import org.jetbrains.kotlin.fir.declarations.FirMemberDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirAnonymousInitializer
-import org.jetbrains.kotlin.fir.declarations.FirTypedDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirTypeParameterRef
 import org.jetbrains.kotlin.fir.declarations.FirTypeParameter
@@ -162,9 +161,7 @@ abstract class FirDefaultVisitor<out R, in D> : FirVisitor<R, D>() {
 
     override fun visitTypeParametersOwner(typeParametersOwner: FirTypeParametersOwner, data: D): R  = visitTypeParameterRefsOwner(typeParametersOwner, data)
 
-    override fun visitTypedDeclaration(typedDeclaration: FirTypedDeclaration, data: D): R  = visitMemberDeclaration(typedDeclaration, data)
-
-    override fun visitCallableDeclaration(callableDeclaration: FirCallableDeclaration, data: D): R  = visitTypedDeclaration(callableDeclaration, data)
+    override fun visitCallableDeclaration(callableDeclaration: FirCallableDeclaration, data: D): R  = visitMemberDeclaration(callableDeclaration, data)
 
     override fun visitEnumEntry(enumEntry: FirEnumEntry, data: D): R  = visitVariable(enumEntry, data)
 

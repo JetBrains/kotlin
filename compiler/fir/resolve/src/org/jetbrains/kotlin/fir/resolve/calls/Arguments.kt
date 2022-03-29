@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.fir.resolve.calls
 
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirFunction
-import org.jetbrains.kotlin.fir.declarations.FirTypedDeclaration
+import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.lookupTracker
@@ -196,7 +196,7 @@ fun Candidate.resolveSubCallArgument(
      * It's important to extract type from argument neither from symbol, because of symbol contains
      *   placeholder type with value 0, but argument contains type with proper literal value
      */
-    val type: ConeKotlinType = context.returnTypeCalculator.tryCalculateReturnType(candidate.symbol.fir as FirTypedDeclaration).type
+    val type: ConeKotlinType = context.returnTypeCalculator.tryCalculateReturnType(candidate.symbol.fir as FirCallableDeclaration).type
     val argumentType = candidate.substitutor.substituteOrSelf(type)
     resolvePlainArgumentType(
         csBuilder,
