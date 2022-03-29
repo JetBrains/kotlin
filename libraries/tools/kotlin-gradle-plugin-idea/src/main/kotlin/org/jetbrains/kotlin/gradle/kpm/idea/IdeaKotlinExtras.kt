@@ -27,7 +27,6 @@ private class IdeaKotlinExtrasImpl(private val extras: IterableExtras) : IdeaKot
     override fun <T : Any> get(key: Extras.Key<T>): T? = extras[key]
     override fun isEmpty(): Boolean = extras.isEmpty()
 
-    @Suppress("unchecked_cast")
     private fun writeReplace(): Any {
         return IdeaKotlinExtrasSurrogate(serialize(extras.entries))
     }
