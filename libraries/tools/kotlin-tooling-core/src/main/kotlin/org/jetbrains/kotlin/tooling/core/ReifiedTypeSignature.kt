@@ -34,7 +34,7 @@ internal fun reifiedTypeSignatureOf(type: KType): String {
     val estimatedStringBuilderCapacity = classifierName.length
         /* +1 because classifierName itself is included as well */
         .times(type.arguments.size + 1)
-         /* Magic number higher than 1 to account for recursions  */
+        /* Magic number higher than 1 to account for recursions  */
         .times(1.6)
         .toInt()
 
