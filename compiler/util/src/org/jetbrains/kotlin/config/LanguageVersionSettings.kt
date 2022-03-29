@@ -259,6 +259,7 @@ enum class LanguageFeature(
     ReportMissingUpperBoundsViolatedErrorOnAbbreviationAtSupertypes(KOTLIN_1_8, kind = BUG_FIX), // KT-29168
     IgnoreNullabilityForErasedValueParameters(KOTLIN_1_8, kind = BUG_FIX),
     ForbidUsingExtensionPropertyTypeParameterInDelegate(KOTLIN_1_8, kind = BUG_FIX),
+    ModifierNonBuiltinSuspendFunError(KOTLIN_1_8),
 
     // 1.9
 
