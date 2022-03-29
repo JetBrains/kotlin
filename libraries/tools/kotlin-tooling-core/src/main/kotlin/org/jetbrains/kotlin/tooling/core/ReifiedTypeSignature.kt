@@ -26,6 +26,11 @@ internal fun reifiedTypeSignatureOf(type: KType): String {
         "Expected non-anonymous, non-local type, found $type"
     )
 
+    /* Fast path: Just a non-nullable class without arguments */
+    if (type.arguments.isEmpty() && !type.isMarkedNullable) {
+        return classifierName
+    }
+
     return buildString {
         append(classifierName)
         if (type.arguments.isNotEmpty()) {
