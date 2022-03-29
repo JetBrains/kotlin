@@ -11,7 +11,6 @@ internal val androidPluginIds = listOf(
     "com.android.dynamic-feature",
     "com.android.asset-pack",
     "com.android.asset-pack-bundle",
-    "com.android.lint",
     "com.android.test",
     // Deprecated android plugins
     "com.android.instantapp",
