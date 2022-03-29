@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinIosX64Variant
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinLinuxX64Variant
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinPm20ProjectExtension
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.jvm
-import org.jetbrains.kotlin.tooling.core.extraKey
+import org.jetbrains.kotlin.tooling.core.extrasKeyOf
 import unwrapProxyInstance
 import java.io.File
 import java.io.Serializable
@@ -81,8 +81,8 @@ class BackwardsCompatibilityDeserializationTest {
 
     @Test
     fun `test - attaching serializable extras`() {
-        val retainedModelKey = extraKey<RetainedModel>() + IdeaKotlinExtraSerializer.serializable()
-        val unretainedModelKey = extraKey<UnretainedModel>()
+        val retainedModelKey = extrasKeyOf<RetainedModel>() + IdeaKotlinExtraSerializer.serializable()
+        val unretainedModelKey = extrasKeyOf<UnretainedModel>()
 
         val project = ProjectBuilder.builder().build() as ProjectInternal
         project.plugins.apply(KotlinPm20PluginWrapper::class.java)

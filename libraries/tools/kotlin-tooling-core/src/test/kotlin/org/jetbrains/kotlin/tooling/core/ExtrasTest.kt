@@ -19,34 +19,34 @@ class ExtrasTest {
     @Test
     fun `test - add and get`() {
         val extras = mutableExtrasOf()
-        assertNull(extras[extraKey<String>()])
-        assertNull(extras[extraKey<String>("a")])
-        assertNull(extras[extraKey<String>("b")])
+        assertNull(extras[extrasKeyOf<String>()])
+        assertNull(extras[extrasKeyOf<String>("a")])
+        assertNull(extras[extrasKeyOf<String>("b")])
 
-        extras[extraKey()] = "22222"
-        assertEquals("22222", extras[extraKey()])
-        assertNull(extras[extraKey("a")])
-        assertNull(extras[extraKey("b")])
+        extras[extrasKeyOf()] = "22222"
+        assertEquals("22222", extras[extrasKeyOf()])
+        assertNull(extras[extrasKeyOf("a")])
+        assertNull(extras[extrasKeyOf("b")])
 
-        extras[extraKey("a")] = "value a"
-        assertEquals("22222", extras[extraKey()])
-        assertEquals("value a", extras[extraKey("a")])
-        assertNull(extras[extraKey("b")])
+        extras[extrasKeyOf("a")] = "value a"
+        assertEquals("22222", extras[extrasKeyOf()])
+        assertEquals("value a", extras[extrasKeyOf("a")])
+        assertNull(extras[extrasKeyOf("b")])
 
-        extras[extraKey("b")] = "value b"
-        assertEquals("22222", extras[extraKey()])
-        assertEquals("value a", extras[extraKey("a")])
-        assertEquals("value b", extras[extraKey("b")])
+        extras[extrasKeyOf("b")] = "value b"
+        assertEquals("22222", extras[extrasKeyOf()])
+        assertEquals("value a", extras[extrasKeyOf("a")])
+        assertEquals("value b", extras[extrasKeyOf("b")])
 
-        assertNull(extras[extraKey("c")])
+        assertNull(extras[extrasKeyOf("c")])
     }
 
     @Test
     fun `test - ids`() {
-        val stringKey = extraKey<String>()
-        val stringKeyA = extraKey<String>("a")
-        val intKey = extraKey<Int>()
-        val intKeyA = extraKey<Int>("a")
+        val stringKey = extrasKeyOf<String>()
+        val stringKeyA = extrasKeyOf<String>("a")
+        val intKey = extrasKeyOf<Int>()
+        val intKeyA = extrasKeyOf<Int>("a")
 
         val ids = setOf(stringKey.id, stringKeyA.id, intKey.id, intKeyA.id)
 
@@ -70,10 +70,10 @@ class ExtrasTest {
 
     @Test
     fun `test - keys`() {
-        val stringKey = extraKey<String>()
-        val stringKeyA = extraKey<String>("a")
-        val intKey = extraKey<Int>()
-        val intKeyA = extraKey<Int>("a")
+        val stringKey = extrasKeyOf<String>()
+        val stringKeyA = extrasKeyOf<String>("a")
+        val intKey = extrasKeyOf<Int>()
+        val intKeyA = extrasKeyOf<Int>("a")
 
         val keys = listOf(stringKey, stringKeyA, intKey, intKeyA)
 
@@ -97,10 +97,10 @@ class ExtrasTest {
 
     @Test
     fun `test - equality`() {
-        val stringKey = extraKey<String>()
-        val stringKeyA = extraKey<String>("a")
-        val intKey = extraKey<Int>()
-        val intKeyA = extraKey<Int>("a")
+        val stringKey = extrasKeyOf<String>()
+        val stringKeyA = extrasKeyOf<String>("a")
+        val intKey = extrasKeyOf<Int>()
+        val intKeyA = extrasKeyOf<Int>("a")
 
         val extras = extrasOf(
             stringKey withValue "string",
@@ -123,8 +123,8 @@ class ExtrasTest {
         assertEquals(extras.toMutableExtras(), mutableExtras)
         assertEquals(mutableExtras, extras)
 
-        assertNotEquals(extras, extras + extraKey<Int>("b").withValue(2))
-        assertNotEquals(mutableExtras, mutableExtras + extraKey<Int>("b").withValue(2))
+        assertNotEquals(extras, extras + extrasKeyOf<Int>("b").withValue(2))
+        assertNotEquals(mutableExtras, mutableExtras + extrasKeyOf<Int>("b").withValue(2))
     }
 
     @Test
@@ -152,7 +152,7 @@ class ExtrasTest {
 
     @Test
     fun `test - overwrite - mutable`() {
-        val key = extraKey<Int>()
+        val key = extrasKeyOf<Int>()
         val extras = mutableExtrasOf()
         assertNull(extras.set(key, 1))
         assertEquals(1, extras[key])
@@ -162,7 +162,7 @@ class ExtrasTest {
 
     @Test
     fun `test - overwrite - immutable`() {
-        val key = extraKey<Int>()
+        val key = extrasKeyOf<Int>()
         val extras0 = extrasOf()
         val extras1 = extras0 + (key withValue 1)
         assertNull(extras0[key])
@@ -178,8 +178,8 @@ class ExtrasTest {
     fun `test - overwrite - mutable - withCapability`() {
         val capability = object : Extras.Key.Capability<Int> {}
 
-        val keyA = extraKey<Int>()
-        val keyB = extraKey<Int>() + capability
+        val keyA = extrasKeyOf<Int>()
+        val keyB = extrasKeyOf<Int>() + capability
 
         val extras = mutableExtrasOf()
         extras[keyA] = 0
@@ -194,8 +194,8 @@ class ExtrasTest {
     fun `test - overwrite - immutable - withCapability`() {
         val capability = object : Extras.Key.Capability<Int> {}
 
-        val keyA = extraKey<Int>()
-        val keyB = extraKey<Int>() + capability
+        val keyA = extrasKeyOf<Int>()
+        val keyB = extrasKeyOf<Int>() + capability
 
         val extras = extrasOf()
         val extras1 = extras + (keyA withValue 1)
@@ -209,28 +209,28 @@ class ExtrasTest {
 
     @Test
     fun `test - key equality`() {
-        assertEquals(extraKey<Int>(), extraKey<Int>())
-        assertEquals(extraKey<List<String>>(), extraKey<List<String>>())
-        assertEquals(extraKey<Int>("a"), extraKey<Int>("a"))
-        assertNotEquals<Extras.Key<*>>(extraKey<Int>(), extraKey<String>())
-        assertNotEquals<Extras.Key<*>>(extraKey<Int>("a"), extraKey<Int>())
-        assertNotEquals<Extras.Key<*>>(extraKey<Int>("a"), extraKey<Int>("b"))
+        assertEquals(extrasKeyOf<Int>(), extrasKeyOf<Int>())
+        assertEquals(extrasKeyOf<List<String>>(), extrasKeyOf<List<String>>())
+        assertEquals(extrasKeyOf<Int>("a"), extrasKeyOf<Int>("a"))
+        assertNotEquals<Extras.Key<*>>(extrasKeyOf<Int>(), extrasKeyOf<String>())
+        assertNotEquals<Extras.Key<*>>(extrasKeyOf<Int>("a"), extrasKeyOf<Int>())
+        assertNotEquals<Extras.Key<*>>(extrasKeyOf<Int>("a"), extrasKeyOf<Int>("b"))
 
         val capabilityA = object : Extras.Key.Capability<Int> {}
         val capabilityB = object : Extras.Key.Capability<Int> {}
 
-        assertNotEquals(extraKey<Int>() + capabilityA, extraKey<Int>())
-        assertNotEquals(extraKey<Int>(), extraKey<Int>() + capabilityA)
-        assertEquals(extraKey<Int>() + capabilityA, extraKey<Int>() + capabilityA)
+        assertNotEquals(extrasKeyOf<Int>() + capabilityA, extrasKeyOf<Int>())
+        assertNotEquals(extrasKeyOf<Int>(), extrasKeyOf<Int>() + capabilityA)
+        assertEquals(extrasKeyOf<Int>() + capabilityA, extrasKeyOf<Int>() + capabilityA)
 
         assertEquals(
-            extraKey<Int>() + capabilityA,
-            extraKey<Int>() + capabilityA + capabilityA
+            extrasKeyOf<Int>() + capabilityA,
+            extrasKeyOf<Int>() + capabilityA + capabilityA
         )
 
         assertNotEquals(
-            extraKey<Int>() + capabilityA,
-            extraKey<Int>() + capabilityA + capabilityB
+            extrasKeyOf<Int>() + capabilityA,
+            extrasKeyOf<Int>() + capabilityA + capabilityB
         )
     }
 
@@ -238,11 +238,11 @@ class ExtrasTest {
     fun `test - add two extras`() {
         val capability = object : Extras.Key.Capability<Int> {}
 
-        val keyA = extraKey<Int>("a")
-        val keyB = extraKey<Int>("b")
-        val keyC = extraKey<Int>("c")
-        val keyD = extraKey<Int>()
-        val keyE = extraKey<Int>() + capability
+        val keyA = extrasKeyOf<Int>("a")
+        val keyB = extrasKeyOf<Int>("b")
+        val keyC = extrasKeyOf<Int>("c")
+        val keyD = extrasKeyOf<Int>()
+        val keyE = extrasKeyOf<Int>() + capability
 
         val extras1 = extrasOf(
             keyA withValue 0,

@@ -18,20 +18,20 @@ class IdeaKotlinExtrasTest {
     private data class RetainedModel(val value: Int) : Serializable
     private data class UnretainedModel(val value: Int)
 
-    private val retainedModelKey = extraKey<RetainedModel>() + IdeaKotlinExtraSerializer.serializable()
-    private val retainedModelKeyFoo = extraKey<RetainedModel>("foo") + IdeaKotlinExtraSerializer.serializable()
-    private val retainedModelKeyBar = extraKey<RetainedModel>("bar") + IdeaKotlinExtraSerializer.serializable()
+    private val retainedModelKey = extrasKeyOf<RetainedModel>() + IdeaKotlinExtraSerializer.serializable()
+    private val retainedModelKeyFoo = extrasKeyOf<RetainedModel>("foo") + IdeaKotlinExtraSerializer.serializable()
+    private val retainedModelKeyBar = extrasKeyOf<RetainedModel>("bar") + IdeaKotlinExtraSerializer.serializable()
 
-    private val unretainedModelKey = extraKey<UnretainedModel>()
-    private val unretainedModelKeyFoo = extraKey<UnretainedModel>("foo")
-    private val unretainedModelKeyBar = extraKey<UnretainedModel>("bar")
+    private val unretainedModelKey = extrasKeyOf<UnretainedModel>()
+    private val unretainedModelKeyFoo = extrasKeyOf<UnretainedModel>("foo")
+    private val unretainedModelKeyBar = extrasKeyOf<UnretainedModel>("bar")
 
     @Test
     fun `test - extras are captured when creating IdeaKotlinExtras`() {
-        val extras = mutableExtrasOf(extraKey<Int>() withValue 1)
+        val extras = mutableExtrasOf(extrasKeyOf<Int>() withValue 1)
         val capturedExtras = extras.toExtras()
         val ideaKotlinExtras = IdeaKotlinExtras(extras)
-        extras[extraKey<Int>("a")] = 2
+        extras[extrasKeyOf<Int>("a")] = 2
 
         assertNotEquals(extras, capturedExtras, "Expected extras to contain additional 'a' key")
         assertNotEquals<Extras>(extras, ideaKotlinExtras)
