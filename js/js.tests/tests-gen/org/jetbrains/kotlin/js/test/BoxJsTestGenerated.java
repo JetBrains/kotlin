@@ -3002,6 +3002,12 @@ public class BoxJsTestGenerated extends AbstractBoxJsTest {
             }
 
             @Test
+            @TestMetadata("overloadGeneric.kt")
+            public void testOverloadGeneric() throws Exception {
+                runTest("js/js.translator/testData/box/expression/function/overloadGeneric.kt");
+            }
+
+            @Test
             @TestMetadata("overloadOverridenFun.kt")
             public void testOverloadOverridenFun() throws Exception {
                 runTest("js/js.translator/testData/box/expression/function/overloadOverridenFun.kt");
