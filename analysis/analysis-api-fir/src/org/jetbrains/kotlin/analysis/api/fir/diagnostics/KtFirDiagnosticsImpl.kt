@@ -3256,6 +3256,16 @@ internal class ModifierFormForNonBuiltInSuspendImpl(
     override val token: ValidityToken,
 ) : KtFirDiagnostic.ModifierFormForNonBuiltInSuspend(), KtAbstractFirDiagnostic<PsiElement>
 
+internal class ModifierFormForNonBuiltInSuspendFunErrorImpl(
+    override val firDiagnostic: KtPsiDiagnostic,
+    override val token: ValidityToken,
+) : KtFirDiagnostic.ModifierFormForNonBuiltInSuspendFunError(), KtAbstractFirDiagnostic<PsiElement>
+
+internal class ModifierFormForNonBuiltInSuspendFunWarningImpl(
+    override val firDiagnostic: KtPsiDiagnostic,
+    override val token: ValidityToken,
+) : KtFirDiagnostic.ModifierFormForNonBuiltInSuspendFunWarning(), KtAbstractFirDiagnostic<PsiElement>
+
 internal class ReturnForBuiltInSuspendImpl(
     override val firDiagnostic: KtPsiDiagnostic,
     override val token: ValidityToken,

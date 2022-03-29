@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.analysis.checkers.expression
 
 import org.jetbrains.kotlin.KtNodeTypes
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
@@ -30,8 +31,12 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.types.*
+import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.StandardClassIds
+import org.jetbrains.kotlin.psi
+import org.jetbrains.kotlin.psi.KtNamedFunction
+import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
 import org.jetbrains.kotlin.utils.addToStdlib.lastIsInstanceOrNull
 
 object FirSuspendCallChecker : FirQualifiedAccessExpressionChecker() {
@@ -81,38 +86,50 @@ object FirSuspendCallChecker : FirQualifiedAccessExpressionChecker() {
         if (symbol.callableId == KOTLIN_SUSPEND_BUILT_IN_FUNCTION_CALLABLE_ID) {
             if (reference.name != BUILTIN_SUSPEND_NAME ||
                 expression.explicitReceiver != null ||
-                !expression.hasFormOfSuspendModifierForLambda()
+                expression.formOfSuspendModifierForLambdaOrFun() == null
             ) {
                 reporter.reportOn(expression.source, FirErrors.NON_MODIFIER_FORM_FOR_BUILT_IN_SUSPEND, context)
             }
-        } else {
-            if (reference.name == BUILTIN_SUSPEND_NAME && expression.hasFormOfSuspendModifierForLambda()) {
-                reporter.reportOn(expression.source, FirErrors.MODIFIER_FORM_FOR_NON_BUILT_IN_SUSPEND, context)
+        } else if (reference.name == BUILTIN_SUSPEND_NAME) {
+            when (expression.formOfSuspendModifierForLambdaOrFun()) {
+                SuspendCallArgumentKind.FUN -> {
+                    reporter.reportOn(expression.source, FirErrors.MODIFIER_FORM_FOR_NON_BUILT_IN_SUSPEND_FUN, context)
+                }
+                SuspendCallArgumentKind.LAMBDA -> {
+                    reporter.reportOn(expression.source, FirErrors.MODIFIER_FORM_FOR_NON_BUILT_IN_SUSPEND, context)
+                }
+                null -> {
+                    // Nothing to do
+                }
             }
         }
     }
 
-    private fun FirQualifiedAccessExpression.hasFormOfSuspendModifierForLambda(): Boolean {
-        if (this !is FirFunctionCall) return false
+    private fun FirQualifiedAccessExpression.formOfSuspendModifierForLambdaOrFun(): SuspendCallArgumentKind? {
+        if (this !is FirFunctionCall) return null
         val reference = this.calleeReference
-        if (reference is FirResolvedCallableReference) return false
-        if (typeArguments.any { it.source != null }) return false
+        if (reference is FirResolvedCallableReference) return null
+        if (typeArguments.any { it.source != null }) return null
         if (arguments.singleOrNull() is FirLambdaArgumentExpression) {
             // No brackets should be in a selector call
             val callExpressionSource =
                 if (explicitReceiver == null) source
                 else source?.getChild(KtNodeTypes.CALL_EXPRESSION, index = 1, depth = 1)
             if (callExpressionSource?.getChild(KtNodeTypes.VALUE_ARGUMENT_LIST, depth = 1) == null) {
-                return true
+                return SuspendCallArgumentKind.LAMBDA
             }
         }
         if (origin == FirFunctionCallOrigin.Infix) {
             val lastArgument = arguments.lastOrNull()
             if (lastArgument is FirAnonymousFunctionExpression && source?.getChild(KtNodeTypes.PARENTHESIZED, depth = 1) == null) {
-                return true
+                return if (lastArgument.source?.lighterASTNode?.tokenType == KtStubElementTypes.FUNCTION) {
+                    SuspendCallArgumentKind.FUN
+                } else {
+                    SuspendCallArgumentKind.LAMBDA
+                }
             }
         }
-        return false
+        return null
     }
 
     private fun findEnclosingSuspendFunction(context: CheckerContext): FirFunction? {
@@ -227,4 +244,8 @@ object FirSuspendCallChecker : FirQualifiedAccessExpressionChecker() {
             calledDeclarationSymbol.resolvedReceiverTypeRef?.coneType,
         )
     }
+}
+
+private enum class SuspendCallArgumentKind {
+    FUN, LAMBDA
 }
