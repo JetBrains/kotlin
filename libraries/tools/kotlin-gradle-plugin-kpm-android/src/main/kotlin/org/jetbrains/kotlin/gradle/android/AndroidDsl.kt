@@ -12,10 +12,7 @@ import org.jetbrains.kotlin.tooling.core.extrasKeyOf
 import java.io.File
 import java.io.Serializable
 
-internal val androidDslKey = extrasKeyOf<AndroidDsl>() +
-        IdeaKotlinExtrasSerializer.serializable() +
-        IdeaKotlinExtrasSerializer.ErrorHandler.ConsoleLogger()
-
+internal val androidDslKey = extrasKeyOf<AndroidDsl>() + IdeaKotlinExtrasSerializer.serializable()
 val KotlinGradleFragment.androidDsl: AndroidDsl? get() = this.extras[androidDslKey]
 
 class AndroidDsl : Serializable {
