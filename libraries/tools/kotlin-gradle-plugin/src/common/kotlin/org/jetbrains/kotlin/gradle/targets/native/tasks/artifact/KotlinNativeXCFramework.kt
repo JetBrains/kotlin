@@ -17,8 +17,14 @@ import org.jetbrains.kotlin.gradle.tasks.dependsOn
 import org.jetbrains.kotlin.gradle.tasks.registerTask
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 import org.jetbrains.kotlin.konan.target.KonanTarget
+import javax.inject.Inject
 
-open class KotlinNativeXCFramework : KotlinNativeArtifact() {
+open class KotlinNativeXCFramework @Inject constructor(
+    project: Project,
+    artifactName: String
+) : KotlinNativeArtifact(project, artifactName) {
+    override val taskName get() = lowerCamelCaseName("assemble", artifactName, "XCFramework")
+
     var targets: Set<KonanTarget> = emptySet()
     fun targets(vararg targets: KonanTarget) {
         this.targets = targets.toSet()
@@ -28,46 +34,43 @@ open class KotlinNativeXCFramework : KotlinNativeArtifact() {
 
     private val kind = NativeOutputKind.FRAMEWORK
 
-    override fun validate(project: Project, name: String): Boolean {
-        val logger = project.logger
-        if (!super.validate(project, name)) return false
-        if (targets.isEmpty()) {
-            logger.error("Native library '${name}' wasn't configured because it requires at least one target")
-            return false
+    override fun validate() {
+        super.validate()
+        check(targets.isNotEmpty()) {
+            "Native artifact '$artifactName' wasn't configured because it requires at least one target"
         }
-        targets.firstOrNull { !kind.availableFor(it) }?.let { target ->
-            logger.error("Native library '${name}' wasn't configured because ${kind.description} is not available for ${target.visibleName}")
-            return false
+        val wrongTarget = targets.firstOrNull { !kind.availableFor(it) }
+        check(wrongTarget == null) {
+            "Native artifact '$artifactName' wasn't configured because ${kind.description} is not available for ${wrongTarget!!.visibleName}"
         }
-
-        return true
     }
 
-    override fun registerAssembleTask(project: Project, name: String) {
-        val parentTask = project.registerTask<Task>(lowerCamelCaseName("assemble", name, "XCFramework")) {
+    override fun registerAssembleTask() {
+        validate()
+        val parentTask = project.registerTask<Task>(taskName) {
             it.group = "build"
-            it.description = "Assemble all types of registered '$name' XCFramework"
+            it.description = "Assemble all types of registered '$artifactName' XCFramework"
         }
         project.tasks.named(LifecycleBasePlugin.ASSEMBLE_TASK_NAME).dependsOn(parentTask)
 
         modes.forEach { buildType ->
-            val holder = XCFrameworkTaskHolder.create(project, name, buildType).also {
+            val holder = XCFrameworkTaskHolder.create(project, artifactName, buildType).also {
                 parentTask.dependsOn(it.task)
             }
 
             val nameSuffix = "ForXCF"
             val frameworkDescriptors: List<FrameworkDescriptor> = targets.map { target ->
-                val librariesConfigurationName = project.registerLibsDependencies(target, name + nameSuffix, modules)
-                val exportConfigurationName = project.registerExportDependencies(target, name + nameSuffix, modules)
+                val librariesConfigurationName = project.registerLibsDependencies(target, artifactName + nameSuffix, modules)
+                val exportConfigurationName = project.registerExportDependencies(target, artifactName + nameSuffix, modules)
                 val targetTask = registerLinkFrameworkTask(
                     project,
-                    name,
+                    artifactName,
                     target,
                     buildType,
                     librariesConfigurationName,
                     exportConfigurationName,
                     embedBitcode,
-                    "${name}XCFrameworkTemp",
+                    "${artifactName}XCFrameworkTemp",
                     nameSuffix
                 )
                 holder.task.dependsOn(targetTask)
@@ -76,7 +79,7 @@ open class KotlinNativeXCFramework : KotlinNativeArtifact() {
 
                 val group = AppleTarget.values().firstOrNull { it.targets.contains(target) }
                 holder.fatTasks[group]?.configure { fatTask ->
-                    fatTask.baseName = name
+                    fatTask.baseName = artifactName
                     fatTask.fromFrameworkDescriptors(listOf(descriptor))
                     fatTask.dependsOn(targetTask)
                 }

@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.gradle.targets.native.tasks.artifact
 
-import groovy.lang.Closure
 import org.gradle.api.Action
 import org.gradle.api.Project
 import org.gradle.api.attributes.Usage
@@ -18,7 +17,12 @@ import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.konan.target.presetName
 
-abstract class KotlinArtifact {
+abstract class KotlinArtifact(
+    val project: Project,
+    val artifactName: String
+) {
+    internal abstract val taskName: String
+
     internal val modules = mutableSetOf<Any>()
     fun setModules(vararg project: Any) {
         modules.clear()
@@ -29,11 +33,11 @@ abstract class KotlinArtifact {
         modules.add(project)
     }
 
-    internal abstract fun validate(project: Project, name: String): Boolean
-    internal abstract fun registerAssembleTask(project: Project, name: String)
+    internal abstract fun validate()
+    internal abstract fun registerAssembleTask()
 }
 
-abstract class KotlinNativeArtifact : KotlinArtifact() {
+abstract class KotlinNativeArtifact(project: Project, artifactName: String) : KotlinArtifact(project, artifactName) {
     var modes: Set<NativeBuildType> = NativeBuildType.DEFAULT_BUILD_TYPES
     fun modes(vararg modes: NativeBuildType) {
         this.modes = modes.toSet()
@@ -52,22 +56,16 @@ abstract class KotlinNativeArtifact : KotlinArtifact() {
         binaryOptions[name] = value
     }
 
-    override fun validate(project: Project, name: String): Boolean {
-        val logger = project.logger
-        if (modules.isEmpty()) {
-            logger.error("Native library '${name}' wasn't configured because it requires at least one module for linking")
-            return false
+    override fun validate() {
+        check(modules.isNotEmpty()) {
+            "Native artifact '$artifactName' wasn't configured because it requires at least one module for linking"
         }
-
-        if (modes.isEmpty()) {
-            logger.error("Native library '${name}' wasn't configured because it requires at least one build type in modes")
-            return false
+        check(modes.isNotEmpty()) {
+            "Native artifact '$artifactName' wasn't configured because it requires at least one build type in modes"
         }
-
-        return true
     }
 
-    fun Project.registerLibsDependencies(target: KonanTarget, artifactName: String, deps: Set<Any>): String {
+    protected fun Project.registerLibsDependencies(target: KonanTarget, artifactName: String, deps: Set<Any>): String {
         val librariesConfigurationName = lowerCamelCaseName(target.presetName, artifactName, "linkLibrary")
         configurations.maybeCreate(librariesConfigurationName).apply {
             isVisible = false
@@ -82,7 +80,7 @@ abstract class KotlinNativeArtifact : KotlinArtifact() {
         return librariesConfigurationName
     }
 
-    fun Project.registerExportDependencies(target: KonanTarget, artifactName: String, deps: Set<Any>): String {
+    protected fun Project.registerExportDependencies(target: KonanTarget, artifactName: String, deps: Set<Any>): String {
         val exportConfigurationName = lowerCamelCaseName(target.presetName, artifactName, "linkExport")
         configurations.maybeCreate(exportConfigurationName).apply {
             isVisible = false
