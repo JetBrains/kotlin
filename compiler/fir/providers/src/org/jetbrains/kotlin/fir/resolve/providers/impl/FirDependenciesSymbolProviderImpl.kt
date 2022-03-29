@@ -11,9 +11,7 @@ import org.jetbrains.kotlin.fir.caches.createCache
 import org.jetbrains.kotlin.fir.caches.firCachesFactory
 import org.jetbrains.kotlin.fir.caches.getValue
 import org.jetbrains.kotlin.fir.nullableModuleData
-import org.jetbrains.kotlin.fir.resolve.providers.FirDependenciesSymbolProvider
-import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProviderInternals
-import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
+import org.jetbrains.kotlin.fir.resolve.providers.*
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
@@ -37,7 +35,45 @@ open class FirDependenciesSymbolProviderImpl(session: FirSession) : FirDependenc
         (moduleData.dependencies + moduleData.friendDependencies + moduleData.dependsOnDependencies)
             .mapNotNull { session.sessionProvider?.getSession(it) }
             .sortedBy { it.kind }
-            .map { it.symbolProvider }
+            .map {
+                if (it.kind == FirSession.Kind.Source) {
+                    it.symbolProvider.loadTransitiveSourceProvides()
+                } else {
+                    listOf(it.symbolProvider)
+                }
+            }
+            .flatten()
+    }
+
+    private fun FirSymbolProvider.loadTransitiveSourceProvides(): List<FirSymbolProvider> {
+        val result = mutableListOf<FirSymbolProvider>()
+        val visited = hashSetOf<FirSymbolProvider>()
+
+        fun loadTransitiveSourceProvides(provider: FirSymbolProvider) {
+            if (!visited.add(provider)) {
+                return
+            }
+
+            when {
+                provider is FirDependenciesSymbolProviderImpl -> {
+                    for (p in provider.dependencyProviders) {
+                        loadTransitiveSourceProvides(p)
+                    }
+                }
+                provider is FirCompositeSymbolProvider -> {
+                    for (p in provider.providers) {
+                        loadTransitiveSourceProvides(p)
+                    }
+                }
+                provider.session.kind == FirSession.Kind.Source -> {
+                    result.add(provider)
+                }
+            }
+        }
+
+        loadTransitiveSourceProvides(this)
+
+        return result
     }
 
     @OptIn(FirSymbolProviderInternals::class, ExperimentalStdlibApi::class)
