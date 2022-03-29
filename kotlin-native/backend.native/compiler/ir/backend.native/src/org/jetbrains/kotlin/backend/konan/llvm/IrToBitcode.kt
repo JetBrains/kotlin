@@ -1740,7 +1740,7 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
     private fun needMutationCheck(irClass: IrClass): Boolean {
         // For now we omit mutation checks on immutable types, as this allows initialization in constructor
         // and it is assumed that API doesn't allow to change them.
-        return !irClass.isFrozen(context)
+        return context.config.freezing.enableFreezeChecks && !irClass.isFrozen(context)
     }
 
     private fun isZeroConstValue(value: IrExpression): Boolean {
