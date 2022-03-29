@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.fir.visitors.*
  * DO NOT MODIFY IT MANUALLY
  */
 
-sealed class FirCallableDeclaration : FirTypedDeclaration() {
+sealed class FirCallableDeclaration : FirMemberDeclaration() {
     abstract override val source: KtSourceElement?
     abstract override val annotations: List<FirAnnotation>
     abstract override val moduleData: FirModuleData
@@ -29,7 +29,7 @@ sealed class FirCallableDeclaration : FirTypedDeclaration() {
     abstract override val attributes: FirDeclarationAttributes
     abstract override val typeParameters: List<FirTypeParameterRef>
     abstract override val status: FirDeclarationStatus
-    abstract override val returnTypeRef: FirTypeRef
+    abstract val returnTypeRef: FirTypeRef
     abstract val receiverTypeRef: FirTypeRef?
     abstract val deprecation: DeprecationsPerUseSite?
     abstract override val symbol: FirCallableSymbol<out FirCallableDeclaration>
@@ -44,7 +44,7 @@ sealed class FirCallableDeclaration : FirTypedDeclaration() {
 
     abstract override fun replaceResolvePhase(newResolvePhase: FirResolvePhase)
 
-    abstract override fun replaceReturnTypeRef(newReturnTypeRef: FirTypeRef)
+    abstract fun replaceReturnTypeRef(newReturnTypeRef: FirTypeRef)
 
     abstract fun replaceReceiverTypeRef(newReceiverTypeRef: FirTypeRef?)
 
@@ -56,7 +56,7 @@ sealed class FirCallableDeclaration : FirTypedDeclaration() {
 
     abstract override fun <D> transformStatus(transformer: FirTransformer<D>, data: D): FirCallableDeclaration
 
-    abstract override fun <D> transformReturnTypeRef(transformer: FirTransformer<D>, data: D): FirCallableDeclaration
+    abstract fun <D> transformReturnTypeRef(transformer: FirTransformer<D>, data: D): FirCallableDeclaration
 
     abstract fun <D> transformReceiverTypeRef(transformer: FirTransformer<D>, data: D): FirCallableDeclaration
 }

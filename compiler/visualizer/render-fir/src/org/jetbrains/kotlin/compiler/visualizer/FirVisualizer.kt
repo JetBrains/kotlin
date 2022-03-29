@@ -163,7 +163,7 @@ class FirVisualizer(private val firFile: FirFile) : BaseRenderer() {
             stack.push((function.name ?: ANONYMOUS_NAME))
             if (function.equalsToken != null) {
                 function.bodyExpression!!.firstOfTypeWithRender<FirReturnExpression>(function.equalsToken) { this.result.typeRef }
-                    ?: function.firstOfTypeWithRender<FirTypedDeclaration>(function.equalsToken) { this.returnTypeRef }
+                    ?: function.firstOfTypeWithRender<FirCallableDeclaration>(function.equalsToken) { this.returnTypeRef }
             }
             super.visitNamedFunction(function)
             stack.pop()

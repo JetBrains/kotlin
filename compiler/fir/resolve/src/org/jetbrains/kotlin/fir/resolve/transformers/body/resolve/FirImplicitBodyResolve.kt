@@ -215,7 +215,7 @@ private class ReturnTypeCalculatorWithJump(
 
     var outerTowerDataContexts: FirRegularTowerDataContexts? = null
 
-    override fun tryCalculateReturnTypeOrNull(declaration: FirTypedDeclaration): FirResolvedTypeRef {
+    override fun tryCalculateReturnTypeOrNull(declaration: FirCallableDeclaration): FirResolvedTypeRef {
         if (declaration is FirValueParameter && declaration.returnTypeRef is FirImplicitTypeRef) {
             // TODO?
             declaration.transformReturnTypeRef(
@@ -229,8 +229,6 @@ private class ReturnTypeCalculatorWithJump(
         val returnTypeRef = declaration.returnTypeRef
         if (returnTypeRef is FirResolvedTypeRef) return returnTypeRef
 
-        require(declaration is FirCallableDeclaration) { "${declaration::class}: ${declaration.render()}" }
-
         if (declaration is FirSyntheticProperty) {
             return tryCalculateReturnType(declaration.getter.delegate)
         }
@@ -242,7 +240,7 @@ private class ReturnTypeCalculatorWithJump(
                 (declaration.returnTypeRef as? FirResolvedTypeRef)?.let { return it }
                 declaration.attributes.fakeOverrideSubstitution = null
                 val (substitutor, baseSymbol) = fakeOverrideSubstitution
-                val baseDeclaration = baseSymbol.fir as FirTypedDeclaration
+                val baseDeclaration = baseSymbol.fir as FirCallableDeclaration
                 val baseReturnTypeRef = tryCalculateReturnType(baseDeclaration)
                 val baseReturnType = baseReturnTypeRef.type
                 val coneType = substitutor.substituteOrSelf(baseReturnType)

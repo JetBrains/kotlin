@@ -22,7 +22,6 @@ import org.jetbrains.kotlin.fir.declarations.FirTypeParameterRefsOwner
 import org.jetbrains.kotlin.fir.declarations.FirTypeParametersOwner
 import org.jetbrains.kotlin.fir.declarations.FirMemberDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirAnonymousInitializer
-import org.jetbrains.kotlin.fir.declarations.FirTypedDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirTypeParameterRef
 import org.jetbrains.kotlin.fir.declarations.FirTypeParameter
@@ -214,10 +213,6 @@ abstract class FirVisitorVoid : FirVisitor<Unit, Nothing?>() {
 
     open fun visitAnonymousInitializer(anonymousInitializer: FirAnonymousInitializer) {
         visitElement(anonymousInitializer)
-    }
-
-    open fun visitTypedDeclaration(typedDeclaration: FirTypedDeclaration) {
-        visitElement(typedDeclaration)
     }
 
     open fun visitCallableDeclaration(callableDeclaration: FirCallableDeclaration) {
@@ -766,10 +761,6 @@ abstract class FirVisitorVoid : FirVisitor<Unit, Nothing?>() {
 
     final override fun visitAnonymousInitializer(anonymousInitializer: FirAnonymousInitializer, data: Nothing?) {
         visitAnonymousInitializer(anonymousInitializer)
-    }
-
-    final override fun visitTypedDeclaration(typedDeclaration: FirTypedDeclaration, data: Nothing?) {
-        visitTypedDeclaration(typedDeclaration)
     }
 
     final override fun visitCallableDeclaration(callableDeclaration: FirCallableDeclaration, data: Nothing?) {

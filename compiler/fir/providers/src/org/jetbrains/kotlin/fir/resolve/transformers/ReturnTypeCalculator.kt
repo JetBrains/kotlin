@@ -5,14 +5,14 @@
 
 package org.jetbrains.kotlin.fir.resolve.transformers
 
-import org.jetbrains.kotlin.fir.declarations.FirTypedDeclaration
+import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
 
 abstract class ReturnTypeCalculator {
-    abstract fun tryCalculateReturnTypeOrNull(declaration: FirTypedDeclaration): FirResolvedTypeRef?
+    abstract fun tryCalculateReturnTypeOrNull(declaration: FirCallableDeclaration): FirResolvedTypeRef?
 
-    fun tryCalculateReturnType(declaration: FirTypedDeclaration): FirResolvedTypeRef {
+    fun tryCalculateReturnType(declaration: FirCallableDeclaration): FirResolvedTypeRef {
         return tryCalculateReturnTypeOrNull(declaration)!!
     }
 
