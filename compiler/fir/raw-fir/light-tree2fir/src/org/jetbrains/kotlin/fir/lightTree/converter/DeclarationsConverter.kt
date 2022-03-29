@@ -56,6 +56,7 @@ import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.lexer.KtTokens.*
 import org.jetbrains.kotlin.name.*
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
+import org.jetbrains.kotlin.utils.addToStdlib.runUnless
 
 class DeclarationsConverter(
     session: FirSession,
@@ -711,6 +712,7 @@ class DeclarationsConverter(
         }
 
         val enumEntryName = identifier.nameAsSafeName()
+        val containingClassIsExpectClass = classWrapper.hasExpect() || context.containerIsExpect
         return buildEnumEntry {
             source = enumEntry.toFirSourceElement()
             moduleData = baseModuleData
@@ -720,7 +722,7 @@ class DeclarationsConverter(
             symbol = FirEnumEntrySymbol(CallableId(context.currentClassId, enumEntryName))
             status = FirDeclarationStatusImpl(Visibilities.Public, Modality.FINAL).apply {
                 isStatic = true
-                isExpect = classWrapper.hasExpect() || context.containerIsExpect
+                isExpect = containingClassIsExpectClass
             }
             if (classWrapper.hasDefaultConstructor && enumEntry.getChildNodeByType(INITIALIZER_LIST) == null &&
                 modifiers.annotations.isEmpty() && classBodyNode == null
@@ -762,7 +764,7 @@ class DeclarationsConverter(
                             enumClassWrapper,
                             superTypeCallEntry?.toFirSourceElement(),
                             isEnumEntry = true,
-                            containingClassIsExpectClass = false
+                            containingClassIsExpectClass = containingClassIsExpectClass
                         )?.let { declarations += it.firConstructor }
                         classBodyNode?.also {
                             // Use ANONYMOUS_OBJECT_NAME for the owner class id of enum entry declarations
@@ -828,7 +830,9 @@ class DeclarationsConverter(
     ): PrimaryConstructor? {
         if (primaryConstructor == null && !classWrapper.isEnumEntry() && classWrapper.hasSecondaryConstructor) return null
         val classKind = classWrapper.classBuilder.classKind
-        if (primaryConstructor == null && (containingClassIsExpectClass && classKind != ClassKind.ENUM_CLASS)) return null
+        if (primaryConstructor == null &&
+            (containingClassIsExpectClass && classKind != ClassKind.ENUM_CLASS && classKind != ClassKind.ENUM_ENTRY)
+        ) return null
         if (classWrapper.isInterface()) return null
 
         var modifiers = Modifier()
@@ -841,26 +845,28 @@ class DeclarationsConverter(
         }
 
         val defaultVisibility = classWrapper.defaultConstructorVisibility()
-        val firDelegatedCall = buildDelegatedConstructorCall {
-            source = delegatedConstructorSource ?: selfTypeSource?.fakeElement(KtFakeSourceElementKind.DelegatingConstructorCall)
-            constructedTypeRef = classWrapper.delegatedSuperTypeRef.copyWithNewSourceKind(KtFakeSourceElementKind.ImplicitTypeRef)
-            isThis = false
-            calleeReference = buildExplicitSuperReference {
-                //[dirty] in case of enum classWrapper.delegatedSuperTypeRef.source is whole enum source
-                source = if (!isEnumEntry) {
-                    classWrapper.delegatedSuperTypeRef.source?.fakeElement(KtFakeSourceElementKind.DelegatingConstructorCall)
-                        ?: this@buildDelegatedConstructorCall.source?.fakeElement(KtFakeSourceElementKind.DelegatingConstructorCall)
-                } else {
-                    delegatedConstructorSource
-                        ?.lighterASTNode
-                        ?.getChildNodeByType(CONSTRUCTOR_CALLEE)
-                        ?.toFirSourceElement(KtFakeSourceElementKind.DelegatingConstructorCall)
-                        ?: this@buildDelegatedConstructorCall.source
-                }
+        val firDelegatedCall = runUnless(containingClassIsExpectClass) {
+            buildDelegatedConstructorCall {
+                source = delegatedConstructorSource ?: selfTypeSource?.fakeElement(KtFakeSourceElementKind.DelegatingConstructorCall)
+                constructedTypeRef = classWrapper.delegatedSuperTypeRef.copyWithNewSourceKind(KtFakeSourceElementKind.ImplicitTypeRef)
+                isThis = false
+                calleeReference = buildExplicitSuperReference {
+                    //[dirty] in case of enum classWrapper.delegatedSuperTypeRef.source is whole enum source
+                    source = if (!isEnumEntry) {
+                        classWrapper.delegatedSuperTypeRef.source?.fakeElement(KtFakeSourceElementKind.DelegatingConstructorCall)
+                            ?: this@buildDelegatedConstructorCall.source?.fakeElement(KtFakeSourceElementKind.DelegatingConstructorCall)
+                    } else {
+                        delegatedConstructorSource
+                            ?.lighterASTNode
+                            ?.getChildNodeByType(CONSTRUCTOR_CALLEE)
+                            ?.toFirSourceElement(KtFakeSourceElementKind.DelegatingConstructorCall)
+                            ?: this@buildDelegatedConstructorCall.source
+                    }
 
-                superTypeRef = this@buildDelegatedConstructorCall.constructedTypeRef
+                    superTypeRef = this@buildDelegatedConstructorCall.constructedTypeRef
+                }
+                extractArgumentsFrom(classWrapper.superTypeCallEntry)
             }
-            extractArgumentsFrom(classWrapper.superTypeCallEntry)
         }
 
         val explicitVisibility = runIf(primaryConstructor != null) {

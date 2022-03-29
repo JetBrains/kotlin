@@ -837,6 +837,7 @@ open class RawFirBuilder(
                     delegatedSelfTypeRef ?: delegatedSuperTypeRef!!,
                     owner = this,
                     containerTypeParameters,
+                    containingClassIsExpectClass,
                     body = null
                 )
                 container.declarations += firPrimaryConstructor
@@ -851,12 +852,13 @@ open class RawFirBuilder(
             delegatedSelfTypeRef: FirTypeRef,
             owner: KtClassOrObject,
             ownerTypeParameters: List<FirTypeParameterRef>,
+            containingClassIsExpectClass: Boolean,
             body: FirBlock? = null
         ): FirConstructor {
             val constructorCall = superTypeCallEntry?.toFirSourceElement()
             val constructorSource = this?.toFirSourceElement()
                 ?: owner.toKtPsiSourceElement(KtFakeSourceElementKind.ImplicitConstructor)
-            val firDelegatedCall = buildDelegatedConstructorCall {
+            val firDelegatedCall = if (containingClassIsExpectClass) null else buildDelegatedConstructorCall {
                 source = constructorCall ?: constructorSource.fakeElement(KtFakeSourceElementKind.DelegatingConstructorCall)
                 constructedTypeRef = delegatedSuperTypeRef.copyWithNewSourceKind(KtFakeSourceElementKind.ImplicitTypeRef)
                 isThis = false
@@ -945,6 +947,7 @@ open class RawFirBuilder(
             ownerClassHasDefaultConstructor: Boolean
         ): FirDeclaration {
             val ktEnumEntry = this@toFirEnumEntry
+            val containingClassIsExpectClass = hasExpectModifier() || this@RawFirBuilder.context.containerIsExpect
             return buildEnumEntry {
                 source = toFirSourceElement()
                 moduleData = baseModuleData
@@ -953,7 +956,7 @@ open class RawFirBuilder(
                 name = nameAsSafeName
                 status = FirDeclarationStatusImpl(Visibilities.Public, Modality.FINAL).apply {
                     isStatic = true
-                    isExpect = hasExpectModifier() || this@RawFirBuilder.context.containerIsExpect
+                    isExpect = containingClassIsExpectClass
                 }
                 symbol = FirEnumEntrySymbol(callableIdForName(nameAsSafeName))
                 if (ownerClassHasDefaultConstructor && ktEnumEntry.initializerList == null &&
@@ -992,7 +995,8 @@ open class RawFirBuilder(
                                 correctedEnumSelfTypeRef,
                                 delegatedEntrySelfType,
                                 owner = ktEnumEntry,
-                                typeParameters
+                                typeParameters,
+                                containingClassIsExpectClass
                             )
                             // Use ANONYMOUS_OBJECT_NAME for the owner class id for enum entry declarations (see KT-42351)
                             withChildClassName(SpecialNames.ANONYMOUS, forceLocalContext = true, isExpect = false) {

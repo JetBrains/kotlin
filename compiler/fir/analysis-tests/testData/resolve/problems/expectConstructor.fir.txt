@@ -1,0 +1,31 @@
+FILE: expectConstructor.kt
+    public open class Base : R|kotlin/Any| {
+        public constructor(v: R|kotlin/String|): R|Base| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final expect class Derived : R|Base| {
+        public expect constructor(v: R|kotlin/String|): R|Derived|
+
+    }
+    public open expect class ExpectBase : R|kotlin/Any| {
+        public expect constructor(v: R|kotlin/String|): R|ExpectBase|
+
+    }
+    public final expect class ExpectDerived : R|ExpectBase| {
+        public expect constructor(v: R|kotlin/String|): R|ExpectDerived|
+
+    }
+    public open expect class IOException : R|kotlin/Any| {
+        public expect constructor(message: R|kotlin/String|, cause: R|kotlin/Throwable?|): R|IOException|
+
+        public expect constructor(message: R|kotlin/String|): R|IOException| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final expect class EOFException : R|IOException| {
+        public expect constructor(message: R|kotlin/String|): R|EOFException|
+
+    }
