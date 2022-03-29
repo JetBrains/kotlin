@@ -74,6 +74,12 @@ private class SerializedIdeaKotlinExtras(
     @Synchronized
     override fun <T : Any> get(key: Extras.Key<T>): T? {
         /*
+        Fast path: If id is not present, we can already return null
+        Locking is not required, since the `ids` are captured and immutable here
+        */
+        if (key.id !in ids) return null
+
+        /*
         Guard: A key without serializer capability has no rights to access any data here
         This is done to prevent subtle heisenberg-like bugs where a value might, or might not be
         returned after or before accessing with another key that actually has a deserializer attached.
