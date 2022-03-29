@@ -96,7 +96,7 @@ abstract class AbstractIterableExtras : IterableExtras {
     }
 
     override fun toString(): String {
-        return "Extras(${entries.joinToString(", ") { "${it.key}:${it.value}" }})"
+        return "Extras($entries)"
     }
 }
 

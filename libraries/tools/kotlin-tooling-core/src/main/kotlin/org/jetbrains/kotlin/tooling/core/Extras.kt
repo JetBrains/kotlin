@@ -81,6 +81,8 @@ interface Extras {
             return result
         }
 
+        override fun toString(): String = "$key=$value"
+
         operator fun component1() = key
         operator fun component2() = value
     }
