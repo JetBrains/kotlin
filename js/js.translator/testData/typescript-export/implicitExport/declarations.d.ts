@@ -37,5 +37,9 @@ declare namespace JS_TESTS {
         class H /* extends foo.NonExportedGenericType<foo.NonExportedType> */ {
             constructor();
         }
+        function foo(a: number): Promise<number>;
+        function bar(): Error;
+        const console: Console;
+        const error: WebAssembly.CompileError;
     }
 }
