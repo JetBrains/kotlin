@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.gradle.native
 import org.jetbrains.kotlin.gradle.BaseGradleIT
 import org.jetbrains.kotlin.gradle.GradleVersionRequired
 import org.jetbrains.kotlin.gradle.native.GeneralNativeIT.Companion.withNativeCommandLineArguments
+import org.jetbrains.kotlin.gradle.transformProjectWithPluginsDsl
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.junit.Assume
 import org.junit.jupiter.api.Assertions.assertFalse
@@ -19,14 +20,14 @@ class NativeLibraryDslIT : BaseGradleIT() {
 
     @Test
     fun `check registered gradle tasks`() {
-        with(Project("new-kn-library-dsl")) {
+        with(transformProjectWithPluginsDsl("new-kn-library-dsl")) {
             build(":shared:tasks") {
                 assertSuccessful()
                 assertTasksRegistered(
                     ":shared:assembleMyfatframeFatFramework",
-                    ":shared:assembleMyframeFramework",
-                    ":shared:assembleMylibSharedLibrary",
-                    ":shared:assembleMyslibSharedLibrary",
+                    ":shared:assembleMyframeFrameworkIosArm64",
+                    ":shared:assembleMylibSharedLibraryLinuxX64",
+                    ":shared:assembleMyslibSharedLibraryLinuxX64",
                     ":shared:assembleSharedXCFramework"
                 )
                 assertTasksNotRegistered(
@@ -37,8 +38,8 @@ class NativeLibraryDslIT : BaseGradleIT() {
                 assertSuccessful()
                 assertTasksRegistered(
                     ":lib:assembleGroofatframeFatFramework",
-                    ":lib:assembleGrooframeFramework",
-                    ":lib:assembleGroolibSharedLibrary",
+                    ":lib:assembleGrooframeFrameworkIosArm64",
+                    ":lib:assembleGroolibSharedLibraryIosX64",
                     ":lib:assembleLibXCFramework"
                 )
             }
@@ -47,7 +48,7 @@ class NativeLibraryDslIT : BaseGradleIT() {
 
     @Test
     fun `link shared library from two gradle modules`() {
-        with(Project("new-kn-library-dsl")) {
+        with(transformProjectWithPluginsDsl("new-kn-library-dsl")) {
             build(":shared:assembleMyslibDebugSharedLibraryLinuxX64") {
                 assertSuccessful()
                 assertTasksExecuted(
@@ -63,7 +64,7 @@ class NativeLibraryDslIT : BaseGradleIT() {
 
     @Test
     fun `link shared library from single gradle module`() {
-        with(Project("new-kn-library-dsl")) {
+        with(transformProjectWithPluginsDsl("new-kn-library-dsl")) {
             build(":shared:assembleMylibDebugSharedLibraryLinuxX64") {
                 assertSuccessful()
                 assertTasksExecuted(
@@ -86,8 +87,7 @@ class NativeLibraryDslIT : BaseGradleIT() {
 
     @Test
     fun `link shared library from single gradle module with additional link args`() {
-        with(Project("new-kn-library-dsl")) {
-            setupWorkingDir()
+        with(transformProjectWithPluginsDsl("new-kn-library-dsl")) {
             gradleProperties().appendText("\nkotlin.native.linkArgs=-Xfoo=bar -Xbaz=qux")
             build(":shared:assembleMylibDebugSharedLibraryLinuxX64") {
                 assertSuccessful()
@@ -112,7 +112,7 @@ class NativeLibraryDslIT : BaseGradleIT() {
     @Test
     fun `link release XCFramework from two gradle modules`() {
         Assume.assumeTrue(HostManager.hostIsMac)
-        with(Project("new-kn-library-dsl")) {
+        with(transformProjectWithPluginsDsl("new-kn-library-dsl")) {
             build(":shared:assembleSharedReleaseXCFramework") {
                 assertSuccessful()
                 assertTasksExecuted(
