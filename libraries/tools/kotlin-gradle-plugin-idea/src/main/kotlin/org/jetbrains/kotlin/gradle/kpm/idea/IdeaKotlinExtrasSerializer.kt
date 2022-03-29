@@ -61,12 +61,12 @@ private data class IdeaKotlinSerializableExtrasSerializer<T : Serializable>(
     }
 
     override fun deserialize(key: Extras.Key<T>, data: ByteArray): T? {
-        try {
-            return ObjectInputStream(ByteArrayInputStream(data)).use { stream ->
+        return try {
+            ObjectInputStream(ByteArrayInputStream(data)).use { stream ->
                 clazz.cast(stream.readObject())
             }
         } catch (t: Throwable) {
-            return key.capability<IdeaKotlinExtrasSerializer.ErrorHandler<T>>()
+            key.capability<IdeaKotlinExtrasSerializer.ErrorHandler<T>>()
                 ?.onDeserializationFailure(key, t)
         }
     }
