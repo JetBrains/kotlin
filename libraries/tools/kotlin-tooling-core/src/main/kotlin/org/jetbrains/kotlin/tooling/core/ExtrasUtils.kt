@@ -34,7 +34,7 @@ fun emptyExtras(): IterableExtras = EmptyExtras
 
 fun extrasOf() = emptyExtras()
 
-fun extrasOf(vararg entries: Extras.Entry<*>): IterableExtras = ImmutableExtrasImpl(entries.toList())
+fun extrasOf(vararg entries: Extras.Entry<*>): IterableExtras = ImmutableExtrasImpl(entries)
 
 fun mutableExtrasOf(): MutableExtras = MutableExtrasImpl()
 

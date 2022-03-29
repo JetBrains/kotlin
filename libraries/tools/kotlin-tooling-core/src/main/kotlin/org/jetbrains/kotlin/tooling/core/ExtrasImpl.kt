@@ -59,6 +59,8 @@ internal class ImmutableExtrasImpl private constructor(
 ) : AbstractIterableExtras() {
     constructor(extras: Iterable<Extras.Entry<*>>) : this(extras.associateBy { it.key.id })
 
+    constructor(extras: Array<out Extras.Entry<*>>) : this(extras.associateBy { it.key.id })
+
     override val ids: Set<Extras.Id<*>> = extras.keys
 
     override fun isEmpty(): Boolean = extras.isEmpty()
