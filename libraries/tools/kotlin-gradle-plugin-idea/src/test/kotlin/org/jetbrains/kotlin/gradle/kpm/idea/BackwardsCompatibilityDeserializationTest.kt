@@ -81,7 +81,7 @@ class BackwardsCompatibilityDeserializationTest {
 
     @Test
     fun `test - attaching serializable extras`() {
-        val retainedModelKey = extrasKeyOf<RetainedModel>() + IdeaKotlinExtraSerializer.serializable()
+        val retainedModelKey = extrasKeyOf<RetainedModel>() + IdeaKotlinExtrasSerializer.serializable()
         val unretainedModelKey = extrasKeyOf<UnretainedModel>()
 
         val project = ProjectBuilder.builder().build() as ProjectInternal

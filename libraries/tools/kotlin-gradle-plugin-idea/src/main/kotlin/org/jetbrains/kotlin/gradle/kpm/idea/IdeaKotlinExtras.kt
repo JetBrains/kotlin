@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.tooling.core.*
 import java.io.Serializable
 import java.util.concurrent.locks.ReentrantReadWriteLock
 import kotlin.concurrent.withLock
-import kotlin.reflect.typeOf
 
 sealed interface IdeaKotlinExtras : Extras, Serializable
 
@@ -84,7 +83,7 @@ private class SerializedIdeaKotlinExtras(
         This is done to prevent subtle heisenberg-like bugs where a value might, or might not be
         returned after or before accessing with another key that actually has a deserializer attached.
         */
-        val serializer = key.capability<IdeaKotlinExtraSerializer<T>>() ?: return null
+        val serializer = key.capability<IdeaKotlinExtrasSerializer<T>>() ?: return null
 
         readLock.withLock {
             /* Check previous results */
@@ -95,7 +94,7 @@ private class SerializedIdeaKotlinExtras(
         writeLock.withLock {
             /* try to deserialize */
             val data = serializedExtras[key.id] ?: return null
-            return serializer.deserialize(data).also { value ->
+            return serializer.deserialize(key, data).also { value ->
                 /* Release memory in favor of deserialized value cache */
                 serializedExtras.remove(key.id)
 
@@ -118,8 +117,8 @@ private class SerializedIdeaKotlinExtras(
 
 private fun serialize(entries: Set<Extras.Entry<*>>): Map<Extras.Id<*>, ByteArray> {
     fun <T : Any> serializeOrNull(entry: Extras.Entry<T>): ByteArray? {
-        val serializer = entry.key.capability<IdeaKotlinExtraSerializer<T>>() ?: return null
-        return serializer.serialize(entry.value)
+        val serializer = entry.key.capability<IdeaKotlinExtrasSerializer<T>>() ?: return null
+        return serializer.serialize(entry.key, entry.value)
     }
 
     return entries.mapNotNull { it.key.id to (serializeOrNull(it) ?: return@mapNotNull null) }.toMap()

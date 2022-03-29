@@ -18,9 +18,9 @@ class IdeaKotlinExtrasTest {
     private data class RetainedModel(val value: Int) : Serializable
     private data class UnretainedModel(val value: Int)
 
-    private val retainedModelKey = extrasKeyOf<RetainedModel>() + IdeaKotlinExtraSerializer.serializable()
-    private val retainedModelKeyFoo = extrasKeyOf<RetainedModel>("foo") + IdeaKotlinExtraSerializer.serializable()
-    private val retainedModelKeyBar = extrasKeyOf<RetainedModel>("bar") + IdeaKotlinExtraSerializer.serializable()
+    private val retainedModelKey = extrasKeyOf<RetainedModel>() + IdeaKotlinExtrasSerializer.serializable()
+    private val retainedModelKeyFoo = extrasKeyOf<RetainedModel>("foo") + IdeaKotlinExtrasSerializer.serializable()
+    private val retainedModelKeyBar = extrasKeyOf<RetainedModel>("bar") + IdeaKotlinExtrasSerializer.serializable()
 
     private val unretainedModelKey = extrasKeyOf<UnretainedModel>()
     private val unretainedModelKeyFoo = extrasKeyOf<UnretainedModel>("foo")
