@@ -43,6 +43,7 @@ public final class org/jetbrains/kotlin/tooling/core/Extras$Entry {
 	public final fun getKey ()Lorg/jetbrains/kotlin/tooling/core/Extras$Key;
 	public final fun getValue ()Ljava/lang/Object;
 	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
 }
 
 public final class org/jetbrains/kotlin/tooling/core/Extras$Id : java/io/Serializable {
