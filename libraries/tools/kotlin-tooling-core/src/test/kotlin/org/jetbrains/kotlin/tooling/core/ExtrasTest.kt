@@ -302,6 +302,24 @@ class ExtrasTest {
     }
 
     @Test
+    fun `test - mutable extras - remove non-matching key`() {
+        val capability = object : Extras.Key.Capability<Int> {}
+        val key1 = extrasKeyOf<Int>()
+        val key2 = extrasKeyOf<Int>() + capability
+
+        val extras1 = mutableExtrasOf(key1 withValue 42)
+        assertNull(extras1.remove(key2))
+        assertEquals(extrasOf(key1 withValue 42), extras1)
+        assertEquals(42, extras1.remove(key1))
+        assertEquals(emptyExtras(), extras1)
+
+        val extras2 = mutableExtrasOf(key2 withValue 42)
+        assertNull(extras2.remove(key1))
+        assertEquals(42, extras2.remove(key2))
+        assertEquals(emptyExtras(), extras2)
+    }
+
+    @Test
     fun `test - mutable extras - clear`() {
         val extras = mutableExtrasOf(
             extrasKeyOf<String>() withValue "2",
