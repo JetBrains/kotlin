@@ -15,27 +15,31 @@ interface IdeaKotlinExtrasSerializer<T : Any> : Extras.Key.Capability<T> {
     interface ErrorHandler<T : Any> : Extras.Key.Capability<T> {
         fun onDeserializationFailure(key: Extras.Key<T>, error: Throwable): T?
 
-        class ConsoleLogger<T : Any> : ErrorHandler<T> {
+        class StreamLogger<T : Any>(private val stream: PrintStream = System.err) : ErrorHandler<T> {
             override fun onDeserializationFailure(key: Extras.Key<T>, error: Throwable): T? {
-                println("Failed to deserialize $key: ${error.message}")
-                error.printStackTrace()
+                stream.println("Failed to deserialize $key: ${error.message}")
+                error.printStackTrace(stream)
                 return null
             }
         }
     }
 
     companion object {
-        fun <T : Serializable> serializable(clazz: Class<T>): IdeaKotlinExtrasSerializer<T> =
-            IdeaKotlinSerializableExtrasSerializer(clazz)
+        fun <T : Serializable> serializable(
+            clazz: Class<T>, errorHandler: ErrorHandler<T>
+        ): IdeaKotlinExtrasSerializer<T> = IdeaKotlinSerializableExtrasSerializer(clazz, errorHandler)
 
-        inline fun <reified T : Serializable> serializable(): IdeaKotlinExtrasSerializer<T> =
-            serializable(T::class.java)
+        inline fun <reified T : Serializable> serializable(
+            errorHandler: ErrorHandler<T> = ErrorHandler.StreamLogger(System.err)
+        ): IdeaKotlinExtrasSerializer<T> = serializable(T::class.java, errorHandler)
     }
 }
 
 private class IdeaKotlinSerializableExtrasSerializer<T : Serializable>(
-    private val clazz: Class<T>
-) : IdeaKotlinExtrasSerializer<T> {
+    private val clazz: Class<T>,
+    private val errorHandler: IdeaKotlinExtrasSerializer.ErrorHandler<T>
+) : IdeaKotlinExtrasSerializer<T>,
+    IdeaKotlinExtrasSerializer.ErrorHandler<T> by errorHandler {
     override fun serialize(key: Extras.Key<T>, extra: T): ByteArray {
         return ByteArrayOutputStream().run {
             ObjectOutputStream(this).use { stream -> stream.writeObject(extra) }

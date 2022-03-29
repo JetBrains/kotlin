@@ -41,22 +41,33 @@ public final class org/jetbrains/kotlin/gradle/kpm/idea/IdeaKotlinDependencyKt {
 	public static final fun isSourcesType (Lorg/jetbrains/kotlin/gradle/kpm/idea/IdeaKotlinResolvedBinaryDependency;)Z
 }
 
-public abstract interface class org/jetbrains/kotlin/gradle/kpm/idea/IdeaKotlinExtraSerializer : org/jetbrains/kotlin/tooling/core/Extras$Key$Capability {
-	public static final field Companion Lorg/jetbrains/kotlin/gradle/kpm/idea/IdeaKotlinExtraSerializer$Companion;
-	public abstract fun deserialize ([B)Ljava/lang/Object;
-	public abstract fun serialize (Ljava/lang/Object;)[B
-}
-
-public final class org/jetbrains/kotlin/gradle/kpm/idea/IdeaKotlinExtraSerializer$Companion {
-	public final fun serializable (Ljava/lang/Class;)Lorg/jetbrains/kotlin/gradle/kpm/idea/IdeaKotlinExtraSerializer;
-}
-
 public abstract interface class org/jetbrains/kotlin/gradle/kpm/idea/IdeaKotlinExtras : java/io/Serializable, org/jetbrains/kotlin/tooling/core/Extras {
 }
 
 public final class org/jetbrains/kotlin/gradle/kpm/idea/IdeaKotlinExtrasKt {
 	public static final fun IdeaKotlinExtras ()Lorg/jetbrains/kotlin/gradle/kpm/idea/IdeaKotlinExtras;
 	public static final fun IdeaKotlinExtras (Lorg/jetbrains/kotlin/tooling/core/IterableExtras;)Lorg/jetbrains/kotlin/gradle/kpm/idea/IdeaKotlinExtras;
+}
+
+public abstract interface class org/jetbrains/kotlin/gradle/kpm/idea/IdeaKotlinExtrasSerializer : org/jetbrains/kotlin/tooling/core/Extras$Key$Capability {
+	public static final field Companion Lorg/jetbrains/kotlin/gradle/kpm/idea/IdeaKotlinExtrasSerializer$Companion;
+	public abstract fun deserialize (Lorg/jetbrains/kotlin/tooling/core/Extras$Key;[B)Ljava/lang/Object;
+	public abstract fun serialize (Lorg/jetbrains/kotlin/tooling/core/Extras$Key;Ljava/lang/Object;)[B
+}
+
+public final class org/jetbrains/kotlin/gradle/kpm/idea/IdeaKotlinExtrasSerializer$Companion {
+	public final fun serializable (Ljava/lang/Class;Lorg/jetbrains/kotlin/gradle/kpm/idea/IdeaKotlinExtrasSerializer$ErrorHandler;)Lorg/jetbrains/kotlin/gradle/kpm/idea/IdeaKotlinExtrasSerializer;
+}
+
+public abstract interface class org/jetbrains/kotlin/gradle/kpm/idea/IdeaKotlinExtrasSerializer$ErrorHandler : org/jetbrains/kotlin/tooling/core/Extras$Key$Capability {
+	public abstract fun onDeserializationFailure (Lorg/jetbrains/kotlin/tooling/core/Extras$Key;Ljava/lang/Throwable;)Ljava/lang/Object;
+}
+
+public final class org/jetbrains/kotlin/gradle/kpm/idea/IdeaKotlinExtrasSerializer$ErrorHandler$StreamLogger : org/jetbrains/kotlin/gradle/kpm/idea/IdeaKotlinExtrasSerializer$ErrorHandler {
+	public fun <init> ()V
+	public fun <init> (Ljava/io/PrintStream;)V
+	public synthetic fun <init> (Ljava/io/PrintStream;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun onDeserializationFailure (Lorg/jetbrains/kotlin/tooling/core/Extras$Key;Ljava/lang/Throwable;)Ljava/lang/Object;
 }
 
 public abstract interface class org/jetbrains/kotlin/gradle/kpm/idea/IdeaKotlinFragment : java/io/Serializable, org/jetbrains/kotlin/gradle/kpm/idea/IdeaKotlinHasExtras {
