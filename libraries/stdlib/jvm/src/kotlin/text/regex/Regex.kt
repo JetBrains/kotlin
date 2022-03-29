@@ -228,6 +228,27 @@ internal constructor(private val nativePattern: Pattern) : Serializable {
     public actual fun replaceFirst(input: CharSequence, replacement: String): String =
         nativePattern.matcher(input).replaceFirst(replacement)
 
+    /**
+     * Replaces the first occurrence of this regular expression in the specified [input] string with the result of
+     * the given function [transform] that takes [MatchResult] and returns a string to be used as a
+     * replacement for that match.
+     */
+    public actual fun replaceFirst(input: CharSequence, transform: (MatchResult) -> CharSequence): String {
+        val firstMatch: MatchResult = find(input) ?: return input.toString()
+
+        val length = input.length
+        val sb = StringBuilder(length)
+
+        sb.append(input, 0, firstMatch.range.start)
+        sb.append(transform(firstMatch))
+
+        val lastStart = firstMatch.range.endInclusive + 1
+        if (lastStart < length) {
+            sb.append(input, lastStart, length)
+        }
+
+        return sb.toString()
+    }
 
     /**
      * Splits the [input] CharSequence to a list of strings around matches of this regular expression.
