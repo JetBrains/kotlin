@@ -32,8 +32,11 @@ internal class Pattern(val pattern: String, flags: Int = 0) {
     /** A lexer instance used to get tokens from the pattern. */
     private val lexemes = Lexer(pattern, flags)
 
-    /* All back references that may be used in pattern. */
+    /** All back references that may be used in pattern. */
     private val backRefs = arrayOfNulls<FSet>(BACK_REF_NUMBER)
+
+    /** Mapping from group name to its index */
+    val groupNameToIndex = hashMapOf<String, Int>()
 
     /** Is true if back referenced sets replacement by second compilation pass is needed.*/
     private var needsBackRefReplacement = false
@@ -129,8 +132,16 @@ internal class Pattern(val pattern: String, flags: Int = 0) {
                 if (capturingGroupCount < BACK_REF_NUMBER) {
                     backRefs[capturingGroupCount] = fSet
                 }
+                if (ch == Lexer.CHAR_NAMED_GROUP) {
+                    val name = (lexemes.curSpecialToken as NamedGroup).name
+                    groupNameToIndex[name] = capturingGroupCount
+                }
                 capturingGroupCount++
             }
+        }
+
+        if (last != null) {
+            lexemes.next()
         }
 
         //Process to EOF or ')'
@@ -466,7 +477,6 @@ internal class Pattern(val pattern: String, flags: Int = 0) {
         }
         // The terminal is some kind of group: (E). Call processExpression for it.
         if (char and 0x8000ffff.toInt() == Lexer.CHAR_LEFT_PARENTHESIS) {
-            lexemes.next()
             var newFlags = flags
             if (char and 0xff00ffff.toInt() == Lexer.CHAR_NONCAP_GROUP) {
                 newFlags = (char shr 16) and flagsBitMask
@@ -569,16 +579,16 @@ internal class Pattern(val pattern: String, flags: Int = 0) {
                 0x80000000.toInt() or '7'.toInt(),
                 0x80000000.toInt() or '8'.toInt(),
                 0x80000000.toInt() or '9'.toInt() -> {
-                    val number = (char and 0x7FFFFFFF) - '0'.toInt()
-                    if (number < capturingGroupCount) {   // All is ok - the group exists.
-                        lexemes.next()
-                        term = BackReferenceSet(number, consumersCount++, hasFlag(CASE_INSENSITIVE))
-                        // backRefs[number] is proved to be not null because the group is already created (number < capturingGroupCount)
-                        backRefs[number]!!.isBackReferenced = true
-                        needsBackRefReplacement = true // And process back references in the second pass.
-                    } else {
-                        throw PatternSyntaxException("No such group yet exists at this point in the pattern", pattern, lexemes.curTokenIndex)
-                    }
+                    val groupIndex = (char and 0x7FFFFFFF) - '0'.toInt()
+                    term = createBackReference(groupIndex)
+                    lexemes.next()
+                }
+
+                Lexer.CHAR_NAMED_GROUP_REF -> {
+                    val name = (lexemes.curSpecialToken as NamedGroup).name
+                    val groupIndex = groupNameToIndex[name] ?: -1
+                    term = createBackReference(groupIndex)
+                    lexemes.next()
                 }
 
                 // A special token (\D, \w etc), 'u0000' or the end of the pattern.
@@ -624,6 +634,17 @@ internal class Pattern(val pattern: String, flags: Int = 0) {
         return term
     }
 
+    /** Creates a back reference to the group with specified [groupIndex], or throws if the group doesn't exist yet. */
+    private fun createBackReference(groupIndex: Int): BackReferenceSet {
+        if (groupIndex >= 0 && groupIndex < capturingGroupCount) {   // All is ok - the group exists.
+            // backRefs[groupIndex] is proved to be not null because the group is already created (groupIndex < capturingGroupCount)
+            backRefs[groupIndex]!!.isBackReferenced = true
+            needsBackRefReplacement = true // And process back references in the second pass.
+            return BackReferenceSet(groupIndex, consumersCount++, hasFlag(CASE_INSENSITIVE))
+        } else {
+            throw PatternSyntaxException("No such group yet exists at this point in the pattern", pattern, lexemes.curTokenIndex)
+        }
+    }
 
     /**
      * Process [...] ranges

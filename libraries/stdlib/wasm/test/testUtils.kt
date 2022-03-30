@@ -28,7 +28,6 @@ public actual val isFloat32RangeEnforced: Boolean = false
 
 actual val supportsSuppressedExceptions: Boolean get() = true
 
-// TODO: implement named group reference in replacement expression
-public actual val supportsNamedCapturingGroup: Boolean get() = false
+public actual val supportsNamedCapturingGroup: Boolean get() = true
 
 public actual val regexSplitUnicodeCodePointHandling: Boolean get() = true
