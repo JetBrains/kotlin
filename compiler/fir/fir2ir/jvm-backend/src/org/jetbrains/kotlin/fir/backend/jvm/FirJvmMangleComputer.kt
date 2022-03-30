@@ -159,7 +159,7 @@ open class FirJvmMangleComputer(
             appendSignature(specialValueParamPrefix(it))
             mangleValueParameter(this, it)
         }
-        ((container as? FirTypeParametersOwner)?.typeParameters?.withIndex()?.toList() ?: emptyList())
+        (container as? FirTypeParametersOwner)?.typeParameters?.withIndex()?.toList().orEmpty()
             .collectForMangler(builder, MangleConstant.TYPE_PARAMETERS) { (index, typeParameter) ->
                 mangleTypeParameter(this, typeParameter, index)
             }

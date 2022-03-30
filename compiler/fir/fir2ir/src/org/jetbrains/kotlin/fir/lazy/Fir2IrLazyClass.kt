@@ -26,10 +26,7 @@ import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.types.IrSimpleType
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
-import org.jetbrains.kotlin.ir.util.DeserializableClass
-import org.jetbrains.kotlin.ir.util.IdSignature
-import org.jetbrains.kotlin.ir.util.isEnumClass
-import org.jetbrains.kotlin.ir.util.isObject
+import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.utils.addIfNotNull
@@ -150,7 +147,7 @@ class Fir2IrLazyClass(
     }
 
     override val declarations: MutableList<IrDeclaration> by lazyVar(lock) {
-        val isTopLevelPrivate = symbol.signature is IdSignature.CompositeSignature
+        val isTopLevelPrivate = symbol.signature.isComposite()
         val result = mutableListOf<IrDeclaration>()
         // NB: it's necessary to take all callables from scope,
         // e.g. to avoid accessing un-enhanced Java declarations with FirJavaTypeRef etc. inside
