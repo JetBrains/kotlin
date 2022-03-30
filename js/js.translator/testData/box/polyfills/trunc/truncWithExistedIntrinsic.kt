@@ -19,7 +19,7 @@ fun box(): String {
     val result = truncate(1.188)
 
     assertEquals(result, 1)
-    assertEquals(js("Math.trunc.called"), true)
+    assertEquals(js("Math.trunc['called']"), true)
 
     return "OK"
 }

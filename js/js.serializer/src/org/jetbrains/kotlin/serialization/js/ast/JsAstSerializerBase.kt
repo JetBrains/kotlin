@@ -259,10 +259,10 @@ abstract class JsAstSerializerBase {
 
             override fun visitDocComment(comment: JsDocComment) {
                 val commentBuilder = JsAstProtoBuf.DocComment.newBuilder()
-                for ((name, value) in comment.tags) {
+                for (tag in comment.tags) {
                     val tagBuilder = JsAstProtoBuf.DocCommentTag.newBuilder()
-                    tagBuilder.nameId = serialize(name)
-                    when (value) {
+                    tagBuilder.nameId = serialize(tag.label)
+                    when (val value = tag.value) {
                         is JsNameRef -> tagBuilder.expression = serialize(value)
                         is String -> tagBuilder.valueStringId = serialize(value)
                     }

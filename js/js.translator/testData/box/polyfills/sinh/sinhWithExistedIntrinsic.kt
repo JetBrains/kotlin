@@ -20,7 +20,7 @@ fun box(): String {
     assertEquals(sinh(1.0), 1.1752011936438014)
     assertEquals(sinh(2.0), 3.626860407847019)
 
-    assertEquals(js("Math.sinh.called"), true)
+    assertEquals(js("Math.sinh['called']"), true)
 
     return "OK"
 }

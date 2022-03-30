@@ -12,7 +12,7 @@ fun box(): String {
     assertEquals(expm1(1.0), 1.718281828459045)
     assertEquals(expm1(2.0), 6.38905609893065)
 
-    assertEquals(js("Math.expm1.called"), js("undefined"))
+    assertEquals(js("Math.expm1['called']"), js("undefined"))
 
     return "OK"
 }

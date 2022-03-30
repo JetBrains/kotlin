@@ -240,14 +240,14 @@ abstract class JsAstDeserializerBase {
 
         JsAstProtoBuf.Expression.ExpressionCase.DOC_COMMENT -> {
             val docCommentProto = proto.docComment
-            JsDocComment(docCommentProto.tagList.associate { tagProto ->
+            JsDocComment(docCommentProto.tagList.map { tagProto ->
                 val name = deserializeString(tagProto.nameId)
                 val value: Any = if (tagProto.hasExpression()) {
                     deserialize(tagProto.expression)
                 } else {
                     deserializeString(tagProto.valueStringId)
                 }
-                name to value
+                JsDocComment.JsDocTag(name, value)
             })
         }
 

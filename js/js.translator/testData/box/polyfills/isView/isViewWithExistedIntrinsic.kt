@@ -12,7 +12,7 @@ fun box(): String {
     val result = IntArray(5).apply { intArr.copyInto(this) }
 
     assertEquals(result.joinToString(","), intArr.joinToString(","))
-    assertEquals(js("ArrayBuffer.isView.called"), true)
+    assertEquals(js("ArrayBuffer.isView['called']"), true)
 
     return "OK"
 }

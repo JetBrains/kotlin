@@ -11,7 +11,7 @@ fun box(): String {
     assertEquals(tanh(0.0), 0.0)
     assertEquals(tanh(1.0), 0.7615941559557649)
     assertEquals(tanh(Double.POSITIVE_INFINITY), 1.0)
-    assertEquals(js("Math.tanh.called"), js("undefined"))
+    assertEquals(js("Math.tanh['called']"), js("undefined"))
 
     return "OK"
 }

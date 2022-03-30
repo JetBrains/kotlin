@@ -22,12 +22,12 @@ package kotlin.js
                     }
                     return a !== a ? (b !== b ? 0 : 1) : -1
                 }
-                return Array.prototype.sort.call(this, compareFunction || totalOrderComparator);
+                return Array.prototype.sort.call(this, compareFunction);
             }
         });
     }
 })
 """)
-internal inline fun Any.nativeSort(noinline comparison: (a: dynamic, b: dynamic) -> Int = js("undefined")): Unit {
+internal inline fun Any.nativeSort(noinline comparison: (a: dynamic, b: dynamic) -> Int = js("undefined")) {
     asDynamic().sort(comparison)
 }

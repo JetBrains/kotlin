@@ -13,7 +13,7 @@ fun box(): String {
     assertEquals(acosh(1.0), 0.0)
     assertEquals(acosh(2.0), 1.3169578969248166)
 
-    assertEquals(js("Math.acosh.called"), js("undefined"))
+    assertEquals(js("Math.acosh['called']"), js("undefined"))
 
     return "OK"
 }

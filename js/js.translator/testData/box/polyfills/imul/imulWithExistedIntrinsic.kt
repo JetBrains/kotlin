@@ -12,7 +12,7 @@ fun box(): String {
     val c: Int = a * b
 
     assertEquals(c, 84)
-    assertEquals(js("Math.imul.called"), true)
+    assertEquals(js("Math.imul['called']"), true)
 
     return "OK"
 }

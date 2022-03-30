@@ -16,8 +16,12 @@ var p3: Char = '4'
         field = value + 1
     }
 
+external val `_`: dynamic
+
 fun box(): String {
-    var root = eval("_")
+    // TODO: This kind of code is not safe
+    // var root = eval("_")
+    val  root = `_`
 
     var r = typeOf(root.foo())
     if (r !== "number") return "fail1: $r"

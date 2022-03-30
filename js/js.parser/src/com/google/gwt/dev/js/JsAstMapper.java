@@ -610,8 +610,7 @@ public class JsAstMapper {
         Node from2 = from1.getNext();
 
         JsExpression toQualifier = mapExpression(from1);
-        JsNameRef toNameRef;
-        toNameRef = mapAsPropertyNameRef(from2);
+        JsNameRef toNameRef = mapAsPropertyNameRef(from2);
 
         toNameRef.setQualifier(toQualifier);
 

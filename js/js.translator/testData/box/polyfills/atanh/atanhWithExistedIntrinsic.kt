@@ -20,7 +20,7 @@ fun box(): String {
     assertEquals(atanh(0.5), 0.5493061443340548)
     assertEquals(atanh(1.0), Double.POSITIVE_INFINITY)
 
-    assertEquals(js("Math.atanh.called"), true)
+    assertEquals(js("Math.atanh['called']"), true)
 
     return "OK"
 }

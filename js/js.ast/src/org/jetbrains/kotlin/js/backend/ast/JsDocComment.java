@@ -19,25 +19,43 @@ package org.jetbrains.kotlin.js.backend.ast;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collections;
-import java.util.Map;
+import java.util.List;
 
 public class JsDocComment extends JsExpression {
-    private final Map<String, Object> tags;
+    private final List<JsDocTag> tags;
 
-    public JsDocComment(Map<String, Object> tags) {
+    public static class JsDocTag {
+       private final String label;
+       private final Object value;
+
+       public JsDocTag(String label, Object value) {
+           this.label = label;
+           this.value = value;
+       }
+
+       public String getLabel() {
+           return label;
+       }
+
+       public Object getValue() {
+           return value;
+       }
+    }
+
+    public JsDocComment(List<JsDocTag> tags) {
         this.tags = tags;
     }
 
-    public Map<String, Object> getTags() {
+    public List<JsDocTag> getTags() {
         return tags;
     }
 
     public JsDocComment(String tagName, JsNameRef tagValue) {
-        tags = Collections.<String, Object>singletonMap(tagName, tagValue);
+        tags = getSingletonListOf(tagName, tagValue);
     }
 
     public JsDocComment(String tagName, String tagValue) {
-        tags = Collections.<String, Object>singletonMap(tagName, tagValue);
+        tags = getSingletonListOf(tagName, tagValue);
     }
 
     @Override
@@ -53,5 +71,9 @@ public class JsDocComment extends JsExpression {
     @Override
     public JsDocComment deepCopy() {
         return new JsDocComment(tags).withMetadataFrom(this);
+    }
+
+    private static List<JsDocTag> getSingletonListOf(String tagName, Object tagValue) {
+        return Collections.singletonList(new JsDocTag(tagName, tagValue));
     }
 }
