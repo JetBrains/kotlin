@@ -125,7 +125,9 @@ class IrModuleToJsTransformerTmp(
         return CompilerResult(result, dts)
     }
 
-    fun generateBinaryAst(files: Iterable<IrFile>, allModules: Iterable<IrModuleFragment>): Map<String, ByteArray> {
+    class SrcFileFragmentAndBinaryAst(val srcPath: String, val fragment: JsIrProgramFragment, val binaryAst: ByteArray)
+
+    fun generateBinaryAst(files: Iterable<IrFile>, allModules: Iterable<IrModuleFragment>): List<SrcFileFragmentAndBinaryAst> {
         val exportModelGenerator = ExportModelGenerator(backendContext, generateNamespacesForPackages = true)
 
         val exportData = files.associate { file ->
@@ -139,18 +141,14 @@ class IrModuleToJsTransformerTmp(
         }
 
         val serializer = JsIrAstSerializer()
-
-        val result = mutableMapOf<String, ByteArray>()
-        files.forEach { f ->
+        return files.map { f ->
             val exports = exportData[f]!! // TODO
             val fragment = generateProgramFragment(f, exports, minimizedMemberNames = false)
             val output = ByteArrayOutputStream()
             serializer.serialize(fragment, output)
             val binaryAst = output.toByteArray()
-            result[f.fileEntry.name] = binaryAst
+            SrcFileFragmentAndBinaryAst(f.fileEntry.name, fragment, binaryAst)
         }
-
-        return result
     }
 
     private fun ExportModelGenerator.generateExportWithExternals(irFile: IrFile): List<ExportedDeclaration> {
@@ -330,7 +328,7 @@ class IrModuleToJsTransformerTmp(
     }
 }
 
-fun generateWrappedModuleBody(
+private fun generateWrappedModuleBody(
     multiModule: Boolean,
     mainModuleName: String,
     moduleKind: ModuleKind,
@@ -383,7 +381,7 @@ fun generateWrappedModuleBody(
     }
 }
 
-private fun generateSingleWrappedModuleBody(
+fun generateSingleWrappedModuleBody(
     moduleName: String,
     moduleKind: ModuleKind,
     fragments: List<JsIrProgramFragment>,

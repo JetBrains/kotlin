@@ -26,7 +26,8 @@ fun ScriptEngine.runTestFunction(
     testModuleName: String?,
     testPackageName: String?,
     testFunctionName: String,
-    withModuleSystem: Boolean
+    withModuleSystem: Boolean,
+    testFunctionArgs: String = "",
 ): String {
     var script = when {
         withModuleSystem -> "\$kotlin_test_internal\$.require('" + testModuleName!! + "')"
@@ -38,7 +39,7 @@ fun ScriptEngine.runTestFunction(
         script += ".$testPackageName"
     }
 
-    script += ".$testFunctionName()"
+    script += ".$testFunctionName($testFunctionArgs)"
 
     return eval(script)
 }
@@ -52,7 +53,20 @@ abstract class AbstractJsTestChecker {
         expectedResult: String,
         withModuleSystem: Boolean
     ) {
-        val actualResult = run(files, testModuleName, testPackageName, testFunctionName, withModuleSystem)
+        val actualResult = run(files, testModuleName, testPackageName, testFunctionName, "", withModuleSystem)
+        Assert.assertEquals(expectedResult, actualResult.normalize())
+    }
+
+    fun checkWithTestFunctionArgs(
+        files: List<String>,
+        testModuleName: String?,
+        testPackageName: String?,
+        testFunctionName: String,
+        testFunctionArgs: String,
+        expectedResult: String,
+        withModuleSystem: Boolean
+    ) {
+        val actualResult = run(files, testModuleName, testPackageName, testFunctionName, testFunctionArgs, withModuleSystem)
         Assert.assertEquals(expectedResult, actualResult.normalize())
     }
 
@@ -61,9 +75,10 @@ abstract class AbstractJsTestChecker {
         testModuleName: String?,
         testPackageName: String?,
         testFunctionName: String,
+        testFunctionArgs: String,
         withModuleSystem: Boolean
     ) = run(files) {
-        runTestFunction(testModuleName, testPackageName, testFunctionName, withModuleSystem)
+        runTestFunction(testModuleName, testPackageName, testFunctionName, withModuleSystem, testFunctionArgs)
     }
 
 

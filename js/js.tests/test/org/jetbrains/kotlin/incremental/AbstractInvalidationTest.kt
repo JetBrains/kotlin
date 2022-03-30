@@ -16,25 +16,37 @@ import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.codegen.*
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
-import org.jetbrains.kotlin.ir.backend.js.WholeWorldStageController
-import org.jetbrains.kotlin.ir.backend.js.generateKLib
+import org.jetbrains.kotlin.ir.backend.js.*
 import org.jetbrains.kotlin.ir.backend.js.ic.*
 import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.JsIrLinker
-import org.jetbrains.kotlin.ir.backend.js.prepareAnalyzedSourceModule
-import org.jetbrains.kotlin.ir.declarations.IrFactory
+import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.SourceMapsInfo
+import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.safeModuleName
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImplForJsIC
+import org.jetbrains.kotlin.js.config.JSConfigurationKeys
+import org.jetbrains.kotlin.js.testOld.V8IrJsTestChecker
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.serialization.js.ModuleKind
 import org.jetbrains.kotlin.test.KotlinTestWithEnvironment
 import org.jetbrains.kotlin.test.util.JUnit4Assertions
+import org.junit.ComparisonFailure
 import java.io.File
 import kotlin.io.path.createTempDirectory
 
-private var stdlibCacheDir: File? = null
-
 abstract class AbstractInvalidationTest : KotlinTestWithEnvironment() {
+    companion object {
+        private const val TEST_DATA_DIR_PATH = "js/js.translator/testData/"
+
+        private const val stdlibAlias = "stdlib"
+        private const val stdlibModuleName = "kotlin"
+        private val stdlibKlibPath = File(System.getProperty("kotlin.js.stdlib.klib.path") ?: error("Please set stdlib path")).canonicalPath
+        private var stdlibCacheDir: File? = null
+
+        private const val boxFunctionName = "box"
+    }
+
     override fun createEnvironment(): KotlinCoreEnvironment {
         return KotlinCoreEnvironment.createForTests(TestDisposable(), CompilerConfiguration(), EnvironmentConfigFiles.JS_CONFIG_FILES)
     }
@@ -47,36 +59,24 @@ abstract class AbstractInvalidationTest : KotlinTestWithEnvironment() {
         return ModuleInfoParser(infoFile).parse(moduleName)
     }
 
-    @Suppress("UNUSED_PARAMETER")
-    private fun emptyChecker(
-        currentModule: IrModuleFragment,
-        dependencies: Collection<IrModuleFragment>,
-        deserializer: JsIrLinker,
-        configuration: CompilerConfiguration,
-        dirtyFiles: Collection<String>?, // if null consider the whole module dirty
-        artifactCache: ArtifactCache,
-        exportedDeclarations: Set<FqName>,
-        mainArguments: List<String>?,
-    ) {
-    }
-
     private fun initializeStdlibCache() {
         if (stdlibCacheDir != null) return
         val cacheDir = createTempDirectory().toFile()
         cacheDir.deleteOnExit()
 
-        val configuration = createConfiguration("stdlib")
-
-        actualizeCacheForModuleWithPrepare(
+        val cacheUpdater = CacheUpdater(
             stdlibKlibPath,
-            cacheDir.canonicalPath,
-            configuration,
             listOf(stdlibKlibPath),
-            emptyList(),
-            IrFactoryImpl,
-            null, // TODO: mainArguments
-            ::emptyChecker
+            createConfiguration(stdlibAlias),
+            listOf(cacheDir.canonicalPath),
+            { IrFactoryImplForJsIC(WholeWorldStageController()) },
+            null,
+            ::buildCacheForModuleFiles
         )
+        cacheUpdater.actualizeCaches { updateStatus, updatedModule ->
+            JUnit4Assertions.assertEquals(stdlibKlibPath, updatedModule) { "incorrect std klib path" }
+            JUnit4Assertions.assertTrue(updateStatus is CacheUpdateStatus.Dirty) { "std klib should be rebuilt" }
+        }
 
         stdlibCacheDir = cacheDir
     }
@@ -104,70 +104,213 @@ abstract class AbstractInvalidationTest : KotlinTestWithEnvironment() {
 
         initializeWorkingDir(projectInfo, testDirectory, sourceDir, buildDir)
 
-        executeProjectSteps(projectInfo, modulesInfos, testDirectory, sourceDir, buildDir)
+        ProjectStepsExecutor(projectInfo, modulesInfos, testDirectory, sourceDir, buildDir).execute()
     }
 
-    private val stdlibKlibPath = System.getProperty("kotlin.js.stdlib.klib.path") ?: error("Please set stdlib path")
-
-    private val String.artifactName: String get() = "$this.klib"
-
     private fun resolveModuleArtifact(moduleName: String, buildDir: File): File {
-        if (moduleName == "stdlib") return File(stdlibKlibPath)
-        return File(File(buildDir, moduleName), moduleName.artifactName)
+        if (moduleName == stdlibAlias) return File(stdlibKlibPath)
+        return File(File(buildDir, moduleName), "$moduleName.klib")
     }
 
     private fun resolveModuleCache(moduleName: String, buildDir: File): File {
-        if (moduleName == "stdlib") return stdlibCacheDir ?: error("stdlib cache corruption")
+        if (moduleName == stdlibAlias) return stdlibCacheDir ?: error("stdlib cache corruption")
         return File(File(buildDir, moduleName), "cache")
     }
 
     private fun createConfiguration(moduleName: String): CompilerConfiguration {
         val copy = environment.configuration.copy()
         copy.put(CommonConfigurationKeys.MODULE_NAME, moduleName)
+        copy.put(JSConfigurationKeys.MODULE_KIND, ModuleKind.PLAIN)
         return copy
     }
 
-    private fun executeProjectSteps(
-        projectInfo: ProjectInfo,
-        moduleInfos: Map<String, ModuleInfo>,
-        testDir: File,
-        sourceDir: File,
-        buildDir: File
+    private inner class ProjectStepsExecutor(
+        private val projectInfo: ProjectInfo,
+        private val moduleInfos: Map<String, ModuleInfo>,
+        private val testDir: File,
+        private val sourceDir: File,
+        private val buildDir: File
     ) {
-        for (projStep in projectInfo.steps) {
-            for (module in projStep.order) {
-                val moduleTestDir = File(testDir, module)
-                val moduleSourceDir = File(sourceDir, module)
-                val moduleInfo = moduleInfos[module] ?: error("No module info found for $module")
-                val moduleStep = moduleInfo.steps[projStep.id]
-                val deletedFiles = mutableListOf<File>()
-                for (modification in moduleStep.modifications) {
-                    modification.execute(moduleTestDir, moduleSourceDir) { deletedFiles.add(it) }
+        private inner class TestStepInfo(
+            val moduleName: String,
+            val modulePath: String,
+            val icCacheDir: String,
+            val directives: Set<StepDirectives>,
+            val dirtyFiles: List<String> = emptyList(),
+            val deletedFiles: List<String> = emptyList()
+        )
+
+        private fun setupTestStep(projStepId: Int, module: String): TestStepInfo {
+            val moduleTestDir = File(testDir, module)
+            val moduleSourceDir = File(sourceDir, module)
+            val moduleInfo = moduleInfos[module] ?: error("No module info found for $module")
+            val moduleStep = moduleInfo.steps[projStepId]
+            val deletedFiles = mutableListOf<File>()
+            for (modification in moduleStep.modifications) {
+                modification.execute(moduleTestDir, moduleSourceDir) { deletedFiles.add(it) }
+            }
+
+            val dependencies = moduleStep.dependencies.map { resolveModuleArtifact(it, buildDir) }
+            val outputKlibFile = resolveModuleArtifact(module, buildDir)
+            val configuration = createConfiguration(module)
+            buildArtifact(configuration, module, moduleSourceDir, dependencies, outputKlibFile)
+
+            return TestStepInfo(
+                module.safeModuleName,
+                outputKlibFile.canonicalPath,
+                resolveModuleCache(module, buildDir).canonicalPath,
+                moduleStep.directives,
+                moduleStep.dirtyFiles.map { File(moduleSourceDir, it).canonicalPath },
+                deletedFiles.map { it.canonicalPath }
+            )
+        }
+
+        private fun verifyCacheUpdateStatus(stepId: Int, statuses: Map<String, CacheUpdateStatus>, testInfo: List<TestStepInfo>) {
+            val expectedInfo = testInfo.filter { StepDirectives.UNUSED_MODULE !in it.directives }
+
+            JUnit4Assertions.assertEquals(statuses.size, expectedInfo.size) {
+                "Mismatched updated modules count at step $stepId"
+            }
+
+            for (info in expectedInfo) {
+                JUnit4Assertions.assertTrue(info.modulePath in statuses) {
+                    "Status is missed for ${info.modulePath} at step $stepId"
+                }
+                val updateStatus = statuses[info.modulePath]!!
+                if (StepDirectives.FAST_PATH_UPDATE in info.directives) {
+                    JUnit4Assertions.assertEquals(CacheUpdateStatus.FastPath, updateStatus) {
+                        "Cache has to be checked by fast path, instead it $updateStatus at step $stepId"
+                    }
+                } else {
+                    JUnit4Assertions.assertNotEquals(CacheUpdateStatus.FastPath, updateStatus) {
+                        "Cache has not to be checked by fast path, but it is at step $stepId"
+                    }
                 }
 
-                val dependencies = moduleStep.dependencies.map { resolveModuleArtifact(it, buildDir) }
+                val (updated, removed) = when (updateStatus) {
+                    is CacheUpdateStatus.FastPath -> emptySet<String>() to emptySet()
+                    is CacheUpdateStatus.NoDirtyFiles -> emptySet<String>() to updateStatus.removed
+                    is CacheUpdateStatus.Dirty -> updateStatus.updated to updateStatus.removed
+                }
 
-                val outputKlibFile = resolveModuleArtifact(module, buildDir)
+                JUnit4Assertions.assertSameElements(info.dirtyFiles, updated.map { File(it).canonicalPath }) {
+                    "Mismatched DIRTY files for module ${info.moduleName} at step $stepId"
+                }
 
-                val configuration = createConfiguration(module)
+                JUnit4Assertions.assertSameElements(info.deletedFiles, removed.map { File(it).canonicalPath }) {
+                    "Mismatched DELETED files for module ${info.moduleName} at step $stepId"
+                }
+            }
+        }
 
-                buildArtifact(configuration, module, moduleSourceDir, dependencies, outputKlibFile)
+        private fun verifyJsExecutableProducerBuildModules(stepId: Int, gotRebuilt: Set<String>, expectedRebuilt: List<String>) {
+            val expected = expectedRebuilt.map { if (it == stdlibAlias) stdlibModuleName.safeModuleName else it.safeModuleName }
+            JUnit4Assertions.assertSameElements(expected, gotRebuilt) {
+                "Mismatched rebuilt modules at step $stepId"
+            }
+        }
 
-                val dirtyFiles = moduleStep.dirtyFiles.map { File(moduleSourceDir, it) }
-                val icCaches = moduleStep.dependencies.map { resolveModuleCache(it, buildDir) }
+        fun writeJsFile(name: String, text: String): String {
+            val file = File(buildDir, "$name.js")
+            if (file.exists()) {
+                file.delete()
+            }
+            file.writeText(text)
+            return file.canonicalPath
+        }
 
-                val moduleCacheDir = resolveModuleCache(module, buildDir)
-
-                buildCachesAndCheck(
-                    moduleStep,
-                    configuration,
-                    outputKlibFile,
-                    moduleCacheDir,
-                    dependencies,
-                    icCaches,
-                    dirtyFiles,
-                    deletedFiles
+        private fun verifyJsCode(stepId: Int, mainModuleName: String, jsOutput: CompilationOutputs) {
+            val files = jsOutput.dependencies.map { writeJsFile(it.first, it.second.jsCode) } + writeJsFile(mainModuleName, jsOutput.jsCode)
+            try {
+                V8IrJsTestChecker.checkWithTestFunctionArgs(
+                    files = files,
+                    testModuleName = mainModuleName,
+                    testPackageName = null,
+                    testFunctionName = boxFunctionName,
+                    testFunctionArgs = "$stepId",
+                    expectedResult = "OK",
+                    withModuleSystem = false
                 )
+            } catch (e: ComparisonFailure) {
+                throw ComparisonFailure("Mismatched box out at step $stepId", e.expected, e.actual)
+            } catch (e: IllegalStateException) {
+                throw IllegalStateException("Something goes wrong (bad JS code?) at step $stepId\n${e.message}")
+            }
+        }
+
+        fun executorWithBoxExport(
+            currentModule: IrModuleFragment,
+            dependencies: Collection<IrModuleFragment>,
+            deserializer: JsIrLinker,
+            configuration: CompilerConfiguration,
+            dirtyFiles: Collection<String>?,
+            artifactCache: ArtifactCache,
+            exportedDeclarations: Set<FqName>,
+            mainArguments: List<String>?
+        ) {
+            buildCacheForModuleFiles(
+                currentModule = currentModule,
+                dependencies = dependencies,
+                deserializer = deserializer,
+                configuration = configuration,
+                dirtyFiles = dirtyFiles,
+                artifactCache = artifactCache,
+                exportedDeclarations = exportedDeclarations + FqName(boxFunctionName),
+                mainArguments = mainArguments,
+            )
+        }
+
+        fun execute() {
+            val stdlibInfo = TestStepInfo(
+                moduleName = stdlibModuleName.safeModuleName,
+                modulePath = stdlibKlibPath,
+                icCacheDir = stdlibCacheDir!!.canonicalPath,
+                directives = setOf(StepDirectives.FAST_PATH_UPDATE)
+            )
+            for (projStep in projectInfo.steps) {
+                val testInfo = projStep.order.mapTo(mutableListOf(stdlibInfo)) { setupTestStep(projStep.id, it) }
+
+                val configuration = createConfiguration(projStep.order.last())
+                val cacheUpdater = CacheUpdater(
+                    rootModule = testInfo.last().modulePath,
+                    testInfo.map { it.modulePath },
+                    configuration,
+                    testInfo.map { it.icCacheDir },
+                    { IrFactoryImplForJsIC(WholeWorldStageController()) },
+                    null,
+                    ::executorWithBoxExport
+                )
+
+                val updateStatuses = mutableMapOf<String, CacheUpdateStatus>()
+                var icCaches = cacheUpdater.actualizeCaches { updateStatus, updatedModule -> updateStatuses[updatedModule] = updateStatus }
+                verifyCacheUpdateStatus(projStep.id, updateStatuses, testInfo)
+
+                val mainModuleCacheDir = icCaches.last().artifactsDir!!
+                // tests use one stdlib artifact for all cases, patching stdlib cache path here:
+                //  - enable using cached js (stdlib) file through all steps in a test case
+                //  - disable using cached js (stdlib) file through test cases
+                icCaches = icCaches.map {
+                    when (it.moduleSafeName) {
+                        stdlibModuleName.safeModuleName -> {
+                            val stdlibDir = File(mainModuleCacheDir, stdlibAlias).apply { mkdirs() }
+                            ModuleArtifact(stdlibModuleName, it.fileArtifacts, stdlibDir, it.forceRebuildJs)
+                        }
+                        else -> it
+                    }
+                }
+
+                val jsExecutableProducer = JsExecutableProducer(
+                    mainModuleName = testInfo.last().moduleName,
+                    moduleKind = configuration[JSConfigurationKeys.MODULE_KIND]!!,
+                    sourceMapsInfo = SourceMapsInfo.from(configuration),
+                    caches = icCaches,
+                    relativeRequirePath = true
+                )
+
+                val rebuiltModules = mutableSetOf<String>()
+                val jsOutput = jsExecutableProducer.buildExecutable(true) { rebuiltModules += it }
+                verifyJsExecutableProducerBuildModules(projStep.id, rebuiltModules, projStep.dirtyJS)
+                verifyJsCode(projStep.id, testInfo.last().moduleName, jsOutput)
             }
         }
     }
@@ -175,83 +318,6 @@ abstract class AbstractInvalidationTest : KotlinTestWithEnvironment() {
     private fun File.filteredKtFiles(): Collection<File> {
         assert(isDirectory && exists())
         return listFiles { _, name -> name.endsWith(".kt") }!!.toList()
-    }
-
-    private fun buildCachesAndCheck(
-        moduleStep: ModuleInfo.ModuleStep,
-        configuration: CompilerConfiguration,
-        moduleKlibFile: File,
-        moduleCacheDir: File,
-        dependencies: List<File>,
-        icCaches: List<File>,
-        expectedDirtyFiles: List<File>,
-        expectedDeletedFiles: List<File>
-    ) {
-        val dependenciesPaths = mutableListOf<String>()
-        dependencies.mapTo(dependenciesPaths) { it.canonicalPath }
-        dependenciesPaths.add(moduleKlibFile.canonicalPath)
-
-        val updateStatus = actualizeCacheForModuleWithPrepare(
-            moduleKlibFile.canonicalPath,
-            moduleCacheDir.canonicalPath,
-            configuration,
-            dependenciesPaths,
-            icCaches.map { it.canonicalPath },// + moduleCacheDir.canonicalPath,
-            IrFactoryImpl,
-            null, // TODO: mainArguments
-            ::emptyChecker
-        )
-
-        if (StepDirectives.FAST_PATH_UPDATE in moduleStep.directives) {
-            JUnit4Assertions.assertEquals(CacheUpdateStatus.FastPath, updateStatus) {
-                "Cache has to be checked by fast path, instead it $updateStatus"
-            }
-        }
-
-        val (updated, removed) = when (updateStatus) {
-            is CacheUpdateStatus.FastPath -> emptySet<String>() to emptySet<String>()
-            is CacheUpdateStatus.NoDirtyFiles -> emptySet<String>() to updateStatus.removed
-            is CacheUpdateStatus.Dirty -> updateStatus.updated to updateStatus.removed
-        }
-
-        val actualDirtyFiles = updated.map { File(it).canonicalPath }
-        val expectedDirtyFilesCanonical = expectedDirtyFiles.map { it.canonicalPath }
-        JUnit4Assertions.assertSameElements(expectedDirtyFilesCanonical, actualDirtyFiles) {
-            "Mismatched DIRTY files for module $moduleKlibFile at step ${moduleStep.id}"
-        }
-
-        val actualDeletedFiles = removed.map { File(it).canonicalPath }
-        val expectedDeletedFilesCanonical = expectedDeletedFiles.map { it.canonicalPath }
-        JUnit4Assertions.assertSameElements(expectedDeletedFilesCanonical, actualDeletedFiles) {
-            "Mismatched DELETED files for module $moduleKlibFile at step ${moduleStep.id}"
-        }
-    }
-
-    private fun actualizeCacheForModuleWithPrepare(
-        moduleName: String,
-        cachePath: String,
-        compilerConfiguration: CompilerConfiguration,
-        dependencies: Collection<String>,
-        icCachePaths: Collection<String>,
-        irFactory: IrFactory,
-        mainArguments: List<String>?,
-        executor: CacheExecutor
-    ): CacheUpdateStatus {
-        val modulePath = File(moduleName).canonicalPath
-        val statuses = mutableMapOf<String, CacheUpdateStatus>()
-        val cacheUpdater = CacheUpdater(
-            modulePath,
-            dependencies,
-            compilerConfiguration,
-            icCachePaths + cachePath,
-            { irFactory },
-            mainArguments,
-            executor
-        )
-        cacheUpdater.actualizeCaches { updateStatus, updatedModule ->
-            statuses[updatedModule] = updateStatus
-        }
-        return statuses[modulePath] ?: error("Status is missed for $modulePath")
     }
 
     private fun KotlinCoreEnvironment.createPsiFile(file: File): KtFile {
@@ -317,9 +383,4 @@ abstract class AbstractInvalidationTest : KotlinTestWithEnvironment() {
 
         return dir
     }
-
-    companion object {
-        const val TEST_DATA_DIR_PATH = "js/js.translator/testData/"
-    }
-
 }

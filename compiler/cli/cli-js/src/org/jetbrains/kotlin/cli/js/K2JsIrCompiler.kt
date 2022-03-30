@@ -286,23 +286,22 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
             messageCollector.report(INFO, arguments.cacheDirectories ?: "")
 
             if (icCaches.isNotEmpty()) {
-
                 val beforeIc2Js = System.currentTimeMillis()
 
-                val moduleKind = configurationJs[JSConfigurationKeys.MODULE_KIND]!!
-
-                val translationMode = TranslationMode.fromFlags(false, arguments.irPerModule, false)
-
-                val compiledModule = generateJsFromAst(
-                    moduleName,
-                    moduleKind,
-                    SourceMapsInfo.from(configurationJs),
-                    setOf(translationMode),
-                    icCaches,
+                val jsExecutableProducer = JsExecutableProducer(
+                    mainModuleName = moduleName,
+                    moduleKind = configurationJs[JSConfigurationKeys.MODULE_KIND]!!,
+                    sourceMapsInfo = SourceMapsInfo.from(configurationJs),
+                    caches = icCaches,
                     relativeRequirePath = true
                 )
 
-                val outputs = compiledModule.outputs.values.single()
+                val outputs = jsExecutableProducer.buildExecutable(
+                    multiModule = arguments.irPerModule,
+                    rebuildCallback = { rebuiltModule ->
+                        messageCollector.report(INFO, "IC module builder rebuilt module [${File(rebuiltModule).name}]")
+                    }
+                )
 
                 outputFile.write(outputs)
                 outputs.dependencies.forEach { (name, content) ->

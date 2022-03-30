@@ -10,7 +10,7 @@ import java.util.regex.Pattern
 
 class ProjectInfo(val name: String, val modules: List<String>, val steps: List<ProjectBuildStep>, val muted: Boolean) {
 
-    class ProjectBuildStep(val id: Int, val order: List<String>)
+    class ProjectBuildStep(val id: Int, val order: List<String>, val dirtyJS: List<String>)
 }
 
 class ModuleInfo(val moduleName: String) {
@@ -52,14 +52,15 @@ class ModuleInfo(val moduleName: String) {
 }
 
 enum class StepDirectives(val mnemonic: String) {
-    FAST_PATH_UPDATE("FP")
+    FAST_PATH_UPDATE("FP"),
+    UNUSED_MODULE("UNUSED")
 }
 
 const val MODULES_LIST = "MODULES"
 const val PROJECT_INFO_FILE = "project.info"
 const val MODULE_INFO_FILE = "module.info"
 
-private val STEP_PATTERN = Pattern.compile("^\\s*STEP\\s+(\\d+)\\s*:?$")
+private val STEP_PATTERN = Pattern.compile("^\\s*STEP\\s+(\\d+)\\.*(\\d+)?\\s*:?$")
 
 private val MODIFICATION_PATTERN = Pattern.compile("^([UD])\\s*:(.+)$")
 
@@ -94,11 +95,14 @@ abstract class InfoParser<Info>(protected val infoFile: File) {
 
 }
 
+private fun String.splitAndTrim() = split(",").map { it.trim() }.filter { it.isNotBlank() }
+
 class ProjectInfoParser(infoFile: File) : InfoParser<ProjectInfo>(infoFile) {
 
 
-    private fun parseStep(stepId: Int): ProjectInfo.ProjectBuildStep {
+    private fun parseSteps(firstId: Int, lastId: Int): List<ProjectInfo.ProjectBuildStep> {
         val order = mutableListOf<String>()
+        val dirtyJS = mutableListOf<String>()
 
         loop { line ->
             val splitIndex = line.indexOf(':')
@@ -113,10 +117,13 @@ class ProjectInfoParser(infoFile: File) : InfoParser<ProjectInfo>(infoFile) {
 
             ++lineCounter
 
+
             when (op) {
                 "libs" -> {
-                    val args = splitted[1]
-                    args.split(",").filter { it.isNotBlank() }.forEach { order.add(it.trim()) }
+                    order += splitted[1].splitAndTrim()
+                }
+                "dirty js" -> {
+                    dirtyJS += splitted[1].splitAndTrim()
                 }
                 else -> println(diagnosticMessage("Unknown op $op", line))
             }
@@ -124,7 +131,7 @@ class ProjectInfoParser(infoFile: File) : InfoParser<ProjectInfo>(infoFile) {
             false
         }
 
-        return ProjectInfo.ProjectBuildStep(stepId, order)
+        return (firstId..lastId).map { ProjectInfo.ProjectBuildStep(it, order, dirtyJS) }
     }
 
     override fun parse(entryName: String): ProjectInfo {
@@ -148,14 +155,15 @@ class ProjectInfoParser(infoFile: File) : InfoParser<ProjectInfo>(infoFile) {
 
             when {
                 op == MODULES_LIST -> {
-                    val arguments = splitted[1]
-                    arguments.split(",").filter { it.isNotBlank() }.forEach { libraries.add(it.trim()) }
+                    libraries += splitted[1].splitAndTrim()
                 }
                 op.matches(STEP_PATTERN.toRegex()) -> {
                     val m = STEP_PATTERN.matcher(op)
                     if (!m.matches()) throwSyntaxError(line)
-                    val stepId = Integer.parseInt(m.group(1))
-                    steps.add(parseStep(stepId))
+
+                    val firstId = Integer.parseInt(m.group(1))
+                    val lastId = m.group(2)?.let { Integer.parseInt(it) } ?: firstId
+                    steps += parseSteps(firstId, lastId)
                 }
                 else -> println(diagnosticMessage("Unknown op $op", line))
             }
@@ -202,7 +210,7 @@ class ModuleInfoParser(infoFile: File) : InfoParser<ModuleInfo>(infoFile) {
         }
     }
 
-    private fun parseStep(stepId: Int): ModuleInfo.ModuleStep {
+    private fun parseSteps(firstId: Int, lastId: Int): List<ModuleInfo.ModuleStep> {
         val dependencies = mutableSetOf<String>()
         val dirtyFiles = mutableSetOf<String>()
         val modifications = mutableListOf<ModuleInfo.Modification>()
@@ -227,7 +235,7 @@ class ModuleInfoParser(infoFile: File) : InfoParser<ModuleInfo>(infoFile) {
             false
         }
 
-        return ModuleInfo.ModuleStep(stepId, dependencies, dirtyFiles, modifications, directives)
+        return (firstId..lastId).map { ModuleInfo.ModuleStep(it, dependencies, dirtyFiles, modifications, directives) }
     }
 
     override fun parse(entryName: String): ModuleInfo {
@@ -237,8 +245,9 @@ class ModuleInfoParser(infoFile: File) : InfoParser<ModuleInfo>(infoFile) {
             lineCounter++
             val stepMatcher = STEP_PATTERN.matcher(line)
             if (stepMatcher.matches()) {
-                val id = Integer.parseInt(stepMatcher.group(1))
-                result.steps.add(parseStep(id))
+                val firstId = Integer.parseInt(stepMatcher.group(1))
+                val lastId = stepMatcher.group(2)?.let { Integer.parseInt(it) } ?: firstId
+                result.steps += parseSteps(firstId, lastId)
             }
             false
         }

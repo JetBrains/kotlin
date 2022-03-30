@@ -20,7 +20,7 @@ internal fun File.recreate() {
     createNewFile()
 }
 
-internal inline fun File.useCodedInputIfExists(f: CodedInputStream.() -> Unit) = ifExists {
+internal inline fun <T> File.useCodedInputIfExists(f: CodedInputStream.() -> T) = ifExists {
     CodedInputStream.newInstance(FileInputStream(this)).f()
 }
 

@@ -3,5 +3,4 @@ STEP 0:
     dirty: l1.kt
 STEP 1:
     dependencies: stdlib
-    dirty:
     flags: FP

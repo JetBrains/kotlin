@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.ir.backend.js.WholeWorldStageController
 import org.jetbrains.kotlin.ir.backend.js.ic.*
 import org.jetbrains.kotlin.ir.backend.js.moduleName
+import org.jetbrains.kotlin.ir.backend.js.utils.serialization.JsIrAstDeserializer
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImplForJsIC
 import org.jetbrains.kotlin.js.test.handlers.JsBoxRunner
 import org.jetbrains.kotlin.konan.properties.propertyList
@@ -22,17 +23,31 @@ import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.compilerConfigurationProvider
 import org.jetbrains.kotlin.test.services.configuration.JsEnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.jsLibraryProvider
+import java.io.ByteArrayInputStream
 import java.io.File
 
 private class TestArtifactCache(var moduleName: String? = null) : ArtifactCache() {
-    override fun fetchArtifacts() = KLibArtifact(
-        moduleName = moduleName ?: error("Module name is not set"),
-        fileArtifacts = binaryAsts.entries.map {
-            SrcFileArtifact(it.key, "", it.value)
-        }
-    )
+    override fun fetchArtifacts(): ModuleArtifact {
+        val deserializer = JsIrAstDeserializer()
+        return ModuleArtifact(
+            moduleName = moduleName ?: error("Module name is not set"),
+            fileArtifacts = binaryAsts.entries.map {
+                SrcFileArtifact(
+                    srcFilePath = it.key,
+                    // TODO: It will be better to use saved fragments (this.fragments), but it doesn't work
+                    //  Merger.merge() + JsNode.resolveTemporaryNames() modify fragments,
+                    //  therefore the sequential calls produce different results
+                    fragment = deserializer.deserialize(ByteArrayInputStream(it.value))
+                )
+            }
+        )
+    }
 
-    fun invalidateForFile(srcPath: String) = binaryAsts.remove(srcPath)
+    fun invalidateForFile(srcPath: String) {
+        binaryAsts.remove(srcPath)
+        fragments.remove(srcPath)
+    }
+
     fun getAst(srcPath: String) = binaryAsts[srcPath]
 }
 

@@ -9,8 +9,8 @@ import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.ir.backend.js.*
 import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.JsIrLinker
 import org.jetbrains.kotlin.ir.declarations.IrFactory
+import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
-import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.js.config.JSConfigurationKeys
@@ -144,7 +144,7 @@ class CacheUpdater(
             }.getFlatHashes()
 
             val hashProvider = object : InlineFunctionHashProvider {
-                override fun hashForExternalFunction(declaration: IrSimpleFunction): ICHash? {
+                override fun hashForExternalFunction(declaration: IrFunction): ICHash? {
                     return declaration.symbol.signature?.let { cleanInlineHashes[it] }
                 }
             }
@@ -254,7 +254,7 @@ class CacheUpdater(
         }
     }
 
-    fun actualizeCaches(callback: (CacheUpdateStatus, String) -> Unit): List<KLibArtifact> {
+    fun actualizeCaches(callback: (CacheUpdateStatus, String) -> Unit): List<ModuleArtifact> {
         val libraries = loadLibraries()
         val dependencyGraph = buildDependenciesGraph(libraries)
         val configHash = compilerConfiguration.configHashForIC()
