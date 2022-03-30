@@ -36,4 +36,5 @@ public expect object BackReferenceHandling {
     val enclosingGroup: HandlingOption
     val nonExistentGroup: HandlingOption
     val nonExistentNamedGroup: HandlingOption
+    val groupZero: HandlingOption
 }

@@ -42,4 +42,5 @@ public actual object BackReferenceHandling {
     actual val enclosingGroup: HandlingOption = HandlingOption.MATCH_NOTHING
     actual val nonExistentGroup: HandlingOption = HandlingOption.THROW
     actual val nonExistentNamedGroup: HandlingOption = HandlingOption.THROW
+    actual val groupZero: HandlingOption = HandlingOption.THROW
 }

@@ -241,6 +241,9 @@ class RegexTest {
         testInvalidBackReference(BackReferenceHandling.nonExistentGroup, pattern = "a(a)\\2")
         testInvalidBackReference(BackReferenceHandling.enclosingGroup, pattern = "a(a\\1)")
         testInvalidBackReference(BackReferenceHandling.notYetDefinedGroup, pattern = "a\\1(a)")
+
+        testInvalidBackReference(BackReferenceHandling.groupZero, pattern = "aa\\0")
+        testInvalidBackReference(BackReferenceHandling.groupZero, pattern = "a\\0a")
     }
 
     @Test fun matchCharWithOctalValue() {
@@ -306,7 +309,7 @@ class RegexTest {
 
     // TODO: Test comment mode enabled and group name is separated by space, (before, in the middle, after)
     // TODO: Test comment mode enabled and back reference group index is separated by space, (before, in the middle, after)
-    // TODO: Test back reference with \0
+    // TODO: IllegalArgumentException to java.util.regex.PatternSyntaxException where possible
 
     @Test fun matchMultiline() {
         val regex = "^[a-z]*$".toRegex(setOf(RegexOption.IGNORE_CASE, RegexOption.MULTILINE))
