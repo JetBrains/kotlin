@@ -3,7 +3,7 @@
 
 class Box<E>(val x: E)
 
-class A<X, Y> {
+class A<X, Y : Number> {
     context(Box<X>, Y)
     fun foo(): String = x.toString() + this@Y.toString()
 
@@ -12,7 +12,7 @@ class A<X, Y> {
 }
 
 context(Box<X>, Y)
-fun <X, Y> bar(): String = x.toString() + this@Y.toString()
+fun <X, Y : Number> bar(): String = x.toString() + this@Y.toString()
 
 fun box(): String {
     return with(Box("OK")) {

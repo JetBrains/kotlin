@@ -10926,6 +10926,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
                 }
 
                 @Test
+                @TestMetadata("subtypingBetweenContextReceivers.kt")
+                public void testSubtypingBetweenContextReceivers() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/extensions/contextReceivers/subtypingBetweenContextReceivers.kt");
+                }
+
+                @Test
                 @TestMetadata("superWithContext.kt")
                 public void testSuperWithContext() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/extensions/contextReceivers/superWithContext.kt");

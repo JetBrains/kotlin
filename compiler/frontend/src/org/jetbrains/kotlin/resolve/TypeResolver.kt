@@ -368,10 +368,12 @@ class TypeResolver(
 
                 val contextReceiverList = type.contextReceiverList
                 val contextReceiversTypes = if (contextReceiverList != null) {
-                    checkContextReceiversAreEnabled(contextReceiverList)
-                    contextReceiverList.typeReferences().map { typeRef ->
+                    checkContextReceiversAreEnabled(c.trace, languageVersionSettings, contextReceiverList)
+                    val types = contextReceiverList.typeReferences().map { typeRef ->
                         resolveType(c.noBareTypes(), typeRef)
                     }
+                    checkSubtypingBetweenContextReceivers(c.trace, contextReceiverList, types)
+                    types
                 } else emptyList()
 
                 val parameterDescriptors = resolveParametersOfFunctionType(type.parameters)
@@ -454,7 +456,7 @@ class TypeResolver(
             }
 
             override fun visitContextReceiverList(contextReceiverList: KtContextReceiverList) {
-                checkContextReceiversAreEnabled(contextReceiverList)
+                checkContextReceiversAreEnabled(c.trace, languageVersionSettings, contextReceiverList)
             }
 
             override fun visitDynamicType(type: KtDynamicType) {
@@ -494,17 +496,6 @@ class TypeResolver(
 
                 param.valOrVarKeyword?.let {
                     c.trace.report(Errors.UNSUPPORTED.on(it, "val or var on parameter in function type"))
-                }
-            }
-
-            private fun checkContextReceiversAreEnabled(contextReceiverList: KtContextReceiverList) {
-                if (!languageVersionSettings.supportsFeature(LanguageFeature.ContextReceivers)) {
-                    c.trace.report(
-                        UNSUPPORTED_FEATURE.on(
-                            contextReceiverList,
-                            LanguageFeature.ContextReceivers to languageVersionSettings
-                        )
-                    )
                 }
             }
         })
