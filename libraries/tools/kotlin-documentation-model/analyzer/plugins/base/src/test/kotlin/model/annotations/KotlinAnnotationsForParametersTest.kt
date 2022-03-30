@@ -1,13 +1,13 @@
 package model.annotations
 
+import org.jetbrains.dokka.base.signatures.KotlinSignatureUtils.annotations
 import org.jetbrains.dokka.links.DRI
-import org.jetbrains.dokka.model.Annotations
-import org.jetbrains.dokka.model.DFunction
-import org.jetbrains.dokka.model.DProperty
-import org.jetbrains.dokka.model.GenericTypeConstructor
+import org.jetbrains.dokka.model.*
+import org.jetbrains.dokka.utilities.cast
 import org.junit.jupiter.api.Test
 import utils.AbstractModelTest
 import kotlin.test.assertEquals
+import kotlin.test.assertTrue
 
 class KotlinAnnotationsForParametersTest : AbstractModelTest("/src/main/kotlin/annotations/Test.kt", "annotations") {
     @Test
@@ -47,6 +47,54 @@ class KotlinAnnotationsForParametersTest : AbstractModelTest("/src/main/kotlin/a
 
                 assertEquals(listOf(driOfHello), annotations?.map { it.dri })
                 assertEquals(listOf("abc"), annotationsValues)
+            }
+        }
+    }
+
+    @Test
+    fun `type parameter annotations should be visible even if type declaration has none`() {
+        inlineModelTest(
+            """
+             |@Target(AnnotationTarget.TYPE_PARAMETER, AnnotationTarget.TYPE)
+             |annotation class Hello
+             |
+             |fun <T> foo(param: List<@Hello T>) {}
+            """.trimIndent()
+        ) {
+            with((this / "annotations" / "foo").cast<DFunction>()) {
+                val paramAnnotations = parameters.first()
+                    .type.cast<GenericTypeConstructor>()
+                    .projections
+                    .first().cast<Invariance<TypeParameter>>()
+                    .inner.cast<TypeParameter>()
+                    .annotations()
+                    .values
+                    .flatten()
+
+                assertEquals(1, paramAnnotations.size)
+                assertEquals(DRI("annotations", "Hello"), paramAnnotations[0].dri)
+            }
+        }
+    }
+
+    @Test
+    fun `type parameter annotations should not be propagated from resolved type`() {
+        inlineModelTest(
+            """
+             |@Target(AnnotationTarget.TYPE_PARAMETER, AnnotationTarget.TYPE)
+             |annotation class Hello
+             |
+             |fun <@Hello T> foo(param: List<T>) {}
+            """.trimIndent()
+        ) {
+            with((this / "annotations" / "foo").cast<DFunction>()) {
+                val paramAnnotations = parameters.first()
+                    .type.cast<GenericTypeConstructor>()
+                    .projections.first().cast<Invariance<TypeParameter>>()
+                    .inner.cast<TypeParameter>()
+                    .annotations()
+
+                assertTrue(paramAnnotations.isEmpty())
             }
         }
     }
