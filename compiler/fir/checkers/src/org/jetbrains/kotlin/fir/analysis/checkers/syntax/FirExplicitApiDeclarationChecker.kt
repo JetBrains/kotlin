@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.fir.declarations.impl.FirPrimaryConstructor
 import org.jetbrains.kotlin.fir.declarations.utils.effectiveVisibility
 import org.jetbrains.kotlin.fir.declarations.utils.isData
 import org.jetbrains.kotlin.fir.declarations.utils.isOverride
+import org.jetbrains.kotlin.fir.declarations.utils.visibility
 import org.jetbrains.kotlin.fir.resolve.transformers.publishedApiEffectiveVisibility
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.KtDeclaration
@@ -47,6 +48,10 @@ object FirExplicitApiDeclarationChecker : FirDeclarationSyntaxChecker<FirDeclara
         // Enum entries do not have visibilities
         if (element is FirEnumEntry) return
         if (!element.effectiveVisibility.publicApi && element.publishedApiEffectiveVisibility == null) return
+        val lastDeclaration = context.containingDeclarations.lastOrNull()
+        if ((lastDeclaration as? FirMemberDeclaration)?.effectiveVisibility?.publicApi == false) {
+            return
+        }
 
         checkVisibilityModifier(state, element, source, context, reporter)
         checkExplicitReturnType(state, element, source, context, reporter)
@@ -85,14 +90,10 @@ object FirExplicitApiDeclarationChecker : FirDeclarationSyntaxChecker<FirDeclara
      */
     private fun explicitVisibilityIsNotRequired(declaration: FirMemberDeclaration, context: CheckerContext): Boolean {
         return when (declaration) {
-            // 1,
-            is FirPrimaryConstructor,
-            // 4
-            is FirPropertyAccessor,
-            // 6
-            is FirValueParameter,
-            // 7
-            is FirAnonymousFunction -> true
+            is FirPrimaryConstructor, // 1,
+            is FirPropertyAccessor, // 4
+            is FirValueParameter, // 6
+            is FirAnonymousFunction -> true // 7
             is FirCallableDeclaration -> {
                 val containingClass = context.containingDeclarations.lastOrNull() as? FirRegularClass
                 // 2, 5
