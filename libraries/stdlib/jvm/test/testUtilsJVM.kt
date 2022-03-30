@@ -43,6 +43,8 @@ public actual val supportsSuppressedExceptions: Boolean get() = !isJava6
 
 public actual val supportsNamedCapturingGroup: Boolean get() = !isJava6
 
+public actual val supportsOctalLiteralInRegex: Boolean get() = true
+
 public actual val regexSplitUnicodeCodePointHandling: Boolean get() = false
 
 public actual object BackReferenceHandling {

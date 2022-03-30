@@ -9,6 +9,7 @@ package test.text
 
 import test.regexSplitUnicodeCodePointHandling
 import test.supportsNamedCapturingGroup
+import test.supportsOctalLiteralInRegex
 import test.BackReferenceHandling
 import test.HandlingOption
 import kotlin.test.*
@@ -240,6 +241,14 @@ class RegexTest {
         testInvalidBackReference(BackReferenceHandling.nonExistentGroup, pattern = "a(a)\\2")
         testInvalidBackReference(BackReferenceHandling.enclosingGroup, pattern = "a(a\\1)")
         testInvalidBackReference(BackReferenceHandling.notYetDefinedGroup, pattern = "a\\1(a)")
+    }
+
+    @Test fun matchCharWithOctalValue() {
+        if (supportsOctalLiteralInRegex) {
+            assertEquals("aa", "a\\0141".toRegex().find("aaaa")?.value)
+        } else {
+            assertFails { "a\\0141".toRegex() }
+        }
     }
 
     @Test fun matchNamedGroupsWithBackReference() {

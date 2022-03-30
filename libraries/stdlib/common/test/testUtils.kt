@@ -20,6 +20,8 @@ public expect val supportsSuppressedExceptions: Boolean
 
 public expect val supportsNamedCapturingGroup: Boolean
 
+public expect val supportsOctalLiteralInRegex: Boolean
+
 public expect val regexSplitUnicodeCodePointHandling: Boolean
 
 public enum class HandlingOption {
