@@ -6,7 +6,7 @@ expect enum class En(x: Int) {
     E2(42),
     ;
 
-    <!PRIMARY_CONSTRUCTOR_DELEGATION_CALL_EXPECTED!>constructor(s: String)<!>
+    constructor(s: String)
 }
 
 expect enum class En2 {
