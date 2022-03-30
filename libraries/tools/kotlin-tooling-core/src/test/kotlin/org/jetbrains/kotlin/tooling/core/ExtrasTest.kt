@@ -6,6 +6,17 @@ import kotlin.test.*
 
 class ExtrasTest {
 
+    interface ITestCapabilityA<T> : Extras.Key.Capability<T> {
+        val valueA: Int
+    }
+
+    interface ITestCapabilityB<T> : Extras.Key.Capability<T> {
+        val valueB: Int
+    }
+
+    data class TestCapabilityA(override val valueA: Int) : ITestCapabilityA<String>
+    data class TestCapabilityB(override val valueB: Int) : ITestCapabilityB<String>
+
     @Test
     fun `test - isEmpty`() {
         assertTrue(mutableExtrasOf().isEmpty())
@@ -358,5 +369,54 @@ class ExtrasTest {
             ),
             extras
         )
+    }
+
+    @Test
+    fun `test - key accessing missing capability`() {
+        assertNull(extrasKeyOf<String>().capability<TestCapabilityA>())
+        assertNull(extrasKeyOf<String>().plus(TestCapabilityA(0)).capability<TestCapabilityB>())
+    }
+
+    @Test
+    fun `test - accessing capability`() {
+        assertEquals(TestCapabilityA(2411), extrasKeyOf<String>().plus(TestCapabilityA(2411)).capability<TestCapabilityA>())
+
+        assertEquals(
+            TestCapabilityB(1),
+            extrasKeyOf<String>().plus(TestCapabilityA(0)).plus(TestCapabilityB(1)).capability<TestCapabilityB>()
+        )
+    }
+
+    @Test
+    fun `test - accessing overwritten capability`() {
+        val key0 = extrasKeyOf<String>() + TestCapabilityA(0)
+        val key1 = key0 + TestCapabilityA(1) // <- will overwrite previous
+
+        assertEquals(TestCapabilityA(0), key0.capability<TestCapabilityA>())
+        assertEquals(TestCapabilityA(1), key1.capability<TestCapabilityA>())
+    }
+
+    @Test
+    fun `test - accessing capabilities implementing multiple`() {
+        data class TestCapabilityAB(
+            override val valueA: Int,
+            override val valueB: Int
+        ) : ITestCapabilityA<String>, ITestCapabilityB<String>
+
+        val key0 = extrasKeyOf<String>() + TestCapabilityAB(0, 1)
+        assertEquals(0, key0.capability<TestCapabilityA>()?.valueA)
+        assertEquals(1, key0.capability<TestCapabilityB>()?.valueB)
+
+        val key1 = key0 + TestCapabilityA(2)
+        assertEquals(2, key1.capability<TestCapabilityA>()?.valueA)
+        assertEquals(1, key1.capability<TestCapabilityB>()?.valueB)
+
+        val key2 = key1 + TestCapabilityA(3)
+        assertEquals(3, key2.capability<TestCapabilityA>()?.valueA)
+        assertEquals(1, key1.capability<TestCapabilityB>()?.valueB)
+
+        val key3 = key2 + TestCapabilityB(4)
+        assertEquals(3, key3.capability<TestCapabilityA>()?.valueA)
+        assertEquals(4, key3.capability<TestCapabilityB>()?.valueB)
     }
 }
