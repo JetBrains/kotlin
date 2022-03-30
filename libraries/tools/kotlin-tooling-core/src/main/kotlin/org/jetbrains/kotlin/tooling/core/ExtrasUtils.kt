@@ -49,3 +49,18 @@ infix fun <T : Any> Extras.Key<T>.withValue(value: T): Extras.Entry<T> = Extras.
 operator fun IterableExtras.plus(entry: Extras.Entry<*>): IterableExtras = ImmutableExtrasImpl(this.entries + entry)
 
 operator fun IterableExtras.plus(entries: Iterable<Extras.Entry<*>>): IterableExtras = ImmutableExtrasImpl(this.entries + entries)
+
+/**
+ * Filters the given [Extras] by exact type matches.
+ * Contrary to operations like [filterIsInstance], this operation is invariant under [T] and will
+ * only filter for entries stored exactly as [T]
+ */
+inline fun <reified T : Any> IterableExtras.filterType(): Iterable<Extras.Entry<T>> {
+    return filterType(reifiedTypeSignatureOf())
+}
+
+@PublishedApi
+@Suppress("unchecked_cast")
+internal fun <T : Any> IterableExtras.filterType(type: ReifiedTypeSignature<T>): Iterable<Extras.Entry<T>> =
+    filter { entry -> entry.key.id.type == type } as Iterable<Extras.Entry<T>>
+

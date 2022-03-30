@@ -6,6 +6,8 @@ import kotlin.test.*
 
 class ExtrasTest {
 
+    data class Box<T>(val value: T)
+
     interface ITestCapabilityA<T> : Extras.Key.Capability<T> {
         val valueA: Int
     }
@@ -418,5 +420,30 @@ class ExtrasTest {
         val key3 = key2 + TestCapabilityB(4)
         assertEquals(3, key3.capability<ITestCapabilityA<String>>()?.valueA)
         assertEquals(4, key3.capability<ITestCapabilityB<String>>()?.valueB)
+    }
+
+    @Test
+    fun `test - filterType`() {
+        val extras = mutableExtrasOf()
+        extras[extrasKeyOf<Box<String>>()] = Box("first")
+        extras[extrasKeyOf<Box<String>>("other")] = Box("second")
+        extras[extrasKeyOf<Box<Int>>()] = Box(1)
+
+        assertEquals<List<Box<String>>>(
+            listOf(Box("first"), Box("second")),
+            extras.filterType<Box<String>>().map { it.value }.toList()
+        )
+
+        assertEquals<List<Box<Int>>>(
+            listOf(Box(1)), extras.filterType<Box<Int>>().map { it.value }.toList()
+        )
+
+        assertEquals(
+            emptyList(), extras.filterType<Box<*>>().toList()
+        )
+
+        assertEquals(
+            emptyList(), extras.filterType<Any>().toList()
+        )
     }
 }
