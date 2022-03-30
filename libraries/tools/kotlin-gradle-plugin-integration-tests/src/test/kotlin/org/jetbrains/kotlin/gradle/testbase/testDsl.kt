@@ -12,8 +12,12 @@ import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.BaseGradleIT.Companion.acceptAndroidSdkLicenses
 import org.jetbrains.kotlin.gradle.model.ModelContainer
 import org.jetbrains.kotlin.gradle.model.ModelFetcherBuildAction
+import org.jetbrains.kotlin.gradle.native.SINGLE_NATIVE_TARGET_PLACEHOLDER
+import org.jetbrains.kotlin.gradle.native.disableKotlinNativeCaches
 import org.jetbrains.kotlin.gradle.util.modify
 import org.jetbrains.kotlin.gradle.report.BuildReportType
+import org.jetbrains.kotlin.konan.target.HostManager
+import org.jetbrains.kotlin.konan.target.presetName
 import org.jetbrains.kotlin.test.util.KtTestUtil
 import java.io.File
 import java.nio.file.*
@@ -36,11 +40,10 @@ fun KGPBaseTest.project(
     enableBuildScan: Boolean = false,
     addHeapDumpOptions: Boolean = true,
     enableGradleDebug: Boolean = false,
-    enableCacheRedirector: Boolean = true,
     projectPathAdditionalSuffix: String = "",
     buildJdk: File? = null,
     directoryPrefix: String? = null,
-    parentDir: String = "",
+    localRepoDir: Path? = null,
     test: TestProject.() -> Unit = {}
 ): TestProject {
     val projectPath = setupProjectFromTestResources(
@@ -49,11 +52,10 @@ fun KGPBaseTest.project(
         workingDir,
         projectPathAdditionalSuffix,
         directoryPrefix,
-        parentDir = parentDir
     )
     projectPath.addDefaultBuildFiles()
-    if (enableCacheRedirector) projectPath.enableCacheRedirector()
     projectPath.enableAndroidSdk()
+
     if (addHeapDumpOptions) projectPath.addHeapDumpOptions()
 
     val gradleRunner = GradleRunner
@@ -72,14 +74,53 @@ fun KGPBaseTest.project(
         forceOutput,
         enableBuildScan
     )
-
+    localRepoDir?.let { testProject.configureLocalRepository(localRepoDir) }
     if (buildJdk != null) testProject.setupNonDefaultJdk(buildJdk)
-
-    // enableFeaturePreview("GRADLE_METADATA") is no longer needed when building with Gradle 5.4 or above
-    if (gradleVersion >= GradleVersion.version("5.4")) testProject.removeEnableFeaturePreview()
 
     testProject.test()
     return testProject
+}
+
+/**
+ * Create new test project with configuring single native target.
+ *
+ * @param [projectName] test project name in 'src/test/resources/testProject` directory.
+ * @param [buildOptions] common Gradle build options
+ * @param [buildJdk] path to JDK build should run with. *Note* Only append to 'gradle.properties'!
+ */
+fun KGPBaseTest.nativeProject(
+    projectName: String,
+    gradleVersion: GradleVersion,
+    buildOptions: BuildOptions = defaultBuildOptions,
+    forceOutput: Boolean = false,
+    enableBuildScan: Boolean = false,
+    addHeapDumpOptions: Boolean = true,
+    enableGradleDebug: Boolean = false,
+    projectPathAdditionalSuffix: String = "",
+    buildJdk: File? = null,
+    directoryPrefix: String? = null,
+    localRepoDir: Path? = null,
+    test: TestProject.() -> Unit = {}
+): TestProject {
+    val project = project(
+        projectName = projectName,
+        gradleVersion = gradleVersion,
+        buildOptions = buildOptions,
+        forceOutput = forceOutput,
+        enableBuildScan = enableBuildScan,
+        addHeapDumpOptions = addHeapDumpOptions,
+        enableGradleDebug = enableGradleDebug,
+        projectPathAdditionalSuffix = projectPathAdditionalSuffix,
+        buildJdk = buildJdk,
+        directoryPrefix = directoryPrefix,
+        localRepoDir = localRepoDir,
+    )
+    project.configureSingleNativeTarget()
+    project.gradleProperties().apply {
+        disableKotlinNativeCaches()
+    }
+    project.test()
+    return project
 }
 
 /**
@@ -215,8 +256,6 @@ open class GradleProject(
     val settingsGradleKts: Path get() = projectPath.resolve("settings.gradle.kts")
     val gradleProperties: Path get() = projectPath.resolve("gradle.properties")
 
-    val projectDir: File get() = projectPath.toFile()
-
     fun classesDir(
         sourceSet: String = "main",
         language: String = "kotlin"
@@ -242,23 +281,12 @@ open class GradleProject(
         files: List<Path>
     ): List<Path> = files.map { projectPath.relativize(it) }
 
-    fun relativeToProject(vararg files: File): List<Path> =
-        relativeToProject(files.map { it.toPath() })
-
     fun gradleProperties(): File =
         gradleProperties.toFile().also { file ->
             if (!file.exists()) {
                 file.createNewFile()
             }
         }
-
-    fun buildScript(): File = listOf(buildGradle, buildGradleKts).singleOrNull { it.toFile().exists() }?.toFile()
-        ?: error("Build script does not exists under $projectPath")
-
-    fun gradleSettingsScript(): File =
-        listOf(settingsGradleKts, settingsGradle).run {
-            singleOrNull { it.exists() } ?: first()
-        }.toFile()
 }
 
 class TestProject(
@@ -304,10 +332,6 @@ class TestProject(
             """.trimIndent()
         )
     }
-}
-
-fun TestProject.gradleBuildScript(subproject: String? = null): File {
-    return subproject?.let { subProject(subproject).buildScript() } ?: buildScript()
 }
 
 private fun commonBuildSetup(
@@ -357,13 +381,17 @@ private fun TestProject.withBuildSummary(
  */
 private val testKitDir get() = Paths.get(".").resolve(".testKitDir")
 
+private val hashAlphabet: List<Char> = ('a'..'z') + ('A'..'Z') + ('0'..'9')
+private fun randomHash(length: Int = 15): String {
+    return List(length) { hashAlphabet.random() }.joinToString("")
+}
+
 private fun setupProjectFromTestResources(
     projectName: String,
     gradleVersion: GradleVersion,
     tempDir: Path,
     optionalSubDir: String,
     directoryPrefix: String? = null,
-    parentDir: String = ""
 ): Path {
     val testProjectPath = directoryPrefix?.let { "$directoryPrefix/$projectName".testProjectPath } ?: projectName.testProjectPath
     assertTrue("Test project doesn't exists") { Files.exists(testProjectPath) }
@@ -371,7 +399,7 @@ private fun setupProjectFromTestResources(
 
     return tempDir
         .resolve(gradleVersion.version)
-        .resolve(parentDir)
+        .resolve(randomHash())
         .resolve(projectName)
         .resolve(optionalSubDir)
         .also {
@@ -455,19 +483,6 @@ private fun TestProject.setupNonDefaultJdk(pathToJdk: File) {
         |
         |$it        
         """.trimMargin()
-    }
-}
-
-fun GradleProject.removeEnableFeaturePreview() {
-    gradleSettingsScript().apply {
-        if (exists()) {
-            modify {
-                it.replace("enableFeaturePreview('GRADLE_METADATA')", "//")
-            }
-            modify {
-                it.replace("enableFeaturePreview(\"GRADLE_METADATA\")", "//")
-            }
-        }
     }
 }
 
@@ -586,4 +601,29 @@ private fun Path.addHeapDumpOptions() {
             println("<=== Heap dump options are already exists! ===>")
         }
     }
+}
+
+private fun TestProject.configureSingleNativeTarget(preset: String = HostManager.host.presetName) {
+//    val buildScript = if (Files.exists(buildGradle)) buildGradle else buildGradleKts
+//    buildScript.toFile().modify {
+//        it.replace(SINGLE_NATIVE_TARGET_PLACEHOLDER, preset)
+//    }
+    projectPath.toFile().walk()
+        .filter { it.isFile && (it.name == "build.gradle.kts" || it.name == "build.gradle") }
+        .forEach { file ->
+            file.modify {
+                it.replace(SINGLE_NATIVE_TARGET_PLACEHOLDER, preset)
+            }
+        }
+}
+
+private fun TestProject.configureLocalRepository(localRepoDir: Path) {
+    projectPath.toFile().walkTopDown()
+        .filter {
+            it.isFile && (it.name == "build.gradle" || it.name == "build.gradle.kts" ||
+                    it.name == "settings.gradle" || it.name == "settings.gradle.kts")
+        }
+        .forEach { file ->
+            file.modify { it.replace("<localRepo>", localRepoDir.absolutePathString()) }
+        }
 }

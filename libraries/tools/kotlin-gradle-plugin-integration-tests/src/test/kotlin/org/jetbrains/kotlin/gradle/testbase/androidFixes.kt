@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.gradle.util.modify
 import java.io.File
 import java.nio.file.Path
 import java.nio.file.Paths
+import kotlin.io.path.createFile
 import kotlin.io.path.exists
 
 internal fun Path.applyAndroidTestFixes() {
@@ -17,7 +18,7 @@ internal fun Path.applyAndroidTestFixes() {
     assert(keystoreFile.exists()) {
         "Common 'debug.keystore' file does not exists in ${keystoreFile.toAbsolutePath()} location!"
     }
-    resolve("gradle.properties").append(
+    resolve("gradle.properties").also { if (!it.exists()) it.createFile() }.append(
         """
         |test.fixes.android.debugKeystore=${keystoreFile.toAbsolutePath().toString().normalizePath()}
         |
