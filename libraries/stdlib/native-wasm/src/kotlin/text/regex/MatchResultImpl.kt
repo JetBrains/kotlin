@@ -30,7 +30,6 @@ internal class MatchResultImpl
 /**
  *  @param input an input sequence for matching/searching.
  *  @param regex a [Regex] instance used for matching/searching.
- *  @param rightBound index in the [input] used as a right bound for matching/searching. Exclusive.
  */
 constructor (internal val input: CharSequence,
              internal val regex: Regex) : MatchResult {
@@ -92,7 +91,7 @@ constructor (internal val input: CharSequence,
      * Groups are indexed from 1 to `groupCount` and group with the index 0 corresponds to the entire match.
      */
     // Create one object or several ones?
-    override val groups: MatchGroupCollection = object: MatchGroupCollection, AbstractCollection<MatchGroup?>() {
+    override val groups: MatchGroupCollection = object: MatchNamedGroupCollection, AbstractCollection<MatchGroup?>() {
         override val size: Int
             get() = this@MatchResultImpl.groupCount
 
@@ -117,6 +116,12 @@ constructor (internal val input: CharSequence,
         override fun get(index: Int): MatchGroup? {
             val value = group(index) ?: return null
             return MatchGroup(value, getStart(index) until getEnd(index))
+        }
+
+        override fun get(name: String): MatchGroup? {
+            val index = nativePattern.groupNameToIndex[name]
+                ?: throw IllegalArgumentException("Capturing group with name {$name} does not exist")
+            return get(index)
         }
     }
 

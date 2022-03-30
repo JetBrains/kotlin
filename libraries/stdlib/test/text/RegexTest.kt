@@ -156,20 +156,19 @@ class RegexTest {
     }
 
     @Test fun matchNamedGroups() {
+        if (!supportsNamedCapturingGroup) return
+
         val regex = "\\b(?<city>[A-Za-z\\s]+),\\s(?<state>[A-Z]{2}):\\s(?<areaCode>[0-9]{3})\\b".toRegex()
         val input = "Coordinates: Austin, TX: 123"
 
-        regex.find(input)!!.let { match ->
-            assertEquals(listOf("Austin, TX: 123", "Austin", "TX", "123"), match.groupValues)
+        val match = regex.find(input)!!
+        assertEquals(listOf("Austin, TX: 123", "Austin", "TX", "123"), match.groupValues)
 
-            if (supportsNamedCapturingGroup) {
-                val namedGroups = match.groups as MatchNamedGroupCollection
-                assertEquals(4, namedGroups.size)
-                assertEquals("Austin", namedGroups["city"]?.value)
-                assertEquals("TX", namedGroups["state"]?.value)
-                assertEquals("123", namedGroups["areaCode"]?.value)
-            }
-        }
+        val namedGroups = match.groups as MatchNamedGroupCollection
+        assertEquals(4, namedGroups.size)
+        assertEquals("Austin", namedGroups["city"]?.value)
+        assertEquals("TX", namedGroups["state"]?.value)
+        assertEquals("123", namedGroups["areaCode"]?.value)
     }
 
     @Test fun matchOptionalNamedGroup() {
@@ -208,14 +207,80 @@ class RegexTest {
     }
 
     @Test fun matchWithBackReference() {
-        val regex = "(?<title>\\w+), yes \\k<title>".toRegex()
+        "(\\w+), yes \\1".toRegex().let { regex ->
+            val match = regex.find("Do you copy? Sir, yes Sir!")!!
+            assertEquals("Sir, yes Sir", match.value)
+            assertEquals("Sir", match.groups[1]?.value)
 
-        val match = regex.find("Do you copy? Sir, yes Sir!")!!
-        assertEquals("Sir, yes Sir", match.value)
-        assertEquals("Sir", (match.groups as MatchNamedGroupCollection)["title"]?.value)
+            assertNull(regex.find("Do you copy? Sir, yes I do!"))
+        }
 
-        assertNull(regex.find("Do you copy? Sir, yes I do!"))
+        // capture the largest valid group index
+        "(\\w+), yes \\12".toRegex().let { regex ->
+            val match = regex.find("Do you copy? Sir, yes Sir2")!!
+            assertEquals("Sir, yes Sir2", match.value)
+            assertEquals("Sir", match.groups[1]?.value)
+        }
+        // back reference to non-existent group
+        assertNull("a(a)\\21".toRegex().find("aaaa1"))
+
+        // back reference to a group with large index
+        "0(1(2(3(4(5(6(7(8(9(A(B(C))))))))\\11))))".toRegex().let { regex ->
+            val match = regex.find("0123456789ABCBC")!!
+            assertEquals("BC", match.groups[11]?.value)
+            assertEquals("56789ABC", match.groups[5]?.value)
+            assertEquals("456789ABCBC", match.groups[4]?.value)
+        }
+
+        // back reference to an enclosing group
+        assertNull("a(a\\1)".toRegex().find("aaaa"))
+        // back reference to not yet available group
+        assertNull("a\\1(a)".toRegex().find("aaaa"))
     }
+
+    @Test fun matchNamedGroupsWithBackReference() {
+        if (!supportsNamedCapturingGroup) return
+
+        "(?<title>\\w+), yes \\k<title>".toRegex().let { regex ->
+            val match = regex.find("Do you copy? Sir, yes Sir!")!!
+            assertEquals("Sir, yes Sir", match.value)
+            assertEquals("Sir", (match.groups as MatchNamedGroupCollection)["title"]?.value)
+
+            assertNull(regex.find("Do you copy? Sir, yes I do!"))
+        }
+
+        // back reference to an enclosing group
+        assertNull("a(?<first>a\\k<first>)".toRegex().find("aaaa"))
+        // back reference to not yet available group
+        assertFailsWith<IllegalArgumentException> {
+            "a\\k<first>(?<first>a)".toRegex()
+        }
+    }
+
+    @Test fun incompleteNamedGroupDeclaration() {
+        if (!supportsNamedCapturingGroup) return
+
+        assertFailsWith<IllegalArgumentException> {
+            "(?<".toRegex()
+        }
+        assertFailsWith<IllegalArgumentException> {
+            "(?<)".toRegex()
+        }
+        assertFailsWith<IllegalArgumentException> {
+            "(?<name".toRegex()
+        }
+        assertFailsWith<IllegalArgumentException> {
+            "(?<name)".toRegex()
+        }
+        assertFailsWith<IllegalArgumentException> {
+            "(?<name>".toRegex()
+        }
+        assertFailsWith<IllegalArgumentException> {
+            "(?<>\\w+), yes \\k<>".toRegex()
+        }
+    }
+
+    // TODO: Test comment mode enabled and group name is separated by space, (before, in the middle, after)
 
     @Test fun matchMultiline() {
         val regex = "^[a-z]*$".toRegex(setOf(RegexOption.IGNORE_CASE, RegexOption.MULTILINE))
