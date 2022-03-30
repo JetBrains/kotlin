@@ -1,0 +1,12 @@
+syntax = "proto3";
+
+package org.jetbrains.kotlin.gradle.kpm.idea.proto;
+option java_multiple_files = true;
+
+message ModuleCoordinatesProto {
+  string buildId = 1;
+  string projectPath = 2;
+  string projectName = 3;
+  string moduleName = 4;
+  optional string moduleClassifier = 5;
+}

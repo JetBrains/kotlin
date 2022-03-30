@@ -61,7 +61,7 @@ private class IdeaKotlinExtrasSurrogate(
 
 @WriteReplacedModel(replacedBy = IdeaKotlinExtrasSurrogate::class)
 @Suppress("unchecked_cast")
-private class SerializedIdeaKotlinExtras(
+/*internal TODO!!! */class SerializedIdeaKotlinExtras(
     private val serializedExtras: MutableMap<Extras.Id<*>, ByteArray>
 ) : IdeaKotlinExtras {
     private val lock = ReentrantReadWriteLock()

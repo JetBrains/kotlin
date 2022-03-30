@@ -1,0 +1,9 @@
+syntax = "proto3";
+
+package org.jetbrains.kotlin.gradle.kpm.idea.proto;
+option java_multiple_files = true;
+
+message ExtrasProto {
+  repeated string ids = 1;
+  repeated bytes values = 2;
+}
