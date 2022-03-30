@@ -168,7 +168,7 @@ interface Extras {
     ) {
         constructor(id: Id<T>) : this(id, emptySet())
 
-        interface Capability<T : Any>
+        interface Capability<T>
 
         override fun equals(other: Any?): Boolean {
             if (other === this) return true
