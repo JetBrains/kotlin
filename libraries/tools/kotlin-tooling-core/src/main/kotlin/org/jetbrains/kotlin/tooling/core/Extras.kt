@@ -139,6 +139,13 @@ interface Extras {
         internal val type: ReifiedTypeSignature<T>,
         val name: String? = null,
     ) : Serializable {
+
+        val stableString: String
+            get() {
+                return if (name == null) type.signature
+                else "${type.signature};$name"
+            }
+
         override fun equals(other: Any?): Boolean {
             if (this === other) return true
             if (other !is Id<*>) return false
@@ -153,12 +160,16 @@ interface Extras {
             return result
         }
 
-        override fun toString(): String {
-            if (name == null) return type.toString()
-            return "$name: $type"
-        }
+        override fun toString(): String = stableString
 
-        internal companion object {
+        companion object {
+            fun fromString(stableString: String): Id<*> {
+                @OptIn(UnsafeApi::class) return if (stableString.contains(';')) {
+                    val split = stableString.split(';', limit = 2)
+                    Id(ReifiedTypeSignature(split[0]), split[1])
+                } else Id(ReifiedTypeSignature(stableString))
+            }
+
             private const val serialVersionUID = 0L
         }
     }
