@@ -113,6 +113,10 @@ fun main(args: Array<String>) {
             testClass<AbstractJsIrLineNumberTest> {
                 model("lineNumbers/")
             }
+
+            testClass<AbstractFirJsTest> {
+                model("box/", pattern = "^([^_](.+))\\.kt$")
+            }
         }
 
         testGroup("js/js.tests/tests-gen", "compiler/testData", testRunnerMethodName = "runTest0") {
