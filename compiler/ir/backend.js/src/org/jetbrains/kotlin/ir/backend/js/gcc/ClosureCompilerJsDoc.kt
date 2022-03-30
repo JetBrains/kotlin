@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.ir.backend.js.export.isMangled
 import org.jetbrains.kotlin.ir.backend.js.jsdoc.annotateWithContext
 import org.jetbrains.kotlin.ir.backend.js.jsdoc.annotateWithoutContext
 import org.jetbrains.kotlin.ir.backend.js.utils.JsGenerationContext
+import org.jetbrains.kotlin.ir.backend.js.utils.getJsName
 import org.jetbrains.kotlin.ir.backend.js.utils.isInterface
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrSetField
@@ -76,11 +77,9 @@ fun JsStatement.withJsDocForProperty(property: IrProperty, context: JsGeneration
 fun JsStatement.withJsDocForFunction(function: IrSimpleFunction, context: JsGenerationContext) =
     annotateWithContext(context) {
         if (function.parentClassOrNull != null) {
-            exportability(
-                function.correspondingPropertySymbol == null &&
-                        function.isExported(context.staticContext.backendContext) &&
-                        !function.isMangled(context)
-            )
+            val isExported = function.correspondingPropertySymbol == null && function.isExported(context.staticContext.backendContext)
+            val hasJsName = function.getJsName() != null
+            exportability(hasJsName || isExported && !function.isMangled(context))
             visibility(function.visibility)
             inheritable(function.isOverridableMemberOrAccessor())
         }

@@ -45,8 +45,8 @@ fun <T : JsNode> IrWhen.toJsNode(
         }
     }
 
-fun jsElementAccess(name: String, receiver: JsExpression?, isForExport: Boolean = false): JsExpression =
-    if (isForExport || receiver != null && !name.isValidES5Identifier()) {
+fun jsElementAccess(name: String, receiver: JsExpression?, isFixedName: Boolean = false): JsExpression =
+    if (isFixedName || receiver != null && !name.isValidES5Identifier()) {
         JsArrayAccess(receiver, JsStringLiteral(name))
     } else {
         JsNameRef(JsName(name, false), receiver)
@@ -74,7 +74,9 @@ fun translateFunction(declaration: IrFunction, name: JsName?, context: JsGenerat
     val functionContext = context.newDeclaration(declaration, localNameGenerator)
 
     val functionParams = declaration.valueParameters.map { functionContext.getNameForValueDeclaration(it) }
-    val body = declaration.body?.accept(IrElementToJsStatementTransformer(), functionContext) as? JsBlock ?: JsBlock()
+    val body = declaration.body
+        ?.takeIf { !declaration.isExternal }
+        ?.accept(IrElementToJsStatementTransformer(), functionContext) as? JsBlock ?: JsBlock()
 
     val function = JsFunction(emptyScope, body, "member function ${name ?: "annon"}")
 

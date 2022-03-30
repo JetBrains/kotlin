@@ -698,7 +698,7 @@ fun IrSimpleFunction.isMangled(context: JsGenerationContext): Boolean {
             correspondingPropertySymbol == null
 }
 
-private fun IrSimpleFunction.hasMangledName(): Boolean {
+fun IrDeclarationWithName.hasMangledName(): Boolean {
     return getJsName() == null && !name.asString().isValidES5Identifier()
 }
 

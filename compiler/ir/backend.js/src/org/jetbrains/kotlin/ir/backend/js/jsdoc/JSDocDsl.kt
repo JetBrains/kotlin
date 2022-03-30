@@ -38,7 +38,7 @@ private fun <T: BasicOptimizationAnnotations> JsStatement.annotate(annotationsCo
 }
 
 open class BasicOptimizationAnnotations {
-    private val jsDoc = JsDocComment(mutableMapOf())
+    private val jsDoc = JsDocComment(mutableListOf())
 
     fun constructor() {
         jsDoc.appendTag("constructor")
@@ -112,12 +112,14 @@ open class BasicOptimizationAnnotations {
     fun protected() {
         jsDoc.appendTag("protected")
     }
+
     internal fun makeStmt(): JsStatement {
         return if (jsDoc.tags.isEmpty()) JsEmpty else jsDoc.makeStmt()
     }
 
     private fun JsDocComment.appendTag(tag: String, tagValue: String? = null, description: String = "") {
-        tags[tag] = tagValue?.run { "{$this} $description" } ?: description
+        val resultTagValue = tagValue?.run { "{$this} $description" } ?: description
+        tags.add(JsDocComment.JsDocTag(tag, resultTagValue))
     }
 }
 

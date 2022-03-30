@@ -148,6 +148,7 @@ abstract class BridgesConstruction<T : JsCommonBackendContext>(val context: T) :
             annotations += bridge.annotations
             overriddenSymbols += delegateTo.overriddenSymbols
             overriddenSymbols += bridge.symbol
+            correspondingPropertySymbol = function.correspondingPropertySymbol
         }
 
         irFunction.body = context.irFactory.createBlockBody(UNDEFINED_OFFSET, UNDEFINED_OFFSET) {

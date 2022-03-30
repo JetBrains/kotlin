@@ -27,13 +27,27 @@ import org.jetbrains.kotlin.ir.util.file
 import org.jetbrains.kotlin.ir.util.fileEntry
 import org.jetbrains.kotlin.js.backend.JsToStringGenerationVisitor
 import org.jetbrains.kotlin.js.backend.ast.JsGlobalBlock
+import org.jetbrains.kotlin.js.config.JSConfigurationKeys
 import org.jetbrains.kotlin.js.util.TextOutputImpl
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.serialization.js.ModuleKind
+
+private val supportedModuleKinds = setOf(
+    ModuleKind.COMMON_JS,
+    ModuleKind.PLAIN,
+    ModuleKind.ES,
+)
 
 fun CompilationOutputs.optimize(context: JsIrBackendContext): CompilationOutputs {
+    if (!context.isSupportedModuleKind()) return this
+
     return CompilationOutputs(
         ClosureCompilerOptimizer(jsCode, context).optimize(), jsProgram, sourceMap, dependencies
     )
+}
+
+private fun JsIrBackendContext.isSupportedModuleKind(): Boolean {
+    return configuration[JSConfigurationKeys.MODULE_KIND]!! in supportedModuleKinds
 }
 
 private class ClosureCompilerOptimizer(output: String, context: JsIrBackendContext) {

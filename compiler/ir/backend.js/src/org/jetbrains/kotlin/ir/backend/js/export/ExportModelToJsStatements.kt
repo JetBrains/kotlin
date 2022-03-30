@@ -45,7 +45,7 @@ class ExportModelToJsStatements(
                     val newNamespace = "$currentNamespace$$element"
                     val newNameSpaceRef = namespaceToRefMap.getOrPut(newNamespace) {
                         val varName = JsName(declareNewNamespace(newNamespace), false)
-                        val namespaceRef = jsElementAccess(element, currentRef, isForExport = true)
+                        val namespaceRef = jsElementAccess(element, currentRef, isFixedName = true)
                         statements += JsVars(
                             JsVars.JsVar(
                                 varName,
@@ -74,7 +74,7 @@ class ExportModelToJsStatements(
                     if (namespace != null) {
                         listOf(
                             jsAssignment(
-                                jsElementAccess(declaration.name, namespace, isForExport = true),
+                                jsElementAccess(declaration.name, namespace, isFixedName = true),
                                 JsNameRef(name)
                             ).makeStmt()
                         )
@@ -100,7 +100,7 @@ class ExportModelToJsStatements(
             is ExportedClass -> {
                 if (declaration.isInterface) return emptyList()
                 val newNameSpace = if (namespace != null)
-                    jsElementAccess(declaration.name, namespace, isForExport = true)
+                    jsElementAccess(declaration.name, namespace, isFixedName = true)
                 else
                     JsNameRef(Namer.PROTOTYPE_NAME, namer.getNameForClass(declaration.ir).makeRef())
                 val name = namer.getNameForStaticDeclaration(declaration.ir)

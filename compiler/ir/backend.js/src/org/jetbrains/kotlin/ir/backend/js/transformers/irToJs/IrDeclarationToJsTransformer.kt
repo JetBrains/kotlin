@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.ir.backend.js.transformers.irToJs
 
+import org.jetbrains.kotlin.ir.backend.js.export.hasMangledName
 import org.jetbrains.kotlin.ir.backend.js.gcc.withJsDoc
 import org.jetbrains.kotlin.ir.backend.js.utils.JsGenerationContext
 import org.jetbrains.kotlin.ir.declarations.*
@@ -37,9 +38,9 @@ class IrDeclarationToJsTransformer : BaseIrElementToJsNodeTransformer<JsStatemen
     }
 
     override fun visitField(declaration: IrField, context: JsGenerationContext): JsStatement {
-        val fieldName = context.getNameForField(declaration)
+        if (declaration.isExternal && declaration.hasMangledName()) return JsEmpty
 
-        if (declaration.isExternal) return JsEmpty
+        val fieldName = context.getNameForField(declaration)
 
         if (declaration.initializer != null) {
             val initializer = declaration.initializer!!.accept(IrElementToJsExpressionTransformer(), context)

@@ -247,7 +247,11 @@ class IrElementToJsExpressionTransformer : BaseIrElementToJsNodeTransformer<JsEx
     }
 
     override fun visitDynamicMemberExpression(expression: IrDynamicMemberExpression, data: JsGenerationContext): JsExpression =
-        jsElementAccess(expression.memberName, expression.receiver.accept(this, data)).withSource(expression, data)
+        jsElementAccess(
+            expression.memberName,
+            expression.receiver.accept(this, data),
+            true
+        ).withSource(expression, data)
 
     override fun visitDynamicOperatorExpression(expression: IrDynamicOperatorExpression, data: JsGenerationContext): JsExpression =
         when (expression.operator) {

@@ -120,7 +120,8 @@ class IrModuleToJsTransformerTmp(
                 backendContext.fieldDataCache.clear()
                 backendContext.minimizedNameGenerator.clear()
             }
-            result[it] = compilationOutput(it.perModule, it.minimizedMemberNames).optimize(backendContext)
+            result[it] = compilationOutput(it.perModule, it.minimizedMemberNames)
+                .run { if (it.perModule) this else optimize(backendContext) }
         }
 
         return CompilerResult(result, dts)

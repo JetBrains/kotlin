@@ -8,10 +8,7 @@ package org.jetbrains.kotlin.ir.backend.js.transformers.irToJs
 import org.jetbrains.kotlin.backend.common.compilationException
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.ir.backend.js.export.isAllowedFakeOverriddenDeclaration
-import org.jetbrains.kotlin.ir.backend.js.export.isExported
-import org.jetbrains.kotlin.ir.backend.js.export.isMangled
-import org.jetbrains.kotlin.ir.backend.js.export.isOverriddenExported
+import org.jetbrains.kotlin.ir.backend.js.export.*
 import org.jetbrains.kotlin.ir.backend.js.gcc.withJsDoc
 import org.jetbrains.kotlin.ir.backend.js.gcc.withJsDocForConstructor
 import org.jetbrains.kotlin.ir.backend.js.gcc.withJsDocForExported
@@ -98,7 +95,10 @@ class JsClassGenerator(private val irClass: IrClass, val context: JsGenerationCo
                     }
                 }
                 is IrClass -> {
-//                    classBlock.statements += JsClassGenerator(declaration, context).generate()
+                    if (irClass.isExternal) {
+                        classBlock.statements += JsClassGenerator(declaration, context).generate()
+                        classBlock.statements += declaration.generateAssignmentForNested()
+                    }
                 }
                 is IrField, is IrProperty -> {
                 }
@@ -278,15 +278,21 @@ class JsClassGenerator(private val irClass: IrClass, val context: JsGenerationCo
         return isInterface && !isEffectivelyExternal()
     }
 
+    private fun IrClass.generateAssignmentForNested(): JsStatement {
+        val nestedClassName = context.getNameForClass(this)
+        val memberRef = jsElementAccess(nestedClassName.ident, className.makeRef())
+        return jsAssignment(memberRef, nestedClassName.makeRef()).makeStmt()
+    }
+
     private fun generateMemberFunction(declaration: IrSimpleFunction): Pair<JsExpression, JsFunction?> {
         val memberName = context.getNameForMemberFunction(declaration.realOverrideTarget)
         val memberRef = jsElementAccess(memberName.ident, classPrototypeRef)
 
-        if (declaration.isReal && declaration.body != null) {
+        if (declaration.isReal) {
             val translatedFunction: JsFunction = declaration.accept(IrFunctionToJsTransformer(), context)
             assert(!declaration.isStaticMethodOfClass)
 
-            if (irClass.isInterface) {
+            if (irClass.isInterface && !irClass.isExternal) {
                 classModel.preDeclarationBlock.statements += translatedFunction.makeStmt()
                 return Pair(memberRef, null)
             }
@@ -313,7 +319,7 @@ class JsClassGenerator(private val irClass: IrClass, val context: JsGenerationCo
 
                     if (implClassDeclaration.shouldCopyFrom()) {
                         val reference = context.getNameForStaticDeclaration(it).makeRef()
-                        classModel.postDeclarationBlock.statements += jsAssignment(memberRef, reference).makeStmt()
+                        classModel.postDeclarationBlock.statements += jsAssignment(memberRef, reference).makeStmt().withJsDoc(declaration, context)
                         if (isFakeOverride) {
                             classModel.postDeclarationBlock.statements += missedOverrides
                                 .map { missedOverride ->
@@ -420,11 +426,14 @@ class JsClassGenerator(private val irClass: IrClass, val context: JsGenerationCo
     private fun IrType.isFunctionType() = isFunctionOrKFunction() || isSuspendFunctionOrKFunction()
 
     private fun IrProperty.generatePropertyAccessorDefinition(): JsStatement {
-        if (!parentAsClass.isExternal && backingField?.type == null) return JsEmpty
+        if (hasMangledName() || !parentAsClass.isExternal && !isExportedMember()) {
+            return JsEmpty
+        }
 
         val prototype = prototypeOf(classNameRef)
         val name = context.getNameForProperty(this)
-        return JsNameRef(name, prototype)
+
+        return jsElementAccess(name.ident, prototype)
             .makeStmt()
             .withJsDoc(this, context)
     }
