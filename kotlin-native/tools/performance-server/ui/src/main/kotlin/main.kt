@@ -190,7 +190,7 @@ fun getDatesComponents() = "${beforeDate?.let {"&before=${encodeURIComponent(it)
         "${afterDate?.let {"&after=${encodeURIComponent(it)}"} ?: ""}"
 
 fun main(args: Array<String>) {
-    val serverUrl = "https://kotlin-native-perf-summary.labs.jb.gg"
+    val serverUrl = "https://kotlin-native-perf-summary.labs.jb.gg" // use "http://localhost:3000" for local debug.
     val zoomRatio = 2
 
     // Get parameters from request.
