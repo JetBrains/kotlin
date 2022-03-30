@@ -6,11 +6,14 @@
 package org.jetbrains.kotlin.resolve.checkers
 
 import org.jetbrains.kotlin.config.LanguageFeature
+import org.jetbrains.kotlin.descriptors.CallableDescriptor
+import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
-import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.findDescendantOfType
 import org.jetbrains.kotlin.psi.psiUtil.isContextualDeclaration
+import org.jetbrains.kotlin.resolve.checkContextReceiversAreEnabled
+import org.jetbrains.kotlin.resolve.checkSubtypingBetweenContextReceivers
 
 object ContextualDeclarationChecker : DeclarationChecker {
     override fun check(declaration: KtDeclaration, descriptor: DeclarationDescriptor, context: DeclarationCheckerContext) {
@@ -19,12 +22,23 @@ object ContextualDeclarationChecker : DeclarationChecker {
         }
         if (declaration.isContextualDeclaration()) {
             val contextReceiverList = declaration.findDescendantOfType<KtContextReceiverList>() ?: return
-            context.trace.report(
-                Errors.UNSUPPORTED_FEATURE.on(
-                    contextReceiverList, LanguageFeature.ContextReceivers to context.languageVersionSettings
-                )
-            )
+            checkContextReceiversAreEnabled(context.trace, context.languageVersionSettings, contextReceiverList)
             return
         }
+    }
+}
+
+object SubtypingBetweenContextReceiversChecker : DeclarationChecker {
+    override fun check(declaration: KtDeclaration, descriptor: DeclarationDescriptor, context: DeclarationCheckerContext) {
+        if (!context.languageVersionSettings.supportsFeature(LanguageFeature.ContextReceivers) || !declaration.isContextualDeclaration()) {
+            return
+        }
+        val contextReceivers = when (descriptor) {
+            is CallableDescriptor -> descriptor.contextReceiverParameters
+            is ClassDescriptor -> descriptor.contextReceivers
+            else -> return
+        }
+        val contextReceiverList = declaration.findDescendantOfType<KtContextReceiverList>() ?: return
+        checkSubtypingBetweenContextReceivers(context.trace, contextReceiverList, contextReceivers.map { it.type })
     }
 }
