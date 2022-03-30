@@ -30,6 +30,8 @@ actual val supportsSuppressedExceptions: Boolean get() = true
 
 public actual val supportsNamedCapturingGroup: Boolean get() = true
 
+public actual val supportsOctalLiteralInRegex: Boolean get() = true
+
 public actual val regexSplitUnicodeCodePointHandling: Boolean get() = true
 
 public actual object BackReferenceHandling {
