@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.ir.backend.js.ic
 
 import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.CrossModuleReferences
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.util.DumpIrTreeVisitor
 import org.jetbrains.kotlin.js.config.JSConfigurationKeys
@@ -98,4 +99,24 @@ internal fun KotlinLibrary.fingerprint(fileIndex: Int) = HashCalculatorForIC().a
     update(strings(fileIndex))
     update(declarations(fileIndex))
     update(bodies(fileIndex))
+}.finalize()
+
+internal fun CrossModuleReferences.crossModuleReferencesHashForIC() = HashCalculatorForIC().apply {
+    for (importedModule in importedModules) {
+        update(importedModule.externalName)
+        update(importedModule.internalName.toString())
+    }
+    for (exportFrom in transitiveJsExportFrom) {
+        update(exportFrom.toString())
+    }
+    for (tag in exports.keys.sorted()) {
+        update(tag)
+        update(exports[tag]!!)
+    }
+    for (tag in imports.keys.sorted()) {
+        val import = imports[tag]!!
+        update(tag)
+        update(import.exportedAs)
+        update(import.moduleExporter.toString())
+    }
 }.finalize()

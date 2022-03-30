@@ -1,2 +1,2 @@
 
-fun box() = qux()
+fun box() = if (qux() == 42) "OK" else "Fail"

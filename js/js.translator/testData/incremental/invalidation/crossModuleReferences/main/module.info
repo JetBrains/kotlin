@@ -1,0 +1,12 @@
+STEP 0:
+    dependencies: stdlib, lib1, lib2
+    dirty: m.kt
+STEP 1..4:
+    dependencies: stdlib, lib1, lib2
+STEP 5:
+    dependencies: stdlib, lib1, lib2
+    modifications:
+        U : m.kt.5.txt -> m.kt
+    dirty: m.kt
+STEP 6:
+    dependencies: stdlib, lib1, lib2

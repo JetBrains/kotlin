@@ -45,6 +45,11 @@ public class InvalidationTestGenerated extends AbstractInvalidationTest {
         runTest("js/js.translator/testData/incremental/invalidation/constVals/");
     }
 
+    @TestMetadata("crossModuleReferences")
+    public void testCrossModuleReferences() throws Exception {
+        runTest("js/js.translator/testData/incremental/invalidation/crossModuleReferences/");
+    }
+
     @TestMetadata("fastPath1")
     public void testFastPath1() throws Exception {
         runTest("js/js.translator/testData/incremental/invalidation/fastPath1/");

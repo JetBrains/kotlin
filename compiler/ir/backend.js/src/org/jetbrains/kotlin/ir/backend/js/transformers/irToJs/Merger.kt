@@ -56,7 +56,7 @@ class Merger(
             }
         }
 
-        for ((tag, jsVar) in crossModuleReferences.imports) {
+        for ((tag, jsVar) in crossModuleReferences.jsImports) {
             val importName = nameMap[tag] ?: error("Missing name for declaration '$tag'")
 
             importStatements.putIfAbsent(tag, JsVars(JsVars.JsVar(importName, jsVar.initExpression)))

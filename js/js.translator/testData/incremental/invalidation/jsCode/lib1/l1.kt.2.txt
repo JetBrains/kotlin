@@ -1,1 +1,1 @@
-inline fun foo() = js("'42'")
+inline fun foo() = js("'44'")

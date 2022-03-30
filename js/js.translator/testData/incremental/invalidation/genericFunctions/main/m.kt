@@ -1,2 +1,2 @@
 
-fun box() = foo("demo")
+fun box() = foo("OK")

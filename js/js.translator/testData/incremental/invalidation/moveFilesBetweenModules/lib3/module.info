@@ -1,11 +1,3 @@
-STEP 0:
-    dependencies: stdlib, lib1, lib2
-    dirty: l3.kt
-
-STEP 1:
-    dependencies: stdlib, lib1, lib2
-    dirty: l3.kt
-
-STEP 2:
+STEP 0..2:
     dependencies: stdlib, lib1, lib2
     dirty: l3.kt

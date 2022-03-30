@@ -8,4 +8,7 @@ class BoxConsumer: Consumer<String> {
 
 fun test(producer: Producer<String>, consumer: Consumer<String>) = consumer.consume(producer.produce())
 
-fun box() = test(BoxProducer(), BoxConsumer())
+fun box(): String {
+    if (test(BoxProducer(), BoxConsumer()) != 4) return "Fail"
+    return "OK"
+}

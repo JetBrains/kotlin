@@ -2,49 +2,22 @@ MODULES: lib1, main, libProxy
 
 STEP 0:
     libs: lib1, main
-STEP 1:
+    dirty js: stdlib, lib1, main
+STEP 1..5:
     libs: lib1, main
-STEP 2:
+    dirty js: lib1, main
+STEP 6..7:
     libs: lib1, main
-STEP 3:
-    libs: lib1, main
-STEP 4:
-    libs: lib1, main
-STEP 5:
-    libs: lib1, main
-STEP 6:
-    libs: lib1, main
-STEP 7:
-    libs: lib1, main
-STEP 8:
+    dirty js: stdlib, lib1, main
+STEP 8..13:
     libs: lib1, libProxy, main
-STEP 9:
+    dirty js: lib1, libProxy, main
+STEP 14..16:
     libs: lib1, libProxy, main
-STEP 10:
+    dirty js: stdlib, lib1, libProxy, main
+STEP 17..21:
     libs: lib1, libProxy, main
-STEP 11:
+    dirty js: lib1, libProxy, main
+STEP 22..23:
     libs: lib1, libProxy, main
-STEP 12:
-    libs: lib1, libProxy, main
-STEP 13:
-    libs: lib1, libProxy, main
-STEP 14:
-    libs: lib1, libProxy, main
-STEP 15:
-    libs: lib1, libProxy, main
-STEP 16:
-    libs: lib1, libProxy, main
-STEP 17:
-    libs: lib1, libProxy, main
-STEP 18:
-    libs: lib1, libProxy, main
-STEP 19:
-    libs: lib1, libProxy, main
-STEP 20:
-    libs: lib1, libProxy, main
-STEP 21:
-    libs: lib1, libProxy, main
-STEP 22:
-    libs: lib1, libProxy, main
-STEP 23:
-    libs: lib1, libProxy, main
+    dirty js: stdlib, lib1, libProxy, main

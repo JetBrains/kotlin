@@ -7,10 +7,13 @@ package org.jetbrains.kotlin.ir.backend.js.ic
 
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.IrFile
+import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.expressions.IrCall
+import org.jetbrains.kotlin.ir.expressions.IrFunctionReference
 import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.ir.util.file
+import org.jetbrains.kotlin.ir.util.isFakeOverride
 import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
@@ -29,50 +32,63 @@ class InlineFunctionFlatHashBuilder : IrElementVisitorVoid {
         declaration.acceptChildren(this, null)
     }
 
-    private val flatHashes = mutableMapOf<IrSimpleFunction, ICHash>()
+    private val flatHashes = mutableMapOf<IrFunction, ICHash>()
 
     fun getFlatHashes() = flatHashes
 }
 
 interface InlineFunctionHashProvider {
-    fun hashForExternalFunction(declaration: IrSimpleFunction): ICHash?
+    fun hashForExternalFunction(declaration: IrFunction): ICHash?
 }
 
 class InlineFunctionHashBuilder(
     private val hashProvider: InlineFunctionHashProvider,
-    private val flatHashes: Map<IrSimpleFunction, ICHash>
+    private val flatHashes: Map<IrFunction, ICHash>
 ) {
-    private val inlineFunctionCallGraph: MutableMap<IrSimpleFunction, Set<IrSimpleFunction>> = mutableMapOf()
+    private val inlineFunctionCallGraph: MutableMap<IrFunction, Set<IrFunction>> = mutableMapOf()
 
-    private inner class GraphBuilder : IrElementVisitor<Unit, MutableSet<IrSimpleFunction>> {
+    private inner class GraphBuilder : IrElementVisitor<Unit, MutableSet<IrFunction>> {
+        var inlineFunctionCallDepth: Int = 0
 
-        override fun visitElement(element: IrElement, data: MutableSet<IrSimpleFunction>) {
+        override fun visitElement(element: IrElement, data: MutableSet<IrFunction>) {
             element.acceptChildren(this, data)
         }
 
-        override fun visitSimpleFunction(declaration: IrSimpleFunction, data: MutableSet<IrSimpleFunction>) {
-            val newGraph = mutableSetOf<IrSimpleFunction>()
+        override fun visitSimpleFunction(declaration: IrSimpleFunction, data: MutableSet<IrFunction>) {
+            val newGraph = mutableSetOf<IrFunction>()
             inlineFunctionCallGraph[declaration] = newGraph
             declaration.acceptChildren(this, newGraph)
         }
 
-
-        override fun visitCall(expression: IrCall, data: MutableSet<IrSimpleFunction>) {
+        override fun visitCall(expression: IrCall, data: MutableSet<IrFunction>) {
             val callee = expression.symbol.owner
-
             if (callee.isInline) {
-                data.add(callee)
+                data += callee
+                inlineFunctionCallDepth += 1
             }
+            expression.acceptChildren(this, data)
+            if (callee.isInline) {
+                inlineFunctionCallDepth -= 1
+                if (inlineFunctionCallDepth < 0) {
+                    error("Internal error: inline function calls depth inconsistency")
+                }
+            }
+        }
 
+        override fun visitFunctionReference(expression: IrFunctionReference, data: MutableSet<IrFunction>) {
+            val reference = expression.symbol.owner
+            if (inlineFunctionCallDepth > 0 && reference.isInline) {
+                data += reference
+            }
             expression.acceptChildren(this, data)
         }
     }
 
     private inner class InlineFunctionHashProcessor {
-        private val computedHashes = mutableMapOf<IrSimpleFunction, ICHash>()
-        private val processingFunctions = mutableSetOf<IrSimpleFunction>()
+        private val computedHashes = mutableMapOf<IrFunction, ICHash>()
+        private val processingFunctions = mutableSetOf<IrFunction>()
 
-        private fun processInlineFunction(f: IrSimpleFunction): ICHash = computedHashes.getOrPut(f) {
+        private fun processInlineFunction(f: IrFunction): ICHash = computedHashes.getOrPut(f) {
             if (!processingFunctions.add(f)) {
                 error("Inline circle through function ${f.render()} detected")
             }
@@ -86,14 +102,14 @@ class InlineFunctionHashBuilder(
             functionInlineHash
         }
 
-        private fun processCallee(callee: IrSimpleFunction): ICHash {
+        private fun processCallee(callee: IrFunction): ICHash {
             if (callee in flatHashes) {
                 return processInlineFunction(callee)
             }
             return hashProvider.hashForExternalFunction(callee) ?: error("Internal error: No hash found for ${callee.render()}")
         }
 
-        fun process(): Map<IrSimpleFunction, ICHash> {
+        fun process(): Map<IrFunction, ICHash> {
             for ((f, callees) in inlineFunctionCallGraph.entries) {
                 if (f.isInline) {
                     processInlineFunction(f)
@@ -105,12 +121,12 @@ class InlineFunctionHashBuilder(
         }
     }
 
-    fun buildHashes(dirtyFiles: Collection<IrFile>): Map<IrSimpleFunction, ICHash> {
+    fun buildHashes(dirtyFiles: Collection<IrFile>): Map<IrFunction, ICHash> {
         dirtyFiles.forEach { it.acceptChildren(GraphBuilder(), mutableSetOf()) }
         return InlineFunctionHashProcessor().process()
     }
 
-    fun buildInlineGraph(computedHashed: Map<IrSimpleFunction, ICHash>): Map<IrFile, Map<IdSignature, ICHash>> {
+    fun buildInlineGraph(computedHashed: Map<IrFunction, ICHash>): Map<IrFile, Map<IdSignature, ICHash>> {
         val perFileInlineGraph = inlineFunctionCallGraph.entries.groupBy({ it.key.file }) {
             it.value
         }

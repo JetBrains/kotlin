@@ -366,6 +366,7 @@ projectTest("wasmTest", true) {
 }
 
 projectTest("invalidationTest", jUnitMode = JUnitMode.JUnit4) {
+    setupV8()
     workingDir = rootDir
 
     include("org/jetbrains/kotlin/incremental/*")

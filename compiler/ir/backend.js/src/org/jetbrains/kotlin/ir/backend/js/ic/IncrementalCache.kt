@@ -36,6 +36,7 @@ class IncrementalCache(private val library: KotlinLibrary, cachePath: String) : 
     private enum class CacheState { NON_LOADED, FETCHED_FOR_DEPENDENCY, FETCHED_FULL }
 
     private var state = CacheState.NON_LOADED
+    private var forceRebuildJs = false
 
     private val cacheDir = File(cachePath)
     private val signatureToIdMapping = mutableMapOf<String, Map<IdSignature, Int>>()
@@ -232,10 +233,12 @@ class IncrementalCache(private val library: KotlinLibrary, cachePath: String) : 
 
     private fun clearCacheAfterCommit() {
         state = CacheState.FETCHED_FOR_DEPENDENCY
+        forceRebuildJs = deletedSrcFiles.isNotEmpty()
         signatureToIdMapping.clear()
         usedInlineFunctions.clear()
         srcFilesInOrderFromKLib = emptyList()
         deletedSrcFiles = emptySet()
+        binaryAsts.clear()
     }
 
     fun commitCacheForRemovedSrcFiles() {
@@ -255,11 +258,14 @@ class IncrementalCache(private val library: KotlinLibrary, cachePath: String) : 
         clearCacheAfterCommit()
     }
 
-    override fun fetchArtifacts() = KLibArtifact(
+    override fun fetchArtifacts() = ModuleArtifact(
         moduleName = cacheFastInfo.moduleName ?: error("Internal error: missing module name"),
         fileArtifacts = fingerprints.keys.map {
-            SrcFileArtifact(it, getBinaryAstPath(it).absolutePath, binaryAsts[it])
-        })
+            SrcFileArtifact(it, fragments[it], getBinaryAstPath(it))
+        },
+        artifactsDir = cacheDir,
+        forceRebuildJs = forceRebuildJs
+    )
 
     fun invalidate() {
         cacheDir.deleteRecursively()
@@ -268,6 +274,7 @@ class IncrementalCache(private val library: KotlinLibrary, cachePath: String) : 
         usedInlineFunctions.clear()
         fingerprints.clear()
         binaryAsts.clear()
+        fragments.clear()
         cacheFastInfo = CacheFastInfo()
         srcFilesInOrderFromKLib = emptyList()
         deletedSrcFiles = emptySet()
@@ -280,6 +287,7 @@ class IncrementalCache(private val library: KotlinLibrary, cachePath: String) : 
         usedInlineFunctions.remove(srcPath)
         fingerprints.remove(srcPath)
         binaryAsts.remove(srcPath)
+        fragments.remove(srcPath)
     }
 
     private fun KotlinLibrary.filesAndSigReaders(): List<Pair<String, IdSignatureDeserializer>> {

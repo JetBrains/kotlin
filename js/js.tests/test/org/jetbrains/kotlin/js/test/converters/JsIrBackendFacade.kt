@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.ir.backend.js.codegen.JsGenerationGranularity
 import org.jetbrains.kotlin.ir.backend.js.codegen.JsGenerationOptions
 import org.jetbrains.kotlin.ir.backend.js.codegen.generateEsModules
 import org.jetbrains.kotlin.ir.backend.js.dce.eliminateDeadDeclarations
+import org.jetbrains.kotlin.ir.backend.js.ic.JsExecutableProducer
 import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.JsManglerDesc
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.IrModuleToJsTransformer
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.IrModuleToJsTransformerTmp
@@ -98,11 +99,20 @@ class JsIrBackendFacade(
             } else {
                 File(JsEnvironmentConfigurator.getRecompiledJsModuleArtifactPath(testServices, module.name) + ".js")
             }
-            val moduleName = configuration.getNotNull(CommonConfigurationKeys.MODULE_NAME)
-            val moduleKind = configuration.get(JSConfigurationKeys.MODULE_KIND, ModuleKind.PLAIN)
-            val sourceMapsInfo = SourceMapsInfo.from(configuration)
-            val translationModes = setOf(TranslationMode.FULL, TranslationMode.PER_MODULE)
-            val compiledModule = generateJsFromAst(moduleName, moduleKind, sourceMapsInfo, translationModes, testServices.jsIrIncrementalDataProvider.getCaches())
+
+            val compiledModule = CompilerResult(
+                outputs = listOf(TranslationMode.FULL, TranslationMode.PER_MODULE).associateWith {
+                    val jsExecutableProducer = JsExecutableProducer(
+                        mainModuleName = configuration.getNotNull(CommonConfigurationKeys.MODULE_NAME),
+                        moduleKind = configuration.get(JSConfigurationKeys.MODULE_KIND, ModuleKind.PLAIN),
+                        sourceMapsInfo = SourceMapsInfo.from(configuration),
+                        caches = testServices.jsIrIncrementalDataProvider.getCaches(),
+                        relativeRequirePath = false
+                    )
+                    jsExecutableProducer.buildExecutable(it.perModule)
+                },
+                tsDefinitions = null
+            )
             return BinaryArtifacts.Js.JsIrArtifact(
                 outputFile, compiledModule, testServices.jsIrIncrementalDataProvider.getCacheForModule(module)
             ).dump(module, firstTimeCompilation)

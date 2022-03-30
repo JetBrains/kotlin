@@ -1,2 +1,5 @@
 
-fun box() = qux0()
+fun box(): String {
+    if (qux0() != 42) return "Fail"
+    return "OK"
+}
