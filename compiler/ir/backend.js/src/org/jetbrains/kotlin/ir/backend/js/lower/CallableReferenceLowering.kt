@@ -246,8 +246,7 @@ class CallableReferenceLowering(private val context: CommonBackendContext) : Bod
         }
 
         private fun createInvokeMethod(clazz: IrClass): IrSimpleFunction {
-            val superMethods = superFunctionInterface.declarations.filterIsInstance<IrSimpleFunction>()
-            val superMethod = superMethods.single { it.name.asString() == "invoke" }
+            val superMethod = superFunctionInterface.invokeFun!!
             return clazz.addFunction {
                 setSourceRange(if (isLambda) function else reference)
                 name = superMethod.name
@@ -255,9 +254,7 @@ class CallableReferenceLowering(private val context: CommonBackendContext) : Bod
                 isSuspend = superMethod.isSuspend
                 isOperator = superMethod.isOperator
             }.apply {
-                val secondSuperMethods: List<IrSimpleFunction>? =
-                    secondFunctionInterface?.declarations?.filterIsInstance<IrSimpleFunction>()
-                val secondSuperMethod = secondSuperMethods?.single { it.name.asString() == "invoke" }
+                val secondSuperMethod = secondFunctionInterface?.let { it.invokeFun!! }
 
                 overriddenSymbols = listOfNotNull(
                     superMethod.symbol,

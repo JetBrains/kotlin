@@ -197,6 +197,9 @@ val IrClassSymbol.fields: Sequence<IrFieldSymbol>
 val IrClass.primaryConstructor: IrConstructor?
     get() = this.declarations.singleOrNull { it is IrConstructor && it.isPrimary } as IrConstructor?
 
+val IrClass.invokeFun: IrSimpleFunction?
+    get() = declarations.filterIsInstance<IrSimpleFunction>().singleOrNull { it.name.asString() == "invoke" }
+
 val IrDeclarationContainer.properties: Sequence<IrProperty>
     get() = declarations.asSequence().filterIsInstance<IrProperty>()
 
