@@ -404,19 +404,19 @@ class ExtrasTest {
         ) : ITestCapabilityA<String>, ITestCapabilityB<String>
 
         val key0 = extrasKeyOf<String>() + TestCapabilityAB(0, 1)
-        assertEquals(0, key0.capability<TestCapabilityA>()?.valueA)
-        assertEquals(1, key0.capability<TestCapabilityB>()?.valueB)
+        assertEquals(0, key0.capability<ITestCapabilityA<String>>()?.valueA)
+        assertEquals(1, key0.capability<ITestCapabilityB<String>>()?.valueB)
 
         val key1 = key0 + TestCapabilityA(2)
-        assertEquals(2, key1.capability<TestCapabilityA>()?.valueA)
-        assertEquals(1, key1.capability<TestCapabilityB>()?.valueB)
+        assertEquals(2, key1.capability<ITestCapabilityA<String>>()?.valueA)
+        assertEquals(1, key1.capability<ITestCapabilityB<String>>()?.valueB)
 
         val key2 = key1 + TestCapabilityA(3)
-        assertEquals(3, key2.capability<TestCapabilityA>()?.valueA)
-        assertEquals(1, key1.capability<TestCapabilityB>()?.valueB)
+        assertEquals(3, key2.capability<ITestCapabilityA<String>>()?.valueA)
+        assertEquals(1, key1.capability<ITestCapabilityB<String>>()?.valueB)
 
         val key3 = key2 + TestCapabilityB(4)
-        assertEquals(3, key3.capability<TestCapabilityA>()?.valueA)
-        assertEquals(4, key3.capability<TestCapabilityB>()?.valueB)
+        assertEquals(3, key3.capability<ITestCapabilityA<String>>()?.valueA)
+        assertEquals(4, key3.capability<ITestCapabilityB<String>>()?.valueB)
     }
 }
