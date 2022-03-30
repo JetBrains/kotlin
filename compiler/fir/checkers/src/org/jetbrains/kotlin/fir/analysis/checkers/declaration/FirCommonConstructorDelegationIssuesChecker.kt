@@ -24,6 +24,7 @@ object FirCommonConstructorDelegationIssuesChecker : FirRegularClassChecker() {
     override fun check(declaration: FirRegularClass, context: CheckerContext, reporter: DiagnosticReporter) {
         val cyclicConstructors = mutableSetOf<FirConstructor>()
         var hasPrimaryConstructor = false
+        val isEffectivelyExpect = declaration.isEffectivelyExpect(context.containingDeclarations.lastOrNull() as? FirRegularClass, context)
 
         // secondary; non-cyclic;
         // candidates for further analysis
@@ -47,7 +48,7 @@ object FirCommonConstructorDelegationIssuesChecker : FirRegularClassChecker() {
 
         if (hasPrimaryConstructor) {
             for (it in otherConstructors) {
-                if (it.delegatedConstructor?.isThis != true) {
+                if (!isEffectivelyExpect && it.delegatedConstructor?.isThis != true) {
                     if (it.delegatedConstructor?.source != null) {
                         reporter.reportOn(it.delegatedConstructor?.source, FirErrors.PRIMARY_CONSTRUCTOR_DELEGATION_CALL_EXPECTED, context)
                     } else {
