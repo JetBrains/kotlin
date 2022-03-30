@@ -145,10 +145,11 @@ internal class TestRunProvider(
                     TestCompilationCacheKey.Grouped(
                         testCaseGroupId = testCaseId.testCaseGroupId,
                         freeCompilerArgs = testCase.freeCompilerArgs,
+                        sharedModules = testCase.sharedModules,
                         runnerType = testRunnerType
                     )
                 ) {
-                    val testCases = testCaseGroup.getRegularOnly(testCase.freeCompilerArgs, testRunnerType)
+                    val testCases = testCaseGroup.getRegularOnly(testCase.freeCompilerArgs, testCase.sharedModules, testRunnerType)
                     assertTrue(testCases.isNotEmpty())
                     compilationFactory.testCasesToExecutable(testCases, settings)
                 }
@@ -180,6 +181,7 @@ internal class TestRunProvider(
         data class Grouped(
             val testCaseGroupId: TestCaseGroupId,
             val freeCompilerArgs: TestCompilerArgs,
+            val sharedModules: Set<TestModule.Shared>,
             val runnerType: TestRunnerType
         ) : TestCompilationCacheKey()
     }
