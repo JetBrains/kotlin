@@ -30995,6 +30995,12 @@ public class DiagnosisCompilerTestFE10TestdataTestGenerated extends AbstractDiag
             }
 
             @Test
+            @TestMetadata("noErrorsForMemebersInsideInternalDeclaration.kt")
+            public void testNoErrorsForMemebersInsideInternalDeclaration() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/testsWithExplicitApi/noErrorsForMemebersInsideInternalDeclaration.kt");
+            }
+
+            @Test
             @TestMetadata("properties.kt")
             public void testProperties() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/testsWithExplicitApi/properties.kt");
