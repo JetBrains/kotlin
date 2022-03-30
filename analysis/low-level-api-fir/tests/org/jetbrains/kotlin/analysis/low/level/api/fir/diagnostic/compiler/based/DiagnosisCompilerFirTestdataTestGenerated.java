@@ -165,6 +165,12 @@ public class DiagnosisCompilerFirTestdataTestGenerated extends AbstractDiagnosis
         }
 
         @Test
+        @TestMetadata("elvisReturnSimple.kt")
+        public void testElvisReturnSimple() throws Exception {
+            runTest("compiler/fir/analysis-tests/testData/resolve/elvisReturnSimple.kt");
+        }
+
+        @Test
         @TestMetadata("enum.kt")
         public void testEnum() throws Exception {
             runTest("compiler/fir/analysis-tests/testData/resolve/enum.kt");
