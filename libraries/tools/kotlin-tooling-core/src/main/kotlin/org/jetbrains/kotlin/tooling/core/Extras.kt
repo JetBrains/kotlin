@@ -68,6 +68,71 @@ import java.io.Serializable
  * However, some implementations might not be able to promise this and will only be able to provide
  * a value when the actual/proper key is provided. One example for this case would be container that previously
  * was serialized and got de-serialized, unable to provide the keys without additional [Key.Capability]
+ *
+ * ## Advanced: Capabilities
+ * [Key.Capability]ies can be used to attach additional functionality/breadcrumbs alongside the stored value.
+ * A very simple example would be storing something like a "pretty String formatter" with the value:
+ *
+ * ```kotlin
+ * data class Person(val name: String, val age: Int, val gibberish: String)
+ *
+ * interface PrettyDisplayString<T : Any> : Extras.Key.Capability<T> {
+ *     fun prettyString(value: T): String
+ * }
+ *
+ * object PersonPrettyDisplayString : PrettyDisplayString<Person> {
+ *     override fun prettyString(value: Person): String {
+ *         return "${value.name} (${value.age})"
+ *     }
+ * }
+ *
+ * fun <T : Any> announce(entry: Extras.Entry<T>) {
+ *     val prettyStringCapability = entry.key.capability<PrettyDisplayString<T>>()
+ *     val string = prettyStringCapability?.prettyString(entry.value) ?: entry.value.toString()
+ *     println("Found: $string")
+ * }
+ *
+ *
+ * fun main() {
+ *     val extras = mutableExtrasOf()
+ *     extras[extrasKeyOf<Person>("pretty") + PersonPrettyDisplayString] = Person("Sunny Cash", 27, "Hakuna Matata")
+ *     extras[extrasKeyOf<Person>("ugly")] = Person("Robbie Rotten", 33, "I hate Sportacus")
+ *     extras.forEach { entry -> announce(entry) }
+ *
+ *     // Prints:
+ *     // Found: Sunny Cash (27)
+ *     // Found: Person(name="Robbie Rotten", age=33, gibberish="I hate Sportacus")
+ * }
+ * ```
+ *
+ * Some implementation of [Extras] might require to provide a certain [Key.Capability] in order to access the data stored in the [Extras].
+ * E.g. the stored value might be stored in serialized binary format and accessing its value requires "proof" ([Key.Capability]) of
+ * deserialization:
+ *
+ * ```kotlin
+ * interface SerializedExtras : Extras {
+ *     interface Deserializer<T: Any> : Extras.Key.Capability<T> {
+ *         fun deserialize(value: ByteArray): T
+ *     }
+ * }
+ *
+ * object StringDeserializer : SerializedExtras.Deserializer<String> {
+ *     override fun deserialize(value: ByteArray): String {
+ *         return value.decodeToString()
+ *     }
+ * }
+ *
+ * fun useExtras(extras: SerializedExtras) {
+ *     val plainKey = extrasKeyOf<String>("name")
+ *     val keyWithDeserializer = extrasKeyOf<String>("name") + StringDeserializer
+ *     extras[plainKey] // <- null: Can't provide Capability of deserialization
+ *     extras[keyWithDeserializer] // <- "some value"  || Can be deserialized!
+ * }
+ * ```
+ *
+ * Note: Capabilities are not part of the identity of the stored Extra:
+ * Setting a value with a given [Extras.Key] with the same [Extras.Id] (type and name matching), will result in
+ * the old value being overwritten!
  */
 interface Extras {
     class Id<T : Any> @PublishedApi internal constructor(
@@ -103,7 +168,7 @@ interface Extras {
     ) {
         constructor(id: Id<T>) : this(id, emptySet())
 
-        interface Capability<T>
+        interface Capability<T : Any>
 
         override fun equals(other: Any?): Boolean {
             if (other === this) return true
