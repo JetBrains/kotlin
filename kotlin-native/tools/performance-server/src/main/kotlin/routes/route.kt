@@ -207,7 +207,9 @@ internal fun <T> orderedValues(values: List<T>, buildElement: (T) -> CompositeBu
                                 Int.MAX_VALUE
                         },
                         { buildElement(it).first?.let { if (it == "DEV") 0 else 1 } ?: 0 }, // Develop and release builds
-                        { buildElement(it).second.substringAfterLast("-").substringBefore("(").toDouble() }, // build counter
+                        { if (buildElement(it).first == "RELEASE")
+                            0
+                        else buildElement(it).second.substringAfterLast("-").substringBefore("(").toDouble() }, // build counter
                         { buildElement(it).second.contains("(") } // build suffix
                 )
         )

@@ -98,7 +98,7 @@ open class BenchmarksReport(val env: Environment, benchmarksList: List<Benchmark
 
     // Concatenate benchmarks report if they have same environment and compiler.
     operator fun plus(other: BenchmarksReport): BenchmarksReport {
-        if (compiler != other.compiler || env != other.env) {
+        if (compiler != other.compiler || env.machine != other.env.machine) {
             error("It's impossible to concat reports from different machines!")
         }
         return merge(other)
