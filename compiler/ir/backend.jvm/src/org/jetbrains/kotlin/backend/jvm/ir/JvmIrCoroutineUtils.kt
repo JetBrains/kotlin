@@ -23,7 +23,7 @@ fun IrFunction.continuationParameter(): IrValueParameter? = when {
     else -> valueParameters.singleOrNull { it.origin == JvmLoweredDeclarationOrigin.CONTINUATION_CLASS }
 }
 
-internal fun IrFunction.isInvokeSuspendOfLambda(): Boolean =
+fun IrFunction.isInvokeSuspendOfLambda(): Boolean =
     name.asString() == INVOKE_SUSPEND_METHOD_NAME && parentAsClass.origin == JvmLoweredDeclarationOrigin.SUSPEND_LAMBDA
 
 private fun IrFunction.isInvokeSuspendForInlineOfLambda(): Boolean =
