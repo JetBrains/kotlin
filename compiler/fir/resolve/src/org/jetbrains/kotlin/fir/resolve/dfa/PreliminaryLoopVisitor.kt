@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.resolve.dfa
 
+import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.*
@@ -41,6 +42,8 @@ class PreliminaryLoopVisitor {
         }
 
         override fun visitVariableAssignment(variableAssignment: FirVariableAssignment, data: FirStatement?) {
+            if (variableAssignment.source?.kind == KtFakeSourceElementKind.DesugaredIncrementOrDecrement) return
+
             val reference = variableAssignment.lValue as? FirNamedReference
             if (reference != null) {
                 requireNotNull(data)
