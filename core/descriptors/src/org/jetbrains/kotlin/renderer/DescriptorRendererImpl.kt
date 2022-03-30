@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.declaresOrInheritsDefaultValu
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.TypeUtils.CANNOT_INFER_FUNCTION_PARAM_TYPE
 import org.jetbrains.kotlin.types.error.*
+import org.jetbrains.kotlin.types.error.ErrorUtils
 import org.jetbrains.kotlin.types.typeUtil.isUnresolvedType
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
 
