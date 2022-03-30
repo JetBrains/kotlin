@@ -1,11 +1,13 @@
 package model.annotations
 
+import org.jetbrains.dokka.base.signatures.KotlinSignatureUtils.annotations
 import org.jetbrains.dokka.links.DRI
 import org.jetbrains.dokka.model.*
+import org.jetbrains.dokka.utilities.cast
 import org.junit.jupiter.api.Test
 import utils.AbstractModelTest
-import kotlin.test.Ignore
 import kotlin.test.assertEquals
+import kotlin.test.assertTrue
 
 class JavaAnnotationsForParametersTest : AbstractModelTest("/src/main/kotlin/java/Test.java", "java") {
 
@@ -110,6 +112,63 @@ class JavaAnnotationsForParametersTest : AbstractModelTest("/src/main/kotlin/jav
 
                     assertEquals(listOf(driOfHello), annotations?.map { it.dri })
                     assertEquals(listOf("baz"), annotationsValues)
+                }
+            }
+        }
+    }
+
+    @Test
+    fun `type parameter annotations should be visible even if type declaration has none`() {
+        inlineModelTest(
+            """
+            |@Retention(RetentionPolicy.RUNTIME)
+            |@Target(ElementType.PARAMETER)
+            |public @interface Hello {
+            |    public String bar() default "";
+            |}
+            |public class Test {
+            |    public <T> void foo(java.util.List<@Hello T> param) {}
+            |}
+        """.trimIndent()
+        ) {
+            with((this / "java" / "Test").cast<DClass>()) {
+                with((this / "foo").cast<DFunction>()) {
+                    val paramAnnotations = parameters.first()
+                        .type.cast<GenericTypeConstructor>()
+                        .projections.first().cast<TypeParameter>()
+                        .annotations()
+                        .values
+                        .flatten()
+
+                    assertEquals(1, paramAnnotations.size)
+                    assertEquals(DRI("java", "Hello"), paramAnnotations[0].dri)
+                }
+            }
+        }
+    }
+
+    @Test
+    fun `type parameter annotations should not be propagated from resolved type`() {
+        inlineModelTest(
+            """
+            |@Retention(RetentionPolicy.RUNTIME)
+            |@Target(ElementType.PARAMETER)
+            |public @interface Hello {
+            |    public String bar() default "";
+            |}
+            |public class Test {
+            |    public <@Hello T> void foo(java.util.List<T> param) {}
+            |}
+        """.trimIndent()
+        ) {
+            with((this / "java" / "Test").cast<DClass>()) {
+                with((this / "foo").cast<DFunction>()) {
+                    val paramAnnotations = parameters.first()
+                        .type.cast<GenericTypeConstructor>()
+                        .projections.first().cast<TypeParameter>()
+                        .annotations()
+
+                    assertTrue(paramAnnotations.isEmpty())
                 }
             }
         }
