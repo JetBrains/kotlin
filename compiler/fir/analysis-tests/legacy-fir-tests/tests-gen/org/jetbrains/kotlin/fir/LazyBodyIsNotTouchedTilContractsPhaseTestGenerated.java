@@ -144,6 +144,11 @@ public class LazyBodyIsNotTouchedTilContractsPhaseTestGenerated extends Abstract
         runTest("compiler/fir/analysis-tests/testData/resolve/derivedClass.kt");
     }
 
+    @TestMetadata("elvisReturnSimple.kt")
+    public void testElvisReturnSimple() throws Exception {
+        runTest("compiler/fir/analysis-tests/testData/resolve/elvisReturnSimple.kt");
+    }
+
     @TestMetadata("enum.kt")
     public void testEnum() throws Exception {
         runTest("compiler/fir/analysis-tests/testData/resolve/enum.kt");
