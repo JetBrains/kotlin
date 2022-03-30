@@ -45,8 +45,7 @@ import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes
-import org.jetbrains.kotlin.resolve.jvm.AsmTypes.JAVA_STRING_TYPE
-import org.jetbrains.kotlin.resolve.jvm.AsmTypes.OBJECT_TYPE
+import org.jetbrains.kotlin.resolve.jvm.AsmTypes.*
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodParameterKind
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature
 import org.jetbrains.kotlin.types.TypeSystemCommonBackendContext
@@ -653,6 +652,18 @@ class ExpressionCodegen(
             val value = initializer.accept(this, data)
             initializer.markLineNumber(startOffset = true)
             value.materializeAt(varType, declaration.type)
+            // We need to generate CHECKCAST from ACONST_NULL here for coroutines,
+            // since otherwise, upon spilling and then unspilling, we will get VerifyError,
+            // because state-machine builder does not know the type of the ACONST_NULL
+            // and assumes it to be Ljava/lang/Object;, which is incorrect.
+            // Generating CHECKCAST hints the state-machine builder the type of the variable
+            // avoiding the issue of VerifyError. See KT-51718
+            // Exception is Ljava/lang/Object;, since CHECKCAST Ljava/lang/Object; is effectively no-op.
+            if (initializer.isNullConst() && varType != OBJECT_TYPE &&
+                (irFunction.isSuspend || irFunction.isInvokeSuspendOfLambda())
+            ) {
+                mv.checkcast(varType)
+            }
             declaration.markLineNumber(startOffset = true)
             mv.store(index, varType)
         } else if (declaration.isVisibleInLVT) {

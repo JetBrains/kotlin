@@ -14,10 +14,5 @@ suspend fun test() {
 
 // 2 PUTFIELD .*L\$0 : Ljava/lang/Object;
 
-// JVM_TEMPLATES:
-// just before suspension point
-// 1 ACONST_NULL
-
-// JVM_IR_TEMPLATES:
 // two stores to initialize the `a` variable and one null constant to store in the spill slot.
 // 3 ACONST_NULL
