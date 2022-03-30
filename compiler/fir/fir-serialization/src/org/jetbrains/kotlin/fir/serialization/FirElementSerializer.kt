@@ -622,39 +622,7 @@ class FirElementSerializer private constructor(
     fun typeId(type: ConeKotlinType): Int = typeTable[typeProto(type)]
 
     private fun typeProto(typeRef: FirTypeRef, toSuper: Boolean = false): ProtoBuf.Type.Builder {
-        val coneType = typeRef.coneType
-        return typeProto(coneType, toSuper, correspondingTypeRef = typeRef).also { typeProto ->
-            val compilerAttributes = mutableListOf<ConeAttribute<*>>()
-            val extensionAttributes = mutableListOf<ConeAttribute<*>>()
-            for (attribute in coneType.attributes) {
-                when {
-                    attribute is CustomAnnotationTypeAttribute -> continue
-                    attribute.key in CompilerConeAttributes.classIdByCompilerAttributeKey -> compilerAttributes += attribute
-                    else -> extensionAttributes += attribute
-                }
-            }
-
-            for (attribute in compilerAttributes) {
-                val annotation = buildAnnotation {
-                    annotationTypeRef = buildResolvedTypeRef {
-                        type = ConeClassLikeTypeImpl(
-                            ConeClassLikeLookupTagImpl(CompilerConeAttributes.classIdByCompilerAttributeKey.getValue(attribute.key)),
-                            emptyArray(),
-                            isNullable = false
-                        )
-                    }
-                    argumentMapping = FirEmptyAnnotationArgumentMapping
-                }
-                extension.serializeTypeAnnotation(annotation, typeProto)
-            }
-
-            for (attributeExtension in session.extensionService.typeAttributeExtensions) {
-                for (attribute in extensionAttributes) {
-                    val annotation = attributeExtension.convertAttributeToAnnotation(attribute) ?: continue
-                    extension.serializeTypeAnnotation(annotation, typeProto)
-                }
-            }
-        }
+        return typeProto(typeRef.coneType, toSuper, correspondingTypeRef = typeRef)
     }
 
     private fun typeProto(
@@ -739,8 +707,24 @@ class FirElementSerializer private constructor(
             builder.nullable = type.isMarkedNullable
         }
 
-        for (annotation in type.attributes.customAnnotations) {
-            extension.serializeTypeAnnotation(annotation, builder)
+        val extensionAttributes = mutableListOf<ConeAttribute<*>>()
+        for (attribute in type.attributes) {
+            when {
+                attribute is CustomAnnotationTypeAttribute ->
+                    for (annotation in attribute.annotations) {
+                        extension.serializeTypeAnnotation(annotation, builder)
+                    }
+                attribute.key in CompilerConeAttributes.classIdByCompilerAttributeKey ->
+                    serializeCompilerDefinedTypeAttribute(builder, attribute)
+                else -> extensionAttributes += attribute
+            }
+        }
+
+        for (attributeExtension in session.extensionService.typeAttributeExtensions) {
+            for (attribute in extensionAttributes) {
+                val annotation = attributeExtension.convertAttributeToAnnotation(attribute) ?: continue
+                extension.serializeTypeAnnotation(annotation, builder)
+            }
         }
 
         // TODO: abbreviated type
@@ -754,6 +738,23 @@ class FirElementSerializer private constructor(
 //        }
 
         return builder
+    }
+
+    private fun serializeCompilerDefinedTypeAttribute(
+        builder: ProtoBuf.Type.Builder,
+        attribute: ConeAttribute<*>
+    ) {
+        val annotation = buildAnnotation {
+            annotationTypeRef = buildResolvedTypeRef {
+                this.type = ConeClassLikeTypeImpl(
+                    ConeClassLikeLookupTagImpl(CompilerConeAttributes.classIdByCompilerAttributeKey.getValue(attribute.key)),
+                    emptyArray(),
+                    isNullable = false
+                )
+            }
+            argumentMapping = FirEmptyAnnotationArgumentMapping
+        }
+        extension.serializeTypeAnnotation(annotation, builder)
     }
 
     private fun serializeAnnotationFromAttribute(
