@@ -1040,17 +1040,24 @@ class TestSharedRefs {
 
     private func testMoreWorkBeforeThreadExit() throws {
         class Deinit {
+            static var deinitLock: NSLock = NSLock()
+
             static var object1: AnyObject? = nil
             static var object2: AnyObject? = nil
             static weak var weakVar2: AnyObject? = nil
 
             deinit {
+                Deinit.deinitLock.lock()
                 TestSharedRefs.runInNewThread(initializeKotlinRuntime: false) {
                     Deinit.object2 = nil
                 }
+                Deinit.deinitLock.unlock()
             }
         }
 
+        // Set up the test under a lock to avoid a race when GC and Deinit.deinit
+        // is triggered right after assigning Deinit.object1 = nil
+        Deinit.deinitLock.lock()
         runInNewThread(initializeKotlinRuntime: false) {
             autoreleasepool {
                 let object1 = SharedRefs.MutableData()
@@ -1066,6 +1073,7 @@ class TestSharedRefs {
                 Deinit.object1 = nil
             }
         }
+        Deinit.deinitLock.unlock()
 
         // This will free `object1` and release+dealloc its associated `Deinit` which nils `Deinit.object2`
         ValuesKt.gc()
