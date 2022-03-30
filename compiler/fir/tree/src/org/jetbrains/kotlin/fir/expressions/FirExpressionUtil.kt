@@ -6,6 +6,8 @@
 package org.jetbrains.kotlin.fir.expressions
 
 import org.jetbrains.kotlin.KtSourceElement
+import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
+import org.jetbrains.kotlin.fir.declarations.FirFunction
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
 import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
 import org.jetbrains.kotlin.fir.expressions.builder.buildConstExpression
@@ -44,6 +46,15 @@ fun <T> buildConstOrErrorExpression(source: KtSourceElement?, kind: ConstantValu
 inline val FirCall.arguments: List<FirExpression> get() = argumentList.arguments
 
 inline val FirCall.argument: FirExpression get() = argumentList.arguments.first()
+
+inline val FirCall.dynamicVararg: FirVarargArgumentsExpression?
+    get() = arguments.firstOrNull() as? FirVarargArgumentsExpression
+
+inline val FirCall.dynamicVarargArguments: List<FirExpression>?
+    get() = dynamicVararg?.arguments
+
+inline val FirFunctionCall.isCalleeDynamic: Boolean
+    get() = (calleeReference.resolvedSymbol?.fir as? FirFunction)?.origin == FirDeclarationOrigin.DynamicScope
 
 inline val FirCall.resolvedArgumentMapping: Map<FirExpression, FirValueParameter>?
     get() = when (val argumentList = argumentList) {
