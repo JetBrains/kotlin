@@ -209,6 +209,6 @@ task assembleWeb(type: Sync) {
         }
     }
 
-    from compileKotlinJs.destinationDir
+    from compileKotlinJs.destinationDirectory
     into "${projectDir}/web"
 }
