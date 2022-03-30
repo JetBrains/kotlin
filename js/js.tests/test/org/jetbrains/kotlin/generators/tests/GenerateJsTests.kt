@@ -118,6 +118,10 @@ fun main(args: Array<String>) {
             testClass<AbstractIrJsTypeScriptExportTest> {
                 model("typescript-export/", pattern = "^([^_](.+))\\.kt$")
             }
+
+            testClass<AbstractFirJsTest> {
+                model("box/", pattern = "^([^_](.+))\\.kt$")
+            }
         }
 
         testGroup("js/js.tests/tests-gen", "compiler/testData", testRunnerMethodName = "runTest0") {
