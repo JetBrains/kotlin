@@ -15,12 +15,12 @@ public class ByteArray(size: Int) {
     }
 
     public operator fun get(index: Int): Byte {
-        if (index < 0 || index >= storage.len()) throw IndexOutOfBoundsException()
+        rangeCheck(index, storage.len())
         return storage.get(index)
     }
 
     public operator fun set(index: Int, value: Byte) {
-        if (index < 0 || index >= storage.len()) throw IndexOutOfBoundsException()
+        rangeCheck(index, storage.len())
         storage.set(index, value)
     }
 
@@ -45,12 +45,12 @@ public class CharArray(size: Int) {
     }
 
     public operator fun get(index: Int): Char {
-        if (index < 0 || index >= storage.len()) throw IndexOutOfBoundsException()
+        rangeCheck(index, storage.len())
         return storage.get(index)
     }
 
     public operator fun set(index: Int, value: Char) {
-        if (index < 0 || index >= storage.len()) throw IndexOutOfBoundsException()
+        rangeCheck(index, storage.len())
         storage.set(index, value)
     }
 
@@ -76,12 +76,12 @@ public class ShortArray(size: Int) {
     }
 
     public operator fun get(index: Int): Short {
-        if (index < 0 || index >= storage.len()) throw IndexOutOfBoundsException()
+        rangeCheck(index, storage.len())
         return storage.get(index)
     }
 
     public operator fun set(index: Int, value: Short) {
-        if (index < 0 || index >= storage.len()) throw IndexOutOfBoundsException()
+        rangeCheck(index, storage.len())
         storage.set(index, value)
     }
 
@@ -107,12 +107,12 @@ public class IntArray(size: Int) {
     }
 
     public operator fun get(index: Int): Int {
-        if (index < 0 || index >= storage.len()) throw IndexOutOfBoundsException()
+        rangeCheck(index, storage.len())
         return storage.get(index)
     }
 
     public operator fun set(index: Int, value: Int) {
-        if (index < 0 || index >= storage.len()) throw IndexOutOfBoundsException()
+        rangeCheck(index, storage.len())
         storage.set(index, value)
     }
 
@@ -138,12 +138,12 @@ public class LongArray(size: Int) {
     }
 
     public operator fun get(index: Int): Long {
-        if (index < 0 || index >= storage.len()) throw IndexOutOfBoundsException()
+        rangeCheck(index, storage.len())
         return storage.get(index)
     }
 
     public operator fun set(index: Int, value: Long) {
-        if (index < 0 || index >= storage.len()) throw IndexOutOfBoundsException()
+        rangeCheck(index, storage.len())
         storage.set(index, value)
     }
 
@@ -168,12 +168,12 @@ public class FloatArray(size: Int) {
     }
 
     public operator fun get(index: Int): Float {
-        if (index < 0 || index >= storage.len()) throw IndexOutOfBoundsException()
+        rangeCheck(index, storage.len())
         return storage.get(index)
     }
 
     public operator fun set(index: Int, value: Float) {
-        if (index < 0 || index >= storage.len()) throw IndexOutOfBoundsException()
+        rangeCheck(index, storage.len())
         storage.set(index, value)
     }
 
@@ -198,12 +198,12 @@ public class DoubleArray(size: Int) {
     }
 
     public operator fun get(index: Int): Double {
-        if (index < 0 || index >= storage.len()) throw IndexOutOfBoundsException()
+        rangeCheck(index, storage.len())
         return storage.get(index)
     }
 
     public operator fun set(index: Int, value: Double) {
-        if (index < 0 || index >= storage.len()) throw IndexOutOfBoundsException()
+        rangeCheck(index, storage.len())
         storage.set(index, value)
     }
 
@@ -228,12 +228,12 @@ public class BooleanArray(size: Int) {
     }
 
     public operator fun get(index: Int): Boolean {
-        if (index < 0 || index >= storage.len()) throw IndexOutOfBoundsException()
+        rangeCheck(index, storage.len())
         return storage.get(index).reinterpretAsInt().reinterpretAsBoolean()
     }
 
     public operator fun set(index: Int, value: Boolean) {
-        if (index < 0 || index >= storage.len()) throw IndexOutOfBoundsException()
+        rangeCheck(index, storage.len())
         storage.set(index, value.toInt().reinterpretAsByte())
     }
 

@@ -41,7 +41,7 @@ public class Array<T> constructor(size: Int) {
      */
     @Suppress("UNCHECKED_CAST")
     public operator fun get(index: Int): T {
-        if (index < 0 || index >= storage.len()) throw IndexOutOfBoundsException()
+        rangeCheck(index, storage.len())
         return storage.get(index) as T
     }
 
@@ -56,7 +56,7 @@ public class Array<T> constructor(size: Int) {
      * where the behavior is unspecified.
      */
     public operator fun set(index: Int, value: T) {
-        if (index < 0 || index >= storage.len()) throw IndexOutOfBoundsException()
+        rangeCheck(index, storage.len())
         storage.set(index, value)
     }
 

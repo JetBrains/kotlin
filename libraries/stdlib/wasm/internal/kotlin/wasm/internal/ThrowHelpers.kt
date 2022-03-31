@@ -25,6 +25,10 @@ internal fun throwNoBranchMatchedException(): Nothing {
     throw NoWhenBranchMatchedException()
 }
 
+internal fun rangeCheck(index: Int, size: Int) {
+  if (index < 0 || index >= size) throw IndexOutOfBoundsException()
+}
+
 @PublishedApi
 internal fun throwUninitializedPropertyAccessException(name: String): Nothing {
     throw UninitializedPropertyAccessException("lateinit property $name has not been initialized")
