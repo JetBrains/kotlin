@@ -896,10 +896,6 @@ func testWeakRefs0(frozen: Bool) throws {
             Holder.ref2 = obj2
         }
 
-        try assertFalse(Holder.ref1 === nil)
-        try assertFalse(Holder.ref2 === nil)
-        try assertEquals(actual: Holder.deinitialized, expected: 0)
-
         ValuesKt.gc()
 
         try assertTrue(Holder.ref1 === nil)
@@ -942,8 +938,12 @@ class TestSharedRefs {
                 let ignore = SharedRefs() // Ensures that Kotlin runtime gets initialized.
             }
 
-            Closure.currentBlock!()
+            // Take the block from Closure to avoid races when block() execution triggers
+            // calling launchInNewThread on another thread (e.g. on the finalizer thread).
+            let block =  Closure.currentBlock!
             Closure.currentBlock = nil
+
+            block()
 
             return nil
         }, nil)
