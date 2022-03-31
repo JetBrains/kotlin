@@ -95,6 +95,7 @@ tasks.withType(KonanCompileNativeBinary.class).configureEach {
 
 ext.isExperimentalMM = project.globalTestArgs.contains("-memory-model") && project.globalTestArgs.contains("experimental")
 ext.isNoopGC = project.globalTestArgs.contains("-Xgc=noop")
+ext.isAggressiveGC = project.globalTestArgs.contains("-Xbinary=gcSchedulerType=aggressive")
 
 // TODO: It also makes sense to test -g without asserts, and also to test -opt with asserts.
 if (project.globalTestArgs.contains("-g")) {
@@ -5362,6 +5363,9 @@ if (isAppleTarget(project)) {
         swiftSources = ['objcexport']
         if (isNoopGC) {
             swiftExtraOpts += ["-D", "NOOP_GC"]
+        }
+        if (isAggressiveGC) {
+            swiftExtraOpts += ["-D", "AGGRESSIVE_GC"]
         }
     }
 
