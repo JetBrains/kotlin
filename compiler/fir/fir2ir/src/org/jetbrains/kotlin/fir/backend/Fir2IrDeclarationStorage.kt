@@ -1264,7 +1264,12 @@ class Fir2IrDeclarationStorage(
                     dispatchReceiverLookupTag,
                     getCachedIrDeclaration = ::getCachedIrFunction,
                     createIrDeclaration = { parent, origin ->
-                        createIrFunction(fir, parent, predefinedOrigin = origin, forceTopLevelPrivate = forceTopLevelPrivate)
+                        createIrFunction(
+                            fir, parent,
+                            predefinedOrigin = origin,
+                            forceTopLevelPrivate = forceTopLevelPrivate,
+                            containingClass = dispatchReceiverLookupTag,
+                        )
                     },
                     createIrLazyDeclaration = { signature, lazyParent, declarationOrigin ->
                         createIrLazyFunction(fir, signature, lazyParent, declarationOrigin)
@@ -1330,7 +1335,8 @@ class Fir2IrDeclarationStorage(
             getCachedIrDeclaration = ::getCachedIrProperty,
             createIrDeclaration = { parent, origin ->
                 createIrProperty(
-                    fir, parent, predefinedOrigin = origin, forceTopLevelPrivate = forceTopLevelPrivate
+                    fir, parent, predefinedOrigin = origin, forceTopLevelPrivate = forceTopLevelPrivate,
+                    containingClass = dispatchReceiverLookupTag,
                 )
             },
             createIrLazyDeclaration = { signature, lazyParent, declarationOrigin ->
