@@ -1,5 +1,5 @@
 plugins {
-    kotlin("js").version("<pluginMarkerVersion>")
+    kotlin("js")
     `maven-publish`
 }
 
@@ -30,7 +30,7 @@ kotlin {
 
 publishing {
     repositories {
-        maven("../repo")
+        maven("<localRepo>")
     }
     publications {
         create<MavenPublication>("maven") {

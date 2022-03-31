@@ -1,11 +1,11 @@
 plugins {
-    kotlin("multiplatform").version("<pluginMarkerVersion>").apply(false)
+    kotlin("multiplatform").apply(false)
 }
 
 allprojects {
     repositories {
         mavenLocal()
-        maven("$rootDir/../repo")
+        maven("<localRepo>")
         mavenCentral()
     }
 }
