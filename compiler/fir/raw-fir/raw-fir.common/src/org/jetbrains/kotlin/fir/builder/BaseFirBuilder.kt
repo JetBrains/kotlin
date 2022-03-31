@@ -811,7 +811,7 @@ abstract class BaseFirBuilder<T>(val baseSession: FirSession, val context: Conte
             val firArgument = buildFunctionCall {
                 source = desugaredSource
                 calleeReference = buildSimpleNamedReference {
-                    source = receiver?.toFirSourceElement()
+                    source = receiver?.toFirSourceElement(KtFakeSourceElementKind.ArrayAccessNameReference)
                     name = OperatorNameConventions.GET
                 }
                 explicitReceiver = generateResolvedAccessExpression(arrayVariable.source, arrayVariable)
