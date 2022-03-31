@@ -110,6 +110,12 @@ sealed class KtFakeSourceElementKind : KtSourceElementKind() {
     // x = x++ -> x = { val <unary> = x; x = <unary>.inc(); <unary> }
     object DesugaredIncrementOrDecrement : KtFakeSourceElementKind()
 
+    // ++x --> `inc` calleeReference
+    object DesugaredPrefixNameReference : KtFakeSourceElementKind()
+
+    // x++ --> `inc` calleeReference
+    object DesugaredPostfixNameReference : KtFakeSourceElementKind()
+
     // x !in list --> !(x in list) where ! and !(x in list) will have a fake source
     object DesugaredInvertedContains : KtFakeSourceElementKind()
 
