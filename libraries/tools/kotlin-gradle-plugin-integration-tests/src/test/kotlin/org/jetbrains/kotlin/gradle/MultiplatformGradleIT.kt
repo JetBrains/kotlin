@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.gradle.internals.KOTLIN_12X_MPP_DEPRECATION_WARNING
 import org.jetbrains.kotlin.gradle.plugin.EXPECTED_BY_CONFIG_NAME
 import org.jetbrains.kotlin.gradle.plugin.IMPLEMENT_CONFIG_NAME
 import org.jetbrains.kotlin.gradle.plugin.IMPLEMENT_DEPRECATION_WARNING
+import org.jetbrains.kotlin.gradle.testbase.TestVersions
 import org.jetbrains.kotlin.gradle.util.AGPVersion
 import org.jetbrains.kotlin.gradle.util.getFileByName
 import org.jetbrains.kotlin.gradle.util.modify
@@ -318,7 +319,7 @@ class MultiplatformGradleIT : BaseGradleIT() {
     fun testWithJavaDuplicatedResourcesFail() = with(
         Project(
             projectName = "mpp-single-jvm-target",
-            gradleVersionRequirement = GradleVersionRequired.AtLeast("7.0"),
+            gradleVersionRequirement = GradleVersionRequired.AtLeast(TestVersions.Gradle.G_7_0),
             minLogLevel = LogLevel.WARN
         )
     ) {

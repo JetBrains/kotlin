@@ -4,6 +4,7 @@ import org.gradle.api.logging.LogLevel
 import org.gradle.api.logging.configuration.WarningMode
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.internal.ensureParentDirsCreated
+import org.jetbrains.kotlin.gradle.testbase.TestVersions
 import org.jetbrains.kotlin.gradle.tooling.BuildKotlinToolingMetadataTask
 import org.jetbrains.kotlin.gradle.util.*
 import org.jetbrains.kotlin.test.util.KtTestUtil
@@ -16,9 +17,159 @@ import kotlin.test.assertNotNull
 import kotlin.test.assertNull
 import kotlin.test.assertTrue
 
-open class KotlinAndroid36GradleIT : KotlinAndroid34GradleIT() {
+open class KotlinAndroid36GradleIT : KotlinAndroid3GradleIT() {
     override val androidGradlePluginVersion: AGPVersion
         get() = AGPVersion.v3_6_0
+
+    // AGP 3.+ is not working well with Gradle 7+
+    override val defaultGradleVersion: GradleVersionRequired
+        get() = GradleVersionRequired.Until(TestVersions.Gradle.G_6_9)
+
+    @Test
+    fun testKaptUsingApOptionProvidersAsNestedInputOutput() = with(Project("AndroidProject")) {
+        setupWorkingDir()
+
+        gradleBuildScript(subproject = "Android").appendText(
+            """
+
+            apply plugin: 'kotlin-kapt'
+
+            class MyNested implements org.gradle.process.CommandLineArgumentProvider {
+
+                @InputFile
+                File inputFile = null
+
+                @Override
+                Iterable<String> asArguments() {
+                    // Read the arguments from a file, because changing them in a build script is treated as an
+                    // implementation change by Gradle:
+                    return [new File('args.txt').text]
+                }
+            }
+
+            def nested = new MyNested()
+            nested.inputFile = file("${'$'}projectDir/in.txt")
+
+            android.applicationVariants.all {
+                it.javaCompileOptions.annotationProcessorOptions.compilerArgumentProviders.add(nested)
+            }
+            """.trimIndent()
+        )
+
+        File(projectDir, "Android/in.txt").appendText("1234")
+        File(projectDir, "args.txt").appendText("1234")
+
+        val kaptTasks = listOf(":Android:kaptFlavor1DebugKotlin")
+        val javacTasks = listOf(":Android:compileFlavor1DebugJavaWithJavac")
+
+        val buildTasks = (kaptTasks + javacTasks).toTypedArray()
+
+        build(*buildTasks) {
+            assertSuccessful()
+            assertTasksExecuted(kaptTasks + javacTasks)
+        }
+
+        File(projectDir, "Android/in.txt").appendText("5678")
+
+        build(*buildTasks) {
+            assertSuccessful()
+            assertTasksExecuted(kaptTasks)
+            assertTasksUpToDate(javacTasks)
+        }
+
+        // Changing only the annotation provider arguments should not trigger the tasks to run, as the arguments may be outputs,
+        // internals or neither:
+        File(projectDir, "args.txt").appendText("5678")
+
+        build(*buildTasks) {
+            assertSuccessful()
+            assertTasksUpToDate(javacTasks + kaptTasks)
+        }
+    }
+
+    @Test
+    fun testAgpNestedArgsNotEvaluatedDuringConfiguration() = with(Project("AndroidProject")) {
+        setupWorkingDir()
+
+        gradleBuildScript(subproject = "Android").appendText(
+            """
+
+            apply plugin: 'kotlin-kapt'
+
+            class MyNested implements org.gradle.process.CommandLineArgumentProvider {
+                @Override
+                Iterable<String> asArguments() {
+                    throw new RuntimeException("This should not be invoked during configuration.")
+                }
+            }
+
+            def nested = new MyNested()
+
+            android.applicationVariants.all {
+                it.javaCompileOptions.annotationProcessorOptions.compilerArgumentProviders.add(nested)
+            }
+            """.trimIndent()
+        )
+
+        build(":Android:kaptFlavor1DebugKotlin", "--dry-run") {
+            assertSuccessful()
+        }
+
+        build(
+            ":Android:kaptFlavor1DebugKotlin", "--dry-run",
+            options = defaultBuildOptions().copy(kaptOptions = KaptOptions(verbose = false, useWorkers = false))
+        ) {
+            assertSuccessful()
+        }
+    }
+
+    @Test
+    fun testOmittedStdlibVersion() = Project("AndroidProject").run {
+        setupWorkingDir()
+
+        gradleBuildScript("Lib").modify {
+
+            it.checkedReplace(
+                "kotlin-stdlib:\$kotlin_version",
+                "kotlin-stdlib"
+            ) + "\n" +
+                    """
+                apply plugin: 'maven-publish'
+
+                android {
+                    defaultPublishConfig 'flavor1Debug'
+                }
+                
+                afterEvaluate {
+                    publishing {
+                        publications {
+                            flavorDebug(MavenPublication) {
+                                from components.flavor1Debug
+                                
+                                group = 'com.example'
+                                artifactId = 'flavor1Debug'
+                                version = '1.0'
+                            }
+                        }
+                        repositories {
+                            maven {
+                                url = "file://${'$'}buildDir/repo"
+                            }
+                        }
+                    }
+                }
+                """.trimIndent()
+        }
+
+        build(":Lib:assembleFlavor1Debug", ":Lib:publish") {
+            assertSuccessful()
+            assertTasksExecuted(":Lib:compileFlavor1DebugKotlin", ":Lib:publishFlavorDebugPublicationToMavenRepository")
+            val pomLines = File(projectDir, "Lib/build/repo/com/example/flavor1Debug/1.0/flavor1Debug-1.0.pom").readLines()
+            val stdlibVersionLineNumber = pomLines.indexOfFirst { "<artifactId>kotlin-stdlib</artifactId>" in it } + 1
+            val versionLine = pomLines[stdlibVersionLineNumber]
+            assertTrue { "<version>${defaultBuildOptions().kotlinVersion}</version>" in versionLine }
+        }
+    }
 
     @Test
     fun testAndroidMppSourceSets(): Unit = with(
@@ -473,7 +624,7 @@ open class KotlinAndroid70GradleIT : KotlinAndroid36GradleIT() {
         get() = AGPVersion.v7_0_0
 
     override val defaultGradleVersion: GradleVersionRequired
-        get() = GradleVersionRequired.AtLeast("7.0")
+        get() = GradleVersionRequired.AtLeast(TestVersions.Gradle.G_7_0)
 
     override fun defaultBuildOptions(): BuildOptions {
         val javaHome = File(System.getProperty("jdk11Home") ?: error("jdk11Home not specified"))
@@ -603,194 +754,7 @@ open class KotlinAndroid71GradleIT : KotlinAndroid70GradleIT() {
     }
 }
 
-open class KotlinAndroid34GradleIT : KotlinAndroid3GradleIT() {
-    override val androidGradlePluginVersion: AGPVersion
-        get() = AGPVersion.v3_4_1
-
-    // AGP 3.4.1 is not working with Gradle 7+
-    override val defaultGradleVersion: GradleVersionRequired
-        get() = GradleVersionRequired.Until("6.8.4")
-
-    @Test
-    fun testKaptUsingApOptionProvidersAsNestedInputOutput() = with(Project("AndroidProject")) {
-        setupWorkingDir()
-
-        gradleBuildScript(subproject = "Android").appendText(
-            """
-
-            apply plugin: 'kotlin-kapt'
-
-            class MyNested implements org.gradle.process.CommandLineArgumentProvider {
-
-                @InputFile
-                File inputFile = null
-
-                @Override
-                Iterable<String> asArguments() {
-                    // Read the arguments from a file, because changing them in a build script is treated as an
-                    // implementation change by Gradle:
-                    return [new File('args.txt').text]
-                }
-            }
-
-            def nested = new MyNested()
-            nested.inputFile = file("${'$'}projectDir/in.txt")
-
-            android.applicationVariants.all {
-                it.javaCompileOptions.annotationProcessorOptions.compilerArgumentProviders.add(nested)
-            }
-            """.trimIndent()
-        )
-
-        File(projectDir, "Android/in.txt").appendText("1234")
-        File(projectDir, "args.txt").appendText("1234")
-
-        val kaptTasks = listOf(":Android:kaptFlavor1DebugKotlin")
-        val javacTasks = listOf(":Android:compileFlavor1DebugJavaWithJavac")
-
-        val buildTasks = (kaptTasks + javacTasks).toTypedArray()
-
-        build(*buildTasks) {
-            assertSuccessful()
-            assertTasksExecuted(kaptTasks + javacTasks)
-        }
-
-        File(projectDir, "Android/in.txt").appendText("5678")
-
-        build(*buildTasks) {
-            assertSuccessful()
-            assertTasksExecuted(kaptTasks)
-            assertTasksUpToDate(javacTasks)
-        }
-
-        // Changing only the annotation provider arguments should not trigger the tasks to run, as the arguments may be outputs,
-        // internals or neither:
-        File(projectDir, "args.txt").appendText("5678")
-
-        build(*buildTasks) {
-            assertSuccessful()
-            assertTasksUpToDate(javacTasks + kaptTasks)
-        }
-    }
-
-    @Test
-    fun testAgpNestedArgsNotEvaluatedDuringConfiguration() = with(Project("AndroidProject")) {
-        setupWorkingDir()
-
-        gradleBuildScript(subproject = "Android").appendText(
-            """
-
-            apply plugin: 'kotlin-kapt'
-
-            class MyNested implements org.gradle.process.CommandLineArgumentProvider {
-                @Override
-                Iterable<String> asArguments() {
-                    throw new RuntimeException("This should not be invoked during configuration.")
-                }
-            }
-
-            def nested = new MyNested()
-
-            android.applicationVariants.all {
-                it.javaCompileOptions.annotationProcessorOptions.compilerArgumentProviders.add(nested)
-            }
-            """.trimIndent()
-        )
-
-        build(":Android:kaptFlavor1DebugKotlin", "--dry-run") {
-            assertSuccessful()
-        }
-
-        build(
-            ":Android:kaptFlavor1DebugKotlin", "--dry-run",
-            options = defaultBuildOptions().copy(kaptOptions = KaptOptions(verbose = false, useWorkers = false))
-        ) {
-            assertSuccessful()
-        }
-    }
-
-    @Test
-    fun testOmittedStdlibVersion() = Project("AndroidProject").run {
-        setupWorkingDir()
-
-        gradleBuildScript("Lib").modify {
-
-            it.checkedReplace(
-                "kotlin-stdlib:\$kotlin_version",
-                "kotlin-stdlib"
-            ) + "\n" +
-                    """
-                apply plugin: 'maven-publish'
-
-                android {
-                    defaultPublishConfig 'flavor1Debug'
-                }
-                
-                afterEvaluate {
-                    publishing {
-                        publications {
-                            flavorDebug(MavenPublication) {
-                                from components.flavor1Debug
-                                
-                                group = 'com.example'
-                                artifactId = 'flavor1Debug'
-                                version = '1.0'
-                            }
-                        }
-                        repositories {
-                            maven {
-                                url = "file://${'$'}buildDir/repo"
-                            }
-                        }
-                    }
-                }
-                """.trimIndent()
-        }
-
-        build(":Lib:assembleFlavor1Debug", ":Lib:publish") {
-            assertSuccessful()
-            assertTasksExecuted(":Lib:compileFlavor1DebugKotlin", ":Lib:publishFlavorDebugPublicationToMavenRepository")
-            val pomLines = File(projectDir, "Lib/build/repo/com/example/flavor1Debug/1.0/flavor1Debug-1.0.pom").readLines()
-            val stdlibVersionLineNumber = pomLines.indexOfFirst { "<artifactId>kotlin-stdlib</artifactId>" in it } + 1
-            val versionLine = pomLines[stdlibVersionLineNumber]
-            assertTrue { "<version>${defaultBuildOptions().kotlinVersion}</version>" in versionLine }
-        }
-    }
-}
-
 abstract class KotlinAndroid3GradleIT : AbstractKotlinAndroidGradleTests() {
-    @Test
-    fun testApplyWithFeaturePlugin() {
-        Assume.assumeTrue(
-            "The com.android.feature plugin has been deprecated and removed in newer versions",
-            androidGradlePluginVersion < AGPVersion.v3_6_0
-        )
-
-        val project = Project("AndroidProject")
-
-        project.setupWorkingDir()
-        File(project.projectDir, "Lib/build.gradle").modify { text ->
-            // Change the applied plugin to com.android.feature
-            text.replace("com.android.library", "com.android.feature")
-                .replace("compileSdkVersion 22", "compileSdkVersion 26")
-                .apply { assert(!equals(text)) }
-                .plus("\nandroid { baseFeature true }")
-        }
-
-        // Check that Kotlin tasks were created for both lib and feature variants:
-        val kotlinTaskNames =
-            listOf("Debug").flatMap { buildType ->
-                listOf("Flavor1", "Flavor2").flatMap { flavor ->
-                    listOf("", "Feature").map { isFeature -> ":Lib:compile$flavor$buildType${isFeature}Kotlin" }
-                }
-            }
-
-        project.build(":Lib:assembleDebug") {
-            assertSuccessful()
-            assertTasksExecuted(*kotlinTaskNames.toTypedArray())
-        }
-    }
-
     @Test
     fun testAfterEvaluateOrdering() = with(Project("AndroidProject")) {
         setupWorkingDir()
@@ -1099,37 +1063,6 @@ fun getSomething() = 10
             assertSuccessful()
         }
     }
-
-    @Test
-    fun testAndroidExtensionsIncremental() {
-        Assume.assumeTrue(
-            "Ignored for newer AGP versions because of KT-38622",
-            androidGradlePluginVersion < AGPVersion.v3_6_0
-        )
-
-        val project = Project("AndroidExtensionsProject")
-        val options = defaultBuildOptions().copy(incremental = true)
-
-        project.build("assembleDebug", options = options) {
-            assertSuccessful()
-            val affectedSources = project.projectDir.getFilesByNames(
-                "MyActivity.kt", "noLayoutUsages.kt"
-            )
-            val relativePaths = project.relativize(affectedSources)
-            assertCompiledKotlinSources(relativePaths)
-        }
-
-        val activityLayout = File(project.projectDir, "app/src/main/res/layout/activity_main.xml")
-        activityLayout.modify { it.replace("textView", "newTextView") }
-
-        project.build("assembleDebug", options = options) {
-            assertFailed()
-            val affectedSources = project.projectDir.getFilesByNames("MyActivity.kt")
-            val relativePaths = project.relativize(affectedSources)
-            assertCompiledKotlinSources(relativePaths)
-        }
-    }
-
 
     @Test
     fun testAndroidExtensionsManyVariants() {

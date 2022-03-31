@@ -15,7 +15,6 @@ import org.gradle.api.attributes.Attribute
 import org.gradle.api.attributes.Usage.JAVA_RUNTIME_JARS
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.utils.dashSeparatedName
-import org.jetbrains.kotlin.gradle.utils.listProperty
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 import org.jetbrains.kotlin.gradle.utils.setProperty
 
@@ -169,7 +168,7 @@ open class KotlinAndroidTarget(
                 )
             } else {
                 nestedVariants.single()
-            } as KotlinTargetComponent // Type inference corner case or bug? this cast in each branch is redundant but required here
+            }
         }.toSet()
     }
 

@@ -5,7 +5,6 @@ apply plugin: 'kotlin-android-extensions'
 
 android {
     compileSdkVersion 23
-    buildToolsVersion "25.0.2"
 
     defaultConfig {
         applicationId "com.example.dagger.kotlin"
@@ -14,6 +13,12 @@ android {
         versionCode 1
         versionName "1.0"
     }
+
+    compileOptions {
+        sourceCompatibility 1.8
+        targetCompatibility 1.8
+    }
+
     buildTypes {
         release {
             minifyEnabled false
@@ -28,9 +33,8 @@ android {
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation 'com.android.support:appcompat-v7:23.3.0'
-    implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
 
-    implementation 'com.google.dagger:dagger:2.6.1'
-    kapt 'com.google.dagger:dagger-compiler:2.6.1'
+    implementation 'com.google.dagger:dagger:2.9'
+    kapt 'com.google.dagger:dagger-compiler:2.9'
     compileOnly  'org.glassfish:javax.annotation:10.0-b28'
 }

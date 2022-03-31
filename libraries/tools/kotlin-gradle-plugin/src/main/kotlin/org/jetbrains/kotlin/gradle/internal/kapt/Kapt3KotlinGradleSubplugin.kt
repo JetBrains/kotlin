@@ -389,9 +389,9 @@ class Kapt3GradleSubplugin @Inject internal constructor(private val registry: To
 
         val subluginOptionsFromProvidedApOptions = lazy {
             val apOptionsFromProviders =
-                annotationProcessorProviders?.flatMap {
-                    (it as CommandLineArgumentProvider).asArguments()
-                }.orEmpty()
+                annotationProcessorProviders
+                    ?.flatMap { it.asArguments() }
+                    .orEmpty()
 
             apOptionsFromProviders.map {
                 // Use the internal subplugin option type to exclude them from Gradle input/output checks, as their providers are already
@@ -829,14 +829,8 @@ internal fun checkAndroidAnnotationProcessorDependencyUsage(project: Project) {
 private val BaseVariant.annotationProcessorOptions: Map<String, String>?
     get() = javaCompileOptions.annotationProcessorOptions.arguments
 
-private val BaseVariant.annotationProcessorOptionProviders: List<*>
-    get() = try {
-        // Public API added in Android Gradle Plugin 3.2.0-alpha15:
-        val apOptions = javaCompileOptions.annotationProcessorOptions
-        apOptions.javaClass.getMethod("getCompilerArgumentProviders").invoke(apOptions) as List<*>
-    } catch (e: NoSuchMethodException) {
-        emptyList<Any>()
-    }
+private val BaseVariant.annotationProcessorOptionProviders: List<CommandLineArgumentProvider>
+    get() = javaCompileOptions.annotationProcessorOptions.compilerArgumentProviders
 
 //TODO once the Android plugin reaches its 3.0.0 release, consider compiling against it (remove the reflective call)
 private val BaseVariant.dataBindingDependencyArtifactsIfSupported: FileCollection?

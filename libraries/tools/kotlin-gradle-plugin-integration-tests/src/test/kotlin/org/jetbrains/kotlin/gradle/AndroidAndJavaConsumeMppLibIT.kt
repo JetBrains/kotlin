@@ -7,6 +7,7 @@
 package org.jetbrains.kotlin.gradle
 
 import org.jetbrains.kotlin.gradle.ResolvedVariantChecker.ResolvedVariantRequest
+import org.jetbrains.kotlin.gradle.testbase.TestVersions
 import org.jetbrains.kotlin.gradle.util.AGPVersion
 import org.jetbrains.kotlin.gradle.util.checkedReplace
 import org.jetbrains.kotlin.gradle.util.modify
@@ -22,12 +23,16 @@ import java.lang.Boolean as RefBoolean
 
 class AndroidAndJavaConsumeMppLibBuiltByGradle69IT : AndroidAndJavaConsumeMppLibIT() {
     override val producerAgpVersion: AGPVersion = AGPVersion.v4_2_0
-    override val producerGradleVersion: GradleVersionRequired = GradleVersionRequired.Exact("6.9")
+    override val producerGradleVersion: GradleVersionRequired = GradleVersionRequired.Exact(
+        TestVersions.Gradle.G_6_9
+    )
 }
 
 class AndroidAndJavaConsumeMppLibBuiltByGradle7IT : AndroidAndJavaConsumeMppLibIT() {
     override val producerAgpVersion: AGPVersion = AGPVersion.v7_0_0
-    override val producerGradleVersion: GradleVersionRequired = GradleVersionRequired.AtLeast("7.0")
+    override val producerGradleVersion: GradleVersionRequired = GradleVersionRequired.AtLeast(
+        TestVersions.Gradle.G_7_0
+    )
 }
 
 @RunWith(Parameterized::class)
@@ -62,9 +67,9 @@ abstract class AndroidAndJavaConsumeMppLibIT : BaseGradleIT() {
         @Parameterized.Parameters(name = "Consumer(AGP={3}, Gradle={4}), flavors={0}, debugOnly={1}, published={2}")
         fun testCases(): List<Array<Any>> {
             val consumers = listOf(
-                AGPVersion.v4_2_0 to GradleVersionRequired.Exact("6.9"),
-                AGPVersion.v4_2_0 to GradleVersionRequired.AtLeast("7.0"),
-                AGPVersion.v7_0_0 to GradleVersionRequired.AtLeast("7.0"),
+                AGPVersion.v4_2_0 to GradleVersionRequired.Exact(TestVersions.Gradle.G_6_9),
+                AGPVersion.v4_2_0 to GradleVersionRequired.AtLeast(TestVersions.Gradle.G_7_0),
+                AGPVersion.v7_0_0 to GradleVersionRequired.AtLeast(TestVersions.Gradle.G_7_0),
             )
             val buildParams = listOf(
                 /* useFlavors, isAndroidPublishDebugOnly, isPublishedLibrary */

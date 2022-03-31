@@ -2,6 +2,7 @@ package org.jetbrains.kotlin.gradle
 
 import org.gradle.api.logging.LogLevel
 import org.gradle.api.logging.configuration.WarningMode
+import org.jetbrains.kotlin.gradle.testbase.TestVersions
 import org.jetbrains.kotlin.gradle.util.*
 import org.jetbrains.kotlin.test.util.KtTestUtil
 import org.junit.Assert
@@ -10,18 +11,18 @@ import org.junit.Ignore
 import org.junit.Test
 import java.io.File
 
-class Kapt3WorkersAndroid34IT : Kapt3Android34IT() {
+class Kapt3WorkersAndroid36IT : Kapt3Android36IT() {
     override fun kaptOptions(): KaptOptions =
         super.kaptOptions().copy(useWorkers = true)
 }
 
-open class Kapt3Android34IT : Kapt3AndroidIT() {
+open class Kapt3Android36IT : Kapt3AndroidIT() {
     override val androidGradlePluginVersion: AGPVersion
-        get() = AGPVersion.v3_4_1
+        get() = AGPVersion.v3_6_0
 
-    // AGP 3.4 is not working with Gradle 7+
+    // AGP 3.+ is not working with Gradle 7+
     override val defaultGradleVersion: GradleVersionRequired
-        get() = GradleVersionRequired.Until("6.8.4")
+        get() = GradleVersionRequired.Until(TestVersions.Gradle.G_6_9)
 
     @Test
     fun testAndroidxNavigationSafeArgs() = with(Project("androidx-navigation-safe-args", directoryPrefix = "kapt2")) {
@@ -77,7 +78,7 @@ class Kapt3Android70IT : Kapt3AndroidIT() {
         get() = AGPVersion.v7_0_0
 
     override val defaultGradleVersion: GradleVersionRequired
-        get() = GradleVersionRequired.AtLeast("7.0")
+        get() = GradleVersionRequired.AtLeast(TestVersions.Gradle.G_7_0)
 
     override fun defaultBuildOptions(): BuildOptions {
         val javaHome = File(System.getProperty("jdk11Home")!!)
@@ -199,7 +200,7 @@ abstract class Kapt3AndroidIT : BaseGradleIT() {
             assertFileExists("app/build/generated/source/kapt/debug/org/example/kotlin/butterknife/SimpleActivity\$\$ViewBinder.java")
 
             val butterknifeJavaClassesDir =
-                "app/build/intermediates/javac/debug/compileDebugJavaWithJavac/classes/org/example/kotlin/butterknife/"
+                "app/build/intermediates/javac/debug/classes/org/example/kotlin/butterknife/"
             assertFileExists(butterknifeJavaClassesDir + "SimpleActivity\$\$ViewBinder.class")
 
             assertFileExists("app/build/tmp/kotlin-classes/debug/org/example/kotlin/butterknife/SimpleAdapter\$ViewHolder.class")
@@ -222,7 +223,7 @@ abstract class Kapt3AndroidIT : BaseGradleIT() {
             assertFileExists("app/build/generated/source/kapt/debug/com/example/dagger/kotlin/ui/HomeActivity_MembersInjector.java")
 
             val daggerJavaClassesDir =
-                "app/build/intermediates/javac/debug/compileDebugJavaWithJavac/classes/com/example/dagger/kotlin/"
+                "app/build/intermediates/javac/debug/classes/com/example/dagger/kotlin/"
 
             assertFileExists(daggerJavaClassesDir + "DaggerApplicationComponent.class")
 
