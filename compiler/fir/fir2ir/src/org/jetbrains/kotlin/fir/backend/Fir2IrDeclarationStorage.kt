@@ -1198,7 +1198,7 @@ class Fir2IrDeclarationStorage(
                     dispatchReceiverLookupTag,
                     getCachedIrDeclaration = ::getCachedIrFunction,
                     createIrDeclaration = { parent, origin ->
-                        createIrFunction(fir, parent, predefinedOrigin = origin)
+                        createIrFunction(fir, parent, predefinedOrigin = origin, containingClass = dispatchReceiverLookupTag)
                     },
                     createIrLazyDeclaration = { signature, lazyParent, declarationOrigin ->
                         createIrLazyFunction(fir, signature, lazyParent, declarationOrigin)
