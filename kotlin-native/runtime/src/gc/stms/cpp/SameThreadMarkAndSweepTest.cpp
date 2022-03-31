@@ -190,10 +190,10 @@ test_support::Object<Payload>& AllocateObjectWithFinalizer(mm::ThreadData& threa
 KStdVector<ObjHeader*> Alive(mm::ThreadData& threadData) {
     KStdVector<ObjHeader*> objects;
     for (auto node : threadData.gc().impl().objectFactoryThreadQueue()) {
-        objects.push_back(node.IsArray() ? node.GetArrayHeader()->obj() : node.GetObjHeader());
+        objects.push_back(node.GetObjHeader());
     }
     for (auto node : mm::GlobalData::Instance().gc().impl().objectFactory().LockForIter()) {
-        objects.push_back(node.IsArray() ? node.GetArrayHeader()->obj() : node.GetObjHeader());
+        objects.push_back(node.GetObjHeader());
     }
     return objects;
 }
@@ -202,7 +202,7 @@ using Color = gc::SameThreadMarkAndSweep::ObjectData::Color;
 
 Color GetColor(ObjHeader* objHeader) {
     auto nodeRef = mm::ObjectFactory<gc::SameThreadMarkAndSweep>::NodeRef::From(objHeader);
-    return nodeRef.GCObjectData().color();
+    return nodeRef.ObjectData().color();
 }
 
 WeakCounter& InstallWeakCounter(mm::ThreadData& threadData, ObjHeader* objHeader, ObjHeader** location) {
