@@ -256,6 +256,13 @@ val IrDeclaration.isStaticInlineClassReplacement: Boolean
     get() = origin == JvmLoweredDeclarationOrigin.STATIC_INLINE_CLASS_REPLACEMENT
             || origin == JvmLoweredDeclarationOrigin.STATIC_INLINE_CLASS_CONSTRUCTOR
 
+val IrDeclaration.isStaticMultiFieldValueClassReplacement: Boolean
+    get() = origin == JvmLoweredDeclarationOrigin.STATIC_MULTI_FIELD_VALUE_CLASS_REPLACEMENT
+            || origin == JvmLoweredDeclarationOrigin.STATIC_MULTI_FIELD_VALUE_CLASS_CONSTRUCTOR
+
+val IrDeclaration.isStaticValueClassReplacement: Boolean
+    get() = isStaticMultiFieldValueClassReplacement || isStaticInlineClassReplacement
+
 // On the IR backend we represent raw types as star projected types with a special synthetic annotation.
 // See `TypeTranslator.translateTypeAnnotations`.
 private fun JvmBackendContext.makeRawTypeAnnotation() =
@@ -305,7 +312,7 @@ val IrClass.isSyntheticSingleton: Boolean
 
 fun IrSimpleFunction.suspendFunctionOriginal(): IrSimpleFunction =
     if (isSuspend &&
-        !isStaticInlineClassReplacement &&
+        !isStaticValueClassReplacement &&
         !isOrOverridesDefaultParameterStub() &&
         parentAsClass.origin != JvmLoweredDeclarationOrigin.DEFAULT_IMPLS
     )

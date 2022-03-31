@@ -301,14 +301,16 @@ private fun MethodInsnNode.isInlineClassBoxingMethodDescriptor(state: Generation
     if (name != KotlinTypeMapper.BOX_JVM_METHOD_NAME) return false
 
     val ownerType = Type.getObjectType(owner)
-    return desc == Type.getMethodDescriptor(ownerType, unboxedTypeOfInlineClass(ownerType, state))
+    val unboxedType = unboxedTypeOfInlineClass(ownerType, state) ?: return false
+    return desc == Type.getMethodDescriptor(ownerType, unboxedType)
 }
 
 private fun MethodInsnNode.isInlineClassUnboxingMethodDescriptor(state: GenerationState): Boolean {
     if (name != KotlinTypeMapper.UNBOX_JVM_METHOD_NAME) return false
 
     val ownerType = Type.getObjectType(owner)
-    return desc == Type.getMethodDescriptor(unboxedTypeOfInlineClass(ownerType, state))
+    val unboxedType = unboxedTypeOfInlineClass(ownerType, state) ?: return false
+    return desc == Type.getMethodDescriptor(unboxedType)
 }
 
 fun AbstractInsnNode.isNextMethodCallOfProgressionIterator(values: List<BasicValue>) =
