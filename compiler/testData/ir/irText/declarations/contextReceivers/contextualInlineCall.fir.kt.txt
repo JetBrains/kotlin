@@ -27,9 +27,22 @@ inline fun Int.testInlineWithExtensionAndMultipleArgs(_context_receiver_0: Conte
   return <this>.plus(other = i1).plus(other = i2).plus(other = _context_receiver_0.c())
 }
 
-inline fun Int.testInlineWithExtensionAndMultipleContextsAndArgs(_context_receiver_0: Context, _context_receiver_1: Any, i1: Int = 1, i2: Int = 2): Int {
+class A {
+  constructor(a: Any?) /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  val a: Any?
+    field = a
+    get
+
+}
+
+inline fun Int.testInlineWithExtensionAndMultipleContextsAndArgs(_context_receiver_0: Context, _context_receiver_1: A, i1: Int = 1, i2: Int = 2): Int {
   return <this>.plus(other = i1).plus(other = i2).plus(other = _context_receiver_0.c()).plus(other = when {
-    EQEQ(arg0 = _context_receiver_1, arg1 = null) -> 0
+    EQEQ(arg0 = _context_receiver_1.<get-a>(), arg1 = null) -> 0
     else -> 1
   })
 }
@@ -41,7 +54,7 @@ fun box(): String {
     result = result.plus(other = testInlineWithArg(_context_receiver_0 = $this$with, i = 1))
     result = result.plus(other = 1.testInlineWithExtensionAndArg(_context_receiver_0 = $this$with, i = 1))
     result = result.plus(other = 1.testInlineWithExtensionAndMultipleArgs(_context_receiver_0 = $this$with, i1 = 1, i2 = 2))
-    with<Int, Unit>(receiver = 1, block = local fun Int.<anonymous>() {
+    with<A, Unit>(receiver = A(a = 1), block = local fun A.<anonymous>() {
       result = result.plus(other = 1.testInlineWithExtensionAndMultipleContextsAndArgs(_context_receiver_0 = $this$with, _context_receiver_1 = $this$with, i1 = 1, i2 = 2))
       result = result.plus(other = 1.testInlineWithExtensionAndMultipleContextsAndArgs(_context_receiver_0 = $this$with, _context_receiver_1 = $this$with))
     }
@@ -53,3 +66,4 @@ fun box(): String {
   }
 )
 }
+
