@@ -1,0 +1,4 @@
+package
+
+public fun testBreak(/*0*/ b: kotlin.Boolean, /*1*/ s: kotlin.String?): kotlin.Unit
+public fun testContinue(/*0*/ b: kotlin.Boolean, /*1*/ s: kotlin.String?): kotlin.Unit

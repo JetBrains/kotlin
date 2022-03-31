@@ -6,6 +6,8 @@
 package org.jetbrains.kotlin.fir.resolve.dfa.cfg
 
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
+import org.jetbrains.kotlin.fir.expressions.FirBreakExpression
+import org.jetbrains.kotlin.fir.expressions.FirLoopJump
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 
 class ControlFlowGraph(val declaration: FirDeclaration?, val name: String, val kind: Kind) {
@@ -143,6 +145,11 @@ object LoopBackPath : EdgeLabel(label = null) {
 }
 
 object UncaughtExceptionPath : EdgeLabel(label = "onUncaughtException")
+
+class LoopPath(
+    firLoopJump: FirLoopJump
+) : EdgeLabel("\"" + (if (firLoopJump is FirBreakExpression) "break" else "continue") +
+                      (firLoopJump.target.labeledElement.label?.let { "@${it.name}" } ?: "") + "\"")
 
 // TODO: Label `return`ing edge with this.
 class ReturnPath(
