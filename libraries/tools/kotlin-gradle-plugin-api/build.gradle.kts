@@ -7,5 +7,5 @@ dependencies {
     api(project(":native:kotlin-native-utils"))
     api(project(":kotlin-project-model"))
     implementation(project(":kotlin-tooling-core"))
-    compileOnly("com.android.tools.build:gradle:3.4.0")
+    compileOnly("com.android.tools.build:gradle:3.6.4")
 }

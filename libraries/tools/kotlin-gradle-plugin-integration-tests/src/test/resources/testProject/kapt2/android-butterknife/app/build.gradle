@@ -4,7 +4,6 @@ apply plugin: 'kotlin-kapt'
 
 android {
     compileSdkVersion 23
-    buildToolsVersion "25.0.2"
 
     defaultConfig {
         applicationId "org.example.kotlin.butterknife"
@@ -32,10 +31,7 @@ android {
 }
 
 dependencies {
-    implementation fileTree(dir: 'libs', include: ['*.jar'])
-
     implementation 'com.android.support:appcompat-v7:23.3.0'
     implementation 'com.jakewharton:butterknife:8.0.1'
     kapt 'com.jakewharton:butterknife-compiler:8.0.1'
-    implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
 }

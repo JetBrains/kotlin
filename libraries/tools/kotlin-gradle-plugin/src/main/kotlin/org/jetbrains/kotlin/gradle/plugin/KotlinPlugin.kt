@@ -741,13 +741,16 @@ internal open class KotlinAndroidPlugin(
     }
 
     companion object {
+        const val MINIMAL_SUPPORTED_AGP_VERSION = "3.6.4"
         fun androidTargetHandler(): AbstractAndroidProjectHandler {
             val tasksProvider = AndroidTasksProvider()
 
             if (androidPluginVersion != null) {
-                val minimalVersion = "3.0.0"
-                if (compareVersionNumbers(androidPluginVersion, minimalVersion) < 0) {
-                    throw IllegalStateException("Kotlin: Unsupported version of com.android.tools.build:gradle plugin: version $minimalVersion or higher should be used with kotlin-android plugin")
+                if (compareVersionNumbers(androidPluginVersion, MINIMAL_SUPPORTED_AGP_VERSION) < 0) {
+                    throw IllegalStateException(
+                        "Kotlin: Unsupported version of com.android.tools.build:gradle plugin: " +
+                                "version $MINIMAL_SUPPORTED_AGP_VERSION or higher should be used with kotlin-android plugin"
+                    )
                 }
             }
 
@@ -812,7 +815,7 @@ abstract class AbstractAndroidProjectHandler(private val kotlinConfigurationTool
     protected abstract fun wireKotlinTasks(
         project: Project,
         compilation: KotlinJvmAndroidCompilation,
-        androidPlugin: BasePlugin<*>,
+        androidPlugin: BasePlugin,
         androidExt: BaseExtension,
         variantData: BaseVariant,
         javaTask: TaskProvider<out AbstractCompile>,
@@ -841,7 +844,7 @@ abstract class AbstractAndroidProjectHandler(private val kotlinConfigurationTool
 
         val plugin = androidPluginIds
             .asSequence()
-            .mapNotNull { project.plugins.findPlugin(it) as? BasePlugin<*> }
+            .mapNotNull { project.plugins.findPlugin(it) as? BasePlugin }
             .firstOrNull()
             ?: throw InvalidPluginException("'kotlin-android' expects one of the Android Gradle " +
                                                     "plugins to be applied to the project:\n\t" +
@@ -1035,7 +1038,7 @@ abstract class AbstractAndroidProjectHandler(private val kotlinConfigurationTool
         compilation: KotlinJvmAndroidCompilation,
         project: Project,
         androidExt: BaseExtension,
-        androidPlugin: BasePlugin<*>
+        androidPlugin: BasePlugin
     ) {
 
         getTestedVariantData(variantData)?.let { testedVariant ->

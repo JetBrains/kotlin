@@ -63,10 +63,10 @@ dependencies {
         exclude(group = "*")
     }
 
-    compileOnly("com.android.tools.build:gradle:3.4.0")
-    compileOnly("com.android.tools.build:gradle-api:3.4.0")
-    compileOnly("com.android.tools.build:builder:3.4.0")
-    compileOnly("com.android.tools.build:builder-model:3.4.0")
+    compileOnly("com.android.tools.build:gradle:3.6.4")
+    compileOnly("com.android.tools.build:gradle-api:3.6.4")
+    compileOnly("com.android.tools.build:builder:3.6.4")
+    compileOnly("com.android.tools.build:builder-model:3.6.4")
     compileOnly("org.codehaus.groovy:groovy-all:2.4.12")
     compileOnly(project(":kotlin-reflect"))
     compileOnly(intellijCore())
@@ -84,11 +84,6 @@ dependencies {
     embedded(commonDependency("com.google.code.gson:gson")) { isTransitive = false }
     embedded(commonDependency("com.google.guava:guava")) { isTransitive = false }
     embedded(commonDependency("org.jetbrains.teamcity:serviceMessages")) { isTransitive = false }
-
-    // com.android.tools.build:gradle has ~50 unneeded transitive dependencies
-    compileOnly("com.android.tools.build:gradle:3.0.0") { isTransitive = false }
-    compileOnly("com.android.tools.build:gradle-core:3.0.0") { isTransitive = false }
-    compileOnly("com.android.tools.build:builder-model:3.0.0") { isTransitive = false }
 
     if (!kotlinBuildProperties.isInJpsBuildIdeaSync) {
         "functionalTestImplementation"("com.android.tools.build:gradle:4.0.1") {
