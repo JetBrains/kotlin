@@ -896,9 +896,15 @@ func testWeakRefs0(frozen: Bool) throws {
             Holder.ref2 = obj2
         }
 
+// With aggressive GC, the objects referenced from the Holder are freed once
+// we left the autoreleasepool scope, before ValuesKt.gc().
+// TODO: This behaviour is possible for the regular GC too (but much less probable),
+// so we need to handle it somehow. E.g. by disabling GC at all during setting up the test.
+#if !AGGRESSIVE_GC
         try assertFalse(Holder.ref1 === nil)
         try assertFalse(Holder.ref2 === nil)
         try assertEquals(actual: Holder.deinitialized, expected: 0)
+#endif
 
         ValuesKt.gc()
 
@@ -942,8 +948,12 @@ class TestSharedRefs {
                 let ignore = SharedRefs() // Ensures that Kotlin runtime gets initialized.
             }
 
-            Closure.currentBlock!()
+            // Take the block from Closure to avoid races when block() execution triggers
+            // calling launchInNewThread on another thread (e.g. on the finalizer thread).
+            let block =  Closure.currentBlock!
             Closure.currentBlock = nil
+
+            block()
 
             return nil
         }, nil)
