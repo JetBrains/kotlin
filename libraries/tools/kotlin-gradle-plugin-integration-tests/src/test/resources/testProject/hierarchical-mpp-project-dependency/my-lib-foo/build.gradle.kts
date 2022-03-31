@@ -95,6 +95,6 @@ kotlin {
 
 publishing {
     repositories {
-        maven("$rootDir/../repo")
+        maven("<localRepo>")
     }
 }

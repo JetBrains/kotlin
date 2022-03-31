@@ -1,5 +1,5 @@
 plugins {
-    kotlin("multiplatform").version("<pluginMarkerVersion>")
+    kotlin("multiplatform")
     `maven-publish`
 }
 
@@ -52,6 +52,6 @@ kotlin {
 
 publishing {
     repositories {
-        maven("../repo")
+        maven("<localRepo>")
     }
 }

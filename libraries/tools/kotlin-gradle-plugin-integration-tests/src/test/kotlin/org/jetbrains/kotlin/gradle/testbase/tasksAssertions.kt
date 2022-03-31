@@ -21,6 +21,13 @@ fun BuildResult.assertTasksExecuted(vararg tasks: String) {
 }
 
 /**
+ * Asserts given [tasks] have 'SUCCESS' execution state.
+ */
+fun BuildResult.assertTasksExecuted(tasks: Collection<String>) {
+    assertTasksExecuted(*tasks.toTypedArray())
+}
+
+/**
  * Asserts given [tasks] have 'FAILED' execution state.
  */
 fun BuildResult.assertTasksFailed(vararg tasks: String) {
