@@ -5441,6 +5441,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
             }
 
             @Test
+            @TestMetadata("breakContinueInTryFinallyInLoop.kt")
+            public void testBreakContinueInTryFinallyInLoop() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/controlFlowAnalysis/breakContinueInTryFinallyInLoop.kt");
+            }
+
+            @Test
             @TestMetadata("breakInsideLocal.kt")
             public void testBreakInsideLocal() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/controlFlowAnalysis/breakInsideLocal.kt");

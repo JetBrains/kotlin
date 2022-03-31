@@ -16,9 +16,6 @@ abstract class PathAwareControlFlowInfo<P : PathAwareControlFlowInfo<P, S>, S : 
     internal val infoAtNormalPath: S
         get() = map.getValue(NormalPath)
 
-    private val hasNormalPath: Boolean
-        get() = map.containsKey(NormalPath)
-
     fun applyLabel(node: CFGNode<*>, label: EdgeLabel): P {
         if (label.isNormal) {
             // Special case: when we exit the try expression, null label means a normal path.
@@ -26,7 +23,8 @@ abstract class PathAwareControlFlowInfo<P : PathAwareControlFlowInfo<P, S>, S : 
             // One day, if we allow multiple edges between nodes with different labels, e.g., labeling all paths in try/catch/finally,
             // instead of this kind of special handling, proxy enter/exit nodes per label are preferred.
             if (node is TryExpressionExitNode) {
-                return if (hasNormalPath) {
+                val infoAtNormalPath = map[NormalPath]
+                return if (infoAtNormalPath != null) {
                     constructor(persistentMapOf(NormalPath to infoAtNormalPath))
                 } else {
                     /* This means no info for normal path. */

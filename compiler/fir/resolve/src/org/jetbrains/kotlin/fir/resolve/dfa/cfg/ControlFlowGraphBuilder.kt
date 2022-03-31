@@ -640,10 +640,10 @@ class ControlFlowGraphBuilder {
             else -> throw IllegalArgumentException("Unknown jump type: ${jump.render()}")
         }
 
-        val labelForFinallyBLock = if (jump is FirReturnExpression) {
-            ReturnPath(jump.target.labeledElement.symbol)
-        } else {
-            NormalPath
+        val labelForFinallyBLock = when (jump) {
+            is FirReturnExpression -> ReturnPath(jump.target.labeledElement.symbol)
+            is FirLoopJump -> LoopPath(jump)
+            else -> NormalPath
         }
 
         addNodeWithJump(
