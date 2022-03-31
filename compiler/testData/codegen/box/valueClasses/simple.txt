@@ -1,0 +1,181 @@
+@kotlin.jvm.JvmInline
+@kotlin.Metadata
+public final class A {
+    // source: 'simple.kt'
+    private final @org.jetbrains.annotations.NotNull field x: java.util.List
+    private synthetic method <init>(p0: java.util.List): void
+    public synthetic final static method box-impl(p0: java.util.List): A
+    public static @org.jetbrains.annotations.NotNull method constructor-impl(@org.jetbrains.annotations.NotNull p0: java.util.List): java.util.List
+    public method equals(p0: java.lang.Object): boolean
+    public static method equals-impl(p0: java.util.List, p1: java.lang.Object): boolean
+    public final static method equals-impl0(p0: java.util.List, p1: java.util.List): boolean
+    public final @org.jetbrains.annotations.NotNull method getX(): java.util.List
+    public method hashCode(): int
+    public static method hashCode-impl(p0: java.util.List): int
+    public method toString(): java.lang.String
+    public static method toString-impl(p0: java.util.List): java.lang.String
+    public synthetic final method unbox-impl(): java.util.List
+}
+
+@kotlin.jvm.JvmInline
+@kotlin.Metadata
+public final class B {
+    // source: 'simple.kt'
+    private final field x: int
+    private synthetic method <init>(p0: int): void
+    public synthetic final static method box-impl(p0: int): B
+    public static method constructor-impl(p0: int): int
+    public method equals(p0: java.lang.Object): boolean
+    public static method equals-impl(p0: int, p1: java.lang.Object): boolean
+    public final static method equals-impl0(p0: int, p1: int): boolean
+    public final method getX-pVg5ArA(): int
+    public method hashCode(): int
+    public static method hashCode-impl(p0: int): int
+    public method toString(): java.lang.String
+    public static method toString-impl(p0: int): java.lang.String
+    public synthetic final method unbox-impl(): int
+}
+
+@kotlin.jvm.JvmInline
+@kotlin.Metadata
+public final class C {
+    // source: 'simple.kt'
+    private field x: int
+    private field y: int
+    private @org.jetbrains.annotations.NotNull field z: java.lang.String
+    private synthetic method <init>(p0: int, p1: int, p2: java.lang.String): void
+    public synthetic final static method box-impl(p0: int, p1: int, p2: java.lang.String): C
+    public final static method constructor-impl(p0: int, p1: int, @org.jetbrains.annotations.NotNull p2: java.lang.String): void
+    public static method equals-impl(p0: int, p1: int, p2: java.lang.String, p3: java.lang.Object): boolean
+    public final static method equals-impl0(p0: int, p1: int, p2: java.lang.String, p3: int, p4: int, p5: java.lang.String): boolean
+    public final method getX(): int
+    public final method getY(): int
+    public final @org.jetbrains.annotations.NotNull method getZ(): java.lang.String
+    public static method hashCode-impl(p0: int, p1: int, p2: java.lang.String): int
+    public static method toString-impl(p0: int, p1: int, p2: java.lang.String): java.lang.String
+    public synthetic final method unbox-impl0(): int
+    public synthetic final method unbox-impl1(): int
+    public synthetic final method unbox-impl2(): java.lang.String
+}
+
+@kotlin.jvm.JvmInline
+@kotlin.Metadata
+public final class D {
+    // source: 'simple.kt'
+    private field x$x: int
+    private field x$y: int
+    private @org.jetbrains.annotations.NotNull field x$z: java.lang.String
+    private synthetic method <init>(p0: int, p1: int, p2: java.lang.String): void
+    public synthetic final static method box-impl(p0: int, p1: int, p2: java.lang.String): D
+    public final static method constructor-impl(p0: int, p1: int, @org.jetbrains.annotations.NotNull p2: java.lang.String): void
+    public final static @org.jetbrains.annotations.NotNull method constructor-impl(p0: int, p1: int, p2: int): D
+    public static method equals-impl(p0: int, p1: int, p2: java.lang.String, p3: java.lang.Object): boolean
+    public final static method equals-impl0(p0: int, p1: int, p2: java.lang.String, p3: int, p4: int, p5: java.lang.String): boolean
+    public final method getX$x(): int
+    public final method getX$y(): int
+    public final @org.jetbrains.annotations.NotNull method getX$z(): java.lang.String
+    public final @org.jetbrains.annotations.NotNull method getX(): C
+    public static method hashCode-impl(p0: int, p1: int, p2: java.lang.String): int
+    public static method toString-impl(p0: int, p1: int, p2: java.lang.String): java.lang.String
+    public synthetic final method unbox-impl0(): int
+    public synthetic final method unbox-impl1(): int
+    public synthetic final method unbox-impl2(): java.lang.String
+}
+
+@kotlin.jvm.JvmInline
+@kotlin.Metadata
+public final class E {
+    // source: 'simple.kt'
+    private field x$x$x: int
+    private field x$x$y: int
+    private @org.jetbrains.annotations.NotNull field x$x$z: java.lang.String
+    private synthetic method <init>(p0: int, p1: int, p2: java.lang.String): void
+    public synthetic final static method box-impl(p0: int, p1: int, p2: java.lang.String): E
+    public final static method constructor-impl(p0: int, p1: int, @org.jetbrains.annotations.NotNull p2: java.lang.String): void
+    public static method equals-impl(p0: int, p1: int, p2: java.lang.String, p3: java.lang.Object): boolean
+    public final static method equals-impl0(p0: int, p1: int, p2: java.lang.String, p3: int, p4: int, p5: java.lang.String): boolean
+    public final method getX$x$x(): int
+    public final method getX$x$y(): int
+    public final @org.jetbrains.annotations.NotNull method getX$x$z(): java.lang.String
+    public final @org.jetbrains.annotations.NotNull method getX$x(): C
+    public final @org.jetbrains.annotations.NotNull method getX(): D
+    public static method hashCode-impl(p0: int, p1: int, p2: java.lang.String): int
+    public static method toString-impl(p0: int, p1: int, p2: java.lang.String): java.lang.String
+    public synthetic final method unbox-impl0(): int
+    public synthetic final method unbox-impl1(): int
+    public synthetic final method unbox-impl2(): java.lang.String
+}
+
+@kotlin.Metadata
+public final class NotInlined {
+    // source: 'simple.kt'
+    private @org.jetbrains.annotations.NotNull field l$t: java.util.List
+    private field l$y: int
+    private field l$z$x$x$x$1: int
+    private field l$z$x$x$x: int
+    private field l$z$x$x$y: int
+    private @org.jetbrains.annotations.NotNull field l$z$x$x$z: java.lang.String
+    private field y: int
+    private method <init>(p0: int, p1: int, p2: int, p3: int, p4: java.lang.String, p5: java.util.List, p6: int): void
+    public synthetic method <init>(p0: int, p1: int, p2: int, p3: int, p4: java.lang.String, p5: java.util.List, p6: int, p7: kotlin.jvm.internal.DefaultConstructorMarker): void
+    public final @org.jetbrains.annotations.NotNull method getL$t(): java.util.List
+    public final method getL$y(): int
+    public final method getL$z$x$x$x(): int
+    public final method getL$z$x$x$y(): int
+    public final @org.jetbrains.annotations.NotNull method getL$z$x$x$z(): java.lang.String
+    public final @org.jetbrains.annotations.NotNull method getL$z$x$x(): C
+    public final @org.jetbrains.annotations.NotNull method getL$z$x(): D
+    public final @org.jetbrains.annotations.NotNull method getL$z(): E
+    public final @org.jetbrains.annotations.NotNull method getL(): R
+    public final method getY(): int
+    public final method setL-Y_3tvh0(p0: int, p1: int, p2: int, p3: int, @org.jetbrains.annotations.NotNull p4: java.lang.String, @org.jetbrains.annotations.NotNull p5: java.util.List): void
+    public final method setY(p0: int): void
+    public @org.jetbrains.annotations.NotNull method toString(): java.lang.String
+    public final method trySetter(): void
+}
+
+@kotlin.jvm.JvmInline
+@kotlin.Metadata
+public final class R {
+    // source: 'simple.kt'
+    private @org.jetbrains.annotations.NotNull field t: java.util.List
+    private field y: int
+    private field z$x$x$x$1: int
+    private field z$x$x$x: int
+    private field z$x$x$y: int
+    private @org.jetbrains.annotations.NotNull field z$x$x$z: java.lang.String
+    private synthetic method <init>(p0: int, p1: int, p2: int, p3: int, p4: java.lang.String, p5: java.util.List): void
+    public synthetic final static method box-impl(p0: int, p1: int, p2: int, p3: int, p4: java.lang.String, p5: java.util.List): R
+    public final static method constructor-impl(p0: int, p1: int, p2: int, p3: int, @org.jetbrains.annotations.NotNull p4: java.lang.String, @org.jetbrains.annotations.NotNull p5: java.util.List): void
+    public static method equals-impl(p0: int, p1: int, p2: int, p3: int, p4: java.lang.String, p5: java.util.List, p6: java.lang.Object): boolean
+    public final static method equals-impl0(p0: int, p1: int, p2: int, p3: int, p4: java.lang.String, p5: java.util.List, p6: int, p7: int, p8: int, p9: int, p10: java.lang.String, p11: java.util.List): boolean
+    public final @org.jetbrains.annotations.NotNull method getT(): java.util.List
+    public final method getY(): int
+    public final method getZ$x$x$x(): int
+    public final method getZ$x$x$y(): int
+    public final @org.jetbrains.annotations.NotNull method getZ$x$x$z(): java.lang.String
+    public final @org.jetbrains.annotations.NotNull method getZ$x$x(): C
+    public final @org.jetbrains.annotations.NotNull method getZ$x(): D
+    public final @org.jetbrains.annotations.NotNull method getZ(): E
+    public static method hashCode-impl(p0: int, p1: int, p2: int, p3: int, p4: java.lang.String, p5: java.util.List): int
+    public static method toString-impl(p0: int, p1: int, p2: int, p3: int, p4: java.lang.String, p5: java.util.List): java.lang.String
+    public synthetic final method unbox-impl0(): int
+    public synthetic final method unbox-impl1(): int
+    public synthetic final method unbox-impl2(): int
+    public synthetic final method unbox-impl3(): int
+    public synthetic final method unbox-impl4(): java.lang.String
+    public synthetic final method unbox-impl5(): java.util.List
+}
+
+@kotlin.Metadata
+public final class SimpleKt {
+    // source: 'simple.kt'
+    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
+    public final static method ekeke(@org.jetbrains.annotations.NotNull p0: NotInlined): void
+    public final static method f-sUp7gFk-Y_3tvh0(p0: int, p1: int, p2: int, p3: int, @org.jetbrains.annotations.NotNull p4: java.lang.String, @org.jetbrains.annotations.NotNull p5: java.util.List): void
+    public final static method g-sUp7gFk-ZTiL54U(p0: int, p1: int, @org.jetbrains.annotations.NotNull p2: java.lang.String): void
+    public final static method h-sUp7gFk-Y_3tvh0(p0: int, p1: int, p2: int, p3: int, @org.jetbrains.annotations.NotNull p4: java.lang.String, @org.jetbrains.annotations.NotNull p5: java.util.List): void
+    public final static method h1(): void
+    public final static @org.jetbrains.annotations.NotNull method inlined-OsBMiQA(p0: int, p1: int, p2: int): D
+    public final static @org.jetbrains.annotations.NotNull method notInlined-OsBMiQA(p0: int, p1: int, p2: int): D
+}

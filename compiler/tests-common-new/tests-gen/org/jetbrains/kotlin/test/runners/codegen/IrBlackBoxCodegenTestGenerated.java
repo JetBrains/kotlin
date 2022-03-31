@@ -50194,6 +50194,12 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
         public void testEquality() throws Exception {
             runTest("compiler/testData/codegen/box/valueClasses/equality.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
         }
+
+        @Test
+        @TestMetadata("simple.kt")
+        public void testSimple() throws Exception {
+            runTest("compiler/testData/codegen/box/valueClasses/simple.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+        }
     }
 
     @Nested
