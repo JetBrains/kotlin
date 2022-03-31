@@ -91,7 +91,7 @@ typename Traits::ObjectFactory::FinalizerQueue Sweep(typename Traits::ObjectFact
             ++it;
             continue;
         }
-        auto* objHeader = it->IsArray() ? it->GetArrayHeader()->obj() : it->GetObjHeader();
+        auto* objHeader = it->GetObjHeader();
         if (HasFinalizers(objHeader)) {
             objectFactoryIter.MoveAndAdvance(finalizerQueue, it);
         } else {

@@ -33,7 +33,7 @@ public:
     Impl(GC& gc, mm::ThreadData& threadData) noexcept :
         gcScheduler_(gc.impl_->gcScheduler().NewThreadData()),
         gc_(gc.impl_->gc(), threadData, gcScheduler_),
-        objectFactoryThreadQueue_(gc.impl_->objectFactory(), gc_) {}
+        objectFactoryThreadQueue_(gc.impl_->objectFactory(), gc_.CreateAllocator()) {}
 
     GCSchedulerThreadData& gcScheduler() noexcept { return gcScheduler_; }
     GCImpl::ThreadData& gc() noexcept { return gc_; }

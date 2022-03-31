@@ -427,21 +427,20 @@ private:
 
 } // namespace internal
 
-template <typename GC>
+template <typename Traits>
 class ObjectFactory : private Pinned {
-    using GCObjectData = typename GC::ObjectData;
-    using GCThreadData = typename GC::ThreadData;
-    using Allocator = typename GC::Allocator;
+    using ObjectData = typename Traits::ObjectData;
+    using Allocator = typename Traits::Allocator;
 
     struct HeapObjHeader {
-        GCObjectData gcData;
+        ObjectData gcData;
         alignas(kObjectAlignment) ObjHeader object;
     };
 
     // Needs to be kept compatible with `HeapObjHeader` just like `ArrayHeader` is compatible
     // with `ObjHeader`: the former can always be casted to the other.
     struct HeapArrayHeader {
-        GCObjectData gcData;
+        ObjectData gcData;
         alignas(kObjectAlignment) ArrayHeader array;
     };
 
@@ -470,29 +469,14 @@ public:
 
         NodeRef* operator->() noexcept { return this; }
 
-        GCObjectData& GCObjectData() noexcept {
+        ObjectData& ObjectData() noexcept {
             // `HeapArrayHeader` and `HeapObjHeader` are kept compatible, so the former can
             // be always casted to the other.
             return static_cast<HeapObjHeader*>(node_.Data())->gcData;
         }
 
-        bool IsArray() const noexcept {
-            // `HeapArrayHeader` and `HeapObjHeader` are kept compatible, so the former can
-            // be always casted to the other.
-            auto* object = &static_cast<HeapObjHeader*>(node_.Data())->object;
-            return object->type_info()->IsArray();
-        }
-
         ObjHeader* GetObjHeader() noexcept {
-            auto* object = &static_cast<HeapObjHeader*>(node_.Data())->object;
-            RuntimeAssert(!object->type_info()->IsArray(), "Must not be an array");
-            return object;
-        }
-
-        ArrayHeader* GetArrayHeader() noexcept {
-            auto* array = &static_cast<HeapArrayHeader*>(node_.Data())->array;
-            RuntimeAssert(array->type_info()->IsArray(), "Must be an array");
-            return array;
+            return &static_cast<HeapObjHeader*>(node_.Data())->object;
         }
 
         bool operator==(const NodeRef& rhs) const noexcept { return &node_ == &rhs.node_; }
@@ -526,7 +510,7 @@ public:
             typename Storage::Producer::Iterator iterator_;
         };
 
-        ThreadQueue(ObjectFactory& owner, GCThreadData& gc) noexcept : producer_(owner.storage_, gc.CreateAllocator()) {}
+        ThreadQueue(ObjectFactory& owner, Allocator allocator) noexcept : producer_(owner.storage_, std::move(allocator)) {}
 
         static size_t ObjectAllocatedSize(const TypeInfo* typeInfo) noexcept {
             RuntimeAssert(!typeInfo->IsArray(), "Must not be an array");
@@ -648,7 +632,7 @@ public:
         // TODO: Consider running it in the destructor instead.
         void Finalize() noexcept {
             for (auto node : Iterable(*this)) {
-                RunFinalizers(node->IsArray() ? node->GetArrayHeader()->obj() : node->GetObjHeader());
+                RunFinalizers(node->GetObjHeader());
             }
         }
 

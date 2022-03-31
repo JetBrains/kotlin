@@ -93,6 +93,7 @@ struct ObjHeader {
   }
 
   // Unsafe cast to ArrayHeader. Use carefully!
+  // TODO: RuntimeAssert on type_info()->IsArray()?
   ArrayHeader* array() { return reinterpret_cast<ArrayHeader*>(this); }
   const ArrayHeader* array() const { return reinterpret_cast<const ArrayHeader*>(this); }
 
