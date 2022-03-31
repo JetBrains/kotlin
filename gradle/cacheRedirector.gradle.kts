@@ -215,6 +215,12 @@ val checkRepositories: TaskProvider<Task> = tasks.register("checkRepositories") 
     }
 }
 
+fun Project.overrideNativeCompilerDownloadUrl() {
+    logger.info("Redirecting Kotlin/Native compiler download url")
+    extensions.extraProperties["kotlin.native.distribution.baseDownloadUrl"] =
+        "https://cache-redirector.jetbrains.com/download.jetbrains.com/kotlin/native/builds"
+}
+
 tasks
     .matching {
         it.name == "checkBuild"
@@ -226,4 +232,5 @@ tasks
 if (cacheRedirectorEnabled()) {
     logger.info("Redirecting repositories for $displayName")
     repositories.redirect()
+    overrideNativeCompilerDownloadUrl()
 }
