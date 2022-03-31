@@ -16,22 +16,104 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 
-public class KotlinStaticDeclarationProvider(
-    scope: GlobalSearchScope,
-    ktFiles: Collection<KtFile>
+public class KotlinStaticDeclarationIndex {
+    internal val facadeFileMap: MutableMap<FqName, MutableSet<KtFile>> = mutableMapOf()
+    internal val classMap: MutableMap<FqName, MutableSet<KtClassOrObject>> = mutableMapOf()
+    internal val typeAliasMap: MutableMap<FqName, MutableSet<KtTypeAlias>> = mutableMapOf()
+    internal val topLevelFunctionMap: MutableMap<FqName, MutableSet<KtNamedFunction>> = mutableMapOf()
+    internal val topLevelPropertyMap: MutableMap<FqName, MutableSet<KtProperty>> = mutableMapOf()
+}
+
+public class KotlinStaticDeclarationProvider internal constructor(
+    private val index: KotlinStaticDeclarationIndex,
+    private val scope: GlobalSearchScope,
 ) : KotlinDeclarationProvider() {
 
-    private val index = Index()
+    private val KtElement.inScope: Boolean
+        get() = containingKtFile.virtualFile in scope
 
-    private class Index {
-        val facadeFileMap: MutableMap<FqName, MutableSet<KtFile>> = mutableMapOf()
-        val classMap: MutableMap<FqName, MutableSet<KtClassOrObject>> = mutableMapOf()
-        val typeAliasMap: MutableMap<FqName, MutableSet<KtTypeAlias>> = mutableMapOf()
-        val topLevelFunctionMap: MutableMap<FqName, MutableSet<KtNamedFunction>> = mutableMapOf()
-        val topLevelPropertyMap: MutableMap<FqName, MutableSet<KtProperty>> = mutableMapOf()
+    override fun getClassesByClassId(classId: ClassId): Collection<KtClassOrObject> =
+        index.classMap[classId.packageFqName]
+            ?.filter { ktClassOrObject ->
+                ktClassOrObject.getClassId() == classId && ktClassOrObject.inScope
+            }
+            ?: emptyList()
+
+    override fun getTypeAliasesByClassId(classId: ClassId): Collection<KtTypeAlias> =
+        index.typeAliasMap[classId.packageFqName]
+            ?.filter { ktTypeAlias ->
+                ktTypeAlias.getClassId() == classId && ktTypeAlias.inScope
+            }
+            ?: emptyList()
+
+    override fun getClassNamesInPackage(packageFqName: FqName): Set<Name> =
+        index.classMap[packageFqName]
+            ?.filter { ktClassOrObject ->
+                ktClassOrObject.inScope
+            }
+            ?.mapNotNullTo(mutableSetOf()) { it.nameAsName }
+            ?: emptySet()
+
+    override fun getTypeAliasNamesInPackage(packageFqName: FqName): Set<Name> =
+        index.typeAliasMap[packageFqName]
+            ?.filter { ktTypeAlias ->
+                ktTypeAlias.inScope
+            }
+            ?.mapNotNullTo(mutableSetOf()) { it.nameAsName }
+            ?: emptySet()
+
+    override fun getPropertyNamesInPackage(packageFqName: FqName): Set<Name> =
+        index.topLevelPropertyMap[packageFqName]
+            ?.filter { ktProperty ->
+                ktProperty.inScope
+            }
+            ?.mapNotNullTo(mutableSetOf()) { it.nameAsName }
+            ?: emptySet()
+
+    override fun getFunctionsNamesInPackage(packageFqName: FqName): Set<Name> =
+        index.topLevelFunctionMap[packageFqName]
+            ?.filter { ktNamedFunction ->
+                ktNamedFunction.inScope
+            }
+            ?.mapNotNullTo(mutableSetOf()) { it.nameAsName }
+            ?: emptySet()
+
+    override fun getFacadeFilesInPackage(packageFqName: FqName): Collection<KtFile> =
+        index.facadeFileMap[packageFqName]
+            ?.filter { ktFile ->
+                ktFile.virtualFile in scope
+            }
+            ?: emptyList()
+
+    override fun findFilesForFacade(facadeFqName: FqName): Collection<KtFile> {
+        if (facadeFqName.shortNameOrSpecial().isSpecial) return emptyList()
+        return getFacadeFilesInPackage(facadeFqName.parent()) //TODO Not work correctly for classes with JvmPackageName
+            .filter { it.javaFileFacadeFqName == facadeFqName }
     }
 
-    private class KtDeclarationRecorder(private val index: Index) : KtVisitorVoid() {
+    override fun getTopLevelProperties(callableId: CallableId): Collection<KtProperty> =
+        index.topLevelPropertyMap[callableId.packageName]
+            ?.filter { ktProperty ->
+                ktProperty.nameAsName == callableId.callableName && ktProperty.inScope
+            }
+            ?: emptyList()
+
+    override fun getTopLevelFunctions(callableId: CallableId): Collection<KtNamedFunction> =
+        index.topLevelFunctionMap[callableId.packageName]
+            ?.filter { ktNamedFunction ->
+                ktNamedFunction.nameAsName == callableId.callableName && ktNamedFunction.inScope
+            }
+            ?: emptyList()
+
+}
+
+public class KotlinStaticDeclarationProviderFactory(
+    files: Collection<KtFile>
+) : KotlinDeclarationProviderFactory() {
+
+    private val index = KotlinStaticDeclarationIndex()
+
+    private class KtDeclarationRecorder(private val index: KotlinStaticDeclarationIndex) : KtVisitorVoid() {
 
         override fun visitElement(element: PsiElement) {
             element.acceptChildren(this)
@@ -87,69 +169,12 @@ public class KotlinStaticDeclarationProvider(
 
     init {
         val recorder = KtDeclarationRecorder(index)
-        ktFiles
-            .filter {
-                scope.contains(it.virtualFile)
-            }
-            .forEach {
-                it.accept(recorder)
-            }
+        files.forEach {
+            it.accept(recorder)
+        }
     }
 
-    override fun getClassesByClassId(classId: ClassId): Collection<KtClassOrObject> =
-        index.classMap[classId.packageFqName]
-            ?.filter { it.getClassId() == classId }
-            ?: emptyList()
-
-    override fun getTypeAliasesByClassId(classId: ClassId): Collection<KtTypeAlias> =
-        index.typeAliasMap[classId.packageFqName]
-            ?.filter { it.getClassId() == classId }
-            ?: emptyList()
-
-    override fun getClassNamesInPackage(packageFqName: FqName): Set<Name> =
-        index.classMap[packageFqName]
-            ?.mapNotNullTo(mutableSetOf()) { it.nameAsName }
-            ?: emptySet()
-
-    override fun getTypeAliasNamesInPackage(packageFqName: FqName): Set<Name> =
-        index.typeAliasMap[packageFqName]
-            ?.mapNotNullTo(mutableSetOf()) { it.nameAsName }
-            ?: emptySet()
-
-    override fun getPropertyNamesInPackage(packageFqName: FqName): Set<Name> =
-        index.topLevelPropertyMap[packageFqName]
-            ?.mapNotNullTo(mutableSetOf()) { it.nameAsName }
-            ?: emptySet()
-
-    override fun getFunctionsNamesInPackage(packageFqName: FqName): Set<Name> =
-        index.topLevelFunctionMap[packageFqName]
-            ?.mapNotNullTo(mutableSetOf()) { it.nameAsName }
-            ?: emptySet()
-
-    override fun getFacadeFilesInPackage(packageFqName: FqName): Collection<KtFile> =
-        index.facadeFileMap[packageFqName]
-            ?: emptyList()
-
-    override fun findFilesForFacade(facadeFqName: FqName): Collection<KtFile> {
-        if (facadeFqName.shortNameOrSpecial().isSpecial) return emptyList()
-        return getFacadeFilesInPackage(facadeFqName.parent()) //TODO Not work correctly for classes with JvmPackageName
-            .filter { it.javaFileFacadeFqName == facadeFqName }
-    }
-
-    override fun getTopLevelProperties(callableId: CallableId): Collection<KtProperty> =
-        index.topLevelPropertyMap[callableId.packageName]
-            ?.filter { it.nameAsName == callableId.callableName }
-            ?: emptyList()
-
-    override fun getTopLevelFunctions(callableId: CallableId): Collection<KtNamedFunction> =
-        index.topLevelFunctionMap[callableId.packageName]
-            ?.filter { it.nameAsName == callableId.callableName }
-            ?: emptyList()
-
-}
-
-public class KotlinStaticDeclarationProviderFactory(private val files: Collection<KtFile>) : KotlinDeclarationProviderFactory() {
     override fun createDeclarationProvider(searchScope: GlobalSearchScope): KotlinDeclarationProvider {
-        return KotlinStaticDeclarationProvider(searchScope, files)
+        return KotlinStaticDeclarationProvider(index, searchScope)
     }
 }
