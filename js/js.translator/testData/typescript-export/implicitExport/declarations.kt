@@ -70,7 +70,7 @@ class G : NonExportedGenericInterface<NonExportedType>
 class H : NonExportedGenericType<NonExportedType>(NonExportedType(42))
 
 @JsExport
-fun foo(a: Int): kotlin.js.Promise<Int> {
+fun baz(a: Int): kotlin.js.Promise<Int> {
     return kotlin.js.Promise<Int> { res, rej -> res(a) }
 }
 
