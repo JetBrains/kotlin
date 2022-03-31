@@ -113,6 +113,8 @@ internal open class FirElementsRecorder : FirVisitor<Unit, MutableMap<KtElement,
                         // For secondary constructors without explicit delegated constructor call, the PSI tree always create an empty
                         // KtConstructorDelegationCall. In this case, the source in FIR has this fake source kind.
                         it.kind == KtFakeSourceElementKind.ImplicitConstructor ||
+                        it.kind == KtFakeSourceElementKind.DesugaredPrefixNameReference ||
+                        it.kind == KtFakeSourceElementKind.DesugaredPostfixNameReference ||
                         it.isSourceForCompoundAccess(element)
             }.psi as? KtElement
             ?: return
