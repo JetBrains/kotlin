@@ -447,6 +447,7 @@ object FirExpectActualResolver {
         actualSession: FirSession
     ): Boolean {
         if (expectedType == null) return actualType == null
+        if (actualType is ConeDynamicType) return true
         if (actualType == null) return false
 
         val typeCheckerContext = ConeInferenceContextForExpectActual(expectSession, actualSession).newTypeCheckerState(
