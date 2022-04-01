@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.ir.types.isNullableAny
 import org.jetbrains.kotlin.ir.util.isEffectivelyExternal
 import org.jetbrains.kotlin.ir.util.isTopLevelDeclaration
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.util.OperatorNameConventions
 
 fun TODO(element: IrElement): Nothing = TODO(element::class.java.simpleName + " is not supported yet here")
 
@@ -58,9 +59,10 @@ fun IrFunction.hasStableJsName(context: JsIrBackendContext): Boolean {
     return (isEffectivelyExternal() || getJsName() != null || isExported(context)) && namedOrMissingGetter
 }
 
-fun IrFunction.isEqualsInheritedFromAny() =
-    name == Name.identifier("equals") &&
+fun IrFunction.isEqualsInheritedFromAny(): Boolean =
+    name == OperatorNameConventions.EQUALS &&
             dispatchReceiverParameter != null &&
+            extensionReceiverParameter == null &&
             valueParameters.size == 1 &&
             valueParameters[0].type.isNullableAny()
 
