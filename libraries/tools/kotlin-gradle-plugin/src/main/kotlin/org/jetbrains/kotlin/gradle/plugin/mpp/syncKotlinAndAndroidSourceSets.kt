@@ -28,7 +28,9 @@ internal fun syncKotlinAndAndroidSourceSets(target: KotlinAndroidTarget) {
 
         createDefaultDependsOnEdges(target, kotlinSourceSet, androidSourceSet)
         syncKotlinAndAndroidSourceDirs(target, kotlinSourceSet, androidSourceSet)
-        syncKotlinAndAndroidResources(target, kotlinSourceSet, androidSourceSet)
+        (setOf(kotlinSourceSet) + kotlinSourceSet.dependsOn).forEach {
+            syncKotlinAndAndroidResources(target, it, androidSourceSet)
+        }
 
         ifKaptEnabled(project) {
             Kapt3GradleSubplugin.createAptConfigurationIfNeeded(project, androidSourceSet.name)
