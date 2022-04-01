@@ -8,12 +8,11 @@ import org.jetbrains.benchmarksLauncher.*
 import kotlinx.cli.*
 
 class StartupLauncher : Launcher() {
-    override val benchmarks = BenchmarksCollection(
-      mutableMapOf(
-          "Singleton.initialize" to BenchmarkEntryManual(::singletonInitialize),
-          "Singleton.initializeNested" to BenchmarkEntryManual(::singletonInitializeNested),
-      )
+    override val baseBenchmarksSet: MutableMap<String, AbstractBenchmarkEntry> = mutableMapOf(
+            "Singleton.initialize" to BenchmarkEntryManual(::singletonInitialize),
+            "Singleton.initializeNested" to BenchmarkEntryManual(::singletonInitializeNested),
     )
+
 }
 
 fun main(args: Array<String>) {

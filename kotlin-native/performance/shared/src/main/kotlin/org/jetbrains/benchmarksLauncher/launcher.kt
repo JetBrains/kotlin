@@ -26,7 +26,9 @@ data class RecordTimeMeasurement(
     val durationNs: Double)
 
 abstract class Launcher {
-    abstract val benchmarks: BenchmarksCollection
+    abstract val baseBenchmarksSet: MutableMap<String, AbstractBenchmarkEntry>
+    open val extendedBenchmarksSet: MutableMap<String, AbstractBenchmarkEntry> = mutableMapOf()
+    val benchmarks: BenchmarksCollection by lazy { BenchmarksCollection((baseBenchmarksSet + extendedBenchmarksSet).toMutableMap()) }
 
     fun add(name: String, benchmark: AbstractBenchmarkEntry) {
         benchmarks[name] = benchmark
@@ -140,8 +142,9 @@ abstract class Launcher {
         return benchmarkResults
     }
 
-    fun benchmarksListAction() {
-        benchmarks.keys.forEach {
+    fun benchmarksListAction(baseOnly: Boolean) {
+        val benchmarksNames = if (baseOnly) baseBenchmarksSet.keys else benchmarks.keys
+        benchmarksNames.forEach {
             println(it)
         }
     }
@@ -165,16 +168,22 @@ class BaseBenchmarkArguments(argParser: ArgParser): BenchmarkArguments(argParser
 }
 
 object BenchmarksRunner {
-    fun parse(args: Array<String>, benchmarksListAction: ()->Unit): BenchmarkArguments? {
+    fun parse(args: Array<String>, benchmarksListAction: (Boolean)->Unit): BenchmarkArguments? {
         class List: Subcommand("list", "Show list of benchmarks") {
             override fun execute() {
-                benchmarksListAction()
+                benchmarksListAction(false)
+            }
+        }
+
+        class BaseBenchmarksList: Subcommand("baseOnlyList", "Show list of base benchmarks") {
+            override fun execute() {
+                benchmarksListAction(true)
             }
         }
 
         // Parse args.
         val argParser = ArgParser("benchmark")
-        argParser.subcommands(List())
+        argParser.subcommands(List(), BaseBenchmarksList())
         val argumentsValues = BaseBenchmarkArguments(argParser)
         return if (argParser.parse(args).commandName == "benchmark") argumentsValues else null
     }
@@ -187,9 +196,9 @@ object BenchmarksRunner {
 
     fun runBenchmarks(args: Array<String>,
                       run: (parser: BenchmarkArguments) -> List<BenchmarkResult>,
-                      parseArgs: (args: Array<String>, benchmarksListAction: ()->Unit) -> BenchmarkArguments? = this::parse,
+                      parseArgs: (args: Array<String>, benchmarksListAction: (Boolean)->Unit) -> BenchmarkArguments? = this::parse,
                       collect: (results: List<BenchmarkResult>, arguments: BenchmarkArguments) -> Unit = this::collect,
-                      benchmarksListAction: ()->Unit) {
+                      benchmarksListAction: (Boolean)->Unit) {
         val arguments = parseArgs(args, benchmarksListAction)
         arguments?.let {
             val results = run(arguments)
