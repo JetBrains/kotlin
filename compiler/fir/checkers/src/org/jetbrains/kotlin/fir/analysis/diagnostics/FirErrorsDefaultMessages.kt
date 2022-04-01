@@ -1734,7 +1734,7 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         )
         map.put(
             CONFUSING_BRANCH_CONDITION,
-            "The logical expressions may be understood ambiguously in when with subject branches. Please wrap it with parenthesis"
+            "The logical expressions may be understood ambiguously in when with subject branches. Please wrap it with parentheses"
         )
 
         // Context tracking
