@@ -514,6 +514,7 @@ targetList.forEach { targetName ->
             originalKlib = project.buildDir.resolve("${targetName}Stdlib")
             klibUniqName = "stdlib"
             cacheRoot = project.buildDir.resolve("cache/$targetName").absolutePath
+            makePerFileCache = true
 
             dependsOn("${targetName}Stdlib")
             dependsOn(":kotlin-native:${targetName}CrossDistRuntime")

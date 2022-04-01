@@ -213,6 +213,9 @@ class K2NativeCompilerArguments : CommonCompilerArguments() {
     )
     var fileToCache: String? = null
 
+    @Argument(value = "-Xmake-per-file-cache", description = "Force compiler to produce per-file cache")
+    var makePerFileCache: Boolean = false
+
     @Argument(value = "-Xexport-kdoc", description = "Export KDoc in framework header")
     var exportKDoc: Boolean = false
 

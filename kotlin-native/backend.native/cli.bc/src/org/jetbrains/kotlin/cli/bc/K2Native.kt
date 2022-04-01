@@ -9,7 +9,9 @@ import com.intellij.openapi.Disposable
 import org.jetbrains.annotations.NotNull
 import org.jetbrains.annotations.Nullable
 import org.jetbrains.kotlin.analyzer.CompilationErrorException
+import org.jetbrains.kotlin.backend.common.serialization.codedInputStream
 import org.jetbrains.kotlin.backend.common.serialization.metadata.KlibMetadataVersion
+import org.jetbrains.kotlin.backend.common.serialization.proto.IrFile as ProtoFile
 import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.cli.common.*
 import org.jetbrains.kotlin.cli.common.config.addKotlinSourceRoot
@@ -32,6 +34,10 @@ import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.util.profile
 import org.jetbrains.kotlin.utils.KotlinPaths
+import org.jetbrains.kotlin.konan.library.impl.createKonanLibrary
+import org.jetbrains.kotlin.protobuf.ExtensionRegistryLite
+import org.jetbrains.kotlin.util.capitalizeDecapitalize.capitalizeAsciiOnly
+import org.jetbrains.kotlin.util.capitalizeDecapitalize.toUpperCaseAsciiOnly
 
 private class K2NativeCompilerPerformanceManager: CommonCompilerPerformanceManager("Kotlin to Native Compiler")
 class K2Native : CLICompiler<K2NativeCompilerArguments>() {
@@ -83,10 +89,54 @@ class K2Native : CLICompiler<K2NativeCompilerArguments>() {
         configuration.put(CommonConfigurationKeys.KLIB_NORMALIZE_ABSOLUTE_PATH, arguments.normalizeAbsolutePath)
         configuration.put(CLIConfigurationKeys.RENDER_DIAGNOSTIC_INTERNAL_NAME, arguments.renderInternalDiagnosticNames)
 
+        val fileNames = arguments.libraryToAddToCache?.let { libPath ->
+            if (!arguments.makePerFileCache)
+                null
+            else {
+                val lib = createKonanLibrary(File(libPath), "default", null, true)
+                (0 until lib.fileCount()).map { fileIndex ->
+                    val proto = ProtoFile.parseFrom(lib.file(fileIndex).codedInputStream, ExtensionRegistryLite.newInstance())
+                    proto.fileEntry.name
+                }
+            }
+        }
+
         try {
-            val konanConfig = KonanConfig(project, configuration)
-            ensureModuleName(konanConfig, environment)
-            runTopLevelPhases(konanConfig, environment)
+            if (fileNames == null) {
+                val konanConfig = KonanConfig(project, configuration)
+                ensureModuleName(konanConfig, environment)
+                runTopLevelPhases(konanConfig, environment)
+            } else {
+                val produce = arguments.produce!!
+                arguments.produce = "preliminary_cache"
+                arguments.makePerFileCache = false
+                configuration.put(KonanConfigKeys.PRODUCE, CompilerOutputKind.PRELIMINARY_CACHE)
+                configuration.put(CLIConfigurationKeys.PHASE_CONFIG, createPhaseConfig(toplevelPhase, arguments, messageCollector))
+                fileNames.forEach { fileName ->
+                    println("PRELIMINARY_CACHE for $fileName")
+                    arguments.fileToCache = fileName
+                    configuration.put(KonanConfigKeys.FILE_TO_CACHE, fileName)
+                    val konanConfig = KonanConfig(project, configuration)
+                    ensureModuleName(konanConfig, environment)
+                    runTopLevelPhases(konanConfig, environment)
+                }
+                arguments.produce = produce
+                configuration.put(KonanConfigKeys.PRODUCE, CompilerOutputKind.valueOf(produce.uppercase()))
+//                arguments.printIr = true
+//                configuration.put(KonanConfigKeys.PRINT_IR, true)
+//                arguments.phasesToDumpAfter = arrayOf("ALL")
+//                arguments.printBitCode = true
+//                configuration.put(KonanConfigKeys.PRINT_BITCODE, true)
+                configuration.put(CLIConfigurationKeys.PHASE_CONFIG, createPhaseConfig(toplevelPhase, arguments, messageCollector))
+                fileNames.forEach { fileName ->
+                    println("${produce.uppercase()} for $fileName")
+                    arguments.fileToCache = fileName
+                    configuration.put(KonanConfigKeys.FILE_TO_CACHE, fileName)
+                    val konanConfig = KonanConfig(project, configuration)
+                    ensureModuleName(konanConfig, environment)
+                    runTopLevelPhases(konanConfig, environment)
+                }
+            }
         } catch (e: Throwable) {
             if (e is KonanCompilationException || e is CompilationErrorException)
                 return ExitCode.COMPILATION_ERROR

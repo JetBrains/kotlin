@@ -25,7 +25,7 @@ fun configureCacheTesting(project: Project): CacheTesting? {
     val target = project.testTarget
 
     val cacheDir = project.file("${project.buildDir}/cache")
-    val cacheFile = "$cacheDir/stdlib-cache"
+    val cacheFile = "$cacheDir/stdlib-per-file-cache"
     val dist = project.kotlinNativeDist
     val stdlib = "$dist/klib/common/stdlib"
     val compilerArgs = listOf("-Xcached-library=$stdlib,$cacheFile")
@@ -40,8 +40,9 @@ fun configureCacheTesting(project: Project): CacheTesting? {
         commandLine(
                 "$dist/bin/konanc",
                 "-p", cacheKind.visibleName,
-                "-o", "$cacheDir/stdlib-cache",
-                "-Xmake-cache=$stdlib",
+                //"-o", "$cacheDir/stdlib-cache",
+                //"-Xmake-cache=$stdlib",
+                "-Xadd-cache=$stdlib", "-Xmake-per-file-cache", "-Xcache-directory=$cacheDir",
                 "-no-default-libs", "-nostdlib",
                 "-target", target,
                 "-g"

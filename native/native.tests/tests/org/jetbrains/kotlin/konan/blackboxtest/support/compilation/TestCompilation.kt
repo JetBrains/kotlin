@@ -303,7 +303,8 @@ internal class StaticCacheCompilation(
         add(
             "-Xadd-cache=${dependencies.libraryToCache.path}",
             "-Xcache-directory=${expectedArtifact.cacheDir.path}",
-            "-Xcache-directory=$cacheRootDir"
+            "-Xcache-directory=$cacheRootDir",
+            "-Xmake-per-file-cache"
         )
     }
 
