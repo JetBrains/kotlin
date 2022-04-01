@@ -30,6 +30,7 @@ import org.gradle.api.tasks.util.PatternSet
 import org.gradle.work.ChangeType
 import org.gradle.work.Incremental
 import org.gradle.work.InputChanges
+import org.gradle.work.NormalizeLineEndings
 import org.gradle.workers.WorkerExecutor
 import org.jetbrains.kotlin.build.DEFAULT_KOTLIN_SOURCE_FILES_EXTENSIONS
 import org.jetbrains.kotlin.build.report.metrics.*
@@ -97,6 +98,7 @@ abstract class AbstractKotlinCompileTool<T : CommonToolArguments> @Inject constr
 
     @get:InputFiles
     @get:SkipWhenEmpty
+    @get:NormalizeLineEndings
     @get:IgnoreEmptyDirectories
     @get:PathSensitive(PathSensitivity.RELATIVE)
     open val sources: FileCollection = objectFactory.fileCollection()
@@ -171,6 +173,7 @@ abstract class AbstractKotlinCompileTool<T : CommonToolArguments> @Inject constr
     }
 
     @get:Classpath
+    @get:NormalizeLineEndings
     @get:Incremental
     abstract val libraries: ConfigurableFileCollection
 
@@ -186,6 +189,7 @@ abstract class AbstractKotlinCompileTool<T : CommonToolArguments> @Inject constr
      *
      * Empty classpath will fail the build.
      */
+    @get:NormalizeLineEndings
     @get:Classpath
     internal val defaultCompilerClasspath: ConfigurableFileCollection =
         project.objects.fileCollection()
@@ -347,6 +351,7 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments> @Inject constr
     protected val multiModuleICSettings: MultiModuleICSettings
         get() = MultiModuleICSettings(buildHistoryFile.get().asFile, useModuleDetection.get())
 
+    @get:NormalizeLineEndings
     @get:Classpath
     open val pluginClasspath: ConfigurableFileCollection = objectFactory.fileCollection()
 
@@ -374,6 +379,7 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments> @Inject constr
 
     @get:InputFiles
     @get:IgnoreEmptyDirectories
+    @get:NormalizeLineEndings
     @get:Incremental
     @get:PathSensitive(PathSensitivity.RELATIVE)
     internal val commonSourceSet: ConfigurableFileCollection = objectFactory.fileCollection()
@@ -739,11 +745,13 @@ abstract class KotlinCompile @Inject constructor(
         abstract val useClasspathSnapshot: Property<Boolean>
 
         @get:Classpath
+        @get:NormalizeLineEndings
         @get:Incremental
         @get:Optional // Set if useClasspathSnapshot == true
         abstract val classpathSnapshot: ConfigurableFileCollection
 
         @get:Classpath
+        @get:NormalizeLineEndings
         @get:Incremental
         @get:Optional // Set if useClasspathSnapshot == false (to restore the existing classpath annotations when the feature is disabled)
         abstract val classpath: ConfigurableFileCollection
@@ -830,6 +838,7 @@ abstract class KotlinCompile @Inject constructor(
 
     @get:InputFiles
     @get:SkipWhenEmpty
+    @get:NormalizeLineEndings
     @get:IgnoreEmptyDirectories
     @get:PathSensitive(PathSensitivity.RELATIVE)
     internal open val scriptSources: FileCollection = scriptSourceFiles
@@ -994,6 +1003,7 @@ abstract class KotlinCompile @Inject constructor(
 
     @get:Incremental
     @get:InputFiles
+    @get:NormalizeLineEndings
     @get:IgnoreEmptyDirectories
     @get:PathSensitive(PathSensitivity.RELATIVE)
     open val javaSources: FileCollection = objectFactory.fileCollection()
@@ -1011,6 +1021,7 @@ abstract class KotlinCompile @Inject constructor(
      */
     @get:Incremental
     @get:InputFiles
+    @get:NormalizeLineEndings
     @get:IgnoreEmptyDirectories
     @get:PathSensitive(PathSensitivity.RELATIVE)
     internal open val androidLayoutResources: FileCollection = androidLayoutResourceFiles
@@ -1184,6 +1195,7 @@ abstract class Kotlin2JsCompile @Inject constructor(
 
     @get:InputFiles
     @get:IgnoreEmptyDirectories
+    @get:NormalizeLineEndings
     @get:Incremental
     @get:Optional
     @get:PathSensitive(PathSensitivity.RELATIVE)
@@ -1200,6 +1212,7 @@ abstract class Kotlin2JsCompile @Inject constructor(
     @Suppress("unused")
     @get:InputFiles
     @get:IgnoreEmptyDirectories
+    @get:NormalizeLineEndings
     @get:Optional
     @get:PathSensitive(PathSensitivity.RELATIVE)
     internal val sourceMapBaseDirs: FileCollection?
@@ -1330,6 +1343,7 @@ abstract class Kotlin2JsCompile @Inject constructor(
 }
 
 data class KotlinCompilerPluginData(
+    @get:NormalizeLineEndings
     @get:Classpath
     val classpath: FileCollection,
 
@@ -1348,6 +1362,7 @@ data class KotlinCompilerPluginData(
 
         @get:InputFiles
         @get:IgnoreEmptyDirectories
+        @get:NormalizeLineEndings
         @get:PathSensitive(PathSensitivity.RELATIVE)
         val inputFiles: Set<File>,
 

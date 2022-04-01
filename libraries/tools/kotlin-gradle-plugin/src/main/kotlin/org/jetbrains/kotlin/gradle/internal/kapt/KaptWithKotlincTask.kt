@@ -12,6 +12,7 @@ import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.*
 import org.gradle.work.InputChanges
+import org.gradle.work.NormalizeLineEndings
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.kotlin.compilerRunner.GradleCompilerEnvironment
 import org.jetbrains.kotlin.compilerRunner.GradleCompilerRunner
@@ -49,6 +50,7 @@ abstract class KaptWithKotlincTask @Inject constructor(
     @get:Internal
     internal val pluginOptions = CompilerPluginOptions()
 
+    @get:NormalizeLineEndings
     @get:Classpath
     abstract val pluginClasspath: ConfigurableFileCollection
 

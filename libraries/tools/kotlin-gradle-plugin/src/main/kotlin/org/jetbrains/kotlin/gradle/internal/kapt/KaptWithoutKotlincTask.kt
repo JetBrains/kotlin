@@ -15,6 +15,7 @@ import org.gradle.api.tasks.*
 import org.gradle.kotlin.dsl.listProperty
 import org.gradle.process.CommandLineArgumentProvider
 import org.gradle.work.InputChanges
+import org.gradle.work.NormalizeLineEndings
 import org.gradle.workers.IsolationMode
 import org.gradle.workers.WorkAction
 import org.gradle.workers.WorkParameters
@@ -51,6 +52,7 @@ abstract class KaptWithoutKotlincTask @Inject constructor(
         }
     }
 
+    @get:NormalizeLineEndings
     @get:Classpath
     abstract val kaptJars: ConfigurableFileCollection
 

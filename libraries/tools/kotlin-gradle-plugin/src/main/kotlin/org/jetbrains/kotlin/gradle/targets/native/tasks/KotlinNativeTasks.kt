@@ -21,6 +21,7 @@ import org.gradle.api.file.FileTree
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.*
+import org.gradle.work.NormalizeLineEndings
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.CommonToolArguments
 import org.jetbrains.kotlin.compilerRunner.*
@@ -158,6 +159,7 @@ abstract class AbstractKotlinNativeCompile<
         compilation.konanTarget
     }
 
+    @get:NormalizeLineEndings
     @get:Classpath
     override val libraries: ConfigurableFileCollection by project.provider {
         // Avoid resolving these dependencies during task graph construction when we can't build the target:
@@ -168,6 +170,7 @@ abstract class AbstractKotlinNativeCompile<
         else objectFactory.fileCollection()
     }
 
+    @get:NormalizeLineEndings
     @get:Classpath
     protected val friendModule: FileCollection by project.provider {
         project.files(compilation.friendPaths)
@@ -233,6 +236,7 @@ abstract class AbstractKotlinNativeCompile<
         get() = compilerPluginOptions.arguments
 
     @Optional
+    @NormalizeLineEndings
     @Classpath
     open var compilerPluginClasspath: FileCollection? = null
 
@@ -544,6 +548,7 @@ constructor(
     val processTests: Boolean
         @Input get() = binary is TestExecutable
 
+    @get:NormalizeLineEndings
     @get:Classpath
     val exportLibraries: FileCollection by project.provider {
         binary.let {
@@ -1098,6 +1103,7 @@ open class CInteropProcess @Inject constructor(@get:Internal val settings: Defau
     @OutputFile
     val outputFileProvider: Provider<File> = project.provider { destinationDir.get().resolve(outputFileName) }
 
+    @get:NormalizeLineEndings
     @get:InputFile
     @get:PathSensitive(PathSensitivity.RELATIVE)
     val defFile: File
@@ -1113,6 +1119,7 @@ open class CInteropProcess @Inject constructor(@get:Internal val settings: Defau
         @Input get() = settings.linkerOpts
 
     @get:IgnoreEmptyDirectories
+    @get:NormalizeLineEndings
     @get:InputFiles
     @get:PathSensitive(PathSensitivity.RELATIVE)
     val headers: FileCollection
@@ -1125,6 +1132,7 @@ open class CInteropProcess @Inject constructor(@get:Internal val settings: Defau
         @Input get() = settings.includeDirs.headerFilterDirs.files
 
     @get:IgnoreEmptyDirectories
+    @get:NormalizeLineEndings
     @get:InputFiles
     @get:PathSensitive(PathSensitivity.RELATIVE)
     val libraries: FileCollection
