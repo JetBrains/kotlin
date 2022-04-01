@@ -34,6 +34,9 @@ open class RunKotlinNativeTask @Inject constructor(private val linkTask: Task,
     @Option(option = "verbose", description = "Verbose mode of running benchmarks")
     var verbose: Boolean = false
     @Input
+    @Option(option = "baseOnly", description = "Run only set of base benchmarks")
+    var baseOnly: Boolean = false
+    @Input
     var warmupCount: Int = 0
     @Input
     var repeatCount: Int = 0
@@ -131,7 +134,11 @@ open class RunKotlinNativeTask @Inject constructor(private val linkTask: Task,
             } else {
                 executable = this@RunKotlinNativeTask.executable
             }
-            args("list")
+            if (baseOnly) {
+                args("baseOnlyList")
+            } else {
+                args("list")
+            }
             standardOutput = output
         }
         val benchmarks = output.toString().lines()
