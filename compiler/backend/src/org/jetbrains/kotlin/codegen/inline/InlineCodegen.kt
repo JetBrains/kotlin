@@ -106,7 +106,7 @@ abstract class InlineCodegen<out T : BaseExpressionCodegen>(
             node, parameters, info, FieldRemapper(null, null, parameters), sourceCompiler.isCallInsideSameModuleAsCallee,
             "Method inlining " + sourceCompiler.callElementText,
             SourceMapCopier(sourceMapper, nodeAndSmap.classSMAP, callSite),
-            info.callSiteInfo, if (isInlineOnly) InlineOnlySmapSkipper(codegen) else null,
+            info.callSiteInfo, isInlineOnly,
             !isInlinedToInlineFunInKotlinRuntime()
         ) //with captured
 

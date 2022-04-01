@@ -48,7 +48,7 @@ class MethodInliner(
     private val errorPrefix: String,
     private val sourceMapper: SourceMapCopier,
     private val inlineCallSiteInfo: InlineCallSiteInfo,
-    private val inlineOnlySmapSkipper: InlineOnlySmapSkipper?, //non null only for root
+    private val overrideLineNumber: Boolean = false,
     private val shouldPreprocessApiVersionCalls: Boolean = false
 ) {
     private val languageVersionSettings = inliningContext.state.languageVersionSettings
@@ -154,8 +154,16 @@ class MethodInliner(
 
         val fakeContinuationName = CoroutineTransformer.findFakeContinuationConstructorClassName(node)
         val markerShift = calcMarkerShift(parameters, node)
+        var currentLineNumber = if (overrideLineNumber) sourceMapper.callSite!!.line else -1
         val lambdaInliner = object : InlineAdapter(remappingMethodAdapter, parameters.argsSizeOnStack, sourceMapper) {
             private var transformationInfo: TransformationInfo? = null
+
+            override fun visitLineNumber(line: Int, start: Label) {
+                if (!overrideLineNumber) {
+                    currentLineNumber = line
+                }
+                super.visitLineNumber(line, start)
+            }
 
             private fun handleAnonymousObjectRegeneration() {
                 transformationInfo = iterator.next()
@@ -250,10 +258,29 @@ class MethodInliner(
                         store(valueParamShift, type)
                     }
                     if (expectedParameters.isEmpty()) {
-                        nop() // add something for a line number to bind onto
+                        nop() // add something for a line number to bind onto (TODO what line number?)
                     }
 
-                    inlineOnlySmapSkipper?.onInlineLambdaStart(remappingMethodAdapter, info.node.node, sourceMapper.parent)
+                    val firstLine = info.node.node.instructions.asSequence().mapNotNull { it as? LineNumberNode }.firstOrNull()?.line ?: -1
+                    if (currentLineNumber >= 0 && firstLine == currentLineNumber) {
+                        // This can happen in two cases:
+                        //   1. `someInlineOnlyFunction { singleLineLambda }`: in this case line numbers are removed
+                        //      from the inline function, so the entirety of its bytecode has the line number of
+                        //      the call site;
+                        //   2. `inline fun someFunction(defaultLambda: ... = { ... }) = singleLineExpression`:
+                        //      all of `someFunction`, including `defaultLambda` if no value is provided at call site,
+                        //      has the line number of the declaration.
+                        // In those cases the debugger is unable to observe the boundary between the body of the function
+                        // and the inline lambda call, as they have the exact same line number. So to force a JDI
+                        // event we insert a fake line number separating those two real stretches. The event corresponding
+                        // to the fake line number itself should be ignored by the debugger though.
+                        val label = Label()
+                        val fakeLineNumber =
+                            sourceMapper.parent.mapSyntheticLineNumber(SourceMapper.LOCAL_VARIABLE_INLINE_ARGUMENT_SYNTHETIC_LINE_NUMBER)
+                        mv.visitLabel(label)
+                        mv.visitLineNumber(fakeLineNumber, label)
+                    }
+
                     addInlineMarker(this, true)
                     val lambdaParameters = info.addAllParameters(nodeRemapper)
 
@@ -270,7 +297,7 @@ class MethodInliner(
                         newCapturedRemapper,
                         if (info is DefaultLambda) isSameModule else true /*cause all nested objects in same module as lambda*/,
                         "Lambda inlining " + info.lambdaClassType.internalName,
-                        SourceMapCopier(sourceMapper.parent, info.node.classSMAP, callSite), inlineCallSiteInfo, null
+                        SourceMapCopier(sourceMapper.parent, info.node.classSMAP, callSite), inlineCallSiteInfo
                     )
 
                     val varRemapper = LocalVarRemapper(lambdaParameters, valueParamShift)
@@ -284,7 +311,12 @@ class MethodInliner(
                     StackValue.coerce(info.invokeMethod.returnType, info.invokeMethodReturnType, OBJECT_TYPE, nullableAnyType, this)
                     setLambdaInlining(false)
                     addInlineMarker(this, false)
-                    inlineOnlySmapSkipper?.onInlineLambdaEnd(remappingMethodAdapter)
+
+                    if (overrideLineNumber) {
+                        val endLabel = Label()
+                        mv.visitLabel(endLabel)
+                        mv.visitLineNumber(currentLineNumber, endLabel)
+                    }
                 } else if (isAnonymousConstructorCall(owner, name)) { //TODO add method
                     //TODO add proper message
                     val newInfo = transformationInfo as? AnonymousObjectTransformationInfo ?: throw AssertionError(
@@ -371,7 +403,7 @@ class MethodInliner(
         )
 
         val transformationVisitor = object : InlineMethodInstructionAdapter(transformedNode) {
-            private val GENERATE_DEBUG_INFO = GENERATE_SMAP && inlineOnlySmapSkipper == null
+            private val GENERATE_DEBUG_INFO = GENERATE_SMAP && !overrideLineNumber
 
             private val isInliningLambda = nodeRemapper.isInsideInliningLambda
 

@@ -87,6 +87,7 @@ class SourceMapper(val sourceInfo: SourceInfo?) {
     companion object {
         const val FAKE_FILE_NAME = "fake.kt"
         const val FAKE_PATH = "kotlin/jvm/internal/FakeKt"
+        const val LOCAL_VARIABLE_INLINE_ARGUMENT_SYNTHETIC_LINE_NUMBER = 1
     }
 
     init {
