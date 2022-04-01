@@ -9,7 +9,6 @@ import com.intellij.openapi.vfs.VirtualFile
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.codegen.ASSERTIONS_DISABLED_FIELD_NAME
 import org.jetbrains.kotlin.codegen.AsmUtil
-import org.jetbrains.kotlin.codegen.BaseExpressionCodegen
 import org.jetbrains.kotlin.codegen.SamWrapperCodegen.SAM_WRAPPER_SUFFIX
 import org.jetbrains.kotlin.codegen.StackValue
 import org.jetbrains.kotlin.codegen.`when`.WhenByEnumsMapping
@@ -694,37 +693,6 @@ fun isFakeLocalVariableForInline(name: String): Boolean {
 }
 
 internal fun isThis0(name: String): Boolean = AsmUtil.CAPTURED_THIS_FIELD == name
-
-class InlineOnlySmapSkipper(codegen: BaseExpressionCodegen) {
-    private val callLineNumber = codegen.lastLineNumber
-
-    companion object {
-        const val LOCAL_VARIABLE_INLINE_ARGUMENT_SYNTHETIC_LINE_NUMBER = 1
-    }
-
-    fun onInlineLambdaStart(mv: MethodVisitor, lambda: MethodNode, smap: SourceMapper) {
-        val firstLine = lambda.instructions.asSequence().mapNotNull { it as? LineNumberNode }.firstOrNull()?.line ?: -1
-        if (callLineNumber >= 0 && firstLine == callLineNumber) {
-            // We want the debugger to be able to break both on the inline call itself, plus on each
-            // invocation of the inline lambda passed to it. For that to happen there needs to be at least
-            // one different line number in between those breakpoints for the VM to emit a locatable event.
-            // @InlineOnly functions, however, contain no line numbers, so if the lambda is single-line,
-            // the entire call will "meld" into a single region. To break it up, we insert a different line
-            // number that is remapped by the SMAP to a line that does not exist.
-            val label = Label()
-            mv.visitLabel(label)
-            mv.visitLineNumber(smap.mapSyntheticLineNumber(LOCAL_VARIABLE_INLINE_ARGUMENT_SYNTHETIC_LINE_NUMBER), label)
-        }
-    }
-
-    fun onInlineLambdaEnd(mv: MethodVisitor) {
-        if (callLineNumber >= 0) {
-            val label = Label()
-            mv.visitLabel(label)
-            mv.visitLineNumber(callLineNumber, label)
-        }
-    }
-}
 
 fun MethodNode.preprocessSuspendMarkers(forInline: Boolean, keepFakeContinuation: Boolean = true) {
     if (instructions.first == null) return
