@@ -168,6 +168,7 @@ private fun FirBasedSymbol<*>.toSymbolForCall(
     classifierStorage: Fir2IrClassifierStorage,
     declarationStorage: Fir2IrDeclarationStorage,
     preferGetter: Boolean,
+    conversionScope: Fir2IrConversionScope,
     explicitReceiver: FirExpression? = null,
     isDelegate: Boolean = false
 ) = when (this) {
@@ -175,6 +176,7 @@ private fun FirBasedSymbol<*>.toSymbolForCall(
         dispatchReceiver,
         declarationStorage,
         preferGetter,
+        conversionScope,
         explicitReceiver,
         isDelegate
     )
@@ -200,6 +202,7 @@ fun FirReference.toSymbolForCall(
                 classifierStorage,
                 declarationStorage,
                 preferGetter,
+                conversionScope,
                 explicitReceiver,
                 isDelegate
             )
@@ -210,6 +213,7 @@ fun FirReference.toSymbolForCall(
                 classifierStorage,
                 declarationStorage,
                 preferGetter,
+                conversionScope,
                 explicitReceiver,
                 isDelegate
             )
@@ -232,6 +236,7 @@ private fun FirCallableSymbol<*>.toSymbolForCall(
     dispatchReceiver: FirExpression,
     declarationStorage: Fir2IrDeclarationStorage,
     preferGetter: Boolean,
+    conversionScope: Fir2IrConversionScope,
     explicitReceiver: FirExpression? = null,
     isDelegate: Boolean = false
 ): IrSymbol? {
@@ -264,12 +269,16 @@ private fun FirCallableSymbol<*>.toSymbolForCall(
                             ?: throw AssertionError("Written synthetic property must have a setter")
                     }
                     delegateSymbol.unwrapCallRepresentative()
-                        .toSymbolForCall(dispatchReceiver, declarationStorage, preferGetter, isDelegate = false)
+                        .toSymbolForCall(dispatchReceiver, declarationStorage, preferGetter, conversionScope, isDelegate = false)
                 } ?: declarationStorage.getIrPropertySymbol(this)
             }
         }
         is FirFunctionSymbol<*> -> declarationStorage.getIrFunctionSymbol(this, dispatchReceiverLookupTag)
-        is FirPropertySymbol -> declarationStorage.getIrPropertySymbol(this, dispatchReceiverLookupTag)
+        is FirPropertySymbol -> if (this.origin !is FirDeclarationOrigin.DynamicScope) {
+            declarationStorage.getIrPropertySymbol(this, dispatchReceiverLookupTag)
+        } else {
+            declarationStorage.getOrCreateIrVariable(fir, conversionScope.parentFromStack(), null).symbol
+        }
         is FirFieldSymbol -> declarationStorage.getIrFieldSymbol(this)
         is FirBackingFieldSymbol -> declarationStorage.getIrBackingFieldSymbol(this)
         is FirDelegateFieldSymbol -> declarationStorage.getIrDelegateFieldSymbol(this)
