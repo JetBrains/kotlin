@@ -22,6 +22,7 @@ import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.*
 import org.gradle.work.InputChanges
+import org.gradle.work.NormalizeLineEndings
 import org.gradle.workers.WorkerExecutor
 import org.jetbrains.kotlin.cli.common.arguments.K2MetadataCompilerArguments
 import org.jetbrains.kotlin.compilerRunner.GradleCompilerEnvironment
@@ -128,6 +129,7 @@ abstract class KotlinCompileCommon @Inject constructor(
     }
 
     @get:PathSensitive(PathSensitivity.RELATIVE)
+    @get:NormalizeLineEndings
     @get:IgnoreEmptyDirectories
     @get:InputFiles
     internal val refinesMetadataPaths: ConfigurableFileCollection = objectFactory.fileCollection()

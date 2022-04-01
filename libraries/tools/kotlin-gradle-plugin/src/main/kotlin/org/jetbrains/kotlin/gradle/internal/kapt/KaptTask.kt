@@ -12,6 +12,7 @@ import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.*
 import org.gradle.work.Incremental
 import org.gradle.work.InputChanges
+import org.gradle.work.NormalizeLineEndings
 import org.jetbrains.kotlin.build.report.metrics.BuildMetricsReporter
 import org.jetbrains.kotlin.build.report.metrics.BuildMetricsReporterImpl
 import org.jetbrains.kotlin.gradle.internal.kapt.incremental.ClasspathSnapshot
@@ -69,14 +70,17 @@ abstract class KaptTask @Inject constructor(
     @get:Internal
     internal abstract val stubsDir: DirectoryProperty
 
+    @get:NormalizeLineEndings
     @get:Classpath
     abstract val kaptClasspath: ConfigurableFileCollection
 
     //part of kaptClasspath consisting from external artifacts only
     //basically kaptClasspath = kaptExternalClasspath + artifacts built locally
+    @get:NormalizeLineEndings
     @get:Classpath
     abstract val kaptExternalClasspath: ConfigurableFileCollection
 
+    @get:NormalizeLineEndings
     @get:Classpath
     abstract val compilerClasspath: ConfigurableFileCollection
 
@@ -85,6 +89,7 @@ abstract class KaptTask @Inject constructor(
 
     @get:PathSensitive(PathSensitivity.NONE)
     @get:Incremental
+    @get:NormalizeLineEndings
     @get:IgnoreEmptyDirectories
     @get:Optional
     @get:InputFiles
@@ -144,6 +149,7 @@ abstract class KaptTask @Inject constructor(
         level = DeprecationLevel.ERROR
     )
     @get:Incremental
+    @get:NormalizeLineEndings
     @get:Classpath
     internal val internalNonAbiClasspath: FileCollection = project.objects.fileCollection().from(
         { if (includeCompileClasspath.get()) classpath else null }
@@ -158,6 +164,7 @@ abstract class KaptTask @Inject constructor(
 
     @get:InputFiles
     @get:IgnoreEmptyDirectories
+    @get:NormalizeLineEndings
     @get:Incremental
     @get:PathSensitive(PathSensitivity.RELATIVE)
     abstract val source: ConfigurableFileCollection

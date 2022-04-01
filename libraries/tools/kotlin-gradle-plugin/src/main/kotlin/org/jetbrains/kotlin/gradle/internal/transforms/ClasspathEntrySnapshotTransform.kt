@@ -12,6 +12,7 @@ import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.Classpath
 import org.gradle.api.tasks.Internal
+import org.gradle.work.NormalizeLineEndings
 import org.jetbrains.kotlin.build.report.metrics.*
 import org.jetbrains.kotlin.gradle.report.BuildMetricsReporterService
 import org.jetbrains.kotlin.incremental.classpathDiff.ClassSnapshotGranularity
@@ -34,6 +35,7 @@ abstract class ClasspathEntrySnapshotTransform : TransformAction<ClasspathEntryS
         abstract val buildMetricsReporterService: Property<BuildMetricsReporterService>
     }
 
+    @get:NormalizeLineEndings
     @get:Classpath
     @get:InputArtifact
     abstract val inputArtifact: Provider<FileSystemLocation>

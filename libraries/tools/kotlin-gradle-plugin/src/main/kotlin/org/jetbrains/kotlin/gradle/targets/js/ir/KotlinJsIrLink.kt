@@ -11,6 +11,7 @@ import org.gradle.api.file.FileCollection
 import org.gradle.api.file.ProjectLayout
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.tasks.*
+import org.gradle.work.NormalizeLineEndings
 import org.gradle.workers.WorkerExecutor
 import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.parseCommandLineArguments
@@ -97,6 +98,7 @@ abstract class KotlinJsIrLink @Inject constructor(
 
     @get:SkipWhenEmpty
     @get:IgnoreEmptyDirectories
+    @get:NormalizeLineEndings
     @get:InputDirectory
     @get:PathSensitive(PathSensitivity.RELATIVE)
     internal abstract val entryModule: DirectoryProperty
