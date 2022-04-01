@@ -800,7 +800,7 @@ abstract class BaseFirBuilder<T>(val baseSession: FirSession, val context: Conte
             val arrayVariable = generateTemporaryVariable(
                 baseModuleData,
                 array?.toFirSourceElement(),
-                Name.special("<array>"),
+                SpecialNames.ARRAY_NAME,
                 initializer = arrayReceiver,
             ).also { statements += it }
 

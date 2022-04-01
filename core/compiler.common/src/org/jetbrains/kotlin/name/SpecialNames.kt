@@ -61,6 +61,8 @@ object SpecialNames {
     @JvmField
     val IMPLICIT_SET_PARAMETER = Name.special("<set-?>")
 
+    val ARRAY_NAME = Name.special("<array>")
+
     @JvmStatic
     fun safeIdentifier(name: Name?): Name {
         return if (name != null && !name.isSpecial) name else SAFE_IDENTIFIER_FOR_NO_NAME
