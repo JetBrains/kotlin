@@ -75,9 +75,6 @@ internal class InlineClassAwareCaller<out M : Member?>(
             else -> 0
         }
 
-        val extraArgumentsTail = (if (isDefault) 2 else 0) +
-                (if (descriptor is FunctionDescriptor && descriptor.isSuspend) 1 else 0)
-
         val kotlinParameterTypes: List<KotlinType> = ArrayList<KotlinType>().also { kotlinParameterTypes ->
             val extensionReceiverType = descriptor.extensionReceiverParameter?.type
             if (extensionReceiverType != null) {
@@ -96,6 +93,11 @@ internal class InlineClassAwareCaller<out M : Member?>(
 
             descriptor.valueParameters.mapTo(kotlinParameterTypes, ValueParameterDescriptor::getType)
         }
+
+        // If the default argument is set,
+        // (kotlinParameterTypes.size + Integer.SIZE - 1) / Integer.SIZE masks and one marker are added to the end of the argument.
+        val extraArgumentsTail = (if (isDefault) ((kotlinParameterTypes.size + Integer.SIZE - 1) / Integer.SIZE) + 1 else 0) +
+                (if (descriptor is FunctionDescriptor && descriptor.isSuspend) 1 else 0)
         val expectedArgsSize = kotlinParameterTypes.size + shift + extraArgumentsTail
         if (arity != expectedArgsSize) {
             throw KotlinReflectionInternalError(
