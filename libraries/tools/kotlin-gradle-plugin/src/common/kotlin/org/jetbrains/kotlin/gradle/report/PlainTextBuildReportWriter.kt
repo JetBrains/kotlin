@@ -65,7 +65,7 @@ internal class PlainTextBuildReportWriter(
         // TODO: If it is confusing, consider renaming "tasks" to "build operations" in this class.
         printBuildInfo(build)
         if (printMetrics) {
-            printMetrics(build.aggregatedMetrics)
+            printMetrics(build.aggregatedMetrics, newLineBetweenSections = true)
             p.println()
         }
         printTaskOverview(build)
@@ -84,9 +84,13 @@ internal class PlainTextBuildReportWriter(
         }
     }
 
-    private fun printMetrics(buildMetrics: BuildMetrics) {
+    private fun printMetrics(buildMetrics: BuildMetrics, newLineBetweenSections: Boolean = false) {
         printBuildTimes(buildMetrics.buildTimes)
+        if (newLineBetweenSections) p.println()
+
         printBuildPerformanceMetrics(buildMetrics.buildPerformanceMetrics)
+        if (newLineBetweenSections) p.println()
+
         printBuildAttributes(buildMetrics.buildAttributes)
     }
 
