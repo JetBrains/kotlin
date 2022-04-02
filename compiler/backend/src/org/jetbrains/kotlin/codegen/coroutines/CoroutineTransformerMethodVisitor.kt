@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.codegen.optimization.common.*
 import org.jetbrains.kotlin.codegen.optimization.fixStack.FixStackMethodTransformer
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin
+import org.jetbrains.kotlin.utils.addToStdlib.popLast
 import org.jetbrains.kotlin.utils.sure
 import org.jetbrains.org.objectweb.asm.Label
 import org.jetbrains.org.objectweb.asm.MethodVisitor
@@ -681,12 +682,22 @@ class CoroutineTransformerMethodVisitor(
         val suspensionPointEnds = suspensionPoints.associateBy { it.suspensionCallEnd }
         fun findSuspensionPointPredecessors(suspension: SuspensionPoint): List<SuspensionPoint> {
             val visited = mutableSetOf<AbstractInsnNode>()
-            fun dfs(current: AbstractInsnNode): List<SuspensionPoint> {
-                if (!visited.add(current)) return emptyList()
-                suspensionPointEnds[current]?.let { return listOf(it) }
-                return cfg.getPredecessorsIndices(current).flatMap { dfs(instructions[it]) }
+            val current = mutableListOf(suspension.suspensionCallBegin)
+            val result = mutableListOf<SuspensionPoint>()
+
+            while (current.isNotEmpty()) {
+                val insn = current.popLast()
+                if (!visited.add(insn)) continue
+
+                val end = suspensionPointEnds[insn]
+                if (end != null) {
+                    result.add(end)
+                    continue
+                }
+                current.addAll(cfg.getPredecessorsIndices(insn).map { instructions[it] })
             }
-            return dfs(suspension.suspensionCallBegin)
+
+            return result
         }
 
         val predSuspensionPoints = suspensionPoints.associateWith { findSuspensionPointPredecessors(it) }
