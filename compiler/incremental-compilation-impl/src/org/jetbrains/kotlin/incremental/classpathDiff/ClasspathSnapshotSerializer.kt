@@ -13,46 +13,40 @@ import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
 import java.io.DataInput
 import java.io.DataOutput
 import java.io.File
-import java.util.concurrent.ConcurrentHashMap
 
 /** Utility to serialize a [ClasspathSnapshot]. */
 object CachedClasspathSnapshotSerializer {
-    private val cache = ConcurrentHashMap<File, ClasspathEntrySnapshot>()
-    private const val RECOMMENDED_MAX_CACHE_SIZE = 100
+
+    // Note: This cache is shared across builds, so we need to be careful if the snapshot file's path hasn't changed but its contents have
+    // changed. Luckily, each snapshot file is currently the output of a Gradle (non-incremental) transform, so that case will not happen.
+    // TODO: Make this code safer (not relying on how the snapshot files are produced and whether Gradle maintains the above guarantee). For
+    // example, if the transform is incremental, the above case may happen (the output directory of am incremental transform is unchanged
+    // even though its inputs/outputs have changed). Potential solutions: Write the file's content hash in the file's
+    // name or to another file next to it.
+    private val cache = InMemoryCacheWithEviction<File, ClasspathEntrySnapshot>(maxTimePeriods = 20, maxMemoryUsageRatio = 0.8)
 
     fun load(classpathEntrySnapshotFiles: List<File>, reporter: ClasspathSnapshotBuildReporter): ClasspathSnapshot {
-        return ClasspathSnapshot(classpathEntrySnapshotFiles.map { snapshotFile ->
-            // Note: This cache is shared across builds, so we need to be careful if the snapshot file's path hasn't changed but its
-            // contents have changed. Luckily, each snapshot file is the output of a Gradle transform and Gradle has the hash of the file's
-            // contents encoded in the file's path. Therefore, if the file's path hasn't changed, then its contents must also not have
-            // changed, and we can reuse the cache entry.
-            // TODO: Make this code safer (not relying on how the snapshot files are produced and whether Gradle maintains the above
-            // guarantee). For example, maybe we can write the file's content hash in the file's name or to another file next to it.
+        cache.newTimePeriod()
+        reporter.reportVerbose {
+            val counts = cache.countCacheEntriesForDebug()
+            @Suppress("SpellCheckingInspection")
+            "Load classpath snapshot, cache size = ${counts.first + counts.second + counts.third}" +
+                    " (${counts.first} strong refs, ${counts.second + counts.third} soft refs, ${counts.third} are gc'd)"
+        }
+
+        var cacheMisses: Long = 0
+        val classpathSnapshot = ClasspathSnapshot(classpathEntrySnapshotFiles.map { snapshotFile ->
             cache.computeIfAbsent(snapshotFile) {
-                reporter.addMetric(BuildPerformanceMetric.LOAD_CLASSPATH_SNAPSHOT_CACHE_MISSES, 1)
+                cacheMisses++
                 ClasspathEntrySnapshotExternalizer.loadFromFile(it)
             }
-        }).also {
-            handleCacheEviction(recentlyReferencedKeys = classpathEntrySnapshotFiles)
-        }
-    }
+        })
 
-    private fun handleCacheEviction(recentlyReferencedKeys: List<File>) {
-        if (cache.size > RECOMMENDED_MAX_CACHE_SIZE) {
-            // Remove old entries.
-            // Note:
-            //   - The cache entries after eviction = recently-referenced entries + some other entries (so that
-            //     size = RECOMMENDED_MAX_CACHE_SIZE)
-            //       + Removed entries don't have to be the oldest (for simplicity).
-            //       + If recentlyReferencedKeys.size > RECOMMENDED_MAX_CACHE_SIZE, all of them will be kept. The reason is that
-            //         recently-referenced entries will likely be used again, so we keep them even if the cache is larger than recommended.
-            //   - It's okay to have race condition in this method.
-            val oldKeys = cache.keys - recentlyReferencedKeys.toSet()
-            for (oldKey in oldKeys) {
-                cache.remove(oldKey)
-                if (cache.size <= RECOMMENDED_MAX_CACHE_SIZE) break
-            }
-        }
+        cache.evictEntries()
+        reporter.addMetric(BuildPerformanceMetric.LOAD_CLASSPATH_ENTRY_SNAPSHOT_CACHE_MISSES, cacheMisses)
+        reporter.reportVerbose { "Loaded classpath snapshot, cache misses = $cacheMisses / ${classpathEntrySnapshotFiles.size}" }
+
+        return classpathSnapshot
     }
 }
 
