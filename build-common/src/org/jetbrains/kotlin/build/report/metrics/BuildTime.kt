@@ -68,7 +68,7 @@ enum class BuildTime(val parent: BuildTime? = null, val readableString: String) 
             FIND_INACCESSIBLE_CLASSES(parent = SNAPSHOT_CLASSES, "Find inaccessible classes"),
             SNAPSHOT_KOTLIN_CLASSES(parent = SNAPSHOT_CLASSES, "Snapshot Kotlin classes"),
             SNAPSHOT_JAVA_CLASSES(parent = SNAPSHOT_CLASSES, "Snapshot Java classes"),
-        SAVE_CLASSPATH_ENTRY_SNAPSHOT(parent = CLASSPATH_ENTRY_SNAPSHOT_TRANSFORM, "Save classpath entry snapshot")
+        SAVE_CLASSPATH_ENTRY_SNAPSHOT(parent = CLASSPATH_ENTRY_SNAPSHOT_TRANSFORM, "Save classpath entry snapshot"),
     ;
 
     companion object {
