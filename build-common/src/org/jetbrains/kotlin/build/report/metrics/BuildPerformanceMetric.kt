@@ -25,7 +25,7 @@ enum class BuildPerformanceMetric(val parent: BuildPerformanceMetric? = null, va
         CLASSPATH_ENTRY_COUNT(parent = SHRINK_AND_SAVE_CLASSPATH_SNAPSHOT_EXECUTION_COUNT, "Number of classpath entries", type = SizeMetricType.NUMBER),
         CLASSPATH_SNAPSHOT_SIZE(parent = SHRINK_AND_SAVE_CLASSPATH_SNAPSHOT_EXECUTION_COUNT, "Size of classpath snapshot", type = SizeMetricType.BYTES),
         SHRUNK_CLASSPATH_SNAPSHOT_SIZE(parent = SHRINK_AND_SAVE_CLASSPATH_SNAPSHOT_EXECUTION_COUNT, "Size of shrunk classpath snapshot", type = SizeMetricType.BYTES),
-    LOAD_CLASSPATH_SNAPSHOT_CACHE_MISSES(parent = null, "Number of cache misses when loading classpath snapshot", type = SizeMetricType.NUMBER),
+    LOAD_CLASSPATH_ENTRY_SNAPSHOT_CACHE_MISSES(parent = null, "Number of cache misses when loading classpath entry snapshots", type = SizeMetricType.NUMBER),
     ;
 
     companion object {
