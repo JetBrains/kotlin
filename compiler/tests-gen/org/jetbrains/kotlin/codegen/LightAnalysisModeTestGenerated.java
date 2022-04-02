@@ -7551,6 +7551,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
             runTest("compiler/testData/codegen/box/coroutines/kt49168.kt");
         }
 
+        @TestMetadata("kt51530.kt")
+        public void ignoreKt51530() throws Exception {
+            runTest("compiler/testData/codegen/box/coroutines/kt51530.kt");
+        }
+
         @TestMetadata("suspendFunctionAsSupertype.kt")
         public void ignoreSuspendFunctionAsSupertype() throws Exception {
             runTest("compiler/testData/codegen/box/coroutines/suspendFunctionAsSupertype.kt");
