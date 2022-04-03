@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.config.LanguageFeature.ProhibitConcurrentHashMapCont
 import org.jetbrains.kotlin.config.LanguageFeature.ProhibitJvmOverloadsOnConstructorsOfAnnotationClasses
 import org.jetbrains.kotlin.config.LanguageFeature.ProhibitSpreadOnSignaturePolymorphicCall
 import org.jetbrains.kotlin.config.LanguageFeature.RepeatableAnnotationContainerConstraints
+import org.jetbrains.kotlin.config.LanguageFeature.SynchronizedSuspendError
 import org.jetbrains.kotlin.diagnostics.*
 import org.jetbrains.kotlin.diagnostics.SourceElementPositioningStrategies
 import org.jetbrains.kotlin.diagnostics.rendering.RootDiagnosticRendererFactory
@@ -58,6 +59,7 @@ object FirJvmErrors {
     val SYNCHRONIZED_ON_ABSTRACT by error0<KtAnnotationEntry>()
     val SYNCHRONIZED_IN_INTERFACE by error0<KtAnnotationEntry>()
     val SYNCHRONIZED_ON_INLINE by warning0<KtAnnotationEntry>()
+    val SYNCHRONIZED_ON_SUSPEND by deprecationError0<KtAnnotationEntry>(SynchronizedSuspendError)
     val OVERLOADS_WITHOUT_DEFAULT_ARGUMENTS by warning0<KtAnnotationEntry>()
     val OVERLOADS_ABSTRACT by error0<KtAnnotationEntry>()
     val OVERLOADS_INTERFACE by error0<KtAnnotationEntry>()

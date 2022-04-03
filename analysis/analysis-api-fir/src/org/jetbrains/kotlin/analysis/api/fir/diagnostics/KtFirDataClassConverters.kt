@@ -4018,6 +4018,18 @@ internal val KT_DIAGNOSTIC_CONVERTER = KtDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
+    add(FirJvmErrors.SYNCHRONIZED_ON_SUSPEND.errorFactory) { firDiagnostic ->
+        SynchronizedOnSuspendErrorImpl(
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirJvmErrors.SYNCHRONIZED_ON_SUSPEND.warningFactory) { firDiagnostic ->
+        SynchronizedOnSuspendWarningImpl(
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
     add(FirJvmErrors.OVERLOADS_WITHOUT_DEFAULT_ARGUMENTS) { firDiagnostic ->
         OverloadsWithoutDefaultArgumentsImpl(
             firDiagnostic as KtPsiDiagnostic,
