@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.fir
 
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.common.config.KotlinSourceRoot
-import org.jetbrains.kotlin.cli.common.setupLanguageVersionSettings
 import org.jetbrains.kotlin.cli.jvm.config.configureJdkClasspathRoots
 import org.jetbrains.kotlin.cli.jvm.config.addJavaSourceRoot
 import org.jetbrains.kotlin.cli.jvm.config.addJvmClasspathRoots
@@ -63,7 +62,9 @@ private fun NodeList.toList(): List<Node> {
 
 private val Node.childNodesList get() = childNodes.toList()
 
-private val ROOT_PATH_PREFIX = System.getProperty("fir.bench.prefix", "/")
+private val ROOT_PATH_PREFIX:String = System.getProperty("fir.bench.prefix", "/")
+private val OUTPUT_DIR_REGEX_FILTER:String = System.getProperty("fir.bench.filter", ".*")
+private val MODULE_NAME_FILTER: String? = System.getProperty("fir.bench.filter.name")
 
 abstract class AbstractModularizedTest : KtUsefulTestCase() {
     private val folderDateFormat = SimpleDateFormat("yyyy-MM-dd")
@@ -195,13 +196,15 @@ abstract class AbstractModularizedTest : KtUsefulTestCase() {
 
         println("BASE PATH: ${root.absolutePath}")
 
-        val filterRegex = (System.getProperty("fir.bench.filter") ?: ".*").toRegex()
+        val filterRegex = OUTPUT_DIR_REGEX_FILTER.toRegex()
+        val moduleName = MODULE_NAME_FILTER
         val files = root.listFiles() ?: emptyArray()
         val modules = files.filter { it.extension == "xml" }
             .sortedBy { it.lastModified() }
             .map { loadModule(it) }
             .sortedBy { it.timestamp }
             .filter { it.rawOutputDir.matches(filterRegex) }
+            .filter { (moduleName == null) || it.name == moduleName }
             .filter { !it.isCommon }
 
 
