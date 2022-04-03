@@ -198,7 +198,7 @@ class SynchronizedAnnotationChecker : DeclarationChecker {
             } else if (descriptor.isInline) {
                 context.trace.report(ErrorsJvm.SYNCHRONIZED_ON_INLINE.on(annotationEntry))
             } else if (descriptor.isSuspend) {
-                context.trace.report(ErrorsJvm.SYNCHRONIZED_ON_SUSPEND.on(annotationEntry))
+                context.trace.report(ErrorsJvm.SYNCHRONIZED_ON_SUSPEND.on(context.languageVersionSettings, annotationEntry))
             } else if (descriptor.containingDeclaration.let { it is ClassDescriptor && it.isValue }) {
                 context.trace.report(ErrorsJvm.SYNCHRONIZED_ON_VALUE_CLASS.on(annotationEntry))
             }

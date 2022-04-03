@@ -49,7 +49,8 @@ public interface ErrorsJvm {
     DiagnosticFactory0<KtAnnotationEntry> SYNCHRONIZED_ON_ABSTRACT = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory0<KtElement> SYNCHRONIZED_ON_INLINE = DiagnosticFactory0.create(WARNING);
     DiagnosticFactory0<KtElement> SYNCHRONIZED_ON_VALUE_CLASS = DiagnosticFactory0.create(WARNING);
-    DiagnosticFactory0<PsiElement> SYNCHRONIZED_ON_SUSPEND = DiagnosticFactory0.create(WARNING);
+    DiagnosticFactoryForDeprecation0<PsiElement> SYNCHRONIZED_ON_SUSPEND =
+            DiagnosticFactoryForDeprecation0.create(LanguageFeature.SynchronizedSuspendError);
     DiagnosticFactory0<KtAnnotationEntry> SYNCHRONIZED_IN_INTERFACE = DiagnosticFactory0.create(ERROR);
 
     DiagnosticFactory0<KtAnnotationEntry> OVERLOADS_WITHOUT_DEFAULT_ARGUMENTS = DiagnosticFactory0.create(WARNING);

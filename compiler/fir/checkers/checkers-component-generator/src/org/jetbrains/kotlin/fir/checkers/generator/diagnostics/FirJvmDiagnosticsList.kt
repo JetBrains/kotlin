@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.checkers.generator.diagnostics
 
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageFeature.*
 import org.jetbrains.kotlin.fir.PrivateForInline
 import org.jetbrains.kotlin.fir.checkers.generator.diagnostics.model.DiagnosticList
@@ -60,6 +61,7 @@ object JVM_DIAGNOSTICS_LIST : DiagnosticList("FirJvmErrors") {
         val SYNCHRONIZED_ON_ABSTRACT by error<KtAnnotationEntry>()
         val SYNCHRONIZED_IN_INTERFACE by error<KtAnnotationEntry>()
         val SYNCHRONIZED_ON_INLINE by warning<KtAnnotationEntry>()
+        val SYNCHRONIZED_ON_SUSPEND by deprecationError<KtAnnotationEntry>(SynchronizedSuspendError)
         val OVERLOADS_WITHOUT_DEFAULT_ARGUMENTS by warning<KtAnnotationEntry>()
         val OVERLOADS_ABSTRACT by error<KtAnnotationEntry>()
         val OVERLOADS_INTERFACE by error<KtAnnotationEntry>()
