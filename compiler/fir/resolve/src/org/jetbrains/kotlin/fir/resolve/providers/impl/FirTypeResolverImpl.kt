@@ -120,19 +120,6 @@ class FirTypeResolverImpl(private val session: FirSession) : FirTypeResolver() {
                 val scopes = scopeClassDeclaration.scopes
                 val containingDeclarations = scopeClassDeclaration.containingDeclarations
 
-                var selfCl: FirBasedSymbol<*>? = null
-                for (decl in scopeClassDeclaration.containingDeclarations) {
-                    val isSelf = decl.annotations.find { it.fqName(session)?.asString() == "kotlin.Self" }
-                    if (isSelf != null && decl is FirRegularClass) {
-                        selfCl = decl.typeParameters.find { it.symbol.name == Name.special("<Self>") }?.symbol
-                        break
-                    }
-                }
-
-                if (selfCl != null) {
-                    return Triple(selfCl, null, null)
-                }
-
                 for (scope in scopes) {
                     if (acceptedSymbol != null) {
                         break

@@ -1,6 +1,9 @@
-// !DUMP_CFG
-
 import kotlin.Self
+
+@Self
+class JustSelfAnnotation {
+    fun anyFun(): String = "string"
+}
 
 @Self
 class ReturnType {
@@ -12,13 +15,13 @@ class ReturnType {
 @Self
 class WithTypeParameter<T : WithTypeParameter<T>> {
 
-    fun withTypeParameter: Self = this
+    fun withTypeParameter(): Self = this
 
 }
 
 @Self
 class WithoutTypeParameter<T : WithoutTypeParameter> {
 
-    fun withoutTypeParameter: Self = this
+    fun withoutTypeParameter(): Self = this
 
 }

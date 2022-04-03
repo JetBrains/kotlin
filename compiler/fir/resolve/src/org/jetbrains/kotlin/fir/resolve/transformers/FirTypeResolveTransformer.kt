@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.scopes.createImportingScopes
 import org.jetbrains.kotlin.fir.scopes.getNestedClassifierScope
 import org.jetbrains.kotlin.fir.scopes.impl.FirMemberTypeParameterScope
+import org.jetbrains.kotlin.fir.scopes.impl.FirSelfTypeScope
 import org.jetbrains.kotlin.fir.scopes.impl.nestedClassifierScope
 import org.jetbrains.kotlin.fir.scopes.impl.wrapNestedClassifierScopeWithSubstitutionForSuperType
 import org.jetbrains.kotlin.fir.symbols.ConeTypeParameterLookupTag
@@ -264,6 +265,18 @@ open class FirTypeResolveTransformer(
                         ), isNullable = false
                     )
                 })
+                /*
+                  firClass.replaceTypeParameterRefs(params + firTypeParameterBuilder.apply {
+                                    source = firClass.source?.fakeElement(KtFakeSourceElementKind.ClassSelfTypeRef)
+                                    moduleData = session.moduleData
+                                    resolvePhase = FirResolvePhase.TYPES
+                                    origin = FirDeclarationOrigin.Source
+                                    name = Name.special("<Self>")
+                                    symbol = selfSymbol
+                                    variance = Variance.OUT_VARIANCE
+                                    isReified = false
+                                }.build())
+                 */
                 params.add(firTypeParameterBuilder.apply {
                     source = firClass.source?.fakeElement(KtFakeSourceElementKind.ClassSelfTypeRef)
                     moduleData = session.moduleData
@@ -328,6 +341,7 @@ open class FirTypeResolveTransformer(
     }
 
     private fun FirMemberDeclaration.addTypeParametersScope() {
+        scopes.add(FirSelfTypeScope(this))
         if (typeParameters.isNotEmpty()) {
             scopes.add(FirMemberTypeParameterScope(this))
         }
