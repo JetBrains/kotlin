@@ -588,6 +588,11 @@ internal class Lexer(val patternString: String, flags: Int) {
                     positive = false
                 }
 
+                'c' -> result = if (positive)
+                                    result or Pattern.CANON_EQ
+                                else
+                                    result xor Pattern.CANON_EQ and result
+
                 'i' -> result = if (positive)
                                     result or Pattern.CASE_INSENSITIVE
                                 else
@@ -609,10 +614,16 @@ internal class Lexer(val patternString: String, flags: Int) {
                                     result xor Pattern.DOTALL and result
 
                 // We don't support UNICODE_CASE.
-                /*'u' -> result = if (positive)
+                'u' -> {}/*result = if (positive)
                                     result or Pattern.UNICODE_CASE
                                 else
                                     result xor Pattern.UNICODE_CASE and result*/
+
+                // We don't support UNICODE_CHARACTER_CLASS.
+                'U' -> {}/*result = if (positive)
+                                    result or Pattern.UNICODE_CHARACTER_CLASS
+                                else
+                                    result xor Pattern.UNICODE_CHARACTER_CLASS and result*/
 
                 'x' -> result = if (positive)
                                     result or Pattern.COMMENTS
@@ -627,6 +638,10 @@ internal class Lexer(val patternString: String, flags: Int) {
                 ')' -> {
                     nextIndex()
                     return result or (1 shl 8)
+                }
+
+                else -> {
+                    throw PatternSyntaxException("Unknown inline modifier", patternString, curTokenIndex)
                 }
             }
             nextIndex()
