@@ -123,6 +123,8 @@ if (!project.hasProperty("versions.kotlin-native")) {
 }
 
 val useJvmFir by extra(project.kotlinBuildProperties.useFir)
+val useFirLT by extra(project.kotlinBuildProperties.useFirWithLightTree)
+val useFirIC by extra(project.kotlinBuildProperties.useFirTightIC)
 val renderDiagnosticNames by extra(project.kotlinBuildProperties.renderDiagnosticNames)
 
 val irCompilerModules = arrayOf(
@@ -505,6 +507,12 @@ allprojects {
             if (useJvmFir && this@allprojects.path !in projectsWithDisabledFirBootstrap) {
                 freeCompilerArgs += "-Xuse-fir"
                 freeCompilerArgs += "-Xabi-stability=stable"
+                if (useFirLT) {
+                    freeCompilerArgs += "-Xuse-fir-lt"
+                }
+                if (useFirIC) {
+                    freeCompilerArgs += "-Xuse-fir-ic"
+                }
             }
             if (renderDiagnosticNames) {
                 freeCompilerArgs += "-Xrender-internal-diagnostic-names"
