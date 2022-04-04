@@ -36639,6 +36639,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
             }
 
             @Test
+            @TestMetadata("fileOptInSuppressesOverride.kt")
+            public void testFileOptInSuppressesOverride() throws Exception {
+                runTest("compiler/testData/diagnostics/testsWithStdLib/experimental/fileOptInSuppressesOverride.kt");
+            }
+
+            @Test
             @TestMetadata("fullFqNameUsage.kt")
             public void testFullFqNameUsage() throws Exception {
                 runTest("compiler/testData/diagnostics/testsWithStdLib/experimental/fullFqNameUsage.kt");
