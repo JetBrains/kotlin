@@ -10,6 +10,7 @@ package test.text
 import test.regexSplitUnicodeCodePointHandling
 import test.supportsNamedCapturingGroup
 import test.supportsOctalLiteralInRegex
+import test.supportsEscapeAnyCharInRegex
 import test.BackReferenceHandling
 import test.HandlingOption
 import kotlin.test.*
@@ -57,6 +58,20 @@ class RegexTest {
         assertFailsWith<IndexOutOfBoundsException> { p.find(input, -1) }
         assertFailsWith<IndexOutOfBoundsException> { p.find(input, input.length + 1) }
         assertEquals(null, p.find(input, input.length))
+    }
+
+    @Test fun matchEscapeSurrogatePair() {
+        if (!supportsEscapeAnyCharInRegex) return
+
+        val regex = "\\\uD83D\uDE00".toRegex()
+        assertTrue(regex.matches("\uD83D\uDE00"))
+    }
+
+    @Test fun matchEscapeRandomChar() {
+        if (!supportsEscapeAnyCharInRegex) return
+
+        val regex = "\\-".toRegex()
+        assertTrue(regex.matches("-"))
     }
 
     @Test fun matchIgnoreCase() {
@@ -177,12 +192,9 @@ class RegexTest {
     @Test fun matchDuplicateGroupName() {
         if (!supportsNamedCapturingGroup) return
 
-        assertFailsWith<IllegalArgumentException> {
-            "(?<hi>hi)|(?<hi>bye)".toRegex()
-        }
-        assertFailsWith<IllegalArgumentException> {
-            Regex("(?<first>\\d+)-(?<first>\\d+)")
-        }
+        // should fail with IllegalArgumentException, but JS fails with SyntaxError
+        assertFails { "(?<hi>hi)|(?<hi>bye)".toRegex() }
+        assertFails { "(?<first>\\d+)-(?<first>\\d+)".toRegex() }
     }
 
     @Test fun matchOptionalNamedGroup() {
@@ -286,7 +298,7 @@ class RegexTest {
             HandlingOption.IGNORE_BACK_REFERENCE_EXPRESSION ->
                 assertEquals(matchValue, pattern.toRegex().find(input)?.value)
             HandlingOption.THROW ->
-                // TODO: should fail with IllegalArgumentException, but JS fails with SyntaxError
+                // should fail with IllegalArgumentException, but JS fails with SyntaxError
                 assertFails { pattern.toRegex() }
             HandlingOption.MATCH_NOTHING ->
                 assertNull(pattern.toRegex().find(input))
@@ -296,7 +308,7 @@ class RegexTest {
     @Test fun invalidNamedGroupDeclaration() {
         if (!supportsNamedCapturingGroup) return
 
-        // TODO: should fail with IllegalArgumentException, but JS fails with SyntaxError
+        // should fail with IllegalArgumentException, but JS fails with SyntaxError
 
         assertFails {
             "(?<".toRegex()
@@ -317,10 +329,6 @@ class RegexTest {
             "(?<>\\w+), yes \\k<>".toRegex()
         }
     }
-
-    // TODO: Test comment mode enabled and group name is separated by space, (before, in the middle, after)
-    // TODO: Test comment mode enabled and back reference group index is separated by space, (before, in the middle, after)
-    // TODO: IllegalArgumentException to java.util.regex.PatternSyntaxException where possible
 
     @Test fun matchMultiline() {
         val regex = "^[a-z]*$".toRegex(setOf(RegexOption.IGNORE_CASE, RegexOption.MULTILINE))
