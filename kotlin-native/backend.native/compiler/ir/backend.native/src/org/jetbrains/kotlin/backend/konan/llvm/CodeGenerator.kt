@@ -514,8 +514,8 @@ internal abstract class FunctionGenerationContext(
     init {
         irFunction?.let {
             if (!irFunction.isExported()) {
-                LLVMSetLinkage(function, LLVMLinkage.LLVMInternalLinkage)
-                // (Cannot do this before the function body is created).
+                if (!context.config.producePerFileCache || irFunction !in context.calledFromExportedInlineFunctions)
+                    LLVMSetLinkage(function, LLVMLinkage.LLVMInternalLinkage) // (Cannot do this before the function body is created)
             }
         }
     }

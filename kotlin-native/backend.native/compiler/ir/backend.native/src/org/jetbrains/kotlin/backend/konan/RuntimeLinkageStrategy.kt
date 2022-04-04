@@ -76,7 +76,7 @@ internal sealed class RuntimeLinkageStrategy {
         internal fun pick(context: Context): RuntimeLinkageStrategy {
             val binaryOption = context.config.configuration.get(BinaryOptions.linkRuntime)
             val runtimeNativeLibraries = context.config.runtimeNativeLibraries
-                    .takeIf { context.producedLlvmModuleContainsStdlib }
+                    .takeIf { context.shouldLinkRuntimeNativeLibraries }
             val runtimeLlvmModules = runtimeNativeLibraries?.map {
                 val parsedModule = parseBitcodeFile(it)
                 if (!context.shouldUseDebugInfoFromNativeLibs()) {

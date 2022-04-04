@@ -7,6 +7,8 @@ package org.jetbrains.kotlin.backend.konan
 
 import org.jetbrains.kotlin.backend.konan.serialization.ClassFieldsSerializer
 import org.jetbrains.kotlin.backend.konan.serialization.InlineFunctionBodyReferenceSerializer
+import org.jetbrains.kotlin.backend.konan.serialization.SerializedClassFields
+import org.jetbrains.kotlin.backend.konan.serialization.SerializedInlineFunctionReference
 import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import org.jetbrains.kotlin.konan.target.KonanTarget
@@ -19,25 +21,69 @@ class CachedLibraries(
         explicitCaches: Map<KotlinLibrary, String>,
         implicitCacheDirectories: List<File>
 ) {
+    enum class Kind { DYNAMIC, STATIC }
+    enum class Granularity { MODULE, FILE }
 
-    class Cache(val kind: Kind, val path: String) {
-        enum class Kind { DYNAMIC, STATIC }
+    private fun Kind.toCompilerOutputKind(): CompilerOutputKind = when (this) {
+        Kind.DYNAMIC -> CompilerOutputKind.DYNAMIC_CACHE
+        Kind.STATIC -> CompilerOutputKind.STATIC_CACHE
+    }
+
+    inner class Cache(val kind: Kind, val granularity: Granularity, val path: String) {
+        val fileDirs by lazy { File(path).listFiles.filter { it.isDirectory }.sortedBy { it.name } }
 
         val bitcodeDependencies by lazy {
-            val directory = File(path).absoluteFile.parent
-            File(directory, BITCODE_DEPENDENCIES_FILE_NAME).readStrings()
+            when (granularity) {
+                Granularity.MODULE -> File(path).parentFile.child(BITCODE_DEPENDENCIES_FILE_NAME).readStrings()
+                Granularity.FILE -> fileDirs.flatMap {
+                    it.child(PER_FILE_CACHE_BINARY_LEVEL_DIR_NAME).child(BITCODE_DEPENDENCIES_FILE_NAME).readStrings()
+                }.distinct()
+            }
+        }
+
+        val binariesPaths by lazy {
+            when (granularity) {
+                Granularity.MODULE -> listOf(path)
+                Granularity.FILE -> fileDirs.map {
+                    it.child(PER_FILE_CACHE_BINARY_LEVEL_DIR_NAME).child(getArtifactName(it.name, kind.toCompilerOutputKind())).absolutePath
+                }
+            }
         }
 
         val serializedInlineFunctionBodies by lazy {
-            val directory = File(path).absoluteFile.parent
-            val data = File(directory, INLINE_FUNCTION_BODIES_FILE_NAME).readBytes()
-            InlineFunctionBodyReferenceSerializer.deserialize(data)
+            val result = mutableListOf<SerializedInlineFunctionReference>()
+            when (granularity) {
+                Granularity.MODULE -> {
+                    val directory = File(path).absoluteFile.parent
+                    val data = File(directory, INLINE_FUNCTION_BODIES_FILE_NAME).readBytes()
+                    InlineFunctionBodyReferenceSerializer.deserializeTo(data, result)
+                }
+                Granularity.FILE -> {
+                    fileDirs.forEach { fileDir ->
+                        val data = fileDir.child(PER_FILE_CACHE_IR_LEVEL_DIR_NAME).child(INLINE_FUNCTION_BODIES_FILE_NAME).readBytes()
+                        InlineFunctionBodyReferenceSerializer.deserializeTo(data, result)
+                    }
+                }
+            }
+            result
         }
 
         val serializedClassFields by lazy {
-            val directory = File(path).absoluteFile.parent
-            val data = File(directory, CLASS_FIELDS_FILE_NAME).readBytes()
-            ClassFieldsSerializer.deserialize(data)
+            val result = mutableListOf<SerializedClassFields>()
+            when (granularity) {
+                Granularity.MODULE -> {
+                    val directory = File(path).absoluteFile.parent
+                    val data = File(directory, CLASS_FIELDS_FILE_NAME).readBytes()
+                    ClassFieldsSerializer.deserializeTo(data, result)
+                }
+                Granularity.FILE -> {
+                    fileDirs.forEach { fileDir ->
+                        val data = fileDir.child(PER_FILE_CACHE_IR_LEVEL_DIR_NAME).child(CLASS_FIELDS_FILE_NAME).readBytes()
+                        ClassFieldsSerializer.deserializeTo(data, result)
+                    }
+                }
+            }
+            result
         }
     }
 
@@ -57,9 +103,9 @@ class CachedLibraries(
             error("Both dynamic and static caches files cannot be in the same directory." +
                     " Library: ${library.libraryName}, path to cache: ${cacheDir.absolutePath}")
         return when {
-            dynamicFile.absolutePath in cacheDirContents -> Cache(Cache.Kind.DYNAMIC, dynamicFile.absolutePath)
-            staticFile.absolutePath in cacheDirContents -> Cache(Cache.Kind.STATIC, staticFile.absolutePath)
-            else -> error("No cache found for library ${library.libraryName} at ${cacheDir.absolutePath}")
+            dynamicFile.absolutePath in cacheDirContents -> Cache(Kind.DYNAMIC, Granularity.MODULE, dynamicFile.absolutePath)
+            staticFile.absolutePath in cacheDirContents -> Cache(Kind.STATIC, Granularity.MODULE, staticFile.absolutePath)
+            else -> Cache(Kind.STATIC, Granularity.FILE, cacheDir.absolutePath)
         }
     }
 
@@ -71,7 +117,8 @@ class CachedLibraries(
                     ?: error("No cache found for library ${library.libraryName} at $explicitPath")
         } else {
             implicitCacheDirectories.firstNotNullOfOrNull { dir ->
-                selectCache(library, dir.child(getCachedLibraryName(library)))
+                selectCache(library, dir.child(getPerFileCachedLibraryName(library)))
+                        ?: selectCache(library, dir.child(getCachedLibraryName(library)))
             }
         }
 
@@ -89,21 +136,25 @@ class CachedLibraries(
 
     val hasStaticCaches = allCaches.values.any {
         when (it.kind) {
-            Cache.Kind.STATIC -> true
-            Cache.Kind.DYNAMIC -> false
+            Kind.STATIC -> true
+            Kind.DYNAMIC -> false
         }
     }
 
     val hasDynamicCaches = allCaches.values.any {
         when (it.kind) {
-            Cache.Kind.STATIC -> false
-            Cache.Kind.DYNAMIC -> true
+            Kind.STATIC -> false
+            Kind.DYNAMIC -> true
         }
     }
 
     companion object {
+        fun getPerFileCachedLibraryName(library: KotlinLibrary): String = "${library.uniqueName}-per-file-cache"
         fun getCachedLibraryName(library: KotlinLibrary): String = getCachedLibraryName(library.uniqueName)
         fun getCachedLibraryName(libraryName: String): String = "$libraryName-cache"
+
+        const val PER_FILE_CACHE_IR_LEVEL_DIR_NAME = "ir"
+        const val PER_FILE_CACHE_BINARY_LEVEL_DIR_NAME = "bin"
 
         const val BITCODE_DEPENDENCIES_FILE_NAME = "bitcode_deps"
         const val INLINE_FUNCTION_BODIES_FILE_NAME = "inline_bodies"

@@ -293,6 +293,10 @@ class K2Native : CLICompiler<K2NativeCompilerArguments>() {
                 libraryToAddToCache?.let { put(LIBRARY_TO_ADD_TO_CACHE, it) }
                 put(CACHE_DIRECTORIES, cacheDirectories)
                 put(CACHED_LIBRARIES, parseCachedLibraries(arguments, configuration))
+                val fileToCache = arguments.fileToCache
+                if (outputKind == CompilerOutputKind.PRELIMINARY_CACHE && fileToCache == null)
+                    configuration.report(ERROR, "preliminary_cache only supported for per-file caches")
+                fileToCache?.let { put(FILE_TO_CACHE, it) }
 
                 parseShortModuleName(arguments, configuration, outputKind)?.let {
                     put(SHORT_MODULE_NAME, it)

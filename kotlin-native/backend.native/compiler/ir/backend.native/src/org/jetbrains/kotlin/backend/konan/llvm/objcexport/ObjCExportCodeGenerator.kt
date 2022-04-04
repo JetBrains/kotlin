@@ -290,7 +290,7 @@ internal class ObjCExportBlockCodeGenerator(codegen: CodeGenerator) : ObjCExport
         // 1. Enumerates [BuiltInFictitiousFunctionIrClassFactory] built classes, which may be incomplete otherwise.
         // 2. Modifies stdlib global initializers.
         // 3. Defines runtime-declared globals.
-        require(context.producedLlvmModuleContainsStdlib)
+        require(context.shouldDefineFunctionClasses)
     }
 
     fun generate() {
@@ -589,6 +589,8 @@ internal class ObjCExportCodeGenerator(
             unreachable()
         }
 
+        LLVMSetLinkage(imp, LLVMLinkage.LLVMInternalLinkage)
+
         val methods = selectorsToDefine.map { (selector, bridge) ->
             ObjCDataGenerator.Method(selector, getEncoding(bridge), constPointer(imp))
         }
@@ -865,7 +867,7 @@ private val ObjCExportBlockCodeGenerator.mappedFunctionNClasses get() =
         .filter { it.descriptor.isMappedFunctionClass() }
 
 private fun ObjCExportBlockCodeGenerator.emitFunctionConverters() {
-    require(context.producedLlvmModuleContainsStdlib)
+    require(context.shouldDefineFunctionClasses)
     mappedFunctionNClasses.forEach { functionClass ->
         val convertToRetained = kotlinFunctionToRetainedBlockConverter(BlockPointerBridge(functionClass.arity, returnsVoid = false))
 
@@ -875,7 +877,7 @@ private fun ObjCExportBlockCodeGenerator.emitFunctionConverters() {
 }
 
 private fun ObjCExportBlockCodeGenerator.emitBlockToKotlinFunctionConverters() {
-    require(context.producedLlvmModuleContainsStdlib)
+    require(context.shouldDefineFunctionClasses)
     val functionClassesByArity = mappedFunctionNClasses.associateBy { it.arity }
 
     val arityLimit = (functionClassesByArity.keys.maxOrNull() ?: -1) + 1

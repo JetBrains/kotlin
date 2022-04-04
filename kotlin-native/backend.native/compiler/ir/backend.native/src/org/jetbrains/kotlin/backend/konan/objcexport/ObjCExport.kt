@@ -81,7 +81,7 @@ internal class ObjCExport(val context: Context, symbolTable: SymbolTable) {
     internal fun generate(codegen: CodeGenerator) {
         if (!target.family.isAppleFamily) return
 
-        if (context.producedLlvmModuleContainsStdlib) {
+        if (context.shouldDefineFunctionClasses) {
             ObjCExportBlockCodeGenerator(codegen).generate()
         }
 

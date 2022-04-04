@@ -36,7 +36,7 @@ data class File constructor(internal val javaPath: Path) {
         get() = File(canonicalPath)
 
     val name: String
-        get() = javaPath.fileName.toString().removeSuffixIfPresent("/") // https://bugs.java.com/bugdatabase/view_bug.do?bug_id=8153248
+        get() = javaPath.fileName.toString().removeSuffixIfPresent(separator) // https://bugs.java.com/bugdatabase/view_bug.do?bug_id=8153248
     val extension: String
         get() = name.substringAfterLast('.', "")
     val parent: String
@@ -69,6 +69,8 @@ data class File constructor(internal val javaPath: Path) {
         val destPath = destination.javaPath
         sourcePath.recursiveCopyTo(destPath, resetTimeAttributes = resetTimeAttributes)
     }
+
+    fun renameTo(destination: File) = javaPath.toFile().renameTo(destination.javaPath.toFile())
 
     fun mkdirs() = Files.createDirectories(javaPath)
     fun delete() = Files.deleteIfExists(javaPath)
@@ -167,6 +169,7 @@ data class File constructor(internal val javaPath: Path) {
             get() = File(System.getProperty("java.home"))
         val pathSeparator = java.io.File.pathSeparator
         val separator = java.io.File.separator
+        val separatorChar = java.io.File.separatorChar
     }
 
     fun readStrings() = mutableListOf<String>().also { list -> forEachLine{list.add(it)}}

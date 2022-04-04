@@ -205,6 +205,14 @@ class K2NativeCompilerArguments : CommonCompilerArguments() {
     )
     var libraryToAddToCache: String? = null
 
+    @Argument(
+            value = "-Xfile-to-cache",
+            valueDescription = "<path>",
+            description = "Path to file to cache",
+            delimiter = ""
+    )
+    var fileToCache: String? = null
+
     @Argument(value = "-Xexport-kdoc", description = "Export KDoc in framework header")
     var exportKDoc: Boolean = false
 

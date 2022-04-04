@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.backend.konan
 
+import org.jetbrains.kotlin.backend.common.serialization.codedInputStream
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.konan.file.File
@@ -12,6 +13,8 @@ import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.resolver.KotlinLibraryResolveResult
+import org.jetbrains.kotlin.protobuf.ExtensionRegistryLite
+import org.jetbrains.kotlin.backend.common.serialization.proto.IrFile as ProtoFile
 
 sealed class CacheDeserializationStrategy {
     abstract fun contains(filePath: String): Boolean
@@ -23,6 +26,10 @@ sealed class CacheDeserializationStrategy {
     object WholeModule : CacheDeserializationStrategy() {
         override fun contains(filePath: String) = true
     }
+
+    class SingleFile(val filePath: String) : CacheDeserializationStrategy() {
+        override fun contains(filePath: String) = filePath == this.filePath
+    }
 }
 
 class PartialCacheInfo(val klib: KotlinLibrary, val strategy: CacheDeserializationStrategy)
@@ -31,7 +38,7 @@ class CacheSupport(
         val configuration: CompilerConfiguration,
         resolvedLibraries: KotlinLibraryResolveResult,
         target: KonanTarget,
-        produce: CompilerOutputKind
+        val produce: CompilerOutputKind
 ) {
     private val allLibraries = resolvedLibraries.getFullList()
 
@@ -45,14 +52,40 @@ class CacheSupport(
             }
 
     internal fun tryGetImplicitOutput(): String? {
-        val libraryToAddToCache = configuration.get(KonanConfigKeys.LIBRARY_TO_ADD_TO_CACHE) ?: return null
+        val libraryToCache = libraryToCache ?: return null
         // Put the resulting library in the first cache directory.
         val cacheDirectory = implicitCacheDirectories.firstOrNull() ?: return null
-        val libraryToAddToCacheFile = File(libraryToAddToCache)
-        val library = allLibraries.single { it.libraryFile == libraryToAddToCacheFile }
-        return cacheDirectory.child(CachedLibraries.getCachedLibraryName(library)).absolutePath
-    }
+        val fileToCache = (libraryToCache.strategy as? CacheDeserializationStrategy.SingleFile)?.filePath
+        val baseLibraryCacheDirectory = cacheDirectory.child(
+                if (fileToCache == null)
+                    CachedLibraries.getCachedLibraryName(libraryToCache.klib)
+                else
+                    CachedLibraries.getPerFileCachedLibraryName(libraryToCache.klib)
+        )
+        if (fileToCache == null)
+            return baseLibraryCacheDirectory.absolutePath
 
+        // TODO: probably should do this in the same way as is done in per-file klibs (fqName_pathHash).
+        val fileProtos = Array<ProtoFile>(libraryToCache.klib.fileCount()) {
+            ProtoFile.parseFrom(libraryToCache.klib.file(it).codedInputStream, ExtensionRegistryLite.newInstance())
+        }
+        val commonPrefix = fileProtos
+                .drop(1)
+                .fold(fileProtos[0].fileEntry.name) { s, f -> s.commonPrefixWith(f.fileEntry.name) }
+        val pathSeparatorIndex = commonPrefix.lastIndexOf(File.separatorChar)
+        require(pathSeparatorIndex >= 0) { "The library's content root should be a directory: $commonPrefix" }
+        val libraryContentRoot = commonPrefix.substring(0, pathSeparatorIndex + 1)
+        require(fileToCache.startsWith(libraryContentRoot)) {
+            "File $fileToCache should lie in the library's content root $libraryContentRoot"
+        }
+
+        val relativePathToFileToCache = fileToCache.substring(libraryContentRoot.length).replace(File.separatorChar, '_')
+        val fileCacheDirectory = baseLibraryCacheDirectory.child(relativePathToFileToCache)
+        val contentDirName = if (produce == CompilerOutputKind.PRELIMINARY_CACHE)
+            CachedLibraries.PER_FILE_CACHE_IR_LEVEL_DIR_NAME
+        else CachedLibraries.PER_FILE_CACHE_BINARY_LEVEL_DIR_NAME
+        return fileCacheDirectory.child(contentDirName).absolutePath
+    }
 
     internal val cachedLibraries: CachedLibraries = run {
         val explicitCacheFiles = configuration.get(KonanConfigKeys.CACHED_LIBRARIES)!!
@@ -104,7 +137,7 @@ class CacheSupport(
             val libraryToAddToCacheFile = File(libraryToAddToCachePath)
             val libraryToAddToCache = getLibrary(libraryToAddToCacheFile)
             val libraryCache = cachedLibraries.getLibraryCache(libraryToAddToCache)
-            if (libraryCache == null)
+            if (libraryCache == null || libraryCache.granularity == CachedLibraries.Granularity.FILE)
                 setOf(libraryToAddToCache)
             else
                 emptySet()
@@ -112,7 +145,8 @@ class CacheSupport(
     }
 
     internal val libraryToCache = librariesToCache.singleOrNull()?.let {
-        PartialCacheInfo(it, CacheDeserializationStrategy.WholeModule)
+        val fileToCache = configuration.get(KonanConfigKeys.FILE_TO_CACHE)
+        PartialCacheInfo(it, if (fileToCache == null) CacheDeserializationStrategy.WholeModule else CacheDeserializationStrategy.SingleFile(fileToCache))
     }
 
     internal val preLinkCaches: Boolean =
@@ -146,8 +180,8 @@ class CacheSupport(
         // Ensure not making cache for libraries that are already cached:
         librariesToCache.forEach {
             val cache = cachedLibraries.getLibraryCache(it)
-            if (cache != null) {
-                configuration.reportCompilationError("Can't cache library '${it.libraryName}' " +
+            if (cache != null && cache.granularity == CachedLibraries.Granularity.MODULE) {
+                configuration.reportCompilationError("can't cache library '${it.libraryName}' " +
                         "that is already cached in '${cache.path}'")
             }
         }

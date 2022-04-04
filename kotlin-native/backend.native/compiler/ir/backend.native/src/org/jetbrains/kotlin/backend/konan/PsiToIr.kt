@@ -64,10 +64,10 @@ internal fun Context.psiToIr(
     )
     val irBuiltInsOverDescriptors = generatorContext.irBuiltIns as IrBuiltInsOverDescriptors
     val functionIrClassFactory: KonanIrAbstractDescriptorBasedFunctionFactory =
-            if (config.lazyIrForCaches && !llvmModuleSpecification.containsModule(this.stdlibModule))
-                LazyIrFunctionFactory(symbolTable, stubGenerator, irBuiltInsOverDescriptors, reflectionTypes)
-            else
+            if (shouldDefineFunctionClasses || (!config.lazyIrForCaches && !config.producePerFileCache))
                 BuiltInFictitiousFunctionIrClassFactory(symbolTable, irBuiltInsOverDescriptors, reflectionTypes)
+            else
+                LazyIrFunctionFactory(symbolTable, stubGenerator, irBuiltInsOverDescriptors, reflectionTypes)
     irBuiltInsOverDescriptors.functionFactory = functionIrClassFactory
     val symbols = KonanSymbols(this, generatorContext.irBuiltIns, symbolTable, symbolTable.lazyWrapper)
 
@@ -144,10 +144,11 @@ internal fun Context.psiToIr(
 
                 for (dependency in sortDependencies(dependencies).filter { it != moduleDescriptor }) {
                     val kotlinLibrary = (dependency.getCapability(KlibModuleOrigin.CAPABILITY) as? DeserializedKlibModuleOrigin)?.library
-                    val isCachedLibrary = kotlinLibrary != null && config.cachedLibraries.isLibraryCached(kotlinLibrary)
-                    if (isProducingLibrary || (config.lazyIrForCaches && isCachedLibrary))
+                    val isFullyCachedLibrary = kotlinLibrary != null &&
+                            config.cachedLibraries.isLibraryCached(kotlinLibrary) && kotlinLibrary != config.libraryToCache?.klib
+                    if (isProducingLibrary || (config.lazyIrForCaches && isFullyCachedLibrary))
                         linker.deserializeOnlyHeaderModule(dependency, kotlinLibrary)
-                    else if (isCachedLibrary)
+                    else if (isFullyCachedLibrary)
                         linker.deserializeHeadersWithInlineBodies(dependency, kotlinLibrary!!)
                     else
                         linker.deserializeIrModuleHeader(dependency, kotlinLibrary, dependency.name.asString())
@@ -226,7 +227,7 @@ internal fun Context.psiToIr(
     if (!isProducingLibrary) {
         // TODO: find out what should be done in the new builtins/symbols about it
         if (this.stdlibModule in modulesWithoutDCE) {
-            (functionIrClassFactory as BuiltInFictitiousFunctionIrClassFactory).buildAllClasses()
+            (functionIrClassFactory as? BuiltInFictitiousFunctionIrClassFactory)?.buildAllClasses()
         }
         internalAbi.init(irModules.values + irModule!!)
         (functionIrClassFactory as? BuiltInFictitiousFunctionIrClassFactory)?.module =

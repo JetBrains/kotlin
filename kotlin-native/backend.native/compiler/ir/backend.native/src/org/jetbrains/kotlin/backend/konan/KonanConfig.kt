@@ -184,16 +184,18 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
     internal val libraryToCache: PartialCacheInfo?
         get() = cacheSupport.libraryToCache
 
+    internal val producePerFileCache = libraryToCache?.strategy is CacheDeserializationStrategy.SingleFile
+
     val outputFiles =
             OutputFiles(configuration.get(KonanConfigKeys.OUTPUT) ?: cacheSupport.tryGetImplicitOutput(),
-                    target, produce)
+                    target, produce, producePerFileCache)
 
     val tempFiles = TempFiles(outputFiles.outputName, configuration.get(KonanConfigKeys.TEMPORARY_FILES_DIR))
 
-    val outputFile get() = outputFiles.mainFile
+    val outputFile get() = outputFiles.mainFileName
 
     private val implicitModuleName: String
-        get() = File(outputFiles.outputName).name
+        get() = if (produce.isCache) outputFiles.cacheFileName else File(outputFiles.outputName).name
 
     val fullExportedNamePrefix: String
         get() = configuration.get(KonanConfigKeys.FULL_EXPORTED_NAME_PREFIX) ?: implicitModuleName
@@ -204,10 +206,12 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
     val shortModuleName: String?
         get() = configuration.get(KonanConfigKeys.SHORT_MODULE_NAME)
 
+    @Suppress("Reformat")
     val infoArgsOnly = configuration.kotlinSourceRoots.isEmpty()
             && configuration[KonanConfigKeys.INCLUDED_LIBRARIES].isNullOrEmpty()
-            && librariesToCache.isEmpty()
             && configuration[KonanConfigKeys.EXPORTED_LIBRARIES].isNullOrEmpty()
+            && (librariesToCache.isEmpty()
+                    || producePerFileCache && outputFiles.mainFile.exists)
 
     fun librariesWithDependencies(moduleDescriptor: ModuleDescriptor?): List<KonanLibrary> {
         if (moduleDescriptor == null) error("purgeUnneeded() only works correctly after resolve is over, and we have successfully marked package files as needed or not needed.")

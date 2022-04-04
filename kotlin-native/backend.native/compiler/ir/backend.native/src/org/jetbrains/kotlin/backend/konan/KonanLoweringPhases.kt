@@ -179,7 +179,8 @@ internal val inlinePhase = makeKonanFileOpPhase(
                 }
             })
 
-            FunctionInlining(context, NativeInlineFunctionResolver(context)).lower(irFile)
+            FunctionInlining(context, NativeInlineFunctionResolver(context),
+                    inlineSymbolRenamerFactory = NativeInlineSymbolRenamerFactory()).lower(irFile)
         },
         name = "Inline",
         description = "Functions inlining",

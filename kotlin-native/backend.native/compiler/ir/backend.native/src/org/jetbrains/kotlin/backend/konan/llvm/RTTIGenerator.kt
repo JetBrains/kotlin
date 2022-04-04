@@ -462,6 +462,8 @@ internal class RTTIGenerator(override val context: Context) : ContextUtils {
                     ""
             ) {
                 ret(getObjectValue(value, ExceptionHandler.Caller, startLocationInfo = null))
+            }.also {
+                LLVMSetLinkage(it, LLVMLinkage.LLVMPrivateLinkage)
             }
 
             Struct(runtime.associatedObjectTableRecordType, key.typeInfoPtr, constPointer(associatedObjectGetter))

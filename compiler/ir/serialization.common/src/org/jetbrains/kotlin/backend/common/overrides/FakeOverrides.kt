@@ -87,9 +87,8 @@ class FakeOverrideBuilder(
         fakeOverrideCandidates[clazz] = compatibilityMode
     }
 
-    private fun buildFakeOverrideChainsForClass(clazz: IrClass, compatibilityMode: CompatibilityMode) {
-        if (haveFakeOverrides.contains(clazz)) return
-        if (!platformSpecificClassFilter.needToConstructFakeOverrides(clazz)) return
+    private fun buildFakeOverrideChainsForClass(clazz: IrClass, compatibilityMode: CompatibilityMode): Boolean {
+        if (haveFakeOverrides.contains(clazz)) return true
 
         val superTypes = clazz.superTypes
 
@@ -99,15 +98,18 @@ class FakeOverrideBuilder(
 
         superClasses.forEach { superClass ->
             val mode = fakeOverrideCandidates[superClass] ?: compatibilityMode
-            buildFakeOverrideChainsForClass(superClass, mode)
-            haveFakeOverrides.add(superClass)
+            if (buildFakeOverrideChainsForClass(superClass, mode))
+                haveFakeOverrides.add(superClass)
         }
+
+        if (!platformSpecificClassFilter.needToConstructFakeOverrides(clazz)) return false
 
         fakeOverrideDeclarationTable.run {
             inFile(clazz.fileOrNull) {
                 irOverridingUtil.buildFakeOverridesForClass(clazz, compatibilityMode.oldSignatures)
             }
         }
+        return true
     }
 
     override fun linkFunctionFakeOverride(declaration: IrFakeOverrideFunction, compatibilityMode: Boolean) {

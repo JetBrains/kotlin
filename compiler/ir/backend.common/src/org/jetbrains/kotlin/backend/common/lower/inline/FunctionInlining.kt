@@ -71,11 +71,18 @@ open class DefaultInlineFunctionResolver(open val context: CommonBackendContext)
     }
 }
 
+interface InlineSymbolRenamerFactory {
+    fun createSymbolRenamer(topCallee: IrFunction): SymbolRenamer = SymbolRenamer.DEFAULT
+
+    object DEFAULT : InlineSymbolRenamerFactory
+}
+
 class FunctionInlining(
     val context: CommonBackendContext,
     val inlineFunctionResolver: InlineFunctionResolver,
     val innerClassesSupport: InnerClassesSupport? = null,
-    val insertAdditionalImplicitCasts: Boolean = false
+    val insertAdditionalImplicitCasts: Boolean = false,
+    val inlineSymbolRenamerFactory: InlineSymbolRenamerFactory = InlineSymbolRenamerFactory.DEFAULT
 ) : IrElementTransformerVoidWithContext(), BodyLoweringPass {
 
     constructor(context: CommonBackendContext) : this(context, DefaultInlineFunctionResolver(context), null)
@@ -150,7 +157,7 @@ class FunctionInlining(
                 (0 until callSite.typeArgumentsCount).associate {
                     typeParameters[it].symbol to callSite.getTypeArgument(it)
                 }
-            DeepCopyIrTreeWithSymbolsForInliner(typeArguments, parent)
+            DeepCopyIrTreeWithSymbolsForInliner(typeArguments, parent, inlineSymbolRenamerFactory.createSymbolRenamer(callee))
         }
 
         val substituteMap = mutableMapOf<IrValueParameter, IrExpression>()

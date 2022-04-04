@@ -7,19 +7,30 @@ package org.jetbrains.kotlin.backend.konan.lower
 
 import org.jetbrains.kotlin.backend.common.DeclarationTransformer
 import org.jetbrains.kotlin.backend.common.lower.*
-import org.jetbrains.kotlin.backend.common.lower.inline.DefaultInlineFunctionResolver
-import org.jetbrains.kotlin.backend.common.lower.inline.LocalClassesExtractionFromInlineFunctionsLowering
-import org.jetbrains.kotlin.backend.common.lower.inline.LocalClassesInInlineFunctionsLowering
-import org.jetbrains.kotlin.backend.common.lower.inline.LocalClassesInInlineLambdasLowering
+import org.jetbrains.kotlin.backend.common.lower.inline.*
 import org.jetbrains.kotlin.backend.konan.Context
 import org.jetbrains.kotlin.backend.konan.InlineFunctionOriginInfo
 import org.jetbrains.kotlin.backend.konan.descriptors.findPackage
 import org.jetbrains.kotlin.ir.declarations.IrExternalPackageFragment
 import org.jetbrains.kotlin.ir.declarations.IrFunction
+import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
-import org.jetbrains.kotlin.ir.util.dump
-import org.jetbrains.kotlin.ir.util.file
-import org.jetbrains.kotlin.ir.util.render
+import org.jetbrains.kotlin.ir.util.*
+import org.jetbrains.kotlin.name.Name
+
+internal class NativeInlineSymbolRenamerFactory : InlineSymbolRenamerFactory {
+    private var classIndex = 0
+
+    override fun createSymbolRenamer(topCallee: IrFunction): SymbolRenamer {
+        return object : SymbolRenamer {
+            private val map = mutableMapOf<IrClassSymbol, Name>()
+
+            override fun getClassName(symbol: IrClassSymbol) = map.getOrPut(symbol) {
+                Name.identifier("${topCallee.fqNameForIrSerialization}_${symbol.owner.name.asString()}_${classIndex++}")
+            }
+        }
+    }
+}
 
 // TODO: This is a bit hacky. Think about adopting persistent IR ideas.
 internal class NativeInlineFunctionResolver(override val context: Context) : DefaultInlineFunctionResolver(context) {
@@ -59,7 +70,7 @@ internal class NativeInlineFunctionResolver(override val context: Context) : Def
 
         LocalClassesInInlineLambdasLowering(context).lower(body, notLoweredFunction)
 
-        if (context.llvmModuleSpecification.containsPackageFragment(packageFragment)) {
+        if (packageFragment !is IrExternalPackageFragment) {
             // Do not extract local classes off of inline functions from cached libraries.
             LocalClassesInInlineFunctionsLowering(context).lower(body, notLoweredFunction)
             LocalClassesExtractionFromInlineFunctionsLowering(context).lower(body, notLoweredFunction)

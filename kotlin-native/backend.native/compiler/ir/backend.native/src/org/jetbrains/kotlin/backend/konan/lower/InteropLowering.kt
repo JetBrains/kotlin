@@ -69,9 +69,11 @@ private abstract class BaseInteropIrTransformer(private val context: Context) : 
 
         val uniqueModuleName = irFile.packageFragmentDescriptor.module.name.asString()
                 .let { it.substring(1, it.lastIndex) }
+        // TODO: Consider using only for per-file caches.
+        val uniqueFileName = irFile.fileEntry.name
         val uniquePrefix = buildString {
             append('_')
-            uniqueModuleName.toByteArray().joinTo(this, "") {
+            (uniqueModuleName + uniqueFileName).toByteArray().joinTo(this, "") {
                 (0xFF and it.toInt()).toString(16).padStart(2, '0')
             }
             append('_')

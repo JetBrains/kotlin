@@ -7,19 +7,18 @@ package org.jetbrains.kotlin.backend.konan.llvm
 
 import kotlinx.cinterop.toKString
 import llvm.*
-import org.jetbrains.kotlin.backend.konan.BoxCache
-import org.jetbrains.kotlin.backend.konan.CachedLibraries
-import org.jetbrains.kotlin.library.resolver.TopologicalLibraryOrder
+import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.Context
-import org.jetbrains.kotlin.backend.konan.TargetAbiInfo
+import org.jetbrains.kotlin.library.resolver.TopologicalLibraryOrder
+import org.jetbrains.kotlin.backend.konan.descriptors.findPackage
 import org.jetbrains.kotlin.backend.konan.ir.llvmSymbolOrigin
+import org.jetbrains.kotlin.backend.konan.llvm.KonanBinaryInterface.functionName
 import org.jetbrains.kotlin.descriptors.konan.CompiledKlibModuleOrigin
 import org.jetbrains.kotlin.descriptors.konan.CurrentKlibModuleOrigin
 import org.jetbrains.kotlin.descriptors.konan.DeserializedKlibModuleOrigin
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.util.file
-import org.jetbrains.kotlin.ir.util.fqNameForIrSerialization
-import org.jetbrains.kotlin.ir.util.isReal
+import org.jetbrains.kotlin.ir.declarations.lazy.IrLazyFunction
+import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.konan.library.KonanLibrary
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.library.KotlinLibrary
@@ -176,6 +175,12 @@ internal interface ContextUtils : RuntimeAware {
         get() = llvmFunctionOrNull
                 ?: error("$name in ${file.name}/${parent.fqNameForIrSerialization}")
 
+    private tailrec fun IdSignature.fileSignature(): IdSignature.FileSignature? = when (this) {
+        is IdSignature.FileSignature -> this
+        is IdSignature.CompositeSignature -> this.container.fileSignature()
+        else -> null
+    }
+
     val IrFunction.llvmFunctionOrNull: LlvmCallable?
         get() {
             assert(this.isReal) {
@@ -183,7 +188,20 @@ internal interface ContextUtils : RuntimeAware {
             }
             return if (isExternal(this)) {
                 runtime.addedLLVMExternalFunctions.getOrPut(this) {
-                    val proto = LlvmFunctionProto(this, this.computeSymbolName(), this@ContextUtils)
+                    val symbolName = if (KonanBinaryInterface.isExported(this)) {
+                        this.computeSymbolName()
+                    } else {
+                        val externalPackageFragment = this.findPackage() as? IrExternalPackageFragment
+                                ?: error("Expected an external package fragment for $descriptor")
+                        val moduleDescriptor = externalPackageFragment.packageFragmentDescriptor.containingDeclaration
+                        val moduleDeserializer = context.irLinker.moduleDeserializers[moduleDescriptor]
+                                ?: error("No module deserializer for $moduleDescriptor")
+                        val idSig = moduleDeserializer.descriptorSignatures[descriptor] ?: error("No signature for $descriptor")
+                        val containerName = this.parentClassOrNull?.fqNameForIrSerialization
+                                ?: (idSig.topLevelSignature().fileSignature() ?: error("No file for $idSig")).fileName
+                        "kfun:$containerName.$functionName"
+                    }
+                    val proto = LlvmFunctionProto(this, symbolName, this@ContextUtils)
                     context.llvm.externalFunction(proto)
                 }
             } else {
@@ -379,6 +397,7 @@ internal class Llvm(val context: Context, val llvmModule: LLVMModuleRef) : Runti
         }
 
         for (library in immediateBitcodeDependencies) {
+            if (library == context.config.libraryToCache?.klib) continue
             val cache = context.config.cachedLibraries.getLibraryCache(library)
             if (cache != null) {
                 result += library
@@ -395,7 +414,7 @@ internal class Llvm(val context: Context, val llvmModule: LLVMModuleRef) : Runti
 
     val allBitcodeDependencies: List<KonanLibrary> by lazy {
         val allNonCachedDependencies = context.librariesWithDependencies.filter {
-            context.config.cachedLibraries.getLibraryCache(it) == null
+            context.config.cachedLibraries.getLibraryCache(it) == null || it == context.config.libraryToCache?.klib
         }
         val set = (allNonCachedDependencies + allCachedBitcodeDependencies).toSet()
         // This list is used in particular to build the libraries' initializers chain.

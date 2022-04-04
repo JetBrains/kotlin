@@ -124,8 +124,7 @@ internal object InlineFunctionBodyReferenceSerializer {
         return stream.buf
     }
 
-    fun deserialize(data: ByteArray): List<SerializedInlineFunctionReference> {
-        val result = mutableListOf<SerializedInlineFunctionReference>()
+    fun deserializeTo(data: ByteArray, result: MutableList<SerializedInlineFunctionReference>) {
         val stream = ByteArrayStream(data)
         while (stream.hasData()) {
             val file = stream.readInt()
@@ -146,7 +145,6 @@ internal object InlineFunctionBodyReferenceSerializer {
             result.add(SerializedInlineFunctionReference(file, functionSignature, body, startOffset, endOffset,
                     extensionReceiverSig, dispatchReceiverSig, outerReceiverSigs, valueParameterSigs, typeParameterSigs, defaultValues))
         }
-        return result
     }
 }
 
@@ -182,8 +180,7 @@ internal object ClassFieldsSerializer {
         return stream.buf
     }
 
-    fun deserialize(data: ByteArray): List<SerializedClassFields> {
-        val result = mutableListOf<SerializedClassFields>()
+    fun deserializeTo(data: ByteArray, result: MutableList<SerializedClassFields>) {
         val stream = ByteArrayStream(data)
         while (stream.hasData()) {
             val file = stream.readInt()
@@ -201,7 +198,6 @@ internal object ClassFieldsSerializer {
             }
             result.add(SerializedClassFields(file, classSignature, typeParameterSigs, outerThisIndex, fields))
         }
-        return result
     }
 }
 
