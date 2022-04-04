@@ -216,11 +216,11 @@ class LazyTopDownAnalyzer(
         declarationResolver.checkRedeclarationsInPackages(topLevelDescriptorProvider, topLevelFqNames)
         declarationResolver.checkRedeclarations(c)
 
+        declarationResolver.resolveAnnotationsOnFiles(c, fileScopeProvider)
+
         overrideResolver.check(c)
 
         varianceChecker.check(c)
-
-        declarationResolver.resolveAnnotationsOnFiles(c, fileScopeProvider)
 
         overloadResolver.checkOverloads(c)
 
