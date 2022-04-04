@@ -24,6 +24,7 @@ class IncrementalCompilationJsMultiProjectIT : BaseIncrementalCompilationMultiPr
             subProject.buildGradle.writeText(buildGradleJs.readText())
             buildGradleJs.deleteExisting()
         }
+        test()
     }
 
     override val additionalLibDependencies: String =
