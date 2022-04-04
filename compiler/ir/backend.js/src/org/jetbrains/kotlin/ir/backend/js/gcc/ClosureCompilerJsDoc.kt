@@ -34,6 +34,7 @@ fun JsStatement.withJsDoc(element: IrElement, context: JsGenerationContext) =
         is IrSetField -> withJsDocForInitializer(element, context)
         is IrSimpleFunction -> withJsDocForFunction(element, context)
         is IrConstructor -> withJsDocForConstructor(element, context)
+        is IrEnumEntry -> withJsDocForEnumEntry()
         else -> this
     }
 
@@ -110,4 +111,10 @@ fun JsStatement.withJsDocForConstructor(constructor: IrFunction?, parentClass: I
             implements(interfaces)
             constructor?.let { withParams(it.valueParameters) }
         }
+    }
+
+fun JsStatement.withJsDocForEnumEntry() =
+    annotateWithoutContext {
+        export()
+        type("?Object")
     }

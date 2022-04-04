@@ -8,14 +8,13 @@ package kotlin.js
 @JsPolyfill("""
 (function() {
     if (typeof globalThis === 'object') return; 
-    Object.defineProperty(Object.prototype, 'globalThis', {
-        get: function() {
-            return this;
-        },
+    Object.defineProperty(Object.prototype, '__magic__', {
+        get: function() { return this },
         configurable: true
     });
-    globalThis.globalThis = globalThis;
-    delete Object.prototype.globalThis;
+    // @suppress
+    __magic__.globalThis = globalThis;
+    delete Object.prototype.__magic__;
 }());
 """)
 internal external val globalThis: dynamic

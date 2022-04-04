@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.backend.js.JsStatementOrigins
 import org.jetbrains.kotlin.ir.backend.js.utils.*
 import org.jetbrains.kotlin.ir.declarations.IrClass
+import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.expressions.*
@@ -75,12 +76,12 @@ fun translateFunction(declaration: IrFunction, name: JsName?, context: JsGenerat
 
     val functionParams = declaration.valueParameters.map { functionContext.getNameForValueDeclaration(it) }
     val body = declaration.body
-        ?.takeIf { !declaration.isExternal }
+        ?.takeIf { !declaration.isExternal || declaration.origin != IrDeclarationOrigin.DEFINED }
         ?.accept(IrElementToJsStatementTransformer(), functionContext) as? JsBlock ?: JsBlock()
 
     val function = JsFunction(emptyScope, body, "member function ${name ?: "annon"}")
 
-    function.name = name
+    function.name = name?.takeIf { it.ident.isValidES5Identifier() }
 
     fun JsFunction.addParameter(parameter: JsName) {
         parameters.add(JsParameter(parameter))

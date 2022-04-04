@@ -12,7 +12,7 @@ fun box(): String {
         .apply { sort { a, b -> a - b } }
 
     assertEquals(intArr.joinToString(","), "1,2,3,4,5")
-    assertEquals(js("Int32Array.prototype.sort.called"), true)
+    assertEquals(js("Int32Array.prototype.sort['called']"), true)
 
     return "OK"
 }

@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.ir.backend.js.export.hasMangledName
 import org.jetbrains.kotlin.ir.backend.js.gcc.withJsDoc
 import org.jetbrains.kotlin.ir.backend.js.utils.JsGenerationContext
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.util.isTopLevelDeclaration
 import org.jetbrains.kotlin.js.backend.ast.*
 
 @Suppress("PARAMETER_NAME_CHANGED_ON_OVERRIDE")
@@ -16,13 +17,11 @@ class IrDeclarationToJsTransformer : BaseIrElementToJsNodeTransformer<JsStatemen
 
     override fun visitSimpleFunction(declaration: IrSimpleFunction, context: JsGenerationContext): JsStatement {
         require(!declaration.isExpect)
-        return declaration.accept(IrFunctionToJsTransformer(), context)
-            .makeStmt()
-            .withJsDoc(declaration, context)
+        return declaration.generateJsFunction(context)
     }
 
     override fun visitConstructor(declaration: IrConstructor, context: JsGenerationContext): JsStatement {
-        return declaration.accept(IrFunctionToJsTransformer(), context).makeStmt()
+        return declaration.generateJsFunction(context)
     }
 
     override fun visitClass(declaration: IrClass, context: JsGenerationContext): JsStatement {
@@ -50,6 +49,15 @@ class IrDeclarationToJsTransformer : BaseIrElementToJsNodeTransformer<JsStatemen
         return JsVars(JsVars.JsVar(fieldName)).withJsDoc(declaration, context)
     }
 
+    override fun visitProperty(declaration: IrProperty, context: JsGenerationContext): JsStatement {
+        return if (!declaration.isExternal && !declaration.isTopLevelDeclaration || declaration.hasMangledName()) {
+            JsEmpty
+        } else {
+            val fieldName = context.getNameForProperty(declaration)
+            JsVars(JsVars.JsVar(fieldName)).withJsDoc(declaration, context)
+        }
+    }
+
     override fun visitVariable(declaration: IrVariable, context: JsGenerationContext): JsStatement {
         return declaration.accept(IrElementToJsStatementTransformer(), context)
     }
@@ -62,5 +70,12 @@ class IrDeclarationToJsTransformer : BaseIrElementToJsNodeTransformer<JsStatemen
                     else it.accept(IrElementToJsStatementTransformer(), context)
             }
         }
+    }
+
+    private fun IrFunction.generateJsFunction(context: JsGenerationContext): JsStatement {
+        return accept(IrFunctionToJsTransformer(), context)
+            .takeIf { it.name != null }
+            ?.makeStmt()
+            ?.withJsDoc(this, context) ?: JsEmpty
     }
 }

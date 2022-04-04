@@ -27,6 +27,7 @@ class IrFunctionToJsTransformer : BaseIrElementToJsNodeTransformer<JsFunction, J
         } else {
             context.getNameForMemberFunction(declaration)
         }
+
         return translateFunction(declaration, funcName, context)
     }
 

@@ -9,7 +9,7 @@ fun box(): String {
         .apply { sort { a, b -> a - b } }
 
     assertEquals(intArr.joinToString(","), "1,2,3,4,5")
-    assertEquals(js("Int32Array.prototype.sort.called"), js("undefined"))
+    assertEquals(js("Int32Array.prototype.sort['called']"), js("undefined"))
 
     return "OK"
 }

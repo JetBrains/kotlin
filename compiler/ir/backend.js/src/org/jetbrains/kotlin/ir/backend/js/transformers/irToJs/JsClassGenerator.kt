@@ -43,6 +43,8 @@ class JsClassGenerator(private val irClass: IrClass, val context: JsGenerationCo
     fun generate(): JsStatement {
         assert(!irClass.isExpect)
 
+        if (irClass.isExternal && !irClass.getJsNameOrKotlinName().identifier.isValidES5Identifier()) return JsEmpty
+
         if (!es6mode) maybeGeneratePrimaryConstructor()
         val transformer = IrDeclarationToJsTransformer()
 
@@ -63,6 +65,7 @@ class JsClassGenerator(private val irClass: IrClass, val context: JsGenerationCo
                 is IrConstructor -> {
                     if (es6mode) {
                         declaration.accept(IrFunctionToJsTransformer(), context).let {
+                            if (it.name == null) return@let
                             //HACK: add superCall to Error
                             if ((baseClass?.classifierOrNull?.owner as? IrClass)?.symbol === context.staticContext.backendContext.throwableClass) {
                                 it.body.statements.add(0, JsInvocation(JsNameRef("super")).makeStmt())
@@ -73,12 +76,13 @@ class JsClassGenerator(private val irClass: IrClass, val context: JsGenerationCo
                             }
                         }
                     } else {
-                        classBlock.statements += declaration.accept(transformer, context).withJsDoc(declaration, context)
+                        classBlock.statements += declaration.accept(transformer, context)
                         classModel.preDeclarationBlock.statements += generateInheritanceCode()
                     }
                 }
                 is IrSimpleFunction -> {
                     properties.addIfNotNull(declaration.correspondingPropertySymbol?.owner)
+                    if (declaration.origin === IrDeclarationOrigin.ENUM_CLASS_SPECIAL_MEMBER) continue
 
                     if (es6mode) {
                         val (memberRef, function) = generateMemberFunction(declaration)
@@ -101,6 +105,12 @@ class JsClassGenerator(private val irClass: IrClass, val context: JsGenerationCo
                     }
                 }
                 is IrField, is IrProperty -> {
+                }
+                is IrEnumEntry -> {
+                    if (!irClass.isExternal) {
+                        compilationException("Unexpected enum in class", declaration)
+                    }
+                    classBlock.statements += declaration.generateAssignmentForEnumEntry()
                 }
                 else -> {
                     compilationException(
@@ -282,6 +292,13 @@ class JsClassGenerator(private val irClass: IrClass, val context: JsGenerationCo
         val nestedClassName = context.getNameForClass(this)
         val memberRef = jsElementAccess(nestedClassName.ident, className.makeRef())
         return jsAssignment(memberRef, nestedClassName.makeRef()).makeStmt()
+    }
+
+    private fun IrEnumEntry.generateAssignmentForEnumEntry(): JsStatement {
+        val enumEntry = getJsNameOrKotlinName()
+        return jsElementAccess(enumEntry.identifier, className.makeRef())
+            .makeStmt()
+            .withJsDoc(this, context)
     }
 
     private fun generateMemberFunction(declaration: IrSimpleFunction): Pair<JsExpression, JsFunction?> {

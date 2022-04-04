@@ -33,7 +33,6 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.serialization.js.ModuleKind
 
 private val supportedModuleKinds = setOf(
-    ModuleKind.COMMON_JS,
     ModuleKind.PLAIN,
     ModuleKind.ES,
 )
@@ -91,15 +90,9 @@ private class ClosureCompilerOptimizer(output: String, context: JsIrBackendConte
             ), currentFunction = null, staticContext = staticContext, useBareParameterNames = false
         )
         val externs = JsGlobalBlock().apply {
-            statements += externalPackageFragment.asSequence().filter {
-                val ctx = this@generateUserLandExterns
-                (!it.value.module.isJsStdLib(ctx) || it.value.isTypeCheckUtils(ctx))
-            }.flatMap { it.value.declarations }.mapNotNull {
-                when (it) {
-                    is IrProperty -> it.backingField
-                    else -> it
-                }
-            }.map { it.accept(declarationTransformer, generationContext) }.toList()
+            statements += externalPackageFragment.asSequence()
+                .flatMap { it.value.declarations }
+                .map { it.accept(declarationTransformer, generationContext) }.toList()
         }
 
         val output = TextOutputImpl().apply {
@@ -115,14 +108,6 @@ private class ClosureCompilerOptimizer(output: String, context: JsIrBackendConte
             externs.accept(JsToStringGenerationVisitor(this))
         }
         return SourceFile.fromCode(DummyFile.name, output.toString())
-    }
-
-    private fun IrModuleFragment.isJsStdLib(context: JsIrBackendContext): Boolean {
-        return context.intrinsics.jsCode.owner.file.module === this
-    }
-
-    private fun IrFile.isTypeCheckUtils(context: JsIrBackendContext): Boolean {
-        return context.intrinsics.metadataClassConstructorSymbol.owner.fileEntry === fileEntry
     }
 
     private fun getCompilerOptions(): CompilerOptions {
