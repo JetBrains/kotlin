@@ -156,13 +156,13 @@ object FirSessionFactory {
             register(FirProvider::class, firProvider)
 
             val symbolProviderForBinariesFromIncrementalCompilation =
-                incrementalCompilationContext?.let { (_, precomiledBinariesPackagePartProvider, precompiledBinariesFileScope) ->
-                    if (precomiledBinariesPackagePartProvider == null || precompiledBinariesFileScope == null) null
+                incrementalCompilationContext?.let { (_, precompiledBinariesPackagePartProvider, precompiledBinariesFileScope) ->
+                    if (precompiledBinariesPackagePartProvider == null || precompiledBinariesFileScope == null) null
                     else JvmClassFileBasedSymbolProvider(
                         this@session,
                         SingleModuleDataProvider(moduleData),
                         kotlinScopeProvider,
-                        precomiledBinariesPackagePartProvider,
+                        precompiledBinariesPackagePartProvider,
                         projectEnvironment.getKotlinClassFinder(precompiledBinariesFileScope),
                         projectEnvironment.getFirJavaFacade(this, moduleData, precompiledBinariesFileScope),
                         defaultDeserializationOrigin = FirDeclarationOrigin.Precompiled
