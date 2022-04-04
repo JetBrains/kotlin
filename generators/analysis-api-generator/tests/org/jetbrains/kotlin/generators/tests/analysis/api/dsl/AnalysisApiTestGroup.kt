@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.generators.tests.analysis.api.dsl
 
+import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiMode
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiTestConfiguratorFactoryData
 import org.jetbrains.kotlin.generators.TestGroup
 import org.jetbrains.kotlin.generators.TestGroupSuite
@@ -59,7 +60,7 @@ private fun TestGroup.analysisApiTestClass(
 ) {
     val factory = AnalysisApiConfiguratorFactoryProvider.getFactory(data) ?: return
 
-    val fullPackage = getPackageName(data.frontend.suffix, testClass)
+    val fullPackage = getPackageName(data, testClass)
 
     val suiteTestClassName = buildString {
         append(fullPackage)
@@ -89,8 +90,15 @@ private fun getTestNameSuffix(data: AnalysisApiTestConfiguratorFactoryData): Str
     }
 }
 
-private fun getPackageName(prefix: String, testClass: KClass<*>): String {
-    val basePrefix = "org.jetbrains.kotlin.analysis.api.${prefix.lowercase()}.test.cases.generated"
+private fun getPackageName(data: AnalysisApiTestConfiguratorFactoryData, testClass: KClass<*>): String {
+    val basePrefix = buildString {
+        append("org.jetbrains.kotlin.analysis.api.")
+        if (data.analysisApiMode ==AnalysisApiMode.Standalone) {
+            append("standalone.")
+        }
+        append(data.frontend.suffix.lowercase())
+        append(".test.cases.generated")
+    }
     val packagePrefix = testClass.java.name
         .substringAfter("org.jetbrains.kotlin.analysis.api.impl.base.test.")
         .substringBeforeLast('.', "")
