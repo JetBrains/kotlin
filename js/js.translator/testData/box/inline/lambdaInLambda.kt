@@ -1,7 +1,9 @@
 // EXPECTED_REACHABLE_NODES: 1284
 package foo
 
-// CHECK_CALLED_IN_SCOPE: scope=multiplyBy2 function=multiplyBy2$lambda
+// CHECK_FUNCTION_EXISTS: multiplyBy2$lambda
+// CHECK_CALLED_IN_SCOPE: scope=multiplyBy2 function=multiplyBy2$lambda TARGET_BACKENDS=JS
+// HAS_NO_CAPTURED_VARS: function=multiplyBy2 except=multiplyBy2$lambda
 // CHECK_NOT_CALLED_IN_SCOPE: scope=multiplyBy2 function=multiplyBy2$lambda_0
 // CHECK_NOT_CALLED_IN_SCOPE: scope=multiplyBy2 function=run
 
