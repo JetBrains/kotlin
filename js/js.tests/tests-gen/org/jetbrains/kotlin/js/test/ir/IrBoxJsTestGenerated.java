@@ -2322,6 +2322,12 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
             }
 
             @Test
+            @TestMetadata("importFunctionSyntax.kt")
+            public void testImportFunctionSyntax() throws Exception {
+                runTest("js/js.translator/testData/box/esModules/native/importFunctionSyntax.kt");
+            }
+
+            @Test
             @TestMetadata("inheritanceInNativeClass.kt")
             public void testInheritanceInNativeClass() throws Exception {
                 runTest("js/js.translator/testData/box/esModules/native/inheritanceInNativeClass.kt");
