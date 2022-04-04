@@ -64,7 +64,7 @@ class AWSNetworkConnector : NetworkConnector() {
     override fun <T : String?> sendBaseRequest(method: RequestMethod, path: String, user: String?, password: String?,
                                                acceptJsonContentType: Boolean, body: String?,
                                                errorHandler: (url: String, response: dynamic) -> Nothing?): Promise<T> {
-        val useEnvironmentCredentials = false
+        val useEnvironmentCredentials = true // For easy test on localhost change to false.
         val AWSEndpoint = AWSInstance.Endpoint(AWSDomain)
         var request = AWSInstance.HttpRequest(AWSEndpoint, AWSRegion)
         request.method = method.toString()
