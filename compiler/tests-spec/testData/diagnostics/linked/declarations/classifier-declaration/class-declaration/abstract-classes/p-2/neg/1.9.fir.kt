@@ -20,7 +20,7 @@ public abstract class BaseKotlin1 {
 }
 
 // MODULE: mainModule(libModule)
-// FILE: JavaClassWithAbstractKotlinClass.java
+// FILE: mainModule/JavaClassWithAbstractKotlinClass.java
 package mainModule
 import libModule.*
 
