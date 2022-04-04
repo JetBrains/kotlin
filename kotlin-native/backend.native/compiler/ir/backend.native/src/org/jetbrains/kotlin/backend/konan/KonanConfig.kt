@@ -181,6 +181,9 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
     internal val librariesToCache: Set<KotlinLibrary>
         get() = cacheSupport.librariesToCache
 
+    internal val libraryToCache: PartialCacheInfo?
+        get() = cacheSupport.libraryToCache
+
     val outputFiles =
             OutputFiles(configuration.get(KonanConfigKeys.OUTPUT) ?: cacheSupport.tryGetImplicitOutput(),
                     target, produce)

@@ -123,6 +123,7 @@ internal fun Context.psiToIr(
                 exportedDependencies = exportedDependencies,
                 cachedLibraries = config.cachedLibraries,
                 lazyIrForCaches = config.lazyIrForCaches,
+                libraryBeingCached = config.libraryToCache,
                 unlinkedDeclarationsSupport = unlinkedDeclarationsSupport,
                 userVisibleIrModulesSupport = config.userVisibleIrModulesSupport
         ).also { linker ->

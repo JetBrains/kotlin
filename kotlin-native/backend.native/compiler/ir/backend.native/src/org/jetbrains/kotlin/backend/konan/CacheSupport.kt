@@ -13,6 +13,20 @@ import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.resolver.KotlinLibraryResolveResult
 
+sealed class CacheDeserializationStrategy {
+    abstract fun contains(filePath: String): Boolean
+
+    object Nothing : CacheDeserializationStrategy() {
+        override fun contains(filePath: String) = false
+    }
+
+    object WholeModule : CacheDeserializationStrategy() {
+        override fun contains(filePath: String) = true
+    }
+}
+
+class PartialCacheInfo(val klib: KotlinLibrary, val strategy: CacheDeserializationStrategy)
+
 class CacheSupport(
         val configuration: CompilerConfiguration,
         resolvedLibraries: KotlinLibraryResolveResult,
@@ -95,6 +109,10 @@ class CacheSupport(
             else
                 emptySet()
         }
+    }
+
+    internal val libraryToCache = librariesToCache.singleOrNull()?.let {
+        PartialCacheInfo(it, CacheDeserializationStrategy.WholeModule)
     }
 
     internal val preLinkCaches: Boolean =
