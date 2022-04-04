@@ -13,8 +13,8 @@ import org.jetbrains.kotlin.analysis.api.impl.base.test.AbstractReferenceResolve
 import org.jetbrains.kotlin.analysis.api.impl.base.test.annotations.AbstractAnalysisApiAnnotationsOnDeclarationsTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.annotations.AbstractAnalysisApiAnnotationsOnFilesTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.annotations.AbstractAnalysisApiAnnotationsOnTypesTest
-import org.jetbrains.kotlin.analysis.api.impl.base.test.components.AbstractResolveCallTest
-import org.jetbrains.kotlin.analysis.api.impl.base.test.components.AbstractResolveCandidatesTest
+import org.jetbrains.kotlin.analysis.api.impl.base.test.components.callResolver.AbstractResolveCallTest
+import org.jetbrains.kotlin.analysis.api.impl.base.test.components.callResolver.AbstractResolveCandidatesTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.components.compileTimeConstantProvider.AbstractCompileTimeConstantEvaluatorTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.components.diagnosticProvider.AbstractCollectDiagnosticsTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.components.expressionInfoProvider.AbstractReturnTargetSymbolTest
