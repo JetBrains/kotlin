@@ -91,6 +91,14 @@ internal class InteropBuiltIns(builtIns: KonanBuiltIns) {
 
     val objCObjectBase = packageScope.getContributedClass("ObjCObjectBase")
 
+    val objCObjectBaseMeta = packageScope.getContributedClass("ObjCObjectBaseMeta")
+
+    val objCClass = packageScope.getContributedClass("ObjCClass")
+
+    val objCClassOf = packageScope.getContributedClass("ObjCClassOf")
+
+    val objCProtocol = packageScope.getContributedClass("ObjCProtocol")
+
     val allocObjCObject = packageScope.getContributedFunctions("allocObjCObject").single()
 
     val getObjCClass = packageScope.getContributedFunctions("getObjCClass").single()

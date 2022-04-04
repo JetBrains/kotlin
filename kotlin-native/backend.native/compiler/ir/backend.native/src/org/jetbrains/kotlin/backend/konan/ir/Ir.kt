@@ -123,6 +123,10 @@ internal class KonanSymbols(
     val interopCOpaque = symbolTable.referenceClass(context.interopBuiltIns.cOpaque)
     val interopObjCObject = symbolTable.referenceClass(context.interopBuiltIns.objCObject)
     val interopObjCObjectBase = symbolTable.referenceClass(context.interopBuiltIns.objCObjectBase)
+    val interopObjCObjectBaseMeta = symbolTable.referenceClass(context.interopBuiltIns.objCObjectBaseMeta)
+    val interopObjCClass = symbolTable.referenceClass(context.interopBuiltIns.objCClass)
+    val interopObjCClassOf = symbolTable.referenceClass(context.interopBuiltIns.objCClassOf)
+    val interopObjCProtocol = symbolTable.referenceClass(context.interopBuiltIns.objCProtocol)
 
     val interopObjCRelease = interopFunction("objc_release")
 
@@ -175,7 +179,13 @@ internal class KonanSymbols(
 
     val interopObjCGetSelector = interopFunction("objCGetSelector")
 
+    val interopCEnum = interopClass("CEnum")
+
+    val interopCPrimitiveVar = interopClass("CPrimitiveVar")
+
     val interopCEnumVar = interopClass("CEnumVar")
+
+    val interopCStructVar = interopClass("CStructVar")
 
     val nativeMemUtils = symbolTable.referenceClass(context.interopBuiltIns.nativeMemUtils)
 

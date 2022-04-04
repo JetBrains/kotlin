@@ -7,14 +7,17 @@ package org.jetbrains.kotlin.backend.konan
 import org.jetbrains.kotlin.backend.konan.descriptors.synthesizedName
 import org.jetbrains.kotlin.backend.konan.llvm.llvmSymbolOrigin
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
+import org.jetbrains.kotlin.descriptors.impl.PackageFragmentDescriptorImpl
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.declarations.impl.IrModuleFragmentImpl
+import org.jetbrains.kotlin.ir.declarations.impl.IrExternalPackageFragmentImpl
+import org.jetbrains.kotlin.ir.symbols.impl.IrExternalPackageFragmentSymbolImpl
 import org.jetbrains.kotlin.ir.util.NaiveSourceBasedFileEntryImpl
 import org.jetbrains.kotlin.ir.util.addChild
 import org.jetbrains.kotlin.ir.util.addFile
 import org.jetbrains.kotlin.ir.util.fqNameForIrSerialization
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.resolve.scopes.MemberScope
 
 /**
  * Sometimes we need to reference symbols that are not declared in metadata.
@@ -38,14 +41,21 @@ internal class InternalAbi(private val context: Context) {
     /**
      * Representation of ABI files from external modules.
      */
-    private val externalAbiFiles = mutableMapOf<ModuleDescriptor, IrFile>()
+    private val externalAbiFiles = mutableMapOf<ModuleDescriptor, IrExternalPackageFragment>()
 
     fun init(modules: List<IrModuleFragment>) {
         internalAbiFiles = modules.associate { it.descriptor to createAbiFile(it) }
     }
 
     private fun createAbiFile(module: IrModuleFragment): IrFile =
-        module.addFile(NaiveSourceBasedFileEntryImpl("internal"), FqName("kotlin.native.caches.abi"))
+            module.addFile(NaiveSourceBasedFileEntryImpl("internal"), KonanFqNames.cachesInternalAbi)
+
+    private fun createExternalAbiFile(module: ModuleDescriptor, fqName: FqName): IrExternalPackageFragment {
+        val packageFragmentDescriptor = object : PackageFragmentDescriptorImpl(module, fqName) {
+            override fun getMemberScope(): MemberScope = MemberScope.Empty
+        }
+        return IrExternalPackageFragmentImpl(IrExternalPackageFragmentSymbolImpl(packageFragmentDescriptor), fqName)
+    }
 
     /**
      * Adds external [function] from [module] to a list of external references.
@@ -53,9 +63,8 @@ internal class InternalAbi(private val context: Context) {
     fun reference(function: IrFunction, module: ModuleDescriptor) {
         assert(function.isExternal) { "Function that represents external ABI should be marked as external" }
         context.llvmImports.add(module.llvmSymbolOrigin)
-        externalAbiFiles.getOrPut(module) {
-            createAbiFile(IrModuleFragmentImpl(module, context.irBuiltIns))
-        }.addChild(function)
+        val externalAbiFile = externalAbiFiles.getOrPut(module) { createExternalAbiFile(module, KonanFqNames.cachesInternalAbi) }
+        externalAbiFile.addChild(function)
     }
 
     /**

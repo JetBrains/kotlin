@@ -394,27 +394,27 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
     internal val cachedLibraries: CachedLibraries
         get() = cacheSupport.cachedLibraries
 
-    internal val librariesToCache: Set<KotlinLibrary>
-        get() = cacheSupport.librariesToCache
-
     internal val libraryToCache: PartialCacheInfo?
         get() = cacheSupport.libraryToCache
 
+    internal val producePerFileCache = libraryToCache?.strategy is CacheDeserializationStrategy.SingleFile
+
     val outputFiles =
             OutputFiles(configuration.get(KonanConfigKeys.OUTPUT) ?: cacheSupport.tryGetImplicitOutput(),
-                    target, produce)
+                    target, produce, producePerFileCache)
 
     val tempFiles = TempFiles(outputFiles.outputName, configuration.get(KonanConfigKeys.TEMPORARY_FILES_DIR))
 
-    val outputFile get() = outputFiles.mainFile
+    val outputFile get() = outputFiles.mainFileName
 
     private val implicitModuleName: String
-        get() = File(outputFiles.outputName).name
+        get() = if (produce.isCache) outputFiles.cacheFileName else File(outputFiles.outputName).name
 
-    val infoArgsOnly = configuration.kotlinSourceRoots.isEmpty()
+    val infoArgsOnly = (configuration.kotlinSourceRoots.isEmpty()
             && configuration[KonanConfigKeys.INCLUDED_LIBRARIES].isNullOrEmpty()
-            && librariesToCache.isEmpty()
             && configuration[KonanConfigKeys.EXPORTED_LIBRARIES].isNullOrEmpty()
+            && libraryToCache == null)
+            || (producePerFileCache && outputFiles.mainFile.exists)
 
     /**
      * Do not compile binary when compiling framework.

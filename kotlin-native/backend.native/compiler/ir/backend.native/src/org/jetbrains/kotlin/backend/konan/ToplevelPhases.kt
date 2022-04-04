@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.backend.common.serialization.CompatibilityMode
 import org.jetbrains.kotlin.backend.common.serialization.metadata.KlibMetadataMonolithicSerializer
 import org.jetbrains.kotlin.backend.konan.descriptors.isFromInteropLibrary
 import org.jetbrains.kotlin.backend.konan.llvm.*
+import org.jetbrains.kotlin.backend.konan.lower.CacheInfoBuilder
 import org.jetbrains.kotlin.backend.konan.lower.ExpectToActualDefaultValueCopier
 import org.jetbrains.kotlin.backend.konan.lower.SamSuperTypesChecker
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCExport
@@ -22,15 +23,10 @@ import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.builders.declarations.addValueParameter
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
-import org.jetbrains.kotlin.ir.expressions.IrExpression
-import org.jetbrains.kotlin.ir.expressions.IrGetObjectValue
-import org.jetbrains.kotlin.ir.expressions.IrGetField
+import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
 import org.jetbrains.kotlin.ir.util.*
-import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
-import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
-import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
-import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
+import org.jetbrains.kotlin.ir.visitors.*
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -133,33 +129,7 @@ internal val buildAdditionalCacheInfoPhase = konanUnitPhase(
                 if (moduleDeserializer == null) {
                     require(module.descriptor.isFromInteropLibrary()) { "No module deserializer for ${module.descriptor}" }
                 } else {
-                    val compatibleMode = CompatibilityMode(moduleDeserializer.libraryAbiVersion).oldSignatures
-                    module.acceptChildrenVoid(object : IrElementVisitorVoid {
-                        override fun visitElement(element: IrElement) {
-                            element.acceptChildrenVoid(this)
-                        }
-
-                        override fun visitClass(declaration: IrClass) {
-                            declaration.acceptChildrenVoid(this)
-
-                            if (!declaration.isInterface && declaration.visibility != DescriptorVisibilities.LOCAL
-                                    && declaration.isExported && declaration.origin != DECLARATION_ORIGIN_FUNCTION_CLASS)
-                                classFields.add(moduleDeserializer.buildClassFields(declaration, getLayoutBuilder(declaration).getDeclaredFields()))
-                        }
-
-                        override fun visitFunction(declaration: IrFunction) {
-                            declaration.acceptChildrenVoid(this)
-
-                            if (declaration.isFakeOverride || !declaration.isExportedInlineFunction) return
-                            inlineFunctionBodies.add(moduleDeserializer.buildInlineFunctionReference(declaration))
-                        }
-
-                        private val IrClass.isExported
-                            get() = with(KonanManglerIr) { isExported(compatibleMode) }
-
-                        private val IrFunction.isExportedInlineFunction
-                            get() = isInline && with(KonanManglerIr) { isExported(compatibleMode) }
-                    })
+                    CacheInfoBuilder(this, moduleDeserializer).build()
                 }
             }
         },
@@ -240,6 +210,12 @@ internal val serializerPhase = konanUnitPhase(
         description = "Serialize descriptor tree and inline IR bodies"
 )
 
+internal val saveAdditionalCacheInfoPhase = konanUnitPhase(
+        op = { CacheStorage(this).saveAdditionalCacheInfo() },
+        name = "SaveAdditionalCacheInfo",
+        description = "Save additional cache info (inline functions bodies and fields of classes)"
+)
+
 internal val objectFilesPhase = konanUnitPhase(
         op = { compilerOutput = BitcodeCompiler(this).makeObjectFiles(bitcodeFileName) },
         name = "ObjectFiles",
@@ -250,6 +226,12 @@ internal val linkerPhase = konanUnitPhase(
         op = { Linker(this).link(compilerOutput) },
         name = "Linker",
         description = "Linker"
+)
+
+internal val finalizeCachePhase = konanUnitPhase(
+        op = { CacheStorage(this).renameOutput() },
+        name = "FinalizeCache",
+        description = "Finalize cache (rename temp to the final dist)"
 )
 
 internal val allLoweringsPhase = NamedCompilerPhase(
@@ -407,6 +389,9 @@ internal val exportInternalAbiPhase = makeKonanModuleOpPhase(
 
                 override fun visitClass(declaration: IrClass) {
                     declaration.acceptChildrenVoid(this)
+
+                    if (declaration.isLocal) return
+
                     if (declaration.isCompanion) {
                         val function = context.irFactory.buildFun {
                             name = InternalAbi.getCompanionObjectAccessorName(declaration)
@@ -595,8 +580,10 @@ val toplevelPhase: CompilerPhase<*, Unit, Unit> = namedUnitPhase(
                                 disposeLLVMPhase then
                                 unitSink()
                 ) then
+                saveAdditionalCacheInfoPhase then
                 objectFilesPhase then
-                linkerPhase
+                linkerPhase then
+                finalizeCachePhase
 )
 
 internal fun PhaseConfig.disableIf(phase: AnyNamedPhase, condition: Boolean) {
@@ -621,8 +608,10 @@ internal fun PhaseConfig.konanPhasesConfig(config: KonanConfig) {
         disableUnless(serializerPhase, config.produce == CompilerOutputKind.LIBRARY)
         disableUnless(entryPointPhase, config.produce == CompilerOutputKind.PROGRAM)
         disableUnless(buildAdditionalCacheInfoPhase, config.produce.isCache && config.lazyIrForCaches)
+        disableUnless(saveAdditionalCacheInfoPhase, config.produce.isCache && config.lazyIrForCaches)
+        disableUnless(finalizeCachePhase, config.produce.isCache)
         disableUnless(exportInternalAbiPhase, config.produce.isCache)
-        disableIf(backendCodegen, config.produce == CompilerOutputKind.LIBRARY || config.omitFrameworkBinary)
+        disableIf(backendCodegen, config.produce == CompilerOutputKind.LIBRARY || config.omitFrameworkBinary || config.produce == CompilerOutputKind.PRELIMINARY_CACHE)
         disableUnless(checkExternalCallsPhase, getBoolean(KonanConfigKeys.CHECK_EXTERNAL_CALLS))
         disableUnless(rewriteExternalCallsCheckerGlobals, getBoolean(KonanConfigKeys.CHECK_EXTERNAL_CALLS))
         disableUnless(stringConcatenationTypeNarrowingPhase, config.optimizationsEnabled)

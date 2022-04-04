@@ -45,12 +45,6 @@ const val CACHED_LIBRARY = MovedK2NativeCompilerArguments.CACHED_LIBRARY
 
 @Deprecated(
         "Moved to new 'org.jetbrains.kotlin.cli.common.arguments' package",
-        ReplaceWith("MAKE_CACHE", "org.jetbrains.kotlin.cli.common.arguments.MAKE_CACHE")
-)
-const val MAKE_CACHE = MovedK2NativeCompilerArguments.MAKE_CACHE
-
-@Deprecated(
-        "Moved to new 'org.jetbrains.kotlin.cli.common.arguments' package",
         ReplaceWith("ADD_CACHE", "org.jetbrains.kotlin.cli.common.arguments.ADD_CACHE")
 )
 const val ADD_CACHE = MovedK2NativeCompilerArguments.ADD_CACHE

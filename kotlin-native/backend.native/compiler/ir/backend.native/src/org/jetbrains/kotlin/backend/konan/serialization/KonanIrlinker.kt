@@ -122,8 +122,7 @@ internal object InlineFunctionBodyReferenceSerializer {
         return stream.buf
     }
 
-    fun deserialize(data: ByteArray): List<SerializedInlineFunctionReference> {
-        val result = mutableListOf<SerializedInlineFunctionReference>()
+    fun deserializeTo(data: ByteArray, result: MutableList<SerializedInlineFunctionReference>) {
         val stream = ByteArrayStream(data)
         while (stream.hasData()) {
             val file = stream.readInt()
@@ -144,7 +143,6 @@ internal object InlineFunctionBodyReferenceSerializer {
             result.add(SerializedInlineFunctionReference(file, functionSignature, body, startOffset, endOffset,
                     extensionReceiverSig, dispatchReceiverSig, outerReceiverSigs, valueParameterSigs, typeParameterSigs, defaultValues))
         }
-        return result
     }
 }
 
@@ -180,8 +178,7 @@ internal object ClassFieldsSerializer {
         return stream.buf
     }
 
-    fun deserialize(data: ByteArray): List<SerializedClassFields> {
-        val result = mutableListOf<SerializedClassFields>()
+    fun deserializeTo(data: ByteArray, result: MutableList<SerializedClassFields>) {
         val stream = ByteArrayStream(data)
         while (stream.hasData()) {
             val file = stream.readInt()
@@ -199,7 +196,6 @@ internal object ClassFieldsSerializer {
             }
             result.add(SerializedClassFields(file, classSignature, typeParameterSigs, outerThisIndex, fields))
         }
-        return result
     }
 }
 
@@ -345,6 +341,7 @@ internal class KonanIrLinker(
         FakeOverrideBuilder(this, symbolTable, KonanManglerIr, IrTypeSystemContextImpl(builtIns), friendModules, KonanFakeOverrideClassFilter)
 
     val moduleDeserializers = mutableMapOf<ModuleDescriptor, KonanPartialModuleDeserializer>()
+    val klibToModuleDeserializerMap = mutableMapOf<KotlinLibrary, KonanPartialModuleDeserializer>()
 
     override fun createModuleDeserializer(moduleDescriptor: ModuleDescriptor, klib: KotlinLibrary?, strategyResolver: (String) -> DeserializationStrategy) =
             when {
@@ -365,6 +362,7 @@ internal class KonanIrLinker(
                     }
                     KonanPartialModuleDeserializer(moduleDescriptor, klib, strategyResolver, deserializationStrategy).also {
                         moduleDeserializers[moduleDescriptor] = it
+                        klibToModuleDeserializerMap[klib] = it
                     }
                 }
             }
@@ -381,6 +379,22 @@ internal class KonanIrLinker(
         return packageFragment as? IrFile
                 ?: inlineFunctionFiles[packageFragment as IrExternalPackageFragment]
                 ?: error("Unknown external package fragment: ${packageFragment.packageFragmentDescriptor}")
+    }
+
+    private tailrec fun IdSignature.fileSignature(): IdSignature.FileSignature? = when (this) {
+        is IdSignature.FileSignature -> this
+        is IdSignature.CompositeSignature -> this.container.fileSignature()
+        else -> null
+    }
+
+    fun getExternalDeclarationFileName(declaration: IrDeclaration) = with(declaration) {
+        val externalPackageFragment = getPackageFragment() as? IrExternalPackageFragment
+                ?: error("Expected an external package fragment for ${render()}")
+        val moduleDescriptor = externalPackageFragment.packageFragmentDescriptor.containingDeclaration
+        val moduleDeserializer = moduleDeserializers[moduleDescriptor]
+                ?: error("No module deserializer for $moduleDescriptor")
+        val idSig = moduleDeserializer.descriptorSignatures[descriptor] ?: error("No signature for $descriptor")
+        idSig.topLevelSignature().fileSignature()?.fileName ?: error("No file for $idSig")
     }
 
     private val IrClass.firstNonClassParent: IrDeclarationParent
@@ -414,7 +428,8 @@ internal class KonanIrLinker(
                 if (cacheDeserializationStrategy.contains(fileName))
                     strategyResolver(fileName)
                 else DeserializationStrategy.ON_DEMAND
-            }, klib.versions.abiVersion ?: KotlinAbiVersion.CURRENT, containsErrorCode) {
+            }, klib.versions.abiVersion ?: KotlinAbiVersion.CURRENT, containsErrorCode
+    ) {
         override val moduleFragment: IrModuleFragment = KonanIrModuleFragmentImpl(moduleDescriptor, builtIns)
 
         fun buildInlineFunctionReference(irFunction: IrFunction): SerializedInlineFunctionReference {
@@ -616,7 +631,8 @@ internal class KonanIrLinker(
         override fun deserializedSymbolNotFound(idSig: IdSignature): Nothing = error("No descriptor found for $idSig")
 
         private val inlineFunctionReferences by lazy {
-            cachedLibraries.getLibraryCache(klib)!!.serializedInlineFunctionBodies.associateBy {
+            (cachedLibraries.getLibraryCache(klib)
+                    ?: error("No cache for ${klib.libraryName}")).serializedInlineFunctionBodies.associateBy {
                 fileDeserializationStates[it.file].declarationDeserializer.symbolDeserializer.deserializeIdSignature(it.functionSignature)
             }
         }
@@ -704,12 +720,15 @@ internal class KonanIrLinker(
         }
 
         private val classesFields by lazy {
-            cachedLibraries.getLibraryCache(klib)!!.serializedClassFields.associateBy {
+            (cachedLibraries.getLibraryCache(klib)
+                    ?: error("No cache for ${klib.libraryName}")).serializedClassFields.associateBy {
                 fileDeserializationStates[it.file].declarationDeserializer.symbolDeserializer.deserializeIdSignature(it.classSignature)
             }
         }
 
         fun deserializeClassFields(irClass: IrClass, outerThisField: IrField?): List<ClassLayoutBuilder.FieldInfo> {
+            irClass.getPackageFragment() as? IrExternalPackageFragment
+                    ?: error("Expected an external package fragment for ${irClass.render()}")
             val signature = irClass.symbol.signature
                     ?: error("No signature for ${irClass.render()}")
             val serializedClassFields = classesFields[signature]
@@ -729,6 +748,9 @@ internal class KonanIrLinker(
                     val sigIndex = serializedClassFields.typeParameterSigs[endToEndTypeParameterIndex++]
                     referenceIrSymbol(symbolDeserializer, sigIndex, parameter.symbol)
                 }
+            }
+            require(endToEndTypeParameterIndex == serializedClassFields.typeParameterSigs.size) {
+                "Not all type parameters have been referenced"
             }
 
             fun getByClassId(classId: ClassId): IrClassSymbol {
@@ -763,6 +785,12 @@ internal class KonanIrLinker(
                             name, type, isConst = (field.flags and SerializedClassFieldInfo.FLAG_IS_CONST) != 0, irField = null)
                 }
             }
+        }
+
+        val sortedFileIds by lazy {
+            fileDeserializationStates
+                    .sortedBy { it.file.fileEntry.name }
+                    .map { CacheSupport.cacheFileId(it.file.fqName.asString(), it.file.fileEntry.name) }
         }
     }
 

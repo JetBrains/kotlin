@@ -36,6 +36,7 @@ import org.jetbrains.kotlin.konan.ForeignExceptionMode
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import org.jetbrains.kotlin.konan.target.Family
 import org.jetbrains.kotlin.library.KotlinLibrary
+import org.jetbrains.kotlin.library.uniqueName
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.descriptorUtil.classId
@@ -2816,35 +2817,52 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
             initializers.add(it.initializer)
         }
 
-        val ctorFunctions = libraries.map { library ->
-            val ctorName = if (library != null) {
-                library.moduleConstructorName
-            } else {
-                context.config.moduleId.moduleConstructorName
-            }
+        fun fileCtorName(libraryName: String, fileName: String) = "$libraryName:$fileName".moduleConstructorName
 
-            val ctorFunction = addLlvmFunctionWithDefaultAttributes(
-                    context,
-                    context.llvmModule!!,
-                    ctorName,
-                    kVoidFuncType
-            )
-            LLVMSetLinkage(ctorFunction, LLVMLinkage.LLVMExternalLinkage)
+        fun addCtorFunction(ctorName: String) =
+                addLlvmFunctionWithDefaultAttributes(
+                        context,
+                        context.llvmModule!!,
+                        ctorName,
+                        kVoidFuncType
+                ).also { LLVMSetLinkage(it, LLVMLinkage.LLVMExternalLinkage) }
 
+        val ctorFunctions = libraries.flatMap { library ->
             val initializers = libraryToInitializers.getValue(library)
 
-            if (library == null || context.llvmModuleSpecification.containsLibrary(library)) {
-                val otherInitializers =
-                        context.llvm.otherStaticInitializers.takeIf { library == null }.orEmpty()
+            val ctorName = when {
+                library == null -> context.config.moduleId.moduleConstructorName
+                library == context.config.libraryToCache?.klib
+                        && context.config.producePerFileCache ->
+                    fileCtorName(library.uniqueName, context.config.outputFiles.perFileCacheFileName!!)
+                else -> library.moduleConstructorName
+            }
 
+            if (library == null || context.llvmModuleSpecification.containsLibrary(library)) {
+                val otherInitializers = context.llvm.otherStaticInitializers.takeIf { library == null }.orEmpty()
+
+                val ctorFunction = addCtorFunction(ctorName)
                 appendStaticInitializers(ctorFunction, initializers + otherInitializers)
+
+                listOf(ctorFunction)
             } else {
+                // A cached library.
                 check(initializers.isEmpty()) {
                     "found initializer from ${library.libraryFile}, which is not included into compilation"
                 }
-            }
 
-            ctorFunction
+                val cache = context.config.cachedLibraries.getLibraryCache(library)
+                        ?: error("Library $library is expected to be cached")
+
+                when (cache.granularity) {
+                    CachedLibraries.Granularity.MODULE -> listOf(addCtorFunction(ctorName))
+                    CachedLibraries.Granularity.FILE -> {
+                        context.irLinker.klibToModuleDeserializerMap[library]!!.sortedFileIds.map {
+                            addCtorFunction(fileCtorName(library.uniqueName, it))
+                        }
+                    }
+                }
+            }
         }
 
         appendGlobalCtors(ctorFunctions)

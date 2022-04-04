@@ -7,12 +7,17 @@ package org.jetbrains.kotlin.backend.konan.llvm
 
 import kotlinx.cinterop.toCValues
 import llvm.*
+import org.jetbrains.kotlin.backend.common.serialization.mangle.MangleConstant
 import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.descriptors.ClassLayoutBuilder
 import org.jetbrains.kotlin.backend.konan.descriptors.isTypedIntrinsic
 import org.jetbrains.kotlin.backend.konan.ir.*
+import org.jetbrains.kotlin.backend.konan.llvm.KonanBinaryInterface.functionName
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.expressions.IrBlockBody
+import org.jetbrains.kotlin.ir.expressions.IrConst
+import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
@@ -170,7 +175,12 @@ private class DeclarationsGeneratorVisitor(override val context: Context) :
         val typeInfoSymbolName = if (declaration.isExported()) {
             declaration.computeTypeInfoSymbolName()
         } else {
-            "ktype:$internalName"
+            if (!context.config.producePerFileCache)
+                "${MangleConstant.CLASS_PREFIX}:$internalName"
+            else {
+                val containerName = (context.config.libraryToCache!!.strategy as CacheDeserializationStrategy.SingleFile).filePath
+                declaration.computePrivateTypeInfoSymbolName(containerName)
+            }
         }
 
         if (declaration.typeInfoHasVtableAttached) {
@@ -196,7 +206,8 @@ private class DeclarationsGeneratorVisitor(override val context: Context) :
                     throw IllegalArgumentException("Global '$typeInfoSymbolName' already exists")
                 }
             } else {
-                LLVMSetLinkage(llvmTypeInfoPtr, LLVMLinkage.LLVMInternalLinkage)
+                if (!context.config.producePerFileCache || declaration !in context.constructedFromExportedInlineFunctions)
+                    LLVMSetLinkage(llvmTypeInfoPtr, LLVMLinkage.LLVMInternalLinkage)
             }
 
             typeInfoPtr = constPointer(llvmTypeInfoPtr)
@@ -365,8 +376,15 @@ private class DeclarationsGeneratorVisitor(override val context: Context) :
                     }
                 }
             } else {
-                "kfun:" + qualifyInternalName(declaration)
+                if (!context.config.producePerFileCache)
+                    "${MangleConstant.FUN_PREFIX}:${qualifyInternalName(declaration)}"
+                else {
+                    val containerName = declaration.parentClassOrNull?.fqNameForIrSerialization?.asString()
+                            ?: (context.config.libraryToCache!!.strategy as CacheDeserializationStrategy.SingleFile).filePath
+                    declaration.computePrivateSymbolName(containerName)
+                }
             }
+
             val proto = LlvmFunctionProto(declaration, symbolName, this)
             val llvmFunction = addLlvmFunctionWithDefaultAttributes(
                     context,
