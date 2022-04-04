@@ -10,7 +10,7 @@ fun call(lambda: () -> String ) = lambda()
 
 // FILE: 2.kt
 // CHECK_CALLED_IN_SCOPE: function=inlineFun$lambda scope=box TARGET_BACKENDS=JS
-// CHECK_CALLED_IN_SCOPE: function=box$lambda scope=box IGNORED_BACKENDS=JS
+// HAS_NO_CAPTURED_VARS: function=box except=box$lambda;call IGNORED_BACKENDS=JS
 // CHECK_CALLED_IN_SCOPE: function=call scope=box
 import test.*
 
