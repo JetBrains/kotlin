@@ -43,7 +43,7 @@ sealed class VariantResolution(
         }
     }
 
-    override fun toString(): String = when (this) {
+    override fun toString(): String = "${requestingVariant.fragmentName} -> " + when (this) {
         is VariantMatch -> "match: ${chosenVariant.fragmentName}"
         is Unknown -> "unknown"
         is NotRequested -> "not requested"
