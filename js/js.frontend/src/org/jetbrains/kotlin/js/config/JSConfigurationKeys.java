@@ -99,4 +99,7 @@ public class JSConfigurationKeys {
 
     public static final CompilerConfigurationKey<Boolean> PROPERTY_LAZY_INITIALIZATION =
             CompilerConfigurationKey.create("perform lazy initialization for properties");
+
+    public static final CompilerConfigurationKey<Boolean> WASM_ENABLE_ARRAY_RANGE_CHECKS =
+            CompilerConfigurationKey.create("enable array range checks");
 }

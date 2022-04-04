@@ -156,6 +156,8 @@ class WasmSymbols(
 
     val wasmRefCast = getInternalFunction("wasm_ref_cast")
 
+    val rangeCheck = getInternalFunction("rangeCheck")
+
     val boxIntrinsic: IrSimpleFunctionSymbol = getInternalFunction("boxIntrinsic")
     val unboxIntrinsic: IrSimpleFunctionSymbol = getInternalFunction("unboxIntrinsic")
 
