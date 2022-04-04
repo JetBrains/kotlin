@@ -18,7 +18,7 @@
  * Copyright (C) 1997-1999 Netscape Communications Corporation. All
  * Rights Reserved.
  *
- * Contributor(s): 
+ * Contributor(s):
  * Mike Ang
  * Mike McCabe
  *
@@ -1139,6 +1139,13 @@ public class Parser {
                 pn = expr(ts, false);
                 mustMatchToken(ts, TokenStream.GWT, "msg.no.paren");
                 return pn;
+
+            case TokenStream.IMPORT:
+                // for import() and import.meta syntax
+                if (ts.peekToken() != TokenStream.LP && ts.peekToken() != TokenStream.DOT) {
+                    reportError(ts, "msg.syntax");
+                }
+                return nf.createName(TokenStream.tokenToName(TokenStream.IMPORT), position);
 
             case TokenStream.NAME:
                 String name = ts.getString();
