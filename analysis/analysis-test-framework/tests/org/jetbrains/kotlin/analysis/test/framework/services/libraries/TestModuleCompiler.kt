@@ -43,7 +43,7 @@ internal object TestModuleCompiler {
         JarOutputStream(librarySourcesPath.outputStream(), manifest).use { jarOutputStream ->
             for (testFile in module.files) {
                 val text = testServices.sourceFileProvider.getContentOfSourceFile(testFile)
-                addFileToJar(testFile.relativePath, text, jarOutputStream)
+                addFileToJar(testFile.name, text, jarOutputStream)
             }
         }
         return librarySourcesPath
