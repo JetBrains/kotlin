@@ -19,9 +19,17 @@ public final class ClassKt {
     public final static @org.jetbrains.annotations.NotNull method c(): C
     public final static @org.jetbrains.annotations.Nullable method cn(): C
     public final static @org.jetbrains.annotations.Nullable method cnn(): C
+    public final static @org.jetbrains.annotations.NotNull method i(): I
+    public final static @org.jetbrains.annotations.Nullable method iN(): I
     public final static @org.jetbrains.annotations.NotNull method ic(): java.lang.Object
     public final static @org.jetbrains.annotations.Nullable method icn(): IC
     public final static @org.jetbrains.annotations.Nullable method icnn(): IC
+    public final static @org.jetbrains.annotations.Nullable method inn(): I
+}
+
+@kotlin.Metadata
+public interface I {
+    // source: 'class.kt'
 }
 
 @kotlin.jvm.JvmInline

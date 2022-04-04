@@ -17717,6 +17717,16 @@ public class IrCodegenBoxWasmTestGenerated extends AbstractIrCodegenBoxWasmTest 
                     runTest("compiler/testData/codegen/box/inlineClasses/sealed/casts/inlineClass.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
                 }
 
+                @TestMetadata("inlineClassNullable.kt")
+                public void testInlineClassNullable() throws Exception {
+                    runTest("compiler/testData/codegen/box/inlineClasses/sealed/casts/inlineClassNullable.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+                }
+
+                @TestMetadata("inlineClassPrimitive.kt")
+                public void testInlineClassPrimitive() throws Exception {
+                    runTest("compiler/testData/codegen/box/inlineClasses/sealed/casts/inlineClassPrimitive.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+                }
+
                 @TestMetadata("interface.kt")
                 public void testInterface() throws Exception {
                     runTest("compiler/testData/codegen/box/inlineClasses/sealed/casts/interface.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());

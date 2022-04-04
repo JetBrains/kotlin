@@ -1,3 +1,8 @@
+@kotlin.Metadata
+public interface I {
+    // source: 'object.kt'
+}
+
 @kotlin.jvm.JvmInline
 @kotlin.Metadata
 public class IC {
@@ -40,7 +45,10 @@ public final class ObjectKt {
     public final static @org.jetbrains.annotations.NotNull method c(): O
     public final static @org.jetbrains.annotations.Nullable method cn(): O
     public final static @org.jetbrains.annotations.Nullable method cnn(): O
+    public final static @org.jetbrains.annotations.NotNull method i(): I
+    public final static @org.jetbrains.annotations.Nullable method iN(): I
     public final static @org.jetbrains.annotations.NotNull method ic(): java.lang.Object
     public final static @org.jetbrains.annotations.Nullable method icn(): IC
     public final static @org.jetbrains.annotations.Nullable method icnn(): IC
+    public final static @org.jetbrains.annotations.Nullable method inn(): I
 }

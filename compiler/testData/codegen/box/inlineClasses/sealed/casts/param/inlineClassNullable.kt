@@ -4,8 +4,10 @@
 // CHECK_BYTECODE_LISTING
 // LANGUAGE: +ValueClasses, +SealedInlineClasses
 
+interface I
+
 OPTIONAL_JVM_INLINE_ANNOTATION
-sealed value class IC
+sealed value class IC: I
 
 OPTIONAL_JVM_INLINE_ANNOTATION
 value class C(val ok: String?): IC()
@@ -20,6 +22,10 @@ fun ic(a: IC) {
     if (res != "OK") error(res!!)
     res = (a as? C)?.run { "OK" } ?: "FAIL 31"
     if (res != "OK") error(res!!)
+    res = (a as? C)?.let { it.ok } ?: "FAIL 41"
+    if (res != "OK") error(res)
+    res = (a as? C)?.run { ok } ?: "FAIL 51"
+    if (res != "OK") error(res)
 }
 
 fun icn(a: IC?) {
@@ -32,6 +38,10 @@ fun icn(a: IC?) {
     if (res != "OK") error(res!!)
     res = (a as? C)?.run { "OK" } ?: "FAIL 32"
     if (res != "OK") error(res!!)
+    res = (a as? C)?.let { it.ok } ?: "FAIL 42"
+    if (res != "OK") error(res)
+    res = (a as? C)?.run { ok } ?: "FAIL 52"
+    if (res != "OK") error(res)
 }
 
 fun icnn(a: IC?) {
@@ -52,6 +62,10 @@ fun any(a: Any) {
     if (res != "OK") error(res!!)
     res = (a as? C)?.run { "OK" } ?: "FAIL 34"
     if (res != "OK") error(res!!)
+    res = (a as? C)?.let { it.ok } ?: "FAIL 44"
+    if (res != "OK") error(res)
+    res = (a as? C)?.run { ok } ?: "FAIL 54"
+    if (res != "OK") error(res)
 }
 
 fun anyN(a: Any?) {
@@ -64,6 +78,10 @@ fun anyN(a: Any?) {
     if (res != "OK") error(res!!)
     res = (a as? C)?.run { "OK" } ?: "FAIL 35"
     if (res != "OK") error(res!!)
+    res = (a as? C)?.let { it.ok } ?: "FAIL 45"
+    if (res != "OK") error(res)
+    res = (a as? C)?.run { ok } ?: "FAIL 55"
+    if (res != "OK") error(res)
 }
 
 fun anyNN(a: Any?) {
@@ -84,6 +102,10 @@ fun c(a: C) {
     if (res != "OK") error(res!!)
     res = (a as? C)?.run { "OK" } ?: "FAIL 38"
     if (res != "OK") error(res!!)
+    res = (a as? C)?.let { it.ok } ?: "FAIL 48"
+    if (res != "OK") error(res)
+    res = (a as? C)?.run { ok } ?: "FAIL 58"
+    if (res != "OK") error(res)
 }
 
 fun cn(a: C?) {
@@ -96,6 +118,10 @@ fun cn(a: C?) {
     if (res != "OK") error(res!!)
     res = (a as? C)?.run { "OK" } ?: "FAIL 39"
     if (res != "OK") error(res!!)
+    res = (a as? C)?.let { it.ok } ?: "FAIL 49"
+    if (res != "OK") error(res)
+    res = (a as? C)?.run { ok } ?: "FAIL 59"
+    if (res != "OK") error(res)
 }
 
 fun cnn(a: C?) {
@@ -104,6 +130,46 @@ fun cnn(a: C?) {
     if (res != "OK") error(res!!)
     res = (a as? C)?.run { "FAIL 20" } ?: "OK"
     if (res != "OK") error(res!!)
+}
+
+fun i(a: I) {
+    var res = "FAIL A"
+    res = (a as C).ok!!
+    if (res != "OK") error(res)
+    res = (a as? C)?.ok ?: "FAIL 1A"
+    if (res != "OK") error(res)
+    res = (a as? C)?.let { "OK" } ?: "FAIL 2A"
+    if (res != "OK") error(res)
+    res = (a as? C)?.run { "OK" } ?: "FAIL 3A"
+    if (res != "OK") error(res)
+    res = (a as? C)?.let { it.ok } ?: "FAIL 2A"
+    if (res != "OK") error(res)
+    res = (a as? C)?.run { ok } ?: "FAIL 3A"
+    if (res != "OK") error(res)
+}
+
+fun iN(a: I?) {
+    var res = "FAIL B"
+    res = (a as C).ok!!
+    if (res != "OK") error(res)
+    res = (a as? C)?.ok ?: "FAIL 1B"
+    if (res != "OK") error(res)
+    res = (a as? C)?.let { "OK" } ?: "FAIL 2B"
+    if (res != "OK") error(res)
+    res = (a as? C)?.run { "OK" } ?: "FAIL 3B"
+    if (res != "OK") error(res)
+    res = (a as? C)?.let { it.ok } ?: "FAIL 2B"
+    if (res != "OK") error(res)
+    res = (a as? C)?.run { ok } ?: "FAIL 3B"
+    if (res != "OK") error(res)
+}
+
+fun iNN(a: I?) {
+    var res = "FAIL C"
+    res = (a as? C)?.let { "FAIL 1C" } ?: "OK"
+    if (res != "OK") error(res)
+    res = (a as? C)?.run { "FAIL 2C" } ?: "OK"
+    if (res != "OK") error(res)
 }
 
 fun box(): String {
@@ -116,6 +182,9 @@ fun box(): String {
     c(C("OK"))
     cn(C("OK"))
     cnn(null)
+    i(C("OK"))
+    iN(C("OK"))
+    iNN(null)
 
     return "OK"
 }

@@ -4,8 +4,10 @@
 // CHECK_BYTECODE_LISTING
 // LANGUAGE: +ValueClasses, +SealedInlineClasses
 
+interface I
+
 OPTIONAL_JVM_INLINE_ANNOTATION
-sealed value class IC
+sealed value class IC: I
 
 value class C(val ok: String): IC()
 
@@ -18,6 +20,9 @@ fun anyNN(): Any? = null
 fun c(): C = C("OK")
 fun cn(): C? = C("OK")
 fun cnn(): C? = null
+fun i(): I = C("OK")
+fun iN(): I? = C("OK")
+fun inn(): I? = null
 
 fun box(): String {
     var res = "FAIL 1"
@@ -29,6 +34,10 @@ fun box(): String {
     if (res != "OK") return res
     res = (ic() as? C)?.run { "OK" } ?: "FAIL 31"
     if (res != "OK") return res
+    res = (ic() as? C)?.let { it.ok } ?: "FAIL 41"
+    if (res != "OK") return res
+    res = (ic() as? C)?.run { ok } ?: "FAIL 51"
+    if (res != "OK") return res
 
     res = "FAIL 2"
     res = (icn() as C).ok
@@ -38,6 +47,10 @@ fun box(): String {
     res = (icn() as? C)?.let { "OK" } ?: "FAIL 22"
     if (res != "OK") return res
     res = (icn() as? C)?.run { "OK" } ?: "FAIL 32"
+    if (res != "OK") return res
+    res = (icn() as? C)?.let { it.ok } ?: "FAIL 42"
+    if (res != "OK") return res
+    res = (icn() as? C)?.run { ok } ?: "FAIL 52"
     if (res != "OK") return res
 
     res = "FAIL 4"
@@ -49,6 +62,10 @@ fun box(): String {
     if (res != "OK") return res
     res = (any() as? C)?.run { "OK" } ?: "FAIL 34"
     if (res != "OK") return res
+    res = (any() as? C)?.let { it.ok } ?: "FAIL 44"
+    if (res != "OK") return res
+    res = (any() as? C)?.run { ok } ?: "FAIL 54"
+    if (res != "OK") return res
 
     res = "FAIL 5"
     res = (anyN() as C).ok
@@ -58,6 +75,10 @@ fun box(): String {
     res = (anyN() as? C)?.let { "OK" } ?: "FAIL 25"
     if (res != "OK") return res
     res = (anyN() as? C)?.run { "OK" } ?: "FAIL 35"
+    if (res != "OK") return res
+    res = (anyN() as? C)?.let { it.ok } ?: "FAIL 45"
+    if (res != "OK") return res
+    res = (anyN() as? C)?.run { ok } ?: "FAIL 55"
     if (res != "OK") return res
 
     res = "FAIL 6"
@@ -81,6 +102,10 @@ fun box(): String {
     if (res != "OK") return res
     res = (c() as? C)?.run { "OK" } ?: "FAIL 38"
     if (res != "OK") return res
+    res = (c() as? C)?.let { it.ok } ?: "FAIL 48"
+    if (res != "OK") return res
+    res = (c() as? C)?.run { ok } ?: "FAIL 58"
+    if (res != "OK") return res
 
     res = "FAIL 9"
     res = (cn() as C).ok
@@ -91,11 +116,49 @@ fun box(): String {
     if (res != "OK") return res
     res = (cn() as? C)?.run { "OK" } ?: "FAIL 39"
     if (res != "OK") return res
+    res = (cn() as? C)?.let { it.ok } ?: "FAIL 49"
+    if (res != "OK") return res
+    res = (cn() as? C)?.run { ok } ?: "FAIL 59"
+    if (res != "OK") return res
 
     res = "FAIL 0"
     res = (cnn() as? C)?.let { "FAIL 10" } ?: "OK"
     if (res != "OK") return res
     res = (cnn() as? C)?.run { "FAIL 20" } ?: "OK"
+    if (res != "OK") return res
+
+    res = "FAIL A"
+    res = (i() as C).ok
+    if (res != "OK") return res
+    res = (i() as? C)?.ok ?: "FAIL 1A"
+    if (res != "OK") return res
+    res = (i() as? C)?.let { "OK" } ?: "FAIL 2A"
+    if (res != "OK") return res
+    res = (i() as? C)?.run { "OK" } ?: "FAIL 3A"
+    if (res != "OK") return res
+    res = (i() as? C)?.let { it.ok } ?: "FAIL 4A"
+    if (res != "OK") return res
+    res = (i() as? C)?.run { ok } ?: "FAIL 5A"
+    if (res != "OK") return res
+
+    res = "FAIL B"
+    res = (iN() as C).ok
+    if (res != "OK") return res
+    res = (iN() as? C)?.ok ?: "FAIL 1B"
+    if (res != "OK") return res
+    res = (iN() as? C)?.let { "OK" } ?: "FAIL 2B"
+    if (res != "OK") return res
+    res = (iN() as? C)?.run { "OK" } ?: "FAIL 3B"
+    if (res != "OK") return res
+    res = (iN() as? C)?.let { it.ok } ?: "FAIL 4B"
+    if (res != "OK") return res
+    res = (iN() as? C)?.run { ok } ?: "FAIL 5B"
+    if (res != "OK") return res
+
+    res = "FAIL C"
+    res = (inn() as? C)?.let { "FAIL 1C" } ?: "OK"
+    if (res != "OK") return res
+    res = (inn() as? C)?.run { "FAIL 2C" } ?: "OK"
     if (res != "OK") return res
 
     return "OK"

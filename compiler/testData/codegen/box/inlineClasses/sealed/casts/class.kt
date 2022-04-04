@@ -19,6 +19,10 @@ fun box(): String {
     if (res != "OK") return res
     res = (ic as? C)?.run { "OK" } ?: "FAIL 31"
     if (res != "OK") return res
+    res = (ic as? C)?.let { it.ok } ?: "FAIL 41"
+    if (res != "OK") return res
+    res = (ic as? C)?.run { ok } ?: "FAIL 51"
+    if (res != "OK") return res
 
     res = "FAIL 2"
     val icn: IC? = ic
@@ -29,6 +33,10 @@ fun box(): String {
     res = (icn as? C)?.let { "OK" } ?: "FAIL 22"
     if (res != "OK") return res
     res = (icn as? C)?.run { "OK" } ?: "FAIL 32"
+    if (res != "OK") return res
+    res = (icn as? C)?.let { it.ok } ?: "FAIL 42"
+    if (res != "OK") return res
+    res = (icn as? C)?.run { ok } ?: "FAIL 52"
     if (res != "OK") return res
 
     res = "FAIL 3"
@@ -41,6 +49,10 @@ fun box(): String {
     if (res != "OK") return res
     res = (ic2 as? C)?.run { "OK" } ?: "FAIL 33"
     if (res != "OK") return res
+    res = (ic2 as? C)?.let { it.ok } ?: "FAIL 43"
+    if (res != "OK") return res
+    res = (ic2 as? C)?.run { ok } ?: "FAIL 53"
+    if (res != "OK") return res
 
     res = "FAIL 4"
     val any = (icn as Any)
@@ -52,6 +64,10 @@ fun box(): String {
     if (res != "OK") return res
     res = (any as? C)?.run { "OK" } ?: "FAIL 34"
     if (res != "OK") return res
+    res = (any as? C)?.let { it.ok } ?: "FAIL 44"
+    if (res != "OK") return res
+    res = (any as? C)?.run { ok } ?: "FAIL 54"
+    if (res != "OK") return res
 
     res = "FAIL 5"
     val anyN = (icn as Any?)
@@ -62,6 +78,10 @@ fun box(): String {
     res = (anyN as? C)?.let { "OK" } ?: "FAIL 25"
     if (res != "OK") return res
     res = (anyN as? C)?.run { "OK" } ?: "FAIL 35"
+    if (res != "OK") return res
+    res = (anyN as? C)?.let { it.ok } ?: "FAIL 45"
+    if (res != "OK") return res
+    res = (anyN as? C)?.run { ok } ?: "FAIL 55"
     if (res != "OK") return res
 
     res = "FAIL 6"

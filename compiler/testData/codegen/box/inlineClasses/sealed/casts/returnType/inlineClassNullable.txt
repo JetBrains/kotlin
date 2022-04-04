@@ -9,6 +9,11 @@ public final class C {
     public static method toString-impl(p0: java.lang.String): java.lang.String
 }
 
+@kotlin.Metadata
+public interface I {
+    // source: 'inlineClassNullable.kt'
+}
+
 @kotlin.jvm.JvmInline
 @kotlin.Metadata
 public class IC {
@@ -42,7 +47,10 @@ public final class InlineClassNullableKt {
     public final static @org.jetbrains.annotations.NotNull method c(): java.lang.String
     public final static @org.jetbrains.annotations.Nullable method cn(): IC
     public final static @org.jetbrains.annotations.Nullable method cnn(): IC
+    public final static @org.jetbrains.annotations.NotNull method i(): I
+    public final static @org.jetbrains.annotations.Nullable method iN(): I
     public final static @org.jetbrains.annotations.NotNull method ic(): java.lang.Object
     public final static @org.jetbrains.annotations.Nullable method icn(): IC
     public final static @org.jetbrains.annotations.Nullable method icnn(): IC
+    public final static @org.jetbrains.annotations.Nullable method inn(): I
 }

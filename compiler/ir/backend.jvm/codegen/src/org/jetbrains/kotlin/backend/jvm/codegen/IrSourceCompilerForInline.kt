@@ -9,6 +9,7 @@ import com.intellij.openapi.util.TextRange
 import org.jetbrains.kotlin.backend.common.CodegenUtil
 import org.jetbrains.kotlin.backend.jvm.hasMangledReturnType
 import org.jetbrains.kotlin.backend.jvm.ir.*
+import org.jetbrains.kotlin.backend.jvm.mapping.mapType
 import org.jetbrains.kotlin.codegen.StackValue
 import org.jetbrains.kotlin.codegen.inline.*
 import org.jetbrains.kotlin.codegen.state.GenerationState
@@ -21,6 +22,8 @@ import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.descriptors.toIrBasedDescriptor
 import org.jetbrains.kotlin.ir.expressions.IrFunctionAccessExpression
 import org.jetbrains.kotlin.ir.expressions.IrLoop
+import org.jetbrains.kotlin.ir.types.classOrNull
+import org.jetbrains.kotlin.ir.types.makeNotNull
 import org.jetbrains.kotlin.ir.types.makeNullable
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.psi.doNotAnalyze
@@ -141,6 +144,8 @@ class IrSourceCompilerForInline(
         val topIrType = irType.findTopSealedInlineSuperClass().defaultType
         val topType = codegen.typeMapper.mapType(topIrType.makeNullable())
         StackValue.unboxInlineClass(AsmTypes.OBJECT_TYPE, topType, AsmTypes.OBJECT_TYPE, false, mv)
+        val jvmType = codegen.typeMapper.mapType(irType.makeNotNull())
+        StackValue.coerce(AsmTypes.OBJECT_TYPE, jvmType, mv)
     }
 }
 

@@ -19,9 +19,17 @@ public final class ClassKt {
     public final static method c-sUp7gFk(@org.jetbrains.annotations.NotNull p0: C): void
     public final static method cn-sUp7gFk(@org.jetbrains.annotations.Nullable p0: C): void
     public final static method cnn-sUp7gFk(@org.jetbrains.annotations.Nullable p0: C): void
+    public final static method i(@org.jetbrains.annotations.NotNull p0: I): void
+    public final static method iN(@org.jetbrains.annotations.Nullable p0: I): void
+    public final static method iNN(@org.jetbrains.annotations.Nullable p0: I): void
     public final static method ic-K5cTq2M(@org.jetbrains.annotations.NotNull p0: java.lang.Object): void
     public final static method icn-6iVyXxs(@org.jetbrains.annotations.Nullable p0: IC): void
     public final static method icnn-6iVyXxs(@org.jetbrains.annotations.Nullable p0: IC): void
+}
+
+@kotlin.Metadata
+public interface I {
+    // source: 'class.kt'
 }
 
 @kotlin.jvm.JvmInline

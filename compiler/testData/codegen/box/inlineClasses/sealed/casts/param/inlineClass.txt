@@ -9,6 +9,11 @@ public final class C {
     public static method toString-impl(p0: java.lang.String): java.lang.String
 }
 
+@kotlin.Metadata
+public interface I {
+    // source: 'inlineClass.kt'
+}
+
 @kotlin.jvm.JvmInline
 @kotlin.Metadata
 public class IC {
@@ -42,6 +47,9 @@ public final class InlineClassKt {
     public final static method c-8N5YUaI(@org.jetbrains.annotations.NotNull p0: java.lang.String): void
     public final static method cn-NJEY_ek(@org.jetbrains.annotations.Nullable p0: java.lang.String): void
     public final static method cnn-NJEY_ek(@org.jetbrains.annotations.Nullable p0: java.lang.String): void
+    public final static method i(@org.jetbrains.annotations.NotNull p0: I): void
+    public final static method iN(@org.jetbrains.annotations.Nullable p0: I): void
+    public final static method iNN(@org.jetbrains.annotations.Nullable p0: I): void
     public final static method ic-K5cTq2M(@org.jetbrains.annotations.NotNull p0: java.lang.Object): void
     public final static method icn-6iVyXxs(@org.jetbrains.annotations.Nullable p0: IC): void
     public final static method icnn-6iVyXxs(@org.jetbrains.annotations.Nullable p0: IC): void
