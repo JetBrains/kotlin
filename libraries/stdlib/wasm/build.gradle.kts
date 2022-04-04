@@ -1,4 +1,5 @@
 import org.jetbrains.kotlin.gradle.dsl.KotlinCompile
+import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrLink
 
 plugins {
     `maven-publish`
@@ -137,6 +138,10 @@ val compileTestKotlinWasm by tasks.existing(KotlinCompile::class) {
         // so can't do this at configuration time:
         kotlinOptions.freeCompilerArgs += listOf("-Xcommon-sources=${sources.joinToString(",")}")
     }
+}
+
+tasks.named<KotlinJsIrLink>("compileTestDevelopmentExecutableKotlinWasm") {
+    (this as KotlinCompile<*>).kotlinOptions.freeCompilerArgs += "-Xwasm-enable-array-range-checks"
 }
 
 val runtimeElements by configurations.creating {}

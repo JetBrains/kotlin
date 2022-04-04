@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.ir.backend.js.prepareAnalyzedSourceModule
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
+import org.jetbrains.kotlin.js.config.JSConfigurationKeys
 import org.jetbrains.kotlin.js.config.JsConfig
 import org.jetbrains.kotlin.js.facade.TranslationUnit
 import org.jetbrains.kotlin.js.testOld.engines.ExternalTool
@@ -235,6 +236,7 @@ abstract class BasicWasmBoxTest(
     private fun createConfig(languageVersionSettings: LanguageVersionSettings?): JsConfig {
         val configuration = environment.configuration.copy()
         configuration.put(CommonConfigurationKeys.MODULE_NAME, TEST_MODULE)
+        configuration.put(JSConfigurationKeys.WASM_ENABLE_ARRAY_RANGE_CHECKS, false)
         configuration.languageVersionSettings = languageVersionSettings
             ?: LanguageVersionSettingsImpl(LanguageVersion.LATEST_STABLE, ApiVersion.LATEST_STABLE)
         return JsConfig(project, configuration, CompilerEnvironment, null, null)
