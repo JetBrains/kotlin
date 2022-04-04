@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 @file:OptIn(Marker::class)
 
 @RequiresOptIn
@@ -12,5 +13,5 @@ interface MyInterface {
 }
 
 class MyClass : MyInterface {
-    override fun execute() = <!OPT_IN_USAGE_ERROR!>experimental<!>()
+    override fun execute() = experimental()
 }
