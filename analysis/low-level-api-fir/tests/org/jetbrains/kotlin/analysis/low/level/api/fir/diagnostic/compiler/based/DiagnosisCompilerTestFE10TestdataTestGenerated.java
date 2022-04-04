@@ -31561,6 +31561,12 @@ public class DiagnosisCompilerTestFE10TestdataTestGenerated extends AbstractDiag
             }
 
             @Test
+            @TestMetadata("functionalTypeWithParameterNameVisibility.kt")
+            public void testFunctionalTypeWithParameterNameVisibility() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/typealias/functionalTypeWithParameterNameVisibility.kt");
+            }
+
+            @Test
             @TestMetadata("genericTypeAliasConstructor.kt")
             public void testGenericTypeAliasConstructor() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/typealias/genericTypeAliasConstructor.kt");
