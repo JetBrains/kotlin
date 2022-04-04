@@ -174,6 +174,17 @@ class RegexTest {
         assertEquals("123", namedGroups["areaCode"]?.value)
     }
 
+    @Test fun matchDuplicateGroupName() {
+        if (!supportsNamedCapturingGroup) return
+
+        assertFailsWith<IllegalArgumentException> {
+            "(?<hi>hi)|(?<hi>bye)".toRegex()
+        }
+        assertFailsWith<IllegalArgumentException> {
+            Regex("(?<first>\\d+)-(?<first>\\d+)")
+        }
+    }
+
     @Test fun matchOptionalNamedGroup() {
         if (!supportsNamedCapturingGroup) return
 
