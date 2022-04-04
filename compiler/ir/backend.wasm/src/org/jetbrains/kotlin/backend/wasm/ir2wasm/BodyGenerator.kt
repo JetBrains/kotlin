@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.ir.util.isInterface
 import org.jetbrains.kotlin.ir.util.parentAsClass
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
+import org.jetbrains.kotlin.js.config.JSConfigurationKeys
 import org.jetbrains.kotlin.wasm.ir.*
 
 class BodyGenerator(val context: WasmFunctionCodegenContext) : IrElementVisitorVoid {
@@ -254,6 +255,13 @@ class BodyGenerator(val context: WasmFunctionCodegenContext) : IrElementVisitorV
 
         // Get unit is a special case because it is the only function which returns the real unit instance.
         if (call.symbol == unitGetInstance.symbol) {
+            body.buildGetUnit()
+            return
+        }
+
+        // Range check intrinsic is a special case because it doesn't require arguments on the stack.
+        if (call.symbol == wasmSymbols.rangeCheck &&
+            backendContext.configuration.getNotNull(JSConfigurationKeys.WASM_ENABLE_ARRAY_RANGE_CHECKS) == false) {
             body.buildGetUnit()
             return
         }

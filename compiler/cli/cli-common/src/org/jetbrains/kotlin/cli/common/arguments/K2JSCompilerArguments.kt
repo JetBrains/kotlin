@@ -253,6 +253,9 @@ class K2JSCompilerArguments : CommonCompilerArguments() {
     @Argument(value = "-Xwasm-kclass-fqn", description = "Enable support for FQ names in KClass")
     var wasmKClassFqn: Boolean by FreezableVar(false)
 
+    @Argument(value = "-Xwasm-enable-array-range-checks", description = "Turn on range checks for the array access functions")
+    var wasmEnableArrayRangeChecks: Boolean by FreezableVar(false)
+
     override fun configureAnalysisFlags(collector: MessageCollector, languageVersion: LanguageVersion): MutableMap<AnalysisFlag<*>, Any> {
         return super.configureAnalysisFlags(collector, languageVersion).also {
             it[allowFullyQualifiedNameInKClass] = wasm && wasmKClassFqn //Only enabled WASM BE supports this flag
