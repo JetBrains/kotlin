@@ -113,6 +113,10 @@ internal class Lexer(val patternString: String, flags: Int) {
         this.pattern[this.pattern.size - 1] = 0.toChar()
         this.pattern[this.pattern.size - 2] = 0.toChar()
 
+        // Skips leading comments and whitespaces if comments flag is on.
+        if (flags and Pattern.COMMENTS != 0) {
+            skipComments()
+        }
         // Read first two tokens.
         movePointer()
         movePointer()
@@ -200,10 +204,9 @@ internal class Lexer(val patternString: String, flags: Int) {
      */
     private fun nextIndex(): Int {
         prevNonWhitespaceIndex = index
-        if (flags and Pattern.COMMENTS != 0) {
+        index++
+        if (mode != Mode.ESCAPE && flags and Pattern.COMMENTS != 0) {
             skipComments()
-        } else {
-            index++
         }
         return prevNonWhitespaceIndex
     }
@@ -211,7 +214,6 @@ internal class Lexer(val patternString: String, flags: Int) {
     /** Skips comments and whitespaces */
     private fun skipComments(): Int {
         val length = pattern.size - 2
-        index++
         do {
             while (index < length && pattern[index].isWhitespace()) {
                 index++
@@ -289,6 +291,8 @@ internal class Lexer(val patternString: String, flags: Int) {
             if (lookAheadChar == 'E') {
                 // If \E found - change the mode to the previous one and shift to the next char.
                 mode = savedMode
+                index = prevNonWhitespaceIndex // index of 'E'
+                nextIndex() // skip 'E' and process the following chars with the saved mode
                 lookAhead = if (index <= pattern.size - 2) nextCodePoint() else 0
             } else {
                 // If \ have no E - make a step back and return.
@@ -337,7 +341,7 @@ internal class Lexer(val patternString: String, flags: Int) {
                 } else {
                     // Special constructs (non-capturing groups, named capturing groups, look ahead/look behind etc).
                     nextIndex()
-                    var char = pattern[index]
+                    var char = pattern[prevNonWhitespaceIndex + 1]
                     when (char) {
                         // Look ahead or an atomic group.
                         '!' -> {
@@ -419,18 +423,13 @@ internal class Lexer(val patternString: String, flags: Int) {
 
     /** Processes an escaped (\x) character in any mode. Returns whether we need to reread the character or not */
     private fun processEscapedChar() : Boolean {
-        lookAhead = if (index < pattern.size - 2) {
-            nextCodePoint()
-        } else {
+        val escapedCharIndex = prevNonWhitespaceIndex + 1
+        if (escapedCharIndex >= pattern.size - 2) {
             throw PatternSyntaxException("Trailing \\", patternString, curTokenIndex)
         }
-
-        // The current code point cannot be a surrogate pair because it is an escaped special one.
-        // Cast it to char or just skip it as if we pass through the else branch of the when below.
-        if (lookAhead.isSurrogatePair()) {
-            return false
-        }
-        val lookAheadChar = lookAhead.toChar()
+        index = escapedCharIndex
+        val lookAheadChar = pattern[nextIndex()]
+        lookAhead = lookAheadChar.toInt()
 
         when (lookAheadChar) {
             // Character class.
@@ -455,6 +454,8 @@ internal class Lexer(val patternString: String, flags: Int) {
             'Q' -> {
                 savedMode = mode
                 mode = Mode.ESCAPE
+                index = escapedCharIndex // index of 'Q'
+                nextIndex() // skip 'Q' and process the following chars with ESCAPE mode
                 return true
             }
 

@@ -22,6 +22,8 @@ public expect val supportsNamedCapturingGroup: Boolean
 
 public expect val supportsOctalLiteralInRegex: Boolean
 
+public expect val supportsEscapeAnyCharInRegex: Boolean
+
 public expect val regexSplitUnicodeCodePointHandling: Boolean
 
 public enum class HandlingOption {
