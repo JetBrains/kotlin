@@ -130,6 +130,9 @@ internal class Pattern(val pattern: String, flags: Int = 0) {
 
                 if (ch == Lexer.CHAR_NAMED_GROUP) {
                     val name = (lexemes.curSpecialToken as NamedGroup).name
+                    if (groupNameToIndex.containsKey(name)) {
+                        throw PatternSyntaxException("Named capturing group <$name> is already defined", pattern, lexemes.curTokenIndex)
+                    }
                     groupNameToIndex[name] = fSet.groupIndex
                 }
             }
