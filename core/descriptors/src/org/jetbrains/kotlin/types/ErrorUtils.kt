@@ -23,6 +23,18 @@ object ErrorUtils {
     )
     @JvmStatic
     fun createUnresolvedType(presentableName: String, arguments: List<TypeProjection>): SimpleType {
-        return org.jetbrains.kotlin.types.error.ErrorUtils.createErrorType(ErrorTypeKind.UNRESOLVED_TYPE, this.toString())
+        return org.jetbrains.kotlin.types.error.ErrorUtils.createErrorTypeWithArguments(
+            ErrorTypeKind.UNRESOLVED_TYPE, arguments, this.toString()
+        )
+    }
+
+    @IDEAPluginsCompatibilityAPI(
+        _213, _221,
+        message = "Please migrate to the org.jetbrains.kotlin.types.error.ErrorUtils",
+        plugins = "mobile-ide/kotlin-ocswift"
+    )
+    @JvmStatic
+    fun createErrorType(debugMessage: String): SimpleType {
+        return org.jetbrains.kotlin.types.error.ErrorUtils.createErrorType(ErrorTypeKind.UNRESOLVED_TYPE, debugMessage)
     }
 }
