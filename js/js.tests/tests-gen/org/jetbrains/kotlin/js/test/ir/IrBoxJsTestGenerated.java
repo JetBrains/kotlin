@@ -357,6 +357,12 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
         }
 
         @Test
+        @TestMetadata("closureCodeSize.kt")
+        public void testClosureCodeSize() throws Exception {
+            runTest("js/js.translator/testData/box/closure/closureCodeSize.kt");
+        }
+
+        @Test
         @TestMetadata("closureFunctionAsArgument.kt")
         public void testClosureFunctionAsArgument() throws Exception {
             runTest("js/js.translator/testData/box/closure/closureFunctionAsArgument.kt");
