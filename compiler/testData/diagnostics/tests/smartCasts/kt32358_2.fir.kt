@@ -14,7 +14,7 @@ inline fun <R> callItContracted(fn: () -> R): R {
 
 fun smartIt(p1: String?, p2: String?) {
     p1 ?: callIt { return }
-    p1<!UNSAFE_CALL!>.<!>length
+    p1.length
 
     p2 ?: callItContracted { return }
     p2.length

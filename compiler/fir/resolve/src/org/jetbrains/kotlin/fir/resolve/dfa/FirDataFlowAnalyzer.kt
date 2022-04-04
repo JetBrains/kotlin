@@ -756,32 +756,32 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
         val (node, unionNode) = graphBuilder.exitCheckNotNullCall(checkNotNullCall, callCompleted)
         node.mergeIncomingFlow()
 
-        fun FirExpression.propagateNotNullInfo() {
-            val symbol = this.symbol
-            if (symbol != null) {
-                variableStorage.getOrCreateRealVariable(node.previousFlow, symbol, this)?.let { operandVariable ->
-                    node.flow.addTypeStatement(operandVariable typeEq any)
-                    logicSystem.approveStatementsInsideFlow(
-                        node.flow,
-                        operandVariable notEq null,
-                        shouldRemoveSynthetics = true,
-                        shouldForkFlow = false
-                    )
-                }
+        checkNotNullCall.argument.propagateNotNullInfo(node)
+
+        unionNode?.let { unionFlowFromArguments(it) }
+    }
+
+    fun FirExpression.propagateNotNullInfo(node: CFGNode<*>) {
+        val symbol = this.symbol
+        if (symbol != null) {
+            variableStorage.getOrCreateRealVariable(node.previousFlow, symbol, this)?.let { operandVariable ->
+                node.flow.addTypeStatement(operandVariable typeEq any)
+                logicSystem.approveStatementsInsideFlow(
+                    node.flow,
+                    operandVariable notEq null,
+                    shouldRemoveSynthetics = true,
+                    shouldForkFlow = false
+                )
             }
-            when (this) {
-                is FirSafeCallExpression -> receiver.propagateNotNullInfo()
-                is FirTypeOperatorCall -> {
-                    if (operation == FirOperation.AS || operation == FirOperation.SAFE_AS) {
-                        argument.propagateNotNullInfo()
-                    }
+        }
+        when (this) {
+            is FirSafeCallExpression -> receiver.propagateNotNullInfo(node)
+            is FirTypeOperatorCall -> {
+                if (operation == FirOperation.AS || operation == FirOperation.SAFE_AS) {
+                    argument.propagateNotNullInfo(node)
                 }
             }
         }
-
-        checkNotNullCall.argument.propagateNotNullInfo()
-
-        unionNode?.let { unionFlowFromArguments(it) }
     }
 
     // ----------------------------------- When -----------------------------------
@@ -1459,12 +1459,16 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
         }
     }
 
-    fun exitElvis(elvisExpression: FirElvisExpression) {
+    fun exitElvis(elvisExpression: FirElvisExpression, isLhsNotNull: Boolean) {
         val node = graphBuilder.exitElvis().mergeIncomingFlow()
+        if (isLhsNotNull) {
+            elvisExpression.lhs.propagateNotNullInfo(node)
+        }
+
         if (!components.session.languageVersionSettings.supportsFeature(LanguageFeature.BooleanElvisBoundSmartCasts)) return
-        val lhs = elvisExpression.lhs
         val rhs = elvisExpression.rhs
         if (rhs is FirConstExpression<*> && rhs.kind == ConstantValueKind.Boolean) {
+            val lhs = elvisExpression.lhs
             if (lhs.typeRef.coneType.classId != StandardClassIds.Boolean) return
 
             val flow = node.flow
