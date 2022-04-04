@@ -55,10 +55,8 @@ internal fun configureMetadataExposure(module: KotlinGradleModule) {
     val project = module.project
     generateAndExportProjectStructureMetadata(module)
     project.configurations.create(metadataElementsConfigurationName(module)).apply {
-        isCanBeConsumed = false
-        module.ifMadePublic {
-            isCanBeConsumed = true
-        }
+        isCanBeConsumed = true // but we don't allow this configuration to be consumed from outside, using the attribute, see below
+        makePublicIfModuleIsMadePublic(module)
         isCanBeResolved = false
         project.artifacts.add(name, project.tasks.named(metadataJarName(module)))
         attributes.attribute(Usage.USAGE_ATTRIBUTE, project.usageByName(KotlinUsages.KOTLIN_METADATA))
