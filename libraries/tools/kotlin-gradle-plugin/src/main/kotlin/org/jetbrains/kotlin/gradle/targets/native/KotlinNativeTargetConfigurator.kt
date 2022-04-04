@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.apple.registerEmbedAndSignAppleFra
 import org.jetbrains.kotlin.gradle.plugin.mpp.isMain
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KpmAwareTargetConfigurator
+import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.copyAttributes
 import org.jetbrains.kotlin.gradle.targets.metadata.isKotlinGranularMetadataEnabled
 import org.jetbrains.kotlin.gradle.targets.native.*
 import org.jetbrains.kotlin.gradle.targets.native.internal.commonizeCInteropTask
@@ -111,13 +112,11 @@ open class KotlinNativeTargetConfigurator<T : KotlinNativeTarget> : AbstractKotl
                         setOf(binary.target.konanTarget.name)
                     )
                 }
-                // capture type parameter T
-                fun <T> copyAttribute(key: Attribute<T>, from: AttributeContainer, to: AttributeContainer) {
-                    to.attribute(key, from.getAttribute(key)!!)
-                }
-                binary.attributes.keySet().filter { it != KotlinNativeTarget.konanTargetAttribute }.forEach {
-                    copyAttribute(it, binary.attributes, this.attributes)
-                }
+                copyAttributes(
+                    binary.attributes,
+                    attributes,
+                    binary.attributes.keySet().filter { it != KotlinNativeTarget.konanTargetAttribute }
+                )
             }
         }
 
@@ -267,11 +266,7 @@ open class KotlinNativeTargetConfigurator<T : KotlinNativeTarget> : AbstractKotl
                 configuration.isCanBeResolved = false
 
                 configuration.extendsFrom(*apiElements.extendsFrom.toTypedArray())
-
-                fun <T> copyAttribute(from: AttributeContainer, to: AttributeContainer, attribute: Attribute<T>) {
-                    to.attribute(attribute, from.getAttribute(attribute)!!)
-                }
-                with(apiElements.attributes) { keySet().forEach { copyAttribute(this, configuration.attributes, it) } }
+                copyAttributes(apiElements.attributes, configuration.attributes)
                 configuration.attributes.attribute(USAGE_ATTRIBUTE, objects.named(Usage::class.java, KotlinUsages.KOTLIN_METADATA))
             }
         }
