@@ -227,7 +227,6 @@ enum class LanguageFeature(
     SafeCallsAreAlwaysNullable(KOTLIN_1_7),
     RefineTypeCheckingOnAssignmentsToJavaFields(KOTLIN_1_7),
     JvmPermittedSubclassesAttributeForSealed(KOTLIN_1_7),
-    ForbidUsingExtensionPropertyTypeParameterInDelegate(KOTLIN_1_7, kind = BUG_FIX),
     ProperTypeInferenceConstraintsProcessing(KOTLIN_1_7, kind = BUG_FIX),
     ForbidExposingTypesInPrimaryConstructorProperties(KOTLIN_1_7, kind = BUG_FIX),
     PartiallySpecifiedTypeArguments(KOTLIN_1_7),
@@ -259,6 +258,7 @@ enum class LanguageFeature(
     ProhibitAccessToEnumCompanionMembersInEnumConstructorCall(KOTLIN_1_8, kind = BUG_FIX), // KT-49110
     ReportMissingUpperBoundsViolatedErrorOnAbbreviationAtSupertypes(KOTLIN_1_8, kind = BUG_FIX), // KT-29168
     IgnoreNullabilityForErasedValueParameters(KOTLIN_1_8, kind = BUG_FIX),
+    ForbidUsingExtensionPropertyTypeParameterInDelegate(KOTLIN_1_8, kind = BUG_FIX),
 
     // 1.9
 
