@@ -54,3 +54,9 @@ val KotlinBuildProperties.junit5NumberOfThreadsForParallelExecution: Int?
 
 val KotlinBuildProperties.publishGradlePluginsJavadoc: Boolean
     get() = getBoolean("kotlin.build.gradle.publish.javadocs", false)
+
+val KotlinBuildProperties.useFirWithLightTree: Boolean
+    get() = getBoolean("kotlin.build.useFirLT")
+
+val KotlinBuildProperties.useFirTightIC: Boolean
+    get() = getBoolean("kotlin.build.useFirIC")
