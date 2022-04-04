@@ -89,6 +89,9 @@ private fun ConeKotlinType.simplifyType(
     do {
         val oldType = currentType
         currentType = currentType.fullyExpandedType(session)
+        if (currentType is ConeDynamicType) {
+            return currentType
+        }
         currentType = currentType.upperBoundIfFlexible()
         currentType = substitutor.substituteOrSelf(currentType)
         val needLocalTypeApproximation = needLocalTypeApproximation(visibilityForApproximation, isInlineFunction, session, useSitePosition)
