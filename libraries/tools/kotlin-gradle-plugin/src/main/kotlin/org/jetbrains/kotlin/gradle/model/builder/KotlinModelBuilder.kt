@@ -11,11 +11,9 @@ import org.gradle.api.artifacts.ProjectDependency
 import org.gradle.api.plugins.JavaPluginConvention
 import org.gradle.tooling.provider.model.ToolingModelBuilder
 import org.jetbrains.kotlin.gradle.model.CompilerArguments
-import org.jetbrains.kotlin.gradle.model.ExperimentalFeatures
 import org.jetbrains.kotlin.gradle.model.KotlinProject
 import org.jetbrains.kotlin.gradle.model.SourceSet
 import org.jetbrains.kotlin.gradle.model.impl.CompilerArgumentsImpl
-import org.jetbrains.kotlin.gradle.model.impl.ExperimentalFeaturesImpl
 import org.jetbrains.kotlin.gradle.model.impl.KotlinProjectImpl
 import org.jetbrains.kotlin.gradle.model.impl.SourceSetImpl
 import org.jetbrains.kotlin.gradle.plugin.*
@@ -47,7 +45,6 @@ class KotlinModelBuilder(private val kotlinPluginVersion: String, private val an
                 if (androidTarget != null) it.createAndroidSourceSet(androidTarget) else it.createSourceSet(project, projectType)
             },
             getExpectedByDependencies(project),
-            kotlinCompileTasks.first()!!.createExperimentalFeatures()
         )
     }
 
@@ -128,10 +125,6 @@ class KotlinModelBuilder(private val kotlinPluginVersion: String, private val an
                 defaultSerializedCompilerArguments,
                 libraries.toList()
             )
-        }
-
-        private fun AbstractKotlinCompile<*>.createExperimentalFeatures(): ExperimentalFeatures {
-            return ExperimentalFeaturesImpl(coroutines.get().name)
         }
     }
 }

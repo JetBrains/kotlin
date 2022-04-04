@@ -31,7 +31,6 @@ class KotlinProjectIT : KGPBaseTest() {
                         "kotlinProject",
                         defaultBuildOptions.kotlinVersion,
                         KotlinProject.ProjectType.PLATFORM_JVM,
-                        "DEFAULT"
                     )
                     assertTrue(expectedByDependencies.isEmpty())
 
@@ -94,7 +93,6 @@ class KotlinProjectIT : KGPBaseTest() {
                         "kotlinJavaProject",
                         defaultBuildOptions.kotlinVersion,
                         KotlinProject.ProjectType.PLATFORM_JVM,
-                        "DEFAULT"
                     )
 
                     assertEquals(3, sourceSets.size)
@@ -123,19 +121,16 @@ class KotlinProjectIT : KGPBaseTest() {
                     "lib",
                     defaultBuildOptions.kotlinVersion,
                     KotlinProject.ProjectType.PLATFORM_COMMON,
-                    "DEFAULT"
                 )
                 libJsKotlinProject.assertBasics(
                     "libJs",
                     defaultBuildOptions.kotlinVersion,
                     KotlinProject.ProjectType.PLATFORM_JS,
-                    "DEFAULT"
                 )
                 libJvmKotlinProject.assertBasics(
                     "libJvm",
                     defaultBuildOptions.kotlinVersion,
                     KotlinProject.ProjectType.PLATFORM_JVM,
-                    "DEFAULT"
                 )
 
                 assertEquals(1, libJsKotlinProject.expectedByDependencies.size)
@@ -183,7 +178,6 @@ class KotlinProjectIT : KGPBaseTest() {
                         "app",
                         defaultBuildOptions.kotlinVersion,
                         KotlinProject.ProjectType.PLATFORM_JVM,
-                        "DEFAULT"
                     )
 
                     assertTrue(expectedByDependencies.isEmpty())
@@ -316,35 +310,17 @@ class KotlinProjectIT : KGPBaseTest() {
         assertNotEquals(0, compilerArguments.defaultArguments.size)
     }
 
-
-    @DisplayName("Project with coroutines dsl enabled has valid model")
-    @GradleTest
-    fun testCoroutinesProjectDSL(gradleVersion: GradleVersion) {
-        project("coroutinesProjectDSL", gradleVersion) {
-            getModels<KotlinProject> {
-                getModel(":")!!.assertBasics(
-                    "coroutinesProjectDSL",
-                    defaultBuildOptions.kotlinVersion,
-                    KotlinProject.ProjectType.PLATFORM_JVM,
-                    "ENABLE"
-                )
-            }
-        }
-    }
-
     companion object {
 
         private fun KotlinProject.assertBasics(
             expectedName: String,
             expectedKotlinVersion: String,
             expectedProjectType: KotlinProject.ProjectType,
-            expectedCoroutines: String
         ) {
             assertEquals(1L, modelVersion)
             assertEquals(expectedName, name)
             assertEquals(expectedKotlinVersion, kotlinVersion)
             assertEquals(expectedProjectType, projectType)
-            assertEquals(expectedCoroutines, experimentalFeatures.coroutines)
         }
 
         private fun SourceSet.assertBasics(

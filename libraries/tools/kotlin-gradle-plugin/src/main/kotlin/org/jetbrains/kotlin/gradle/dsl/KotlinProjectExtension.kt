@@ -64,12 +64,6 @@ internal val Project.pm20Extension: KotlinPm20ProjectExtension
 
 abstract class KotlinTopLevelExtension(internal val project: Project) : KotlinTopLevelExtensionConfig {
 
-    override val experimental: ExperimentalExtension = project.objects.newInstance(ExperimentalExtension::class.java, project)
-
-    fun experimental(action: Action<ExperimentalExtension>) {
-        action.execute(this.experimental)
-    }
-
     override lateinit var coreLibrariesVersion: String
 
     private val toolchainSupport = ToolchainSupport.createToolchain(project)
@@ -299,22 +293,6 @@ open class KotlinAndroidProjectExtension(project: Project) : KotlinSingleTargetE
         internal set
 
     open fun target(body: KotlinAndroidTarget.() -> Unit) = target.run(body)
-}
-
-open class ExperimentalExtension @Inject constructor(
-    private val project: Project
-) : ExperimentalExtensionConfig {
-    override var coroutines: Coroutines? = null
-        set(value) {
-            SingleWarningPerBuild.show(
-                project,
-                """
-                'kotlin.experimental.coroutines' option does nothing since 1.5.0 release 
-                and scheduled to be removed in Kotlin 1.7.0 release!    
-                """.trimIndent()
-            )
-            field = value
-        }
 }
 
 enum class NativeCacheKind(val produce: String?, val outputKind: CompilerOutputKind?) {

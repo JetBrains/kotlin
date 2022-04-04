@@ -273,13 +273,6 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments> @Inject constr
             }
             task.moduleName.set(project.provider { compilation.moduleName })
             task.sourceSetName.set(project.provider { compilation.compilationPurpose })
-            task.coroutines.value(
-                project.provider {
-                    project.extensions.findByType(KotlinTopLevelExtension::class.java)!!.experimental.coroutines
-                        ?: PropertiesProvider(project).coroutines
-                        ?: Coroutines.DEFAULT
-                }
-            ).disallowChanges()
             task.multiPlatformEnabled.value(
                 project.provider {
                     project.plugins.any { it is KotlinPlatformPluginBase || it is KotlinMultiplatformPluginWrapper || it is KotlinPm20PluginWrapper }
@@ -366,10 +359,6 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments> @Inject constr
     @get:Nested
     // TODO: replace with objects.property and introduce task configurator
     internal var kotlinPluginData: Provider<KotlinCompilerPluginData>? = null
-
-    // Input is needed to force rebuild even if source files are not changed
-    @get:Input
-    internal val coroutines: Property<Coroutines> = objectFactory.property(Coroutines::class.java)
 
     @get:Internal
     internal val javaOutputDir: DirectoryProperty = objectFactory.directoryProperty()
@@ -571,7 +560,6 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments> @Inject constr
 
 open class KotlinCompileArgumentsProvider<T : AbstractKotlinCompile<out CommonCompilerArguments>>(taskProvider: T) {
 
-    val coroutines: Provider<Coroutines> = taskProvider.coroutines
     val logger: Logger = taskProvider.logger
     val isMultiplatform: Boolean = taskProvider.multiPlatformEnabled.get()
     private val pluginData = taskProvider.kotlinPluginData?.orNull

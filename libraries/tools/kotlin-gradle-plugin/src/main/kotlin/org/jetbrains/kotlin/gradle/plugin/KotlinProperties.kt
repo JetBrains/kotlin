@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.gradle.plugin
 import org.gradle.api.Project
 import org.jetbrains.kotlin.cli.common.CompilerSystemProperties
 import org.jetbrains.kotlin.cli.common.toBooleanLenient
-import org.jetbrains.kotlin.gradle.dsl.Coroutines
 import org.jetbrains.kotlin.gradle.dsl.NativeCacheKind
 import org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessageOutputStreamHandler.Companion.IGNORE_TCSM_OVERFLOW
 import org.jetbrains.kotlin.gradle.plugin.Kotlin2JsPlugin.Companion.NOWARN_2JS_FLAG
@@ -80,21 +79,6 @@ internal class PropertiesProvider private constructor(private val project: Proje
             }
         }
     }
-
-    val coroutines: Coroutines?
-        get() {
-            val propValue = property("kotlin.coroutines")?.let { Coroutines.byCompilerArgument(it) }
-            if (propValue != null) {
-                SingleWarningPerBuild.show(
-                    project,
-                    """
-                    'kotlin.coroutines' property does nothing since 1.5.0 release 
-                    and scheduled to be removed in Kotlin 1.7.0 release!    
-                    """.trimIndent()
-                )
-            }
-            return propValue
-        }
 
     val singleBuildMetricsFile: File?
         get() = property("kotlin.internal.single.build.metrics.file")?.let { File(it) }

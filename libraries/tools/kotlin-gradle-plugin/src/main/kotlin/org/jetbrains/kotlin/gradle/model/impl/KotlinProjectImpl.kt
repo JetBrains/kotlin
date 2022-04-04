@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.gradle.model.impl
 
-import org.jetbrains.kotlin.gradle.model.ExperimentalFeatures
 import org.jetbrains.kotlin.gradle.model.KotlinProject
 import org.jetbrains.kotlin.gradle.model.SourceSet
 import java.io.Serializable
@@ -19,7 +18,6 @@ data class KotlinProjectImpl(
     override val projectType: KotlinProject.ProjectType,
     override val sourceSets: Collection<SourceSet>,
     override val expectedByDependencies: Collection<String>,
-    override val experimentalFeatures: ExperimentalFeatures
 ) : KotlinProject, Serializable {
 
     override val modelVersion = serialVersionUID

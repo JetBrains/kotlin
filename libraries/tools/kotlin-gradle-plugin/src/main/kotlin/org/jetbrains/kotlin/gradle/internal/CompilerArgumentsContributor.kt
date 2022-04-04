@@ -43,7 +43,6 @@ internal open class AbstractKotlinCompileArgumentsContributor<T : CommonCompiler
     taskProvider: KotlinCompileArgumentsProvider<out AbstractKotlinCompile<T>>
 ) : CompilerArgumentsContributor<T> {
 
-    private val coroutines = taskProvider.coroutines
     protected val logger = taskProvider.logger
     private val isMultiplatform = taskProvider.isMultiplatform
     private val pluginClasspath = taskProvider.pluginClasspath
