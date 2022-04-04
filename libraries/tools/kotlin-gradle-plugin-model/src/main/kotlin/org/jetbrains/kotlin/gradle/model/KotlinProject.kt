@@ -68,11 +68,4 @@ interface KotlinProject {
      * @return expectedBy dependencies.
      */
     val expectedByDependencies: Collection<String>
-
-    /**
-     * Return an object containing a descriptor of the experimental features.
-     *
-     * @return experimental features.
-     */
-    val experimentalFeatures: ExperimentalFeatures
 }

@@ -9,8 +9,6 @@ package org.jetbrains.kotlin.gradle.dsl
  * DSL extension that is used to configure Kotlin options for the entire project.
  */
 interface KotlinTopLevelExtensionConfig {
-    val experimental: ExperimentalExtensionConfig
-
     /**
      * Version of the core Kotlin libraries that are added to Kotlin compile classpath, unless there is already a dependency added to this
      * project. By default, this version is the same as the version of the used Kotlin Gradle plugin.
@@ -33,10 +31,6 @@ interface KotlinTopLevelExtensionConfig {
     fun explicitApiWarning()
 }
 
-interface ExperimentalExtensionConfig {
-    var coroutines: Coroutines?
-}
-
 /**
  * Different modes that can be used to set the level of issue reporting for [KotlinTopLevelExtensionConfig.explicitApi] option.
  */
@@ -51,16 +45,4 @@ enum class ExplicitApiMode(val cliOption: String) {
     Disabled("disable");
 
     fun toCompilerArg() = "-Xexplicit-api=$cliOption"
-}
-
-enum class Coroutines {
-    ENABLE,
-    WARN,
-    ERROR,
-    DEFAULT;
-
-    companion object {
-        fun byCompilerArgument(argument: String): Coroutines? =
-            values().firstOrNull { it.name.equals(argument, ignoreCase = true) }
-    }
 }
