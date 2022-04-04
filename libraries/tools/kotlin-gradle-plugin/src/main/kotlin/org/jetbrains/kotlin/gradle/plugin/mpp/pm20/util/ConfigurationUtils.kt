@@ -63,7 +63,7 @@ internal fun copyConfiguration(
 
         // artifacts:
         if (overrideArtifacts != null) {
-            overrideArtifacts(this, artifacts)
+            overrideArtifacts(this, allArtifacts) // TODO NOW: it used to be 'artifacts' in master -- why?
         } else {
             artifacts.addAllLater(project.listProperty { configuration.allArtifacts })
         }
