@@ -224,38 +224,3 @@ private fun JavaClassifierType.argumentsMakeSenseOnlyForMutableContainer(
 
     return mutableLastParameterVariance != Variance.OUT_VARIANCE
 }
-
-private fun List<FirTypeParameterSymbol>.eraseToUpperBounds(session: FirSession): Array<ConeTypeProjection> {
-    val cache = mutableMapOf<FirTypeParameter, ConeKotlinType>()
-    return Array(size) { index -> this[index].fir.eraseToUpperBound(session, cache) }
-}
-
-private fun FirTypeParameter.eraseToUpperBound(session: FirSession, cache: MutableMap<FirTypeParameter, ConeKotlinType>): ConeKotlinType {
-    return cache.getOrPut(this) {
-        // Mark to avoid loops.
-        cache[this] = ConeErrorType(ConeIntermediateDiagnostic("self-recursive type parameter $name"))
-        // We can assume that Java type parameter bounds are already converted.
-        symbol.resolvedBounds.first().coneType.eraseAsUpperBound(session, cache)
-    }
-}
-
-private fun ConeKotlinType.eraseAsUpperBound(session: FirSession, cache: MutableMap<FirTypeParameter, ConeKotlinType>): ConeKotlinType =
-    when (this) {
-        is ConeClassLikeType ->
-            withArguments(typeArguments.map { ConeStarProjection }.toTypedArray())
-        is ConeFlexibleType ->
-            // If one bound is a type parameter, the other is probably the same type parameter,
-            // so there is no exponential complexity here due to cache lookups.
-            coneFlexibleOrSimpleType(
-                session.typeContext,
-                lowerBound.eraseAsUpperBound(session, cache),
-                upperBound.eraseAsUpperBound(session, cache)
-            )
-        is ConeTypeParameterType ->
-            lookupTag.typeParameterSymbol.fir.eraseToUpperBound(session, cache).let {
-                if (isNullable) it.withNullability(nullability, session.typeContext) else it
-            }
-        is ConeDefinitelyNotNullType ->
-            original.eraseAsUpperBound(session, cache).makeConeTypeDefinitelyNotNullOrNotNull(session.typeContext)
-        else -> error("unexpected Java type parameter upper bound kind: $this")
-    }
