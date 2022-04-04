@@ -7,6 +7,8 @@ package org.jetbrains.kotlin.gradle.plugin.mpp.pm20
 
 import org.gradle.api.Project
 import org.gradle.api.artifacts.component.BuildIdentifier
+import org.gradle.api.artifacts.result.ResolvedComponentResult
+import org.gradle.api.artifacts.result.ResolvedDependencyResult
 import org.gradle.api.internal.project.ProjectInternal
 import org.gradle.api.plugins.BasePluginConvention
 import org.gradle.api.plugins.BasePluginExtension
@@ -53,3 +55,11 @@ val Project.distsDirectory get() = if (isGradleVersionAtLeast(7, 1)) {
     } else {
         convention.getPlugin(BasePluginConvention::class.java).distsDirectory
     }
+
+val ResolvedDependencyResult.resolvedDependencies: Iterable<ResolvedDependencyResult>
+    get() = selected.getDependenciesForVariant(this.resolvedVariant).filterIsInstance<ResolvedDependencyResult>()
+
+// TODO NOW: Sergey told that no usages of ResolvedComponentResult should be left. There's only one usage, in DependencyGraphResolver,
+// for graphRoot. Is it OK? Can we construct a counter-example?
+val ResolvedComponentResult.resolvedDependencies: Iterable<ResolvedDependencyResult>
+    get() = dependencies.filterIsInstance<ResolvedDependencyResult>()
