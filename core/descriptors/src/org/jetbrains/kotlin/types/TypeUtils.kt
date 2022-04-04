@@ -26,7 +26,6 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.checker.*
 import org.jetbrains.kotlin.types.error.ErrorType
-import org.jetbrains.kotlin.types.model.SimpleTypeMarker
 import org.jetbrains.kotlin.types.model.TypeArgumentMarker
 import org.jetbrains.kotlin.types.model.TypeVariableTypeConstructorMarker
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
@@ -249,21 +248,6 @@ private fun KotlinType.containsSelfTypeParameter(
         argument.type.containsSelfTypeParameter(baseConstructor, visitedTypeParameters)
     }
 }
-
-fun KotlinType.replaceArgumentsWithStarProjectionOrMapped(
-    substitutor: TypeSubstitutor,
-    substitutionMap: Map<TypeConstructor, TypeProjection>,
-    variance: Variance,
-    visitedTypeParameters: Set<TypeParameterDescriptor>?
-) =
-    replaceArgumentsByParametersWith { typeParameterDescriptor ->
-        val argument = arguments.getOrNull(typeParameterDescriptor.index)
-        val isTypeParameterVisited = visitedTypeParameters != null && typeParameterDescriptor in visitedTypeParameters
-        if (!isTypeParameterVisited && argument != null && argument.type.constructor in substitutionMap) {
-            argument
-        } else StarProjectionImpl(typeParameterDescriptor)
-    }.let { substitutor.safeSubstitute(it, variance) }
-
 
 inline fun KotlinType.replaceArgumentsByParametersWith(replacement: (TypeParameterDescriptor) -> TypeProjection): KotlinType {
     val unwrapped = unwrap()

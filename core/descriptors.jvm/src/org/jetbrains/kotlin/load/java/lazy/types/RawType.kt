@@ -16,21 +16,14 @@
 
 package org.jetbrains.kotlin.load.java.lazy.types
 
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
-import org.jetbrains.kotlin.load.java.components.TypeUsage
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.renderer.DescriptorRendererOptions
-import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
-import org.jetbrains.kotlin.resolve.descriptorUtil.classId
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 import org.jetbrains.kotlin.types.checker.KotlinTypeRefiner
 import org.jetbrains.kotlin.types.TypeRefinement
-import org.jetbrains.kotlin.types.error.ErrorUtils
-import org.jetbrains.kotlin.types.error.ErrorTypeKind
 import org.jetbrains.kotlin.types.typeUtil.builtIns
 
 class RawTypeImpl private constructor(lowerBound: SimpleType, upperBound: SimpleType, disableAssertion: Boolean) :
@@ -100,109 +93,5 @@ class RawTypeImpl private constructor(lowerBound: SimpleType, upperBound: Simple
             kotlinTypeRefiner.refineType(upperBound) as SimpleType,
             disableAssertion = true
         )
-    }
-}
-
-internal class RawSubstitution(typeParameterUpperBoundEraser: TypeParameterUpperBoundEraser? = null) : TypeSubstitution() {
-    private val typeParameterUpperBoundEraser = typeParameterUpperBoundEraser ?: TypeParameterUpperBoundEraser(this)
-
-    override fun get(key: KotlinType) = TypeProjectionImpl(eraseType(key))
-
-    private fun eraseType(type: KotlinType, attr: JavaTypeAttributes = JavaTypeAttributes(TypeUsage.COMMON)): KotlinType {
-        return when (val declaration = type.constructor.declarationDescriptor) {
-            is TypeParameterDescriptor ->
-                eraseType(typeParameterUpperBoundEraser.getErasedUpperBound(declaration, isRaw = true, attr), attr)
-            is ClassDescriptor -> {
-                val declarationForUpper =
-                    type.upperIfFlexible().constructor.declarationDescriptor
-
-                check(declarationForUpper is ClassDescriptor) {
-                    "For some reason declaration for upper bound is not a class " +
-                            "but \"$declarationForUpper\" while for lower it's \"$declaration\""
-                }
-
-                val (lower, isRawL) = eraseInflexibleBasedOnClassDescriptor(type.lowerIfFlexible(), declaration, lowerTypeAttr)
-                val (upper, isRawU) = eraseInflexibleBasedOnClassDescriptor(type.upperIfFlexible(), declarationForUpper, upperTypeAttr)
-
-                if (isRawL || isRawU) {
-                    RawTypeImpl(lower, upper)
-                } else {
-                    KotlinTypeFactory.flexibleType(lower, upper)
-                }
-            }
-            else -> error("Unexpected declaration kind: $declaration")
-        }
-    }
-
-    // false means that type cannot be raw
-    private fun eraseInflexibleBasedOnClassDescriptor(
-        type: SimpleType, declaration: ClassDescriptor, attr: JavaTypeAttributes
-    ): Pair<SimpleType, Boolean> {
-        if (type.constructor.parameters.isEmpty()) return type to false
-
-        if (KotlinBuiltIns.isArray(type)) {
-            val componentTypeProjection = type.arguments[0]
-            val arguments = listOf(
-                TypeProjectionImpl(componentTypeProjection.projectionKind, eraseType(componentTypeProjection.type, attr))
-            )
-            return KotlinTypeFactory.simpleType(
-                type.attributes, type.constructor, arguments, type.isMarkedNullable
-            ) to false
-        }
-
-        if (type.isError) {
-            return ErrorUtils.createErrorType(ErrorTypeKind.ERROR_RAW_TYPE, type.constructor.toString()) to false
-        }
-
-        val memberScope = declaration.getMemberScope(this)
-        return KotlinTypeFactory.simpleTypeWithNonTrivialMemberScope(
-            type.attributes, declaration.typeConstructor,
-            declaration.typeConstructor.parameters.map { parameter ->
-                computeProjection(parameter, attr)
-            },
-            type.isMarkedNullable, memberScope
-        ) factory@{ kotlinTypeRefiner ->
-            val classId = (declaration as? ClassDescriptor)?.classId ?: return@factory null
-            @OptIn(TypeRefinement::class)
-            val refinedClassDescriptor = kotlinTypeRefiner.findClassAcrossModuleDependencies(classId) ?: return@factory null
-            if (refinedClassDescriptor == declaration) return@factory null
-
-            eraseInflexibleBasedOnClassDescriptor(type, refinedClassDescriptor, attr).first
-        } to true
-    }
-
-    fun computeProjection(
-        parameter: TypeParameterDescriptor,
-        attr: JavaTypeAttributes,
-        erasedUpperBound: KotlinType = typeParameterUpperBoundEraser.getErasedUpperBound(parameter, isRaw = true, attr)
-    ) = when (attr.flexibility) {
-        // Raw(List<T>) => (List<Any?>..List<*>)
-        // Raw(Enum<T>) => (Enum<Enum<*>>..Enum<out Enum<*>>)
-        // In the last case upper bound is equal to star projection `Enum<*>`,
-        // but we want to keep matching tree structure of flexible bounds (at least they should have the same size)
-        JavaTypeFlexibility.FLEXIBLE_LOWER_BOUND -> TypeProjectionImpl(
-            // T : String -> String
-            // in T : String -> String
-            // T : Enum<T> -> Enum<*>
-            Variance.INVARIANT, erasedUpperBound
-        )
-        JavaTypeFlexibility.FLEXIBLE_UPPER_BOUND, JavaTypeFlexibility.INFLEXIBLE -> {
-            if (!parameter.variance.allowsOutPosition)
-            // in T -> Comparable<Nothing>
-                TypeProjectionImpl(Variance.INVARIANT, parameter.builtIns.nothingType)
-            else if (erasedUpperBound.constructor.parameters.isNotEmpty())
-            // T : Enum<E> -> out Enum<*>
-                TypeProjectionImpl(Variance.OUT_VARIANCE, erasedUpperBound)
-            else
-            // T : String -> *
-                makeStarProjection(parameter, attr)
-        }
-    }
-
-    override fun isEmpty() = false
-
-    companion object {
-        private val lowerTypeAttr = TypeUsage.COMMON.toAttributes().withFlexibility(JavaTypeFlexibility.FLEXIBLE_LOWER_BOUND)
-        private val upperTypeAttr = TypeUsage.COMMON.toAttributes().withFlexibility(JavaTypeFlexibility.FLEXIBLE_UPPER_BOUND)
     }
 }

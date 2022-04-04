@@ -20,9 +20,9 @@ import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMapper
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
-import org.jetbrains.kotlin.load.java.components.TypeUsage
-import org.jetbrains.kotlin.load.java.components.TypeUsage.COMMON
-import org.jetbrains.kotlin.load.java.components.TypeUsage.SUPERTYPE
+import org.jetbrains.kotlin.types.TypeUsage
+import org.jetbrains.kotlin.types.TypeUsage.COMMON
+import org.jetbrains.kotlin.types.TypeUsage.SUPERTYPE
 import org.jetbrains.kotlin.load.java.lazy.LazyJavaAnnotations
 import org.jetbrains.kotlin.load.java.lazy.LazyJavaResolverContext
 import org.jetbrains.kotlin.load.java.lazy.TypeParameterResolver
@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.load.java.structure.*
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.types.*
+import org.jetbrains.kotlin.types.TypeUtils.makeStarProjection
 import org.jetbrains.kotlin.types.Variance.*
 import org.jetbrains.kotlin.types.error.ErrorUtils
 import org.jetbrains.kotlin.types.error.ErrorTypeKind
@@ -43,8 +44,8 @@ class JavaTypeResolver(
     private val c: LazyJavaResolverContext,
     private val typeParameterResolver: TypeParameterResolver
 ) {
-    private val typeParameterUpperBoundEraser = TypeParameterUpperBoundEraser()
-    private val rawSubstitution = RawSubstitution(typeParameterUpperBoundEraser)
+    private val projectionComputer = RawProjectionComputer()
+    private val typeParameterUpperBoundEraser = TypeParameterUpperBoundEraser(projectionComputer)
 
     fun transformJavaType(javaType: JavaType?, attr: JavaTypeAttributes): KotlinType {
         return when (javaType) {
@@ -225,15 +226,15 @@ class JavaTypeResolver(
         val erasedUpperBound = LazyWrappedType(c.storageManager) {
             typeParameterUpperBoundEraser.getErasedUpperBound(
                 parameter,
-                javaType.isRaw,
-                attr.withDefaultType(constructor.declarationDescriptor?.defaultType)
+                attr.withDefaultType(constructor.declarationDescriptor?.defaultType).markIsRaw(javaType.isRaw)
             )
         }
 
-        rawSubstitution.computeProjection(
+        projectionComputer.computeProjection(
             parameter,
             // if erasure happens due to invalid arguments number, use star projections instead
-            if (javaType.isRaw) attr else attr.withFlexibility(INFLEXIBLE),
+            attr.markIsRaw(javaType.isRaw),
+            typeParameterUpperBoundEraser,
             erasedUpperBound
         )
     }
@@ -309,42 +310,3 @@ class JavaTypeResolver(
         return !isForAnnotationParameter && howThisTypeIsUsed != SUPERTYPE
     }
 }
-
-internal fun makeStarProjection(
-    typeParameter: TypeParameterDescriptor,
-    attr: JavaTypeAttributes
-): TypeProjection {
-    return if (attr.howThisTypeIsUsed == SUPERTYPE)
-        TypeProjectionImpl(typeParameter.starProjectionType())
-    else
-        StarProjectionImpl(typeParameter)
-}
-
-data class JavaTypeAttributes(
-    val howThisTypeIsUsed: TypeUsage,
-    val flexibility: JavaTypeFlexibility = INFLEXIBLE,
-    val isForAnnotationParameter: Boolean = false,
-    // we use it to prevent happening a recursion while compute type parameter's upper bounds
-    val visitedTypeParameters: Set<TypeParameterDescriptor>? = null,
-    val defaultType: SimpleType? = null
-) {
-    fun withFlexibility(flexibility: JavaTypeFlexibility) = copy(flexibility = flexibility)
-    fun withDefaultType(type: SimpleType?) = copy(defaultType = type)
-    fun withNewVisitedTypeParameter(typeParameter: TypeParameterDescriptor) =
-        copy(visitedTypeParameters = if (visitedTypeParameters != null) visitedTypeParameters + typeParameter else setOf(typeParameter))
-}
-
-enum class JavaTypeFlexibility {
-    INFLEXIBLE,
-    FLEXIBLE_UPPER_BOUND,
-    FLEXIBLE_LOWER_BOUND
-}
-
-fun TypeUsage.toAttributes(
-    isForAnnotationParameter: Boolean = false,
-    upperBoundForTypeParameter: TypeParameterDescriptor? = null
-) = JavaTypeAttributes(
-    this,
-    isForAnnotationParameter = isForAnnotationParameter,
-    visitedTypeParameters = upperBoundForTypeParameter?.let(::setOf)
-)
