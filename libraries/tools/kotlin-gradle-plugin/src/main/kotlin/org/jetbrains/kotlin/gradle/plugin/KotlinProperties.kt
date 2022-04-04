@@ -439,10 +439,17 @@ internal class PropertiesProvider private constructor(private val project: Proje
 
     val kotlinCompilerExecutionStrategy: KotlinCompilerExecutionStrategy
         get() {
-            val gradleProperty = property("kotlin.compiler.execution.strategy")
+            val propertyName = "kotlin.compiler.execution.strategy"
+            val gradleProperty = property(propertyName)
             // system property is for backward compatibility
-            val value = (gradleProperty ?: System.getProperty("kotlin.compiler.execution.strategy"))?.toLowerCase()
-            return KotlinCompilerExecutionStrategy.fromProperty(value)
+            val value = (gradleProperty ?: System.getProperty(propertyName)?.also {
+                SingleWarningPerBuild.show(
+                    project,
+                    "The '$propertyName' system property is deprecated and will have no effect since Kotlin 1.8.0. " +
+                            "Please use the '$propertyName' project property or the `compilerExecutionStrategy` Kotlin compile task property instead."
+                )
+            })
+            return KotlinCompilerExecutionStrategy.fromProperty(value?.toLowerCase())
         }
 
     private fun propertyWithDeprecatedVariant(propName: String, deprecatedPropName: String): String? {
