@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.analysis.api.symbols.KtDeclarationSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtFileSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtSymbolPointer
+import org.jetbrains.kotlin.analysis.test.framework.utils.executeOnPooledThreadInReadAction
 import org.jetbrains.kotlin.analysis.utils.printer.prettyPrint
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
@@ -44,32 +45,35 @@ abstract class AbstractSymbolTest : AbstractAnalysisApiSingleFileTest() {
             PrettyRenderingMode.RENDER_SYMBOLS_NESTED -> renderingOptions.copy(renderClassMembers = true)
         }
 
-        val pointersWithRendered = analyseOnPooledThreadInReadAction(ktFile) {
-            val (symbols, symbolForPrettyRendering) = collectSymbols(ktFile, testServices)
+        val pointersWithRendered = executeOnPooledThreadInReadAction {
+            analyseForTest(ktFile) {
+                val (symbols, symbolForPrettyRendering) = collectSymbols(ktFile, testServices)
 
-            val pointerWithRenderedSymbol = symbols.map { symbol ->
-                PointerWithRenderedSymbol(
-                    if (createPointers) symbol.createPointer() else null,
-                    renderSymbolForComparison(symbol),
-                )
-            }
+                val pointerWithRenderedSymbol = symbols.map { symbol ->
+                    PointerWithRenderedSymbol(
+                        if (createPointers) symbol.createPointer() else null,
+                        renderSymbolForComparison(symbol),
+                    )
+                }
 
-            val pointerWithPrettyRenderedSymbol = symbolForPrettyRendering.map { symbol ->
-                PointerWithRenderedSymbol(
-                    if (createPointers) symbol.createPointer() else null,
-                    when (symbol) {
-                        is KtDeclarationSymbol -> symbol.render(prettyRenderOptions)
-                        is KtFileSymbol -> prettyPrint {
-                            printCollection(symbol.getFileScope().getAllSymbols().asIterable(), separator = "\n\n") {
-                                append((it as KtDeclarationSymbol).render(prettyRenderOptions))
+                val pointerWithPrettyRenderedSymbol = symbolForPrettyRendering.map { symbol ->
+                    PointerWithRenderedSymbol(
+                        if (createPointers) symbol.createPointer() else null,
+                        when (symbol) {
+                            is KtDeclarationSymbol -> symbol.render(prettyRenderOptions)
+                            is KtFileSymbol -> prettyPrint {
+                                printCollection(symbol.getFileScope().getAllSymbols().asIterable(), separator = "\n\n") {
+                                    append((it as KtDeclarationSymbol).render(prettyRenderOptions))
+                                }
                             }
-                        }
-                        else -> error(symbol::class.toString())
-                    }
-                )
-            }
 
-            SymbolPointersData(pointerWithRenderedSymbol, pointerWithPrettyRenderedSymbol)
+                            else -> error(symbol::class.toString())
+                        }
+                    )
+                }
+
+                SymbolPointersData(pointerWithRenderedSymbol, pointerWithPrettyRenderedSymbol)
+            }
         }
 
         compareResults(pointersWithRendered, testServices)
@@ -97,7 +101,7 @@ abstract class AbstractSymbolTest : AbstractAnalysisApiSingleFileTest() {
         pointersWithRendered: List<PointerWithRenderedSymbol>,
         testServices: TestServices,
     ) {
-        val restored = analyseOnPooledThreadInReadAction(ktFile) {
+        val restored = analyseForTest(ktFile) {
             pointersWithRendered.map { (pointer, expectedRender) ->
                 val restored = pointer!!.restoreSymbol()
                     ?: error("Symbol $expectedRender was not restored")
