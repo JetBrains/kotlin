@@ -5,25 +5,25 @@
 
 package org.jetbrains.kotlin.analysis.test.framework.base
 
+import com.intellij.mock.MockProject
 import com.intellij.openapi.util.Disposer
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.testFramework.TestDataFile
 import junit.framework.ComparisonFailure
-import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
-import org.jetbrains.kotlin.analysis.api.analyse
-import org.jetbrains.kotlin.analysis.api.analyseInDependedAnalysisSession
+import org.jetbrains.kotlin.analysis.api.*
 import org.jetbrains.kotlin.analysis.test.framework.AnalysisApiTestDirectives
 import org.jetbrains.kotlin.analysis.test.framework.TestWithDisposable
 import org.jetbrains.kotlin.analysis.test.framework.project.structure.ktModuleProvider
 import org.jetbrains.kotlin.analysis.test.framework.services.ExpressionMarkerProvider
 import org.jetbrains.kotlin.analysis.test.framework.services.ExpressionMarkersSourceFilePreprocessor
-import org.jetbrains.kotlin.analysis.test.framework.services.libraries.LibraryWasNotCompiledDueToExpectedCompilationError
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiTestConfigurator
+import org.jetbrains.kotlin.analysis.test.framework.utils.SkipTestException
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.ExecutionListenerBasedDisposableProvider
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
+import org.jetbrains.kotlin.test.TestConfiguration
 import org.jetbrains.kotlin.test.TestInfrastructureInternals
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.builders.testConfiguration
@@ -51,7 +51,7 @@ abstract class AbstractAnalysisApiBasedTest : TestWithDisposable() {
     protected lateinit var testDataPath: Path
         private set
 
-    private lateinit var moduleStructure: TestModuleStructure
+    private lateinit var testServices: TestServices
 
     protected open fun configureTest(builder: TestConfigurationBuilder) {
         configurator.configureTest(builder, disposable)
@@ -126,47 +126,54 @@ abstract class AbstractAnalysisApiBasedTest : TestWithDisposable() {
         this.testInfo = this@AbstractAnalysisApiBasedTest.testInfo
     }
 
-    protected open fun handleInitializationError(exception: Throwable, moduleStructure: TestModuleStructure): InitializationErrorAction =
-        InitializationErrorAction.THROW
-
-    enum class InitializationErrorAction {
-        IGNORE, THROW
-    }
-
+    @OptIn(InvalidWayOfUsingAnalysisSession::class)
     protected fun runTest(@TestDataFile path: String) {
         testDataPath = configurator.preprocessTestDataPath(Paths.get(path))
-        val testConfiguration = testConfiguration(path, configure)
-        Disposer.register(disposable, testConfiguration.rootDisposable)
-        val testServices = testConfiguration.testServices
-        val moduleStructure =
-            testConfiguration.moduleStructureExtractor.splitTestDataByModules(path, testConfiguration.directives)
-        testServices.register(TestModuleStructure::class, moduleStructure)
-        this.moduleStructure = moduleStructure
-        testConfiguration.testServices.register(TestModuleStructure::class, moduleStructure)
+        val testConfiguration = createTestConfiguration()
+        testServices = testConfiguration.testServices
+        val moduleStructure = createModuleStructure(testConfiguration)
 
         try {
-            testConfiguration.preAnalysisHandlers.forEach { preprocessor -> preprocessor.preprocessModuleStructure(moduleStructure) }
-        } catch(ignored: LibraryWasNotCompiledDueToExpectedCompilationError) {
+            prepareToTheAnalysis(testConfiguration)
+        } catch (ignored: SkipTestException) {
             return
         }
 
-        testConfiguration.preAnalysisHandlers.forEach { preprocessor ->
-            preprocessor.prepareSealedClassInheritors(moduleStructure)
-        }
-
-        moduleStructure.modules.forEach { module ->
-            val files = testServices.ktModuleProvider.getModuleFiles(module)
-            configurator.prepareFilesInModule(files, module, testServices)
+        if (configurator.analyseInDependentSession && isDependentModeDisabledForTheTest()) {
+            return
         }
 
         doTestByFileStructure(moduleStructure, testServices)
     }
 
+    private fun createTestConfiguration(): TestConfiguration {
+        val testConfiguration = testConfiguration(testDataPath.toString(), configure)
+        Disposer.register(disposable, testConfiguration.rootDisposable)
+        return testConfiguration
+    }
+
+    private fun createModuleStructure(testConfiguration: TestConfiguration): TestModuleStructure {
+        val moduleStructure = testConfiguration.moduleStructureExtractor.splitTestDataByModules(testDataPath.toString(), testConfiguration.directives)
+        testServices.register(TestModuleStructure::class, moduleStructure)
+        return moduleStructure
+    }
+
+    private fun prepareToTheAnalysis(testConfiguration: TestConfiguration) {
+        val moduleStructure = testServices.moduleStructure
+        testConfiguration.preAnalysisHandlers.forEach { preprocessor -> preprocessor.preprocessModuleStructure(moduleStructure) }
+        testConfiguration.preAnalysisHandlers.forEach { preprocessor -> preprocessor.prepareSealedClassInheritors(moduleStructure) }
+
+        moduleStructure.modules.forEach { module ->
+            val files = testServices.ktModuleProvider.getModuleFiles(module)
+            configurator.prepareFilesInModule(files, module, testServices)
+        }
+    }
+
+    private fun isDependentModeDisabledForTheTest(): Boolean =
+        AnalysisApiTestDirectives.DISABLE_DEPENDED_MODE in testServices.moduleStructure.allDirectives
 
     protected fun <R> analyseForTest(contextElement: KtElement, action: KtAnalysisSession.() -> R): R {
-        return if (configurator.analyseInDependentSession
-            && AnalysisApiTestDirectives.DISABLE_DEPENDED_MODE !in this.moduleStructure.allDirectives
-        ) {
+        return if (configurator.analyseInDependentSession) {
             val originalContainingFile = contextElement.containingKtFile
             val fileCopy = originalContainingFile.copy() as KtFile
             analyseInDependedAnalysisSession(originalContainingFile, PsiTreeUtil.findSameElementInCopy(contextElement, fileCopy), action)

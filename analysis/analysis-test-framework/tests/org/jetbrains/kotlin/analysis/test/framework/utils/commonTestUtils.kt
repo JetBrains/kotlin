@@ -24,11 +24,6 @@ inline fun <T> runReadAction(crossinline runnable: () -> T): T {
 fun <R> executeOnPooledThreadInReadAction(action: () -> R): R =
     ApplicationManager.getApplication().executeOnPooledThread<R> { runReadAction(action) }.get()
 
-inline fun <R> analyseOnPooledThreadInReadAction(context: KtElement, crossinline action: KtAnalysisSession.() -> R): R =
-    executeOnPooledThreadInReadAction {
-        analyse(context) { action() }
-    }
-
 fun PsiElement?.position(): String {
     if (this == null) return "(unknown)"
     return offsetToLineAndColumn(containingFile.viewProvider.document, textRange.startOffset).toString()
