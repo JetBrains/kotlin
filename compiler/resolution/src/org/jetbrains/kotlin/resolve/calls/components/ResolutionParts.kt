@@ -304,25 +304,6 @@ internal object PostponedVariablesInitializerResolutionPart : ResolutionPart() {
     }
 }
 
-internal object CompatibilityOfTypeVariableAsIntersectionTypePart : ResolutionPart() {
-    override fun ResolutionCandidate.process(workIndex: Int) {
-        val csBuilder = getSystem().getBuilder()
-        for ((_, variableWithConstraints) in csBuilder.currentStorage().notFixedTypeVariables) {
-            val constraints = variableWithConstraints.constraints.filter { csBuilder.isProperType(it.type) }
-
-            if (constraints.size <= 1) continue
-            if (constraints.any { it.kind.isLower() || it.kind.isEqual() }) continue
-
-            // See TypeBoundsImpl.computeValues(). It returns several values for such situation which means an error in OI
-            if (callComponents.statelessCallbacks.isOldIntersectionIsEmpty(constraints.map { it.type }.cast())) {
-                markCandidateForCompatibilityResolve()
-                return
-            }
-        }
-
-    }
-}
-
 internal object CompatibilityOfPartiallyApplicableSamConversion : ResolutionPart() {
     override fun ResolutionCandidate.process(workIndex: Int) {
         if (resolvedCall.argumentsWithConversion.isEmpty()) return

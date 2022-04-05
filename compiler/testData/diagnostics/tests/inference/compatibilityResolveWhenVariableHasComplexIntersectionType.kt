@@ -11,7 +11,7 @@ object Scope {
         fun <T : Comparable<T>, S : T> greater(x: Bar<in S>, t: T) {}
 
         fun test(b: Bar<Long>) {
-            <!DEBUG_INFO_CALL("fqName: Scope.greater; typeCall: function")!><!COMPATIBILITY_WARNING!>greater<!>(b, b)<!>
+            <!DEBUG_INFO_CALL("fqName: Scope.greater; typeCall: function")!>greater(b, b)<!>
         }
     }
 }
