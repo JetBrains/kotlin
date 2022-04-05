@@ -10,19 +10,16 @@ import org.jetbrains.kotlin.fir.declarations.ContextReceiverGroup
 import org.jetbrains.kotlin.fir.declarations.FirConstructor
 import org.jetbrains.kotlin.fir.declarations.getAnnotationByClassId
 import org.jetbrains.kotlin.fir.declarations.utils.isInner
+import org.jetbrains.kotlin.fir.expressions.FirExpressionWithSmartcast
 import org.jetbrains.kotlin.fir.expressions.builder.buildResolvedQualifier
-import org.jetbrains.kotlin.fir.resolve.BodyResolveComponents
-import org.jetbrains.kotlin.fir.resolve.ScopeSession
+import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.resolve.calls.*
-import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.resultType
-import org.jetbrains.kotlin.fir.resolve.typeForQualifier
-import org.jetbrains.kotlin.fir.scopes.FirScope
-import org.jetbrains.kotlin.fir.scopes.FirTypeScope
+import org.jetbrains.kotlin.fir.scopes.*
 import org.jetbrains.kotlin.fir.scopes.impl.FirDefaultStarImportingScope
+import org.jetbrains.kotlin.fir.scopes.impl.FirStandardOverrideChecker
 import org.jetbrains.kotlin.fir.scopes.impl.importedFromObjectData
-import org.jetbrains.kotlin.fir.scopes.processClassifiersByName
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
@@ -79,13 +76,33 @@ class MemberScopeTowerLevel(
     private val scopeSession: ScopeSession get() = bodyResolveComponents.scopeSession
     private val session: FirSession get() = bodyResolveComponents.session
 
-    private fun <T : FirBasedSymbol<*>> processMembers(
+    private fun <T : FirCallableSymbol<*>> processMembers(
+        callInfo: CallInfo,
         output: TowerScopeLevelProcessor<T>,
         processScopeMembers: FirScope.(processor: (T) -> Unit) -> Unit
     ): ProcessResult {
         val scope = dispatchReceiverValue.scope(session, scopeSession) ?: return ProcessResult.SCOPE_EMPTY
         var (empty, candidates) = scope.collectCandidates(processScopeMembers)
-        consumeCandidates(output, candidates.map { scope to it })
+
+        val scopeWithoutSmartcast = (dispatchReceiverValue.receiverExpression as? FirExpressionWithSmartcast)
+            ?.takeIf { it.isStable }
+            ?.originalType
+            ?.coneType
+            ?.scope(session, scopeSession, bodyResolveComponents.returnTypeCalculator.fakeOverrideTypeCalculator)
+        if (scopeWithoutSmartcast == null) {
+            consumeCandidates(output, candidates)
+        } else {
+            val candidatesFromOriginalType = mutableListOf<MemberWithBaseScope<T>>()
+            scopeWithoutSmartcast.collectCandidates(processScopeMembers).let { (isEmpty, originalCandidates) ->
+                empty = empty && isEmpty
+                candidatesFromOriginalType += originalCandidates
+            }
+            if (candidatesFromOriginalType.isNotEmpty()) {
+                processMembersFromSmartcastedType(callInfo, candidatesFromOriginalType, candidates, output)
+            } else {
+                consumeCandidates(output, candidates)
+            }
+        }
 
         if (givenExtensionReceiverOptions.isEmpty()) {
             val withSynthetic = FirSyntheticPropertiesScope(session, scope)
@@ -97,32 +114,65 @@ class MemberScopeTowerLevel(
         return if (empty) ProcessResult.SCOPE_EMPTY else ProcessResult.FOUND
     }
 
-    private fun <T : FirBasedSymbol<*>> FirTypeScope.collectCandidates(
+    private fun <T : FirCallableSymbol<*>> processMembersFromSmartcastedType(
+        callInfo: CallInfo,
+        candidatesFromOriginalType: Collection<MemberWithBaseScope<T>>,
+        candidatesFromSmartcast: Collection<MemberWithBaseScope<T>>,
+        output: TowerScopeLevelProcessor<T>,
+    ) {
+        val visibilityChecker = session.visibilityChecker
+        val candidatesMapping = buildMap {
+            candidatesFromOriginalType.forEach { put(it, false) }
+            candidatesFromSmartcast.forEach { put(it, true) }
+        }
+
+        val overridableGroups = session.overrideService.createOverridableGroups(
+            candidatesFromOriginalType + candidatesFromSmartcast,
+            FirStandardOverrideChecker(session)
+        )
+
+        val candidates = mutableListOf<MemberWithBaseScope<T>>()
+        for (group in overridableGroups) {
+            val visibleCandidates = group.filter {
+                visibilityChecker.isVisible(it.member.fir, callInfo, dispatchReceiverValue)
+            }
+
+            val visibleCandidatesFromSmartcast = visibleCandidates.filter { candidatesMapping.getValue(it) }
+            if (visibleCandidatesFromSmartcast.isNotEmpty()) {
+                candidates += visibleCandidatesFromSmartcast
+            } else {
+                group.filterNotTo(candidates) { candidatesMapping.getValue(it) }
+            }
+        }
+        consumeCandidates(output, candidates)
+    }
+
+    private fun <T : FirCallableSymbol<*>> FirTypeScope.collectCandidates(
         processScopeMembers: FirScope.(processor: (T) -> Unit) -> Unit
-    ): Pair<Boolean, List<T>> {
+    ): Pair<Boolean, List<MemberWithBaseScope<T>>> {
         var empty = true
-        val result = mutableListOf<T>()
+        val result = mutableListOf<MemberWithBaseScope<T>>()
         processScopeMembers { candidate ->
             empty = false
-            if (candidate is FirCallableSymbol<*> && candidate.hasConsistentExtensionReceiver(givenExtensionReceiverOptions)) {
+            if (candidate.hasConsistentExtensionReceiver(givenExtensionReceiverOptions)) {
                 val fir = candidate.fir
                 if ((fir as? FirConstructor)?.isInner == false) {
                     return@processScopeMembers
                 }
-                result += candidate
+                result += MemberWithBaseScope(candidate, this)
             } else if (candidate is FirClassLikeSymbol<*>) {
-                result += candidate
+                result += MemberWithBaseScope(candidate, this)
             }
         }
         return empty to result
     }
 
-    private fun <T : FirBasedSymbol<*>> consumeCandidates(
+    private fun <T : FirCallableSymbol<*>> consumeCandidates(
         output: TowerScopeLevelProcessor<T>,
-        candidatesWithScope: List<Pair<FirScope, T>>
+        candidatesWithScope: List<MemberWithBaseScope<T>>
     ) {
-        for ((scope, candidate) in candidatesWithScope) {
-            if (candidate is FirCallableSymbol<*> && candidate.hasConsistentExtensionReceiver(givenExtensionReceiverOptions)) {
+        for ((candidate, scope) in candidatesWithScope) {
+            if (candidate.hasConsistentExtensionReceiver(givenExtensionReceiverOptions)) {
                 output.consumeCandidate(
                     candidate, dispatchReceiverValue,
                     givenExtensionReceiverOptions,
@@ -139,7 +189,7 @@ class MemberScopeTowerLevel(
         processor: TowerScopeLevelProcessor<FirFunctionSymbol<*>>
     ): ProcessResult {
         val lookupTracker = session.lookupTracker
-        return processMembers(processor) { consumer ->
+        return processMembers(info, processor) { consumer ->
             withMemberCallLookup(lookupTracker, info) { lookupCtx ->
                 this.processFunctionsAndConstructorsByName(
                     info, session, bodyResolveComponents,
@@ -160,13 +210,11 @@ class MemberScopeTowerLevel(
         processor: TowerScopeLevelProcessor<FirVariableSymbol<*>>
     ): ProcessResult {
         val lookupTracker = session.lookupTracker
-        return processMembers(processor) { consumer ->
+        return processMembers(info, processor) { consumer ->
             withMemberCallLookup(lookupTracker, info) { lookupCtx ->
                 lookupTracker?.recordCallLookup(info, dispatchReceiverValue.type)
                 this.processPropertiesByName(info.name) {
                     lookupCtx.recordCallableMemberLookup(it)
-                    // WARNING, DO NOT CAST FUNCTIONAL TYPE ITSELF
-                    @Suppress("UNCHECKED_CAST")
                     consumer(it)
                 }
             }

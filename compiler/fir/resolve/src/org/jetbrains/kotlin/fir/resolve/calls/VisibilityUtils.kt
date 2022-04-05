@@ -20,11 +20,12 @@ import org.jetbrains.kotlin.fir.originalIfFakeOverride
 
 fun FirVisibilityChecker.isVisible(
     declaration: FirMemberDeclaration,
-    candidate: Candidate
+    callInfo: CallInfo,
+    dispatchReceiverValue: ReceiverValue?
 ): Boolean {
     if (declaration is FirCallableDeclaration && (declaration.isIntersectionOverride || declaration.isSubstitutionOverride)) {
         @Suppress("UNCHECKED_CAST")
-        return isVisible(declaration.originalIfFakeOverride() as FirMemberDeclaration, candidate)
+        return isVisible(declaration.originalIfFakeOverride() as FirMemberDeclaration, callInfo, dispatchReceiverValue)
     }
 
     // We won't resolve into the backing field
@@ -33,18 +34,31 @@ fun FirVisibilityChecker.isVisible(
         return true
     }
 
-    val callInfo = candidate.callInfo
     val useSiteFile = callInfo.containingFile
     val containingDeclarations = callInfo.containingDeclarations
     val session = callInfo.session
 
-    val visible = isVisible(
+    return isVisible(
         declaration,
         session,
         useSiteFile,
         containingDeclarations,
-        candidate.dispatchReceiverValue,
-        candidate.callInfo.callSite is FirVariableAssignment
+        dispatchReceiverValue,
+        callInfo.callSite is FirVariableAssignment
+    )
+
+}
+
+fun FirVisibilityChecker.isVisible(
+    declaration: FirMemberDeclaration,
+    candidate: Candidate
+): Boolean {
+    val callInfo = candidate.callInfo
+
+    val visible = isVisible(
+        declaration,
+        callInfo,
+        candidate.dispatchReceiverValue
     )
 
     if (visible) {
@@ -52,9 +66,9 @@ fun FirVisibilityChecker.isVisible(
         if (backingField != null) {
             candidate.hasVisibleBackingField = isVisible(
                 backingField,
-                session,
-                useSiteFile,
-                containingDeclarations,
+                callInfo.session,
+                callInfo.containingFile,
+                callInfo.containingDeclarations,
                 candidate.dispatchReceiverValue,
                 candidate.callInfo.callSite is FirVariableAssignment,
             )

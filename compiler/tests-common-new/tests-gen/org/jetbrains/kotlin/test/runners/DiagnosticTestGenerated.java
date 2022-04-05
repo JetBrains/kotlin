@@ -25225,6 +25225,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
             }
 
             @Test
+            @TestMetadata("smartcastToMoreSpecificProperty.kt")
+            public void testSmartcastToMoreSpecificProperty() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/resolve/smartcastToMoreSpecificProperty.kt");
+            }
+
+            @Test
             @TestMetadata("superInvoke.kt")
             public void testSuperInvoke() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/resolve/superInvoke.kt");
@@ -28164,6 +28170,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
             @TestMetadata("kt3993.kt")
             public void testKt3993() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/smartCasts/kt3993.kt");
+            }
+
+            @Test
+            @TestMetadata("kt51460.kt")
+            public void testKt51460() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/smartCasts/kt51460.kt");
             }
 
             @Test
@@ -32990,6 +33002,30 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
             @TestMetadata("protectedInternal.kt")
             public void testProtectedInternal() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/visibility/protectedInternal.kt");
+            }
+
+            @Test
+            @TestMetadata("protectedVisibilityAndSmartcast_fakeOverride.kt")
+            public void testProtectedVisibilityAndSmartcast_fakeOverride() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/visibility/protectedVisibilityAndSmartcast_fakeOverride.kt");
+            }
+
+            @Test
+            @TestMetadata("protectedVisibilityAndSmartcast_noOverride.kt")
+            public void testProtectedVisibilityAndSmartcast_noOverride() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/visibility/protectedVisibilityAndSmartcast_noOverride.kt");
+            }
+
+            @Test
+            @TestMetadata("protectedVisibilityAndSmartcast_overrideChangesType.kt")
+            public void testProtectedVisibilityAndSmartcast_overrideChangesType() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/visibility/protectedVisibilityAndSmartcast_overrideChangesType.kt");
+            }
+
+            @Test
+            @TestMetadata("protectedVisibilityAndSmartcast_overrideSameType.kt")
+            public void testProtectedVisibilityAndSmartcast_overrideSameType() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/visibility/protectedVisibilityAndSmartcast_overrideSameType.kt");
             }
         }
 

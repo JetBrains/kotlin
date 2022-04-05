@@ -63,10 +63,25 @@ class FirOverrideService(val session: FirSession) : FirSessionComponent {
         return result
     }
 
+    fun <D : FirCallableSymbol<*>> createOverridableGroups(
+        members: Collection<MemberWithBaseScope<D>>,
+        overrideChecker: FirOverrideChecker
+    ): List<List<MemberWithBaseScope<D>>> {
+        if (members.size <= 1) return listOf(members.toList())
+        val queue = LinkedList(members)
+        val result = mutableListOf<List<MemberWithBaseScope<D>>>()
+        while (queue.isNotEmpty()) {
+            val nextHandle = queue.first()
+            val overridableGroup = extractBothWaysOverridable(nextHandle, queue, overrideChecker)
+            result += overridableGroup
+        }
+        return result
+    }
+
     fun <D : FirCallableSymbol<*>> extractBothWaysOverridable(
         overrider: MemberWithBaseScope<D>,
         members: MutableCollection<MemberWithBaseScope<D>>,
-        overrideChecker: FirOverrideChecker
+        overrideChecker: FirOverrideChecker,
     ): MutableList<MemberWithBaseScope<D>> {
         val result = mutableListOf<MemberWithBaseScope<D>>().apply { add(overrider) }
 

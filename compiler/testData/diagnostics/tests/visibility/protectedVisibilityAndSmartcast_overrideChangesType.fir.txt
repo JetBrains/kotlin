@@ -1,0 +1,155 @@
+FILE: protectedVisibilityAndSmartcast_overrideChangesType.fir.kt
+    public abstract interface Base : R|kotlin/Any| {
+        public abstract fun baseFun(): R|kotlin/Unit|
+
+    }
+    public abstract interface Derived : R|Base| {
+        public abstract fun derivedFun(): R|kotlin/Unit|
+
+    }
+    public abstract class A : R|kotlin/Any| {
+        public constructor(): R|A| {
+            super<R|kotlin/Any|>()
+        }
+
+        protected abstract val a: R|Base|
+            protected get(): R|Base|
+
+        public final fun fest_1(other: R|A|): R|kotlin/Unit| {
+            R|<local>/other|.R|/A.a|.R|/Base.baseFun|()
+            when () {
+                (R|<local>/other| is R|A.B|) ->  {
+                    R|<local>/other|.R|/A.a|.R|/Base.baseFun|()
+                    R|<local>/other|.R|/A.a|.<Unresolved name: derivedFun>#()
+                }
+            }
+
+            when () {
+                (R|<local>/other| is R|A.C|) ->  {
+                    R|<local>/other|.R|/A.a|.R|/Base.baseFun|()
+                    R|<local>/other|.R|/A.a|.<Unresolved name: derivedFun>#()
+                }
+            }
+
+            when () {
+                (R|<local>/other| is R|A.D|) ->  {
+                    R|<local>/other|.R|/A.a|.R|/Base.baseFun|()
+                    R|<local>/other|.R|/A.a|.<Unresolved name: derivedFun>#()
+                }
+            }
+
+        }
+
+        public open class B : R|A| {
+            public constructor(a: R|Derived|): R|A.B| {
+                super<R|A|>()
+            }
+
+            protected open override val a: R|Derived| = R|<local>/a|
+                protected get(): R|Derived|
+
+            public final class Nested : R|kotlin/Any| {
+                public constructor(): R|A.B.Nested| {
+                    super<R|kotlin/Any|>()
+                }
+
+                public final fun fest_3(other: R|A|): R|kotlin/Unit| {
+                    R|<local>/other|.R|/A.a|.R|/Base.baseFun|()
+                    when () {
+                        (R|<local>/other| is R|A.B|) ->  {
+                            R|<local>/other|.R|/A.B.a|.R|/Base.baseFun|()
+                            R|<local>/other|.R|/A.B.a|.R|/Derived.derivedFun|()
+                        }
+                    }
+
+                    when () {
+                        (R|<local>/other| is R|A.C|) ->  {
+                            R|<local>/other|.R|/A.a|.R|/Base.baseFun|()
+                            R|<local>/other|.R|/A.a|.<Unresolved name: derivedFun>#()
+                        }
+                    }
+
+                    when () {
+                        (R|<local>/other| is R|A.D|) ->  {
+                            R|<local>/other|.R|/A.a|.R|/Base.baseFun|()
+                            R|<local>/other|.R|/A.a|.<Unresolved name: derivedFun>#()
+                        }
+                    }
+
+                }
+
+            }
+
+        }
+
+        public final class C : R|A.B| {
+            public constructor(a: R|Derived|): R|A.C| {
+                super<R|A.B|>(R|<local>/a|)
+            }
+
+            protected final override val a: R|Derived| = R|<local>/a|
+                protected get(): R|Derived|
+
+            public final fun fest_4(other: R|A|): R|kotlin/Unit| {
+                R|<local>/other|.R|/A.a|.R|/Base.baseFun|()
+                when () {
+                    (R|<local>/other| is R|A.B|) ->  {
+                        R|<local>/other|.R|/A.a|.R|/Base.baseFun|()
+                        R|<local>/other|.R|/A.a|.<Unresolved name: derivedFun>#()
+                    }
+                }
+
+                when () {
+                    (R|<local>/other| is R|A.C|) ->  {
+                        R|<local>/other|.R|/A.C.a|.R|/Base.baseFun|()
+                        R|<local>/other|.R|/A.C.a|.R|/Derived.derivedFun|()
+                    }
+                }
+
+                when () {
+                    (R|<local>/other| is R|A.D|) ->  {
+                        R|<local>/other|.R|/A.a|.R|/Base.baseFun|()
+                        R|<local>/other|.R|/A.a|.<Unresolved name: derivedFun>#()
+                    }
+                }
+
+            }
+
+        }
+
+        public final class D : R|A| {
+            public constructor(a: R|Derived|): R|A.D| {
+                super<R|A|>()
+            }
+
+            protected final override val a: R|Derived| = R|<local>/a|
+                protected get(): R|Derived|
+
+            public final fun fest_5(other: R|A|): R|kotlin/Unit| {
+                R|<local>/other|.R|/A.a|.R|/Base.baseFun|()
+                when () {
+                    (R|<local>/other| is R|A.B|) ->  {
+                        R|<local>/other|.R|/A.a|.R|/Base.baseFun|()
+                        R|<local>/other|.R|/A.a|.<Unresolved name: derivedFun>#()
+                    }
+                }
+
+                when () {
+                    (R|<local>/other| is R|A.C|) ->  {
+                        R|<local>/other|.R|/A.a|.R|/Base.baseFun|()
+                        R|<local>/other|.R|/A.a|.<Unresolved name: derivedFun>#()
+                    }
+                }
+
+                when () {
+                    (R|<local>/other| is R|A.D|) ->  {
+                        R|<local>/other|.R|/A.D.a|.R|/Base.baseFun|()
+                        R|<local>/other|.R|/A.D.a|.R|/Derived.derivedFun|()
+                    }
+                }
+
+            }
+
+        }
+
+    }
