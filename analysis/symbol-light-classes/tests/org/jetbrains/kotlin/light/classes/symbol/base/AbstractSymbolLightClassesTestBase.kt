@@ -45,11 +45,6 @@ abstract class AbstractSymbolLightClassesTestBase(
         }
     }
 
-    override fun handleInitializationError(exception: Throwable, moduleStructure: TestModuleStructure): InitializationErrorAction {
-        return if (Directives.IGNORE_FIR in moduleStructure.allDirectives) InitializationErrorAction.IGNORE
-        else InitializationErrorAction.THROW
-    }
-
     override fun doTestByFileStructure(ktFiles: List<KtFile>, module: TestModule, testServices: TestServices) {
         if (stopIfCompilationErrorDirectivePresent && CompilerExecutor.Directives.COMPILATION_ERRORS in module.directives) {
             return
