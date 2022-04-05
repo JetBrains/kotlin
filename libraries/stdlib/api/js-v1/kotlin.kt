@@ -415,8 +415,8 @@ public inline operator fun <T, V> kotlin.reflect.KProperty1<T, V>.getValue(thisR
 @kotlin.internal.InlineOnly
 public inline fun kotlin.Any?.hashCode(): kotlin.Int
 
-@kotlin.SinceKotlin(version = "1.4")
-@kotlin.ExperimentalStdlibApi
+@kotlin.SinceKotlin(version = "1.7")
+@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
 public operator fun <T, R> kotlin.DeepRecursiveFunction<T, R>.invoke(value: T): R
 
 public fun kotlin.Double.isFinite(): kotlin.Boolean
@@ -1195,15 +1195,15 @@ public final annotation class ContextFunctionTypeParams : kotlin.Annotation {
     public final val count: kotlin.Int { get; }
 }
 
-@kotlin.SinceKotlin(version = "1.4")
-@kotlin.ExperimentalStdlibApi
+@kotlin.SinceKotlin(version = "1.7")
+@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
 public final class DeepRecursiveFunction<T, R> {
     public constructor DeepRecursiveFunction<T, R>(block: suspend kotlin.DeepRecursiveScope<T, R>.(T) -> R)
 }
 
 @kotlin.coroutines.RestrictsSuspension
-@kotlin.SinceKotlin(version = "1.4")
-@kotlin.ExperimentalStdlibApi
+@kotlin.SinceKotlin(version = "1.7")
+@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
 public sealed class DeepRecursiveScope<T, R> {
     protected constructor DeepRecursiveScope<T, R>()
 

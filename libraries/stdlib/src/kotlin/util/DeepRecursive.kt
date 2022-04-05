@@ -37,7 +37,7 @@ import kotlin.native.concurrent.SharedImmutable
  * println(depth(deepTree)) // StackOverflowError
  * ```
  *
- * If this `depth` function is called for a `deepTree` it produces [StackOverflowError] because of deep recursion.
+ * If this `depth` function is called for a `deepTree` it produces `StackOverflowError` because of deep recursion.
  * However, the `depth` function can be rewritten using `DeepRecursiveFunction` in the following way, and then
  * it successfully computes [`depth(deepTree)`][DeepRecursiveFunction.invoke] expression:
  *
@@ -67,8 +67,8 @@ import kotlin.native.concurrent.SharedImmutable
  * @param [R] the function result type.
  * @param block the function body.
  */
-@SinceKotlin("1.4")
-@ExperimentalStdlibApi
+@SinceKotlin("1.7")
+@WasExperimental(ExperimentalStdlibApi::class)
 public class DeepRecursiveFunction<T, R>(
     internal val block: suspend DeepRecursiveScope<T, R>.(T) -> R
 )
@@ -80,8 +80,8 @@ public class DeepRecursiveFunction<T, R>(
  * initial recursive invocation. From inside of [DeepRecursiveScope] use
  * [callRecursive][DeepRecursiveScope.callRecursive].
  */
-@SinceKotlin("1.4")
-@ExperimentalStdlibApi
+@SinceKotlin("1.7")
+@WasExperimental(ExperimentalStdlibApi::class)
 public operator fun <T, R> DeepRecursiveFunction<T, R>.invoke(value: T): R =
     DeepRecursiveScopeImpl<T, R>(block, value).runCallLoop()
 
@@ -93,8 +93,8 @@ public operator fun <T, R> DeepRecursiveFunction<T, R>.invoke(value: T): R =
  * @param [R] function result type.
  */
 @RestrictsSuspension
-@SinceKotlin("1.4")
-@ExperimentalStdlibApi
+@SinceKotlin("1.7")
+@WasExperimental(ExperimentalStdlibApi::class)
 public sealed class DeepRecursiveScope<T, R> {
     /**
      * Makes recursive call to this [DeepRecursiveFunction] function putting the call activation frame on the heap,
@@ -122,14 +122,12 @@ public sealed class DeepRecursiveScope<T, R> {
 
 // ================== Implementation ==================
 
-@ExperimentalStdlibApi
 private typealias DeepRecursiveFunctionBlock = suspend DeepRecursiveScope<*, *>.(Any?) -> Any?
 
 @SharedImmutable
 private val UNDEFINED_RESULT = Result.success(COROUTINE_SUSPENDED)
 
 @Suppress("UNCHECKED_CAST")
-@ExperimentalStdlibApi
 private class DeepRecursiveScopeImpl<T, R>(
     block: suspend DeepRecursiveScope<T, R>.(T) -> R,
     value: T
