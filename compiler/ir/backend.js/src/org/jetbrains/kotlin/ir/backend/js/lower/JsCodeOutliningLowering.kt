@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
-import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.translateJsCodeIntoStatementList
+import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.translateJsCodeIntoJsScript
 import org.jetbrains.kotlin.ir.backend.js.utils.emptyScope
 import org.jetbrains.kotlin.ir.builders.declarations.addValueParameter
 import org.jetbrains.kotlin.ir.builders.declarations.buildFun
@@ -132,7 +132,8 @@ private class JsCodeOutlineTransformer(
             return null
 
         val jsCodeArg = expression.getValueArgument(0) ?: compilationException("Expected js code string", expression)
-        val jsStatements = translateJsCodeIntoStatementList(jsCodeArg, backendContext) ?: return null
+        val jsScript = translateJsCodeIntoJsScript(jsCodeArg, backendContext) ?: return null
+        val jsStatements = jsScript.statements
 
         // Collect used Kotlin local variables and parameters.
         val scope = JsScopesCollector().apply { acceptList(jsStatements) }
@@ -175,7 +176,13 @@ private class JsCodeOutlineTransformer(
                 newStatements += JsReturn(JsPrefixOperation(JsUnaryOperator.VOID, JsIntLiteral(3)))
             }
         }
-        val newFun = JsFunction(emptyScope, JsBlock(newStatements), "")
+
+        val newFun = JsFunction(
+            emptyScope,
+            JsBlock(JsScript(newStatements, jsScript.comments)),
+            ""
+        )
+
         kotlinLocalsUsedInJs.forEach { irParameter ->
             newFun.parameters.add(JsParameter(JsName(irParameter.name.identifier, false)))
         }

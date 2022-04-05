@@ -35,6 +35,8 @@
 
 package com.google.gwt.dev.js.rhino;
 
+import jdk.nashorn.internal.parser.Token;
+
 /**
  * This class allows the creation of nodes, and follows the Factory pattern.
  *
@@ -48,9 +50,8 @@ public class IRFactory {
     /**
      * Script (for associating file/url names with toplevel scripts.)
      */
-    public Node createScript(Node body)
-    {
-        Node result = new Node(TokenStream.SCRIPT);
+    public Node.ScriptNode createScript(Node body, Comment firstComment) {
+        Node.ScriptNode result = Node.newScript(firstComment);
         Node children = body.getFirstChild();
         if (children != null)
             result.addChildrenToBack(children);

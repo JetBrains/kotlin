@@ -5,9 +5,9 @@
 
 package org.jetbrains.kotlin.js.backend.ast
 
-class JsSingleLineComment(text: String) : JsComment(text) {
+class JsMultiLineComment(text: String) : JsComment(text) {
     override fun accept(visitor: JsVisitor) {
-        visitor.visitSingleLineComment(this)
+        visitor.visitMultiLineComment(this)
     }
 
     override fun traverse(visitor: JsVisitorWithContext, ctx: JsContext<*>) {

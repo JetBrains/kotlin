@@ -42,7 +42,7 @@ package com.google.gwt.dev.js.rhino;
  * This class implements the root of the intermediate representation.
  */
 
-public class Node implements Cloneable {
+public class Node implements Cloneable, WithCodePosition {
 
     private static class NumberNode extends Node {
         NumberNode(int type, double number, CodePosition position) {
@@ -88,6 +88,17 @@ public class Node implements Cloneable {
         }
 
         private String str;
+    }
+
+    public static class ScriptNode extends Node {
+        ScriptNode(Comment firstComment, CodePosition position) {
+            super(TokenStream.SCRIPT, position);
+            this.firstComment = firstComment;
+        }
+
+        private Comment firstComment;
+
+        public Comment getFirstComment() { return firstComment; }
     }
 
     public Node(int nodeType) {
@@ -185,6 +196,10 @@ public class Node implements Cloneable {
 
     public static Node newString(String str, CodePosition position) {
         return new StringNode(TokenStream.STRING, str, position);
+    }
+
+    public static ScriptNode newScript(Comment firstComment) {
+        return new ScriptNode(firstComment, null);
     }
 
     public static Node newString(int type, String str, CodePosition position) {
@@ -342,6 +357,7 @@ public class Node implements Cloneable {
         return operation;
     }
 
+    @Override
     public CodePosition getPosition() {
         return position;
     }

@@ -12,24 +12,33 @@ import org.jetbrains.kotlin.ir.backend.js.utils.getJsFunAnnotation
 import org.jetbrains.kotlin.js.backend.ast.*
 
 class FunctionWithJsFuncAnnotationInliner(private val jsFuncCall: IrCall, private val context: JsGenerationContext) {
+    private val script = getJsScript()
     private val function = getJsFunctionImplementation()
     private val replacements = collectReplacementsForCall()
 
-    fun generateResultStatement(): List<JsStatement> {
+    fun generateResultJsScript(): JsScript {
         return function.body.statements
             .run {
                 SimpleJsCodeInliner(replacements)
                     .apply { acceptList(this@run) }
                     .withTemporaryVariablesForExpressions(this)
             }
+            .run {
+                JsScript(this, script.comments)
+            }
     }
 
     private fun getJsFunctionImplementation(): JsFunction {
+        return (script.statements.firstOrNull() as? JsExpressionStatement)
+            ?.let { it.expression as? JsFunction } ?: compilationException("Provided js code is not a js function", jsFuncCall.symbol.owner)
+    }
+
+    private fun getJsScript(): JsScript {
         val code = jsFuncCall.symbol.owner.getJsFunAnnotation() ?: compilationException("JsFun annotation is expected", jsFuncCall)
         val statements = parseJsCode(code) ?: compilationException("Cannot compute js code", jsFuncCall)
         return statements.singleOrNull()
             ?.let { it as? JsExpressionStatement }
-            ?.let { it.expression as? JsFunction } ?: compilationException("Provided js code is not a js function", jsFuncCall.symbol.owner)
+            ?.let { it.expression as? JsScript } ?: compilationException("Provided js code has wrong structure", jsFuncCall.symbol.owner)
     }
 
     private fun collectReplacementsForCall(): Map<JsName, JsExpression> {
@@ -42,7 +51,7 @@ class FunctionWithJsFuncAnnotationInliner(private val jsFuncCall: IrCall, privat
     }
 }
 
-private class SimpleJsCodeInliner(private val replacements: Map<JsName, JsExpression>): RecursiveJsVisitor() {
+private class SimpleJsCodeInliner(private val replacements: Map<JsName, JsExpression>) : RecursiveJsVisitor() {
     private val temporaryNamesForExpressions = mutableMapOf<JsName, JsExpression>()
 
     fun withTemporaryVariablesForExpressions(statements: List<JsStatement>): List<JsStatement> {

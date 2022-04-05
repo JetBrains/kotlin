@@ -15,17 +15,16 @@ import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
-import org.jetbrains.kotlin.js.backend.ast.JsFunctionScope
-import org.jetbrains.kotlin.js.backend.ast.JsProgram
-import org.jetbrains.kotlin.js.backend.ast.JsRootScope
-import org.jetbrains.kotlin.js.backend.ast.JsStatement
+import org.jetbrains.kotlin.js.backend.ast.*
 import org.jetbrains.kotlin.js.parser.parseExpressionOrStatement
 
 // Returns null if constant expression could not be parsed
-fun translateJsCodeIntoStatementList(code: IrExpression, context: JsIrBackendContext): List<JsStatement>? {
+fun translateJsCodeIntoJsScript(code: IrExpression, context: JsIrBackendContext): JsScript? {
     // TODO: support proper symbol linkage and label clash resolution
 
     return parseJsCode(foldString(code, context) ?: return null)
+        ?.let { it.firstOrNull() as? JsExpressionStatement }
+        ?.let { it.expression as? JsScript }
 }
 
 fun parseJsCode(jsCode: String): List<JsStatement>? {

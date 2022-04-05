@@ -253,7 +253,7 @@ public class TokenStream {
 
         LAST_TOKEN  = 147,
         NUMBER_INT  = 148,
-    
+
         // This value is only used as a return value for getTokenHelper,
         // which is only called from getToken and exists to avoid an excessive
         // recursion problem if a number of lines in a row are comments.
@@ -412,7 +412,7 @@ public class TokenStream {
                 case JSR:             return "jsr";
                 case NEWLOCAL:        return "newlocal";
                 case USELOCAL:        return "uselocal";
-                case SCRIPT:          return "script";
+                case SCRIPT:        return "script";
             }
             return "<unknown="+token+">";
         }
@@ -1059,19 +1059,29 @@ public class TokenStream {
         case '/':
             // is it a // comment?
             if (in.match('/')) {
-                skipLine();
+                CodePosition commentPosition = tokenPosition;
+                stringBufferTop = 0;
+                while ((c = in.read()) != -1 && c != '\n') {
+                    addToString(c);
+                }
+                this.addSingleLineComment(new String(stringBuffer, 0, stringBufferTop), commentPosition);
                 return RETRY_TOKEN;
             }
             if (in.match('*')) {
+                CodePosition commentPosition = tokenPosition;
+                stringBufferTop = 0;
                 while ((c = in.read()) != -1 &&
                        !(c == '*' && in.match('/'))) {
+                    addToString(c);
                     ; // empty loop body
                 }
                 if (c == EOF_CHAR) {
                     reportTokenError("msg.unterminated.comment", null);
                     return ERROR;
                 }
-                return RETRY_TOKEN;  // `goto retry'
+
+                this.addMultiLineComment(new String(stringBuffer, 0, stringBufferTop), commentPosition);
+                return RETRY_TOKEN;
             }
 
             // is it a regexp?
@@ -1454,7 +1464,26 @@ public class TokenStream {
         }
     }
 
+    private void addComment(Comment comment) {
+        if (firstComment == null) {
+            firstComment = comment;
+            currentComment = comment;
+        } else {
+            currentComment.setNext(comment);
+            currentComment = comment;
+        }
+    }
+
+    private void addSingleLineComment(String content, CodePosition position) {
+        addComment(new Comment(content, position, false));
+    }
+
+    private void addMultiLineComment(String content, CodePosition position) {
+        addComment(new Comment(content, position, true));
+    }
+
     public String getSourceName() { return sourceName; }
+    public Comment getFirstComment() { return firstComment; }
     public int getLineno() { return in.getLineno(); }
     public int getOp() { return op; }
     public String getString() { return string; }
@@ -1496,4 +1525,7 @@ public class TokenStream {
 
     private char[] stringBuffer = new char[128];
     private int stringBufferTop;
+
+    private Comment firstComment;
+    private Comment currentComment;
 }

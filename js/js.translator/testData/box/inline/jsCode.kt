@@ -5,7 +5,7 @@ package foo
 // CHECK_CONTAINS_NO_CALLS: test TARGET_BACKENDS=JS
 // CHECK_NOT_CALLED_IN_SCOPE: function=sum scope=test
 
-internal inline fun sum(x: Int, y: Int): Int = js("x + y")
+fun sum(x: Int, y: Int): Int = js("/*before x*/ x /*before +*/ + /*after +*/ y /*after y*/")
 
 internal fun test(x: Int, y: Int): Int = sum(sum(x, x), sum(y, y))
 

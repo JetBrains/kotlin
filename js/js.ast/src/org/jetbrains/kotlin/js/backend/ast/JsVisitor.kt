@@ -39,6 +39,9 @@ abstract class JsVisitor {
     open fun visitBlock(x: JsBlock): Unit =
             visitElement(x)
 
+    open fun visitScript(x: JsScript): Unit =
+            visitElement(x)
+
     open fun visitBoolean(x: JsBooleanLiteral): Unit =
             visitElement(x)
 
@@ -164,6 +167,9 @@ abstract class JsVisitor {
 
     open fun visitSingleLineComment(comment: JsSingleLineComment): Unit =
             visitElement(comment)
+
+    open fun visitMultiLineComment(comment: JsMultiLineComment): Unit =
+        visitElement(comment)
 
     open fun visitExport(export: JsExport): Unit =
             visitElement(export)

@@ -22,11 +22,18 @@ data class JsLocation(
         override val file: String,
         override val startLine: Int,
         override val startChar: Int
-) : JsLocationWithSource {
+) : JsLocationWithSource, Comparable<JsLocation> {
     override val identityObject: Any? = null
     override val sourceProvider: () -> Reader? = { null }
 
     override fun asSimpleLocation(): JsLocation = this
+
+    override fun compareTo(other: JsLocation): Int {
+        val linesDiff = startLine - other.startLine
+        if (linesDiff != 0) return linesDiff
+
+        return startChar - other.startChar
+    }
 }
 
 interface JsLocationWithSource {

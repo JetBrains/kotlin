@@ -12,13 +12,13 @@ import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.js.backend.ast.*
 
 class JsCallTransformer(private val jsOrJsFuncCall: IrCall, private val context: JsGenerationContext) {
-    private val statements = getJsStatements()
+    private val script = getJsScript()
 
     fun generateStatement(): JsStatement {
-        if (statements.isEmpty()) return JsEmpty
+        if (script.statements.isEmpty()) return JsEmpty
 
-        val newStatements = statements.toMutableList().apply {
-            val expression = (last() as? JsReturn)?.expression ?: return@apply
+        val newStatements = script.statements.toMutableList().apply {
+            val expression = (script.statements.last() as? JsReturn)?.expression ?: return@apply
 
             if (expression is JsPrefixOperation && expression.operator == JsUnaryOperator.VOID) {
                 removeLastOrNull()
@@ -27,47 +27,56 @@ class JsCallTransformer(private val jsOrJsFuncCall: IrCall, private val context:
             }
         }
 
-        return when (newStatements.size) {
-            0 -> JsEmpty
-            1 -> newStatements.single().withSource(jsOrJsFuncCall, context)
+        val statements = when (newStatements.size) {
+            0 -> return JsEmpty
+            1 -> newStatements.map { it.withSource(jsOrJsFuncCall, context) }
             // TODO: use transparent block (e.g. JsCompositeBlock)
-            else -> JsBlock(newStatements)
+            else -> newStatements
         }
+
+        return JsScript(statements, script.comments)
     }
 
     fun generateExpression(): JsExpression {
-        if (statements.isEmpty()) return JsPrefixOperation(JsUnaryOperator.VOID, JsIntLiteral(3)) // TODO: report warning or even error
+        if (script.statements.isEmpty()) return JsPrefixOperation(JsUnaryOperator.VOID, JsIntLiteral(3)) // TODO: report warning or even error
 
-        val lastStatement = statements.last()
+        val lastStatement = script.statements.last()
         val lastExpression = when (lastStatement) {
             is JsReturn -> lastStatement.expression
             is JsExpressionStatement -> lastStatement.expression
             else -> null
         }
-        if (statements.size == 1 && lastExpression != null) {
-            return lastExpression.withSource(jsOrJsFuncCall, context)
+        if (script.statements.size == 1 && lastExpression != null) {
+            return JsScript(
+                listOf(lastExpression.withSource(jsOrJsFuncCall, context).makeStmt()),
+                script.comments
+            )
         }
 
-        val newStatements = statements.toMutableList()
+        val newStatements = script.statements.toMutableList()
 
         when (lastStatement) {
             is JsReturn -> {
             }
             is JsExpressionStatement -> {
-                newStatements[statements.lastIndex] = JsReturn(lastStatement.expression)
+                newStatements[script.statements.lastIndex] = JsReturn(lastStatement.expression)
             }
             // TODO: report warning or even error
             else -> newStatements += JsReturn(JsPrefixOperation(JsUnaryOperator.VOID, JsIntLiteral(3)))
         }
 
-        val syntheticFunction = JsFunction(emptyScope, JsBlock(newStatements), "")
+        val syntheticFunction = JsFunction(
+            emptyScope,
+            JsBlock(JsScript(newStatements, script.comments)),
+            ""
+        )
         return JsInvocation(syntheticFunction).withSource(jsOrJsFuncCall, context)
     }
 
-    private fun getJsStatements(): List<JsStatement> {
+    private fun getJsScript(): JsScript {
         return when {
             context.checkIfJsCode(jsOrJsFuncCall.symbol) -> {
-                translateJsCodeIntoStatementList(
+                translateJsCodeIntoJsScript(
                     jsOrJsFuncCall.getValueArgument(0) ?: compilationException("JsCode is expected", jsOrJsFuncCall),
                     context.staticContext.backendContext
                 )
@@ -75,7 +84,7 @@ class JsCallTransformer(private val jsOrJsFuncCall: IrCall, private val context:
             }
 
             context.checkIfAnnotatedWithJsFunc(jsOrJsFuncCall.symbol) ->
-                FunctionWithJsFuncAnnotationInliner(jsOrJsFuncCall, context).generateResultStatement()
+                FunctionWithJsFuncAnnotationInliner(jsOrJsFuncCall, context).generateResultJsScript()
 
             else -> compilationException("`js` function call or function with @JsFunc annotation expected", jsOrJsFuncCall)
         }

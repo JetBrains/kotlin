@@ -46,6 +46,12 @@ class JsPrecedenceVisitor extends JsVisitor {
     }
 
     @Override
+    public void visitScript(@NotNull JsScript x) {
+        JsExpressionStatement statement = (JsExpressionStatement) x.getStatements().get(0);
+        statement.getExpression().accept(this);
+    }
+
+    @Override
     public void visitArrayAccess(@NotNull JsArrayAccess x) {
         answer = 16;
     }

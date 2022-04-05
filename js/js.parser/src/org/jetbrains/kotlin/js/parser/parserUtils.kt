@@ -38,7 +38,7 @@ fun parseExpressionOrStatement(
     val accumulatingReporter = AccumulatingReporter()
     val exprNode = try {
         parse(code, startPosition, 0, accumulatingReporter, true) {
-            val result = expr(it, false)
+            val result = scriptExpr(it, false)
             if (it.token != TokenStream.EOF) {
                 accumulatingReporter.hasErrors = true
             }
@@ -61,7 +61,7 @@ fun parseExpressionOrStatement(
     else {
         val node = parse(code, startPosition, 0, reporter, true, Parser::parse)
         node?.toJsAst(scope, fileName) {
-            mapStatements(it)
+            listOf(JsExpressionStatement(mapScriptStatement(it)))
         }
     }
 }
@@ -71,7 +71,9 @@ fun parseFunction(code: String, fileName: String, position: CodePosition, offset
         addListener(FunctionParsingObserver())
         primaryExpr(it)
     }
-    return rootNode?.toJsAst(scope, fileName, JsAstMapper::mapFunction)
+    return rootNode?.toJsAst(scope, fileName) {
+        mapFunction(it)
+    }
 }
 
 private class FunctionParsingObserver : ParserListener {

@@ -16,15 +16,14 @@
 package com.google.gwt.dev.js;
 
 import com.google.gwt.dev.js.parserExceptions.JsParserException;
-import com.google.gwt.dev.js.rhino.CodePosition;
-import com.google.gwt.dev.js.rhino.Node;
-import com.google.gwt.dev.js.rhino.TokenStream;
+import com.google.gwt.dev.js.rhino.*;
 import com.intellij.util.SmartList;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.js.backend.ast.*;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 public class JsAstMapper {
@@ -50,9 +49,7 @@ public class JsAstMapper {
     private JsNode mapWithoutLocation(Node node) throws JsParserException {
         switch (node.getType()) {
             case TokenStream.SCRIPT: {
-                JsBlock block = new JsBlock();
-                mapStatements(block.getStatements(), node);
-                return block;
+                return mapScriptStatement(node);
             }
 
             case TokenStream.DEBUGGER:
@@ -892,6 +889,12 @@ public class JsAstMapper {
             return JsEmpty.INSTANCE;
         }
     }
+    public JsScript mapScriptStatement(Node node) {
+        List<JsComment> comments = mapComments(((Node.ScriptNode) node).getFirstComment());
+        JsScript result = new JsScript(comments);
+        mapStatements(result.getStatements(), node);
+        return result;
+    }
 
     private void mapStatements(List<JsStatement> stmts, Node nodeStmts)
             throws JsParserException {
@@ -1107,7 +1110,31 @@ public class JsAstMapper {
                                     withNode);
     }
 
-    private <T extends JsNode> T withLocation(T astNode, Node node) {
+    private List<JsComment> mapComments(Comment comment) {
+        List<JsComment> comments = new LinkedList<>();
+
+        while (comment != null) {
+            comments.add(mapComment(comment));
+            comment = comment.getNext();
+        }
+
+        return comments;
+    }
+
+    private JsComment mapComment(Comment comment) {
+        JsComment jsComment = comment.isMultiLine() ? mapMultiLineComment(comment) : mapSingleLineComment(comment);
+        return withLocation(jsComment, comment);
+    }
+
+    private JsSingleLineComment mapSingleLineComment(Comment comment) {
+        return new JsSingleLineComment(comment.getContent());
+    }
+
+    private JsMultiLineComment mapMultiLineComment(Comment comment) {
+        return new JsMultiLineComment(comment.getContent());
+    }
+
+    public <T extends JsNode> T withLocation(T astNode, WithCodePosition node) {
         if (astNode == null) return null;
 
         CodePosition location = node.getPosition();

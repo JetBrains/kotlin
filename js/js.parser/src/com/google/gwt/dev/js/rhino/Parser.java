@@ -37,6 +37,7 @@
 
 package com.google.gwt.dev.js.rhino;
 
+import jdk.nashorn.internal.parser.Token;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
@@ -137,7 +138,7 @@ public class Parser {
             return null;
         }
 
-        return nf.createScript(tempBlock);
+        return nf.createScript(tempBlock, ts.getFirstComment());
     }
 
     /*
@@ -733,6 +734,13 @@ public class Parser {
             pn = nf.createBinary(TokenStream.COMMA, pn, assignExpr(ts, inForInit), position);
         }
         return pn;
+    }
+
+    public Node scriptExpr(TokenStream ts, boolean inForInit) throws IOException, JavaScriptException {
+        Node expression = expr(ts, inForInit);
+        Node tempBlock = nf.createLeaf(TokenStream.BLOCK, ts.tokenPosition);
+        tempBlock.addChildToBack(expression);
+        return nf.createScript(tempBlock, ts.getFirstComment());
     }
 
     private Node assignExpr(TokenStream ts, boolean inForInit) throws IOException, JavaScriptException {
