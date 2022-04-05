@@ -2497,6 +2497,12 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
         }
 
         @Test
+        @TestMetadata("exportClassWithInternalOneFile.kt")
+        public void testExportClassWithInternalOneFile() throws Exception {
+            runTest("js/js.translator/testData/box/export/exportClassWithInternalOneFile.kt");
+        }
+
+        @Test
         @TestMetadata("exportEnumClass.kt")
         public void testExportEnumClass() throws Exception {
             runTest("js/js.translator/testData/box/export/exportEnumClass.kt");
