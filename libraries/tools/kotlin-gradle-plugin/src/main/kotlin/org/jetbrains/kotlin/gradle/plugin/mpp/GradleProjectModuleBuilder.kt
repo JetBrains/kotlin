@@ -227,21 +227,21 @@ class GradleProjectModuleBuilder(private val addInferredSourceSetVisibilityAsExp
 }
 
 internal fun Dependency.toModuleDependency(
-    project: Project
+    thisProject: Project
 ): KotlinModuleDependency {
     return KotlinModuleDependency(
         when (this) {
             is ProjectDependency ->
                 LocalModuleIdentifier(
-                    project.currentBuildId().name,
+                    thisProject.currentBuildId().name,
                     dependencyProject.path,
-                    moduleClassifiersFromCapabilities(requestedCapabilities).single() // FIXME multiple capabilities
+                    moduleClassifierFromCapabilities(requestedCapabilities)
                 )
             is ModuleDependency ->
                 MavenModuleIdentifier(
                     group.orEmpty(),
                     name,
-                    moduleClassifiersFromCapabilities(requestedCapabilities).single() // FIXME multiple capabilities
+                    moduleClassifierFromCapabilities(requestedCapabilities)
                 )
             else -> MavenModuleIdentifier(group.orEmpty(), name, null)
         }
