@@ -32,7 +32,6 @@ import kotlin.reflect.KClass
 import kotlin.reflect.KParameter
 import kotlin.reflect.full.findAnnotation
 import kotlin.time.Duration.Companion.milliseconds
-import kotlin.time.Duration.Companion.seconds
 
 class NativeBlackBoxTestSupport : BeforeEachCallback {
     /**
@@ -218,7 +217,7 @@ private object NativeTestSupport {
         val executionTimeout = ClassLevelProperty.EXECUTION_TIMEOUT.readValue(
             enforcedProperties,
             { it.toLongOrNull()?.milliseconds },
-            default = 10.seconds
+            default = Timeouts.DEFAULT_EXECUTION_TIMEOUT
         )
         return Timeouts(executionTimeout)
     }

@@ -10,12 +10,11 @@ import org.jetbrains.kotlin.konan.blackboxtest.support.TestName
 import org.jetbrains.kotlin.konan.blackboxtest.support.util.GTestListing
 import org.jetbrains.kotlin.konan.blackboxtest.support.util.TestOutputFilter
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.fail
-import kotlin.time.Duration
 
 internal class LocalTestNameExtractor(
     override val executable: TestExecutable,
-    executionTimeout: Duration
-) : AbstractLocalProcessRunner<Collection<TestName>>(executionTimeout) {
+    checks: TestRunChecks
+) : AbstractLocalProcessRunner<Collection<TestName>>(checks) {
     override val visibleProcessName get() = "Test name extractor"
     override val programArgs = listOf(executable.executableFile.path, "--ktest_list_tests")
     override val outputFilter get() = TestOutputFilter.NO_FILTERING
@@ -27,7 +26,7 @@ internal class LocalTestNameExtractor(
         runParameters = null
     )
 
-    override fun buildResultHandler(runResult: RunResult.Completed) = ResultHandler(runResult)
+    override fun buildResultHandler(runResult: RunResult) = ResultHandler(runResult)
 
     override fun handleUnexpectedFailure(t: Throwable) = fail {
         LoggedData.TestRunUnexpectedFailure(getLoggedParameters(), t)
@@ -35,7 +34,7 @@ internal class LocalTestNameExtractor(
     }
 
     inner class ResultHandler(
-        runResult: RunResult.Completed
+        runResult: RunResult
     ) : AbstractLocalProcessRunner<Collection<TestName>>.ResultHandler(runResult) {
         override fun getLoggedRun() = LoggedData.TestRun(getLoggedParameters(), runResult)
         override fun doHandle() = GTestListing.parse(runResult.processOutput.stdOut.filteredOutput)

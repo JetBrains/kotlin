@@ -19,10 +19,8 @@ import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.konan.blackboxtest.support.*
 import org.jetbrains.kotlin.konan.blackboxtest.support.TestCase.WithTestRunnerExtras
-import org.jetbrains.kotlin.konan.blackboxtest.support.settings.ExternalSourceTransformersProvider
-import org.jetbrains.kotlin.konan.blackboxtest.support.settings.GeneratedSources
-import org.jetbrains.kotlin.konan.blackboxtest.support.settings.Settings
-import org.jetbrains.kotlin.konan.blackboxtest.support.settings.TestRoots
+import org.jetbrains.kotlin.konan.blackboxtest.support.runner.TestRunChecks
+import org.jetbrains.kotlin.konan.blackboxtest.support.settings.*
 import org.jetbrains.kotlin.konan.blackboxtest.support.util.*
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -69,7 +67,8 @@ internal class ExtTestCaseGroupProvider : TestCaseGroupProvider, TestDisposable(
                     structureFactory = structureFactory,
                     customSourceTransformers = settings.get<ExternalSourceTransformersProvider>().getSourceTransformers(testDataFile),
                     testRoots = settings.get(),
-                    generatedSources = settings.get()
+                    generatedSources = settings.get(),
+                    timeouts = settings.get()
                 )
 
                 if (extTestDataFile.isRelevant)
@@ -102,7 +101,8 @@ private class ExtTestDataFile(
     structureFactory: ExtTestDataFileStructureFactory,
     customSourceTransformers: ExternalSourceTransformers?,
     testRoots: TestRoots,
-    private val generatedSources: GeneratedSources
+    private val generatedSources: GeneratedSources,
+    private val timeouts: Timeouts
 ) {
     private val structure by lazy {
         val allSourceTransformers: ExternalSourceTransformers = if (customSourceTransformers.isNullOrEmpty())
@@ -554,6 +554,7 @@ private class ExtTestDataFile(
             freeCompilerArgs = assembleFreeCompilerArgs(),
             nominalPackageName = testDataFileSettings.nominalPackageName,
             expectedOutputDataFile = null,
+            checks = TestRunChecks.Default(timeouts.executionTimeout),
             extras = WithTestRunnerExtras(runnerType = TestRunnerType.DEFAULT)
         )
         testCase.initialize(sharedModules::get)

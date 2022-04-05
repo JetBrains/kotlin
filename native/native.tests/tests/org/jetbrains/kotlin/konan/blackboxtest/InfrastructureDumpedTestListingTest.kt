@@ -21,9 +21,11 @@ import org.jetbrains.kotlin.konan.blackboxtest.support.compilation.TestCompilati
 import org.jetbrains.kotlin.konan.blackboxtest.support.compilation.TestCompilationResult.Companion.assertSuccess
 import org.jetbrains.kotlin.konan.blackboxtest.support.compilation.TestCompilationResult.Success
 import org.jetbrains.kotlin.konan.blackboxtest.support.runner.TestExecutable
+import org.jetbrains.kotlin.konan.blackboxtest.support.runner.TestRunChecks
 import org.jetbrains.kotlin.konan.blackboxtest.support.runner.TestRunners
 import org.jetbrains.kotlin.konan.blackboxtest.support.settings.KotlinNativeTargets
 import org.jetbrains.kotlin.konan.blackboxtest.support.settings.SimpleTestDirectories
+import org.jetbrains.kotlin.konan.blackboxtest.support.settings.Timeouts
 import org.jetbrains.kotlin.konan.blackboxtest.support.util.DumpedTestListing
 import org.jetbrains.kotlin.konan.blackboxtest.support.util.LAUNCHER_MODULE_NAME
 import org.jetbrains.kotlin.test.TestMetadata
@@ -111,6 +113,7 @@ class InfrastructureDumpedTestListingTest : AbstractNativeSimpleTest() {
             freeCompilerArgs = TestCompilerArgs.EMPTY,
             nominalPackageName = PackageName.EMPTY,
             expectedOutputDataFile = null,
+            checks = TestRunChecks.Default(testRunSettings.get<Timeouts>().executionTimeout),
             extras = DEFAULT_EXTRAS
         ).apply {
             initialize(null)

@@ -9,6 +9,7 @@ package org.jetbrains.kotlin.konan.blackboxtest.support
 
 import org.jetbrains.kotlin.konan.blackboxtest.support.TestCase.WithTestRunnerExtras
 import org.jetbrains.kotlin.konan.blackboxtest.support.TestModule.Companion.allDependencies
+import org.jetbrains.kotlin.konan.blackboxtest.support.runner.TestRunChecks
 import org.jetbrains.kotlin.konan.blackboxtest.support.util.*
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertTrue
@@ -169,7 +170,8 @@ internal class TestCase(
     val modules: Set<TestModule.Exclusive>,
     val freeCompilerArgs: TestCompilerArgs,
     val nominalPackageName: PackageName,
-    val expectedOutputDataFile: File?,
+    val expectedOutputDataFile: File?, // TODO: refactor to TestRunCheck
+    val checks: TestRunChecks,
     val extras: Extras
 ) {
     sealed interface Extras

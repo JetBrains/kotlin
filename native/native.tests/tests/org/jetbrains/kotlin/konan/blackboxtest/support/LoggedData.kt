@@ -152,11 +152,16 @@ internal abstract class LoggedData {
 
     class TestRun(
         private val parameters: TestRunParameters,
-        private val runResult: RunResult.Completed
+        private val runResult: RunResult
     ) : LoggedData() {
         override fun computeText() = buildString {
             appendLine("TEST RUN:")
-            appendCommonRunResult(runResult)
+            appendLine("- Exit code: ${runResult.exitCode ?: "<unknown>"}")
+            appendDuration(runResult.timeout, runResult.duration, runResult.hasFinishedOnTime)
+            appendLine()
+            appendPotentiallyLargeOutput(runResult.processOutput.stdOut.filteredOutput, "STDOUT", truncateLargeOutput = true)
+            appendLine()
+            appendPotentiallyLargeOutput(runResult.processOutput.stdErr, "STDERR", truncateLargeOutput = true)
             appendLine()
             appendLine(parameters)
         }
@@ -174,19 +179,6 @@ internal abstract class LoggedData {
             appendLine()
             appendLine("STACK TRACE:")
             appendLine(throwable.stackTraceToString().trimEnd())
-            appendLine()
-            appendLine(parameters)
-        }
-    }
-
-    class TestRunTimeoutExceeded(
-        private val parameters: TestRunParameters,
-        private val runResult: RunResult.TimeoutExceeded
-    ) : LoggedData() {
-        override fun computeText() = buildString {
-            appendLine("TIMED OUT:")
-            appendLine("- Max permitted duration: ${runResult.timeout}")
-            appendCommonRunResult(runResult)
             appendLine()
             appendLine(parameters)
         }
@@ -222,17 +214,14 @@ internal abstract class LoggedData {
             return this
         }
 
-        protected fun StringBuilder.appendDuration(duration: Duration): StringBuilder =
-            append("- Duration: ").appendLine(duration.toString(DurationUnit.SECONDS, 2))
+        protected fun StringBuilder.appendDuration(timeout: Duration, duration: Duration, hasFinishedOnTime: Boolean) {
+            append("- Max permitted duration: ").appendLine(timeout.toString(DurationUnit.SECONDS, 2))
+            appendDuration(duration)
+            appendLine("- Finished on time: $hasFinishedOnTime")
+        }
 
-        protected fun StringBuilder.appendCommonRunResult(runResult: RunResult): StringBuilder {
-            appendLine("- Exit code: ${runResult.exitCode ?: "<unknown>"}")
-            appendDuration(runResult.duration)
-            appendLine()
-            appendPotentiallyLargeOutput(runResult.processOutput.stdOut.filteredOutput, "STDOUT", truncateLargeOutput = true)
-            appendLine()
-            appendPotentiallyLargeOutput(runResult.processOutput.stdErr, "STDERR", truncateLargeOutput = true)
-            return this
+        protected fun StringBuilder.appendDuration(duration: Duration) {
+            append("- Duration: ").appendLine(duration.toString(DurationUnit.SECONDS, 2))
         }
 
         private fun StringBuilder.appendPotentiallyLargeOutput(output: String, subject: String, truncateLargeOutput: Boolean) {

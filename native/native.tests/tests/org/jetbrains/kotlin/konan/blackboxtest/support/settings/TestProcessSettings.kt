@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.konan.target.KonanTarget
 import java.io.File
 import java.util.*
 import kotlin.time.Duration
+import kotlin.time.Duration.Companion.seconds
 
 /**
  * The tested and the host Kotlin/Native targets.
@@ -113,7 +114,11 @@ internal class BaseDirs(val testBuildDir: File)
 /**
  * Timeouts.
  */
-internal class Timeouts(val executionTimeout: Duration)
+internal class Timeouts(val executionTimeout: Duration) {
+    companion object {
+        val DEFAULT_EXECUTION_TIMEOUT: Duration get() = 15.seconds
+    }
+}
 
 /**
  * Used cache mode.

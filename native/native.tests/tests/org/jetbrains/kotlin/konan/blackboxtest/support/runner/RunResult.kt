@@ -8,23 +8,17 @@ package org.jetbrains.kotlin.konan.blackboxtest.support.runner
 import org.jetbrains.kotlin.konan.blackboxtest.support.util.TestOutputFilter
 import kotlin.time.Duration
 
-internal sealed interface RunResult {
-    val exitCode: Int?
-    val duration: Duration
+internal data class RunResult(
+    val exitCode: Int?,
+    val timeout: Duration,
+    val duration: Duration,
+    val hasFinishedOnTime: Boolean,
     val processOutput: ProcessOutput
-
-    data class Completed(
-        override val exitCode: Int,
-        override val duration: Duration,
-        override val processOutput: ProcessOutput
-    ) : RunResult
-
-    data class TimeoutExceeded(
-        val timeout: Duration,
-        override val exitCode: Int?,
-        override val duration: Duration,
-        override val processOutput: ProcessOutput
-    ) : RunResult
+) {
+    init {
+        // null exit code is possible only when test run hasn't finished on time.
+        check(exitCode != null || !hasFinishedOnTime)
+    }
 }
 
 internal class ProcessOutput(val stdOut: TestOutputFilter.FilteredOutput, val stdErr: String)

@@ -14,10 +14,8 @@ import org.jetbrains.kotlin.konan.blackboxtest.support.compilation.TestCompilati
 import org.jetbrains.kotlin.konan.blackboxtest.support.compilation.TestCompilationDependencyType.Library
 import org.jetbrains.kotlin.konan.blackboxtest.support.compilation.TestCompilationResult.Companion.assertSuccess
 import org.jetbrains.kotlin.konan.blackboxtest.support.runner.TestExecutable
-import org.jetbrains.kotlin.konan.blackboxtest.support.settings.CacheMode
-import org.jetbrains.kotlin.konan.blackboxtest.support.settings.KotlinNativeHome
-import org.jetbrains.kotlin.konan.blackboxtest.support.settings.KotlinNativeTargets
-import org.jetbrains.kotlin.konan.blackboxtest.support.settings.SimpleTestDirectories
+import org.jetbrains.kotlin.konan.blackboxtest.support.runner.TestRunChecks
+import org.jetbrains.kotlin.konan.blackboxtest.support.settings.*
 import org.jetbrains.kotlin.konan.blackboxtest.support.util.*
 import org.junit.jupiter.api.Tag
 import java.io.File
@@ -119,6 +117,7 @@ abstract class AbstractNativeKlibABITest : AbstractNativeSimpleTest() {
         freeCompilerArgs = compilerArgs,
         nominalPackageName = PackageName.EMPTY,
         expectedOutputDataFile = null,
+        checks = TestRunChecks.Default(testRunSettings.get<Timeouts>().executionTimeout),
         extras = DEFAULT_EXTRAS
     ).apply {
         initialize(null)

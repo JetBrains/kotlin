@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.konan.blackboxtest.support.TestDirectives.FREE_COMPI
 import org.jetbrains.kotlin.konan.blackboxtest.support.TestDirectives.INPUT_DATA_FILE
 import org.jetbrains.kotlin.konan.blackboxtest.support.TestDirectives.KIND
 import org.jetbrains.kotlin.konan.blackboxtest.support.TestDirectives.OUTPUT_DATA_FILE
+import org.jetbrains.kotlin.konan.blackboxtest.support.TestDirectives.EXPECTED_TIMEOUT_FAILURE
 import org.jetbrains.kotlin.konan.blackboxtest.support.TestDirectives.TEST_RUNNER
 import org.jetbrains.kotlin.test.directives.model.RegisteredDirectives
 import org.jetbrains.kotlin.test.directives.model.SimpleDirectivesContainer
@@ -67,16 +68,53 @@ internal object TestDirectives : SimpleDirectivesContainer() {
 
     val OUTPUT_DATA_FILE by stringDirective(
         description = """
-            Specify the file which contains the expected program output. When program finishes its execution the actual output (stdout)
+            Specify the file which contains the expected program output. When program finishes its execution, the actual output (stdout)
             will be compared to the contents of this file.
         """.trimIndent()
     )
+
+    // TODO: to be supported later
+//    val OUTPUT_REGEX by stringDirective(
+//        description = """
+//            The regex that the expected program output should match to. When program finishes its execution, the actual output (stdout)
+//            will be checked against this regex.
+//        """.trimIndent()
+//    )
+
+    // TODO: to be supported later
+//    val OUTPUT_INCLUDES by stringDirective(
+//        description = """
+//            The text that the expected program output should contain. When program finishes its execution, it will be checked if
+//            the actual output (stdout) contains this text.
+//        """.trimIndent()
+//    )
+
+    // TODO: to be supported later
+//    val OUTPUT_NOT_INCLUDES by stringDirective(
+//        description = """
+//            The text that the expected program output should NOT contain. When program finishes its execution, it will be checked if
+//            the actual output (stdout) does nto contain this text.
+//        """.trimIndent()
+//    )
 
     val INPUT_DATA_FILE by stringDirective(
         description = """
             Specify the file which contains the text to be passed to process' input (stdin).
             Note that this directive makes sense only in combination with // KIND: STANDALONE_NO_TR
         """.trimIndent()
+    )
+
+    // TODO: to be supported later
+//    val EXIT_CODE by stringDirective(
+//        description = """
+//            Specify the exit code that the test should finish with. Example: // EXIT_CODE: 42
+//            To indicate any non-zero exit code use // EXIT_CODE: !0
+//            Note that this directive makes sense only in combination with // KIND: STANDALONE_NO_TR
+//        """.trimIndent()
+//    )
+
+    val EXPECTED_TIMEOUT_FAILURE by directive(
+        description = "Whether the test is expected to fail on timeout"
     )
 
     val FREE_COMPILER_ARGS by stringDirective(
@@ -202,6 +240,9 @@ internal fun parseFileName(parsedDirective: RegisteredDirectivesParser.ParsedDir
 
     return fileName
 }
+
+internal fun parseExpectedTimeoutFailure(registeredDirectives: RegisteredDirectives): Boolean =
+    EXPECTED_TIMEOUT_FAILURE in registeredDirectives
 
 internal fun parseFreeCompilerArgs(registeredDirectives: RegisteredDirectives, location: Location): TestCompilerArgs {
     if (FREE_COMPILER_ARGS !in registeredDirectives)
