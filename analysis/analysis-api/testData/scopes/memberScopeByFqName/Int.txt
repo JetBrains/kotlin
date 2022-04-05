@@ -1669,7 +1669,7 @@ KtConstructorSymbol:
   symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
-    KtValueParameterSymbol(p0)
+    KtValueParameterSymbol(value)
   ]
   visibility: Public
   deprecationStatus: null
