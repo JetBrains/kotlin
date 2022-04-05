@@ -39,6 +39,7 @@ fun box(): String {
     if (res != "OK") return res!!
     res = (ic() as? C)?.run { ok } ?: "FAIL 51"
     if (res != "OK") return res!!
+    if (ic() !is C) return "FAIL 61"
 
     res = "FAIL 2"
     res = (icn() as C).ok
@@ -53,6 +54,7 @@ fun box(): String {
     if (res != "OK") return res!!
     res = (icn() as? C)?.run { ok } ?: "FAIL 52"
     if (res != "OK") return res!!
+    if (icn() !is C) return "FAIL 62"
 
     res = "FAIL 4"
     res = (any() as C).ok
@@ -67,6 +69,7 @@ fun box(): String {
     if (res != "OK") return res!!
     res = (any() as? C)?.run { ok } ?: "FAIL 54"
     if (res != "OK") return res!!
+    if (any() !is C) return "FAIL 64"
 
     res = "FAIL 5"
     res = (anyN() as C).ok
@@ -81,18 +84,21 @@ fun box(): String {
     if (res != "OK") return res!!
     res = (anyN() as? C)?.run { ok } ?: "FAIL 55"
     if (res != "OK") return res!!
+    if (anyN() !is C) return "FAIL 65"
 
     res = "FAIL 6"
     res = (icnn() as? C)?.let { "FAIL 16" } ?: "OK"
     if (res != "OK") return res!!
     res = (icnn() as? C)?.run { "FAIL 26" } ?: "OK"
     if (res != "OK") return res!!
+    if (icnn() is C) return "FAIL 36"
 
     res = "FAIL 7"
     res = (anyNN() as? C)?.let { "FAIL 17" } ?: "OK"
     if (res != "OK") return res!!
     res = (anyNN() as? C)?.run { "FAIL 27" } ?: "OK"
     if (res != "OK") return res!!
+    if (anyNN() is C) return "FAIL 37"
 
     res = "FAIL 8"
     res = (c() as C).ok
@@ -107,6 +113,7 @@ fun box(): String {
     if (res != "OK") return res!!
     res = (c() as? C)?.run { ok } ?: "FAIL 58"
     if (res != "OK") return res!!
+    if (c() !is C) return "FAIL 68"
 
     res = "FAIL 9"
     res = (cn() as C).ok
@@ -121,12 +128,14 @@ fun box(): String {
     if (res != "OK") return res!!
     res = (cn() as? C)?.run { ok } ?: "FAIL 59"
     if (res != "OK") return res!!
+    if (cn() !is C) return "FAIL 69"
 
     res = "FAIL 0"
     res = (cnn() as? C)?.let { "FAIL 10" } ?: "OK"
     if (res != "OK") return res!!
     res = (cnn() as? C)?.run { "FAIL 20" } ?: "OK"
     if (res != "OK") return res!!
+    if (cnn() is C) return "FAIL 30"
 
     res = "FAIL A"
     res = (i() as C).ok
@@ -141,6 +150,7 @@ fun box(): String {
     if (res != "OK") return res!!
     res = (i() as? C)?.run { ok } ?: "FAIL 5A"
     if (res != "OK") return res!!
+    if (i() !is C) return "FAIL 6A"
 
     res = "FAIL B"
     res = (iN() as C).ok
@@ -155,12 +165,14 @@ fun box(): String {
     if (res != "OK") return res!!
     res = (iN() as? C)?.run { ok } ?: "FAIL 5B"
     if (res != "OK") return res!!
+    if (iN() !is C) return "FAIL 6B"
 
     res = "FAIL C"
     res = (inn() as? C)?.let { "FAIL 1C" } ?: "OK"
     if (res != "OK") return res!!
     res = (inn() as? C)?.run { "FAIL 2C" } ?: "OK"
     if (res != "OK") return res!!
+    if (inn() is C) return "FAIL 3B"
 
     return "OK"
 }

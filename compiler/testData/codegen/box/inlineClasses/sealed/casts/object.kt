@@ -25,6 +25,7 @@ fun box(): String {
     if (res != "OK") return res
     res = (ic as? O)?.run { ok } ?: "FAIL 51"
     if (res != "OK") return res
+    if (ic !is O) return "FAIL 61"
 
     res = "FAIL 2"
     val icn: IC? = ic
@@ -40,6 +41,7 @@ fun box(): String {
     if (res != "OK") return res
     res = (icn as? O)?.run { ok } ?: "FAIL 52"
     if (res != "OK") return res
+    if (icn !is O) return "FAIL 62"
 
     res = "FAIL 3"
     val ic2 = (icn as IC)
@@ -55,6 +57,7 @@ fun box(): String {
     if (res != "OK") return res
     res = (ic2 as? O)?.run { ok } ?: "FAIL 53"
     if (res != "OK") return res
+    if (ic2 !is O) return "FAIL 63"
 
     res = "FAIL 4"
     val any = (icn as Any)
@@ -70,6 +73,7 @@ fun box(): String {
     if (res != "OK") return res
     res = (any as? O)?.run { ok } ?: "FAIL 54"
     if (res != "OK") return res
+    if (any !is O) return "FAIL 64"
 
     res = "FAIL 5"
     val anyN = (icn as Any?)
@@ -85,6 +89,7 @@ fun box(): String {
     if (res != "OK") return res
     res = (anyN as? O)?.run { ok } ?: "FAIL 55"
     if (res != "OK") return res
+    if (anyN !is O) return "FAIL 65"
 
     res = "FAIL 6"
     val icnn: IC? = null
@@ -92,6 +97,7 @@ fun box(): String {
     if (res != "OK") return res
     res = (icnn as? O)?.run { "FAIL 26" } ?: "OK"
     if (res != "OK") return res
+    if (icnn is O) return "FAIL 36"
 
     res = "FAIL 7"
     val anyNN: Any? = null
@@ -99,6 +105,7 @@ fun box(): String {
     if (res != "OK") return res
     res = (anyNN as? O)?.run { "FAIL 27" } ?: "OK"
     if (res != "OK") return res
+    if (anyNN is O) return "FAIL 37"
 
     return "OK"
 }

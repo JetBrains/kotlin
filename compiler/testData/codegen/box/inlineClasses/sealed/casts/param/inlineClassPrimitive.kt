@@ -26,6 +26,7 @@ fun ic(a: IC) {
     if (res != 100) error(res)
     res = (a as? C)?.run { ok } ?: 51
     if (res != 100) error(res)
+    if (a !is C) error("FAIL 61")
 }
 
 fun icn(a: IC?) {
@@ -42,6 +43,7 @@ fun icn(a: IC?) {
     if (res != 100) error(res)
     res = (a as? C)?.run { ok } ?: 52
     if (res != 100) error(res)
+    if (a !is C) error("FAIL 62")
 }
 
 fun icnn(a: IC?) {
@@ -50,6 +52,7 @@ fun icnn(a: IC?) {
     if (res != 100) error("$res")
     res = (a as? C)?.run { 26 } ?: 100
     if (res != 100) error("$res")
+    if (a is C) error("FAIL 36")
 }
 
 fun any(a: Any) {
@@ -66,6 +69,7 @@ fun any(a: Any) {
     if (res != 100) error(res)
     res = (a as? C)?.run { ok } ?: 54
     if (res != 100) error(res)
+    if (a !is C) error("FAIL 64")
 }
 
 fun anyN(a: Any?) {
@@ -82,6 +86,7 @@ fun anyN(a: Any?) {
     if (res != 100) error(res)
     res = (a as? C)?.run { ok } ?: 55
     if (res != 100) error(res)
+    if (a !is C) error("FAIL 65")
 }
 
 fun anyNN(a: Any?) {
@@ -90,6 +95,7 @@ fun anyNN(a: Any?) {
     if (res != 100) error("$res")
     res = (a as? C)?.run { 27 } ?: 100
     if (res != 100) error("$res")
+    if (a is C) error("FAIL 37")
 }
 
 fun c(a: C) {
@@ -106,6 +112,7 @@ fun c(a: C) {
     if (res != 100) error(res)
     res = (a as? C)?.run { ok } ?: 58
     if (res != 100) error(res)
+    if (a !is C) error("FAIL 68")
 }
 
 fun cn(a: C?) {
@@ -122,6 +129,7 @@ fun cn(a: C?) {
     if (res != 100) error(res)
     res = (a as? C)?.run { ok } ?: 59
     if (res != 100) error(res)
+    if (a !is C) error("FAIL 69")
 }
 
 fun cnn(a: C?) {
@@ -130,6 +138,7 @@ fun cnn(a: C?) {
     if (res != 100) error("$res")
     res = (a as? C)?.run { 20 } ?: 100
     if (res != 100) error("$res")
+    if (a is C) error("FAIL 30")
 }
 
 fun i(a: I) {
@@ -146,6 +155,7 @@ fun i(a: I) {
     if (res != 100) error(res)
     res = (a as? C)?.run { ok } ?: 510
     if (res != 100) error(res)
+    if (a !is C) error("FAIL 3A")
 }
 
 fun iN(a: I?) {
@@ -162,6 +172,7 @@ fun iN(a: I?) {
     if (res != 100) error(res)
     res = (a as? C)?.run { ok } ?: 520
     if (res != 100) error(res)
+    if (a !is C) error("FAIL 3B")
 }
 
 fun iNN(a: I?) {
@@ -170,6 +181,7 @@ fun iNN(a: I?) {
     if (res != 100) error(res)
     res = (a as? C)?.run { 230 } ?: 100
     if (res != 100) error(res)
+    if (a is C) error("FAIL 3C")
 }
 
 fun box(): String {

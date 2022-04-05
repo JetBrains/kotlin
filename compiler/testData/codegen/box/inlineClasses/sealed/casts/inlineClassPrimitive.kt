@@ -24,6 +24,7 @@ fun box(): String {
     if (res != 100) return "FAIL $res"
     res = (ic as? C)?.run { ok } ?: 51
     if (res != 100) return "FAIL $res"
+    if (ic !is C) return "FAIL 61"
 
     res = 2
     val icn: IC? = ic
@@ -39,6 +40,7 @@ fun box(): String {
     if (res != 100) return "FAIL $res"
     res = (icn as? C)?.run { ok } ?: 52
     if (res != 100) return "FAIL $res"
+    if (icn !is C) return "FAIL 62"
 
     res = 3
     val ic2 = (icn as IC)
@@ -54,6 +56,7 @@ fun box(): String {
     if (res != 100) return "FAIL $res"
     res = (ic2 as? C)?.run { ok } ?: 53
     if (res != 100) return "FAIL $res"
+    if (ic2 !is C) return "FAIL 63"
 
     res = 4
     val any = (icn as Any)
@@ -69,6 +72,7 @@ fun box(): String {
     if (res != 100) return "FAIL $res"
     res = (any as? C)?.run { ok } ?: 54
     if (res != 100) return "FAIL $res"
+    if (any !is C) return "FAIL 64"
 
     res = 5
     val anyN = (icn as Any?)
@@ -84,6 +88,7 @@ fun box(): String {
     if (res != 100) return "FAIL $res"
     res = (anyN as? C)?.run { ok } ?: 55
     if (res != 100) return "FAIL $res"
+    if (anyN !is C) return "FAIL 65"
 
     res = 6
     val icnn: IC? = null
@@ -91,6 +96,7 @@ fun box(): String {
     if (res != 100) return "FAIL $res"
     res = (icnn as? C)?.run { 26 } ?: 100
     if (res != 100) return "FAIL $res"
+    if (icnn is C) return "FAIL 36"
 
     res = 7
     val anyNN: Any? = null
@@ -98,6 +104,7 @@ fun box(): String {
     if (res != 100) return "FAIL $res"
     res = (anyNN as? C)?.run { 27 } ?: 100
     if (res != 100) return "FAIL $res"
+    if (anyNN is C) return "FAIL 36"
 
     return "OK"
 }

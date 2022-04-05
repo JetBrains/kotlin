@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.backend.jvm.lower
 import org.jetbrains.kotlin.backend.common.lower.DeclarationIrBuilder
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.lower.irBlockBody
+import org.jetbrains.kotlin.backend.common.lower.irNot
 import org.jetbrains.kotlin.backend.common.lower.loops.forLoopsPhase
 import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
 import org.jetbrains.kotlin.backend.common.pop
@@ -102,12 +103,39 @@ private class JvmInlineClassLowering(context: JvmBackendContext) : JvmValueClass
 
             when (transformed.operator) {
                 IrTypeOperator.INSTANCEOF -> {
-                    // Top.is-Child(top)
-                    return IrCallImpl(
-                        transformed.startOffset, transformed.endOffset,
-                        context.irBuiltIns.booleanType, isCheck.symbol, top.typeParameters.size, isCheck.valueParameters.size
-                    ).also {
-                        it.putValueArgument(0, coerceInlineClasses(transformed.argument, top.defaultType, context.irBuiltIns.anyNType))
+                    // if (top != null) false else Top.is-Child(top)
+                    with(context.createIrBuilder((currentFunction!!.irElement as IrFunction).symbol)) {
+                        return irBlock {
+                            val tmp = irTemporary(transformed.argument)
+                            +irIfNull(
+                                context.irBuiltIns.booleanType, irGet(tmp), irFalse(),
+                                irCall(isCheck.symbol).also {
+                                    it.putValueArgument(
+                                        0,
+                                        coerceInlineClasses(irGet(tmp), top.defaultType, context.irBuiltIns.anyNType)
+                                    )
+                                }
+                            )
+                        }
+                    }
+                }
+                IrTypeOperator.NOT_INSTANCEOF -> {
+                    // if (top != null) true else Top.is-Child(top).not()
+                    with(context.createIrBuilder((currentFunction!!.irElement as IrFunction).symbol)) {
+                        return irBlock {
+                            val tmp = irTemporary(transformed.argument)
+                            +irIfNull(
+                                context.irBuiltIns.booleanType, irGet(tmp), irTrue(),
+                                irNot(
+                                    irCall(isCheck.symbol).also {
+                                        it.putValueArgument(
+                                            0,
+                                            coerceInlineClasses(irGet(tmp), top.defaultType, context.irBuiltIns.anyNType)
+                                        )
+                                    }
+                                )
+                            )
+                        }
                     }
                 }
                 IrTypeOperator.CAST -> {
@@ -132,6 +160,12 @@ private class JvmInlineClassLowering(context: JvmBackendContext) : JvmValueClass
         }
         return super.visitTypeOperator(expression)
     }
+
+    private fun irAndAnd(left: IrExpression, right: IrExpression): IrExpression =
+        IrCallImpl.fromSymbolOwner(right.startOffset, right.endOffset, context.irBuiltIns.andandSymbol).apply {
+            putValueArgument(0, left)
+            putValueArgument(1, right)
+        }
 
     private fun generateAsCheck(
         expression: IrTypeOperatorCall,

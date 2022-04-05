@@ -36,6 +36,9 @@ fun box(): String {
     if (res != "OK") return res
     res = (iC as? C)?.run { ok } ?: "FAIL 51"
     if (res != "OK") return res
+    if (iC !is C) return "FAIL 61"
+    if (iC is O) return "FAIL 71"
+    if (iC is VC) return "FAIL 71"
 
     res = "FAIL 2"
     val iO: I = io
@@ -51,6 +54,9 @@ fun box(): String {
     if (res != "OK") return res
     res = (iO as? O)?.run { ok } ?: "FAIL 52"
     if (res != "OK") return res
+    if (iO !is O) return "FAIL 62"
+    if (iO is C) return "FAIL 72"
+    if (iO is VC) return "FAIL 82"
 
     res = "FAIL 3"
     val iCN: I? = ic
@@ -66,6 +72,9 @@ fun box(): String {
     if (res != "OK") return res
     res = (iCN as? C)?.run { ok } ?: "FAIL 53"
     if (res != "OK") return res
+    if (iCN !is C) return "FAIL 63"
+    if (iCN is O) return "FAIL 73"
+    if (iCN is VC) return "FAIL 83"
 
     res = "FAIL 4"
     val iON: I? = io
@@ -81,6 +90,9 @@ fun box(): String {
     if (res != "OK") return res
     res = (iON as? O)?.run { ok } ?: "FAIL 34"
     if (res != "OK") return res
+    if (iON !is O) return "FAIL 64"
+    if (iON is C) return "FAIL 74"
+    if (iON is VC) return "FAIL 84"
 
     res = "FAIL 5"
     val vC: I = vc
@@ -96,6 +108,9 @@ fun box(): String {
     if (res != "OK") return res
     res = (vC as? VC)?.run { ok } ?: "FAIL 55"
     if (res != "OK") return res
+    if (vC !is VC) return "FAIL 65"
+    if (vC is C) return "FAIL 75"
+    if (vC is O) return "FAIL 85"
 
     res = "FAIL 6"
     val vCN: I? = vc
@@ -111,12 +126,18 @@ fun box(): String {
     if (res != "OK") return res
     res = (vCN as? VC)?.run { ok } ?: "FAIL 56"
     if (res != "OK") return res
+    if (vCN !is VC) return "FAIL 66"
+    if (vCN is C) return "FAIL 76"
+    if (vCN is O) return "FAIL 86"
 
     val iNull: I? = null
     res = (iNull as? C)?.let { "FAIL 7" } ?: "OK"
     if (res != "OK") return res
     res = (iNull as? O)?.run { "FAIL 8" } ?: "OK"
     if (res != "OK") return res
+    if (iNull is C) return "FAIL 90"
+    if (iNull is O) return "FAIL 91"
+    if (iNull is VC) return "FAIL 92"
 
     return "OK"
 }

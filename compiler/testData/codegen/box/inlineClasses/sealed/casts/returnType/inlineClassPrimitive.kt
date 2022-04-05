@@ -39,6 +39,7 @@ fun box(): String {
     if (res != 100) return "$res"
     res = (ic() as? C)?.run { ok } ?: 51
     if (res != 100) return "$res"
+    if (ic() !is C) return "FAIL 61"
 
     res = 2
     res = (icn() as C).ok
@@ -53,6 +54,7 @@ fun box(): String {
     if (res != 100) return "$res"
     res = (icn() as? C)?.run { ok } ?: 52
     if (res != 100) return "$res"
+    if (icn() !is C) return "FAIL 62"
 
     res = 4
     res = (any() as C).ok
@@ -67,6 +69,7 @@ fun box(): String {
     if (res != 100) return "$res"
     res = (any() as? C)?.run { ok } ?: 54
     if (res != 100) return "$res"
+    if (any() !is C) return "FAIL 64"
 
     res = 5
     res = (anyN() as C).ok
@@ -81,18 +84,21 @@ fun box(): String {
     if (res != 100) return "$res"
     res = (anyN() as? C)?.run { ok } ?: 55
     if (res != 100) return "$res"
+    if (anyN() !is C) return "FAIL 65"
 
     res = 6
     res = (icnn() as? C)?.let { 16 } ?: 100
     if (res != 100) return "$res"
     res = (icnn() as? C)?.run { 26 } ?: 100
     if (res != 100) return "$res"
+    if (icnn() is C) return "FAIL 36"
 
     res = 7
     res = (anyNN() as? C)?.let { 17 } ?: 100
     if (res != 100) return "$res"
     res = (anyNN() as? C)?.run { 27 } ?: 100
     if (res != 100) return "$res"
+    if (anyNN() is C) return "FAIL 37"
 
     res = 8
     res = (c() as C).ok
@@ -107,6 +113,7 @@ fun box(): String {
     if (res != 100) return "$res"
     res = (c() as? C)?.run { ok } ?: 58
     if (res != 100) return "$res"
+    if (c() !is C) return "FAIL 68"
 
     res = 9
     res = (cn() as C).ok
@@ -121,12 +128,14 @@ fun box(): String {
     if (res != 100) return "$res"
     res = (cn() as? C)?.run { ok } ?: 59
     if (res != 100) return "$res"
+    if (cn() !is C) return "FAIL 69"
 
     res = 0
     res = (cnn() as? C)?.let { 10 } ?: 100
     if (res != 100) return "$res"
     res = (cnn() as? C)?.run { 20 } ?: 100
     if (res != 100) return "$res"
+    if (cnn() is C) return "FAIL 30"
 
     res = 10
     res = (i() as C).ok
@@ -141,6 +150,7 @@ fun box(): String {
     if (res != 100) return "$res"
     res = (i() as? C)?.run { ok } ?: 510
     if (res != 100) return "$res"
+    if (i() !is C) return "FAIL 6A"
 
     res = 11
     res = (iN() as C).ok
@@ -155,12 +165,14 @@ fun box(): String {
     if (res != 100) return "$res"
     res = (iN() as? C)?.run { ok } ?: 511
     if (res != 100) return "$res"
+    if (iN() !is C) return "FAIL 6B"
 
     res = 12
     res = (inn() as? C)?.let { 112 } ?: 100
     if (res != 100) return "$res"
     res = (inn() as? C)?.run { 212 } ?: 100
     if (res != 100) return "$res"
+    if (inn() is C) return "FAIL 3B"
 
     return "OK"
 }

@@ -40,6 +40,7 @@ fun box(): String {
     if (res != "OK") return res
     res = (ic() as? O)?.run { ok } ?: "FAIL 51"
     if (res != "OK") return res
+    if (ic() !is O) return "FAIL 61"
 
     res = "FAIL 2"
     res = (icn() as O).ok
@@ -54,6 +55,7 @@ fun box(): String {
     if (res != "OK") return res
     res = (icn() as? O)?.run { ok } ?: "FAIL 52"
     if (res != "OK") return res
+    if (icn() !is O) return "FAIL 62"
 
     res = "FAIL 4"
     res = (any() as O).ok
@@ -68,6 +70,7 @@ fun box(): String {
     if (res != "OK") return res
     res = (any() as? O)?.run { ok } ?: "FAIL 54"
     if (res != "OK") return res
+    if (any() !is O) return "FAIL 64"
 
     res = "FAIL 5"
     res = (anyN() as O).ok
@@ -82,18 +85,21 @@ fun box(): String {
     if (res != "OK") return res
     res = (anyN() as? O)?.run { ok } ?: "FAIL 55"
     if (res != "OK") return res
+    if (anyN() !is O) return "FAIL 65"
 
     res = "FAIL 6"
     res = (icnn() as? O)?.let { "FAIL 16" } ?: "OK"
     if (res != "OK") return res
     res = (icnn() as? O)?.run { "FAIL 26" } ?: "OK"
     if (res != "OK") return res
+    if (icnn() is O) return "FAIL 36"
 
     res = "FAIL 7"
     res = (anyNN() as? O)?.let { "FAIL 17" } ?: "OK"
     if (res != "OK") return res
     res = (anyNN() as? O)?.run { "FAIL 27" } ?: "OK"
     if (res != "OK") return res
+    if (anyNN() is O) return "FAIL 37"
 
     res = "FAIL 8"
     res = (c() as O).ok
@@ -108,6 +114,7 @@ fun box(): String {
     if (res != "OK") return res
     res = (c() as? O)?.run { ok } ?: "FAIL 58"
     if (res != "OK") return res
+    if (c() !is O) return "FAIL 68"
 
     res = "FAIL 9"
     res = (cn() as O).ok
@@ -122,12 +129,14 @@ fun box(): String {
     if (res != "OK") return res
     res = (cn() as? O)?.run { ok } ?: "FAIL 59"
     if (res != "OK") return res
+    if (cn() !is O) return "FAIL 69"
 
     res = "FAIL 0"
     res = (cnn() as? O)?.let { "FAIL 10" } ?: "OK"
     if (res != "OK") return res
     res = (cnn() as? O)?.run { "FAIL 20" } ?: "OK"
     if (res != "OK") return res
+    if (cnn() is O) return "FAIL 30"
 
     res = "FAIL A"
     res = (i() as O).ok
@@ -142,6 +151,7 @@ fun box(): String {
     if (res != "OK") return res
     res = (i() as? O)?.run { ok } ?: "FAIL 5A"
     if (res != "OK") return res
+    if (i() !is O) return "FAIL 6A"
 
     res = "FAIL B"
     res = (iN() as O).ok
@@ -156,12 +166,14 @@ fun box(): String {
     if (res != "OK") return res
     res = (iN() as? O)?.run { ok } ?: "FAIL 5B"
     if (res != "OK") return res
+    if (iN() !is O) return "FAIL 6B"
 
     res = "FAIL C"
     res = (inn() as? O)?.let { "FAIL 1C" } ?: "OK"
     if (res != "OK") return res
     res = (inn() as? O)?.run { "FAIL 2C" } ?: "OK"
     if (res != "OK") return res
+    if (inn() is O) return "FAIL 3B"
 
     return "OK"
 }
