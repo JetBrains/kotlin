@@ -2,6 +2,8 @@ import org.gradle.api.Project
 import org.gradle.api.plugins.JavaPluginExtension
 import org.gradle.api.tasks.SourceSet
 import org.gradle.api.tasks.SourceSetContainer
+import org.gradle.kotlin.dsl.apply
+import org.jetbrains.kotlin.ideaExt.idea
 
 inline fun Project.sourceSets(crossinline body: SourceSetsBuilder.() -> Unit) = SourceSetsBuilder(this).body()
 
@@ -34,6 +36,20 @@ val SourceSet.projectDefault: Project.() -> Unit
             }
         }
     }
+
+val SourceSet.generatedTestDir: Project.() -> Unit
+    get() = {
+        val generationRoot = projectDir.resolve("tests-gen")
+        java.srcDir(generationRoot.name)
+
+        if (kotlinBuildProperties.isInJpsBuildIdeaSync) {
+            apply(plugin = "idea")
+            idea {
+                this.module.generatedSourceDirs.add(generationRoot)
+            }
+        }
+    }
+
 
 val Project.sourceSets: SourceSetContainer
     get() = javaPluginExtension().sourceSets

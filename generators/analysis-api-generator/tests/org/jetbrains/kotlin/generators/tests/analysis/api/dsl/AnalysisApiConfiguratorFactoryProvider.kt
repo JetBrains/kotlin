@@ -33,9 +33,9 @@ object AnalysisApiConfiguratorFactoryProvider {
     }
 
     fun getTestPath(data: AnalysisApiTestConfiguratorFactoryData): String? = when {
-        data.frontend == FrontendKind.Fir && data.analysisApiMode == AnalysisApiMode.Ide -> "analysis/analysis-api-fir/tests"
-        data.frontend == FrontendKind.Fe10 && data.analysisApiMode == AnalysisApiMode.Ide -> "analysis/analysis-api-fe10/tests"
-        data.frontend == FrontendKind.Fir && data.analysisApiMode == AnalysisApiMode.Standalone -> "analysis/analysis-api-standalone/tests"
+        data.frontend == FrontendKind.Fir && data.analysisApiMode == AnalysisApiMode.Ide -> "analysis/analysis-api-fir/tests-gen"
+        data.frontend == FrontendKind.Fe10 && data.analysisApiMode == AnalysisApiMode.Ide -> "analysis/analysis-api-fe10/tests-gen"
+        data.frontend == FrontendKind.Fir && data.analysisApiMode == AnalysisApiMode.Standalone -> "analysis/analysis-api-standalone/tests-gen"
         else -> null
     }
 
