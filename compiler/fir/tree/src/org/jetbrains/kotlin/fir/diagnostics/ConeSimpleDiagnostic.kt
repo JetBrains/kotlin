@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir.diagnostics
 
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
+import org.jetbrains.kotlin.name.Name
 
 class ConeSimpleDiagnostic(override val reason: String, val kind: DiagnosticKind = DiagnosticKind.Other) : ConeDiagnostic
 
@@ -27,6 +28,11 @@ class ConeUnderscoreUsageWithoutBackticks(source: KtSourceElement) : ConeDiagnos
 class ConeAmbiguousSuper(val candidateTypes: List<ConeKotlinType>) : ConeDiagnostic {
     override val reason: String
         get() = "Ambiguous supertype"
+}
+
+class ConeRecursiveTypeParameterDuringErasureError(val typeParameterName: Name) : ConeDiagnostic {
+    override val reason: String
+        get() = "self-recursive type parameter $typeParameterName"
 }
 
 enum class DiagnosticKind {

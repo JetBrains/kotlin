@@ -5,9 +5,7 @@
 
 package org.jetbrains.kotlin.types.model
 
-import org.jetbrains.kotlin.types.AbstractTypeChecker
-import org.jetbrains.kotlin.types.TypeCheckerState
-import org.jetbrains.kotlin.types.Variance
+import org.jetbrains.kotlin.types.*
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.contract
 
@@ -158,7 +156,7 @@ interface TypeSystemInferenceExtensionContext : TypeSystemContext, TypeSystemBui
 
     fun TypeConstructorMarker.isCapturedTypeConstructor(): Boolean
 
-    fun TypeConstructorMarker.isTypeParameterTypeConstructor(): Boolean
+    fun KotlinTypeMarker.eraseContainingTypeParameters(): KotlinTypeMarker
 
     fun Collection<KotlinTypeMarker>.singleBestRepresentative(): KotlinTypeMarker?
 
@@ -175,8 +173,6 @@ interface TypeSystemInferenceExtensionContext : TypeSystemContext, TypeSystemBui
 
     fun createStubTypeForBuilderInference(typeVariable: TypeVariableMarker): StubTypeMarker
     fun createStubTypeForTypeVariablesInSubtyping(typeVariable: TypeVariableMarker): StubTypeMarker
-
-    fun KotlinTypeMarker.isFinal(): Boolean
 
     fun KotlinTypeMarker.removeAnnotations(): KotlinTypeMarker
     fun KotlinTypeMarker.removeExactAnnotation(): KotlinTypeMarker
@@ -263,7 +259,7 @@ interface TypeSystemInferenceExtensionContext : TypeSystemContext, TypeSystemBui
 
     fun getKFunctionTypeConstructor(parametersNumber: Int, isSuspend: Boolean): TypeConstructorMarker
 
-    private fun KotlinTypeMarker.extractTypeVariables(to: MutableSet<TypeVariableTypeConstructorMarker>) {
+    private fun <T> KotlinTypeMarker.extractTypeOf(to: MutableSet<T>, getIfApplicable: (TypeConstructorMarker) -> T?) {
         for (i in 0 until argumentsCount()) {
             val argument = getArgument(i)
 
@@ -271,16 +267,26 @@ interface TypeSystemInferenceExtensionContext : TypeSystemContext, TypeSystemBui
 
             val argumentType = argument.getType()
             val argumentTypeConstructor = argumentType.typeConstructor()
-            if (argumentTypeConstructor is TypeVariableTypeConstructorMarker) {
-                to.add(argumentTypeConstructor)
+            val argumentToAdd = getIfApplicable(argumentTypeConstructor)
+
+            if (argumentToAdd != null) {
+                to.add(argumentToAdd)
             } else if (argumentType.argumentsCount() != 0) {
-                argumentType.extractTypeVariables(to)
+                argumentType.extractTypeOf(to, getIfApplicable)
             }
         }
     }
 
-    @OptIn(ExperimentalStdlibApi::class)
-    fun KotlinTypeMarker.extractTypeVariables() = buildSet { extractTypeVariables(this) }
+    fun KotlinTypeMarker.extractTypeVariables(): Set<TypeVariableTypeConstructorMarker> =
+        buildSet {
+            extractTypeOf(this) { it as? TypeVariableTypeConstructorMarker }
+        }
+
+    fun KotlinTypeMarker.extractTypeParameters(): Set<TypeParameterMarker> =
+        buildSet {
+            typeConstructor().getTypeParameterClassifier()?.let(::add)
+            extractTypeOf(this) { it.getTypeParameterClassifier() }
+        }
 
     /**
      * For case Foo <: (T..T?) return LowerBound for new constraint LowerBound <: T
@@ -309,6 +315,172 @@ interface TypeSystemInferenceExtensionContext : TypeSystemContext, TypeSystemBui
         )
 
         return createCapturedType(starProjection, listOf(superType), lowerType = null, CaptureStatus.FROM_EXPRESSION)
+    }
+
+    fun Collection<KotlinTypeMarker>.computeEmptyIntersectionTypeKind(): EmptyIntersectionTypeKind {
+        if (this.isEmpty())
+            return EmptyIntersectionTypeKind.NOT_EMPTY_INTERSECTION
+
+        val types = this.withIndex()
+
+        for ((i, firstType) in types) {
+            if (!firstType.typeConstructor().mayCauseEmptyIntersection())
+                continue
+
+            val doesFirstTypeContainTypeParameters by lazy { firstType.contains { it.typeConstructor().isTypeParameterTypeConstructor() } }
+            val firstSubstitutedType by lazy { firstType.eraseContainingTypeParameters() }
+
+            for ((j, secondType) in types) {
+                if (i >= j || !secondType.typeConstructor().mayCauseEmptyIntersection()) continue
+
+                val doesSecondTypeContainTypeParameters = secondType.contains { it.typeConstructor().isTypeParameterTypeConstructor() }
+                val secondSubstitutedType by lazy { secondType.eraseContainingTypeParameters() }
+                val anyContainingTypeParameter = doesFirstTypeContainTypeParameters || doesSecondTypeContainTypeParameters
+
+                when {
+                    !anyContainingTypeParameter && !canHaveSubtype(listOf(firstType, secondType)) ->
+                        return EmptyIntersectionTypeKind.MULTIPLE_CLASSES
+                    anyContainingTypeParameter && !canHaveSubtype(listOf(firstSubstitutedType, secondSubstitutedType)) ->
+                        return EmptyIntersectionTypeKind.MULTIPLE_CLASSES
+                }
+            }
+        }
+
+        return EmptyIntersectionTypeKind.NOT_EMPTY_INTERSECTION
+    }
+
+    private fun canHaveSubtype(types: List<KotlinTypeMarker>): Boolean {
+        val expandedTypes = types.map {
+            if (it.typeConstructor() is IntersectionTypeConstructorMarker) {
+                it.typeConstructor().supertypes().toList()
+            } else listOf(it)
+        }.flatten().withIndex()
+
+        val typeCheckerState = newTypeCheckerState(errorTypesEqualToAnything = true, stubTypesEqualToAnything = true)
+
+        for ((i, firstType) in expandedTypes) {
+            val firstTypeConstructor = firstType.typeConstructor()
+
+            if (!firstTypeConstructor.mayCauseEmptyIntersection())
+                continue
+
+            for ((j, secondType) in expandedTypes) {
+                if (i >= j) continue
+
+                val secondTypeConstructor = secondType.typeConstructor()
+
+                if (!secondTypeConstructor.mayCauseEmptyIntersection())
+                    continue
+
+                if (areEqualTypeConstructors(firstTypeConstructor, secondTypeConstructor) && secondTypeConstructor.parametersCount() == 0)
+                    continue
+
+                // Below is determining having subtypes for two classes
+                // A class type may have only one supertype of class-based type constructor
+                val superTypeByFirstConstructor = AbstractTypeChecker.findCorrespondingSupertypes(
+                    typeCheckerState, firstType.lowerBoundIfFlexible(), secondTypeConstructor
+                ).takeIf { it.isNotEmpty() }?.single()
+                val superTypeBySecondConstructor = AbstractTypeChecker.findCorrespondingSupertypes(
+                    typeCheckerState, secondType.lowerBoundIfFlexible(), firstTypeConstructor
+                ).takeIf { it.isNotEmpty() }?.single()
+
+                if (superTypeByFirstConstructor == null && superTypeBySecondConstructor == null)
+                    return false
+
+                if (superTypeByFirstConstructor == null || superTypeBySecondConstructor == null)
+                    continue // first or second is actually subtype of another
+
+                if (!areTypeArgumentsCompatibleToHaveSubtypes(superTypeByFirstConstructor, superTypeBySecondConstructor)) {
+                    return false
+                }
+            }
+        }
+
+        return true
+    }
+
+    private fun TypeArgumentMarker.uncaptureIfNeeded(): TypeArgumentMarker {
+        val type = getType()
+        return if (type is CapturedTypeMarker) type.typeConstructorProjection() else this
+    }
+
+    private fun computeEffectiveVariance(parameter: TypeParameterMarker, argument: TypeArgumentMarker): TypeVariance? =
+        AbstractTypeChecker.effectiveVariance(parameter.getVariance(), argument.getVariance())
+
+    private fun TypeConstructorMarker.mayCauseEmptyIntersection(): Boolean =
+        (isClassTypeConstructor() || isTypeParameterTypeConstructor()) && !isInterface() && !isAnyConstructor() && !isNothingConstructor()
+
+    private fun areArgumentsOfSpecifiedVariances(
+        firstType: KotlinTypeMarker,
+        secondType: KotlinTypeMarker,
+        argumentIndex: Int,
+        variance1: TypeVariance,
+        variance2: TypeVariance,
+    ): Boolean {
+        val argumentOfFirst = firstType.getArgument(argumentIndex).uncaptureIfNeeded()
+        val parameterOfFirst = firstType.typeConstructor().getParameter(argumentIndex)
+
+        val argumentOfSecond = secondType.getArgument(argumentIndex).uncaptureIfNeeded()
+        val parameterOfSecond = secondType.typeConstructor().getParameter(argumentIndex)
+
+        val effectiveVariance1 = AbstractTypeChecker.effectiveVariance(parameterOfFirst.getVariance(), argumentOfFirst.getVariance())
+        val effectiveVariance2 = AbstractTypeChecker.effectiveVariance(parameterOfSecond.getVariance(), argumentOfSecond.getVariance())
+
+        return (effectiveVariance1 == variance1 && effectiveVariance2 == variance2)
+                || (effectiveVariance1 == variance2 && effectiveVariance2 == variance1)
+    }
+
+    private fun areTypeArgumentsCompatibleToHaveSubtypes(firstType: KotlinTypeMarker, secondType: KotlinTypeMarker): Boolean {
+        require(firstType.typeConstructor() == secondType.typeConstructor()) {
+            "Type constructors of the passed types should be the same to compare their arguments"
+        }
+
+        fun isSubtypeOf(firstType: KotlinTypeMarker, secondType: KotlinTypeMarker) =
+            AbstractTypeChecker.isSubtypeOf(this, firstType, secondType)
+
+        for ((i, argumentOfFirst) in firstType.getArguments().withIndex()) {
+            @Suppress("NAME_SHADOWING")
+            val argumentOfFirst = argumentOfFirst.uncaptureIfNeeded()
+            val argumentOfSecond = secondType.getArgument(i).uncaptureIfNeeded()
+
+            if (argumentOfFirst == argumentOfSecond || argumentOfFirst.isStarProjection() || argumentOfSecond.isStarProjection())
+                continue
+
+            val argumentTypeOfFirst = argumentOfFirst.getType()
+            val argumentTypeOfSecond = argumentOfSecond.getType()
+
+            when {
+                areArgumentsOfSpecifiedVariances(firstType, secondType, i, TypeVariance.INV, TypeVariance.INV) ->
+                    return false
+                areArgumentsOfSpecifiedVariances(firstType, secondType, i, TypeVariance.INV, TypeVariance.OUT) -> {
+                    if (!isSubtypeOf(argumentTypeOfFirst, argumentTypeOfSecond)) {
+                        return false
+                    }
+                }
+                areArgumentsOfSpecifiedVariances(firstType, secondType, i, TypeVariance.INV, TypeVariance.IN) -> {
+                    if (!isSubtypeOf(argumentTypeOfSecond, argumentTypeOfFirst)) {
+                        return false
+                    }
+                }
+                areArgumentsOfSpecifiedVariances(firstType, secondType, i, TypeVariance.IN, TypeVariance.OUT) -> {
+                    if (argumentTypeOfFirst.argumentsCount() == 0 && argumentTypeOfSecond.argumentsCount() == 0) {
+                        if (!isSubtypeOf(argumentTypeOfFirst, argumentTypeOfSecond)) {
+                            return false
+                        }
+                    } else if (!canHaveSubtype(listOf(argumentTypeOfFirst, argumentTypeOfSecond))) {
+                        return false
+                    }
+                }
+                areArgumentsOfSpecifiedVariances(firstType, secondType, i, TypeVariance.OUT, TypeVariance.OUT)
+                        || areArgumentsOfSpecifiedVariances(firstType, secondType, i, TypeVariance.IN, TypeVariance.IN) -> {
+                    if (!canHaveSubtype(listOf(argumentTypeOfFirst, argumentTypeOfSecond))) {
+                        return false
+                    }
+                }
+            }
+        }
+
+        return true
     }
 }
 
@@ -389,6 +561,7 @@ interface TypeSystemContext : TypeSystemOptimizationContext {
     fun TypeConstructorMarker.isLocalType(): Boolean
     fun TypeConstructorMarker.isAnonymous(): Boolean
     fun TypeConstructorMarker.getTypeParameterClassifier(): TypeParameterMarker?
+    fun TypeConstructorMarker.isTypeParameterTypeConstructor(): Boolean
 
     val TypeVariableTypeConstructorMarker.typeParameter: TypeParameterMarker?
 

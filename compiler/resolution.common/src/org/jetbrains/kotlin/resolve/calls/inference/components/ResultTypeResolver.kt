@@ -44,7 +44,6 @@ class ResultTypeResolver(
         return createCapturedStarProjectionForSelfType(typeVariableConstructor, typesForRecursiveTypeParameters)
     }
 
-    @OptIn(ExperimentalStdlibApi::class)
     private fun Context.getDefaultType(
         direction: ResolveDirection,
         constraints: List<Constraint>,
@@ -241,10 +240,13 @@ class ResultTypeResolver(
         }
     }
 
-    private fun Context.findSuperType(variableWithConstraints: VariableWithConstraints): KotlinTypeMarker? {
-        val upperConstraints =
-            variableWithConstraints.constraints.filter { it.kind == ConstraintKind.UPPER && this@findSuperType.isProperTypeForFixation(it.type) }
-        if (upperConstraints.isNotEmpty()) {
+    private fun Context.computeUpperType(upperConstraints: List<Constraint>): KotlinTypeMarker {
+        val isInferringIntoEmptyIntersectionEnabled =
+            languageVersionSettings.supportsFeature(LanguageFeature.ForbidInferringTypeVariablesIntoEmptyIntersection)
+
+        // TODO: Remove this after stopping support of disabling `ForbidInferringTypeVariablesIntoEmptyIntersection`
+        // If `ForbidInferringTypeVariablesIntoEmptyIntersection` is enabled, we do the corresponding checks during resolution and completion
+        return if (!isInferringIntoEmptyIntersectionEnabled) {
             val intersectionUpperType = intersectTypes(upperConstraints.map { it.type })
             val resultIsActuallyIntersection = intersectionUpperType.typeConstructor().isIntersection()
 
@@ -268,12 +270,25 @@ class ResultTypeResolver(
                 val filteredUpperConstraints = upperConstraints.filterNot { it.isExpectedTypePosition() }.map { it.type }
                 if (filteredUpperConstraints.isNotEmpty()) intersectTypes(filteredUpperConstraints) else intersectionUpperType
             } else intersectionUpperType
+            upperType
+        } else {
+            intersectTypes(upperConstraints.map { it.type })
+        }
+    }
+
+    private fun Context.findSuperType(variableWithConstraints: VariableWithConstraints): KotlinTypeMarker? {
+        val upperConstraints =
+            variableWithConstraints.constraints.filter { it.kind == ConstraintKind.UPPER && this@findSuperType.isProperTypeForFixation(it.type) }
+
+        if (upperConstraints.isNotEmpty()) {
+            val upperType = computeUpperType(upperConstraints)
 
             return typeApproximator.approximateToSubType(
                 upperType,
                 TypeApproximatorConfiguration.InternalTypesApproximation
             ) ?: upperType
         }
+
         return null
     }
 

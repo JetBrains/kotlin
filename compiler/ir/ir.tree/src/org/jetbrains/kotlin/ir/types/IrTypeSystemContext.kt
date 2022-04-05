@@ -172,6 +172,8 @@ interface IrTypeSystemContext : TypeSystemContext, TypeSystemCommonSuperTypesCon
         return (this as? IrClassSymbol)?.owner?.isInterface == true
     }
 
+    override fun TypeConstructorMarker.isTypeParameterTypeConstructor(): Boolean = this is IrTypeParameterSymbol
+
     override fun TypeParameterMarker.getVariance() = (this as IrTypeParameterSymbol).owner.variance.convertVariance()
 
     private fun getSuperTypes(typeParameterMarker: TypeParameterMarker) = (typeParameterMarker as IrTypeParameterSymbol).owner.superTypes

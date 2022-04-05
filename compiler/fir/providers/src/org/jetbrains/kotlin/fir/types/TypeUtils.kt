@@ -726,6 +726,9 @@ private fun SimpleTypeMarker.eraseArgumentsDeeply(
     intersectUpperBounds: Boolean,
 ): ConeKotlinType = with(typeContext) {
     replaceArgumentsDeeply { typeArgument ->
+        if (typeArgument.isStarProjection())
+            return@replaceArgumentsDeeply typeArgument
+
         val typeConstructor = typeArgument.getType().typeConstructor().takeIf { it.isTypeParameterTypeConstructor() }
             ?: return@replaceArgumentsDeeply typeArgument
 

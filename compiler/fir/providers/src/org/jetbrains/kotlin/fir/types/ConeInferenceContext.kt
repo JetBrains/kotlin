@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
+import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutorByMap
 import org.jetbrains.kotlin.fir.resolve.substitution.NoSubstitutor
 import org.jetbrains.kotlin.fir.resolve.substitution.createTypeSubstitutorByTypeConstructor
 import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
@@ -272,11 +273,6 @@ interface ConeInferenceContext : TypeSystemInferenceExtensionContext, ConeTypeCo
         return ConeStubTypeForTypeVariableInSubtyping(typeVariable, ConeNullability.create(typeVariable.defaultType().isMarkedNullable()))
     }
 
-    override fun KotlinTypeMarker.isFinal(): Boolean {
-        require(this is ConeKotlinType)
-        return !this.canHaveSubtypes(session)
-    }
-
     override fun KotlinTypeMarker.removeAnnotations(): KotlinTypeMarker {
         require(this is ConeKotlinType)
         return withAttributes(ConeAttributes.Empty)
@@ -388,6 +384,13 @@ interface ConeInferenceContext : TypeSystemInferenceExtensionContext, ConeTypeCo
         return this is ConeCapturedTypeConstructor
     }
 
+    override fun KotlinTypeMarker.eraseContainingTypeParameters(): KotlinTypeMarker {
+        val erasedTypeParameters = this.extractTypeParameters()
+            .map { (it as ConeTypeParameterLookupTag).typeParameterSymbol }
+            .eraseToUpperBoundsAssociated(session, intersectUpperBounds = true, eraseRecursively = true)
+        return ConeSubstitutorByMap(erasedTypeParameters, session).safeSubstitute(this)
+    }
+
     override fun TypeConstructorMarker.isTypeParameterTypeConstructor(): Boolean {
         return this.getTypeParameterClassifier() != null
     }
@@ -477,7 +480,6 @@ interface ConeInferenceContext : TypeSystemInferenceExtensionContext, ConeTypeCo
         return this.lowerBoundIfFlexible().safeAs<ConeKotlinType>()?.isExtensionFunctionType(session) == true
     }
 
-    @OptIn(ExperimentalStdlibApi::class)
     override fun KotlinTypeMarker.extractArgumentsForFunctionalTypeOrSubtype(): List<KotlinTypeMarker> {
         val builtInFunctionalType = getFunctionalTypeFromSupertypes().cast<ConeKotlinType>()
         return buildList {

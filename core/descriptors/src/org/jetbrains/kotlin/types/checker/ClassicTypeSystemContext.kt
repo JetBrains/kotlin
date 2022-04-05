@@ -460,11 +460,6 @@ interface ClassicTypeSystemContext : TypeSystemInferenceExtensionContext, TypeSy
         return makeSimpleTypeDefinitelyNotNullOrNotNullInternal(this)
     }
 
-    override fun KotlinTypeMarker.isFinal(): Boolean {
-        require(this is KotlinType, this::errorMessage)
-        return !TypeUtils.canHaveSubtypes(KotlinTypeChecker.DEFAULT, this)
-    }
-
     override fun KotlinTypeMarker.removeAnnotations(): KotlinTypeMarker {
         require(this is UnwrappedType, this::errorMessage)
         return this.replaceAnnotations(Annotations.EMPTY)
@@ -712,6 +707,17 @@ interface ClassicTypeSystemContext : TypeSystemInferenceExtensionContext, TypeSy
 
     override fun TypeConstructorMarker.isCapturedTypeConstructor(): Boolean {
         return this is NewCapturedTypeConstructor
+    }
+
+    override fun KotlinTypeMarker.eraseContainingTypeParameters(): KotlinTypeMarker {
+        val eraser = TypeParameterUpperBoundEraser(
+            ErasureProjectionComputer(),
+            TypeParameterErasureOptions(leaveNonTypeParameterTypes = true, intersectUpperBounds = true)
+        )
+        val typeParameters = this.extractTypeParameters()
+            .map { it as TypeParameterDescriptor }
+            .associateWith { TypeProjectionImpl(eraser.getErasedUpperBound(it, ErasureTypeAttributes(TypeUsage.COMMON))) }
+        return TypeConstructorSubstitution.createByParametersMap(typeParameters).buildSubstitutor().safeSubstitute(this)
     }
 
     override fun TypeConstructorMarker.isTypeParameterTypeConstructor(): Boolean {
