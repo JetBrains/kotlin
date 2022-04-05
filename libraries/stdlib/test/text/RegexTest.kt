@@ -460,13 +460,7 @@ class RegexTest {
     }
 
     @Test fun replaceWithNamedGroups() {
-        if (!supportsNamedCapturingGroup) {
-            assertFails {
-                val pattern = Regex("(?<first>\\d+)-(?<second>\\d+)")
-                pattern.replace("123-456", "\${first}+\${second}")
-            }
-            return
-        }
+        if (!supportsNamedCapturingGroup) return
 
         val pattern = Regex("(?<first>\\d+)-(?<second>\\d+)")
 
