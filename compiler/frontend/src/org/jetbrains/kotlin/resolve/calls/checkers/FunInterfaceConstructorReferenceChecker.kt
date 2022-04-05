@@ -16,7 +16,7 @@ object FunInterfaceConstructorReferenceChecker : CallChecker {
     override fun check(resolvedCall: ResolvedCall<*>, reportOn: PsiElement, context: CallCheckerContext) {
         if (context.languageVersionSettings.supportsFeature(LanguageFeature.KotlinFunInterfaceConstructorReference)) return
 
-        val resultingDescriptor = resolvedCall.resultingDescriptor
+        val resultingDescriptor = resolvedCall.resultingDescriptor.original
         if (resultingDescriptor !is SamConstructorDescriptor || !resolvedCall.call.isCallableReference()) return
 
         if (resultingDescriptor.baseDescriptorForSynthetic.isFun) {
