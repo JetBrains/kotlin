@@ -14,15 +14,17 @@ import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.Nested
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtensionOrNull
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinGradleModule
+import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.hasKpmModel
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.withRefinesClosure
+import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.replaceProjectDependenciesWithPublishedMavenDependencies
+import org.jetbrains.kotlin.gradle.plugin.mpp.toModuleDependency
 import org.jetbrains.kotlin.gradle.plugin.sources.KotlinDependencyScope
 import org.jetbrains.kotlin.gradle.plugin.sources.sourceSetDependencyConfigurationByScope
 import org.jetbrains.kotlin.gradle.targets.metadata.dependsOnClosureWithInterCompilationDependencies
 import org.jetbrains.kotlin.gradle.targets.metadata.getPublishedPlatformCompilations
 import org.jetbrains.kotlin.gradle.targets.metadata.isSharedNativeSourceSet
 import org.jetbrains.kotlin.gradle.targets.native.internal.CInteropCommonizerCompositeMetadataJarBundling.cinteropMetadataDirectoryPath
+import org.jetbrains.kotlin.project.model.MavenModuleIdentifier
 import org.w3c.dom.Document
 import org.w3c.dom.Element
 import org.w3c.dom.Node
@@ -103,7 +105,7 @@ data class KotlinProjectStructureMetadata(
     val sourceSetBinaryLayout: Map<String, SourceSetMetadataLayout>,
 
     @Internal
-    val sourceSetModuleDependencies: Map<String, Set<ModuleDependencyIdentifier>>,
+    val sourceSetModuleDependencies: Map<String, Set<MavenModuleIdentifier>>,
 
     @Input
     val sourceSetCInteropMetadataDirectory: Map<String, String>,
@@ -120,7 +122,9 @@ data class KotlinProjectStructureMetadata(
     @Suppress("UNUSED") // Gradle input
     @get:Input
     internal val sourceSetModuleDependenciesInput: Map<String, Set<Pair<String, String>>>
-        get() = sourceSetModuleDependencies.mapValues { (_, ids) -> ids.map { (group, module) -> group.orEmpty() to module }.toSet() }
+        get() = sourceSetModuleDependencies.mapValues { (_, ids) ->
+            ids.map { it.group.orEmpty() to it.name }.toSet()
+        }
 
     companion object {
         internal const val FORMAT_VERSION_0_1 = "0.1"
@@ -205,19 +209,16 @@ internal fun buildProjectStructureMetadata(module: KotlinGradleModule): KotlinPr
         module.fragments.associate { it.name to it.directRefinesDependencies.map { it.fragmentName }.toSet() }
 
     // FIXME: support native implementation-as-api-dependencies
-    // FIXME: support dependencies on auxiliary modules
     val fragmentDependencies =
         module.fragments.associate { fragment ->
-            fragment.name to fragment.declaredModuleDependencies.map {
-                ModuleIds.lossyFromModuleIdentifier(module.project, it.moduleIdentifier)
-            }.toSet()
+            fragment.name to fragment.declaredModuleDependencies
         }
 
     return KotlinProjectStructureMetadata(
         sourceSetNamesByVariantName = expandVariantKeys(kotlinFragmentsPerKotlinVariant),
         sourceSetsDependsOnRelation = fragmentRefinesRelation,
         sourceSetBinaryLayout = module.fragments.associate { it.name to SourceSetMetadataLayout.KLIB },
-        sourceSetModuleDependencies = fragmentDependencies,
+        sourceSetModuleDependencies = fragmentDependencies, // TODO in next commit: replace values with published modules
         sourceSetCInteropMetadataDirectory = emptyMap(), // Not supported yet
         hostSpecificSourceSets = getHostSpecificFragments(module).mapTo(mutableSetOf()) { it.name },
         isPublishedAsRoot = true
@@ -253,7 +254,7 @@ internal fun <Serializer> KotlinProjectStructureMetadata.serialize(
                     value(NAME_NODE_NAME, sourceSet)
                     multiValue(DEPENDS_ON_NODE_NAME, sourceSetsDependsOnRelation[sourceSet].orEmpty().toList())
                     multiValue(MODULE_DEPENDENCY_NODE_NAME, sourceSetModuleDependencies[sourceSet].orEmpty().map { moduleDependency ->
-                        moduleDependency.groupId + ":" + moduleDependency.moduleId
+                        moduleDependency.group + ":" + moduleDependency.name
                     })
                     sourceSetCInteropMetadataDirectory[sourceSet]?.let { cinteropMetadataDirectory ->
                         value(SOURCE_SET_CINTEROP_METADATA_NODE_NAME, cinteropMetadataDirectory)
@@ -345,7 +346,7 @@ internal fun <ParsingContext> parseKotlinSourceSetMetadata(
     }
 
     val sourceSetDependsOnRelation = mutableMapOf<String, Set<String>>()
-    val sourceSetModuleDependencies = mutableMapOf<String, Set<ModuleDependencyIdentifier>>()
+    val sourceSetModuleDependencies = mutableMapOf<String, Set<MavenModuleIdentifier>>()
     val sourceSetBinaryLayout = mutableMapOf<String, SourceSetMetadataLayout>()
     val sourceSetCInteropMetadataDirectory = mutableMapOf<String, String>()
     val hostSpecificSourceSets = mutableSetOf<String>()
@@ -357,8 +358,9 @@ internal fun <ParsingContext> parseKotlinSourceSetMetadata(
 
         val dependsOn = sourceSetNode.multiValues(DEPENDS_ON_NODE_NAME).toSet()
         val moduleDependencies = sourceSetNode.multiValues(MODULE_DEPENDENCY_NODE_NAME).mapTo(mutableSetOf()) {
-            val (groupId, moduleId) = it.split(":")
-            ModuleDependencyIdentifier(groupId, moduleId)
+            val dependencyNotationParts = it.split(":")
+            val (groupId, moduleId) = dependencyNotationParts
+            MavenModuleIdentifier(groupId, moduleId, null /* TODO in next commits: classifiers */)
         }
 
         sourceSetNode.valueNamed(SOURCE_SET_CINTEROP_METADATA_NODE_NAME)?.let { cinteropMetadataDirectory ->
