@@ -16,6 +16,9 @@ where advanced options include:
                              -Xassertions=jvm:            enable, depend on jvm assertion settings;
                              -Xassertions=legacy:         calculate condition on each call, check depends on jvm assertion settings in the kotlin package;
                              default: legacy
+  -Xbackend-threads=<N>      When using the IR backend, run lowerings by file in N parallel threads.
+                             0 means use a thread per processor core.
+                             Default value is 1
   -Xbuild-file=<path>        Path to the .xml build file to compile
   -Xcompile-java             Reuse javac analysis and compile Java source files
   -Xdump-declarations-to=<path> Path to JSON file to dump Java to Kotlin declaration mappings
@@ -99,9 +102,6 @@ where advanced options include:
                                * ignore
                                * strict
                                * warn (report a warning)
-  -Xbackend-threads=<N>      When using the IR backend, run lowerings by file in N parallel threads.
-                             0 means use a thread per processor core.
-                             Default value is 1
   -Xprofile=<profilerPath:command:outputDir>
                              Debug option: Run compiler with async profiler and save snapshots to `outputDir`; `command` is passed to async-profiler on start.
                              `profilerPath` is a path to libasyncProfiler.so; async-profiler.jar should be on the compiler classpath.

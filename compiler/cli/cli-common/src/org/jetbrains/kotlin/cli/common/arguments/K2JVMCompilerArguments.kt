@@ -124,7 +124,7 @@ class K2JVMCompilerArguments : CommonCompilerArguments() {
                 "0 means use a thread per processor core.\n" +
                 "Default value is 1"
     )
-    var parallelBackendThreads: String by FreezableVar("1")
+    var backendThreads: String by FreezableVar("1")
 
     @Argument(value = "-Xmodule-path", valueDescription = "<path>", description = "Paths where to find Java 9+ modules")
     var javaModulePath: String? by NullableStringFreezableVar(null)
@@ -505,7 +505,7 @@ Also sets `-jvm-target` value equal to the selected JDK version"""
 
     @Argument(
         value = "-Xlink-via-signatures",
-        description = "Link JVM IR symbols via signatures, instead of descriptors. \n" +
+        description = "Link JVM IR symbols via signatures, instead of descriptors.\n" +
                 "This mode is slower, but can be useful in troubleshooting problems with the JVM IR backend"
     )
     var linkViaSignatures: Boolean by FreezableVar(false)
