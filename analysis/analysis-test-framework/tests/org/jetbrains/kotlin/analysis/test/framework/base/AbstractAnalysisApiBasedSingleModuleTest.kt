@@ -23,16 +23,4 @@ abstract class AbstractAnalysisApiBasedSingleModuleTest : AbstractAnalysisApiBas
     }
 
     protected abstract fun doTestByFileStructure(ktFiles: List<KtFile>, module: TestModule, testServices: TestServices)
-
-    protected inline fun <R> analyseOnPooledThreadInReadAction(context: KtElement, crossinline action: KtAnalysisSession.() -> R): R =
-        executeOnPooledThreadInReadAction {
-            analyseForTest(context) { action() }
-        }
-
-    protected inline fun <T> runReadAction(crossinline runnable: () -> T): T {
-        return ApplicationManager.getApplication().runReadAction(Computable { runnable() })
-    }
-
-    protected inline fun <R> executeOnPooledThreadInReadAction(crossinline action: () -> R): R =
-        ApplicationManager.getApplication().executeOnPooledThread<R> { runReadAction(action) }.get()
 }
