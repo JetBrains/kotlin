@@ -41,7 +41,8 @@ public actual val isFloat32RangeEnforced: Boolean = true
 
 public actual val supportsSuppressedExceptions: Boolean get() = !isJava6
 
-public actual val supportsNamedCapturingGroup: Boolean get() = !isJava6
+// Named capturing groups are supported starting from java 7. However, retrieving them by name is not supported in java 7.
+public actual val supportsNamedCapturingGroup: Boolean get() = isJava8AndAbove
 
 public actual val supportsOctalLiteralInRegex: Boolean get() = true
 
