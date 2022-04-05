@@ -16962,6 +16962,12 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
         }
 
         @Test
+        @TestMetadata("fakeOverrideInAnonymousObject.kt")
+        public void testFakeOverrideInAnonymousObject() throws Exception {
+            runTest("compiler/testData/codegen/box/fakeOverride/fakeOverrideInAnonymousObject.kt");
+        }
+
+        @Test
         @TestMetadata("function.kt")
         public void testFunction() throws Exception {
             runTest("compiler/testData/codegen/box/fakeOverride/function.kt");
@@ -45636,9 +45642,27 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
         }
 
         @Test
+        @TestMetadata("resolveToMemberOfSuperclass_overrideWithDifferentType.kt")
+        public void testResolveToMemberOfSuperclass_overrideWithDifferentType() throws Exception {
+            runTest("compiler/testData/codegen/box/smartCasts/resolveToMemberOfSuperclass_overrideWithDifferentType.kt");
+        }
+
+        @Test
+        @TestMetadata("resolveToMemberOfSuperclass_overrideWithSameType.kt")
+        public void testResolveToMemberOfSuperclass_overrideWithSameType() throws Exception {
+            runTest("compiler/testData/codegen/box/smartCasts/resolveToMemberOfSuperclass_overrideWithSameType.kt");
+        }
+
+        @Test
         @TestMetadata("smartCastInsideIf.kt")
         public void testSmartCastInsideIf() throws Exception {
             runTest("compiler/testData/codegen/box/smartCasts/smartCastInsideIf.kt");
+        }
+
+        @Test
+        @TestMetadata("toStringOnReceiverWIthSmartcast.kt")
+        public void testToStringOnReceiverWIthSmartcast() throws Exception {
+            runTest("compiler/testData/codegen/box/smartCasts/toStringOnReceiverWIthSmartcast.kt");
         }
 
         @Test
