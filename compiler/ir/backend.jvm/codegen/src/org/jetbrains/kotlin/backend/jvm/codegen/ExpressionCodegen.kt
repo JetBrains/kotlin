@@ -40,12 +40,17 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrCompositeImpl
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.symbols.IrValueParameterSymbol
+import org.jetbrains.kotlin.ir.symbols.IrValueSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
+import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
+import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
+import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes
-import org.jetbrains.kotlin.resolve.jvm.AsmTypes.*
+import org.jetbrains.kotlin.resolve.jvm.AsmTypes.JAVA_STRING_TYPE
+import org.jetbrains.kotlin.resolve.jvm.AsmTypes.OBJECT_TYPE
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodParameterKind
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature
 import org.jetbrains.kotlin.types.TypeSystemCommonBackendContext
@@ -125,6 +130,7 @@ class Gap(val start: Label, val end: Label)
 
 class VariableInfo(val declaration: IrVariable, val index: Int, val type: Type, val startLabel: Label) {
     val gaps = mutableListOf<Gap>()
+    var explicitEndLabel: Label? = null
 }
 
 class ExpressionCodegen(
@@ -424,7 +430,8 @@ class ExpressionCodegen(
                     mv.visitLocalVariable(it.declaration.name.asString(), it.type.descriptor, null, start, gap.start, it.index)
                     start = gap.end
                 }
-                mv.visitLocalVariable(it.declaration.name.asString(), it.type.descriptor, null, start, endLabel, it.index)
+                val end = it.explicitEndLabel ?: endLabel
+                mv.visitLocalVariable(it.declaration.name.asString(), it.type.descriptor, null, start, end, it.index)
             }
         }
 
@@ -1102,15 +1109,52 @@ class ExpressionCodegen(
         // We have a regular 'do-while' loop. Proceed as usual.
         mv.fakeAlwaysFalseIfeq(continueLabel)
         mv.fakeAlwaysFalseIfeq(endLabel)
+
         data.withBlock(loopInfo) {
             loop.body?.accept(this, data)?.discard()
             mv.visitLabel(continueLabel)
             loop.condition.markLineNumber(true)
             loop.condition.accept(this, data).coerceToBoolean().jumpIfTrue(entry)
+            endUnreferencedDoWhileLocals(data, loop, continueLabel)
         }
         mv.mark(endLabel)
         addInlineMarker(mv, false)
         return unitValue
+    }
+
+    // Locals introduced in the body of a do-while loop are not necessarily declared when the condition is
+    // reached. For example, there could be a continue from the body before the local is declared:
+    //
+    //   do {
+    //       if (shouldContinue(x)) {
+    //           continue
+    //       }
+    //       var y = 32 // this variable is not necessarily declared on the do-while condition
+    //       doSomething(y)
+    //   } while (x < 2)
+    //
+    // This is all fine for variables used in the condition. If a variable that is not definitely
+    // assigned is used in the condition, the frontend rightly rejects the code. However, for variables
+    // that are *not* referenced in the condition, we have to be conservative and make sure that
+    // they do not end up in the local variable table. Otherwise, the debugger and other build tools
+    // such as D8 will see locals information that makes no sense.
+    private fun endUnreferencedDoWhileLocals(blockInfo: BlockInfo, loop: IrDoWhileLoop, continueLabel: Label) {
+        val referencedValues = hashSetOf<IrValueSymbol>()
+        loop.condition.acceptVoid(object : IrElementVisitorVoid {
+            override fun visitElement(element: IrElement) {
+                element.acceptChildrenVoid(this)
+            }
+
+            override fun visitGetValue(expression: IrGetValue) {
+                referencedValues.add(expression.symbol)
+                super.visitGetValue(expression)
+            }
+        })
+        blockInfo.variables.forEach {
+            if (it.declaration.symbol !in referencedValues) {
+                it.explicitEndLabel = continueLabel
+            }
+        }
     }
 
     private fun unwindBlockStack(
