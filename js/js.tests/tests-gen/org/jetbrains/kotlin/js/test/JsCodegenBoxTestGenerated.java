@@ -20169,6 +20169,42 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             }
 
             @Nested
+            @TestMetadata("compiler/testData/codegen/box/inlineClasses/sealed/methods")
+            @TestDataPath("$PROJECT_ROOT")
+            public class Methods {
+                @Test
+                public void testAllFilesPresentInMethods() throws Exception {
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/inlineClasses/sealed/methods"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS, true);
+                }
+
+                @Nested
+                @TestMetadata("compiler/testData/codegen/box/inlineClasses/sealed/methods/string")
+                @TestDataPath("$PROJECT_ROOT")
+                public class String {
+                    @Test
+                    public void testAllFilesPresentInString() throws Exception {
+                        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/inlineClasses/sealed/methods/string"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS, true);
+                    }
+
+                    @Nested
+                    @TestMetadata("compiler/testData/codegen/box/inlineClasses/sealed/methods/string/toString")
+                    @TestDataPath("$PROJECT_ROOT")
+                    public class ToString {
+                        @Test
+                        public void testAllFilesPresentInToString() throws Exception {
+                            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/inlineClasses/sealed/methods/string/toString"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS, true);
+                        }
+
+                        @Test
+                        @TestMetadata("stringToStringN.kt")
+                        public void testStringToStringN() throws Exception {
+                            runTest("compiler/testData/codegen/box/inlineClasses/sealed/methods/string/toString/stringToStringN.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+                        }
+                    }
+                }
+            }
+
+            @Nested
             @TestMetadata("compiler/testData/codegen/box/inlineClasses/sealed/returnType")
             @TestDataPath("$PROJECT_ROOT")
             public class ReturnType {

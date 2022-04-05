@@ -22824,6 +22824,53 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
                 }
 
                 @Nested
+                @TestMetadata("compiler/testData/codegen/box/inlineClasses/sealed/methods")
+                @TestDataPath("$PROJECT_ROOT")
+                @Tag("codegen")
+                @UseExtTestCaseGroupProvider()
+                public class Methods {
+                    @Test
+                    public void testAllFilesPresentInMethods() throws Exception {
+                        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/inlineClasses/sealed/methods"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
+                    }
+
+                    @Nested
+                    @TestMetadata("compiler/testData/codegen/box/inlineClasses/sealed/methods/string")
+                    @TestDataPath("$PROJECT_ROOT")
+                    @Tag("codegen")
+                    @UseExtTestCaseGroupProvider()
+                    public class String {
+                        @Test
+                        public void testAllFilesPresentInString() throws Exception {
+                            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/inlineClasses/sealed/methods/string"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
+                        }
+
+                        @Nested
+                        @TestMetadata("compiler/testData/codegen/box/inlineClasses/sealed/methods/string/toString")
+                        @TestDataPath("$PROJECT_ROOT")
+                        @Tag("codegen")
+                        @UseExtTestCaseGroupProvider()
+                        public class ToString {
+                            public ToString() {
+                                register("compiler/testData/codegen/box/inlineClasses/sealed/methods/string/toString/stringToStringN.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+                            }
+
+                            @Test
+                            public void testAllFilesPresentInToString() throws Exception {
+                                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/inlineClasses/sealed/methods/string/toString"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
+                            }
+
+                            @Test
+                            @TestMetadata("stringToStringN.kt")
+                            public void testStringToStringN() throws Exception {
+                                // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
+                                runTest("compiler/testData/codegen/box/inlineClasses/sealed/methods/string/toString/stringToStringN.kt");
+                            }
+                        }
+                    }
+                }
+
+                @Nested
                 @TestMetadata("compiler/testData/codegen/box/inlineClasses/sealed/returnType")
                 @TestDataPath("$PROJECT_ROOT")
                 @Tag("codegen")

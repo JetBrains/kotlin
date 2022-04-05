@@ -94,8 +94,8 @@ class ClassGenerator(
                 classDescriptor.thisAsReceiverParameter.type.toIrType()
             )
 
-            if (classDescriptor.isValue && irClass.modality == Modality.SEALED) {
-                generatePropertyForSealedInlineClassOrFakeOverride(irClass)
+            if (classDescriptor.isValue && irClass.modality == Modality.SEALED && !classDescriptor.getSuperClassOrAny().isValueClass()) {
+                generatePropertyForSealedInlineClass(irClass)
             }
 
             generateFieldsForContextReceivers(irClass, classDescriptor)
@@ -524,7 +524,7 @@ class ClassGenerator(
         }
     }
 
-    private fun generatePropertyForSealedInlineClassOrFakeOverride(irClass: IrClass) {
+    private fun generatePropertyForSealedInlineClass(irClass: IrClass) {
         val irProperty = context.irFactory.createProperty(
             UNDEFINED_OFFSET, UNDEFINED_OFFSET,
             IrDeclarationOrigin.FIELD_FOR_SEALED_INLINE_CLASS,

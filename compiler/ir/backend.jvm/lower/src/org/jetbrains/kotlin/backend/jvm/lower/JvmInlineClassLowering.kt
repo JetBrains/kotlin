@@ -70,23 +70,19 @@ private class JvmInlineClassLowering(context: JvmBackendContext) : JvmValueClass
     override fun IrFunction.isSpecificFieldGetter(): Boolean = isInlineClassFieldGetter
 
     override fun buildAdditionalMethodsForSealedInlineClass(declaration: IrClass) {
-        if (declaration.isChildOfSealedInlineClass()) {
+        if (declaration.isChildOfSealedInlineClass() && declaration.modality != Modality.SEALED) {
             val irConstructor = declaration.primaryConstructor!!
-            val parent = declaration.sealedInlineClassParent()
-            updateGetterForSealedInlineClassChild(declaration, parent)
-            rewriteConstructorForSealedInlineClassChild(declaration, parent, irConstructor)
+            updateGetterForSealedInlineClassChild(declaration, declaration.defaultType.findTopSealedInlineSuperClass())
+            rewriteConstructorForSealedInlineClassChild(declaration, declaration.sealedInlineClassParent(), irConstructor)
             removeMethods(declaration)
         }
 
-        if (declaration.modality == Modality.SEALED) {
+        if (declaration.modality == Modality.SEALED && !declaration.isChildOfSealedInlineClass()) {
             patchReceiverParameterOfValueGetter(declaration)
 
             val info = SealedInlineClassInfo.analyze(declaration)
             buildIsMethodsForSealedInlineClass(info)
-            rewriteFunctionFromAnyForSealed(info, "hashCode")
-            rewriteFunctionFromAnyForSealed(info, "toString")
-            rewriteOpenMethodsForSealed(info)
-            buildSpecializedEqualsMethodForSealed(info)
+            rewriteMethodsForSealed(info)
         }
     }
 
@@ -291,10 +287,10 @@ private class JvmInlineClassLowering(context: JvmBackendContext) : JvmValueClass
     }
 
     // For sealed inline class children we generate getter, which simply calls parent's and casts the result.
-    private fun updateGetterForSealedInlineClassChild(irClass: IrClass, parent: IrClass) {
+    private fun updateGetterForSealedInlineClassChild(irClass: IrClass, top: IrClass) {
         val fieldGetter = irClass.functions.find { it.isInlineClassFieldGetter } ?: error("${irClass.render()} has no getter")
 
-        val methodToOverride = parent.functions.single { it.name == InlineClassAbi.sealedInlineClassFieldName }
+        val methodToOverride = top.functions.single { it.name == InlineClassAbi.sealedInlineClassFieldName }
 
         require(
             methodToOverride.origin == IrDeclarationOrigin.FAKE_OVERRIDE ||
@@ -908,9 +904,13 @@ private class JvmInlineClassLowering(context: JvmBackendContext) : JvmValueClass
         }
     }
 
+    private fun rewriteMethodsForSealed(info: SealedInlineClassInfo) {
+        rewriteOpenMethodsForSealed(info)
+    }
+
     private fun rewriteOpenMethodsForSealed(info: SealedInlineClassInfo) {
         val irClass = info.top
-        val inlineSubclasses = irClass.sealedSubclasses.filter { it.owner.isInline }
+        val inlineSubclasses = info.inlineSubclasses
         val noinlineSubclasses = info.noinlineSubclasses
 
         val openMethods = irClass.functions.filter {
@@ -920,13 +920,9 @@ private class JvmInlineClassLowering(context: JvmBackendContext) : JvmValueClass
         if (openMethods.isEmpty()) return
 
         val overridesInNoinline = mapOverriddenToOverrides(noinlineSubclasses, openMethods)
-        val overridesInInline = mapOverriddenToOverrides(
-            inlineSubclasses.map { SealedInlineClassInfo.SubclassInfo(it, true, emptyList()) }, openMethods
-        )
+        val overridesInInline = mapOverriddenToOverrides(inlineSubclasses, openMethods)
 
         for (function in openMethods) {
-            // TODO: Remove
-            if (function.owner.name.asString().let { it == "toString" || it == "hashCode" }) continue
             if (function !in overridesInInline && function !in overridesInNoinline) continue
             if (function.owner.isFakeOverride) continue
 

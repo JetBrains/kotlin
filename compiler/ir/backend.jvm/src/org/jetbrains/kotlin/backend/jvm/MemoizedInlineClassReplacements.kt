@@ -57,6 +57,7 @@ class MemoizedInlineClassReplacements(
 
                 // Do not update sealed inline class value getter
                 it.origin == IrDeclarationOrigin.GETTER_OF_SEALED_INLINE_CLASS_FIELD -> null
+                it.origin == IrDeclarationOrigin.FAKE_OVERRIDE && it.name == InlineClassAbi.sealedInlineClassFieldName -> null
 
                 // Don't mangle anonymous or synthetic functions, except for generated SAM wrapper methods
                 (it.isLocal && it is IrSimpleFunction && it.overriddenSymbols.isEmpty()) ||
