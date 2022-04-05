@@ -50,6 +50,12 @@ public class LocalVariableTestGenerated extends AbstractLocalVariableTest {
     }
 
     @Test
+    @TestMetadata("doWhile.kt")
+    public void testDoWhile() throws Exception {
+        runTest("compiler/testData/debug/localVariables/doWhile.kt");
+    }
+
+    @Test
     @TestMetadata("emptyFun.kt")
     public void testEmptyFun() throws Exception {
         runTest("compiler/testData/debug/localVariables/emptyFun.kt");
