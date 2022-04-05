@@ -24,6 +24,10 @@ fun main(args: Array<String>) {
             testClass<AbstractSerializationFirMembersTest> {
                 model("firMembers")
             }
+
+            testClass<AbstractSerializationFirBlackBoxTest> {
+                model("firMembers")
+            }
         }
     }
 }

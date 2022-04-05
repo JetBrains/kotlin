@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.fir.declarations.findArgumentByName
 import org.jetbrains.kotlin.fir.declarations.utils.modality
 import org.jetbrains.kotlin.fir.expressions.classId
+import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlinx.serialization.compiler.resolve.SerializationAnnotations
@@ -52,11 +53,12 @@ internal fun FirClassSymbol<*>.isSerializableEnum(): Boolean = classKind == Clas
 internal fun FirClassSymbol<*>.isInternallySerializableEnum(): Boolean =
     classKind == ClassKind.ENUM_CLASS && hasSerializableAnnotationWithoutArgs
 
-// FIXME: fir.modality returns null, .modality shows
-// org.jetbrains.kotlin.fir.declarations.impl.FirDeclarationStatusImpl cannot be cast to org.jetbrains.kotlin.fir.declarations.FirResolvedDeclarationStatus
-//java.lang.ClassCastException: org.jetbrains.kotlin.fir.declarations.impl.FirDeclarationStatusImpl cannot be cast to org.jetbrains.kotlin.fir.declarations.FirResolvedDeclarationStatus
-//	at org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol.getResolvedStatus(FirClassLikeSymbol.kt:69)
-//	at org.jetbrains.kotlinx.serialization.compiler.fir.SerializationFirUtilsKt.getShouldHaveGeneratedSerializer(SerializationFirUtils.kt:65)
 internal val FirClassSymbol<*>.shouldHaveGeneratedSerializer: Boolean
-    get() = isInternalSerializable
-//    get() = (isInternalSerializable && (fir.modality!! == Modality.FINAL || fir.modality!! == Modality.OPEN)) || isInternallySerializableEnum()
+    get() = (isInternalSerializable && isFinalOrOpen()) || isInternallySerializableEnum()
+
+@OptIn(SymbolInternals::class)
+private fun FirClassSymbol<*>.isFinalOrOpen(): Boolean {
+    val modality = fir.status.modality
+    // null means default modality, final
+    return (modality == null || modality == Modality.FINAL || modality == Modality.OPEN)
+}

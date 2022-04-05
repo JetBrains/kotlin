@@ -10,11 +10,12 @@ import org.jetbrains.kotlin.descriptors.EffectiveVisibility
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.analysis.checkers.getContainingDeclarationSymbol
+import org.jetbrains.kotlin.fir.copy
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirPluginKey
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
-import org.jetbrains.kotlin.fir.declarations.builder.buildRegularClass
-import org.jetbrains.kotlin.fir.declarations.builder.buildTypeParameter
+import org.jetbrains.kotlin.fir.declarations.builder.*
 import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.declarations.utils.addDefaultBoundIfNecessary
 import org.jetbrains.kotlin.fir.declarations.utils.superConeTypes
@@ -23,8 +24,11 @@ import org.jetbrains.kotlin.fir.extensions.FirDeclarationPredicateRegistrar
 import org.jetbrains.kotlin.fir.extensions.predicate.AnnotatedWith
 import org.jetbrains.kotlin.fir.extensions.predicateBasedProvider
 import org.jetbrains.kotlin.fir.moduleData
+import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.defaultType
-import org.jetbrains.kotlin.fir.scopes.kotlinScopeProvider
+import org.jetbrains.kotlin.fir.resolve.lookupSuperTypes
+import org.jetbrains.kotlin.fir.scopes.*
+import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.classId
@@ -95,6 +99,8 @@ class SerializationFirResolveExtension(session: FirSession) : FirDeclarationGene
      *
      * 3. Is it supposed to check that classSymbol does not already have same Name? How to add a generated overload?
      *
+     * 4. It is unclear what to do with properties
+     *
      */
     override fun getCallableNamesForClass(classSymbol: FirClassSymbol<*>): Set<Name> {
         val classId = classSymbol.classId
@@ -110,10 +116,15 @@ class SerializationFirResolveExtension(session: FirSession) : FirDeclarationGene
                 }
             }
             SerialEntityNames.SERIALIZER_CLASS_NAME -> {
-                //
                 // TODO: check classSymbol for already added functions
                 // TODO: support user-defined serializers?
-                result += setOf(SpecialNames.INIT, SerialEntityNames.SAVE_NAME, SerialEntityNames.LOAD_NAME)
+                result += setOf(
+                    SpecialNames.INIT,
+                    SerialEntityNames.SAVE_NAME,
+                    SerialEntityNames.LOAD_NAME,
+                    // FIXME: correctly create property?
+                    SerialEntityNames.SERIAL_DESC_FIELD_NAME
+                )
                 if (classSymbol.superConeTypes.any {
                         it.classId == ClassId(
                             SerializationPackages.internalPackageFqName,
@@ -132,25 +143,88 @@ class SerializationFirResolveExtension(session: FirSession) : FirDeclarationGene
         return result
     }
 
-    // FIXME: it seems tedious to declare overrides. In old FE, one could do getMemberScope(typeParam) and get correct FO to simply copy data from it.
-    //  Is this possible here? (see KSerializerDescriptorResolver.doCreateSerializerFunction)
-    //
-    //  lookupSuperTypes(owner, true, true, session).map { it.fullyExpandedType(session) }
-    //  does not create correct substitutions.
-    //
+    @OptIn(SymbolInternals::class)
+    private fun <T> getFromSupertype(callableId: CallableId, owner: FirClassSymbol<*>, extractor: (FirTypeScope) -> List<T>): T {
+        val scopeSession = ScopeSession() // ????????
+        val scopes = lookupSuperTypes(
+            owner, lookupInterfaces = true, deep = false, useSiteSession = session
+        ).mapNotNull { useSiteSuperType ->
+            useSiteSuperType.scopeForSupertype(session, scopeSession, owner.fir)
+        }
+        val targets = scopes.flatMap { extractor(it) }
+        val target = targets.singleOrNull() ?: error("Multiple overrides found for ${callableId.callableName}")
+        return target
+    }
+
     // TODO: support @Serializer(for)
+    @OptIn(SymbolInternals::class)
     override fun generateFunctions(callableId: CallableId, owner: FirClassSymbol<*>?): List<FirNamedFunctionSymbol> {
         if (owner == null) return emptyList()
-        if (owner.name != SerialEntityNames.SERIALIZER_CLASS_NAME) return emptyList() // TODO: support other cases
-//        val serializableClass = matchedClasses.firstOrNull { it.classId == owner.classId.outerClassId }
-//        val (superTypeGenerated) = owner.resolvedSuperTypeRefs // TODO: more reliable logic than based on indices
-//        val superGeneratedSerializerClass = superTypeGenerated.toRegularClassSymbol(session)!!
-        println(owner)
-        println(callableId)
-//        when(callableId.callableName) {
-//            SerialEntityNames.SAVE_NAME ->
-//        }
-        return emptyList()
+        if (owner.name == SpecialNames.DEFAULT_NAME_FOR_COMPANION_OBJECT && callableId.callableName == SerialEntityNames.SERIALIZER_PROVIDER_NAME)
+            return listOf(generateSerializerGetterInCompanion(owner, callableId))
+        if (owner.name != SerialEntityNames.SERIALIZER_CLASS_NAME) return emptyList() // TODO: support getter in companion
+        if (callableId.callableName !in setOf(
+                SpecialNames.INIT,
+                SerialEntityNames.SAVE_NAME,
+                SerialEntityNames.LOAD_NAME,
+                SerialEntityNames.CHILD_SERIALIZERS_GETTER,
+                SerialEntityNames.TYPE_PARAMS_SERIALIZERS_GETTER
+            )
+        ) return emptyList()
+        val target = getFromSupertype(callableId, owner) { it.getFunctions(callableId.callableName) }
+        val original = target.fir
+        val copy = buildSimpleFunctionCopy(original) {
+            symbol = FirNamedFunctionSymbol(callableId)
+            origin = SerializationPluginKey.origin
+            status = original.status.copy(newModality = Modality.FINAL)
+
+        }
+        return listOf(copy.symbol)
+    }
+
+    private fun generateSerializerGetterInCompanion(owner: FirClassSymbol<*>, callableId: CallableId): FirNamedFunctionSymbol {
+        val f = buildSimpleFunction {
+            moduleData = session.moduleData
+            symbol = FirNamedFunctionSymbol(callableId)
+            origin = SerializationPluginKey.origin
+            status = FirResolvedDeclarationStatusImpl(
+                Visibilities.Public,
+                Modality.FINAL,
+                EffectiveVisibility.Public
+            )
+            name = callableId.callableName
+            dispatchReceiverType = owner.defaultType()
+
+            // TODO: handle serializable objects
+            val serializableType =
+                (owner.getContainingDeclarationSymbol(session) as? FirClassSymbol<*>) ?: error("Can't get outer class for $owner")
+
+            // TODO: Add value parameters & type parameters for parameterized classes
+            returnTypeRef = buildResolvedTypeRef {
+                type = kSerializerClassId.constructClassLikeType(
+                    arrayOf(serializableType.defaultType().toTypeProjection(Variance.INVARIANT)),
+                    isNullable = false
+                )
+            }
+        }
+        return f.symbol
+    }
+
+    @OptIn(SymbolInternals::class)
+    override fun generateProperties(callableId: CallableId, owner: FirClassSymbol<*>?): List<FirPropertySymbol> {
+        if (owner == null) return emptyList()
+        if (owner.name != SerialEntityNames.SERIALIZER_CLASS_NAME) return emptyList() // TODO: support getter in companion
+        if (callableId.callableName != SerialEntityNames.SERIAL_DESC_FIELD_NAME) return emptyList()
+
+        val target = getFromSupertype(callableId, owner) { it.getProperties(callableId.callableName).filterIsInstance<FirPropertySymbol>() }
+        val original = target.fir
+        val copy = buildPropertyCopy(original) {
+            symbol = FirPropertySymbol(callableId)
+            origin = SerializationPluginKey.origin
+            status = original.status.copy(newModality = Modality.FINAL)
+
+        }
+        return listOf(copy.symbol)
     }
 
     // FIXME: it seems that this list will always be used, why not provide it automatically?
@@ -207,15 +281,6 @@ class SerializationFirResolveExtension(session: FirSession) : FirDeclarationGene
                 // It seems that this code generates KSerializer<Box<[declared type param of Box]>> instead of KSerializer<Box<*>>, but it didn't matter for old FE
                 type = generatedSerializerClassId.constructClassLikeType(arrayOf(owner.defaultType().toTypeProjection(Variance.INVARIANT)), isNullable = false)
             }
-
-            // FIXME: It seems that if I want to access correctly substituted supertype functions in generateFunctions (see comment there),
-            //  I have to explicitly declare ALL supertypes, even though KSerializer, SerializationStrategy and DeserializationStrategy
-            //  are a supertype to GeneratedSerializer by definition.
-
-//            superTypeRefs += buildResolvedTypeRef {
-//                type = kSerializerClassId.constructClassLikeType(arrayOf(owner.defaultType().toTypeProjection(Variance.INVARIANT)), isNullable = false)
-//            }
-
         }
         // TODO: add typed constructor
 //        val secondaryCtors =

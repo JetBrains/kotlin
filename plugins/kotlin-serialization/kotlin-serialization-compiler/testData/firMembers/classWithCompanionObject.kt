@@ -3,9 +3,10 @@ import kotlinx.serialization.*
 @Serializable
 class SomeClass
 
-fun test() {
+fun box(): String {
 //    SomeClass.serializer()
 //    SomeClass.Companion.serializer()
+    return "OK"
 }
 
 
