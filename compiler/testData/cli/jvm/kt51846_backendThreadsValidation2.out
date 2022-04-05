@@ -1,0 +1,2 @@
+error: cannot parse -Xbackend-threads value: "abcd". Please use an integer number
+COMPILATION_ERROR

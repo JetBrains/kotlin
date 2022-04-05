@@ -689,6 +689,21 @@ public class CliTestGenerated extends AbstractCliTest {
             runTest("compiler/testData/cli/jvm/kt49209.args");
         }
 
+        @TestMetadata("kt51846_backendThreadsValidation1.args")
+        public void testKt51846_backendThreadsValidation1() throws Exception {
+            runTest("compiler/testData/cli/jvm/kt51846_backendThreadsValidation1.args");
+        }
+
+        @TestMetadata("kt51846_backendThreadsValidation2.args")
+        public void testKt51846_backendThreadsValidation2() throws Exception {
+            runTest("compiler/testData/cli/jvm/kt51846_backendThreadsValidation2.args");
+        }
+
+        @TestMetadata("kt51846_backendThreadsValidation3.args")
+        public void testKt51846_backendThreadsValidation3() throws Exception {
+            runTest("compiler/testData/cli/jvm/kt51846_backendThreadsValidation3.args");
+        }
+
         @TestMetadata("languageVersion.args")
         public void testLanguageVersion() throws Exception {
             runTest("compiler/testData/cli/jvm/languageVersion.args");
