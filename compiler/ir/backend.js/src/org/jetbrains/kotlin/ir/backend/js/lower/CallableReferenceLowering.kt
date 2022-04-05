@@ -375,11 +375,10 @@ class CallableReferenceLowering(private val context: CommonBackendContext) : Bod
                 }
             }
 
-            var j = 0
-
-            while (i < valueParameters.size) {
-                irCall.putValueArgument(j++, getValue(valueParameters[i++]))
+            repeat(funRef.valueArgumentsCount) {
+                irCall.putValueArgument(it, funRef.getValueArgument(it) ?: getValue(valueParameters[i++]))
             }
+            check(i == valueParameters.size) { "Unused parameters are left" }
 
             return irCall
         }
