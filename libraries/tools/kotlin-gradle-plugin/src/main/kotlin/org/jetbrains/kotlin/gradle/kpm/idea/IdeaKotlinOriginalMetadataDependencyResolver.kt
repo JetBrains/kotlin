@@ -18,7 +18,7 @@ internal class IdeaKotlinOriginalMetadataDependencyResolver(
     override fun resolve(fragment: KotlinGradleFragment): Set<IdeaKotlinDependency> {
         val dependencyIdentifiers = fragmentGranularMetadataResolverFactory.getOrCreate(fragment).resolutions
             .filterIsInstance<KeepOriginalDependency>()
-            .mapNotNull { resolution -> resolution.dependency.id as? ModuleComponentIdentifier }
+            .mapNotNull { resolution -> resolution.dependency.selected.id as? ModuleComponentIdentifier }
             .toSet()
 
         val allModuleCompileDependenciesConfiguration = fragment.project.configurations

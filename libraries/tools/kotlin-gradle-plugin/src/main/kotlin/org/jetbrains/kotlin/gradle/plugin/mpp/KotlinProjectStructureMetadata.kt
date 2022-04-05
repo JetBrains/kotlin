@@ -17,7 +17,6 @@ import org.jetbrains.kotlin.gradle.dsl.multiplatformExtensionOrNull
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.hasKpmModel
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.replaceProjectDependenciesWithPublishedMavenDependencies
-import org.jetbrains.kotlin.gradle.plugin.mpp.toModuleDependency
 import org.jetbrains.kotlin.gradle.plugin.sources.KotlinDependencyScope
 import org.jetbrains.kotlin.gradle.plugin.sources.sourceSetDependencyConfigurationByScope
 import org.jetbrains.kotlin.gradle.targets.metadata.dependsOnClosureWithInterCompilationDependencies
@@ -180,7 +179,9 @@ internal fun buildKotlinProjectStructureMetadata(project: Project): KotlinProjec
                     project.sourceSetDependencyConfigurationByScope(hierarchySourceSet, scope).allDependencies.toList()
                 }
             }
-            sourceSet.name to sourceSetExportedDependencies.map { ModuleIds.fromDependency(it) }.toSet()
+            sourceSet.name to sourceSetExportedDependencies.mapNotNullTo(mutableSetOf()) {
+                it.toModuleDependency(project).moduleIdentifier as? MavenModuleIdentifier
+            }
         },
         sourceSetCInteropMetadataDirectory = sourceSetsWithMetadataCompilations.keys
             .filter { isSharedNativeSourceSet(project, it) }

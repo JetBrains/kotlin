@@ -11,7 +11,7 @@ import org.gradle.api.artifacts.Configuration
 import org.gradle.api.artifacts.Dependency
 import org.gradle.api.artifacts.ModuleDependency
 import org.gradle.api.artifacts.ProjectDependency
-import org.gradle.api.artifacts.result.ResolvedComponentResult
+import org.gradle.api.artifacts.result.ResolvedDependencyResult
 import org.gradle.api.attributes.Attribute
 import org.gradle.api.attributes.AttributeContainer
 import org.jetbrains.kotlin.gradle.dsl.*
@@ -66,8 +66,11 @@ class ProjectStructureMetadataModuleBuilder {
         )
     }
 
-    fun getModule(component: ResolvedComponentResult, projectStructureMetadata: KotlinProjectStructureMetadata): KotlinModule {
-        val moduleId = component.toSingleModuleIdentifier()
+    fun getModule(
+        resolvedDependencyResult: ResolvedDependencyResult,
+        projectStructureMetadata: KotlinProjectStructureMetadata
+    ): KotlinModule {
+        val moduleId = resolvedDependencyResult.toModuleIdentifier()
         return modulesCache.getOrPut(moduleId) {
             buildModuleFromProjectStructureMetadata(
                 moduleId,
@@ -227,21 +230,21 @@ class GradleProjectModuleBuilder(private val addInferredSourceSetVisibilityAsExp
 }
 
 internal fun Dependency.toModuleDependency(
-    project: Project
+    thisProject: Project
 ): KotlinModuleDependency {
     return KotlinModuleDependency(
         when (this) {
             is ProjectDependency ->
                 LocalModuleIdentifier(
-                    project.currentBuildId().name,
+                    thisProject.currentBuildId().name,
                     dependencyProject.path,
-                    moduleClassifiersFromCapabilities(requestedCapabilities).single() // FIXME multiple capabilities
+                    moduleClassifierFromCapabilities(requestedCapabilities)
                 )
             is ModuleDependency ->
                 MavenModuleIdentifier(
                     group.orEmpty(),
                     name,
-                    moduleClassifiersFromCapabilities(requestedCapabilities).single() // FIXME multiple capabilities
+                    moduleClassifierFromCapabilities(requestedCapabilities)
                 )
             else -> MavenModuleIdentifier(group.orEmpty(), name, null)
         }

@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.gradle.targets.metadata
 
 import org.gradle.api.Project
 import org.gradle.api.artifacts.Configuration
-import org.gradle.api.artifacts.component.ComponentIdentifier
+import org.gradle.api.artifacts.result.ResolvedDependencyResult
 import org.gradle.api.attributes.Category
 import org.gradle.api.attributes.Category.CATEGORY_ATTRIBUTE
 import org.gradle.api.attributes.Usage.USAGE_ATTRIBUTE
@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.gradle.targets.native.internal.*
 import org.jetbrains.kotlin.gradle.tasks.*
 import org.jetbrains.kotlin.gradle.utils.addExtendsFromRelation
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
+import org.jetbrains.kotlin.project.model.MavenModuleIdentifier
 import org.jetbrains.kotlin.statistics.metrics.BooleanMetrics
 import java.util.concurrent.Callable
 
@@ -411,19 +412,32 @@ class KotlinMetadataTargetConfigurator :
             val (unrequested, requested) = metadataDependencyResolutions
                 .partition { it is MetadataDependencyResolution.ExcludeAsUnrequested }
 
+            fun getGroupAndName(metadataDependencyResolution: MetadataDependencyResolution): Pair<String, String> {
+                val projectDependency = metadataDependencyResolution.projectDependency
+                return if (projectDependency != null) {
+                    projectDependency.group.toString() to projectDependency.name
+                } else {
+                    val mavenIdentifier = metadataDependencyResolution.dependency.toModuleIdentifier() as MavenModuleIdentifier
+                    mavenIdentifier.group to mavenIdentifier.name
+                }
+            }
+
+            val allRequestedCoordinates = requested.mapTo(mutableSetOf(), ::getGroupAndName)
+
             unrequested.forEach {
-                val (group, name) = it.projectDependency?.run {
-                    /** Note: the project dependency notation here should be exactly this, group:name,
-                     * not from [ModuleIds.fromProjectPathDependency], as `exclude` checks it against the project's group:name  */
-                    ModuleDependencyIdentifier(group.toString(), name)
-                } ?: ModuleIds.fromComponent(project, it.dependency)
+                val (group, name) = getGroupAndName(it)
+                    // The same coordinates may be in both "requested" and "unrequested" if we depend on multiple capabilities
+                    .also { if (it in allRequestedCoordinates) return@forEach }
                 configuration.exclude(mapOf("group" to group, "module" to name))
             }
 
             requested.filter { it.projectDependency == null }.forEach {
-                val (group, name) = ModuleIds.fromComponent(project, it.dependency)
-                val notation = listOfNotNull(group.orEmpty(), name, it.dependency.moduleVersion?.version).joinToString(":")
-                configuration.resolutionStrategy.force(notation)
+                val (group, name) = getGroupAndName(it)
+                val version = it.dependency.selected.moduleVersion?.version
+                if (version != null) {
+                    val notation = listOfNotNull(group, name, version).joinToString(":")
+                    configuration.resolutionStrategy.force(notation)
+                }
             }
         }
     }
@@ -491,6 +505,7 @@ internal class NativeSharedCompilationProcessor(
 
 internal fun Project.createGenerateProjectStructureMetadataTask(module: KotlinGradleModule): TaskProvider<GenerateProjectStructureMetadata> =
     project.registerTask(lowerCamelCaseName("generate", module.moduleClassifier, "ProjectStructureMetadata")) { task ->
+        task.moduleName = module.name
         task.lazyKotlinProjectStructureMetadata = lazy { buildProjectStructureMetadata(module) }
     }
 
@@ -513,32 +528,42 @@ internal fun createMetadataDependencyTransformationClasspath(
 ): FileCollection {
     return project.files(
         Callable {
-            val allResolutionsByComponentId: Map<ComponentIdentifier, List<MetadataDependencyResolution>> =
-                mutableMapOf<ComponentIdentifier, MutableList<MetadataDependencyResolution>>().apply {
+            val allResolutionsByGradleDependency: Map<ResolvedDependencyResult, List<MetadataDependencyResolution>> =
+                mutableMapOf<ResolvedDependencyResult, MutableList<MetadataDependencyResolution>>().apply {
                     metadataResolutionProviders.value.forEach {
                         it.metadataResolutions.forEach { resolution ->
-                            getOrPut(resolution.dependency.id) { mutableListOf() }.add(resolution)
+                            getOrPut(resolution.dependency) { mutableListOf() }.add(resolution)
                         }
                     }
                 }
+            val componentResolutionsByVariant =
+                allResolutionsByGradleDependency.entries.groupBy { it.key.selected.id }.mapValues { (_, values) ->
+                    values.map { it.key.resolvedVariant.displayName to it.value }
+                }
+            val requestedComponentIds = allResolutionsByGradleDependency
+                .filterValues { it.any { it !is MetadataDependencyResolution.ExcludeAsUnrequested } }
+                .keys.mapTo(mutableSetOf()) { it.selected.id }
 
             val transformedFilesByResolution: Map<MetadataDependencyResolution, FileCollection> =
                 metadataResolutionProviders.value.flatMap { it.metadataFilesByResolution.toList() }.toMap()
 
             val artifactView = fromFiles.incoming.artifactView { view ->
-                view.componentFilter { id ->
-                    allResolutionsByComponentId[id].let { resolutions ->
-                        resolutions == null || resolutions.any { it !is MetadataDependencyResolution.ExcludeAsUnrequested }
-                    }
-                }
+                view.componentFilter { id -> id in requestedComponentIds }
             }
 
             mutableSetOf<Any /* File | FileCollection */>().apply {
                 addAll(metadataResolutionProviders.value.map { project.files().builtBy(it.buildDependencies) })
                 addAll(parentCompiledMetadataFiles.value)
                 artifactView.artifacts.forEach { artifact ->
-                    val resolutions = allResolutionsByComponentId[artifact.id.componentIdentifier]
-                    if (resolutions == null) {
+                    val variantDisplayName = artifact.variant.displayName
+                    val resolutions =
+                        componentResolutionsByVariant[artifact.id.componentIdentifier].orEmpty()
+                            // Workaround: Gradle artifact variants don't exactly match the component variants, and they don't have a
+                            // reliable ID that we can use here; for now, find the artifact variants that contain the exact variant names
+                            .filter { (exactVariantName, _) -> exactVariantName in variantDisplayName }
+                            .flatMap { (_, resolutions) -> resolutions }
+
+                    if (resolutions.isEmpty()) {
                         add(artifact.file)
                     } else {
                         val chooseVisibleSourceSets = resolutions.filterIsInstance<MetadataDependencyResolution.ChooseVisibleSourceSets>()

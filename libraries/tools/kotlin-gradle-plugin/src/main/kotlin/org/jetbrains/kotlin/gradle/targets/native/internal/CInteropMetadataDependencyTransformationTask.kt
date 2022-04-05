@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinProjectStructureMetadata
 import org.jetbrains.kotlin.gradle.plugin.mpp.MetadataDependencyResolution.ChooseVisibleSourceSets
 import org.jetbrains.kotlin.gradle.plugin.mpp.MetadataDependencyResolution.ChooseVisibleSourceSets.MetadataProvider.JarMetadataProvider
 import org.jetbrains.kotlin.gradle.plugin.mpp.MetadataDependencyResolution.ChooseVisibleSourceSets.MetadataProvider.ProjectMetadataProvider
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.toModuleIdentifiers
+import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.toModuleIdentifier
 import org.jetbrains.kotlin.gradle.plugin.sources.DefaultKotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.sources.SourceSetMetadataStorageForIde
 import org.jetbrains.kotlin.gradle.plugin.sources.dependsOnClosure
@@ -104,12 +104,12 @@ internal open class CInteropMetadataDependencyTransformationTask @Inject constru
 
     @Suppress("unused")
     class ChooseVisibleSourceSetProjection(
-        @Input val dependencyModuleIdentifiers: List<KotlinModuleIdentifier>,
+        @Input val dependencyModuleIdentifier: KotlinModuleIdentifier,
         @Nested val projectStructureMetadata: KotlinProjectStructureMetadata,
         @Input val visibleSourceSetsProvidingCInterops: Set<String>
     ) {
         constructor(chooseVisibleSourceSets: ChooseVisibleSourceSets) : this(
-            dependencyModuleIdentifiers = chooseVisibleSourceSets.dependency.toModuleIdentifiers(),
+            dependencyModuleIdentifier = chooseVisibleSourceSets.dependency.toModuleIdentifier(),
             projectStructureMetadata = chooseVisibleSourceSets.projectStructureMetadata,
             visibleSourceSetsProvidingCInterops = chooseVisibleSourceSets.visibleSourceSetsProvidingCInterops
         )

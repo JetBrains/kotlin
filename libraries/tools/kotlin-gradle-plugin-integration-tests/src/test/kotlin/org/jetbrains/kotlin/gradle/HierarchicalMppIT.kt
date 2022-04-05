@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.gradle.util.checkedReplace
 import org.jetbrains.kotlin.gradle.util.modify
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.io.TempDir
+import org.jetbrains.kotlin.project.model.MavenModuleIdentifier
 import java.io.File
 import java.nio.file.Path
 import java.util.zip.ZipFile
@@ -540,9 +541,7 @@ class HierarchicalMppIT : KGPBaseTest() {
                 "commonMain" to emptySet()
             ),
             sourceSetModuleDependencies = sourceSetModuleDependencies.mapValues { (_, pairs) ->
-                pairs.map {
-                    ModuleDependencyIdentifier(it.first, it.second)
-                }.toSet()
+                pairs.map { MavenModuleIdentifier(it.first, it.second, null) }.toSet()
             },
             sourceSetCInteropMetadataDirectory = mapOf(),
             hostSpecificSourceSets = emptySet(),
