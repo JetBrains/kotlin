@@ -180,7 +180,9 @@ internal fun buildKotlinProjectStructureMetadata(project: Project): KotlinProjec
                     project.sourceSetDependencyConfigurationByScope(hierarchySourceSet, scope).allDependencies.toList()
                 }
             }
-            sourceSet.name to sourceSetExportedDependencies.map { ModuleIds.fromDependency(it) }.toSet()
+            sourceSet.name to sourceSetExportedDependencies.mapNotNullTo(mutableSetOf()) {
+                it.toModuleDependency(project).moduleIdentifier as? MavenModuleIdentifier
+            }
         },
         sourceSetCInteropMetadataDirectory = sourceSetsWithMetadataCompilations.keys
             .filter { isSharedNativeSourceSet(project, it) }

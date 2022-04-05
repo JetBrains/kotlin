@@ -46,7 +46,7 @@ interface KotlinVariantCompilationDataInternal<T : KotlinCommonOptions> : Kotlin
                             }
                         }.artifacts.filter {
                             // FIXME rewrite using the proper module resolution after those changes are merged
-                            moduleClassifiersFromCapabilities(it.variant.capabilities).any { it in friendModuleClassifiers }
+                            friendModuleClassifiers.contains(moduleClassifierFromCapabilities(it.variant.capabilities))
                         }.map { it.file }
                 }
             )

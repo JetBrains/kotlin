@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.gradle.plugin.mpp
 import org.gradle.api.Project
 import org.gradle.api.artifacts.component.ProjectComponentIdentifier
 import org.gradle.api.artifacts.result.ResolvedComponentResult
+import org.gradle.api.artifacts.result.ResolvedDependencyResult
 import org.jetbrains.kotlin.gradle.dsl.topLevelExtensionOrNull
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinPm20ProjectExtension
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.hasKpmModel
@@ -64,14 +65,14 @@ internal open class JarMppDependencyProjectStructureMetadataExtractor(
 
 internal class IncludedBuildMppDependencyProjectStructureMetadataExtractor(
     private val project: Project,
-    dependency: ResolvedComponentResult,
+    dependency: ResolvedDependencyResult,
     primaryArtifact: File
 ) : JarMppDependencyProjectStructureMetadataExtractor(primaryArtifact) {
 
     private val id: ProjectComponentIdentifier
 
     init {
-        val id = dependency.id
+        val id = dependency.selected.id
         require(id is ProjectComponentIdentifier) { "dependency should resolve to a project" }
         require(!id.build.isCurrentBuild) { "should be a project from an included build" }
         this.id = id
