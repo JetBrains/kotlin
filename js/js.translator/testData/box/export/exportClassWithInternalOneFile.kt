@@ -1,4 +1,3 @@
-// FILE: lib.kt
 @JsExport
 class Foo(internal val constructorParameter: String) {
     internal val nonDefaultAccessor: String
@@ -17,7 +16,6 @@ enum class Bar(internal val constructorParameter: String) {
     internal val defaultAccessor: String = constructorParameter + "!"
 }
 
-// FILE: main.kt
 fun box(): String {
     val foo = Foo("foo")
     if (foo.constructorParameter != "foo") return "fail1"

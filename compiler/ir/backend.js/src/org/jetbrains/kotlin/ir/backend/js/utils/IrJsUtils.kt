@@ -5,16 +5,18 @@
 
 package org.jetbrains.kotlin.ir.backend.js.utils
 
-import org.jetbrains.kotlin.descriptors.isInterface
 import org.jetbrains.kotlin.descriptors.isClass
+import org.jetbrains.kotlin.descriptors.isInterface
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
+import org.jetbrains.kotlin.ir.declarations.IrDeclarationWithVisibility
 import org.jetbrains.kotlin.ir.expressions.IrReturn
 import org.jetbrains.kotlin.ir.symbols.IrReturnableBlockSymbol
 import org.jetbrains.kotlin.ir.util.parentClassOrNull
 
 fun IrDeclaration.isExportedMember() =
-    parentClassOrNull.let { it is IrClass && it.isJsExport() }
+    (this is IrDeclarationWithVisibility && visibility.isPublicAPI) &&
+            parentClassOrNull.let { it is IrClass && it.isJsExport() }
 
 fun IrDeclaration?.isExportedClass() =
     this is IrClass && kind.isClass && isJsExport()
