@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.fir.resolve.transformers.FirTransformerBasedResolveP
 import org.jetbrains.kotlin.fir.resolve.transformers.ReturnTypeCalculator
 import org.jetbrains.kotlin.fir.resolve.transformers.TransformImplicitType
 import org.jetbrains.kotlin.fir.resolve.transformers.contracts.runContractResolveForLocalClass
+import org.jetbrains.kotlin.fir.scopes.FakeOverrideTypeCalculator
 import org.jetbrains.kotlin.fir.scopes.fakeOverrideSubstitution
 import org.jetbrains.kotlin.fir.symbols.impl.FirSyntheticPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
@@ -205,6 +206,7 @@ private class ReturnTypeCalculatorWithJump(
         outerBodyResolveContext: BodyResolveContext?
     ) -> FirDesignatedBodyResolveTransformerForReturnTypeCalculator = ::FirDesignatedBodyResolveTransformerForReturnTypeCalculator,
 ) : ReturnTypeCalculator() {
+    override val fakeOverrideTypeCalculator: FakeOverrideTypeCalculator = FakeOverrideTypeCalculatorWithJump()
 
     @OptIn(PrivateForInline::class)
     var outerBodyResolveContext: BodyResolveContext? = null
@@ -306,6 +308,12 @@ private class ReturnTypeCalculatorWithJump(
             outerBodyResolveContext.regularTowerDataContexts = previousTowerDataContexts
         }
         return newReturnTypeRef
+    }
+
+    private inner class FakeOverrideTypeCalculatorWithJump : FakeOverrideTypeCalculator.AbstractFakeOverrideTypeCalculator() {
+        override fun FirCallableDeclaration.getResolvedTypeRef(): FirResolvedTypeRef? {
+            return this@ReturnTypeCalculatorWithJump.computeReturnTypeRef(this)
+        }
     }
 }
 

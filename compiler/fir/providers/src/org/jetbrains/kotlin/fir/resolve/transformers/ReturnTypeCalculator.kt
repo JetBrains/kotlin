@@ -6,10 +6,13 @@
 package org.jetbrains.kotlin.fir.resolve.transformers
 
 import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
+import org.jetbrains.kotlin.fir.scopes.FakeOverrideTypeCalculator
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
 
 abstract class ReturnTypeCalculator {
+    abstract val fakeOverrideTypeCalculator: FakeOverrideTypeCalculator
+
     abstract fun tryCalculateReturnTypeOrNull(declaration: FirCallableDeclaration): FirResolvedTypeRef?
 
     fun tryCalculateReturnType(declaration: FirCallableDeclaration): FirResolvedTypeRef {

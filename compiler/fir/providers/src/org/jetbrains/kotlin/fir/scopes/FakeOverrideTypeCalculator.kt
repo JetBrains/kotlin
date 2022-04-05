@@ -24,10 +24,10 @@ abstract class FakeOverrideTypeCalculator {
         }
     }
 
-    object Forced : FakeOverrideTypeCalculator() {
+    abstract class AbstractFakeOverrideTypeCalculator : FakeOverrideTypeCalculator() {
         override fun computeReturnType(declaration: FirCallableDeclaration): FirResolvedTypeRef? {
             val fakeOverrideSubstitution = declaration.attributes.fakeOverrideSubstitution
-                ?: return declaration.returnTypeRef as? FirResolvedTypeRef
+                ?: return declaration.getResolvedTypeRef()
             synchronized(fakeOverrideSubstitution) {
                 if (declaration.attributes.fakeOverrideSubstitution == null) {
                     return declaration.returnTypeRef as FirResolvedTypeRef
@@ -41,6 +41,15 @@ abstract class FakeOverrideTypeCalculator {
                 declaration.replaceReturnTypeRef(returnType)
                 return returnType
             }
+        }
+
+        protected abstract fun FirCallableDeclaration.getResolvedTypeRef(): FirResolvedTypeRef?
+    }
+
+
+    object Forced : AbstractFakeOverrideTypeCalculator() {
+        override fun FirCallableDeclaration.getResolvedTypeRef(): FirResolvedTypeRef? {
+            return returnTypeRef as? FirResolvedTypeRef
         }
     }
 }
