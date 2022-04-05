@@ -494,6 +494,17 @@ allprojects {
             apiVersion = kotlinLanguageVersion
             freeCompilerArgs = commonCompilerArgs
         }
+
+        val relativePathBaseArg: String? =
+            "-Xklib-relative-path-base=$buildDir,$projectDir".takeIf {
+                !kotlinBuildProperties.getBoolean("kotlin.build.use.absolute.paths.in.klib")
+            }
+
+        doFirst {
+            if (relativePathBaseArg != null) {
+                kotlinOptions.freeCompilerArgs += relativePathBaseArg
+            }
+        }
     }
 
     val jvmCompilerArgs = listOf(

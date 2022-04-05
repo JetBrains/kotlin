@@ -52,12 +52,6 @@ tasks.withType<KotlinCompile<*>>().configureEach {
         "-opt-in=kotlin.ExperimentalMultiplatform",
         "-opt-in=kotlin.contracts.ExperimentalContracts"
     )
-
-    doFirst {
-        kotlinOptions.freeCompilerArgs += listOfNotNull(
-            "-Xklib-relative-path-base=$buildDir,$projectDir".takeIf { !kotlinBuildProperties.getBoolean("kotlin.build.use.absolute.paths.in.klib") }
-        )
-    }
 }
 
 tasks.named("compileKotlinJs") {
