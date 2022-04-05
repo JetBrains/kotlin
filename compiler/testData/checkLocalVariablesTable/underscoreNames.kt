@@ -13,7 +13,7 @@ fun box() {
         val (_, `_`, d) = A()
 
         for ((_, q) in arrayOfA) {
-
+            Unit
         }
 
         ""
