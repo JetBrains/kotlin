@@ -148,67 +148,31 @@ internal class ExternalImportedKotlinModule(
     override fun toString(): String = "imported $moduleData"
 }
 
-private fun ModuleComponentIdentifier.toSingleModuleIdentifier(classifier: String? = null): MavenModuleIdentifier =
-    MavenModuleIdentifier(moduleIdentifier.group, moduleIdentifier.name, classifier)
+internal const val KOTLIN_AUXILIARY_MODULE_CAPABILITY_INFIX_PART = ".kotlin.auxiliary.module."
 
-internal fun ComponentIdentifier.matchesModule(module: KotlinModule): Boolean =
-    matchesModuleIdentifier(module.moduleIdentifier)
-
-internal fun ResolvedComponentResult.toModuleIdentifiers(): List<KotlinModuleIdentifier> {
-    val classifiers = moduleClassifiersFromCapabilities(variants.flatMap { it.capabilities })
-    return classifiers.map { moduleClassifier -> toModuleIdentifier(moduleClassifier) }
+internal fun moduleClassifierFromCapabilities(capabilities: Iterable<Capability>): String? {
+    val classifierCapability = capabilities.firstOrNull { it.name.contains(KOTLIN_AUXILIARY_MODULE_CAPABILITY_INFIX_PART) }
+    // TODO: handle the erroneous case when there's more than one such capability?
+    return classifierCapability?.name?.substringAfterLast(KOTLIN_AUXILIARY_MODULE_CAPABILITY_INFIX_PART)
 }
 
-// FIXME this mapping doesn't have enough information to choose auxiliary modules
-internal fun ResolvedComponentResult.toSingleModuleIdentifier(): KotlinModuleIdentifier {
-    val classifiers = moduleClassifiersFromCapabilities(variants.flatMap { it.capabilities })
-    val moduleClassifier = classifiers.single() // FIXME handle multiple capabilities
-    return toModuleIdentifier(moduleClassifier)
-}
+internal fun ResolvedDependencyResult.toModuleIdentifier(): KotlinModuleIdentifier = requested.toModuleIdentifier()
 
-private fun ResolvedComponentResult.toModuleIdentifier(moduleClassifier: String?): KotlinModuleIdentifier {
-    return when (val id = id) {
-        is ProjectComponentIdentifier -> LocalModuleIdentifier(id.build.name, id.projectPath, moduleClassifier)
-        is ModuleComponentIdentifier -> id.toSingleModuleIdentifier()
-        else -> MavenModuleIdentifier(moduleVersion?.group.orEmpty(), moduleVersion?.name.orEmpty(), moduleClassifier)
-    }
-}
-
-internal fun moduleClassifiersFromCapabilities(capabilities: Iterable<Capability>): Iterable<String?> {
-    val classifierCapabilities = capabilities.filter { it.name.contains("..") }
-    return if (classifierCapabilities.none()) listOf(null) else classifierCapabilities.map { it.name.substringAfterLast("..") /*FIXME invent a more stable scheme*/ }
-}
-
-internal fun ComponentSelector.toModuleIdentifiers(): Iterable<KotlinModuleIdentifier> {
-    val moduleClassifiers = moduleClassifiersFromCapabilities(requestedCapabilities)
+internal fun ComponentSelector.toModuleIdentifier(): KotlinModuleIdentifier {
+    val moduleClassifier = moduleClassifierFromCapabilities(requestedCapabilities)
     return when (this) {
-        is ProjectComponentSelector -> moduleClassifiers.map { LocalModuleIdentifier(buildName, projectPath, it) }
-        is ModuleComponentSelector -> moduleClassifiers.map { MavenModuleIdentifier(moduleIdentifier.group, moduleIdentifier.name, it) }
+        is ProjectComponentSelector -> LocalModuleIdentifier(buildName, projectPath, moduleClassifier)
+        is ModuleComponentSelector -> MavenModuleIdentifier(moduleIdentifier.group, moduleIdentifier.name, moduleClassifier)
         else -> error("unexpected component selector")
     }
 }
 
-internal fun ResolvedComponentResult.toModuleDependency(): KotlinModuleDependency = KotlinModuleDependency(toSingleModuleIdentifier())
+internal fun ResolvedDependencyResult.toModuleDependency(): KotlinModuleDependency = KotlinModuleDependency(toModuleIdentifier())
+
 internal fun ComponentSelector.toModuleDependency(): KotlinModuleDependency {
-    val moduleId = toModuleIdentifiers().single() // FIXME handle multiple
+    val moduleId = toModuleIdentifier()
     return KotlinModuleDependency(moduleId)
 }
-
-internal fun ComponentIdentifier.matchesModuleDependency(moduleDependency: KotlinModuleDependency) =
-    matchesModuleIdentifier(moduleDependency.moduleIdentifier)
-
-internal fun ComponentIdentifier.matchesModuleIdentifier(id: KotlinModuleIdentifier): Boolean =
-    when (id) {
-        is LocalModuleIdentifier -> {
-            val projectId = this as? ProjectComponentIdentifier
-            projectId?.build?.name == id.buildId && projectId.projectPath == id.projectId
-        }
-        is MavenModuleIdentifier -> {
-            val componentId = this as? ModuleComponentIdentifier
-            componentId?.toSingleModuleIdentifier() == id
-        }
-        else -> false
-    }
 
 private fun getProjectStructureMetadata(
     project: Project,
