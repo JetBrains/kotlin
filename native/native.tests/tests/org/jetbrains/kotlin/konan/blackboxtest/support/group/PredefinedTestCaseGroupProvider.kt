@@ -7,8 +7,10 @@ package org.jetbrains.kotlin.konan.blackboxtest.support.group
 
 import org.jetbrains.kotlin.konan.blackboxtest.support.*
 import org.jetbrains.kotlin.konan.blackboxtest.support.TestCase.WithTestRunnerExtras
+import org.jetbrains.kotlin.konan.blackboxtest.support.runner.TestRunChecks
 import org.jetbrains.kotlin.konan.blackboxtest.support.settings.KotlinNativeHome
 import org.jetbrains.kotlin.konan.blackboxtest.support.settings.Settings
+import org.jetbrains.kotlin.konan.blackboxtest.support.settings.Timeouts
 import org.jetbrains.kotlin.konan.blackboxtest.support.util.ThreadSafeCache
 import org.jetbrains.kotlin.konan.blackboxtest.support.util.expandGlobTo
 import org.jetbrains.kotlin.konan.blackboxtest.support.util.getAbsoluteFile
@@ -62,6 +64,7 @@ internal class PredefinedTestCaseGroupProvider(annotation: PredefinedTestCases) 
                     .parseCompilerArgs(settings) { "Failed to parse free compiler arguments for test case $testCaseId" },
                 nominalPackageName = PackageName(testCaseId.uniqueName),
                 expectedOutputDataFile = null,
+                checks = TestRunChecks.Default(settings.get<Timeouts>().executionTimeout),
                 extras = WithTestRunnerExtras(
                     runnerType = predefinedTestCase.runnerType,
                     ignoredTests = predefinedTestCase.ignoredTests.toSet()

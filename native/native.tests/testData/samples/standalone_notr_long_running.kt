@@ -1,4 +1,5 @@
 // KIND: STANDALONE_NO_TR
+// EXPECTED_TIMEOUT_FAILURE
 
 import kotlin.math.E
 import kotlin.math.sqrt

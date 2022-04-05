@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.konan.blackboxtest.support.util.TestOutputFilter
 import java.io.ByteArrayOutputStream
 import kotlin.time.*
 
-internal abstract class AbstractLocalProcessRunner<R>(private val executionTimeout: Duration) : AbstractRunner<R>() {
+internal abstract class AbstractLocalProcessRunner<R>(private val checks: TestRunChecks) : AbstractRunner<R>() {
     protected abstract val visibleProcessName: String
     protected abstract val executable: TestExecutable
     protected abstract val programArgs: List<String>
@@ -25,6 +25,8 @@ internal abstract class AbstractLocalProcessRunner<R>(private val executionTimeo
         runBlocking(Dispatchers.IO) {
             val unfilteredOutput = UnfilteredProcessOutput()
             val unfilteredOutputReader: Job
+
+            val executionTimeout: Duration = checks.executionTimeoutCheck.timeout
 
             val process: Process
             val hasFinishedOnTime: Boolean
@@ -41,16 +43,11 @@ internal abstract class AbstractLocalProcessRunner<R>(private val executionTimeo
                 )
             }
 
-            if (hasFinishedOnTime) {
+            val exitCode: Int? = if (hasFinishedOnTime) {
                 unfilteredOutputReader.join() // Wait until all output streams are drained.
-
-                RunResult.Completed(
-                    exitCode = process.exitValue(),
-                    duration = duration,
-                    processOutput = unfilteredOutput.toProcessOutput(outputFilter)
-                )
+                process.exitValue()
             } else {
-                val exitCode: Int? = try { // It could happen just by an accident that the process has exited by itself.
+                try { // It could happen just by an accident that the process has exited by itself.
                     val exitCode = process.exitValue() // Fetch exit code.
                     unfilteredOutputReader.join() // Wait until all streams are drained.
                     exitCode
@@ -59,22 +56,37 @@ internal abstract class AbstractLocalProcessRunner<R>(private val executionTimeo
                     process.destroyForcibly() // kill -9
                     null
                 }
-
-                RunResult.TimeoutExceeded(
-                    timeout = executionTimeout,
-                    exitCode = exitCode,
-                    duration = duration,
-                    processOutput = unfilteredOutput.toProcessOutput(outputFilter)
-                )
             }
+
+            RunResult(
+                exitCode = exitCode,
+                timeout = executionTimeout,
+                duration = duration,
+                hasFinishedOnTime = hasFinishedOnTime,
+                processOutput = unfilteredOutput.toProcessOutput(outputFilter)
+            )
         }
     }
 
-    abstract override fun buildResultHandler(runResult: RunResult.Completed): ResultHandler // Narrow returned type.
+    abstract override fun buildResultHandler(runResult: RunResult): ResultHandler // Narrow returned type.
 
-    abstract inner class ResultHandler(runResult: RunResult.Completed) : AbstractRunner<R>.ResultHandler(runResult) {
+    abstract inner class ResultHandler(runResult: RunResult) : AbstractRunner<R>.ResultHandler(runResult) {
         override fun handle(): R {
-            verifyExpectation(runResult.exitCode == 0) { "$visibleProcessName exited with non-zero code." }
+            checks.forEach { check ->
+                when (check) {
+                    is TestRunCheck.ExecutionTimeout.ShouldNotExceed -> verifyExpectation(runResult.hasFinishedOnTime) {
+                        "Timeout exceeded during test execution."
+                    }
+                    is TestRunCheck.ExecutionTimeout.ShouldExceed -> verifyExpectation(!runResult.hasFinishedOnTime) {
+                        "Test is expected to fail with exceeded timeout, which hasn't happened."
+                    }
+                }
+            }
+
+            // Don't check exit code if it is unknown.
+            runResult.exitCode?.let { exitCode ->
+                verifyExpectation(exitCode == 0) { "$visibleProcessName exited with non-zero code." }
+            }
 
             return doHandle()
         }

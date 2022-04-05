@@ -16,7 +16,7 @@ internal object TestRunners {
     fun createProperTestRunner(testRun: TestRun, settings: Settings): AbstractRunner<*> = with(settings) {
         with(get<KotlinNativeTargets>()) {
             if (testTarget == hostTarget)
-                LocalTestRunner(testRun, get<Timeouts>().executionTimeout)
+                LocalTestRunner(testRun)
             else
                 runningAtNonHostTarget()
         }
@@ -26,7 +26,7 @@ internal object TestRunners {
     fun extractTestNames(executable: TestExecutable, settings: Settings): Collection<TestName> = with(settings) {
         with(get<KotlinNativeTargets>()) {
             if (testTarget == hostTarget)
-                LocalTestNameExtractor(executable, get<Timeouts>().executionTimeout).run()
+                LocalTestNameExtractor(executable, TestRunChecks.Default(get<Timeouts>().executionTimeout)).run()
             else
                 runningAtNonHostTarget()
         }

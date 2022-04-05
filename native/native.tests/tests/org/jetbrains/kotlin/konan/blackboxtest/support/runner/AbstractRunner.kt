@@ -7,26 +7,18 @@ package org.jetbrains.kotlin.konan.blackboxtest.support.runner
 
 import org.jetbrains.kotlin.konan.blackboxtest.support.LoggedData
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertTrue
-import org.jetbrains.kotlin.test.services.JUnit5Assertions.fail
 import org.opentest4j.TestAbortedException
 
 internal abstract class AbstractRunner<R> {
     protected abstract fun buildRun(): AbstractRun
-    protected abstract fun buildResultHandler(runResult: RunResult.Completed): ResultHandler
+    protected abstract fun buildResultHandler(runResult: RunResult): ResultHandler
     protected abstract fun getLoggedParameters(): LoggedData.TestRunParameters
     protected abstract fun handleUnexpectedFailure(t: Throwable): Nothing
 
     fun run(): R = try {
         val run = buildRun()
-
-        val resultHandler = when (val runResult = run.run()) {
-            is RunResult.TimeoutExceeded -> fail {
-                LoggedData.TestRunTimeoutExceeded(getLoggedParameters(), runResult)
-                    .withErrorMessage("Timeout exceeded during test execution.")
-            }
-            is RunResult.Completed -> buildResultHandler(runResult)
-        }
-
+        val runResult = run.run()
+        val resultHandler = buildResultHandler(runResult)
         resultHandler.handle()
     } catch (t: Throwable) {
         when (t) {
@@ -42,7 +34,7 @@ internal abstract class AbstractRunner<R> {
         fun run(): RunResult
     }
 
-    abstract inner class ResultHandler(protected val runResult: RunResult.Completed) {
+    abstract inner class ResultHandler(protected val runResult: RunResult) {
         abstract fun getLoggedRun(): LoggedData
         abstract fun handle(): R
 
