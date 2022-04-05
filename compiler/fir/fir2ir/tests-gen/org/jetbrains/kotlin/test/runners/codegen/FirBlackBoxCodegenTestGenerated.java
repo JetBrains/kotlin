@@ -17256,6 +17256,12 @@ public class FirBlackBoxCodegenTestGenerated extends AbstractFirBlackBoxCodegenT
         }
 
         @Test
+        @TestMetadata("differentSinceKotlin.kt")
+        public void testDifferentSinceKotlin() throws Exception {
+            runTest("compiler/testData/codegen/box/fir/differentSinceKotlin.kt");
+        }
+
+        @Test
         @TestMetadata("ExtensionAlias.kt")
         public void testExtensionAlias() throws Exception {
             runTest("compiler/testData/codegen/box/fir/ExtensionAlias.kt");

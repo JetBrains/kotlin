@@ -31,7 +31,7 @@ fun use1(
     c1: NewClassExperimentalInThePast,
     t1: TypeAliasToNewClass
 ) {
-    newPublishedFun()
+    <!UNRESOLVED_REFERENCE!>newPublishedFun<!>()
     newFunExperimentalInThePast()
     newValExperimentalInThePast
     NewClassExperimentalInThePast()
@@ -42,7 +42,7 @@ fun use2(
     c2: NewClassExperimentalInThePast,
     t2: TypeAliasToNewClass
 ) {
-    newPublishedFun()
+    <!UNRESOLVED_REFERENCE!>newPublishedFun<!>()
     newFunExperimentalInThePast()
     newValExperimentalInThePast
     NewClassExperimentalInThePast()
@@ -53,7 +53,7 @@ fun use3(
     c3: NewClassExperimentalInThePast,
     t3: TypeAliasToNewClass
 ) {
-    newPublishedFun()
+    <!UNRESOLVED_REFERENCE!>newPublishedFun<!>()
     newFunExperimentalInThePast()
     newValExperimentalInThePast
     NewClassExperimentalInThePast()

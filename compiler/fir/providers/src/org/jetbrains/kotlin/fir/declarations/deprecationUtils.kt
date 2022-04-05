@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.name.StandardClassIds.Annotations.ParameterNames.dep
 import org.jetbrains.kotlin.resolve.deprecation.DeprecationInfo
 import org.jetbrains.kotlin.resolve.deprecation.DeprecationLevelValue
 import org.jetbrains.kotlin.resolve.deprecation.SimpleDeprecationInfo
-import org.jetbrains.kotlin.utils.addToStdlib.safeAs
+import org.jetbrains.kotlin.utils.addToStdlib.runUnless
 
 fun FirBasedSymbol<*>.getDeprecation(callSite: FirElement?): DeprecationInfo? {
     return when (this) {
@@ -111,20 +111,38 @@ private fun List<FirAnnotation>.extractDeprecationInfoPerUseSite(
     currentVersion: ApiVersion,
     fromJava: Boolean
 ): List<Pair<AnnotationUseSiteTarget?, DeprecationInfo>> {
-    val annotations = getAnnotationsByClassId(StandardClassIds.Annotations.Deprecated).map { it to false } +
-            getAnnotationsByClassId(StandardClassIds.Annotations.Java.Deprecated).map { it to true }
+    @Suppress("RemoveExplicitTypeArguments")
+    val annotations = buildList<Pair<FirAnnotation, Boolean>> {
+        mapAnnotationsWithClassIdTo(StandardClassIds.Annotations.Deprecated, this) { it to false }
+        mapAnnotationsWithClassIdTo(StandardClassIds.Annotations.Java.Deprecated, this) { it to true }
+        mapAnnotationsWithClassIdTo(StandardClassIds.Annotations.SinceKotlin, this) { it to false }
+    }
     return annotations.mapNotNull { (deprecated, fromJavaAnnotation) ->
+        if (deprecated.classId == StandardClassIds.Annotations.SinceKotlin) {
+            val sinceKotlinSingleArgument = deprecated.findArgumentByName(ParameterNames.sinceKotlinVersion)
+            val apiVersion = ((sinceKotlinSingleArgument as? FirConstExpression<*>)?.value as? String)
+                ?.let(ApiVersion.Companion::parse) ?: return@mapNotNull null
+            if (apiVersion <= currentVersion) return@mapNotNull null
+            val wasExperimental = this.any { it.classId == StandardClassIds.Annotations.WasExperimental }
+            return@mapNotNull runUnless(wasExperimental) {
+                deprecated.useSiteTarget to SimpleDeprecationInfo(
+                    deprecationLevel = DeprecationLevelValue.HIDDEN,
+                    propagatesToOverrides = true,
+                    message = null
+                )
+            }
+        }
         val deprecationLevel = deprecated.getDeprecationLevel() ?: DeprecationLevelValue.WARNING
         val deprecatedSinceKotlin = getAnnotationsByClassId(StandardClassIds.Annotations.DeprecatedSinceKotlin).firstOrNull()
 
-        fun levelApplied(name: Name, level: DeprecationLevelValue): DeprecationLevelValue? {
+        fun deprecatedLevelApplied(name: Name, level: DeprecationLevelValue): DeprecationLevelValue? {
             deprecatedSinceKotlin?.getVersionFromArgument(name)?.takeIf { it <= currentVersion }?.let { return level }
             return level.takeIf { deprecatedSinceKotlin == null && level == deprecationLevel }
         }
 
-        val appliedLevel = (levelApplied(deprecatedSinceKotlinHiddenSince, DeprecationLevelValue.HIDDEN)
-            ?: levelApplied(deprecatedSinceKotlinErrorSince, DeprecationLevelValue.ERROR)
-            ?: levelApplied(deprecatedSinceKotlinWarningSince, DeprecationLevelValue.WARNING))
+        val appliedLevel = (deprecatedLevelApplied(deprecatedSinceKotlinHiddenSince, DeprecationLevelValue.HIDDEN)
+            ?: deprecatedLevelApplied(deprecatedSinceKotlinErrorSince, DeprecationLevelValue.ERROR)
+            ?: deprecatedLevelApplied(deprecatedSinceKotlinWarningSince, DeprecationLevelValue.WARNING))
 
         appliedLevel?.let {
             val inheritable = !fromJavaAnnotation && !fromJava
