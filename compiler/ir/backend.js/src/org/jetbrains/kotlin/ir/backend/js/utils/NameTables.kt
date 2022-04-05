@@ -14,7 +14,11 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.symbols.IrReturnableBlockSymbol
 import org.jetbrains.kotlin.ir.types.isUnit
-import org.jetbrains.kotlin.ir.util.*
+import org.jetbrains.kotlin.ir.util.file
+import org.jetbrains.kotlin.ir.util.fqNameWhenAvailable
+import org.jetbrains.kotlin.ir.util.isEffectivelyExternal
+import org.jetbrains.kotlin.ir.util.isInterface
+import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.js.common.isES5IdentifierPart
@@ -137,17 +141,22 @@ fun jsFunctionSignature(declaration: IrFunction, context: JsIrBackendContext): S
     val nameBuilder = StringBuilder()
     nameBuilder.append(declarationName)
 
+    // TODO should we skip type parameters and use upper bound of type parameter when print type of value parameters?
+    declaration.typeParameters.ifNotEmpty {
+        nameBuilder.append("_\$t")
+        joinTo(nameBuilder, "") { "_${it.name.asString()}" }
+    }
     declaration.extensionReceiverParameter?.let {
-        nameBuilder.append("_r$${it.type.eraseGenerics(context.irBuiltIns).asString()}")
+        nameBuilder.append("_r$${it.type.asString()}")
     }
     declaration.valueParameters.ifNotEmpty {
-        joinTo(nameBuilder, "") { "_${it.type.eraseGenerics(context.irBuiltIns).asString()}" }
+        joinTo(nameBuilder, "") { "_${it.type.asString()}" }
     }
     declaration.returnType.let {
         // Return type is only used in signature for inline class and Unit types because
         // they are binary incompatible with supertypes.
         if (context.inlineClassesUtils.isTypeInlined(it) || it.isUnit()) {
-            nameBuilder.append("_ret$${it.eraseGenerics(context.irBuiltIns).asString()}")
+            nameBuilder.append("_ret$${it.asString()}")
         }
     }
 

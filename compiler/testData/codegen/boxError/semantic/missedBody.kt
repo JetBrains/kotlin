@@ -4,9 +4,9 @@
 // MODULE: lib
 // FILE: t.kt
 
-fun bar(a: String, b: String): Any
+fun bar(a: String, b: String): String
 
-fun foo(): Any {
+fun foo(): String {
     return bar("O", "K")
 }
 
