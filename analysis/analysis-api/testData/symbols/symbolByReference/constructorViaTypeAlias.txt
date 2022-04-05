@@ -13,7 +13,7 @@ KtConstructorSymbol:
     KtTypeParameterSymbol(E)
   ]
   valueParameters: [
-    KtValueParameterSymbol(p0)
+    KtValueParameterSymbol(c)
   ]
   visibility: Public
   deprecationStatus: null
