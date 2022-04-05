@@ -129,7 +129,6 @@ projectTest(
 ) {
     includeMppAndAndroid(false)
     includeNative(false)
-    if (isTeamcityBuild) finalizedBy(cleanTestKitCacheTask)
 }
 
 projectTest(
@@ -140,8 +139,6 @@ projectTest(
     advanceGradleVersion()
     includeMppAndAndroid(false)
     includeNative(false)
-
-    if (isTeamcityBuild) finalizedBy(cleanTestKitCacheTask)
 }
 
 projectTest(
@@ -152,7 +149,6 @@ projectTest(
     systemProperty("kotlin.gradle.kpm.enableModelMapping", "true")
     includeMppAndAndroid(true)
     includeNative(false)
-    if (isTeamcityBuild) finalizedBy(cleanTestKitCacheTask)
 }
 
 projectTest(
@@ -164,7 +160,6 @@ projectTest(
     advanceGradleVersion()
     includeMppAndAndroid(true)
     includeNative(false)
-    if (isTeamcityBuild) finalizedBy(cleanTestKitCacheTask)
 }
 
 if (isTeamcityBuild) {
@@ -174,7 +169,6 @@ if (isTeamcityBuild) {
         jUnitMode = JUnitMode.JUnit5
     ) {
         includeNative(true)
-        finalizedBy(cleanTestKitCacheTask)
     }
 
     projectTest(
@@ -184,7 +178,6 @@ if (isTeamcityBuild) {
     ) {
         advanceGradleVersion()
         includeNative(true)
-        finalizedBy(cleanTestKitCacheTask)
     }
 
     projectTest(
@@ -193,7 +186,6 @@ if (isTeamcityBuild) {
         jUnitMode = JUnitMode.JUnit5
     ) {
         includeMppAndAndroid(true)
-        finalizedBy(cleanTestKitCacheTask)
     }
 
     projectTest(
@@ -203,7 +195,6 @@ if (isTeamcityBuild) {
     ) {
         advanceGradleVersion()
         includeMppAndAndroid(true)
-        finalizedBy(cleanTestKitCacheTask)
     }
 }
 
@@ -222,8 +213,6 @@ val allParallelTestsTask = tasks.register<Test>("kgpAllParallelTests") {
         excludeTags("DaemonsKGP")
         includeEngines("junit-jupiter")
     }
-
-    if (isTeamcityBuild) finalizedBy(cleanTestKitCacheTask)
 }
 
 val jvmTestsTask = tasks.register<Test>("kgpJvmTests") {
@@ -234,8 +223,6 @@ val jvmTestsTask = tasks.register<Test>("kgpJvmTests") {
         includeTags("JvmKGP")
         includeEngines("junit-jupiter")
     }
-
-    if (isTeamcityBuild) finalizedBy(cleanTestKitCacheTask)
 }
 
 val jsTestsTask = tasks.register<Test>("kgpJsTests") {
@@ -246,8 +233,6 @@ val jsTestsTask = tasks.register<Test>("kgpJsTests") {
         includeTags("JsKGP")
         includeEngines("junit-jupiter")
     }
-
-    if (isTeamcityBuild) finalizedBy(cleanTestKitCacheTask)
 }
 
 val nativeTestsTask = tasks.register<Test>("kgpNativeTests") {
@@ -258,8 +243,6 @@ val nativeTestsTask = tasks.register<Test>("kgpNativeTests") {
         includeTags("NativeKGP")
         includeEngines("junit-jupiter")
     }
-
-    if (isTeamcityBuild) finalizedBy(cleanTestKitCacheTask)
 }
 
 // Daemon tests could run only sequentially as they could not be shared between parallel test builds
@@ -272,8 +255,6 @@ val daemonsTestsTask = tasks.register<Test>("kgpDaemonTests") {
         includeTags("DaemonsKGP")
         includeEngines("junit-jupiter")
     }
-
-    if (isTeamcityBuild) finalizedBy(cleanTestKitCacheTask)
 }
 
 val otherPluginsTestTask = tasks.register<Test>("kgpOtherTests") {
@@ -284,8 +265,6 @@ val otherPluginsTestTask = tasks.register<Test>("kgpOtherTests") {
         includeTags("OtherKGP")
         includeEngines("junit-jupiter")
     }
-
-    if (isTeamcityBuild) finalizedBy(cleanTestKitCacheTask)
 }
 
 val mppTestsTask = tasks.register<Test>("kgpMppTests") {
@@ -296,8 +275,6 @@ val mppTestsTask = tasks.register<Test>("kgpMppTests") {
         includeTags("MppKGP")
         includeEngines("junit-jupiter")
     }
-
-    if (isTeamcityBuild) finalizedBy(cleanTestKitCacheTask)
 }
 
 val androidTestsTask = tasks.register<Test>("kgpAndroidTests") {
@@ -308,8 +285,6 @@ val androidTestsTask = tasks.register<Test>("kgpAndroidTests") {
         includeTags("AndroidKGP")
         includeEngines("junit-jupiter")
     }
-
-    if (isTeamcityBuild) finalizedBy(cleanTestKitCacheTask)
 }
 
 tasks.named<Task>("check") {
@@ -320,7 +295,6 @@ tasks.named<Task>("check") {
         dependsOn("testMppAndAndroid")
         dependsOn("testNative")
         dependsOn("testAdvanceGradleVersionNative")
-        finalizedBy(cleanTestKitCacheTask)
     }
 }
 
