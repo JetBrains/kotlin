@@ -16,8 +16,8 @@ fun t1(): Foo = Foo()
 // TODO: do not report API_NOT_AVAILABLE twice
 fun t2() = object : Foo() {}
 
-fun t3(): Bar? = Bar()
+fun t3(): Bar? = <!UNRESOLVED_REFERENCE!>Bar<!>()
 
-fun t4(): Baz = Baz()
+fun t4(): Baz = <!UNRESOLVED_REFERENCE!>Baz<!>()
 
 fun t5(): Quux = Quux()

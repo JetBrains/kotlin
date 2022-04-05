@@ -161,6 +161,8 @@ object StandardClassIds {
 
         val RestrictsSuspension = "RestrictsSuspension".coroutinesId()
 
+        val WasExperimental = "WasExperimental".baseId()
+
         object Java {
             val Deprecated = "Deprecated".javaLangId()
             val Repeatable = "Repeatable".javaAnnotationId()

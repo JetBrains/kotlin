@@ -120,6 +120,18 @@ fun List<FirAnnotation>.getAnnotationsByClassId(classId: ClassId): List<FirAnnot
     }
 }
 
+inline fun <T> List<FirAnnotation>.mapAnnotationsWithClassIdTo(
+    classId: ClassId,
+    destination: MutableCollection<T>,
+    func: (FirAnnotation) -> T
+) {
+    for (annotation in this) {
+        if (annotation.annotationTypeRef.coneTypeSafe<ConeClassLikeType>()?.lookupTag?.classId == classId) {
+            destination.add(func(annotation))
+        }
+    }
+}
+
 fun FirExpression.unwrapVarargValue(): List<FirExpression> {
     return when (this) {
         is FirVarargArgumentsExpression -> arguments

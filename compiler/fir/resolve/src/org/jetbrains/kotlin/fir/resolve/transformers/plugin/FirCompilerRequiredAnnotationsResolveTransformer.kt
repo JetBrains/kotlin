@@ -27,9 +27,12 @@ import org.jetbrains.kotlin.fir.resolve.transformers.*
 import org.jetbrains.kotlin.fir.types.ConeClassLikeType
 import org.jetbrains.kotlin.fir.types.FirUserTypeRef
 import org.jetbrains.kotlin.fir.types.coneTypeSafe
+import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.StandardClassIds.Annotations.Deprecated
 import org.jetbrains.kotlin.name.StandardClassIds.Annotations.DeprecatedSinceKotlin
+import org.jetbrains.kotlin.name.StandardClassIds.Annotations.WasExperimental
 
 class FirCompilerRequiredAnnotationsResolveProcessor(
     session: FirSession,
@@ -120,6 +123,14 @@ private class FirAnnotationResolveTransformer(
 ) : FirAbstractAnnotationResolveTransformer<Multimap<AnnotationFqn, FirRegularClass>, PersistentList<FirDeclaration>>(
     session, scopeSession
 ) {
+    companion object {
+        private val REQUIRED_ANNOTATIONS: Set<ClassId> = setOf(
+            Deprecated, DeprecatedSinceKotlin, WasExperimental
+        )
+
+        private val REQUIRED_ANNOTATION_NAMES: Set<Name> = REQUIRED_ANNOTATIONS.mapTo(mutableSetOf()) { it.shortClassName }
+    }
+
     private val predicateBasedProvider = session.predicateBasedProvider
 
     var acceptableFqNames: Set<AnnotationFqn> = emptySet()
@@ -156,9 +167,7 @@ private class FirAnnotationResolveTransformer(
         val annotationTypeRef = annotation.annotationTypeRef
         if (annotationTypeRef !is FirUserTypeRef) return annotation
         val name = annotationTypeRef.qualifier.last().name
-        if (name != Deprecated.shortClassName && name != DeprecatedSinceKotlin.shortClassName &&
-            acceptableFqNames.none { it.shortName() == name }
-        ) return annotation
+        if (name !in REQUIRED_ANNOTATION_NAMES && acceptableFqNames.none { it.shortName() == name }) return annotation
 
         val transformedAnnotation = annotation.transformAnnotationTypeRef(
             typeResolverTransformer,

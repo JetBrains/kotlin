@@ -7,5 +7,5 @@ annotation class Anno2 @SinceKotlin("1.1") constructor()
 
 
 @Anno1("")
-@Anno2
+@<!UNRESOLVED_REFERENCE!>Anno2<!>
 fun t1() {}
