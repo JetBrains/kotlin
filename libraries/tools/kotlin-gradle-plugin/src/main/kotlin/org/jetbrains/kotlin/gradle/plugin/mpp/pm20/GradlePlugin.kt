@@ -53,35 +53,77 @@ abstract class KotlinPm20GradlePlugin @Inject constructor(
         project.pm20Extension.apply {
             modules.create(KotlinGradleModule.MAIN_MODULE_NAME)
             modules.create(KotlinGradleModule.TEST_MODULE_NAME)
-            main { makePublic() }
+            main { makePublic(Standalone(null)) }
         }
     }
 
     private fun setupPublicationForModule(module: KotlinGradleModule) {
         val project = module.project
 
-        val metadataElements = project.configurations.getByName(metadataElementsConfigurationName(module))
-        val sourceElements = project.configurations.getByName(sourceElementsConfigurationName(module))
-
-        val componentName = rootPublicationComponentName(module)
-        val rootSoftwareComponent = softwareComponentFactory.adhoc(componentName).also {
-            project.components.add(it)
-            it.addVariantsFromConfiguration(metadataElements) { }
-            it.addVariantsFromConfiguration(sourceElements) { }
-        }
-
         module.ifMadePublic {
-            val metadataDependencyConfiguration = resolvableMetadataConfiguration(module)
+            val publicationHolder: SingleMavenPublishedModuleHolder? = module.publicationHolder()
+
+            val metadataElements = project.configurations.getByName(metadataElementsConfigurationName(module))
+            val sourceElements = project.configurations.getByName(sourceElementsConfigurationName(module))
+
+            val publishedConfigurationNameSuffix = "-published"
+            val metadataElementsForPublishing = copyConfigurationForPublishing(
+                project,
+                metadataElements.name + publishedConfigurationNameSuffix,
+                metadataElements,
+                overrideDependencies = {
+                    addAllLater(project.listProperty {
+                        replaceProjectDependenciesWithPublishedMavenDependencies(project, metadataElements.allDependencies)
+                    })
+                },
+                overrideCapabilities = { setGradlePublishedModuleCapability(this, module) }
+            )
+
+            val sourceElementsForPublishing = copyConfigurationForPublishing(
+                project,
+                sourceElements.name + publishedConfigurationNameSuffix,
+                sourceElements,
+                overrideCapabilities = { setGradlePublishedModuleCapability(this, module) }
+            )
+
+            fun addVariantsToSoftwareComponent(component: AdhocComponentWithVariants) {
+                component.addVariantsFromConfiguration(metadataElementsForPublishing) { }
+                component.addVariantsFromConfiguration(sourceElementsForPublishing) { }
+            }
+
+            val rootSoftwareComponent = when (module.publicationMode) {
+                is Standalone -> {
+                    val component = softwareComponentFactory.adhoc(rootPublicationComponentName(module))
+                    project.components.add(component)
+                    component
+                }
+                is Embedded -> {
+                    project.components.withType(AdhocComponentWithVariants::class.java)
+                        .getByName(rootPublicationComponentName(project.pm20Extension.main))
+                }
+                Private -> error("unexpected private module; expected publicationMode: Standalone or Embedded")
+            }
+
+            addVariantsToSoftwareComponent(rootSoftwareComponent)
+
             project.pluginManager.withPlugin("maven-publish") {
-                project.extensions.getByType(PublishingExtension::class.java).publications.create(
-                    componentName,
-                    MavenPublication::class.java
-                ) { publication ->
-                    publication.from(rootSoftwareComponent)
-                    publication.versionMapping { versionMapping ->
-                        versionMapping.allVariants {
-                            it.fromResolutionOf(metadataDependencyConfiguration)
+                val publishing = project.extensions.getByType(PublishingExtension::class.java)
+                when (val publicationMode = module.publicationMode) {
+                    is Standalone -> {
+                        project.pluginManager.withPlugin("maven-publish") {
+                            publishing.publications.create(rootSoftwareComponent.name, MavenPublication::class.java) { publication ->
+                                if (!module.isMain) {
+                                    (publication as DefaultMavenPublication).isAlias = true
+                                }
+                                publication.artifactId = lowerCaseDashSeparatedName(project.name, publicationMode.defaultArtifactIdSuffix)
+                                publication.from(rootSoftwareComponent)
+                                publicationHolder?.assignMavenPublication(publication)
+                            }
                         }
+                    }
+                    Embedded -> {
+                        val mainPublication = publishing.publications.withType(MavenPublication::class.java).getByName(rootSoftwareComponent.name)
+                        publicationHolder?.assignMavenPublication(mainPublication)
                     }
                 }
             }
@@ -97,7 +139,7 @@ abstract class KotlinPm20GradlePlugin @Inject constructor(
 fun rootPublicationComponentName(module: KotlinGradleModule) =
     module.disambiguateName("root")
 
-open class KotlinPm20ProjectExtension(project: Project) : KotlinTopLevelExtension(project) {
+open class KotlinPm20ProjectExtension(project: Project) : KotlinTopLevelExtension(project), HasKotlinDependencies {
 
     internal val kpmModelContainer = DefaultKpmGradleProjectModelContainer.create(project)
 
@@ -124,6 +166,14 @@ open class KotlinPm20ProjectExtension(project: Project) : KotlinTopLevelExtensio
     @PublishedApi
     @JvmName("isAllowCommonizer")
     internal fun isAllowCommonizerForIde(@Suppress("UNUSED_PARAMETER") project: Project): Boolean = false
+
+    override fun dependencies(configure: KotlinDependencyHandler.() -> Unit) = main.dependencies(configure)
+    override fun dependencies(configureClosure: Closure<Any?>) = main.dependencies(configureClosure)
+
+    override val apiConfigurationName: String get() = main.apiConfigurationName
+    override val implementationConfigurationName: String get() = main.implementationConfigurationName
+    override val compileOnlyConfigurationName: String get() = main.compileOnlyConfigurationName
+    override val runtimeOnlyConfigurationName: String get() = main.runtimeOnlyConfigurationName
 }
 
 val KotlinGradleModule.jvm: KotlinJvmVariant
