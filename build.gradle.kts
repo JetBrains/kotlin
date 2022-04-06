@@ -496,7 +496,7 @@ allprojects {
         }
 
         val relativePathBaseArg: String? =
-            "-Xklib-relative-path-base=$buildDir,$projectDir".takeIf {
+            "-Xklib-relative-path-base=$buildDir,$projectDir,$rootDir".takeIf {
                 !kotlinBuildProperties.getBoolean("kotlin.build.use.absolute.paths.in.klib")
             }
 
