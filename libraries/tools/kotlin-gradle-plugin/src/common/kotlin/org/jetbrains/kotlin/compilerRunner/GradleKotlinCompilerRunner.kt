@@ -295,7 +295,7 @@ internal open class GradleCompilerRunner(
                 if (task is AbstractKotlinCompile<*>) {
                     val module = IncrementalModuleEntry(
                         project.path,
-                        task.moduleName.get(),
+                        task.ownModuleName.get(),
                         project.buildDir,
                         task.buildHistoryFile.get().asFile,
                         task.abiSnapshotFile.get().asFile
@@ -327,7 +327,7 @@ internal open class GradleCompilerRunner(
                         val kotlinTask = mainCompilation.compileKotlinTask as? AbstractKotlinCompile<*> ?: continue
                         val module = IncrementalModuleEntry(
                             project.path,
-                            kotlinTask.moduleName.get(),
+                            kotlinTask.ownModuleName.get(),
                             project.buildDir,
                             kotlinTask.buildHistoryFile.get().asFile,
                             kotlinTask.abiSnapshotFile.get().asFile

@@ -274,6 +274,9 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments> @Inject constr
     @get:Internal
     val startParameters = BuildMetricsReporterService.getStartParameters(project)
 
+    @get:Input
+    abstract val ownModuleName: Property<String>
+
     @get:Internal
     internal abstract val buildMetricsReporterService: Property<BuildMetricsReporterService?>
 
