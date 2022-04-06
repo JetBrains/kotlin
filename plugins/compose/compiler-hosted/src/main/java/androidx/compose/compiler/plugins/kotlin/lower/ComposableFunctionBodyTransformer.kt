@@ -602,6 +602,8 @@ class ComposableFunctionBodyTransformer(
         ).map { it.owner }.singleOrNull {
             it.valueParameters.map { p -> p.type } == listOf(
                 context.irBuiltIns.intType,
+                context.irBuiltIns.intType,
+                context.irBuiltIns.intType,
                 context.irBuiltIns.stringType
             )
         }
@@ -1958,11 +1960,15 @@ class ComposableFunctionBodyTransformer(
             val file = declaration.file.name
             val line = declaration.file.fileEntry.getLineNumber(declaration.startOffset)
             val traceInfo = "$name ($file:$line)" // TODO(174715171) decide on what to log
+            val dirty1 = irConst(-1) // placeholder TODO(228314276): implement
+            val dirty2 = irConst(-1) // placeholder TODO(228314276): implement
 
             irIfTraceInProgress(
                 irCall(traceEventStart, startOffset, endOffset).also {
                     it.putValueArgument(0, key)
-                    it.putValueArgument(1, irConst(traceInfo))
+                    it.putValueArgument(1, dirty1)
+                    it.putValueArgument(2, dirty2)
+                    it.putValueArgument(3, irConst(traceInfo))
                 }
             )
         }
