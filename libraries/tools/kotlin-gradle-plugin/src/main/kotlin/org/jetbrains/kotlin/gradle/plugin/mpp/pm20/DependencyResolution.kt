@@ -167,7 +167,7 @@ internal fun ComponentSelector.toModuleDependency(): KotlinModuleDependency {
 
 private fun getProjectStructureMetadata(
     project: Project,
-    module: ResolvedComponentResult,
+    module: ResolvedDependencyResult,
     configuration: Configuration,
     moduleIdentifier: KotlinModuleIdentifier? = null
 ): KotlinProjectStructureMetadata? {

@@ -8,34 +8,30 @@ package org.jetbrains.kotlin.gradle.plugin.mpp
 import org.gradle.api.Project
 import org.gradle.api.artifacts.Configuration
 import org.gradle.api.artifacts.component.ProjectComponentIdentifier
-import org.gradle.api.artifacts.result.ResolvedComponentResult
 import org.gradle.api.artifacts.result.ResolvedDependencyResult
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.toSingleModuleIdentifier
+import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.resolvedDependencies
+import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.toModuleIdentifier
 import org.jetbrains.kotlin.project.model.KotlinModuleIdentifier
 
 internal fun MppDependencyProjectStructureMetadataExtractor.Factory.create(
     project: Project,
-    resolvedComponentResult: ResolvedComponentResult,
+    resolvedDependencyResult: ResolvedDependencyResult,
     configuration: Configuration,
     resolveViaAvailableAt: Boolean
 ): MppDependencyProjectStructureMetadataExtractor? {
     return create(
         resolvedMppVariantsProvider = ResolvedMppVariantsProvider.get(project),
-        /*
-        FIXME this loses information about auxiliary module deps
-        TODO check how this code works with multi-capability resolutions,
-         */
-        moduleIdentifier = resolvedComponentResult.toSingleModuleIdentifier(),
+        moduleIdentifier = resolvedDependencyResult.toModuleIdentifier(),
         configuration = configuration,
         resolveViaAvailableAt = resolveViaAvailableAt,
-        resolvedComponentResult = resolvedComponentResult,
+        resolvedDependencyResult = resolvedDependencyResult,
         project = project
     )
 }
 
 internal fun MppDependencyProjectStructureMetadataExtractor.Factory.create(
     project: Project,
-    resolvedComponentResult: ResolvedComponentResult,
+    resolvedDependencyResult: ResolvedDependencyResult,
     moduleIdentifier: KotlinModuleIdentifier,
     configuration: Configuration
 ): MppDependencyProjectStructureMetadataExtractor? {
@@ -44,7 +40,7 @@ internal fun MppDependencyProjectStructureMetadataExtractor.Factory.create(
         moduleIdentifier = moduleIdentifier,
         configuration = configuration,
         resolveViaAvailableAt = true,
-        resolvedComponentResult = resolvedComponentResult,
+        resolvedDependencyResult = resolvedDependencyResult,
         project = project
     )
 }
@@ -54,7 +50,7 @@ private fun MppDependencyProjectStructureMetadataExtractor.Factory.create(
     moduleIdentifier: KotlinModuleIdentifier,
     configuration: Configuration,
     resolveViaAvailableAt: Boolean,
-    resolvedComponentResult: ResolvedComponentResult,
+    resolvedDependencyResult: ResolvedDependencyResult,
     project: Project
 ): MppDependencyProjectStructureMetadataExtractor? {
     var resolvedViaAvailableAt = false
@@ -68,20 +64,23 @@ private fun MppDependencyProjectStructureMetadataExtractor.Factory.create(
         )?.also {
             resolvedViaAvailableAt = true
         }
-    } else null
+    } else {
+        null
+    }
 
-    val actualComponent = if (resolvedViaAvailableAt) {
-        resolvedComponentResult.dependencies.filterIsInstance<ResolvedDependencyResult>().singleOrNull()?.selected
-            ?: resolvedComponentResult
-    } else resolvedComponentResult
+    val actualDependency = if (resolvedViaAvailableAt) {
+        resolvedDependencyResult.resolvedDependencies.singleOrNull() ?: resolvedDependencyResult
+    } else {
+        resolvedDependencyResult
+    }
 
-    val moduleId = actualComponent.id
+    val moduleId = actualDependency.selected.id
     return when {
         moduleId is ProjectComponentIdentifier -> when {
             moduleId.build.isCurrentBuild ->
                 ProjectMppDependencyProjectStructureMetadataExtractor(moduleIdentifier, project.project(moduleId.projectPath))
             metadataArtifact != null ->
-                IncludedBuildMppDependencyProjectStructureMetadataExtractor(project, actualComponent, metadataArtifact)
+                IncludedBuildMppDependencyProjectStructureMetadataExtractor(project, actualDependency, metadataArtifact)
             else -> null
         }
         metadataArtifact != null -> JarMppDependencyProjectStructureMetadataExtractor(metadataArtifact)
