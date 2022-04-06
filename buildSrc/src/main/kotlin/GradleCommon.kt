@@ -23,7 +23,7 @@ import org.gradle.kotlin.dsl.*
 import org.gradle.plugin.devel.plugins.JavaGradlePluginPlugin
 import org.jetbrains.dokka.DokkaVersion
 import org.jetbrains.dokka.gradle.DokkaTask
-import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
+import org.jetbrains.kotlin.gradle.dsl.KotlinSingleTargetExtension
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.jetbrains.kotlin.project.model.KotlinPlatformTypeAttribute
 import plugins.configureDefaultPublishing
@@ -95,9 +95,17 @@ fun Project.createGradleCommonSourceSet(): SourceSet {
     val commonSourceSet = sourceSets.create("common") {
         excludeGradleCommonDependencies(this)
 
+        // Adding Gradle API to separate configuration, so version will not leak into variants
+        val commonGradleApiConfiguration = configurations.create("commonGradleApiCompileOnly") {
+            isVisible = false
+            isCanBeConsumed = false
+            isCanBeResolved = true
+        }
+        configurations[compileClasspathConfigurationName].extendsFrom(commonGradleApiConfiguration)
+
         dependencies {
             compileOnlyConfigurationName(kotlinStdlib())
-            compileOnlyConfigurationName("dev.gradleplugins:gradle-api:7.2")
+            "commonGradleApiCompileOnly"("dev.gradleplugins:gradle-api:7.2")
             if (this@createGradleCommonSourceSet.name != "kotlin-gradle-plugin-api" &&
                 this@createGradleCommonSourceSet.name != "android-test-fixes"
             ) {
@@ -190,11 +198,22 @@ fun Project.wireGradleVariantToCommonGradleVariant(
 ) {
     wireSourceSet.compileClasspath += commonSourceSet.output
     wireSourceSet.runtimeClasspath += commonSourceSet.output
-    @Suppress("deprecation") // Needs support from KGP
-    wireSourceSet.withConvention(KotlinSourceSet::class) {
-        val wireKotlinSourceSet = this
-        commonSourceSet.withConvention(KotlinSourceSet::class) {
-            wireKotlinSourceSet.dependsOn(this)
+
+    // Allowing to use 'internal' classes/methods from common source code
+    (extensions.getByName("kotlin") as KotlinSingleTargetExtension).target.compilations.run {
+        getByName(wireSourceSet.name).associateWith(getByName(commonSourceSet.name))
+    }
+
+    // Common outputs will also produce '${project.name}.kotlin_module' file, so we need to avoid
+    // files clash
+    val compileTaskName = if (wireSourceSet.name == SourceSet.MAIN_SOURCE_SET_NAME) {
+        "compileKotlin"
+    } else {
+        "compile${wireSourceSet.name.capitalize()}Kotlin"
+    }
+    tasks.named<KotlinCompile>(compileTaskName) {
+        kotlinOptions {
+            moduleName = "${this@wireGradleVariantToCommonGradleVariant.name}_${wireSourceSet.name}"
         }
     }
 
@@ -251,14 +270,11 @@ fun Project.reconfigureMainSourcesSetForGradlePlugin(
         excludeGradleCommonDependencies(this)
         wireGradleVariantToCommonGradleVariant(this, commonSourceSet)
 
-        tasks.withType<Jar>().configureEach {
-            if (name == jarTaskName) {
-                setupPublicJar(archiveBaseName.get())
-                addEmbeddedRuntime()
-            } else if (name == sourcesJarTaskName) {
-                addEmbeddedSources()
-            }
-        }
+        // https://youtrack.jetbrains.com/issue/KT-51913
+        configurations["default"].attributes.attribute(
+            TargetJvmEnvironment.TARGET_JVM_ENVIRONMENT_ATTRIBUTE,
+            objects.named(TargetJvmEnvironment::class, "no-op")
+        )
 
         plugins.withType<JavaLibraryPlugin>().configureEach {
             this@reconfigureMainSourcesSetForGradlePlugin
@@ -294,6 +310,17 @@ fun Project.reconfigureMainSourcesSetForGradlePlugin(
                 }
             }
         }
+    }
+
+    // Fix common sources visibility for tests
+    sourceSets.named(SourceSet.TEST_SOURCE_SET_NAME) {
+        compileClasspath += commonSourceSet.output
+        runtimeClasspath += commonSourceSet.output
+    }
+
+    // Allowing to use 'internal' classes/methods from common source code
+    (extensions.getByName("kotlin") as KotlinSingleTargetExtension).target.compilations.run {
+        getByName(SourceSet.TEST_SOURCE_SET_NAME).associateWith(getByName(commonSourceSet.name))
     }
 }
 
