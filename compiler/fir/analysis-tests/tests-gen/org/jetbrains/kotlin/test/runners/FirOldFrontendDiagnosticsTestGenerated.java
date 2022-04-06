@@ -16288,6 +16288,12 @@ public class FirOldFrontendDiagnosticsTestGenerated extends AbstractFirDiagnosti
                 }
 
                 @Test
+                @TestMetadata("hideLocalTypeForReturnTypeOfSingleExpressionFunction.kt")
+                public void testHideLocalTypeForReturnTypeOfSingleExpressionFunction() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/inference/substitutions/hideLocalTypeForReturnTypeOfSingleExpressionFunction.kt");
+                }
+
+                @Test
                 @TestMetadata("kt32189returnTypeWithTypealiasSubtitution.kt")
                 public void testKt32189returnTypeWithTypealiasSubtitution() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/inference/substitutions/kt32189returnTypeWithTypealiasSubtitution.kt");

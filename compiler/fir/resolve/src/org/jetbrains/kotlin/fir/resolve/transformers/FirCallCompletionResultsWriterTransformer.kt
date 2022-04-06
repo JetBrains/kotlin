@@ -952,7 +952,7 @@ internal class FirDeclarationCompletionResultsWriter(
             typeRef.resolvedTypeFromPrototype(it)
         } ?: typeRef
         if (data is ApproximationData.ApproximateByStatus) {
-            return result.approximatedIfNeededOrSelf(typeApproximator, data.visibility, data.isInline)
+            return result.approximatedIfNeededOrSelf(typeApproximator, data.visibility, this.typeContext.session, data.isInline)
         }
         return result
     }
