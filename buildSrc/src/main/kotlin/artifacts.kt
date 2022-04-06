@@ -71,7 +71,13 @@ fun Jar.addEmbeddedRuntime() {
     project.configurations.findByName("embedded")?.let { embedded ->
         dependsOn(embedded)
         from {
-            embedded.map(project::zipTree)
+            embedded.map {
+                if (it.extension.equals("jar", ignoreCase = true)) {
+                    project.zipTree(it)
+                } else {
+                    it
+                }
+            }
         }
     }
 }

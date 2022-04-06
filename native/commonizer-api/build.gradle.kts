@@ -17,11 +17,7 @@ dependencies {
     testImplementation(commonDependency("junit:junit"))
     testImplementation(projectTests(":compiler:tests-common"))
     testRuntimeOnly(project(":native:kotlin-klib-commonizer"))
-    testImplementation(project(":kotlin-gradle-plugin")) {
-        capabilities {
-            requireCapability("org.jetbrains.kotlin:kotlin-gradle-plugin-common")
-        }
-    }
+    testImplementation(project(":kotlin-gradle-plugin"))
     testImplementation(project(":kotlin-gradle-statistics"))
     testImplementation(project(":kotlin-gradle-plugin-model"))
     testImplementation(gradleApi())
