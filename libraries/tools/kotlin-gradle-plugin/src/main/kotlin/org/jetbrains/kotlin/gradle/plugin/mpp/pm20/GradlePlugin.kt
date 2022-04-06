@@ -10,6 +10,7 @@ import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.NamedDomainObjectProvider
 import org.gradle.api.Plugin
 import org.gradle.api.Project
+import org.gradle.api.artifacts.Configuration
 import org.gradle.api.component.AdhocComponentWithVariants
 import org.gradle.api.component.SoftwareComponentFactory
 import org.gradle.api.plugins.JavaBasePlugin
@@ -26,6 +27,7 @@ import org.jetbrains.kotlin.gradle.kpm.idea.default
 import org.jetbrains.kotlin.gradle.kpm.idea.locateOrRegisterBuildIdeaKotlinProjectModelTask
 import org.jetbrains.kotlin.gradle.plugin.HasKotlinDependencies
 import org.jetbrains.kotlin.gradle.plugin.KotlinDependencyHandler
+import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.ComputedCapability
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.copyConfigurationForPublishing
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.listProperty
 import org.jetbrains.kotlin.gradle.utils.checkGradleCompatibility
@@ -224,5 +226,12 @@ open class KotlinFragmentSlice<T : KotlinGradleFragment>(
 
     fun inModule(module: KotlinGradleModule, configure: T.() -> Unit) {
         getOrCreateFragment(module).configure()
+    }
+}
+
+internal fun setGradlePublishedModuleCapability(configuration: Configuration, module: KotlinGradleModule) {
+    val capability = ComputedCapability.forPublishedModule(module)
+    if (capability != null) {
+        configuration.outgoing.capability(capability)
     }
 }
