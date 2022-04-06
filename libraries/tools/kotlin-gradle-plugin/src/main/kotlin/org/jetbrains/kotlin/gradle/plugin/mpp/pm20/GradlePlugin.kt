@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinDependencyHandler
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.copyConfigurationForPublishing
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.listProperty
 import org.jetbrains.kotlin.gradle.utils.checkGradleCompatibility
+import org.jetbrains.kotlin.gradle.utils.lowerCaseDashSeparatedName
 import javax.inject.Inject
 
 abstract class KotlinPm20GradlePlugin @Inject constructor(
