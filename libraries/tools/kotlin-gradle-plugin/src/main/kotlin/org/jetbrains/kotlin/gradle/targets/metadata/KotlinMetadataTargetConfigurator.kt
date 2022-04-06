@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.gradle.targets.metadata
 import org.gradle.api.Project
 import org.gradle.api.artifacts.Configuration
 import org.gradle.api.artifacts.component.ComponentIdentifier
+import org.gradle.api.artifacts.result.ResolvedDependencyResult
 import org.gradle.api.attributes.Category
 import org.gradle.api.attributes.Category.CATEGORY_ATTRIBUTE
 import org.gradle.api.attributes.Usage.USAGE_ATTRIBUTE
@@ -410,7 +411,7 @@ class KotlinMetadataTargetConfigurator :
         // Run this action immediately before the configuration first takes part in dependency resolution:
         configuration.withDependencies {
             val (unrequested, requested) = metadataDependencyResolutions
-                .partition { it is ExcludeAsUnrequested }
+                .partition { it is MetadataDependencyResolution.ExcludeAsUnrequested }
 
             fun getGroupAndName(metadataDependencyResolution: MetadataDependencyResolution): Pair<String, String> =
                 metadataDependencyResolution.projectDependency?.run {
@@ -503,7 +504,7 @@ internal class NativeSharedCompilationProcessor(
 internal fun Project.createGenerateProjectStructureMetadataTask(module: KotlinGradleModule): TaskProvider<GenerateProjectStructureMetadata> =
     project.registerTask(lowerCamelCaseName("generate", module.moduleClassifier, "ProjectStructureMetadata")) { task ->
         task.moduleName = module.name
-        task.lazyKotlinProjectStructureMetadata = lazy { buildKpmProjectStructureMetadata(module) }
+        task.lazyKotlinProjectStructureMetadata = lazy { buildProjectStructureMetadata(module) }
     }
 
 internal fun Project.createGenerateProjectStructureMetadataTask(): TaskProvider<GenerateProjectStructureMetadata> =
@@ -538,7 +539,7 @@ internal fun createMetadataDependencyTransformationClasspath(
                     values.map { it.key.resolvedVariant.displayName to it.value }
                 }
             val requestedComponentIds = allResolutionsByGradleDependency
-                .filterValues { it.any { it !is ExcludeAsUnrequested } }
+                .filterValues { it.any { it !is MetadataDependencyResolution.ExcludeAsUnrequested } }
                 .keys.mapTo(mutableSetOf()) { it.selected.id }
 
             val transformedFilesByResolution: Map<MetadataDependencyResolution, FileCollection> =
