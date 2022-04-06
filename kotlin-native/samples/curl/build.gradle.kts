@@ -44,13 +44,15 @@ kotlin {
             }
         }
     }
-}
 
-// The code snippet below is needed to make all compile tasks depend on publication of
-// "libcurl" library. So that to the time of compilation the library will already be
-// in Maven repo and will be successfully resolved as a dependency of this project.
-tasks.withType(AbstractCompile::class) {
-    dependsOn(":libcurl:publish")
+    // The code snippet below is needed to make all compile tasks depend on publication of
+    // "libcurl" library. So that to the time of compilation the library will already be
+    // in Maven repo and will be successfully resolved as a dependency of this project.
+    targets.all {
+        compilations.all {
+            compileKotlinTask.dependsOn(":libcurl:publish")
+        }
+    }
 }
 
 // The following snippet is needed to give instructions for IDEA user who just imported project
