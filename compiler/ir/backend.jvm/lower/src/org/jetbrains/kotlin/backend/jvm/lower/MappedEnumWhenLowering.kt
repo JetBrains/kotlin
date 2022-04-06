@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.backend.jvm.lower
 import org.jetbrains.kotlin.backend.common.ir.createImplicitParameterDeclarationWithWrappedDescriptor
 import org.jetbrains.kotlin.backend.common.lower.EnumWhenLowering
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
+import org.jetbrains.kotlin.backend.common.lower.irCatch
 import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
@@ -60,7 +61,7 @@ internal val enumWhenPhase = makeIrFilePhase(
 // The latter would not need to be recompiled if new entries were added before `X`
 // at the negligible cost of an additional initializer per run + one array read per call.
 //
-private class MappedEnumWhenLowering(context: JvmBackendContext) : EnumWhenLowering(context) {
+private class MappedEnumWhenLowering(override val context: JvmBackendContext) : EnumWhenLowering(context) {
     private val intArray = context.irBuiltIns.primitiveArrayForType.getValue(context.irBuiltIns.intType)
     private val intArrayConstructor = intArray.constructors.single { it.owner.valueParameters.size == 1 }
     private val intArrayGet = intArray.functions.single { it.owner.name == OperatorNameConventions.GET }
@@ -141,11 +142,23 @@ private class MappedEnumWhenLowering(context: JvmBackendContext) : EnumWhenLower
                 val result = irTemporary(irCall(intArrayConstructor).apply { putValueArgument(0, enumSize) })
                 for ((entry, index) in mapping.ordinals) {
                     val runtimeEntry = IrGetEnumValueImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, enum.defaultType, entry.symbol)
-                    +irCall(intArraySet).apply {
+                    val writeToMapping = irCall(intArraySet).apply {
                         dispatchReceiver = irGet(result)
                         putValueArgument(0, super.mapRuntimeEnumEntry(builder, runtimeEntry)) // <entry>.ordinal()
                         putValueArgument(1, irInt(index))
                     }
+                    val noSuchFieldVariable = scope.createTemporaryVariableDeclaration(
+                        this@MappedEnumWhenLowering.context.ir.symbols.noSuchFieldErrorType,
+                        startOffset = UNDEFINED_OFFSET,
+                        endOffset = UNDEFINED_OFFSET
+                    )
+                    +irTry(
+                        // Ignore NoSuchFieldError in case this module is running with a version of the dependency
+                        // that is missing some of the enum's fields; the corresponding branches are then effectively
+                        // unreachable code (KT-38637)
+                        context.irBuiltIns.unitType, writeToMapping, listOf(irCatch(noSuchFieldVariable, irUnit())),
+                        finallyExpression = null
+                    )
                 }
                 +irGet(result)
             })
@@ -155,7 +168,7 @@ private class MappedEnumWhenLowering(context: JvmBackendContext) : EnumWhenLower
             declaration.declarations += mappingState.mappingsClass.apply {
                 parent = declaration
                 if (mappingState.isPublicAbi) {
-                    (context as JvmBackendContext).publicAbiSymbols += symbol
+                    context.publicAbiSymbols += symbol
                 }
             }
         }

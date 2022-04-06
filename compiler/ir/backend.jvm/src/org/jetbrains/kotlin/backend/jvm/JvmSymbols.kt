@@ -265,6 +265,11 @@ class JvmSymbols(
 
     val assertionErrorConstructor = javaLangAssertionError.constructors.single()
 
+    private val javaLangNoSuchFieldError: IrClassSymbol =
+        createClass(FqName("java.lang.NoSuchFieldError"), classModality = Modality.OPEN) {}
+
+    val noSuchFieldErrorType = javaLangNoSuchFieldError.defaultType
+
     val continuationClass: IrClassSymbol =
         createClass(StandardNames.CONTINUATION_INTERFACE_FQ_NAME, ClassKind.INTERFACE) { klass ->
             klass.addTypeParameter("T", irBuiltIns.anyNType, Variance.IN_VARIANCE)

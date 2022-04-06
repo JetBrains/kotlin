@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.ir.util.*
  * Replace branches that are comparisons with compile-time known enum entries
  * with comparisons of ordinals.
  */
-open class EnumWhenLowering(protected val context: CommonBackendContext) : IrElementTransformerVoidWithContext(), FileLoweringPass {
+open class EnumWhenLowering(protected open val context: CommonBackendContext) : IrElementTransformerVoidWithContext(), FileLoweringPass {
 
     protected open fun mapConstEnumEntry(entry: IrEnumEntry): Int =
         entry.parentAsClass.declarations.filterIsInstance<IrEnumEntry>().indexOf(entry).also {
