@@ -42,8 +42,8 @@ val DefaultKotlinApiElementsDefinition = ConfigurationDefinition(
     provider = ConfigurationProvider {
         project.configurations.maybeCreate(disambiguateName("apiElements")).apply {
             isCanBeResolved = false
-            isCanBeConsumed = false
-            module.ifMadePublic { isCanBeConsumed = true }
+            isCanBeConsumed = true // but we don't allow this configuration to be consumed from outside, using the attribute, see below
+            makePublicIfModuleIsMadePublic(module)
         }
     },
     relations = FragmentConfigurationRelation { extendsFrom(dependencies.transitiveApiConfiguration) },

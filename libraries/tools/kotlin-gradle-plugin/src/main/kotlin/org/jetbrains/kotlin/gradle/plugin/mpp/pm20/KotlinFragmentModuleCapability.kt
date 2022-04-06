@@ -18,4 +18,4 @@ internal fun setModuleCapability(configuration: Configuration, module: KotlinGra
 }
 
 internal val KotlinGradleModule.moduleCapability: Capability?
-    get() = if (moduleClassifier != null) ComputedCapability.fromModule(this) else null
+    get() = ComputedCapability.forProjectDependenciesOnModule(this) // TODO NOW: consider cleaning stack up a bit

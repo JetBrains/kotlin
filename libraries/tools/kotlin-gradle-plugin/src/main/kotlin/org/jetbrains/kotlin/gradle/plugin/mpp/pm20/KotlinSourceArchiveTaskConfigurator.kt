@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.gradle.plugin.mpp.pm20
 
 import org.gradle.api.tasks.TaskProvider
+import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.disambiguateName
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.unambiguousNameInProject
 import org.jetbrains.kotlin.gradle.plugin.mpp.sourcesJarTaskNamed
 
@@ -22,7 +23,7 @@ object DefaultKotlinSourceArchiveTaskConfigurator : KotlinSourceArchiveTaskConfi
                 FragmentSourcesProvider().getSourcesFromRefinesClosureAsMap(variant)
                     .entries.associate { it.key.unambiguousNameInProject to it.value.get() }
             },
-            artifactNameAppendix = variant.name
+            artifactNameAppendix = variant.disambiguateName("") // TODO NOW: find out if this is necessary
         )
     }
 }
