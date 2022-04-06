@@ -77,7 +77,7 @@ internal object CheckExplicitReceiverConsistency : ResolutionStage() {
 
 object CheckExtensionReceiver : ResolutionStage() {
     override suspend fun check(candidate: Candidate, callInfo: CallInfo, sink: CheckerSink, context: ResolutionContext) {
-        val expectedReceiverType = candidate.getReceiverType(context) ?: return
+        val expectedReceiverType = candidate.getExpectedReceiverType() ?: return
         val expectedType = candidate.substitutor.substituteOrSelf(expectedReceiverType.type)
 
         // Probably, we should add an assertion here since we check consistency on the level of scope tower levels
@@ -125,14 +125,9 @@ object CheckExtensionReceiver : ResolutionStage() {
         sink.yieldIfNeed()
     }
 
-    private fun Candidate.getReceiverType(context: ResolutionContext): ConeKotlinType? {
+    private fun Candidate.getExpectedReceiverType(): ConeKotlinType? {
         val callableSymbol = symbol as? FirCallableSymbol<*> ?: return null
-        val callable = callableSymbol.fir
-        val receiverType = callable.receiverTypeRef?.coneType
-        if (receiverType != null) return receiverType
-        val returnTypeRef = callable.returnTypeRef as? FirResolvedTypeRef ?: return null
-        if (!returnTypeRef.type.isExtensionFunctionType(context.session)) return null
-        return (returnTypeRef.type.typeArguments.firstOrNull() as? ConeKotlinTypeProjection)?.type
+        return callableSymbol.fir.receiverTypeRef?.coneType
     }
 }
 
