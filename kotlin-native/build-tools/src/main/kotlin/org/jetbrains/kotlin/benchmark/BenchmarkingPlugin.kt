@@ -217,8 +217,11 @@ abstract class BenchmarkingPlugin: Plugin<Project> {
             doLast {
                 val applicationName = benchmark.applicationName
                 val benchContents = buildDir.resolve(nativeBenchResults).readText()
-                val nativeCompileTime = if (benchmark.compileTasks.isEmpty()) getNativeCompileTime(project, applicationName)
-                else getNativeCompileTime(project, applicationName, benchmark.compileTasks)
+                val nativeCompileTasks = if (benchmark.compileTasks.isEmpty()) {
+                   listOf("linkBenchmark${benchmark.buildType.name.lowercase().replaceFirstChar { it.uppercase() }}ExecutableNative")
+                } else benchmark.compileTasks
+
+                val nativeCompileTime = getNativeCompileTime(project, applicationName, nativeCompileTasks)
 
                 val properties = commonBenchmarkProperties + mapOf(
                         "type" to "native",
