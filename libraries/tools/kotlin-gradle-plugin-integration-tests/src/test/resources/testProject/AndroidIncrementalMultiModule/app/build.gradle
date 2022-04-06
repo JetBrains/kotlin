@@ -21,4 +21,5 @@ dependencies {
     implementation project(":libJvmClassesOnly")
     implementation project(":libAndroid")
     implementation project(":libAndroidClassesOnly")
+    testImplementation "junit:junit:4.13.2"
 }

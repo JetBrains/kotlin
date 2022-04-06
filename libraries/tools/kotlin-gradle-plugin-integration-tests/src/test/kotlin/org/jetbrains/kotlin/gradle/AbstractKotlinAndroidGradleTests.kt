@@ -667,6 +667,38 @@ open class KotlinAndroid70GradleIT : KotlinAndroid36GradleIT() {
     }
 
     @Test
+    fun testAndroidWithKaptIncremental() {
+        val project = Project("AndroidIncrementalMultiModule")
+        val options = defaultBuildOptions().copy(incremental = true)
+        project.setupWorkingDir().also {
+            project.gradleBuildScript("app").modify {
+                """
+                apply plugin: 'org.jetbrains.kotlin.kapt'
+                $it
+            """.trimIndent()
+            }
+        }
+        project.build(":app:testDebugUnitTest", options = options) {
+            assertSuccessful()
+        }
+
+        project.projectDir
+            .resolve("app/src/main/kotlin/com/example/KotlinActivity.kt")
+            .appendText(
+                """
+                    {
+                      private val x = 1
+                    }
+                """.trimIndent()
+            )
+
+        project.build(":app:testDebugUnitTest", options = options) {
+            assertSuccessful()
+            assertNotContains("Non-incremental compilation will be performed")
+        }
+    }
+
+    @Test
     fun testNamespaceDSLInsteadOfPackageAttributeInManifest() {
         val project = Project("AndroidExtensionsProjectAGP7")
         val options = defaultBuildOptions().copy(incremental = false)
@@ -761,38 +793,39 @@ abstract class KotlinAndroid3GradleIT : AbstractKotlinAndroidGradleTests() {
 
         gradleBuildScript("Lib").writeText(
             """
-            buildscript {
-                repositories {
-                    mavenLocal()
-                    google()
-                    gradlePluginPortal()
-                }
-                dependencies {
-                    classpath "com.android.tools.build:gradle:${'$'}android_tools_version"
-                    classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:${'$'}kotlin_version"
-                }
+        buildscript {
+            repositories {
+                mavenLocal()
+                google()
+                gradlePluginPortal()
             }
-            
-            plugins {
-                id 'org.jetbrains.kotlin.multiplatform'
+            dependencies {
+                classpath "com.android.tools.build:gradle:${'$'}android_tools_version"
+                classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:${'$'}kotlin_version"
             }
-            
-            class MyAction implements kotlin.jvm.functions.Function1<Project, Void> {
-                Void invoke(Project p) {
-                    println("compilations: " + p.kotlin.targets.getByName("android").compilations.names)
-                }
+        }
+
+        plugins {
+            id 'org.jetbrains.kotlin.multiplatform'
+        }
+
+        class MyAction implements kotlin.jvm.functions.Function1<Project, Void> {
+            Void invoke (Project p) {
+                println("compilations: " + p.kotlin.targets.getByName("android").compilations.names)
             }
-            
-            org.jetbrains.kotlin.gradle.plugin.KotlinMultiplatformPluginKt.whenEvaluated(project, new MyAction())
-            
-            apply plugin: "android-library"
-            
-            android {
-                compileSdkVersion 22
-            }
-            
-            kotlin { android("android") { } }
-        """.trimIndent())
+        }
+
+        org.jetbrains.kotlin.gradle.plugin.KotlinMultiplatformPluginKt.whenEvaluated(project, new MyAction ())
+
+        apply plugin : "android-library"
+
+        android {
+            compileSdkVersion 22
+        }
+
+        kotlin { android("android") { } }
+        """.trimIndent()
+        )
 
         build("help") {
             assertSuccessful()
@@ -885,10 +918,10 @@ abstract class AbstractKotlinAndroidGradleTests : BaseGradleIT() {
         val getSomethingKt = project.projectDir.walk().filter { it.isFile && it.name.endsWith("getSomething.kt") }.first()
         getSomethingKt.writeText(
             """
-package com.example
+        package com.example
 
-fun getSomething() = 10
-"""
+        fun getSomething() = 10
+        """
         )
 
         project.build("assembleDebug", options = options) {
@@ -968,11 +1001,12 @@ fun getSomething() = 10
 
         project.projectDir.resolve("app/build.gradle").appendText(
             """
-            |
-            |androidExtensions {
+        |
+        |androidExtensions {
             |    experimental = true
-            |}
-            """.trimMargin()
+            |
+        }
+        """.trimMargin()
         )
 
         project.build("assembleDebug") {
@@ -1129,27 +1163,27 @@ fun getSomething() = 10
 
         gradleBuildScript().modify {
             """
-                plugins {
-                    id("com.android.lint")
-                }
-                
-            """.trimIndent() + it
+        plugins {
+            id("com.android.lint")
+        }
+
+        """.trimIndent() + it
         }
 
         gradleBuildScript("Lib").appendText(
             "\n" + """
-            android { 
-                lintOptions.checkDependencies = true
-            }
-            dependencies {
-                implementation(project(":java-lib"))
-            }
+        android {
+            lintOptions.checkDependencies = true
+        }
+        dependencies {
+            implementation(project(":java-lib"))
+        }
         """.trimIndent()
         )
 
         gradleSettingsScript().appendText(
             "\n" + """
-            include("java-lib")
+        include("java-lib")
         """.trimIndent()
         )
 
@@ -1157,11 +1191,11 @@ fun getSomething() = 10
             ensureParentDirsCreated()
             writeText(
                 """
-                plugins {
-                    id("java-library")
-                    id("com.android.lint")
-                }
-            """.trimIndent()
+        plugins {
+            id("java-library")
+            id("com.android.lint")
+        }
+        """.trimIndent()
             )
         }
 

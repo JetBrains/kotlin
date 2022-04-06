@@ -94,6 +94,7 @@ internal abstract class AbstractKotlinCompileConfig<TASK : AbstractKotlinCompile
                 )
             }
             task.moduleName.set(providers.provider { compilation.moduleName })
+            task.ownModuleName.set(project.provider { compilation.ownModuleName })
             task.sourceSetName.value(providers.provider { compilation.compilationPurpose })
             task.multiPlatformEnabled.value(
                 providers.provider {
