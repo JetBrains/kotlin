@@ -18,7 +18,9 @@ class SrcFileArtifact(val srcFilePath: String, private val fragment: JsIrProgram
             return fragment
         }
         return astArtifact?.ifExists { readBytes() }?.let {
-            deserializer.deserialize(ByteArrayInputStream(it))
+            ByteArrayInputStream(it).use { byteStream ->
+                deserializer.deserialize(byteStream)
+            }
         }
     }
 
