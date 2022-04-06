@@ -8,14 +8,17 @@ package org.jetbrains.kotlin.gradle.plugin.mpp.pm20
 import groovy.lang.Closure
 import org.gradle.api.NamedDomainObjectProvider
 import org.gradle.api.Project
+import org.gradle.api.artifacts.ModuleDependency
 import org.gradle.api.file.SourceDirectorySet
 import org.gradle.api.provider.Provider
 import org.gradle.util.ConfigureUtil
 import org.jetbrains.kotlin.gradle.kpm.KotlinExternalModelContainer
 import org.jetbrains.kotlin.gradle.kpm.KotlinMutableExternalModelContainer
 import org.jetbrains.kotlin.gradle.plugin.KotlinDependencyHandler
+import org.jetbrains.kotlin.gradle.plugin.KpmKotlinDependencyHandler
 import org.jetbrains.kotlin.gradle.plugin.LanguageSettingsBuilder
 import org.jetbrains.kotlin.gradle.plugin.mpp.DefaultKotlinDependencyHandler
+import org.jetbrains.kotlin.gradle.plugin.mpp.KpmKotlinDependencyHandlerImpl
 import org.jetbrains.kotlin.gradle.plugin.mpp.toModuleDependency
 import org.jetbrains.kotlin.gradle.plugin.sources.DefaultLanguageSettingsBuilder
 import org.jetbrains.kotlin.gradle.plugin.sources.FragmentConsistencyChecker
@@ -76,8 +79,8 @@ open class KotlinGradleFragmentInternal @Inject constructor(
         }
     }
 
-    override fun dependencies(configure: KotlinDependencyHandler.() -> Unit): Unit =
-        DefaultKotlinDependencyHandler(this, project).run(configure)
+    override fun dependencies(configure: KpmKotlinDependencyHandler.() -> Unit) =
+        KpmKotlinDependencyHandlerImpl(this, project).run(configure)
 
     override fun dependencies(configureClosure: Closure<Any?>) =
         dependencies f@{ ConfigureUtil.configure(configureClosure, this@f) }
@@ -91,9 +94,11 @@ open class KotlinGradleFragmentInternal @Inject constructor(
     //       out of the consumer's metadata compilations compile classpath; however, Native variants must expose implementation as API
     //       anyway, so for now all fragments follow that behavior
     override val declaredModuleDependencies: Iterable<KotlinModuleDependency>
-        get() = listOf(apiConfiguration, implementationConfiguration).flatMapTo(mutableSetOf()) { exportConfiguration ->
-            exportConfiguration.allDependencies.map { dependency -> dependency.toModuleDependency(project) }
-        }
+        get() = project.configurations
+            .getByName(apiConfigurationName)
+            .allDependencies
+            .withType(ModuleDependency::class.java)
+            .map { it.toModuleDependency(project) } // FIXME impl
 
     override val kotlinSourceRoots: SourceDirectorySet =
         project.objects.sourceDirectorySet(
@@ -112,3 +117,11 @@ open class KotlinGradleFragmentInternal @Inject constructor(
             ).allChecks
         )
 }
+
+/*
+WARNING! CHANGE LOST! REVIEW!
+See 'Auxillary modules. Register KpmDependencyHandler in fragments + some weird change about dissambiguation Dmitry Savvinov 25.03.2022, 12:27'
+internal fun KotlinModuleFragment.disambiguateName(simpleName: String) =
+    // TODO NOW: weird change, review?
+    lowerCamelCaseName(fragmentName, containingModule.moduleIdentifier.moduleClassifier, simpleName)
+ */
