@@ -34,6 +34,14 @@ abstract class Launcher {
         benchmarks[name] = benchmark
     }
 
+    fun addBase(name: String, benchmark: AbstractBenchmarkEntry) {
+        baseBenchmarksSet[name] = benchmark
+    }
+
+    fun addExtended(name: String, benchmark: AbstractBenchmarkEntry) {
+        extendedBenchmarksSet[name] = benchmark
+    }
+
     fun runBenchmark(benchmarkInstance: Any?, benchmark: AbstractBenchmarkEntry, repeatNumber: Int): Long {
         var i = repeatNumber
         return if (benchmark is BenchmarkEntryWithInit) {
