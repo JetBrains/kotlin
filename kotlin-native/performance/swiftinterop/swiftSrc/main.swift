@@ -47,7 +47,7 @@ runner.runBenchmarks(args: args, run: { (arguments: BenchmarkArguments) -> [Benc
     }
     return [BenchmarkResult]()
 }, parseArgs: { (args: KotlinArray,  benchmarksListAction: ((KotlinBoolean) -> KotlinUnit)) -> BenchmarkArguments? in
-    return runner.parse(args: args, benchmarksListAction: swiftLauncher.benchmarksListAction) },
+    return runner.parse(args: args, benchmarksListAction: { (baseOnly: KotlinBoolean) in swiftLauncher.benchmarksListAction(baseOnly: baseOnly.boolValue) }) },
   collect: { (benchmarks: [BenchmarkResult], arguments: BenchmarkArguments) -> Void in
     runner.collect(results: benchmarks, arguments: arguments)
-}, benchmarksListAction: swiftLauncher.benchmarksListAction)
+}, benchmarksListAction: { (baseOnly: KotlinBoolean) in swiftLauncher.benchmarksListAction(baseOnly: baseOnly.boolValue) })
