@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.fir.expressions
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.fir.FirElement
+import org.jetbrains.kotlin.fir.types.FirTypeProjection
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.visitors.*
 
@@ -23,6 +24,7 @@ abstract class FirAnnotation : FirExpression() {
     abstract val useSiteTarget: AnnotationUseSiteTarget?
     abstract val annotationTypeRef: FirTypeRef
     abstract val argumentMapping: FirAnnotationArgumentMapping
+    abstract val typeArguments: List<FirTypeProjection>
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitAnnotation(this, data)
 
@@ -34,7 +36,11 @@ abstract class FirAnnotation : FirExpression() {
 
     abstract fun replaceArgumentMapping(newArgumentMapping: FirAnnotationArgumentMapping)
 
+    abstract fun replaceTypeArguments(newTypeArguments: List<FirTypeProjection>)
+
     abstract override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirAnnotation
 
     abstract fun <D> transformAnnotationTypeRef(transformer: FirTransformer<D>, data: D): FirAnnotation
+
+    abstract fun <D> transformTypeArguments(transformer: FirTransformer<D>, data: D): FirAnnotation
 }

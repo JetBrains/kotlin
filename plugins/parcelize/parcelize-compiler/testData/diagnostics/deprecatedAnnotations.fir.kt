@@ -22,11 +22,11 @@ object <!DEPRECATED_PARCELER!>Parceler2<!> : Parceler<List<String>> {
 }
 
 <!DEPRECATED_ANNOTATION!>@Parcelize<!>
-<!FORBIDDEN_DEPRECATED_ANNOTATION!>@<!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER, NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>TypeParceler<!><String, Parceler2><!>
+<!FORBIDDEN_DEPRECATED_ANNOTATION!>@TypeParceler<String, Parceler2><!>
 data class Test(
     val a: String,
-    val b: <!FORBIDDEN_DEPRECATED_ANNOTATION!>@<!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>WriteWith<!><Parceler1><!> String,
-    val c: <!FORBIDDEN_DEPRECATED_ANNOTATION!>@<!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>WriteWith<!><Parceler2><!> List<<!FORBIDDEN_DEPRECATED_ANNOTATION!>@<!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>WriteWith<!><Parceler1><!> String>
+    val b: <!FORBIDDEN_DEPRECATED_ANNOTATION!>@WriteWith<Parceler1><!> String,
+    val c: <!FORBIDDEN_DEPRECATED_ANNOTATION!>@WriteWith<Parceler2><!> List<<!FORBIDDEN_DEPRECATED_ANNOTATION!>@WriteWith<Parceler1><!> String>
 ) : Parcelable {
     <!DEPRECATED_ANNOTATION!>@IgnoredOnParcel<!>
     val x by lazy { "foo" }

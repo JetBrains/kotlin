@@ -1,5 +1,3 @@
-// IGNORE_BACKEND_FIR: JVM_IR
-
 package ann
 
 annotation class Test1<T>(val x: Int)

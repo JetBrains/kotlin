@@ -1453,6 +1453,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
             }
 
             @Test
+            @TestMetadata("typeArgumentsInAnnotation.kt")
+            public void testTypeArgumentsInAnnotation() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/annotations/typeArgumentsInAnnotation.kt");
+            }
+
+            @Test
             @TestMetadata("typeParameterAsAnnotation.kt")
             public void testTypeParameterAsAnnotation() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/annotations/typeParameterAsAnnotation.kt");

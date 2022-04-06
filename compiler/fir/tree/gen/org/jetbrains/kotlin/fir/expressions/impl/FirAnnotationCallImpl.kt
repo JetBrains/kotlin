@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.fir.expressions.FirAnnotationArgumentMapping
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.expressions.FirArgumentList
 import org.jetbrains.kotlin.fir.references.FirReference
+import org.jetbrains.kotlin.fir.types.FirTypeProjection
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.visitors.*
 
@@ -24,6 +25,7 @@ internal class FirAnnotationCallImpl(
     override val source: KtSourceElement?,
     override val useSiteTarget: AnnotationUseSiteTarget?,
     override var annotationTypeRef: FirTypeRef,
+    override val typeArguments: MutableList<FirTypeProjection>,
     override var argumentList: FirArgumentList,
     override var calleeReference: FirReference,
     override var argumentMapping: FirAnnotationArgumentMapping,
@@ -33,12 +35,14 @@ internal class FirAnnotationCallImpl(
 
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
         annotationTypeRef.accept(visitor, data)
+        typeArguments.forEach { it.accept(visitor, data) }
         argumentList.accept(visitor, data)
         calleeReference.accept(visitor, data)
     }
 
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirAnnotationCallImpl {
         transformAnnotationTypeRef(transformer, data)
+        transformTypeArguments(transformer, data)
         argumentList = argumentList.transform(transformer, data)
         transformCalleeReference(transformer, data)
         return this
@@ -53,12 +57,22 @@ internal class FirAnnotationCallImpl(
         return this
     }
 
+    override fun <D> transformTypeArguments(transformer: FirTransformer<D>, data: D): FirAnnotationCallImpl {
+        typeArguments.transformInplace(transformer, data)
+        return this
+    }
+
     override fun <D> transformCalleeReference(transformer: FirTransformer<D>, data: D): FirAnnotationCallImpl {
         calleeReference = calleeReference.transform(transformer, data)
         return this
     }
 
     override fun replaceTypeRef(newTypeRef: FirTypeRef) {}
+
+    override fun replaceTypeArguments(newTypeArguments: List<FirTypeProjection>) {
+        typeArguments.clear()
+        typeArguments.addAll(newTypeArguments)
+    }
 
     override fun replaceArgumentList(newArgumentList: FirArgumentList) {
         argumentList = newArgumentList

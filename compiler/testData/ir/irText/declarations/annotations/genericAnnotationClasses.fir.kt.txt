@@ -1,0 +1,102 @@
+package ann
+
+open annotation class Test1<T : Any?> : Annotation {
+  constructor(x: Int) /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  val x: Int
+    field = x
+    get
+
+}
+
+open annotation class Test2<T1 : Any, T2 : Any?> : Annotation {
+  constructor(x: Int = 0) /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  val x: Int
+    field = x
+    get
+
+}
+
+interface I<T : Any?> {
+
+}
+
+open annotation class Test3<T1 : Any?, T2 : I<T1>> : Annotation {
+  constructor(x: Test1<I<T2>>) /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  val x: Test1<I<T2>>
+    field = x
+    get
+
+}
+
+class C<T : Any?> : I<T> {
+  constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+}
+
+open annotation class Test4 : Annotation {
+  constructor(x: Array<Test3<Int, C<Int>>>) /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  val x: Array<Test3<Int, C<Int>>>
+    field = x
+    get
+
+}
+
+class ARG {
+  constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+}
+
+open annotation class Test5<T : Any?> : Annotation {
+  constructor(vararg xs: Test3<T, C<T>>) /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  val xs: Array<out Test3<T, C<T>>>
+    field = xs
+    get
+
+}
+
+@Test1(x = 42)
+@Test2(x = 38)
+@Test3(x = Test1<I<C<String>>>(x = 39))
+@Test4(x = [Test3<ErrorType, ErrorType>(x = Test1<ErrorType>(x = 40)), Test3<ErrorType, ErrorType>(x = Test1<ErrorType>(x = 50)), Test3<ErrorType, ErrorType>(x = Test1<ErrorType>(x = 60))])
+@Test5(xs = [Test3<ARG, C<ARG>>(x = Test1<I<C<ARG>>>(x = 70)), Test3<ARG, C<ARG>>(x = Test1<I<C<ARG>>>(x = 80))])
+class CC {
+  constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+}

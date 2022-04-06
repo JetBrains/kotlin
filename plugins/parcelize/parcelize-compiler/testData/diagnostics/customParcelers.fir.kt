@@ -19,27 +19,27 @@ class StringClassParceler : Parceler<String> {
     override fun String.write(parcel: Parcel, flags: Int) = TODO()
 }
 
-@<!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER, NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>TypeParceler<!><String, StringParceler>
-class MissingParcelizeAnnotation(val a: @<!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>WriteWith<!><StringParceler> String)
+@TypeParceler<String, StringParceler>
+class MissingParcelizeAnnotation(val a: @WriteWith<StringParceler> String)
 
 @Parcelize
-@<!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER, NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>TypeParceler<!><String, StringClassParceler>
-class ShouldBeClass(val a: @<!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>WriteWith<!><StringClassParceler> String) : Parcelable
+@TypeParceler<String, StringClassParceler>
+class ShouldBeClass(val a: @WriteWith<StringClassParceler> String) : Parcelable
 
 @Parcelize
 class Test(
-    val a: @<!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>WriteWith<!><StringParceler> Int,
-    val b: @<!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>WriteWith<!><StringParceler> String,
-    val c: @<!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>WriteWith<!><StringParceler> CharSequence,
-    val d: @<!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>WriteWith<!><CharSequenceParceler> String,
-    val e: @<!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>WriteWith<!><CharSequenceParceler> CharSequence
+    val a: @WriteWith<StringParceler> Int,
+    val b: @WriteWith<StringParceler> String,
+    val c: @WriteWith<StringParceler> CharSequence,
+    val d: @WriteWith<CharSequenceParceler> String,
+    val e: @WriteWith<CharSequenceParceler> CharSequence
 ) : Parcelable
 
 @Parcelize
-@<!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER, NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>TypeParceler<!><String, StringParceler>
-class Test2(@<!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER, NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER, NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER, NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>TypeParceler<!><String, StringParceler> val a: String) : Parcelable
+@TypeParceler<String, StringParceler>
+class Test2(@TypeParceler<String, StringParceler> val a: String) : Parcelable
 
 @Parcelize
-@<!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER, NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>TypeParceler<!><String, StringParceler>
-@<!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER, NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>TypeParceler<!><String, CharSequenceParceler>
+@TypeParceler<String, StringParceler>
+@TypeParceler<String, CharSequenceParceler>
 class Test3(val a: String) : Parcelable

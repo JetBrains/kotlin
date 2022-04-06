@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.references.FirReference
+import org.jetbrains.kotlin.fir.types.FirTypeProjection
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.visitors.*
 
@@ -23,6 +24,7 @@ abstract class FirAnnotationCall : FirAnnotation(), FirCall, FirResolvable {
     abstract override val annotations: List<FirAnnotation>
     abstract override val useSiteTarget: AnnotationUseSiteTarget?
     abstract override val annotationTypeRef: FirTypeRef
+    abstract override val typeArguments: List<FirTypeProjection>
     abstract override val argumentList: FirArgumentList
     abstract override val calleeReference: FirReference
     abstract override val argumentMapping: FirAnnotationArgumentMapping
@@ -35,6 +37,8 @@ abstract class FirAnnotationCall : FirAnnotation(), FirCall, FirResolvable {
 
     abstract override fun replaceTypeRef(newTypeRef: FirTypeRef)
 
+    abstract override fun replaceTypeArguments(newTypeArguments: List<FirTypeProjection>)
+
     abstract override fun replaceArgumentList(newArgumentList: FirArgumentList)
 
     abstract override fun replaceCalleeReference(newCalleeReference: FirReference)
@@ -44,6 +48,8 @@ abstract class FirAnnotationCall : FirAnnotation(), FirCall, FirResolvable {
     abstract override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirAnnotationCall
 
     abstract override fun <D> transformAnnotationTypeRef(transformer: FirTransformer<D>, data: D): FirAnnotationCall
+
+    abstract override fun <D> transformTypeArguments(transformer: FirTransformer<D>, data: D): FirAnnotationCall
 
     abstract override fun <D> transformCalleeReference(transformer: FirTransformer<D>, data: D): FirAnnotationCall
 }

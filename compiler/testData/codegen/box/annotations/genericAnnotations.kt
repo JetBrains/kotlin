@@ -1,5 +1,3 @@
-// IGNORE_BACKEND_FIR: JVM_IR
-// FIR status: generic annotation aren't supported in FIR inference yet; see also KT-46967
 // MODULE: lib
 // FILE: l1.kt
 package ann

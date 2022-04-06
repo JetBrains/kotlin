@@ -555,7 +555,7 @@ class FirCallResolver(
             explicitReceiver = null,
             annotation.argumentList,
             isImplicitInvoke = false,
-            typeArguments = emptyList(),
+            typeArguments = annotation.typeArguments,
             session,
             components.file,
             components.containingDeclarations

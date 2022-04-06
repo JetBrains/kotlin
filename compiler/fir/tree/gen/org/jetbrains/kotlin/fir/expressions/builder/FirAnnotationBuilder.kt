@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationArgumentMapping
 import org.jetbrains.kotlin.fir.expressions.builder.FirExpressionBuilder
 import org.jetbrains.kotlin.fir.expressions.impl.FirAnnotationImpl
+import org.jetbrains.kotlin.fir.types.FirTypeProjection
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.visitors.*
 
@@ -28,6 +29,7 @@ class FirAnnotationBuilder : FirAnnotationContainerBuilder, FirExpressionBuilder
     var useSiteTarget: AnnotationUseSiteTarget? = null
     lateinit var annotationTypeRef: FirTypeRef
     lateinit var argumentMapping: FirAnnotationArgumentMapping
+    val typeArguments: MutableList<FirTypeProjection> = mutableListOf()
 
     override fun build(): FirAnnotation {
         return FirAnnotationImpl(
@@ -35,6 +37,7 @@ class FirAnnotationBuilder : FirAnnotationContainerBuilder, FirExpressionBuilder
             useSiteTarget,
             annotationTypeRef,
             argumentMapping,
+            typeArguments,
         )
     }
 

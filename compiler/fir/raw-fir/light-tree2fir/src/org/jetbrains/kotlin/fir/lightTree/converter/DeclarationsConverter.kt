@@ -377,7 +377,8 @@ class DeclarationsConverter(
                 CONSTRUCTOR_CALLEE -> constructorCalleePair = convertConstructorInvocation(unescapedAnnotation)
             }
         }
-        val name = (constructorCalleePair.first as? FirUserTypeRef)?.qualifier?.last()?.name ?: Name.special("<no-annotation-name>")
+        val qualifier = (constructorCalleePair.first as? FirUserTypeRef)?.qualifier?.last()
+        val name = qualifier?.name ?: Name.special("<no-annotation-name>")
         return buildAnnotationCall {
             source = unescapedAnnotation.toFirSourceElement()
             useSiteTarget = annotationUseSiteTarget ?: defaultAnnotationUseSiteTarget
@@ -392,6 +393,7 @@ class DeclarationsConverter(
                 this.name = name
             }
             extractArgumentsFrom(constructorCalleePair.second)
+            typeArguments += qualifier?.typeArgumentList?.typeArguments ?: listOf()
         }
     }
 
