@@ -160,7 +160,12 @@ public final class ExpressionVisitor extends TranslatorVisitor<JsNode> {
 
         JsReturn jsReturn;
         if (returned == null) {
-            jsReturn = new JsReturn(null);
+            JsExpression returnExpression = null;
+            if (returnTarget != null && KotlinBuiltIns.mayReturnNonUnitValue(returnTarget)) {
+                ClassDescriptor unit = context.getCurrentModule().getBuiltIns().getUnit();
+                returnExpression = ReferenceTranslator.translateAsValueReference(unit, context);
+            }
+            jsReturn = new JsReturn(returnExpression);
         }
         else {
             JsExpression jsReturnExpression = translateAsExpression(returned, context);

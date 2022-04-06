@@ -161,9 +161,7 @@ public final class FunctionBodyTranslator extends AbstractTranslator {
     }
 
     private boolean mustAddReturnToGeneratedFunctionBody() {
-        KotlinType functionReturnType = descriptor.getReturnType();
-        assert functionReturnType != null : "Function return typed type must be resolved.";
-        return (!declaration.hasBlockBody()) && !(KotlinBuiltIns.isUnit(functionReturnType) && !descriptor.isSuspend());
+        return !declaration.hasBlockBody() && (KotlinBuiltIns.mayReturnNonUnitValue(descriptor) || descriptor.isSuspend());
     }
 
     @NotNull
