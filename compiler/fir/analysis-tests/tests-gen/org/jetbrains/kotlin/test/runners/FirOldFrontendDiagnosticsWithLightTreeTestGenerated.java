@@ -31509,6 +31509,12 @@ public class FirOldFrontendDiagnosticsWithLightTreeTestGenerated extends Abstrac
             }
 
             @Test
+            @TestMetadata("typeMismatchErrorHasExpectedGenericTypeArgumentInsteadOfTypeParameter.kt")
+            public void testTypeMismatchErrorHasExpectedGenericTypeArgumentInsteadOfTypeParameter() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/typeParameters/typeMismatchErrorHasExpectedGenericTypeArgumentInsteadOfTypeParameter.kt");
+            }
+
+            @Test
             @TestMetadata("upperBoundCannotBeArray.kt")
             public void testUpperBoundCannotBeArray() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/typeParameters/upperBoundCannotBeArray.kt");

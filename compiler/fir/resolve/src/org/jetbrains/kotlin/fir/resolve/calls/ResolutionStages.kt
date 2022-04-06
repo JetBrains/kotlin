@@ -445,11 +445,10 @@ internal object CheckArguments : CheckerStage() {
         val argumentMapping =
             candidate.argumentMapping ?: error("Argument should be already mapped while checking arguments!")
         for (argument in callInfo.arguments) {
-            val parameter = argumentMapping[argument]
             candidate.resolveArgument(
                 callInfo,
                 argument,
-                parameter,
+                argumentMapping[argument],
                 isReceiver = false,
                 sink = sink,
                 context = context
