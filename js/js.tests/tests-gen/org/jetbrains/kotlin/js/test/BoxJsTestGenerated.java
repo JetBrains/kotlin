@@ -751,6 +751,12 @@ public class BoxJsTestGenerated extends AbstractBoxJsTest {
         }
 
         @Test
+        @TestMetadata("unitMaterializationInOverriddenMethod.kt")
+        public void testUnitMaterializationInOverriddenMethod() throws Exception {
+            runTest("js/js.translator/testData/box/coercion/unitMaterializationInOverriddenMethod.kt");
+        }
+
+        @Test
         @TestMetadata("unitNullCheck.kt")
         public void testUnitNullCheck() throws Exception {
             runTest("js/js.translator/testData/box/coercion/unitNullCheck.kt");

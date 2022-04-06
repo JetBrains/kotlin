@@ -895,6 +895,24 @@ public abstract class KotlinBuiltIns {
         return isNotNullConstructedFromGivenClass(type, FqNames.unit);
     }
 
+    /**
+     * Returns <code>true</code> if the <code>descriptor</code>'s return type is not <code>Unit</code>,
+     * or it overrides a function with a non-<code>Unit</code> return type.
+     */
+    public static boolean mayReturnNonUnitValue(@NotNull FunctionDescriptor descriptor) {
+        KotlinType functionReturnType = descriptor.getReturnType();
+        assert functionReturnType != null : "Function return typed type must be resolved.";
+        boolean mayReturnNonUnitValue = !isUnit(functionReturnType);
+        for (FunctionDescriptor overriddenDescriptor : descriptor.getOriginal().getOverriddenDescriptors()) {
+            if (mayReturnNonUnitValue)
+                break;
+            KotlinType overriddenFunctionReturnType = overriddenDescriptor.getReturnType();
+            assert overriddenFunctionReturnType != null : "Function return typed type must be resolved.";
+            mayReturnNonUnitValue = !isUnit(overriddenFunctionReturnType);
+        }
+        return mayReturnNonUnitValue;
+    }
+
     public static boolean isUnitOrNullableUnit(@NotNull KotlinType type) {
         return isConstructedFromGivenClass(type, FqNames.unit);
     }
