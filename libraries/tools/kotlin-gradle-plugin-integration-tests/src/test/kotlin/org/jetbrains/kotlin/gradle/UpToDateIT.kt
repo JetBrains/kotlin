@@ -99,11 +99,7 @@ class UpToDateIT : KGPBaseTest() {
         val originalPaths get() = originalCompilerCp.map { it.replace("\\", "/") }.joinToString(", ") { "'$it'" }
 
         override fun initProject(project: TestProject) = with(project) {
-            val pluginSuffix = if (project.gradleVersion < GradleVersion.version("7.0")) {
-                "kotlin_gradle_plugin"
-            } else {
-                "kotlin_gradle_plugin_gradle70"
-            }
+            val pluginSuffix = "kotlin_gradle_plugin"
             buildGradle.appendText(
                 "\nafterEvaluate { println 'compiler_cp=' + compileKotlin.getDefaultCompilerClasspath\$$pluginSuffix().toList() }"
             )
