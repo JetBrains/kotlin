@@ -1,2 +1,2 @@
-warning: JVM target 1.6 is deprecated and will be removed in a future release. Please migrate to JVM target 1.8 or above
-OK
+error: JVM target 1.6 is no longer supported. Please migrate to JVM target 1.8 or above
+COMPILATION_ERROR

@@ -16,6 +16,7 @@ dependencies {
     expectedBy project(':kotlin-test:kotlin-test-annotations-common')
     api project(':kotlin-test:kotlin-test-jvm')
     api('junit:junit:4.13.2')
+    kotlinCompilerClasspath(project(':libraries:tools:stdlib-compiler-classpath'))
 }
 
 

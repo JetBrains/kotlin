@@ -16,6 +16,7 @@ sourceSets {
 
 dependencies {
     compileOnly DependenciesKt.kotlinBuiltins(project)
+    kotlinCompilerClasspath project(':libraries:tools:stdlib-compiler-classpath')
 }
 
 configureSourcesJar()

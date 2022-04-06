@@ -63,6 +63,8 @@ dependencies {
     testApi project(':kotlin-test:kotlin-test-junit')
 
     builtins project(':core:builtins')
+
+    kotlinCompilerClasspath project(':libraries:tools:stdlib-compiler-classpath')
 }
 
 jar {

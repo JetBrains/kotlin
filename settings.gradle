@@ -313,7 +313,8 @@ include ":benchmarks",
         ":kotlinx-serialization-compiler-plugin",
         ":kotlin-serialization",
         ":kotlin-serialization-unshaded",
-        ":wasm:wasm.ir"
+        ":wasm:wasm.ir",
+        ":libraries:tools:stdlib-compiler-classpath"
 
 
 include ":kotlinx-atomicfu-compiler-plugin",

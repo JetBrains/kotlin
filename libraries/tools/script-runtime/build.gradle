@@ -8,6 +8,7 @@ configurePublishing(project)
 
 dependencies {
     compileOnly kotlinStdlib()
+    kotlinCompilerClasspath project(':libraries:tools:stdlib-compiler-classpath')
 }
 
 sourceSets {

@@ -10,6 +10,7 @@ dependencies {
     api(project(":kotlin-scripting-common"))
     testApi(commonDependency("junit"))
     testImplementation(commonDependency("org.jetbrains.kotlinx", "kotlinx-coroutines-core"))
+    kotlinCompilerClasspath(project(":libraries:tools:stdlib-compiler-classpath"))
 }
 
 sourceSets {

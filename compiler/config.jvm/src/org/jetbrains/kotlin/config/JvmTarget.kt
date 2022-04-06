@@ -55,5 +55,8 @@ enum class JvmTarget(
             return if (platformDescription != null) "JVM target $platformDescription"
             else "JVM bytecode version $majorVersion"
         }
+
+        fun supportedValues(): List<JvmTarget> =
+            values().asList() - JVM_1_6
     }
 }

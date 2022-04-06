@@ -29,6 +29,7 @@ dependencies {
     compileOnly project(':core:descriptors.runtime')
     compileOnly project(':core:util.runtime')
     compileOnly "org.jetbrains:annotations:13.0"
+    kotlinCompilerClasspath project(':libraries:tools:stdlib-compiler-classpath')
 }
 
 if (includeJava9) {
