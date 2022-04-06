@@ -14,27 +14,27 @@ let args = KotlinArray<NSString>(size: Int32(CommandLine.arguments.count - 1), i
 let companion = BenchmarkEntryWithInit.Companion()
 
 var swiftLauncher = SwiftLauncher()
-swiftLauncher.add(name: "createMultigraphOfInt", benchmark: companion.create(ctor: { return SwiftInteropBenchmarks() },
+swiftLauncher.addBase(name: "createMultigraphOfInt", benchmark: companion.create(ctor: { return SwiftInteropBenchmarks() },
         lambda: { ($0 as! SwiftInteropBenchmarks).createMultigraphOfInt() }))
-    swiftLauncher.add(name: "fillCityMap", benchmark: companion.create(ctor: { return SwiftInteropBenchmarks() },
+    swiftLauncher.addBase(name: "fillCityMap", benchmark: companion.create(ctor: { return SwiftInteropBenchmarks() },
         lambda: { ($0 as! SwiftInteropBenchmarks).fillCityMap() }))
-    swiftLauncher.add(name: "searchRoutesInSwiftMultigraph", benchmark: companion.create(ctor: { return SwiftInteropBenchmarks() },
+    swiftLauncher.addBase(name: "searchRoutesInSwiftMultigraph", benchmark: companion.create(ctor: { return SwiftInteropBenchmarks() },
         lambda: { ($0 as! SwiftInteropBenchmarks).searchRoutesInSwiftMultigraph () }))
-    swiftLauncher.add(name: "searchTravelRoutes", benchmark: companion.create(ctor: { return SwiftInteropBenchmarks() },
+    swiftLauncher.addExtended(name: "searchTravelRoutes", benchmark: companion.create(ctor: { return SwiftInteropBenchmarks() },
         lambda: { ($0 as! SwiftInteropBenchmarks).searchTravelRoutes() }))
-    swiftLauncher.add(name: "availableTransportOnMap", benchmark: companion.create(ctor: { return SwiftInteropBenchmarks() },
+    swiftLauncher.addBase(name: "availableTransportOnMap", benchmark: companion.create(ctor: { return SwiftInteropBenchmarks() },
         lambda: { ($0 as! SwiftInteropBenchmarks).availableTransportOnMap() }))
-    swiftLauncher.add(name: "allPlacesMapedByInterests", benchmark: companion.create(ctor: { return SwiftInteropBenchmarks() },
+    swiftLauncher.addExtended(name: "allPlacesMapedByInterests", benchmark: companion.create(ctor: { return SwiftInteropBenchmarks() },
         lambda: { ($0 as! SwiftInteropBenchmarks).allPlacesMapedByInterests() }))
-    swiftLauncher.add(name: "getAllPlacesWithStraightRoutesTo", benchmark: companion.create(ctor: { return SwiftInteropBenchmarks() },
+    swiftLauncher.addBase(name: "getAllPlacesWithStraightRoutesTo", benchmark: companion.create(ctor: { return SwiftInteropBenchmarks() },
         lambda: { ($0 as! SwiftInteropBenchmarks).getAllPlacesWithStraightRoutesTo() }))
-    swiftLauncher.add(name: "goToAllAvailablePlaces", benchmark: companion.create(ctor: { return SwiftInteropBenchmarks() },
+    swiftLauncher.addExtended(name: "goToAllAvailablePlaces", benchmark: companion.create(ctor: { return SwiftInteropBenchmarks() },
         lambda: { ($0 as! SwiftInteropBenchmarks).goToAllAvailablePlaces() }))
-    swiftLauncher.add(name: "removeVertexAndEdgesSwiftMultigraph", benchmark: companion.create(ctor: { return SwiftInteropBenchmarks() },
+    swiftLauncher.addBase(name: "removeVertexAndEdgesSwiftMultigraph", benchmark: companion.create(ctor: { return SwiftInteropBenchmarks() },
         lambda: { ($0 as! SwiftInteropBenchmarks).removeVertexAndEdgesSwiftMultigraph() }))
-    swiftLauncher.add(name: "stringInterop", benchmark: companion.create(ctor: { return SwiftInteropBenchmarks() },
+    swiftLauncher.addBase(name: "stringInterop", benchmark: companion.create(ctor: { return SwiftInteropBenchmarks() },
         lambda: { ($0 as! SwiftInteropBenchmarks).stringInterop() }))
-    swiftLauncher.add(name: "simpleFunction", benchmark: companion.create(ctor: { return SwiftInteropBenchmarks() },
+    swiftLauncher.addBase(name: "simpleFunction", benchmark: companion.create(ctor: { return SwiftInteropBenchmarks() },
         lambda: { ($0 as! SwiftInteropBenchmarks).simpleFunction() }))
 runner.runBenchmarks(args: args, run: { (arguments: BenchmarkArguments) -> [BenchmarkResult] in
     if arguments is BaseBenchmarkArguments {
