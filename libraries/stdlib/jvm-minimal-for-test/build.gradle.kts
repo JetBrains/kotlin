@@ -20,6 +20,7 @@ val builtins by configurations.creating {
 dependencies {
     compileOnly(project(":kotlin-stdlib"))
     builtins(project(":core:builtins"))
+    kotlinCompilerClasspath(project(":libraries:tools:stdlib-compiler-classpath"))
 }
 
 sourceSets {

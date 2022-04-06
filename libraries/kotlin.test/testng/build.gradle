@@ -20,6 +20,7 @@ dependencies {
     if (includeJava9) {
         java9CompileOnly('org.testng:testng:7.0.0')
     }
+    kotlinCompilerClasspath project(':libraries:tools:stdlib-compiler-classpath')
 }
 
 jar {

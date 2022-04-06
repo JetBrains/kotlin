@@ -75,7 +75,7 @@ class K2JVMCompilerArguments : CommonCompilerArguments() {
     @Argument(
         value = "-jvm-target",
         valueDescription = "<version>",
-        description = "Target version of the generated JVM bytecode (1.6 (DEPRECATED), 1.8, 9, 10, ..., 18), default is 1.8"
+        description = "Target version of the generated JVM bytecode (1.8, 9, 10, ..., 18), default is 1.8"
     )
     var jvmTarget: String? by NullableStringFreezableVar(null)
 
@@ -466,7 +466,8 @@ Also sets `-jvm-target` value equal to the selected JDK version"""
 
     @Argument(
         value = "-Xsuppress-deprecated-jvm-target-warning",
-        description = "Suppress deprecation warning about deprecated JVM target versions"
+        description = "Suppress deprecation warning about deprecated JVM target versions.\n" +
+                "This option has no effect and will be deleted in a future version."
     )
     var suppressDeprecatedJvmTargetWarning: Boolean by FreezableVar(false)
 

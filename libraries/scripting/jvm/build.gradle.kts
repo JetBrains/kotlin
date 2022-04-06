@@ -10,6 +10,7 @@ dependencies {
     api(kotlinStdlib())
     api(project(":kotlin-scripting-common"))
     testApi(commonDependency("junit"))
+    kotlinCompilerClasspath(project(":libraries:tools:stdlib-compiler-classpath"))
 }
 
 sourceSets {

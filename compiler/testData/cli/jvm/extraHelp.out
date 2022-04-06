@@ -131,7 +131,8 @@ where advanced options include:
                              Specify behavior for Checker Framework compatqual annotations (NullableDecl/NonNullDecl).
                              Default value is 'enable'
   -Xsuppress-deprecated-jvm-target-warning
-                             Suppress deprecation warning about deprecated JVM target versions
+                             Suppress deprecation warning about deprecated JVM target versions.
+                             This option has no effect and will be deleted in a future version.
   -Xsuppress-missing-builtins-error
                              Suppress the "cannot access built-in declaration" error (useful with -no-stdlib)
   -Xtype-enhancement-improvements-strict-mode

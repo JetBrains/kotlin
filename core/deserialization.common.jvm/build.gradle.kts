@@ -9,6 +9,7 @@ dependencies {
     api(project(":core:metadata.jvm"))
     api(project(":core:deserialization.common"))
     implementation(project(":core:compiler.common.jvm"))
+    kotlinCompilerClasspath(project(":libraries:tools:stdlib-compiler-classpath"))
 }
 
 sourceSets {

@@ -34,6 +34,7 @@ dependencies {
     testRuntimeOnly("org.slf4j:slf4j-nop:1.7.30")
     testImplementation(kotlin("reflect"))
     testImplementation(commonDependency("org.jetbrains.kotlinx", "kotlinx-coroutines-core"))
+    kotlinCompilerClasspath(project(":libraries:tools:stdlib-compiler-classpath"))
 }
 
 sourceSets {
