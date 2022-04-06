@@ -26,7 +26,7 @@ internal class IdeaKotlinMetadataBinaryDependencyResolver(
     }
 
     private fun resolve(fragment: KotlinGradleFragment, resolution: ChooseVisibleSourceSets): Iterable<IdeaKotlinDependency> {
-        val gradleModuleIdentifier = resolution.dependency.id as? ModuleComponentIdentifier ?: return emptySet()
+        val gradleModuleIdentifier = resolution.dependency.selected.id as? ModuleComponentIdentifier ?: return emptySet()
         val kotlinModuleIdentifier = resolution.dependency.toModuleDependency().moduleIdentifier
 
         /* Project to project metadata dependencies shall be resolved as source dependencies, somewhere else */

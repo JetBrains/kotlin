@@ -24,7 +24,7 @@ internal class IdeaKotlinGranularFragmentDependencyResolver(
     }
 
     private fun resolve(fragment: KotlinGradleFragment, resolution: ChooseVisibleSourceSets): Iterable<IdeaKotlinDependency> {
-        val gradleProjectIdentifier = resolution.dependency.id as? ProjectComponentIdentifier ?: return emptyList()
+        val gradleProjectIdentifier = resolution.dependency.selected.id as? ProjectComponentIdentifier ?: return emptyList()
         val kotlinModuleIdentifier = resolution.dependency.toModuleDependency().moduleIdentifier
         return resolution.allVisibleSourceSetNames.map { visibleFragmentName ->
             IdeaKotlinFragmentDependencyImpl(
