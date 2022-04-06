@@ -35,10 +35,10 @@ import org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluat
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedCallableMemberDescriptor
-import org.jetbrains.kotlin.types.error.ErrorUtils
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.checker.intersectWrappedTypes
+import org.jetbrains.kotlin.types.error.ErrorUtils
 import org.jetbrains.kotlin.types.expressions.ControlStructureTypingUtils
 import org.jetbrains.kotlin.types.model.TypeSystemInferenceExtensionContextDelegate
 import org.jetbrains.kotlin.types.model.TypeVariableMarker
@@ -119,7 +119,7 @@ class DiagnosticReporterByTrackingStrategy(
                 val callElement = psiKotlinCall.psiCall.callElement
                 trace.report(
                     NO_CONTEXT_RECEIVER.on(
-                        callElement,
+                        callElement.getCalleeExpressionIfAny() ?: callElement,
                         (diagnostic as NoContextReceiver).receiverDescriptor.value.toString()
                     )
                 )

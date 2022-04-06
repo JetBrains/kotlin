@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // !LANGUAGE: +ContextReceivers
 
 open class A
@@ -10,7 +11,7 @@ fun B.f() {}
 fun main() {
     val b = B()
 
-    b.<!NO_CONTEXT_RECEIVER!>f()<!>
+    b.<!NO_CONTEXT_RECEIVER!>f<!>()
     with(A()) {
         b.f()
     }
