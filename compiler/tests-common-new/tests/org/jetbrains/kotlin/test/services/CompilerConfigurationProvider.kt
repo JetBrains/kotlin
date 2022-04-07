@@ -91,14 +91,14 @@ open class CompilerConfigurationProviderImpl(
             testServices.applicationDisposableProvider.getApplicationRootDisposable(),
             CompilerConfiguration()
         )
-        val initialConfiguration = createCompilerConfiguration(module)
-        val projectEnv = KotlinCoreEnvironment.ProjectEnvironment(testRootDisposable, applicationEnvironment, initialConfiguration)
+        val configuration = createCompilerConfiguration(module)
+        val projectEnv = KotlinCoreEnvironment.ProjectEnvironment(testRootDisposable, applicationEnvironment, configuration)
         val project = projectEnv.project
         return KotlinCoreEnvironment.createForTests(
             projectEnv,
-            initialConfiguration,
+            configuration,
             configFiles
-        ).also { configurators.forEach { it.registerCompilerExtensions(project, module) } }
+        ).also { configurators.forEach { it.registerCompilerExtensions(project, module, configuration) } }
     }
 
     @TestInfrastructureInternals

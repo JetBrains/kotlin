@@ -58,9 +58,9 @@ private class EnabledByDirectiveConfiguratorDecorator(
         languageVersion: LanguageVersion
     ): Map<AnalysisFlag<*>, Any?> = original.provideAdditionalAnalysisFlags(directives, languageVersion)
 
-    override fun registerCompilerExtensions(project: Project, module: TestModule) {
+    override fun registerCompilerExtensions(project: Project, module: TestModule, configuration: CompilerConfiguration) {
         if (directive !in module.directives) return
 
-        original.registerCompilerExtensions(project, module)
+        original.registerCompilerExtensions(project, module, configuration)
     }
 }

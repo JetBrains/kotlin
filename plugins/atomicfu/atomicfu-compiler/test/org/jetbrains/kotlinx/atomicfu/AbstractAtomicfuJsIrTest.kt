@@ -7,6 +7,7 @@ package org.jetbrains.kotlinx.atomicfu
 
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
+import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.js.test.ir.AbstractJsIrTest
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.model.TestModule
@@ -39,7 +40,7 @@ class AtomicfuRuntimeClasspathProvider(testServices: TestServices) : RuntimeClas
 }
 
 class AtomicfuEnvironmentConfigurator(testServices: TestServices) : EnvironmentConfigurator(testServices) {
-    override fun registerCompilerExtensions(project: Project, module: TestModule) {
+    override fun registerCompilerExtensions(project: Project, module: TestModule, configuration: CompilerConfiguration) {
         IrGenerationExtension.registerExtension(project, AtomicfuLoweringExtension())
     }
 }

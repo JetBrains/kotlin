@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.parcelize.test.services
 
 import com.intellij.openapi.project.Project
+import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.name.FqName
@@ -16,7 +17,7 @@ import org.jetbrains.kotlin.test.services.EnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.TestServices
 
 class SerializableLikeExtensionProvider(testServices: TestServices) : EnvironmentConfigurator(testServices) {
-    override fun registerCompilerExtensions(project: Project, module: TestModule) {
+    override fun registerCompilerExtensions(project: Project, module: TestModule, configuration: CompilerConfiguration) {
         SyntheticResolveExtension.registerExtension(project, SerializableLike())
     }
 

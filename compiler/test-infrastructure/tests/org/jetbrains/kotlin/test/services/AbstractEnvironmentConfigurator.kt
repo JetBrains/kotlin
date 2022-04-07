@@ -22,7 +22,7 @@ abstract class AbstractEnvironmentConfigurator : ServicesAndDirectivesContainer 
 
     abstract fun provideAdditionalAnalysisFlags(directives: RegisteredDirectives, languageVersion: LanguageVersion): Map<AnalysisFlag<*>, Any?>
 
-    abstract fun registerCompilerExtensions(project: Project, module: TestModule)
+    abstract fun registerCompilerExtensions(project: Project, module: TestModule, configuration: CompilerConfiguration)
 }
 
 abstract class EnvironmentConfigurator(protected val testServices: TestServices) : AbstractEnvironmentConfigurator() {
@@ -50,7 +50,7 @@ abstract class EnvironmentConfigurator(protected val testServices: TestServices)
         return emptyMap()
     }
 
-    override fun registerCompilerExtensions(project: Project, module: TestModule) {}
+    override fun registerCompilerExtensions(project: Project, module: TestModule, configuration: CompilerConfiguration) {}
 }
 
 class DirectiveToConfigurationKeyExtractor {
