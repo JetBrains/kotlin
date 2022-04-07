@@ -7,9 +7,12 @@ package org.jetbrains.kotlin.analysis.api.components
 
 import org.jetbrains.kotlin.analysis.api.symbols.KtSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KtSymbolWithKind
+import org.jetbrains.kotlin.analysis.project.structure.KtModule
 
 public abstract class KtSymbolContainingDeclarationProvider : KtAnalysisSessionComponent() {
     public abstract fun getContainingDeclaration(symbol: KtSymbol): KtSymbolWithKind?
+
+    public abstract fun getContainingModule(symbol: KtSymbol): KtModule
 }
 
 public interface KtSymbolContainingDeclarationProviderMixIn : KtAnalysisSessionMixIn {
@@ -21,4 +24,7 @@ public interface KtSymbolContainingDeclarationProviderMixIn : KtAnalysisSessionM
      */
     public fun KtSymbol.getContainingSymbol(): KtSymbolWithKind? =
         analysisSession.containingDeclarationProvider.getContainingDeclaration(this)
+
+    public fun KtSymbol.getContainingModule(): KtModule =
+        analysisSession.containingDeclarationProvider.getContainingModule(this)
 }

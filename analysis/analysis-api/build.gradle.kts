@@ -17,6 +17,7 @@ dependencies {
     implementation(project(":analysis:analysis-internal-utils"))
     implementation(project(":analysis:analysis-api-providers"))
     implementation(project(":analysis:kt-references"))
+    api(project(":analysis:project-structure"))
 
     api(intellijCore())
     api(commonDependency("org.jetbrains.intellij.deps:asm-all"))
