@@ -46,7 +46,7 @@ class TestConfigurationBuilder {
     private val configurationsByNegativeTestDataCondition: MutableList<Pair<Regex, TestConfigurationBuilder.() -> Unit>> = mutableListOf()
     private val additionalServices: MutableList<ServiceRegistrationData> = mutableListOf()
 
-    private var compilerConfigurationProvider: ((Disposable, List<AbstractEnvironmentConfigurator>) -> CompilerConfigurationProvider)? = null
+    private var compilerConfigurationProvider: ((TestServices, Disposable, List<AbstractEnvironmentConfigurator>) -> CompilerConfigurationProvider)? = null
     private var runtimeClasspathProviders: MutableList<Constructor<RuntimeClasspathProvider>> = mutableListOf()
 
     lateinit var testInfo: KotlinTestInfo
@@ -184,7 +184,7 @@ class TestConfigurationBuilder {
     }
 
     @TestInfrastructureInternals
-    fun useCustomCompilerConfigurationProvider(provider: (Disposable, List<AbstractEnvironmentConfigurator>) -> CompilerConfigurationProvider) {
+    fun useCustomCompilerConfigurationProvider(provider: (TestServices, Disposable, List<AbstractEnvironmentConfigurator>) -> CompilerConfigurationProvider) {
         compilerConfigurationProvider = provider
     }
 
@@ -286,7 +286,7 @@ class TestConfigurationBuilder {
         val additionalServices: List<ServiceRegistrationData>
             get() = builder.additionalServices
 
-        val compilerConfigurationProvider: ((Disposable, List<AbstractEnvironmentConfigurator>) -> CompilerConfigurationProvider)?
+        val compilerConfigurationProvider: ((TestServices, Disposable, List<AbstractEnvironmentConfigurator>) -> CompilerConfigurationProvider)?
             get() = builder.compilerConfigurationProvider
         val runtimeClasspathProviders: List<Constructor<RuntimeClasspathProvider>>
             get() = builder.runtimeClasspathProviders

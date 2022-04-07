@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.test.runners
 
 import com.intellij.testFramework.TestDataFile
 import org.jetbrains.kotlin.test.Constructor
+import org.jetbrains.kotlin.test.ExecutionListenerBasedDisposableProvider
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.builders.testRunner
 import org.jetbrains.kotlin.test.directives.ConfigurationDirectives
@@ -39,7 +40,9 @@ abstract class AbstractKotlinCompilerTest {
         }
 
         val defaultConfiguration: TestConfigurationBuilder.() -> Unit = {
+            assertions = JUnit5Assertions
             useAdditionalService<TemporaryDirectoryManager>(::TemporaryDirectoryManagerImpl)
+            useAdditionalService<ApplicationDisposableProvider> { ExecutionListenerBasedDisposableProvider() }
             useSourcePreprocessor(*defaultPreprocessors.toTypedArray())
             useDirectives(*defaultDirectiveContainers.toTypedArray())
             configureDebugFlags()
@@ -48,7 +51,6 @@ abstract class AbstractKotlinCompilerTest {
     }
 
     protected val configuration: TestConfigurationBuilder.() -> Unit = {
-        assertions = JUnit5Assertions
         defaultConfiguration()
         configure(this)
     }
