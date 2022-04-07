@@ -416,6 +416,7 @@ class CodegenTestsOnAndroidGenerator private constructor(private val pathManager
         assertions = JUnit5Assertions
         useAdditionalService<TemporaryDirectoryManager>(::TemporaryDirectoryManagerImpl)
         useAdditionalService<ApplicationDisposableProvider> { ExecutionListenerBasedDisposableProvider() }
+        useAdditionalService<KotlinStandardLibrariesPathProvider> { StandardLibrariesPathProviderForKotlinProject }
         useSourcePreprocessor(*AbstractKotlinCompilerTest.defaultPreprocessors.toTypedArray())
         useDirectives(*AbstractKotlinCompilerTest.defaultDirectiveContainers.toTypedArray())
         class AndroidTransformingPreprocessor(testServices: TestServices) : SourceFilePreprocessor(testServices) {

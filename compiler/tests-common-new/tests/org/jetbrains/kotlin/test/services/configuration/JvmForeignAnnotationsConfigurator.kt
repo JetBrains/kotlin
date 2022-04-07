@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.test.services.configuration
 import org.jetbrains.kotlin.cli.jvm.addModularRootIfNotNull
 import org.jetbrains.kotlin.cli.jvm.config.addJvmClasspathRoot
 import org.jetbrains.kotlin.cli.jvm.config.jvmClasspathRoots
-import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.load.java.*
 import org.jetbrains.kotlin.name.FqName
@@ -27,6 +26,7 @@ import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.EnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.JUnit5Assertions
 import org.jetbrains.kotlin.test.services.TestServices
+import org.jetbrains.kotlin.test.services.standardLibrariesPathProvider
 import org.jetbrains.kotlin.test.util.KtTestUtil
 import java.io.File
 import kotlin.io.path.createTempDirectory
@@ -92,7 +92,7 @@ open class JvmForeignAnnotationsConfigurator(testServices: TestServices) : Envir
             useJava11 = useJava11ToCompileIncludedJavaFiles
         )
         configuration.addModularRootIfNotNull(useJava11ToCompileIncludedJavaFiles, "java9_annotations", foreignAnnotationsJar)
-        configuration.addJvmClasspathRoot(ForTestCompileRuntime.jvmAnnotationsForTests())
+        configuration.addJvmClasspathRoot(testServices.standardLibrariesPathProvider.jvmAnnotationsForTests())
 
         if (JvmEnvironmentConfigurationDirectives.WITH_JSR305_TEST_ANNOTATIONS in registeredDirectives) {
             val jsr305AnnotationsDir = createTempDirectory().toFile().also {
