@@ -11,11 +11,13 @@ import org.jetbrains.kotlin.analysis.api.KtConstantInitializerValue
 import org.jetbrains.kotlin.analysis.api.KtInitializerValue
 import org.jetbrains.kotlin.analysis.api.KtNonConstantInitializerValue
 import org.jetbrains.kotlin.analysis.api.annotations.*
+import org.jetbrains.kotlin.analysis.api.components.KtSymbolContainingDeclarationProviderMixIn
 import org.jetbrains.kotlin.analysis.api.components.KtSymbolInfoProviderMixIn
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KtNamedSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KtPossiblyNamedSymbol
 import org.jetbrains.kotlin.analysis.api.types.KtClassErrorType
 import org.jetbrains.kotlin.analysis.api.types.KtType
+import org.jetbrains.kotlin.analysis.project.structure.KtModule
 import org.jetbrains.kotlin.analysis.utils.printer.PrettyPrinter
 import org.jetbrains.kotlin.analysis.utils.printer.prettyPrint
 import org.jetbrains.kotlin.descriptors.Visibility
@@ -27,9 +29,9 @@ import org.jetbrains.kotlin.renderer.render
 import org.jetbrains.kotlin.resolve.deprecation.DeprecationInfo
 import java.lang.reflect.InvocationTargetException
 import kotlin.reflect.KClass
+import kotlin.reflect.KFunction
 import kotlin.reflect.KProperty
-import kotlin.reflect.full.declaredMemberExtensionProperties
-import kotlin.reflect.full.extensionReceiverParameter
+import kotlin.reflect.full.*
 
 public object DebugSymbolRenderer {
     public fun render(symbol: KtSymbol): String = prettyPrint { renderSymbol(symbol) }
@@ -48,6 +50,13 @@ public object DebugSymbolRenderer {
                 appendLine().append("getDispatchReceiver()").append(": ")
                 renderType(dispatchType)
             }
+
+            KtSymbolContainingDeclarationProviderMixIn::class
+                .declaredMemberExtensionFunctions
+                .filter { it.name == "getContainingModule" }
+                .forEach {
+                    renderFunction(it, this@renderExtra, symbol)
+                }
 
             KtSymbolInfoProviderMixIn::class.declaredMemberExtensionProperties
                 .asSequence()
@@ -70,10 +79,19 @@ public object DebugSymbolRenderer {
         }
     }
 
-    private fun PrettyPrinter.renderProperty(property: KProperty<*>, vararg args: Any) {
+    private fun PrettyPrinter.renderFunction(function: KFunction<*>, vararg args: Any) {
+        appendLine().append(function.name).append(": ")
+        renderFunctionCall(function, args)
+    }
+
+    private fun PrettyPrinter.renderProperty(property: KProperty<*>, vararg args: Any ) {
+        appendLine().append(property.name).append(": ")
+        renderFunctionCall(property.getter, args)
+    }
+
+    private fun PrettyPrinter.renderFunctionCall(function: KFunction<*>, args: Array<out Any>) {
         try {
-            appendLine().append(property.name).append(": ")
-            renderValue(property.getter.call(*args))
+            renderValue(function.call(*args))
         } catch (e: InvocationTargetException) {
             append("Could not render due to ").appendLine(e.cause.toString())
         }
@@ -187,6 +205,7 @@ public object DebugSymbolRenderer {
             is KtInitializerValue -> renderKtInitializerValue(value)
             is KtAnnotationApplication -> renderAnnotationApplication(value)
             is KtAnnotationsList -> renderAnnotationsList(value)
+            is KtModule -> renderKtModule(value)
             // Other custom values
             is Name -> append(value.asString())
             is FqName -> append(value.asString())
@@ -202,6 +221,25 @@ public object DebugSymbolRenderer {
             is Enum<*> -> append(value.name)
             is List<*> -> renderList(value)
             else -> append(value.toString())
+        }
+    }
+
+    private fun PrettyPrinter.renderKtModule(ktModule: KtModule) {
+        val ktModuleClass = ktModule::class.allSuperclasses.filter { it in ktModuleSubclasses }.first()
+        append("${ktModuleClass.simpleName} \"${ktModule.moduleDescription}\"")
+    }
+
+    private fun KClass<*>.allSealedSubClasses(): List<KClass<*>> = buildList {
+        add(this@allSealedSubClasses)
+        sealedSubclasses.flatMapTo(this) { it.allSealedSubClasses() }
+    }
+
+    private val ktModuleSubclasses = KtModule::class.allSealedSubClasses().distinct().sortedWith { a, b ->
+        when {
+            a == b -> 0
+            a.isSubclassOf(b) -> -1
+            b.isSubclassOf(a) -> 1
+            else -> 0
         }
     }
 
