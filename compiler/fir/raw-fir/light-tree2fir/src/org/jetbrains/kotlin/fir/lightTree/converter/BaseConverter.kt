@@ -156,7 +156,7 @@ abstract class BaseConverter(
             when (node.tokenType) {
                 type -> container += node
             }
-        } ?: listOf()
+        } ?: emptyList()
     }
 
     fun LighterASTNode?.getChildrenAsArray(): Array<out LighterASTNode?> {
@@ -168,13 +168,7 @@ abstract class BaseConverter(
     }
 
     fun LighterASTNode?.getFirstChild(): LighterASTNode? {
-        val firstChild: LighterASTNode?
-        try {
-            firstChild = getChildrenAsArray()[0]
-        } catch (e: ArrayIndexOutOfBoundsException) {
-            return null
-        }
-        return firstChild
+        return getChildrenAsArray().firstOrNull()
     }
 
     @OptIn(ExperimentalContracts::class)
