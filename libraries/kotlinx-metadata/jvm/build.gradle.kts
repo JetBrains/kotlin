@@ -21,8 +21,6 @@ group = "org.jetbrains.kotlinx"
 val deployVersion = findProperty("kotlinxMetadataDeployVersion") as String?
 version = deployVersion ?: "0.1-SNAPSHOT"
 
-project.configureJvmToolchain(JdkMajorVersion.JDK_1_6)
-
 sourceSets {
     "main" { projectDefault() }
     "test" { projectDefault() }

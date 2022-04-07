@@ -5,8 +5,6 @@ plugins {
     id("jps-compatible")
 }
 
-project.configureJvmToolchain(JdkMajorVersion.JDK_1_6)
-
 sourceSets {
     "main" { projectDefault() }
     "test" { }
