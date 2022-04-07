@@ -217,7 +217,7 @@ enum class LanguageFeature(
      */
     TypeEnhancementImprovementsInStrictMode(KOTLIN_1_7),
     OptInRelease(KOTLIN_1_7),
-    ProhibitNonExhaustiveWhenOnAlgebraicTypes(KOTLIN_1_7, kind = BUG_FIX),
+    ProhibitNonExhaustiveWhenOnAlgebraicTypes(KOTLIN_1_8, kind = BUG_FIX),
     UseBuilderInferenceWithoutAnnotation(KOTLIN_1_7),
     ProhibitSmartcastsOnPropertyFromAlienBaseClass(KOTLIN_1_7, kind = BUG_FIX),
     ProhibitInvalidCharsInNativeIdentifiers(KOTLIN_1_7, kind = BUG_FIX),
