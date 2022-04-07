@@ -1,0 +1,15 @@
+KtSamConstructorSymbol:
+  callableIdIfNonLocal: java/lang/Runnable
+  hasStableParameterNames: true
+  isExtension: false
+  name: Runnable
+  origin: SAM_CONSTRUCTOR
+  receiverType: null
+  returnType: java/lang/Runnable
+  symbolKind: SAM_CONSTRUCTOR
+  valueParameters: [
+    KtValueParameterSymbol(function)
+  ]
+  getContainingModule: Could not render due to java.util.NoSuchElementException: Collection contains no element matching the predicate.
+
+  deprecationStatus: null

@@ -1,0 +1,12 @@
+KtBackingFieldSymbol:
+  callableIdIfNonLocal: null
+  isExtension: false
+  name: field
+  origin: PROPERTY_BACKING_FIELD
+  owningProperty: KtKotlinPropertySymbol(/x)
+  receiverType: null
+  returnType: kotlin/Int
+  symbolKind: LOCAL
+  getContainingModule: Could not render due to java.lang.IllegalStateException: Unexpected KtSymbol KtFe10DescSyntheticFieldSymbol
+
+  deprecationStatus: null
