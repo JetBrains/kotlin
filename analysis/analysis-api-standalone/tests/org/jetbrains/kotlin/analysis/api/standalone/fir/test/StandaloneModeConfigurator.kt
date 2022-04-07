@@ -30,7 +30,7 @@ object StandaloneModeConfigurator : AnalysisApiTestConfigurator() {
         moduleStructure: TestModuleStructure,
         testServices: TestServices,
         project: Project
-    ): List<KtModuleWithFiles> {
+    ): KtModuleProjectStructure {
         return AnalysisApiFirSourceTestConfigurator(analyseInDependentSession = false).createModules(moduleStructure, testServices, project)
     }
 
