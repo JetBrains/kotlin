@@ -12,7 +12,7 @@ inline fun inlineFunInt(f: () -> Int): Int {
 
 inline fun inlineFunVoid(f: () -> Unit): Unit {
     val a = 1
-    return f()
+    return f() // return replaced with nop to stop here *after* calling f
 }
 
 fun simpleFunInt(f: () -> Int): Int {
@@ -20,7 +20,7 @@ fun simpleFunInt(f: () -> Int): Int {
 }
 
 fun simpleFunVoid(f: () -> Unit): Unit {
-    return f()
+    return f() // return replaced with nop to stop here *after* calling f
 }
 
-// 0 NOP
+// 2 NOP

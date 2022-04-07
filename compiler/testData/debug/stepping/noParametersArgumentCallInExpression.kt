@@ -16,5 +16,6 @@ inline fun lookAtMe(f: () -> Int) {
 // test.kt:10 box
 // test.kt:11 box
 // test.kt:5 box
+// test.kt:11 box
 // test.kt:12 box
 // test.kt:7 box

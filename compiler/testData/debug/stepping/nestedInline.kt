@@ -53,9 +53,11 @@ inline fun html(init: () -> Unit) {
 // 1.kt:34 box
 // test.kt:11 box
 // test.kt:12 box
+// 1.kt:34 box
 // 1.kt:35 box
 // 1.kt:37 box
 // test.kt:13 box
+// 1.kt:29 box
 // 1.kt:30 box
 // 1.kt:41 box
 // test.kt:15 box

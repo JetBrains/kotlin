@@ -17,5 +17,6 @@ inline fun lookAtMe(f: (String) -> Unit) {
 // test.kt:11 box
 // test.kt:5 box
 // test.kt:6 box
+// test.kt:11 box
 // test.kt:12 box
 // test.kt:7 box
