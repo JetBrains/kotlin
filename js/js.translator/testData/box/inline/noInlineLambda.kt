@@ -10,6 +10,8 @@ internal inline fun <T> run(noinline func: (T) -> T, arg: T): T {
     return func(arg)
 }
 
+// CHECK_BREAKS_COUNT: function=multiplyBy2 count=0 TARGET_BACKENDS=JS_IR
+// CHECK_LABELS_COUNT: function=multiplyBy2 name=$l$block count=0 TARGET_BACKENDS=JS_IR
 internal fun multiplyBy2(x: Int): Int {
     return run({ it * 2 }, x)
 }

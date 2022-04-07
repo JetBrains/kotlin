@@ -58,6 +58,8 @@ class N(val value: Int) {
     inline operator fun dec() = N(value - 1)
 }
 
+// CHECK_BREAKS_COUNT: function=box count=0 TARGET_BACKENDS=JS_IR
+// CHECK_LABELS_COUNT: function=box name=$l$block count=0 TARGET_BACKENDS=JS_IR
 fun box(): String {
     var result = A() + 1
     if (result != 11) return "fail: member operator: $result"

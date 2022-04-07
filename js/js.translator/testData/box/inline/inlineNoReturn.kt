@@ -33,6 +33,8 @@ internal inline fun factAbs(state: State) {
     }
 }
 
+// CHECK_BREAKS_COUNT: function=factAbsNoInline1 count=1 TARGET_BACKENDS=JS_IR
+// CHECK_LABELS_COUNT: function=factAbsNoInline1 name=$l$block count=1 TARGET_BACKENDS=JS_IR
 internal fun factAbsNoInline1(state: State): Int {
     factAbs(state)
     return state.value

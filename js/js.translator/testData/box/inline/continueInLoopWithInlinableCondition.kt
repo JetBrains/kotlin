@@ -6,6 +6,8 @@ package foo
 
 inline fun condition() = false
 
+// CHECK_BREAKS_COUNT: function=run count=0 TARGET_BACKENDS=JS_IR
+// CHECK_LABELS_COUNT: function=run name=$block count=0 TARGET_BACKENDS=JS_IR
 fun run(x: Boolean): String {
     var y = 0
     do {

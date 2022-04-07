@@ -7,6 +7,8 @@ package foo
 
 internal inline fun sum(x: Int, y: Int): Int = js("x + y")
 
+// CHECK_BREAKS_COUNT: function=test count=0 TARGET_BACKENDS=JS_IR
+// CHECK_LABELS_COUNT: function=test name=$l$block count=0 TARGET_BACKENDS=JS_IR
 internal fun test(x: Int, y: Int): Int = sum(sum(x, x), sum(y, y))
 
 fun box(): String {
