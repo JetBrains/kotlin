@@ -37,7 +37,7 @@ fun errorWithLambda(): String {
         return@foo
     } foo {
         bar()
-        return@foo <!RETURN_TYPE_MISMATCH!>10<!>
+        return@foo 10
     }
 
     return ""
