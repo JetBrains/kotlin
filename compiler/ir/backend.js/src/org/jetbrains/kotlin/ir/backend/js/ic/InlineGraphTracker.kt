@@ -63,7 +63,10 @@ class InlineFunctionHashBuilder(
         override fun visitCall(expression: IrCall, data: MutableSet<IrFunction>) {
             val callee = expression.symbol.owner
             if (callee.isInline) {
-                data += callee
+                // TODO: do not ignore fake overides after KT-51896
+                if (!callee.isFakeOverride) {
+                    data += callee
+                }
                 inlineFunctionCallDepth += 1
             }
             expression.acceptChildren(this, data)
@@ -78,7 +81,10 @@ class InlineFunctionHashBuilder(
         override fun visitFunctionReference(expression: IrFunctionReference, data: MutableSet<IrFunction>) {
             val reference = expression.symbol.owner
             if (inlineFunctionCallDepth > 0 && reference.isInline) {
-                data += reference
+                // this if is fine, because fake overrides are not inlined as function reference calls even as inline function args
+                if (!reference.isFakeOverride) {
+                    data += reference
+                }
             }
             expression.acceptChildren(this, data)
         }
@@ -135,12 +141,13 @@ class InlineFunctionHashBuilder(
             val usedInlineFunctions = mutableMapOf<IdSignature, ICHash>()
             it.value.forEach { edges ->
                 edges.forEach { callee ->
+                    // TODO: do not ignore fake overides after KT-51896
                     if (!callee.isFakeOverride) {
-                        val signature = callee.symbol.signature // ?: error("Expecting signature for ${callee.render()}")
+                        val signature = callee.symbol.signature
                         if (signature?.visibleCrossFile == true) {
                             val calleeHash = computedHashed[callee]
                                 ?: hashProvider.hashForExternalFunction(callee)
-                                ?: error("Internal error: No has found for ${callee.render()}")
+                                ?: error("Internal error: No hash found for ${callee.render()}")
                             usedInlineFunctions[signature] = calleeHash
                         }
                     }
