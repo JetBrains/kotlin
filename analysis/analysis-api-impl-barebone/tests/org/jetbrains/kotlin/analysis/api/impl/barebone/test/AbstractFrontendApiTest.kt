@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.load.kotlin.PackagePartProvider
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.test.ExecutionListenerBasedDisposableProvider
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import org.jetbrains.kotlin.test.TestInfrastructureInternals
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
@@ -151,6 +152,7 @@ abstract class AbstractFrontendApiTest : TestWithDisposable() {
         useSourcePreprocessor(::ExpressionMarkersSourceFilePreprocessor)
         useAdditionalService { ExpressionMarkerProvider() }
         useAdditionalService(::TestKtModuleProvider)
+        useAdditionalService<ApplicationDisposableProvider> { ExecutionListenerBasedDisposableProvider() }
         configureTest(this)
 
         startingArtifactFactory = { ResultingArtifact.Source() }

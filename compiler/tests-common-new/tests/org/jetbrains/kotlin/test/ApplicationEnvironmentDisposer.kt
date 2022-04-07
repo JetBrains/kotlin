@@ -9,6 +9,7 @@ import com.intellij.openapi.Disposable
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.util.Disposer
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
+import org.jetbrains.kotlin.test.services.ApplicationDisposableProvider
 import org.junit.platform.launcher.TestExecutionListener
 import org.junit.platform.launcher.TestPlan
 import java.lang.reflect.Field
@@ -24,5 +25,11 @@ class ApplicationEnvironmentDisposer : TestExecutionListener {
         val ourApplicationField: Field = ApplicationManager::class.java.getDeclaredField("ourApplication")
         ourApplicationField.isAccessible = true
         ourApplicationField.set(null, null)
+    }
+}
+
+class ExecutionListenerBasedDisposableProvider : ApplicationDisposableProvider() {
+    override fun getApplicationRootDisposable(): Disposable {
+        return ApplicationEnvironmentDisposer.ROOT_DISPOSABLE
     }
 }

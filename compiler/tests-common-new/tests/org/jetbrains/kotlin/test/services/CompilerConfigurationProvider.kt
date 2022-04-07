@@ -26,7 +26,6 @@ import org.jetbrains.kotlin.platform.js.isJs
 import org.jetbrains.kotlin.platform.jvm.isJvm
 import org.jetbrains.kotlin.platform.konan.isNative
 import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.test.ApplicationEnvironmentDisposer
 import org.jetbrains.kotlin.test.TestInfrastructureInternals
 import org.jetbrains.kotlin.test.directives.JsEnvironmentConfigurationDirectives
 import org.jetbrains.kotlin.test.model.FrontendKinds
@@ -34,7 +33,7 @@ import org.jetbrains.kotlin.test.model.TestFile
 import org.jetbrains.kotlin.test.model.TestModule
 import java.io.File
 
-abstract class CompilerConfigurationProvider : TestService {
+abstract class CompilerConfigurationProvider(val testServices: TestServices) : TestService {
     abstract val testRootDisposable: Disposable
 
     protected abstract fun getKotlinCoreEnvironment(module: TestModule): KotlinCoreEnvironment
@@ -65,9 +64,10 @@ abstract class CompilerConfigurationProvider : TestService {
 val TestServices.compilerConfigurationProvider: CompilerConfigurationProvider by TestServices.testServiceAccessor()
 
 open class CompilerConfigurationProviderImpl(
+    testServices: TestServices,
     override val testRootDisposable: Disposable,
     val configurators: List<AbstractEnvironmentConfigurator>
-) : CompilerConfigurationProvider() {
+) : CompilerConfigurationProvider(testServices) {
     private val cache: MutableMap<TestModule, KotlinCoreEnvironment> = mutableMapOf()
 
     override fun getKotlinCoreEnvironment(module: TestModule): KotlinCoreEnvironment {
@@ -88,7 +88,7 @@ open class CompilerConfigurationProviderImpl(
             else -> error("Unknown platform: $platform")
         }
         val applicationEnvironment = KotlinCoreEnvironment.getOrCreateApplicationEnvironmentForTests(
-            ApplicationEnvironmentDisposer.ROOT_DISPOSABLE,
+            testServices.applicationDisposableProvider.getApplicationRootDisposable(),
             CompilerConfiguration()
         )
         val initialConfiguration = createCompilerConfiguration(module)
