@@ -5,9 +5,8 @@
 
 package org.jetbrains.kotlin.konan.blackboxtest.support.runner
 
-import org.jetbrains.kotlin.konan.blackboxtest.support.settings.Timeouts
-import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstance
-import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
+import org.jetbrains.kotlin.konan.blackboxtest.support.runner.TestRunCheck.ExecutionTimeout
+import org.jetbrains.kotlin.konan.blackboxtest.support.runner.TestRunCheck.ExitCode
 import kotlin.time.Duration
 
 internal sealed interface TestRunCheck {
@@ -15,32 +14,29 @@ internal sealed interface TestRunCheck {
         class ShouldNotExceed(timeout: Duration) : ExecutionTimeout(timeout)
         class ShouldExceed(timeout: Duration) : ExecutionTimeout(timeout)
     }
+
+    sealed class ExitCode : TestRunCheck {
+        object AnyNonZero : ExitCode()
+        class Expected(val expectedExitCode: Int) : ExitCode()
+    }
 }
 
-internal class TestRunChecks(builderAction: MutableCollection<TestRunCheck>.() -> Unit) : Iterable<TestRunCheck> {
-    constructor(vararg checks: TestRunCheck) : this({ addAll(checks) })
+internal class TestRunChecks(
+    val executionTimeoutCheck: ExecutionTimeout,
+    private val exitCodeCheck: ExitCode
+) : Iterable<TestRunCheck> {
 
-    private val allChecks = buildList {
-        builderAction()
-        addDefaults()
+    override fun iterator() = iterator {
+        yield(executionTimeoutCheck)
+        yield(exitCodeCheck)
     }
-
-    val executionTimeoutCheck: TestRunCheck.ExecutionTimeout get() = allChecks.firstIsInstance()
-
-    override fun iterator() = allChecks.iterator()
 
     companion object {
         // The most frequently used case:
         @Suppress("TestFunctionName")
-        fun Default(timeout: Duration) = TestRunChecks(TestRunCheck.ExecutionTimeout.ShouldNotExceed(timeout))
-
-        private fun MutableCollection<TestRunCheck>.addDefaults() {
-            if (isMissing<TestRunCheck.ExecutionTimeout>()) {
-                add(TestRunCheck.ExecutionTimeout.ShouldNotExceed(Timeouts.DEFAULT_EXECUTION_TIMEOUT))
-            }
-        }
-
-        private inline fun <reified T : TestRunCheck> Collection<TestRunCheck>.isMissing(): Boolean =
-            firstIsInstanceOrNull<T>() == null
+        fun Default(timeout: Duration) = TestRunChecks(
+            ExecutionTimeout.ShouldNotExceed(timeout),
+            ExitCode.Expected(0)
+        )
     }
 }

@@ -7,6 +7,8 @@ package org.jetbrains.kotlin.konan.blackboxtest.support.runner
 
 import kotlinx.coroutines.*
 import org.jetbrains.kotlin.konan.blackboxtest.support.runner.AbstractRunner.AbstractRun
+import org.jetbrains.kotlin.konan.blackboxtest.support.runner.TestRunCheck.ExecutionTimeout
+import org.jetbrains.kotlin.konan.blackboxtest.support.runner.TestRunCheck.ExitCode
 import org.jetbrains.kotlin.konan.blackboxtest.support.runner.UnfilteredProcessOutput.Companion.launchReader
 import org.jetbrains.kotlin.konan.blackboxtest.support.util.TestOutputFilter
 import java.io.ByteArrayOutputStream
@@ -74,18 +76,25 @@ internal abstract class AbstractLocalProcessRunner<R>(private val checks: TestRu
         override fun handle(): R {
             checks.forEach { check ->
                 when (check) {
-                    is TestRunCheck.ExecutionTimeout.ShouldNotExceed -> verifyExpectation(runResult.hasFinishedOnTime) {
+                    is ExecutionTimeout.ShouldNotExceed -> verifyExpectation(runResult.hasFinishedOnTime) {
                         "Timeout exceeded during test execution."
                     }
-                    is TestRunCheck.ExecutionTimeout.ShouldExceed -> verifyExpectation(!runResult.hasFinishedOnTime) {
+                    is ExecutionTimeout.ShouldExceed -> verifyExpectation(!runResult.hasFinishedOnTime) {
                         "Test is expected to fail with exceeded timeout, which hasn't happened."
                     }
+                    is ExitCode -> {
+                        // Don't check exit code if it is unknown.
+                        val knownExitCode: Int = runResult.exitCode ?: return@forEach
+                        when (check) {
+                            is ExitCode.Expected -> verifyExpectation(knownExitCode == check.expectedExitCode) {
+                                "$visibleProcessName exit code is $knownExitCode while ${check.expectedExitCode} was expected."
+                            }
+                            is ExitCode.AnyNonZero -> verifyExpectation(knownExitCode != 0) {
+                                "$visibleProcessName exited with zero code, which wasn't expected."
+                            }
+                        }
+                    }
                 }
-            }
-
-            // Don't check exit code if it is unknown.
-            runResult.exitCode?.let { exitCode ->
-                verifyExpectation(exitCode == 0) { "$visibleProcessName exited with non-zero code." }
             }
 
             return doHandle()
