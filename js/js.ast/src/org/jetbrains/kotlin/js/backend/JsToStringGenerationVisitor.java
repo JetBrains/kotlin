@@ -4,6 +4,7 @@
 
 package org.jetbrains.kotlin.js.backend;
 
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.js.backend.ast.*;
 import org.jetbrains.kotlin.js.backend.ast.JsDoubleLiteral;
 import org.jetbrains.kotlin.js.backend.ast.JsIntLiteral;
@@ -765,7 +766,7 @@ public class JsToStringGenerationVisitor extends JsVisitor {
         return false;
     }
 
-    private static JsStatement materialize(@NotNull JsStatement statement) {
+    private static JsStatement materialize(JsStatement statement) {
        return statement instanceof JsCompositeBlock && ((JsCompositeBlock) statement).getStatements().size() > 1
               ? new JsBlock(statement)
               : statement;
