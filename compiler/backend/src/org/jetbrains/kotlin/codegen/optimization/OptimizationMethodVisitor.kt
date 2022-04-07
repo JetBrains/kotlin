@@ -28,6 +28,8 @@ import org.jetbrains.kotlin.codegen.optimization.temporaryVals.TemporaryVariable
 import org.jetbrains.kotlin.codegen.optimization.transformer.CompositeMethodTransformer
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.org.objectweb.asm.MethodVisitor
+import org.jetbrains.org.objectweb.asm.Opcodes
+import org.jetbrains.org.objectweb.asm.tree.AbstractInsnNode
 import org.jetbrains.org.objectweb.asm.tree.MethodNode
 
 class OptimizationMethodVisitor(
@@ -83,11 +85,11 @@ class OptimizationMethodVisitor(
                 if (getTotalFramesWeight(getTotalTcbSize(node), node) > MEMORY_LIMIT_BY_METHOD_MB)
                     return false
             }
-            return getTotalFramesWeight(node.instructions.size(), node) < MEMORY_LIMIT_BY_METHOD_MB
+            return getTotalFramesWeight(node.instructions.first.countInsnsWithFramesUntil(null), node) < MEMORY_LIMIT_BY_METHOD_MB
         }
 
         fun canBeOptimizedUsingSourceInterpreter(node: MethodNode): Boolean {
-            val methodSize = node.instructions.size()
+            val methodSize = node.instructions.first.countInsnsWithFramesUntil(null)
             if (node.tryCatchBlocks.size > TRY_CATCH_BLOCKS_SOFT_LIMIT) {
                 if (getTotalFramesWeight(getTotalTcbSize(node) * methodSize, node) > MEMORY_LIMIT_BY_METHOD_MB)
                     return false
@@ -95,10 +97,26 @@ class OptimizationMethodVisitor(
             return getTotalFramesWeight(methodSize * methodSize, node) < MEMORY_LIMIT_BY_METHOD_MB
         }
 
+        private fun AbstractInsnNode?.countInsnsWithFramesUntil(end: AbstractInsnNode?): Int {
+            var it = this
+            var result = 0
+            while (it != end && it != null) {
+                // FastMethodAnalyzer will reuse the Frame instance when a pseudo-instruction or a NOP is followed
+                // by anything other than a jump-targeted label, so those instructions consume no extra memory.
+                // To avoid checking all jumps, here we assume all labels are potentially targeted.
+                // (Effectively, all of this means that adding line numbers should not inhibit optimization.)
+                if ((it.type != AbstractInsnNode.LINE && it.type != AbstractInsnNode.FRAME && it.type != AbstractInsnNode.LABEL &&
+                            it.opcode != Opcodes.NOP) || it.next?.type == AbstractInsnNode.LABEL
+                ) result++
+                it = it.next
+            }
+            return result
+        }
+
         private fun getTotalFramesWeight(size: Int, node: MethodNode) =
             size.toLong() * (node.maxLocals + node.maxStack) / (1024 * 1024)
 
         private fun getTotalTcbSize(node: MethodNode) =
-            node.tryCatchBlocks.sumOf { node.instructions.indexOf(it.end) - node.instructions.indexOf(it.start) }
+            node.tryCatchBlocks.sumOf { it.start.countInsnsWithFramesUntil(it.end) }
     }
 }
