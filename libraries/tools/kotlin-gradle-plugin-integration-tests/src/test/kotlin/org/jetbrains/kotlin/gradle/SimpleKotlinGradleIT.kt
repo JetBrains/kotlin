@@ -209,4 +209,21 @@ class SimpleKotlinGradleIT : KGPBaseTest() {
             build(":main-project:compileKotlin")
         }
     }
+
+    @DisplayName("Proper Gradle plugin variant is used")
+    @GradleTestVersions(additionalVersions = [TestVersions.Gradle.G_7_0])
+    @GradleTest
+    internal fun pluginVariantIsUsed(gradleVersion: GradleVersion) {
+        project("kotlinProject", gradleVersion) {
+            build("tasks") {
+                val expectedVariant = if (gradleVersion < GradleVersion.version("7.0")) {
+                    "main"
+                } else {
+                    "gradle70"
+                }
+
+                assertOutputContains("Using Kotlin Gradle Plugin $expectedVariant variant")
+            }
+        }
+    }
 }

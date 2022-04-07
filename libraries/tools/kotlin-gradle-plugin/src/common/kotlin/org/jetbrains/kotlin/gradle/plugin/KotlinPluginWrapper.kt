@@ -57,6 +57,8 @@ abstract class KotlinBasePluginWrapper : Plugin<Project> {
 
     open val projectExtensionClass: KClass<out KotlinTopLevelExtension> get() = KotlinProjectExtension::class
 
+    abstract val pluginVariant: String
+
     internal open fun kotlinSourceSetFactory(project: Project): NamedDomainObjectFactory<KotlinSourceSet> =
         if (PropertiesProvider(project).experimentalKpmModelMapping)
             FragmentMappedKotlinSourceSetFactory(project)
@@ -64,6 +66,8 @@ abstract class KotlinBasePluginWrapper : Plugin<Project> {
 
     override fun apply(project: Project) {
         val kotlinPluginVersion = project.getKotlinPluginVersion()
+
+        project.logger.info("Using Kotlin Gradle Plugin $pluginVariant variant")
 
         val statisticsReporter = KotlinBuildStatsService.getOrCreateInstance(project)
         statisticsReporter?.report(StringMetrics.KOTLIN_COMPILER_VERSION, kotlinPluginVersion)
