@@ -96,8 +96,12 @@ open class FastMethodAnalyzer<V : Value>
                 val insnOpcode = insnNode.opcode
                 val insnType = insnNode.type
 
-                if (insnType == AbstractInsnNode.LABEL || insnType == AbstractInsnNode.LINE || insnType == AbstractInsnNode.FRAME) {
-                    mergeControlFlowEdge(insn + 1, f)
+                if (insnType == AbstractInsnNode.LABEL ||
+                    insnType == AbstractInsnNode.LINE ||
+                    insnType == AbstractInsnNode.FRAME ||
+                    insnOpcode == Opcodes.NOP
+                ) {
+                    mergeControlFlowEdge(insn + 1, f, canReuse = true)
                 } else {
                     current.init(f).execute(insnNode, interpreter)
                     when {
@@ -236,10 +240,10 @@ open class FastMethodAnalyzer<V : Value>
     }
 
     private fun visitJumpInsnNode(insnNode: JumpInsnNode, current: Frame<V>, insn: Int, insnOpcode: Int) {
+        mergeControlFlowEdge(insnNode.label.indexOf(), current)
         if (insnOpcode != Opcodes.GOTO) {
             mergeControlFlowEdge(insn + 1, current)
         }
-        mergeControlFlowEdge(insnNode.label.indexOf(), current)
     }
 
     private fun computeExceptionHandlersForEachInsn(m: MethodNode) {
@@ -258,9 +262,13 @@ open class FastMethodAnalyzer<V : Value>
         }
     }
 
-    private fun mergeControlFlowEdge(dest: Int, frame: Frame<V>) {
+    private fun mergeControlFlowEdge(dest: Int, frame: Frame<V>, canReuse: Boolean = false) {
         val oldFrame = frames[dest]
         val changes = when {
+            canReuse && !isMergeNode[dest] -> {
+                frames[dest] = frame
+                true
+            }
             oldFrame == null -> {
                 frames[dest] = newFrame(frame.locals, frame.maxStackSize).apply { init(frame) }
                 true
