@@ -23,15 +23,21 @@ class InlineAll {
     }
 }
 
+// CHECK_BREAKS_COUNT: function=testClassObjectCall count=0 TARGET_BACKENDS=JS_IR
+// CHECK_LABELS_COUNT: function=testClassObjectCall name=$l$block count=0 TARGET_BACKENDS=JS_IR
 fun testClassObjectCall(): String {
     return InlineAll.inline({"classobject"})
 }
 
+// CHECK_BREAKS_COUNT: function=testInstanceCall count=0 TARGET_BACKENDS=JS_IR
+// CHECK_LABELS_COUNT: function=testInstanceCall name=$l$block count=0 TARGET_BACKENDS=JS_IR
 fun testInstanceCall(): String {
     val inlineX = InlineAll()
     return inlineX.inline({"instance"})
 }
 
+// CHECK_BREAKS_COUNT: function=testPackageCall count=0 TARGET_BACKENDS=JS_IR
+// CHECK_LABELS_COUNT: function=testPackageCall name=$l$block count=0 TARGET_BACKENDS=JS_IR
 fun testPackageCall(): String {
     return inline({"package"})
 }

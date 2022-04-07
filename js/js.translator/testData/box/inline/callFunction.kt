@@ -33,6 +33,8 @@ fun callLocalExtension(a: Int): String {
     return Boo().call(a)
 }
 
+// CHECK_BREAKS_COUNT: function=box count=0 TARGET_BACKENDS=JS_IR
+// CHECK_LABELS_COUNT: function=box name=$l$block count=0 TARGET_BACKENDS=JS_IR
 fun box(): String {
     var result = call(1)
     if (result != "call(1)") return "fail1: $result"
