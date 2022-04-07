@@ -39,9 +39,6 @@ dependencies {
     testApiJUnit5()
     testApi(project(":analysis:symbol-light-classes"))
 
-    // We use 'api' instead of 'implementation' because other modules might be using these jars indirectly
-    testApi(project(":plugins:fir-plugin-prototype"))
-    testApi(projectTests(":plugins:fir-plugin-prototype"))
 }
 
 sourceSets {

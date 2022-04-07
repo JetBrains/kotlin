@@ -13,10 +13,7 @@ import kotlinx.collections.immutable.toPersistentMap
 import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirPhaseRunner
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.addValueFor
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.executeWithoutPCE
-import org.jetbrains.kotlin.analysis.project.structure.KtLibraryModule
-import org.jetbrains.kotlin.analysis.project.structure.KtLibrarySourceModule
-import org.jetbrains.kotlin.analysis.project.structure.KtModule
-import org.jetbrains.kotlin.analysis.project.structure.KtSourceModule
+import org.jetbrains.kotlin.analysis.project.structure.*
 import org.jetbrains.kotlin.analysis.providers.createLibrariesModificationTracker
 import org.jetbrains.kotlin.analysis.providers.createModuleWithoutDependenciesOutOfBlockModificationTracker
 import org.jetbrains.kotlin.analysis.utils.caches.getValue
@@ -38,7 +35,9 @@ class LLFirSessionProviderStorage(val project: Project) {
         val firPhaseRunner = LLFirPhaseRunner()
 
         val builtinTypes = BuiltinTypes()
-        val builtinsAndCloneableSession = LLFirSessionFactory.createBuiltinsAndCloneableSession(project, builtinTypes)
+        val stdlibModule = project.getService(ProjectStructureProvider::class.java).getStdlibWithBuiltinsModule(rootModule)
+            ?: error("Stdlib was not found for ${rootModule.moduleDescription}")
+        val builtinsAndCloneableSession = LLFirSessionFactory.createBuiltinsAndCloneableSession(project, builtinTypes, stdlibModule)
         val cache = sessionsCache.getOrPut(rootModule) { FromModuleViewSessionCache() }
         val (sessions, session) = cache.withMappings(project) { mappings ->
             val sessions = mutableMapOf<KtModule, LLFirResolvableModuleSession>().apply { putAll(mappings) }

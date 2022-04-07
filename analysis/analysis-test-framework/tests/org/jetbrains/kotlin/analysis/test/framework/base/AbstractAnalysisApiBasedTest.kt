@@ -104,10 +104,7 @@ abstract class AbstractAnalysisApiBasedTest : TestWithDisposable() {
             targetPlatform = JvmPlatforms.defaultJvmPlatform
             dependencyKind = DependencyKind.Source
         }
-        useConfigurators(
-            ::CommonEnvironmentConfigurator,
-            ::JvmEnvironmentConfigurator,
-        )
+
         assertions = JUnit5Assertions
         useAdditionalService<TemporaryDirectoryManager>(::TemporaryDirectoryManagerImpl)
 

@@ -52,7 +52,7 @@ class AnalysisApiEnvironmentManagerImpl(
     }
 
     override fun initializeProjectStructure() {
-        val ktModules = testServices.ktModuleProvider.getAllModules()
+        val ktModules = testServices.ktModuleProvider.getModuleStructure()
         val useSiteModule = testServices.moduleStructure.modules.first()
         val useSiteCompilerConfiguration = testServices.compilerConfigurationProvider.getCompilerConfiguration(useSiteModule)
 

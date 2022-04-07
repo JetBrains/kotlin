@@ -7,23 +7,24 @@ package org.jetbrains.kotlin.analysis.api.fir.test.configurators.library
 
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.project.Project
-import com.intellij.psi.PsiManager
-import org.jetbrains.kotlin.analysis.api.fir.test.configurators.source.AnalysisApiFirSourceTestConfigurator
+import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.analysis.api.impl.base.test.configurators.AnalysisApiBaseTestServiceRegistrar
 import org.jetbrains.kotlin.analysis.api.impl.base.test.configurators.AnalysisApiLibraryBaseTestServiceRegistrar
 import org.jetbrains.kotlin.analysis.api.impl.base.util.LibraryUtils
+import org.jetbrains.kotlin.analysis.api.standalone.base.project.structure.KtModuleProjectStructure
 import org.jetbrains.kotlin.analysis.api.standalone.base.project.structure.KtModuleWithFiles
-import org.jetbrains.kotlin.analysis.decompiler.psi.file.KtClsFile
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.base.AnalysisApiFirTestServiceRegistrar
-import org.jetbrains.kotlin.analysis.test.framework.project.structure.TestKtLibraryModule
+import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.AnalysisApiFirSourceTestConfigurator
+import org.jetbrains.kotlin.analysis.test.framework.project.structure.KtLibraryModuleImpl
+import org.jetbrains.kotlin.analysis.test.framework.project.structure.TestModuleStructureFactory
 import org.jetbrains.kotlin.analysis.test.framework.services.libraries.compiledLibraryProvider
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiTestConfigurator
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiTestServiceRegistrar
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
+import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestModuleStructure
 import org.jetbrains.kotlin.test.services.TestServices
-import java.nio.file.Path
 
 object AnalysisApiFirLibraryBinaryTestConfigurator : AnalysisApiTestConfigurator() {
     override val analyseInDependentSession: Boolean get() = false
@@ -38,17 +39,28 @@ object AnalysisApiFirLibraryBinaryTestConfigurator : AnalysisApiTestConfigurator
         moduleStructure: TestModuleStructure,
         testServices: TestServices,
         project: Project
-    ): List<KtModuleWithFiles> {
-        val testModule = moduleStructure.modules.single()
-        val library = testServices.compiledLibraryProvider.compileToLibrary(testModule).jar
-        val decompiledFiles = LibraryUtils.getAllPsiFilesFromTheJar(library, project)
+    ): KtModuleProjectStructure {
+        return TestModuleStructureFactory.createProjectStructureByTestStructure(
+            moduleStructure,
+            testServices,
+            project
+        ) { testModule: TestModule, _, _ ->
+            val library = testServices.compiledLibraryProvider.compileToLibrary(testModule).jar
+            val decompiledFiles = LibraryUtils.getAllPsiFilesFromTheJar(library, project)
 
-        return listOf(
             KtModuleWithFiles(
-                TestKtLibraryModule(project, testModule, decompiledFiles, listOf(library), testServices),
-                decompiledFiles,
+                KtLibraryModuleImpl(
+                    testModule.name,
+                    testModule.targetPlatform,
+                    GlobalSearchScope.filesScope(project, decompiledFiles.mapTo(mutableSetOf()) { it.virtualFile }),
+                    project,
+                    binaryRoots = listOf(library),
+                    librarySources = null,
+                    isBuitinsContainingStdlib = false,
+                ),
+                decompiledFiles
             )
-        )
+        }
     }
 
 

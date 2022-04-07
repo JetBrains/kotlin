@@ -9,8 +9,7 @@ import com.intellij.openapi.Disposable
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiFile
 import org.jetbrains.kotlin.analysis.api.impl.base.test.configurators.AnalysisApiBaseTestServiceRegistrar
-import org.jetbrains.kotlin.analysis.api.standalone.base.project.structure.KtModuleWithFiles
-import org.jetbrains.kotlin.analysis.test.framework.project.structure.toKtSourceModules
+import org.jetbrains.kotlin.analysis.api.standalone.base.project.structure.KtModuleProjectStructure
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiTestConfigurator
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiTestServiceRegistrar
 import org.jetbrains.kotlin.psi.KtFile
@@ -42,7 +41,7 @@ object AnalysisApiFe10TestConfigurator : AnalysisApiTestConfigurator() {
         moduleStructure: TestModuleStructure,
         testServices: TestServices,
         project: Project,
-    ): List<KtModuleWithFiles> {
+    ): KtModuleProjectStructure {
         return moduleStructure.toKtSourceModules(testServices, project)
     }
 
