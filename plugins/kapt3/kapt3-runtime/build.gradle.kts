@@ -9,8 +9,6 @@ dependencies {
     api(kotlinStdlib())
 }
 
-project.updateJvmTarget("1.6")
-
 sourceSets {
     "main" { projectDefault() }
     "test" {}
