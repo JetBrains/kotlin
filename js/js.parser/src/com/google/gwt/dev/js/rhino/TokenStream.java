@@ -536,13 +536,19 @@ public class TokenStream {
     }
 
     public int peekToken() throws IOException {
-        int result = getToken();
+        return peekTokenHelper(getToken());
+    }
 
-        this.pushbackToken = result;
+    public int peekTokenWithComment() throws IOException {
+        return peekTokenHelper(getTokenWithComment());
+    }
+
+    private int peekTokenHelper(int token) throws IOException {
+        this.pushbackToken = token;
         lastPosition = secondToLastPosition;
         lastTokenPosition = tokenPosition;
         tokenno--;
-        return result;
+        return token;
     }
 
     public int peekTokenSameLine() throws IOException {
