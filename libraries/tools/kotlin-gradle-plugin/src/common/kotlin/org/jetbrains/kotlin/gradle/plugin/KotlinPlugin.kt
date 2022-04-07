@@ -9,7 +9,6 @@ import com.android.build.gradle.*
 import com.android.build.gradle.BasePlugin
 import com.android.build.gradle.api.*
 import org.gradle.api.*
-import org.gradle.api.artifacts.repositories.ArtifactRepository
 import org.gradle.api.attributes.Category
 import org.gradle.api.attributes.Usage
 import org.gradle.api.file.ConfigurableFileTree
@@ -26,13 +25,13 @@ import org.gradle.api.tasks.*
 import org.gradle.api.tasks.compile.AbstractCompile
 import org.gradle.jvm.tasks.Jar
 import org.gradle.tooling.provider.model.ToolingModelBuilderRegistry
-import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.dsl.*
 import org.jetbrains.kotlin.gradle.internal.Kapt3GradleSubplugin
 import org.jetbrains.kotlin.gradle.internal.checkAndroidAnnotationProcessorDependencyUsage
 import org.jetbrains.kotlin.gradle.internal.customizeKotlinDependencies
 import org.jetbrains.kotlin.gradle.logging.kotlinDebug
 import org.jetbrains.kotlin.gradle.model.builder.KotlinModelBuilder
+import org.jetbrains.kotlin.gradle.plugin.internal.MavenPluginConfigurator
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinCompilationData
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.isMainCompilationData
@@ -45,14 +44,10 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.jetbrains.kotlin.gradle.testing.internal.kotlinTestRegistry
 import org.jetbrains.kotlin.gradle.tooling.includeKotlinToolingMetadataInApk
 import org.jetbrains.kotlin.gradle.utils.*
-import org.jetbrains.kotlin.utils.addToStdlib.cast
 import java.io.File
 import java.net.URL
 import java.util.concurrent.Callable
 import java.util.jar.Manifest
-import kotlin.reflect.full.functions
-import kotlin.reflect.full.staticProperties
-import kotlin.reflect.jvm.isAccessible
 
 const val PLUGIN_CLASSPATH_CONFIGURATION_NAME = "kotlinCompilerPluginClasspath"
 const val NATIVE_COMPILER_PLUGIN_CLASSPATH_CONFIGURATION_NAME = "kotlinNativeCompilerPluginClasspath"
@@ -438,64 +433,10 @@ internal abstract class AbstractKotlinPlugin(
             }
         }
 
-        if (GradleVersion.version(project.gradle.gradleVersion) < GradleVersion.version("7.0")) {
-            project.pluginManager.withPlugin("maven") {
-                project.tasks.withType(Upload::class.java).configureEach { uploadTask ->
-                    uploadTask
-                        .repositories
-                        .withType(
-                            Class.forName("org.gradle.api.artifacts.maven.MavenResolver")
-                                .cast<Class<ArtifactRepository>>()
-                        )
-                        .configureEach { mavenResolver ->
-                            val pomRewriter = PomDependenciesRewriter(project, target.kotlinComponents.single())
-                            val mavenPom = mavenResolver::class
-                                .functions
-                                .first { it.name == "getPom" }
-                                .also { it.isAccessible = true }
-                                .call(mavenResolver)!!
-                            mavenPom::class
-                                .functions
-                                .first { func ->
-                                    // On older Gradle versions there were two 'withXml' method - one with 'Closure' and one with 'Action'
-                                    func.name == "withXml" &&
-                                            func.parameters.any {
-                                                it.type.toString() == "org.gradle.api.Action<org.gradle.api.XmlProvider!>!"
-                                            }
-                                }
-                                .call(mavenPom, Action<XmlProvider> { xml ->
-                                    if (shouldRewritePoms.get()) {
-                                        pomRewriter.rewritePomMppDependenciesToActualTargetModules(xml)
-                                    }
-                                })
-                        }
-                }
-
-                // Setup conf2ScopeMappings so that the API dependencies are written
-                // with compile scope in the POMs in case of 'java' plugin
-                val mavenPluginConvention = project
-                    .convention
-                    .getPlugin(Class.forName("org.gradle.api.plugins.MavenPluginConvention"))
-
-                val conf2ScopeMappingContainer = mavenPluginConvention::class
-                    .functions
-                    .first { it.name == "getConf2ScopeMappings" }
-                    .call(mavenPluginConvention)!!
-
-                conf2ScopeMappingContainer::class
-                    .functions
-                    .first { it.name == "addMapping" }
-                    .call(
-                        conf2ScopeMappingContainer,
-                        0,
-                        project.configurations.getByName("api"),
-                        conf2ScopeMappingContainer::class
-                            .staticProperties
-                            .first { it.name == "COMPILE" }
-                            .get()
-                    )
-            }
-        }
+        VariantImplementationFactories
+            .get(project.gradle)[MavenPluginConfigurator.MavenPluginConfiguratorVariantFactory::class]
+            .getInstance()
+            .applyConfiguration(project, target, shouldRewritePoms)
     }
 
     companion object {

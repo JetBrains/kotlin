@@ -5,9 +5,12 @@
 
 package org.jetbrains.kotlin.gradle
 
+import org.gradle.api.logging.configuration.WarningMode
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.junit.jupiter.api.DisplayName
+import org.junit.jupiter.api.io.TempDir
+import java.nio.file.Path
 import kotlin.io.path.appendText
 import kotlin.io.path.readLines
 import kotlin.io.path.readText
@@ -107,4 +110,43 @@ class PublishingIT : KGPBaseTest() {
             }
         }
     }
+
+    @DisplayName("Publication with old 'maven' plugin is working")
+    @GradleTest
+    @GradleTestVersions(maxVersion = TestVersions.Gradle.G_6_9)
+    fun testOldMavenPublishing(
+        gradleVersion: GradleVersion,
+        @TempDir localRepoDir: Path
+    ) {
+        project(
+            projectName = "old-maven-publish",
+            gradleVersion = gradleVersion,
+            localRepoDir = localRepoDir,
+            buildOptions = defaultBuildOptions.copy(
+                warningMode = WarningMode.Summary // 'maven' is deprecated
+            )
+        ) {
+            build("uploadArchives") {
+                val publishingDir = localRepoDir.resolve("org.jetbrains.kotlin.example").resolve("1.0.0")
+                assertDirectoryExists(publishingDir)
+                assertFileExists(publishingDir.resolve("org.jetbrains.kotlin.example-1.0.0.jar"))
+                val pomFile = publishingDir.resolve("org.jetbrains.kotlin.example-1.0.0.pom")
+                assertFileExists(pomFile)
+                assertFileContains(
+                    pomFile,
+                    """
+                    |  <dependencies>
+                    |    <dependency>
+                    |      <groupId>org.jetbrains.kotlin</groupId>
+                    |      <artifactId>kotlin-stdlib</artifactId>
+                    |      <version>${buildOptions.kotlinVersion}</version>
+                    |      <scope>compile</scope>
+                    |    </dependency>
+                    |  </dependencies>
+                    """.trimMargin()
+                )
+            }
+        }
+    }
+
 }

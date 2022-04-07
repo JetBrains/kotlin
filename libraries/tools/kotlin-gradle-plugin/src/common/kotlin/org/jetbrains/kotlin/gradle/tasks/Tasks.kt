@@ -275,7 +275,11 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments> @Inject constr
             task.sourceSetName.set(project.provider { compilation.compilationPurpose })
             task.multiPlatformEnabled.value(
                 project.provider {
-                    project.plugins.any { it is KotlinPlatformPluginBase || it is KotlinMultiplatformPluginWrapper || it is KotlinPm20PluginWrapper }
+                    project.plugins.any {
+                        it is KotlinPlatformPluginBase ||
+                                it is AbstractKotlinMultiplatformPluginWrapper ||
+                                it is AbstractKotlinPm20PluginWrapper
+                    }
                 }
             ).disallowChanges()
             task.taskBuildCacheableOutputDirectory.value(getKotlinBuildDir(task).map { it.dir("cacheable") }).disallowChanges()
