@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrConstructor
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.expressions.IrCall
+import org.jetbrains.kotlin.ir.expressions.IrFunctionExpression
 import org.jetbrains.kotlin.ir.expressions.IrFunctionReference
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
@@ -195,15 +196,21 @@ class JsIntrinsicTransformers(backendContext: JsIrBackendContext) {
 
             add(intrinsics.jsBind) { call, context: JsGenerationContext ->
                 val receiver = call.getValueArgument(0)!!
-                val reference = call.getValueArgument(1) as IrFunctionReference
-                val superClass = call.superQualifierSymbol!!
-
                 val jsReceiver = receiver.accept(IrElementToJsExpressionTransformer(), context)
-                val functionName = context.getNameForMemberFunction(reference.symbol.owner as IrSimpleFunction)
-                val superName = context.getNameForClass(superClass.owner).makeRef()
-                val qPrototype = JsNameRef(functionName, prototypeOf(superName))
-                val bindRef = JsNameRef(Namer.BIND_FUNCTION, qPrototype)
-
+                val jsBindTarget = when (val target = call.getValueArgument(1)!!) {
+                    is IrFunctionReference -> {
+                        val superClass = call.superQualifierSymbol!!
+                        val functionName = context.getNameForMemberFunction(target.symbol.owner as IrSimpleFunction)
+                        val superName = context.getNameForClass(superClass.owner).makeRef()
+                        JsNameRef(functionName, prototypeOf(superName))
+                    }
+                    is IrFunctionExpression -> target.accept(IrElementToJsExpressionTransformer(), context)
+                    else -> compilationException(
+                        "The 'target' argument of 'jsBind' must be either IrFunctionReference or IrFunctionExpression",
+                        call
+                    )
+                }
+                val bindRef = JsNameRef(Namer.BIND_FUNCTION, jsBindTarget)
                 JsInvocation(bindRef, jsReceiver)
             }
 
