@@ -124,7 +124,7 @@ class NewTestGeneratorImpl(
             val out = StringBuilder()
             val p = Printer(out)
 
-            val copyright = File("license/COPYRIGHT_HEADER.txt").readText()
+            val copyright = File("license/COPYRIGHT_HEADER.txt").takeIf { it.exists() }?.readText() ?: ""
             p.println(copyright)
             p.println()
             p.println("package $suiteClassPackage;")
