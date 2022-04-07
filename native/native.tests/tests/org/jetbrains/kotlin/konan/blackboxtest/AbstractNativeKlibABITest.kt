@@ -116,7 +116,6 @@ abstract class AbstractNativeKlibABITest : AbstractNativeSimpleTest() {
         modules = setOf(module),
         freeCompilerArgs = compilerArgs,
         nominalPackageName = PackageName.EMPTY,
-        expectedOutputDataFile = null,
         checks = TestRunChecks.Default(testRunSettings.get<Timeouts>().executionTimeout),
         extras = DEFAULT_EXTRAS
     ).apply {

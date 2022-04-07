@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.konan.blackboxtest.support.TestDirectives.OUTPUT_DAT
 import org.jetbrains.kotlin.konan.blackboxtest.support.TestDirectives.EXPECTED_TIMEOUT_FAILURE
 import org.jetbrains.kotlin.konan.blackboxtest.support.TestDirectives.TEST_RUNNER
 import org.jetbrains.kotlin.konan.blackboxtest.support.runner.TestRunCheck
+import org.jetbrains.kotlin.konan.blackboxtest.support.runner.TestRunCheck.OutputDataFile
 import org.jetbrains.kotlin.test.directives.model.RegisteredDirectives
 import org.jetbrains.kotlin.test.directives.model.SimpleDirectivesContainer
 import org.jetbrains.kotlin.test.directives.model.StringDirective
@@ -276,8 +277,8 @@ internal fun parseFreeCompilerArgs(registeredDirectives: RegisteredDirectives, l
     return TestCompilerArgs(freeCompilerArgs)
 }
 
-internal fun parseOutputDataFile(baseDir: File, registeredDirectives: RegisteredDirectives, location: Location): File? =
-    parseFileBasedDirective(baseDir, OUTPUT_DATA_FILE, registeredDirectives, location)
+internal fun parseOutputDataFile(baseDir: File, registeredDirectives: RegisteredDirectives, location: Location): OutputDataFile? =
+    parseFileBasedDirective(baseDir, OUTPUT_DATA_FILE, registeredDirectives, location)?.let(TestRunCheck::OutputDataFile)
 
 internal fun parseInputDataFile(baseDir: File, registeredDirectives: RegisteredDirectives, location: Location): File? =
     parseFileBasedDirective(baseDir, INPUT_DATA_FILE, registeredDirectives, location)

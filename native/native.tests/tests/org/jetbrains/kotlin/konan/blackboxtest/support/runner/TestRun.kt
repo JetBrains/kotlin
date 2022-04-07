@@ -96,6 +96,7 @@ internal sealed interface TestRunParameter {
         override fun applyTo(programArgs: MutableList<String>) = Unit
     }
 
+    // Currently, used only for logging the data.
     class WithExpectedOutputData(val expectedOutputDataFile: File) : TestRunParameter {
         override fun applyTo(programArgs: MutableList<String>) = Unit
     }
