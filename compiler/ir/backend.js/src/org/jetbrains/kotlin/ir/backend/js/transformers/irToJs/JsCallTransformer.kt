@@ -31,14 +31,14 @@ class JsCallTransformer(private val jsOrJsFuncCall: IrCall, private val context:
             0 -> JsEmpty
             1 -> newStatements.single().withSource(jsOrJsFuncCall, context)
             // TODO: use transparent block (e.g. JsCompositeBlock)
-            else -> JsBlock(newStatements)
+            else -> JsGlobalBlock().apply { statements += newStatements }
         }
     }
 
     fun generateExpression(): JsExpression {
         if (statements.isEmpty()) return JsPrefixOperation(JsUnaryOperator.VOID, JsIntLiteral(3)) // TODO: report warning or even error
 
-        val lastStatement = statements.last()
+        val lastStatement = statements.findLast { it !is JsSingleLineComment && it !is JsMultiLineComment }
         val lastExpression = when (lastStatement) {
             is JsReturn -> lastStatement.expression
             is JsExpressionStatement -> lastStatement.expression

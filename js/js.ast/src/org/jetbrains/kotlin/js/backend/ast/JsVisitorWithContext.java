@@ -214,6 +214,9 @@ public abstract class JsVisitorWithContext {
     public void endVisit(@NotNull JsSingleLineComment x, @NotNull JsContext ctx) {
     }
 
+    public void endVisit(@NotNull JsMultiLineComment x, @NotNull JsContext ctx) {
+    }
+
     public void endVisit(@NotNull JsExport x, @NotNull JsContext ctx) {
     }
 
@@ -401,6 +404,10 @@ public abstract class JsVisitorWithContext {
     }
 
     public boolean visit(@NotNull JsSingleLineComment x, @NotNull JsContext ctx) {
+        return true;
+    }
+
+    public boolean visit(@NotNull JsMultiLineComment x, @NotNull JsContext ctx) {
         return true;
     }
 

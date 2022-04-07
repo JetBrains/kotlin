@@ -165,6 +165,9 @@ abstract class JsVisitor {
     open fun visitSingleLineComment(comment: JsSingleLineComment): Unit =
             visitElement(comment)
 
+    open fun visitMultiLineComment(comment: JsMultiLineComment): Unit =
+            visitElement(comment)
+
     open fun visitExport(export: JsExport): Unit =
             visitElement(export)
 

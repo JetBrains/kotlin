@@ -26,6 +26,8 @@ import org.jetbrains.kotlin.test.TargetBackend;
 import org.junit.runners.model.MultipleFailureException;
 
 import java.util.*;
+import java.util.regex.Pattern;
+import java.util.regex.Matcher;
 
 import static org.jetbrains.kotlin.js.inline.util.CollectUtilsKt.collectInstances;
 import static org.jetbrains.kotlin.test.InTextDirectivesUtils.findLinesWithPrefixesRemoved;
@@ -164,6 +166,41 @@ public class DirectiveTestUtils {
         }
     };
 
+    private static abstract class NodeExistenceDirective extends DirectiveHandler {
+        private boolean isElementExists = false;
+        private boolean shouldCheckForExistence;
+
+        NodeExistenceDirective(@NotNull String directive, boolean shouldCheckForExistence) {
+            super(directive);
+            this.shouldCheckForExistence = shouldCheckForExistence;
+        }
+
+        protected abstract String getTextForError();
+        protected abstract JsVisitor getJsVisitorForElement();
+        protected abstract void loadArguments(@NotNull ArgumentsHelper arguments);
+
+        protected void setElementExists(boolean isElementExists) {
+            this.isElementExists = isElementExists;
+        }
+
+        @Override
+        void processEntry(@NotNull JsNode ast, @NotNull ArgumentsHelper arguments) throws Exception {
+            loadArguments(arguments);
+            getJsVisitorForElement().accept(ast);
+            assertExistence();
+            setElementExists(false);
+        }
+
+        private void assertExistence() {
+            String message = getTextForError();
+            if (shouldCheckForExistence) {
+                assertTrue(message, isElementExists);
+            } else {
+                assertFalse(message, isElementExists);
+            }
+        }
+    }
+
     private static class CountNodesDirective<T extends JsNode> extends DirectiveHandler {
 
         @NotNull
@@ -254,6 +291,76 @@ public class DirectiveTestUtils {
             };
 
             visitor.accept(ast);
+        }
+    };
+
+    private static final DirectiveHandler CHECK_COMMENT_EXISTS = new NodeExistenceDirective("CHECK_COMMENT_EXISTS", true) {
+        private String text;
+        private boolean isMultiLine;
+
+        @Override
+        protected String getTextForError() {
+            return (isMultiLine ? "Multi line" : "Single line") + " comment with text '" + text + "' doesn't exist";
+        }
+
+        @Override
+        protected JsVisitor getJsVisitorForElement() {
+            return isMultiLine ? new RecursiveJsVisitor() {
+                @Override
+                public void visitMultiLineComment(@NotNull JsMultiLineComment comment) {
+                    if (comment.getText().trim().equals(text)) {
+                        setElementExists(true);
+                    }
+                }
+            } : new RecursiveJsVisitor() {
+                @Override
+                public void visitSingleLineComment(@NotNull JsSingleLineComment comment) {
+                    if (comment.getText().trim().equals(text)) {
+                        setElementExists(true);
+                    }
+                }
+            };
+        }
+
+        @Override
+        protected void loadArguments(@NotNull ArgumentsHelper arguments) {
+            this.text = arguments.findNamedArgument("text");
+            this.isMultiLine = Boolean.parseBoolean(arguments.findNamedArgument("multiline"));
+        }
+    };
+
+    private static final DirectiveHandler CHECK_COMMENT_DOESNT_EXIST = new NodeExistenceDirective("CHECK_COMMENT_DOESNT_EXIST", false) {
+        private String text;
+        private boolean isMultiLine;
+
+        @Override
+        protected String getTextForError() {
+            return (isMultiLine ? "Multi line" : "Single line") + " comment with text '" + text + "' exists, but it should not";
+        }
+
+        @Override
+        protected JsVisitor getJsVisitorForElement() {
+            return isMultiLine ? new RecursiveJsVisitor() {
+                @Override
+                public void visitMultiLineComment(@NotNull JsMultiLineComment comment) {
+                    if (comment.getText().trim() == text) {
+                        setElementExists(true);
+                    }
+                }
+            } : new RecursiveJsVisitor() {
+                @Override
+                public void visitSingleLineComment(@NotNull JsSingleLineComment comment) {
+                    if (comment.getText().trim() == text) {
+                        setElementExists(true);
+                    }
+                }
+            };
+        }
+
+        @Override
+        protected void loadArguments(@NotNull ArgumentsHelper arguments) {
+            this.text = arguments.findNamedArgument("text");
+            this.isMultiLine = Boolean.parseBoolean(arguments.findNamedArgument("multiline"));
         }
     };
 
@@ -374,6 +481,8 @@ public class DirectiveTestUtils {
             FUNCTION_NOT_CALLED_IN_SCOPE,
             FUNCTIONS_HAVE_SAME_LINES,
             ONLY_THIS_QUALIFIED_REFERENCES,
+            CHECK_COMMENT_EXISTS,
+            CHECK_COMMENT_DOESNT_EXIST,
             COUNT_LABELS,
             COUNT_VARS,
             COUNT_BREAKS,
@@ -420,6 +529,10 @@ public class DirectiveTestUtils {
             return AstSearchUtil.getFunction(node, scopeFunctionName);
         }
         return node;
+    }
+
+    public static void checkCommentExists(JsNode node, String content, boolean isMultiline) {
+
     }
 
     public static void checkPropertyNotUsed(JsNode node, String propertyName, String scope, boolean isGetAllowed, boolean isSetAllowed)
@@ -565,8 +678,8 @@ public class DirectiveTestUtils {
     /**
      * Arguments format: ((namedArg|positionalArg)\s+)*`
      *
-     * Where: namedArg -- "key=value"
-     *        positionalArg -- "value"
+     * Where: namedArg -- 'key=value' or 'key="spaced value"'
+     *        positionalArg -- 'value'
      *
      * Neither key, nor value should contain spaces.
      */
@@ -574,16 +687,25 @@ public class DirectiveTestUtils {
         private final List<String> positionalArguments = new ArrayList<>();
         private final Map<String, String> namedArguments = new HashMap<>();
         private final String entry;
+        private final Pattern argumentsPattern = Pattern.compile("\\w+(=((\".*?\")|\\w+))?");
 
         ArgumentsHelper(@NotNull String directiveEntry) {
             entry = directiveEntry;
 
-            for (String argument: directiveEntry.split("\\s+")) {
-                String[] keyVal = argument.split("=");
+            Matcher matcher = argumentsPattern.matcher(directiveEntry);
 
+            while (matcher.find()) {
+                String argument = matcher.group();
+                String[] keyVal = argument.split("=");
                 switch (keyVal.length) {
                     case 1: positionalArguments.add(keyVal[0]); break;
-                    case 2: namedArguments.put(keyVal[0], keyVal[1]); break;
+                    case 2:
+                        String value = keyVal[1];
+                        if (value.charAt(0) == '"') {
+                            value = value.substring(1, value.length() - 1);
+                        }
+                        namedArguments.put(keyVal[0], value);
+                        break;
                     default: throw new AssertionError("Wrong argument format: " + argument);
                 }
             }

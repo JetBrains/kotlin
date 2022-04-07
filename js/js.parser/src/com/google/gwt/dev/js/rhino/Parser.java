@@ -110,7 +110,7 @@ public class Parser {
 
         while (true) {
             ts.flags |= TokenStream.TSF_REGEXP;
-            tt = ts.getToken();
+            tt = ts.getTokenWithComment();
             ts.flags &= ~TokenStream.TSF_REGEXP;
 
             if (tt <= TokenStream.EOF) {
@@ -360,7 +360,7 @@ public class Parser {
 
         int lastExprType; // For wellTerminated
 
-        tt = ts.getToken();
+        tt = ts.getTokenWithComment();
         CodePosition position = ts.tokenPosition;
 
         switch (tt) {
@@ -593,6 +593,15 @@ public class Parser {
                 }
                 break;
             }
+
+            case TokenStream.SINGLE_LINE_COMMENT:
+                pn = nf.createSingleLineComment(ts.getString(), ts.tokenPosition);
+                break;
+
+            case TokenStream.MULTI_LINE_COMMENT:
+                pn = nf.createMultiLineComment(ts.getString(), ts.tokenPosition);
+                break;
+
             case TokenStream.RETURN: {
                 Node retExpr = null;
                 int lineno;
@@ -1000,7 +1009,7 @@ public class Parser {
     ) throws IOException, JavaScriptException {
         lastExprEndLine = ts.getLineno();
         int tt;
-        while ((tt = ts.getToken()) > TokenStream.EOF) {
+        while ((tt = ts.getTokenWithComment()) > TokenStream.EOF) {
             CodePosition position = ts.tokenPosition;
             if (tt == TokenStream.DOT) {
                 ts.treatKeywordAsIdentifier = true;

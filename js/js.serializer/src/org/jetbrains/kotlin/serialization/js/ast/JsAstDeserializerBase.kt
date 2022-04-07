@@ -164,6 +164,8 @@ abstract class JsAstDeserializerBase {
 
         JsAstProtoBuf.Statement.StatementCase.SINGLE_LINE_COMMENT -> JsSingleLineComment(proto.singleLineComment.message)
 
+        JsAstProtoBuf.Statement.StatementCase.MULTI_LINE_COMMENT -> JsMultiLineComment(proto.multiLineComment.message)
+
         JsAstProtoBuf.Statement.StatementCase.STATEMENT_NOT_SET,
         null -> error("Statement not set")
     }
