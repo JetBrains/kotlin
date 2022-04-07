@@ -147,6 +147,19 @@ class LineCollector : RecursiveJsVisitor() {
         }
     }
 
+
+    override fun visitSingleLineComment(comment: JsSingleLineComment) {
+        withStatement(comment) {
+            lineNumbersByStatement[comment]?.add(-1)
+        }
+    }
+
+    override fun visitMultiLineComment(comment: JsMultiLineComment) {
+        withStatement(comment) {
+            lineNumbersByStatement[comment]?.add(-1)
+        }
+    }
+
     private fun withStatement(statement: JsStatement, action: () -> Unit) {
         val oldStatement = currentStatement
         currentStatement = statement
