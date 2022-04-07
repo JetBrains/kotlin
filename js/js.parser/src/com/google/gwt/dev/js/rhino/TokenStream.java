@@ -40,7 +40,6 @@ package com.google.gwt.dev.js.rhino;
 import java.io.*;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.function.Predicate;
 
 /**
  * This class implements the JavaScript scanner.
