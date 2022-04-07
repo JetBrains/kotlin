@@ -687,7 +687,7 @@ public class DirectiveTestUtils {
         private final List<String> positionalArguments = new ArrayList<>();
         private final Map<String, String> namedArguments = new HashMap<>();
         private final String entry;
-        private final Pattern argumentsPattern = Pattern.compile("\\w+(=((\".*?\")|([\\w$_])+))?");
+        private final Pattern argumentsPattern = Pattern.compile("\\w+(=((\".*?\")|([\\w$_;])+))?");
 
         ArgumentsHelper(@NotNull String directiveEntry) {
             entry = directiveEntry;
