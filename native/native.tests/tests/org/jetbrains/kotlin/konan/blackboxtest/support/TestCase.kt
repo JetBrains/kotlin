@@ -170,7 +170,6 @@ internal class TestCase(
     val modules: Set<TestModule.Exclusive>,
     val freeCompilerArgs: TestCompilerArgs,
     val nominalPackageName: PackageName,
-    val expectedOutputDataFile: File?, // TODO: refactor to TestRunCheck
     val checks: TestRunChecks,
     val extras: Extras
 ) {

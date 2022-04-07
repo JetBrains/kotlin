@@ -8,8 +8,7 @@ package org.jetbrains.kotlin.konan.blackboxtest.support.group
 import org.jetbrains.kotlin.konan.blackboxtest.support.*
 import org.jetbrains.kotlin.konan.blackboxtest.support.TestCase.NoTestRunnerExtras
 import org.jetbrains.kotlin.konan.blackboxtest.support.TestCase.WithTestRunnerExtras
-import org.jetbrains.kotlin.konan.blackboxtest.support.runner.TestRunCheck.ExecutionTimeout
-import org.jetbrains.kotlin.konan.blackboxtest.support.runner.TestRunCheck.ExitCode
+import org.jetbrains.kotlin.konan.blackboxtest.support.runner.TestRunCheck.*
 import org.jetbrains.kotlin.konan.blackboxtest.support.runner.TestRunChecks
 import org.jetbrains.kotlin.konan.blackboxtest.support.settings.GeneratedSources
 import org.jetbrains.kotlin.konan.blackboxtest.support.settings.Settings
@@ -183,7 +182,6 @@ internal class StandardTestCaseGroupProvider : TestCaseGroupProvider {
         val registeredDirectives = directivesParser.build()
 
         val freeCompilerArgs = parseFreeCompilerArgs(registeredDirectives, location)
-        val expectedOutputDataFile = parseOutputDataFile(baseDir = testDataFile.parentFile, registeredDirectives, location)
         val testKind = parseTestKind(registeredDirectives, location)
         val expectedTimeoutFailure = parseExpectedTimeoutFailure(registeredDirectives)
 
@@ -198,10 +196,10 @@ internal class StandardTestCaseGroupProvider : TestCaseGroupProvider {
             modules = testModules.values.toSet(),
             freeCompilerArgs = freeCompilerArgs,
             nominalPackageName = nominalPackageName,
-            expectedOutputDataFile = expectedOutputDataFile,
             checks = TestRunChecks(
                 computeExecutionTimeoutCheck(settings, expectedTimeoutFailure),
-                computeExitCodeCheck(testKind, registeredDirectives, location)
+                computeExitCodeCheck(testKind, registeredDirectives, location),
+                computeOutputDataFileCheck(testDataFile, registeredDirectives, location)
             ),
             extras = if (testKind == TestKind.STANDALONE_NO_TR)
                 NoTestRunnerExtras(
@@ -254,5 +252,11 @@ internal class StandardTestCaseGroupProvider : TestCaseGroupProvider {
                 parseExpectedExitCode(registeredDirectives, location)
             else
                 ExitCode.Expected(0)
+
+        private fun computeOutputDataFileCheck(
+            testDataFile: File,
+            registeredDirectives: RegisteredDirectives,
+            location: Location
+        ): OutputDataFile? = parseOutputDataFile(baseDir = testDataFile.parentFile, registeredDirectives, location)
     }
 }

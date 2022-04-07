@@ -63,7 +63,6 @@ internal class PredefinedTestCaseGroupProvider(annotation: PredefinedTestCases) 
                 freeCompilerArgs = predefinedTestCase.freeCompilerArgs
                     .parseCompilerArgs(settings) { "Failed to parse free compiler arguments for test case $testCaseId" },
                 nominalPackageName = PackageName(testCaseId.uniqueName),
-                expectedOutputDataFile = null,
                 checks = TestRunChecks.Default(settings.get<Timeouts>().executionTimeout),
                 extras = WithTestRunnerExtras(
                     runnerType = predefinedTestCase.runnerType,

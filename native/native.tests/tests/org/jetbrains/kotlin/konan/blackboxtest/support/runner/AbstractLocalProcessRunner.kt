@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.konan.blackboxtest.support.runner
 
+import com.intellij.openapi.util.text.StringUtilRt.convertLineSeparators
 import kotlinx.coroutines.*
 import org.jetbrains.kotlin.konan.blackboxtest.support.runner.AbstractRunner.AbstractRun
 import org.jetbrains.kotlin.konan.blackboxtest.support.runner.TestRunCheck.ExecutionTimeout
@@ -92,6 +93,16 @@ internal abstract class AbstractLocalProcessRunner<R>(private val checks: TestRu
                             is ExitCode.AnyNonZero -> verifyExpectation(knownExitCode != 0) {
                                 "$visibleProcessName exited with zero code, which wasn't expected."
                             }
+                        }
+                    }
+                    is TestRunCheck.OutputDataFile -> {
+                        val expectedOutput = check.file.readText()
+                        val actualFilteredOutput = runResult.processOutput.stdOut.filteredOutput + runResult.processOutput.stdErr
+
+                        // Don't use verifyExpectation(expected, actual) to avoid exposing potentially large test output in exception message
+                        // and blowing up test logs.
+                        verifyExpectation(convertLineSeparators(expectedOutput) == convertLineSeparators(actualFilteredOutput)) {
+                            "Tested process output mismatch. See \"TEST STDOUT\" and \"EXPECTED OUTPUT DATA FILE\" below."
                         }
                     }
                 }

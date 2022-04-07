@@ -26,7 +26,7 @@ internal open class BaseTestRunProvider {
     )
 
     private fun getTestRunParameters(testCase: TestCase, testName: TestName?): List<TestRunParameter> = buildList {
-        addIfNotNull(testCase.expectedOutputDataFile?.let(TestRunParameter::WithExpectedOutputData))
+        addIfNotNull(testCase.checks.outputDataFile?.file?.let(TestRunParameter::WithExpectedOutputData))
 
         when (testCase.kind) {
             TestKind.STANDALONE_NO_TR -> {

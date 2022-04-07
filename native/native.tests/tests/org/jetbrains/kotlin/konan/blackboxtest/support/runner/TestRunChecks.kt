@@ -5,8 +5,9 @@
 
 package org.jetbrains.kotlin.konan.blackboxtest.support.runner
 
-import org.jetbrains.kotlin.konan.blackboxtest.support.runner.TestRunCheck.ExecutionTimeout
-import org.jetbrains.kotlin.konan.blackboxtest.support.runner.TestRunCheck.ExitCode
+import org.jetbrains.kotlin.konan.blackboxtest.support.runner.TestRunCheck.*
+import org.jetbrains.kotlin.utils.yieldIfNotNull
+import java.io.File
 import kotlin.time.Duration
 
 internal sealed interface TestRunCheck {
@@ -19,24 +20,29 @@ internal sealed interface TestRunCheck {
         object AnyNonZero : ExitCode()
         class Expected(val expectedExitCode: Int) : ExitCode()
     }
+
+    class OutputDataFile(val file: File) : TestRunCheck
 }
 
 internal class TestRunChecks(
     val executionTimeoutCheck: ExecutionTimeout,
-    private val exitCodeCheck: ExitCode
+    private val exitCodeCheck: ExitCode,
+    val outputDataFile: OutputDataFile?
 ) : Iterable<TestRunCheck> {
 
     override fun iterator() = iterator {
         yield(executionTimeoutCheck)
         yield(exitCodeCheck)
+        yieldIfNotNull(outputDataFile)
     }
 
     companion object {
         // The most frequently used case:
         @Suppress("TestFunctionName")
         fun Default(timeout: Duration) = TestRunChecks(
-            ExecutionTimeout.ShouldNotExceed(timeout),
-            ExitCode.Expected(0)
+            executionTimeoutCheck = ExecutionTimeout.ShouldNotExceed(timeout),
+            exitCodeCheck = ExitCode.Expected(0),
+            outputDataFile = null
         )
     }
 }

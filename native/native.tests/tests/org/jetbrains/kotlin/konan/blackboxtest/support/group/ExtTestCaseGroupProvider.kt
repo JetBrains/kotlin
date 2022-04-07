@@ -553,7 +553,6 @@ private class ExtTestDataFile(
             modules = modules,
             freeCompilerArgs = assembleFreeCompilerArgs(),
             nominalPackageName = testDataFileSettings.nominalPackageName,
-            expectedOutputDataFile = null,
             checks = TestRunChecks.Default(timeouts.executionTimeout),
             extras = WithTestRunnerExtras(runnerType = TestRunnerType.DEFAULT)
         )
