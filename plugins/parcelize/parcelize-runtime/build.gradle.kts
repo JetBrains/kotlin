@@ -5,8 +5,6 @@ plugins {
     id("jps-compatible")
 }
 
-project.updateJvmTarget("1.6")
-
 dependencies {
     api(kotlinStdlib())
     api(project(":kotlin-android-extensions-runtime"))
