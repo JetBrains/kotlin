@@ -145,6 +145,18 @@ public class InfrastructureTestGenerated extends AbstractNativeBlackBoxTest {
         }
 
         @Test
+        @TestMetadata("standalone_notr_nonzero_exit_code.kt")
+        public void testStandalone_notr_nonzero_exit_code() throws Exception {
+            runTest("native/native.tests/testData/samples/standalone_notr_nonzero_exit_code.kt");
+        }
+
+        @Test
+        @TestMetadata("standalone_notr_nonzero_exit_code2.kt")
+        public void testStandalone_notr_nonzero_exit_code2() throws Exception {
+            runTest("native/native.tests/testData/samples/standalone_notr_nonzero_exit_code2.kt");
+        }
+
+        @Test
         @TestMetadata("standalone_notr_simple.kt")
         public void testStandalone_notr_simple() throws Exception {
             runTest("native/native.tests/testData/samples/standalone_notr_simple.kt");
@@ -184,6 +196,12 @@ public class InfrastructureTestGenerated extends AbstractNativeBlackBoxTest {
         @TestMetadata("standalone_notr_too_verbose.kt")
         public void testStandalone_notr_too_verbose() throws Exception {
             runTest("native/native.tests/testData/samples/standalone_notr_too_verbose.kt");
+        }
+
+        @Test
+        @TestMetadata("standalone_notr_zero_exit_code.kt")
+        public void testStandalone_notr_zero_exit_code() throws Exception {
+            runTest("native/native.tests/testData/samples/standalone_notr_zero_exit_code.kt");
         }
 
         @Test

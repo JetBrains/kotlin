@@ -6,12 +6,14 @@
 package org.jetbrains.kotlin.konan.blackboxtest.support
 
 import org.jetbrains.kotlin.konan.blackboxtest.support.TestDirectives.ENTRY_POINT
+import org.jetbrains.kotlin.konan.blackboxtest.support.TestDirectives.EXIT_CODE
 import org.jetbrains.kotlin.konan.blackboxtest.support.TestDirectives.FREE_COMPILER_ARGS
 import org.jetbrains.kotlin.konan.blackboxtest.support.TestDirectives.INPUT_DATA_FILE
 import org.jetbrains.kotlin.konan.blackboxtest.support.TestDirectives.KIND
 import org.jetbrains.kotlin.konan.blackboxtest.support.TestDirectives.OUTPUT_DATA_FILE
 import org.jetbrains.kotlin.konan.blackboxtest.support.TestDirectives.EXPECTED_TIMEOUT_FAILURE
 import org.jetbrains.kotlin.konan.blackboxtest.support.TestDirectives.TEST_RUNNER
+import org.jetbrains.kotlin.konan.blackboxtest.support.runner.TestRunCheck
 import org.jetbrains.kotlin.test.directives.model.RegisteredDirectives
 import org.jetbrains.kotlin.test.directives.model.SimpleDirectivesContainer
 import org.jetbrains.kotlin.test.directives.model.StringDirective
@@ -104,14 +106,13 @@ internal object TestDirectives : SimpleDirectivesContainer() {
         """.trimIndent()
     )
 
-    // TODO: to be supported later
-//    val EXIT_CODE by stringDirective(
-//        description = """
-//            Specify the exit code that the test should finish with. Example: // EXIT_CODE: 42
-//            To indicate any non-zero exit code use // EXIT_CODE: !0
-//            Note that this directive makes sense only in combination with // KIND: STANDALONE_NO_TR
-//        """.trimIndent()
-//    )
+    val EXIT_CODE by stringDirective(
+        description = """
+            Specify the exit code that the test should finish with. Example: // EXIT_CODE: 42
+            To indicate any non-zero exit code use // EXIT_CODE: !0
+            Note that this directive makes sense only in combination with // KIND: STANDALONE_NO_TR
+        """.trimIndent()
+    )
 
     val EXPECTED_TIMEOUT_FAILURE by directive(
         description = "Whether the test is expected to fail on timeout"
@@ -243,6 +244,21 @@ internal fun parseFileName(parsedDirective: RegisteredDirectivesParser.ParsedDir
 
 internal fun parseExpectedTimeoutFailure(registeredDirectives: RegisteredDirectives): Boolean =
     EXPECTED_TIMEOUT_FAILURE in registeredDirectives
+
+internal fun parseExpectedExitCode(registeredDirectives: RegisteredDirectives, location: Location): TestRunCheck.ExitCode {
+    if (EXIT_CODE !in registeredDirectives)
+        return TestRunCheck.ExitCode.Expected(0)
+
+    val values = registeredDirectives[EXIT_CODE]
+    val exitCode = values.singleOrNull()
+        ?: fail { "$location: Exactly one exit code expected in $EXIT_CODE directive: $values" }
+
+    return when (exitCode) {
+        "!0" -> TestRunCheck.ExitCode.AnyNonZero
+        else -> exitCode.toIntOrNull()?.let(TestRunCheck.ExitCode::Expected)
+            ?: fail { "$location: Invalid exit code specified in $EXIT_CODE directive: $exitCode" }
+    }
+}
 
 internal fun parseFreeCompilerArgs(registeredDirectives: RegisteredDirectives, location: Location): TestCompilerArgs {
     if (FREE_COMPILER_ARGS !in registeredDirectives)
