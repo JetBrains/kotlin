@@ -17,7 +17,7 @@ FILE: classWithCompanionObject.kt
             public final fun deserialize(decoder: R|kotlinx/serialization/encoding/Decoder|): R|SomeClass|
 
             public final val descriptor: R|kotlinx/serialization/descriptors/SerialDescriptor|
-
+                public get(): R|kotlinx/serialization/descriptors/SerialDescriptor|
 
             public final fun childSerializers(): R|kotlin/Array<kotlinx/serialization/KSerializer<*>>|
 

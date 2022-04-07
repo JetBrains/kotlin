@@ -222,7 +222,15 @@ class SerializationFirResolveExtension(session: FirSession) : FirDeclarationGene
             symbol = FirPropertySymbol(callableId)
             origin = SerializationPluginKey.origin
             status = original.status.copy(newModality = Modality.FINAL)
-
+            getter = buildPropertyAccessor {
+                status = original.status.copy(newModality = Modality.FINAL)
+                symbol = FirPropertyAccessorSymbol()
+                origin = SerializationPluginKey.origin
+                moduleData = session.moduleData
+                isGetter = true
+                returnTypeRef = original.returnTypeRef
+                dispatchReceiverType = owner.defaultType()
+            }
         }
         return listOf(copy.symbol)
     }
