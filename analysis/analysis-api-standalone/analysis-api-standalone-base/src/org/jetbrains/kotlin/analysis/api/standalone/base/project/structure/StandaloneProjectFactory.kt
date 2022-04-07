@@ -55,7 +55,7 @@ object StandaloneProjectFactory {
         KotlinCoreEnvironment.registerProjectExtensionPoints(project.extensionArea)
         KotlinCoreEnvironment.registerProjectServices(project)
 
-        project.registerService(ProjectStructureProvider::class.java, KtStaticModuleProvider(modules.map { it.ktModule }))
+        project.registerService(ProjectStructureProvider::class.java, KtStaticModuleProvider(modules.map { it.ktModule }, emptySet()))
         initialiseVirtualFinderFinderServices(modules, environment, jdkHome, languageVersionSettings)
         initialiseAnnotationServices(project)
 

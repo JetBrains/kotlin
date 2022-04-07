@@ -32,7 +32,9 @@ import org.jetbrains.kotlin.fir.checkers.registerExtendedCommonCheckers
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.declarations.SealedClassInheritorsProvider
+import org.jetbrains.kotlin.fir.deserialization.LibraryPathFilter
 import org.jetbrains.kotlin.fir.deserialization.ModuleDataProvider
+import org.jetbrains.kotlin.fir.deserialization.MultipleModuleDataProvider
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
 import org.jetbrains.kotlin.fir.extensions.FirPredicateBasedProvider
 import org.jetbrains.kotlin.fir.extensions.FirRegisteredPluginAnnotations
@@ -225,9 +227,10 @@ internal object LLFirSessionFactory {
 
             val mainModuleData = KtModuleBasedModuleData(sourceModule).apply { bindSession(this@session) }
 
+            val moduleDataProvider = createModuleDataProviderWithLibraryDependencies(sourceModule, this)
             val classFileBasedSymbolProvider = JvmClassFileBasedSymbolProvider(
                 this@session,
-                moduleDataProvider = createModuleDataProvider(sourceModule, this),
+                moduleDataProvider = moduleDataProvider,
                 kotlinScopeProvider = kotlinScopeProvider,
                 packagePartProvider = project.createPackagePartProviderForLibrary(searchScope),
                 kotlinClassFinder = VirtualFileFinderFactory.getInstance(project).create(searchScope),
@@ -244,19 +247,28 @@ internal object LLFirSessionFactory {
         }
     }
 
-    private fun createModuleDataProvider(sourceModule: KtModule, session: LLFirSession): ModuleDataProvider {
-        val dependencyList = DependencyListForCliModule.build(
-            Name.special("<${sourceModule.moduleDescription}>"),
-            sourceModule.platform,
-            sourceModule.analyzerServices
-        ) {
-            dependencies(sourceModule.directRegularDependencies.extractLibraryPaths())
-            friendDependencies(sourceModule.directFriendDependencies.extractLibraryPaths())
-            dependsOnDependencies(sourceModule.directRefinementDependencies.extractLibraryPaths())
+    private fun createModuleDataProviderWithLibraryDependencies(sourceModule: KtModule, session: LLFirSession): ModuleDataProvider {
+        val regularDependenciesOnLibs =
+            sourceModule.directRegularDependenciesOfType<KtBinaryModule>().map { KtModuleBasedModuleData(it) }
+        val friendDependenciesOnLibs =
+            sourceModule.directFriendDependenciesOfType<KtBinaryModule>().map { KtModuleBasedModuleData(it) }
+        val dependsOnDependenciesOnLibs =
+            sourceModule.directRefinementDependenciesOfType<KtBinaryModule>().map { KtModuleBasedModuleData(it) }
+
+        val allDependencies = buildList {
+            addAll(regularDependenciesOnLibs)
+            addAll(friendDependenciesOnLibs)
+            addAll(dependsOnDependenciesOnLibs)
         }
-        return dependencyList.moduleDataProvider.apply {
-            allModuleData.forEach { it.bindSession(session) }
-        }
+
+        allDependencies.forEach { it.bindSession(session) }
+
+        val moduleDataWithFilters: Map<FirModuleData, LibraryPathFilter.LibraryList> =
+            allDependencies.associateWith { moduleData ->
+                LibraryPathFilter.LibraryList((moduleData.module as KtBinaryModule).getBinaryRoots().toSet())
+            }
+
+        return MultipleModuleDataProvider(moduleDataWithFilters)
     }
 
     fun createBuiltinsAndCloneableSession(
@@ -360,7 +372,7 @@ internal object LLFirSessionFactory {
                 add(
                     JvmClassFileBasedSymbolProvider(
                         this@session,
-                        moduleDataProvider = createModuleDataProvider(module, this@session),
+                        moduleDataProvider = createModuleDataProviderWithLibraryDependencies(module, this@session),
                         kotlinScopeProvider = scopeProvider,
                         packagePartProvider = project.createPackagePartProviderForLibrary(librariesSearchScope),
                         kotlinClassFinder = VirtualFileFinderFactory.getInstance(project).create(librariesSearchScope),
