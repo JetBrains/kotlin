@@ -1,0 +1,24 @@
+KtNamedClassOrObjectSymbol:
+  annotationsList: []
+  classIdIfNonLocal: kotlin/Lazy
+  classKind: INTERFACE
+  companionObject: null
+  isData: false
+  isExternal: false
+  isFun: false
+  isInline: false
+  isInner: false
+  modality: ABSTRACT
+  name: Lazy
+  origin: LIBRARY
+  superTypes: [
+    kotlin/Any
+  ]
+  symbolKind: TOP_LEVEL
+  typeParameters: [
+    KtTypeParameterSymbol(T)
+  ]
+  visibility: Public
+  getContainingModule: Could not render due to kotlin.NotImplementedError: An operation is not implemented: deserialized class Lazy
+
+  deprecationStatus: null

@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.ba
 import org.jetbrains.kotlin.analysis.api.*
 import org.jetbrains.kotlin.analysis.api.annotations.*
 import org.jetbrains.kotlin.analysis.api.base.KtConstantValue
+import org.jetbrains.kotlin.analysis.api.calls.symbol
 import org.jetbrains.kotlin.analysis.api.components.KtDeclarationRendererOptions
 import org.jetbrains.kotlin.analysis.api.descriptors.Fe10AnalysisContext
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.*
@@ -18,6 +19,7 @@ import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KtSymbolKind
 import org.jetbrains.kotlin.analysis.api.types.KtType
 import org.jetbrains.kotlin.analysis.api.types.KtTypeNullability
+import org.jetbrains.kotlin.analysis.utils.errors.unexpectedElementError
 import org.jetbrains.kotlin.analysis.utils.printer.prettyPrint
 import org.jetbrains.kotlin.builtins.functions.FunctionClassDescriptor
 import org.jetbrains.kotlin.descriptors.*
@@ -108,6 +110,15 @@ internal fun ClassDescriptor.toKtClassSymbol(analysisContext: Fe10AnalysisContex
         KtFe10DescNamedClassOrObjectSymbol(this, analysisContext)
     }
 }
+
+internal fun KtSymbol.getDescriptor(): DeclarationDescriptor? {
+    return when (this) {
+        is KtFe10PsiSymbol<*, *> -> descriptor
+        is KtFe10DescSymbol<*> -> descriptor
+        else -> unexpectedElementError("KtSymbol", this)
+    }
+}
+
 
 internal fun ConstructorDescriptor.toKtConstructorSymbol(analysisContext: Fe10AnalysisContext): KtConstructorSymbol {
     if (this is TypeAliasConstructorDescriptor) {

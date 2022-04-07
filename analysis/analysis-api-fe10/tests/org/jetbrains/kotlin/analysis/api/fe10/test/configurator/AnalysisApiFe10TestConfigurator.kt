@@ -10,6 +10,8 @@ import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiFile
 import org.jetbrains.kotlin.analysis.api.impl.base.test.configurators.AnalysisApiBaseTestServiceRegistrar
 import org.jetbrains.kotlin.analysis.api.standalone.base.project.structure.KtModuleProjectStructure
+import org.jetbrains.kotlin.analysis.test.framework.project.structure.KtMainModuleFactoryForSourceModules
+import org.jetbrains.kotlin.analysis.test.framework.project.structure.TestModuleStructureFactory
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiTestConfigurator
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiTestServiceRegistrar
 import org.jetbrains.kotlin.psi.KtFile
@@ -42,7 +44,12 @@ object AnalysisApiFe10TestConfigurator : AnalysisApiTestConfigurator() {
         testServices: TestServices,
         project: Project,
     ): KtModuleProjectStructure {
-        return moduleStructure.toKtSourceModules(testServices, project)
+        return TestModuleStructureFactory.createProjectStructureByTestStructure(
+            moduleStructure,
+            testServices,
+            project,
+            KtMainModuleFactoryForSourceModules,
+        )
     }
 
     override fun prepareFilesInModule(files: List<PsiFile>, module: TestModule, testServices: TestServices) {
