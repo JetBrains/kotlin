@@ -6,12 +6,13 @@
 package org.jetbrains.kotlin.analysis.api.standalone.base.project.structure
 
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.analysis.project.structure.KtLibraryModule
-import org.jetbrains.kotlin.analysis.project.structure.KtModule
-import org.jetbrains.kotlin.analysis.project.structure.ProjectStructureProvider
+import org.jetbrains.kotlin.analysis.project.structure.*
 import org.jetbrains.kotlin.psi.psiUtil.contains
 
-class KtStaticModuleProvider(private val modules: List<KtModule>) : ProjectStructureProvider() {
+class KtStaticModuleProvider(
+    private val modules: List<KtModule>,
+    private val stdlibs: Set<KtModule>
+) : ProjectStructureProvider() {
     override fun getKtModuleForKtElement(element: PsiElement): KtModule {
         return modules.first { module ->
             module.contentScope.contains(element)
@@ -19,6 +20,10 @@ class KtStaticModuleProvider(private val modules: List<KtModule>) : ProjectStruc
     }
 
     override fun getKtLibraryModules(): Collection<KtLibraryModule> {
-       return modules.filterIsInstance<KtLibraryModule>()
+        return modules.filterIsInstance<KtLibraryModule>()
+    }
+
+    override fun getStdlibModule(module: KtModule): KtLibraryModule? {
+        return module.allDirectDependenciesOfType<KtLibraryModule>().firstOrNull { it in stdlibs }
     }
 }
