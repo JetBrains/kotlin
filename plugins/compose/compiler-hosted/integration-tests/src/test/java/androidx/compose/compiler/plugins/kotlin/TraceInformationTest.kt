@@ -20,11 +20,11 @@ import androidx.compose.compiler.plugins.kotlin.AbstractIrTransformTest.Truncate
 import org.junit.Test
 
 /**
- * Verifies trace data passed to tracing. Relies on [TruncateTracingInfoMode.KEEP_INFO_STRING] to
+ * Verifies trace data passed to tracing. Relies on [TruncateTracingInfoMode.GROUP_KEY_ONLY] to
  * leave most of the trace information in the test output.
  *
  * More complex cases tested in other IrTransform tests that use
- * the [TruncateTracingInfoMode.KEEP_INFO_STRING].
+ * the [TruncateTracingInfoMode.GROUP_KEY_ONLY].
  */
 class TraceInformationTest : ComposeIrTransformTest() {
     @Test
@@ -45,7 +45,7 @@ class TraceInformationTest : ComposeIrTransformTest() {
               @Composable
               fun B(x: Int, %composer: Composer?, %changed: Int) {
                 if (isTraceInProgress()) {
-                  traceEventStart(<>, -1, -1, "A.B (Test.kt:4)")
+                  traceEventStart(<>, "A.B (Test.kt:4)")
                 }
                 %composer = %composer.startRestartGroup(<>)
                 sourceInformation(%composer, "C(B):Test.kt")
@@ -66,7 +66,7 @@ class TraceInformationTest : ComposeIrTransformTest() {
             @Composable
             fun C(%composer: Composer?, %changed: Int) {
               if (isTraceInProgress()) {
-                traceEventStart(<>, -1, -1, "C (Test.kt:8)")
+                traceEventStart(<>, "C (Test.kt:8)")
               }
               %composer = %composer.startRestartGroup(<>)
               sourceInformation(%composer, "C(C)<B(1337...>:Test.kt")
@@ -83,6 +83,6 @@ class TraceInformationTest : ComposeIrTransformTest() {
               }
             }
         """,
-        truncateTracingInfoMode = TruncateTracingInfoMode.TRUNCATE_KEY
+        truncateTracingInfoMode = TruncateTracingInfoMode.GROUP_KEY_ONLY
     )
 }
