@@ -216,6 +216,12 @@ public class JsAstMapper {
             case TokenStream.LABEL:
                 return mapLabel(node);
 
+            case TokenStream.SINGLE_LINE_COMMENT:
+                return mapSingleLineComment(node);
+
+            case TokenStream.MULTI_LINE_COMMENT:
+                return mapMultiLineComment(node);
+
             default:
                 int tokenType = node.getType();
                 throw createParserException("Unexpected top-level token type: "
@@ -1094,6 +1100,14 @@ public class JsAstMapper {
         }
 
         return toVars;
+    }
+
+    private JsSingleLineComment mapSingleLineComment(Node node) {
+       return new JsSingleLineComment(node.getString());
+    }
+
+    private JsMultiLineComment mapMultiLineComment(Node node) {
+        return new JsMultiLineComment(node.getString());
     }
 
     private JsNode mapWithStatement(Node withNode) throws JsParserException {
