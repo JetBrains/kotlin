@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFirFile
 import org.jetbrains.kotlin.analysis.low.level.api.fir.createResolveStateForNoCaching
 import org.jetbrains.kotlin.analysis.low.level.api.fir.transformers.LLFirLazyTransformer
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
+import org.jetbrains.kotlin.test.ExecutionListenerBasedDisposableProvider
 import org.jetbrains.kotlin.test.bind
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.builders.firHandlersStep
@@ -25,8 +26,7 @@ import org.jetbrains.kotlin.test.model.DependencyKind
 import org.jetbrains.kotlin.test.model.FrontendFacade
 import org.jetbrains.kotlin.test.model.FrontendKinds
 import org.jetbrains.kotlin.test.model.TestModule
-import org.jetbrains.kotlin.test.services.TestServices
-import org.jetbrains.kotlin.test.services.compilerConfigurationProvider
+import org.jetbrains.kotlin.test.services.*
 
 abstract class AbstractCompilerBasedTestForFir : AbstractCompilerBasedTest() {
     final override fun TestConfigurationBuilder.configuration() {
@@ -39,6 +39,8 @@ abstract class AbstractCompilerBasedTestForFir : AbstractCompilerBasedTest() {
         configureTest()
         defaultConfiguration(this)
 
+        useAdditionalService<ApplicationDisposableProvider> { ExecutionListenerBasedDisposableProvider() }
+        useAdditionalService<KotlinStandardLibrariesPathProvider> { StandardLibrariesPathProviderForKotlinProject }
         useAdditionalService(::TestKtModuleProvider)
         usePreAnalysisHandlers(::ModuleRegistrarPreAnalysisHandler.bind(disposable, true))
 
