@@ -57,7 +57,7 @@ open class FastMethodAnalyzer<V : Value>
     private val insnsArray = method.instructions.toArray()
     private val nInsns = method.instructions.size()
 
-    private val isMergeNode = BooleanArray(nInsns)
+    private val isMergeNode = findMergeNodes(method)
 
     private val frames: Array<Frame<V>?> = arrayOfNulls(nInsns)
 
@@ -74,7 +74,6 @@ open class FastMethodAnalyzer<V : Value>
 
         checkAssertions()
         computeExceptionHandlersForEachInsn(method)
-        initMergeNodes()
 
         val isTcbStart = BooleanArray(nInsns)
         for (tcb in method.tryCatchBlocks) {
@@ -179,35 +178,6 @@ open class FastMethodAnalyzer<V : Value>
     private fun AbstractInsnNode.indexOf() =
         method.instructions.indexOf(this)
 
-    private fun initMergeNodes() {
-        for (insn in insnsArray) {
-            when (insn.type) {
-                AbstractInsnNode.JUMP_INSN -> {
-                    val jumpInsn = insn as JumpInsnNode
-                    isMergeNode[jumpInsn.label.indexOf()] = true
-                }
-                AbstractInsnNode.LOOKUPSWITCH_INSN -> {
-                    val switchInsn = insn as LookupSwitchInsnNode
-                    isMergeNode[switchInsn.dflt.indexOf()] = true
-                    for (label in switchInsn.labels) {
-                        isMergeNode[label.indexOf()] = true
-                    }
-                }
-                AbstractInsnNode.TABLESWITCH_INSN -> {
-                    val switchInsn = insn as TableSwitchInsnNode
-                    isMergeNode[switchInsn.dflt.indexOf()] = true
-                    for (label in switchInsn.labels) {
-                        isMergeNode[label.indexOf()] = true
-                    }
-                }
-            }
-        }
-        for (tcb in method.tryCatchBlocks) {
-            isMergeNode[tcb.handler.indexOf()] = true
-        }
-    }
-
-
     fun getFrame(insn: AbstractInsnNode): Frame<V>? =
         frames[insn.indexOf()]
 
@@ -311,6 +281,38 @@ open class FastMethodAnalyzer<V : Value>
                 append("  ]\n")
             }
             append("}\n")
+        }
+    }
+
+    companion object {
+        fun findMergeNodes(method: MethodNode): BooleanArray {
+            val isMergeNode = BooleanArray(method.instructions.size())
+            for (insn in method.instructions) {
+                when (insn.type) {
+                    AbstractInsnNode.JUMP_INSN -> {
+                        val jumpInsn = insn as JumpInsnNode
+                        isMergeNode[method.instructions.indexOf(jumpInsn.label)] = true
+                    }
+                    AbstractInsnNode.LOOKUPSWITCH_INSN -> {
+                        val switchInsn = insn as LookupSwitchInsnNode
+                        isMergeNode[method.instructions.indexOf(switchInsn.dflt)] = true
+                        for (label in switchInsn.labels) {
+                            isMergeNode[method.instructions.indexOf(label)] = true
+                        }
+                    }
+                    AbstractInsnNode.TABLESWITCH_INSN -> {
+                        val switchInsn = insn as TableSwitchInsnNode
+                        isMergeNode[method.instructions.indexOf(switchInsn.dflt)] = true
+                        for (label in switchInsn.labels) {
+                            isMergeNode[method.instructions.indexOf(label)] = true
+                        }
+                    }
+                }
+            }
+            for (tcb in method.tryCatchBlocks) {
+                isMergeNode[method.instructions.indexOf(tcb.handler)] = true
+            }
+            return isMergeNode
         }
     }
 }
