@@ -15,9 +15,14 @@ import org.jetbrains.kotlin.gradle.plugin.internal.MavenPluginConfigurator
 import org.jetbrains.kotlin.gradle.plugin.internal.MavenPluginConfiguratorG6
 import javax.inject.Inject
 
+private const val PLUGIN_VARIANT_NAME = "main"
+
 open class KotlinPluginWrapper @Inject constructor(
     registry: ToolingModelBuilderRegistry
 ) : AbstractKotlinPluginWrapper(registry) {
+
+    override val pluginVariant: String = PLUGIN_VARIANT_NAME
+
     override fun apply(project: Project) {
         project.registerVariantImplementations()
         super.apply(project)
@@ -27,6 +32,9 @@ open class KotlinPluginWrapper @Inject constructor(
 open class KotlinCommonPluginWrapper @Inject constructor(
     registry: ToolingModelBuilderRegistry
 ) : AbstractKotlinCommonPluginWrapper(registry) {
+
+    override val pluginVariant: String = PLUGIN_VARIANT_NAME
+
     override fun apply(project: Project) {
         project.registerVariantImplementations()
         super.apply(project)
@@ -36,6 +44,9 @@ open class KotlinCommonPluginWrapper @Inject constructor(
 open class KotlinAndroidPluginWrapper @Inject constructor(
     registry: ToolingModelBuilderRegistry
 ) : AbstractKotlinAndroidPluginWrapper(registry) {
+
+    override val pluginVariant: String = PLUGIN_VARIANT_NAME
+
     override fun apply(project: Project) {
         project.registerVariantImplementations()
         super.apply(project)
@@ -46,6 +57,9 @@ open class KotlinAndroidPluginWrapper @Inject constructor(
 open class Kotlin2JsPluginWrapper @Inject constructor(
     registry: ToolingModelBuilderRegistry
 ) : AbstractKotlin2JsPluginWrapper(registry) {
+
+    override val pluginVariant: String = PLUGIN_VARIANT_NAME
+
     override fun apply(project: Project) {
         project.registerVariantImplementations()
         super.apply(project)
@@ -53,6 +67,9 @@ open class Kotlin2JsPluginWrapper @Inject constructor(
 }
 
 open class KotlinMultiplatformPluginWrapper : AbstractKotlinMultiplatformPluginWrapper() {
+
+    override val pluginVariant: String = PLUGIN_VARIANT_NAME
+
     override fun apply(project: Project) {
         project.registerVariantImplementations()
         super.apply(project)
@@ -60,6 +77,9 @@ open class KotlinMultiplatformPluginWrapper : AbstractKotlinMultiplatformPluginW
 }
 
 open class KotlinJsPluginWrapper : AbstractKotlinJsPluginWrapper() {
+
+    override val pluginVariant: String = PLUGIN_VARIANT_NAME
+
     override fun apply(project: Project) {
         project.registerVariantImplementations()
         super.apply(project)
@@ -69,6 +89,9 @@ open class KotlinJsPluginWrapper : AbstractKotlinJsPluginWrapper() {
 open class KotlinPm20PluginWrapper @Inject constructor(
     objectFactory: ObjectFactory
 ) : AbstractKotlinPm20PluginWrapper(objectFactory) {
+
+    override val pluginVariant: String = PLUGIN_VARIANT_NAME
+
     override fun apply(project: Project) {
         project.registerVariantImplementations()
         super.apply(project)

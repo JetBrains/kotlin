@@ -9,6 +9,8 @@ import org.gradle.api.logging.configuration.WarningMode
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.junit.jupiter.api.DisplayName
+import org.junit.jupiter.api.condition.DisabledOnOs
+import org.junit.jupiter.api.condition.OS
 import org.junit.jupiter.api.io.TempDir
 import java.nio.file.Path
 import kotlin.io.path.appendText
@@ -114,6 +116,7 @@ class PublishingIT : KGPBaseTest() {
     @DisplayName("Publication with old 'maven' plugin is working")
     @GradleTest
     @GradleTestVersions(maxVersion = TestVersions.Gradle.G_6_9)
+    @DisabledOnOs(OS.WINDOWS)
     fun testOldMavenPublishing(
         gradleVersion: GradleVersion,
         @TempDir localRepoDir: Path

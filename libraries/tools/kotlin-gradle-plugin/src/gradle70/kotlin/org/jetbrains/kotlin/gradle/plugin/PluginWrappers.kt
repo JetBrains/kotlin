@@ -13,30 +13,46 @@ import org.gradle.api.model.ObjectFactory
 import org.gradle.tooling.provider.model.ToolingModelBuilderRegistry
 import javax.inject.Inject
 
+private const val PLUGIN_VARIANT_NAME = "gradle70"
+
 open class KotlinPluginWrapper @Inject constructor(
     registry: ToolingModelBuilderRegistry
-) : AbstractKotlinPluginWrapper(registry)
+) : AbstractKotlinPluginWrapper(registry) {
+    override val pluginVariant: String = PLUGIN_VARIANT_NAME
+}
 
 open class KotlinCommonPluginWrapper @Inject constructor(
     registry: ToolingModelBuilderRegistry
-) : AbstractKotlinCommonPluginWrapper(registry)
+) : AbstractKotlinCommonPluginWrapper(registry) {
+    override val pluginVariant: String = PLUGIN_VARIANT_NAME
+}
 
 open class KotlinAndroidPluginWrapper @Inject constructor(
     registry: ToolingModelBuilderRegistry
-) : AbstractKotlinAndroidPluginWrapper(registry)
+) : AbstractKotlinAndroidPluginWrapper(registry) {
+    override val pluginVariant: String = PLUGIN_VARIANT_NAME
+}
 
 @Suppress("DEPRECATION_ERROR")
 open class Kotlin2JsPluginWrapper @Inject constructor(
     registry: ToolingModelBuilderRegistry
-) : AbstractKotlin2JsPluginWrapper(registry)
+) : AbstractKotlin2JsPluginWrapper(registry) {
+    override val pluginVariant: String = PLUGIN_VARIANT_NAME
+}
 
-open class KotlinMultiplatformPluginWrapper : AbstractKotlinMultiplatformPluginWrapper()
+open class KotlinMultiplatformPluginWrapper : AbstractKotlinMultiplatformPluginWrapper() {
+    override val pluginVariant: String = PLUGIN_VARIANT_NAME
+}
 
-open class KotlinJsPluginWrapper : AbstractKotlinJsPluginWrapper()
+open class KotlinJsPluginWrapper : AbstractKotlinJsPluginWrapper() {
+    override val pluginVariant: String = PLUGIN_VARIANT_NAME
+}
 
 open class KotlinPm20PluginWrapper @Inject constructor(
     objectFactory: ObjectFactory
-) : AbstractKotlinPm20PluginWrapper(objectFactory)
+) : AbstractKotlinPm20PluginWrapper(objectFactory) {
+    override val pluginVariant: String = PLUGIN_VARIANT_NAME
+}
 
 open class KotlinPlatformJvmPlugin : KotlinPlatformImplementationPluginBase("jvm") {
     override fun apply(project: Project) {
