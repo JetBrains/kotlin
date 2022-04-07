@@ -6127,6 +6127,12 @@ public class BoxJsTestGenerated extends AbstractBoxJsTest {
         }
 
         @Test
+        @TestMetadata("comments.kt")
+        public void testComments() throws Exception {
+            runTest("js/js.translator/testData/box/jsCode/comments.kt");
+        }
+
+        @Test
         @TestMetadata("constantExpression.kt")
         public void testConstantExpression() throws Exception {
             runTest("js/js.translator/testData/box/jsCode/constantExpression.kt");

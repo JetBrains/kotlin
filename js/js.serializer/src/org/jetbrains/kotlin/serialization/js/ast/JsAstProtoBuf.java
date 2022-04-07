@@ -15664,6 +15664,15 @@ public final class JsAstProtoBuf {
      * <code>optional .org.jetbrains.kotlin.serialization.js.ast.SingleLineComment single_line_comment = 39;</code>
      */
     org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.SingleLineComment getSingleLineComment();
+
+    /**
+     * <code>optional .org.jetbrains.kotlin.serialization.js.ast.MultiLineComment multi_line_comment = 40;</code>
+     */
+    boolean hasMultiLineComment();
+    /**
+     * <code>optional .org.jetbrains.kotlin.serialization.js.ast.MultiLineComment multi_line_comment = 40;</code>
+     */
+    org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.MultiLineComment getMultiLineComment();
   }
   /**
    * Protobuf type {@code org.jetbrains.kotlin.serialization.js.ast.Statement}
@@ -15985,6 +15994,19 @@ public final class JsAstProtoBuf {
               statementCase_ = 39;
               break;
             }
+            case 322: {
+              org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.MultiLineComment.Builder subBuilder = null;
+              if (statementCase_ == 40) {
+                subBuilder = ((org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.MultiLineComment) statement_).toBuilder();
+              }
+              statement_ = input.readMessage(org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.MultiLineComment.PARSER, extensionRegistry);
+              if (subBuilder != null) {
+                subBuilder.mergeFrom((org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.MultiLineComment) statement_);
+                statement_ = subBuilder.buildPartial();
+              }
+              statementCase_ = 40;
+              break;
+            }
           }
         }
       } catch (org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException e) {
@@ -16042,6 +16064,7 @@ public final class JsAstProtoBuf {
       TRY_STATEMENT(37),
       EMPTY(38),
       SINGLE_LINE_COMMENT(39),
+      MULTI_LINE_COMMENT(40),
       STATEMENT_NOT_SET(0);
       private int value = 0;
       private StatementCase(int value) {
@@ -16068,6 +16091,7 @@ public final class JsAstProtoBuf {
           case 37: return TRY_STATEMENT;
           case 38: return EMPTY;
           case 39: return SINGLE_LINE_COMMENT;
+          case 40: return MULTI_LINE_COMMENT;
           case 0: return STATEMENT_NOT_SET;
           default: throw new java.lang.IllegalArgumentException(
             "Value is undefined for this oneof enum.");
@@ -16452,6 +16476,23 @@ public final class JsAstProtoBuf {
       return org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.SingleLineComment.getDefaultInstance();
     }
 
+    public static final int MULTI_LINE_COMMENT_FIELD_NUMBER = 40;
+    /**
+     * <code>optional .org.jetbrains.kotlin.serialization.js.ast.MultiLineComment multi_line_comment = 40;</code>
+     */
+    public boolean hasMultiLineComment() {
+      return statementCase_ == 40;
+    }
+    /**
+     * <code>optional .org.jetbrains.kotlin.serialization.js.ast.MultiLineComment multi_line_comment = 40;</code>
+     */
+    public org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.MultiLineComment getMultiLineComment() {
+      if (statementCase_ == 40) {
+         return (org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.MultiLineComment) statement_;
+      }
+      return org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.MultiLineComment.getDefaultInstance();
+    }
+
     private void initFields() {
       fileId_ = 0;
       location_ = org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.Location.getDefaultInstance();
@@ -16559,6 +16600,12 @@ public final class JsAstProtoBuf {
           return false;
         }
       }
+      if (hasMultiLineComment()) {
+        if (!getMultiLineComment().isInitialized()) {
+          memoizedIsInitialized = 0;
+          return false;
+        }
+      }
       memoizedIsInitialized = 1;
       return true;
     }
@@ -16631,6 +16678,9 @@ public final class JsAstProtoBuf {
       }
       if (statementCase_ == 39) {
         output.writeMessage(39, (org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.SingleLineComment) statement_);
+      }
+      if (statementCase_ == 40) {
+        output.writeMessage(40, (org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.MultiLineComment) statement_);
       }
       output.writeRawBytes(unknownFields);
     }
@@ -16728,6 +16778,10 @@ public final class JsAstProtoBuf {
       if (statementCase_ == 39) {
         size += org.jetbrains.kotlin.protobuf.CodedOutputStream
           .computeMessageSize(39, (org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.SingleLineComment) statement_);
+      }
+      if (statementCase_ == 40) {
+        size += org.jetbrains.kotlin.protobuf.CodedOutputStream
+          .computeMessageSize(40, (org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.MultiLineComment) statement_);
       }
       size += unknownFields.size();
       memoizedSerializedSize = size;
@@ -16923,6 +16977,9 @@ public final class JsAstProtoBuf {
         if (statementCase_ == 39) {
           result.statement_ = statement_;
         }
+        if (statementCase_ == 40) {
+          result.statement_ = statement_;
+        }
         result.bitField0_ = to_bitField0_;
         result.statementCase_ = statementCase_;
         return result;
@@ -17014,6 +17071,10 @@ public final class JsAstProtoBuf {
           }
           case SINGLE_LINE_COMMENT: {
             mergeSingleLineComment(other.getSingleLineComment());
+            break;
+          }
+          case MULTI_LINE_COMMENT: {
+            mergeMultiLineComment(other.getMultiLineComment());
             break;
           }
           case STATEMENT_NOT_SET: {
@@ -17118,6 +17179,12 @@ public final class JsAstProtoBuf {
         }
         if (hasSingleLineComment()) {
           if (!getSingleLineComment().isInitialized()) {
+            
+            return false;
+          }
+        }
+        if (hasMultiLineComment()) {
+          if (!getMultiLineComment().isInitialized()) {
             
             return false;
           }
@@ -18491,6 +18558,70 @@ public final class JsAstProtoBuf {
        */
       public Builder clearSingleLineComment() {
         if (statementCase_ == 39) {
+          statementCase_ = 0;
+          statement_ = null;
+          
+        }
+        return this;
+      }
+
+      /**
+       * <code>optional .org.jetbrains.kotlin.serialization.js.ast.MultiLineComment multi_line_comment = 40;</code>
+       */
+      public boolean hasMultiLineComment() {
+        return statementCase_ == 40;
+      }
+      /**
+       * <code>optional .org.jetbrains.kotlin.serialization.js.ast.MultiLineComment multi_line_comment = 40;</code>
+       */
+      public org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.MultiLineComment getMultiLineComment() {
+        if (statementCase_ == 40) {
+          return (org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.MultiLineComment) statement_;
+        }
+        return org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.MultiLineComment.getDefaultInstance();
+      }
+      /**
+       * <code>optional .org.jetbrains.kotlin.serialization.js.ast.MultiLineComment multi_line_comment = 40;</code>
+       */
+      public Builder setMultiLineComment(org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.MultiLineComment value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        statement_ = value;
+
+        statementCase_ = 40;
+        return this;
+      }
+      /**
+       * <code>optional .org.jetbrains.kotlin.serialization.js.ast.MultiLineComment multi_line_comment = 40;</code>
+       */
+      public Builder setMultiLineComment(
+          org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.MultiLineComment.Builder builderForValue) {
+        statement_ = builderForValue.build();
+
+        statementCase_ = 40;
+        return this;
+      }
+      /**
+       * <code>optional .org.jetbrains.kotlin.serialization.js.ast.MultiLineComment multi_line_comment = 40;</code>
+       */
+      public Builder mergeMultiLineComment(org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.MultiLineComment value) {
+        if (statementCase_ == 40 &&
+            statement_ != org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.MultiLineComment.getDefaultInstance()) {
+          statement_ = org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.MultiLineComment.newBuilder((org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.MultiLineComment) statement_)
+              .mergeFrom(value).buildPartial();
+        } else {
+          statement_ = value;
+        }
+
+        statementCase_ = 40;
+        return this;
+      }
+      /**
+       * <code>optional .org.jetbrains.kotlin.serialization.js.ast.MultiLineComment multi_line_comment = 40;</code>
+       */
+      public Builder clearMultiLineComment() {
+        if (statementCase_ == 40) {
           statementCase_ = 0;
           statement_ = null;
           
@@ -30813,6 +30944,445 @@ public final class JsAstProtoBuf {
     }
 
     // @@protoc_insertion_point(class_scope:org.jetbrains.kotlin.serialization.js.ast.SingleLineComment)
+  }
+
+  public interface MultiLineCommentOrBuilder extends
+      // @@protoc_insertion_point(interface_extends:org.jetbrains.kotlin.serialization.js.ast.MultiLineComment)
+      org.jetbrains.kotlin.protobuf.MessageLiteOrBuilder {
+
+    /**
+     * <code>required string message = 1;</code>
+     */
+    boolean hasMessage();
+    /**
+     * <code>required string message = 1;</code>
+     */
+    java.lang.String getMessage();
+    /**
+     * <code>required string message = 1;</code>
+     */
+    org.jetbrains.kotlin.protobuf.ByteString
+        getMessageBytes();
+  }
+  /**
+   * Protobuf type {@code org.jetbrains.kotlin.serialization.js.ast.MultiLineComment}
+   */
+  public static final class MultiLineComment extends
+      org.jetbrains.kotlin.protobuf.GeneratedMessageLite implements
+      // @@protoc_insertion_point(message_implements:org.jetbrains.kotlin.serialization.js.ast.MultiLineComment)
+      MultiLineCommentOrBuilder {
+    // Use MultiLineComment.newBuilder() to construct.
+    private MultiLineComment(org.jetbrains.kotlin.protobuf.GeneratedMessageLite.Builder builder) {
+      super(builder);
+      this.unknownFields = builder.getUnknownFields();
+    }
+    private MultiLineComment(boolean noInit) { this.unknownFields = org.jetbrains.kotlin.protobuf.ByteString.EMPTY;}
+
+    private static final MultiLineComment defaultInstance;
+    public static MultiLineComment getDefaultInstance() {
+      return defaultInstance;
+    }
+
+    public MultiLineComment getDefaultInstanceForType() {
+      return defaultInstance;
+    }
+
+    private final org.jetbrains.kotlin.protobuf.ByteString unknownFields;
+    private MultiLineComment(
+        org.jetbrains.kotlin.protobuf.CodedInputStream input,
+        org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
+      initFields();
+      int mutable_bitField0_ = 0;
+      org.jetbrains.kotlin.protobuf.ByteString.Output unknownFieldsOutput =
+          org.jetbrains.kotlin.protobuf.ByteString.newOutput();
+      org.jetbrains.kotlin.protobuf.CodedOutputStream unknownFieldsCodedOutput =
+          org.jetbrains.kotlin.protobuf.CodedOutputStream.newInstance(
+              unknownFieldsOutput, 1);
+      try {
+        boolean done = false;
+        while (!done) {
+          int tag = input.readTag();
+          switch (tag) {
+            case 0:
+              done = true;
+              break;
+            default: {
+              if (!parseUnknownField(input, unknownFieldsCodedOutput,
+                                     extensionRegistry, tag)) {
+                done = true;
+              }
+              break;
+            }
+            case 10: {
+              org.jetbrains.kotlin.protobuf.ByteString bs = input.readBytes();
+              bitField0_ |= 0x00000001;
+              message_ = bs;
+              break;
+            }
+          }
+        }
+      } catch (org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException e) {
+        throw e.setUnfinishedMessage(this);
+      } catch (java.io.IOException e) {
+        throw new org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException(
+            e.getMessage()).setUnfinishedMessage(this);
+      } finally {
+        try {
+          unknownFieldsCodedOutput.flush();
+        } catch (java.io.IOException e) {
+        // Should not happen
+        } finally {
+          unknownFields = unknownFieldsOutput.toByteString();
+        }
+        makeExtensionsImmutable();
+      }
+    }
+    public static org.jetbrains.kotlin.protobuf.Parser<MultiLineComment> PARSER =
+        new org.jetbrains.kotlin.protobuf.AbstractParser<MultiLineComment>() {
+      public MultiLineComment parsePartialFrom(
+          org.jetbrains.kotlin.protobuf.CodedInputStream input,
+          org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
+        return new MultiLineComment(input, extensionRegistry);
+      }
+    };
+
+    @java.lang.Override
+    public org.jetbrains.kotlin.protobuf.Parser<MultiLineComment> getParserForType() {
+      return PARSER;
+    }
+
+    private int bitField0_;
+    public static final int MESSAGE_FIELD_NUMBER = 1;
+    private java.lang.Object message_;
+    /**
+     * <code>required string message = 1;</code>
+     */
+    public boolean hasMessage() {
+      return ((bitField0_ & 0x00000001) == 0x00000001);
+    }
+    /**
+     * <code>required string message = 1;</code>
+     */
+    public java.lang.String getMessage() {
+      java.lang.Object ref = message_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        org.jetbrains.kotlin.protobuf.ByteString bs = 
+            (org.jetbrains.kotlin.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        if (bs.isValidUtf8()) {
+          message_ = s;
+        }
+        return s;
+      }
+    }
+    /**
+     * <code>required string message = 1;</code>
+     */
+    public org.jetbrains.kotlin.protobuf.ByteString
+        getMessageBytes() {
+      java.lang.Object ref = message_;
+      if (ref instanceof java.lang.String) {
+        org.jetbrains.kotlin.protobuf.ByteString b = 
+            org.jetbrains.kotlin.protobuf.ByteString.copyFromUtf8(
+                (java.lang.String) ref);
+        message_ = b;
+        return b;
+      } else {
+        return (org.jetbrains.kotlin.protobuf.ByteString) ref;
+      }
+    }
+
+    private void initFields() {
+      message_ = "";
+    }
+    private byte memoizedIsInitialized = -1;
+    public final boolean isInitialized() {
+      byte isInitialized = memoizedIsInitialized;
+      if (isInitialized == 1) return true;
+      if (isInitialized == 0) return false;
+
+      if (!hasMessage()) {
+        memoizedIsInitialized = 0;
+        return false;
+      }
+      memoizedIsInitialized = 1;
+      return true;
+    }
+
+    public void writeTo(org.jetbrains.kotlin.protobuf.CodedOutputStream output)
+                        throws java.io.IOException {
+      getSerializedSize();
+      if (((bitField0_ & 0x00000001) == 0x00000001)) {
+        output.writeBytes(1, getMessageBytes());
+      }
+      output.writeRawBytes(unknownFields);
+    }
+
+    private int memoizedSerializedSize = -1;
+    public int getSerializedSize() {
+      int size = memoizedSerializedSize;
+      if (size != -1) return size;
+
+      size = 0;
+      if (((bitField0_ & 0x00000001) == 0x00000001)) {
+        size += org.jetbrains.kotlin.protobuf.CodedOutputStream
+          .computeBytesSize(1, getMessageBytes());
+      }
+      size += unknownFields.size();
+      memoizedSerializedSize = size;
+      return size;
+    }
+
+    private static final long serialVersionUID = 0L;
+    @java.lang.Override
+    protected java.lang.Object writeReplace()
+        throws java.io.ObjectStreamException {
+      return super.writeReplace();
+    }
+
+    public static org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.MultiLineComment parseFrom(
+        org.jetbrains.kotlin.protobuf.ByteString data)
+        throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.MultiLineComment parseFrom(
+        org.jetbrains.kotlin.protobuf.ByteString data,
+        org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.MultiLineComment parseFrom(byte[] data)
+        throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.MultiLineComment parseFrom(
+        byte[] data,
+        org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.MultiLineComment parseFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return PARSER.parseFrom(input);
+    }
+    public static org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.MultiLineComment parseFrom(
+        java.io.InputStream input,
+        org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return PARSER.parseFrom(input, extensionRegistry);
+    }
+    public static org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.MultiLineComment parseDelimitedFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return PARSER.parseDelimitedFrom(input);
+    }
+    public static org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.MultiLineComment parseDelimitedFrom(
+        java.io.InputStream input,
+        org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return PARSER.parseDelimitedFrom(input, extensionRegistry);
+    }
+    public static org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.MultiLineComment parseFrom(
+        org.jetbrains.kotlin.protobuf.CodedInputStream input)
+        throws java.io.IOException {
+      return PARSER.parseFrom(input);
+    }
+    public static org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.MultiLineComment parseFrom(
+        org.jetbrains.kotlin.protobuf.CodedInputStream input,
+        org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return PARSER.parseFrom(input, extensionRegistry);
+    }
+
+    public static Builder newBuilder() { return Builder.create(); }
+    public Builder newBuilderForType() { return newBuilder(); }
+    public static Builder newBuilder(org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.MultiLineComment prototype) {
+      return newBuilder().mergeFrom(prototype);
+    }
+    public Builder toBuilder() { return newBuilder(this); }
+
+    /**
+     * Protobuf type {@code org.jetbrains.kotlin.serialization.js.ast.MultiLineComment}
+     */
+    public static final class Builder extends
+        org.jetbrains.kotlin.protobuf.GeneratedMessageLite.Builder<
+          org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.MultiLineComment, Builder>
+        implements
+        // @@protoc_insertion_point(builder_implements:org.jetbrains.kotlin.serialization.js.ast.MultiLineComment)
+        org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.MultiLineCommentOrBuilder {
+      // Construct using org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.MultiLineComment.newBuilder()
+      private Builder() {
+        maybeForceBuilderInitialization();
+      }
+
+      private void maybeForceBuilderInitialization() {
+      }
+      private static Builder create() {
+        return new Builder();
+      }
+
+      public Builder clear() {
+        super.clear();
+        message_ = "";
+        bitField0_ = (bitField0_ & ~0x00000001);
+        return this;
+      }
+
+      public Builder clone() {
+        return create().mergeFrom(buildPartial());
+      }
+
+      public org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.MultiLineComment getDefaultInstanceForType() {
+        return org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.MultiLineComment.getDefaultInstance();
+      }
+
+      public org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.MultiLineComment build() {
+        org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.MultiLineComment result = buildPartial();
+        if (!result.isInitialized()) {
+          throw newUninitializedMessageException(result);
+        }
+        return result;
+      }
+
+      public org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.MultiLineComment buildPartial() {
+        org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.MultiLineComment result = new org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.MultiLineComment(this);
+        int from_bitField0_ = bitField0_;
+        int to_bitField0_ = 0;
+        if (((from_bitField0_ & 0x00000001) == 0x00000001)) {
+          to_bitField0_ |= 0x00000001;
+        }
+        result.message_ = message_;
+        result.bitField0_ = to_bitField0_;
+        return result;
+      }
+
+      public Builder mergeFrom(org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.MultiLineComment other) {
+        if (other == org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.MultiLineComment.getDefaultInstance()) return this;
+        if (other.hasMessage()) {
+          bitField0_ |= 0x00000001;
+          message_ = other.message_;
+          
+        }
+        setUnknownFields(
+            getUnknownFields().concat(other.unknownFields));
+        return this;
+      }
+
+      public final boolean isInitialized() {
+        if (!hasMessage()) {
+          
+          return false;
+        }
+        return true;
+      }
+
+      public Builder mergeFrom(
+          org.jetbrains.kotlin.protobuf.CodedInputStream input,
+          org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.MultiLineComment parsedMessage = null;
+        try {
+          parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
+        } catch (org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException e) {
+          parsedMessage = (org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.MultiLineComment) e.getUnfinishedMessage();
+          throw e;
+        } finally {
+          if (parsedMessage != null) {
+            mergeFrom(parsedMessage);
+          }
+        }
+        return this;
+      }
+      private int bitField0_;
+
+      private java.lang.Object message_ = "";
+      /**
+       * <code>required string message = 1;</code>
+       */
+      public boolean hasMessage() {
+        return ((bitField0_ & 0x00000001) == 0x00000001);
+      }
+      /**
+       * <code>required string message = 1;</code>
+       */
+      public java.lang.String getMessage() {
+        java.lang.Object ref = message_;
+        if (!(ref instanceof java.lang.String)) {
+          org.jetbrains.kotlin.protobuf.ByteString bs =
+              (org.jetbrains.kotlin.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          if (bs.isValidUtf8()) {
+            message_ = s;
+          }
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>required string message = 1;</code>
+       */
+      public org.jetbrains.kotlin.protobuf.ByteString
+          getMessageBytes() {
+        java.lang.Object ref = message_;
+        if (ref instanceof String) {
+          org.jetbrains.kotlin.protobuf.ByteString b = 
+              org.jetbrains.kotlin.protobuf.ByteString.copyFromUtf8(
+                  (java.lang.String) ref);
+          message_ = b;
+          return b;
+        } else {
+          return (org.jetbrains.kotlin.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>required string message = 1;</code>
+       */
+      public Builder setMessage(
+          java.lang.String value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  bitField0_ |= 0x00000001;
+        message_ = value;
+        
+        return this;
+      }
+      /**
+       * <code>required string message = 1;</code>
+       */
+      public Builder clearMessage() {
+        bitField0_ = (bitField0_ & ~0x00000001);
+        message_ = getDefaultInstance().getMessage();
+        
+        return this;
+      }
+      /**
+       * <code>required string message = 1;</code>
+       */
+      public Builder setMessageBytes(
+          org.jetbrains.kotlin.protobuf.ByteString value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  bitField0_ |= 0x00000001;
+        message_ = value;
+        
+        return this;
+      }
+
+      // @@protoc_insertion_point(builder_scope:org.jetbrains.kotlin.serialization.js.ast.MultiLineComment)
+    }
+
+    static {
+      defaultInstance = new MultiLineComment(true);
+      defaultInstance.initFields();
+    }
+
+    // @@protoc_insertion_point(class_scope:org.jetbrains.kotlin.serialization.js.ast.MultiLineComment)
   }
 
   public interface FragmentOrBuilder extends

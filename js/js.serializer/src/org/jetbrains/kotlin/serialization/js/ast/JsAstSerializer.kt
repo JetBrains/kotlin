@@ -18,10 +18,7 @@ package org.jetbrains.kotlin.serialization.js.ast
 
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.js.backend.ast.*
-import org.jetbrains.kotlin.js.backend.ast.JsImportedModule
 import org.jetbrains.kotlin.js.backend.ast.metadata.*
-import org.jetbrains.kotlin.js.backend.ast.metadata.LocalAlias
-import org.jetbrains.kotlin.js.backend.ast.metadata.SpecialFunction
 import org.jetbrains.kotlin.resolve.calls.util.isFakePsiElement
 import org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.*
 import org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.BinaryOperation.Type.*

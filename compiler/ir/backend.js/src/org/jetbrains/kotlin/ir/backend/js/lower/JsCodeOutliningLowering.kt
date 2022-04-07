@@ -163,7 +163,7 @@ private class JsCodeOutlineTransformer(
         }
 
         // Building JS Ast function
-        val lastStatement = jsStatements.last()
+        val lastStatement = jsStatements.findLast { it !is JsSingleLineComment && it !is JsMultiLineComment }
         val newStatements = jsStatements.toMutableList()
         when (lastStatement) {
             is JsReturn -> {
