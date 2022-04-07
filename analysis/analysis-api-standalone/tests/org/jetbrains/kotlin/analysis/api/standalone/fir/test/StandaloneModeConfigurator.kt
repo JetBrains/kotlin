@@ -7,8 +7,8 @@ package org.jetbrains.kotlin.analysis.api.standalone.fir.test
 
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.project.Project
-import org.jetbrains.kotlin.analysis.api.fir.test.configurators.source.AnalysisApiFirSourceTestConfigurator
-import org.jetbrains.kotlin.analysis.api.standalone.base.project.structure.KtModuleWithFiles
+import org.jetbrains.kotlin.analysis.api.standalone.base.project.structure.KtModuleProjectStructure
+import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.AnalysisApiFirSourceTestConfigurator
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiTestConfigurator
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiTestServiceRegistrar
 import org.jetbrains.kotlin.psi.KtFile

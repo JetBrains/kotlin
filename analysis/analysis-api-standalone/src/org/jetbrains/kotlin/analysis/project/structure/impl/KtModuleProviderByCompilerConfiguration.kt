@@ -39,4 +39,8 @@ internal class KtModuleProviderByCompilerConfiguration(
     override fun getKtLibraryModules(): Collection<KtLibraryModule> {
         return libraryModules
     }
+
+    override fun getStdlibWithBuiltinsModule(module: KtModule): KtLibraryModule? {
+        TODO("Not yet implemented")
+    }
 }

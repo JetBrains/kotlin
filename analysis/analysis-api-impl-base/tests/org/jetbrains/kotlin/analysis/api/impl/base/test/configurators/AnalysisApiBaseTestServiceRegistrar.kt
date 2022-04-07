@@ -29,7 +29,7 @@ object AnalysisApiBaseTestServiceRegistrar: AnalysisApiTestServiceRegistrar()  {
     }
 
     override fun registerProjectServices(project: MockProject, testServices: TestServices) {
-        val allKtFiles = testServices.ktModuleProvider.getAllModules().flatMap { it.files.filterIsInstance<KtFile>() }
+        val allKtFiles = testServices.ktModuleProvider.getModuleStructure().mainModules.flatMap { it.files.filterIsInstance<KtFile>() }
 
         project.apply {
             registerService(KotlinModificationTrackerFactory::class.java, KotlinStaticModificationTrackerFactory::class.java)

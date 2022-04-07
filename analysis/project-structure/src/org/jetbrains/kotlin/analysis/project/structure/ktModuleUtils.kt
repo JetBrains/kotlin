@@ -6,12 +6,30 @@
 package org.jetbrains.kotlin.analysis.project.structure
 
 /**
- * A list of all modules current module can depend onwith regular dependency
+ * A list of all modules current module can depend on with regular dependency
  *
  * @see KtModule.directRegularDependencies
  */
 public inline fun <reified M : KtModule> KtModule.directRegularDependenciesOfType(): Sequence<M> =
     directRegularDependencies.asSequence().filterIsInstance<M>()
+
+/**
+ * A list of all modules current module can depend on with friend dependency
+ *
+ * @see KtModule.directFriendDependencies
+ */
+public inline fun <reified M : KtModule> KtModule.directFriendDependenciesOfType(): Sequence<M> =
+    directFriendDependencies.asSequence().filterIsInstance<M>()
+
+/**
+ * A list of all modules current module can depend on with refinement dependency
+ *
+ * @see KtModule.directRefinementDependencies
+ */
+public inline fun <reified M : KtModule> KtModule.directRefinementDependenciesOfType(): Sequence<M> =
+    directRefinementDependencies.asSequence().filterIsInstance<M>()
+
+
 
 /**
  * A list of all other modules current module can depend on.

@@ -8,12 +8,13 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.compiler.based
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFirFile
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getResolveState
 import org.jetbrains.kotlin.analysis.project.structure.ProjectStructureProvider
-import org.jetbrains.kotlin.analysis.test.framework.project.structure.getKtFilesFromModule
+import org.jetbrains.kotlin.analysis.test.framework.project.structure.ktModuleProvider
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.transformers.FirSealedClassInheritorsProcessor
 import org.jetbrains.kotlin.fir.symbols.ensureResolved
+import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.services.PreAnalysisHandler
 import org.jetbrains.kotlin.test.services.TestModuleStructure
 import org.jetbrains.kotlin.test.services.TestServices
@@ -28,7 +29,7 @@ class SealedClassesInheritorsCaclulatorPreAnalysisHandler(
 
     override fun prepareSealedClassInheritors(moduleStructure: TestModuleStructure) {
         val ktFilesByModule = moduleStructure.modules.associateWith { testModule ->
-            getKtFilesFromModule(testServices, testModule)
+            testServices.ktModuleProvider.getModuleFiles(testModule).filterIsInstance<KtFile>()
         }
 
         ktFilesByModule.forEach { (testModule, ktFiles) ->
