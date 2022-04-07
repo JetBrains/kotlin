@@ -10,6 +10,7 @@ import org.gradle.jvm.tasks.Jar
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.disambiguateName
 import org.jetbrains.kotlin.gradle.targets.metadata.filesWithUnpackedArchives
 import org.jetbrains.kotlin.gradle.tasks.registerTask
+import org.jetbrains.kotlin.gradle.utils.lowerCaseDashSeparatedName
 import org.jetbrains.kotlin.library.KLIB_FILE_EXTENSION
 import org.jetbrains.kotlin.project.model.withRefinesClosure
 
@@ -22,8 +23,8 @@ val KotlinFragmentHostSpecificMetadataArtifact = FragmentArtifacts<KotlinNativeV
     val hostSpecificMetadataElements = fragment.hostSpecificMetadataElementsConfiguration ?: return@artifacts
 
     val hostSpecificMetadataJar = project.registerTask<Jar>(fragment.disambiguateName("hostSpecificMetadataJar")) { jar ->
-        jar.archiveClassifier.set("metadata")
-        jar.archiveAppendix.set(fragment.disambiguateName(""))
+        jar.archiveClassifier.set(lowerCaseDashSeparatedName(fragment.containingModule.moduleClassifier, "metadata"))
+        jar.archiveAppendix.set(lowerCaseDashSeparatedName(fragment.name, fragment.containingModule.moduleClassifier))
         project.metadataCompilationRegistryByModuleId.getValue(fragment.containingModule.moduleIdentifier)
             .withAll { metadataCompilation ->
                 val metadataFragment = metadataCompilation.fragment

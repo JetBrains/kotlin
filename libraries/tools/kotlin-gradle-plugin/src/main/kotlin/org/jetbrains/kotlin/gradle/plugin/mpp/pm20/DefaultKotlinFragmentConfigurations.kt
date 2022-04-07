@@ -79,7 +79,7 @@ val DefaultKotlinHostSpecificMetadataElementsDefinition = ConfigurationDefinitio
     provider = ConfigurationProvider {
         project.configurations.maybeCreate(disambiguateName("hostSpecificMetadataElements")).apply {
             isCanBeResolved = false
-            isCanBeConsumed = false
+            isCanBeConsumed = false // with project-to-project dependencies, we expose the metadata compilation output directly, so no need
         }
     },
     attributes = KotlinFragmentPlatformAttributes + KotlinFragmentKonanTargetAttribute + KotlinFragmentMetadataUsageAttribute,
