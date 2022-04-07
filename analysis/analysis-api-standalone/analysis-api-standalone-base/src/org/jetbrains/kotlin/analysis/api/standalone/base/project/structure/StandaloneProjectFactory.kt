@@ -46,7 +46,7 @@ object StandaloneProjectFactory {
 
     fun registerServicesForProjectEnvironment(
         environment: KotlinCoreProjectEnvironment,
-        modules: List<KtModuleWithFiles>,
+        modules: KtModuleProjectStructure,
         languageVersionSettings: LanguageVersionSettings,
         jdkHome: Path?,
     ) {
@@ -55,7 +55,7 @@ object StandaloneProjectFactory {
         KotlinCoreEnvironment.registerProjectExtensionPoints(project.extensionArea)
         KotlinCoreEnvironment.registerProjectServices(project)
 
-        project.registerService(ProjectStructureProvider::class.java, KtStaticModuleProvider(modules.map { it.ktModule }, emptySet()))
+        project.registerService(ProjectStructureProvider::class.java, KtStaticModuleProvider(modules))
         initialiseVirtualFinderFinderServices(modules, environment, jdkHome, languageVersionSettings)
         initialiseAnnotationServices(project)
 
@@ -68,7 +68,7 @@ object StandaloneProjectFactory {
     }
 
     private fun initialiseVirtualFinderFinderServices(
-        modules: List<KtModuleWithFiles>,
+        modules: KtModuleProjectStructure,
         environment: KotlinCoreProjectEnvironment,
         jdkHome: Path?,
         languageVersionSettings: LanguageVersionSettings
@@ -76,12 +76,12 @@ object StandaloneProjectFactory {
         val project = environment.project
 
         val allSourceFiles = buildList {
-            val files = modules.flatMap { it.files }
+            val files = modules.mainModules.flatMap { it.files }
             addAll(files)
             addAll(findJvmRootsForJavaFiles(files.filterIsInstance<PsiJavaFile>()))
         }
         val allSourceFileRoots = allSourceFiles.map { JavaRoot(it.virtualFile, JavaRoot.RootType.SOURCE) }
-        val libraryRoots = getAllBinaryRoots(modules.map { it.ktModule }, environment)
+        val libraryRoots = getAllBinaryRoots(modules.allKtModules(), environment)
         libraryRoots.forEach { environment.addSourcesToClasspath(it.file) }
 
         val sourceAndLibraryRoots = buildList {
@@ -133,7 +133,7 @@ object StandaloneProjectFactory {
         modules: List<KtModule>,
         environment: KotlinCoreProjectEnvironment
     ): List<JavaRoot> = withAllTransitiveDependencies(modules)
-        .filterIsInstance<KtLibraryModule>()
+        .filterIsInstance<KtBinaryModule>()
         .flatMap { it.getBinaryRoots() }
         .map {
             val jar = environment.environment.jarFileSystem.findFileByPath(it.toAbsolutePath().toString() + "!/")!!

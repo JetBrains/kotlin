@@ -97,6 +97,7 @@ class TestConfigurationImpl(
 
     init {
         testServices.apply {
+            register(EnvironmentConfiguratorsProvider::class, EnvironmentConfiguratorsProvider(this@TestConfigurationImpl.environmentConfigurators))
             @OptIn(ExperimentalStdlibApi::class)
             val sourceFilePreprocessors = sourcePreprocessors.map { it.invoke(this@apply) }
             val sourceFileProvider = SourceFileProviderImpl(this, sourceFilePreprocessors)

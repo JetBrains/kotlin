@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.analysis.test.framework.project.structure
 
 import com.intellij.psi.PsiFile
+import org.jetbrains.kotlin.analysis.api.standalone.base.project.structure.KtModuleProjectStructure
 import org.jetbrains.kotlin.analysis.api.standalone.base.project.structure.KtModuleWithFiles
 import org.jetbrains.kotlin.analysis.project.structure.*
 import org.jetbrains.kotlin.test.model.TestModule
@@ -18,17 +19,17 @@ abstract class AnalysisApiKtModuleProvider : TestService {
 
     abstract fun getModuleFiles(module: TestModule): List<PsiFile>
 
-    abstract fun registerProjectStructure(modules: List<KtModuleWithFiles>)
+    abstract fun registerProjectStructure(modules: KtModuleProjectStructure)
 
     protected abstract fun getModuleName(ktModule: KtModule): String
 
-    abstract fun getAllModules(): List<KtModuleWithFiles>
+    abstract fun getModuleStructure(): KtModuleProjectStructure
 }
 
 class AnalysisApiKtModuleProviderImpl(
     override val testServices: TestServices,
 ) : AnalysisApiKtModuleProvider() {
-    private lateinit var modules: List<KtModuleWithFiles>
+    private lateinit var modulesStructure: KtModuleProjectStructure
     private lateinit var modulesByName: Map<String, KtModuleWithFiles>
 
     override fun getModule(moduleName: String): KtModule {
@@ -37,12 +38,12 @@ class AnalysisApiKtModuleProviderImpl(
 
     override fun getModuleFiles(module: TestModule): List<PsiFile> = modulesByName.getValue(module.name).files
 
-    override fun registerProjectStructure(modules: List<KtModuleWithFiles>) {
-        require(!this::modules.isInitialized)
+    override fun registerProjectStructure(modules: KtModuleProjectStructure) {
+        require(!this::modulesStructure.isInitialized)
         require(!this::modulesByName.isInitialized)
 
-        this.modules = modules
-        this.modulesByName = modules.associateBy { getModuleName(it.ktModule) }
+        this.modulesStructure = modules
+        this.modulesByName = modulesStructure.mainModules.associateBy { getModuleName(it.ktModule) }
     }
 
     override fun getModuleName(ktModule: KtModule): String = when (ktModule) {
@@ -54,7 +55,7 @@ class AnalysisApiKtModuleProviderImpl(
     }
 
 
-    override fun getAllModules(): List<KtModuleWithFiles> = modules
+    override fun getModuleStructure(): KtModuleProjectStructure = modulesStructure
 }
 
 val TestServices.ktModuleProvider: AnalysisApiKtModuleProvider by TestServices.testServiceAccessor()

@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.light.classes.symbol.decompiled.test.configurators
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.analysis.api.fir.test.configurators.library.AnalysisApiFirLibraryBinaryTestConfigurator
-import org.jetbrains.kotlin.analysis.api.standalone.base.project.structure.KtModuleWithFiles
+import org.jetbrains.kotlin.analysis.api.standalone.base.project.structure.KtModuleProjectStructure
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiTestConfigurator
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiTestServiceRegistrar
 import org.jetbrains.kotlin.psi.KtFile
@@ -35,7 +35,7 @@ object AnalysisApiSymbolLightClassesDecompiledTestConfigurator : AnalysisApiTest
         moduleStructure: TestModuleStructure,
         testServices: TestServices,
         project: Project
-    ): List<KtModuleWithFiles> {
+    ): KtModuleProjectStructure {
         return AnalysisApiFirLibraryBinaryTestConfigurator.createModules(moduleStructure, testServices, project)
     }
 }

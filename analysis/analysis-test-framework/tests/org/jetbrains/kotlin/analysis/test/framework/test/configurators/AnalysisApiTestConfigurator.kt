@@ -12,7 +12,7 @@ import com.intellij.openapi.application.Application
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Key
 import com.intellij.psi.PsiFile
-import org.jetbrains.kotlin.analysis.api.standalone.base.project.structure.KtModuleWithFiles
+import org.jetbrains.kotlin.analysis.api.standalone.base.project.structure.KtModuleProjectStructure
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.NotNullableUserDataProperty
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
@@ -40,7 +40,7 @@ abstract class AnalysisApiTestConfigurator {
 
     open fun preprocessTestDataPath(path: Path): Path = path
 
-    abstract fun createModules(moduleStructure: TestModuleStructure, testServices: TestServices, project: Project): List<KtModuleWithFiles>
+    abstract fun createModules(moduleStructure: TestModuleStructure, testServices: TestServices, project: Project): KtModuleProjectStructure
 
     fun registerProjectExtensionPoints(project: MockProject, testServices: TestServices) {
         serviceRegistrars.forEach { it.registerProjectExtensionPoints(project, testServices) }

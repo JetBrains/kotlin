@@ -9,6 +9,7 @@ dependencies {
     testApiJUnit5()
 
     testApi(project(":kotlin-test:kotlin-test-junit"))
+    testImplementation(project(":analysis:analysis-internal-utils"))
     testApi(project(":compiler:psi"))
     testApi(project(":analysis:kt-references"))
     testApi(projectTests(":compiler:tests-common-new"))

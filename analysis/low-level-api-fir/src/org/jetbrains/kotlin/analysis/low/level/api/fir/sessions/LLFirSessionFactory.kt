@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.fir.checkers.registerExtendedCommonCheckers
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.declarations.SealedClassInheritorsProvider
+import org.jetbrains.kotlin.fir.deserialization.EmptyModuleDataProvider
 import org.jetbrains.kotlin.fir.deserialization.LibraryPathFilter
 import org.jetbrains.kotlin.fir.deserialization.ModuleDataProvider
 import org.jetbrains.kotlin.fir.deserialization.MultipleModuleDataProvider
@@ -261,11 +262,17 @@ internal object LLFirSessionFactory {
             addAll(dependsOnDependenciesOnLibs)
         }
 
+        if (allDependencies.isEmpty()) {
+            return EmptyModuleDataProvider(sourceModule.platform, sourceModule.analyzerServices)
+        }
+
         allDependencies.forEach { it.bindSession(session) }
 
         val moduleDataWithFilters: Map<FirModuleData, LibraryPathFilter.LibraryList> =
             allDependencies.associateWith { moduleData ->
-                LibraryPathFilter.LibraryList((moduleData.module as KtBinaryModule).getBinaryRoots().toSet())
+                val ktBinaryModule = moduleData.module as KtBinaryModule
+                val moduleBinaryRoots = ktBinaryModule.getBinaryRoots().mapTo(mutableSetOf()) { it.toAbsolutePath() }
+                LibraryPathFilter.LibraryList(moduleBinaryRoots)
             }
 
         return MultipleModuleDataProvider(moduleDataWithFilters)

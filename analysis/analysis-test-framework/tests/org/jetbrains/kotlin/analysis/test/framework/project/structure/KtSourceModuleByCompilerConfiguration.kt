@@ -31,7 +31,7 @@ import java.nio.file.Path
 import java.nio.file.Paths
 
 @OptIn(ExperimentalStdlibApi::class)
-abstract class TestKtModule(
+abstract class KtModuleByCompilerConfiguration(
     val project: Project,
     val testModule: TestModule,
     val psiFiles: List<PsiFile>,
@@ -91,25 +91,25 @@ abstract class TestKtModule(
         get() = testModule.targetPlatform.getAnalyzerServices()
 }
 
-class TestKtSourceModule(
+class KtSourceModuleByCompilerConfiguration(
     project: Project,
     testModule: TestModule,
     psiFiles: List<PsiFile>,
     testServices: TestServices
-) : TestKtModule(project, testModule, psiFiles, testServices), KtSourceModule {
+) : KtModuleByCompilerConfiguration(project, testModule, psiFiles, testServices), KtSourceModule {
     override val ktModule: KtModule get() = this
 
     override val contentScope: GlobalSearchScope =
         TopDownAnalyzerFacadeForJVM.newModuleSearchScope(project, psiFiles.filterIsInstance<KtFile>())
 }
 
-class TestKtLibraryModule(
+class KtLibraryModuleByCompilerConfiguration(
     project: Project,
     testModule: TestModule,
     psiFiles: List<PsiFile>,
     private val binaryRoots: List<Path>,
     testServices: TestServices
-) : TestKtModule(project, testModule, psiFiles, testServices), KtLibraryModule {
+) : KtModuleByCompilerConfiguration(project, testModule, psiFiles, testServices), KtLibraryModule {
     override val ktModule: KtModule get() = this
     override val libraryName: String get() = testModule.name
     override val librarySources: KtLibrarySourceModule? get() = null
@@ -120,13 +120,13 @@ class TestKtLibraryModule(
         GlobalSearchScope.filesScope(project, psiFiles.map { it.virtualFile })
 }
 
-class TestKtLibrarySourceModule(
+class KtLibrarySourceModuleByCompilerConfiguration(
     project: Project,
     testModule: TestModule,
     psiFiles: List<PsiFile>,
     testServices: TestServices,
     override val binaryLibrary: KtLibraryModule,
-) : TestKtModule(project, testModule, psiFiles, testServices), KtLibrarySourceModule {
+) : KtModuleByCompilerConfiguration(project, testModule, psiFiles, testServices), KtLibrarySourceModule {
     override val ktModule: KtModule get() = this
     override val contentScope: GlobalSearchScope get() = GlobalSearchScope.filesScope(project, psiFiles.map { it.virtualFile })
 
