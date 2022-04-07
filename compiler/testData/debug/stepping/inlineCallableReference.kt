@@ -21,6 +21,7 @@ inline fun f(block: () -> Unit) {
 // test.kt:15 box
 // test.kt:5 box
 // test.kt:6 box
+// test.kt:15 box
 // test.kt:16 box
 // test.kt:7 box
 // test.kt:8 box
@@ -29,5 +30,6 @@ inline fun f(block: () -> Unit) {
 // test.kt:15 box
 // test.kt:10 box
 // test.kt:11 box
+// test.kt:15 box
 // test.kt:16 box
 // test.kt:12 box

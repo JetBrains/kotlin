@@ -1,13 +1,13 @@
 
 fun box() {
-    lookAtMe {
-        val c = "c"
-    }
+    lookAtMe { // 1
+        val c = "c" // 4
+    } // 5 (nop)
 }
 
 inline fun lookAtMe(f: (String) -> Unit) {
-    val a = "a"
-    f(a) // Should be no unneeded nops on this line, that might be generated for zero-parameters lambda
-}
+    val a = "a" // 2
+    f(a) // 3 before call, 6 after call (nop)
+} // 7 (nop)
 
-// 2 NOP
+// 3 NOP

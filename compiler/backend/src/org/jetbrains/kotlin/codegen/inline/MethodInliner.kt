@@ -262,12 +262,12 @@ class MethodInliner(
                     }
 
                     val firstLine = info.node.node.instructions.asSequence().mapNotNull { it as? LineNumberNode }.firstOrNull()?.line ?: -1
-                    if (currentLineNumber >= 0 && firstLine == currentLineNumber) {
+                    if ((info is DefaultLambda != overrideLineNumber) && currentLineNumber >= 0 && firstLine == currentLineNumber) {
                         // This can happen in two cases:
                         //   1. `someInlineOnlyFunction { singleLineLambda }`: in this case line numbers are removed
                         //      from the inline function, so the entirety of its bytecode has the line number of
                         //      the call site;
-                        //   2. `inline fun someFunction(defaultLambda: ... = { ... }) = singleLineExpression`:
+                        //   2. `inline fun someFunction(defaultLambda: ... = { ... }) = something(defaultLambda())`:
                         //      all of `someFunction`, including `defaultLambda` if no value is provided at call site,
                         //      has the line number of the declaration.
                         // In those cases the debugger is unable to observe the boundary between the body of the function
@@ -312,10 +312,16 @@ class MethodInliner(
                     setLambdaInlining(false)
                     addInlineMarker(this, false)
 
-                    if (overrideLineNumber) {
+                    if (currentLineNumber != -1) {
                         val endLabel = Label()
                         mv.visitLabel(endLabel)
-                        mv.visitLineNumber(currentLineNumber, endLabel)
+                        if (overrideLineNumber) {
+                            // This is from the function we're inlining into, so no need to remap.
+                            mv.visitLineNumber(currentLineNumber, endLabel)
+                        } else {
+                            // Need to go through the superclass here to properly remap the line number via `sourceMapper`.
+                            super.visitLineNumber(currentLineNumber, endLabel)
+                        }
                     }
                 } else if (isAnonymousConstructorCall(owner, name)) { //TODO add method
                     //TODO add proper message
