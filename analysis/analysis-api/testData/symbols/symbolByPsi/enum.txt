@@ -7,6 +7,7 @@ KtEnumEntrySymbol:
   receiverType: null
   returnType: X
   symbolKind: CLASS_MEMBER
+  getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
 
 KtEnumEntrySymbol:
@@ -18,6 +19,7 @@ KtEnumEntrySymbol:
   receiverType: null
   returnType: X
   symbolKind: CLASS_MEMBER
+  getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
 
 KtNamedClassOrObjectSymbol:
@@ -39,4 +41,5 @@ KtNamedClassOrObjectSymbol:
   symbolKind: TOP_LEVEL
   typeParameters: []
   visibility: Public
+  getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null

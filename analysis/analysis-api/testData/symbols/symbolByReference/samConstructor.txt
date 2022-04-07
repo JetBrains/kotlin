@@ -10,4 +10,5 @@ KtSamConstructorSymbol:
   valueParameters: [
     KtValueParameterSymbol(function)
   ]
+  getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null

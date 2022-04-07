@@ -20,4 +20,5 @@ KtNamedClassOrObjectSymbol:
   symbolKind: TOP_LEVEL
   typeParameters: []
   visibility: Public
+  getContainingModule: KtSdkModule "SDK jdk"
   deprecationStatus: null

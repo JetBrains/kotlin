@@ -23,6 +23,7 @@ KtFunctionSymbol:
   ]
   visibility: Public
   getDispatchReceiver(): kotlin/collections/MutableList<E>
+  getContainingModule: KtLibraryModule "Library kotlin-stdlib"
   deprecationStatus: null
 
 KtFunctionSymbol:
@@ -51,6 +52,7 @@ KtFunctionSymbol:
   ]
   visibility: Public
   getDispatchReceiver(): kotlin/collections/MutableList<E>
+  getContainingModule: KtLibraryModule "Library kotlin-stdlib"
   deprecationStatus: null
 
 KtFunctionSymbol:
@@ -79,6 +81,7 @@ KtFunctionSymbol:
   ]
   visibility: Public
   getDispatchReceiver(): kotlin/collections/MutableList<E>
+  getContainingModule: KtLibraryModule "Library kotlin-stdlib"
   deprecationStatus: null
 
 KtFunctionSymbol:
@@ -106,6 +109,7 @@ KtFunctionSymbol:
   ]
   visibility: Public
   getDispatchReceiver(): kotlin/collections/MutableList<E>
+  getContainingModule: KtLibraryModule "Library kotlin-stdlib"
   deprecationStatus: null
 
 KtFunctionSymbol:
@@ -131,6 +135,7 @@ KtFunctionSymbol:
   valueParameters: []
   visibility: Public
   getDispatchReceiver(): kotlin/collections/MutableList<E>
+  getContainingModule: KtLibraryModule "Library kotlin-stdlib"
   deprecationStatus: null
 
 KtFunctionSymbol:
@@ -156,6 +161,7 @@ KtFunctionSymbol:
   valueParameters: []
   visibility: Public
   getDispatchReceiver(): kotlin/collections/MutableList<E>
+  getContainingModule: KtLibraryModule "Library kotlin-stdlib"
   deprecationStatus: null
 
 KtFunctionSymbol:
@@ -183,6 +189,7 @@ KtFunctionSymbol:
   ]
   visibility: Public
   getDispatchReceiver(): kotlin/collections/MutableList<E>
+  getContainingModule: KtLibraryModule "Library kotlin-stdlib"
   deprecationStatus: null
 
 KtFunctionSymbol:
@@ -210,6 +217,7 @@ KtFunctionSymbol:
   ]
   visibility: Public
   getDispatchReceiver(): kotlin/collections/MutableList<E>
+  getContainingModule: KtLibraryModule "Library kotlin-stdlib"
   deprecationStatus: null
 
 KtFunctionSymbol:
@@ -237,6 +245,7 @@ KtFunctionSymbol:
   ]
   visibility: Public
   getDispatchReceiver(): kotlin/collections/MutableList<E>
+  getContainingModule: KtLibraryModule "Library kotlin-stdlib"
   deprecationStatus: null
 
 KtFunctionSymbol:
@@ -264,6 +273,7 @@ KtFunctionSymbol:
   ]
   visibility: Public
   getDispatchReceiver(): kotlin/collections/MutableList<E>
+  getContainingModule: KtLibraryModule "Library kotlin-stdlib"
   deprecationStatus: null
 
 KtFunctionSymbol:
@@ -291,6 +301,7 @@ KtFunctionSymbol:
   ]
   visibility: Public
   getDispatchReceiver(): kotlin/collections/MutableList<E>
+  getContainingModule: KtLibraryModule "Library kotlin-stdlib"
   deprecationStatus: null
 
 KtFunctionSymbol:
@@ -319,6 +330,7 @@ KtFunctionSymbol:
   ]
   visibility: Public
   getDispatchReceiver(): kotlin/collections/MutableList<E>
+  getContainingModule: KtLibraryModule "Library kotlin-stdlib"
   deprecationStatus: null
 
 KtFunctionSymbol:
@@ -347,6 +359,7 @@ KtFunctionSymbol:
   ]
   visibility: Public
   getDispatchReceiver(): kotlin/collections/MutableList<E>
+  getContainingModule: KtLibraryModule "Library kotlin-stdlib"
   deprecationStatus: null
 
 KtFunctionSymbol:
@@ -374,6 +387,7 @@ KtFunctionSymbol:
   ]
   visibility: Public
   getDispatchReceiver(): kotlin/collections/MutableList<E>
+  getContainingModule: KtLibraryModule "Library kotlin-stdlib"
   deprecationStatus: null
 
 KtFunctionSymbol:
@@ -401,6 +415,7 @@ KtFunctionSymbol:
   ]
   visibility: Public
   getDispatchReceiver(): kotlin/collections/MutableList<E>
+  getContainingModule: KtLibraryModule "Library kotlin-stdlib"
   deprecationStatus: null
 
 KtFunctionSymbol:
@@ -428,6 +443,7 @@ KtFunctionSymbol:
   ]
   visibility: Public
   getDispatchReceiver(): kotlin/collections/MutableList<E>
+  getContainingModule: KtLibraryModule "Library kotlin-stdlib"
   deprecationStatus: null
 
 KtFunctionSymbol:
@@ -455,6 +471,7 @@ KtFunctionSymbol:
   ]
   visibility: Public
   getDispatchReceiver(): kotlin/collections/MutableList<E>
+  getContainingModule: KtLibraryModule "Library kotlin-stdlib"
   deprecationStatus: null
 
 KtFunctionSymbol:
@@ -480,6 +497,7 @@ KtFunctionSymbol:
   valueParameters: []
   visibility: Public
   getDispatchReceiver(): kotlin/collections/List<E>
+  getContainingModule: KtLibraryModule "Library kotlin-stdlib"
   deprecationStatus: null
 
 KtFunctionSymbol:
@@ -505,6 +523,7 @@ KtFunctionSymbol:
   valueParameters: []
   visibility: Public
   getDispatchReceiver(): kotlin/collections/MutableList<E>
+  getContainingModule: KtLibraryModule "Library kotlin-stdlib"
   deprecationStatus: null
 
 KtFunctionSymbol:
@@ -532,6 +551,7 @@ KtFunctionSymbol:
   ]
   visibility: Public
   getDispatchReceiver(): kotlin/collections/MutableList<E>
+  getContainingModule: KtLibraryModule "Library kotlin-stdlib"
   deprecationStatus: null
 
 KtKotlinPropertySymbol:
@@ -560,6 +580,7 @@ KtKotlinPropertySymbol:
   typeParameters: []
   visibility: Public
   getDispatchReceiver(): kotlin/collections/List<E>
+  getContainingModule: KtLibraryModule "Library kotlin-stdlib"
   deprecationStatus: null
   getterDeprecationStatus: null
   javaGetterName: getSize
@@ -591,6 +612,7 @@ KtFunctionSymbol:
   ]
   visibility: Public
   getDispatchReceiver(): kotlin/Any
+  getContainingModule: KtLibraryModule "Library kotlin-stdlib"
   deprecationStatus: null
 
 KtFunctionSymbol:
@@ -616,6 +638,7 @@ KtFunctionSymbol:
   valueParameters: []
   visibility: Public
   getDispatchReceiver(): kotlin/Any
+  getContainingModule: KtLibraryModule "Library kotlin-stdlib"
   deprecationStatus: null
 
 KtFunctionSymbol:
@@ -641,4 +664,5 @@ KtFunctionSymbol:
   valueParameters: []
   visibility: Public
   getDispatchReceiver(): kotlin/Any
+  getContainingModule: KtLibraryModule "Library kotlin-stdlib"
   deprecationStatus: null

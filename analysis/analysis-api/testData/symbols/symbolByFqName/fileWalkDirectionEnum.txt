@@ -24,6 +24,7 @@ KtFunctionSymbol:
     KtValueParameterSymbol(element)
   ]
   visibility: Public
+  getContainingModule: KtLibraryModule "Library kotlin-stdlib"
   deprecationStatus: null
 
 KtFunctionSymbol:
@@ -53,6 +54,7 @@ KtFunctionSymbol:
   ]
   valueParameters: []
   visibility: Public
+  getContainingModule: KtLibraryModule "Library kotlin-stdlib"
   deprecationStatus: null
 
 KtFunctionSymbol:
@@ -81,4 +83,5 @@ KtFunctionSymbol:
     KtValueParameterSymbol(elements)
   ]
   visibility: Public
+  getContainingModule: KtLibraryModule "Library kotlin-stdlib"
   deprecationStatus: null

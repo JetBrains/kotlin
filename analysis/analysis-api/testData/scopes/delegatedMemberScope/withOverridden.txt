@@ -21,4 +21,5 @@ KtFunctionSymbol:
   valueParameters: []
   visibility: Public
   getDispatchReceiver(): B
+  getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
