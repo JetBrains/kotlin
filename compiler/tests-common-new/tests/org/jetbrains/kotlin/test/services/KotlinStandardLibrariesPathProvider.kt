@@ -1,0 +1,127 @@
+/*
+ * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
+ */
+
+package org.jetbrains.kotlin.test.services
+
+import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
+import java.io.File
+import java.lang.ref.SoftReference
+import java.net.URL
+import java.net.URLClassLoader
+
+abstract class KotlinStandardLibrariesPathProvider : TestService {
+    companion object {
+        @Volatile
+        private var runtimeJarClassLoader: SoftReference<ClassLoader?> = SoftReference(null)
+
+        @Volatile
+        private var reflectJarClassLoader: SoftReference<ClassLoader?> = SoftReference(null)
+
+        private fun createClassLoader(vararg files: File): ClassLoader {
+            val urls: MutableList<URL> = ArrayList(2)
+            for (file in files) {
+                urls.add(file.toURI().toURL())
+            }
+            return URLClassLoader(urls.toTypedArray(), null)
+        }
+    }
+
+    /**
+     * kotlin-stdlib.jar
+     */
+    abstract fun runtimeJarForTests(): File
+
+    /**
+     * kotlin-stdlib-jdk8.jar
+     */
+    abstract fun runtimeJarForTestsWithJdk8(): File
+
+    /**
+     * Jar with minimal version of kotlin stdlib (may be same as runtimeJarForTests)
+     */
+    abstract fun minimalRuntimeJarForTests(): File
+
+    /**
+     * kotlin-reflect.jar
+     */
+    abstract fun reflectJarForTests(): File
+
+    /**
+     * kotlin-test.jar
+     */
+    abstract fun kotlinTestJarForTests(): File
+
+    /**
+     * kotlin-script-runtime.jar
+     */
+    abstract fun scriptRuntimeJarForTests(): File
+
+    /**
+     * kotlin-annotations-jvm.jar
+     */
+    abstract fun jvmAnnotationsForTests(): File
+
+    fun getRuntimeJarClassLoader(): ClassLoader = synchronized(this) {
+        var loader = runtimeJarClassLoader.get()
+        if (loader == null) {
+            loader = createClassLoader(
+                runtimeJarForTests(),
+                scriptRuntimeJarForTests(),
+                kotlinTestJarForTests()
+            )
+            runtimeJarClassLoader = SoftReference(loader)
+        }
+        loader
+    }
+
+    fun getRuntimeAndReflectJarClassLoader(): ClassLoader = synchronized(this) {
+        var loader = reflectJarClassLoader.get()
+        if (loader == null) {
+            loader = createClassLoader(
+                runtimeJarForTests(),
+                reflectJarForTests(),
+                scriptRuntimeJarForTests(),
+                kotlinTestJarForTests())
+            reflectJarClassLoader = SoftReference(loader)
+        }
+        loader
+    }
+}
+
+object StandardLibrariesPathProviderForKotlinProject : KotlinStandardLibrariesPathProvider() {
+    override fun runtimeJarForTests(): File = ForTestCompileRuntime.runtimeJarForTests()
+    override fun runtimeJarForTestsWithJdk8(): File = ForTestCompileRuntime.runtimeJarForTestsWithJdk8()
+    override fun minimalRuntimeJarForTests(): File = ForTestCompileRuntime.minimalRuntimeJarForTests()
+    override fun reflectJarForTests(): File = ForTestCompileRuntime.reflectJarForTests()
+    override fun kotlinTestJarForTests(): File = ForTestCompileRuntime.kotlinTestJarForTests()
+    override fun scriptRuntimeJarForTests(): File = ForTestCompileRuntime.scriptRuntimeJarForTests()
+    override fun jvmAnnotationsForTests(): File = ForTestCompileRuntime.jvmAnnotationsForTests()
+}
+
+object EnvironmentBasedStandardLibrariesPathProvider : KotlinStandardLibrariesPathProvider() {
+    const val KOTLIN_STDLIB_PROP = "org.jetbrains.kotlin.test.kotlin-stdlib"
+    const val KOTLIN_STDLIB_JDK8_PROP = "org.jetbrains.kotlin.test.kotlin-stdlib-jdk8"
+    const val KOTLIN_REFLECT_PROP = "org.jetbrains.kotlin.test.kotlin-reflect"
+    const val KOTLIN_TEST_PROP = "org.jetbrains.kotlin.test.kotlin-test"
+    const val KOTLIN_SCRIPT_RUNTIME_PROP = "org.jetbrains.kotlin.test.kotlin-script-runtime"
+    const val KOTLIN_ANNOTATIONS_JVM_PROP = "org.jetbrains.kotlin.test.kotlin-annotations-jvm"
+
+    private fun getFile(propertyName: String): File {
+        return System.getProperty(propertyName)
+            ?.let(::File)
+            ?.takeIf { it.exists() }
+            ?: error("Property $propertyName is not set or file under it not found")
+    }
+
+    override fun runtimeJarForTests(): File = getFile(KOTLIN_STDLIB_PROP)
+    override fun runtimeJarForTestsWithJdk8(): File = getFile(KOTLIN_STDLIB_JDK8_PROP)
+    override fun minimalRuntimeJarForTests(): File = getFile(KOTLIN_STDLIB_PROP)
+    override fun reflectJarForTests(): File = getFile(KOTLIN_REFLECT_PROP)
+    override fun kotlinTestJarForTests(): File = getFile(KOTLIN_TEST_PROP)
+    override fun scriptRuntimeJarForTests(): File = getFile(KOTLIN_SCRIPT_RUNTIME_PROP)
+    override fun jvmAnnotationsForTests(): File = getFile(KOTLIN_ANNOTATIONS_JVM_PROP)
+}
+
+val TestServices.standardLibrariesPathProvider: KotlinStandardLibrariesPathProvider by TestServices.testServiceAccessor()

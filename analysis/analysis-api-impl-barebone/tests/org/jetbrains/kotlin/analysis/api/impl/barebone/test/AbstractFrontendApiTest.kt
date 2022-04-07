@@ -153,6 +153,7 @@ abstract class AbstractFrontendApiTest : TestWithDisposable() {
         useAdditionalService { ExpressionMarkerProvider() }
         useAdditionalService(::TestKtModuleProvider)
         useAdditionalService<ApplicationDisposableProvider> { ExecutionListenerBasedDisposableProvider() }
+        useAdditionalService<KotlinStandardLibrariesPathProvider> { StandardLibrariesPathProviderForKotlinProject }
         configureTest(this)
 
         startingArtifactFactory = { ResultingArtifact.Source() }

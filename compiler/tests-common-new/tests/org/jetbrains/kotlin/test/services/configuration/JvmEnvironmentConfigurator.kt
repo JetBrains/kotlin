@@ -14,7 +14,6 @@ import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.kotlin.cli.jvm.addModularRootIfNotNull
 import org.jetbrains.kotlin.cli.jvm.config.*
 import org.jetbrains.kotlin.cli.jvm.configureStandardLibs
-import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.CompilerConfigurationKey
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
@@ -103,26 +102,6 @@ class JvmEnvironmentConfigurator(testServices: TestServices) : EnvironmentConfig
                 1 -> jdkKinds.single()
                 else -> error("Too many jdk kinds passed: ${jdkKinds.joinToArrayString()}")
             }
-        }
-
-        fun getLibraryFilesExceptRealRuntime(configurationKind: ConfigurationKind, directives: RegisteredDirectives): List<File> {
-            val files = mutableListOf<File>()
-            if (configurationKind.withRuntime) {
-                files.add(ForTestCompileRuntime.kotlinTestJarForTests())
-            } else if (configurationKind.withMockRuntime) {
-                files.add(ForTestCompileRuntime.minimalRuntimeJarForTests())
-                files.add(ForTestCompileRuntime.scriptRuntimeJarForTests())
-            }
-            if (configurationKind.withReflection) {
-                files.add(ForTestCompileRuntime.reflectJarForTests())
-            }
-            files.add(KtTestUtil.getAnnotationsJar())
-
-            if (JvmEnvironmentConfigurationDirectives.STDLIB_JDK8 in directives) {
-                files.add(ForTestCompileRuntime.runtimeJarForTestsWithJdk8())
-            }
-            files.add(KtTestUtil.getAnnotationsJar())
-            return files
         }
     }
 
@@ -332,7 +311,7 @@ class JvmEnvironmentConfigurator(testServices: TestServices) : EnvironmentConfig
         val modulePath = buildList {
             addAll(configuration.jvmModularRoots.map { it.absolutePath })
             if (configurationKind.withRuntime) {
-                add(ForTestCompileRuntime.runtimeJarForTests().path)
+                add(testServices.standardLibrariesPathProvider.runtimeJarForTests().path)
             }
         }
         return MockLibraryUtil.compileLibraryToJar(
@@ -393,4 +372,26 @@ class JvmEnvironmentConfigurator(testServices: TestServices) : EnvironmentConfig
             testServices.compiledClassesManager.getCompiledJavaDirForModule(friendModule)
         )
     }
+
+    private fun getLibraryFilesExceptRealRuntime(configurationKind: ConfigurationKind, directives: RegisteredDirectives): List<File> {
+        val provider = testServices.standardLibrariesPathProvider
+        val files = mutableListOf<File>()
+        if (configurationKind.withRuntime) {
+            files.add(provider.kotlinTestJarForTests())
+        } else if (configurationKind.withMockRuntime) {
+            files.add(provider.minimalRuntimeJarForTests())
+            files.add(provider.scriptRuntimeJarForTests())
+        }
+        if (configurationKind.withReflection) {
+            files.add(provider.reflectJarForTests())
+        }
+        files.add(KtTestUtil.getAnnotationsJar())
+
+        if (JvmEnvironmentConfigurationDirectives.STDLIB_JDK8 in directives) {
+            files.add(provider.runtimeJarForTestsWithJdk8())
+        }
+        files.add(KtTestUtil.getAnnotationsJar())
+        return files
+    }
+
 }

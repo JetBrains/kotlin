@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.test.backend.handlers
 import junit.framework.TestCase
 import org.jetbrains.kotlin.backend.common.CodegenUtil.getMemberDeclarationsToGenerate
 import org.jetbrains.kotlin.codegen.*
-import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.fileClasses.JvmFileClassInfo
 import org.jetbrains.kotlin.fileClasses.JvmFileClassUtil.getFileClassInfoNoResolve
 import org.jetbrains.kotlin.psi.KtFile
@@ -24,13 +23,10 @@ import org.jetbrains.kotlin.test.model.BinaryArtifacts
 import org.jetbrains.kotlin.test.model.DependencyKind
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.model.nameWithoutExtension
-import org.jetbrains.kotlin.test.services.TestServices
-import org.jetbrains.kotlin.test.services.compilerConfigurationProvider
+import org.jetbrains.kotlin.test.services.*
 import org.jetbrains.kotlin.test.services.configuration.JvmEnvironmentConfigurator.Companion.TEST_CONFIGURATION_KIND_KEY
-import org.jetbrains.kotlin.test.services.dependencyProvider
 import org.jetbrains.kotlin.test.services.jvm.compiledClassesManager
 import org.jetbrains.kotlin.test.services.jvm.jvmBoxMainClassProvider
-import org.jetbrains.kotlin.test.services.runtimeClasspathProviders
 import org.jetbrains.kotlin.test.services.sourceProviders.MainFunctionForBlackBoxTestsSourceProvider
 import org.jetbrains.kotlin.test.services.sourceProviders.MainFunctionForBlackBoxTestsSourceProvider.Companion.fileContainsBoxMethod
 import org.jetbrains.kotlin.test.util.KtTestUtil
@@ -297,9 +293,9 @@ open class JvmBoxRunner(testServices: TestServices) : JvmBinaryArtifactHandler(t
     private fun createClassLoader(module: TestModule, classFileFactory: ClassFileFactory): GeneratedClassLoader {
         val configuration = testServices.compilerConfigurationProvider.getCompilerConfiguration(module)
         val parentClassLoader = if (configuration[TEST_CONFIGURATION_KIND_KEY]?.withReflection == true) {
-            ForTestCompileRuntime.runtimeAndReflectJarClassLoader()
+            testServices.standardLibrariesPathProvider.getRuntimeAndReflectJarClassLoader()
         } else {
-            ForTestCompileRuntime.runtimeJarClassLoader()
+            testServices.standardLibrariesPathProvider.getRuntimeJarClassLoader()
         }
         val classpath = computeRuntimeClasspath(module)
         return GeneratedClassLoader(classFileFactory, parentClassLoader, *classpath.map { it.toURI().toURL() }.toTypedArray())
