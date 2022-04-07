@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.asJava.finder.JavaElementFinder
 import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.java.FirJavaElementFinder
-import org.jetbrains.kotlin.fir.java.FirJavaFacade
+import org.jetbrains.kotlin.fir.java.FirJavaFacadeForSource
 import org.jetbrains.kotlin.fir.session.environment.AbstractProjectEnvironment
 import org.jetbrains.kotlin.fir.session.environment.AbstractProjectFileSearchScope
 import org.jetbrains.kotlin.load.java.createJavaClassFinder
@@ -128,7 +128,7 @@ open class VfsBasedProjectEnvironment(
         firSession: FirSession,
         baseModuleData: FirModuleData,
         fileSearchScope: AbstractProjectFileSearchScope
-    ) = FirJavaFacade(firSession, baseModuleData, project.createJavaClassFinder(fileSearchScope.asPsiSearchScope()))
+    ) = FirJavaFacadeForSource(firSession, baseModuleData, project.createJavaClassFinder(fileSearchScope.asPsiSearchScope()))
 
 }
 
