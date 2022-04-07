@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.gradle.internal.Kapt3GradleSubplugin.Companion.KAPT_
 import org.jetbrains.kotlin.gradle.internal.kapt.classloaders.ClassLoadersCache
 import org.jetbrains.kotlin.gradle.internal.kapt.classloaders.rootOrSelf
 import org.jetbrains.kotlin.gradle.internal.kapt.incremental.KaptIncrementalChanges
-import org.jetbrains.kotlin.gradle.plugin.KotlinAndroidPluginWrapper
+import org.jetbrains.kotlin.gradle.plugin.AbstractKotlinAndroidPluginWrapper
 import org.jetbrains.kotlin.gradle.tasks.CompilerPluginOptions
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.jetbrains.kotlin.gradle.utils.isGradleVersionAtLeast
@@ -46,7 +46,7 @@ abstract class KaptWithoutKotlincTask @Inject constructor(
         override fun configure(task: KaptWithoutKotlincTask) {
             super.configure(task)
             task.addJdkClassesToClasspath.value(
-                task.project.providers.provider { task.project.plugins.none { it is KotlinAndroidPluginWrapper } }
+                task.project.providers.provider { task.project.plugins.none { it is AbstractKotlinAndroidPluginWrapper } }
             ).disallowChanges()
             task.kaptJars.from(task.project.configurations.getByName(KAPT_WORKER_DEPENDENCIES_CONFIGURATION_NAME)).disallowChanges()
         }

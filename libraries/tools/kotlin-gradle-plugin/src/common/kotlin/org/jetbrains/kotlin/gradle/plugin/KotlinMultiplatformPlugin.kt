@@ -40,13 +40,6 @@ abstract class KotlinPlatformPluginBase(protected val platformName: String) : Pl
     }
 }
 
-open class KotlinPlatformCommonPlugin : KotlinPlatformPluginBase("common") {
-    override fun apply(project: Project) {
-        warnAboutKotlin12xMppDeprecation(project)
-        project.applyPlugin<KotlinCommonPluginWrapper>()
-    }
-}
-
 const val EXPECTED_BY_CONFIG_NAME = "expectedBy"
 
 const val IMPLEMENT_CONFIG_NAME = "implement"
@@ -252,39 +245,6 @@ internal fun <T> Project.whenEvaluated(fn: Project.() -> T) {
     }
 }
 
-open class KotlinPlatformAndroidPlugin : KotlinPlatformImplementationPluginBase("android") {
-    override fun apply(project: Project) {
-        project.applyPlugin<KotlinAndroidPluginWrapper>()
-        super.apply(project)
-    }
-
-    override fun namedSourceSetsContainer(project: Project): NamedDomainObjectContainer<*> =
-        (project.extensions.getByName("android") as BaseExtension).sourceSets
-
-    override fun addCommonSourceSetToPlatformSourceSet(commonSourceSet: Named, platformProject: Project) {
-        val androidExtension = platformProject.extensions.getByName("android") as BaseExtension
-        val androidSourceSet = androidExtension.sourceSets.findByName(commonSourceSet.name) ?: return
-        val kotlinSourceSet = androidSourceSet.getConvention(KOTLIN_DSL_NAME) as? KotlinSourceSet
-            ?: return
-        kotlinSourceSet.kotlin.source(getKotlinSourceDirectorySetSafe(commonSourceSet)!!)
-    }
-}
-
-open class KotlinPlatformJvmPlugin : KotlinPlatformImplementationPluginBase("jvm") {
-    override fun apply(project: Project) {
-        project.applyPlugin<KotlinPluginWrapper>()
-        super.apply(project)
-    }
-}
-
-open class KotlinPlatformJsPlugin : KotlinPlatformImplementationPluginBase("js") {
-    override fun apply(project: Project) {
-        @Suppress("DEPRECATION_ERROR")
-        project.applyPlugin<Kotlin2JsPluginWrapper>()
-        super.apply(project)
-    }
-}
-
 internal val KOTLIN_12X_MPP_DEPRECATION_WARNING = "\n" + """
     The 'org.jetbrains.kotlin.platform.*' plugins are deprecated and will no longer be available in Kotlin 1.4.
     Please migrate the project to the 'org.jetbrains.kotlin.multiplatform' plugin.
@@ -293,7 +253,7 @@ internal val KOTLIN_12X_MPP_DEPRECATION_WARNING = "\n" + """
 
 private const val KOTLIN_12X_MPP_DEPRECATION_SUPPRESS_FLAG = "kotlin.internal.mpp12x.deprecation.suppress"
 
-private fun warnAboutKotlin12xMppDeprecation(project: Project) {
+internal fun warnAboutKotlin12xMppDeprecation(project: Project) {
     if (project.findProperty(KOTLIN_12X_MPP_DEPRECATION_SUPPRESS_FLAG) != "true") {
         SingleWarningPerBuild.show(project, KOTLIN_12X_MPP_DEPRECATION_WARNING)
     }
