@@ -7,8 +7,11 @@ package org.jetbrains.kotlin.gradle.targets.native.tasks.artifact
 
 import org.gradle.api.Project
 import org.gradle.api.Task
+import org.gradle.api.plugins.ExtensionAware
 import org.gradle.language.base.plugins.LifecycleBasePlugin
+import org.jetbrains.kotlin.gradle.dsl.KotlinCommonToolOptions
 import org.jetbrains.kotlin.gradle.plugin.mpp.BitcodeEmbeddingMode
+import org.jetbrains.kotlin.gradle.plugin.mpp.NativeBuildType
 import org.jetbrains.kotlin.gradle.plugin.mpp.NativeOutputKind
 import org.jetbrains.kotlin.gradle.tasks.FatFrameworkTask
 import org.jetbrains.kotlin.gradle.tasks.FrameworkDescriptor
@@ -19,12 +22,9 @@ import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.konan.util.visibleName
 import javax.inject.Inject
 
-open class KotlinNativeFatFramework @Inject constructor(
-    project: Project,
+abstract class KotlinNativeFatFrameworkConfig @Inject constructor(
     artifactName: String
-) : KotlinNativeArtifact(project, artifactName) {
-    override val taskName get() = lowerCamelCaseName("assemble", artifactName, "FatFramework")
-
+) : KotlinNativeArtifactConfig(artifactName) {
     var targets: Set<KonanTarget> = emptySet()
     fun targets(vararg targets: KonanTarget) {
         this.targets = targets.toSet()
@@ -32,7 +32,36 @@ open class KotlinNativeFatFramework @Inject constructor(
 
     var embedBitcode: BitcodeEmbeddingMode? = null
 
+    override fun createArtifact(project: Project, extensions: ExtensionAware) = KotlinNativeFatFramework(
+        project,
+        artifactName,
+        modules,
+        modes,
+        isStatic,
+        linkerOptions,
+        kotlinOptionsFn,
+        binaryOptions,
+        targets,
+        embedBitcode,
+        extensions
+    )
+}
+
+class KotlinNativeFatFramework(
+    override val project: Project,
+    override val artifactName: String,
+    override val modules: Set<Any>,
+    override val modes: Set<NativeBuildType>,
+    override val isStatic: Boolean,
+    override val linkerOptions: List<String>,
+    override val kotlinOptionsFn: KotlinCommonToolOptions.() -> Unit,
+    override val binaryOptions: Map<String, String>,
+    val targets: Set<KonanTarget>,
+    val embedBitcode: BitcodeEmbeddingMode?,
+    extensions: ExtensionAware
+) : KotlinNativeArtifact, ExtensionAware by extensions {
     private val kind = NativeOutputKind.FRAMEWORK
+    override fun getName() = lowerCamelCaseName(artifactName, "FatFramework")
 
     override fun validate() {
         super.validate()

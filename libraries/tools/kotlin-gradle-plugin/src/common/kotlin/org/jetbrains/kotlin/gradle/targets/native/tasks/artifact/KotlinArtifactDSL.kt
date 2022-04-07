@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.gradle.targets.native.tasks.artifact
 
 import org.gradle.api.Action
 import org.gradle.api.Project
+import org.gradle.api.plugins.ExtensionAware
 import org.jetbrains.kotlin.gradle.plugin.mpp.NativeBuildType
 import org.jetbrains.kotlin.gradle.utils.castIsolatedKotlinPluginClassLoaderAware
 import org.jetbrains.kotlin.konan.target.KonanTarget
@@ -27,74 +28,96 @@ abstract class NativeArtifacts @Inject constructor(private val project: Project)
     annotation class ExperimentalArtifactDsl
 
     @ExperimentalArtifactDsl
-    fun Library(name: String, configure: Action<KotlinNativeLibrary>) {
+    fun Library(name: String, configure: Action<KotlinNativeLibraryConfig>) {
         addKotlinArtifact(name, configure)
     }
 
     @ExperimentalArtifactDsl
-    fun Library(configure: Action<KotlinNativeLibrary>) {
+    fun Library(configure: Action<KotlinNativeLibraryConfig>) {
         addKotlinArtifact(configure)
     }
 
     @ExperimentalArtifactDsl
-    fun Framework(name: String, configure: Action<KotlinNativeFramework>) {
+    fun Framework(name: String, configure: Action<KotlinNativeFrameworkConfig>) {
         addKotlinArtifact(name, configure)
     }
 
     @ExperimentalArtifactDsl
-    fun Framework(configure: Action<KotlinNativeFramework>) {
+    fun Framework(configure: Action<KotlinNativeFrameworkConfig>) {
         addKotlinArtifact(configure)
     }
 
     @ExperimentalArtifactDsl
-    fun FatFramework(name: String, configure: Action<KotlinNativeFatFramework>) {
+    fun FatFramework(name: String, configure: Action<KotlinNativeFatFrameworkConfig>) {
         addKotlinArtifact(name, configure)
     }
 
     @ExperimentalArtifactDsl
-    fun FatFramework(configure: Action<KotlinNativeFatFramework>) {
+    fun FatFramework(configure: Action<KotlinNativeFatFrameworkConfig>) {
         addKotlinArtifact(configure)
     }
 
     @ExperimentalArtifactDsl
-    fun XCFramework(name: String, configure: Action<KotlinNativeXCFramework>) {
+    fun XCFramework(name: String, configure: Action<KotlinNativeXCFrameworkConfig>) {
         addKotlinArtifact(name, configure)
     }
 
     @ExperimentalArtifactDsl
-    fun XCFramework(configure: Action<KotlinNativeXCFramework>) {
+    fun XCFramework(configure: Action<KotlinNativeXCFrameworkConfig>) {
         addKotlinArtifact(configure)
     }
 
-    private inline fun <reified T : KotlinArtifact> addKotlinArtifact(configure: Action<T>) {
+    private inline fun <reified T : KotlinArtifactConfig> addKotlinArtifact(configure: Action<T>) {
         addKotlinArtifact(project.name.replace(UNSAFE_NAME_SYMBOLS, "_"), configure)
     }
 
-    private inline fun <reified T : KotlinArtifact> addKotlinArtifact(name: String, configure: Action<T>) {
+    private inline fun <reified T : KotlinArtifactConfig> addKotlinArtifact(name: String, configure: Action<T>) {
         //create via newInstance for extensibility
-        val artifact = project.objects.newInstance(T::class.java, project, name)
+        val config: T = project.objects.newInstance(T::class.java, name)
+        project.kotlinArtifactsExtension.artifactConfigs.add(config)
 
-        //we should add artifact to collection BEFORE configuration
-        //because other plugins can add extensions for artifacts which will be used in configuration block
-        project.kotlinArtifactsExtension.artifacts.add(artifact)
+        //current project is added by default
+        config.addModule(project)
 
-        artifact.addModule(project)
-        configure.execute(artifact)
-        artifact.registerAssembleTask()
+        //apply user configuration
+        configure.execute(config)
+        //create immutable artifact object
+        val artifact = config.createArtifact(project, config as ExtensionAware)
+
+        val isAdded = project.kotlinArtifactsExtension.artifacts.add(artifact)
+        if (!isAdded) {
+            error("Kotlin artifact with name '${artifact.name}' is already exists! Change the name, please!")
+        }
     }
 }
 
 //Groovy script DSL
 private const val KOTLIN_ARTIFACTS_EXTENSION_NAME = "kotlinArtifacts"
 internal fun Project.registerKotlinArtifactsExtension() {
-    extensions.create(KOTLIN_ARTIFACTS_EXTENSION_NAME, KotlinArtifactsExtension::class.java, this)
+    val kotlinArtifactsExt = objects.newInstance(KotlinArtifactsExtension::class.java, this)
+    extensions.add(KOTLIN_ARTIFACTS_EXTENSION_NAME, kotlinArtifactsExt)
+    kotlinArtifactsExt.artifacts.all { it.registerAssembleTask() }
 }
 
 internal val Project.kotlinArtifactsExtension: KotlinArtifactsExtension
     get() = extensions.getByName(KOTLIN_ARTIFACTS_EXTENSION_NAME).castIsolatedKotlinPluginClassLoaderAware()
 
 abstract class KotlinArtifactsExtension @Inject constructor(project: Project) {
-    val artifacts = project.objects.domainObjectSet(KotlinArtifact::class.java)
+    //Extending by external plugins:
+    //
+    //project.kotlinArtifactsExtension.apply {
+    //    artifactConfigs.all {
+    //      //add custom extension to artifact config DSL
+    //      (it as ExtensionAware).extensions.create("myConfig", Config::class.java)
+    //    }
+    //    artifacts.all {
+    //      val config = it.extensions.findByName("myConfig") as Config
+    //      //configure additional tasks, etc
+    //      //here we can use artifact parameters
+    //    }
+    //}
+    val artifactConfigs = project.objects.domainObjectSet(KotlinArtifactConfig::class.java)
+    val artifacts = project.objects.namedDomainObjectSet(KotlinArtifact::class.java)
 
     val DEBUG = NativeBuildType.DEBUG
     val RELEASE = NativeBuildType.RELEASE

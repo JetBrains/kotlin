@@ -8,8 +8,10 @@ package org.jetbrains.kotlin.gradle.targets.native.tasks.artifact
 import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.api.plugins.BasePlugin
+import org.gradle.api.plugins.ExtensionAware
 import org.gradle.api.tasks.TaskProvider
 import org.gradle.language.base.plugins.LifecycleBasePlugin
+import org.jetbrains.kotlin.gradle.dsl.KotlinCommonToolOptions
 import org.jetbrains.kotlin.gradle.plugin.mpp.BitcodeEmbeddingMode
 import org.jetbrains.kotlin.gradle.plugin.mpp.NativeBuildType
 import org.jetbrains.kotlin.gradle.plugin.mpp.NativeOutputKind
@@ -22,19 +24,45 @@ import org.jetbrains.kotlin.konan.target.presetName
 import org.jetbrains.kotlin.konan.util.visibleName
 import javax.inject.Inject
 
-open class KotlinNativeFramework @Inject constructor(project: Project, artifactName: String) : KotlinNativeArtifact(project, artifactName) {
-    lateinit var target: KonanTarget
+abstract class KotlinNativeFrameworkConfig @Inject constructor(
+    artifactName: String
+) : KotlinNativeArtifactConfig(artifactName) {
+    abstract var target: KonanTarget
     var embedBitcode: BitcodeEmbeddingMode? = null
 
-    private val kind = NativeOutputKind.FRAMEWORK
+    override fun createArtifact(project: Project, extensions: ExtensionAware) = KotlinNativeFramework(
+        project,
+        artifactName,
+        modules,
+        modes,
+        isStatic,
+        linkerOptions,
+        kotlinOptionsFn,
+        binaryOptions,
+        target,
+        embedBitcode,
+        extensions
+    )
+}
 
-    override val taskName get() = lowerCamelCaseName("assemble", artifactName, kind.taskNameClassifier, target.presetName)
+class KotlinNativeFramework(
+    override val project: Project,
+    override val artifactName: String,
+    override val modules: Set<Any>,
+    override val modes: Set<NativeBuildType>,
+    override val isStatic: Boolean,
+    override val linkerOptions: List<String>,
+    override val kotlinOptionsFn: KotlinCommonToolOptions.() -> Unit,
+    override val binaryOptions: Map<String, String>,
+    val target: KonanTarget,
+    val embedBitcode: BitcodeEmbeddingMode?,
+    extensions: ExtensionAware
+) : KotlinNativeArtifact, ExtensionAware by extensions {
+    private val kind = NativeOutputKind.FRAMEWORK
+    override fun getName() = lowerCamelCaseName(artifactName, kind.taskNameClassifier, target.presetName)
 
     override fun validate() {
         super.validate()
-        check(this::target.isInitialized) {
-            "Native artifact '$artifactName' wasn't configured because it requires target"
-        }
         check(kind.availableFor(target)) {
             "Native artifact '$artifactName' wasn't configured because ${kind.description} is not available for ${target.visibleName}"
         }
