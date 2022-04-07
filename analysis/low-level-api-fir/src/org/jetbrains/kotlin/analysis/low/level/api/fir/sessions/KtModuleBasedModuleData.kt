@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.resolve.PlatformDependentAnalyzerServices
 
-internal class KtModuleBasedModuleData(
+class KtModuleBasedModuleData(
     val module: KtModule,
 ) : FirModuleData() {
     override val name: Name get() = Name.special("<${module.moduleDescription}>")
