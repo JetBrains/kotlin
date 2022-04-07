@@ -9,6 +9,7 @@ KtValueParameterSymbol:
   receiverType: null
   returnType: kotlin/String
   symbolKind: LOCAL
+  getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
 
 KtConstructorSymbol:
@@ -27,6 +28,7 @@ KtConstructorSymbol:
     KtValueParameterSymbol(value)
   ]
   visibility: Private
+  getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
 
 KtPropertyGetterSymbol:
@@ -45,6 +47,7 @@ KtPropertyGetterSymbol:
   symbolKind: ACCESSOR
   valueParameters: []
   visibility: Public
+  getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
 
 KtKotlinPropertySymbol:
@@ -73,6 +76,7 @@ KtKotlinPropertySymbol:
   typeParameters: []
   visibility: Public
   getDispatchReceiver(): <anonymous>
+  getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
   getterDeprecationStatus: null
   javaGetterName: getExitAnimation
@@ -88,6 +92,7 @@ KtEnumEntrySymbol:
   receiverType: null
   returnType: Style
   symbolKind: CLASS_MEMBER
+  getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
 
 KtKotlinPropertySymbol:
@@ -116,6 +121,7 @@ KtKotlinPropertySymbol:
   typeParameters: []
   visibility: Public
   getDispatchReceiver(): Style
+  getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
   getterDeprecationStatus: null
   javaGetterName: getExitAnimation
@@ -141,4 +147,5 @@ KtNamedClassOrObjectSymbol:
   symbolKind: TOP_LEVEL
   typeParameters: []
   visibility: Public
+  getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null

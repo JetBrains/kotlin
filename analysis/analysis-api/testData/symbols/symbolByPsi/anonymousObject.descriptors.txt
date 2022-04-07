@@ -21,6 +21,7 @@ KtFunctionSymbol:
   valueParameters: []
   visibility: Public
   getDispatchReceiver(): <no name provided>
+  getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
 
 KtKotlinPropertySymbol:
@@ -49,6 +50,7 @@ KtKotlinPropertySymbol:
   typeParameters: []
   visibility: Public
   getDispatchReceiver(): <no name provided>
+  getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
   getterDeprecationStatus: null
   javaGetterName: getData
@@ -65,6 +67,7 @@ KtAnonymousObjectSymbol:
     java/lang/Runnable
   ]
   symbolKind: LOCAL
+  getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
 
 KtKotlinPropertySymbol:
@@ -93,6 +96,7 @@ KtKotlinPropertySymbol:
   typeParameters: []
   visibility: Public
   getDispatchReceiver(): AnonymousContainer
+  getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
   getterDeprecationStatus: null
   javaGetterName: getAnonymousObject
@@ -118,4 +122,5 @@ KtNamedClassOrObjectSymbol:
   symbolKind: TOP_LEVEL
   typeParameters: []
   visibility: Public
+  getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null

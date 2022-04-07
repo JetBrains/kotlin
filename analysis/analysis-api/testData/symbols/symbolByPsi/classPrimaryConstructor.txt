@@ -12,6 +12,7 @@ KtConstructorSymbol:
   typeParameters: []
   valueParameters: []
   visibility: Public
+  getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
 
 KtNamedClassOrObjectSymbol:
@@ -33,4 +34,5 @@ KtNamedClassOrObjectSymbol:
   symbolKind: TOP_LEVEL
   typeParameters: []
   visibility: Public
+  getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null

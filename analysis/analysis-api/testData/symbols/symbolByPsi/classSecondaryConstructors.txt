@@ -12,6 +12,7 @@ KtConstructorSymbol:
   typeParameters: []
   valueParameters: []
   visibility: Public
+  getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
 
 KtValueParameterSymbol:
@@ -25,6 +26,7 @@ KtValueParameterSymbol:
   receiverType: null
   returnType: kotlin/Int
   symbolKind: LOCAL
+  getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
 
 KtConstructorSymbol:
@@ -43,6 +45,7 @@ KtConstructorSymbol:
     KtValueParameterSymbol(x)
   ]
   visibility: Public
+  getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
 
 KtValueParameterSymbol:
@@ -56,6 +59,7 @@ KtValueParameterSymbol:
   receiverType: null
   returnType: kotlin/Int
   symbolKind: LOCAL
+  getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
 
 KtValueParameterSymbol:
@@ -69,6 +73,7 @@ KtValueParameterSymbol:
   receiverType: null
   returnType: kotlin/String
   symbolKind: LOCAL
+  getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
 
 KtConstructorSymbol:
@@ -88,6 +93,7 @@ KtConstructorSymbol:
     KtValueParameterSymbol(z)
   ]
   visibility: Public
+  getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
 
 KtNamedClassOrObjectSymbol:
@@ -109,4 +115,5 @@ KtNamedClassOrObjectSymbol:
   symbolKind: TOP_LEVEL
   typeParameters: []
   visibility: Public
+  getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null

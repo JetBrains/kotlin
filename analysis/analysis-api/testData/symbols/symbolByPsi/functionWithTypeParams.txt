@@ -6,6 +6,7 @@ KtTypeParameterSymbol:
     kotlin/Any?
   ]
   variance: INVARIANT
+  getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
 
 KtValueParameterSymbol:
@@ -19,6 +20,7 @@ KtValueParameterSymbol:
   receiverType: null
   returnType: X
   symbolKind: LOCAL
+  getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
 
 KtFunctionSymbol:
@@ -47,4 +49,5 @@ KtFunctionSymbol:
     KtValueParameterSymbol(x)
   ]
   visibility: Public
+  getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null

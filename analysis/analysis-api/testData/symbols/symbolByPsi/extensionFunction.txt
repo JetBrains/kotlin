@@ -20,4 +20,5 @@ KtFunctionSymbol:
   typeParameters: []
   valueParameters: []
   visibility: Public
+  getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null

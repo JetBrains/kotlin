@@ -7,4 +7,5 @@ KtBackingFieldSymbol:
   receiverType: null
   returnType: kotlin/Int
   symbolKind: LOCAL
+  getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null

@@ -6,6 +6,7 @@ KtTypeParameterSymbol:
     kotlin/Any?
   ]
   variance: INVARIANT
+  getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
 
 KtNamedClassOrObjectSymbol:
@@ -29,6 +30,7 @@ KtNamedClassOrObjectSymbol:
     KtTypeParameterSymbol(T)
   ]
   visibility: Public
+  getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
 
 KtTypeParameterSymbol:
@@ -39,6 +41,7 @@ KtTypeParameterSymbol:
     kotlin/Any?
   ]
   variance: INVARIANT
+  getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
 
 KtTypeAliasSymbol:
@@ -52,4 +55,5 @@ KtTypeAliasSymbol:
     KtTypeParameterSymbol(Z)
   ]
   visibility: Private
+  getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null

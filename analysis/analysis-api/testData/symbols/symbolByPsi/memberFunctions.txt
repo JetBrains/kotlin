@@ -21,6 +21,7 @@ KtFunctionSymbol:
   valueParameters: []
   visibility: Public
   getDispatchReceiver(): A
+  getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
 
 KtFunctionSymbol:
@@ -46,6 +47,7 @@ KtFunctionSymbol:
   valueParameters: []
   visibility: Public
   getDispatchReceiver(): A
+  getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
 
 KtNamedClassOrObjectSymbol:
@@ -67,4 +69,5 @@ KtNamedClassOrObjectSymbol:
   symbolKind: TOP_LEVEL
   typeParameters: []
   visibility: Public
+  getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
