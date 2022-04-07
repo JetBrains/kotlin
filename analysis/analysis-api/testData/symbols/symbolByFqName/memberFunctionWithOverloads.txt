@@ -21,6 +21,7 @@ KtFunctionSymbol:
   valueParameters: []
   visibility: Public
   getDispatchReceiver(): kotlin/collections/List<E>
+  getContainingModule: KtLibraryModule "Library kotlin-stdlib"
   deprecationStatus: null
 
 KtFunctionSymbol:
@@ -48,4 +49,5 @@ KtFunctionSymbol:
   ]
   visibility: Public
   getDispatchReceiver(): kotlin/collections/List<E>
+  getContainingModule: KtLibraryModule "Library kotlin-stdlib"
   deprecationStatus: null

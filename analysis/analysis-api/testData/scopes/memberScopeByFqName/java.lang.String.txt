@@ -11,6 +11,7 @@ KtJavaFieldSymbol:
   symbolKind: CLASS_MEMBER
   visibility: Private
   getDispatchReceiver(): java/lang/String
+  getContainingModule: KtSdkModule "SDK jdk"
   deprecationStatus: null
 
 KtJavaFieldSymbol:
@@ -26,6 +27,7 @@ KtJavaFieldSymbol:
   symbolKind: CLASS_MEMBER
   visibility: Private
   getDispatchReceiver(): java/lang/String
+  getContainingModule: KtSdkModule "SDK jdk"
   deprecationStatus: null
 
 KtFunctionSymbol:
@@ -51,6 +53,7 @@ KtFunctionSymbol:
   valueParameters: []
   visibility: PackageVisibility
   getDispatchReceiver(): java/lang/String
+  getContainingModule: KtSdkModule "SDK jdk"
   deprecationStatus: null
 
 KtJavaFieldSymbol:
@@ -66,6 +69,7 @@ KtJavaFieldSymbol:
   symbolKind: CLASS_MEMBER
   visibility: Private
   getDispatchReceiver(): java/lang/String
+  getContainingModule: KtSdkModule "SDK jdk"
   deprecationStatus: null
 
 KtSyntheticJavaPropertySymbol:
@@ -94,6 +98,7 @@ KtSyntheticJavaPropertySymbol:
   typeParameters: []
   visibility: Public
   getDispatchReceiver(): java/lang/String
+  getContainingModule: KtSdkModule "SDK jdk"
   deprecationStatus: null
   getterDeprecationStatus: null
   javaGetterName: length
@@ -123,6 +128,7 @@ KtFunctionSymbol:
   valueParameters: []
   visibility: Public
   getDispatchReceiver(): java/lang/String
+  getContainingModule: KtSdkModule "SDK jdk"
   deprecationStatus: null
 
 KtFunctionSymbol:
@@ -150,6 +156,7 @@ KtFunctionSymbol:
   ]
   visibility: Public
   getDispatchReceiver(): java/lang/String
+  getContainingModule: KtSdkModule "SDK jdk"
   deprecationStatus: null
 
 KtFunctionSymbol:
@@ -177,6 +184,7 @@ KtFunctionSymbol:
   ]
   visibility: Public
   getDispatchReceiver(): java/lang/String
+  getContainingModule: KtSdkModule "SDK jdk"
   deprecationStatus: null
 
 KtFunctionSymbol:
@@ -205,6 +213,7 @@ KtFunctionSymbol:
   ]
   visibility: Public
   getDispatchReceiver(): java/lang/String
+  getContainingModule: KtSdkModule "SDK jdk"
   deprecationStatus: null
 
 KtFunctionSymbol:
@@ -233,6 +242,7 @@ KtFunctionSymbol:
   ]
   visibility: Public
   getDispatchReceiver(): java/lang/String
+  getContainingModule: KtSdkModule "SDK jdk"
   deprecationStatus: null
 
 KtFunctionSymbol:
@@ -261,6 +271,7 @@ KtFunctionSymbol:
   ]
   visibility: PackageVisibility
   getDispatchReceiver(): java/lang/String
+  getContainingModule: KtSdkModule "SDK jdk"
   deprecationStatus: null
 
 KtFunctionSymbol:
@@ -291,6 +302,7 @@ KtFunctionSymbol:
   ]
   visibility: Public
   getDispatchReceiver(): java/lang/String
+  getContainingModule: KtSdkModule "SDK jdk"
   deprecationStatus: null
 
 KtFunctionSymbol:
@@ -324,6 +336,7 @@ KtFunctionSymbol:
   ]
   visibility: Public
   getDispatchReceiver(): java/lang/String
+  getContainingModule: KtSdkModule "SDK jdk"
   deprecationStatus: DeprecationInfo(deprecationLevel=WARNING, propagatesToOverrides=false, message=Deprecated in Java)
 
 KtFunctionSymbol:
@@ -351,6 +364,7 @@ KtFunctionSymbol:
   ]
   visibility: Public
   getDispatchReceiver(): java/lang/String
+  getContainingModule: KtSdkModule "SDK jdk"
   deprecationStatus: null
 
 KtFunctionSymbol:
@@ -378,6 +392,7 @@ KtFunctionSymbol:
   ]
   visibility: Public
   getDispatchReceiver(): java/lang/String
+  getContainingModule: KtSdkModule "SDK jdk"
   deprecationStatus: null
 
 KtFunctionSymbol:
@@ -403,6 +418,7 @@ KtFunctionSymbol:
   valueParameters: []
   visibility: Public
   getDispatchReceiver(): java/lang/String
+  getContainingModule: KtSdkModule "SDK jdk"
   deprecationStatus: null
 
 KtFunctionSymbol:
@@ -430,6 +446,7 @@ KtFunctionSymbol:
   ]
   visibility: Public
   getDispatchReceiver(): java/lang/String
+  getContainingModule: KtSdkModule "SDK jdk"
   deprecationStatus: null
 
 KtFunctionSymbol:
@@ -457,6 +474,7 @@ KtFunctionSymbol:
   ]
   visibility: Public
   getDispatchReceiver(): java/lang/String
+  getContainingModule: KtSdkModule "SDK jdk"
   deprecationStatus: null
 
 KtFunctionSymbol:
@@ -484,6 +502,7 @@ KtFunctionSymbol:
   ]
   visibility: Public
   getDispatchReceiver(): java/lang/String
+  getContainingModule: KtSdkModule "SDK jdk"
   deprecationStatus: null
 
 KtFunctionSymbol:
@@ -511,6 +530,7 @@ KtFunctionSymbol:
   ]
   visibility: Public
   getDispatchReceiver(): java/lang/String
+  getContainingModule: KtSdkModule "SDK jdk"
   deprecationStatus: null
 
 KtFunctionSymbol:
@@ -538,6 +558,7 @@ KtFunctionSymbol:
   ]
   visibility: Public
   getDispatchReceiver(): java/lang/String
+  getContainingModule: KtSdkModule "SDK jdk"
   deprecationStatus: null
 
 KtFunctionSymbol:
@@ -565,6 +586,7 @@ KtFunctionSymbol:
   ]
   visibility: Public
   getDispatchReceiver(): java/lang/String
+  getContainingModule: KtSdkModule "SDK jdk"
   deprecationStatus: null
 
 KtFunctionSymbol:
@@ -595,6 +617,7 @@ KtFunctionSymbol:
   ]
   visibility: Public
   getDispatchReceiver(): java/lang/String
+  getContainingModule: KtSdkModule "SDK jdk"
   deprecationStatus: null
 
 KtFunctionSymbol:
@@ -626,6 +649,7 @@ KtFunctionSymbol:
   ]
   visibility: Public
   getDispatchReceiver(): java/lang/String
+  getContainingModule: KtSdkModule "SDK jdk"
   deprecationStatus: null
 
 KtFunctionSymbol:
@@ -654,6 +678,7 @@ KtFunctionSymbol:
   ]
   visibility: Public
   getDispatchReceiver(): java/lang/String
+  getContainingModule: KtSdkModule "SDK jdk"
   deprecationStatus: null
 
 KtFunctionSymbol:
@@ -681,6 +706,7 @@ KtFunctionSymbol:
   ]
   visibility: Public
   getDispatchReceiver(): java/lang/String
+  getContainingModule: KtSdkModule "SDK jdk"
   deprecationStatus: null
 
 KtFunctionSymbol:
@@ -708,6 +734,7 @@ KtFunctionSymbol:
   ]
   visibility: Public
   getDispatchReceiver(): java/lang/String
+  getContainingModule: KtSdkModule "SDK jdk"
   deprecationStatus: null
 
 KtFunctionSymbol:
@@ -733,6 +760,7 @@ KtFunctionSymbol:
   valueParameters: []
   visibility: Public
   getDispatchReceiver(): java/lang/String
+  getContainingModule: KtSdkModule "SDK jdk"
   deprecationStatus: null
 
 KtFunctionSymbol:
@@ -760,6 +788,7 @@ KtFunctionSymbol:
   ]
   visibility: Public
   getDispatchReceiver(): java/lang/String
+  getContainingModule: KtSdkModule "SDK jdk"
   deprecationStatus: null
 
 KtFunctionSymbol:
@@ -788,6 +817,7 @@ KtFunctionSymbol:
   ]
   visibility: Public
   getDispatchReceiver(): java/lang/String
+  getContainingModule: KtSdkModule "SDK jdk"
   deprecationStatus: null
 
 KtFunctionSymbol:
@@ -815,6 +845,7 @@ KtFunctionSymbol:
   ]
   visibility: Public
   getDispatchReceiver(): java/lang/String
+  getContainingModule: KtSdkModule "SDK jdk"
   deprecationStatus: null
 
 KtFunctionSymbol:
@@ -843,6 +874,7 @@ KtFunctionSymbol:
   ]
   visibility: Public
   getDispatchReceiver(): java/lang/String
+  getContainingModule: KtSdkModule "SDK jdk"
   deprecationStatus: null
 
 KtFunctionSymbol:
@@ -871,6 +903,7 @@ KtFunctionSymbol:
   ]
   visibility: Private
   getDispatchReceiver(): java/lang/String
+  getContainingModule: KtSdkModule "SDK jdk"
   deprecationStatus: null
 
 KtFunctionSymbol:
@@ -898,6 +931,7 @@ KtFunctionSymbol:
   ]
   visibility: Public
   getDispatchReceiver(): java/lang/String
+  getContainingModule: KtSdkModule "SDK jdk"
   deprecationStatus: null
 
 KtFunctionSymbol:
@@ -926,6 +960,7 @@ KtFunctionSymbol:
   ]
   visibility: Public
   getDispatchReceiver(): java/lang/String
+  getContainingModule: KtSdkModule "SDK jdk"
   deprecationStatus: null
 
 KtFunctionSymbol:
@@ -953,6 +988,7 @@ KtFunctionSymbol:
   ]
   visibility: Public
   getDispatchReceiver(): java/lang/String
+  getContainingModule: KtSdkModule "SDK jdk"
   deprecationStatus: null
 
 KtFunctionSymbol:
@@ -981,6 +1017,7 @@ KtFunctionSymbol:
   ]
   visibility: Public
   getDispatchReceiver(): java/lang/String
+  getContainingModule: KtSdkModule "SDK jdk"
   deprecationStatus: null
 
 KtFunctionSymbol:
@@ -1009,6 +1046,7 @@ KtFunctionSymbol:
   ]
   visibility: Private
   getDispatchReceiver(): java/lang/String
+  getContainingModule: KtSdkModule "SDK jdk"
   deprecationStatus: null
 
 KtFunctionSymbol:
@@ -1036,6 +1074,7 @@ KtFunctionSymbol:
   ]
   visibility: Public
   getDispatchReceiver(): java/lang/String
+  getContainingModule: KtSdkModule "SDK jdk"
   deprecationStatus: null
 
 KtFunctionSymbol:
@@ -1064,6 +1103,7 @@ KtFunctionSymbol:
   ]
   visibility: Public
   getDispatchReceiver(): java/lang/String
+  getContainingModule: KtSdkModule "SDK jdk"
   deprecationStatus: null
 
 KtFunctionSymbol:
@@ -1092,6 +1132,7 @@ KtFunctionSymbol:
   ]
   visibility: Public
   getDispatchReceiver(): java/lang/String
+  getContainingModule: KtSdkModule "SDK jdk"
   deprecationStatus: null
 
 KtFunctionSymbol:
@@ -1119,6 +1160,7 @@ KtFunctionSymbol:
   ]
   visibility: Public
   getDispatchReceiver(): java/lang/String
+  getContainingModule: KtSdkModule "SDK jdk"
   deprecationStatus: null
 
 KtFunctionSymbol:
@@ -1147,6 +1189,7 @@ KtFunctionSymbol:
   ]
   visibility: Public
   getDispatchReceiver(): java/lang/String
+  getContainingModule: KtSdkModule "SDK jdk"
   deprecationStatus: null
 
 KtFunctionSymbol:
@@ -1175,6 +1218,7 @@ KtFunctionSymbol:
   ]
   visibility: Public
   getDispatchReceiver(): java/lang/String
+  getContainingModule: KtSdkModule "SDK jdk"
   deprecationStatus: null
 
 KtFunctionSymbol:
@@ -1202,6 +1246,7 @@ KtFunctionSymbol:
   ]
   visibility: Public
   getDispatchReceiver(): java/lang/String
+  getContainingModule: KtSdkModule "SDK jdk"
   deprecationStatus: null
 
 KtFunctionSymbol:
@@ -1229,6 +1274,7 @@ KtFunctionSymbol:
   ]
   visibility: Public
   getDispatchReceiver(): java/lang/String
+  getContainingModule: KtSdkModule "SDK jdk"
   deprecationStatus: null
 
 KtFunctionSymbol:
@@ -1257,6 +1303,7 @@ KtFunctionSymbol:
   ]
   visibility: Public
   getDispatchReceiver(): java/lang/String
+  getContainingModule: KtSdkModule "SDK jdk"
   deprecationStatus: null
 
 KtFunctionSymbol:
@@ -1285,6 +1332,7 @@ KtFunctionSymbol:
   ]
   visibility: Public
   getDispatchReceiver(): java/lang/String
+  getContainingModule: KtSdkModule "SDK jdk"
   deprecationStatus: null
 
 KtFunctionSymbol:
@@ -1313,6 +1361,7 @@ KtFunctionSymbol:
   ]
   visibility: Public
   getDispatchReceiver(): java/lang/String
+  getContainingModule: KtSdkModule "SDK jdk"
   deprecationStatus: null
 
 KtFunctionSymbol:
@@ -1340,6 +1389,7 @@ KtFunctionSymbol:
   ]
   visibility: Public
   getDispatchReceiver(): java/lang/String
+  getContainingModule: KtSdkModule "SDK jdk"
   deprecationStatus: null
 
 KtFunctionSymbol:
@@ -1367,6 +1417,7 @@ KtFunctionSymbol:
   ]
   visibility: Public
   getDispatchReceiver(): java/lang/String
+  getContainingModule: KtSdkModule "SDK jdk"
   deprecationStatus: null
 
 KtFunctionSymbol:
@@ -1392,6 +1443,7 @@ KtFunctionSymbol:
   valueParameters: []
   visibility: Public
   getDispatchReceiver(): java/lang/String
+  getContainingModule: KtSdkModule "SDK jdk"
   deprecationStatus: null
 
 KtFunctionSymbol:
@@ -1419,6 +1471,7 @@ KtFunctionSymbol:
   ]
   visibility: Public
   getDispatchReceiver(): java/lang/String
+  getContainingModule: KtSdkModule "SDK jdk"
   deprecationStatus: null
 
 KtFunctionSymbol:
@@ -1444,6 +1497,7 @@ KtFunctionSymbol:
   valueParameters: []
   visibility: Public
   getDispatchReceiver(): java/lang/String
+  getContainingModule: KtSdkModule "SDK jdk"
   deprecationStatus: null
 
 KtFunctionSymbol:
@@ -1469,6 +1523,7 @@ KtFunctionSymbol:
   valueParameters: []
   visibility: Public
   getDispatchReceiver(): java/lang/String
+  getContainingModule: KtSdkModule "SDK jdk"
   deprecationStatus: null
 
 KtFunctionSymbol:
@@ -1494,6 +1549,7 @@ KtFunctionSymbol:
   valueParameters: []
   visibility: Public
   getDispatchReceiver(): java/lang/String
+  getContainingModule: KtSdkModule "SDK jdk"
   deprecationStatus: null
 
 KtFunctionSymbol:
@@ -1519,6 +1575,7 @@ KtFunctionSymbol:
   valueParameters: []
   visibility: Public
   getDispatchReceiver(): java/lang/String
+  getContainingModule: KtSdkModule "SDK jdk"
   deprecationStatus: null
 
 KtFunctionSymbol:
@@ -1544,6 +1601,7 @@ KtFunctionSymbol:
   valueParameters: []
   visibility: Public
   getDispatchReceiver(): java/lang/String
+  getContainingModule: KtSdkModule "SDK jdk"
   deprecationStatus: null
 
 KtFunctionSymbol:
@@ -1571,6 +1629,7 @@ KtFunctionSymbol:
   ]
   visibility: Public
   getDispatchReceiver(): java/lang/String
+  getContainingModule: KtSdkModule "SDK jdk"
   deprecationStatus: null
 
 KtNamedClassOrObjectSymbol:
@@ -1594,6 +1653,7 @@ KtNamedClassOrObjectSymbol:
   symbolKind: CLASS_MEMBER
   typeParameters: []
   visibility: Private
+  getContainingModule: KtSdkModule "SDK jdk"
   deprecationStatus: null
 
 KtConstructorSymbol:
@@ -1610,6 +1670,7 @@ KtConstructorSymbol:
   typeParameters: []
   valueParameters: []
   visibility: Public
+  getContainingModule: KtSdkModule "SDK jdk"
   deprecationStatus: null
 
 KtConstructorSymbol:
@@ -1628,6 +1689,7 @@ KtConstructorSymbol:
     KtValueParameterSymbol(original)
   ]
   visibility: Public
+  getContainingModule: KtSdkModule "SDK jdk"
   deprecationStatus: null
 
 KtConstructorSymbol:
@@ -1646,6 +1708,7 @@ KtConstructorSymbol:
     KtValueParameterSymbol(value)
   ]
   visibility: Public
+  getContainingModule: KtSdkModule "SDK jdk"
   deprecationStatus: null
 
 KtConstructorSymbol:
@@ -1666,6 +1729,7 @@ KtConstructorSymbol:
     KtValueParameterSymbol(count)
   ]
   visibility: Public
+  getContainingModule: KtSdkModule "SDK jdk"
   deprecationStatus: null
 
 KtConstructorSymbol:
@@ -1686,6 +1750,7 @@ KtConstructorSymbol:
     KtValueParameterSymbol(count)
   ]
   visibility: Public
+  getContainingModule: KtSdkModule "SDK jdk"
   deprecationStatus: null
 
 KtConstructorSymbol:
@@ -1710,6 +1775,7 @@ KtConstructorSymbol:
     KtValueParameterSymbol(count)
   ]
   visibility: Public
+  getContainingModule: KtSdkModule "SDK jdk"
   deprecationStatus: DeprecationInfo(deprecationLevel=WARNING, propagatesToOverrides=false, message=Deprecated in Java)
 
 KtConstructorSymbol:
@@ -1732,6 +1798,7 @@ KtConstructorSymbol:
     KtValueParameterSymbol(hibyte)
   ]
   visibility: Public
+  getContainingModule: KtSdkModule "SDK jdk"
   deprecationStatus: DeprecationInfo(deprecationLevel=WARNING, propagatesToOverrides=false, message=Deprecated in Java)
 
 KtConstructorSymbol:
@@ -1753,6 +1820,7 @@ KtConstructorSymbol:
     KtValueParameterSymbol(charsetName)
   ]
   visibility: Public
+  getContainingModule: KtSdkModule "SDK jdk"
   deprecationStatus: null
 
 KtConstructorSymbol:
@@ -1774,6 +1842,7 @@ KtConstructorSymbol:
     KtValueParameterSymbol(charset)
   ]
   visibility: Public
+  getContainingModule: KtSdkModule "SDK jdk"
   deprecationStatus: null
 
 KtConstructorSymbol:
@@ -1793,6 +1862,7 @@ KtConstructorSymbol:
     KtValueParameterSymbol(charsetName)
   ]
   visibility: Public
+  getContainingModule: KtSdkModule "SDK jdk"
   deprecationStatus: null
 
 KtConstructorSymbol:
@@ -1812,6 +1882,7 @@ KtConstructorSymbol:
     KtValueParameterSymbol(charset)
   ]
   visibility: Public
+  getContainingModule: KtSdkModule "SDK jdk"
   deprecationStatus: null
 
 KtConstructorSymbol:
@@ -1832,6 +1903,7 @@ KtConstructorSymbol:
     KtValueParameterSymbol(length)
   ]
   visibility: Public
+  getContainingModule: KtSdkModule "SDK jdk"
   deprecationStatus: null
 
 KtConstructorSymbol:
@@ -1850,6 +1922,7 @@ KtConstructorSymbol:
     KtValueParameterSymbol(bytes)
   ]
   visibility: Public
+  getContainingModule: KtSdkModule "SDK jdk"
   deprecationStatus: null
 
 KtConstructorSymbol:
@@ -1868,6 +1941,7 @@ KtConstructorSymbol:
     KtValueParameterSymbol(buffer)
   ]
   visibility: Public
+  getContainingModule: KtSdkModule "SDK jdk"
   deprecationStatus: null
 
 KtConstructorSymbol:
@@ -1886,6 +1960,7 @@ KtConstructorSymbol:
     KtValueParameterSymbol(builder)
   ]
   visibility: Public
+  getContainingModule: KtSdkModule "SDK jdk"
   deprecationStatus: null
 
 KtConstructorSymbol:
@@ -1905,6 +1980,7 @@ KtConstructorSymbol:
     KtValueParameterSymbol(share)
   ]
   visibility: PackageVisibility
+  getContainingModule: KtSdkModule "SDK jdk"
   deprecationStatus: null
 
 KtConstructorSymbol:
@@ -1928,4 +2004,5 @@ KtConstructorSymbol:
     KtValueParameterSymbol(value)
   ]
   visibility: PackageVisibility
+  getContainingModule: KtSdkModule "SDK jdk"
   deprecationStatus: DeprecationInfo(deprecationLevel=WARNING, propagatesToOverrides=false, message=Deprecated in Java)

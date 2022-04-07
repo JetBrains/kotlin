@@ -23,6 +23,7 @@ KtFunctionSymbol:
   ]
   visibility: Public
   getDispatchReceiver(): test/Serializer
+  getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
 
 KtFunctionSymbol:
@@ -50,6 +51,7 @@ KtFunctionSymbol:
   ]
   visibility: Public
   getDispatchReceiver(): test/Serializer
+  getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
 
 KtFunctionSymbol:
@@ -77,6 +79,7 @@ KtFunctionSymbol:
   ]
   visibility: Public
   getDispatchReceiver(): kotlin/Any
+  getContainingModule: KtLibraryModule "Library kotlin-stdlib"
   deprecationStatus: null
 
 KtFunctionSymbol:
@@ -102,6 +105,7 @@ KtFunctionSymbol:
   valueParameters: []
   visibility: Public
   getDispatchReceiver(): kotlin/Any
+  getContainingModule: KtLibraryModule "Library kotlin-stdlib"
   deprecationStatus: null
 
 KtFunctionSymbol:
@@ -127,6 +131,7 @@ KtFunctionSymbol:
   valueParameters: []
   visibility: Public
   getDispatchReceiver(): kotlin/Any
+  getContainingModule: KtLibraryModule "Library kotlin-stdlib"
   deprecationStatus: null
 
 KtConstructorSymbol:
@@ -143,4 +148,5 @@ KtConstructorSymbol:
   typeParameters: []
   valueParameters: []
   visibility: Public
+  getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null

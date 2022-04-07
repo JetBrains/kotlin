@@ -9,6 +9,7 @@ KtValueParameterSymbol:
   receiverType: null
   returnType: kotlin/Int
   symbolKind: LOCAL
+  getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
 
 KtValueParameterSymbol:
@@ -22,6 +23,7 @@ KtValueParameterSymbol:
   receiverType: null
   returnType: kotlin/Int
   symbolKind: LOCAL
+  getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
 
 KtValueParameterSymbol:
@@ -35,6 +37,7 @@ KtValueParameterSymbol:
   receiverType: null
   returnType: kotlin/Int
   symbolKind: LOCAL
+  getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
 
 KtConstructorSymbol:
@@ -55,6 +58,7 @@ KtConstructorSymbol:
     KtValueParameterSymbol(z)
   ]
   visibility: Public
+  getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
 
 KtNamedClassOrObjectSymbol:
@@ -76,6 +80,7 @@ KtNamedClassOrObjectSymbol:
   symbolKind: TOP_LEVEL
   typeParameters: []
   visibility: Public
+  getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
 
 KtAnonymousFunctionSymbol:
@@ -87,6 +92,7 @@ KtAnonymousFunctionSymbol:
   returnType: MyColor
   symbolKind: LOCAL
   valueParameters: []
+  getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
 
 KtKotlinPropertySymbol:
@@ -115,6 +121,7 @@ KtKotlinPropertySymbol:
   typeParameters: []
   visibility: Public
   getDispatchReceiver(): Some
+  getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
   getterDeprecationStatus: null
   javaGetterName: getDelegate
@@ -130,6 +137,7 @@ KtAnonymousFunctionSymbol:
   returnType: MyColor
   symbolKind: LOCAL
   valueParameters: []
+  getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
 
 KtKotlinPropertySymbol:
@@ -158,6 +166,7 @@ KtKotlinPropertySymbol:
   typeParameters: []
   visibility: Public
   getDispatchReceiver(): Some
+  getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
   getterDeprecationStatus: null
   javaGetterName: getLambda
@@ -190,6 +199,7 @@ KtKotlinPropertySymbol:
   typeParameters: []
   visibility: Public
   getDispatchReceiver(): Some
+  getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
   getterDeprecationStatus: null
   javaGetterName: getNonLazy
@@ -215,4 +225,5 @@ KtNamedClassOrObjectSymbol:
   symbolKind: TOP_LEVEL
   typeParameters: []
   visibility: Public
+  getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
