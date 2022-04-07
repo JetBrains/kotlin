@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.ir.backend.js.JsLoweredDeclarationOrigin
 import org.jetbrains.kotlin.ir.backend.js.utils.JsGenerationContext
 import org.jetbrains.kotlin.ir.backend.js.utils.emptyScope
 import org.jetbrains.kotlin.ir.declarations.IrFunction
+import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.declarations.IrVariable
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
@@ -20,6 +21,7 @@ import org.jetbrains.kotlin.ir.types.classOrNull
 import org.jetbrains.kotlin.ir.types.isAny
 import org.jetbrains.kotlin.ir.util.constructedClassType
 import org.jetbrains.kotlin.ir.util.file
+import org.jetbrains.kotlin.ir.util.fqNameWhenAvailable
 import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.js.backend.ast.*
 
@@ -59,10 +61,9 @@ class IrElementToJsStatementTransformer : BaseIrElementToJsNodeTransformer<JsSta
 
     private fun List<JsStatement>.wrapInCommentsInlineFunctionCall(expression: IrReturnableBlock): List<JsStatement> {
         val inlineFunctionSymbol = expression.inlineFunctionSymbol ?: return this
-        val owner = inlineFunctionSymbol.owner
-        val receiver = (owner.dispatchReceiverParameter ?: owner.extensionReceiverParameter)?.type?.classOrNull?.owner
-        val receiverName = receiver?.name?.asString()?.plus(".") ?: ""
-        val funName = "$receiverName${owner.name}"
+        val correspondingProperty = (inlineFunctionSymbol.owner as? IrSimpleFunction)?.correspondingPropertySymbol
+        val owner = correspondingProperty?.owner ?: inlineFunctionSymbol.owner
+        val funName = owner.fqNameWhenAvailable ?: owner.name
         return listOf(JsSingleLineComment(" Inline function '$funName' call")) + this
     }
 
