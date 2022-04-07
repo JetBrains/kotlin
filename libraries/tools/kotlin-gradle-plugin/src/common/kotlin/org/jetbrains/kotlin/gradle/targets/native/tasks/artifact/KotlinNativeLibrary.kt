@@ -8,7 +8,10 @@ package org.jetbrains.kotlin.gradle.targets.native.tasks.artifact
 import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.api.plugins.BasePlugin
+import org.gradle.api.plugins.ExtensionAware
 import org.gradle.language.base.plugins.LifecycleBasePlugin
+import org.jetbrains.kotlin.gradle.dsl.KotlinCommonToolOptions
+import org.jetbrains.kotlin.gradle.plugin.mpp.NativeBuildType
 import org.jetbrains.kotlin.gradle.plugin.mpp.NativeOutputKind
 import org.jetbrains.kotlin.gradle.plugin.mpp.enabledOnCurrentHost
 import org.jetbrains.kotlin.gradle.tasks.dependsOn
@@ -19,22 +22,42 @@ import org.jetbrains.kotlin.konan.target.presetName
 import org.jetbrains.kotlin.konan.util.visibleName
 import javax.inject.Inject
 
-open class KotlinNativeLibrary @Inject constructor(
-    project: Project,
+abstract class KotlinNativeLibraryConfig @Inject constructor(
     artifactName: String
-) : KotlinNativeArtifact(project, artifactName) {
-    lateinit var target: KonanTarget
+) : KotlinNativeArtifactConfig(artifactName) {
+    abstract var target: KonanTarget
 
-    private val kind: NativeOutputKind
-        get() = if (isStatic) NativeOutputKind.STATIC else NativeOutputKind.DYNAMIC
+    override fun createArtifact(project: Project, extensions: ExtensionAware) = KotlinNativeLibrary(
+        project,
+        artifactName,
+        modules,
+        modes,
+        isStatic,
+        linkerOptions,
+        kotlinOptionsFn,
+        binaryOptions,
+        target,
+        extensions
+    )
+}
 
-    override val taskName get() = lowerCamelCaseName("assemble", artifactName, kind.taskNameClassifier, "Library", target.presetName)
+class KotlinNativeLibrary(
+    override val project: Project,
+    override val artifactName: String,
+    override val modules: Set<Any>,
+    override val modes: Set<NativeBuildType>,
+    override val isStatic: Boolean,
+    override val linkerOptions: List<String>,
+    override val kotlinOptionsFn: KotlinCommonToolOptions.() -> Unit,
+    override val binaryOptions: Map<String, String>,
+    val target: KonanTarget,
+    extensions: ExtensionAware
+) : KotlinNativeArtifact, ExtensionAware by extensions {
+    private val kind = if (isStatic) NativeOutputKind.STATIC else NativeOutputKind.DYNAMIC
+    override fun getName() = lowerCamelCaseName(artifactName, kind.taskNameClassifier, "Library", target.presetName)
 
     override fun validate() {
         super.validate()
-        check(this::target.isInitialized) {
-            "Native artifact '$artifactName' wasn't configured because it requires target"
-        }
         check(kind.availableFor(target)) {
             "Native artifact '$artifactName' wasn't configured because ${kind.description} is not available for ${target.visibleName}"
         }

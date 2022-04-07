@@ -6,8 +6,10 @@
 package org.jetbrains.kotlin.gradle.targets.native.tasks.artifact
 
 import org.gradle.api.Action
+import org.gradle.api.Named
 import org.gradle.api.Project
 import org.gradle.api.attributes.Usage
+import org.gradle.api.plugins.ExtensionAware
 import org.jetbrains.kotlin.gradle.dsl.KotlinCommonToolOptions
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
@@ -17,12 +19,9 @@ import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.konan.target.presetName
 
-abstract class KotlinArtifact(
-    val project: Project,
+abstract class KotlinArtifactConfig(
     val artifactName: String
 ) {
-    internal abstract val taskName: String
-
     internal val modules = mutableSetOf<Any>()
     fun setModules(vararg project: Any) {
         modules.clear()
@@ -33,18 +32,30 @@ abstract class KotlinArtifact(
         modules.add(project)
     }
 
-    internal abstract fun validate()
-    internal abstract fun registerAssembleTask()
+    abstract fun createArtifact(project: Project, extensions: ExtensionAware): KotlinArtifact
 }
 
-abstract class KotlinNativeArtifact(project: Project, artifactName: String) : KotlinArtifact(project, artifactName) {
+interface KotlinArtifact : Named, ExtensionAware {
+    val project: Project
+    val artifactName: String
+    val modules: Set<Any>
+    val taskName: String get() = lowerCamelCaseName("assemble", name)
+
+    fun validate()
+    fun registerAssembleTask()
+}
+
+abstract class KotlinNativeArtifactConfig(artifactName: String) : KotlinArtifactConfig(artifactName) {
     var modes: Set<NativeBuildType> = NativeBuildType.DEFAULT_BUILD_TYPES
     fun modes(vararg modes: NativeBuildType) {
         this.modes = modes.toSet()
     }
 
-    @JvmField var isStatic: Boolean = false
-    @JvmField var linkerOptions: List<String> = emptyList()
+    @JvmField
+    var isStatic: Boolean = false
+
+    @JvmField
+    var linkerOptions: List<String> = emptyList()
 
     internal var kotlinOptionsFn: KotlinCommonToolOptions.() -> Unit = {}
     fun kotlinOptions(fn: Action<KotlinCommonToolOptions>) {
@@ -55,6 +66,14 @@ abstract class KotlinNativeArtifact(project: Project, artifactName: String) : Ko
     fun binaryOption(name: String, value: String) {
         binaryOptions[name] = value
     }
+}
+
+interface KotlinNativeArtifact : KotlinArtifact {
+    val modes: Set<NativeBuildType>
+    val isStatic: Boolean
+    val linkerOptions: List<String>
+    val kotlinOptionsFn: KotlinCommonToolOptions.() -> Unit
+    val binaryOptions: Map<String, String>
 
     override fun validate() {
         check(modules.isNotEmpty()) {
@@ -64,34 +83,34 @@ abstract class KotlinNativeArtifact(project: Project, artifactName: String) : Ko
             "Native artifact '$artifactName' wasn't configured because it requires at least one build type in modes"
         }
     }
+}
 
-    protected fun Project.registerLibsDependencies(target: KonanTarget, artifactName: String, deps: Set<Any>): String {
-        val librariesConfigurationName = lowerCamelCaseName(target.presetName, artifactName, "linkLibrary")
-        configurations.maybeCreate(librariesConfigurationName).apply {
-            isVisible = false
-            isCanBeConsumed = false
-            isCanBeResolved = true
-            isTransitive = true
-            attributes.attribute(KotlinPlatformType.attribute, KotlinPlatformType.native)
-            attributes.attribute(KotlinNativeTarget.konanTargetAttribute, target.name)
-            attributes.attribute(Usage.USAGE_ATTRIBUTE, project.objects.named(Usage::class.java, KotlinUsages.KOTLIN_API))
-        }
-        deps.forEach { dependencies.add(librariesConfigurationName, it) }
-        return librariesConfigurationName
+internal fun Project.registerLibsDependencies(target: KonanTarget, artifactName: String, deps: Set<Any>): String {
+    val librariesConfigurationName = lowerCamelCaseName(target.presetName, artifactName, "linkLibrary")
+    configurations.maybeCreate(librariesConfigurationName).apply {
+        isVisible = false
+        isCanBeConsumed = false
+        isCanBeResolved = true
+        isTransitive = true
+        attributes.attribute(KotlinPlatformType.attribute, KotlinPlatformType.native)
+        attributes.attribute(KotlinNativeTarget.konanTargetAttribute, target.name)
+        attributes.attribute(Usage.USAGE_ATTRIBUTE, project.objects.named(Usage::class.java, KotlinUsages.KOTLIN_API))
     }
+    deps.forEach { dependencies.add(librariesConfigurationName, it) }
+    return librariesConfigurationName
+}
 
-    protected fun Project.registerExportDependencies(target: KonanTarget, artifactName: String, deps: Set<Any>): String {
-        val exportConfigurationName = lowerCamelCaseName(target.presetName, artifactName, "linkExport")
-        configurations.maybeCreate(exportConfigurationName).apply {
-            isVisible = false
-            isCanBeConsumed = false
-            isCanBeResolved = true
-            isTransitive = false
-            attributes.attribute(KotlinPlatformType.attribute, KotlinPlatformType.native)
-            attributes.attribute(KotlinNativeTarget.konanTargetAttribute, target.name)
-            attributes.attribute(Usage.USAGE_ATTRIBUTE, project.objects.named(Usage::class.java, KotlinUsages.KOTLIN_API))
-        }
-        deps.forEach { dependencies.add(exportConfigurationName, it) }
-        return exportConfigurationName
+internal fun Project.registerExportDependencies(target: KonanTarget, artifactName: String, deps: Set<Any>): String {
+    val exportConfigurationName = lowerCamelCaseName(target.presetName, artifactName, "linkExport")
+    configurations.maybeCreate(exportConfigurationName).apply {
+        isVisible = false
+        isCanBeConsumed = false
+        isCanBeResolved = true
+        isTransitive = false
+        attributes.attribute(KotlinPlatformType.attribute, KotlinPlatformType.native)
+        attributes.attribute(KotlinNativeTarget.konanTargetAttribute, target.name)
+        attributes.attribute(Usage.USAGE_ATTRIBUTE, project.objects.named(Usage::class.java, KotlinUsages.KOTLIN_API))
     }
+    deps.forEach { dependencies.add(exportConfigurationName, it) }
+    return exportConfigurationName
 }
