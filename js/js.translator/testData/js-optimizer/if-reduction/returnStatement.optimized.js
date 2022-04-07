@@ -1,4 +1,5 @@
 function test(n) {
+    /*synthetic*/
     return n >= 0 ? n : -n;
 }
 
