@@ -25,9 +25,7 @@ object FirFunctionReturnTypeMismatchChecker : FirReturnExpressionChecker() {
     override fun check(expression: FirReturnExpression, context: CheckerContext, reporter: DiagnosticReporter) {
         if (expression.source == null) return
         val targetElement = expression.target.labeledElement
-        if (targetElement is FirErrorFunction ||
-            targetElement is FirAnonymousFunction && targetElement.isLambda && expression.target.labelName == null
-        ) {
+        if (targetElement is FirErrorFunction || targetElement is FirAnonymousFunction && targetElement.isLambda) {
             return
         }
         val resultExpression = expression.result
