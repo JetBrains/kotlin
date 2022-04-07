@@ -12,8 +12,8 @@ package kotlin.js
         get: function() { return this },
         configurable: true
     });
-    // @suppress
-    __magic__.globalThis = globalThis;
+    /** @suppress {undefinedVars} */
+    __magic__.globalThis = __magic__;
     delete Object.prototype.__magic__;
 }());
 """)

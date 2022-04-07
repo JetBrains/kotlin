@@ -433,6 +433,13 @@ fun sanitizeName(name: String, withHash: Boolean = true): String {
 fun IrDeclarationWithName.nameIfPropertyAccessor(): String? {
     if (this is IrSimpleFunction) {
         return when {
+            this.origin == JsLoweredDeclarationOrigin.BRIDGE_PROPERTY_ACCESSOR -> {
+                this.getJsNameOrKotlinName().asString()
+                    .removePrefix("<")
+                    .removeSuffix(">")
+                    .replaceFirst("get-", "get_")
+                    .replaceFirst("set-", "set_")
+            }
             this.correspondingPropertySymbol != null -> {
                 val property = this.correspondingPropertySymbol!!.owner
                 val name = property.getJsNameOrKotlinName().asString()
@@ -442,13 +449,6 @@ fun IrDeclarationWithName.nameIfPropertyAccessor(): String? {
                     else -> error("")
                 }
                 prefix + name
-            }
-            this.origin == JsLoweredDeclarationOrigin.BRIDGE_PROPERTY_ACCESSOR -> {
-                this.getJsNameOrKotlinName().asString()
-                    .removePrefix("<")
-                    .removeSuffix(">")
-                    .replaceFirst("get-", "get_")
-                    .replaceFirst("set-", "set_")
             }
             else -> null
         }

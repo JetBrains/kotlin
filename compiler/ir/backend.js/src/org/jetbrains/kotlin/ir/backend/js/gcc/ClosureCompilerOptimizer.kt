@@ -76,7 +76,7 @@ private class ClosureCompilerOptimizer(output: String, context: JsIrBackendConte
     }
 
     private fun JsIrBackendContext.generateUserLandExterns(): SourceFile {
-        val nameGenerator = JsNameLinkingNamer(this)
+        val nameGenerator = JsNameLinkingNamer(this, false)
 
         val globalNameScope = NameTable<IrDeclaration>()
 

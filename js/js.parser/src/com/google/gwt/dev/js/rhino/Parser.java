@@ -153,7 +153,7 @@ public class Parser {
         Node pn = nf.createBlock(ts.tokenPosition);
         try {
             int tt;
-            while ((tt = ts.peekToken()) > TokenStream.EOF && tt != TokenStream.RC) {
+            while ((tt = ts.peekTokenWithComment()) > TokenStream.EOF && tt != TokenStream.RC) {
                 if (tt == TokenStream.FUNCTION) {
                     ts.getToken();
                     pn.addChildToBack(function(ts, false));
