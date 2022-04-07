@@ -58,7 +58,7 @@ internal fun TestConfigurationBuilder.configureForKotlinxSerialization(libraries
                     configuration.addJvmClasspathRoots(librariesPaths)
                 }
 
-                override fun registerCompilerExtensions(project: Project, module: TestModule) {
+                override fun registerCompilerExtensions(project: Project, module: TestModule, configuration: CompilerConfiguration) {
                     SerializationComponentRegistrar.registerExtensions(project)
                 }
             }
