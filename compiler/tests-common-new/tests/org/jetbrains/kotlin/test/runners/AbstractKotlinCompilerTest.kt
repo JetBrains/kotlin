@@ -42,8 +42,6 @@ abstract class AbstractKotlinCompilerTest {
         val defaultConfiguration: TestConfigurationBuilder.() -> Unit = {
             assertions = JUnit5Assertions
             useAdditionalService<TemporaryDirectoryManager>(::TemporaryDirectoryManagerImpl)
-            useAdditionalService<ApplicationDisposableProvider> { ExecutionListenerBasedDisposableProvider() }
-            useAdditionalService<KotlinStandardLibrariesPathProvider> { StandardLibrariesPathProviderForKotlinProject }
             useSourcePreprocessor(*defaultPreprocessors.toTypedArray())
             useDirectives(*defaultDirectiveContainers.toTypedArray())
             configureDebugFlags()
@@ -53,11 +51,21 @@ abstract class AbstractKotlinCompilerTest {
 
     protected val configuration: TestConfigurationBuilder.() -> Unit = {
         defaultConfiguration()
+        useAdditionalService { createApplicationDisposableProvider() }
+        useAdditionalService { createKotlinStandardLibrariesPathProvider() }
         configure(this)
     }
 
     abstract fun TestConfigurationBuilder.configuration()
     private lateinit var testInfo: KotlinTestInfo
+
+    open fun createApplicationDisposableProvider(): ApplicationDisposableProvider {
+        return ExecutionListenerBasedDisposableProvider()
+    }
+
+    open fun createKotlinStandardLibrariesPathProvider(): KotlinStandardLibrariesPathProvider {
+        return StandardLibrariesPathProviderForKotlinProject
+    }
 
     @BeforeEach
     fun initTestInfo(testInfo: TestInfo) {
