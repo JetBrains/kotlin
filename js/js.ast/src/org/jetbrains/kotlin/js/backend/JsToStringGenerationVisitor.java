@@ -458,11 +458,13 @@ public class JsToStringGenerationVisitor extends JsVisitor {
 
         popSourceInfo();
 
-        nestedPush(x.getBody());
+        JsStatement body = materialize(x.getBody());
+
+        nestedPush(body);
         sourceLocationConsumer.pushSourceInfo(null);
-        accept(x.getBody());
+        accept(body);
         sourceLocationConsumer.popSourceInfo();
-        nestedPop(x.getBody());
+        nestedPop(body);
     }
 
     @Override
@@ -470,10 +472,13 @@ public class JsToStringGenerationVisitor extends JsVisitor {
         sourceLocationConsumer.pushSourceInfo(null);
 
         p.print(CHARS_DO);
-        nestedPush(x.getBody());
-        accept(x.getBody());
+
+        JsStatement body = materialize(x.getBody());
+
+        nestedPush(body);
+        accept(body);
         sourceLocationConsumer.popSourceInfo();
-        nestedPop(x.getBody());
+        nestedPop(body);
 
         pushSourceInfo(x.getCondition().getSource());
         if (needSemi) {
@@ -557,13 +562,15 @@ public class JsToStringGenerationVisitor extends JsVisitor {
 
         popSourceInfo();
 
-        nestedPush(x.getBody());
-        if (x.getBody() != null) {
+        JsStatement body = materialize(x.getBody());
+
+        nestedPush(body);
+        if (body != null) {
             sourceLocationConsumer.pushSourceInfo(null);
-            accept(x.getBody());
+            accept(body);
             sourceLocationConsumer.popSourceInfo();
         }
-        nestedPop(x.getBody());
+        nestedPop(body);
     }
 
     @Override
@@ -601,11 +608,12 @@ public class JsToStringGenerationVisitor extends JsVisitor {
 
         popSourceInfo();
 
-        nestedPush(x.getBody());
+        JsStatement body = materialize(x.getBody());
+        nestedPush(body);
         sourceLocationConsumer.pushSourceInfo(null);
-        accept(x.getBody());
+        accept(body);
         sourceLocationConsumer.popSourceInfo();
-        nestedPop(x.getBody());
+        nestedPop(body);
     }
 
     @Override
@@ -715,7 +723,7 @@ public class JsToStringGenerationVisitor extends JsVisitor {
         }
 
         sourceLocationConsumer.pushSourceInfo(null);
-        accept(thenStmt);
+        accept(materialize(thenStmt));
         sourceLocationConsumer.popSourceInfo();
 
         nestedPop(thenStmt);
@@ -755,6 +763,12 @@ public class JsToStringGenerationVisitor extends JsVisitor {
         }
 
         return false;
+    }
+
+    private static JsStatement materialize(@NotNull JsStatement statement) {
+       return statement instanceof JsCompositeBlock && ((JsCompositeBlock) statement).getStatements().size() > 1
+              ? new JsBlock(statement)
+              : statement;
     }
 
     @Override
