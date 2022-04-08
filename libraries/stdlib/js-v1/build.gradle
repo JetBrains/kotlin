@@ -172,7 +172,7 @@ task compileJs(type: NoDebugJavaExec) {
         include '**/*.js'
     }
 
-    main = "org.jetbrains.kotlin.cli.js.internal.JSStdlibLinker"
+    mainClass = "org.jetbrains.kotlin.cli.js.internal.JSStdlibLinker"
 
     // local variables for configuration cache work
     def rootDir = rootDir
