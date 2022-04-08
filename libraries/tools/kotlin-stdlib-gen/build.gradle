@@ -30,7 +30,7 @@ processResources {
 
 task run(type: JavaExec) {
     group 'application'
-    main 'generators.GenerateStandardLibKt'
+    mainClass = 'generators.GenerateStandardLibKt'
     classpath sourceSets.main.runtimeClasspath
     args = ["${rootDir}"]
     systemProperty 'line.separator', '\n'
@@ -38,7 +38,7 @@ task run(type: JavaExec) {
 
 task generateStdlibTests(type: JavaExec) {
     group 'application'
-    main 'generators.GenerateStandardLibTestsKt'
+    mainClass = 'generators.GenerateStandardLibTestsKt'
     classpath sourceSets.main.runtimeClasspath
     args = ["${rootDir}"]
     systemProperty 'line.separator', '\n'
@@ -46,7 +46,7 @@ task generateStdlibTests(type: JavaExec) {
 
 task generateUnicodeData(type: JavaExec) {
     group 'application'
-    main 'generators.unicode.GenerateUnicodeDataKt'
+    mainClass = 'generators.unicode.GenerateUnicodeDataKt'
     classpath sourceSets.main.runtimeClasspath
     args = ["${rootDir}"]
 }
