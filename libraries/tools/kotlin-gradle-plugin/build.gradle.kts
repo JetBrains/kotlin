@@ -54,7 +54,7 @@ dependencies {
     commonCompileOnly(project(":kotlin-reflect"))
     commonCompileOnly(intellijCore())
     commonCompileOnly(commonDependency("org.jetbrains.teamcity:serviceMessages"))
-    commonCompileOnly("com.gradle:gradle-enterprise-gradle-plugin:3.6.3")
+    commonCompileOnly("com.gradle:gradle-enterprise-gradle-plugin:3.9")
 
     commonImplementation(project(":kotlin-gradle-plugin-idea"))
     commonImplementation(project(":kotlin-util-klib"))
