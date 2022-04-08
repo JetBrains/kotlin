@@ -1,13 +1,15 @@
 package translators
 
 import org.jetbrains.dokka.DokkaConfiguration
+import org.jetbrains.dokka.base.testApi.testRunner.BaseAbstractTest
+import org.jetbrains.dokka.links.DRI
 import org.jetbrains.dokka.model.*
-import org.junit.jupiter.api.Assertions.*
 import org.jetbrains.dokka.model.doc.CodeBlock
 import org.jetbrains.dokka.model.doc.P
 import org.jetbrains.dokka.model.doc.Text
-import org.jetbrains.dokka.base.testApi.testRunner.BaseAbstractTest
 import org.junit.Assert
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 
 class DefaultDescriptorToDocumentableTranslatorTest : BaseAbstractTest() {
@@ -660,6 +662,67 @@ class DefaultDescriptorToDocumentableTranslatorTest : BaseAbstractTest() {
                 )
 
                 runTestSuitesAgainstGivenClasses(classes, testSuites)
+            }
+        }
+    }
+
+    val javaConfiguration = dokkaConfiguration {
+        sourceSets {
+            sourceSet {
+                sourceRoots = listOf("src/main/java")
+                includeNonPublic = true
+            }
+        }
+    }
+
+    @Disabled // The compiler throws away annotations on unresolved types upstream
+    @Test
+    fun `Can annotate unresolved type`() {
+        testInline(
+            """
+            |/src/main/java/sample/FooLibrary.kt
+            |package sample;
+            |@MustBeDocumented
+            |@Target(AnnotationTarget.TYPE)
+            |annotation class Hello()
+            |fun bar(): @Hello() TypeThatDoesntResolve
+            """.trimMargin(),
+            javaConfiguration
+        ) {
+            documentablesMergingStage = { module ->
+                val type = module.packages.single().functions.single().type as GenericTypeConstructor
+                assertEquals(
+                    Annotations.Annotation(DRI("sample", "Hello"), emptyMap()),
+                    type.extra[Annotations]?.directAnnotations?.values?.single()?.single()
+                )
+            }
+        }
+    }
+
+    /**
+     * Kotlin Int becomes java int. Java int cannot be annotated in source, but Kotlin Int can be.
+     * This is paired with KotlinAsJavaPluginTest.`Java primitive annotations work`()
+     */
+    @Test
+    fun `Java primitive annotations work`() {
+        testInline(
+            """
+            |/src/main/java/sample/FooLibrary.kt
+            |package sample;
+            |@MustBeDocumented
+            |@Target(AnnotationTarget.TYPE)
+            |annotation class Hello()
+            |fun bar(): @Hello() Int
+            """.trimMargin(),
+            javaConfiguration
+        ) {
+            documentablesMergingStage = { module ->
+                val type = module.packages.single().functions.single().type as GenericTypeConstructor
+                assertEquals(
+                    Annotations.Annotation(DRI("sample", "Hello"), emptyMap()),
+                    type.extra[Annotations]?.directAnnotations?.values?.single()?.single()
+                )
+                assertEquals("kotlin/Int///PointingToDeclaration/", type.dri.toString())
             }
         }
     }
