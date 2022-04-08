@@ -1,3 +1,4 @@
+// IGNORE_FIR
 // EXPECTED_REACHABLE_NODES: 1300
 // MODULE: module2
 // FILE: module2.kt
