@@ -43,8 +43,8 @@ projectTest {
 val generateTests by generator("org.jetbrains.kotlin.kotlinp.test.GenerateKotlinpTestsKt")
 
 val shadowJar by task<ShadowJar> {
-    classifier = "shadow"
-    version = null
+    archiveClassifier.set("shadow")
+    archiveVersion.set("")
     configurations = listOf(shadows)
     from(mainSourceSet.output)
     manifest {

@@ -79,14 +79,14 @@ val serializeJvm = serializeTask("serializeJvm", prepareSourcesJvm, listOf(built
 val builtinsJar by task<Jar> {
     dependsOn(serialize)
     from(serialize) { include("kotlin/**") }
-    destinationDir = File(buildDir, "libs")
+    destinationDirectory.set(File(buildDir, "libs"))
 }
 
 val builtinsJvmJar by task<Jar> {
     dependsOn(serializeJvm)
     from(serializeJvm) { include("kotlin/**") }
     archiveClassifier.set("jvm")
-    destinationDir = File(buildDir, "libs")
+    destinationDirectory.set(File(buildDir, "libs"))
 }
 
 val assemble by tasks.getting {
