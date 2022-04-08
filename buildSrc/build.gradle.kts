@@ -21,6 +21,9 @@ buildscript {
         }
     }
 
+    // workaround for KGP build metrics reports: https://github.com/gradle/gradle/issues/20001
+    project.extensions.extraProperties["kotlin.build.report.output"] = null
+
     dependencies {
         classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:${project.bootstrapKotlinVersion}")
         classpath("org.jetbrains.kotlin:kotlin-sam-with-receiver:${project.bootstrapKotlinVersion}")
