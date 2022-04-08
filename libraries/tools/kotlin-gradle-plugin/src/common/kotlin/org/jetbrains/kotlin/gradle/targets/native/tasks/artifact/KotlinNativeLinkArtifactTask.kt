@@ -161,10 +161,10 @@ open class KotlinNativeLinkArtifactTask @Inject constructor(
             konanTarget,
             outputKind,
             libraries.klibs(),
-            emptyList(), //todo FriendModules
+            emptyList(), //FriendModules aren't needed here because it's no test artifact
             enableEndorsedLibs,
             kotlinOptions,
-            emptyList(),//todo CompilerPlugins
+            emptyList(),//CompilerPlugins aren't needed here because it's no compilation but linking
             processTests,
             entryPoint,
             embedBitcode,
@@ -173,7 +173,7 @@ open class KotlinNativeLinkArtifactTask @Inject constructor(
             isStaticFramework,
             exportLibraries.klibs(),
             includeLibraries.klibs(),
-            emptyList()//todo external deps and cache
+            emptyList()//todo support org.jetbrains.kotlin.gradle.tasks.CacheBuilder and org.jetbrains.kotlin.gradle.tasks.ExternalDependenciesBuilder
         )
 
         KotlinNativeCompilerRunner(project).run(buildArgs)
