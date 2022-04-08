@@ -1,3 +1,4 @@
+// FIR_IDE_IGNORE
 // !API_VERSION: 1.5
 // !LANGUAGE: +JvmRecordSupport
 // JVM_TARGET: 17
