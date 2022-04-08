@@ -38,9 +38,9 @@ private fun IrFunction.isInvokeOfSuspendCallableReference(): Boolean =
             && parentAsClass.origin == JvmLoweredDeclarationOrigin.FUNCTION_REFERENCE_IMPL
 
 private fun IrFunction.isBridgeToSuspendImplMethod(): Boolean =
-    isSuspend && this is IrSimpleFunction && parentAsClass.functions.any {
+    isSuspend && this is IrSimpleFunction && (parent as? IrClass)?.functions?.any {
         it.name.asString() == name.asString() + SUSPEND_IMPL_NAME_SUFFIX && it.attributeOwnerId == attributeOwnerId
-    }
+    } == true
 
 private fun IrFunction.isStaticInlineClassReplacementDelegatingCall(): Boolean {
     if (this !is IrAttributeContainer || isStaticInlineClassReplacement) return false
