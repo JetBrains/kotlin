@@ -43,11 +43,10 @@ internal constructor(@PublishedApi internal val storage: IntArray) : Collection<
     /** Creates an iterator over the elements of the array. */
     public override operator fun iterator(): kotlin.collections.Iterator<UInt> = Iterator(storage)
 
-    @Suppress("DEPRECATION_ERROR")
-    private class Iterator(private val array: IntArray) : UIntIterator() {
+    private class Iterator(private val array: IntArray) : kotlin.collections.Iterator<UInt> {
         private var index = 0
         override fun hasNext() = index < array.size
-        override fun nextUInt() = if (index < array.size) array[index++].toUInt() else throw NoSuchElementException(index.toString())
+        override fun next() = if (index < array.size) array[index++].toUInt() else throw NoSuchElementException(index.toString())
     }
 
     override fun contains(element: UInt): Boolean {
