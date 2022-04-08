@@ -98,7 +98,7 @@ class FirFrontendFacade(
             module.targetPlatform.isJvm() -> TopDownAnalyzerFacadeForJVM.newModuleSearchScope(project, ktFiles)
             module.targetPlatform.isCommon() -> TopDownAnalyzerFacadeForJVM.newModuleSearchScope(project, ktFiles)
             module.targetPlatform.isJs() -> AbstractTopDownAnalyzerFacadeForJS.newModuleSearchScope(project, ktFiles)
-            else -> throw Exception("Unsupported")
+            else -> error("Unsupported")
         }
 
         val moduleName = Name.identifier(module.name)
@@ -109,7 +109,7 @@ class FirFrontendFacade(
                 module.targetPlatform.isJvm() -> configureJvmDependencies(configuration)
                 module.targetPlatform.isCommon() -> configureJvmDependencies(configuration)
                 module.targetPlatform.isJs() -> configureJsDependencies(module, testServices)
-                else -> throw Exception("Unsupported")
+                else -> error("Unsupported")
             }
 
             sourceDependencies(moduleInfoProvider.getRegularDependentSourceModules(module))
@@ -260,7 +260,7 @@ private fun configureLibrarySession(
             languageVersionSettings,
         )
     }
-    else -> throw Exception("Unsupported")
+    else -> error("Unsupported")
 }
 
 @OptIn(PrivateSessionConstructor::class, SessionConfiguration::class)
@@ -317,7 +317,7 @@ private fun configureMainSession(
                 sessionConfigurator,
             )
         }
-        else -> throw Exception("Unsupported")
+        else -> error("Unsupported")
     }
 }
 
