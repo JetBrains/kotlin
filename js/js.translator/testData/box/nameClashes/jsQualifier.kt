@@ -1,3 +1,4 @@
+// IGNORE_FIR
 // MODULE: lib
 // FILE: lib.kt
 @file:JsQualifier("chopchop.foo")
