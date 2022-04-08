@@ -5049,6 +5049,19 @@ if (PlatformInfo.isAppleTarget(project)) {
     }
 }
 
+tasks.register("KT-50983", KonanDriverTest) {
+    enabled = PlatformInfo.isWindows() && (project.target.family == Family.MINGW)
+    doBeforeBuild {
+        mkdir(buildDir)
+        exec {
+            commandLine UtilsKt.binaryFromToolchain(project, "windres")
+            args "$projectDir/windows/KT-50983/File.rc", "-O", "coff", "-o", "$buildDir/File.res"
+        }
+    }
+    source = "windows/KT-50983/main.kt"
+    flags = ['-linker-option', "$buildDir/File.res"]
+}
+
 standaloneTest("jsinterop_math") {
     doBeforeBuild {
         def jsinteropScript = isWindows() ? "jsinterop.bat" : "jsinterop"

@@ -498,6 +498,11 @@ fun Project.buildStaticLibrary(cSources: Collection<File>, output: File, objDir:
     }
 }
 
+fun Project.binaryFromToolchain(toolName: String): File {
+    val platform = platformManager.platform(testTarget)
+    return File("${platform.configurables.absoluteTargetToolchain}/bin/$toolName")
+}
+
 // Workaround the deprecation warning from stdlib's appendln, which is reported because this module is compiled with API version 1.3.
 internal fun StringBuilder.appendln(o: Any?) {
     append(o)

@@ -1,0 +1,16 @@
+1 VERSIONINFO
+  FILEVERSION     5,0,0,1
+  PRODUCTVERSION  5,0,0,1
+  BEGIN
+    BLOCK "StringFileInfo"
+    BEGIN
+      BLOCK "080904E4"
+      BEGIN
+        VALUE "CompanyName", "CompanyName"
+        VALUE "FileDescription", "Test Application"
+        VALUE "FileVersion", "1.0"
+        VALUE "InternalName", "Test"
+        VALUE "OriginalFilename", "Test.exe"
+      END
+    END
+  END
