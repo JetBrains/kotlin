@@ -1,18 +1,6 @@
 @kotlin.internal.InlineOnly
 public inline fun <T> Sequence(crossinline iterator: () -> kotlin.collections.Iterator<T>): kotlin.sequences.Sequence<T>
 
-@kotlin.SinceKotlin(version = "1.3")
-@kotlin.Deprecated(level = DeprecationLevel.ERROR, message = "Use 'iterator { }' function instead.", replaceWith = kotlin.ReplaceWith(expression = "iterator(builderAction)", imports = {}))
-@kotlin.internal.InlineOnly
-public inline fun <T> buildIterator(@kotlin.BuilderInference
-noinline builderAction: suspend kotlin.sequences.SequenceScope<T>.() -> kotlin.Unit): kotlin.collections.Iterator<T>
-
-@kotlin.SinceKotlin(version = "1.3")
-@kotlin.Deprecated(level = DeprecationLevel.ERROR, message = "Use 'sequence { }' function instead.", replaceWith = kotlin.ReplaceWith(expression = "sequence(builderAction)", imports = {}))
-@kotlin.internal.InlineOnly
-public inline fun <T> buildSequence(@kotlin.BuilderInference
-noinline builderAction: suspend kotlin.sequences.SequenceScope<T>.() -> kotlin.Unit): kotlin.sequences.Sequence<T>
-
 public fun <T> emptySequence(): kotlin.sequences.Sequence<T>
 
 public fun <T : kotlin.Any> generateSequence(nextFunction: () -> T?): kotlin.sequences.Sequence<T>
@@ -628,6 +616,3 @@ public abstract class SequenceScope<in T> {
 
     public final suspend fun yieldAll(sequence: kotlin.sequences.Sequence<T>): kotlin.Unit
 }
-
-@kotlin.Deprecated(level = DeprecationLevel.ERROR, message = "Use SequenceScope class instead.", replaceWith = kotlin.ReplaceWith(expression = "SequenceScope<T>", imports = {}))
-public typealias SequenceBuilder<T> = kotlin.sequences.SequenceScope<T>
