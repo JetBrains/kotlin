@@ -138,6 +138,8 @@ class ConeOverloadConflictResolver(
             isAppropriateForReceiverType(candidate)
         }
 
+        if (bestCandidatesByReceiverType.size <= 1) return bestCandidatesByReceiverType.singleOrNull()
+
         val candidateSignatures = bestCandidatesByReceiverType.map { candidateCall ->
             createFlatSignature(candidateCall)
         }
