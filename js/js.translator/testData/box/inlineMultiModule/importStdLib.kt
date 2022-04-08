@@ -1,3 +1,4 @@
+// IGNORE_FIR
 // EXPECTED_REACHABLE_NODES: 1376
 // MODULE: lib
 // FILE: lib.kt
