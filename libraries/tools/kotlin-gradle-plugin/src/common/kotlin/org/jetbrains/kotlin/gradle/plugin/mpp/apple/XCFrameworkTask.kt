@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.Framework
 import org.jetbrains.kotlin.gradle.plugin.mpp.NativeBuildType
 import org.jetbrains.kotlin.gradle.tasks.*
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
+import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import java.io.File
 
@@ -138,6 +139,10 @@ private fun Project.registerAssembleFatForXCFrameworkTask(
 }
 
 abstract class XCFrameworkTask : DefaultTask() {
+    init {
+        onlyIf { HostManager.hostIsMac }
+    }
+
     /**
      * A base name for the XCFramework.
      */
