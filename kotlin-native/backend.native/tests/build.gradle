@@ -184,6 +184,7 @@ run {
         dependsOn(tasksOf(FileCheckTest))
     }
     dependsOn(":kotlin-native:Interop:Indexer:check")
+    dependsOn(":kotlin-native:Interop:StubGenerator:check")
 }
 
 task sanity {
