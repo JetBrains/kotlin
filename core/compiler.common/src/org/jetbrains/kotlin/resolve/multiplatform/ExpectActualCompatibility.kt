@@ -89,3 +89,6 @@ sealed class ExpectActualCompatibility<out D> {
 
     object Compatible : ExpectActualCompatibility<Nothing>()
 }
+
+val ExpectActualCompatibility<*>.compatible: Boolean
+    get() = this == ExpectActualCompatibility.Compatible

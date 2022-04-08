@@ -78,18 +78,6 @@ internal fun FirMemberDeclaration.isEffectivelyExternal(
 
 internal val FirClass.canHaveOpenMembers: Boolean get() = modality() != Modality.FINAL || classKind == ClassKind.ENUM_CLASS
 
-internal fun FirRegularClass.isInlineOrValueClass(): Boolean {
-    if (this.classKind != ClassKind.CLASS) return false
-
-    return isInline || hasModifier(KtTokens.VALUE_KEYWORD)
-}
-
-internal fun FirRegularClassSymbol.isInlineOrValueClass(): Boolean {
-    if (this.classKind != ClassKind.CLASS) return false
-
-    return isInline
-}
-
 internal val FirDeclaration.isEnumEntryInitializer: Boolean
     get() {
         if (this !is FirConstructor || !this.isPrimary) return false

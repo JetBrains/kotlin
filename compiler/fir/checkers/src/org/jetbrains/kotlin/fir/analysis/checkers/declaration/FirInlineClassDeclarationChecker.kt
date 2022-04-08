@@ -40,7 +40,7 @@ object FirInlineClassDeclarationChecker : FirRegularClassChecker() {
 
     @Suppress("NAME_SHADOWING")
     override fun check(declaration: FirRegularClass, context: CheckerContext, reporter: DiagnosticReporter) {
-        if (!declaration.isInlineOrValueClass()) {
+        if (!declaration.symbol.isInlineOrValueClass()) {
             return
         }
 

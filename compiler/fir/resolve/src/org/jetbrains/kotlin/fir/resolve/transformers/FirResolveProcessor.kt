@@ -29,7 +29,7 @@ abstract class FirTransformerBasedResolveProcessor(
 ) : FirResolveProcessor(session, scopeSession) {
     abstract val transformer: FirTransformer<Nothing?>
 
-    fun processFile(file: FirFile) {
+    open fun processFile(file: FirFile) {
         file.transform<FirFile, Nothing?>(transformer, null)
     }
 }

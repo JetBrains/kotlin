@@ -1,18 +1,16 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.fir.analysis.checkers.declaration
+package org.jetbrains.kotlin.fir.resolve.transformers.mpp
 
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Modality.*
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.analysis.checkers.collectEnumEntries
-import org.jetbrains.kotlin.fir.analysis.checkers.fullyExpandedClass
-import org.jetbrains.kotlin.fir.declarations.FirDeclarationStatus
+import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.resolve.providers.dependenciesSymbolProvider
@@ -43,7 +41,7 @@ object FirExpectActualResolver {
         actualSymbol: FirBasedSymbol<*>,
         useSiteSession: FirSession,
         scopeSession: ScopeSession
-    ): Map<ExpectActualCompatibility<FirBasedSymbol<*>>, List<FirBasedSymbol<*>>>? {
+    ): ExpectForActualData? {
         return when (actualSymbol) {
             is FirCallableSymbol<*> -> {
                 val callableId = actualSymbol.callableId
@@ -228,8 +226,8 @@ object FirExpectActualResolver {
         }
 
         if (expectClassSymbol.classKind == ClassKind.ENUM_CLASS) {
-            val expectEntries = expectClassSymbol.collectEnumEntries().map { it.name }
-            val actualEntries = actualClassSymbol.collectEnumEntries().map { it.name }
+            val expectEntries = expectClassSymbol.fir.collectEnumEntries().map { it.name }
+            val actualEntries = actualClassSymbol.fir.collectEnumEntries().map { it.name }
 
             if (!actualEntries.containsAll(expectEntries)) {
                 return ExpectActualCompatibility.Incompatible.EnumEntries

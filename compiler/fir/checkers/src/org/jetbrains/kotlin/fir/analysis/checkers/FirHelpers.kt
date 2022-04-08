@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.fir.expressions.FirVariableAssignment
 import org.jetbrains.kotlin.fir.expressions.impl.FirEmptyExpressionBlock
 import org.jetbrains.kotlin.fir.expressions.toResolvedCallableSymbol
 import org.jetbrains.kotlin.fir.resolve.SessionHolder
+import org.jetbrains.kotlin.fir.declarations.fullyExpandedClass
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.resolve.toFirRegularClassSymbol
@@ -137,20 +138,6 @@ fun FirClassSymbol<*>.getContainingDeclarationSymbol(session: FirSession): FirCl
     }
 
     return null
-}
-
-/**
- * Returns the FirClassLikeDeclaration that the
- * sequence of FirTypeAlias'es points to starting
- * with `this`. Or null if something goes wrong or we have anonymous object symbol.
- */
-tailrec fun FirClassLikeSymbol<*>.fullyExpandedClass(useSiteSession: FirSession): FirRegularClassSymbol? {
-    return when (this) {
-        is FirRegularClassSymbol -> this
-        is FirAnonymousObjectSymbol -> null
-        is FirTypeAliasSymbol -> resolvedExpandedTypeRef.coneTypeSafe<ConeClassLikeType>()
-            ?.toSymbol(useSiteSession)?.fullyExpandedClass(useSiteSession)
-    }
 }
 
 /**
@@ -574,11 +561,6 @@ fun extractArgumentsTypeRefAndSource(typeRef: FirTypeRef?): List<FirTypeRefSourc
 }
 
 data class FirTypeRefSource(val typeRef: FirTypeRef?, val source: KtSourceElement?)
-
-fun FirRegularClassSymbol.collectEnumEntries(): Collection<FirEnumEntrySymbol> {
-    assert(classKind == ClassKind.ENUM_CLASS)
-    return declarationSymbols.filterIsInstance<FirEnumEntrySymbol>()
-}
 
 val FirClassLikeSymbol<*>.classKind: ClassKind?
     get() = (this as? FirClassSymbol<*>)?.classKind

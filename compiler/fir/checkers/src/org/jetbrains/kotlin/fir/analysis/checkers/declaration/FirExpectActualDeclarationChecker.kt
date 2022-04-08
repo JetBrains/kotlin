@@ -13,13 +13,12 @@ import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.diagnostics.reportOn
-import org.jetbrains.kotlin.fir.declarations.FirDeclaration
-import org.jetbrains.kotlin.fir.declarations.FirMemberDeclaration
+import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.isActual
 import org.jetbrains.kotlin.fir.languageVersionSettings
-import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
+import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeAliasSymbol
@@ -46,9 +45,8 @@ object FirExpectActualDeclarationChecker : FirBasicDeclarationChecker() {
         reporter: DiagnosticReporter,
         checkActual: Boolean = true
     ) {
-        val scopeSession = ScopeSession()
         val symbol = declaration.symbol
-        val compatibilityToMembersMap = FirExpectActualResolver.findExpectForActual(symbol, context.session, scopeSession) ?: return
+        val compatibilityToMembersMap = symbol.expectForActual ?: return
         val session = context.session
 
         checkAmbiguousExpects(symbol, compatibilityToMembersMap, symbol, context, reporter)
@@ -81,14 +79,11 @@ object FirExpectActualDeclarationChecker : FirBasicDeclarationChecker() {
                 ): Boolean {
                     val (expectedMember, incompatibility) = expectedWithIncompatibility
                     val actualMember = incompatibility.values.singleOrNull()?.singleOrNull()
+                    @OptIn(SymbolInternals::class)
                     return actualMember != null &&
                             actualMember.isExplicitActualDeclaration() &&
                             !incompatibility.allStrongIncompatibilities() &&
-                            FirExpectActualResolver.findExpectForActual(
-                                actualMember,
-                                session,
-                                scopeSession
-                            )?.values?.singleOrNull()?.singleOrNull() == expectedMember
+                            actualMember.fir.expectForActual?.values?.singleOrNull()?.singleOrNull() == expectedMember
                 }
 
                 val nonTrivialUnfulfilled = singleIncompatibility.unfulfilled.filterNot(::hasSingleActualSuspect)
@@ -210,27 +205,6 @@ object FirExpectActualDeclarationChecker : FirBasicDeclarationChecker() {
 //        }
         return true
     }
-}
-
-fun FirBasedSymbol<*>.isAnnotationConstructor(session: FirSession): Boolean {
-    if (this !is FirConstructorSymbol) return false
-    return getConstructedClass(session)?.classKind == ClassKind.ANNOTATION_CLASS
-}
-
-fun FirBasedSymbol<*>.isEnumConstructor(session: FirSession): Boolean {
-    if (this !is FirConstructorSymbol) return false
-    return getConstructedClass(session)?.classKind == ClassKind.ENUM_CLASS
-}
-
-fun FirBasedSymbol<*>.isPrimaryConstructorOfInlineClass(session: FirSession): Boolean {
-    if (this !is FirConstructorSymbol) return false
-    return getConstructedClass(session)?.isInlineOrValueClass() == true && this.isPrimary
-}
-
-fun FirConstructorSymbol.getConstructedClass(session: FirSession): FirRegularClassSymbol? {
-    return resolvedReturnTypeRef.coneType
-        .fullyExpandedType(session)
-        .toSymbol(session) as? FirRegularClassSymbol?
 }
 
 fun FirBasedSymbol<*>.expandedClass(session: FirSession): FirRegularClassSymbol? {
