@@ -96,15 +96,8 @@ class CoroutineTransformerMethodVisitor(
                 addCompletionParameterToLVT(methodNode)
             }
 
-            val examiner = MethodNodeExaminer(
-                containingClassInternalName,
-                methodNode,
-                suspensionPoints,
-                disableTailCallOptimizationForFunctionReturningUnit
-            )
-            if (examiner.allSuspensionPointsAreTailCalls(suspensionPoints)) {
-                examiner.replacePopsBeforeSafeUnitInstancesWithCoroutineSuspendedChecks()
-                examiner.addCoroutineSuspendedChecksBeforeSafeCheckcasts()
+            if (methodNode.allSuspensionPointsAreTailCalls(suspensionPoints, !disableTailCallOptimizationForFunctionReturningUnit)) {
+                methodNode.addCoroutineSuspendedChecks(suspensionPoints)
                 dropSuspensionMarkers(methodNode)
                 dropUnboxInlineClassMarkers(methodNode, suspensionPoints)
                 return
