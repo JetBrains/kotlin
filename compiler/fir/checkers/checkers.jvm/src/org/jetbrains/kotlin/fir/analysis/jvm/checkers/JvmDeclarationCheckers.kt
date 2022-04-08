@@ -18,7 +18,6 @@ object JvmDeclarationCheckers : DeclarationCheckers() {
             FirJvmStaticChecker,
             FirRepeatableAnnotationChecker,
             FirJvmInvalidAndDangerousCharactersChecker,
-            FirDynamicUnsupportedChecker,
         )
 
     override val classCheckers: Set<FirClassChecker>
