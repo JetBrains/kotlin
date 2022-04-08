@@ -332,6 +332,8 @@ sourcesJar {
             project(it).mainSourceSet.allSource
         }
     }
+
+    dependsOn(":compiler:fir:checkers:generateCheckersComponents")
 }
 
 javadocJar()
