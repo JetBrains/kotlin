@@ -45,11 +45,11 @@ object Elements : TemplateGroupBase() {
 
         doc { "Returns `true` if [element] is found in the ${f.collection}." }
         typeParam("@kotlin.internal.OnlyInputTypes T")
-        if (f == ArraysOfPrimitives && primitive!!.isFloatingPoint()) {
+        val isDeprecated = f == ArraysOfPrimitives && primitive!!.isFloatingPoint()
+        if (isDeprecated) {
             val replacement = "any { it == element }"
             val message = floatingSearchDeprecationMessage(signature, replacement)
-            deprecate(Deprecation(message, replacement, warningSince = "1.4", errorSince = "1.6"))
-            annotation("""@Suppress("DEPRECATION_ERROR")""")
+            deprecate(Deprecation(message, replacement, warningSince = "1.4", errorSince = "1.6", hiddenSince = "1.7"))
         }
         returns("Boolean")
         body(Iterables) {
@@ -59,6 +59,7 @@ object Elements : TemplateGroupBase() {
             return indexOf(element) >= 0
             """
         }
+        if (!isDeprecated)
         body(ArraysOfPrimitives, ArraysOfObjects, Sequences) {
             """
             return indexOf(element) >= 0
@@ -77,7 +78,7 @@ object Elements : TemplateGroupBase() {
         if (f == ArraysOfPrimitives && primitive!!.isFloatingPoint()) {
             val replacement = "indexOfFirst { it == element }"
             val message = floatingSearchDeprecationMessage(signature, replacement)
-            deprecate(Deprecation(message, replacement, warningSince = "1.4", errorSince = "1.6"))
+            deprecate(Deprecation(message, replacement, warningSince = "1.4", errorSince = "1.6", hiddenSince = "1.7"))
         }
         returns("Int")
         body {
@@ -142,7 +143,7 @@ object Elements : TemplateGroupBase() {
         if (f == ArraysOfPrimitives && primitive!!.isFloatingPoint()) {
             val replacement = "indexOfLast { it == element }"
             val message = floatingSearchDeprecationMessage(signature, replacement)
-            deprecate(Deprecation(message, replacement, warningSince = "1.4", errorSince = "1.6"))
+            deprecate(Deprecation(message, replacement, warningSince = "1.4", errorSince = "1.6", hiddenSince = "1.7"))
         }
         returns("Int")
         body {
