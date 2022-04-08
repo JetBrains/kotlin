@@ -143,15 +143,15 @@ internal constructor(private val nativePattern: Pattern) : Serializable {
      */
     public actual fun matchEntire(input: CharSequence): MatchResult? = nativePattern.matcher(input).matchEntire(input)
 
-    @SinceKotlin("1.5")
-    @ExperimentalStdlibApi
+    @SinceKotlin("1.7")
+    @WasExperimental(ExperimentalStdlibApi::class)
     public actual fun matchAt(input: CharSequence, index: Int): MatchResult? =
         nativePattern.matcher(input).useAnchoringBounds(false).useTransparentBounds(true).region(index, input.length).run {
             if (lookingAt()) MatcherMatchResult(this, input) else null
         }
 
-    @SinceKotlin("1.5")
-    @ExperimentalStdlibApi
+    @SinceKotlin("1.7")
+    @WasExperimental(ExperimentalStdlibApi::class)
     public actual fun matchesAt(input: CharSequence, index: Int): Boolean =
         nativePattern.matcher(input).useAnchoringBounds(false).useTransparentBounds(true).region(index, input.length).lookingAt()
 
