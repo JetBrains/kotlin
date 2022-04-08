@@ -19,6 +19,6 @@ sourceSets {
 val mutesPackageName = "org.jetbrains.kotlin.test.mutes"
 
 application {
-    mainClassName = "$mutesPackageName.MutedTestsSyncKt"
+    mainClass.set("$mutesPackageName.MutedTestsSyncKt")
     applicationDefaultJvmArgs = rootProject.properties.filterKeys { it.startsWith(mutesPackageName) }.map { (k, v) -> "-D$k=$v" }
 }
