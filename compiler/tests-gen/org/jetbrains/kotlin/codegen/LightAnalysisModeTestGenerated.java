@@ -10203,6 +10203,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
                 runTest("compiler/testData/codegen/box/coroutines/tailCallOptimizations/checkcast.kt");
             }
 
+            @TestMetadata("checkcast2.kt")
+            public void testCheckcast2() throws Exception {
+                runTest("compiler/testData/codegen/box/coroutines/tailCallOptimizations/checkcast2.kt");
+            }
+
             @TestMetadata("crossinline.kt")
             public void testCrossinline() throws Exception {
                 runTest("compiler/testData/codegen/box/coroutines/tailCallOptimizations/crossinline.kt");

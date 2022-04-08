@@ -12771,6 +12771,12 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
             }
 
             @Test
+            @TestMetadata("checkcast2.kt")
+            public void testCheckcast2() throws Exception {
+                runTest("compiler/testData/codegen/box/coroutines/tailCallOptimizations/checkcast2.kt");
+            }
+
+            @Test
             @TestMetadata("crossinline.kt")
             public void testCrossinline() throws Exception {
                 runTest("compiler/testData/codegen/box/coroutines/tailCallOptimizations/crossinline.kt");
