@@ -254,3 +254,5 @@ inline fun <T, U, K, V> List<T>.flatGroupBy(
     }
     return result
 }
+
+fun <E> MutableList<E>.popLast(): E = removeAt(lastIndex)
