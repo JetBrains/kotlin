@@ -12,6 +12,7 @@ import org.gradle.api.attributes.Attribute
 import org.gradle.api.attributes.LibraryElements
 import org.gradle.api.attributes.java.TargetJvmEnvironment
 import org.gradle.api.attributes.plugin.GradlePluginApiVersion
+import org.gradle.api.file.FileCollection
 import org.gradle.api.plugins.JavaLibraryPlugin
 import org.gradle.api.plugins.JavaPluginExtension
 import org.gradle.api.publish.PublishingExtension
@@ -480,8 +481,8 @@ fun Project.publishShadowedJar(
 
         // When Gradle traverses the inputs, reject the shaded compiler JAR,
         // which leads to the content of that JAR being excluded as well:
-        val compilerDummyJarFile = project.provider { project.configurations.getByName("compilerDummyJar").singleFile }
-        exclude { it.file == compilerDummyJarFile.get() }
+        val compilerDummyJarConfiguration: FileCollection = project.configurations.getByName("compilerDummyJar")
+        exclude { it.file == compilerDummyJarConfiguration.singleFile }
     }
 
     // Removing artifact produced by Jar task
