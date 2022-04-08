@@ -52,6 +52,8 @@ val commonMainSources by task<Sync> {
     }
 
     into("$buildDir/commonMainSources")
+
+    dependsOn(":prepare:build.version:writeStdlibVersion")
 }
 
 val commonTestSources by task<Sync> {

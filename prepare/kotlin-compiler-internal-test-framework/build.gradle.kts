@@ -15,5 +15,7 @@ dependencies {
 
 publish()
 runtimeJar()
-sourcesJar()
+sourcesJar().configure {
+    dependsOn(":compiler:fir:checkers:generateCheckersComponents")
+}
 javadocJar()
