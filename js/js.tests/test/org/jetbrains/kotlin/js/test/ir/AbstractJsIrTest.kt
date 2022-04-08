@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.js.test.ir
 
+import com.intellij.testFramework.TestDataFile
 import org.jetbrains.kotlin.js.test.AbstractJsBlackBoxCodegenTestBase
 import org.jetbrains.kotlin.js.test.JsAdditionalSourceProvider
 import org.jetbrains.kotlin.js.test.converters.JsIrBackendFacade
@@ -17,10 +18,7 @@ import org.jetbrains.kotlin.platform.js.JsPlatforms
 import org.jetbrains.kotlin.test.Constructor
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.backend.ir.IrBackendInput
-import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
-import org.jetbrains.kotlin.test.builders.classicFrontendHandlersStep
-import org.jetbrains.kotlin.test.builders.configureJsArtifactsHandlersStep
-import org.jetbrains.kotlin.test.builders.firHandlersStep
+import org.jetbrains.kotlin.test.builders.*
 import org.jetbrains.kotlin.test.directives.ConfigurationDirectives
 import org.jetbrains.kotlin.test.directives.DiagnosticsDirectives
 import org.jetbrains.kotlin.test.directives.JsEnvironmentConfigurationDirectives
@@ -39,6 +37,7 @@ import org.jetbrains.kotlin.test.services.JsLibraryProvider
 import org.jetbrains.kotlin.test.services.configuration.CommonEnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.configuration.JsEnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.sourceProviders.CoroutineHelpersSourceFilesProvider
+import java.io.File
 import java.lang.Boolean.getBoolean
 
 abstract class AbstractJsIrTest(
@@ -144,6 +143,12 @@ open class AbstractFirJsTest : AbstractKotlinCompilerWithTargetBackendTest(Targe
 
     private val frontendToBackendConverter: Constructor<Frontend2BackendConverter<FirOutputArtifact, IrBackendInput>>
         get() = ::Fir2IrResultsConverter
+
+    override fun runTest(@TestDataFile filePath: String) {
+        if (!File(filePath).readText().contains("// IGNORE_FIR")) {
+            testRunner(filePath, configuration).runTest(filePath)
+        }
+    }
 
     override fun TestConfigurationBuilder.configuration() {
         globalDefaults {
