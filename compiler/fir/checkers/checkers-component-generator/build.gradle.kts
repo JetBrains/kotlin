@@ -28,7 +28,7 @@ val writeCopyright by task<tasks.WriteCopyrightToFile> {
 }
 
 application {
-    mainClassName = "org.jetbrains.kotlin.fir.checkers.generator.MainKt"
+    mainClass.set("org.jetbrains.kotlin.fir.checkers.generator.MainKt")
 }
 
 val processResources by tasks
