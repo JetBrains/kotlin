@@ -113,8 +113,7 @@ internal constructor(
  * @property step the number by which the value is incremented on each step.
  */
 @SinceKotlin("1.3")
-@Suppress("DEPRECATION_ERROR")
-private class UIntProgressionIterator(first: UInt, last: UInt, step: Int) : UIntIterator() {
+private class UIntProgressionIterator(first: UInt, last: UInt, step: Int) : Iterator<UInt> {
     private val finalElement = last
     private var hasNext: Boolean = if (step > 0) first <= last else first >= last
     private val step = step.toUInt() // use 2-complement math for negative steps
@@ -122,7 +121,7 @@ private class UIntProgressionIterator(first: UInt, last: UInt, step: Int) : UInt
 
     override fun hasNext(): Boolean = hasNext
 
-    override fun nextUInt(): UInt {
+    override fun next(): UInt {
         val value = next
         if (value == finalElement) {
             if (!hasNext) throw kotlin.NoSuchElementException()

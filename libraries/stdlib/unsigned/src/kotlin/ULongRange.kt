@@ -113,8 +113,7 @@ internal constructor(
  * @property step the number by which the value is incremented on each step.
  */
 @SinceKotlin("1.3")
-@Suppress("DEPRECATION_ERROR")
-private class ULongProgressionIterator(first: ULong, last: ULong, step: Long) : ULongIterator() {
+private class ULongProgressionIterator(first: ULong, last: ULong, step: Long) : Iterator<ULong> {
     private val finalElement = last
     private var hasNext: Boolean = if (step > 0) first <= last else first >= last
     private val step = step.toULong() // use 2-complement math for negative steps
@@ -122,7 +121,7 @@ private class ULongProgressionIterator(first: ULong, last: ULong, step: Long) : 
 
     override fun hasNext(): Boolean = hasNext
 
-    override fun nextULong(): ULong {
+    override fun next(): ULong {
         val value = next
         if (value == finalElement) {
             if (!hasNext) throw kotlin.NoSuchElementException()
