@@ -870,8 +870,8 @@ public final class kotlin/collections/ArraysKt {
 	public static synthetic fun binarySearch$default ([SSIIILjava/lang/Object;)I
 	public static final fun contains ([BB)Z
 	public static final fun contains ([CC)Z
-	public static final fun contains ([DD)Z
-	public static final fun contains ([FF)Z
+	public static final synthetic fun contains ([DD)Z
+	public static final synthetic fun contains ([FF)Z
 	public static final fun contains ([II)Z
 	public static final fun contains ([JJ)Z
 	public static final fun contains ([Ljava/lang/Object;Ljava/lang/Object;)Z
@@ -1223,8 +1223,8 @@ public final class kotlin/collections/ArraysKt {
 	public static final fun groupingBy ([Ljava/lang/Object;Lkotlin/jvm/functions/Function1;)Lkotlin/collections/Grouping;
 	public static final fun indexOf ([BB)I
 	public static final fun indexOf ([CC)I
-	public static final fun indexOf ([DD)I
-	public static final fun indexOf ([FF)I
+	public static final synthetic fun indexOf ([DD)I
+	public static final synthetic fun indexOf ([FF)I
 	public static final fun indexOf ([II)I
 	public static final fun indexOf ([JJ)I
 	public static final fun indexOf ([Ljava/lang/Object;Ljava/lang/Object;)I
@@ -1313,8 +1313,8 @@ public final class kotlin/collections/ArraysKt {
 	public static final fun last ([ZLkotlin/jvm/functions/Function1;)Z
 	public static final fun lastIndexOf ([BB)I
 	public static final fun lastIndexOf ([CC)I
-	public static final fun lastIndexOf ([DD)I
-	public static final fun lastIndexOf ([FF)I
+	public static final synthetic fun lastIndexOf ([DD)I
+	public static final synthetic fun lastIndexOf ([FF)I
 	public static final fun lastIndexOf ([II)I
 	public static final fun lastIndexOf ([JJ)I
 	public static final fun lastIndexOf ([Ljava/lang/Object;Ljava/lang/Object;)I
