@@ -160,8 +160,7 @@ actual class ArrayList<E> private constructor(
     }
 
     override fun toString(): String {
-        @Suppress("DEPRECATION_ERROR")
-        return backingArray.subarrayContentToString(offset, length)
+        return backingArray.subarrayContentToStringImpl(offset, length)
     }
 
     @Suppress("UNCHECKED_CAST")
