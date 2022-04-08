@@ -5,8 +5,6 @@
 
 package kotlin.collections
 
-import kotlin.internal.PureReifiable
-
 /**
  * Returns the array if it's not `null`, or an empty array otherwise.
  * @sample samples.collections.Arrays.Usage.arrayOrEmpty
@@ -27,8 +25,15 @@ internal fun checkCopyOfRangeArguments(fromIndex: Int, toIndex: Int, size: Int) 
  */
 @kotlin.internal.InlineOnly
 @Deprecated("This function will become internal soon.")
-@DeprecatedSinceKotlin(warningSince = "1.4", errorSince = "1.5")
+@DeprecatedSinceKotlin(warningSince = "1.4", errorSince = "1.5", hiddenSince = "1.7")
 public inline fun <T> Array<out T>.subarrayContentToString(offset: Int, length: Int): String {
+    return subarrayContentToStringImpl(offset, length)
+}
+
+@kotlin.internal.InlineOnly
+@PublishedApi
+// TODO: Rename back to subarrayContentToString after dropping that public function
+internal inline fun <T> Array<out T>.subarrayContentToStringImpl(offset: Int, length: Int): String {
     val sb = StringBuilder(2 + length * 3)
     sb.append("[")
     var i = 0
