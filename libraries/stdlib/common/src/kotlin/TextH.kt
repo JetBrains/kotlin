@@ -25,8 +25,8 @@ expect class Regex {
      * @throws IndexOutOfBoundsException if [index] is less than zero or greater than the length of the [input] char sequence.
      * @sample samples.text.Regexps.matchAt
      */
-    @SinceKotlin("1.5")
-    @ExperimentalStdlibApi
+    @SinceKotlin("1.7")
+    @WasExperimental(ExperimentalStdlibApi::class)
     fun matchAt(input: CharSequence, index: Int): MatchResult?
 
     /**
@@ -38,8 +38,8 @@ expect class Regex {
      * @throws IndexOutOfBoundsException if [index] is less than zero or greater than the length of the [input] char sequence.
      * @sample samples.text.Regexps.matchesAt
      */
-    @SinceKotlin("1.5")
-    @ExperimentalStdlibApi
+    @SinceKotlin("1.7")
+    @WasExperimental(ExperimentalStdlibApi::class)
     fun matchesAt(input: CharSequence, index: Int): Boolean
 
     fun containsMatchIn(input: CharSequence): Boolean

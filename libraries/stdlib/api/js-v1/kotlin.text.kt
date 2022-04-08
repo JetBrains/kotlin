@@ -1415,16 +1415,16 @@ public final class Regex {
 
     public final fun findAll(input: kotlin.CharSequence, startIndex: kotlin.Int = ...): kotlin.sequences.Sequence<kotlin.text.MatchResult>
 
-    @kotlin.SinceKotlin(version = "1.5")
-    @kotlin.ExperimentalStdlibApi
+    @kotlin.SinceKotlin(version = "1.7")
+    @kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
     public final fun matchAt(input: kotlin.CharSequence, index: kotlin.Int): kotlin.text.MatchResult?
 
     public final fun matchEntire(input: kotlin.CharSequence): kotlin.text.MatchResult?
 
     public final infix fun matches(input: kotlin.CharSequence): kotlin.Boolean
 
-    @kotlin.SinceKotlin(version = "1.5")
-    @kotlin.ExperimentalStdlibApi
+    @kotlin.SinceKotlin(version = "1.7")
+    @kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
     public final fun matchesAt(input: kotlin.CharSequence, index: kotlin.Int): kotlin.Boolean
 
     public final fun replace(input: kotlin.CharSequence, transform: (kotlin.text.MatchResult) -> kotlin.CharSequence): kotlin.String
