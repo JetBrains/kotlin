@@ -53,7 +53,7 @@ if (deployVersion != null) {
 
 runtimeJar(tasks.register<ShadowJar>("shadowJar")) {
     callGroovy("manifestAttributes", manifest, project)
-    manifest.attributes["Implementation-Version"] = version
+    manifest.attributes["Implementation-Version"] = archiveVersion
 
     from(mainSourceSet.output)
     exclude("**/*.proto")
