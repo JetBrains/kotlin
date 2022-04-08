@@ -66,7 +66,7 @@ val kotlinVersion: String by project
 
 dependencies {
     implementation(gradleApi())
-    implementation("org.jetbrains.kotlinx:kotlinx-metadata-jvm:0.3.0")
+    implementation("org.jetbrains.kotlinx:kotlinx-metadata-jvm:0.4.2")
     implementation("org.ow2.asm:asm:9.2")
     implementation("org.ow2.asm:asm-tree:9.2")
     implementation("com.googlecode.java-diff-utils:diffutils:1.3.0")
