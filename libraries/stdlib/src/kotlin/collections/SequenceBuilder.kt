@@ -24,11 +24,6 @@ import kotlin.experimental.ExperimentalTypeInference
 @SinceKotlin("1.3")
 public fun <T> sequence(@BuilderInference block: suspend SequenceScope<T>.() -> Unit): Sequence<T> = Sequence { iterator(block) }
 
-@SinceKotlin("1.3")
-@Deprecated("Use 'sequence { }' function instead.", ReplaceWith("sequence(builderAction)"), level = DeprecationLevel.ERROR)
-@kotlin.internal.InlineOnly
-public inline fun <T> buildSequence(@BuilderInference noinline builderAction: suspend SequenceScope<T>.() -> Unit): Sequence<T> = Sequence { iterator(builderAction) }
-
 /**
  * Builds an [Iterator] lazily yielding values one by one.
  *
@@ -41,11 +36,6 @@ public fun <T> iterator(@BuilderInference block: suspend SequenceScope<T>.() -> 
     iterator.nextStep = block.createCoroutineUnintercepted(receiver = iterator, completion = iterator)
     return iterator
 }
-
-@SinceKotlin("1.3")
-@Deprecated("Use 'iterator { }' function instead.", ReplaceWith("iterator(builderAction)"), level = DeprecationLevel.ERROR)
-@kotlin.internal.InlineOnly
-public inline fun <T> buildIterator(@BuilderInference noinline builderAction: suspend SequenceScope<T>.() -> Unit): Iterator<T> = iterator(builderAction)
 
 /**
  * The scope for yielding values of a [Sequence] or an [Iterator], provides [yield] and [yieldAll] suspension functions.
@@ -99,9 +89,6 @@ public abstract class SequenceScope<in T> internal constructor() {
      */
     public suspend fun yieldAll(sequence: Sequence<T>) = yieldAll(sequence.iterator())
 }
-
-@Deprecated("Use SequenceScope class instead.", ReplaceWith("SequenceScope<T>"), level = DeprecationLevel.ERROR)
-public typealias SequenceBuilder<T> = SequenceScope<T>
 
 private typealias State = Int
 
