@@ -61,7 +61,7 @@ fun serializeTask(name: String, sourcesTask: TaskProvider<*>, inDirs: List<File>
         outputs.cacheIf { true }
 
         classpath(rootProject.buildscript.configurations["bootstrapCompilerClasspath"])
-        main = "org.jetbrains.kotlin.serialization.builtins.RunKt"
+        mainClass.set("org.jetbrains.kotlin.serialization.builtins.RunKt")
         jvmArgs(listOfNotNull(
             "-Didea.io.use.nio2=true",
             "-Dkotlin.builtins.serializer.log=true".takeIf { logger.isInfoEnabled }

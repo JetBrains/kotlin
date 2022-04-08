@@ -52,7 +52,7 @@ val generateCheckersComponents by tasks.registering(NoDebugJavaExec::class) {
     args(generationRoot, *platformGenerationRoots.toTypedArray())
     workingDir = rootDir
     classpath = generatorClasspath
-    main = "org.jetbrains.kotlin.fir.checkers.generator.MainKt"
+    mainClass.set("org.jetbrains.kotlin.fir.checkers.generator.MainKt")
     systemProperties["line.separator"] = "\n"
 }
 

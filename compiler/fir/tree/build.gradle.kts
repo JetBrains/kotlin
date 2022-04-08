@@ -42,7 +42,7 @@ val generateTree by tasks.registering(NoDebugJavaExec::class) {
     args(generationRoot)
     workingDir = rootDir
     classpath = generatorClasspath
-    main = "org.jetbrains.kotlin.fir.tree.generator.MainKt"
+    mainClass.set("org.jetbrains.kotlin.fir.tree.generator.MainKt")
     systemProperties["line.separator"] = "\n"
 }
 
