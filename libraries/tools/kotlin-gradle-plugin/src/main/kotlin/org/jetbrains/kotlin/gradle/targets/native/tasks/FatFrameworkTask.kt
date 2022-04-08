@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.NativeOutputKind
 import org.jetbrains.kotlin.gradle.utils.appendLine
 import org.jetbrains.kotlin.konan.target.Architecture
 import org.jetbrains.kotlin.konan.target.Family
+import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.konan.target.KonanTarget.*
 import org.jetbrains.kotlin.konan.util.visibleName
@@ -89,6 +90,10 @@ class FrameworkDescriptor(
  * Task running lipo to create a fat framework from several simple frameworks. It also merges headers, plists and module files.
  */
 open class FatFrameworkTask : DefaultTask() {
+    init {
+        onlyIf { HostManager.hostIsMac }
+    }
+
     private val archToFramework: MutableMap<Architecture, FrameworkDescriptor> = mutableMapOf()
 
     //region DSL properties.
