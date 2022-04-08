@@ -11097,7 +11097,7 @@ public abstract class ShortIterator : kotlin.collections.Iterator<kotlin.Short> 
 
     public abstract fun nextShort(): kotlin.Short
 }
-
+/*∆*/ 
 /*∆*/ public abstract class ShortIterator : kotlin.collections.Iterator<kotlin.Short> {
 /*∆*/     public constructor ShortIterator()
 /*∆*/ 
@@ -11105,43 +11105,3 @@ public abstract class ShortIterator : kotlin.collections.Iterator<kotlin.Short> 
 /*∆*/ 
 /*∆*/     public abstract fun nextShort(): kotlin.Short
 /*∆*/ }
-/*∆*/ 
-@kotlin.Deprecated(level = DeprecationLevel.ERROR, message = "This class is not going to be stabilized and is to be removed soon.")
-@kotlin.SinceKotlin(version = "1.3")
-public abstract class UByteIterator : kotlin.collections.Iterator<kotlin.UByte> {
-    public constructor UByteIterator()
-
-    public final override operator fun next(): kotlin.UByte
-
-    public abstract fun nextUByte(): kotlin.UByte
-}
-
-@kotlin.Deprecated(level = DeprecationLevel.ERROR, message = "This class is not going to be stabilized and is to be removed soon.")
-@kotlin.SinceKotlin(version = "1.3")
-public abstract class UIntIterator : kotlin.collections.Iterator<kotlin.UInt> {
-    public constructor UIntIterator()
-
-    public final override operator fun next(): kotlin.UInt
-
-    public abstract fun nextUInt(): kotlin.UInt
-}
-
-@kotlin.Deprecated(level = DeprecationLevel.ERROR, message = "This class is not going to be stabilized and is to be removed soon.")
-@kotlin.SinceKotlin(version = "1.3")
-public abstract class ULongIterator : kotlin.collections.Iterator<kotlin.ULong> {
-    public constructor ULongIterator()
-
-    public final override operator fun next(): kotlin.ULong
-
-    public abstract fun nextULong(): kotlin.ULong
-}
-
-@kotlin.Deprecated(level = DeprecationLevel.ERROR, message = "This class is not going to be stabilized and is to be removed soon.")
-@kotlin.SinceKotlin(version = "1.3")
-public abstract class UShortIterator : kotlin.collections.Iterator<kotlin.UShort> {
-    public constructor UShortIterator()
-
-    public final override operator fun next(): kotlin.UShort
-
-    public abstract fun nextUShort(): kotlin.UShort
-}
