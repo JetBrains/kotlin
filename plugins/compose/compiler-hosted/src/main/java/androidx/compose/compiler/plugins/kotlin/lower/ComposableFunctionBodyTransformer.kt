@@ -591,19 +591,28 @@ class ComposableFunctionBodyTransformer(
     private val isTraceInProgressFunction by guardedLazy {
         getTopLevelFunctions(
             ComposeFqNames.fqNameFor(KtxNameConventions.IS_TRACE_IN_PROGRESS)
-        ).map { it.owner }.firstOrNull()
+        ).map { it.owner }.singleOrNull {
+            it.valueParameters.isEmpty()
+        }
     }
 
     private val traceEventStartFunction by guardedLazy {
         getTopLevelFunctions(
             ComposeFqNames.fqNameFor(KtxNameConventions.TRACE_EVENT_START)
-        ).map { it.owner }.firstOrNull()
+        ).map { it.owner }.singleOrNull {
+            it.valueParameters.map { p -> p.type } == listOf(
+                context.irBuiltIns.intType,
+                context.irBuiltIns.stringType
+            )
+        }
     }
 
     private val traceEventEndFunction by guardedLazy {
         getTopLevelFunctions(
             ComposeFqNames.fqNameFor(KtxNameConventions.TRACE_EVENT_END)
-        ).map { it.owner }.firstOrNull()
+        ).map { it.owner }.singleOrNull {
+            it.valueParameters.isEmpty()
+        }
     }
 
     private val sourceInformationMarkerEndFunction by guardedLazy {
