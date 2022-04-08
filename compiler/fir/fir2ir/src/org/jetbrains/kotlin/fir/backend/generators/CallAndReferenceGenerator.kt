@@ -352,7 +352,7 @@ class CallAndReferenceGenerator(
                     is IrConstructorSymbol -> IrConstructorCallImpl.fromSymbolOwner(startOffset, endOffset, type, symbol)
                     is IrSimpleFunctionSymbol -> if (explicitReceiverExpression != null && isDynamicAccess) {
                         val name = calleeReference.resolved?.name
-                            ?: throw Exception("Must have a name")
+                            ?: error("Must have a name")
                         val operator = name.dynamicOperator
                             ?: qualifiedAccess.dynamicOperator
                             ?: IrDynamicOperator.INVOKE
@@ -422,7 +422,7 @@ class CallAndReferenceGenerator(
                         superQualifierSymbol = dispatchReceiver.superQualifierSymbol()
                     )
                     is IrValueSymbol -> if (explicitReceiverExpression != null && isDynamicAccess) {
-                        val name = calleeReference.resolved?.name ?: throw Exception("There must be a name")
+                        val name = calleeReference.resolved?.name ?: error("There must be a name")
                         IrDynamicMemberExpressionImpl(startOffset, endOffset, type, name.identifier, explicitReceiverExpression)
                     } else {
                         IrGetValueImpl(
@@ -510,7 +510,7 @@ class CallAndReferenceGenerator(
                         }
                     }
                     is IrVariableSymbol -> if (explicitReceiverExpression != null && isDynamicAccess) {
-                        val name = calleeReference.resolved?.name ?: throw Exception("There must be a name")
+                        val name = calleeReference.resolved?.name ?: error("There must be a name")
                         theExplicitReceiver = IrDynamicMemberExpressionImpl(
                             startOffset, endOffset, type, name.identifier, explicitReceiverExpression
                         )
@@ -713,7 +713,7 @@ class CallAndReferenceGenerator(
                     if (valueParameters != null) {
                         val dynamicCallVarargArgument = argumentMapping.keys.firstOrNull()
                             ?.safeAs<FirVarargArgumentsExpression>()
-                            ?: throw Exception("Dynamic call must have a single vararg argument")
+                            ?: error("Dynamic call must have a single vararg argument")
                         for (argument in dynamicCallVarargArgument.arguments) {
                             val irArgument = convertArgument(argument, null, substitutor, annotationMode)
                             arguments.add(irArgument)
@@ -946,7 +946,7 @@ class CallAndReferenceGenerator(
                 }
             }
             is IrDynamicOperatorExpression -> {
-                receiver = explicitReceiverExpression ?: throw Exception("No receiver for dynamic")
+                receiver = explicitReceiverExpression ?: error("No receiver for dynamic")
             }
         }
         return this
