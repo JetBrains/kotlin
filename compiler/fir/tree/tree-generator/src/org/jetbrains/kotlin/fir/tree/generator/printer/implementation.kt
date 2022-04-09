@@ -336,27 +336,35 @@ fun SmartPrinter.printImplementation(implementation: Implementation) {
             for (field in allFields.filter { it.withReplace }) {
                 val capitalizedFieldName = field.name.replaceFirstChar(Char::uppercaseChar)
                 val newValue = "new$capitalizedFieldName"
-                generateReplace(field, forceNullable = field.useNullableForReplace) {
-                    when {
-                        field.withGetter -> {}
 
-                        field.origin is FieldList -> {
-                            println("${field.name}.clear()")
-                            println("${field.name}.addAll($newValue)")
-                        }
+                val isInOverridenTypes = (field.overridenTypes.filterIsInstance<Field>()
+                    .any { it.name == "typeParameters" })
 
-                        else -> {
-                            if (field.useNullableForReplace) {
-                                println("require($newValue != null)")
+                if (!(field.name == "typeParameters" && isInOverridenTypes)) {
+                    generateReplace(field, forceNullable = field.useNullableForReplace) {
+                        when {
+                            field.withGetter -> {}
+
+                            field.origin is FieldList -> {
+                                println("${field.name}.clear()")
+                                println("${field.name}.addAll($newValue)")
                             }
-                            println("${field.name} = $newValue")
+
+                            else -> {
+                                if (field.useNullableForReplace) {
+                                    println("require($newValue != null)")
+                                }
+                                println("${field.name} = $newValue")
+                            }
                         }
                     }
                 }
 
                 for (overridenType in field.overridenTypes) {
                     generateReplace(field, overridenType) {
-                        println("require($newValue is ${field.typeWithArguments})")
+                        if (field.typeWithArguments != "List<FirTypeParameter>") {
+                            println("require($newValue is ${field.typeWithArguments})")
+                        }
                         println("replace$capitalizedFieldName($newValue)")
                     }
                 }

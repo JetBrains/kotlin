@@ -265,19 +265,8 @@ open class FirTypeResolveTransformer(
                         ), isNullable = false
                     )
                 })
-                /*
-                  firClass.replaceTypeParameterRefs(params + firTypeParameterBuilder.apply {
-                                    source = firClass.source?.fakeElement(KtFakeSourceElementKind.ClassSelfTypeRef)
-                                    moduleData = session.moduleData
-                                    resolvePhase = FirResolvePhase.TYPES
-                                    origin = FirDeclarationOrigin.Source
-                                    name = Name.special("<Self>")
-                                    symbol = selfSymbol
-                                    variance = Variance.OUT_VARIANCE
-                                    isReified = false
-                                }.build())
-                 */
-                params.add(firTypeParameterBuilder.apply {
+
+                firClass.replaceTypeParameters(params + firTypeParameterBuilder.apply {
                     source = firClass.source?.fakeElement(KtFakeSourceElementKind.ClassSelfTypeRef)
                     moduleData = session.moduleData
                     resolvePhase = FirResolvePhase.TYPES

@@ -24,5 +24,7 @@ sealed interface FirTypeParameterRefsOwner : FirElement {
     override fun <E: FirElement, D> transform(transformer: FirTransformer<D>, data: D): E = 
         transformer.transformTypeParameterRefsOwner(this, data) as E
 
+    fun replaceTypeParameters(newTypeParameters: List<FirTypeParameterRef>)
+
     fun <D> transformTypeParameters(transformer: FirTransformer<D>, data: D): FirTypeParameterRefsOwner
 }

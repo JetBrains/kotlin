@@ -59,7 +59,13 @@ object FieldSets {
 
     val typeParameters by lazy { fieldList("typeParameters", typeParameter) }
 
-    val typeParameterRefs by lazy { fieldList("typeParameters", typeParameterRef) }
+    /*
+    val typeParameters: List<FirTypeParameter extends FirTypeParameterRef>
+
+    replaceTypeParametersRefs(kek: List<FirTypeParameterRef>)
+
+     */
+    val typeParameterRefs by lazy { fieldList("typeParameters", typeParameterRef, withReplace = true) }
 
     val name by lazy { field(nameType) }
 

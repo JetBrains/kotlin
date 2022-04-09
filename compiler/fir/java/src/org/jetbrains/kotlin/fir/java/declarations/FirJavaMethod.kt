@@ -178,6 +178,9 @@ class FirJavaMethod @FirImplementationDetail constructor(
 
     override fun replaceContractDescription(newContractDescription: FirContractDescription) {
     }
+
+    override fun replaceTypeParameters(newTypeParameters: List<FirTypeParameterRef>) {
+    }
 }
 
 val ALL_JAVA_OPERATION_NAMES =

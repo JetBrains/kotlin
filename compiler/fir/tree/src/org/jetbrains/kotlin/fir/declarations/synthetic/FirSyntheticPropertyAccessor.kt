@@ -154,6 +154,10 @@ class FirSyntheticPropertyAccessor(
         throw AssertionError("Mutation of synthetic property accessor isn't supported")
     }
 
+    override fun replaceTypeParameters(newTypeParameters: List<FirTypeParameterRef>) {
+        throw AssertionError("Mutation of synthetic property isn't supported")
+    }
+
     override fun replaceControlFlowGraphReference(newControlFlowGraphReference: FirControlFlowGraphReference?) {
         throw AssertionError("Mutation of synthetic property accessor isn't supported")
     }

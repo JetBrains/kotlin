@@ -159,6 +159,9 @@ class FirJavaValueParameter @FirImplementationDetail constructor(
         resolvePhase = newResolvePhase
     }
 
+    override fun replaceTypeParameters(newTypeParameters: List<FirTypeParameterRef>) {
+    }
+
     override fun replaceReturnTypeRef(newReturnTypeRef: FirTypeRef) {
         returnTypeRef = newReturnTypeRef
     }

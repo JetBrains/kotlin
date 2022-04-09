@@ -36,6 +36,8 @@ sealed class FirMemberDeclaration : FirDeclaration(), FirTypeParameterRefsOwner 
 
     abstract override fun replaceResolvePhase(newResolvePhase: FirResolvePhase)
 
+    abstract override fun replaceTypeParameters(newTypeParameters: List<FirTypeParameterRef>)
+
     abstract override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirMemberDeclaration
 
     abstract override fun <D> transformTypeParameters(transformer: FirTransformer<D>, data: D): FirMemberDeclaration
