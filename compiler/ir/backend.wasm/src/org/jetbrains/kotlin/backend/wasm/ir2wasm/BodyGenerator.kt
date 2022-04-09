@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.backend.wasm.utils.*
 import org.jetbrains.kotlin.backend.wasm.utils.isCanonical
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.IrElement
+import org.jetbrains.kotlin.ir.backend.js.utils.erasedUpperBound
 import org.jetbrains.kotlin.ir.backend.js.utils.findUnitGetInstanceFunction
 import org.jetbrains.kotlin.ir.backend.js.utils.isDispatchReceiver
 import org.jetbrains.kotlin.ir.backend.js.utils.realOverrideTarget
@@ -312,9 +313,8 @@ class BodyGenerator(
                 val receiver = call.dispatchReceiver!!
                 generateExpression(receiver)
 
-                if (!receiver.type.getRuntimeClass(irBuiltIns).isSubclassOf(klass)) {
-                    body.buildRefCastStatic(toType = context.referenceGcType(klass.symbol))
-                }
+                //TODO: check why it could be needed
+                generateRefCast(receiver.type, klass.defaultType)
 
                 body.buildStructGet(context.referenceGcType(klass.symbol), WasmSymbol(0))
                 body.buildStructGet(context.referenceVTableGcType(klass.symbol), WasmSymbol(vfSlot))
@@ -350,14 +350,31 @@ class BodyGenerator(
             body.buildGetUnit()
     }
 
-    private fun generateRefCast(type: IrType) {
-        body.buildRefCastStatic(
-            context.referenceGcType(type.getRuntimeClass(irBuiltIns).symbol)
-        )
+    private fun generateRefCast(fromType: IrType, toType: IrType) {
+        if (!isDownCastAlwaysSuccessInRuntime(fromType, toType)) {
+            body.buildRefCastStatic(
+                toType = context.referenceGcType(toType.getRuntimeClass(irBuiltIns).symbol)
+            )
+        }
     }
 
-    private fun generateTypeRTT(type: IrType) {
-        body.buildRttCanon(context.referenceGcType(type.getRuntimeClass(irBuiltIns).symbol))
+    private fun generateRefTest(fromType: IrType, toType: IrType) {
+        if (!isDownCastAlwaysSuccessInRuntime(fromType, toType)) {
+            body.buildRefTestStatic(
+                toType = context.referenceGcType(toType.getRuntimeClass(irBuiltIns).symbol)
+            )
+        } else {
+            body.buildDrop()
+            body.buildConstI32(1)
+        }
+    }
+
+    private fun isDownCastAlwaysSuccessInRuntime(fromType: IrType, toType: IrType): Boolean {
+        val upperBound = fromType.erasedUpperBound
+        if (upperBound != null && upperBound.symbol.isSubtypeOfClass(backendContext.wasmSymbols.wasmAnyRefClass)) {
+            return false
+        }
+        return fromType.getRuntimeClass(irBuiltIns).isSubclassOf(toType.getRuntimeClass(irBuiltIns))
     }
 
     // Return true if generated.
@@ -412,14 +429,11 @@ class BodyGenerator(
                 }
             }
 
-            wasmSymbols.wasmRefCast -> {
-                generateRefCast(call.getTypeArgument(0)!!)
-            }
-
-            wasmSymbols.refTest -> {
-                val toType = call.getTypeArgument(0)!!
-                generateTypeRTT(toType)
-                body.buildInstr(WasmOp.REF_TEST)
+            wasmSymbols.refCast -> {
+                generateRefCast(
+                    fromType = call.getValueArgument(0)!!.type,
+                    toType = call.getTypeArgument(0)!!
+                )
             }
 
             wasmSymbols.unboxIntrinsic -> {
@@ -441,8 +455,7 @@ class BodyGenerator(
                 val klass: IrClass = backendContext.inlineClassesUtils.getInlinedClass(toType)!!
                 val field = getInlineClassBackingField(klass)
 
-                generateTypeRTT(toType)
-                body.buildRefCast()
+                generateRefCast(fromType, toType)
                 generateInstanceFieldAccess(field)
             }
 
@@ -616,21 +629,22 @@ class BodyGenerator(
         val opString = function.getWasmOpAnnotation()
         if (opString != null) {
             val op = WasmOp.valueOf(opString)
-            var immediates = emptyArray<WasmImmediate>()
             when (op.immediates.size) {
                 0 -> {
                     when (op) {
-                        WasmOp.REF_TEST -> {
-                            val toIrType = call.getTypeArgument(0)!!
-                            // ref.test takes RTT as a second operand
-                            generateTypeRTT(toIrType)
+                        WasmOp.REF_TEST, WasmOp.REF_TEST_STATIC -> {
+                            generateRefTest(
+                                fromType = call.getValueArgument(0)!!.type,
+                                toType = call.getTypeArgument(0)!!
+                            )
                         }
                         else -> {
+                            body.buildInstr(op)
                         }
                     }
                 }
                 1 -> {
-                    immediates = arrayOf(
+                    val immediates = arrayOf(
                         when (val imm = op.immediates[0]) {
                             WasmImmediateKind.MEM_ARG ->
                                 WasmImmediate.MemArg(0u, 0u)
@@ -643,11 +657,11 @@ class BodyGenerator(
                                 error("Immediate $imm is unsupported")
                         }
                     )
+                    body.buildInstr(op, *immediates)
                 }
                 else ->
                     error("Op $opString is unsupported")
             }
-            body.buildInstr(op, *immediates)
             return true
         }
 

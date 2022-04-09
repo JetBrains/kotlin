@@ -225,6 +225,7 @@ class WasmBaseTypeOperatorTransformer(val context: WasmBackendContext) : IrEleme
         if (fromClass.isSubclassOf(toClass)) {
             return value
         }
+
         if (toType.isNothing()) {
             // Casting to nothing is unreachable...
             return builder.irComposite(resultType = context.irBuiltIns.nothingType) {
@@ -233,7 +234,7 @@ class WasmBaseTypeOperatorTransformer(val context: WasmBackendContext) : IrEleme
             }
         }
 
-        return builder.irCall(symbols.wasmRefCast, type = toType).apply {
+        return builder.irCall(symbols.refCast, type = toType).apply {
             putTypeArgument(0, toType)
             putValueArgument(0, value)
         }

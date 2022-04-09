@@ -580,7 +580,7 @@ class JsInteropFunctionsLowering(val context: WasmBackendContext) : DeclarationT
     ) : InteropTypeAdapter {
         override val fromType: IrType = context.wasmSymbols.wasmDataRefType
         override fun adapt(expression: IrExpression, builder: IrBuilderWithScope): IrExpression {
-            val call = builder.irCall(context.wasmSymbols.wasmRefCast)
+            val call = builder.irCall(context.wasmSymbols.refCast)
             call.putValueArgument(0, expression)
             call.putTypeArgument(0, toType)
             return call

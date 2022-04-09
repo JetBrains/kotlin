@@ -150,13 +150,12 @@ abstract class WasmExpressionBuilder {
         )
     }
 
-
-    fun buildRefCast() {
-        buildInstr(WasmOp.REF_CAST)
-    }
-
     fun buildRefCastStatic(toType: WasmSymbolReadOnly<WasmTypeDeclaration>) {
         buildInstr(WasmOp.REF_CAST_STATIC, WasmImmediate.TypeIdx(toType))
+    }
+
+    fun buildRefTestStatic(toType: WasmSymbolReadOnly<WasmTypeDeclaration>) {
+        buildInstr(WasmOp.REF_TEST_STATIC, WasmImmediate.TypeIdx(toType))
     }
 
     fun buildRefNull(type: WasmHeapType) {

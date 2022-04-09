@@ -45,7 +45,7 @@ internal class WasmUsefulDeclarationProcessor(
             }
             context.wasmSymbols.wasmClassId,
             context.wasmSymbols.wasmInterfaceId,
-            context.wasmSymbols.wasmRefCast,
+            context.wasmSymbols.refCast,
             context.wasmSymbols.refTest -> {
                 call.getTypeArgument(0)?.getClass()?.enqueue(from, "generic intrinsic ${call.symbol.owner.name}")
                 true
@@ -63,8 +63,8 @@ internal class WasmUsefulDeclarationProcessor(
                 val op = WasmOp.valueOf(opString)
                 when (op.immediates.size) {
                     0 -> {
-                        if (op == WasmOp.REF_TEST) {
-                            call.getTypeArgument(0)?.enqueueRuntimeClassOrAny(from, "REF_TEST")
+                        if (op == WasmOp.REF_TEST || op == WasmOp.REF_TEST_STATIC) {
+                            call.getTypeArgument(0)?.enqueueRuntimeClassOrAny(from, "REF_TEST/REF_TEST_STATIC")
                         }
                     }
                     1 -> {
