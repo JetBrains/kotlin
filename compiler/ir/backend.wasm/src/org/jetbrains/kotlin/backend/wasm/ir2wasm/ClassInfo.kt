@@ -5,20 +5,56 @@
 
 package org.jetbrains.kotlin.backend.wasm.ir2wasm
 
-import org.jetbrains.kotlin.backend.wasm.lower.WasmSignature
-import org.jetbrains.kotlin.backend.wasm.lower.wasmSignature
+import org.jetbrains.kotlin.ir.util.isOverridableOrOverrides
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.IrBuiltIns
+import org.jetbrains.kotlin.ir.backend.js.utils.eraseGenerics
 import org.jetbrains.kotlin.ir.backend.js.utils.realOverrideTarget
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrField
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
+import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.classifierOrFail
 import org.jetbrains.kotlin.ir.util.fqNameWhenAvailable
 import org.jetbrains.kotlin.ir.util.isInterface
-import org.jetbrains.kotlin.ir.util.isOverridableOrOverrides
+import org.jetbrains.kotlin.ir.util.render
+import org.jetbrains.kotlin.name.Name
+
+data class WasmSignature(
+    val name: Name,
+    val extensionReceiverType: IrType?,
+    val valueParametersType: List<IrType>,
+    val returnType: IrType,
+    // Needed for bridges to final non-override methods
+    // that indirectly implement interfaces. For example:
+    //    interface I { fun foo() }
+    //    class C1 { fun foo() {} }
+    //    class C2 : C1(), I
+    val isVirtual: Boolean,
+) {
+    override fun toString(): String {
+        val er = extensionReceiverType?.let { "(er: ${it.render()}) " } ?: ""
+        val parameters = valueParametersType.joinToString(", ") { it.render() }
+        val nonVirtual = if (!isVirtual) "(non-virtual) " else ""
+        return "[$nonVirtual$er$name($parameters) -> ${returnType.render()}]"
+    }
+}
+
+fun IrSimpleFunction.wasmSignature(irBuiltIns: IrBuiltIns): WasmSignature =
+    WasmSignature(
+        name,
+        extensionReceiverParameter?.type?.eraseGenerics(irBuiltIns),
+        valueParameters.map { it.type.eraseGenerics(irBuiltIns) },
+        returnType.eraseGenerics(irBuiltIns),
+        isOverridableOrOverrides
+    )
+
+class VirtualMethodMetadata(
+    val function: IrSimpleFunction,
+    val signature: WasmSignature
+)
 
 class ClassMetadata(
     val klass: IrClass,
@@ -36,27 +72,23 @@ class ClassMetadata(
     // Virtual methods in Wasm order
     // TODO: Collect interface methods separately
     val virtualMethods: List<VirtualMethodMetadata> = run {
-        val virtualFunctions =
-            klass.declarations
-                .filterVirtualFunctions()
-                .map {
-                    VirtualMethodMetadata(
-                        it,
-                        it.wasmSignature(irBuiltIns)
-                    )
-                }
+        val virtualFunctions = klass.declarations
+            .asSequence()
+            .filterVirtualFunctions()
+            .mapTo(mutableListOf()) { VirtualMethodMetadata(it, it.wasmSignature(irBuiltIns)) }
+
+        val superClassVirtualMethods = superClass?.virtualMethods
+        if (superClassVirtualMethods.isNullOrEmpty()) return@run virtualFunctions
+
+        val result = mutableListOf<VirtualMethodMetadata>()
 
         val signatureToVirtualFunction = virtualFunctions.associateBy { it.signature }
+        superClassVirtualMethods.mapTo(result) { signatureToVirtualFunction[it.signature] ?: it }
 
-        val superSignatures = superClass?.virtualMethodsSignatures.orEmpty()
+        val superSignatures = superClassVirtualMethods.mapTo(mutableSetOf()) { it.signature }
+        virtualFunctions.filterTo(result) { it.signature !in superSignatures }
 
-        val newVirtualMethods = virtualFunctions.filter { it.signature !in superSignatures }
-        val superVirtualMethods = superClass?.virtualMethods.orEmpty().map {
-            signatureToVirtualFunction[it.signature] ?: it
-        }
-        val orderedVirtualFunctions = superVirtualMethods + newVirtualMethods
-
-        orderedVirtualFunctions
+        result
     }
 
     init {
@@ -69,64 +101,60 @@ class ClassMetadata(
             if (functions.size > 1) {
                 val funcList = functions.joinToString { " ---- ${it.fqNameWhenAvailable} \n" }
                 // TODO: Check in FE
-                error(
-                    "Class ${klass.fqNameWhenAvailable} has ${functions.size} methods with the same signature $sig\n $funcList"
-                )
+                error("Class ${klass.fqNameWhenAvailable} has ${functions.size} methods with the same signature $sig\n $funcList")
             }
         }
     }
-
-    private val virtualMethodsSignatures: Set<WasmSignature> =
-        virtualMethods.map { it.signature }.toSet()
 }
 
-class InterfaceMetadata(
-    val iface: IrClass,
-    irBuiltIns: IrBuiltIns
-) {
-    val methods: List<VirtualMethodMetadata> =
-        iface.declarations
-            .filterIsInstance<IrSimpleFunction>()
-            .filter { !it.isFakeOverride && it.visibility != DescriptorVisibilities.PRIVATE && it.modality != Modality.FINAL }
-            .map {
-                VirtualMethodMetadata(
-                    it,
-                    it.wasmSignature(irBuiltIns)
-                )
-            }
+class InterfaceMetadata(val iFace: IrClass, irBuiltIns: IrBuiltIns) {
+    val methods: List<VirtualMethodMetadata> = iFace.declarations
+        .asSequence()
+        .filterIsInstance<IrSimpleFunction>()
+        .filter { !it.isFakeOverride && it.visibility != DescriptorVisibilities.PRIVATE && it.modality != Modality.FINAL }
+        .mapTo(mutableListOf()) { VirtualMethodMetadata(it, it.wasmSignature(irBuiltIns)) }
 }
 
-
-class VirtualMethodMetadata(
-    val function: IrSimpleFunction,
-    val signature: WasmSignature
-)
-
-fun IrClass.allSuperInterfaces(): List<IrClass> =
-    superTypes.map {
-        it.classifierOrFail.owner as IrClass
-    }.flatMap {
-        (if (it.isInterface) listOf(it) else emptyList()) + it.allSuperInterfaces()
+fun IrClass.allSuperInterfaces(): List<IrClass> {
+    fun allSuperInterfacesImpl(currentClass: IrClass, result: MutableList<IrClass>) {
+        for (superType in currentClass.superTypes) {
+            allSuperInterfacesImpl(superType.classifierOrFail.owner as IrClass, result)
+        }
+        if (currentClass.isInterface) result.add(currentClass)
     }
 
-fun List<IrDeclaration>.filterVirtualFunctions(): List<IrSimpleFunction> =
-    asSequence()
-        .filterIsInstance<IrSimpleFunction>()
+    return mutableListOf<IrClass>().also {
+        allSuperInterfacesImpl(this, it)
+    }
+}
+
+fun Sequence<IrDeclaration>.filterVirtualFunctions(): Sequence<IrSimpleFunction> =
+    this.filterIsInstance<IrSimpleFunction>()
         .filter { it.dispatchReceiverParameter != null }
         .map { it.realOverrideTarget }
         .filter { it.isOverridableOrOverrides }
         .distinct()
-        .toList()
 
 fun IrClass.getSuperClass(builtIns: IrBuiltIns): IrClass? =
     when (this) {
         builtIns.anyClass.owner -> null
-        else -> {
-            superTypes
-                .map { it.classifierOrFail.owner as IrClass }
-                .singleOrNull { !it.isInterface } ?: builtIns.anyClass.owner
-        }
+        else -> superTypes
+            .map { it.classifierOrFail.owner as IrClass }
+            .singleOrNull { !it.isInterface } ?: builtIns.anyClass.owner
     }
 
 fun IrClass.allFields(builtIns: IrBuiltIns): List<IrField> =
     getSuperClass(builtIns)?.allFields(builtIns).orEmpty() + declarations.filterIsInstance<IrField>()
+
+fun IrClass.hasInterfaceSuperClass(): Boolean {
+    var superClass: IrClass? = null
+    for (superType in superTypes) {
+        val typeAsClass = superType.classifierOrFail.owner as IrClass
+        if (typeAsClass.isInterface) {
+            return true
+        } else {
+            superClass = typeAsClass
+        }
+    }
+    return superClass?.hasInterfaceSuperClass() ?: false
+}
