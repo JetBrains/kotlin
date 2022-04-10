@@ -36,8 +36,9 @@ inline fun <reified T : Annotation> KAnnotatedElement.hasAnnotation(): Boolean =
  * in Java reflection ([java.lang.reflect.AnnotatedElement.getAnnotationsByType]). This is supported both for Kotlin-repeatable
  * ([kotlin.annotation.Repeatable]) and Java-repeatable ([java.lang.annotation.Repeatable]) annotation classes.
  */
-@SinceKotlin("1.5")
-@ExperimentalStdlibApi
+@SinceKotlin("1.7")
+@Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER")
+@WasExperimental(ExperimentalStdlibApi::class)
 inline fun <reified T : Annotation> KAnnotatedElement.findAnnotations(): List<T> =
     findAnnotations(T::class)
 
@@ -49,9 +50,9 @@ inline fun <reified T : Annotation> KAnnotatedElement.findAnnotations(): List<T>
  * in Java reflection ([java.lang.reflect.AnnotatedElement.getAnnotationsByType]). This is supported both for Kotlin-repeatable
  * ([kotlin.annotation.Repeatable]) and Java-repeatable ([java.lang.annotation.Repeatable]) annotation classes.
  */
-@Suppress("UNCHECKED_CAST")
-@SinceKotlin("1.5")
-@ExperimentalStdlibApi
+@SinceKotlin("1.7")
+@Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER")
+@WasExperimental(ExperimentalStdlibApi::class)
 fun <T : Annotation> KAnnotatedElement.findAnnotations(klass: KClass<T>): List<T> {
     val filtered = annotations.filterIsInstance(klass.java)
     if (filtered.isNotEmpty()) return filtered
@@ -62,6 +63,7 @@ fun <T : Annotation> KAnnotatedElement.findAnnotations(klass: KClass<T>): List<T
         if (container != null) {
             // A repeatable annotation container must have a method "value" returning the array of repeated annotations.
             val valueMethod = container::class.java.getMethod("value")
+            @Suppress("UNCHECKED_CAST")
             return (valueMethod(container) as Array<T>).asList()
         }
     }
