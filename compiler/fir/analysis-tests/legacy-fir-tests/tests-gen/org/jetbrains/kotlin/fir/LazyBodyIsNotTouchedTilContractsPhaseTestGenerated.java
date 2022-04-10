@@ -109,6 +109,11 @@ public class LazyBodyIsNotTouchedTilContractsPhaseTestGenerated extends Abstract
         runTest("compiler/fir/analysis-tests/testData/resolve/covariantArrayAsReceiver.kt");
     }
 
+    @TestMetadata("customStringLiterals.kt")
+    public void testCustomStringLiterals() throws Exception {
+        runTest("compiler/fir/analysis-tests/testData/resolve/customStringLiterals.kt");
+    }
+
     @TestMetadata("defaultJavaImportHiding.kt")
     public void testDefaultJavaImportHiding() throws Exception {
         runTest("compiler/fir/analysis-tests/testData/resolve/defaultJavaImportHiding.kt");
