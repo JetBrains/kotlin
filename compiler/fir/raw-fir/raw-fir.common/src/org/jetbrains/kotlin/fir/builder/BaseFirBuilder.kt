@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.ConeClassLikeType
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.FirTypeRef
+import org.jetbrains.kotlin.fir.types.builder.buildImplicitTypeRef
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
 import org.jetbrains.kotlin.fir.types.impl.ConeTypeParameterTypeImpl
@@ -38,8 +39,7 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.parsing.*
-import org.jetbrains.kotlin.psi.KtPsiUtil
-import org.jetbrains.kotlin.psi.KtStringTemplateExpression
+import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.types.ConstantValueKind
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
@@ -440,13 +440,6 @@ abstract class BaseFirBuilder<T>(val baseSession: FirSession, val context: Conte
         return buildStringConcatenationCall {
             val sb = StringBuilder()
             var hasExpressions = false
-            // TODO #[custom string literals]: consider better implementation
-            when (base) {
-                is KtStringTemplateExpression -> {
-                    prefix = base.prefix
-                }
-                else -> {}
-            }
             argumentList = buildArgumentList {
                 L@ for (entry in this@toInterpolatingCall) {
                     if (entry == null) continue
@@ -475,11 +468,116 @@ abstract class BaseFirBuilder<T>(val baseSession: FirSession, val context: Conte
                 }
             }
             source = base.toFirSourceElement()
-            // Fast-pass if there is no non-const string expressions and prefix
-            if (!hasExpressions && prefix == null) {
+            // Fast-pass if there is no non-const string expressions
+            if (!hasExpressions) {
                 return buildConstExpression(source, ConstantValueKind.String, sb.toString())
             }
         }
+    }
+
+    fun List<T?>.toBuildLiteralCall(
+        base: T,
+        prefix : String,
+        getElementType: (T) -> IElementType = { it.elementType },
+        convertTemplateEntry: T?.(String) -> FirExpression
+    ) : FirExpression {
+        // TODO set source to corresponding fake element everywhere
+        val objectReceiver = buildPropertyAccessExpression {
+            calleeReference = buildSimpleNamedReference {
+                source = null
+                name = Name.identifier(prefix)
+            }
+        }
+
+        val convertedEntriesAndTypes: MutableList<Pair<FirExpression, IElementType>> = mutableListOf()
+        L@ for (entry in this@toBuildLiteralCall) {
+            if (entry == null) continue
+            val elementType = getElementType(entry)
+            val convertedEntry = when (getElementType(entry)) {
+                OPEN_QUOTE, CLOSING_QUOTE -> continue@L
+                LITERAL_STRING_TEMPLATE_ENTRY -> {
+                    buildConstExpression(entry.toFirSourceElement(), ConstantValueKind.String, entry.asText)
+                }
+                ESCAPE_STRING_TEMPLATE_ENTRY -> {
+                    buildConstExpression(entry.toFirSourceElement(), ConstantValueKind.String, entry.unescapedValue)
+                }
+                SHORT_STRING_TEMPLATE_ENTRY, LONG_STRING_TEMPLATE_ENTRY -> {
+                    entry.convertTemplateEntry("Incorrect template argument")
+                }
+                else -> {
+                    buildErrorExpression {
+                        source = entry.toFirSourceElement()
+                        diagnostic = ConeSimpleDiagnostic("Incorrect template entry: ${entry.asText}", DiagnosticKind.Syntax)
+                    }
+                }
+            }
+
+            convertedEntriesAndTypes += convertedEntry to elementType
+        }
+
+        val lambdaArgumentBody = buildBlock {
+            convertedEntriesAndTypes.forEach { (entry, elementType) ->
+                when (elementType) {
+                    LITERAL_STRING_TEMPLATE_ENTRY, ESCAPE_STRING_TEMPLATE_ENTRY -> {
+                        statements += buildFunctionCall {
+                            source = null
+                            calleeReference = buildSimpleNamedReference {
+                                source = null
+                                name = Name.identifier("appendString")
+                            }
+                            argumentList = buildArgumentList {
+                                arguments += entry
+                            }
+                        }
+                    }
+                    SHORT_STRING_TEMPLATE_ENTRY, LONG_STRING_TEMPLATE_ENTRY -> {
+                        statements += buildFunctionCall {
+                            source = null
+                            calleeReference = buildSimpleNamedReference {
+                                source = null
+                                name = Name.identifier("appendObject")
+                            }
+                            argumentList = buildArgumentList {
+                                arguments += entry
+                            }
+                        }
+                    }
+                    else -> error("invalid node type $elementType")
+                }
+            }
+        }
+
+        val lambdaArgument = buildLambdaArgumentExpression {
+            source = null
+            expression = buildAnonymousFunctionExpression {
+                source = null
+                anonymousFunction = buildAnonymousFunction {
+                    source = null
+                    moduleData = baseModuleData
+                    origin = FirDeclarationOrigin.Source
+                    returnTypeRef = buildImplicitTypeRef()
+                    receiverTypeRef = buildImplicitTypeRef()
+                    symbol = FirAnonymousFunctionSymbol()
+                    isLambda = true
+                    hasExplicitParameterList = false
+                    body = lambdaArgumentBody
+                }
+            }
+        }
+
+        val buildLiteralCall = buildFunctionCall {
+            source = null
+            calleeReference = buildSimpleNamedReference {
+                source = null
+                name = Name.identifier("buildLiteral")
+            }
+            explicitReceiver = objectReceiver
+            argumentList = buildArgumentList {
+                arguments += lambdaArgument
+            }
+        }
+
+        return buildLiteralCall
     }
 
     /**

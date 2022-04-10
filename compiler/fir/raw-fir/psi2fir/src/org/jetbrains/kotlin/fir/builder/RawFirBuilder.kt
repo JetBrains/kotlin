@@ -43,7 +43,6 @@ import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.*
 import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
-import org.jetbrains.kotlin.types.ConstantValueKind
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.types.expressions.OperatorConventions
 import org.jetbrains.kotlin.util.OperatorNameConventions
@@ -1861,148 +1860,35 @@ open class RawFirBuilder(
             generateConstantExpressionByLiteral(expression)
 
         override fun visitStringTemplateExpression(expression: KtStringTemplateExpression, data: Unit): FirElement {
+            val getElementType: (PsiElement) -> IElementType  = { element ->
+                when (element) {
+                    is KtLiteralStringTemplateEntry -> KtNodeTypes.LITERAL_STRING_TEMPLATE_ENTRY
+                    is KtEscapeStringTemplateEntry -> KtNodeTypes.ESCAPE_STRING_TEMPLATE_ENTRY
+                    is KtSimpleNameStringTemplateEntry -> KtNodeTypes.SHORT_STRING_TEMPLATE_ENTRY
+                    is KtBlockStringTemplateEntry -> KtNodeTypes.LONG_STRING_TEMPLATE_ENTRY
+                    else -> error("invalid node type $element")
+                }
+            }
+
+            val convertTemplateEntry: PsiElement?.(String) -> FirExpression = {
+                (this as KtStringTemplateEntryWithExpression).expression.toFirExpression(it)
+            }
+
             val prefix = expression.prefix
-            if (prefix != null) {
-                return stringTemplateToLiteralBuilderCall(prefix, expression)
-            } else {
-                return expression.entries.toInterpolatingCall(
+            return if (prefix != null) {
+                expression.entries.toList().toBuildLiteralCall(
                     expression,
-                    getElementType = { element ->
-                        when (element) {
-                            is KtLiteralStringTemplateEntry -> KtNodeTypes.LITERAL_STRING_TEMPLATE_ENTRY
-                            is KtEscapeStringTemplateEntry -> KtNodeTypes.ESCAPE_STRING_TEMPLATE_ENTRY
-                            is KtSimpleNameStringTemplateEntry -> KtNodeTypes.SHORT_STRING_TEMPLATE_ENTRY
-                            is KtBlockStringTemplateEntry -> KtNodeTypes.LONG_STRING_TEMPLATE_ENTRY
-                            else -> error("invalid node type $element")
-                        }
-                    },
-                    convertTemplateEntry = {
-                        (this as KtStringTemplateEntryWithExpression).expression.toFirExpression(it)
-                    },
+                    prefix,
+                    getElementType = getElementType,
+                    convertTemplateEntry = convertTemplateEntry
+                )
+            } else {
+                expression.entries.toInterpolatingCall(
+                    expression,
+                    getElementType = getElementType,
+                    convertTemplateEntry = convertTemplateEntry
                 )
             }
-        }
-
-        fun stringTemplateToLiteralBuilderCall(
-            prefix: String,
-            stringConcatenationCall: KtStringTemplateExpression
-        ): FirElement {
-            // TODO set source to corresponding fake element everywhere
-
-            val objectReceiver = buildPropertyAccessExpression {
-                calleeReference = buildSimpleNamedReference {
-                    source = null
-                    name = Name.identifier(prefix)
-                }
-            }
-
-            val argsList = buildArgumentList {
-                stringConcatenationCall.entries.forEach {
-                    arguments += when (it) {
-                        is KtLiteralStringTemplateEntry -> {
-                            buildConstExpression(it.toFirSourceElement(), ConstantValueKind.String, it.asText)
-                        }
-                        is  KtEscapeStringTemplateEntry -> {
-                            buildConstExpression(it.toFirSourceElement(), ConstantValueKind.String, it.unescapedValue)
-                        }
-                        is KtSimpleNameStringTemplateEntry -> {
-                            (it as KtStringTemplateEntryWithExpression).expression.toFirExpression("TODO")
-                        }
-                        is KtBlockStringTemplateEntry -> {
-                            (it as KtStringTemplateEntryWithExpression).expression.toFirExpression("TODO")
-                        }
-                        else -> error("invalid node type $it")
-                    }
-                }
-            }
-
-            val lambdaArgumentBody = buildBlock {
-                stringConcatenationCall.entries.zip(argsList.arguments).forEach {
-                    when (it.first) {
-                        is KtLiteralStringTemplateEntry -> {
-                            statements += buildFunctionCall {
-                                source = null
-                                calleeReference = buildSimpleNamedReference {
-                                    source = null
-                                    name = Name.identifier("appendString")
-                                }
-                                argumentList = buildArgumentList {
-                                    arguments += it.second
-                                }
-                            }
-                        }
-                        is KtEscapeStringTemplateEntry -> {
-                            statements += buildFunctionCall {
-                                source = null
-                                calleeReference = buildSimpleNamedReference {
-                                    source = null
-                                    name = Name.identifier("appendString")
-                                }
-                                argumentList = buildArgumentList {
-                                    arguments += it.second
-                                }
-                            }
-                        }
-                        is KtSimpleNameStringTemplateEntry -> {
-                            statements += buildFunctionCall {
-                                source = null
-                                calleeReference = buildSimpleNamedReference {
-                                    source = null
-                                    name = Name.identifier("appendObject")
-                                }
-                                argumentList = buildArgumentList {
-                                    arguments += it.second
-                                }
-                            }
-                        }
-                        is KtBlockStringTemplateEntry -> {
-                            statements += buildFunctionCall {
-                                source = null
-                                calleeReference = buildSimpleNamedReference {
-                                    source = null
-                                    name = Name.identifier("appendObject")
-                                }
-                                argumentList = buildArgumentList {
-                                    arguments += it.second
-                                }
-                            }
-                        }
-                        else -> error("invalid node type $it")
-                    }
-                }
-            }
-
-            val lambdaArgument = buildLambdaArgumentExpression {
-                source = null
-                expression = buildAnonymousFunctionExpression {
-                    source = null
-                    anonymousFunction = buildAnonymousFunction {
-                        source = null
-                        moduleData = baseModuleData
-                        origin = FirDeclarationOrigin.Source
-                        returnTypeRef = buildImplicitTypeRef()
-                        receiverTypeRef = buildImplicitTypeRef()
-                        symbol = FirAnonymousFunctionSymbol()
-                        isLambda = true
-                        hasExplicitParameterList = false
-                        body = lambdaArgumentBody
-                    }
-                }
-            }
-
-            val fc = buildFunctionCall {
-                source = null
-                calleeReference = buildSimpleNamedReference {
-                    source = null
-                    name = Name.identifier("buildLiteral")
-                }
-                explicitReceiver = objectReceiver
-                argumentList = buildArgumentList {
-                    arguments += lambdaArgument
-                }
-            }
-
-            return fc
         }
 
         override fun visitReturnExpression(expression: KtReturnExpression, data: Unit): FirElement {
