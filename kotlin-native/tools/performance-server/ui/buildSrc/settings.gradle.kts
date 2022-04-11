@@ -21,7 +21,8 @@ buildscript {
             }
         }
     }
+    val buildGradlePluginVersion = extra["kotlin.build.gradlePlugin.version"]
     dependencies {
-        classpath("org.jetbrains.kotlin:kotlin-build-gradle-plugin:${extra["kotlin.build.gradlePlugin.version"]}")
+        classpath("org.jetbrains.kotlin:kotlin-build-gradle-plugin:$buildGradlePluginVersion")
     }
 }
