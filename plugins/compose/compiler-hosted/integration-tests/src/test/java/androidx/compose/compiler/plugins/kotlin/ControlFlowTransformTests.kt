@@ -2422,10 +2422,9 @@ class ControlFlowTransformTests : AbstractControlFlowTransformTests() {
               %composer.startReplaceableGroup(<>)
               sourceInformation(%composer, "C(provided)*<rememb...>:Test.kt")
               val tmp0 = remember({
-                val tmp0_return = mutableStateOf(
+                mutableStateOf(
                   value = value
                 )
-                tmp0_return
               }, %composer, 0).apply {
                 %this%apply.value = value
               }
@@ -4175,6 +4174,106 @@ class ControlFlowTransformTests : AbstractControlFlowTransformTests() {
 
             @Composable
             fun Leaf(default: Int = 0) {}
+        """
+    )
+
+    // There are a number of "inline constructors" in the Kotlin standard library for Array types.
+    // These are special cases, since normal constructors cannot be inlined.
+    @Test
+    fun testInlineArrayConstructor() = verifyComposeIrTransform(
+        """
+            import androidx.compose.runtime.*
+
+            @Composable
+            fun ArrayConstructorTest(n: Int) {
+                Array(n) { remember { it } }
+                ByteArray(n) { remember { it.toByte() } }
+                CharArray(n) { remember { it.toChar() } }
+                ShortArray(n) { remember { it.toShort() } }
+                IntArray(n) { remember { it } }
+                LongArray(n) { remember { it.toLong() } }
+                FloatArray(n) { remember { it.toFloat() } }
+                DoubleArray(n) { remember { it.toDouble() } }
+                BooleanArray(n) { remember { false } }
+            }
+        """,
+        """
+            @Composable
+            fun ArrayConstructorTest(n: Int, %composer: Composer?, %changed: Int) {
+              if (isTraceInProgress()) {
+                traceEventStart(<>)
+              }
+              %composer = %composer.startRestartGroup(<>)
+              sourceInformation(%composer, "C(ArrayConstructorTest)<rememb...>,<rememb...>,<rememb...>,<rememb...>,<rememb...>,<rememb...>,<rememb...>,<rememb...>,<rememb...>:Test.kt")
+              val %dirty = %changed
+              if (%changed and 0b1110 === 0) {
+                %dirty = %dirty or if (%composer.changed(n)) 0b0100 else 0b0010
+              }
+              if (%dirty and 0b1011 !== 0b0010 || !%composer.skipping) {
+                Array(n) { it: Int ->
+                  val tmp0_return = remember({
+                    it
+                  }, %composer, 0)
+                  tmp0_return
+                }
+                ByteArray(n) { it: Int ->
+                  val tmp0_return = remember({
+                    it.toByte()
+                  }, %composer, 0)
+                  tmp0_return
+                }
+                CharArray(n) { it: Int ->
+                  val tmp0_return = remember({
+                    it.toChar()
+                  }, %composer, 0)
+                  tmp0_return
+                }
+                ShortArray(n) { it: Int ->
+                  val tmp0_return = remember({
+                    it.toShort()
+                  }, %composer, 0)
+                  tmp0_return
+                }
+                IntArray(n) { it: Int ->
+                  val tmp0_return = remember({
+                    it
+                  }, %composer, 0)
+                  tmp0_return
+                }
+                LongArray(n) { it: Int ->
+                  val tmp0_return = remember({
+                    it.toLong()
+                  }, %composer, 0)
+                  tmp0_return
+                }
+                FloatArray(n) { it: Int ->
+                  val tmp0_return = remember({
+                    it.toFloat()
+                  }, %composer, 0)
+                  tmp0_return
+                }
+                DoubleArray(n) { it: Int ->
+                  val tmp0_return = remember({
+                    it.toDouble()
+                  }, %composer, 0)
+                  tmp0_return
+                }
+                BooleanArray(n) { it: Int ->
+                  val tmp0_return = remember({
+                    false
+                  }, %composer, 0)
+                  tmp0_return
+                }
+              } else {
+                %composer.skipToGroupEnd()
+              }
+              %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
+                ArrayConstructorTest(n, %composer, %changed or 0b0001)
+              }
+              if (isTraceInProgress()) {
+                traceEventEnd()
+              }
+            }
         """
     )
 }

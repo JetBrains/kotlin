@@ -24,13 +24,13 @@ import androidx.compose.compiler.plugins.kotlin.lower.decoys.copyWithNewTypePara
 import androidx.compose.compiler.plugins.kotlin.lower.decoys.didDecoyHaveDefaultForValueParameter
 import androidx.compose.compiler.plugins.kotlin.lower.decoys.isDecoy
 import androidx.compose.compiler.plugins.kotlin.lower.decoys.isDecoyImplementation
+import kotlin.math.min
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.backend.common.ir.copyTo
 import org.jetbrains.kotlin.backend.common.ir.copyTypeParametersFrom
 import org.jetbrains.kotlin.backend.common.ir.moveBodyTo
 import org.jetbrains.kotlin.backend.common.ir.remapTypeParameters
 import org.jetbrains.kotlin.backend.jvm.ir.isInlineClassType
-import org.jetbrains.kotlin.backend.jvm.ir.isInlineParameter
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
@@ -92,7 +92,6 @@ import org.jetbrains.kotlin.resolve.BindingTrace
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.multiplatform.findCompatibleExpectsForActual
 import org.jetbrains.kotlin.util.OperatorNameConventions
-import kotlin.math.min
 
 @Suppress("DEPRECATION")
 class ComposerParamTransformer(
@@ -111,10 +110,13 @@ class ComposerParamTransformer(
      */
     private var currentModule: IrModuleFragment? = null
 
+    private var inlineLambdaInfo = ComposeInlineLambdaLocator(context)
+
     @OptIn(ObsoleteDescriptorBasedAPI::class)
     override fun lower(module: IrModuleFragment) {
-        super.lower(module)
         currentModule = module
+
+        inlineLambdaInfo.scan(module)
 
         module.transformChildrenVoid(this)
 
@@ -157,7 +159,6 @@ class ComposerParamTransformer(
         return v2
     }
 
-    @OptIn(ObsoleteDescriptorBasedAPI::class)
     fun IrCall.withComposerParamIfNeeded(composerParam: IrValueParameter): IrCall {
         val isComposableLambda = isComposableLambdaInvoke()
 
@@ -314,7 +315,6 @@ class ComposerParamTransformer(
     }
 
     // Transform `@Composable fun foo(params): RetType` into `fun foo(params, $composer: Composer): RetType`
-    @OptIn(ObsoleteDescriptorBasedAPI::class)
     private fun IrFunction.withComposerParamIfNeeded(): IrFunction {
         // don't transform functions that themselves were produced by this function. (ie, if we
         // call this with a function that has the synthetic composer parameter, we don't want to
@@ -577,7 +577,7 @@ class ComposerParamTransformer(
                 }
             }
 
-            inlinedFunctions += IrInlineReferenceLocator.scan(context, fn)
+            inlineLambdaInfo.scan(fn)
 
             fn.transformChildrenVoid(object : IrElementTransformerVoid() {
                 var isNestedScope = false
@@ -635,7 +635,7 @@ class ComposerParamTransformer(
         }
     }
 
-    fun defaultParameterType(param: IrValueParameter): IrType {
+    private fun defaultParameterType(param: IrValueParameter): IrType {
         val type = param.type
         if (param.defaultValue == null) return type
         return when {
@@ -645,26 +645,12 @@ class ComposerParamTransformer(
         }
     }
 
-    fun IrCall.isInlineParameterLambdaInvoke(): Boolean {
-        if (origin != IrStatementOrigin.INVOKE) return false
-        val lambda = dispatchReceiver as? IrGetValue
-        val valueParameter = lambda?.symbol?.owner as? IrValueParameter
-        return valueParameter?.isInlineParameter() == true
-    }
-
     private fun IrCall.isComposableLambdaInvoke(): Boolean {
         return isInvoke() && dispatchReceiver?.type?.hasComposableAnnotation() == true
     }
 
-    private fun IrFunction.isNonComposableInlinedLambda(): Boolean {
-        for (element in inlinedFunctions) {
-            if (element.argument.function != this)
-                continue
-            if (!element.parameter.type.hasComposableAnnotation())
-                return true
-        }
-        return false
-    }
+    private fun IrFunction.isNonComposableInlinedLambda(): Boolean =
+        inlineLambdaInfo.isInlineLambda(this) && !hasComposableAnnotation()
 
     @OptIn(ObsoleteDescriptorBasedAPI::class)
     private fun IrFunction.expectDescriptor(): CallableDescriptor? =

@@ -462,8 +462,10 @@ class ComposableFunctionBodyTransformer(
     FileLoweringPass,
     ModuleLoweringPass {
 
+    private var inlineLambdaInfo = ComposeInlineLambdaLocator(context)
+
     override fun lower(module: IrModuleFragment) {
-        super.lower(module)
+        inlineLambdaInfo.scan(module)
         module.transformChildrenVoid(this)
         applySourceFixups()
         module.patchDeclarationParents()
@@ -782,7 +784,7 @@ class ComposableFunctionBodyTransformer(
             return false
 
         // Do not insert an observe scope in an inline composable lambda
-        if (this.isInlinedLambda()) return false
+        if (inlineLambdaInfo.isInlineLambda(this)) return false
 
         // Do not insert an observe scope if the function has a return result
         if (descriptor.returnType.let { it == null || !it.isUnit() })
@@ -3013,13 +3015,12 @@ class ComposableFunctionBodyTransformer(
         // now after the inner block is extracted, the $composer parameter used in the block needs
         // to be remapped to the outer composer instead for the expression and any inlined lambdas.
         block.transformChildrenVoid(object : IrElementTransformerVoid() {
-            override fun visitFunction(declaration: IrFunction): IrStatement {
-                if (declaration.isInlinedLambda()) {
-                    return super.visitFunction(declaration)
+            override fun visitFunction(declaration: IrFunction): IrStatement =
+                if (inlineLambdaInfo.isInlineLambda(declaration)) {
+                    super.visitFunction(declaration)
                 } else {
-                    return declaration
+                    declaration
                 }
-            }
 
             override fun visitGetValue(expression: IrGetValue): IrExpression {
                 super.visitGetValue(expression)
@@ -3484,7 +3485,8 @@ class ComposableFunctionBodyTransformer(
             val function: IrFunction,
             private val transformer: ComposableFunctionBodyTransformer
         ) : BlockScope("fun ${function.name.asString()}") {
-            val isInlinedLambda = with(transformer) { function.isInlinedLambda() }
+            val isInlinedLambda: Boolean
+                get() = transformer.inlineLambdaInfo.isInlineLambda(function)
 
             val metrics: FunctionMetrics = transformer.metricsFor(function)
 
@@ -3493,7 +3495,10 @@ class ComposableFunctionBodyTransformer(
             private fun nextTemporaryIndex(): Int = lastTemporaryIndex++
 
             override val isInComposable: Boolean
-                get() = if (isInlinedLambda) (parent?.isInComposable ?: false) else isComposable
+                get() = isComposable ||
+                    transformer.inlineLambdaInfo.preservesComposableScope(function) &&
+                    parent?.isInComposable == true
+
             override val functionScope: FunctionScope? get() = this
             override val nearestComposer: IrValueParameter?
                 get() = composerParameter ?: super.nearestComposer

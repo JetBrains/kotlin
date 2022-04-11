@@ -210,7 +210,6 @@ class ComposableTargetAnnotationsTransformer(
             ComposableInferredTargetClass != null &&
             ComposableOpenTargetClass != null
         ) {
-            super.lower(module)
             module.transformChildrenVoid(this)
         }
     }
