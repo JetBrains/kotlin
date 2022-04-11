@@ -88,10 +88,11 @@ task testJdk6Tests(type: Test) { thisTask ->
     dependsOn(':kotlin-stdlib:testClasses')
     check.dependsOn(thisTask)
     group = "verification"
-
+    def kotlinStdLibTestOutput = project(':kotlin-stdlib').sourceSets.test.output
+    def objectFactory = project.objects
     doFirst {
-        testClassesDirs = project(':kotlin-stdlib').sourceSets.test.output
-        classpath = files(
+        testClassesDirs = kotlinStdLibTestOutput
+        classpath = objectFactory.fileCollection().from(
                 testClassesDirs,
                 sourceSets.test.compileClasspath
         )
