@@ -55,12 +55,12 @@ fun Project.commonDependency(group: String, artifact: String, vararg suffixesAnd
     return "$group:$artifact${artifactSuffixes.joinToString("")}:${commonDependencyVersion(group, artifact)}${classifiers.joinToString("")}"
 }
 
-fun Project.commonDependencyVersion(group: String, artifact: String) =
+fun Project.commonDependencyVersion(group: String, artifact: String): String =
     when {
         rootProject.extra.has("versions.$artifact") -> rootProject.extra["versions.$artifact"]
         rootProject.extra.has("versions.$group") -> rootProject.extra["versions.$group"]
         else -> throw GradleException("Neither versions.$artifact nor versions.$group is defined in the root project's extra")
-    }
+    } as String
 
 fun Project.preloadedDeps(
     vararg artifactBaseNames: String,

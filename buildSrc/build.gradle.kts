@@ -28,6 +28,20 @@ buildscript {
         classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:${project.bootstrapKotlinVersion}")
         classpath("org.jetbrains.kotlin:kotlin-sam-with-receiver:${project.bootstrapKotlinVersion}")
     }
+
+    val versionPropertiesFile = project.rootProject.projectDir.parentFile.resolve("gradle/versions.properties")
+    val versionProperties = java.util.Properties()
+    versionPropertiesFile.inputStream().use { propInput ->
+        versionProperties.load(propInput)
+    }
+    configurations.all {
+        resolutionStrategy.eachDependency {
+            if (requested.group == "com.google.code.gson" && requested.name == "gson") {
+                useVersion(versionProperties["versions.gson"] as String)
+                because("Force using same gson version because of https://github.com/google/gson/pull/1991")
+            }
+        }
+    }
 }
 
 logger.info("buildSrcKotlinVersion: " + extra["bootstrapKotlinVersion"])

@@ -10,6 +10,21 @@ project.buildscript.repositories {
         mavenCentral()
 }
 
+File versionPropertiesFile = new File(rootProject.projectDir, "gradle/versions.properties")
+def versionProperties = new Properties()
+versionPropertiesFile.withInputStream {
+    versionProperties.load(it)
+}
+
+project.buildscript.configurations.all {
+    resolutionStrategy.eachDependency {
+        if (requested.group == "com.google.code.gson" && requested.name == "gson") {
+            useVersion(versionProperties['versions.gson'])
+            because("Force using same gson version because of https://github.com/google/gson/pull/1991")
+        }
+    }
+}
+
 project.buildscript.dependencies {
     classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:${project.bootstrapKotlinVersion}"
 }
