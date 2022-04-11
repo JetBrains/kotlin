@@ -25,10 +25,11 @@ object StandardTypes {
     val Double: ConeClassLikeType = StandardClassIds.Double.createType()
 
     val Any: ConeClassLikeType = StandardClassIds.Any.createType()
+    val NullableAny: ConeClassLikeType = StandardClassIds.Any.createType(isNullable = true)
 }
 
-private fun ClassId.createType(): ConeClassLikeType = 
-    ConeClassLikeTypeImpl(ConeClassLikeLookupTagImpl(this), emptyArray(), isNullable = false)
+private fun ClassId.createType(isNullable: Boolean = false): ConeClassLikeType =
+    ConeClassLikeTypeImpl(ConeClassLikeLookupTagImpl(this), emptyArray(), isNullable)
 
 fun ConeClassLikeType.isDouble(): Boolean = lookupTag.classId == StandardClassIds.Double
 fun ConeClassLikeType.isFloat(): Boolean = lookupTag.classId == StandardClassIds.Float
