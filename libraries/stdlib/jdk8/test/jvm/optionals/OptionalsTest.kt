@@ -31,13 +31,17 @@ class OptionalsTest {
         assertEquals("foo", Optional.of("foo").getOrElse { throw AssertionError() })
         assertEquals("bar", Optional.empty<String>().getOrElse { "bar" })
 
-        assertFailsWith<IllegalStateException>(message = "ran") {
-            Optional.empty<String>().getOrElse { throw IllegalStateException("ran") }
-        }
-
         // Return type can be a supertype
         assertNull(Optional.empty<String>().getOrElse { null })
         assertEquals(5.0, Optional.empty<Int>().getOrElse<Number, Int> { 5.0 })
+    }
+
+    @Test
+    fun getOrElse_propagatesException() {
+        val e = assertFailsWith<IllegalStateException> {
+            Optional.empty<String>().getOrElse { throw IllegalStateException("ran") }
+        }
+        assertEquals("ran", e.message)
     }
 
     @Test
@@ -58,17 +62,26 @@ class OptionalsTest {
     fun optionalToList() {
         assertEquals(listOf("foo"), Optional.of("foo").toList())
         assertEquals(emptyList(), Optional.empty<String>().toList())
+
+        // List element type can be a supertype
+        assertEquals(listOf<CharSequence>("foo"), Optional.of("foo").toList<CharSequence>())
     }
 
     @Test
     fun optionalToSet() {
         assertEquals(setOf("foo"), Optional.of("foo").toSet())
         assertEquals(emptySet(), Optional.empty<String>().toSet())
+
+        // List element type can be a supertype
+        assertEquals(setOf<CharSequence>("foo"), Optional.of("foo").toSet<CharSequence>())
     }
 
     @Test
     fun optionalAsSequence() {
         assertEquals(listOf("foo"), Optional.of("foo").asSequence().toList())
         assertEquals(emptyList(), Optional.empty<String>().asSequence().toList())
+
+        // List element type can be a supertype
+        assertEquals(listOf<CharSequence>("foo"), Optional.of("foo").asSequence<CharSequence>().toList())
     }
 }

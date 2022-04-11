@@ -10,23 +10,31 @@ import java.util.Optional
 /**
  * Returns this [Optional]'s value if [present][Optional.isPresent], or otherwise `null`.
  */
-public fun <T : Any> Optional<out T>.getOrNull(): T? = orElse(null)
+@SinceKotlin("1.7")
+@ExperimentalStdlibApi
+public fun <T : Any> Optional<T>.getOrNull(): T? = orElse(null)
 
 /**
  * Returns this [Optional]'s value if [present][Optional.isPresent], or otherwise [defaultValue].
  */
-public fun <R, T : R & Any> Optional<out T>.getOrDefault(defaultValue: R): R = if (isPresent) get() else defaultValue
+@SinceKotlin("1.7")
+@ExperimentalStdlibApi
+public fun <R, T : R & Any> Optional<T>.getOrDefault(defaultValue: R): R = if (isPresent) get() else defaultValue
 
 /**
  * Returns this [Optional]'s value if [present][Optional.isPresent], or otherwise the result of the [defaultValue] function.
  */
-public inline fun <R, T : R & Any> Optional<out T>.getOrElse(defaultValue: () -> R): R =
+@SinceKotlin("1.7")
+@ExperimentalStdlibApi
+public inline fun <R, T : R & Any> Optional<T>.getOrElse(defaultValue: () -> R): R =
     if (isPresent) get() else defaultValue()
 
 /**
  * Appends this [Optional]'s value to the given [destination] collection if [present][Optional.isPresent].
  */
-public fun <T : Any, C : MutableCollection<in T>> Optional<out T>.toCollection(destination: C): C {
+@SinceKotlin("1.7")
+@ExperimentalStdlibApi
+public fun <T : Any, C : MutableCollection<in T>> Optional<T>.toCollection(destination: C): C {
     if (isPresent) {
         destination.add(get())
     }
@@ -37,6 +45,8 @@ public fun <T : Any, C : MutableCollection<in T>> Optional<out T>.toCollection(d
  * Returns a new read-only list of this [Optional]'s value if [present][Optional.isPresent], or otherwise an empty list.
  * The returned list is serializable (JVM).
  */
+@SinceKotlin("1.7")
+@ExperimentalStdlibApi
 public fun <T : Any> Optional<out T>.toList(): List<T> =
     if (isPresent) listOf(get()) else emptyList()
 
@@ -44,6 +54,8 @@ public fun <T : Any> Optional<out T>.toList(): List<T> =
  * Returns a new read-only set of this [Optional]'s value if [present][Optional.isPresent], or otherwise an empty set.
  * The returned set is serializable (JVM).
  */
+@SinceKotlin("1.7")
+@ExperimentalStdlibApi
 public fun <T : Any> Optional<out T>.toSet(): Set<T> =
     if (isPresent) setOf(get()) else emptySet()
 
@@ -51,5 +63,7 @@ public fun <T : Any> Optional<out T>.toSet(): Set<T> =
  * Returns a new sequence for this [Optional]'s value if [present][Optional.isPresent], or otherwise an empty sequence.
  * The returned set is serializable (JVM).
  */
+@SinceKotlin("1.7")
+@ExperimentalStdlibApi
 public fun <T : Any> Optional<out T>.asSequence(): Sequence<T> =
     if (isPresent) sequenceOf(get()) else emptySequence()
