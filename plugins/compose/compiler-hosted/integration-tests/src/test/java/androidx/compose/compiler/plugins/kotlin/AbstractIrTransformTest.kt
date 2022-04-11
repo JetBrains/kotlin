@@ -160,7 +160,7 @@ abstract class AbstractIrTransformTest : AbstractCodegenTest() {
         extra: String = "",
         validator: (element: IrElement) -> Unit = { },
         dumpTree: Boolean = false,
-        truncateTracingInfoMode: TruncateTracingInfoMode = TruncateTracingInfoMode.ALL,
+        truncateTracingInfoMode: TruncateTracingInfoMode = TruncateTracingInfoMode.TRUNCATE_ALL,
         compilation: Compilation = JvmCompilation()
     ) {
         if (!compilation.enabled) {
@@ -206,13 +206,15 @@ abstract class AbstractIrTransformTest : AbstractCodegenTest() {
             // replace traceEventStart values with a token
             // TODO(174715171): capture actual values for testing
             .replace(
-                Regex("traceEventStart\\(-?\\d+, (.*)")
+                Regex("traceEventStart\\(-?\\d+, (-?\\d+, -?\\d+), (.*)")
             ) {
                 when (truncateTracingInfoMode) {
-                    TruncateTracingInfoMode.ALL ->
+                    TruncateTracingInfoMode.TRUNCATE_ALL ->
                         "traceEventStart(<>)"
-                    TruncateTracingInfoMode.GROUP_KEY_ONLY ->
-                        "traceEventStart(<>, ${it.groupValues[1]}"
+                    TruncateTracingInfoMode.TRUNCATE_KEY ->
+                        "traceEventStart(<>, ${it.groupValues[1]}, ${it.groupValues[2]}"
+                    TruncateTracingInfoMode.KEEP_INFO_STRING ->
+                        "traceEventStart(<>, ${it.groupValues[2]}"
                 }
             }
             // replace source information with source it references
@@ -510,7 +512,8 @@ abstract class AbstractIrTransformTest : AbstractCodegenTest() {
     }
 
     enum class TruncateTracingInfoMode {
-        ALL, // truncates all trace information replacing it with a token
-        GROUP_KEY_ONLY, // truncates just the group key
+        TRUNCATE_ALL, // truncates all trace information replacing it with a token
+        TRUNCATE_KEY, // truncates only the `key` parameter
+        KEEP_INFO_STRING, // truncates everything except for the `info` string
     }
 }
