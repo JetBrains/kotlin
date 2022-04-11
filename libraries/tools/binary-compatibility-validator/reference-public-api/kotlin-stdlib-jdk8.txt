@@ -1,3 +1,13 @@
+public final class kotlin/jvm/optionals/OptionalsKt {
+	public static final fun asSequence (Ljava/util/Optional;)Lkotlin/sequences/Sequence;
+	public static final fun getOrDefault (Ljava/util/Optional;Ljava/lang/Object;)Ljava/lang/Object;
+	public static final fun getOrElse (Ljava/util/Optional;Lkotlin/jvm/functions/Function0;)Ljava/lang/Object;
+	public static final fun getOrNull (Ljava/util/Optional;)Ljava/lang/Object;
+	public static final fun toCollection (Ljava/util/Optional;Ljava/util/Collection;)Ljava/util/Collection;
+	public static final fun toList (Ljava/util/Optional;)Ljava/util/List;
+	public static final fun toSet (Ljava/util/Optional;)Ljava/util/Set;
+}
+
 public final class kotlin/streams/jdk8/StreamsKt {
 	public static final fun asSequence (Ljava/util/stream/DoubleStream;)Lkotlin/sequences/Sequence;
 	public static final fun asSequence (Ljava/util/stream/IntStream;)Lkotlin/sequences/Sequence;
