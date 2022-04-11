@@ -34,6 +34,20 @@ buildscript {
         classpath(kotlin("serialization", bootstrapKotlinVersion))
         classpath("org.jetbrains.dokka:dokka-gradle-plugin:0.9.17")
     }
+
+    val versionPropertiesFile = project.rootProject.projectDir.resolve("gradle/versions.properties")
+    val versionProperties = java.util.Properties()
+    versionPropertiesFile.inputStream().use { propInput ->
+        versionProperties.load(propInput)
+    }
+    configurations.all {
+        resolutionStrategy.eachDependency {
+            if (requested.group == "com.google.code.gson" && requested.name == "gson") {
+                useVersion(versionProperties["versions.gson"] as String)
+                because("Force using same gson version because of https://github.com/google/gson/pull/1991")
+            }
+        }
+    }
 }
 
 plugins {
