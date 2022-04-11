@@ -8,6 +8,8 @@ package org.jetbrains.kotlin.ir.backend.js.transformers.irToJs
 import org.jetbrains.kotlin.ir.backend.js.export.hasMangledName
 import org.jetbrains.kotlin.ir.backend.js.gcc.withJsDoc
 import org.jetbrains.kotlin.ir.backend.js.utils.JsGenerationContext
+import org.jetbrains.kotlin.ir.backend.js.utils.getJsName
+import org.jetbrains.kotlin.ir.backend.js.utils.getJsQualifier
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.util.isTopLevelDeclaration
 import org.jetbrains.kotlin.js.backend.ast.*
@@ -54,7 +56,16 @@ class IrDeclarationToJsTransformer : BaseIrElementToJsNodeTransformer<JsStatemen
             JsEmpty
         } else {
             val fieldName = context.getNameForProperty(declaration)
-            JsVars(JsVars.JsVar(fieldName)).withJsDoc(declaration, context)
+            val variable = JsVars(JsVars.JsVar(fieldName)).withJsDoc(declaration, context)
+
+            val getterDeclaration = declaration.getter.visitDeclarationWithJsName(context)
+            val setterDeclaration = declaration.setter.visitDeclarationWithJsName(context)
+
+            return JsGlobalBlock().apply {
+                statements += variable
+                if (getterDeclaration != null) statements += getterDeclaration
+                if (setterDeclaration != null) statements += setterDeclaration
+            }
         }
     }
 
@@ -77,5 +88,9 @@ class IrDeclarationToJsTransformer : BaseIrElementToJsNodeTransformer<JsStatemen
             .takeIf { it.name != null }
             ?.makeStmt()
             ?.withJsDoc(this, context) ?: JsEmpty
+    }
+
+    private fun IrSimpleFunction?.visitDeclarationWithJsName(context: JsGenerationContext): JsStatement? {
+        return this?.takeIf { it.getJsName() != null }?.accept(this@IrDeclarationToJsTransformer, context)
     }
 }
