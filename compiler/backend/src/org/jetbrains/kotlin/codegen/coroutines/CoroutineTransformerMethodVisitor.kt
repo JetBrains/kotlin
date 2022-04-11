@@ -160,7 +160,39 @@ class CoroutineTransformerMethodVisitor(
             insert(firstStateLabel, withInstructionAdapter {
                 generateResumeWithExceptionCheck(dataIndex)
             })
+
+            // Insert throw of an IllegalStateException if the resumption point is unknown. This code does not correspond to
+            // anything in the input code. We give it the entry line number instead of letting it inherit the line number
+            // of the last branch to avoid debugger issues where reordering the blocks leads to inability to set a breakpoint
+            // on the last expression in a suspend function. See KT-51936 for a concrete example.
+            //
+            // The IntelliJ debugger tries to avoid stuttering by only setting a breakpoint on the first bytecode offset that
+            // corresponds to a line number. Therefore, if the code is generated as:
+            //
+            //    line 1: switch
+            //    line 2: case 1: ...
+            //    line 3:         ...
+            //    line 4: case 2: ...
+            //    line 5:         ...
+            //            default: throw IllegalStateException
+            //
+            // The default case ends up with line number 5. Now, compilers could (and the D8 dexer someties does) reorder
+            // the blocks for the cases to end up with:
+            //
+            //    line 1: switch
+            //    line 5: default : throw IllegalStateException
+            //    line 2: case 1: ...
+            //    line 3:         ...
+            //    line 4: case 2: ...
+            //    line 5:         ...
+            //
+            // This is equivalent to the original code. However, if the user tries to set a breakpoint on line 5, it will
+            // ONLY be set on the throw of the IllegalStateException and not in the actual user code in case 2. And therefore
+            // it is impossible for a developer to hit a breakpoint on the last line of a suspend function.
+            //
+            // Using line 1 for the default case limits this issue as the entry block is rarely (if ever) reordered.
             insert(last, defaultLabel)
+            insert(last, LineNumberNode(lineNumber, defaultLabel))
 
             insert(last, withInstructionAdapter {
                 AsmUtil.genThrow(this, "java/lang/IllegalStateException", ILLEGAL_STATE_ERROR_MESSAGE)
