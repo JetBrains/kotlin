@@ -16,8 +16,8 @@
 
 package androidx.compose.compiler.plugins.kotlin.lower
 
-import androidx.compose.compiler.plugins.kotlin.ModuleMetrics
 import androidx.compose.compiler.plugins.kotlin.ComposeFqNames
+import androidx.compose.compiler.plugins.kotlin.ModuleMetrics
 import androidx.compose.compiler.plugins.kotlin.analysis.ComposeWritableSlices
 import androidx.compose.compiler.plugins.kotlin.analysis.knownStable
 import androidx.compose.compiler.plugins.kotlin.irTrace
@@ -190,7 +190,7 @@ private class FunctionContext(
     val canRemember: Boolean
 ) : DeclarationContext() {
     override val symbol get() = declaration.symbol
-    override val functionContext: FunctionContext? get() = this
+    override val functionContext: FunctionContext get() = this
     val locals = mutableSetOf<IrValueDeclaration>()
     override val captures: MutableSet<IrValueDeclaration> = mutableSetOf()
     var collectors = mutableListOf<CaptureCollector>()
@@ -282,7 +282,6 @@ const val COMPOSABLE_LAMBDA_N = "composableLambdaN"
 const val COMPOSABLE_LAMBDA_INSTANCE = "composableLambdaInstance"
 const val COMPOSABLE_LAMBDA_N_INSTANCE = "composableLambdaNInstance"
 
-@Suppress("PRE_RELEASE_CLASS")
 class ComposerLambdaMemoization(
     context: IrPluginContext,
     symbolRemapper: DeepCopySymbolRemapper,
@@ -299,6 +298,8 @@ class ComposerLambdaMemoization(
 
     private var composableSingletonsClass: IrClass? = null
     private var currentFile: IrFile? = null
+
+    private var inlineLambdaInfo = ComposeInlineLambdaLocator(context)
 
     private fun getOrCreateComposableSingletonsClass(): IrClass {
         if (composableSingletonsClass != null) return composableSingletonsClass!!
@@ -367,23 +368,22 @@ class ComposerLambdaMemoization(
     }
 
     override fun lower(module: IrModuleFragment) {
-        super.lower(module)
+        inlineLambdaInfo.scan(module)
         module.transformChildrenVoid(this)
     }
 
     override fun visitDeclaration(declaration: IrDeclarationBase): IrStatement {
         if (declaration is IrFunction)
             return super.visitDeclaration(declaration)
-        val symbolOwner = declaration as? IrSymbolOwner
-        if (symbolOwner != null) {
-            val functionContext = currentFunctionContext
-            if (functionContext != null)
-                declarationContextStack.push(FunctionLocalSymbol(declaration, functionContext))
-            else
-                declarationContextStack.push(SymbolOwnerContext(declaration))
+
+        val functionContext = currentFunctionContext
+        if (functionContext != null) {
+            declarationContextStack.push(FunctionLocalSymbol(declaration, functionContext))
+        } else {
+            declarationContextStack.push(SymbolOwnerContext(declaration))
         }
         val result = super.visitDeclaration(declaration)
-        if (symbolOwner != null) declarationContextStack.pop()
+        declarationContextStack.pop()
         return result
     }
 
@@ -404,10 +404,15 @@ class ComposerLambdaMemoization(
         )
     }
 
+    private val IrFunction.allowsComposableCalls: Boolean
+        get() = hasComposableAnnotation() ||
+            inlineLambdaInfo.preservesComposableScope(this) &&
+            declarationContextStack.peek()?.composable == true
+
     @OptIn(ObsoleteDescriptorBasedAPI::class)
     override fun visitFunction(declaration: IrFunction): IrStatement {
         val descriptor = declaration.descriptor
-        val composable = descriptor.allowsComposableCalls()
+        val composable = declaration.allowsComposableCalls
         val canRemember = composable &&
             // Don't use remember in an inline function
             !descriptor.isInline &&
@@ -446,7 +451,6 @@ class ComposerLambdaMemoization(
         return super.visitValueAccess(expression)
     }
 
-    @OptIn(ObsoleteDescriptorBasedAPI::class)
     override fun visitFunctionReference(expression: IrFunctionReference): IrExpression {
         // Memoize the instance created by using the :: operator
         val result = super.visitFunctionReference(expression)
@@ -527,7 +531,7 @@ class ComposerLambdaMemoization(
             // Only memoize non-composable lambdas in a context we can use remember
             !functionContext.canRemember ||
             // Don't memoize inlined lambdas
-            expression.function.isInlinedLambda()
+            inlineLambdaInfo.isInlineLambda(expression.function)
         ) {
             return super.visitFunctionExpression(expression)
         }
@@ -580,7 +584,7 @@ class ComposerLambdaMemoization(
         val functionExpression = result as? IrFunctionExpression ?: return result
 
         // Do not wrap target of an inline function
-        if (expression.function.isInlinedLambda()) {
+        if (inlineLambdaInfo.isInlineLambda(expression.function)) {
             return functionExpression
         }
 
@@ -676,7 +680,7 @@ class ComposerLambdaMemoization(
     override fun visitFunctionExpression(expression: IrFunctionExpression): IrExpression {
         val declarationContext = declarationContextStack.peek()
             ?: return super.visitFunctionExpression(expression)
-        return if (expression.allowsComposableCalls())
+        return if (expression.function.allowsComposableCalls)
             visitComposableFunctionExpression(expression, declarationContext)
         else
             visitNonComposableFunctionExpression(expression)
