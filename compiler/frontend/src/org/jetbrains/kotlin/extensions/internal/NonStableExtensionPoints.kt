@@ -36,7 +36,7 @@ import org.jetbrains.kotlin.types.expressions.ExpressionTypingContext
  */
 @RequiresOptIn(level = RequiresOptIn.Level.ERROR)
 @Retention(AnnotationRetention.BINARY)
-annotation class InternalNonStableExtensionPoints
+internal annotation class InternalNonStableExtensionPoints
 
 @InternalNonStableExtensionPoints
 interface TypeResolutionInterceptorExtension {
