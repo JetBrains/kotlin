@@ -362,9 +362,8 @@ fun SmartPrinter.printImplementation(implementation: Implementation) {
 
                 for (overridenType in field.overridenTypes) {
                     generateReplace(field, overridenType) {
-                        if (field.typeWithArguments != "List<FirTypeParameter>") {
+                        if (overridenType is Field && overridenType.overrideTypeRequire)
                             println("require($newValue is ${field.typeWithArguments})")
-                        }
                         println("replace$capitalizedFieldName($newValue)")
                     }
                 }

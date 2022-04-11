@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.tree.generator.model
 
+import com.sun.org.apache.xpath.internal.operations.Bool
 import org.jetbrains.kotlin.fir.tree.generator.context.AbstractFirTreeBuilder
 import org.jetbrains.kotlin.fir.tree.generator.context.type
 import org.jetbrains.kotlin.fir.tree.generator.printer.typeWithArguments
@@ -62,12 +63,12 @@ fun field(element: Element, nullable: Boolean = false, withReplace: Boolean = fa
 
 // ----------- Field list -----------
 
-fun fieldList(name: String, type: Importable, withReplace: Boolean = false): Field {
-    return FieldList(name, type, withReplace)
+fun fieldList(name: String, type: Importable, withReplace: Boolean = false, overrideTypeRequire: Boolean = false): Field {
+    return FieldList(name, type, withReplace, overrideTypeRequire)
 }
 
-fun fieldList(element: AbstractElement, withReplace: Boolean = false): Field {
-    return FieldList(element.name.replaceFirstChar(Char::lowercaseChar) + "s", element, withReplace)
+fun fieldList(element: AbstractElement, withReplace: Boolean = false, overrideTypeRequire: Boolean = false): Field {
+    return FieldList(element.name.replaceFirstChar(Char::lowercaseChar) + "s", element, withReplace, overrideTypeRequire)
 }
 
 // ----------- Field set -----------
