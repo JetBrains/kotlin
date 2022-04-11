@@ -32,6 +32,7 @@ import kotlin.io.path.*
 import kotlin.streams.toList
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
+import kotlin.test.assertNotEquals
 import kotlin.test.assertTrue
 
 @JsGradlePluginTests
@@ -1113,6 +1114,10 @@ abstract class AbstractKotlin2JsGradlePluginIT(protected val irBackend: Boolean)
     @GradleTest
     fun testMochaFailedModuleNotFound(gradleVersion: GradleVersion) {
         project("kotlin-js-nodejs-project", gradleVersion) {
+            build("nodeTest") {
+                assertOutputDoesNotContain("##teamcity[")
+            }
+
             projectPath.resolve("src/test/kotlin/Tests.kt").appendText(
                 "\n" + """
                 |
