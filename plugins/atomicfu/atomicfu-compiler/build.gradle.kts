@@ -7,13 +7,13 @@ description = "Atomicfu Compiler Plugin"
 plugins {
     kotlin("jvm")
     id("jps-compatible")
-    id("com.github.node-gradle.node") version "2.2.0"
+    id("com.github.node-gradle.node") version "3.2.1"
     id("de.undercouch.download")
 }
 
 node {
-    download = true
-    version = "10.16.2"
+    download.set(true)
+    version.set("10.16.2")
 }
 
 val antLauncherJar by configurations.creating

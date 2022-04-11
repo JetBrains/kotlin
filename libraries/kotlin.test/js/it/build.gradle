@@ -2,8 +2,7 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsages
 
 plugins {
-    // TODO: update gradle-node-plugin to support configuration cache
-    id "com.github.node-gradle.node" version "2.2.0"
+    id "com.github.node-gradle.node" version "3.2.1"
 }
 
 description = 'Kotlin-test integration tests for JS'
@@ -59,13 +58,15 @@ node {
 def createFrameworkTest(def name) {
     return tasks.register("test$name", NpmTask) {
         dependsOn(compileTestKotlin2Js, populateNodeModules, npmInstall)
+        def testName = name
         def lowerName = name.toLowerCase()
-        def tcOutput = "$buildDir/tc-${lowerName}.log"
+        def tcOutput = project.file("$buildDir/tc-${lowerName}.log")
         def stdOutput = "$buildDir/test-${lowerName}.log"
         def errOutput = "$buildDir/test-${lowerName}.err.log"
+        def exitCodeFile = project.file("$buildDir/test-${lowerName}.exit-code")
         inputs.files(sourceSets.test.output)
         inputs.dir("${buildDir}/node_modules")
-        outputs.files(tcOutput, stdOutput, errOutput)
+        outputs.files(tcOutput, stdOutput, errOutput, exitCodeFile)
 
         args = ['run', "test-$lowerName"]
         group = 'verification'
@@ -74,12 +75,13 @@ def createFrameworkTest(def name) {
             it.standardOutput = new FileOutputStream(stdOutput)
             it.errorOutput = new FileOutputStream(errOutput)
         }
-        doLast {
-            println file(tcOutput).text
-            if (result.exitValue != 0 && !rootProject.ignoreTestFailures) {
-                throw new GradleException("$name integration test failed")
-            }
 
+        def ignoreTestFailures = rootProject.ignoreTestFailures
+        doLast {
+            println tcOutput.text
+            if (exitCodeFile.text != "0" && !ignoreTestFailures) {
+                throw new GradleException("$testName integration test failed")
+            }
         }
     }
 }

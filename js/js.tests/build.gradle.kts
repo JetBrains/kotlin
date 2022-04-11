@@ -8,7 +8,7 @@ import org.jetbrains.kotlin.ideaExt.idea
 plugins {
     kotlin("jvm")
     id("jps-compatible")
-    id("com.github.node-gradle.node") version "3.0.1"
+    id("com.github.node-gradle.node") version "3.2.1"
     id("de.undercouch.download")
 }
 
