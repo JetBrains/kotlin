@@ -113,6 +113,8 @@ abstract class DexMethodCountStats : DefaultTask() {
     @get:Optional
     internal abstract val ownPackages: ListProperty<String>
 
+    private val isTeamCityBuild = project.kotlinBuildProperties.isTeamcityBuild
+
     @TaskAction
     private fun printStats() {
         val artifactOrArchiveName = artifactOrArchiveName.get()
@@ -125,7 +127,7 @@ abstract class DexMethodCountStats : DefaultTask() {
             val total = stats[0]
             logger.lifecycle("Artifact $artifactOrArchiveName, total methods: $total")
 
-            if (project.kotlinBuildProperties.isTeamcityBuild) {
+            if (isTeamCityBuild) {
                 println("##teamcity[buildStatisticValue key='DexMethodCount_${artifactOrArchiveName}' value='$total']")
             }
 
