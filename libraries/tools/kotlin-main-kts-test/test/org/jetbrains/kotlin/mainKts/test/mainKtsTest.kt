@@ -148,14 +148,20 @@ class MainKtsTest {
 
     @Test
     fun testCompilerOptions() {
-
         val out = captureOut {
-            val res = evalFile(File("$TEST_DATA_ROOT/compile-java6.main.kts"))
+            val res = evalFile(File("$TEST_DATA_ROOT/compiler-options.main.kts"))
             assertSucceeded(res)
-            assertIsJava6Bytecode(res)
+
+            // `-Xabi-stability=unstable` unsets 5th bit in `Metadata.extraInt` (see kdoc). Let's check that it had effect.
+            val scriptClass = res.valueOrThrow().returnValue.scriptClass!!.java
+            val metadata = scriptClass.declaredAnnotations.single { it.annotationClass.java.name == "kotlin.Metadata" }
+            val extraInt = metadata.javaClass.getDeclaredMethod("xi").invoke(metadata) as Int
+            assertTrue(extraInt and (1 shl 5) == 0) {
+                "Incorrect value of Metadata.extraInt; probably the compiler flag -Xabi-stability=unstable wasn't recognized: $extraInt"
+            }
         }.lines()
 
-        Assert.assertEquals(listOf("Hi from sub", "Hi from super", "Hi from random"), out)
+        assertEquals(listOf("Hi from sub", "Hi from super", "Hi from random"), out)
     }
 
     @Test
@@ -215,21 +221,6 @@ class MainKtsTest {
         val value = (resultValue as ResultValue.Value).value!!
         assertEquals("String", value::class.simpleName)
         assertEquals("success", value)
-    }
-
-    private fun assertIsJava6Bytecode(res: ResultWithDiagnostics<EvaluationResult>) {
-        val scriptClassResource = res.valueOrThrow().returnValue.scriptClass!!.java.run {
-            getResource("$simpleName.class")
-        }
-
-        DataInputStream(ByteArrayInputStream(scriptClassResource.readBytes())).use { stream ->
-            val header = stream.readInt()
-            if (0xCAFEBABE.toInt() != header) throw IOException("Invalid header class header: $header")
-            @Suppress("UNUSED_VARIABLE")
-            val minor = stream.readUnsignedShort()
-            val major = stream.readUnsignedShort()
-            Assert.assertTrue(major == 50)
-        }
     }
 
     private fun assertSucceeded(res: ResultWithDiagnostics<EvaluationResult>) {

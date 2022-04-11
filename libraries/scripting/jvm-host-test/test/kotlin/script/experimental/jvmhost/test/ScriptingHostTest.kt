@@ -412,9 +412,9 @@ class ScriptingHostTest : TestCase() {
 
     @Test
     fun testJvmTarget() {
-        jvmTargetTestImpl("1.6", 50)
         jvmTargetTestImpl("1.8", 52)
         jvmTargetTestImpl("9", 53)
+        jvmTargetTestImpl("17", 61)
     }
 
     @Test

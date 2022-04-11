@@ -1,4 +1,4 @@
-@file:CompilerOptions("-jvm-target", "1.6")
+@file:CompilerOptions("-jvm-target", "1.8", "-Xabi-stability=unstable")
 
 interface Test {
     fun print()
