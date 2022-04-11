@@ -35,8 +35,12 @@ class SingleModuleDataProvider(private val moduleData: FirModuleData) : ModuleDa
 class MultipleModuleDataProvider(private val moduleDataWithFilters: Map<FirModuleData, LibraryPathFilter>) : ModuleDataProvider() {
     init {
         require(moduleDataWithFilters.isNotEmpty()) { "ModuleDataProvider must contain at least one module data" }
-        require(moduleDataWithFilters.keys.same { it.platform }) { "All module data should have same target platform" }
-        require(moduleDataWithFilters.keys.same { it.analyzerServices }) { "All module data should have same analyzerServices" }
+        require(moduleDataWithFilters.keys.same { it.platform }) {
+            "All module data should have same target platform, but was: ${moduleDataWithFilters.keys.joinToString { "${it.name.asString()}: ${it.platform}" }}"
+        }
+        require(moduleDataWithFilters.keys.same { it.analyzerServices }) {
+            "All module data should have same analyzerServices, but was: ${moduleDataWithFilters.keys.joinToString { "${it.name.asString()}: ${it.analyzerServices::class.simpleName}" }}"
+        }
     }
 
     override val platform: TargetPlatform = allModuleData.first().platform
