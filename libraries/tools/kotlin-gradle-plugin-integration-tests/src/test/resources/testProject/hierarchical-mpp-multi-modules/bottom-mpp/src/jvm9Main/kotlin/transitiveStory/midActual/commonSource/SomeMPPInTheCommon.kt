@@ -10,4 +10,4 @@ actual open class SomeMPPInTheCommon actual constructor() {
 
 }
 
-actual val sourceSetName: String = "jvm16Main"
+actual val sourceSetName: String = "jvm9Main"
