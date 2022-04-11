@@ -96,7 +96,7 @@ abstract class AbstractFir2IrLazyFunction<F : FirCallableDeclaration>(
 
     protected fun createThisReceiverParameter(thisType: IrType): IrValueParameter {
         declarationStorage.enterScope(this)
-        return declareThisReceiverParameter(symbolTable, thisType, origin).apply {
+        return declareThisReceiverParameter(thisType, origin).apply {
             declarationStorage.leaveScope(this@AbstractFir2IrLazyFunction)
         }
     }

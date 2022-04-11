@@ -229,13 +229,7 @@ class Fir2IrLazyProperty(
 
     override var overriddenSymbols: List<IrPropertySymbol> by lazyVar(lock) {
         if (containingClass == null) return@lazyVar emptyList()
-        fir.generateOverriddenPropertySymbols(
-            containingClass,
-            session,
-            scopeSession,
-            declarationStorage,
-            fakeOverrideGenerator
-        )
+        fir.generateOverriddenPropertySymbols(containingClass)
     }
 
     override var metadata: MetadataSource?

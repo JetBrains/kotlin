@@ -365,7 +365,6 @@ class Fir2IrDeclarationStorage(
                             Name.identifier("\$this\$$suffix")
                         } ?: SpecialNames.THIS
                         declareThisReceiverParameter(
-                            symbolTable,
                             thisType = receiverTypeRef.toIrType(typeContext),
                             thisOrigin = thisOrigin,
                             startOffset = startOffset,
@@ -378,7 +377,6 @@ class Fir2IrDeclarationStorage(
                 val isLocal = function is FirSimpleFunction && function.isLocal
                 if (function !is FirAnonymousFunction && containingClass != null && !isStatic && !isLocal) {
                     dispatchReceiverParameter = declareThisReceiverParameter(
-                        symbolTable,
                         thisType = containingClass.thisReceiver?.type ?: error("No this receiver"),
                         thisOrigin = thisOrigin
                     )
@@ -388,7 +386,6 @@ class Fir2IrDeclarationStorage(
                 val outerClass = containingClass?.parentClassOrNull
                 if (containingClass?.isInner == true && outerClass != null) {
                     dispatchReceiverParameter = declareThisReceiverParameter(
-                        symbolTable,
                         thisType = outerClass.thisReceiver!!.type,
                         thisOrigin = thisOrigin
                     )
@@ -728,7 +725,7 @@ class Fir2IrDeclarationStorage(
                 }
                 if (correspondingProperty is Fir2IrLazyProperty && correspondingProperty.containingClass != null && !isFakeOverride && thisReceiverOwner != null) {
                     this.overriddenSymbols = correspondingProperty.fir.generateOverriddenAccessorSymbols(
-                        correspondingProperty.containingClass, !isSetter, session, scopeSession, declarationStorage, fakeOverrideGenerator
+                        correspondingProperty.containingClass, !isSetter
                     )
                 }
             }

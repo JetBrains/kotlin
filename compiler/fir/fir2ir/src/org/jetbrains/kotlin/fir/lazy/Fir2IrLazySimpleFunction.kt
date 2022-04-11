@@ -94,7 +94,7 @@ class Fir2IrLazySimpleFunction(
             )
             fakeOverrideGenerator.getOverriddenSymbolsForFakeOverride(this)?.let { return@lazyVar it }
         }
-        fir.generateOverriddenFunctionSymbols(firParent, session, scopeSession, declarationStorage, fakeOverrideGenerator)
+        fir.generateOverriddenFunctionSymbols(firParent)
     }
 
     override val initialSignatureFunction: IrFunction? by lazy {

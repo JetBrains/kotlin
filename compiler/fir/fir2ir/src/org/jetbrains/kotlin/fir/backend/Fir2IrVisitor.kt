@@ -164,7 +164,7 @@ class Fir2IrVisitor(
         }
         val irClass = classifierStorage.getCachedIrClass(regularClass)!!
         if (regularClass.isSealed) {
-            irClass.sealedSubclasses = regularClass.getIrSymbolsForSealedSubclasses(components)
+            irClass.sealedSubclasses = regularClass.getIrSymbolsForSealedSubclasses()
         }
         return conversionScope.withParent(irClass) {
             conversionScope.withContainingFirClass(regularClass) {

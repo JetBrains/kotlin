@@ -53,7 +53,7 @@ class Fir2IrBuiltIns(
 
     private fun annotationSymbolById(id: ClassId): IrClassSymbol? =
         provider?.getClassSymbolById(id) ?: session.symbolProvider.getClassLikeSymbolByClassId(id)?.toSymbol(
-            session, classifierStorage, ConversionTypeContext.DEFAULT
+            ConversionTypeContext.DEFAULT
         ) as? IrClassSymbol
 
     private fun IrClassSymbol.toConstructorCall(): IrConstructorCallImpl =

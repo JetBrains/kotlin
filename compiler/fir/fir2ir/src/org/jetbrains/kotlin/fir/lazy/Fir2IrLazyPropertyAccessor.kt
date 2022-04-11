@@ -106,14 +106,7 @@ class Fir2IrLazyPropertyAccessor(
 
     override var overriddenSymbols: List<IrSimpleFunctionSymbol> by lazyVar(lock) {
         if (firParentClass == null) return@lazyVar emptyList()
-        firParentProperty.generateOverriddenAccessorSymbols(
-            firParentClass,
-            !isSetter,
-            session,
-            scopeSession,
-            declarationStorage,
-            fakeOverrideGenerator
-        )
+        firParentProperty.generateOverriddenAccessorSymbols(firParentClass, !isSetter)
     }
 
     override val initialSignatureFunction: IrFunction? by lazy {

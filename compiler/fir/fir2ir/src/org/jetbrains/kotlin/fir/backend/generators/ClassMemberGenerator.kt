@@ -195,9 +195,7 @@ internal class ClassMemberGenerator(
                 declarationStorage.leaveScope(irFunction)
             }
             if (irFunction is IrSimpleFunction && firFunction is FirSimpleFunction && containingClass != null) {
-                irFunction.overriddenSymbols = firFunction.generateOverriddenFunctionSymbols(
-                    containingClass, session, scopeSession, declarationStorage, fakeOverrideGenerator
-                )
+                irFunction.overriddenSymbols = firFunction.generateOverriddenFunctionSymbols(containingClass)
             }
         }
         return irFunction
@@ -209,9 +207,7 @@ internal class ClassMemberGenerator(
         val propertyType = property.returnTypeRef.toIrType()
         irProperty.initializeBackingField(property, initializerExpression = initializer ?: delegate)
         if (containingClass != null) {
-            irProperty.overriddenSymbols = property.generateOverriddenPropertySymbols(
-                containingClass, session, scopeSession, declarationStorage, fakeOverrideGenerator
-            )
+            irProperty.overriddenSymbols = property.generateOverriddenPropertySymbols(containingClass)
         }
         irProperty.getter?.setPropertyAccessorContent(
             property, property.getter, irProperty, propertyType,
@@ -310,9 +306,7 @@ internal class ClassMemberGenerator(
                 }
             }
             if (containingClass != null) {
-                this.overriddenSymbols = property.generateOverriddenAccessorSymbols(
-                    containingClass, isGetter, session, scopeSession, declarationStorage, fakeOverrideGenerator
-                )
+                this.overriddenSymbols = property.generateOverriddenAccessorSymbols(containingClass, isGetter)
             }
 
         }

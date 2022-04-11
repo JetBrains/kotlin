@@ -110,7 +110,7 @@ class Fir2IrLazyClass(
 
     override var sealedSubclasses: List<IrClassSymbol> by lazyVar(lock) {
         if (fir.isSealed) {
-            fir.getIrSymbolsForSealedSubclasses(components)
+            fir.getIrSymbolsForSealedSubclasses()
         } else {
             emptyList()
         }
@@ -125,7 +125,6 @@ class Fir2IrLazyClass(
             )
         }
         val receiver = declareThisReceiverParameter(
-            symbolTable,
             thisType = IrSimpleTypeImpl(symbol, hasQuestionMark = false, arguments = typeArguments, annotations = emptyList()),
             thisOrigin = IrDeclarationOrigin.INSTANCE_RECEIVER
         )

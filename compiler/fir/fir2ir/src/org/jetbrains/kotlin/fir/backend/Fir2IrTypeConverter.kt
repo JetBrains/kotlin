@@ -114,7 +114,7 @@ class Fir2IrTypeConverter(
 
                 val irSymbol =
                     getBuiltInClassSymbol(classId)
-                        ?: lookupTag.toSymbol(session)?.toSymbol(session, classifierStorage, typeContext) {
+                        ?: lookupTag.toSymbol(session)?.toSymbol(typeContext) {
                             typeAnnotations += with(annotationGenerator) { it.toIrAnnotations() }
                         }
                         ?: (lookupTag as? ConeClassLikeLookupTag)?.let(classifierStorage::getIrClassSymbolForNotFoundClass)

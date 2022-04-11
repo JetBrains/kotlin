@@ -86,7 +86,6 @@ class Fir2IrLazyConstructor(
         if (containingClass?.isInner == true && outerClass != null) {
             declarationStorage.enterScope(this)
             declareThisReceiverParameter(
-                symbolTable,
                 thisType = outerClass.thisReceiver!!.type,
                 thisOrigin = origin
             ).apply {

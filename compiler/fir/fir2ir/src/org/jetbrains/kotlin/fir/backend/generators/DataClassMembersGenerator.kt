@@ -57,7 +57,7 @@ import org.jetbrains.kotlin.util.OperatorNameConventions.TO_STRING
  * fir own logic that traverses class hierarchies in fir elements. Also, this one creates and passes IR elements, instead of providing how
  * to declare them, to [DataClassMembersGenerator].
  */
-class DataClassMembersGenerator(val components: Fir2IrComponents) {
+class DataClassMembersGenerator(val components: Fir2IrComponents) : Fir2IrComponents by components {
 
     fun generateSingleFieldValueClassMembers(klass: FirClass, irClass: IrClass): List<FirDeclaration> =
         MyDataClassMethodsGenerator(irClass, klass.symbol.toLookupTag(), IrDeclarationOrigin.GENERATED_SINGLE_FIELD_VALUE_CLASS_MEMBER)
@@ -155,7 +155,6 @@ class DataClassMembersGenerator(val components: Fir2IrComponents) {
 
         fun generateDispatchReceiverParameter(irFunction: IrFunction) =
             irFunction.declareThisReceiverParameter(
-                components.symbolTable,
                 irClass.defaultType,
                 origin,
                 UNDEFINED_OFFSET,
