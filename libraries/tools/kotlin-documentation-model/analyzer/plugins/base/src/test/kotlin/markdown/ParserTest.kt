@@ -951,6 +951,7 @@ class ParserTest : KDocTest() {
     fun `Multilined Code Block`() {
         val kdoc = """
         | ```kotlin
+        | @Suppress("UNUSED_VARIABLE")
         | val x: Int = 0
         | val y: String = "Text"
         |
@@ -968,6 +969,7 @@ class ParserTest : KDocTest() {
                         listOf(
                             CodeBlock(
                                 listOf(
+                                    Text("@Suppress(\"UNUSED_VARIABLE\")"), Br,
                                     Text("val x: Int = 0"), Br,
                                     Text("val y: String = \"Text\""), Br, Br,
                                     Text("    val z: Boolean = true"), Br,
