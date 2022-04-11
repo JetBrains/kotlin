@@ -14,7 +14,10 @@ import org.jetbrains.kotlin.fir.declarations.utils.isCompanion
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.builder.buildAnnotationCall
 import org.jetbrains.kotlin.fir.expressions.impl.FirNoReceiverExpression
-import org.jetbrains.kotlin.fir.references.*
+import org.jetbrains.kotlin.fir.references.FirDelegateFieldReference
+import org.jetbrains.kotlin.fir.references.FirReference
+import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
+import org.jetbrains.kotlin.fir.references.FirSuperReference
 import org.jetbrains.kotlin.fir.references.builder.buildResolvedNamedReference
 import org.jetbrains.kotlin.fir.references.impl.FirReferencePlaceholderForResolvedAnnotations
 import org.jetbrains.kotlin.fir.resolve.calls.FirSyntheticFunctionSymbol
@@ -37,14 +40,7 @@ import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.dump
 import org.jetbrains.kotlin.ir.util.isFunctionTypeOrSubtype
 import org.jetbrains.kotlin.ir.util.isInterface
-import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.psi
-import org.jetbrains.kotlin.psi.KtArrayAccessExpression
-import org.jetbrains.kotlin.psi.KtBinaryExpression
-import org.jetbrains.kotlin.psi.KtElement
-import org.jetbrains.kotlin.psi.KtPostfixExpression
-import org.jetbrains.kotlin.psi.KtPrefixExpression
 import org.jetbrains.kotlin.psi2ir.generators.hasNoSideEffects
 import org.jetbrains.kotlin.psi2ir.generators.isUnchanging
 import org.jetbrains.kotlin.resolve.calls.NewCommonSuperTypeCalculator.commonSuperType
@@ -323,7 +319,9 @@ class CallAndReferenceGenerator(
         typeRef: FirTypeRef,
         explicitReceiverExpression: IrExpression?,
         annotationMode: Boolean = false,
-        variableAsFunctionMode: Boolean = false
+        dynamicOperator: IrDynamicOperator? = null,
+        variableAsFunctionMode: Boolean = false,
+        noArguments: Boolean = false
     ): IrExpression {
         try {
             val type = typeRef.toIrType()
@@ -353,7 +351,8 @@ class CallAndReferenceGenerator(
                     is IrSimpleFunctionSymbol -> if (explicitReceiverExpression != null && isDynamicAccess) {
                         val name = calleeReference.resolved?.name
                             ?: error("Must have a name")
-                        val operator = name.dynamicOperator
+                        val operator = dynamicOperator
+                            ?: name.dynamicOperator
                             ?: qualifiedAccess.dynamicOperator
                             ?: IrDynamicOperator.INVOKE
                         val theType = if (name == OperatorNameConventions.COMPARE_TO) {
@@ -435,7 +434,7 @@ class CallAndReferenceGenerator(
                     else -> generateErrorCallExpression(startOffset, endOffset, calleeReference, type)
                 }
             }.applyTypeArguments(qualifiedAccess).applyReceivers(qualifiedAccess, theExplicitReceiver)
-                .applyCallArguments(qualifiedAccess as? FirCall, annotationMode)
+                .applyCallArguments((qualifiedAccess as? FirCall)?.takeIf { !noArguments }, annotationMode)
         } catch (e: Throwable) {
             throw IllegalStateException(
                 "Error while translating ${qualifiedAccess.render()} " +
