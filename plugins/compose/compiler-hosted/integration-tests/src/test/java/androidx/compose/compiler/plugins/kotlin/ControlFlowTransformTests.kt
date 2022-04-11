@@ -3693,7 +3693,7 @@ class ControlFlowTransformTests : AbstractControlFlowTransformTests() {
               }
             }
         """,
-        truncateTracingInfoMode = TruncateTracingInfoMode.GROUP_KEY_ONLY
+        truncateTracingInfoMode = TruncateTracingInfoMode.KEEP_INFO_STRING
     )
 
     @Test
@@ -3738,7 +3738,7 @@ class ControlFlowTransformTests : AbstractControlFlowTransformTests() {
               }
             }
         """,
-        truncateTracingInfoMode = TruncateTracingInfoMode.GROUP_KEY_ONLY
+        truncateTracingInfoMode = TruncateTracingInfoMode.KEEP_INFO_STRING
     )
 
     @Test
@@ -3802,7 +3802,7 @@ class ControlFlowTransformTests : AbstractControlFlowTransformTests() {
               )
             }
         """,
-        truncateTracingInfoMode = TruncateTracingInfoMode.GROUP_KEY_ONLY
+        truncateTracingInfoMode = TruncateTracingInfoMode.KEEP_INFO_STRING
     )
 
     @Test
@@ -3877,7 +3877,7 @@ class ControlFlowTransformTests : AbstractControlFlowTransformTests() {
               }
             }
         """,
-        truncateTracingInfoMode = TruncateTracingInfoMode.GROUP_KEY_ONLY
+        truncateTracingInfoMode = TruncateTracingInfoMode.KEEP_INFO_STRING
     )
 
     @Test
@@ -3963,7 +3963,7 @@ class ControlFlowTransformTests : AbstractControlFlowTransformTests() {
             @Composable
             fun Text(text: String) { }
         """,
-        truncateTracingInfoMode = TruncateTracingInfoMode.GROUP_KEY_ONLY
+        truncateTracingInfoMode = TruncateTracingInfoMode.KEEP_INFO_STRING
     )
 
     @Test
@@ -4079,7 +4079,7 @@ class ControlFlowTransformTests : AbstractControlFlowTransformTests() {
             @Composable
             fun Text(text: String) { }
         """,
-        truncateTracingInfoMode = TruncateTracingInfoMode.GROUP_KEY_ONLY
+        truncateTracingInfoMode = TruncateTracingInfoMode.KEEP_INFO_STRING
     )
 
     @Test
