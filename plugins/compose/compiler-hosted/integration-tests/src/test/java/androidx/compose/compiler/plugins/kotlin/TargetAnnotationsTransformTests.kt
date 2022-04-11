@@ -859,7 +859,7 @@ class TargetAnnotationsTransformTests : ComposeIrTransformTest() {
           static val %stable: Int = 0
         }
         val localBoxMeasurePolicy: MeasurePolicy = class <no name provided> : MeasurePolicy {
-          override fun measure(%this%MeasurePolicy: MeasureScope, %noName_0: List<Measurable>, constraints: Constraints): MeasureResult {
+          override fun measure(%this%MeasurePolicy: MeasureScope, <anonymous parameter 0>: List<Measurable>, constraints: Constraints): MeasureResult {
             return %this%MeasurePolicy.layout(
               width = constraints.minWidth,
               height = constraints.minHeight
@@ -962,7 +962,7 @@ class TargetAnnotationsTransformTests : ComposeIrTransformTest() {
               }
               %composer.endReplaceableGroup()
             }, null, class <no name provided> : MeasurePolicy {
-              override fun measure(%this%Layout: MeasureScope, %noName_0: List<Measurable>, %noName_1: Constraints): MeasureResult {
+              override fun measure(%this%Layout: MeasureScope, <anonymous parameter 0>: List<Measurable>, <anonymous parameter 1>: Constraints): MeasureResult {
                 return error("")
               }
             }
@@ -991,7 +991,7 @@ class TargetAnnotationsTransformTests : ComposeIrTransformTest() {
           }
           if (%dirty and 0b1011 !== 0b0010 || !%composer.skipping) {
             Layout(content, null, class <no name provided> : MeasurePolicy {
-              override fun measure(%this%Layout: MeasureScope, %noName_0: List<Measurable>, %noName_1: Constraints): MeasureResult {
+              override fun measure(%this%Layout: MeasureScope, <anonymous parameter 0>: List<Measurable>, <anonymous parameter 1>: Constraints): MeasureResult {
                 return error("")
               }
             }

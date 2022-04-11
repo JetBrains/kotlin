@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
-import org.jetbrains.kotlin.resolve.multiplatform.ExpectedActualResolver.findCompatibleExpectedForActual
+import org.jetbrains.kotlin.resolve.multiplatform.findCompatibleExpectsForActual
 
 /**
  * [ComposableFunctionBodyTransformer] relies on presence of default values in
@@ -66,9 +66,9 @@ class CopyDefaultValuesFromExpectLowering : ModuleLoweringPass {
         module.transformChildrenVoid(object : IrElementTransformerVoid() {
             override fun visitFunction(declaration: IrFunction): IrStatement {
                 if (declaration.descriptor.isActual && declaration.hasComposableAnnotation()) {
-                    val compatibleExpects = declaration.descriptor.findCompatibleExpectedForActual(
-                        module.descriptor
-                    )
+                    val compatibleExpects = declaration.descriptor.findCompatibleExpectsForActual {
+                        module.descriptor == it
+                    }
                     if (compatibleExpects.isNotEmpty()) {
                         val expectFun = compatibleExpects.firstOrNull {
                             it in expectComposables

@@ -25,7 +25,6 @@ import org.jetbrains.kotlin.backend.common.ir.BuiltinSymbolsBase
 import org.jetbrains.kotlin.backend.common.ir.createParameterDeclarations
 import org.jetbrains.kotlin.backend.jvm.JvmGeneratorExtensionsImpl
 import org.jetbrains.kotlin.backend.jvm.JvmIrTypeSystemContext
-import org.jetbrains.kotlin.backend.jvm.JvmNameProvider
 import org.jetbrains.kotlin.backend.jvm.serialization.JvmIdSignatureDescriptor
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
@@ -408,8 +407,7 @@ abstract class AbstractIrTransformTest : AbstractCodegenTest() {
                 ?: IrMessageLogger.None
             val symbolTable = SymbolTable(
                 JvmIdSignatureDescriptor(mangler),
-                IrFactoryImpl,
-                JvmNameProvider
+                IrFactoryImpl
             )
 
             val analysisResult = JvmResolveUtil.analyze(files, environment)
