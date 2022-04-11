@@ -852,10 +852,7 @@ abstract class KotlinCompile @Inject constructor(
             )
         )
 
-        // This method could be called on configuration phase to calculate `filteredArgumentsMap` property
-        if (state.executing) {
-            defaultKotlinJavaToolchain.get().updateJvmTarget(this, args)
-        }
+        defaultKotlinJavaToolchain.get().updateJvmTarget(this, args)
 
         if (reportingSettings().buildReportMode == BuildReportMode.VERBOSE) {
             args.reportPerf = true

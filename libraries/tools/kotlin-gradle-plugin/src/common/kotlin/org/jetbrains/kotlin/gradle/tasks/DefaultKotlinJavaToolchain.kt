@@ -129,10 +129,6 @@ internal abstract class DefaultKotlinJavaToolchain @Inject constructor(
         task: KotlinCompile,
         args: K2JVMCompilerArguments
     ) {
-        check(task.state.executing) {
-            "\"updateJvmTarget()\" method should be called only on task execution!"
-        }
-
         if (providedJvmExplicitlySet) {
             val jdkVersion = javaVersion.get()
 

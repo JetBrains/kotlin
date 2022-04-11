@@ -578,7 +578,9 @@ class KotlinJavaToolchainTest : KGPBaseTest() {
             )
 
             build("assemble")
-            build("assemble")
+            build("assemble") {
+                assertTasksUpToDate(":compileKotlin")
+            }
         }
     }
 
