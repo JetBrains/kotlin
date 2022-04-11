@@ -141,9 +141,6 @@ internal class PropertiesProvider private constructor(private val project: Proje
     val ignorePluginLoadedInMultipleProjects: Boolean?
         get() = booleanProperty("kotlin.pluginLoadedInMultipleProjects.ignore")
 
-    val setJvmTargetFromAndroidCompileOptions: Boolean?
-        get() = booleanProperty("kotlin.setJvmTargetFromAndroidCompileOptions")
-
     val keepAndroidBuildTypeAttribute: Boolean
         get() = booleanProperty("kotlin.android.buildTypeAttribute.keep") ?: false
 

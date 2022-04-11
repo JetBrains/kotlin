@@ -1099,46 +1099,6 @@ fun getSomething() = 10
     }
 
     @Test
-    fun testDetectAndroidJava8() = with(Project("AndroidProject")) {
-        setupWorkingDir()
-
-        val kotlinJvmTarget16Regex = Regex("Kotlin compiler args: .* -jvm-target 1.6")
-
-        gradleBuildScript("Lib").appendText(
-            "\n" + """
-            android.compileOptions {
-                sourceCompatibility JavaVersion.VERSION_1_8
-                targetCompatibility JavaVersion.VERSION_1_8
-            }
-            """.trimIndent()
-        )
-
-        build(":Lib:assembleDebug", "-Pkotlin.setJvmTargetFromAndroidCompileOptions=true") {
-            assertSuccessful()
-            assertNotContains(kotlinJvmTarget16Regex)
-        }
-
-        gradleBuildScript("Lib").appendText(
-            "\n" + """
-            android.compileOptions {
-                sourceCompatibility JavaVersion.VERSION_1_6
-                targetCompatibility JavaVersion.VERSION_1_6
-            }
-            """.trimIndent()
-        )
-
-        build("clean", ":Lib:assembleDebug") {
-            assertSuccessful()
-            assertNotContains(kotlinJvmTarget16Regex)
-        }
-
-        build(":Lib:assembleDebug", "-Pkotlin.setJvmTargetFromAndroidCompileOptions=true") {
-            assertSuccessful()
-            assertContainsRegex(kotlinJvmTarget16Regex)
-        }
-    }
-
-    @Test
     fun shouldAllowToApplyPluginWhenAndroidPluginIsMissing() {
         with(Project("simpleProject", minLogLevel = LogLevel.WARN)) {
             setupWorkingDir()
