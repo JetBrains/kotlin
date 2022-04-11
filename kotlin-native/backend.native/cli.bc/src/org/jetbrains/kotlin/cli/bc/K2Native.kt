@@ -28,7 +28,6 @@ import org.jetbrains.kotlin.konan.CURRENT
 import org.jetbrains.kotlin.konan.CompilerVersion
 import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
-import org.jetbrains.kotlin.library.uniqueName
 import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.util.profile
@@ -90,13 +89,7 @@ class K2Native : CLICompiler<K2NativeCompilerArguments>() {
         configuration.put(CLIConfigurationKeys.RENDER_DIAGNOSTIC_INTERNAL_NAME, arguments.renderInternalDiagnosticNames)
 
         try {
-            val konanConfig = KonanConfig(project, configuration)
-            try {
-                ensureModuleName(konanConfig, environment)
-                runTopLevelPhases(konanConfig, environment)
-            } finally {
-                konanConfig.dispose()
-            }
+            KonanDriver(project, environment, configuration).run()
         } catch (e: Throwable) {
             if (e is KonanCompilationException || e is CompilationErrorException)
                 return ExitCode.COMPILATION_ERROR
@@ -121,18 +114,6 @@ class K2Native : CLICompiler<K2NativeCompilerArguments>() {
 
     fun Array<String>?.toNonNullList(): List<String> {
         return this?.asList<String>() ?: listOf<String>()
-    }
-
-    private fun ensureModuleName(config: KonanConfig, environment: KotlinCoreEnvironment) {
-        if (environment.getSourceFiles().isEmpty()) {
-            val libraries = config.resolvedLibraries.getFullList()
-            val moduleName = config.moduleId
-            if (libraries.any { it.uniqueName == moduleName }) {
-                val kexeModuleName = "${moduleName}_kexe"
-                config.configuration.put(KonanConfigKeys.MODULE_NAME, kexeModuleName)
-                assert(libraries.none { it.uniqueName == kexeModuleName })
-            }
-        }
     }
 
     // It is executed before doExecute().
@@ -308,6 +289,7 @@ class K2Native : CLICompiler<K2NativeCompilerArguments>() {
                 if (outputKind == CompilerOutputKind.PRELIMINARY_CACHE && fileToCache == null)
                     configuration.report(ERROR, "preliminary_cache only supported for per-file caches")
                 fileToCache?.let { put(FILE_TO_CACHE, it) }
+                put(MAKE_PER_FILE_CACHE, arguments.makePerFileCache)
 
                 parseShortModuleName(arguments, configuration, outputKind)?.let {
                     put(SHORT_MODULE_NAME, it)
