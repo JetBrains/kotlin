@@ -6,8 +6,10 @@
 package org.jetbrains.kotlin.gradle.plugin
 
 import com.android.build.gradle.*
-import com.android.build.gradle.BasePlugin
-import com.android.build.gradle.api.*
+import com.android.build.gradle.api.AndroidSourceSet
+import com.android.build.gradle.api.BaseVariant
+import com.android.build.gradle.api.SourceKind
+import com.android.build.gradle.api.UnitTestVariant
 import org.gradle.api.*
 import org.gradle.api.attributes.Category
 import org.gradle.api.attributes.Usage
@@ -16,12 +18,16 @@ import org.gradle.api.file.Directory
 import org.gradle.api.file.FileCollection
 import org.gradle.api.file.SourceDirectorySet
 import org.gradle.api.logging.Logging
-import org.gradle.api.plugins.*
+import org.gradle.api.plugins.InvalidPluginException
+import org.gradle.api.plugins.JavaPlugin
+import org.gradle.api.plugins.JavaPluginConvention
 import org.gradle.api.provider.Provider
 import org.gradle.api.publish.PublishingExtension
 import org.gradle.api.publish.maven.MavenPom
 import org.gradle.api.publish.maven.MavenPublication
-import org.gradle.api.tasks.*
+import org.gradle.api.tasks.SourceSet
+import org.gradle.api.tasks.TaskProvider
+import org.gradle.api.tasks.Upload
 import org.gradle.api.tasks.compile.AbstractCompile
 import org.gradle.jvm.tasks.Jar
 import org.gradle.tooling.provider.model.ToolingModelBuilderRegistry
@@ -743,16 +749,6 @@ abstract class AbstractAndroidProjectHandler(private val kotlinConfigurationTool
         val ext = project.extensions.getByName("android") as BaseExtension
 
         val kotlinOptions = KotlinJvmOptionsImpl()
-        project.whenEvaluated {
-            // TODO don't require the flag once there is an Android Gradle plugin build that supports desugaring of Long.hashCode and
-            //  Boolean.hashCode. Instead, run conditionally, only with the AGP versions that play well with Kotlin bytecode for
-            //  JVM target 1.8.
-            //  See: KT-31027
-            if (PropertiesProvider(project).setJvmTargetFromAndroidCompileOptions == true) {
-                applyAndroidJavaVersion(project.extensions.getByType(BaseExtension::class.java), kotlinOptions)
-            }
-        }
-
         kotlinOptions.noJdk = true
         ext.addExtension(KOTLIN_OPTIONS_DSL_NAME, kotlinOptions)
 
@@ -888,13 +884,6 @@ abstract class AbstractAndroidProjectHandler(private val kotlinConfigurationTool
                 )
             }
         }
-    }
-
-    private fun applyAndroidJavaVersion(baseExtension: BaseExtension, kotlinOptions: KotlinJvmOptions) {
-        val javaVersion =
-            minOf(baseExtension.compileOptions.sourceCompatibility, baseExtension.compileOptions.targetCompatibility)
-        if (javaVersion == JavaVersion.VERSION_1_6)
-            kotlinOptions.jvmTarget = "1.6"
     }
 
     private fun addAndroidUnitTestTasksAsDependenciesToAllTest(project: Project) {
