@@ -15,6 +15,7 @@ import org.gradle.process.internal.ExecHandle
 import org.gradle.process.internal.ExecHandleFactory
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
+import java.io.OutputStream
 
 open class TCServiceMessagesTestExecutionSpec(
     val forkOptions: ProcessForkOptions,
@@ -53,6 +54,17 @@ class TCServiceMessagesTestExecutor(
                 val exec = execHandleFactory.newExec()
                 spec.forkOptions.copyTo(exec)
                 exec.args = spec.args
+                // We do not need output by dry run of tests
+                exec.standardOutput = object : OutputStream() {
+                    override fun write(b: Int) {
+                        // do nothing
+                    }
+                }
+                exec.errorOutput = object : OutputStream() {
+                    override fun write(b: Int) {
+                        // do nothing
+                    }
+                }
                 execHandle = exec.build()
 
                 execHandle.start()
