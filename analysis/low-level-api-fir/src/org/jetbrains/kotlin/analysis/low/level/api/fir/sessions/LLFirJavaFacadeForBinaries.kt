@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.load.java.structure.impl.VirtualFileBoundJavaClass
 import java.nio.file.Path
 import java.nio.file.Paths
 
+
 internal class LLFirJavaFacadeForBinaries(
     session: FirSession,
     builtinTypes: BuiltinTypes,
@@ -28,13 +29,21 @@ internal class LLFirJavaFacadeForBinaries(
         requireIsInstance<VirtualFileBoundJavaClass>(javaClass)
         val path = getBinaryPath(javaClass)
         return binaryDependenciesModuleDataProvider.getModuleData(path)
-            ?: error("No module data found for ${javaClass.classId} with path $path")
+            ?: error("No module data found for ${javaClass.classId} with path $path and virtual file ${javaClass.virtualFile?.path}")
     }
 
     private fun getBinaryPath(javaClass: VirtualFileBoundJavaClass): Path {
         val virtualFile = javaClass.virtualFile
             ?: error("no virtual file for ${javaClass.classId}")
         val path = virtualFile.path
-        return Paths.get(path)
+        return if (JAR_DELIMITER in path) {
+            Paths.get(path.substringBefore(JAR_DELIMITER) + ".jar")
+        } else {
+            Paths.get(path)
+        }
+    }
+
+    companion object {
+        private const val JAR_DELIMITER = ".jar!/"
     }
 }
