@@ -39,7 +39,7 @@ open class KonanCacheTask: DefaultTask() {
 
     @get:OutputDirectory
     val cacheFile: File
-        get() = cacheDirectory.resolve("${klibUniqName}-cache")
+        get() = cacheDirectory.resolve(if (makePerFileCache) "${klibUniqName}-per-file-cache" else "${klibUniqName}-cache")
 
     /**
      * Note: we can't use this function instead of [klibUniqName] in [cacheFile],
@@ -58,6 +58,9 @@ open class KonanCacheTask: DefaultTask() {
 
     @get:Input
     var cacheKind: KonanCacheKind = KonanCacheKind.STATIC
+
+    @get:Input
+    var makePerFileCache: Boolean = false
 
     @get:Input
     /** Path to a compiler distribution that is used to build this cache. */
@@ -85,13 +88,17 @@ open class KonanCacheTask: DefaultTask() {
             it.targetByName(target).let(it::loader).additionalCacheFlags
         }
         requireNotNull(originalKlib)
-        val args = listOf(
+        val args = mutableListOf(
             "-g",
             "-target", target,
             "-produce", cacheKind.outputKind.name.toLowerCase(),
             "-Xadd-cache=${originalKlib?.absolutePath}",
             "-Xcache-directory=${cacheDirectory.absolutePath}"
-        ) + additionalCacheFlags + cachedLibraries.map { "-Xcached-library=${it.key},${it.value}" }
+        )
+        if (makePerFileCache)
+            args += "-Xmake-per-file-cache"
+        args += additionalCacheFlags
+        args += cachedLibraries.map { "-Xcached-library=${it.key},${it.value}" }
         KonanCliCompilerRunner(project, konanHome = konanHome).run(args)
     }
 }
