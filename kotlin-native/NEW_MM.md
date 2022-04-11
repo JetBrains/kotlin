@@ -57,6 +57,11 @@ kotlin.targets.withType(KotlinNativeTarget::class.java) {
 
 If `kotlin.native.isExperimentalMM()` returns `true`, you've successfully enabled the new MM.
 
+To improve the performance, please also consider enabling a concurrent implementation
+for the sweep phase of the garbage collector. See more details
+[here](https://kotlinlang.org/docs/whatsnew1620.html#concurrent-implementation-for-the-sweep-phase-in-new-memory-manager).
+It will be switched on by default in Kotlin 1.7.0.
+
 ### Update the libraries
 
 To take full advantage of the new MM, we released new versions of the following libraries:
