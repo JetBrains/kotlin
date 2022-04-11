@@ -128,10 +128,6 @@ tasks {
         enableStricterValidation.set(true)
     }
 
-    named("install") {
-        dependsOn(named("validatePlugins"))
-    }
-
     withType<DokkaTask>().configureEach {
         dokkaSourceSets.configureEach {
             includes.from("Module.md")

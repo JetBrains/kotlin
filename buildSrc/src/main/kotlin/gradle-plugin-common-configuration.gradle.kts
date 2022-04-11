@@ -37,6 +37,12 @@ publishing {
     }
 }
 
+tasks {
+    named("install") {
+        dependsOn(named("validatePlugins"))
+    }
+}
+
 val commonSourceSet = createGradleCommonSourceSet()
 reconfigureMainSourcesSetForGradlePlugin(commonSourceSet)
 publishShadowedJar(sourceSets[SourceSet.MAIN_SOURCE_SET_NAME], commonSourceSet)

@@ -841,7 +841,7 @@ tasks {
 
     register("examplesTest") {
         dependsOn("dist")
-        (project(":examples").subprojects + project(":kotlin-gradle-subplugin-example")).forEach { p ->
+        project(":examples").subprojects.forEach { p ->
             dependsOn("${p.path}:check")
         }
     }
