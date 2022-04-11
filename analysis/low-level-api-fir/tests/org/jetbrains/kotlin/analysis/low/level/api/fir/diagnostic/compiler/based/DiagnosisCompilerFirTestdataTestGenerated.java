@@ -3226,6 +3226,12 @@ public class DiagnosisCompilerFirTestdataTestGenerated extends AbstractDiagnosis
             }
 
             @Test
+            @TestMetadata("emptySelectorInQualifiedExpression.kt")
+            public void testEmptySelectorInQualifiedExpression() throws Exception {
+                runTest("compiler/fir/analysis-tests/testData/resolve/problems/emptySelectorInQualifiedExpression.kt");
+            }
+
+            @Test
             @TestMetadata("expectConstructor.kt")
             public void testExpectConstructor() throws Exception {
                 runTest("compiler/fir/analysis-tests/testData/resolve/problems/expectConstructor.kt");

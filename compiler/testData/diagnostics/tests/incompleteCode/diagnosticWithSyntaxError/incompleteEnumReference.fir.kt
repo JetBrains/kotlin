@@ -5,7 +5,7 @@ enum class E {
 }
 
 fun foo() {
-    val e = E.<!SYNTAX!><!>
+    val e = <!NO_COMPANION_OBJECT!>E<!>.<!SYNTAX!><!>
 }
 
 

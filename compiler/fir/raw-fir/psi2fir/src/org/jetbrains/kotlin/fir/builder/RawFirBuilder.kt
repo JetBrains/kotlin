@@ -2389,14 +2389,19 @@ open class RawFirBuilder(
         }
 
         override fun visitQualifiedExpression(expression: KtQualifiedExpression, data: Unit): FirElement {
+            val receiver = expression.receiverExpression.toFirExpression("Incorrect receiver expression")
+
             val selector = expression.selectorExpression
-                ?: return buildErrorExpression(
-                    expression.toFirSourceElement(), ConeSimpleDiagnostic("Qualified expression without selector", DiagnosticKind.Syntax),
-                )
+                ?: return buildErrorExpression {
+                    source = expression.toFirSourceElement()
+                    diagnostic = ConeSimpleDiagnostic("Qualified expression without selector", DiagnosticKind.Syntax)
+
+                    // if there is no selector, we still want to resolve the receiver
+                    this.expression = receiver
+                }
+
             val firSelector = selector.toFirExpression("Incorrect selector expression")
             if (firSelector is FirQualifiedAccess) {
-                val receiver = expression.receiverExpression.toFirExpression("Incorrect receiver expression")
-
                 if (expression is KtSafeQualifiedExpression) {
                     @OptIn(FirImplementationDetail::class)
                     firSelector.replaceSource(expression.toFirSourceElement(KtFakeSourceElementKind.DesugaredSafeCallExpression))

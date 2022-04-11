@@ -2844,6 +2844,11 @@ public class LazyBodyIsNotTouchedTilContractsPhaseTestGenerated extends Abstract
             runTest("compiler/fir/analysis-tests/testData/resolve/problems/doubleGenericDiamond.kt");
         }
 
+        @TestMetadata("emptySelectorInQualifiedExpression.kt")
+        public void testEmptySelectorInQualifiedExpression() throws Exception {
+            runTest("compiler/fir/analysis-tests/testData/resolve/problems/emptySelectorInQualifiedExpression.kt");
+        }
+
         @TestMetadata("expectConstructor.kt")
         public void testExpectConstructor() throws Exception {
             runTest("compiler/fir/analysis-tests/testData/resolve/problems/expectConstructor.kt");

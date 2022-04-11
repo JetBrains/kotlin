@@ -554,10 +554,13 @@ class ExpressionsConverter(
             result = convertFirSelector(it, dotQualifiedExpression.toFirSourceElement(), firReceiver!!) as? FirExpression
         }
 
-        return result ?: buildErrorExpression(
-            null,
-            ConeSimpleDiagnostic("Qualified expression without selector", DiagnosticKind.Syntax)
-        )
+        return result ?: buildErrorExpression {
+            source = null
+            diagnostic = ConeSimpleDiagnostic("Qualified expression without selector", DiagnosticKind.Syntax)
+
+            // if there is no selector, we still want to resolve the receiver
+            expression = firReceiver
+        }
     }
 
     /**

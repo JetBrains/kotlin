@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // ISSUE: KT-34440
 
 class BufferUtil {
