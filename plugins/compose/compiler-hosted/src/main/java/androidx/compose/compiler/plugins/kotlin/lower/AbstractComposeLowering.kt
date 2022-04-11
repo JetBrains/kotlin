@@ -50,7 +50,6 @@ import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.impl.AnonymousFunctionDescriptor
 import org.jetbrains.kotlin.descriptors.impl.ValueParameterDescriptorImpl
-import org.jetbrains.kotlin.fir.java.topLevelName
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
@@ -558,6 +557,7 @@ abstract class AbstractComposeLowering(
                     )
                 },
                 null,
+                emptyList(),
                 emptyList(),
                 kotlinType.getValueParameterTypesFromFunctionType().mapIndexed { i, t ->
                     ValueParameterDescriptorImpl(
@@ -1387,3 +1387,6 @@ inline fun <T> includeFileNameInExceptionTrace(file: IrFile, body: () -> T): T {
         throw Exception("IR lowering failed at: ${file.name}", e)
     }
 }
+
+fun FqName.topLevelName() =
+    asString().substringBefore(".")

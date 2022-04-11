@@ -36,8 +36,7 @@ tasks.withType(KotlinCompile).configureEach {
         jvmTarget = "1.8"
         freeCompilerArgs = [
                 "-Xskip-metadata-version-check",
-                "-Xjvm-default=enable",
-                "-Xopt-in=kotlin.RequiresOptIn"
+                "-opt-in=kotlin.RequiresOptIn"
         ]
     }
 }
