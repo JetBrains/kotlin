@@ -652,9 +652,12 @@ val syncMutedTests = tasks.register("syncMutedTests") {
 }
 
 tasks.register("createIdeaHomeForTests") {
-    outputs.file(ideaBuildNumberFileForTests())
+    val ideaBuildNumberFileForTests = ideaBuildNumberFileForTests()
+    val intellijSdkVersion = rootProject.extra["versions.intellijSdk"]
+    outputs.file(ideaBuildNumberFileForTests)
     doFirst {
-        writeIdeaBuildNumberForTests()
+        ideaBuildNumberFileForTests.parentFile.mkdirs()
+        ideaBuildNumberFileForTests.writeText("IC-$intellijSdkVersion")
     }
 }
 

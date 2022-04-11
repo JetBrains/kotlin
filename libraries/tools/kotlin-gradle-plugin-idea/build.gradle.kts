@@ -47,8 +47,10 @@ run {
 
     tasks.test {
         dependsOnKotlinGradlePluginInstall()
-        inputs.files(compatibilityTestClasspath)
-        doFirst { systemProperty("compatibilityTestClasspath", compatibilityTestClasspath.files.joinToString(";") { it.absolutePath }) }
+        dependsOn(compatibilityTestClasspath)
+        val conf: FileCollection = compatibilityTestClasspath
+        inputs.files(conf)
+        doFirst { systemProperty("compatibilityTestClasspath", conf.files.joinToString(";") { it.absolutePath }) }
     }
 }
 

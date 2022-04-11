@@ -25,9 +25,10 @@ val syncClasspath by tasks.register<Sync>("syncClasspath") {
     from(incomingClasspath)
     into(classpathDestination)
 
+    val testedVersionLocal = testedVersion
     /* Test if the correct version was resolved */
     doLast {
-        val expectedJar = destinationDir.resolve("kotlin-gradle-plugin-idea-$testedVersion.jar")
+        val expectedJar = destinationDir.resolve("kotlin-gradle-plugin-idea-$testedVersionLocal.jar")
         check(expectedJar.exists()) { "Expected $expectedJar in classpath. Found ${destinationDir.listFiles().orEmpty()}" }
     }
 }

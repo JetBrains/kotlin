@@ -95,13 +95,15 @@ projectTest(jUnitMode = JUnitMode.JUnit5) {
     workingDir = rootDir
     useAndroidJar()
 
-    val parcelizeRuntimeForTestsProvider = project.provider { parcelizeRuntimeForTests.asPath }
-    val robolectricClasspathProvider = project.provider { robolectricClasspath.asPath }
+    val parcelizeRuntimeForTestsConf: FileCollection = parcelizeRuntimeForTests
+    val robolectricClasspathConf: FileCollection = robolectricClasspath
+    val layoutLibConf: FileCollection = layoutLib
+    val layoutLibApiConf: FileCollection = layoutLibApi
     doFirst {
-        systemProperty("parcelizeRuntime.classpath", parcelizeRuntimeForTestsProvider.get())
-        systemProperty("robolectric.classpath", robolectricClasspathProvider.get())
-        systemProperty("layoutLib.path", layoutLib.singleFile.canonicalPath)
-        systemProperty("layoutLibApi.path", layoutLibApi.singleFile.canonicalPath)
+        systemProperty("parcelizeRuntime.classpath", parcelizeRuntimeForTestsConf.asPath)
+        systemProperty("robolectric.classpath", robolectricClasspathConf.asPath)
+        systemProperty("layoutLib.path", layoutLibConf.singleFile.canonicalPath)
+        systemProperty("layoutLibApi.path", layoutLibApiConf.singleFile.canonicalPath)
     }
     doLast {
         println(filter)
