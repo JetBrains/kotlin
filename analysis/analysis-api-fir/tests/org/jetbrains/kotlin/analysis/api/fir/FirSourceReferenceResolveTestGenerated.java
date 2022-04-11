@@ -1336,6 +1336,24 @@ public class FirSourceReferenceResolveTestGenerated extends AbstractReferenceRes
         }
 
         @Test
+        @TestMetadata("NoSelectorInDotQualifiedCall.kt")
+        public void testNoSelectorInDotQualifiedCall() throws Exception {
+            runTest("analysis/analysis-api/testData/referenceResolve/withErrors/NoSelectorInDotQualifiedCall.kt");
+        }
+
+        @Test
+        @TestMetadata("NoSelectorInDotQualifiedCall_ResolveInsideLambda.kt")
+        public void testNoSelectorInDotQualifiedCall_ResolveInsideLambda() throws Exception {
+            runTest("analysis/analysis-api/testData/referenceResolve/withErrors/NoSelectorInDotQualifiedCall_ResolveInsideLambda.kt");
+        }
+
+        @Test
+        @TestMetadata("NoSelectorInSafeQualifiedCall.kt")
+        public void testNoSelectorInSafeQualifiedCall() throws Exception {
+            runTest("analysis/analysis-api/testData/referenceResolve/withErrors/NoSelectorInSafeQualifiedCall.kt");
+        }
+
+        @Test
         @TestMetadata("PropertyPlaceInClassObjectInObject.kt")
         public void testPropertyPlaceInClassObjectInObject() throws Exception {
             runTest("analysis/analysis-api/testData/referenceResolve/withErrors/PropertyPlaceInClassObjectInObject.kt");
