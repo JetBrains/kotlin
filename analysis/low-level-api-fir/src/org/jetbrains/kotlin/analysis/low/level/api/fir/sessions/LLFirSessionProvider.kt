@@ -8,8 +8,10 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.sessions
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.analysis.api.impl.barebone.annotations.Immutable
 import org.jetbrains.kotlin.analysis.low.level.api.fir.file.builder.ModuleFileCache
+import org.jetbrains.kotlin.analysis.low.level.api.fir.project.structure.LLFirKtModuleBasedModuleData
 import org.jetbrains.kotlin.analysis.project.structure.KtModule
 import org.jetbrains.kotlin.analysis.project.structure.NoCacheForModuleException
+import org.jetbrains.kotlin.analysis.utils.errors.requireIsInstance
 import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.FirSessionProvider
@@ -20,8 +22,11 @@ class LLFirSessionProvider internal constructor(
     internal val rootModuleSession: LLFirResolvableModuleSession,
     private val moduleToSession: Map<KtModule, LLFirResolvableModuleSession>
 ) : FirSessionProvider() {
-    override fun getSession(moduleData: FirModuleData): FirSession? =
-        moduleToSession[moduleData.module]
+
+    override fun getSession(moduleData: FirModuleData): FirSession? {
+        requireIsInstance<LLFirKtModuleBasedModuleData>(moduleData)
+        return moduleToSession[moduleData.ktModule]
+    }
 
     fun getSession(module: KtModule): FirSession? =
         moduleToSession[module]

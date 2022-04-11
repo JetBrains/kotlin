@@ -17,12 +17,15 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.file.builder.FirFileBuild
 import org.jetbrains.kotlin.analysis.low.level.api.fir.file.builder.ModuleFileCacheImpl
 import org.jetbrains.kotlin.analysis.low.level.api.fir.fir.caches.FirThreadSafeCachesFactory
 import org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.FirLazyDeclarationResolver
+import org.jetbrains.kotlin.analysis.low.level.api.fir.project.structure.LLFirKtModuleBasedModuleData
+import org.jetbrains.kotlin.analysis.low.level.api.fir.project.structure.LLFirBuiltinsModuleData
 import org.jetbrains.kotlin.analysis.low.level.api.fir.providers.*
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.checkCanceled
 import org.jetbrains.kotlin.analysis.project.structure.*
 import org.jetbrains.kotlin.analysis.providers.createAnnotationResolver
 import org.jetbrains.kotlin.analysis.providers.createDeclarationProvider
 import org.jetbrains.kotlin.analysis.providers.createPackageProvider
+import org.jetbrains.kotlin.analysis.utils.errors.checkIsInstance
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
 import org.jetbrains.kotlin.fir.*
@@ -88,7 +91,7 @@ internal object LLFirSessionFactory {
         sessionsCache[module] = session
 
         return session.apply session@{
-            val moduleData = KtModuleBasedModuleData(module).apply { bindSession(this@session) }
+            val moduleData = LLFirKtModuleBasedModuleData(module).apply { bindSession(this@session) }
             registerModuleData(moduleData)
             register(FirKotlinScopeProvider::class, scopeProvider)
 
@@ -216,7 +219,7 @@ internal object LLFirSessionFactory {
         checkCanceled()
         val searchScope = project.moduleScopeProvider.getModuleLibrariesScope(sourceModule)
         LLFirLibrariesSession(project, builtinTypes).apply session@{
-            registerModuleData(KtModuleBasedModuleData(sourceModule).apply { bindSession(this@session) })
+            registerModuleData(LLFirKtModuleBasedModuleData(sourceModule).apply { bindSession(this@session) })
             registerIdeComponents(project)
             register(FirPhaseManager::class, FirPhaseCheckingPhaseManager)
             registerCommonComponents(languageVersionSettings)
@@ -251,11 +254,11 @@ internal object LLFirSessionFactory {
 
     private fun createModuleDataProviderWithLibraryDependencies(sourceModule: KtModule, session: LLFirSession): ModuleDataProvider {
         val regularDependenciesOnLibs =
-            sourceModule.directRegularDependenciesOfType<KtBinaryModule>().map { KtModuleBasedModuleData(it) }
+            sourceModule.directRegularDependenciesOfType<KtBinaryModule>().map { LLFirKtModuleBasedModuleData(it) }
         val friendDependenciesOnLibs =
-            sourceModule.directFriendDependenciesOfType<KtBinaryModule>().map { KtModuleBasedModuleData(it) }
+            sourceModule.directFriendDependenciesOfType<KtBinaryModule>().map { LLFirKtModuleBasedModuleData(it) }
         val dependsOnDependenciesOnLibs =
-            sourceModule.directRefinementDependenciesOfType<KtBinaryModule>().map { KtModuleBasedModuleData(it) }
+            sourceModule.directRefinementDependenciesOfType<KtBinaryModule>().map { LLFirKtModuleBasedModuleData(it) }
 
         val allDependencies = buildList {
             addAll(regularDependenciesOnLibs)
@@ -271,7 +274,8 @@ internal object LLFirSessionFactory {
 
         val moduleDataWithFilters: Map<FirModuleData, LibraryPathFilter.LibraryList> =
             allDependencies.associateWith { moduleData ->
-                val ktBinaryModule = moduleData.module as KtBinaryModule
+                checkIsInstance<LLFirKtModuleBasedModuleData>(moduleData)
+                val ktBinaryModule = moduleData.ktModule as KtBinaryModule
                 val moduleBinaryRoots = ktBinaryModule.getBinaryRoots().mapTo(mutableSetOf()) { it.toAbsolutePath() }
                 LibraryPathFilter.LibraryList(moduleBinaryRoots)
             }
@@ -282,12 +286,12 @@ internal object LLFirSessionFactory {
     fun createBuiltinsAndCloneableSession(
         project: Project,
         builtinTypes: BuiltinTypes,
-        stdlibModule: KtModule,
+        useSiteModule: KtModule,
         languageVersionSettings: LanguageVersionSettings = LanguageVersionSettingsImpl.DEFAULT,
         configureSession: (LLFirSession.() -> Unit)? = null,
     ): LLFirBuiltinsAndCloneableSession {
         return LLFirBuiltinsAndCloneableSession(project, builtinTypes).apply session@{
-            val moduleData = KtModuleBasedModuleData(stdlibModule).apply {
+            val moduleData = LLFirBuiltinsModuleData(useSiteModule).apply {
                 bindSession(this@session)
             }
             registerIdeComponents(project)
@@ -339,7 +343,7 @@ internal object LLFirSessionFactory {
         sessionsCache[module] = session
 
         return session.apply session@{
-            val moduleData = KtModuleBasedModuleData(module).apply { bindSession(this@session) }
+            val moduleData = LLFirKtModuleBasedModuleData(module).apply { bindSession(this@session) }
             registerModuleData(moduleData)
             register(FirKotlinScopeProvider::class, scopeProvider)
 
