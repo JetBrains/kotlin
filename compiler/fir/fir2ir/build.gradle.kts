@@ -50,13 +50,11 @@ dependencies {
     testRuntimeOnly(jpsModelImpl())
 }
 
-val generationRoot = projectDir.resolve("tests-gen")
-
 sourceSets {
     "main" { projectDefault() }
     "test" {
         projectDefault()
-        this.java.srcDir(generationRoot.name)
+        generatedTestDir()
     }
 }
 
@@ -65,13 +63,6 @@ tasks {
         kotlinOptions {
             freeCompilerArgs += "-opt-in=org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI"
         }
-    }
-}
-
-if (kotlinBuildProperties.isInJpsBuildIdeaSync) {
-    apply(plugin = "idea")
-    idea {
-        this.module.generatedSourceDirs.add(generationRoot)
     }
 }
 

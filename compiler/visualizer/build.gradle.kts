@@ -23,22 +23,14 @@ dependencies {
     testRuntimeOnly(commonDependency("net.java.dev.jna:jna"))
 }
 
-val generationRoot = projectDir.resolve("tests-gen")
-
 sourceSets {
     "main" { projectDefault() }
     "test" {
         projectDefault()
-        this.java.srcDir(generationRoot.name)
+        generatedTestDir()
     }
 }
 
-if (kotlinBuildProperties.isInJpsBuildIdeaSync) {
-    apply(plugin = "idea")
-    idea {
-        this.module.generatedSourceDirs.add(generationRoot)
-    }
-}
 
 projectTest(parallel = true, jUnitMode = JUnitMode.JUnit5) {
     workingDir = rootDir
