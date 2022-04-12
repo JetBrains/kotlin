@@ -150,7 +150,7 @@ class DescriptorByIdSignatureFinder(
         }
         val candidates = acc
 
-        return candidates.singleOrNull() ?: findDescriptorByHash(candidates, signature.id)
+        return findDescriptorByHash(candidates, signature.id)
    }
 
     private fun findDescriptorByHash(candidates: Collection<DeclarationDescriptor>, id: Long?): DeclarationDescriptor? =
