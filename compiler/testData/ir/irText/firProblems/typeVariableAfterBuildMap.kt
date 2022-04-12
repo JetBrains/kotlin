@@ -1,4 +1,3 @@
-// !OPT_IN: kotlin.ExperimentalStdlibApi
 // WITH_STDLIB
 
 abstract class Visibility(val name: String, val isPublicAPI: Boolean) {

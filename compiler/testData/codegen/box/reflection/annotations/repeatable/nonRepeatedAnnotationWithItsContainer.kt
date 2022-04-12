@@ -1,5 +1,4 @@
 // !LANGUAGE: +RepeatableAnnotations
-// !OPT_IN: kotlin.ExperimentalStdlibApi
 // TARGET_BACKEND: JVM_IR
 // JVM_TARGET: 1.8
 // FULL_JDK
