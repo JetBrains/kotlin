@@ -143,13 +143,20 @@ private object NativeTestSupport {
         val hostManager = HostManager(distribution = Distribution(nativeHome.dir.path), experimental = false)
         val nativeTargets = computeNativeTargets(enforcedProperties, hostManager)
 
+        val cacheMode = computeCacheMode(enforcedProperties, nativeHome, nativeTargets, optimizationMode)
+        if (cacheMode != CacheMode.WithoutCache) {
+            assertEquals(ThreadStateChecker.DISABLED, threadStateChecker) {
+                "Thread state checker can not be used with cache"
+            }
+        }
+
         output += optimizationMode
         output += memoryModel
         output += threadStateChecker
         output += gcType
         output += gcScheduler
         output += nativeTargets
-        output += CacheMode::class to computeCacheMode(enforcedProperties, nativeHome, nativeTargets, optimizationMode)
+        output += CacheMode::class to cacheMode
         output += computeTestMode(enforcedProperties)
         output += computeTimeouts(enforcedProperties)
 
