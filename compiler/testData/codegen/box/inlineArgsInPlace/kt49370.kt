@@ -1,4 +1,3 @@
-// !OPT_IN: kotlin.ExperimentalStdlibApi
 // WITH_STDLIB
 
 fun box(): String {
