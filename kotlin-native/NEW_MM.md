@@ -1,9 +1,9 @@
-# New memory model migration guide
+# New memory manager migration guide
 
-> The new memory model is Experimental. It's not production-ready and may be changed at any time.
+> The new memory manager is Alpha. It's not production-ready and may be changed at any time.
 > Opt-in is required (see the details below), and you should use it only for evaluation purposes. We would appreciate your feedback on it in [YouTrack](https://youtrack.jetbrains.com/issue/KT-48525).
 
-In the new memory model (MM), we're lifting restrictions on object sharing: there's no need to freeze objects to share them
+In the new memory manager (MM), we're lifting restrictions on object sharing: there's no need to freeze objects to share them
 between threads anymore.
 
 In particular:
@@ -26,14 +26,14 @@ The new MM also brings another set of changes:
   As a workaround, properties that must be initialized at the program start can be marked with `@EagerInitialization`. Before using, consult the [`@EagerInitialization`](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.native/-eager-initialization/) documentation.
 * `by lazy {}` properties support thread-safety modes and do not handle unbounded recursion. This is in line with Kotlin/JVM.
 * Exceptions that escape `operation` in `Worker.executeAfter` are processed like in other parts of the runtime: by trying to execute a user-defined unhandled exception hook or terminating the program if the hook was not found or failed with an exception itself.
-* In the new MM, freezing is deprecated and will be removed in one of the future releases.
+* In the new MM, freezing is deprecated, disabled by default, and will be removed in one of the future releases.
   Don't use freezing if you don't need your code to work with the old MM.
 
 ## Enable the new MM
 
 ### Update the Kotlin/Native compiler
 
-Update to Kotlin 1.6.0-M1 or newer.
+Update to Kotlin 1.6.20 or newer.
 
 ### Switch to the new MM
 
@@ -60,7 +60,7 @@ If `kotlin.native.isExperimentalMM()` returns `true`, you've successfully enable
 ### Update the libraries
 
 To take full advantage of the new MM, we released new versions of the following libraries:
-* `kotlinx.coroutines`: `1.6.0` (will automatically detect when running with the new memory model).
+* `kotlinx.coroutines`: `1.6.0` or newer (will automatically detect when running with the new memory manager).
     * No freezing. Every common primitive (Channels, Flows, coroutines) works through `Worker` boundaries.
     * Unlike the `native-mt` version, library objects are transparent for `freeze`. For example, if you freeze a channel, all of its internals will get frozen, so it won't work as expected. In particular, this can happen when freezing something that captures a channel.
     * `Dispatchers.Default` is backed by a pool of `Worker`s on Linux and Windows and by a global queue on Apple targets.
@@ -68,7 +68,7 @@ To take full advantage of the new MM, we released new versions of the following 
     * `newFixedThreadPoolContext` to create a coroutine dispatcher backed by a pool of `N` `Worker`s.
     * `Dispatchers.Main` is backed by the main queue on Darwin and by a standalone `Worker` on other platforms.
       _In unit tests, nothing processes the main thread queue, so do not use `Dispatchers.Main` in unit tests unless it was mocked, which can be done by calling `Dispatchers.setMain` from `kotlinx-coroutines-test`._
-* `ktor`: `1.6.2-native-mm-eap-196` at https://maven.pkg.jetbrains.space/public/p/ktor/eap
+* `ktor`: `2.0.0` or newer.
 
 ### Using previous versions of the libraries
 
