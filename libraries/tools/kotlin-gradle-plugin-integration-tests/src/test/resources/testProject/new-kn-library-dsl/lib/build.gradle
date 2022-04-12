@@ -10,10 +10,10 @@ kotlin {
 }
 
 kotlinArtifacts {
-    Native.Library("groolib") {
+    it.native.Library("groolib") {
         modes(DEBUG)
         target = iosX64
-        isStatic = false
+        it.static = false
         linkerOptions = ["a", "b"]
         kotlinOptions {
             verbose = true
@@ -25,24 +25,24 @@ kotlinArtifacts {
             project(":lib")
         )
     }
-    Native.Framework("grooframe") {
+    it.native.Framework("grooframe") {
         modes(DEBUG, RELEASE)
         target = iosArm64
-        isStatic = false
+        it.static = false
         embedBitcode = EmbedBitcodeMode.MARKER
         kotlinOptions {
             verbose = true
         }
         addModule(project(":shared"))
     }
-    Native.FatFramework("groofatframe") {
+    it.native.FatFramework("groofatframe") {
         targets(iosX64, iosSimulatorArm64)
         embedBitcode = EmbedBitcodeMode.DISABLE
         kotlinOptions {
             suppressWarnings = true
         }
     }
-    Native.XCFramework {
+    it.native.XCFramework {
         targets(iosX64, iosArm64, iosSimulatorArm64)
     }
 }

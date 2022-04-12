@@ -10,6 +10,8 @@ import org.gradle.api.Task
 import org.gradle.api.plugins.ExtensionAware
 import org.gradle.language.base.plugins.LifecycleBasePlugin
 import org.jetbrains.kotlin.gradle.dsl.KotlinCommonToolOptions
+import org.jetbrains.kotlin.gradle.dsl.KotlinNativeXCFramework
+import org.jetbrains.kotlin.gradle.dsl.KotlinNativeXCFrameworkConfig
 import org.jetbrains.kotlin.gradle.plugin.mpp.BitcodeEmbeddingMode
 import org.jetbrains.kotlin.gradle.plugin.mpp.NativeBuildType
 import org.jetbrains.kotlin.gradle.plugin.mpp.NativeOutputKind
@@ -22,49 +24,18 @@ import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import javax.inject.Inject
 
-abstract class KotlinNativeXCFrameworkConfig @Inject constructor(
-    artifactName: String
-) : KotlinNativeArtifactConfig(artifactName) {
-    var targets: Set<KonanTarget> = emptySet()
-    fun targets(vararg targets: KonanTarget) {
+abstract class KotlinNativeXCFrameworkConfigImpl @Inject constructor(artifactName: String) :
+    KotlinNativeArtifactConfigImpl(artifactName), KotlinNativeXCFrameworkConfig {
+    override var targets: Set<KonanTarget> = emptySet()
+    override fun targets(vararg targets: KonanTarget) {
         this.targets = targets.toSet()
     }
 
-    var embedBitcode: BitcodeEmbeddingMode? = null
-
-    override fun createArtifact(project: Project, extensions: ExtensionAware) = KotlinNativeXCFramework(
-        project,
-        artifactName,
-        modules,
-        modes,
-        isStatic,
-        linkerOptions,
-        kotlinOptionsFn,
-        binaryOptions,
-        targets,
-        embedBitcode,
-        extensions
-    )
-}
-
-class KotlinNativeXCFramework(
-    override val project: Project,
-    override val artifactName: String,
-    override val modules: Set<Any>,
-    override val modes: Set<NativeBuildType>,
-    override val isStatic: Boolean,
-    override val linkerOptions: List<String>,
-    override val kotlinOptionsFn: KotlinCommonToolOptions.() -> Unit,
-    override val binaryOptions: Map<String, String>,
-    val targets: Set<KonanTarget>,
-    val embedBitcode: BitcodeEmbeddingMode?,
-    extensions: ExtensionAware
-) : KotlinNativeArtifact, ExtensionAware by extensions {
-    private val kind = NativeOutputKind.FRAMEWORK
-    override fun getName() = lowerCamelCaseName(artifactName, "XCFramework")
+    override var embedBitcode: BitcodeEmbeddingMode? = null
 
     override fun validate() {
         super.validate()
+        val kind = NativeOutputKind.FRAMEWORK
         check(targets.isNotEmpty()) {
             "Native artifact '$artifactName' wasn't configured because it requires at least one target"
         }
@@ -74,8 +45,39 @@ class KotlinNativeXCFramework(
         }
     }
 
-    override fun registerAssembleTask() {
+    override fun createArtifact(extensions: ExtensionAware): KotlinNativeXCFrameworkImpl {
         validate()
+        return KotlinNativeXCFrameworkImpl(
+            artifactName = artifactName,
+            modules = modules,
+            modes = modes,
+            isStatic = isStatic,
+            linkerOptions = linkerOptions,
+            kotlinOptionsFn = kotlinOptionsFn,
+            binaryOptions = binaryOptions,
+            targets = targets,
+            embedBitcode = embedBitcode,
+            extensions = extensions
+        )
+    }
+}
+
+class KotlinNativeXCFrameworkImpl(
+    override val artifactName: String,
+    override val modules: Set<Any>,
+    override val modes: Set<NativeBuildType>,
+    override val isStatic: Boolean,
+    override val linkerOptions: List<String>,
+    override val kotlinOptionsFn: KotlinCommonToolOptions.() -> Unit,
+    override val binaryOptions: Map<String, String>,
+    override val targets: Set<KonanTarget>,
+    override val embedBitcode: BitcodeEmbeddingMode?,
+    extensions: ExtensionAware
+) : KotlinNativeXCFramework, ExtensionAware by extensions {
+    override fun getName() = lowerCamelCaseName(artifactName, "XCFramework")
+    override val taskName = lowerCamelCaseName("assemble", name)
+
+    override fun registerAssembleTask(project: Project) {
         val parentTask = project.registerTask<Task>(taskName) {
             it.group = "build"
             it.description = "Assemble all types of registered '$artifactName' XCFramework"
@@ -92,15 +94,15 @@ class KotlinNativeXCFramework(
                 val librariesConfigurationName = project.registerLibsDependencies(target, artifactName + nameSuffix, modules)
                 val exportConfigurationName = project.registerExportDependencies(target, artifactName + nameSuffix, modules)
                 val targetTask = registerLinkFrameworkTask(
-                    project,
-                    artifactName,
-                    target,
-                    buildType,
-                    librariesConfigurationName,
-                    exportConfigurationName,
-                    embedBitcode,
-                    "${artifactName}XCFrameworkTemp",
-                    nameSuffix
+                    project = project,
+                    name = artifactName,
+                    target = target,
+                    buildType = buildType,
+                    librariesConfigurationName = librariesConfigurationName,
+                    exportConfigurationName = exportConfigurationName,
+                    embedBitcode = embedBitcode,
+                    outDirName = "${artifactName}XCFrameworkTemp",
+                    taskNameSuffix = nameSuffix
                 )
                 holder.task.dependsOn(targetTask)
                 val frameworkFileProvider = targetTask.map { it.outputFile }

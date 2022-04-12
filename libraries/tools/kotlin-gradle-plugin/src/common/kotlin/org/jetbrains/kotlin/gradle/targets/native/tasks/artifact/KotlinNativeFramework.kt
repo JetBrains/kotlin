@@ -12,6 +12,9 @@ import org.gradle.api.plugins.ExtensionAware
 import org.gradle.api.tasks.TaskProvider
 import org.gradle.language.base.plugins.LifecycleBasePlugin
 import org.jetbrains.kotlin.gradle.dsl.KotlinCommonToolOptions
+import org.jetbrains.kotlin.gradle.dsl.KotlinNativeArtifact
+import org.jetbrains.kotlin.gradle.dsl.KotlinNativeFramework
+import org.jetbrains.kotlin.gradle.dsl.KotlinNativeFrameworkConfig
 import org.jetbrains.kotlin.gradle.plugin.mpp.BitcodeEmbeddingMode
 import org.jetbrains.kotlin.gradle.plugin.mpp.NativeBuildType
 import org.jetbrains.kotlin.gradle.plugin.mpp.NativeOutputKind
@@ -24,29 +27,35 @@ import org.jetbrains.kotlin.konan.target.presetName
 import org.jetbrains.kotlin.konan.util.visibleName
 import javax.inject.Inject
 
-abstract class KotlinNativeFrameworkConfig @Inject constructor(
-    artifactName: String
-) : KotlinNativeArtifactConfig(artifactName) {
-    abstract var target: KonanTarget
-    var embedBitcode: BitcodeEmbeddingMode? = null
+abstract class KotlinNativeFrameworkConfigImpl @Inject constructor(artifactName: String) :
+    KotlinNativeArtifactConfigImpl(artifactName), KotlinNativeFrameworkConfig {
 
-    override fun createArtifact(project: Project, extensions: ExtensionAware) = KotlinNativeFramework(
-        project,
-        artifactName,
-        modules,
-        modes,
-        isStatic,
-        linkerOptions,
-        kotlinOptionsFn,
-        binaryOptions,
-        target,
-        embedBitcode,
-        extensions
-    )
+    override fun validate() {
+        super.validate()
+        val kind = NativeOutputKind.FRAMEWORK
+        check(kind.availableFor(target)) {
+            "Native artifact '$artifactName' wasn't configured because ${kind.description} is not available for ${target.visibleName}"
+        }
+    }
+
+    override fun createArtifact(extensions: ExtensionAware): KotlinNativeFrameworkImpl {
+        validate()
+        return KotlinNativeFrameworkImpl(
+            artifactName = artifactName,
+            modules = modules,
+            modes = modes,
+            isStatic = isStatic,
+            linkerOptions = linkerOptions,
+            kotlinOptionsFn = kotlinOptionsFn,
+            binaryOptions = binaryOptions,
+            target = target,
+            embedBitcode = embedBitcode,
+            extensions = extensions
+        )
+    }
 }
 
-class KotlinNativeFramework(
-    override val project: Project,
+class KotlinNativeFrameworkImpl(
     override val artifactName: String,
     override val modules: Set<Any>,
     override val modes: Set<NativeBuildType>,
@@ -54,22 +63,15 @@ class KotlinNativeFramework(
     override val linkerOptions: List<String>,
     override val kotlinOptionsFn: KotlinCommonToolOptions.() -> Unit,
     override val binaryOptions: Map<String, String>,
-    val target: KonanTarget,
-    val embedBitcode: BitcodeEmbeddingMode?,
+    override val target: KonanTarget,
+    override val embedBitcode: BitcodeEmbeddingMode?,
     extensions: ExtensionAware
-) : KotlinNativeArtifact, ExtensionAware by extensions {
+) : KotlinNativeFramework, ExtensionAware by extensions {
     private val kind = NativeOutputKind.FRAMEWORK
     override fun getName() = lowerCamelCaseName(artifactName, kind.taskNameClassifier, target.presetName)
+    override val taskName = lowerCamelCaseName("assemble", name)
 
-    override fun validate() {
-        super.validate()
-        check(kind.availableFor(target)) {
-            "Native artifact '$artifactName' wasn't configured because ${kind.description} is not available for ${target.visibleName}"
-        }
-    }
-
-    override fun registerAssembleTask() {
-        validate()
+    override fun registerAssembleTask(project: Project) {
         val resultTask = project.registerTask<Task>(taskName) { task ->
             task.group = BasePlugin.BUILD_GROUP
             task.description = "Assemble ${kind.description} '$artifactName' for ${target.visibleName}."
@@ -80,13 +82,13 @@ class KotlinNativeFramework(
         val exportConfigurationName = project.registerExportDependencies(target, artifactName, modules)
         modes.forEach { buildType ->
             val targetTask = registerLinkFrameworkTask(
-                project,
-                artifactName,
-                target,
-                buildType,
-                librariesConfigurationName,
-                exportConfigurationName,
-                embedBitcode
+                project = project,
+                name = artifactName,
+                target = target,
+                buildType = buildType,
+                librariesConfigurationName = librariesConfigurationName,
+                exportConfigurationName = exportConfigurationName,
+                embedBitcode = embedBitcode
             )
             resultTask.dependsOn(targetTask)
         }

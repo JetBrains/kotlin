@@ -11,6 +11,8 @@ import org.gradle.api.plugins.BasePlugin
 import org.gradle.api.plugins.ExtensionAware
 import org.gradle.language.base.plugins.LifecycleBasePlugin
 import org.jetbrains.kotlin.gradle.dsl.KotlinCommonToolOptions
+import org.jetbrains.kotlin.gradle.dsl.KotlinNativeLibrary
+import org.jetbrains.kotlin.gradle.dsl.KotlinNativeLibraryConfig
 import org.jetbrains.kotlin.gradle.plugin.mpp.NativeBuildType
 import org.jetbrains.kotlin.gradle.plugin.mpp.NativeOutputKind
 import org.jetbrains.kotlin.gradle.plugin.mpp.enabledOnCurrentHost
@@ -22,27 +24,34 @@ import org.jetbrains.kotlin.konan.target.presetName
 import org.jetbrains.kotlin.konan.util.visibleName
 import javax.inject.Inject
 
-abstract class KotlinNativeLibraryConfig @Inject constructor(
-    artifactName: String
-) : KotlinNativeArtifactConfig(artifactName) {
-    abstract var target: KonanTarget
+abstract class KotlinNativeLibraryConfigImpl @Inject constructor(artifactName: String) :
+    KotlinNativeArtifactConfigImpl(artifactName), KotlinNativeLibraryConfig {
 
-    override fun createArtifact(project: Project, extensions: ExtensionAware) = KotlinNativeLibrary(
-        project,
-        artifactName,
-        modules,
-        modes,
-        isStatic,
-        linkerOptions,
-        kotlinOptionsFn,
-        binaryOptions,
-        target,
-        extensions
-    )
+    override fun validate() {
+        super.validate()
+        val kind = if (isStatic) NativeOutputKind.STATIC else NativeOutputKind.DYNAMIC
+        check(kind.availableFor(target)) {
+            "Native artifact '$artifactName' wasn't configured because ${kind.description} is not available for ${target.visibleName}"
+        }
+    }
+
+    override fun createArtifact(extensions: ExtensionAware): KotlinNativeLibraryImpl {
+        validate()
+        return KotlinNativeLibraryImpl(
+            artifactName = artifactName,
+            modules = modules,
+            modes = modes,
+            isStatic = isStatic,
+            linkerOptions = linkerOptions,
+            kotlinOptionsFn = kotlinOptionsFn,
+            binaryOptions = binaryOptions,
+            target = target,
+            extensions = extensions
+        )
+    }
 }
 
-class KotlinNativeLibrary(
-    override val project: Project,
+class KotlinNativeLibraryImpl(
     override val artifactName: String,
     override val modules: Set<Any>,
     override val modes: Set<NativeBuildType>,
@@ -50,21 +59,14 @@ class KotlinNativeLibrary(
     override val linkerOptions: List<String>,
     override val kotlinOptionsFn: KotlinCommonToolOptions.() -> Unit,
     override val binaryOptions: Map<String, String>,
-    val target: KonanTarget,
+    override val target: KonanTarget,
     extensions: ExtensionAware
-) : KotlinNativeArtifact, ExtensionAware by extensions {
+) : KotlinNativeLibrary, ExtensionAware by extensions {
     private val kind = if (isStatic) NativeOutputKind.STATIC else NativeOutputKind.DYNAMIC
     override fun getName() = lowerCamelCaseName(artifactName, kind.taskNameClassifier, "Library", target.presetName)
+    override val taskName = lowerCamelCaseName("assemble", name)
 
-    override fun validate() {
-        super.validate()
-        check(kind.availableFor(target)) {
-            "Native artifact '$artifactName' wasn't configured because ${kind.description} is not available for ${target.visibleName}"
-        }
-    }
-
-    override fun registerAssembleTask() {
-        validate()
+    override fun registerAssembleTask(project: Project) {
         val resultTask = project.registerTask<Task>(taskName) { task ->
             task.group = BasePlugin.BUILD_GROUP
             task.description = "Assemble all types of registered '$artifactName' ${kind.description} for ${target.visibleName}."
