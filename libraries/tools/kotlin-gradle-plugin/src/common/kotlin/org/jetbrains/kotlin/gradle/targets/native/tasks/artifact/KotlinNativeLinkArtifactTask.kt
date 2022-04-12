@@ -155,25 +155,25 @@ open class KotlinNativeLinkArtifactTask @Inject constructor(
         val localBinaryOptions = PropertiesProvider(project).nativeBinaryOptions + binaryOptions
 
         val buildArgs = buildKotlinNativeBinaryLinkerArgs(
-            outFile,
-            optimized,
-            debuggable,
-            konanTarget,
-            outputKind,
-            libraries.klibs(),
-            emptyList(), //FriendModules aren't needed here because it's no test artifact
-            enableEndorsedLibs,
-            kotlinOptions,
-            emptyList(),//CompilerPlugins aren't needed here because it's no compilation but linking
-            processTests,
-            entryPoint,
-            embedBitcode,
-            linkerOptions,
-            localBinaryOptions,
-            isStaticFramework,
-            exportLibraries.klibs(),
-            includeLibraries.klibs(),
-            emptyList()//todo support org.jetbrains.kotlin.gradle.tasks.CacheBuilder and org.jetbrains.kotlin.gradle.tasks.ExternalDependenciesBuilder
+            outFile = outFile,
+            optimized = optimized,
+            debuggable = debuggable,
+            target = konanTarget,
+            outputKind = outputKind,
+            libraries = libraries.klibs(),
+            friendModules = emptyList(), //FriendModules aren't needed here because it's no test artifact
+            enableEndorsedLibs = enableEndorsedLibs,
+            kotlinOptions = kotlinOptions,
+            compilerPlugins = emptyList(),//CompilerPlugins aren't needed here because it's no compilation but linking
+            processTests = processTests,
+            entryPoint = entryPoint,
+            embedBitcode = embedBitcode,
+            linkerOpts = linkerOptions,
+            binaryOptions = localBinaryOptions,
+            isStaticFramework = isStaticFramework,
+            exportLibraries = exportLibraries.klibs(),
+            includeLibraries = includeLibraries.klibs(),
+            additionalOptions = emptyList()//todo support org.jetbrains.kotlin.gradle.tasks.CacheBuilder and org.jetbrains.kotlin.gradle.tasks.ExternalDependenciesBuilder
         )
 
         KotlinNativeCompilerRunner(project).run(buildArgs)

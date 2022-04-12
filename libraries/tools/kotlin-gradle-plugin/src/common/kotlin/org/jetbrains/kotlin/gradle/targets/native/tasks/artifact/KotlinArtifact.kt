@@ -6,11 +6,11 @@
 package org.jetbrains.kotlin.gradle.targets.native.tasks.artifact
 
 import org.gradle.api.Action
-import org.gradle.api.Named
 import org.gradle.api.Project
 import org.gradle.api.attributes.Usage
-import org.gradle.api.plugins.ExtensionAware
+import org.jetbrains.kotlin.gradle.dsl.KotlinArtifactConfig
 import org.jetbrains.kotlin.gradle.dsl.KotlinCommonToolOptions
+import org.jetbrains.kotlin.gradle.dsl.KotlinNativeArtifactConfig
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsages
@@ -19,66 +19,47 @@ import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.konan.target.presetName
 
-abstract class KotlinArtifactConfig(
-    val artifactName: String
-) {
-    internal val modules = mutableSetOf<Any>()
-    fun setModules(vararg project: Any) {
+abstract class KotlinArtifactConfigImpl(
+    override val artifactName: String
+) : KotlinArtifactConfig {
+    override val modules = mutableSetOf<Any>()
+    override fun setModules(vararg project: Any) {
         modules.clear()
         modules.addAll(project)
     }
 
-    fun addModule(project: Any) {
+    override fun addModule(project: Any) {
         modules.add(project)
     }
 
-    abstract fun createArtifact(project: Project, extensions: ExtensionAware): KotlinArtifact
+    protected open fun validate() {
+        check(modules.isNotEmpty()) {
+            "Native artifact '$artifactName' wasn't configured because it requires at least one module for linking"
+        }
+    }
 }
 
-interface KotlinArtifact : Named, ExtensionAware {
-    val project: Project
-    val artifactName: String
-    val modules: Set<Any>
-    val taskName: String get() = lowerCamelCaseName("assemble", name)
-
-    fun validate()
-    fun registerAssembleTask()
-}
-
-abstract class KotlinNativeArtifactConfig(artifactName: String) : KotlinArtifactConfig(artifactName) {
-    var modes: Set<NativeBuildType> = NativeBuildType.DEFAULT_BUILD_TYPES
-    fun modes(vararg modes: NativeBuildType) {
+abstract class KotlinNativeArtifactConfigImpl(artifactName: String) : KotlinArtifactConfigImpl(artifactName), KotlinNativeArtifactConfig {
+    override var modes: Set<NativeBuildType> = NativeBuildType.DEFAULT_BUILD_TYPES
+    override fun modes(vararg modes: NativeBuildType) {
         this.modes = modes.toSet()
     }
 
-    @JvmField
-    var isStatic: Boolean = false
-
-    @JvmField
-    var linkerOptions: List<String> = emptyList()
+    override var isStatic: Boolean = false
+    override var linkerOptions: List<String> = emptyList()
 
     internal var kotlinOptionsFn: KotlinCommonToolOptions.() -> Unit = {}
-    fun kotlinOptions(fn: Action<KotlinCommonToolOptions>) {
+    override fun kotlinOptions(fn: Action<KotlinCommonToolOptions>) {
         kotlinOptionsFn = fn::execute
     }
 
     internal val binaryOptions: MutableMap<String, String> = mutableMapOf()
-    fun binaryOption(name: String, value: String) {
+    override fun binaryOption(name: String, value: String) {
         binaryOptions[name] = value
     }
-}
-
-interface KotlinNativeArtifact : KotlinArtifact {
-    val modes: Set<NativeBuildType>
-    val isStatic: Boolean
-    val linkerOptions: List<String>
-    val kotlinOptionsFn: KotlinCommonToolOptions.() -> Unit
-    val binaryOptions: Map<String, String>
 
     override fun validate() {
-        check(modules.isNotEmpty()) {
-            "Native artifact '$artifactName' wasn't configured because it requires at least one module for linking"
-        }
+        super.validate()
         check(modes.isNotEmpty()) {
             "Native artifact '$artifactName' wasn't configured because it requires at least one build type in modes"
         }
