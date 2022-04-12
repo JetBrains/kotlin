@@ -102,7 +102,19 @@ private fun JavaType?.toConeTypeProjection(
                 return lowerBound
             }
             val upperBound = toConeKotlinTypeForFlexibleBound(session, javaTypeParameterStack, mode, attributes, lowerBound)
-            if (isRaw) ConeRawType(lowerBound, upperBound) else ConeFlexibleType(lowerBound, upperBound)
+
+            val finalLowerBound = when (lowerBound) {
+                is ConeTypeParameterType ->
+                    ConeDefinitelyNotNullType.create(
+                        lowerBound, session.typeContext,
+                        // Upper bounds might be not initialized properly yet, so we force creating DefinitelyNotNullType
+                        // It should not affect semantics, since it would be still a valid type anyway
+                        forceWithoutCheck = true,
+                    ) ?: lowerBound
+                else -> lowerBound
+            }
+
+            if (isRaw) ConeRawType(finalLowerBound, upperBound) else ConeFlexibleType(finalLowerBound, upperBound)
         }
 
         is JavaArrayType -> {

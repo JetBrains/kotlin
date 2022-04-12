@@ -174,9 +174,9 @@ abstract class TypeCheckerStateForConstraintSystem(
      *
      * T?
      *
-     * Foo <: T? -- Foo & Any <: T -- Foo!! <: T
-     * Foo? <: T? -- Foo? & Any <: T -- Foo!! <: T
-     * (Foo..Bar) <: T? -- (Foo..Bar) & Any <: T -- (Foo..Bar)!! <: T
+     * Foo <: T? -- Foo & Any <: T
+     * Foo? <: T? -- Foo? & Any <: T -- Foo & Any <: T
+     * (Foo..Bar) <: T? -- (Foo..Bar) & Any <: T
      *
      * T!
      *
@@ -248,12 +248,34 @@ abstract class TypeCheckerStateForConstraintSystem(
 
                 when (subType) {
                     is SimpleTypeMarker ->
-                        // Foo <: T! -- (Foo!! .. Foo) <: T
-                        subType.createConstraintPartForLowerBoundAndFlexibleTypeVariable()
+                        when {
+                            useRefinedBoundsForTypeVariableInFlexiblePosition() ->
+                                // Foo <: T! -- (Foo!! .. Foo) <: T
+                                createFlexibleType(
+                                    subType.makeSimpleTypeDefinitelyNotNullOrNotNull(),
+                                    subType.withNullability(true)
+                                )
+                            // In K1 (FE1.0), there is an obsolete behavior
+                            subType.isMarkedNullable() -> subType
+                            else -> createFlexibleType(subType, subType.withNullability(true))
+                        }
 
                     is FlexibleTypeMarker ->
-                        // (Foo..Bar) <: T! -- (Foo!! .. Bar) <: T
-                        createFlexibleType(subType.lowerBound().makeSimpleTypeDefinitelyNotNullOrNotNull(), subType.upperBound())
+
+                        when {
+                            useRefinedBoundsForTypeVariableInFlexiblePosition() ->
+                                // (Foo..Bar) <: T! -- (Foo!! .. Bar?) <: T
+                                createFlexibleType(
+                                    subType.lowerBound().makeSimpleTypeDefinitelyNotNullOrNotNull(),
+                                    subType.upperBound().withNullability(true)
+                                )
+                            else ->
+                                // (Foo..Bar) <: T! -- (Foo!! .. Bar) <: T
+                                createFlexibleType(
+                                    subType.lowerBound().makeSimpleTypeDefinitelyNotNullOrNotNull(),
+                                    subType.upperBound()
+                                )
+                        }
 
                     else -> error("sealed")
                 }
@@ -273,17 +295,29 @@ abstract class TypeCheckerStateForConstraintSystem(
     }
 
     /**
-     * T! <: Foo <=> T <: Foo..Foo?
+     * T! <: Foo <=> T <: Foo & Any..Foo?
      * T? <: Foo <=> T <: Foo && Nothing? <: Foo
      * T  <: Foo -- leave as is
      */
     private fun simplifyUpperConstraint(typeVariable: KotlinTypeMarker, superType: KotlinTypeMarker): Boolean = with(extensionTypeContext) {
         val typeVariableLowerBound = typeVariable.lowerBoundIfFlexible()
-        val simplifiedSuperType = if (typeVariableLowerBound.isDefinitelyNotNullType()) {
-            superType.withNullability(true)
-        } else if (typeVariable.isFlexible() && superType is SimpleTypeMarker) {
-            createFlexibleType(superType, superType.withNullability(true))
-        } else superType
+
+        val simplifiedSuperType = when {
+            typeVariable.isFlexible() && useRefinedBoundsForTypeVariableInFlexiblePosition() ->
+                createFlexibleType(
+                    superType.lowerBoundIfFlexible().makeSimpleTypeDefinitelyNotNullOrNotNull(),
+                    superType.upperBoundIfFlexible().withNullability(true)
+                )
+
+            typeVariableLowerBound.isDefinitelyNotNullType() -> {
+                superType.withNullability(true)
+            }
+
+            typeVariable.isFlexible() && superType is SimpleTypeMarker ->
+                createFlexibleType(superType, superType.withNullability(true))
+
+            else -> superType
+        }
 
         addUpperConstraint(typeVariableLowerBound.typeConstructor(), simplifiedSuperType)
 

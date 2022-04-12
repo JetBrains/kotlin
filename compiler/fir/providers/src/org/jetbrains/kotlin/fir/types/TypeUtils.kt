@@ -60,7 +60,7 @@ fun TypeCheckerProviderContext.equalTypes(a: ConeKotlinType, b: ConeKotlinType):
 
 private fun ConeTypeContext.makesSenseToBeDefinitelyNotNull(originalType: ConeKotlinType): Boolean {
     return when (val type = originalType.lowerBoundIfFlexible()) {
-        is ConeTypeParameterType -> type.isNullableType()
+        is ConeTypeParameterType -> !type.lookupTag.symbol.isInitializedFir || type.isNullableType()
         // Actually, this branch should work for type parameters as well, but it breaks some cases. See KT-40114.
         // Basically, if we have `T : X..X?`, then `T <: Any` but we still have `T` != `T & Any`.
         is ConeTypeVariableType, is ConeCapturedType -> {
@@ -75,12 +75,13 @@ private fun ConeTypeContext.makesSenseToBeDefinitelyNotNull(originalType: ConeKo
 
 fun ConeDefinitelyNotNullType.Companion.create(
     original: ConeKotlinType,
-    typeContext: ConeTypeContext
+    typeContext: ConeTypeContext,
+    forceWithoutCheck: Boolean = false,
 ): ConeDefinitelyNotNullType? {
     return when (original) {
         is ConeDefinitelyNotNullType -> original
         is ConeFlexibleType -> create(original.lowerBound, typeContext)
-        is ConeSimpleKotlinType -> runIf(typeContext.makesSenseToBeDefinitelyNotNull(original)) {
+        is ConeSimpleKotlinType -> runIf(forceWithoutCheck || typeContext.makesSenseToBeDefinitelyNotNull(original)) {
             ConeDefinitelyNotNullType(original.coneLowerBoundIfFlexible())
         }
     }

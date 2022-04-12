@@ -21,7 +21,8 @@ import org.jetbrains.kotlin.types.model.TypeVariableMarker
 
 object ConeConstraintSystemUtilContext : ConstraintSystemUtilContext {
     override fun TypeVariableMarker.shouldBeFlexible(): Boolean {
-        // TODO
+        // In FIR, there's no need in hack with shouldTryUseDifferentFlexibilityForUpperType
+        // See org.jetbrains.kotlin.types.model.TypeSystemInferenceExtensionContext.useRefinedBoundsForTypeVariableInFlexiblePosition
         return false
     }
 

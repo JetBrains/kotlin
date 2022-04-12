@@ -37,7 +37,7 @@ fun <R> main(a: ReturnType<R>) {
     takeNullableStringAndKNullable(x1)
     takeNotNullStringAndNotNullK(<!ARGUMENT_TYPE_MISMATCH!>x1<!>)
     takeNullableStringAndNotNullK(<!ARGUMENT_TYPE_MISMATCH!>x1<!>)
-    takeNotNullString(<!ARGUMENT_TYPE_MISMATCH!>a.foo41.foo411<!>)
+    takeNotNullString(a.foo41.foo411)
 
     val x2 = <!DEBUG_INFO_EXPRESSION_TYPE("ReturnType.A<kotlin.String?, R!!>..ReturnType.A<kotlin.String?, R!!>?!")!>a.foo2()<!>
     takeNotNullStringAndKNullable(<!ARGUMENT_TYPE_MISMATCH!>x2<!>)

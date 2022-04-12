@@ -13,7 +13,10 @@ import org.jetbrains.kotlin.descriptors.ValueClassKind
 import org.jetbrains.kotlin.descriptors.valueClassLoweringKind
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.declarations.utils.*
+import org.jetbrains.kotlin.fir.declarations.utils.expandedConeType
+import org.jetbrains.kotlin.fir.declarations.utils.isInner
+import org.jetbrains.kotlin.fir.declarations.utils.modality
+import org.jetbrains.kotlin.fir.declarations.utils.superConeTypes
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.resolve.directExpansionType
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
@@ -289,7 +292,7 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, Ty
                     else -> listOf(session.builtinTypes.anyType.type)
                 }
             }
-            is ConeCapturedTypeConstructor -> supertypes!!
+            is ConeCapturedTypeConstructor -> supertypes.orEmpty()
             is ConeIntersectionType -> intersectedTypes
             is ConeIntegerLiteralType -> supertypes
             else -> unknownConstructorError()
@@ -475,13 +478,13 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, Ty
 
         return when (this) {
             is ConeFlexibleType -> this.upperBound.isNullableType()
-            is ConeTypeParameterType -> lookupTag.symbol.allBoundsAreNullable()
+            is ConeTypeParameterType -> lookupTag.symbol.allBoundsAreNullableOrUnresolved()
             is ConeTypeVariableType -> {
                 val symbol = lookupTag.toSymbol(session) ?: return false
                 when (symbol) {
                     is FirClassSymbol -> false
                     is FirTypeAliasSymbol -> symbol.fir.expandedConeType?.isNullableType() ?: false
-                    is FirTypeParameterSymbol -> symbol.allBoundsAreNullable()
+                    is FirTypeParameterSymbol -> symbol.allBoundsAreNullableOrUnresolved()
                 }
             }
             is ConeIntersectionType -> intersectedTypes.all { it.isNullableType() }
@@ -490,8 +493,13 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, Ty
         }
     }
 
-    private fun FirTypeParameterSymbol.allBoundsAreNullable(): Boolean {
-        return resolvedBounds.all { it.coneType.isNullableType() }
+    private fun FirTypeParameterSymbol.allBoundsAreNullableOrUnresolved(): Boolean {
+        for (bound in fir.bounds) {
+            if (bound !is FirResolvedTypeRef) return true
+            if (!bound.type.isNullableType()) return false
+        }
+
+        return true
     }
 
     private fun TypeConstructorMarker.toFirRegularClass(): FirRegularClass? {

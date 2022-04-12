@@ -92,7 +92,12 @@ private fun ConeSimpleKotlinType.enhanceInflexibleType(
     qualifiers: IndexedJavaTypeQualifiers,
     index: Int,
     subtreeSizes: List<Int>,
+    isFromDefinitelyNotNullType: Boolean = false,
 ): ConeSimpleKotlinType? {
+    if (this is ConeDefinitelyNotNullType) {
+        return original.enhanceInflexibleType(session, position, qualifiers, index, subtreeSizes, isFromDefinitelyNotNullType = true)
+    }
+
     val shouldEnhance = position.shouldEnhance()
     if ((!shouldEnhance && typeArguments.isEmpty()) || this !is ConeLookupTagBasedType) {
         return null
@@ -104,7 +109,7 @@ private fun ConeSimpleKotlinType.enhanceInflexibleType(
     // TODO: implement warnings
     val nullabilityFromQualifiers = effectiveQualifiers.nullability
         .takeIf { shouldEnhance && !effectiveQualifiers.isNullabilityQualifierForWarning }
-    val enhancedNullability = when (nullabilityFromQualifiers) {
+    val enhancedIsNullable = when (nullabilityFromQualifiers) {
         NullabilityQualifier.NULLABLE -> true
         NullabilityQualifier.NOT_NULL -> false
         else -> isNullable
@@ -124,14 +129,14 @@ private fun ConeSimpleKotlinType.enhanceInflexibleType(
     }
 
     val shouldAddAttribute = nullabilityFromQualifiers == NullabilityQualifier.NOT_NULL && !hasEnhancedNullability
-    if (lookupTag == enhancedTag && enhancedNullability == isNullable && !shouldAddAttribute && enhancedArguments.all { it == null }) {
+    if (lookupTag == enhancedTag && enhancedIsNullable == isNullable && !shouldAddAttribute && enhancedArguments.all { it == null }) {
         return null // absolutely no changes
     }
 
     val mergedArguments = Array(typeArguments.size) { enhancedArguments[it] ?: typeArguments[it] }
     val mergedAttributes = if (shouldAddAttribute) attributes + CompilerConeAttributes.EnhancedNullability else attributes
-    val enhancedType = enhancedTag.constructType(mergedArguments, enhancedNullability, mergedAttributes)
-    return if (effectiveQualifiers.definitelyNotNull)
+    val enhancedType = enhancedTag.constructType(mergedArguments, enhancedIsNullable, mergedAttributes)
+    return if (effectiveQualifiers.definitelyNotNull || (isFromDefinitelyNotNullType && nullabilityFromQualifiers == null))
         ConeDefinitelyNotNullType.create(enhancedType, session.typeContext) ?: enhancedType
     else
         enhancedType

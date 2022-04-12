@@ -289,15 +289,19 @@ interface TypeSystemInferenceExtensionContext : TypeSystemContext, TypeSystemBui
         }
 
     /**
-     * For case Foo <: (T..T?) return LowerBound for new constraint LowerBound <: T
-     * In FE 1.0, in case nullable it was just Foo?, so constraint was Foo? <: T
+     * For case Foo <: (T..T?) return LowerConstraint for new constraint LowerConstraint <: T
+     * In K1, in case nullable it was just Foo?, so constraint was Foo? <: T
      * But it's not 100% correct because prevent having not-nullable upper constraint on T while initial (Foo? <: (T..T?)) is not violated
      *
-     * In FIR, we try to have a correct one: (Foo!!..Foo?) <: T
+     * In FIR, we try to have a correct one: (Foo & Any..Foo?) <: T
+     *
+     * The same logic applies for T! <: UpperConstraint, as well
+     * In K1, it was reduced to T <: UpperConstraint..UpperConstraint?
+     * In FIR, we use UpperConstraint & Any..UpperConstraint?
      *
      * In future once we have only FIR (or FE 1.0 behavior is fixed) this method should be inlined to the use-site
      */
-    fun SimpleTypeMarker.createConstraintPartForLowerBoundAndFlexibleTypeVariable(): KotlinTypeMarker
+    fun useRefinedBoundsForTypeVariableInFlexiblePosition(): Boolean
 
     fun createCapturedStarProjectionForSelfType(
         typeVariable: TypeVariableTypeConstructorMarker,

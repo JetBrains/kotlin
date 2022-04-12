@@ -12,7 +12,7 @@ public class A {
 fun test() {
     A.bar(null, "")
 
-    A.bar<String>(null, "")
+    A.bar<String>(<!NULL_FOR_NONNULL_TYPE!>null<!>, "")
     A.bar<String?>(null, "")
     A.bar(null, A.platformString())
 }

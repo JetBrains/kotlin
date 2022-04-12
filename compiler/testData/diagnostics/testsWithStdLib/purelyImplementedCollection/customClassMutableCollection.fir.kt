@@ -28,5 +28,5 @@ fun foo() {
     x.add("")
 
     val b1: Collection<String?> = x
-    val b2: MutableCollection<String?> = x
+    val b2: MutableCollection<String?> = <!INITIALIZER_TYPE_MISMATCH!>x<!>
 }

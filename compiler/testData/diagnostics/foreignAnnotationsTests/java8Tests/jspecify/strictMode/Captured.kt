@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // JSPECIFY_STATE: strict
 // !LANGUAGE: +TypeEnhancementImprovementsInStrictMode
 // FILE: J1.java
