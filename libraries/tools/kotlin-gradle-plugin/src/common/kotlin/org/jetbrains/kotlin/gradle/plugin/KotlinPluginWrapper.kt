@@ -21,6 +21,7 @@ import org.gradle.api.NamedDomainObjectFactory
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.logging.Logger
+import org.gradle.api.logging.Logging
 import org.gradle.api.model.ObjectFactory
 import org.gradle.tooling.provider.model.ToolingModelBuilderRegistry
 import org.jetbrains.kotlin.compilerRunner.registerCommonizerClasspathConfigurationIfNecessary
@@ -59,7 +60,10 @@ import kotlin.reflect.KClass
  * Base Kotlin plugin that is responsible for creating basic build services, configurations,
  * and other setup that is common for all Kotlin projects.
  */
-abstract class KotlinBasePlugin : Plugin<Project> {
+abstract class DefaultKotlinBasePlugin : KotlinBasePlugin {
+
+    private val logger = Logging.getLogger(DefaultKotlinBasePlugin::class.java)
+    override val pluginVersion: String = getKotlinPluginVersion(logger)
 
     override fun apply(project: Project) {
         val kotlinPluginVersion = project.getKotlinPluginVersion()
@@ -127,7 +131,7 @@ abstract class KotlinBasePlugin : Plugin<Project> {
 }
 
 
-abstract class KotlinBasePluginWrapper : KotlinBasePlugin() {
+abstract class KotlinBasePluginWrapper : DefaultKotlinBasePlugin() {
 
     open val projectExtensionClass: KClass<out KotlinTopLevelExtension> get() = KotlinProjectExtension::class
 
