@@ -120,5 +120,9 @@ class ComposeErrorMessages : DefaultErrorMessages.Extension {
             Renderers.TO_STRING,
             Renderers.TO_STRING
         )
+        MAP.put(
+            ComposeErrors.COMPOSE_APPLIER_DECLARATION_MISMATCH,
+            "The composition target of an override must match the ancestor target"
+        )
     }
 }

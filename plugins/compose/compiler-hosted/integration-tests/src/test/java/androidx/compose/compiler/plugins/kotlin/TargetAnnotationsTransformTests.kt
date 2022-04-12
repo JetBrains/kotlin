@@ -1323,6 +1323,67 @@ class TargetAnnotationsTransformTests : ComposeIrTransformTest() {
         """
     )
 
+    @Test
+    fun testInferringTargetFromAncestorMethod() = verifyComposeIrTransform(
+        source = """
+            import androidx.compose.runtime.Composable
+            import androidx.compose.runtime.ComposableTarget
+            import androidx.compose.runtime.ComposableOpenTarget
+
+            @Composable @ComposableOpenTarget(0) fun OpenTarget() { }
+
+            abstract class Base {
+              @Composable @ComposableTarget("N") abstract fun Compose()
+            }
+
+            class Valid : Base () {
+              @Composable override fun Compose() {
+                OpenTarget()
+              }
+            }
+        """,
+        expectedTransformed = """
+            @Composable
+            @ComposableOpenTarget(index = 0)
+            fun OpenTarget(%composer: Composer?, %changed: Int) {
+              %composer = %composer.startRestartGroup(<>)
+              sourceInformation(%composer, "C(OpenTarget):Test.kt")
+              if (%changed !== 0 || !%composer.skipping) {
+              } else {
+                %composer.skipToGroupEnd()
+              }
+              %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
+                OpenTarget(%composer, %changed or 0b0001)
+              }
+            }
+            @StabilityInferred(parameters = 0)
+            abstract class Base {
+              @Composable
+              @ComposableTarget(applier = "N")
+              abstract fun Compose(%composer: Composer?, %changed: Int)
+              static val %stable: Int = 0
+            }
+            @StabilityInferred(parameters = 0)
+            class Valid : Base {
+              @Composable
+              override fun Compose(%composer: Composer?, %changed: Int) {
+                %composer = %composer.startRestartGroup(<>)
+                sourceInformation(%composer, "C(Compose)<OpenTa...>:Test.kt")
+                if (%changed and 0b0001 !== 0 || !%composer.skipping) {
+                  OpenTarget(%composer, 0)
+                } else {
+                  %composer.skipToGroupEnd()
+                }
+                val tmp0_rcvr = <this>
+                %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
+                  tmp0_rcvr.Compose(%composer, %changed or 0b0001)
+                }
+              }
+              static val %stable: Int = 0
+            }
+        """
+        )
+
     private fun verify(source: String, expected: String) =
         verifyComposeIrTransform(source, expected, baseDefinition)
 
