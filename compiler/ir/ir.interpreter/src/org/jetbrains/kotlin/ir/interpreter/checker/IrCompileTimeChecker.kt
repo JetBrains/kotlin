@@ -31,6 +31,10 @@ class IrCompileTimeChecker(
 
     override fun visitElement(element: IrElement, data: Nothing?) = false
 
+    private fun IrDeclarationParent.getInnerDeclarations(): List<IrStatement> {
+        return (this as? IrDeclarationContainer)?.declarations ?: (this as? IrStatementContainer)?.statements ?: emptyList()
+    }
+
     private fun visitStatements(statements: List<IrStatement>, data: Nothing?): Boolean {
         if (mode == EvaluationMode.ONLY_BUILTINS || mode == EvaluationMode.ONLY_INTRINSIC_CONST) {
             val statement = statements.singleOrNull() ?: return false
@@ -149,8 +153,8 @@ class IrCompileTimeChecker(
                 receiverComputable && initializerComputable
             }
             else -> {
-                val parent = owner.parent as IrDeclarationContainer
-                val getter = parent.declarations.filterIsInstance<IrProperty>().singleOrNull { it == property }?.getter ?: return false
+                val declarations = owner.parent.getInnerDeclarations()
+                val getter = declarations.filterIsInstance<IrProperty>().singleOrNull { it == property }?.getter ?: return false
                 visitedStack.contains(getter)
             }
         }
@@ -160,8 +164,8 @@ class IrCompileTimeChecker(
         if (expression.accessesTopLevelOrObjectField()) return false
         //todo check receiver?
         val property = expression.symbol.owner.correspondingPropertySymbol?.owner
-        val parent = expression.symbol.owner.parent as IrDeclarationContainer
-        val setter = parent.declarations.filterIsInstance<IrProperty>().single { it == property }.setter ?: return false
+        val declarations = expression.symbol.owner.parent.getInnerDeclarations()
+        val setter = declarations.filterIsInstance<IrProperty>().single { it == property }.setter ?: return false
         return visitedStack.contains(setter) && expression.value.accept(this, data)
     }
 
