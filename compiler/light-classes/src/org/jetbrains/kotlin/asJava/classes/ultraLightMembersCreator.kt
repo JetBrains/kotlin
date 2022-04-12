@@ -514,7 +514,7 @@ internal class UltraLightMembersCreator(
                     )
                 else
                     KtUltraLightParameterForSetterParameter(
-                        name = DEFAULT_VALUE_PARAMETER.identifier,
+                        name = SpecialNames.IMPLICIT_SET_PARAMETER.asString(),
                         property = declaration,
                         support = support,
                         method = setterWrapper,
