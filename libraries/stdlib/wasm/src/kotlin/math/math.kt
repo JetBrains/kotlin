@@ -349,6 +349,19 @@ public actual fun min(a: Double, b: Double): Double = kotlin.wasm.internal.wasm_
 @SinceKotlin("1.2")
 public actual fun max(a: Double, b: Double): Double = kotlin.wasm.internal.wasm_f64_max(a, b)
 
+/**
+ * Returns the cube root of [x]. For positive finite `x`, `cbrt(-x) == -cbrt(x)`;
+ * that is, the cube root of a negative value is the negative of the cube root
+ * of that value's magnitude. Special cases:
+ *
+ * Special cases:
+ *   - If the argument is `NaN`, then the result is `NaN`.
+ *   - If the argument is infinite, then the result is an infinity with the same sign as the argument.
+ *   - If the argument is zero, then the result is a zero with the same sign as the argument.
+ */
+public actual fun cbrt(x: Double): Double = kotlin.math.fdlibm.__ieee754_cbrt(x)
+
+
 // extensions
 
 /**
@@ -840,6 +853,20 @@ public actual fun min(a: Float, b: Float): Float = kotlin.wasm.internal.wasm_f32
  */
 @SinceKotlin("1.2")
 public actual fun max(a: Float, b: Float): Float = kotlin.wasm.internal.wasm_f32_max(a ,b)
+
+
+/**
+ * Returns the cube root of [x]. For positive finite `x`, `cbrt(-x) == -cbrt(x)`;
+ * that is, the cube root of a negative value is the negative of the cube root
+ * of that value's magnitude. Special cases:
+ *
+ * Special cases:
+ *   - If the argument is `NaN`, then the result is `NaN`.
+ *   - If the argument is infinite, then the result is an infinity with the same sign as the argument.
+ *   - If the argument is zero, then the result is a zero with the same sign as the argument.
+ */
+public actual fun cbrt(x: Float): Float = kotlin.math.fdlibm.__ieee754_cbrt(x.toDouble()).toFloat()
+
 
 // extensions
 

@@ -324,6 +324,12 @@ public fun kotlin.Double.nextTowards(to: kotlin.Double): kotlin.Double
 @kotlin.SinceKotlin(version = "1.2")
 public fun kotlin.Double.nextUp(): kotlin.Double
 
+@kotlin.internal.InlineOnly
+public inline fun kotlin.Double.cbrt(): kotlin.Double
+
+@kotlin.internal.InlineOnly
+public inline fun kotlin.Float.cbrt(): kotlin.Float
+
 @kotlin.SinceKotlin(version = "1.2")
 @kotlin.internal.InlineOnly
 public inline fun kotlin.Double.pow(x: kotlin.Double): kotlin.Double

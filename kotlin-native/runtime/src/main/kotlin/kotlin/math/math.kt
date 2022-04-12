@@ -384,6 +384,21 @@ public actual fun max(a: Double, b: Double): Double = when {
     else -> if (a > b) a else b
 }
 
+
+/**
+ * Returns the cube root of [x]. For positive finite `x`, `cbrt(-x) == -cbrt(x)`;
+ * that is, the cube root of a negative value is the negative of the cube root
+ * of that value's magnitude. Special cases:
+ *
+ * Special cases:
+ *   - If the argument is `NaN`, then the result is `NaN`.
+ *   - If the argument is infinite, then the result is an infinity with the same sign as the argument.
+ *   - If the argument is zero, then the result is a zero with the same sign as the argument.
+ */
+@GCUnsafeCall("Kotlin_math_cbrt")
+external public actual fun cbrt(x: Double): Double
+
+
 // extensions
 
 /**
@@ -933,6 +948,21 @@ public actual fun max(a: Float, b: Float): Float = when {
     a == 0.0f && b == 0.0f -> if (!a.signBit()) a else b   // -0.0 < +0.0
     else -> if (a > b) a else b
 }
+
+
+/**
+ * Returns the cube root of [x]. For positive finite `x`, `cbrt(-x) == -cbrt(x)`;
+ * that is, the cube root of a negative value is the negative of the cube root
+ * of that value's magnitude. Special cases:
+ *
+ * Special cases:
+ *   - If the argument is `NaN`, then the result is `NaN`.
+ *   - If the argument is infinite, then the result is an infinity with the same sign as the argument.
+ *   - If the argument is zero, then the result is a zero with the same sign as the argument.
+ */
+@GCUnsafeCall("Kotlin_math_cbrtf")
+external public actual fun cbrt(x: Float): Float
+
 
 // extensions
 

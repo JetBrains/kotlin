@@ -29,6 +29,7 @@ internal external object JsMath {
     fun sqrt(value: Double): Double
     fun tan(value: Double): Double
     fun log(value: Double): Double
+    fun cbrt(value: Double): Double
     fun pow(base: Double, exp: Double): Double
     fun round(value: Number): Double
     fun floor(value: Number): Double
