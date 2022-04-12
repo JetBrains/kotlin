@@ -191,7 +191,9 @@ class MemoizedInlineClassReplacements(
      */
     val getIsSealedInlineChildFunction: (Pair<IrClass, IrClass>) -> IrSimpleFunction =
         storageManager.createMemoizedFunction { (top, child) ->
-            require(top.isInline && top.modality == Modality.SEALED && child.superTypes.any { it.isInlineClassType() })
+            require(top.isInline && top.modality == Modality.SEALED && child.isChildOfSealedInlineClass()) {
+                "Expected sealed inline class child, but got ${child.render()}, which is not a child of ${top.render()}"
+            }
             irFactory.buildFun {
                 name = Name.identifier("is-${child.name}")
                 origin = JvmLoweredDeclarationOrigin.SYNTHETIC_INLINE_CLASS_MEMBER

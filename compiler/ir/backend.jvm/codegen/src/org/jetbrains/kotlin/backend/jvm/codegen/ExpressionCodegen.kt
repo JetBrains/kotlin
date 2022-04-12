@@ -1028,7 +1028,7 @@ class ExpressionCodegen(
                 val type = typeMapper.boxType(typeOperand)
 
                 if (typeOperand.isNoinlineChildOfSealedInlineClass()) {
-                    val topIrType = typeOperand.classOrNull!!.owner.sealedInlineClassParent().defaultType.makeNullable()
+                    val topIrType = typeOperand.findTopSealedInlineSuperClass().defaultType.makeNullable()
                     val topType = typeMapper.mapType(topIrType)
                     StackValue.unboxInlineClass(OBJECT_TYPE, topType, OBJECT_TYPE, true, mv)
                 }

@@ -22835,36 +22835,284 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
                     }
 
                     @Nested
-                    @TestMetadata("compiler/testData/codegen/box/inlineClasses/sealed/methods/string")
+                    @TestMetadata("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string")
                     @TestDataPath("$PROJECT_ROOT")
                     @Tag("codegen")
                     @UseExtTestCaseGroupProvider()
-                    public class String {
+                    public class _string {
                         @Test
-                        public void testAllFilesPresentInString() throws Exception {
-                            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/inlineClasses/sealed/methods/string"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
+                        public void testAllFilesPresentIn_string() throws Exception {
+                            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
                         }
 
                         @Nested
-                        @TestMetadata("compiler/testData/codegen/box/inlineClasses/sealed/methods/string/toString")
+                        @TestMetadata("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/toString")
                         @TestDataPath("$PROJECT_ROOT")
                         @Tag("codegen")
                         @UseExtTestCaseGroupProvider()
                         public class ToString {
                             public ToString() {
-                                register("compiler/testData/codegen/box/inlineClasses/sealed/methods/string/toString/stringToStringN.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+                                register("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/toString/stringToStringN.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+                                register("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/toString/stringToString_I1.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+                                register("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/toString/stringToString_I1_I2.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+                                register("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/toString/stringToString_I1_I2_I3.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+                                register("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/toString/stringToString_I1_I2_I3_O2.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+                                register("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/toString/stringToString_I1_I2_O1.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+                                register("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/toString/stringToString_I1_I2_O1_I3.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+                                register("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/toString/stringToString_I1_I2_O1_I3_O2.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+                                register("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/toString/stringToString_I1_I2_O1_O2.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+                                register("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/toString/stringToString_I1_I2_O2.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+                                register("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/toString/stringToString_I1_I3.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+                                register("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/toString/stringToString_I1_I3_O2.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+                                register("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/toString/stringToString_I1_O1.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+                                register("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/toString/stringToString_I1_O1_I3.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+                                register("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/toString/stringToString_I1_O1_I3_O2.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+                                register("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/toString/stringToString_I1_O1_O2.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+                                register("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/toString/stringToString_I1_O2.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+                                register("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/toString/stringToString_I2.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+                                register("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/toString/stringToString_I2_I3.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+                                register("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/toString/stringToString_I2_I3_O2.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+                                register("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/toString/stringToString_I2_O1.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+                                register("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/toString/stringToString_I2_O1_I3.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+                                register("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/toString/stringToString_I2_O1_I3_O2.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+                                register("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/toString/stringToString_I2_O1_O2.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+                                register("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/toString/stringToString_I2_O2.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+                                register("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/toString/stringToString_I3.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+                                register("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/toString/stringToString_I3_O2.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+                                register("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/toString/stringToString_O1.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+                                register("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/toString/stringToString_O1_I3.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+                                register("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/toString/stringToString_O1_I3_O2.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+                                register("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/toString/stringToString_O1_O2.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+                                register("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/toString/stringToString_O2.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
                             }
 
                             @Test
                             public void testAllFilesPresentInToString() throws Exception {
-                                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/inlineClasses/sealed/methods/string/toString"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
+                                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/toString"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
                             }
 
                             @Test
                             @TestMetadata("stringToStringN.kt")
                             public void testStringToStringN() throws Exception {
                                 // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-                                runTest("compiler/testData/codegen/box/inlineClasses/sealed/methods/string/toString/stringToStringN.kt");
+                                runTest("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/toString/stringToStringN.kt");
+                            }
+
+                            @Test
+                            @TestMetadata("stringToString_I1.kt")
+                            public void testStringToString_I1() throws Exception {
+                                // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
+                                runTest("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/toString/stringToString_I1.kt");
+                            }
+
+                            @Test
+                            @TestMetadata("stringToString_I1_I2.kt")
+                            public void testStringToString_I1_I2() throws Exception {
+                                // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
+                                runTest("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/toString/stringToString_I1_I2.kt");
+                            }
+
+                            @Test
+                            @TestMetadata("stringToString_I1_I2_I3.kt")
+                            public void testStringToString_I1_I2_I3() throws Exception {
+                                // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
+                                runTest("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/toString/stringToString_I1_I2_I3.kt");
+                            }
+
+                            @Test
+                            @TestMetadata("stringToString_I1_I2_I3_O2.kt")
+                            public void testStringToString_I1_I2_I3_O2() throws Exception {
+                                // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
+                                runTest("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/toString/stringToString_I1_I2_I3_O2.kt");
+                            }
+
+                            @Test
+                            @TestMetadata("stringToString_I1_I2_O1.kt")
+                            public void testStringToString_I1_I2_O1() throws Exception {
+                                // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
+                                runTest("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/toString/stringToString_I1_I2_O1.kt");
+                            }
+
+                            @Test
+                            @TestMetadata("stringToString_I1_I2_O1_I3.kt")
+                            public void testStringToString_I1_I2_O1_I3() throws Exception {
+                                // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
+                                runTest("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/toString/stringToString_I1_I2_O1_I3.kt");
+                            }
+
+                            @Test
+                            @TestMetadata("stringToString_I1_I2_O1_I3_O2.kt")
+                            public void testStringToString_I1_I2_O1_I3_O2() throws Exception {
+                                // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
+                                runTest("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/toString/stringToString_I1_I2_O1_I3_O2.kt");
+                            }
+
+                            @Test
+                            @TestMetadata("stringToString_I1_I2_O1_O2.kt")
+                            public void testStringToString_I1_I2_O1_O2() throws Exception {
+                                // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
+                                runTest("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/toString/stringToString_I1_I2_O1_O2.kt");
+                            }
+
+                            @Test
+                            @TestMetadata("stringToString_I1_I2_O2.kt")
+                            public void testStringToString_I1_I2_O2() throws Exception {
+                                // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
+                                runTest("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/toString/stringToString_I1_I2_O2.kt");
+                            }
+
+                            @Test
+                            @TestMetadata("stringToString_I1_I3.kt")
+                            public void testStringToString_I1_I3() throws Exception {
+                                // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
+                                runTest("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/toString/stringToString_I1_I3.kt");
+                            }
+
+                            @Test
+                            @TestMetadata("stringToString_I1_I3_O2.kt")
+                            public void testStringToString_I1_I3_O2() throws Exception {
+                                // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
+                                runTest("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/toString/stringToString_I1_I3_O2.kt");
+                            }
+
+                            @Test
+                            @TestMetadata("stringToString_I1_O1.kt")
+                            public void testStringToString_I1_O1() throws Exception {
+                                // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
+                                runTest("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/toString/stringToString_I1_O1.kt");
+                            }
+
+                            @Test
+                            @TestMetadata("stringToString_I1_O1_I3.kt")
+                            public void testStringToString_I1_O1_I3() throws Exception {
+                                // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
+                                runTest("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/toString/stringToString_I1_O1_I3.kt");
+                            }
+
+                            @Test
+                            @TestMetadata("stringToString_I1_O1_I3_O2.kt")
+                            public void testStringToString_I1_O1_I3_O2() throws Exception {
+                                // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
+                                runTest("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/toString/stringToString_I1_O1_I3_O2.kt");
+                            }
+
+                            @Test
+                            @TestMetadata("stringToString_I1_O1_O2.kt")
+                            public void testStringToString_I1_O1_O2() throws Exception {
+                                // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
+                                runTest("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/toString/stringToString_I1_O1_O2.kt");
+                            }
+
+                            @Test
+                            @TestMetadata("stringToString_I1_O2.kt")
+                            public void testStringToString_I1_O2() throws Exception {
+                                // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
+                                runTest("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/toString/stringToString_I1_O2.kt");
+                            }
+
+                            @Test
+                            @TestMetadata("stringToString_I2.kt")
+                            public void testStringToString_I2() throws Exception {
+                                // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
+                                runTest("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/toString/stringToString_I2.kt");
+                            }
+
+                            @Test
+                            @TestMetadata("stringToString_I2_I3.kt")
+                            public void testStringToString_I2_I3() throws Exception {
+                                // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
+                                runTest("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/toString/stringToString_I2_I3.kt");
+                            }
+
+                            @Test
+                            @TestMetadata("stringToString_I2_I3_O2.kt")
+                            public void testStringToString_I2_I3_O2() throws Exception {
+                                // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
+                                runTest("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/toString/stringToString_I2_I3_O2.kt");
+                            }
+
+                            @Test
+                            @TestMetadata("stringToString_I2_O1.kt")
+                            public void testStringToString_I2_O1() throws Exception {
+                                // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
+                                runTest("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/toString/stringToString_I2_O1.kt");
+                            }
+
+                            @Test
+                            @TestMetadata("stringToString_I2_O1_I3.kt")
+                            public void testStringToString_I2_O1_I3() throws Exception {
+                                // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
+                                runTest("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/toString/stringToString_I2_O1_I3.kt");
+                            }
+
+                            @Test
+                            @TestMetadata("stringToString_I2_O1_I3_O2.kt")
+                            public void testStringToString_I2_O1_I3_O2() throws Exception {
+                                // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
+                                runTest("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/toString/stringToString_I2_O1_I3_O2.kt");
+                            }
+
+                            @Test
+                            @TestMetadata("stringToString_I2_O1_O2.kt")
+                            public void testStringToString_I2_O1_O2() throws Exception {
+                                // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
+                                runTest("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/toString/stringToString_I2_O1_O2.kt");
+                            }
+
+                            @Test
+                            @TestMetadata("stringToString_I2_O2.kt")
+                            public void testStringToString_I2_O2() throws Exception {
+                                // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
+                                runTest("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/toString/stringToString_I2_O2.kt");
+                            }
+
+                            @Test
+                            @TestMetadata("stringToString_I3.kt")
+                            public void testStringToString_I3() throws Exception {
+                                // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
+                                runTest("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/toString/stringToString_I3.kt");
+                            }
+
+                            @Test
+                            @TestMetadata("stringToString_I3_O2.kt")
+                            public void testStringToString_I3_O2() throws Exception {
+                                // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
+                                runTest("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/toString/stringToString_I3_O2.kt");
+                            }
+
+                            @Test
+                            @TestMetadata("stringToString_O1.kt")
+                            public void testStringToString_O1() throws Exception {
+                                // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
+                                runTest("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/toString/stringToString_O1.kt");
+                            }
+
+                            @Test
+                            @TestMetadata("stringToString_O1_I3.kt")
+                            public void testStringToString_O1_I3() throws Exception {
+                                // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
+                                runTest("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/toString/stringToString_O1_I3.kt");
+                            }
+
+                            @Test
+                            @TestMetadata("stringToString_O1_I3_O2.kt")
+                            public void testStringToString_O1_I3_O2() throws Exception {
+                                // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
+                                runTest("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/toString/stringToString_O1_I3_O2.kt");
+                            }
+
+                            @Test
+                            @TestMetadata("stringToString_O1_O2.kt")
+                            public void testStringToString_O1_O2() throws Exception {
+                                // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
+                                runTest("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/toString/stringToString_O1_O2.kt");
+                            }
+
+                            @Test
+                            @TestMetadata("stringToString_O2.kt")
+                            public void testStringToString_O2() throws Exception {
+                                // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
+                                runTest("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/toString/stringToString_O2.kt");
                             }
                         }
                     }
