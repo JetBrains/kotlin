@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.gradle.plugin
 
 import org.gradle.api.Project
 import org.gradle.api.file.FileCollection
-import org.gradle.api.logging.Logging
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.TaskProvider
 import org.jetbrains.kotlin.gradle.dsl.KotlinJvmOptions
@@ -21,10 +20,7 @@ import org.jetbrains.kotlin.gradle.tasks.configuration.KaptWithoutKotlincConfig
 import org.jetbrains.kotlin.gradle.tasks.configuration.KotlinCompileConfig
 
 /** Plugin that can be used by third-party plugins to create Kotlin-specific DSL and tasks (compilation and KAPT) for JVM platform. */
-abstract class KotlinBaseApiPlugin : KotlinBasePlugin(), KotlinJvmFactory {
-
-    private val logger = Logging.getLogger(KotlinBaseApiPlugin::class.java)
-    override val pluginVersion = getKotlinPluginVersion(logger)
+abstract class KotlinBaseApiPlugin : DefaultKotlinBasePlugin(), KotlinJvmFactory {
 
     private lateinit var myProject: Project
     private val taskCreator = KotlinTasksProvider()

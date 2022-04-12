@@ -23,9 +23,6 @@ interface KotlinJvmFactory {
     /** Instance of DSL object that should be used to configure Kotlin compilation pipeline. */
     val kotlinExtension: KotlinTopLevelExtensionConfig
 
-    /** Gets the current version of the Kotlin Gradle plugin. */
-    val pluginVersion: String
-
     /** Creates instance of DSL object that should be used to configure JVM/android specific compilation. */
     fun createKotlinJvmOptions(): KotlinJvmOptions
 
