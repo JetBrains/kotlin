@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir
 
 import org.jetbrains.kotlin.KtSourceElement
+import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.hasExplicitBackingField
@@ -16,6 +17,7 @@ import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
 import org.jetbrains.kotlin.fir.diagnostics.ConeStubDiagnostic
 import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
 import org.jetbrains.kotlin.fir.expressions.*
+import org.jetbrains.kotlin.fir.expressions.builder.buildPropertyAccessExpression
 import org.jetbrains.kotlin.fir.expressions.builder.buildResolvedReifiedParameterReference
 import org.jetbrains.kotlin.fir.references.*
 import org.jetbrains.kotlin.fir.references.builder.buildBackingFieldReference
@@ -34,6 +36,7 @@ import org.jetbrains.kotlin.fir.resolve.transformers.StoreReceiver
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirAbstractBodyResolveTransformer
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirExpressionsResolveTransformer
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.resultType
+import org.jetbrains.kotlin.fir.scopes.impl.FirSyntheticsScope
 import org.jetbrains.kotlin.fir.scopes.unsubstitutedScope
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
@@ -304,6 +307,36 @@ class FirCallResolver(
             else -> null
         }
 
+        val isFromSyntheticScope = reducedCandidates.any { it.originScope is FirSyntheticsScope }
+
+        val propagatedDispatchReceiver = if (isFromSyntheticScope) {
+            val thePropertyAccess = qualifiedAccess.explicitReceiver as? FirPropertyAccessExpression
+                ?: error("Should've been a property access")
+            val isSelf = referencedSymbol == thePropertyAccess.calleeReference.resolvedSymbol
+
+            if (referencedSymbol is FirBackingFieldSymbol || isSelf) {
+                thePropertyAccess.dispatchReceiver
+            } else {
+                val theProperty = thePropertyAccess.calleeReference.resolvedSymbol?.fir as? FirProperty
+                    ?: error("No property")
+
+                buildPropertyAccessExpression {
+                    calleeReference = buildResolvedNamedReference {
+                        name = StandardNames.BACKING_FIELD
+                        resolvedSymbol = theProperty.delegateFieldSymbol ?: error("Should've had a delegate")
+                    }
+                    explicitReceiver = thePropertyAccess.explicitReceiver
+                    dispatchReceiver = thePropertyAccess.dispatchReceiver
+                    extensionReceiver = thePropertyAccess.extensionReceiver
+                    typeRef = theProperty.delegate?.typeRef ?: error("Should've had a delegate")
+                }.also {
+                    qualifiedAccess.replaceExplicitReceiver(it)
+                }
+            }
+        } else {
+            null
+        }
+
         val diagnostic = when (nameReference) {
             is FirErrorReferenceWithCandidate -> nameReference.diagnostic
             is FirErrorNamedReference -> nameReference.diagnostic
@@ -341,7 +374,13 @@ class FirCallResolver(
         var resultExpression = qualifiedAccess.transformCalleeReference(StoreNameReference, nameReference)
         if (reducedCandidates.size == 1) {
             val candidate = reducedCandidates.single()
-            resultExpression = resultExpression.transformDispatchReceiver(StoreReceiver, candidate.dispatchReceiverExpression())
+            resultExpression = if (!isFromSyntheticScope) {
+                resultExpression.transformDispatchReceiver(StoreReceiver, candidate.dispatchReceiverExpression())
+            } else if (propagatedDispatchReceiver != null) {
+                resultExpression.transformDispatchReceiver(StoreReceiver, propagatedDispatchReceiver)
+            } else {
+                error("Should not be here")
+            }
             resultExpression = resultExpression.transformExtensionReceiver(StoreReceiver, candidate.extensionReceiverExpression())
         }
         if (resultExpression is FirExpression) transformer.storeTypeFromCallee(resultExpression)

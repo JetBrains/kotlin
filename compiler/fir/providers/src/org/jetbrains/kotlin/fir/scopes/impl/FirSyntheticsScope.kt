@@ -5,19 +5,24 @@
 
 package org.jetbrains.kotlin.fir.scopes.impl
 
+import org.jetbrains.kotlin.builtins.StandardNames
+import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.declarations.FirVariable
+import org.jetbrains.kotlin.fir.declarations.utils.hasBackingField
+import org.jetbrains.kotlin.fir.resolve.ScopeSession
+import org.jetbrains.kotlin.fir.resolve.scope
+import org.jetbrains.kotlin.fir.scopes.FakeOverrideTypeCalculator
 import org.jetbrains.kotlin.fir.scopes.FirTypeScope
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction
-import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.*
+import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.name.Name
 
-class FirSyntheticsScope(
-    private val declaration: FirDeclaration,
-) : FirTypeScope() {
+val SELF_NAME = Name.identifier("self")
+
+open class FirSyntheticsScope : FirTypeScope() {
     override fun processDirectOverriddenFunctionsWithBaseScope(
         functionSymbol: FirNamedFunctionSymbol,
         processor: (FirNamedFunctionSymbol, FirTypeScope) -> ProcessorAction
@@ -31,33 +36,59 @@ class FirSyntheticsScope(
     override fun getCallableNames(): Set<Name> = emptySet()
 
     override fun getClassifierNames(): Set<Name> = emptySet()
+}
 
-    override fun processFunctionsByName(
-        name: Name,
-        processor: (FirNamedFunctionSymbol) -> Unit
-    ) {
-    }
-
-    override fun processPropertiesByName(
-        name: Name,
-        processor: (FirVariableSymbol<*>) -> Unit
-    ) {
-        getPropertyByName(name)?.let {
-            processor(it)
+class FirPropertyWithFieldSyntheticsScope(private val declaration: FirProperty) : FirSyntheticsScope() {
+    override fun processPropertiesByName(name: Name, processor: (FirVariableSymbol<*>) -> Unit) {
+        when (name) {
+            StandardNames.BACKING_FIELD -> declaration.backingField?.let { processor(it.symbol) }
+            SELF_NAME -> processor(declaration.symbol)
+            else -> {}
         }
     }
+}
 
-    private val fieldName = Name.identifier("field")
-    private val selfName = Name.identifier("self")
-
-    private fun getPropertyByName(name: Name) = when (name) {
-        fieldName -> tryGetFieldProperty()?.symbol
-        selfName -> (declaration as? FirVariable)?.symbol
-        else -> null
+class FirDelegatedPropertySyntheticsScope(
+    private val declaration: FirProperty,
+    private val delegateScope: FirTypeScope,
+) : FirSyntheticsScope() {
+    override fun processPropertiesByName(name: Name, processor: (FirVariableSymbol<*>) -> Unit) {
+        when (name) {
+            SELF_NAME -> processor(declaration.symbol)
+            else -> delegateScope.processPropertiesByName(name, processor)
+        }
     }
+}
 
-    private fun tryGetFieldProperty(): FirVariable? {
-        val property = declaration as? FirProperty ?: return null
-        return property.backingField
+class FirSelfOnlySyntheticsScope(private val declaration: FirVariable) : FirSyntheticsScope() {
+    override fun processPropertiesByName(name: Name, processor: (FirVariableSymbol<*>) -> Unit) {
+        when (name) {
+            SELF_NAME -> processor(declaration.symbol)
+            else -> {}
+        }
     }
+}
+
+fun createSyntheticsScopeFor(
+    declaration: FirDeclaration,
+    useSiteSession: FirSession,
+    scopeSession: ScopeSession,
+) = when (declaration) {
+    is FirProperty -> when {
+        declaration.delegate != null -> {
+            val delegateType = declaration.delegate?.typeRef?.coneType
+                ?: error("Should've had a delegate")
+            val scope = delegateType.scope(useSiteSession, scopeSession, FakeOverrideTypeCalculator.DoNothing)
+                ?: error("Couldn't get a type scope")
+            FirDelegatedPropertySyntheticsScope(declaration, scope)
+        }
+        declaration.hasBackingField -> {
+            FirPropertyWithFieldSyntheticsScope(declaration)
+        }
+        else -> {
+            FirSelfOnlySyntheticsScope(declaration)
+        }
+    }
+    is FirVariable -> FirSelfOnlySyntheticsScope(declaration)
+    else -> null
 }

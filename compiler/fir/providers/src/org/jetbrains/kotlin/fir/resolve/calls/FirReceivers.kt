@@ -61,7 +61,7 @@ open class ExpressionReceiverValue(
             receiverExpr = receiverExpr.arguments.firstOrNull()
         }
         if (searchSynthetics) {
-            return receiverExpr?.syntheticsScope()
+            return receiverExpr?.syntheticsScope(useSiteSession, scopeSession)
         }
         if (receiverExpr is FirExpressionWithSmartcast) {
             return receiverExpr.smartcastScope(useSiteSession, scopeSession)
