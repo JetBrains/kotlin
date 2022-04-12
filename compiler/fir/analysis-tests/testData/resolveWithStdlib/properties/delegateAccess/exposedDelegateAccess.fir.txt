@@ -1,0 +1,35 @@
+FILE: exposedDelegateAccess.kt
+    public final val myProperty: R|kotlin/String|by object : R|kotlin/Any| {
+        private constructor(): R|<anonymous>| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final var text: R|kotlin/String| = String(Test)
+            public get(): R|kotlin/String|
+            public set(value: R|kotlin/String|): R|kotlin/Unit|
+
+        public final val delegate: R|<anonymous>| = this@R|/<anonymous>|
+            public get(): R|<anonymous>|
+
+        public final operator fun getValue(thisRef: R|kotlin/Any?|, property: R|kotlin/reflect/KProperty<*>|): R|kotlin/String| {
+            ^getValue this@R|/<anonymous>|.R|/<anonymous>.text|
+        }
+
+    }
+
+        public get(): R|kotlin/String| {
+            ^ D|/myProperty|.R|/<anonymous>.getValue|(Null(null), ::R|/myProperty|)
+        }
+    public final fun box(): R|kotlin/String| {
+        R|/myProperty|.R|/<anonymous>.delegate|.R|kotlin/apply|<R|<anonymous>|>(<L> = apply@fun R|<anonymous>|.<anonymous>(): R|kotlin/Unit| <inline=Inline, kind=EXACTLY_ONCE>  {
+            this@R|special/anonymous|.R|/<anonymous>.text| = String(Rest)
+        }
+        )
+        when () {
+            !=(R|/myProperty|, String(Rest)) ->  {
+                ^box <strcat>(String(FAIL: expected ), String("), String(Rest), String("), String(, was ), R|/myProperty|)
+            }
+        }
+
+        ^box String(OK)
+    }

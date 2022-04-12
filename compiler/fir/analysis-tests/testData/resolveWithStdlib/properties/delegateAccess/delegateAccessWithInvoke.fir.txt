@@ -1,0 +1,38 @@
+FILE: delegateAccessWithInvoke.kt
+    public final val myProperty: R|kotlin/String|by object : R|kotlin/Any| {
+        private constructor(): R|<anonymous>| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final var action: R|<anonymous>| = object : R|kotlin/Any| {
+            private constructor(): R|<anonymous>| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final operator fun invoke(number: R|kotlin/Int|): R|kotlin/Int| {
+                ^invoke R|<local>/number|.R|kotlin/Int.times|(Int(2))
+            }
+
+        }
+
+            public get(): R|<anonymous>|
+            public set(value: R|<anonymous>|): R|kotlin/Unit|
+
+        public final operator fun getValue(thisRef: R|kotlin/Any?|, property: R|kotlin/reflect/KProperty<*>|): R|kotlin/String| {
+            ^getValue String(Hello)
+        }
+
+    }
+
+        public get(): R|kotlin/String| {
+            ^ D|/myProperty|.R|/<anonymous>.getValue|(Null(null), ::R|/myProperty|)
+        }
+    public final fun box(): R|kotlin/String| {
+        when () {
+            !=(R|/myProperty|.R|/<anonymous>.action|.R|/<anonymous>.invoke|(Int(20)), Int(40)) ->  {
+                ^box String(FAIL: expected 40)
+            }
+        }
+
+        ^box String(OK)
+    }

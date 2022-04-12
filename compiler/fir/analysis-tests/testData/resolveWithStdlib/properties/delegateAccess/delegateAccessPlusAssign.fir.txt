@@ -1,0 +1,43 @@
+FILE: delegateAccessPlusAssign.kt
+    public final var number: R|kotlin/String|by object : R|kotlin/Any| {
+        private constructor(): R|<anonymous>| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final var rawValue: R|kotlin/Int| = Int(10)
+            public get(): R|kotlin/Int|
+            public set(value: R|kotlin/Int|): R|kotlin/Unit|
+
+        public final operator fun getValue(thisRef: R|kotlin/Any?|, property: R|kotlin/reflect/KProperty<*>|): R|kotlin/String| {
+            ^getValue this@R|/<anonymous>|.R|/<anonymous>.rawValue|.R|kotlin/Any.toString|()
+        }
+
+        public final operator fun setValue(thisRef: R|kotlin/Any?|, property: R|kotlin/reflect/KProperty<*>|, value: R|kotlin/String|): R|kotlin/Unit| {
+            this@R|/<anonymous>|.R|/<anonymous>.rawValue| = R|<local>/value|.R|kotlin/String.length|
+        }
+
+    }
+
+        public get(): R|kotlin/String| {
+            ^ D|/number|.R|/<anonymous>.getValue|(Null(null), ::R|/number|)
+        }
+        public set(<set-?>: R|kotlin/String|): R|kotlin/Unit| {
+            D|/number|.R|/<anonymous>.setValue|(Null(null), ::R|/number|, R|<local>/number|)
+        }
+    public final fun box(): R|kotlin/String| {
+        R|/number| = R|/number|.R|kotlin/String.plus|(String(test))
+        when () {
+            !=(R|/number|, String(6)) ->  {
+                ^box <strcat>(String(FAIL: expected 6, was ), R|/number|)
+            }
+        }
+
+        R|/number|.R|/<anonymous>.rawValue| = R|/number|.R|/<anonymous>.rawValue|.R|kotlin/Int.plus|(Int(4))
+        when () {
+            !=(R|/number|, String(10)) ->  {
+                ^box <strcat>(String(FAIL: expected 10, was ), R|/number|)
+            }
+        }
+
+        ^box String(OK)
+    }
