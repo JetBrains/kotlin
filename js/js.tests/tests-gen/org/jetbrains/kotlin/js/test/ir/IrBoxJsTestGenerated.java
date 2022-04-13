@@ -757,6 +757,18 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
         }
 
         @Test
+        @TestMetadata("unitMaterializationOnAssign.kt")
+        public void testUnitMaterializationOnAssign() throws Exception {
+            runTest("js/js.translator/testData/box/coercion/unitMaterializationOnAssign.kt");
+        }
+
+        @Test
+        @TestMetadata("unitMaterializationOnCall.kt")
+        public void testUnitMaterializationOnCall() throws Exception {
+            runTest("js/js.translator/testData/box/coercion/unitMaterializationOnCall.kt");
+        }
+
+        @Test
         @TestMetadata("unitNullCheck.kt")
         public void testUnitNullCheck() throws Exception {
             runTest("js/js.translator/testData/box/coercion/unitNullCheck.kt");
@@ -5740,6 +5752,12 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
         @TestMetadata("propertyAccessAndInitializer.kt")
         public void testPropertyAccessAndInitializer() throws Exception {
             runTest("js/js.translator/testData/box/inlineEvaluationOrder/propertyAccessAndInitializer.kt");
+        }
+
+        @Test
+        @TestMetadata("propertyAccessNoSideEffect.kt")
+        public void testPropertyAccessNoSideEffect() throws Exception {
+            runTest("js/js.translator/testData/box/inlineEvaluationOrder/propertyAccessNoSideEffect.kt");
         }
 
         @Test

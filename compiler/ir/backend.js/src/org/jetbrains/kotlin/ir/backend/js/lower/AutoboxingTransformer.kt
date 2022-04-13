@@ -8,12 +8,18 @@ package org.jetbrains.kotlin.ir.backend.js.lower
 import org.jetbrains.kotlin.backend.common.BodyLoweringPass
 import org.jetbrains.kotlin.backend.common.compilationException
 import org.jetbrains.kotlin.backend.common.lower.AbstractValueUsageTransformer
+import org.jetbrains.kotlin.backend.common.pop
+import org.jetbrains.kotlin.backend.common.push
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.backend.js.JsCommonBackendContext
 import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
 import org.jetbrains.kotlin.ir.backend.js.utils.realOverrideTarget
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
+import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
+import org.jetbrains.kotlin.ir.symbols.IrReturnTargetSymbol
+import org.jetbrains.kotlin.ir.symbols.IrReturnableBlockSymbol
+import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.isPrimitiveArray
 import org.jetbrains.kotlin.ir.util.patchDeclarationParents
@@ -43,35 +49,32 @@ abstract class AbstractValueUsageLowering(val context: JsCommonBackendContext) :
 
     abstract fun IrExpression.useExpressionAsType(actualType: IrType, expectedType: IrType): IrExpression
 
-    override fun IrExpression.useAs(type: IrType): IrExpression {
-        val actualType = when (this) {
-            is IrConstructorCall -> symbol.owner.returnType
-            is IrCall -> symbol.owner.realOverrideTarget.returnType
-            is IrGetField -> this.symbol.owner.type
+    protected fun IrExpression.getActualType() = when (this) {
+        is IrConstructorCall -> symbol.owner.returnType
+        is IrCall -> symbol.owner.realOverrideTarget.returnType
+        is IrGetField -> this.symbol.owner.type
 
-            is IrTypeOperatorCall -> {
-                if (operator == IrTypeOperator.REINTERPRET_CAST) {
-                    this.typeOperand
-                } else {
-                    this.type
-                }
+        is IrTypeOperatorCall -> {
+            if (operator == IrTypeOperator.REINTERPRET_CAST) {
+                this.typeOperand
+            } else {
+                this.type
             }
-
-            is IrGetValue -> {
-                val value = this.symbol.owner
-                if (value is IrValueParameter && icUtils.shouldValueParameterBeBoxed(value)) {
-                    irBuiltIns.anyType
-                } else {
-                    this.type
-                }
-            }
-
-            else -> this.type
         }
 
-        return useExpressionAsType(actualType, type)
+        is IrGetValue -> {
+            val value = this.symbol.owner
+            if (value is IrValueParameter && icUtils.shouldValueParameterBeBoxed(value)) {
+                irBuiltIns.anyType
+            } else {
+                this.type
+            }
+        }
+
+        else -> this.type
     }
 
+    override fun IrExpression.useAs(type: IrType): IrExpression = useExpressionAsType(getActualType(), type)
 
     private val IrFunctionAccessExpression.target: IrFunction
         get() = when (this) {
@@ -117,13 +120,44 @@ abstract class AbstractValueUsageLowering(val context: JsCommonBackendContext) :
 }
 
 class AutoboxingTransformer(context: JsCommonBackendContext) : AbstractValueUsageLowering(context) {
+    private var processingReturnStack = mutableListOf<IrReturn>()
+
+    private fun IrExpression.useReturnableExpressionAsType(expectedType: IrType): IrExpression {
+        val expressionType = getActualType()
+        if (expressionType.isUnit() && expectedType.isUnit()) {
+            return this
+        }
+        return useExpressionAsType(expressionType, expectedType)
+    }
+
+    override fun visitReturn(expression: IrReturn): IrExpression {
+        processingReturnStack.push(expression)
+        val res = super.visitReturn(expression)
+        processingReturnStack.pop()
+        return res
+    }
+
+    override fun IrExpression.useAsResult(enclosing: IrExpression): IrExpression {
+        if (processingReturnStack.lastOrNull()?.value == enclosing && enclosing is IrReturnableBlock) {
+            return useReturnableExpressionAsType(enclosing.type)
+        }
+        return this.useAs(enclosing.type)
+    }
+
+    override fun IrExpression.useAsReturnValue(returnTarget: IrReturnTargetSymbol): IrExpression = when (returnTarget) {
+        is IrSimpleFunctionSymbol -> useReturnableExpressionAsType(returnTarget.owner.returnType)
+        is IrConstructorSymbol -> useReturnableExpressionAsType(irBuiltIns.unitType)
+        is IrReturnableBlockSymbol -> useReturnableExpressionAsType(returnTarget.owner.type)
+        else -> error(returnTarget)
+    }
+
     override fun IrExpression.useExpressionAsType(actualType: IrType, expectedType: IrType): IrExpression {
         // // TODO: Default parameters are passed as nulls and they need not to be unboxed. Fix this
 
         if (actualType.makeNotNull().isNothing())
             return this
 
-        if (actualType.isUnit() && !expectedType.isUnit()) {
+        if (actualType.isUnit() && (!expectedType.isUnit() || this is IrCall)) {
             // Don't materialize Unit if value is known to be proper Unit on runtime
             if (!this.isGetUnit(irBuiltIns)) {
                 val unitValue = JsIrBuilder.buildGetObjectValue(actualType, context.irBuiltIns.unitClass)
