@@ -178,11 +178,7 @@ run {
     // Add regular gradle test tasks
     dependsOn(tasksOf(Test))
     dependsOn(tasksOf(CoverageTest))
-    // Bitcode that is generated in presence of caches or two-stage compilation differs from the "closed world"-generated,
-    // so disable these tests for now.
-    if (cacheTesting == null && !twoStageEnabled && project.testTarget != 'linux_mips32') {
-        dependsOn(tasksOf(FileCheckTest))
-    }
+    dependsOn(tasksOf(FileCheckTest))
     dependsOn(":kotlin-native:Interop:Indexer:check")
     dependsOn(":kotlin-native:Interop:StubGenerator:check")
 }
@@ -5913,8 +5909,15 @@ Task fileCheckTest(String name, Closure<FileCheckTest> configureClosure) {
     return project.tasks.create(name, FileCheckTest) { task ->
         task.configure(configureClosure)
         task.llvmIr = project.file("$testOutputFileCheck/$name/$target/out.${task.phaseToCheck}.ll")
-        def target = task.target
+
+        KonanTarget target = task.target
         boolean isCrossCompiling = target != project.target
+
+        // Bitcode that is generated in presence of caches or two-stage compilation differs from the "closed world"-generated,
+        // so disable these tests for now.
+        if (task.enabled && (twoStageEnabled || target.name == 'linux_mips32'))
+            task.enabled = false
+
         if (task.enabled) {
             konanArtifacts {
                 def lib = task.interop
@@ -5971,6 +5974,7 @@ fileCheckTest("filecheck_smoke0") {
 
 if (HostManager.@Companion.hostIsMac) {
     fileCheckTest("filecheck_force_arm_instruction_set") {
+        enabled = enabled && cacheTesting == null
         annotatedSource = project.file('filecheck/force_arm_instruction_set.kt')
         targetName = "watchos_arm32"
         // Perform check after optimization pipeline because
@@ -6016,6 +6020,7 @@ fileCheckTest("filecheck_suspend_returnNothing") {
 }
 
 fileCheckTest("filecheck_bce") {
+    enabled = enabled && cacheTesting == null
     annotatedSource = project.file('filecheck/bce.kt')
 }
 
@@ -6043,6 +6048,7 @@ createInterop("filecheck_signext_zeroext_interop_input") {
 }
 
 fileCheckTest("filecheck_signext_zeroext_interop") {
+    enabled = enabled && cacheTesting == null
     annotatedSource = project.file('filecheck/signext_zeroext_interop.kt')
     interop = "filecheck_signext_zeroext_interop_input"
     if (project.testTarget == 'mingw_x64') {
