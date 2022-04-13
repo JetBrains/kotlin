@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.konan.blackboxtest.support.settings
 
 import org.jetbrains.kotlin.konan.target.KonanTarget
+import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertTrue
 import java.io.File
 import java.util.*
 import kotlin.time.Duration
@@ -138,7 +139,7 @@ internal sealed interface CacheMode {
         optimizationMode: OptimizationMode,
         override val staticCacheRequiredForEveryLibrary: Boolean
     ) : CacheMode {
-        override val staticCacheRootDir: File? = kotlinNativeHome.dir
+        override val staticCacheRootDir: File = kotlinNativeHome.dir
             .resolve("klib/cache")
             .resolve(
                 computeCacheDirName(
@@ -146,7 +147,11 @@ internal sealed interface CacheMode {
                     cacheKind = CACHE_KIND,
                     debuggable = optimizationMode == OptimizationMode.DEBUG
                 )
-            ).takeIf { it.exists() }
+            ).also { rootCacheDir ->
+                assertTrue(rootCacheDir.exists()) { "The root cache directory is not found: $rootCacheDir" }
+                assertTrue(rootCacheDir.isDirectory) { "The root cache directory is not a directory: $rootCacheDir" }
+                assertTrue(rootCacheDir.list().orEmpty().isNotEmpty()) { "The root cache directory is empty: $rootCacheDir" }
+            }
 
         companion object {
             private const val CACHE_KIND = "STATIC"
