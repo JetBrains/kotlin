@@ -1740,7 +1740,12 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
     private fun needMutationCheck(irClass: IrClass): Boolean {
         // For now we omit mutation checks on immutable types, as this allows initialization in constructor
         // and it is assumed that API doesn't allow to change them.
-        return !irClass.isFrozen(context)
+        return context.config.freezing.enableFreezeChecks && !irClass.isFrozen(context)
+    }
+
+    private fun needLifetimeConstraintsCheck(valueToAssign: LLVMValueRef, irClass: IrClass): Boolean {
+        // TODO: Likely, we don't need isFrozen check here at all.
+        return functionGenerationContext.isObjectType(valueToAssign.type) && !irClass.isFrozen(context)
     }
 
     private fun isZeroConstValue(value: IrExpression): Boolean {
@@ -1776,13 +1781,14 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
             assert(thisPtr.type == codegen.kObjHeaderPtr) {
                 LLVMPrintTypeToString(thisPtr.type)?.toKString().toString()
             }
-            if (needMutationCheck(value.symbol.owner.parentAsClass)) {
+            val parentAsClass = value.symbol.owner.parentAsClass
+            if (needMutationCheck(parentAsClass)) {
                 functionGenerationContext.call(context.llvm.mutationCheck,
                         listOf(functionGenerationContext.bitcast(codegen.kObjHeaderPtr, thisPtr)),
                         Lifetime.IRRELEVANT, currentCodeContext.exceptionHandler)
-
-                if (functionGenerationContext.isObjectType(valueToAssign.type))
-                    functionGenerationContext.call(context.llvm.checkLifetimesConstraint, listOf(thisPtr, valueToAssign))
+            }
+            if (needLifetimeConstraintsCheck(valueToAssign, parentAsClass)) {
+                functionGenerationContext.call(context.llvm.checkLifetimesConstraint, listOf(thisPtr, valueToAssign))
             }
             functionGenerationContext.storeAny(valueToAssign, fieldPtrOfClass(thisPtr, value.symbol.owner), false)
         } else {
