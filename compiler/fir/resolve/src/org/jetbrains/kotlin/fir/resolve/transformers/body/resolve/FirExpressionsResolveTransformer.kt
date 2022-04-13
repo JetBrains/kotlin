@@ -859,20 +859,35 @@ open class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransform
         if (lhsSymbol?.fir?.isVal != true) {
             return
         }
-        buildFunctionCall {
+        val assignOperatorCall = buildFunctionCall {
             this.source = source
             explicitReceiver = buildPropertyAccessExpression {
-                // TODO
-                this.source = source
+                this.source = resolvedAssignment.lValue.source
+                this.typeRef = resolvedAssignment.lValueTypeRef
+                this.calleeReference = resolvedAssignment.calleeReference
+                this.typeArguments.addAll(resolvedAssignment.typeArguments)
+                this.annotations.addAll(resolvedAssignment.annotations)
+                this.explicitReceiver = resolvedAssignment.explicitReceiver
+                this.dispatchReceiver = resolvedAssignment.dispatchReceiver
+                this.extensionReceiver = resolvedAssignment.extensionReceiver
+                this.contextReceiverArguments.addAll(resolvedAssignment.contextReceiverArguments)
             }
             argumentList = buildUnaryArgumentList(resolvedAssignment.rValue)
             calleeReference = buildSimpleNamedReference {
-                // TODO: Use source of operator for callee reference source
+                // TODO: Use source of resolved assign function
                 this.source = resolvedAssignment.source
                 this.name = OperatorNameConventions.ASSIGN
                 candidateSymbol = null
             }
             origin = FirFunctionCallOrigin.Operator
+        }
+        val resolvedAssignCall = resolveCandidateForAssignmentOperatorCall {
+            assignOperatorCall.transformSingle(this, ResolutionMode.ContextDependent)
+        }
+        val assignCallReference = resolvedAssignCall.calleeReference as? FirNamedReferenceWithCandidate
+        when (assignCallReference?.isError == false) {
+            true -> println("Assign successful: $assignCallReference")
+            else -> println("Assign failed: $assignCallReference")
         }
     }
 
