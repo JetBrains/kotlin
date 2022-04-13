@@ -71,6 +71,10 @@ Functions and other APIs specific to the JavaScript platform.
 
 Functions and annotations specific to the Java platform.
 
+# Package kotlin.jvm.optionals
+
+Convenience extension functions for `java.util.Optional` to simplify Kotlin-Java interop.
+
 # Package kotlin.math
 
 Mathematical functions and constants. 
