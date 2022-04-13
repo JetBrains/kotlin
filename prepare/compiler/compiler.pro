@@ -285,3 +285,6 @@
     public ** plus(java.lang.Object, java.lang.Object);
     public ** plusAll(java.util.Map);
 }
+
+# This class is needed for test framework
+-keep class com.intellij.openapi.util.text.StringUtil { *; }
