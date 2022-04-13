@@ -839,6 +839,7 @@ open class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransform
         variableAssignment.transformAnnotations(transformer, ResolutionMode.ContextIndependent)
         val resolvedAssignment = callResolver.resolveVariableAccessAndSelectCandidate(variableAssignment, isUsedAsReceiver = false)
         val result = if (resolvedAssignment is FirVariableAssignment) {
+            transformAssignOperator(resolvedAssignment)
             val completeAssignment = callCompleter.completeCall(resolvedAssignment, noExpectedType).result // TODO: check
             completeAssignment.transformRValue(
                 transformer,
@@ -850,6 +851,29 @@ open class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransform
         }
         (result as? FirVariableAssignment)?.let { dataFlowAnalyzer.exitVariableAssignment(it) }
         return result
+    }
+
+    private fun transformAssignOperator(resolvedAssignment: FirVariableAssignment) {
+        val lhsReference = resolvedAssignment.lValue
+        val lhsSymbol = lhsReference.resolvedSymbol as? FirVariableSymbol<*>
+        if (lhsSymbol?.fir?.isVal != true) {
+            return
+        }
+        buildFunctionCall {
+            this.source = source
+            explicitReceiver = buildPropertyAccessExpression {
+                // TODO
+                this.source = source
+            }
+            argumentList = buildUnaryArgumentList(resolvedAssignment.rValue)
+            calleeReference = buildSimpleNamedReference {
+                // TODO: Use source of operator for callee reference source
+                this.source = resolvedAssignment.source
+                this.name = OperatorNameConventions.ASSIGN
+                candidateSymbol = null
+            }
+            origin = FirFunctionCallOrigin.Operator
+        }
     }
 
     override fun transformCallableReferenceAccess(

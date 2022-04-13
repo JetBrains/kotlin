@@ -45,6 +45,12 @@ public class DiagnosisCompilerFirTestdataTestGenerated extends AbstractDiagnosis
         }
 
         @Test
+        @TestMetadata("assignOverload.kt")
+        public void testAssignOverload() throws Exception {
+            runTest("compiler/fir/analysis-tests/testData/resolve/assignOverload.kt");
+        }
+
+        @Test
         @TestMetadata("bareTypes.kt")
         public void testBareTypes() throws Exception {
             runTest("compiler/fir/analysis-tests/testData/resolve/bareTypes.kt");
