@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -16,6 +16,8 @@ import org.jetbrains.kotlin.preloading.ClassPreloadingUtils
 import org.jetbrains.kotlin.preloading.Preloader
 import org.jetbrains.kotlin.test.KtAssert.assertTrue
 import org.jetbrains.kotlin.test.util.KtTestUtil
+import org.jetbrains.kotlin.utils.KotlinPaths
+import org.jetbrains.kotlin.utils.KotlinPathsFromHomeDir
 import org.jetbrains.kotlin.utils.PathUtil
 import java.io.ByteArrayOutputStream
 import java.io.File
@@ -25,6 +27,9 @@ import java.lang.ref.SoftReference
 import java.util.regex.Pattern
 import java.util.zip.ZipOutputStream
 import kotlin.reflect.KClass
+
+val PathUtil.kotlinPathsForDistDirectoryForTests: KotlinPaths
+    get() = System.getProperty("jps.kotlin.home")?.let(::File)?.let(::KotlinPathsFromHomeDir) ?: kotlinPathsForDistDirectory
 
 object MockLibraryUtil {
     private var compilerClassLoader = SoftReference<ClassLoader>(null)
@@ -230,7 +235,7 @@ object MockLibraryUtil {
     @Synchronized
     private fun createCompilerClassLoader(): ClassLoader {
         return ClassPreloadingUtils.preloadClasses(
-            listOf(PathUtil.kotlinPathsForDistDirectory.compilerPath),
+            listOf(PathUtil.kotlinPathsForDistDirectoryForTests.compilerPath),
             Preloader.DEFAULT_CLASS_NUMBER_ESTIMATE, null, null
         )
     }
