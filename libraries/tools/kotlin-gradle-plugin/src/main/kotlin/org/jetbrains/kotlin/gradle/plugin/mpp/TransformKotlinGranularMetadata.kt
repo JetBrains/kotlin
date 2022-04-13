@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.gradle.targets.metadata.KotlinMetadataTargetConfigur
 import org.jetbrains.kotlin.gradle.targets.metadata.ResolvedMetadataFilesProvider
 import org.jetbrains.kotlin.gradle.targets.metadata.dependsOnClosureWithInterCompilationDependencies
 import org.jetbrains.kotlin.gradle.utils.getValue
+import org.jetbrains.kotlin.gradle.utils.notCompatibleWithConfigurationCache
 import java.io.File
 import javax.inject.Inject
 
@@ -27,6 +28,10 @@ open class TransformKotlinGranularMetadata
     @field:Transient
     val kotlinSourceSet: KotlinSourceSet
 ) : DefaultTask() {
+
+    init {
+        notCompatibleWithConfigurationCache("Task $name does not support Gradle Configuration Cache. Check KT-49933 for more info")
+    }
 
     @get:OutputDirectory
     val outputsDir: File by project.provider {

@@ -314,6 +314,10 @@ constructor(
 ) : AbstractKotlinNativeCompile<KotlinCommonOptions, KotlinNativeCompilationData<*>>(),
     KotlinCompile<KotlinCommonOptions> {
 
+    init {
+        notCompatibleWithConfigurationCache("Task $name does not support Gradle Configuration Cache. Check KT-43293 for more info")
+    }
+
     @get:Input
     override val outputKind = LIBRARY
 

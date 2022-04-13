@@ -647,6 +647,42 @@ class HierarchicalMppIT : BaseGradleIT() {
         }
     }
 
+    @Test
+    fun testHmppTasksAreNotIncludedInGradleConfigurationCache() {
+        val options = defaultBuildOptions().copy(configurationCache = true, configurationCacheProblems = ConfigurationCacheProblems.FAIL)
+        transformProjectWithPluginsDsl("hmppGradleConfigurationCache", GradleVersionRequired.AtLeast("7.4")).apply {
+            build(":lib:publish") {
+                assertSuccessful()
+            }
+
+            build("clean", "assemble", options = options) {
+                assertSuccessful()
+                assertTasksExecuted(
+                    ":generateProjectStructureMetadata",
+                    ":transformCommonMainDependenciesMetadata"
+                )
+
+                assertContainsRegex(
+                    """Task `:generateProjectStructureMetadata` of type `.+`: invocation of 'Task\.project' at execution time is unsupported"""
+                        .toRegex()
+                )
+                assertContainsRegex(
+                    """Task `:transformCommonMainDependenciesMetadata` of type `.+`: invocation of 'Task.project' at execution time is unsupported"""
+                        .toRegex()
+                )
+            }
+
+            build("clean", "assemble", options = options) {
+                assertSuccessful()
+                assertContains("Configuration cache entry discarded")
+                assertTasksExecuted(
+                    ":generateProjectStructureMetadata",
+                    ":transformCommonMainDependenciesMetadata"
+                )
+            }
+        }
+    }
+
     private fun Project.testDependencyTransformations(
         subproject: String? = null,
         check: CompiledProject.(reports: Iterable<DependencyTransformationReport>) -> Unit

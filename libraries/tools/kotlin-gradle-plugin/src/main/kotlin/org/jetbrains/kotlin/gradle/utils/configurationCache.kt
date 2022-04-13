@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.gradle.utils
 
 import org.gradle.api.Project
+import org.gradle.api.Task
 import org.gradle.api.invocation.Gradle
 
 internal fun isConfigurationCacheAvailable(gradle: Gradle) =
@@ -26,3 +27,15 @@ internal fun Project.getSystemProperty(key: String): String? {
 
 internal fun unavailableValueError(propertyName: String): Nothing =
     error("'$propertyName' should be available at configuration time but unavailable on configuration cache reuse")
+
+fun Task.notCompatibleWithConfigurationCache(reason: String) {
+    if (!isGradleVersionAtLeast(7, 4)) return
+    try {
+        val taskClass = Task::class.java
+        val method = taskClass.getMethod("notCompatibleWithConfigurationCache", String::class.java)
+
+        method.invoke(this, reason)
+    } catch (e: ReflectiveOperationException) {
+        logger.warn("Can't mark task $this as notCompatibleWithConfigurationCache due to reflection issue", e)
+    }
+}
