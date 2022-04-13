@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.jvm.compiler
@@ -19,12 +8,12 @@ package org.jetbrains.kotlin.jvm.compiler
 import org.jetbrains.jps.builders.java.JavaModuleBuildTargetType
 import org.jetbrains.kotlin.build.JvmSourceRoot
 import org.jetbrains.kotlin.config.IncrementalCompilation
+import org.jetbrains.kotlin.jps.build.AbstractKotlinJpsBuildTestCase
 import org.jetbrains.kotlin.modules.KotlinModuleXmlBuilder
 import org.jetbrains.kotlin.test.MockLibraryUtil
 import org.jetbrains.kotlin.test.TestCaseWithTmpdir
-import org.jetbrains.kotlin.test.util.KtTestUtil
+import org.jetbrains.kotlin.test.kotlinPathsForDistDirectoryForTests
 import org.jetbrains.kotlin.utils.PathUtil
-import org.junit.Ignore
 import java.io.File
 
 /**
@@ -34,7 +23,8 @@ import java.io.File
  */
 class ClasspathOrderTest : TestCaseWithTmpdir() {
     companion object {
-        private val sourceDir = File(KtTestUtil.getTestDataPathBase() + "/classpathOrder").absoluteFile
+        private val sourceDir
+            get() = File(AbstractKotlinJpsBuildTestCase.TEST_DATA_PATH + "/../../../compiler/testData/classpathOrder").absoluteFile
     }
 
     fun testClasspathOrderForCLI() {
@@ -47,7 +37,7 @@ class ClasspathOrderTest : TestCaseWithTmpdir() {
             File(tmpdir, "output").absolutePath,
             listOf(sourceDir),
             listOf(JvmSourceRoot(sourceDir)),
-            listOf(PathUtil.kotlinPathsForDistDirectory.stdlibPath),
+            listOf(PathUtil.kotlinPathsForDistDirectoryForTests.stdlibPath),
             emptyList(),
             null,
             JavaModuleBuildTargetType.PRODUCTION.typeId,
