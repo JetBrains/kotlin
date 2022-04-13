@@ -717,6 +717,42 @@ class HierarchicalMppIT : KGPBaseTest() {
         }
     }
 
+    @GradleTest
+    @GradleTestVersions(minVersion = TestVersions.Gradle.G_7_4, maxVersion = TestVersions.Gradle.G_7_4)
+    @DisplayName("KT-51946: Temporarily mark HMPP tasks as notCompatibleWithConfigurationCache for Gradle 7.4")
+    fun testHmppTasksAreNotIncludedInGradleConfigurationCache(gradleVersion: GradleVersion, @TempDir tempDir: Path) {
+        with(project("hmppGradleConfigurationCache", gradleVersion = gradleVersion, localRepoDir = tempDir)) {
+            val options = buildOptions.copy(configurationCache = true, configurationCacheProblems = BaseGradleIT.ConfigurationCacheProblems.FAIL)
+
+            build(":lib:publish") {
+                assertTasksExecuted(":lib:publish")
+            }
+
+            build("clean", "assemble", buildOptions = options) {
+                assertTasksExecuted(
+                    ":generateProjectStructureMetadata",
+                    ":transformCommonMainDependenciesMetadata"
+                )
+                assertOutputContains(
+                    """Task `:generateProjectStructureMetadata` of type `.+`: invocation of 'Task\.project' at execution time is unsupported"""
+                        .toRegex()
+                )
+                assertOutputContains(
+                    """Task `:transformCommonMainDependenciesMetadata` of type `.+`: invocation of 'Task.project' at execution time is unsupported"""
+                        .toRegex()
+                )
+            }
+
+            build("clean", "assemble", buildOptions = options) {
+                assertOutputContains("Configuration cache entry discarded")
+                assertTasksExecuted(
+                    ":generateProjectStructureMetadata",
+                    ":transformCommonMainDependenciesMetadata"
+                )
+            }
+        }
+    }
+
     private fun TestProject.testDependencyTransformations(
         subproject: String? = null,
         check: BuildResult.(reports: Iterable<DependencyTransformationReport>) -> Unit
