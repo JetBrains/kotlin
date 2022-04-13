@@ -12,3 +12,12 @@ package kotlin.internal
 @Target(AnnotationTarget.TYPE_PARAMETER)
 @Retention(AnnotationRetention.BINARY)
 internal annotation class PureReifiable
+
+/**
+ * When applied to a function or property, enables a compiler optimization that evaluates that function or property
+ * at compile-time and replaces calls to it with the computed result.
+ */
+@Target(AnnotationTarget.CONSTRUCTOR, AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY)
+@Retention(AnnotationRetention.BINARY)
+@SinceKotlin("1.7")
+public annotation class IntrinsicConstEvaluation
