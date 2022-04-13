@@ -247,6 +247,7 @@ class RawFirBuilderTotalKotlinTestCase : AbstractRawFirBuilderTestCase() {
         return it is KtPackageDirective || it is KtImportList || it is KtClassBody ||
                 it is KtModifierList ||
                 it is KtUserType || it is KtNullableType || it is KtFunctionType || it is KtFunctionTypeReceiver ||
+                it is KtIntersectionType || it is KtDynamicType ||
                 it is KtQualifiedExpression ||
                 it is KtPropertyDelegate ||
                 it is KtConstructorCalleeExpression && (it.parent is KtAnnotationEntry || it.parent is KtSuperTypeCallEntry) ||
@@ -265,7 +266,6 @@ class RawFirBuilderTotalKotlinTestCase : AbstractRawFirBuilderTestCase() {
                 it is KtWhenConditionWithExpression ||
                 it is KtFinallySection ||
                 it is KtObjectLiteralExpression ||// TODO: KT-24089 (support of dynamic)
-                it is KtDynamicType ||
                 // NB: KtAnnotation is processed via its KtAnnotationEntries
                 it is KtFileAnnotationList || it is KtAnnotationUseSiteTarget || it is KtAnnotation ||
                 it is KtInitializerList || it is KtEnumEntrySuperclassReferenceExpression ||
