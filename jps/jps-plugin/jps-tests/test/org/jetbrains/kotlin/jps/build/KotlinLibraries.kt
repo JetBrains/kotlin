@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -9,39 +9,55 @@ import org.jetbrains.jps.model.JpsProject
 import org.jetbrains.jps.model.java.JpsJavaLibraryType
 import org.jetbrains.jps.model.library.JpsLibrary
 import org.jetbrains.jps.model.library.JpsOrderRootType
+import org.jetbrains.kotlin.test.kotlinPathsForDistDirectoryForTests
 import org.jetbrains.kotlin.utils.PathUtil
 import java.io.File
 
-enum class KotlinJpsLibrary(val id: String, vararg val roots: File) {
+enum class KotlinJpsLibrary(val id: String, roots: () -> Array<File>) {
     MockRuntime(
         "kotlin-mock-runtime",
-        PathUtil.kotlinPathsForDistDirectory.stdlibPath,
-        File(PathUtil.kotlinPathsForDistDirectory.libPath, "annotations-13.0.jar")
+        {
+            arrayOf(
+                PathUtil.kotlinPathsForDistDirectoryForTests.stdlibPath,
+                File(PathUtil.kotlinPathsForDistDirectoryForTests.libPath, "annotations-13.0.jar"),
+            )
+        }
     ),
 
     JvmStdLib(
         "kotlin-stdlib",
-        PathUtil.kotlinPathsForDistDirectory.stdlibPath,
-        File(PathUtil.kotlinPathsForDistDirectory.libPath, "annotations-13.0.jar")
+        {
+            arrayOf(
+                PathUtil.kotlinPathsForDistDirectoryForTests.stdlibPath,
+                File(PathUtil.kotlinPathsForDistDirectoryForTests.libPath, "annotations-13.0.jar"),
+            )
+        }
     ),
+
     JvmTest(
         "kotlin-test",
-        PathUtil.kotlinPathsForDistDirectory.kotlinTestPath
+        { arrayOf(PathUtil.kotlinPathsForDistDirectoryForTests.kotlinTestPath) },
     ),
 
     JsStdLib(
         "KotlinJavaScript",
-        PathUtil.kotlinPathsForDistDirectory.jsStdLibJarPath
+        { arrayOf(PathUtil.kotlinPathsForDistDirectoryForTests.jsStdLibJarPath) }
     ),
     JsTest(
         "KotlinJavaScriptTest",
-        PathUtil.kotlinPathsForDistDirectory.jsKotlinTestJarPath
+        { arrayOf(PathUtil.kotlinPathsForDistDirectoryForTests.jsKotlinTestJarPath) }
     ),
     Lombok(
         "lombok",
-        PathUtil.kotlinPathsForDistDirectory.stdlibPath,
-        File(lombok.Lombok::class.java.protectionDomain.codeSource.location.toURI().path)
+        {
+            arrayOf(
+                PathUtil.kotlinPathsForDistDirectoryForTests.stdlibPath,
+                File(lombok.Lombok::class.java.protectionDomain.codeSource.location.toURI().path),
+            )
+        }
     );
+
+    val roots: Array<File> by lazy(roots)
 
     fun create(project: JpsProject): JpsLibrary {
         val library = project.addLibrary(id, JpsJavaLibraryType.INSTANCE)
