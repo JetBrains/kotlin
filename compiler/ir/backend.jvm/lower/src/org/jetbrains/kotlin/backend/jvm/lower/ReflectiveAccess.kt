@@ -74,7 +74,7 @@ internal class ReflectiveAccessLowering(
 
     // Wrapper for the logic from SyntheticAccessorLowering
     private fun IrSymbol.isAccessible(withSuper: Boolean = false): Boolean {
-        return isAccessible(context, currentScope, inlineScopeResolver, withSuper, null)
+        return isAccessible(context, currentScope, inlineScopeResolver, withSuper, null, fromOtherClassLoader = true)
     }
 
     // Fragments are transformed in a post-order traversal: children first,
