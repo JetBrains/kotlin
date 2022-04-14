@@ -6,10 +6,8 @@
 package org.jetbrains.kotlin.gradle.tasks.configuration
 
 import org.gradle.api.Project
-import org.gradle.api.artifacts.Configuration
 import org.gradle.api.attributes.Attribute
 import org.gradle.api.provider.Provider
-import org.gradle.api.tasks.TaskProvider
 import org.jetbrains.kotlin.gradle.dsl.KotlinJvmOptions
 import org.jetbrains.kotlin.gradle.dsl.KotlinTopLevelExtension
 import org.jetbrains.kotlin.gradle.internal.transforms.ClasspathEntrySnapshotTransform
@@ -28,7 +26,15 @@ internal open class BaseKotlinCompileConfig<TASK : KotlinCompile> : AbstractKotl
 
     init {
         configureTaskProvider { taskProvider ->
-            val snapshotConfiguration = runAtConfigurationTime(taskProvider)
+            val useClasspathSnapshot = propertiesProvider.useClasspathSnapshot
+            val classpathConfiguration = if (useClasspathSnapshot) {
+                registerTransformsOnce(project)
+                // Note: Creating configurations should be done during build configuration, not task configuration, to avoid issues with
+                // composite builds (e.g., https://issuetracker.google.com/183952598).
+                project.configurations.detachedConfiguration(
+                    project.dependencies.create(objectFactory.fileCollection().from(project.provider { taskProvider.get().libraries }))
+                )
+            } else null
 
             taskProvider.configure { task ->
                 task.incremental = propertiesProvider.incrementalJvm ?: true
@@ -38,19 +44,17 @@ internal open class BaseKotlinCompileConfig<TASK : KotlinCompile> : AbstractKotl
                 }
                 task.usePreciseJavaTracking = propertiesProvider.usePreciseJavaTracking ?: true
                 task.jvmTargetValidationMode.set(propertiesProvider.jvmTargetValidationMode)
-                task.classpathSnapshotProperties.useClasspathSnapshot.value(propertiesProvider.useClasspathSnapshot)
                 task.useKotlinAbiSnapshot.value(propertiesProvider.useKotlinAbiSnapshot).disallowChanges()
 
-                if (snapshotConfiguration != null) {
-                    val snapshotFiles = snapshotConfiguration.incoming.artifactView {
+                task.classpathSnapshotProperties.useClasspathSnapshot.value(useClasspathSnapshot).disallowChanges()
+                if (useClasspathSnapshot) {
+                    val classpathEntrySnapshotFiles = classpathConfiguration!!.incoming.artifactView {
                         it.attributes.attribute(ARTIFACT_TYPE_ATTRIBUTE, CLASSPATH_ENTRY_SNAPSHOT_ARTIFACT_TYPE)
                     }.files
-                    task.classpathSnapshotProperties.classpathSnapshot.from(snapshotFiles).disallowChanges()
-                    task.classpathSnapshotProperties.classpathSnapshotDir
-                        .value(getClasspathSnapshotDir(task))
-                        .disallowChanges()
+                    task.classpathSnapshotProperties.classpathSnapshot.from(classpathEntrySnapshotFiles).disallowChanges()
+                    task.classpathSnapshotProperties.classpathSnapshotDir.value(getClasspathSnapshotDir(task)).disallowChanges()
                 } else {
-                    task.classpathSnapshotProperties.classpath.from(task.project.provider { task.libraries })
+                    task.classpathSnapshotProperties.classpath.from(task.project.provider { task.libraries }).disallowChanges()
                 }
             }
         }
@@ -122,17 +126,4 @@ internal open class BaseKotlinCompileConfig<TASK : KotlinCompile> : AbstractKotl
         }
     }
 
-    /**
-     * Prepares for configuration of the task. This method must be called during build configuration, not during task configuration
-     * (which typically happens after build configuration). The reason is that some actions must be performed early (e.g., creating
-     * configurations should be done early to avoid issues with composite builds (https://issuetracker.google.com/183952598)).
-     */
-    private fun runAtConfigurationTime(taskProvider: TaskProvider<TASK>): Configuration? {
-        return if (propertiesProvider.useClasspathSnapshot) {
-            registerTransformsOnce(project)
-            project.configurations.detachedConfiguration(
-                project.dependencies.create(objectFactory.fileCollection().from(project.provider { taskProvider.get().libraries }))
-            )
-        } else null
-    }
 }
