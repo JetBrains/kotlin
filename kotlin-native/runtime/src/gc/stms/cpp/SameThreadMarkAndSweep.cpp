@@ -34,16 +34,17 @@ struct MarkTraits {
     }
 
     static ObjHeader* dequeue(MarkQueue& queue) noexcept {
-        auto top = queue.back();
-        queue.pop_back();
-        return top;
+        auto& top = queue.front();
+        queue.pop_front();
+        auto node = mm::ObjectFactory<gc::SameThreadMarkAndSweep>::NodeRef::From(top);
+        return node->GetObjHeader();
     }
 
     static void enqueue(MarkQueue& queue, ObjHeader* object) noexcept {
         auto& objectData = mm::ObjectFactory<gc::SameThreadMarkAndSweep>::NodeRef::From(object).ObjectData();
         if (objectData.color() == gc::SameThreadMarkAndSweep::ObjectData::Color::kBlack) return;
         objectData.setColor(gc::SameThreadMarkAndSweep::ObjectData::Color::kBlack);
-        queue.push_back(object);
+        queue.push_front(objectData);
     }
 };
 
@@ -115,7 +116,6 @@ NO_INLINE void gc::SameThreadMarkAndSweep::ThreadData::SafePointSlowPath(Safepoi
 gc::SameThreadMarkAndSweep::SameThreadMarkAndSweep(
         mm::ObjectFactory<SameThreadMarkAndSweep>& objectFactory, GCScheduler& gcScheduler) noexcept :
     objectFactory_(objectFactory), gcScheduler_(gcScheduler) {
-    markQueue_.reserve(1000);
     gcScheduler_.SetScheduleGC([]() {
         // TODO: CMS is also responsible for avoiding scheduling while GC hasn't started running.
         //       Investigate, if it's possible to move this logic into the scheduler.

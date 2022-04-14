@@ -80,6 +80,8 @@ private:
 
 size_t CombineHash(size_t seed, size_t value);
 
+#define ownerOf(type, field, ref) *reinterpret_cast<type*>(reinterpret_cast<char*>(&ref) - offsetof(type, field))
+
 } // namespace kotlin
 
 #endif // RUNTIME_UTILS_H

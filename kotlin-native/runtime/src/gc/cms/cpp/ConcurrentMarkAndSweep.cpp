@@ -36,16 +36,17 @@ struct MarkTraits {
     }
 
     static ObjHeader* dequeue(MarkQueue& queue) noexcept {
-        auto top = queue.back();
-        queue.pop_back();
-        return top;
+        auto& top = queue.front();
+        queue.pop_front();
+        auto node = mm::ObjectFactory<gc::ConcurrentMarkAndSweep>::NodeRef::From(top);
+        return node->GetObjHeader();
     }
 
     static void enqueue(MarkQueue& queue, ObjHeader* object) noexcept {
         auto& objectData = mm::ObjectFactory<gc::ConcurrentMarkAndSweep>::NodeRef::From(object).ObjectData();
         if (objectData.color() == gc::ConcurrentMarkAndSweep::ObjectData::Color::kBlack) return;
         objectData.setColor(gc::ConcurrentMarkAndSweep::ObjectData::Color::kBlack);
-        queue.push_back(object);
+        queue.push_front(objectData);
     }
 };
 
@@ -96,7 +97,6 @@ gc::ConcurrentMarkAndSweep::ConcurrentMarkAndSweep(
     objectFactory_(objectFactory),
     gcScheduler_(gcScheduler),
     finalizerProcessor_(make_unique<FinalizerProcessor>([this](int64_t epoch) { state_.finalized(epoch); })) {
-    markQueue_.reserve(1000);
     gcScheduler_.SetScheduleGC([this]() NO_INLINE {
         RuntimeLogDebug({kTagGC}, "Scheduling GC by thread %d", konan::currentThreadId());
         // This call acquires a lock, so we need to ensure that we're in the safe state.

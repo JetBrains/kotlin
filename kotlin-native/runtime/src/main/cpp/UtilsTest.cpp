@@ -7,6 +7,7 @@
 
 #include <type_traits>
 
+#include "gmock/gmock.h"
 #include "gtest/gtest.h"
 
 using namespace kotlin;
@@ -47,4 +48,28 @@ TEST(UtilsTest, PinnedImpl) {
     static_assert(!std::is_move_constructible_v<PinnedImpl>, "Must not be move constructible");
     static_assert(!std::is_move_assignable_v<PinnedImpl>, "Must not be move assignable");
     static_assert(sizeof(PinnedImpl) == sizeof(A), "Must not increase size");
+}
+
+namespace {
+
+class Container {
+public:
+    static Container& fromX(int32_t& x) { return ownerOf(Container, x_, x); }
+
+    static Container& fromY(void*& y) { return ownerOf(Container, y_, y); }
+
+    int32_t& x() { return x_; }
+    void*& y() { return y_; }
+
+private:
+    int32_t x_ = 0;
+    void* y_ = nullptr;
+};
+
+} // namespace
+
+TEST(UtilsTest, OwnerOf) {
+    Container c;
+    EXPECT_THAT(&c, &Container::fromX(c.x()));
+    EXPECT_THAT(&c, &Container::fromY(c.y()));
 }

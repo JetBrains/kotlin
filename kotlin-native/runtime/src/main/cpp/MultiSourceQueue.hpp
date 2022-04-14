@@ -12,6 +12,7 @@
 
 #include "Mutex.hpp"
 #include "Types.h"
+#include "Utils.hpp"
 
 namespace kotlin {
 
@@ -34,7 +35,7 @@ public:
 
         static Node& fromValue(T& t) noexcept {
             static_assert(std::is_base_of_v<Pinned, T>, "fromValue function only makes sense for non-movable object");
-            return *reinterpret_cast<Node*>(reinterpret_cast<uintptr_t>(&t) - offsetof(Node, value_));
+            return ownerOf(Node, value_, t);
         }
 
     private:
