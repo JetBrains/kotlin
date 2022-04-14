@@ -867,6 +867,7 @@ open class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransform
         if (lhsSymbol?.fir?.isVal != true) {
             return null
         }
+        val rightArgument = resolvedAssignment.rValue.transformSingle(transformer, ResolutionMode.ContextDependent)
         val assignOperatorCall = buildFunctionCall {
             this.source = source
             explicitReceiver = buildPropertyAccessExpression {
@@ -880,7 +881,7 @@ open class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransform
                 this.extensionReceiver = resolvedAssignment.extensionReceiver
                 this.contextReceiverArguments.addAll(resolvedAssignment.contextReceiverArguments)
             }
-            argumentList = buildUnaryArgumentList(resolvedAssignment.rValue)
+            argumentList = buildUnaryArgumentList(rightArgument)
             calleeReference = buildSimpleNamedReference {
                 // TODO: Use source of resolved assign function
                 this.source = resolvedAssignment.source
