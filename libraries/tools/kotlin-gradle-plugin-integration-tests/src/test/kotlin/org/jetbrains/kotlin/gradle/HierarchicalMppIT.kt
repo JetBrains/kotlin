@@ -18,10 +18,7 @@ import org.jetbrains.kotlin.gradle.util.checkedReplace
 import org.jetbrains.kotlin.gradle.util.modify
 import java.io.File
 import java.util.zip.ZipFile
-import kotlin.test.Test
-import kotlin.test.assertEquals
-import kotlin.test.assertNotNull
-import kotlin.test.assertTrue
+import kotlin.test.*
 
 class HierarchicalMppIT : BaseGradleIT() {
     override val defaultGradleVersion: GradleVersionRequired
@@ -655,30 +652,30 @@ class HierarchicalMppIT : BaseGradleIT() {
                 assertSuccessful()
             }
 
+            val gccIncompatibleTasks = listOf(
+                ":generateProjectStructureMetadata",
+                ":transformCommonMainDependenciesMetadata",
+                ":cinteropFooLinuxX64",
+                ":compileKotlinLinuxX64",
+                ":linkDebugSharedLinuxX64",
+            )
+
             build("clean", "assemble", options = options) {
                 assertSuccessful()
-                assertTasksExecuted(
-                    ":generateProjectStructureMetadata",
-                    ":transformCommonMainDependenciesMetadata"
-                )
+                assertTasksExecuted(gccIncompatibleTasks)
 
-                assertContainsRegex(
-                    """Task `:generateProjectStructureMetadata` of type `.+`: invocation of 'Task\.project' at execution time is unsupported"""
-                        .toRegex()
-                )
-                assertContainsRegex(
-                    """Task `:transformCommonMainDependenciesMetadata` of type `.+`: invocation of 'Task.project' at execution time is unsupported"""
-                        .toRegex()
-                )
+                gccIncompatibleTasks.forEach { task ->
+                    assertContainsRegex(
+                        """Task `:$task` of type `.+`: .+(at execution time is unsupported)|(not supported with the configuration cache)"""
+                            .toRegex()
+                    )
+                }
             }
 
             build("clean", "assemble", options = options) {
                 assertSuccessful()
                 assertContains("Configuration cache entry discarded")
-                assertTasksExecuted(
-                    ":generateProjectStructureMetadata",
-                    ":transformCommonMainDependenciesMetadata"
-                )
+                assertTasksExecuted(gccIncompatibleTasks)
             }
         }
     }
