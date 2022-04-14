@@ -839,29 +839,36 @@ open class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransform
         variableAssignment.transformAnnotations(transformer, ResolutionMode.ContextIndependent)
         val resolvedAssignment = callResolver.resolveVariableAccessAndSelectCandidate(variableAssignment, isUsedAsReceiver = false)
 
+        fun FirFunctionCall.chooseFunctionCall(): FirStatement {
+            dataFlowAnalyzer.enterFunctionCall(this)
+            callCompleter.completeCall(this, noExpectedType)
+            dataFlowAnalyzer.exitFunctionCall(this, callCompleted = true)
+            return this
+        }
+
         fun FirVariableAssignment.chooseOperator(): FirStatement {
             val completeAssignment = callCompleter.completeCall(this, noExpectedType).result // TODO: check
-            return completeAssignment.transformRValue(
+            val completedAssignment = completeAssignment.transformRValue(
                 transformer,
                 withExpectedType(variableAssignment.lValueTypeRef, expectedTypeMismatchIsReportedInChecker = true),
             )
+            dataFlowAnalyzer.exitVariableAssignment(completedAssignment)
+            return completedAssignment
         }
 
-        val result = if (resolvedAssignment is FirVariableAssignment) {
-            val resolvedAssignCall = transformAssignOperator(resolvedAssignment)
+        return if (resolvedAssignment is FirVariableAssignment) {
+            val resolvedAssignCall = resolveAssignOperatorFunctionCall(resolvedAssignment)
             when {
-                resolvedAssignCall != null -> resolvedAssignCall
+                resolvedAssignCall != null -> resolvedAssignCall.chooseFunctionCall()
                 else -> resolvedAssignment.chooseOperator()
             }
         } else {
             // This can happen in erroneous code only
             resolvedAssignment
         }
-        (result as? FirVariableAssignment)?.let { dataFlowAnalyzer.exitVariableAssignment(it) }
-        return result
     }
 
-    private fun transformAssignOperator(resolvedAssignment: FirVariableAssignment): FirFunctionCall? {
+    private fun resolveAssignOperatorFunctionCall(resolvedAssignment: FirVariableAssignment): FirFunctionCall? {
         val leftArgument = resolvedAssignment.lValue
         val leftSymbol = leftArgument.resolvedSymbol as? FirVariableSymbol<*>
         if (leftSymbol?.fir?.isVal != true) {
