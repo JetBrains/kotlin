@@ -162,5 +162,10 @@ declare namespace JS_TESTS {
                 get ordinal(): 0 | 1;
             }
         }
+        class KT38262 {
+            constructor();
+            then(): number;
+            catch(): number;
+        }
     }
 }

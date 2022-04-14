@@ -588,7 +588,7 @@ class ExportModelGenerator(
 
         val name = function.getExportedIdentifier()
         // TODO: Use [] syntax instead of prohibiting
-        if (name in allReservedWords)
+        if (parentClass == null && name in allReservedWords)
             return Exportability.Prohibited("Name is a reserved word")
 
         return Exportability.Allowed

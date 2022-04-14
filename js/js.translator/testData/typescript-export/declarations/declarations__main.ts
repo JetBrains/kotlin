@@ -30,6 +30,7 @@ import TestEnumClass = JS_TESTS.foo.TestEnumClass;
 import TestInterfaceImpl = JS_TESTS.foo.TestInterfaceImpl;
 import processInterface = JS_TESTS.foo.processInterface;
 import OuterClass = JS_TESTS.foo.OuterClass;
+import KT38262 = JS_TESTS.foo.KT38262;
 
 function assert(condition: boolean) {
     if (!condition) {
@@ -151,6 +152,9 @@ function box(): string {
     assert(OuterClass.NestedEnum.B.name === "B")
     assert(OuterClass.NestedEnum.A.ordinal === 0)
     assert(OuterClass.NestedEnum.B.ordinal === 1)
+
+    assert(new KT38262().then() == 42)
+    assert(new KT38262().catch() == 24)
 
     return "OK";
 }
