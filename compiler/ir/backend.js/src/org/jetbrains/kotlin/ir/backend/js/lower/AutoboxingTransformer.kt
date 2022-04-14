@@ -18,6 +18,8 @@ import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.isPrimitiveArray
 import org.jetbrains.kotlin.ir.util.patchDeclarationParents
 import org.jetbrains.kotlin.ir.util.render
+import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
+import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 
 
 // Copied and adapted from Kotlin/Native
@@ -191,6 +193,24 @@ class AutoboxingTransformer(context: JsCommonBackendContext) : AbstractValueUsag
             )
         }
     }
+
+    override fun visitCall(expression: IrCall): IrExpression {
+        if (expression.symbol == irBuiltIns.eqeqeqSymbol && expression.isAllArgumentsHaveType(irBuiltIns.charType)) {
+            return expression.apply { transformChildrenVoid() }
+        } else {
+            return super.visitCall(expression)
+        }
+    }
+
+    private fun IrCall.isAllArgumentsHaveType(type: IrType): Boolean {
+        for (i in 0 until valueArgumentsCount) {
+            if (getValueArgument(i)?.type != type) {
+                return false
+            }
+        }
+        return true
+    }
+
 }
 
 private tailrec fun IrExpression.isGetUnit(irBuiltIns: IrBuiltIns): Boolean =
