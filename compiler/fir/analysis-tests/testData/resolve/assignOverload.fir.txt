@@ -7,19 +7,36 @@ FILE: assignOverload.kt
     }
     public final operator fun R|kotlin/Any|.plusAssign(x: R|kotlin/String|): R|kotlin/Unit| {
     }
-    public final class Foo : R|kotlin/Any| {
-        public constructor(): R|Foo| {
+    public final data class Foo : R|kotlin/Any| {
+        public constructor(x: R|kotlin/String|): R|Foo| {
             super<R|kotlin/Any|>()
         }
 
+        public final val x: R|kotlin/String| = R|<local>/x|
+            public get(): R|kotlin/String|
+
+        public final operator fun component1(): R|kotlin/String|
+
+        public final fun copy(x: R|kotlin/String| = this@R|/Foo|.R|/Foo.x|): R|Foo|
+
     }
-    public final fun box(): R|kotlin/String| {
+    public final fun test_local_variable(): R|kotlin/String| {
         lval x: R|kotlin/Int| = Int(10)
         R|<local>/x|.R|/assign|(String(OK))
-        ^box R|/result|
+        ^test_local_variable R|/result|
     }
-    public final fun test_2(): R|kotlin/String| {
+    public final fun test_local_variable_plus_assign(): R|kotlin/String| {
         lval x: R|kotlin/Int| = Int(10)
         R|<local>/x|.R|/plusAssign|(String(OK))
-        ^test_2 R|/result|
+        ^test_local_variable_plus_assign R|/result|
+    }
+    public final fun test_object_property(): R|kotlin/String| {
+        lval x: R|Foo| = R|/Foo.Foo|(String(Hello))
+        R|<local>/x|.R|/Foo.x|.R|/assign|(String(OK))
+        ^test_object_property R|/result|
+    }
+    public final fun test_object_property_plus_assign(): R|kotlin/String| {
+        lval x: R|Foo| = R|/Foo.Foo|(String(Hello))
+        R|<local>/x|.R|/Foo.x|.R|/plusAssign|(String(OK))
+        ^test_object_property_plus_assign R|/result|
     }

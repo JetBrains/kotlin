@@ -862,17 +862,18 @@ open class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransform
     }
 
     private fun transformAssignOperator(resolvedAssignment: FirVariableAssignment): FirFunctionCall? {
-        val lhsReference = resolvedAssignment.lValue
-        val lhsSymbol = lhsReference.resolvedSymbol as? FirVariableSymbol<*>
-        if (lhsSymbol?.fir?.isVal != true) {
+        val leftArgument = resolvedAssignment.lValue
+        val leftSymbol = leftArgument.resolvedSymbol as? FirVariableSymbol<*>
+        if (leftSymbol?.fir?.isVal != true) {
             return null
         }
+        val leftResolvedType = leftSymbol.fir.returnTypeRef
         val rightArgument = resolvedAssignment.rValue.transformSingle(transformer, ResolutionMode.ContextDependent)
         val assignOperatorCall = buildFunctionCall {
             this.source = source
             explicitReceiver = buildPropertyAccessExpression {
-                this.source = resolvedAssignment.lValue.source
-                this.typeRef = resolvedAssignment.lValueTypeRef
+                this.source = leftArgument.source
+                this.typeRef = leftResolvedType
                 this.calleeReference = resolvedAssignment.calleeReference
                 this.typeArguments.addAll(resolvedAssignment.typeArguments)
                 this.annotations.addAll(resolvedAssignment.annotations)
