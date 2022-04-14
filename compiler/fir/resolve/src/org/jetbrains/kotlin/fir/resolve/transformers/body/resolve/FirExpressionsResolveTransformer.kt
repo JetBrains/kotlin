@@ -839,28 +839,28 @@ open class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransform
         variableAssignment.transformAnnotations(transformer, ResolutionMode.ContextIndependent)
         val resolvedAssignment = callResolver.resolveVariableAccessAndSelectCandidate(variableAssignment, isUsedAsReceiver = false)
 
-        fun FirFunctionCall.chooseFunctionCall(): FirStatement {
+        fun FirFunctionCall.updateFunctionCallDataflow(): FirStatement {
             dataFlowAnalyzer.enterFunctionCall(this)
             callCompleter.completeCall(this, noExpectedType)
             dataFlowAnalyzer.exitFunctionCall(this, callCompleted = true)
             return this
         }
 
-        fun FirVariableAssignment.chooseOperator(): FirStatement {
-            val completeAssignment = callCompleter.completeCall(this, noExpectedType).result // TODO: check
-            val completedAssignment = completeAssignment.transformRValue(
-                transformer,
-                withExpectedType(variableAssignment.lValueTypeRef, expectedTypeMismatchIsReportedInChecker = true),
-            )
-            dataFlowAnalyzer.exitVariableAssignment(completedAssignment)
-            return completedAssignment
+        fun FirVariableAssignment.updateOperatorDataflow(): FirStatement {
+            dataFlowAnalyzer.exitVariableAssignment(this)
+            return this
         }
 
         return if (resolvedAssignment is FirVariableAssignment) {
-            val resolvedAssignCall = resolveAssignOperatorFunctionCall(resolvedAssignment)
+            val completeAssignment = callCompleter.completeCall(resolvedAssignment, noExpectedType).result // TODO: check
+            val completedAssignment = completeAssignment.transformRValue(
+                transformer,
+                withExpectedType(variableAssignment.lValueTypeRef, expectedTypeMismatchIsReportedInChecker = true)
+            )
+            val resolvedAssignCall = resolveAssignOperatorFunctionCall(completedAssignment)
             when {
-                resolvedAssignCall != null -> resolvedAssignCall.chooseFunctionCall()
-                else -> resolvedAssignment.chooseOperator()
+                resolvedAssignCall != null -> resolvedAssignCall.updateFunctionCallDataflow()
+                else -> completedAssignment.updateOperatorDataflow()
             }
         } else {
             // This can happen in erroneous code only
@@ -875,7 +875,7 @@ open class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransform
             return null
         }
         val leftResolvedType = leftSymbol.fir.returnTypeRef
-        val rightArgument = resolvedAssignment.rValue.transformSingle(transformer, ResolutionMode.ContextDependent)
+        val rightArgument = resolvedAssignment.rValue
         val assignOperatorCall = buildFunctionCall {
             this.source = source
             explicitReceiver = buildPropertyAccessExpression {
