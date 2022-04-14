@@ -7,6 +7,6 @@ FILE: assignOverload.kt
     }
     public final fun box(): R|kotlin/String| {
         lval x: R|kotlin/Int| = Int(10)
-        R|<local>/x| = String(OK)
+        R|<local>/x|.R|/assign|(String(OK))
         ^box R|/result|
     }

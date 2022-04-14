@@ -838,13 +838,21 @@ open class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransform
         // val resolvedAssignment = transformCallee(variableAssignment)
         variableAssignment.transformAnnotations(transformer, ResolutionMode.ContextIndependent)
         val resolvedAssignment = callResolver.resolveVariableAccessAndSelectCandidate(variableAssignment, isUsedAsReceiver = false)
-        val result = if (resolvedAssignment is FirVariableAssignment) {
-            transformAssignOperator(resolvedAssignment)
-            val completeAssignment = callCompleter.completeCall(resolvedAssignment, noExpectedType).result // TODO: check
-            completeAssignment.transformRValue(
+
+        fun FirVariableAssignment.chooseOperator(): FirStatement {
+            val completeAssignment = callCompleter.completeCall(this, noExpectedType).result // TODO: check
+            return completeAssignment.transformRValue(
                 transformer,
                 withExpectedType(variableAssignment.lValueTypeRef, expectedTypeMismatchIsReportedInChecker = true),
             )
+        }
+
+        val result = if (resolvedAssignment is FirVariableAssignment) {
+            val resolvedAssignCall = transformAssignOperator(resolvedAssignment)
+            when {
+                resolvedAssignCall != null -> resolvedAssignCall
+                else -> resolvedAssignment.chooseOperator()
+            }
         } else {
             // This can happen in erroneous code only
             resolvedAssignment
@@ -853,11 +861,11 @@ open class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransform
         return result
     }
 
-    private fun transformAssignOperator(resolvedAssignment: FirVariableAssignment) {
+    private fun transformAssignOperator(resolvedAssignment: FirVariableAssignment): FirFunctionCall? {
         val lhsReference = resolvedAssignment.lValue
         val lhsSymbol = lhsReference.resolvedSymbol as? FirVariableSymbol<*>
         if (lhsSymbol?.fir?.isVal != true) {
-            return
+            return null
         }
         val assignOperatorCall = buildFunctionCall {
             this.source = source
@@ -885,10 +893,13 @@ open class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransform
             assignOperatorCall.transformSingle(this, ResolutionMode.ContextDependent)
         }
         val assignCallReference = resolvedAssignCall.calleeReference as? FirNamedReferenceWithCandidate
-        when (assignCallReference?.isError == false) {
-            true -> println("Assign successful: $assignCallReference")
-            else -> println("Assign failed: $assignCallReference")
+        if (assignCallReference?.isError == false) {
+            dataFlowAnalyzer.enterFunctionCall(resolvedAssignCall)
+            callCompleter.completeCall(resolvedAssignCall, noExpectedType)
+            dataFlowAnalyzer.exitFunctionCall(resolvedAssignCall, callCompleted = true)
+            return resolvedAssignCall
         }
+        return null
     }
 
     override fun transformCallableReferenceAccess(
