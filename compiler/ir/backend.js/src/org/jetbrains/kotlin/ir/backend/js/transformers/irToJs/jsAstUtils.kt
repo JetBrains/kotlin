@@ -124,7 +124,7 @@ fun translateCall(
         val property = function.correspondingPropertySymbol?.owner
         if (
             property != null &&
-            (property.isEffectivelyExternal() || property.isExportedMember())
+            (property.isEffectivelyExternal() || property.isExportedMember(context.staticContext.backendContext))
         ) {
             val propertyName = context.getNameForProperty(property)
             val nameRef = when (jsDispatchReceiver) {
