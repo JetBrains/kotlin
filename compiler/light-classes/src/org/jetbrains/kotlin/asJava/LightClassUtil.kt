@@ -178,7 +178,8 @@ object LightClassUtil {
         val classesWithMatchingFqName =
             JavaElementFinder.getInstance(project).findClasses(fqName.asString(), GlobalSearchScope.allScope(project))
         return classesWithMatchingFqName.singleOrNull() ?: classesWithMatchingFqName.find {
-            it.containingFile?.virtualFile == ktFile.virtualFile
+            it is KtLightClassForFacade && it.files.any { it.virtualFile == ktFile.virtualFile } ||
+                    it.containingFile?.virtualFile == ktFile.virtualFile
         }
     }
 
