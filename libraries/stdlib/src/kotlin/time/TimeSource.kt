@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -31,17 +31,43 @@ public interface TimeSource {
      *
      * This time source returns its readings from a source of monotonic time when it is available in a target platform,
      * and resorts to a non-monotonic time source otherwise.
+     *
+     * The function [markNow] of this time source returns the specialized [ValueTimeMark] that is an inline value class
+     * wrapping a platform-dependent time reading value.
      */
     public object Monotonic : TimeSource {
-        override fun markNow(): DefaultTimeMark = MonotonicTimeSource.markNow()
+        override fun markNow(): ValueTimeMark = MonotonicTimeSource.markNow()
         override fun toString(): String = MonotonicTimeSource.toString()
-    }
 
+        /**
+         * A specialized [kotlin.time.TimeMark] returned by [TimeSource.Monotonic].
+         *
+         * This time mark is implemented as an inline value class wrapping a platform-dependent
+         * time reading value of the default monotonic time source, thus allowing to avoid additional boxing
+         * of that value.
+         *
+         * The operations [plus] and [minus] are also specialized to return [ValueTimeMark] type.
+         */
+        @ExperimentalTime
+        @SinceKotlin("1.7")
+        @JvmInline
+        public value class ValueTimeMark internal constructor(internal val reading: ValueTimeMarkReading) : TimeMark {
+            override fun elapsedNow(): Duration = MonotonicTimeSource.elapsedFrom(this)
+            override fun plus(duration: Duration): ValueTimeMark = MonotonicTimeSource.adjustReading(this, duration)
+            override fun minus(duration: Duration): ValueTimeMark = MonotonicTimeSource.adjustReading(this, -duration)
+            override fun hasPassedNow(): Boolean = !elapsedNow().isNegative()
+            override fun hasNotPassedNow(): Boolean = elapsedNow().isNegative()
+        }
+    }
 
     public companion object {
 
     }
 }
+
+/** A platform-specific reading type that is wrapped by [TimeSource.Monotonic.ValueTimeMark] inline class. */
+internal expect class ValueTimeMarkReading
+
 
 /**
  * Represents a time point notched on a particular [TimeSource]. Remains bound to the time source it was taken from
@@ -104,28 +130,6 @@ public interface TimeMark {
      */
     public fun hasNotPassedNow(): Boolean = elapsedNow().isNegative()
 }
-
-/**
- * A specialized [TimeMark] returned by [TimeSource.Monotonic].
- *
- * This time mark is implemented as an inline value class wrapping a platform-dependent
- * time reading value of the default monotonic time source, thus allowing to avoid additional boxing
- * of that value.
- *
- * The operations [plus] and [minus] are also specialized to return [DefaultTimeMark] type.
- */
-@ExperimentalTime
-@SinceKotlin("1.7")
-@JvmInline
-public value class DefaultTimeMark internal constructor(internal val reading: DefaultTimeMarkReading) : TimeMark {
-    override fun elapsedNow(): Duration = MonotonicTimeSource.elapsedFrom(this)
-    override fun plus(duration: Duration): DefaultTimeMark = MonotonicTimeSource.adjustReading(this, duration)
-    override fun minus(duration: Duration): DefaultTimeMark = MonotonicTimeSource.adjustReading(this, -duration)
-    override fun hasPassedNow(): Boolean = !elapsedNow().isNegative()
-    override fun hasNotPassedNow(): Boolean = elapsedNow().isNegative()
-}
-
-internal expect class DefaultTimeMarkReading
 
 
 @ExperimentalTime

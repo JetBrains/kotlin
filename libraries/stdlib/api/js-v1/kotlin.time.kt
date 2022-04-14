@@ -206,27 +206,6 @@ public abstract class AbstractLongTimeSource : kotlin.time.TimeSource {
     protected abstract fun read(): kotlin.Long
 }
 
-@kotlin.time.ExperimentalTime
-@kotlin.SinceKotlin(version = "1.7")
-@kotlin.jvm.JvmInline
-public final inline class DefaultTimeMark : kotlin.time.TimeMark {
-    public open override fun elapsedNow(): kotlin.time.Duration
-
-    public open override operator fun equals(other: kotlin.Any?): kotlin.Boolean
-
-    public open override fun hasNotPassedNow(): kotlin.Boolean
-
-    public open override fun hasPassedNow(): kotlin.Boolean
-
-    public open override fun hashCode(): kotlin.Int
-
-    public open override operator fun minus(duration: kotlin.time.Duration): kotlin.time.DefaultTimeMark
-
-    public open override operator fun plus(duration: kotlin.time.Duration): kotlin.time.DefaultTimeMark
-
-    public open override fun toString(): kotlin.String
-}
-
 @kotlin.SinceKotlin(version = "1.6")
 @kotlin.WasExperimental(markerClass = {kotlin.time.ExperimentalTime::class})
 @kotlin.jvm.JvmInline
@@ -600,9 +579,30 @@ public interface TimeSource {
     }
 
     public object Monotonic : kotlin.time.TimeSource {
-        public open override fun markNow(): kotlin.time.DefaultTimeMark
+        public open override fun markNow(): kotlin.time.TimeSource.Monotonic.ValueTimeMark
 
         public open override fun toString(): kotlin.String
+
+        @kotlin.time.ExperimentalTime
+        @kotlin.SinceKotlin(version = "1.7")
+        @kotlin.jvm.JvmInline
+        public final inline class ValueTimeMark : kotlin.time.TimeMark {
+            public open override fun elapsedNow(): kotlin.time.Duration
+
+            public open override operator fun equals(other: kotlin.Any?): kotlin.Boolean
+
+            public open override fun hasNotPassedNow(): kotlin.Boolean
+
+            public open override fun hasPassedNow(): kotlin.Boolean
+
+            public open override fun hashCode(): kotlin.Int
+
+            public open override operator fun minus(duration: kotlin.time.Duration): kotlin.time.TimeSource.Monotonic.ValueTimeMark
+
+            public open override operator fun plus(duration: kotlin.time.Duration): kotlin.time.TimeSource.Monotonic.ValueTimeMark
+
+            public open override fun toString(): kotlin.String
+        }
     }
 }
 
