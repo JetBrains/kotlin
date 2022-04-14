@@ -24,6 +24,17 @@ val generateAbstractBinaryContainer by generator(
     group = generateGroupName
 }
 
+val generateAbstractKotlinArtifactsExtensionImplementation by generator(
+    "org.jetbrains.kotlin.generators.gradle.dsl.KotlinArtifactsDSLCodegenKt",
+    sourceSets["main"]
+) {
+    group = generateGroupName
+    systemProperty(
+        "org.jetbrains.kotlin.generators.gradle.dsl.outputSourceRoot",
+        project(":kotlin-gradle-plugin").projectDir.resolve("src/common/kotlin").absolutePath
+    )
+}
+
 val generateKpmNativeVariants by generator(
     "org.jetbrains.kotlin.generators.gradle.dsl.KpmNativeVariantCodegenKt",
     sourceSets["main"]
