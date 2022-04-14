@@ -752,6 +752,24 @@ class HierarchicalMppIT : KGPBaseTest() {
             }
         }
     }
+    @GradleTest
+    @GradleTestVersions(maxVersion = TestVersions.Gradle.G_7_3)
+    @DisplayName("KT-51946: Print warning on tasks that are not compatible with configuration cache")
+    fun testHmppTasksReportConfigurationCacheWarningForGradleLessThan74(gradleVersion: GradleVersion, @TempDir tempDir: Path) {
+        with(project("hmppGradleConfigurationCache", gradleVersion = gradleVersion, localRepoDir = tempDir)) {
+            build(":lib:publish")
+
+            // Assert that no warnings are shown when configuration-cache is not enabled
+            build("clean", "assemble") {
+                assertOutputDoesNotContain("""Task \S+ is not compatible with configuration cache""".toRegex())
+            }
+
+            val options = buildOptions.copy(configurationCache = true, configurationCacheProblems = BaseGradleIT.ConfigurationCacheProblems.FAIL)
+            buildAndFail("clean", "assemble", buildOptions = options) {
+                assertOutputContains("""Task \S+ is not compatible with configuration cache""".toRegex())
+            }
+        }
+    }
 
     private fun TestProject.testDependencyTransformations(
         subproject: String? = null,
