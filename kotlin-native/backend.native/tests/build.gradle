@@ -5536,10 +5536,10 @@ if (isAppleTarget(project)) {
     }
 
     frameworkTest("testMultipleFrameworksStatic") {
-        if (cacheTesting != null) {
+         if (cacheTesting != null && !isExperimentalMM) {
             // See https://youtrack.jetbrains.com/issue/KT-34261.
             expectedExitStatus = 134
-        }
+         }
 
         framework('FirstStatic') {
             artifact = 'First'
