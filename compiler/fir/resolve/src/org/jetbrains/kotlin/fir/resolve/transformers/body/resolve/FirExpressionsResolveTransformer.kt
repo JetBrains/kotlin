@@ -902,13 +902,10 @@ open class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransform
             assignOperatorCall.transformSingle(this, ResolutionMode.ContextDependent)
         }
         val assignCallReference = resolvedAssignCall.calleeReference as? FirNamedReferenceWithCandidate
-        if (assignCallReference?.isError == false) {
-            dataFlowAnalyzer.enterFunctionCall(resolvedAssignCall)
-            callCompleter.completeCall(resolvedAssignCall, noExpectedType)
-            dataFlowAnalyzer.exitFunctionCall(resolvedAssignCall, callCompleted = true)
-            return resolvedAssignCall
+        return when (assignCallReference?.isError) {
+            false -> resolvedAssignCall
+            else -> null
         }
-        return null
     }
 
     override fun transformCallableReferenceAccess(
