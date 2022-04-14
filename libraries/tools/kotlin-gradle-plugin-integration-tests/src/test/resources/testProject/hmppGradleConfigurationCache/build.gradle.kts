@@ -12,7 +12,16 @@ allprojects {
 
 kotlin {
     jvm()
-    linuxX64()
+    linuxX64 {
+        binaries { sharedLib() }
+        compilations.getByName("main").apply {
+            cinterops {
+                val foo by creating {
+                    defFile(project.file("foo.def"))
+                }
+            }
+        }
+    }
 
     sourceSets {
         val commonMain by getting {
