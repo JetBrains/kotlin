@@ -5,7 +5,11 @@ FILE: assignOverload.kt
     public final operator fun R|kotlin/Any|.assign(other: R|kotlin/String|): R|kotlin/Unit| {
         R|/result| = R|<local>/other|
     }
+    public final operator fun R|kotlin/String|.assign(x: R|kotlin/Int|): R|kotlin/Unit| {
+    }
     public final operator fun R|kotlin/Any|.plusAssign(x: R|kotlin/String|): R|kotlin/Unit| {
+    }
+    public final operator fun R|kotlin/String|.plusAssign(x: R|kotlin/String|): R|kotlin/Unit| {
     }
     public final data class Foo : R|kotlin/Any| {
         public constructor(x: R|kotlin/String|): R|Foo| {
@@ -35,8 +39,23 @@ FILE: assignOverload.kt
         R|<local>/x|.R|/Foo.x|.R|/assign|(String(OK))
         ^test_object_property R|/result|
     }
+    public final fun test_object_property_with_different_type(): R|kotlin/String| {
+        lval x: R|Foo| = R|/Foo.Foo|(String(Hello))
+        R|<local>/x|.R|/Foo.x|.R|/assign|(Int(5))
+        ^test_object_property_with_different_type R|/result|
+    }
+    public final fun test_assignment_type_mismatch(): R|kotlin/String| {
+        lval x: R|Foo| = R|/Foo.Foo|(String(Hello))
+        R|<local>/x|.R|/Foo.x| = Long(5)
+        ^test_assignment_type_mismatch R|/result|
+    }
     public final fun test_object_property_plus_assign(): R|kotlin/String| {
         lval x: R|Foo| = R|/Foo.Foo|(String(Hello))
         R|<local>/x|.R|/Foo.x|.R|/plusAssign|(String(OK))
         ^test_object_property_plus_assign R|/result|
+    }
+    public final fun test_plus_assign_assignment_type_mismatch(): R|kotlin/String| {
+        lval x: R|Foo| = R|/Foo.Foo|(String(Hello))
+        R|<local>/x|.<Re-assigning a val variable># = R|<local>/x|.R|/Foo.x|.R|kotlin/String.plus|(Long(5))
+        ^test_plus_assign_assignment_type_mismatch R|/result|
     }
