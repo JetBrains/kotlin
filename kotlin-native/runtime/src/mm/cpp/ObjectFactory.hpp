@@ -453,18 +453,19 @@ public:
 
         static NodeRef From(ObjHeader* object) noexcept {
             RuntimeAssert(object->heap(), "Must be a heap object");
-            auto* heapObject = reinterpret_cast<HeapObjHeader*>(reinterpret_cast<uintptr_t>(object) - offsetof(HeapObjHeader, object));
-            RuntimeAssert(&heapObject->object == object, "HeapObjHeader layout has broken");
-            return NodeRef(Storage::Node::FromData(heapObject));
+            auto& heapObject = ownerOf(HeapObjHeader, object, *object);
+            return NodeRef(Storage::Node::FromData(&heapObject));
         }
 
         static NodeRef From(ArrayHeader* array) noexcept {
-            // `ArrayHeader` and `ObjHeader` are kept compatible, so the former can
-            // be always casted to the other.
-            RuntimeAssert(reinterpret_cast<ObjHeader*>(array)->heap(), "Must be a heap object");
-            auto* heapArray = reinterpret_cast<HeapArrayHeader*>(reinterpret_cast<uintptr_t>(array) - offsetof(HeapArrayHeader, array));
-            RuntimeAssert(&heapArray->array == array, "HeapArrayHeader layout has broken");
-            return NodeRef(Storage::Node::FromData(heapArray));
+            RuntimeAssert(array->obj()->heap(), "Must be a heap object");
+            auto& heapArray = ownerOf(HeapArrayHeader, array, *array);
+            return NodeRef(Storage::Node::FromData(&heapArray));
+        }
+
+        static NodeRef From(ObjectData& objectData) noexcept {
+            auto& heapObject = ownerOf(HeapObjHeader, gcData, objectData);
+            return NodeRef(Storage::Node::FromData(&heapObject));
         }
 
         NodeRef* operator->() noexcept { return this; }
