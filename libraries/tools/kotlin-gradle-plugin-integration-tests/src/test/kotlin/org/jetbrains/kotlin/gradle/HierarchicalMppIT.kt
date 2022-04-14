@@ -679,6 +679,27 @@ class HierarchicalMppIT : BaseGradleIT() {
             }
         }
     }
+    @Test
+    fun testHmppTasksReportConfigurationCacheWarningForGradleLessThan74() {
+        val versionRequirement = GradleVersionRequired.InRange("6.8", "7.3")
+        transformProjectWithPluginsDsl("hmppGradleConfigurationCache", versionRequirement).apply {
+            build(":lib:publish") {
+                assertSuccessful()
+            }
+
+            // Assert that no warnings are shown when configuration-cache is not enabled
+            build("clean", "assemble") {
+                assertSuccessful()
+                assertNotContains("""Task \S+ is not compatible with configuration cache""".toRegex())
+            }
+
+            val options = defaultBuildOptions().copy(configurationCache = true, configurationCacheProblems = ConfigurationCacheProblems.FAIL)
+            build("clean", "assemble", options = options) {
+                assertFailed()
+                assertContainsRegex("""Task \S+ is not compatible with configuration cache""".toRegex())
+            }
+        }
+    }
 
     private fun Project.testDependencyTransformations(
         subproject: String? = null,
