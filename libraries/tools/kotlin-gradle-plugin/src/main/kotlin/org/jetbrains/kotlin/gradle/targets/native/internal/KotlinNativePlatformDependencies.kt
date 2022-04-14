@@ -31,6 +31,10 @@ internal fun Project.setupKotlinNativePlatformDependencies() {
     }
 
     kotlin.sourceSets.forEach { sourceSet ->
+        if (!PropertiesProvider(project).hierarchicalStructureSupport && sourceSet.name == KotlinSourceSet.COMMON_MAIN_SOURCE_SET_NAME) {
+            return@forEach
+        }
+
         val target = getCommonizerTarget(sourceSet) ?: return@forEach
         addDependencies(sourceSet, getNativeDistributionDependencies(target))
         addDependencies(

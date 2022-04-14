@@ -551,6 +551,9 @@ internal fun createMetadataDependencyTransformationClasspath(
 }
 
 internal fun isSharedNativeSourceSet(project: Project, sourceSet: KotlinSourceSet): Boolean {
+    if (!PropertiesProvider(project).hierarchicalStructureSupport && sourceSet.name == KotlinSourceSet.COMMON_MAIN_SOURCE_SET_NAME) {
+        return false
+    }
     val compilations = compilationsBySourceSets(project)[sourceSet].orEmpty()
     return compilations.isNotEmpty() && compilations.all {
         it.platformType == KotlinPlatformType.common || it.platformType == KotlinPlatformType.native
