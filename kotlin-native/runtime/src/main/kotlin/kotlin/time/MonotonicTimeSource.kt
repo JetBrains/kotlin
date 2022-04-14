@@ -6,6 +6,7 @@
 package kotlin.time
 
 import kotlin.system.*
+import kotlin.time.TimeSource.Monotonic.ValueTimeMark
 
 @SinceKotlin("1.3")
 @ExperimentalTime
@@ -14,13 +15,13 @@ internal actual object MonotonicTimeSource : TimeSource {
     private fun read(): Long = getTimeNanos() - zero
     override fun toString(): String = "TimeSource(System.nanoTime())"
 
-    actual override fun markNow(): DefaultTimeMark = DefaultTimeMark(read())
-    actual fun elapsedFrom(timeMark: DefaultTimeMark): Duration =
+    actual override fun markNow(): ValueTimeMark = ValueTimeMark(read())
+    actual fun elapsedFrom(timeMark: ValueTimeMark): Duration =
             saturatingDiff(read(), timeMark.reading)
 
-    actual fun adjustReading(timeMark: DefaultTimeMark, duration: Duration): DefaultTimeMark =
-            DefaultTimeMark(saturatingAdd(timeMark.reading, duration))
+    actual fun adjustReading(timeMark: ValueTimeMark, duration: Duration): ValueTimeMark =
+            ValueTimeMark(saturatingAdd(timeMark.reading, duration))
 }
 
 @Suppress("ACTUAL_WITHOUT_EXPECT") // visibility
-internal actual typealias DefaultTimeMarkReading = Long
+internal actual typealias ValueTimeMarkReading = Long
