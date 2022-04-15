@@ -85,12 +85,6 @@ sealed class ClangArgs(
                     else -> configurables.osVersionMin
                 }
                 targetTriple.copy(
-                        architecture = when (targetTriple.architecture) {
-                            // TODO: LLVM 8 doesn't support arm64_32.
-                            //  We can use armv7k because they are compatible at bitcode level.
-                            "arm64_32" -> "armv7k"
-                            else -> targetTriple.architecture
-                        },
                         os = "${targetTriple.os}$osVersionMin"
                 ).toString()
             }
