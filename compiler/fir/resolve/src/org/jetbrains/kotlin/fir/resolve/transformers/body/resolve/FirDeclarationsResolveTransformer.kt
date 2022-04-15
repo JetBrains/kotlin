@@ -468,6 +468,8 @@ open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransfor
             dataFlowAnalyzer.exitClass()
         }
 
+       // analyseAndCheck(context, regularClass)
+
         return result
     }
 

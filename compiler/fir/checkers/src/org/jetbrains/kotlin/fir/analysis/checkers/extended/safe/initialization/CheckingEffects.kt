@@ -5,12 +5,8 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers.extended.safe.initialization
 
-import org.jetbrains.kotlin.contracts.description.EventOccurrencesRange
 import org.jetbrains.kotlin.contracts.description.isDefinitelyVisited
-import org.jetbrains.kotlin.contracts.description.isInPlace
-import org.jetbrains.kotlin.fir.analysis.cfa.util.EventOccurrencesRangeInfo
-import org.jetbrains.kotlin.fir.analysis.cfa.util.PathAwarePropertyInitializationInfo
-import org.jetbrains.kotlin.fir.analysis.cfa.util.PropertyInitializationInfo
+import org.jetbrains.kotlin.fir.analysis.cfa.util.*
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.analysis.checkers.extended.safe.initialization.Effect.*
 import org.jetbrains.kotlin.fir.analysis.checkers.extended.safe.initialization.Potential.*
@@ -20,7 +16,6 @@ import org.jetbrains.kotlin.fir.resolve.dfa.cfg.CFGNode
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.ControlFlowGraphVisitorVoid
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.VariableAssignmentNode
 import org.jetbrains.kotlin.fir.resolve.dfa.controlFlowGraph
-import org.jetbrains.kotlin.utils.addIfNotNull
 
 class CheckingEffects {
 }
@@ -43,11 +38,13 @@ fun resolve(clazz: FirClass, firDeclaration: FirDeclaration): FirClass = clazz /
 object Checker {
 
     data class StateOfClass(val firClass: FirClass) {
-        val alreadyInitializedProperties = mutableSetOf<FirProperty>()
-        val allProperties = firClass.declarations.filterIsInstance<FirProperty>()
+        val alreadyInitializedVariable = mutableSetOf<FirVariable>()
+        val maybeUninitializedProperties = run {
+            val properties = firClass.declarations.filterIsInstance<FirProperty>()
+            properties.associateWith { EffectsAndPotentials() }
+        }
 
         val notFinalAssignments = mutableMapOf<FirProperty, Set<FirVariableAssignment>>()
-
         val caches = mutableMapOf<FirDeclaration, EffectsAndPotentials>()
     }
 
@@ -56,31 +53,34 @@ object Checker {
         firClass.declarations.map { dec ->
             when (dec) {
                 is FirConstructor -> {
-                    if (dec.isPrimary) {
-                        dec.valueParameters.map { param ->
-                            val prop = allProperties.find { it.name == param.name }
-                            alreadyInitializedProperties.addIfNotNull(prop)
-                        }
-                    }
+                    if (dec.isPrimary)
+                        alreadyInitializedVariable + dec.valueParameters
                     checkBody(dec)
                 }
-                is FirAnonymousInitializer -> TODO()
+                is FirAnonymousInitializer -> {
+                    dec.body?.let(::analyser)
+                    TODO()
+                }
                 is FirRegularClass -> TODO()
                 is FirPropertyAccessor -> TODO()
 //                is FirSimpleFunction -> checkBody(dec)
                 is FirField -> TODO()
                 is FirProperty -> {
-                    val (effs, _) = dec.initializer?.let(firClass::analyser) ?: dec.findFirstInitializationPoint()
+                    val (effs, _) = dec.initializer?.let(::analyser) ?: return@map dec.findFirstInitializationPoint()
                     val errors = effs.flatMap { effectChecking(it) }
-                    if (errors.isEmpty()) alreadyInitializedProperties.add(dec)
+                    if (errors.isEmpty()) alreadyInitializedVariable.add(dec)
                     errors
                 }
                 else -> listOf()
             }
         }
 
-    private fun FirProperty.findFirstInitializationPoint(): EffectsAndPotentials {
-        TODO()
+    private fun FirProperty.findFirstInitializationPoint(): List<Error> {
+        val graph = controlFlowGraphReference?.controlFlowGraph ?: return listOf()
+        val data = PropertyInitializationInfoCollector(setOf(symbol)).getData(graph)
+        val p = PropertyInitializationPoint(data)
+        graph.traverse(TraverseDirection.Forward, p)
+        return listOf()
     }
 
     class PropertyInitializationPoint(
@@ -102,23 +102,23 @@ object Checker {
     }
 
     fun StateOfClass.checkBody(dec: FirFunction): List<Error> {
-        val (effs, _) = dec.body?.let(firClass::analyser) ?: EffectsAndPotentials()
+        val (effs, _) = dec.body?.let(::analyser) ?: EffectsAndPotentials()
         return effs.flatMap { effectChecking(it) }
     }
 
-    fun potentialPropagation(potential: Potential): EffectsAndPotentials {
+    fun StateOfClass.potentialPropagation(potential: Potential): EffectsAndPotentials {
         return when (potential) {
             is FieldPotential -> {
                 val (pot, field) = potential
                 when (pot) {
                     is Root.This -> {                                     // P-Acc1
                         val clazz = resolve(pot.clazz, field)
-                        val potentials = pot.potentialsOf(clazz, field)
+                        val potentials = pot.potentialsOf(this, field)
                         EffectsAndPotentials(potentials = potentials.viewChange(pot))
                     }
                     is Root.Warm -> {                                         // P-Acc2
                         val clazz = resolve(pot.clazz, field)
-                        val potentials = pot.potentialsOf(clazz, field)
+                        val potentials = pot.potentialsOf(this, field)
                         EffectsAndPotentials(potentials = potentials.viewChange(pot))
                     }
                     is Root.Cold -> EffectsAndPotentials(Promote(pot)) // or exception or empty list
@@ -135,12 +135,12 @@ object Checker {
                 when (pot) {
                     is Root.This -> {                                     // P-Inv1
                         val clazz = resolve(pot.clazz, method)
-                        val potentials = pot.potentialsOf(clazz, method)
+                        val potentials = pot.potentialsOf(this, method)
                         EffectsAndPotentials(listOf(), potentials)
                     }
                     is Root.Warm -> {                                     // P-Inv2
                         val clazz = resolve(pot.clazz, method)
-                        val potentials = pot.potentialsOf(clazz, method)
+                        val potentials = pot.potentialsOf(this, method)
                         EffectsAndPotentials(listOf(), potentials.viewChange(pot))
                     }
                     is Root.Cold -> EffectsAndPotentials(Promote(pot))
@@ -181,7 +181,7 @@ object Checker {
                 val (pot, field) = effect
                 when (pot) {
                     is Root.This -> {                                     // C-Acc1
-                        if (alreadyInitializedProperties.contains(field))
+                        if (alreadyInitializedVariable.contains(field))
                             listOf()
                         else listOf(Error.AccessError())
                     }
@@ -197,11 +197,11 @@ object Checker {
                 when (pot) {
                     is Root.This -> {                                     // C-Inv1
                         val clazz = resolve(pot.clazz, method)
-                        pot.effectsOf(clazz, method).flatMap { effectChecking(it) }
+                        pot.effectsOf(this, method).flatMap { effectChecking(it) }
                     }
                     is Root.Warm -> {                                     // C-Inv2
                         val clazz = resolve(pot.clazz, method)
-                        pot.effectsOf(clazz, method).flatMap { eff ->
+                        pot.effectsOf(this, method).flatMap { eff ->
                             viewChange(eff, pot)
                             effectChecking(eff)
                         }
@@ -214,7 +214,7 @@ object Checker {
             }
             is Init -> {                                                     // C-Init
                 val (pot, clazz) = effect
-                pot.effectsOf(clazz, clazz).flatMap { eff ->
+                pot.effectsOf(this, clazz).flatMap { eff ->
                     viewChange(eff, pot)
                     effectChecking(eff)
                 }

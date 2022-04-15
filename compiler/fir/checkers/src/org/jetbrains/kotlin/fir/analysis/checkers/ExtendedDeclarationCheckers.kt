@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.fir.analysis.cfa.AbstractFirPropertyInitializationCh
 import org.jetbrains.kotlin.fir.analysis.checkers.cfa.FirControlFlowChecker
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.*
 import org.jetbrains.kotlin.fir.analysis.checkers.extended.*
+import org.jetbrains.kotlin.fir.analysis.checkers.extended.safe.initialization.SafeInitialisationChecker
 
 object ExtendedDeclarationCheckers : DeclarationCheckers() {
     override val basicDeclarationCheckers: Set<FirBasicDeclarationChecker>
@@ -36,5 +37,10 @@ object ExtendedDeclarationCheckers : DeclarationCheckers() {
     override val simpleFunctionCheckers: Set<FirSimpleFunctionChecker>
         get() = setOf(
             RedundantReturnUnitType,
+        )
+
+    override val regularClassCheckers: Set<FirRegularClassChecker>
+        get() = setOf(
+            SafeInitialisationChecker            
         )
 }

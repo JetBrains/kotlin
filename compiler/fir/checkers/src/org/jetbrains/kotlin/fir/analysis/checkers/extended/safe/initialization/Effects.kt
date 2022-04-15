@@ -10,10 +10,13 @@ import org.jetbrains.kotlin.fir.declarations.FirFunction
 import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.analysis.checkers.extended.safe.initialization.Effect.*
 import org.jetbrains.kotlin.fir.analysis.checkers.extended.safe.initialization.Potential.*
+import org.jetbrains.kotlin.fir.declarations.FirVariable
+
+typealias Effects = List<Effect>
 
 sealed class Effect {
     data class Promote(val potential: Potential) : Effect()
-    data class FieldAccess(val potential: Potential, val field: FirProperty) : Effect()
+    data class FieldAccess(val potential: Potential, val field: FirVariable) : Effect()
     data class MethodAccess(val potential: Potential, var method: FirFunction) : Effect()
     data class Init(val potential: Root.Warm, val clazz: FirClass) : Effect()
 }

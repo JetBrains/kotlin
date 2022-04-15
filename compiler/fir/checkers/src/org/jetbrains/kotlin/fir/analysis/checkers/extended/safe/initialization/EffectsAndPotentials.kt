@@ -5,9 +5,10 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers.extended.safe.initialization
 
+
 data class EffectsAndPotentials(
-    val effects: List<Effect> = listOf(),
-    val potentials: List<Potential> = listOf()
+    val effects: Effects = listOf(),
+    val potentials: Potentials = listOf()
 ) {
     constructor(effect: Effect, potential: Potential) : this(listOf(effect), listOf(potential))
 
@@ -20,21 +21,21 @@ data class EffectsAndPotentials(
     operator fun plus(potential: Potential): EffectsAndPotentials = plus(listOf(potential))
 
     @JvmName("plus1")
-    operator fun plus(effs: List<Effect>): EffectsAndPotentials =
+    operator fun plus(effs: Effects): EffectsAndPotentials =
         addEffectsAndPotentials(effs = effs)
 
     @JvmName("plus2")
-    operator fun plus(pots: List<Potential>): EffectsAndPotentials =
+    operator fun plus(pots: Potentials): EffectsAndPotentials =
         addEffectsAndPotentials(pots = pots)
 
     fun addEffectsAndPotentials(
-        effs: List<Effect> = listOf(),
-        pots: List<Potential> = listOf()
+        effs: Effects = listOf(),
+        pots: Potentials = listOf()
     ): EffectsAndPotentials =
         EffectsAndPotentials(effects + effs, potentials + pots)
 
     operator fun plus(effectsAndPotentials: EffectsAndPotentials): EffectsAndPotentials =
-        effectsAndPotentials.let { (effs, pots) -> addEffectsAndPotentials(effs, pots) }
+        effectsAndPotentials.run { addEffectsAndPotentials(effects, potentials) }
 
     fun maxLength(): Int = potentials.maxOfOrNull(Potential::length) ?: 0
 }

@@ -7,20 +7,20 @@ package org.jetbrains.kotlin.fir.analysis.checkers.extended.safe.initialization
 
 import org.jetbrains.kotlin.fir.analysis.checkers.extended.safe.initialization.ClassAnalyser.analyseDeclaration
 import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.declarations.utils.fromPrimaryConstructor
 import org.jetbrains.kotlin.fir.analysis.checkers.extended.safe.initialization.Effect.*
 import org.jetbrains.kotlin.fir.analysis.checkers.extended.safe.initialization.Potential.*
 
+typealias Potentials = List<Potential>
 
 sealed class Potential(val length: Int = 0) {
 
     sealed class Root(length: Int = 0) : Potential(length) {
 
-        fun effectsOf(clazz: FirClass, firDeclaration: FirDeclaration): List<Effect> =
-            clazz.analyseDeclaration(firDeclaration).effects
+        fun effectsOf(state: Checker.StateOfClass, firDeclaration: FirDeclaration): Effects =
+            state.analyseDeclaration(firDeclaration).effects
 
-        fun potentialsOf(clazz: FirClass, firDeclaration: FirDeclaration): List<Potential> =
-            clazz.analyseDeclaration(firDeclaration).potentials
+        fun potentialsOf(state: Checker.StateOfClass, firDeclaration: FirDeclaration): Potentials =
+            state.analyseDeclaration(firDeclaration).potentials
 
         data class This(val clazz: FirClass) : Root()
         data class Warm(val clazz: FirClass, val outer: Potential) : Root(outer.length + 1)
@@ -30,7 +30,7 @@ sealed class Potential(val length: Int = 0) {
     data class MethodPotential(val potential: Potential, val method: FirFunction) :
         Potential(potential.length + 1)
 
-    data class FieldPotential(val potential: Potential, val field: FirProperty) :
+    data class FieldPotential(val potential: Potential, val field: FirVariable) :
         Potential(potential.length + 1)
 
     data class OuterPotential(val potential: Potential, val outerClass: FirClass) :
@@ -42,10 +42,10 @@ sealed class Potential(val length: Int = 0) {
     ) : Potential(effectsAndPotentials.maxLength())
 }
 
-fun select(potentials: List<Potential>, field: FirProperty): EffectsAndPotentials {
+fun select(potentials: Potentials, field: FirVariable): EffectsAndPotentials {
 
-    fun select(potential: Potential, field: FirProperty): EffectsAndPotentials = when {
-        field.fromPrimaryConstructor == true -> EffectsAndPotentials()
+    fun select(potential: Potential, field: FirVariable): EffectsAndPotentials = when {
+        field is FirValueParameter -> EffectsAndPotentials()
         potential is Root.Cold -> EffectsAndPotentials(Promote(potential))
         potential.length < 2 -> EffectsAndPotentials(
             FieldAccess(potential, field),
@@ -57,7 +57,7 @@ fun select(potentials: List<Potential>, field: FirProperty): EffectsAndPotential
     return potentials.fold(EffectsAndPotentials()) { sum, pot -> sum + select(pot, field) }
 }
 
-fun call(potentials: List<Potential>, function: FirFunction): EffectsAndPotentials {
+fun call(potentials: Potentials, function: FirFunction): EffectsAndPotentials {
 
     fun call(potential: Potential, function: FirFunction): EffectsAndPotentials = when {
         potential is Root.Cold -> EffectsAndPotentials(Promote(potential))
@@ -71,7 +71,7 @@ fun call(potentials: List<Potential>, function: FirFunction): EffectsAndPotentia
     return potentials.fold(EffectsAndPotentials()) { sum, pot -> sum + call(pot, function) }
 }
 
-fun outerSelection(potentials: List<Potential>, clazz: FirClass): EffectsAndPotentials {
+fun outerSelection(potentials: Potentials, clazz: FirClass): EffectsAndPotentials {
 
     fun outerSelection(potential: Potential, clazz: FirClass): EffectsAndPotentials = when {
         potential is Root.Cold -> EffectsAndPotentials(Promote(potential))
@@ -82,12 +82,12 @@ fun outerSelection(potentials: List<Potential>, clazz: FirClass): EffectsAndPote
     return potentials.fold(EffectsAndPotentials()) { sum, pot -> sum + outerSelection(pot, clazz) }
 }
 
-fun promote(potentials: List<Potential>): List<Effect> = potentials.map(Effect::Promote)
+fun promote(potentials: Potentials): Effects = potentials.map(Effect::Promote)
 
 fun init(
     clazz: FirClass,
-    fieldsPots: List<List<Potential>>,
-    potentials: List<Potential> = listOf()
+    fieldsPots: List<Potentials>,
+    potentials: Potentials = listOf()
 ): EffectsAndPotentials {
     val propagateEffects = fieldsPots.flatMap(::promote)
     val prefixPotentials = potentials.map { pot -> Root.Warm(clazz, pot) }
@@ -96,7 +96,7 @@ fun init(
     return EffectsAndPotentials(propagateEffects + initEffects, prefixPotentials)
 }
 
-fun List<Potential>.viewChange(root: Potential): List<Potential> = map { pot -> viewChange(pot, root) }
+fun Potentials.viewChange(root: Potential): Potentials = map { pot -> viewChange(pot, root) }
 
 fun viewChange(potential: Potential, root: Potential): Potential {
 
