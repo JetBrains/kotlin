@@ -1,6 +1,6 @@
 class A {
-    fun foo(): String = this.name
+    fun foo(): String = name
 
-    val nameLength = this.foo().length
+    val nameLength = foo().length
     val name = "Hello World"
 }
