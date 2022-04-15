@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.file.builder
 
 import com.intellij.concurrency.ConcurrentCollectionFactory
 import org.jetbrains.kotlin.analysis.api.impl.barebone.annotations.ThreadSafe
-import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirModuleResolveComponents
 import org.jetbrains.kotlin.fir.declarations.FirClassLikeDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirFile
@@ -24,7 +24,7 @@ import java.util.concurrent.ConcurrentHashMap
  */
 @ThreadSafe
 internal abstract class ModuleFileCache {
-    abstract val session: FirSession
+    abstract val moduleComponents: LLFirModuleResolveComponents
 
     /**
      * Maps [ClassId] to corresponding classifiers
@@ -47,11 +47,9 @@ internal abstract class ModuleFileCache {
     abstract fun getContainerFirFile(declaration: FirDeclaration): FirFile?
 
     abstract fun getCachedFirFile(ktFile: KtFile): FirFile?
-
-    abstract val firFileLockProvider: LockProvider<FirFile>
 }
 
-internal class ModuleFileCacheImpl(override val session: FirSession) : ModuleFileCache() {
+internal class ModuleFileCacheImpl(override val moduleComponents: LLFirModuleResolveComponents) : ModuleFileCache() {
     private val ktFileToFirFile = ConcurrentCollectionFactory.createConcurrentIdentityMap<KtFile, FirFile>()
 
     override val classifierByClassId: ConcurrentHashMap<ClassId, Optional<FirClassLikeDeclaration>> = ConcurrentHashMap()
@@ -66,6 +64,4 @@ internal class ModuleFileCacheImpl(override val session: FirSession) : ModuleFil
         val ktFile = declaration.psi?.containingFile as? KtFile ?: return null
         return getCachedFirFile(ktFile)
     }
-
-    override val firFileLockProvider: LockProvider<FirFile> = LockProvider()
 }

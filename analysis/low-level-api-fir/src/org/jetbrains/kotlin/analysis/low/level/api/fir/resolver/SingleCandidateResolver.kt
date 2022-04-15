@@ -24,8 +24,6 @@ class SingleCandidateResolver(
     private val firSession: FirSession,
     private val firFile: FirFile,
 ) {
-    private val scopeSession = ScopeSession()
-
     private val bodyResolveComponents = createStubBodyResolveComponents(firSession)
     private val firCallCompleter = FirCallCompleter(
         bodyResolveComponents.transformer,

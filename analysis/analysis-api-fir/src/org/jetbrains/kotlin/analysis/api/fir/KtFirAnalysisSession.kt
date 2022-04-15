@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.api.LLFirModuleResolveSta
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.LowLevelFirApiFacadeForResolveOnAir
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.moduleData
+import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.platform.TargetPlatform
@@ -115,6 +116,8 @@ private constructor(
     val rootModuleSession: FirSession get() = firResolveState.rootModuleSession
     val firSymbolProvider: FirSymbolProvider get() = rootModuleSession.symbolProvider
     val targetPlatform: TargetPlatform get() = rootModuleSession.moduleData.platform
+
+    fun getScopeSessionFor(session: FirSession): ScopeSession = firResolveState.getScopeSessionFor(session)
 
     companion object {
         @InvalidWayOfUsingAnalysisSession

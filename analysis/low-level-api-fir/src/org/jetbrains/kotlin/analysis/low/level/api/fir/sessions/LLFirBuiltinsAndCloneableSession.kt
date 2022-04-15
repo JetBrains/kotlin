@@ -11,6 +11,6 @@ import org.jetbrains.kotlin.fir.PrivateSessionConstructor
 
 @OptIn(PrivateSessionConstructor::class)
 class LLFirBuiltinsAndCloneableSession @PrivateSessionConstructor constructor(
-    override val project: Project,
+    project: Project,
     builtinTypes: BuiltinTypes,
-) : LLFirSession(builtinTypes, Kind.Library)
+) : LLFirLibraryLikeSession(project, builtinTypes)

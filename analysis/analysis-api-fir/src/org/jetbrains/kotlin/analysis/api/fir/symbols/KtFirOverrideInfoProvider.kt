@@ -54,7 +54,10 @@ internal class KtFirOverrideInfoProvider(
         val parentClassFir = parentClassSymbol.firSymbol.fir as? FirClass ?: return null
 
         return memberFir.symbol.getImplementationStatus(
-            SessionHolderImpl(rootModuleSession, ScopeSession()),
+            SessionHolderImpl(
+                rootModuleSession,
+                analysisSession.getScopeSessionFor(analysisSession.rootModuleSession),
+            ),
             parentClassFir.symbol
         )
     }

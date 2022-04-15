@@ -16,7 +16,7 @@ internal object PersistentCheckerContextFactory {
     fun createEmptyPersistenceCheckerContext(sessionHolder: SessionHolder): PersistentCheckerContext {
         val returnTypeCalculator = createReturnTypeCalculatorForIDE(
             sessionHolder.session,
-            ScopeSession(),
+            sessionHolder.scopeSession,
             ImplicitBodyResolveComputationSession(),
             ::LLFirDesignatedImpliciteTypesBodyResolveTransformerForReturnTypeCalculator
         )

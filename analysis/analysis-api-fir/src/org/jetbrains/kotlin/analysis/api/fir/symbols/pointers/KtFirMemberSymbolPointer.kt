@@ -24,9 +24,10 @@ internal abstract class KtFirMemberSymbolPointer<S : KtSymbol>(
         require(analysisSession is KtFirAnalysisSession)
         val owner = analysisSession.getClassLikeSymbol(ownerClassId) as? FirRegularClass
             ?: return null
+        val firSession = analysisSession.rootModuleSession
         val scope = owner.unsubstitutedScope(
-            analysisSession.firResolveState.rootModuleSession,
-            ScopeSession(),
+            firSession,
+            analysisSession.getScopeSessionFor(firSession),
             withForcedTypeCalculator = false
         )
         return analysisSession.chooseCandidateAndCreateSymbol(scope, owner.moduleData.session)

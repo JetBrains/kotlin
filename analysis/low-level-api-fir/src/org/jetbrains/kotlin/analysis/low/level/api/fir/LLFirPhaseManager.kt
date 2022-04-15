@@ -7,34 +7,27 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir
 
 import org.jetbrains.kotlin.fir.ThreadSafeMutableState
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
-import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.symbols.FirPhaseManager
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
-import org.jetbrains.kotlin.analysis.low.level.api.fir.file.builder.ModuleFileCache
-import org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.FirLazyDeclarationResolver
+import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirResolvableModuleSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSessionInvalidator
 
 @ThreadSafeMutableState
-internal class LLFirPhaseManager(
-    private val lazyDeclarationResolver: FirLazyDeclarationResolver,
-    private val cache: ModuleFileCache,
-    private val sessionInvalidator: LLFirSessionInvalidator,
-) : FirPhaseManager() {
-    override fun ensureResolved(
-        symbol: FirBasedSymbol<*>,
-        requiredPhase: FirResolvePhase
-    ) {
+internal class LLFirPhaseManager(private val sessionInvalidator: LLFirSessionInvalidator) : FirPhaseManager() {
+    override fun ensureResolved(symbol: FirBasedSymbol<*>, requiredPhase: FirResolvePhase) {
         val fir = symbol.fir
+        val session = fir.moduleData.session
+        if (session !is LLFirResolvableModuleSession) return
+        val moduleComponents = session.moduleComponents
         try {
-            lazyDeclarationResolver.lazyResolveDeclaration(
+            moduleComponents.lazyFirDeclarationsResolver.lazyResolveDeclaration(
                 firDeclarationToResolve = fir,
-                moduleFileCache = cache,
-                scopeSession = ScopeSession(),
+                scopeSession = moduleComponents.scopeSessionProvider.getScopeSession(),
                 toPhase = requiredPhase,
                 checkPCE = true,
             )
         } catch (e: Throwable) {
-            sessionInvalidator.invalidate(fir.moduleData.session)
+            sessionInvalidator.invalidate(session)
             throw e
         }
     }

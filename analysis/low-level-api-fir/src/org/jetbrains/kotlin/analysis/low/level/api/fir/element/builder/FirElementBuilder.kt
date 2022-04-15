@@ -8,16 +8,12 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.element.builder
 import com.intellij.psi.PsiElement
 import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.analysis.api.impl.barebone.annotations.ThreadSafe
+import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirModuleResolveComponents
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
-import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.LLFirModuleResolveState
-import org.jetbrains.kotlin.analysis.low.level.api.fir.file.builder.FirFileBuilder
-import org.jetbrains.kotlin.analysis.low.level.api.fir.file.builder.ModuleFileCache
-import org.jetbrains.kotlin.analysis.low.level.api.fir.file.structure.FileStructureCache
 import org.jetbrains.kotlin.analysis.low.level.api.fir.file.structure.FileStructureElement
-import org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.FirLazyDeclarationResolver
 import org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.declarationCanBeLazilyResolved
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.getElementTextInContext
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.isNonAnonymousClassOrObject
@@ -26,12 +22,11 @@ import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
 import org.jetbrains.kotlin.psi.psiUtil.isAncestor
 import org.jetbrains.kotlin.psi2ir.deparenthesize
 
-/**
- * Maps [KtElement] to [FirElement]
- * Stateless, caches everything into [ModuleFileCache] & [FileStructureCache] passed into the function
- */
+
 @ThreadSafe
-internal class FirElementBuilder {
+internal class FirElementBuilder(
+    private val moduleComponents: LLFirModuleResolveComponents,
+) {
     companion object {
         fun getPsiAsFirElementSource(element: KtElement): KtElement? {
             val deparenthesized = if (element is KtPropertyDelegate) element.deparenthesize() else element
@@ -65,28 +60,18 @@ internal class FirElementBuilder {
 
     fun getOrBuildFirFor(
         element: KtElement,
-        firFileBuilder: FirFileBuilder,
-        moduleFileCache: ModuleFileCache,
-        fileStructureCache: FileStructureCache,
-        firLazyDeclarationResolver: FirLazyDeclarationResolver,
         state: LLFirModuleResolveState,
     ): FirElement? = when (element) {
-        is KtFile -> getOrBuildFirForKtFile(element, firFileBuilder, moduleFileCache, firLazyDeclarationResolver)
-        else -> getOrBuildFirForNonKtFileElement(element, fileStructureCache, moduleFileCache, state)
+        is KtFile -> getOrBuildFirForKtFile(element)
+        else -> getOrBuildFirForNonKtFileElement(element, state)
     }
 
-    private fun getOrBuildFirForKtFile(
-        ktFile: KtFile,
-        firFileBuilder: FirFileBuilder,
-        moduleFileCache: ModuleFileCache,
-        firLazyDeclarationResolver: FirLazyDeclarationResolver
-    ): FirFile {
-        val firFile = firFileBuilder.buildRawFirFileWithCaching(ktFile, moduleFileCache)
-        firLazyDeclarationResolver.lazyResolveFileDeclaration(
+    private fun getOrBuildFirForKtFile(ktFile: KtFile): FirFile {
+        val firFile = moduleComponents.firFileBuilder.buildRawFirFileWithCaching(ktFile)
+        moduleComponents.lazyFirDeclarationsResolver.lazyResolveFileDeclaration(
             firFile = firFile,
-            moduleFileCache = moduleFileCache,
             toPhase = FirResolvePhase.BODY_RESOLVE,
-            scopeSession = ScopeSession(),
+            scopeSession = moduleComponents.scopeSessionProvider.getScopeSession(),
             checkPCE = true
         )
         return firFile
@@ -94,8 +79,6 @@ internal class FirElementBuilder {
 
     private fun getOrBuildFirForNonKtFileElement(
         element: KtElement,
-        fileStructureCache: FileStructureCache,
-        moduleFileCache: ModuleFileCache,
         state: LLFirModuleResolveState,
     ): FirElement? {
         require(element !is KtFile)
@@ -105,7 +88,7 @@ internal class FirElementBuilder {
         }
 
         val firFile = element.containingKtFile
-        val fileStructure = fileStructureCache.getFileStructure(firFile, moduleFileCache)
+        val fileStructure = moduleComponents.fileStructureCache.getFileStructure(firFile)
 
         val mappings = fileStructure.getStructureElementFor(element).mappings
         val psi = getPsiAsFirElementSource(element) ?: return null
@@ -114,12 +97,8 @@ internal class FirElementBuilder {
     }
 
     @TestOnly
-    fun getStructureElementFor(
-        element: KtElement,
-        moduleFileCache: ModuleFileCache,
-        fileStructureCache: FileStructureCache,
-    ): FileStructureElement {
-        val fileStructure = fileStructureCache.getFileStructure(element.containingKtFile, moduleFileCache)
+    fun getStructureElementFor(element: KtElement): FileStructureElement {
+        val fileStructure = moduleComponents.fileStructureCache.getFileStructure(element.containingKtFile)
         return fileStructure.getStructureElementFor(element)
     }
 }

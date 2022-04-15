@@ -5,10 +5,8 @@
 
 package org.jetbrains.kotlin.analysis.low.level.api.fir.providers
 
-import com.intellij.openapi.project.Project
-import org.jetbrains.kotlin.analysis.low.level.api.fir.file.builder.FirFileBuilder
+import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirModuleResolveComponents
 import org.jetbrains.kotlin.analysis.low.level.api.fir.file.builder.ModuleFileCache
-import org.jetbrains.kotlin.analysis.project.structure.KtModule
 import org.jetbrains.kotlin.analysis.providers.KotlinDeclarationProvider
 import org.jetbrains.kotlin.analysis.providers.KotlinPackageProvider
 import org.jetbrains.kotlin.fir.FirSession
@@ -21,7 +19,6 @@ import org.jetbrains.kotlin.fir.originalForSubstitutionOverride
 import org.jetbrains.kotlin.fir.resolve.providers.FirProvider
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProviderInternals
-import org.jetbrains.kotlin.fir.scopes.FirKotlinScopeProvider
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
@@ -29,20 +26,16 @@ import org.jetbrains.kotlin.name.Name
 
 @ThreadSafeMutableState
 internal class LLFirProvider(
-    @Suppress("UNUSED_PARAMETER") project: Project,
     val session: FirSession,
-    @Suppress("UNUSED_PARAMETER") module: KtModule,
-    val kotlinScopeProvider: FirKotlinScopeProvider,
-    firFileBuilder: FirFileBuilder,
-    val cache: ModuleFileCache,
+    private val moduleComponents: LLFirModuleResolveComponents,
     private val declarationProvider: KotlinDeclarationProvider,
     packageProvider: KotlinPackageProvider,
 ) : FirProvider() {
     override val symbolProvider: FirSymbolProvider = SymbolProvider()
 
     private val providerHelper = LLFirProviderHelper(
-        cache,
-        firFileBuilder,
+        moduleComponents.cache,
+        moduleComponents.firFileBuilder,
         declarationProvider,
         packageProvider,
     )
@@ -59,7 +52,7 @@ internal class LLFirProvider(
 
     override fun getFirClassifierContainerFileIfAny(fqName: ClassId): FirFile? {
         val fir = getFirClassifierByFqName(fqName) ?: return null // Necessary to ensure cacheProvider contains this classifier
-        return cache.getContainerFirFile(fir)
+        return moduleComponents.cache.getContainerFirFile(fir)
     }
 
     override fun getFirClassifierContainerFile(symbol: FirClassLikeSymbol<*>): FirFile {
@@ -68,7 +61,7 @@ internal class LLFirProvider(
     }
 
     override fun getFirClassifierContainerFileIfAny(symbol: FirClassLikeSymbol<*>): FirFile? =
-        cache.getContainerFirFile(symbol.fir)
+        moduleComponents.cache.getContainerFirFile(symbol.fir)
 
 
     override fun getFirCallableContainerFile(symbol: FirCallableSymbol<*>): FirFile? {
@@ -81,7 +74,7 @@ internal class LLFirProvider(
                 return getFirCallableContainerFile(fir.getter.delegate.symbol)
             }
         }
-        return cache.getContainerFirFile(symbol.fir)
+        return moduleComponents.cache.getContainerFirFile(symbol.fir)
     }
 
     override fun getFirFilesByPackage(fqName: FqName): List<FirFile> = error("Should not be called in FIR IDE")

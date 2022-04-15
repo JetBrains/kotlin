@@ -17,10 +17,12 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirPhaseRunner
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.FirDeclarationDesignation
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.FirDeclarationDesignationWithFile
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.collectDesignation
+import org.jetbrains.kotlin.analysis.low.level.api.fir.file.builder.LockProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.file.builder.ModuleFileCache
 import org.jetbrains.kotlin.analysis.low.level.api.fir.file.builder.runCustomResolveUnderLock
 import org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.FirLazyDeclarationResolver
 import org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.ResolveTreeBuilder
+import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.llFirResolvableSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.transformers.LLFirLazyTransformer.Companion.updatePhaseDeep
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.checkCanceled
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.ensurePhase
@@ -32,8 +34,8 @@ internal class LLFirDesignatedSupertypeResolverTransformer(
     private val designation: FirDeclarationDesignationWithFile,
     private val session: FirSession,
     private val scopeSession: ScopeSession,
-    private val moduleFileCache: ModuleFileCache,
     private val firLazyDeclarationResolver: FirLazyDeclarationResolver,
+    private val lockProvider: LockProvider<FirFile>,
     private val firProviderInterceptor: FirProviderInterceptor?,
     private val checkPCE: Boolean,
 ) : LLFirLazyTransformer {
@@ -80,10 +82,9 @@ internal class LLFirDesignatedSupertypeResolverTransformer(
             for (nowVisit in toVisit) {
                 if (checkPCE) checkCanceled()
                 val resolver = DesignatedFirSupertypeResolverVisitor(nowVisit)
-                moduleFileCache.firFileLockProvider.runCustomResolveUnderLock(nowVisit.firFile, checkPCE) {
+                lockProvider.runCustomResolveUnderLock(nowVisit.firFile, checkPCE) {
                     firLazyDeclarationResolver.lazyResolveFileDeclaration(
                         firFile = nowVisit.firFile,
-                        moduleFileCache = moduleFileCache,
                         toPhase = FirResolvePhase.IMPORTS,
                         scopeSession = scopeSession,
                         checkPCE = true,
@@ -102,7 +103,8 @@ internal class LLFirDesignatedSupertypeResolverTransformer(
                     if (classLikeDeclaration !is FirClassLikeDeclaration) continue
                     if (classLikeDeclaration is FirJavaClass) continue
                     if (visited.containsKey(classLikeDeclaration)) continue
-                    val containingFile = moduleFileCache.getContainerFirFile(classLikeDeclaration) ?: continue
+                    val cache = classLikeDeclaration.llFirResolvableSession?.moduleComponents?.cache ?: continue
+                    val containingFile = cache.getContainerFirFile(classLikeDeclaration) ?: continue
                     toVisit.add(classLikeDeclaration.collectDesignation(containingFile))
                 }
             }
@@ -123,7 +125,7 @@ internal class LLFirDesignatedSupertypeResolverTransformer(
         val filesToDesignations = visited.groupBy { it.firFile }
         for (designationsPerFile in filesToDesignations) {
             if (checkPCE) checkCanceled()
-            moduleFileCache.firFileLockProvider.runCustomResolveUnderLock(designationsPerFile.key, checkPCE) {
+            lockProvider.runCustomResolveUnderLock(designationsPerFile.key, checkPCE) {
                 applyToFileSymbols(designationsPerFile.value)
             }
         }

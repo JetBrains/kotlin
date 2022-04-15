@@ -6,9 +6,9 @@
 package org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostics
 
 import org.jetbrains.kotlin.KtFakeSourceElementKind
+import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirModuleResolveComponents
 import org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostics.fir.PersistenceContextCollector
 import org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostics.fir.PersistentCheckerContextFactory
-import org.jetbrains.kotlin.analysis.low.level.api.fir.file.builder.LockProvider
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.collectors.components.AbstractDiagnosticCollectorComponent
@@ -19,7 +19,7 @@ internal abstract class FileStructureElementDiagnosticRetriever {
     abstract fun retrieve(
         firFile: FirFile,
         collector: FileStructureElementDiagnosticsCollector,
-        lockProvider: LockProvider<FirFile>
+        moduleComponents: LLFirModuleResolveComponents,
     ): FileStructureElementDiagnosticList
 }
 
@@ -29,10 +29,10 @@ internal class SingleNonLocalDeclarationDiagnosticRetriever(
     override fun retrieve(
         firFile: FirFile,
         collector: FileStructureElementDiagnosticsCollector,
-        lockProvider: LockProvider<FirFile>
+        moduleComponents: LLFirModuleResolveComponents,
     ): FileStructureElementDiagnosticList {
-        val sessionHolder = SessionHolderImpl.createWithEmptyScopeSession(firFile.moduleData.session)
-        val context = lockProvider.withWriteLock(firFile) {
+        val sessionHolder = SessionHolderImpl(moduleComponents.session, moduleComponents.scopeSessionProvider.getScopeSession())
+        val context = moduleComponents.globalResolveComponents.lockProvider.withWriteLock(firFile) {
             PersistenceContextCollector.collectContext(sessionHolder, firFile, structureElementDeclaration)
         }
         return collector.collectForStructureElement(structureElementDeclaration) { components ->
@@ -95,17 +95,19 @@ internal object FileDiagnosticRetriever : FileStructureElementDiagnosticRetrieve
     override fun retrieve(
         firFile: FirFile,
         collector: FileStructureElementDiagnosticsCollector,
-        lockProvider: LockProvider<FirFile>
+        moduleComponents: LLFirModuleResolveComponents,
     ): FileStructureElementDiagnosticList =
         collector.collectForStructureElement(firFile) { components ->
-            Visitor(firFile, components)
+            Visitor(components, moduleComponents)
         }
 
     private class Visitor(
-        firFile: FirFile,
-        components: List<AbstractDiagnosticCollectorComponent>
+        components: List<AbstractDiagnosticCollectorComponent>,
+        moduleComponents: LLFirModuleResolveComponents,
     ) : LLFirDiagnosticVisitor(
-        PersistentCheckerContextFactory.createEmptyPersistenceCheckerContext(SessionHolderImpl.createWithEmptyScopeSession(firFile.moduleData.session)),
+        PersistentCheckerContextFactory.createEmptyPersistenceCheckerContext(
+            SessionHolderImpl(moduleComponents.session, moduleComponents.scopeSessionProvider.getScopeSession())
+        ),
         components,
     ) {
         override fun visitFile(file: FirFile, data: Nothing?) {

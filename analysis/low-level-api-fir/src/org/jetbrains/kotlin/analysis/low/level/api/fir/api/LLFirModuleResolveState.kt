@@ -6,8 +6,10 @@
 package org.jetbrains.kotlin.analysis.low.level.api.fir.api
 
 import com.intellij.openapi.project.Project
+import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirGlobalResolveComponents
 import org.jetbrains.kotlin.analysis.low.level.api.fir.element.builder.FirTowerContextProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.file.builder.ModuleFileCache
+import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirResolvableModuleSession
 import org.jetbrains.kotlin.analysis.project.structure.KtLibraryModule
 import org.jetbrains.kotlin.analysis.project.structure.KtModule
 import org.jetbrains.kotlin.analysis.project.structure.KtSourceModule
@@ -18,6 +20,7 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
+import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtElement
@@ -32,6 +35,9 @@ abstract class LLFirModuleResolveState {
     abstract val module: KtModule
 
     internal abstract fun getSessionFor(module: KtModule): FirSession
+
+    abstract fun getScopeSessionFor(firSession: FirSession): ScopeSession
+
 
     /**
      * Build fully resolved FIR node for requested element.

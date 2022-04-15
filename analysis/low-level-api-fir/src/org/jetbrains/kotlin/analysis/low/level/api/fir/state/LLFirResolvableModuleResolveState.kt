@@ -5,23 +5,22 @@
 
 package org.jetbrains.kotlin.analysis.low.level.api.fir.state
 
+import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirGlobalResolveComponents
+import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirModuleResolveComponents
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.LLFirModuleResolveState
-import org.jetbrains.kotlin.analysis.low.level.api.fir.element.builder.FirElementBuilder
 import org.jetbrains.kotlin.analysis.low.level.api.fir.element.builder.FirTowerContextProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.element.builder.getNonLocalContainingOrThisDeclaration
-import org.jetbrains.kotlin.analysis.low.level.api.fir.file.builder.FirFileBuilder
-import org.jetbrains.kotlin.analysis.low.level.api.fir.file.builder.ModuleFileCache
-import org.jetbrains.kotlin.analysis.low.level.api.fir.file.structure.FileStructureCache
-import org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.FirLazyDeclarationResolver
-import org.jetbrains.kotlin.analysis.low.level.api.fir.providers.LLFirProvider
+import org.jetbrains.kotlin.analysis.low.level.api.fir.project.structure.firModuleData
+import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirResolvableModuleSession
+import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSessionProvider
-import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSourcesSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.FirDeclarationForCompiledElementSearcher
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.findSourceNonLocalFirDeclaration
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.getElementTextInContext
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.originalDeclaration
 import org.jetbrains.kotlin.analysis.project.structure.KtModule
 import org.jetbrains.kotlin.analysis.project.structure.getKtModule
+import org.jetbrains.kotlin.analysis.utils.errors.requireIsInstance
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
@@ -36,35 +35,37 @@ import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.psi.*
 
 internal abstract class LLFirResolvableModuleResolveState(
-    protected val sessionProvider: LLFirSessionProvider,
-    val firFileBuilder: FirFileBuilder,
-    val firLazyDeclarationResolver: FirLazyDeclarationResolver,
+    private val sessionProvider: LLFirSessionProvider,
 ) : LLFirModuleResolveState() {
-    final override val rootModuleSession = sessionProvider.rootModuleSession
-    val cache = (rootModuleSession.firProvider as LLFirProvider).cache
+    abstract val globalComponents: LLFirGlobalResolveComponents
 
-    val fileStructureCache = FileStructureCache(firFileBuilder, firLazyDeclarationResolver)
-    val elementBuilder = FirElementBuilder()
+    final override val rootModuleSession = sessionProvider.rootModuleSession
 
     override fun getSessionFor(module: KtModule): FirSession =
-        sessionProvider.getSession(module)!!
+        sessionProvider.getSession(module)
 
-    override fun getOrBuildFirFor(element: KtElement): FirElement? =
-        elementBuilder.getOrBuildFirFor(
-            element = element,
-            firFileBuilder = firFileBuilder,
-            moduleFileCache = cache,
-            fileStructureCache = fileStructureCache,
-            firLazyDeclarationResolver = firLazyDeclarationResolver,
-            state = this
-        )
+    override fun getScopeSessionFor(firSession: FirSession): ScopeSession {
+        requireIsInstance<LLFirSession>(firSession)
+        return firSession.getScopeSession()
+    }
 
+    override fun getOrBuildFirFor(element: KtElement): FirElement? {
+        val moduleComponents = getModuleComponentsForElement(element)
+        return moduleComponents.elementsBuilder.getOrBuildFirFor(element, this)
+    }
 
-    override fun getOrBuildFirFile(ktFile: KtFile): FirFile =
-        firFileBuilder.buildRawFirFileWithCaching(ktFile, cache)
+    override fun getOrBuildFirFile(ktFile: KtFile): FirFile {
+        val moduleComponents = getModuleComponentsForElement(ktFile)
+        return moduleComponents.firFileBuilder.buildRawFirFileWithCaching(ktFile)
+    }
 
     override fun tryGetCachedFirFile(declaration: FirDeclaration, cache: ModuleFileCache): FirFile? =
         cache.getContainerFirFile(declaration)
+
+    protected fun getModuleComponentsForElement(element: KtElement): LLFirModuleResolveComponents {
+        val ktModule = element.getKtModule()
+        return sessionProvider.getSession(ktModule).moduleComponents
+    }
 
     override fun resolveToFirSymbol(
         ktDeclaration: KtDeclaration,
@@ -102,10 +103,10 @@ internal abstract class LLFirResolvableModuleResolveState(
             ?: error("Declaration should have non-local container${ktDeclaration.getElementTextInContext()}")
 
         if (ktDeclaration == nonLocalNamedDeclaration) {
+            val session = sessionProvider.getSession(module)
             return nonLocalNamedDeclaration.findSourceNonLocalFirDeclaration(
-                firFileBuilder = firFileBuilder,
-                firSymbolProvider = rootModuleSession.firProvider.symbolProvider,
-                moduleFileCache = sessionProvider.getModuleCache(module)
+                firFileBuilder = session.moduleComponents.firFileBuilder,
+                provider = session.firProvider,
             ).symbol
         }
 
@@ -126,14 +127,12 @@ internal abstract class LLFirResolvableModuleResolveState(
 
     override fun resolveFirToPhase(declaration: FirDeclaration, toPhase: FirResolvePhase) {
         if (toPhase == FirResolvePhase.RAW_FIR) return
-        val fileCache = when (val session = declaration.moduleData.session) {
-            is LLFirSourcesSession -> session.cache
-            else -> return
-        }
-        firLazyDeclarationResolver.lazyResolveDeclaration(
+        val llFirResolvableModuleSession = declaration.firModuleData.session as? LLFirResolvableModuleSession ?: return
+
+        val moduleComponents = llFirResolvableModuleSession.moduleComponents
+        moduleComponents.lazyFirDeclarationsResolver.lazyResolveDeclaration(
             firDeclarationToResolve = declaration,
-            moduleFileCache = fileCache,
-            scopeSession = ScopeSession(),
+            scopeSession = moduleComponents.scopeSessionProvider.getScopeSession(),
             toPhase = toPhase,
             checkPCE = true,
         )

@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostics
 
 import com.intellij.psi.PsiElement
 import com.intellij.util.SmartList
+import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirModuleResolveComponents
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.DiagnosticCheckerFilter
 import org.jetbrains.kotlin.analysis.low.level.api.fir.file.builder.LockProvider
 import org.jetbrains.kotlin.diagnostics.KtPsiDiagnostic
@@ -14,15 +15,15 @@ import org.jetbrains.kotlin.fir.declarations.FirFile
 
 internal class FileStructureElementDiagnostics(
     private val firFile: FirFile,
-    private val lockProvider: LockProvider<FirFile>,
-    private val retriever: FileStructureElementDiagnosticRetriever
+    private val retriever: FileStructureElementDiagnosticRetriever,
+    private val moduleComponents: LLFirModuleResolveComponents,
 ) {
     private val diagnosticByCommonCheckers: FileStructureElementDiagnosticList by lazy {
-        retriever.retrieve(firFile, FileStructureElementDiagnosticsCollector.USUAL_COLLECTOR, lockProvider)
+        retriever.retrieve(firFile, FileStructureElementDiagnosticsCollector.USUAL_COLLECTOR, moduleComponents)
     }
 
     private val diagnosticByExtendedCheckers: FileStructureElementDiagnosticList by lazy {
-        retriever.retrieve(firFile, FileStructureElementDiagnosticsCollector.EXTENDED_COLLECTOR, lockProvider)
+        retriever.retrieve(firFile, FileStructureElementDiagnosticsCollector.EXTENDED_COLLECTOR, moduleComponents)
     }
 
     fun diagnosticsFor(filter: DiagnosticCheckerFilter, element: PsiElement): List<KtPsiDiagnostic> =

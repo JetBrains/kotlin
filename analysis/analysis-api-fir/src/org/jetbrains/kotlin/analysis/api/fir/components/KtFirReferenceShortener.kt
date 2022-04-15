@@ -66,7 +66,7 @@ internal class KtFirReferenceShortener(
     override val token: ValidityToken,
     override val firResolveState: LLFirModuleResolveState,
 ) : KtReferenceShortener(), KtFirAnalysisSessionComponent {
-    private val context = FirShorteningContext(firResolveState)
+    private val context = FirShorteningContext(analysisSession)
 
     override fun collectShortenings(
         file: KtFile,
@@ -163,7 +163,8 @@ private data class AvailableSymbol<out T>(
     val importKind: ImportKind,
 )
 
-private class FirShorteningContext(val firResolveState: LLFirModuleResolveState) {
+private class FirShorteningContext(val analysisSession: KtFirAnalysisSession) {
+    private val firResolveState = analysisSession.firResolveState
 
     private val firSession: FirSession
         get() = firResolveState.rootModuleSession
@@ -229,7 +230,11 @@ private class FirShorteningContext(val firResolveState: LLFirModuleResolveState)
         val resolvedNewImports = newImports.mapNotNull { createFakeResolvedImport(it) }
         if (resolvedNewImports.isEmpty()) return null
 
-        return FirExplicitSimpleImportingScope(resolvedNewImports, firSession, ScopeSession())
+        return FirExplicitSimpleImportingScope(
+            resolvedNewImports,
+            firSession,
+            analysisSession.getScopeSessionFor(firSession),
+        )
     }
 
     private fun createFakeResolvedImport(fqNameToImport: FqName): FirResolvedImport? {
