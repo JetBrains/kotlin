@@ -3356,6 +3356,12 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
             }
 
             @Test
+            @TestMetadata("lambdaReturnValue.kt")
+            public void testLambdaReturnValue() throws Exception {
+                runTest("js/js.translator/testData/box/expression/function/lambdaReturnValue.kt");
+            }
+
+            @Test
             @TestMetadata("localExtFunction.kt")
             public void testLocalExtFunction() throws Exception {
                 runTest("js/js.translator/testData/box/expression/function/localExtFunction.kt");
@@ -9482,6 +9488,12 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
         @TestMetadata("kt2470.kt")
         public void testKt2470() throws Exception {
             runTest("js/js.translator/testData/box/regression/kt2470.kt");
+        }
+
+        @Test
+        @TestMetadata("kt52010.kt")
+        public void testKt52010() throws Exception {
+            runTest("js/js.translator/testData/box/regression/kt52010.kt");
         }
 
         @Test

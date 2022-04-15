@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.classifierOrNull
+import org.jetbrains.kotlin.ir.types.isUnit
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
@@ -184,6 +185,11 @@ class InteropCallableReferenceLowering(val context: JsIrBackendContext) : BodyLo
 
         // Fix parents of declarations inside body
         body.patchDeclarationParents(lambdaDeclaration)
+
+        if (invokeFun.returnType.isUnit()) {
+            val unitValue = JsIrBuilder.buildGetObjectValue(context.irBuiltIns.unitType, context.irBuiltIns.unitClass)
+            (body as IrBlockBody).statements.add(IrReturnImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, context.irBuiltIns.nothingType, lambdaDeclaration.symbol, unitValue))
+        }
 
         return body as IrBlockBody
     }
