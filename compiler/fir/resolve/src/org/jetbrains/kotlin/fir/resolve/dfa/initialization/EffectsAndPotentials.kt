@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.fir.resolve.dfa.initialization
 
-class EffectsAndPotentials(
+data class EffectsAndPotentials(
     val effects: List<Effect> = listOf(),
     val potentials: List<Potential> = listOf()
 ) {
@@ -15,8 +15,17 @@ class EffectsAndPotentials(
 
     constructor(potential: Potential) : this(potentials = listOf(potential))
 
-    fun addEffectAndPotential(effect: Effect, potential: Potential): EffectsAndPotentials =
-        addEffectsAndPotentials(listOf(effect), listOf(potential))
+    operator fun plus(effect: Effect): EffectsAndPotentials = plus(listOf(effect))
+
+    operator fun plus(potential: Potential): EffectsAndPotentials = plus(listOf(potential))
+
+    @JvmName("plus1")
+    operator fun plus(effs: List<Effect>): EffectsAndPotentials =
+        addEffectsAndPotentials(effs = effs)
+
+    @JvmName("plus2")
+    operator fun plus(pots: List<Potential>): EffectsAndPotentials =
+        addEffectsAndPotentials(pots = pots)
 
     fun addEffectsAndPotentials(
         effs: List<Effect> = listOf(),
@@ -24,13 +33,8 @@ class EffectsAndPotentials(
     ): EffectsAndPotentials =
         EffectsAndPotentials(effects + effs, potentials + pots)
 
-    fun addEffectsAndPotentials(effectsAndPotentials: EffectsAndPotentials): EffectsAndPotentials =
-        effectsAndPotentials.run { addEffectsAndPotentials(effects, potentials) }
+    operator fun plus(effectsAndPotentials: EffectsAndPotentials): EffectsAndPotentials =
+        effectsAndPotentials.let { (effs, pots) -> addEffectsAndPotentials(effs, pots) }
 
     fun maxLength(): Int = potentials.maxOfOrNull(Potential::length) ?: 0
-
-    operator fun component1(): List<Effect> = effects
-
-    operator fun component2(): List<Potential> = potentials
-
 }
