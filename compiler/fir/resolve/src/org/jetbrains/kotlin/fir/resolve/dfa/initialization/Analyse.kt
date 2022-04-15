@@ -46,6 +46,7 @@ fun methodTyping(firFunction: FirFunction): EffectsAndPotentials =
 
 @OptIn(SymbolInternals::class)
 fun analyser(firExpression: FirStatement): EffectsAndPotentials =
+    // ???
     when (firExpression) {
         is FirBlock -> firExpression.statements.fold(EffectsAndPotentials()) { sum, firStatement ->
             sum.addEffectsAndPotentials(analyser(firStatement))
@@ -79,26 +80,27 @@ fun analyser(firExpression: FirStatement): EffectsAndPotentials =
         is FirPropertyAccessExpression -> {
             val receiver = firExpression.getReceiver()
 
-            val (prefEffs, prefPots) = analyser(receiver)
-
             val callable = firExpression.calleeReference.toResolvedCallableSymbol()
+
+            //val (prefEffs, prefPots) = analyser(receiver)
 
             when (callable) {
 
             }
-            select(prefPots, TODO())
+            //select(prefPots, TODO())
 
-            TODO()
+//            TODO()
+            EffectsAndPotentials()
         }
         is FirReturnExpression -> {
             analyser(firExpression.result)
         }
         is FirThisReceiverExpression -> {
-
+            firExpression.typeRef
 //            TODO:resolveThis()
-            EffectsAndPotentials(Potential.Root.This(firExpression))
+            EffectsAndPotentials(Potential.Root.This(firExpression as FirClass)) //!!!
         }
-
+        is FirConstExpression<*> -> EffectsAndPotentials()  // ???
         else -> throw IllegalArgumentException()
     }
 
