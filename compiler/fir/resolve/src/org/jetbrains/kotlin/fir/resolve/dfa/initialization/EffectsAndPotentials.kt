@@ -9,7 +9,6 @@ class EffectsAndPotentials(
     val effects: List<Effect> = listOf(),
     val potentials: List<Potential> = listOf()
 ) {
-
     constructor(effect: Effect, potential: Potential) : this(listOf(effect), listOf(potential))
 
     constructor(effect: Effect) : this(effects = listOf(effect))
@@ -26,5 +25,12 @@ class EffectsAndPotentials(
         EffectsAndPotentials(effects + effs, potentials + pots)
 
     fun addEffectsAndPotentials(effectsAndPotentials: EffectsAndPotentials): EffectsAndPotentials =
-        addEffectsAndPotentials(effectsAndPotentials.effects, effectsAndPotentials.potentials)
+        effectsAndPotentials.run { addEffectsAndPotentials(effects, potentials) }
+
+    fun maxLength(): Int = potentials.maxOfOrNull(Potential::length) ?: 0
+
+    operator fun component1(): List<Effect> = effects
+
+    operator fun component2(): List<Potential> = potentials
+
 }
