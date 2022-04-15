@@ -11,6 +11,7 @@ import org.gradle.api.file.*
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.tasks.*
 import java.io.*
+import java.util.TreeSet
 import javax.inject.Inject
 
 open class ApiCompareCompareTask @Inject constructor(private val objects: ObjectFactory): DefaultTask() {
@@ -53,7 +54,11 @@ open class ApiCompareCompareTask @Inject constructor(private val objects: Object
 
         val subject = projectName
         val apiBuildDirFiles = mutableSetOf<RelativePath>()
-        val expectedApiFiles = mutableSetOf<RelativePath>()
+        // We use case-insensitive comparison to workaround issues with case-insensitive OSes
+        // and Gradle behaving slightly different on different platforms
+        val expectedApiFiles = TreeSet<RelativePath> { rp, rp2 ->
+            rp.toString().compareTo(rp2.toString(), true)
+        }
         objects.fileTree().from(apiBuildDir).visit { file ->
             apiBuildDirFiles.add(file.relativePath)
         }
