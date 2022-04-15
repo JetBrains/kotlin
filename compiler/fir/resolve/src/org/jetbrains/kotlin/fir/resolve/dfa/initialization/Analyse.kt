@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.fir.resolve.dfa.initialization
 
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.*
-import org.jetbrains.kotlin.fir.references.FirNamedReference
+import org.jetbrains.kotlin.fir.expressions.impl.FirNoReceiverExpression
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 
 class ClassAnalyser(val firClass: FirClass) {
@@ -54,16 +54,18 @@ fun analyser(firExpression: FirStatement): EffectsAndPotentials =
             sum.addEffectsAndPotentials(analyser(operator))
         }
         is FirFunctionCall -> {
+            val receiver = firExpression.getReceiver()
+            val prefEffsAndPots = analyser(receiver)
 
             val firCallableDeclaration = firExpression.calleeReference.candidateSymbol?.fir as? FirCallableDeclaration
 
             val effsAndPotsOfMethod = when (firCallableDeclaration) {
                 is FirAnonymousFunction -> TODO()
-                is FirConstructor -> TODO()
-                is FirPropertyAccessor -> firCallableDeclaration.propertySymbol?.fir?.let(::fieldTyping) ?: EffectsAndPotentials()
-                is FirSimpleFunction -> methodTyping(firCallableDeclaration)
-//                is FirField -> TODO() ???
                 is FirProperty -> TODO()
+                is FirPropertyAccessor -> firCallableDeclaration.propertySymbol?.fir?.let(::fieldTyping) ?: EffectsAndPotentials()
+                is FirSimpleFunction -> call(prefEffsAndPots.potentials, firCallableDeclaration)
+                is FirConstructor -> TODO()
+//                is FirField -> TODO() ???
                 else -> throw IllegalArgumentException()
             }
 
@@ -72,20 +74,42 @@ fun analyser(firExpression: FirStatement): EffectsAndPotentials =
                 sum.addEffectsAndPotentials(effs + promote(pots))
                 // TODO: explicit receiver promotion
             }
-            effsAndPotsOfMethod.addEffectsAndPotentials(effsAndPotsOfArgs)
+            effsAndPotsOfMethod.addEffectsAndPotentials(effsAndPotsOfArgs).addEffectsAndPotentials(prefEffsAndPots)
         }
         is FirPropertyAccessExpression -> {
-            val firCallableDeclaration =
-                (firExpression.calleeReference as? FirNamedReference)?.candidateSymbol?.fir as? FirCallableDeclaration
-            val a = { sum: Int, b: Int -> sum + b }
+            val receiver = firExpression.getReceiver()
+
+            val (prefEffs, prefPots) = analyser(receiver)
+
+            val callable = firExpression.calleeReference.toResolvedCallableSymbol()
+
+            when (callable) {
+
+            }
+            select(prefPots, TODO())
 
             TODO()
         }
         is FirReturnExpression -> {
             analyser(firExpression.result)
         }
+        is FirThisReceiverExpression -> {
+
+//            TODO:resolveThis()
+            EffectsAndPotentials(Potential.Root.This(firExpression))
+        }
+
         else -> throw IllegalArgumentException()
     }
+
+private fun FirQualifiedAccess.getReceiver(): FirExpression {
+    val rec = explicitReceiver ?: extensionReceiver
+    if (rec is FirNoReceiverExpression)
+        TODO()
+
+    return rec
+}
+
 
 fun analyseAndCheck(firClass: FirClass) {
     val analyser = ClassAnalyser(firClass)

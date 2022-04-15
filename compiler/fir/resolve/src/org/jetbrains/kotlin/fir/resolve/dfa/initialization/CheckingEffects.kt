@@ -15,10 +15,17 @@ class CheckingEffects {
 
 fun resolveThis(
     clazz: FirClass,
-    potential: List<Potential>,
-    effect: Effect,
+    potential: Potential,
+    effects: List<Effect>,
     innerClass: FirClass
-): EffectsAndPotentials = TODO()
+): EffectsAndPotentials {
+    if (clazz === innerClass)
+        return EffectsAndPotentials(potential)
+
+    outerSelection(TODO(), innerClass)
+
+    return resolveThis(clazz, OuterPotential(potential, innerClass), effects, TODO())
+}
 
 fun resolve(clazz: FirClass, firDeclaration: FirDeclaration): FirClass = TODO()
 
