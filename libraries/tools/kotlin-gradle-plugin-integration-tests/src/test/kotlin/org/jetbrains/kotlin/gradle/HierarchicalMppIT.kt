@@ -700,6 +700,20 @@ class HierarchicalMppIT : BaseGradleIT() {
             }
         }
     }
+    @Test
+    fun testSingleTargetWithDisabledHMPPCanConsumeNonHMPPLibs() {
+        with(transformProjectWithPluginsDsl("lib", directoryPrefix = "singleTargetConsumeNonHMPP")) {
+            build("publish") {
+                assertSuccessful()
+            }
+        }
+
+        with (transformProjectWithPluginsDsl("app", directoryPrefix = "singleTargetConsumeNonHMPP")) {
+            build("assemble", options = defaultBuildOptions().copy(hierarchicalMPPStructureSupport = false)) {
+                assertSuccessful()
+            }
+        }
+    }
 
     private fun Project.testDependencyTransformations(
         subproject: String? = null,
