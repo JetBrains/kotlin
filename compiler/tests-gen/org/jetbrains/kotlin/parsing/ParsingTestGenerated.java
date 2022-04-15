@@ -161,6 +161,11 @@ public class ParsingTestGenerated extends AbstractParsingTest {
             runTest("compiler/testData/psi/destructuringInLambdas_ERR.kt");
         }
 
+        @TestMetadata("diagnosticTags_ERR.kt")
+        public void testDiagnosticTags_ERR() throws Exception {
+            runTest("compiler/testData/psi/diagnosticTags_ERR.kt");
+        }
+
         @TestMetadata("DocCommentAfterFileAnnotations.kt")
         public void testDocCommentAfterFileAnnotations() throws Exception {
             runTest("compiler/testData/psi/DocCommentAfterFileAnnotations.kt");
