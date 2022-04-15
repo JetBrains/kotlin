@@ -2243,7 +2243,7 @@ public class KotlinParsing extends AbstractKotlinParsing {
             wasIntersection = true;
         }
 
-        if (typeBeforeDot && at(DOT) && !wasIntersection) {
+        if (typeBeforeDot && at(DOT) && !wasIntersection && !wasFunctionTypeParsed) {
             // This is a receiver for a function type
             //  A.(B) -> C
             //   ^
@@ -2261,6 +2261,7 @@ public class KotlinParsing extends AbstractKotlinParsing {
                 parseFunctionType(functionType);
             }
             else {
+                functionType.drop();
                 error("Expecting function type");
             }
 
