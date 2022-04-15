@@ -12,11 +12,7 @@ value class VC(val v: Int)
 
 fun vcFun(): VC = VC(1)
 
-class Holder() {
-    fun <T> applyAndRet(block: () -> T): T {
-        return block()
-    }
-}
+
 
 fun box(): String {
     if (rawReturnValue { unitFun() } != Unit) return "fail1.1"
