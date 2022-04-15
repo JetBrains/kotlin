@@ -18718,6 +18718,12 @@ public class FirOldFrontendDiagnosticsTestGenerated extends AbstractFirDiagnosti
                 }
 
                 @Test
+                @TestMetadata("noOverrideKeyword.kt")
+                public void testNoOverrideKeyword() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/j+k/types/noOverrideKeyword.kt");
+                }
+
+                @Test
                 @TestMetadata("notNullTypeParameterWithKotlinNullable.kt")
                 public void testNotNullTypeParameterWithKotlinNullable() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/j+k/types/notNullTypeParameterWithKotlinNullable.kt");
