@@ -31,6 +31,8 @@ import org.jetbrains.kotlin.resolve.constants.ClassLiteralValue
 import org.jetbrains.kotlin.resolve.constants.ConstantValue
 import org.jetbrains.kotlin.resolve.constants.KClassValue
 import org.jetbrains.kotlin.serialization.deserialization.getClassId
+import org.jetbrains.kotlin.storage.LockBasedStorageManager
+import org.jetbrains.kotlin.storage.StorageManager
 
 open class KotlinClsStubBuilder : ClsStubBuilder() {
     override fun getStubVersion() = ClassFileStubBuilder.STUB_VERSION + KotlinStubVersions.CLASSFILE_STUB_VERSION
@@ -128,8 +130,13 @@ private class AnnotationLoaderForClassFileStubBuilder(
     private val cachedFileContent: ByteArray
 ) : AbstractBinaryClassAnnotationLoader<ClassId, AnnotationLoaderForClassFileStubBuilder.AnnotationsClassIdContainer>(kotlinClassFinder) {
 
+    private val storage =
+        LockBasedStorageManager.NO_LOCKS.createMemoizedFunction<KotlinJvmBinaryClass, AnnotationsClassIdContainer> { kotlinClass ->
+            loadAnnotationsAndInitializers(kotlinClass)
+        }
+
     override fun getAnnotationsContainer(binaryClass: KotlinJvmBinaryClass): AnnotationsClassIdContainer {
-        return loadAnnotationsAndInitializers(binaryClass)
+        return storage(binaryClass)
     }
 
     override fun getCachedFileContent(kotlinClass: KotlinJvmBinaryClass): ByteArray? {
