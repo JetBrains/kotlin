@@ -15,16 +15,14 @@ class CheckingEffects {
 
 fun resolveThis(
     clazz: FirClass,
-    potential: Potential,
-    effects: List<Effect>,
-    innerClass: FirClass
+    effsAndPots: EffectsAndPotentials,
+    innerClass: FirClass,
 ): EffectsAndPotentials {
-    if (clazz === innerClass)
-        return EffectsAndPotentials(potential)
+    if (clazz === innerClass) return effsAndPots
 
-    outerSelection(TODO(), innerClass)
-
-    return resolveThis(clazz, OuterPotential(potential, innerClass), effects, TODO())
+    val outerSelection = outerSelection(effsAndPots.potentials, innerClass)
+    val outerClass = TODO() // outerClass for innerClass
+    return resolveThis(clazz, outerSelection, outerClass)
 }
 
 fun resolve(clazz: FirClass, firDeclaration: FirDeclaration): FirClass = TODO()
