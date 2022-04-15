@@ -5,9 +5,21 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers.extended.safe.initialization
 
+import org.jetbrains.kotlin.contracts.description.EventOccurrencesRange
+import org.jetbrains.kotlin.contracts.description.isDefinitelyVisited
+import org.jetbrains.kotlin.contracts.description.isInPlace
+import org.jetbrains.kotlin.fir.analysis.cfa.util.EventOccurrencesRangeInfo
+import org.jetbrains.kotlin.fir.analysis.cfa.util.PathAwarePropertyInitializationInfo
+import org.jetbrains.kotlin.fir.analysis.cfa.util.PropertyInitializationInfo
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.analysis.checkers.extended.safe.initialization.Effect.*
 import org.jetbrains.kotlin.fir.analysis.checkers.extended.safe.initialization.Potential.*
+import org.jetbrains.kotlin.fir.expressions.FirVariableAssignment
+import org.jetbrains.kotlin.fir.expressions.toResolvedCallableSymbol
+import org.jetbrains.kotlin.fir.resolve.dfa.cfg.CFGNode
+import org.jetbrains.kotlin.fir.resolve.dfa.cfg.ControlFlowGraphVisitorVoid
+import org.jetbrains.kotlin.fir.resolve.dfa.cfg.VariableAssignmentNode
+import org.jetbrains.kotlin.fir.resolve.dfa.controlFlowGraph
 import org.jetbrains.kotlin.utils.addIfNotNull
 
 class CheckingEffects {
@@ -33,6 +45,8 @@ object Checker {
     data class StateOfClass(val firClass: FirClass) {
         val alreadyInitializedProperties = mutableSetOf<FirProperty>()
         val allProperties = firClass.declarations.filterIsInstance<FirProperty>()
+
+        val notFinalAssignments = mutableMapOf<FirProperty, Set<FirVariableAssignment>>()
 
         val caches = mutableMapOf<FirDeclaration, EffectsAndPotentials>()
     }
@@ -66,7 +80,25 @@ object Checker {
         }
 
     private fun FirProperty.findFirstInitializationPoint(): EffectsAndPotentials {
-            TODO()
+        TODO()
+    }
+
+    class PropertyInitializationPoint(
+        val data: Map<CFGNode<*>, PathAwarePropertyInitializationInfo>,
+    ) : ControlFlowGraphVisitorVoid() {
+        val notFinalAssignment = mutableSetOf<FirVariableAssignment>()
+
+        override fun visitNode(node: CFGNode<*>) {}
+
+        override fun visitVariableAssignmentNode(node: VariableAssignmentNode) {
+            val symbol = node.fir.calleeReference.toResolvedCallableSymbol()
+
+            val info = data.getValue(node)
+            val eventOccurrencesRange = info.infoAtNormalPath[symbol] ?: return
+            if (!eventOccurrencesRange.isDefinitelyVisited())
+                notFinalAssignment.add(node.fir)
+        }
+
     }
 
     fun StateOfClass.checkBody(dec: FirFunction): List<Error> {
