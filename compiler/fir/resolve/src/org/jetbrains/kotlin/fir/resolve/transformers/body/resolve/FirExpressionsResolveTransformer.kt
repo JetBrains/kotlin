@@ -857,10 +857,9 @@ open class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransform
                 transformer,
                 withExpectedType(variableAssignment.lValueTypeRef, expectedTypeMismatchIsReportedInChecker = true)
             )
-            val resolvedAssignCall = resolveAssignOperatorFunctionCall(completedAssignment)
-            when {
-                resolvedAssignCall != null -> resolvedAssignCall.updateFunctionCallDataflow()
-                else -> completedAssignment.updateOperatorDataflow()
+            when (val resolvedAssignCall = resolveAssignOperatorFunctionCall(completedAssignment)) {
+                null -> completedAssignment.updateOperatorDataflow()
+                else -> resolvedAssignCall.updateFunctionCallDataflow()
             }
         } else {
             // This can happen in erroneous code only
@@ -877,23 +876,23 @@ open class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransform
         val leftResolvedType = leftSymbol.fir.returnTypeRef
         val rightArgument = resolvedAssignment.rValue
         val assignOperatorCall = buildFunctionCall {
-            this.source = source
+            source = resolvedAssignment.source?.fakeElement(KtFakeSourceElementKind.DesugaredCompoundAssignment)
             explicitReceiver = buildPropertyAccessExpression {
-                this.source = leftArgument.source
-                this.typeRef = leftResolvedType
-                this.calleeReference = resolvedAssignment.calleeReference
-                this.typeArguments.addAll(resolvedAssignment.typeArguments)
-                this.annotations.addAll(resolvedAssignment.annotations)
-                this.explicitReceiver = resolvedAssignment.explicitReceiver
-                this.dispatchReceiver = resolvedAssignment.dispatchReceiver
-                this.extensionReceiver = resolvedAssignment.extensionReceiver
-                this.contextReceiverArguments.addAll(resolvedAssignment.contextReceiverArguments)
+                source = leftArgument.source
+                typeRef = leftResolvedType
+                calleeReference = resolvedAssignment.calleeReference
+                typeArguments += resolvedAssignment.typeArguments
+                annotations += resolvedAssignment.annotations
+                explicitReceiver = resolvedAssignment.explicitReceiver
+                dispatchReceiver = resolvedAssignment.dispatchReceiver
+                extensionReceiver = resolvedAssignment.extensionReceiver
+                contextReceiverArguments += resolvedAssignment.contextReceiverArguments
             }
             argumentList = buildUnaryArgumentList(rightArgument)
             calleeReference = buildSimpleNamedReference {
-                // TODO: Use source of resolved assign function
-                this.source = resolvedAssignment.source
-                this.name = OperatorNameConventions.ASSIGN
+                // TODO: Should I use different source here same as in += function call?
+                source = resolvedAssignment.source
+                name = OperatorNameConventions.ASSIGN
                 candidateSymbol = null
             }
             origin = FirFunctionCallOrigin.Operator
