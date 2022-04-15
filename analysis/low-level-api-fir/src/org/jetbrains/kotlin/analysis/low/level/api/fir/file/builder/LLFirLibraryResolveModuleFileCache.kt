@@ -5,19 +5,16 @@
 
 package org.jetbrains.kotlin.analysis.low.level.api.fir.file.builder
 
-import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirPhaseRunner
+import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirModuleResolveComponents
 import org.jetbrains.kotlin.analysis.low.level.api.fir.element.builder.FirTowerDataContextAllElementsCollector
 import org.jetbrains.kotlin.analysis.low.level.api.fir.file.structure.FirElementsRecorder
 import org.jetbrains.kotlin.analysis.low.level.api.fir.file.structure.KtToFirMapping
-import org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.FirLazyDeclarationResolver
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirLibraryOrLibrarySourceResolvableModuleSession
 import org.jetbrains.kotlin.fir.declarations.FirClassLikeDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.psi
-import org.jetbrains.kotlin.fir.resolve.ScopeSession
-import org.jetbrains.kotlin.fir.scopes.FirScopeProvider
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
@@ -25,13 +22,7 @@ import org.jetbrains.kotlin.psi.KtFile
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap
 
-internal class LLFirLibraryResolveModuleFileCache(
-    val kotlinScopeProvider: FirScopeProvider,
-    override val session: LLFirLibraryOrLibrarySourceResolvableModuleSession
-) : ModuleFileCache() {
-    private val firFileBuilder = FirFileBuilder(kotlinScopeProvider, LLFirPhaseRunner())
-
-    private val firLazyDeclarationResolver = FirLazyDeclarationResolver(firFileBuilder)
+internal class LLFirLibraryResolveModuleFileCache: ModuleFileCache() {
 
     private val kfFileToFirCache = ConcurrentHashMap<KtFile, ResolvedFile>()
 
@@ -58,16 +49,16 @@ internal class LLFirLibraryResolveModuleFileCache(
         createKtFile: (KtFile) -> FirFile
     ): ResolvedFile = kfFileToFirCache.computeIfAbsent(ktFile) {
         val collector = FirTowerDataContextAllElementsCollector()
-        val scopeSession = ScopeSession()
+
+        val scopeSession = moduleComponents.scopeSessionProvider.getScopeSession()
 
         val firFile = createKtFile(ktFile)
 
-        firLazyDeclarationResolver.lazyResolveFileDeclaration(
+        moduleComponents.lazyFirDeclarationsResolver.lazyResolveFileDeclaration(
             firFile,
-            this,
             FirResolvePhase.BODY_RESOLVE,
             scopeSession,
-            collector = collector,
+            collector,
             checkPCE = true
         )
 

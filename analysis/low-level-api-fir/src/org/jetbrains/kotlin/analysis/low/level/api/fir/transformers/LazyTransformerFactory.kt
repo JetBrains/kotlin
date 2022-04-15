@@ -18,7 +18,6 @@ internal object LazyTransformerFactory {
         phase: FirResolvePhase,
         designation: FirDeclarationDesignationWithFile,
         scopeSession: ScopeSession,
-        moduleFileCache: ModuleFileCache,
         lazyDeclarationResolver: FirLazyDeclarationResolver,
         towerDataContextCollector: FirTowerDataContextCollector?,
         firProviderInterceptor: FirProviderInterceptor?,
@@ -33,8 +32,8 @@ internal object LazyTransformerFactory {
             designation = designation,
             session = designation.firFile.moduleData.session,
             scopeSession = scopeSession,
-            moduleFileCache = moduleFileCache,
             firLazyDeclarationResolver = lazyDeclarationResolver,
+            lockProvider = lazyDeclarationResolver.moduleComponents.globalResolveComponents.lockProvider,
             firProviderInterceptor = firProviderInterceptor,
             checkPCE = checkPCE,
         )

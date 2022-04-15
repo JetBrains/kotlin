@@ -5,22 +5,17 @@
 
 package org.jetbrains.kotlin.analysis.low.level.api.fir.file.structure
 
-import org.jetbrains.kotlin.analysis.low.level.api.fir.file.builder.FirFileBuilder
-import org.jetbrains.kotlin.analysis.low.level.api.fir.file.builder.ModuleFileCache
-import org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.FirLazyDeclarationResolver
+import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirModuleResolveComponents
 import org.jetbrains.kotlin.psi.KtFile
 import java.util.concurrent.ConcurrentHashMap
 
 /**
  * Belongs to a [org.jetbrains.kotlin.analysis.low.level.api.fir.api.LLFirModuleResolveState]
  */
-internal class FileStructureCache(
-    private val fileBuilder: FirFileBuilder,
-    private val firLazyDeclarationResolver: FirLazyDeclarationResolver,
-) {
+internal class FileStructureCache(private val moduleResolveComponents: LLFirModuleResolveComponents) {
     private val cache = ConcurrentHashMap<KtFile, FileStructure>()
 
-    fun getFileStructure(ktFile: KtFile, moduleFileCache: ModuleFileCache): FileStructure = cache.computeIfAbsent(ktFile) {
-        FileStructure.build(ktFile, firLazyDeclarationResolver, fileBuilder, moduleFileCache)
+    fun getFileStructure(ktFile: KtFile): FileStructure = cache.computeIfAbsent(ktFile) {
+        FileStructure.build(ktFile, moduleResolveComponents)
     }
 }

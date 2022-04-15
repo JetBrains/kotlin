@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.file.builder
 
 import com.intellij.concurrency.ConcurrentCollectionFactory
 import org.jetbrains.kotlin.analysis.api.impl.barebone.annotations.ThreadSafe
+import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirModuleResolveComponents
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirClassLikeDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
@@ -24,7 +25,7 @@ import java.util.concurrent.ConcurrentHashMap
  */
 @ThreadSafe
 internal abstract class ModuleFileCache {
-    abstract val session: FirSession
+    lateinit var moduleComponents: LLFirModuleResolveComponents
 
     /**
      * Maps [ClassId] to corresponding classifiers
@@ -51,7 +52,7 @@ internal abstract class ModuleFileCache {
     abstract val firFileLockProvider: LockProvider<FirFile>
 }
 
-internal class ModuleFileCacheImpl(override val session: FirSession) : ModuleFileCache() {
+internal class ModuleFileCacheImpl() : ModuleFileCache() {
     private val ktFileToFirFile = ConcurrentCollectionFactory.createConcurrentIdentityMap<KtFile, FirFile>()
 
     override val classifierByClassId: ConcurrentHashMap<ClassId, Optional<FirClassLikeDeclaration>> = ConcurrentHashMap()

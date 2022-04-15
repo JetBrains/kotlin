@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.analysis.low.level.api.fir.state
 
 import com.intellij.openapi.project.Project
+import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirGlobalResolveComponents
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.DiagnosticCheckerFilter
 import org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostics.DiagnosticsCollector
 import org.jetbrains.kotlin.analysis.low.level.api.fir.file.builder.FirFileBuilder
@@ -20,19 +21,20 @@ import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtFile
 
 internal class LLFirSourceModuleResolveState(
+    override val globalComponents: LLFirGlobalResolveComponents,
     override val project: Project,
     override val module: KtModule,
     sessionProvider: LLFirSessionProvider,
-    firFileBuilder: FirFileBuilder,
-    firLazyDeclarationResolver: FirLazyDeclarationResolver,
-) : LLFirResolvableModuleResolveState(sessionProvider, firFileBuilder, firLazyDeclarationResolver) {
-    private val diagnosticsCollector = DiagnosticsCollector(fileStructureCache, cache)
+) : LLFirResolvableModuleResolveState(sessionProvider) {
+    override fun getDiagnostics(element: KtElement, filter: DiagnosticCheckerFilter): List<KtPsiDiagnostic> {
+        val moduleComponents = getModuleComponentsForElement(element)
+        return moduleComponents.diagnosticsCollector.getDiagnosticsFor(element, filter)
+    }
 
-    override fun getDiagnostics(element: KtElement, filter: DiagnosticCheckerFilter): List<KtPsiDiagnostic> =
-        diagnosticsCollector.getDiagnosticsFor(element, filter)
-
-    override fun collectDiagnosticsForFile(ktFile: KtFile, filter: DiagnosticCheckerFilter): Collection<KtPsiDiagnostic> =
-        diagnosticsCollector.collectDiagnosticsForFile(ktFile, filter)
+    override fun collectDiagnosticsForFile(ktFile: KtFile, filter: DiagnosticCheckerFilter): Collection<KtPsiDiagnostic> {
+        val moduleComponents = getModuleComponentsForElement(ktFile)
+        return moduleComponents.diagnosticsCollector.collectDiagnosticsForFile(ktFile, filter)
+    }
 
     override fun getModuleKind(module: KtModule): ModuleKind {
         return when (module) {

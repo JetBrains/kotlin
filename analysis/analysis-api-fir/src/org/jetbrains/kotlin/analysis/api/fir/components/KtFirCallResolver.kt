@@ -929,7 +929,11 @@ internal class KtFirCallResolver(
     }
 
     private fun FirClassSymbol<*>.getEqualsSymbol(equalsSymbolInAny: FirNamedFunctionSymbol): FirNamedFunctionSymbol {
-        val scope = unsubstitutedScope(analysisSession.rootModuleSession, ScopeSession(), false)
+        val scope = unsubstitutedScope(
+            analysisSession.rootModuleSession,
+            analysisSession.getScopeSessionFor(analysisSession.rootModuleSession),
+            false
+        )
         var equalsSymbol: FirNamedFunctionSymbol? = null
         scope.processFunctionsByName(EQUALS) { equalsSymbolFromScope ->
             if (equalsSymbol != null) return@processFunctionsByName

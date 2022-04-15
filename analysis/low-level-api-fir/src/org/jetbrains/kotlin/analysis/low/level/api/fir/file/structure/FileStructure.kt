@@ -6,18 +6,14 @@
 package org.jetbrains.kotlin.analysis.low.level.api.fir.file.structure
 
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirModuleResolveComponents
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.DiagnosticCheckerFilter
 import org.jetbrains.kotlin.analysis.low.level.api.fir.element.builder.getNonLocalContainingOrThisDeclaration
-import org.jetbrains.kotlin.analysis.low.level.api.fir.file.builder.FirFileBuilder
-import org.jetbrains.kotlin.analysis.low.level.api.fir.file.builder.ModuleFileCache
-import org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.FirLazyDeclarationResolver
-import org.jetbrains.kotlin.analysis.low.level.api.fir.providers.LLFirProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.findSourceNonLocalFirDeclaration
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.getElementTextInContext
 import org.jetbrains.kotlin.diagnostics.KtPsiDiagnostic
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
-import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.providers.firProvider
 import org.jetbrains.kotlin.psi.*
 import java.util.concurrent.ConcurrentHashMap
@@ -25,19 +21,15 @@ import java.util.concurrent.ConcurrentHashMap
 internal class FileStructure private constructor(
     private val ktFile: KtFile,
     private val firFile: FirFile,
-    private val firLazyDeclarationResolver: FirLazyDeclarationResolver,
-    private val firFileBuilder: FirFileBuilder,
-    private val moduleFileCache: ModuleFileCache,
+    private val moduleComponents: LLFirModuleResolveComponents,
 ) {
     companion object {
         fun build(
             ktFile: KtFile,
-            firLazyDeclarationResolver: FirLazyDeclarationResolver,
-            firFileBuilder: FirFileBuilder,
-            moduleFileCache: ModuleFileCache,
+            moduleComponents: LLFirModuleResolveComponents,
         ): FileStructure {
-            val firFile = firFileBuilder.buildRawFirFileWithCaching(ktFile, moduleFileCache)
-            return FileStructure(ktFile, firFile, firLazyDeclarationResolver, firFileBuilder, moduleFileCache)
+            val firFile = moduleComponents.firFileBuilder.buildRawFirFileWithCaching(ktFile)
+            return FileStructure(ktFile, firFile, moduleComponents)
         }
     }
 
@@ -56,11 +48,7 @@ internal class FileStructure private constructor(
             when {
                 structureElement == null -> createStructureElement(declaration)
                 structureElement is ReanalyzableStructureElement<KtDeclaration, *> && !structureElement.isUpToDate() -> {
-                    structureElement.reanalyze(
-                        newKtDeclaration = declaration as KtDeclaration,
-                        cache = moduleFileCache,
-                        firLazyDeclarationResolver = firLazyDeclarationResolver,
-                    )
+                    structureElement.reanalyze(newKtDeclaration = declaration as KtDeclaration,)
                 }
                 else -> structureElement
             }
@@ -111,15 +99,13 @@ internal class FileStructure private constructor(
 
     private fun createDeclarationStructure(declaration: KtDeclaration): FileStructureElement {
         val firDeclaration = declaration.findSourceNonLocalFirDeclaration(
-            firFileBuilder,
-            firProvider.symbolProvider,
-            moduleFileCache,
+            moduleComponents.firFileBuilder,
+            firProvider,
             firFile
         )
-        firLazyDeclarationResolver.lazyResolveDeclaration(
+        moduleComponents.lazyFirDeclarationsResolver.lazyResolveDeclaration(
             firDeclarationToResolve = firDeclaration,
-            moduleFileCache = moduleFileCache,
-            scopeSession = ScopeSession(),
+            scopeSession = moduleComponents.scopeSessionProvider.getScopeSession(),
             toPhase = FirResolvePhase.BODY_RESOLVE,
             checkPCE = true,
         )
@@ -127,25 +113,20 @@ internal class FileStructure private constructor(
             firDeclaration = firDeclaration,
             ktDeclaration = declaration,
             firFile = firFile,
-            firFileLockProvider = moduleFileCache.firFileLockProvider
+            moduleComponents = moduleComponents
         )
     }
 
     private fun createStructureElement(container: KtAnnotated): FileStructureElement = when (container) {
         is KtFile -> {
-            val firFile = firFileBuilder.buildRawFirFileWithCaching(ktFile, moduleFileCache)
-            firLazyDeclarationResolver.resolveFileAnnotations(
+            val firFile = moduleComponents.firFileBuilder.buildRawFirFileWithCaching(ktFile)
+            moduleComponents.lazyFirDeclarationsResolver.resolveFileAnnotations(
                 firFile = firFile,
                 annotations = firFile.annotations,
-                moduleFileCache = moduleFileCache,
-                scopeSession = ScopeSession(),
+                scopeSession = moduleComponents.scopeSessionProvider.getScopeSession(),
                 checkPCE = true
             )
-            RootStructureElement(
-                firFile,
-                container,
-                moduleFileCache.firFileLockProvider,
-            )
+            RootStructureElement(firFile, container, moduleComponents)
         }
         is KtDeclaration -> createDeclarationStructure(container)
         else -> error("Invalid container $container")

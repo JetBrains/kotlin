@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.analysis.low.level.api.fir.state
 
 import com.intellij.openapi.project.Project
+import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirGlobalResolveComponents
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.DiagnosticCheckerFilter
 import org.jetbrains.kotlin.analysis.low.level.api.fir.file.builder.FirFileBuilder
 import org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.FirLazyDeclarationResolver
@@ -18,12 +19,11 @@ import org.jetbrains.kotlin.psi.KtFile
 
 
 internal class LLFirLibraryOrLibrarySourceResolvableModuleResolveState(
+    override val globalComponents: LLFirGlobalResolveComponents,
     override val project: Project,
     override val module: KtModule,
     sessionProvider: LLFirSessionProvider,
-    firFileBuilder: FirFileBuilder,
-    firLazyDeclarationResolver: FirLazyDeclarationResolver,
-) : LLFirResolvableModuleResolveState(sessionProvider, firFileBuilder, firLazyDeclarationResolver) {
+) : LLFirResolvableModuleResolveState(sessionProvider) {
     override fun getDiagnostics(element: KtElement, filter: DiagnosticCheckerFilter): List<KtPsiDiagnostic> =
         emptyList()
 

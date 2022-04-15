@@ -11,10 +11,9 @@ import com.intellij.openapi.roots.ProjectRootModificationTracker
 import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.LLFirModuleResolveState
 import org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.FirLazyDeclarationResolver
-import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSession
-import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSessionProviderStorage
-import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSourcesSession
+import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.*
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirLibraryOrLibrarySourceResolvableModuleSession
+import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSessionProviderStorage
 import org.jetbrains.kotlin.analysis.low.level.api.fir.state.LLFirSourceModuleResolveState
 import org.jetbrains.kotlin.analysis.low.level.api.fir.state.LLFirLibraryOrLibrarySourceResolvableModuleResolveState
 import org.jetbrains.kotlin.analysis.low.level.api.fir.state.LLFirResolvableModuleResolveState
@@ -49,25 +48,22 @@ internal class LLFirResolveStateService(project: Project) {
             configureSession: (LLFirSession.() -> Unit)? = null,
         ): LLFirResolvableModuleResolveState {
             val sessionProvider = sessionProviderStorage.getSessionProvider(module, configureSession)
+            val useSiteSession = sessionProvider.rootModuleSession
             return when (module) {
                 is KtSourceModule -> {
-                    val firFileBuilder = (sessionProvider.rootModuleSession as LLFirSourcesSession).firFileBuilder
                     LLFirSourceModuleResolveState(
+                        useSiteSession.moduleComponents.globalResolveComponents,
                         sessionProviderStorage.project,
                         module,
                         sessionProvider,
-                        firFileBuilder,
-                        FirLazyDeclarationResolver(firFileBuilder),
                     )
                 }
                 is KtLibraryModule, is KtLibrarySourceModule -> {
-                    val firFileBuilder = (sessionProvider.rootModuleSession as LLFirLibraryOrLibrarySourceResolvableModuleSession).firFileBuilder
                     LLFirLibraryOrLibrarySourceResolvableModuleResolveState(
+                        useSiteSession.moduleComponents.globalResolveComponents,
                         sessionProviderStorage.project,
                         module,
                         sessionProvider,
-                        firFileBuilder,
-                        FirLazyDeclarationResolver(firFileBuilder),
                     )
                 }
                 else -> {

@@ -36,7 +36,6 @@ import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.utils.delegateFields
 import org.jetbrains.kotlin.fir.expressions.FirAnonymousObjectExpression
-import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.calls.FirSyntheticPropertiesScope
 import org.jetbrains.kotlin.fir.resolve.scope
 import org.jetbrains.kotlin.fir.scopes.*
@@ -53,6 +52,10 @@ internal class KtFirScopeProvider(
     firResolveState: LLFirModuleResolveState,
     override val token: ValidityToken,
 ) : KtScopeProvider(), ValidityTokenOwner {
+    // KtFirScopeProvider is thread local, so it's okay to use the same session here
+    private val scopeSession = analysisSession.getScopeSessionFor(analysisSession.rootModuleSession)
+
+
     override val analysisSession: KtFirAnalysisSession by weakRef(analysisSession)
     private val builder by weakRef(builder)
     private val firResolveState by weakRef(firResolveState)
@@ -89,7 +92,7 @@ internal class KtFirScopeProvider(
                 val firSession = analysisSession.rootModuleSession
                 fir.unsubstitutedScope(
                     firSession,
-                    ScopeSession(),
+                    scopeSession,
                     withForcedTypeCalculator = false
                 )
             } ?: return@getOrPut getEmptyScope()
@@ -100,7 +103,12 @@ internal class KtFirScopeProvider(
 
     override fun getStaticMemberScope(symbol: KtSymbolWithMembers): KtScope {
         val firScope = symbol.withFirForScope { fir ->
-            fir.scopeProvider.getStaticScope(fir, analysisSession.rootModuleSession, ScopeSession())
+            val firSession = analysisSession.rootModuleSession
+            fir.scopeProvider.getStaticScope(
+                fir,
+                firSession,
+                scopeSession,
+            )
         } ?: return getEmptyScope()
         return KtFirDelegatingScope(firScope, builder, token)
     }
@@ -122,9 +130,10 @@ internal class KtFirScopeProvider(
             val firScope = classSymbol.withFirForScope { fir ->
                 val delegateFields = fir.delegateFields
                 if (delegateFields.isNotEmpty()) {
+                    val firSession = analysisSession.rootModuleSession
                     FirDelegatedMemberScope(
-                        analysisSession.rootModuleSession,
-                        ScopeSession(),
+                        firSession,
+                        scopeSession,
                         fir,
                         declaredScope,
                         delegateFields
@@ -170,7 +179,7 @@ internal class KtFirScopeProvider(
         val firSession = firResolveState.rootModuleSession
         val firTypeScope = type.coneType.scope(
             firSession,
-            ScopeSession(),
+            scopeSession,
             FakeOverrideTypeCalculator.Forced
         ) ?: return null
         return getCompositeScope(

@@ -23,17 +23,13 @@ class LLFirSessionProvider internal constructor(
     private val moduleToSession: Map<KtModule, LLFirResolvableModuleSession>
 ) : FirSessionProvider() {
 
-    override fun getSession(moduleData: FirModuleData): FirSession? {
+    override fun getSession(moduleData: FirModuleData): LLFirResolvableModuleSession? {
         requireIsInstance<LLFirKtModuleBasedModuleData>(moduleData)
         return moduleToSession[moduleData.ktModule]
     }
 
-    fun getSession(module: KtModule): FirSession? =
-        moduleToSession[module]
-
-    internal fun getModuleCache(module: KtModule): ModuleFileCache =
-        moduleToSession[module]?.cache
-            ?: throw NoCacheForModuleException(module, moduleToSession.keys)
+    fun getSession(module: KtModule): LLFirResolvableModuleSession =
+        moduleToSession.getValue(module)
 
     val allSessions: Collection<LLFirModuleSession>
         get() = moduleToSession.values

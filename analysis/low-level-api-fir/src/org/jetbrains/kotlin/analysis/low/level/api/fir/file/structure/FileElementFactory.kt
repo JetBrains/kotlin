@@ -5,11 +5,11 @@
 
 package org.jetbrains.kotlin.analysis.low.level.api.fir.file.structure
 
+import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirModuleResolveComponents
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
-import org.jetbrains.kotlin.analysis.low.level.api.fir.file.builder.LockProvider
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtNamedFunction
 import org.jetbrains.kotlin.psi.KtProperty
@@ -22,14 +22,14 @@ internal object FileElementFactory {
         firDeclaration: FirDeclaration,
         ktDeclaration: KtDeclaration,
         firFile: FirFile,
-        firFileLockProvider: LockProvider<FirFile>,
+        moduleComponents: LLFirModuleResolveComponents,
     ): FileStructureElement = when {
         ktDeclaration is KtNamedFunction && ktDeclaration.isReanalyzableContainer() -> ReanalyzableFunctionStructureElement(
             firFile,
             ktDeclaration,
             (firDeclaration as FirSimpleFunction).symbol,
             ktDeclaration.modificationStamp,
-            firFileLockProvider,
+            moduleComponents,
         )
 
         ktDeclaration is KtProperty && ktDeclaration.isReanalyzableContainer() -> ReanalyzablePropertyStructureElement(
@@ -37,14 +37,14 @@ internal object FileElementFactory {
             ktDeclaration,
             (firDeclaration as FirProperty).symbol,
             ktDeclaration.modificationStamp,
-            firFileLockProvider,
+            moduleComponents,
         )
 
         else -> NonReanalyzableDeclarationStructureElement(
             firFile,
             firDeclaration,
             ktDeclaration,
-            firFileLockProvider,
+            moduleComponents,
         )
     }
 }

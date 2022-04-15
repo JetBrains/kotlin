@@ -25,7 +25,11 @@ internal class KtFirTypeInfoProvider(
 
     override fun isFunctionalInterfaceType(type: KtType): Boolean {
         val coneType = (type as KtFirType).coneType
-        val samResolver = FirSamResolverImpl(analysisSession.rootModuleSession, ScopeSession())
+        val firSession = analysisSession.rootModuleSession
+        val samResolver = FirSamResolverImpl(
+            firSession,
+            analysisSession.getScopeSessionFor(firSession),
+        )
         return samResolver.getFunctionTypeForPossibleSamType(coneType) != null
     }
 

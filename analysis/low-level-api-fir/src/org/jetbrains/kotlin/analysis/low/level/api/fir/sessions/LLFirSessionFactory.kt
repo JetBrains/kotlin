@@ -8,15 +8,14 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.sessions
 import com.intellij.openapi.project.Project
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.search.ProjectScope
-import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirPhaseRunner
 import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirPhaseManager
 import org.jetbrains.kotlin.analysis.low.level.api.fir.IdeSessionComponents
+import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirGlobalResolveComponents
+import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirModuleResolveComponents
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.services.createPackagePartProviderForLibrary
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.services.createSealedInheritorsProvider
-import org.jetbrains.kotlin.analysis.low.level.api.fir.file.builder.FirFileBuilder
 import org.jetbrains.kotlin.analysis.low.level.api.fir.file.builder.ModuleFileCacheImpl
 import org.jetbrains.kotlin.analysis.low.level.api.fir.fir.caches.FirThreadSafeCachesFactory
-import org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.FirLazyDeclarationResolver
 import org.jetbrains.kotlin.analysis.low.level.api.fir.project.structure.LLFirKtModuleBasedModuleData
 import org.jetbrains.kotlin.analysis.low.level.api.fir.project.structure.LLFirBuiltinsModuleData
 import org.jetbrains.kotlin.analysis.low.level.api.fir.providers.*
@@ -73,7 +72,7 @@ internal object LLFirSessionFactory {
         project: Project,
         module: KtSourceModule,
         builtinsAndCloneableSession: LLFirBuiltinsAndCloneableSession,
-        firPhaseRunner: LLFirPhaseRunner,
+        globalResolveComponents: LLFirGlobalResolveComponents,
         sessionInvalidator: LLFirSessionInvalidator,
         builtinTypes: BuiltinTypes,
         sessionsCache: MutableMap<KtModule, LLFirResolvableModuleSession>,
@@ -84,19 +83,19 @@ internal object LLFirSessionFactory {
         sessionsCache[module]?.let { return it as LLFirSourcesSession }
         val languageVersionSettings = module.languageVersionSettings
         val scopeProvider = FirKotlinScopeProvider(::wrapScopeWithJvmMapped)
-        val firBuilder = FirFileBuilder(scopeProvider, firPhaseRunner)
+
+        val components = LLFirModuleResolveComponents(module, globalResolveComponents, scopeProvider, ModuleFileCacheImpl())
+
         val contentScope = module.contentScope
         val dependentModules = module.directRegularDependenciesOfType<KtSourceModule>()
-        val session = LLFirSourcesSession(module, project, firBuilder, builtinTypes)
+        val session = LLFirSourcesSession(module, project, components, builtinTypes)
         sessionsCache[module] = session
+        components.session = session
 
         return session.apply session@{
             val moduleData = LLFirKtModuleBasedModuleData(module).apply { bindSession(this@session) }
             registerModuleData(moduleData)
             register(FirKotlinScopeProvider::class, scopeProvider)
-
-            val cache = ModuleFileCacheImpl(this)
-            val firPhaseManager = LLFirPhaseManager(FirLazyDeclarationResolver(firFileBuilder), cache, sessionInvalidator)
 
             registerIdeComponents(project)
             registerCommonComponents(languageVersionSettings)
@@ -105,12 +104,8 @@ internal object LLFirSessionFactory {
             registerJavaSpecificResolveComponents()
 
             val provider = LLFirProvider(
-                project,
                 this,
-                module,
-                scopeProvider,
-                firFileBuilder,
-                cache,
+                components,
                 project.createDeclarationProvider(contentScope),
                 project.createPackageProvider(contentScope),
             )
@@ -118,7 +113,7 @@ internal object LLFirSessionFactory {
             register(FirProvider::class, provider)
             register(LLFirProvider::class, provider)
 
-            register(FirPhaseManager::class, firPhaseManager)
+            register(FirPhaseManager::class, LLFirPhaseManager(sessionInvalidator))
 
             @OptIn(ExperimentalStdlibApi::class)
             val dependentProviders = buildList {
@@ -139,7 +134,7 @@ internal object LLFirSessionFactory {
                             project,
                             it,
                             builtinsAndCloneableSession,
-                            firPhaseRunner,
+                            globalResolveComponents,
                             sessionInvalidator,
                             builtinTypes,
                             sessionsCache,
@@ -319,7 +314,7 @@ internal object LLFirSessionFactory {
         project: Project,
         module: KtModule,
         builtinsAndCloneableSession: LLFirBuiltinsAndCloneableSession,
-        firPhaseRunner: LLFirPhaseRunner,
+        globalComponents: LLFirGlobalResolveComponents,
         sessionInvalidator: LLFirSessionInvalidator,
         builtinTypes: BuiltinTypes,
         sessionsCache: MutableMap<KtModule, LLFirResolvableModuleSession>,
@@ -337,18 +332,17 @@ internal object LLFirSessionFactory {
         }
 
         val scopeProvider = FirKotlinScopeProvider()
-        val firFileBuilder = FirFileBuilder(scopeProvider, firPhaseRunner)
+        val components = LLFirModuleResolveComponents(module, globalComponents, scopeProvider, ModuleFileCacheImpl())
+
         val contentScope = module.contentScope
-        val session = LLFirLibraryOrLibrarySourceResolvableModuleSession(module, project, firFileBuilder, builtinTypes)
+        val session = LLFirLibraryOrLibrarySourceResolvableModuleSession(module, project, components, builtinTypes)
         sessionsCache[module] = session
+        components.session = session
 
         return session.apply session@{
             val moduleData = LLFirKtModuleBasedModuleData(module).apply { bindSession(this@session) }
             registerModuleData(moduleData)
             register(FirKotlinScopeProvider::class, scopeProvider)
-
-            val cache = ModuleFileCacheImpl(this)
-            val firPhaseManager = LLFirPhaseManager(FirLazyDeclarationResolver(firFileBuilder), cache, sessionInvalidator)
 
             registerIdeComponents(project)
             registerCommonComponents(languageVersionSettings)
@@ -357,12 +351,8 @@ internal object LLFirSessionFactory {
             registerJavaSpecificResolveComponents()
 
             val provider = LLFirProvider(
-                project,
                 this,
-                module,
-                scopeProvider,
-                firFileBuilder,
-                cache,
+                components,
                 project.createDeclarationProvider(contentScope),
                 project.createPackageProvider(contentScope),
             )
@@ -370,7 +360,7 @@ internal object LLFirSessionFactory {
             register(FirProvider::class, provider)
             register(LLFirProvider::class, provider)
 
-            register(FirPhaseManager::class, firPhaseManager)
+            register(FirPhaseManager::class, LLFirPhaseManager(sessionInvalidator))
             val dependentProviders = buildList {
                 val librariesSearchScope = ProjectScope.getLibrariesScope(project)
                     .intersectWith(GlobalSearchScope.notScope(libraryModule.contentScope)) // <all libraries scope> - <current library scope>

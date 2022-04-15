@@ -6,6 +6,8 @@
 package org.jetbrains.kotlin.analysis.low.level.api.fir
 
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.roots.ProjectRootModificationTracker
+import com.intellij.psi.util.PsiModificationTracker
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.DiagnosticCheckerFilter
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.LLFirModuleResolveState
 import org.jetbrains.kotlin.analysis.low.level.api.fir.element.builder.FirElementBuilder
@@ -14,19 +16,23 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.file.builder.ModuleFileCa
 import org.jetbrains.kotlin.analysis.low.level.api.fir.file.structure.KtToFirMapping
 import org.jetbrains.kotlin.analysis.low.level.api.fir.state.LLFirResolvableModuleResolveState
 import org.jetbrains.kotlin.analysis.low.level.api.fir.state.TowerProviderForElementForState
+import org.jetbrains.kotlin.analysis.low.level.api.fir.util.LLFirScopeSessionProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.containingKtFileIfAny
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.originalKtFile
 import org.jetbrains.kotlin.analysis.project.structure.KtModule
+import org.jetbrains.kotlin.analysis.utils.caches.*
 import org.jetbrains.kotlin.diagnostics.KtPsiDiagnostic
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
+import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtFile
+import java.util.concurrent.ConcurrentHashMap
 
 internal class FirModuleResolveStateDepended(
     val originalState: LLFirResolvableModuleResolveState,
@@ -36,6 +42,20 @@ internal class FirModuleResolveStateDepended(
     override val project: Project get() = originalState.project
     override val module: KtModule get() = originalState.module
     override val rootModuleSession get() = originalState.rootModuleSession
+
+    private val scopeSessionProviderCache by softCachedValue(
+        project,
+        PsiModificationTracker.MODIFICATION_COUNT,
+        ProjectRootModificationTracker.getInstance(project),
+    ) {
+        ConcurrentHashMap<FirSession, LLFirScopeSessionProvider>()
+    }
+
+    override fun getScopeSessionFor(firSession: FirSession): ScopeSession {
+        return scopeSessionProviderCache
+            .getOrPut(firSession) { LLFirScopeSessionProvider(project) }
+            .getScopeSession()
+    }
 
     override fun getSessionFor(module: KtModule): FirSession =
         originalState.getSessionFor(module)

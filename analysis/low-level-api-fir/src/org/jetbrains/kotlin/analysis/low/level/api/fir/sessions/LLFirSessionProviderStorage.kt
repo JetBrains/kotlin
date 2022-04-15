@@ -10,6 +10,7 @@ import com.intellij.openapi.util.ModificationTracker
 import kotlinx.collections.immutable.PersistentMap
 import kotlinx.collections.immutable.persistentMapOf
 import kotlinx.collections.immutable.toPersistentMap
+import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirGlobalResolveComponents
 import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirPhaseRunner
 import org.jetbrains.kotlin.analysis.low.level.api.fir.project.structure.firKtModuleBasedModuleData
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.addValueFor
@@ -20,7 +21,7 @@ import org.jetbrains.kotlin.analysis.providers.createModuleWithoutDependenciesOu
 import org.jetbrains.kotlin.analysis.utils.caches.getValue
 import org.jetbrains.kotlin.analysis.utils.caches.softCachedValue
 import org.jetbrains.kotlin.fir.BuiltinTypes
-import org.jetbrains.kotlin.fir.moduleData
+import org.jetbrains.kotlin.fir.FirSessionProvider
 import java.util.concurrent.ConcurrentHashMap
 
 class LLFirSessionProviderStorage(val project: Project) {
@@ -32,7 +33,7 @@ class LLFirSessionProviderStorage(val project: Project) {
         rootModule: KtModule,
         configureSession: (LLFirSession.() -> Unit)? = null
     ): LLFirSessionProvider {
-        val firPhaseRunner = LLFirPhaseRunner()
+        val globalComponents = LLFirGlobalResolveComponents(rootModule, project)
 
         val builtinTypes = BuiltinTypes()
 
@@ -47,7 +48,7 @@ class LLFirSessionProviderStorage(val project: Project) {
                             project,
                             rootModule,
                             builtinsAndCloneableSession,
-                            firPhaseRunner,
+                            globalComponents,
                             cache.sessionInvalidator,
                             builtinTypes,
                             sessions,
@@ -61,7 +62,7 @@ class LLFirSessionProviderStorage(val project: Project) {
                             project,
                             rootModule,
                             builtinsAndCloneableSession,
-                            firPhaseRunner,
+                            globalComponents,
                             cache.sessionInvalidator,
                             builtinTypes,
                             sessions,
