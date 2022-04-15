@@ -348,7 +348,8 @@ extra["compilerArtifactsForIde"] = listOf(
 
 // TODO: fix remaining warnings and remove this property.
 extra["tasksWithWarnings"] = listOf(
-    ":kotlin-gradle-plugin:compileKotlin"
+    ":kotlin-gradle-plugin:compileKotlin",
+    ":compiler:fir:resolve:compileKotlin"
 )
 
 val tasksWithWarnings: List<String> by extra
