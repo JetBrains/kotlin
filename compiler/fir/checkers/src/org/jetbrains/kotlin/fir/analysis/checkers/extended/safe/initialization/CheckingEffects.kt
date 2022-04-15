@@ -61,14 +61,18 @@ object Checker {
                     dec.body?.let(::analyser)
                     TODO()
                 }
-                is FirRegularClass -> TODO()
+                is FirRegularClass -> {
+                    val state = StateOfClass(dec)
+                    val errors = state.checkClass().flatten()
+                    errors
+                }
                 is FirPropertyAccessor -> TODO()
 //                is FirSimpleFunction -> checkBody(dec)
                 is FirField -> TODO()
                 is FirProperty -> {
                     val (effs, _) = dec.initializer?.let(::analyser) ?: return@map dec.findFirstInitializationPoint()
                     val errors = effs.flatMap { effectChecking(it) }
-                    if (errors.isEmpty()) alreadyInitializedVariable.add(dec)
+                    alreadyInitializedVariable.add(dec)
                     errors
                 }
                 else -> listOf()
@@ -183,11 +187,11 @@ object Checker {
                     is Root.This -> {                                     // C-Acc1
                         if (alreadyInitializedVariable.contains(field))
                             listOf()
-                        else listOf(Error.AccessError())
+                        else listOf(Error.AccessError(field))
                     }
                     is Root.Warm -> listOf()                              // C-Acc2
                     is FunPotential -> throw Exception()                  // impossible
-                    is Root.Cold -> listOf(Error.AccessError())           // illegal
+                    is Root.Cold -> listOf(Error.AccessError(field))           // illegal
                     else ->                                                         // C-Acc3
                         ruleAcc3(potentialPropagation(pot)) { p -> FieldAccess(p, field) }
                 }
@@ -236,9 +240,9 @@ object Checker {
                         }
 
                     }
-                    is Root.This -> listOf(Error.PromoteError())
+                    is Root.This -> listOf(Error.PromoteError(pot))
                     is FunPotential -> ruleAcc3(pot.effectsAndPotentials, Effect::Promote)
-                    is Root.Cold -> listOf(Error.PromoteError())
+                    is Root.Cold -> listOf(Error.PromoteError(pot))
                     else -> {
                         ruleAcc3(potentialPropagation(pot), Effect::Promote)   // C-Up2
 
@@ -257,9 +261,17 @@ object Checker {
 }
 
 sealed class Error {
-    class AccessError : Error()
+    class AccessError(val firProperty: FirVariable) : Error() {
+        override fun toString(): String {
+            return "AccessError(property=${firProperty.name})"
+        }
+    }
 
     class InvError : Error()
 
-    class PromoteError : Error()
+    class PromoteError(val potential: Potential) : Error() {
+        override fun toString(): String {
+            return "PromoteError(potential=${potential})"
+        }
+    }
 }

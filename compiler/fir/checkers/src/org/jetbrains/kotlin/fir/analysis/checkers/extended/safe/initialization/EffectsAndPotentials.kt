@@ -35,7 +35,7 @@ data class EffectsAndPotentials(
         EffectsAndPotentials(effects + effs, potentials + pots)
 
     operator fun plus(effectsAndPotentials: EffectsAndPotentials): EffectsAndPotentials =
-        effectsAndPotentials.run { addEffectsAndPotentials(effects, potentials) }
+        effectsAndPotentials.let { (effs, pots) -> addEffectsAndPotentials(effs, pots) }
 
     fun maxLength(): Int = potentials.maxOfOrNull(Potential::length) ?: 0
 }

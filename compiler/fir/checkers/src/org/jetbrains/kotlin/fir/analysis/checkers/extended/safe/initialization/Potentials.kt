@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.fir.analysis.checkers.extended.safe.initialization.C
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.analysis.checkers.extended.safe.initialization.Effect.*
 import org.jetbrains.kotlin.fir.analysis.checkers.extended.safe.initialization.Potential.*
+import org.jetbrains.kotlin.fir.declarations.utils.classId
 
 typealias Potentials = List<Potential>
 
@@ -22,7 +23,11 @@ sealed class Potential(val length: Int = 0) {
         fun potentialsOf(state: Checker.StateOfClass, firDeclaration: FirDeclaration): Potentials =
             state.analyseDeclaration(firDeclaration).potentials
 
-        data class This(val clazz: FirClass) : Root()
+        data class This(val clazz: FirClass) : Root() {
+            override fun toString(): String {
+                return "This(class=${clazz.classId.shortClassName})"
+            }
+        }
         data class Warm(val clazz: FirClass, val outer: Potential) : Root(outer.length + 1)
         data class Cold(val firDeclaration: FirDeclaration) : Root()
     }

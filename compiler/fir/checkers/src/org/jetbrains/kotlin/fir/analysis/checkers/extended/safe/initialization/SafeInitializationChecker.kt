@@ -18,7 +18,7 @@ object SafeInitialisationChecker : FirRegularClassChecker() {
 
     override fun check(declaration: FirRegularClass, context: CheckerContext, reporter: DiagnosticReporter) {
         val state = Checker.StateOfClass(declaration)
-        val errors = state.checkClass()
+        val errors = state.checkClass().flatten()
         cache.add(state)
     }
 }
