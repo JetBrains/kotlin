@@ -1,14 +1,15 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.fir.resolve.dfa.initialization
+package org.jetbrains.kotlin.fir.analysis.checkers.extended.safe.initialization
 
+import org.jetbrains.kotlin.fir.analysis.checkers.extended.safe.initialization.ClassAnalyser.analyseDeclaration
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.fromPrimaryConstructor
-import org.jetbrains.kotlin.fir.resolve.dfa.initialization.Effect.*
-import org.jetbrains.kotlin.fir.resolve.dfa.initialization.Potential.*
+import org.jetbrains.kotlin.fir.analysis.checkers.extended.safe.initialization.Effect.*
+import org.jetbrains.kotlin.fir.analysis.checkers.extended.safe.initialization.Potential.*
 
 
 sealed class Potential(val length: Int = 0) {
@@ -16,10 +17,10 @@ sealed class Potential(val length: Int = 0) {
     sealed class Root(length: Int = 0) : Potential(length) {
 
         fun effectsOf(clazz: FirClass, firDeclaration: FirDeclaration): List<Effect> =
-            ClassAnalyser(clazz).analyseDeclaration(firDeclaration).effects
+            clazz.analyseDeclaration(firDeclaration).effects
 
         fun potentialsOf(clazz: FirClass, firDeclaration: FirDeclaration): List<Potential> =
-            ClassAnalyser(clazz).analyseDeclaration(firDeclaration).potentials
+            clazz.analyseDeclaration(firDeclaration).potentials
 
         data class This(val clazz: FirClass) : Root()
         data class Warm(val clazz: FirClass, val outer: Potential) : Root(outer.length + 1)

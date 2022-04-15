@@ -1,30 +1,31 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.fir.resolve.dfa.initialization
+package org.jetbrains.kotlin.fir.analysis.checkers.extended.safe.initialization
 
+import org.jetbrains.kotlin.fir.analysis.checkers.extended.safe.initialization.Checker.checkClass
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.impl.FirNoReceiverExpression
-import org.jetbrains.kotlin.fir.resolve.dfa.initialization.Potential.Root
+import org.jetbrains.kotlin.fir.analysis.checkers.extended.safe.initialization.Potential.Root
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 
-class ClassAnalyser(val firClass: FirClass) {
+object ClassAnalyser {
 
-    fun classTyping(firClass1: FirClass): EffectsAndPotentials {
+    fun FirClass.classTyping(firClass1: FirClass): EffectsAndPotentials {
         // TODO: resolveSuperClasses
-        return ClassAnalyser(firClass1).allEffectsAndPotentials()
+        return firClass1.allEffectsAndPotentials()
     }
 
-    fun fieldTyping(firProperty: FirProperty): EffectsAndPotentials =
-        firProperty.initializer?.let(firClass::analyser) ?: throw IllegalArgumentException()
+    fun FirClass.fieldTyping(firProperty: FirProperty): EffectsAndPotentials =
+        firProperty.initializer?.let(::analyser) ?: throw IllegalArgumentException()
 
-    fun methodTyping(firFunction: FirFunction): EffectsAndPotentials =
-        firFunction.body?.let(firClass::analyser) ?: throw IllegalArgumentException()
+    fun FirClass.methodTyping(firFunction: FirFunction): EffectsAndPotentials =
+        firFunction.body?.let(::analyser) ?: throw IllegalArgumentException()
 
-    fun analyseDeclaration(firDeclaration: FirDeclaration): EffectsAndPotentials =
+    fun FirClass.analyseDeclaration(firDeclaration: FirDeclaration): EffectsAndPotentials =
         when (firDeclaration) {
             is FirRegularClass -> classTyping(firDeclaration)
 //                is FirConstructor -> TODO()
@@ -34,19 +35,12 @@ class ClassAnalyser(val firClass: FirClass) {
             else -> EffectsAndPotentials()
         }
 
-    fun allEffectsAndPotentials(): EffectsAndPotentials =
-        firClass.declarations.fold(EffectsAndPotentials()) { prev, dec ->
+    fun FirClass.allEffectsAndPotentials(): EffectsAndPotentials =
+        declarations.fold(EffectsAndPotentials()) { prev, dec ->
             val effsAndPots = analyseDeclaration(dec)
             prev + effsAndPots
         }
-
 }
-
-fun FirClass.fieldTyping(firProperty: FirProperty): EffectsAndPotentials =
-    firProperty.initializer?.let(::analyser) ?: throw IllegalArgumentException()
-
-fun FirClass.methodTyping(firFunction: FirFunction): EffectsAndPotentials =
-    firFunction.body?.let(::analyser) ?: throw IllegalArgumentException()
 
 @OptIn(SymbolInternals::class)
 fun FirClass.analyser(firExpression: FirStatement): EffectsAndPotentials =
@@ -100,7 +94,7 @@ private fun FirQualifiedAccess.getReceiver(): FirExpression = when {
 }
 
 fun analyseAndCheck(firClass: FirClass) {
-    val checker = ClassInitializationState(firClass)
+    val checker = Checker.StateOfClass(firClass)
     val errors = checker.checkClass()
 }
 

@@ -1,13 +1,13 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.fir.resolve.dfa.initialization
+package org.jetbrains.kotlin.fir.analysis.checkers.extended.safe.initialization
 
 import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.resolve.dfa.initialization.Effect.*
-import org.jetbrains.kotlin.fir.resolve.dfa.initialization.Potential.*
+import org.jetbrains.kotlin.fir.analysis.checkers.extended.safe.initialization.Effect.*
+import org.jetbrains.kotlin.fir.analysis.checkers.extended.safe.initialization.Potential.*
 import org.jetbrains.kotlin.utils.addIfNotNull
 
 class CheckingEffects {
@@ -28,24 +28,24 @@ fun resolveThis(
 
 fun resolve(clazz: FirClass, firDeclaration: FirDeclaration): FirClass = clazz // maybe delete
 
-class ClassInitializationState(val clazz: FirClass) {
+object Checker {
 
-    private val safeProperties = mutableSetOf<FirProperty>()
-    private val allProperties = clazz.declarations.filterIsInstance<FirProperty>()
+    data class StateOfClass(val firClass: FirClass) {
+        val alreadyInitializedProperties = mutableSetOf<FirProperty>()
+        val allProperties = firClass.declarations.filterIsInstance<FirProperty>()
 
-    fun checkClass(): List<Error> {
-        fun checkBody(dec: FirFunction): List<Error> {
-            val (effs, _) = dec.body?.let(clazz::analyser) ?: EffectsAndPotentials()
-            return effs.flatMap(::effectChecking)
-        }
+        val caches = mutableMapOf<FirDeclaration, EffectsAndPotentials>()
+    }
 
-        val errors: List<Error> = clazz.declarations.flatMap { dec ->
+
+    fun StateOfClass.checkClass(): List<List<Error>> =
+        firClass.declarations.map { dec ->
             when (dec) {
                 is FirConstructor -> {
                     if (dec.isPrimary) {
                         dec.valueParameters.map { param ->
                             val prop = allProperties.find { it.name == param.name }
-                            safeProperties.addIfNotNull(prop)
+                            alreadyInitializedProperties.addIfNotNull(prop)
                         }
                     }
                     checkBody(dec)
@@ -56,15 +56,22 @@ class ClassInitializationState(val clazz: FirClass) {
 //                is FirSimpleFunction -> checkBody(dec)
                 is FirField -> TODO()
                 is FirProperty -> {
-                    val (effs, _) = dec.initializer!!.let(clazz::analyser)
-                    val errors = effs.flatMap(::effectChecking)
-                    if (errors.isEmpty()) safeProperties.add(dec)
+                    val (effs, _) = dec.initializer?.let(firClass::analyser) ?: dec.findFirstInitializationPoint()
+                    val errors = effs.flatMap { effectChecking(it) }
+                    if (errors.isEmpty()) alreadyInitializedProperties.add(dec)
                     errors
                 }
                 else -> listOf()
             }
         }
-        return errors
+
+    private fun FirProperty.findFirstInitializationPoint(): EffectsAndPotentials {
+            TODO()
+    }
+
+    fun StateOfClass.checkBody(dec: FirFunction): List<Error> {
+        val (effs, _) = dec.body?.let(firClass::analyser) ?: EffectsAndPotentials()
+        return effs.flatMap { effectChecking(it) }
     }
 
     fun potentialPropagation(potential: Potential): EffectsAndPotentials {
@@ -136,13 +143,13 @@ class ClassInitializationState(val clazz: FirClass) {
         }
     }
 
-    fun effectChecking(effect: Effect): List<Error> {
+    fun StateOfClass.effectChecking(effect: Effect): List<Error> {
         return when (effect) {
             is FieldAccess -> {
                 val (pot, field) = effect
                 when (pot) {
                     is Root.This -> {                                     // C-Acc1
-                        if (safeProperties.contains(field))
+                        if (alreadyInitializedProperties.contains(field))
                             listOf()
                         else listOf(Error.AccessError())
                     }
@@ -158,7 +165,7 @@ class ClassInitializationState(val clazz: FirClass) {
                 when (pot) {
                     is Root.This -> {                                     // C-Inv1
                         val clazz = resolve(pot.clazz, method)
-                        pot.effectsOf(clazz, method).flatMap(::effectChecking)
+                        pot.effectsOf(clazz, method).flatMap { effectChecking(it) }
                     }
                     is Root.Warm -> {                                     // C-Inv2
                         val clazz = resolve(pot.clazz, method)
@@ -209,10 +216,10 @@ class ClassInitializationState(val clazz: FirClass) {
         }
     }
 
-    private fun ruleAcc3(effectsAndPotentials: EffectsAndPotentials, producerOfEffects: (Potential) -> Effect): List<Error> =
+    private fun StateOfClass.ruleAcc3(effectsAndPotentials: EffectsAndPotentials, producerOfEffects: (Potential) -> Effect): List<Error> =
         effectsAndPotentials.run {
             val errors = potentials.map { effectChecking(producerOfEffects(it)) } // call / select
-            val effectErrors = effects.map(::effectChecking)
+            val effectErrors = effects.map { effectChecking(it) }
             (errors + effectErrors).flatten()
         }
 }
