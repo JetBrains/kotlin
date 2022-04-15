@@ -223,7 +223,8 @@ class RingLauncher : Launcher() {
                     "Calls.interfaceMethodBimorphic" to BenchmarkEntryWithInit.create(::CallsBenchmark, { interfaceMethodCall_BimorphicCallsite() }),
                     "Calls.interfaceMethodTrimorphic" to BenchmarkEntryWithInit.create(::CallsBenchmark, { interfaceMethodCall_TrimorphicCallsite() }),
                     "Calls.interfaceMethodHexamorphic" to BenchmarkEntryWithInit.create(::CallsBenchmark, { interfaceMethodCall_HexamorphicCallsite() }),
-                    "LocalObjects.localArray" to BenchmarkEntryWithInit.create(::LocalObjectsBenchmark, { localArray() })
+                    "LocalObjects.localArray" to BenchmarkEntryWithInit.create(::LocalObjectsBenchmark, { localArray() }),
+                    "ComplexArrays.outerProduct" to BenchmarkEntryWithInit.create(::ComplexArraysBenchmark, { outerProduct() }),
             )
 }
 
