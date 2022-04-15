@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.fir.resolve.dfa.initialization
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.resolve.dfa.initialization.Effect.*
 import org.jetbrains.kotlin.fir.resolve.dfa.initialization.Potential.*
+import org.jetbrains.kotlin.utils.addIfNotNull
 
 class CheckingEffects {
 }
@@ -25,12 +26,46 @@ fun resolveThis(
     return resolveThis(clazz, outerSelection, outerClass)
 }
 
-fun resolve(clazz: FirClass, firDeclaration: FirDeclaration): FirClass = TODO()
+fun resolve(clazz: FirClass, firDeclaration: FirDeclaration): FirClass = clazz // maybe delete
 
 class ClassInitializationState(val clazz: FirClass) {
 
     private val safeProperties = mutableSetOf<FirProperty>()
     private val allProperties = clazz.declarations.filterIsInstance<FirProperty>()
+
+    fun checkClass(): List<Error> {
+        fun checkBody(dec: FirFunction): List<Error> {
+            val (effs, _) = dec.body?.let(clazz::analyser) ?: EffectsAndPotentials()
+            return effs.flatMap(::effectChecking)
+        }
+
+        val errors: List<Error> = clazz.declarations.flatMap { dec ->
+            when (dec) {
+                is FirConstructor -> {
+                    if (dec.isPrimary) {
+                        dec.valueParameters.map { param ->
+                            val prop = allProperties.find { it.name == param.name }
+                            safeProperties.addIfNotNull(prop)
+                        }
+                    }
+                    checkBody(dec)
+                }
+                is FirAnonymousInitializer -> TODO()
+                is FirRegularClass -> TODO()
+                is FirPropertyAccessor -> TODO()
+//                is FirSimpleFunction -> checkBody(dec)
+                is FirField -> TODO()
+                is FirProperty -> {
+                    val (effs, _) = dec.initializer!!.let(clazz::analyser)
+                    val errors = effs.flatMap(::effectChecking)
+                    if (errors.isEmpty()) safeProperties.add(dec)
+                    errors
+                }
+                else -> listOf()
+            }
+        }
+        return errors
+    }
 
     fun potentialPropagation(potential: Potential): EffectsAndPotentials {
         return when (potential) {
@@ -40,12 +75,12 @@ class ClassInitializationState(val clazz: FirClass) {
                     is Root.This -> {                                     // P-Acc1
                         val clazz = resolve(pot.clazz, field)
                         val potentials = pot.potentialsOf(clazz, field)
-                        EffectsAndPotentials(listOf(), potentials.viewChange(pot))
+                        EffectsAndPotentials(potentials = potentials.viewChange(pot))
                     }
                     is Root.Warm -> {                                         // P-Acc2
                         val clazz = resolve(pot.clazz, field)
                         val potentials = pot.potentialsOf(clazz, field)
-                        EffectsAndPotentials(listOf(), potentials.viewChange(pot))
+                        EffectsAndPotentials(potentials = potentials.viewChange(pot))
                     }
                     is Root.Cold -> EffectsAndPotentials(Promote(pot)) // or exception or empty list
                     is FunPotential -> throw IllegalArgumentException()
@@ -165,7 +200,10 @@ class ClassInitializationState(val clazz: FirClass) {
                     is Root.This -> listOf(Error.PromoteError())
                     is FunPotential -> ruleAcc3(pot.effectsAndPotentials, Effect::Promote)
                     is Root.Cold -> listOf(Error.PromoteError())
-                    else -> ruleAcc3(potentialPropagation(pot), Effect::Promote)   // C-Up2
+                    else -> {
+                        ruleAcc3(potentialPropagation(pot), Effect::Promote)   // C-Up2
+
+                    }
                 }
             }
         }
