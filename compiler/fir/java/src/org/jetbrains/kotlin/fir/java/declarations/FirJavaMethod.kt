@@ -189,8 +189,6 @@ class FirJavaMethod @FirImplementationDetail constructor(
         error("Body cannot be replaced for FirJavaMethod")
     }
 
-    override fun replaceTypeParameters(newTypeParameters: List<FirTypeParameterRef>) {
-    }
 }
 
 val ALL_JAVA_OPERATION_NAMES =
