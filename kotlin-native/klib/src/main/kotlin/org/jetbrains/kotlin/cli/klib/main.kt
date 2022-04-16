@@ -56,7 +56,7 @@ private fun parseArgs(args: Array<String>): Map<String, List<String>> {
             throw IllegalArgumentException("Expected a flag with initial dash: $key")
         }
         if (index + 1 == args.size) {
-            throw IllegalArgumentException("Expected an value after $key")
+            throw IllegalArgumentException("Expected a value after $key")
         }
         val value = listOf(args[index + 1])
         commandLine[key]?.addAll(value) ?: commandLine.put(key, value.toMutableList())
