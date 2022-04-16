@@ -14,6 +14,7 @@ sealed class Field : Importable {
     abstract var isVolatile: Boolean
     open var withReplace: Boolean = false
     abstract val isFirType: Boolean
+    open val overrideTypeRequire: Boolean = true
 
     var fromParent: Boolean = false
     open var needsSeparateTransform: Boolean = false
@@ -198,7 +199,8 @@ class FirField(
 class FieldList(
     override val name: String,
     val baseType: Importable,
-    override var withReplace: Boolean
+    override var withReplace: Boolean,
+    override val overrideTypeRequire: Boolean
 ) : Field() {
     override var defaultValueInImplementation: String? = null
     override val packageName: String? get() = baseType.packageName
@@ -215,7 +217,8 @@ class FieldList(
         return FieldList(
             name,
             baseType,
-            withReplace
+            withReplace,
+            overrideTypeRequire
         )
     }
 

@@ -6,21 +6,35 @@
 package org.jetbrains.kotlin.fir.resolve.transformers
 
 import kotlinx.collections.immutable.toImmutableList
+import org.jetbrains.kotlin.KtFakeSourceElementKind
+import org.jetbrains.kotlin.fakeElement
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.declarations.builder.FirTypeParameterBuilder
+import org.jetbrains.kotlin.fir.declarations.utils.classId
 import org.jetbrains.kotlin.fir.declarations.utils.isFromVararg
 import org.jetbrains.kotlin.fir.expressions.*
+import org.jetbrains.kotlin.fir.moduleData
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeCyclicTypeBound
+import org.jetbrains.kotlin.fir.resolve.fqName
 import org.jetbrains.kotlin.fir.resolve.lookupSuperTypes
 import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.scopes.createImportingScopes
 import org.jetbrains.kotlin.fir.scopes.getNestedClassifierScope
 import org.jetbrains.kotlin.fir.scopes.impl.FirMemberTypeParameterScope
+import org.jetbrains.kotlin.fir.scopes.impl.FirSelfTypeScope
 import org.jetbrains.kotlin.fir.scopes.impl.nestedClassifierScope
 import org.jetbrains.kotlin.fir.scopes.impl.wrapNestedClassifierScopeWithSubstitutionForSuperType
+import org.jetbrains.kotlin.fir.symbols.ConeTypeParameterLookupTag
+import org.jetbrains.kotlin.fir.symbols.impl.ConeClassLikeLookupTagImpl
+import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.buildErrorTypeRef
+import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
+import org.jetbrains.kotlin.fir.types.impl.ConeTypeParameterTypeImpl
+import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.types.Variance
 
 class FirTypeResolveProcessor(
     session: FirSession,
@@ -82,7 +96,6 @@ open class FirTypeResolveTransformer(
                 }
                 unboundCyclesInTypeParametersSupertypes(regularClass)
             }
-
             return resolveClassContent(regularClass, data)
         }
     }
@@ -233,6 +246,38 @@ open class FirTypeResolveTransformer(
         withScopeCleanup {
             firClass.transformAnnotations(this, null)
 
+            val isSelf = firClass.annotations.any { it.fqName(session)?.asString() == "kotlin.Self" }
+
+            val params = firClass.typeParameters
+            if (params is MutableList && isSelf) {
+                val selfSymbol = FirTypeParameterSymbol()
+                val firTypeParameterBuilder = FirTypeParameterBuilder()
+                firTypeParameterBuilder.bounds.add(buildResolvedTypeRef {
+                    source = firClass.source
+                    type = ConeClassLikeLookupTagImpl(firClass.classId).constructClassType(
+                        typeArguments = params.map {
+                            ConeTypeParameterTypeImpl(
+                                lookupTag = ConeTypeParameterLookupTag(it.symbol),
+                                isNullable = false
+                            )
+                        }.toTypedArray() + arrayOf(
+                            ConeTypeParameterTypeImpl(lookupTag = ConeTypeParameterLookupTag(selfSymbol), isNullable = false)
+                        ), isNullable = false
+                    )
+                })
+
+                firClass.replaceTypeParameters(params + firTypeParameterBuilder.apply {
+                    source = firClass.source?.fakeElement(KtFakeSourceElementKind.ClassSelfTypeRef)
+                    moduleData = session.moduleData
+                    resolvePhase = FirResolvePhase.TYPES
+                    origin = FirDeclarationOrigin.Source
+                    name = Name.special("<Self>")
+                    symbol = selfSymbol
+                    variance = Variance.OUT_VARIANCE
+                    isReified = false
+                }.build())
+            }
+
             if (firClass is FirRegularClass) {
                 firClass.addTypeParametersScope()
             }
@@ -285,6 +330,7 @@ open class FirTypeResolveTransformer(
     }
 
     private fun FirMemberDeclaration.addTypeParametersScope() {
+        scopes.add(FirSelfTypeScope(this))
         if (typeParameters.isNotEmpty()) {
             scopes.add(FirMemberTypeParameterScope(this))
         }

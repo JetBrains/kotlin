@@ -1,0 +1,31 @@
+FILE: selfTypes.kt
+    @R|kotlin/Self|() public final class JustSelfAnnotation<out <Self> : R|JustSelfAnnotation<<Self>>|> : R|kotlin/Any| {
+        public constructor(): R|JustSelfAnnotation| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final fun anyFun(): R|kotlin/String| {
+            ^anyFun String(string)
+        }
+
+    }
+    @R|kotlin/Self|() public final class ReturnType<out <Self> : R|ReturnType<<Self>>|> : R|kotlin/Any| {
+        public constructor(): R|ReturnType| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final fun returnType(): R|kotlin/Self| {
+            ^returnType this@R|/ReturnType|
+        }
+
+    }
+    @R|kotlin/Self|() public final class WithTypeParameter<T : R|WithTypeParameter<T>|, out <Self> : R|WithTypeParameter<T, <Self>>|> : R|kotlin/Any| {
+        public constructor<T : R|WithTypeParameter<T>|>(): R|WithTypeParameter<T>| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final fun withTypeParameter(): R|kotlin/Self| {
+            ^withTypeParameter this@R|/WithTypeParameter|
+        }
+
+    }

@@ -38,6 +38,8 @@ sealed class FirClassLikeDeclaration : FirMemberDeclaration(), FirStatement {
 
     abstract override fun replaceResolvePhase(newResolvePhase: FirResolvePhase)
 
+    abstract override fun replaceTypeParameters(newTypeParameters: List<FirTypeParameterRef>)
+
     abstract fun replaceDeprecation(newDeprecation: DeprecationsPerUseSite?)
 
     abstract override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirClassLikeDeclaration
