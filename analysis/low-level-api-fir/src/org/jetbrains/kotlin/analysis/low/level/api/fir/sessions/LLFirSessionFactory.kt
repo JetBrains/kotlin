@@ -47,6 +47,7 @@ import org.jetbrains.kotlin.fir.extensions.predicate.DeclarationPredicate
 import org.jetbrains.kotlin.fir.java.FirJavaFacadeForSource
 import org.jetbrains.kotlin.fir.java.JavaSymbolProvider
 import org.jetbrains.kotlin.fir.java.deserialization.JvmClassFileBasedSymbolProvider
+import org.jetbrains.kotlin.fir.java.deserialization.OptionalAnnotationClassesProvider
 import org.jetbrains.kotlin.fir.resolve.providers.FirDependenciesSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.providers.FirProvider
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
@@ -230,11 +231,12 @@ internal object LLFirSessionFactory {
             register(FirKotlinScopeProvider::class, kotlinScopeProvider)
 
             val moduleDataProvider = createModuleDataProviderWithLibraryDependencies(sourceModule, this)
+            val packagePartProvider = project.createPackagePartProviderForLibrary(searchScope)
             val classFileBasedSymbolProvider = JvmClassFileBasedSymbolProvider(
                 this@session,
                 moduleDataProvider = moduleDataProvider,
                 kotlinScopeProvider = kotlinScopeProvider,
-                packagePartProvider = project.createPackagePartProviderForLibrary(searchScope),
+                packagePartProvider = packagePartProvider,
                 kotlinClassFinder = VirtualFileFinderFactory.getInstance(project).create(searchScope),
                 javaFacade = LLFirJavaFacadeForBinaries(
                     this@session,
@@ -243,8 +245,17 @@ internal object LLFirSessionFactory {
                     moduleDataProvider
                 )
             )
+            val optionalAnnotationClassesProvider = OptionalAnnotationClassesProvider(
+                this,
+                moduleDataProvider,
+                kotlinScopeProvider,
+                packagePartProvider
+            )
             val symbolProvider =
-                FirCompositeSymbolProvider(this, listOf(classFileBasedSymbolProvider, builtinsAndCloneableSession.symbolProvider))
+                FirCompositeSymbolProvider(
+                    this,
+                    listOf(classFileBasedSymbolProvider, optionalAnnotationClassesProvider, builtinsAndCloneableSession.symbolProvider)
+                )
             register(FirProvider::class, LLFirLibrariesSessionProvider(symbolProvider))
             register(FirSymbolProvider::class, symbolProvider)
             register(FirJvmTypeMapper::class, FirJvmTypeMapper(this))
@@ -374,6 +385,7 @@ internal object LLFirSessionFactory {
             val dependentProviders = buildList {
                 val librariesSearchScope = ProjectScope.getLibrariesScope(project)
                     .intersectWith(GlobalSearchScope.notScope(libraryModule.contentScope)) // <all libraries scope> - <current library scope>
+                val packagePartProvider = project.createPackagePartProviderForLibrary(librariesSearchScope)
                 add(builtinsAndCloneableSession.symbolProvider)
                 val libraryDependenciesModuleDataProvider = createModuleDataProviderWithLibraryDependencies(module, this@session)
                 add(
@@ -381,7 +393,7 @@ internal object LLFirSessionFactory {
                         this@session,
                         moduleDataProvider = libraryDependenciesModuleDataProvider,
                         kotlinScopeProvider = scopeProvider,
-                        packagePartProvider = project.createPackagePartProviderForLibrary(librariesSearchScope),
+                        packagePartProvider = packagePartProvider,
                         kotlinClassFinder = VirtualFileFinderFactory.getInstance(project).create(librariesSearchScope),
                         javaFacade = LLFirJavaFacadeForBinaries(
                             this@session,
@@ -389,6 +401,14 @@ internal object LLFirSessionFactory {
                             project.createJavaClassFinder(librariesSearchScope),
                             libraryDependenciesModuleDataProvider
                         )
+                    )
+                )
+                add(
+                    OptionalAnnotationClassesProvider(
+                        this@session,
+                        moduleDataProvider = libraryDependenciesModuleDataProvider,
+                        kotlinScopeProvider = scopeProvider,
+                        packagePartProvider = packagePartProvider,
                     )
                 )
             }

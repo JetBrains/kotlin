@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmProtoBufUtil
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
-import org.jetbrains.kotlin.serialization.deserialization.IncompatibleVersionErrorData
+import org.jetbrains.kotlin.serialization.deserialization.*
 import java.nio.file.Path
 import java.nio.file.Paths
 
@@ -132,7 +132,7 @@ class JvmClassFileBasedSymbolProvider(
             nameResolver,
             classProto,
             JvmBinaryAnnotationDeserializer(session, kotlinClass, kotlinClassFinder, result.byteContent),
-            kotlinClass.containingLibrary.toPath(),
+            moduleDataProvider.getModuleData(kotlinClass.containingLibrary?.toPath()),
             KotlinJvmBinarySourceElement(kotlinClass),
             classPostProcessor = { loadAnnotationsFromClassFile(result, it) }
         )

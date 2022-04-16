@@ -13091,6 +13091,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
             }
 
             @Test
+            @TestMetadata("OptionalAnnotationClasses.kt")
+            public void testOptionalAnnotationClasses() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/imports/OptionalAnnotationClasses.kt");
+            }
+
+            @Test
             @TestMetadata("PackageLocalClassNotImported.kt")
             public void testPackageLocalClassNotImported() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/imports/PackageLocalClassNotImported.kt");

@@ -1,0 +1,4 @@
+package
+
+@kotlin.native.concurrent.SharedImmutable private val EmptyArray: kotlin.Array<kotlin.Int>
+@kotlin.js.JsName(name = "") public fun test(): kotlin.Unit
