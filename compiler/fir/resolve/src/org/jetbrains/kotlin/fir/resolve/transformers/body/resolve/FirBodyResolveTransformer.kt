@@ -11,6 +11,10 @@ import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.transformers.FirProviderInterceptor
 import org.jetbrains.kotlin.fir.resolve.transformers.ReturnTypeCalculator
 import org.jetbrains.kotlin.fir.resolve.transformers.ReturnTypeCalculatorForFullBodyResolve
+import org.jetbrains.kotlin.fir.resolve.transformers.ScopeClassDeclaration
+import org.jetbrains.kotlin.fir.scopes.impl.FirSelfTypeScope
+import org.jetbrains.kotlin.fir.types.*
+import org.jetbrains.kotlin.fir.visitors.FirTransformer
 
 open class FirBodyResolveTransformer(
     session: FirSession,

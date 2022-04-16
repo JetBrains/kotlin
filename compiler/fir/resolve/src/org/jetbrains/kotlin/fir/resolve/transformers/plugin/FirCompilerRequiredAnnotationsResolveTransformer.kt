@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.name.StandardClassIds.Annotations.Deprecated
 import org.jetbrains.kotlin.name.StandardClassIds.Annotations.DeprecatedSinceKotlin
 import org.jetbrains.kotlin.name.StandardClassIds.Annotations.JvmRecord
 import org.jetbrains.kotlin.name.StandardClassIds.Annotations.WasExperimental
+import org.jetbrains.kotlin.name.StandardClassIds.Annotations.Self
 
 class FirCompilerRequiredAnnotationsResolveProcessor(
     session: FirSession,

@@ -163,6 +163,10 @@ class FirSyntheticPropertyAccessor(
         throw AssertionError("Mutation of synthetic property accessor isn't supported")
     }
 
+    override fun replaceTypeParameters(newTypeParameters: List<FirTypeParameterRef>) {
+        throw AssertionError("Mutation of synthetic property isn't supported")
+    }
+
     override fun replaceAnnotations(newAnnotations: List<FirAnnotation>) {
         throw AssertionError("Mutation of synthetic property accessor isn't supported")
     }

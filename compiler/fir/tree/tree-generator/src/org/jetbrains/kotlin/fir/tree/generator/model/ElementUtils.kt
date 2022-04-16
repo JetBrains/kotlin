@@ -11,7 +11,14 @@ import org.jetbrains.kotlin.fir.tree.generator.printer.typeWithArguments
 
 // ----------- Simple field -----------
 
-fun field(name: String, type: String, packageName: String?, customType: Importable? = null, nullable: Boolean = false, withReplace: Boolean = false): Field {
+fun field(
+    name: String,
+    type: String,
+    packageName: String?,
+    customType: Importable? = null,
+    nullable: Boolean = false,
+    withReplace: Boolean = false
+): Field {
     return SimpleField(name, type, packageName, customType, nullable, withReplace)
 }
 
@@ -27,7 +34,14 @@ fun field(name: String, typeWithArgs: Pair<Type, List<Importable>>, nullable: Bo
 }
 
 fun field(type: Type, nullable: Boolean = false, withReplace: Boolean = false): Field {
-    return SimpleField(type.type.replaceFirstChar(Char::lowercaseChar), type.typeWithArguments, type.packageName, null, nullable, withReplace)
+    return SimpleField(
+        type.type.replaceFirstChar(Char::lowercaseChar),
+        type.typeWithArguments,
+        type.packageName,
+        null,
+        nullable,
+        withReplace
+    )
 }
 
 fun booleanField(name: String, withReplace: Boolean = false): Field {
@@ -62,12 +76,12 @@ fun field(element: Element, nullable: Boolean = false, withReplace: Boolean = fa
 
 // ----------- Field list -----------
 
-fun fieldList(name: String, type: Importable, withReplace: Boolean = false, useMutableOrEmpty: Boolean = false): Field {
-    return FieldList(name, type, withReplace, useMutableOrEmpty)
+fun fieldList(name: String, type: Importable, withReplace: Boolean = false, overrideTypeRequire: Boolean = false, useMutableOrEmpty: Boolean = false): Field {
+    return FieldList(name, type, withReplace, overrideTypeRequire, useMutableOrEmpty)
 }
 
-fun fieldList(element: AbstractElement, withReplace: Boolean = false, useMutableOrEmpty: Boolean = false): Field {
-    return FieldList(element.name.replaceFirstChar(Char::lowercaseChar) + "s", element, withReplace, useMutableOrEmpty)
+fun fieldList(element: AbstractElement, withReplace: Boolean = false, overrideTypeRequire: Boolean = false, useMutableOrEmpty: Boolean = false): Field {
+    return FieldList(element.name.replaceFirstChar(Char::lowercaseChar) + "s", element, withReplace, overrideTypeRequire, useMutableOrEmpty)
 }
 
 // ----------- Field set -----------

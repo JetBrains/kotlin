@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.fir.declarations.FirDeclarationStatus
 import org.jetbrains.kotlin.fir.declarations.FirReceiverParameter
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.FirTypeParameter
+import org.jetbrains.kotlin.fir.declarations.FirTypeParameterRef
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
 import org.jetbrains.kotlin.fir.declarations.InlineStatus
 import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl
@@ -178,6 +179,12 @@ internal class FirAnonymousFunctionImpl(
 
     override fun replaceInlineStatus(newInlineStatus: InlineStatus) {
         inlineStatus = newInlineStatus
+    }
+
+    override fun replaceTypeParameters(newTypeParameters: List<FirTypeParameterRef>) {
+        require(newTypeParameters.all { it is FirTypeParameter })
+        typeParameters.clear()
+        typeParameters.addAll(newTypeParameters.map { it as FirTypeParameter })
     }
 
     override fun replaceTypeRef(newTypeRef: FirTypeRef) {

@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.fir.declarations.FirReceiverParameter
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
 import org.jetbrains.kotlin.fir.declarations.FirTypeParameter
+import org.jetbrains.kotlin.fir.declarations.FirTypeParameterRef
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirBlock
@@ -167,6 +168,12 @@ internal class FirSimpleFunctionImpl(
 
     override fun replaceContractDescription(newContractDescription: FirContractDescription) {
         contractDescription = newContractDescription
+    }
+
+    override fun replaceTypeParameters(newTypeParameters: List<FirTypeParameterRef>) {
+        require(newTypeParameters.all { it is FirTypeParameter })
+        typeParameters.clear()
+        typeParameters.addAll(newTypeParameters.map { it as FirTypeParameter })
     }
 
     override fun replaceAnnotations(newAnnotations: List<FirAnnotation>) {

@@ -77,6 +77,8 @@ object StandardNames {
     @JvmField
     val KOTLIN_INTERNAL_FQ_NAME = BUILT_INS_PACKAGE_FQ_NAME.child(Name.identifier("internal"))
 
+    const val SELF_TYPE_NAME = "Self"
+
     @JvmField
     val BUILT_INS_PACKAGE_FQ_NAMES = setOf(
         BUILT_INS_PACKAGE_FQ_NAME,

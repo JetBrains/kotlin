@@ -339,14 +339,19 @@ fun SmartPrinter.printImplementation(implementation: Implementation) {
             for (field in allFields.filter { it.withReplace }) {
                 val capitalizedFieldName = field.name.replaceFirstChar(Char::uppercaseChar)
                 val newValue = "new$capitalizedFieldName"
-                generateReplace(field, forceNullable = field.useNullableForReplace) {
-                    when {
-                        field.withGetter -> {}
 
-                        field.origin is FieldList && !field.isMutableOrEmpty -> {
-                            println("${field.name}.clear()")
-                            println("${field.name}.addAll($newValue)")
-                        }
+                val overridenTypeRequire = (field.overridenTypes.filterIsInstance<Field>()
+                    .any { !it.overrideTypeRequire })
+
+                if (!overridenTypeRequire) {
+                    generateReplace(field, forceNullable = field.useNullableForReplace) {
+                        when {
+                            field.withGetter -> {}
+
+                            field.origin is FieldList && !field.isMutableOrEmpty -> {
+                                println("${field.name}.clear()")
+                                println("${field.name}.addAll($newValue)")
+                            }
 
                         else -> {
                             if (field.useNullableForReplace) {
@@ -360,11 +365,18 @@ fun SmartPrinter.printImplementation(implementation: Implementation) {
                         }
                     }
                 }
-
                 for (overridenType in field.overridenTypes) {
                     generateReplace(field, overridenType) {
-                        println("require($newValue is ${field.typeWithArguments})")
-                        println("replace$capitalizedFieldName($newValue)")
+                        if (overridenType is Field && overridenType.overrideTypeRequire) {
+                            println("require($newValue is ${field.typeWithArguments})")
+                            println("replace$capitalizedFieldName($newValue)")
+                        } else if (overridenType is Field && field.origin is FieldList) {
+                            val genericType =
+                                field.type.substring(field.type.indexOfFirst { it == '<' } + 1, field.type.indexOfLast { it == '>' })
+                            println("require($newValue.all { it is $genericType })")
+                            println("${field.name}.clear()")
+                            println("${field.name}.addAll($newValue.map { it as $genericType })")
+                        }
                     }
                 }
             }

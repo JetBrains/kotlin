@@ -1104,6 +1104,11 @@ public class LazyBodyIsNotTouchedTilContractsPhaseTestGenerated extends Abstract
             runTest("compiler/fir/analysis-tests/testData/resolve/cfg/safeCalls.kt");
         }
 
+        @TestMetadata("selfTypes.kt")
+        public void testSelfTypes() throws Exception {
+            runTest("compiler/fir/analysis-tests/testData/resolve/cfg/selfTypes.kt");
+        }
+
         @TestMetadata("simple.kt")
         public void testSimple() throws Exception {
             runTest("compiler/fir/analysis-tests/testData/resolve/cfg/simple.kt");
