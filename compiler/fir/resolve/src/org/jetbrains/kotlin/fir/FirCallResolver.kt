@@ -9,9 +9,7 @@ import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.declarations.utils.hasExplicitBackingField
-import org.jetbrains.kotlin.fir.declarations.utils.isInner
-import org.jetbrains.kotlin.fir.declarations.utils.isReferredViaField
+import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
 import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
 import org.jetbrains.kotlin.fir.diagnostics.ConeStubDiagnostic
@@ -307,36 +305,6 @@ class FirCallResolver(
             else -> null
         }
 
-        val isFromSyntheticScope = reducedCandidates.any { it.originScope is FirSyntheticsScope }
-
-        val propagatedDispatchReceiver = if (isFromSyntheticScope) {
-            val thePropertyAccess = qualifiedAccess.explicitReceiver as? FirPropertyAccessExpression
-                ?: error("Should've been a property access")
-            val isSelf = referencedSymbol == thePropertyAccess.calleeReference.resolvedSymbol
-
-            if (referencedSymbol is FirBackingFieldSymbol || isSelf) {
-                thePropertyAccess.dispatchReceiver
-            } else {
-                val theProperty = thePropertyAccess.calleeReference.resolvedSymbol?.fir as? FirProperty
-                    ?: error("No property")
-
-                buildPropertyAccessExpression {
-                    calleeReference = buildResolvedNamedReference {
-                        name = StandardNames.BACKING_FIELD
-                        resolvedSymbol = theProperty.delegateFieldSymbol ?: error("Should've had a delegate")
-                    }
-                    explicitReceiver = thePropertyAccess.explicitReceiver
-                    dispatchReceiver = thePropertyAccess.dispatchReceiver
-                    extensionReceiver = thePropertyAccess.extensionReceiver
-                    typeRef = theProperty.delegate?.typeRef ?: error("Should've had a delegate")
-                }.also {
-                    qualifiedAccess.replaceExplicitReceiver(it)
-                }
-            }
-        } else {
-            null
-        }
-
         val diagnostic = when (nameReference) {
             is FirErrorReferenceWithCandidate -> nameReference.diagnostic
             is FirErrorNamedReference -> nameReference.diagnostic
@@ -374,13 +342,7 @@ class FirCallResolver(
         var resultExpression = qualifiedAccess.transformCalleeReference(StoreNameReference, nameReference)
         if (reducedCandidates.size == 1) {
             val candidate = reducedCandidates.single()
-            resultExpression = if (!isFromSyntheticScope) {
-                resultExpression.transformDispatchReceiver(StoreReceiver, candidate.dispatchReceiverExpression())
-            } else if (propagatedDispatchReceiver != null) {
-                resultExpression.transformDispatchReceiver(StoreReceiver, propagatedDispatchReceiver)
-            } else {
-                error("Should not be here")
-            }
+            resultExpression = resultExpression.transformDispatchReceiver(StoreReceiver, candidate.dispatchReceiverExpression())
             resultExpression = resultExpression.transformExtensionReceiver(StoreReceiver, candidate.extensionReceiverExpression())
         }
         if (resultExpression is FirExpression) transformer.storeTypeFromCallee(resultExpression)

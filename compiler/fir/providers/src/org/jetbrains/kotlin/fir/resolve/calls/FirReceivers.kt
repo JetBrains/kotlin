@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.resolve.calls
 
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.diagnostics.ConeIntermediateDiagnostic
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.builder.buildExpressionWithSmartcast
@@ -16,6 +17,7 @@ import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.resolvedTypeFromPrototype
 import org.jetbrains.kotlin.fir.scopes.FakeOverrideTypeCalculator
 import org.jetbrains.kotlin.fir.scopes.FirTypeScope
+import org.jetbrains.kotlin.fir.scopes.impl.createSyntheticsScopeFor
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
@@ -51,7 +53,7 @@ abstract class AbstractExplicitReceiverValue<E : FirExpression> : AbstractExplic
 
 open class ExpressionReceiverValue(
     override val explicitReceiver: FirExpression,
-    private val searchSynthetics: Boolean = false,
+    private val syntheticsOwner: FirDeclaration? = null,
 ) : AbstractExplicitReceiverValue<FirExpression>(), ReceiverValue {
     override fun scope(useSiteSession: FirSession, scopeSession: ScopeSession): FirTypeScope? {
         var receiverExpr: FirExpression? = receiverExpression
@@ -60,8 +62,8 @@ open class ExpressionReceiverValue(
         if (receiverExpr is FirCheckNotNullCall) {
             receiverExpr = receiverExpr.arguments.firstOrNull()
         }
-        if (searchSynthetics) {
-            return receiverExpr?.syntheticsScope(useSiteSession, scopeSession)
+        if (syntheticsOwner != null) {
+            return createSyntheticsScopeFor(syntheticsOwner, useSiteSession, scopeSession)
         }
         if (receiverExpr is FirExpressionWithSmartcast) {
             return receiverExpr.smartcastScope(useSiteSession, scopeSession)

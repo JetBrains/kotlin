@@ -54,7 +54,12 @@ internal object CheckExplicitReceiverConsistency : ResolutionStage() {
         // TODO: add invoke cases
         when (receiverKind) {
             NO_EXPLICIT_RECEIVER -> {
-                if (explicitReceiver != null && explicitReceiver !is FirResolvedQualifier && !explicitReceiver.isSuperReferenceExpression()) {
+                if (
+                    explicitReceiver != null &&
+                    explicitReceiver !is FirResolvedQualifier &&
+                    !explicitReceiver.isSuperReferenceExpression() &&
+                    !callInfo.searchSynthetics
+                ) {
                     return sink.yieldDiagnostic(InapplicableWrongReceiver(actualType = explicitReceiver.typeRef.coneTypeSafe()))
                 }
             }
