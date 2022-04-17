@@ -8,9 +8,11 @@ package org.jetbrains.kotlin.resolve.calls.components
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemBuilder
 import org.jetbrains.kotlin.resolve.calls.inference.components.NewTypeSubstitutor
 import org.jetbrains.kotlin.resolve.calls.model.*
+import org.jetbrains.kotlin.resolve.calls.tower.RecursiveCallableReferenceType
 import org.jetbrains.kotlin.resolve.calls.tower.VisibilityError
 import org.jetbrains.kotlin.resolve.calls.tower.VisibilityErrorOnArgument
 import org.jetbrains.kotlin.resolve.calls.tower.isInapplicable
+import org.jetbrains.kotlin.resolve.calls.model.TypeCheckerHasRanIntoRecursion
 
 class CallableReferenceArgumentResolver(val callableReferenceOverloadConflictResolver: CallableReferenceOverloadConflictResolver) {
     fun processCallableReferenceArgument(
@@ -46,6 +48,7 @@ class CallableReferenceArgumentResolver(val callableReferenceOverloadConflictRes
                 val transformedDiagnostic = when (it) {
                     is CompatibilityWarning -> CompatibilityWarningOnArgument(argument, it.candidate)
                     is VisibilityError -> VisibilityErrorOnArgument(argument, it.invisibleMember)
+                    is RecursiveCallableReferenceType -> TypeCheckerHasRanIntoRecursion(argument)
                     else -> it
                 }
                 diagnosticsHolder.addDiagnostic(transformedDiagnostic)

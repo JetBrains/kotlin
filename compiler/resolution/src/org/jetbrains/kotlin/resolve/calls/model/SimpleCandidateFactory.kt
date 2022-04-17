@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.resolve.calls.inference.addSubsystemFromArgument
 import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintStorage
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
 import org.jetbrains.kotlin.resolve.calls.tower.*
+import org.jetbrains.kotlin.resolve.calls.util.ErrorCandidateReason
 import org.jetbrains.kotlin.resolve.descriptorUtil.hasDynamicExtensionAnnotation
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValueWithSmartCastInfo
 import org.jetbrains.kotlin.types.error.ErrorUtils
@@ -160,7 +161,7 @@ class SimpleCandidateFactory(
         return candidate
     }
 
-    override fun createErrorCandidate(): SimpleResolutionCandidate {
+    override fun createErrorCandidate(reason: ErrorCandidateReason): SimpleResolutionCandidate {
         val errorScope = ErrorUtils.createErrorScope(ErrorScopeKind.SCOPE_FOR_ERROR_RESOLUTION_CANDIDATE, kotlinCall.toString())
         val errorDescriptor = if (kotlinCall.callKind == KotlinCallKind.VARIABLE) {
             errorScope.getContributedVariables(kotlinCall.name, scopeTower.location)

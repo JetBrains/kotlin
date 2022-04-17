@@ -2078,6 +2078,12 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
             }
 
             @Test
+            @TestMetadata("kt51844.kt")
+            public void testKt51844() throws Exception {
+                runTest("compiler/testData/codegen/box/callableReference/kt51844.kt");
+            }
+
+            @Test
             @TestMetadata("nested.kt")
             public void testNested() throws Exception {
                 runTest("compiler/testData/codegen/box/callableReference/nested.kt");

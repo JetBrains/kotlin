@@ -154,6 +154,7 @@ object ResolvedUsingNewFeatures : ResolutionDiagnostic(RESOLVED_NEED_PRESERVE_CO
 object UnstableSmartCastDiagnostic : ResolutionDiagnostic(UNSTABLE_SMARTCAST)
 object HiddenExtensionRelatedToDynamicTypes : ResolutionDiagnostic(HIDDEN)
 object HiddenDescriptor : ResolutionDiagnostic(HIDDEN)
+object RecursiveCallableReferenceType : ResolutionDiagnostic(INAPPLICABLE)
 
 object InvokeConventionCallNoOperatorModifier : ResolutionDiagnostic(CONVENTION_ERROR)
 object InfixCallNoInfixModifier : ResolutionDiagnostic(CONVENTION_ERROR)
