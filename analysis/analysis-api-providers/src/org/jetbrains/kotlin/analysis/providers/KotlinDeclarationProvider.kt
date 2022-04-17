@@ -19,8 +19,10 @@ import org.jetbrains.kotlin.psi.*
  * May be called frequently, so for implementations it is better to cache results.
  */
 public abstract class KotlinDeclarationProvider {
-    public abstract fun getClassesByClassId(classId: ClassId): Collection<KtClassOrObject>
-    public abstract fun getTypeAliasesByClassId(classId: ClassId): Collection<KtTypeAlias>
+    public abstract fun getClassLikeDeclarationByClassId(classId: ClassId): KtClassLikeDeclaration?
+
+    public abstract fun getAllClassesByClassId(classId: ClassId): Collection<KtClassOrObject>
+    public abstract fun getAllTypeAliasesByClassId(classId: ClassId): Collection<KtTypeAlias>
 
     public abstract fun getClassNamesInPackage(packageFqName: FqName): Set<Name>
     public abstract fun getTypeAliasNamesInPackage(packageFqName: FqName): Set<Name>

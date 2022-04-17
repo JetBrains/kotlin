@@ -32,14 +32,19 @@ public class KotlinStaticDeclarationProvider internal constructor(
     private val KtElement.inScope: Boolean
         get() = containingKtFile.virtualFile in scope
 
-    override fun getClassesByClassId(classId: ClassId): Collection<KtClassOrObject> =
+    override fun getClassLikeDeclarationByClassId(classId: ClassId): KtClassLikeDeclaration? {
+        return getAllClassesByClassId(classId).firstOrNull()
+            ?: getAllTypeAliasesByClassId(classId).firstOrNull()
+    }
+
+    override fun getAllClassesByClassId(classId: ClassId): Collection<KtClassOrObject> =
         index.classMap[classId.packageFqName]
             ?.filter { ktClassOrObject ->
                 ktClassOrObject.getClassId() == classId && ktClassOrObject.inScope
             }
             ?: emptyList()
 
-    override fun getTypeAliasesByClassId(classId: ClassId): Collection<KtTypeAlias> =
+    override fun getAllTypeAliasesByClassId(classId: ClassId): Collection<KtTypeAlias> =
         index.typeAliasMap[classId.packageFqName]
             ?.filter { ktTypeAlias ->
                 ktTypeAlias.getClassId() == classId && ktTypeAlias.inScope

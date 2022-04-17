@@ -34,7 +34,7 @@ class KotlinAsJavaFirSupport(private val project: Project) : KotlinAsJavaSupport
         searchScope: GlobalSearchScope
     ): Collection<KtClassOrObject> = project.createDeclarationProvider(searchScope).run {
         getClassNamesInPackage(packageFqName).flatMap {
-            getClassesByClassId(ClassId.topLevel(packageFqName.child(it)))
+            getAllClassesByClassId(ClassId.topLevel(packageFqName.child(it)))
         }
     }
 
@@ -66,7 +66,7 @@ class KotlinAsJavaFirSupport(private val project: Project) : KotlinAsJavaSupport
 
     override fun findClassOrObjectDeclarations(fqName: FqName, searchScope: GlobalSearchScope): Collection<KtClassOrObject> =
         fqName.toClassIdSequence().flatMap {
-            project.createDeclarationProvider(searchScope).getClassesByClassId(it)
+            project.createDeclarationProvider(searchScope).getAllClassesByClassId(it)
         }
             .filter { it.isFromSourceOrLibraryBinary(project) }
             .toSet()

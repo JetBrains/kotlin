@@ -67,7 +67,7 @@ internal object FirDeserializedDeclarationSourceProvider {
         classByClassId(klass.symbol.classId, klass.scope(project), project)
 
     private fun provideSourceForTypeAlias(alias: FirTypeAlias, project: Project): PsiElement? {
-        val candidates = project.createDeclarationProvider(alias.scope(project)).getTypeAliasesByClassId(alias.symbol.classId)
+        val candidates = project.createDeclarationProvider(alias.scope(project)).getAllTypeAliasesByClassId(alias.symbol.classId)
         return candidates.firstOrNull(KtElement::isCompiled)
     }
 
@@ -120,7 +120,7 @@ internal object FirDeserializedDeclarationSourceProvider {
     private fun classByClassId(classId: ClassId, scope: GlobalSearchScope, project: Project): KtClassOrObject? {
         val correctedClassId = classIdMapping[classId] ?: classId
         return project.createDeclarationProvider(scope)
-            .getClassesByClassId(correctedClassId)
+            .getAllClassesByClassId(correctedClassId)
             .firstOrNull(KtElement::isCompiled)
     }
 

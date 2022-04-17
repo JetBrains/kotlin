@@ -158,7 +158,7 @@ internal class LLFirIdePredicateBasedProvider(
         val directAnnotations = annotationsOnDeclaration(declaration)
         val metaAnnotations = directAnnotations
             .asSequence()
-            .mapNotNull { declarationProvider.getClassesByClassId(ClassId.topLevel(it)).singleOrNull() }
+            .mapNotNull { declarationProvider.getAllClassesByClassId(ClassId.topLevel(it)).singleOrNull() }
             .flatMap { annotationsResolver.annotationsOnDeclaration(it) }
             .toSet()
 

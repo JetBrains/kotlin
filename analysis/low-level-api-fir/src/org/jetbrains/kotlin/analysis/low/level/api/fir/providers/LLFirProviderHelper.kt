@@ -35,10 +35,9 @@ internal class LLFirProviderHelper(
         if (classId.isLocal) return null
         return executeOrReturnDefaultValueOnPCE(null) {
             cache.classifierByClassId.computeIfAbsent(classId) {
-                val ktClass = when (val klass = declarationProvider.getClassesByClassId(classId).firstOrNull()) {
-                    null -> declarationProvider.getTypeAliasesByClassId(classId).firstOrNull()
-                    else -> if (klass.getClassId() == null) null else klass
-                } ?: return@computeIfAbsent Optional.empty()
+                val ktClass = declarationProvider.getClassLikeDeclarationByClassId(classId)
+                    ?: return@computeIfAbsent Optional.empty()
+                if (ktClass.getClassId() == null) return@computeIfAbsent Optional.empty()
                 val firFile = firFileBuilder.buildRawFirFileWithCaching(ktClass.containingKtFile)
                 val classifier = FirElementFinder.findElementIn<FirClassLikeDeclaration>(firFile) { classifier ->
                     classifier.symbol.classId == classId
