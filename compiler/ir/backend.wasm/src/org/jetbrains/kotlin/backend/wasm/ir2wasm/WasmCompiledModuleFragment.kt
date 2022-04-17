@@ -95,7 +95,6 @@ class WasmCompiledModuleFragment(val irBuiltIns: IrBuiltIns) {
             val declaration = (ir as? IrSymbol)?.owner as? IrDeclarationWithName
             if (declaration != null) {
                 val packageFragment = declaration.getPackageFragment()
-                    ?: error("Referencing declaration without package fragment ${declaration.fqNameWhenAvailable}")
                 if (packageFragment is IrExternalPackageFragment) {
                     error("Referencing declaration without package fragment ${declaration.fqNameWhenAvailable}")
                 }

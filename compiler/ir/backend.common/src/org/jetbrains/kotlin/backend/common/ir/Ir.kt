@@ -250,7 +250,7 @@ abstract class Symbols<out T : CommonBackendContext>(
             symbol is IrSimpleFunctionSymbol && symbol.owner.let { function ->
                 function.name.asString() == "<get-isInitialized>" &&
                         function.isTopLevel &&
-                        function.getPackageFragment()!!.fqName.asString() == "kotlin" &&
+                        function.getPackageFragment().fqName.asString() == "kotlin" &&
                         function.valueParameters.isEmpty() &&
                         symbol.owner.extensionReceiverParameter?.type?.classOrNull?.owner.let { receiverClass ->
                             receiverClass?.fqNameWhenAvailable?.toUnsafe() == StandardNames.FqNames.kProperty0

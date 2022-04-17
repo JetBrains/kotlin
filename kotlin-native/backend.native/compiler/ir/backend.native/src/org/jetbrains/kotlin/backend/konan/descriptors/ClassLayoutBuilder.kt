@@ -472,7 +472,7 @@ internal class ClassLayoutBuilder(val irClass: IrClass, val context: Context) {
             context.specialDeclarationsFactory.getOuterThisField(irClass)
         else null
         if (context.config.lazyIrForCaches && !context.llvmModuleSpecification.containsDeclaration(irClass)) {
-            val packageFragment = irClass.findPackage()
+            val packageFragment = irClass.getPackageFragment()
             val moduleDescriptor = packageFragment.packageFragmentDescriptor.containingDeclaration
             if (moduleDescriptor.isFromInteropLibrary())
                 return emptyList()

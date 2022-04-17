@@ -236,12 +236,6 @@ internal fun IrSimpleFunction.bridgeDirectionsTo(overriddenFunction: IrSimpleFun
     return ourDirections
 }
 
-internal tailrec fun IrDeclaration.findPackage(): IrPackageFragment {
-    val parent = this.parent
-    return parent as? IrPackageFragment
-            ?: (parent as IrDeclaration).findPackage()
-}
-
 fun IrFunctionSymbol.isComparisonFunction(map: Map<IrClassifierSymbol, IrSimpleFunctionSymbol>): Boolean =
         this in map.values
 

@@ -13,13 +13,14 @@ import org.jetbrains.kotlin.backend.common.lower.inline.LocalClassesInInlineFunc
 import org.jetbrains.kotlin.backend.common.lower.inline.LocalClassesInInlineLambdasLowering
 import org.jetbrains.kotlin.backend.konan.Context
 import org.jetbrains.kotlin.backend.konan.InlineFunctionOriginInfo
-import org.jetbrains.kotlin.backend.konan.descriptors.findPackage
 import org.jetbrains.kotlin.ir.declarations.IrExternalPackageFragment
+import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.util.dump
 import org.jetbrains.kotlin.ir.util.file
 import org.jetbrains.kotlin.ir.util.render
+import org.jetbrains.kotlin.ir.util.getPackageFragment
 
 // TODO: This is a bit hacky. Think about adopting persistent IR ideas.
 internal class NativeInlineFunctionResolver(override val context: Context) : DefaultInlineFunctionResolver(context) {
@@ -28,11 +29,11 @@ internal class NativeInlineFunctionResolver(override val context: Context) : Def
 
         context.specialDeclarationsFactory.loweredInlineFunctions[function]?.let { return it.irFunction }
 
-        val packageFragment = function.findPackage()
+        val packageFragment = function.getPackageFragment()
         val notLoweredFunction = if (packageFragment !is IrExternalPackageFragment) {
             context.specialDeclarationsFactory.getNonLoweredInlineFunction(function).also {
                 context.specialDeclarationsFactory.loweredInlineFunctions[function] =
-                        InlineFunctionOriginInfo(it, function.file, function.startOffset, function.endOffset)
+                        InlineFunctionOriginInfo(it, packageFragment as IrFile, function.startOffset, function.endOffset)
             }
         } else {
             // The function is from Lazy IR, get its body from the IR linker.

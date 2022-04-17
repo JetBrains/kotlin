@@ -452,7 +452,7 @@ class MethodSignatureMapper(private val context: JvmBackendContext) {
     }
 
     private val IrSimpleFunction.isBuiltIn: Boolean
-        get() = getPackageFragment()?.fqName == StandardNames.BUILT_INS_PACKAGE_FQ_NAME ||
+        get() = getPackageFragment().fqName == StandardNames.BUILT_INS_PACKAGE_FQ_NAME ||
                 parent.safeAs<IrClass>()?.fqNameWhenAvailable?.toUnsafe()?.let(JavaToKotlinClassMap::mapKotlinToJava) != null
 
     // From BuiltinMethodsWithDifferentJvmName.isBuiltinFunctionWithDifferentNameInJvm, BuiltinMethodsWithDifferentJvmName.getJvmName

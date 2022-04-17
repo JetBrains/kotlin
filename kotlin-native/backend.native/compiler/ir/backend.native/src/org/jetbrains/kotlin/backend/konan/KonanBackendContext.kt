@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.backend.common.CommonBackendContext
 import org.jetbrains.kotlin.backend.common.DefaultMapping
 import org.jetbrains.kotlin.backend.common.Mapping
 import org.jetbrains.kotlin.backend.konan.descriptors.KonanSharedVariablesManager
-import org.jetbrains.kotlin.backend.konan.descriptors.findPackage
 import org.jetbrains.kotlin.backend.konan.ir.KonanIr
 import org.jetbrains.kotlin.builtins.konan.KonanBuiltIns
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
@@ -22,6 +21,7 @@ import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrFactory
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
+import org.jetbrains.kotlin.ir.util.getPackageFragment
 
 internal abstract class KonanBackendContext(val config: KonanConfig) : CommonBackendContext {
     abstract override val builtIns: KonanBuiltIns
@@ -59,7 +59,7 @@ internal fun IrElement.getCompilerMessageLocation(containingFile: IrFile): Compi
 
 internal fun IrBuilderWithScope.getCompilerMessageLocation(): CompilerMessageLocation? {
     val declaration = this.scope.scopeOwnerSymbol.owner as? IrDeclaration ?: return null
-    val file = declaration.findPackage() as? IrFile ?: return null
+    val file = declaration.getPackageFragment() as? IrFile ?: return null
     return createCompilerMessageLocation(file, startOffset, endOffset)
 }
 

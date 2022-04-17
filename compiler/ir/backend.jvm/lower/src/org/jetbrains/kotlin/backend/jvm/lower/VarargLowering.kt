@@ -101,7 +101,7 @@ internal const val ARRAY_OF_NAME = "arrayOf"
 
 internal fun IrFunction.isArrayOf(): Boolean {
     val parent = when (val directParent = parent) {
-        is IrClass -> directParent.getPackageFragment() ?: return false
+        is IrClass -> directParent.getPackageFragment()
         is IrPackageFragment -> directParent
         else -> return false
     }

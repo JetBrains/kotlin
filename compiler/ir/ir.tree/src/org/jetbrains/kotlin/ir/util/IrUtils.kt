@@ -273,12 +273,13 @@ val IrDeclaration.parentAsClass: IrClass
     get() = parent as? IrClass
         ?: error("Parent of this declaration is not a class: ${render()}")
 
-tailrec fun IrElement.getPackageFragment(): IrPackageFragment? {
-    if (this is IrPackageFragment) return this
-    return when (val parent = (this as? IrDeclaration)?.parent) {
-        is IrPackageFragment -> parent
-        else -> parent?.getPackageFragment()
-    }
+fun IrElement.getPackageFragment(): IrPackageFragment? =
+    this as? IrPackageFragment ?: (this as? IrDeclaration)?.getPackageFragment()
+
+tailrec fun IrDeclaration.getPackageFragment(): IrPackageFragment {
+    val parent = this.parent
+    return parent as? IrPackageFragment
+        ?: (parent as IrDeclaration).getPackageFragment()
 }
 
 fun IrConstructorCall.isAnnotation(name: FqName) = symbol.owner.parentAsClass.fqNameWhenAvailable == name
@@ -484,12 +485,7 @@ fun IrMemberAccessExpression<IrFunctionSymbol>.copyValueArgumentsFrom(
 }
 
 val IrDeclaration.fileOrNull: IrFile?
-    get() = when (val parent = parent) {
-        is IrFile -> parent
-        is IrPackageFragment -> null
-        is IrDeclaration -> parent.fileOrNull
-        else -> TODO("Unexpected declaration parent")
-    }
+    get() = getPackageFragment() as? IrFile
 
 val IrDeclaration.file: IrFile
     get() = fileOrNull ?: TODO("Unknown file")

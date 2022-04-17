@@ -714,7 +714,7 @@ internal class KonanIrLinker(
         private val inlineFunctionFiles = mutableMapOf<IrExternalPackageFragment, IrFile>()
 
         fun deserializeInlineFunction(function: IrFunction): InlineFunctionOriginInfo {
-            val packageFragment = function.findPackage() as? IrExternalPackageFragment
+            val packageFragment = function.getPackageFragment() as? IrExternalPackageFragment
                     ?: error("Expected an external package fragment for ${function.render()}")
             if (function.parents.any { (it as? IrFunction)?.isInline == true}) {
                 // Already deserialized by the top-most inline function.

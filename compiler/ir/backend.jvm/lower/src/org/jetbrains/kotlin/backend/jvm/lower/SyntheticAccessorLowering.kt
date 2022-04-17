@@ -89,7 +89,7 @@ internal class SyntheticAccessorLowering(val context: JvmBackendContext) : FileL
 
             val ownerClass = declaration.parent as? IrClass ?: return true // locals are always accessible
             val scopeClassOrPackage = inlineScopeResolver.findContainer(currentScope!!.irElement) ?: return false
-            val samePackage = ownerClass.getPackageFragment()?.fqName == scopeClassOrPackage.getPackageFragment()?.fqName
+            val samePackage = ownerClass.getPackageFragment().fqName == scopeClassOrPackage.getPackageFragment()?.fqName
             return when {
                 jvmVisibility == 0 /* package only */ -> samePackage
                 jvmVisibility == Opcodes.ACC_PRIVATE -> ownerClass == scopeClassOrPackage
