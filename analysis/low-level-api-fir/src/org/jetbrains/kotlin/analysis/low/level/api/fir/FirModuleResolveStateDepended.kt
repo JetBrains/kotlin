@@ -73,13 +73,6 @@ internal class FirModuleResolveStateDepended(
         originalState.resolveFirToPhase(declaration, toPhase)
     }
 
-    override fun tryGetCachedFirFile(declaration: FirDeclaration, cache: ModuleFileCache): FirFile? {
-        val ktFile = declaration.containingKtFileIfAny ?: return null
-        cache.getCachedFirFile(ktFile)?.let { return it }
-        ktFile.originalKtFile?.let(cache::getCachedFirFile)?.let { return it }
-        return null
-    }
-
     override fun getDiagnostics(element: KtElement, filter: DiagnosticCheckerFilter): List<KtPsiDiagnostic> =
         TODO("Diagnostics are not implemented for depended state")
 

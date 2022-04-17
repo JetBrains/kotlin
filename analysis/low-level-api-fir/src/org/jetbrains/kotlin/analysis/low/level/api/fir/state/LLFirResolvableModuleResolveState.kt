@@ -59,9 +59,6 @@ internal abstract class LLFirResolvableModuleResolveState(
         return moduleComponents.firFileBuilder.buildRawFirFileWithCaching(ktFile)
     }
 
-    override fun tryGetCachedFirFile(declaration: FirDeclaration, cache: ModuleFileCache): FirFile? =
-        cache.getContainerFirFile(declaration)
-
     protected fun getModuleComponentsForElement(element: KtElement): LLFirModuleResolveComponents {
         val ktModule = element.getKtModule()
         return sessionProvider.getSession(ktModule).moduleComponents

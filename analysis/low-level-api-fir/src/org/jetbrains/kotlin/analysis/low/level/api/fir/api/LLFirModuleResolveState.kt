@@ -51,11 +51,6 @@ abstract class LLFirModuleResolveState {
      */
     internal abstract fun getOrBuildFirFile(ktFile: KtFile): FirFile
 
-    /**
-     * Try get [FirFile] from the cache in undefined phase
-     */
-    internal abstract fun tryGetCachedFirFile(declaration: FirDeclaration, cache: ModuleFileCache): FirFile?
-
     internal abstract fun getDiagnostics(element: KtElement, filter: DiagnosticCheckerFilter): List<KtPsiDiagnostic>
 
     internal abstract fun collectDiagnosticsForFile(ktFile: KtFile, filter: DiagnosticCheckerFilter): Collection<KtPsiDiagnostic>
