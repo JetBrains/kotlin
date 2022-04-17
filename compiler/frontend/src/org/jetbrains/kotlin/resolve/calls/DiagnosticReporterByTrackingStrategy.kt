@@ -195,6 +195,14 @@ class DiagnosticReporterByTrackingStrategy(
             SmartCastDiagnostic::class.java -> reportSmartCast(diagnostic as SmartCastDiagnostic)
             UnstableSmartCastDiagnosticError::class.java,
             UnstableSmartCastResolutionError::class.java -> reportUnstableSmartCast(diagnostic as UnstableSmartCast)
+            TypeCheckerHasRanIntoRecursion::class.java -> {
+                diagnostic as TypeCheckerHasRanIntoRecursion
+                val argumentExpression =
+                    diagnostic.onArgument?.psiCallArgument?.valueArgument?.getArgumentExpression()
+                if (argumentExpression != null) {
+                    trace.report(TYPECHECKER_HAS_RUN_INTO_RECURSIVE_PROBLEM.errorFactory.on(argumentExpression))
+                }
+            }
             VisibilityErrorOnArgument::class.java -> {
                 diagnostic as VisibilityErrorOnArgument
                 val invisibleMember = diagnostic.invisibleMember

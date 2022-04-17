@@ -18,15 +18,15 @@ import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintStorage
 import org.jetbrains.kotlin.resolve.calls.inference.model.TypeVariableTypeConstructor
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
 import org.jetbrains.kotlin.resolve.calls.tower.*
+import org.jetbrains.kotlin.resolve.calls.util.ErrorCandidateReason
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import org.jetbrains.kotlin.resolve.descriptorUtil.isCompanionObject
 import org.jetbrains.kotlin.resolve.scopes.receivers.DetailedReceiver
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValueWithSmartCastInfo
 import org.jetbrains.kotlin.types.*
-import org.jetbrains.kotlin.types.error.ErrorScopeKind
+import org.jetbrains.kotlin.types.error.*
 import org.jetbrains.kotlin.types.error.ErrorUtils
-import org.jetbrains.kotlin.types.error.ErrorTypeKind
 import org.jetbrains.kotlin.types.expressions.CoercionStrategy
 import org.jetbrains.kotlin.types.typeUtil.isUnit
 import org.jetbrains.kotlin.utils.SmartList
@@ -43,7 +43,7 @@ class CallableReferencesCandidateFactory(
     private val CallableReceiver.asReceiverValueForVisibilityChecks: ReceiverValue
         get() = receiver.receiverValue
 
-    override fun createErrorCandidate(): CallableReferenceResolutionCandidate {
+    override fun createErrorCandidate(reason: ErrorCandidateReason): CallableReferenceResolutionCandidate {
         val errorScope = ErrorUtils.createErrorScope(ErrorScopeKind.SCOPE_FOR_ERROR_RESOLUTION_CANDIDATE, kotlinCall.toString())
         val errorDescriptor = errorScope.getContributedFunctions(kotlinCall.rhsName, scopeTower.location).first()
 
@@ -56,21 +56,36 @@ class CallableReferencesCandidateFactory(
             buildTypeWithConversions = kotlinCall is CallableReferenceKotlinCallArgument
         )
 
-        return CallableReferenceResolutionCandidate(
+        val candidate = CallableReferenceResolutionCandidate(
             errorDescriptor, dispatchReceiver = null, extensionReceiver = null,
             ExplicitReceiverKind.NO_EXPLICIT_RECEIVER, reflectionCandidateType, callableReferenceAdaptation,
             kotlinCall, expectedType, callComponents, scopeTower, resolutionCallbacks, baseSystem
         )
+
+        when (reason) {
+            ErrorCandidateReason.TYPE_COMPUTATION_RECURSION -> candidate.addDiagnostic(RecursiveCallableReferenceType)
+            ErrorCandidateReason.OTHER -> {}
+        }
+
+        return candidate
     }
 
-    override fun createCandidate(
+    private fun KotlinType.isErrorRecursiveType(): Boolean {
+        val unwrapped = if (this is WrappedType && isComputed()) unwrap() else this
+        return unwrapped is ErrorType && unwrapped.kind == ErrorTypeKind.RECURSIVE_TYPE
+    }
+
+    private fun createCandidateInternal(
         towerCandidate: CandidateWithBoundDispatchReceiver,
         explicitReceiverKind: ExplicitReceiverKind,
         extensionReceiver: ReceiverValueWithSmartCastInfo?
     ): CallableReferenceResolutionCandidate {
-        val dispatchCallableReceiver =
-            towerCandidate.dispatchReceiver?.let { toCallableReceiver(it, explicitReceiverKind == ExplicitReceiverKind.DISPATCH_RECEIVER) }
-        val extensionCallableReceiver = extensionReceiver?.let { toCallableReceiver(it, explicitReceiverKind == ExplicitReceiverKind.EXTENSION_RECEIVER) }
+        val dispatchCallableReceiver = towerCandidate.dispatchReceiver?.let {
+            toCallableReceiver(it, explicitReceiverKind == ExplicitReceiverKind.DISPATCH_RECEIVER)
+        }
+        val extensionCallableReceiver = extensionReceiver?.let {
+            toCallableReceiver(it, explicitReceiverKind == ExplicitReceiverKind.EXTENSION_RECEIVER)
+        }
         val candidateDescriptor = towerCandidate.descriptor
         val diagnostics = SmartList<KotlinCallDiagnostic>()
 
@@ -121,6 +136,30 @@ class CallableReferencesCandidateFactory(
 
         return createCallableReferenceCallCandidate(diagnostics)
     }
+
+    override fun createCandidate(
+        towerCandidate: CandidateWithBoundDispatchReceiver,
+        explicitReceiverKind: ExplicitReceiverKind,
+        extensionReceiver: ReceiverValueWithSmartCastInfo?
+    ): CallableReferenceResolutionCandidate =
+        createRecursionTolerantCandidate(towerCandidate, explicitReceiverKind, extensionReceiver) {
+            createErrorCandidate(ErrorCandidateReason.TYPE_COMPUTATION_RECURSION)
+        }
+
+    private fun createRecursionTolerantCandidate(
+        towerCandidate: CandidateWithBoundDispatchReceiver,
+        explicitReceiverKind: ExplicitReceiverKind,
+        extensionReceiver: ReceiverValueWithSmartCastInfo?,
+        onRecursion: () -> CallableReferenceResolutionCandidate,
+    ): CallableReferenceResolutionCandidate =
+        try {
+            val resolutionCandidate = createCandidateInternal(towerCandidate, explicitReceiverKind, extensionReceiver)
+            val returnType = resolutionCandidate.candidate.returnType
+
+            if (returnType == null || !returnType.isErrorRecursiveType()) resolutionCandidate else onRecursion()
+        } catch (e: LazyWrappedTypeComputationException) {
+            onRecursion()
+        }
 
     /**
      * The function is called only inside [NoExplicitReceiverScopeTowerProcessor] with [TowerData.BothTowerLevelAndContextReceiversGroup].

@@ -502,7 +502,7 @@ class NewResolutionOldInference(
             extensionReceiverCandidates: List<ReceiverValueWithSmartCastInfo>
         ): MyCandidate = error("${this::class.simpleName} doesn't support candidates with multiple extension receiver candidates")
 
-        override fun createErrorCandidate(): MyCandidate {
+        override fun createErrorCandidate(reason: ErrorCandidateReason): MyCandidate {
             throw IllegalStateException("Not supported creating error candidate for the old type inference candidate factory")
         }
 

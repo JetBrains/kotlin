@@ -26,7 +26,7 @@ infix fun filter(filter: (R, Any?) -> Boolean): Delegate<R, T>
 class GitLabChangesProcessor: DatabaseEntity {
     var buildProcessors by <!DEBUG_INFO_EXPRESSION_TYPE("Delegate<GitLabChangesProcessor, kotlin.collections.MutableCollection<GitLabBuildProcessor>>"), TYPECHECKER_HAS_RUN_INTO_RECURSIVE_PROBLEM_ERROR!>child_many(
         GitLabBuildProcessor::class.java,
-        GitLabBuildProcessor::processor
+        <!TYPECHECKER_HAS_RUN_INTO_RECURSIVE_PROBLEM_ERROR, TYPE_MISMATCH!>GitLabBuildProcessor::<!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>processor<!><!>
     )<!>
 }
 

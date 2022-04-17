@@ -8,7 +8,7 @@ class ProcessorWithParent : Entity {
 }
 
 class ProcessorWithChildren : Entity {
-    var processors by <!TYPECHECKER_HAS_RUN_INTO_RECURSIVE_PROBLEM_ERROR!>children(ProcessorWithParent::class.java, ProcessorWithParent::processor)<!>
+    var processors by <!TYPECHECKER_HAS_RUN_INTO_RECURSIVE_PROBLEM_ERROR!>children(ProcessorWithParent::class.java, <!TYPECHECKER_HAS_RUN_INTO_RECURSIVE_PROBLEM_ERROR, TYPE_MISMATCH!>ProcessorWithParent::<!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>processor<!><!>)<!>
 }
 
 class Processor2WithParent : Entity {
