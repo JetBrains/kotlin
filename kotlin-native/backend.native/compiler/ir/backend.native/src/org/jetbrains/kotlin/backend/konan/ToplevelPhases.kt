@@ -429,6 +429,35 @@ internal val exportInternalAbiPhase = makeKonanModuleOpPhase(
                         context.internalAbi.declare(function, declaration.module)
                     }
                 }
+
+                override fun visitProperty(declaration: IrProperty) {
+                    declaration.acceptChildrenVoid(this)
+
+                    if (!declaration.isLateinit || declaration.isFakeOverride
+                            || DescriptorVisibilities.isPrivate(declaration.visibility) || declaration.isLocal)
+                        return
+
+                    val backingField = declaration.backingField ?: error("Lateinit property ${declaration.render()} should have a backing field")
+                    val function = context.irFactory.buildFun {
+                        name = InternalAbi.getLateinitPropertyFieldAccessorName(declaration)
+                        origin = InternalAbi.INTERNAL_ABI_ORIGIN
+                        returnType = backingField.type
+                    }
+                    val ownerClass = declaration.parentClassOrNull
+                    if (ownerClass != null)
+                        function.addValueParameter {
+                            name = Name.identifier("owner")
+                            origin = InternalAbi.INTERNAL_ABI_ORIGIN
+                            type = ownerClass.defaultType
+                        }
+
+                    context.createIrBuilder(function.symbol).apply {
+                        function.body = irBlockBody {
+                            +irReturn(irGetField(ownerClass?.let { irGet(function.valueParameters[0]) }, backingField))
+                        }
+                    }
+                    context.internalAbi.declare(function, declaration.module)
+                }
             }
             module.acceptChildrenVoid(visitor)
         }
@@ -441,8 +470,12 @@ internal val useInternalAbiPhase = makeKonanModuleOpPhase(
         op = { context, module ->
             val companionObjectAccessors = mutableMapOf<IrClass, IrSimpleFunction>()
             val outerThisAccessors = mutableMapOf<IrClass, IrSimpleFunction>()
+            val lateinitPropertyAccessors = mutableMapOf<IrProperty, IrSimpleFunction>()
+
             val transformer = object : IrElementTransformerVoid() {
                 override fun visitGetObjectValue(expression: IrGetObjectValue): IrExpression {
+                    expression.transformChildrenVoid(this)
+
                     val irClass = expression.symbol.owner
                     if (!irClass.isCompanion || context.llvmModuleSpecification.containsDeclaration(irClass)) {
                         return expression
@@ -466,35 +499,70 @@ internal val useInternalAbiPhase = makeKonanModuleOpPhase(
                 }
 
                 override fun visitGetField(expression: IrGetField): IrExpression {
-                    val field = expression.symbol.owner
-                    val irClass = field.parentClassOrNull ?: return expression
-                    if (!irClass.isInner || context.llvmModuleSpecification.containsDeclaration(irClass)
-                            || context.specialDeclarationsFactory.getOuterThisField(irClass) != field
-                    ) {
-                        return expression
-                    }
-                    val accessor = outerThisAccessors.getOrPut(irClass) {
-                        context.irFactory.buildFun {
-                            name = InternalAbi.getInnerClassOuterThisAccessorName(irClass)
-                            returnType = irClass.parentAsClass.defaultType
-                            origin = InternalAbi.INTERNAL_ABI_ORIGIN
-                            isExternal = true
-                        }.also { function ->
-                            context.internalAbi.reference(function, irClass.module)
+                    expression.transformChildrenVoid(this)
 
-                            function.addValueParameter {
-                                name = Name.identifier("innerClass")
-                                origin = InternalAbi.INTERNAL_ABI_ORIGIN
-                                type = irClass.defaultType
+                    val field = expression.symbol.owner
+                    val irClass = field.parentClassOrNull
+                    val property = field.correspondingPropertySymbol?.owner
+
+                    return when {
+                        context.llvmModuleSpecification.containsDeclaration(field) -> expression
+
+                        irClass?.isInner == true && context.specialDeclarationsFactory.getOuterThisField(irClass) == field -> {
+                            val accessor = outerThisAccessors.getOrPut(irClass) {
+                                context.irFactory.buildFun {
+                                    name = InternalAbi.getInnerClassOuterThisAccessorName(irClass)
+                                    returnType = irClass.parentAsClass.defaultType
+                                    origin = InternalAbi.INTERNAL_ABI_ORIGIN
+                                    isExternal = true
+                                }.also { function ->
+                                    context.internalAbi.reference(function, irClass.module)
+
+                                    function.addValueParameter {
+                                        name = Name.identifier("innerClass")
+                                        origin = InternalAbi.INTERNAL_ABI_ORIGIN
+                                        type = irClass.defaultType
+                                    }
+                                }
+                            }
+                            return IrCallImpl(
+                                    expression.startOffset, expression.endOffset,
+                                    expression.type, accessor.symbol,
+                                    accessor.typeParameters.size, accessor.valueParameters.size
+                            ).apply {
+                                putValueArgument(0, expression.receiver)
                             }
                         }
-                    }
-                    return IrCallImpl(
-                            expression.startOffset, expression.endOffset,
-                            expression.type, accessor.symbol,
-                            accessor.typeParameters.size, accessor.valueParameters.size
-                    ).apply {
-                        putValueArgument(0, expression.receiver)
+
+                        property?.isLateinit == true -> {
+                            val accessor = lateinitPropertyAccessors.getOrPut(property) {
+                                context.irFactory.buildFun {
+                                    name = InternalAbi.getLateinitPropertyFieldAccessorName(property)
+                                    returnType = field.type
+                                    origin = InternalAbi.INTERNAL_ABI_ORIGIN
+                                    isExternal = true
+                                }.also { function ->
+                                    context.internalAbi.reference(function, property.module)
+
+                                    if (irClass != null)
+                                        function.addValueParameter {
+                                            name = Name.identifier("owner")
+                                            origin = InternalAbi.INTERNAL_ABI_ORIGIN
+                                            type = irClass.defaultType
+                                        }
+                                }
+                            }
+                            return IrCallImpl(
+                                    expression.startOffset, expression.endOffset,
+                                    expression.type, accessor.symbol,
+                                    accessor.typeParameters.size, accessor.valueParameters.size
+                            ).apply {
+                                if (irClass != null)
+                                    putValueArgument(0, expression.receiver)
+                            }
+                        }
+
+                        else -> expression
                     }
                 }
             }

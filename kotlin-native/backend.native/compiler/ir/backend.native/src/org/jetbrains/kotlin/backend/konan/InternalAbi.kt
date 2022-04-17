@@ -89,6 +89,9 @@ internal class InternalAbi(private val context: Context) {
         fun getInnerClassOuterThisAccessorName(innerClass: IrClass): Name =
                 getMangledNameFor("outerThis", innerClass)
 
+        fun getLateinitPropertyFieldAccessorName(property: IrProperty): Name =
+                getMangledNameFor("${property.name}_field", property.parent)
+
         /**
          * Generate name for declaration that will be a part of internal ABI.
          */

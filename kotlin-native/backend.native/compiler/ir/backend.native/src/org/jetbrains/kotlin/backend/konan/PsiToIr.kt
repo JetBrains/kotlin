@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.backend.konan.serialization.*
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
+import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.descriptors.konan.DeserializedKlibModuleOrigin
 import org.jetbrains.kotlin.descriptors.konan.KlibModuleOrigin
 import org.jetbrains.kotlin.descriptors.konan.isNativeStdlib
@@ -33,6 +34,12 @@ import org.jetbrains.kotlin.psi2ir.generators.DeclarationStubGeneratorImpl
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.CleanableBindingContext
 import org.jetbrains.kotlin.utils.DFS
+
+object KonanStubGeneratorExtensions : StubGeneratorExtensions() {
+    override fun isPropertyWithPlatformField(descriptor: PropertyDescriptor): Boolean {
+        return super.isPropertyWithPlatformField(descriptor) || descriptor.isLateInit
+    }
+}
 
 internal fun Context.psiToIr(
         symbolTable: SymbolTable,
@@ -61,6 +68,7 @@ internal fun Context.psiToIr(
             moduleDescriptor, symbolTable,
             generatorContext.irBuiltIns,
             DescriptorByIdSignatureFinderImpl(moduleDescriptor, KonanManglerDesc),
+            KonanStubGeneratorExtensions
     )
     val irBuiltInsOverDescriptors = generatorContext.irBuiltIns as IrBuiltInsOverDescriptors
     val functionIrClassFactory: KonanIrAbstractDescriptorBasedFunctionFactory =
