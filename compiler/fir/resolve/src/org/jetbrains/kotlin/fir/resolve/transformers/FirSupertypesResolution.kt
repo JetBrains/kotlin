@@ -241,7 +241,7 @@ open class FirSupertypeResolverVisitor(
 
     private fun getFirClassifierContainerFileIfAny(symbol: FirClassLikeSymbol<*>): FirFile? =
         if (firProviderInterceptor != null) firProviderInterceptor.getFirClassifierContainerFileIfAny(symbol)
-        else session.firProvider.getFirClassifierContainerFileIfAny(symbol.classId)
+        else symbol.moduleData.session.firProvider.getFirClassifierContainerFileIfAny(symbol.classId)
 
     private fun getFirClassifierByFqName(classId: ClassId): FirClassLikeDeclaration? =
         if (firProviderInterceptor != null) firProviderInterceptor.getFirClassifierByFqName(classId)
