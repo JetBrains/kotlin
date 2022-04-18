@@ -18,12 +18,7 @@ import org.jetbrains.kotlin.native.interop.indexer.*
 internal fun Type.isStret(target: KonanTarget): Boolean {
     val unwrappedType = this.unwrapTypedefs()
     val abiInfo: ObjCAbiInfo = when (target.architecture) {
-        Architecture.ARM64 -> {
-            // Currently, cinterop works with watchos_arm64 as with watchos_arm32.
-            // TODO: ABI for watchos_arm64 should be revisited after LLVM update.
-            require(target != KonanTarget.WATCHOS_ARM64)
-            DarwinArm64AbiInfo()
-        }
+        Architecture.ARM64 -> DarwinArm64AbiInfo()
 
         Architecture.X64 -> DarwinX64AbiInfo()
 
@@ -88,6 +83,9 @@ class DarwinArm32AbiInfo(private val target: KonanTarget) : ObjCAbiInfo {
     }
 }
 
+/**
+ * Remember about arm64_32!
+ */
 class DarwinArm64AbiInfo : ObjCAbiInfo {
     override fun shouldUseStret(returnType: Type): Boolean {
         // On aarch64 stret is never the case, since an implicit argument gets passed on x8.

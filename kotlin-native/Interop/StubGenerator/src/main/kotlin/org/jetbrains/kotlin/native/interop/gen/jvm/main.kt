@@ -288,13 +288,7 @@ private fun processCLib(flavor: KotlinPlatform, cinteropArguments: CInteropArgum
 
     val (nativeIndex, compilation) = plugin.buildNativeIndex(library, verbose)
 
-    // Our current approach to arm64_32 support is to compile armv7k version of bitcode
-    // for arm64_32. That's the reason for this substitution.
-    // TODO: Add proper support with the next LLVM update.
-    val target = when (tool.target) {
-        KonanTarget.WATCHOS_ARM64 -> KonanTarget.WATCHOS_ARM32
-        else -> tool.target
-    }
+    val target = tool.target
 
     val klibSuffix = CompilerOutputKind.LIBRARY.suffix(target)
     val moduleName = cinteropArguments.moduleName
