@@ -1,0 +1,66 @@
+package
+
+public fun </*0*/ SC : Entity, /*1*/ TC : Entity> SC.children(/*0*/ clazz: java.lang.Class<TC>, /*1*/ property: kotlin.reflect.KProperty1<TC, SC?>, /*2*/ name: kotlin.String = ...): Delegate<SC, kotlin.collections.MutableCollection<TC>>
+public inline fun </*0*/ reified SP : Entity, /*1*/ reified TP : Entity> SP.parent(/*0*/ property: kotlin.reflect.KProperty1<TP, kotlin.collections.MutableCollection<SP>>): Delegate<SP, TP?>
+
+public interface Delegate</*0*/ R : Entity, /*1*/ T> : kotlin.properties.ReadWriteProperty<R, T> {
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public abstract override /*1*/ /*fake_override*/ fun getValue(/*0*/ thisRef: R, /*1*/ property: kotlin.reflect.KProperty<*>): T
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public abstract override /*1*/ /*fake_override*/ fun setValue(/*0*/ thisRef: R, /*1*/ property: kotlin.reflect.KProperty<*>, /*2*/ value: T): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public interface Entity {
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class Processor2WithChildren : Entity {
+    public constructor Processor2WithChildren()
+    public final var processors: kotlin.collections.MutableCollection<Processor2WithParent>
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class Processor2WithParent : Entity {
+    public constructor Processor2WithParent()
+    public final var processor: Processor2WithChildren?
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class Processor3WithChildren : Entity {
+    public constructor Processor3WithChildren()
+    public final var processors: kotlin.collections.MutableCollection<Processor3WithParent>
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class Processor3WithParent : Entity {
+    public constructor Processor3WithParent()
+    public final var processor: Processor3WithChildren?
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class ProcessorWithChildren : Entity {
+    public constructor ProcessorWithChildren()
+    public final var processors: kotlin.collections.MutableCollection<ProcessorWithParent>
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class ProcessorWithParent : Entity {
+    public constructor ProcessorWithParent()
+    public final var processor: ProcessorWithChildren?
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
