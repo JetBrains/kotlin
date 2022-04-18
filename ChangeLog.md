@@ -1,3 +1,35 @@
+## 1.6.21
+
+### Compiler
+
+- [`KT-51979`](https://youtrack.jetbrains.com/issue/KT-51979) "AssertionError: No modifier list, but modifier has been found by the analyzer" exception on incorrect Java interface override
+- [`KT-51893`](https://youtrack.jetbrains.com/issue/KT-51893) Duplicated [OVERRIDE_DEPRECATION] on overridden properties
+- [`KT-51927`](https://youtrack.jetbrains.com/issue/KT-51927) Native: `The symbol of unexpected type encountered during IR deserialization` error when multiple libraries have non-conflicting declarations with the same name
+- [`KT-51843`](https://youtrack.jetbrains.com/issue/KT-51843) Functional interface constructor references are incorrectly allowed in 1.6.20 without any compiler flags
+- [`KT-51672`](https://youtrack.jetbrains.com/issue/KT-51672) JVM IR: Inline class mangling issue in interface default methods split across multiple modules
+- [`KT-51711`](https://youtrack.jetbrains.com/issue/KT-51711) Compiler warning is displayed in case there is 'if' else branch used with elvis
+- [`KT-49317`](https://youtrack.jetbrains.com/issue/KT-49317) "IllegalStateException: Parent of this declaration is not a class: FUN LOCAL_FUNCTION_FOR_LAMBDA" with parameter of suspend type with the default parameter
+
+### IDE. Native
+
+- [`KTIJ-20819`](https://youtrack.jetbrains.com/issue/KTIJ-20819) Native debugging support: "Debug is impossible without lldb binaries required by Kotlin/Native" on "Attach to process"
+
+### JavaScript
+
+- [`KT-52010`](https://youtrack.jetbrains.com/issue/KT-52010) K/JS IR: both flows execute when using elvis operator
+- [`KT-51973`](https://youtrack.jetbrains.com/issue/KT-51973) KJS / IR overridden properties of inherited interface missing
+- [`KT-50504`](https://youtrack.jetbrains.com/issue/KT-50504) KJS / IR: Transpiled JS incorrectly uses the unscrambled names of internal fields
+
+### Tools. Gradle
+
+- [`KT-51837`](https://youtrack.jetbrains.com/issue/KT-51837) kotlin-gradle-plugin:1.6.20 fails xray scan on shadowed Gson 2.8.6.
+
+### Tools. Gradle. Multiplatform
+
+- [`KT-51810`](https://youtrack.jetbrains.com/issue/KT-51810) MPP / Gradle: Dependency locking fails with 1.6.20
+- [`KT-51765`](https://youtrack.jetbrains.com/issue/KT-51765) com.android.lint in multiplatform project without android target should not trigger warning
+
+
 ## 1.6.20
 
 ### Compiler
