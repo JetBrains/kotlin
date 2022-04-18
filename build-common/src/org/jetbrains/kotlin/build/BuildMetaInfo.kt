@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.build
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.config.KotlinCompilerVersion
 import org.jetbrains.kotlin.config.LanguageVersion
+import org.jetbrains.kotlin.config.PluginClasspaths
 import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion
 import kotlin.reflect.KClass
 
@@ -23,6 +24,7 @@ interface BuildMetaInfo {
     val ownVersion: Int
     val coroutinesVersion: Int
     val multiplatformVersion: Int
+    val pluginClasspaths: String
 }
 
 abstract class BuildMetaInfoFactory<T : BuildMetaInfo>(private val metaInfoClass: KClass<T>) {
@@ -35,7 +37,8 @@ abstract class BuildMetaInfoFactory<T : BuildMetaInfo>(private val metaInfoClass
         ownVersion: Int,
         coroutinesVersion: Int,
         multiplatformVersion: Int,
-        metadataVersionArray: IntArray?
+        metadataVersionArray: IntArray?,
+        pluginClasspaths: String
     ): T
 
     fun create(args: CommonCompilerArguments): T {
@@ -50,7 +53,8 @@ abstract class BuildMetaInfoFactory<T : BuildMetaInfo>(private val metaInfoClass
             ownVersion = OWN_VERSION,
             coroutinesVersion = COROUTINES_VERSION,
             multiplatformVersion = MULTIPLATFORM_VERSION,
-            metadataVersionArray = args.metadataVersion?.let { BinaryVersion.parseVersionArray(it) }
+            metadataVersionArray = args.metadataVersion?.let { BinaryVersion.parseVersionArray(it) },
+            pluginClasspaths = PluginClasspaths(args.pluginClasspaths).serialize()
         )
     }
 

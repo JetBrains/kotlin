@@ -45,9 +45,11 @@ import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
 import org.jetbrains.kotlin.codegen.AsmUtil
 import org.jetbrains.kotlin.codegen.JvmCodegenUtil
 import org.jetbrains.kotlin.config.IncrementalCompilation
+import org.jetbrains.kotlin.config.KotlinFacetSettings
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.jps.build.KotlinJpsBuildTestBase.LibraryDependency.*
 import org.jetbrains.kotlin.jps.incremental.CacheAttributesDiff
+import org.jetbrains.kotlin.jps.model.JpsKotlinFacetModuleExtension
 import org.jetbrains.kotlin.jps.model.kotlinCommonCompilerArguments
 import org.jetbrains.kotlin.jps.model.kotlinCompilerArguments
 import org.jetbrains.kotlin.jps.targets.KotlinModuleBuildTarget
@@ -950,6 +952,38 @@ open class KotlinJpsBuildTest : KotlinJpsBuildTestBase() {
     fun testKotlinLombokProjectBuild() {
         initProject(LOMBOK)
         buildAllModules().assertSuccessful()
+    }
+
+    @WorkingDir("KotlinProject")
+    fun testModuleRebuildOnPluginClasspathsChange() {
+        initProject(JVM_MOCK_RUNTIME)
+        myProject.modules.forEach {
+            val facet = KotlinFacetSettings()
+            facet.useProjectSettings = false
+            facet.compilerArguments = K2JVMCompilerArguments()
+            facet.compilerArguments?.pluginClasspaths = arrayOf(PathUtil.kotlinPathsForDistDirectory.lombokPluginJarPath.path)
+
+            it.container.setChild(
+                JpsKotlinFacetModuleExtension.KIND,
+                JpsKotlinFacetModuleExtension(facet)
+            )
+        }
+        buildAllModules().assertSuccessful()
+        myProject.modules.forEach {
+            val facet = KotlinFacetSettings()
+            facet.useProjectSettings = false
+            facet.compilerArguments = K2JVMCompilerArguments()
+            facet.compilerArguments?.pluginClasspaths = arrayOf(
+                PathUtil.kotlinPathsForDistDirectory.lombokPluginJarPath.path,
+                PathUtil.kotlinPathsForDistDirectory.allOpenPluginJarPath.path
+            )
+            it.container.setChild(
+                JpsKotlinFacetModuleExtension.KIND,
+                JpsKotlinFacetModuleExtension(facet)
+            )
+        }
+
+        checkWhen(emptyArray(), null, packageClasses("kotlinProject", "src/test1.kt", "Test1Kt"))
     }
 
     private fun BuildResult.checkErrors() {

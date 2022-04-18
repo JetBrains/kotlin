@@ -21,9 +21,7 @@ import org.jetbrains.kotlin.build.GeneratedFile
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.compilerRunner.JpsCompilerEnvironment
-import org.jetbrains.kotlin.config.ApiVersion
-import org.jetbrains.kotlin.config.LanguageVersion
-import org.jetbrains.kotlin.config.Services
+import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.incremental.ChangesCollector
 import org.jetbrains.kotlin.incremental.ExpectActualTrackerImpl
 import org.jetbrains.kotlin.incremental.components.ExpectActualTracker
@@ -339,7 +337,8 @@ abstract class KotlinModuleBuildTarget<BuildMetaInfoType : BuildMetaInfo> intern
 
         val prevBuildMetaInfo =
             try {
-                buildMetaInfoFactory.deserializeFromString(Files.newInputStream(file).bufferedReader().use { it.readText() }) ?: return false
+                buildMetaInfoFactory.deserializeFromString(Files.newInputStream(file).bufferedReader().use { it.readText() })
+                    ?: return false
             } catch (e: Exception) {
                 KotlinBuilder.LOG.error("Could not deserialize build meta info", e)
                 return false
@@ -355,7 +354,10 @@ abstract class KotlinModuleBuildTarget<BuildMetaInfoType : BuildMetaInfo> intern
                 // If EAP->Non-EAP build with IC, then rebuild all kotlin
                 "Last build was compiled with EAP-plugin"
             }
-            else -> null
+            else -> PluginClasspathsComparator(
+                prevBuildMetaInfo.pluginClasspaths,
+                buildMetaInfo.pluginClasspaths
+            ).describeDifferencesOrNull()
         }
 
         if (reasonToRebuild != null) {
