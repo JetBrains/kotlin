@@ -167,6 +167,12 @@ public class FirIdeDependentAnalysisSourceModuleReferenceResolveTestGenerated ex
     }
 
     @Test
+    @TestMetadata("explicitLambdaParameter.kt")
+    public void testExplicitLambdaParameter() throws Exception {
+        runTest("analysis/analysis-api/testData/referenceResolve/explicitLambdaParameter.kt");
+    }
+
+    @Test
     @TestMetadata("ExternalCompanionObject.kt")
     public void testExternalCompanionObject() throws Exception {
         runTest("analysis/analysis-api/testData/referenceResolve/ExternalCompanionObject.kt");
@@ -206,6 +212,12 @@ public class FirIdeDependentAnalysisSourceModuleReferenceResolveTestGenerated ex
     @TestMetadata("implicitFunctionalInterfaceInvoke.kt")
     public void testImplicitFunctionalInterfaceInvoke() throws Exception {
         runTest("analysis/analysis-api/testData/referenceResolve/implicitFunctionalInterfaceInvoke.kt");
+    }
+
+    @Test
+    @TestMetadata("implicitLambdaParameter.kt")
+    public void testImplicitLambdaParameter() throws Exception {
+        runTest("analysis/analysis-api/testData/referenceResolve/implicitLambdaParameter.kt");
     }
 
     @Test
