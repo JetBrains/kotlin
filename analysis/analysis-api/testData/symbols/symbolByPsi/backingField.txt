@@ -22,6 +22,7 @@ KtValueParameterSymbol:
   callableIdIfNonLocal: null
   hasDefaultValue: false
   isExtension: false
+  isImplicitLambdaParameter: false
   isVararg: false
   name: value
   origin: SOURCE

@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.analysis.api.descriptors.symbols.psiBased.base.KtFe1
 import org.jetbrains.kotlin.analysis.api.symbols.KtBackingFieldSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtPackageSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KtValueParameterSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KtSymbolKind
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KtSymbolWithKind
 import org.jetbrains.kotlin.analysis.api.tokens.ValidityToken
@@ -68,6 +69,13 @@ internal class KtFe10SymbolContainingDeclarationProvider(
 
     // TODO this is a dummy and incorrect implementation just to satisfy some tests
     override fun getContainingModule(symbol: KtSymbol): KtModule {
+        // Implicit lambda parameter doesn't have a source PSI.
+        if ((symbol as? KtValueParameterSymbol)?.isImplicitLambdaParameter == true) {
+            // Retrieve the module from its containing lambda instead.
+            getContainingDeclaration(symbol)?.let { parentLambdaSymbol ->
+                return getContainingModule(parentLambdaSymbol)
+            }
+        }
         return symbol.psi?.getKtModule(analysisSession.analysisContext.resolveSession.project)
             ?: symbol.getDescriptor()?.getFakeContainingKtModule()
             ?: TODO(symbol.toString())

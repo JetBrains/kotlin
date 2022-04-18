@@ -3,6 +3,7 @@ KtValueParameterSymbol:
   callableIdIfNonLocal: null
   hasDefaultValue: false
   isExtension: false
+  isImplicitLambdaParameter: false
   isVararg: true
   name: a
   origin: SOURCE
@@ -44,6 +45,7 @@ KtValueParameterSymbol:
   callableIdIfNonLocal: null
   hasDefaultValue: false
   isExtension: false
+  isImplicitLambdaParameter: false
   isVararg: true
   name: b
   origin: SOURCE
@@ -85,6 +87,7 @@ KtValueParameterSymbol:
   callableIdIfNonLocal: null
   hasDefaultValue: false
   isExtension: false
+  isImplicitLambdaParameter: false
   isVararg: true
   name: c
   origin: SOURCE
@@ -126,6 +129,7 @@ KtValueParameterSymbol:
   callableIdIfNonLocal: null
   hasDefaultValue: false
   isExtension: false
+  isImplicitLambdaParameter: false
   isVararg: true
   name: d
   origin: SOURCE
