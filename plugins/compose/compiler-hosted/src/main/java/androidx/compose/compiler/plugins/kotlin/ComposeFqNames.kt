@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.constants.ConstantValue
+import org.jetbrains.kotlin.resolve.descriptorUtil.annotationClass
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils.NO_EXPECTED_TYPE
 import org.jetbrains.kotlin.types.TypeUtils.UNIT_EXPECTED_TYPE
@@ -45,6 +46,7 @@ object ComposeFqNames {
     val ComposableTarget = fqNameFor("ComposableTarget")
     val ComposableTargetMarker = fqNameFor("ComposableTargetMarker")
     val ComposableTargetMarkerDescription = "description"
+    val ComposableTargetMarkerDescriptionName = Name.identifier("description")
     val ComposableTargetApplierArgument = Name.identifier("applier")
     val ComposableOpenTarget = fqNameFor("ComposableOpenTarget")
     val ComposableOpenTargetIndexArgument = Name.identifier("index")
@@ -116,11 +118,17 @@ fun Annotated.hasExplicitGroupsAnnotation(): Boolean =
 fun Annotated.hasDisallowComposableCallsAnnotation(): Boolean =
     annotations.findAnnotation(ComposeFqNames.DisallowComposableCalls) != null
 fun Annotated.compositionTarget(): String? =
+    annotations.map { it.compositionTarget() }.firstOrNull { it != null }
+
+fun Annotated.hasCompositionTargetMarker(): Boolean =
     annotations.findAnnotation(
-        ComposeFqNames.ComposableTarget
-    )?.allValueArguments?.let {
-        it[ComposeFqNames.ComposableTargetApplierArgument]?.value as? String
-    }
+        ComposeFqNames.ComposableTargetMarker
+    ) != null
+
+fun AnnotationDescriptor.compositionTarget(): String? =
+    if (fqName == ComposeFqNames.ComposableTarget)
+        allValueArguments[ComposeFqNames.ComposableTargetApplierArgument]?.value as? String
+    else if (annotationClass?.hasCompositionTargetMarker() == true) this.fqName.toString() else null
 
 fun Annotated.compositionScheme(): String? =
     annotations.findAnnotation(
