@@ -305,6 +305,11 @@ internal fun DeclarationDescriptor.getSymbolOrigin(analysisContext: Fe10Analysis
 
         val virtualFile = psi.containingFile.virtualFile
         return analysisContext.getOrigin(virtualFile)
+    } else { // psi == null
+        // Implicit lambda parameter
+        if (this is ValueParameterDescriptor && this.name.identifierOrNullIfSpecial == "it") {
+            return KtSymbolOrigin.SOURCE_MEMBER_GENERATED
+        }
     }
 
     return KtSymbolOrigin.SOURCE

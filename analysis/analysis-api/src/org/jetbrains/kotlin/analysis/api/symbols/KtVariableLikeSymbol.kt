@@ -151,8 +151,20 @@ public abstract class KtValueParameterSymbol : KtVariableLikeSymbol(), KtSymbolW
     final override val isExtension: Boolean get() = false
     final override val receiverType: KtType? get() = null
 
+    /**
+     * Whether this value parameter has a default value or not.
+     */
     public abstract val hasDefaultValue: Boolean
+
+    /**
+     * Whether this value parameter represents a variable number of arguments (`vararg`) or not.
+     */
     public abstract val isVararg: Boolean
+
+    /**
+     * Whether this value parameter is an implicitly generated lambda parameter `it` or not.
+     */
+    public abstract val isImplicitLambdaParameter: Boolean
 
     abstract override fun createPointer(): KtSymbolPointer<KtValueParameterSymbol>
 
