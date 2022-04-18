@@ -4,7 +4,7 @@
 /kt45461_2.kt:8:10: warning: 'Int' is a final type, and thus a value of the type parameter is predetermined
 fun <K : Int> main() {
          ^
-/kt45461_2.kt:10:19: warning: type argument for a type parameter S can't be inferred because it's upper bounded by incompatible types: String, K. This will become an error in Kotlin 1.9
+/kt45461_2.kt:10:19: warning: type argument for a type parameter S can't be inferred because it has incompatible upper bounds: String, K. This will become an error in Kotlin 1.9
     Bar<String>().takeFoo(foo) // error in 1.3.72, no error in 1.4.31
                   ^
 

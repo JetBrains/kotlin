@@ -1,4 +1,4 @@
-/kt45461_26.kt:13:44: error: type argument for a type parameter S can't be inferred because it's upper bounded by incompatible types: Out<String>, K, Out<Float>
+/kt45461_26.kt:13:44: error: type argument for a type parameter S can't be inferred because it has incompatible upper bounds: Out<String>, K, Out<Float>
     val x: Out<Float> = Bar<Out<String>>().takeFoo(foo)
                                            ^
 

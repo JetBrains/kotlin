@@ -107,7 +107,7 @@ abstract class ConstraintSystemCompletionContext : VariableFixationFinder.Contex
         postponedArguments: List<T>
     ) = postponedArguments.firstOrNull { argument -> argument.inputTypes.all { containsOnlyFixedVariables(it) } }
 
-    fun List<Constraint>.extractUpperTypes(): List<KotlinTypeMarker> =
+    fun List<Constraint>.extractUpperTypesToCheckIntersectionEmptiness(): List<KotlinTypeMarker> =
         filter { constraint ->
             constraint.kind == ConstraintKind.UPPER && !constraint.type.contains {
                 !it.typeConstructor().isClassTypeConstructor() && !it.typeConstructor().isTypeParameterTypeConstructor()

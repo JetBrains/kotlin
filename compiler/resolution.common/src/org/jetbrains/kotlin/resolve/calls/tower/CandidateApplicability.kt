@@ -29,7 +29,6 @@ enum class CandidateApplicability {
     PROPERTY_AS_OPERATOR, // using property of functional type as an operator. From resolution perspective, this is considered successful.
     RESOLVED_NEED_PRESERVE_COMPATIBILITY, // call resolved successfully, but using new features that changes resolve
     RESOLVED_WITH_ERROR, // call has error, but it is still successful from resolution perspective
-    RESOLVED_WITH_WARNING, // generally call is successful, but there are additional resolution warnings (e.g. for deprecation something)
     RESOLVED, // call success or has uncompleted inference or in other words possible successful candidate
 }
 

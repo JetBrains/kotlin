@@ -4,7 +4,7 @@
 /kt48765.kt:4:52: warning: parameter 'x2' is never used
     fun <T1: Number, T2: A<Float, T1>> foo(x1: T2, x2: T1) {}
                                                    ^
-/kt48765.kt:8:13: warning: type argument for a type parameter T can't be inferred because it's upper bounded by incompatible types: String, Number. This will become an error in Kotlin 1.9
+/kt48765.kt:8:13: warning: type argument for a type parameter T can't be inferred because it has incompatible upper bounds: String, Number. This will become an error in Kotlin 1.9
         B().foo(x, foo())
             ^
 /kt48765.kt:12:9: warning: 'String' is a final type, and thus a value of the type parameter is predetermined

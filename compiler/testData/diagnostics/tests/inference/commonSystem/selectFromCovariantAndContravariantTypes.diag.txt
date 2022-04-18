@@ -7,6 +7,6 @@ fun <V> genericIn(x: In<V>) {}
 /selectFromCovariantAndContravariantTypes.kt:13:20: warning: parameter 'x' is never used
 fun <V> genericOut(x: Out<V>) {}
                    ^
-/selectFromCovariantAndContravariantTypes.kt:16:5: warning: type argument for a type parameter V can't be inferred because it's upper bounded by incompatible types: A, B. This will become an error in Kotlin 1.9
+/selectFromCovariantAndContravariantTypes.kt:16:5: warning: type argument for a type parameter V can't be inferred because it has incompatible upper bounds: A, B. This will become an error in Kotlin 1.9
     genericIn(select(a, b))
     ^
