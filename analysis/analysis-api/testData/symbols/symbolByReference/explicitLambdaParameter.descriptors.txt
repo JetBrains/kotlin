@@ -1,0 +1,14 @@
+KtValueParameterSymbol:
+  annotationsList: []
+  callableIdIfNonLocal: null
+  hasDefaultValue: false
+  isExtension: false
+  isImplicitLambdaParameter: false
+  isVararg: false
+  name: it
+  origin: LIBRARY
+  receiverType: null
+  returnType: kotlin/Int
+  symbolKind: LOCAL
+  getContainingModule: KtSourceModule "Sources of main"
+  deprecationStatus: null

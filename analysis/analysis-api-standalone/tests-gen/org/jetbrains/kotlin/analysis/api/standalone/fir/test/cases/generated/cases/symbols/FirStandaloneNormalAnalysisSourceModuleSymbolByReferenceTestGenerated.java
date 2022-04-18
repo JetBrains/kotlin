@@ -59,6 +59,12 @@ public class FirStandaloneNormalAnalysisSourceModuleSymbolByReferenceTestGenerat
     }
 
     @Test
+    @TestMetadata("explicitLambdaParameter.kt")
+    public void testExplicitLambdaParameter() throws Exception {
+        runTest("analysis/analysis-api/testData/symbols/symbolByReference/explicitLambdaParameter.kt");
+    }
+
+    @Test
     @TestMetadata("genericFromFunctionInLocalClass.kt")
     public void testGenericFromFunctionInLocalClass() throws Exception {
         runTest("analysis/analysis-api/testData/symbols/symbolByReference/genericFromFunctionInLocalClass.kt");
@@ -68,6 +74,12 @@ public class FirStandaloneNormalAnalysisSourceModuleSymbolByReferenceTestGenerat
     @TestMetadata("genericFromOuterClassInInnerClass.kt")
     public void testGenericFromOuterClassInInnerClass() throws Exception {
         runTest("analysis/analysis-api/testData/symbols/symbolByReference/genericFromOuterClassInInnerClass.kt");
+    }
+
+    @Test
+    @TestMetadata("implicitLambdaParameter.kt")
+    public void testImplicitLambdaParameter() throws Exception {
+        runTest("analysis/analysis-api/testData/symbols/symbolByReference/implicitLambdaParameter.kt");
     }
 
     @Test

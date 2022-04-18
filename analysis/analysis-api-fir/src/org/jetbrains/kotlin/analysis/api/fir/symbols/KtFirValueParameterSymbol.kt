@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.analysis.api.fir.symbols
 
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.analysis.api.fir.KtSymbolByFirBuilder
 import org.jetbrains.kotlin.analysis.api.fir.annotations.KtFirAnnotationListForDeclaration
 import org.jetbrains.kotlin.analysis.api.fir.findPsi
@@ -32,6 +33,11 @@ internal class KtFirValueParameterSymbol(
     override val name: Name get() = withValidityAssertion { firSymbol.name }
 
     override val isVararg: Boolean get() = withValidityAssertion { firSymbol.isVararg }
+
+    override val isImplicitLambdaParameter: Boolean
+        get() = withValidityAssertion {
+            firSymbol.source?.kind == KtFakeSourceElementKind.ItLambdaParameter
+        }
 
     override val returnType by cached {
         val returnType = firSymbol.resolvedReturnType

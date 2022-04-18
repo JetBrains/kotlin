@@ -32,7 +32,6 @@ import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.CallableId
-import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtProperty
 import org.jetbrains.kotlin.psi.psiUtil.isExtensionDeclaration
@@ -114,6 +113,9 @@ class KtFe10PsiDefaultPropertySetterSymbol(
             get() = withValidityAssertion { false }
 
         override val isVararg: Boolean
+            get() = withValidityAssertion { false }
+
+        override val isImplicitLambdaParameter: Boolean
             get() = withValidityAssertion { false }
 
         override val name: Name

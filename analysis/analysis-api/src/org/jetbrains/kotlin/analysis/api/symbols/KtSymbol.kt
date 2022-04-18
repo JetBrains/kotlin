@@ -50,11 +50,11 @@ public enum class KtSymbolOrigin {
     SOURCE,
 
     /**
-     * Declaration which do not have it's PSI source and was generated, they are:
+     * Declaration which do not have its PSI source and was generated, they are:
      * For regular classes, implicit default constructor is generated
      * For data classes the `copy`, `component{N}`, `toString`, `equals`, `hashCode` functions are generated
      * For enum classes the `valueOf` & `values` functions are generated
-     * For lambda the `it` property is generated
+     * For lambda the `it` implicit parameter is generated
      */
     SOURCE_MEMBER_GENERATED,
 

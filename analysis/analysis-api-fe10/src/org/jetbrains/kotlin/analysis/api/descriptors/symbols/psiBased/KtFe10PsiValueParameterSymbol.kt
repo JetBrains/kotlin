@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.analysis.api.descriptors.symbols.psiBased
 
 import org.jetbrains.kotlin.analysis.api.descriptors.Fe10AnalysisContext
 import org.jetbrains.kotlin.analysis.api.descriptors.Fe10AnalysisFacade.AnalysisMode
-import org.jetbrains.kotlin.analysis.api.descriptors.KtFe10AnalysisSession
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.toKtType
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.pointers.KtFe10NeverRestoringSymbolPointer
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.psiBased.base.KtFe10PsiSymbol
@@ -38,6 +37,9 @@ internal class KtFe10PsiValueParameterSymbol(
 
     override val isVararg: Boolean
         get() = withValidityAssertion { psi.isVarArg }
+
+    override val isImplicitLambdaParameter: Boolean
+        get() = withValidityAssertion { false }
 
     override val returnType: KtType
         get() = withValidityAssertion {
