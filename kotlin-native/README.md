@@ -86,6 +86,6 @@ See the [documentation](https://kotlinlang.org/docs/native-c-interop.html) for m
 
 ### Running tests
 
-For tests, use:
+For tests, use `./gradlew :native:native.tests:codegenBoxTest` and `./gradlew :kotlin-native:backend.native:tests:run`.
 
-	./gradlew :kotlin-native:backend.native:tests:run
+For more details see [Testing](HACKING.md#Testing).
