@@ -30,11 +30,11 @@ python3 package.py --build-targets install-distribution --distribution-component
 ```
 Set of required `$DISTRIBUTION_COMPONENTS` depends on OS:
 
-| OS | Distribution components |
-| --- | --- |
-|Windows | `clang libclang lld llvm-cov llvm-profdata llvm-ar clang-resource-headers` |
-|macOS | `clang libclang lld llvm-cov llvm-profdata llvm-ar clang-resource-headers` |
-|Linux | `clang libclang lld llvm-cov llvm-profdata llvm-ar clang-resource-headers compiler_rt` |
+| OS      | Distribution components                                                                |
+|---------|----------------------------------------------------------------------------------------|
+| Windows | `clang libclang lld llvm-cov llvm-profdata llvm-ar clang-resource-headers`             |
+| macOS   | `clang libclang lld llvm-cov llvm-profdata llvm-ar clang-resource-headers`             |
+| Linux   | `clang libclang lld llvm-cov llvm-profdata llvm-ar clang-resource-headers compiler_rt` |
 
 ### Tuning
 Run `python3 package.py -h` to check how one can tune script's behavior.

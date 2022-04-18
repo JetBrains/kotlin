@@ -343,7 +343,7 @@ class K2NativeCompilerArguments : CommonCompilerArguments() {
 
     @Argument(
             value = "-Xllvm-variant",
-            valueDescription = "{dev|user}",
+            valueDescription = "{dev|user|absolute path to llvm}",
             description = "Choose LLVM distribution which will be used during compilation."
     )
     var llvmVariant: String? = null

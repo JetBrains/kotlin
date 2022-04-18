@@ -367,22 +367,15 @@ instead of provided one.
 
 ### Using different LLVM distributions as part of Kotlin/Native compilation pipeline.
 
-`llvmHome.<HOST_NAME>` variable in `<distribution_location>/konan/konan.properties` controls 
-which LLVM distribution Kotlin/Native will use in its compilation pipeline. 
-You can replace its value with either `$llvm.<HOST_NAME>.{dev, user}` to use one of predefined distributions
-or pass an absolute to your own distribution.
-Don't forget to set `llvmVersion.<HOST_NAME>` to the version of your LLVM distribution.
-
-#### Example. Using LLVM from an absolute path.
-Assuming LLVM distribution is installed at `/usr` path, one can specify a path to it 
-with the `-Xoverride-konan-properties` option:
-```
-konanc main.kt -Xoverride-konan-properties=llvmHome.linux_x64=/usr
-```
+`-Xllvm-variant` compiler option allows to choose which LLVM distribution should be used during compilation.
+The following values are supported:
+* `user` — The compiler downloads (if necessary) and uses small LLVM distribution that contains only necessary tools. This is what compiler does by default.
+* `dev` — The compiler downloads (if necessary) and uses large LLVM distribution that contains additional development tools like `llvm-nm`, `opt`, etc.
+* `<absolute path>` — Use local distribution of LLVM.
 
 ### Playing with compilation pipeline.
 
-Following compiler phases control different parts of LLVM pipeline:
+The following compiler phases control different parts of LLVM pipeline:
 1. `LinkBitcodeDependencies`. Linkage of produced bitcode with runtime and some other dependencies.
 2. `BitcodeOptimization`. Running LLVM optimization pipeline.
 3. `ObjectFiles`. Compilation of bitcode with Clang.
@@ -400,20 +393,16 @@ Please note:
 3. Use `clang -cc1 -help` to see a list of available options.
  
 Another useful compiler option is `-Xtemporary-files-dir=<PATH>` which allows
-to specify a directory for intermediate compiler artifacts like bitcode and object files.
+ specifying a directory for intermediate compiler artifacts like bitcode and object files.
+For example, it allows to store LLVM IR after a particular compiler phase.
 
-#### Example 1. Bitcode right after IR to Bitcode translation.
 ```shell script
-konanc main.kt -produce bitcode -o bitcode.bc
+konanc main.kt -Xsave-llvm-ir-after=BitcodeOptimization -Xtemporary-files-dir=<PATH>
 ```
 
-#### Example 2. Bitcode after LLVM optimizations.
-```shell script
-konanc main.kt -Xtemporary-files-dir=<PATH> -o <OUTPUT_NAME>
-```
-`<PATH>/<OUTPUT_NAME>.kt.bc` will contain bitcode after LLVM optimization pipeline.
+`<PATH>/out.BitcodeOptimization.ll` will contain LLVM IR after LLVM optimization pipeline.
 
-#### Example 3. Replace predefined LLVM pipeline with Clang options.
+#### Example: replace predefined LLVM pipeline with Clang options.
 ```shell script
 CLANG_FLAGS="clangFlags.macos_x64=-cc1 -emit-obj;clangNooptFlags.macos_x64=-O2"
 konanc main.kt -Xdisable-phases=BitcodeOptimization -Xoverride-konan-properties="$CLANG_FLAGS"
