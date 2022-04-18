@@ -128,7 +128,32 @@ To use a local GTest copy instead of the downloaded one, add the following line 
 
 ## Debugging Kotlin/Native compiler
 
-In order to debug Kotlin/Native compiler using IntelliJ IDEA, you should run it from the command line in a special way to wait for the debbuger connection. This requires adding certain JVM options before running the compiler. These flags could be set via environment variable `JAVA_OPTS`.
+To debug Kotlin/Native compiler with a debugger (e.g. in IntelliJ IDEA),
+you should run the compiler in a special way to make it wait for a debugger connection.
+There are different ways to achieve that.
+
+### Making the compiler wait for a debugger when running Gradle build
+
+If you use Kotlin/Native compiler as a part of your Gradle build (which is usually the case), you can simply debug
+the entire Gradle process by adding `-Dorg.gradle.debug=true` to Gradle arguments.
+I.e., run the build like
+```shell
+./gradlew $task -Dorg.gradle.debug=true
+```
+
+This will make the Gradle process wait for a debugger to connect right after start, and you will be able to connect
+with IntelliJ IDEA (see below) or other debuggers.
+
+In this case you will debug the execution of all triggered tasks.
+In particular, Kotlin/Native tasks.
+
+Note: this won't work if you have `kotlin.native.disableCompilerDaemon=true` in your Gradle properties.
+
+### Making the command-line compiler wait for a debugger
+
+Kotlin/Native compiler is also available in command line.
+To make it wait for a debugger, you have to add certain JVM options when launching it.
+These flags could be set via environment variable `JAVA_OPTS`.
 The following bash script (`debug.sh`) can be used to debug:
 
 ```shell
@@ -137,22 +162,34 @@ set -e
 JAVA_OPTS="-agentlib:jdwp=transport=dt_socket,server=y,suspend=y,address=5005" "$@"
 ```
 
-Running Kotlin/Native compiler with this script
+So running Kotlin/Native compiler with this script
 
 ```shell
-~/debug.sh <path_to_kotlin>/kotlin-native/dist/bin/konanc ...
+~/debug.sh <path_to_kotlin>/kotlin-native/dist/bin/kotlinc-native ...
 ```
 
-makes the compiler wait for the remote debugger to connect.
+makes the compiler wait for a debugger to connect.
 
-You can get ther command line output of the compiler from the detailed Gradle output of your project's build process.  To see the the detailed Gradle output, run the gradle command with `-i` flag.
+Additionally, even if you build with Gradle, you can extract command-line
+compiler arguments from the detailed Gradle output of your project's build
+process.
+This will allow you to run the command-line compiler instead of Gradle, which might be helpful when debugging.
+To get the detailed Gradle output, run the Gradle command with `-i` flag.
+See also [degrade](tools/degrade) tool -- it automates extracting Kotlin/Native command-line tools invocations from Gradle builds.
 
-The next step is setting up your debug configuration in IntelliJ IDEA. After opening Kotlin project in IDEA (more information can be found on
+### Attaching with IntelliJ IDEA
+
+After you instructed a Gradle process or a command-line compiler invocation to wait for a debugger connection, now it's time to connect.
+It is possible to do this with different JVM debuggers.
+Here is the explanation for IntelliJ IDEA.
+
+First, set up your debug configuration in IntelliJ IDEA.
+After opening Kotlin project in IDEA (more information can be found on
 https://github.com/JetBrains/kotlin#build-environment-requirements and
 https://github.com/JetBrains/kotlin#-working-with-the-project-in-intellij-idea), create a remote debugger config.
 
 Use `Edit Configurations` in dropdown menu with your run/debug configurations and add a new `Remote JVM Debug`.
-In settings, select the same port you specified in `JAVA_OPTS` in the `debug.sh` script.
+Ensure the port is `5005`.
 Now just run this configuration. It’ll attach and let the compiler run.
 
 ## Developing Kotlin/Native runtime in CLion
