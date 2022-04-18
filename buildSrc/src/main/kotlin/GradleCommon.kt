@@ -282,11 +282,7 @@ fun Project.reconfigureMainSourcesSetForGradlePlugin(
                 .extensions
                 .configure<JavaPluginExtension> {
                     withSourcesJar()
-                    // Enabling publishing docs jars only on CI build
-                    // Currently dokka task runs non-incrementally and takes big amount of time
-                    if (kotlinBuildProperties.publishGradlePluginsJavadoc ||
-                        kotlinBuildProperties.isTeamcityBuild
-                    ) {
+                    if (kotlinBuildProperties.publishGradlePluginsJavadoc) {
                         withJavadocJar()
                     }
                 }
@@ -346,11 +342,7 @@ fun Project.createGradlePluginVariant(
                     capability(project.group.toString(), project.name, project.version.toString())
                 }
 
-                // Enabling publishing docs jars only on CI build
-                // Currently dokka task runs non-incrementally and takes big amount of time
-                if (kotlinBuildProperties.publishGradlePluginsJavadoc ||
-                    kotlinBuildProperties.isTeamcityBuild
-                ) {
+                if (kotlinBuildProperties.publishGradlePluginsJavadoc) {
                     withJavadocJar()
                 }
                 withSourcesJar()
@@ -365,11 +357,7 @@ fun Project.createGradlePluginVariant(
         }
     }
 
-    // Enabling publishing docs jars only on CI build
-    // Currently dokka task runs non-incrementally and takes big amount of time
-    if (kotlinBuildProperties.publishGradlePluginsJavadoc ||
-        kotlinBuildProperties.isTeamcityBuild
-    ) {
+    if (kotlinBuildProperties.publishGradlePluginsJavadoc) {
         plugins.withId("org.jetbrains.dokka") {
             val dokkaTask = tasks.register<DokkaTask>("dokka${variantSourceSet.javadocTaskName.capitalize()}") {
                 description = "Generates documentation in 'javadoc' format for '${variantSourceSet.javadocTaskName}' variant"
