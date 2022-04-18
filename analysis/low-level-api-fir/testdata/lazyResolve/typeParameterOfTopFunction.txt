@@ -41,6 +41,11 @@ FILE: typeParameterOfTopFunction.kt
     public final [IMPLICIT_TYPES_BODY_RESOLVE] fun <resolveMe> ddd(): R|kotlin/Unit| {
     }
 
+EXPECT_ACTUAL_MATCHING:
+FILE: typeParameterOfTopFunction.kt
+    public final [EXPECT_ACTUAL_MATCHING] fun <resolveMe> ddd(): R|kotlin/Unit| {
+    }
+
 BODY_RESOLVE:
 FILE: typeParameterOfTopFunction.kt
     public final [BODY_RESOLVE] fun <resolveMe> ddd(): R|kotlin/Unit| {

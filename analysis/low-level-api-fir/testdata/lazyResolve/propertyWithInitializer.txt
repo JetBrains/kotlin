@@ -63,6 +63,14 @@ FILE: propertyWithInitializer.kt
     public? final? [RAW_FIR] val property: Int = LAZY_EXPRESSION
         [TYPES] public? get(): Int
 
+EXPECT_ACTUAL_MATCHING:
+FILE: propertyWithInitializer.kt
+    public final [EXPECT_ACTUAL_MATCHING] fun resolveMe(): R|kotlin/Unit| {
+        receive#(property#)
+    }
+    public? final? [RAW_FIR] val property: Int = LAZY_EXPRESSION
+        [TYPES] public? get(): Int
+
 BODY_RESOLVE:
 FILE: propertyWithInitializer.kt
     public final [BODY_RESOLVE] fun resolveMe(): R|kotlin/Unit| {

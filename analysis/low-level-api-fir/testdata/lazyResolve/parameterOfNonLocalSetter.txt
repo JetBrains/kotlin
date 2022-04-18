@@ -133,6 +133,21 @@ FILE: parameterOfNonLocalSetter.kt
 
     }
 
+EXPECT_ACTUAL_MATCHING:
+FILE: parameterOfNonLocalSetter.kt
+    public final [STATUS] class X : R|kotlin/Any| {
+        public [STATUS] [ContainingClassKey=X] constructor(): R|X| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final [EXPECT_ACTUAL_MATCHING] var x: R|kotlin/Int| = IntegerLiteral(2)
+            [BODY_RESOLVE] [ContainingClassKey=X] public get(): R|kotlin/Int|
+            [EXPECT_ACTUAL_MATCHING] [ContainingClassKey=X] public set([RAW_FIR] resolveMe: R|kotlin/Int|): R|kotlin/Unit| {
+                ^ Unit#
+            }
+
+    }
+
 BODY_RESOLVE:
 FILE: parameterOfNonLocalSetter.kt
     public final [STATUS] class X : R|kotlin/Any| {

@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.transformers.FirAbstractTreeTransformer
 import org.jetbrains.kotlin.fir.resolve.transformers.FirTransformerBasedResolveProcessor
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
-import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualCompatibility
 import org.jetbrains.kotlin.resolve.multiplatform.compatible
 
 class FirExpectActualMatcherProcessor(
@@ -32,7 +31,7 @@ class FirExpectActualMatcherProcessor(
     }
 }
 
-class FirExpectActualMatcherTransformer(
+open class FirExpectActualMatcherTransformer(
     override val session: FirSession,
     private val scopeSession: ScopeSession
 ) : FirAbstractTreeTransformer<Nothing?>(FirResolvePhase.EXPECT_ACTUAL_MATCHING) {

@@ -209,6 +209,27 @@ FILE: superTypes.kt
 
     }
 
+EXPECT_ACTUAL_MATCHING:
+FILE: superTypes.kt
+    public open [TYPES] class A : R|kotlin/Any| {
+        public [TYPES] [ContainingClassKey=A] constructor(): R|A| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public? open [RAW_FIR] class B : A {
+        public? [RAW_FIR] [ContainingClassKey=B] constructor(): R|B| {
+            super<A>()
+        }
+
+    }
+    public open [EXPECT_ACTUAL_MATCHING] class resolveMe : R|A| {
+        public [EXPECT_ACTUAL_MATCHING] [ContainingClassKey=resolveMe] constructor(): R|resolveMe| {
+            super<R|A|>()
+        }
+
+    }
+
 BODY_RESOLVE:
 FILE: superTypes.kt
     public open [STATUS] class A : R|kotlin/Any| {

@@ -75,6 +75,11 @@ internal object LazyTransformerFactory {
             towerDataContextCollector,
             firProviderInterceptor,
         )
+        FirResolvePhase.EXPECT_ACTUAL_MATCHING -> LLFirDesignatedExpectActualMatcherTransformer(
+            designation,
+            designation.firFile.moduleData.session,
+            scopeSession
+        )
         else -> error("Non-lazy phase $phase")
     }
 }

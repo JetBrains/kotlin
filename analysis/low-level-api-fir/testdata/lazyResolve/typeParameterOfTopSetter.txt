@@ -63,6 +63,14 @@ FILE: typeParameterOfTopSetter.kt
             ^ Unit#
         }
 
+EXPECT_ACTUAL_MATCHING:
+FILE: typeParameterOfTopSetter.kt
+    public final [EXPECT_ACTUAL_MATCHING] var x: R|kotlin/Int| = IntegerLiteral(2)
+        [BODY_RESOLVE] public get(): R|kotlin/Int|
+        [EXPECT_ACTUAL_MATCHING] public set([RAW_FIR] resolveMe: R|kotlin/Int|): R|kotlin/Unit| {
+            ^ Unit#
+        }
+
 BODY_RESOLVE:
 FILE: typeParameterOfTopSetter.kt
     public final [BODY_RESOLVE] var x: R|kotlin/Int| = Int(2)

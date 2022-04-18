@@ -111,6 +111,18 @@ FILE: typeParameterOfNonLocalFunction.kt
 
     }
 
+EXPECT_ACTUAL_MATCHING:
+FILE: typeParameterOfNonLocalFunction.kt
+    public final [STATUS] class X : R|kotlin/Any| {
+        public [STATUS] [ContainingClassKey=X] constructor(): R|X| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final [EXPECT_ACTUAL_MATCHING] fun <resolveMe> ddd(): R|kotlin/Unit| {
+        }
+
+    }
+
 BODY_RESOLVE:
 FILE: typeParameterOfNonLocalFunction.kt
     public final [STATUS] class X : R|kotlin/Any| {

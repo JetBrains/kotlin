@@ -51,6 +51,12 @@ FILE: annotations.kt
     @R|kotlin/Suppress|(String(2)) public final [IMPLICIT_TYPES_BODY_RESOLVE] fun resolveMe(): R|kotlin/Unit| {
     }
 
+EXPECT_ACTUAL_MATCHING:
+FILE: annotations.kt
+    @FILE:Suppress(String(1))
+    @R|kotlin/Suppress|(String(2)) public final [EXPECT_ACTUAL_MATCHING] fun resolveMe(): R|kotlin/Unit| {
+    }
+
 BODY_RESOLVE:
 FILE: annotations.kt
     @FILE:Suppress(String(1))

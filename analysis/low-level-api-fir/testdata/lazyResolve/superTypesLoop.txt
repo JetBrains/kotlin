@@ -269,6 +269,33 @@ FILE: superTypesLoop.kt
 
     }
 
+EXPECT_ACTUAL_MATCHING:
+FILE: superTypesLoop.kt
+    public open [EXPECT_ACTUAL_MATCHING] class resolveMe : R|C| {
+        public [EXPECT_ACTUAL_MATCHING] [ContainingClassKey=resolveMe] constructor(): R|resolveMe| {
+            super<R|C|>()
+        }
+
+    }
+    public? open [COMPILER_REQUIRED_ANNOTATIONS] class A : <ERROR TYPE REF: Loop in supertype: /A -> /B> {
+        public? [COMPILER_REQUIRED_ANNOTATIONS] [ContainingClassKey=A] constructor(): R|A| {
+            super<B>()
+        }
+
+    }
+    public? open [COMPILER_REQUIRED_ANNOTATIONS] class B : <ERROR TYPE REF: Loop in supertype: /B -> /C> {
+        public? [COMPILER_REQUIRED_ANNOTATIONS] [ContainingClassKey=B] constructor(): R|B| {
+            super<C>()
+        }
+
+    }
+    public open [TYPES] class C : <ERROR TYPE REF: Loop in supertype: /C -> /A> {
+        public [TYPES] [ContainingClassKey=C] constructor(): R|C| {
+            super<R|A|>()
+        }
+
+    }
+
 BODY_RESOLVE:
 FILE: superTypesLoop.kt
     public open [BODY_RESOLVE] class resolveMe : R|C| {

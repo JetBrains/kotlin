@@ -63,6 +63,14 @@ FILE: topLevelFunctionsWithExpressionBodyAndExplicitType.kt
     public? final? [RAW_FIR] fun receive([RAW_FIR] value: String): R|kotlin/Unit| { LAZY_BLOCK }
     public? final? [RAW_FIR] fun functionWithLazyBody(): String { LAZY_BLOCK }
 
+EXPECT_ACTUAL_MATCHING:
+FILE: topLevelFunctionsWithExpressionBodyAndExplicitType.kt
+    public final [EXPECT_ACTUAL_MATCHING] fun resolveMe(): R|kotlin/Unit| {
+        receive#(functionWithLazyBody#())
+    }
+    public? final? [RAW_FIR] fun receive([RAW_FIR] value: String): R|kotlin/Unit| { LAZY_BLOCK }
+    public? final? [RAW_FIR] fun functionWithLazyBody(): String { LAZY_BLOCK }
+
 BODY_RESOLVE:
 FILE: topLevelFunctionsWithExpressionBodyAndExplicitType.kt
     public final [BODY_RESOLVE] fun resolveMe(): R|kotlin/Unit| {
