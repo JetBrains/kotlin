@@ -81,7 +81,7 @@ open class FirContractResolveTransformer(
         override fun transformProperty(property: FirProperty, data: ResolutionMode): FirProperty {
             if (
                 property.getter?.hasContractToResolve != true && property.setter?.hasContractToResolve != true ||
-                property.isLocal || property.delegate != null
+                property.isLocal || property.delegateField != null
             ) {
                 return property
             }

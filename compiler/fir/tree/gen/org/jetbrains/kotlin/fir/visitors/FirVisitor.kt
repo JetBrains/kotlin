@@ -40,6 +40,7 @@ import org.jetbrains.kotlin.fir.declarations.FirContractDescriptionOwner
 import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
 import org.jetbrains.kotlin.fir.declarations.FirPropertyAccessor
 import org.jetbrains.kotlin.fir.declarations.FirBackingField
+import org.jetbrains.kotlin.fir.declarations.FirDelegateField
 import org.jetbrains.kotlin.fir.declarations.FirConstructor
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.FirPackageDirective
@@ -220,6 +221,8 @@ abstract class FirVisitor<out R, in D> {
     open fun visitPropertyAccessor(propertyAccessor: FirPropertyAccessor, data: D): R  = visitElement(propertyAccessor, data)
 
     open fun visitBackingField(backingField: FirBackingField, data: D): R  = visitElement(backingField, data)
+
+    open fun visitDelegateField(delegateField: FirDelegateField, data: D): R  = visitElement(delegateField, data)
 
     open fun visitConstructor(constructor: FirConstructor, data: D): R  = visitElement(constructor, data)
 

@@ -622,10 +622,10 @@ fun getActualTargetList(annotated: FirDeclaration): AnnotationTargetList {
                     if (annotated.source?.kind == KtFakeSourceElementKind.PropertyFromParameter) {
                         TargetLists.T_VALUE_PARAMETER_WITH_VAL
                     } else {
-                        TargetLists.T_MEMBER_PROPERTY(annotated.hasBackingField, annotated.delegate != null)
+                        TargetLists.T_MEMBER_PROPERTY(annotated.hasBackingField, annotated.delegateField != null)
                     }
                 else ->
-                    TargetLists.T_TOP_LEVEL_PROPERTY(annotated.hasBackingField, annotated.delegate != null)
+                    TargetLists.T_TOP_LEVEL_PROPERTY(annotated.hasBackingField, annotated.delegateField != null)
             }
         }
         is FirValueParameter -> {

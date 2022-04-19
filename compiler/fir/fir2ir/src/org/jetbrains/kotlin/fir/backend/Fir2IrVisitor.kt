@@ -261,7 +261,7 @@ class Fir2IrVisitor(
 
     private fun visitLocalVariable(variable: FirProperty): IrElement {
         assert(variable.isLocal)
-        val delegate = variable.delegate
+        val delegate = variable.delegateField?.initializer
         if (delegate != null) {
             val irProperty = declarationStorage.createIrLocalDelegatedProperty(variable, conversionScope.parentFromStack())
             irProperty.delegate.initializer = convertToIrExpression(delegate, isDelegate = true)

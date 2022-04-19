@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.fir.declarations.FirContextReceiver
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationAttributes
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationStatus
+import org.jetbrains.kotlin.fir.declarations.FirDelegateField
 import org.jetbrains.kotlin.fir.declarations.FirEnumEntry
 import org.jetbrains.kotlin.fir.declarations.FirPropertyAccessor
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
@@ -48,11 +49,11 @@ internal class FirEnumEntryImpl(
     override val name: Name,
     override var initializer: FirExpression?,
     override var backingField: FirBackingField?,
+    override var delegateField: FirDelegateField?,
     override val annotations: MutableList<FirAnnotation>,
     override val symbol: FirEnumEntrySymbol,
 ) : FirEnumEntry() {
     override val receiverTypeRef: FirTypeRef? get() = null
-    override val delegate: FirExpression? get() = null
     override val isVar: Boolean get() = false
     override val isVal: Boolean get() = true
     override val getter: FirPropertyAccessor? get() = null
@@ -69,6 +70,7 @@ internal class FirEnumEntryImpl(
         contextReceivers.forEach { it.accept(visitor, data) }
         initializer?.accept(visitor, data)
         backingField?.accept(visitor, data)
+        delegateField?.accept(visitor, data)
         annotations.forEach { it.accept(visitor, data) }
     }
 
@@ -78,6 +80,7 @@ internal class FirEnumEntryImpl(
         transformReturnTypeRef(transformer, data)
         transformInitializer(transformer, data)
         transformBackingField(transformer, data)
+        transformDelegateField(transformer, data)
         transformOtherChildren(transformer, data)
         return this
     }
@@ -106,10 +109,6 @@ internal class FirEnumEntryImpl(
         return this
     }
 
-    override fun <D> transformDelegate(transformer: FirTransformer<D>, data: D): FirEnumEntryImpl {
-        return this
-    }
-
     override fun <D> transformGetter(transformer: FirTransformer<D>, data: D): FirEnumEntryImpl {
         return this
     }
@@ -120,6 +119,11 @@ internal class FirEnumEntryImpl(
 
     override fun <D> transformBackingField(transformer: FirTransformer<D>, data: D): FirEnumEntryImpl {
         backingField = backingField?.transform(transformer, data)
+        return this
+    }
+
+    override fun <D> transformDelegateField(transformer: FirTransformer<D>, data: D): FirEnumEntryImpl {
+        delegateField = delegateField?.transform(transformer, data)
         return this
     }
 

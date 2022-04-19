@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.fir.declarations.FirContextReceiver
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationAttributes
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationStatus
+import org.jetbrains.kotlin.fir.declarations.FirDelegateField
 import org.jetbrains.kotlin.fir.declarations.FirErrorProperty
 import org.jetbrains.kotlin.fir.declarations.FirPropertyAccessor
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
@@ -51,6 +52,7 @@ class FirErrorPropertyBuilder : FirAnnotationContainerBuilder {
     val contextReceivers: MutableList<FirContextReceiver> = mutableListOf()
     lateinit var name: Name
     var backingField: FirBackingField? = null
+    var delegateField: FirDelegateField? = null
     override val annotations: MutableList<FirAnnotation> = mutableListOf()
     lateinit var diagnostic: ConeDiagnostic
     lateinit var symbol: FirErrorPropertySymbol
@@ -68,6 +70,7 @@ class FirErrorPropertyBuilder : FirAnnotationContainerBuilder {
             contextReceivers,
             name,
             backingField,
+            delegateField,
             annotations,
             diagnostic,
             symbol,

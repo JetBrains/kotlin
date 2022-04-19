@@ -38,7 +38,7 @@ class FirDefaultPropertyBackingField(
     containerSource = null,
     dispatchReceiverType = null,
     name = BACKING_FIELD,
-    delegate = null,
+    delegateField = null,
     isVar = isVar,
     isVal = !isVar,
     getter = null,

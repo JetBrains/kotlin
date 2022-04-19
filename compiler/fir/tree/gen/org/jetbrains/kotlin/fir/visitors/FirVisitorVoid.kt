@@ -40,6 +40,7 @@ import org.jetbrains.kotlin.fir.declarations.FirContractDescriptionOwner
 import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
 import org.jetbrains.kotlin.fir.declarations.FirPropertyAccessor
 import org.jetbrains.kotlin.fir.declarations.FirBackingField
+import org.jetbrains.kotlin.fir.declarations.FirDelegateField
 import org.jetbrains.kotlin.fir.declarations.FirConstructor
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.FirPackageDirective
@@ -287,6 +288,10 @@ abstract class FirVisitorVoid : FirVisitor<Unit, Nothing?>() {
 
     open fun visitBackingField(backingField: FirBackingField) {
         visitElement(backingField)
+    }
+
+    open fun visitDelegateField(delegateField: FirDelegateField) {
+        visitElement(delegateField)
     }
 
     open fun visitConstructor(constructor: FirConstructor) {
@@ -843,6 +848,10 @@ abstract class FirVisitorVoid : FirVisitor<Unit, Nothing?>() {
 
     final override fun visitBackingField(backingField: FirBackingField, data: Nothing?) {
         visitBackingField(backingField)
+    }
+
+    final override fun visitDelegateField(delegateField: FirDelegateField, data: Nothing?) {
+        visitDelegateField(delegateField)
     }
 
     final override fun visitConstructor(constructor: FirConstructor, data: Nothing?) {

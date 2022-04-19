@@ -50,7 +50,7 @@ class PropertyInitializationInfoCollector(
         return processVariableWithAssignment(
             dataForNode,
             node.fir.symbol,
-            overwriteRange = node.fir.initializer == null && node.fir.delegate == null
+            overwriteRange = node.fir.initializer == null && node.fir.delegateField == null
         )
     }
 

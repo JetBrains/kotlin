@@ -45,8 +45,8 @@ object FirConstPropertyChecker : FirPropertyChecker() {
             return
         }
 
-        if (declaration.delegate != null) {
-            reporter.reportOn(declaration.delegate?.source, FirErrors.CONST_VAL_WITH_DELEGATE, context)
+        if (declaration.delegateField != null) {
+            reporter.reportOn(declaration.delegateField?.source, FirErrors.CONST_VAL_WITH_DELEGATE, context)
             return
         }
 

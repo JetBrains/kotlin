@@ -66,7 +66,7 @@ class Fir2IrLazyProperty(
         get() = fir.isLateInit
 
     override val isDelegated: Boolean
-        get() = fir.delegate != null
+        get() = fir.delegateField != null
 
     override val isExternal: Boolean
         get() = fir.isExternal
@@ -142,12 +142,12 @@ class Fir2IrLazyProperty(
                     }
                 }
             }
-            fir.delegate != null -> {
+            fir.delegateField != null -> {
                 with(declarationStorage) {
                     createBackingField(
                         fir, IrDeclarationOrigin.PROPERTY_DELEGATE,
                         components.visibilityConverter.convertToDescriptorVisibility(fir.visibility),
-                        Name.identifier("${fir.name}\$delegate"), true, fir.delegate
+                        Name.identifier("${fir.name}\$delegate"), true, fir.delegateField?.initializer
                     )
                 }
             }
@@ -172,7 +172,7 @@ class Fir2IrLazyProperty(
                 components, startOffset, endOffset,
                 when {
                     origin == IrDeclarationOrigin.IR_EXTERNAL_DECLARATION_STUB -> origin
-                    fir.delegate != null -> IrDeclarationOrigin.DELEGATED_PROPERTY_ACCESSOR
+                    fir.delegateField != null -> IrDeclarationOrigin.DELEGATED_PROPERTY_ACCESSOR
                     fir.getter is FirDefaultPropertyGetter -> IrDeclarationOrigin.DEFAULT_PROPERTY_ACCESSOR
                     else -> origin
                 },
@@ -206,7 +206,7 @@ class Fir2IrLazyProperty(
                     components, startOffset, endOffset,
                     when {
                         origin == IrDeclarationOrigin.IR_EXTERNAL_DECLARATION_STUB -> origin
-                        fir.delegate != null -> IrDeclarationOrigin.DELEGATED_PROPERTY_ACCESSOR
+                        fir.delegateField != null -> IrDeclarationOrigin.DELEGATED_PROPERTY_ACCESSOR
                         fir.setter is FirDefaultPropertySetter -> IrDeclarationOrigin.DEFAULT_PROPERTY_ACCESSOR
                         else -> origin
                     },

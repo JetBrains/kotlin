@@ -106,6 +106,15 @@ abstract class FirStatusTransformerExtension(session: FirSession) : FirExtension
 
     open fun transformStatus(
         status: FirDeclarationStatus,
+        delegateField: FirDelegateField,
+        containingClass: FirClass?,
+        isLocal: Boolean
+    ): FirDeclarationStatus {
+        return transformStatus(status, delegateField)
+    }
+
+    open fun transformStatus(
+        status: FirDeclarationStatus,
         enumEntry: FirEnumEntry,
         containingClass: FirClass?,
         isLocal: Boolean

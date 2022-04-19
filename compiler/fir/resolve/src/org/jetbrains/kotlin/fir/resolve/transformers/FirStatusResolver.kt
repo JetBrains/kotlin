@@ -76,6 +76,7 @@ class FirStatusResolver(
             is FirConstructor -> resolveStatus(declaration, containingClass, isLocal)
             is FirField -> resolveStatus(declaration, containingClass, isLocal)
             is FirBackingField -> resolveStatus(declaration, containingClass, isLocal)
+            is FirDelegateField -> resolveStatus(declaration, containingClass, isLocal)
             else -> error("Unsupported declaration type: ${declaration.render()}")
         }
     }
@@ -192,6 +193,15 @@ class FirStatusResolver(
     ): FirResolvedDeclarationStatus {
         val status = backingField.applyExtensionTransformers { transformStatus(it, backingField, containingClass, isLocal) }
         return resolveStatus(backingField, status, containingClass, null, isLocal, emptyList())
+    }
+
+    fun resolveStatus(
+        delegateField: FirDelegateField,
+        containingClass: FirClass?,
+        isLocal: Boolean
+    ): FirResolvedDeclarationStatus {
+        val status = delegateField.applyExtensionTransformers { transformStatus(it, delegateField, containingClass, isLocal) }
+        return resolveStatus(delegateField, status, containingClass, null, isLocal, emptyList())
     }
 
     fun resolveStatus(enumEntry: FirEnumEntry, containingClass: FirClass?, isLocal: Boolean): FirResolvedDeclarationStatus {
