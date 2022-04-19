@@ -580,16 +580,12 @@ allprojects {
         outputs.doNotCacheIf("https://youtrack.jetbrains.com/issue/KTI-112") { true }
     }
 
-    if (isConfigurationCacheDisabled) {
-        // Custom input normolization isn't supported by configuration cache at the moment
-        // See https://github.com/gradle/gradle/issues/13706
-        normalization {
-            runtimeClasspath {
-                ignore("META-INF/MANIFEST.MF")
-                ignore("META-INF/compiler.version")
-                ignore("META-INF/plugin.xml")
-                ignore("kotlin/KotlinVersionCurrentValue.class")
-            }
+    normalization {
+        runtimeClasspath {
+            ignore("META-INF/MANIFEST.MF")
+            ignore("META-INF/compiler.version")
+            ignore("META-INF/plugin.xml")
+            ignore("kotlin/KotlinVersionCurrentValue.class")
         }
     }
 
