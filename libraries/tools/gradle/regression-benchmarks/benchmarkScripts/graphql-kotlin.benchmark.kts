@@ -9,14 +9,10 @@
 @file:BenchmarkProject(
     name = "graphql-kotlin",
     gitUrl = "https://github.com/ExpediaGroup/graphql-kotlin.git",
-    gitCommitSha = "fac1e41914f6a8a0a494082752a4e3674b812a3f"
+    gitCommitSha = "a0a8bad009a4ddbf88ce5c30200f90a091bd3df7"
 )
 
 import java.io.File
-
-val stableReleasePatch = {
-    "graphql-kotlin-1.6.10.patch" to File("benchmarkScripts/files/graphql-kotlin-1.6.10.patch").inputStream()
-}
 
 val currentReleasePatch = {
     "graphql-kotlin-current.patch" to File("benchmarkScripts/files/graphql-kotlin-current.patch")
@@ -68,7 +64,7 @@ runAllBenchmarks(
         }
     },
     mapOf(
-        "1.6.10" to stableReleasePatch,
-        "1.6.20" to currentReleasePatch
+        "1.6.20" to null,
+        "1.7.0" to currentReleasePatch
     )
 )
