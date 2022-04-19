@@ -436,6 +436,7 @@ internal fun KtSymbolWithMembers.createInnerClasses(
 }
 
 internal fun KtClassOrObject.checkIsInheritor(superClassOrigin: KtClassOrObject, checkDeep: Boolean): Boolean {
+    if (this == superClassOrigin) return false
     return analyseForLightClasses(this) {
         if (!superClassOrigin.canBeAnalysed()) {
             return false
