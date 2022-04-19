@@ -1,0 +1,4 @@
+package
+
+public val x: kotlin.Unit
+public fun </*0*/ K> foo(/*0*/ x: K): kotlin.Unit
