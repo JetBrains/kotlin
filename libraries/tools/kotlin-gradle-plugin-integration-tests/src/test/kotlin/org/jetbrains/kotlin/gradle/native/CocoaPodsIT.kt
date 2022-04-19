@@ -27,6 +27,7 @@ import org.junit.BeforeClass
 import org.junit.Test
 import java.io.File
 import java.io.IOException
+import java.util.*
 import java.util.concurrent.TimeUnit
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
@@ -84,20 +85,35 @@ class CocoaPodsIT : BaseGradleIT() {
     private val defaultBuildTaskName = podBuildFullTaskName()
     private val defaultSetupBuildTaskName = podSetupBuildFullTaskName()
     private val defaultCinteropTaskName = cinteropTaskName + defaultPodName + defaultTarget
-    private val downloadUrlTaskName = podDownloadTaskName + downloadUrlPodName.capitalize()
+    private val downloadUrlTaskName =
+        podDownloadTaskName + downloadUrlPodName.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() }
 
-    private fun podDownloadFullTaskName(podName: String = defaultPodName) = podDownloadTaskName + podName.capitalize()
+    private fun podDownloadFullTaskName(podName: String = defaultPodName) =
+        podDownloadTaskName + podName.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() }
 
-    private fun podGenFullTaskName(familyName: String = defaultFamily) = podGenTaskName + familyName.capitalize()
+    private fun podGenFullTaskName(familyName: String = defaultFamily) =
+        podGenTaskName + familyName.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() }
 
     private fun podSetupBuildFullTaskName(podName: String = defaultPodName, sdkName: String = defaultSDK) =
-        podSetupBuildTaskName + podName.capitalize() + sdkName.capitalize()
+        podSetupBuildTaskName + podName.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() } + sdkName.replaceFirstChar {
+            if (it.isLowerCase()) it.titlecase(
+                Locale.getDefault()
+            ) else it.toString()
+        }
 
     private fun podBuildFullTaskName(podName: String = defaultPodName, sdkName: String = defaultSDK) =
-        podBuildTaskName + podName.capitalize() + sdkName.capitalize()
+        podBuildTaskName + podName.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() } + sdkName.replaceFirstChar {
+            if (it.isLowerCase()) it.titlecase(
+                Locale.getDefault()
+            ) else it.toString()
+        }
 
     private fun cinteropFullTaskName(podName: String = defaultPodName, targetName: String = defaultTarget) =
-        cinteropTaskName + podName.capitalize() + targetName.capitalize()
+        cinteropTaskName + podName.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() } + targetName.replaceFirstChar {
+            if (it.isLowerCase()) it.titlecase(
+                Locale.getDefault()
+            ) else it.toString()
+        }
 
     private lateinit var hooks: CustomHooks
     private lateinit var project: BaseGradleIT.Project
@@ -472,7 +488,7 @@ class CocoaPodsIT : BaseGradleIT() {
         val anotherSdk = "macosx"
         val anotherFamily = "OSX"
         with(project.gradleBuildScript()) {
-            appendToKotlinBlock(anotherTarget.decapitalize() + "()")
+            appendToKotlinBlock(anotherTarget.replaceFirstChar { it.lowercase(Locale.getDefault()) } + "()")
         }
         hooks.rewriteHooks {
             assertTasksExecuted(
@@ -494,7 +510,7 @@ class CocoaPodsIT : BaseGradleIT() {
 
         with(project.gradleBuildScript()) {
             var text = readText()
-            text = text.replace(anotherTarget.decapitalize() + "()", "")
+            text = text.replace(anotherTarget.replaceFirstChar { it.lowercase(Locale.getDefault()) } + "()", "")
             writeText(text)
         }
         hooks.rewriteHooks {
@@ -636,7 +652,7 @@ class CocoaPodsIT : BaseGradleIT() {
         val anotherSdk = "macosx"
         with(project.gradleBuildScript()) {
             appendToCocoapodsBlock("osx.deploymentTarget = \"10.15\"")
-            appendToKotlinBlock(anotherTarget.decapitalize() + "()")
+            appendToKotlinBlock(anotherTarget.replaceFirstChar { it.lowercase(Locale.getDefault()) } + "()")
         }
         val anotherSdkDefaultPodTaskName = podBuildFullTaskName(sdkName = anotherSdk)
         val anotherTargetUrlTaskName = podBuildFullTaskName(downloadUrlPodName, anotherSdk)

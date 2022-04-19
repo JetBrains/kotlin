@@ -28,8 +28,10 @@ import org.junit.Before
 import org.junit.runner.RunWith
 import java.io.File
 import java.nio.file.Files
+import java.util.*
 import java.util.regex.Pattern
 import javax.xml.parsers.DocumentBuilderFactory
+import kotlin.collections.HashSet
 import kotlin.io.path.isDirectory
 import kotlin.test.*
 
@@ -489,7 +491,7 @@ abstract class BaseGradleIT {
     }
 
     fun CompiledProject.assertClassFilesNotContain(dir: File, vararg strings: String) {
-        val classFiles = dir.walk().filter { it.isFile && it.extension.toLowerCase() == "class" }
+        val classFiles = dir.walk().filter { it.isFile && it.extension.lowercase(Locale.getDefault()) == "class" }
 
         for (cf in classFiles) {
             checkBytecodeNotContains(cf, strings.toList())
@@ -853,7 +855,7 @@ Finished executing task ':$taskName'|
                 // see https://docs.gradle.org/current/userguide/logging.html#sec:choosing_a_log_level
                 LogLevel.LIFECYCLE -> Unit
                 //Command line option for other log levels
-                else -> add("--${minLogLevel.name.toLowerCase()}")
+                else -> add("--${minLogLevel.name.lowercase(Locale.getDefault())}")
             }
             if (options.daemonOptionSupported) {
                 add(if (options.withDaemon) "--daemon" else "--no-daemon")
@@ -931,7 +933,7 @@ Finished executing task ':$taskName'|
             }
 
             add("-Dorg.gradle.unsafe.configuration-cache=${options.configurationCache}")
-            add("-Dorg.gradle.unsafe.configuration-cache-problems=${options.configurationCacheProblems.name.toLowerCase()}")
+            add("-Dorg.gradle.unsafe.configuration-cache-problems=${options.configurationCacheProblems.name.lowercase(Locale.getDefault())}")
 
             // Workaround: override a console type set in the user machine gradle.properties (since Gradle 4.3):
             add("--console=plain")
@@ -943,7 +945,7 @@ Finished executing task ':$taskName'|
             val notUsingAgpWithWarnings =
                 options.androidGradlePluginVersion == null || options.androidGradlePluginVersion > AGPVersion.v3_6_0
             if (supportFailingBuildOnWarning && notUsingAgpWithWarnings && options.warningMode == WarningMode.Fail) {
-                add("--warning-mode=${WarningMode.Fail.name.toLowerCase()}")
+                add("--warning-mode=${WarningMode.Fail.name.lowercase(Locale.getDefault())}")
             }
             addAll(options.freeCommandLineArgs)
         }
