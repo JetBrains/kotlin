@@ -57,19 +57,15 @@ val runtimeJar = runtimeJar(embeddableCompiler()) {
 sourcesJar {
     val compilerTask = project(":kotlin-compiler").tasks.named<Jar>("sourcesJar")
     dependsOn(compilerTask)
-    // workaround for https://github.com/gradle/gradle/issues/17936
     val archiveOperations = serviceOf<ArchiveOperations>()
-    val sourcesJar by lazy { compilerTask.get().archiveFile.get() }
-    from({ archiveOperations.zipTree(sourcesJar) })
+    from(compilerTask.map { it.archiveFile }.map { archiveOperations.zipTree(it) })
 }
 
 javadocJar {
     val compilerTask = project(":kotlin-compiler").tasks.named<Jar>("javadocJar")
     dependsOn(compilerTask)
-    // workaround for https://github.com/gradle/gradle/issues/17936
     val archiveOperations = serviceOf<ArchiveOperations>()
-    val javadocJarFile by lazy { compilerTask.get().archiveFile.get() }
-    from({ archiveOperations.zipTree(javadocJarFile) })
+    from(compilerTask.map { it.archiveFile }.map { archiveOperations.zipTree(it) })
 }
 
 projectTest {
