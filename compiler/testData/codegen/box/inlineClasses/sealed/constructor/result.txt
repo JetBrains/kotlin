@@ -13,9 +13,9 @@ public final class Result$Ok {
 @kotlin.Metadata
 public final class Result$Throwable {
     // source: 'result.kt'
-    private final @org.jetbrains.annotations.NotNull field error: Result$Throwable
-    public method <init>(@org.jetbrains.annotations.NotNull p0: Result$Throwable): void
-    public final @org.jetbrains.annotations.NotNull method getError(): Result$Throwable
+    private final @org.jetbrains.annotations.NotNull field error: java.lang.Throwable
+    public method <init>(@org.jetbrains.annotations.NotNull p0: java.lang.Throwable): void
+    public final @org.jetbrains.annotations.NotNull method getError(): java.lang.Throwable
     public final inner class Result$Throwable
 }
 
@@ -31,13 +31,14 @@ public class Result {
     public synthetic method <init>(p0: kotlin.jvm.internal.DefaultConstructorMarker): void
     public synthetic final static method box-impl(p0: java.lang.Object): Result
     protected static @org.jetbrains.annotations.NotNull method constructor-impl(p0: java.lang.Object): java.lang.Object
-    public method equals(p0: java.lang.Object): boolean
-    public static method equals-impl(p0: java.lang.Object, p1: java.lang.Object): boolean
+    public method equals(@org.jetbrains.annotations.Nullable p0: java.lang.Object): boolean
+    public static method equals-impl(p0: java.lang.Object, @org.jetbrains.annotations.Nullable p1: java.lang.Object): boolean
     public final static method equals-impl0(p0: java.lang.Object, p1: java.lang.Object): boolean
     public method hashCode(): int
     public static method hashCode-impl(p0: java.lang.Object): int
-    public method toString(): java.lang.String
-    public static method toString-impl(p0: java.lang.Object): java.lang.String
+    public synthetic final static method is-Ok(p0: java.lang.Object): boolean
+    public @org.jetbrains.annotations.NotNull method toString(): java.lang.String
+    public static @org.jetbrains.annotations.NotNull method toString-impl(p0: java.lang.Object): java.lang.String
     public synthetic method unbox-impl(): java.lang.Object
     public final inner class Result$Ok
     public final inner class Result$Throwable

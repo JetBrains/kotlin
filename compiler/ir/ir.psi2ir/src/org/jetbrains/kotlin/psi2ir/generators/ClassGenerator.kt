@@ -146,7 +146,9 @@ class ClassGenerator(
                 generateAdditionalMembersForDataClass(irClass, ktClassOrObject)
             }
 
-            if (classDescriptor.isValue && !classDescriptor.isInlineClass() && ktClassOrObject is KtClassOrObject) {
+            if (classDescriptor.isValue && classDescriptor.annotations.hasAnnotation(JVM_INLINE_ANNOTATION_FQ_NAME) &&
+                !classDescriptor.isInlineClass() && ktClassOrObject is KtClassOrObject
+            ) {
                 generateAdditionalMembersForMultiFieldValueClasses(irClass, ktClassOrObject)
             }
 

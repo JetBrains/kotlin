@@ -25,7 +25,7 @@ val JVM_INLINE_ANNOTATION_CLASS_ID = ClassId.topLevel(JVM_INLINE_ANNOTATION_FQ_N
 // FIXME: would like to check as well.
 fun DeclarationDescriptor.isInlineClass(): Boolean =
     this is ClassDescriptor && annotations.hasAnnotation(JVM_INLINE_ANNOTATION_FQ_NAME) &&
-        this.valueClassRepresentation is InlineClassRepresentation
+            this.valueClassRepresentation is InlineClassRepresentation
 
 fun DeclarationDescriptor.isMultiFieldValueClass(): Boolean =
     this is ClassDescriptor && this.valueClassRepresentation is MultiFieldValueClassRepresentation
