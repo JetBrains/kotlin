@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.fir.declarations.FirBackingField
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationAttributes
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationStatus
+import org.jetbrains.kotlin.fir.declarations.FirDelegateField
 import org.jetbrains.kotlin.fir.declarations.FirPropertyAccessor
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.FirTypeParameter
@@ -48,12 +49,12 @@ class FirBackingFieldBuilder : FirAnnotationContainerBuilder {
     var containerSource: DeserializedContainerSource? = null
     var dispatchReceiverType: ConeSimpleKotlinType? = null
     lateinit var name: Name
-    var delegate: FirExpression? = null
     var isVar: Boolean by kotlin.properties.Delegates.notNull<Boolean>()
     var isVal: Boolean by kotlin.properties.Delegates.notNull<Boolean>()
     var getter: FirPropertyAccessor? = null
     var setter: FirPropertyAccessor? = null
     var backingField: FirBackingField? = null
+    var delegateField: FirDelegateField? = null
     lateinit var symbol: FirBackingFieldSymbol
     lateinit var propertySymbol: FirPropertySymbol
     var initializer: FirExpression? = null
@@ -75,12 +76,12 @@ class FirBackingFieldBuilder : FirAnnotationContainerBuilder {
             containerSource,
             dispatchReceiverType,
             name,
-            delegate,
             isVar,
             isVal,
             getter,
             setter,
             backingField,
+            delegateField,
             symbol,
             propertySymbol,
             initializer,

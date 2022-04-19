@@ -34,13 +34,13 @@ open class FirPropertySymbol(
         get() = fir.backingField?.symbol
 
     val delegateFieldSymbol: FirDelegateFieldSymbol?
-        get() = fir.delegateFieldSymbol
+        get() = fir.delegateField?.symbol
 
     val hasInitializer: Boolean
         get() = fir.initializer != null
 
     val hasDelegate: Boolean
-        get() = fir.delegate != null
+        get() = fir.delegateField != null
 
     val controlFlowGraphReference: FirControlFlowGraphReference?
         get() {
@@ -74,7 +74,16 @@ class FirBackingFieldSymbol(callableId: CallableId) : FirVariableSymbol<FirBacki
         get() = fir.propertySymbol.fir.getter?.symbol
 }
 
-class FirDelegateFieldSymbol(callableId: CallableId) : FirVariableSymbol<FirProperty>(callableId)
+class FirDelegateFieldSymbol(callableId: CallableId) : FirVariableSymbol<FirDelegateField>(callableId) {
+    val isVal: Boolean
+        get() = fir.isVal
+
+    val isVar: Boolean
+        get() = fir.isVar
+
+    val propertySymbol: FirPropertySymbol
+        get() = fir.propertySymbol
+}
 
 class FirFieldSymbol(callableId: CallableId) : FirVariableSymbol<FirField>(callableId)
 

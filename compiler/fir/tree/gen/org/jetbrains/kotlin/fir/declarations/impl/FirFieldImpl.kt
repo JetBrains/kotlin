@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.fir.declarations.FirBackingField
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationAttributes
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationStatus
+import org.jetbrains.kotlin.fir.declarations.FirDelegateField
 import org.jetbrains.kotlin.fir.declarations.FirField
 import org.jetbrains.kotlin.fir.declarations.FirPropertyAccessor
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
@@ -49,11 +50,11 @@ class FirFieldImpl @FirImplementationDetail constructor(
     override var initializer: FirExpression?,
     override val isVar: Boolean,
     override var backingField: FirBackingField?,
+    override var delegateField: FirDelegateField?,
     override val annotations: MutableList<FirAnnotation>,
     override val symbol: FirFieldSymbol,
 ) : FirField() {
     override val receiverTypeRef: FirTypeRef? get() = null
-    override val delegate: FirExpression? get() = null
     override val isVal: Boolean get() = !isVar
     override val getter: FirPropertyAccessor? get() = null
     override val setter: FirPropertyAccessor? get() = null
@@ -69,6 +70,7 @@ class FirFieldImpl @FirImplementationDetail constructor(
         returnTypeRef.accept(visitor, data)
         initializer?.accept(visitor, data)
         backingField?.accept(visitor, data)
+        delegateField?.accept(visitor, data)
         annotations.forEach { it.accept(visitor, data) }
         controlFlowGraphReference?.accept(visitor, data)
     }
@@ -79,6 +81,7 @@ class FirFieldImpl @FirImplementationDetail constructor(
         transformReturnTypeRef(transformer, data)
         transformInitializer(transformer, data)
         transformBackingField(transformer, data)
+        transformDelegateField(transformer, data)
         transformOtherChildren(transformer, data)
         return this
     }
@@ -107,10 +110,6 @@ class FirFieldImpl @FirImplementationDetail constructor(
         return this
     }
 
-    override fun <D> transformDelegate(transformer: FirTransformer<D>, data: D): FirFieldImpl {
-        return this
-    }
-
     override fun <D> transformGetter(transformer: FirTransformer<D>, data: D): FirFieldImpl {
         return this
     }
@@ -121,6 +120,11 @@ class FirFieldImpl @FirImplementationDetail constructor(
 
     override fun <D> transformBackingField(transformer: FirTransformer<D>, data: D): FirFieldImpl {
         backingField = backingField?.transform(transformer, data)
+        return this
+    }
+
+    override fun <D> transformDelegateField(transformer: FirTransformer<D>, data: D): FirFieldImpl {
+        delegateField = delegateField?.transform(transformer, data)
         return this
     }
 

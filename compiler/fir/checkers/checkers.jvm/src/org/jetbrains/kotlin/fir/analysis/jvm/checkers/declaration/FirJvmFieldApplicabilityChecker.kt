@@ -44,7 +44,7 @@ object FirJvmFieldApplicabilityChecker : FirPropertyChecker() {
         val containingClassSymbol = declaration.containingClass()?.toFirRegularClassSymbol(session)
 
         val problem = when {
-            declaration.delegate != null -> DELEGATE
+            declaration.delegateField != null -> DELEGATE
             !declaration.hasBackingField -> return
             declaration.isOverridable(containingClassSymbol) -> NOT_FINAL
             Visibilities.isPrivate(declaration.visibility) -> PRIVATE

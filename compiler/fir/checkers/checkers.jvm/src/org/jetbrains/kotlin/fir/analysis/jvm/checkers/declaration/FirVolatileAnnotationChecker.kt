@@ -24,7 +24,12 @@ object FirVolatileAnnotationChecker : FirPropertyChecker() {
             reporter.reportOn(fieldAnnotation.source, FirJvmErrors.VOLATILE_ON_VALUE, context)
         }
 
-        val delegateAnnotation = declaration.delegateFieldSymbol?.getAnnotationByClassId(VOLATILE_ANNOTATION_CLASS_ID)
+        if (declaration.delegateField == null) {
+            return
+        }
+
+        val delegateAnnotation = declaration.getAnnotationByClassId(VOLATILE_ANNOTATION_CLASS_ID)
+
         if (delegateAnnotation != null) {
             reporter.reportOn(delegateAnnotation.source, FirJvmErrors.VOLATILE_ON_DELEGATE, context)
         }

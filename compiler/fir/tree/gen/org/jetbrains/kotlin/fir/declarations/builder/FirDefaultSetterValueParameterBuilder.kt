@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.fir.declarations.FirBackingField
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationAttributes
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationStatus
+import org.jetbrains.kotlin.fir.declarations.FirDelegateField
 import org.jetbrains.kotlin.fir.declarations.FirPropertyAccessor
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.FirTypeParameterRef
@@ -49,12 +50,12 @@ class FirDefaultSetterValueParameterBuilder : FirAnnotationContainerBuilder {
     var containerSource: DeserializedContainerSource? = null
     var dispatchReceiverType: ConeSimpleKotlinType? = null
     var initializer: FirExpression? = null
-    var delegate: FirExpression? = null
     var isVar: Boolean = false
     var isVal: Boolean = true
     var getter: FirPropertyAccessor? = null
     var setter: FirPropertyAccessor? = null
     var backingField: FirBackingField? = null
+    var delegateField: FirDelegateField? = null
     override val annotations: MutableList<FirAnnotation> = mutableListOf()
     lateinit var symbol: FirValueParameterSymbol
     var defaultValue: FirExpression? = null
@@ -75,12 +76,12 @@ class FirDefaultSetterValueParameterBuilder : FirAnnotationContainerBuilder {
             containerSource,
             dispatchReceiverType,
             initializer,
-            delegate,
             isVar,
             isVal,
             getter,
             setter,
             backingField,
+            delegateField,
             annotations,
             symbol,
             defaultValue,

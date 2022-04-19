@@ -100,10 +100,10 @@ internal object FirLazyBodiesCalculator {
             backingField.replaceInitializer(newInitializer)
         }
 
-        val delegate = firProperty.delegate as? FirWrappedDelegateExpression
+        val delegate = firProperty.delegateField?.initializer as? FirWrappedDelegateExpression
         val delegateExpression = delegate?.expression
         if (delegateExpression is FirLazyExpression) {
-            val newDelegate = newProperty.delegate as? FirWrappedDelegateExpression
+            val newDelegate = newProperty.delegateField?.initializer as? FirWrappedDelegateExpression
             check(newDelegate != null) { "Invalid replacement delegate" }
             delegate.replaceExpression(newDelegate.expression)
 
@@ -121,7 +121,7 @@ internal object FirLazyBodiesCalculator {
         firProperty.getter?.body is FirLazyBlock
                 || firProperty.setter?.body is FirLazyBlock
                 || firProperty.initializer is FirLazyExpression
-                || (firProperty.delegate as? FirWrappedDelegateExpression)?.expression is FirLazyExpression
+                || (firProperty.delegateField?.initializer as? FirWrappedDelegateExpression)?.expression is FirLazyExpression
                 || firProperty.getExplicitBackingField()?.initializer is FirLazyExpression
 }
 

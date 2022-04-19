@@ -512,6 +512,13 @@ abstract class AbstractFirStatusResolveTransformer(
             )
         }
 
+        property.delegateField?.let {
+            it.transformStatus(
+                this,
+                statusResolver.resolveStatus(it, containingClass, property, isLocal = false)
+            )
+        }
+
         calculateDeprecations(property)
         return property
     }

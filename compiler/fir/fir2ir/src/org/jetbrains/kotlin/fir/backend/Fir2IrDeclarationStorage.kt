@@ -724,6 +724,7 @@ class Fir2IrDeclarationStorage(
             isLateInit -> setter?.visibility ?: status.visibility
             isConst -> status.visibility
             hasJvmFieldAnnotation -> status.visibility
+            delegateField != null -> delegateField?.visibility ?: status.visibility
             else -> Visibilities.Private
         }
 
@@ -793,8 +794,8 @@ class Fir2IrDeclarationStorage(
     ): IrProperty = convertCatching(property) {
         val origin = property.computeIrOrigin(predefinedOrigin)
         classifierStorage.preCacheTypeParameters(property)
-        if (property.delegate != null) {
-            ((property.delegate as? FirQualifiedAccess)?.calleeReference?.resolvedSymbol?.fir as? FirTypeParameterRefsOwner)?.let {
+        if (property.delegateField != null) {
+            ((property.delegateField?.initializer as? FirQualifiedAccess)?.calleeReference?.resolvedSymbol?.fir as? FirTypeParameterRefsOwner)?.let {
                 classifierStorage.preCacheTypeParameters(it)
             }
         }
@@ -807,7 +808,7 @@ class Fir2IrDeclarationStorage(
                     isVar = property.isVar,
                     isConst = property.isConst,
                     isLateinit = property.isLateInit,
-                    isDelegated = property.delegate != null,
+                    isDelegated = property.delegateField != null,
                     isExternal = property.isExternal,
                     isExpect = property.isExpect,
                     isFakeOverride = origin == IrDeclarationOrigin.FAKE_OVERRIDE,
@@ -820,7 +821,7 @@ class Fir2IrDeclarationStorage(
                         parent = irParent
                     }
                     val type = property.returnTypeRef.toIrType()
-                    val delegate = property.delegate
+                    val delegate = property.delegateField?.initializer
                     val getter = property.getter
                     val setter = property.setter
                     if (delegate != null || property.hasBackingField) {
@@ -1104,7 +1105,7 @@ class Fir2IrDeclarationStorage(
             enterScope(this)
             delegate = declareIrVariable(
                 startOffset, endOffset, IrDeclarationOrigin.PROPERTY_DELEGATE,
-                Name.identifier("${property.name}\$delegate"), property.delegate!!.typeRef.toIrType(),
+                Name.identifier("${property.name}\$delegate"), property.delegateField!!.returnTypeRef.toIrType(),
                 isVar = false, isConst = false, isLateinit = false
             )
             delegate.parent = irParent
@@ -1385,8 +1386,8 @@ class Fir2IrDeclarationStorage(
         return getIrPropertyForwardedSymbol(firBackingFieldSymbol.fir.propertySymbol.fir)
     }
 
-    fun getIrDelegateFieldSymbol(firVariableSymbol: FirVariableSymbol<*>): IrSymbol {
-        return getIrPropertyForwardedSymbol(firVariableSymbol.fir)
+    fun getIrDelegateFieldSymbol(firDelegateFieldSymbol: FirDelegateFieldSymbol): IrSymbol {
+        return getIrPropertyForwardedSymbol(firDelegateFieldSymbol.fir.propertySymbol.fir)
     }
 
     private fun getIrPropertyForwardedSymbol(fir: FirVariable): IrSymbol {

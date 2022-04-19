@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.fir.declarations.FirBackingField
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationAttributes
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationStatus
+import org.jetbrains.kotlin.fir.declarations.FirDelegateField
 import org.jetbrains.kotlin.fir.declarations.FirPropertyAccessor
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.FirTypeParameter
@@ -44,12 +45,12 @@ open class FirBackingFieldImpl @FirImplementationDetail constructor(
     override val containerSource: DeserializedContainerSource?,
     override val dispatchReceiverType: ConeSimpleKotlinType?,
     override val name: Name,
-    override var delegate: FirExpression?,
     override val isVar: Boolean,
     override val isVal: Boolean,
     override var getter: FirPropertyAccessor?,
     override var setter: FirPropertyAccessor?,
     override var backingField: FirBackingField?,
+    override var delegateField: FirDelegateField?,
     override val symbol: FirBackingFieldSymbol,
     override val propertySymbol: FirPropertySymbol,
     override var initializer: FirExpression?,
@@ -64,10 +65,10 @@ open class FirBackingFieldImpl @FirImplementationDetail constructor(
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
         returnTypeRef.accept(visitor, data)
         receiverTypeRef?.accept(visitor, data)
-        delegate?.accept(visitor, data)
         getter?.accept(visitor, data)
         setter?.accept(visitor, data)
         backingField?.accept(visitor, data)
+        delegateField?.accept(visitor, data)
         initializer?.accept(visitor, data)
         annotations.forEach { it.accept(visitor, data) }
         typeParameters.forEach { it.accept(visitor, data) }
@@ -77,10 +78,10 @@ open class FirBackingFieldImpl @FirImplementationDetail constructor(
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirBackingFieldImpl {
         transformReturnTypeRef(transformer, data)
         transformReceiverTypeRef(transformer, data)
-        transformDelegate(transformer, data)
         transformGetter(transformer, data)
         transformSetter(transformer, data)
         transformBackingField(transformer, data)
+        transformDelegateField(transformer, data)
         transformInitializer(transformer, data)
         transformTypeParameters(transformer, data)
         transformStatus(transformer, data)
@@ -98,11 +99,6 @@ open class FirBackingFieldImpl @FirImplementationDetail constructor(
         return this
     }
 
-    override fun <D> transformDelegate(transformer: FirTransformer<D>, data: D): FirBackingFieldImpl {
-        delegate = delegate?.transform(transformer, data)
-        return this
-    }
-
     override fun <D> transformGetter(transformer: FirTransformer<D>, data: D): FirBackingFieldImpl {
         getter = getter?.transform(transformer, data)
         return this
@@ -115,6 +111,11 @@ open class FirBackingFieldImpl @FirImplementationDetail constructor(
 
     override fun <D> transformBackingField(transformer: FirTransformer<D>, data: D): FirBackingFieldImpl {
         backingField = backingField?.transform(transformer, data)
+        return this
+    }
+
+    override fun <D> transformDelegateField(transformer: FirTransformer<D>, data: D): FirBackingFieldImpl {
+        delegateField = delegateField?.transform(transformer, data)
         return this
     }
 

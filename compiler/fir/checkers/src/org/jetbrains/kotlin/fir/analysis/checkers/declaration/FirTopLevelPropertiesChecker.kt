@@ -85,7 +85,7 @@ internal fun checkPropertyInitializer(
     if (isAbstract) {
         val returnTypeRef = property.returnTypeRef
         if (property.initializer == null &&
-            property.delegate == null &&
+            property.delegateField == null &&
             returnTypeRef is FirErrorTypeRef && returnTypeRef.diagnostic is ConeLocalVariableNoTypeOrInitializer
         ) {
             property.source?.let {
@@ -123,8 +123,8 @@ internal fun checkPropertyInitializer(
                 }
             }
         }
-        property.delegate != null -> {
-            property.delegate?.source?.let {
+        property.delegateField != null -> {
+            property.delegateField?.source?.let {
                 when {
                     inInterface -> {
                         reporter.reportOn(it, FirErrors.DELEGATED_PROPERTY_IN_INTERFACE, context)

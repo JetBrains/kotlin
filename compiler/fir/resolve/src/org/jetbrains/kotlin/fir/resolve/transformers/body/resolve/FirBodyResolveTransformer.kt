@@ -286,6 +286,10 @@ open class FirBodyResolveTransformer(
         return declarationsTransformer.transformBackingField(backingField, data)
     }
 
+    override fun transformDelegateField(delegateField: FirDelegateField, data: ResolutionMode): FirStatement {
+        return declarationsTransformer.transformDelegateField(delegateField, data)
+    }
+
     override fun transformField(field: FirField, data: ResolutionMode): FirField {
         return declarationsTransformer.transformField(field, data)
     }

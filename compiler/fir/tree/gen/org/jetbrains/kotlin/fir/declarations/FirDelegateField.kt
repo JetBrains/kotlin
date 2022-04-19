@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirStatement
-import org.jetbrains.kotlin.fir.symbols.impl.FirBackingFieldSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirDelegateFieldSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.types.ConeSimpleKotlinType
 import org.jetbrains.kotlin.fir.types.FirTypeRef
@@ -24,12 +24,13 @@ import org.jetbrains.kotlin.fir.visitors.*
  * DO NOT MODIFY IT MANUALLY
  */
 
-abstract class FirBackingField : FirVariable(), FirTypeParametersOwner, FirStatement {
+abstract class FirDelegateField : FirVariable(), FirStatement {
     abstract override val source: KtSourceElement?
     abstract override val moduleData: FirModuleData
     abstract override val resolvePhase: FirResolvePhase
     abstract override val origin: FirDeclarationOrigin
     abstract override val attributes: FirDeclarationAttributes
+    abstract override val typeParameters: List<FirTypeParameterRef>
     abstract override val returnTypeRef: FirTypeRef
     abstract override val receiverTypeRef: FirTypeRef?
     abstract override val deprecation: DeprecationsPerUseSite?
@@ -42,18 +43,17 @@ abstract class FirBackingField : FirVariable(), FirTypeParametersOwner, FirState
     abstract override val setter: FirPropertyAccessor?
     abstract override val backingField: FirBackingField?
     abstract override val delegateField: FirDelegateField?
-    abstract override val symbol: FirBackingFieldSymbol
-    abstract val propertySymbol: FirPropertySymbol
-    abstract override val initializer: FirExpression?
     abstract override val annotations: List<FirAnnotation>
-    abstract override val typeParameters: List<FirTypeParameter>
+    abstract override val symbol: FirDelegateFieldSymbol
+    abstract val propertySymbol: FirPropertySymbol
+    abstract override val initializer: FirExpression
     abstract override val status: FirDeclarationStatus
 
-    override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitBackingField(this, data)
+    override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitDelegateField(this, data)
 
     @Suppress("UNCHECKED_CAST")
     override fun <E: FirElement, D> transform(transformer: FirTransformer<D>, data: D): E = 
-        transformer.transformBackingField(this, data) as E
+        transformer.transformDelegateField(this, data) as E
 
     abstract override fun replaceResolvePhase(newResolvePhase: FirResolvePhase)
 
@@ -69,25 +69,25 @@ abstract class FirBackingField : FirVariable(), FirTypeParametersOwner, FirState
 
     abstract override fun replaceInitializer(newInitializer: FirExpression?)
 
-    abstract override fun <D> transformReturnTypeRef(transformer: FirTransformer<D>, data: D): FirBackingField
+    abstract override fun <D> transformTypeParameters(transformer: FirTransformer<D>, data: D): FirDelegateField
 
-    abstract override fun <D> transformReceiverTypeRef(transformer: FirTransformer<D>, data: D): FirBackingField
+    abstract override fun <D> transformReturnTypeRef(transformer: FirTransformer<D>, data: D): FirDelegateField
 
-    abstract override fun <D> transformGetter(transformer: FirTransformer<D>, data: D): FirBackingField
+    abstract override fun <D> transformReceiverTypeRef(transformer: FirTransformer<D>, data: D): FirDelegateField
 
-    abstract override fun <D> transformSetter(transformer: FirTransformer<D>, data: D): FirBackingField
+    abstract override fun <D> transformGetter(transformer: FirTransformer<D>, data: D): FirDelegateField
 
-    abstract override fun <D> transformBackingField(transformer: FirTransformer<D>, data: D): FirBackingField
+    abstract override fun <D> transformSetter(transformer: FirTransformer<D>, data: D): FirDelegateField
 
-    abstract override fun <D> transformDelegateField(transformer: FirTransformer<D>, data: D): FirBackingField
+    abstract override fun <D> transformBackingField(transformer: FirTransformer<D>, data: D): FirDelegateField
 
-    abstract override fun <D> transformInitializer(transformer: FirTransformer<D>, data: D): FirBackingField
+    abstract override fun <D> transformDelegateField(transformer: FirTransformer<D>, data: D): FirDelegateField
 
-    abstract override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirBackingField
+    abstract override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirDelegateField
 
-    abstract override fun <D> transformTypeParameters(transformer: FirTransformer<D>, data: D): FirBackingField
+    abstract override fun <D> transformInitializer(transformer: FirTransformer<D>, data: D): FirDelegateField
 
-    abstract override fun <D> transformStatus(transformer: FirTransformer<D>, data: D): FirBackingField
+    abstract override fun <D> transformStatus(transformer: FirTransformer<D>, data: D): FirDelegateField
 
-    abstract override fun <D> transformOtherChildren(transformer: FirTransformer<D>, data: D): FirBackingField
+    abstract override fun <D> transformOtherChildren(transformer: FirTransformer<D>, data: D): FirDelegateField
 }

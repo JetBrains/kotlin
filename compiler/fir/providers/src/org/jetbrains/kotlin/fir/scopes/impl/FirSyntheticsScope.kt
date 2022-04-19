@@ -75,8 +75,8 @@ fun createSyntheticsScopeFor(
     scopeSession: ScopeSession,
 ) = when (declaration) {
     is FirProperty -> when {
-        declaration.delegate != null -> {
-            val delegateType = declaration.delegate?.typeRef?.coneType
+        declaration.delegateField != null -> {
+            val delegateType = declaration.delegateField?.returnTypeRef?.coneType
                 ?: error("Should've had a delegate")
             val scope = delegateType.scope(useSiteSession, scopeSession, FakeOverrideTypeCalculator.DoNothing)
                 ?: error("Couldn't get a type scope")

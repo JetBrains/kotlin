@@ -505,7 +505,7 @@ open class FirRenderer(builder: StringBuilder, protected val mode: RenderMode = 
             print(" = ")
             it.accept(this)
         }
-        variable.delegate?.let {
+        variable.delegateField?.initializer?.let {
             print("by ")
             it.accept(this)
         }

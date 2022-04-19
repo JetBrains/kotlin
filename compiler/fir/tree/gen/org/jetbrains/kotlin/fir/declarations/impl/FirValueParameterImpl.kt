@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.fir.declarations.FirBackingField
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationAttributes
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationStatus
+import org.jetbrains.kotlin.fir.declarations.FirDelegateField
 import org.jetbrains.kotlin.fir.declarations.FirPropertyAccessor
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.FirTypeParameterRef
@@ -45,6 +46,7 @@ internal class FirValueParameterImpl(
     override val dispatchReceiverType: ConeSimpleKotlinType?,
     override val name: Name,
     override var backingField: FirBackingField?,
+    override var delegateField: FirDelegateField?,
     override val annotations: MutableList<FirAnnotation>,
     override val symbol: FirValueParameterSymbol,
     override var defaultValue: FirExpression?,
@@ -56,7 +58,6 @@ internal class FirValueParameterImpl(
     override var status: FirDeclarationStatus = FirResolvedDeclarationStatusImpl.DEFAULT_STATUS_FOR_STATUSLESS_DECLARATIONS
     override val receiverTypeRef: FirTypeRef? get() = null
     override val initializer: FirExpression? get() = null
-    override val delegate: FirExpression? get() = null
     override val isVar: Boolean get() = false
     override val isVal: Boolean get() = true
     override val getter: FirPropertyAccessor? get() = null
@@ -71,6 +72,7 @@ internal class FirValueParameterImpl(
         status.accept(visitor, data)
         returnTypeRef.accept(visitor, data)
         backingField?.accept(visitor, data)
+        delegateField?.accept(visitor, data)
         annotations.forEach { it.accept(visitor, data) }
         controlFlowGraphReference?.accept(visitor, data)
         defaultValue?.accept(visitor, data)
@@ -80,6 +82,7 @@ internal class FirValueParameterImpl(
         transformStatus(transformer, data)
         transformReturnTypeRef(transformer, data)
         transformBackingField(transformer, data)
+        transformDelegateField(transformer, data)
         transformOtherChildren(transformer, data)
         return this
     }
@@ -106,10 +109,6 @@ internal class FirValueParameterImpl(
         return this
     }
 
-    override fun <D> transformDelegate(transformer: FirTransformer<D>, data: D): FirValueParameterImpl {
-        return this
-    }
-
     override fun <D> transformGetter(transformer: FirTransformer<D>, data: D): FirValueParameterImpl {
         return this
     }
@@ -120,6 +119,11 @@ internal class FirValueParameterImpl(
 
     override fun <D> transformBackingField(transformer: FirTransformer<D>, data: D): FirValueParameterImpl {
         backingField = backingField?.transform(transformer, data)
+        return this
+    }
+
+    override fun <D> transformDelegateField(transformer: FirTransformer<D>, data: D): FirValueParameterImpl {
+        delegateField = delegateField?.transform(transformer, data)
         return this
     }
 

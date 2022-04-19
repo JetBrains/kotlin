@@ -126,7 +126,7 @@ open class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransform
             }
             is FirDelegateFieldReference -> {
                 val delegateFieldSymbol = callee.resolvedSymbol
-                qualifiedAccessExpression.resultType = delegateFieldSymbol.fir.delegate!!.typeRef
+                qualifiedAccessExpression.resultType = delegateFieldSymbol.fir.returnTypeRef
                 qualifiedAccessExpression
             }
             is FirResolvedNamedReference,

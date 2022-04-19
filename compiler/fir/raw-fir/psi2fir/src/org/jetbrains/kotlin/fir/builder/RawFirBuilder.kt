@@ -1943,7 +1943,6 @@ open class RawFirBuilder(
                         receiverTypeRef = null
                         this.name = name
                         initializer = subjectExpression
-                        delegate = null
                         isVar = false
                         symbol = FirPropertySymbol(name)
                         isLocal = true

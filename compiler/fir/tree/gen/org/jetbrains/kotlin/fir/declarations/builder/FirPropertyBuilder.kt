@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.fir.declarations.FirBackingField
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationAttributes
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationStatus
+import org.jetbrains.kotlin.fir.declarations.FirDelegateField
 import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.declarations.FirPropertyAccessor
 import org.jetbrains.kotlin.fir.declarations.FirPropertyBodyResolveState
@@ -55,14 +56,13 @@ class FirPropertyBuilder : FirDeclarationBuilder, FirTypeParametersOwnerBuilder,
     var dispatchReceiverType: ConeSimpleKotlinType? = null
     lateinit var name: Name
     var initializer: FirExpression? = null
-    var delegate: FirExpression? = null
     var isVar: Boolean by kotlin.properties.Delegates.notNull<Boolean>()
     var getter: FirPropertyAccessor? = null
     var setter: FirPropertyAccessor? = null
     var backingField: FirBackingField? = null
+    var delegateField: FirDelegateField? = null
     override val annotations: MutableList<FirAnnotation> = mutableListOf()
     lateinit var symbol: FirPropertySymbol
-    var delegateFieldSymbol: FirDelegateFieldSymbol? = null
     var isLocal: Boolean by kotlin.properties.Delegates.notNull<Boolean>()
     var bodyResolveState: FirPropertyBodyResolveState = FirPropertyBodyResolveState.NOTHING_RESOLVED
     override val typeParameters: MutableList<FirTypeParameter> = mutableListOf()
@@ -82,14 +82,13 @@ class FirPropertyBuilder : FirDeclarationBuilder, FirTypeParametersOwnerBuilder,
             dispatchReceiverType,
             name,
             initializer,
-            delegate,
             isVar,
             getter,
             setter,
             backingField,
+            delegateField,
             annotations,
             symbol,
-            delegateFieldSymbol,
             isLocal,
             bodyResolveState,
             typeParameters,
@@ -125,14 +124,13 @@ inline fun buildPropertyCopy(original: FirProperty, init: FirPropertyBuilder.() 
     copyBuilder.dispatchReceiverType = original.dispatchReceiverType
     copyBuilder.name = original.name
     copyBuilder.initializer = original.initializer
-    copyBuilder.delegate = original.delegate
     copyBuilder.isVar = original.isVar
     copyBuilder.getter = original.getter
     copyBuilder.setter = original.setter
     copyBuilder.backingField = original.backingField
+    copyBuilder.delegateField = original.delegateField
     copyBuilder.annotations.addAll(original.annotations)
     copyBuilder.symbol = original.symbol
-    copyBuilder.delegateFieldSymbol = original.delegateFieldSymbol
     copyBuilder.isLocal = original.isLocal
     copyBuilder.bodyResolveState = original.bodyResolveState
     copyBuilder.typeParameters.addAll(original.typeParameters)

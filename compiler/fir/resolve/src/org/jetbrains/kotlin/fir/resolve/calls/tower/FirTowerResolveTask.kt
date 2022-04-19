@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.fir.references.builder.buildResolvedNamedReference
 import org.jetbrains.kotlin.fir.resolve.BodyResolveComponents
 import org.jetbrains.kotlin.fir.resolve.DoubleColonLHS
 import org.jetbrains.kotlin.fir.resolve.calls.*
+import org.jetbrains.kotlin.fir.resolve.dfa.unwrapSmartcastExpression
 import org.jetbrains.kotlin.fir.resolvedSymbol
 import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.scopes.impl.SELF_NAME
@@ -230,15 +231,15 @@ internal open class FirTowerResolveTask(
         val theProperty = syntheticsOwner as? FirProperty
 
         val properReceiver = when {
-            theProperty?.delegate != null && info.name != SELF_NAME -> buildPropertyAccessExpression {
+            theProperty?.delegateField != null && info.name != SELF_NAME -> buildPropertyAccessExpression {
                 calleeReference = buildResolvedNamedReference {
-                    name = StandardNames.BACKING_FIELD
-                    resolvedSymbol = theProperty.delegateFieldSymbol ?: error("Should've had a delegate")
+                    name = StandardNames.DELEGATE_FIELD
+                    resolvedSymbol = theProperty.delegateField?.symbol ?: error("Should've had a delegate")
                 }
                 explicitReceiver = thePropertyAccess.explicitReceiver
                 dispatchReceiver = thePropertyAccess.dispatchReceiver
                 extensionReceiver = thePropertyAccess.extensionReceiver
-                typeRef = theProperty.delegate?.typeRef ?: error("Should've had a delegate")
+                typeRef = theProperty.delegateField?.returnTypeRef ?: error("Should've had a delegate")
             }
             thePropertyAccess.dispatchReceiver !is FirNoReceiverExpression -> thePropertyAccess.dispatchReceiver
             thePropertyAccess.extensionReceiver !is FirNoReceiverExpression -> thePropertyAccess.extensionReceiver
@@ -308,7 +309,7 @@ internal open class FirTowerResolveTask(
         parentGroup: TowerGroup = TowerGroup.EmptyRoot
     ) {
         if (info.searchSynthetics) {
-            runResolverForSyntheticsAccess(info, receiver, parentGroup)
+            runResolverForSyntheticsAccess(info, receiver.unwrapSmartcastExpression(), parentGroup)
         } else {
             runResolverForExpressionReceiver(info, ExpressionReceiverValue(receiver), parentGroup)
         }

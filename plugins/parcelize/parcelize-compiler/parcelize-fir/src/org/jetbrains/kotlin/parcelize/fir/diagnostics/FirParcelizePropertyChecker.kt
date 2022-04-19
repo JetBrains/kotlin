@@ -37,7 +37,7 @@ object FirParcelizePropertyChecker : FirPropertyChecker() {
             val fromPrimaryConstructor = declaration.fromPrimaryConstructor ?: false
             if (
                 !fromPrimaryConstructor &&
-                (declaration.hasBackingField || declaration.delegate != null) &&
+                (declaration.hasBackingField || declaration.delegateField != null) &&
                 !declaration.hasIgnoredOnParcel() &&
                 !containingClassSymbol.hasCustomParceler(context.session)
             ) {

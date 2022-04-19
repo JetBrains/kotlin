@@ -209,7 +209,7 @@ object FirMemberPropertiesChecker : FirClassChecker() {
                 property.initializer?.source?.let {
                     reporter.reportOn(it, FirErrors.ABSTRACT_PROPERTY_WITH_INITIALIZER, context)
                 }
-                property.delegate?.source?.let {
+                property.delegateField?.source?.let {
                     reporter.reportOn(it, FirErrors.ABSTRACT_DELEGATED_PROPERTY, context)
                 }
             }

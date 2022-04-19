@@ -26,6 +26,7 @@ object FirMemberDeclarationComparator : Comparator<FirMemberDeclaration> {
                 is FirErrorProperty -> 0
                 is FirValueParameter -> 0
                 is FirBackingField -> 0
+                is FirDelegateField -> 0
             }
 
         private val FirMemberDeclaration.name: Name

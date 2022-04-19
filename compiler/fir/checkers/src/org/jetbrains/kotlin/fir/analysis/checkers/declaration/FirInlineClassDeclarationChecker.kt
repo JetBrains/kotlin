@@ -125,10 +125,10 @@ object FirInlineClassDeclarationChecker : FirRegularClassChecker() {
                         primaryConstructorPropertiesByName[innerDeclaration.name] = innerDeclaration
                     } else {
                         when {
-                            innerDeclaration.delegate != null ->
+                            innerDeclaration.delegateField != null ->
                                 withSuppressedDiagnostics(innerDeclaration, context) { context ->
                                     reporter.reportOn(
-                                        innerDeclaration.delegate!!.source,
+                                        innerDeclaration.delegateField!!.source,
                                         FirErrors.DELEGATED_PROPERTY_INSIDE_VALUE_CLASS,
                                         context
                                     )

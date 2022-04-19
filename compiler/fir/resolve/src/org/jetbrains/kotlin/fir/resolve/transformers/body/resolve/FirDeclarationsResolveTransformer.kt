@@ -154,10 +154,10 @@ open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransfor
                         backingFieldIsAlreadyResolved = true
                     }
                 }
-                val delegate = property.delegate
+                val delegate = property.delegateField?.initializer
                 if (delegate != null) {
                     transformPropertyAccessorsWithDelegate(property)
-                    if (property.delegateFieldSymbol != null) {
+                    if (property.delegateField != null) {
                         replacePropertyReferenceTypeInDelegateAccessors(property)
                     }
                     property.replaceBodyResolveState(FirPropertyBodyResolveState.EVERYTHING_RESOLVED)
@@ -260,7 +260,7 @@ open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransfor
             (returnExpression.result as? FirFunctionCall)?.replacePropertyReferenceTypeInDelegateAccessors(property)
         }
         (property.setter?.body?.statements?.singleOrNull() as? FirFunctionCall)?.replacePropertyReferenceTypeInDelegateAccessors(property)
-        (property.delegate as? FirFunctionCall)?.replacePropertyReferenceTypeInDelegateAccessors(property)
+        (property.delegateField?.initializer as? FirFunctionCall)?.replacePropertyReferenceTypeInDelegateAccessors(property)
     }
 
     private fun transformPropertyAccessorsWithDelegate(property: FirProperty) {
@@ -268,10 +268,10 @@ open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransfor
         context.forPropertyDelegateAccessors(property, resolutionContext, callCompleter) {
             // Resolve delegate expression, after that, delegate will contain either expr.provideDelegate or expr
             if (property.isLocal) {
-                property.transformDelegate(transformer, ResolutionMode.ContextDependentDelegate)
+                property.transformDelegateField(transformer, ResolutionMode.ContextDependentDelegate)
             } else {
                 context.forPropertyInitializer {
-                    property.transformDelegate(transformer, ResolutionMode.ContextDependentDelegate)
+                    property.transformDelegateField(transformer, ResolutionMode.ContextDependentDelegate)
                 }
             }
 
@@ -359,13 +359,13 @@ open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransfor
 
     private fun transformLocalVariable(variable: FirProperty): FirProperty {
         assert(variable.isLocal)
-        val delegate = variable.delegate
+        val delegate = variable.delegateField?.initializer
 
         val hadExplicitType = variable.returnTypeRef !is FirImplicitTypeRef
 
         if (delegate != null) {
             transformPropertyAccessorsWithDelegate(variable)
-            if (variable.delegateFieldSymbol != null) {
+            if (variable.delegateField != null) {
                 replacePropertyReferenceTypeInDelegateAccessors(variable)
             }
             // This ensures there's no ImplicitTypeRef
@@ -993,6 +993,20 @@ open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransfor
                     backingField.visibilityForApproximation(),
                 )
             )
+        )
+    }
+
+    override fun transformDelegateField(delegateField: FirDelegateField, data: ResolutionMode): FirStatement {
+        val propertyType = data.expectedType
+        val initializerData = if (propertyType != null) {
+            ResolutionMode.WithSuggestedType(propertyType)
+        } else {
+            ResolutionMode.ContextDependent
+        }
+        delegateField.transformInitializer(transformer, initializerData)
+        return delegateField.transformReturnTypeRef(
+            transformer,
+            withExpectedType(delegateField.initializer.typeRef.toExpectedTypeRef()),
         )
     }
 

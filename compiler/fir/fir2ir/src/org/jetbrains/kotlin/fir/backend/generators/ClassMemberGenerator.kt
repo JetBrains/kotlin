@@ -168,7 +168,7 @@ internal class ClassMemberGenerator(
 
     fun convertPropertyContent(irProperty: IrProperty, property: FirProperty, containingClass: FirClass?): IrProperty {
         val initializer = property.backingField?.initializer ?: property.initializer
-        val delegate = property.delegate
+        val delegate = property.delegateField?.initializer
         val propertyType = property.returnTypeRef.toIrType()
         irProperty.initializeBackingField(property, initializerExpression = initializer ?: delegate)
         if (containingClass != null) {
@@ -217,8 +217,8 @@ internal class ClassMemberGenerator(
             if (initializer == null && initializerExpression != null) {
                 initializer = irFactory.createExpressionBody(
                     run {
-                        val irExpression = visitor.convertToIrExpression(initializerExpression, isDelegate = property.delegate != null)
-                        if (property.delegate == null) {
+                        val irExpression = visitor.convertToIrExpression(initializerExpression, isDelegate = property.delegateField != null)
+                        if (property.delegateField == null) {
                             with(visitor.implicitCastInserter) {
                                 irExpression.cast(initializerExpression, initializerExpression.typeRef, property.returnTypeRef)
                             }

@@ -13,10 +13,7 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.backend.Fir2IrComponents
 import org.jetbrains.kotlin.fir.backend.FirMetadataSource
 import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.declarations.builder.buildAnonymousFunction
-import org.jetbrains.kotlin.fir.declarations.builder.buildProperty
-import org.jetbrains.kotlin.fir.declarations.builder.buildPropertyAccessor
-import org.jetbrains.kotlin.fir.declarations.builder.buildValueParameterCopy
+import org.jetbrains.kotlin.fir.declarations.builder.*
 import org.jetbrains.kotlin.fir.diagnostics.ConeIntermediateDiagnostic
 import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.serialization.FirElementSerializer
@@ -118,18 +115,30 @@ class FirMetadataSerializer(
 
     private fun FirProperty.copyToFreeProperty(): FirProperty {
         val property = this
+        val newSymbol = FirPropertySymbol(property.symbol.callableId)
         return buildProperty {
             val typeParameterSet = property.typeParameters.toMutableSet()
             moduleData = property.moduleData
             origin = FirDeclarationOrigin.Source
-            symbol = FirPropertySymbol(property.symbol.callableId)
+            symbol = newSymbol
             returnTypeRef = property.returnTypeRef.approximated(toSuper = true, typeParameterSet)
             receiverTypeRef = property.receiverTypeRef?.approximated(toSuper = false, typeParameterSet)
             name = property.name
             initializer = property.initializer
-            delegate = property.delegate
-            delegateFieldSymbol = property.delegateFieldSymbol?.let {
-                FirDelegateFieldSymbol(it.callableId)
+            delegateField = property.delegateField?.let {
+                buildDelegateField {
+                    source = it.source
+                    origin = it.origin
+                    moduleData = it.moduleData
+                    name = it.name
+                    symbol = FirDelegateFieldSymbol(it.symbol.callableId)
+                    initializer = it.initializer
+                    returnTypeRef = it.returnTypeRef
+                    propertySymbol = newSymbol
+                    status = it.status
+                    isVar = it.isVar
+                    isVal = it.isVal
+                }
             }
             getter = property.getter?.copyToFreeAccessor()
             setter = property.setter?.copyToFreeAccessor()
@@ -140,8 +149,6 @@ class FirMetadataSerializer(
             attributes = property.attributes.copy()
             annotations += property.annotations
             typeParameters += typeParameterSet
-        }.apply {
-            delegateFieldSymbol?.bind(this)
         }
     }
 
