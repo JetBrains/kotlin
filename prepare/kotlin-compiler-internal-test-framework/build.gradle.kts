@@ -2,20 +2,38 @@ plugins {
     java
 }
 
+val testModules = listOf(
+    ":compiler:tests-common-jvm6",
+    ":compiler:test-infrastructure",
+    ":compiler:test-infrastructure-utils",
+    ":compiler:tests-compiler-utils",
+    ":compiler:tests-common-new",
+    ":generators:test-generator"
+)
+
+val mainModules = listOf(
+    ":generators"
+)
+
 dependencies {
-    embedded(projectTests(":compiler:tests-common-jvm6")) { isTransitive = false }
-    embedded(projectTests(":compiler:test-infrastructure")) { isTransitive = false }
-    embedded(projectTests(":compiler:test-infrastructure-utils")) { isTransitive = false }
-    embedded(projectTests(":compiler:tests-compiler-utils")) { isTransitive = false }
-    embedded(projectTests(":compiler:tests-common-new")) { isTransitive = false }
+    mainModules.forEach {
+        embedded(project(it)) { isTransitive = false }
+    }
+    testModules.forEach {
+        embedded(projectTests(it)) { isTransitive = false }
+    }
+
     embedded(intellijJavaRt()) { isTransitive = false }
-    embedded(project(":generators")) { isTransitive = false }
-    embedded(projectTests(":generators:test-generator")) { isTransitive = false }
 }
 
 publish()
 runtimeJar()
-sourcesJar().configure {
+sourcesJar {
+    from {
+        mainModules.map { project(it).mainSourceSet.allSource } + testModules.map { project(it).testSourceSet.allSource }
+    }
+
     dependsOn(":compiler:fir:checkers:generateCheckersComponents")
 }
+
 javadocJar()
