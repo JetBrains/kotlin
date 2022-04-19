@@ -61,6 +61,10 @@ dependencies {
     testImplementation(project(":kotlin-android-extensions"))
     testImplementation(project(":kotlin-parcelize-compiler"))
     testImplementation(commonDependency("org.jetbrains.intellij.deps", "trove4j"))
+    testImplementation(commonDependency("io.ktor", "ktor-server-test-host"))
+    testImplementation(commonDependency("io.ktor", "ktor-server-core"))
+    testImplementation(commonDependency("io.ktor", "ktor-server-netty"))
+    testImplementation(commonDependency("io.ktor", "ktor-client-mock"))
 
     testImplementation(gradleApi())
     testImplementation(gradleTestKit())

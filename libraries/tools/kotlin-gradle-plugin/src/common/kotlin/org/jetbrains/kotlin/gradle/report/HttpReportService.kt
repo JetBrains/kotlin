@@ -15,7 +15,9 @@ import org.gradle.tooling.events.FinishEvent
 import org.gradle.tooling.events.OperationCompletionListener
 import org.gradle.tooling.events.task.TaskFinishEvent
 import org.jetbrains.kotlin.gradle.plugin.stat.CompileStatisticsData
+import org.jetbrains.kotlin.gradle.plugin.stat.StatTag
 import org.jetbrains.kotlin.gradle.plugin.statistics.KotlinBuildStatListener.Companion.prepareData
+import org.jetbrains.kotlin.gradle.utils.isConfigurationCacheAvailable
 import java.io.IOException
 import java.net.HttpURLConnection
 import java.net.URL
@@ -28,16 +30,21 @@ abstract class HttpReportService : BuildService<HttpReportService.Parameters>,
     OperationCompletionListener, AutoCloseable {
 
     var executorService: ExecutorService = Executors.newSingleThreadExecutor()
+    val uuid = UUID.randomUUID().toString()
 
     interface Parameters : BuildServiceParameters {
         var label: String?
-        var uuid: String
         var projectName: String
         var httpSettings: HttpReportSettings
         var kotlinVersion: String
+        var additionalTags: List<StatTag>
     }
 
-    private val log = Logging.getLogger(this.javaClass)
+    val log = Logging.getLogger(this.javaClass)
+
+    init {
+        log.info("Http report service is registered. Build $uuid")
+    }
 
     //    @Volatile for one thread executor it does not need
     private var requestPreviousFailed = false
@@ -45,7 +52,8 @@ abstract class HttpReportService : BuildService<HttpReportService.Parameters>,
 
     override fun onFinish(event: FinishEvent?) {
         if (event is TaskFinishEvent) {
-            val data = prepareData(event, parameters.projectName, parameters.uuid, parameters.label, parameters.kotlinVersion)
+            val data =
+                prepareData(event, parameters.projectName, uuid, parameters.label, parameters.kotlinVersion, parameters.additionalTags)
             data?.also { executorService.submit { report(data) } }
         }
     }
@@ -57,19 +65,29 @@ abstract class HttpReportService : BuildService<HttpReportService.Parameters>,
     companion object {
 
         fun registerIfAbsent(project: Project, kotlinVersion: String): Provider<HttpReportService>? {
-            val rootProject = project.gradle.rootProject
+            val gradle = project.gradle
+            val rootProject = gradle.rootProject
             val reportingSettings = reportingSettings(rootProject)
 
             return reportingSettings.httpReportSettings?.let { httpSettings ->
-                project.gradle.sharedServices.registerIfAbsent(
+                gradle.sharedServices.registerIfAbsent(
                     "build_http_metric_service_${HttpReportService::class.java.classLoader.hashCode()}",
                     HttpReportService::class.java
                 ) {
                     it.parameters.label = reportingSettings.buildReportLabel
                     it.parameters.projectName = rootProject.name
-                    it.parameters.uuid = UUID.randomUUID().toString()
                     it.parameters.httpSettings = httpSettings
                     it.parameters.kotlinVersion = kotlinVersion
+
+                    //init gradle tags, that present in build scan
+                    val additionalTags = ArrayList<StatTag>()
+                    if (isConfigurationCacheAvailable(gradle)) {
+                        additionalTags.add(StatTag.CONFIGURATION_CACHE)
+                    }
+                    if (gradle.startParameter.isBuildCacheEnabled) {
+                        additionalTags.add(StatTag.BUILD_CACHE)
+                    }
+                    it.parameters.additionalTags = additionalTags
                 }!!
             }
 
