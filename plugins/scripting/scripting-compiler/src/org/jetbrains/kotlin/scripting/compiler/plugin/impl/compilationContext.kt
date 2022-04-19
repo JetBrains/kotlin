@@ -286,6 +286,8 @@ private fun createInitialCompilerConfiguration(
 
         configureAdvancedJvmOptions(baseArguments)
         configureJdkClasspathRoots()
+
+        put(JVMConfigurationKeys.USE_FAST_JAR_FILE_SYSTEM, true)
     }
 }
 
