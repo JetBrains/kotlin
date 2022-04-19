@@ -8,15 +8,24 @@ package org.jetbrains.kotlin.analysis.api.descriptors
 import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
 import org.jetbrains.kotlin.analysis.api.components.*
 import org.jetbrains.kotlin.analysis.api.descriptors.components.*
+import org.jetbrains.kotlin.analysis.api.impl.base.components.KtAnalysisScopeProviderImpl
 import org.jetbrains.kotlin.analysis.api.symbols.KtSymbolProvider
 import org.jetbrains.kotlin.analysis.api.tokens.ValidityToken
+import org.jetbrains.kotlin.analysis.project.structure.KtModule
+import org.jetbrains.kotlin.analysis.project.structure.getKtModule
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtFile
 
 @Suppress("LeakingThis")
-class KtFe10AnalysisSession(val analysisContext: Fe10AnalysisContext) : KtAnalysisSession(analysisContext.token) {
-    constructor(contextElement: KtElement, token: ValidityToken) :
-            this(Fe10AnalysisContext(Fe10AnalysisFacade.getInstance(contextElement.project), contextElement, token))
+class KtFe10AnalysisSession(
+    val analysisContext: Fe10AnalysisContext,
+    override val useSiteModule: KtModule
+) : KtAnalysisSession(analysisContext.token) {
+    constructor(contextElement: KtElement, token: ValidityToken) : this(
+        Fe10AnalysisContext(Fe10AnalysisFacade.getInstance(contextElement.project), contextElement, token),
+        contextElement.getKtModule()
+    )
+
 
     override val smartCastProviderImpl: KtSmartCastProvider = KtFe10SmartCastProvider(this)
     override val diagnosticProviderImpl: KtDiagnosticProvider = KtFe10DiagnosticProvider(this)
@@ -25,7 +34,8 @@ class KtFe10AnalysisSession(val analysisContext: Fe10AnalysisContext) : KtAnalys
     override val symbolProviderImpl: KtSymbolProvider = KtFe10SymbolProvider(this)
     override val callResolverImpl: KtCallResolver = KtFe10CallResolver(this)
     override val completionCandidateCheckerImpl: KtCompletionCandidateChecker = KtFe10CompletionCandidateChecker(this)
-    override val symbolDeclarationOverridesProviderImpl: KtSymbolDeclarationOverridesProvider = KtFe10SymbolDeclarationOverridesProvider(this)
+    override val symbolDeclarationOverridesProviderImpl: KtSymbolDeclarationOverridesProvider =
+        KtFe10SymbolDeclarationOverridesProvider(this)
     override val referenceShortenerImpl: KtReferenceShortener = KtFe10ReferenceShortener(this)
     override val symbolDeclarationRendererProviderImpl: KtSymbolDeclarationRendererProvider = KtFe10SymbolDeclarationRendererProvider(this)
     override val expressionTypeProviderImpl: KtExpressionTypeProvider = KtFe10ExpressionTypeProvider(this)
@@ -43,6 +53,7 @@ class KtFe10AnalysisSession(val analysisContext: Fe10AnalysisContext) : KtAnalys
     override val importOptimizerImpl: KtImportOptimizer = KtFe10ImportOptimizer(this)
     override val jvmTypeMapperImpl: KtJvmTypeMapper = KtFe10JvmTypeMapper(this)
     override val symbolInfoProviderImpl: KtSymbolInfoProvider = KtFe10SymbolInfoProvider(this)
+    override val analysisScopeProviderImpl: KtAnalysisScopeProvider = KtAnalysisScopeProviderImpl(this, token)
 
     override fun createContextDependentCopy(originalKtFile: KtFile, elementToReanalyze: KtElement): KtAnalysisSession {
         return KtFe10AnalysisSession(elementToReanalyze, token)

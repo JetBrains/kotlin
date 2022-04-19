@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.analysis.api.symbols.KtSymbolProvider
 import org.jetbrains.kotlin.analysis.api.symbols.KtSymbolProviderMixIn
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtSymbolPointer
 import org.jetbrains.kotlin.analysis.api.tokens.ValidityToken
+import org.jetbrains.kotlin.analysis.project.structure.KtModule
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtFile
 
@@ -53,7 +54,10 @@ public abstract class KtAnalysisSession(final override val token: ValidityToken)
     KtVisibilityCheckerMixIn,
     KtMemberSymbolProviderMixin,
     KtInheritorsProviderMixIn,
-    KtTypeCreatorMixIn {
+    KtTypeCreatorMixIn,
+    KtAnalysisScopeProviderMixIn {
+
+    public abstract val useSiteModule: KtModule
 
     override val analysisSession: KtAnalysisSession get() = this
 
@@ -130,6 +134,9 @@ public abstract class KtAnalysisSession(final override val token: ValidityToken)
 
     internal val symbolInfoProvider: KtSymbolInfoProvider get() = symbolInfoProviderImpl
     protected abstract val symbolInfoProviderImpl: KtSymbolInfoProvider
+
+    internal val analysisScopeProvider: KtAnalysisScopeProvider get() = analysisScopeProviderImpl
+    protected abstract val analysisScopeProviderImpl: KtAnalysisScopeProvider
 
     @PublishedApi
     internal val typesCreator: KtTypeCreator
