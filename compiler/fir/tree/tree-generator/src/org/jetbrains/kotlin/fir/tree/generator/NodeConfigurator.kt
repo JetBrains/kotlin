@@ -324,7 +324,6 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
 
         property.configure {
             +symbol("FirPropertySymbol")
-            +field("delegateFieldSymbol", delegateFieldSymbolType, nullable = true)
             +booleanField("isLocal")
             +field("bodyResolveState", propertyBodyResolveStateType, withReplace = true)
             +typeParameters
@@ -349,6 +348,15 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
             +initializer.withTransform().withReplace()
             +annotations
             +typeParameters
+            +status.withTransform()
+        }
+
+        delegateField.configure {
+            +field("symbol", delegateFieldSymbolType)
+            +field("propertySymbol", firPropertySymbolType).apply {
+                withBindThis = false
+            }
+            +field("initializer", expression, nullable = false).withTransform().withReplace()
             +status.withTransform()
         }
 
@@ -392,11 +400,11 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
             +name
             +symbol("FirVariableSymbol", "out FirVariable")
             +initializer.withTransform().withReplace()
-            +field("delegate", expression, nullable = true).withTransform()
             generateBooleanFields("var", "val")
             +field("getter", propertyAccessor, nullable = true, withReplace = true).withTransform()
             +field("setter", propertyAccessor, nullable = true, withReplace = true).withTransform()
             +field("backingField", backingField, nullable = true).withTransform()
+            +field("delegateField", delegateField, nullable = true).withTransform()
             +annotations
             needTransformOtherChildren()
         }

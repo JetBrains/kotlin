@@ -305,7 +305,7 @@ class FirElementSerializer private constructor(
             ProtoEnumFlags.modality(modality),
             ProtoBuf.MemberKind.DECLARATION,
             property.isVar, hasGetter, hasSetter, property.isConst, property.isConst, property.isLateInit,
-            property.isExternal, property.delegateFieldSymbol != null, property.isExpect
+            property.isExternal, property.delegateField != null, property.isExpect
         )
         if (flags != builder.flags) {
             builder.flags = flags

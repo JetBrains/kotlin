@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.fir.builder
 import com.intellij.psi.tree.IElementType
 import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.KtSourceElement
+import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
@@ -36,11 +37,11 @@ import org.jetbrains.kotlin.fir.symbols.constructStarProjectedType
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.ConeClassLikeType
 import org.jetbrains.kotlin.fir.types.ConeStarProjection
-import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.types.builder.buildImplicitTypeRef
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.impl.*
 import org.jetbrains.kotlin.lexer.KtTokens
+import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.types.ConstantValueKind
@@ -304,8 +305,17 @@ fun <T> FirPropertyBuilder.generateAccessorsByDelegate(
     isExtension: Boolean,
 ) {
     if (delegateBuilder == null) return
-    val delegateFieldSymbol = FirDelegateFieldSymbol(symbol.callableId).also {
-        this.delegateFieldSymbol = it
+
+    val delegateFieldBuilder = FirDelegateFieldBuilder().apply {
+        source = delegateBuilder.source?.fakeElement(KtFakeSourceElementKind.WrappedDelegate)
+        name = StandardNames.DELEGATE_FIELD
+        origin = FirDeclarationOrigin.Source
+        symbol = FirDelegateFieldSymbol(this@generateAccessorsByDelegate.symbol.callableId)
+        propertySymbol = this@generateAccessorsByDelegate.symbol
+        returnTypeRef = buildImplicitTypeRef()
+        this.moduleData = moduleData
+        this.isVar = this@generateAccessorsByDelegate.isVar
+        this.isVal = !this@generateAccessorsByDelegate.isVar
     }
 
     val isMember = ownerRegularOrAnonymousObjectSymbol != null
@@ -349,7 +359,7 @@ fun <T> FirPropertyBuilder.generateAccessorsByDelegate(
     fun delegateAccess() = buildPropertyAccessExpression {
         source = fakeSource
         calleeReference = buildDelegateFieldReference {
-            resolvedSymbol = delegateFieldSymbol
+            resolvedSymbol = delegateFieldBuilder.symbol
         }
         if (ownerRegularOrAnonymousObjectSymbol != null) {
             dispatchReceiver = thisRef(forDispatchReceiver = true)
@@ -392,7 +402,6 @@ fun <T> FirPropertyBuilder.generateAccessorsByDelegate(
         argumentList = buildBinaryArgumentList(thisRef(forDispatchReceiver = true), propertyRef())
         origin = FirFunctionCallOrigin.Operator
     }
-    delegate = delegateBuilder.build()
     if (getter == null || getter is FirDefaultPropertyAccessor) {
         val annotations = getter?.annotations
         val returnTarget = FirFunctionTarget(null, isLambda = false)
@@ -491,6 +500,13 @@ fun <T> FirPropertyBuilder.generateAccessorsByDelegate(
             it.initContainingClassAttr(context)
         }
     }
+    delegateField = delegateFieldBuilder.apply {
+        initializer = delegateBuilder.build()
+        status = FirDeclarationStatusImpl(
+            this@generateAccessorsByDelegate.status.visibility,
+            Modality.FINAL,
+        )
+    }.build()
 }
 
 fun FirBlock?.extractContractDescriptionIfPossible(): Pair<FirBlock?, FirContractDescription?> {

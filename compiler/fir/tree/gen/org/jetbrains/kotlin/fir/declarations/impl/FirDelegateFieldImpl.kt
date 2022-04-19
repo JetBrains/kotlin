@@ -17,10 +17,10 @@ import org.jetbrains.kotlin.fir.declarations.FirDeclarationStatus
 import org.jetbrains.kotlin.fir.declarations.FirDelegateField
 import org.jetbrains.kotlin.fir.declarations.FirPropertyAccessor
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
-import org.jetbrains.kotlin.fir.declarations.FirTypeParameter
+import org.jetbrains.kotlin.fir.declarations.FirTypeParameterRef
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirExpression
-import org.jetbrains.kotlin.fir.symbols.impl.FirBackingFieldSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirDelegateFieldSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.types.ConeSimpleKotlinType
 import org.jetbrains.kotlin.fir.types.FirTypeRef
@@ -33,13 +33,14 @@ import org.jetbrains.kotlin.fir.visitors.*
  * DO NOT MODIFY IT MANUALLY
  */
 
-open class FirBackingFieldImpl @FirImplementationDetail constructor(
+open class FirDelegateFieldImpl @FirImplementationDetail constructor(
     override val source: KtSourceElement?,
     override val moduleData: FirModuleData,
     @Volatile
     override var resolvePhase: FirResolvePhase,
     override val origin: FirDeclarationOrigin,
     override val attributes: FirDeclarationAttributes,
+    override val typeParameters: MutableList<FirTypeParameterRef>,
     override var returnTypeRef: FirTypeRef,
     override var receiverTypeRef: FirTypeRef?,
     override var deprecation: DeprecationsPerUseSite?,
@@ -53,18 +54,18 @@ open class FirBackingFieldImpl @FirImplementationDetail constructor(
     override var setter: FirPropertyAccessor?,
     override var backingField: FirBackingField?,
     override var delegateField: FirDelegateField?,
-    override val symbol: FirBackingFieldSymbol,
-    override val propertySymbol: FirPropertySymbol,
-    override var initializer: FirExpression?,
     override val annotations: MutableList<FirAnnotation>,
-    override val typeParameters: MutableList<FirTypeParameter>,
+    override val symbol: FirDelegateFieldSymbol,
+    override val propertySymbol: FirPropertySymbol,
+    override var initializer: FirExpression,
     override var status: FirDeclarationStatus,
-) : FirBackingField() {
+) : FirDelegateField() {
     init {
         symbol.bind(this)
     }
 
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
+        typeParameters.forEach { it.accept(visitor, data) }
         returnTypeRef.accept(visitor, data)
         receiverTypeRef?.accept(visitor, data)
         contextReceivers.forEach { it.accept(visitor, data) }
@@ -72,13 +73,13 @@ open class FirBackingFieldImpl @FirImplementationDetail constructor(
         setter?.accept(visitor, data)
         backingField?.accept(visitor, data)
         delegateField?.accept(visitor, data)
-        initializer?.accept(visitor, data)
         annotations.forEach { it.accept(visitor, data) }
-        typeParameters.forEach { it.accept(visitor, data) }
+        initializer.accept(visitor, data)
         status.accept(visitor, data)
     }
 
-    override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirBackingFieldImpl {
+    override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirDelegateFieldImpl {
+        transformTypeParameters(transformer, data)
         transformReturnTypeRef(transformer, data)
         transformReceiverTypeRef(transformer, data)
         transformGetter(transformer, data)
@@ -86,63 +87,62 @@ open class FirBackingFieldImpl @FirImplementationDetail constructor(
         transformBackingField(transformer, data)
         transformDelegateField(transformer, data)
         transformInitializer(transformer, data)
-        transformTypeParameters(transformer, data)
         transformStatus(transformer, data)
         transformOtherChildren(transformer, data)
         return this
     }
 
-    override fun <D> transformReturnTypeRef(transformer: FirTransformer<D>, data: D): FirBackingFieldImpl {
-        returnTypeRef = returnTypeRef.transform(transformer, data)
-        return this
-    }
-
-    override fun <D> transformReceiverTypeRef(transformer: FirTransformer<D>, data: D): FirBackingFieldImpl {
-        receiverTypeRef = receiverTypeRef?.transform(transformer, data)
-        return this
-    }
-
-    override fun <D> transformGetter(transformer: FirTransformer<D>, data: D): FirBackingFieldImpl {
-        getter = getter?.transform(transformer, data)
-        return this
-    }
-
-    override fun <D> transformSetter(transformer: FirTransformer<D>, data: D): FirBackingFieldImpl {
-        setter = setter?.transform(transformer, data)
-        return this
-    }
-
-    override fun <D> transformBackingField(transformer: FirTransformer<D>, data: D): FirBackingFieldImpl {
-        backingField = backingField?.transform(transformer, data)
-        return this
-    }
-
-    override fun <D> transformDelegateField(transformer: FirTransformer<D>, data: D): FirBackingFieldImpl {
-        delegateField = delegateField?.transform(transformer, data)
-        return this
-    }
-
-    override fun <D> transformInitializer(transformer: FirTransformer<D>, data: D): FirBackingFieldImpl {
-        initializer = initializer?.transform(transformer, data)
-        return this
-    }
-
-    override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirBackingFieldImpl {
-        annotations.transformInplace(transformer, data)
-        return this
-    }
-
-    override fun <D> transformTypeParameters(transformer: FirTransformer<D>, data: D): FirBackingFieldImpl {
+    override fun <D> transformTypeParameters(transformer: FirTransformer<D>, data: D): FirDelegateFieldImpl {
         typeParameters.transformInplace(transformer, data)
         return this
     }
 
-    override fun <D> transformStatus(transformer: FirTransformer<D>, data: D): FirBackingFieldImpl {
+    override fun <D> transformReturnTypeRef(transformer: FirTransformer<D>, data: D): FirDelegateFieldImpl {
+        returnTypeRef = returnTypeRef.transform(transformer, data)
+        return this
+    }
+
+    override fun <D> transformReceiverTypeRef(transformer: FirTransformer<D>, data: D): FirDelegateFieldImpl {
+        receiverTypeRef = receiverTypeRef?.transform(transformer, data)
+        return this
+    }
+
+    override fun <D> transformGetter(transformer: FirTransformer<D>, data: D): FirDelegateFieldImpl {
+        getter = getter?.transform(transformer, data)
+        return this
+    }
+
+    override fun <D> transformSetter(transformer: FirTransformer<D>, data: D): FirDelegateFieldImpl {
+        setter = setter?.transform(transformer, data)
+        return this
+    }
+
+    override fun <D> transformBackingField(transformer: FirTransformer<D>, data: D): FirDelegateFieldImpl {
+        backingField = backingField?.transform(transformer, data)
+        return this
+    }
+
+    override fun <D> transformDelegateField(transformer: FirTransformer<D>, data: D): FirDelegateFieldImpl {
+        delegateField = delegateField?.transform(transformer, data)
+        return this
+    }
+
+    override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirDelegateFieldImpl {
+        annotations.transformInplace(transformer, data)
+        return this
+    }
+
+    override fun <D> transformInitializer(transformer: FirTransformer<D>, data: D): FirDelegateFieldImpl {
+        initializer = initializer.transform(transformer, data)
+        return this
+    }
+
+    override fun <D> transformStatus(transformer: FirTransformer<D>, data: D): FirDelegateFieldImpl {
         status = status.transform(transformer, data)
         return this
     }
 
-    override fun <D> transformOtherChildren(transformer: FirTransformer<D>, data: D): FirBackingFieldImpl {
+    override fun <D> transformOtherChildren(transformer: FirTransformer<D>, data: D): FirDelegateFieldImpl {
         contextReceivers.transformInplace(transformer, data)
         transformAnnotations(transformer, data)
         return this
@@ -178,6 +178,7 @@ open class FirBackingFieldImpl @FirImplementationDetail constructor(
     }
 
     override fun replaceInitializer(newInitializer: FirExpression?) {
+        require(newInitializer != null)
         initializer = newInitializer
     }
 }

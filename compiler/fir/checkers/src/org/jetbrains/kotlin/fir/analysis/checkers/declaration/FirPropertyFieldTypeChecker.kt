@@ -48,7 +48,7 @@ object FirPropertyFieldTypeChecker : FirPropertyChecker() {
             reporter.reportOn(backingField.source, FirErrors.LATEINIT_NULLABLE_BACKING_FIELD, context)
         }
 
-        if (declaration.delegate != null) {
+        if (declaration.delegateField != null) {
             reporter.reportOn(backingField.source, FirErrors.BACKING_FIELD_FOR_DELEGATED_PROPERTY, context)
         }
 

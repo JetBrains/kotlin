@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.fir.declarations.FirContextReceiver
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationAttributes
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationStatus
+import org.jetbrains.kotlin.fir.declarations.FirDelegateField
 import org.jetbrains.kotlin.fir.declarations.FirEnumEntry
 import org.jetbrains.kotlin.fir.declarations.FirPropertyAccessor
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
@@ -52,6 +53,7 @@ class FirEnumEntryBuilder : FirAnnotationContainerBuilder {
     lateinit var name: Name
     var initializer: FirExpression? = null
     var backingField: FirBackingField? = null
+    var delegateField: FirDelegateField? = null
     override val annotations: MutableList<FirAnnotation> = mutableListOf()
     lateinit var symbol: FirEnumEntrySymbol
 
@@ -72,6 +74,7 @@ class FirEnumEntryBuilder : FirAnnotationContainerBuilder {
             name,
             initializer,
             backingField,
+            delegateField,
             annotations,
             symbol,
         )

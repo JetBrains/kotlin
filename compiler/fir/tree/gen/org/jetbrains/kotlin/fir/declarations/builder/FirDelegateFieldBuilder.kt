@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir.declarations.builder
 
 import kotlin.contracts.*
 import org.jetbrains.kotlin.KtSourceElement
+import org.jetbrains.kotlin.fir.FirImplementationDetail
 import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.builder.FirAnnotationContainerBuilder
 import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
@@ -20,13 +21,11 @@ import org.jetbrains.kotlin.fir.declarations.FirDelegateField
 import org.jetbrains.kotlin.fir.declarations.FirPropertyAccessor
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.FirTypeParameterRef
-import org.jetbrains.kotlin.fir.declarations.FirValueParameter
-import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultSetterValueParameter
-import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl
+import org.jetbrains.kotlin.fir.declarations.impl.FirDelegateFieldImpl
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirExpression
-import org.jetbrains.kotlin.fir.references.FirControlFlowGraphReference
-import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirDelegateFieldSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.types.ConeSimpleKotlinType
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.visitors.*
@@ -39,46 +38,48 @@ import org.jetbrains.kotlin.serialization.deserialization.descriptors.Deserializ
  */
 
 @FirBuilderDsl
-class FirDefaultSetterValueParameterBuilder : FirAnnotationContainerBuilder {
+class FirDelegateFieldBuilder : FirAnnotationContainerBuilder {
     override var source: KtSourceElement? = null
     lateinit var moduleData: FirModuleData
     var resolvePhase: FirResolvePhase = FirResolvePhase.RAW_FIR
     lateinit var origin: FirDeclarationOrigin
     var attributes: FirDeclarationAttributes = FirDeclarationAttributes()
+    val typeParameters: MutableList<FirTypeParameterRef> = mutableListOf()
     lateinit var returnTypeRef: FirTypeRef
     var receiverTypeRef: FirTypeRef? = null
     var deprecation: DeprecationsPerUseSite? = null
     var containerSource: DeserializedContainerSource? = null
     var dispatchReceiverType: ConeSimpleKotlinType? = null
     val contextReceivers: MutableList<FirContextReceiver> = mutableListOf()
-    var initializer: FirExpression? = null
-    var isVar: Boolean = false
-    var isVal: Boolean = true
+    lateinit var name: Name
+    var isVar: Boolean by kotlin.properties.Delegates.notNull<Boolean>()
+    var isVal: Boolean by kotlin.properties.Delegates.notNull<Boolean>()
     var getter: FirPropertyAccessor? = null
     var setter: FirPropertyAccessor? = null
     var backingField: FirBackingField? = null
     var delegateField: FirDelegateField? = null
     override val annotations: MutableList<FirAnnotation> = mutableListOf()
-    lateinit var symbol: FirValueParameterSymbol
-    var defaultValue: FirExpression? = null
-    var isCrossinline: Boolean = false
-    var isNoinline: Boolean = false
-    var isVararg: Boolean = false
+    lateinit var symbol: FirDelegateFieldSymbol
+    lateinit var propertySymbol: FirPropertySymbol
+    lateinit var initializer: FirExpression
+    lateinit var status: FirDeclarationStatus
 
-    override fun build(): FirValueParameter {
-        return FirDefaultSetterValueParameter(
+    @OptIn(FirImplementationDetail::class)
+    override fun build(): FirDelegateField {
+        return FirDelegateFieldImpl(
             source,
             moduleData,
             resolvePhase,
             origin,
             attributes,
+            typeParameters,
             returnTypeRef,
             receiverTypeRef,
             deprecation,
             containerSource,
             dispatchReceiverType,
             contextReceivers,
-            initializer,
+            name,
             isVar,
             isVal,
             getter,
@@ -87,19 +88,18 @@ class FirDefaultSetterValueParameterBuilder : FirAnnotationContainerBuilder {
             delegateField,
             annotations,
             symbol,
-            defaultValue,
-            isCrossinline,
-            isNoinline,
-            isVararg,
+            propertySymbol,
+            initializer,
+            status,
         )
     }
 
 }
 
 @OptIn(ExperimentalContracts::class)
-inline fun buildDefaultSetterValueParameter(init: FirDefaultSetterValueParameterBuilder.() -> Unit): FirValueParameter {
+inline fun buildDelegateField(init: FirDelegateFieldBuilder.() -> Unit): FirDelegateField {
     contract {
         callsInPlace(init, kotlin.contracts.InvocationKind.EXACTLY_ONCE)
     }
-    return FirDefaultSetterValueParameterBuilder().apply(init).build()
+    return FirDelegateFieldBuilder().apply(init).build()
 }

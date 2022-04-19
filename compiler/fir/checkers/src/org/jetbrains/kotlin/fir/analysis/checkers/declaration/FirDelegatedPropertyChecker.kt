@@ -33,7 +33,7 @@ import org.jetbrains.kotlin.types.AbstractTypeChecker
 
 object FirDelegatedPropertyChecker : FirPropertyChecker() {
     override fun check(declaration: FirProperty, context: CheckerContext, reporter: DiagnosticReporter) {
-        val delegate = declaration.delegate ?: return
+        val delegate = declaration.delegateField?.initializer ?: return
         val delegateType = delegate.typeRef.coneType
 
         // TODO: Also suppress delegate issue if type inference failed. For example, in

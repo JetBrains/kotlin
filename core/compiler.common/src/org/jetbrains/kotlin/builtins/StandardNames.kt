@@ -18,6 +18,8 @@ import org.jetbrains.kotlin.utils.newHashSetWithExpectedSize
 object StandardNames {
     @JvmField val BACKING_FIELD = Name.identifier("field")
 
+    @JvmField val DELEGATE_FIELD = Name.identifier("delegate")
+
     @JvmField val DEFAULT_VALUE_PARAMETER = Name.identifier("value")
 
     @JvmField val ENUM_VALUES = Name.identifier("values")

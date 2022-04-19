@@ -51,10 +51,7 @@ class FirSyntheticProperty(
     override val initializer: FirExpression?
         get() = null
 
-    override val delegate: FirExpression?
-        get() = null
-
-    override val delegateFieldSymbol: FirDelegateFieldSymbol?
+    override val delegateField: FirDelegateField?
         get() = null
 
     override val isLocal: Boolean
@@ -126,7 +123,7 @@ class FirSyntheticProperty(
         throw AssertionError("Transformation of synthetic property isn't supported")
     }
 
-    override fun <D> transformDelegate(transformer: FirTransformer<D>, data: D): FirProperty {
+    override fun <D> transformDelegateField(transformer: FirTransformer<D>, data: D): FirProperty {
         throw AssertionError("Transformation of synthetic property isn't supported")
     }
 
