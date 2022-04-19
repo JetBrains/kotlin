@@ -53,6 +53,11 @@ class BuildScanStatisticsListener(
 
             readableString(data).forEach { buildScan.value(data.taskName, it) }
 
+            data.label?.takeIf { !tags.contains(it) }?.also {
+                buildScan.tag(it)
+                tags.add(it)
+            }
+
             data.tags
                 .filter { !tags.contains(it) }
                 .forEach {

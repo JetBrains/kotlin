@@ -9,8 +9,6 @@ import org.gradle.tooling.events.task.TaskFailureResult
 import org.gradle.tooling.events.task.TaskFinishEvent
 import org.gradle.tooling.events.task.TaskSkippedResult
 import org.gradle.tooling.events.task.TaskSuccessResult
-import org.jetbrains.kotlin.cli.common.CompilerSystemProperties
-import org.jetbrains.kotlin.cli.common.toBooleanLenient
 import org.jetbrains.kotlin.gradle.plugin.internal.state.TaskExecutionResults
 import org.jetbrains.kotlin.gradle.plugin.stat.CompileStatisticsData
 import org.jetbrains.kotlin.gradle.plugin.stat.StatTag
@@ -49,7 +47,8 @@ class KotlinBuildStatListener {
             projectName: String,
             uuid: String,
             label: String?,
-            kotlinVersion: String
+            kotlinVersion: String,
+            additionalTags: List<StatTag> = emptyList()
         ): CompileStatisticsData? {
             val result = event.result
             val taskPath = event.descriptor.taskPath
@@ -89,7 +88,7 @@ class KotlinBuildStatListener {
                 projectName = projectName,
                 taskName = taskPath,
                 changes = changes,
-                tags = parseTags(taskExecutionResult).map { it.name },
+                tags = parseTags(taskExecutionResult, additionalTags).map { it.name },
                 nonIncrementalAttributes = taskExecutionResult?.buildMetrics?.buildAttributes?.asMap()?.filter { it.value > 0 }?.keys ?: emptySet(),
                 hostName = hostName,
                 kotlinVersion = kotlinVersion,
@@ -99,8 +98,8 @@ class KotlinBuildStatListener {
             )
         }
 
-        private fun parseTags(taskExecutionResult: TaskExecutionResult?): List<StatTag> {
-            val tags = ArrayList<StatTag>()
+        private fun parseTags(taskExecutionResult: TaskExecutionResult?, additionalTags: List<StatTag>): List<StatTag> {
+            val tags = ArrayList(additionalTags)
 
             val nonIncrementalAttributes = taskExecutionResult?.buildMetrics?.buildAttributes?.asMap() ?: emptyMap()
 
