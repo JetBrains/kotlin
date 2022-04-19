@@ -33,7 +33,7 @@ import javax.xml.parsers.SAXParserFactory
 @WithMutedInDatabaseRunTest
 class KotlinVersionsTest : KtUsefulTestCase() {
     fun testVersionsAreConsistent() {
-        val versionPattern = "(\\d+)\\.(\\d+)(\\.(\\d+)|-SNAPSHOT)?".toRegex()
+        val versionPattern = "(\\d+)\\.(\\d+)(\\.(\\d+))?(?:-(\\p{Alpha}*\\p{Alnum}|[\\p{Alpha}-]*))?(?:-(\\d+))?".toRegex()
 
         data class Version(val major: Int, val minor: Int, val patch: Int?, val versionString: String, val source: String) {
             fun isConsistentWith(other: Version): Boolean {

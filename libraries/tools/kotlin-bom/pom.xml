@@ -7,7 +7,7 @@
 
     <groupId>org.jetbrains.kotlin</groupId>
     <artifactId>kotlin-bom</artifactId>
-    <version>1.6.255-SNAPSHOT</version>
+    <version>1.7.255-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <!-- No parent to avoid accidentally inheriting parent's dependencyManagement section -->

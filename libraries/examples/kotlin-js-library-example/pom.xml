@@ -8,7 +8,7 @@
     <parent>
         <groupId>org.jetbrains.kotlin</groupId>
         <artifactId>kotlin-project</artifactId>
-        <version>1.6.255-SNAPSHOT</version>
+        <version>1.7.255-SNAPSHOT</version>
         <relativePath>../../pom.xml</relativePath>
     </parent>
 

@@ -43,7 +43,6 @@ org.jetbrains.kotlin.j2k.JavaToKotlinConverterSingleFileTestGenerated.AnonymousC
 org.jetbrains.kotlin.j2k.JavaToKotlinConverterSingleFileTestGenerated.Issues.testKt_807,,,
 org.jetbrains.kotlin.psi.injection.StringInterpolationInjectionTest.testInterpolationSimpleName, Stable failure during run may work in debug,,
 org.jetbrains.kotlin.shortenRefs.ShortenRefsTestGenerated.testExtensionForObject2, Always red,,
-org.jetbrains.kotlin.util.KotlinVersionsTest.testVersionsAreConsistent, KT-35567,,
 org.jetbrains.kotlin.idea.debugger.test.AsyncStackTraceTestGenerated.testAsyncLambdas, redesign test AsyncStackTraces,,
 org.jetbrains.kotlin.idea.quickfix.QuickFixTestGenerated.ConvertToAnonymousObject.testHasConcreateMember2, Unprocessed,,
 org.jetbrains.uast.test.kotlin.KotlinUastTypesTest.testEa101715, Unprocessed,,
