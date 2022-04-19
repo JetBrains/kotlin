@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 object FirDelegateUsesExtensionPropertyTypeParameterChecker : FirPropertyChecker() {
     override fun check(declaration: FirProperty, context: CheckerContext, reporter: DiagnosticReporter) {
-        val delegate = declaration.delegate.safeAs<FirFunctionCall>() ?: return
+        val delegate = declaration.delegateField?.initializer.safeAs<FirFunctionCall>() ?: return
         val parameters = declaration.typeParameters.mapTo(hashSetOf()) { it.symbol }
 
         val usedTypeParameterSymbol = delegate.typeRef.coneType.findUsedTypeParameterSymbol(parameters, delegate, context, reporter)

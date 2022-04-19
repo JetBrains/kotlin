@@ -248,7 +248,7 @@ class FirJvmSerializerExtension(
         val field = getBinding(FIELD_FOR_PROPERTY, property)
         val syntheticMethod = getBinding(SYNTHETIC_METHOD_FOR_FIR_VARIABLE, property)
         val delegateMethod = getBinding(DELEGATE_METHOD_FOR_FIR_VARIABLE, property)
-        assert(property.delegate != null || delegateMethod == null) { "non-delegated property ${property.render()} has delegate method" }
+        assert(property.delegateField != null || delegateMethod == null) { "non-delegated property ${property.render()} has delegate method" }
 
         val signature = signatureSerializer.propertySignature(
             property,

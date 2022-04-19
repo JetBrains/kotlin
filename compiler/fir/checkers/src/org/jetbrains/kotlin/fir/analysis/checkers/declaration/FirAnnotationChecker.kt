@@ -137,12 +137,12 @@ object FirAnnotationChecker : FirBasicDeclarationChecker() {
             AnnotationUseSiteTarget.PROPERTY_GETTER -> {
             }
             AnnotationUseSiteTarget.FIELD -> {
-                if (annotated is FirProperty && annotated.delegateFieldSymbol != null && !annotated.hasBackingField) {
+                if (annotated is FirProperty && annotated.delegateField != null && !annotated.hasBackingField) {
                     reporter.reportOn(annotation.source, FirErrors.INAPPLICABLE_TARGET_PROPERTY_HAS_NO_BACKING_FIELD, context)
                 }
             }
             AnnotationUseSiteTarget.PROPERTY_DELEGATE_FIELD -> {
-                if (annotated is FirProperty && annotated.delegateFieldSymbol == null) {
+                if (annotated is FirProperty && annotated.delegateField == null) {
                     reporter.reportOn(annotation.source, FirErrors.INAPPLICABLE_TARGET_PROPERTY_HAS_NO_DELEGATE, context)
                 }
             }

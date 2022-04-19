@@ -40,12 +40,12 @@ abstract class FirErrorProperty : FirVariable(), FirDiagnosticHolder {
     abstract override val contextReceivers: List<FirContextReceiver>
     abstract override val name: Name
     abstract override val initializer: FirExpression?
-    abstract override val delegate: FirExpression?
     abstract override val isVar: Boolean
     abstract override val isVal: Boolean
     abstract override val getter: FirPropertyAccessor?
     abstract override val setter: FirPropertyAccessor?
     abstract override val backingField: FirBackingField?
+    abstract override val delegateField: FirDelegateField?
     abstract override val annotations: List<FirAnnotation>
     abstract override val diagnostic: ConeDiagnostic
     abstract override val symbol: FirErrorPropertySymbol
@@ -82,13 +82,13 @@ abstract class FirErrorProperty : FirVariable(), FirDiagnosticHolder {
 
     abstract override fun <D> transformInitializer(transformer: FirTransformer<D>, data: D): FirErrorProperty
 
-    abstract override fun <D> transformDelegate(transformer: FirTransformer<D>, data: D): FirErrorProperty
-
     abstract override fun <D> transformGetter(transformer: FirTransformer<D>, data: D): FirErrorProperty
 
     abstract override fun <D> transformSetter(transformer: FirTransformer<D>, data: D): FirErrorProperty
 
     abstract override fun <D> transformBackingField(transformer: FirTransformer<D>, data: D): FirErrorProperty
+
+    abstract override fun <D> transformDelegateField(transformer: FirTransformer<D>, data: D): FirErrorProperty
 
     abstract override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirErrorProperty
 

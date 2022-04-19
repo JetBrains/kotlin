@@ -33,7 +33,7 @@ object FirInapplicableLateinitChecker : FirPropertyChecker() {
                 reporter.reportError(declaration.source, "is not allowed on properties with initializer", context)
             }
 
-            declaration.delegate != null ->
+            declaration.delegateField != null ->
                 reporter.reportError(declaration.source, "is not allowed on delegated properties", context)
 
             declaration.isNullable() ->

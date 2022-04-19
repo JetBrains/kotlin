@@ -202,7 +202,7 @@ object BuilderConfigurator : AbstractBuilderConfigurator<FirTreeBuilder>(FirTree
         builder(property) {
             parents += declarationBuilder
             parents += typeParametersOwnerBuilder
-            defaultNull("getter", "setter", "containerSource", "delegateFieldSymbol")
+            defaultNull("getter", "setter", "containerSource")
             default("resolvePhase", "FirResolvePhase.RAW_FIR")
             default("bodyResolveState", "FirPropertyBodyResolveState.NOTHING_RESOLVED")
             withCopy()
@@ -286,7 +286,7 @@ object BuilderConfigurator : AbstractBuilderConfigurator<FirTreeBuilder>(FirTree
         }
 
         builder(valueParameter, type = "FirDefaultSetterValueParameter") {
-            defaultNull("defaultValue", "initializer", "delegate", "receiverTypeRef", "getter", "setter")
+            defaultNull("defaultValue", "initializer", "receiverTypeRef", "getter", "setter")
             defaultFalse("isCrossinline", "isNoinline", "isVararg", "isVar")
             defaultTrue("isVal")
         }

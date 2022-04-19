@@ -36,6 +36,7 @@ internal class FirIdeRenderer private constructor(
             is FirPropertyAccessor -> renderPropertyAccessor(declaration)
             is FirSimpleFunction -> renderSimpleFunction(declaration)
             is FirBackingField -> renderBackingField()
+            is FirDelegateField -> error("FirDelegateField should not be rendered")
             is FirEnumEntry -> renderEnumEntry(declaration)
             is FirProperty -> renderPropertyOrField(declaration)
             is FirValueParameter -> renderValueParameter(declaration)

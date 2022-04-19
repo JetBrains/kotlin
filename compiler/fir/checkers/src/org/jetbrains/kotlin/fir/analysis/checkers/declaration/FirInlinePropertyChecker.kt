@@ -20,7 +20,7 @@ object FirInlinePropertyChecker : FirPropertyChecker() {
 
         FirInlineDeclarationChecker.checkCallableDeclaration(declaration, context, reporter)
 
-        if (declaration.hasBackingField || declaration.delegate != null) {
+        if (declaration.hasBackingField || declaration.delegateField != null) {
             reporter.reportOn(declaration.source, FirErrors.INLINE_PROPERTY_WITH_BACKING_FIELD, context)
         }
     }

@@ -92,7 +92,7 @@ object FirJvmRecordChecker : FirRegularClassChecker() {
                 val fromConstructor = decl.source?.kind == KtFakeSourceElementKind.PropertyFromParameter
                 if (decl.isVar && fromConstructor) {
                     reporter.reportOn(decl.source, FirJvmErrors.JVM_RECORD_NOT_VAL_PARAMETER, context)
-                } else if (!fromConstructor && (decl.hasBackingField || decl.delegateFieldSymbol != null)) {
+                } else if (!fromConstructor && (decl.hasBackingField || decl.delegateField != null)) {
                     reporter.reportOn(decl.source, FirJvmErrors.FIELD_IN_JVM_RECORD, context)
                 }
             } else if (decl is FirField && decl.isSynthetic) {

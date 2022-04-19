@@ -47,7 +47,7 @@ class FirObjectImportedCallableScope(
             val syntheticFunction = buildPropertyCopy(property) {
                 origin = FirDeclarationOrigin.ImportedFromObject
                 this.symbol = FirPropertySymbol(CallableId(importedClassId, name))
-                this.delegateFieldSymbol = null
+                this.delegateField = null
             }.apply {
                 importedFromObjectData = ImportedFromObjectData(importedClassId, property)
             }

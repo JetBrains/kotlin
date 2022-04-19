@@ -70,9 +70,6 @@ class FirJavaValueParameter @FirImplementationDetail constructor(
     override val initializer: FirExpression?
         get() = null
 
-    override val delegate: FirExpression?
-        get() = null
-
     override val getter: FirPropertyAccessor?
         get() = null
 
@@ -80,6 +77,9 @@ class FirJavaValueParameter @FirImplementationDetail constructor(
         get() = null
 
     override val backingField: FirBackingField?
+        get() = null
+
+    override val delegateField: FirDelegateField?
         get() = null
 
     override val controlFlowGraphReference: FirControlFlowGraphReference?
@@ -125,10 +125,6 @@ class FirJavaValueParameter @FirImplementationDetail constructor(
         return this
     }
 
-    override fun <D> transformDelegate(transformer: FirTransformer<D>, data: D): FirValueParameter {
-        return this
-    }
-
     override fun <D> transformGetter(transformer: FirTransformer<D>, data: D): FirValueParameter {
         return this
     }
@@ -138,6 +134,10 @@ class FirJavaValueParameter @FirImplementationDetail constructor(
     }
 
     override fun <D> transformBackingField(transformer: FirTransformer<D>, data: D): FirValueParameter {
+        return this
+    }
+
+    override fun <D> transformDelegateField(transformer: FirTransformer<D>, data: D): FirValueParameter {
         return this
     }
 

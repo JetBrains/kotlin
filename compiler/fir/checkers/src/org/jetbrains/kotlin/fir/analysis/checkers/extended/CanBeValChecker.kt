@@ -96,7 +96,7 @@ object CanBeValChecker : AbstractFirPropertyInitializationChecker() {
 
         override fun visitVariableDeclarationNode(node: VariableDeclarationNode) {
             val symbol = node.fir.symbol
-            if (node.fir.initializer == null && node.fir.delegate == null) {
+            if (node.fir.initializer == null && node.fir.delegateField == null) {
                 unprocessedProperties.add(symbol)
             } else {
                 propertiesCharacteristics[symbol] = EventOccurrencesRange.AT_MOST_ONCE

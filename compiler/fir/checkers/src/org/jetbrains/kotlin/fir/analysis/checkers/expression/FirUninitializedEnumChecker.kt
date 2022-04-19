@@ -224,8 +224,8 @@ object FirUninitializedEnumChecker : FirQualifiedAccessExpressionChecker() {
             ensureResolved(FirResolvePhase.BODY_RESOLVE)
             @OptIn(SymbolInternals::class)
             val property = this.fir
-            if (property.delegate == null || property.delegate !is FirFunctionCall) return null
-            val delegateCall = property.delegate as FirFunctionCall
+            if (property.delegateField == null || property.delegateField?.initializer !is FirFunctionCall) return null
+            val delegateCall = property.delegateField?.initializer as FirFunctionCall
             val calleeSymbol =
                 delegateCall.calleeReference.resolvedSymbol as? FirNamedFunctionSymbol ?: return null
             if (calleeSymbol.callableId.asSingleFqName().asString() != "kotlin.lazy") return null

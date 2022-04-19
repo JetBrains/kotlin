@@ -57,6 +57,7 @@ class FirJavaField @FirImplementationDetail constructor(
     override val getter: FirPropertyAccessor? get() = null
     override val setter: FirPropertyAccessor? get() = null
     override val backingField: FirBackingField? = null
+    override val delegateField: FirDelegateField? = null
     override val controlFlowGraphReference: FirControlFlowGraphReference? get() = null
     override val origin: FirDeclarationOrigin
         get() = FirDeclarationOrigin.Java
@@ -84,6 +85,10 @@ class FirJavaField @FirImplementationDetail constructor(
     }
 
     override fun <D> transformBackingField(transformer: FirTransformer<D>, data: D): FirField {
+        return this
+    }
+
+    override fun <D> transformDelegateField(transformer: FirTransformer<D>, data: D): FirField {
         return this
     }
 
@@ -137,9 +142,6 @@ class FirJavaField @FirImplementationDetail constructor(
         return this
     }
 
-    override val delegate: FirExpression?
-        get() = null
-
     override var containerSource: DeserializedContainerSource? = null
 
     override fun <D> transformInitializer(transformer: FirTransformer<D>, data: D): FirField {
@@ -149,10 +151,6 @@ class FirJavaField @FirImplementationDetail constructor(
     override fun replaceReceiverTypeRef(newReceiverTypeRef: FirTypeRef?) {}
 
     override fun replaceDeprecation(newDeprecation: DeprecationsPerUseSite?) {}
-
-    override fun <D> transformDelegate(transformer: FirTransformer<D>, data: D): FirField {
-        return this
-    }
 
     override fun replaceGetter(newGetter: FirPropertyAccessor?) {}
 
