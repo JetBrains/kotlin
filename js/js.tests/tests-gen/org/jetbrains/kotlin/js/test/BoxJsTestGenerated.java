@@ -5353,12 +5353,6 @@ public class BoxJsTestGenerated extends AbstractBoxJsTest {
         }
 
         @Test
-        @TestMetadata("propertyAccessNoSideEffect.kt")
-        public void testPropertyAccessNoSideEffect() throws Exception {
-            runTest("js/js.translator/testData/box/inlineEvaluationOrder/propertyAccessNoSideEffect.kt");
-        }
-
-        @Test
         @TestMetadata("propertyAccessWithSideEffect.kt")
         public void testPropertyAccessWithSideEffect() throws Exception {
             runTest("js/js.translator/testData/box/inlineEvaluationOrder/propertyAccessWithSideEffect.kt");
