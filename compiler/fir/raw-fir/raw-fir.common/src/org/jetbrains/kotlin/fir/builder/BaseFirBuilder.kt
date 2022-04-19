@@ -523,7 +523,7 @@ abstract class BaseFirBuilder<T>(val baseSession: FirSession, val context: Conte
                             source = null
                             calleeReference = buildSimpleNamedReference {
                                 source = null
-                                name = Name.identifier("appendString")
+                                name = OperatorNameConventions.APPEND_STRING
                             }
                             argumentList = buildArgumentList {
                                 arguments += entry
@@ -535,7 +535,7 @@ abstract class BaseFirBuilder<T>(val baseSession: FirSession, val context: Conte
                             source = null
                             calleeReference = buildSimpleNamedReference {
                                 source = null
-                                name = Name.identifier("appendObject")
+                                name = OperatorNameConventions.APPEND_OBJECT
                             }
                             argumentList = buildArgumentList {
                                 arguments += entry
@@ -569,7 +569,7 @@ abstract class BaseFirBuilder<T>(val baseSession: FirSession, val context: Conte
             source = null
             calleeReference = buildSimpleNamedReference {
                 source = null
-                name = Name.identifier("buildLiteral")
+                name = OperatorNameConventions.BUILD_LITERAL
             }
             explicitReceiver = objectReceiver
             argumentList = buildArgumentList {

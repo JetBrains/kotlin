@@ -1,12 +1,12 @@
 object id
 
-fun id.buildLiteral(body: LiteralBuilder.() -> Unit): Int {
+operator fun id.buildLiteral(body: LiteralBuilder.() -> Unit): Int {
     return LiteralBuilder().apply(body).build()
 }
 
 class LiteralBuilder {
-    fun appendString(s: String) { }
-    fun appendObject(obj: Any) { }
+    operator fun appendString(s: String) { }
+    operator fun appendObject(obj: Any) { }
     fun build(): Int = 0
 }
 
