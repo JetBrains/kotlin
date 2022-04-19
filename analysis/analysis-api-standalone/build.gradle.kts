@@ -43,7 +43,7 @@ projectTest(jUnitMode = JUnitMode.JUnit5) {
     dependsOn(":dist")
     workingDir = rootDir
     useJUnitPlatform()
-}
+}.also { confugureFirPluginAnnotationsDependency(it) }
 
 testsJar()
 

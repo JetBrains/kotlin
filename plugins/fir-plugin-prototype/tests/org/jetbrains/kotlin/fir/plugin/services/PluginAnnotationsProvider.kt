@@ -15,17 +15,20 @@ import java.io.File
 import java.io.FilenameFilter
 
 class PluginAnnotationsProvider(testServices: TestServices) : EnvironmentConfigurator(testServices) {
-    companion object {
-        private const val ANNOTATIONS_JAR_DIR = "plugins/fir-plugin-prototype/plugin-annotations/build/libs/"
-        private val ANNOTATIONS_JAR_FILTER = FilenameFilter { _, name -> name.startsWith("plugin-annotations") && name.endsWith(".jar") }
+
+    private val firPluginAnnotationsJar: File by lazy {
+        val firPluginAnnotationsPath = System.getProperty("firPluginAnnotations.path") ?: error("firPluginAnnotations.path system property is not set")
+        val firPluginAnnotationsFile = File(firPluginAnnotationsPath)
+        if (!firPluginAnnotationsFile.isFile &&
+            firPluginAnnotationsFile.name.startsWith("plugin-annotations") &&
+            firPluginAnnotationsFile.name.endsWith(".jar")
+        ) {
+            error("Can't find fir plugin annotations jar file in firPluginAnnotations.path system property")
+        }
+        firPluginAnnotationsFile
     }
 
     override fun configureCompilerConfiguration(configuration: CompilerConfiguration, module: TestModule) {
-        val libDir = File(ANNOTATIONS_JAR_DIR)
-        testServices.assertions.assertTrue(libDir.exists() && libDir.isDirectory, failMessage)
-        val jar = libDir.listFiles(ANNOTATIONS_JAR_FILTER)?.firstOrNull() ?: testServices.assertions.fail(failMessage)
-        configuration.addJvmClasspathRoot(jar)
+        configuration.addJvmClasspathRoot(firPluginAnnotationsJar)
     }
-
-    private val failMessage = { "Jar with annotations does not exist. Please run :plugins:fir-plugin-prototype:plugin-annotations:jar" }
 }

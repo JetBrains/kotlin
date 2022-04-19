@@ -10,13 +10,13 @@
 import com.sun.management.OperatingSystemMXBean
 import org.gradle.api.Project
 import org.gradle.api.Task
+import org.gradle.api.artifacts.Configuration
 import org.gradle.api.artifacts.ProjectDependency
 import org.gradle.api.file.FileSystemOperations
 import org.gradle.api.internal.tasks.testing.filter.DefaultTestFilter
 import org.gradle.api.tasks.TaskProvider
 import org.gradle.api.tasks.testing.Test
-import org.gradle.kotlin.dsl.extra
-import org.gradle.kotlin.dsl.project
+import org.gradle.kotlin.dsl.*
 import org.gradle.kotlin.dsl.support.serviceOf
 import java.io.File
 import java.lang.Character.isLowerCase
@@ -313,4 +313,19 @@ fun Task.useAndroidSdk() {
 
 fun Task.useAndroidJar() {
     TaskUtils.useAndroidJar(this)
+}
+
+fun Project.confugureFirPluginAnnotationsDependency(testTask: TaskProvider<Test>) {
+    val firPluginAnnotations: Configuration by configurations.creating
+
+    dependencies {
+        firPluginAnnotations(project(":plugins:fir-plugin-prototype:plugin-annotations")) { isTransitive = false }
+    }
+
+    testTask.configure {
+        dependsOn(firPluginAnnotations)
+        doFirst {
+            systemProperty("firPluginAnnotations.path", firPluginAnnotations.singleFile.canonicalPath)
+        }
+    }
 }

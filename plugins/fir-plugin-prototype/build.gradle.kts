@@ -59,10 +59,8 @@ if (kotlinBuildProperties.isInJpsBuildIdeaSync) {
 
 projectTest(parallel = true, jUnitMode = JUnitMode.JUnit5) {
     dependsOn(":dist")
-    dependsOn(":plugins:fir-plugin-prototype:plugin-annotations:jar")
-
     workingDir = rootDir
     useJUnitPlatform()
-}
+}.also { confugureFirPluginAnnotationsDependency(it) }
 
 testsJar()

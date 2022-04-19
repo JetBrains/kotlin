@@ -38,7 +38,6 @@ dependencies {
     testApi(toolsJar())
     testApiJUnit5()
     testApi(project(":analysis:symbol-light-classes"))
-
 }
 
 sourceSets {
@@ -53,10 +52,7 @@ projectTest(jUnitMode = JUnitMode.JUnit5) {
     dependsOn(":dist")
     workingDir = rootDir
     useJUnitPlatform()
-
-    // PluginAnnotationsProvider needs this jar during tests
-    dependsOn(":plugins:fir-plugin-prototype:plugin-annotations:jar")
-}
+}.also { confugureFirPluginAnnotationsDependency(it) }
 
 testsJar()
 
