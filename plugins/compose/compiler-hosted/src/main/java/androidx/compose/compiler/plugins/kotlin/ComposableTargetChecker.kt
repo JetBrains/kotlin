@@ -30,6 +30,7 @@ import androidx.compose.compiler.plugins.kotlin.inference.Scheme
 import androidx.compose.compiler.plugins.kotlin.inference.Token
 import androidx.compose.compiler.plugins.kotlin.inference.deserializeScheme
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.backend.jvm.ir.psiElement
 import org.jetbrains.kotlin.builtins.isFunctionType
 import org.jetbrains.kotlin.codegen.kotlinType
 import org.jetbrains.kotlin.container.StorageComponentContainer
@@ -77,12 +78,13 @@ private sealed class InferenceNode(val element: PsiElement) {
 }
 
 private sealed class InferenceNodeType {
-    abstract fun toScheme(): Scheme
+    abstract fun toScheme(callContext: CallCheckerContext): Scheme
     abstract fun isTypeFor(descriptor: CallableDescriptor): Boolean
 }
 
 private class InferenceDescriptorType(val descriptor: CallableDescriptor) : InferenceNodeType() {
-    override fun toScheme(): Scheme = descriptor.toScheme()
+    override fun toScheme(callContext: CallCheckerContext): Scheme =
+        descriptor.toScheme(callContext)
     override fun isTypeFor(descriptor: CallableDescriptor) = this.descriptor == descriptor
     override fun hashCode(): Int = 31 * descriptor.original.hashCode()
     override fun equals(other: Any?): Boolean =
@@ -90,7 +92,7 @@ private class InferenceDescriptorType(val descriptor: CallableDescriptor) : Infe
 }
 
 private class InferenceKotlinType(val type: KotlinType) : InferenceNodeType() {
-    override fun toScheme(): Scheme = type.toScheme()
+    override fun toScheme(callContext: CallCheckerContext): Scheme = type.toScheme()
     override fun isTypeFor(descriptor: CallableDescriptor): Boolean = false
     override fun hashCode(): Int = 31 * type.hashCode()
     override fun equals(other: Any?): Boolean =
@@ -98,7 +100,7 @@ private class InferenceKotlinType(val type: KotlinType) : InferenceNodeType() {
 }
 
 private class InferenceUnknownType : InferenceNodeType() {
-    override fun toScheme(): Scheme = Scheme(Open(-1))
+    override fun toScheme(callContext: CallCheckerContext): Scheme = Scheme(Open(-1))
     override fun isTypeFor(descriptor: CallableDescriptor): Boolean = false
     override fun hashCode(): Int = System.identityHashCode(this)
     override fun equals(other: Any?): Boolean = other === this
@@ -168,7 +170,8 @@ class ComposableTargetChecker : CallChecker, StorageComponentContainerContributo
     // Create an InferApplier instance with adapters for the Psi front-end
     private val infer = ApplierInferencer(
         typeAdapter = object : TypeAdapter<InferenceNodeType> {
-            override fun declaredSchemaOf(type: InferenceNodeType): Scheme = type.toScheme()
+            override fun declaredSchemaOf(type: InferenceNodeType): Scheme =
+                type.toScheme(callContext)
             override fun currentInferredSchemeOf(type: InferenceNodeType): Scheme? = null
             override fun updatedInferredScheme(type: InferenceNodeType, scheme: Scheme) { }
         },
@@ -425,16 +428,35 @@ private fun Annotated.schemeItem(): Item {
 
 private fun Annotated.scheme(): Scheme? = compositionScheme()?.let { deserializeScheme(it) }
 
-private fun CallableDescriptor.toScheme(): Scheme =
+private fun CallableDescriptor.toScheme(callContext: CallCheckerContext): Scheme =
     scheme()
         ?: Scheme(
-            target = schemeItem(),
+            target = schemeItem().let {
+                // The item is unspecified see if the containing has an annotation we can use
+                if (it.isUnspecified) {
+                    val target = fileScopeTarget(callContext)
+                    if (target != null) return@let target
+                }
+                it
+            },
             parameters = valueParameters.filter {
                 it.type.hasComposableAnnotation() || it.isSamComposable()
             }.map {
-                it.samComposableOrNull()?.toScheme() ?: it.type.toScheme()
+                it.samComposableOrNull()?.toScheme(callContext) ?: it.type.toScheme()
             }
         )
+
+private fun CallableDescriptor.fileScopeTarget(callContext: CallCheckerContext): Item? =
+    (psiElement?.containingFile as? KtFile)?.let {
+        for (entry in it.annotationEntries) {
+            val annotationDescriptor =
+                callContext.trace.bindingContext[BindingContext.ANNOTATION, entry]
+            annotationDescriptor?.compositionTarget()?.let {
+                return Token(it)
+            }
+        }
+        null
+    }
 
 private fun KotlinType.toScheme(): Scheme = Scheme(
     target = schemeItem(),
