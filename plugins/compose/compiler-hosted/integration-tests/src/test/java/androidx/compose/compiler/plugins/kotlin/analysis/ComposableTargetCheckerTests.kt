@@ -327,6 +327,78 @@ class ComposableTargetCheckerTests : AbstractComposeDiagnosticsTest() {
         """
     )
 
+    fun testFileScopeTargetDeclaration() = check(
+        """
+        @file:ComposableTarget("N")
+
+        import androidx.compose.runtime.Composable
+        import androidx.compose.runtime.ComposableTarget
+
+        @Composable @ComposableTarget("N") fun N() {}
+        @Composable @ComposableTarget("M") fun M() {}
+
+        @Composable
+        fun AssumesN() {
+            <!COMPOSE_APPLIER_CALL_MISMATCH!>M<!>()
+        }
+        """
+    )
+
+    fun testTargetMarker() = check(
+        """
+        import androidx.compose.runtime.Composable
+        import androidx.compose.runtime.ComposableTarget
+        import androidx.compose.runtime.ComposableTargetMarker
+
+        @Retention(AnnotationRetention.BINARY)
+        @ComposableTargetMarker(description = "N")
+        @Target(
+            AnnotationTarget.FILE,
+            AnnotationTarget.FUNCTION,
+            AnnotationTarget.PROPERTY_GETTER,
+            AnnotationTarget.TYPE,
+            AnnotationTarget.TYPE_PARAMETER,
+        )
+        annotation class NComposable()
+
+        @Composable @ComposableTarget("M") fun M() {}
+
+        @Composable
+        @NComposable
+        fun AssumesN() {
+            <!COMPOSE_APPLIER_CALL_MISMATCH!>M<!>()
+        }
+        """
+    )
+
+    fun testFileScopeTargetMarker() = check(
+        """
+        @file: NComposable
+
+        import androidx.compose.runtime.Composable
+        import androidx.compose.runtime.ComposableTarget
+        import androidx.compose.runtime.ComposableTargetMarker
+
+        @Retention(AnnotationRetention.BINARY)
+        @ComposableTargetMarker(description = "An N Composable")
+        @Target(
+            AnnotationTarget.FILE,
+            AnnotationTarget.FUNCTION,
+            AnnotationTarget.PROPERTY_GETTER,
+            AnnotationTarget.TYPE,
+            AnnotationTarget.TYPE_PARAMETER,
+        )
+        annotation class NComposable()
+
+        @Composable @ComposableTarget("M") fun M() {}
+
+        @Composable
+        fun AssumesN() {
+            <!COMPOSE_APPLIER_CALL_MISMATCH!>M<!>()
+        }
+        """
+    )
+
     fun testUiTextAndInvalid() = check(
         """
         import androidx.compose.runtime.Composable
