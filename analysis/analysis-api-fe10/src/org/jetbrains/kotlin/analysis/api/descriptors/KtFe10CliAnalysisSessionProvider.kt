@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.analysis.api.KtAnalysisSessionProvider
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.base.KtFe10Symbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtSymbol
 import org.jetbrains.kotlin.analysis.api.tokens.ValidityTokenFactory
+import org.jetbrains.kotlin.analysis.project.structure.getKtModule
 import org.jetbrains.kotlin.psi.KtElement
 import java.lang.UnsupportedOperationException
 
@@ -24,7 +25,7 @@ class KtFe10AnalysisSessionProvider : KtAnalysisSessionProvider() {
     @InvalidWayOfUsingAnalysisSession
     override fun getAnalysisSessionBySymbol(contextSymbol: KtSymbol): KtAnalysisSession {
         if (contextSymbol is KtFe10Symbol) {
-            return KtFe10AnalysisSession(contextSymbol.analysisContext)
+            return KtFe10AnalysisSession(contextSymbol.analysisContext, contextSymbol.analysisContext.contextElement.getKtModule())
         } else {
             val contextElement = contextSymbol.psi
             if (contextElement is KtElement) {
