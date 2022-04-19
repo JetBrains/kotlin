@@ -19902,6 +19902,12 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
         }
 
         @Test
+        @TestMetadata("considerPropertyInitValueFromNestedClass.kt")
+        public void testConsiderPropertyInitValueFromNestedClass() throws Exception {
+            runTest("compiler/testData/codegen/box/innerNested/considerPropertyInitValueFromNestedClass.kt");
+        }
+
+        @Test
         @TestMetadata("createNestedClass.kt")
         public void testCreateNestedClass() throws Exception {
             runTest("compiler/testData/codegen/box/innerNested/createNestedClass.kt");

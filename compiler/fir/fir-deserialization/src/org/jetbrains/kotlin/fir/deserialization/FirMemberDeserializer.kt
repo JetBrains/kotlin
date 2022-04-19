@@ -65,6 +65,7 @@ class FirDeserializationContext(
         containerSource: DeserializedContainerSource? = this.containerSource,
         outerClassSymbol: FirRegularClassSymbol? = this.outerClassSymbol,
         annotationDeserializer: AbstractAnnotationDeserializer = this.annotationDeserializer,
+        constDeserializer: FirConstDeserializer = this.constDeserializer,
         capturesTypeParameters: Boolean = true,
         containingDeclarationSymbol: FirBasedSymbol<*>? = this.outerClassSymbol
     ): FirDeserializationContext = FirDeserializationContext(
