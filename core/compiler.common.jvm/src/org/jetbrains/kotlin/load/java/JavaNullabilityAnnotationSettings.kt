@@ -41,7 +41,7 @@ val NULLABILITY_ANNOTATION_SETTINGS: NullabilityAnnotationStates<JavaNullability
         ),
         FqName("io.reactivex.rxjava3.annotations") to JavaNullabilityAnnotationsStatus(
             reportLevelBefore = ReportLevel.WARN,
-            sinceVersion = KotlinVersion(1, 7),
+            sinceVersion = KotlinVersion(1, 8),
             reportLevelAfter = ReportLevel.STRICT
         ),
     )
