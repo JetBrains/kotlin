@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.fir.declarations.FirVariable
 import org.jetbrains.kotlin.fir.declarations.utils.hasBackingField
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.scope
+import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.scopes.FakeOverrideTypeCalculator
 import org.jetbrains.kotlin.fir.scopes.FirTypeScope
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction
@@ -57,6 +58,14 @@ class FirDelegatedPropertySyntheticsScope(
             SELF_NAME -> processor(declaration.symbol)
             else -> delegateScope.processPropertiesByName(name, processor)
         }
+    }
+
+    override fun processFunctionsByName(name: Name, processor: (FirNamedFunctionSymbol) -> Unit) {
+        delegateScope.processFunctionsByName(name, processor)
+    }
+
+    override fun processClassifiersByNameWithSubstitution(name: Name, processor: (FirClassifierSymbol<*>, ConeSubstitutor) -> Unit) {
+        delegateScope.processClassifiersByNameWithSubstitution(name, processor)
     }
 }
 
