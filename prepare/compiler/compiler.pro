@@ -107,7 +107,8 @@
 -keep class org.jetbrains.kotlin.container.** { *; }
 
 -keep class org.jetbrains.org.objectweb.asm.Opcodes { *; }
-
+-keep class org.jetbrains.org.objectweb.asm.tree.analysis.SimpleVerifier { *; }
+-keep class org.jetbrains.org.objectweb.asm.tree.analysis.Analyzer { *; }
 -keep class org.jetbrains.kotlin.codegen.extensions.** {
     public protected *;
 }
