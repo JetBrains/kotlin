@@ -14,7 +14,10 @@ import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
 import org.jetbrains.kotlin.backend.common.pop
 import org.jetbrains.kotlin.backend.common.push
 import org.jetbrains.kotlin.backend.jvm.*
-import org.jetbrains.kotlin.backend.jvm.ir.*
+import org.jetbrains.kotlin.backend.jvm.ir.erasedUpperBound
+import org.jetbrains.kotlin.backend.jvm.ir.findTopSealedInlineSuperClass
+import org.jetbrains.kotlin.backend.jvm.ir.isInlineChildOfSealedInlineClass
+import org.jetbrains.kotlin.backend.jvm.ir.isInlineClassType
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.config.ApiVersion
 import org.jetbrains.kotlin.descriptors.ClassKind
@@ -40,7 +43,6 @@ import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.util.OperatorNameConventions
-import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 val jvmInlineClassPhase = makeIrFilePhase(
     ::JvmInlineClassLowering,
@@ -73,15 +75,14 @@ private class JvmInlineClassLowering(context: JvmBackendContext) : JvmValueClass
         if (declaration.isChildOfSealedInlineClass() && declaration.isInline) {
             if (declaration.modality != Modality.SEALED) {
                 updateGetterForSealedInlineClassChild(declaration, declaration.defaultType.findTopSealedInlineSuperClass())
+                buildSpecializedEqualsMethod(declaration)
             }
             rewriteConstructorForSealedInlineClassChild(declaration, declaration.sealedInlineClassParent(), constructor)
             removeMethods(declaration)
         }
 
         if (declaration.modality == Modality.SEALED && !declaration.isChildOfSealedInlineClass()) {
-            buildPrimaryValueClassConstructor(declaration, constructor)
-            buildBoxFunction(declaration)
-            buildUnboxFunction(declaration)
+            buildCommonAdditionalMethods(declaration, constructor)
 
             patchReceiverParameterOfValueGetter(declaration)
 
@@ -757,9 +758,9 @@ private class JvmInlineClassLowering(context: JvmBackendContext) : JvmValueClass
             copyParameterDeclarationsFrom(irConstructor)
             annotations = irConstructor.annotations
             body = context.createIrBuilder(this.symbol).irBlockBody(this) {
-                +irDelegatingConstructorCall(valueClass.superTypes.single {
+                +irDelegatingConstructorCall(valueClass.superTypes.singleOrNull {
                     it.classOrNull?.owner?.kind == ClassKind.CLASS
-                }.classOrNull?.constructors?.single()?.owner ?: context.irBuiltIns.anyClass.owner.constructors.single())
+                }?.classOrNull?.constructors?.singleOrNull()?.owner ?: context.irBuiltIns.anyClass.owner.constructors.single())
                 +irSetField(
                     irGet(valueClass.thisReceiver!!),
                     getInlineClassBackingField(valueClass),
