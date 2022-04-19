@@ -327,8 +327,8 @@ class NewMultiplatformIT : BaseGradleIT() {
                     arrayOf("NodeJs")
                 } else {
                     arrayOf(
-                        "NodeJs${LEGACY.lowerName.capitalize()}",
-                        "NodeJs${IR.lowerName.capitalize()}",
+                        "NodeJs${LEGACY.lowerName.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() }}",
+                        "NodeJs${IR.lowerName.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() }}",
                     )
                 }),
             ).map { ":compileKotlin$it" }
@@ -580,7 +580,7 @@ class NewMultiplatformIT : BaseGradleIT() {
             )
 
             fun javaSourceRootForCompilation(compilationName: String) =
-                if (testJavaSupportInJvmTargets) "src/jvm6${compilationName.capitalize()}/java" else "src/$compilationName/java"
+                if (testJavaSupportInJvmTargets) "src/jvm6${compilationName.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() }}/java" else "src/$compilationName/java"
 
             val javaMainSrcDir = javaSourceRootForCompilation("main")
             val javaTestSrcDir = javaSourceRootForCompilation("test")
@@ -1524,7 +1524,8 @@ class NewMultiplatformIT : BaseGradleIT() {
                 "jvm6", "nodeJs", "mingw64", "mingw86", "linux64", "macos64", "linuxMipsel32", "wasm"
             ).flatMapTo(mutableSetOf()) { target ->
                 listOf("main", "test").map { compilation ->
-                    Triple(target, compilation, "$target${compilation.capitalize()}")
+                    Triple(target, compilation,
+                           "$target${compilation.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() }}")
                 }
             } + Triple("metadata", "main", "commonMain")
 
@@ -1738,7 +1739,14 @@ class NewMultiplatformIT : BaseGradleIT() {
             setupWorkingDir()
             gradleBuildScript().modify(::transformBuildScriptWithPluginsDsl)
 
-            val tasks = listOf("jvm", "js", "linux64").map { ":compileIntegrationTestKotlin${it.capitalize()}" }
+            val tasks = listOf("jvm", "js", "linux64").map {
+                ":compileIntegrationTestKotlin${
+                    it.replaceFirstChar {
+                        if (it.isLowerCase()) it.titlecase(
+                            Locale.getDefault()
+                        ) else it.toString()
+                    }
+                }" }
 
             build(
                 *tasks.toTypedArray()
@@ -1788,7 +1796,7 @@ class NewMultiplatformIT : BaseGradleIT() {
             assertTasksExecuted(
                 *testTasks,
                 ":compileIntegrationTestKotlinJvm",
-                ":linkIntegrationDebugTest${nativeHostTargetName.capitalize()}"
+                ":linkIntegrationDebugTest${nativeHostTargetName.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() }}"
             )
 
             fun checkUnitTestOutput(targetName: String) {

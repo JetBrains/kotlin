@@ -18,6 +18,7 @@ import org.junit.rules.TemporaryFolder
 import org.junit.runner.RunWith
 import org.junit.runners.Parameterized
 import java.io.File
+import java.util.*
 import kotlin.test.assertTrue
 import java.lang.Boolean as RefBoolean
 
@@ -253,8 +254,13 @@ abstract class AndroidAndJavaConsumeMppLibIT : BaseGradleIT() {
             "debugApiElements$variantNamePublishedSuffix"
         else "releaseApiElements$variantNamePublishedSuffix"
 
-        @Suppress("DEPRECATION")
-        fun nameWithFlavorIfNeeded(name: String) = if (useFlavors) "flavor1${name.capitalize()}" else name
+        fun nameWithFlavorIfNeeded(name: String) = if (useFlavors) "flavor1${
+            name.replaceFirstChar {
+                if (it.isLowerCase()) it.titlecase(
+                    Locale.getDefault()
+                ) else it.toString()
+            }
+        }" else name
 
         val configurationToExpectedVariant = listOf(
             nameWithFlavorIfNeeded("debugCompileClasspath") to nameWithFlavorIfNeeded("debugApiElements$variantNamePublishedSuffix"),

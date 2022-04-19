@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.konan.target.HostManager
 import org.junit.Assume
 import org.junit.BeforeClass
 import org.junit.Test
+import java.util.*
 
 class CommonNativeIT : BaseGradleIT() {
 
@@ -27,10 +28,17 @@ class CommonNativeIT : BaseGradleIT() {
             configureJvmMemory()
         }
 
-        val libCompileTasks = libTargets.map { ":lib:compileKotlin${it.capitalize()}" }
-        val appCompileTasks = appTargets.map { ":app:compileKotlin${it.capitalize()}" }
-        val appLinkFrameworkTasks = appTargets.map { ":app:linkDebugFramework${it.capitalize()}" }
-        val appLinkTestTasks = appTargets.map { ":app:linkDebugTest${it.capitalize()}" }
+        val libCompileTasks = libTargets.map { ":lib:compileKotlin${it.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() }}" }
+        val appCompileTasks = appTargets.map { ":app:compileKotlin${it.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() }}" }
+        val appLinkFrameworkTasks = appTargets.map {
+            ":app:linkDebugFramework${
+                it.replaceFirstChar {
+                    if (it.isLowerCase()) it.titlecase(
+                        Locale.getDefault()
+                    ) else it.toString()
+                }
+            }" }
+        val appLinkTestTasks = appTargets.map { ":app:linkDebugTest${it.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() }}" }
 
         build(":lib:publish") {
             assertSuccessful()

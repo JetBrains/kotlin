@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.gradle.util.modify
 import org.jetbrains.kotlin.test.util.KtTestUtil
 import org.junit.Test
 import java.io.File
+import java.util.*
 import kotlin.test.assertTrue
 
 @TestDataPath("\$CONTENT_ROOT/resources")
@@ -307,7 +308,7 @@ class MultiplatformGradleIT : BaseGradleIT() {
         }
 
         val customSourceSetCompileTasks = listOf(":lib" to "Common", ":libJs" to "2Js", ":libJvm" to "")
-            .map { (module, platform) -> "$module:compile${sourceSetName.capitalize()}Kotlin$platform" }
+            .map { (module, platform) -> "$module:compile${sourceSetName.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() }}Kotlin$platform" }
 
         build(*customSourceSetCompileTasks.toTypedArray(), options = defaultBuildOptions().copy(warningMode = WarningMode.Summary)) {
             assertSuccessful()

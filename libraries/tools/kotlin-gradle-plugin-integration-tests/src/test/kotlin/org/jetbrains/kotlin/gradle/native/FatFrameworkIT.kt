@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.konan.target.HostManager
 import org.junit.Assume
 import org.junit.BeforeClass
 import org.junit.Test
+import java.util.*
 import kotlin.test.assertTrue
 
 class FatFrameworkIT : BaseGradleIT() {
@@ -76,7 +77,14 @@ class FatFrameworkIT : BaseGradleIT() {
         expectedPlistPlatform: String
     ) {
         assertSuccessful()
-        val linkTasks = archs.map { ":linkDebugFramework${targetPrefix.capitalize()}${it.capitalize()}" }
+        val linkTasks = archs.map {
+            ":linkDebugFramework${targetPrefix.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() }}${
+                it.replaceFirstChar {
+                    if (it.isLowerCase()) it.titlecase(
+                        Locale.getDefault()
+                    ) else it.toString()
+                }
+            }" }
 
         assertTasksExecuted(linkTasks)
         assertTasksExecuted(":fat")

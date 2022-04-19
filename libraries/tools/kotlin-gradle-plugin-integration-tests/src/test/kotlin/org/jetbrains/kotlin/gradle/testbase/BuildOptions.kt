@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.cli.common.CompilerSystemProperties.COMPILE_INCREMEN
 import org.jetbrains.kotlin.gradle.BaseGradleIT
 import org.jetbrains.kotlin.gradle.plugin.KotlinJsCompilerType
 import org.jetbrains.kotlin.gradle.report.BuildReportType
+import java.util.*
 
 data class BuildOptions(
     val logLevel: LogLevel = LogLevel.INFO,
@@ -70,7 +71,7 @@ data class BuildOptions(
 
         if (gradleVersion >= GradleVersion.version("6.6.0")) {
             arguments.add("-Dorg.gradle.unsafe.configuration-cache=$configurationCache")
-            arguments.add("-Dorg.gradle.unsafe.configuration-cache-problems=${configurationCacheProblems.name.toLowerCase()}")
+            arguments.add("-Dorg.gradle.unsafe.configuration-cache-problems=${configurationCacheProblems.name.lowercase(Locale.getDefault())}")
         }
         if (gradleVersion >= GradleVersion.version("7.1")) {
             arguments.add("-Dorg.gradle.unsafe.isolated-projects=$projectIsolation")

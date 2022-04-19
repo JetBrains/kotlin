@@ -351,8 +351,20 @@ class GeneralNativeIT : BaseGradleIT() {
         val frameworkTasks = targets.flatMap { target ->
             binaries.getValue(target).flatMap {
                 listOf(
-                    ":link${it.name.capitalize()}DebugFramework${target.capitalize()}",
-                    ":link${it.name.capitalize()}ReleaseFramework${target.capitalize()}",
+                    ":link${it.name.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() }}DebugFramework${
+                        target.replaceFirstChar {
+                            if (it.isLowerCase()) it.titlecase(
+                                Locale.getDefault()
+                            ) else it.toString()
+                        }
+                    }",
+                    ":link${it.name.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() }}ReleaseFramework${
+                        target.replaceFirstChar {
+                            if (it.isLowerCase()) it.titlecase(
+                                Locale.getDefault()
+                            ) else it.toString()
+                        }
+                    }",
                 )
             }
         }
@@ -454,7 +466,7 @@ class GeneralNativeIT : BaseGradleIT() {
             "releaseExecutable" to "native-binary",
             "bazDebugExecutable" to "my-baz",
         )
-        val linkTasks = binaries.map { (name, _) -> "link${name.capitalize()}Host" }
+        val linkTasks = binaries.map { (name, _) -> "link${name.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() }}Host" }
         val outputFiles = binaries.map { (name, fileBaseName) ->
             val outputKind = NativeOutputKind.values().single { name.endsWith(it.taskNameClassifier, true) }.compilerOutputKind
             val prefix = outputKind.prefix(HostManager.host)
@@ -501,7 +513,8 @@ class GeneralNativeIT : BaseGradleIT() {
     private fun testNativeBinaryDsl(project: String) = with(
         transformNativeTestProjectWithPluginDsl(project, directoryPrefix = "native-binaries")
     ) {
-        val hostSuffix = nativeHostTargetName.capitalize()
+        val hostSuffix =
+            nativeHostTargetName.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() }
 
         build("tasks") {
             assertSuccessful()
@@ -972,9 +985,16 @@ class GeneralNativeIT : BaseGradleIT() {
             .resolve("B.kt")
         fileWithSpacesInPath.writeText("fun foo() = 42")
 
-        build("compileKotlin${nativeHostTargetName.capitalize()}") {
+        build("compileKotlin${nativeHostTargetName.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() }}") {
             assertSuccessful()
-            withNativeCommandLineArguments(":compileKotlin${nativeHostTargetName.capitalize()}") { arguments ->
+            withNativeCommandLineArguments(
+                ":compileKotlin${
+                    nativeHostTargetName.replaceFirstChar {
+                        if (it.isLowerCase()) it.titlecase(
+                            Locale.getDefault()
+                        ) else it.toString()
+                    }
+                }") { arguments ->
                 val escapedQuotedPath =
                     "\"${fileWithSpacesInPath.absolutePath.replace("\\", "\\\\").replace("\"", "\\\"")}\""
                 assertTrue(

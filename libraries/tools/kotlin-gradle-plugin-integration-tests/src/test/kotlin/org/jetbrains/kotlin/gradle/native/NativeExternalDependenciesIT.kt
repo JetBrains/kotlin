@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.junit.Assume.assumeFalse
 import org.junit.Test
 import java.io.File
+import java.util.*
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
 import kotlin.test.assertNull
@@ -171,6 +172,6 @@ class NativeExternalDependenciesIT : BaseGradleIT() {
 
         fun findKotlinNativeTargetName(output: String): String? = findParameterInOutput("for_test_kotlin_native_target", output)
             ?.takeIf(String::isNotBlank)
-            ?.toLowerCase()
+            ?.lowercase(Locale.getDefault())
     }
 }

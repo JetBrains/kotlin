@@ -12,6 +12,7 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.junit.runners.Parameterized
 import java.io.File
+import java.util.*
 
 @RunWith(Parameterized::class)
 class MppHighlightingTestDataWithGradleIT : BaseGradleIT() {
@@ -88,7 +89,7 @@ class MppHighlightingTestDataWithGradleIT : BaseGradleIT() {
 
         gradleBuildScript().appendText("\n" + scriptCustomization)
 
-        val tasks = sourceRoots.map { "compile" + it.kotlinSourceSetName.capitalize() + "KotlinMetadata" }
+        val tasks = sourceRoots.map { "compile" + it.kotlinSourceSetName.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() } + "KotlinMetadata" }
 
         build(*tasks.toTypedArray()) {
             if (expectedErrorsPerSourceSetName.values.all { it.all(ErrorInfo::isAllowedInCli) }) {
@@ -176,7 +177,7 @@ class MppHighlightingTestDataWithGradleIT : BaseGradleIT() {
             get() = partsToQualifiedName(qualifiedNameParts)
 
         val kotlinSourceSetName
-            get() = "intermediate${qualifiedName.capitalize()}"
+            get() = "intermediate${qualifiedName.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() }}"
 
         val gradleSrcDir
             get() = "src/$kotlinSourceSetName/kotlin"
