@@ -69,15 +69,20 @@ private class JvmInlineClassLowering(context: JvmBackendContext) : JvmValueClass
 
     override fun IrFunction.isSpecificFieldGetter(): Boolean = isInlineClassFieldGetter
 
-    override fun buildAdditionalMethodsForSealedInlineClass(declaration: IrClass) {
-        if (declaration.isChildOfSealedInlineClass() && declaration.modality != Modality.SEALED) {
-            val irConstructor = declaration.primaryConstructor!!
-            updateGetterForSealedInlineClassChild(declaration, declaration.defaultType.findTopSealedInlineSuperClass())
-            rewriteConstructorForSealedInlineClassChild(declaration, declaration.sealedInlineClassParent(), irConstructor)
+    override fun buildAdditionalMethodsForSealedInlineClass(declaration: IrClass, constructor: IrConstructor) {
+        if (declaration.isChildOfSealedInlineClass() && declaration.isInline) {
+            if (declaration.modality != Modality.SEALED) {
+                updateGetterForSealedInlineClassChild(declaration, declaration.defaultType.findTopSealedInlineSuperClass())
+            }
+            rewriteConstructorForSealedInlineClassChild(declaration, declaration.sealedInlineClassParent(), constructor)
             removeMethods(declaration)
         }
 
         if (declaration.modality == Modality.SEALED && !declaration.isChildOfSealedInlineClass()) {
+            buildPrimaryValueClassConstructor(declaration, constructor)
+            buildBoxFunction(declaration)
+            buildUnboxFunction(declaration)
+
             patchReceiverParameterOfValueGetter(declaration)
 
             val info = SealedInlineClassInfo.analyze(declaration)
@@ -283,7 +288,8 @@ private class JvmInlineClassLowering(context: JvmBackendContext) : JvmValueClass
 
     // For sealed inline class children we generate getter, which simply calls parent's and casts the result.
     private fun updateGetterForSealedInlineClassChild(irClass: IrClass, top: IrClass) {
-        val fieldGetter = irClass.functions.find { it.isInlineClassFieldGetter } ?: error("${irClass.render()} has no getter")
+        val fieldGetter = irClass.functions.find { it.isInlineClassFieldGetter }
+            ?: error("${irClass.render()} has no getter")
 
         val methodToOverride = top.functions.single { it.name == InlineClassAbi.sealedInlineClassFieldName }
 
@@ -795,10 +801,11 @@ private class JvmInlineClassLowering(context: JvmBackendContext) : JvmValueClass
         val function = context.inlineClassReplacements.getBoxFunction(valueClass)
 
         val primaryConstructor =
-            if (valueClass.modality == Modality.SEALED) valueClass.declarations.single {
-                it is IrConstructor && it.origin == JvmLoweredDeclarationOrigin.PRIMARY_CONSTRUCTOR_FOR_SEALED_INLINE_CLASS
-            } as IrConstructor
-            else valueClass.primaryConstructor!!
+            if (valueClass.modality == Modality.SEALED) {
+                valueClass.declarations.single {
+                    it is IrConstructor && it.origin == JvmLoweredDeclarationOrigin.PRIMARY_CONSTRUCTOR_FOR_SEALED_INLINE_CLASS
+                } as IrConstructor
+            } else valueClass.primaryConstructor!!
 
         with(context.createIrBuilder(function.symbol)) {
             function.body = irExprBody(

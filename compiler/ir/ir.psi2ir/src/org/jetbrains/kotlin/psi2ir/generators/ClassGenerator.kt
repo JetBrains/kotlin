@@ -127,10 +127,10 @@ class ClassGenerator(
 
                             if (classDescriptor.isInlineClass() && classDescriptor.getSuperClassOrAny().isSealedInlineClass() &&
                                 type.isPrimitiveNumberType()
-                            )
+                            ) {
                                 irType.makeNullable() as? IrSimpleType
                                     ?: error("Inline class underlying type is not a simple type: $classDescriptor")
-                            else irType
+                            } else irType
                         }
                     }
 
