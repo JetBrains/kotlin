@@ -357,12 +357,6 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
         }
 
         @Test
-        @TestMetadata("closureCodeSize.kt")
-        public void testClosureCodeSize() throws Exception {
-            runTest("js/js.translator/testData/box/closure/closureCodeSize.kt");
-        }
-
-        @Test
         @TestMetadata("closureFunctionAsArgument.kt")
         public void testClosureFunctionAsArgument() throws Exception {
             runTest("js/js.translator/testData/box/closure/closureFunctionAsArgument.kt");
@@ -630,6 +624,58 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
         @TestMetadata("wrappedVariableInExtensionFun.kt")
         public void testWrappedVariableInExtensionFun() throws Exception {
             runTest("js/js.translator/testData/box/closure/wrappedVariableInExtensionFun.kt");
+        }
+
+        @Nested
+        @TestMetadata("js/js.translator/testData/box/closure/inlineAnonymousFunctions")
+        @TestDataPath("$PROJECT_ROOT")
+        public class InlineAnonymousFunctions {
+            @Test
+            public void testAllFilesPresentInInlineAnonymousFunctions() throws Exception {
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/closure/inlineAnonymousFunctions"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR, true);
+            }
+
+            @Test
+            @TestMetadata("closureCodeSize.kt")
+            public void testClosureCodeSize() throws Exception {
+                runTest("js/js.translator/testData/box/closure/inlineAnonymousFunctions/closureCodeSize.kt");
+            }
+
+            @Test
+            @TestMetadata("closureInWithInsideWith.kt")
+            public void testClosureInWithInsideWith() throws Exception {
+                runTest("js/js.translator/testData/box/closure/inlineAnonymousFunctions/closureInWithInsideWith.kt");
+            }
+
+            @Test
+            @TestMetadata("inlineChain.kt")
+            public void testInlineChain() throws Exception {
+                runTest("js/js.translator/testData/box/closure/inlineAnonymousFunctions/inlineChain.kt");
+            }
+
+            @Test
+            @TestMetadata("lambdaChain.kt")
+            public void testLambdaChain() throws Exception {
+                runTest("js/js.translator/testData/box/closure/inlineAnonymousFunctions/lambdaChain.kt");
+            }
+
+            @Test
+            @TestMetadata("lambdaParameters.kt")
+            public void testLambdaParameters() throws Exception {
+                runTest("js/js.translator/testData/box/closure/inlineAnonymousFunctions/lambdaParameters.kt");
+            }
+
+            @Test
+            @TestMetadata("localParameterInCallback.kt")
+            public void testLocalParameterInCallback() throws Exception {
+                runTest("js/js.translator/testData/box/closure/inlineAnonymousFunctions/localParameterInCallback.kt");
+            }
+
+            @Test
+            @TestMetadata("twiceRegeneratedAnonymousObject.kt")
+            public void testTwiceRegeneratedAnonymousObject() throws Exception {
+                runTest("js/js.translator/testData/box/closure/inlineAnonymousFunctions/twiceRegeneratedAnonymousObject.kt");
+            }
         }
     }
 

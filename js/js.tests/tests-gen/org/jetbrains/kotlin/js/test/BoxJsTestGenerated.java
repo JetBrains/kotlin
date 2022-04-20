@@ -22,7 +22,7 @@ import java.util.regex.Pattern;
 public class BoxJsTestGenerated extends AbstractBoxJsTest {
     @Test
     public void testAllFilesPresentInBox() throws Exception {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS, true, "closure/inlineAnonymousFunctions");
     }
 
     @Nested
@@ -347,19 +347,13 @@ public class BoxJsTestGenerated extends AbstractBoxJsTest {
     public class Closure {
         @Test
         public void testAllFilesPresentInClosure() throws Exception {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/closure"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/closure"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS, true, "inlineAnonymousFunctions");
         }
 
         @Test
         @TestMetadata("closureArrayListInstance.kt")
         public void testClosureArrayListInstance() throws Exception {
             runTest("js/js.translator/testData/box/closure/closureArrayListInstance.kt");
-        }
-
-        @Test
-        @TestMetadata("closureCodeSize.kt")
-        public void testClosureCodeSize() throws Exception {
-            runTest("js/js.translator/testData/box/closure/closureCodeSize.kt");
         }
 
         @Test

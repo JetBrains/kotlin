@@ -28,11 +28,15 @@ import org.jetbrains.kotlin.ir.types.classifierOrNull
 import org.jetbrains.kotlin.ir.types.isUnit
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.*
+import org.jetbrains.kotlin.js.config.JSConfigurationKeys
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.addToStdlib.cast
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 class InteropCallableReferenceLowering(val context: JsIrBackendContext) : BodyLoweringPass {
+
+    val generateInlineAnonymousFunctions: Boolean
+        get() = context.configuration.getBoolean(JSConfigurationKeys.GENERATE_INLINE_ANONYMOUS_FUNCTIONS)
 
     /**
      * A factory that creates [IrFunctionExpression] for lambdas being constructed.
@@ -121,7 +125,8 @@ class InteropCallableReferenceLowering(val context: JsIrBackendContext) : BodyLo
 
         val closureUsageAnalyser = ClosureUsageAnalyser()
 
-        irFile.acceptChildrenVoid(closureUsageAnalyser) // TODO: Only do this if lambda inlining is enabled with a feature flag!
+        if (generateInlineAnonymousFunctions)
+            irFile.acceptChildrenVoid(closureUsageAnalyser)
 
         val callableReferenceClassTransformer = CallableReferenceClassTransformer(
             ctorToFactoryMap,
@@ -317,8 +322,9 @@ class InteropCallableReferenceLowering(val context: JsIrBackendContext) : BodyLo
                     // This allows us to avoid allocating a new object each time the lambda is created.
                     liftLambda(ctorToFreeFunctionMap, lambdaInfo)
                 } else if (
+                    generateInlineAnonymousFunctions
                     // If the lambda constructor is called from more than one place, don't inline.
-                    closureUsageAnalyser.getLambdaConstructorCalls(lambdaClass.primaryConstructor!!.symbol).size == 1
+                    && closureUsageAnalyser.getLambdaConstructorCalls(lambdaClass.primaryConstructor!!.symbol).size == 1
                     // In-line anonymous functions that capture variables declared in loops are dangerous.
                     // See https://stackoverflow.com/questions/750486/javascript-closure-inside-loops-simple-practical-example
                     && !closureUsageAnalyser.lambdaCapturesVariablesDeclaredInLoops(lambdaClass)

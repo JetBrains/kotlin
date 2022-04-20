@@ -65,6 +65,12 @@ abstract class AbstractJsIrTest(
                     ::JsIrRecompiledArtifactsIdentityHandler,
                 )
             }
+
+            forTestsMatching("${JsEnvironmentConfigurator.TEST_DATA_DIR_PATH}/box/closure/inlineAnonymousFunctions/*") {
+                defaultDirectives {
+                    +JsEnvironmentConfigurationDirectives.GENERATE_INLINE_ANONYMOUS_FUNCTIONS
+                }
+            }
         }
     }
 }

@@ -112,6 +112,11 @@ object JsEnvironmentConfigurationDirectives : SimpleDirectivesContainer() {
         applicability = DirectiveApplicability.Global
     )
 
+    val GENERATE_INLINE_ANONYMOUS_FUNCTIONS by directive(
+        description = "translate lambdas into in-line anonymous functions",
+        applicability = DirectiveApplicability.Global
+    )
+
     val SAFE_EXTERNAL_BOOLEAN by directive(
         description = "",
         applicability = DirectiveApplicability.Global

@@ -79,7 +79,7 @@ fun main(args: Array<String>) {
     generateTestGroupSuiteWithJUnit5(args) {
         testGroup("js/js.tests/tests-gen", "js/js.translator/testData", testRunnerMethodName = "runTest0") {
             testClass<AbstractBoxJsTest> {
-                model("box/", pattern = "^([^_](.+))\\.kt$")
+                model("box/", pattern = "^([^_](.+))\\.kt$", excludeDirs = listOf("closure/inlineAnonymousFunctions"))
             }
 
             testClass<AbstractSourceMapGenerationSmokeTest> {

@@ -120,6 +120,10 @@ fun createCompilerConfiguration(module: TestModule, configurators: List<Abstract
         configuration.put(JSConfigurationKeys.PROPERTY_LAZY_INITIALIZATION, true)
     }
 
+    if (JsEnvironmentConfigurationDirectives.GENERATE_INLINE_ANONYMOUS_FUNCTIONS in module.directives) {
+        configuration.put(JSConfigurationKeys.GENERATE_INLINE_ANONYMOUS_FUNCTIONS, true)
+    }
+
     if (module.frontendKind == FrontendKinds.FIR) {
         configuration[CommonConfigurationKeys.USE_FIR] = true
     }

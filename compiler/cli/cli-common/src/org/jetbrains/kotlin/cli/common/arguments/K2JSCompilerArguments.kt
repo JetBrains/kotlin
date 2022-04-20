@@ -179,6 +179,12 @@ class K2JSCompilerArguments : CommonCompilerArguments() {
     var irNewIr2Js: Boolean by FreezableVar(true)
 
     @Argument(
+        value = "-Xir-generate-inline-anonymous-functions",
+        description = "Lambda expressions that capture values are translated into in-line anonymous JavaScript functions"
+    )
+    var irGenerateInlineAnonymousFunctions: Boolean by FreezableVar(false)
+
+    @Argument(
         value = "-Xinclude",
         valueDescription = "<path>",
         description = "A path to an intermediate library that should be processed in the same manner as source files."
