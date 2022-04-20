@@ -98,7 +98,7 @@ internal class MockModulesProvider private constructor(
         return SERIALIZER.serializeModule(module)
     }
 
-    private fun fakeModuleInfo(name: String) = ModuleInfo(name, File("/tmp/commonizer/mocks/$name"), null)
+    private fun fakeModuleInfo(name: String) = ModuleInfo(name, null)
 
     companion object {
         @JvmName("createByModuleNames")

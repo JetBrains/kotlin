@@ -104,6 +104,23 @@ class CommonizeNativeDistributionTest {
     }
 
     @Test
+    fun `commonize - linux macos - linux macos mingw`() {
+        val unixTarget = CommonizerTarget(LINUX_X64, MACOS_X64)
+        val nativeTarget = CommonizerTarget(MINGW_X64, LINUX_X64, MACOS_X64)
+        CliCommonizer(this::class.java.classLoader).commonizeNativeDistribution(
+            konanHome = konanHome,
+            outputTargets = setOf(unixTarget, nativeTarget),
+            outputDirectory = temporaryOutputDirectory.root,
+            logLevel = CommonizerLogLevel.Info
+        )
+
+        assertTrue(
+            resolveCommonizedDirectory(temporaryOutputDirectory.root, nativeTarget).isDirectory,
+            "Expected directory for $nativeTarget"
+        )
+    }
+
+    @Test
     fun `commonize - no outputTargets specified`() {
         CliCommonizer(this::class.java.classLoader).commonizeNativeDistribution(
             konanHome = konanHome,

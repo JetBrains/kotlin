@@ -58,7 +58,6 @@ internal fun commonizeTarget(
             targetDependencies = availableTrees.mapValue(CirTreeRoot::dependencies),
             commonizedNodes = CirCommonizedClassifierNodes.default(),
             commonDependencies = parameters.dependencyClassifiers(output)
-
         )
 
         val mergedTree = mergeCirTree(parameters.storageManager, classifiers, availableTrees, parameters.settings)
