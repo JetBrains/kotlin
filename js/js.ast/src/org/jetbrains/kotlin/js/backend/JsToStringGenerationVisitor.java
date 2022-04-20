@@ -746,7 +746,7 @@ public class JsToStringGenerationVisitor extends JsVisitor {
                 space();
             }
             sourceLocationConsumer.pushSourceInfo(null);
-            accept(elseStatement);
+            accept(materialize(elseStatement));
             sourceLocationConsumer.popSourceInfo();
             if (!elseIf) {
                 nestedPop(elseStatement);

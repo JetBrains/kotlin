@@ -4953,6 +4953,12 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
         }
 
         @Test
+        @TestMetadata("blocksMaterialization.kt")
+        public void testBlocksMaterialization() throws Exception {
+            runTest("js/js.translator/testData/box/inline/blocksMaterialization.kt");
+        }
+
+        @Test
         @TestMetadata("callFunction.kt")
         public void testCallFunction() throws Exception {
             runTest("js/js.translator/testData/box/inline/callFunction.kt");
