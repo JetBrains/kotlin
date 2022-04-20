@@ -791,6 +791,12 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
         }
 
         @Test
+        @TestMetadata("lambdaWithValueClass.kt")
+        public void testLambdaWithValueClass() throws Exception {
+            runTest("js/js.translator/testData/box/coroutines/lambdaWithValueClass.kt");
+        }
+
+        @Test
         @TestMetadata("localVarOptimization.kt")
         public void testLocalVarOptimization() throws Exception {
             runTest("js/js.translator/testData/box/coroutines/localVarOptimization.kt");
