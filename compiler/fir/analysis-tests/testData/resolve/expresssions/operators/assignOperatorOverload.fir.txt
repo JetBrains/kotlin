@@ -7,6 +7,10 @@ FILE: assignOperatorOverload.kt
     }
     public final operator fun R|kotlin/String|.assign(x: R|kotlin/Int|): R|kotlin/Unit| {
     }
+    public final operator fun R|kotlin/String|.set(i: R|kotlin/Int|, v: R|kotlin/Int|): R|kotlin/Unit| {
+    }
+    public final operator fun R|kotlin/String|.set(i: R|kotlin/Int|, v: R|kotlin/Long|): R|kotlin/Unit| {
+    }
     public final operator fun R|kotlin/Any|.plusAssign(x: R|kotlin/String|): R|kotlin/Unit| {
     }
     public final operator fun R|kotlin/String|.plusAssign(x: R|kotlin/String|): R|kotlin/Unit| {
@@ -49,10 +53,21 @@ FILE: assignOperatorOverload.kt
         R|<local>/x|.R|/Foo.x| = Long(5)
         ^test_assignment_type_mismatch R|/result|
     }
+    public final fun test_set_priority(): R|kotlin/String| {
+        lval x: R|Foo| = R|/Foo.Foo|(String(Hello))
+        R|<local>/x|.R|/Foo.x|.R|/set|(Int(5), Int(5))
+        R|<local>/x|.R|/Foo.x|.R|/set|(Int(5), Long(5))
+        ^test_set_priority R|/result|
+    }
     public final fun test_object_property_plus_assign(): R|kotlin/String| {
         lval x: R|Foo| = R|/Foo.Foo|(String(Hello))
         R|<local>/x|.R|/Foo.x|.R|/plusAssign|(String(OK))
         ^test_object_property_plus_assign R|/result|
+    }
+    public final fun test_null_safe_operator_with_assignment(): R|kotlin/String| {
+        lval x: R|Foo?| = Null(null)
+        R|<local>/x|?.{ $subj$.R|/Foo.x|.R|/assign|(String(OK)) }
+        ^test_null_safe_operator_with_assignment R|/result|
     }
     public final fun test_plus_assign_assignment_type_mismatch(): R|kotlin/String| {
         lval x: R|Foo| = R|/Foo.Foo|(String(Hello))
