@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.fir.resolve.calls.jvm
 import org.jetbrains.kotlin.fir.containingClass
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.isExpect
+import org.jetbrains.kotlin.fir.resolve.BodyResolveComponents
 import org.jetbrains.kotlin.fir.resolve.calls.AbstractConeCallConflictResolver
 import org.jetbrains.kotlin.fir.resolve.calls.Candidate
 import org.jetbrains.kotlin.fir.resolve.inference.InferenceComponents
@@ -19,8 +20,9 @@ import org.jetbrains.kotlin.resolve.calls.results.TypeSpecificityComparator
 // like emptyArray() from intrinsics and built-ins
 class ConeEquivalentCallConflictResolver(
     specificityComparator: TypeSpecificityComparator,
-    inferenceComponents: InferenceComponents
-) : AbstractConeCallConflictResolver(specificityComparator, inferenceComponents) {
+    inferenceComponents: InferenceComponents,
+    transformerComponents: BodyResolveComponents
+) : AbstractConeCallConflictResolver(specificityComparator, inferenceComponents, transformerComponents) {
     override fun chooseMaximallySpecificCandidates(
         candidates: Set<Candidate>,
         discriminateGenerics: Boolean,
@@ -64,8 +66,8 @@ class ConeEquivalentCallConflictResolver(
         }
         val firstSignature = createFlatSignature(firstCandidate, first)
         val secondSignature = createFlatSignature(secondCandidate, second)
-        return compareCallsByUsedArguments(firstSignature, secondSignature, false) &&
-                compareCallsByUsedArguments(secondSignature, firstSignature, false)
+        return compareCallsByUsedArguments(firstSignature, secondSignature, discriminateGenerics = false, useOriginalSamTypes = false) &&
+                compareCallsByUsedArguments(secondSignature, firstSignature, discriminateGenerics = false, useOriginalSamTypes = false)
     }
 
     private fun createFlatSignature(call: Candidate, declaration: FirCallableDeclaration): FlatSignature<Candidate> {

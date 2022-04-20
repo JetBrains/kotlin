@@ -10,15 +10,18 @@ import org.jetbrains.kotlin.fir.containingClass
 import org.jetbrains.kotlin.fir.declarations.FirField
 import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.languageVersionSettings
+import org.jetbrains.kotlin.fir.resolve.BodyResolveComponents
 import org.jetbrains.kotlin.fir.resolve.calls.AbstractConeCallConflictResolver
 import org.jetbrains.kotlin.fir.resolve.calls.Candidate
 import org.jetbrains.kotlin.fir.resolve.inference.InferenceComponents
+import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirAbstractBodyResolveTransformer
 import org.jetbrains.kotlin.resolve.calls.results.TypeSpecificityComparator
 
 class JvmPlatformOverloadsConflictResolver(
     specificityComparator: TypeSpecificityComparator,
-    inferenceComponents: InferenceComponents
-) : AbstractConeCallConflictResolver(specificityComparator, inferenceComponents) {
+    inferenceComponents: InferenceComponents,
+    transformerComponents: BodyResolveComponents
+) : AbstractConeCallConflictResolver(specificityComparator, inferenceComponents, transformerComponents) {
     override fun chooseMaximallySpecificCandidates(
         candidates: Set<Candidate>,
         discriminateGenerics: Boolean,

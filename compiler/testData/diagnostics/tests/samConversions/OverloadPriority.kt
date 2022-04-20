@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // !LANGUAGE: +EliminateAmbiguitiesOnInheritedSamInterfaces
 // !CHECK_TYPE
 // FILE: Fn.java

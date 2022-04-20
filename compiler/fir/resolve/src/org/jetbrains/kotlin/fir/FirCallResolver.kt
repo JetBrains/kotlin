@@ -68,7 +68,7 @@ class FirCallResolver(
     )
 
     val conflictResolver: ConeCallConflictResolver =
-        session.callConflictResolverFactory.create(TypeSpecificityComparator.NONE, session.inferenceComponents)
+        session.callConflictResolverFactory.create(TypeSpecificityComparator.NONE, session.inferenceComponents, components)
 
     @PrivateForInline
     var needTransformArguments: Boolean = true

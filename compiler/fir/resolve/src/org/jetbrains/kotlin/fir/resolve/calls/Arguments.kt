@@ -507,12 +507,10 @@ private fun Candidate.getExpectedTypeWithSAMConversion(
     // TODO: resolvedCall.registerArgumentWithSamConversion(argument, SamConversionDescription(convertedTypeByOriginal, convertedTypeByCandidate!!))
 
     val expectedFunctionType = context.bodyResolveComponents.samResolver.getFunctionTypeForPossibleSamType(candidateExpectedType)
+        ?: return null
     return runIf(argument.isFunctional(session, scopeSession, expectedFunctionType)) {
-        expectedFunctionType.apply {
-            // Even though the `expectedFunctionalType` could be `null`, we should mark the flag to indicate that the argument is a
-            // functional type. That will help avoid ambiguous `invoke` resolutions. See KT-39824
-            usesSAM = true
-        }
+        usesSAM = true
+        expectedFunctionType
     }
 }
 

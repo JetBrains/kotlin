@@ -5,14 +5,16 @@
 
 package org.jetbrains.kotlin.fir.resolve.calls
 
+import org.jetbrains.kotlin.fir.resolve.BodyResolveComponents
 import org.jetbrains.kotlin.fir.resolve.inference.InferenceComponents
 import org.jetbrains.kotlin.fir.scopes.impl.isWrappedIntegerOperator
 import org.jetbrains.kotlin.resolve.calls.results.TypeSpecificityComparator
 
 class ConeIntegerOperatorConflictResolver(
     specificityComparator: TypeSpecificityComparator,
-    inferenceComponents: InferenceComponents
-) : AbstractConeCallConflictResolver(specificityComparator, inferenceComponents) {
+    inferenceComponents: InferenceComponents,
+    transformerComponents: BodyResolveComponents
+) : AbstractConeCallConflictResolver(specificityComparator, inferenceComponents, transformerComponents) {
     override fun chooseMaximallySpecificCandidates(
         candidates: Set<Candidate>,
         discriminateGenerics: Boolean,

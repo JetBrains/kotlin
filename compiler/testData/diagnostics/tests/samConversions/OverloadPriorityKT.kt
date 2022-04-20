@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // !LANGUAGE: +EliminateAmbiguitiesOnInheritedSamInterfaces +SamConversionForKotlinFunctions +SamConversionPerArgument
 // !CHECK_TYPE
 // FILE: Fn.java

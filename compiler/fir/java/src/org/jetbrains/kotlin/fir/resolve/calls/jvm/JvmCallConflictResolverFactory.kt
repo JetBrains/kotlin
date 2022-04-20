@@ -6,11 +6,13 @@
 package org.jetbrains.kotlin.fir.resolve.calls.jvm
 
 import org.jetbrains.kotlin.fir.NoMutableState
+import org.jetbrains.kotlin.fir.resolve.BodyResolveComponents
 import org.jetbrains.kotlin.fir.resolve.calls.ConeCallConflictResolverFactory
 import org.jetbrains.kotlin.fir.resolve.calls.ConeCompositeConflictResolver
 import org.jetbrains.kotlin.fir.resolve.calls.ConeIntegerOperatorConflictResolver
 import org.jetbrains.kotlin.fir.resolve.calls.ConeOverloadConflictResolver
 import org.jetbrains.kotlin.fir.resolve.inference.InferenceComponents
+import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirAbstractBodyResolveTransformer
 import org.jetbrains.kotlin.fir.types.typeContext
 import org.jetbrains.kotlin.resolve.calls.results.TypeSpecificityComparator
 import org.jetbrains.kotlin.resolve.jvm.JvmTypeSpecificityComparator
@@ -19,14 +21,15 @@ import org.jetbrains.kotlin.resolve.jvm.JvmTypeSpecificityComparator
 object JvmCallConflictResolverFactory : ConeCallConflictResolverFactory() {
     override fun create(
         typeSpecificityComparator: TypeSpecificityComparator,
-        components: InferenceComponents
+        components: InferenceComponents,
+        transformerComponents: BodyResolveComponents
     ): ConeCompositeConflictResolver {
         val specificityComparator = JvmTypeSpecificityComparator(components.session.typeContext)
         return ConeCompositeConflictResolver(
-            ConeOverloadConflictResolver(specificityComparator, components),
-            ConeEquivalentCallConflictResolver(specificityComparator, components),
-            JvmPlatformOverloadsConflictResolver(specificityComparator, components),
-            ConeIntegerOperatorConflictResolver(specificityComparator, components)
+            ConeOverloadConflictResolver(specificityComparator, components, transformerComponents),
+            ConeEquivalentCallConflictResolver(specificityComparator, components, transformerComponents),
+            JvmPlatformOverloadsConflictResolver(specificityComparator, components, transformerComponents),
+            ConeIntegerOperatorConflictResolver(specificityComparator, components, transformerComponents)
         )
     }
 }

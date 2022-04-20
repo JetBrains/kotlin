@@ -7,6 +7,8 @@ package org.jetbrains.kotlin.fir.resolve.calls
 
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.isExpect
+import org.jetbrains.kotlin.fir.resolve.BodyResolveComponents
+import org.jetbrains.kotlin.fir.resolve.FirSamResolver
 import org.jetbrains.kotlin.fir.resolve.inference.InferenceComponents
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.name.StandardClassIds
@@ -17,8 +19,12 @@ import org.jetbrains.kotlin.utils.addIfNotNull
 
 abstract class AbstractConeCallConflictResolver(
     private val specificityComparator: TypeSpecificityComparator,
-    protected val inferenceComponents: InferenceComponents
+    protected val inferenceComponents: InferenceComponents,
+    private val transformerComponents: BodyResolveComponents
 ) : ConeCallConflictResolver() {
+
+    private val samResolver: FirSamResolver get() = transformerComponents.samResolver
+
     /**
      * Returns `true` if [call1] is definitely more or equally specific [call2],
      * `false` otherwise.
@@ -26,7 +32,8 @@ abstract class AbstractConeCallConflictResolver(
     protected fun compareCallsByUsedArguments(
         call1: FlatSignature<Candidate>,
         call2: FlatSignature<Candidate>,
-        discriminateGenerics: Boolean
+        discriminateGenerics: Boolean,
+        useOriginalSamTypes: Boolean
     ): Boolean {
         if (discriminateGenerics) {
             val isGeneric1 = call1.isGeneric
@@ -48,7 +55,8 @@ abstract class AbstractConeCallConflictResolver(
             call1,
             call2,
             SpecificityComparisonWithNumerics,
-            specificityComparator
+            specificityComparator,
+            useOriginalSamTypes
         )
     }
 
@@ -113,44 +121,44 @@ abstract class AbstractConeCallConflictResolver(
 
     protected fun createFlatSignature(call: Candidate, variable: FirVariable): FlatSignature<Candidate> {
         return FlatSignature(
-            call,
-            (variable as? FirProperty)?.typeParameters?.map { it.symbol.toLookupTag() }.orEmpty(),
-            computeSignatureTypes(call, variable),
-            variable.receiverTypeRef != null,
-            variable.contextReceivers.size,
-            false,
-            0,
-            (variable as? FirProperty)?.isExpect == true,
-            false // TODO
+            origin = call,
+            typeParameters = (variable as? FirProperty)?.typeParameters?.map { it.symbol.toLookupTag() }.orEmpty(),
+            valueParameterTypes = computeSignatureTypes(call, variable),
+            hasExtensionReceiver = variable.receiverTypeRef != null,
+            contextReceiverCount = variable.contextReceivers.size,
+            hasVarargs = false,
+            numDefaults = 0,
+            isExpect = (variable as? FirProperty)?.isExpect == true,
+            isSyntheticMember = false // TODO
         )
     }
 
     protected fun createFlatSignature(call: Candidate, constructor: FirConstructor): FlatSignature<Candidate> {
         return FlatSignature(
-            call,
-            constructor.typeParameters.map { it.symbol.toLookupTag() },
-            computeSignatureTypes(call, constructor),
+            origin = call,
+            typeParameters = constructor.typeParameters.map { it.symbol.toLookupTag() },
+            valueParameterTypes = computeSignatureTypes(call, constructor),
             //constructor.receiverTypeRef != null,
-            false,
-            constructor.contextReceivers.size,
-            constructor.valueParameters.any { it.isVararg },
-            call.numDefaults,
-            constructor.isExpect,
-            false // TODO
+            hasExtensionReceiver = false,
+            contextReceiverCount = constructor.contextReceivers.size,
+            hasVarargs = constructor.valueParameters.any { it.isVararg },
+            numDefaults = call.numDefaults,
+            isExpect = constructor.isExpect,
+            isSyntheticMember = false // TODO
         )
     }
 
     protected fun createFlatSignature(call: Candidate, function: FirSimpleFunction): FlatSignature<Candidate> {
         return FlatSignature(
-            call,
-            function.typeParameters.map { it.symbol.toLookupTag() },
-            computeSignatureTypes(call, function),
-            function.receiverTypeRef != null,
-            function.contextReceivers.size,
-            function.valueParameters.any { it.isVararg },
-            call.numDefaults,
-            function.isExpect,
-            false // TODO
+            origin = call,
+            typeParameters = function.typeParameters.map { it.symbol.toLookupTag() },
+            valueParameterTypes = computeSignatureTypes(call, function),
+            hasExtensionReceiver = function.receiverTypeRef != null,
+            contextReceiverCount = function.contextReceivers.size,
+            hasVarargs = function.valueParameters.any { it.isVararg },
+            numDefaults = call.numDefaults,
+            isExpect = function.isExpect,
+            isSyntheticMember = false // TODO
         )
     }
 
@@ -163,19 +171,28 @@ abstract class AbstractConeCallConflictResolver(
     private fun computeSignatureTypes(
         call: Candidate,
         called: FirCallableDeclaration
-    ): List<ConeKotlinType> {
+    ): List<TypeWithConversion> {
         return buildList {
-            addIfNotNull(called.receiverTypeRef?.coneType)
+            addIfNotNull(called.receiverTypeRef?.coneType?.let { TypeWithConversion(it) })
             val typeForCallableReference = call.resultingTypeForCallableReference
             if (typeForCallableReference != null) {
                 // Return type isn't needed here       v
                 typeForCallableReference.typeArguments.dropLast(1)
                     .mapTo(this) {
-                        (it as ConeKotlinType).removeTypeVariableTypes(inferenceComponents.session.typeContext)
+                        TypeWithConversion((it as ConeKotlinType).removeTypeVariableTypes(inferenceComponents.session.typeContext))
                     }
             } else {
-                called.contextReceivers.mapTo(this) { it.typeRef.coneType }
-                call.argumentMapping?.mapTo(this) { it.value.argumentType() }
+                called.contextReceivers.mapTo(this) { TypeWithConversion(it.typeRef.coneType) }
+                call.argumentMapping?.mapTo(this) { (_, parameter) ->
+                    val argumentType = parameter.argumentType()
+                    if (!call.usesSAM) {
+                        TypeWithConversion(argumentType)
+                    } else {
+                        val functionType = samResolver.getFunctionTypeForPossibleSamType(argumentType)?.second
+                        if (functionType == null) TypeWithConversion(argumentType)
+                        else TypeWithConversion(functionType, argumentType)
+                    }
+                }
             }
         }
     }

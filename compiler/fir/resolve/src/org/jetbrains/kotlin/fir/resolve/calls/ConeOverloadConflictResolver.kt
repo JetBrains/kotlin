@@ -10,9 +10,11 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirMemberDeclaration
 import org.jetbrains.kotlin.fir.declarations.utils.modality
 import org.jetbrains.kotlin.fir.render
+import org.jetbrains.kotlin.fir.resolve.BodyResolveComponents
 import org.jetbrains.kotlin.fir.resolve.inference.ConeTypeParameterBasedTypeVariable
 import org.jetbrains.kotlin.fir.resolve.inference.InferenceComponents
 import org.jetbrains.kotlin.fir.resolve.substitution.substitutorByMap
+import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirAbstractBodyResolveTransformer
 import org.jetbrains.kotlin.fir.symbols.ConeTypeParameterLookupTag
 import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.resolve.calls.inference.model.NewConstraintSystemImpl
@@ -29,8 +31,9 @@ typealias CandidateSignature = FlatSignature<Candidate>
 
 class ConeOverloadConflictResolver(
     specificityComparator: TypeSpecificityComparator,
-    inferenceComponents: InferenceComponents
-) : AbstractConeCallConflictResolver(specificityComparator, inferenceComponents) {
+    inferenceComponents: InferenceComponents,
+    transformerComponents: BodyResolveComponents
+) : AbstractConeCallConflictResolver(specificityComparator, inferenceComponents, transformerComponents) {
 
     override fun chooseMaximallySpecificCandidates(
         candidates: Set<Candidate>,
@@ -123,12 +126,18 @@ class ConeOverloadConflictResolver(
             }
         }
 
+        val filtered = candidates.filterTo(mutableSetOf()) { it.usesSAM }
+        if (filtered.isNotEmpty()) {
+            findMaximallySpecificCall(candidates, discriminateGenerics = false, useOriginalSamTypes = true)?.let { return setOf(it) }
+        }
+
         return candidates
     }
 
     private fun findMaximallySpecificCall(
         candidates: Set<Candidate>,
-        discriminateGenerics: Boolean
+        discriminateGenerics: Boolean,
+        useOriginalSamTypes: Boolean = false
     ): Candidate? {
         if (candidates.size <= 1) return candidates.singleOrNull()
 
@@ -138,7 +147,7 @@ class ConeOverloadConflictResolver(
 
         val bestCandidatesByParameterTypes = candidateSignatures.filter { signature ->
             candidateSignatures.all { other ->
-                signature === other || isNotLessSpecificCallWithArgumentMapping(signature, other, discriminateGenerics)
+                signature === other || isNotLessSpecificCallWithArgumentMapping(signature, other, discriminateGenerics, useOriginalSamTypes)
             }
         }
 
@@ -151,9 +160,10 @@ class ConeOverloadConflictResolver(
     private fun isNotLessSpecificCallWithArgumentMapping(
         call1: CandidateSignature,
         call2: CandidateSignature,
-        discriminateGenerics: Boolean
+        discriminateGenerics: Boolean,
+        useOriginalSamTypes: Boolean = false
     ): Boolean {
-        return compareCallsByUsedArguments(call1, call2, discriminateGenerics)
+        return compareCallsByUsedArguments(call1, call2, discriminateGenerics, useOriginalSamTypes)
     }
 
     private fun List<CandidateSignature>.exactMaxWith(): CandidateSignature? {
