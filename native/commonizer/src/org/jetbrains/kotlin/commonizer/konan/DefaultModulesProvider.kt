@@ -14,10 +14,9 @@ import java.io.File
 internal class DefaultModulesProvider(libraries: Collection<NativeLibrary>) : ModulesProvider {
     internal class NativeModuleInfo(
         name: String,
-        originalLocation: File,
         val dependencies: Set<String>,
         cInteropAttributes: ModulesProvider.CInteropModuleAttributes?
-    ) : ModuleInfo(name, originalLocation, cInteropAttributes)
+    ) : ModuleInfo(name, cInteropAttributes)
 
     private val libraryMap: Map<String, NativeLibrary>
     private val moduleInfoMap: Map<String, NativeModuleInfo>
@@ -30,7 +29,6 @@ internal class DefaultModulesProvider(libraries: Collection<NativeLibrary>) : Mo
             val manifestData = library.manifestData
 
             val name = manifestData.uniqueName
-            val location = File(library.library.libraryFile.path)
             val dependencies = manifestData.dependencies.toSet()
 
             val cInteropAttributes = if (manifestData.isInterop) {
@@ -39,7 +37,7 @@ internal class DefaultModulesProvider(libraries: Collection<NativeLibrary>) : Mo
             } else null
 
             libraryMap.put(name, library)?.let { error("Duplicated libraries: $name") }
-            moduleInfoMap[name] = NativeModuleInfo(name, location, dependencies, cInteropAttributes)
+            moduleInfoMap[name] = NativeModuleInfo(name, dependencies, cInteropAttributes)
         }
 
         this.libraryMap = libraryMap
