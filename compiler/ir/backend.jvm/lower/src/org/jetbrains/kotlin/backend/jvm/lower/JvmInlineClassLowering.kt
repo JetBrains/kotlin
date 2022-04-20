@@ -827,6 +827,12 @@ private class JvmInlineClassLowering(context: JvmBackendContext) : JvmValueClass
         rewriteOpenMethodsForSealed(info)
     }
 
+    /**
+     * Methods of sealed inline classes and their children all go through the top,
+     * where we check, which one we should call in giant switch-case.
+     *
+     * First, we check for noinline children, then for inline children and finally, just run the top's method body.
+     */
     private fun rewriteOpenMethodsForSealed(info: SealedInlineClassInfo) {
         for ((methodSymbol, retargets) in info.methods) {
             val replacements = context.inlineClassReplacements
@@ -869,9 +875,9 @@ private class JvmInlineClassLowering(context: JvmBackendContext) : JvmValueClass
                                 if (retargetClass.symbol == info.top.symbol) copyOldBody()
                                 else irCall(toCall).apply {
                                     if (retargetClass.isInline) {
-                                        putValueArgument(0, irGet(receiver))
+                                        putValueArgument(0, irGet(function.valueParameters[0]))
                                     } else {
-                                        dispatchReceiver = irImplicitCast(irGet(receiver), toCall.owner.parentAsClass.defaultType)
+                                        dispatchReceiver = irGet(function.valueParameters[0])
                                     }
                                     for ((target, source) in toCall.owner.explicitParameters.zip(function.explicitParameters).drop(1)) {
                                         putArgument(target, irGet(source))
@@ -908,7 +914,10 @@ private class JvmInlineClassLowering(context: JvmBackendContext) : JvmValueClass
                     }
 
                     val sealedInlineSubclass = info.sealedInlineSubclasses.first()
-                    val retarget = retargets[sealedInlineSubclass]
+                    var retarget = retargets[sealedInlineSubclass]
+                    if (retarget != null && retarget.owner.origin != JvmLoweredDeclarationOrigin.STATIC_INLINE_CLASS_REPLACEMENT) {
+                        retarget = replacements.getReplacementFunction(retarget.owner)?.symbol
+                    }
 
                     if (retarget != null) {
                         branches += irBranch(
@@ -919,7 +928,7 @@ private class JvmInlineClassLowering(context: JvmBackendContext) : JvmValueClass
                                     0, coerceInlineClasses(
                                         irImplicitCast(irGet(receiver), context.irBuiltIns.anyNType),
                                         context.irBuiltIns.anyNType,
-                                        sealedInlineSubclass.owner.parentAsClass.defaultType
+                                        sealedInlineSubclass.owner.defaultType.findTopSealedInlineSuperClass().defaultType
                                     )
                                 )
                                 for ((target, source) in retarget.owner.explicitParameters.zip(function.explicitParameters).drop(1)) {

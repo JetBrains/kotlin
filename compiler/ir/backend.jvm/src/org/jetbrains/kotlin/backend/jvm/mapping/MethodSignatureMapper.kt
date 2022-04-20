@@ -408,7 +408,8 @@ class MethodSignatureMapper(private val context: JvmBackendContext) {
 
         val calleeInSealedInlineClassTop = calleeParent.isChildOfSealedInlineClass() &&
                 caller?.isToStringImplOfTopSealedInlineClass() == false &&
-                callee.origin == JvmLoweredDeclarationOrigin.STATIC_INLINE_CLASS_REPLACEMENT
+                (callee.origin == JvmLoweredDeclarationOrigin.STATIC_INLINE_CLASS_REPLACEMENT ||
+                        (callee.isFakeOverride && callee.overriddenSymbols.any { it.owner.parentAsClass.isInline }))
 
         if (calleeInSealedInlineClassTop) {
             calleeParent = calleeParent.defaultType.findTopSealedInlineSuperClass()

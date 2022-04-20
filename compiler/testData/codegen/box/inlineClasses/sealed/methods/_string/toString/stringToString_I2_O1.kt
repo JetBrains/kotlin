@@ -32,13 +32,13 @@ fun <T: I2> coerceToI2(v: T): I2 = v
 fun box(): String {
     var res: String = ""
     res = O1.toString()
-    if (res != "I1") return "FAIL 1: $res"
+    if (res != "O1") return "FAIL 1: $res"
 
     res = boxValue(O1).toString()
-    if (res != "I1") return "FAIL 2: $res"
+    if (res != "O1") return "FAIL 2: $res"
 
     res = coerceToI1(O1).toString()
-    if (res != "I1") return "FAIL 3: $res"
+    if (res != "O1") return "FAIL 3: $res"
 
     res = O2.toString()
     if (res != "I2") return "FAIL 4: $res"
