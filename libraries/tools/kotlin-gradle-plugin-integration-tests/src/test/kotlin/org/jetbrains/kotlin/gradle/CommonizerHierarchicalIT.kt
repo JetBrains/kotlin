@@ -153,6 +153,16 @@ class CommonizerHierarchicalIT : BaseGradleIT() {
         }
     }
 
+    @Test
+    fun `test KT-52050 - DIR retains CPointed supertype`() {
+        with(Project("commonize-kt-52050-DIR-supertype")) {
+            build(":compileCommonMainKotlinMetadata") {
+                assertNotContains("Unresolved reference")
+                assertSuccessful()
+            }
+        }
+    }
+
     private object Os {
         private val os = OperatingSystem.current()
         val canCompileApple get() = os.isMacOsX
