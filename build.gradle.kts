@@ -339,9 +339,7 @@ extra["compilerArtifactsForIde"] = listOfNotNull(
     ":kotlin-stdlib-jdk7",
     ":kotlin-stdlib-jdk8",
     ":kotlin-reflect",
-    ":kotlin-main-kts",
-    ":kotlin-gradle-plugin-idea",
-    ":kotlin-gradle-plugin-kpm-android"
+    ":kotlin-main-kts"
 )
 
 // TODO: fix remaining warnings and remove this property.
