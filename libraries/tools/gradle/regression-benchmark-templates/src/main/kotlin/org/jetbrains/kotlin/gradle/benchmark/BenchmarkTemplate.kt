@@ -219,6 +219,9 @@ abstract class BenchmarkTemplate(
                     row["execution median time"] into "Execution: ${row["benchmark"]}"
                 }
             }
+//            .add("Configuration difference") {
+//                column<Int>("Configuration: 1.6.20").getValue(this) * 100 / column<Int>("Configuration: 1.7.0").getValue(this)
+//            }
             .sortBy("scenario")
             .rename("scenario" to "Scenario")
             .reorderColumnsBy {
@@ -366,9 +369,9 @@ abstract class BenchmarkTemplate(
 
     companion object {
         private const val STEP_SEPARATOR = "###############"
-        private const val GRADLE_PROFILER_VERSION = "0.16.0"
+        private const val GRADLE_PROFILER_VERSION = "0.18.0"
         private const val GRADLE_PROFILER_URL: String =
-            "https://repo.gradle.org/gradle/ext-releases-local/org/gradle/profiler/gradle-profiler/$GRADLE_PROFILER_VERSION/gradle-profiler-$GRADLE_PROFILER_VERSION.zip"
+            "https://repo1.maven.org/maven2/org/gradle/profiler/gradle-profiler/$GRADLE_PROFILER_VERSION/gradle-profiler-$GRADLE_PROFILER_VERSION.zip"
 
     }
 }
