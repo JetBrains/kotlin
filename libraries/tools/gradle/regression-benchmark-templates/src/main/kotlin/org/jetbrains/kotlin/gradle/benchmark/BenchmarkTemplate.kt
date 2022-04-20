@@ -13,6 +13,7 @@ import org.eclipse.jgit.api.ResetCommand
 import org.eclipse.jgit.lib.TextProgressMonitor
 import org.jetbrains.kotlinx.dataframe.*
 import org.jetbrains.kotlinx.dataframe.api.*
+import org.jetbrains.kotlinx.dataframe.io.DisplayConfiguration
 import org.jetbrains.kotlinx.dataframe.io.readCSV
 import org.jetbrains.kotlinx.dataframe.io.toHTML
 import org.jetbrains.kotlinx.dataframe.io.writeCSV
@@ -237,7 +238,13 @@ abstract class BenchmarkTemplate(
         val benchmarkHtml = benchmarkOutputDir.resolve("$projectName.html")
         benchmarkHtml.writeText(
             results.toHTML(
-                includeInit = true
+                configuration = DisplayConfiguration(
+                    cellContentLimit = 120
+                ),
+                includeInit = true,
+                getFooter = {
+                    "Results for: $projectName"
+                }
             ).toString()
         )
         println("Result in csv format: ${benchmarkCsv.absolutePath}")
