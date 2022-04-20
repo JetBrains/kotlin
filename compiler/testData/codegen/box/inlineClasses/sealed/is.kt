@@ -19,6 +19,14 @@ fun check(ic: IC): String = when(ic) {
     is ICO -> "OK"
 }
 
+class Check(ic: IC) {
+    val isICAny = ic is ICAny
+
+    val isICC = ic is ICC
+
+    val isICO = ic is ICO
+}
+
 fun box(): String {
     var res = check(ICAny("OK"))
     if (res != "OK") return "FAIL 1 $res"
@@ -28,6 +36,18 @@ fun box(): String {
 
     res = check(ICO)
     if (res != "OK") return "FAIL 3 $res"
+
+    if (!Check(ICAny("OK")).isICAny) return "FAIL 4"
+    if (Check(ICAny("OK")).isICC) return "FAIL 41"
+    if (Check(ICAny("OK")).isICO) return "FAIL 42"
+
+    if (!Check(ICC("OK")).isICC) return "FAIL 5"
+    if (Check(ICC("OK")).isICAny) return "FAIL 51"
+    if (Check(ICC("OK")).isICO) return "FAIL 52"
+
+    if (!Check(ICO).isICO) return "FAIL 6"
+    if (Check(ICO).isICAny) return "FAIL 61"
+    if (Check(ICO).isICC) return "FAIL 62"
 
     return "OK"
 }

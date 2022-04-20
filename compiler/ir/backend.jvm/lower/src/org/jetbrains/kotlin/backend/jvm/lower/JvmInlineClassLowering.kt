@@ -34,6 +34,7 @@ import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
+import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionSymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrValueParameterSymbolImpl
 import org.jetbrains.kotlin.ir.transformStatement
@@ -93,6 +94,10 @@ private class JvmInlineClassLowering(context: JvmBackendContext) : JvmValueClass
         }
     }
 
+    /**
+     * In case of is checks of sealed inline classes, we generate is-Name functions on top and
+     * replace all is checks with calls to these functions.
+     */
     override fun visitTypeOperator(expression: IrTypeOperatorCall): IrExpression {
         if ((currentClass?.irElement as? IrClass)?.isInline == true) {
             return super.visitTypeOperator(expression)
@@ -103,11 +108,13 @@ private class JvmInlineClassLowering(context: JvmBackendContext) : JvmValueClass
             val top = transformed.typeOperand.findTopSealedInlineSuperClass()
             val isCheck = context.inlineClassReplacements.getIsSealedInlineChildFunction(top to transformed.typeOperand.classOrNull!!.owner)
             val underlyingType = transformed.typeOperand.unboxInlineClass()
+            val currentScopeSymbol = (currentScope?.irElement as? IrSymbolOwner)?.symbol
+                ?: error("${currentScope?.irElement?.render()} is not valid symbol owner")
 
             when (transformed.operator) {
                 IrTypeOperator.INSTANCEOF -> {
                     // if (top != null) false else Top.is-Child(top)
-                    with(context.createIrBuilder((currentFunction!!.irElement as IrFunction).symbol)) {
+                    with(context.createIrBuilder(currentScopeSymbol)) {
                         return irBlock {
                             val tmp = irTemporary(transformed.argument)
                             +irIfNull(
@@ -124,7 +131,7 @@ private class JvmInlineClassLowering(context: JvmBackendContext) : JvmValueClass
                 }
                 IrTypeOperator.NOT_INSTANCEOF -> {
                     // if (top != null) true else Top.is-Child(top).not()
-                    with(context.createIrBuilder((currentFunction!!.irElement as IrFunction).symbol)) {
+                    with(context.createIrBuilder(currentScopeSymbol)) {
                         return irBlock {
                             val tmp = irTemporary(transformed.argument)
                             +irIfNull(
@@ -143,7 +150,7 @@ private class JvmInlineClassLowering(context: JvmBackendContext) : JvmValueClass
                 }
                 IrTypeOperator.CAST -> {
                     // if (Top.is-Child(top)) top else CCE
-                    return generateAsCheck(transformed, top, isCheck, underlyingType) {
+                    return generateAsCheck(currentScopeSymbol, transformed, top, isCheck, underlyingType) {
                         irCall(this@JvmInlineClassLowering.context.ir.symbols.throwTypeCastException).also {
                             it.putValueArgument(
                                 0,
@@ -154,7 +161,7 @@ private class JvmInlineClassLowering(context: JvmBackendContext) : JvmValueClass
                 }
                 IrTypeOperator.SAFE_CAST -> {
                     // if (Top.is-Child(top)) top else null
-                    return generateAsCheck(transformed, top, isCheck, underlyingType) { irNull() }
+                    return generateAsCheck(currentScopeSymbol, transformed, top, isCheck, underlyingType) { irNull() }
                 }
                 else -> {
                     return transformed
@@ -165,13 +172,14 @@ private class JvmInlineClassLowering(context: JvmBackendContext) : JvmValueClass
     }
 
     private fun generateAsCheck(
+        currentScopeSymbol: IrSymbol,
         expression: IrTypeOperatorCall,
         top: IrClass,
         isCheck: IrSimpleFunction,
         underlyingType: IrType,
         onFail: IrBuilderWithScope.() -> IrExpression
     ): IrExpression {
-        with(context.createIrBuilder((currentFunction!!.irElement as IrFunction).symbol)) {
+        with(context.createIrBuilder(currentScopeSymbol)) {
             return irBlock {
                 val tmp = irTemporary(expression.argument)
                 +irIfNull(
