@@ -1,9 +1,11 @@
 package org.jetbrains.kotlin.gradle
 
+import org.gradle.api.logging.LogLevel
 import org.gradle.testkit.runner.BuildResult
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.util.checkedReplace
+import org.jetbrains.kotlin.test.KtAssert.assertTrue
 import org.junit.jupiter.api.DisplayName
 import java.nio.file.Path
 import kotlin.io.path.*
@@ -646,6 +648,29 @@ abstract class BaseIncrementalCompilationMultiProjectIT : IncrementalCompilation
                     output
                 )
             }
+        }
+    }
+
+    @DisplayName("KT-49780: Valid outputs after cache corruption exception")
+    @GradleTest
+    fun testValidOutputsWithCacheCorrupted(gradleVersion: GradleVersion) {
+        defaultProject(gradleVersion, buildOptions = defaultBuildOptions.copy(logLevel = LogLevel.DEBUG)) {
+            build("assemble")
+
+            val lookupFile = projectPath.resolve("lib/build/kotlin/compileKotlin/cacheable/caches-jvm/lookups/file-to-id.tab")
+            assertTrue(
+                "Part of lookups cache was not deleted",
+                lookupFile.deleteIfExists()
+            )
+
+            subProject("lib").kotlinSourcesDir().resolve("bar/A.kt").modify {
+                it.replace("fun a() {}", "fun a() {}\nfun newA() {}")
+            }
+
+            build("assemble") {
+                assertOutputContains("Non-incremental compilation will be performed: CACHE_CORRUPTION")
+            }
+            assertTrue("Output is empty", projectPath.resolve(lookupFile).exists())
         }
     }
 }

@@ -190,7 +190,12 @@ abstract class IncrementalCompilerRunner<
         } catch (e: Exception) { // todo: catch only cache corruption
             // todo: warn?
             reporter.report { "Rebuilding because of possible caches corruption: $e" }
-            rebuild(BuildAttribute.CACHE_CORRUPTION)
+            rebuild(BuildAttribute.CACHE_CORRUPTION).also { exitCode ->
+                if (exitCode == ExitCode.OK) {
+                    cachesMayBeCorrupted = false //Do not clean output
+                }
+            }
+
         } finally {
             if (cachesMayBeCorrupted) {
                 cleanOutputsAndLocalStateOnRebuild(args)
