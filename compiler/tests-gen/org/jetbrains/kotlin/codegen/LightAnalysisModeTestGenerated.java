@@ -21506,6 +21506,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
                 runTest("compiler/testData/codegen/box/invokedynamic/sam/kt47510.kt");
             }
 
+            @TestMetadata("kt52040_severalProxyFunsInInit.kt")
+            public void testKt52040_severalProxyFunsInInit() throws Exception {
+                runTest("compiler/testData/codegen/box/invokedynamic/sam/kt52040_severalProxyFunsInInit.kt");
+            }
+
             @TestMetadata("nullabilityAssertions.kt")
             public void testNullabilityAssertions() throws Exception {
                 runTest("compiler/testData/codegen/box/invokedynamic/sam/nullabilityAssertions.kt");
