@@ -34,7 +34,9 @@ internal object DumpedTestListing {
                     emptyLineEncountered = true
                     null
                 }
+
                 emptyLineEncountered -> parseError("Unexpected empty line")
+
                 else -> {
                     val (packageAndClass, functionName) = line.trim()
                         .split(':')
@@ -48,7 +50,7 @@ internal object DumpedTestListing {
                     }
                 }
             }
-        }
+        }.sorted()
     }
 }
 

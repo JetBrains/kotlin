@@ -292,6 +292,8 @@ internal class StaticCacheCompilation(
         cacheMode.staticCacheRootDir ?: fail { "No cache root directory found for cache mode $cacheMode" }
     }
 
+    private val makePerFileCache: Boolean = settings.get<CacheMode>().makePerFileCaches
+
     override fun applySpecificArgs(argsBuilder: ArgsBuilder): Unit = with(argsBuilder) {
         add("-produce", "static_cache")
 
@@ -310,6 +312,8 @@ internal class StaticCacheCompilation(
             "-Xcache-directory=${expectedArtifact.cacheDir.path}",
             "-Xcache-directory=$cacheRootDir"
         )
+        if (makePerFileCache)
+            add("-Xmake-per-file-cache")
     }
 
     override fun applyDependencies(argsBuilder: ArgsBuilder): Unit = with(argsBuilder) {

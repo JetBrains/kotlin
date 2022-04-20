@@ -244,9 +244,11 @@ private object NativeTestSupport {
             CacheMode.Alias.NO -> return CacheMode.WithoutCache
             CacheMode.Alias.STATIC_ONLY_DIST -> false
             CacheMode.Alias.STATIC_EVERYWHERE -> true
+            CacheMode.Alias.STATIC_PER_FILE_EVERYWHERE -> true
         }
+        val makePerFileCaches = cacheMode == CacheMode.Alias.STATIC_PER_FILE_EVERYWHERE
 
-        return CacheMode.WithStaticCache(distribution, kotlinNativeTargets, optimizationMode, staticCacheRequiredForEveryLibrary)
+        return CacheMode.WithStaticCache(distribution, kotlinNativeTargets, optimizationMode, staticCacheRequiredForEveryLibrary, makePerFileCaches)
     }
 
     private fun computeTestMode(enforcedProperties: EnforcedProperties): TestMode =

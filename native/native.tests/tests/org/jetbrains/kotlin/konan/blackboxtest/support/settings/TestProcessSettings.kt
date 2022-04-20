@@ -152,17 +152,20 @@ internal class Timeouts(val executionTimeout: Duration) {
 internal sealed interface CacheMode {
     val staticCacheRootDir: File?
     val staticCacheRequiredForEveryLibrary: Boolean
+    val makePerFileCaches: Boolean
 
     object WithoutCache : CacheMode {
         override val staticCacheRootDir: File? get() = null
         override val staticCacheRequiredForEveryLibrary get() = false
+        override val makePerFileCaches: Boolean = false
     }
 
     class WithStaticCache(
         distribution: Distribution,
         kotlinNativeTargets: KotlinNativeTargets,
         optimizationMode: OptimizationMode,
-        override val staticCacheRequiredForEveryLibrary: Boolean
+        override val staticCacheRequiredForEveryLibrary: Boolean,
+        override val makePerFileCaches: Boolean
     ) : CacheMode {
         override val staticCacheRootDir: File = File(distribution.klib)
             .resolve("cache")
@@ -183,7 +186,7 @@ internal sealed interface CacheMode {
         }
     }
 
-    enum class Alias { NO, STATIC_ONLY_DIST, STATIC_EVERYWHERE }
+    enum class Alias { NO, STATIC_ONLY_DIST, STATIC_EVERYWHERE, STATIC_PER_FILE_EVERYWHERE }
 
     companion object {
         fun defaultForTestTarget(distribution: Distribution, kotlinNativeTargets: KotlinNativeTargets): Alias {

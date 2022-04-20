@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.konan.blackboxtest.support
 /**
  * Represents a package name.
  */
-internal class PackageName private constructor(private val fqn: String, val segments: List<String>) {
+internal class PackageName private constructor(private val fqn: String, val segments: List<String>): Comparable<PackageName> {
     constructor(segments: List<String>) : this(segments.joinToString("."), segments)
     constructor(fqn: String) : this(fqn, if (fqn.isNotEmpty()) fqn.split('.') else emptyList())
 
@@ -17,6 +17,8 @@ internal class PackageName private constructor(private val fqn: String, val segm
     override fun toString() = fqn
     override fun equals(other: Any?) = fqn == (other as? PackageName)?.fqn
     override fun hashCode() = fqn.hashCode()
+
+    override fun compareTo(other: PackageName) = fqn.compareTo(other.fqn)
 
     companion object {
         val EMPTY = PackageName("", emptyList())
@@ -31,7 +33,7 @@ internal class PackageName private constructor(private val fqn: String, val segm
  * [packagePartClassName] - package-part class name (if there is any)
  * [functionName] - name of test function
  */
-internal class TestName {
+internal class TestName: Comparable<TestName> {
     private val fqn: String
 
     val packageName: PackageName
@@ -70,6 +72,8 @@ internal class TestName {
     override fun toString() = fqn
     override fun equals(other: Any?) = fqn == (other as? TestName)?.fqn
     override fun hashCode() = fqn.hashCode()
+
+    override fun compareTo(other: TestName) = fqn.compareTo(other.fqn)
 
     companion object {
         private fun Char.isEffectivelyUpperCase() = if (isUpperCase()) true else !isLowerCase()

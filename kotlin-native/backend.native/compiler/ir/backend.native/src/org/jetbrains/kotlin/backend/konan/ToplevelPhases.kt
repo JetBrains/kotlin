@@ -340,19 +340,18 @@ internal val dumpTestsPhase = makeCustomPhase<Context, IrModuleFragment>(
             val testDumpFile = context.config.testDumpFile
             requireNotNull(testDumpFile)
 
-            if (context.testCasesToDump.isEmpty()) {
-                testDumpFile.writeText("")
-                return@makeCustomPhase
-            }
+            if (!testDumpFile.exists)
+                testDumpFile.createNew()
 
-            testDumpFile.writeText(
-                    context.testCasesToDump.asSequence()
+            if (context.testCasesToDump.isEmpty())
+                return@makeCustomPhase
+
+            testDumpFile.appendLines(
+                    context.testCasesToDump
                             .flatMap { (suiteClassId, functionNames) ->
                                 val suiteName = suiteClassId.asString()
                                 functionNames.asSequence().map { "$suiteName:$it" }
                             }
-                            .sorted()
-                            .joinToString(separator = "\n")
             )
         }
 )
