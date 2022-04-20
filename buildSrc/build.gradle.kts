@@ -193,7 +193,10 @@ dependencies {
     implementation("org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion")
     implementation("org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion")
     implementation("org.jetbrains.kotlin:kotlin-reflect:$kotlinVersion")
-    implementation("com.ullink.slack:simpleslackapi:$slackApiVersion")
+    implementation("com.ullink.slack:simpleslackapi:$slackApiVersion") {
+        exclude(group = "com.google.code.gson", module = "gson") // Workaround for Gradle dependency resolution error
+    }
+    implementation("com.google.code.gson:gson:2.8.9") // Workaround for Gradle dependency resolution error
 
     implementation("io.ktor:ktor-client-auth:$ktorVersion")
     implementation("io.ktor:ktor-client-core:$ktorVersion")
