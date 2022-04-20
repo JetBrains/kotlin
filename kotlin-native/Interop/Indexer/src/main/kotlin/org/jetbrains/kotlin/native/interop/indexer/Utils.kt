@@ -417,7 +417,20 @@ fun Compilation.precompileHeaders(): CompilationWithPCH = withIndex { index ->
 
 internal fun Compilation.withPrecompiledHeader(translationUnit: CXTranslationUnit): CompilationWithPCH {
     val precompiledHeader = Files.createTempFile(null, ".pch").toFile().apply { this.deleteOnExit() }
-    clang_saveTranslationUnit(translationUnit, precompiledHeader.absolutePath, 0)
+    val errorCode = clang_saveTranslationUnit(translationUnit, precompiledHeader.absolutePath, 0)
+    if (errorCode != 0) {
+        error(buildString {
+            appendLine("""
+                clang_saveTranslationUnit failed with $errorCode;
+                output = ${precompiledHeader.absolutePath}
+                output size is ${precompiledHeader.length()}, exists = ${precompiledHeader.exists()}
+                arguments = ${compilerArgs.joinToString(" ")}
+                preamble:
+                """.trimIndent())
+
+            this.appendPreamble(this@withPrecompiledHeader)
+        })
+    }
 
     return CompilationWithPCH(
         this.compilerArgs,
