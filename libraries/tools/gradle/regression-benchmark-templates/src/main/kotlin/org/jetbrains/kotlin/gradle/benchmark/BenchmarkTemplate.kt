@@ -20,7 +20,6 @@ import org.jetbrains.kotlinx.dataframe.math.median
 import java.io.File
 import java.io.InputStream
 import java.util.zip.ZipInputStream
-import kotlin.reflect.typeOf
 import kotlin.script.experimental.annotations.KotlinScript
 import kotlin.script.experimental.api.*
 import kotlin.script.experimental.util.PropertiesCollection
@@ -203,12 +202,12 @@ abstract class BenchmarkTemplate(
                     .remove("version", "tasks") // removing unused columns
                     .remove { nameContains("warm-up build") } // removing warm-up times
                     .add("median build time") { // squashing build times into median build time
-                        valuesOf<Int>().median(typeOf<Int>())
+                        valuesOf<Int>().median()
                     }
                     .remove { nameContains("measured build") } // removing iterations results
                     .groupBy("scenario").aggregate { // merging configuration and build times into one row
                         first { it.values().contains("task start") }["median build time"] into "tasks start median time"
-                        first { it.values().contains("execution") }["median build time"] into "execution median time"
+                        first { it.values().contains("total execution time") }["median build time"] into "execution median time"
                     }
                     .add("benchmark") { result.name }
             }
@@ -350,7 +349,7 @@ abstract class BenchmarkTemplate(
         }
     }
 
-    private fun <T : Any> DataFrame<*>.rowToColumn(
+    private fun <T : Any?> DataFrame<*>.rowToColumn(
         rowName: String,
         typeConversion: (Any?) -> T
     ): List<T> =
