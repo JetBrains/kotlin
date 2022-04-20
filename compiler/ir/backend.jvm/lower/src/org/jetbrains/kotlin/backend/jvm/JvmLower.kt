@@ -116,10 +116,7 @@ internal val localDeclarationsPhase = makeIrFilePhase(
     { context ->
         LocalDeclarationsLowering(
             context,
-            object : LocalNameProvider {
-                override fun localName(declaration: IrDeclarationWithName): String =
-                    NameUtils.sanitizeAsJavaIdentifier(super.localName(declaration))
-            },
+            NameUtils::sanitizeAsJavaIdentifier,
             object : VisibilityPolicy {
                 // Note: any condition that results in non-`LOCAL` visibility here should be duplicated in `JvmLocalClassPopupLowering`,
                 // else it won't detect the class as local.

@@ -2243,6 +2243,12 @@ public class IrBytecodeListingTestGenerated extends AbstractIrBytecodeListingTes
         }
 
         @Test
+        @TestMetadata("severalProxyFunsInInit.kt")
+        public void testSeveralProxyFunsInInit() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeListing/sam/severalProxyFunsInInit.kt");
+        }
+
+        @Test
         @TestMetadata("specializedFunInterface.kt")
         public void testSpecializedFunInterface() throws Exception {
             runTest("compiler/testData/codegen/bytecodeListing/sam/specializedFunInterface.kt");

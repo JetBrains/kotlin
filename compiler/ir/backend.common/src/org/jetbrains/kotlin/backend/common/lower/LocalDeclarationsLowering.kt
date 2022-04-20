@@ -33,15 +33,6 @@ import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
-interface LocalNameProvider {
-    fun localName(declaration: IrDeclarationWithName): String =
-        declaration.name.asString()
-
-    companion object {
-        val DEFAULT = object : LocalNameProvider {}
-    }
-}
-
 interface VisibilityPolicy {
     fun forClass(declaration: IrClass, inInlineFunctionScope: Boolean): DescriptorVisibility =
         declaration.visibility
@@ -77,7 +68,7 @@ object BOUND_RECEIVER_PARAMETER : IrDeclarationOriginImpl("BOUND_RECEIVER_PARAME
 */
 class LocalDeclarationsLowering(
     val context: CommonBackendContext,
-    val localNameProvider: LocalNameProvider = LocalNameProvider.DEFAULT,
+    val localNameSanitizer: (String) -> String = { it },
     val visibilityPolicy: VisibilityPolicy = VisibilityPolicy.DEFAULT,
     val suggestUniqueNames: Boolean = true, // When `true` appends a `-#index` suffix to lifted declaration names
     val forceFieldsForInlineCaptures: Boolean = false // See `LocalClassContext`
@@ -594,13 +585,14 @@ class LocalDeclarationsLowering(
         }
 
         private fun suggestLocalName(declaration: IrDeclarationWithName): String {
+            val declarationName = localNameSanitizer(declaration.name.asString())
             localFunctions[declaration]?.let {
-                val baseName = if (declaration.name.isSpecial) "lambda" else declaration.name
+                val baseName = if (declaration.name.isSpecial) "lambda" else declarationName
                 if (it.index >= 0)
-                    return if (suggestUniqueNames) "$baseName-${it.index}" else "$baseName"
+                    return if (suggestUniqueNames) "$baseName-${it.index}" else baseName
             }
 
-            return localNameProvider.localName(declaration)
+            return declarationName
         }
 
         private fun generateNameForLiftedDeclaration(
