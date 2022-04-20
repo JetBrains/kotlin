@@ -1,0 +1,20 @@
+diff --git a/build.gradle b/build.gradle
+index 5e2a7230..6093f13c 100644
+--- a/build.gradle
++++ b/build.gradle
+@@ -2,7 +2,7 @@
+ buildscript {
+ 
+     ext {
+-        kotlin_version = '1.6.10'
++        kotlin_version = '1.6.20'
+         spotless = "6.1.2"
+         anvil_version = "2.3.11-1-6-10"
+         gradle_plugin = "7.0.3"
+@@ -70,4 +70,4 @@ fladle {
+     }
+ }
+ 
+-apply plugin: 'android-reporting'
+\ No newline at end of file
++apply plugin: 'android-reporting'

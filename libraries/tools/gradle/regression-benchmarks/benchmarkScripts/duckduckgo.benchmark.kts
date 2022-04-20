@@ -4,13 +4,13 @@
 @file:BenchmarkProject(
     name = "duckduckgo",
     gitUrl = "https://github.com/duckduckgo/Android.git",
-    gitCommitSha = "659bd5aaac1fba922a6df9053daa2b7bcd610375"
+    gitCommitSha = "18e2fcb53a6de6f4f9ef90f27a587d88b6d2e140"
 )
 
 import java.io.File
 
 val stableReleasePatch = {
-    "duckduckgo-kotlin-1.6.10.patch" to File("benchmarkScripts/files/duckduckgo-kotlin-1.6.10.patch").inputStream()
+    "duckduckgo-kotlin-1.6.20.patch" to File("benchmarkScripts/files/duckduckgo-kotlin-1.6.20.patch").inputStream()
 }
 
 val currentReleasePatch = {
@@ -56,7 +56,7 @@ runAllBenchmarks(
         }
     },
     mapOf(
-        "1.6.10" to stableReleasePatch,
-        "1.6.20" to currentReleasePatch
+        "1.6.20" to stableReleasePatch,
+        "1.7.0" to currentReleasePatch
     )
 )
