@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeToken
 import org.jetbrains.kotlin.analysis.api.types.KtType
 import org.jetbrains.kotlin.builtins.functions.FunctionClassKind
 import org.jetbrains.kotlin.fir.resolve.FirSamResolverImpl
-import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.types.canBeNull
 import org.jetbrains.kotlin.fir.types.functionClassKind
 import org.jetbrains.kotlin.fir.types.typeApproximator
@@ -30,7 +29,7 @@ internal class KtFirTypeInfoProvider(
             firSession,
             analysisSession.getScopeSessionFor(firSession),
         )
-        return samResolver.getFunctionTypeForPossibleSamType(coneType) != null
+        return samResolver.getSamInfoForPossibleSamType(coneType) != null
     }
 
     override fun getFunctionClassKind(type: KtType): FunctionClassKind? {

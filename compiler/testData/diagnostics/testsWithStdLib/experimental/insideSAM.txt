@@ -1,0 +1,19 @@
+package
+
+public fun regressionTestOverrides(): kotlin.Unit
+@ExperimentalKotlinAnnotation public fun suppressed(): kotlin.Unit
+
+@kotlin.RequiresOptIn public final annotation class ExperimentalKotlinAnnotation : kotlin.Annotation {
+    public constructor ExperimentalKotlinAnnotation()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+internal fun interface StableInterface {
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    @ExperimentalKotlinAnnotation public abstract fun experimentalMethod(): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+

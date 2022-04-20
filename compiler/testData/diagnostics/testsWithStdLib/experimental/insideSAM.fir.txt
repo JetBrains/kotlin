@@ -1,0 +1,33 @@
+FILE: insideSAM.fir.kt
+    @R|kotlin/RequiresOptIn|() public final annotation class ExperimentalKotlinAnnotation : R|kotlin/Annotation| {
+        public constructor(): R|ExperimentalKotlinAnnotation| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    internal abstract fun interface StableInterface : R|kotlin/Any| {
+        @R|ExperimentalKotlinAnnotation|() public abstract fun experimentalMethod(): R|kotlin/Unit|
+
+    }
+    public final fun regressionTestOverrides(): R|kotlin/Unit| {
+        lval anonymous: R|StableInterface| = object : R|StableInterface| {
+            private constructor(): R|<anonymous>| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final override fun experimentalMethod(): R|kotlin/Unit| {
+            }
+
+        }
+
+        lval lambda: R|StableInterface| = R|/StableInterface|(<L> = StableInterface@fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+            ^@StableInterface Unit
+        }
+        )
+    }
+    @R|ExperimentalKotlinAnnotation|() public final fun suppressed(): R|kotlin/Unit| {
+        lval lambda: R|StableInterface| = R|/StableInterface|(<L> = StableInterface@fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+            ^@StableInterface Unit
+        }
+        )
+    }

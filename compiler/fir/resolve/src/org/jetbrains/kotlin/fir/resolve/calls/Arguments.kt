@@ -506,7 +506,7 @@ private fun Candidate.getExpectedTypeWithSAMConversion(
 
     // TODO: resolvedCall.registerArgumentWithSamConversion(argument, SamConversionDescription(convertedTypeByOriginal, convertedTypeByCandidate!!))
 
-    val expectedFunctionType = context.bodyResolveComponents.samResolver.getFunctionTypeForPossibleSamType(candidateExpectedType)
+    val (_, expectedFunctionType) = context.bodyResolveComponents.samResolver.getSamInfoForPossibleSamType(candidateExpectedType)
         ?: return null
     return runIf(argument.isFunctional(session, scopeSession, expectedFunctionType)) {
         usesSAM = true

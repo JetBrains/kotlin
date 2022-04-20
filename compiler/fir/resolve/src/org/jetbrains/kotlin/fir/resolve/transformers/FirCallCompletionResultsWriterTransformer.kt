@@ -589,19 +589,16 @@ class FirCallCompletionResultsWriterTransformer(
                     val firRegularClass =
                         session.symbolProvider.getClassLikeSymbolByClassId(expectedArgumentType.lookupTag.classId)?.fir as? FirRegularClass
 
-                    firRegularClass?.let {
-                        val functionType = samResolver.getFunctionTypeForPossibleSamType(firRegularClass.defaultType())
-                        if (functionType != null) {
-                            createFunctionalType(
-                                functionType.typeArguments.dropLast(1).map { it as ConeKotlinType },
-                                null,
-                                functionType.typeArguments.last() as ConeKotlinType,
-                                functionType.classId?.relativeClassName?.asString()
-                                    ?.startsWith(FunctionClassKind.SuspendFunction.classNamePrefix) == true
-                            )
-                        } else {
-                            null
-                        }
+                    firRegularClass?.let answer@{
+                        val (_, functionType) = samResolver.getSamInfoForPossibleSamType(firRegularClass.defaultType())
+                            ?: return@answer null
+                        createFunctionalType(
+                            functionType.typeArguments.dropLast(1).map { it as ConeKotlinType },
+                            null,
+                            functionType.typeArguments.last() as ConeKotlinType,
+                            functionType.classId?.relativeClassName?.asString()
+                                ?.startsWith(FunctionClassKind.SuspendFunction.classNamePrefix) == true
+                        )
                     }
                 }
                 else -> null
