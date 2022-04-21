@@ -236,7 +236,8 @@ abstract class BasicWasmBoxTest(
     private fun createConfig(languageVersionSettings: LanguageVersionSettings?): JsConfig {
         val configuration = environment.configuration.copy()
         configuration.put(CommonConfigurationKeys.MODULE_NAME, TEST_MODULE)
-        configuration.put(JSConfigurationKeys.WASM_ENABLE_ARRAY_RANGE_CHECKS, false)
+        configuration.put(JSConfigurationKeys.WASM_ENABLE_ARRAY_RANGE_CHECKS, true)
+        configuration.put(JSConfigurationKeys.WASM_ENABLE_ASSERTS, true)
         configuration.languageVersionSettings = languageVersionSettings
             ?: LanguageVersionSettingsImpl(LanguageVersion.LATEST_STABLE, ApiVersion.LATEST_STABLE)
         return JsConfig(project, configuration, CompilerEnvironment, null, null)

@@ -41,6 +41,7 @@ where advanced options include:
   -Xwasm-debug-info          Add debug info to WebAssembly compiled module
   -Xwasm-enable-array-range-checks
                              Turn on range checks for the array access functions
+  -Xwasm-enable-asserts      Turn on asserts
   -Xwasm-kclass-fqn          Enable support for FQ names in KClass
   -Xwasm-launcher=esm|nodejs|d8 Picks flavor for the wasm launcher. Default is ESM.
   -Xallow-kotlin-package     Allow compiling code in package 'kotlin' and allow not requiring kotlin.stdlib in module-info
