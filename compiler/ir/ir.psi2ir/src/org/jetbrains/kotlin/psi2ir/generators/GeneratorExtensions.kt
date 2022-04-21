@@ -23,6 +23,8 @@ open class GeneratorExtensions : StubGeneratorExtensions() {
     open class SamConversion {
         open fun isPlatformSamType(type: KotlinType): Boolean = false
 
+        open fun isCarefulApproximationOfContravariantProjection(): Boolean = false
+
         companion object Instance : SamConversion()
     }
 

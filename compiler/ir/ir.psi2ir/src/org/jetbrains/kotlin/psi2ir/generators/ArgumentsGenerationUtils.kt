@@ -737,8 +737,9 @@ fun StatementGenerator.generateSamConversionForValueArgumentsIfRequired(call: Ca
 }
 
 private fun StatementGenerator.getSamTypeForValueParameter(valueParameter: ValueParameterDescriptor): KotlinType? {
-    val approximatedSamType = context.samTypeApproximator.getSamTypeForValueParameter(valueParameter)
-        ?: return null
+    val approximatedSamType = context.samTypeApproximator.getSamTypeForValueParameter(
+        valueParameter, context.extensions.samConversion.isCarefulApproximationOfContravariantProjection(),
+    ) ?: return null
     if (!context.extensions.samConversion.isSamType(approximatedSamType))
         return null
     val classDescriptor = approximatedSamType.constructor.declarationDescriptor
