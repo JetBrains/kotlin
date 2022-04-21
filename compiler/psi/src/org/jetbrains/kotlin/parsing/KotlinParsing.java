@@ -1511,13 +1511,14 @@ public class KotlinParsing extends AbstractKotlinParsing {
 
     /*
      * propertyDelegate
-     *   : "by" expression
+     *   : "by" modifiers expression
      *   ;
      */
     private void parsePropertyDelegate() {
         assert _at(BY_KEYWORD);
         PsiBuilder.Marker delegate = mark();
         advance(); // BY_KEYWORD
+        parseModifierList(DEFAULT, VISIBILITY_MODIFIERS);
         myExpressionParsing.parseExpression();
         delegate.done(PROPERTY_DELEGATE);
     }
