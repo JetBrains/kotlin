@@ -25,15 +25,15 @@ class K2 : JavaClass() {
 }
 
 class K3 : JavaClass() {
-    override fun foo(x: Int, y: Continuation<String>): Any? = null
+    <!NOTHING_TO_OVERRIDE!>override<!> fun foo(x: Int, y: Continuation<String>): Any? = null
 }
 
 fun builder(block: suspend () -> Unit) {}
 
 fun main(x: Continuation<String>) {
-    JavaClass().foo(5, x)
-    K1().foo(6, x)
-    K2().foo(7, x)
+    JavaClass().foo(5, <!TOO_MANY_ARGUMENTS!>x<!>)
+    K1().foo(6, <!TOO_MANY_ARGUMENTS!>x<!>)
+    K2().foo(7, <!TOO_MANY_ARGUMENTS!>x<!>)
     K3().foo(8, x)
 
     builder {
@@ -42,9 +42,9 @@ fun main(x: Continuation<String>) {
         K2().foo(3)
         K3().foo(4)
 
-        JavaClass().foo(5, x)
-        K1().foo(6, x)
-        K2().foo(7, x)
+        JavaClass().foo(5, <!TOO_MANY_ARGUMENTS!>x<!>)
+        K1().foo(6, <!TOO_MANY_ARGUMENTS!>x<!>)
+        K2().foo(7, <!TOO_MANY_ARGUMENTS!>x<!>)
         K3().foo(8, x)
     }
 }

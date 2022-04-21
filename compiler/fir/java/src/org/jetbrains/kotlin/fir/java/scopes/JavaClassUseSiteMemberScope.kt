@@ -378,7 +378,9 @@ class JavaClassUseSiteMemberScope(
             // regular rules
             when (explicitlyDeclaredFunctionWithNaturalName) {
                 null -> {
-                    destination += resultOfIntersectionWithNaturalName.chosenSymbol
+                    val chosenSymbol = resultOfIntersectionWithNaturalName.chosenSymbol
+                    if (!chosenSymbol.isVisibleInCurrentClass()) continue
+                    destination += chosenSymbol
                     resultsOfIntersectionToSaveInCache += resultOfIntersectionWithNaturalName
                 }
                 else -> {
