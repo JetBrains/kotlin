@@ -170,6 +170,11 @@ public class InvalidationTestGenerated extends AbstractInvalidationTest {
         runTest("js/js.translator/testData/incremental/invalidation/transitiveInlineFunction/");
     }
 
+    @TestMetadata("unicodeSerializationAndDeserialization")
+    public void testUnicodeSerializationAndDeserialization() throws Exception {
+        runTest("js/js.translator/testData/incremental/invalidation/unicodeSerializationAndDeserialization/");
+    }
+
     @TestMetadata("variance")
     public void testVariance() throws Exception {
         runTest("js/js.translator/testData/incremental/invalidation/variance/");

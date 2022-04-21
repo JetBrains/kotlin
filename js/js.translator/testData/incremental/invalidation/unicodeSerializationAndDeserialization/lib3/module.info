@@ -1,0 +1,11 @@
+STEP 0:
+    dependencies: stdlib
+    dirty: l3.kt
+STEP 1:
+    dependencies: stdlib
+    flags: FP
+STEP 2:
+    dependencies: stdlib
+    modifications:
+        U : l3.kt.2.txt -> l3.kt
+    dirty: l3.kt
