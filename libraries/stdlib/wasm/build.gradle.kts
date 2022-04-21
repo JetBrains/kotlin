@@ -143,7 +143,7 @@ val compileTestKotlinWasm by tasks.existing(KotlinCompile::class) {
 }
 
 tasks.named<KotlinJsIrLink>("compileTestDevelopmentExecutableKotlinWasm") {
-    (this as KotlinCompile<*>).kotlinOptions.freeCompilerArgs += "-Xwasm-enable-array-range-checks"
+    (this as KotlinCompile<*>).kotlinOptions.freeCompilerArgs += listOf("-Xwasm-enable-array-range-checks", "-Xwasm-enable-asserts")
 }
 
 val runtimeElements by configurations.creating {}

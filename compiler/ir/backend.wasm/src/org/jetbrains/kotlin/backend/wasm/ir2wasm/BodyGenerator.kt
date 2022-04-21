@@ -259,9 +259,15 @@ class BodyGenerator(val context: WasmFunctionCodegenContext) : IrElementVisitorV
             return
         }
 
-        // Range check intrinsic is a special case because it doesn't require arguments on the stack.
-        if (call.symbol == wasmSymbols.rangeCheck &&
-            backendContext.configuration.getNotNull(JSConfigurationKeys.WASM_ENABLE_ARRAY_RANGE_CHECKS) == false) {
+        // Some intrinsics are a special case because we want to remove them completely, including their arguments.
+        val removableIntrinsics = buildList {
+            if (backendContext.configuration.getNotNull(JSConfigurationKeys.WASM_ENABLE_ARRAY_RANGE_CHECKS) == false)
+                add(wasmSymbols.rangeCheck)
+            if (backendContext.configuration.getNotNull(JSConfigurationKeys.WASM_ENABLE_ASSERTS) == false)
+                addAll(wasmSymbols.assertFuncs)
+        }
+
+        if (call.symbol in removableIntrinsics) {
             body.buildGetUnit()
             return
         }

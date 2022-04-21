@@ -31,6 +31,8 @@ class WasmSymbols(
     private val symbolTable: SymbolTable
 ) : Symbols<WasmBackendContext>(context, context.irBuiltIns, symbolTable) {
 
+    private val kotlinTopLevelPackage: PackageViewDescriptor =
+        context.module.getPackage(FqName("kotlin"))
     private val wasmInternalPackage: PackageViewDescriptor =
         context.module.getPackage(FqName("kotlin.wasm.internal"))
     private val collectionsPackage: PackageViewDescriptor =
@@ -157,6 +159,7 @@ class WasmSymbols(
     val wasmRefCast = getInternalFunction("wasm_ref_cast")
 
     val rangeCheck = getInternalFunction("rangeCheck")
+    val assertFuncs = findFunctions(kotlinTopLevelPackage.memberScope, Name.identifier("assert"))
 
     val boxIntrinsic: IrSimpleFunctionSymbol = getInternalFunction("boxIntrinsic")
     val unboxIntrinsic: IrSimpleFunctionSymbol = getInternalFunction("unboxIntrinsic")
