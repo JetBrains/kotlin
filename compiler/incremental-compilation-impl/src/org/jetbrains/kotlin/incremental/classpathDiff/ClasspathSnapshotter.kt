@@ -59,7 +59,6 @@ object ClassSnapshotter {
     fun snapshot(
         classes: List<ClassFileWithContents>,
         granularity: ClassSnapshotGranularity = CLASS_MEMBER_LEVEL,
-        includeDebugInfoInJavaSnapshot: Boolean = false,
         metrics: BuildMetricsReporter = DoNothingBuildMetricsReporter
     ): List<ClassSnapshot> {
         val classesInfo: List<BasicClassInfo> = metrics.measure(BuildTime.READ_CLASSES_BASIC_INFO) {
@@ -75,7 +74,7 @@ object ClassSnapshotter {
                     snapshotKotlinClass(it, granularity)
                 }
                 else -> metrics.measure(BuildTime.SNAPSHOT_JAVA_CLASSES) {
-                    JavaClassSnapshotter.snapshot(it, granularity, includeDebugInfoInJavaSnapshot)
+                    JavaClassSnapshotter.snapshot(it, granularity)
                 }
             }
         }
@@ -86,7 +85,7 @@ object ClassSnapshotter {
         val kotlinClassInfo =
             KotlinClassInfo.createFrom(classFile.classInfo.classId, classFile.classInfo.kotlinClassHeader!!, classFile.contents)
         val classId = kotlinClassInfo.classId
-        val classAbiHash = KotlinClassInfoExternalizer.toByteArray(kotlinClassInfo).md5()
+        val classAbiHash = KotlinClassInfoExternalizer.toByteArray(kotlinClassInfo).hashToLong()
         val classMemberLevelSnapshot = kotlinClassInfo.takeIf { granularity == CLASS_MEMBER_LEVEL }
 
         return when (kotlinClassInfo.classKind) {
@@ -208,4 +207,10 @@ private object DirectoryOrJarContentsReader {
         }
         return relativePathsToContents.toSortedMap().toMap(LinkedHashMap())
     }
+}
+
+internal fun ByteArray.hashToLong(): Long {
+    // Note: md5 is 128-bit while Long is 64-bit.
+    // Use md5 for now until we find a better 64-bit hash function.
+    return md5()
 }
