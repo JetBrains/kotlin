@@ -28,7 +28,6 @@ internal class LLFirFileAnnotationsResolveTransformer(
     implicitTypeOnly = false,
     scopeSession = scopeSession,
     returnTypeCalculator = createReturnTypeCalculatorForIDE(
-        session,
         scopeSession,
         implicitBodyResolveComputationSession,
         ::LLFirDesignatedImpliciteTypesBodyResolveTransformerForReturnTypeCalculator

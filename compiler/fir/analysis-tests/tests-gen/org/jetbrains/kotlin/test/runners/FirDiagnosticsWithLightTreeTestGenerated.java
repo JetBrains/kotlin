@@ -255,6 +255,12 @@ public class FirDiagnosticsWithLightTreeTestGenerated extends AbstractFirDiagnos
         }
 
         @Test
+        @TestMetadata("implicitTypeFromOtherModule.kt")
+        public void testImplicitTypeFromOtherModule() throws Exception {
+            runTest("compiler/fir/analysis-tests/testData/resolve/implicitTypeFromOtherModule.kt");
+        }
+
+        @Test
         @TestMetadata("implicitTypeInFakeOverride.kt")
         public void testImplicitTypeInFakeOverride() throws Exception {
             runTest("compiler/fir/analysis-tests/testData/resolve/implicitTypeInFakeOverride.kt");

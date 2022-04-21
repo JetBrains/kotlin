@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.element.builder.LLFirDesi
 internal object PersistentCheckerContextFactory {
     fun createEmptyPersistenceCheckerContext(sessionHolder: SessionHolder): PersistentCheckerContext {
         val returnTypeCalculator = createReturnTypeCalculatorForIDE(
-            sessionHolder.session,
             sessionHolder.scopeSession,
             ImplicitBodyResolveComputationSession(),
             ::LLFirDesignatedImpliciteTypesBodyResolveTransformerForReturnTypeCalculator

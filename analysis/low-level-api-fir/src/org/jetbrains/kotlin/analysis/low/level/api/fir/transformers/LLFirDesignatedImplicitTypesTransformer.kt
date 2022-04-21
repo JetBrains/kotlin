@@ -38,7 +38,6 @@ internal class LLFirDesignatedImplicitTypesTransformer(
     scopeSession = scopeSession,
     firTowerDataContextCollector = towerDataContextCollector,
     returnTypeCalculator = createReturnTypeCalculatorForIDE(
-        session,
         scopeSession,
         implicitBodyResolveComputationSession,
         ::LLFirDesignatedImpliciteTypesBodyResolveTransformerForReturnTypeCalculator

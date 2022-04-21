@@ -219,6 +219,11 @@ public class LazyBodyIsNotTouchedTilContractsPhaseTestGenerated extends Abstract
         runTest("compiler/fir/analysis-tests/testData/resolve/genericReceiverPropertyOverride.kt");
     }
 
+    @TestMetadata("implicitTypeFromOtherModule.kt")
+    public void testImplicitTypeFromOtherModule() throws Exception {
+        runTest("compiler/fir/analysis-tests/testData/resolve/implicitTypeFromOtherModule.kt");
+    }
+
     @TestMetadata("implicitTypeInFakeOverride.kt")
     public void testImplicitTypeInFakeOverride() throws Exception {
         runTest("compiler/fir/analysis-tests/testData/resolve/implicitTypeInFakeOverride.kt");
