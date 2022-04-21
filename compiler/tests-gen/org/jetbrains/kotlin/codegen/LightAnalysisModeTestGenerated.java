@@ -38875,6 +38875,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
             runTest("compiler/testData/codegen/box/vararg/kt46092.kt");
         }
 
+        @TestMetadata("kt52146_samWithSelfTypeAndStarProjection.kt")
+        public void testKt52146_samWithSelfTypeAndStarProjection() throws Exception {
+            runTest("compiler/testData/codegen/box/vararg/kt52146_samWithSelfTypeAndStarProjection.kt");
+        }
+
         @TestMetadata("kt581.kt")
         public void testKt581() throws Exception {
             runTest("compiler/testData/codegen/box/vararg/kt581.kt");
