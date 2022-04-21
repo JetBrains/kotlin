@@ -292,6 +292,30 @@ public class GetOrBuildFirTestGenerated extends AbstractGetOrBuildFirTest {
         }
 
         @Test
+        @TestMetadata("intLiteral_minusOne_entire.kt")
+        public void testIntLiteral_minusOne_entire() throws Exception {
+            runTest("analysis/low-level-api-fir/testdata/getOrBuildFir/expressions/intLiteral_minusOne_entire.kt");
+        }
+
+        @Test
+        @TestMetadata("intLiteral_minusOne_justOne.kt")
+        public void testIntLiteral_minusOne_justOne() throws Exception {
+            runTest("analysis/low-level-api-fir/testdata/getOrBuildFir/expressions/intLiteral_minusOne_justOne.kt");
+        }
+
+        @Test
+        @TestMetadata("intLiteral_plusOne_entire.kt")
+        public void testIntLiteral_plusOne_entire() throws Exception {
+            runTest("analysis/low-level-api-fir/testdata/getOrBuildFir/expressions/intLiteral_plusOne_entire.kt");
+        }
+
+        @Test
+        @TestMetadata("intLiteral_plusOne_justOne.kt")
+        public void testIntLiteral_plusOne_justOne() throws Exception {
+            runTest("analysis/low-level-api-fir/testdata/getOrBuildFir/expressions/intLiteral_plusOne_justOne.kt");
+        }
+
+        @Test
         @TestMetadata("isExpression.kt")
         public void testIsExpression() throws Exception {
             runTest("analysis/low-level-api-fir/testdata/getOrBuildFir/expressions/isExpression.kt");
