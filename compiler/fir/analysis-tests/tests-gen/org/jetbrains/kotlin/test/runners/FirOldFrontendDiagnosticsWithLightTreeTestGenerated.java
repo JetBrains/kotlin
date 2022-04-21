@@ -15386,6 +15386,18 @@ public class FirOldFrontendDiagnosticsWithLightTreeTestGenerated extends Abstrac
                 }
 
                 @Test
+                @TestMetadata("kt45461_35.kt")
+                public void testKt45461_35() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/inference/emptyIntersectionTypes/kt45461_35.kt");
+                }
+
+                @Test
+                @TestMetadata("kt45461_35_Enabled.kt")
+                public void testKt45461_35_Enabled() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/inference/emptyIntersectionTypes/kt45461_35_Enabled.kt");
+                }
+
+                @Test
                 @TestMetadata("kt45461_4.kt")
                 public void testKt45461_4() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/inference/emptyIntersectionTypes/kt45461_4.kt");
