@@ -127,6 +127,14 @@ fun Project.createGradleCommonSourceSet(): SourceSet {
         }
     }
 
+    // Common outputs will also produce '${project.name}.kotlin_module' file, so we need to avoid
+    // files clash
+    tasks.named<KotlinCompile>("compile${commonSourceSet.name.capitalize()}Kotlin") {
+        kotlinOptions {
+            moduleName = "${this@createGradleCommonSourceSet.name}_${commonSourceSet.name}"
+        }
+    }
+
     return commonSourceSet
 }
 
@@ -202,19 +210,6 @@ fun Project.wireGradleVariantToCommonGradleVariant(
     // Allowing to use 'internal' classes/methods from common source code
     (extensions.getByName("kotlin") as KotlinSingleTargetExtension).target.compilations.run {
         getByName(wireSourceSet.name).associateWith(getByName(commonSourceSet.name))
-    }
-
-    // Common outputs will also produce '${project.name}.kotlin_module' file, so we need to avoid
-    // files clash
-    val compileTaskName = if (wireSourceSet.name == SourceSet.MAIN_SOURCE_SET_NAME) {
-        "compileKotlin"
-    } else {
-        "compile${wireSourceSet.name.capitalize()}Kotlin"
-    }
-    tasks.named<KotlinCompile>(compileTaskName) {
-        kotlinOptions {
-            moduleName = "${this@wireGradleVariantToCommonGradleVariant.name}_${wireSourceSet.name}"
-        }
     }
 
     configurations[wireSourceSet.apiConfigurationName].extendsFrom(
@@ -411,6 +406,13 @@ fun Project.createGradlePluginVariant(
                     objects.named(variant.minimalSupportedGradleVersion)
                 )
             }
+        }
+    }
+
+    // KT-52138: Make module name the same for all variants, so KSP could access internal methods/properties
+    tasks.named<KotlinCompile>("compile${variantSourceSet.name.capitalize()}Kotlin") {
+        kotlinOptions {
+            moduleName = this@createGradlePluginVariant.name
         }
     }
 
