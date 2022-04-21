@@ -100,7 +100,7 @@ class UpToDateIT : KGPBaseTest() {
         val originalPaths get() = originalCompilerCp.map { it.replace("\\", "/") }.joinToString(", ") { "'$it'" }
 
         override fun initProject(project: TestProject) = with(project) {
-            val pluginSuffix = "kotlin_gradle_plugin"
+            val pluginSuffix = "kotlin_gradle_plugin_common"
             buildGradle.appendText(
                 "\nafterEvaluate { println 'compiler_cp=' + compileKotlin.getDefaultCompilerClasspath\$$pluginSuffix().toList() }"
             )
