@@ -17878,6 +17878,183 @@ public class IrCodegenBoxWasmTestGenerated extends AbstractIrCodegenBoxWasmTest 
                         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
                     }
 
+                    @TestMetadata("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/hashCode")
+                    @TestDataPath("$PROJECT_ROOT")
+                    @RunWith(JUnit3RunnerWithInners.class)
+                    public static class HashCode extends AbstractIrCodegenBoxWasmTest {
+                        private void runTest(String testDataFilePath) throws Exception {
+                            KotlinTestUtils.runTest0(this::doTest, TargetBackend.WASM, testDataFilePath);
+                        }
+
+                        private void runTest(String testDataFilePath, java.util.function.Function<String, String> transformer) throws Exception {
+                            KotlinTestUtils.runTest0(path -> doTestWithTransformer(path, transformer), TargetBackend.WASM, testDataFilePath);
+                        }
+
+                        public void testAllFilesPresentInHashCode() throws Exception {
+                            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/hashCode"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+                        }
+
+                        @TestMetadata("stringHashCodeN.kt")
+                        public void testStringHashCodeN() throws Exception {
+                            runTest("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/hashCode/stringHashCodeN.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+                        }
+
+                        @TestMetadata("stringHashCode_I1.kt")
+                        public void testStringHashCode_I1() throws Exception {
+                            runTest("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/hashCode/stringHashCode_I1.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+                        }
+
+                        @TestMetadata("stringHashCode_I1_I2.kt")
+                        public void testStringHashCode_I1_I2() throws Exception {
+                            runTest("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/hashCode/stringHashCode_I1_I2.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+                        }
+
+                        @TestMetadata("stringHashCode_I1_I2_I3.kt")
+                        public void testStringHashCode_I1_I2_I3() throws Exception {
+                            runTest("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/hashCode/stringHashCode_I1_I2_I3.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+                        }
+
+                        @TestMetadata("stringHashCode_I1_I2_I3_O2.kt")
+                        public void testStringHashCode_I1_I2_I3_O2() throws Exception {
+                            runTest("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/hashCode/stringHashCode_I1_I2_I3_O2.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+                        }
+
+                        @TestMetadata("stringHashCode_I1_I2_O1.kt")
+                        public void testStringHashCode_I1_I2_O1() throws Exception {
+                            runTest("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/hashCode/stringHashCode_I1_I2_O1.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+                        }
+
+                        @TestMetadata("stringHashCode_I1_I2_O1_I3.kt")
+                        public void testStringHashCode_I1_I2_O1_I3() throws Exception {
+                            runTest("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/hashCode/stringHashCode_I1_I2_O1_I3.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+                        }
+
+                        @TestMetadata("stringHashCode_I1_I2_O1_I3_O2.kt")
+                        public void testStringHashCode_I1_I2_O1_I3_O2() throws Exception {
+                            runTest("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/hashCode/stringHashCode_I1_I2_O1_I3_O2.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+                        }
+
+                        @TestMetadata("stringHashCode_I1_I2_O1_O2.kt")
+                        public void testStringHashCode_I1_I2_O1_O2() throws Exception {
+                            runTest("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/hashCode/stringHashCode_I1_I2_O1_O2.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+                        }
+
+                        @TestMetadata("stringHashCode_I1_I2_O2.kt")
+                        public void testStringHashCode_I1_I2_O2() throws Exception {
+                            runTest("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/hashCode/stringHashCode_I1_I2_O2.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+                        }
+
+                        @TestMetadata("stringHashCode_I1_I3.kt")
+                        public void testStringHashCode_I1_I3() throws Exception {
+                            runTest("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/hashCode/stringHashCode_I1_I3.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+                        }
+
+                        @TestMetadata("stringHashCode_I1_I3_O2.kt")
+                        public void testStringHashCode_I1_I3_O2() throws Exception {
+                            runTest("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/hashCode/stringHashCode_I1_I3_O2.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+                        }
+
+                        @TestMetadata("stringHashCode_I1_O1.kt")
+                        public void testStringHashCode_I1_O1() throws Exception {
+                            runTest("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/hashCode/stringHashCode_I1_O1.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+                        }
+
+                        @TestMetadata("stringHashCode_I1_O1_I3.kt")
+                        public void testStringHashCode_I1_O1_I3() throws Exception {
+                            runTest("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/hashCode/stringHashCode_I1_O1_I3.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+                        }
+
+                        @TestMetadata("stringHashCode_I1_O1_I3_O2.kt")
+                        public void testStringHashCode_I1_O1_I3_O2() throws Exception {
+                            runTest("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/hashCode/stringHashCode_I1_O1_I3_O2.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+                        }
+
+                        @TestMetadata("stringHashCode_I1_O1_O2.kt")
+                        public void testStringHashCode_I1_O1_O2() throws Exception {
+                            runTest("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/hashCode/stringHashCode_I1_O1_O2.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+                        }
+
+                        @TestMetadata("stringHashCode_I1_O2.kt")
+                        public void testStringHashCode_I1_O2() throws Exception {
+                            runTest("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/hashCode/stringHashCode_I1_O2.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+                        }
+
+                        @TestMetadata("stringHashCode_I2.kt")
+                        public void testStringHashCode_I2() throws Exception {
+                            runTest("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/hashCode/stringHashCode_I2.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+                        }
+
+                        @TestMetadata("stringHashCode_I2_I3.kt")
+                        public void testStringHashCode_I2_I3() throws Exception {
+                            runTest("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/hashCode/stringHashCode_I2_I3.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+                        }
+
+                        @TestMetadata("stringHashCode_I2_I3_O2.kt")
+                        public void testStringHashCode_I2_I3_O2() throws Exception {
+                            runTest("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/hashCode/stringHashCode_I2_I3_O2.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+                        }
+
+                        @TestMetadata("stringHashCode_I2_O1.kt")
+                        public void testStringHashCode_I2_O1() throws Exception {
+                            runTest("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/hashCode/stringHashCode_I2_O1.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+                        }
+
+                        @TestMetadata("stringHashCode_I2_O1_I3.kt")
+                        public void testStringHashCode_I2_O1_I3() throws Exception {
+                            runTest("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/hashCode/stringHashCode_I2_O1_I3.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+                        }
+
+                        @TestMetadata("stringHashCode_I2_O1_I3_O2.kt")
+                        public void testStringHashCode_I2_O1_I3_O2() throws Exception {
+                            runTest("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/hashCode/stringHashCode_I2_O1_I3_O2.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+                        }
+
+                        @TestMetadata("stringHashCode_I2_O1_O2.kt")
+                        public void testStringHashCode_I2_O1_O2() throws Exception {
+                            runTest("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/hashCode/stringHashCode_I2_O1_O2.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+                        }
+
+                        @TestMetadata("stringHashCode_I2_O2.kt")
+                        public void testStringHashCode_I2_O2() throws Exception {
+                            runTest("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/hashCode/stringHashCode_I2_O2.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+                        }
+
+                        @TestMetadata("stringHashCode_I3.kt")
+                        public void testStringHashCode_I3() throws Exception {
+                            runTest("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/hashCode/stringHashCode_I3.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+                        }
+
+                        @TestMetadata("stringHashCode_I3_O2.kt")
+                        public void testStringHashCode_I3_O2() throws Exception {
+                            runTest("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/hashCode/stringHashCode_I3_O2.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+                        }
+
+                        @TestMetadata("stringHashCode_O1.kt")
+                        public void testStringHashCode_O1() throws Exception {
+                            runTest("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/hashCode/stringHashCode_O1.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+                        }
+
+                        @TestMetadata("stringHashCode_O1_I3.kt")
+                        public void testStringHashCode_O1_I3() throws Exception {
+                            runTest("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/hashCode/stringHashCode_O1_I3.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+                        }
+
+                        @TestMetadata("stringHashCode_O1_I3_O2.kt")
+                        public void testStringHashCode_O1_I3_O2() throws Exception {
+                            runTest("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/hashCode/stringHashCode_O1_I3_O2.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+                        }
+
+                        @TestMetadata("stringHashCode_O1_O2.kt")
+                        public void testStringHashCode_O1_O2() throws Exception {
+                            runTest("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/hashCode/stringHashCode_O1_O2.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+                        }
+
+                        @TestMetadata("stringHashCode_O2.kt")
+                        public void testStringHashCode_O2() throws Exception {
+                            runTest("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/hashCode/stringHashCode_O2.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+                        }
+                    }
+
                     @TestMetadata("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/toString")
                     @TestDataPath("$PROJECT_ROOT")
                     @RunWith(JUnit3RunnerWithInners.class)

@@ -22846,6 +22846,277 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
                         }
 
                         @Nested
+                        @TestMetadata("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/hashCode")
+                        @TestDataPath("$PROJECT_ROOT")
+                        @Tag("codegen")
+                        @UseExtTestCaseGroupProvider()
+                        public class HashCode {
+                            public HashCode() {
+                                register("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/hashCode/stringHashCodeN.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+                                register("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/hashCode/stringHashCode_I1.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+                                register("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/hashCode/stringHashCode_I1_I2.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+                                register("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/hashCode/stringHashCode_I1_I2_I3.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+                                register("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/hashCode/stringHashCode_I1_I2_I3_O2.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+                                register("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/hashCode/stringHashCode_I1_I2_O1.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+                                register("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/hashCode/stringHashCode_I1_I2_O1_I3.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+                                register("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/hashCode/stringHashCode_I1_I2_O1_I3_O2.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+                                register("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/hashCode/stringHashCode_I1_I2_O1_O2.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+                                register("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/hashCode/stringHashCode_I1_I2_O2.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+                                register("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/hashCode/stringHashCode_I1_I3.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+                                register("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/hashCode/stringHashCode_I1_I3_O2.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+                                register("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/hashCode/stringHashCode_I1_O1.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+                                register("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/hashCode/stringHashCode_I1_O1_I3.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+                                register("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/hashCode/stringHashCode_I1_O1_I3_O2.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+                                register("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/hashCode/stringHashCode_I1_O1_O2.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+                                register("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/hashCode/stringHashCode_I1_O2.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+                                register("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/hashCode/stringHashCode_I2.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+                                register("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/hashCode/stringHashCode_I2_I3.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+                                register("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/hashCode/stringHashCode_I2_I3_O2.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+                                register("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/hashCode/stringHashCode_I2_O1.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+                                register("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/hashCode/stringHashCode_I2_O1_I3.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+                                register("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/hashCode/stringHashCode_I2_O1_I3_O2.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+                                register("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/hashCode/stringHashCode_I2_O1_O2.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+                                register("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/hashCode/stringHashCode_I2_O2.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+                                register("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/hashCode/stringHashCode_I3.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+                                register("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/hashCode/stringHashCode_I3_O2.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+                                register("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/hashCode/stringHashCode_O1.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+                                register("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/hashCode/stringHashCode_O1_I3.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+                                register("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/hashCode/stringHashCode_O1_I3_O2.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+                                register("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/hashCode/stringHashCode_O1_O2.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+                                register("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/hashCode/stringHashCode_O2.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+                            }
+
+                            @Test
+                            public void testAllFilesPresentInHashCode() throws Exception {
+                                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/hashCode"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
+                            }
+
+                            @Test
+                            @TestMetadata("stringHashCodeN.kt")
+                            public void testStringHashCodeN() throws Exception {
+                                // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
+                                runTest("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/hashCode/stringHashCodeN.kt");
+                            }
+
+                            @Test
+                            @TestMetadata("stringHashCode_I1.kt")
+                            public void testStringHashCode_I1() throws Exception {
+                                // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
+                                runTest("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/hashCode/stringHashCode_I1.kt");
+                            }
+
+                            @Test
+                            @TestMetadata("stringHashCode_I1_I2.kt")
+                            public void testStringHashCode_I1_I2() throws Exception {
+                                // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
+                                runTest("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/hashCode/stringHashCode_I1_I2.kt");
+                            }
+
+                            @Test
+                            @TestMetadata("stringHashCode_I1_I2_I3.kt")
+                            public void testStringHashCode_I1_I2_I3() throws Exception {
+                                // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
+                                runTest("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/hashCode/stringHashCode_I1_I2_I3.kt");
+                            }
+
+                            @Test
+                            @TestMetadata("stringHashCode_I1_I2_I3_O2.kt")
+                            public void testStringHashCode_I1_I2_I3_O2() throws Exception {
+                                // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
+                                runTest("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/hashCode/stringHashCode_I1_I2_I3_O2.kt");
+                            }
+
+                            @Test
+                            @TestMetadata("stringHashCode_I1_I2_O1.kt")
+                            public void testStringHashCode_I1_I2_O1() throws Exception {
+                                // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
+                                runTest("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/hashCode/stringHashCode_I1_I2_O1.kt");
+                            }
+
+                            @Test
+                            @TestMetadata("stringHashCode_I1_I2_O1_I3.kt")
+                            public void testStringHashCode_I1_I2_O1_I3() throws Exception {
+                                // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
+                                runTest("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/hashCode/stringHashCode_I1_I2_O1_I3.kt");
+                            }
+
+                            @Test
+                            @TestMetadata("stringHashCode_I1_I2_O1_I3_O2.kt")
+                            public void testStringHashCode_I1_I2_O1_I3_O2() throws Exception {
+                                // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
+                                runTest("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/hashCode/stringHashCode_I1_I2_O1_I3_O2.kt");
+                            }
+
+                            @Test
+                            @TestMetadata("stringHashCode_I1_I2_O1_O2.kt")
+                            public void testStringHashCode_I1_I2_O1_O2() throws Exception {
+                                // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
+                                runTest("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/hashCode/stringHashCode_I1_I2_O1_O2.kt");
+                            }
+
+                            @Test
+                            @TestMetadata("stringHashCode_I1_I2_O2.kt")
+                            public void testStringHashCode_I1_I2_O2() throws Exception {
+                                // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
+                                runTest("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/hashCode/stringHashCode_I1_I2_O2.kt");
+                            }
+
+                            @Test
+                            @TestMetadata("stringHashCode_I1_I3.kt")
+                            public void testStringHashCode_I1_I3() throws Exception {
+                                // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
+                                runTest("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/hashCode/stringHashCode_I1_I3.kt");
+                            }
+
+                            @Test
+                            @TestMetadata("stringHashCode_I1_I3_O2.kt")
+                            public void testStringHashCode_I1_I3_O2() throws Exception {
+                                // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
+                                runTest("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/hashCode/stringHashCode_I1_I3_O2.kt");
+                            }
+
+                            @Test
+                            @TestMetadata("stringHashCode_I1_O1.kt")
+                            public void testStringHashCode_I1_O1() throws Exception {
+                                // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
+                                runTest("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/hashCode/stringHashCode_I1_O1.kt");
+                            }
+
+                            @Test
+                            @TestMetadata("stringHashCode_I1_O1_I3.kt")
+                            public void testStringHashCode_I1_O1_I3() throws Exception {
+                                // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
+                                runTest("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/hashCode/stringHashCode_I1_O1_I3.kt");
+                            }
+
+                            @Test
+                            @TestMetadata("stringHashCode_I1_O1_I3_O2.kt")
+                            public void testStringHashCode_I1_O1_I3_O2() throws Exception {
+                                // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
+                                runTest("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/hashCode/stringHashCode_I1_O1_I3_O2.kt");
+                            }
+
+                            @Test
+                            @TestMetadata("stringHashCode_I1_O1_O2.kt")
+                            public void testStringHashCode_I1_O1_O2() throws Exception {
+                                // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
+                                runTest("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/hashCode/stringHashCode_I1_O1_O2.kt");
+                            }
+
+                            @Test
+                            @TestMetadata("stringHashCode_I1_O2.kt")
+                            public void testStringHashCode_I1_O2() throws Exception {
+                                // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
+                                runTest("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/hashCode/stringHashCode_I1_O2.kt");
+                            }
+
+                            @Test
+                            @TestMetadata("stringHashCode_I2.kt")
+                            public void testStringHashCode_I2() throws Exception {
+                                // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
+                                runTest("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/hashCode/stringHashCode_I2.kt");
+                            }
+
+                            @Test
+                            @TestMetadata("stringHashCode_I2_I3.kt")
+                            public void testStringHashCode_I2_I3() throws Exception {
+                                // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
+                                runTest("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/hashCode/stringHashCode_I2_I3.kt");
+                            }
+
+                            @Test
+                            @TestMetadata("stringHashCode_I2_I3_O2.kt")
+                            public void testStringHashCode_I2_I3_O2() throws Exception {
+                                // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
+                                runTest("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/hashCode/stringHashCode_I2_I3_O2.kt");
+                            }
+
+                            @Test
+                            @TestMetadata("stringHashCode_I2_O1.kt")
+                            public void testStringHashCode_I2_O1() throws Exception {
+                                // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
+                                runTest("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/hashCode/stringHashCode_I2_O1.kt");
+                            }
+
+                            @Test
+                            @TestMetadata("stringHashCode_I2_O1_I3.kt")
+                            public void testStringHashCode_I2_O1_I3() throws Exception {
+                                // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
+                                runTest("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/hashCode/stringHashCode_I2_O1_I3.kt");
+                            }
+
+                            @Test
+                            @TestMetadata("stringHashCode_I2_O1_I3_O2.kt")
+                            public void testStringHashCode_I2_O1_I3_O2() throws Exception {
+                                // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
+                                runTest("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/hashCode/stringHashCode_I2_O1_I3_O2.kt");
+                            }
+
+                            @Test
+                            @TestMetadata("stringHashCode_I2_O1_O2.kt")
+                            public void testStringHashCode_I2_O1_O2() throws Exception {
+                                // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
+                                runTest("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/hashCode/stringHashCode_I2_O1_O2.kt");
+                            }
+
+                            @Test
+                            @TestMetadata("stringHashCode_I2_O2.kt")
+                            public void testStringHashCode_I2_O2() throws Exception {
+                                // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
+                                runTest("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/hashCode/stringHashCode_I2_O2.kt");
+                            }
+
+                            @Test
+                            @TestMetadata("stringHashCode_I3.kt")
+                            public void testStringHashCode_I3() throws Exception {
+                                // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
+                                runTest("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/hashCode/stringHashCode_I3.kt");
+                            }
+
+                            @Test
+                            @TestMetadata("stringHashCode_I3_O2.kt")
+                            public void testStringHashCode_I3_O2() throws Exception {
+                                // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
+                                runTest("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/hashCode/stringHashCode_I3_O2.kt");
+                            }
+
+                            @Test
+                            @TestMetadata("stringHashCode_O1.kt")
+                            public void testStringHashCode_O1() throws Exception {
+                                // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
+                                runTest("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/hashCode/stringHashCode_O1.kt");
+                            }
+
+                            @Test
+                            @TestMetadata("stringHashCode_O1_I3.kt")
+                            public void testStringHashCode_O1_I3() throws Exception {
+                                // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
+                                runTest("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/hashCode/stringHashCode_O1_I3.kt");
+                            }
+
+                            @Test
+                            @TestMetadata("stringHashCode_O1_I3_O2.kt")
+                            public void testStringHashCode_O1_I3_O2() throws Exception {
+                                // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
+                                runTest("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/hashCode/stringHashCode_O1_I3_O2.kt");
+                            }
+
+                            @Test
+                            @TestMetadata("stringHashCode_O1_O2.kt")
+                            public void testStringHashCode_O1_O2() throws Exception {
+                                // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
+                                runTest("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/hashCode/stringHashCode_O1_O2.kt");
+                            }
+
+                            @Test
+                            @TestMetadata("stringHashCode_O2.kt")
+                            public void testStringHashCode_O2() throws Exception {
+                                // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
+                                runTest("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/hashCode/stringHashCode_O2.kt");
+                            }
+                        }
+
+                        @Nested
                         @TestMetadata("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/toString")
                         @TestDataPath("$PROJECT_ROOT")
                         @Tag("codegen")

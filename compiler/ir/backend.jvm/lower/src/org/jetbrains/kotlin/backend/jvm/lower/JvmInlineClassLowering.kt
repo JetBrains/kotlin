@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.backend.common.lower.DeclarationIrBuilder
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.lower.irBlockBody
 import org.jetbrains.kotlin.backend.common.lower.irNot
+import org.jetbrains.kotlin.backend.common.lower.irThrow
 import org.jetbrains.kotlin.backend.common.lower.loops.forLoopsPhase
 import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
 import org.jetbrains.kotlin.backend.common.pop
@@ -859,7 +860,13 @@ private class JvmInlineClassLowering(context: JvmBackendContext) : JvmValueClass
                             }
                         }
                         // TODO: Call super.method
-                        null -> irString("${counter++}")
+                        null -> {
+                            irThrow(
+                                irCall(this@JvmInlineClassLowering.context.ir.symbols.illegalStateExceptionCtorString).also {
+                                    it.putValueArgument(0, irString("${counter++}"))
+                                }
+                            )
+                        }
                         else -> error("oldBody is not a function body: ${oldBody.dump()}")
                     }
 

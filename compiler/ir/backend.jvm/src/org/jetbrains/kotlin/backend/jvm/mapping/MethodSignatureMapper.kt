@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.backend.common.lower.parentsWithSelf
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.backend.jvm.ir.*
-import org.jetbrains.kotlin.backend.jvm.isInlineClassFieldGetter
 import org.jetbrains.kotlin.backend.jvm.unboxInlineClass
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMap
@@ -407,7 +406,7 @@ class MethodSignatureMapper(private val context: JvmBackendContext) {
             ?: callee.parentAsClass // Static call or type parameter
 
         val calleeInSealedInlineClassTop = calleeParent.isChildOfSealedInlineClass() &&
-                caller?.isToStringImplOfTopSealedInlineClass() == false &&
+                caller?.isMethodImplOfTopSealedInlineClassCallingChild(callee) == false &&
                 (callee.origin == JvmLoweredDeclarationOrigin.STATIC_INLINE_CLASS_REPLACEMENT ||
                         (callee.isFakeOverride && callee.overriddenSymbols.any { it.owner.parentAsClass.isInline }))
 
@@ -567,6 +566,15 @@ class MethodSignatureMapper(private val context: JvmBackendContext) {
         }
 }
 
-private fun IrFunction.isToStringImplOfTopSealedInlineClass(): Boolean =
-    name.asString() == "toString-impl" && parentAsClass.isInline && parentAsClass.modality == Modality.SEALED &&
-            !parentAsClass.isChildOfSealedInlineClass()
+private fun IrFunction.isMethodImplOfTopSealedInlineClassCallingChild(callee: IrSimpleFunction): Boolean {
+    if (!parentAsClass.isInline) return false
+    if (parentAsClass.modality != Modality.SEALED) return false
+    if (parentAsClass.isChildOfSealedInlineClass()) return false
+
+    var current: IrSimpleFunction? = callee
+    while (current != null && current != this) {
+        current = current.overriddenSymbols.find { it.owner.parentAsClass.isInline }?.owner
+    }
+
+    return current != null
+}
