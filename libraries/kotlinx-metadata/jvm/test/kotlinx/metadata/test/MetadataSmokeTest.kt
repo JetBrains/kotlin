@@ -17,10 +17,8 @@ import kotlin.test.*
 
 @OptIn(DeprecatedVisitor::class)
 class MetadataSmokeTest {
-    private fun Class<*>.readMetadata(): KotlinClassHeader {
-        return getAnnotation(Metadata::class.java).run {
-            KotlinClassHeader(kind, metadataVersion, data1, data2, extraString, packageName, extraInt)
-        }
+    private fun Class<*>.readMetadata(): Metadata {
+        return getAnnotation(Metadata::class.java)
     }
 
     @Test
@@ -155,17 +153,7 @@ class MetadataSmokeTest {
     fun lambdaVersionRequirement() {
         val x: suspend Int.(String, String) -> Unit = { _, _ -> }
         val annotation = x::class.java.getAnnotation(Metadata::class.java)!!
-        val metadata = KotlinClassMetadata.read(
-            KotlinClassHeader(
-                kind = annotation.kind,
-                metadataVersion = annotation.metadataVersion,
-                data1 = annotation.data1,
-                data2 = annotation.data2,
-                extraInt = annotation.extraInt,
-                extraString = annotation.extraString,
-                packageName = annotation.packageName
-            )
-        ) as KotlinClassMetadata.SyntheticClass
+        val metadata = KotlinClassMetadata.read(annotation) as KotlinClassMetadata.SyntheticClass
         metadata.accept(KmLambda())
     }
 

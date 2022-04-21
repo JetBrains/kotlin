@@ -231,35 +231,36 @@ public final class kotlinx/metadata/jvm/KmPackageParts {
 	public final fun getMultiFileClassParts ()Ljava/util/Map;
 }
 
-public final class kotlinx/metadata/jvm/KotlinClassHeader {
+public final class kotlinx/metadata/jvm/KotlinClassHeader : kotlin/Metadata {
 	public static final field CLASS_KIND I
-	public static final field COMPATIBLE_BYTECODE_VERSION [I
 	public static final field COMPATIBLE_METADATA_VERSION [I
-	public static final field Companion Lkotlinx/metadata/jvm/KotlinClassHeader$Companion;
 	public static final field FILE_FACADE_KIND I
 	public static final field MULTI_FILE_CLASS_FACADE_KIND I
 	public static final field MULTI_FILE_CLASS_PART_KIND I
 	public static final field SYNTHETIC_CLASS_KIND I
-	public fun <init> (Ljava/lang/Integer;[I[I[Ljava/lang/String;[Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/Integer;)V
 	public fun <init> (Ljava/lang/Integer;[I[Ljava/lang/String;[Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/Integer;)V
-	public final fun getBytecodeVersion ()[I
-	public final fun getData1 ()[Ljava/lang/String;
-	public final fun getData2 ()[Ljava/lang/String;
-	public final fun getExtraInt ()I
-	public final fun getExtraString ()Ljava/lang/String;
-	public final fun getKind ()I
-	public final fun getMetadataVersion ()[I
-	public final fun getPackageName ()Ljava/lang/String;
-}
-
-public final class kotlinx/metadata/jvm/KotlinClassHeader$Companion {
+	public fun annotationType ()Ljava/lang/Class;
+	public fun bv ()[I
+	public fun d1 ()[Ljava/lang/String;
+	public fun d2 ()[Ljava/lang/String;
+	public fun k ()I
+	public fun mv ()[I
+	public fun pn ()Ljava/lang/String;
+	public fun xi ()I
+	public fun xs ()Ljava/lang/String;
 }
 
 public abstract class kotlinx/metadata/jvm/KotlinClassMetadata {
+	public static final field CLASS_KIND I
+	public static final field COMPATIBLE_METADATA_VERSION [I
 	public static final field Companion Lkotlinx/metadata/jvm/KotlinClassMetadata$Companion;
-	public synthetic fun <init> (Lkotlinx/metadata/jvm/KotlinClassHeader;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
-	public final fun getHeader ()Lkotlinx/metadata/jvm/KotlinClassHeader;
-	public static final fun read (Lkotlinx/metadata/jvm/KotlinClassHeader;)Lkotlinx/metadata/jvm/KotlinClassMetadata;
+	public static final field FILE_FACADE_KIND I
+	public static final field MULTI_FILE_CLASS_FACADE_KIND I
+	public static final field MULTI_FILE_CLASS_PART_KIND I
+	public static final field SYNTHETIC_CLASS_KIND I
+	public synthetic fun <init> (Lkotlin/Metadata;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun getHeader ()Lkotlin/Metadata;
+	public static final fun read (Lkotlin/Metadata;)Lkotlinx/metadata/jvm/KotlinClassMetadata;
 }
 
 public final class kotlinx/metadata/jvm/KotlinClassMetadata$Class : kotlinx/metadata/jvm/KotlinClassMetadata {
@@ -276,7 +277,7 @@ public final class kotlinx/metadata/jvm/KotlinClassMetadata$Class$Writer : kotli
 }
 
 public final class kotlinx/metadata/jvm/KotlinClassMetadata$Companion {
-	public final fun read (Lkotlinx/metadata/jvm/KotlinClassHeader;)Lkotlinx/metadata/jvm/KotlinClassMetadata;
+	public final fun read (Lkotlin/Metadata;)Lkotlinx/metadata/jvm/KotlinClassMetadata;
 	public final fun writeClass (Lkotlinx/metadata/KmClass;[II)Lkotlinx/metadata/jvm/KotlinClassMetadata$Class;
 	public static synthetic fun writeClass$default (Lkotlinx/metadata/jvm/KotlinClassMetadata$Companion;Lkotlinx/metadata/KmClass;[IIILjava/lang/Object;)Lkotlinx/metadata/jvm/KotlinClassMetadata$Class;
 	public final fun writeFileFacade (Lkotlinx/metadata/KmPackage;[II)Lkotlinx/metadata/jvm/KotlinClassMetadata$FileFacade;
