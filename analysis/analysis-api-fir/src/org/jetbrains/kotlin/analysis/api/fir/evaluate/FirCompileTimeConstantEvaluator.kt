@@ -258,17 +258,17 @@ internal object FirCompileTimeConstantEvaluator {
         if (value == null) {
             return null
         }
-        return when {
-            this == ConstantValueKind.Byte -> value.toByte()
-            this == ConstantValueKind.Double -> value.toDouble()
-            this == ConstantValueKind.Float -> value.toFloat()
-            this == ConstantValueKind.Int -> value.toInt()
-            this == ConstantValueKind.Long -> value.toLong()
-            this == ConstantValueKind.Short -> value.toShort()
-            this == ConstantValueKind.UnsignedByte -> value.toLong().toUByte()
-            this == ConstantValueKind.UnsignedShort -> value.toLong().toUShort()
-            this == ConstantValueKind.UnsignedInt -> value.toLong().toUInt()
-            this == ConstantValueKind.UnsignedLong -> value.toLong().toULong()
+        return when (this) {
+            ConstantValueKind.Byte -> value.toByte()
+            ConstantValueKind.Double -> value.toDouble()
+            ConstantValueKind.Float -> value.toFloat()
+            ConstantValueKind.Int -> value.toInt()
+            ConstantValueKind.Long -> value.toLong()
+            ConstantValueKind.Short -> value.toShort()
+            ConstantValueKind.UnsignedByte -> value.toLong().toUByte()
+            ConstantValueKind.UnsignedShort -> value.toLong().toUShort()
+            ConstantValueKind.UnsignedInt -> value.toLong().toUInt()
+            ConstantValueKind.UnsignedLong -> value.toLong().toULong()
             else -> null
         }
     }
