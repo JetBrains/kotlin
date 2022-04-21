@@ -9,6 +9,7 @@ package kotlinx.metadata.jvm
 
 import kotlinx.metadata.*
 import kotlinx.metadata.impl.accept
+import kotlinx.metadata.jvm.KotlinClassMetadata.Companion.COMPATIBLE_METADATA_VERSION
 import org.jetbrains.kotlin.metadata.jvm.JvmModuleProtoBuf
 import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmMetadataVersion
 import org.jetbrains.kotlin.metadata.jvm.deserialization.ModuleMapping
@@ -83,11 +84,11 @@ class KotlinModuleMetadata(@Suppress("CanBeParameter", "MemberVisibilityCanBePri
         /**
          * Returns the metadata of the module file that was written with this writer.
          *
-         * @param metadataVersion metadata version to be written to the metadata (see [KotlinClassHeader.metadataVersion]),
-         *   [KotlinClassHeader.COMPATIBLE_METADATA_VERSION] by default
+         * @param metadataVersion metadata version to be written to the metadata (see [Metadata.metadataVersion]),
+         *   [KotlinClassMetadata.COMPATIBLE_METADATA_VERSION] by default
          */
         @Deprecated("Writer class API is deprecated. Please use KotlinModuleMetadata.write(kmModule, metadataVersion)", level = DeprecationLevel.ERROR)
-        fun write(metadataVersion: IntArray = KotlinClassHeader.COMPATIBLE_METADATA_VERSION): KotlinModuleMetadata =
+        fun write(metadataVersion: IntArray = COMPATIBLE_METADATA_VERSION): KotlinModuleMetadata =
             KotlinModuleMetadata(b.build().serializeToByteArray(JvmMetadataVersion(*metadataVersion), 0))
     }
 
@@ -144,7 +145,7 @@ class KotlinModuleMetadata(@Suppress("CanBeParameter", "MemberVisibilityCanBePri
 
         @OptIn(DeprecatedVisitor::class)
         @Suppress("DEPRECATION_ERROR")
-        fun write(kmModule: KmModule, metadataVersion: IntArray =  KotlinClassHeader.COMPATIBLE_METADATA_VERSION): KotlinModuleMetadata = Writer().also { kmModule.accept(it) }.write(metadataVersion)
+        fun write(kmModule: KmModule, metadataVersion: IntArray = COMPATIBLE_METADATA_VERSION): KotlinModuleMetadata = Writer().also { kmModule.accept(it) }.write(metadataVersion)
     }
 }
 

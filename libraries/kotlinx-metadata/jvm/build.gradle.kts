@@ -23,6 +23,10 @@ group = "org.jetbrains.kotlinx"
 val deployVersion = findProperty("kotlinxMetadataDeployVersion") as String?
 version = deployVersion ?: "0.1-SNAPSHOT"
 
+//kotlin {
+//    explicitApiWarning()
+//}
+
 sourceSets {
     "main" { projectDefault() }
     "test" { projectDefault() }
