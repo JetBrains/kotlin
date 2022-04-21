@@ -26001,6 +26001,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             }
 
             @Test
+            @TestMetadata("kt51868_contravariantGenericSam.kt")
+            public void testKt51868_contravariantGenericSam() throws Exception {
+                runTest("compiler/testData/codegen/box/invokedynamic/sam/kt51868_contravariantGenericSam.kt");
+            }
+
+            @Test
             @TestMetadata("kt52040_severalProxyFunsInInit.kt")
             public void testKt52040_severalProxyFunsInInit() throws Exception {
                 runTest("compiler/testData/codegen/box/invokedynamic/sam/kt52040_severalProxyFunsInInit.kt");

@@ -21907,6 +21907,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
                 runTest("compiler/testData/codegen/box/invokedynamic/sam/kt47510.kt");
             }
 
+            @TestMetadata("kt51868_contravariantGenericSam.kt")
+            public void testKt51868_contravariantGenericSam() throws Exception {
+                runTest("compiler/testData/codegen/box/invokedynamic/sam/kt51868_contravariantGenericSam.kt");
+            }
+
             @TestMetadata("kt52040_severalProxyFunsInInit.kt")
             public void testKt52040_severalProxyFunsInInit() throws Exception {
                 runTest("compiler/testData/codegen/box/invokedynamic/sam/kt52040_severalProxyFunsInInit.kt");

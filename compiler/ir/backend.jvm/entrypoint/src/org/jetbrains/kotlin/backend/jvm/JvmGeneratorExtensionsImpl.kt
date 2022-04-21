@@ -6,10 +6,7 @@
 package org.jetbrains.kotlin.backend.jvm
 
 import org.jetbrains.kotlin.backend.common.serialization.signature.PublicIdSignatureComputer
-import org.jetbrains.kotlin.config.CompilerConfiguration
-import org.jetbrains.kotlin.config.JVMConfigurationKeys
-import org.jetbrains.kotlin.config.JvmSerializeIrMode
-import org.jetbrains.kotlin.config.languageVersionSettings
+import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.FilteredAnnotations
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
@@ -53,7 +50,7 @@ import org.jetbrains.kotlin.types.typeUtil.replaceAnnotations
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 open class JvmGeneratorExtensionsImpl(
-    configuration: CompilerConfiguration,
+    private val configuration: CompilerConfiguration,
     private val generateFacades: Boolean = true,
 ) : GeneratorExtensions(), JvmGeneratorExtensions {
     override val classNameOverride: MutableMap<IrClass, JvmClassName> = mutableMapOf()
@@ -62,15 +59,14 @@ open class JvmGeneratorExtensionsImpl(
 
     override val cachedFields = CachedFieldsForObjectInstances(IrFactoryImpl, configuration.languageVersionSettings)
 
-    override val samConversion: SamConversion
-        get() = JvmSamConversion
+    override val samConversion: SamConversion = JvmSamConversion()
 
-    open class JvmSamConversion : SamConversion() {
-
+    inner class JvmSamConversion : SamConversion() {
         override fun isPlatformSamType(type: KotlinType): Boolean =
             JavaSingleAbstractMethodUtils.isSamType(type)
 
-        companion object Instance : JvmSamConversion()
+        override fun isCarefulApproximationOfContravariantProjection(): Boolean =
+            configuration.get(JVMConfigurationKeys.SAM_CONVERSIONS) != JvmClosureGenerationScheme.CLASS
     }
 
     override fun getContainerSource(descriptor: DeclarationDescriptor): DeserializedContainerSource? {

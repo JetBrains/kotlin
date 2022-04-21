@@ -15,6 +15,7 @@ import kotlin.Pair;
 import kotlin.collections.CollectionsKt;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.backend.common.SamType;
 import org.jetbrains.kotlin.backend.common.SamTypeApproximator;
 import org.jetbrains.kotlin.builtins.FunctionTypesKt;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
@@ -26,7 +27,6 @@ import org.jetbrains.kotlin.codegen.state.GenerationState;
 import org.jetbrains.kotlin.codegen.when.SwitchCodegenProvider;
 import org.jetbrains.kotlin.codegen.when.WhenByEnumsMapping;
 import org.jetbrains.kotlin.config.JvmDefaultMode;
-import org.jetbrains.kotlin.config.LanguageFeature;
 import org.jetbrains.kotlin.config.LanguageVersionSettings;
 import org.jetbrains.kotlin.coroutines.CoroutineUtilKt;
 import org.jetbrains.kotlin.descriptors.*;
@@ -45,11 +45,11 @@ import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.BindingTrace;
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
-import org.jetbrains.kotlin.resolve.calls.util.CallUtilKt;
 import org.jetbrains.kotlin.resolve.calls.model.*;
 import org.jetbrains.kotlin.resolve.calls.tower.NewAbstractResolvedCall;
 import org.jetbrains.kotlin.resolve.calls.tower.NewResolvedCallImpl;
 import org.jetbrains.kotlin.resolve.calls.tower.NewVariableAsFunctionResolvedCallImpl;
+import org.jetbrains.kotlin.resolve.calls.util.CallUtilKt;
 import org.jetbrains.kotlin.resolve.constants.ConstantValue;
 import org.jetbrains.kotlin.resolve.constants.EnumValue;
 import org.jetbrains.kotlin.resolve.constants.NullValue;
@@ -59,14 +59,12 @@ import org.jetbrains.kotlin.resolve.sam.SamConstructorDescriptor;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue;
 import org.jetbrains.kotlin.resolve.scopes.receivers.TransientReceiver;
 import org.jetbrains.kotlin.types.KotlinType;
-import org.jetbrains.kotlin.backend.common.SamType;
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker;
 import org.jetbrains.org.objectweb.asm.Type;
 
 import java.util.*;
 
 import static org.jetbrains.kotlin.codegen.binding.CodegenBinding.*;
-import static org.jetbrains.kotlin.codegen.inline.InlineCodegenUtilsKt.NUMBERED_FUNCTION_PREFIX;
 import static org.jetbrains.kotlin.lexer.KtTokens.*;
 import static org.jetbrains.kotlin.name.SpecialNames.safeIdentifier;
 import static org.jetbrains.kotlin.resolve.BindingContext.*;
@@ -819,7 +817,7 @@ class CodegenAnnotatingVisitor extends KtVisitorVoid {
 
     @Nullable
     private SamType createSamTypeByValueParameter(ValueParameterDescriptor valueParameterDescriptor) {
-        KotlinType kotlinSamType = samTypeApproximator.getSamTypeForValueParameter(valueParameterDescriptor);
+        KotlinType kotlinSamType = samTypeApproximator.getSamTypeForValueParameter(valueParameterDescriptor, false);
         if (kotlinSamType == null) return null;
         if (!JavaSingleAbstractMethodUtils.isSamType(kotlinSamType)) return null;
         return new SamType(kotlinSamType);

@@ -10,13 +10,17 @@ import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.types.*
-import org.jetbrains.kotlin.types.checker.intersectWrappedTypes
+import org.jetbrains.kotlin.types.typeUtil.asTypeProjection
+import org.jetbrains.kotlin.types.typeUtil.isNullableAny
 import org.jetbrains.kotlin.types.typeUtil.replaceArgumentsWithNothing
 
 class SamTypeApproximator(builtIns: KotlinBuiltIns, languageVersionSettings: LanguageVersionSettings) {
     private val typeApproximator = TypeApproximator(builtIns, languageVersionSettings)
 
-    fun getSamTypeForValueParameter(valueParameter: ValueParameterDescriptor): KotlinType? {
+    fun getSamTypeForValueParameter(
+        valueParameter: ValueParameterDescriptor,
+        carefulApproximationOfContravariantProjection: Boolean,
+    ): KotlinType? {
         val singleArgumentType: KotlinType
         val originalSingleArgumentType: KotlinType?
         val varargElementType = valueParameter.varargElementType
@@ -54,14 +58,26 @@ class SamTypeApproximator(builtIns: KotlinBuiltIns, languageVersionSettings: Lan
             ) ?: originalTypeToUse
         approximatedOriginalTypeToUse as KotlinType
 
-        return approximatedOriginalTypeToUse.removeExternalProjections()
+        return approximatedOriginalTypeToUse.removeExternalProjections(carefulApproximationOfContravariantProjection)
     }
 
-    private fun KotlinType.removeExternalProjections(): KotlinType {
-        val newArguments = arguments.map { TypeProjectionImpl(Variance.INVARIANT, it.type) }
+    private fun KotlinType.removeExternalProjections(carefulApproximationOfContravariantProjection: Boolean): KotlinType? {
+        val newArguments = arguments.mapIndexed { i, argument ->
+            if (carefulApproximationOfContravariantProjection && argument.projectionKind == Variance.IN_VARIANCE) {
+                // Just erasing `in` from the type projection would lead to an incorrect type for the SAM adapter,
+                // and error at runtime on JVM if invokedynamic + LambdaMetafactory is used, see KT-51868.
+                // So we do it "carefully". If we have a class `A<T>` and a method that takes e.g. `A<in String>`, we check
+                // if `T` has a non-trivial upper bound. If it has one, we don't attempt to perform a SAM conversion at all.
+                // Otherwise we erase the type to `Any?`, so `A<in String>` becomes `A<Any?>`, which is the computed SAM type.
+                val parameter = constructor.parameters.getOrNull(i) ?: return null
+                val upperBound = parameter.upperBounds.singleOrNull()?.upperIfFlexible() ?: return null
+                if (!upperBound.isNullableAny()) return null
+
+                upperBound.asTypeProjection()
+            } else TypeProjectionImpl(Variance.INVARIANT, argument.type)
+        }
         return replace(newArguments)
     }
-
 }
 
 open class SamTypeFactory {
