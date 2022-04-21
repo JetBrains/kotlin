@@ -76,6 +76,14 @@ fun FirSession.doUnify(
         )
     }
 
+    if (typeWithParameters is ConeDefinitelyNotNullType) {
+        return doUnify(
+            originalTypeProjection,
+            typeWithParametersProjection.replaceType(typeWithParameters.original),
+            targetTypeParameters, result,
+        )
+    }
+
     // Foo ~ X? => fail
     if (originalType?.nullability != ConeNullability.NULLABLE && typeWithParameters?.nullability == ConeNullability.NULLABLE) {
         return true
