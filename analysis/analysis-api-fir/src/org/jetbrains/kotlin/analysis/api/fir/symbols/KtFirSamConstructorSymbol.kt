@@ -37,9 +37,7 @@ internal class KtFirSamConstructorSymbol(
 
     override val valueParameters: List<KtValueParameterSymbol>
         get() = withValidityAssertion {
-            firSymbol.fir.valueParameters.map { valueParameter ->
-                builder.variableLikeBuilder.buildValueParameterSymbol(valueParameter.symbol)
-            }
+            firSymbol.createKtValueParameters(builder)
         }
 
     override val hasStableParameterNames: Boolean

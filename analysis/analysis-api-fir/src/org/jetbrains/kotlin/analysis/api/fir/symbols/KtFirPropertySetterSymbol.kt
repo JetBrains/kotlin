@@ -65,7 +65,7 @@ internal class KtFirPropertySetterSymbol(
     }
 
     override val parameter: KtValueParameterSymbol by cached {
-        builder.variableLikeBuilder.buildValueParameterSymbol(firSymbol.fir.valueParameters.single().symbol)
+        firSymbol.createKtValueParameters(builder).single()
     }
 
     override val valueParameters: List<KtValueParameterSymbol> by cached { listOf(parameter) }

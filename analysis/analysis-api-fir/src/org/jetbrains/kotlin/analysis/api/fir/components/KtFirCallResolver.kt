@@ -689,10 +689,6 @@ internal class KtFirCallResolver(
     private fun FirVariableSymbol<*>.toKtSignature(): KtVariableLikeSignature<KtVariableLikeSymbol> =
         firSymbolBuilder.variableLikeBuilder.buildVariableLikeSignature(this)
 
-    @OptIn(SymbolInternals::class)
-    private fun FirValueParameterSymbol.toKtSymbol(): KtValueParameterSymbol =
-        firSymbolBuilder.variableLikeBuilder.buildValueParameterSymbol(this)
-
     override fun collectCallCandidates(psi: KtElement): List<KtCallCandidateInfo> = withValidityAssertion {
         getCallInfo(psi) { psiToResolve, resolveCalleeExpressionOfFunctionCall, resolveFragmentOfCall ->
             collectCallCandidates(
@@ -977,7 +973,7 @@ internal class KtFirCallResolver(
         substitutor: KtSubstitutor,
     ): LinkedHashMap<KtExpression, KtVariableLikeSignature<KtValueParameterSymbol>> {
         val ktArgumentMapping = LinkedHashMap<KtExpression, KtVariableLikeSignature<KtValueParameterSymbol>>()
-        val parameterSymbol = arrayOfCallSymbol.firSymbol.fir.valueParameters.single().symbol.toKtSymbol()
+        val parameterSymbol = arrayOfCallSymbol.valueParameters.single()
 
         for (firExpression in argumentList.arguments) {
             mapArgumentExpressionToParameter(firExpression, parameterSymbol.toSignature(substitutor), ktArgumentMapping)
