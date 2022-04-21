@@ -430,7 +430,6 @@ object ExpectedActualResolver {
         }
     }
 
-
     private fun areCompatibleClassScopes(
         a: ClassDescriptor,
         b: ClassDescriptor,
