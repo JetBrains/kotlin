@@ -53,6 +53,18 @@ public class FirStandaloneNormalAnalysisSourceModuleCompileTimeConstantEvaluator
     }
 
     @Test
+    @TestMetadata("integerLiteral_minusOne_entire.kt")
+    public void testIntegerLiteral_minusOne_entire() throws Exception {
+        runTest("analysis/analysis-api/testData/components/compileTimeConstantProvider/evaluate/integerLiteral_minusOne_entire.kt");
+    }
+
+    @Test
+    @TestMetadata("integerLiteral_minusOne_justOne.kt")
+    public void testIntegerLiteral_minusOne_justOne() throws Exception {
+        runTest("analysis/analysis-api/testData/components/compileTimeConstantProvider/evaluate/integerLiteral_minusOne_justOne.kt");
+    }
+
+    @Test
     @TestMetadata("namedReference_const.kt")
     public void testNamedReference_const() throws Exception {
         runTest("analysis/analysis-api/testData/components/compileTimeConstantProvider/evaluate/namedReference_const.kt");
