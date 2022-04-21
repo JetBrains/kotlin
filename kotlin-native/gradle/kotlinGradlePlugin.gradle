@@ -9,8 +9,8 @@ project.buildscript.repositories {
     else
         mavenCentral()
 }
-
-File versionPropertiesFile = new File(rootProject.projectDir, "gradle/versions.properties")
+def kotlinRoot = ext.properties.containsKey("rootBuildDirectory") ? file("${ext.rootBuildDirectory}/..") : rootProject.projectDir
+File versionPropertiesFile = new File(kotlinRoot, "gradle/versions.properties")
 def versionProperties = new Properties()
 versionPropertiesFile.withInputStream {
     versionProperties.load(it)
