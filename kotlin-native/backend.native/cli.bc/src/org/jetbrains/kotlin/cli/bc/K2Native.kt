@@ -85,8 +85,12 @@ class K2Native : CLICompiler<K2NativeCompilerArguments>() {
 
         try {
             val konanConfig = KonanConfig(project, configuration)
-            ensureModuleName(konanConfig, environment)
-            runTopLevelPhases(konanConfig, environment)
+            try {
+                ensureModuleName(konanConfig, environment)
+                runTopLevelPhases(konanConfig, environment)
+            } finally {
+                konanConfig.dispose()
+            }
         } catch (e: Throwable) {
             if (e is KonanCompilationException || e is CompilationErrorException)
                 return ExitCode.COMPILATION_ERROR

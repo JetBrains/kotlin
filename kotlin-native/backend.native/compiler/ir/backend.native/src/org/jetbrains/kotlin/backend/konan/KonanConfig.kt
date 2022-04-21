@@ -29,6 +29,10 @@ import org.jetbrains.kotlin.utils.addToStdlib.cast
 
 class KonanConfig(val project: Project, val configuration: CompilerConfiguration) {
 
+    fun dispose() {
+        tempFiles.dispose()
+    }
+
     internal val distribution = run {
         val overridenProperties = mutableMapOf<String, String>().apply {
             configuration.get(KonanConfigKeys.OVERRIDE_KONAN_PROPERTIES)?.let(this::putAll)
