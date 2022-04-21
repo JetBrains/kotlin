@@ -299,6 +299,11 @@ private fun StatementGenerator.generateReceiverForCalleeImportedFromObject(
     }
 }
 
+private fun StatementGenerator.computeVarargType(type: KotlinType): IrType =
+    // Vararg type loaded from Java can be flexible, and have `Nothing` as lower bound after approximation. (See KT-52146.)
+    // Its upper bound should always have the form `Array<out T>`, though.
+    type.upperIfFlexible().toIrType()
+
 private fun StatementGenerator.generateVarargExpressionUsing(
     varargArgument: VarargValueArgument,
     valueParameter: ValueParameterDescriptor,
@@ -319,7 +324,7 @@ private fun StatementGenerator.generateVarargExpressionUsing(
     val varargElementType =
         valueParameter.varargElementType ?: throw AssertionError("Vararg argument for non-vararg parameter $valueParameter")
 
-    val irVararg = IrVarargImpl(varargStartOffset, varargEndOffset, valueParameter.type.toIrType(), varargElementType.toIrType())
+    val irVararg = IrVarargImpl(varargStartOffset, varargEndOffset, computeVarargType(valueParameter.type), varargElementType.toIrType())
 
     for (varargElementArgument in varargArgument.arguments) {
         val ktArgumentExpression = varargElementArgument.getArgumentExpression()
@@ -714,7 +719,7 @@ fun StatementGenerator.generateSamConversionForValueArgumentsIfRequired(call: Ca
 
                 IrVarargImpl(
                     originalArgument.startOffset, originalArgument.endOffset,
-                    substitutedVarargType.toIrType(),
+                    computeVarargType(substitutedVarargType),
                     irSamType
                 ).apply {
                     originalArgument.elements.mapIndexedTo(elements) { index, element ->
