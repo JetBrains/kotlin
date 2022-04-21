@@ -97,7 +97,7 @@ if (kotlinBuildProperties.isInJpsBuildIdeaSync) {
 }
 
 enum class OsName { WINDOWS, MAC, LINUX, UNKNOWN }
-enum class OsArch { X86_32, X86_64, UNKNOWN }
+enum class OsArch { X86_32, X86_64, ARM64, UNKNOWN }
 data class OsType(val name: OsName, val arch: OsArch)
 val currentOsType = run {
     val gradleOs = OperatingSystem.current()
@@ -110,7 +110,10 @@ val currentOsType = run {
 
     val osArch = when (providers.systemProperty("sun.arch.data.model").forUseAtConfigurationTime().get()) {
         "32" -> OsArch.X86_32
-        "64" -> OsArch.X86_64
+        "64" -> when (providers.systemProperty("os.arch").forUseAtConfigurationTime().get().toLowerCase()) {
+            "aarch64" -> OsArch.ARM64
+            else -> OsArch.X86_64
+        }
         else -> OsArch.UNKNOWN
     }
 
@@ -121,7 +124,8 @@ val jsShellDirectory = "https://archive.mozilla.org/pub/firefox/nightly/2020/06/
 val jsShellSuffix = when (currentOsType) {
     OsType(OsName.LINUX, OsArch.X86_32) -> "linux-i686"
     OsType(OsName.LINUX, OsArch.X86_64) -> "linux-x86_64"
-    OsType(OsName.MAC, OsArch.X86_64) -> "mac"
+    OsType(OsName.MAC, OsArch.X86_64),
+    OsType(OsName.MAC, OsArch.ARM64) -> "mac"
     OsType(OsName.WINDOWS, OsArch.X86_32) -> "win32"
     OsType(OsName.WINDOWS, OsArch.X86_64) -> "win64"
     else -> error("unsupported os type $currentOsType")
@@ -147,6 +151,7 @@ val v8osString = when (currentOsType) {
     OsType(OsName.LINUX, OsArch.X86_32) -> "linux32"
     OsType(OsName.LINUX, OsArch.X86_64) -> "linux64"
     OsType(OsName.MAC, OsArch.X86_64) -> "mac64"
+    OsType(OsName.MAC, OsArch.ARM64) -> "mac-arm64"
     OsType(OsName.WINDOWS, OsArch.X86_32) -> "win32"
     OsType(OsName.WINDOWS, OsArch.X86_64) -> "win64"
     else -> error("unsupported os type $currentOsType")
