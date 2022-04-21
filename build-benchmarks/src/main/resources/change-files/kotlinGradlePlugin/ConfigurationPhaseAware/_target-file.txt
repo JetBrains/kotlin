@@ -1,1 +1,1 @@
-libraries/tools/kotlin-gradle-plugin/src/main/kotlin/org/jetbrains/kotlin/gradle/internal/ConfigurationPhaseAware.kt
+libraries/tools/kotlin-gradle-plugin/src/common/kotlin/org/jetbrains/kotlin/gradle/internal/ConfigurationPhaseAware.kt
