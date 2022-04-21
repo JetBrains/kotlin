@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.psi.KtBackingField
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtParameter
+import org.jetbrains.kotlin.psi.KtPropertyDelegate
 import org.jetbrains.kotlin.psi.psiUtil.collectDescendantsOfType
 import org.jetbrains.kotlin.test.services.TestServices
 
@@ -29,7 +30,7 @@ abstract class AbstractSymbolByPsiTest : AbstractSymbolTest() {
     private val KtDeclaration.isValidForSymbolCreation
         get() =
             when (this) {
-                is KtBackingField -> false
+                is KtBackingField, is KtPropertyDelegate -> false
                 is KtParameter -> !this.isFunctionTypeParameter
                 else -> true
             }

@@ -1593,6 +1593,7 @@ open class RawFirBuilder(
                             ownerRegularClassTypeParametersCount = null,
                             isExtension = false,
                             context = context,
+                            delegateVisibility = this@toFirProperty.delegate?.visibility,
                         )
                     }
                 } else {
@@ -1657,6 +1658,7 @@ open class RawFirBuilder(
                                 ownerRegularClassTypeParametersCount,
                                 context,
                                 isExtension = receiverTypeReference != null,
+                                delegateVisibility = this@toFirProperty.delegate?.visibility,
                             )
                         }
                     }
