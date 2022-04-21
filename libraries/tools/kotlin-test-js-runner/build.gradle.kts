@@ -13,7 +13,7 @@ val default = configurations.getByName(Dependency.DEFAULT_CONFIGURATION)
 default.extendsFrom(configurations.publishedRuntime.get())
 
 node {
-    version.set("16.2.0")
+    version.set(nodejsVersion)
     download.set(true)
     nodeProjectDir.set(projectDir)
 }

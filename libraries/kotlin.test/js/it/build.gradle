@@ -51,7 +51,7 @@ tasks.register("populateNodeModules", Copy) {
 }
 
 node {
-    version = '12.18.0'
+    version = DependenciesKt.getNodejsVersion(project)
     download = true
 }
 

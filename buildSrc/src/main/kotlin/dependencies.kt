@@ -261,6 +261,8 @@ fun Project.kotlinxCollectionsImmutable() =
 
 val Project.kotlinNativeVersion: String get() = property("versions.kotlin-native") as String
 
+val Project.nodejsVersion: String get() = property("versions.nodejs") as String
+
 fun File.matchMaybeVersionedArtifact(baseName: String) = name.matches(baseName.toMaybeVersionedJarRegex())
 
 private val wildcardsRe = """[^*?]+|(\*)|(\?)""".toRegex()

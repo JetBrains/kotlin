@@ -336,7 +336,7 @@ artifacts {
 
 node {
     download = true
-    version = '12.18.0'
+    version = DependenciesKt.getNodejsVersion(project)
     nodeProjectDir = buildDir
 }
 
