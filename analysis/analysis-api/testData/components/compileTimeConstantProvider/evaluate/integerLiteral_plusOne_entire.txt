@@ -1,4 +1,4 @@
-expression: 1
+expression: +1
 
 CONSTANT_EXPRESSION_EVALUATION
 constant: 1
