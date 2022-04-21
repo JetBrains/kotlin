@@ -20,10 +20,17 @@ import com.intellij.lang.ASTNode;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.lexer.KtTokens;
+import org.jetbrains.kotlin.psi.stubs.KotlinPropertyDelegateStub;
+import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes;
 
-public class KtPropertyDelegate extends KtElementImpl {
+public class KtPropertyDelegate extends KtDeclarationStub<KotlinPropertyDelegateStub>
+        implements KtModifierListOwner {
     public KtPropertyDelegate(@NotNull ASTNode node) {
         super(node);
+    }
+
+    public KtPropertyDelegate(@NotNull KotlinPropertyDelegateStub stub) {
+        super(stub, KtStubElementTypes.PROPERTY_DELEGATE);
     }
 
     @Nullable

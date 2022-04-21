@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
+import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.fakeElement
 import org.jetbrains.kotlin.fir.*
@@ -303,6 +304,7 @@ fun <T> FirPropertyBuilder.generateAccessorsByDelegate(
     ownerRegularClassTypeParametersCount: Int?,
     context: Context<T>,
     isExtension: Boolean,
+    delegateVisibility: Visibility? = null,
 ) {
     if (delegateBuilder == null) return
 
@@ -503,7 +505,7 @@ fun <T> FirPropertyBuilder.generateAccessorsByDelegate(
     delegateField = delegateFieldBuilder.apply {
         initializer = delegateBuilder.build()
         status = FirDeclarationStatusImpl(
-            this@generateAccessorsByDelegate.status.visibility,
+            delegateVisibility ?: this@generateAccessorsByDelegate.status.visibility,
             Modality.FINAL,
         )
     }.build()

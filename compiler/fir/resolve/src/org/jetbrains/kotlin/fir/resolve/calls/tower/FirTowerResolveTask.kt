@@ -6,7 +6,9 @@
 package org.jetbrains.kotlin.fir.resolve.calls.tower
 
 import org.jetbrains.kotlin.builtins.StandardNames
+import org.jetbrains.kotlin.fir.FirVisibilityChecker.Default.isVisible
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
+import org.jetbrains.kotlin.fir.declarations.FirDelegateField
 import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.util.asReversedFrozen
 import org.jetbrains.kotlin.fir.declarations.FirTowerDataContext
@@ -14,11 +16,13 @@ import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.builder.buildExpressionStub
 import org.jetbrains.kotlin.fir.expressions.builder.buildPropertyAccessExpression
 import org.jetbrains.kotlin.fir.expressions.impl.FirNoReceiverExpression
+import org.jetbrains.kotlin.fir.references.builder.buildErrorNamedReference
 import org.jetbrains.kotlin.fir.references.builder.buildResolvedNamedReference
 import org.jetbrains.kotlin.fir.resolve.BodyResolveComponents
 import org.jetbrains.kotlin.fir.resolve.DoubleColonLHS
 import org.jetbrains.kotlin.fir.resolve.calls.*
 import org.jetbrains.kotlin.fir.resolve.dfa.unwrapSmartcastExpression
+import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeVisibilityError
 import org.jetbrains.kotlin.fir.resolvedSymbol
 import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.scopes.impl.SELF_NAME
@@ -222,6 +226,33 @@ internal open class FirTowerResolveTask(
         )
     }
 
+    private fun generateDelegateAccessReceiver(
+        propertyAccess: FirPropertyAccessExpression,
+        delegateField: FirDelegateField,
+        info: CallInfo,
+    ): FirPropertyAccessExpression {
+        val isAccessible = isVisible(delegateField, info.session, info.containingFile, info.containingDeclarations, null)
+
+        val reference = if (isAccessible) {
+            buildResolvedNamedReference {
+                name = StandardNames.DELEGATE_FIELD
+                resolvedSymbol = delegateField.symbol
+            }
+        } else {
+            buildErrorNamedReference {
+                diagnostic = ConeVisibilityError(delegateField.symbol)
+            }
+        }
+
+        return buildPropertyAccessExpression {
+            calleeReference = reference
+            explicitReceiver = propertyAccess.explicitReceiver
+            dispatchReceiver = propertyAccess.dispatchReceiver
+            extensionReceiver = propertyAccess.extensionReceiver
+            typeRef = delegateField.returnTypeRef
+        }
+    }
+
     private fun getReceiverForSynthetics(receiver: FirExpression, info: CallInfo): Pair<FirExpression?, FirDeclaration?> {
         val thePropertyAccess = receiver as? FirPropertyAccessExpression
             ?: return null to null
@@ -229,17 +260,11 @@ internal open class FirTowerResolveTask(
         val syntheticsOwner = thePropertyAccess.calleeReference.resolvedSymbol?.fir
             ?: return null to null
         val theProperty = syntheticsOwner as? FirProperty
+        val thePropertyDelegate = theProperty?.delegateField
 
         val properReceiver = when {
-            theProperty?.delegateField != null && info.name != SELF_NAME -> buildPropertyAccessExpression {
-                calleeReference = buildResolvedNamedReference {
-                    name = StandardNames.DELEGATE_FIELD
-                    resolvedSymbol = theProperty.delegateField?.symbol ?: error("Should've had a delegate")
-                }
-                explicitReceiver = thePropertyAccess.explicitReceiver
-                dispatchReceiver = thePropertyAccess.dispatchReceiver
-                extensionReceiver = thePropertyAccess.extensionReceiver
-                typeRef = theProperty.delegateField?.returnTypeRef ?: error("Should've had a delegate")
+            thePropertyDelegate != null && info.name != SELF_NAME -> {
+                generateDelegateAccessReceiver(thePropertyAccess, thePropertyDelegate, info)
             }
             thePropertyAccess.dispatchReceiver !is FirNoReceiverExpression -> thePropertyAccess.dispatchReceiver
             thePropertyAccess.extensionReceiver !is FirNoReceiverExpression -> thePropertyAccess.extensionReceiver
@@ -249,7 +274,7 @@ internal open class FirTowerResolveTask(
         return properReceiver to syntheticsOwner
     }
 
-    suspend fun runResolverForExpressionReceiver(
+    private suspend fun runResolverForExpressionReceiver(
         info: CallInfo,
         explicitReceiverValue: ExpressionReceiverValue,
         parentGroup: TowerGroup = TowerGroup.EmptyRoot

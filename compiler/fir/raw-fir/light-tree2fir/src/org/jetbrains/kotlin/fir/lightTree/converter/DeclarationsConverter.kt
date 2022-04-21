@@ -1057,6 +1057,20 @@ class DeclarationsConverter(
         }
     }
 
+    private fun extractDelegate(node: LighterASTNode): Pair<Modifier, LighterASTNode?> {
+        var modifiers = Modifier()
+        var expression: LighterASTNode? = null
+
+        node.forEachChildren {
+            when (it.tokenType) {
+                MODIFIER_LIST -> modifiers = convertModifierList(it)
+                else -> expression = it
+            }
+        }
+
+        return modifiers to expression
+    }
+
     /**
      * @see org.jetbrains.kotlin.parsing.KotlinParsing.parseProperty
      */
@@ -1065,6 +1079,7 @@ class DeclarationsConverter(
         var identifier: String? = null
         val firTypeParameters = mutableListOf<FirTypeParameter>()
         var isReturnType = false
+        var delegateModifiers = Modifier()
         var delegateExpression: LighterASTNode? = null
         var isVar = false
         var receiverType: FirTypeRef? = null
@@ -1082,7 +1097,10 @@ class DeclarationsConverter(
                 COLON -> isReturnType = true
                 TYPE_REFERENCE -> if (isReturnType) returnType = convertType(it) else receiverType = convertType(it)
                 TYPE_CONSTRAINT_LIST -> typeConstraints += convertTypeConstraints(it)
-                PROPERTY_DELEGATE -> delegateExpression = it
+                PROPERTY_DELEGATE -> extractDelegate(it).also { that ->
+                    delegateModifiers = that.first
+                    delegateExpression = that.second
+                }
                 VAR_KEYWORD -> isVar = true
                 PROPERTY_ACCESSOR -> {
                     accessors += it
@@ -1107,10 +1125,7 @@ class DeclarationsConverter(
             this.isVar = isVar
             initializer = propertyInitializer
 
-            //probably can do this for delegateExpression itself
-            val delegateSource = delegateExpression?.let {
-                (it.getExpressionInParentheses() ?: it).toFirSourceElement()
-            }
+            val delegateSource = delegateExpression?.toFirSourceElement()
 
             symbol = if (isLocal) FirPropertySymbol(propertyName) else FirPropertySymbol(callableIdForName(propertyName))
 
@@ -1136,7 +1151,8 @@ class DeclarationsConverter(
                     classWrapper?.classBuilder?.ownerRegularOrAnonymousObjectSymbol,
                     classWrapper?.classBuilder?.ownerRegularClassTypeParametersCount,
                     isExtension = false,
-                    context = context
+                    context = context,
+                    delegateVisibility = delegateModifiers.getVisibility(),
                 )
             } else {
                 this.isLocal = false
@@ -1211,6 +1227,7 @@ class DeclarationsConverter(
                         classWrapper?.classBuilder?.ownerRegularClassTypeParametersCount,
                         context,
                         isExtension = receiverType != null,
+                        delegateVisibility = delegateModifiers.getVisibility(),
                     )
                 }
             }

@@ -123,6 +123,8 @@ interface KotlinPropertyAccessorStub : StubElement<KtPropertyAccessor> {
 
 interface KotlinBackingFieldStub : StubElement<KtBackingField>
 
+interface KotlinPropertyDelegateStub : StubElement<KtPropertyDelegate>
+
 interface KotlinPropertyStub : KotlinCallableStubBase<KtProperty> {
     fun isVar(): Boolean
     fun hasDelegate(): Boolean
