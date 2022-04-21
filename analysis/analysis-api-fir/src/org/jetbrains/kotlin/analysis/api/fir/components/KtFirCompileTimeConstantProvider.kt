@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.analysis.api.fir.components
 
 import org.jetbrains.kotlin.analysis.api.base.KtConstantValue
-import org.jetbrains.kotlin.analysis.api.base.KtConstantValueFactory
 import org.jetbrains.kotlin.analysis.api.components.KtCompileTimeConstantProvider
 import org.jetbrains.kotlin.analysis.api.components.KtConstantEvaluationMode
 import org.jetbrains.kotlin.analysis.api.fir.KtFirAnalysisSession
@@ -16,16 +15,11 @@ import org.jetbrains.kotlin.analysis.api.withValidityAssertion
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFir
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.throwUnexpectedFirElementError
 import org.jetbrains.kotlin.fir.FirElement
-import org.jetbrains.kotlin.fir.expressions.FirConstExpression
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirPropertyAccessExpression
 import org.jetbrains.kotlin.fir.expressions.FirWhenBranch
 import org.jetbrains.kotlin.fir.references.FirNamedReference
-import org.jetbrains.kotlin.lexer.KtTokens
-import org.jetbrains.kotlin.psi
 import org.jetbrains.kotlin.psi.KtExpression
-import org.jetbrains.kotlin.psi.KtPrefixExpression
-import org.jetbrains.kotlin.types.ConstantValueKind
 
 internal class KtFirCompileTimeConstantProvider(
     override val analysisSession: KtFirAnalysisSession,
@@ -45,13 +39,6 @@ internal class KtFirCompileTimeConstantProvider(
         mode: KtConstantEvaluationMode,
     ): KtConstantValue? = withValidityAssertion {
         when (fir) {
-            is FirConstExpression<*> -> {
-                val v = FirCompileTimeConstantEvaluator.evaluateAsKtConstantValue(fir, mode)
-                if (v != null && fir.isConverted(sourcePsi)) {
-                    val value = fir.kind.unaryMinus(v.value as? Number) ?: return null
-                    KtConstantValueFactory.createConstantValue(value, v.sourcePsi)
-                } else v
-            }
             is FirPropertyAccessExpression,
             is FirExpression,
             is FirNamedReference -> {
@@ -74,23 +61,4 @@ internal class KtFirCompileTimeConstantProvider(
         }
     }
 
-    private fun FirConstExpression<*>.isConverted(sourcePsi: KtExpression): Boolean {
-        val firSourcePsi = this.source?.psi ?: return false
-        return firSourcePsi is KtPrefixExpression && firSourcePsi.operationToken == KtTokens.MINUS && firSourcePsi != sourcePsi
-    }
-
-    private fun ConstantValueKind<*>.unaryMinus(value: Number?): Any? {
-        if (value == null) {
-            return null
-        }
-        return when (this) {
-            ConstantValueKind.Byte -> value.toByte().unaryMinus()
-            ConstantValueKind.Double -> value.toDouble().unaryMinus()
-            ConstantValueKind.Float -> value.toFloat().unaryMinus()
-            ConstantValueKind.Int -> value.toInt().unaryMinus()
-            ConstantValueKind.Long -> value.toLong().unaryMinus()
-            ConstantValueKind.Short -> value.toShort().unaryMinus()
-            else -> null
-        }
-    }
 }

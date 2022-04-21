@@ -5,15 +5,15 @@
 
 package org.jetbrains.kotlin.analysis.low.level.api.fir.file.structure
 
-import org.jetbrains.kotlin.KtFakeSourceElementKind
-import org.jetbrains.kotlin.KtRealPsiSourceElement
-import org.jetbrains.kotlin.KtSourceElement
+import org.jetbrains.kotlin.*
 import org.jetbrains.kotlin.analysis.low.level.api.fir.element.builder.DuplicatedFirSourceElementsException
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.isErrorElement
 import org.jetbrains.kotlin.fir.FirElement
+import org.jetbrains.kotlin.fir.expressions.FirConstExpression
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
 import org.jetbrains.kotlin.fir.expressions.FirPropertyAccessExpression
 import org.jetbrains.kotlin.fir.expressions.FirVariableAssignment
+import org.jetbrains.kotlin.fir.expressions.builder.buildConstExpression
 import org.jetbrains.kotlin.fir.references.*
 import org.jetbrains.kotlin.fir.types.FirErrorTypeRef
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
@@ -21,11 +21,10 @@ import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.types.FirUserTypeRef
 import org.jetbrains.kotlin.fir.types.impl.FirResolvedTypeRefImpl
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
-import org.jetbrains.kotlin.psi
-import org.jetbrains.kotlin.psi.KtBinaryExpression
-import org.jetbrains.kotlin.psi.KtElement
-import org.jetbrains.kotlin.psi.KtTypeReference
-import org.jetbrains.kotlin.psi.KtUnaryExpression
+import org.jetbrains.kotlin.lexer.KtTokens
+import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.findDescendantOfType
+import org.jetbrains.kotlin.types.ConstantValueKind
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
 internal open class FirElementsRecorder : FirVisitor<Unit, MutableMap<KtElement, FirElement>>() {
@@ -71,6 +70,15 @@ internal open class FirElementsRecorder : FirVisitor<Unit, MutableMap<KtElement,
         visitElement(variableAssignment, data)
     }
 
+    override fun <T> visitConstExpression(constExpression: FirConstExpression<T>, data: MutableMap<KtElement, FirElement>) {
+        cacheElement(constExpression, data)
+        // KtPrefixExpression(-, KtConstExpression(n)) is represented as FirConstExpression(-n) with converted constant value.
+        // If one queries FIR for KtConstExpression, we still return FirConstExpression(-n) even though its source is KtPrefixExpression.
+        // Here, we cache FirConstExpression(n) for KtConstExpression(n) to make everything natural and intuitive!
+        if (constExpression.isConverted) {
+            constExpression.kind.reverseConverted(constExpression)?.let { cacheElement(it, data) }
+        }
+    }
 
     //@formatter:off
     override fun visitReference(reference: FirReference, data: MutableMap<KtElement, FirElement>) {}
@@ -143,6 +151,39 @@ internal open class FirElementsRecorder : FirVisitor<Unit, MutableMap<KtElement,
         if (this !is FirFunctionCall) return false
         val name = (calleeReference as? FirResolvedNamedReference)?.name
         return name == OperatorNameConventions.SET || name in OperatorNameConventions.ASSIGNMENT_OPERATIONS
+    }
+
+    private val FirConstExpression<*>.isConverted: Boolean
+        get() {
+            val firSourcePsi = this.source?.psi ?: return false
+            return firSourcePsi is KtPrefixExpression && firSourcePsi.operationToken == KtTokens.MINUS
+        }
+
+    private val FirConstExpression<*>.ktConstantExpression: KtConstantExpression?
+        get() {
+            val firSourcePsi = this.source?.psi
+            return firSourcePsi?.findDescendantOfType()
+        }
+
+    private fun <T> ConstantValueKind<T>.reverseConverted(original: FirConstExpression<T>): FirConstExpression<T>? {
+        val value = original.value as? Number ?: return null
+        val convertedValue = when (this) {
+            ConstantValueKind.Byte -> value.toByte().unaryMinus()
+            ConstantValueKind.Double -> value.toDouble().unaryMinus()
+            ConstantValueKind.Float -> value.toFloat().unaryMinus()
+            ConstantValueKind.Int -> value.toInt().unaryMinus()
+            ConstantValueKind.Long -> value.toLong().unaryMinus()
+            ConstantValueKind.Short -> value.toShort().unaryMinus()
+            else -> null
+        } ?: return null
+        @Suppress("UNCHECKED_CAST")
+        return buildConstExpression(
+            original.ktConstantExpression?.toKtPsiSourceElement(),
+            this,
+            convertedValue as T
+        ).also {
+            it.replaceTypeRef(original.typeRef)
+        }
     }
 
     companion object {
