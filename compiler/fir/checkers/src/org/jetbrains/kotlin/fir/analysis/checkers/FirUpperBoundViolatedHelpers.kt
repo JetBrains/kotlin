@@ -129,17 +129,9 @@ private class FE10LikeConeSubstitutor(
 }
 
 private class OriginalProjectionTypeAttribute(val data: ConeTypeProjection) : ConeAttribute<OriginalProjectionTypeAttribute>() {
-    override fun union(other: OriginalProjectionTypeAttribute?): OriginalProjectionTypeAttribute? {
-        return other
-    }
-
-    override fun intersect(other: OriginalProjectionTypeAttribute?): OriginalProjectionTypeAttribute? {
-        return other
-    }
-
-    override fun add(other: OriginalProjectionTypeAttribute?): OriginalProjectionTypeAttribute? {
-        return other
-    }
+    override fun union(other: OriginalProjectionTypeAttribute?): OriginalProjectionTypeAttribute = other ?: this
+    override fun intersect(other: OriginalProjectionTypeAttribute?): OriginalProjectionTypeAttribute = other ?: this
+    override fun add(other: OriginalProjectionTypeAttribute?): OriginalProjectionTypeAttribute = other ?: this
 
     override fun isSubtypeOf(other: OriginalProjectionTypeAttribute?): Boolean {
         return true
