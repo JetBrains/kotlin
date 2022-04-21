@@ -23,6 +23,7 @@ import com.intellij.psi.stubs.PsiFileStub
 import com.intellij.psi.stubs.StubElement
 import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.asJava.classes.KtLightClass
+import org.jetbrains.kotlin.asJava.classes.KtLightClassForFacade
 import org.jetbrains.kotlin.asJava.elements.*
 import org.jetbrains.kotlin.asJava.finder.JavaElementFinder
 import org.jetbrains.kotlin.fileClasses.javaFileFacadeFqName
@@ -177,8 +178,9 @@ object LightClassUtil {
         val project = ktFile.project
         val classesWithMatchingFqName =
             JavaElementFinder.getInstance(project).findClasses(fqName.asString(), GlobalSearchScope.allScope(project))
-        return classesWithMatchingFqName.singleOrNull() ?: classesWithMatchingFqName.find {
-            it.containingFile?.virtualFile == ktFile.virtualFile
+        return classesWithMatchingFqName.singleOrNull() ?: classesWithMatchingFqName.find { psiClass ->
+            psiClass is KtLightClassForFacade && psiClass.files.any { it.virtualFile == ktFile.virtualFile } ||
+                    psiClass.containingFile?.virtualFile == ktFile.virtualFile
         }
     }
 
