@@ -15344,9 +15344,45 @@ public class FirOldFrontendDiagnosticsWithLightTreeTestGenerated extends Abstrac
                 }
 
                 @Test
+                @TestMetadata("kt45461_29.kt")
+                public void testKt45461_29() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/inference/emptyIntersectionTypes/kt45461_29.kt");
+                }
+
+                @Test
                 @TestMetadata("kt45461_3.kt")
                 public void testKt45461_3() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/inference/emptyIntersectionTypes/kt45461_3.kt");
+                }
+
+                @Test
+                @TestMetadata("kt45461_30.kt")
+                public void testKt45461_30() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/inference/emptyIntersectionTypes/kt45461_30.kt");
+                }
+
+                @Test
+                @TestMetadata("kt45461_31.kt")
+                public void testKt45461_31() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/inference/emptyIntersectionTypes/kt45461_31.kt");
+                }
+
+                @Test
+                @TestMetadata("kt45461_32.kt")
+                public void testKt45461_32() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/inference/emptyIntersectionTypes/kt45461_32.kt");
+                }
+
+                @Test
+                @TestMetadata("kt45461_33.kt")
+                public void testKt45461_33() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/inference/emptyIntersectionTypes/kt45461_33.kt");
+                }
+
+                @Test
+                @TestMetadata("kt45461_34.kt")
+                public void testKt45461_34() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/inference/emptyIntersectionTypes/kt45461_34.kt");
                 }
 
                 @Test

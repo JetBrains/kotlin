@@ -105,11 +105,11 @@ interface TypeCheckerProviderContext {
  */
 interface TypeSystemCommonSuperTypesContext : TypeSystemContext, TypeSystemTypeFactoryContext, TypeCheckerProviderContext {
 
-    fun KotlinTypeMarker.anySuperTypeConstructor(predicate: (TypeConstructorMarker) -> Boolean) =
+    fun KotlinTypeMarker.anySuperTypeConstructor(predicate: (SimpleTypeMarker) -> Boolean) =
         newTypeCheckerState(errorTypesEqualToAnything = false, stubTypesEqualToAnything = true)
             .anySupertype(
                 lowerBoundIfFlexible(),
-                { predicate(it.typeConstructor()) },
+                { predicate(it) },
                 { TypeCheckerState.SupertypesPolicy.LowerIfFlexible }
             )
 
@@ -325,13 +325,13 @@ interface TypeSystemInferenceExtensionContext : TypeSystemContext, TypeSystemBui
 
         for (i in 0 until types.size) {
             val firstType = types[i]
-            if (!firstType.typeConstructor().mayCauseEmptyIntersection()) continue
+            if (!firstType.mayCauseEmptyIntersection()) continue
 
             val firstSubstitutedType by lazy { firstType.eraseContainingTypeParameters() }
 
             for (j in i + 1 until types.size) {
                 val secondType = types[j]
-                if (!secondType.typeConstructor().mayCauseEmptyIntersection()) continue
+                if (!secondType.mayCauseEmptyIntersection()) continue
 
                 val secondSubstitutedType = secondType.eraseContainingTypeParameters()
 
@@ -343,6 +343,30 @@ interface TypeSystemInferenceExtensionContext : TypeSystemContext, TypeSystemBui
         return EmptyIntersectionTypeKind.NOT_EMPTY_INTERSECTION
     }
 
+    private fun canHaveCommonSubtypeWithInterface(firstType: KotlinTypeMarker, secondType: KotlinTypeMarker): Boolean {
+        require(firstType.typeConstructor().isInterface() || secondType.typeConstructor().isInterface()) {
+            "One of the passed type should be an interface"
+        }
+        @Suppress("NAME_SHADOWING")
+        val firstType = firstType.withNullability(false)
+
+        @Suppress("NAME_SHADOWING")
+        val secondType = secondType.withNullability(false)
+
+        // interface A<K>
+        // interface B: A<String>
+        // interface C: A<Int>
+        // B & C can't have common subtype due to having incompatible supertypes: A<String> and A<Int>
+        val haveIncompatibleSupertypes = firstType.anySuperTypeConstructor { superTypeOfFirst ->
+            secondType.anySuperTypeConstructor { superTypeOfSecond ->
+                superTypeOfFirst.typeConstructor() == superTypeOfSecond.typeConstructor()
+                        && !AbstractTypeChecker.equalTypes(this, superTypeOfFirst, superTypeOfSecond)
+            }
+        }
+
+        return !haveIncompatibleSupertypes
+    }
+
     private fun canHaveCommonSubtype(first: KotlinTypeMarker, second: KotlinTypeMarker): Boolean {
         fun extractIntersectionComponentsIfNeeded(type: KotlinTypeMarker) =
             if (type.typeConstructor() is IntersectionTypeConstructorMarker) {
@@ -350,24 +374,26 @@ interface TypeSystemInferenceExtensionContext : TypeSystemContext, TypeSystemBui
             } else listOf(type)
 
         val expandedTypes = extractIntersectionComponentsIfNeeded(first) + extractIntersectionComponentsIfNeeded(second)
-
         val typeCheckerState = newTypeCheckerState(errorTypesEqualToAnything = true, stubTypesEqualToAnything = true)
 
-        for (i in 0 until expandedTypes.size) {
+        for (i in expandedTypes.indices) {
             val firstType = expandedTypes[i]
             val firstTypeConstructor = firstType.typeConstructor()
 
-            if (!firstTypeConstructor.mayCauseEmptyIntersection())
+            if (!firstType.mayCauseEmptyIntersection())
                 continue
 
             for (j in i + 1 until expandedTypes.size) {
                 val secondType = expandedTypes[j]
                 val secondTypeConstructor = secondType.typeConstructor()
 
-                if (!secondTypeConstructor.mayCauseEmptyIntersection())
+                if (!secondType.mayCauseEmptyIntersection())
                     continue
 
                 if (areEqualTypeConstructors(firstTypeConstructor, secondTypeConstructor) && secondTypeConstructor.parametersCount() == 0)
+                    continue
+
+                if (AbstractTypeChecker.areRelatedBySubtyping(this, firstType, secondType))
                     continue
 
                 val superTypeByFirstConstructor = AbstractTypeChecker.findCorrespondingSupertypes(
@@ -377,15 +403,20 @@ interface TypeSystemInferenceExtensionContext : TypeSystemContext, TypeSystemBui
                     typeCheckerState, secondType.lowerBoundIfFlexible(), firstTypeConstructor
                 ).singleOrNull()
 
-                if (superTypeByFirstConstructor == null && superTypeBySecondConstructor == null)
+                val anyInference = firstTypeConstructor.isInterface() || secondTypeConstructor.isInterface()
+
+                // Two classes can't have a common subtype if neither is a subtype of another
+                if (superTypeByFirstConstructor == null && superTypeBySecondConstructor == null && !anyInference)
+                    return false
+
+                if (anyInference && !canHaveCommonSubtypeWithInterface(firstType, secondType))
                     return false
 
                 if (superTypeByFirstConstructor == null || superTypeBySecondConstructor == null)
                     continue // first or second is actually subtype of another
 
-                if (!checkArgumentsOfTypesToBeAbleToHaveCommonSubtype(superTypeByFirstConstructor, superTypeBySecondConstructor)) {
+                if (!checkArgumentsOfTypesToBeAbleToHaveCommonSubtype(superTypeByFirstConstructor, superTypeBySecondConstructor))
                     return false
-                }
             }
         }
 
@@ -400,8 +431,19 @@ interface TypeSystemInferenceExtensionContext : TypeSystemContext, TypeSystemBui
     private fun computeEffectiveVariance(parameter: TypeParameterMarker, argument: TypeArgumentMarker): TypeVariance? =
         AbstractTypeChecker.effectiveVariance(parameter.getVariance(), argument.getVariance())
 
-    private fun TypeConstructorMarker.mayCauseEmptyIntersection(): Boolean =
-        (isClassTypeConstructor() || isTypeParameterTypeConstructor()) && !isInterface() && !isAnyConstructor() && !isNothingConstructor()
+    private fun KotlinTypeMarker.mayCauseEmptyIntersection(): Boolean {
+        val typeConstructor = typeConstructor()
+
+        if (!typeConstructor.isClassTypeConstructor() && !typeConstructor.isTypeParameterTypeConstructor())
+            return false
+
+        // Even two interfaces may be an empty intersection type:
+        // interface Inv<K>
+        // interface B : Inv<Int>
+        // `Inv<String> & B` or `Inv<String> & Inv<Int>` are empty
+        // So we don't filter out interfaces here
+        return !typeConstructor.isAnyConstructor() && !typeConstructor.isNothingConstructor()
+    }
 
     private fun areArgumentsOfSpecifiedVariances(
         firstType: KotlinTypeMarker,
@@ -431,6 +473,9 @@ interface TypeSystemInferenceExtensionContext : TypeSystemContext, TypeSystemBui
         fun isSubtypeOf(firstType: KotlinTypeMarker, secondType: KotlinTypeMarker) =
             AbstractTypeChecker.isSubtypeOf(this, firstType, secondType)
 
+        fun areEqualTypes(firstType: KotlinTypeMarker, secondType: KotlinTypeMarker) =
+            AbstractTypeChecker.equalTypes(this, firstType, secondType)
+
         for ((i, argumentOfFirst) in firstType.getArguments().withIndex()) {
             @Suppress("NAME_SHADOWING")
             val argumentOfFirst = argumentOfFirst.uncaptureIfNeeded()
@@ -444,31 +489,27 @@ interface TypeSystemInferenceExtensionContext : TypeSystemContext, TypeSystemBui
 
             when {
                 areArgumentsOfSpecifiedVariances(firstType, secondType, i, TypeVariance.INV, TypeVariance.INV) ->
-                    return false
+                    return areEqualTypes(argumentTypeOfFirst, argumentTypeOfSecond)
                 areArgumentsOfSpecifiedVariances(firstType, secondType, i, TypeVariance.INV, TypeVariance.OUT) -> {
-                    if (!isSubtypeOf(argumentTypeOfFirst, argumentTypeOfSecond)) {
+                    if (!isSubtypeOf(argumentTypeOfFirst, argumentTypeOfSecond))
                         return false
-                    }
                 }
                 areArgumentsOfSpecifiedVariances(firstType, secondType, i, TypeVariance.INV, TypeVariance.IN) -> {
-                    if (!isSubtypeOf(argumentTypeOfSecond, argumentTypeOfFirst)) {
+                    if (!isSubtypeOf(argumentTypeOfSecond, argumentTypeOfFirst))
                         return false
-                    }
                 }
                 areArgumentsOfSpecifiedVariances(firstType, secondType, i, TypeVariance.IN, TypeVariance.OUT) -> {
                     if (argumentTypeOfFirst.argumentsCount() == 0 && argumentTypeOfSecond.argumentsCount() == 0) {
-                        if (!isSubtypeOf(argumentTypeOfFirst, argumentTypeOfSecond)) {
+                        if (!isSubtypeOf(argumentTypeOfFirst, argumentTypeOfSecond))
                             return false
-                        }
                     } else if (!canHaveCommonSubtype(argumentTypeOfFirst, argumentTypeOfSecond)) {
                         return false
                     }
                 }
                 areArgumentsOfSpecifiedVariances(firstType, secondType, i, TypeVariance.OUT, TypeVariance.OUT)
                         || areArgumentsOfSpecifiedVariances(firstType, secondType, i, TypeVariance.IN, TypeVariance.IN) -> {
-                    if (!canHaveCommonSubtype(argumentTypeOfFirst, argumentTypeOfSecond)) {
+                    if (!canHaveCommonSubtype(argumentTypeOfFirst, argumentTypeOfSecond))
                         return false
-                    }
                 }
             }
         }
