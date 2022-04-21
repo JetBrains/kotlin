@@ -655,13 +655,17 @@ abstract class BaseIncrementalCompilationMultiProjectIT : IncrementalCompilation
     @GradleTest
     fun testValidOutputsWithCacheCorrupted(gradleVersion: GradleVersion) {
         defaultProject(gradleVersion, buildOptions = defaultBuildOptions.copy(logLevel = LogLevel.DEBUG)) {
-            build("assemble")
+            subProject("lib").buildGradle.appendText("""
+                compileKotlin {
+                    doLast {
+                        def file = new File(projectDir.path + "/build/kotlin/compileKotlin/cacheable/caches-jvm/lookups/file-to-id.tab")
+                        println("Update lookup file " + file.path)
+                        file.write("la-la")
+                    }
+                }
+            """.trimIndent())
 
-            val lookupFile = projectPath.resolve("lib/build/kotlin/compileKotlin/cacheable/caches-jvm/lookups/file-to-id.tab")
-            assertTrue(
-                "Part of lookups cache was not deleted",
-                lookupFile.deleteIfExists()
-            )
+            build("assemble")
 
             subProject("lib").kotlinSourcesDir().resolve("bar/A.kt").modify {
                 it.replace("fun a() {}", "fun a() {}\nfun newA() {}")
@@ -669,8 +673,12 @@ abstract class BaseIncrementalCompilationMultiProjectIT : IncrementalCompilation
 
             build("assemble") {
                 assertOutputContains("Non-incremental compilation will be performed: CACHE_CORRUPTION")
+                printBuildOutput()
             }
-            assertTrue("Output is empty", projectPath.resolve(lookupFile).exists())
+
+            val lookupFile = projectPath.resolve("lib/build/kotlin/compileKotlin/cacheable/caches-jvm/lookups/file-to-id.tab")
+            assertTrue("Output is empty", lookupFile.exists())
+
         }
     }
 }
