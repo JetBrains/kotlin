@@ -1582,7 +1582,7 @@ open class RawFirBuilder(
 
                         val delegateBuilder = FirWrappedDelegateExpressionBuilder().apply {
                             val delegateFirExpression = extractDelegateExpression()
-                            source = delegateFirExpression.source?.fakeElement(KtFakeSourceElementKind.WrappedDelegate)
+                            source = this@toFirProperty.delegate?.toFirSourceElement(KtFakeSourceElementKind.WrappedDelegate)
                             expression = delegateFirExpression
                         }
 
@@ -1593,6 +1593,7 @@ open class RawFirBuilder(
                             ownerRegularClassTypeParametersCount = null,
                             isExtension = false,
                             context = context,
+                            delegateVisibility = this@toFirProperty.delegate?.visibility,
                         )
                     }
                 } else {
@@ -1646,8 +1647,8 @@ open class RawFirBuilder(
 
                             val delegateBuilder = FirWrappedDelegateExpressionBuilder().apply {
                                 val delegateExpression = extractDelegateExpression()
-                                source = delegateExpression.source?.fakeElement(KtFakeSourceElementKind.WrappedDelegate)
-                                expression = extractDelegateExpression()
+                                source = this@toFirProperty.delegate?.toFirSourceElement(KtFakeSourceElementKind.WrappedDelegate)
+                                expression = delegateExpression
                             }
 
                             generateAccessorsByDelegate(
@@ -1657,6 +1658,7 @@ open class RawFirBuilder(
                                 ownerRegularClassTypeParametersCount,
                                 context,
                                 isExtension = receiverTypeReference != null,
+                                delegateVisibility = this@toFirProperty.delegate?.visibility,
                             )
                         }
                     }

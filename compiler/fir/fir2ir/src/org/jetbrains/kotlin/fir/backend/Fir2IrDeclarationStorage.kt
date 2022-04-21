@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.fir.backend
 
 import org.jetbrains.kotlin.KtFakeSourceElementKind
-import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.builtins.StandardNames.BUILT_INS_PACKAGE_FQ_NAMES
 import org.jetbrains.kotlin.descriptors.DescriptorVisibility
 import org.jetbrains.kotlin.descriptors.Modality
@@ -765,6 +764,7 @@ class Fir2IrDeclarationStorage(
             isLateInit -> setter?.visibility ?: status.visibility
             isConst -> status.visibility
             hasJvmFieldAnnotation -> status.visibility
+            delegateField != null -> delegateField?.visibility ?: status.visibility
             else -> Visibilities.Private
         }
 
@@ -1504,8 +1504,8 @@ class Fir2IrDeclarationStorage(
         return getIrPropertyForwardedSymbol(firBackingFieldSymbol.fir.propertySymbol.fir)
     }
 
-    fun getIrDelegateFieldSymbol(firVariableSymbol: FirVariableSymbol<*>): IrSymbol {
-        return getIrPropertyForwardedSymbol(firVariableSymbol.fir)
+    fun getIrDelegateFieldSymbol(firDelegateFieldSymbol: FirDelegateFieldSymbol): IrSymbol {
+        return getIrPropertyForwardedSymbol(firDelegateFieldSymbol.fir.propertySymbol.fir)
     }
 
     private fun getIrPropertyForwardedSymbol(fir: FirVariable): IrSymbol {
