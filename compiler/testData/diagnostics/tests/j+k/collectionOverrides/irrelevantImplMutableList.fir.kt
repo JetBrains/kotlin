@@ -115,5 +115,5 @@ fun main() {
     x[0]
     x.size
     x.remove("")
-    x.remove(1)
+    x.remove(<!ARGUMENT_TYPE_MISMATCH!>1<!>)
 }

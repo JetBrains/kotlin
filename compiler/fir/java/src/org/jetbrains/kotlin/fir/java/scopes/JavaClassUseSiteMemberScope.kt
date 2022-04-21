@@ -415,7 +415,7 @@ class JavaClassUseSiteMemberScope(
             ?.symbol as? FirNamedFunctionSymbol
             ?: unwrappedSubstitutionOverride.symbol
         val originalDeclaredFunction = declaredMemberScope.getFunctions(naturalName).firstOrNull {
-            it.hasSameJvmDescriptorButDoesNotOverride(functionFromSupertypeWithErasedParameterType)
+            it.hasSameJvmDescriptor(functionFromSupertypeWithErasedParameterType) && it.hasErasedParameters()
         } ?: return false
         val renamedDeclaredFunction = buildJavaMethodCopy(originalDeclaredFunction.fir as FirJavaMethod) {
             name = naturalName
@@ -451,11 +451,10 @@ class JavaClassUseSiteMemberScope(
         return false
     }
 
-    private fun FirNamedFunctionSymbol.hasSameJvmDescriptorButDoesNotOverride(
+    private fun FirNamedFunctionSymbol.hasSameJvmDescriptor(
         builtinWithErasedParameters: FirNamedFunctionSymbol
     ): Boolean {
         return fir.computeJvmDescriptor(includeReturnType = false) == builtinWithErasedParameters.fir.computeJvmDescriptor(includeReturnType = false)
-                && overrideChecker.isOverriddenFunction(this, builtinWithErasedParameters)
     }
 
     private fun processOverridesForFunctionsWithDifferentJvmName(
