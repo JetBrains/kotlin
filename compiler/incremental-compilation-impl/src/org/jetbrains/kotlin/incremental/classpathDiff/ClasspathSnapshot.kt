@@ -114,7 +114,7 @@ class JavaClassMemberLevelSnapshot(
 )
 
 /** Snapshot of a Java class or a Java class member (field or method). */
-open class JavaElementSnapshot(
+class JavaElementSnapshot(
 
     /** The name of the Java element. It is part of the Java element's ABI. */
     val name: String,
@@ -122,17 +122,6 @@ open class JavaElementSnapshot(
     /** The hash of the Java element's ABI. */
     val abiHash: Long
 )
-
-/** TEST-ONLY: A [JavaElementSnapshot] that is used for testing only and must not be used in production code. */
-class JavaElementSnapshotForTests(
-    name: String,
-    abiHash: Long,
-
-    /** The Java element's ABI, captured in a [String]. */
-    @Suppress("unused") // Used by Gson reflection
-    val abiValue: String
-
-) : JavaElementSnapshot(name, abiHash)
 
 /**
  * [ClassSnapshot] of an inaccessible class.

@@ -30,13 +30,13 @@ import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCache
 import org.jetbrains.kotlin.load.kotlin.incremental.components.JvmPackagePartProto
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.metadata.jvm.deserialization.BitEncoding
+import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmMemberSignature
 import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmProtoBufUtil
 import org.jetbrains.kotlin.metadata.jvm.deserialization.ModuleMapping
 import org.jetbrains.kotlin.metadata.jvm.serialization.JvmStringTable
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.resolve.jvm.AsmTypes
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 import org.jetbrains.org.objectweb.asm.*
 import org.jetbrains.org.objectweb.asm.ClassReader.*
@@ -728,13 +728,13 @@ private fun getConstantsAndInlineFunctions(
     classContents: ByteArray
 ): Pair<LinkedHashMap<String, Any>, LinkedHashMap<String, Long>> {
     val constantsClassVisitor = ConstantsClassVisitor()
-    val inlineFunctionNames = inlineFunctionsJvmNames(classHeader)
+    val inlineFunctionSignatures = inlineFunctionsJvmNames(classHeader)
 
-    return if (inlineFunctionNames.isEmpty()) {
+    return if (inlineFunctionSignatures.isEmpty()) {
         ClassReader(classContents).accept(constantsClassVisitor, SKIP_CODE or SKIP_DEBUG or SKIP_FRAMES)
         Pair(constantsClassVisitor.getResult(), LinkedHashMap())
     } else {
-        val inlineFunctionsClassVisitor = InlineFunctionsClassVisitor(inlineFunctionNames, constantsClassVisitor)
+        val inlineFunctionsClassVisitor = InlineFunctionsClassVisitor(inlineFunctionSignatures, constantsClassVisitor)
         ClassReader(classContents).accept(inlineFunctionsClassVisitor, 0)
         Pair(constantsClassVisitor.getResult(), inlineFunctionsClassVisitor.getResult())
     }
@@ -757,33 +757,35 @@ private class ConstantsClassVisitor : ClassVisitor(Opcodes.API_VERSION) {
 }
 
 private class InlineFunctionsClassVisitor(
-    private val inlineFunctionNames: Set<String>,
+    private val inlineFunctionSignatures: Set<String>,
     cv: ConstantsClassVisitor // Note: cv must not override the visitMethod (it will not be called with the current implementation below)
 ) : ClassVisitor(Opcodes.API_VERSION, cv) {
 
     private val result = LinkedHashMap<String, Long>()
-    private var dummyVersion: Int = -1
+    private var classVersion: Int? = null
 
-    override fun visit(version: Int, access: Int, name: String?, signature: String?, superName: String?, interfaces: Array<out String>?) {
+    override fun visit(version: Int, access: Int, name: String, signature: String?, superName: String?, interfaces: Array<out String>?) {
         super.visit(version, access, name, signature, superName, interfaces)
-        dummyVersion = version
+        classVersion = version
     }
 
     override fun visitMethod(access: Int, name: String, desc: String, signature: String?, exceptions: Array<out String>?): MethodVisitor? {
         if (access and Opcodes.ACC_PRIVATE == Opcodes.ACC_PRIVATE) return null
 
-        val dummyClassWriter = ClassWriter(0)
-        dummyClassWriter.visit(dummyVersion, 0, "dummy", null, AsmTypes.OBJECT_TYPE.internalName, null)
+        // Note: Here, functionSignature = name + descriptor.
+        // It is different from the `signature` parameter above, which is essentially a more detailed descriptor when generics are used
+        // (or null otherwise).
+        val functionSignature = JvmMemberSignature.Method(name, desc).asString()
+        if (functionSignature !in inlineFunctionSignatures) return null
 
-        return object : MethodVisitor(Opcodes.API_VERSION, dummyClassWriter.visitMethod(0, name, desc, null, exceptions)) {
+        val classWriter = ClassWriter(0)
+
+        // The `version` and `name` parameters are important (see KT-38857), the others can be null.
+        classWriter.visit(/* version */ classVersion!!, /* access */ 0, /* name */ "ClassWithOneMethod", null, null, null)
+
+        return object : MethodVisitor(Opcodes.API_VERSION, classWriter.visitMethod(access, name, desc, signature, exceptions)) {
             override fun visitEnd() {
-                val jvmName = name + desc
-                if (jvmName !in inlineFunctionNames) return
-
-                val dummyBytes = dummyClassWriter.toByteArray()!!
-
-                val hash = dummyBytes.md5()
-                result[jvmName] = hash
+                result[functionSignature] = classWriter.toByteArray().md5()
             }
         }
     }

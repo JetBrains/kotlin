@@ -12,30 +12,26 @@
     },
     "local": false
   },
-  "classAbiHash": 7253633932031152470,
+  "classAbiHash": -6515999856905133685,
   "classMemberLevelSnapshot": {
     "classAbiExcludingMembers": {
-      "abiValue": "{\n  \"version\": 52,\n  \"access\": 33,\n  \"name\": \"com/example/SimpleClass\",\n  \"superName\": \"java/lang/Object\",\n  \"interfaces\": [],\n  \"sourceFile\": \"SimpleClass.java\",\n  \"innerClasses\": [],\n  \"fields\": [],\n  \"methods\": [],\n  \"api\": 589824\n}",
       "name": "com/example/SimpleClass",
-      "abiHash": -1986494095366785349
+      "abiHash": 8734303838782665320
     },
     "fieldsAbi": [
       {
-        "abiValue": "{\n  \"access\": 1,\n  \"name\": \"publicField\",\n  \"desc\": \"Ljava/lang/String;\",\n  \"api\": 589824\n}",
         "name": "publicField",
-        "abiHash": 1021768301411937004
+        "abiHash": 8370167348140025367
       }
     ],
     "methodsAbi": [
       {
-        "abiValue": "{\n  \"access\": 1,\n  \"name\": \"\\u003cinit\\u003e\",\n  \"desc\": \"()V\",\n  \"exceptions\": [],\n  \"visibleAnnotableParameterCount\": 0,\n  \"invisibleAnnotableParameterCount\": 0,\n  \"instructions\": {\n    \"size\": 0\n  },\n  \"tryCatchBlocks\": [],\n  \"maxStack\": 0,\n  \"maxLocals\": 0,\n  \"localVariables\": [],\n  \"visited\": false,\n  \"api\": 589824\n}",
         "name": "\u003cinit\u003e",
-        "abiHash": 5725188035643409224
+        "abiHash": 2413123887428571534
       },
       {
-        "abiValue": "{\n  \"access\": 1,\n  \"name\": \"publicMethod\",\n  \"desc\": \"()Ljava/lang/String;\",\n  \"exceptions\": [],\n  \"visibleAnnotableParameterCount\": 0,\n  \"invisibleAnnotableParameterCount\": 0,\n  \"instructions\": {\n    \"size\": 0\n  },\n  \"tryCatchBlocks\": [],\n  \"maxStack\": 0,\n  \"maxLocals\": 0,\n  \"localVariables\": [],\n  \"visited\": false,\n  \"api\": 589824\n}",
         "name": "publicMethod",
-        "abiHash": 8210873051092995586
+        "abiHash": 7574889098198027162
       }
     ]
   },

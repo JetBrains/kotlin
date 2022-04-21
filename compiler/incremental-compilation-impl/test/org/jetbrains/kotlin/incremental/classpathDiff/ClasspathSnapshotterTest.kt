@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.incremental.classpathDiff
 
-import org.jetbrains.kotlin.incremental.classpathDiff.ClasspathSnapshotTestCommon.ClassFileUtil.readBytes
 import org.jetbrains.kotlin.incremental.classpathDiff.ClasspathSnapshotTestCommon.ClassFileUtil.snapshot
 import org.jetbrains.kotlin.incremental.classpathDiff.ClasspathSnapshotTestCommon.SourceFile.JavaSourceFile
 import org.jetbrains.kotlin.incremental.classpathDiff.ClasspathSnapshotTestCommon.SourceFile.KotlinSourceFile
@@ -101,18 +100,10 @@ class JavaOnlyClasspathSnapshotterTest : ClasspathSnapshotTestCommon() {
         JavaSourceFile(baseDir = File("$testDataDir/java/$testName/src"), relativePath = relativePath), tmpDir
     )
 
-    private fun TestSourceFile.compileAndSnapshotWithDebugInfo(): ClassSnapshot {
-        val classFile = compileSingle()
-        return ClassSnapshotter.snapshot(
-            listOf(ClassFileWithContents(classFile, classFile.readBytes())),
-            includeDebugInfoInJavaSnapshot = true
-        ).single()
-    }
-
     @Test
     fun testSimpleClass() {
         val sourceFile = getSourceFile("testSimpleClass", "com/example/SimpleClass.java")
-        val actualSnapshot = sourceFile.compileAndSnapshotWithDebugInfo().toGson()
+        val actualSnapshot = sourceFile.compileAndSnapshot().toGson()
         val expectedSnapshot = sourceFile.getExpectedSnapshotFile().readText()
 
         assertEquals(expectedSnapshot, actualSnapshot)
