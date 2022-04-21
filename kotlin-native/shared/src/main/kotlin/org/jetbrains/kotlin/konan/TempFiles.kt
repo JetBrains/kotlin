@@ -23,6 +23,13 @@ import org.jetbrains.kotlin.konan.file.*
  * If pathToTemporaryDir is given and is not empty then temporary outputs will be preserved
  */
 class TempFiles(outputPath: String, pathToTemporaryDir: String? = null) {
+    fun dispose() {
+        if (deleteOnExit) {
+            // Note: this can throw an exception if a file deletion is failed for some reason (e.g. OS is Windows and the file is in use).
+            dir.deleteRecursively()
+        }
+    }
+
     private val outputName = File(outputPath).name
     val deleteOnExit = pathToTemporaryDir == null || pathToTemporaryDir.isEmpty()
 
@@ -36,7 +43,7 @@ class TempFiles(outputPath: String, pathToTemporaryDir: String? = null) {
 
     private val dir by lazy {
         if (deleteOnExit) {
-            createTempDir("konan_temp").deleteOnExit()
+            createTempDir("konan_temp")
         } else {
             createDirForTemporaryFiles(pathToTemporaryDir!!)
         }
@@ -55,8 +62,6 @@ class TempFiles(outputPath: String, pathToTemporaryDir: String? = null) {
      * Create file named {name}{suffix} inside temporary dir
      */
     fun create(prefix: String, suffix: String = ""): File =
-            File(dir, "$prefix$suffix").also {
-                if (deleteOnExit) it.deleteOnExit()
-            }
+            File(dir, "$prefix$suffix")
 }
 
