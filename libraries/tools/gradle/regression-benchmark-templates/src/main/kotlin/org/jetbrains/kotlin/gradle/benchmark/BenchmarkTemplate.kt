@@ -252,7 +252,22 @@ abstract class BenchmarkTemplate(
         benchmarkHtml.writeText(
             results.toHTML(
                 configuration = DisplayConfiguration(
-                    cellContentLimit = 120
+                    cellContentLimit = 120,
+                    cellFormatter = { dataRow, dataColumn ->
+                        if (dataColumn.name.contains("diff from stable release")) {
+                            val percent = dataRow.getValue<String>(dataColumn.name).removeSuffix("%").toInt()
+                            when {
+                                percent <= 100 -> background(184, 255, 184) // Green
+                                percent in 101..105 -> this.background(255, 255, 184) // Yellow
+                                else -> background(255, 184, 184) // Red
+                            }
+                        } else if (dataColumn.name == "Scenario") {
+                            background(225, 225, 225) // Gray
+                            bold
+                        } else {
+                            null
+                        }
+                    }
                 ),
                 includeInit = true,
                 getFooter = {
