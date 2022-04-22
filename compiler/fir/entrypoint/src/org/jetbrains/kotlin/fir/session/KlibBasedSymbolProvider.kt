@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.deserialization.*
 import org.jetbrains.kotlin.fir.scopes.FirKotlinScopeProvider
 import org.jetbrains.kotlin.library.metadata.KlibMetadataClassDataFinder
-import org.jetbrains.kotlin.library.packageFqName
 import org.jetbrains.kotlin.library.resolver.KotlinResolvedLibrary
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.metadata.deserialization.NameResolverImpl
@@ -26,11 +25,11 @@ class KlibBasedSymbolProvider(
     session: FirSession,
     moduleDataProvider: ModuleDataProvider,
     kotlinScopeProvider: FirKotlinScopeProvider,
-    private val library: KotlinResolvedLibrary,
+    private val resolvedLibrary: KotlinResolvedLibrary,
     defaultDeserializationOrigin: FirDeclarationOrigin = FirDeclarationOrigin.Library
 ) : AbstractFirDeserializedSymbolProvider(session, moduleDataProvider, kotlinScopeProvider, defaultDeserializationOrigin) {
     private val fragmentNameList by lazy {
-        library.loadModuleHeader(library.library).packageFragmentNameList.toSet()
+        resolvedLibrary.loadModuleHeader(resolvedLibrary.library).packageFragmentNameList.toSet()
     }
 
     private val annotationDeserializer = KlibBasedAnnotationDeserializer(session)
@@ -43,10 +42,10 @@ class KlibBasedSymbolProvider(
             return emptyList()
         }
 
-        return library.library.packageMetadataParts(packageStringName).mapNotNull {
-            val fragment = library.loadPackageFragment(library.library, packageStringName, it)
+        return resolvedLibrary.library.packageMetadataParts(packageStringName).mapNotNull {
+            val fragment = resolvedLibrary.loadPackageFragment(resolvedLibrary.library, packageStringName, it)
 
-            val libraryPath = Paths.get(library.library.libraryName)
+            val libraryPath = Paths.get(resolvedLibrary.library.libraryName)
             val moduleData = moduleDataProvider.getModuleData(libraryPath) ?: return@mapNotNull null
             val packageProto = fragment.`package`
 
@@ -74,9 +73,9 @@ class KlibBasedSymbolProvider(
             return null
         }
 
-        library.library.packageMetadataParts(packageStringName).forEach {
-            val libraryPath = Paths.get(library.library.libraryName)
-            val fragment = library.loadPackageFragment(library.library, packageStringName, it)
+        resolvedLibrary.library.packageMetadataParts(packageStringName).forEach {
+            val libraryPath = Paths.get(resolvedLibrary.library.libraryName)
+            val fragment = resolvedLibrary.loadPackageFragment(resolvedLibrary.library, packageStringName, it)
 
             val nameResolver = NameResolverImpl(
                 fragment.strings,
