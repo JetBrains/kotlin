@@ -300,7 +300,7 @@ class WasmBaseTypeOperatorTransformer(val context: WasmBackendContext) : IrEleme
     }
 
     private fun generateIsInterface(argument: IrExpression, toType: IrType): IrExpression {
-        return builder.irCall(symbols.isInterface).apply {
+        return builder.irCall(symbols.wasmIsInterface).apply {
             putValueArgument(0, argument)
             putTypeArgument(0, toType)
         }

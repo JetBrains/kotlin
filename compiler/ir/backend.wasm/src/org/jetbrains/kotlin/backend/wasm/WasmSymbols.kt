@@ -173,7 +173,7 @@ class WasmSymbols(
     val wasmClassId = getInternalFunction("wasmClassId")
     val wasmInterfaceId = getInternalFunction("wasmInterfaceId")
 
-    val isInterface = getInternalFunction("isInterface")
+    val wasmIsInterface = getInternalFunction("wasmIsInterface")
 
     val nullableEquals = getInternalFunction("nullableEquals")
     val ensureNotNull = getInternalFunction("ensureNotNull")

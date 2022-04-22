@@ -402,7 +402,7 @@ class BodyGenerator(
                 body.buildConstI32Symbol(context.referenceInterfaceId(irInterface.symbol))
             }
 
-            wasmSymbols.isInterface -> {
+            wasmSymbols.wasmIsInterface -> {
                 val irInterface = call.getTypeArgument(0)!!.getClass()
                     ?: error("No interface given for wasmInterfaceId intrinsic")
                 assert(irInterface.isInterface)
