@@ -261,6 +261,10 @@ obj
             put("boundValue", 100)
         })
         Assert.assertEquals(111, result2)
+
+        engine.put("nullable", null)
+        val result3 = engine.eval("bindings[\"nullable\"]?.let { it as Int } ?: -1")
+        Assert.assertEquals(-1, result3)
     }
 
     @Test
@@ -280,6 +284,10 @@ obj
             put("boundValue", 100)
         })
         Assert.assertEquals(111, result2)
+
+        engine.put("nullable", null)
+        val result3 = engine.eval("nullable?.let { it as Int } ?: -1")
+        Assert.assertEquals(-1, result3)
     }
 
     @Test

@@ -14,31 +14,37 @@ import kotlin.reflect.KType
  */
 class KotlinType private constructor(
     val typeName: String,
-    @Transient val fromClass: KClass<*>? = null
+    @Transient val fromClass: KClass<*>?,
+    val isNullable: Boolean
     // TODO: copy properties from KType
 ) : Serializable {
     /**
      * Constructs KotlinType from fully-qualified [qualifiedTypeName] in a dot-separated form, e.g. "org.acme.Outer.Inner"
      */
-    constructor(qualifiedTypeName: String) : this(qualifiedTypeName, null)
+    @JvmOverloads
+    constructor(qualifiedTypeName: String, isNullable: Boolean = false)
+            : this(qualifiedTypeName.removeSuffix("?"), null, isNullable = isNullable || qualifiedTypeName.endsWith('?'))
 
     /**
      * Constructs KotlinType from reflected [kclass]
      */
-    constructor(kclass: KClass<*>) : this(kclass.java.name, kclass)
+    @JvmOverloads
+    constructor(kclass: KClass<*>, isNullable: Boolean = false) : this(kclass.java.name, kclass, isNullable)
 
     // TODO: implement other approach for non-class types
     /**
-     * Constructs KotlinType from reflected [ktype]
+     * Constructs KotlinType from reflected [type]
      */
-    constructor(type: KType) : this(type.classifier as KClass<*>)
+    constructor(type: KType) : this(type.classifier as KClass<*>, type.isMarkedNullable)
 
     override fun equals(other: Any?): Boolean =
-        (other as? KotlinType)?.let { typeName == it.typeName } == true
+        (other as? KotlinType)?.let { typeName == it.typeName && isNullable == it.isNullable } == true
 
-    override fun hashCode(): Int = typeName.hashCode()
+    override fun hashCode(): Int = typeName.hashCode() + 31 * isNullable.hashCode()
+
+    fun withNullability(isNullable: Boolean): KotlinType = KotlinType(typeName, fromClass, isNullable)
 
     companion object {
-        private const val serialVersionUID: Long = 1L
+        private const val serialVersionUID: Long = 2L
     }
 }

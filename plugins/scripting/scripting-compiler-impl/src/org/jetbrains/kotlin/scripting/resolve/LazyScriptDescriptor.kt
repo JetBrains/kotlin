@@ -274,7 +274,7 @@ class LazyScriptDescriptor(
         scriptCompilationConfiguration()[ScriptCompilationConfiguration.providedProperties].orEmpty()
             .mapNotNull { (name, type) ->
                 findTypeDescriptor(getScriptingClass(type), Errors.MISSING_SCRIPT_PROVIDED_PROPERTY_CLASS)
-                    ?.let { name.toValidJvmIdentifier() to it }
+                    ?.let { name.toValidJvmIdentifier() to it.defaultType.makeNullableAsSpecified(type.isNullable) }
             }.map { (name, classDescriptor) ->
                 ScriptProvidedPropertyDescriptor(
                     Name.identifier(name),

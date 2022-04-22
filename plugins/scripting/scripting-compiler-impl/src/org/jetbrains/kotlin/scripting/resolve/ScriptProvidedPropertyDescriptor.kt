@@ -9,10 +9,11 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.impl.PropertyDescriptorImpl
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.types.KotlinType
 
 class ScriptProvidedPropertyDescriptor(
     name: Name,
-    typeDescriptor: ClassDescriptor,
+    type: KotlinType,
     receiver: ReceiverParameterDescriptor?,
     isVar: Boolean,
     script: ScriptDescriptor
@@ -30,7 +31,7 @@ class ScriptProvidedPropertyDescriptor(
     /* isDelegated = */ false
 ) {
     init {
-        setType(typeDescriptor.defaultType, emptyList(), receiver, null, emptyList())
+        setType(type, emptyList(), receiver, null, emptyList())
         // TODO: consider delegation instead
         initialize(null, null, null, null)
     }
