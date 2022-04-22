@@ -163,10 +163,10 @@ class VariantAwareDependenciesMppIT : BaseGradleIT() {
             gradleBuildScript().appendText(
                 "\n" + """
                 dependencies {
-                    jvm6Implementation project(':${innerJvmProject.projectName}')
-                    jvm6TestRuntimeOnly project(':${innerJvmProject.projectName}')
-                    nodeJsImplementation project(':${innerJsProject.projectName}')
-                    nodeJsTestRuntimeOnly project(':${innerJsProject.projectName}')
+                    jvm6CompilationImplementation project(':${innerJvmProject.projectName}')
+                    jvm6TestCompilationRuntimeOnly project(':${innerJvmProject.projectName}')
+                    nodeJsCompilationImplementation project(':${innerJsProject.projectName}')
+                    nodeJsTestCompilationRuntimeOnly project(':${innerJsProject.projectName}')
                 }
             """.trimIndent()
             )

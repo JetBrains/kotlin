@@ -20,9 +20,9 @@ kotlin.targets.fromPreset(kotlin.presets.js, 'browser') {
 }
 
 dependencies {
-    browserImplementation project(":libraryProject")
-    browserImplementation "org.jetbrains.kotlin:kotlin-stdlib-js"
-    browserImplementation "org.mozilla:rhino:1.7.7.1"
+    browserCompilationImplementation project(":libraryProject")
+    browserCompilationImplementation "org.jetbrains.kotlin:kotlin-stdlib-js"
+    browserCompilationImplementation "org.mozilla:rhino:1.7.7.1"
 }
 
 tasks.named('compileKotlinBrowser') {

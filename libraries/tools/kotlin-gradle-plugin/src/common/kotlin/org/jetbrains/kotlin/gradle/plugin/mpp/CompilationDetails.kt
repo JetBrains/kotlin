@@ -96,6 +96,7 @@ open class DefaultCompilationDetails<T : KotlinCommonOptions>(
             lowerCamelCaseName(
                 target.disambiguationClassifier,
                 compilationPurpose.takeIf { it != KotlinCompilation.MAIN_COMPILATION_NAME },
+                "compilation",
             )
         )
 
@@ -592,6 +593,7 @@ internal open class JsCompilationDetails(
             return lowerCamelCaseName(
                 disambiguationClassifierInPlatform,
                 compilationPurpose.takeIf { it != KotlinCompilation.MAIN_COMPILATION_NAME },
+                "compilation",
                 simpleName
             )
         }
