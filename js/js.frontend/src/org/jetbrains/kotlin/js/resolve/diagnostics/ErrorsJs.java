@@ -103,6 +103,9 @@ public interface ErrorsJs {
     DiagnosticFactory0<KtParameter> EXTERNAL_CLASS_CONSTRUCTOR_PROPERTY_PARAMETER = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory0<PsiElement> CALL_TO_DEFINED_EXTERNALLY_FROM_NON_EXTERNAL_DECLARATION = DiagnosticFactory0.create(ERROR);
 
+    DiagnosticFactory0<PsiElement> ENUM_SYNTHETIC_METHOD_USAGE_WITH_EXTERNAL_ENUM = DiagnosticFactory0.create(ERROR);
+
+    DiagnosticFactory0<PsiElement> ENUM_STDLIB_HELPERS_USAGE_WITH_EXTERNAL_ENUM = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory1<PsiElement, CallableMemberDescriptor> WRONG_MULTIPLE_INHERITANCE =
             DiagnosticFactory1.create(ERROR, DECLARATION_SIGNATURE_OR_DEFAULT);
 

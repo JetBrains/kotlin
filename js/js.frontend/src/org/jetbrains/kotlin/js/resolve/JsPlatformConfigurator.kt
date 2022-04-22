@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.js.resolve
 
-import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.container.StorageComponentContainer
 import org.jetbrains.kotlin.container.useImpl
 import org.jetbrains.kotlin.container.useInstance
@@ -30,6 +29,7 @@ object JsPlatformConfigurator : PlatformConfiguratorBase(
     additionalCallCheckers = listOf(
         JsModuleCallChecker,
         JsDynamicCallChecker,
+        JsExternalEnumUsageChecker,
         JsDefinedExternallyCallChecker,
     ),
 ) {

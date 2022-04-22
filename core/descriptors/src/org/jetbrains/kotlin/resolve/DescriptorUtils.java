@@ -278,6 +278,13 @@ public class DescriptorUtils {
         return false;
     }
 
+    public static boolean isExternalEnum(@Nullable DeclarationDescriptor descriptor) {
+        return isEnumClass(descriptor) && ((ClassDescriptor) descriptor).isExternal();
+    }
+
+    public static boolean isExternalEnumEntry(@Nullable DeclarationDescriptor descriptor) {
+        return isEnumEntry(descriptor) && ((ClassDescriptor) descriptor).isExternal();
+    }
     public static boolean isCompanionObject(@Nullable DeclarationDescriptor descriptor) {
         return isKindOf(descriptor, ClassKind.OBJECT) && ((ClassDescriptor) descriptor).isCompanionObject();
     }

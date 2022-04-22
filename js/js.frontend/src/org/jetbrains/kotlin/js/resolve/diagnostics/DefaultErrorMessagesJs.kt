@@ -97,6 +97,14 @@ private val DIAGNOSTIC_FACTORY_TO_RENDERER by lazy {
         put(ErrorsJs.EXTERNAL_ENUM_ENTRY_WITH_BODY, "Entry of external enum class can't have body")
         put(ErrorsJs.EXTERNAL_CLASS_CONSTRUCTOR_PROPERTY_PARAMETER, "External class constructor cannot have a property parameter")
         put(ErrorsJs.CALL_TO_DEFINED_EXTERNALLY_FROM_NON_EXTERNAL_DECLARATION, "This property can only be used from external declarations")
+        put(
+            ErrorsJs.ENUM_SYNTHETIC_METHOD_USAGE_WITH_EXTERNAL_ENUM,
+            "External enums don't have kotlin.Enum class methods and fields like 'values', 'valueOf', 'name' or 'ordinal'"
+        )
+        put(
+            ErrorsJs.ENUM_STDLIB_HELPERS_USAGE_WITH_EXTERNAL_ENUM,
+            "External enums can't be used with enum helper functions like 'enumValueOf' or 'enumValues'"
+        )
 
         put(ErrorsJs.WRONG_MULTIPLE_INHERITANCE,
             "Can''t apply multiple inheritance here, since it''s impossible to generate bridge for system function {0}",
