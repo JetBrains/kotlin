@@ -25337,6 +25337,46 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
                     }
 
                     @Nested
+                    @TestMetadata("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/methodBottom")
+                    @TestDataPath("$PROJECT_ROOT")
+                    public class MethodBottom {
+                        @Test
+                        public void testAllFilesPresentInMethodBottom() throws Exception {
+                            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/methodBottom"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM, true);
+                        }
+
+                        @Test
+                        @TestMetadata("stringMethodBottom_I3_O2.kt")
+                        public void testStringMethodBottom_I3_O2() throws Exception {
+                            runTest("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/methodBottom/stringMethodBottom_I3_O2.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+                        }
+
+                        @Test
+                        @TestMetadata("stringMethodBottom_O1.kt")
+                        public void testStringMethodBottom_O1() throws Exception {
+                            runTest("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/methodBottom/stringMethodBottom_O1.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+                        }
+
+                        @Test
+                        @TestMetadata("stringMethodBottom_O1_I3.kt")
+                        public void testStringMethodBottom_O1_I3() throws Exception {
+                            runTest("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/methodBottom/stringMethodBottom_O1_I3.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+                        }
+
+                        @Test
+                        @TestMetadata("stringMethodBottom_O1_I3_O2.kt")
+                        public void testStringMethodBottom_O1_I3_O2() throws Exception {
+                            runTest("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/methodBottom/stringMethodBottom_O1_I3_O2.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+                        }
+
+                        @Test
+                        @TestMetadata("stringMethodBottom_O1_O2.kt")
+                        public void testStringMethodBottom_O1_O2() throws Exception {
+                            runTest("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/methodBottom/stringMethodBottom_O1_O2.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+                        }
+                    }
+
+                    @Nested
                     @TestMetadata("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/toString")
                     @TestDataPath("$PROJECT_ROOT")
                     public class ToString {
