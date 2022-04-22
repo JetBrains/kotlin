@@ -195,7 +195,8 @@ abstract class BenchmarkTemplate(
 
     fun aggregateBenchmarkResults(vararg benchmarkResults: BenchmarkResult) {
         println("Aggregating benchmark results...")
-        val results = benchmarkResults
+        val sortedResults = benchmarkResults.sortedBy { it.name }
+        val results = sortedResults
             .map { result ->
                 DataFrame
                     .readCSV(result.result)
@@ -219,15 +220,27 @@ abstract class BenchmarkTemplate(
                     row["execution median time"] into "Execution: ${row["benchmark"]}"
                 }
             }
-//            .add("Configuration difference") {
-//                column<Int>("Configuration: 1.6.20").getValue(this) * 100 / column<Int>("Configuration: 1.7.0").getValue(this)
-//            }
+            .also { println(it.print(borders = true)) }
             .sortBy("scenario")
             .rename("scenario" to "Scenario")
             .reorderColumnsBy {
                 // "Scenario" column should always be in the first place
                 if (it.name() == "Scenario") "0000Scenario" else it.name()
             }
+            .insert("Configuration diff from stable release") {
+                val stableReleaseConfiguration = column<Int>("Configuration: ${sortedResults.first().name}").getValue(this)
+                val currentReleaseConfiguration = column<Int>("Configuration: ${sortedResults.last().name}").getValue(this)
+                val percent = currentReleaseConfiguration * 100 / stableReleaseConfiguration
+                "${percent}%"
+            }
+            .after("Configuration: ${sortedResults.last().name}")
+            .insert("Execution diff from stable release") {
+                val stableReleaseConfiguration = column<Int>("Execution: ${sortedResults.first().name}").getValue(this)
+                val currentReleaseConfiguration = column<Int>("Execution: ${sortedResults.last().name}").getValue(this)
+                val percent = currentReleaseConfiguration * 100 / stableReleaseConfiguration
+                "${percent}%"
+            }
+            .after("Execution: ${sortedResults.last().name}")
 
         println("Benchmark results:")
         println(results.print(borders = true))
