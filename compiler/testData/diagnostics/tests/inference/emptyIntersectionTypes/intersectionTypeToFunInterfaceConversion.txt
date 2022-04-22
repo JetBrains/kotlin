@@ -1,0 +1,30 @@
+package
+
+public var result: kotlin.String
+public fun box(): kotlin.String
+public fun </*0*/ T : () -> kotlin.Unit> testIntersection(/*0*/ x: T): kotlin.Unit where T : (kotlin.Boolean) -> kotlin.Unit
+public fun useFunInterface(/*0*/ fn: KRunnable): kotlin.Unit
+public fun useFunInterfacePredicate(/*0*/ fn: KBoolean): kotlin.Unit
+
+public fun interface KBoolean {
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public abstract fun invoke(/*0*/ b: kotlin.Boolean): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public fun interface KRunnable {
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public abstract fun invoke(): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public object Test : () -> kotlin.Unit, (kotlin.Boolean) -> kotlin.Unit {
+    private constructor Test()
+    public open override /*2*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*2*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ fun invoke(): kotlin.Unit
+    public open override /*1*/ fun invoke(/*0*/ p1: kotlin.Boolean): kotlin.Unit
+    public open override /*2*/ /*fake_override*/ fun toString(): kotlin.String
+}

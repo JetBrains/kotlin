@@ -32,7 +32,7 @@ class Test : () -> String, (Int) -> String {
 fun box(): String {
     var test = "Failed"
     builder {
-        test = testIntersection(Test())
+        test = <!INFERRED_TYPE_VARIABLE_INTO_EMPTY_INTERSECTION!>testIntersection<!>(Test())
     }
 
     if (test != "OKEmptyOK42") return "failed: $test"
