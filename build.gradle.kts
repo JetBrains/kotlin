@@ -513,6 +513,9 @@ allprojects {
             //TODO these modules should be properly migrated
             if (!project.path.contains("-gradle") &&
                 !project.path.contains(":binary-compatibility-validator") &&
+                //TODO: tune performance
+                !project.path.contains(":compiler:backend.jvm.lower") &&
+                !project.path.contains(":compiler:ir.tree") &&
                 //HACK: filter modules with JVM target 1.6
                 //TODO: remove after removing 1.6 target
                 !project.path.startsWith(":core") &&
