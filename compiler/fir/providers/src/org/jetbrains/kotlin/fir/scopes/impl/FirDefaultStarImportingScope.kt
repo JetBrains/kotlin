@@ -13,11 +13,9 @@ import org.jetbrains.kotlin.fir.declarations.builder.buildResolvedImport
 import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.moduleData
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
-import org.jetbrains.kotlin.fir.resolve.providers.firProvider
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.platform.TargetPlatform
 
 class FirDefaultStarImportingScope(
     session: FirSession,
@@ -46,15 +44,9 @@ class FirDefaultStarImportingScope(
 
     override fun processFunctionsByName(name: Name, processor: (FirNamedFunctionSymbol) -> Unit) {
         if (name.isSpecial || name.identifier.isNotEmpty()) {
-            val containsKotlinPackage = session.firProvider.containsKotlinPackage()
             for (import in starImports) {
                 for (symbol in provider.getTopLevelFunctionSymbols(import.packageFqName, name)) {
                     processor(symbol)
-                }
-                if (containsKotlinPackage) {
-                    for (symbol in session.firProvider.symbolProvider.getTopLevelFunctionSymbols(import.packageFqName, name)) {
-                        processor(symbol)
-                    }
                 }
             }
         }
