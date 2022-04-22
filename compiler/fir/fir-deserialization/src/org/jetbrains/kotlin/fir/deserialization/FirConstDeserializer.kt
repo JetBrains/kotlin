@@ -26,7 +26,7 @@ open class FirConstDeserializer(
         if (!Flags.HAS_CONSTANT.get(propertyProto.flags)) return null
         constantCache[callableId]?.let { return it }
         val value = propertyProto.getExtensionOrNull(BuiltInSerializerProtocol.compileTimeValue) ?: return null
-        return buildFirConstant(value, null, value.type.name, nameResolver)?.apply { constantCache[callableId] = this }
+        return buildFirConstant(value, null, value.type.name, nameResolver)?.also { constantCache[callableId] = it }
     }
 }
 
