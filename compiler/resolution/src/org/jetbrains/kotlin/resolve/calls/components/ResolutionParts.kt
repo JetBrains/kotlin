@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.types.error.ErrorUtils
 import org.jetbrains.kotlin.types.model.*
 import org.jetbrains.kotlin.types.typeUtil.*
 import org.jetbrains.kotlin.utils.SmartList
+import org.jetbrains.kotlin.utils.addToStdlib.cast
 import org.jetbrains.kotlin.utils.addToStdlib.compactIfPossible
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
@@ -880,6 +881,13 @@ internal object CheckContextReceiversResolutionPart : ResolutionPart() {
 }
 
 internal object CheckIncompatibleTypeVariableUpperBounds : ResolutionPart() {
+    /*
+     * Check if the candidate was already discriminated by `CompatibilityOfTypeVariableAsIntersectionTypePart` resolution part
+     * If it's true we shouldn't mark the candidate with warning, but should mark with error, to repeat the existing proper behaviour
+     */
+    private fun ResolutionCandidate.wasPreviouslyDiscriminated(upperTypes: List<KotlinTypeMarker>) =
+        callComponents.statelessCallbacks.isOldIntersectionIsEmpty(upperTypes.cast())
+
     override fun ResolutionCandidate.process(workIndex: Int) = with(getSystem().asConstraintSystemCompleterContext()) {
         for (variableWithConstraints in getSystem().getBuilder().currentStorage().notFixedTypeVariables.values) {
             val upperTypes = variableWithConstraints.constraints.extractUpperTypesToCheckIntersectionEmptiness()
@@ -888,8 +896,9 @@ internal object CheckIncompatibleTypeVariableUpperBounds : ResolutionPart() {
                 val isInferredEmptyIntersectionForbidden =
                     callComponents.languageVersionSettings.supportsFeature(LanguageFeature.ForbidInferringTypeVariablesIntoEmptyIntersection)
 
-                val errorFactory =
-                    if (isInferredEmptyIntersectionForbidden) ::InferredEmptyIntersectionError else ::InferredEmptyIntersectionWarning
+                val errorFactory = if (isInferredEmptyIntersectionForbidden || wasPreviouslyDiscriminated(upperTypes))
+                    ::InferredEmptyIntersectionError
+                else ::InferredEmptyIntersectionWarning
                 addError(errorFactory(upperTypes, variableWithConstraints.typeVariable))
             }
         }

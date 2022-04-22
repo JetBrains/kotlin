@@ -12,5 +12,5 @@ class C : A<String>
 
 fun <K : <!FINAL_UPPER_BOUND!>Out<C><!>> main() {
     val foo = Foo<K>()
-    Bar<Out<B>>().<!INFERRED_TYPE_VARIABLE_INTO_EMPTY_INTERSECTION_WARNING!>takeFoo<!>(foo) // error in 1.3.72, no error in 1.4.31
+    Bar<Out<B>>().<!INFERRED_TYPE_VARIABLE_INTO_EMPTY_INTERSECTION!>takeFoo<!>(foo) // error in 1.3.72, no error in 1.4.31
 }
