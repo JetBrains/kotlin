@@ -83,6 +83,18 @@ public class Fe10IdeNormalAnalysisSourceModuleSymbolByReferenceTestGenerated ext
     }
 
     @Test
+    @TestMetadata("parameterNameForGenericClassMember1.kt")
+    public void testParameterNameForGenericClassMember1() throws Exception {
+        runTest("analysis/analysis-api/testData/symbols/symbolByReference/parameterNameForGenericClassMember1.kt");
+    }
+
+    @Test
+    @TestMetadata("parameterNameForGenericClassMember2.kt")
+    public void testParameterNameForGenericClassMember2() throws Exception {
+        runTest("analysis/analysis-api/testData/symbols/symbolByReference/parameterNameForGenericClassMember2.kt");
+    }
+
+    @Test
     @TestMetadata("samConstructor.kt")
     public void testSamConstructor() throws Exception {
         runTest("analysis/analysis-api/testData/symbols/symbolByReference/samConstructor.kt");
