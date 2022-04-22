@@ -65,6 +65,13 @@ fun ConeKotlinType.lowerBoundIfFlexible(): ConeSimpleKotlinType {
     }
 }
 
+fun ConeKotlinType.originalIfDefinitelyNotNullable(): ConeKotlinType {
+    return when (this) {
+        is ConeDefinitelyNotNullType -> original
+        else -> this
+    }
+}
+
 fun ConeIntersectionType.withAlternative(alternativeType: ConeKotlinType): ConeIntersectionType {
     return ConeIntersectionType(intersectedTypes, alternativeType)
 }

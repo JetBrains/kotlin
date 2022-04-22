@@ -6,8 +6,8 @@
 package org.jetbrains.kotlin.fir.resolve.calls
 
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.declarations.FirFunction
 import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
+import org.jetbrains.kotlin.fir.declarations.FirFunction
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.lookupTracker
@@ -540,7 +540,7 @@ fun FirExpression.isFunctional(
             // Make sure the contributed `invoke` is indeed a wanted functional type by checking if types are compatible.
             val expectedReturnType = classLikeExpectedFunctionType.returnType(session).lowerBoundIfFlexible()
             val returnTypeCompatible =
-                expectedReturnType is ConeTypeParameterType ||
+                expectedReturnType.originalIfDefinitelyNotNullable() is ConeTypeParameterType ||
                         AbstractTypeChecker.isSubtypeOf(
                             session.typeContext.newTypeCheckerState(
                                 errorTypesEqualToAnything = false,
@@ -560,7 +560,7 @@ fun FirExpression.isFunctional(
                 invokeSymbol.fir.valueParameters.zip(classLikeExpectedFunctionType.valueParameterTypesIncludingReceiver(session))
             return parameterPairs.all { (invokeParameter, expectedParameter) ->
                 val expectedParameterType = expectedParameter.lowerBoundIfFlexible()
-                expectedParameterType is ConeTypeParameterType ||
+                expectedParameterType.originalIfDefinitelyNotNullable() is ConeTypeParameterType ||
                         AbstractTypeChecker.isSubtypeOf(
                             session.typeContext.newTypeCheckerState(
                                 errorTypesEqualToAnything = false,
