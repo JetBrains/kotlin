@@ -96,7 +96,7 @@ abstract class AbstractFirUseSiteMemberScope(
 
     private fun getFunctionsFromSupertypesByName(name: Name): List<ResultOfIntersection<FirNamedFunctionSymbol>> {
         return functionsFromSupertypes.getOrPut(name) {
-            supertypeScopeContext.collectCallables(name, FirScope::processFunctionsByName)
+            supertypeScopeContext.collectIntersectionResultsForCallables(name, FirScope::processFunctionsByName)
         }
     }
 

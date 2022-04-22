@@ -120,7 +120,7 @@ class JavaClassUseSiteMemberScope(
          * 2. Field from some java superclass (only one, if class have more than one superclass then we can choose
          *   just one field because this is incorrect code anyway)
          */
-        val fromSupertypes = supertypeScopeContext.collectCallables(name, FirScope::processPropertiesByName)
+        val fromSupertypes = supertypeScopeContext.collectIntersectionResultsForCallables(name, FirScope::processPropertiesByName)
 
         val (fieldsFromSupertype, propertiesFromSupertypes) = fromSupertypes.partition {
             it is ResultOfIntersection.SingleMember && it.chosenSymbol is FirFieldSymbol
@@ -251,7 +251,7 @@ class JavaClassUseSiteMemberScope(
     private fun FirNamedFunctionSymbol.doesOverrideRenamedBuiltins(): Boolean {
         // e.g. 'removeAt' or 'toInt'
         val builtinName = SpecialGenericSignatures.getBuiltinFunctionNamesByJvmName(name) ?: return false
-        val builtinSpecialFromSuperTypes = supertypeScopeContext.collectMembersByScope(builtinName, FirScope::processFunctionsByName)
+        val builtinSpecialFromSuperTypes = supertypeScopeContext.collectMembersGroupedByScope(builtinName, FirScope::processFunctionsByName)
             .flatMap { (scope, symbols) ->
                 symbols.filter { it.doesOverrideBuiltinWithDifferentJvmName(scope, session) }
             }
@@ -273,7 +273,7 @@ class JavaClassUseSiteMemberScope(
      */
     private fun FirNamedFunctionSymbol.shouldBeVisibleAsOverrideOfBuiltInWithErasedValueParameters(): Boolean {
         if (!name.sameAsBuiltinMethodWithErasedValueParameters) return false
-        val candidatesToOverride = supertypeScopeContext.collectMembersByScope(name, FirScope::processFunctionsByName)
+        val candidatesToOverride = supertypeScopeContext.collectMembersGroupedByScope(name, FirScope::processFunctionsByName)
             .flatMap { (scope, symbols) ->
                 symbols.mapNotNull {
                     BuiltinMethodsWithSpecialGenericSignature.getOverriddenBuiltinFunctionWithErasedValueParametersInJava(it, scope)
@@ -320,7 +320,7 @@ class JavaClassUseSiteMemberScope(
         collectDeclaredFunctions(name, result)
         val explicitlyDeclaredFunctions = result.toSet()
 
-        val functionsWithScopeFromSupertypes = supertypeScopeContext.collectMembersByScope(name, FirScope::processFunctionsByName)
+        val functionsWithScopeFromSupertypes = supertypeScopeContext.collectMembersGroupedByScope(name, FirScope::processFunctionsByName)
 
         if (
             !name.sameAsRenamedInJvmBuiltin &&
@@ -337,13 +337,13 @@ class JavaClassUseSiteMemberScope(
     }
 
     private fun processSpecialFunctions(
-        naturalName: Name,
+        requestedName: Name,
         explicitlyDeclaredFunctionsWithNaturalName: Collection<FirNamedFunctionSymbol>,
-        functionsFromSupertypesWithNaturalName: MembersByScope<FirNamedFunctionSymbol>, // candidates for override
+        functionsFromSupertypesWithRequestedName: MembersByScope<FirNamedFunctionSymbol>, // candidates for override
         destination: MutableCollection<FirNamedFunctionSymbol>
     ) {
         val resultsOfIntersectionToSaveInCache = mutableListOf<ResultOfIntersection<FirNamedFunctionSymbol>>()
-        val list = supertypeScopeContext.collectCallablesImpl(functionsFromSupertypesWithNaturalName)
+        val list = supertypeScopeContext.convertGroupedCallablesToIntersectionResults(functionsFromSupertypesWithRequestedName)
         for (resultOfIntersectionWithNaturalName in list) {
             val someSymbolWithNaturalNameFromSuperType = resultOfIntersectionWithNaturalName.extractSomeSymbolFromSuperType()
             val explicitlyDeclaredFunctionWithNaturalName = explicitlyDeclaredFunctionsWithNaturalName.firstOrNull {
@@ -357,7 +357,7 @@ class JavaClassUseSiteMemberScope(
                     jvmName,
                     someSymbolWithNaturalNameFromSuperType,
                     explicitlyDeclaredFunctionWithNaturalName,
-                    naturalName,
+                    requestedName,
                     resultOfIntersectionWithNaturalName,
                     destination,
                     resultsOfIntersectionToSaveInCache
@@ -367,7 +367,7 @@ class JavaClassUseSiteMemberScope(
 
             if (processOverridesForFunctionsWithErasedValueParameter(
                     resultOfIntersectionWithNaturalName.overriddenMembers,
-                    naturalName,
+                    requestedName,
                     explicitlyDeclaredFunctionsWithNaturalName,
                     destination,
                     resultOfIntersectionWithNaturalName,
@@ -392,7 +392,7 @@ class JavaClassUseSiteMemberScope(
                 }
             }
         }
-        functionsFromSupertypes[naturalName] = resultsOfIntersectionToSaveInCache
+        functionsFromSupertypes[requestedName] = resultsOfIntersectionToSaveInCache
     }
 
     private fun processOverridesForFunctionsWithErasedValueParameter(
@@ -521,7 +521,7 @@ class JavaClassUseSiteMemberScope(
                     overriddenMembers.mapTo(this) { it.baseScope to listOf(it.member) }
                     addAll(renamedFunctionsFromSupertypes)
                 }
-                supertypeScopeContext.collectCallablesImpl(membersByScope)
+                supertypeScopeContext.convertGroupedCallablesToIntersectionResults(membersByScope)
             }
         }
 

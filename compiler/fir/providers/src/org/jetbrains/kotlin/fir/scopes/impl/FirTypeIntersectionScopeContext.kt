@@ -10,7 +10,9 @@ import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.caches.*
-import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
+import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
+import org.jetbrains.kotlin.fir.declarations.FirMemberDeclaration
 import org.jetbrains.kotlin.fir.declarations.utils.isExpect
 import org.jetbrains.kotlin.fir.declarations.utils.modality
 import org.jetbrains.kotlin.fir.declarations.utils.visibility
@@ -20,7 +22,9 @@ import org.jetbrains.kotlin.fir.scopes.*
 import org.jetbrains.kotlin.fir.scopes.impl.FirIntersectionOverrideStorage.ContextForIntersectionOverrideConstruction
 import org.jetbrains.kotlin.fir.scopes.impl.FirTypeIntersectionScopeContext.ResultOfIntersection
 import org.jetbrains.kotlin.fir.symbols.impl.*
-import org.jetbrains.kotlin.fir.types.*
+import org.jetbrains.kotlin.fir.types.ConeKotlinType
+import org.jetbrains.kotlin.fir.types.ConeSimpleKotlinType
+import org.jetbrains.kotlin.fir.types.classId
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.Name
 import kotlin.contracts.ExperimentalContracts
@@ -109,11 +113,11 @@ class FirTypeIntersectionScopeContext(
     }
 
     fun collectFunctions(name: Name): List<ResultOfIntersection<FirNamedFunctionSymbol>> {
-        return collectCallables(name, FirScope::processFunctionsByName)
+        return collectIntersectionResultsForCallables(name, FirScope::processFunctionsByName)
     }
 
     @OptIn(PrivateForInline::class)
-    inline fun <D : FirCallableSymbol<*>> collectMembersByScope(
+    inline fun <D : FirCallableSymbol<*>> collectMembersGroupedByScope(
         name: Name,
         processCallables: FirScope.(Name, (D) -> Unit) -> Unit
     ): MembersByScope<D> {
@@ -132,14 +136,14 @@ class FirTypeIntersectionScopeContext(
     }
 
     @OptIn(PrivateForInline::class)
-    inline fun <D : FirCallableSymbol<*>> collectCallables(
+    inline fun <D : FirCallableSymbol<*>> collectIntersectionResultsForCallables(
         name: Name,
         processCallables: FirScope.(Name, (D) -> Unit) -> Unit
     ): List<ResultOfIntersection<D>> {
-        return collectCallablesImpl(collectMembersByScope(name, processCallables))
+        return convertGroupedCallablesToIntersectionResults(collectMembersGroupedByScope(name, processCallables))
     }
 
-    fun <D : FirCallableSymbol<*>> collectCallablesImpl(
+    fun <D : FirCallableSymbol<*>> convertGroupedCallablesToIntersectionResults(
         membersByScope: List<Pair<FirTypeScope, List<D>>>
     ): List<ResultOfIntersection<D>> {
         if (membersByScope.isEmpty()) {

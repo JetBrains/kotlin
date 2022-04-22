@@ -48,7 +48,7 @@ class FirTypeIntersectionScope private constructor(
             return
         }
 
-        val callablesWithOverridden = intersectionContext.collectCallables(name, processCallables)
+        val callablesWithOverridden = intersectionContext.collectIntersectionResultsForCallables(name, processCallables)
 
         if (callablesWithOverridden.isEmpty()) {
             absentNames.add(name)
