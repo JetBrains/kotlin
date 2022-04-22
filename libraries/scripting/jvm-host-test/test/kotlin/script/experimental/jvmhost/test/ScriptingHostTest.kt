@@ -224,6 +224,55 @@ class ScriptingHostTest : TestCase() {
     }
 
     @Test
+    fun testProvidedPropertiesNullability() {
+        val stringType = KotlinType(String::class)
+        val definition = createJvmScriptDefinitionFromTemplate<SimpleScriptTemplate>(
+            compilation = {
+                providedProperties(
+                    "notNullable" to stringType,
+                    "nullable" to stringType.withNullability(true)
+                )
+            },
+            evaluation = {
+                providedProperties(
+                    "notNullable" to "something",
+                    "nullable" to null
+                )
+            }
+        )
+        val defaultEvalConfig = definition.evaluationConfiguration
+        val notNullEvalConfig = defaultEvalConfig.with {
+            providedProperties("nullable" to "!")
+        }
+        val wrongNullEvalConfig = defaultEvalConfig.with {
+            providedProperties("notNullable" to null)
+        }
+
+        with(BasicJvmScriptingHost()) {
+            // compile time
+            val comp0 = runBlocking {
+                compiler("nullable.length".toScriptSource(), definition.compilationConfiguration)
+            }
+            assertTrue(comp0 is ResultWithDiagnostics.Failure)
+            val errors = comp0.reports.filter { it.severity == ScriptDiagnostic.Severity.ERROR }
+            assertTrue( errors.any { it.message == "Only safe (?.) or non-null asserted (!!.) calls are allowed on a nullable receiver of type String?" })
+
+            // runtime
+            fun evalWith(evalConfig: ScriptEvaluationConfiguration) =
+                eval("notNullable+(nullable ?: \"0\")".toScriptSource(), definition.compilationConfiguration, evalConfig).valueOrThrow().returnValue
+
+            val ret0 = evalWith(defaultEvalConfig)
+            assertEquals("something0", (ret0 as? ResultValue.Value)?.value)
+
+            val ret1 = evalWith(notNullEvalConfig)
+            assertEquals("something!", (ret1 as? ResultValue.Value)?.value)
+
+            val ret2 = evalWith(wrongNullEvalConfig)
+            assertTrue((ret2 as? ResultValue.Error)?.error is java.lang.NullPointerException)
+        }
+    }
+
+    @Test
     fun testDiamondImportWithoutSharing() {
         val greeting = listOf("Hi from common", "Hi from middle", "Hi from common", "sharedVar == 3")
         val output = doDiamondImportTest()
