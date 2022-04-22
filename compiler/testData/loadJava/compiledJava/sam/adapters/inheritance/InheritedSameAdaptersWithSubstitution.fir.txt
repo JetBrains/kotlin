@@ -6,7 +6,7 @@ public abstract interface InheritedSameAdaptersWithSubstitution : R|kotlin/Any| 
 
     }
     public abstract interface Super2<T : R|ft<kotlin/Any, kotlin/Any?>|> : R|kotlin/Any| {
-        public abstract fun foo(r: R|ft<java/util/Comparator<ft<T, T?>>, java/util/Comparator<ft<T, T?>>?>|): R|kotlin/Unit|
+        public abstract fun foo(r: R|ft<java/util/Comparator<ft<T & Any, T?>>, java/util/Comparator<ft<T & Any, T?>>?>|): R|kotlin/Unit|
 
     }
     public abstract interface Super2Substituted : R|test/InheritedSameAdaptersWithSubstitution.Super2<ft<kotlin/String, kotlin/String?>>| {

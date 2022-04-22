@@ -9,6 +9,6 @@ public abstract interface HalfSubstitutedTypeParameters : R|kotlin/Any| {
         public abstract fun dummy(): R|kotlin/Unit|
 
     }
-    public abstract interface TrickyList<X : R|ft<kotlin/Any, kotlin/Any?>|, E : R|ft<kotlin/Any, kotlin/Any?>|> : R|kotlin/collections/MutableList<ft<E, E?>>| {
+    public abstract interface TrickyList<X : R|ft<kotlin/Any, kotlin/Any?>|, E : R|ft<kotlin/Any, kotlin/Any?>|> : R|kotlin/collections/MutableList<ft<E & Any, E?>>| {
     }
 }
