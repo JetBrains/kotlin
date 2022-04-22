@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.test.builders.*
 import org.jetbrains.kotlin.test.directives.ConfigurationDirectives
 import org.jetbrains.kotlin.test.directives.DiagnosticsDirectives
 import org.jetbrains.kotlin.test.directives.JsEnvironmentConfigurationDirectives
+import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives
 import org.jetbrains.kotlin.test.frontend.classic.ClassicFrontend2IrConverter
 import org.jetbrains.kotlin.test.frontend.classic.ClassicFrontendFacade
 import org.jetbrains.kotlin.test.frontend.classic.ClassicFrontendOutputArtifact
@@ -167,6 +168,7 @@ open class AbstractFirJsTest : AbstractKotlinCompilerWithTargetBackendTest(Targe
             if (skipMinification) +JsEnvironmentConfigurationDirectives.SKIP_MINIFICATION
             if (getBoolean("kotlin.js.ir.skipRegularMode")) +JsEnvironmentConfigurationDirectives.SKIP_REGULAR_MODE
             +ConfigurationDirectives.WITH_STDLIB
+            +LanguageSettingsDirectives.ALLOW_KOTLIN_PACKAGE
         }
 
         forTestsNotMatching("compiler/testData/codegen/box/diagnostics/functions/tailRecursion/*") {
