@@ -129,7 +129,7 @@ internal val psiToIrPhase = konanUnitPhase(
 internal val buildAdditionalCacheInfoPhase = konanUnitPhase(
         op = {
             irModules.values.single().let { module ->
-                val moduleDeserializer = irLinker.nonCachedLibraryModuleDeserializers[module.descriptor]
+                val moduleDeserializer = irLinker.moduleDeserializers[module.descriptor]
                 if (moduleDeserializer == null) {
                     require(module.descriptor.isFromInteropLibrary()) { "No module deserializer for ${module.descriptor}" }
                 } else {

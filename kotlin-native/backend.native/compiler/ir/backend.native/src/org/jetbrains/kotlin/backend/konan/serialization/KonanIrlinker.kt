@@ -42,6 +42,8 @@ import org.jetbrains.kotlin.ir.declarations.impl.IrFileImpl
 import org.jetbrains.kotlin.ir.declarations.lazy.IrLazyClass
 import org.jetbrains.kotlin.ir.expressions.IrBody
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
+import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
+import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrPublicSymbolBase
 import org.jetbrains.kotlin.ir.types.*
@@ -322,6 +324,7 @@ internal class KonanIrLinker(
         exportedDependencies: List<ModuleDescriptor>,
         private val cachedLibraries: CachedLibraries,
         private val lazyIrForCaches: Boolean,
+        private val libraryBeingCached: PartialCacheInfo?,
         override val unlinkedDeclarationsSupport: UnlinkedDeclarationsSupport,
         override val userVisibleIrModulesSupport: UserVisibleIrModulesSupport
 ) : KotlinIrLinker(currentModule, messageLogger, builtIns, symbolTable, exportedDependencies) {
@@ -341,8 +344,7 @@ internal class KonanIrLinker(
     override val fakeOverrideBuilder: FakeOverrideBuilder =
         FakeOverrideBuilder(this, symbolTable, KonanManglerIr, IrTypeSystemContextImpl(builtIns), friendModules, KonanFakeOverrideClassFilter)
 
-    val nonCachedLibraryModuleDeserializers = mutableMapOf<ModuleDescriptor, KonanModuleDeserializer>()
-    val cachedLibraryModuleDeserializers = mutableMapOf<ModuleDescriptor, KonanCachedLibraryModuleDeserializer>()
+    val moduleDeserializers = mutableMapOf<ModuleDescriptor, KonanPartialModuleDeserializer>()
 
     override fun createModuleDeserializer(moduleDescriptor: ModuleDescriptor, klib: KotlinLibrary?, strategyResolver: (String) -> DeserializationStrategy) =
             when {
@@ -355,14 +357,14 @@ internal class KonanIrLinker(
                 klib.isInteropLibrary() -> {
                     KonanInteropModuleDeserializer(moduleDescriptor, klib, cachedLibraries.isLibraryCached(klib))
                 }
-                lazyIrForCaches && cachedLibraries.isLibraryCached(klib) -> {
-                    KonanCachedLibraryModuleDeserializer(moduleDescriptor, klib).also {
-                        cachedLibraryModuleDeserializers[moduleDescriptor] = it
-                    }
-                }
                 else -> {
-                    KonanModuleDeserializer(moduleDescriptor, klib, strategyResolver).also {
-                        nonCachedLibraryModuleDeserializers[moduleDescriptor] = it
+                    val deserializationStrategy = when {
+                        klib == libraryBeingCached?.klib -> libraryBeingCached.strategy
+                        lazyIrForCaches && cachedLibraries.isLibraryCached(klib) -> CacheDeserializationStrategy.Nothing
+                        else -> CacheDeserializationStrategy.WholeModule
+                    }
+                    KonanPartialModuleDeserializer(moduleDescriptor, klib, strategyResolver, deserializationStrategy).also {
+                        moduleDeserializers[moduleDescriptor] = it
                     }
                 }
             }
@@ -401,12 +403,19 @@ internal class KonanIrLinker(
 
     private val InvalidIndex = -1
 
-    inner class KonanModuleDeserializer(
+    inner class KonanPartialModuleDeserializer(
             moduleDescriptor: ModuleDescriptor,
-            klib: KotlinLibrary,
-            strategyResolver: (String) -> DeserializationStrategy
-    ) : BasicIrModuleDeserializer(this@KonanIrLinker, moduleDescriptor, klib, strategyResolver, klib.versions.abiVersion ?: KotlinAbiVersion.CURRENT) {
-        override val moduleFragment: IrModuleFragment = KonanIrModuleFragmentImpl(moduleDescriptor, builtIns, emptyList())
+            override val klib: KotlinLibrary,
+            strategyResolver: (String) -> DeserializationStrategy,
+            private val cacheDeserializationStrategy: CacheDeserializationStrategy,
+            containsErrorCode: Boolean = false
+    ) : BasicIrModuleDeserializer(this, moduleDescriptor, klib,
+            { fileName ->
+                if (cacheDeserializationStrategy.contains(fileName))
+                    strategyResolver(fileName)
+                else DeserializationStrategy.ON_DEMAND
+            }, klib.versions.abiVersion ?: KotlinAbiVersion.CURRENT, containsErrorCode) {
+        override val moduleFragment: IrModuleFragment = KonanIrModuleFragmentImpl(moduleDescriptor, builtIns)
 
         fun buildInlineFunctionReference(irFunction: IrFunction): SerializedInlineFunctionReference {
             val signature = irFunction.symbol.signature
@@ -562,76 +571,6 @@ internal class KonanIrLinker(
                         }
                     })
         }
-    }
-
-    private inner class KonanInteropModuleDeserializer(
-            moduleDescriptor: ModuleDescriptor,
-            override val klib: KotlinLibrary,
-            private val isLibraryCached: Boolean
-    ) : IrModuleDeserializer(moduleDescriptor, klib.versions.abiVersion ?: KotlinAbiVersion.CURRENT) {
-        init {
-            require(klib.isInteropLibrary())
-        }
-
-        private val descriptorByIdSignatureFinder = DescriptorByIdSignatureFinderImpl(
-                moduleDescriptor, KonanManglerDesc,
-                DescriptorByIdSignatureFinderImpl.LookupMode.MODULE_ONLY
-        )
-
-        private fun IdSignature.isInteropSignature() = IdSignature.Flags.IS_NATIVE_INTEROP_LIBRARY.test()
-
-        override fun contains(idSig: IdSignature): Boolean {
-            if (idSig.isPubliclyVisible) {
-                if (idSig.isInteropSignature()) {
-                    // TODO: add descriptor cache??
-                    return descriptorByIdSignatureFinder.findDescriptorBySignature(idSig) != null
-                }
-            }
-
-            return false
-        }
-
-        private fun DeclarationDescriptor.isCEnumsOrCStruct(): Boolean = cenumsProvider.isCEnumOrCStruct(this)
-
-        private val fileMap = mutableMapOf<PackageFragmentDescriptor, IrFile>()
-
-        private fun getIrFile(packageFragment: PackageFragmentDescriptor): IrFile = fileMap.getOrPut(packageFragment) {
-            IrFileImpl(NaiveSourceBasedFileEntryImpl(IrProviderForCEnumAndCStructStubs.cTypeDefinitionsFileName), packageFragment).also {
-                moduleFragment.files.add(it)
-            }
-        }
-
-        private fun resolveCEnumsOrStruct(descriptor: DeclarationDescriptor, idSig: IdSignature, symbolKind: BinarySymbolData.SymbolKind): IrSymbol {
-            val file = getIrFile(descriptor.findPackage())
-            return cenumsProvider.getDeclaration(descriptor, idSig, file, symbolKind).symbol
-        }
-
-        override fun tryDeserializeIrSymbol(idSig: IdSignature, symbolKind: BinarySymbolData.SymbolKind): IrSymbol? {
-            val descriptor = descriptorByIdSignatureFinder.findDescriptorBySignature(idSig) ?: return null
-            // If library is cached we don't need to create an IrClass for struct or enum.
-            if (!isLibraryCached && descriptor.isCEnumsOrCStruct()) return resolveCEnumsOrStruct(descriptor, idSig, symbolKind)
-
-            val symbolOwner = stubGenerator.generateMemberStub(descriptor) as IrSymbolOwner
-
-            return symbolOwner.symbol
-        }
-
-        override fun deserializedSymbolNotFound(idSig: IdSignature): Nothing = error("No descriptor found for $idSig")
-
-        override val moduleFragment: IrModuleFragment = KonanIrModuleFragmentImpl(moduleDescriptor, builtIns)
-        override val moduleDependencies: Collection<IrModuleDeserializer> = listOfNotNull(forwardDeclarationDeserializer)
-
-        override val kind get() = IrModuleDeserializerKind.DESERIALIZED
-    }
-
-    inner class KonanCachedLibraryModuleDeserializer(
-            moduleDescriptor: ModuleDescriptor,
-            override val klib: KotlinLibrary
-    ) : BasicIrModuleDeserializer(this@KonanIrLinker, moduleDescriptor, klib,
-            { _ -> DeserializationStrategy.ON_DEMAND },
-            klib.versions.abiVersion ?: KotlinAbiVersion.CURRENT
-    ) {
-        override val moduleFragment: IrModuleFragment = KonanIrModuleFragmentImpl(moduleDescriptor, builtIns, emptyList())
 
         private val descriptorByIdSignatureFinder = DescriptorByIdSignatureFinderImpl(
                 moduleDescriptor, KonanManglerDesc,
@@ -655,14 +594,22 @@ internal class KonanIrLinker(
             }
         }
 
-        override fun contains(idSig: IdSignature) =
-                deserializedSymbols.containsKey(idSig) ||
-                    idSig.isPubliclyVisible && descriptorByIdSignatureFinder.findDescriptorBySignature(idSig) != null
+        override fun contains(idSig: IdSignature): Boolean =
+                super.contains(idSig) || deserializedSymbols.containsKey(idSig) ||
+                        cacheDeserializationStrategy != CacheDeserializationStrategy.WholeModule
+                        && idSig.isPubliclyVisible && descriptorByIdSignatureFinder.findDescriptorBySignature(idSig) != null
+
+        val descriptorSignatures = mutableMapOf<DeclarationDescriptor, IdSignature>()
 
         override fun tryDeserializeIrSymbol(idSig: IdSignature, symbolKind: BinarySymbolData.SymbolKind): IrSymbol? {
+            super.tryDeserializeIrSymbol(idSig, symbolKind)?.let { return it }
+
             deserializedSymbols[idSig]?.let { return it }
 
             val descriptor = descriptorByIdSignatureFinder.findDescriptorBySignature(idSig) ?: return null
+
+            descriptorSignatures[descriptor] = idSig
+
             return (stubGenerator.generateMemberStub(descriptor) as IrSymbolOwner).symbol
         }
 
@@ -687,7 +634,7 @@ internal class KonanIrLinker(
                 )
             }
 
-            val signature = function.symbol.signature
+            val signature = function.symbol.signature ?: descriptorSignatures[function.descriptor]
                     ?: error("No signature for ${function.render()}")
             val inlineFunctionReference = inlineFunctionReferences[signature]
                     ?: error("No inline function reference for ${function.render()}, sig = ${signature.render()}")
@@ -817,6 +764,66 @@ internal class KonanIrLinker(
                 }
             }
         }
+    }
+
+    private inner class KonanInteropModuleDeserializer(
+            moduleDescriptor: ModuleDescriptor,
+            override val klib: KotlinLibrary,
+            private val isLibraryCached: Boolean
+    ) : IrModuleDeserializer(moduleDescriptor, klib.versions.abiVersion ?: KotlinAbiVersion.CURRENT) {
+        init {
+            require(klib.isInteropLibrary())
+        }
+
+        private val descriptorByIdSignatureFinder = DescriptorByIdSignatureFinderImpl(
+                moduleDescriptor, KonanManglerDesc,
+                DescriptorByIdSignatureFinderImpl.LookupMode.MODULE_ONLY
+        )
+
+        private fun IdSignature.isInteropSignature() = IdSignature.Flags.IS_NATIVE_INTEROP_LIBRARY.test()
+
+        override fun contains(idSig: IdSignature): Boolean {
+            if (idSig.isPubliclyVisible) {
+                if (idSig.isInteropSignature()) {
+                    // TODO: add descriptor cache??
+                    return descriptorByIdSignatureFinder.findDescriptorBySignature(idSig) != null
+                }
+            }
+
+            return false
+        }
+
+        private fun DeclarationDescriptor.isCEnumsOrCStruct(): Boolean = cenumsProvider.isCEnumOrCStruct(this)
+
+        private val fileMap = mutableMapOf<PackageFragmentDescriptor, IrFile>()
+
+        private fun getIrFile(packageFragment: PackageFragmentDescriptor): IrFile = fileMap.getOrPut(packageFragment) {
+            IrFileImpl(NaiveSourceBasedFileEntryImpl(IrProviderForCEnumAndCStructStubs.cTypeDefinitionsFileName), packageFragment).also {
+                moduleFragment.files.add(it)
+            }
+        }
+
+        private fun resolveCEnumsOrStruct(descriptor: DeclarationDescriptor, idSig: IdSignature, symbolKind: BinarySymbolData.SymbolKind): IrSymbol {
+            val file = getIrFile(descriptor.findPackage())
+            return cenumsProvider.getDeclaration(descriptor, idSig, file, symbolKind).symbol
+        }
+
+        override fun tryDeserializeIrSymbol(idSig: IdSignature, symbolKind: BinarySymbolData.SymbolKind): IrSymbol? {
+            val descriptor = descriptorByIdSignatureFinder.findDescriptorBySignature(idSig) ?: return null
+            // If library is cached we don't need to create an IrClass for struct or enum.
+            if (!isLibraryCached && descriptor.isCEnumsOrCStruct()) return resolveCEnumsOrStruct(descriptor, idSig, symbolKind)
+
+            val symbolOwner = stubGenerator.generateMemberStub(descriptor) as IrSymbolOwner
+
+            return symbolOwner.symbol
+        }
+
+        override fun deserializedSymbolNotFound(idSig: IdSignature): Nothing = error("No descriptor found for $idSig")
+
+        override val moduleFragment: IrModuleFragment = KonanIrModuleFragmentImpl(moduleDescriptor, builtIns)
+        override val moduleDependencies: Collection<IrModuleDeserializer> = listOfNotNull(forwardDeclarationDeserializer)
+
+        override val kind get() = IrModuleDeserializerKind.DESERIALIZED
     }
 
     private inner class KonanForwardDeclarationModuleDeserializer(moduleDescriptor: ModuleDescriptor) : IrModuleDeserializer(moduleDescriptor, KotlinAbiVersion.CURRENT) {
