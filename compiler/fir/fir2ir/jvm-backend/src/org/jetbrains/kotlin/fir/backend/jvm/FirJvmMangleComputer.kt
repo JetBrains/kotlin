@@ -280,6 +280,10 @@ open class FirJvmMangleComputer(
             is ConeCapturedType -> {
                 mangleType(tBuilder, type.lowerType ?: type.constructor.supertypes!!.first())
             }
+            is ConeIntersectionType -> {
+                // TODO: add intersectionTypeApproximation
+                mangleType(tBuilder, type.intersectedTypes.first())
+            }
             else -> error("Unexpected type $type")
         }
     }
