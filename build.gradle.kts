@@ -516,6 +516,7 @@ allprojects {
                 //TODO: tune performance
                 !project.path.contains(":compiler:backend.jvm.lower") &&
                 !project.path.contains(":compiler:ir.tree") &&
+                !project.path.contains(":compiler:ir.tree.impl") &&
                 //HACK: filter modules with JVM target 1.6
                 //TODO: remove after removing 1.6 target
                 !project.path.startsWith(":core") &&
