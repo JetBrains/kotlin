@@ -5564,6 +5564,12 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
             }
 
             @Test
+            @TestMetadata("nestedClassAsBound.kt")
+            public void testNestedClassAsBound() throws Exception {
+                runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/nestedClassAsBound.kt");
+            }
+
+            @Test
             @TestMetadata("nestedClassInAnnotationArgument.kt")
             public void testNestedClassInAnnotationArgument() throws Exception {
                 runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/nestedClassInAnnotationArgument.kt");
