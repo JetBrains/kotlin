@@ -546,6 +546,10 @@ class Fir2IrClassifierStorage(
         val parentId = classId.outerClassId
         val parentClass = parentId?.let { session.symbolProvider.getClassLikeSymbolByClassId(it) }
         val irParent = declarationStorage.findIrParent(classId.packageFqName, parentClass?.toLookupTag(), firClassSymbol, firClass.origin)!!
+
+        // firClass may be referenced by some parent's type parameters as a bound. In that case, getIrClassSymbol will be called recursively.
+        getCachedIrClass(firClass)?.let { return it.symbol }
+
         val irClass = firClass.convertWithOffsets { startOffset, endOffset ->
             symbolTable.declareClass(signature, { symbol }) {
                 Fir2IrLazyClass(components, startOffset, endOffset, firClass.irOrigin(firProvider), firClass, symbol).apply {
