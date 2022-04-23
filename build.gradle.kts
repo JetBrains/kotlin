@@ -515,6 +515,7 @@ allprojects {
                 !project.path.contains(":binary-compatibility-validator") &&
                 //TODO: tune performance
                 !project.path.contains(":compiler:backend.jvm.lower") &&
+                !project.path.contains(":compiler:ir.backend.common") &&
                 !project.path.contains(":compiler:ir.tree") &&
                 !project.path.contains(":compiler:ir.tree.impl") &&
                 //HACK: filter modules with JVM target 1.6
@@ -527,6 +528,8 @@ allprojects {
                 !project.path.startsWith(":compiler:tests-common-jvm6")
             ) {
                 freeCompilerArgs += "-Xjvm-default=all"
+            } else {
+                println("skip " + project.path)
             }
         }
     }
