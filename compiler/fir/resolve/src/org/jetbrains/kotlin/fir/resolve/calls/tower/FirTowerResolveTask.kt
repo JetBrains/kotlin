@@ -281,11 +281,12 @@ internal open class FirTowerResolveTask(
     }
 
     private fun getReceiverForSynthetics(receiver: FirExpression, info: CallInfo): Pair<FirExpression?, FirDeclaration?> {
+        val syntheticsOwner = (receiver as? FirResolvable)?.calleeReference?.resolvedSymbol?.fir
+            ?: return null to null
+
         val thePropertyAccess = receiver as? FirPropertyAccessExpression
             ?: return null to null
 
-        val syntheticsOwner = thePropertyAccess.calleeReference.resolvedSymbol?.fir
-            ?: return null to null
         val theProperty = syntheticsOwner as? FirProperty
         val thePropertyDelegate = theProperty?.delegateField
 
@@ -347,7 +348,7 @@ internal open class FirTowerResolveTask(
         val (properReceiver, syntheticsOwner) = getReceiverForSynthetics(receiver, info)
 
         if (syntheticsOwner == null) {
-            error("No owning declaration for synthetic access")
+            return
         }
 
         if (properReceiver != null) {

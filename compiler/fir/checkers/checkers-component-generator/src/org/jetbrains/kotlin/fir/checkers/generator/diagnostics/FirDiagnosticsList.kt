@@ -126,6 +126,9 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
         val UNRESOLVED_IMPORT by error<PsiElement>(PositioningStrategy.IMPORT_LAST_NAME) {
             parameter<String>("reference")
         }
+        val SYNTHETIC_ACCESS_WRONG_RECEIVER by error<PsiElement> {
+            parameter<String>("name")
+        }
     }
 
     val CALL_RESOLUTION by object : DiagnosticGroup("Call resolution") {

@@ -517,6 +517,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.UNRESOLVED_IMPORT
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.UNRESOLVED_LABEL
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.UNRESOLVED_REFERENCE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.UNRESOLVED_REFERENCE_WRONG_RECEIVER
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.SYNTHETIC_ACCESS_WRONG_RECEIVER
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.UNSAFE_CALL
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.UNSAFE_IMPLICIT_INVOKE_CALL
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.UNSAFE_INFIX_CALL
@@ -1011,6 +1012,11 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
             UNRESOLVED_REFERENCE_WRONG_RECEIVER,
             "Unresolved reference. None of the following candidates is applicable because of receiver type mismatch: {0}",
             SYMBOLS
+        )
+        map.put(
+            SYNTHETIC_ACCESS_WRONG_RECEIVER,
+            "Couldn't resolve ''{0}'': the receiver is not a property access expression",
+            TO_STRING,
         )
 
         // Types & type parameters

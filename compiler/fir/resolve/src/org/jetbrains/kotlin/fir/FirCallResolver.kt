@@ -49,6 +49,7 @@ import org.jetbrains.kotlin.resolve.calls.results.TypeSpecificityComparator
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
 import org.jetbrains.kotlin.resolve.calls.tower.CandidateApplicability
 import org.jetbrains.kotlin.resolve.calls.tower.isSuccess
+import org.jetbrains.kotlin.text
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
@@ -747,6 +748,9 @@ class FirCallResolver(
             candidates.isEmpty() -> {
                 val diagnostic = if (name.asString() == "invoke" && explicitReceiver is FirConstExpression<*>) {
                     ConeFunctionExpectedError(explicitReceiver.value?.toString() ?: "", explicitReceiver.typeRef.coneType)
+                } else if (callInfo.searchSynthetics && explicitReceiver != null && explicitReceiver !is FirPropertyAccessExpression) {
+                    val target = explicitReceiver.source.text?.let { "'$it'" } ?: "the receiver"
+                    ConeUnresolvedSyntheticsAccessError(name, target, explicitReceiver.source)
                 } else {
                     ConeUnresolvedNameError(name)
                 }

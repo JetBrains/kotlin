@@ -55,9 +55,13 @@ class ConeUnresolvedQualifierError(override val qualifier: String) : ConeUnresol
     override val reason: String get() = "Symbol not found for $qualifier"
 }
 
-class ConeUnresolvedNameError(val name: Name) : ConeUnresolvedError {
+open class ConeUnresolvedNameError(val name: Name) : ConeUnresolvedError {
     override val qualifier: String get() = name.asString()
     override val reason: String get() = "Unresolved name: $name"
+}
+
+class ConeUnresolvedSyntheticsAccessError(name: Name, val receiver: String, val source: KtSourceElement?) : ConeUnresolvedNameError(name) {
+    override val reason: String get() = "Couldn't resolve '$name': $receiver is not a property access expression"
 }
 
 class ConeFunctionCallExpectedError(
