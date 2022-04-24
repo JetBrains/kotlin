@@ -705,6 +705,8 @@ class FirCallResolver(
             candidates.isEmpty() -> {
                 val diagnostic = if (name.asString() == "invoke" && explicitReceiver is FirConstExpression<*>) {
                     ConeFunctionExpectedError(explicitReceiver.value?.toString() ?: "", explicitReceiver.typeRef.coneType)
+                } else if (callInfo.searchSynthetics && explicitReceiver != null && explicitReceiver !is FirPropertyAccessExpression) {
+                    ConeUnresolvedSyntheticsAccessError(name, explicitReceiver)
                 } else {
                     ConeUnresolvedNameError(name)
                 }

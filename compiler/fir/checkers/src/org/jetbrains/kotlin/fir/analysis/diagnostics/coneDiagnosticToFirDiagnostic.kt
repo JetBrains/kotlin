@@ -46,6 +46,7 @@ private fun ConeDiagnostic.toKtDiagnostic(
         (this.name ?: SpecialNames.NO_NAME_PROVIDED).asString()
     )
     is ConeUnresolvedSymbolError -> FirErrors.UNRESOLVED_REFERENCE.createOn(source, this.classId.asString())
+    is ConeUnresolvedSyntheticsAccessError -> FirErrors.SYNTHETIC_ACCESS_WRONG_RECEIVER.createOn(this.receiver.source, this.name.asString())
     is ConeUnresolvedNameError -> FirErrors.UNRESOLVED_REFERENCE.createOn(source, this.name.asString())
     is ConeUnresolvedQualifierError -> FirErrors.UNRESOLVED_REFERENCE.createOn(source, this.qualifier)
     is ConeFunctionCallExpectedError -> FirErrors.FUNCTION_CALL_EXPECTED.createOn(source, this.name.asString(), this.hasValueParameters)

@@ -306,6 +306,12 @@ internal class UnresolvedImportImpl(
     override val token: ValidityToken,
 ) : KtFirDiagnostic.UnresolvedImport(), KtAbstractFirDiagnostic<PsiElement>
 
+internal class SyntheticAccessWrongReceiverImpl(
+    override val name: String,
+    override val firDiagnostic: KtPsiDiagnostic,
+    override val token: ValidityToken,
+) : KtFirDiagnostic.SyntheticAccessWrongReceiver(), KtAbstractFirDiagnostic<PsiElement>
+
 internal class CreatingAnInstanceOfAbstractClassImpl(
     override val firDiagnostic: KtPsiDiagnostic,
     override val token: ValidityToken,

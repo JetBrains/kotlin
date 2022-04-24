@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.declarations.FirVariable
 import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
 import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnosticWithSource
+import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.resolve.calls.AbstractCandidate
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
@@ -20,6 +21,7 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.calls.tower.CandidateApplicability
 import org.jetbrains.kotlin.resolve.deprecation.DeprecationInfo
+import org.jetbrains.kotlin.text
 
 sealed interface ConeUnresolvedError : ConeDiagnostic {
     val qualifier: String?
@@ -55,9 +57,13 @@ class ConeUnresolvedQualifierError(override val qualifier: String) : ConeUnresol
     override val reason: String get() = "Symbol not found for $qualifier"
 }
 
-class ConeUnresolvedNameError(val name: Name) : ConeUnresolvedError {
+open class ConeUnresolvedNameError(val name: Name) : ConeUnresolvedError {
     override val qualifier: String get() = name.asString()
     override val reason: String get() = "Unresolved name: $name"
+}
+
+class ConeUnresolvedSyntheticsAccessError(name: Name, val receiver: FirExpression) : ConeUnresolvedNameError(name) {
+    override val reason: String get() = "Couldn't resolve '$name': '${receiver.source.text}' is not a property access expression"
 }
 
 class ConeFunctionCallExpectedError(
