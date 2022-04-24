@@ -8,10 +8,8 @@ package org.jetbrains.kotlin.test.frontend.fir
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
-import org.jetbrains.kotlin.fir.FirModuleData
-import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.PrivateSessionConstructor
-import org.jetbrains.kotlin.fir.SessionConfiguration
+import org.jetbrains.kotlin.fir.*
+import org.jetbrains.kotlin.fir.analysis.FirOverridesBackwardCompatibilityHelper
 import org.jetbrains.kotlin.fir.checkers.registerCommonCheckers
 import org.jetbrains.kotlin.fir.checkers.registerJsCheckers
 import org.jetbrains.kotlin.fir.deserialization.ModuleDataProvider
@@ -19,12 +17,15 @@ import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
 import org.jetbrains.kotlin.fir.extensions.FirSwitchableExtensionDeclarationsSymbolProvider
 import org.jetbrains.kotlin.fir.java.FirCliSession
 import org.jetbrains.kotlin.fir.java.FirProjectSessionProvider
+import org.jetbrains.kotlin.fir.resolve.calls.ConeCallConflictResolverFactory
+import org.jetbrains.kotlin.fir.resolve.calls.FirSyntheticNamesProvider
 import org.jetbrains.kotlin.fir.resolve.providers.FirDependenciesSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.providers.FirProvider
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.providers.impl.*
 import org.jetbrains.kotlin.fir.resolve.scopes.wrapScopeWithJvmMapped
 import org.jetbrains.kotlin.fir.scopes.FirKotlinScopeProvider
+import org.jetbrains.kotlin.fir.scopes.FirPlatformClassMapper
 import org.jetbrains.kotlin.fir.session.*
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.name.Name
@@ -77,6 +78,15 @@ object FirJsSessionFactory {
         }
     }
 
+    @OptIn(SessionConfiguration::class)
+    fun FirSession.registerJsSpecificResolveComponents() {
+        register(FirVisibilityChecker::class, FirVisibilityChecker.Default)
+        register(ConeCallConflictResolverFactory::class, JsCallConflictResolverFactory)
+        register(FirPlatformClassMapper::class, FirPlatformClassMapper.Default)
+        register(FirSyntheticNamesProvider::class, FirJsSyntheticNamesProvider)
+        register(FirOverridesBackwardCompatibilityHelper::class, FirOverridesBackwardCompatibilityHelper.Default())
+    }
+
     @OptIn(PrivateSessionConstructor::class, SessionConfiguration::class)
     fun createJsModuleBasedSession(
         moduleData: FirModuleData,
@@ -93,19 +103,13 @@ object FirJsSessionFactory {
             registerCliCompilerOnlyComponents()
             registerCommonComponents(languageVersionSettings)
             registerResolveComponents(lookupTracker)
-
-            // Otherwise, the ConeConflictResolverFactory is not found
-            registerJavaSpecificResolveComponents()
+            registerJsSpecificResolveComponents()
 
             val kotlinScopeProvider = FirKotlinScopeProvider { _, declaredMemberScope, _, _ -> declaredMemberScope }
             register(FirKotlinScopeProvider::class, kotlinScopeProvider)
 
             val firProvider = FirProviderImpl(this, kotlinScopeProvider)
             register(FirProvider::class, firProvider)
-
-//        val symbolProviderForBinariesFromIncrementalCompilation = providerAndScopeForIncrementalCompilation?.let {
-//            KlibBasedSymbolProvider(this@session, SingleModuleDataProvider(moduleData), kotlinScopeProvider, ??)
-//        }
 
             FirSessionFactory.FirSessionConfigurator(this).apply {
                 registerCommonCheckers()
