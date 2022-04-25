@@ -11,6 +11,7 @@ val Project.intellijVersion
     get() = rootProject.extra["versions.intellijSdk"]
 
 fun Project.intellijCore() = dependencies.project(":dependencies:intellij-core")
+fun Project.intellijUtilRt() = "com.jetbrains.intellij.platform:util-rt:$intellijVersion"
 
 fun Project.jpsModel() = "com.jetbrains.intellij.platform:jps-model:$intellijVersion"
 fun Project.jpsModelSerialization() = "com.jetbrains.intellij.platform:jps-model-serialization:$intellijVersion"

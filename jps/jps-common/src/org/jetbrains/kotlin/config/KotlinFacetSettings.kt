@@ -5,8 +5,6 @@
 
 package org.jetbrains.kotlin.config
 
-import com.intellij.openapi.module.Module
-import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.cli.common.arguments.*
 import org.jetbrains.kotlin.platform.IdePlatformKind
 import org.jetbrains.kotlin.platform.TargetPlatform
@@ -275,14 +273,4 @@ class KotlinFacetSettings {
         }
 
     var pureKotlinSourceFolders: List<String> = emptyList()
-}
-
-interface KotlinFacetSettingsProvider {
-    fun getSettings(module: Module): KotlinFacetSettings?
-    fun getInitializedSettings(module: Module): KotlinFacetSettings
-
-    companion object {
-        fun getInstance(project: Project): KotlinFacetSettingsProvider? = project.takeUnless(Project::isDisposed)
-            ?.getService(KotlinFacetSettingsProvider::class.java)
-    }
 }
