@@ -805,7 +805,7 @@ PKCS#7, PKCS#8 and PKSC#10. Portions of these standards are included
 in Harmony Javadoc for reference, and in accordance with the licensing terms 
 for PKCS#7, PKCS#8 and PKSC#10, the full copyright statement is here:
 
-Copyright © 1991-1993 RSA Laboratories, a division of RSA Data Security, Inc.
+Copyright Â© 1991-1993 RSA Laboratories, a division of RSA Data Security, Inc.
 License to copy this document is granted provided that it is identified as
 "RSA Data Security, Inc. Public-Key Cryptography Standards (PKCS)" in all
 material mentioning or referencing this document.
