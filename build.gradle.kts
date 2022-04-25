@@ -888,11 +888,6 @@ tasks {
         dependsOn(":kotlin-annotation-processing-cli:test")
     }
 
-    // Need the task for transi˚tion period. Shouold be removed in a week after commit is master.
-    register("kaptIdeTest") {
-        dependsOn("kaptTests")
-    }
-
     register("test") {
         doLast {
             throw GradleException("Don't use directly, use aggregate tasks *-check instead")
