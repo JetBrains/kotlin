@@ -1,0 +1,4 @@
+$TESTDATA_DIR$/fir.kt
+-Xuse-fir
+-d
+$TEMP_DIR$

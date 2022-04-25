@@ -58,6 +58,10 @@ class K2MetadataCompiler : CLICompiler<K2MetadataCompilerArguments>() {
         paths: KotlinPaths?
     ): ExitCode {
         val collector = configuration.getNotNull(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY)
+        if (configuration.getBoolean(CommonConfigurationKeys.USE_FIR)) {
+            collector.report(ERROR, "K2 does not support compilation to metadata right now")
+            return ExitCode.COMPILATION_ERROR
+        }
         val performanceManager = configuration.getNotNull(CLIConfigurationKeys.PERF_MANAGER)
 
         val pluginLoadResult = loadPlugins(paths, arguments, configuration)
