@@ -249,4 +249,7 @@ open class JvmGeneratorExtensionsImpl(
         }
         return null
     }
+
+    override val parametersAreAssignable: Boolean
+        get() = true
 }
