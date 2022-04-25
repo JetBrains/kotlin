@@ -1,0 +1,5 @@
+package lib1
+
+abstract class A {
+    abstract fun foo(): Int
+}
