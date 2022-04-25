@@ -969,26 +969,6 @@ val zipTestData by task<Zip> {
     }
 }
 
-val zipPlugin by task<Zip> {
-    val src = when (project.findProperty("pluginArtifactDir") as String?) {
-        "Kotlin" -> ideaPluginDir
-        null -> ideaPluginDir
-        else -> error("Unsupported plugin artifact dir")
-    }
-    val destPath = project.findProperty("pluginZipPath") as String?
-    val dest = File(destPath ?: "$buildDir/kotlin-plugin.zip")
-    destinationDirectory.set(dest.parentFile)
-    archiveFileName.set(dest.name)
-
-    from(src)
-    into("Kotlin")
-    setExecutablePermissions()
-
-    doLast {
-        logger.lifecycle("Plugin artifacts packed to ${archiveFile.get()}")
-    }
-}
-
 fun Project.secureZipTask(zipTask: TaskProvider<Zip>): RegisteringDomainObjectDelegateProviderWithAction<out TaskContainer, Task> {
     val checkSumTask = tasks.register("${zipTask.name}Checksum", Checksum::class) {
         dependsOn(zipTask)
@@ -1014,7 +994,6 @@ signing {
 }
 
 val zipCompilerWithSignature by secureZipTask(zipCompiler)
-val zipPluginWithSignature by secureZipTask(zipPlugin)
 
 configure<IdeaModel> {
     module {
