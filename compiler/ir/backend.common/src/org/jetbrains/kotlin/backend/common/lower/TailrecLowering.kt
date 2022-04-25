@@ -75,7 +75,7 @@ open class TailrecLowering(val context: BackendContext) : BodyLoweringPass {
 }
 
 private fun TailrecLowering.lowerTailRecursionCalls(irFunction: IrFunction) {
-    val tailRecursionCalls = collectTailRecursionCalls(irFunction, ::followFunctionReference)
+    val (tailRecursionCalls, someCallsAreFromOtherFunctions) = collectTailRecursionCalls(irFunction, ::followFunctionReference)
     if (tailRecursionCalls.isEmpty()) {
         return
     }
@@ -84,33 +84,41 @@ private fun TailrecLowering.lowerTailRecursionCalls(irFunction: IrFunction) {
     val oldBodyStatements = ArrayList(oldBody.statements)
     val builder = context.createIrBuilder(irFunction.symbol).at(oldBody)
 
-    val parameters = irFunction.explicitParameters
-
     oldBody.statements.clear()
     oldBody.statements += builder.irBlockBody {
-        // Define variables containing current values of parameters:
-        val parameterToVariable = parameters.associateWith {
-            createTmpVariable(irGet(it), nameHint = it.symbol.suggestVariableName(), isMutable = true)
+        // `return recursiveCall(...)` is rewritten into assignments to parameters followed by a jump to the start.
+        // While we may be able to write to the parameters directly, the recursive call may be inside an inline lambda,
+        // so the parameters are captured and assigning to them requires temporarily rewriting their types (see
+        // `SharedVariablesLowering`), and that we can't do. So we have to create new `var`s for this purpose.
+        // TODO: an optimization pass will rewrite the types of vars back since the lambdas are guaranteed to be inlined
+        //  in place (otherwise they can't jump to the start of the function at all), so this is all a waste of CPU time.
+        val parameterToVariable = irFunction.explicitParameters.associateWith {
+            if (someCallsAreFromOtherFunctions || !it.isAssignable)
+                createTmpVariable(irGet(it), nameHint = it.symbol.suggestVariableName(), isMutable = true)
+            else
+                it
         }
-        // (these variables are to be updated on any tail call).
 
-        +irWhile().apply {
-            val loop = this
-            condition = irTrue()
-
+        +irDoWhile().apply loop@{
             body = irBlock(startOffset, endOffset, resultType = context.irBuiltIns.unitType) {
-                // Read variables containing current values of parameters:
-                val parameterToNew = parameters.associateWith {
-                    createTmpVariable(irGet(parameterToVariable[it]!!), nameHint = it.symbol.suggestVariableName())
-                }
                 val transformer = BodyTransformer(
-                    this@lowerTailRecursionCalls, builder, irFunction, loop, parameterToNew, parameterToVariable, tailRecursionCalls
+                    this@lowerTailRecursionCalls, builder, irFunction, this@loop, parameterToVariable, tailRecursionCalls
                 )
                 oldBodyStatements.forEach {
                     +it.transformStatement(transformer)
                 }
-
-                +irBreak(loop)
+                +irBreak(this@loop)
+            }
+            condition = irBlock {
+                // The problem with creating new `var`s is that they do not show up in the debugger, so stopping inside
+                // a nested call will still display the parameters from the outermost call. To fix this, we need to
+                // write the new values back even though the parameters are now otherwise unused.
+                for ((parameter, variable) in parameterToVariable.entries) {
+                    if (parameter.isAssignable && parameter !== variable) {
+                        +irSet(parameter, irGet(variable))
+                    }
+                }
+                +irTrue()
             }
         }
     }.statements
@@ -124,10 +132,9 @@ private class BodyTransformer(
     private val builder: IrBuilderWithScope,
     irFunction: IrFunction,
     private val loop: IrLoop,
-    parameterToNew: Map<IrValueParameter, IrValueDeclaration>,
-    private val parameterToVariable: Map<IrValueParameter, IrVariable>,
+    private val parameterToVariable: Map<IrValueParameter, IrValueDeclaration>,
     private val tailRecursionCalls: Set<IrCall>,
-) : VariableRemapper(parameterToNew) {
+) : VariableRemapper(parameterToVariable) {
 
     val parameters = irFunction.explicitParameters
 

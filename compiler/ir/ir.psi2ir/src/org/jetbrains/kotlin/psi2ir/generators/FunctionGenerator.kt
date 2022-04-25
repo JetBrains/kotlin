@@ -371,15 +371,16 @@ class FunctionGenerator(declarationGenerator: DeclarationGenerator) : Declaratio
         ktElement: KtPureElement?,
         irOwnerElement: IrElement
     ): IrValueParameter {
-        if (context.languageVersionSettings.supportsFeature(LanguageFeature.NewCapturedReceiverFieldNamingConvention)) {
+        val name = if (context.languageVersionSettings.supportsFeature(LanguageFeature.NewCapturedReceiverFieldNamingConvention)) {
             if (ktElement is KtFunctionLiteral) {
-                val name = getCallLabelForLambdaArgument(ktElement, this.context.bindingContext)?.let {
+                val label = getCallLabelForLambdaArgument(ktElement, this.context.bindingContext)?.let {
                     it.takeIf(Name::isValidIdentifier) ?: "\$receiver"
                 }
-                return declareParameter(receiverParameterDescriptor, ktElement, irOwnerElement, name = Name.identifier("\$this\$$name"))
-            }
-        }
-        return declareParameter(receiverParameterDescriptor, ktElement, irOwnerElement)
+                // TODO: this can produce `$this$null` - expected?
+                Name.identifier("\$this\$$label")
+            } else null
+        } else null
+        return declareParameter(receiverParameterDescriptor, ktElement, irOwnerElement, name)
     }
 
     private fun getCallLabelForLambdaArgument(declaration: KtFunctionLiteral, bindingContext: BindingContext): String? {
@@ -427,7 +428,8 @@ class FunctionGenerator(declarationGenerator: DeclarationGenerator) : Declaratio
             descriptor, descriptor.type.toIrType(),
             (descriptor as? ValueParameterDescriptor)?.varargElementType?.toIrType(),
             name,
-            index
+            index,
+            isAssignable = (irOwnerElement as? IrSimpleFunction)?.isTailrec == true && context.extensions.parametersAreAssignable
         )
     }
 
