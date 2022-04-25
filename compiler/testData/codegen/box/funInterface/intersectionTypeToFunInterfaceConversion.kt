@@ -36,6 +36,6 @@ object Test : () -> Unit, (Boolean) -> Unit {
 }
 
 fun box(): String {
-    <!INFERRED_TYPE_VARIABLE_INTO_EMPTY_INTERSECTION!>testIntersection<!>(Test)
+    testIntersection(Test)
     return result
 }

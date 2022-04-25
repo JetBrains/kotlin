@@ -15476,6 +15476,12 @@ public class DiagnosisCompilerTestFE10TestdataTestGenerated extends AbstractDiag
                 }
 
                 @Test
+                @TestMetadata("kt48987.kt")
+                public void testKt48987() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/inference/emptyIntersectionTypes/kt48987.kt");
+                }
+
+                @Test
                 @TestMetadata("kt49661.kt")
                 public void testKt49661() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/inference/emptyIntersectionTypes/kt49661.kt");

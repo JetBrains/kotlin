@@ -359,8 +359,13 @@ interface TypeSystemInferenceExtensionContext : TypeSystemContext, TypeSystemBui
         // B & C can't have common subtype due to having incompatible supertypes: A<String> and A<Int>
         val haveIncompatibleSupertypes = firstType.anySuperTypeConstructor { superTypeOfFirst ->
             secondType.anySuperTypeConstructor { superTypeOfSecond ->
+                val erasedSuperTypeOfSecond by lazy { superTypeOfSecond.eraseContainingTypeParameters() }
                 superTypeOfFirst.typeConstructor() == superTypeOfSecond.typeConstructor()
-                        && !AbstractTypeChecker.equalTypes(this, superTypeOfFirst, superTypeOfSecond)
+                        && !AbstractTypeChecker.equalTypes(
+                    context = this,
+                    superTypeOfFirst.eraseContainingTypeParameters(),
+                    erasedSuperTypeOfSecond
+                )
             }
         }
 
