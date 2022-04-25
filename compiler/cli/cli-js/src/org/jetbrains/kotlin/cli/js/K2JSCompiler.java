@@ -172,6 +172,10 @@ public class K2JSCompiler extends CLICompiler<K2JSCompilerArguments> {
             @Nullable KotlinPaths paths
     ) {
         MessageCollector messageCollector = configuration.getNotNull(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY);
+        if (configuration.getBoolean(CommonConfigurationKeys.USE_FIR)) {
+            messageCollector.report(ERROR, "K2 does not support JS target right now", null);
+            return ExitCode.COMPILATION_ERROR;
+        }
 
         ExitCode exitCode = OK;
 

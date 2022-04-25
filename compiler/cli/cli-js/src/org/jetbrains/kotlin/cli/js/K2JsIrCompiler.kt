@@ -87,6 +87,10 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
         paths: KotlinPaths?
     ): ExitCode {
         val messageCollector = configuration.getNotNull(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY)
+        if (configuration.getBoolean(CommonConfigurationKeys.USE_FIR)) {
+            messageCollector.report(ERROR, "K2 does not support JS target right now")
+            return ExitCode.COMPILATION_ERROR
+        }
 
         val pluginLoadResult = loadPlugins(paths, arguments, configuration)
         if (pluginLoadResult != ExitCode.OK) return pluginLoadResult
