@@ -638,6 +638,15 @@ class CompileKotlinAgainstCustomBinariesTest : AbstractKotlinCompilerIntegration
         )
     }
 
+    fun testFirIncorrectRemoveSignature() {
+        compileKotlin(
+            "source.kt", tmpdir,
+            listOf(),
+            additionalOptions = listOf("-Xuse-k2"),
+            additionalSources = listOf("A.java", "B.java"),
+        )
+    }
+
     fun testOldJvmAgainstJvmIr() {
         val library = compileLibrary("library", additionalOptions = listOf("-Xuse-ir"))
         compileKotlin("source.kt", tmpdir, listOf(library))

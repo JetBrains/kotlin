@@ -63,6 +63,8 @@ class JavaClassUseSiteMemberScope(
 
     private val canUseSpecialGetters: Boolean by lazy { !klass.hasKotlinSuper(session) }
 
+    private val javaOverrideChecker: JavaOverrideChecker get() = overrideChecker as JavaOverrideChecker
+
     private fun generateSyntheticPropertySymbol(
         getterSymbol: FirNamedFunctionSymbol,
         setterSymbol: FirNamedFunctionSymbol?,
@@ -343,8 +345,9 @@ class JavaClassUseSiteMemberScope(
         destination: MutableCollection<FirNamedFunctionSymbol>
     ) {
         val resultsOfIntersectionToSaveInCache = mutableListOf<ResultOfIntersection<FirNamedFunctionSymbol>>()
-        val list = supertypeScopeContext.convertGroupedCallablesToIntersectionResults(functionsFromSupertypesWithRequestedName)
-        for (resultOfIntersectionWithNaturalName in list) {
+        val intersectionResults =
+            supertypeScopeContext.convertGroupedCallablesToIntersectionResults(functionsFromSupertypesWithRequestedName)
+        for (resultOfIntersectionWithNaturalName in intersectionResults) {
             val someSymbolWithNaturalNameFromSuperType = resultOfIntersectionWithNaturalName.extractSomeSymbolFromSuperType()
             val explicitlyDeclaredFunctionWithNaturalName = explicitlyDeclaredFunctionsWithNaturalName.firstOrNull {
                 overrideChecker.isOverriddenFunction(it, someSymbolWithNaturalNameFromSuperType)
@@ -415,7 +418,8 @@ class JavaClassUseSiteMemberScope(
             ?.symbol as? FirNamedFunctionSymbol
             ?: unwrappedSubstitutionOverride.symbol
         val originalDeclaredFunction = declaredMemberScope.getFunctions(naturalName).firstOrNull {
-            it.hasSameJvmDescriptor(functionFromSupertypeWithErasedParameterType) && it.hasErasedParameters()
+            it.hasSameJvmDescriptor(functionFromSupertypeWithErasedParameterType) && it.hasErasedParameters() &&
+                    javaOverrideChecker.doesReturnTypesHaveSameKind(functionFromSupertypeWithErasedParameterType.fir, it.fir)
         } ?: return false
         val renamedDeclaredFunction = buildJavaMethodCopy(originalDeclaredFunction.fir as FirJavaMethod) {
             name = naturalName

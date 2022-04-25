@@ -90,7 +90,7 @@ class JavaOverrideChecker internal constructor(
 
     // In most cases checking erasure of value parameters should be enough, but in some cases there might be semi-valid Java hierarchies
     // with same value parameters, but different return type kinds, so it's worth distinguishing them as different non-overridable members
-    private fun doesReturnTypesHaveSameKind(
+    fun doesReturnTypesHaveSameKind(
         candidate: FirSimpleFunction,
         base: FirSimpleFunction,
     ): Boolean {
