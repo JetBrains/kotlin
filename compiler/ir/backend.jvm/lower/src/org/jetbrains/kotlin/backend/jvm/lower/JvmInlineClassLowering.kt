@@ -355,8 +355,10 @@ private class JvmInlineClassLowering(context: JvmBackendContext) : JvmValueClass
         replacement.copyAttributes(function)
 
         // Don't create a wrapper for functions which are only used in an unboxed context
-        if (function.overriddenSymbols.isEmpty() || replacement.dispatchReceiverParameter != null)
-            return listOf(replacement)
+        // However, sealed inline classes do have overrides.
+        if ((function.overriddenSymbols.isEmpty() || replacement.dispatchReceiverParameter != null) &&
+            function.parentAsClass.modality != Modality.SEALED
+        ) return listOf(replacement)
 
         val bridgeFunction = createBridgeDeclaration(
             function,
@@ -859,7 +861,7 @@ private class JvmInlineClassLowering(context: JvmBackendContext) : JvmValueClass
             with(context.createIrBuilder(function.symbol)) {
                 function.body = irBlockBody {
                     var counter = 0
-                    fun copyOldBody() = when(oldBody) {
+                    fun copyOldBody() = when (oldBody) {
                         is IrExpressionBody -> irReturn(oldBody.expression.deepCopySavingMetadata())
                         is IrBlockBody -> irBlock {
                             for (stmt in oldBody.statements) {

@@ -23172,6 +23172,149 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
                         }
 
                         @Nested
+                        @TestMetadata("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/openMethod")
+                        @TestDataPath("$PROJECT_ROOT")
+                        @Tag("codegen")
+                        @UseExtTestCaseGroupProvider()
+                        public class OpenMethod {
+                            public OpenMethod() {
+                                register("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/openMethod/stringOpenMethod_I1.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+                                register("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/openMethod/stringOpenMethod_I1_I2.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+                                register("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/openMethod/stringOpenMethod_I1_I2_I3.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+                                register("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/openMethod/stringOpenMethod_I1_I2_I3_O2.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+                                register("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/openMethod/stringOpenMethod_I1_I2_O1.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+                                register("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/openMethod/stringOpenMethod_I1_I2_O1_I3.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+                                register("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/openMethod/stringOpenMethod_I1_I2_O1_I3_O2.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+                                register("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/openMethod/stringOpenMethod_I1_I2_O1_O2.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+                                register("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/openMethod/stringOpenMethod_I1_I2_O2.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+                                register("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/openMethod/stringOpenMethod_I1_I3.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+                                register("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/openMethod/stringOpenMethod_I1_I3_O2.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+                                register("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/openMethod/stringOpenMethod_I1_O1.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+                                register("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/openMethod/stringOpenMethod_I1_O1_I3.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+                                register("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/openMethod/stringOpenMethod_I1_O1_I3_O2.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+                                register("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/openMethod/stringOpenMethod_I1_O1_O2.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+                                register("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/openMethod/stringOpenMethod_I1_O2.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+                            }
+
+                            @Test
+                            public void testAllFilesPresentInOpenMethod() throws Exception {
+                                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/openMethod"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
+                            }
+
+                            @Test
+                            @TestMetadata("stringOpenMethod_I1.kt")
+                            public void testStringOpenMethod_I1() throws Exception {
+                                // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
+                                runTest("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/openMethod/stringOpenMethod_I1.kt");
+                            }
+
+                            @Test
+                            @TestMetadata("stringOpenMethod_I1_I2.kt")
+                            public void testStringOpenMethod_I1_I2() throws Exception {
+                                // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
+                                runTest("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/openMethod/stringOpenMethod_I1_I2.kt");
+                            }
+
+                            @Test
+                            @TestMetadata("stringOpenMethod_I1_I2_I3.kt")
+                            public void testStringOpenMethod_I1_I2_I3() throws Exception {
+                                // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
+                                runTest("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/openMethod/stringOpenMethod_I1_I2_I3.kt");
+                            }
+
+                            @Test
+                            @TestMetadata("stringOpenMethod_I1_I2_I3_O2.kt")
+                            public void testStringOpenMethod_I1_I2_I3_O2() throws Exception {
+                                // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
+                                runTest("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/openMethod/stringOpenMethod_I1_I2_I3_O2.kt");
+                            }
+
+                            @Test
+                            @TestMetadata("stringOpenMethod_I1_I2_O1.kt")
+                            public void testStringOpenMethod_I1_I2_O1() throws Exception {
+                                // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
+                                runTest("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/openMethod/stringOpenMethod_I1_I2_O1.kt");
+                            }
+
+                            @Test
+                            @TestMetadata("stringOpenMethod_I1_I2_O1_I3.kt")
+                            public void testStringOpenMethod_I1_I2_O1_I3() throws Exception {
+                                // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
+                                runTest("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/openMethod/stringOpenMethod_I1_I2_O1_I3.kt");
+                            }
+
+                            @Test
+                            @TestMetadata("stringOpenMethod_I1_I2_O1_I3_O2.kt")
+                            public void testStringOpenMethod_I1_I2_O1_I3_O2() throws Exception {
+                                // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
+                                runTest("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/openMethod/stringOpenMethod_I1_I2_O1_I3_O2.kt");
+                            }
+
+                            @Test
+                            @TestMetadata("stringOpenMethod_I1_I2_O1_O2.kt")
+                            public void testStringOpenMethod_I1_I2_O1_O2() throws Exception {
+                                // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
+                                runTest("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/openMethod/stringOpenMethod_I1_I2_O1_O2.kt");
+                            }
+
+                            @Test
+                            @TestMetadata("stringOpenMethod_I1_I2_O2.kt")
+                            public void testStringOpenMethod_I1_I2_O2() throws Exception {
+                                // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
+                                runTest("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/openMethod/stringOpenMethod_I1_I2_O2.kt");
+                            }
+
+                            @Test
+                            @TestMetadata("stringOpenMethod_I1_I3.kt")
+                            public void testStringOpenMethod_I1_I3() throws Exception {
+                                // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
+                                runTest("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/openMethod/stringOpenMethod_I1_I3.kt");
+                            }
+
+                            @Test
+                            @TestMetadata("stringOpenMethod_I1_I3_O2.kt")
+                            public void testStringOpenMethod_I1_I3_O2() throws Exception {
+                                // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
+                                runTest("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/openMethod/stringOpenMethod_I1_I3_O2.kt");
+                            }
+
+                            @Test
+                            @TestMetadata("stringOpenMethod_I1_O1.kt")
+                            public void testStringOpenMethod_I1_O1() throws Exception {
+                                // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
+                                runTest("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/openMethod/stringOpenMethod_I1_O1.kt");
+                            }
+
+                            @Test
+                            @TestMetadata("stringOpenMethod_I1_O1_I3.kt")
+                            public void testStringOpenMethod_I1_O1_I3() throws Exception {
+                                // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
+                                runTest("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/openMethod/stringOpenMethod_I1_O1_I3.kt");
+                            }
+
+                            @Test
+                            @TestMetadata("stringOpenMethod_I1_O1_I3_O2.kt")
+                            public void testStringOpenMethod_I1_O1_I3_O2() throws Exception {
+                                // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
+                                runTest("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/openMethod/stringOpenMethod_I1_O1_I3_O2.kt");
+                            }
+
+                            @Test
+                            @TestMetadata("stringOpenMethod_I1_O1_O2.kt")
+                            public void testStringOpenMethod_I1_O1_O2() throws Exception {
+                                // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
+                                runTest("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/openMethod/stringOpenMethod_I1_O1_O2.kt");
+                            }
+
+                            @Test
+                            @TestMetadata("stringOpenMethod_I1_O2.kt")
+                            public void testStringOpenMethod_I1_O2() throws Exception {
+                                // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
+                                runTest("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/openMethod/stringOpenMethod_I1_O2.kt");
+                            }
+                        }
+
+                        @Nested
                         @TestMetadata("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/toString")
                         @TestDataPath("$PROJECT_ROOT")
                         @Tag("codegen")

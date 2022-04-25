@@ -21379,6 +21379,103 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
                         }
                     }
 
+                    @TestMetadata("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/openMethod")
+                    @TestDataPath("$PROJECT_ROOT")
+                    @RunWith(JUnit3RunnerWithInners.class)
+                    public static class OpenMethod extends AbstractLightAnalysisModeTest {
+                        @TestMetadata("stringOpenMethod_I1.kt")
+                        public void ignoreStringOpenMethod_I1() throws Exception {
+                            runTest("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/openMethod/stringOpenMethod_I1.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+                        }
+
+                        @TestMetadata("stringOpenMethod_I1_I2.kt")
+                        public void ignoreStringOpenMethod_I1_I2() throws Exception {
+                            runTest("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/openMethod/stringOpenMethod_I1_I2.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+                        }
+
+                        @TestMetadata("stringOpenMethod_I1_I2_I3.kt")
+                        public void ignoreStringOpenMethod_I1_I2_I3() throws Exception {
+                            runTest("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/openMethod/stringOpenMethod_I1_I2_I3.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+                        }
+
+                        @TestMetadata("stringOpenMethod_I1_I2_I3_O2.kt")
+                        public void ignoreStringOpenMethod_I1_I2_I3_O2() throws Exception {
+                            runTest("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/openMethod/stringOpenMethod_I1_I2_I3_O2.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+                        }
+
+                        @TestMetadata("stringOpenMethod_I1_I2_O1.kt")
+                        public void ignoreStringOpenMethod_I1_I2_O1() throws Exception {
+                            runTest("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/openMethod/stringOpenMethod_I1_I2_O1.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+                        }
+
+                        @TestMetadata("stringOpenMethod_I1_I2_O1_I3.kt")
+                        public void ignoreStringOpenMethod_I1_I2_O1_I3() throws Exception {
+                            runTest("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/openMethod/stringOpenMethod_I1_I2_O1_I3.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+                        }
+
+                        @TestMetadata("stringOpenMethod_I1_I2_O1_I3_O2.kt")
+                        public void ignoreStringOpenMethod_I1_I2_O1_I3_O2() throws Exception {
+                            runTest("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/openMethod/stringOpenMethod_I1_I2_O1_I3_O2.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+                        }
+
+                        @TestMetadata("stringOpenMethod_I1_I2_O1_O2.kt")
+                        public void ignoreStringOpenMethod_I1_I2_O1_O2() throws Exception {
+                            runTest("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/openMethod/stringOpenMethod_I1_I2_O1_O2.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+                        }
+
+                        @TestMetadata("stringOpenMethod_I1_I2_O2.kt")
+                        public void ignoreStringOpenMethod_I1_I2_O2() throws Exception {
+                            runTest("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/openMethod/stringOpenMethod_I1_I2_O2.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+                        }
+
+                        @TestMetadata("stringOpenMethod_I1_I3.kt")
+                        public void ignoreStringOpenMethod_I1_I3() throws Exception {
+                            runTest("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/openMethod/stringOpenMethod_I1_I3.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+                        }
+
+                        @TestMetadata("stringOpenMethod_I1_I3_O2.kt")
+                        public void ignoreStringOpenMethod_I1_I3_O2() throws Exception {
+                            runTest("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/openMethod/stringOpenMethod_I1_I3_O2.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+                        }
+
+                        @TestMetadata("stringOpenMethod_I1_O1.kt")
+                        public void ignoreStringOpenMethod_I1_O1() throws Exception {
+                            runTest("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/openMethod/stringOpenMethod_I1_O1.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+                        }
+
+                        @TestMetadata("stringOpenMethod_I1_O1_I3.kt")
+                        public void ignoreStringOpenMethod_I1_O1_I3() throws Exception {
+                            runTest("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/openMethod/stringOpenMethod_I1_O1_I3.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+                        }
+
+                        @TestMetadata("stringOpenMethod_I1_O1_I3_O2.kt")
+                        public void ignoreStringOpenMethod_I1_O1_I3_O2() throws Exception {
+                            runTest("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/openMethod/stringOpenMethod_I1_O1_I3_O2.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+                        }
+
+                        @TestMetadata("stringOpenMethod_I1_O1_O2.kt")
+                        public void ignoreStringOpenMethod_I1_O1_O2() throws Exception {
+                            runTest("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/openMethod/stringOpenMethod_I1_O1_O2.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+                        }
+
+                        @TestMetadata("stringOpenMethod_I1_O2.kt")
+                        public void ignoreStringOpenMethod_I1_O2() throws Exception {
+                            runTest("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/openMethod/stringOpenMethod_I1_O2.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+                        }
+
+                        private void runTest(String testDataFilePath) throws Exception {
+                            KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM, testDataFilePath);
+                        }
+
+                        private void runTest(String testDataFilePath, java.util.function.Function<String, String> transformer) throws Exception {
+                            KotlinTestUtils.runTest(path -> doTestWithTransformer(path, transformer), TargetBackend.JVM, testDataFilePath);
+                        }
+
+                        public void testAllFilesPresentInOpenMethod() throws Exception {
+                            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/openMethod"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM, true);
+                        }
+                    }
+
                     @TestMetadata("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/toString")
                     @TestDataPath("$PROJECT_ROOT")
                     @RunWith(JUnit3RunnerWithInners.class)
