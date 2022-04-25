@@ -366,8 +366,7 @@ class Fir2IrVisitor(
     private fun convertToIrCall(functionCall: FirFunctionCall, annotationMode: Boolean): IrExpression {
         if (functionCall.isCalleeDynamic &&
             functionCall.calleeReference.name == OperatorNameConventions.SET &&
-            functionCall.dynamicVarargArguments?.size != 1 &&
-            functionCall.source?.elementType != KtNodeTypes.DOT_QUALIFIED_EXPRESSION
+            functionCall.calleeReference.source?.kind == KtFakeSourceElementKind.ArrayAccessNameReference
         ) {
             return convertToIrArrayAccessDynamicCall(functionCall, annotationMode)
         }
@@ -759,10 +758,15 @@ class Fir2IrVisitor(
             }
         } else {
             val qualifiedAccess = operationReceiver as? FirQualifiedAccessExpression ?: return null
+            val receiverExpression = if (receiverValue != qualifiedAccess) {
+                receiverValue
+            } else {
+                null
+            }
             callGenerator.convertToIrCall(
                 qualifiedAccess,
                 qualifiedAccess.typeRef,
-                convertToIrReceiverExpression(receiverValue, qualifiedAccess.calleeReference),
+                convertToIrReceiverExpression(receiverExpression, qualifiedAccess.calleeReference),
                 annotationMode = false
             )
         }
