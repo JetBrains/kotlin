@@ -19,7 +19,6 @@ package org.jetbrains.kotlin.backend.konan.serialization
 import org.jetbrains.kotlin.backend.common.lower.parents
 import org.jetbrains.kotlin.backend.common.overrides.FakeOverrideBuilder
 import org.jetbrains.kotlin.backend.common.overrides.FakeOverrideClassFilter
-import org.jetbrains.kotlin.backend.common.overrides.FileLocalAwareLinker
 import org.jetbrains.kotlin.backend.common.serialization.*
 import org.jetbrains.kotlin.backend.common.serialization.encodings.BinaryNameAndType
 import org.jetbrains.kotlin.backend.common.serialization.encodings.BinarySymbolData
@@ -39,7 +38,6 @@ import org.jetbrains.kotlin.descriptors.konan.klibModuleOrigin
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.builders.TranslationPluginContext
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrFileImpl
 import org.jetbrains.kotlin.ir.declarations.lazy.IrLazyClass
 import org.jetbrains.kotlin.ir.expressions.IrBody
@@ -55,13 +53,11 @@ import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.protobuf.ExtensionRegistryLite
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import sun.misc.Unsafe
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrClass as ProtoClass
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrDeclaration as ProtoDeclaration
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrField as ProtoField
-import org.jetbrains.kotlin.backend.common.serialization.proto.IrFile as ProtoFile
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrFunction as ProtoFunction
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrProperty as ProtoProperty
 
@@ -400,7 +396,7 @@ internal class KonanIrLinker(
             moduleDescriptor: ModuleDescriptor,
             klib: KotlinLibrary,
             strategyResolver: (String) -> DeserializationStrategy
-    ): BasicIrModuleDeserializer(this@KonanIrLinker, moduleDescriptor, klib, strategyResolver, klib.versions.abiVersion ?: KotlinAbiVersion.CURRENT) {
+    ) : BasicIrModuleDeserializer(this@KonanIrLinker, moduleDescriptor, klib, strategyResolver, klib.versions.abiVersion ?: KotlinAbiVersion.CURRENT) {
         override val moduleFragment: IrModuleFragment = KonanIrModuleFragmentImpl(moduleDescriptor, builtIns, emptyList())
 
         fun buildInlineFunctionReference(irFunction: IrFunction): SerializedInlineFunctionReference {
@@ -620,7 +616,11 @@ internal class KonanIrLinker(
     inner class KonanCachedLibraryModuleDeserializer(
             moduleDescriptor: ModuleDescriptor,
             override val klib: KotlinLibrary
-    ) : IrModuleDeserializer(moduleDescriptor, klib.versions.abiVersion ?: KotlinAbiVersion.CURRENT) {
+    ) : BasicIrModuleDeserializer(this@KonanIrLinker, moduleDescriptor, klib,
+            { _ -> DeserializationStrategy.ON_DEMAND },
+            klib.versions.abiVersion ?: KotlinAbiVersion.CURRENT
+    ) {
+        override val moduleFragment: IrModuleFragment = KonanIrModuleFragmentImpl(moduleDescriptor, builtIns, emptyList())
 
         private val descriptorByIdSignatureFinder = DescriptorByIdSignatureFinderImpl(
                 moduleDescriptor, KonanManglerDesc,
@@ -630,81 +630,16 @@ internal class KonanIrLinker(
         override fun contains(idSig: IdSignature) =
                 idSig.isPubliclyVisible && descriptorByIdSignatureFinder.findDescriptorBySignature(idSig) != null
 
-        override fun deserializeIrSymbol(idSig: IdSignature, symbolKind: BinarySymbolData.SymbolKind): IrSymbol {
+        override fun tryDeserializeIrSymbol(idSig: IdSignature, symbolKind: BinarySymbolData.SymbolKind): IrSymbol {
             val descriptor = descriptorByIdSignatureFinder.findDescriptorBySignature(idSig)
                     ?: error("Expecting descriptor for $idSig")
 
             return (stubGenerator.generateMemberStub(descriptor) as IrSymbolOwner).symbol
         }
 
-        override val moduleFragment: IrModuleFragment = KonanIrModuleFragmentImpl(moduleDescriptor, builtIns)
-
-        override val moduleDependencies by lazy {
-            moduleDescriptor.allDependencyModules
-                    .filter { it != moduleDescriptor }
-                    .map { resolveModuleDeserializer(it, null) }
-        }
-
-        inner class FileDeserializationInfo(val fileReader: IrLibraryFileFromBytes, val file: IrFile,
-                                            val declarationDeserializer: IrDeclarationDeserializer,
-                                            val fakeOverrideBuilder: FakeOverrideBuilder)
-
-        private val filesDeserializationInfo by lazy {
-            val result = mutableListOf<FileDeserializationInfo>()
-            val fileCount = klib.fileCount()
-
-            for (i in 0 until fileCount) {
-                val fileStream = klib.file(i).codedInputStream
-                val fileProto = ProtoFile.parseFrom(fileStream, ExtensionRegistryLite.newInstance())
-
-                val fileReader = IrLibraryFileFromBytes(IrKlibBytesSource(klib, i))
-                val file = fileReader.createFile(moduleFragment, fileProto)
-
-                val symbolDeserializer = IrSymbolDeserializer(
-                        symbolTable, fileReader, file.symbol, emptyList(), { }, { _, symbol -> symbol })
-                { idSig, symbolKind ->
-                    val topLevelSig = idSig.topLevelSignature()
-                    val actualModuleDeserializer = resolveModuleDeserializer(moduleDescriptor, null)
-                            .findModuleDeserializerForTopLevelId(topLevelSig)
-                            ?: handleSignatureIdNotFoundInModuleWithDependencies(idSig, this)
-
-                    actualModuleDeserializer.deserializeIrSymbol(idSig, symbolKind)
-                }
-
-                val fakeOverrideBuilder = FakeOverrideBuilder(
-                        object : FileLocalAwareLinker {
-                            override fun tryReferencingSimpleFunctionByLocalSignature(parent: IrDeclaration, idSignature: IdSignature) =
-                                    if (idSignature.isPubliclyVisible) null else symbolDeserializer.referenceSimpleFunctionByLocalSignature(idSignature)
-
-                            override fun tryReferencingPropertyByLocalSignature(parent: IrDeclaration, idSignature: IdSignature) =
-                                    if (idSignature.isPubliclyVisible) null else symbolDeserializer.referencePropertyByLocalSignature(idSignature)
-                        },
-                        symbolTable, KonanManglerIr, IrTypeSystemContextImpl(builtIns), emptyMap(), KonanFakeOverrideClassFilter)
-
-                val declarationDeserializer = IrDeclarationDeserializer(
-                        builtIns,
-                        symbolTable,
-                        IrFactoryImpl,
-                        fileReader,
-                        file,
-                        allowErrorNodes = false,
-                        deserializeInlineFunctions = true,
-                        deserializeBodies = true,
-                        symbolDeserializer,
-                        fakeOverrideBuilder.platformSpecificClassFilter,
-                        fakeOverrideBuilder,
-                        compatibilityMode = CompatibilityMode(libraryAbiVersion)
-                )
-
-                result.add(FileDeserializationInfo(fileReader, file, declarationDeserializer, fakeOverrideBuilder))
-            }
-
-            result
-        }
-
         private val inlineFunctionReferences by lazy {
             cachedLibraries.getLibraryCache(klib)!!.serializedInlineFunctionBodies.associateBy {
-                filesDeserializationInfo[it.file].declarationDeserializer.symbolDeserializer.deserializeIdSignature(it.functionSignature)
+                fileDeserializationStates[it.file].declarationDeserializer.symbolDeserializer.deserializeIdSignature(it.functionSignature)
             }
         }
 
@@ -727,8 +662,8 @@ internal class KonanIrLinker(
                     ?: error("No signature for ${function.render()}")
             val inlineFunctionReference = inlineFunctionReferences[signature]
                     ?: error("No inline function reference for ${function.render()}, sig = ${signature.render()}")
-            val fileDeserializationInfo = filesDeserializationInfo[inlineFunctionReference.file]
-            val declarationDeserializer = fileDeserializationInfo.declarationDeserializer
+            val fileDeserializationState = fileDeserializationStates[inlineFunctionReference.file]
+            val declarationDeserializer = fileDeserializationState.declarationDeserializer
             val symbolDeserializer = declarationDeserializer.symbolDeserializer
 
             val outerClasses = (function.parent as? IrClass)?.getOuterClasses(takeOnlyInner = true) ?: emptyList()
@@ -774,21 +709,21 @@ internal class KonanIrLinker(
                     parameter.defaultValue = declarationDeserializer.deserializeExpressionBody(defaultValueIndex)
             }
 
-            fileDeserializationInfo.fakeOverrideBuilder.provideFakeOverrides()
+            fakeOverrideBuilder.provideFakeOverrides()
 
             inlineFunctionFiles[packageFragment]?.let {
-                require(it == fileDeserializationInfo.file) {
-                    "Different files ${it.fileEntry.name} and ${fileDeserializationInfo.file.fileEntry.name} have the same $packageFragment"
+                require(it == fileDeserializationState.file) {
+                    "Different files ${it.fileEntry.name} and ${fileDeserializationState.file.fileEntry.name} have the same $packageFragment"
                 }
             }
-            inlineFunctionFiles[packageFragment] = fileDeserializationInfo.file
+            inlineFunctionFiles[packageFragment] = fileDeserializationState.file
 
-            return InlineFunctionOriginInfo(function, fileDeserializationInfo.file, inlineFunctionReference.startOffset, inlineFunctionReference.endOffset)
+            return InlineFunctionOriginInfo(function, fileDeserializationState.file, inlineFunctionReference.startOffset, inlineFunctionReference.endOffset)
         }
 
         private val classesFields by lazy {
             cachedLibraries.getLibraryCache(klib)!!.serializedClassFields.associateBy {
-                filesDeserializationInfo[it.file].declarationDeserializer.symbolDeserializer.deserializeIdSignature(it.classSignature)
+                fileDeserializationStates[it.file].declarationDeserializer.symbolDeserializer.deserializeIdSignature(it.classSignature)
             }
         }
 
@@ -797,8 +732,8 @@ internal class KonanIrLinker(
                     ?: error("No signature for ${irClass.render()}")
             val serializedClassFields = classesFields[signature]
                     ?: error("No class fields for ${irClass.render()}, sig = ${signature.render()}")
-            val fileDeserializationInfo = filesDeserializationInfo[serializedClassFields.file]
-            val declarationDeserializer = fileDeserializationInfo.declarationDeserializer
+            val fileDeserializationState = fileDeserializationStates[serializedClassFields.file]
+            val declarationDeserializer = fileDeserializationState.declarationDeserializer
             val symbolDeserializer = declarationDeserializer.symbolDeserializer
 
             val outerClasses = irClass.getOuterClasses(takeOnlyInner = true)
@@ -825,7 +760,7 @@ internal class KonanIrLinker(
                     require(outerThisField != null) { "For an inner class ${irClass.render()} there should be <outer this> field" }
                     outerThisField.toFieldInfo()
                 } else {
-                    val name = fileDeserializationInfo.fileReader.string(field.name)
+                    val name = fileDeserializationState.fileReader.string(field.name)
                     val type = when {
                         field.type != InvalidIndex -> declarationDeserializer.deserializeIrType(field.type)
                         field.binaryType == InvalidIndex -> builtIns.anyNType
@@ -847,8 +782,6 @@ internal class KonanIrLinker(
                 }
             }
         }
-
-        override val kind get() = IrModuleDeserializerKind.DESERIALIZED
     }
 
     private inner class KonanForwardDeclarationModuleDeserializer(moduleDescriptor: ModuleDescriptor) : IrModuleDeserializer(moduleDescriptor, KotlinAbiVersion.CURRENT) {

@@ -58,7 +58,7 @@ class IrFileDeserializer(
 class FileDeserializationState(
     val linker: KotlinIrLinker,
     val fileIndex: Int,
-    file: IrFile,
+    val file: IrFile,
     val fileReader: IrLibraryFileFromBytes,
     fileProto: ProtoFile,
     deserializeBodies: Boolean,
@@ -88,7 +88,7 @@ class FileDeserializationState(
             actualModuleDeserializer.deserializeIrSymbol(idSig, symbolKind)
         }
 
-    private val declarationDeserializer = IrDeclarationDeserializer(
+    val declarationDeserializer = IrDeclarationDeserializer(
         linker.builtIns,
         linker.symbolTable,
         linker.symbolTable.irFactory,
