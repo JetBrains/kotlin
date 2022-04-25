@@ -19,10 +19,7 @@ import org.jetbrains.kotlin.test.Constructor
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.backend.ir.IrBackendInput
 import org.jetbrains.kotlin.test.builders.*
-import org.jetbrains.kotlin.test.directives.ConfigurationDirectives
-import org.jetbrains.kotlin.test.directives.DiagnosticsDirectives
-import org.jetbrains.kotlin.test.directives.JsEnvironmentConfigurationDirectives
-import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives
+import org.jetbrains.kotlin.test.directives.*
 import org.jetbrains.kotlin.test.frontend.classic.ClassicFrontend2IrConverter
 import org.jetbrains.kotlin.test.frontend.classic.ClassicFrontendFacade
 import org.jetbrains.kotlin.test.frontend.classic.ClassicFrontendOutputArtifact
@@ -35,9 +32,13 @@ import org.jetbrains.kotlin.test.model.*
 import org.jetbrains.kotlin.test.runners.AbstractKotlinCompilerWithTargetBackendTest
 import org.jetbrains.kotlin.test.runners.codegen.commonClassicFrontendHandlersForCodegenTest
 import org.jetbrains.kotlin.test.services.JsLibraryProvider
+import org.jetbrains.kotlin.test.services.MetaTestConfigurator
+import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.configuration.CommonEnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.configuration.JsEnvironmentConfigurator
+import org.jetbrains.kotlin.test.services.moduleStructure
 import org.jetbrains.kotlin.test.services.sourceProviders.CoroutineHelpersSourceFilesProvider
+import org.jetbrains.kotlin.test.utils.isDirectiveDefined
 import java.io.File
 import java.lang.Boolean.getBoolean
 
@@ -132,6 +133,14 @@ open class AbstractIrCodegenWasmJsInteropJsTest : AbstractJsIrTest(
     testGroupOutputDirPrefix = "codegen/wasmJsInteropJs"
 )
 
+private class SkipMultiModuleTestsMetaConfigurator(testServices: TestServices) : MetaTestConfigurator(testServices) {
+    override fun shouldSkipTest(): Boolean {
+        return testServices.moduleStructure.originalTestDataFiles.any {
+            it.isDirectiveDefined("// IGNORE_FIR")
+        }
+    }
+}
+
 open class AbstractFirJsTest : AbstractKotlinCompilerWithTargetBackendTest(TargetBackend.JS_IR) {
     private val pathToTestDir = "${JsEnvironmentConfigurator.TEST_DATA_DIR_PATH}/box/"
     private val testGroupOutputDirPrefix = "box/"
@@ -144,12 +153,6 @@ open class AbstractFirJsTest : AbstractKotlinCompilerWithTargetBackendTest(Targe
 
     private val frontendToBackendConverter: Constructor<Frontend2BackendConverter<FirOutputArtifact, IrBackendInput>>
         get() = ::Fir2IrResultsConverter
-
-    override fun runTest(@TestDataFile filePath: String) {
-        if (!File(filePath).readText().contains("// IGNORE_FIR")) {
-            testRunner(filePath, configuration).runTest(filePath)
-        }
-    }
 
     override fun TestConfigurationBuilder.configuration() {
         globalDefaults {
@@ -170,6 +173,8 @@ open class AbstractFirJsTest : AbstractKotlinCompilerWithTargetBackendTest(Targe
             +ConfigurationDirectives.WITH_STDLIB
             +LanguageSettingsDirectives.ALLOW_KOTLIN_PACKAGE
         }
+
+        useMetaTestConfigurators(::SkipMultiModuleTestsMetaConfigurator)
 
         forTestsNotMatching("compiler/testData/codegen/box/diagnostics/functions/tailRecursion/*") {
             defaultDirectives {
