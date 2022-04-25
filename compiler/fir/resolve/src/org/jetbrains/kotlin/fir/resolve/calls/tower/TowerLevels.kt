@@ -160,8 +160,6 @@ class MemberScopeTowerLevel(
                     return@processScopeMembers
                 }
                 result += MemberWithBaseScope(candidate, this)
-            } else if (candidate is FirClassLikeSymbol<*>) {
-                result += MemberWithBaseScope(candidate, this)
             }
         }
         return empty to result
