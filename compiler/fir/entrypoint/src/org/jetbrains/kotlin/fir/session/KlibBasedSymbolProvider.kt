@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.descriptors.SourceFile
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.deserialization.*
+import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.scopes.FirKotlinScopeProvider
 import org.jetbrains.kotlin.library.metadata.KlibMetadataClassDataFinder
 import org.jetbrains.kotlin.library.resolver.KotlinResolvedLibrary
@@ -16,6 +17,7 @@ import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.metadata.deserialization.NameResolverImpl
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.resolve.CompilerDeserializationConfiguration
 import org.jetbrains.kotlin.serialization.deserialization.IncompatibleVersionErrorData
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerAbiStability
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
@@ -28,12 +30,24 @@ class KlibBasedSymbolProvider(
     private val resolvedLibrary: KotlinResolvedLibrary,
     defaultDeserializationOrigin: FirDeclarationOrigin = FirDeclarationOrigin.Library
 ) : AbstractFirDeserializedSymbolProvider(session, moduleDataProvider, kotlinScopeProvider, defaultDeserializationOrigin) {
+    private val moduleHeader by lazy {
+        resolvedLibrary.loadModuleHeader(resolvedLibrary.library)
+    }
+
     private val fragmentNameList by lazy {
-        resolvedLibrary.loadModuleHeader(resolvedLibrary.library).packageFragmentNameList.toSet()
+        moduleHeader.packageFragmentNameList.toSet()
     }
 
     private val annotationDeserializer = KlibBasedAnnotationDeserializer(session)
     private val constDeserializer = FirConstDeserializer(session)
+    private val deserializationConfiguration = CompilerDeserializationConfiguration(session.languageVersionSettings)
+    private val cachedFragments = mutableMapOf<Pair<String, String>, ProtoBuf.PackageFragment>()
+
+    private fun getPackageFragment(packageStringName: String, packageMetadataPart: String): ProtoBuf.PackageFragment {
+        return cachedFragments.getOrPut(packageStringName to packageMetadataPart) {
+            resolvedLibrary.loadPackageFragment(resolvedLibrary.library, packageStringName, packageMetadataPart)
+        }
+    }
 
     override fun computePackagePartsInfos(packageFqName: FqName): List<PackagePartsCacheData> {
         val packageStringName = packageFqName.asString()
@@ -43,7 +57,7 @@ class KlibBasedSymbolProvider(
         }
 
         return resolvedLibrary.library.packageMetadataParts(packageStringName).mapNotNull {
-            val fragment = resolvedLibrary.loadPackageFragment(resolvedLibrary.library, packageStringName, it)
+            val fragment = getPackageFragment(packageStringName, it)
 
             val libraryPath = Paths.get(resolvedLibrary.library.libraryName)
             val moduleData = moduleDataProvider.getModuleData(libraryPath) ?: return@mapNotNull null
@@ -75,7 +89,7 @@ class KlibBasedSymbolProvider(
 
         resolvedLibrary.library.packageMetadataParts(packageStringName).forEach {
             val libraryPath = Paths.get(resolvedLibrary.library.libraryName)
-            val fragment = resolvedLibrary.loadPackageFragment(resolvedLibrary.library, packageStringName, it)
+            val fragment = getPackageFragment(packageStringName, it)
 
             val nameResolver = NameResolverImpl(
                 fragment.strings,
@@ -88,9 +102,10 @@ class KlibBasedSymbolProvider(
 
             val source = object : DeserializedContainerSource {
                 override val incompatibility: IncompatibleVersionErrorData<*>? = null
-                override val isPreReleaseInvisible = false
+                override val isPreReleaseInvisible =
+                    deserializationConfiguration.reportErrorsOnPreReleaseDependencies && (moduleHeader.flags and 1) != 0
                 override val abiStability = DeserializedContainerAbiStability.STABLE
-                override val presentableString = a.toString()
+                override val presentableString = "Package '${classId.packageFqName}'"
 
                 override fun getContainingFile() = SourceFile.NO_SOURCE_FILE
             }
