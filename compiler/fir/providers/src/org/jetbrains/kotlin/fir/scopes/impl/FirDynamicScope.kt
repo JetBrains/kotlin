@@ -9,6 +9,10 @@ import org.jetbrains.kotlin.descriptors.EffectiveVisibility
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.FirSessionComponent
+import org.jetbrains.kotlin.fir.caches.FirCache
+import org.jetbrains.kotlin.fir.caches.createCache
+import org.jetbrains.kotlin.fir.caches.firCachesFactory
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
@@ -32,7 +36,10 @@ import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.StandardClassIds
 
-class FirDynamicScope(
+@RequiresOptIn(message = "Please, don't create FirDynamicScope-s manually")
+annotation class FirDynamicScopeConstructor
+
+class FirDynamicScope @FirDynamicScopeConstructor constructor(
     private val session: FirSession,
     private val scopeSession: ScopeSession,
 ) : FirTypeScope() {
@@ -69,11 +76,9 @@ class FirDynamicScope(
             return
         }
 
-        val function = pseudoFunctions.getOrPut(name) {
-            buildPseudoFunctionByName(name)
+        session.dynamicMembersStorage.functionsCacheByName.getValue(name, null).also {
+            processor(it.symbol)
         }
-
-        processor(function.symbol)
     }
 
     override fun processPropertiesByName(
@@ -91,12 +96,26 @@ class FirDynamicScope(
             return
         }
 
-        val property = pseudoProperties.getOrPut(name) {
-            buildPseudoPropertyByName(name)
+        session.dynamicMembersStorage.propertiesCacheByName.getValue(name, null).also {
+            processor(it.symbol)
         }
-
-        processor(property.symbol)
     }
+}
+
+class FirDynamicMembersStorage(val session: FirSession) : FirSessionComponent {
+    private val cachesFactory = session.firCachesFactory
+
+    @OptIn(FirDynamicScopeConstructor::class)
+    private val dynamicScopeCacheByScope: FirCache<ScopeSession, FirDynamicScope, Nothing?> =
+        cachesFactory.createCache { it -> FirDynamicScope(session, it) }
+
+    fun getDynamicScopeFor(scopeSession: ScopeSession) = dynamicScopeCacheByScope.getValue(scopeSession, null)
+
+    val functionsCacheByName: FirCache<Name, FirSimpleFunction, Nothing?> =
+        cachesFactory.createCache { name -> buildPseudoFunctionByName(name) }
+
+    val propertiesCacheByName: FirCache<Name, FirProperty, Nothing?> =
+        cachesFactory.createCache { name -> buildPseudoPropertyByName(name) }
 
     private val dynamicTypeRef = buildResolvedTypeRef {
         type = ConeDynamicType.create(session)
@@ -110,13 +129,11 @@ class FirDynamicScope(
         )
     }
 
-    private val pseudoFunctions = mutableMapOf<Name, FirSimpleFunction>()
-
     private fun buildPseudoFunctionByName(name: Name) = buildSimpleFunction {
         status = FirResolvedDeclarationStatusImpl(
-            Visibilities.Local,
+            Visibilities.Public,
             Modality.FINAL,
-            EffectiveVisibility.Local,
+            EffectiveVisibility.Public,
         ).apply {
             isInfix = true
             isOperator = true
@@ -149,16 +166,14 @@ class FirDynamicScope(
         valueParameters.add(parameter)
     }
 
-    private val pseudoProperties = mutableMapOf<Name, FirProperty>()
-
     private fun buildPseudoPropertyByName(name: Name) = buildProperty {
         this.name = name
         this.symbol = FirPropertySymbol(CallableId(this.name))
 
         status = FirResolvedDeclarationStatusImpl(
-            Visibilities.Local,
+            Visibilities.Public,
             Modality.FINAL,
-            EffectiveVisibility.Local,
+            EffectiveVisibility.Public,
         )
 
         moduleData = session.moduleData
@@ -169,3 +184,5 @@ class FirDynamicScope(
         isLocal = false
     }
 }
+
+val FirSession.dynamicMembersStorage: FirDynamicMembersStorage by FirSession.sessionComponentAccessor()
