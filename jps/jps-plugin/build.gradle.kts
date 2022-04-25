@@ -31,7 +31,6 @@ dependencies {
     api(project(":kotlin-preloader"))
     api(project(":jps:jps-common"))
     compileOnly(commonDependency("org.jetbrains.intellij.deps.fastutil:intellij-deps-fastutil"))
-    compileOnly(intellijCore())
     compileOnly(jpsModel())
     compileOnly(jpsModelImpl())
     compileOnly(jpsBuild())
@@ -67,8 +66,6 @@ dependencies {
     testApi(projectTests(":compiler:test-infrastructure-utils"))
     testCompileOnly(jpsBuild())
     testApi(devKitJps())
-
-    testApi(intellijCore())
 
     testApi(jpsBuildTest())
     compilerModules.forEach {

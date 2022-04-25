@@ -16,7 +16,7 @@
 
 package org.jetbrains.kotlin.jps.build
 
-import com.intellij.util.PathUtil
+import com.intellij.util.PathUtilRt
 import org.jetbrains.jps.model.java.JpsJavaExtensionService
 import org.jetbrains.kotlin.cli.common.CompilerSystemProperties
 import org.jetbrains.kotlin.compilerRunner.JpsKotlinCompilerRunner
@@ -46,7 +46,7 @@ class SimpleKotlinJpsBuildTest : AbstractKotlinJpsBuildTestCase() {
                                        K bar();
                                    }
                                """)
-        val a = addModule("m1", PathUtil.getParentPath(aFile))
+        val a = addModule("m1", PathUtilRt.getParentPath(aFile))
 
         val bFile = createFile("m2/m2.kt",
                                """
@@ -57,7 +57,7 @@ class SimpleKotlinJpsBuildTest : AbstractKotlinJpsBuildTestCase() {
                                         override fun bar(): K
                                     }
                                """)
-        val b = addModule("b", PathUtil.getParentPath(bFile))
+        val b = addModule("b", PathUtilRt.getParentPath(bFile))
         JpsJavaExtensionService.getInstance().getOrCreateDependencyExtension(
                 b.dependenciesList.addModuleDependency(a)
         ).isExported = false

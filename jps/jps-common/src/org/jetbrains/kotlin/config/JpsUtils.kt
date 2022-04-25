@@ -5,9 +5,7 @@
 
 package org.jetbrains.kotlin.config
 
-import com.intellij.openapi.application.ApplicationManager
-
-private const val APPLICATION_MANAGER_CLASS_NAME = "com.intellij.openapi.application.ApplicationManager"
+const val APPLICATION_MANAGER_CLASS_NAME = "com.intellij.openapi.application.ApplicationManager"
 
 val isJps: Boolean by lazy {
     /*
@@ -16,7 +14,7 @@ val isJps: Boolean by lazy {
         Though Application is not properly initialized inside JPS so we can use it as a check.
      */
     return@lazy if (doesClassExist(APPLICATION_MANAGER_CLASS_NAME)) {
-        ApplicationManager.getApplication() == null
+        Class.forName(APPLICATION_MANAGER_CLASS_NAME).getMethod("getApplication").invoke(null) == null
     } else {
         true
     }

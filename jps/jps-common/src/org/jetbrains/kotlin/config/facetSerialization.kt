@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.config
 
-import com.intellij.util.PathUtil
+import com.intellij.openapi.util.io.FileUtilRt
 import com.intellij.util.xmlb.SerializationFilter
 import com.intellij.util.xmlb.SkipDefaultsSerializationFilter
 import com.intellij.util.xmlb.XmlSerializer
@@ -179,10 +179,10 @@ private fun readV2AndLaterConfig(
             compilerArguments!!.detectVersionAutoAdvance()
         }
         productionOutputPath = element.getChild("productionOutputPath")?.let {
-            PathUtil.toSystemDependentName((it.content.firstOrNull() as? Text)?.textTrim)
+            (it.content.firstOrNull() as? Text)?.textTrim?.let(FileUtilRt::toSystemDependentName)
         } ?: (compilerArguments as? K2JSCompilerArguments)?.outputFile
         testOutputPath = element.getChild("testOutputPath")?.let {
-            PathUtil.toSystemDependentName((it.content.firstOrNull() as? Text)?.textTrim)
+            (it.content.firstOrNull() as? Text)?.textTrim?.let(FileUtilRt::toSystemDependentName)
         } ?: (compilerArguments as? K2JSCompilerArguments)?.outputFile
     }
 }
@@ -222,33 +222,33 @@ fun deserializeFacetSettings(element: Element): KotlinFacetSettings {
 }
 
 fun CommonCompilerArguments.convertPathsToSystemIndependent() {
-    pluginClasspaths?.forEachIndexed { index, s -> pluginClasspaths!![index] = PathUtil.toSystemIndependentName(s) }
+    pluginClasspaths?.forEachIndexed { index, s -> pluginClasspaths!![index] = FileUtilRt.toSystemIndependentName(s) }
 
     when (this) {
         is K2JVMCompilerArguments -> {
-            destination = PathUtil.toSystemIndependentName(destination)
-            classpath = PathUtil.toSystemIndependentName(classpath)
-            jdkHome = PathUtil.toSystemIndependentName(jdkHome)
-            kotlinHome = PathUtil.toSystemIndependentName(kotlinHome)
-            friendPaths?.forEachIndexed { index, s -> friendPaths!![index] = PathUtil.toSystemIndependentName(s) }
-            declarationsOutputPath = PathUtil.toSystemIndependentName(declarationsOutputPath)
+            destination = destination?.let(FileUtilRt::toSystemIndependentName)
+            classpath = classpath?.let(FileUtilRt::toSystemIndependentName)
+            jdkHome = jdkHome?.let(FileUtilRt::toSystemIndependentName)
+            kotlinHome = kotlinHome?.let(FileUtilRt::toSystemIndependentName)
+            friendPaths?.forEachIndexed { index, s -> friendPaths!![index] = FileUtilRt.toSystemIndependentName(s) }
+            declarationsOutputPath = declarationsOutputPath?.let(FileUtilRt::toSystemIndependentName)
         }
 
         is K2JSCompilerArguments -> {
-            outputFile = PathUtil.toSystemIndependentName(outputFile)
-            libraries = PathUtil.toSystemIndependentName(libraries)
+            outputFile = outputFile?.let(FileUtilRt::toSystemIndependentName)
+            libraries = libraries?.let(FileUtilRt::toSystemIndependentName)
         }
 
         is K2MetadataCompilerArguments -> {
-            destination = PathUtil.toSystemIndependentName(destination)
-            classpath = PathUtil.toSystemIndependentName(classpath)
+            destination = destination?.let(FileUtilRt::toSystemIndependentName)
+            classpath = classpath?.let(FileUtilRt::toSystemIndependentName)
         }
     }
 }
 
 fun CompilerSettings.convertPathsToSystemIndependent() {
-    scriptTemplatesClasspath = PathUtil.toSystemIndependentName(scriptTemplatesClasspath)
-    outputDirectoryForJsLibraryFiles = PathUtil.toSystemIndependentName(outputDirectoryForJsLibraryFiles)
+    scriptTemplatesClasspath = FileUtilRt.toSystemIndependentName(scriptTemplatesClasspath)
+    outputDirectoryForJsLibraryFiles = FileUtilRt.toSystemIndependentName(outputDirectoryForJsLibraryFiles)
 }
 
 private fun KClass<*>.superClass() = superclasses.firstOrNull { !it.java.isInterface }
@@ -351,12 +351,12 @@ private fun KotlinFacetSettings.writeConfig(element: Element) {
     }
     productionOutputPath?.let {
         if (it != (compilerArguments as? K2JSCompilerArguments)?.outputFile) {
-            element.addContent(Element("productionOutputPath").apply { addContent(PathUtil.toSystemIndependentName(it)) })
+            element.addContent(Element("productionOutputPath").apply { addContent(FileUtilRt.toSystemIndependentName(it)) })
         }
     }
     testOutputPath?.let {
         if (it != (compilerArguments as? K2JSCompilerArguments)?.outputFile) {
-            element.addContent(Element("testOutputPath").apply { addContent(PathUtil.toSystemIndependentName(it)) })
+            element.addContent(Element("testOutputPath").apply { addContent(FileUtilRt.toSystemIndependentName(it)) })
         }
     }
     compilerSettings?.let { copyBean(it) }?.let {
