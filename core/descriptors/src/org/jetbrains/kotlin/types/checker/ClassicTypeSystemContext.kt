@@ -716,7 +716,9 @@ interface ClassicTypeSystemContext : TypeSystemInferenceExtensionContext, TypeSy
         )
         val typeParameters = this.extractTypeParameters()
             .map { it as TypeParameterDescriptor }
-            .associateWith { TypeProjectionImpl(eraser.getErasedUpperBound(it, ErasureTypeAttributes(TypeUsage.COMMON))) }
+            .associateWith {
+                TypeProjectionImpl(Variance.OUT_VARIANCE, eraser.getErasedUpperBound(it, ErasureTypeAttributes(TypeUsage.COMMON)))
+            }
         return TypeConstructorSubstitution.createByParametersMap(typeParameters).buildSubstitutor().safeSubstitute(this)
     }
 

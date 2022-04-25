@@ -1,0 +1,3 @@
+package
+
+public fun </*0*/ K : kotlin.Enum<K>, /*1*/ V> enumMapOf(/*0*/ vararg pairs: kotlin.Pair<K, V> /*kotlin.Array<out kotlin.Pair<K, V>>*/): java.util.EnumMap<K, V>

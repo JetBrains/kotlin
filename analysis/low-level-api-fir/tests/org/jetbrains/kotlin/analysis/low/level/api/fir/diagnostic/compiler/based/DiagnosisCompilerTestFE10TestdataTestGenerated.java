@@ -15500,6 +15500,12 @@ public class DiagnosisCompilerTestFE10TestdataTestGenerated extends AbstractDiag
                 }
 
                 @Test
+                @TestMetadata("recursiveTypeParameters.kt")
+                public void testRecursiveTypeParameters() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/inference/emptyIntersectionTypes/recursiveTypeParameters.kt");
+                }
+
+                @Test
                 @TestMetadata("selectFromCovariantAndContravariantTypes.kt")
                 public void testSelectFromCovariantAndContravariantTypes() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/inference/emptyIntersectionTypes/selectFromCovariantAndContravariantTypes.kt");
