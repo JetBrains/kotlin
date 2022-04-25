@@ -65,6 +65,7 @@ object PlatformInfo {
             if (currentMajorVersion != requiredMajorVersion) {
                 throw IllegalStateException(
                         "Incorrect Xcode version: ${currentXcodeVersion}. Required major Xcode version is ${requiredMajorVersion}."
+                                + "\nYou can try '-PcheckXcodeVersion=false' to suppress this error, the result might be wrong."
                 )
             }
         }
