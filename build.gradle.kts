@@ -1008,61 +1008,6 @@ configure<IdeaModel> {
     }
 }
 
-tasks.register("findShadowJarsInClasspath") {
-    doLast {
-        fun Collection<File>.printSorted(indent: String = "    ") {
-            sortedBy { it.path }.forEach { println(indent + it.relativeTo(rootProject.projectDir)) }
-        }
-
-        val mainJars = hashSetOf<File>()
-        val shadowJars = hashSetOf<File>()
-        for (project in rootProject.allprojects) {
-            project.withJavaPlugin {
-                project.sourceSets.forEach { sourceSet ->
-                    val jarTask = project.tasks.findByPath(sourceSet.jarTaskName) as? Jar
-                    jarTask?.outputFile?.let { mainJars.add(it) }
-                }
-            }
-            for (task in project.tasks) {
-                when (task) {
-                    is ShadowJar -> {
-                        shadowJars.add(fileFrom(task.outputFile))
-                    }
-                    is ProGuardTask -> {
-                        shadowJars.addAll(task.outputs.files.toList())
-                    }
-                }
-            }
-        }
-
-        shadowJars.removeAll(mainJars)
-        println("Shadow jars that might break incremental compilation:")
-        shadowJars.printSorted()
-
-        fun Project.checkConfig(configName: String) {
-            val config = configurations.findByName(configName) ?: return
-            val shadowJarsInConfig = config.resolvedConfiguration.files.filter { it in shadowJars }
-            if (shadowJarsInConfig.isNotEmpty()) {
-                println()
-                println("Project $project contains shadow jars in configuration '$configName':")
-                shadowJarsInConfig.printSorted()
-            }
-        }
-
-        for (project in rootProject.allprojects) {
-            project.sourceSetsOrNull?.forEach { sourceSet ->
-                project.checkConfig(sourceSet.compileClasspathConfigurationName)
-            }
-        }
-    }
-}
-
-val Jar.outputFile: File
-    get() = archiveFile.get().asFile
-
-val Project.sourceSetsOrNull: SourceSetContainer?
-    get() = convention.findPlugin(JavaPluginConvention::class.java)?.sourceSets
-
 val disableVerificationTasks = providers.systemProperty("disable.verification.tasks")
     .forUseAtConfigurationTime().orNull?.toBoolean() ?: false
 if (disableVerificationTasks) {
