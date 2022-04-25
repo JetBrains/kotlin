@@ -24,10 +24,7 @@ import org.jetbrains.kotlin.ir.declarations.IrVariable
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrLoop
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
-import org.jetbrains.kotlin.ir.expressions.impl.IrBreakImpl
-import org.jetbrains.kotlin.ir.expressions.impl.IrContinueImpl
-import org.jetbrains.kotlin.ir.expressions.impl.IrGetObjectValueImpl
-import org.jetbrains.kotlin.ir.expressions.impl.IrWhileLoopImpl
+import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.SimpleTypeNullability
@@ -36,6 +33,9 @@ import org.jetbrains.kotlin.name.Name
 
 fun IrBuilderWithScope.irWhile(origin: IrStatementOrigin? = null) =
     IrWhileLoopImpl(startOffset, endOffset, context.irBuiltIns.unitType, origin)
+
+fun IrBuilderWithScope.irDoWhile(origin: IrStatementOrigin? = null) =
+    IrDoWhileLoopImpl(startOffset, endOffset, context.irBuiltIns.unitType, origin)
 
 fun IrBuilderWithScope.irBreak(loop: IrLoop) =
     IrBreakImpl(startOffset, endOffset, context.irBuiltIns.nothingType, loop)
