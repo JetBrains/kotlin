@@ -33,9 +33,6 @@ class Scenario {
         applyAbiChange.add(pathToClassFile)
     }
 
-    /**
-     * Currently not-working: https://github.com/gradle/gradle-profiler/issues/378
-     */
     fun applyNonAbiChangeTo(pathToClassFile: String) {
         applyNonAbiChange.add(pathToClassFile)
     }
