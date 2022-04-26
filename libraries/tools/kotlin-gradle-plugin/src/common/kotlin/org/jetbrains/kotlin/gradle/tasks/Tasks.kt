@@ -528,16 +528,10 @@ abstract class KotlinCompile @Inject constructor(
         "Replaced with 'libraries' input",
         replaceWith = ReplaceWith("libraries")
     )
-    fun setClasspath(classpath: FileCollection) {
-        libraries.setFrom(classpath)
-    }
-
-    @Deprecated(
-        "Replaced with 'libraries' input",
-        replaceWith = ReplaceWith("libraries")
-    )
-    @Internal
-    fun getClasspath(): FileCollection = libraries
+    @get:Internal
+    var classpath: FileCollection
+        set(value) = libraries.setFrom(value)
+        get() = libraries
 
     @get:Input
     abstract val useKotlinAbiSnapshot: Property<Boolean>
