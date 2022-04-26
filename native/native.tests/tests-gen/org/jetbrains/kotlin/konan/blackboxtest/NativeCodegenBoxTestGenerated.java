@@ -5516,6 +5516,12 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
             }
 
             @Test
+            @TestMetadata("genericSetter.kt")
+            public void testGenericSetter() throws Exception {
+                runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/genericSetter.kt");
+            }
+
+            @Test
             @TestMetadata("innerClassConstructor.kt")
             public void testInnerClassConstructor() throws Exception {
                 runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/innerClassConstructor.kt");
