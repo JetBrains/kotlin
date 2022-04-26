@@ -23609,12 +23609,6 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/platformTypes"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS, true);
         }
 
-        @Test
-        @TestMetadata("inferenceFlexibleTToNullable.kt")
-        public void testInferenceFlexibleTToNullable() throws Exception {
-            runTest("compiler/testData/codegen/box/platformTypes/inferenceFlexibleTToNullable.kt");
-        }
-
         @Nested
         @TestMetadata("compiler/testData/codegen/box/platformTypes/primitives")
         @TestDataPath("$PROJECT_ROOT")

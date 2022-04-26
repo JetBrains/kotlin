@@ -21080,11 +21080,6 @@ public class IrCodegenBoxWasmTestGenerated extends AbstractIrCodegenBoxWasmTest 
             KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/platformTypes"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
         }
 
-        @TestMetadata("inferenceFlexibleTToNullable.kt")
-        public void testInferenceFlexibleTToNullable() throws Exception {
-            runTest("compiler/testData/codegen/box/platformTypes/inferenceFlexibleTToNullable.kt");
-        }
-
         @TestMetadata("compiler/testData/codegen/box/platformTypes/primitives")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
