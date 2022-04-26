@@ -1,4 +1,5 @@
 // !LANGUAGE: +MultiPlatformProjects
+// IGNORE_BACKEND: WASM
 // IGNORE_BACKEND_FIR: JVM_IR
 // NO_CHECK_LAMBDA_INLINING
 // TODO: replace all references on expected declarations and their members to actuals,

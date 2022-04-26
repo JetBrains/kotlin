@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 // NO_CHECK_LAMBDA_INLINING
 // !LANGUAGE: +ProperFinally
 // FILE: 1.kt

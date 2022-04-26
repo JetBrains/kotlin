@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 // WITH_STDLIB
 // FILE: 1.kt
 package test

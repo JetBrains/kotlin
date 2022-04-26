@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 // IGNORE_BACKEND: NATIVE
 // WITH_STDLIB
 // !LANGUAGE: -UseCorrectExecutionOrderForVarargArguments
