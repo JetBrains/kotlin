@@ -7176,6 +7176,12 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
         }
 
         @Test
+        @TestMetadata("genericSetter.kt")
+        public void testGenericSetter() throws Exception {
+            runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/genericSetter.kt");
+        }
+
+        @Test
         @TestMetadata("importCompanion.kt")
         public void testImportCompanion() throws Exception {
             runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/importCompanion.kt");
