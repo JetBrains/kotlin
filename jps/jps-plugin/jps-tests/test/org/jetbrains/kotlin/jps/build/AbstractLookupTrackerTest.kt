@@ -101,7 +101,7 @@ abstract class AbstractJvmLookupTrackerTest : AbstractLookupTrackerTest() {
 
 abstract class AbstractJsKlibLookupTrackerTest : AbstractJsLookupTrackerTest() {
     override val jsStdlibFile: File
-        get() = File("build/js-ir-runtime/full-runtime.klib")
+        get() = File(System.getProperty("jps.testData.js-ir-runtime") ?: "build/js-ir-runtime/full-runtime.klib")
 
     override fun configureAdditionalArgs(args: K2JSCompilerArguments) {
         args.irProduceKlibDir = true
