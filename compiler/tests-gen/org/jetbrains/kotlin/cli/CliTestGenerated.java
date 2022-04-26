@@ -844,6 +844,11 @@ public class CliTestGenerated extends AbstractCliTest {
             runTest("compiler/testData/cli/jvm/pluginSimple.args");
         }
 
+        @TestMetadata("pluginWithK2Error.args")
+        public void testPluginWithK2Error() throws Exception {
+            runTest("compiler/testData/cli/jvm/pluginWithK2Error.args");
+        }
+
         @TestMetadata("progressiveModeOff.args")
         public void testProgressiveModeOff() throws Exception {
             runTest("compiler/testData/cli/jvm/progressiveModeOff.args");
