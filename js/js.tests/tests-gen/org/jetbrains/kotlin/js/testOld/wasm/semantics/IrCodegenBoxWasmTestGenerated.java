@@ -28,7 +28,7 @@ public class IrCodegenBoxWasmTestGenerated extends AbstractIrCodegenBoxWasmTest 
     }
 
     public void testAllFilesPresentInBox() throws Exception {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true, "contracts", "platformTypes", "ranges/stepped/unsigned", "delegatedProperty", "compileKotlinAgainstKotlin", "testsWithJava9", "testsWithJava15", "testsWithJava17");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true, "testsWithJava9", "testsWithJava15", "testsWithJava17", "compileKotlinAgainstKotlin");
     }
 
     @TestMetadata("compiler/testData/codegen/box/annotations")
@@ -4756,6 +4756,99 @@ public class IrCodegenBoxWasmTestGenerated extends AbstractIrCodegenBoxWasmTest 
         }
     }
 
+    @TestMetadata("compiler/testData/codegen/box/contracts")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class Contracts extends AbstractIrCodegenBoxWasmTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest0(this::doTest, TargetBackend.WASM, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInContracts() throws Exception {
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/contracts"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+        }
+
+        @TestMetadata("constructorArgument.kt")
+        public void testConstructorArgument() throws Exception {
+            runTest("compiler/testData/codegen/box/contracts/constructorArgument.kt");
+        }
+
+        @TestMetadata("destructuredVariable.kt")
+        public void testDestructuredVariable() throws Exception {
+            runTest("compiler/testData/codegen/box/contracts/destructuredVariable.kt");
+        }
+
+        @TestMetadata("exactlyOnceNotInline.kt")
+        public void testExactlyOnceNotInline() throws Exception {
+            runTest("compiler/testData/codegen/box/contracts/exactlyOnceNotInline.kt");
+        }
+
+        @TestMetadata("exception.kt")
+        public void testException() throws Exception {
+            runTest("compiler/testData/codegen/box/contracts/exception.kt");
+        }
+
+        @TestMetadata("fieldInConstructorParens.kt")
+        public void testFieldInConstructorParens() throws Exception {
+            runTest("compiler/testData/codegen/box/contracts/fieldInConstructorParens.kt");
+        }
+
+        @TestMetadata("fieldReadInConstructor.kt")
+        public void testFieldReadInConstructor() throws Exception {
+            runTest("compiler/testData/codegen/box/contracts/fieldReadInConstructor.kt");
+        }
+
+        @TestMetadata("forLoop.kt")
+        public void testForLoop() throws Exception {
+            runTest("compiler/testData/codegen/box/contracts/forLoop.kt");
+        }
+
+        @TestMetadata("functionParameter.kt")
+        public void testFunctionParameter() throws Exception {
+            runTest("compiler/testData/codegen/box/contracts/functionParameter.kt");
+        }
+
+        @TestMetadata("kt39374.kt")
+        public void testKt39374() throws Exception {
+            runTest("compiler/testData/codegen/box/contracts/kt39374.kt");
+        }
+
+        @TestMetadata("kt45236.kt")
+        public void testKt45236() throws Exception {
+            runTest("compiler/testData/codegen/box/contracts/kt45236.kt");
+        }
+
+        @TestMetadata("kt47168.kt")
+        public void testKt47168() throws Exception {
+            runTest("compiler/testData/codegen/box/contracts/kt47168.kt");
+        }
+
+        @TestMetadata("kt47300.kt")
+        public void testKt47300() throws Exception {
+            runTest("compiler/testData/codegen/box/contracts/kt47300.kt");
+        }
+
+        @TestMetadata("lambdaParameter.kt")
+        public void testLambdaParameter() throws Exception {
+            runTest("compiler/testData/codegen/box/contracts/lambdaParameter.kt");
+        }
+
+        @TestMetadata("listAppend.kt")
+        public void testListAppend() throws Exception {
+            runTest("compiler/testData/codegen/box/contracts/listAppend.kt");
+        }
+
+        @TestMetadata("nestedLambdaInNonInlineCallExactlyOnce.kt")
+        public void testNestedLambdaInNonInlineCallExactlyOnce() throws Exception {
+            runTest("compiler/testData/codegen/box/contracts/nestedLambdaInNonInlineCallExactlyOnce.kt");
+        }
+
+        @TestMetadata("valInWhen.kt")
+        public void testValInWhen() throws Exception {
+            runTest("compiler/testData/codegen/box/contracts/valInWhen.kt");
+        }
+    }
+
     @TestMetadata("compiler/testData/codegen/box/controlStructures")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
@@ -9352,6 +9445,601 @@ public class IrCodegenBoxWasmTestGenerated extends AbstractIrCodegenBoxWasmTest 
             @TestMetadata("kt9924.kt")
             public void testKt9924() throws Exception {
                 runTest("compiler/testData/codegen/box/defaultArguments/signature/kt9924.kt");
+            }
+        }
+    }
+
+    @TestMetadata("compiler/testData/codegen/box/delegatedProperty")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class DelegatedProperty extends AbstractIrCodegenBoxWasmTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest0(this::doTest, TargetBackend.WASM, testDataFilePath);
+        }
+
+        @TestMetadata("accessTopLevelDelegatedPropertyInClinit.kt")
+        public void testAccessTopLevelDelegatedPropertyInClinit() throws Exception {
+            runTest("compiler/testData/codegen/box/delegatedProperty/accessTopLevelDelegatedPropertyInClinit.kt");
+        }
+
+        public void testAllFilesPresentInDelegatedProperty() throws Exception {
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/delegatedProperty"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+        }
+
+        @TestMetadata("beforeDeclarationContainerOptimization.kt")
+        public void testBeforeDeclarationContainerOptimization() throws Exception {
+            runTest("compiler/testData/codegen/box/delegatedProperty/beforeDeclarationContainerOptimization.kt");
+        }
+
+        @TestMetadata("capturePropertyInClosure.kt")
+        public void testCapturePropertyInClosure() throws Exception {
+            runTest("compiler/testData/codegen/box/delegatedProperty/capturePropertyInClosure.kt");
+        }
+
+        @TestMetadata("castGetReturnType.kt")
+        public void testCastGetReturnType() throws Exception {
+            runTest("compiler/testData/codegen/box/delegatedProperty/castGetReturnType.kt");
+        }
+
+        @TestMetadata("castSetParameter.kt")
+        public void testCastSetParameter() throws Exception {
+            runTest("compiler/testData/codegen/box/delegatedProperty/castSetParameter.kt");
+        }
+
+        @TestMetadata("delegateAsInnerClass.kt")
+        public void testDelegateAsInnerClass() throws Exception {
+            runTest("compiler/testData/codegen/box/delegatedProperty/delegateAsInnerClass.kt");
+        }
+
+        @TestMetadata("delegateByOtherProperty.kt")
+        public void testDelegateByOtherProperty() throws Exception {
+            runTest("compiler/testData/codegen/box/delegatedProperty/delegateByOtherProperty.kt");
+        }
+
+        @TestMetadata("delegateByTopLevelFun.kt")
+        public void testDelegateByTopLevelFun() throws Exception {
+            runTest("compiler/testData/codegen/box/delegatedProperty/delegateByTopLevelFun.kt");
+        }
+
+        @TestMetadata("delegateByTopLevelProperty.kt")
+        public void testDelegateByTopLevelProperty() throws Exception {
+            runTest("compiler/testData/codegen/box/delegatedProperty/delegateByTopLevelProperty.kt");
+        }
+
+        @TestMetadata("delegateForExtProperty.kt")
+        public void testDelegateForExtProperty() throws Exception {
+            runTest("compiler/testData/codegen/box/delegatedProperty/delegateForExtProperty.kt");
+        }
+
+        @TestMetadata("delegateForExtPropertyInClass.kt")
+        public void testDelegateForExtPropertyInClass() throws Exception {
+            runTest("compiler/testData/codegen/box/delegatedProperty/delegateForExtPropertyInClass.kt");
+        }
+
+        @TestMetadata("delegateToConstructorParameter.kt")
+        public void testDelegateToConstructorParameter() throws Exception {
+            runTest("compiler/testData/codegen/box/delegatedProperty/delegateToConstructorParameter.kt");
+        }
+
+        @TestMetadata("delegateWithPrivateSet.kt")
+        public void testDelegateWithPrivateSet() throws Exception {
+            runTest("compiler/testData/codegen/box/delegatedProperty/delegateWithPrivateSet.kt");
+        }
+
+        @TestMetadata("delegatedPropertyInEnum.kt")
+        public void testDelegatedPropertyInEnum() throws Exception {
+            runTest("compiler/testData/codegen/box/delegatedProperty/delegatedPropertyInEnum.kt");
+        }
+
+        @TestMetadata("extensionDelegatesWithSameNames.kt")
+        public void testExtensionDelegatesWithSameNames() throws Exception {
+            runTest("compiler/testData/codegen/box/delegatedProperty/extensionDelegatesWithSameNames.kt");
+        }
+
+        @TestMetadata("extensionPropertyAndExtensionGetValue.kt")
+        public void testExtensionPropertyAndExtensionGetValue() throws Exception {
+            runTest("compiler/testData/codegen/box/delegatedProperty/extensionPropertyAndExtensionGetValue.kt");
+        }
+
+        @TestMetadata("functionRefDelefate.kt")
+        public void testFunctionRefDelefate() throws Exception {
+            runTest("compiler/testData/codegen/box/delegatedProperty/functionRefDelefate.kt");
+        }
+
+        @TestMetadata("genericDelegate.kt")
+        public void testGenericDelegate() throws Exception {
+            runTest("compiler/testData/codegen/box/delegatedProperty/genericDelegate.kt");
+        }
+
+        @TestMetadata("genericDelegateUncheckedCast1.kt")
+        public void testGenericDelegateUncheckedCast1() throws Exception {
+            runTest("compiler/testData/codegen/box/delegatedProperty/genericDelegateUncheckedCast1.kt");
+        }
+
+        @TestMetadata("genericDelegateUncheckedCast2.kt")
+        public void testGenericDelegateUncheckedCast2() throws Exception {
+            runTest("compiler/testData/codegen/box/delegatedProperty/genericDelegateUncheckedCast2.kt");
+        }
+
+        @TestMetadata("genericSetValueViaSyntheticAccessor.kt")
+        public void testGenericSetValueViaSyntheticAccessor() throws Exception {
+            runTest("compiler/testData/codegen/box/delegatedProperty/genericSetValueViaSyntheticAccessor.kt");
+        }
+
+        @TestMetadata("getAsExtensionFun.kt")
+        public void testGetAsExtensionFun() throws Exception {
+            runTest("compiler/testData/codegen/box/delegatedProperty/getAsExtensionFun.kt");
+        }
+
+        @TestMetadata("getAsExtensionFunInClass.kt")
+        public void testGetAsExtensionFunInClass() throws Exception {
+            runTest("compiler/testData/codegen/box/delegatedProperty/getAsExtensionFunInClass.kt");
+        }
+
+        @TestMetadata("getDelegateWithoutReflection.kt")
+        public void testGetDelegateWithoutReflection() throws Exception {
+            runTest("compiler/testData/codegen/box/delegatedProperty/getDelegateWithoutReflection.kt");
+        }
+
+        @TestMetadata("inClassVal.kt")
+        public void testInClassVal() throws Exception {
+            runTest("compiler/testData/codegen/box/delegatedProperty/inClassVal.kt");
+        }
+
+        @TestMetadata("inClassVar.kt")
+        public void testInClassVar() throws Exception {
+            runTest("compiler/testData/codegen/box/delegatedProperty/inClassVar.kt");
+        }
+
+        @TestMetadata("inTrait.kt")
+        public void testInTrait() throws Exception {
+            runTest("compiler/testData/codegen/box/delegatedProperty/inTrait.kt");
+        }
+
+        @TestMetadata("inferredPropertyType.kt")
+        public void testInferredPropertyType() throws Exception {
+            runTest("compiler/testData/codegen/box/delegatedProperty/inferredPropertyType.kt");
+        }
+
+        @TestMetadata("insideInlinedObjectMultiModule.kt")
+        public void testInsideInlinedObjectMultiModule() throws Exception {
+            runTest("compiler/testData/codegen/box/delegatedProperty/insideInlinedObjectMultiModule.kt");
+        }
+
+        @TestMetadata("kt35707.kt")
+        public void testKt35707() throws Exception {
+            runTest("compiler/testData/codegen/box/delegatedProperty/kt35707.kt");
+        }
+
+        @TestMetadata("kt37204.kt")
+        public void testKt37204() throws Exception {
+            runTest("compiler/testData/codegen/box/delegatedProperty/kt37204.kt");
+        }
+
+        @TestMetadata("kt4138.kt")
+        public void testKt4138() throws Exception {
+            runTest("compiler/testData/codegen/box/delegatedProperty/kt4138.kt");
+        }
+
+        @TestMetadata("kt45431.kt")
+        public void testKt45431() throws Exception {
+            runTest("compiler/testData/codegen/box/delegatedProperty/kt45431.kt");
+        }
+
+        @TestMetadata("kt6722.kt")
+        public void testKt6722() throws Exception {
+            runTest("compiler/testData/codegen/box/delegatedProperty/kt6722.kt");
+        }
+
+        @TestMetadata("kt9712.kt")
+        public void testKt9712() throws Exception {
+            runTest("compiler/testData/codegen/box/delegatedProperty/kt9712.kt");
+        }
+
+        @TestMetadata("privateVar.kt")
+        public void testPrivateVar() throws Exception {
+            runTest("compiler/testData/codegen/box/delegatedProperty/privateVar.kt");
+        }
+
+        @TestMetadata("protectedVarWithPrivateSet.kt")
+        public void testProtectedVarWithPrivateSet() throws Exception {
+            runTest("compiler/testData/codegen/box/delegatedProperty/protectedVarWithPrivateSet.kt");
+        }
+
+        @TestMetadata("referenceEnclosingClassFieldInReceiver.kt")
+        public void testReferenceEnclosingClassFieldInReceiver() throws Exception {
+            runTest("compiler/testData/codegen/box/delegatedProperty/referenceEnclosingClassFieldInReceiver.kt");
+        }
+
+        @TestMetadata("referenceEnclosingClassFieldInReceiver2.kt")
+        public void testReferenceEnclosingClassFieldInReceiver2() throws Exception {
+            runTest("compiler/testData/codegen/box/delegatedProperty/referenceEnclosingClassFieldInReceiver2.kt");
+        }
+
+        @TestMetadata("setAsExtensionFun.kt")
+        public void testSetAsExtensionFun() throws Exception {
+            runTest("compiler/testData/codegen/box/delegatedProperty/setAsExtensionFun.kt");
+        }
+
+        @TestMetadata("setAsExtensionFunInClass.kt")
+        public void testSetAsExtensionFunInClass() throws Exception {
+            runTest("compiler/testData/codegen/box/delegatedProperty/setAsExtensionFunInClass.kt");
+        }
+
+        @TestMetadata("topLevelVal.kt")
+        public void testTopLevelVal() throws Exception {
+            runTest("compiler/testData/codegen/box/delegatedProperty/topLevelVal.kt");
+        }
+
+        @TestMetadata("topLevelVar.kt")
+        public void testTopLevelVar() throws Exception {
+            runTest("compiler/testData/codegen/box/delegatedProperty/topLevelVar.kt");
+        }
+
+        @TestMetadata("twoPropByOneDelegete.kt")
+        public void testTwoPropByOneDelegete() throws Exception {
+            runTest("compiler/testData/codegen/box/delegatedProperty/twoPropByOneDelegete.kt");
+        }
+
+        @TestMetadata("useKPropertyLater.kt")
+        public void testUseKPropertyLater() throws Exception {
+            runTest("compiler/testData/codegen/box/delegatedProperty/useKPropertyLater.kt");
+        }
+
+        @TestMetadata("useReflectionOnKProperty.kt")
+        public void testUseReflectionOnKProperty() throws Exception {
+            runTest("compiler/testData/codegen/box/delegatedProperty/useReflectionOnKProperty.kt");
+        }
+
+        @TestMetadata("valByMapDelegatedProperty.kt")
+        public void testValByMapDelegatedProperty() throws Exception {
+            runTest("compiler/testData/codegen/box/delegatedProperty/valByMapDelegatedProperty.kt");
+        }
+
+        @TestMetadata("valInInnerClass.kt")
+        public void testValInInnerClass() throws Exception {
+            runTest("compiler/testData/codegen/box/delegatedProperty/valInInnerClass.kt");
+        }
+
+        @TestMetadata("varInInnerClass.kt")
+        public void testVarInInnerClass() throws Exception {
+            runTest("compiler/testData/codegen/box/delegatedProperty/varInInnerClass.kt");
+        }
+
+        @TestMetadata("compiler/testData/codegen/box/delegatedProperty/delegateToAnother")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class DelegateToAnother extends AbstractIrCodegenBoxWasmTest {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest0(this::doTest, TargetBackend.WASM, testDataFilePath);
+            }
+
+            public void testAllFilesPresentInDelegateToAnother() throws Exception {
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/delegatedProperty/delegateToAnother"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+            }
+
+            @TestMetadata("custom.kt")
+            public void testCustom() throws Exception {
+                runTest("compiler/testData/codegen/box/delegatedProperty/delegateToAnother/custom.kt");
+            }
+
+            @TestMetadata("kt49793_companionObject.kt")
+            public void testKt49793_companionObject() throws Exception {
+                runTest("compiler/testData/codegen/box/delegatedProperty/delegateToAnother/kt49793_companionObject.kt");
+            }
+
+            @TestMetadata("kt49793_interfaceCompanionObject.kt")
+            public void testKt49793_interfaceCompanionObject() throws Exception {
+                runTest("compiler/testData/codegen/box/delegatedProperty/delegateToAnother/kt49793_interfaceCompanionObject.kt");
+            }
+
+            @TestMetadata("kt49793_object.kt")
+            public void testKt49793_object() throws Exception {
+                runTest("compiler/testData/codegen/box/delegatedProperty/delegateToAnother/kt49793_object.kt");
+            }
+
+            @TestMetadata("kt50019_noOptimizedCallableReferences.kt")
+            public void testKt50019_noOptimizedCallableReferences() throws Exception {
+                runTest("compiler/testData/codegen/box/delegatedProperty/delegateToAnother/kt50019_noOptimizedCallableReferences.kt");
+            }
+
+            @TestMetadata("mutable.kt")
+            public void testMutable() throws Exception {
+                runTest("compiler/testData/codegen/box/delegatedProperty/delegateToAnother/mutable.kt");
+            }
+
+            @TestMetadata("openProperty.kt")
+            public void testOpenProperty() throws Exception {
+                runTest("compiler/testData/codegen/box/delegatedProperty/delegateToAnother/openProperty.kt");
+            }
+
+            @TestMetadata("simple.kt")
+            public void testSimple() throws Exception {
+                runTest("compiler/testData/codegen/box/delegatedProperty/delegateToAnother/simple.kt");
+            }
+
+            @TestMetadata("withSideEffects.kt")
+            public void testWithSideEffects() throws Exception {
+                runTest("compiler/testData/codegen/box/delegatedProperty/delegateToAnother/withSideEffects.kt");
+            }
+        }
+
+        @TestMetadata("compiler/testData/codegen/box/delegatedProperty/local")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class Local extends AbstractIrCodegenBoxWasmTest {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest0(this::doTest, TargetBackend.WASM, testDataFilePath);
+            }
+
+            public void testAllFilesPresentInLocal() throws Exception {
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/delegatedProperty/local"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+            }
+
+            @TestMetadata("capturedLocalVal.kt")
+            public void testCapturedLocalVal() throws Exception {
+                runTest("compiler/testData/codegen/box/delegatedProperty/local/capturedLocalVal.kt");
+            }
+
+            @TestMetadata("capturedLocalValNoInline.kt")
+            public void testCapturedLocalValNoInline() throws Exception {
+                runTest("compiler/testData/codegen/box/delegatedProperty/local/capturedLocalValNoInline.kt");
+            }
+
+            @TestMetadata("capturedLocalVar.kt")
+            public void testCapturedLocalVar() throws Exception {
+                runTest("compiler/testData/codegen/box/delegatedProperty/local/capturedLocalVar.kt");
+            }
+
+            @TestMetadata("capturedLocalVarNoInline.kt")
+            public void testCapturedLocalVarNoInline() throws Exception {
+                runTest("compiler/testData/codegen/box/delegatedProperty/local/capturedLocalVarNoInline.kt");
+            }
+
+            @TestMetadata("inlineGetValue.kt")
+            public void testInlineGetValue() throws Exception {
+                runTest("compiler/testData/codegen/box/delegatedProperty/local/inlineGetValue.kt");
+            }
+
+            @TestMetadata("inlineOperators.kt")
+            public void testInlineOperators() throws Exception {
+                runTest("compiler/testData/codegen/box/delegatedProperty/local/inlineOperators.kt");
+            }
+
+            @TestMetadata("kt12891.kt")
+            public void testKt12891() throws Exception {
+                runTest("compiler/testData/codegen/box/delegatedProperty/local/kt12891.kt");
+            }
+
+            @TestMetadata("kt13557.kt")
+            public void testKt13557() throws Exception {
+                runTest("compiler/testData/codegen/box/delegatedProperty/local/kt13557.kt");
+            }
+
+            @TestMetadata("kt16864.kt")
+            public void testKt16864() throws Exception {
+                runTest("compiler/testData/codegen/box/delegatedProperty/local/kt16864.kt");
+            }
+
+            @TestMetadata("kt19690.kt")
+            public void testKt19690() throws Exception {
+                runTest("compiler/testData/codegen/box/delegatedProperty/local/kt19690.kt");
+            }
+
+            @TestMetadata("kt21085.kt")
+            public void testKt21085() throws Exception {
+                runTest("compiler/testData/codegen/box/delegatedProperty/local/kt21085.kt");
+            }
+
+            @TestMetadata("kt23117.kt")
+            public void testKt23117() throws Exception {
+                runTest("compiler/testData/codegen/box/delegatedProperty/local/kt23117.kt");
+            }
+
+            @TestMetadata("localVal.kt")
+            public void testLocalVal() throws Exception {
+                runTest("compiler/testData/codegen/box/delegatedProperty/local/localVal.kt");
+            }
+
+            @TestMetadata("localValNoExplicitType.kt")
+            public void testLocalValNoExplicitType() throws Exception {
+                runTest("compiler/testData/codegen/box/delegatedProperty/local/localValNoExplicitType.kt");
+            }
+
+            @TestMetadata("localVar.kt")
+            public void testLocalVar() throws Exception {
+                runTest("compiler/testData/codegen/box/delegatedProperty/local/localVar.kt");
+            }
+
+            @TestMetadata("localVarNoExplicitType.kt")
+            public void testLocalVarNoExplicitType() throws Exception {
+                runTest("compiler/testData/codegen/box/delegatedProperty/local/localVarNoExplicitType.kt");
+            }
+        }
+
+        @TestMetadata("compiler/testData/codegen/box/delegatedProperty/optimizedDelegatedProperties")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class OptimizedDelegatedProperties extends AbstractIrCodegenBoxWasmTest {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest0(this::doTest, TargetBackend.WASM, testDataFilePath);
+            }
+
+            public void testAllFilesPresentInOptimizedDelegatedProperties() throws Exception {
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/delegatedProperty/optimizedDelegatedProperties"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+            }
+
+            @TestMetadata("definedInSources.kt")
+            public void testDefinedInSources() throws Exception {
+                runTest("compiler/testData/codegen/box/delegatedProperty/optimizedDelegatedProperties/definedInSources.kt");
+            }
+
+            @TestMetadata("definedInSourcesWithNonNullParameter.kt")
+            public void testDefinedInSourcesWithNonNullParameter() throws Exception {
+                runTest("compiler/testData/codegen/box/delegatedProperty/optimizedDelegatedProperties/definedInSourcesWithNonNullParameter.kt");
+            }
+
+            @TestMetadata("inSeparateModule.kt")
+            public void testInSeparateModule() throws Exception {
+                runTest("compiler/testData/codegen/box/delegatedProperty/optimizedDelegatedProperties/inSeparateModule.kt");
+            }
+
+            @TestMetadata("inSeparateModuleWithNonNullParameter.kt")
+            public void testInSeparateModuleWithNonNullParameter() throws Exception {
+                runTest("compiler/testData/codegen/box/delegatedProperty/optimizedDelegatedProperties/inSeparateModuleWithNonNullParameter.kt");
+            }
+
+            @TestMetadata("kt40815.kt")
+            public void testKt40815() throws Exception {
+                runTest("compiler/testData/codegen/box/delegatedProperty/optimizedDelegatedProperties/kt40815.kt");
+            }
+
+            @TestMetadata("kt40815_2.kt")
+            public void testKt40815_2() throws Exception {
+                runTest("compiler/testData/codegen/box/delegatedProperty/optimizedDelegatedProperties/kt40815_2.kt");
+            }
+
+            @TestMetadata("kt40815_3.kt")
+            public void testKt40815_3() throws Exception {
+                runTest("compiler/testData/codegen/box/delegatedProperty/optimizedDelegatedProperties/kt40815_3.kt");
+            }
+
+            @TestMetadata("kt42253.kt")
+            public void testKt42253() throws Exception {
+                runTest("compiler/testData/codegen/box/delegatedProperty/optimizedDelegatedProperties/kt42253.kt");
+            }
+
+            @TestMetadata("kt48825.kt")
+            public void testKt48825() throws Exception {
+                runTest("compiler/testData/codegen/box/delegatedProperty/optimizedDelegatedProperties/kt48825.kt");
+            }
+
+            @TestMetadata("lazy.kt")
+            public void testLazy() throws Exception {
+                runTest("compiler/testData/codegen/box/delegatedProperty/optimizedDelegatedProperties/lazy.kt");
+            }
+
+            @TestMetadata("mixedArgumentSizes.kt")
+            public void testMixedArgumentSizes() throws Exception {
+                runTest("compiler/testData/codegen/box/delegatedProperty/optimizedDelegatedProperties/mixedArgumentSizes.kt");
+            }
+        }
+
+        @TestMetadata("compiler/testData/codegen/box/delegatedProperty/provideDelegate")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class ProvideDelegate extends AbstractIrCodegenBoxWasmTest {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest0(this::doTest, TargetBackend.WASM, testDataFilePath);
+            }
+
+            public void testAllFilesPresentInProvideDelegate() throws Exception {
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/delegatedProperty/provideDelegate"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+            }
+
+            @TestMetadata("delegatedPropertyWithIdProvideDelegate.kt")
+            public void testDelegatedPropertyWithIdProvideDelegate() throws Exception {
+                runTest("compiler/testData/codegen/box/delegatedProperty/provideDelegate/delegatedPropertyWithIdProvideDelegate.kt");
+            }
+
+            @TestMetadata("differentReceivers.kt")
+            public void testDifferentReceivers() throws Exception {
+                runTest("compiler/testData/codegen/box/delegatedProperty/provideDelegate/differentReceivers.kt");
+            }
+
+            @TestMetadata("evaluationOrder.kt")
+            public void testEvaluationOrder() throws Exception {
+                runTest("compiler/testData/codegen/box/delegatedProperty/provideDelegate/evaluationOrder.kt");
+            }
+
+            @TestMetadata("evaluationOrderVar.kt")
+            public void testEvaluationOrderVar() throws Exception {
+                runTest("compiler/testData/codegen/box/delegatedProperty/provideDelegate/evaluationOrderVar.kt");
+            }
+
+            @TestMetadata("extensionDelegated.kt")
+            public void testExtensionDelegated() throws Exception {
+                runTest("compiler/testData/codegen/box/delegatedProperty/provideDelegate/extensionDelegated.kt");
+            }
+
+            @TestMetadata("generic.kt")
+            public void testGeneric() throws Exception {
+                runTest("compiler/testData/codegen/box/delegatedProperty/provideDelegate/generic.kt");
+            }
+
+            @TestMetadata("genericDelegateWithNoAdditionalInfo.kt")
+            public void testGenericDelegateWithNoAdditionalInfo() throws Exception {
+                runTest("compiler/testData/codegen/box/delegatedProperty/provideDelegate/genericDelegateWithNoAdditionalInfo.kt");
+            }
+
+            @TestMetadata("genericProvideDelegateOnNumberLiteral.kt")
+            public void testGenericProvideDelegateOnNumberLiteral() throws Exception {
+                runTest("compiler/testData/codegen/box/delegatedProperty/provideDelegate/genericProvideDelegateOnNumberLiteral.kt");
+            }
+
+            @TestMetadata("hostCheck.kt")
+            public void testHostCheck() throws Exception {
+                runTest("compiler/testData/codegen/box/delegatedProperty/provideDelegate/hostCheck.kt");
+            }
+
+            @TestMetadata("inClass.kt")
+            public void testInClass() throws Exception {
+                runTest("compiler/testData/codegen/box/delegatedProperty/provideDelegate/inClass.kt");
+            }
+
+            @TestMetadata("inlineProvideDelegate.kt")
+            public void testInlineProvideDelegate() throws Exception {
+                runTest("compiler/testData/codegen/box/delegatedProperty/provideDelegate/inlineProvideDelegate.kt");
+            }
+
+            @TestMetadata("kt15437.kt")
+            public void testKt15437() throws Exception {
+                runTest("compiler/testData/codegen/box/delegatedProperty/provideDelegate/kt15437.kt");
+            }
+
+            @TestMetadata("kt16441.kt")
+            public void testKt16441() throws Exception {
+                runTest("compiler/testData/codegen/box/delegatedProperty/provideDelegate/kt16441.kt");
+            }
+
+            @TestMetadata("kt18902.kt")
+            public void testKt18902() throws Exception {
+                runTest("compiler/testData/codegen/box/delegatedProperty/provideDelegate/kt18902.kt");
+            }
+
+            @TestMetadata("kt39588.kt")
+            public void testKt39588() throws Exception {
+                runTest("compiler/testData/codegen/box/delegatedProperty/provideDelegate/kt39588.kt");
+            }
+
+            @TestMetadata("local.kt")
+            public void testLocal() throws Exception {
+                runTest("compiler/testData/codegen/box/delegatedProperty/provideDelegate/local.kt");
+            }
+
+            @TestMetadata("localCaptured.kt")
+            public void testLocalCaptured() throws Exception {
+                runTest("compiler/testData/codegen/box/delegatedProperty/provideDelegate/localCaptured.kt");
+            }
+
+            @TestMetadata("localDifferentReceivers.kt")
+            public void testLocalDifferentReceivers() throws Exception {
+                runTest("compiler/testData/codegen/box/delegatedProperty/provideDelegate/localDifferentReceivers.kt");
+            }
+
+            @TestMetadata("memberExtension.kt")
+            public void testMemberExtension() throws Exception {
+                runTest("compiler/testData/codegen/box/delegatedProperty/provideDelegate/memberExtension.kt");
+            }
+
+            @TestMetadata("propertyMetadata.kt")
+            public void testPropertyMetadata() throws Exception {
+                runTest("compiler/testData/codegen/box/delegatedProperty/provideDelegate/propertyMetadata.kt");
+            }
+
+            @TestMetadata("provideDelegateByExtensionFunction.kt")
+            public void testProvideDelegateByExtensionFunction() throws Exception {
+                runTest("compiler/testData/codegen/box/delegatedProperty/provideDelegate/provideDelegateByExtensionFunction.kt");
             }
         }
     }
@@ -20380,6 +21068,132 @@ public class IrCodegenBoxWasmTestGenerated extends AbstractIrCodegenBoxWasmTest 
         }
     }
 
+    @TestMetadata("compiler/testData/codegen/box/platformTypes")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class PlatformTypes extends AbstractIrCodegenBoxWasmTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest0(this::doTest, TargetBackend.WASM, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInPlatformTypes() throws Exception {
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/platformTypes"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+        }
+
+        @TestMetadata("inferenceFlexibleTToNullable.kt")
+        public void testInferenceFlexibleTToNullable() throws Exception {
+            runTest("compiler/testData/codegen/box/platformTypes/inferenceFlexibleTToNullable.kt");
+        }
+
+        @TestMetadata("compiler/testData/codegen/box/platformTypes/primitives")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class Primitives extends AbstractIrCodegenBoxWasmTest {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest0(this::doTest, TargetBackend.WASM, testDataFilePath);
+            }
+
+            public void testAllFilesPresentInPrimitives() throws Exception {
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/platformTypes/primitives"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+            }
+
+            @TestMetadata("assign.kt")
+            public void testAssign() throws Exception {
+                runTest("compiler/testData/codegen/box/platformTypes/primitives/assign.kt");
+            }
+
+            @TestMetadata("compareTo.kt")
+            public void testCompareTo() throws Exception {
+                runTest("compiler/testData/codegen/box/platformTypes/primitives/compareTo.kt");
+            }
+
+            @TestMetadata("dec.kt")
+            public void testDec() throws Exception {
+                runTest("compiler/testData/codegen/box/platformTypes/primitives/dec.kt");
+            }
+
+            @TestMetadata("div.kt")
+            public void testDiv() throws Exception {
+                runTest("compiler/testData/codegen/box/platformTypes/primitives/div.kt");
+            }
+
+            @TestMetadata("equals.kt")
+            public void testEquals() throws Exception {
+                runTest("compiler/testData/codegen/box/platformTypes/primitives/equals.kt");
+            }
+
+            @TestMetadata("hashCode.kt")
+            public void testHashCode() throws Exception {
+                runTest("compiler/testData/codegen/box/platformTypes/primitives/hashCode.kt");
+            }
+
+            @TestMetadata("inc.kt")
+            public void testInc() throws Exception {
+                runTest("compiler/testData/codegen/box/platformTypes/primitives/inc.kt");
+            }
+
+            @TestMetadata("minus.kt")
+            public void testMinus() throws Exception {
+                runTest("compiler/testData/codegen/box/platformTypes/primitives/minus.kt");
+            }
+
+            @TestMetadata("mod.kt")
+            public void testMod() throws Exception {
+                runTest("compiler/testData/codegen/box/platformTypes/primitives/mod.kt");
+            }
+
+            @TestMetadata("not.kt")
+            public void testNot() throws Exception {
+                runTest("compiler/testData/codegen/box/platformTypes/primitives/not.kt");
+            }
+
+            @TestMetadata("notEquals.kt")
+            public void testNotEquals() throws Exception {
+                runTest("compiler/testData/codegen/box/platformTypes/primitives/notEquals.kt");
+            }
+
+            @TestMetadata("plus.kt")
+            public void testPlus() throws Exception {
+                runTest("compiler/testData/codegen/box/platformTypes/primitives/plus.kt");
+            }
+
+            @TestMetadata("plusAssign.kt")
+            public void testPlusAssign() throws Exception {
+                runTest("compiler/testData/codegen/box/platformTypes/primitives/plusAssign.kt");
+            }
+
+            @TestMetadata("rangeTo.kt")
+            public void testRangeTo() throws Exception {
+                runTest("compiler/testData/codegen/box/platformTypes/primitives/rangeTo.kt");
+            }
+
+            @TestMetadata("times.kt")
+            public void testTimes() throws Exception {
+                runTest("compiler/testData/codegen/box/platformTypes/primitives/times.kt");
+            }
+
+            @TestMetadata("toShort.kt")
+            public void testToShort() throws Exception {
+                runTest("compiler/testData/codegen/box/platformTypes/primitives/toShort.kt");
+            }
+
+            @TestMetadata("toString.kt")
+            public void testToString() throws Exception {
+                runTest("compiler/testData/codegen/box/platformTypes/primitives/toString.kt");
+            }
+
+            @TestMetadata("unaryMinus.kt")
+            public void testUnaryMinus() throws Exception {
+                runTest("compiler/testData/codegen/box/platformTypes/primitives/unaryMinus.kt");
+            }
+
+            @TestMetadata("unaryPlus.kt")
+            public void testUnaryPlus() throws Exception {
+                runTest("compiler/testData/codegen/box/platformTypes/primitives/unaryPlus.kt");
+            }
+        }
+    }
+
     @TestMetadata("compiler/testData/codegen/box/polymorphicSignature")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
@@ -21628,7 +22442,7 @@ public class IrCodegenBoxWasmTestGenerated extends AbstractIrCodegenBoxWasmTest 
         }
 
         public void testAllFilesPresentInRanges() throws Exception {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true, "stepped/unsigned");
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
         }
 
         @TestMetadata("capturedLoopVar.kt")
@@ -23254,7 +24068,7 @@ public class IrCodegenBoxWasmTestGenerated extends AbstractIrCodegenBoxWasmTest 
             }
 
             public void testAllFilesPresentInStepped() throws Exception {
-                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges/stepped"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true, "unsigned");
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges/stepped"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
             }
 
             @TestMetadata("compiler/testData/codegen/box/ranges/stepped/expression")
@@ -24422,6 +25236,1189 @@ public class IrCodegenBoxWasmTestGenerated extends AbstractIrCodegenBoxWasmTest 
                         @TestMetadata("stepThenReversedThenStepThenReversed.kt")
                         public void testStepThenReversedThenStepThenReversed() throws Exception {
                             runTest("compiler/testData/codegen/box/ranges/stepped/literal/until/reversed/stepThenReversedThenStepThenReversed.kt");
+                        }
+                    }
+                }
+            }
+
+            @TestMetadata("compiler/testData/codegen/box/ranges/stepped/unsigned")
+            @TestDataPath("$PROJECT_ROOT")
+            @RunWith(JUnit3RunnerWithInners.class)
+            public static class Unsigned extends AbstractIrCodegenBoxWasmTest {
+                private void runTest(String testDataFilePath) throws Exception {
+                    KotlinTestUtils.runTest0(this::doTest, TargetBackend.WASM, testDataFilePath);
+                }
+
+                public void testAllFilesPresentInUnsigned() throws Exception {
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges/stepped/unsigned"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+                }
+
+                @TestMetadata("compiler/testData/codegen/box/ranges/stepped/unsigned/expression")
+                @TestDataPath("$PROJECT_ROOT")
+                @RunWith(JUnit3RunnerWithInners.class)
+                public static class Expression extends AbstractIrCodegenBoxWasmTest {
+                    private void runTest(String testDataFilePath) throws Exception {
+                        KotlinTestUtils.runTest0(this::doTest, TargetBackend.WASM, testDataFilePath);
+                    }
+
+                    public void testAllFilesPresentInExpression() throws Exception {
+                        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges/stepped/unsigned/expression"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+                    }
+
+                    @TestMetadata("compiler/testData/codegen/box/ranges/stepped/unsigned/expression/downTo")
+                    @TestDataPath("$PROJECT_ROOT")
+                    @RunWith(JUnit3RunnerWithInners.class)
+                    public static class DownTo extends AbstractIrCodegenBoxWasmTest {
+                        private void runTest(String testDataFilePath) throws Exception {
+                            KotlinTestUtils.runTest0(this::doTest, TargetBackend.WASM, testDataFilePath);
+                        }
+
+                        public void testAllFilesPresentInDownTo() throws Exception {
+                            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges/stepped/unsigned/expression/downTo"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+                        }
+
+                        @TestMetadata("emptyProgression.kt")
+                        public void testEmptyProgression() throws Exception {
+                            runTest("compiler/testData/codegen/box/ranges/stepped/unsigned/expression/downTo/emptyProgression.kt");
+                        }
+
+                        @TestMetadata("illegalStepNegative.kt")
+                        public void testIllegalStepNegative() throws Exception {
+                            runTest("compiler/testData/codegen/box/ranges/stepped/unsigned/expression/downTo/illegalStepNegative.kt");
+                        }
+
+                        @TestMetadata("illegalStepNonConst.kt")
+                        public void testIllegalStepNonConst() throws Exception {
+                            runTest("compiler/testData/codegen/box/ranges/stepped/unsigned/expression/downTo/illegalStepNonConst.kt");
+                        }
+
+                        @TestMetadata("illegalStepThenLegalStep.kt")
+                        public void testIllegalStepThenLegalStep() throws Exception {
+                            runTest("compiler/testData/codegen/box/ranges/stepped/unsigned/expression/downTo/illegalStepThenLegalStep.kt");
+                        }
+
+                        @TestMetadata("illegalStepZero.kt")
+                        public void testIllegalStepZero() throws Exception {
+                            runTest("compiler/testData/codegen/box/ranges/stepped/unsigned/expression/downTo/illegalStepZero.kt");
+                        }
+
+                        @TestMetadata("legalStepThenIllegalStep.kt")
+                        public void testLegalStepThenIllegalStep() throws Exception {
+                            runTest("compiler/testData/codegen/box/ranges/stepped/unsigned/expression/downTo/legalStepThenIllegalStep.kt");
+                        }
+
+                        @TestMetadata("maxValueToMinValueStepMaxValue.kt")
+                        public void testMaxValueToMinValueStepMaxValue() throws Exception {
+                            runTest("compiler/testData/codegen/box/ranges/stepped/unsigned/expression/downTo/maxValueToMinValueStepMaxValue.kt");
+                        }
+
+                        @TestMetadata("maxValueToOneStepMaxValue.kt")
+                        public void testMaxValueToOneStepMaxValue() throws Exception {
+                            runTest("compiler/testData/codegen/box/ranges/stepped/unsigned/expression/downTo/maxValueToOneStepMaxValue.kt");
+                        }
+
+                        @TestMetadata("maxValueToZeroStepMaxValue.kt")
+                        public void testMaxValueToZeroStepMaxValue() throws Exception {
+                            runTest("compiler/testData/codegen/box/ranges/stepped/unsigned/expression/downTo/maxValueToZeroStepMaxValue.kt");
+                        }
+
+                        @TestMetadata("mixedTypeStep.kt")
+                        public void testMixedTypeStep() throws Exception {
+                            runTest("compiler/testData/codegen/box/ranges/stepped/unsigned/expression/downTo/mixedTypeStep.kt");
+                        }
+
+                        @TestMetadata("singleElementStepTwo.kt")
+                        public void testSingleElementStepTwo() throws Exception {
+                            runTest("compiler/testData/codegen/box/ranges/stepped/unsigned/expression/downTo/singleElementStepTwo.kt");
+                        }
+
+                        @TestMetadata("stepNonConst.kt")
+                        public void testStepNonConst() throws Exception {
+                            runTest("compiler/testData/codegen/box/ranges/stepped/unsigned/expression/downTo/stepNonConst.kt");
+                        }
+
+                        @TestMetadata("stepOne.kt")
+                        public void testStepOne() throws Exception {
+                            runTest("compiler/testData/codegen/box/ranges/stepped/unsigned/expression/downTo/stepOne.kt");
+                        }
+
+                        @TestMetadata("stepToOutsideRange.kt")
+                        public void testStepToOutsideRange() throws Exception {
+                            runTest("compiler/testData/codegen/box/ranges/stepped/unsigned/expression/downTo/stepToOutsideRange.kt");
+                        }
+
+                        @TestMetadata("stepToSameLast.kt")
+                        public void testStepToSameLast() throws Exception {
+                            runTest("compiler/testData/codegen/box/ranges/stepped/unsigned/expression/downTo/stepToSameLast.kt");
+                        }
+
+                        @TestMetadata("stepToSmallerLast.kt")
+                        public void testStepToSmallerLast() throws Exception {
+                            runTest("compiler/testData/codegen/box/ranges/stepped/unsigned/expression/downTo/stepToSmallerLast.kt");
+                        }
+
+                        @TestMetadata("compiler/testData/codegen/box/ranges/stepped/unsigned/expression/downTo/nestedStep")
+                        @TestDataPath("$PROJECT_ROOT")
+                        @RunWith(JUnit3RunnerWithInners.class)
+                        public static class NestedStep extends AbstractIrCodegenBoxWasmTest {
+                            private void runTest(String testDataFilePath) throws Exception {
+                                KotlinTestUtils.runTest0(this::doTest, TargetBackend.WASM, testDataFilePath);
+                            }
+
+                            public void testAllFilesPresentInNestedStep() throws Exception {
+                                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges/stepped/unsigned/expression/downTo/nestedStep"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+                            }
+
+                            @TestMetadata("stepOneThenStepOne.kt")
+                            public void testStepOneThenStepOne() throws Exception {
+                                runTest("compiler/testData/codegen/box/ranges/stepped/unsigned/expression/downTo/nestedStep/stepOneThenStepOne.kt");
+                            }
+
+                            @TestMetadata("stepThenSameStep.kt")
+                            public void testStepThenSameStep() throws Exception {
+                                runTest("compiler/testData/codegen/box/ranges/stepped/unsigned/expression/downTo/nestedStep/stepThenSameStep.kt");
+                            }
+
+                            @TestMetadata("stepToSameLastThenStepOne.kt")
+                            public void testStepToSameLastThenStepOne() throws Exception {
+                                runTest("compiler/testData/codegen/box/ranges/stepped/unsigned/expression/downTo/nestedStep/stepToSameLastThenStepOne.kt");
+                            }
+
+                            @TestMetadata("stepToSameLastThenStepToSameLast.kt")
+                            public void testStepToSameLastThenStepToSameLast() throws Exception {
+                                runTest("compiler/testData/codegen/box/ranges/stepped/unsigned/expression/downTo/nestedStep/stepToSameLastThenStepToSameLast.kt");
+                            }
+
+                            @TestMetadata("stepToSameLastThenStepToSmallerLast.kt")
+                            public void testStepToSameLastThenStepToSmallerLast() throws Exception {
+                                runTest("compiler/testData/codegen/box/ranges/stepped/unsigned/expression/downTo/nestedStep/stepToSameLastThenStepToSmallerLast.kt");
+                            }
+
+                            @TestMetadata("stepToSmallerLastThenStepOne.kt")
+                            public void testStepToSmallerLastThenStepOne() throws Exception {
+                                runTest("compiler/testData/codegen/box/ranges/stepped/unsigned/expression/downTo/nestedStep/stepToSmallerLastThenStepOne.kt");
+                            }
+
+                            @TestMetadata("stepToSmallerLastThenStepToSameLast.kt")
+                            public void testStepToSmallerLastThenStepToSameLast() throws Exception {
+                                runTest("compiler/testData/codegen/box/ranges/stepped/unsigned/expression/downTo/nestedStep/stepToSmallerLastThenStepToSameLast.kt");
+                            }
+
+                            @TestMetadata("stepToSmallerLastThenStepToSmallerLast.kt")
+                            public void testStepToSmallerLastThenStepToSmallerLast() throws Exception {
+                                runTest("compiler/testData/codegen/box/ranges/stepped/unsigned/expression/downTo/nestedStep/stepToSmallerLastThenStepToSmallerLast.kt");
+                            }
+                        }
+
+                        @TestMetadata("compiler/testData/codegen/box/ranges/stepped/unsigned/expression/downTo/reversed")
+                        @TestDataPath("$PROJECT_ROOT")
+                        @RunWith(JUnit3RunnerWithInners.class)
+                        public static class Reversed extends AbstractIrCodegenBoxWasmTest {
+                            private void runTest(String testDataFilePath) throws Exception {
+                                KotlinTestUtils.runTest0(this::doTest, TargetBackend.WASM, testDataFilePath);
+                            }
+
+                            public void testAllFilesPresentInReversed() throws Exception {
+                                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges/stepped/unsigned/expression/downTo/reversed"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+                            }
+
+                            @TestMetadata("reversedThenStep.kt")
+                            public void testReversedThenStep() throws Exception {
+                                runTest("compiler/testData/codegen/box/ranges/stepped/unsigned/expression/downTo/reversed/reversedThenStep.kt");
+                            }
+
+                            @TestMetadata("reversedThenStepThenReversed.kt")
+                            public void testReversedThenStepThenReversed() throws Exception {
+                                runTest("compiler/testData/codegen/box/ranges/stepped/unsigned/expression/downTo/reversed/reversedThenStepThenReversed.kt");
+                            }
+
+                            @TestMetadata("reversedThenStepThenReversedThenStep.kt")
+                            public void testReversedThenStepThenReversedThenStep() throws Exception {
+                                runTest("compiler/testData/codegen/box/ranges/stepped/unsigned/expression/downTo/reversed/reversedThenStepThenReversedThenStep.kt");
+                            }
+
+                            @TestMetadata("stepThenReversed.kt")
+                            public void testStepThenReversed() throws Exception {
+                                runTest("compiler/testData/codegen/box/ranges/stepped/unsigned/expression/downTo/reversed/stepThenReversed.kt");
+                            }
+
+                            @TestMetadata("stepThenReversedThenStep.kt")
+                            public void testStepThenReversedThenStep() throws Exception {
+                                runTest("compiler/testData/codegen/box/ranges/stepped/unsigned/expression/downTo/reversed/stepThenReversedThenStep.kt");
+                            }
+
+                            @TestMetadata("stepThenReversedThenStepThenReversed.kt")
+                            public void testStepThenReversedThenStepThenReversed() throws Exception {
+                                runTest("compiler/testData/codegen/box/ranges/stepped/unsigned/expression/downTo/reversed/stepThenReversedThenStepThenReversed.kt");
+                            }
+                        }
+                    }
+
+                    @TestMetadata("compiler/testData/codegen/box/ranges/stepped/unsigned/expression/rangeTo")
+                    @TestDataPath("$PROJECT_ROOT")
+                    @RunWith(JUnit3RunnerWithInners.class)
+                    public static class RangeTo extends AbstractIrCodegenBoxWasmTest {
+                        private void runTest(String testDataFilePath) throws Exception {
+                            KotlinTestUtils.runTest0(this::doTest, TargetBackend.WASM, testDataFilePath);
+                        }
+
+                        public void testAllFilesPresentInRangeTo() throws Exception {
+                            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges/stepped/unsigned/expression/rangeTo"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+                        }
+
+                        @TestMetadata("emptyProgression.kt")
+                        public void testEmptyProgression() throws Exception {
+                            runTest("compiler/testData/codegen/box/ranges/stepped/unsigned/expression/rangeTo/emptyProgression.kt");
+                        }
+
+                        @TestMetadata("illegalStepNegative.kt")
+                        public void testIllegalStepNegative() throws Exception {
+                            runTest("compiler/testData/codegen/box/ranges/stepped/unsigned/expression/rangeTo/illegalStepNegative.kt");
+                        }
+
+                        @TestMetadata("illegalStepNonConst.kt")
+                        public void testIllegalStepNonConst() throws Exception {
+                            runTest("compiler/testData/codegen/box/ranges/stepped/unsigned/expression/rangeTo/illegalStepNonConst.kt");
+                        }
+
+                        @TestMetadata("illegalStepThenLegalStep.kt")
+                        public void testIllegalStepThenLegalStep() throws Exception {
+                            runTest("compiler/testData/codegen/box/ranges/stepped/unsigned/expression/rangeTo/illegalStepThenLegalStep.kt");
+                        }
+
+                        @TestMetadata("illegalStepZero.kt")
+                        public void testIllegalStepZero() throws Exception {
+                            runTest("compiler/testData/codegen/box/ranges/stepped/unsigned/expression/rangeTo/illegalStepZero.kt");
+                        }
+
+                        @TestMetadata("legalStepThenIllegalStep.kt")
+                        public void testLegalStepThenIllegalStep() throws Exception {
+                            runTest("compiler/testData/codegen/box/ranges/stepped/unsigned/expression/rangeTo/legalStepThenIllegalStep.kt");
+                        }
+
+                        @TestMetadata("minValueToMaxValueStepMaxValue.kt")
+                        public void testMinValueToMaxValueStepMaxValue() throws Exception {
+                            runTest("compiler/testData/codegen/box/ranges/stepped/unsigned/expression/rangeTo/minValueToMaxValueStepMaxValue.kt");
+                        }
+
+                        @TestMetadata("mixedTypeStep.kt")
+                        public void testMixedTypeStep() throws Exception {
+                            runTest("compiler/testData/codegen/box/ranges/stepped/unsigned/expression/rangeTo/mixedTypeStep.kt");
+                        }
+
+                        @TestMetadata("oneToMaxValueStepMaxValue.kt")
+                        public void testOneToMaxValueStepMaxValue() throws Exception {
+                            runTest("compiler/testData/codegen/box/ranges/stepped/unsigned/expression/rangeTo/oneToMaxValueStepMaxValue.kt");
+                        }
+
+                        @TestMetadata("singleElementStepTwo.kt")
+                        public void testSingleElementStepTwo() throws Exception {
+                            runTest("compiler/testData/codegen/box/ranges/stepped/unsigned/expression/rangeTo/singleElementStepTwo.kt");
+                        }
+
+                        @TestMetadata("stepNonConst.kt")
+                        public void testStepNonConst() throws Exception {
+                            runTest("compiler/testData/codegen/box/ranges/stepped/unsigned/expression/rangeTo/stepNonConst.kt");
+                        }
+
+                        @TestMetadata("stepOne.kt")
+                        public void testStepOne() throws Exception {
+                            runTest("compiler/testData/codegen/box/ranges/stepped/unsigned/expression/rangeTo/stepOne.kt");
+                        }
+
+                        @TestMetadata("stepToOutsideRange.kt")
+                        public void testStepToOutsideRange() throws Exception {
+                            runTest("compiler/testData/codegen/box/ranges/stepped/unsigned/expression/rangeTo/stepToOutsideRange.kt");
+                        }
+
+                        @TestMetadata("stepToSameLast.kt")
+                        public void testStepToSameLast() throws Exception {
+                            runTest("compiler/testData/codegen/box/ranges/stepped/unsigned/expression/rangeTo/stepToSameLast.kt");
+                        }
+
+                        @TestMetadata("stepToSmallerLast.kt")
+                        public void testStepToSmallerLast() throws Exception {
+                            runTest("compiler/testData/codegen/box/ranges/stepped/unsigned/expression/rangeTo/stepToSmallerLast.kt");
+                        }
+
+                        @TestMetadata("zeroToMaxValueStepMaxValue.kt")
+                        public void testZeroToMaxValueStepMaxValue() throws Exception {
+                            runTest("compiler/testData/codegen/box/ranges/stepped/unsigned/expression/rangeTo/zeroToMaxValueStepMaxValue.kt");
+                        }
+
+                        @TestMetadata("compiler/testData/codegen/box/ranges/stepped/unsigned/expression/rangeTo/nestedStep")
+                        @TestDataPath("$PROJECT_ROOT")
+                        @RunWith(JUnit3RunnerWithInners.class)
+                        public static class NestedStep extends AbstractIrCodegenBoxWasmTest {
+                            private void runTest(String testDataFilePath) throws Exception {
+                                KotlinTestUtils.runTest0(this::doTest, TargetBackend.WASM, testDataFilePath);
+                            }
+
+                            public void testAllFilesPresentInNestedStep() throws Exception {
+                                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges/stepped/unsigned/expression/rangeTo/nestedStep"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+                            }
+
+                            @TestMetadata("stepOneThenStepOne.kt")
+                            public void testStepOneThenStepOne() throws Exception {
+                                runTest("compiler/testData/codegen/box/ranges/stepped/unsigned/expression/rangeTo/nestedStep/stepOneThenStepOne.kt");
+                            }
+
+                            @TestMetadata("stepThenSameStep.kt")
+                            public void testStepThenSameStep() throws Exception {
+                                runTest("compiler/testData/codegen/box/ranges/stepped/unsigned/expression/rangeTo/nestedStep/stepThenSameStep.kt");
+                            }
+
+                            @TestMetadata("stepToSameLastThenStepOne.kt")
+                            public void testStepToSameLastThenStepOne() throws Exception {
+                                runTest("compiler/testData/codegen/box/ranges/stepped/unsigned/expression/rangeTo/nestedStep/stepToSameLastThenStepOne.kt");
+                            }
+
+                            @TestMetadata("stepToSameLastThenStepToSameLast.kt")
+                            public void testStepToSameLastThenStepToSameLast() throws Exception {
+                                runTest("compiler/testData/codegen/box/ranges/stepped/unsigned/expression/rangeTo/nestedStep/stepToSameLastThenStepToSameLast.kt");
+                            }
+
+                            @TestMetadata("stepToSameLastThenStepToSmallerLast.kt")
+                            public void testStepToSameLastThenStepToSmallerLast() throws Exception {
+                                runTest("compiler/testData/codegen/box/ranges/stepped/unsigned/expression/rangeTo/nestedStep/stepToSameLastThenStepToSmallerLast.kt");
+                            }
+
+                            @TestMetadata("stepToSmallerLastThenStepOne.kt")
+                            public void testStepToSmallerLastThenStepOne() throws Exception {
+                                runTest("compiler/testData/codegen/box/ranges/stepped/unsigned/expression/rangeTo/nestedStep/stepToSmallerLastThenStepOne.kt");
+                            }
+
+                            @TestMetadata("stepToSmallerLastThenStepToSameLast.kt")
+                            public void testStepToSmallerLastThenStepToSameLast() throws Exception {
+                                runTest("compiler/testData/codegen/box/ranges/stepped/unsigned/expression/rangeTo/nestedStep/stepToSmallerLastThenStepToSameLast.kt");
+                            }
+
+                            @TestMetadata("stepToSmallerLastThenStepToSmallerLast.kt")
+                            public void testStepToSmallerLastThenStepToSmallerLast() throws Exception {
+                                runTest("compiler/testData/codegen/box/ranges/stepped/unsigned/expression/rangeTo/nestedStep/stepToSmallerLastThenStepToSmallerLast.kt");
+                            }
+                        }
+
+                        @TestMetadata("compiler/testData/codegen/box/ranges/stepped/unsigned/expression/rangeTo/reversed")
+                        @TestDataPath("$PROJECT_ROOT")
+                        @RunWith(JUnit3RunnerWithInners.class)
+                        public static class Reversed extends AbstractIrCodegenBoxWasmTest {
+                            private void runTest(String testDataFilePath) throws Exception {
+                                KotlinTestUtils.runTest0(this::doTest, TargetBackend.WASM, testDataFilePath);
+                            }
+
+                            public void testAllFilesPresentInReversed() throws Exception {
+                                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges/stepped/unsigned/expression/rangeTo/reversed"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+                            }
+
+                            @TestMetadata("reversedThenStep.kt")
+                            public void testReversedThenStep() throws Exception {
+                                runTest("compiler/testData/codegen/box/ranges/stepped/unsigned/expression/rangeTo/reversed/reversedThenStep.kt");
+                            }
+
+                            @TestMetadata("reversedThenStepThenReversed.kt")
+                            public void testReversedThenStepThenReversed() throws Exception {
+                                runTest("compiler/testData/codegen/box/ranges/stepped/unsigned/expression/rangeTo/reversed/reversedThenStepThenReversed.kt");
+                            }
+
+                            @TestMetadata("reversedThenStepThenReversedThenStep.kt")
+                            public void testReversedThenStepThenReversedThenStep() throws Exception {
+                                runTest("compiler/testData/codegen/box/ranges/stepped/unsigned/expression/rangeTo/reversed/reversedThenStepThenReversedThenStep.kt");
+                            }
+
+                            @TestMetadata("stepThenReversed.kt")
+                            public void testStepThenReversed() throws Exception {
+                                runTest("compiler/testData/codegen/box/ranges/stepped/unsigned/expression/rangeTo/reversed/stepThenReversed.kt");
+                            }
+
+                            @TestMetadata("stepThenReversedThenStep.kt")
+                            public void testStepThenReversedThenStep() throws Exception {
+                                runTest("compiler/testData/codegen/box/ranges/stepped/unsigned/expression/rangeTo/reversed/stepThenReversedThenStep.kt");
+                            }
+
+                            @TestMetadata("stepThenReversedThenStepThenReversed.kt")
+                            public void testStepThenReversedThenStepThenReversed() throws Exception {
+                                runTest("compiler/testData/codegen/box/ranges/stepped/unsigned/expression/rangeTo/reversed/stepThenReversedThenStepThenReversed.kt");
+                            }
+                        }
+                    }
+
+                    @TestMetadata("compiler/testData/codegen/box/ranges/stepped/unsigned/expression/until")
+                    @TestDataPath("$PROJECT_ROOT")
+                    @RunWith(JUnit3RunnerWithInners.class)
+                    public static class Until extends AbstractIrCodegenBoxWasmTest {
+                        private void runTest(String testDataFilePath) throws Exception {
+                            KotlinTestUtils.runTest0(this::doTest, TargetBackend.WASM, testDataFilePath);
+                        }
+
+                        public void testAllFilesPresentInUntil() throws Exception {
+                            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges/stepped/unsigned/expression/until"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+                        }
+
+                        @TestMetadata("emptyProgression.kt")
+                        public void testEmptyProgression() throws Exception {
+                            runTest("compiler/testData/codegen/box/ranges/stepped/unsigned/expression/until/emptyProgression.kt");
+                        }
+
+                        @TestMetadata("emptyProgressionToMinValue.kt")
+                        public void testEmptyProgressionToMinValue() throws Exception {
+                            runTest("compiler/testData/codegen/box/ranges/stepped/unsigned/expression/until/emptyProgressionToMinValue.kt");
+                        }
+
+                        @TestMetadata("illegalStepNegative.kt")
+                        public void testIllegalStepNegative() throws Exception {
+                            runTest("compiler/testData/codegen/box/ranges/stepped/unsigned/expression/until/illegalStepNegative.kt");
+                        }
+
+                        @TestMetadata("illegalStepNonConst.kt")
+                        public void testIllegalStepNonConst() throws Exception {
+                            runTest("compiler/testData/codegen/box/ranges/stepped/unsigned/expression/until/illegalStepNonConst.kt");
+                        }
+
+                        @TestMetadata("illegalStepThenLegalStep.kt")
+                        public void testIllegalStepThenLegalStep() throws Exception {
+                            runTest("compiler/testData/codegen/box/ranges/stepped/unsigned/expression/until/illegalStepThenLegalStep.kt");
+                        }
+
+                        @TestMetadata("illegalStepZero.kt")
+                        public void testIllegalStepZero() throws Exception {
+                            runTest("compiler/testData/codegen/box/ranges/stepped/unsigned/expression/until/illegalStepZero.kt");
+                        }
+
+                        @TestMetadata("legalStepThenIllegalStep.kt")
+                        public void testLegalStepThenIllegalStep() throws Exception {
+                            runTest("compiler/testData/codegen/box/ranges/stepped/unsigned/expression/until/legalStepThenIllegalStep.kt");
+                        }
+
+                        @TestMetadata("minValueToMaxValueStepMaxValue.kt")
+                        public void testMinValueToMaxValueStepMaxValue() throws Exception {
+                            runTest("compiler/testData/codegen/box/ranges/stepped/unsigned/expression/until/minValueToMaxValueStepMaxValue.kt");
+                        }
+
+                        @TestMetadata("mixedTypeStep.kt")
+                        public void testMixedTypeStep() throws Exception {
+                            runTest("compiler/testData/codegen/box/ranges/stepped/unsigned/expression/until/mixedTypeStep.kt");
+                        }
+
+                        @TestMetadata("progressionToNonConst.kt")
+                        public void testProgressionToNonConst() throws Exception {
+                            runTest("compiler/testData/codegen/box/ranges/stepped/unsigned/expression/until/progressionToNonConst.kt");
+                        }
+
+                        @TestMetadata("singleElementStepTwo.kt")
+                        public void testSingleElementStepTwo() throws Exception {
+                            runTest("compiler/testData/codegen/box/ranges/stepped/unsigned/expression/until/singleElementStepTwo.kt");
+                        }
+
+                        @TestMetadata("stepNonConst.kt")
+                        public void testStepNonConst() throws Exception {
+                            runTest("compiler/testData/codegen/box/ranges/stepped/unsigned/expression/until/stepNonConst.kt");
+                        }
+
+                        @TestMetadata("stepOne.kt")
+                        public void testStepOne() throws Exception {
+                            runTest("compiler/testData/codegen/box/ranges/stepped/unsigned/expression/until/stepOne.kt");
+                        }
+
+                        @TestMetadata("stepToOutsideRange.kt")
+                        public void testStepToOutsideRange() throws Exception {
+                            runTest("compiler/testData/codegen/box/ranges/stepped/unsigned/expression/until/stepToOutsideRange.kt");
+                        }
+
+                        @TestMetadata("stepToSameLast.kt")
+                        public void testStepToSameLast() throws Exception {
+                            runTest("compiler/testData/codegen/box/ranges/stepped/unsigned/expression/until/stepToSameLast.kt");
+                        }
+
+                        @TestMetadata("stepToSmallerLast.kt")
+                        public void testStepToSmallerLast() throws Exception {
+                            runTest("compiler/testData/codegen/box/ranges/stepped/unsigned/expression/until/stepToSmallerLast.kt");
+                        }
+
+                        @TestMetadata("zeroToMaxValueStepMaxValue.kt")
+                        public void testZeroToMaxValueStepMaxValue() throws Exception {
+                            runTest("compiler/testData/codegen/box/ranges/stepped/unsigned/expression/until/zeroToMaxValueStepMaxValue.kt");
+                        }
+
+                        @TestMetadata("compiler/testData/codegen/box/ranges/stepped/unsigned/expression/until/nestedStep")
+                        @TestDataPath("$PROJECT_ROOT")
+                        @RunWith(JUnit3RunnerWithInners.class)
+                        public static class NestedStep extends AbstractIrCodegenBoxWasmTest {
+                            private void runTest(String testDataFilePath) throws Exception {
+                                KotlinTestUtils.runTest0(this::doTest, TargetBackend.WASM, testDataFilePath);
+                            }
+
+                            public void testAllFilesPresentInNestedStep() throws Exception {
+                                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges/stepped/unsigned/expression/until/nestedStep"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+                            }
+
+                            @TestMetadata("stepOneThenStepOne.kt")
+                            public void testStepOneThenStepOne() throws Exception {
+                                runTest("compiler/testData/codegen/box/ranges/stepped/unsigned/expression/until/nestedStep/stepOneThenStepOne.kt");
+                            }
+
+                            @TestMetadata("stepThenSameStep.kt")
+                            public void testStepThenSameStep() throws Exception {
+                                runTest("compiler/testData/codegen/box/ranges/stepped/unsigned/expression/until/nestedStep/stepThenSameStep.kt");
+                            }
+
+                            @TestMetadata("stepToSameLastThenStepOne.kt")
+                            public void testStepToSameLastThenStepOne() throws Exception {
+                                runTest("compiler/testData/codegen/box/ranges/stepped/unsigned/expression/until/nestedStep/stepToSameLastThenStepOne.kt");
+                            }
+
+                            @TestMetadata("stepToSameLastThenStepToSameLast.kt")
+                            public void testStepToSameLastThenStepToSameLast() throws Exception {
+                                runTest("compiler/testData/codegen/box/ranges/stepped/unsigned/expression/until/nestedStep/stepToSameLastThenStepToSameLast.kt");
+                            }
+
+                            @TestMetadata("stepToSameLastThenStepToSmallerLast.kt")
+                            public void testStepToSameLastThenStepToSmallerLast() throws Exception {
+                                runTest("compiler/testData/codegen/box/ranges/stepped/unsigned/expression/until/nestedStep/stepToSameLastThenStepToSmallerLast.kt");
+                            }
+
+                            @TestMetadata("stepToSmallerLastThenStepOne.kt")
+                            public void testStepToSmallerLastThenStepOne() throws Exception {
+                                runTest("compiler/testData/codegen/box/ranges/stepped/unsigned/expression/until/nestedStep/stepToSmallerLastThenStepOne.kt");
+                            }
+
+                            @TestMetadata("stepToSmallerLastThenStepToSameLast.kt")
+                            public void testStepToSmallerLastThenStepToSameLast() throws Exception {
+                                runTest("compiler/testData/codegen/box/ranges/stepped/unsigned/expression/until/nestedStep/stepToSmallerLastThenStepToSameLast.kt");
+                            }
+
+                            @TestMetadata("stepToSmallerLastThenStepToSmallerLast.kt")
+                            public void testStepToSmallerLastThenStepToSmallerLast() throws Exception {
+                                runTest("compiler/testData/codegen/box/ranges/stepped/unsigned/expression/until/nestedStep/stepToSmallerLastThenStepToSmallerLast.kt");
+                            }
+                        }
+
+                        @TestMetadata("compiler/testData/codegen/box/ranges/stepped/unsigned/expression/until/reversed")
+                        @TestDataPath("$PROJECT_ROOT")
+                        @RunWith(JUnit3RunnerWithInners.class)
+                        public static class Reversed extends AbstractIrCodegenBoxWasmTest {
+                            private void runTest(String testDataFilePath) throws Exception {
+                                KotlinTestUtils.runTest0(this::doTest, TargetBackend.WASM, testDataFilePath);
+                            }
+
+                            public void testAllFilesPresentInReversed() throws Exception {
+                                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges/stepped/unsigned/expression/until/reversed"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+                            }
+
+                            @TestMetadata("reversedThenStep.kt")
+                            public void testReversedThenStep() throws Exception {
+                                runTest("compiler/testData/codegen/box/ranges/stepped/unsigned/expression/until/reversed/reversedThenStep.kt");
+                            }
+
+                            @TestMetadata("reversedThenStepThenReversed.kt")
+                            public void testReversedThenStepThenReversed() throws Exception {
+                                runTest("compiler/testData/codegen/box/ranges/stepped/unsigned/expression/until/reversed/reversedThenStepThenReversed.kt");
+                            }
+
+                            @TestMetadata("reversedThenStepThenReversedThenStep.kt")
+                            public void testReversedThenStepThenReversedThenStep() throws Exception {
+                                runTest("compiler/testData/codegen/box/ranges/stepped/unsigned/expression/until/reversed/reversedThenStepThenReversedThenStep.kt");
+                            }
+
+                            @TestMetadata("stepThenReversed.kt")
+                            public void testStepThenReversed() throws Exception {
+                                runTest("compiler/testData/codegen/box/ranges/stepped/unsigned/expression/until/reversed/stepThenReversed.kt");
+                            }
+
+                            @TestMetadata("stepThenReversedThenStep.kt")
+                            public void testStepThenReversedThenStep() throws Exception {
+                                runTest("compiler/testData/codegen/box/ranges/stepped/unsigned/expression/until/reversed/stepThenReversedThenStep.kt");
+                            }
+
+                            @TestMetadata("stepThenReversedThenStepThenReversed.kt")
+                            public void testStepThenReversedThenStepThenReversed() throws Exception {
+                                runTest("compiler/testData/codegen/box/ranges/stepped/unsigned/expression/until/reversed/stepThenReversedThenStepThenReversed.kt");
+                            }
+                        }
+                    }
+                }
+
+                @TestMetadata("compiler/testData/codegen/box/ranges/stepped/unsigned/literal")
+                @TestDataPath("$PROJECT_ROOT")
+                @RunWith(JUnit3RunnerWithInners.class)
+                public static class Literal extends AbstractIrCodegenBoxWasmTest {
+                    private void runTest(String testDataFilePath) throws Exception {
+                        KotlinTestUtils.runTest0(this::doTest, TargetBackend.WASM, testDataFilePath);
+                    }
+
+                    public void testAllFilesPresentInLiteral() throws Exception {
+                        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges/stepped/unsigned/literal"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+                    }
+
+                    @TestMetadata("compiler/testData/codegen/box/ranges/stepped/unsigned/literal/downTo")
+                    @TestDataPath("$PROJECT_ROOT")
+                    @RunWith(JUnit3RunnerWithInners.class)
+                    public static class DownTo extends AbstractIrCodegenBoxWasmTest {
+                        private void runTest(String testDataFilePath) throws Exception {
+                            KotlinTestUtils.runTest0(this::doTest, TargetBackend.WASM, testDataFilePath);
+                        }
+
+                        public void testAllFilesPresentInDownTo() throws Exception {
+                            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges/stepped/unsigned/literal/downTo"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+                        }
+
+                        @TestMetadata("emptyProgression.kt")
+                        public void testEmptyProgression() throws Exception {
+                            runTest("compiler/testData/codegen/box/ranges/stepped/unsigned/literal/downTo/emptyProgression.kt");
+                        }
+
+                        @TestMetadata("illegalStepNegative.kt")
+                        public void testIllegalStepNegative() throws Exception {
+                            runTest("compiler/testData/codegen/box/ranges/stepped/unsigned/literal/downTo/illegalStepNegative.kt");
+                        }
+
+                        @TestMetadata("illegalStepNonConst.kt")
+                        public void testIllegalStepNonConst() throws Exception {
+                            runTest("compiler/testData/codegen/box/ranges/stepped/unsigned/literal/downTo/illegalStepNonConst.kt");
+                        }
+
+                        @TestMetadata("illegalStepThenLegalStep.kt")
+                        public void testIllegalStepThenLegalStep() throws Exception {
+                            runTest("compiler/testData/codegen/box/ranges/stepped/unsigned/literal/downTo/illegalStepThenLegalStep.kt");
+                        }
+
+                        @TestMetadata("illegalStepZero.kt")
+                        public void testIllegalStepZero() throws Exception {
+                            runTest("compiler/testData/codegen/box/ranges/stepped/unsigned/literal/downTo/illegalStepZero.kt");
+                        }
+
+                        @TestMetadata("legalStepThenIllegalStep.kt")
+                        public void testLegalStepThenIllegalStep() throws Exception {
+                            runTest("compiler/testData/codegen/box/ranges/stepped/unsigned/literal/downTo/legalStepThenIllegalStep.kt");
+                        }
+
+                        @TestMetadata("maxValueToMinValueStepMaxValue.kt")
+                        public void testMaxValueToMinValueStepMaxValue() throws Exception {
+                            runTest("compiler/testData/codegen/box/ranges/stepped/unsigned/literal/downTo/maxValueToMinValueStepMaxValue.kt");
+                        }
+
+                        @TestMetadata("maxValueToOneStepMaxValue.kt")
+                        public void testMaxValueToOneStepMaxValue() throws Exception {
+                            runTest("compiler/testData/codegen/box/ranges/stepped/unsigned/literal/downTo/maxValueToOneStepMaxValue.kt");
+                        }
+
+                        @TestMetadata("maxValueToZeroStepMaxValue.kt")
+                        public void testMaxValueToZeroStepMaxValue() throws Exception {
+                            runTest("compiler/testData/codegen/box/ranges/stepped/unsigned/literal/downTo/maxValueToZeroStepMaxValue.kt");
+                        }
+
+                        @TestMetadata("mixedTypeStep.kt")
+                        public void testMixedTypeStep() throws Exception {
+                            runTest("compiler/testData/codegen/box/ranges/stepped/unsigned/literal/downTo/mixedTypeStep.kt");
+                        }
+
+                        @TestMetadata("singleElementStepTwo.kt")
+                        public void testSingleElementStepTwo() throws Exception {
+                            runTest("compiler/testData/codegen/box/ranges/stepped/unsigned/literal/downTo/singleElementStepTwo.kt");
+                        }
+
+                        @TestMetadata("stepNonConst.kt")
+                        public void testStepNonConst() throws Exception {
+                            runTest("compiler/testData/codegen/box/ranges/stepped/unsigned/literal/downTo/stepNonConst.kt");
+                        }
+
+                        @TestMetadata("stepOne.kt")
+                        public void testStepOne() throws Exception {
+                            runTest("compiler/testData/codegen/box/ranges/stepped/unsigned/literal/downTo/stepOne.kt");
+                        }
+
+                        @TestMetadata("stepToOutsideRange.kt")
+                        public void testStepToOutsideRange() throws Exception {
+                            runTest("compiler/testData/codegen/box/ranges/stepped/unsigned/literal/downTo/stepToOutsideRange.kt");
+                        }
+
+                        @TestMetadata("stepToSameLast.kt")
+                        public void testStepToSameLast() throws Exception {
+                            runTest("compiler/testData/codegen/box/ranges/stepped/unsigned/literal/downTo/stepToSameLast.kt");
+                        }
+
+                        @TestMetadata("stepToSmallerLast.kt")
+                        public void testStepToSmallerLast() throws Exception {
+                            runTest("compiler/testData/codegen/box/ranges/stepped/unsigned/literal/downTo/stepToSmallerLast.kt");
+                        }
+
+                        @TestMetadata("compiler/testData/codegen/box/ranges/stepped/unsigned/literal/downTo/nestedStep")
+                        @TestDataPath("$PROJECT_ROOT")
+                        @RunWith(JUnit3RunnerWithInners.class)
+                        public static class NestedStep extends AbstractIrCodegenBoxWasmTest {
+                            private void runTest(String testDataFilePath) throws Exception {
+                                KotlinTestUtils.runTest0(this::doTest, TargetBackend.WASM, testDataFilePath);
+                            }
+
+                            public void testAllFilesPresentInNestedStep() throws Exception {
+                                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges/stepped/unsigned/literal/downTo/nestedStep"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+                            }
+
+                            @TestMetadata("stepOneThenStepOne.kt")
+                            public void testStepOneThenStepOne() throws Exception {
+                                runTest("compiler/testData/codegen/box/ranges/stepped/unsigned/literal/downTo/nestedStep/stepOneThenStepOne.kt");
+                            }
+
+                            @TestMetadata("stepThenSameStep.kt")
+                            public void testStepThenSameStep() throws Exception {
+                                runTest("compiler/testData/codegen/box/ranges/stepped/unsigned/literal/downTo/nestedStep/stepThenSameStep.kt");
+                            }
+
+                            @TestMetadata("stepToSameLastThenStepOne.kt")
+                            public void testStepToSameLastThenStepOne() throws Exception {
+                                runTest("compiler/testData/codegen/box/ranges/stepped/unsigned/literal/downTo/nestedStep/stepToSameLastThenStepOne.kt");
+                            }
+
+                            @TestMetadata("stepToSameLastThenStepToSameLast.kt")
+                            public void testStepToSameLastThenStepToSameLast() throws Exception {
+                                runTest("compiler/testData/codegen/box/ranges/stepped/unsigned/literal/downTo/nestedStep/stepToSameLastThenStepToSameLast.kt");
+                            }
+
+                            @TestMetadata("stepToSameLastThenStepToSmallerLast.kt")
+                            public void testStepToSameLastThenStepToSmallerLast() throws Exception {
+                                runTest("compiler/testData/codegen/box/ranges/stepped/unsigned/literal/downTo/nestedStep/stepToSameLastThenStepToSmallerLast.kt");
+                            }
+
+                            @TestMetadata("stepToSmallerLastThenStepOne.kt")
+                            public void testStepToSmallerLastThenStepOne() throws Exception {
+                                runTest("compiler/testData/codegen/box/ranges/stepped/unsigned/literal/downTo/nestedStep/stepToSmallerLastThenStepOne.kt");
+                            }
+
+                            @TestMetadata("stepToSmallerLastThenStepToSameLast.kt")
+                            public void testStepToSmallerLastThenStepToSameLast() throws Exception {
+                                runTest("compiler/testData/codegen/box/ranges/stepped/unsigned/literal/downTo/nestedStep/stepToSmallerLastThenStepToSameLast.kt");
+                            }
+
+                            @TestMetadata("stepToSmallerLastThenStepToSmallerLast.kt")
+                            public void testStepToSmallerLastThenStepToSmallerLast() throws Exception {
+                                runTest("compiler/testData/codegen/box/ranges/stepped/unsigned/literal/downTo/nestedStep/stepToSmallerLastThenStepToSmallerLast.kt");
+                            }
+                        }
+
+                        @TestMetadata("compiler/testData/codegen/box/ranges/stepped/unsigned/literal/downTo/reversed")
+                        @TestDataPath("$PROJECT_ROOT")
+                        @RunWith(JUnit3RunnerWithInners.class)
+                        public static class Reversed extends AbstractIrCodegenBoxWasmTest {
+                            private void runTest(String testDataFilePath) throws Exception {
+                                KotlinTestUtils.runTest0(this::doTest, TargetBackend.WASM, testDataFilePath);
+                            }
+
+                            public void testAllFilesPresentInReversed() throws Exception {
+                                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges/stepped/unsigned/literal/downTo/reversed"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+                            }
+
+                            @TestMetadata("reversedThenStep.kt")
+                            public void testReversedThenStep() throws Exception {
+                                runTest("compiler/testData/codegen/box/ranges/stepped/unsigned/literal/downTo/reversed/reversedThenStep.kt");
+                            }
+
+                            @TestMetadata("reversedThenStepThenReversed.kt")
+                            public void testReversedThenStepThenReversed() throws Exception {
+                                runTest("compiler/testData/codegen/box/ranges/stepped/unsigned/literal/downTo/reversed/reversedThenStepThenReversed.kt");
+                            }
+
+                            @TestMetadata("reversedThenStepThenReversedThenStep.kt")
+                            public void testReversedThenStepThenReversedThenStep() throws Exception {
+                                runTest("compiler/testData/codegen/box/ranges/stepped/unsigned/literal/downTo/reversed/reversedThenStepThenReversedThenStep.kt");
+                            }
+
+                            @TestMetadata("stepThenReversed.kt")
+                            public void testStepThenReversed() throws Exception {
+                                runTest("compiler/testData/codegen/box/ranges/stepped/unsigned/literal/downTo/reversed/stepThenReversed.kt");
+                            }
+
+                            @TestMetadata("stepThenReversedThenStep.kt")
+                            public void testStepThenReversedThenStep() throws Exception {
+                                runTest("compiler/testData/codegen/box/ranges/stepped/unsigned/literal/downTo/reversed/stepThenReversedThenStep.kt");
+                            }
+
+                            @TestMetadata("stepThenReversedThenStepThenReversed.kt")
+                            public void testStepThenReversedThenStepThenReversed() throws Exception {
+                                runTest("compiler/testData/codegen/box/ranges/stepped/unsigned/literal/downTo/reversed/stepThenReversedThenStepThenReversed.kt");
+                            }
+                        }
+                    }
+
+                    @TestMetadata("compiler/testData/codegen/box/ranges/stepped/unsigned/literal/rangeTo")
+                    @TestDataPath("$PROJECT_ROOT")
+                    @RunWith(JUnit3RunnerWithInners.class)
+                    public static class RangeTo extends AbstractIrCodegenBoxWasmTest {
+                        private void runTest(String testDataFilePath) throws Exception {
+                            KotlinTestUtils.runTest0(this::doTest, TargetBackend.WASM, testDataFilePath);
+                        }
+
+                        public void testAllFilesPresentInRangeTo() throws Exception {
+                            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges/stepped/unsigned/literal/rangeTo"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+                        }
+
+                        @TestMetadata("emptyProgression.kt")
+                        public void testEmptyProgression() throws Exception {
+                            runTest("compiler/testData/codegen/box/ranges/stepped/unsigned/literal/rangeTo/emptyProgression.kt");
+                        }
+
+                        @TestMetadata("illegalStepNegative.kt")
+                        public void testIllegalStepNegative() throws Exception {
+                            runTest("compiler/testData/codegen/box/ranges/stepped/unsigned/literal/rangeTo/illegalStepNegative.kt");
+                        }
+
+                        @TestMetadata("illegalStepNonConst.kt")
+                        public void testIllegalStepNonConst() throws Exception {
+                            runTest("compiler/testData/codegen/box/ranges/stepped/unsigned/literal/rangeTo/illegalStepNonConst.kt");
+                        }
+
+                        @TestMetadata("illegalStepThenLegalStep.kt")
+                        public void testIllegalStepThenLegalStep() throws Exception {
+                            runTest("compiler/testData/codegen/box/ranges/stepped/unsigned/literal/rangeTo/illegalStepThenLegalStep.kt");
+                        }
+
+                        @TestMetadata("illegalStepZero.kt")
+                        public void testIllegalStepZero() throws Exception {
+                            runTest("compiler/testData/codegen/box/ranges/stepped/unsigned/literal/rangeTo/illegalStepZero.kt");
+                        }
+
+                        @TestMetadata("legalStepThenIllegalStep.kt")
+                        public void testLegalStepThenIllegalStep() throws Exception {
+                            runTest("compiler/testData/codegen/box/ranges/stepped/unsigned/literal/rangeTo/legalStepThenIllegalStep.kt");
+                        }
+
+                        @TestMetadata("minValueToMaxValueStepMaxValue.kt")
+                        public void testMinValueToMaxValueStepMaxValue() throws Exception {
+                            runTest("compiler/testData/codegen/box/ranges/stepped/unsigned/literal/rangeTo/minValueToMaxValueStepMaxValue.kt");
+                        }
+
+                        @TestMetadata("mixedTypeStep.kt")
+                        public void testMixedTypeStep() throws Exception {
+                            runTest("compiler/testData/codegen/box/ranges/stepped/unsigned/literal/rangeTo/mixedTypeStep.kt");
+                        }
+
+                        @TestMetadata("oneToMaxValueStepMaxValue.kt")
+                        public void testOneToMaxValueStepMaxValue() throws Exception {
+                            runTest("compiler/testData/codegen/box/ranges/stepped/unsigned/literal/rangeTo/oneToMaxValueStepMaxValue.kt");
+                        }
+
+                        @TestMetadata("singleElementStepTwo.kt")
+                        public void testSingleElementStepTwo() throws Exception {
+                            runTest("compiler/testData/codegen/box/ranges/stepped/unsigned/literal/rangeTo/singleElementStepTwo.kt");
+                        }
+
+                        @TestMetadata("stepNonConst.kt")
+                        public void testStepNonConst() throws Exception {
+                            runTest("compiler/testData/codegen/box/ranges/stepped/unsigned/literal/rangeTo/stepNonConst.kt");
+                        }
+
+                        @TestMetadata("stepOne.kt")
+                        public void testStepOne() throws Exception {
+                            runTest("compiler/testData/codegen/box/ranges/stepped/unsigned/literal/rangeTo/stepOne.kt");
+                        }
+
+                        @TestMetadata("stepToOutsideRange.kt")
+                        public void testStepToOutsideRange() throws Exception {
+                            runTest("compiler/testData/codegen/box/ranges/stepped/unsigned/literal/rangeTo/stepToOutsideRange.kt");
+                        }
+
+                        @TestMetadata("stepToSameLast.kt")
+                        public void testStepToSameLast() throws Exception {
+                            runTest("compiler/testData/codegen/box/ranges/stepped/unsigned/literal/rangeTo/stepToSameLast.kt");
+                        }
+
+                        @TestMetadata("stepToSmallerLast.kt")
+                        public void testStepToSmallerLast() throws Exception {
+                            runTest("compiler/testData/codegen/box/ranges/stepped/unsigned/literal/rangeTo/stepToSmallerLast.kt");
+                        }
+
+                        @TestMetadata("zeroToMaxValueStepMaxValue.kt")
+                        public void testZeroToMaxValueStepMaxValue() throws Exception {
+                            runTest("compiler/testData/codegen/box/ranges/stepped/unsigned/literal/rangeTo/zeroToMaxValueStepMaxValue.kt");
+                        }
+
+                        @TestMetadata("compiler/testData/codegen/box/ranges/stepped/unsigned/literal/rangeTo/nestedStep")
+                        @TestDataPath("$PROJECT_ROOT")
+                        @RunWith(JUnit3RunnerWithInners.class)
+                        public static class NestedStep extends AbstractIrCodegenBoxWasmTest {
+                            private void runTest(String testDataFilePath) throws Exception {
+                                KotlinTestUtils.runTest0(this::doTest, TargetBackend.WASM, testDataFilePath);
+                            }
+
+                            public void testAllFilesPresentInNestedStep() throws Exception {
+                                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges/stepped/unsigned/literal/rangeTo/nestedStep"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+                            }
+
+                            @TestMetadata("stepOneThenStepOne.kt")
+                            public void testStepOneThenStepOne() throws Exception {
+                                runTest("compiler/testData/codegen/box/ranges/stepped/unsigned/literal/rangeTo/nestedStep/stepOneThenStepOne.kt");
+                            }
+
+                            @TestMetadata("stepThenSameStep.kt")
+                            public void testStepThenSameStep() throws Exception {
+                                runTest("compiler/testData/codegen/box/ranges/stepped/unsigned/literal/rangeTo/nestedStep/stepThenSameStep.kt");
+                            }
+
+                            @TestMetadata("stepToSameLastThenStepOne.kt")
+                            public void testStepToSameLastThenStepOne() throws Exception {
+                                runTest("compiler/testData/codegen/box/ranges/stepped/unsigned/literal/rangeTo/nestedStep/stepToSameLastThenStepOne.kt");
+                            }
+
+                            @TestMetadata("stepToSameLastThenStepToSameLast.kt")
+                            public void testStepToSameLastThenStepToSameLast() throws Exception {
+                                runTest("compiler/testData/codegen/box/ranges/stepped/unsigned/literal/rangeTo/nestedStep/stepToSameLastThenStepToSameLast.kt");
+                            }
+
+                            @TestMetadata("stepToSameLastThenStepToSmallerLast.kt")
+                            public void testStepToSameLastThenStepToSmallerLast() throws Exception {
+                                runTest("compiler/testData/codegen/box/ranges/stepped/unsigned/literal/rangeTo/nestedStep/stepToSameLastThenStepToSmallerLast.kt");
+                            }
+
+                            @TestMetadata("stepToSmallerLastThenStepOne.kt")
+                            public void testStepToSmallerLastThenStepOne() throws Exception {
+                                runTest("compiler/testData/codegen/box/ranges/stepped/unsigned/literal/rangeTo/nestedStep/stepToSmallerLastThenStepOne.kt");
+                            }
+
+                            @TestMetadata("stepToSmallerLastThenStepToSameLast.kt")
+                            public void testStepToSmallerLastThenStepToSameLast() throws Exception {
+                                runTest("compiler/testData/codegen/box/ranges/stepped/unsigned/literal/rangeTo/nestedStep/stepToSmallerLastThenStepToSameLast.kt");
+                            }
+
+                            @TestMetadata("stepToSmallerLastThenStepToSmallerLast.kt")
+                            public void testStepToSmallerLastThenStepToSmallerLast() throws Exception {
+                                runTest("compiler/testData/codegen/box/ranges/stepped/unsigned/literal/rangeTo/nestedStep/stepToSmallerLastThenStepToSmallerLast.kt");
+                            }
+                        }
+
+                        @TestMetadata("compiler/testData/codegen/box/ranges/stepped/unsigned/literal/rangeTo/reversed")
+                        @TestDataPath("$PROJECT_ROOT")
+                        @RunWith(JUnit3RunnerWithInners.class)
+                        public static class Reversed extends AbstractIrCodegenBoxWasmTest {
+                            private void runTest(String testDataFilePath) throws Exception {
+                                KotlinTestUtils.runTest0(this::doTest, TargetBackend.WASM, testDataFilePath);
+                            }
+
+                            public void testAllFilesPresentInReversed() throws Exception {
+                                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges/stepped/unsigned/literal/rangeTo/reversed"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+                            }
+
+                            @TestMetadata("reversedThenStep.kt")
+                            public void testReversedThenStep() throws Exception {
+                                runTest("compiler/testData/codegen/box/ranges/stepped/unsigned/literal/rangeTo/reversed/reversedThenStep.kt");
+                            }
+
+                            @TestMetadata("reversedThenStepThenReversed.kt")
+                            public void testReversedThenStepThenReversed() throws Exception {
+                                runTest("compiler/testData/codegen/box/ranges/stepped/unsigned/literal/rangeTo/reversed/reversedThenStepThenReversed.kt");
+                            }
+
+                            @TestMetadata("reversedThenStepThenReversedThenStep.kt")
+                            public void testReversedThenStepThenReversedThenStep() throws Exception {
+                                runTest("compiler/testData/codegen/box/ranges/stepped/unsigned/literal/rangeTo/reversed/reversedThenStepThenReversedThenStep.kt");
+                            }
+
+                            @TestMetadata("stepThenReversed.kt")
+                            public void testStepThenReversed() throws Exception {
+                                runTest("compiler/testData/codegen/box/ranges/stepped/unsigned/literal/rangeTo/reversed/stepThenReversed.kt");
+                            }
+
+                            @TestMetadata("stepThenReversedThenStep.kt")
+                            public void testStepThenReversedThenStep() throws Exception {
+                                runTest("compiler/testData/codegen/box/ranges/stepped/unsigned/literal/rangeTo/reversed/stepThenReversedThenStep.kt");
+                            }
+
+                            @TestMetadata("stepThenReversedThenStepThenReversed.kt")
+                            public void testStepThenReversedThenStepThenReversed() throws Exception {
+                                runTest("compiler/testData/codegen/box/ranges/stepped/unsigned/literal/rangeTo/reversed/stepThenReversedThenStepThenReversed.kt");
+                            }
+                        }
+                    }
+
+                    @TestMetadata("compiler/testData/codegen/box/ranges/stepped/unsigned/literal/until")
+                    @TestDataPath("$PROJECT_ROOT")
+                    @RunWith(JUnit3RunnerWithInners.class)
+                    public static class Until extends AbstractIrCodegenBoxWasmTest {
+                        private void runTest(String testDataFilePath) throws Exception {
+                            KotlinTestUtils.runTest0(this::doTest, TargetBackend.WASM, testDataFilePath);
+                        }
+
+                        public void testAllFilesPresentInUntil() throws Exception {
+                            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges/stepped/unsigned/literal/until"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+                        }
+
+                        @TestMetadata("emptyProgression.kt")
+                        public void testEmptyProgression() throws Exception {
+                            runTest("compiler/testData/codegen/box/ranges/stepped/unsigned/literal/until/emptyProgression.kt");
+                        }
+
+                        @TestMetadata("emptyProgressionToMinValue.kt")
+                        public void testEmptyProgressionToMinValue() throws Exception {
+                            runTest("compiler/testData/codegen/box/ranges/stepped/unsigned/literal/until/emptyProgressionToMinValue.kt");
+                        }
+
+                        @TestMetadata("illegalStepNegative.kt")
+                        public void testIllegalStepNegative() throws Exception {
+                            runTest("compiler/testData/codegen/box/ranges/stepped/unsigned/literal/until/illegalStepNegative.kt");
+                        }
+
+                        @TestMetadata("illegalStepNonConst.kt")
+                        public void testIllegalStepNonConst() throws Exception {
+                            runTest("compiler/testData/codegen/box/ranges/stepped/unsigned/literal/until/illegalStepNonConst.kt");
+                        }
+
+                        @TestMetadata("illegalStepThenLegalStep.kt")
+                        public void testIllegalStepThenLegalStep() throws Exception {
+                            runTest("compiler/testData/codegen/box/ranges/stepped/unsigned/literal/until/illegalStepThenLegalStep.kt");
+                        }
+
+                        @TestMetadata("illegalStepZero.kt")
+                        public void testIllegalStepZero() throws Exception {
+                            runTest("compiler/testData/codegen/box/ranges/stepped/unsigned/literal/until/illegalStepZero.kt");
+                        }
+
+                        @TestMetadata("legalStepThenIllegalStep.kt")
+                        public void testLegalStepThenIllegalStep() throws Exception {
+                            runTest("compiler/testData/codegen/box/ranges/stepped/unsigned/literal/until/legalStepThenIllegalStep.kt");
+                        }
+
+                        @TestMetadata("minValueToMaxValueStepMaxValue.kt")
+                        public void testMinValueToMaxValueStepMaxValue() throws Exception {
+                            runTest("compiler/testData/codegen/box/ranges/stepped/unsigned/literal/until/minValueToMaxValueStepMaxValue.kt");
+                        }
+
+                        @TestMetadata("mixedTypeStep.kt")
+                        public void testMixedTypeStep() throws Exception {
+                            runTest("compiler/testData/codegen/box/ranges/stepped/unsigned/literal/until/mixedTypeStep.kt");
+                        }
+
+                        @TestMetadata("progressionToNonConst.kt")
+                        public void testProgressionToNonConst() throws Exception {
+                            runTest("compiler/testData/codegen/box/ranges/stepped/unsigned/literal/until/progressionToNonConst.kt");
+                        }
+
+                        @TestMetadata("singleElementStepTwo.kt")
+                        public void testSingleElementStepTwo() throws Exception {
+                            runTest("compiler/testData/codegen/box/ranges/stepped/unsigned/literal/until/singleElementStepTwo.kt");
+                        }
+
+                        @TestMetadata("stepNonConst.kt")
+                        public void testStepNonConst() throws Exception {
+                            runTest("compiler/testData/codegen/box/ranges/stepped/unsigned/literal/until/stepNonConst.kt");
+                        }
+
+                        @TestMetadata("stepOne.kt")
+                        public void testStepOne() throws Exception {
+                            runTest("compiler/testData/codegen/box/ranges/stepped/unsigned/literal/until/stepOne.kt");
+                        }
+
+                        @TestMetadata("stepToOutsideRange.kt")
+                        public void testStepToOutsideRange() throws Exception {
+                            runTest("compiler/testData/codegen/box/ranges/stepped/unsigned/literal/until/stepToOutsideRange.kt");
+                        }
+
+                        @TestMetadata("stepToSameLast.kt")
+                        public void testStepToSameLast() throws Exception {
+                            runTest("compiler/testData/codegen/box/ranges/stepped/unsigned/literal/until/stepToSameLast.kt");
+                        }
+
+                        @TestMetadata("stepToSmallerLast.kt")
+                        public void testStepToSmallerLast() throws Exception {
+                            runTest("compiler/testData/codegen/box/ranges/stepped/unsigned/literal/until/stepToSmallerLast.kt");
+                        }
+
+                        @TestMetadata("zeroToMaxValueStepMaxValue.kt")
+                        public void testZeroToMaxValueStepMaxValue() throws Exception {
+                            runTest("compiler/testData/codegen/box/ranges/stepped/unsigned/literal/until/zeroToMaxValueStepMaxValue.kt");
+                        }
+
+                        @TestMetadata("compiler/testData/codegen/box/ranges/stepped/unsigned/literal/until/nestedStep")
+                        @TestDataPath("$PROJECT_ROOT")
+                        @RunWith(JUnit3RunnerWithInners.class)
+                        public static class NestedStep extends AbstractIrCodegenBoxWasmTest {
+                            private void runTest(String testDataFilePath) throws Exception {
+                                KotlinTestUtils.runTest0(this::doTest, TargetBackend.WASM, testDataFilePath);
+                            }
+
+                            public void testAllFilesPresentInNestedStep() throws Exception {
+                                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges/stepped/unsigned/literal/until/nestedStep"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+                            }
+
+                            @TestMetadata("stepOneThenStepOne.kt")
+                            public void testStepOneThenStepOne() throws Exception {
+                                runTest("compiler/testData/codegen/box/ranges/stepped/unsigned/literal/until/nestedStep/stepOneThenStepOne.kt");
+                            }
+
+                            @TestMetadata("stepThenSameStep.kt")
+                            public void testStepThenSameStep() throws Exception {
+                                runTest("compiler/testData/codegen/box/ranges/stepped/unsigned/literal/until/nestedStep/stepThenSameStep.kt");
+                            }
+
+                            @TestMetadata("stepToSameLastThenStepOne.kt")
+                            public void testStepToSameLastThenStepOne() throws Exception {
+                                runTest("compiler/testData/codegen/box/ranges/stepped/unsigned/literal/until/nestedStep/stepToSameLastThenStepOne.kt");
+                            }
+
+                            @TestMetadata("stepToSameLastThenStepToSameLast.kt")
+                            public void testStepToSameLastThenStepToSameLast() throws Exception {
+                                runTest("compiler/testData/codegen/box/ranges/stepped/unsigned/literal/until/nestedStep/stepToSameLastThenStepToSameLast.kt");
+                            }
+
+                            @TestMetadata("stepToSameLastThenStepToSmallerLast.kt")
+                            public void testStepToSameLastThenStepToSmallerLast() throws Exception {
+                                runTest("compiler/testData/codegen/box/ranges/stepped/unsigned/literal/until/nestedStep/stepToSameLastThenStepToSmallerLast.kt");
+                            }
+
+                            @TestMetadata("stepToSmallerLastThenStepOne.kt")
+                            public void testStepToSmallerLastThenStepOne() throws Exception {
+                                runTest("compiler/testData/codegen/box/ranges/stepped/unsigned/literal/until/nestedStep/stepToSmallerLastThenStepOne.kt");
+                            }
+
+                            @TestMetadata("stepToSmallerLastThenStepToSameLast.kt")
+                            public void testStepToSmallerLastThenStepToSameLast() throws Exception {
+                                runTest("compiler/testData/codegen/box/ranges/stepped/unsigned/literal/until/nestedStep/stepToSmallerLastThenStepToSameLast.kt");
+                            }
+
+                            @TestMetadata("stepToSmallerLastThenStepToSmallerLast.kt")
+                            public void testStepToSmallerLastThenStepToSmallerLast() throws Exception {
+                                runTest("compiler/testData/codegen/box/ranges/stepped/unsigned/literal/until/nestedStep/stepToSmallerLastThenStepToSmallerLast.kt");
+                            }
+                        }
+
+                        @TestMetadata("compiler/testData/codegen/box/ranges/stepped/unsigned/literal/until/reversed")
+                        @TestDataPath("$PROJECT_ROOT")
+                        @RunWith(JUnit3RunnerWithInners.class)
+                        public static class Reversed extends AbstractIrCodegenBoxWasmTest {
+                            private void runTest(String testDataFilePath) throws Exception {
+                                KotlinTestUtils.runTest0(this::doTest, TargetBackend.WASM, testDataFilePath);
+                            }
+
+                            public void testAllFilesPresentInReversed() throws Exception {
+                                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges/stepped/unsigned/literal/until/reversed"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+                            }
+
+                            @TestMetadata("reversedThenStep.kt")
+                            public void testReversedThenStep() throws Exception {
+                                runTest("compiler/testData/codegen/box/ranges/stepped/unsigned/literal/until/reversed/reversedThenStep.kt");
+                            }
+
+                            @TestMetadata("reversedThenStepThenReversed.kt")
+                            public void testReversedThenStepThenReversed() throws Exception {
+                                runTest("compiler/testData/codegen/box/ranges/stepped/unsigned/literal/until/reversed/reversedThenStepThenReversed.kt");
+                            }
+
+                            @TestMetadata("reversedThenStepThenReversedThenStep.kt")
+                            public void testReversedThenStepThenReversedThenStep() throws Exception {
+                                runTest("compiler/testData/codegen/box/ranges/stepped/unsigned/literal/until/reversed/reversedThenStepThenReversedThenStep.kt");
+                            }
+
+                            @TestMetadata("stepThenReversed.kt")
+                            public void testStepThenReversed() throws Exception {
+                                runTest("compiler/testData/codegen/box/ranges/stepped/unsigned/literal/until/reversed/stepThenReversed.kt");
+                            }
+
+                            @TestMetadata("stepThenReversedThenStep.kt")
+                            public void testStepThenReversedThenStep() throws Exception {
+                                runTest("compiler/testData/codegen/box/ranges/stepped/unsigned/literal/until/reversed/stepThenReversedThenStep.kt");
+                            }
+
+                            @TestMetadata("stepThenReversedThenStepThenReversed.kt")
+                            public void testStepThenReversedThenStepThenReversed() throws Exception {
+                                runTest("compiler/testData/codegen/box/ranges/stepped/unsigned/literal/until/reversed/stepThenReversedThenStepThenReversed.kt");
+                            }
                         }
                     }
                 }

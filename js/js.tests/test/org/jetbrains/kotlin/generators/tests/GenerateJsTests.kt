@@ -24,6 +24,7 @@ fun main(args: Array<String>) {
         "testsWithJava9",
         "testsWithJava15",
         "testsWithJava17",
+        "compileKotlinAgainstKotlin",
     )
 
     // TODO: repair these tests
@@ -57,18 +58,7 @@ fun main(args: Array<String>) {
         testGroup("js/js.tests/tests-gen", "compiler/testData", testRunnerMethodName = "runTest0") {
             testClass<AbstractIrCodegenBoxWasmTest> {
                 model(
-                    "codegen/box", pattern = "^([^_](.+))\\.kt$", targetBackend = TargetBackend.WASM, excludeDirs = listOf(
-                        // TODO: Add stdlib
-                        "contracts", "platformTypes",
-
-                        // TODO: ArrayList
-                        "ranges/stepped/unsigned",
-
-                        // TODO: Support delegated properties
-                        "delegatedProperty",
-
-                        "compileKotlinAgainstKotlin"
-                    ) + jvmOnlyBoxTests
+                    "codegen/box", pattern = "^([^_](.+))\\.kt$", targetBackend = TargetBackend.WASM, excludeDirs = jvmOnlyBoxTests
                 )
             }
 
@@ -125,7 +115,7 @@ fun main(args: Array<String>) {
 
         testGroup("js/js.tests/tests-gen", "compiler/testData", testRunnerMethodName = "runTest0") {
             testClass<AbstractJsCodegenBoxTest> {
-                model("codegen/box", excludeDirs = jvmOnlyBoxTests + "compileKotlinAgainstKotlin")
+                model("codegen/box", excludeDirs = jvmOnlyBoxTests)
             }
 
             testClass<AbstractJsCodegenInlineTest> {
@@ -137,11 +127,11 @@ fun main(args: Array<String>) {
             }
 
             testClass<AbstractIrJsCodegenBoxTest> {
-                model("codegen/box", excludeDirs = jvmOnlyBoxTests + "compileKotlinAgainstKotlin")
+                model("codegen/box", excludeDirs = jvmOnlyBoxTests)
             }
 
             testClass<AbstractIrJsCodegenBoxErrorTest> {
-                model("codegen/boxError", excludeDirs = jvmOnlyBoxTests + "compileKotlinAgainstKotlin")
+                model("codegen/boxError", excludeDirs = jvmOnlyBoxTests)
             }
 
             testClass<AbstractIrJsCodegenInlineTest> {
