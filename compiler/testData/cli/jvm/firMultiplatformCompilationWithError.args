@@ -2,7 +2,7 @@ $TESTDATA_DIR$/firMultiplatformCompilationWithError/common.kt
 $TESTDATA_DIR$/firMultiplatformCompilationWithError/jvm.kt
 -Xcommon-sources
 $TESTDATA_DIR$/firMultiplatformCompilationWithError/common.kt
--Xuse-fir
+-Xuse-k2
 -cp
 .
 -d

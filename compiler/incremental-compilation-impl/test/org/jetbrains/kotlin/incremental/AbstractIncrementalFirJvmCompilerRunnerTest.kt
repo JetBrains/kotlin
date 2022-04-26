@@ -23,7 +23,7 @@ import java.io.File
 abstract class AbstractIncrementalFirJvmCompilerRunnerTest : AbstractIncrementalJvmCompilerRunnerTest() {
     override fun createCompilerArguments(destinationDir: File, testDir: File): K2JVMCompilerArguments =
         super.createCompilerArguments(destinationDir, testDir).apply {
-            useFir = true
+            useK2 = true
             useIR = true
         }
 

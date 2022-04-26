@@ -36,8 +36,8 @@ internal class NativeCompileOptions(languageSettingsProvider: () -> LanguageSett
         set(value) {
             languageSettings.languageVersion = value
         }
-
-    override var useFir: Boolean
+    
+    override var useK2: Boolean
         get() = false
         set(@Suppress("UNUSED_PARAMETER") value) {}
 

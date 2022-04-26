@@ -137,10 +137,7 @@ abstract class AbstractKotlinCompilerIntegrationTest : TestCaseWithTmpdir() {
 
     private fun String.removeFirWarning(): String {
         return this.replace(
-            """warning: ATTENTION!
- This build uses in-dev FIR: 
-  -Xuse-fir
-""", ""
+            "warning: ATTENTION!\n This build uses experimental K2 compiler: \n  -Xuse-k2\n", ""
         )
     }
 

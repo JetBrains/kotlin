@@ -15,7 +15,7 @@ class FE1FullPipelineModularizedTest : AbstractFullPipelineModularizedTest() {
     override fun configureArguments(args: K2JVMCompilerArguments, moduleData: ModuleData) {
         args.useIR = USE_BE_IR
         args.useOldBackend = !USE_BE_IR
-        args.useFir = false
+        args.useK2 = false
         args.jvmDefault = "compatibility"
         args.apiVersion = "1.4"
         args.optIn = arrayOf(

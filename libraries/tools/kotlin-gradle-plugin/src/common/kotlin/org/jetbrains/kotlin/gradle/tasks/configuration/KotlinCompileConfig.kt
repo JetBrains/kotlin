@@ -33,8 +33,8 @@ internal open class BaseKotlinCompileConfig<TASK : KotlinCompile> : AbstractKotl
             taskProvider.configure { task ->
                 task.incremental = propertiesProvider.incrementalJvm ?: true
 
-                if (propertiesProvider.useFir == true) {
-                    task.kotlinOptions.useFir = true
+                if (propertiesProvider.useK2 == true) {
+                    task.kotlinOptions.useK2 = true
                 }
                 task.usePreciseJavaTracking = propertiesProvider.usePreciseJavaTracking ?: true
                 task.jvmTargetValidationMode.set(propertiesProvider.jvmTargetValidationMode)

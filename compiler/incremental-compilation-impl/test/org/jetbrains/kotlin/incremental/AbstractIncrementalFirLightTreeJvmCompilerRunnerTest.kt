@@ -12,7 +12,7 @@ import java.io.File
 abstract class AbstractIncrementalFirLightTreeJvmCompilerRunnerTest : AbstractIncrementalJvmCompilerRunnerTest() {
     override fun createCompilerArguments(destinationDir: File, testDir: File): K2JVMCompilerArguments =
         super.createCompilerArguments(destinationDir, testDir).apply {
-            useFir = true
+            useK2 = true
             useIR = true
             useFirIC = false
             useFirLT = true

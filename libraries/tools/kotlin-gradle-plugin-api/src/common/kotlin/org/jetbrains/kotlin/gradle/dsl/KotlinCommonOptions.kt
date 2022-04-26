@@ -20,8 +20,8 @@ interface KotlinCommonOptions  : org.jetbrains.kotlin.gradle.dsl.KotlinCommonToo
      var languageVersion: kotlin.String?
 
     /**
-     * Compile using Front-end IR. Warning: this feature is far from being production-ready
+     * Compile using experimental K2. K2 is a new compiler pipeline, no compatibility guarantees are yet provided
      * Default value: false
      */
-     var useFir: kotlin.Boolean
+     var useK2: kotlin.Boolean
 }

@@ -1,4 +1,4 @@
 $TESTDATA_DIR$/firError.kt
--Xuse-fir
+-Xuse-k2
 -d
 $TEMP_DIR$

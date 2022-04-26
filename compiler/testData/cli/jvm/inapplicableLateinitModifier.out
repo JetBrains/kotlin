@@ -1,6 +1,6 @@
 warning: ATTENTION!
- This build uses in-dev FIR:
-  -Xuse-fir
+ This build uses experimental K2 compiler:
+  -Xuse-k2
 compiler/testData/cli/jvm/inapplicableLateinitModifier.kt:6:1: error: 'lateinit' modifier is not allowed on delegated properties
 lateinit var kest by Delegate
 ^

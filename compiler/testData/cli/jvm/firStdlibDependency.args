@@ -1,5 +1,5 @@
 $TESTDATA_DIR$/firStdlibDependency.kt
--Xuse-fir
+-Xuse-k2
 -cp
 .
 -d

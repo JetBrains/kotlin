@@ -97,7 +97,7 @@ fun compileModulesUsingFrontendIrAndLightTree(
 
     messageCollector.report(
         CompilerMessageSeverity.STRONG_WARNING,
-        "ATTENTION!\n This build uses in-dev FIR: \n  -Xuse-fir"
+        "ATTENTION!\n This build uses experimental K2 compiler: \n  -Xuse-k2"
     )
 
     val outputs = mutableListOf<GenerationState>()
