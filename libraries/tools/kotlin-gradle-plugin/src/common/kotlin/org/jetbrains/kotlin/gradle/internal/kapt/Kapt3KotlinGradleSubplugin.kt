@@ -229,8 +229,6 @@ class Kapt3GradleSubplugin @Inject internal constructor(private val registry: To
 
     private fun Kapt3SubpluginContext.getKaptIncrementalDataDir() = temporaryKaptDirectory("incrementalData")
 
-    private fun Kapt3SubpluginContext.getKaptClasspathSnapshotDir() = temporaryKaptDirectory("classpath-snapshot")
-
     private fun Kapt3SubpluginContext.getKaptIncrementalAnnotationProcessingCache() = temporaryKaptDirectory("incApCache")
 
     private fun Kapt3SubpluginContext.temporaryKaptDirectory(
@@ -483,7 +481,6 @@ class Kapt3GradleSubplugin @Inject internal constructor(private val registry: To
                 "${kotlinSourcesOutputDir.relativeTo(projectDir).path}/**"
             )
             it.kaptClasspath.from(kaptClasspathConfigurations)
-            it.classpathSnapshotProperties.classpathSnapshotDir.fileValue(getKaptClasspathSnapshotDir())
         }
 
         taskConfig.execute(kaptTaskProvider)
