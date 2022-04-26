@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 // IGNORE_BACKEND_FIR: JVM_IR
 // FIR status: not supported in JVM
 // IGNORE_BACKEND: NATIVE
