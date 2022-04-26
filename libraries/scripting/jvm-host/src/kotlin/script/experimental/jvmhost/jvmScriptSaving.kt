@@ -20,6 +20,7 @@ import kotlin.script.experimental.jvm.JvmDependency
 import kotlin.script.experimental.jvm.baseClassLoader
 import kotlin.script.experimental.jvm.impl.*
 import kotlin.script.experimental.jvm.jvm
+import kotlin.script.experimental.jvm.loadDependencies
 import kotlin.script.experimental.jvm.util.scriptCompilationClasspathFromContextOrNull
 
 // TODO: generate execution code (main)
@@ -145,8 +146,9 @@ private class KJvmCompiledScriptLazilyLoadedFromClasspath(
         if (loadedScript == null) {
             val actualEvaluationConfiguration = scriptEvaluationConfiguration ?: ScriptEvaluationConfiguration()
             val baseClassLoader = actualEvaluationConfiguration[ScriptEvaluationConfiguration.jvm.baseClassLoader]
+            val loadDependencies = actualEvaluationConfiguration[ScriptEvaluationConfiguration.jvm.loadDependencies]!!
             val classLoader = URLClassLoader(
-                classPath.map { it.toURI().toURL() }.toTypedArray(),
+                classPath.let { if (loadDependencies) it else it.take(1) }.map { it.toURI().toURL() }.toTypedArray(),
                 baseClassLoader
             )
             loadedScript = createScriptFromClassLoader(scriptClassFQName, classLoader)
