@@ -20151,6 +20151,46 @@ public class IrJsCodegenBoxTestGenerated extends AbstractIrJsCodegenBoxTest {
                     }
 
                     @Nested
+                    @TestMetadata("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/abstractMethod")
+                    @TestDataPath("$PROJECT_ROOT")
+                    public class AbstractMethod {
+                        @Test
+                        public void testAllFilesPresentInAbstractMethod() throws Exception {
+                            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/abstractMethod"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
+                        }
+
+                        @Test
+                        @TestMetadata("stringAbstractMethod_I1_I2_O1.kt")
+                        public void testStringAbstractMethod_I1_I2_O1() throws Exception {
+                            runTest("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/abstractMethod/stringAbstractMethod_I1_I2_O1.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+                        }
+
+                        @Test
+                        @TestMetadata("stringAbstractMethod_I1_I2_O1_I3.kt")
+                        public void testStringAbstractMethod_I1_I2_O1_I3() throws Exception {
+                            runTest("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/abstractMethod/stringAbstractMethod_I1_I2_O1_I3.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+                        }
+
+                        @Test
+                        @TestMetadata("stringAbstractMethod_I1_I2_O1_I3_O2.kt")
+                        public void testStringAbstractMethod_I1_I2_O1_I3_O2() throws Exception {
+                            runTest("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/abstractMethod/stringAbstractMethod_I1_I2_O1_I3_O2.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+                        }
+
+                        @Test
+                        @TestMetadata("stringAbstractMethod_I1_I2_O1_O2.kt")
+                        public void testStringAbstractMethod_I1_I2_O1_O2() throws Exception {
+                            runTest("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/abstractMethod/stringAbstractMethod_I1_I2_O1_O2.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+                        }
+
+                        @Test
+                        @TestMetadata("stringAbstractMethod_I1_O1_I3_O2.kt")
+                        public void testStringAbstractMethod_I1_O1_I3_O2() throws Exception {
+                            runTest("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/abstractMethod/stringAbstractMethod_I1_O1_I3_O2.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+                        }
+                    }
+
+                    @Nested
                     @TestMetadata("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/hashCode")
                     @TestDataPath("$PROJECT_ROOT")
                     public class HashCode {

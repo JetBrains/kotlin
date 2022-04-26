@@ -22846,6 +22846,61 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
                         }
 
                         @Nested
+                        @TestMetadata("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/abstractMethod")
+                        @TestDataPath("$PROJECT_ROOT")
+                        @Tag("codegen")
+                        @UseExtTestCaseGroupProvider()
+                        public class AbstractMethod {
+                            public AbstractMethod() {
+                                register("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/abstractMethod/stringAbstractMethod_I1_I2_O1.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+                                register("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/abstractMethod/stringAbstractMethod_I1_I2_O1_I3.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+                                register("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/abstractMethod/stringAbstractMethod_I1_I2_O1_I3_O2.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+                                register("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/abstractMethod/stringAbstractMethod_I1_I2_O1_O2.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+                                register("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/abstractMethod/stringAbstractMethod_I1_O1_I3_O2.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+                            }
+
+                            @Test
+                            public void testAllFilesPresentInAbstractMethod() throws Exception {
+                                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/abstractMethod"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
+                            }
+
+                            @Test
+                            @TestMetadata("stringAbstractMethod_I1_I2_O1.kt")
+                            public void testStringAbstractMethod_I1_I2_O1() throws Exception {
+                                // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
+                                runTest("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/abstractMethod/stringAbstractMethod_I1_I2_O1.kt");
+                            }
+
+                            @Test
+                            @TestMetadata("stringAbstractMethod_I1_I2_O1_I3.kt")
+                            public void testStringAbstractMethod_I1_I2_O1_I3() throws Exception {
+                                // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
+                                runTest("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/abstractMethod/stringAbstractMethod_I1_I2_O1_I3.kt");
+                            }
+
+                            @Test
+                            @TestMetadata("stringAbstractMethod_I1_I2_O1_I3_O2.kt")
+                            public void testStringAbstractMethod_I1_I2_O1_I3_O2() throws Exception {
+                                // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
+                                runTest("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/abstractMethod/stringAbstractMethod_I1_I2_O1_I3_O2.kt");
+                            }
+
+                            @Test
+                            @TestMetadata("stringAbstractMethod_I1_I2_O1_O2.kt")
+                            public void testStringAbstractMethod_I1_I2_O1_O2() throws Exception {
+                                // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
+                                runTest("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/abstractMethod/stringAbstractMethod_I1_I2_O1_O2.kt");
+                            }
+
+                            @Test
+                            @TestMetadata("stringAbstractMethod_I1_O1_I3_O2.kt")
+                            public void testStringAbstractMethod_I1_O1_I3_O2() throws Exception {
+                                // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
+                                runTest("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/abstractMethod/stringAbstractMethod_I1_O1_I3_O2.kt");
+                            }
+                        }
+
+                        @Nested
                         @TestMetadata("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/hashCode")
                         @TestDataPath("$PROJECT_ROOT")
                         @Tag("codegen")
