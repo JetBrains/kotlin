@@ -563,13 +563,6 @@ class KotlinCoreEnvironment private constructor(
                 .apply { isAccessible = true }
                 .setInt(null, FileUtilRt.LARGE_FOR_CONTENT_LOADING)
 
-            if (configuration.getBoolean(JVMConfigurationKeys.USE_FAST_JAR_FILE_SYSTEM)) {
-                configuration.get(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY)?.report(
-                    STRONG_WARNING,
-                    "Using new faster version of JAR FS: it should make your build faster, but the new implementation is experimental"
-                )
-            }
-
             registerExtensionsFromPlugins(configuration)
             // otherwise consider that project environment is properly configured before passing to the environment
             // TODO: consider some asserts to check important extension points
