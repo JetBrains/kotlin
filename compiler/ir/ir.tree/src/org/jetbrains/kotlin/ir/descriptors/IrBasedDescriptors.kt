@@ -1181,6 +1181,13 @@ private fun makeKotlinType(
                 )
             }
         }
+        is IrScriptSymbol -> {
+            TypeUtils.makeUnsubstitutedType(
+                classifier.toIrBasedDescriptorIfPossible(),
+                MemberScope.Empty,
+                KotlinTypeFactory.EMPTY_REFINED_TYPE_FACTORY
+            ).makeNullableAsSpecified(hasQuestionMark)
+        }
         else -> error("unknown classifier kind $classifier")
     }
 
@@ -1200,3 +1207,8 @@ private fun IrSimpleFunctionSymbol.toIrBasedDescriptorIfPossible(): FunctionDesc
 @OptIn(ObsoleteDescriptorBasedAPI::class)
 private fun IrPropertySymbol.toIrBasedDescriptorIfPossible(): PropertyDescriptor =
     if (isBound) owner.toIrBasedDescriptor() else descriptor
+
+// this is a temporary solution for scripts - seems that introducing full-blown emulation of descriptors for the single degenerate case
+// doesn't make any sense.
+@OptIn(ObsoleteDescriptorBasedAPI::class)
+private fun IrScriptSymbol.toIrBasedDescriptorIfPossible(): ScriptDescriptor = descriptor
