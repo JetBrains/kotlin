@@ -21,6 +21,7 @@ import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.analyzer.AnalysisResult
 import org.jetbrains.kotlin.base.kapt3.*
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
+import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.MessageRenderer
 import org.jetbrains.kotlin.cli.common.messages.PrintingMessageCollector
 import org.jetbrains.kotlin.cli.jvm.config.JavaSourceRoot
@@ -66,6 +67,13 @@ class Kapt3CommandLineProcessor : CommandLineProcessor {
         doOpenInternalPackagesIfRequired()
         if (option !is KaptCliOption) {
             throw CliOptionProcessingException("Unknown option: ${option.optionName}")
+        }
+        if (configuration.getBoolean(CommonConfigurationKeys.USE_FIR)) {
+            configuration[CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY]?.report(
+                CompilerMessageSeverity.STRONG_WARNING,
+                "ATTENTION!\n kapt currently doesn't support experimental K2 compiler, disabling K2 for kapt run"
+            )
+            configuration.put(CommonConfigurationKeys.USE_FIR, false)
         }
 
         val kaptOptions = configuration[KAPT_OPTIONS]
