@@ -26,6 +26,7 @@ import org.gradle.work.NormalizeLineEndings
 import org.gradle.workers.WorkerExecutor
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.kotlin.gradle.dsl.KotlinJvmOptionsImpl
+import org.jetbrains.kotlin.gradle.report.BuildReportMode
 import org.jetbrains.kotlin.gradle.tasks.KaptGenerateStubs
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.jetbrains.kotlin.gradle.tasks.toSingleCompilerPluginOptions
@@ -122,6 +123,20 @@ abstract class KaptGenerateStubsTask @Inject constructor(
                 ignoreClasspathResolutionErrors
             )
         )
+
+        // Also use KotlinOptions configuration that was directly set to this task
+        // as 'compileKotlinArgumentsContributor' has KotlinOptions from linked KotlinCompile task
+        listOfNotNull(kotlinOptions, parentKotlinOptions.orNull)
+            .map { it as KotlinJvmOptionsImpl }
+            .forEach {
+                it.updateArguments(args)
+            }
+
+        // Copied from KotlinCompile
+        defaultKotlinJavaToolchain.get().updateJvmTarget(this, args)
+        if (reportingSettings().buildReportMode == BuildReportMode.VERBOSE) {
+            args.reportPerf = true
+        }
 
         val pluginOptionsWithKapt = pluginOptions.toSingleCompilerPluginOptions().withWrappedKaptOptions(withApClasspath = kaptClasspath)
         args.pluginOptions = (pluginOptionsWithKapt.arguments).toTypedArray()
