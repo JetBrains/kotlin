@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.js.test.*
 import org.jetbrains.kotlin.js.test.ir.*
 import org.jetbrains.kotlin.js.testOld.AbstractDceTest
 import org.jetbrains.kotlin.js.testOld.compatibility.binary.AbstractJsKlibBinaryCompatibilityTest
+import org.jetbrains.kotlin.js.testOld.wasm.semantics.AbstractIrCodegenBoxInlineWasmTest
 import org.jetbrains.kotlin.js.testOld.wasm.semantics.AbstractIrCodegenBoxWasmTest
 import org.jetbrains.kotlin.js.testOld.wasm.semantics.AbstractIrCodegenWasmJsInteropWasmTest
 import org.jetbrains.kotlin.js.testOld.wasm.semantics.AbstractJsTranslatorWasmTest
@@ -60,6 +61,10 @@ fun main(args: Array<String>) {
                 model(
                     "codegen/box", pattern = "^([^_](.+))\\.kt$", targetBackend = TargetBackend.WASM, excludeDirs = jvmOnlyBoxTests
                 )
+            }
+
+            testClass<AbstractIrCodegenBoxInlineWasmTest> {
+                model("codegen/boxInline", targetBackend = TargetBackend.WASM)
             }
 
             testClass<AbstractIrCodegenWasmJsInteropWasmTest> {
