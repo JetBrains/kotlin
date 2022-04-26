@@ -216,7 +216,7 @@ class DocumentableVisibilityFilterTransformer(val context: DokkaContext) : PreMe
         }
 
         private fun filterEnumEntries(entries: List<DEnumEntry>, filteredPlatforms: Set<DokkaSourceSet>): Pair<Boolean, List<DEnumEntry>> =
-            entries.foldRight(Pair(false, emptyList())) { entry, acc ->
+            entries.fold(Pair(false, emptyList())) { acc, entry ->
                 val intersection = filteredPlatforms.intersect(entry.sourceSets)
                 if (intersection.isEmpty()) Pair(true, acc.second)
                 else {
