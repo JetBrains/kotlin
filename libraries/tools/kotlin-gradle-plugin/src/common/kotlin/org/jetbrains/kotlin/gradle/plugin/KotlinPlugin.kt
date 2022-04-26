@@ -522,10 +522,6 @@ internal abstract class AbstractKotlinPlugin(
             // Setup the consuming configurations:
             project.dependencies.attributesSchema.attribute(KotlinPlatformType.attribute)
 
-            project.configurations.getByName("default").apply {
-                setupAsLocalTargetSpecificConfigurationIfSupported(kotlinTarget)
-            }
-
             // Setup the published configurations:
             // Don't set the attributes for common module; otherwise their 'common' platform won't be compatible with the one in
             // platform-specific modules

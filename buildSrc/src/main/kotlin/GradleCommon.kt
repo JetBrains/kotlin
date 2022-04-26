@@ -267,10 +267,13 @@ fun Project.reconfigureMainSourcesSetForGradlePlugin(
         wireGradleVariantToCommonGradleVariant(this, commonSourceSet)
 
         // https://youtrack.jetbrains.com/issue/KT-51913
-        configurations["default"].attributes.attribute(
-            TargetJvmEnvironment.TARGET_JVM_ENVIRONMENT_ATTRIBUTE,
-            objects.named(TargetJvmEnvironment::class, "no-op")
-        )
+        // Remove workaround after bootstrap update
+        if (configurations["default"].attributes.contains(TargetJvmEnvironment.TARGET_JVM_ENVIRONMENT_ATTRIBUTE)) {
+            configurations["default"].attributes.attribute(
+                TargetJvmEnvironment.TARGET_JVM_ENVIRONMENT_ATTRIBUTE,
+                objects.named(TargetJvmEnvironment::class, "no-op")
+            )
+        }
 
         plugins.withType<JavaLibraryPlugin>().configureEach {
             this@reconfigureMainSourcesSetForGradlePlugin
