@@ -82,7 +82,7 @@ object FirKotlinToJvmBytecodeCompiler {
 
         messageCollector.report(
             STRONG_WARNING,
-            "ATTENTION!\n This build uses in-dev FIR: \n  -Xuse-fir"
+            "ATTENTION!\n This build uses experimental K2 compiler: \n  -Xuse-k2"
         )
 
         projectConfiguration.get(ComponentRegistrar.PLUGIN_COMPONENT_REGISTRARS)?.let { pluginComponentRegistrars ->

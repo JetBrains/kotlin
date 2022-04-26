@@ -95,7 +95,7 @@ class CompilerArgumentsContentProspectorTest {
             CommonCompilerArguments::profilePhases,
             CommonCompilerArguments::checkPhaseConditions,
             CommonCompilerArguments::checkStickyPhaseConditions,
-            CommonCompilerArguments::useFir,
+            CommonCompilerArguments::useK2,
             CommonCompilerArguments::useFirExtendedCheckers,
             CommonCompilerArguments::disableUltraLightClasses,
             CommonCompilerArguments::useMixedNamedArguments,

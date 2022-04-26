@@ -30,11 +30,11 @@ internal abstract class KotlinMultiplatformCommonOptionsBase : org.jetbrains.kot
 
     override var languageVersion: kotlin.String? = null
 
-    private var useFirField: kotlin.Boolean? = null
-    override var useFir: kotlin.Boolean
-        get() = useFirField ?: false
+    private var useK2Field: kotlin.Boolean? = null
+    override var useK2: kotlin.Boolean
+        get() = useK2Field ?: false
         set(value) {
-            useFirField = value
+            useK2Field = value
         }
 
     internal open fun updateArguments(args: org.jetbrains.kotlin.cli.common.arguments.K2MetadataCompilerArguments) {
@@ -43,7 +43,7 @@ internal abstract class KotlinMultiplatformCommonOptionsBase : org.jetbrains.kot
         verboseField?.let { args.verbose = it }
         apiVersion?.let { args.apiVersion = it }
         languageVersion?.let { args.languageVersion = it }
-        useFirField?.let { args.useFir = it }
+        useK2Field?.let { args.useK2 = it }
     }
 }
 
@@ -53,5 +53,5 @@ internal fun org.jetbrains.kotlin.cli.common.arguments.K2MetadataCompilerArgumen
     verbose = false
     apiVersion = null
     languageVersion = null
-    useFir = false
+    useK2 = false
 }
