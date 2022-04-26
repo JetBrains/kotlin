@@ -23315,6 +23315,53 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
                         }
 
                         @Nested
+                        @TestMetadata("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/openMethodMiddle")
+                        @TestDataPath("$PROJECT_ROOT")
+                        @Tag("codegen")
+                        @UseExtTestCaseGroupProvider()
+                        public class OpenMethodMiddle {
+                            public OpenMethodMiddle() {
+                                register("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/openMethodMiddle/stringOpenMethodMiddle_I2.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+                                register("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/openMethodMiddle/stringOpenMethodMiddle_I2_I3.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+                                register("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/openMethodMiddle/stringOpenMethodMiddle_I2_I3_O2.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+                                register("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/openMethodMiddle/stringOpenMethodMiddle_I2_O2.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+                            }
+
+                            @Test
+                            public void testAllFilesPresentInOpenMethodMiddle() throws Exception {
+                                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/openMethodMiddle"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
+                            }
+
+                            @Test
+                            @TestMetadata("stringOpenMethodMiddle_I2.kt")
+                            public void testStringOpenMethodMiddle_I2() throws Exception {
+                                // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
+                                runTest("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/openMethodMiddle/stringOpenMethodMiddle_I2.kt");
+                            }
+
+                            @Test
+                            @TestMetadata("stringOpenMethodMiddle_I2_I3.kt")
+                            public void testStringOpenMethodMiddle_I2_I3() throws Exception {
+                                // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
+                                runTest("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/openMethodMiddle/stringOpenMethodMiddle_I2_I3.kt");
+                            }
+
+                            @Test
+                            @TestMetadata("stringOpenMethodMiddle_I2_I3_O2.kt")
+                            public void testStringOpenMethodMiddle_I2_I3_O2() throws Exception {
+                                // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
+                                runTest("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/openMethodMiddle/stringOpenMethodMiddle_I2_I3_O2.kt");
+                            }
+
+                            @Test
+                            @TestMetadata("stringOpenMethodMiddle_I2_O2.kt")
+                            public void testStringOpenMethodMiddle_I2_O2() throws Exception {
+                                // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
+                                runTest("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/openMethodMiddle/stringOpenMethodMiddle_I2_O2.kt");
+                            }
+                        }
+
+                        @Nested
                         @TestMetadata("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/toString")
                         @TestDataPath("$PROJECT_ROOT")
                         @Tag("codegen")

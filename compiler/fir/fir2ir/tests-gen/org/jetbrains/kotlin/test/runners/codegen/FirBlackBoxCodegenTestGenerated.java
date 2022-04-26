@@ -26059,6 +26059,40 @@ public class FirBlackBoxCodegenTestGenerated extends AbstractFirBlackBoxCodegenT
                     }
 
                     @Nested
+                    @TestMetadata("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/openMethodMiddle")
+                    @TestDataPath("$PROJECT_ROOT")
+                    public class OpenMethodMiddle {
+                        @Test
+                        public void testAllFilesPresentInOpenMethodMiddle() throws Exception {
+                            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/openMethodMiddle"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+                        }
+
+                        @Test
+                        @TestMetadata("stringOpenMethodMiddle_I2.kt")
+                        public void testStringOpenMethodMiddle_I2() throws Exception {
+                            runTest("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/openMethodMiddle/stringOpenMethodMiddle_I2.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+                        }
+
+                        @Test
+                        @TestMetadata("stringOpenMethodMiddle_I2_I3.kt")
+                        public void testStringOpenMethodMiddle_I2_I3() throws Exception {
+                            runTest("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/openMethodMiddle/stringOpenMethodMiddle_I2_I3.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+                        }
+
+                        @Test
+                        @TestMetadata("stringOpenMethodMiddle_I2_I3_O2.kt")
+                        public void testStringOpenMethodMiddle_I2_I3_O2() throws Exception {
+                            runTest("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/openMethodMiddle/stringOpenMethodMiddle_I2_I3_O2.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+                        }
+
+                        @Test
+                        @TestMetadata("stringOpenMethodMiddle_I2_O2.kt")
+                        public void testStringOpenMethodMiddle_I2_O2() throws Exception {
+                            runTest("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/openMethodMiddle/stringOpenMethodMiddle_I2_O2.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+                        }
+                    }
+
+                    @Nested
                     @TestMetadata("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/toString")
                     @TestDataPath("$PROJECT_ROOT")
                     public class ToString {

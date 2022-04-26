@@ -968,8 +968,29 @@ private class JvmInlineClassLowering(context: JvmBackendContext) : JvmValueClass
 
             if (addToClass) {
                 info.top.addMember(function)
+
+                if (retargets.any { (_, retarget) ->
+                        retarget.owner.parentAsClass.let { it.isInline && it.modality == Modality.SEALED }
+                    }
+                ) {
+                    val bridge = context.irFactory.buildFun {
+                        updateFrom(methodSymbol.owner)
+                        origin = methodSymbol.owner.origin
+                        modality = Modality.OPEN
+                        name = methodSymbol.owner.name
+                        returnType = methodSymbol.owner.returnType
+                    }.apply {
+                        copyParameterDeclarationsFrom(methodSymbol.owner)
+                        annotations = methodSymbol.owner.annotations
+                        parent = info.top
+                    }
+                    info.top.addMember(bridge)
+                    createBridgeBody(bridge, function)
+                }
+
                 for ((_, retarget) in retargets) {
                     val override = if (retarget.owner.origin != JvmLoweredDeclarationOrigin.STATIC_INLINE_CLASS_REPLACEMENT) {
+                        retarget.owner.overriddenSymbols += methodSymbol
                         replacements.getReplacementFunction(retarget.owner) ?: retarget.owner
                     } else retarget.owner
 
@@ -1165,10 +1186,11 @@ private class SealedInlineClassInfo(
 
                         val retargets = mutableMapOf<IrClassSymbol, IrSimpleFunctionSymbol>()
                         colorChildren(subclass.owner, method, method, retargets, visited)
+                        retargets[subclass] = method
 
                         val methodInTop =
                             context.inlineClassReplacements.getSealedInlineClassChildFunctionInTop(top to method.owner.withoutReceiver())
-                        retargetsInTop.getOrPut(methodInTop) { mutableMapOf() }.put(subclass, method)
+                        retargetsInTop.getOrPut(methodInTop) { mutableMapOf() }.putAll(retargets)
                     }
                 }
             }
