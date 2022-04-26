@@ -30,8 +30,7 @@ import org.jetbrains.kotlin.utils.sure
 import java.util.*
 
 class SubstitutingScope(private val workerScope: MemberScope, givenSubstitutor: TypeSubstitutor) : MemberScope {
-
-    private val substitutor = givenSubstitutor.substitution.wrapWithCapturingSubstitution().buildSubstitutor()
+    val substitutor = givenSubstitutor.substitution.wrapWithCapturingSubstitution().buildSubstitutor()
 
     private var substitutedDescriptors: MutableMap<DeclarationDescriptor, DeclarationDescriptor>? = null
 

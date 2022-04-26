@@ -343,33 +343,61 @@ interface TypeSystemInferenceExtensionContext : TypeSystemContext, TypeSystemBui
         return EmptyIntersectionTypeKind.NOT_EMPTY_INTERSECTION
     }
 
+    fun createSubstitutorForSuperTypes(baseType: KotlinTypeMarker): TypeSubstitutorMarker?
+
+    private fun areIncompatibleSuperTypes(firstType: KotlinTypeMarker, secondType: KotlinTypeMarker): Boolean =
+        firstType.typeConstructor() == secondType.typeConstructor()
+                && !AbstractTypeChecker.equalTypes(context = this, firstType, secondType)
+
+    // interface A<T>
+    // interface B : A<Int>
+    // interface C : A<String>
+    // => B and C have incompatible supertypes
+    private fun hasIncompatibleSuperTypes(firstType: KotlinTypeMarker, secondType: KotlinTypeMarker): Boolean {
+        val superTypesOfFirst = firstType.typeConstructor().supertypes()
+        val firstTypeSubstitutor = createSubstitutorForSuperTypes(firstType)
+        val superTypesOfSecond = secondType.typeConstructor().supertypes()
+        val secondTypeSubstitutor = createSubstitutorForSuperTypes(secondType)
+
+        for (superTypeOfFirst in superTypesOfFirst) {
+            @Suppress("NAME_SHADOWING")
+            val superTypeOfFirst = firstTypeSubstitutor?.safeSubstitute(superTypeOfFirst) ?: superTypeOfFirst
+
+            if (areIncompatibleSuperTypes(superTypeOfFirst, secondType))
+                return true
+
+            for (superTypeOfSecond in superTypesOfSecond) {
+                @Suppress("NAME_SHADOWING")
+                val superTypeOfSecond = secondTypeSubstitutor?.safeSubstitute(superTypeOfSecond) ?: superTypeOfSecond
+
+                if (
+                    areIncompatibleSuperTypes(firstType, superTypeOfSecond)
+                    || areIncompatibleSuperTypes(superTypeOfFirst, superTypeOfSecond)
+                ) return true
+
+                if (hasIncompatibleSuperTypes(superTypeOfFirst, superTypeOfSecond))
+                    return true
+            }
+        }
+
+        return false
+    }
+
     private fun canHaveCommonSubtypeWithInterface(firstType: KotlinTypeMarker, secondType: KotlinTypeMarker): Boolean {
         require(firstType.typeConstructor().isInterface() || secondType.typeConstructor().isInterface()) {
             "One of the passed type should be an interface"
         }
         @Suppress("NAME_SHADOWING")
-        val firstType = firstType.withNullability(false)
+        val firstType = firstType.withNullability(false).eraseContainingTypeParameters()
 
         @Suppress("NAME_SHADOWING")
-        val secondType = secondType.withNullability(false)
+        val secondType = secondType.withNullability(false).eraseContainingTypeParameters()
 
         // interface A<K>
         // interface B: A<String>
         // interface C: A<Int>
         // B & C can't have common subtype due to having incompatible supertypes: A<String> and A<Int>
-        val haveIncompatibleSupertypes = firstType.anySuperTypeConstructor { superTypeOfFirst ->
-            secondType.anySuperTypeConstructor { superTypeOfSecond ->
-                val erasedSuperTypeOfSecond by lazy { superTypeOfSecond.eraseContainingTypeParameters() }
-                superTypeOfFirst.typeConstructor() == superTypeOfSecond.typeConstructor()
-                        && !AbstractTypeChecker.equalTypes(
-                    context = this,
-                    superTypeOfFirst.eraseContainingTypeParameters(),
-                    erasedSuperTypeOfSecond
-                )
-            }
-        }
-
-        return !haveIncompatibleSupertypes
+        return !hasIncompatibleSuperTypes(firstType, secondType)
     }
 
     private fun canHaveCommonSubtype(first: KotlinTypeMarker, second: KotlinTypeMarker): Boolean {

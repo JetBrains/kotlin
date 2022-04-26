@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir.types
 
 import org.jetbrains.kotlin.fir.diagnostics.ConeIntermediateDiagnostic
 import org.jetbrains.kotlin.fir.isPrimitiveNumberOrUnsignedNumberType
+import org.jetbrains.kotlin.fir.resolve.createSubstitutionForSupertype
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
@@ -563,4 +564,7 @@ interface ConeInferenceContext : TypeSystemInferenceExtensionContext, ConeTypeCo
 
     override fun SimpleTypeMarker.createConstraintPartForLowerBoundAndFlexibleTypeVariable(): KotlinTypeMarker =
         createFlexibleType(this.makeSimpleTypeDefinitelyNotNullOrNotNull(), this.withNullability(true))
+
+    override fun createSubstitutorForSuperTypes(baseType: KotlinTypeMarker): TypeSubstitutorMarker? =
+        if (baseType is ConeLookupTagBasedType) createSubstitutionForSupertype(baseType, session) else null
 }

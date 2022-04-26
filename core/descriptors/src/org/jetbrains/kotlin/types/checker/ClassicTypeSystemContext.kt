@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.calls.inference.CapturedType
 import org.jetbrains.kotlin.resolve.constants.IntegerLiteralTypeConstructor
 import org.jetbrains.kotlin.resolve.descriptorUtil.*
+import org.jetbrains.kotlin.resolve.scopes.SubstitutingScope
 import org.jetbrains.kotlin.resolve.substitutedUnderlyingType
 import org.jetbrains.kotlin.resolve.unsubstitutedUnderlyingType
 import org.jetbrains.kotlin.types.*
@@ -868,6 +869,11 @@ interface ClassicTypeSystemContext : TypeSystemInferenceExtensionContext, TypeSy
 
     override fun getKFunctionTypeConstructor(parametersNumber: Int, isSuspend: Boolean): TypeConstructorMarker {
         return getKFunctionDescriptor(builtIns, parametersNumber, isSuspend).typeConstructor
+    }
+
+    override fun createSubstitutorForSuperTypes(baseType: KotlinTypeMarker): TypeSubstitutorMarker? {
+        require(baseType is KotlinType, baseType::errorMessage)
+        return (baseType.memberScope as? SubstitutingScope)?.substitutor
     }
 
     override fun SimpleTypeMarker.createConstraintPartForLowerBoundAndFlexibleTypeVariable(): KotlinTypeMarker =

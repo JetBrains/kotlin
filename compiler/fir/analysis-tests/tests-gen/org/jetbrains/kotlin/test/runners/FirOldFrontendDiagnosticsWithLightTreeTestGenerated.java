@@ -15218,6 +15218,12 @@ public class FirOldFrontendDiagnosticsWithLightTreeTestGenerated extends Abstrac
                 }
 
                 @Test
+                @TestMetadata("contravariance.kt")
+                public void testContravariance() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/inference/emptyIntersectionTypes/contravariance.kt");
+                }
+
+                @Test
                 @TestMetadata("kt45461.kt")
                 public void testKt45461() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/inference/emptyIntersectionTypes/kt45461.kt");
@@ -15509,6 +15515,18 @@ public class FirOldFrontendDiagnosticsWithLightTreeTestGenerated extends Abstrac
                 @TestMetadata("selectFromCovariantAndContravariantTypes.kt")
                 public void testSelectFromCovariantAndContravariantTypes() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/inference/emptyIntersectionTypes/selectFromCovariantAndContravariantTypes.kt");
+                }
+
+                @Test
+                @TestMetadata("substitutingSuperTypes.kt")
+                public void testSubstitutingSuperTypes() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/inference/emptyIntersectionTypes/substitutingSuperTypes.kt");
+                }
+
+                @Test
+                @TestMetadata("substitutingSuperTypes2.kt")
+                public void testSubstitutingSuperTypes2() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/inference/emptyIntersectionTypes/substitutingSuperTypes2.kt");
                 }
             }
 
