@@ -13,7 +13,6 @@ import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.junit.jupiter.api.DisplayName
 import java.io.File
-import kotlin.io.path.ExperimentalPathApi
 import kotlin.io.path.createDirectories
 import kotlin.io.path.deleteExisting
 import kotlin.io.path.writeText
@@ -23,7 +22,6 @@ import kotlin.io.path.writeText
 class JvmTargetValidationTest : KGPBaseTest() {
 
     @DisplayName("Should produce warning if java and kotlin jvm targets are different")
-    @GradleTestVersions(minVersion = TestVersions.Gradle.G_6_7)
     @GradleTest
     internal fun shouldWarnIfJavaAndKotlinJvmTargetsAreDifferent(gradleVersion: GradleVersion) {
         project(
@@ -44,7 +42,6 @@ class JvmTargetValidationTest : KGPBaseTest() {
     }
 
     @DisplayName("Should fail the build if verification mode is 'error' and kotlin and java targets are different")
-    @GradleTestVersions(minVersion = TestVersions.Gradle.G_6_7)
     @GradleTest
     internal fun shouldFailBuildIfJavaAndKotlinJvmTargetsAreDifferent(gradleVersion: GradleVersion) {
         project(
@@ -71,7 +68,6 @@ class JvmTargetValidationTest : KGPBaseTest() {
     }
 
     @DisplayName("Should ignore if verification mode is 'ignore' and kotlin and java targets are different")
-    @GradleTestVersions(minVersion = TestVersions.Gradle.G_6_7)
     @GradleTest
     internal fun shouldNotPrintAnythingIfJavaAndKotlinJvmTargetsAreDifferent(
         gradleVersion: GradleVersion
@@ -100,7 +96,6 @@ class JvmTargetValidationTest : KGPBaseTest() {
     }
 
     @DisplayName("Should not produce warning when java and kotlin jvm targets are the same")
-    @GradleTestVersions(minVersion = TestVersions.Gradle.G_6_7)
     @GradleTest
     internal fun shouldNotWarnOnJavaAndKotlinSameJvmTargets(gradleVersion: GradleVersion) {
         project(
@@ -119,7 +114,6 @@ class JvmTargetValidationTest : KGPBaseTest() {
     }
 
     @DisplayName("Should produce Java-Kotlin jvm target incompatibility warning only for related tasks")
-    @GradleTestVersions(minVersion = TestVersions.Gradle.G_6_7)
     @GradleTest
     internal fun shouldProduceJavaKotlinJvmTargetDifferenceWarningOnlyForRelatedTasks(
         gradleVersion: GradleVersion
@@ -161,7 +155,6 @@ class JvmTargetValidationTest : KGPBaseTest() {
     }
 
     @DisplayName("Should correctly validate JVM targets in mixed Kotlin/Java projects that are using <JDK1.8")
-    @GradleTestVersions(minVersion = TestVersions.Gradle.G_6_7)
     @GradleTest
     internal fun oldJdkMixedJavaKotlinTargetVerification(gradleVersion: GradleVersion) {
         project(
@@ -193,7 +186,6 @@ class JvmTargetValidationTest : KGPBaseTest() {
     }
 
     @DisplayName("Should skip JVM target validation if no Kotlin sources are available")
-    @GradleTestVersions(minVersion = TestVersions.Gradle.G_6_7)
     @GradleTest
     internal fun shouldSkipJvmTargetValidationNoKotlinSources(gradleVersion: GradleVersion) {
         project(
@@ -254,7 +246,6 @@ class JvmTargetValidationTest : KGPBaseTest() {
 
     @DisplayName("Should do JVM target validation if java sources are added and configuration cache is reused")
     @GradleTest
-    @ExperimentalPathApi
     internal fun shouldDoJvmTargetValidationOnNewJavaSourcesAndConfigurationCacheReuse(gradleVersion: GradleVersion) {
         project(
             projectName = "simple".fullProjectName,
@@ -299,6 +290,43 @@ class JvmTargetValidationTest : KGPBaseTest() {
                     "'compileJava' task (current target is 11) and 'compileKotlin' task (current target is 1.8) jvm target compatibility should be set to the same Java version."
                 )
             }
+        }
+    }
+
+    @DisplayName("Validation should work correctly for KaptGenerateStubs task")
+    @GradleTestVersions
+    @GradleTest
+    internal fun kaptGenerateStubsValidateCorrect(gradleVersion: GradleVersion) {
+        project(
+            projectName = "kapt2/simple",
+            gradleVersion = gradleVersion,
+            buildJdk = getJdk11().javaHome
+        ) {
+            //language=properties
+            gradleProperties.append(
+                """
+                # suppress inspection "UnusedProperty"
+                kotlin.jvm.target.validation.mode = error
+                """.trimIndent()
+            )
+
+            val toolchainJavaVersion = if (gradleVersion < GradleVersion.version("6.9")) {
+                15
+            } else {
+                16
+            }
+            buildGradle.append(
+                """
+                
+                kotlin {
+                    jvmToolchain {
+                        languageVersion.set(JavaLanguageVersion.of($toolchainJavaVersion))
+                    }
+                }
+                """.trimIndent()
+            )
+
+            build("assemble")
         }
     }
 
