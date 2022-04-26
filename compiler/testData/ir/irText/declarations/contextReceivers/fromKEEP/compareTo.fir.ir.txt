@@ -197,8 +197,8 @@ FILE fqName:<root> fileName:/compareTo.kt
                 $this: GET_VAR '<this>: <root>.Pair<T of <root>.<get-min>, T of <root>.<get-min>> declared in <root>.<get-min>' type=<root>.Pair<T of <root>.<get-min>, T of <root>.<get-min>> origin=null
   FUN name:box visibility:public modality:FINAL <> () returnType:kotlin.String
     BLOCK_BODY
-      VAR name:comparator type:java.util.Comparator<@[FlexibleNullability] kotlin.String?> [val]
-        TYPE_OP type=java.util.Comparator<@[FlexibleNullability] kotlin.String?> origin=SAM_CONVERSION typeOperand=java.util.Comparator<@[FlexibleNullability] kotlin.String?>
+      VAR name:comparator type:java.util.Comparator<kotlin.String> [val]
+        TYPE_OP type=java.util.Comparator<kotlin.String> origin=SAM_CONVERSION typeOperand=java.util.Comparator<kotlin.String>
           FUN_EXPR type=kotlin.Function2<@[FlexibleNullability] kotlin.String?, @[FlexibleNullability] kotlin.String?, kotlin.Int> origin=LAMBDA
             FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (a:@[FlexibleNullability] kotlin.String?, b:@[FlexibleNullability] kotlin.String?) returnType:kotlin.Int
               VALUE_PARAMETER name:a index:0 type:@[FlexibleNullability] kotlin.String?
@@ -228,12 +228,12 @@ FILE fqName:<root> fileName:/compareTo.kt
                           $this: GET_VAR 'b: @[FlexibleNullability] kotlin.String? declared in <root>.box.<anonymous>' type=@[FlexibleNullability] kotlin.String? origin=null
       RETURN type=kotlin.Nothing from='public final fun box (): kotlin.String declared in <root>'
         CALL 'public final fun with <T, R> (receiver: T of kotlin.StandardKt.with, block: @[ExtensionFunctionType] kotlin.Function1<T of kotlin.StandardKt.with, R of kotlin.StandardKt.with>): R of kotlin.StandardKt.with [inline] declared in kotlin.StandardKt' type=kotlin.String origin=null
-          <T>: java.util.Comparator<@[FlexibleNullability] kotlin.String?>
+          <T>: java.util.Comparator<kotlin.String>
           <R>: kotlin.String
-          receiver: GET_VAR 'val comparator: java.util.Comparator<@[FlexibleNullability] kotlin.String?> [val] declared in <root>.box' type=java.util.Comparator<@[FlexibleNullability] kotlin.String?> origin=null
-          block: FUN_EXPR type=@[ExtensionFunctionType] kotlin.Function1<java.util.Comparator<@[FlexibleNullability] kotlin.String?>, kotlin.String> origin=LAMBDA
-            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> ($receiver:java.util.Comparator<@[FlexibleNullability] kotlin.String?>) returnType:kotlin.String
-              $receiver: VALUE_PARAMETER name:$this$with type:java.util.Comparator<@[FlexibleNullability] kotlin.String?>
+          receiver: GET_VAR 'val comparator: java.util.Comparator<kotlin.String> [val] declared in <root>.box' type=java.util.Comparator<kotlin.String> origin=null
+          block: FUN_EXPR type=@[ExtensionFunctionType] kotlin.Function1<java.util.Comparator<kotlin.String>, kotlin.String> origin=LAMBDA
+            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> ($receiver:java.util.Comparator<kotlin.String>) returnType:kotlin.String
+              $receiver: VALUE_PARAMETER name:$this$with type:java.util.Comparator<kotlin.String>
               BLOCK_BODY
                 RETURN type=kotlin.Nothing from='local final fun <anonymous> (): kotlin.String declared in <root>.box'
                   CALL 'public final fun <get-min> <T> (_context_receiver_0: java.util.Comparator<T of <root>.<get-min>>): T of <root>.<get-min> declared in <root>' type=kotlin.String origin=GET_PROPERTY
@@ -243,4 +243,4 @@ FILE fqName:<root> fileName:/compareTo.kt
                       <class: B>: kotlin.String
                       first: CONST String type=kotlin.String value="OK"
                       second: CONST String type=kotlin.String value="fail"
-                    _context_receiver_0: GET_VAR '$this$with: java.util.Comparator<@[FlexibleNullability] kotlin.String?> declared in <root>.box.<anonymous>' type=java.util.Comparator<@[FlexibleNullability] kotlin.String?> origin=null
+                    _context_receiver_0: GET_VAR '$this$with: java.util.Comparator<kotlin.String> declared in <root>.box.<anonymous>' type=java.util.Comparator<kotlin.String> origin=null

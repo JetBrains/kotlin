@@ -73,7 +73,7 @@ val <T : Any?> Pair<T, T>.min: T
   }
 
 fun box(): String {
-  val comparator: Comparator<@FlexibleNullability String?> = local fun <anonymous>(a: @FlexibleNullability String?, b: @FlexibleNullability String?): Int {
+  val comparator: Comparator<String> = local fun <anonymous>(a: @FlexibleNullability String?, b: @FlexibleNullability String?): Int {
     return when {
       when {
         EQEQ(arg0 = a, arg1 = null) -> true
@@ -82,8 +82,8 @@ fun box(): String {
       else -> a.<get-length>().compareTo(other = b.<get-length>())
     }
   }
- /*-> Comparator<@FlexibleNullability String?> */
-  return with<Comparator<@FlexibleNullability String?>, String>(receiver = comparator, block = local fun Comparator<@FlexibleNullability String?>.<anonymous>(): String {
+ /*-> Comparator<String> */
+  return with<Comparator<String>, String>(receiver = comparator, block = local fun Comparator<String>.<anonymous>(): String {
     return Pair<String, String>(first = "OK", second = "fail").<get-min><String>(_context_receiver_0 = $this$with)
   }
 )

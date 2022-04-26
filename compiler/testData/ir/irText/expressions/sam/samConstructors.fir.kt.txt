@@ -16,10 +16,10 @@ fun test3(): Runnable {
   return ::foo /*-> Runnable */
 }
 
-fun test4(): Comparator<@FlexibleNullability Int?> {
+fun test4(): Comparator<Int> {
   return local fun <anonymous>(a: @FlexibleNullability Int?, b: @FlexibleNullability Int?): Int {
     return a.minus(other = b /*!! Int */)
   }
- /*-> Comparator<@FlexibleNullability Int?> */
+ /*-> Comparator<Int> */
 }
 
