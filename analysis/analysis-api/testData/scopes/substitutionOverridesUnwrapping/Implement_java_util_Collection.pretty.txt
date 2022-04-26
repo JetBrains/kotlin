@@ -8,7 +8,7 @@ abstract operator fun iterator(): kotlin.collections.MutableIterator<test.SomeCl
 
 fun toArray(): kotlin.Array<(out) kotlin.Any!>!
 
-fun <T : kotlin.Any!> toArray(p0: kotlin.Array<(out) T!>!): kotlin.Array<(out) T!>!
+fun <T : kotlin.Any!> toArray(p0: kotlin.Array<(out) (T!!..T?)>!): kotlin.Array<(out) (T!!..T?)>!
 
 abstract fun add(p0: test.SomeClass!): kotlin.Boolean
 
