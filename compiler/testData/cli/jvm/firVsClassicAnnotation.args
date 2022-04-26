@@ -1,6 +1,6 @@
 $TESTDATA_DIR$/firVsClassicAnnotation.kt
 -classpath
 $TESTDATA_DIR$/firVsClassicAnnotation
--Xuse-fir
+-Xuse-k2
 -d
 $TEMP_DIR$

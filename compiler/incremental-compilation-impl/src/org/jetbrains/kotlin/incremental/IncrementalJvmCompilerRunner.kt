@@ -88,7 +88,7 @@ fun makeIncrementally(
 
     withIC(args) {
         val compiler =
-            if (args.useFir && args.useFirIC && args.useFirLT /* TODO: move LT check into runner */ )
+            if (args.useK2 && args.useFirIC && args.useFirLT /* TODO: move LT check into runner */ )
                 IncrementalFirJvmCompilerRunner(
                     cachesDir, buildReporter, buildHistoryFile, emptyList(), EmptyModulesApiHistory, kotlinExtensions, ClasspathSnapshotDisabled
                 )
@@ -97,7 +97,7 @@ fun makeIncrementally(
                     cachesDir,
                     buildReporter,
                     // Use precise setting in case of non-Gradle build
-                    usePreciseJavaTracking = !args.useFir, // TODO: add fir-based java classes tracker when available and set this to true
+                    usePreciseJavaTracking = !args.useK2, // TODO: add fir-based java classes tracker when available and set this to true
                     outputFiles = emptyList(),
                     buildHistoryFile = buildHistoryFile,
                     modulesApiHistory = EmptyModulesApiHistory,

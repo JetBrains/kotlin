@@ -9,6 +9,6 @@ as no stability/compatibility guarantees are given on
 compiler or generated code. Use it at your own risk!
 
 warning: ATTENTION!
- This build uses in-dev FIR:
-  -Xuse-fir
+ This build uses experimental K2 compiler:
+  -Xuse-k2
 OK

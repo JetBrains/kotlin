@@ -12,7 +12,7 @@ private val LANGUAGE_VERSION: String = System.getProperty("fir.bench.language.ve
 class FullPipelineModularizedTest : AbstractFullPipelineModularizedTest() {
 
     override fun configureArguments(args: K2JVMCompilerArguments, moduleData: ModuleData) {
-        args.useFir = true
+        args.useK2 = true
         args.useIR = true
         args.apiVersion = LANGUAGE_VERSION
         args.jvmDefault = "compatibility"

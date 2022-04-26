@@ -1,6 +1,6 @@
 warning: ATTENTION!
- This build uses in-dev FIR:
-  -Xuse-fir
+ This build uses experimental K2 compiler:
+  -Xuse-k2
 compiler/testData/cli/jvm/extendedCheckers.kt:2:12: warning: redundant explicit type
     val i: Int = 1
            ^

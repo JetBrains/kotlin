@@ -1,6 +1,6 @@
 warning: ATTENTION!
- This build uses in-dev FIR:
-  -Xuse-fir
+ This build uses experimental K2 compiler:
+  -Xuse-k2
 compiler/testData/cli/jvm/firError.kt:5:13: error: variable 'x' must be initialized
     println(x)
             ^

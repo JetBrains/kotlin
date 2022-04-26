@@ -129,7 +129,7 @@ internal fun reportArgumentsNotAllowed(
         K2JVMCompilerArguments::useJavac,
         K2JVMCompilerArguments::useIR,
         K2JVMCompilerArguments::useOldBackend,
-        K2JVMCompilerArguments::useFir
+        K2JVMCompilerArguments::useK2
     )
 
 internal fun reportArgumentsIgnoredGenerally(
