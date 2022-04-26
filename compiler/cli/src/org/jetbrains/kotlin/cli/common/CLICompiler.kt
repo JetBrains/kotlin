@@ -41,6 +41,9 @@ import java.io.File
 import java.io.PrintStream
 
 abstract class CLICompiler<A : CommonCompilerArguments> : CLITool<A>() {
+    companion object {
+        const val SCRIPT_PLUGIN_REGISTRAR_NAME = "org.jetbrains.kotlin.scripting.compiler.plugin.ScriptingCompilerConfigurationComponentRegistrar"
+    }
 
     abstract val defaultPerformanceManager: CommonCompilerPerformanceManager
 
@@ -188,9 +191,7 @@ abstract class CLICompiler<A : CommonCompilerArguments> : CLITool<A>() {
     }
 
     private fun tryLoadScriptingPluginFromCurrentClassLoader(configuration: CompilerConfiguration): Boolean = try {
-        val pluginRegistrarClass = PluginCliParser::class.java.classLoader.loadClass(
-            "org.jetbrains.kotlin.scripting.compiler.plugin.ScriptingCompilerConfigurationComponentRegistrar"
-        )
+        val pluginRegistrarClass = PluginCliParser::class.java.classLoader.loadClass(SCRIPT_PLUGIN_REGISTRAR_NAME)
         val pluginRegistrar = pluginRegistrarClass.newInstance() as? ComponentRegistrar
         if (pluginRegistrar != null) {
             configuration.add(ComponentRegistrar.PLUGIN_COMPONENT_REGISTRARS, pluginRegistrar)
