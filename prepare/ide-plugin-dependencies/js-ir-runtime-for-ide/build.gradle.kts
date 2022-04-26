@@ -20,7 +20,4 @@ idePluginDependency {
             zipTree(klibTask.singleOutputFile())
         }
     }
-
-    sourcesJar()
-    javadocJar()
 }
