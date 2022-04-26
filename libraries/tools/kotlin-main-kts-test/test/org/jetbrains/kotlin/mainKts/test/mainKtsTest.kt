@@ -223,6 +223,12 @@ class MainKtsTest {
         assertEquals("success", value)
     }
 
+    @Test
+    fun testKt48812() {
+        val res = evalFile(File("$TEST_DATA_ROOT/kt48812.main.kts"))
+        assertSucceeded(res)
+    }
+
     private fun assertSucceeded(res: ResultWithDiagnostics<EvaluationResult>) {
         Assert.assertTrue(
             "test failed:\n  ${res.reports.joinToString("\n  ") { it.message + if (it.exception == null) "" else ": ${it.exception}" }}",
