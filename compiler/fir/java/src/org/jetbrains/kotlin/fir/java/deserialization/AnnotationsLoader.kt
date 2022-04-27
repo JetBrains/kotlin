@@ -18,11 +18,9 @@ import org.jetbrains.kotlin.fir.resolve.providers.getClassDeclaredPropertySymbol
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
 import org.jetbrains.kotlin.fir.symbols.impl.ConeClassLikeLookupTagImpl
-import org.jetbrains.kotlin.fir.types.ConeClassLikeType
-import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
+import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
-import org.jetbrains.kotlin.fir.types.coneType
-import org.jetbrains.kotlin.fir.types.constructClassType
+import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.load.kotlin.KotlinClassFinder
 import org.jetbrains.kotlin.load.kotlin.KotlinJvmBinaryClass
@@ -48,9 +46,12 @@ internal class AnnotationsLoader(private val session: FirSession, private val ko
             }
 
             private fun ClassLiteralValue.toFirClassReferenceExpression(): FirClassReferenceExpression {
-                val literalLookupTag = ConeClassLikeLookupTagImpl(classId)
+                val resolvedClassTypeRef = ConeClassLikeLookupTagImpl(classId).toDefaultResolvedTypeRef()
                 return buildClassReferenceExpression {
-                    classTypeRef = literalLookupTag.toDefaultResolvedTypeRef()
+                    classTypeRef = resolvedClassTypeRef
+                    typeRef = buildResolvedTypeRef {
+                        type = StandardClassIds.KClass.constructClassLikeType(arrayOf(resolvedClassTypeRef.type), false)
+                    }
                 }
             }
 
@@ -77,13 +78,23 @@ internal class AnnotationsLoader(private val session: FirSession, private val ko
                             }
                         }
                     }
+
+                    typeRef = buildResolvedTypeRef {
+                        type = ConeClassLikeTypeImpl(
+                            ConeClassLikeLookupTagImpl(this@toEnumEntryReferenceExpression),
+                            emptyArray(),
+                            isNullable = false
+                        )
+                    }
                 }
             }
 
             override fun visitClassLiteral(name: Name?, value: ClassLiteralValue) {
                 if (name == null) return
                 argumentMap[name] = buildGetClassCall {
-                    argumentList = buildUnaryArgumentList(value.toFirClassReferenceExpression())
+                    val argument = value.toFirClassReferenceExpression()
+                    argumentList = buildUnaryArgumentList(argument)
+                    typeRef = argument.typeRef
                 }
             }
 
@@ -108,7 +119,9 @@ internal class AnnotationsLoader(private val session: FirSession, private val ko
                     override fun visitClassLiteral(value: ClassLiteralValue) {
                         elements.add(
                             buildGetClassCall {
-                                argumentList = buildUnaryArgumentList(value.toFirClassReferenceExpression())
+                                val argument = value.toFirClassReferenceExpression()
+                                argumentList = buildUnaryArgumentList(argument)
+                                typeRef = argument.typeRef
                             }
                         )
                     }

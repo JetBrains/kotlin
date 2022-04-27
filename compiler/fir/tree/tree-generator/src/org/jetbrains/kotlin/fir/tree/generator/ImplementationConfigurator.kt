@@ -561,6 +561,8 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
             "FirArrayOfCallImpl",
             "FirIntegerLiteralOperatorCallImpl",
             "FirContextReceiverImpl",
+            "FirClassReferenceExpressionImpl",
+            "FirGetClassCallImpl"
         )
         configureFieldInAllImplementations(
             field = "typeRef",

@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.fir.expressions.FirArgumentList
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirGetClassCall
 import org.jetbrains.kotlin.fir.types.FirTypeRef
-import org.jetbrains.kotlin.fir.types.impl.FirImplicitTypeRefImpl
 import org.jetbrains.kotlin.fir.visitors.*
 
 /*
@@ -21,10 +20,10 @@ import org.jetbrains.kotlin.fir.visitors.*
 
 internal class FirGetClassCallImpl(
     override val source: KtSourceElement?,
+    override var typeRef: FirTypeRef,
     override val annotations: MutableList<FirAnnotation>,
     override var argumentList: FirArgumentList,
 ) : FirGetClassCall() {
-    override var typeRef: FirTypeRef = FirImplicitTypeRefImpl(null)
     override val argument: FirExpression get() = argumentList.arguments.first()
 
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {

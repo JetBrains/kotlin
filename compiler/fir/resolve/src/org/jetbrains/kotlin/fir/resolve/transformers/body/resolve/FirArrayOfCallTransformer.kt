@@ -37,7 +37,6 @@ internal class FirArrayOfCallTransformer : FirDefaultTransformer<Nothing?>() {
         if (!functionCall.isArrayOfCall) {
             return null
         }
-        val typeRef = functionCall.typeRef
         return buildArrayOfCall {
             source = functionCall.source
             annotations += functionCall.annotations
@@ -49,8 +48,7 @@ internal class FirArrayOfCallTransformer : FirDefaultTransformer<Nothing?>() {
                     }
                 }
             }
-        }.apply {
-            replaceTypeRef(typeRef)
+            typeRef = functionCall.typeRef
         }
     }
 

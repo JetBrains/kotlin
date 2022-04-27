@@ -258,6 +258,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
             runTest("compiler/testData/codegen/box/annotations/resolveWithLowPriorityAnnotation.kt");
         }
 
+        @TestMetadata("resolvedReturnTypeForJavaEnumEntryAfterDeserialization.kt")
+        public void testResolvedReturnTypeForJavaEnumEntryAfterDeserialization() throws Exception {
+            runTest("compiler/testData/codegen/box/annotations/resolvedReturnTypeForJavaEnumEntryAfterDeserialization.kt");
+        }
+
         @TestMetadata("retentionInJava.kt")
         public void testRetentionInJava() throws Exception {
             runTest("compiler/testData/codegen/box/annotations/retentionInJava.kt");

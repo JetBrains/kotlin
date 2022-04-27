@@ -312,6 +312,12 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
         }
 
         @Test
+        @TestMetadata("resolvedReturnTypeForJavaEnumEntryAfterDeserialization.kt")
+        public void testResolvedReturnTypeForJavaEnumEntryAfterDeserialization() throws Exception {
+            runTest("compiler/testData/codegen/box/annotations/resolvedReturnTypeForJavaEnumEntryAfterDeserialization.kt");
+        }
+
+        @Test
         @TestMetadata("retentionInJava.kt")
         public void testRetentionInJava() throws Exception {
             runTest("compiler/testData/codegen/box/annotations/retentionInJava.kt");

@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.metadata.deserialization.NameResolver
 import org.jetbrains.kotlin.metadata.deserialization.TypeTable
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.protobuf.MessageLite
 import org.jetbrains.kotlin.serialization.deserialization.builtins.BuiltInSerializerProtocol
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
@@ -254,13 +255,16 @@ abstract class AbstractAnnotationDeserializer(
                 val classId = nameResolver.getClassId(value.classId)
                 val lookupTag = ConeClassLikeLookupTagImpl(classId)
                 val referencedType = lookupTag.constructType(emptyArray(), isNullable = false)
+                val resolvedTypeRef = buildResolvedTypeRef {
+                    type = StandardClassIds.KClass.constructClassLikeType(arrayOf(referencedType), false)
+                }
                 argumentList = buildUnaryArgumentList(
                     buildClassReferenceExpression {
-                        classTypeRef = buildResolvedTypeRef {
-                            type = referencedType
-                        }
+                        classTypeRef = buildResolvedTypeRef { type = referencedType }
+                        typeRef = resolvedTypeRef
                     }
                 )
+                typeRef = resolvedTypeRef
             }
             ENUM -> buildFunctionCall {
                 val classId = nameResolver.getClassId(value.classId)
@@ -279,6 +283,9 @@ abstract class AbstractAnnotationDeserializer(
                 } ?: buildErrorNamedReference {
                     diagnostic =
                         ConeSimpleDiagnostic("Strange deserialized enum value: $classId.$entryName", DiagnosticKind.DeserializationError)
+                }
+                if (enumEntrySymbol != null) {
+                    typeRef = enumEntrySymbol.returnTypeRef
                 }
             }
             ARRAY -> {
