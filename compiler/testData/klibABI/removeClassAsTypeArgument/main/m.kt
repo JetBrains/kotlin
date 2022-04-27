@@ -1,4 +1,3 @@
-
 fun test1(d: D): String {
     try {
         d.bar()
@@ -12,7 +11,6 @@ fun test1(d: D): String {
 fun test2(d: D): String {
     return d.foo()
 }
-
 
 fun box(): String {
     return test1(D()) + test2(D())

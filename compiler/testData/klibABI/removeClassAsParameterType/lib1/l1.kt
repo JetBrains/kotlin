@@ -1,4 +1,2 @@
-
 class C
-
 class E

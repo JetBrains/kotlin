@@ -1,4 +1,3 @@
-
 interface I<T> {
     val o: T
 }
@@ -12,9 +11,9 @@ class EX: I<E> {
 }
 
 class D {
-    fun foo(): String = stable().o.o()
     fun stable(): ST = ST()
+    fun foo(): String = stable().o.o()
 
-    fun bar(): String = exp().o.e()
     fun exp(): EX = EX()
+    fun bar(): String = exp().o.e()
 }

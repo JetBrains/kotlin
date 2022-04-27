@@ -1,4 +1,3 @@
-
 class C {
     fun o(): String = "K"
 }
