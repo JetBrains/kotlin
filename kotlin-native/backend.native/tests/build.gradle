@@ -4233,6 +4233,10 @@ createInterop("kt44283") {
     it.defFile 'interop/kt44283/kt44283.def'
 }
 
+createInterop("kt51925") {
+    it.defFile 'interop/kt51925/kt51925.def'
+}
+
 createInterop("kt43502") {
     it.defFile 'interop/kt43502/kt43502.def'
     it.headers "$projectDir/interop/kt43502/kt43502.h"
@@ -4686,6 +4690,15 @@ interopTest("interop_kt44283") {
     flags = ['-g']
     interop = 'kt44283'
     source = "interop/kt44283/main.kt"
+}
+
+// TODO: This test should be run with caches on.
+interopTest("interop_kt51925") {
+    disabled = (project.testTarget == 'wasm32') // No interop for wasm yet.
+    interop = 'kt51925'
+    lib = 'interop/kt51925/kt51925_lib.kt'
+    source = 'interop/kt51925/kt51925_main.kt'
+    useGoldenData = true
 }
 
 dynamicTest("interop_kt43502") {
