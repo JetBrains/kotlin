@@ -18375,6 +18375,12 @@ public class FirOldFrontendDiagnosticsTestGenerated extends AbstractFirDiagnosti
             }
 
             @Test
+            @TestMetadata("overrideWithErasure.kt")
+            public void testOverrideWithErasure() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/j+k/overrideWithErasure.kt");
+            }
+
+            @Test
             @TestMetadata("overrideWithSamAndTypeParameter.kt")
             public void testOverrideWithSamAndTypeParameter() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/j+k/overrideWithSamAndTypeParameter.kt");
