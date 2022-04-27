@@ -132,7 +132,7 @@ open class FastMethodAnalyzer<V : Value>
 
                         handler.init(f)
                         handler.clearStack()
-                        handler.push(interpreter.newValue(exnType))
+                        handler.push(interpreter.newExceptionValue(tcb, handler, exnType))
                         mergeControlFlowEdge(jump, handler)
                     }
                 }
@@ -157,21 +157,25 @@ open class FastMethodAnalyzer<V : Value>
     }
 
     internal fun initLocals(current: Frame<V>) {
-        current.setReturn(interpreter.newValue(Type.getReturnType(method.desc)))
+        current.setReturn(interpreter.newReturnTypeValue(Type.getReturnType(method.desc)))
         val args = Type.getArgumentTypes(method.desc)
         var local = 0
-        if ((method.access and Opcodes.ACC_STATIC) == 0) {
-            val ctype = Type.getObjectType(owner)
-            current.setLocal(local++, interpreter.newValue(ctype))
+        val isInstanceMethod = (method.access and Opcodes.ACC_STATIC) == 0
+        if (isInstanceMethod) {
+            current.setLocal(local, interpreter.newParameterValue(true, local, Type.getObjectType(owner)))
+            local++
         }
         for (arg in args) {
-            current.setLocal(local++, interpreter.newValue(arg))
+            current.setLocal(local, interpreter.newParameterValue(isInstanceMethod, local, arg))
+            local++
             if (arg.size == 2) {
-                current.setLocal(local++, interpreter.newValue(null))
+                current.setLocal(local, interpreter.newEmptyValue(local))
+                local++
             }
         }
         while (local < method.maxLocals) {
-            current.setLocal(local++, interpreter.newValue(null))
+            current.setLocal(local, interpreter.newEmptyValue(local))
+            local++
         }
     }
 
