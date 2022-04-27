@@ -25,13 +25,11 @@ class OptionalAnnotationClassesProvider(
     session: FirSession,
     moduleDataProvider: ModuleDataProvider,
     kotlinScopeProvider: FirKotlinScopeProvider,
-    packagePartProvider: PackagePartProvider,
+    val packagePartProvider: PackagePartProvider,
     defaultDeserializationOrigin: FirDeclarationOrigin = FirDeclarationOrigin.Library
 ) : AbstractFirDeserializedSymbolProvider(session, moduleDataProvider, kotlinScopeProvider, defaultDeserializationOrigin) {
-    private val optionalAnnotationClasses: Map<ClassId, ClassData>
-    private val optionalAnnotationPackages: Set<FqName>
 
-    init {
+    private val optionalAnnotationClassesAndPackages by lazy(LazyThreadSafetyMode.PUBLICATION) {
         val optionalAnnotationClasses = mutableMapOf<ClassId, ClassData>()
         val optionalAnnotationPackages = mutableSetOf<FqName>()
 
@@ -41,8 +39,7 @@ class OptionalAnnotationClassesProvider(
             optionalAnnotationPackages.add(classId.packageFqName)
         }
 
-        this.optionalAnnotationClasses = optionalAnnotationClasses
-        this.optionalAnnotationPackages = optionalAnnotationPackages
+        return@lazy Pair(optionalAnnotationClasses, optionalAnnotationPackages)
     }
 
     override fun computePackagePartsInfos(packageFqName: FqName): List<PackagePartsCacheData> {
@@ -53,7 +50,7 @@ class OptionalAnnotationClassesProvider(
         classId: ClassId,
         parentContext: FirDeserializationContext?
     ): ClassMetadataFindResult? {
-        val optionalAnnotationClass = optionalAnnotationClasses[classId] ?: return null
+        val optionalAnnotationClass = optionalAnnotationClassesAndPackages.first[classId] ?: return null
 
         return ClassMetadataFindResult.Metadata(
             optionalAnnotationClass.nameResolver,
@@ -69,5 +66,5 @@ class OptionalAnnotationClassesProvider(
         return JvmFlags.IS_COMPILED_IN_JVM_DEFAULT_MODE.get(classProto.getExtension(JvmProtoBuf.jvmClassFlags))
     }
 
-    override fun getPackage(fqName: FqName): FqName? = if (optionalAnnotationPackages.contains(fqName)) fqName else null
+    override fun getPackage(fqName: FqName): FqName? = if (optionalAnnotationClassesAndPackages.second.contains(fqName)) fqName else null
 }
