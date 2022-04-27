@@ -24,8 +24,13 @@ import org.jetbrains.kotlin.name.Name
 inline fun <reified T : IrElement> T.deepCopyWithSymbols(
     initialParent: IrDeclarationParent? = null,
     createCopier: (SymbolRemapper, TypeRemapper) -> DeepCopyIrTreeWithSymbols = ::DeepCopyIrTreeWithSymbols
+): T = deepCopyWithSymbols(initialParent, DeepCopySymbolRemapper(), createCopier)
+
+inline fun <reified T : IrElement> T.deepCopyWithSymbols(
+    initialParent: IrDeclarationParent?,
+    symbolRemapper: DeepCopySymbolRemapper,
+    createCopier: (SymbolRemapper, TypeRemapper) -> DeepCopyIrTreeWithSymbols = ::DeepCopyIrTreeWithSymbols
 ): T {
-    val symbolRemapper = DeepCopySymbolRemapper()
     acceptVoid(symbolRemapper)
     val typeRemapper = DeepCopyTypeRemapper(symbolRemapper)
     return transform(createCopier(symbolRemapper, typeRemapper), null).patchDeclarationParents(initialParent) as T

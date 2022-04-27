@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.backend.common.serialization.unlinked
 
 import org.jetbrains.kotlin.backend.common.serialization.unlinked.UnlinkedDeclarationsSupport.UnlinkedMarkerTypeHandler
+import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
@@ -19,11 +20,9 @@ import org.jetbrains.kotlin.ir.symbols.impl.IrAnonymousInitializerSymbolImpl
 import org.jetbrains.kotlin.ir.types.IrSimpleType
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.IrTypeProjection
-import org.jetbrains.kotlin.ir.util.IrMessageLogger
-import org.jetbrains.kotlin.ir.util.fileOrNull
-import org.jetbrains.kotlin.ir.util.fqNameForIrSerialization
-import org.jetbrains.kotlin.ir.util.fqNameWhenAvailable
+import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
+import org.jetbrains.kotlin.name.FqName
 
 internal class UnlinkedDeclarationsProcessor(
     private val builtIns: IrBuiltIns,
@@ -33,7 +32,7 @@ internal class UnlinkedDeclarationsProcessor(
 ) {
 
     companion object {
-        val errorOrigin = object : IrStatementOriginImpl("LINKAGE ERROR") {}
+        private val errorOrigin = object : IrStatementOriginImpl("LINKAGE ERROR") {}
     }
 
     fun addLinkageErrorIntoUnlinkedClasses() {
@@ -54,7 +53,7 @@ internal class UnlinkedDeclarationsProcessor(
                 }
                 anonInitializer.body.statements.clear()
 
-                klass.reportWarning("Class", klass.fqNameForIrSerialization.asString())
+                klass.reportUnlinkedSymbolsWarning("Class", klass.fqNameForIrSerialization)
 
                 anonInitializer.body.statements.add(klass.throwLinkageError(klass.symbol))
 
@@ -75,8 +74,8 @@ internal class UnlinkedDeclarationsProcessor(
         return IrMessageLogger.Location("$module @ $fileName", lineNumber, columnNumber)
     }
 
-    private fun IrDeclaration.reportWarning(kind: String, fqn: String) {
-        reportWarning("$kind declaration $fqn contains unlinked symbols", location())
+    private fun IrDeclaration.reportUnlinkedSymbolsWarning(kind: String, fqn: FqName) {
+        reportWarning("$kind declaration ${fqn.asString()} contains unlinked symbols", location())
     }
 
     private fun reportWarning(message: String, location: IrMessageLogger.Location?) {
@@ -86,54 +85,38 @@ internal class UnlinkedDeclarationsProcessor(
     fun signatureTransformer(): IrElementTransformerVoid = SignatureTransformer()
 
     private inner class SignatureTransformer : IrElementTransformerVoid() {
+        private val implementedFakeOverrideProperties = hashSetOf<IrProperty>()
+
+        private val IrFunction.isAccessorOfImplementedFakeOverrideProperty: Boolean
+            get() = (this as? IrSimpleFunction)?.correspondingPropertySymbol?.owner in implementedFakeOverrideProperties
+
+        override fun visitProperty(declaration: IrProperty): IrStatement {
+            val newProperty = declaration.replaceIfUnimplementedFakeOverride()
+
+            val isImplementedFakeOverride = newProperty != declaration
+            if (isImplementedFakeOverride) implementedFakeOverrideProperties += newProperty
+
+            newProperty.transformChildrenVoid()
+
+            if (isImplementedFakeOverride) implementedFakeOverrideProperties -= newProperty
+
+            return newProperty
+        }
 
         override fun visitFunction(declaration: IrFunction): IrStatement {
-            var linked = true
-            fun IrValueParameter.fixType() {
-                if (type.isUnlinked()) {
-                    linked = false
-                    type = unlinkedMarkerTypeHandler.unlinkedMarkerType
-                    defaultValue = null
-                }
-                varargElementType?.let {
-                    if (it.isUnlinked()) {
-                        varargElementType = unlinkedMarkerTypeHandler.unlinkedMarkerType
-                    }
-                }
-            }
-            declaration.dispatchReceiverParameter?.fixType()
-            declaration.extensionReceiverParameter?.fixType()
-            declaration.valueParameters.forEach { it.fixType() }
-            if (declaration.returnType.isUnlinked()) {
-                linked = false
-                declaration.returnType = unlinkedMarkerTypeHandler.unlinkedMarkerType
-            }
-            declaration.typeParameters.forEach {
-                if (it.superTypes.any { s -> s.isUnlinked() }) {
-                    linked = false
-                    it.superTypes = listOf(unlinkedMarkerTypeHandler.unlinkedMarkerType)
-                }
-            }
-            if (linked) {
-                declaration.transformChildrenVoid()
-            } else {
-                declaration.reportWarning("Function", declaration.fqNameForIrSerialization.asString())
+            val newFunction = declaration.replaceIfUnimplementedFakeOverride()
+            val removedUnlinkedTypes = newFunction.fixUnlinkedTypes()
 
-                declaration.body?.let { body ->
-                    val bb = (body as IrBlockBody)
-                    bb.statements.clear()
-                    bb.statements.add(declaration.throwLinkageError(unlinkedSymbol = null, "Unlinked type in IR function signature"))
-                }
-            }
-            return declaration
+            val isImplementedFakeOverride = newFunction != declaration || declaration.isAccessorOfImplementedFakeOverrideProperty
+
+            return newFunction.transformBodyIfNecessary(isImplementedFakeOverride, removedUnlinkedTypes)
         }
 
         override fun visitField(declaration: IrField): IrStatement {
             if (declaration.type.isUnlinked()) {
-
                 val fqn = declaration.correspondingPropertySymbol?.owner?.fqNameWhenAvailable ?: declaration.fqNameForIrSerialization
                 val kind = if (declaration.correspondingPropertySymbol != null) "Property" else "Field"
-                declaration.reportWarning(kind, fqn.asString())
+                declaration.reportUnlinkedSymbolsWarning(kind, fqn)
 
                 declaration.type = unlinkedMarkerTypeHandler.unlinkedMarkerType
                 declaration.initializer = null
@@ -141,6 +124,98 @@ internal class UnlinkedDeclarationsProcessor(
                 declaration.transformChildrenVoid()
             }
             return declaration
+        }
+
+        /**
+         * Replaces an [IrProperty] or [IrSimpleFunction] that is abstract fake override in non-abstract class
+         * by the corresponding non-abstract IR element.
+         */
+        private fun <T : IrDeclaration> T.replaceIfUnimplementedFakeOverride(): T {
+            if (this !is IrOverridableDeclaration<*> || !isFakeOverride || modality != Modality.ABSTRACT) return this
+
+            val clazz = parentAsClass
+            if (clazz.modality == Modality.ABSTRACT || clazz.modality == Modality.SEALED) return this
+
+            return deepCopyWithImplementedFakeOverrides()
+        }
+
+        /**
+         * Returns the set of all unlinked types encountered during transformation of the given [IrFunction].
+         * Or empty set if there were no unlinked types.
+         */
+        private fun IrFunction.fixUnlinkedTypes(): Set<IrType> = buildSet {
+            fun IrValueParameter.fixType() {
+                if (type.isUnlinked()) {
+                    this@buildSet += type
+                    type = unlinkedMarkerTypeHandler.unlinkedMarkerType
+                    defaultValue = null
+                }
+                varargElementType?.let {
+                    if (it.isUnlinked()) {
+                        this@buildSet += it
+                        varargElementType = unlinkedMarkerTypeHandler.unlinkedMarkerType
+                    }
+                }
+            }
+
+            dispatchReceiverParameter?.fixType()
+            extensionReceiverParameter?.fixType()
+            valueParameters.forEach { it.fixType() }
+            if (returnType.isUnlinked()) {
+                this += returnType
+                returnType = unlinkedMarkerTypeHandler.unlinkedMarkerType
+            }
+            typeParameters.forEach {
+                val unlinkedSuperType = it.superTypes.firstOrNull { s -> s.isUnlinked() }
+                if (unlinkedSuperType != null) {
+                    this += unlinkedSuperType
+                    it.superTypes = listOf(unlinkedMarkerTypeHandler.unlinkedMarkerType)
+                }
+            }
+        }
+
+        private fun IrFunction.transformBodyIfNecessary(
+            isImplementedFakeOverride: Boolean,
+            removedUnlinkedTypes: Set<IrType>
+        ): IrFunction {
+            if (!isImplementedFakeOverride && removedUnlinkedTypes.isEmpty()) {
+                transformChildrenVoid()
+            } else {
+                val functionKind = when {
+                    this@transformBodyIfNecessary is IrSimpleFunction && correspondingPropertySymbol != null -> "property accessor"
+                    this@transformBodyIfNecessary is IrConstructor -> "constructor"
+                    else -> "function"
+                }
+
+                val errorMessages = listOfNotNull(
+                    if (isImplementedFakeOverride)
+                        buildString {
+                            append("Abstract ").append(functionKind).append(" ")
+                            append(fqNameForIrSerialization.asString())
+                            append(" is not implemented in non-abstract class ")
+                            append(parent.fqNameForIrSerialization.asString())
+                        }
+                    else null,
+                    if (removedUnlinkedTypes.isNotEmpty())
+                        buildString {
+                            append("The signature of ").append(functionKind).append(" ")
+                            append(fqNameForIrSerialization.asString())
+                            append(" contains unlinked symbols: ")
+                            removedUnlinkedTypes.joinTo(this) { it.render() }
+                        }
+                    else null
+                )
+
+                errorMessages.forEach { reportWarning(it, location()) }
+
+                body?.let { body ->
+                    val bb = body as IrBlockBody
+                    bb.statements.clear()
+                    bb.statements.add(throwLinkageError(unlinkedSymbol = null, errorMessages.joinToString(separator = "; ")))
+                }
+            }
+
+            return this
         }
     }
 
