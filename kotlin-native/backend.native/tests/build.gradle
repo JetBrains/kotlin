@@ -4365,12 +4365,31 @@ Task interopTestBase(String name, boolean multiFile, Closure<KonanInteropTest> c
         task.configure(configureClosure)
         if (task.enabled) {
             konanArtifacts {
-                def lib = task.interop
-                UtilsKt.dependsOnKonanBuildingTask(task, lib, target)
+                def targetName = target.name
+                def interopLib = task.interop
+                UtilsKt.dependsOnKonanBuildingTask(task, interopLib, target)
 
-                program(name, targets: [target.name]) {
+                def lib = "lib$name"
+                def hasIntermediateLib = task.lib != null
+                if (hasIntermediateLib) {
+                    // build a library from KonanLinkTest::lib property
+                    library(lib, targets: [targetName]) {
+                        libraries {
+                            artifact interopLib
+                        }
+                        srcFiles task.lib
+                        baseDir  "$testOutputLocal/$name"
+                        extraOpts task.flags
+                        extraOpts project.globalTestArgs
+                    }
+                    UtilsKt.dependsOnKonanBuildingTask(task, lib, target)
+                }
+
+                program(name, targets: [targetName]) {
                     libraries {
-                        artifact lib
+                        artifact interopLib
+                        if (hasIntermediateLib)
+                            klib lib
                     }
                     srcFiles multiFile ? fileTree(task.source) { include '**/*.kt' } : task.getSources()
                     baseDir "$testOutputLocal/$name"

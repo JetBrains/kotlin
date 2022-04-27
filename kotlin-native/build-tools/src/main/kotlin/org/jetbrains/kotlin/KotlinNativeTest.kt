@@ -471,6 +471,10 @@ open class KonanInteropTest : KonanStandaloneTest() {
      */
     @Input
     lateinit var interop: String
+
+    @Input
+    @Optional
+    var lib: String? = null
 }
 
 open class KonanLinkTest : KonanStandaloneTest() {
