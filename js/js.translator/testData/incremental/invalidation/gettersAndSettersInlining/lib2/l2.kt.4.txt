@@ -1,0 +1,13 @@
+class Child(name: String) : Parent(name) {
+   override var name: String
+        get() = _name
+        set(name) {
+           _name = name
+           isValid = true
+        }
+
+  private var _name: String = name
+
+   override var isValid = false
+        private set
+}

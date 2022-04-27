@@ -85,6 +85,11 @@ public class InvalidationTestGenerated extends AbstractInvalidationTest {
         runTest("js/js.translator/testData/incremental/invalidation/genericInlineFunctions/");
     }
 
+    @TestMetadata("gettersAndSettersInlining")
+    public void testGettersAndSettersInlining() throws Exception {
+        runTest("js/js.translator/testData/incremental/invalidation/gettersAndSettersInlining/");
+    }
+
     @TestMetadata("inlineBecomeNonInline")
     public void testInlineBecomeNonInline() throws Exception {
         runTest("js/js.translator/testData/incremental/invalidation/inlineBecomeNonInline/");

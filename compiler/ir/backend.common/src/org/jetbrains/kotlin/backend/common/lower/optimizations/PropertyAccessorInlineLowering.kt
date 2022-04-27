@@ -95,11 +95,11 @@ open class PropertyAccessorInlineLowering(
 
 
 
-            if (property.getter === callee) {
+            if (property.getter === analyzedCallee) {
                 return tryInlineSimpleGetter(expression, analyzedCallee, backingField) ?: expression
             }
 
-            if (property.setter === callee) {
+            if (property.setter === analyzedCallee) {
                 return tryInlineSimpleSetter(expression, analyzedCallee, backingField) ?: expression
             }
 

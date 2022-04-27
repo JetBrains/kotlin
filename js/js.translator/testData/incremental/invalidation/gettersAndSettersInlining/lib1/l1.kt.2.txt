@@ -1,0 +1,13 @@
+open class Parent(name: String) {
+   var name: String
+        get() = _name
+        set(name) {
+          isValid = true
+          _name = name
+        }
+
+    var isValid = false
+        private set
+
+   private var _name: String = name;
+}
