@@ -68,6 +68,4 @@ internal class KtFirSimpleNameReference(
         // TODO: Implement.
         return null
     }
-
-    override val resolver get() = KtFirReferenceResolver
 }
