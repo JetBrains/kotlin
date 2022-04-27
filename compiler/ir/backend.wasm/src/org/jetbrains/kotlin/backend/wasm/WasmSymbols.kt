@@ -159,7 +159,7 @@ class WasmSymbols(
     val wasmRefCast = getInternalFunction("wasm_ref_cast")
 
     val rangeCheck = getInternalFunction("rangeCheck")
-    val assertFuncs = findFunctions(kotlinTopLevelPackage.memberScope, Name.identifier("assert"))
+    val assertFuncs = findFunctions(kotlinTopLevelPackage.memberScope, Name.identifier("assert")).map { symbolTable.referenceSimpleFunction(it) }
 
     val boxIntrinsic: IrSimpleFunctionSymbol = getInternalFunction("boxIntrinsic")
     val unboxIntrinsic: IrSimpleFunctionSymbol = getInternalFunction("unboxIntrinsic")
