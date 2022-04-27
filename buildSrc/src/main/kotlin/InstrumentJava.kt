@@ -31,7 +31,7 @@ class InstrumentJava(@Transient val javaInstrumentator: Configuration, @Transien
                         "name" to "instrumentIdeaExtensions",
                         "classpath" to instrumentatorClasspath,
                         "loaderref" to "java2.loader",
-                        "classname" to "com.intellij.ant.Javac2"
+                        "classname" to "com.intellij.ant.InstrumentIdeaExtensions"
                     )
                 }
 
