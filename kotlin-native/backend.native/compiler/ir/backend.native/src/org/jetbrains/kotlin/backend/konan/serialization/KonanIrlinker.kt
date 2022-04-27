@@ -357,10 +357,7 @@ internal class KonanIrLinker(
                     error("Expecting kotlin library for $moduleDescriptor")
                 }
                 klib.isInteropLibrary() -> {
-                    // See https://youtrack.jetbrains.com/issue/KT-43517.
-                    // Disabling this flag forces linker to generate IR.
-                    val isCached = false //cachedLibraries.isLibraryCached(klib)
-                    KonanInteropModuleDeserializer(moduleDescriptor, klib, isCached)
+                    KonanInteropModuleDeserializer(moduleDescriptor, klib, cachedLibraries.isLibraryCached(klib))
                 }
                 lazyIrForCaches && cachedLibraries.isLibraryCached(klib) -> {
                     KonanCachedLibraryModuleDeserializer(moduleDescriptor, klib).also {
