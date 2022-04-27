@@ -1,0 +1,48 @@
+package
+
+public fun main(): kotlin.Unit
+
+public abstract class AbstractKotlinCompilation</*0*/ T : KotlinCommonOptions> : KotlinCompilation<T> {
+    public constructor AbstractKotlinCompilation</*0*/ T : KotlinCommonOptions>()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class KotlinCommonCompilation : KotlinMetadataCompilation<KotlinMultiplatformCommonOptions>, AbstractKotlinCompilation<KotlinMultiplatformCommonOptions> {
+    public constructor KotlinCommonCompilation()
+    public open override /*2*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*2*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*2*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public interface KotlinCommonOptions {
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public interface KotlinCompilation</*0*/ out T : KotlinCommonOptions> {
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public interface KotlinMetadataCompilation</*0*/ T : KotlinCommonOptions> : KotlinCompilation<T> {
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public interface KotlinMultiplatformCommonOptions : KotlinCommonOptions {
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class KotlinSharedNativeCompilation : KotlinMetadataCompilation<KotlinCommonOptions>, AbstractKotlinCompilation<KotlinCommonOptions> {
+    public constructor KotlinSharedNativeCompilation()
+    public open override /*2*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*2*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*2*/ /*fake_override*/ fun toString(): kotlin.String
+}
