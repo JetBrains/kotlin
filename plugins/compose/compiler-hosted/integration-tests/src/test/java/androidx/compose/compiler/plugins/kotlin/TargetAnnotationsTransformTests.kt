@@ -524,16 +524,18 @@ class TargetAnnotationsTransformTests : ComposeIrTransformTest() {
           }
           if (%dirty and 0b1011 !== 0b0010 || !%composer.skipping) {
             val tmp0_safe_receiver = content
-            when {
+            val tmp1_group = when {
               tmp0_safe_receiver == null -> {
                 null
               }
               else -> {
-                tmp0_safe_receiver.let { it: Function2<Composer, Int, Unit?> ->
+                val tmp0_group = tmp0_safe_receiver.let { it: Function2<Composer, Int, Unit?> ->
                   it(%composer, 0)
                 }
+                tmp0_group
               }
             }
+            tmp1_group
           } else {
             %composer.skipToGroupEnd()
           }
@@ -709,7 +711,7 @@ class TargetAnnotationsTransformTests : ComposeIrTransformTest() {
             val tmp1_safe_receiver = three
             %composer.startReplaceableGroup(<>)
             sourceInformation(%composer, "*<it()>")
-            when {
+            val tmp1_group = when {
               tmp1_safe_receiver == null -> {
                 null
               }
@@ -720,10 +722,11 @@ class TargetAnnotationsTransformTests : ComposeIrTransformTest() {
               }
             }
             %composer.endReplaceableGroup()
+            tmp1_group
             val tmp2_safe_receiver = four
             %composer.startReplaceableGroup(<>)
             sourceInformation(%composer, "*<four()>")
-            when {
+            val tmp2_group = when {
               tmp2_safe_receiver == null -> {
                 null
               }
@@ -734,6 +737,7 @@ class TargetAnnotationsTransformTests : ComposeIrTransformTest() {
               }
             }
             %composer.endReplaceableGroup()
+            tmp2_group
             %composer.startReplaceableGroup(<>)
             sourceInformation(%composer, "<five()>")
             if (five != null) {
@@ -743,7 +747,7 @@ class TargetAnnotationsTransformTests : ComposeIrTransformTest() {
             val tmp3_safe_receiver = six
             %composer.startReplaceableGroup(<>)
             sourceInformation(%composer, "*<Wrappe...>")
-            when {
+            val tmp3_group = when {
               tmp3_safe_receiver == null -> {
                 null
               }
@@ -754,6 +758,7 @@ class TargetAnnotationsTransformTests : ComposeIrTransformTest() {
               }
             }
             %composer.endReplaceableGroup()
+            tmp3_group
             content(%composer, 0b1110 and %dirty shr 0b00010010)
           } else {
             %composer.skipToGroupEnd()
