@@ -8,8 +8,9 @@
 #include <array>
 #include <cstdarg>
 
-#include "cpp_support/Span.hpp"
+#include "std_support/Span.hpp"
 #include "Format.h"
+#include "Porting.h"
 #include "StackTrace.hpp"
 
 using namespace kotlin;

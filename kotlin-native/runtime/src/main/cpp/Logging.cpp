@@ -22,6 +22,7 @@ inline constexpr auto nullopt = std::experimental::nullopt;
 
 #include "Format.h"
 #include "KAssert.h"
+#include "Porting.h"
 
 using namespace kotlin;
 

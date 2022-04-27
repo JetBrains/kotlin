@@ -6,7 +6,7 @@
 #ifndef RUNTIME_STACK_TRACE_H
 #define RUNTIME_STACK_TRACE_H
 
-#include "cpp_support/Span.hpp"
+#include "std_support/Span.hpp"
 #include "Memory.h"
 #include "Types.h"
 

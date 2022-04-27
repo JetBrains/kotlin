@@ -25,6 +25,7 @@
 #include "KString.h"
 #include "StackTrace.hpp"
 #include "Memory.h"
+#include "Porting.h"
 #include "Natives.h"
 #include "Types.h"
 

@@ -19,25 +19,19 @@
 
 #include <stdlib.h>
 
-#if (KONAN_WASM || KONAN_ZEPHYR) && !defined(assert)
-// assert() is needed by STLport.
-#define assert(cond) if (!(cond)) abort()
-#endif
-
-#include <deque>
-#include <list>
-#include <map>
-#include <memory>
-#include <string>
-#include <set>
-#include <unordered_map>
-#include <unordered_set>
-#include <vector>
-
 #include "Alloc.h"
 #include "Common.h"
 #include "Memory.h"
 #include "TypeInfo.h"
+#include "std_support/Deque.hpp"
+#include "std_support/List.hpp"
+#include "std_support/Map.hpp"
+#include "std_support/Memory.hpp"
+#include "std_support/Set.hpp"
+#include "std_support/String.hpp"
+#include "std_support/UnorderedMap.hpp"
+#include "std_support/UnorderedSet.hpp"
+#include "std_support/Vector.hpp"
 
 // Note that almost all types are signed.
 typedef bool KBoolean;
@@ -61,36 +55,25 @@ typedef ObjHeader* KRef;
 typedef const ObjHeader* KConstRef;
 typedef const ArrayHeader* KString;
 
-// TODO: Consider moving these into `kotlin::std_support` namespace keeping STL names.
-
-// Definitions of STL classes used inside Konan runtime.
-typedef std::basic_string<char, std::char_traits<char>,
-                          KonanAllocator<char>> KStdString;
-template<class Value>
-using KStdDeque = std::deque<Value, KonanAllocator<Value>>;
-template<class Key, class Value>
-using KStdUnorderedMap = std::unordered_map<Key, Value,
-  std::hash<Key>, std::equal_to<Key>,
-  KonanAllocator<std::pair<const Key, Value>>>;
-template<class Value>
-using KStdUnorderedSet = std::unordered_set<Value,
-  std::hash<Value>, std::equal_to<Value>,
-  KonanAllocator<Value>>;
-template<class Value, class Compare = std::less<Value>>
-using KStdOrderedMultiset = std::multiset<Value, Compare, KonanAllocator<Value>>;
-template<class Key, class Value, class Compare = std::less<Key>>
-using KStdOrderedMap = std::map<Key, Value, Compare, KonanAllocator<std::pair<const Key, Value>>>;
-template<class Value>
-using KStdVector = std::vector<Value, KonanAllocator<Value>>;
-template<class Value>
-using KStdList = std::list<Value, KonanAllocator<Value>>;
-template <class Value>
-using KStdUniquePtr = std::unique_ptr<Value, KonanDeleter<Value>>;
-
-template <typename T, typename... Args>
-KStdUniquePtr<T> make_unique(Args&&... args) noexcept {
-    return KStdUniquePtr<T>(konanConstructInstance<T>(std::forward<Args>(args)...));
-}
+// TODO: Remove these typedefs. Use std_support directly everywhere.
+using KStdString = kotlin::std_support::string;
+template <typename Value>
+using KStdDeque = kotlin::std_support::deque<Value>;
+template <typename Key, typename Value>
+using KStdUnorderedMap = kotlin::std_support::unordered_map<Key, Value>;
+template <typename Value>
+using KStdUnorderedSet = kotlin::std_support::unordered_set<Value>;
+template <typename Value, typename Compare = std::less<Value>>
+using KStdOrderedMultiset = kotlin::std_support::multiset<Value, Compare>;
+template <typename Key, typename Value>
+using KStdOrderedMap = kotlin::std_support::map<Key, Value>;
+template <typename Value>
+using KStdVector = kotlin::std_support::vector<Value>;
+template <typename Value>
+using KStdList = kotlin::std_support::list<Value>;
+template <typename Value>
+using KStdUniquePtr = kotlin::std_support::unique_ptr<Value>;
+using kotlin::std_support::make_unique;
 
 #ifdef __cplusplus
 extern "C" {

@@ -10,11 +10,14 @@
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"
 
+#include "AllocatorTestSupport.hpp"
 #include "ScopedThread.hpp"
 #include "TestSupport.hpp"
 #include "Types.h"
 
 using namespace kotlin;
+
+using ::testing::_;
 
 namespace {
 
@@ -311,4 +314,43 @@ TEST(MultiSourceQueueTest, ConcurrentPublishAndApplyDeletions) {
 
     auto actual = Collect(queue);
     EXPECT_THAT(actual, testing::IsEmpty());
+}
+
+TEST(MultiSourceQueueTest, CustomAllocator) {
+    testing::StrictMock<test_support::SpyAllocatorCore> allocatorCore;
+    auto allocator = test_support::MakeAllocator<int>(allocatorCore);
+
+    using Queue = MultiSourceQueue<int, SpinLock<MutexThreadStateHandling::kIgnore>, decltype(allocator)>;
+    Queue queue(allocator);
+    Queue::Producer producer1(queue);
+    Queue::Producer producer2(queue);
+
+    EXPECT_CALL(allocatorCore, allocate(_)).Times(5);
+    auto* node11 = producer1.Insert(1);
+    auto* node12 = producer1.Insert(2);
+    auto* node21 = producer2.Insert(10);
+    auto* node22 = producer2.Insert(20);
+    auto* node23 = producer2.Insert(30);
+    testing::Mock::VerifyAndClearExpectations(&allocatorCore);
+
+    EXPECT_CALL(allocatorCore, deallocate(_, _));
+    producer2.Erase(node22);
+    testing::Mock::VerifyAndClearExpectations(&allocatorCore);
+
+    producer1.Publish();
+    producer2.Publish();
+
+    EXPECT_CALL(allocatorCore, allocate(_)).Times(4);
+    producer1.Erase(node11);
+    producer1.Erase(node23);
+    producer2.Erase(node12);
+    producer2.Erase(node21);
+    testing::Mock::VerifyAndClearExpectations(&allocatorCore);
+
+    producer1.Publish();
+    producer2.Publish();
+
+    EXPECT_CALL(allocatorCore, deallocate(_, _)).Times(8);
+    queue.ApplyDeletions();
+    testing::Mock::VerifyAndClearExpectations(&allocatorCore);
 }

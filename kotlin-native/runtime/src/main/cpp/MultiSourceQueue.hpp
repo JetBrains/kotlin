@@ -13,18 +13,25 @@
 #include "Mutex.hpp"
 #include "Types.h"
 #include "Utils.hpp"
+#include "std_support/List.hpp"
+#include "std_support/Memory.hpp"
 
 namespace kotlin {
 
 // A queue that is constructed by collecting subqueues from several `Producer`s.
-template <typename T, typename Mutex>
+template <typename T, typename Mutex, typename Allocator = std_support::allocator<T>>
 class MultiSourceQueue {
+    // Using `std_support::list` as it allows to implement `Collect` without memory allocations,
+    // which is important for GC mark phase.
+    template <typename U>
+    using List = std_support::list<U, typename std::allocator_traits<Allocator>::template rebind_alloc<U>>;
+
 public:
     class Producer;
 
     // TODO: Consider switching from `KStdList` to `SingleLockList` to hide the constructor
     // and to not store the iterator.
-    class Node : private Pinned, public KonanAllocatorAware {
+    class Node : private Pinned {
     public:
         Node(Producer* owner, const T& value) noexcept : value_(value), owner_(owner) {}
 
@@ -43,12 +50,13 @@ public:
 
         T value_;
         std::atomic<Producer*> owner_; // `nullptr` signifies that `MultiSourceQueue` owns it.
-        typename KStdList<Node>::iterator position_;
+        typename List<Node>::iterator position_;
     };
 
     class Producer {
     public:
-        explicit Producer(MultiSourceQueue& owner) noexcept : owner_(owner) {}
+        explicit Producer(MultiSourceQueue& owner) noexcept :
+            owner_(owner), queue_(owner.queue_.get_allocator()), deletionQueue_(owner.deletionQueue_.get_allocator()) {}
 
         ~Producer() { Publish(); }
 
@@ -84,7 +92,9 @@ public:
                 node.owner_ = nullptr;
             }
             std::lock_guard<Mutex> guard(owner_.mutex_);
+            RuntimeAssert(owner_.queue_.get_allocator() == queue_.get_allocator(), "queue_ allocators must match");
             owner_.queue_.splice(owner_.queue_.end(), queue_);
+            RuntimeAssert(owner_.deletionQueue_.get_allocator() == deletionQueue_.get_allocator(), "deletionQueue_ allocators must match");
             owner_.deletionQueue_.splice(owner_.deletionQueue_.end(), deletionQueue_);
         }
 
@@ -95,8 +105,8 @@ public:
 
     private:
         MultiSourceQueue& owner_; // weak
-        KStdList<Node> queue_;
-        KStdList<Node*> deletionQueue_;
+        List<Node> queue_;
+        List<Node*> deletionQueue_;
     };
 
     class Iterator {
@@ -115,9 +125,9 @@ public:
     private:
         friend class MultiSourceQueue;
 
-        explicit Iterator(const typename KStdList<Node>::iterator& position) noexcept : position_(position) {}
+        explicit Iterator(const typename List<Node>::iterator& position) noexcept : position_(position) {}
 
-        typename KStdList<Node>::iterator position_;
+        typename List<Node>::iterator position_;
     };
 
     class Iterable : MoveOnly {
@@ -134,6 +144,8 @@ public:
         std::unique_lock<Mutex> guard_;
     };
 
+    explicit MultiSourceQueue(const Allocator& allocator = Allocator()) noexcept : queue_(allocator), deletionQueue_(allocator) {}
+
     // Lock `MultiSourceQueue` for safe iteration. If element was scheduled for deletion,
     // it'll still be iterated. Use `ApplyDeletions` to remove those elements.
     Iterable LockForIter() noexcept { return Iterable(*this); }
@@ -141,7 +153,7 @@ public:
     // Lock `MultiSourceQueue` and apply deletions. Only deletes elements that were published.
     void ApplyDeletions() noexcept {
         std::lock_guard<Mutex> guard(mutex_);
-        KStdList<Node*> remainingDeletions;
+        List<Node*> remainingDeletions(deletionQueue_.get_allocator());
 
         auto it = deletionQueue_.begin();
         while (it != deletionQueue_.end()) {
@@ -176,10 +188,8 @@ public:
     }
 
 private:
-    // Using `KStdList` as it allows to implement `Collect` without memory allocations,
-    // which is important for GC mark phase.
-    KStdList<Node> queue_;
-    KStdList<Node*> deletionQueue_;
+    List<Node> queue_;
+    List<Node*> deletionQueue_;
     Mutex mutex_;
 };
 

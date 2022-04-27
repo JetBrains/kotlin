@@ -5,7 +5,7 @@
 ## Headers
 
 * Headers should live in the same folder with it's implementation counterpart (if there's one) **TODO**: This does not work with multiple implementations of a single header.
-* Headers should use header guards
+* Headers can use either `#pragma once` or header guards.
 * Headers that are designed to be included into both `.cpp`/`.mm` and `.c`/`.m` should have extension `.h`
 * Headers that are designed to be included into `.cpp`/`.mm` only should have extension `.hpp`
 
@@ -23,8 +23,8 @@
 * For `extern "C"` declarations emulate namespaces with `Kotlin_[module_name]_` prefixes.
 * To mark type as move-only, privately inherit from `kotlin::MoveOnly`
 * To mark type unmovable and uncopyable, privately inherit from `kotlin::Pinned`
-* All heap-allocated classes should publicly inherit from `KonanAllocatorAware`
-* Use `KStd*` containers and smart pointers instead of `std::*` ones.
+* Use `std_support::*` containers and smart pointers instead of `std::*` ones. The former ones default to runtime-specific allocator.
+* Use `new (std_support::kalloc) T(...)` (defined in `std_support/New.hpp` instead of `new T(...)` and `std_support::kdelete(ptr)` instead of `delete ptr`. The former ones use runtime-specific allocator.
 
 ## Naming
 

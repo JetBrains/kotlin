@@ -168,7 +168,7 @@ NO_INLINE size_t kotlin::internal::GetCurrentStackTrace(size_t skipFrames, std_s
 #if ! KONAN_NO_BACKTRACE
 #include <cstdarg>
 #include <cstring>
-#include "cpp_support/Span.hpp"
+#include "std_support/Span.hpp"
 #include "Format.h"
 
 #if __has_include("dlfcn.h")

@@ -26,6 +26,7 @@
 #include "ExecFormat.h"
 #include "Memory.h"
 #include "Mutex.hpp"
+#include "Porting.h"
 #include "Types.h"
 #include "Utils.hpp"
 #include "ObjCExceptions.h"

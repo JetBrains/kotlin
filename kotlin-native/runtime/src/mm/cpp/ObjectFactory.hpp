@@ -16,6 +16,7 @@
 #include "FinalizerHooks.hpp"
 #include "Memory.h"
 #include "Mutex.hpp"
+#include "Porting.h"
 #include "Types.h"
 #include "Utils.hpp"
 
@@ -45,8 +46,7 @@ class ObjectFactoryStorage : private Pinned {
     using unique_ptr = std::unique_ptr<T, Deleter<T>>;
 
 public:
-    // This class does not know its size at compile-time. Does not inherit from `KonanAllocatorAware` because
-    // in `KonanAllocatorAware::operator new(size_t size, KonanAllocTag)` `size` would be incorrect.
+    // This class does not know its size at compile-time.
     class Node : private Pinned {
         constexpr static size_t DataOffset() noexcept { return AlignUp(sizeof(Node), DataAlignment); }
 

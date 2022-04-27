@@ -13,8 +13,6 @@
 
 #include "KAssert.h"
 
-// Modelling https://en.cppreference.com/w/cpp/container/span from C++20.
-
 namespace kotlin {
 namespace std_support {
 

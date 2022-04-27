@@ -22,7 +22,7 @@ using string_view = std::experimental::string_view;
 #endif
 
 #include "CompilerConstants.hpp"
-#include "cpp_support/Span.hpp"
+#include "std_support/Span.hpp"
 #include "Types.h"
 
 namespace kotlin {

@@ -23,6 +23,7 @@
 #include "../Exceptions.h"
 #include "../KString.h"
 #include "../Natives.h"
+#include "../Porting.h"
 #include "../utf8.h"
 
 #if defined(LINUX) || defined(FREEBSD) || defined(MACOSX) || defined(ZOS) || defined(AIX)

@@ -16,6 +16,7 @@
 
 
 #include "ExecFormat.h"
+#include "Porting.h"
 #include "Types.h"
 
 #if USE_ELF_SYMBOLS

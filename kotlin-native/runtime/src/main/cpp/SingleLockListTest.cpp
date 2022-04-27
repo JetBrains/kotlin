@@ -11,11 +11,14 @@
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"
 
+#include "AllocatorTestSupport.hpp"
 #include "ScopedThread.hpp"
 #include "TestSupport.hpp"
 #include "Types.h"
 
 using namespace kotlin;
+
+using ::testing::_;
 
 namespace {
 
@@ -416,4 +419,27 @@ TEST(SingleLockListTest, Destructor) {
             EXPECT_CALL(hook, Call(first));
         }
     }
+}
+
+TEST(SingleLockListTest, CustomAllocator) {
+    testing::StrictMock<test_support::SpyAllocatorCore> allocatorCore;
+    auto allocator = test_support::MakeAllocator<int>(allocatorCore);
+    SingleLockList<int, SpinLock<MutexThreadStateHandling::kIgnore>, decltype(allocator)> list(allocator);
+
+    EXPECT_CALL(allocatorCore, allocate(_)).Times(3);
+    auto* node1 = list.Emplace(1);
+    auto* node2 = list.Emplace(2);
+    auto* node3 = list.Emplace(3);
+    testing::Mock::VerifyAndClearExpectations(&allocatorCore);
+
+    {
+        testing::InSequence seq;
+        EXPECT_CALL(allocatorCore, deallocate(node1, _));
+        EXPECT_CALL(allocatorCore, deallocate(node2, _));
+        EXPECT_CALL(allocatorCore, deallocate(node3, _));
+    }
+    list.Erase(node1);
+    list.Erase(node2);
+    list.Erase(node3);
+    testing::Mock::VerifyAndClearExpectations(&allocatorCore);
 }
