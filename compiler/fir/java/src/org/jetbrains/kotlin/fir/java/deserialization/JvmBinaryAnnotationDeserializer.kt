@@ -12,9 +12,7 @@ import org.jetbrains.kotlin.fir.deserialization.AbstractAnnotationDeserializer
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.builder.buildAnnotation
 import org.jetbrains.kotlin.load.java.JvmAbi
-import org.jetbrains.kotlin.load.kotlin.KotlinClassFinder
-import org.jetbrains.kotlin.load.kotlin.KotlinJvmBinaryClass
-import org.jetbrains.kotlin.load.kotlin.MemberSignature
+import org.jetbrains.kotlin.load.kotlin.*
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.metadata.deserialization.*
 import org.jetbrains.kotlin.metadata.jvm.JvmProtoBuf
@@ -246,27 +244,6 @@ class JvmBinaryAnnotationDeserializer(
             }
             else -> null
         }
-    }
-
-    private fun getPropertySignature(
-        proto: ProtoBuf.Property,
-        nameResolver: NameResolver,
-        typeTable: TypeTable,
-        field: Boolean = false,
-        synthetic: Boolean = false,
-        requireHasFieldFlagForField: Boolean = true
-    ): MemberSignature? {
-        val signature = proto.getExtensionOrNull(JvmProtoBuf.propertySignature) ?: return null
-
-        if (field) {
-            val fieldSignature =
-                JvmProtoBufUtil.getJvmFieldSignature(proto, nameResolver, typeTable, requireHasFieldFlagForField) ?: return null
-            return MemberSignature.fromJvmMemberSignature(fieldSignature)
-        } else if (synthetic && signature.hasSyntheticMethod()) {
-            return MemberSignature.fromMethod(nameResolver, signature.syntheticMethod)
-        }
-
-        return null
     }
 
     private fun findJvmBinaryClassAndLoadMemberAnnotations(

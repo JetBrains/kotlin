@@ -170,6 +170,7 @@ class PostponedArgumentsAnalyzer(
 
         returnArguments.forEach { c.addSubsystemFromExpression(it) }
         val checkerSink: CheckerSink = CheckerSinkImpl(candidate)
+        val builder = c.getBuilder()
 
         val lastExpression = lambda.atom.body?.statements?.lastOrNull() as? FirExpression
         var hasExpressionInReturnArguments = false
@@ -183,9 +184,9 @@ class PostponedArgumentsAnalyzer(
             val lastExpressionCoercedToUnit =
                 it == lastExpression && expectedReturnType?.isUnitOrFlexibleUnit == true && !it.typeRef.coneType.isUnitOrFlexibleUnit
             // No constraint for the last expression of lambda if it will be coerced to Unit.
-            if (!lastExpressionCoercedToUnit && !c.getBuilder().hasContradiction) {
+            if (!lastExpressionCoercedToUnit && !builder.hasContradiction) {
                 candidate.resolveArgumentExpression(
-                    c.getBuilder(),
+                    builder,
                     it,
                     lambdaReturnType,
                     lambda.atom.returnTypeRef, // TODO: proper ref
@@ -198,7 +199,7 @@ class PostponedArgumentsAnalyzer(
         }
 
         if (!hasExpressionInReturnArguments && lambdaReturnType != null) {
-            c.getBuilder().addSubtypeConstraint(
+            builder.addSubtypeConstraint(
                 components.session.builtinTypes.unitType.type,
                 lambdaReturnType,
                 ConeLambdaArgumentConstraintPosition(lambda.atom)
@@ -209,20 +210,19 @@ class PostponedArgumentsAnalyzer(
         lambda.returnStatements = returnArguments
 
         if (inferenceSession != null) {
-            val constraintSystemBuilder = c.getBuilder()
-            val postponedVariables = inferenceSession.inferPostponedVariables(lambda, constraintSystemBuilder, completionMode)
+            val postponedVariables = inferenceSession.inferPostponedVariables(lambda, builder, completionMode)
 
             if (postponedVariables == null) {
-                c.getBuilder().removePostponedVariables()
+                builder.removePostponedVariables()
                 return
             }
 
             for ((constructor, resultType) in postponedVariables) {
-                val variableWithConstraints = constraintSystemBuilder.currentStorage().notFixedTypeVariables[constructor] ?: continue
+                val variableWithConstraints = builder.currentStorage().notFixedTypeVariables[constructor] ?: continue
                 val variable = variableWithConstraints.typeVariable as ConeTypeVariable
 
-                c.getBuilder().unmarkPostponedVariable(variable)
-                c.getBuilder().addSubtypeConstraint(resultType, variable.defaultType(c), BuilderInferencePosition)
+                builder.unmarkPostponedVariable(variable)
+                builder.addSubtypeConstraint(resultType, variable.defaultType(c), BuilderInferencePosition)
             }
 
             c.removePostponedTypeVariablesFromConstraints(postponedVariables.keys)

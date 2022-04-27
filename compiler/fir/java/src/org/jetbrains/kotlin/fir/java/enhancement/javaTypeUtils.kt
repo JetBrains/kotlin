@@ -6,30 +6,13 @@
 package org.jetbrains.kotlin.fir.java.enhancement
 
 import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMap
-import org.jetbrains.kotlin.descriptors.ClassKind
-import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.declarations.FirRegularClass
-import org.jetbrains.kotlin.fir.declarations.collectEnumEntries
-import org.jetbrains.kotlin.fir.declarations.utils.isStatic
-import org.jetbrains.kotlin.fir.declarations.utils.modality
-import org.jetbrains.kotlin.fir.expressions.FirExpression
-import org.jetbrains.kotlin.fir.expressions.builder.buildConstExpression
-import org.jetbrains.kotlin.fir.expressions.builder.buildPropertyAccessExpression
-import org.jetbrains.kotlin.fir.java.declarations.FirJavaClass
-import org.jetbrains.kotlin.fir.java.declarations.FirJavaField
-import org.jetbrains.kotlin.fir.references.builder.buildResolvedNamedReference
-import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
 import org.jetbrains.kotlin.fir.symbols.ConeClassifierLookupTag
 import org.jetbrains.kotlin.fir.symbols.impl.ConeClassLikeLookupTagImpl
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.load.java.typeEnhancement.*
 import org.jetbrains.kotlin.name.ClassId
-import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.types.ConstantValueKind
-import org.jetbrains.kotlin.utils.extractRadix
 
 internal fun ConeKotlinType.enhance(session: FirSession, qualifiers: IndexedJavaTypeQualifiers): ConeKotlinType? =
     enhanceConeKotlinType(session, qualifiers, 0, mutableListOf<Int>().apply { computeSubtreeSizes(this) })
@@ -166,55 +149,4 @@ private fun ConeClassifierLookupTag.enhanceMutability(
     }
 
     return this
-}
-
-internal fun ConeKotlinType.lexicalCastFrom(session: FirSession, value: String): FirExpression? {
-    val lookupTagBasedType = when (this) {
-        is ConeLookupTagBasedType -> this
-        is ConeFlexibleType -> return lowerBound.lexicalCastFrom(session, value)
-        else -> return null
-    }
-    val lookupTag = lookupTagBasedType.lookupTag
-    val firElement = lookupTag.toSymbol(session)?.fir
-    if (firElement is FirRegularClass && firElement.classKind == ClassKind.ENUM_CLASS) {
-        val name = Name.identifier(value)
-        val firEnumEntry = firElement.collectEnumEntries().find { it.name == name }
-
-        return if (firEnumEntry != null) buildPropertyAccessExpression {
-            calleeReference = buildResolvedNamedReference {
-                this.name = name
-                resolvedSymbol = firEnumEntry.symbol
-            }
-        } else if (firElement is FirJavaClass) {
-            val firStaticProperty = firElement.declarations.filterIsInstance<FirJavaField>().find {
-                it.isStatic && it.modality == Modality.FINAL && it.name == name
-            }
-            if (firStaticProperty != null) {
-                buildPropertyAccessExpression {
-                    calleeReference = buildResolvedNamedReference {
-                        this.name = name
-                        resolvedSymbol = firStaticProperty.symbol
-                    }
-                }
-            } else null
-        } else null
-    }
-
-    if (lookupTag !is ConeClassLikeLookupTag) return null
-    val classId = lookupTag.classId
-    if (classId.packageFqName != FqName("kotlin")) return null
-
-    val (number, radix) = extractRadix(value)
-    return when (classId.relativeClassName.asString()) {
-        "Boolean" -> buildConstExpression(null, ConstantValueKind.Boolean, value.toBoolean())
-        "Char" -> buildConstExpression(null, ConstantValueKind.Char, value.singleOrNull() ?: return null)
-        "Byte" -> buildConstExpression(null, ConstantValueKind.Byte, number.toByteOrNull(radix) ?: return null)
-        "Short" -> buildConstExpression(null, ConstantValueKind.Short, number.toShortOrNull(radix) ?: return null)
-        "Int" -> buildConstExpression(null, ConstantValueKind.Int, number.toIntOrNull(radix) ?: return null)
-        "Long" -> buildConstExpression(null, ConstantValueKind.Long, number.toLongOrNull(radix) ?: return null)
-        "Float" -> buildConstExpression(null, ConstantValueKind.Float, value.toFloatOrNull() ?: return null)
-        "Double" -> buildConstExpression(null, ConstantValueKind.Double, value.toDoubleOrNull() ?: return null)
-        "String" -> buildConstExpression(null, ConstantValueKind.String, value)
-        else -> null
-    }
 }

@@ -548,15 +548,15 @@ class FirCallCompletionResultsWriterTransformer(
     ): List<ConeKotlinType> {
         val declaration = candidate.symbol.fir as? FirCallableDeclaration ?: return emptyList()
 
-        return declaration.typeParameters.map { ConeTypeParameterTypeImpl(it.symbol.toLookupTag(), false) }
-            .map { candidate.substitutor.substituteOrSelf(it) }
-            .map {
-                finalSubstitutor.substituteOrSelf(it).let { substitutedType ->
-                    typeApproximator.approximateToSuperType(
-                        substitutedType, TypeApproximatorConfiguration.TypeArgumentApproximation,
-                    ) ?: substitutedType
-                }
+        return declaration.typeParameters.map {
+            val typeParameter = ConeTypeParameterTypeImpl(it.symbol.toLookupTag(), false)
+            val substitution = candidate.substitutor.substituteOrSelf(typeParameter)
+            finalSubstitutor.substituteOrSelf(substitution).let { substitutedType ->
+                typeApproximator.approximateToSuperType(
+                    substitutedType, TypeApproximatorConfiguration.TypeArgumentApproximation,
+                ) ?: substitutedType
             }
+        }
     }
 
     override fun transformAnonymousFunctionExpression(
@@ -651,17 +651,16 @@ class FirCallCompletionResultsWriterTransformer(
             expression.transform<FirElement, ExpectedArgumentType?>(this, finalType?.toExpectedType())
         }
 
-        val resultFunction = result
-        if (resultFunction.returnTypeRef.coneTypeSafe<ConeIntegerLiteralType>() != null) {
+        if (result.returnTypeRef.coneTypeSafe<ConeIntegerLiteralType>() != null) {
             val lastExpressionType =
                 (returnExpressionsOfAnonymousFunction.lastOrNull() as? FirExpression)
                     ?.typeRef?.coneTypeSafe<ConeKotlinType>()
 
-            val newReturnTypeRef = resultFunction.returnTypeRef.withReplacedConeType(lastExpressionType)
-            resultFunction.replaceReturnTypeRef(newReturnTypeRef)
+            val newReturnTypeRef = result.returnTypeRef.withReplacedConeType(lastExpressionType)
+            result.replaceReturnTypeRef(newReturnTypeRef)
             val resolvedTypeRef =
-                resultFunction.constructFunctionalTypeRef(isSuspend = expectedType?.isSuspendFunctionType(session) == true)
-            resultFunction.replaceTypeRef(resolvedTypeRef)
+                result.constructFunctionalTypeRef(isSuspend = expectedType?.isSuspendFunctionType(session) == true)
+            result.replaceTypeRef(resolvedTypeRef)
             session.lookupTracker?.let {
                 it.recordTypeResolveAsLookup(newReturnTypeRef, anonymousFunction.source, context.file.source)
                 it.recordTypeResolveAsLookup(resolvedTypeRef, anonymousFunction.source, context.file.source)

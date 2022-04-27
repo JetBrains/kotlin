@@ -34,6 +34,7 @@ import org.jetbrains.kotlin.types.model.TypeConstructorMarker
 import org.jetbrains.kotlin.types.model.TypeVariableMarker
 import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.addToStdlib.cast
+import org.jetbrains.kotlin.utils.addToStdlib.filterIsInstanceWithChecker
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 class ConstraintSystemCompleter(components: BodyResolveComponents, private val context: BodyResolveContext) {
@@ -92,9 +93,10 @@ class ConstraintSystemCompleter(components: BodyResolveComponents, private val c
                 break
 
             val postponedArgumentsWithRevisableType = postponedArguments
-                .filterIsInstance<PostponedAtomWithRevisableExpectedType>()
-                // NB: FE 1.0 does not perform this check
-                .filter { it.revisedExpectedType == null }
+                .filterIsInstanceWithChecker<PostponedAtomWithRevisableExpectedType> {
+                    // NB: FE 1.0 does not perform this check
+                    it.revisedExpectedType == null
+                }
             val dependencyProvider =
                 TypeVariableDependencyInformationProvider(notFixedTypeVariables, postponedArguments, topLevelType, this)
 

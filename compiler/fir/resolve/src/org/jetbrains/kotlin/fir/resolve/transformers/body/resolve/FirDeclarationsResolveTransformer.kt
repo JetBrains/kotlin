@@ -570,18 +570,16 @@ open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransfor
             val returnType =
                 dataFlowAnalyzer.returnExpressionsOfAnonymousFunction(result)
                     .firstNotNullOfOrNull { (it as? FirExpression)?.resultType?.coneTypeSafe() }
-
-            if (returnType != null) {
-                result.transformReturnTypeRef(transformer, withExpectedType(returnType))
+            val resolutionMode = if (returnType != null) {
+                withExpectedType(returnType)
             } else {
-                result.transformReturnTypeRef(
-                    transformer,
-                    withExpectedType(buildErrorTypeRef {
-                        diagnostic =
-                            ConeSimpleDiagnostic("Unresolved lambda return type", DiagnosticKind.InferenceError)
-                    })
-                )
+                withExpectedType(buildErrorTypeRef {
+                    diagnostic =
+                        ConeSimpleDiagnostic("Unresolved lambda return type", DiagnosticKind.InferenceError)
+                })
             }
+
+            result.transformReturnTypeRef(transformer, resolutionMode)
         }
 
         return result

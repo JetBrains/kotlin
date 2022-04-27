@@ -220,11 +220,7 @@ class FirCallResolver(
             origin = origin
         )
         towerResolver.reset()
-        val result = if (collector != null) {
-            towerResolver.runResolver(info, resolutionContext, collector)
-        } else {
-            towerResolver.runResolver(info, resolutionContext)
-        }
+        val result = towerResolver.runResolver(info, resolutionContext, collector)
         val bestCandidates = result.bestCandidates()
 
         fun chooseMostSpecific(): Set<Candidate> {

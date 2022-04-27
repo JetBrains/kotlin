@@ -171,7 +171,7 @@ class FirSignatureEnhancement(
                 }.symbol
             }
             else -> {
-                if (original is FirPropertySymbol || original is FirSyntheticPropertySymbol) return original
+                if (original is FirPropertySymbol) return original
                 error("Can't make enhancement for $original: `${firElement.render()}`")
             }
         }

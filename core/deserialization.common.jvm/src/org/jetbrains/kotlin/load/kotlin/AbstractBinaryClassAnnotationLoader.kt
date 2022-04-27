@@ -253,27 +253,6 @@ abstract class AbstractBinaryClassAnnotationLoader<A : Any, S : AbstractBinaryCl
         return null
     }
 
-    protected fun getPropertySignature(
-        proto: ProtoBuf.Property,
-        nameResolver: NameResolver,
-        typeTable: TypeTable,
-        field: Boolean = false,
-        synthetic: Boolean = false,
-        requireHasFieldFlagForField: Boolean = true
-    ): MemberSignature? {
-        val signature = proto.getExtensionOrNull(propertySignature) ?: return null
-
-        if (field) {
-            val fieldSignature =
-                JvmProtoBufUtil.getJvmFieldSignature(proto, nameResolver, typeTable, requireHasFieldFlagForField) ?: return null
-            return MemberSignature.fromJvmMemberSignature(fieldSignature)
-        } else if (synthetic && signature.hasSyntheticMethod()) {
-            return MemberSignature.fromMethod(nameResolver, signature.syntheticMethod)
-        }
-
-        return null
-    }
-
     protected fun getCallableSignature(
         proto: MessageLite,
         nameResolver: NameResolver,
@@ -318,4 +297,25 @@ abstract class AbstractBinaryClassAnnotationLoader<A : Any, S : AbstractBinaryCl
     abstract class AnnotationsContainer<out A> {
         abstract val memberAnnotations: Map<MemberSignature, List<A>>
     }
+}
+
+fun getPropertySignature(
+    proto: ProtoBuf.Property,
+    nameResolver: NameResolver,
+    typeTable: TypeTable,
+    field: Boolean = false,
+    synthetic: Boolean = false,
+    requireHasFieldFlagForField: Boolean = true
+): MemberSignature? {
+    val signature = proto.getExtensionOrNull(propertySignature) ?: return null
+
+    if (field) {
+        val fieldSignature =
+            JvmProtoBufUtil.getJvmFieldSignature(proto, nameResolver, typeTable, requireHasFieldFlagForField) ?: return null
+        return MemberSignature.fromJvmMemberSignature(fieldSignature)
+    } else if (synthetic && signature.hasSyntheticMethod()) {
+        return MemberSignature.fromMethod(nameResolver, signature.syntheticMethod)
+    }
+
+    return null
 }
