@@ -61,6 +61,9 @@ internal fun PropertiesProvider.mapKotlinDaemonProperties(task: CompileUsingKotl
     if (!task.compilerExecutionStrategy.isPresent) {
         task.compilerExecutionStrategy.set(kotlinCompilerExecutionStrategy)
     }
+    if (!task.useFallbackStrategy.isPresent) {
+        task.useFallbackStrategy.set(kotlinDaemonUseFallbackStrategy)
+    }
 }
 
 internal class PropertiesProvider private constructor(private val project: Project) {
@@ -428,6 +431,9 @@ internal class PropertiesProvider private constructor(private val project: Proje
             val value = (gradleProperty ?: System.getProperty("kotlin.compiler.execution.strategy"))?.toLowerCase()
             return KotlinCompilerExecutionStrategy.fromProperty(value)
         }
+
+    val kotlinDaemonUseFallbackStrategy: Boolean
+        get() = booleanProperty("kotlin.daemon.useFallbackStrategy") ?: true
 
     val writeKotlinDaemonsReport: Boolean
         get() = booleanProperty("kotlin.daemon.report.enabled") ?: false

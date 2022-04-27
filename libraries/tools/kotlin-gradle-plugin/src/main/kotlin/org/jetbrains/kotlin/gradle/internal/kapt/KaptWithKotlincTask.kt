@@ -124,6 +124,7 @@ abstract class KaptWithKotlincTask @Inject constructor(
             normalizedKotlinDaemonJvmArguments.orNull,
             metrics.get(),
             compilerExecutionStrategy.get(),
+            useFallbackStrategy.get(),
         )
         compilerRunner.runJvmCompilerAsync(
             sourcesToCompile = emptyList(),
