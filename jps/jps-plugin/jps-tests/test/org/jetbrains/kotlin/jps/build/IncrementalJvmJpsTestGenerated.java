@@ -1286,6 +1286,11 @@ public class IncrementalJvmJpsTestGenerated extends AbstractIncrementalJvmJpsTes
             runTest("jps/jps-plugin/testData/incremental/pureKotlin/secondaryConstructorInlined/");
         }
 
+        @TestMetadata("serializedSubClassAndChangedInterfaces")
+        public void testSerializedSubClassAndChangedInterfaces() throws Exception {
+            runTest("jps/jps-plugin/testData/incremental/pureKotlin/serializedSubClassAndChangedInterfaces/");
+        }
+
         @TestMetadata("simpleClassDependency")
         public void testSimpleClassDependency() throws Exception {
             runTest("jps/jps-plugin/testData/incremental/pureKotlin/simpleClassDependency/");
@@ -1486,6 +1491,11 @@ public class IncrementalJvmJpsTestGenerated extends AbstractIncrementalJvmJpsTes
                 runTest("jps/jps-plugin/testData/incremental/withJava/javaUsedInKotlin/constantChanged/");
             }
 
+            @TestMetadata("constantPropertyChanged")
+            public void testConstantPropertyChanged() throws Exception {
+                runTest("jps/jps-plugin/testData/incremental/withJava/javaUsedInKotlin/constantPropertyChanged/");
+            }
+
             @TestMetadata("constantUnchanged")
             public void testConstantUnchanged() throws Exception {
                 runTest("jps/jps-plugin/testData/incremental/withJava/javaUsedInKotlin/constantUnchanged/");
@@ -1647,6 +1657,19 @@ public class IncrementalJvmJpsTestGenerated extends AbstractIncrementalJvmJpsTes
 
                 public void testAllFilesPresentInConstantChanged() throws Exception {
                     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/withJava/javaUsedInKotlin/constantChanged"), Pattern.compile("^([^\\.]+)$"), null, TargetBackend.JVM_IR, true);
+                }
+            }
+
+            @TestMetadata("jps/jps-plugin/testData/incremental/withJava/javaUsedInKotlin/constantPropertyChanged")
+            @TestDataPath("$PROJECT_ROOT")
+            @RunWith(JUnit3RunnerWithInners.class)
+            public static class ConstantPropertyChanged extends AbstractIncrementalJvmJpsTest {
+                private void runTest(String testDataFilePath) throws Exception {
+                    KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM_IR, testDataFilePath);
+                }
+
+                public void testAllFilesPresentInConstantPropertyChanged() throws Exception {
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/withJava/javaUsedInKotlin/constantPropertyChanged"), Pattern.compile("^([^\\.]+)$"), null, TargetBackend.JVM_IR, true);
                 }
             }
 
@@ -3224,6 +3247,11 @@ public class IncrementalJvmJpsTestGenerated extends AbstractIncrementalJvmJpsTes
             runTest("jps/jps-plugin/testData/incremental/classHierarchyAffected/varianceChanged/");
         }
 
+        @TestMetadata("withIntermediateBodiesChanged")
+        public void testWithIntermediateBodiesChanged() throws Exception {
+            runTest("jps/jps-plugin/testData/incremental/classHierarchyAffected/withIntermediateBodiesChanged/");
+        }
+
         @TestMetadata("jps/jps-plugin/testData/incremental/classHierarchyAffected/annotationFlagRemoved")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
@@ -3741,6 +3769,19 @@ public class IncrementalJvmJpsTestGenerated extends AbstractIncrementalJvmJpsTes
 
             public void testAllFilesPresentInVarianceChanged() throws Exception {
                 KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/classHierarchyAffected/varianceChanged"), Pattern.compile("^([^\\.]+)$"), null, TargetBackend.JVM_IR, true);
+            }
+        }
+
+        @TestMetadata("jps/jps-plugin/testData/incremental/classHierarchyAffected/withIntermediateBodiesChanged")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class WithIntermediateBodiesChanged extends AbstractIncrementalJvmJpsTest {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM_IR, testDataFilePath);
+            }
+
+            public void testAllFilesPresentInWithIntermediateBodiesChanged() throws Exception {
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/classHierarchyAffected/withIntermediateBodiesChanged"), Pattern.compile("^([^\\.]+)$"), null, TargetBackend.JVM_IR, true);
             }
         }
     }
