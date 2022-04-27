@@ -74,10 +74,12 @@ class ExpressionsConverter(
                 val lambdaTree = LightTree2Fir.buildLightTreeLambdaExpression(expression.asText)
                 // Pass on label user to the lambda root
                 context.forwardLabelUsagePermission(expression, lambdaTree.root)
-                declarationsConverter.withOffset(offset + expression.startOffset) {
-                    ExpressionsConverter(baseSession, lambdaTree, declarationsConverter, context)
-                        .convertLambdaExpression(lambdaTree.root)
-                }
+                val lambdaDeclarationsConverter = DeclarationsConverter(
+                    baseSession, declarationsConverter.baseScopeProvider, lambdaTree,
+                    offset = offset + expression.startOffset, context
+                )
+                ExpressionsConverter(baseSession, lambdaTree, lambdaDeclarationsConverter, context)
+                    .convertLambdaExpression(lambdaTree.root)
             }
             BINARY_EXPRESSION -> convertBinaryExpression(expression)
             BINARY_WITH_TYPE -> convertBinaryWithTypeRHSExpression(expression) {

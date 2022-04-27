@@ -58,7 +58,7 @@ import org.jetbrains.kotlin.utils.addToStdlib.runUnless
 
 class DeclarationsConverter(
     session: FirSession,
-    private val baseScopeProvider: FirScopeProvider,
+    internal val baseScopeProvider: FirScopeProvider,
     tree: FlyweightCapableTreeStructure<LighterASTNode>,
     @set:PrivateForInline override var offset: Int = 0,
     context: Context<LighterASTNode> = Context(),
