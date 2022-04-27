@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.gradle.kpm.external.createExternalJvmVariant
 import org.jetbrains.kotlin.gradle.kpm.external.external
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.*
+import java.util.*
 
 fun KotlinGradleModule.createKotlinAndroidVariant(androidVariant: BaseVariant) {
     val androidOutgoingArtifacts = FragmentArtifacts<KotlinJvmVariant> {
@@ -44,7 +45,7 @@ fun KotlinGradleModule.createKotlinAndroidVariant(androidVariant: BaseVariant) {
     }
 
     val kotlinVariant = createExternalJvmVariant(
-        "android${androidVariant.buildType.name.capitalize()}", KotlinJvmVariantConfig(
+        "android${androidVariant.buildType.name.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() }}", KotlinJvmVariantConfig(
             /* Only swap out configuration that is used. Default setup shall still be applied */
             compileDependencies = (DefaultKotlinCompileDependenciesDefinition +
                     FragmentAttributes<KotlinGradleFragment> {

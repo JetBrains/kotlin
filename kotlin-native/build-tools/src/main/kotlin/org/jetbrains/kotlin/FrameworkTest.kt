@@ -19,6 +19,7 @@ import java.io.Serializable
 import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.Paths
+import java.util.*
 
 /**
  * Test task for -produce framework testing. Requires a framework to be built by the Konan plugin
@@ -145,7 +146,10 @@ open class FrameworkTest : DefaultTask(), KonanTestExecutable {
         val provider = Paths.get(testOutput, name, "provider.swift")
         FileWriter(provider.toFile()).use { writer ->
             val providers = swiftSources.toFiles(Language.Swift)
-                    .map { it.name.toString().removeSuffix(".swift").capitalize() }
+                    .map {
+                        it.name.toString().removeSuffix(".swift")
+                            .replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() }
+                    }
                     .map { "${it}Tests" }
 
             writer.write("""

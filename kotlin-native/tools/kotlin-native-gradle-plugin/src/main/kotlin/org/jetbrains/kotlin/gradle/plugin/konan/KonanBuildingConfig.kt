@@ -29,6 +29,8 @@ import org.gradle.api.tasks.TaskProvider
 import org.jetbrains.kotlin.gradle.plugin.tasks.KonanBuildingTask
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import java.io.File
+import java.util.*
+import kotlin.NoSuchElementException
 
 /** Base class for all Kotlin/Native artifacts. */
 abstract class KonanBuildingConfig<T : KonanBuildingTask>(
@@ -79,13 +81,25 @@ abstract class KonanBuildingConfig<T : KonanBuildingTask>(
     }
 
     protected open fun generateTaskName(target: KonanTarget) =
-        "compileKonan${name.capitalize()}${target.visibleName.capitalize()}"
+        "compileKonan${name.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() }}${
+            target.visibleName.replaceFirstChar {
+                if (it.isLowerCase()) it.titlecase(
+                    Locale.getDefault()
+                ) else it.toString()
+            }
+        }"
 
     protected open fun generateAggregateTaskName() =
-        "compileKonan${name.capitalize()}"
+        "compileKonan${name.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() }}"
 
     protected open fun generateTargetAliasTaskName(targetName: String) =
-        "compileKonan${name.capitalize()}${targetName.capitalize()}"
+        "compileKonan${name.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() }}${
+            targetName.replaceFirstChar {
+                if (it.isLowerCase()) it.titlecase(
+                    Locale.getDefault()
+                ) else it.toString()
+            }
+        }"
 
     protected abstract fun generateTaskDescription(task: T): String
     protected abstract fun generateAggregateTaskDescription(task: Task): String

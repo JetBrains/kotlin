@@ -52,6 +52,7 @@ import org.jetbrains.kotlin.konan.target.customerDistribution
 import org.jetbrains.kotlin.konan.util.DependencyProcessor
 import org.jetbrains.kotlin.*
 import java.io.File
+import java.util.*
 import javax.inject.Inject
 
 /**
@@ -394,7 +395,14 @@ class KonanPlugin @Inject constructor(private val registry: ToolingModelBuilderR
                 .forEach { task ->
                     val isCrossCompile = (task.target != HostManager.host.visibleName)
                     if (!isCrossCompile && !project.hasProperty("konanNoRun"))
-                    task.runTask = project.tasks.register("run${task.artifactName.capitalize()}", Exec::class.java) {
+                    task.runTask = project.tasks.register(
+                        "run${
+                            task.artifactName.replaceFirstChar {
+                                if (it.isLowerCase()) it.titlecase(
+                                    Locale.getDefault()
+                                ) else it.toString()
+                            }
+                        }", Exec::class.java) {
                         group= "run"
                         dependsOn(task)
                         val artifactPathClosure = object : Closure<String>(this) {

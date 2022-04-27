@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.gradle.plugin.konan
 import org.gradle.api.Project
 import org.jetbrains.kotlin.gradle.plugin.konan.KonanPlugin.ProjectProperty
 import java.io.File
+import java.util.*
 
 /**
  *  The plugin allows an IDE to specify some building parameters. These parameters
@@ -64,10 +65,10 @@ internal class EnvironmentVariablesImpl(val project: Project):  EnvironmentVaria
         }
 
     override val debuggingSymbols: Boolean
-        get() = System.getenv("DEBUGGING_SYMBOLS")?.toUpperCase() == "YES"
+        get() = System.getenv("DEBUGGING_SYMBOLS")?.uppercase(Locale.getDefault()) == "YES"
 
     override val enableOptimizations: Boolean
-        get() = System.getenv("KONAN_ENABLE_OPTIMIZATIONS")?.toUpperCase() == "YES"
+        get() = System.getenv("KONAN_ENABLE_OPTIMIZATIONS")?.uppercase(Locale.getDefault()) == "YES"
 }
 
 /**
@@ -82,12 +83,12 @@ internal class EnvironmentVariablesFromProperties(val project: Project): Environ
         }
 
     override val debuggingSymbols: Boolean
-        get() = project.findProperty(ProjectProperty.KONAN_DEBUGGING_SYMBOLS)?.toString()?.toUpperCase().let {
+        get() = project.findProperty(ProjectProperty.KONAN_DEBUGGING_SYMBOLS)?.toString()?.uppercase(Locale.getDefault()).let {
             it == "YES" || it == "TRUE"
         }
 
     override val enableOptimizations: Boolean
-        get() = project.findProperty(ProjectProperty.KONAN_OPTIMIZATIONS_ENABLE)?.toString()?.toUpperCase().let {
+        get() = project.findProperty(ProjectProperty.KONAN_OPTIMIZATIONS_ENABLE)?.toString()?.uppercase(Locale.getDefault()).let {
             it == "YES" || it == "TRUE"
         }
 }

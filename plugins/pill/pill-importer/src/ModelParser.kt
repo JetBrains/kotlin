@@ -28,6 +28,8 @@ import org.jetbrains.kotlin.pill.model.PSourceRoot.*
 import org.jetbrains.kotlin.pill.PillExtensionMirror.*
 import org.jetbrains.kotlin.pill.model.*
 import java.io.File
+import java.util.*
+import kotlin.collections.HashMap
 
 typealias OutputDir = String
 typealias GradleProjectPath = String
@@ -104,7 +106,9 @@ class ModelParser(private val variant: Variant, private val modulePrefix: String
     private fun findEmbeddableTask(project: Project, sourceSet: SourceSet): Jar? {
         val jarName = sourceSet.jarTaskName
         val embeddable = "embeddable"
-        val embeddedName = if (jarName == "jar") embeddable else jarName.dropLast("jar".length) + embeddable.capitalize()
+        val embeddedName = if (jarName == "jar") embeddable else jarName.dropLast("jar".length) + embeddable.replaceFirstChar {
+            if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString()
+        }
         return project.tasks.findByName(embeddedName) as? Jar
     }
 
@@ -257,7 +261,9 @@ class ModelParser(private val variant: Variant, private val modulePrefix: String
         val isMainSourceSet = sourceSet.name == SourceSet.MAIN_SOURCE_SET_NAME
 
         val taskNameBase = "processResources"
-        val taskName = if (isMainSourceSet) taskNameBase else sourceSet.name + taskNameBase.capitalize()
+        val taskName = if (isMainSourceSet) taskNameBase else sourceSet.name + taskNameBase.replaceFirstChar {
+            if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString()
+        }
         val task = project.tasks.findByName(taskName) as? ProcessResources ?: return emptyList()
 
         val roots = mutableListOf<File>()
