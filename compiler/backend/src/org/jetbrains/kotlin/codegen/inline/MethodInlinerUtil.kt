@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.codegen.optimization.common.isMeaningful
 import org.jetbrains.kotlin.codegen.optimization.nullCheck.isCheckParameterIsNotNull
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes
 import org.jetbrains.org.objectweb.asm.Opcodes
+import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.tree.AbstractInsnNode
 import org.jetbrains.org.objectweb.asm.tree.FieldInsnNode
 import org.jetbrains.org.objectweb.asm.tree.MethodNode
@@ -63,22 +64,20 @@ val BasicValue?.functionalArgument
     get() = (this as? FunctionalArgumentValue)?.functionalArgument
 
 internal class FunctionalArgumentInterpreter(private val inliner: MethodInliner) : BasicInterpreter(Opcodes.API_VERSION) {
+    override fun newParameterValue(isInstanceMethod: Boolean, local: Int, type: Type): BasicValue =
+        inliner.getFunctionalArgumentIfExists(local)?.let { FunctionalArgumentValue(it, newValue(type)) } ?: newValue(type)
+
     override fun unaryOperation(insn: AbstractInsnNode, value: BasicValue): BasicValue? =
         wrapArgumentInValueIfNeeded(insn, super.unaryOperation(insn, value))
-
-    override fun copyOperation(insn: AbstractInsnNode, value: BasicValue?): BasicValue? =
-        wrapArgumentInValueIfNeeded(insn, super.copyOperation(insn, value))
 
     override fun newOperation(insn: AbstractInsnNode): BasicValue? =
         wrapArgumentInValueIfNeeded(insn, super.newOperation(insn))
 
-    private fun wrapArgumentInValueIfNeeded(
-        insn: AbstractInsnNode,
-        basicValue: BasicValue?
-    ): BasicValue? =
-        inliner.getFunctionalArgumentIfExists(insn)
-            ?.let { FunctionalArgumentValue(it, basicValue) }
-            ?: basicValue
+    private fun wrapArgumentInValueIfNeeded(insn: AbstractInsnNode, basicValue: BasicValue?): BasicValue? =
+        if (insn is FieldInsnNode) // GETFIELD or GETSTATIC
+            inliner.getFunctionalArgumentIfExists(insn)?.let { FunctionalArgumentValue(it, basicValue) } ?: basicValue
+        else
+            basicValue
 
     override fun merge(v: BasicValue?, w: BasicValue?): BasicValue? =
         if (v is FunctionalArgumentValue && w is FunctionalArgumentValue && v.functionalArgument == w.functionalArgument) v

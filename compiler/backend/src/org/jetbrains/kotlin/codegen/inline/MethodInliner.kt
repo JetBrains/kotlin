@@ -661,38 +661,18 @@ class MethodInliner(
     }
 
     private fun markObsoleteInstruction(instructions: InsnList, sources: Array<out Frame<BasicValue>?>): SmartSet<AbstractInsnNode> {
-        val toDelete = SmartSet.create<AbstractInsnNode>()
-
-        for (insn in instructions) {
+        return instructions.filterIndexedTo(SmartSet.create()) { index, insn ->
             // Parameter checks are processed separately
-            if (insn.isAloadBeforeCheckParameterIsNotNull()) continue
-            val functionalArgument = getFunctionalArgumentIfExists(insn)
-            if (functionalArgument is LambdaInfo) {
-                toDelete.add(insn)
-            } else {
-                when (insn.opcode) {
-                    Opcodes.ASTORE -> {
-                        if (sources[instructions.indexOf(insn)]?.top().functionalArgument is LambdaInfo) {
-                            toDelete.add(insn)
-                        }
-                    }
-                    Opcodes.SWAP -> {
-                        if (sources[instructions.indexOf(insn)]?.peek(0).functionalArgument is LambdaInfo ||
-                            sources[instructions.indexOf(insn)]?.peek(1).functionalArgument is LambdaInfo
-                        ) {
-                            toDelete.add(insn)
-                        }
-                    }
-                    Opcodes.ALOAD -> {
-                        if (sources[instructions.indexOf(insn)]?.getLocal((insn as VarInsnNode).`var`).functionalArgument is LambdaInfo) {
-                            toDelete.add(insn)
-                        }
-                    }
-                }
+            !insn.isAloadBeforeCheckParameterIsNotNull() && when (insn.opcode) {
+                Opcodes.GETFIELD, Opcodes.GETSTATIC, Opcodes.ALOAD ->
+                    sources[index + 1]?.top().functionalArgument is LambdaInfo
+                Opcodes.PUTFIELD, Opcodes.PUTSTATIC, Opcodes.ASTORE ->
+                    sources[index]?.top().functionalArgument is LambdaInfo
+                Opcodes.SWAP ->
+                    sources[index]?.peek(0).functionalArgument is LambdaInfo || sources[index]?.peek(1).functionalArgument is LambdaInfo
+                else -> false
             }
         }
-
-        return toDelete
     }
 
     // Replace ALOAD 0
@@ -953,20 +933,18 @@ class MethodInliner(
         return inliningContext.typeRemapper.hasNoAdditionalMapping(owner)
     }
 
-    internal fun getFunctionalArgumentIfExists(insnNode: AbstractInsnNode): FunctionalArgument? {
+    internal fun getFunctionalArgumentIfExists(insnNode: FieldInsnNode): FunctionalArgument? {
         return when {
-            insnNode.opcode == Opcodes.ALOAD ->
-                getFunctionalArgumentIfExists((insnNode as VarInsnNode).`var`)
-            insnNode is FieldInsnNode && insnNode.name.startsWith(CAPTURED_FIELD_FOLD_PREFIX) ->
+            insnNode.name.startsWith(CAPTURED_FIELD_FOLD_PREFIX) ->
                 findCapturedField(insnNode, nodeRemapper).functionalArgument
-            insnNode is FieldInsnNode && inliningContext.root.sourceCompilerForInline.isSuspendLambdaCapturedByOuterObjectOrLambda(insnNode.name) ->
+            inliningContext.root.sourceCompilerForInline.isSuspendLambdaCapturedByOuterObjectOrLambda(insnNode.name) ->
                 NonInlineArgumentForInlineSuspendParameter.INLINE_LAMBDA_AS_VARIABLE
             else ->
                 null
         }
     }
 
-    private fun getFunctionalArgumentIfExists(varIndex: Int): FunctionalArgument? {
+    internal fun getFunctionalArgumentIfExists(varIndex: Int): FunctionalArgument? {
         if (varIndex < parameters.argsSizeOnStack) {
             return parameters.getParameterByDeclarationSlot(varIndex).functionalArgument
         }
