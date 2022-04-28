@@ -3,9 +3,15 @@ package org.jetbrains.dokka.model
 import org.jetbrains.dokka.model.properties.ExtraProperty
 import org.jetbrains.dokka.model.properties.MergeStrategy
 
-class DefaultValue(val value: Expression): ExtraProperty<Documentable> {
+class DefaultValue(val expression: SourceSetDependent<Expression>): ExtraProperty<Documentable> {
+
+    @Deprecated("Use `expression` property that depends on source set", ReplaceWith("this.expression.values.first()"))
+    val value: Expression
+        get() = expression.values.first()
     companion object : ExtraProperty.Key<Documentable, DefaultValue> {
-        override fun mergeStrategyFor(left: DefaultValue, right: DefaultValue): MergeStrategy<Documentable> = MergeStrategy.Remove // TODO pass a logger somehow and log this
+        override fun mergeStrategyFor(left: DefaultValue, right: DefaultValue): MergeStrategy<Documentable> =
+            MergeStrategy.Replace(DefaultValue(left.expression + right.expression))
+
     }
 
     override val key: ExtraProperty.Key<Documentable, *>
