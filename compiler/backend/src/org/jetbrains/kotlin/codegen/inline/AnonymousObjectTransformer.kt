@@ -22,10 +22,8 @@ import org.jetbrains.kotlin.metadata.jvm.JvmProtoBuf
 import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmProtoBufUtil
 import org.jetbrains.kotlin.metadata.jvm.serialization.JvmStringTable
 import org.jetbrains.kotlin.protobuf.MessageLite
-import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin.Companion.NO_ORIGIN
 import org.jetbrains.org.objectweb.asm.*
-import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
 import org.jetbrains.org.objectweb.asm.commons.Method
 import org.jetbrains.org.objectweb.asm.tree.*
 import java.util.*
@@ -44,7 +42,6 @@ class AnonymousObjectTransformer(
     private var constructor: MethodNode? = null
     private lateinit var sourceMap: SMAP
     private lateinit var sourceMapper: SourceMapper
-    private val languageVersionSettings = inliningContext.state.languageVersionSettings
 
     // TODO: use IrTypeMapper in the IR backend
     private val typeMapper: KotlinTypeMapperBase = state.typeMapper
@@ -107,7 +104,7 @@ class AnonymousObjectTransformer(
                 return if (isCapturedFieldName(name)) {
                     null
                 } else {
-                    classBuilder.newField(JvmDeclarationOrigin.NO_ORIGIN, access, name, desc, signature, value)
+                    classBuilder.newField(NO_ORIGIN, access, name, desc, signature, value)
                 }
             }
 
@@ -349,29 +346,9 @@ class AnonymousObjectTransformer(
         parentRemapper: FieldRemapper,
         constructorAdditionalFakeParams: List<CapturedParamInfo>
     ) {
-        val descTypes = ArrayList<Type>()
-
         val constructorParams = constructorInlineBuilder.buildParameters()
-        val capturedIndexes = IntArray(constructorParams.parameters.size)
-        var index = 0
-        var size = 0
-
-        //complex processing cause it could have super constructor call params
-        for (info in constructorParams) {
-            if (!info.isSkipped) { //not inlined
-                if (info.isCaptured || info is CapturedParamInfo) {
-                    capturedIndexes[index] = size
-                    index++
-                }
-
-                if (size != 0) { //skip this
-                    descTypes.add(info.type)
-                }
-                size += info.type.size
-            }
-        }
-
-        val constructorDescriptor = Type.getMethodDescriptor(Type.VOID_TYPE, *descTypes.toTypedArray())
+        val constructorParamTypes = constructorParams.filter { !it.isSkipped }.map { it.type }.drop(1)
+        val constructorDescriptor = Type.getMethodDescriptor(Type.VOID_TYPE, *constructorParamTypes.toTypedArray())
         //TODO for inline method make public class
         transformationInfo.newConstructorDescriptor = constructorDescriptor
         val constructorVisitor = classBuilder.newMethod(
@@ -380,14 +357,28 @@ class AnonymousObjectTransformer(
 
         val newBodyStartLabel = Label()
         constructorVisitor.visitLabel(newBodyStartLabel)
-        //initialize captured fields
-        val newFieldsWithSkipped = getNewFieldsToGenerate(allCapturedBuilder.listCaptured())
-        val fieldInfoWithSkipped = transformToFieldInfo(Type.getObjectType(transformationInfo.newClassName), newFieldsWithSkipped)
 
-        val capturedFieldInitializer = InstructionAdapter(constructorVisitor)
-        fieldInfoWithSkipped.forEachIndexed { paramIndex, fieldInfo ->
-            if (!newFieldsWithSkipped[paramIndex].skip) {
-                DescriptorAsmUtil.genAssignInstanceFieldFromParam(fieldInfo, capturedIndexes[paramIndex], capturedFieldInitializer)
+        //initialize captured fields
+        val capturedIndexes = IntArray(constructorParams.parameters.size)
+        var index = 0
+        var size = 0
+        for (info in constructorParams) {
+            if (!info.isSkipped) { //not inlined
+                if (info.isCaptured || info is CapturedParamInfo) {
+                    capturedIndexes[index] = size
+                    index++
+                }
+                size += info.type.size
+            }
+        }
+        for ((paramIndex, info) in allCapturedBuilder.listCaptured().filter { it.functionalArgument !is LambdaInfo }.withIndex()) {
+            if (!info.isSkipInConstructor) {
+                val desc = info.type.descriptor
+                val access = AsmUtil.NO_FLAG_PACKAGE_PRIVATE or Opcodes.ACC_SYNTHETIC or Opcodes.ACC_FINAL
+                classBuilder.newField(NO_ORIGIN, access, info.newFieldName, desc, null, null)
+                constructorVisitor.visitVarInsn(Opcodes.ALOAD, 0)
+                constructorVisitor.visitVarInsn(info.type.getOpcode(Opcodes.ILOAD), capturedIndexes[paramIndex])
+                constructorVisitor.visitFieldInsn(Opcodes.PUTFIELD, transformationInfo.newClassName, info.newFieldName, desc)
             }
         }
 
@@ -417,7 +408,7 @@ class AnonymousObjectTransformer(
 
         val first = intermediateMethodNode.instructions.first
         val oldStartLabel = (first as? LabelNode)?.label
-        intermediateMethodNode.accept(object : MethodBodyVisitor(capturedFieldInitializer) {
+        intermediateMethodNode.accept(object : MethodBodyVisitor(constructorVisitor) {
             override fun visitLocalVariable(
                 name: String, desc: String, signature: String?, start: Label, end: Label, index: Int
             ) {
@@ -430,9 +421,6 @@ class AnonymousObjectTransformer(
             }
         })
         constructorVisitor.visitEnd()
-        DescriptorAsmUtil.genClosureFields(
-            toNameTypePair(filterSkipped(newFieldsWithSkipped)), classBuilder
-        )
     }
 
     private fun getMethodParametersWithCaptured(capturedBuilder: ParametersBuilder, sourceNode: MethodNode): Parameters {
