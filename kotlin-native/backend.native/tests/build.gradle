@@ -6006,6 +6006,10 @@ fileCheckTest("filecheck_escape_analysis_enabled") {
 }
 
 fileCheckTest("filecheck_enum_when") {
+    // In case of `-opt` we inline Enum.ordinal due to property inlining.
+    if (project.globalTestArgs.contains('-opt')) {
+        checkPrefix = "CHECK-OPT"
+    }
     annotatedSource = project.file('filecheck/enum_when.kt')
 }
 
