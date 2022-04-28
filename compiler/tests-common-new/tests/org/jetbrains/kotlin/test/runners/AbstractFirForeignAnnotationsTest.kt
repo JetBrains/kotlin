@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.builders.configureFirHandlersStep
 import org.jetbrains.kotlin.test.builders.firFrontendStep
 import org.jetbrains.kotlin.test.builders.firHandlersStep
+import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives
 import org.jetbrains.kotlin.test.frontend.classic.handlers.FirJspecifyDiagnosticComplianceHandler
 import org.jetbrains.kotlin.test.frontend.fir.FirFailingTestSuppressor
 import org.jetbrains.kotlin.test.frontend.fir.handlers.*
@@ -20,6 +21,10 @@ abstract class AbstractFirForeignAnnotationsTestBase(kind: ForeignAnnotationsTes
     override fun TestConfigurationBuilder.configureFrontend() {
         globalDefaults {
             frontend = FrontendKinds.FIR
+        }
+
+        defaultDirectives {
+            LanguageSettingsDirectives.LANGUAGE with "+EnableDfaWarningsInK2"
         }
 
         useMetaInfoProcessors(::PsiLightTreeMetaInfoProcessor)

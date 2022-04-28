@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers.expression
 
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.checkers.CastingType
@@ -34,9 +35,13 @@ object FirCastOperatorsChecker : FirTypeOperatorCallChecker() {
         if (expression.operation == FirOperation.AS || isSafeAs) {
             val castType = checkCasting(actualType, targetType, isSafeAs, context)
             if (castType == CastingType.Impossible) {
-                reporter.reportOn(expression.source, FirErrors.CAST_NEVER_SUCCEEDS, context)
+                if (context.languageVersionSettings.supportsFeature(LanguageFeature.EnableDfaWarningsInK2)) {
+                    reporter.reportOn(expression.source, FirErrors.CAST_NEVER_SUCCEEDS, context)
+                }
             } else if (castType == CastingType.Always) {
-                reporter.reportOn(expression.source, FirErrors.USELESS_CAST, context)
+                if (context.languageVersionSettings.supportsFeature(LanguageFeature.EnableDfaWarningsInK2)) {
+                    reporter.reportOn(expression.source, FirErrors.USELESS_CAST, context)
+                }
             } else if (isCastErased(actualType, targetType, context)) {
                 reporter.reportOn(expression.source, FirErrors.UNCHECKED_CAST, actualType, targetType, context)
             }

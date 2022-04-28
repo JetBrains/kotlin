@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers.expression
 
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
@@ -25,12 +26,16 @@ object FirUselessElvisChecker : FirElvisExpressionChecker() {
         val lhsType = expression.lhs.typeRef.coneType
         if (lhsType is ConeErrorType) return
         if (!lhsType.canBeNull) {
-            reporter.reportOn(expression.source, FirErrors.USELESS_ELVIS, lhsType, context)
+            if (context.languageVersionSettings.supportsFeature(LanguageFeature.EnableDfaWarningsInK2)) {
+                reporter.reportOn(expression.source, FirErrors.USELESS_ELVIS, lhsType, context)
+            }
             return
         }
 
         if (expression.rhs.isNullLiteral) {
-            reporter.reportOn(expression.source, FirErrors.USELESS_ELVIS_RIGHT_IS_NULL, context)
+            if (context.languageVersionSettings.supportsFeature(LanguageFeature.EnableDfaWarningsInK2)) {
+                reporter.reportOn(expression.source, FirErrors.USELESS_ELVIS_RIGHT_IS_NULL, context)
+            }
         }
     }
 }

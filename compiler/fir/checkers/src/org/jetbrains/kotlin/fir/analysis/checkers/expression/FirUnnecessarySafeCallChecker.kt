@@ -26,7 +26,9 @@ object FirUnnecessarySafeCallChecker : FirSafeCallExpressionChecker() {
             return
         }
         if (!receiverType.canBeNull) {
-            reporter.reportOn(expression.source, FirErrors.UNNECESSARY_SAFE_CALL, receiverType, context)
+            if (context.languageVersionSettings.supportsFeature(LanguageFeature.EnableDfaWarningsInK2)) {
+                reporter.reportOn(expression.source, FirErrors.UNNECESSARY_SAFE_CALL, receiverType, context)
+            }
             if (!context.session.languageVersionSettings.supportsFeature(LanguageFeature.SafeCallsAreAlwaysNullable)) {
                 reporter.reportOn(expression.source, FirErrors.SAFE_CALL_WILL_CHANGE_NULLABILITY, context)
             }

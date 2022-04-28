@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers.expression
 
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
@@ -36,7 +37,7 @@ object FirNotNullAssertionChecker : FirCheckNotNullCallChecker() {
 
         val type = argument.typeRef.coneType.fullyExpandedType(context.session)
 
-        if (!type.canBeNull) {
+        if (!type.canBeNull && context.languageVersionSettings.supportsFeature(LanguageFeature.EnableDfaWarningsInK2)) {
             reporter.reportOn(expression.source, FirErrors.UNNECESSARY_NOT_NULL_ASSERTION, type, context)
         }
     }

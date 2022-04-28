@@ -261,6 +261,7 @@ enum class LanguageFeature(
     ForbidUsingExtensionPropertyTypeParameterInDelegate(KOTLIN_1_8, kind = BUG_FIX),
     ModifierNonBuiltinSuspendFunError(KOTLIN_1_8),
     SynchronizedSuspendError(KOTLIN_1_8),
+    EnableDfaWarningsInK2(KOTLIN_1_8, kind = OTHER), // KT-50965
 
     // 1.9
 

@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir.analysis.checkers.declaration
 
 import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.KtSourceElement
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
@@ -163,7 +164,9 @@ internal fun checkPropertyInitializer(
                 }
                 // TODO: like [BindingContext.MUST_BE_LATEINIT], we should consider variable with uninitialized error.
                 if (backingFieldRequired && !inInterface && isInitialized) {
-                    reporter.reportOn(propertySource, FirErrors.UNNECESSARY_LATEINIT, context)
+                    if (context.languageVersionSettings.supportsFeature(LanguageFeature.EnableDfaWarningsInK2)) {
+                        reporter.reportOn(propertySource, FirErrors.UNNECESSARY_LATEINIT, context)
+                    }
                 }
             }
         }

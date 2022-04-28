@@ -364,6 +364,11 @@ public class CliTestGenerated extends AbstractCliTest {
             runTest("compiler/testData/cli/jvm/fileClassClashMultipleFiles.args");
         }
 
+        @TestMetadata("firDfa.args")
+        public void testFirDfa() throws Exception {
+            runTest("compiler/testData/cli/jvm/firDfa.args");
+        }
+
         @TestMetadata("firError.args")
         public void testFirError() throws Exception {
             runTest("compiler/testData/cli/jvm/firError.args");
