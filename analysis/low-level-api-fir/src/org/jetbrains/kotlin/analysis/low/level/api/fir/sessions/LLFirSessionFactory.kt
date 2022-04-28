@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.analysis.project.structure.*
 import org.jetbrains.kotlin.analysis.providers.createAnnotationResolver
 import org.jetbrains.kotlin.analysis.providers.createDeclarationProvider
 import org.jetbrains.kotlin.analysis.providers.createPackageProvider
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
 import org.jetbrains.kotlin.fir.*
@@ -76,7 +77,17 @@ internal object LLFirSessionFactory {
         configureSession: (LLFirSession.() -> Unit)? = null
     ): LLFirSourcesSession {
         sessionsCache[module]?.let { return it as LLFirSourcesSession }
-        val languageVersionSettings = module.languageVersionSettings
+        val languageVersionSettings = object : LanguageVersionSettings by module.languageVersionSettings {
+            override fun getFeatureSupport(feature: LanguageFeature): LanguageFeature.State =
+                if (feature == LanguageFeature.EnableDfaWarningsInK2) LanguageFeature.State.ENABLED
+                else module.languageVersionSettings.getFeatureSupport(feature)
+
+            override fun supportsFeature(feature: LanguageFeature): Boolean =
+                getFeatureSupport(feature).let {
+                    it == LanguageFeature.State.ENABLED || it == LanguageFeature.State.ENABLED_WITH_WARNING
+                }
+        }
+
         val scopeProvider = FirKotlinScopeProvider(::wrapScopeWithJvmMapped)
         val firBuilder = FirFileBuilder(scopeProvider, firPhaseRunner)
         val contentScope = module.contentScope

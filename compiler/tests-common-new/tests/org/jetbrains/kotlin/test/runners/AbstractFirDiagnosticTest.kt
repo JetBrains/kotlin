@@ -143,13 +143,17 @@ fun TestConfigurationBuilder.baseFirDiagnosticTestConfiguration(
 
     forTestsMatching("compiler/fir/analysis-tests/testData/resolveWithStdlib/properties/backingField/*") {
         defaultDirectives {
-            LANGUAGE with "+ExplicitBackingFields"
+            LANGUAGE + "+ExplicitBackingFields"
         }
     }
 
     forTestsMatching("compiler/testData/diagnostics/tests/multiplatform/*") {
         defaultDirectives {
-            LANGUAGE with "+MultiPlatformProjects"
+            LANGUAGE + "+MultiPlatformProjects"
         }
+    }
+
+    defaultDirectives {
+        LANGUAGE + "+EnableDfaWarningsInK2"
     }
 }

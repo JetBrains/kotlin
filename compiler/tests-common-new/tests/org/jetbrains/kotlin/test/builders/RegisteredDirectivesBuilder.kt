@@ -28,6 +28,11 @@ class RegisteredDirectivesBuilder {
         stringDirectives.putWithExistsCheck(this, values)
     }
 
+    operator fun StringDirective.plus(value: String) {
+        val previous = stringDirectives[this] ?: listOf()
+        stringDirectives[this] = previous + value
+    }
+
     operator fun StringDirective.unaryMinus() {
         stringDirectives.remove(this)
     }

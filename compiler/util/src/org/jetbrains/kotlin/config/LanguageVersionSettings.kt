@@ -259,6 +259,7 @@ enum class LanguageFeature(
     IgnoreNullabilityForErasedValueParameters(KOTLIN_1_8, kind = BUG_FIX),
     ForbidUsingExtensionPropertyTypeParameterInDelegate(KOTLIN_1_8, kind = BUG_FIX),
     ReportNonVarargSpreadOnGenericCalls(KOTLIN_1_8, kind = BUG_FIX), // KT-48162
+    EnableDfaWarningsInK2(KOTLIN_1_8, kind = OTHER), // KT-50965
 
     // 1.9
 
