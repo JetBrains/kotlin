@@ -35,9 +35,9 @@ class MemoizedMultiFieldValueClassReplacements(
 ) : MemoizedValueClassAbstractReplacements(irFactory, context) {
     private val storageManager = LockBasedStorageManager("multi-field-value-class-replacements")
 
-    internal val originalFunctionForStaticReplacement: MutableMap<IrFunction, IrFunction> = ConcurrentHashMap()
-    internal val originalFunctionForMethodReplacement: MutableMap<IrFunction, IrFunction> = ConcurrentHashMap()
-    internal val originalConstructorForConstructorReplacement: MutableMap<IrConstructor, IrConstructor> = ConcurrentHashMap()
+    val originalFunctionForStaticReplacement: MutableMap<IrFunction, IrFunction> = ConcurrentHashMap()
+    val originalFunctionForMethodReplacement: MutableMap<IrFunction, IrFunction> = ConcurrentHashMap()
+    private val originalConstructorForConstructorReplacement: MutableMap<IrConstructor, IrConstructor> = ConcurrentHashMap()
 
     val getDeclarations: (IrClass) -> MultiFieldValueClassSpecificDeclarations? =
         storageManager.createMemoizedFunctionWithNullableValues {
@@ -77,24 +77,24 @@ class MemoizedMultiFieldValueClassReplacements(
         }
     }
 
-    private fun IrFunction.makeValueParametersFromTemplate(newFlattenedParameters: List<List<ValueParameterTemplate>>) =
-        newFlattenedParameters.flatten().mapIndexed { index: Int, template -> template.toParameter(this, index) }
+    private fun IrFunction.makeValueParametersFromTemplate(newFlattenedParameters: List<RemappedParameter>) = newFlattenedParameters
+        .flatMap { it.valueParameters }.mapIndexed { index: Int, template -> template.toParameter(this, index) }
 
     private fun List<ValueParameterTemplate>.grouped(
         originWhenFlattenedAndNotSpecified: IrDeclarationOrigin? = IrDeclarationOrigin.GENERATED_MULTI_FIELD_VALUE_CLASS_PARAMETER
-    ): List<List<ValueParameterTemplate>> = map { parameter ->
-        val declaration = parameter.type.takeIf { !it.isNullable() }?.getClass()?.let { getDeclarations(it) }
-            ?: return@map listOf(parameter)
+    ): List<RemappedParameter> = map { parameter ->
+        val declarations = parameter.type.takeIf { !it.isNullable() }?.getClass()?.let { getDeclarations(it) }
+            ?: return@map RemappedParameter.RegularMapping(parameter)
         require(!parameter.original.hasDefaultValue()) { "Default parameters values are not supported for multi-field value classes" }
-        declaration.leaves.map { leaf ->
+        RemappedParameter.MultiFieldValueClassMapping(declarations, declarations.leaves.map { leaf ->
             ValueParameterTemplate(
-                name = "${parameter.name}$${declaration.nodeFullNames[leaf]!!}",
+                name = "${parameter.name}$${declarations.nodeFullNames[leaf]!!}",
                 type = leaf.type,
                 origin = parameter.origin ?: originWhenFlattenedAndNotSpecified,
                 defaultValue = null,
                 original = parameter.original,
             )
-        }
+        })
     }
 
     private fun buildReplacement(
@@ -115,8 +115,8 @@ class MemoizedMultiFieldValueClassReplacements(
 
     private fun makeGroupedValueParametersFrom(
         function: IrFunction, includeDispatcherReceiver: Boolean
-    ): List<List<ValueParameterTemplate>> {
-        val newFlattenedParameters = mutableListOf<List<ValueParameterTemplate>>()
+    ): List<RemappedParameter> {
+        val newFlattenedParameters = mutableListOf<RemappedParameter>()
         if (function.dispatchReceiverParameter != null && includeDispatcherReceiver) {
             val template = ValueParameterTemplate(
                 name = "\$dispatchReceiver",
@@ -161,7 +161,24 @@ class MemoizedMultiFieldValueClassReplacements(
         return newFlattenedParameters
     }
 
-    val bindingParameterTemplateStructure: MutableMap<IrFunction, List<List<ValueParameterTemplate>>> = ConcurrentHashMap()
+    sealed class RemappedParameter {
+        data class RegularMapping(val valueParameter: ValueParameterTemplate) : RemappedParameter() {
+            override val valueParameters: List<ValueParameterTemplate> = listOf(valueParameter)
+        }
+
+        data class MultiFieldValueClassMapping(
+            val declarations: MultiFieldValueClassSpecificDeclarations,
+            override val valueParameters: List<ValueParameterTemplate>,
+        ) : RemappedParameter() {
+            init {
+                require(valueParameters.size > 1) { "MFVC must have > 1 fields" }
+            }
+        }
+        
+        abstract val valueParameters: List<ValueParameterTemplate>
+    }
+
+    val bindingParameterTemplateStructure: MutableMap<IrFunction, List<RemappedParameter>> = ConcurrentHashMap()
 
     override fun createStaticReplacement(function: IrFunction): IrSimpleFunction =
         buildReplacement(function, JvmLoweredDeclarationOrigin.STATIC_MULTI_FIELD_VALUE_CLASS_REPLACEMENT, noFakeOverride = true) {
@@ -184,7 +201,7 @@ class MemoizedMultiFieldValueClassReplacements(
             original = receiver,
         ) else null
         bindingParameterTemplateStructure[function] =
-            if (receiverTemplate != null) listOf(listOf(receiverTemplate)) + newFlattenedParameters else newFlattenedParameters
+            if (receiverTemplate != null) listOf(RemappedParameter.RegularMapping(receiverTemplate)) + newFlattenedParameters else newFlattenedParameters
         valueParameters = makeValueParametersFromTemplate(newFlattenedParameters)
     }
 
@@ -217,7 +234,7 @@ class MemoizedMultiFieldValueClassReplacements(
             defaultValue = receiver.defaultValue,
             original = receiver
         )
-        bindingParameterTemplateStructure[function] = listOf(listOf(receiverTemplate))
+        bindingParameterTemplateStructure[function] = listOf(RemappedParameter.RegularMapping(receiverTemplate))
         return newGetter
     }
 

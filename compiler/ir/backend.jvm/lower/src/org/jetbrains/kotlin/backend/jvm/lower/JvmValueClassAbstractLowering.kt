@@ -7,21 +7,21 @@ package org.jetbrains.kotlin.backend.jvm.lower
 
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.IrElementTransformerVoidWithContext
+import org.jetbrains.kotlin.backend.common.ir.copyParameterDeclarationsFrom
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.pop
 import org.jetbrains.kotlin.backend.common.push
-import org.jetbrains.kotlin.backend.jvm.InlineClassAbi
-import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
-import org.jetbrains.kotlin.backend.jvm.MemoizedValueClassAbstractReplacements
+import org.jetbrains.kotlin.backend.jvm.*
+import org.jetbrains.kotlin.backend.jvm.ir.isInlineClassType
 import org.jetbrains.kotlin.ir.IrStatement
+import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.builders.irReturn
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.transformStatement
-import org.jetbrains.kotlin.ir.util.constructedClass
-import org.jetbrains.kotlin.ir.util.parentAsClass
-import org.jetbrains.kotlin.ir.util.patchDeclarationParents
-import org.jetbrains.kotlin.ir.util.transformFlat
+import org.jetbrains.kotlin.ir.util.*
+import org.jetbrains.kotlin.load.java.JvmAbi
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 internal abstract class JvmValueClassAbstractLowering(val context: JvmBackendContext) : FileLoweringPass,
@@ -121,7 +121,7 @@ internal abstract class JvmValueClassAbstractLowering(val context: JvmBackendCon
 
         val bridgeFunction = createBridgeFunction(function, replacement)
 
-        return listOfNotNull(replacement, bridgeFunction)
+        return listOf(replacement, bridgeFunction)
     }
 
     final override fun visitReturn(expression: IrReturn): IrExpression {
@@ -166,10 +166,69 @@ internal abstract class JvmValueClassAbstractLowering(val context: JvmBackendCon
             super.visitAnonymousInitializerNew(declaration)
 
     protected abstract fun addBindingsFor(original: IrFunction, replacement: IrFunction)
-    protected abstract fun createBridgeFunction(function: IrSimpleFunction, replacement: IrSimpleFunction): IrSimpleFunction?
+
+    private fun createBridgeFunction(
+        function: IrSimpleFunction,
+        replacement: IrSimpleFunction
+    ): IrSimpleFunction {
+        val bridgeFunction = createBridgeDeclaration(
+            function,
+            when {
+                // If the original function has signature which need mangling we still need to replace it with a mangled version.
+                (!function.isFakeOverride || function.findInterfaceImplementation(context.state.jvmDefaultMode) != null) &&
+                        function.signatureRequiresMangling() ->
+                    replacement.name
+                // Since we remove the corresponding property symbol from the bridge we need to resolve getter/setter
+                // names at this point.
+                replacement.isGetter ->
+                    Name.identifier(JvmAbi.getterName(replacement.correspondingPropertySymbol!!.owner.name.asString()))
+                replacement.isSetter ->
+                    Name.identifier(JvmAbi.setterName(replacement.correspondingPropertySymbol!!.owner.name.asString()))
+                else ->
+                    function.name
+            }
+        )
+
+        // Update the overridden symbols to point to their inline class replacements
+        bridgeFunction.overriddenSymbols = replacement.overriddenSymbols
+
+        // Replace the function body with a wrapper
+        if (bridgeFunction.isFakeOverride && bridgeFunction.parentAsClass.isSpecificLoweringLogicApplicable()) {
+            // Fake overrides redirect from the replacement to the original function, which is in turn replaced during interfacePhase.
+            createBridgeBody(replacement, bridgeFunction, function, true)
+        } else {
+            createBridgeBody(bridgeFunction, replacement, function, false)
+        }
+        return bridgeFunction
+    }
+
+    private fun IrSimpleFunction.signatureRequiresMangling() =
+        fullValueParameterList.any { it.type.getRequiresMangling() } ||
+                context.state.functionsWithInlineClassReturnTypesMangled && returnType.getRequiresMangling() && returnType.isInlineClassType()
 
     protected fun typedArgumentList(function: IrFunction, expression: IrMemberAccessExpression<*>) = listOfNotNull(
         function.dispatchReceiverParameter?.let { it to expression.dispatchReceiver },
         function.extensionReceiverParameter?.let { it to expression.extensionReceiver }
     ) + function.valueParameters.map { it to expression.getValueArgument(it.index) }
+
+
+    // We may need to add a bridge method for inline class methods with static replacements. Ideally, we'd do this in BridgeLowering,
+    // but unfortunately this is a special case in the old backend. The bridge method is not marked as such and does not follow the normal
+    // visibility rules for bridge methods.
+    private fun createBridgeDeclaration(source: IrSimpleFunction, mangledName: Name) =
+        context.irFactory.buildFun {
+            updateFrom(source)
+            name = mangledName
+            returnType = source.returnType
+        }.apply {
+            copyParameterDeclarationsFrom(source)
+            annotations = source.annotations
+            parent = source.parent
+            // We need to ensure that this bridge has the same attribute owner as its static inline class replacement, since this
+            // is used in [CoroutineCodegen.isStaticInlineClassReplacementDelegatingCall] to identify the bridge and avoid generating
+            // a continuation class.
+            copyAttributes(source)
+        }
+
+    protected abstract fun createBridgeBody(source: IrSimpleFunction, target: IrSimpleFunction, original: IrFunction, inverted: Boolean)
 }
