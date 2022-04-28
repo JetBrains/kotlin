@@ -40,7 +40,7 @@ class MemoizedInlineClassReplacements(
     private val storageManager = LockBasedStorageManager("inline-class-replacements")
 
     val originalFunctionForStaticReplacement: MutableMap<IrFunction, IrFunction> = ConcurrentHashMap()
-    internal val originalFunctionForMethodReplacement: MutableMap<IrFunction, IrFunction> = ConcurrentHashMap()
+    val originalFunctionForMethodReplacement: MutableMap<IrFunction, IrFunction> = ConcurrentHashMap()
 
     /**
      * Get a replacement for a function or a constructor.
@@ -76,7 +76,8 @@ class MemoizedInlineClassReplacements(
                     }
 
                 // Otherwise, mangle functions with mangled parameters, ignoring constructors
-                it is IrSimpleFunction && !it.isFromJava() && (it.hasMangledParameters || mangleReturnTypes && it.hasMangledReturnType) ->
+                it is IrSimpleFunction && !it.isFromJava() &&
+                        (it.hasMangledParameters(includeMFVC = false) || mangleReturnTypes && it.hasMangledReturnType) ->
                     createMethodReplacement(it)
 
                 else ->

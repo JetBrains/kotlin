@@ -18,7 +18,6 @@ import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.builders.declarations.addConstructor
-import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
@@ -30,8 +29,6 @@ import org.jetbrains.kotlin.ir.types.isNullable
 import org.jetbrains.kotlin.ir.types.makeNotNull
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
-import org.jetbrains.kotlin.load.java.JvmAbi
-import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.JVM_INLINE_ANNOTATION_FQ_NAME
 
 val jvmInlineClassPhase = makeIrFilePhase(
@@ -117,64 +114,7 @@ private class JvmInlineClassLowering(context: JvmBackendContext) : JvmValueClass
         )
     }
 
-    override fun createBridgeFunction(
-        function: IrSimpleFunction,
-        replacement: IrSimpleFunction
-    ): IrSimpleFunction {
-        val bridgeFunction = createBridgeDeclaration(
-            function,
-            when {
-                // If the original function has signature which need mangling we still need to replace it with a mangled version.
-                (!function.isFakeOverride || function.findInterfaceImplementation(context.state.jvmDefaultMode) != null) &&
-                        function.signatureRequiresMangling() ->
-                    replacement.name
-                // Since we remove the corresponding property symbol from the bridge we need to resolve getter/setter
-                // names at this point.
-                replacement.isGetter ->
-                    Name.identifier(JvmAbi.getterName(replacement.correspondingPropertySymbol!!.owner.name.asString()))
-                replacement.isSetter ->
-                    Name.identifier(JvmAbi.setterName(replacement.correspondingPropertySymbol!!.owner.name.asString()))
-                else ->
-                    function.name
-            }
-        )
-
-        // Update the overridden symbols to point to their inline class replacements
-        bridgeFunction.overriddenSymbols = replacement.overriddenSymbols
-
-        // Replace the function body with a wrapper
-        if (bridgeFunction.isFakeOverride && bridgeFunction.parentAsClass.isSingleFieldValueClass) {
-            // Fake overrides redirect from the replacement to the original function, which is in turn replaced during interfacePhase.
-            createBridgeBody(replacement, bridgeFunction)
-        } else {
-            createBridgeBody(bridgeFunction, replacement)
-        }
-        return bridgeFunction
-    }
-
-    private fun IrSimpleFunction.signatureRequiresMangling() =
-        fullValueParameterList.any { it.type.requiresMangling } ||
-                context.state.functionsWithInlineClassReturnTypesMangled && returnType.requiresMangling
-
-    // We may need to add a bridge method for inline class methods with static replacements. Ideally, we'd do this in BridgeLowering,
-    // but unfortunately this is a special case in the old backend. The bridge method is not marked as such and does not follow the normal
-    // visibility rules for bridge methods.
-    private fun createBridgeDeclaration(source: IrSimpleFunction, mangledName: Name) =
-        context.irFactory.buildFun {
-            updateFrom(source)
-            name = mangledName
-            returnType = source.returnType
-        }.apply {
-            copyParameterDeclarationsFrom(source)
-            annotations = source.annotations
-            parent = source.parent
-            // We need to ensure that this bridge has the same attribute owner as its static inline class replacement, since this
-            // is used in [CoroutineCodegen.isStaticInlineClassReplacementDelegatingCall] to identify the bridge and avoid generating
-            // a continuation class.
-            copyAttributes(source)
-        }
-
-    private fun createBridgeBody(source: IrSimpleFunction, target: IrSimpleFunction) {
+    override fun createBridgeBody(source: IrSimpleFunction, target: IrSimpleFunction, original: IrFunction, inverted: Boolean) {
         source.body = context.createIrBuilder(source.symbol, source.startOffset, source.endOffset).run {
             irExprBody(irCall(target).apply {
                 passTypeArgumentsFrom(source)
