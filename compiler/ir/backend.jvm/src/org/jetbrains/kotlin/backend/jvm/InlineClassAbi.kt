@@ -101,7 +101,7 @@ object InlineClassAbi {
     ): String? =
         collectFunctionSignatureForManglingSuffix(
             useOldMangleRules,
-            valueParameters.any { it.requiresMangling },
+            valueParameters.any { it.getRequiresMangling() },
             // The JVM backend computes mangled names after creating suspend function views, but before default argument
             // stub insertion. It would be nice if this part of the continuation lowering happened earlier in the pipeline.
             // TODO: Move suspend function view creation before JvmInlineClassLowering.
@@ -124,19 +124,28 @@ object InlineClassAbi {
         get() = (this as IrSimpleFunction).correspondingPropertySymbol!!.owner.name
 }
 
-val IrType.requiresMangling: Boolean
-    get() {
-        val irClass = erasedUpperBound
-        return irClass.isValue && irClass.fqNameWhenAvailable != StandardNames.RESULT_FQ_NAME
+fun IrType.getRequiresMangling(includeInline: Boolean = true, includeMFVC: Boolean = true): Boolean {
+    val irClass = erasedUpperBound
+    return irClass.fqNameWhenAvailable != StandardNames.RESULT_FQ_NAME && when {
+        irClass.isSingleFieldValueClass -> includeInline
+        irClass.isMultiFieldValueClass -> includeMFVC
+        else -> false
     }
+}
 
 val IrFunction.fullValueParameterList: List<IrValueParameter>
     get() = listOfNotNull(extensionReceiverParameter) + valueParameters
 
-val IrFunction.hasMangledParameters: Boolean
-    get() = dispatchReceiverParameter != null && parentAsClass.isValue ||
-            fullValueParameterList.any { it.type.requiresMangling } ||
-            (this is IrConstructor && constructedClass.isValue)
+fun IrFunction.hasMangledParameters(includeInline: Boolean = true, includeMFVC: Boolean = true): Boolean =
+    (dispatchReceiverParameter != null && when {
+        parentAsClass.isSingleFieldValueClass -> includeInline
+        parentAsClass.isMultiFieldValueClass -> includeMFVC
+        else -> false
+    }) || fullValueParameterList.any { it.type.getRequiresMangling(includeInline, includeMFVC) } || (this is IrConstructor && when {
+        constructedClass.isSingleFieldValueClass -> includeInline
+        constructedClass.isMultiFieldValueClass -> includeMFVC
+        else -> false
+    })
 
 val IrFunction.hasMangledReturnType: Boolean
     get() = returnType.isInlineClassType() && parentClassOrNull?.isFileClass != true

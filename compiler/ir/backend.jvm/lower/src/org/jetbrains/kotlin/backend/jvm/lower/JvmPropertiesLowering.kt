@@ -10,10 +10,10 @@ import org.jetbrains.kotlin.backend.common.IrElementTransformerVoidWithContext
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
+import org.jetbrains.kotlin.backend.jvm.getRequiresMangling
 import org.jetbrains.kotlin.backend.jvm.hasMangledReturnType
 import org.jetbrains.kotlin.backend.jvm.ir.eraseTypeParameters
 import org.jetbrains.kotlin.backend.jvm.ir.needsAccessor
-import org.jetbrains.kotlin.backend.jvm.requiresMangling
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
@@ -222,7 +222,7 @@ class JvmPropertiesLowering(private val backendContext: JvmBackendContext) : IrE
                     val getter = property.getter
                     if (getter != null) {
                         val needsMangling =
-                            getter.extensionReceiverParameter?.type?.requiresMangling == true ||
+                            getter.extensionReceiverParameter?.type?.getRequiresMangling(includeInline = true, includeMFVC = false) == true ||
                                     (state.functionsWithInlineClassReturnTypesMangled && getter.hasMangledReturnType)
                         val mangled = if (needsMangling) inlineClassReplacements.getReplacementFunction(getter) else null
                         defaultMethodSignatureMapper.mapFunctionName(mangled ?: getter)
