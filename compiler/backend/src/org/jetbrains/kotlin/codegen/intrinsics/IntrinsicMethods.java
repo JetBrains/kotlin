@@ -149,7 +149,7 @@ public class IntrinsicMethods {
         intrinsicsMap.registerIntrinsic(BUILT_INS_PACKAGE_FQ_NAME, null, "arrayOfNulls", 1, new NewArray());
 
         for (PrimitiveType type : PrimitiveType.values()) {
-            declareIntrinsicFunction(type.getTypeFqName(), "compareTo", 1, new CompareTo());
+            declareIntrinsicFunction(type.getTypeFqName(), "compareTo", 1, new CompareTo(jvmTarget));
             declareIntrinsicFunction(COLLECTIONS_PACKAGE_FQ_NAME.child(Name.identifier(type.getTypeName().asString() + "Iterator")), "next", 0, ITERATOR_NEXT);
         }
 

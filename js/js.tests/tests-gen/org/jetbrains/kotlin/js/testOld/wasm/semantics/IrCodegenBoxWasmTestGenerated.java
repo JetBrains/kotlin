@@ -17898,6 +17898,16 @@ public class IrCodegenBoxWasmTestGenerated extends AbstractIrCodegenBoxWasmTest 
             runTest("compiler/testData/codegen/box/intrinsics/kt12125_inc_2.kt");
         }
 
+        @TestMetadata("kt52163_boolean.kt")
+        public void testKt52163_boolean() throws Exception {
+            runTest("compiler/testData/codegen/box/intrinsics/kt52163_boolean.kt");
+        }
+
+        @TestMetadata("kt52163_doubleCompareToInt.kt")
+        public void testKt52163_doubleCompareToInt() throws Exception {
+            runTest("compiler/testData/codegen/box/intrinsics/kt52163_doubleCompareToInt.kt");
+        }
+
         @TestMetadata("kt8666.kt")
         public void testKt8666() throws Exception {
             runTest("compiler/testData/codegen/box/intrinsics/kt8666.kt");
