@@ -20,8 +20,6 @@ idePluginDependency {
             "compiler/tests-spec/testData",
             "compiler/testData/diagnostics/testsWithStdLib",
             "compiler/fir/raw-fir/psi2fir/testData",
-            "jps/jps-plugin/testData",
-            "compiler/testData/classpathOrder",
         ).forEach {
             from(rootDir.resolve(it)) {
                 into(it)
