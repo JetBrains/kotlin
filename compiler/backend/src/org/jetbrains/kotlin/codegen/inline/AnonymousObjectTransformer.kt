@@ -359,22 +359,20 @@ class AnonymousObjectTransformer(
         //initialize captured fields
         var nextParamOffset = 0
         for (param in constructorParams) {
-            if (param.isSkipped) continue
-            val info = param.fieldEquivalent ?: param
-            if (info is CapturedParamInfo && !info.isSkipInConstructor) {
+            val offset = if (param.isSkipped) -1 else nextParamOffset.also { nextParamOffset += param.type.size }
+            val info = param.fieldEquivalent?.also {
+                // Permit to access this capture through a field within the constructor itself, but remap to local loads.
+                constructorInlineBuilder.addCapturedParam(it, it.newFieldName).remapValue =
+                    if (offset == -1) null else StackValue.local(offset, param.type)
+            } ?: param
+            if (!param.isSkipped && info is CapturedParamInfo && !info.isSkipInConstructor) {
                 val desc = info.type.descriptor
                 val access = AsmUtil.NO_FLAG_PACKAGE_PRIVATE or Opcodes.ACC_SYNTHETIC or Opcodes.ACC_FINAL
                 classBuilder.newField(NO_ORIGIN, access, info.newFieldName, desc, null, null)
                 constructorVisitor.visitVarInsn(Opcodes.ALOAD, 0)
-                constructorVisitor.visitVarInsn(info.type.getOpcode(Opcodes.ILOAD), nextParamOffset)
+                constructorVisitor.visitVarInsn(info.type.getOpcode(Opcodes.ILOAD), offset)
                 constructorVisitor.visitFieldInsn(Opcodes.PUTFIELD, transformationInfo.newClassName, info.newFieldName, desc)
             }
-            nextParamOffset += param.type.size
-        }
-
-        for (param in constructorParams) {
-            val info = param.fieldEquivalent ?: continue
-            constructorInlineBuilder.addCapturedParamCopy(info)
         }
 
         val intermediateMethodNode = MethodNode(constructor!!.access, "<init>", constructorDescriptor, null, ArrayUtil.EMPTY_STRING_ARRAY)
@@ -533,7 +531,10 @@ class AnonymousObjectTransformer(
                     recapturedParamInfo.remapValue = composed
                     allRecapturedParameters.add(desc)
 
-                    constructorParamBuilder.addCapturedParam(recapturedParamInfo, recapturedParamInfo.newFieldName).remapValue = composed
+                    // DO NOT assign a remap value to the constructor parameter - this would cause the inliner to miscount
+                    // the arguments, eventually generating code that overwrites some of these captures with other stuff.
+                    // Plus we don't really want to remap local loads to field reads anyway, the latter are faster.
+                    constructorParamBuilder.addCapturedParam(recapturedParamInfo, recapturedParamInfo.newFieldName).remapValue = null
                 }
             }
         } else if (capturedLambdas.isNotEmpty()) {
@@ -549,7 +550,7 @@ class AnonymousObjectTransformer(
             recapturedParamInfo.remapValue = composed
             allRecapturedParameters.add(desc)
 
-            constructorParamBuilder.addCapturedParam(recapturedParamInfo, recapturedParamInfo.newFieldName).remapValue = composed
+            constructorParamBuilder.addCapturedParam(recapturedParamInfo, recapturedParamInfo.newFieldName).remapValue = null
         }
 
         transformationInfo.allRecapturedParameters = allRecapturedParameters
