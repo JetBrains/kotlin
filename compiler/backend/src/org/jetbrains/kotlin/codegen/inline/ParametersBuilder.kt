@@ -37,13 +37,15 @@ class ParametersBuilder private constructor() {
     }
 
     fun addCapturedParam(original: CapturedParamInfo, newFieldName: String): CapturedParamInfo {
-        val info = CapturedParamInfo(original.desc, newFieldName, original.isSkipped, nextParameterOffset, original.index)
+        val info = CapturedParamInfo(
+            original.desc, newFieldName, original.isSkipped, nextParameterOffset, original.index, original.isSkipInConstructor
+        )
         info.functionalArgument = original.functionalArgument
         return addParameter(info)
     }
 
     fun addCapturedParam(desc: CapturedParamDesc, newFieldName: String, skipInConstructor: Boolean): CapturedParamInfo {
-        return addParameter(CapturedParamInfo(desc, newFieldName, false, nextParameterOffset, null, skipInConstructor, -1))
+        return addParameter(CapturedParamInfo(desc, newFieldName, false, nextParameterOffset, -1, skipInConstructor))
     }
 
     fun addCapturedParamCopy(copyFrom: CapturedParamInfo): CapturedParamInfo {
@@ -59,7 +61,7 @@ class ParametersBuilder private constructor() {
         original: ParameterInfo?
     ): CapturedParamInfo {
         val info = CapturedParamInfo(
-            CapturedParamDesc(containingLambdaType, fieldName, type), newFieldName, skipped, nextParameterOffset, original?.index ?: -1
+            CapturedParamDesc(containingLambdaType, fieldName, type), newFieldName, skipped, nextParameterOffset, original?.index ?: -1, false
         )
         if (original != null) {
             info.functionalArgument = original.functionalArgument

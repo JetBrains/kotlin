@@ -32,7 +32,14 @@ class CapturedParamInfo : ParameterInfo {
     val containingLambdaName: String
         get() = desc.containingLambdaName
 
-    constructor(desc: CapturedParamDesc, newFieldName: String, skipped: Boolean, index: Int, remapIndex: Int) : super(
+    constructor(
+        desc: CapturedParamDesc,
+        newFieldName: String,
+        skipped: Boolean,
+        index: Int,
+        remapIndex: Int,
+        skipInConstructor: Boolean
+    ) : super(
         desc.type,
         skipped,
         index,
@@ -41,10 +48,10 @@ class CapturedParamInfo : ParameterInfo {
     ) {
         this.desc = desc
         this.newFieldName = newFieldName
-        this.isSkipInConstructor = false
+        this.isSkipInConstructor = skipInConstructor
     }
 
-    constructor(
+    private constructor(
         desc: CapturedParamDesc,
         newFieldName: String,
         skipped: Boolean,

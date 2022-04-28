@@ -129,13 +129,13 @@ class AnonymousObjectTransformer(
 
         val allCapturedParamBuilder = ParametersBuilder.newBuilder()
         val constructorParamBuilder = ParametersBuilder.newBuilder()
-        val additionalFakeParams = extractParametersMappingAndPatchConstructor(
+        extractParametersMappingAndPatchConstructor(
             constructor!!, allCapturedParamBuilder, constructorParamBuilder, transformationInfo, parentRemapper
         )
 
         val deferringMethods = ArrayList<DeferredMethodVisitor>()
 
-        generateConstructorAndFields(classBuilder, allCapturedParamBuilder, constructorParamBuilder, parentRemapper, additionalFakeParams)
+        generateConstructorAndFields(classBuilder, constructorParamBuilder, parentRemapper)
 
         val coroutineTransformer = CoroutineTransformer(
             inliningContext,
@@ -341,10 +341,8 @@ class AnonymousObjectTransformer(
 
     private fun generateConstructorAndFields(
         classBuilder: ClassBuilder,
-        allCapturedBuilder: ParametersBuilder,
         constructorInlineBuilder: ParametersBuilder,
-        parentRemapper: FieldRemapper,
-        constructorAdditionalFakeParams: List<CapturedParamInfo>
+        parentRemapper: FieldRemapper
     ) {
         val constructorParams = constructorInlineBuilder.buildParameters()
         val constructorParamTypes = constructorParams.filter { !it.isSkipped }.map { it.type }.drop(1)
@@ -359,47 +357,24 @@ class AnonymousObjectTransformer(
         constructorVisitor.visitLabel(newBodyStartLabel)
 
         //initialize captured fields
-        val capturedIndexes = IntArray(constructorParams.parameters.size)
-        var index = 0
-        var size = 0
-        for (info in constructorParams) {
-            if (!info.isSkipped) { //not inlined
-                if (info.isCaptured || info is CapturedParamInfo) {
-                    capturedIndexes[index] = size
-                    index++
-                }
-                size += info.type.size
-            }
-        }
-        for ((paramIndex, info) in allCapturedBuilder.listCaptured().filter { it.functionalArgument !is LambdaInfo }.withIndex()) {
-            if (!info.isSkipInConstructor) {
+        var nextParamOffset = 0
+        for (param in constructorParams) {
+            if (param.isSkipped) continue
+            val info = param.fieldEquivalent ?: param
+            if (info is CapturedParamInfo && !info.isSkipInConstructor) {
                 val desc = info.type.descriptor
                 val access = AsmUtil.NO_FLAG_PACKAGE_PRIVATE or Opcodes.ACC_SYNTHETIC or Opcodes.ACC_FINAL
                 classBuilder.newField(NO_ORIGIN, access, info.newFieldName, desc, null, null)
                 constructorVisitor.visitVarInsn(Opcodes.ALOAD, 0)
-                constructorVisitor.visitVarInsn(info.type.getOpcode(Opcodes.ILOAD), capturedIndexes[paramIndex])
+                constructorVisitor.visitVarInsn(info.type.getOpcode(Opcodes.ILOAD), nextParamOffset)
                 constructorVisitor.visitFieldInsn(Opcodes.PUTFIELD, transformationInfo.newClassName, info.newFieldName, desc)
             }
+            nextParamOffset += param.type.size
         }
 
-        //then transform constructor
-        //HACK: in inlining into constructor we access original captured fields with field access not local var
-        //but this fields added to general params (this assumes local var access) not captured one,
-        //so we need to add them to captured params
-        for (info in constructorAdditionalFakeParams) {
-            val fake = constructorInlineBuilder.addCapturedParamCopy(info)
-
-            if (fake.functionalArgument is LambdaInfo) {
-                //set remap value to skip this fake (captured with lambda already skipped)
-                val composed = StackValue.field(
-                    fake.type,
-                    oldObjectType,
-                    fake.newFieldName,
-                    false,
-                    StackValue.LOCAL_0
-                )
-                fake.remapValue = composed
-            }
+        for (param in constructorParams) {
+            val info = param.fieldEquivalent ?: continue
+            constructorInlineBuilder.addCapturedParamCopy(info)
         }
 
         val intermediateMethodNode = MethodNode(constructor!!.access, "<init>", constructorDescriptor, null, ArrayUtil.EMPTY_STRING_ARRAY)
@@ -457,11 +432,10 @@ class AnonymousObjectTransformer(
         constructorParamBuilder: ParametersBuilder,
         transformationInfo: AnonymousObjectTransformationInfo,
         parentFieldRemapper: FieldRemapper
-    ): List<CapturedParamInfo> {
+    ) {
+        val capturedParams = HashMap<Int, CapturedParamInfo>()
         val capturedLambdas = LinkedHashSet<LambdaInfo>() //captured var of inlined parameter
-        val constructorAdditionalFakeParams = ArrayList<CapturedParamInfo>()
         val indexToFunctionalArgument = transformationInfo.functionalArguments
-        val capturedParams = HashSet<Int>()
 
         // Possible cases where we need to add each lambda's captures separately:
         //
@@ -508,9 +482,7 @@ class AnonymousObjectTransformer(
             if (functionalArgument is LambdaInfo) {
                 capturedLambdas.add(functionalArgument)
             }
-            constructorAdditionalFakeParams.add(info)
-            capturedParams.add(varIndex)
-
+            capturedParams[varIndex] = info
             toDelete.add(parameterAload.previous)
             toDelete.add(parameterAload)
             toDelete.add(fieldNode)
@@ -521,11 +493,17 @@ class AnonymousObjectTransformer(
 
         val paramTypes = transformationInfo.constructorDesc?.let { Type.getArgumentTypes(it) } ?: emptyArray()
         for (type in paramTypes) {
-            val info = indexToFunctionalArgument[constructorParamBuilder.nextParameterOffset]
-            val isCaptured = capturedParams.contains(constructorParamBuilder.nextParameterOffset)
-            val parameterInfo = constructorParamBuilder.addNextParameter(type, info is LambdaInfo)
-            parameterInfo.functionalArgument = info
-            parameterInfo.isCaptured = isCaptured
+            val functionalArgument = indexToFunctionalArgument[constructorParamBuilder.nextParameterOffset]
+            val fieldEquivalent = capturedParams[constructorParamBuilder.nextParameterOffset]
+            val parameterInfo = constructorParamBuilder.addNextParameter(type, functionalArgument is LambdaInfo)
+            parameterInfo.functionalArgument = functionalArgument
+            parameterInfo.fieldEquivalent = fieldEquivalent
+            if (functionalArgument is LambdaInfo && parameterInfo.fieldEquivalent == null) {
+                // TODO: check if this is enough to support lambdas that have no field equivalent because they are only used
+                //  in the constructor - see `LocalClassContext` in `LocalDeclarationsLowering`.
+                // TODO: these lambdas' captures should have no fields either.
+                capturedLambdas.add(functionalArgument)
+            }
         }
 
         //For all inlined lambdas add their captured parameters
@@ -576,8 +554,6 @@ class AnonymousObjectTransformer(
 
         transformationInfo.allRecapturedParameters = allRecapturedParameters
         transformationInfo.capturedLambdasToInline = capturedLambdas.associateBy { it.lambdaClassType.internalName }
-
-        return constructorAdditionalFakeParams
     }
 
     private fun addUniqueField(name: String): String {
