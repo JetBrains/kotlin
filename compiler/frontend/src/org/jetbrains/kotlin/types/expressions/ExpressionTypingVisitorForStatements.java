@@ -39,6 +39,7 @@ import org.jetbrains.kotlin.resolve.calls.context.ResolutionContext;
 import org.jetbrains.kotlin.resolve.calls.context.TemporaryTraceAndCache;
 import org.jetbrains.kotlin.resolve.calls.inference.BuilderInferenceSession;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
+import org.jetbrains.kotlin.resolve.calls.results.NameNotFoundResolutionResult;
 import org.jetbrains.kotlin.resolve.calls.results.OverloadResolutionResults;
 import org.jetbrains.kotlin.resolve.calls.results.OverloadResolutionResultsImpl;
 import org.jetbrains.kotlin.resolve.calls.results.OverloadResolutionResultsUtil;
@@ -64,6 +65,7 @@ import static org.jetbrains.kotlin.resolve.BindingContext.VARIABLE_REASSIGNMENT;
 import static org.jetbrains.kotlin.resolve.calls.context.ContextDependency.INDEPENDENT;
 import static org.jetbrains.kotlin.types.TypeUtils.NO_EXPECTED_TYPE;
 import static org.jetbrains.kotlin.types.TypeUtils.noExpectedType;
+import static org.jetbrains.kotlin.util.OperatorNameConventions.ASSIGN;
 
 @SuppressWarnings("SuspiciousMethodCalls")
 public class ExpressionTypingVisitorForStatements extends ExpressionTypingVisitor {
@@ -440,6 +442,35 @@ public class ExpressionTypingVisitorForStatements extends ExpressionTypingVisito
         KotlinType expectedType = refineJavaFieldInTypeProperly
                                   ? refineTypeByPropertyInType(bindingContext, leftOperand, leftType)
                                   : refineTypeFromPropertySetterIfPossible(bindingContext, leftOperand, leftType);
+
+
+        // Resolve assign overload
+        VariableDescriptor descriptor = BindingContextUtils.extractVariableFromResolvedCall(bindingContext, leftOperand);
+        OverloadResolutionResults<FunctionDescriptor> assignmentOperationDescriptors = new NameNotFoundResolutionResult<>();
+        KotlinType assignmentOperationType = null;
+        TemporaryTraceAndCache temporaryForAssignmentOperation = null;
+        if (!descriptor.isVar()) {
+            ExpressionReceiver receiver = ExpressionReceiver.Companion.create(left, leftType, context.trace.getBindingContext());
+            temporaryForAssignmentOperation = TemporaryTraceAndCache.create(
+                    context, "trace to check assignment operation like '=' for", expression);
+            assignmentOperationDescriptors =
+                    components.callResolver.resolveBinaryCall(
+                            context.replaceTraceAndCache(temporaryForAssignmentOperation).replaceScope(scope),
+                            receiver, expression, ASSIGN
+                    );
+            assignmentOperationType = OverloadResolutionResultsUtil.getResultingType(assignmentOperationDescriptors, context);
+        }
+        boolean isResolvedAssignOverload = assignmentOperationType != null && assignmentOperationDescriptors.isSuccess();
+        if (isResolvedAssignOverload) {
+            temporaryForAssignmentOperation.commit();
+            if (!KotlinTypeChecker.DEFAULT.equalTypes(components.builtIns.getUnitType(), assignmentOperationType)) {
+                KtSimpleNameExpression operationSign = expression.getOperationReference();
+                context.trace.report(ASSIGNMENT_OPERATOR_SHOULD_RETURN_UNIT.on(operationSign, assignmentOperationDescriptors.getResultingDescriptor(), operationSign));
+            }
+            KotlinTypeInfo rightInfo = leftInfo;
+            return rightInfo.replaceType(checkAssignmentType(assignmentOperationType, expression, contextWithExpectedType));
+        }
+
 
         DataFlowInfo dataFlowInfo = leftInfo.getDataFlowInfo();
         KotlinTypeInfo resultInfo;

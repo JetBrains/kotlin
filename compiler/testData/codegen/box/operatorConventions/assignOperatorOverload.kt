@@ -1,7 +1,5 @@
-import java.lang.RuntimeException
 
 // TARGET_BACKEND: JVM_IR
-// IGNORE_BACKEND: JVM_IR
 
 var result: String = "Fail"
 

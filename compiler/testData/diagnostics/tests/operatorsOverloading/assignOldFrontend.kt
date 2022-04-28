@@ -12,4 +12,5 @@ operator fun C.assign(a: String) {
 fun test() {
     val c = C()
     c = "hello"
+    <!VAL_REASSIGNMENT!>c<!> = <!CONSTANT_EXPECTED_TYPE_MISMATCH!>1<!>
 }
