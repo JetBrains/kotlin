@@ -132,7 +132,7 @@ class OperatorExpressionGenerator(statementGenerator: StatementGenerator) : Stat
 
         return when (val irOperator = getInfixOperator(ktOperator)) {
             null -> throw AssertionError("Unexpected infix operator: $ktOperator")
-            IrStatementOrigin.EQ -> AssignmentGenerator(statementGenerator).generateAssignment(expression)
+            IrStatementOrigin.EQ -> AssignmentGenerator(statementGenerator).generateAssignment(expression, irOperator)
             in AUGMENTED_ASSIGNMENTS -> AssignmentGenerator(statementGenerator).generateAugmentedAssignment(expression, irOperator)
             IrStatementOrigin.ELVIS -> generateElvis(expression)
             in OPERATORS_DESUGARED_TO_CALLS -> generateBinaryOperatorAsCall(expression, irOperator)

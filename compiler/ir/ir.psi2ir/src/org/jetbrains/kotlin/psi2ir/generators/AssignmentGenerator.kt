@@ -43,11 +43,30 @@ import org.jetbrains.kotlin.types.KotlinType
 
 class AssignmentGenerator(statementGenerator: StatementGenerator) : StatementGeneratorExtension(statementGenerator) {
 
-    fun generateAssignment(ktExpression: KtBinaryExpression): IrExpression {
+    fun generateAssignment(ktExpression: KtBinaryExpression, origin: IrStatementOrigin): IrExpression {
         val ktLeft = ktExpression.left!!
         val irRhs = ktExpression.right!!.genExpr()
         val irAssignmentReceiver = generateAssignmentReceiver(ktLeft, IrStatementOrigin.EQ)
-        return irAssignmentReceiver.assign(irRhs)
+        return generateAssignOperatorCall(irAssignmentReceiver, ktExpression, origin) ?: irAssignmentReceiver.assign(irRhs)
+    }
+
+    private fun generateAssignOperatorCall(
+        irAssignmentReceiver: AssignmentReceiver,
+        ktExpression: KtBinaryExpression,
+        origin: IrStatementOrigin
+    ): IrExpression? {
+        val ktLeft = ktExpression.left!!
+        val ktRight = ktExpression.right!!
+        val text = ktLeft.psiOrParent.text
+        println(text)
+        val opResolvedCall = getResolvedCall(ktExpression) ?: return null
+        return irAssignmentReceiver.assign { irLValue ->
+            val opCall = statementGenerator.pregenerateCallReceivers(opResolvedCall)
+            opCall.setExplicitReceiverValue(irLValue)
+            opCall.irValueArgumentsByIndex[0] = ktRight.genExpr()
+            statementGenerator.generateSamConversionForValueArgumentsIfRequired(opCall, opResolvedCall)
+            CallGenerator(statementGenerator).generateCall(ktExpression, opCall, origin)
+        }
     }
 
     fun generateAugmentedAssignment(ktExpression: KtBinaryExpression, origin: IrStatementOrigin): IrExpression {

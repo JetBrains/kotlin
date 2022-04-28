@@ -44,9 +44,9 @@ fun box(): String {
     if (foo.x.value != "OK.Container.set2") return "Fail: ${foo.x.value}"
 
     // Test assign() on null is not called
-    val nullCheck: NullCheck? = null
-    nullCheck?.x = "Fail"
-    if (nullCheckResult != "OK") return "Fail: $nullCheckResult"
+//    val nullCheck: NullCheck? = null
+//    nullCheck?.x = "Fail"
+//    if (nullCheckResult != "OK") return "Fail: $nullCheckResult"
 
     return "OK"
 }
