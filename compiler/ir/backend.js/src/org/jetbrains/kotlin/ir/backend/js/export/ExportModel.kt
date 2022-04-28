@@ -20,7 +20,8 @@ data class ExportedModule(
 
 class ExportedNamespace(
     val name: String,
-    val declarations: List<ExportedDeclaration>
+    val declarations: List<ExportedDeclaration>,
+    val isSynthetic: Boolean = false
 ) : ExportedDeclaration()
 
 data class ExportedFunction(
@@ -59,7 +60,6 @@ class ExportedProperty(
     val isField: Boolean,
     val irGetter: IrFunction?,
     val irSetter: IrFunction?,
-    val exportedObject: ExportedClass? = null,
 ) : ExportedDeclaration()
 
 
@@ -76,6 +76,16 @@ data class ExportedClass(
     val members: List<ExportedDeclaration>,
     val nestedClasses: List<ExportedClass>,
     val ir: IrClass
+) : ExportedDeclaration()
+
+data class ExportedObject(
+    val name: String,
+    val superClass: ExportedType? = null,
+    val superInterfaces: List<ExportedType> = emptyList(),
+    val members: List<ExportedDeclaration>,
+    val nestedClasses: List<ExportedClass>,
+    val ir: IrClass,
+    val irGetter: IrFunction,
 ) : ExportedDeclaration()
 
 class ExportedParameter(

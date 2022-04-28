@@ -353,43 +353,29 @@ class ExportModelGenerator(
 
         val name = klass.getExportedIdentifier()
 
-        val exportedClass = ExportedClass(
-            name = name,
-            isInterface = klass.isInterface,
-            isAbstract = klass.modality == Modality.ABSTRACT,
-            superClass = superType,
-            superInterfaces = superInterfaces,
-            typeParameters = typeParameters,
-            members = members,
-            nestedClasses = nestedClasses,
-            ir = klass
-        )
-
-        if (klass.kind == ClassKind.OBJECT) {
-            var t: ExportedType = ExportedType.InlineInterfaceType(members + nestedClasses)
-            if (superType != null)
-                t = ExportedType.IntersectionType(t, superType)
-
-            for (superInterface in superInterfaces) {
-                t = ExportedType.IntersectionType(t, superInterface)
-            }
-
-            return ExportedProperty(
+        return if (klass.kind == ClassKind.OBJECT) {
+            ExportedObject(
                 name = name,
-                type = t,
-                mutable = false,
-                isMember = klass.parent is IrClass,
-                isStatic = !klass.isInner,
-                isAbstract = false,
-                isProtected = klass.visibility == DescriptorVisibilities.PROTECTED,
-                irGetter = context.mapping.objectToGetInstanceFunction[klass]!!,
-                irSetter = null,
-                exportedObject = exportedClass,
-                isField = false,
+                superClass = superType,
+                superInterfaces = superInterfaces,
+                members = members,
+                nestedClasses = nestedClasses,
+                ir = klass,
+                irGetter = context.mapping.objectToGetInstanceFunction[klass]!!
+            )
+        } else {
+            ExportedClass(
+                name = name,
+                isInterface = klass.isInterface,
+                isAbstract = klass.modality == Modality.ABSTRACT,
+                superClass = superType,
+                superInterfaces = superInterfaces,
+                typeParameters = typeParameters,
+                members = members,
+                nestedClasses = nestedClasses,
+                ir = klass
             )
         }
-
-        return exportedClass
     }
 
     private fun exportAsEnumMember(

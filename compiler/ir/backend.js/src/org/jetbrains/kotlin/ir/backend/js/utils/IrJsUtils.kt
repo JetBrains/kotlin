@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.ir.backend.js.utils
 
 import org.jetbrains.kotlin.descriptors.isClass
 import org.jetbrains.kotlin.descriptors.isInterface
+import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.backend.js.export.isExported
 import org.jetbrains.kotlin.ir.declarations.*
@@ -14,6 +15,7 @@ import org.jetbrains.kotlin.ir.expressions.IrReturn
 import org.jetbrains.kotlin.ir.symbols.IrReturnableBlockSymbol
 import org.jetbrains.kotlin.ir.util.parentClassOrNull
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.Name
 
 fun IrDeclaration.isExportedMember(context: JsIrBackendContext) =
     (this is IrDeclarationWithVisibility && visibility.isPublicAPI) &&
@@ -29,13 +31,23 @@ fun IrReturn.isTheLastReturnStatementIn(target: IrReturnableBlockSymbol): Boolea
     return target.owner.statements.lastOrNull() === this
 }
 
-fun IrDeclarationWithName.getFqNameWithJsNameWhenAvailable(shouldIncludePackage: Boolean): FqName {
-    val name = getJsNameOrKotlinName()
-    return when (val parent = parent) {
-        is IrDeclarationWithName -> parent.getFqNameWithJsNameWhenAvailable(shouldIncludePackage).child(name)
-        is IrPackageFragment -> getKotlinOrJsQualifier(parent, shouldIncludePackage)?.child(name) ?: FqName(name.identifier)
-        else -> FqName(name.identifier)
+private fun IrElement.getFqNameWithJsNameWhenAvailable(getSubQualifier: (IrPackageFragment) -> FqName?): FqName? {
+    return when (this) {
+        is IrDeclarationWithName -> {
+            val name = getJsNameOrKotlinName()
+            return parent.getFqNameWithJsNameWhenAvailable(getSubQualifier)?.child(name) ?: FqName(name.identifier)
+        }
+        is IrPackageFragment -> getSubQualifier(this)
+        else -> null
     }
+}
+
+fun IrDeclarationWithName.getFqNameWithJsNameWhenAvailable(shouldIncludePackage: Boolean): FqName {
+    return getFqNameWithJsNameWhenAvailable { getKotlinOrJsQualifier(it, shouldIncludePackage) }!!
+}
+
+fun IrDeclarationWithName.getFqNameWithJsNameWhenAvailable(subQualifier: Name): FqName {
+    return getFqNameWithJsNameWhenAvailable { getKotlinOrJsQualifier(it, true)?.child(subQualifier) }!!
 }
 
 private fun getKotlinOrJsQualifier(parent: IrPackageFragment, shouldIncludePackage: Boolean): FqName? {

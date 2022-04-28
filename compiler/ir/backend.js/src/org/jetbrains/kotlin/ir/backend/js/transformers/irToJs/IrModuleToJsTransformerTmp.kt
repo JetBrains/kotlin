@@ -84,7 +84,7 @@ class IrModuleToJsTransformerTmp(
             }
         }
 
-        val dts = wrapTypeScript(mainModuleName, moduleKind, exportData.values.flatMap { it.values.flatMap { it } }.toTypeScript(moduleKind))
+        val dts = ExportedModule(mainModuleName, moduleKind, exportData.values.flatMap { it.values.flatten() }).toTypeScript()
 
         modules.forEach { module ->
             module.files.forEach { StaticMembersLowering(backendContext).lower(it) }

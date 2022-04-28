@@ -247,3 +247,42 @@ class __JsNameTest private constructor() {
     @JsName("NestedJsName")
     class __NestJsNameTest(@JsName("value") val __value: Int)
 }
+
+//@JsExport
+//object Parent {
+//    val value = 4
+//    fun test(): String = "Test"
+//
+//    class NestedClass
+//    interface NestedInterface
+//    object NestedObject
+//    enum class NestedEnumClass { A, B }
+//
+//    class NestedParentClass {
+//        class NestedChildClass {
+//            companion object {
+//                class CompanionNestedClass
+//            }
+//        }
+//    }
+//
+//    object NestedParentObject {
+//        object NestedChildObject
+//    }
+//}
+
+@JsExport
+object Parent {
+    object Nested1 {
+       class Nested2 {
+           companion object {
+               class Nested3
+           }
+       }
+    }
+}
+
+@JsExport
+fun createNested3(): Parent.Nested1.Nested2.Companion.Nested3 {
+    return Parent.Nested1.Nested2.Companion.Nested3()
+}
