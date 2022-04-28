@@ -172,13 +172,9 @@ class LocalDeclarationsLowering(
         val capturedValueToField: MutableMap<IrValueDeclaration, PotentiallyUnusedField> = mutableMapOf()
 
         override fun irGet(startOffset: Int, endOffset: Int, valueDeclaration: IrValueDeclaration): IrExpression? {
-            // On the JVM backend, `AnonymousObjectTransformer` in the bytecode inliner uses field assignment
-            // instructions to find captured parameters. Most of the time this is unimportant, as captured
-            // parameters are effectively indistinguishable from normal ones; the exception is ones that can
-            // take an inline lambda value, as the parameter needs to be replaced with the lambda's capture.
-            // Thus we cannot erase the field - the inliner won't handle the inline lambda without it.
-            // (Most of the time this is inconsequential - if the object really is instantiated with an inline
-            // lambda, the field will be erased completely regardless of whether it's used.)
+            // TODO: this used to be a hack for the JVM bytecode inliner (which misbehaved when inline lambdas had no fields),
+            //  but it's no longer necessary. It is only here for backwards compatibility with old kotlinc versions
+            //  and can be removed, probably in 1.9.
             if (!forceFieldsForInlineCaptures || !valueDeclaration.isInlineDeclaration()) {
                 // We're in the initializer scope, which will be moved to a primary constructor later.
                 // Thus we can directly use that constructor's context and read from a parameter instead of a field.
