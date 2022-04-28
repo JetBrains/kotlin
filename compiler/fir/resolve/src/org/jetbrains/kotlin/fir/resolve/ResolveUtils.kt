@@ -354,7 +354,9 @@ private inline fun <T : FirExpression> BodyResolveComponents.transformExpression
 
     val originalType = expression.resultType.coneType
     val allTypes = typesFromSmartCast.also {
-        it += originalType
+        if (originalType !is ConeStubType) {
+            it += originalType
+        }
     }
     val intersectedType = ConeTypeIntersector.intersectTypes(session.typeContext, allTypes)
     if (intersectedType == originalType) return null

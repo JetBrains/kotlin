@@ -57,13 +57,13 @@ fun test() {
         if (get() === null) {}
 
         if (x != null) {
-            x?.hashCode()
-            x?.<!NONE_APPLICABLE!>equals<!>(1)
+            x<!UNNECESSARY_SAFE_CALL!>?.<!>hashCode()
+            x<!UNNECESSARY_SAFE_CALL!>?.<!>equals(1)
             x.equals("")
             x.hashCode()
             x.toString()
             x.test()
-            x?.test2()
+            x<!UNNECESSARY_SAFE_CALL!>?.<!>test2()
             x.test2()
         }
 
@@ -94,7 +94,7 @@ fun test() {
         emit(null)
         val x = get()
         if (x == null) {
-            x.<!NONE_APPLICABLE!>toString<!>("")
+            x<!UNSAFE_CALL!>.<!>toString("")
         }
 
         ""
@@ -104,7 +104,7 @@ fun test() {
         emit(null)
         val x = get()
         if (x == null) {
-            x.test()
+            x<!UNSAFE_CALL!>.<!>test()
         }
 
         ""
@@ -134,7 +134,7 @@ fun test() {
         emit(null)
         val x = get()
         if (x === null) {
-            x.<!NONE_APPLICABLE!>toString<!>("")
+            x<!UNSAFE_CALL!>.<!>toString("")
         }
 
         ""
@@ -144,7 +144,7 @@ fun test() {
         emit(null)
         val x = get()
         if (x === null) {
-            x.test()
+            x<!UNSAFE_CALL!>.<!>test()
         }
 
         ""
@@ -239,7 +239,7 @@ fun test() {
         emit(null)
         val x = get()
         if (x == null) {
-            x.test()
+            x<!UNSAFE_CALL!>.<!>test()
         }
         ""
     }
@@ -276,7 +276,7 @@ fun test() {
         emit(null)
         val x = get()
         if (x === null) {
-            x.test()
+            x<!UNSAFE_CALL!>.<!>test()
         }
         ""
     }

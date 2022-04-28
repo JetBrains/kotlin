@@ -25785,6 +25785,12 @@ public class FirOldFrontendDiagnosticsWithLightTreeTestGenerated extends Abstrac
             }
 
             @Test
+            @TestMetadata("varInsideLambdaThatPassedToExtensionFunctionWithTypeParametersThatDefinedInsideThisLambda.kt")
+            public void testVarInsideLambdaThatPassedToExtensionFunctionWithTypeParametersThatDefinedInsideThisLambda() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/resolve/varInsideLambdaThatPassedToExtensionFunctionWithTypeParametersThatDefinedInsideThisLambda.kt");
+            }
+
+            @Test
             @TestMetadata("wrongNumberOfTypeArguments.kt")
             public void testWrongNumberOfTypeArguments() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/resolve/wrongNumberOfTypeArguments.kt");

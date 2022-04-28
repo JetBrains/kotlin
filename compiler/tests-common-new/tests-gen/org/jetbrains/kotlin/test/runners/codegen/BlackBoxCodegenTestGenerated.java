@@ -120,6 +120,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
         }
 
         @Test
+        @TestMetadata("correctTypeForClassReferenceExpressionInAnnotation.kt")
+        public void testCorrectTypeForClassReferenceExpressionInAnnotation() throws Exception {
+            runTest("compiler/testData/codegen/box/annotations/correctTypeForClassReferenceExpressionInAnnotation.kt");
+        }
+
+        @Test
         @TestMetadata("defaultParameterValues.kt")
         public void testDefaultParameterValues() throws Exception {
             runTest("compiler/testData/codegen/box/annotations/defaultParameterValues.kt");

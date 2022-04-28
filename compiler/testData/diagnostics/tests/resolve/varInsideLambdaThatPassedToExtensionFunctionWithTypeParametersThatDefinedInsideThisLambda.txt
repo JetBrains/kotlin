@@ -1,0 +1,4 @@
+package
+
+public fun </*0*/ K, /*1*/ V> helper(/*0*/ builderAction: kotlin.collections.MutableMap<K, V>.() -> kotlin.Unit): kotlin.Unit
+public fun test(): kotlin.Unit
