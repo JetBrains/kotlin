@@ -167,5 +167,20 @@ declare namespace JS_TESTS {
             then(): number;
             catch(): number;
         }
+        class JsNameTest {
+            private constructor();
+            get value(): number;
+            runTest(): string;
+            static get Companion(): {
+                create(): foo.JsNameTest;
+                createChild(value: number): foo.JsNameTest.NestedJsName;
+            };
+        }
+        namespace JsNameTest {
+            class NestedJsName {
+                constructor(__value: number);
+                get value(): number;
+            }
+        }
     }
 }

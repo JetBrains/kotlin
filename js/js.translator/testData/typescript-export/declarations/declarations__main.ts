@@ -31,6 +31,7 @@ import TestInterfaceImpl = JS_TESTS.foo.TestInterfaceImpl;
 import processInterface = JS_TESTS.foo.processInterface;
 import OuterClass = JS_TESTS.foo.OuterClass;
 import KT38262 = JS_TESTS.foo.KT38262;
+import JsNameTest = JS_TESTS.foo.JsNameTest;
 
 function assert(condition: boolean) {
     if (!condition) {
@@ -155,6 +156,15 @@ function box(): string {
 
     assert(new KT38262().then() == 42)
     assert(new KT38262().catch() == 24)
+
+    const jsNameTest = JsNameTest.Companion.create();
+
+    assert(jsNameTest.value === 4)
+    assert(jsNameTest.runTest() === "JsNameTest")
+
+    const jsNameNestedTest = JsNameTest.Companion.createChild(42);
+
+    assert(jsNameNestedTest.value === 42)
 
     return "OK";
 }

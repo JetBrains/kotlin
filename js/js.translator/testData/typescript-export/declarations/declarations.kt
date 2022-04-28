@@ -220,3 +220,30 @@ class KT38262 {
     fun then(): Int = 42
     fun catch(): Int = 24
 }
+
+@JsExport
+@JsName("JsNameTest")
+class __JsNameTest private constructor() {
+    @JsName("value")
+    val __value = 4
+
+    @JsName("runTest")
+    fun __runTest(): String {
+        return "JsNameTest"
+    }
+
+    companion object {
+        @JsName("create")
+        fun __create(): __JsNameTest {
+           return __JsNameTest()
+        }
+
+        @JsName("createChild")
+        fun __createChild(value: Int): __NestJsNameTest {
+           return  __NestJsNameTest(value)
+        }
+    }
+
+    @JsName("NestedJsName")
+    class __NestJsNameTest(@JsName("value") val __value: Int)
+}

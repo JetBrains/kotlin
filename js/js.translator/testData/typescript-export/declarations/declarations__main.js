@@ -31,6 +31,7 @@ var TestInterfaceImpl = JS_TESTS.foo.TestInterfaceImpl;
 var processInterface = JS_TESTS.foo.processInterface;
 var OuterClass = JS_TESTS.foo.OuterClass;
 var KT38262 = JS_TESTS.foo.KT38262;
+var JsNameTest = JS_TESTS.foo.JsNameTest;
 function assert(condition) {
     if (!condition) {
         throw "Assertion failed";
@@ -129,5 +130,10 @@ function box() {
     assert(OuterClass.NestedEnum.B.ordinal === 1);
     assert(new KT38262().then() == 42);
     assert(new KT38262().catch() == 24);
+    var jsNameTest = JsNameTest.Companion.create();
+    assert(jsNameTest.value === 4);
+    assert(jsNameTest.runTest() === "JsNameTest");
+    var jsNameNestedTest = JsNameTest.Companion.createChild(42);
+    assert(jsNameNestedTest.value === 42);
     return "OK";
 }
