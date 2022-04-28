@@ -39265,6 +39265,12 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
             }
 
             @Test
+            @TestMetadata("kt51950.kt")
+            public void testKt51950() throws Exception {
+                runTest("compiler/testData/codegen/boxInline/anonymousObject/kt51950.kt");
+            }
+
+            @Test
             @TestMetadata("kt6007.kt")
             public void testKt6007() throws Exception {
                 runTest("compiler/testData/codegen/boxInline/anonymousObject/kt6007.kt");
