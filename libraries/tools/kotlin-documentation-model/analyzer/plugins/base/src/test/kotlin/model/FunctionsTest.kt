@@ -344,7 +344,7 @@ class FunctionTest : AbstractModelTest("/src/main/kotlin/function/Test.kt", "fun
                 parameters.forEach { p ->
                     p.name equals "x"
                     p.type.name.assertNotNull("Parameter type: ") equals "String"
-                    p.extra[DefaultValue]?.value equals StringConstant("")
+                    p.extra[DefaultValue]?.expression?.get(sourceSets.single()) equals StringConstant("")
                 }
             }
         }
@@ -363,7 +363,7 @@ class FunctionTest : AbstractModelTest("/src/main/kotlin/function/Test.kt", "fun
                 parameters.forEach { p ->
                     p.name equals "x"
                     p.type.name.assertNotNull("Parameter type: ") equals "Float"
-                    p.extra[DefaultValue]?.value equals FloatConstant(3.14f)
+                    p.extra[DefaultValue]?.expression?.get(sourceSets.single()) equals FloatConstant(3.14f)
                 }
             }
         }
