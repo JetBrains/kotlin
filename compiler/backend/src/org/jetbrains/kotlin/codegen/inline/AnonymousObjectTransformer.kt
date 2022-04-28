@@ -511,30 +511,20 @@ class AnonymousObjectTransformer(
             val capturedOuterThisTypes = mutableSetOf<String>()
             for (info in capturedLambdas) {
                 for (desc in info.capturedVars) {
-                    // Merge all outer `this` of the same type captured by inlined lambdas, since they have to be the same
-                    // object. Outer `this` captured by the original object itself should have been renamed above,
-                    // and can have a different value even if the same type is captured by a lambda.
-                    val recapturedParamInfo = if (isThis0(desc.fieldName))
-                        capturedParamBuilder.addCapturedParam(desc, desc.fieldName, !capturedOuterThisTypes.add(desc.type.className))
-                    else
-                        capturedParamBuilder.addCapturedParam(desc, addUniqueField(desc.fieldName + INLINE_TRANSFORMATION_SUFFIX), false)
+                    val recapturedParamInfo = constructorParamBuilder.addCapturedParam(
+                        desc,
+                        // Merge all outer `this` of the same type captured by inlined lambdas, since they have to be the same
+                        // object. Outer `this` captured by the original object itself should have been renamed above,
+                        // and can have a different value even if the same type is captured by a lambda.
+                        if (isThis0(desc.fieldName)) desc.fieldName else addUniqueField(desc.fieldName + INLINE_TRANSFORMATION_SUFFIX),
+                        (isThis0(desc.fieldName) && !capturedOuterThisTypes.add(desc.type.className))
+                    )
                     if (desc.isSuspend) {
                         recapturedParamInfo.functionalArgument = NonInlineArgumentForInlineSuspendParameter.INLINE_LAMBDA_AS_VARIABLE
                     }
-                    val composed = StackValue.field(
-                        desc.type,
-                        oldObjectType, /*TODO owner type*/
-                        recapturedParamInfo.newFieldName,
-                        false,
-                        StackValue.LOCAL_0
-                    )
-                    recapturedParamInfo.remapValue = composed
+                    capturedParamBuilder.addCapturedParam(recapturedParamInfo, recapturedParamInfo.newFieldName).remapValue =
+                        StackValue.field(desc.type, oldObjectType, recapturedParamInfo.newFieldName, false, StackValue.LOCAL_0)
                     allRecapturedParameters.add(desc)
-
-                    // DO NOT assign a remap value to the constructor parameter - this would cause the inliner to miscount
-                    // the arguments, eventually generating code that overwrites some of these captures with other stuff.
-                    // Plus we don't really want to remap local loads to field reads anyway, the latter are faster.
-                    constructorParamBuilder.addCapturedParam(recapturedParamInfo, recapturedParamInfo.newFieldName).remapValue = null
                 }
             }
         } else if (capturedLambdas.isNotEmpty()) {
@@ -545,12 +535,10 @@ class AnonymousObjectTransformer(
                 ?: throw AssertionError("Expecting RegeneratedLambdaFieldRemapper, but ${parentFieldRemapper.parent}")
             val ownerType = Type.getObjectType(parent.originalLambdaInternalName)
             val desc = CapturedParamDesc(ownerType, AsmUtil.THIS, ownerType)
-            val recapturedParamInfo = capturedParamBuilder.addCapturedParam(desc, AsmUtil.CAPTURED_THIS_FIELD/*outer lambda/object*/, false)
-            val composed = StackValue.LOCAL_0
-            recapturedParamInfo.remapValue = composed
+            val recapturedParamInfo =
+                constructorParamBuilder.addCapturedParam(desc, AsmUtil.CAPTURED_THIS_FIELD/*outer lambda/object*/, false)
+            capturedParamBuilder.addCapturedParam(recapturedParamInfo, recapturedParamInfo.newFieldName).remapValue = StackValue.LOCAL_0
             allRecapturedParameters.add(desc)
-
-            constructorParamBuilder.addCapturedParam(recapturedParamInfo, recapturedParamInfo.newFieldName).remapValue = null
         }
 
         transformationInfo.allRecapturedParameters = allRecapturedParameters
