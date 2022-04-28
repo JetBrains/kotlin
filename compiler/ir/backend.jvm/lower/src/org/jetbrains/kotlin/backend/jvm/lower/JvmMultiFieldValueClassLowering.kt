@@ -9,7 +9,12 @@ import org.jetbrains.kotlin.backend.common.ir.createDispatchReceiverParameter
 import org.jetbrains.kotlin.backend.common.ir.passTypeArgumentsFrom
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
+import org.jetbrains.kotlin.backend.common.pop
+import org.jetbrains.kotlin.backend.common.push
 import org.jetbrains.kotlin.backend.jvm.*
+import org.jetbrains.kotlin.backend.jvm.MemoizedMultiFieldValueClassReplacements.RemappedParameter
+import org.jetbrains.kotlin.backend.jvm.MemoizedMultiFieldValueClassReplacements.RemappedParameter.MultiFieldValueClassMapping
+import org.jetbrains.kotlin.backend.jvm.MemoizedMultiFieldValueClassReplacements.RemappedParameter.RegularMapping
 import org.jetbrains.kotlin.backend.jvm.MemoizedMultiFieldValueClassReplacements.ValueParameterTemplate
 import org.jetbrains.kotlin.backend.jvm.MultiFieldValueClassSpecificDeclarations.ImplementationAgnostic
 import org.jetbrains.kotlin.backend.jvm.MultiFieldValueClassSpecificDeclarations.VirtualProperty
@@ -55,8 +60,12 @@ private class JvmMultiFieldValueClassLowering(context: JvmBackendContext) : JvmV
             symbol2setters[original] = listOf(if (replacement.isAssignable) { _, value -> irSet(replacement, value) } else null)
         }
 
-        fun remapSymbol(original: IrValueSymbol, unboxed: List<VirtualProperty<Unit>>): Unit =
-            remapSymbol(original, replacements.getDeclarations(original.owner.type.erasedUpperBound)!!.ImplementationAgnostic(unboxed))
+        fun remapSymbol(
+            original: IrValueSymbol,
+            unboxed: List<VirtualProperty<Unit>>,
+            declarations: MultiFieldValueClassSpecificDeclarations
+        ): Unit =
+            remapSymbol(original, declarations.ImplementationAgnostic(unboxed))
 
         fun remapSymbol(original: IrValueSymbol, unboxed: ImplementationAgnostic<Unit>) {
             symbol2getter[original] = {
@@ -314,9 +323,39 @@ private class JvmMultiFieldValueClassLowering(context: JvmBackendContext) : JvmV
         valueClass.declarations += properties.values.map { it.getter!!.apply { parent = valueClass } }
     }
 
-    override fun createBridgeFunction(function: IrSimpleFunction, replacement: IrSimpleFunction): IrSimpleFunction? {
-        return null // todo
-        // todo change return type to non-nullable for base class
+    override fun createBridgeBody(source: IrSimpleFunction, target: IrSimpleFunction, original: IrFunction, inverted: Boolean) {
+
+        allScopes.push(createScope(source))
+        source.body = context.createIrBuilder(source.symbol, source.startOffset, source.endOffset).run {
+            if (inverted) {
+                irExprBody(irCall(target).apply { 
+                    passTypeArgumentsFrom(source)
+                    val structure: List<RemappedParameter> = replacements.bindingParameterTemplateStructure[original]!!
+                    var flattenedIndex = 0
+                    for ((remappedParameter, targetParameter) in structure zip target.explicitParameters) {
+                        when (remappedParameter) {
+                            is MultiFieldValueClassMapping -> putArgument(
+                                targetParameter,
+                                irCall(remappedParameter.declarations.boxMethod).apply {
+                                    source.explicitParameters
+                                        .slice(flattenedIndex until flattenedIndex + remappedParameter.valueParameters.size)
+                                        .forEachIndexed { index, boxParameter -> putValueArgument(index, irGet(boxParameter)) }
+                                        .also { flattenedIndex += remappedParameter.valueParameters.size }
+                                })
+                            is RegularMapping -> putArgument(targetParameter, irGet(source.explicitParameters[flattenedIndex++]))
+                        }
+                    }
+                })
+            } else {
+                irExprBody(irCall(original).apply { // not target as it will be replaced during lowering
+                    passTypeArgumentsFrom(source)
+                    for ((parameter, newParameter) in source.explicitParameters.zip(original.explicitParameters)) {
+                        putArgument(newParameter, irGet(parameter))
+                    }
+                }).transform(this@JvmMultiFieldValueClassLowering, null)
+            }
+        }
+        allScopes.pop()
     }
 
     override fun addBindingsFor(original: IrFunction, replacement: IrFunction) {
@@ -324,19 +363,19 @@ private class JvmMultiFieldValueClassLowering(context: JvmBackendContext) : JvmV
         require(parametersStructure.size == original.explicitParameters.size) {
             "Wrong value parameters structure: $parametersStructure"
         }
-        require(parametersStructure.sumOf { it.size } == replacement.explicitParameters.size) {
+        require(parametersStructure.sumOf { it.valueParameters.size } == replacement.explicitParameters.size) {
             "Wrong value parameters structure: $parametersStructure"
         }
         val old2newList = original.explicitParameters.zip(
-            parametersStructure.scan(0) { partial: Int, templates: List<ValueParameterTemplate> -> partial + templates.size }
+            parametersStructure.scan(0) { partial: Int, templates: RemappedParameter -> partial + templates.valueParameters.size }
                 .zipWithNext { start: Int, finish: Int -> replacement.explicitParameters.slice(start until finish) }
         )
-        for ((param, newParamList) in old2newList) {
-            val single = newParamList.singleOrNull()
-            if (single != null) {
-                valueDeclarationsRemapper.remapSymbol(param.symbol, single)
-            } else {
-                valueDeclarationsRemapper.remapSymbol(param.symbol, newParamList.map { VirtualProperty(it) })
+        for (i in old2newList.indices) {
+            val (param, newParamList) = old2newList[i]
+            when (val structure = parametersStructure[i]) {
+                is MultiFieldValueClassMapping ->
+                    valueDeclarationsRemapper.remapSymbol(param.symbol, newParamList.map { VirtualProperty(it) }, structure.declarations)
+                is RegularMapping -> valueDeclarationsRemapper.remapSymbol(param.symbol, newParamList.single())
             }
         }
     }
@@ -352,7 +391,8 @@ private class JvmMultiFieldValueClassLowering(context: JvmBackendContext) : JvmV
         val initializersStatements = valueClass.declarations.filterIsInstance<IrAnonymousInitializer>().flatMap { it.body.statements }
         valueDeclarationsRemapper.remapSymbol(
             oldPrimaryConstructor.constructedClass.thisReceiver!!.symbol,
-            primaryConstructorImpl.valueParameters.map { VirtualProperty(it) }
+            primaryConstructorImpl.valueParameters.map { VirtualProperty(it) },
+            this,
         )
         primaryConstructorImpl.body = context.createIrBuilder(primaryConstructorImpl.symbol).irBlockBody {
             for (stmt in initializersStatements) {
@@ -472,8 +512,9 @@ private class JvmMultiFieldValueClassLowering(context: JvmBackendContext) : JvmV
         val parameter2expression = typedArgumentList(originalFunction, original)
         val structure = replacements.bindingParameterTemplateStructure[originalFunction]!!
         require(parameter2expression.size == structure.size)
-        require(structure.sumOf { it.size } == replacement.explicitParametersCount)
-        val newArguments: List<IrExpression?> = makeNewArguments(parameter2expression.map { (_, argument) -> argument }, structure)
+        require(structure.sumOf { it.valueParameters.size } == replacement.explicitParametersCount)
+        val newArguments: List<IrExpression?> =
+            makeNewArguments(parameter2expression.map { (_, argument) -> argument }, structure.map { it.valueParameters })
         +irCall(replacement.symbol).apply {
             copyTypeArgumentsFrom(original)
             for ((parameter, argument) in replacement.explicitParameters zip newArguments) {
@@ -586,7 +627,7 @@ private class JvmMultiFieldValueClassLowering(context: JvmBackendContext) : JvmV
                 initializer?.let {
                     flattenExpressionTo(it, variables.toGettersAndSetters())
                 }
-                valueDeclarationsRemapper.remapSymbol(declaration.symbol, variables.map { VirtualProperty(it) })
+                valueDeclarationsRemapper.remapSymbol(declaration.symbol, variables.map { VirtualProperty(it) }, declarations)
             }
         }
         return super.visitVariable(declaration)

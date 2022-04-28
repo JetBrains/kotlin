@@ -35,8 +35,12 @@ value class E(val x: D) {
         set(_) = TODO()
 }
 
+interface Base3 {
+    val z: E
+}
+
 @JvmInline
-value class R<T : Any>(val x: Int, val y: UInt, val z: E, val t: A<T>)
+value class R<T : Any>(val x: Int, val y: UInt, override val z: E, val t: A<T>): Base1, Base3
 
 fun <T : List<Int>> f(r: R<T>) {
     println(r)
@@ -79,7 +83,20 @@ fun h1() {
     println(y)
 }
 
-class NotInlined(var l: R<List<Int>>, var y: Int) {
+interface Base1 {
+    val fakeOverrideMFVC: R<List<Int>>
+        get() = TODO()
+    val fakeOverrideRegular: Int
+        get() = TODO()
+}
+interface Base2 {
+    var l: R<List<Int>>
+}
+interface Base4<T> {
+    var l: T
+}
+
+class NotInlined(override var l: R<List<Int>>, var y: Int): Base1, Base2, Base4<R<List<Int>>> {
     override fun toString(): String = l.toString() + l.z.x.x.z
 
     init {
@@ -119,7 +136,7 @@ class NotInlined(var l: R<List<Int>>, var y: Int) {
         }
 }
 
-fun ekeke(x: NotInlined) {
+fun testVars(x: NotInlined) {
     x.l.toString()
     var y = x.l
     y.toString()
@@ -127,6 +144,10 @@ fun ekeke(x: NotInlined) {
     println(y)
     x.l = x.l
     x.l = R<List<Int>>(x.l.x, x.l.y, x.l.z, x.l.t)
+}
+
+fun reuseBoxed(list: MutableList<R<List<Int>>>) {
+    list.add(list.last())
 }
 
 // todo add default parameters
