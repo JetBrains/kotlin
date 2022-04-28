@@ -23,7 +23,7 @@ fun Project.configureJavaInstrumentation() {
             javaInstrumentator("com.jetbrains.intellij.java:java-compiler-ant-tasks:${rootProject.extra["versions.intellijSdk"]}")
         }
         for (sourceSet in listOf(mainSourceSet, testSourceSet)) {
-            tasks.named(sourceSet.compileJavaTaskName, InstrumentJava(javaInstrumentator, sourceSet))
+            tasks.named(sourceSet.compileJavaTaskName, InstrumentJava(javaInstrumentator))
         }
     }
 }
