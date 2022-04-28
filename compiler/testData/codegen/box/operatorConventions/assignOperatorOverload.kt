@@ -6,6 +6,9 @@ var result: String = "Fail"
 operator fun Int.assign(other: String) {
     result = other
 }
+operator fun Int.assign(other: Int) {
+    result = "OK.Int.assign(Int)"
+}
 operator fun Container.assign(other: Int) {
     this.value = "OK"
 }
@@ -31,6 +34,16 @@ fun box(): String {
     val x = 10
     x = "OK"
     if (result != "OK") return "Fail: $result"
+
+    // Test same type assign overload
+    x = 5
+    if (result != "OK.Int.assign(Int)") return "Fail: $result"
+
+    // Test assign overload for var is not applied
+    result = "OK.var"
+    var y = 10
+    y = 5
+    if (result != "OK.var" || y != 5) return "Fail: $result, y = $y"
 
     // Test simple assign for property
     val foo = Foo(Container("Fail"))
