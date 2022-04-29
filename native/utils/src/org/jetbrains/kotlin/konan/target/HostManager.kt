@@ -46,85 +46,43 @@ open class HostManager(
         return targets[resolveAlias(name)] ?: throw TargetSupportException("Unknown target name: $name")
     }
 
+    private val commonTargets = setOf(
+        LINUX_X64,
+        LINUX_ARM32_HFP,
+        LINUX_ARM64,
+        LINUX_MIPS32,
+        LINUX_MIPSEL32,
+        MINGW_X86,
+        MINGW_X64,
+        ANDROID_X86,
+        ANDROID_X64,
+        ANDROID_ARM32,
+        ANDROID_ARM64,
+        WASM32
+    )
+
+    private val appleTargets = setOf(
+        MACOS_X64,
+        MACOS_ARM64,
+        IOS_ARM32,
+        IOS_ARM64,
+        IOS_X64,
+        IOS_SIMULATOR_ARM64,
+        WATCHOS_ARM32,
+        WATCHOS_ARM64,
+        WATCHOS_X86,
+        WATCHOS_X64,
+        WATCHOS_SIMULATOR_ARM64,
+        TVOS_ARM64,
+        TVOS_X64,
+        TVOS_SIMULATOR_ARM64,
+    )
+
     private val enabledRegularByHost: Map<KonanTarget, Set<KonanTarget>> = mapOf(
-        LINUX_X64 to setOf(
-            LINUX_X64,
-            LINUX_ARM32_HFP,
-            LINUX_ARM64,
-            LINUX_MIPS32,
-            LINUX_MIPSEL32,
-            MINGW_X86,
-            MINGW_X64,
-            ANDROID_X86,
-            ANDROID_X64,
-            ANDROID_ARM32,
-            ANDROID_ARM64,
-            WASM32
-        ),
-        MINGW_X64 to setOf(
-            MINGW_X64,
-            MINGW_X86,
-            LINUX_X64,
-            LINUX_ARM32_HFP,
-            LINUX_ARM64,
-            ANDROID_X86,
-            ANDROID_X64,
-            ANDROID_ARM32,
-            ANDROID_ARM64,
-            WASM32
-        ),
-        MACOS_X64 to setOf(
-            MACOS_X64,
-            MACOS_ARM64,
-            IOS_ARM32,
-            IOS_ARM64,
-            IOS_X64,
-            IOS_SIMULATOR_ARM64,
-            WATCHOS_ARM32,
-            WATCHOS_ARM64,
-            WATCHOS_X86,
-            WATCHOS_X64,
-            WATCHOS_SIMULATOR_ARM64,
-            TVOS_ARM64,
-            TVOS_X64,
-            TVOS_SIMULATOR_ARM64,
-            LINUX_X64,
-            LINUX_ARM32_HFP,
-            LINUX_ARM64,
-            MINGW_X86,
-            MINGW_X64,
-            ANDROID_X86,
-            ANDROID_X64,
-            ANDROID_ARM32,
-            ANDROID_ARM64,
-            WASM32
-        ),
-        MACOS_ARM64 to setOf(
-            MACOS_ARM64,
-            MACOS_X64,
-            IOS_ARM32,
-            IOS_ARM64,
-            IOS_X64,
-            IOS_SIMULATOR_ARM64,
-            WATCHOS_ARM32,
-            WATCHOS_ARM64,
-            WATCHOS_X86,
-            WATCHOS_X64,
-            WATCHOS_SIMULATOR_ARM64,
-            TVOS_ARM64,
-            TVOS_X64,
-            TVOS_SIMULATOR_ARM64,
-            LINUX_X64,
-            LINUX_ARM32_HFP,
-            LINUX_ARM64,
-            MINGW_X86,
-            MINGW_X64,
-            ANDROID_X86,
-            ANDROID_X64,
-            ANDROID_ARM32,
-            ANDROID_ARM64,
-            WASM32
-        )
+        LINUX_X64 to commonTargets,
+        MINGW_X64 to commonTargets,
+        MACOS_X64 to commonTargets + appleTargets,
+        MACOS_ARM64 to commonTargets + appleTargets
     )
 
     private val enabledExperimentalByHost: Map<KonanTarget, Set<KonanTarget>> = mapOf(
