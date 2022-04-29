@@ -74,7 +74,7 @@ open class MarkdownParser(
             ).flatMap { it.children }
         )
 
-    private fun horizontalRulesHandler(node: ASTNode) =
+    private fun horizontalRulesHandler() =
         DocTagsFromIElementFactory.getInstance(MarkdownTokenTypes.HORIZONTAL_RULE)
 
     private fun emphasisHandler(node: ASTNode) =
@@ -353,7 +353,7 @@ open class MarkdownParser(
             MarkdownElementTypes.ATX_5,
             MarkdownElementTypes.ATX_6,
             -> headersHandler(node)
-            MarkdownTokenTypes.HORIZONTAL_RULE -> horizontalRulesHandler(node)
+            MarkdownTokenTypes.HORIZONTAL_RULE -> horizontalRulesHandler()
             MarkdownElementTypes.STRONG -> strongHandler(node)
             MarkdownElementTypes.EMPH -> emphasisHandler(node)
             MarkdownElementTypes.FULL_REFERENCE_LINK,

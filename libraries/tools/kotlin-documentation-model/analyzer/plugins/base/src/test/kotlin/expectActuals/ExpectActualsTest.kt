@@ -43,42 +43,42 @@ class ExpectActualsTest : BaseAbstractTest() {
                     sourceRoots = listOf("src/commonN2Main/kotlin/pageMerger/Test.kt")
                     dependentSourceSets = setOf(common.value.sourceSetID)
                 }
-                val js = sourceSet {
+                sourceSet {
                     name = "js"
                     displayName = "js"
                     analysisPlatform = "js"
                     dependentSourceSets = setOf(commonJ.value.sourceSetID)
                     sourceRoots = listOf("src/jsMain/kotlin/pageMerger/Test.kt")
                 }
-                val jvm = sourceSet {
+                sourceSet {
                     name = "jvm"
                     displayName = "jvm"
                     analysisPlatform = "jvm"
                     dependentSourceSets = setOf(commonJ.value.sourceSetID)
                     sourceRoots = listOf("src/jvmMain/kotlin/pageMerger/Test.kt")
                 }
-                val linuxX64 = sourceSet {
+                sourceSet {
                     name = "linuxX64"
                     displayName = "linuxX64"
                     analysisPlatform = "native"
                     dependentSourceSets = setOf(commonN1.value.sourceSetID)
                     sourceRoots = listOf("src/linuxX64Main/kotlin/pageMerger/Test.kt")
                 }
-                val mingwX64 = sourceSet {
+                sourceSet {
                     name = "mingwX64"
                     displayName = "mingwX64"
                     analysisPlatform = "native"
                     dependentSourceSets = setOf(commonN1.value.sourceSetID)
                     sourceRoots = listOf("src/mingwX64Main/kotlin/pageMerger/Test.kt")
                 }
-                val iosArm64 = sourceSet {
+                sourceSet {
                     name = "iosArm64"
                     displayName = "iosArm64"
                     analysisPlatform = "native"
                     dependentSourceSets = setOf(commonN2.value.sourceSetID)
                     sourceRoots = listOf("src/iosArm64Main/kotlin/pageMerger/Test.kt")
                 }
-                val iosX64 = sourceSet {
+                sourceSet {
                     name = "iosX64"
                     displayName = "iosX64"
                     analysisPlatform = "native"
@@ -149,19 +149,19 @@ class ExpectActualsTest : BaseAbstractTest() {
                 val noClass = allChildren.filter { it.name == "A" }
                 assertTrue(commonJ.size == 1) { "There can be only one [jvm, js]A page" }
                 assertTrue(
-                    commonJ.first().documentable?.sourceSets?.map { it.displayName }
+                    commonJ.first().documentables.firstOrNull()?.sourceSets?.map { it.displayName }
                         ?.containsAll(listOf("commonJ", "js", "jvm")) ?: false
                 ) { "A(jvm, js)should have commonJ, js, jvm sources" }
 
                 assertTrue(commonN1.size == 1) { "There can be only one [mingwX64, linuxX64]A page" }
                 assertTrue(
-                    commonN1.first().documentable?.sourceSets?.map { it.displayName }
+                    commonN1.first().documentables.firstOrNull()?.sourceSets?.map { it.displayName }
                         ?.containsAll(listOf("commonN1", "linuxX64", "mingwX64")) ?: false
                 ) { "[mingwX64, linuxX64]A should have commonN1, linuxX64, mingwX64 sources" }
 
                 assertTrue(commonN2.size == 1) { "There can be only one [iosX64, iosArm64]A page" }
                 assertTrue(
-                    commonN2.first().documentable?.sourceSets?.map { it.displayName }
+                    commonN2.first().documentables.firstOrNull()?.sourceSets?.map { it.displayName }
                         ?.containsAll(listOf("commonN2", "iosArm64", "iosX64")) ?: false
                 ) { "[iosX64, iosArm64]A should have commonN2, iosArm64, iosX64 sources" }
 

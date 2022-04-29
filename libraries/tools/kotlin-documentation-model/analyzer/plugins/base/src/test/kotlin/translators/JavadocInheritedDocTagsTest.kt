@@ -12,6 +12,7 @@ import org.jetbrains.dokka.model.doc.Deprecated as DokkaDeprecatedTag
 import org.jetbrains.dokka.model.doc.Throws as DokkaThrowsTag
 
 class JavadocInheritedDocTagsTest : BaseAbstractTest() {
+    @Suppress("DEPRECATION") // for includeNonPublic
     private val configuration = dokkaConfiguration {
         sourceSets {
             sourceSet {

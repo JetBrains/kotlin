@@ -185,48 +185,50 @@ class DefaultDescriptorToDocumentableTranslatorTest : BaseAbstractTest() {
         classlikes.zip(testSuites).forEach { (classlike, testSuites) ->
             testSuites.forEach { testSuite ->
                 when (testSuite) {
-                    is TestSuite.PropertyDoesntExist -> Assert.assertEquals(
-                        "Test for class ${classlike.name} failed",
+                    is TestSuite.PropertyDoesntExist -> assertEquals(
                         null,
-                        classlike.properties.firstOrNull { it.name == testSuite.propertyName })
+                        classlike.properties.firstOrNull { it.name == testSuite.propertyName },
+                        "Test for class ${classlike.name} failed"
+                    )
                     is TestSuite.PropertyExists -> classlike.properties.single { it.name == testSuite.propertyName }
                         .run {
-                            Assert.assertEquals(
-                                "Test for class ${classlike.name} with property $name failed",
+                            assertEquals(
                                 testSuite.modifier,
-                                modifier.values.single()
+                                modifier.values.single(),
+                                "Test for class ${classlike.name} with property $name failed"
                             )
-                            Assert.assertEquals(
-                                "Test for class ${classlike.name} with property $name failed",
+                            assertEquals(
                                 testSuite.visibility,
-                                visibility.values.single()
+                                visibility.values.single(),
+                                "Test for class ${classlike.name} with property $name failed"
                             )
-                            Assert.assertEquals(
-                                "Test for class ${classlike.name} with property $name failed",
+                            assertEquals(
                                 testSuite.additionalModifiers,
-                                extra[AdditionalModifiers]?.content?.values?.single()
+                                extra[AdditionalModifiers]?.content?.values?.single(),
+                                "Test for class ${classlike.name} with property $name failed"
                             )
                         }
-                    is TestSuite.FunctionDoesntExist -> Assert.assertEquals(
-                        "Test for class ${classlike.name} failed",
+                    is TestSuite.FunctionDoesntExist -> assertEquals(
                         null,
-                        classlike.functions.firstOrNull { it.name == testSuite.propertyName })
+                        classlike.functions.firstOrNull { it.name == testSuite.propertyName },
+                        "Test for class ${classlike.name} failed"
+                    )
                     is TestSuite.FunctionExists -> classlike.functions.single { it.name == testSuite.propertyName }
                         .run {
-                            Assert.assertEquals(
-                                "Test for class ${classlike.name} with function $name failed",
+                            assertEquals(
                                 testSuite.modifier,
-                                modifier.values.single()
+                                modifier.values.single(),
+                                "Test for class ${classlike.name} with function $name failed"
                             )
-                            Assert.assertEquals(
-                                "Test for class ${classlike.name} with function $name failed",
+                            assertEquals(
                                 testSuite.visibility,
-                                visibility.values.single()
+                                visibility.values.single(),
+                                "Test for class ${classlike.name} with function $name failed"
                             )
-                            Assert.assertEquals(
-                                "Test for class ${classlike.name} with function $name failed",
+                            assertEquals(
                                 testSuite.additionalModifiers,
-                                extra[AdditionalModifiers]?.content?.values?.single()
+                                extra[AdditionalModifiers]?.content?.values?.single(),
+                                "Test for class ${classlike.name} with function $name failed"
                             )
                         }
                 }
@@ -481,6 +483,7 @@ class DefaultDescriptorToDocumentableTranslatorTest : BaseAbstractTest() {
     @Test
     fun `derived properties with only public code`() {
 
+        @Suppress("DEPRECATION") // for includeNonPublic
         val configuration = dokkaConfiguration {
             sourceSets {
                 sourceSet {
@@ -666,6 +669,7 @@ class DefaultDescriptorToDocumentableTranslatorTest : BaseAbstractTest() {
         }
     }
 
+    @Suppress("DEPRECATION") // for includeNonPublic
     val javaConfiguration = dokkaConfiguration {
         sourceSets {
             sourceSet {

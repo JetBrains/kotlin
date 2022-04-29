@@ -163,16 +163,23 @@ interface JvmSignatureUtils {
         }
     }
 
-    fun <T : Documentable> WithExtraProperties<T>.stylesIfDeprecated(sourceSetData: DokkaSourceSet): Set<TextStyle> =
-        if (extra[Annotations]?.directAnnotations?.get(sourceSetData)?.any {
-                it.dri == DRI("kotlin", "Deprecated")
-                        || it.dri == DRI("java.lang", "Deprecated")
-            } == true) setOf(TextStyle.Strikethrough) else emptySet()
+    fun <T : Documentable> WithExtraProperties<T>.stylesIfDeprecated(sourceSetData: DokkaSourceSet): Set<TextStyle> {
+        val directAnnotations = extra[Annotations]?.directAnnotations?.get(sourceSetData) ?: emptyList()
+        val hasAnyDeprecatedAnnotation =
+            directAnnotations.any { it.dri == DRI("kotlin", "Deprecated") || it.dri == DRI("java.lang", "Deprecated") }
 
-    infix fun DFunction.uses(t: DTypeParameter): Boolean {
-        val allDris: List<DRI> = (listOfNotNull(receiver?.dri, *receiver?.type?.drisOfAllNestedBounds?.toTypedArray() ?: emptyArray()) +
-                parameters.flatMap { listOf(it.dri) + it.type.drisOfAllNestedBounds })
-        return t.dri in allDris
+        return if (hasAnyDeprecatedAnnotation) setOf(TextStyle.Strikethrough) else emptySet()
+    }
+
+    infix fun DFunction.uses(typeParameter: DTypeParameter): Boolean {
+        val parameterDris = parameters.flatMap { listOf(it.dri) + it.type.drisOfAllNestedBounds }
+        val receiverDris =
+            listOfNotNull(
+                receiver?.dri,
+                *receiver?.type?.drisOfAllNestedBounds?.toTypedArray() ?: emptyArray()
+            )
+        val allDris = parameterDris + receiverDris
+        return typeParameter.dri in allDris
     }
 
     /**

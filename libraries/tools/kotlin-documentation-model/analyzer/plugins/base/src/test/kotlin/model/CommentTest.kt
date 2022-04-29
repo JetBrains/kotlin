@@ -72,7 +72,6 @@ class CommentTest : AbstractModelTest("/src/main/kotlin/comment/Test.kt", "comme
             |fun tst() = property
         """
         ) {
-            val p = this
             with((this / "comment" / "property").cast<DProperty>()) {
                 comments() equals ""
             }
@@ -252,85 +251,4 @@ class CommentTest : AbstractModelTest("/src/main/kotlin/comment/Test.kt", "comme
             }
         }
     }
-
-//    @Test todo
-    fun directive() {
-        inlineModelTest(
-            """
-            |/**
-            | * Summary
-            | *
-            | * @sample example1
-            | * @sample example2
-            | * @sample X.example3
-            | * @sample X.Y.example4
-            | */
-            |val property = "test"
-            |
-            |fun example1(node: String) = if (true) {
-            |    println(property)
-            |}
-            |
-            |fun example2(node: String) {
-            |    if (true) {
-            |        println(property)
-            |    }
-            |}
-            |
-            |class X {
-            |    fun example3(node: String) {
-            |        if (true) {
-            |            println(property)
-            |        }
-            |    }
-            |
-            |    class Y {
-            |        fun example4(node: String) {
-            |            if (true) {
-            |                println(property)
-            |            }
-            |        }
-            |    }
-            |}
-        """
-        ) {
-            with((this / "comment" / "property").cast<DProperty>()) {
-                this
-            }
-        }
-    }
-
-
-//    @Test fun directive() {
-//        checkSourceExistsAndVerifyModel("testdata/comments/directive.kt", defaultModelConfig) { model ->
-//            with(model.members.single().members.first()) {
-//                assertEquals("Summary", content.summary.toTestString())
-//                with (content.description) {
-//                    assertEqualsIgnoringSeparators("""
-//                        |[code lang=kotlin]
-//                        |if (true) {
-//                        |    println(property)
-//                        |}
-//                        |[/code]
-//                        |[code lang=kotlin]
-//                        |if (true) {
-//                        |    println(property)
-//                        |}
-//                        |[/code]
-//                        |[code lang=kotlin]
-//                        |if (true) {
-//                        |    println(property)
-//                        |}
-//                        |[/code]
-//                        |[code lang=kotlin]
-//                        |if (true) {
-//                        |    println(property)
-//                        |}
-//                        |[/code]
-//                        |""".trimMargin(), toTestString())
-//                }
-//            }
-//        }
-//    }
-
 }

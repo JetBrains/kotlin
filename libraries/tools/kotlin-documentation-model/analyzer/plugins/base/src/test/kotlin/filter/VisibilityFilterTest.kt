@@ -372,6 +372,7 @@ class VisibilityFilterTest : BaseAbstractTest() {
 
     @Test
     fun `should choose new documentedVisibilities over deprecated includeNonPublic`() {
+        @Suppress("DEPRECATION")
         val configuration = dokkaConfiguration {
             sourceSets {
                 sourceSet {
@@ -404,6 +405,7 @@ class VisibilityFilterTest : BaseAbstractTest() {
 
     @Test
     fun `includeNonPublic - public function with false global`() {
+        @Suppress("DEPRECATION")
         val configuration = dokkaConfiguration {
             sourceSets {
                 sourceSet {
@@ -435,6 +437,7 @@ class VisibilityFilterTest : BaseAbstractTest() {
 
     @Test
     fun `includeNonPublic - private function with false global`() {
+        @Suppress("DEPRECATION")
         val configuration = dokkaConfiguration {
             sourceSets {
                 sourceSet {
@@ -466,6 +469,7 @@ class VisibilityFilterTest : BaseAbstractTest() {
 
     @Test
     fun `includeNonPublic - private function with true global`() {
+        @Suppress("DEPRECATION")
         val configuration = dokkaConfiguration {
             sourceSets {
                 sourceSet {
@@ -497,6 +501,7 @@ class VisibilityFilterTest : BaseAbstractTest() {
 
     @Test
     fun `private setter with false global includeNonPublic`() {
+        @Suppress("DEPRECATION")
         val configuration = dokkaConfiguration {
             sourceSets {
                 sourceSet {
@@ -528,6 +533,7 @@ class VisibilityFilterTest : BaseAbstractTest() {
 
     @Test
     fun `includeNonPublic - private function with false global true package`() {
+        @Suppress("DEPRECATION")
         val configuration = dokkaConfiguration {
             sourceSets {
                 sourceSet {
@@ -569,6 +575,7 @@ class VisibilityFilterTest : BaseAbstractTest() {
 
     @Test
     fun `includeNonPublic - private function with true global false package`() {
+        @Suppress("DEPRECATION")
         val configuration = dokkaConfiguration {
             sourceSets {
                 sourceSet {
@@ -610,6 +617,7 @@ class VisibilityFilterTest : BaseAbstractTest() {
 
     @Test
     fun `includeNonPublic - private typealias should be skipped`() {
+        @Suppress("DEPRECATION")
         val configuration = dokkaConfiguration {
             sourceSets {
                 sourceSet {
@@ -636,6 +644,7 @@ class VisibilityFilterTest : BaseAbstractTest() {
 
     @Test
     fun `includeNonPublic - internal property from enum should be skipped`() {
+        @Suppress("DEPRECATION")
         val configuration = dokkaConfiguration {
             sourceSets {
                 sourceSet {
@@ -675,6 +684,7 @@ class VisibilityFilterTest : BaseAbstractTest() {
 
     @Test
     fun `includeNonPublic - internal property from enum`() {
+        @Suppress("DEPRECATION")
         val configuration = dokkaConfiguration {
             sourceSets {
                 sourceSet {

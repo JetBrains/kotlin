@@ -235,7 +235,7 @@ interface DokkaConfiguration : Serializable {
 
     interface PackageOptions : Serializable {
         val matchingRegex: String
-        @Deprecated(message = "Use [documentedVisibilities] property for a more flexible control over documented visibilities")
+        @Deprecated("Use [documentedVisibilities] property for a more flexible control over documented visibilities")
         val includeNonPublic: Boolean
         val reportUndocumented: Boolean?
         val skipDeprecated: Boolean
