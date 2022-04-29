@@ -17,10 +17,11 @@ import org.jetbrains.kotlin.fir.visitors.*
  * DO NOT MODIFY IT MANUALLY
  */
 
-abstract class FirDelegatedConstructorCall : FirPureAbstractElement(), FirResolvable, FirCall {
+abstract class FirDelegatedConstructorCall : FirPureAbstractElement(), FirResolvable, FirCall, FirContextReceiverArgumentListOwner {
     abstract override val source: KtSourceElement?
     abstract override val annotations: List<FirAnnotation>
     abstract override val argumentList: FirArgumentList
+    abstract override val contextReceiverArguments: List<FirExpression>
     abstract val constructedTypeRef: FirTypeRef
     abstract val dispatchReceiver: FirExpression
     abstract override val calleeReference: FirReference
@@ -34,6 +35,8 @@ abstract class FirDelegatedConstructorCall : FirPureAbstractElement(), FirResolv
         transformer.transformDelegatedConstructorCall(this, data) as E
 
     abstract override fun replaceArgumentList(newArgumentList: FirArgumentList)
+
+    abstract override fun replaceContextReceiverArguments(newContextReceiverArguments: List<FirExpression>)
 
     abstract fun replaceConstructedTypeRef(newConstructedTypeRef: FirTypeRef)
 

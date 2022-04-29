@@ -33,6 +33,7 @@ class FirDelegatedConstructorCallBuilder : FirCallBuilder, FirAnnotationContaine
     override var source: KtSourceElement? = null
     override val annotations: MutableList<FirAnnotation> = mutableListOf()
     override var argumentList: FirArgumentList = FirEmptyArgumentList
+    val contextReceiverArguments: MutableList<FirExpression> = mutableListOf()
     lateinit var constructedTypeRef: FirTypeRef
     var dispatchReceiver: FirExpression = FirNoReceiverExpression
     lateinit var calleeReference: FirReference
@@ -43,6 +44,7 @@ class FirDelegatedConstructorCallBuilder : FirCallBuilder, FirAnnotationContaine
             source,
             annotations,
             argumentList,
+            contextReceiverArguments,
             constructedTypeRef,
             dispatchReceiver,
             calleeReference,

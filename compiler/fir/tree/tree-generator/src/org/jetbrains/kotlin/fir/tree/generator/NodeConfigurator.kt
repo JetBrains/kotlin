@@ -191,11 +191,14 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
             +field("rhs", expression).withTransform()
         }
 
+        contextReceiverArgumentListOwner.configure {
+            +fieldList("contextReceiverArguments", expressionType, withReplace = true)
+        }
+
         qualifiedAccess.configure {
             +typeArguments.withTransform()
             +receivers
             +field("source", sourceElementType, nullable = true, withReplace = true)
-            +fieldList("contextReceiverArguments", expressionType, withReplace = true)
         }
 
         propertyAccessExpression.configure {

@@ -37,11 +37,11 @@ open class FirFunctionCallBuilder : FirAbstractFunctionCallBuilder, FirAnnotatio
     override var source: KtSourceElement? = null
     override var typeRef: FirTypeRef = FirImplicitTypeRefImpl(null)
     override val annotations: MutableList<FirAnnotation> = mutableListOf()
+    override val contextReceiverArguments: MutableList<FirExpression> = mutableListOf()
     override val typeArguments: MutableList<FirTypeProjection> = mutableListOf()
     override var explicitReceiver: FirExpression? = null
     override var dispatchReceiver: FirExpression = FirNoReceiverExpression
     override var extensionReceiver: FirExpression = FirNoReceiverExpression
-    override val contextReceiverArguments: MutableList<FirExpression> = mutableListOf()
     override var argumentList: FirArgumentList = FirEmptyArgumentList
     override lateinit var calleeReference: FirNamedReference
     override var origin: FirFunctionCallOrigin = FirFunctionCallOrigin.Regular
@@ -52,11 +52,11 @@ open class FirFunctionCallBuilder : FirAbstractFunctionCallBuilder, FirAnnotatio
             source,
             typeRef,
             annotations,
+            contextReceiverArguments,
             typeArguments,
             explicitReceiver,
             dispatchReceiver,
             extensionReceiver,
-            contextReceiverArguments,
             argumentList,
             calleeReference,
             origin,

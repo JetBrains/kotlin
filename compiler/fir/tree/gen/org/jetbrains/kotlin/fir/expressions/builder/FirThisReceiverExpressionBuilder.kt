@@ -34,8 +34,8 @@ class FirThisReceiverExpressionBuilder : FirQualifiedAccessBuilder, FirAnnotatio
     override var source: KtSourceElement? = null
     override var typeRef: FirTypeRef = FirImplicitTypeRefImpl(null)
     override val annotations: MutableList<FirAnnotation> = mutableListOf()
-    override val typeArguments: MutableList<FirTypeProjection> = mutableListOf()
     override val contextReceiverArguments: MutableList<FirExpression> = mutableListOf()
+    override val typeArguments: MutableList<FirTypeProjection> = mutableListOf()
     lateinit var calleeReference: FirThisReference
     var isImplicit: Boolean = false
 
@@ -44,8 +44,8 @@ class FirThisReceiverExpressionBuilder : FirQualifiedAccessBuilder, FirAnnotatio
             source,
             typeRef,
             annotations,
-            typeArguments,
             contextReceiverArguments,
+            typeArguments,
             calleeReference,
             isImplicit,
         )

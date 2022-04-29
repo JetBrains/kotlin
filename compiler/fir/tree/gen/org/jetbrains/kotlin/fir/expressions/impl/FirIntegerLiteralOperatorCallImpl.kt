@@ -27,11 +27,11 @@ internal class FirIntegerLiteralOperatorCallImpl(
     override var source: KtSourceElement?,
     override var typeRef: FirTypeRef,
     override val annotations: MutableList<FirAnnotation>,
+    override val contextReceiverArguments: MutableList<FirExpression>,
     override val typeArguments: MutableList<FirTypeProjection>,
     override var explicitReceiver: FirExpression?,
     override var dispatchReceiver: FirExpression,
     override var extensionReceiver: FirExpression,
-    override val contextReceiverArguments: MutableList<FirExpression>,
     override var argumentList: FirArgumentList,
     override var calleeReference: FirNamedReference,
     override val origin: FirFunctionCallOrigin,
@@ -106,6 +106,11 @@ internal class FirIntegerLiteralOperatorCallImpl(
         typeRef = newTypeRef
     }
 
+    override fun replaceContextReceiverArguments(newContextReceiverArguments: List<FirExpression>) {
+        contextReceiverArguments.clear()
+        contextReceiverArguments.addAll(newContextReceiverArguments)
+    }
+
     override fun replaceTypeArguments(newTypeArguments: List<FirTypeProjection>) {
         typeArguments.clear()
         typeArguments.addAll(newTypeArguments)
@@ -113,11 +118,6 @@ internal class FirIntegerLiteralOperatorCallImpl(
 
     override fun replaceExplicitReceiver(newExplicitReceiver: FirExpression?) {
         explicitReceiver = newExplicitReceiver
-    }
-
-    override fun replaceContextReceiverArguments(newContextReceiverArguments: List<FirExpression>) {
-        contextReceiverArguments.clear()
-        contextReceiverArguments.addAll(newContextReceiverArguments)
     }
 
     override fun replaceArgumentList(newArgumentList: FirArgumentList) {

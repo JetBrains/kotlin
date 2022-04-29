@@ -35,11 +35,11 @@ class FirPropertyAccessExpressionBuilder : FirQualifiedAccessBuilder, FirAnnotat
     override var typeRef: FirTypeRef = FirImplicitTypeRefImpl(null)
     override val annotations: MutableList<FirAnnotation> = mutableListOf()
     lateinit var calleeReference: FirReference
+    override val contextReceiverArguments: MutableList<FirExpression> = mutableListOf()
     override val typeArguments: MutableList<FirTypeProjection> = mutableListOf()
     override var explicitReceiver: FirExpression? = null
     override var dispatchReceiver: FirExpression = FirNoReceiverExpression
     override var extensionReceiver: FirExpression = FirNoReceiverExpression
-    override val contextReceiverArguments: MutableList<FirExpression> = mutableListOf()
     val nonFatalDiagnostics: MutableList<ConeDiagnostic> = mutableListOf()
 
     @OptIn(FirImplementationDetail::class)
@@ -49,11 +49,11 @@ class FirPropertyAccessExpressionBuilder : FirQualifiedAccessBuilder, FirAnnotat
             typeRef,
             annotations,
             calleeReference,
+            contextReceiverArguments,
             typeArguments,
             explicitReceiver,
             dispatchReceiver,
             extensionReceiver,
-            contextReceiverArguments,
             nonFatalDiagnostics,
         )
     }

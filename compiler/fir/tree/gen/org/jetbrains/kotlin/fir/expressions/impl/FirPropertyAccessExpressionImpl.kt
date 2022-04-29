@@ -26,11 +26,11 @@ class FirPropertyAccessExpressionImpl @FirImplementationDetail constructor(
     override var typeRef: FirTypeRef,
     override val annotations: MutableList<FirAnnotation>,
     override var calleeReference: FirReference,
+    override val contextReceiverArguments: MutableList<FirExpression>,
     override val typeArguments: MutableList<FirTypeProjection>,
     override var explicitReceiver: FirExpression?,
     override var dispatchReceiver: FirExpression,
     override var extensionReceiver: FirExpression,
-    override val contextReceiverArguments: MutableList<FirExpression>,
     override val nonFatalDiagnostics: MutableList<ConeDiagnostic>,
 ) : FirPropertyAccessExpression() {
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
@@ -105,6 +105,11 @@ class FirPropertyAccessExpressionImpl @FirImplementationDetail constructor(
         calleeReference = newCalleeReference
     }
 
+    override fun replaceContextReceiverArguments(newContextReceiverArguments: List<FirExpression>) {
+        contextReceiverArguments.clear()
+        contextReceiverArguments.addAll(newContextReceiverArguments)
+    }
+
     override fun replaceTypeArguments(newTypeArguments: List<FirTypeProjection>) {
         typeArguments.clear()
         typeArguments.addAll(newTypeArguments)
@@ -112,10 +117,5 @@ class FirPropertyAccessExpressionImpl @FirImplementationDetail constructor(
 
     override fun replaceExplicitReceiver(newExplicitReceiver: FirExpression?) {
         explicitReceiver = newExplicitReceiver
-    }
-
-    override fun replaceContextReceiverArguments(newContextReceiverArguments: List<FirExpression>) {
-        contextReceiverArguments.clear()
-        contextReceiverArguments.addAll(newContextReceiverArguments)
     }
 }

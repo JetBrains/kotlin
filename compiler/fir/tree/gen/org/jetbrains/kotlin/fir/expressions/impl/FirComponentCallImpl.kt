@@ -30,10 +30,10 @@ import org.jetbrains.kotlin.fir.visitors.*
 internal class FirComponentCallImpl(
     override var source: KtSourceElement?,
     override val annotations: MutableList<FirAnnotation>,
+    override val contextReceiverArguments: MutableList<FirExpression>,
     override val typeArguments: MutableList<FirTypeProjection>,
     override var dispatchReceiver: FirExpression,
     override var extensionReceiver: FirExpression,
-    override val contextReceiverArguments: MutableList<FirExpression>,
     override var argumentList: FirArgumentList,
     override var explicitReceiver: FirExpression,
     override val componentIndex: Int,
@@ -112,14 +112,14 @@ internal class FirComponentCallImpl(
         typeRef = newTypeRef
     }
 
-    override fun replaceTypeArguments(newTypeArguments: List<FirTypeProjection>) {
-        typeArguments.clear()
-        typeArguments.addAll(newTypeArguments)
-    }
-
     override fun replaceContextReceiverArguments(newContextReceiverArguments: List<FirExpression>) {
         contextReceiverArguments.clear()
         contextReceiverArguments.addAll(newContextReceiverArguments)
+    }
+
+    override fun replaceTypeArguments(newTypeArguments: List<FirTypeProjection>) {
+        typeArguments.clear()
+        typeArguments.addAll(newTypeArguments)
     }
 
     override fun replaceArgumentList(newArgumentList: FirArgumentList) {

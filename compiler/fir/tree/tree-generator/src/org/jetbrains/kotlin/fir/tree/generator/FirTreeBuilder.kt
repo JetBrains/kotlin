@@ -100,7 +100,8 @@ object FirTreeBuilder : AbstractFirTreeBuilder() {
     val equalityOperatorCall by element(Expression, expression, call)
     val whenExpression by element(Expression, expression, resolvable)
     val whenBranch by element(Expression)
-    val qualifiedAccess by element(Expression, resolvable, statement)
+    val contextReceiverArgumentListOwner by element(Expression)
+    val qualifiedAccess by element(Expression, resolvable, statement, contextReceiverArgumentListOwner)
     val checkNotNullCall by element(Expression, expression, call, resolvable)
     val elvisExpression by element(Expression, expression, resolvable)
 
@@ -115,7 +116,7 @@ object FirTreeBuilder : AbstractFirTreeBuilder() {
     val functionCall by element(Expression, qualifiedAccessExpression, call)
     val integerLiteralOperatorCall by element(Expression, functionCall)
     val implicitInvokeCall by element(Expression, functionCall)
-    val delegatedConstructorCall by element(Expression, resolvable, call)
+    val delegatedConstructorCall by element(Expression, resolvable, call, contextReceiverArgumentListOwner)
     val componentCall by element(Expression, functionCall)
     val callableReferenceAccess by element(Expression, qualifiedAccessExpression)
     val thisReceiverExpression by element(Expression, qualifiedAccessExpression)

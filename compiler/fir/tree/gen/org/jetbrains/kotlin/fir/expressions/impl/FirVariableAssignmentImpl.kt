@@ -24,12 +24,12 @@ import org.jetbrains.kotlin.fir.FirImplementationDetail
 internal class FirVariableAssignmentImpl(
     override var calleeReference: FirReference,
     override val annotations: MutableList<FirAnnotation>,
+    override val contextReceiverArguments: MutableList<FirExpression>,
     override val typeArguments: MutableList<FirTypeProjection>,
     override var explicitReceiver: FirExpression?,
     override var dispatchReceiver: FirExpression,
     override var extensionReceiver: FirExpression,
     override var source: KtSourceElement?,
-    override val contextReceiverArguments: MutableList<FirExpression>,
     override var rValue: FirExpression,
 ) : FirVariableAssignment() {
     override var lValue: FirReference 
@@ -109,6 +109,11 @@ internal class FirVariableAssignmentImpl(
         calleeReference = newCalleeReference
     }
 
+    override fun replaceContextReceiverArguments(newContextReceiverArguments: List<FirExpression>) {
+        contextReceiverArguments.clear()
+        contextReceiverArguments.addAll(newContextReceiverArguments)
+    }
+
     override fun replaceTypeArguments(newTypeArguments: List<FirTypeProjection>) {
         typeArguments.clear()
         typeArguments.addAll(newTypeArguments)
@@ -121,11 +126,6 @@ internal class FirVariableAssignmentImpl(
     @FirImplementationDetail
     override fun replaceSource(newSource: KtSourceElement?) {
         source = newSource
-    }
-
-    override fun replaceContextReceiverArguments(newContextReceiverArguments: List<FirExpression>) {
-        contextReceiverArguments.clear()
-        contextReceiverArguments.addAll(newContextReceiverArguments)
     }
 
     override fun replaceLValueTypeRef(newLValueTypeRef: FirTypeRef) {

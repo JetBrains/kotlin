@@ -22,12 +22,12 @@ import org.jetbrains.kotlin.fir.FirImplementationDetail
 abstract class FirVariableAssignment : FirPureAbstractElement(), FirQualifiedAccess {
     abstract override val calleeReference: FirReference
     abstract override val annotations: List<FirAnnotation>
+    abstract override val contextReceiverArguments: List<FirExpression>
     abstract override val typeArguments: List<FirTypeProjection>
     abstract override val explicitReceiver: FirExpression?
     abstract override val dispatchReceiver: FirExpression
     abstract override val extensionReceiver: FirExpression
     abstract override val source: KtSourceElement?
-    abstract override val contextReceiverArguments: List<FirExpression>
     abstract val lValue: FirReference
     abstract val lValueTypeRef: FirTypeRef
     abstract val rValue: FirExpression
@@ -40,14 +40,14 @@ abstract class FirVariableAssignment : FirPureAbstractElement(), FirQualifiedAcc
 
     abstract override fun replaceCalleeReference(newCalleeReference: FirReference)
 
+    abstract override fun replaceContextReceiverArguments(newContextReceiverArguments: List<FirExpression>)
+
     abstract override fun replaceTypeArguments(newTypeArguments: List<FirTypeProjection>)
 
     abstract override fun replaceExplicitReceiver(newExplicitReceiver: FirExpression?)
 
     @FirImplementationDetail
     abstract override fun replaceSource(newSource: KtSourceElement?)
-
-    abstract override fun replaceContextReceiverArguments(newContextReceiverArguments: List<FirExpression>)
 
     abstract fun replaceLValueTypeRef(newLValueTypeRef: FirTypeRef)
 

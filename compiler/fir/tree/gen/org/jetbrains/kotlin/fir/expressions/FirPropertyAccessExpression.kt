@@ -24,11 +24,11 @@ abstract class FirPropertyAccessExpression : FirQualifiedAccessExpression() {
     abstract override val typeRef: FirTypeRef
     abstract override val annotations: List<FirAnnotation>
     abstract override val calleeReference: FirReference
+    abstract override val contextReceiverArguments: List<FirExpression>
     abstract override val typeArguments: List<FirTypeProjection>
     abstract override val explicitReceiver: FirExpression?
     abstract override val dispatchReceiver: FirExpression
     abstract override val extensionReceiver: FirExpression
-    abstract override val contextReceiverArguments: List<FirExpression>
     abstract val nonFatalDiagnostics: List<ConeDiagnostic>
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitPropertyAccessExpression(this, data)
@@ -44,11 +44,11 @@ abstract class FirPropertyAccessExpression : FirQualifiedAccessExpression() {
 
     abstract override fun replaceCalleeReference(newCalleeReference: FirReference)
 
+    abstract override fun replaceContextReceiverArguments(newContextReceiverArguments: List<FirExpression>)
+
     abstract override fun replaceTypeArguments(newTypeArguments: List<FirTypeProjection>)
 
     abstract override fun replaceExplicitReceiver(newExplicitReceiver: FirExpression?)
-
-    abstract override fun replaceContextReceiverArguments(newContextReceiverArguments: List<FirExpression>)
 
     abstract override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirPropertyAccessExpression
 

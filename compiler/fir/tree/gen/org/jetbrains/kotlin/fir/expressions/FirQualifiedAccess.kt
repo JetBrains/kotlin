@@ -17,15 +17,15 @@ import org.jetbrains.kotlin.fir.FirImplementationDetail
  * DO NOT MODIFY IT MANUALLY
  */
 
-interface FirQualifiedAccess : FirResolvable, FirStatement {
+interface FirQualifiedAccess : FirResolvable, FirStatement, FirContextReceiverArgumentListOwner {
     override val calleeReference: FirReference
     override val annotations: List<FirAnnotation>
+    override val contextReceiverArguments: List<FirExpression>
     val typeArguments: List<FirTypeProjection>
     val explicitReceiver: FirExpression?
     val dispatchReceiver: FirExpression
     val extensionReceiver: FirExpression
     override val source: KtSourceElement?
-    val contextReceiverArguments: List<FirExpression>
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitQualifiedAccess(this, data)
 
@@ -35,14 +35,14 @@ interface FirQualifiedAccess : FirResolvable, FirStatement {
 
     override fun replaceCalleeReference(newCalleeReference: FirReference)
 
+    override fun replaceContextReceiverArguments(newContextReceiverArguments: List<FirExpression>)
+
     fun replaceTypeArguments(newTypeArguments: List<FirTypeProjection>)
 
     fun replaceExplicitReceiver(newExplicitReceiver: FirExpression?)
 
     @FirImplementationDetail
     fun replaceSource(newSource: KtSourceElement?)
-
-    fun replaceContextReceiverArguments(newContextReceiverArguments: List<FirExpression>)
 
     override fun <D> transformCalleeReference(transformer: FirTransformer<D>, data: D): FirQualifiedAccess
 
