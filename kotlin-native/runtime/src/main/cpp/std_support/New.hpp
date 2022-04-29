@@ -18,9 +18,7 @@ inline constexpr kalloc_t kalloc = kotlin::std_support::kalloc_t{};
 //       (also requires removing `-fno-aligned-allocation` compiler flag).
 
 void* operator new(std::size_t count, kotlin::std_support::kalloc_t) noexcept;
-void* operator new[](std::size_t count, kotlin::std_support::kalloc_t) noexcept;
 void operator delete(void* ptr, kotlin::std_support::kalloc_t) noexcept;
-void operator delete[](void* ptr, kotlin::std_support::kalloc_t) noexcept;
 
 namespace kotlin::std_support {
 

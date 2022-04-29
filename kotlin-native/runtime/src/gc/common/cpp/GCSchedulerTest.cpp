@@ -15,6 +15,7 @@
 #include "GCSchedulerImpl.hpp"
 #include "SingleThreadExecutor.hpp"
 #include "TestSupport.hpp"
+#include "std_support/Vector.hpp"
 
 using namespace kotlin;
 
@@ -315,7 +316,7 @@ public:
     explicit GCSchedulerDataTestApi(GCSchedulerConfig& config) : scheduler_(config, scheduleGC_.AsStdFunction()) {
         mutators_.reserve(MutatorCount);
         for (int i = 0; i < MutatorCount; ++i) {
-            mutators_.emplace_back(make_unique<MutatorThread>(
+            mutators_.emplace_back(std_support::make_unique<MutatorThread>(
                     config, [this](GCSchedulerThreadData& threadData) { scheduler_.UpdateFromThreadData(threadData); }));
         }
     }
@@ -334,7 +335,7 @@ public:
     }
 
 private:
-    KStdVector<KStdUniquePtr<MutatorThread>> mutators_;
+    std_support::vector<std_support::unique_ptr<MutatorThread>> mutators_;
     testing::MockFunction<void()> scheduleGC_;
     GCScheduler scheduler_;
 };
@@ -367,7 +368,7 @@ TEST_F(GCSchedulerDataOnSafePointsTest, CollectOnTargetHeapReached) {
     GCSchedulerDataOnSafepointsTestApi<mutatorsCount> schedulerTestApi(config);
 
     EXPECT_CALL(schedulerTestApi.scheduleGC(), Call()).Times(0);
-    KStdVector<std::future<void>> futures;
+    std_support::vector<std::future<void>> futures;
     for (int i = 0; i < mutatorsCount; ++i) {
         futures.push_back(schedulerTestApi.Allocate(i, 10));
     }
@@ -405,7 +406,7 @@ TEST_F(GCSchedulerDataOnSafePointsTest, CollectOnTimeoutReached) {
 
     EXPECT_CALL(schedulerTestApi.scheduleGC(), Call()).Times(0);
     schedulerTestApi.advance_time(microseconds(5));
-    KStdVector<std::future<void>> futures;
+    std_support::vector<std::future<void>> futures;
     for (int i = 0; i < mutatorsCount; ++i) {
         futures.push_back(schedulerTestApi.Allocate(i, 0));
     }
@@ -550,7 +551,7 @@ TEST_F(GCSchedulerDataWithTimerTest, CollectOnTargetHeapReached) {
     GCSchedulerDataWithTimerTestApi<mutatorsCount> schedulerTestApi(config);
 
     EXPECT_CALL(schedulerTestApi.scheduleGC(), Call()).Times(0);
-    KStdVector<std::future<void>> futures;
+    std_support::vector<std::future<void>> futures;
     for (int i = 0; i < mutatorsCount; ++i) {
         futures.push_back(schedulerTestApi.Allocate(i, 10));
     }

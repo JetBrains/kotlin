@@ -8,7 +8,7 @@
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"
 
-#include "Types.h"
+#include "std_support/Memory.hpp"
 
 using namespace kotlin;
 
@@ -28,7 +28,7 @@ public:
     void* Alloc(size_t size, size_t alignment) { return mock_->Alloc(size, alignment); }
 
 private:
-    KStdUniquePtr<testing::StrictMock<MockAllocator>> mock_ = make_unique<testing::StrictMock<MockAllocator>>();
+    std_support::unique_ptr<testing::StrictMock<MockAllocator>> mock_ = std_support::make_unique<testing::StrictMock<MockAllocator>>();
 };
 
 class MockGC {

@@ -14,7 +14,8 @@
 #include "AllocatorTestSupport.hpp"
 #include "ScopedThread.hpp"
 #include "TestSupport.hpp"
-#include "Types.h"
+#include "std_support/Deque.hpp"
+#include "std_support/Vector.hpp"
 
 using namespace kotlin;
 
@@ -51,7 +52,7 @@ TEST(SingleLockListTest, EmplaceAndIter) {
     list.Emplace(kSecond);
     list.Emplace(kThird);
 
-    KStdVector<int> actual;
+    std_support::vector<int> actual;
     for (int element : list.LockForIter()) {
         actual.push_back(element);
     }
@@ -69,7 +70,7 @@ TEST(SingleLockListTest, EmplaceEraseAndIter) {
     list.Emplace(kThird);
     list.Erase(secondNode);
 
-    KStdVector<int> actual;
+    std_support::vector<int> actual;
     for (int element : list.LockForIter()) {
         actual.push_back(element);
     }
@@ -80,7 +81,7 @@ TEST(SingleLockListTest, EmplaceEraseAndIter) {
 TEST(SingleLockListTest, IterEmpty) {
     IntList list;
 
-    KStdVector<int> actual;
+    std_support::vector<int> actual;
     for (int element : list.LockForIter()) {
         actual.push_back(element);
     }
@@ -101,7 +102,7 @@ TEST(SingleLockListTest, EraseToEmptyEmplaceAndIter) {
     list.Emplace(kThird);
     list.Emplace(kFourth);
 
-    KStdVector<int> actual;
+    std_support::vector<int> actual;
     for (int element : list.LockForIter()) {
         actual.push_back(element);
     }
@@ -114,8 +115,8 @@ TEST(SingleLockListTest, ConcurrentEmplace) {
     constexpr int kThreadCount = kDefaultThreadCount;
     std::atomic<bool> canStart(false);
     std::atomic<int> readyCount(0);
-    KStdVector<ScopedThread> threads;
-    KStdVector<int> expected;
+    std_support::vector<ScopedThread> threads;
+    std_support::vector<int> expected;
     for (int i = 0; i < kThreadCount; ++i) {
         expected.push_back(i);
         threads.emplace_back([i, &list, &canStart, &readyCount]() {
@@ -131,7 +132,7 @@ TEST(SingleLockListTest, ConcurrentEmplace) {
     canStart = true;
     threads.clear();
 
-    KStdVector<int> actual;
+    std_support::vector<int> actual;
     for (int element : list.LockForIter()) {
         actual.push_back(element);
     }
@@ -142,14 +143,14 @@ TEST(SingleLockListTest, ConcurrentEmplace) {
 TEST(SingleLockListTest, ConcurrentErase) {
     IntList list;
     constexpr int kThreadCount = kDefaultThreadCount;
-    KStdVector<IntList::Node*> items;
+    std_support::vector<IntList::Node*> items;
     for (int i = 0; i < kThreadCount; ++i) {
         items.push_back(list.Emplace(i));
     }
 
     std::atomic<bool> canStart(false);
     std::atomic<int> readyCount(0);
-    KStdVector<ScopedThread> threads;
+    std_support::vector<ScopedThread> threads;
     for (auto* item : items) {
         threads.emplace_back([item, &list, &canStart, &readyCount]() {
             ++readyCount;
@@ -164,7 +165,7 @@ TEST(SingleLockListTest, ConcurrentErase) {
     canStart = true;
     threads.clear();
 
-    KStdVector<int> actual;
+    std_support::vector<int> actual;
     for (int element : list.LockForIter()) {
         actual.push_back(element);
     }
@@ -177,8 +178,8 @@ TEST(SingleLockListTest, IterWhileConcurrentEmplace) {
     constexpr int kStartCount = 50;
     constexpr int kThreadCount = kDefaultThreadCount;
 
-    KStdDeque<int> expectedBefore;
-    KStdVector<int> expectedAfter;
+    std_support::deque<int> expectedBefore;
+    std_support::vector<int> expectedAfter;
     for (int i = 0; i < kStartCount; ++i) {
         expectedBefore.push_front(i);
         expectedAfter.push_back(i);
@@ -187,7 +188,7 @@ TEST(SingleLockListTest, IterWhileConcurrentEmplace) {
 
     std::atomic<bool> canStart(false);
     std::atomic<int> startedCount(0);
-    KStdVector<ScopedThread> threads;
+    std_support::vector<ScopedThread> threads;
     for (int i = 0; i < kThreadCount; ++i) {
         int j = i + kStartCount;
         expectedAfter.push_back(j);
@@ -199,7 +200,7 @@ TEST(SingleLockListTest, IterWhileConcurrentEmplace) {
         });
     }
 
-    KStdVector<int> actualBefore;
+    std_support::vector<int> actualBefore;
     {
         auto iter = list.LockForIter();
         canStart = true;
@@ -215,7 +216,7 @@ TEST(SingleLockListTest, IterWhileConcurrentEmplace) {
 
     EXPECT_THAT(actualBefore, testing::ElementsAreArray(expectedBefore));
 
-    KStdVector<int> actualAfter;
+    std_support::vector<int> actualAfter;
     for (int element : list.LockForIter()) {
         actualAfter.push_back(element);
     }
@@ -227,8 +228,8 @@ TEST(SingleLockListTest, IterWhileConcurrentErase) {
     IntList list;
     constexpr int kThreadCount = kDefaultThreadCount;
 
-    KStdDeque<int> expectedBefore;
-    KStdVector<IntList::Node*> items;
+    std_support::deque<int> expectedBefore;
+    std_support::vector<IntList::Node*> items;
     for (int i = 0; i < kThreadCount; ++i) {
         expectedBefore.push_front(i);
         items.push_back(list.Emplace(i));
@@ -236,7 +237,7 @@ TEST(SingleLockListTest, IterWhileConcurrentErase) {
 
     std::atomic<bool> canStart(false);
     std::atomic<int> startedCount(0);
-    KStdVector<ScopedThread> threads;
+    std_support::vector<ScopedThread> threads;
     for (auto* item : items) {
         threads.emplace_back([item, &list, &canStart, &startedCount]() {
             while (!canStart) {
@@ -246,7 +247,7 @@ TEST(SingleLockListTest, IterWhileConcurrentErase) {
         });
     }
 
-    KStdVector<int> actualBefore;
+    std_support::vector<int> actualBefore;
     {
         auto iter = list.LockForIter();
         canStart = true;
@@ -262,7 +263,7 @@ TEST(SingleLockListTest, IterWhileConcurrentErase) {
 
     EXPECT_THAT(actualBefore, testing::ElementsAreArray(expectedBefore));
 
-    KStdVector<int> actualAfter;
+    std_support::vector<int> actualAfter;
     for (int element : list.LockForIter()) {
         actualAfter.push_back(element);
     }
@@ -274,10 +275,10 @@ TEST(SingleLockListTest, LockAndEmplace) {
     SingleLockList<int, std::recursive_mutex> list;
     constexpr int kThreadCount = kDefaultThreadCount;
 
-    KStdVector<ScopedThread> threads;
-    KStdVector<int> actualLocked;
-    KStdVector<int> actualUnlocked;
-    KStdVector<int> expectedUnlocked;
+    std_support::vector<ScopedThread> threads;
+    std_support::vector<int> actualLocked;
+    std_support::vector<int> actualUnlocked;
+    std_support::vector<int> expectedUnlocked;
     for (int i = 0; i < kThreadCount; i++) {
         expectedUnlocked.push_back(i);
     }
@@ -313,11 +314,11 @@ TEST(SingleLockListTest, LockAndErase) {
     SingleLockList<int, std::recursive_mutex> list;
     constexpr int kThreadCount = kDefaultThreadCount;
 
-    KStdVector<SingleLockList<int, std::recursive_mutex>::Node*> items;
-    KStdVector<int> expectedLocked;
-    KStdVector<ScopedThread> threads;
-    KStdVector<int> actualLocked;
-    KStdVector<int> actualUnlocked;
+    std_support::vector<SingleLockList<int, std::recursive_mutex>::Node*> items;
+    std_support::vector<int> expectedLocked;
+    std_support::vector<ScopedThread> threads;
+    std_support::vector<int> actualLocked;
+    std_support::vector<int> actualUnlocked;
     std::atomic<int> startedCount(0);
 
     for (int i = 0; i < kThreadCount; i++) {
@@ -376,7 +377,7 @@ TEST(SingleLockListTest, PinnedType) {
 
     list.Erase(itemNode);
 
-    KStdVector<PinnedType*> actualAfter;
+    std_support::vector<PinnedType*> actualAfter;
     for (auto& element : list.LockForIter()) {
         actualAfter.push_back(&element);
     }

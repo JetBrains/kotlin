@@ -9,6 +9,7 @@
 #include "Memory.h"
 #include "Types.h"
 #include "Utils.hpp"
+#include "std_support/Memory.hpp"
 
 namespace kotlin {
 
@@ -46,7 +47,7 @@ public:
         void OnStoppedForGC() noexcept;
 
     private:
-        KStdUniquePtr<Impl> impl_;
+        std_support::unique_ptr<Impl> impl_;
     };
 
     GC() noexcept;
@@ -65,7 +66,7 @@ public:
     bool FinalizersThreadIsRunning() noexcept;
 
 private:
-    KStdUniquePtr<Impl> impl_;
+    std_support::unique_ptr<Impl> impl_;
 };
 
 inline constexpr bool kSupportsMultipleMutators = true;

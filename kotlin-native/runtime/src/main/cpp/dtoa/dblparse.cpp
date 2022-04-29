@@ -28,6 +28,10 @@
 #include "../KotlinMath.h"
 #include "../ReturnSlot.h"
 #include "../DoubleConversions.h"
+#include "../std_support/CStdlib.hpp"
+#include "../std_support/String.hpp"
+
+using namespace kotlin;
 
 #if defined(LINUX) || defined(FREEBSD) || defined(ZOS) || defined(MACOSX) || defined(AIX)
 #define USE_LL
@@ -177,8 +181,8 @@ static const KDouble tens[] = {
         }
 #define ERROR_OCCURED(x) (HIGH_I32_FROM_VAR(x) < 0)
 
-#define allocateU64(x, n) if (!((x) = (U_64*) konan::calloc(1, (n) * sizeof(U_64)))) goto OutOfMemory;
-#define release(r) if ((r)) konan::free((r));
+#define allocateU64(x, n) if (!((x) = (U_64*) std_support::calloc(1, (n) * sizeof(U_64)))) goto OutOfMemory;
+#define release(r) if ((r)) std_support::free((r));
 
 /*NB the Number converter methods are synchronized so it is possible to
  *have global data for use by bigIntDigitGenerator */
@@ -654,7 +658,7 @@ OutOfMemory:
 KDouble Kotlin_native_FloatingPointParser_parseDoubleImpl (KString s, KInt e)
 {
   const KChar* utf16 = CharArrayAddressOfElementAt(s, 0);
-  KStdString utf8;
+  std_support::string utf8;
   utf8.reserve(s->count_);
   TRY_CATCH(utf8::utf16to8(utf16, utf16 + s->count_, back_inserter(utf8)),
             utf8::unchecked::utf16to8(utf16, utf16 + s->count_, back_inserter(utf8)),

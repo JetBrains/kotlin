@@ -13,7 +13,7 @@
 #include "AllocatorTestSupport.hpp"
 #include "ScopedThread.hpp"
 #include "TestSupport.hpp"
-#include "Types.h"
+#include "std_support/Vector.hpp"
 
 using namespace kotlin;
 
@@ -22,8 +22,8 @@ using ::testing::_;
 namespace {
 
 template <typename T, typename Mutex>
-KStdVector<T> Collect(MultiSourceQueue<T, Mutex>& queue) {
-    KStdVector<T> result;
+std_support::vector<T> Collect(MultiSourceQueue<T, Mutex>& queue) {
+    std_support::vector<T> result;
     for (const auto& element : queue.LockForIter()) {
         result.push_back(element);
     }
@@ -196,8 +196,8 @@ TEST(MultiSourceQueueTest, ConcurrentPublish) {
     constexpr int kThreadCount = kDefaultThreadCount;
     std::atomic<bool> canStart(false);
     std::atomic<int> readyCount(0);
-    KStdVector<ScopedThread> threads;
-    KStdVector<int> expected;
+    std_support::vector<ScopedThread> threads;
+    std_support::vector<int> expected;
 
     for (int i = 0; i < kThreadCount; ++i) {
         expected.push_back(i);
@@ -225,8 +225,8 @@ TEST(MultiSourceQueueTest, IterWhileConcurrentPublish) {
     constexpr int kStartCount = 50;
     constexpr int kThreadCount = kDefaultThreadCount;
 
-    KStdVector<int> expectedBefore;
-    KStdVector<int> expectedAfter;
+    std_support::vector<int> expectedBefore;
+    std_support::vector<int> expectedAfter;
     IntQueue::Producer producer(queue);
     for (int i = 0; i < kStartCount; ++i) {
         expectedBefore.push_back(i);
@@ -238,7 +238,7 @@ TEST(MultiSourceQueueTest, IterWhileConcurrentPublish) {
     std::atomic<bool> canStart(false);
     std::atomic<int> readyCount(0);
     std::atomic<int> startedCount(0);
-    KStdVector<ScopedThread> threads;
+    std_support::vector<ScopedThread> threads;
     for (int i = 0; i < kThreadCount; ++i) {
         int j = i + kStartCount;
         expectedAfter.push_back(j);
@@ -253,7 +253,7 @@ TEST(MultiSourceQueueTest, IterWhileConcurrentPublish) {
         });
     }
 
-    KStdVector<int> actualBefore;
+    std_support::vector<int> actualBefore;
     {
         auto iter = queue.LockForIter();
         while (readyCount < kThreadCount) {
@@ -282,7 +282,7 @@ TEST(MultiSourceQueueTest, ConcurrentPublishAndApplyDeletions) {
     std::atomic<bool> canStart(false);
     std::atomic<int> readyCount(0);
     std::atomic<int> startedCount(0);
-    KStdVector<ScopedThread> threads;
+    std_support::vector<ScopedThread> threads;
     for (int i = 0; i < kThreadCount; ++i) {
         threads.emplace_back([&queue, i, &canStart, &readyCount, &startedCount]() {
             IntQueue::Producer producer(queue);

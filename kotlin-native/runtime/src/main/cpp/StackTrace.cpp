@@ -90,7 +90,7 @@ int getSourceInfo(void* symbol, SourceInfo *result, int result_len) {
 
 // TODO: this implementation is just a hack, e.g. the result is inexact;
 // however it is better to have an inexact stacktrace than not to have any.
-NO_INLINE KStdVector<void*> kotlin::internal::GetCurrentStackTrace(size_t skipFrames) noexcept {
+NO_INLINE std_support::vector<void*> kotlin::internal::GetCurrentStackTrace(size_t skipFrames) noexcept {
     NativeOrUnregisteredThreadGuard guard(true);
 #if KONAN_NO_BACKTRACE
     return {};
@@ -104,7 +104,7 @@ NO_INLINE KStdVector<void*> kotlin::internal::GetCurrentStackTrace(size_t skipFr
     const size_t kSkipFrames = 1 + skipFrames;
 #endif
 
-    KStdVector<void*> result;
+    std_support::vector<void*> result;
 #if USE_GCC_UNWIND
     size_t depth = 0;
     _Unwind_Backtrace(depthCountCallback, static_cast<void*>(&depth));
@@ -238,15 +238,15 @@ KNativePtr adjustAddressForSourceInfo(KNativePtr address) {
 KNativePtr adjustAddressForSourceInfo(KNativePtr address) { return address; }
 #endif
 
-KStdVector<KStdString> kotlin::GetStackTraceStrings(std_support::span<void* const> stackTrace) noexcept {
+std_support::vector<std_support::string> kotlin::GetStackTraceStrings(std_support::span<void* const> stackTrace) noexcept {
     NativeOrUnregisteredThreadGuard guard(true);
 #if KONAN_NO_BACKTRACE
-    KStdVector<KStdString> strings;
+    std_support::vector<std_support::string> strings;
     strings.push_back("<UNIMPLEMENTED>");
     return strings;
 #else
     size_t size = stackTrace.size();
-    KStdVector<KStdString> strings;
+    std_support::vector<std_support::string> strings;
     strings.reserve(size);
     if (size > 0) {
         SourceInfo buffer[10]; // outside of the loop to avoid calling constructors and destructors each time

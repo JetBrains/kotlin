@@ -18,6 +18,7 @@
 #include "ClockTestSupport.hpp"
 #include "ScopedThread.hpp"
 #include "TestSupport.hpp"
+#include "std_support/Vector.hpp"
 
 using namespace kotlin;
 
@@ -1035,7 +1036,7 @@ TEST(ManualClockTest, ConcurrentSleepUntil) {
     test_support::manual_clock::reset();
 
     constexpr auto threadCount = kDefaultThreadCount;
-    KStdVector<ScopedThread> threads;
+    std_support::vector<ScopedThread> threads;
     std::atomic<bool> run = false;
     std::atomic<int> ready = 0;
     for (int i = 0; i < threadCount; ++i) {
@@ -1060,7 +1061,7 @@ TEST(ManualClockTest, ConcurrentWaits) {
     test_support::manual_clock::reset();
 
     constexpr auto threadCount = kDefaultThreadCount;
-    KStdVector<ScopedThread> threads;
+    std_support::vector<ScopedThread> threads;
     std::mutex mutex;
     std::condition_variable cv;
     std::condition_variable_any cvAny;

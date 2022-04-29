@@ -43,6 +43,22 @@
 #import "Runtime.h"
 #import "Mutex.hpp"
 #import "Exceptions.h"
+#include "std_support/CStdlib.hpp"
+#include "std_support/Map.hpp"
+#include "std_support/String.hpp"
+#include "std_support/UnorderedSet.hpp"
+#include "std_support/Vector.hpp"
+
+using namespace kotlin;
+
+namespace {
+
+template <typename T>
+inline T* konanAllocArray(size_t length) {
+    return reinterpret_cast<T*>(std_support::calloc(length, sizeof(T)));
+}
+
+}
 
 struct ObjCToKotlinMethodAdapter {
   const char* selector;
@@ -653,7 +669,7 @@ static id Kotlin_ObjCExport_refToRetainedObjC_slowpath(ObjHeader* obj) {
   return convertToRetained(obj);
 }
 
-static void buildITable(TypeInfo* result, const KStdOrderedMap<ClassId, KStdVector<VTableElement>>& interfaceVTables) {
+static void buildITable(TypeInfo* result, const std_support::map<ClassId, std_support::vector<VTableElement>>& interfaceVTables) {
   // Check if can use fast optimistic version - check if the size of the itable could be 2^k and <= 32.
   bool useFastITable;
   int itableSize = 1;
@@ -687,7 +703,7 @@ static void buildITable(TypeInfo* result, const KStdOrderedMap<ClassId, KStdVect
     }
   } else {
     // Otherwise: conservative version.
-    // The table will be sorted since we're using KStdOrderedMap.
+    // The table will be sorted since we're using std_support::map.
     int index = 0;
     for (auto& pair : interfaceVTables) {
       auto interfaceId = pair.first;
@@ -712,15 +728,15 @@ static void buildITable(TypeInfo* result, const KStdOrderedMap<ClassId, KStdVect
 
 static const TypeInfo* createTypeInfo(
   const TypeInfo* superType,
-  const KStdVector<const TypeInfo*>& superInterfaces,
-  const KStdVector<VTableElement>& vtable,
-  const KStdOrderedMap<ClassId, KStdVector<VTableElement>>& interfaceVTables,
+  const std_support::vector<const TypeInfo*>& superInterfaces,
+  const std_support::vector<VTableElement>& vtable,
+  const std_support::map<ClassId, std_support::vector<VTableElement>>& interfaceVTables,
   const InterfaceTableRecord* superItable,
   int superItableSize,
   bool itableEqualsSuper,
   const TypeInfo* fieldsInfo
 ) {
-  TypeInfo* result = (TypeInfo*)konanAllocMemory(sizeof(TypeInfo) + vtable.size() * sizeof(void*));
+  TypeInfo* result = (TypeInfo*)std_support::calloc(1, sizeof(TypeInfo) + vtable.size() * sizeof(void*));
   result->typeInfo_ = result;
 
   result->flags_ = TF_OBJC_DYNAMIC;
@@ -741,10 +757,10 @@ static const TypeInfo* createTypeInfo(
 
   result->classId_ = superType->classId_;
 
-  KStdVector<const TypeInfo*> implementedInterfaces(
+  std_support::vector<const TypeInfo*> implementedInterfaces(
     superType->implementedInterfaces_, superType->implementedInterfaces_ + superType->implementedInterfacesCount_
   );
-  KStdUnorderedSet<const TypeInfo*> usedInterfaces(implementedInterfaces.begin(), implementedInterfaces.end());
+  std_support::unordered_set<const TypeInfo*> usedInterfaces(implementedInterfaces.begin(), implementedInterfaces.end());
 
   for (const TypeInfo* interface : superInterfaces) {
     if (usedInterfaces.insert(interface).second) {
@@ -770,14 +786,14 @@ static const TypeInfo* createTypeInfo(
 
   result->packageName_ = nullptr;
   result->relativeName_ = nullptr; // TODO: add some info.
-  result->writableInfo_ = (WritableTypeInfo*)konanAllocMemory(sizeof(WritableTypeInfo));
+  result->writableInfo_ = (WritableTypeInfo*)std_support::calloc(1, sizeof(WritableTypeInfo));
 
   for (size_t i = 0; i < vtable.size(); ++i) result->vtable()[i] = vtable[i];
 
   return result;
 }
 
-static void addDefinedSelectors(Class clazz, KStdUnorderedSet<SEL>& result) {
+static void addDefinedSelectors(Class clazz, std_support::unordered_set<SEL>& result) {
   unsigned int objcMethodCount;
   Method* objcMethods = class_copyMethodList(clazz, &objcMethodCount);
 
@@ -788,10 +804,10 @@ static void addDefinedSelectors(Class clazz, KStdUnorderedSet<SEL>& result) {
   if (objcMethods != nullptr) free(objcMethods);
 }
 
-static KStdVector<const TypeInfo*> getProtocolsAsInterfaces(Class clazz) {
-  KStdVector<const TypeInfo*> result;
-  KStdUnorderedSet<Protocol*> handledProtocols;
-  KStdVector<Protocol*> protocolsToHandle;
+static std_support::vector<const TypeInfo*> getProtocolsAsInterfaces(Class clazz) {
+  std_support::vector<const TypeInfo*> result;
+  std_support::unordered_set<Protocol*> handledProtocols;
+  std_support::vector<Protocol*> protocolsToHandle;
 
   {
     unsigned int protocolCount;
@@ -847,7 +863,7 @@ static void throwIfCantBeOverridden(Class clazz, const KotlinToObjCMethodAdapter
 }
 
 static const TypeInfo* createTypeInfo(Class clazz, const TypeInfo* superType, const TypeInfo* fieldsInfo) {
-  KStdUnorderedSet<SEL> definedSelectors;
+  std_support::unordered_set<SEL> definedSelectors;
   addDefinedSelectors(clazz, definedSelectors);
 
   const ObjCTypeAdapter* superTypeAdapter = getTypeAdapter(superType);
@@ -870,7 +886,7 @@ static const TypeInfo* createTypeInfo(Class clazz, const TypeInfo* superType, co
 
   if (superVtable == nullptr) superVtable = superType->vtable();
 
-  KStdVector<const void*> vtable(
+  std_support::vector<const void*> vtable(
         superVtable,
         superVtable + superVtableSize
   );
@@ -879,7 +895,7 @@ static const TypeInfo* createTypeInfo(Class clazz, const TypeInfo* superType, co
     superITable = superType->interfaceTable_;
     superITableSize = superType->interfaceTableSize_;
   }
-  KStdOrderedMap<ClassId, KStdVector<VTableElement>> interfaceVTables;
+  std_support::map<ClassId, std_support::vector<VTableElement>> interfaceVTables;
   if (superITable != nullptr) {
     int actualItableSize = superITableSize >= 0 ? superITableSize + 1 : -superITableSize;
     for (int i = 0; i < actualItableSize; ++i) {
@@ -887,16 +903,16 @@ static const TypeInfo* createTypeInfo(Class clazz, const TypeInfo* superType, co
       auto interfaceId = record.id;
       if (interfaceId == kInvalidInterfaceId) continue;
       int vtableSize = record.vtableSize;
-      KStdVector<VTableElement> interfaceVTable(vtableSize);
+      std_support::vector<VTableElement> interfaceVTable(vtableSize);
       for (int j = 0; j < vtableSize; ++j)
         interfaceVTable[j] = record.vtable[j];
       interfaceVTables.emplace(interfaceId, std::move(interfaceVTable));
     }
   }
 
-  KStdVector<const TypeInfo*> addedInterfaces = getProtocolsAsInterfaces(clazz);
+  std_support::vector<const TypeInfo*> addedInterfaces = getProtocolsAsInterfaces(clazz);
 
-  KStdVector<const TypeInfo*> supers(
+  std_support::vector<const TypeInfo*> supers(
         superType->implementedInterfaces_,
         superType->implementedInterfaces_ + superType->implementedInterfacesCount_
   );
@@ -921,7 +937,7 @@ static const TypeInfo* createTypeInfo(Class clazz, const TypeInfo* superType, co
     auto interfaceVTablesIt = interfaceVTables.find(interfaceId);
     if (interfaceVTablesIt == interfaceVTables.end()) {
       itableEqualsSuper = false;
-      interfaceVTables.emplace(interfaceId, KStdVector<VTableElement>(itableSize));
+      interfaceVTables.emplace(interfaceId, std_support::vector<VTableElement>(itableSize));
     } else {
       auto const& interfaceVTable = interfaceVTablesIt->second;
       RuntimeAssert(interfaceVTable.size() == static_cast<size_t>(itableSize), "");
@@ -1036,7 +1052,7 @@ static Class createClass(const TypeInfo* typeInfo, Class superClass) {
   RuntimeAssert(typeInfo->superType_ != nullptr, "");
 
   int classIndex = (anonymousClassNextId++);
-  KStdString className = Kotlin_ObjCInterop_getUniquePrefix();
+  std_support::string className = Kotlin_ObjCInterop_getUniquePrefix();
   className += "_kobjcc";
   className += std::to_string(classIndex);
 
@@ -1056,7 +1072,7 @@ static Class createClass(const TypeInfo* typeInfo, Class superClass) {
     }
   }
 
-  KStdUnorderedSet<const TypeInfo*> superImplementedInterfaces(
+  std_support::unordered_set<const TypeInfo*> superImplementedInterfaces(
           typeInfo->superType_->implementedInterfaces_,
           typeInfo->superType_->implementedInterfaces_ + typeInfo->superType_->implementedInterfacesCount_
   );

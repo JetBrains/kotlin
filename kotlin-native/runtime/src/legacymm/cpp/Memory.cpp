@@ -31,7 +31,6 @@
 #define USE_CYCLE_DETECTOR 1
 #endif
 
-#include "Alloc.h"
 #include "KAssert.h"
 #include "Atomic.h"
 #include "Cleaner.h"
@@ -53,7 +52,13 @@
 #include "Utils.hpp"
 #include "WorkerBoundReference.h"
 #include "Weak.h"
+#include "std_support/CStdlib.hpp"
+#include "std_support/Deque.hpp"
+#include "std_support/List.hpp"
 #include "std_support/New.hpp"
+#include "std_support/UnorderedMap.hpp"
+#include "std_support/UnorderedSet.hpp"
+#include "std_support/Vector.hpp"
 
 #ifdef KONAN_OBJC_INTEROP
 #include "ObjCMMAPI.h"
@@ -134,15 +139,15 @@ constexpr size_t kGcCollectCyclesMinimumDuration = 200;
 
 #endif  // USE_GC
 
-typedef KStdUnorderedSet<ContainerHeader*> ContainerHeaderSet;
-typedef KStdVector<ContainerHeader*> ContainerHeaderList;
-typedef KStdDeque<ContainerHeader*> ContainerHeaderDeque;
-typedef KStdVector<KRef> KRefList;
-typedef KStdVector<KRef*> KRefPtrList;
-typedef KStdUnorderedSet<KRef> KRefSet;
-typedef KStdUnorderedMap<KRef, KInt> KRefIntMap;
-typedef KStdDeque<KRef> KRefDeque;
-typedef KStdDeque<KRefList> KRefListDeque;
+typedef std_support::unordered_set<ContainerHeader*> ContainerHeaderSet;
+typedef std_support::vector<ContainerHeader*> ContainerHeaderList;
+typedef std_support::deque<ContainerHeader*> ContainerHeaderDeque;
+typedef std_support::vector<KRef> KRefList;
+typedef std_support::vector<KRef*> KRefPtrList;
+typedef std_support::unordered_set<KRef> KRefSet;
+typedef std_support::unordered_map<KRef, KInt> KRefIntMap;
+typedef std_support::deque<KRef> KRefDeque;
+typedef std_support::deque<KRefList> KRefListDeque;
 
 // A little hack that allows to enable -O2 optimizations
 // Prevents clang from replacing FrameOverlay struct
@@ -192,11 +197,11 @@ class ScopedRefHolder : private kotlin::MoveOnly {
 
 struct CycleDetectorRootset {
   // Orders roots.
-  KStdVector<KRef> roots;
+  std_support::vector<KRef> roots;
   // Pins a state of each root.
-  KStdUnorderedMap<KRef, KStdVector<KRef>> rootToFields;
+  std_support::unordered_map<KRef, std_support::vector<KRef>> rootToFields;
   // Holding roots and their fields to avoid GC-ing them.
-  KStdVector<ScopedRefHolder> heldRefs;
+  std_support::vector<ScopedRefHolder> heldRefs;
 };
 
 class CycleDetector : private kotlin::Pinned {
@@ -247,9 +252,9 @@ class CycleDetector : private kotlin::Pinned {
   }
 
   kotlin::SpinLock<kotlin::MutexThreadStateHandling::kIgnore> lock_;
-  using CandidateList = KStdList<KRef>;
+  using CandidateList = std_support::list<KRef>;
   CandidateList candidateList_;
-  KStdUnorderedMap<KRef, CandidateList::iterator> candidateInList_;
+  std_support::unordered_map<KRef, CandidateList::iterator> candidateInList_;
 };
 
 #endif  // USE_CYCLE_DETECTOR
@@ -268,7 +273,7 @@ public:
   // Free per container type counters.
   uint64_t objectAllocs[6];
   // Histogram of allocation size distribution.
-  KStdUnorderedMap<int, int>* allocationHistogram;
+  std_support::unordered_map<int, int>* allocationHistogram;
   // Number of allocation cache hits.
   int allocCacheHit;
   // Number of allocation cache misses.
@@ -292,13 +297,13 @@ public:
     memset(containerAllocs, 0, sizeof(containerAllocs));
     memset(objectAllocs, 0, sizeof(objectAllocs));
     memset(updateCounters, 0, sizeof(updateCounters));
-    allocationHistogram = konanConstructInstance<KStdUnorderedMap<int, int>>();
+    allocationHistogram = new (std_support::kalloc) std_support::unordered_map<int, int>();
     allocCacheHit = 0;
     allocCacheMiss = 0;
   }
 
   void deinit() {
-    konanDestructInstance(allocationHistogram);
+    std_support::kdelete(allocationHistogram);
     allocationHistogram = nullptr;
   }
 
@@ -402,7 +407,7 @@ public:
     konan::consolePrintf("\n");
 
     konan::consolePrintf("Allocation histogram:\n");
-    KStdVector<int> keys(allocationHistogram->size());
+    std_support::vector<int> keys(allocationHistogram->size());
     int index = 0;
     for (auto& it : *allocationHistogram) {
       keys[index++] = it.first;
@@ -511,7 +516,7 @@ void ObjHeader::SetAssociatedObject(void* obj) {
 class ForeignRefManager {
  public:
   static ForeignRefManager* create() {
-    ForeignRefManager* result = konanConstructInstance<ForeignRefManager>();
+    ForeignRefManager* result = new (std_support::kalloc) ForeignRefManager();
     result->addRef();
     return result;
   }
@@ -528,7 +533,7 @@ class ForeignRefManager {
       // so it can process the queue pretending like it takes ownership of all its objects:
       this->processAbandoned();
 
-      konanDestructInstance(this);
+      std_support::kdelete(this);
     }
   }
 
@@ -541,14 +546,14 @@ class ForeignRefManager {
         return false;
       }
 
-      konanDestructInstance(this);
+      std_support::kdelete(this);
     }
 
     return true;
   }
 
   void enqueueReleaseRef(ObjHeader* obj) {
-    ListNode* newListNode = konanConstructInstance<ListNode>();
+    ListNode* newListNode = new (std_support::kalloc) ListNode();
     newListNode->obj = obj;
     while (true) {
       ListNode* next = this->releaseList;
@@ -571,7 +576,7 @@ class ForeignRefManager {
     while (toProcess != nullptr) {
       process(toProcess->obj);
       ListNode* next = toProcess->next;
-      konanDestructInstance(toProcess);
+      std_support::kdelete(toProcess);
       toProcess = next;
     }
   }
@@ -616,11 +621,11 @@ class ThreadLocalStorage {
 public:
     using Key = void**;
 
-    void Init() noexcept { map_ = konanConstructInstance<Map>(); }
+    void Init() noexcept { map_ = new (std_support::kalloc) Map(); }
 
     void Deinit() noexcept {
         RuntimeAssert(map_->size() == 0, "Must be already cleared");
-        konanDestructInstance(map_);
+        std_support::kdelete(map_);
     }
 
     void Add(Key key, int size) noexcept {
@@ -636,7 +641,7 @@ public:
 
     void Commit() noexcept {
         RuntimeAssert(storage_ == nullptr, "Cannot commit storage twice");
-        storage_ = reinterpret_cast<KRef*>(konanAllocMemory(size_ * sizeof(KRef)));
+        storage_ = reinterpret_cast<KRef*>(std_support::calloc(size_, sizeof(KRef)));
     }
 
     void Clear() noexcept {
@@ -644,7 +649,7 @@ public:
         for (int i = 0; i < size_; ++i) {
             UpdateHeapRef(storage_ + i, nullptr);
         }
-        konanFreeMemory(storage_);
+        std_support::free(storage_);
         map_->clear();
     }
 
@@ -669,7 +674,7 @@ private:
         int size;
     };
 
-    using Map = KStdUnorderedMap<Key, Entry>;
+    using Map = std_support::unordered_map<Key, Entry>;
 
     Map* map_ = nullptr;
     KRef* storage_ = nullptr;
@@ -726,7 +731,7 @@ struct MemoryState {
 #endif // USE_GC
 
   // A stack of initializing singletons.
-  KStdVector<std::pair<ObjHeader**, ObjHeader*>> initializingSingletons;
+  std_support::vector<std::pair<ObjHeader**, ObjHeader*>> initializingSingletons;
 
   bool isMainThread = false;
 
@@ -767,9 +772,9 @@ namespace {
 
 #if TRACE_MEMORY
 #define INIT_TRACE(state) \
-  memoryState->containers = konanConstructInstance<ContainerHeaderSet>();
+  memoryState->containers = new (std_support::kalloc) ContainerHeaderSet();
 #define DEINIT_TRACE(state) \
-   konanDestructInstance(memoryState->containers); \
+   std_support::kdelete(memoryState->containers); \
    memoryState->containers = nullptr;
 #else
 #define INIT_TRACE(state)
@@ -1069,7 +1074,7 @@ ContainerHeader* allocContainer(MemoryState* state, size_t size) {
     if (state != nullptr)
         state->allocSinceLastGc += size;
 #endif
-    result = konanConstructSizedInstance<ContainerHeader>(alignUp(size, kObjectAlignment));
+    result = new (std_support::calloc(1, alignUp(size, kObjectAlignment))) ContainerHeader();
     atomicAdd(&allocCount, 1);
   }
   if (state != nullptr) {
@@ -1081,7 +1086,7 @@ ContainerHeader* allocContainer(MemoryState* state, size_t size) {
   return result;
 }
 
-ContainerHeader* allocAggregatingFrozenContainer(KStdVector<ContainerHeader*>& containers) {
+ContainerHeader* allocAggregatingFrozenContainer(std_support::vector<ContainerHeader*>& containers) {
   auto componentSize = containers.size();
   auto* superContainer = allocContainer(memoryState, sizeof(ContainerHeader) + sizeof(void*) * componentSize);
   auto* place = reinterpret_cast<ContainerHeader**>(superContainer + 1);
@@ -1110,7 +1115,7 @@ void processFinalizerQueue(MemoryState* state) {
     state->containers->erase(container);
 #endif
     CONTAINER_DESTROY_EVENT(state, container)
-    konanFreeMemory(container);
+    std_support::free(container);
     atomicAdd(&allocCount, -1);
   }
   RuntimeAssert(state->finalizerQueueSize == 0, "Queue must be empty here");
@@ -1151,7 +1156,7 @@ void scheduleDestroyContainer(MemoryState* state, ContainerHeader* container) {
     processFinalizerQueue(state);
   }
 #else
-  konanFreeMemory(container);
+  std_support::free(container);
   atomicAdd(&allocCount, -1);
   CONTAINER_DESTROY_EVENT(state, container);
 #endif
@@ -1229,7 +1234,7 @@ void freeContainer(ContainerHeader* container) {
   * When we see GREY during DFS, it means we see cycle.
   */
 void depthFirstTraversal(ContainerHeader* start, bool* hasCycles,
-                         KRef* firstBlocker, KStdVector<ContainerHeader*>* order) {
+                         KRef* firstBlocker, std_support::vector<ContainerHeader*>* order) {
   ContainerHeaderDeque toVisit;
   toVisit.push_back(start);
   start->setSeen();
@@ -1277,9 +1282,9 @@ void depthFirstTraversal(ContainerHeader* start, bool* hasCycles,
 }
 
 void traverseStronglyConnectedComponent(ContainerHeader* start,
-                                        KStdUnorderedMap<ContainerHeader*,
-                                            KStdVector<ContainerHeader*>> const* reversedEdges,
-                                        KStdVector<ContainerHeader*>* component) {
+                                        std_support::unordered_map<ContainerHeader*,
+                                            std_support::vector<ContainerHeader*>> const* reversedEdges,
+                                        std_support::vector<ContainerHeader*>* component) {
   ContainerHeaderDeque toVisit;
   toVisit.push_back(start);
   start->mark();
@@ -1447,8 +1452,8 @@ void dumpObject(ObjHeader* ref, int indent) {
     typeInfo->relativeName_ != nullptr ? CreateCStringFromString(typeInfo->relativeName_) : nullptr;
   MEMORY_LOG("%p %s.%s\n", ref,
     packageName ? packageName : "<unknown>", relativeName ? relativeName : "<unknown>");
-  if (packageName) konan::free(packageName);
-  if (relativeName) konan::free(relativeName);
+  if (packageName) std_support::free(packageName);
+  if (relativeName) std_support::free(relativeName);
 }
 
 void dumpContainerContent(ContainerHeader* container) {
@@ -1762,7 +1767,7 @@ inline ArenaContainer* initedArena(ObjHeader** auxSlot) {
   auto frame = asFrameOverlay(auxSlot);
   auto arena = reinterpret_cast<ArenaContainer*>(frame->arena);
   if (!arena) {
-    arena = konanConstructInstance<ArenaContainer>();
+    arena = new (std_support::kalloc) ArenaContainer();
     MEMORY_LOG("Initializing arena in %p\n", frame)
     arena->Init();
     frame->arena = arena;
@@ -2055,14 +2060,14 @@ MemoryState* initMemory(bool firstRuntime) {
                 "Layout mismatch");
   RuntimeAssert(sizeof(FrameOverlay) % sizeof(ObjHeader**) == 0, "Frame overlay should contain only pointers");
   RuntimeAssert(memoryState == nullptr, "memory state must be clear");
-  memoryState = konanConstructInstance<MemoryState>();
+  memoryState = new (std_support::kalloc) MemoryState();
   INIT_EVENT(memoryState)
 #if USE_GC
-  memoryState->toFree = konanConstructInstance<ContainerHeaderList>();
-  memoryState->roots = konanConstructInstance<ContainerHeaderList>();
+  memoryState->toFree = new (std_support::kalloc) ContainerHeaderList();
+  memoryState->roots = new (std_support::kalloc) ContainerHeaderList();
   memoryState->gcInProgress = false;
   memoryState->gcSuspendCount = 0;
-  memoryState->toRelease = konanConstructInstance<ContainerHeaderList>();
+  memoryState->toRelease = new (std_support::kalloc) ContainerHeaderList();
   initGcThreshold(memoryState, kGcThreshold);
   initGcCollectCyclesThreshold(memoryState, kMaxToFreeSizeThreshold);
   memoryState->allocSinceLastGcThreshold = kMaxGcAllocThreshold;
@@ -2121,9 +2126,9 @@ void deinitMemory(MemoryState* memoryState, bool destroyRuntime) {
   } while (memoryState->toRelease->size() > 0 || !memoryState->foreignRefManager->tryReleaseRefOwned());
   RuntimeAssert(memoryState->toFree->size() == 0, "Some memory have not been released after GC");
   RuntimeAssert(memoryState->toRelease->size() == 0, "Some memory have not been released after GC");
-  konanDestructInstance(memoryState->toFree);
-  konanDestructInstance(memoryState->roots);
-  konanDestructInstance(memoryState->toRelease);
+  std_support::kdelete(memoryState->toFree);
+  std_support::kdelete(memoryState->roots);
+  std_support::kdelete(memoryState->toRelease);
   memoryState->tls.Deinit();
   RuntimeAssert(memoryState->finalizerQueue == nullptr, "Finalizer queue must be empty");
   RuntimeAssert(memoryState->finalizerQueueSize == 0, "Finalizer queue must be empty");
@@ -2151,7 +2156,7 @@ void deinitMemory(MemoryState* memoryState, bool destroyRuntime) {
   PRINT_EVENT(memoryState)
   DEINIT_EVENT(memoryState)
 
-  konanFreeMemory(memoryState);
+  std_support::free(memoryState);
   ::memoryState = nullptr;
 }
 
@@ -2618,9 +2623,9 @@ void stopGC() {
   if (memoryState->toRelease != nullptr) {
     memoryState->gcSuspendCount = 0;
     garbageCollect(memoryState, true);
-    konanDestructInstance(memoryState->toRelease);
-    konanDestructInstance(memoryState->toFree);
-    konanDestructInstance(memoryState->roots);
+    std_support::kdelete(memoryState->toRelease);
+    std_support::kdelete(memoryState->toFree);
+    std_support::kdelete(memoryState->roots);
     memoryState->toRelease = nullptr;
     memoryState->toFree = nullptr;
     memoryState->roots = nullptr;
@@ -2630,9 +2635,9 @@ void stopGC() {
 void startGC() {
   GC_LOG("startGC\n")
   if (memoryState->toFree == nullptr) {
-    memoryState->toFree = konanConstructInstance<ContainerHeaderList>();
-    memoryState->toRelease = konanConstructInstance<ContainerHeaderList>();
-    memoryState->roots = konanConstructInstance<ContainerHeaderList>();
+    memoryState->toFree = new (std_support::kalloc) ContainerHeaderList();
+    memoryState->toRelease = new (std_support::kalloc) ContainerHeaderList();
+    memoryState->roots = new (std_support::kalloc) ContainerHeaderList();
     memoryState->gcSuspendCount = 0;
   }
 }
@@ -2786,7 +2791,7 @@ bool clearSubgraphReferences(ObjHeader* root, bool checked) {
 }
 
 void freezeAcyclic(ContainerHeader* rootContainer, ContainerHeaderSet* newlyFrozen) {
-  KStdDeque<ContainerHeader*> queue;
+  std_support::deque<ContainerHeader*> queue;
   queue.push_back(rootContainer);
   while (!queue.empty()) {
     ContainerHeader* current = queue.front();
@@ -2811,17 +2816,17 @@ void freezeAcyclic(ContainerHeader* rootContainer, ContainerHeaderSet* newlyFroz
 }
 
 void freezeCyclic(ObjHeader* root,
-                  const KStdVector<ContainerHeader*>& order,
+                  const std_support::vector<ContainerHeader*>& order,
                   ContainerHeaderSet* newlyFrozen) {
-  KStdUnorderedMap<ContainerHeader*, KStdVector<ContainerHeader*>> reversedEdges;
-  KStdDeque<ObjHeader*> queue;
+  std_support::unordered_map<ContainerHeader*, std_support::vector<ContainerHeader*>> reversedEdges;
+  std_support::deque<ObjHeader*> queue;
   queue.push_back(root);
   while (!queue.empty()) {
     ObjHeader* current = queue.front();
     queue.pop_front();
     ContainerHeader* currentContainer = containerFor(current);
     currentContainer->unMark();
-    reversedEdges.emplace(currentContainer, KStdVector<ContainerHeader*>(0));
+    reversedEdges.emplace(currentContainer, std_support::vector<ContainerHeader*>(0));
     traverseContainerReferredObjects(currentContainer, [current, currentContainer, &queue, &reversedEdges](ObjHeader* obj) {
           ContainerHeader* objContainer = containerFor(obj);
           if (canFreeze(objContainer)) {
@@ -2829,19 +2834,19 @@ void freezeCyclic(ObjHeader* root,
               queue.push_back(obj);
             // We ignore references from FreezableAtomicsReference during condensation, to avoid KT-33824.
             if (!isFreezableAtomic(current))
-              reversedEdges.emplace(objContainer, KStdVector<ContainerHeader*>(0)).
+              reversedEdges.emplace(objContainer, std_support::vector<ContainerHeader*>(0)).
                 first->second.push_back(currentContainer);
           }
       });
    }
 
-   KStdVector<KStdVector<ContainerHeader*>> components;
+   std_support::vector<std_support::vector<ContainerHeader*>> components;
    MEMORY_LOG("Condensation:\n");
    // Enumerate in the topological order.
    for (auto it = order.rbegin(); it != order.rend(); ++it) {
      auto* container = *it;
      if (container->marked()) continue;
-     KStdVector<ContainerHeader*> component;
+     std_support::vector<ContainerHeader*> component;
      traverseStronglyConnectedComponent(container, &reversedEdges, &component);
      MEMORY_LOG("SCC:\n");
   #if TRACE_MEMORY
@@ -2896,8 +2901,8 @@ void freezeCyclic(ObjHeader* root,
 }
 
 void runFreezeHooksRecursive(ObjHeader* root) {
-  KStdUnorderedSet<KRef> seen;
-  KStdVector<KRef> toVisit;
+  std_support::unordered_set<KRef> seen;
+  std_support::vector<KRef> toVisit;
   seen.insert(root);
   toVisit.push_back(root);
   while (!toVisit.empty()) {
@@ -2964,7 +2969,7 @@ void freezeSubgraph(ObjHeader* root) {
   bool hasCycles = false;
   KRef firstBlocker = root->has_meta_object() && ((root->meta_object()->flags_ & MF_NEVER_FROZEN) != 0) ?
     root : nullptr;
-  KStdVector<ContainerHeader*> order;
+  std_support::vector<ContainerHeader*> order;
   depthFirstTraversal(rootContainer, &hasCycles, &firstBlocker, &order);
   if (firstBlocker != nullptr) {
     MEMORY_LOG("See freeze blocker for %p: %p\n", root, firstBlocker)
@@ -3044,7 +3049,7 @@ CycleDetectorRootset CycleDetector::collectRootset() {
   return rootset;
 }
 
-KStdVector<KRef> findCycleWithDFS(KRef root, const CycleDetectorRootset& rootset) {
+std_support::vector<KRef> findCycleWithDFS(KRef root, const CycleDetectorRootset& rootset) {
   auto traverseFields = [&rootset](KRef obj, auto process) {
     auto it = rootset.rootToFields.find(obj);
     // If obj is in the rootset, use it's pinned state.
@@ -3061,8 +3066,8 @@ KStdVector<KRef> findCycleWithDFS(KRef root, const CycleDetectorRootset& rootset
     kotlin::traverseReferredObjects(obj, process);
   };
 
-  KStdVector<KStdVector<KRef>> toVisit;
-  auto appendFieldsToVisit = [&toVisit, &traverseFields](KRef obj, const KStdVector<KRef>& currentPath) {
+  std_support::vector<std_support::vector<KRef>> toVisit;
+  auto appendFieldsToVisit = [&toVisit, &traverseFields](KRef obj, const std_support::vector<KRef>& currentPath) {
     traverseFields(obj, [&toVisit, &currentPath](KRef field) {
       auto path = currentPath;
       path.push_back(field);
@@ -3072,10 +3077,10 @@ KStdVector<KRef> findCycleWithDFS(KRef root, const CycleDetectorRootset& rootset
 
   appendFieldsToVisit(root, KRefList(1, root));
 
-  KStdUnorderedSet<KRef> seen;
+  std_support::unordered_set<KRef> seen;
   seen.insert(root);
   while (!toVisit.empty()) {
-    KStdVector<KRef> currentPath = std::move(toVisit.back());
+    std_support::vector<KRef> currentPath = std::move(toVisit.back());
     toVisit.pop_back();
     KRef node = currentPath[currentPath.size() - 1];
 
@@ -3108,7 +3113,7 @@ OBJ_GETTER(createAndFillArray, const C& container) {
 OBJ_GETTER0(detectCyclicReferences) {
   auto rootset = CycleDetector::collectRootset();
 
-  KStdVector<KRef> cyclic;
+  std_support::vector<KRef> cyclic;
 
   for (KRef root: rootset.roots) {
     if (!findCycleWithDFS(root, rootset).empty()) {
@@ -3145,7 +3150,7 @@ MetaObjHeader* ObjHeader::createMetaObject(ObjHeader* object) {
   }
 #endif
 
-  MetaObjHeader* meta = konanConstructInstance<MetaObjHeader>();
+  MetaObjHeader* meta = new (std_support::kalloc) MetaObjHeader();
   meta->typeInfo_ = typeInfo;
 #if KONAN_NO_THREADS
   *location = reinterpret_cast<TypeInfo*>(meta);
@@ -3153,7 +3158,7 @@ MetaObjHeader* ObjHeader::createMetaObject(ObjHeader* object) {
   TypeInfo* old = __sync_val_compare_and_swap(location, typeInfo, reinterpret_cast<TypeInfo*>(meta));
   if (old != typeInfo) {
     // Someone installed a new meta-object since the check.
-    konanFreeMemory(meta);
+    std_support::free(meta);
     meta = reinterpret_cast<MetaObjHeader*>(old);
   }
 #endif
@@ -3173,7 +3178,7 @@ void ObjHeader::destroyMetaObject(ObjHeader* object) {
   Kotlin_ObjCExport_detachAndReleaseAssociatedObject(meta->associatedObject_);
 #endif
 
-  konanFreeMemory(meta);
+  std_support::free(meta);
 }
 
 void ObjectContainer::Init(MemoryState* state, const TypeInfo* typeInfo) {
@@ -3223,7 +3228,7 @@ void ArenaContainer::Deinit() {
   while (chunk != nullptr) {
     auto toRemove = chunk;
     chunk = chunk->next;
-    konanFreeMemory(toRemove);
+    std_support::free(toRemove);
   }
 }
 
@@ -3231,7 +3236,7 @@ bool ArenaContainer::allocContainer(container_size_t minSize) {
   auto size = minSize + sizeof(ContainerHeader) + sizeof(ContainerChunk);
   size = alignUp(size, kContainerAlignment);
   // TODO: keep simple cache of container chunks.
-  ContainerChunk* result = konanConstructSizedInstance<ContainerChunk>(size);
+  ContainerChunk* result = new (std_support::calloc(1, size)) ContainerChunk();
   RuntimeCheck(result != nullptr, "Cannot alloc memory");
   if (result == nullptr) return false;
   result->next = currentChunk_;

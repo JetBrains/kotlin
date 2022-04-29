@@ -8,6 +8,8 @@
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"
 
+#include "std_support/Vector.hpp"
+
 using namespace kotlin;
 
 using ::testing::_;
@@ -36,7 +38,7 @@ public:
     }
 
 private:
-    KStdUniquePtr<logging::internal::LogFilter> logFilter_;
+    std_support::unique_ptr<logging::internal::LogFilter> logFilter_;
 };
 
 class MockLogFilter : public logging::internal::LogFilter {
@@ -202,7 +204,7 @@ private:
 };
 
 MATCHER_P(TagsAre, tags, "") {
-    KStdVector<std::string_view> actualTags;
+    std_support::vector<std::string_view> actualTags;
     for (auto tag : arg) {
         actualTags.push_back(tag);
     }

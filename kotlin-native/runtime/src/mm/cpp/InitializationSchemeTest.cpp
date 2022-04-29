@@ -15,6 +15,7 @@
 #include "TestSupport.hpp"
 #include "ThreadData.hpp"
 #include "Types.h"
+#include "std_support/Vector.hpp"
 
 using namespace kotlin;
 
@@ -200,10 +201,10 @@ TEST_F(InitSingletonTest, InitSingletonConcurrent) {
     constexpr size_t kThreadCount = kDefaultThreadCount;
     std::atomic<bool> canStart(false);
     std::atomic<size_t> readyCount(0);
-    KStdVector<ScopedThread> threads;
+    std_support::vector<ScopedThread> threads;
     ObjHeader* location = nullptr;
-    KStdVector<ObjHeader*> stackLocations(kThreadCount, nullptr);
-    KStdVector<ObjHeader*> actual(kThreadCount, nullptr);
+    std_support::vector<ObjHeader*> stackLocations(kThreadCount, nullptr);
+    std_support::vector<ObjHeader*> actual(kThreadCount, nullptr);
 
     for (size_t i = 0; i < kThreadCount; ++i) {
         threads.emplace_back([this, i, &location, &stackLocations, &actual, &readyCount, &canStart]() {
@@ -234,10 +235,10 @@ TEST_F(InitSingletonTest, InitSingletonConcurrentFailing) {
     constexpr size_t kThreadCount = kDefaultThreadCount;
     std::atomic<bool> canStart(false);
     std::atomic<size_t> readyCount(0);
-    KStdVector<ScopedThread> threads;
+    std_support::vector<ScopedThread> threads;
     constexpr int kException = 42;
     ObjHeader* location = nullptr;
-    KStdVector<ObjHeader*> stackLocations(kThreadCount, nullptr);
+    std_support::vector<ObjHeader*> stackLocations(kThreadCount, nullptr);
 
     for (size_t i = 0; i < kThreadCount; ++i) {
         threads.emplace_back([this, i, &location, &stackLocations, &readyCount, &canStart]() {

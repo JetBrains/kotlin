@@ -20,8 +20,11 @@
 #include "KString.h"
 #include "Types.h"
 #include "Worker.h"
+#include "std_support/CStdlib.hpp"
 
 #include "launcher.h"
+
+using namespace kotlin;
 
 //--- Setup args --------------------------------------------------------------//
 
@@ -77,9 +80,9 @@ extern "C" int Konan_js_arg_size(int index);
 extern "C" int Konan_js_fetch_arg(int index, char* ptr);
 
 extern "C" RUNTIME_USED int Konan_js_main(int argc, int memoryDeInit) {
-    char** argv = (char**)konan::calloc(1, argc);
+    char** argv = (char**)std_support::calloc(1, argc);
     for (int i = 0; i< argc; ++i) {
-        argv[i] = (char*)konan::calloc(1, Konan_js_arg_size(i));
+        argv[i] = (char*)std_support::calloc(1, Konan_js_arg_size(i));
         Konan_js_fetch_arg(i, argv[i]);
     }
     return Init_and_run_start(argc, (const char**)argv, memoryDeInit);

@@ -17,7 +17,11 @@
 
 #include "ExecFormat.h"
 #include "Porting.h"
-#include "Types.h"
+#include "std_support/CStdlib.hpp"
+#include "std_support/New.hpp"
+#include "std_support/Vector.hpp"
+
+using namespace kotlin;
 
 #if USE_ELF_SYMBOLS
 
@@ -58,7 +62,7 @@ struct SymRecord {
   char* strtab;
 };
 
-typedef KStdVector<SymRecord> SymRecordList;
+typedef std_support::vector<SymRecord> SymRecordList;
 
 SymRecordList* symbols = nullptr;
 
@@ -76,7 +80,7 @@ Elf_Ehdr* findElfHeader() {
 
 void initSymbols() {
   RuntimeAssert(symbols == nullptr, "Init twice");
-  symbols = konanConstructInstance<SymRecordList>();
+  symbols = new (std_support::kalloc) SymRecordList();
   Elf_Ehdr* ehdr = findElfHeader();
   if (ehdr == nullptr) return;
   RuntimeAssert(strncmp((const char*)ehdr->e_ident, ELFMAG, SELFMAG) == 0, "Must be an ELF");
@@ -159,10 +163,10 @@ static void* mapModuleFile(HMODULE hModule) {
   DWORD bufferLength = 64;
   wchar_t* buffer = nullptr;
   for (;;) {
-    auto newBuffer = (wchar_t*)konanAllocMemory(sizeof(wchar_t) * bufferLength);
+    auto newBuffer = (wchar_t*)std_support::calloc(bufferLength, sizeof(wchar_t));
     RuntimeAssert(newBuffer != nullptr, "Out of memory");
     if (buffer != nullptr) {
-      konanFreeMemory(buffer);
+      std_support::free(buffer);
     }
     buffer = newBuffer;
 
@@ -178,7 +182,7 @@ static void* mapModuleFile(HMODULE hModule) {
     }
 
     // Invalid result.
-    konanFreeMemory(buffer);
+    std_support::free(buffer);
     return nullptr;
   }
 
@@ -191,7 +195,7 @@ static void* mapModuleFile(HMODULE hModule) {
       /* dwFlagsAndAttributes = */ FILE_ATTRIBUTE_NORMAL,
       /* hTemplateFile = */ nullptr
   );
-  konanFreeMemory(buffer);
+  std_support::free(buffer);
   if (hFile == INVALID_HANDLE_VALUE) {
     // Can't open module file.
     return nullptr;
@@ -323,7 +327,7 @@ extern "C" bool AddressToSymbol(const void* address, char* resultBuffer, size_t 
     int rv = GetModuleHandleExW(GET_MODULE_HANDLE_EX_FLAG_FROM_ADDRESS | GET_MODULE_HANDLE_EX_FLAG_UNCHANGED_REFCOUNT,
                reinterpret_cast<LPCWSTR>(&AddressToSymbol), &hModule);
     RuntimeAssert(rv != 0, "GetModuleHandleExW fails");
-    theExeSymbolTable = konanConstructInstance<SymbolTable>(hModule);
+    theExeSymbolTable = new (std_support::kalloc) SymbolTable(hModule);
   }
   return theExeSymbolTable->functionAddressToSymbol(address, resultBuffer, resultBufferSize, resultOffset);
 }

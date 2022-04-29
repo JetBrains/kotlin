@@ -5,9 +5,11 @@
 
 #include "WorkerBoundReference.h"
 
-#include "Alloc.h"
 #include "Memory.h"
 #include "MemorySharedRefs.hpp"
+#include "std_support/New.hpp"
+
+using namespace kotlin;
 
 namespace {
 
@@ -27,7 +29,7 @@ RUNTIME_NOTHROW void DisposeWorkerBoundReference(KRef thiz) {
   // Can be null if WorkerBoundReference wasn't frozen.
   if (auto* holder = asWorkerBoundReference(thiz)->holder) {
     holder->dispose();
-    konanDestructInstance(holder);
+    std_support::kdelete(holder);
   }
 }
 
@@ -41,9 +43,9 @@ RUNTIME_NOTHROW void WorkerBoundReferenceFreezeHook(KRef thiz) {
 extern "C" {
 
 KNativePtr Kotlin_WorkerBoundReference_create(KRef value) {
-  auto* holder = konanConstructInstance<KRefSharedHolder>();
-  holder->init(value);
-  return holder;
+    auto* holder = new (std_support::kalloc) KRefSharedHolder();
+    holder->init(value);
+    return holder;
 }
 
 OBJ_GETTER(Kotlin_WorkerBoundReference_deref, KNativePtr holder) {

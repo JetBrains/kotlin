@@ -14,6 +14,7 @@
 #include "TestSupport.hpp"
 #include "TestSupportCompilerGenerated.hpp"
 #include "Types.h"
+#include "std_support/Vector.hpp"
 
 using namespace kotlin;
 using namespace kotlin::test_support;
@@ -39,7 +40,7 @@ TEST_F(CleanerTest, ConcurrentCreation) {
 
     int startedThreads = 0;
     bool allowRunning = false;
-    KStdVector<std::future<KInt>> futures;
+    std_support::vector<std::future<KInt>> futures;
     for (int i = 0; i < threadCount; ++i) {
         auto future = std::async(std::launch::async, [&startedThreads, &allowRunning]() {
             // Thread state switching requires initilized memory subsystem.
@@ -54,7 +55,7 @@ TEST_F(CleanerTest, ConcurrentCreation) {
     while (atomicGet(&startedThreads) != threadCount) {
     }
     atomicSet(&allowRunning, true);
-    KStdVector<KInt> values;
+    std_support::vector<KInt> values;
     for (auto& future : futures) {
         values.push_back(future.get());
     }

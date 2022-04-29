@@ -8,13 +8,14 @@
 
 #include "std_support/Span.hpp"
 #include "Memory.h"
-#include "Types.h"
+#include "std_support/String.hpp"
+#include "std_support/Vector.hpp"
 
 namespace kotlin {
 
 namespace internal {
 
-NO_INLINE KStdVector<void*> GetCurrentStackTrace(size_t skipFrames) noexcept;
+NO_INLINE std_support::vector<void*> GetCurrentStackTrace(size_t skipFrames) noexcept;
 NO_INLINE size_t GetCurrentStackTrace(size_t skipFrames, std_support::span<void*> buffer) noexcept;
 
 enum class StackTraceCapacityKind {
@@ -181,19 +182,18 @@ public:
 
     struct TestSupport : private Pinned {
         static StackTrace constructFrom(std::initializer_list<void*> values) {
-            KStdVector<void*> traceElements(values);
+            std_support::vector<void*> traceElements(values);
             return StackTrace(std::move(traceElements));
         }
     };
 
 private:
-    explicit StackTrace(KStdVector<void*>&& buffer) noexcept : buffer_(buffer) {}
+    explicit StackTrace(std_support::vector<void*>&& buffer) noexcept : buffer_(buffer) {}
 
-    KStdVector<void*> buffer_;
+    std_support::vector<void*> buffer_;
 };
 
-
-KStdVector<KStdString> GetStackTraceStrings(std_support::span<void* const> stackTrace) noexcept;
+std_support::vector<std_support::string> GetStackTraceStrings(std_support::span<void* const> stackTrace) noexcept;
 
 // It's not always safe to extract SourceInfo during unhandled exception termination.
 void DisallowSourceInfo();

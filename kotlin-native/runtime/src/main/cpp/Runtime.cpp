@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-#include "Alloc.h"
 #include "Atomic.h"
 #include "Cleaner.h"
 #include "CompilerConstants.hpp"
@@ -27,10 +26,13 @@
 #include "RuntimePrivate.hpp"
 #include "Worker.h"
 #include "KString.h"
+#include "std_support/New.hpp"
 
 #ifndef KONAN_NO_THREADS
 #include <thread>
 #endif
+
+using namespace kotlin;
 
 using kotlin::internal::FILE_NOT_INITIALIZED;
 using kotlin::internal::FILE_BEING_INITIALIZED;
@@ -100,7 +102,7 @@ volatile GlobalRuntimeStatus globalRuntimeStatus = kGlobalRuntimeUninitialized;
 
 RuntimeState* initRuntime() {
   SetKonanTerminateHandler();
-  RuntimeState* result = konanConstructInstance<RuntimeState>();
+  RuntimeState* result = new (std_support::kalloc) RuntimeState();
   if (!result) return kInvalidRuntime;
   RuntimeCheck(!isValidRuntime(), "No active runtimes allowed");
   ::runtimeState = result;
@@ -188,7 +190,7 @@ void deinitRuntime(RuntimeState* state, bool destroyRuntime) {
   // Do not use ThreadStateGuard because memoryState will be destroyed during DeinitMemory.
   kotlin::SwitchThreadState(state->memoryState, kotlin::ThreadState::kNative);
   DeinitMemory(state->memoryState, destroyRuntime);
-  konanDestructInstance(state);
+  std_support::kdelete(state);
   WorkerDestroyThreadDataIfNeeded(workerId);
   ::runtimeState = kInvalidRuntime;
 }

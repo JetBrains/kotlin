@@ -28,6 +28,9 @@
 #include "Porting.h"
 #include "Natives.h"
 #include "Types.h"
+#include "std_support/CStdlib.hpp"
+
+using namespace kotlin;
 
 extern "C" {
 
@@ -87,7 +90,7 @@ void* Kotlin_interop_malloc(KLong size, KInt align) {
   RuntimeAssert(align > 0, "Unsupported alignment");
   RuntimeAssert((align & (align - 1)) == 0, "Alignment must be power of two");
 
-  void* result = konan::calloc_aligned(1, size, align);
+  void* result = std_support::aligned_calloc(align, 1, size);
   if ((reinterpret_cast<uintptr_t>(result) & (align - 1)) != 0) {
     // Unaligned!
     RuntimeAssert(false, "unsupported alignment");
@@ -97,7 +100,7 @@ void* Kotlin_interop_malloc(KLong size, KInt align) {
 }
 
 void Kotlin_interop_free(void* ptr) {
-  konan::free(ptr);
+    std_support::free(ptr);
 }
 
 void Kotlin_system_exitProcess(KInt status) {

@@ -9,6 +9,7 @@
 #include "ScopedThread.hpp"
 #include "ThreadSuspension.hpp"
 #include "ThreadState.hpp"
+#include "std_support/Vector.hpp"
 
 #include <gtest/gtest.h>
 #include <gmock/gmock.h>
@@ -31,8 +32,8 @@ constexpr size_t kDefaultIterations = 10000;
 constexpr size_t kDefaultReportingStep = 1000;
 #endif // #ifdef KONAN_WINDOWS
 
-KStdVector<mm::ThreadData*> collectThreadData() {
-    KStdVector<mm::ThreadData*> result;
+std_support::vector<mm::ThreadData*> collectThreadData() {
+    std_support::vector<mm::ThreadData*> result;
     auto iter = mm::ThreadRegistry::Instance().LockForIter();
     for (auto& thread : iter) {
         result.push_back(&thread);
@@ -40,15 +41,15 @@ KStdVector<mm::ThreadData*> collectThreadData() {
     return result;
 }
 
-template<typename T, typename F>
-KStdVector<T> collectFromThreadData(F extractFunction) {
-    KStdVector<T> result;
+template <typename T, typename F>
+std_support::vector<T> collectFromThreadData(F extractFunction) {
+    std_support::vector<T> result;
     auto threadData = collectThreadData();
     std::transform(threadData.begin(), threadData.end(), std::back_inserter(result), extractFunction);
     return result;
 }
 
-KStdVector<bool> collectSuspended() {
+std_support::vector<bool> collectSuspended() {
     return collectFromThreadData<bool>(
             [](mm::ThreadData* threadData) { return threadData->suspensionData().suspended(); });
 }
@@ -82,7 +83,7 @@ public:
     static constexpr size_t kThreadCount = kDefaultThreadCount;
     static constexpr size_t kIterations = kDefaultIterations;
 
-    KStdVector<ScopedThread> threads;
+    std_support::vector<ScopedThread> threads;
     std::array<std::atomic<bool>, kThreadCount> ready{false};
     std::atomic<bool> canStart{false};
     std::atomic<bool> shouldStop{false};

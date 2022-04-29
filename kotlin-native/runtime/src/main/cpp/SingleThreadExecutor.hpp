@@ -12,8 +12,8 @@
 #include <shared_mutex>
 
 #include "ScopedThread.hpp"
-#include "Types.h"
 #include "Utils.hpp"
+#include "std_support/Deque.hpp"
 
 namespace kotlin {
 
@@ -101,7 +101,7 @@ private:
 
     std::condition_variable workCV_;
     std::mutex workMutex_;
-    KStdDeque<std::packaged_task<void()>> queue_;
+    std_support::deque<std::packaged_task<void()>> queue_;
     bool shutdownRequested_ = false;
 
     ScopedThread thread_;

@@ -12,6 +12,7 @@
 #include "TestSupport.hpp"
 #include "ThreadData.hpp"
 #include "Types.h"
+#include "std_support/Vector.hpp"
 
 using namespace kotlin;
 
@@ -19,11 +20,11 @@ namespace {
 
 class ExceptionObjHolderTest : public ::testing::Test {
 public:
-    static KStdVector<ObjHeader*> Collect(mm::ThreadData& threadData) {
+    static std_support::vector<ObjHeader*> Collect(mm::ThreadData& threadData) {
         auto& stableRefs = mm::StableRefRegistry::Instance();
         stableRefs.ProcessThread(&threadData);
         stableRefs.ProcessDeletions();
-        KStdVector<ObjHeader*> result;
+        std_support::vector<ObjHeader*> result;
         for (const auto& obj : stableRefs.LockForIter()) {
             result.push_back(obj);
         }

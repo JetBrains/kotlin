@@ -15,6 +15,7 @@
 #include "Types.h"
 #include "Utils.hpp"
 #include "GCState.hpp"
+#include "std_support/Memory.hpp"
 
 namespace kotlin {
 
@@ -105,7 +106,7 @@ private:
     uint64_t lastGCTimestampUs_ = 0;
     GCStateHolder state_;
     ScopedThread gcThread_;
-    KStdUniquePtr<FinalizerProcessor> finalizerProcessor_;
+    std_support::unique_ptr<FinalizerProcessor> finalizerProcessor_;
 
     MarkQueue markQueue_;
 };

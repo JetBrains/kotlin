@@ -10,6 +10,7 @@
 
 #include "Natives.h"
 #include "TestSupport.hpp"
+#include "std_support/Vector.hpp"
 
 using namespace kotlin;
 
@@ -68,8 +69,8 @@ using ObjectTestCases = testing::Types<RegularObjectTestCase, IrregularObjectTes
 TYPED_TEST_SUITE(ObjectTestSupportObjectTest, ObjectTestCases, ObjectTestCaseNames);
 
 template <typename Payload>
-KStdVector<ObjHeader**> Collect(test_support::Object<Payload>& object) {
-    KStdVector<ObjHeader**> result;
+std_support::vector<ObjHeader**> Collect(test_support::Object<Payload>& object) {
+    std_support::vector<ObjHeader**> result;
     for (auto& field : object.fields()) {
         result.push_back(&field);
     }
@@ -307,8 +308,8 @@ using ArrayTestCases = testing::Types<
 TYPED_TEST_SUITE(ObjectTestSupportArrayTest, ArrayTestCases, ArrayTestCaseNames);
 
 template <typename Payload, size_t ElementCount>
-KStdVector<Payload*> Collect(test_support::internal::Array<Payload, ElementCount>& array) {
-    KStdVector<Payload*> result;
+std_support::vector<Payload*> Collect(test_support::internal::Array<Payload, ElementCount>& array) {
+    std_support::vector<Payload*> result;
     for (auto& element : array.elements()) {
         result.push_back(&element);
     }
@@ -329,7 +330,7 @@ TYPED_TEST(ObjectTestSupportArrayTest, Local) {
     EXPECT_THAT(array.arrayHeader()->count_, size);
     EXPECT_THAT(array.elements().size(), size);
 
-    KStdVector<Payload*> expected;
+    std_support::vector<Payload*> expected;
     for (size_t i = 0; i < size; ++i) {
         auto* element = AddressOfElementAt<Payload>(array.arrayHeader(), i);
         EXPECT_THAT(&array.elements()[i], element);
@@ -360,7 +361,7 @@ TYPED_TEST(ObjectTestSupportArrayTest, Heap) {
         EXPECT_THAT(array.arrayHeader()->count_, size);
         EXPECT_THAT(array.elements().size(), size);
 
-        KStdVector<Payload*> expected;
+        std_support::vector<Payload*> expected;
         for (size_t i = 0; i < size; ++i) {
             auto* element = AddressOfElementAt<Payload>(array.arrayHeader(), i);
             EXPECT_THAT(&array.elements()[i], element);

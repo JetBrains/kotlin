@@ -11,6 +11,8 @@
 #include "Natives.h"
 #include "ObjectTraversal.hpp"
 #include "Types.h"
+#include "std_support/UnorderedSet.hpp"
+#include "std_support/Vector.hpp"
 
 using namespace kotlin;
 
@@ -29,10 +31,10 @@ bool mm::IsFrozen(const ObjHeader* object) noexcept {
 ObjHeader* mm::FreezeSubgraph(ObjHeader* root) noexcept {
     if (IsFrozen(root)) return nullptr;
 
-    KStdVector<ObjHeader*> objects;
-    KStdVector<ObjHeader*> stack;
+    std_support::vector<ObjHeader*> objects;
+    std_support::vector<ObjHeader*> stack;
     // TODO: This may be a suboptimal container for the job.
-    KStdUnorderedSet<ObjHeader*> visited;
+    std_support::unordered_set<ObjHeader*> visited;
     stack.push_back(root);
     while (!stack.empty()) {
         ObjHeader* object = stack.back();

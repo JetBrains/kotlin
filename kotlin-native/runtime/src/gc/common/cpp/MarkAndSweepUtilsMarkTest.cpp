@@ -14,6 +14,8 @@
 #include "FinalizerHooks.hpp"
 #include "ObjectTestSupport.hpp"
 #include "Utils.hpp"
+#include "std_support/UnorderedSet.hpp"
+#include "std_support/Vector.hpp"
 
 using namespace kotlin;
 
@@ -108,7 +110,7 @@ public:
 
 class ScopedMarkTraits : private Pinned {
 public:
-    using MarkQueue = KStdVector<ObjHeader*>;
+    using MarkQueue = std_support::vector<ObjHeader*>;
 
     ScopedMarkTraits() {
         RuntimeAssert(instance_ == nullptr, "Only one ScopedMarkTraits is allowed");
@@ -120,7 +122,7 @@ public:
         instance_ = nullptr;
     }
 
-    const KStdUnorderedSet<ObjHeader*>& marked() const { return marked_; }
+    const std_support::unordered_set<ObjHeader*>& marked() const { return marked_; }
 
     static bool isEmpty(const MarkQueue& queue) noexcept {
         return queue.empty();
@@ -146,7 +148,7 @@ public:
 private:
     static ScopedMarkTraits* instance_;
 
-    KStdUnorderedSet<ObjHeader*> marked_;
+    std_support::unordered_set<ObjHeader*> marked_;
 };
 
 // static
@@ -154,10 +156,10 @@ ScopedMarkTraits* ScopedMarkTraits::instance_ = nullptr;
 
 class MarkAndSweepUtilsMarkTest : public ::testing::Test {
 public:
-    const KStdUnorderedSet<ObjHeader*>& marked() const { return markTraits_.marked(); }
+    const std_support::unordered_set<ObjHeader*>& marked() const { return markTraits_.marked(); }
 
     auto MarkedMatcher(std::initializer_list<std::reference_wrapper<BaseObject>> expected) {
-        KStdVector<ObjHeader*> objects;
+        std_support::vector<ObjHeader*> objects;
         for (auto& object : expected) {
             objects.push_back(object.get().GetObjHeader());
         }
@@ -165,7 +167,7 @@ public:
     }
 
     gc::MarkStats Mark(std::initializer_list<std::reference_wrapper<BaseObject>> graySet) {
-        KStdVector<ObjHeader*> objects;
+        std_support::vector<ObjHeader*> objects;
         for (auto& object : graySet) ScopedMarkTraits::enqueue(objects, object.get().GetObjHeader());
         return gc::Mark<ScopedMarkTraits>(objects);
     }

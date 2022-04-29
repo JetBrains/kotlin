@@ -5,15 +5,17 @@
 
 #pragma once
 
-#include "Alloc.h"
+#include <utility>
+
+#include "std_support/CStdlib.hpp"
 
 namespace kotlin {
 namespace gc {
 
 class AlignedAllocator {
 public:
-    void* Alloc(size_t size, size_t alignment) noexcept { return konanAllocAlignedMemory(size, alignment); }
-    static void Free(void* instance) noexcept { konanFreeMemory(instance); }
+    void* Alloc(size_t size, size_t alignment) noexcept { return std_support::aligned_calloc(alignment, 1, size); }
+    static void Free(void* instance) noexcept { std_support::free(instance); }
 };
 
 template <typename BaseAllocator, typename GCThreadData>

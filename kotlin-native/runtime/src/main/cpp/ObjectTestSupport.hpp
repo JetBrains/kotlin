@@ -11,6 +11,7 @@
 #include "TypeInfo.h"
 #include "Types.h"
 #include "Utils.hpp"
+#include "std_support/Vector.hpp"
 
 namespace kotlin {
 namespace test_support {
@@ -26,7 +27,7 @@ private:
         virtual ~Builder() = default;
 
         int32_t instanceSize_ = 0;
-        KStdVector<int32_t> objOffsets_;
+        std_support::vector<int32_t> objOffsets_;
         int32_t flags_ = 0;
         const TypeInfo* superType_ = nullptr;
     };
@@ -88,7 +89,7 @@ public:
 
 private:
     TypeInfo typeInfo_{};
-    KStdVector<int32_t> objOffsets_;
+    std_support::vector<int32_t> objOffsets_;
 };
 
 template <typename Payload>

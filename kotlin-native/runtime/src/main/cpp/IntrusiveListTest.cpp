@@ -11,8 +11,8 @@
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"
 
-#include "Types.h"
 #include "Utils.hpp"
+#include "std_support/List.hpp"
 
 using namespace kotlin;
 
@@ -54,8 +54,8 @@ private:
 };
 
 template <typename List>
-KStdList<typename List::value_type> create(std::initializer_list<int> list) {
-    KStdList<typename List::value_type> result;
+std_support::list<typename List::value_type> create(std::initializer_list<int> list) {
+    std_support::list<typename List::value_type> result;
     for (auto x : list) {
         result.emplace_back(x);
     }

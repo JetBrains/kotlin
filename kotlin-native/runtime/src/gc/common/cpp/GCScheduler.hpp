@@ -17,6 +17,7 @@
 #include "Logging.hpp"
 #include "Types.h"
 #include "Utils.hpp"
+#include "std_support/Memory.hpp"
 
 namespace kotlin {
 namespace gc {
@@ -159,7 +160,7 @@ public:
 
 private:
     GCSchedulerConfig config_;
-    KStdUniquePtr<GCSchedulerData> gcData_;
+    std_support::unique_ptr<GCSchedulerData> gcData_;
     std::function<void()> scheduleGC_;
 };
 

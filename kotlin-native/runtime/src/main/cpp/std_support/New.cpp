@@ -15,14 +15,6 @@ void* operator new(std::size_t count, kotlin::std_support::kalloc_t) noexcept {
     return std_support::calloc(1, count);
 }
 
-void* operator new[](std::size_t count, kotlin::std_support::kalloc_t) noexcept {
-    return std_support::calloc(1, count);
-}
-
 void operator delete(void* ptr, kotlin::std_support::kalloc_t) noexcept {
-    std_support::free(ptr);
-}
-
-void operator delete[](void* ptr, kotlin::std_support::kalloc_t) noexcept {
     std_support::free(ptr);
 }

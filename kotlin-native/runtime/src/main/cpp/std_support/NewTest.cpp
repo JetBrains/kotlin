@@ -40,16 +40,6 @@ TEST(NewTest, NewDelete) {
     std_support::kdelete(ptr);
 }
 
-TEST(NewTest, NewDeleteArray) {
-    Class* ptr = new (std_support::kalloc) Class[13];
-    EXPECT_THAT(ptr[3].x(), 17);
-    std_support::kdelete(ptr);
-}
-
 TEST(NewTest, NewThrows) {
     EXPECT_THROW(new (std_support::kalloc) ClassThrows(42), int);
-}
-
-TEST(NewTest, NewThrowsArray) {
-    EXPECT_THROW(new (std_support::kalloc) ClassThrows[13], int);
 }

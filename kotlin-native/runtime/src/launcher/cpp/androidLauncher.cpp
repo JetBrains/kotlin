@@ -20,6 +20,7 @@
 #include "Porting.h"
 #include "Runtime.h"
 #include "Types.h"
+#include "std_support/CStdlib.hpp"
 
 #ifdef KONAN_ANDROID
 
@@ -43,6 +44,8 @@
 #else
 #  define LOGV(...)  ((void)0)
 #endif
+
+using namespace kotlin;
 
 //--- main --------------------------------------------------------------------//
 namespace {
@@ -215,7 +218,7 @@ extern "C" void RUNTIME_USED Konan_main(
     ANativeActivity* activity, void* savedState, size_t savedStateSize) {
   bool launchThread = activity->instance == nullptr;
   if (launchThread) {
-    launcherState = (LauncherState*)konan::calloc(sizeof(LauncherState), 1);
+    launcherState = (LauncherState*)std_support::calloc(sizeof(LauncherState), 1);
     launcherState->nativeActivityState = {activity, savedState, savedStateSize, nullptr};
     activity->instance = launcherState;
     activity->callbacks->onDestroy = onDestroy;

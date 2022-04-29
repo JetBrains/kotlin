@@ -12,8 +12,8 @@
 #include <string_view>
 #include <thread>
 
-#include "Types.h"
 #include "Utils.hpp"
+#include "std_support/String.hpp"
 
 namespace kotlin {
 namespace internal {
@@ -46,7 +46,7 @@ public:
 
     private:
         friend class ScopedThread;
-        std::optional<KStdString> name_;
+        std::optional<std_support::string> name_;
     };
 
     ScopedThread() noexcept = default;

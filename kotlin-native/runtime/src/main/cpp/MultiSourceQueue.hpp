@@ -11,7 +11,6 @@
 #include <mutex>
 
 #include "Mutex.hpp"
-#include "Types.h"
 #include "Utils.hpp"
 #include "std_support/List.hpp"
 #include "std_support/Memory.hpp"
@@ -29,7 +28,7 @@ class MultiSourceQueue {
 public:
     class Producer;
 
-    // TODO: Consider switching from `KStdList` to `SingleLockList` to hide the constructor
+    // TODO: Consider switching from `std_support::list` to `SingleLockList` to hide the constructor
     // and to not store the iterator.
     class Node : private Pinned {
     public:

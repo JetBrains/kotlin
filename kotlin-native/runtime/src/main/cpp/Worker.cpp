@@ -27,7 +27,6 @@
 #include "PthreadUtils.h"
 #endif
 
-#include "Alloc.h"
 #include "Exceptions.h"
 #include "KAssert.h"
 #include "Memory.h"
@@ -35,6 +34,11 @@
 #include "Runtime.h"
 #include "Types.h"
 #include "Worker.h"
+#include "std_support/Deque.hpp"
+#include "std_support/New.hpp"
+#include "std_support/Set.hpp"
+#include "std_support/UnorderedMap.hpp"
+#include "std_support/Vector.hpp"
 
 using namespace kotlin;
 
@@ -133,7 +137,7 @@ struct JobCompare {
 // Using multiset instead of regular set, because we compare the jobs only by `whenExecute`.
 // So if `whenExecute` of two different jobs is the same, the jobs are considered equivalent,
 // and set would simply drop one of them.
-typedef KStdOrderedMultiset<Job, JobCompare> DelayedJobSet;
+typedef std_support::multiset<Job, JobCompare> DelayedJobSet;
 
 }  // namespace
 
@@ -200,7 +204,7 @@ class Worker {
 
   KInt id_;
   WorkerKind kind_;
-  KStdDeque<Job> queue_;
+  std_support::deque<Job> queue_;
   DelayedJobSet delayed_;
   // Stable pointer with worker's name.
   KNativePtr name_;
@@ -359,7 +363,7 @@ class State {
     Worker* worker = nullptr;
     {
       Locker locker(&lock_);
-      worker = konanConstructInstance<Worker>(nextWorkerId(), exceptionHandling, customName, kind);
+      worker = new (std_support::kalloc) Worker(nextWorkerId(), exceptionHandling, customName, kind);
       if (worker == nullptr) return nullptr;
       workers_[worker->id()] = worker;
     }
@@ -392,7 +396,7 @@ class State {
       }
     }
     GC_UnregisterWorker(worker);
-    konanDestructInstance(worker);
+    std_support::kdelete(worker);
   }
 
   Future* addJobToWorkerUnlocked(
@@ -405,7 +409,7 @@ class State {
     if (it == workers_.end()) return nullptr;
     worker = it->second;
 
-    future = konanConstructInstance<Future>(nextFutureId());
+    future = new (std_support::kalloc) Future(nextFutureId());
     futures_[future->id()] = future;
 
     Job job;
@@ -507,7 +511,7 @@ class State {
        auto it = futures_.find(id);
        if (it != futures_.end()) {
          futures_.erase(it);
-         konanDestructInstance(future);
+         std_support::kdelete(future);
        }
     }
 
@@ -581,7 +585,7 @@ class State {
 
   template <typename F>
   void waitNativeWorkersTerminationUnlocked(bool checkLeaks, F waitForWorker) {
-      KStdVector<std::pair<KInt, pthread_t>> workersToWait;
+      std_support::vector<std::pair<KInt, pthread_t>> workersToWait;
       {
           Locker locker(&lock_);
 
@@ -628,9 +632,9 @@ class State {
  private:
   pthread_mutex_t lock_;
   pthread_cond_t cond_;
-  KStdUnorderedMap<KInt, Future*> futures_;
-  KStdUnorderedMap<KInt, Worker*> workers_;
-  KStdUnorderedMap<KInt, pthread_t> terminating_native_workers_;
+  std_support::unordered_map<KInt, Future*> futures_;
+  std_support::unordered_map<KInt, Worker*> workers_;
+  std_support::unordered_map<KInt, pthread_t> terminating_native_workers_;
   KInt currentWorkerId_;
   KInt currentFutureId_;
   KInt currentVersion_;
@@ -643,11 +647,11 @@ State* theState() {
     return state;
   }
 
-  State* result = konanConstructInstance<State>();
+  State* result = new (std_support::kalloc) State();
 
   State* old = __sync_val_compare_and_swap(&state, nullptr, result);
   if (old != nullptr) {
-    konanDestructInstance(result);
+    std_support::kdelete(result);
     // Someone else inited this data.
     return old;
   }

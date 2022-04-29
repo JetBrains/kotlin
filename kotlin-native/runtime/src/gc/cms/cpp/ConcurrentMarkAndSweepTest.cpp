@@ -22,6 +22,7 @@
 #include "SingleThreadExecutor.hpp"
 #include "TestSupport.hpp"
 #include "ThreadData.hpp"
+#include "std_support/Vector.hpp"
 
 using namespace kotlin;
 
@@ -187,8 +188,8 @@ test_support::Object<Payload>& AllocateObjectWithFinalizer(mm::ThreadData& threa
     return test_support::Object<Payload>::FromObjHeader(holder.obj());
 }
 
-KStdVector<ObjHeader*> Alive(mm::ThreadData& threadData) {
-    KStdVector<ObjHeader*> objects;
+std_support::vector<ObjHeader*> Alive(mm::ThreadData& threadData) {
+    std_support::vector<ObjHeader*> objects;
     for (auto node : threadData.gc().impl().objectFactoryThreadQueue()) {
         objects.push_back(node.GetObjHeader());
     }
@@ -657,7 +658,7 @@ public:
     StackObjectHolder& AddStackRoot() {
         RuntimeAssert(std::this_thread::get_id() == executor_.threadId(), "AddStackRoot can only be called in the mutator thread");
         auto& context = executor_.context();
-        auto holder = make_unique<StackObjectHolder>(*context.memory_->memoryState()->GetThreadData());
+        auto holder = std_support::make_unique<StackObjectHolder>(*context.memory_->memoryState()->GetThreadData());
         auto& holderRef = *holder;
         context.stackRoots_.push_back(std::move(holder));
         return holderRef;
@@ -666,7 +667,7 @@ public:
     StackObjectHolder& AddStackRoot(ObjHeader* object) {
         RuntimeAssert(std::this_thread::get_id() == executor_.threadId(), "AddStackRoot can only be called in the mutator thread");
         auto& context = executor_.context();
-        auto holder = make_unique<StackObjectHolder>(object);
+        auto holder = std_support::make_unique<StackObjectHolder>(object);
         auto& holderRef = *holder;
         context.stackRoots_.push_back(std::move(holder));
         return holderRef;
@@ -675,7 +676,7 @@ public:
     GlobalObjectHolder& AddGlobalRoot() {
         RuntimeAssert(std::this_thread::get_id() == executor_.threadId(), "AddGlobalRoot can only be called in the mutator thread");
         auto& context = executor_.context();
-        auto holder = make_unique<GlobalObjectHolder>(*context.memory_->memoryState()->GetThreadData());
+        auto holder = std_support::make_unique<GlobalObjectHolder>(*context.memory_->memoryState()->GetThreadData());
         auto& holderRef = *holder;
         context.globalRoots_.push_back(std::move(holder));
         return holderRef;
@@ -684,21 +685,21 @@ public:
     GlobalObjectHolder& AddGlobalRoot(ObjHeader* object) {
         RuntimeAssert(std::this_thread::get_id() == executor_.threadId(), "AddGlobalRoot can only be called in the mutator thread");
         auto& context = executor_.context();
-        auto holder = make_unique<GlobalObjectHolder>(*context.memory_->memoryState()->GetThreadData(), object);
+        auto holder = std_support::make_unique<GlobalObjectHolder>(*context.memory_->memoryState()->GetThreadData(), object);
         auto& holderRef = *holder;
         context.globalRoots_.push_back(std::move(holder));
         return holderRef;
     }
 
-    KStdVector<ObjHeader*> Alive() { return ::Alive(*executor_.context().memory_->memoryState()->GetThreadData()); }
+    std_support::vector<ObjHeader*> Alive() { return ::Alive(*executor_.context().memory_->memoryState()->GetThreadData()); }
 
 private:
     struct Context {
-        KStdUniquePtr<ScopedMemoryInit> memory_;
-        KStdVector<KStdUniquePtr<StackObjectHolder>> stackRoots_;
-        KStdVector<KStdUniquePtr<GlobalObjectHolder>> globalRoots_;
+        std_support::unique_ptr<ScopedMemoryInit> memory_;
+        std_support::vector<std_support::unique_ptr<StackObjectHolder>> stackRoots_;
+        std_support::vector<std_support::unique_ptr<GlobalObjectHolder>> globalRoots_;
 
-        Context() : memory_(make_unique<ScopedMemoryInit>()) {
+        Context() : memory_(std_support::make_unique<ScopedMemoryInit>()) {
             // SingleThreadExecutor must work in the runnable state, so that GC does not collect between tasks.
             AssertThreadState(memory_->memoryState(), ThreadState::kRunnable);
         }
@@ -710,10 +711,10 @@ private:
 } // namespace
 
 TEST_F(ConcurrentMarkAndSweepTest, MultipleMutatorsCollect) {
-    KStdVector<Mutator> mutators(kDefaultThreadCount);
-    KStdVector<ObjHeader*> globals(kDefaultThreadCount);
-    KStdVector<ObjHeader*> locals(kDefaultThreadCount);
-    KStdVector<ObjHeader*> reachables(kDefaultThreadCount);
+    std_support::vector<Mutator> mutators(kDefaultThreadCount);
+    std_support::vector<ObjHeader*> globals(kDefaultThreadCount);
+    std_support::vector<ObjHeader*> locals(kDefaultThreadCount);
+    std_support::vector<ObjHeader*> reachables(kDefaultThreadCount);
 
     auto expandRootSet = [&globals, &locals, &reachables](mm::ThreadData& threadData, Mutator& mutator, int i) {
         auto& global = mutator.AddGlobalRoot();
@@ -732,7 +733,7 @@ TEST_F(ConcurrentMarkAndSweepTest, MultipleMutatorsCollect) {
                 .wait();
     }
 
-    KStdVector<std::future<void>> gcFutures(kDefaultThreadCount);
+    std_support::vector<std::future<void>> gcFutures(kDefaultThreadCount);
 
     gcFutures[0] = mutators[0].Execute([](mm::ThreadData& threadData, Mutator& mutator) { threadData.gc().ScheduleAndWaitFullGC(); });
 
@@ -749,7 +750,7 @@ TEST_F(ConcurrentMarkAndSweepTest, MultipleMutatorsCollect) {
         future.wait();
     }
 
-    KStdVector<ObjHeader*> expectedAlive;
+    std_support::vector<ObjHeader*> expectedAlive;
     for (auto& global : globals) {
         expectedAlive.push_back(global);
     }
@@ -766,10 +767,10 @@ TEST_F(ConcurrentMarkAndSweepTest, MultipleMutatorsCollect) {
 }
 
 TEST_F(ConcurrentMarkAndSweepTest, MultipleMutatorsAllCollect) {
-    KStdVector<Mutator> mutators(kDefaultThreadCount);
-    KStdVector<ObjHeader*> globals(kDefaultThreadCount);
-    KStdVector<ObjHeader*> locals(kDefaultThreadCount);
-    KStdVector<ObjHeader*> reachables(kDefaultThreadCount);
+    std_support::vector<Mutator> mutators(kDefaultThreadCount);
+    std_support::vector<ObjHeader*> globals(kDefaultThreadCount);
+    std_support::vector<ObjHeader*> locals(kDefaultThreadCount);
+    std_support::vector<ObjHeader*> reachables(kDefaultThreadCount);
 
     auto expandRootSet = [&globals, &locals, &reachables](mm::ThreadData& threadData, Mutator& mutator, int i) {
         auto& global = mutator.AddGlobalRoot();
@@ -788,7 +789,7 @@ TEST_F(ConcurrentMarkAndSweepTest, MultipleMutatorsAllCollect) {
                 .wait();
     }
 
-    KStdVector<std::future<void>> gcFutures(kDefaultThreadCount);
+    std_support::vector<std::future<void>> gcFutures(kDefaultThreadCount);
 
     for (int i = 0; i < kDefaultThreadCount; ++i) {
         gcFutures[i] = mutators[i].Execute([](mm::ThreadData& threadData, Mutator& mutator) {
@@ -811,7 +812,7 @@ TEST_F(ConcurrentMarkAndSweepTest, MultipleMutatorsAllCollect) {
         .wait();
     }
 
-    KStdVector<ObjHeader*> expectedAlive;
+    std_support::vector<ObjHeader*> expectedAlive;
     for (auto& global : globals) {
         expectedAlive.push_back(global);
     }
@@ -828,10 +829,10 @@ TEST_F(ConcurrentMarkAndSweepTest, MultipleMutatorsAllCollect) {
 }
 
 TEST_F(ConcurrentMarkAndSweepTest, MultipleMutatorsAddToRootSetAfterCollectionRequested) {
-    KStdVector<Mutator> mutators(kDefaultThreadCount);
-    KStdVector<ObjHeader*> globals(kDefaultThreadCount);
-    KStdVector<ObjHeader*> locals(kDefaultThreadCount);
-    KStdVector<ObjHeader*> reachables(kDefaultThreadCount);
+    std_support::vector<Mutator> mutators(kDefaultThreadCount);
+    std_support::vector<ObjHeader*> globals(kDefaultThreadCount);
+    std_support::vector<ObjHeader*> locals(kDefaultThreadCount);
+    std_support::vector<ObjHeader*> reachables(kDefaultThreadCount);
 
     auto allocateInHeap = [&globals, &locals, &reachables](mm::ThreadData& threadData, Mutator& mutator, int i) {
         auto& global = AllocateObject(threadData);
@@ -865,7 +866,7 @@ TEST_F(ConcurrentMarkAndSweepTest, MultipleMutatorsAddToRootSetAfterCollectionRe
                 .wait();
     }
 
-    KStdVector<std::future<void>> gcFutures(kDefaultThreadCount);
+    std_support::vector<std::future<void>> gcFutures(kDefaultThreadCount);
     gcFutures[0] = mutators[0].Execute([](mm::ThreadData& threadData, Mutator& mutator) { threadData.gc().ScheduleAndWaitFullGC(); });
 
     // Spin until thread suspension is requested.
@@ -883,7 +884,7 @@ TEST_F(ConcurrentMarkAndSweepTest, MultipleMutatorsAddToRootSetAfterCollectionRe
         future.wait();
     }
 
-    KStdVector<ObjHeader*> expectedAlive;
+    std_support::vector<ObjHeader*> expectedAlive;
     for (auto& global : globals) {
         expectedAlive.push_back(global);
     }
@@ -900,10 +901,10 @@ TEST_F(ConcurrentMarkAndSweepTest, MultipleMutatorsAddToRootSetAfterCollectionRe
 }
 
 TEST_F(ConcurrentMarkAndSweepTest, CrossThreadReference) {
-    KStdVector<Mutator> mutators(kDefaultThreadCount);
-    KStdVector<ObjHeader*> globals(kDefaultThreadCount);
-    KStdVector<ObjHeader*> locals(kDefaultThreadCount);
-    KStdVector<ObjHeader*> reachables(2 * kDefaultThreadCount);
+    std_support::vector<Mutator> mutators(kDefaultThreadCount);
+    std_support::vector<ObjHeader*> globals(kDefaultThreadCount);
+    std_support::vector<ObjHeader*> locals(kDefaultThreadCount);
+    std_support::vector<ObjHeader*> reachables(2 * kDefaultThreadCount);
 
     auto expandRootSet = [&globals, &locals, &reachables](mm::ThreadData& threadData, Mutator& mutator, int i) {
         auto& global = mutator.AddGlobalRoot();
@@ -929,7 +930,7 @@ TEST_F(ConcurrentMarkAndSweepTest, CrossThreadReference) {
                 .wait();
     }
 
-    KStdVector<std::future<void>> gcFutures(kDefaultThreadCount);
+    std_support::vector<std::future<void>> gcFutures(kDefaultThreadCount);
 
     gcFutures[0] = mutators[0].Execute([](mm::ThreadData& threadData, Mutator& mutator) { threadData.gc().ScheduleAndWaitFullGC(); });
 
@@ -946,7 +947,7 @@ TEST_F(ConcurrentMarkAndSweepTest, CrossThreadReference) {
         future.wait();
     }
 
-    KStdVector<ObjHeader*> expectedAlive;
+    std_support::vector<ObjHeader*> expectedAlive;
     for (auto& global : globals) {
         expectedAlive.push_back(global);
     }
@@ -966,7 +967,7 @@ TEST_F(ConcurrentMarkAndSweepTest, CrossThreadReference) {
 }
 
 TEST_F(ConcurrentMarkAndSweepTest, MultipleMutatorsWeaks) {
-    KStdVector<Mutator> mutators(kDefaultThreadCount);
+    std_support::vector<Mutator> mutators(kDefaultThreadCount);
     ObjHeader* globalRoot = nullptr;
     WeakCounter* weak = nullptr;
 
@@ -990,7 +991,7 @@ TEST_F(ConcurrentMarkAndSweepTest, MultipleMutatorsWeaks) {
         mutators[i].Execute([](mm::ThreadData& threadData, Mutator& mutator) {}).wait();
     }
 
-    KStdVector<std::future<void>> gcFutures(kDefaultThreadCount);
+    std_support::vector<std::future<void>> gcFutures(kDefaultThreadCount);
 
     gcFutures[0] = mutators[0].Execute([weak](mm::ThreadData& threadData, Mutator& mutator) {
         threadData.gc().ScheduleAndWaitFullGC();
@@ -1018,11 +1019,11 @@ TEST_F(ConcurrentMarkAndSweepTest, MultipleMutatorsWeaks) {
 }
 
 TEST_F(ConcurrentMarkAndSweepTest, NewThreadsWhileRequestingCollection) {
-    KStdVector<Mutator> mutators(kDefaultThreadCount);
-    KStdVector<ObjHeader*> globals(2 * kDefaultThreadCount);
-    KStdVector<ObjHeader*> locals(2 * kDefaultThreadCount);
-    KStdVector<ObjHeader*> reachables(2 * kDefaultThreadCount);
-    KStdVector<ObjHeader*> unreachables(2 * kDefaultThreadCount);
+    std_support::vector<Mutator> mutators(kDefaultThreadCount);
+    std_support::vector<ObjHeader*> globals(2 * kDefaultThreadCount);
+    std_support::vector<ObjHeader*> locals(2 * kDefaultThreadCount);
+    std_support::vector<ObjHeader*> reachables(2 * kDefaultThreadCount);
+    std_support::vector<ObjHeader*> unreachables(2 * kDefaultThreadCount);
 
     auto expandRootSet = [&globals, &locals, &reachables, &unreachables](mm::ThreadData& threadData, Mutator& mutator, int i) {
         auto& global = mutator.AddGlobalRoot();
@@ -1042,7 +1043,7 @@ TEST_F(ConcurrentMarkAndSweepTest, NewThreadsWhileRequestingCollection) {
                 .wait();
     }
 
-    KStdVector<std::future<void>> gcFutures(kDefaultThreadCount);
+    std_support::vector<std::future<void>> gcFutures(kDefaultThreadCount);
 
     gcFutures[0] = mutators[0].Execute([](mm::ThreadData& threadData, Mutator& mutator) { threadData.gc().ScheduleAndWaitFullGC(); });
 
@@ -1051,8 +1052,8 @@ TEST_F(ConcurrentMarkAndSweepTest, NewThreadsWhileRequestingCollection) {
     }
 
     // Now start attaching new threads.
-    KStdVector<Mutator> newMutators(kDefaultThreadCount);
-    KStdVector<std::future<void>> attachFutures(kDefaultThreadCount);
+    std_support::vector<Mutator> newMutators(kDefaultThreadCount);
+    std_support::vector<std::future<void>> attachFutures(kDefaultThreadCount);
 
     for (int i = 0; i < kDefaultThreadCount; ++i) {
         attachFutures[i] = newMutators[i].Execute([i, expandRootSet](mm::ThreadData& threadData, Mutator& mutator) { expandRootSet(threadData, mutator, i + kDefaultThreadCount); });
@@ -1076,7 +1077,7 @@ TEST_F(ConcurrentMarkAndSweepTest, NewThreadsWhileRequestingCollection) {
 
     // Old mutators don't even see alive objects from the new threads yet (as the latter ones have not published anything).
 
-    KStdVector<ObjHeader*> expectedAlive;
+    std_support::vector<ObjHeader*> expectedAlive;
     for (int i = 0; i < kDefaultThreadCount; ++i) {
         expectedAlive.push_back(globals[i]);
         expectedAlive.push_back(locals[i]);
@@ -1088,7 +1089,7 @@ TEST_F(ConcurrentMarkAndSweepTest, NewThreadsWhileRequestingCollection) {
     }
 
     for (int i = 0; i < kDefaultThreadCount; ++i) {
-        KStdVector<ObjHeader*> aliveForThisThread(expectedAlive.begin(), expectedAlive.end());
+        std_support::vector<ObjHeader*> aliveForThisThread(expectedAlive.begin(), expectedAlive.end());
         aliveForThisThread.push_back(globals[kDefaultThreadCount + i]);
         aliveForThisThread.push_back(locals[kDefaultThreadCount + i]);
         aliveForThisThread.push_back(reachables[kDefaultThreadCount + i]);
@@ -1100,7 +1101,7 @@ TEST_F(ConcurrentMarkAndSweepTest, NewThreadsWhileRequestingCollection) {
 
 
 TEST_F(ConcurrentMarkAndSweepTest, FreeObjectWithFreeWeakReversedOrder) {
-    KStdVector<Mutator> mutators(2);
+    std_support::vector<Mutator> mutators(2);
     std::atomic<test_support::Object<Payload>*> object1 = nullptr;
     std::atomic<WeakCounter*> weak = nullptr;
     std::atomic<bool> done = false;
