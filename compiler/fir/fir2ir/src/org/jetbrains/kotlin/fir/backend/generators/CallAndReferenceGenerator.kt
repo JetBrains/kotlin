@@ -555,11 +555,10 @@ class CallAndReferenceGenerator(
         statement: FirStatement?,
         annotationMode: Boolean
     ): IrExpression {
-        val qualifiedAccess = statement as? FirQualifiedAccess
         val call = statement as? FirCall
         return when (this) {
             is IrMemberAccessExpression<*> -> {
-                val contextReceiverCount = putContextReceiverArguments(qualifiedAccess)
+                val contextReceiverCount = putContextReceiverArguments(statement)
                 if (call == null) return this
                 val argumentsCount = call.arguments.size
                 if (argumentsCount <= valueArgumentsCount) {
@@ -624,8 +623,10 @@ class CallAndReferenceGenerator(
     }
 
     private fun IrMemberAccessExpression<*>.putContextReceiverArguments(statement: FirStatement?): Int {
-        val contextReceiverCount = (statement as? FirQualifiedAccess)?.contextReceiverArguments?.size ?: 0
-        if (statement is FirQualifiedAccess && contextReceiverCount > 0) {
+        if (statement !is FirContextReceiverArgumentListOwner) return 0
+
+        val contextReceiverCount = statement.contextReceiverArguments.size
+        if (contextReceiverCount > 0) {
             for (index in 0 until contextReceiverCount) {
                 putValueArgument(
                     index,

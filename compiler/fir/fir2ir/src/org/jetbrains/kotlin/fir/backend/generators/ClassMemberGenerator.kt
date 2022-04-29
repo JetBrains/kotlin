@@ -116,11 +116,13 @@ internal class ClassMemberGenerator(
             if (firFunction is FirConstructor && irFunction is IrConstructor && !firFunction.isExpect) {
                 val body = factory.createBlockBody(startOffset, endOffset)
                 val delegatedConstructor = firFunction.delegatedConstructor
+                val irClass = parent as IrClass
                 if (delegatedConstructor != null) {
-                    val irDelegatingConstructorCall = delegatedConstructor.toIrDelegatingConstructorCall()
+                    val irDelegatingConstructorCall = conversionScope.forDelegatingConstructorCall(irFunction, irClass) {
+                        delegatedConstructor.toIrDelegatingConstructorCall()
+                    }
                     body.statements += irDelegatingConstructorCall
                 }
-                val irClass = parent as IrClass
                 if (delegatedConstructor?.isThis == false) {
                     val instanceInitializerCall = IrInstanceInitializerCallImpl(
                         startOffset, endOffset, irClass.symbol, irFunction.constructedClassType

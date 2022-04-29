@@ -67,6 +67,7 @@ sealed class CallKind(vararg resolutionSequence: ResolutionStage) {
         CollectTypeVariableUsagesInfo,
         CheckDispatchReceiver,
         CheckExtensionReceiver,
+        CheckContextReceivers,
         CheckDslScopeViolation,
         CheckArguments,
         EagerResolveOfCallableReferences,

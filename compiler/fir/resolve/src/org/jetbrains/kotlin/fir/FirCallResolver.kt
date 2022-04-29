@@ -648,6 +648,7 @@ class FirCallResolver(
                 if (symbol is FirConstructorSymbol && symbol.fir.isInner) {
                     transformDispatchReceiver(StoreReceiver, singleCandidate.dispatchReceiverExpression())
                 }
+                replaceContextReceiverArguments(singleCandidate.contextReceiverArguments())
             }
         }
     }

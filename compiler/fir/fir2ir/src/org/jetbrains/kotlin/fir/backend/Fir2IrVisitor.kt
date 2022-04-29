@@ -455,15 +455,24 @@ class Fir2IrVisitor(
                 return thisReceiverExpression.convertWithOffsets { startOffset, endOffset ->
                     val thisRef = IrGetValueImpl(startOffset, endOffset, dispatchReceiver.type, dispatchReceiver.symbol)
                     if (calleeReference.contextReceiverNumber != -1) {
-                        val contextReceivers =
-                            components.classifierStorage.getFieldsWithContextReceiversForClass(irClass)
-                                ?: error("Not defined context receivers for $irClass")
+                        val constructorForCurrentlyGeneratedDelegatedConstructor =
+                            conversionScope.getConstructorForCurrentlyGeneratedDelegatedConstructor(irClass)
 
-                        IrGetFieldImpl(
-                            startOffset, endOffset, contextReceivers[calleeReference.contextReceiverNumber].symbol,
-                            thisReceiverExpression.typeRef.toIrType(),
-                            thisRef,
-                        )
+                        if (constructorForCurrentlyGeneratedDelegatedConstructor != null) {
+                            val constructorParameter =
+                                constructorForCurrentlyGeneratedDelegatedConstructor.valueParameters[calleeReference.contextReceiverNumber]
+                            IrGetValueImpl(startOffset, endOffset, constructorParameter.type, constructorParameter.symbol)
+                        } else {
+                            val contextReceivers =
+                                components.classifierStorage.getFieldsWithContextReceiversForClass(irClass)
+                                    ?: error("Not defined context receivers for $irClass")
+
+                            IrGetFieldImpl(
+                                startOffset, endOffset, contextReceivers[calleeReference.contextReceiverNumber].symbol,
+                                thisReceiverExpression.typeRef.toIrType(),
+                                thisRef,
+                            )
+                        }
                     } else {
                         thisRef
                     }

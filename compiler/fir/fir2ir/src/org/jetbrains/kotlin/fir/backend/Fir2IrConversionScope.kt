@@ -17,6 +17,7 @@ class Fir2IrConversionScope {
     private val parentStack = mutableListOf<IrDeclarationParent>()
 
     private val containingFirClassStack = mutableListOf<FirClass>()
+    private val currentlyGeneratedDelegatedConstructors = mutableMapOf<IrClass, IrConstructor>()
 
     fun <T : IrDeclarationParent?> withParent(parent: T, f: T.() -> Unit): T {
         if (parent == null) return parent
@@ -25,6 +26,16 @@ class Fir2IrConversionScope {
         parentStack.removeAt(parentStack.size - 1)
         return parent
     }
+
+    fun <T> forDelegatingConstructorCall(constructor: IrConstructor, irClass: IrClass, f: () -> T): T {
+        currentlyGeneratedDelegatedConstructors[irClass] = constructor
+        val result = f()
+        currentlyGeneratedDelegatedConstructors.remove(irClass)
+        return result
+    }
+
+    fun getConstructorForCurrentlyGeneratedDelegatedConstructor(itClass: IrClass): IrConstructor? =
+        currentlyGeneratedDelegatedConstructors[itClass]
 
     fun containingFileIfAny(): IrFile? = parentStack.getOrNull(0) as? IrFile
 
