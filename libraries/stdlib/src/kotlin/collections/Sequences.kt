@@ -698,7 +698,7 @@ public fun <T> Sequence<T>.randomOrNull(random: Random = Random): T? {
 /**
  * Picks a random element from the sequence.
  *
- * This function works differently in comparison to, for example, [List.randomOrNull].
+ * This function works differently in comparison to, for example, [List.random].
  * It does not allocate a list of all elements in the sequence, however, it does consume
  * much more randomness (roughly 1 "randomly generated integer" per element in the sequence).
  *
