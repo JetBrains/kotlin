@@ -752,4 +752,49 @@ public class SequenceTest {
     }
 */
 
+    @Test
+    fun randomOrNullEmptySequence() {
+        val sequence = emptySequence<Unit>()
+        assertNull(sequence.randomOrNull())
+    }
+
+    @Test
+    fun randomOrNullConsistency() {
+        val sequence1 = fibonacci().take(32)
+        val sequence2 = fibonacci().take(32)
+
+        val seed = Random.nextInt()
+        val random1 = Random(seed)
+        val random2 = Random(seed)
+
+        val pick1 = sequence1.randomOrNull(random1)
+        val pick2 = sequence2.randomOrNull(random2)
+
+        assertNotNull(pick1)
+        assertEquals(pick1, pick2)
+    }
+
+    @Test
+    fun randomEmptySequence() {
+        val sequence = emptySequence<Unit>()
+        assertFailsWith<NoSuchElementException> {
+            sequence.random()
+        }
+    }
+
+    @Test
+    fun randomConsistency() {
+        val sequence1 = fibonacci().take(32)
+        val sequence2 = fibonacci().take(32)
+
+        val seed = Random.nextInt()
+        val random1 = Random(seed)
+        val random2 = Random(seed)
+
+        val pick1 = sequence1.random(random1)
+        val pick2 = sequence2.random(random2)
+
+        assertEquals(pick1, pick2)
+    }
+
 }

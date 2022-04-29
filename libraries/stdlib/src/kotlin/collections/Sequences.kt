@@ -677,3 +677,35 @@ public fun <T : Any> generateSequence(seed: T?, nextFunction: (T) -> T?): Sequen
 public fun <T : Any> generateSequence(seedFunction: () -> T?, nextFunction: (T) -> T?): Sequence<T> =
     GeneratorSequence(seedFunction, nextFunction)
 
+
+
+/**
+ * Picks a random element from the sequence. Will return `null` in the case, the sequence is empty.
+ *
+ * This function works differently in comparison to, for example, [List.randomOrNull].
+ * It does not allocate a list of all elements in the sequence, however, it does consume
+ * much more randomness (roughly 1 "randomly generated integer" per element in the sequence).
+ *
+ * @param random the source of randomness to use
+ * @return a randomly picked element, or `null` if the sequence is empty
+ */
+public fun <T> Sequence<T>.randomOrNull(random: Random = Random): T? {
+    return foldIndexed<T, T?>(null) { index, acc, value ->
+        if (random.nextInt(index + 1) == 0) value else acc
+    }
+}
+
+/**
+ * Picks a random element from the sequence.
+ *
+ * This function works differently in comparison to, for example, [List.randomOrNull].
+ * It does not allocate a list of all elements in the sequence, however, it does consume
+ * much more randomness (roughly 1 "randomly generated integer" per element in the sequence).
+ *
+ * @param random the source of randomness to use
+ * @return a randomly picked element
+ * @throws NoSuchElementException if the sequence is empty
+ */
+public fun <T> Sequence<T>.random(random: Random = Random): T {
+    return randomOrNull(random) ?: throw NoSuchElementException("Sequence is empty.")
+}
