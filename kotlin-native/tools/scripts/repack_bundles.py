@@ -24,7 +24,7 @@ for bundle in bundles:
     unpackCommand = 'unzip -qq' if bundle.endswith('.zip') else 'tar -xzf'
     os.system(unpackCommand + ' ' + bundle)
 
-    extractedDir = bundle.rstrip('.tar.gz').rstrip('.zip')
+    extractedDir = bundle.replace('.tar.gz', '').replace('.zip', '')
     renamedDir = extractedDir.replace('-prebuilt-', '-')
     print('Renaming ' + extractedDir + ' to ' + renamedDir)
     os.rename(extractedDir, renamedDir)
