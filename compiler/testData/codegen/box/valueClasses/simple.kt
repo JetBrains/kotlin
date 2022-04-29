@@ -1,3 +1,5 @@
+// IGNORE_BACKEND_FIR: JVM_IR
+// https://youtrack.jetbrains.com/issue/KT-52236/Different-modality-in-psi-and-fir
 // CHECK_BYTECODE_LISTING
 // WITH_STDLIB
 // TARGET_BACKEND: JVM_IR
@@ -40,7 +42,7 @@ interface Base3 {
 }
 
 @JvmInline
-value class R<T : Any>(val x: Int, val y: UInt, override val z: E, val t: A<T>): Base1, Base3
+value class R<T : Any>(val x: Int, val y: UInt, override val z: E, val t: A<T>) : Base1, Base3
 
 fun <T : List<Int>> f(r: R<T>) {
     println(r)
@@ -89,14 +91,16 @@ interface Base1 {
     val fakeOverrideRegular: Int
         get() = TODO()
 }
+
 interface Base2 {
     var l: R<List<Int>>
 }
+
 interface Base4<T> {
     var l: T
 }
 
-class NotInlined(override var l: R<List<Int>>, var y: Int): Base1, Base2, Base4<R<List<Int>>> {
+class NotInlined(override var l: R<List<Int>>, var y: Int) : Base1, Base2, Base4<R<List<Int>>> {
     override fun toString(): String = l.toString() + l.z.x.x.z
 
     init {
@@ -150,6 +154,22 @@ fun reuseBoxed(list: MutableList<R<List<Int>>>) {
     list.add(list.last())
 }
 
+fun supply(x: Boolean) {}
+fun equalsChecks(left: R<List<Int>>, right: R<List<Int>>) {
+    supply(left == right)
+    supply(left as Any == right)
+    supply(left == right as Any)
+    supply(left as Any == right as Any)
+    supply(null == right)
+    supply(left == null)
+    supply(null as Any? == right)
+    supply(null as R<List<Int>>? == right)
+    supply(left == null as Any?)
+    supply(left == null as R<List<Int>>?)
+    supply(left as R<List<Int>>? == right)
+    supply(left == right as R<List<Int>>?)
+}
+
 // todo add default parameters
 
-fun box() = "bad"//.also { h(R(1, 2U, E(D(C(3, B(4U), "5"))), A(listOf(listOf(6))))) }
+fun box() = "OK"//.also { h(R(1, 2U, E(D(C(3, B(4U), "5"))), A(listOf(listOf(6))))) }
