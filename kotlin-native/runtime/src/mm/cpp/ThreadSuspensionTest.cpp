@@ -25,11 +25,11 @@ using namespace kotlin;
 namespace {
 
 #ifdef KONAN_WINDOWS
-constexpr size_t kDefaultIterations = 1000;
-constexpr size_t kDefaultReportingStep = 100;
+constexpr size_t kDefaultIterations = 20;
+constexpr size_t kDefaultReportingStep = 2;
 #else
-constexpr size_t kDefaultIterations = 10000;
-constexpr size_t kDefaultReportingStep = 1000;
+constexpr size_t kDefaultIterations = 200;
+constexpr size_t kDefaultReportingStep = 20;
 #endif // #ifdef KONAN_WINDOWS
 
 std_support::vector<mm::ThreadData*> collectThreadData() {
