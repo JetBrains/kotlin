@@ -190,7 +190,7 @@ class DRITest : BaseAbstractTest() {
         ) {
             pagesGenerationStage = { module ->
                 val sampleClass = module.dfs { it.name == "Sample" } as ClasslikePageNode
-                val classDocumentable = sampleClass.documentable as DClass
+                val classDocumentable = sampleClass.documentables.firstOrNull() as DClass
 
                 assertEquals( "example/Sample///PointingToDeclaration/", sampleClass.dri.first().toString())
                 assertEquals("example/Sample///PointingToGenericParameters(0)/", classDocumentable.generics.first().dri.toString())
@@ -224,7 +224,7 @@ class DRITest : BaseAbstractTest() {
             pagesGenerationStage = { module ->
                 val sampleClass = module.dfs { it.name == "Sample" } as ClasslikePageNode
                 val functionNode = sampleClass.children.first { it.name == "genericFun" } as MemberPageNode
-                val functionDocumentable = functionNode.documentable as DFunction
+                val functionDocumentable = functionNode.documentables.firstOrNull() as DFunction
                 val parameter = functionDocumentable.parameters.first()
 
                 assertEquals("example/Sample/genericFun/#kotlin.String/PointingToDeclaration/", functionNode.dri.first().toString())
@@ -269,9 +269,10 @@ class DRITest : BaseAbstractTest() {
                 val sampleClass = module.dfs { it.name == "Sample" } as ClasslikePageNode
                 val sampleInner = sampleClass.children.first { it.name == "SampleInner" } as ClasslikePageNode
                 val foo = sampleInner.children.first { it.name == "foo" } as MemberPageNode
-                val documentable = foo.documentable as DFunction
+                val documentable = foo.documentables.firstOrNull() as DFunction
 
-                assertEquals((sampleClass.documentable as WithGenerics).generics.first().dri.toString(), (documentable.type as TypeParameter).dri.toString())
+                val generics = (sampleClass.documentables.firstOrNull() as WithGenerics).generics
+                assertEquals(generics.first().dri.toString(), (documentable.type as TypeParameter).dri.toString())
                 assertEquals(0, documentable.generics.size)
             }
         }
@@ -298,7 +299,7 @@ class DRITest : BaseAbstractTest() {
         ) {
             pagesGenerationStage = { module ->
                 val extensionFunction = module.dfs { it.name == "extensionFunction" } as MemberPageNode
-                val documentable = extensionFunction.documentable as DFunction
+                val documentable = extensionFunction.documentables.firstOrNull() as DFunction
 
                 assertEquals(
                     "example//extensionFunction/kotlin.collections.List[TypeParam(bounds=[kotlin.Any?])]#/PointingToDeclaration/",

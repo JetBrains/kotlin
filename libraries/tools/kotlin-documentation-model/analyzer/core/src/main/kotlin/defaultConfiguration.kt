@@ -37,6 +37,7 @@ data class DokkaSourceSetImpl(
     override val dependentSourceSets: Set<DokkaSourceSetID> = emptySet(),
     override val samples: Set<File> = emptySet(),
     override val includes: Set<File> = emptySet(),
+    @Deprecated("Use [documentedVisibilities] property for a more flexible control over documented visibilities")
     override val includeNonPublic: Boolean = DokkaDefaults.includeNonPublic,
     override val reportUndocumented: Boolean = DokkaDefaults.reportUndocumented,
     override val skipEmptyPackages: Boolean = DokkaDefaults.skipEmptyPackages,
@@ -79,6 +80,7 @@ data class SourceLinkDefinitionImpl(
 
 data class PackageOptionsImpl(
     override val matchingRegex: String,
+    @Deprecated("Use [documentedVisibilities] property for a more flexible control over documented visibilities")
     override val includeNonPublic: Boolean,
     override val reportUndocumented: Boolean?,
     override val skipDeprecated: Boolean,

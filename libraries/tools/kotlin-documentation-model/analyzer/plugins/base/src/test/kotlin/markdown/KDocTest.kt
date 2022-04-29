@@ -26,7 +26,7 @@ abstract class KDocTest : BaseAbstractTest() {
         """.trimMargin()
 
     private fun actualDocumentationNode(modulePageNode: ModulePageNode) =
-        (modulePageNode.documentable?.children?.first() as DPackage)
+        (modulePageNode.documentables.firstOrNull()?.children?.first() as DPackage)
             .classlikes.single()
             .documentation.values.single()
 

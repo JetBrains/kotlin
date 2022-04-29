@@ -54,6 +54,7 @@ object DocTagsFromIElementFactory {
             MarkdownTokenTypes.HTML_BLOCK_CONTENT       -> Text(body.orEmpty(), params = params + contentTypeParam("html"))
             else                                        -> CustomDocTag(children, params, type.name)
         }.let {
+            @Suppress("UNCHECKED_CAST")
             when (it) {
                 is List<*> -> it as List<DocTag>
                 else -> listOf(it as DocTag)
