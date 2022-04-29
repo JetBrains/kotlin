@@ -34,6 +34,7 @@ import org.jetbrains.kotlin.ir.symbols.impl.IrAnonymousInitializerSymbolImpl
 import org.jetbrains.kotlin.ir.transformStatement
 import org.jetbrains.kotlin.ir.types.classOrNull
 import org.jetbrains.kotlin.ir.types.isNullable
+import org.jetbrains.kotlin.ir.types.makeNotNull
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.name.Name
@@ -328,7 +329,7 @@ private class JvmMultiFieldValueClassLowering(context: JvmBackendContext) : JvmV
         allScopes.push(createScope(source))
         source.body = context.createIrBuilder(source.symbol, source.startOffset, source.endOffset).run {
             if (inverted) {
-                irExprBody(irCall(target).apply { 
+                irExprBody(irCall(target).apply {
                     passTypeArgumentsFrom(source)
                     val structure: List<RemappedParameter> = replacements.bindingParameterTemplateStructure[original]!!
                     var flattenedIndex = 0
@@ -490,9 +491,54 @@ private class JvmMultiFieldValueClassLowering(context: JvmBackendContext) : JvmV
                 }
             }
         }
-        @Suppress("ControlFlowWithEmptyBody")
-        if (expression.isSpecializedInlineClassEqEq) {
-            // todo
+        if (expression.isSpecializedMFVCEqEq) {
+            val leftArgument = expression.getValueArgument(0)!!.transform(this, null)
+            val rightArgument = expression.getValueArgument(1)!!.transform(this, null)
+            val leftImplementation = valueDeclarationsRemapper.implementationAgnostic(leftArgument)
+            val rightImplementation = valueDeclarationsRemapper.implementationAgnostic(rightArgument)
+            if (leftImplementation != null) {
+                val leftClass = leftImplementation.regularDeclarations.valueClass
+                if (rightImplementation != null) {
+                    val rightClass = rightImplementation.regularDeclarations.valueClass
+                    require(leftClass == rightClass) { "Equals for different classes: $leftClass and $rightClass called" }
+                    return context.createIrBuilder(expression.symbol).run {
+                        irCall(leftImplementation.regularDeclarations.specializedEqualsMethod).apply {
+                            val arguments =
+                                (leftImplementation.virtualFields + rightImplementation.virtualFields).map { it.makeGetter(this@run, Unit) }
+                            arguments.forEachIndexed { index, argument -> putValueArgument(index, argument) }
+                        }
+                    }
+                } else {
+                    val equals = leftClass.functions.single { it.name.asString() == "equals" && it.overriddenSymbols.isNotEmpty() }
+                    return super.visitCall(context.createIrBuilder(expression.symbol).run {
+                        irCall(equals).apply { 
+                            copyTypeArgumentsFrom(expression)
+                            dispatchReceiver = leftArgument
+                            putValueArgument(0, rightArgument)
+                        } as IrCall
+                    })
+                }
+            } else if (rightImplementation != null) {
+                if (leftArgument.isNullConst()) {
+                    return context.createIrBuilder(expression.symbol).irBlock { 
+                        +rightArgument
+                        +irFalse()
+                    }.transform(this, null)
+                }
+                if (leftArgument.type.classOrNull == rightArgument.type.classOrNull && leftArgument.type.isNullable()) {
+                    return context.createIrBuilder(expression.symbol).irBlock {
+                        val leftValue = irTemporary(leftArgument)
+                        +irIfNull(context.irBuiltIns.booleanType, irGet(leftValue), irFalse(), irBlock {
+                            val nonNullLeftArgumentVariable = 
+                                irTemporary(irImplicitCast(irGet(leftValue), leftArgument.type.makeNotNull()))
+                            +irCall(context.irBuiltIns.eqeqSymbol).apply {
+                                putValueArgument(0, irGet(nonNullLeftArgumentVariable))
+                                putValueArgument(1, rightArgument)
+                            }
+                        })
+                    }.transform(this@JvmMultiFieldValueClassLowering, null)
+                }
+            }
         }
         return super.visitCall(expression)
     }
@@ -542,11 +588,12 @@ private class JvmMultiFieldValueClassLowering(context: JvmBackendContext) : JvmV
         }
     }
 
-    // Note that reference equality (x === y) is not allowed on values of inline class type,
+    // Note that reference equality (x === y) is not allowed on values of MFVC class type,
     // so it is enough to check for eqeq.
-    private val IrCall.isSpecializedInlineClassEqEq: Boolean
+    private val IrCall.isSpecializedMFVCEqEq: Boolean
         get() = symbol == context.irBuiltIns.eqeqSymbol &&
-                getValueArgument(0)?.type?.classOrNull?.owner?.takeIf { it.isMultiFieldValueClass } != null
+                listOf(getValueArgument(0)!!, getValueArgument(1)!!)
+                    .any { it.type.classOrNull?.owner?.takeIf { it.isMultiFieldValueClass } != null }
 
     override fun visitGetField(expression: IrGetField): IrExpression {
         val field = expression.symbol.owner
