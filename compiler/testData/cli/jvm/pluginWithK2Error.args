@@ -7,4 +7,4 @@ plugin\:org.jetbrains.kotlin.android\:package=com.myapp
 plugin\:org.jetbrains.kotlin.android\:variant=main;$TESTDATA_DIR$/androidPlugin/res
 $TESTDATA_DIR$/pluginSimple.kt
 $TESTDATA_DIR$/androidPlugin
--Xuse-fir
+-Xuse-k2
