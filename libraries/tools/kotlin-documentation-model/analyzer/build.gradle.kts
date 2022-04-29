@@ -4,7 +4,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 plugins {
     kotlin("jvm") apply false
     id("java")
-    id("org.jetbrains.dokka") version "1.5.0"
+    id("org.jetbrains.dokka") version "1.6.20"
     id("io.github.gradle-nexus.publish-plugin")
 }
 
@@ -21,10 +21,13 @@ allprojects {
     tasks.withType(KotlinCompile::class).all {
         kotlinOptions {
             freeCompilerArgs = freeCompilerArgs + listOf(
-                "-Xopt-in=kotlin.RequiresOptIn",
+                "-opt-in=kotlin.RequiresOptIn",
+                "-Xjsr305=strict",
                 "-Xskip-metadata-version-check",
-                "-Xjsr305=strict"
+                // need 1.4 support, otherwise there might be problems with Gradle 6.x (it's bundling Kotlin 1.4)
+                "-Xsuppress-version-warnings"
             )
+            allWarningsAsErrors = true
             languageVersion = language_version
             apiVersion = language_version
             jvmTarget = "1.8"
