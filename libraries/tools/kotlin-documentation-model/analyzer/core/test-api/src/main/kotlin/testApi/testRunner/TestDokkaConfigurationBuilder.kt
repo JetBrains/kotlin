@@ -106,6 +106,7 @@ class DokkaSourceSetBuilder(
     var externalDocumentationLinks: List<ExternalDocumentationLinkImpl> = emptyList(),
     var sourceLinks: List<SourceLinkDefinitionImpl> = emptyList()
 ) {
+    @Suppress("DEPRECATION")
     fun build() = DokkaSourceSetImpl(
         displayName = displayName,
         sourceSetID = DokkaSourceSetID(moduleName, name),

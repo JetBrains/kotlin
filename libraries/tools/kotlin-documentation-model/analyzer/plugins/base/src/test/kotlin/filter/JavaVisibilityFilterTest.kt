@@ -225,6 +225,7 @@ class JavaVisibilityFilterTest : BaseAbstractTest() {
     )
 
     companion object TestDataSources {
+        @Suppress("DEPRECATION") // for includeNonPublic
         val globalExcludes = dokkaConfiguration {
             sourceSets {
                 sourceSet {
@@ -234,6 +235,7 @@ class JavaVisibilityFilterTest : BaseAbstractTest() {
             }
         }
 
+        @Suppress("DEPRECATION") // for includeNonPublic
         val globalIncludes = dokkaConfiguration {
             sourceSets {
                 sourceSet {
@@ -243,6 +245,7 @@ class JavaVisibilityFilterTest : BaseAbstractTest() {
             }
         }
 
+        @Suppress("DEPRECATION") // for includeNonPublic
         val globalIncludesPackageExcludes = dokkaConfiguration {
             sourceSets {
                 sourceSet {
@@ -251,17 +254,18 @@ class JavaVisibilityFilterTest : BaseAbstractTest() {
                     perPackageOptions = mutableListOf(
                         PackageOptionsImpl(
                             "basic",
-                            false,
-                            false,
-                            false,
-                            false,
-                            DokkaDefaults.documentedVisibilities
+                            includeNonPublic = false,
+                            reportUndocumented = false,
+                            skipDeprecated = false,
+                            suppress = false,
+                            documentedVisibilities = DokkaDefaults.documentedVisibilities
                         )
                     )
                 }
             }
         }
 
+        @Suppress("DEPRECATION") // for includeNonPublic
         val globalExcludesPackageIncludes = dokkaConfiguration {
             sourceSets {
                 sourceSet {

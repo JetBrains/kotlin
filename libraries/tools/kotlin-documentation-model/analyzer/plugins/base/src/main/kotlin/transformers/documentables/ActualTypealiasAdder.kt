@@ -66,7 +66,7 @@ class ActualTypealiasAdder : DocumentableTransformer {
         elements.map { element ->
             if (element.expectPresentInSet != null) {
                 typealiases[element.dri]?.let { ta ->
-                    element.withNewExtras(element.extra + ActualTypealias(ta.underlyingType)).let {
+                    val merged = element.withNewExtras(element.extra + ActualTypealias(ta.underlyingType)).let {
                         when(it) {
                             is DClass -> it.copy(sourceSets = element.sourceSets + ta.sourceSets)
                             is DEnum ->  it.copy(sourceSets = element.sourceSets + ta.sourceSets)
@@ -75,7 +75,9 @@ class ActualTypealiasAdder : DocumentableTransformer {
                             is DAnnotation -> it.copy(sourceSets = element.sourceSets + ta.sourceSets)
                             else -> throw IllegalStateException("${it::class.qualifiedName} ${it.name} cannot have copy its sourceSets")
                         }
-                    } as T
+                    }
+                    @Suppress("UNCHECKED_CAST")
+                    merged as T
                 } ?: element
             } else {
                 element

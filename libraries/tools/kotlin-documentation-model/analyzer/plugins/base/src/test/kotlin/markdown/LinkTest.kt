@@ -74,7 +74,7 @@ class LinkTest : BaseAbstractTest() {
                 val root = rootPageNode.children.single().children.single() as ClasslikePageNode
                 val innerClass = root.children.first { it is ClasslikePageNode }
                 val foo = innerClass.children.first { it.name == "foo" } as MemberPageNode
-                val destinationDri = (root.documentable as WithGenerics).generics.first().dri.toString()
+                val destinationDri = (root.documentables.firstOrNull() as WithGenerics).generics.first().dri.toString()
 
                 assertEquals(destinationDri, "/Outer///PointingToGenericParameters(0)/")
                 assertNotNull(foo.content.dfs { it is ContentDRILink && it.address.toString() == destinationDri })

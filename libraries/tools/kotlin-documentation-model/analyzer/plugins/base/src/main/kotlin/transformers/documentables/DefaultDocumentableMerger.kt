@@ -49,7 +49,7 @@ internal class DefaultDocumentableMerger(val context: DokkaContext) : Documentab
 
         fun mergeClashingElements(elements: List<Pair<T, Set<DokkaConfiguration.DokkaSourceSet>>>): List<T> =
             elements.groupBy { it.first.name }.values.flatMap { listOfDocumentableToSSIds ->
-                listOfDocumentableToSSIds.map { (documentable, sourceSets) ->
+                val merged = listOfDocumentableToSSIds.map { (documentable, sourceSets) ->
                     when (documentable) {
                         is DClass -> documentable.copy(
                             extra = documentable.extra + ClashingDriIdentifier(
@@ -88,7 +88,9 @@ internal class DefaultDocumentableMerger(val context: DokkaContext) : Documentab
                         )
                         else -> documentable
                     }
-                } as List<T>
+                }
+                @Suppress("UNCHECKED_CAST")
+                merged as List<T>
             }
 
 
