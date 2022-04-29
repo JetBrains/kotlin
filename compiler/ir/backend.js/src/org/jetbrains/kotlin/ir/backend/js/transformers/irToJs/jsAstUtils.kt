@@ -126,18 +126,20 @@ fun translateCall(
             property != null &&
             (property.isEffectivelyExternal() || property.isExportedMember(context.staticContext.backendContext))
         ) {
-            val propertyName = context.getNameForProperty(property)
-            val nameRef = when (jsDispatchReceiver) {
-                null -> JsNameRef(propertyName)
-                else -> jsElementAccess(propertyName.ident, jsDispatchReceiver)
-            }
-            return when (function) {
-                property.getter -> nameRef
-                property.setter -> jsAssignment(nameRef, arguments.single())
-                else -> compilationException(
-                    "Function must be an accessor of corresponding property",
-                    function
-                )
+            if (function.overriddenSymbols.isEmpty() || function.overriddenStableProperty(context.staticContext.backendContext)) {
+                val propertyName = context.getNameForProperty(property)
+                val nameRef = when (jsDispatchReceiver) {
+                    null -> JsNameRef(propertyName)
+                    else -> jsElementAccess(propertyName.ident, jsDispatchReceiver)
+                }
+                return when (function) {
+                    property.getter -> nameRef
+                    property.setter -> jsAssignment(nameRef, arguments.single())
+                    else -> compilationException(
+                        "Function must be an accessor of corresponding property",
+                        function
+                    )
+                }
             }
         }
     }

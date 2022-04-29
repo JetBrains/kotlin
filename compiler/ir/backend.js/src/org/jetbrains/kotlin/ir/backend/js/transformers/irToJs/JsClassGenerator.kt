@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.ir.backend.js.transformers.irToJs
 import org.jetbrains.kotlin.backend.common.compilationException
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.backend.js.export.isAllowedFakeOverriddenDeclaration
 import org.jetbrains.kotlin.ir.backend.js.export.isExported
 import org.jetbrains.kotlin.ir.backend.js.export.isOverriddenExported
@@ -176,7 +177,7 @@ class JsClassGenerator(private val irClass: IrClass, val context: JsGenerationCo
                     //     });
 
                     val getterForwarder = property.getter
-                        .takeIf { it.shouldExportAccessor() }
+                        .takeIf { it.shouldExportAccessor(context.staticContext.backendContext) }
                         .getOrGenerateIfFinal {
                             propertyAccessorForwarder("getter forwarder") {
                                 JsReturn(JsInvocation(it))
@@ -184,7 +185,7 @@ class JsClassGenerator(private val irClass: IrClass, val context: JsGenerationCo
                         }
 
                     val setterForwarder = property.setter
-                        .takeIf { it.shouldExportAccessor() }
+                        .takeIf { it.shouldExportAccessor(context.staticContext.backendContext) }
                         .getOrGenerateIfFinal {
                             val setterArgName = JsName("value", false)
                             propertyAccessorForwarder("setter forwarder") {
@@ -219,20 +220,6 @@ class JsClassGenerator(private val irClass: IrClass, val context: JsGenerationCo
                 overriddenSymbols.any { it.owner.isDefinedInsideExportedInterface() }
     }
 
-    private fun IrSimpleFunction?.shouldExportAccessor(): Boolean {
-        if (this == null) return false
-
-        if (parentAsClass.isExported(context.staticContext.backendContext)) return true
-
-        val property = correspondingPropertySymbol!!.owner
-
-        if (property.isOverriddenExported(context.staticContext.backendContext)) {
-            return isOverriddenExported(context.staticContext.backendContext)
-        }
-
-        return overridesExternal() || property.getJsName() != null
-    }
-
     private fun IrSimpleFunction.accessorRef(): JsNameRef? =
         when (visibility) {
             DescriptorVisibilities.PRIVATE -> null
@@ -258,12 +245,6 @@ class JsClassGenerator(private val irClass: IrClass, val context: JsGenerationCo
 
     private fun IrSimpleFunction.prototypeAccessRef(): JsExpression {
         return jsElementAccess(name.asString(), classPrototypeRef)
-    }
-
-    private fun IrSimpleFunction.overridesExternal(): Boolean {
-        if (this.isEffectivelyExternal()) return true
-
-        return this.overriddenSymbols.any { it.owner.overridesExternal() }
     }
 
     private fun IrClass.shouldCopyFrom(): Boolean {
@@ -428,6 +409,30 @@ class JsClassGenerator(private val irClass: IrClass, val context: JsGenerationCo
             .takeIf { it.isNotEmpty() }
             ?.let { JsObjectLiteral(it) }
     }
+}
+
+fun IrSimpleFunction?.shouldExportAccessor(context: JsIrBackendContext): Boolean {
+    if (this == null) return false
+
+    if (parentAsClass.isExported(context)) return true
+
+    return overriddenStableProperty(context)
+}
+
+fun IrSimpleFunction.overriddenStableProperty(context: JsIrBackendContext): Boolean {
+    val property = correspondingPropertySymbol!!.owner
+
+    if (property.isOverriddenExported(context)) {
+        return isOverriddenExported(context)
+    }
+
+    return overridesExternal() || property.getJsName() != null
+}
+
+private fun IrSimpleFunction.overridesExternal(): Boolean {
+    if (this.isEffectivelyExternal()) return true
+
+    return this.overriddenSymbols.any { it.owner.overridesExternal() }
 }
 
 private val IrClassifierSymbol.isInterface get() = (owner as? IrClass)?.isInterface == true

@@ -2569,6 +2569,12 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
         }
 
         @Test
+        @TestMetadata("overriddenPropertyFromInterface.kt")
+        public void testOverriddenPropertyFromInterface() throws Exception {
+            runTest("js/js.translator/testData/box/export/overriddenPropertyFromInterface.kt");
+        }
+
+        @Test
         @TestMetadata("overridenMethod.kt")
         public void testOverridenMethod() throws Exception {
             runTest("js/js.translator/testData/box/export/overridenMethod.kt");
