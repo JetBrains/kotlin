@@ -169,20 +169,20 @@ private fun DependencyListForCliModule.Builder.configureJsDependencies(
 ) {
     val (runtimeKlibsPaths, transitiveLibraries, friendLibraries) = getJsDependencies(module, testServices)
 
-    dependencies(runtimeKlibsPaths.filterNotNull().map { Paths.get(it).toAbsolutePath() })
+    dependencies(runtimeKlibsPaths.map { Paths.get(it).toAbsolutePath() })
     dependencies(transitiveLibraries.map { it.toPath().toAbsolutePath() })
 
     friendDependencies(friendLibraries.map { it.toPath().toAbsolutePath() })
 }
 
-private fun getJsDependencies(module: TestModule, testServices: TestServices): Triple<List<String?>, List<File>, List<File>> {
+private fun getJsDependencies(module: TestModule, testServices: TestServices): Triple<List<String>, List<File>, List<File>> {
     val runtimeKlibsPaths = JsEnvironmentConfigurator.getRuntimePathsForModule(module, testServices)
     val transitiveLibraries = JsEnvironmentConfigurator.getKlibDependencies(module, testServices, DependencyRelation.RegularDependency)
     val friendLibraries = JsEnvironmentConfigurator.getKlibDependencies(module, testServices, DependencyRelation.FriendDependency)
     return Triple(runtimeKlibsPaths, transitiveLibraries, friendLibraries)
 }
 
-private fun getAllJsDependenciesPaths(module: TestModule, testServices: TestServices): List<String?> {
+private fun getAllJsDependenciesPaths(module: TestModule, testServices: TestServices): List<String> {
     val (runtimeKlibsPaths, transitiveLibraries, friendLibraries) = getJsDependencies(module, testServices)
     return runtimeKlibsPaths + transitiveLibraries.map { it.path } + friendLibraries.map { it.path }
 }
@@ -195,7 +195,7 @@ fun resolveJsLibraries(
     val paths = getAllJsDependenciesPaths(module, testServices)
     val repositories = configuration[JSConfigurationKeys.REPOSITORIES] ?: emptyList()
     val logger = configuration[IrMessageLogger.IR_MESSAGE_LOGGER].toResolverLogger()
-    return jsResolveLibraries(paths.filterNotNull(), repositories, logger).getFullResolvedList()
+    return jsResolveLibraries(paths, repositories, logger).getFullResolvedList()
 }
 
 private fun buildDependencyList(
