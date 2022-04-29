@@ -34,10 +34,7 @@ import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionSymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrValueParameterSymbolImpl
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.psi.KtConstructorDelegationCall
-import org.jetbrains.kotlin.psi.KtElement
-import org.jetbrains.kotlin.psi.KtExpression
-import org.jetbrains.kotlin.psi.ValueArgument
+import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.startOffsetSkippingComments
 import org.jetbrains.kotlin.psi2ir.intermediate.*
@@ -264,10 +261,12 @@ fun StatementGenerator.generateCallReceiver(
         else -> {
             dispatchReceiverValue = generateReceiverOrNull(ktDefaultElement, dispatchReceiver)
             extensionReceiverValue = generateReceiverOrNull(ktDefaultElement, extensionReceiver)
-            contextReceiverValues = if (ktDefaultElement is KtConstructorDelegationCall) contextReceivers.mapNotNull {
-                generateContextReceiverForDelegatingConstructorCall(ktDefaultElement, it as ContextClassReceiver)
+            contextReceiverValues = when (ktDefaultElement) {
+                is KtConstructorDelegationCall, is KtSuperTypeCallEntry -> contextReceivers.mapNotNull {
+                    generateContextReceiverForDelegatingConstructorCall(ktDefaultElement, it as ContextClassReceiver)
+                }
+                else -> contextReceivers.mapNotNull { generateReceiverOrNull(ktDefaultElement, it) }
             }
-            else contextReceivers.mapNotNull { generateReceiverOrNull(ktDefaultElement, it) }
         }
     }
 

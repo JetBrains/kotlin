@@ -16753,6 +16753,12 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
             }
 
             @Test
+            @TestMetadata("superClassAndSubClassWithContextReceiver.kt")
+            public void testSuperClassAndSubClassWithContextReceiver() throws Exception {
+                runTest("compiler/testData/codegen/box/extensionFunctions/contextReceivers/superClassAndSubClassWithContextReceiver.kt");
+            }
+
+            @Test
             @TestMetadata("suspendContextualWithExtension.kt")
             public void testSuspendContextualWithExtension() throws Exception {
                 runTest("compiler/testData/codegen/box/extensionFunctions/contextReceivers/suspendContextualWithExtension.kt");
