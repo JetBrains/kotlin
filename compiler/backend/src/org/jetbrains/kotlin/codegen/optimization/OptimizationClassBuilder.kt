@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.codegen.ClassBuilder
 import org.jetbrains.kotlin.codegen.DelegatingClassBuilder
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin
+import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOriginKind
 import org.jetbrains.org.objectweb.asm.MethodVisitor
 
 class OptimizationClassBuilder(private val delegate: ClassBuilder, private val generationState: GenerationState) :
@@ -36,6 +37,7 @@ class OptimizationClassBuilder(private val delegate: ClassBuilder, private val g
     ): MethodVisitor {
         return OptimizationMethodVisitor(
             super.newMethod(origin, access, name, desc, signature, exceptions),
+            origin.originKind == JvmDeclarationOriginKind.INLINE_VERSION_OF_SUSPEND_FUN,
             generationState, access, name, desc, signature, exceptions
         )
     }
