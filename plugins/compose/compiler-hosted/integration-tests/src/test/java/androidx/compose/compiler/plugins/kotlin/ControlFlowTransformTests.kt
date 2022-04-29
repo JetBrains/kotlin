@@ -2325,7 +2325,7 @@ class ControlFlowTransformTests : AbstractControlFlowTransformTests() {
                 val tmp0_safe_receiver = x
                 %composer.startReplaceableGroup(<>)
                 sourceInformation(%composer, "*<A(b)>")
-                when {
+                val tmp0_group = when {
                   tmp0_safe_receiver == null -> {
                     null
                   }
@@ -2342,6 +2342,7 @@ class ControlFlowTransformTests : AbstractControlFlowTransformTests() {
                   }
                 }
                 %composer.endReplaceableGroup()
+                tmp0_group
                 A(c, %composer, 0)
               } else {
                 %composer.skipToGroupEnd()
