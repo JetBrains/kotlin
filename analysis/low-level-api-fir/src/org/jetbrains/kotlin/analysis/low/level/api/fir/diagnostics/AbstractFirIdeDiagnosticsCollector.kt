@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.fir.analysis.jvm.checkers.JvmTypeCheckers
 import org.jetbrains.kotlin.fir.moduleData
 import org.jetbrains.kotlin.platform.SimplePlatform
 import org.jetbrains.kotlin.platform.jvm.JvmPlatform
+import org.jetbrains.kotlin.platform.js.JsPlatform
 
 internal abstract class AbstractLLFirDiagnosticsCollector(
     session: FirSession,
@@ -71,8 +72,9 @@ private object CheckersFactory {
                 add(CommonDeclarationCheckers)
                 when (platform) {
                     is JvmPlatform -> add(JvmDeclarationCheckers)
-                    // TODO: JsPlatform is inaccessible due to module's dependencies
-                    else -> add(JsDeclarationCheckers)
+                    is JsPlatform -> add(JsDeclarationCheckers)
+                    else -> {
+                    }
                 }
             }
         }
@@ -86,8 +88,9 @@ private object CheckersFactory {
                 add(CommonExpressionCheckers)
                 when (platform) {
                     is JvmPlatform -> add(JvmExpressionCheckers)
-                    // TODO: JsPlatform is inaccessible due to module's dependencies
-                    else -> add(JsExpressionCheckers)
+                    is JsPlatform -> add(JsExpressionCheckers)
+                    else -> {
+                    }
                 }
             }
         }
