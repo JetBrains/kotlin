@@ -821,7 +821,11 @@ class IrSourcePrinterVisitor(
                 val rhsStatement = expression.statements[1]
                 val rhs = when (rhsStatement) {
                     is IrBlock -> {
-                        rhsStatement.statements[1]
+                        val target = rhsStatement.statements[1]
+                        when (target) {
+                            is IrVariable -> target.initializer
+                            else -> target
+                        }
                     }
                     else -> {
                         rhsStatement

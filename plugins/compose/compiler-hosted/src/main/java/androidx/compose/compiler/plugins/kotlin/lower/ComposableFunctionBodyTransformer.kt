@@ -16,19 +16,24 @@
 
 package androidx.compose.compiler.plugins.kotlin.lower
 
-import androidx.compose.compiler.plugins.kotlin.ModuleMetrics
 import androidx.compose.compiler.plugins.kotlin.ComposeFqNames
 import androidx.compose.compiler.plugins.kotlin.FunctionMetrics
 import androidx.compose.compiler.plugins.kotlin.KtxNameConventions
+import androidx.compose.compiler.plugins.kotlin.ModuleMetrics
 import androidx.compose.compiler.plugins.kotlin.analysis.ComposeWritableSlices
 import androidx.compose.compiler.plugins.kotlin.analysis.Stability
 import androidx.compose.compiler.plugins.kotlin.analysis.knownStable
 import androidx.compose.compiler.plugins.kotlin.analysis.knownUnstable
 import androidx.compose.compiler.plugins.kotlin.hasExplicitGroupsAnnotation
-import androidx.compose.compiler.plugins.kotlin.hasReadonlyComposableAnnotation
 import androidx.compose.compiler.plugins.kotlin.hasNonRestartableComposableAnnotation
+import androidx.compose.compiler.plugins.kotlin.hasReadonlyComposableAnnotation
 import androidx.compose.compiler.plugins.kotlin.irTrace
 import androidx.compose.compiler.plugins.kotlin.lower.decoys.DecoyFqNames
+import kotlin.math.abs
+import kotlin.math.absoluteValue
+import kotlin.math.ceil
+import kotlin.math.min
+import kotlin.reflect.KProperty
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.backend.common.lower.DeclarationIrBuilder
@@ -147,6 +152,7 @@ import org.jetbrains.kotlin.ir.util.functions
 import org.jetbrains.kotlin.ir.util.getPropertyGetter
 import org.jetbrains.kotlin.ir.util.isLocal
 import org.jetbrains.kotlin.ir.util.isVararg
+import org.jetbrains.kotlin.ir.util.kotlinFqName
 import org.jetbrains.kotlin.ir.util.parentClassOrNull
 import org.jetbrains.kotlin.ir.util.patchDeclarationParents
 import org.jetbrains.kotlin.ir.util.properties
@@ -161,12 +167,6 @@ import org.jetbrains.kotlin.resolve.BindingTrace
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.types.typeUtil.isUnit
 import org.jetbrains.kotlin.util.OperatorNameConventions
-import kotlin.math.abs
-import kotlin.math.absoluteValue
-import kotlin.math.ceil
-import kotlin.math.min
-import kotlin.reflect.KProperty
-import org.jetbrains.kotlin.ir.util.kotlinFqName
 
 /**
  * An enum of the different "states" a parameter of a composable function can have relating to
@@ -2285,23 +2285,7 @@ class ComposableFunctionBodyTransformer(
         before: List<IrExpression> = emptyList(),
         after: List<IrExpression> = emptyList()
     ): IrExpression {
-        return if (after.isEmpty() || type.isNothing() || type.isUnitOrNullableUnit()) {
-            wrap(type, before, after)
-        } else {
-            val tmpVar = irTemporary(this, nameHint = "group")
-            tmpVar.wrap(
-                type,
-                before,
-                after + irGet(tmpVar)
-            )
-        }
-    }
-
-    private fun IrExpression.wrapDeferred(
-        before: List<IrExpression> = emptyList(),
-        after: List<IrExpression> = emptyList()
-    ): IrExpression {
-        return if (type.isNothing() || type.isUnitOrNullableUnit()) {
+        return if (after.isEmpty() || type.isNothing() || type.isUnit()) {
             wrap(type, before, after)
         } else {
             val tmpVar = irTemporary(this, nameHint = "group")
@@ -2346,7 +2330,7 @@ class ComposableFunctionBodyTransformer(
             },
             makeEnd = ::irEndReplaceableGroup
         )
-        return wrapDeferred(
+        return wrap(
             listOf(before),
             listOf(after)
         )
