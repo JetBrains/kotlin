@@ -36,7 +36,10 @@ import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.StandardClassIds
 
-class FirDynamicScope(
+@RequiresOptIn(message = "Please, don't create FirDynamicScope-s manually")
+annotation class FirDynamicScopeConstructor
+
+class FirDynamicScope @FirDynamicScopeConstructor constructor(
     private val session: FirSession,
     private val scopeSession: ScopeSession,
 ) : FirTypeScope() {
@@ -101,6 +104,12 @@ class FirDynamicScope(
 
 class FirDynamicMembersStorage(val session: FirSession) : FirSessionComponent {
     private val cachesFactory = session.firCachesFactory
+
+    @OptIn(FirDynamicScopeConstructor::class)
+    private val dynamicScopeCacheByScope: FirCache<ScopeSession, FirDynamicScope, Nothing?> =
+        cachesFactory.createCache { it -> FirDynamicScope(session, it) }
+
+    fun getDynamicScopeFor(scopeSession: ScopeSession) = dynamicScopeCacheByScope.getValue(scopeSession, null)
 
     val functionsCacheByName: FirCache<Name, FirSimpleFunction, Nothing?> =
         cachesFactory.createCache { name -> buildPseudoFunctionByName(name) }
@@ -176,4 +185,4 @@ class FirDynamicMembersStorage(val session: FirSession) : FirSessionComponent {
     }
 }
 
-private val FirSession.dynamicMembersStorage: FirDynamicMembersStorage by FirSession.sessionComponentAccessor()
+val FirSession.dynamicMembersStorage: FirDynamicMembersStorage by FirSession.sessionComponentAccessor()
