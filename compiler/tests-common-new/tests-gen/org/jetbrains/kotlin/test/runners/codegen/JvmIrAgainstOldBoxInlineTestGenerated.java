@@ -5055,6 +5055,12 @@ public class JvmIrAgainstOldBoxInlineTestGenerated extends AbstractJvmIrAgainstO
         }
 
         @Test
+        @TestMetadata("kt52198.kt")
+        public void testKt52198() throws Exception {
+            runTest("compiler/testData/codegen/boxInline/suspend/kt52198.kt");
+        }
+
+        @Test
         @TestMetadata("maxStackWithCrossinline.kt")
         public void testMaxStackWithCrossinline() throws Exception {
             runTest("compiler/testData/codegen/boxInline/suspend/maxStackWithCrossinline.kt");

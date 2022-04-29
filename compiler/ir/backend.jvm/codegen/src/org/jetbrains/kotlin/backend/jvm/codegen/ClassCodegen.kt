@@ -57,7 +57,6 @@ import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import org.jetbrains.org.objectweb.asm.*
 import org.jetbrains.org.objectweb.asm.commons.Method
 import java.io.File
-import java.lang.RuntimeException
 
 class ClassCodegen private constructor(
     val irClass: IrClass,
@@ -509,10 +508,15 @@ class ClassCodegen private constructor(
     private val IrDeclaration.descriptorOrigin: JvmDeclarationOrigin
         get() {
             val psiElement = PsiSourceManager.findPsiElement(this)
-            return if (origin == IrDeclarationOrigin.FILE_CLASS)
-                JvmDeclarationOrigin(JvmDeclarationOriginKind.PACKAGE_PART, psiElement, toIrBasedDescriptor())
-            else
-                OtherOrigin(psiElement, toIrBasedDescriptor())
+            return when {
+                origin == IrDeclarationOrigin.FILE_CLASS ->
+                    JvmDeclarationOrigin(JvmDeclarationOriginKind.PACKAGE_PART, psiElement, toIrBasedDescriptor())
+                (this is IrSimpleFunction && isSuspend && isEffectivelyInlineOnly()) ||
+                        origin == JvmLoweredDeclarationOrigin.FOR_INLINE_STATE_MACHINE_TEMPLATE ||
+                        origin == JvmLoweredDeclarationOrigin.FOR_INLINE_STATE_MACHINE_TEMPLATE_CAPTURES_CROSSINLINE ->
+                    JvmDeclarationOrigin(JvmDeclarationOriginKind.INLINE_VERSION_OF_SUSPEND_FUN, psiElement, toIrBasedDescriptor())
+                else -> OtherOrigin(psiElement, toIrBasedDescriptor())
+            }
         }
 
     private fun storeSerializedIr(serializedIr: ByteArray) {

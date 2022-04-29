@@ -32,6 +32,7 @@ import org.jetbrains.org.objectweb.asm.tree.MethodNode
 
 class OptimizationMethodVisitor(
     delegate: MethodVisitor,
+    private val mandatoryTransformationsOnly: Boolean,
     private val generationState: GenerationState,
     access: Int,
     name: String,
@@ -65,7 +66,7 @@ class OptimizationMethodVisitor(
         normalizationMethodTransformer.transform("fake", methodNode)
         UninitializedStoresProcessor(methodNode).run()
 
-        if (canBeOptimized(methodNode) && !generationState.disableOptimization) {
+        if (!mandatoryTransformationsOnly && canBeOptimized(methodNode) && !generationState.disableOptimization) {
             optimizationTransformer.transform("fake", methodNode)
         }
 
