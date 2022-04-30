@@ -7,14 +7,13 @@ package kotlin.script.experimental.dependencies.maven
 
 import org.eclipse.aether.artifact.DefaultArtifact
 import org.eclipse.aether.repository.RemoteRepository
+import org.eclipse.aether.resolution.ArtifactResolutionException
 import org.eclipse.aether.resolution.DependencyResolutionException
 import org.eclipse.aether.util.artifact.JavaScopes
 import org.eclipse.aether.util.repository.AuthenticationBuilder
 import java.io.File
 import java.util.*
-import kotlin.script.experimental.api.ResultWithDiagnostics
-import kotlin.script.experimental.api.SourceCode
-import kotlin.script.experimental.api.asSuccess
+import kotlin.script.experimental.api.*
 import kotlin.script.experimental.dependencies.ExternalDependenciesResolver
 import kotlin.script.experimental.dependencies.RepositoryCoordinates
 import kotlin.script.experimental.dependencies.impl.*
@@ -71,13 +70,30 @@ class MavenDependenciesResolver : ExternalDependenciesResolver {
             )
             ResultWithDiagnostics.Success(deps.map { it.file })
         } catch (e: DependencyResolutionException) {
-            makeResolveFailureResult(e.message ?: "unknown error", sourceCodeLocation)
+            makeResolveFailureResult(e, sourceCodeLocation)
         }
     }
 
-    private fun tryResolveEnvironmentVariable(str: String) =
-        if (str.startsWith("$")) System.getenv(str.substring(1)) ?: str
-        else str
+    private fun tryResolveEnvironmentVariable(
+        str: String?,
+        optionName: String,
+        location: SourceCode.LocationWithId?
+    ): ResultWithDiagnostics<String?> {
+        if (str == null) return null.asSuccess()
+        if (!str.startsWith("$")) return str.asSuccess()
+        val envName = str.substring(1)
+        val envValue: String? = System.getenv(envName)
+        if (envValue.isNullOrEmpty()) return ResultWithDiagnostics.Failure(
+            ScriptDiagnostic(
+                ScriptDiagnostic.unspecifiedError,
+                "Environment variable `$envName` for $optionName is not set",
+                ScriptDiagnostic.Severity.ERROR,
+                location
+            )
+        )
+        return envValue.asSuccess()
+    }
+
 
     override fun addRepository(
         repositoryCoordinates: RepositoryCoordinates,
@@ -87,30 +103,48 @@ class MavenDependenciesResolver : ExternalDependenciesResolver {
         val url = repositoryCoordinates.toRepositoryUrlOrNull()
             ?: return false.asSuccess()
         val repoId = repositoryCoordinates.string.replace(FORBIDDEN_CHARS, "_")
-        val repo = RemoteRepository.Builder(repoId, "default", url.toString()).apply {
-            /**
-             * Here we set all the authentication information we have, unconditionally.
-             * Actual information that will be used (as well as lower-level checks,
-             * such as nullability or emptiness) is determined by implementation.
-             *
-             * @see org.eclipse.aether.transport.wagon.WagonTransporter.getProxy
-             * @see org.apache.maven.wagon.shared.http.AbstractHttpClientWagon.openConnectionInternal
-             */
-            setAuthentication(
-                AuthenticationBuilder().apply {
-                    @Suppress("DEPRECATION")
-                    val mavenRepo = repositoryCoordinates as? MavenRepositoryCoordinates
-                    val username = options.username ?: mavenRepo?.username
-                    val password = options.password ?: mavenRepo?.password
-                    addUsername(username?.let(::tryResolveEnvironmentVariable))
-                    addPassword(password?.let(::tryResolveEnvironmentVariable))
-                    addPrivateKey(
-                        options.privateKeyFile?.let(::tryResolveEnvironmentVariable),
-                        options.privateKeyPassphrase?.let(::tryResolveEnvironmentVariable)
-                    )
-                }.build()
+
+        @Suppress("DEPRECATION")
+        val mavenRepo = repositoryCoordinates as? MavenRepositoryCoordinates
+        val usernameRaw = options.username ?: mavenRepo?.username
+        val passwordRaw = options.password ?: mavenRepo?.password
+
+        val reports = mutableListOf<ScriptDiagnostic>()
+        fun getFinalValue(optionName: String, rawValue: String?): String? {
+            return tryResolveEnvironmentVariable(rawValue, optionName, sourceCodeLocation)
+                .onFailure { reports.addAll(it.reports) }
+                .valueOrNull()
+        }
+
+        val username = getFinalValue("username", usernameRaw)
+        val password = getFinalValue("password", passwordRaw)
+        val privateKeyFile = getFinalValue("private key file", options.privateKeyFile)
+        val privateKeyPassphrase = getFinalValue("private key passphrase", options.privateKeyPassphrase)
+
+        if (reports.isNotEmpty()) {
+            return ResultWithDiagnostics.Failure(reports)
+        }
+
+        /**
+         * Here we set all the authentication information we have, unconditionally.
+         * Actual information that will be used (as well as lower-level checks,
+         * such as nullability or emptiness) is determined by implementation.
+         *
+         * @see org.eclipse.aether.transport.wagon.WagonTransporter.getProxy
+         * @see org.apache.maven.wagon.shared.http.AbstractHttpClientWagon.openConnectionInternal
+         */
+        val auth = AuthenticationBuilder()
+            .addUsername(username)
+            .addPassword(password)
+            .addPrivateKey(
+                privateKeyFile,
+                privateKeyPassphrase
             )
-        }.build()
+            .build()
+
+        val repo = RemoteRepository.Builder(repoId, "default", url.toString())
+            .setAuthentication(auth)
+            .build()
 
         repos.add(repo)
         return true.asSuccess()
@@ -124,5 +158,23 @@ class MavenDependenciesResolver : ExternalDependenciesResolver {
          * they should be replaced with an allowed character.
          */
         private val FORBIDDEN_CHARS = Regex("[/\\\\:<>\"|?*]")
+
+        private fun makeResolveFailureResult(
+            exception: DependencyResolutionException,
+            location: SourceCode.LocationWithId?
+        ): ResultWithDiagnostics.Failure {
+            val allCauses = generateSequence(exception) { e: Throwable -> e.cause }.toList()
+            val primaryCause = allCauses.firstOrNull { it is ArtifactResolutionException } ?: exception
+
+            val message = buildString {
+                append(primaryCause::class.simpleName)
+                if (primaryCause.message != null) {
+                    append(": ")
+                    append(primaryCause.message)
+                }
+            }
+
+            return makeResolveFailureResult(message, location)
+        }
     }
 }
