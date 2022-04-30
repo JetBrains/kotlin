@@ -238,7 +238,8 @@ object FirInlineDeclarationChecker : FirFunctionChecker() {
         ) {
             if (
                 calledDeclaration == null ||
-                calledDeclaration.callableId.callableName == BACKING_FIELD
+                calledDeclaration.callableId.callableName == BACKING_FIELD ||
+                calledDeclaration is FirDelegateFieldSymbol
             ) {
                 return
             }
