@@ -119,6 +119,12 @@ open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransfor
             property.getter?.let { it.transformStatus(this, it.resolveStatus(containingProperty = property).mode()) }
             property.setter?.let { it.transformStatus(this, it.resolveStatus(containingProperty = property).mode()) }
             property.backingField?.let { it.transformStatus(this, it.resolveStatus(containingProperty = property).mode()) }
+            property.delegateField?.let {
+                @OptIn(PrivateForInline::class)
+                context.withContainer(property) {
+                    it.transformStatus(this, it.resolveStatus(containingProperty = property).mode())
+                }
+            }
             return transformLocalVariable(property)
         }
 
