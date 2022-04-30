@@ -28,6 +28,9 @@ class FirProviderImpl(val session: FirSession, val kotlinScopeProvider: FirKotli
         if (symbol is FirBackingFieldSymbol) {
             return getFirCallableContainerFile(symbol.fir.propertySymbol)
         }
+        if (symbol is FirDelegateFieldSymbol) {
+            return getFirCallableContainerFile(symbol.fir.propertySymbol)
+        }
         if (symbol is FirSyntheticPropertySymbol) {
             val fir = symbol.fir
             if (fir is FirSyntheticProperty) {

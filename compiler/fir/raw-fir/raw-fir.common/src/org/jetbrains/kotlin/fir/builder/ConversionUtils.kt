@@ -304,7 +304,7 @@ fun <T> FirPropertyBuilder.generateAccessorsByDelegate(
     ownerRegularClassTypeParametersCount: Int?,
     context: Context<T>,
     isExtension: Boolean,
-    delegateVisibility: Visibility? = null,
+    delegateVisibility: Visibility = Visibilities.Unknown,
 ) {
     if (delegateBuilder == null) return
 
@@ -505,10 +505,15 @@ fun <T> FirPropertyBuilder.generateAccessorsByDelegate(
     delegateField = delegateFieldBuilder.apply {
         initializer = delegateBuilder.build()
         status = FirDeclarationStatusImpl(
-            delegateVisibility ?: this@generateAccessorsByDelegate.status.visibility,
+            delegateVisibility.knownOr(Visibilities.Private),
             Modality.FINAL,
         )
     }.build()
+}
+
+private fun Visibility.knownOr(default: Visibility) = when (this) {
+    Visibilities.Unknown -> default
+    else -> this
 }
 
 fun FirBlock?.extractContractDescriptionIfPossible(): Pair<FirBlock?, FirContractDescription?> {
