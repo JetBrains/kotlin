@@ -54,9 +54,10 @@ class FastJarHandler(val fileSystem: FastJarFileSystem, path: String) {
     }
 
     private fun createFile(entry: ZipEntryDescription, directories: MutableMap<String, FastJarVirtualFile>): FastJarVirtualFile {
-        val (parentName, shortName) = entry.relativePath.splitPath()
+        val slashIndex = entry.relativePath.slashIndex()
 
-        val parentFile = getOrCreateDirectory(parentName, directories)
+        val parentFile = getOrCreateDirectory(entry.relativePath.getParentPath(slashIndex), directories)
+        val shortName = entry.relativePath.getShortName(slashIndex)
         if ("." == shortName) {
             return parentFile
         }
@@ -71,22 +72,25 @@ class FastJarHandler(val fileSystem: FastJarFileSystem, path: String) {
 
     private fun getOrCreateDirectory(entryName: CharSequence, directories: MutableMap<String, FastJarVirtualFile>): FastJarVirtualFile {
         return directories.getOrPut(entryName.toString()) {
-            val (parentPath, shortName) = entryName.splitPath()
-            val parentFile = getOrCreateDirectory(parentPath, directories)
+            val slashIndex = entryName.slashIndex()
+            val parentFile = getOrCreateDirectory(entryName.getParentPath(slashIndex), directories)
 
-            FastJarVirtualFile(this, shortName, -1, parentFile, entryDescription = null)
+            FastJarVirtualFile(this, entryName.getShortName(slashIndex), -1, parentFile, entryDescription = null)
         }
     }
 
-    private fun CharSequence.splitPath(): Pair<CharSequence, CharSequence> {
+    private fun CharSequence.getParentPath(slashIndex: Int): CharSequence = if (slashIndex == -1) "" else subSequence(0, slashIndex)
+
+    private fun CharSequence.getShortName(slashIndex: Int): CharSequence =
+        if (slashIndex == -1) this else subSequence(slashIndex + 1, this.length)
+
+    private fun CharSequence.slashIndex(): Int {
         var slashIndex = this.length - 1
 
         while (slashIndex >= 0 && this[slashIndex] != '/') {
             slashIndex--
         }
-
-        if (slashIndex == -1) return Pair("", this)
-        return Pair(subSequence(0, slashIndex), subSequence(slashIndex + 1, this.length))
+        return slashIndex
     }
 
     fun findFileByPath(pathInJar: String): VirtualFile? {
