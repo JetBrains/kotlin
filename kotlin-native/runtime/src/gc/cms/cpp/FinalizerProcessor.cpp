@@ -9,7 +9,6 @@
 
 
 void kotlin::gc::FinalizerProcessor::StartFinalizerThreadIfNone() noexcept {
-    if (finalizerThread_.joinable()) return;
     std::unique_lock guard(threadCreatingMutex_);
     if (finalizerThread_.joinable()) return;
 
