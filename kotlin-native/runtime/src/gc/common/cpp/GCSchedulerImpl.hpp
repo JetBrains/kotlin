@@ -86,7 +86,7 @@ class SafePointTracker {
 public:
     using SafePointID = kotlin::StackTrace<SafePointStackSize>;
 
-    SafePointTracker(size_t maxSize = 100000) : maxSize_(maxSize) {}
+    explicit SafePointTracker(size_t maxSize = 100000) : maxSize_(maxSize) {}
 
     /** Returns whether the GC must be triggered on the current safe point or not. */
     NO_INLINE bool registerCurrentSafePoint(size_t skipFrames) noexcept {
