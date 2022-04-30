@@ -124,6 +124,46 @@ class MavenResolverTest : ResolversTestBase() {
         assertTrue(files.any { it.name.startsWith("space-sdk") })
     }
 
+    fun testAuthFailure() {
+        val resolver = MavenDependenciesResolver()
+        val options = buildOptions(
+            DependenciesResolverOptionsName.USERNAME to "invalid name",
+            DependenciesResolverOptionsName.PASSWORD to "invalid password",
+        )
+        resolver.addRepository("https://packages.jetbrains.team/maven/p/crl/maven/", options)
+        val result = runBlocking {
+            resolver.resolve("com.jetbrains:space-sdk:1.0-dev")
+        } as ResultWithDiagnostics.Failure
+
+        assertEquals(1, result.reports.size)
+        val diagnostic = result.reports.single()
+        assertEquals(
+            "ArtifactResolutionException: Could not transfer artifact com.jetbrains:space-sdk:pom:1.0-dev " +
+                    "from/to https___packages.jetbrains.team_maven_p_crl_maven_ (https://packages.jetbrains.team/maven/p/crl/maven/): " +
+                    "authentication failed for https://packages.jetbrains.team/maven/p/crl/maven/com/jetbrains/space-sdk/1.0-dev/space-sdk-1.0-dev.pom, " +
+                    "status: 401 Unauthorized",
+            diagnostic.message
+        )
+    }
+
+    fun testAuthIncorrectEnvUsage() {
+        val resolver = MavenDependenciesResolver()
+        val options = buildOptions(
+            DependenciesResolverOptionsName.USERNAME to "\$MY_USERNAME_XXX",
+            DependenciesResolverOptionsName.KEY_PASSPHRASE to "\$MY_KEY_PASSPHRASE_YYY",
+        )
+        val result = resolver.addRepository("https://packages.jetbrains.team/maven/p/crl/maven/", options) as ResultWithDiagnostics.Failure
+
+        val messages = result.reports.map { it.message }
+        assertEquals(
+            listOf(
+                "Environment variable `MY_USERNAME_XXX` for username is not set",
+                "Environment variable `MY_KEY_PASSPHRASE_YYY` for private key passphrase is not set"
+            ),
+            messages
+        )
+    }
+
     // Ignored - tests with custom repos often break the CI due to the caching issues
     // TODO: find a way to enable it back
     @Ignore
