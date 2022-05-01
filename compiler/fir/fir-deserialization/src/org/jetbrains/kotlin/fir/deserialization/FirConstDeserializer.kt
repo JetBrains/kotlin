@@ -22,16 +22,16 @@ class FirConstDeserializer(
     val session: FirSession,
     private val binaryClass: KotlinJvmBinaryClass? = null
 ) {
-    private val constantCache = mutableMapOf<CallableId, FirExpression>()
+    private var constantCache: MutableMap<CallableId, FirExpression>? = null
 
     fun loadConstant(propertyProto: ProtoBuf.Property, callableId: CallableId, nameResolver: NameResolver): FirExpression? {
         if (!Flags.HAS_CONSTANT.get(propertyProto.flags)) return null
 
-        constantCache[callableId]?.let { return it }
+        constantCache?.get(callableId)?.let { return it }
 
         if (binaryClass == null) {
             val value = propertyProto.getExtensionOrNull(BuiltInSerializerProtocol.compileTimeValue) ?: return null
-            return buildFirConstant(value, null, value.type.name, nameResolver)?.apply { constantCache[callableId] = this }
+            return buildFirConstant(value, null, value.type.name, nameResolver)?.apply { constantCache?.set(callableId, this) }
         }
 
         binaryClass.visitMembers(object : KotlinJvmBinaryClass.MemberVisitor {
@@ -40,13 +40,17 @@ class FirConstDeserializer(
             override fun visitField(name: Name, desc: String, initializer: Any?): KotlinJvmBinaryClass.AnnotationVisitor? {
                 if (initializer != null) {
                     val constant = buildFirConstant(null, initializer, desc, nameResolver)
-                    constant?.let { constantCache[callableId.replaceName(name)] = it }
+                    constant?.let {
+                        val newCallableId = callableId.replaceName(name)
+                        if (constantCache == null) constantCache = mutableMapOf<CallableId, FirExpression>(newCallableId to it)
+                        else constantCache!![newCallableId] = it
+                    }
                 }
                 return null
             }
         }, null)
 
-        return constantCache[callableId]
+        return constantCache?.get(callableId)
     }
 
     private fun buildFirConstant(
