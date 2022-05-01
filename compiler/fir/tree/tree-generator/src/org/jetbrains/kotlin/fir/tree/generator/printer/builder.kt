@@ -210,7 +210,7 @@ private fun SmartPrinter.printFieldListInBuilder(field: FieldList, builder: Buil
     printModifiers(builder, field, fieldIsUseless)
     print("val ${field.name}: ${field.mutableType}")
     if (builder is LeafBuilder) {
-        print(" = mutableListOf()")
+        print(" = SmartList()")
     }
     println()
 }

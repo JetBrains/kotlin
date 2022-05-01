@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.fir.expressions.impl.FirNamedArgumentExpressionImpl
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.visitors.*
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.utils.SmartList
 
 /*
  * This file was generated automatically
@@ -26,7 +27,7 @@ import org.jetbrains.kotlin.name.Name
 @FirBuilderDsl
 class FirNamedArgumentExpressionBuilder : FirAnnotationContainerBuilder, FirExpressionBuilder {
     override var source: KtSourceElement? = null
-    override val annotations: MutableList<FirAnnotation> = mutableListOf()
+    override val annotations: MutableList<FirAnnotation> = SmartList()
     lateinit var expression: FirExpression
     var isSpread: Boolean by kotlin.properties.Delegates.notNull<Boolean>()
     lateinit var name: Name

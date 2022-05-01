@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.fir.contracts.FirRawContractDescription
 import org.jetbrains.kotlin.fir.contracts.impl.FirRawContractDescriptionImpl
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.visitors.*
+import org.jetbrains.kotlin.utils.SmartList
 
 /*
  * This file was generated automatically
@@ -21,7 +22,7 @@ import org.jetbrains.kotlin.fir.visitors.*
 @FirBuilderDsl
 class FirRawContractDescriptionBuilder {
     var source: KtSourceElement? = null
-    val rawEffects: MutableList<FirExpression> = mutableListOf()
+    val rawEffects: MutableList<FirExpression> = SmartList()
 
     fun build(): FirRawContractDescription {
         return FirRawContractDescriptionImpl(

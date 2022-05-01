@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.fir.expressions.impl.FirCheckedSafeCallSubjectImpl
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.types.impl.FirImplicitTypeRefImpl
 import org.jetbrains.kotlin.fir.visitors.*
+import org.jetbrains.kotlin.utils.SmartList
 
 /*
  * This file was generated automatically
@@ -28,7 +29,7 @@ import org.jetbrains.kotlin.fir.visitors.*
 class FirCheckedSafeCallSubjectBuilder : FirAnnotationContainerBuilder, FirExpressionBuilder {
     override var source: KtSourceElement? = null
     override var typeRef: FirTypeRef = FirImplicitTypeRefImpl(null)
-    override val annotations: MutableList<FirAnnotation> = mutableListOf()
+    override val annotations: MutableList<FirAnnotation> = SmartList()
     lateinit var originalReceiverRef: FirExpressionRef<FirExpression>
 
     override fun build(): FirCheckedSafeCallSubject {

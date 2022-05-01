@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.fir.scopes.FirScopeProvider
 import org.jetbrains.kotlin.fir.symbols.impl.FirAnonymousObjectSymbol
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.visitors.*
+import org.jetbrains.kotlin.utils.SmartList
 
 /*
  * This file was generated automatically
@@ -41,13 +42,13 @@ class FirAnonymousObjectBuilder : FirDeclarationBuilder, FirClassBuilder, FirAnn
     override var resolvePhase: FirResolvePhase = FirResolvePhase.RAW_FIR
     override lateinit var origin: FirDeclarationOrigin
     override var attributes: FirDeclarationAttributes = FirDeclarationAttributes()
-    override val typeParameters: MutableList<FirTypeParameterRef> = mutableListOf()
+    override val typeParameters: MutableList<FirTypeParameterRef> = SmartList()
     override lateinit var status: FirDeclarationStatus
     override var deprecation: DeprecationsPerUseSite? = null
     override lateinit var classKind: ClassKind
-    override val superTypeRefs: MutableList<FirTypeRef> = mutableListOf()
-    override val declarations: MutableList<FirDeclaration> = mutableListOf()
-    override val annotations: MutableList<FirAnnotation> = mutableListOf()
+    override val superTypeRefs: MutableList<FirTypeRef> = SmartList()
+    override val declarations: MutableList<FirDeclaration> = SmartList()
+    override val annotations: MutableList<FirAnnotation> = SmartList()
     override lateinit var scopeProvider: FirScopeProvider
     lateinit var symbol: FirAnonymousObjectSymbol
 

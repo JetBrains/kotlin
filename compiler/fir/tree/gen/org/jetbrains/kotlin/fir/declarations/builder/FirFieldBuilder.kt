@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.visitors.*
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
+import org.jetbrains.kotlin.utils.SmartList
 
 /*
  * This file was generated automatically
@@ -45,18 +46,18 @@ open class FirFieldBuilder : FirDeclarationBuilder, FirAnnotationContainerBuilde
     override var resolvePhase: FirResolvePhase = FirResolvePhase.RAW_FIR
     override lateinit var origin: FirDeclarationOrigin
     override var attributes: FirDeclarationAttributes = FirDeclarationAttributes()
-    open val typeParameters: MutableList<FirTypeParameterRef> = mutableListOf()
+    open val typeParameters: MutableList<FirTypeParameterRef> = SmartList()
     open lateinit var status: FirDeclarationStatus
     open lateinit var returnTypeRef: FirTypeRef
     open var deprecation: DeprecationsPerUseSite? = null
     open var containerSource: DeserializedContainerSource? = null
     open var dispatchReceiverType: ConeSimpleKotlinType? = null
-    open val contextReceivers: MutableList<FirContextReceiver> = mutableListOf()
+    open val contextReceivers: MutableList<FirContextReceiver> = SmartList()
     open lateinit var name: Name
     open var initializer: FirExpression? = null
     open var isVar: Boolean by kotlin.properties.Delegates.notNull<Boolean>()
     open var backingField: FirBackingField? = null
-    override val annotations: MutableList<FirAnnotation> = mutableListOf()
+    override val annotations: MutableList<FirAnnotation> = SmartList()
     open lateinit var symbol: FirFieldSymbol
 
     @OptIn(FirImplementationDetail::class)

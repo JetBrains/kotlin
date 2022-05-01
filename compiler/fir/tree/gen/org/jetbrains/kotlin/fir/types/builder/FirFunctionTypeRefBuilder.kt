@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.fir.types.FirFunctionTypeRef
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.types.impl.FirFunctionTypeRefImpl
 import org.jetbrains.kotlin.fir.visitors.*
+import org.jetbrains.kotlin.utils.SmartList
 
 /*
  * This file was generated automatically
@@ -24,13 +25,13 @@ import org.jetbrains.kotlin.fir.visitors.*
 @FirBuilderDsl
 class FirFunctionTypeRefBuilder : FirAnnotationContainerBuilder {
     override var source: KtSourceElement? = null
-    override val annotations: MutableList<FirAnnotation> = mutableListOf()
+    override val annotations: MutableList<FirAnnotation> = SmartList()
     var isMarkedNullable: Boolean by kotlin.properties.Delegates.notNull<Boolean>()
     var receiverTypeRef: FirTypeRef? = null
-    val valueParameters: MutableList<FirValueParameter> = mutableListOf()
+    val valueParameters: MutableList<FirValueParameter> = SmartList()
     lateinit var returnTypeRef: FirTypeRef
     var isSuspend: Boolean by kotlin.properties.Delegates.notNull<Boolean>()
-    val contextReceiverTypeRefs: MutableList<FirTypeRef> = mutableListOf()
+    val contextReceiverTypeRefs: MutableList<FirTypeRef> = SmartList()
 
     override fun build(): FirFunctionTypeRef {
         return FirFunctionTypeRefImpl(

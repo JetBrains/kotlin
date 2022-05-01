@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.fir.types.FirTypeProjection
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.types.impl.FirImplicitTypeRefImpl
 import org.jetbrains.kotlin.fir.visitors.*
+import org.jetbrains.kotlin.utils.SmartList
 
 /*
  * This file was generated automatically
@@ -33,14 +34,14 @@ import org.jetbrains.kotlin.fir.visitors.*
 class FirPropertyAccessExpressionBuilder : FirQualifiedAccessBuilder, FirAnnotationContainerBuilder, FirExpressionBuilder {
     override var source: KtSourceElement? = null
     override var typeRef: FirTypeRef = FirImplicitTypeRefImpl(null)
-    override val annotations: MutableList<FirAnnotation> = mutableListOf()
+    override val annotations: MutableList<FirAnnotation> = SmartList()
     lateinit var calleeReference: FirReference
-    override val typeArguments: MutableList<FirTypeProjection> = mutableListOf()
+    override val typeArguments: MutableList<FirTypeProjection> = SmartList()
     override var explicitReceiver: FirExpression? = null
     override var dispatchReceiver: FirExpression = FirNoReceiverExpression
     override var extensionReceiver: FirExpression = FirNoReceiverExpression
-    override val contextReceiverArguments: MutableList<FirExpression> = mutableListOf()
-    val nonFatalDiagnostics: MutableList<ConeDiagnostic> = mutableListOf()
+    override val contextReceiverArguments: MutableList<FirExpression> = SmartList()
+    val nonFatalDiagnostics: MutableList<ConeDiagnostic> = SmartList()
 
     @OptIn(FirImplementationDetail::class)
     override fun build(): FirPropertyAccessExpression {

@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.fir.declarations.impl.FirFileImpl
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.symbols.impl.FirFileSymbol
 import org.jetbrains.kotlin.fir.visitors.*
+import org.jetbrains.kotlin.utils.SmartList
 
 /*
  * This file was generated automatically
@@ -32,14 +33,14 @@ import org.jetbrains.kotlin.fir.visitors.*
 @FirBuilderDsl
 class FirFileBuilder : FirAnnotationContainerBuilder {
     override var source: KtSourceElement? = null
-    override val annotations: MutableList<FirAnnotation> = mutableListOf()
+    override val annotations: MutableList<FirAnnotation> = SmartList()
     lateinit var moduleData: FirModuleData
     var resolvePhase: FirResolvePhase = FirResolvePhase.RAW_FIR
     lateinit var origin: FirDeclarationOrigin
     var attributes: FirDeclarationAttributes = FirDeclarationAttributes()
     lateinit var packageDirective: FirPackageDirective
-    val imports: MutableList<FirImport> = mutableListOf()
-    val declarations: MutableList<FirDeclaration> = mutableListOf()
+    val imports: MutableList<FirImport> = SmartList()
+    val declarations: MutableList<FirDeclaration> = SmartList()
     lateinit var name: String
     var sourceFile: KtSourceFile? = null
     var sourceFileLinesMapping: KtSourceFileLinesMapping? = null

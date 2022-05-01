@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.fir.declarations.impl.FirContextReceiverImpl
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.visitors.*
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.utils.SmartList
 
 /*
  * This file was generated automatically

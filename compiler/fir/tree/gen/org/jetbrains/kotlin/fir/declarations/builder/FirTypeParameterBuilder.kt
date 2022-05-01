@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.visitors.*
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.Variance
+import org.jetbrains.kotlin.utils.SmartList
 
 /*
  * This file was generated automatically
@@ -40,8 +41,8 @@ class FirTypeParameterBuilder : FirAnnotationContainerBuilder {
     lateinit var containingDeclarationSymbol: FirBasedSymbol<*>
     lateinit var variance: Variance
     var isReified: Boolean by kotlin.properties.Delegates.notNull<Boolean>()
-    val bounds: MutableList<FirTypeRef> = mutableListOf()
-    override val annotations: MutableList<FirAnnotation> = mutableListOf()
+    val bounds: MutableList<FirTypeRef> = SmartList()
+    override val annotations: MutableList<FirAnnotation> = SmartList()
 
     override fun build(): FirTypeParameter {
         return FirTypeParameterImpl(

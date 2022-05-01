@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.fir.types.impl.FirImplicitTypeRefImpl
 import org.jetbrains.kotlin.fir.visitors.*
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.utils.SmartList
 
 /*
  * This file was generated automatically
@@ -33,13 +34,13 @@ import org.jetbrains.kotlin.name.FqName
 class FirResolvedQualifierBuilder : FirAbstractResolvedQualifierBuilder, FirAnnotationContainerBuilder, FirExpressionBuilder {
     override var source: KtSourceElement? = null
     override var typeRef: FirTypeRef = FirImplicitTypeRefImpl(null)
-    override val annotations: MutableList<FirAnnotation> = mutableListOf()
+    override val annotations: MutableList<FirAnnotation> = SmartList()
     override lateinit var packageFqName: FqName
     override var relativeClassFqName: FqName? = null
     override var symbol: FirClassLikeSymbol<*>? = null
     override var isNullableLHSForCallableReference: Boolean = false
-    override val nonFatalDiagnostics: MutableList<ConeDiagnostic> = mutableListOf()
-    override val typeArguments: MutableList<FirTypeProjection> = mutableListOf()
+    override val nonFatalDiagnostics: MutableList<ConeDiagnostic> = SmartList()
+    override val typeArguments: MutableList<FirTypeProjection> = SmartList()
 
     override fun build(): FirResolvedQualifier {
         return FirResolvedQualifierImpl(

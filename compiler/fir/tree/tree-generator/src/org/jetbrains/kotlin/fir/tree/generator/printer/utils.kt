@@ -25,7 +25,7 @@ fun Builder.collectImports(): List<String> {
         is LeafBuilder -> implementation.collectImports(
             parents,
             ImportKind.Builder,
-        ) + implementation.fullQualifiedName!! + usedTypes.mapNotNull { it.fullQualifiedName } + builderDsl + "kotlin.contracts.*"
+        ) + implementation.fullQualifiedName!! + usedTypes.mapNotNull { it.fullQualifiedName } + builderDsl + "kotlin.contracts.*" + "org.jetbrains.kotlin.utils.SmartList"
         is IntermediateBuilder -> {
             val fqns = parents + allFields.mapNotNull { it.fullQualifiedName } + allFields.flatMap {
                 it.arguments.mapNotNull { it.fullQualifiedName }

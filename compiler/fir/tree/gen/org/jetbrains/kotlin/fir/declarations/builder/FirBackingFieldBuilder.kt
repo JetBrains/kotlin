@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.visitors.*
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
+import org.jetbrains.kotlin.utils.SmartList
 
 /*
  * This file was generated automatically
@@ -48,7 +49,7 @@ class FirBackingFieldBuilder : FirAnnotationContainerBuilder {
     var deprecation: DeprecationsPerUseSite? = null
     var containerSource: DeserializedContainerSource? = null
     var dispatchReceiverType: ConeSimpleKotlinType? = null
-    val contextReceivers: MutableList<FirContextReceiver> = mutableListOf()
+    val contextReceivers: MutableList<FirContextReceiver> = SmartList()
     lateinit var name: Name
     var delegate: FirExpression? = null
     var isVar: Boolean by kotlin.properties.Delegates.notNull<Boolean>()
@@ -59,8 +60,8 @@ class FirBackingFieldBuilder : FirAnnotationContainerBuilder {
     lateinit var symbol: FirBackingFieldSymbol
     lateinit var propertySymbol: FirPropertySymbol
     var initializer: FirExpression? = null
-    override val annotations: MutableList<FirAnnotation> = mutableListOf()
-    val typeParameters: MutableList<FirTypeParameter> = mutableListOf()
+    override val annotations: MutableList<FirAnnotation> = SmartList()
+    val typeParameters: MutableList<FirTypeParameter> = SmartList()
     lateinit var status: FirDeclarationStatus
 
     @OptIn(FirImplementationDetail::class)

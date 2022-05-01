@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.impl.FirLazyExpression
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.visitors.*
+import org.jetbrains.kotlin.utils.SmartList
 
 /*
  * This file was generated automatically
@@ -34,7 +35,7 @@ class FirLazyExpressionBuilder : FirAnnotationContainerBuilder {
 
 
     @Deprecated("Modification of 'annotations' has no impact for FirLazyExpressionBuilder", level = DeprecationLevel.HIDDEN)
-    override val annotations: MutableList<FirAnnotation> = mutableListOf()
+    override val annotations: MutableList<FirAnnotation> = SmartList()
 }
 
 @OptIn(ExperimentalContracts::class)

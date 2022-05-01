@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.visitors.*
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.utils.SmartList
 
 /*
  * This file was generated automatically
@@ -43,18 +44,18 @@ open class FirRegularClassBuilder : FirClassBuilder, FirTypeParameterRefsOwnerBu
     override var resolvePhase: FirResolvePhase = FirResolvePhase.RAW_FIR
     override lateinit var origin: FirDeclarationOrigin
     override var attributes: FirDeclarationAttributes = FirDeclarationAttributes()
-    override val typeParameters: MutableList<FirTypeParameterRef> = mutableListOf()
+    override val typeParameters: MutableList<FirTypeParameterRef> = SmartList()
     override lateinit var status: FirDeclarationStatus
     override var deprecation: DeprecationsPerUseSite? = null
     override lateinit var classKind: ClassKind
-    override val declarations: MutableList<FirDeclaration> = mutableListOf()
-    override val annotations: MutableList<FirAnnotation> = mutableListOf()
+    override val declarations: MutableList<FirDeclaration> = SmartList()
+    override val annotations: MutableList<FirAnnotation> = SmartList()
     override lateinit var scopeProvider: FirScopeProvider
     open lateinit var name: Name
     open lateinit var symbol: FirRegularClassSymbol
     open var companionObjectSymbol: FirRegularClassSymbol? = null
-    override val superTypeRefs: MutableList<FirTypeRef> = mutableListOf()
-    open val contextReceivers: MutableList<FirContextReceiver> = mutableListOf()
+    override val superTypeRefs: MutableList<FirTypeRef> = SmartList()
+    open val contextReceivers: MutableList<FirContextReceiver> = SmartList()
 
     override fun build(): FirRegularClass {
         return FirRegularClassImpl(

@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.visitors.*
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
+import org.jetbrains.kotlin.utils.SmartList
 
 /*
  * This file was generated automatically
@@ -52,14 +53,14 @@ open class FirSimpleFunctionBuilder : FirFunctionBuilder, FirTypeParametersOwner
     override var deprecation: DeprecationsPerUseSite? = null
     override var containerSource: DeserializedContainerSource? = null
     override var dispatchReceiverType: ConeSimpleKotlinType? = null
-    override val contextReceivers: MutableList<FirContextReceiver> = mutableListOf()
-    override val valueParameters: MutableList<FirValueParameter> = mutableListOf()
+    override val contextReceivers: MutableList<FirContextReceiver> = SmartList()
+    override val valueParameters: MutableList<FirValueParameter> = SmartList()
     override var body: FirBlock? = null
     open var contractDescription: FirContractDescription = FirEmptyContractDescription
     open lateinit var name: Name
     open lateinit var symbol: FirNamedFunctionSymbol
-    override val annotations: MutableList<FirAnnotation> = mutableListOf()
-    override val typeParameters: MutableList<FirTypeParameter> = mutableListOf()
+    override val annotations: MutableList<FirAnnotation> = SmartList()
+    override val typeParameters: MutableList<FirTypeParameter> = SmartList()
 
     override fun build(): FirSimpleFunction {
         return FirSimpleFunctionImpl(

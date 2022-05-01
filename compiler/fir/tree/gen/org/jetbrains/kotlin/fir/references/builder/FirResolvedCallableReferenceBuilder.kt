@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.visitors.*
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.utils.SmartList
 
 /*
  * This file was generated automatically
@@ -26,7 +27,7 @@ class FirResolvedCallableReferenceBuilder {
     var source: KtSourceElement? = null
     lateinit var name: Name
     lateinit var resolvedSymbol: FirBasedSymbol<*>
-    val inferredTypeArguments: MutableList<ConeKotlinType> = mutableListOf()
+    val inferredTypeArguments: MutableList<ConeKotlinType> = SmartList()
     lateinit var mappedArguments: CallableReferenceMappedArguments
 
     fun build(): FirResolvedCallableReference {

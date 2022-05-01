@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.fir.types.ConeSimpleKotlinType
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.visitors.*
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
+import org.jetbrains.kotlin.utils.SmartList
 
 /*
  * This file was generated automatically
@@ -44,16 +45,16 @@ class FirPrimaryConstructorBuilder : FirAbstractConstructorBuilder, FirAnnotatio
     override var resolvePhase: FirResolvePhase = FirResolvePhase.RAW_FIR
     override lateinit var origin: FirDeclarationOrigin
     override var attributes: FirDeclarationAttributes = FirDeclarationAttributes()
-    override val typeParameters: MutableList<FirTypeParameterRef> = mutableListOf()
+    override val typeParameters: MutableList<FirTypeParameterRef> = SmartList()
     override lateinit var status: FirDeclarationStatus
     override lateinit var returnTypeRef: FirTypeRef
     override var receiverTypeRef: FirTypeRef? = null
     override var deprecation: DeprecationsPerUseSite? = null
     override var containerSource: DeserializedContainerSource? = null
     override var dispatchReceiverType: ConeSimpleKotlinType? = null
-    override val contextReceivers: MutableList<FirContextReceiver> = mutableListOf()
-    override val valueParameters: MutableList<FirValueParameter> = mutableListOf()
-    override val annotations: MutableList<FirAnnotation> = mutableListOf()
+    override val contextReceivers: MutableList<FirContextReceiver> = SmartList()
+    override val valueParameters: MutableList<FirValueParameter> = SmartList()
+    override val annotations: MutableList<FirAnnotation> = SmartList()
     override lateinit var symbol: FirConstructorSymbol
     override var delegatedConstructor: FirDelegatedConstructorCall? = null
     override var body: FirBlock? = null
