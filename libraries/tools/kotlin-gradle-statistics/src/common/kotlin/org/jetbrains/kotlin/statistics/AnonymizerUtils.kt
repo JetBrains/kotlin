@@ -21,12 +21,18 @@ internal val salt: String by lazy {
 }
 
 fun anonymizeComponentVersion(version: String): String {
-    return version.replace('-', '.')
+    val parts = version.toLowerCase().replace('-', '.')
         .split(".")
-        .plus(listOf("0", "0")) // pad with zeros
-        .take(3)
-        .map { s -> s.toIntOrNull() ?: "0" }
-        .joinToString(".")
+        .plus(listOf("0", "0", "0")) // pad with zeros
+        .take(4)
+    val mainVersion = parts.take(3).map { s -> s.toIntOrNull()?.toString() ?: "0" }
+
+    val suffix = when {
+        parts[3].matches("(rc|m)\\d{0,1}".toRegex()) -> "-${parts[3]}"
+        parts[3].matches("(snapshot|dev|beta)".toRegex()) -> "-${parts[3]}"
+        else -> ""
+    }
+    return mainVersion.joinToString(".") + suffix
 }
 
 internal fun sha256(s: String): String {
