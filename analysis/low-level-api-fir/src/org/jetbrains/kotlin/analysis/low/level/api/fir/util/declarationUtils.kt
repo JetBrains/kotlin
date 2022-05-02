@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.util
 
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.throwUnexpectedFirElementError
 import org.jetbrains.kotlin.analysis.low.level.api.fir.element.builder.getNonLocalContainingOrThisDeclaration
-import org.jetbrains.kotlin.analysis.low.level.api.fir.file.builder.FirFileBuilder
+import org.jetbrains.kotlin.analysis.low.level.api.fir.file.builder.LLFirFileBuilder
 import org.jetbrains.kotlin.fir.declarations.FirClassLikeDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirFile
@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
  * 'Non-local' stands for not local classes/functions/etc.
  */
 internal fun KtDeclaration.findSourceNonLocalFirDeclaration(
-    firFileBuilder: FirFileBuilder,
+    firFileBuilder: LLFirFileBuilder,
     provider: FirProvider,
     containerFirFile: FirFile? = null
 ): FirDeclaration {
@@ -34,7 +34,7 @@ internal fun KtDeclaration.findSourceNonLocalFirDeclaration(
 }
 
 internal fun KtDeclaration.findFirDeclarationForAnyFirSourceDeclaration(
-    firFileBuilder: FirFileBuilder,
+    firFileBuilder: LLFirFileBuilder,
     provider: FirProvider,
 ): FirDeclaration {
     val nonLocalDeclaration = getNonLocalContainingOrThisDeclaration()
@@ -49,7 +49,7 @@ internal fun KtDeclaration.findFirDeclarationForAnyFirSourceDeclaration(
 }
 
 internal inline fun <reified F : FirDeclaration> KtDeclaration.findFirDeclarationForAnyFirSourceDeclarationOfType(
-    firFileBuilder: FirFileBuilder,
+    firFileBuilder: LLFirFileBuilder,
     provider: FirProvider,
 ): FirDeclaration {
     val fir = findFirDeclarationForAnyFirSourceDeclaration(firFileBuilder, provider)
@@ -58,7 +58,7 @@ internal inline fun <reified F : FirDeclaration> KtDeclaration.findFirDeclaratio
 }
 
 private fun KtDeclaration.findSourceOfNonLocalFirDeclarationByTraversingWholeTree(
-    firFileBuilder: FirFileBuilder,
+    firFileBuilder: LLFirFileBuilder,
     containerFirFile: FirFile?,
 ): FirDeclaration? {
     val firFile = containerFirFile ?: firFileBuilder.buildRawFirFileWithCaching(containingKtFile)
@@ -69,7 +69,7 @@ private fun KtDeclaration.findSourceOfNonLocalFirDeclarationByTraversingWholeTre
 }
 
 private fun KtDeclaration.findSourceNonLocalFirDeclarationByProvider(
-    firFileBuilder: FirFileBuilder,
+    firFileBuilder: LLFirFileBuilder,
     provider: FirProvider,
     containerFirFile: FirFile?
 ): FirDeclaration? {

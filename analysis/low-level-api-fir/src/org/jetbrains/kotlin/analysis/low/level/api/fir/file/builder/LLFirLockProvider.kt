@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.analysis.low.level.api.fir.file.builder
 
-import org.jetbrains.kotlin.analysis.api.impl.barebone.annotations.PrivateForInline
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.ResolveTreeBuilder
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.lockWithPCECheck
@@ -14,21 +13,18 @@ import kotlin.concurrent.withLock
 
 /**
  * Keyed locks provider.
- * !!! We temporary remove its correct implementation to fix deadlocks problem. Do not use this until this comment is present
  */
-internal class LockProvider<KEY> {
-    //We temporary disable multi-locks to fix deadlocks problem
+internal class LLFirLockProvider {
+    //We temporarily disable multi-locks to fix deadlocks problem
     private val globalLock = ReentrantLock()
 
-    @OptIn(PrivateForInline::class)
-    inline fun <R> withWriteLock(@Suppress("UNUSED_PARAMETER") key: KEY, action: () -> R): R {
+    inline fun <R> withWriteLock(@Suppress("UNUSED_PARAMETER") key: FirFile, action: () -> R): R {
         val startTime = System.currentTimeMillis()
         return globalLock.withLock { ResolveTreeBuilder.lockNode(startTime, action) }
     }
 
 
-    @OptIn(PrivateForInline::class)
-    inline fun <R> withWriteLockPCECheck(@Suppress("UNUSED_PARAMETER") key: KEY, lockingIntervalMs: Long, action: () -> R): R {
+    inline fun <R> withWriteLockPCECheck(@Suppress("UNUSED_PARAMETER") key: FirFile, lockingIntervalMs: Long, action: () -> R): R {
         val startTime = System.currentTimeMillis()
         return globalLock.lockWithPCECheck(lockingIntervalMs) { ResolveTreeBuilder.lockNode(startTime, action) }
     }
@@ -37,7 +33,7 @@ internal class LockProvider<KEY> {
 /**
  * Runs [resolve] function (which is considered to do some resolve on [firFile]) under a lock for [firFile]
  */
-internal inline fun <R> LockProvider<FirFile>.runCustomResolveUnderLock(
+internal inline fun <R> LLFirLockProvider.runCustomResolveUnderLock(
     firFile: FirFile,
     checkPCE: Boolean,
     body: () -> R

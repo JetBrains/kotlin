@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.util.executeWithoutPCE
 internal class LLFirPhaseRunner {
     /**
      * We temporary disable multi-locks to fix deadlocks problem
-     * @see org.jetbrains.kotlin.analysis.low.level.api.fir.file.builder.LockProvider
+     * @see org.jetbrains.kotlin.analysis.low.level.api.fir.file.builder.LLFirLockProvider
      */
     inline fun runPhaseWithCustomResolve(@Suppress("UNUSED_PARAMETER") phase: FirResolvePhase, crossinline resolve: () -> Unit) =
         runPhaseWithCustomResolveWithoutLock(resolve)

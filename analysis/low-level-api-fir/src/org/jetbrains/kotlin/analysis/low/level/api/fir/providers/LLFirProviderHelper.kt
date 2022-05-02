@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
-import org.jetbrains.kotlin.analysis.low.level.api.fir.file.builder.FirFileBuilder
+import org.jetbrains.kotlin.analysis.low.level.api.fir.file.builder.LLFirFileBuilder
 import org.jetbrains.kotlin.analysis.low.level.api.fir.file.builder.ModuleFileCache
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.FirElementFinder
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.executeOrReturnDefaultValueOnPCE
@@ -27,7 +27,7 @@ import java.util.*
 
 internal class LLFirProviderHelper(
     private val cache: ModuleFileCache,
-    private val firFileBuilder: FirFileBuilder,
+    private val firFileBuilder: LLFirFileBuilder,
     private val declarationProvider: KotlinDeclarationProvider,
     private val packageProvider: KotlinPackageProvider,
 ) {
