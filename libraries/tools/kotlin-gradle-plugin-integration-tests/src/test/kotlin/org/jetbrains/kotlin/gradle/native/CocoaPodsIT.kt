@@ -871,13 +871,26 @@ class CocoaPodsIT : BaseGradleIT() {
     }
 
     @Test
-    fun testSyncFrameworkMultipleArchitectures() {
+    fun testSyncFrameworkMultipleArchitecturesWithCustomName() {
         with(project) {
-            gradleBuildScript().appendToKotlinBlock("iosArm64()")
-            gradleBuildScript().appendToKotlinBlock("iosArm32()")
+            val frameworkName = "customSdk"
+            gradleBuildScript().appendText(
+                """
+                    |
+                    |kotlin {
+                    |    iosArm64()
+                    |    iosArm32()
+                    |    cocoapods {
+                    |       framework {
+                    |           baseName = "$frameworkName"
+                    |       }
+                    |    }
+                    |}
+                """.trimMargin()
+            )
             hooks.addHook {
                 // Check that an output framework is a dynamic framework
-                val framework = fileInWorkingDir("build/cocoapods/framework/cocoapods.framework/cocoapods")
+                val framework = fileInWorkingDir("build/cocoapods/framework/$frameworkName.framework/$frameworkName")
                 with(runProcess(listOf("file", framework.absolutePath), projectDir)) {
                     assertTrue(isSuccessful)
                     assertTrue(output.contains("\\(for architecture armv7\\):\\s+current ar archive".toRegex()))

@@ -200,7 +200,9 @@ open class KotlinCocoapodsPlugin : Plugin<Project> {
 
             fatTargets.forEach { (_, targets) ->
                 targets.singleOrNull()?.let {
-                    task.from(it.binaries.getFramework(POD_FRAMEWORK_PREFIX, requestedBuildType))
+                    val framework = it.binaries.getFramework(POD_FRAMEWORK_PREFIX, requestedBuildType)
+                    task.baseName = framework.baseName //all frameworks should have same names
+                    task.from(framework)
                 }
             }
         }
