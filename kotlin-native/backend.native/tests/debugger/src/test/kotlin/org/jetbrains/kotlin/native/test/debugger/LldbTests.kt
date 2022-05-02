@@ -178,10 +178,10 @@ class LldbTests {
         val application = swiftc("application", swiftSrc, "-F", root.toString())
         """
             > b kfun:#b(){}kotlin.String
-            Breakpoint 1: where = [..]`kfun:#b(){}kotlin.String [..] at b.kt:1:12, [..]
+            Breakpoint 1: where = [..]`kfun:#b(){}kotlin.String [..] at b.kt:1:1, [..]
 
             > b kfun:#a(){}kotlin.String
-            Breakpoint 2: where = [..]`kfun:#a(){}kotlin.String [..] at a.kt:1:12, [..]
+            Breakpoint 2: where = [..]`kfun:#a(){}kotlin.String [..] at a.kt:1:1, [..]
             > q
         """.trimIndent().lldb(application)
     }

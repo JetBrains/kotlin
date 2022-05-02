@@ -59,9 +59,10 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
     val lightDebug: Boolean = configuration.get(KonanConfigKeys.LIGHT_DEBUG)
             ?: target.family.isAppleFamily // Default is true for Apple targets.
     val generateDebugTrampoline = debug && configuration.get(KonanConfigKeys.GENERATE_DEBUG_TRAMPOLINE) ?: false
+    val optimizationsEnabled = configuration.getBoolean(KonanConfigKeys.OPTIMIZATION)
 
     val memoryModel: MemoryModel by lazy {
-        when (configuration.get(BinaryOptions.memoryModel)!!) {
+        when (configuration.get(BinaryOptions.memoryModel)) {
             MemoryModel.STRICT -> MemoryModel.STRICT
             MemoryModel.RELAXED -> {
                 configuration.report(CompilerMessageSeverity.ERROR,
@@ -82,6 +83,13 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
                     MemoryModel.EXPERIMENTAL
                 }
             }
+            null -> {
+                if (target.supportsThreads() && destroyRuntimeMode != DestroyRuntimeMode.LEGACY) {
+                    MemoryModel.EXPERIMENTAL
+                } else {
+                    MemoryModel.STRICT
+                }
+            }
         }
     }
     val destroyRuntimeMode: DestroyRuntimeMode get() = configuration.get(KonanConfigKeys.DESTROY_RUNTIME_MODE)!!
@@ -99,7 +107,10 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
         realGc
     }
     val runtimeAssertsMode: RuntimeAssertsMode get() = configuration.get(BinaryOptions.runtimeAssertionsMode) ?: RuntimeAssertsMode.IGNORE
-    val workerExceptionHandling: WorkerExceptionHandling get() = configuration.get(KonanConfigKeys.WORKER_EXCEPTION_HANDLING)!!
+    val workerExceptionHandling: WorkerExceptionHandling get() = configuration.get(KonanConfigKeys.WORKER_EXCEPTION_HANDLING) ?: when (memoryModel) {
+            MemoryModel.EXPERIMENTAL -> WorkerExceptionHandling.USE_HOOK
+            else -> WorkerExceptionHandling.LEGACY
+        }
     val runtimeLogs: String? get() = configuration.get(KonanConfigKeys.RUNTIME_LOGS)
     val freezing: Freezing by lazy {
         val freezingMode = configuration.get(BinaryOptions.freezing)
@@ -134,8 +145,7 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
 
     val needCompilerVerification: Boolean
         get() = configuration.get(KonanConfigKeys.VERIFY_COMPILER) ?:
-            (configuration.getBoolean(KonanConfigKeys.OPTIMIZATION) ||
-                CompilerVersion.CURRENT.meta != MetaVersion.RELEASE)
+            (optimizationsEnabled || CompilerVersion.CURRENT.meta != MetaVersion.RELEASE)
 
     init {
         if (!platformManager.isEnabled(target)) {
@@ -177,24 +187,6 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
             konanKlibDir = File(distribution.klib)
     )
 
-    internal val cacheSupport = CacheSupport(configuration, resolvedLibraries, target, produce)
-
-    internal val cachedLibraries: CachedLibraries
-        get() = cacheSupport.cachedLibraries
-
-    internal val librariesToCache: Set<KotlinLibrary>
-        get() = cacheSupport.librariesToCache
-
-    val outputFiles =
-            OutputFiles(configuration.get(KonanConfigKeys.OUTPUT) ?: cacheSupport.tryGetImplicitOutput(),
-                    target, produce)
-
-    val tempFiles = TempFiles(outputFiles.outputName, configuration.get(KonanConfigKeys.TEMPORARY_FILES_DIR))
-
-    val outputFile get() = outputFiles.mainFile
-
-    private val implicitModuleName: String
-        get() = File(outputFiles.outputName).name
 
     val fullExportedNamePrefix: String
         get() = configuration.get(KonanConfigKeys.FULL_EXPORTED_NAME_PREFIX) ?: implicitModuleName
@@ -205,11 +197,6 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
     val shortModuleName: String?
         get() = configuration.get(KonanConfigKeys.SHORT_MODULE_NAME)
 
-    val infoArgsOnly = configuration.kotlinSourceRoots.isEmpty()
-            && configuration[KonanConfigKeys.INCLUDED_LIBRARIES].isNullOrEmpty()
-            && librariesToCache.isEmpty()
-            && configuration[KonanConfigKeys.EXPORTED_LIBRARIES].isNullOrEmpty()
-
     fun librariesWithDependencies(moduleDescriptor: ModuleDescriptor?): List<KonanLibrary> {
         if (moduleDescriptor == null) error("purgeUnneeded() only works correctly after resolve is over, and we have successfully marked package files as needed or not needed.")
         return resolvedLibraries.filterRoots { (!it.isDefault && !this.purgeUserLibs) || it.isNeededForLink }.getFullList(TopologicalLibraryOrder).cast()
@@ -217,20 +204,27 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
 
     val shouldCoverSources = configuration.getBoolean(KonanConfigKeys.COVERAGE)
     private val shouldCoverLibraries = !configuration.getList(KonanConfigKeys.LIBRARIES_TO_COVER).isNullOrEmpty()
+    val allocationMode by lazy {
+        when (configuration.get(KonanConfigKeys.ALLOCATION_MODE)) {
+            null -> when {
+                memoryModel == MemoryModel.EXPERIMENTAL && target.supportsMimallocAllocator() -> AllocationMode.MIMALLOC
+                else -> AllocationMode.STD
+            }
+            AllocationMode.STD -> AllocationMode.STD
+            AllocationMode.MIMALLOC -> {
+                if (target.supportsMimallocAllocator()) {
+                    AllocationMode.MIMALLOC
+                } else {
+                    configuration.report(CompilerMessageSeverity.STRONG_WARNING,
+                            "Mimalloc allocator isn't supported on target ${target.name}. Used standard mode.")
+                    AllocationMode.STD
+                }
+            }
+        }
+    }
 
     internal val runtimeNativeLibraries: List<String> = mutableListOf<String>().apply {
         if (debug) add("debug.bc")
-        val useMimalloc = if (configuration.get(KonanConfigKeys.ALLOCATION_MODE) == "mimalloc") {
-            if (target.supportsMimallocAllocator()) {
-                true
-            } else {
-                configuration.report(CompilerMessageSeverity.STRONG_WARNING,
-                        "Mimalloc allocator isn't supported on target ${target.name}. Used standard mode.")
-                false
-            }
-        } else {
-            false
-        }
         when (memoryModel) {
             MemoryModel.STRICT -> {
                 add("strict.bc")
@@ -264,11 +258,14 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
             add("source_info_libbacktrace.bc")
             add("libbacktrace.bc")
         }
-        if (useMimalloc) {
-            add("opt_alloc.bc")
-            add("mimalloc.bc")
-        } else {
-            add("std_alloc.bc")
+        when (allocationMode) {
+            AllocationMode.MIMALLOC -> {
+                add("opt_alloc.bc")
+                add("mimalloc.bc")
+            }
+            AllocationMode.STD -> {
+                add("std_alloc.bc")
+            }
         }
     }.map {
         File(distribution.defaultNatives(target)).child(it).absolutePath
@@ -302,7 +299,11 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
 
     internal val isInteropStubs: Boolean get() = manifestProperties?.getProperty("interop") == "true"
 
-    internal val propertyLazyInitialization: Boolean get() = configuration.get(KonanConfigKeys.PROPERTY_LAZY_INITIALIZATION)!!
+    internal val propertyLazyInitialization: Boolean get() = configuration.get(KonanConfigKeys.PROPERTY_LAZY_INITIALIZATION) ?:
+        when (memoryModel) {
+            MemoryModel.EXPERIMENTAL -> true
+            else -> false
+        }
 
     internal val lazyIrForCaches: Boolean get() = configuration.get(KonanConfigKeys.LAZY_IR_FOR_CACHES)!!
 
@@ -321,6 +322,39 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
         get() = configuration.get(BinaryOptions.unitSuspendFunctionObjCExport) ?: UnitSuspendFunctionObjCExport.DEFAULT
 
     internal val testDumpFile: File? = configuration[KonanConfigKeys.TEST_DUMP_OUTPUT_PATH]?.let(::File)
+
+    internal val cacheSupport = CacheSupport(
+            configuration = configuration,
+            resolvedLibraries = resolvedLibraries,
+            memoryModel = memoryModel,
+            optimizationsEnabled = optimizationsEnabled,
+            propertyLazyInitialization = propertyLazyInitialization,
+            target = target,
+            produce = produce
+    )
+
+    internal val cachedLibraries: CachedLibraries
+        get() = cacheSupport.cachedLibraries
+
+    internal val librariesToCache: Set<KotlinLibrary>
+        get() = cacheSupport.librariesToCache
+
+    val outputFiles =
+            OutputFiles(configuration.get(KonanConfigKeys.OUTPUT) ?: cacheSupport.tryGetImplicitOutput(),
+                    target, produce)
+
+    val tempFiles = TempFiles(outputFiles.outputName, configuration.get(KonanConfigKeys.TEMPORARY_FILES_DIR))
+
+    val outputFile get() = outputFiles.mainFile
+
+    private val implicitModuleName: String
+        get() = File(outputFiles.outputName).name
+
+    val infoArgsOnly = configuration.kotlinSourceRoots.isEmpty()
+            && configuration[KonanConfigKeys.INCLUDED_LIBRARIES].isNullOrEmpty()
+            && librariesToCache.isEmpty()
+            && configuration[KonanConfigKeys.EXPORTED_LIBRARIES].isNullOrEmpty()
+
 }
 
 fun CompilerConfiguration.report(priority: CompilerMessageSeverity, message: String)

@@ -3,11 +3,11 @@
 set "ALL_PARAMS=%konanCompilerArgs%"
 set "MEMORY_MODEL=%1"
 
-if "%MEMORY_MODEL%" == "experimental" (
+if "%MEMORY_MODEL%" == "legacy" (
   if "%ALL_PARAMS%" == "" (
-    set "ALL_PARAMS=-memory-model experimental"
+    set "ALL_PARAMS=-memory-model strict"
   ) ELSE (
-    set "ALL_PARAMS=-memory-model experimental %ALL_PARAMS%"
+    set "ALL_PARAMS=-memory-model strict %ALL_PARAMS%"
   )
 )
 if not "%ALL_PARAMS%" == "" (

@@ -96,7 +96,7 @@ class KonanConfigKeys {
                 = CompilerConfigurationKey.create("program or library name")
         val OVERRIDE_CLANG_OPTIONS: CompilerConfigurationKey<List<String>>
                 = CompilerConfigurationKey.create("arguments for clang")
-        val ALLOCATION_MODE: CompilerConfigurationKey<String>
+        val ALLOCATION_MODE: CompilerConfigurationKey<AllocationMode>
                 = CompilerConfigurationKey.create("allocation mode")
         val EXPORT_KDOC: CompilerConfigurationKey<Boolean>
                 = CompilerConfigurationKey.create("export KDoc into klib and framework")

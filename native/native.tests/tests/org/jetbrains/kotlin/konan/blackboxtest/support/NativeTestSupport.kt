@@ -173,7 +173,7 @@ private object NativeTestSupport {
         )
 
     private fun computeMemoryModel(enforcedProperties: EnforcedProperties): MemoryModel =
-        ClassLevelProperty.MEMORY_MODEL.readValue(enforcedProperties, MemoryModel.values(), default = MemoryModel.DEFAULT)
+        ClassLevelProperty.MEMORY_MODEL.readValue(enforcedProperties, MemoryModel.values(), default = MemoryModel.EXPERIMENTAL)
 
     private fun computeThreadStateChecker(enforcedProperties: EnforcedProperties): ThreadStateChecker {
         val useThreadStateChecker =

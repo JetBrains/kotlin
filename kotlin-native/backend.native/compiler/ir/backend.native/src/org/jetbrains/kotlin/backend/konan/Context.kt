@@ -460,7 +460,7 @@ internal class Context(config: KonanConfig) : KonanBackendContext(config) {
     fun shouldUseDebugInfoFromNativeLibs() = shouldContainAnyDebugInfo() &&
             config.configuration.get(BinaryOptions.stripDebugInfoFromNativeLibs) == false
 
-    fun shouldOptimize() = config.configuration.getBoolean(KonanConfigKeys.OPTIMIZATION)
+    fun shouldOptimize() = config.optimizationsEnabled
     fun ghaEnabled() = ::globalHierarchyAnalysisResult.isInitialized
     fun useLazyFileInitializers() = config.propertyLazyInitialization
 

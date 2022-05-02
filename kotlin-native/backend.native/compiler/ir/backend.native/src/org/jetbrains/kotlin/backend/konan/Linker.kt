@@ -160,8 +160,7 @@ internal class Linker(val context: Context) {
         }
 
         val needsProfileLibrary = context.coverage.enabled
-        val mimallocEnabled = config.get(KonanConfigKeys.ALLOCATION_MODE) == "mimalloc" &&
-                target.supportsMimallocAllocator()
+        val mimallocEnabled = context.config.allocationMode == AllocationMode.MIMALLOC
 
         val linkerInput = determineLinkerInput(objectFiles, linkerOutput)
         try {

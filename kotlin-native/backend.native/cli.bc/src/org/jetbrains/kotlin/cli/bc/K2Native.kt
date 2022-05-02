@@ -252,15 +252,17 @@ class K2Native : CLICompiler<K2NativeCompilerArguments>() {
                     "relaxed" -> MemoryModel.RELAXED
                     "strict" -> MemoryModel.STRICT
                     "experimental" -> MemoryModel.EXPERIMENTAL
+                    null -> null
                     else -> {
                         configuration.report(ERROR, "Unsupported memory model ${arguments.memoryModel}")
-                        MemoryModel.STRICT
+                        null
                     }
                 }
 
                 // TODO: revise priority and/or report conflicting values.
-                val memoryModel = get(BinaryOptions.memoryModel) ?: memoryModelFromArgument
-                put(BinaryOptions.memoryModel, memoryModel)
+                if (get(BinaryOptions.memoryModel) == null) {
+                    putIfNotNull(BinaryOptions.memoryModel, memoryModelFromArgument)
+                }
 
                 when {
                     arguments.generateWorkerTestRunner -> put(GENERATE_TEST_RUNNER, TestRunnerKind.WORKER)
@@ -316,9 +318,6 @@ class K2Native : CLICompiler<K2NativeCompilerArguments>() {
                         DestroyRuntimeMode.ON_SHUTDOWN
                     }
                 })
-                if (arguments.gc != null && memoryModel != MemoryModel.EXPERIMENTAL) {
-                    configuration.report(ERROR, "-Xgc is only supported for -memory-model experimental")
-                }
                 putIfNotNull(GARBAGE_COLLECTOR, when (arguments.gc) {
                     null -> null
                     "noop" -> GC.NOOP
@@ -329,13 +328,8 @@ class K2Native : CLICompiler<K2NativeCompilerArguments>() {
                         null
                     }
                 })
-                put(PROPERTY_LAZY_INITIALIZATION, when (arguments.propertyLazyInitialization) {
-                    null -> {
-                        when (memoryModel) {
-                            MemoryModel.EXPERIMENTAL -> true
-                            else -> false
-                        }
-                    }
+                putIfNotNull(PROPERTY_LAZY_INITIALIZATION, when (arguments.propertyLazyInitialization) {
+                    null -> null
                     "enable" -> true
                     "disable" -> false
                     else -> {
@@ -343,22 +337,17 @@ class K2Native : CLICompiler<K2NativeCompilerArguments>() {
                         false
                     }
                 })
-                put(ALLOCATION_MODE, when (arguments.allocator) {
-                    null -> {
-                        when (memoryModel) {
-                            MemoryModel.EXPERIMENTAL -> "mimalloc"
-                            else -> "std"
-                        }
-                    }
-                    "std" -> arguments.allocator!!
-                    "mimalloc" -> arguments.allocator!!
+                putIfNotNull(ALLOCATION_MODE, when (arguments.allocator) {
+                    null -> null
+                    "std" -> AllocationMode.STD
+                    "mimalloc" -> AllocationMode.MIMALLOC
                     else -> {
                         configuration.report(ERROR, "Expected 'std' or 'mimalloc' for allocator")
-                        "std"
+                        AllocationMode.STD
                     }
                 })
-                put(WORKER_EXCEPTION_HANDLING, when (arguments.workerExceptionHandling) {
-                    null -> if (memoryModel == MemoryModel.EXPERIMENTAL) WorkerExceptionHandling.USE_HOOK else WorkerExceptionHandling.LEGACY
+                putIfNotNull(WORKER_EXCEPTION_HANDLING, when (arguments.workerExceptionHandling) {
+                    null -> null
                     "legacy" -> WorkerExceptionHandling.LEGACY
                     "use-hook" -> WorkerExceptionHandling.USE_HOOK
                     else -> {
