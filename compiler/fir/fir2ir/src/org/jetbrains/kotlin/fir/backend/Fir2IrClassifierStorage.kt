@@ -114,7 +114,7 @@ class Fir2IrClassifierStorage(
             getIrTypeParameter(typeParameter, index, symbol, typeContext).apply {
                 parent = this@setTypeParameters
                 if (superTypes.isEmpty()) {
-                    superTypes = typeParameter.bounds.map { it.toIrType() }
+                    superTypes = typeParameter.bounds.map { it.toIrType(typeContext) }
                 }
             }
         }
