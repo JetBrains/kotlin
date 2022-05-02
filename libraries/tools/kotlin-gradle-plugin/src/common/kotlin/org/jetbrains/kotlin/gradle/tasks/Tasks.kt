@@ -506,7 +506,7 @@ abstract class KotlinCompile @Inject constructor(
     workerExecutor: WorkerExecutor,
     private val objectFactory: ObjectFactory
 ) : AbstractKotlinCompile<K2JVMCompilerArguments>(objectFactory),
-    KotlinJvmCompile,
+    @Suppress("TYPEALIAS_EXPANSION_DEPRECATION") KotlinJvmCompileDsl,
     UsesKotlinJavaToolchain {
 
     /** A package prefix that is used for locating Java sources in a directory structure with non-full-depth packages.

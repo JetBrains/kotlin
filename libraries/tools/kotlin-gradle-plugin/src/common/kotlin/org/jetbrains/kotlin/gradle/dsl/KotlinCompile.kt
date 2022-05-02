@@ -20,6 +20,7 @@ import groovy.lang.Closure
 import org.gradle.api.Task
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.Internal
+import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile as KotlinJvmCompileApi
 
 interface KotlinJsCompile : KotlinCompile<KotlinJsOptions>
 
@@ -27,7 +28,7 @@ interface KotlinJsCompile : KotlinCompile<KotlinJsOptions>
     message = "Moved into API artifact",
     replaceWith = ReplaceWith("KotlinJvmCompile", "org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile")
 )
-interface KotlinJvmCompile : KotlinCompile<KotlinJvmOptions>
+interface KotlinJvmCompile : KotlinJvmCompileApi
 
 interface KotlinCommonCompile : KotlinCompile<KotlinMultiplatformCommonOptions>
 
