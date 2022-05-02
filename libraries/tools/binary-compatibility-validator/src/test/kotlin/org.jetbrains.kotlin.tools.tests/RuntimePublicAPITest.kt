@@ -81,27 +81,3 @@ class RuntimePublicAPITest {
     }
 
 }
-
-/*
-Copied from `binary-compatibility-validator
-Can be removed after:
-https://github.com/Kotlin/binary-compatibility-validator/pull/75
-*/
-private fun List<ClassBinarySignature>.filterOutAnnotated(targetAnnotations: Set<String>): List<ClassBinarySignature> {
-    if (targetAnnotations.isEmpty()) return this
-    return filter {
-        it.annotations.all { ann -> !targetAnnotations.any { ann.refersToName(it) }  }
-    }.map {
-        ClassBinarySignature(
-            it.name,
-            it.superName,
-            it.outerName,
-            it.supertypes,
-            it.memberSignatures.filter { it.annotations.all { ann -> !targetAnnotations.any { ann.refersToName(it) } } },
-            it.access,
-            it.isEffectivelyPublic,
-            it.isNotUsedWhenEmpty,
-            it.annotations
-        )
-    }
-}
