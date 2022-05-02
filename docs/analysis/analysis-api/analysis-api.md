@@ -43,7 +43,7 @@ All interaction with the Analysis API should be performed **only** in **KtAnalys
 function should be used:
 
 ```kotlin
-fun <R> analyze(contextElement: KtElement, action: KtAnalysisSession.() -> R): R
+fun <R> analyse(contextElement: KtElement, action: KtAnalysisSession.() -> R): R
 ```
 
 Where `action` lambda represents the **KtAnalysisSession Scope**.
