@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.idea.references
 
+import com.intellij.openapi.application.Application
+import com.intellij.openapi.components.ServiceManager
 import com.intellij.psi.*
 import com.intellij.psi.impl.source.resolve.ResolveCache
 import com.intellij.util.IncorrectOperationException
@@ -34,9 +36,18 @@ abstract class AbstractKtReference<T : KtElement>(element: T) : PsiPolyVariantRe
     override fun getCanonicalText(): String = "<TBD>"
 
     open fun canRename(): Boolean = false
-    override fun handleElementRename(newElementName: String): PsiElement? = throw IncorrectOperationException()
+    override fun handleElementRename(newElementName: String): PsiElement? =
+        if (canRename())
+            getKtReferenceMutateService().handleElementRename(this, newElementName)
+        else
+            null
 
-    override fun bindToElement(element: PsiElement): PsiElement = throw IncorrectOperationException()
+    override fun bindToElement(element: PsiElement): PsiElement =
+        getKtReferenceMutateService().bindToElement(this, element)
+
+    protected fun getKtReferenceMutateService(): KtReferenceMutateService =
+        ServiceManager.getService(KtReferenceMutateService::class.java)
+            ?: throw IllegalStateException("Cannot handle element rename because KtReferenceMutateService is missing")
 
     @Suppress("UNCHECKED_CAST")
     override fun getVariants(): Array<Any> = PsiReference.EMPTY_ARRAY as Array<Any>

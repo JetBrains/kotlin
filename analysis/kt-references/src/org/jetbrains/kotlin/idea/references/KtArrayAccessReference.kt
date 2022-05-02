@@ -28,8 +28,6 @@ abstract class KtArrayAccessReference(
 
     override fun canRename() = true
 
-    abstract override fun handleElementRename(newElementName: String): PsiElement?
-
     companion object {
         private val NAMES = listOf(OperatorNameConventions.GET, OperatorNameConventions.SET)
     }

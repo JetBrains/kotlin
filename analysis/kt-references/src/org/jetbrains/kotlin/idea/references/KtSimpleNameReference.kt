@@ -40,25 +40,21 @@ abstract class KtSimpleNameReference(expression: KtSimpleNameExpression) : KtSim
         return true
     }
 
-   abstract override fun handleElementRename(newElementName: String): PsiElement?
-
     enum class ShorteningMode {
         NO_SHORTENING,
         DELAYED_SHORTENING,
         FORCED_SHORTENING
     }
 
-    // By default reference binding is delayed
-    override fun bindToElement(element: PsiElement): PsiElement =
-        bindToElement(element, ShorteningMode.DELAYED_SHORTENING)
+    fun bindToElement(element: PsiElement, shorteningMode: ShorteningMode = ShorteningMode.DELAYED_SHORTENING): PsiElement =
+        getKtReferenceMutateService().bindToElement(this, element, shorteningMode)
 
-    abstract fun bindToElement(element: PsiElement, shorteningMode: ShorteningMode): PsiElement
-
-    abstract fun bindToFqName(
+    fun bindToFqName(
         fqName: FqName,
         shorteningMode: ShorteningMode = ShorteningMode.DELAYED_SHORTENING,
         targetElement: PsiElement? = null
-    ): PsiElement
+    ): PsiElement =
+        getKtReferenceMutateService().bindToFqName(this, fqName, shorteningMode, targetElement)
 
     override fun getCanonicalText(): String = expression.text
 

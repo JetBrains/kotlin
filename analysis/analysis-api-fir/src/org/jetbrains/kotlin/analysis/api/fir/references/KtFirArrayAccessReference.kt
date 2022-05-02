@@ -23,6 +23,4 @@ class KtFirArrayAccessReference(
         val fir = element.getOrBuildFirSafe<FirFunctionCall>(firResolveSession) ?: return emptyList()
         return fir.getCandidateSymbols().map { it.fir.buildSymbol(firSymbolBuilder) }
     }
-
-    override fun handleElementRename(newElementName: String): PsiElement = TODO("Not yet implemented")
 }
