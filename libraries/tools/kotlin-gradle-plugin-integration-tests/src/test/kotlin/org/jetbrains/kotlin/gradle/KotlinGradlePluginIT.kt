@@ -215,6 +215,28 @@ class KotlinGradleIT : KGPBaseTest() {
         }
     }
 
+    @DisplayName("KT-52239: Changing Kotlin options via deprecated 'dsl.KotlinJvmOptions' interface")
+    @GradleTest
+    fun testKotlinOptionsViaDeprecatedKotlinJvmOptionsDsl(gradleVersion: GradleVersion) {
+        project("kotlinProject", gradleVersion) {
+            val customModuleName = "custom_module_name"
+
+            buildGradle.appendText(
+                //language=Groovy
+                """
+                
+                tasks.withType(org.jetbrains.kotlin.gradle.dsl.KotlinJvmCompile.class).configureEach {
+                    kotlinOptions.moduleName = "$customModuleName"
+                }
+                """.trimIndent()
+            )
+
+            build("assemble") {
+                assertFileExists(kotlinClassesDir().resolve("META-INF/$customModuleName.kotlin_module"))
+            }
+        }
+    }
+
     @DisplayName("Downgrading Kotlin plugin version")
     @GradleTest
     fun testDowngradePluginVersion(gradleVersion: GradleVersion) {
