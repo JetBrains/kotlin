@@ -17,8 +17,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirPhaseRunner
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.FirDeclarationDesignation
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.FirDeclarationDesignationWithFile
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.collectDesignation
-import org.jetbrains.kotlin.analysis.low.level.api.fir.file.builder.LockProvider
-import org.jetbrains.kotlin.analysis.low.level.api.fir.file.builder.ModuleFileCache
+import org.jetbrains.kotlin.analysis.low.level.api.fir.file.builder.LLFirLockProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.file.builder.runCustomResolveUnderLock
 import org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.FirLazyDeclarationResolver
 import org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.ResolveTreeBuilder
@@ -35,7 +34,7 @@ internal class LLFirDesignatedSupertypeResolverTransformer(
     private val session: FirSession,
     private val scopeSession: ScopeSession,
     private val firLazyDeclarationResolver: FirLazyDeclarationResolver,
-    private val lockProvider: LockProvider<FirFile>,
+    private val lockProvider: LLFirLockProvider,
     private val firProviderInterceptor: FirProviderInterceptor?,
     private val checkPCE: Boolean,
 ) : LLFirLazyTransformer {

@@ -9,7 +9,7 @@ import com.intellij.openapi.roots.ProjectRootModificationTracker
 import com.intellij.psi.util.PsiModificationTracker
 import org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostics.DiagnosticsCollector
 import org.jetbrains.kotlin.analysis.low.level.api.fir.element.builder.FirElementBuilder
-import org.jetbrains.kotlin.analysis.low.level.api.fir.file.builder.FirFileBuilder
+import org.jetbrains.kotlin.analysis.low.level.api.fir.file.builder.LLFirFileBuilder
 import org.jetbrains.kotlin.analysis.low.level.api.fir.file.builder.ModuleFileCache
 import org.jetbrains.kotlin.analysis.low.level.api.fir.file.builder.ModuleFileCacheImpl
 import org.jetbrains.kotlin.analysis.low.level.api.fir.file.structure.FileStructureCache
@@ -26,7 +26,7 @@ internal class LLFirModuleResolveComponents(
     val scopeProvider: FirScopeProvider,
 ) {
     val cache: ModuleFileCache = ModuleFileCacheImpl(this)
-    val firFileBuilder: FirFileBuilder = FirFileBuilder(this)
+    val firFileBuilder: LLFirFileBuilder = LLFirFileBuilder(this)
     val lazyFirDeclarationsResolver = FirLazyDeclarationResolver(this)
 
     val scopeSessionProvider: LLFirScopeSessionProvider = LLFirScopeSessionProvider.create(

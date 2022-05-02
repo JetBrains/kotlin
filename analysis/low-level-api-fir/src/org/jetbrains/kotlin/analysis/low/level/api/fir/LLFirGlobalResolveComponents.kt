@@ -6,9 +6,8 @@
 package org.jetbrains.kotlin.analysis.low.level.api.fir
 
 import com.intellij.openapi.project.Project
-import org.jetbrains.kotlin.analysis.low.level.api.fir.file.builder.LockProvider
+import org.jetbrains.kotlin.analysis.low.level.api.fir.file.builder.LLFirLockProvider
 import org.jetbrains.kotlin.analysis.project.structure.KtModule
-import org.jetbrains.kotlin.fir.declarations.FirFile
 
 @Suppress("unused")
 internal class LLFirGlobalResolveComponents(
@@ -16,5 +15,5 @@ internal class LLFirGlobalResolveComponents(
     val project: Project,
 ) {
     val phaseRunner: LLFirPhaseRunner = LLFirPhaseRunner()
-    val lockProvider: LockProvider<FirFile> = LockProvider()
+    val lockProvider: LLFirLockProvider = LLFirLockProvider()
 }

@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.psi.KtFile
  * Responsible for building [FirFile] by [KtFile]
  */
 @ThreadSafe
-internal class FirFileBuilder(
+internal class LLFirFileBuilder(
     val moduleComponents: LLFirModuleResolveComponents,
 ) {
     fun buildRawFirFileWithCaching(ktFile: KtFile): FirFile = moduleComponents.cache.fileCached(ktFile) {
