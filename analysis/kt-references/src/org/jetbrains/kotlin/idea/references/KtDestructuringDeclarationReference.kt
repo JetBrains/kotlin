@@ -19,16 +19,9 @@ abstract class KtDestructuringDeclarationReference(
 
     override fun getRangeInElement() = TextRange(0, element.textLength)
 
-    abstract override fun canRename(): Boolean
-
     override fun resolve() = multiResolve(false).asSequence()
         .map { it.element }
         .first { it is KtDestructuringDeclarationEntry }
-
-    override fun handleElementRename(newElementName: String): PsiElement? {
-        if (canRename()) return expression
-        throw IncorrectOperationException()
-    }
 
     override val resolvesByNames: Collection<Name>
         get() {

@@ -15,10 +15,6 @@ import org.jetbrains.kotlin.psi.KtCallExpression
 import org.jetbrains.kotlin.psi.KtExpression
 
 class KtFirInvokeFunctionReference(expression: KtCallExpression) : KtInvokeFunctionReference(expression), KtFirReference {
-    override fun doRenameImplicitConventionalCall(newName: String?): KtExpression {
-        TODO("Not yet implemented")
-    }
-
     override fun KtAnalysisSession.resolveToSymbols(): Collection<KtSymbol> {
         return expression.resolveCall().calls.mapNotNull { call ->
             (call as? KtSimpleFunctionCall)

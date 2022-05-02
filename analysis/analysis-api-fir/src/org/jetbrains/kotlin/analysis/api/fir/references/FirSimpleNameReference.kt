@@ -52,18 +52,6 @@ internal class KtFirSimpleNameReference(
         return false
     }
 
-    override fun handleElementRename(newElementName: String): PsiElement? {
-        TODO("Not yet implemented")
-    }
-
-    override fun bindToElement(element: PsiElement, shorteningMode: ShorteningMode): PsiElement {
-        TODO("Not yet implemented")
-    }
-
-    override fun bindToFqName(fqName: FqName, shorteningMode: ShorteningMode, targetElement: PsiElement?): PsiElement {
-        TODO("Not yet implemented")
-    }
-
     override fun getImportAlias(): KtImportAlias? {
         // TODO: Implement.
         return null
