@@ -2,7 +2,7 @@
 
 import kotlin.reflect.KProperty
 
-internal var number by object {
+internal var number by internal object {
     var rawValue = 10
 
     operator fun getValue(thisRef: Any?, property: KProperty<*>): String {
