@@ -63,28 +63,6 @@ abstract class KtInvokeFunctionReference(expression: KtCallExpression) : KtSimpl
 
     override fun canRename(): Boolean = true
 
-    override fun handleElementRename(newElementName: String): PsiElement? {
-        val callExpression = expression
-        val fullCallExpression = callExpression.getQualifiedExpressionForSelectorOrThis()
-        if (newElementName == OperatorNameConventions.GET.asString() && callExpression.typeArguments.isEmpty()) {
-            val arrayAccessExpression = KtPsiFactory(callExpression).buildExpression {
-                if (fullCallExpression is KtQualifiedExpression) {
-                    appendExpression(fullCallExpression.receiverExpression)
-                    appendFixedText(fullCallExpression.operationSign.value)
-                }
-                appendExpression(callExpression.calleeExpression)
-                appendFixedText("[")
-                appendExpressions(callExpression.valueArguments.map { it.getArgumentExpression() })
-                appendFixedText("]")
-            }
-            return fullCallExpression.replace(arrayAccessExpression)
-        }
-
-        return doRenameImplicitConventionalCall(newElementName)
-    }
-
-    protected abstract fun doRenameImplicitConventionalCall(newName: String?): KtExpression
-
     companion object {
         private val NAMES = listOf(OperatorNameConventions.INVOKE)
     }

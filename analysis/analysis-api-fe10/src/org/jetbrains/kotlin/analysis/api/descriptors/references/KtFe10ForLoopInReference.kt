@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.analysis.api.descriptors.references
 
 import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
 import org.jetbrains.kotlin.analysis.api.descriptors.KtFe10AnalysisSession
-import org.jetbrains.kotlin.analysis.api.descriptors.references.base.CliKtFe10Reference
 import org.jetbrains.kotlin.analysis.api.descriptors.references.base.KtFe10Reference
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.toKtCallableSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtSymbol
@@ -15,7 +14,7 @@ import org.jetbrains.kotlin.idea.references.KtForLoopInReference
 import org.jetbrains.kotlin.psi.KtForExpression
 import org.jetbrains.kotlin.resolve.BindingContext
 
-abstract class KtFe10ForLoopInReference(expression: KtForExpression) : KtForLoopInReference(expression), KtFe10Reference {
+class KtFe10ForLoopInReference(expression: KtForExpression) : KtForLoopInReference(expression), KtFe10Reference {
     override fun KtAnalysisSession.resolveToSymbols(): Collection<KtSymbol> {
         check(this is KtFe10AnalysisSession)
 
@@ -29,5 +28,3 @@ abstract class KtFe10ForLoopInReference(expression: KtForExpression) : KtForLoop
         ).mapNotNull { slice -> bindingContext[slice, loopRange]?.resultingDescriptor?.toKtCallableSymbol(analysisContext) }
     }
 }
-
-internal class CliKtFe10ForLoopInReference(expression: KtForExpression) : KtFe10ForLoopInReference(expression), CliKtFe10Reference
