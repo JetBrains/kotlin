@@ -9,6 +9,7 @@ import org.gradle.api.Project
 import org.jetbrains.kotlin.pill.model.PModule
 import org.jetbrains.kotlin.pill.model.PProject
 import java.io.File
+import java.util.*
 
 private val USER_HOME_DIR_PATH = System.getProperty("user.home").withSlash()
 
@@ -29,7 +30,7 @@ interface PathContext {
 
     fun url(file: File): Pair<String, String> {
         val path = when {
-            file.isFile && file.extension.toLowerCase() == "jar" -> "jar://" + this(file) + "!/"
+            file.isFile && file.extension.lowercase(Locale.getDefault()) == "jar" -> "jar://" + this(file) + "!/"
             else -> "file://" + this(file)
         }
 

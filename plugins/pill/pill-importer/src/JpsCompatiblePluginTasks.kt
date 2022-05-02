@@ -91,14 +91,14 @@ class JpsCompatiblePluginTasks(
     fun pill() {
         initEnvironment(rootProject)
 
-        val variantOptionValue = System.getProperty("pill.variant", "base").toUpperCase()
+        val variantOptionValue = System.getProperty("pill.variant", "base").uppercase(Locale.getDefault())
         val variant = PillExtensionMirror.Variant.values().firstOrNull { it.name == variantOptionValue }
             ?: run {
                 rootProject.logger.error("Invalid variant name: $variantOptionValue")
                 return
             }
 
-        rootProject.logger.lifecycle("Pill: Setting up project for the '${variant.name.toLowerCase()}' variant...")
+        rootProject.logger.lifecycle("Pill: Setting up project for the '${variant.name.lowercase(Locale.getDefault())}' variant...")
 
         val modulePrefix = System.getProperty("pill.module.prefix", "")
         val modelParser = ModelParser(variant, modulePrefix)
@@ -161,14 +161,14 @@ class JpsCompatiblePluginTasks(
     private fun removeJpsAndPillRunConfigurations() {
         File(projectDir, ".idea/runConfigurations")
             .walk()
-            .filter { (it.name.startsWith("JPS_") || it.name.startsWith("Pill_")) && it.extension.toLowerCase() == "xml" }
+            .filter { (it.name.startsWith("JPS_") || it.name.startsWith("Pill_")) && it.extension.lowercase(Locale.getDefault()) == "xml" }
             .forEach { it.delete() }
     }
 
     private fun removeArtifactConfigurations() {
         File(projectDir, ".idea/artifacts")
             .walk()
-            .filter { it.extension.toLowerCase() == "xml" && ALLOWED_ARTIFACT_PATTERNS.none { p -> p.matches(it.name) } }
+            .filter { it.extension.lowercase(Locale.getDefault()) == "xml" && ALLOWED_ARTIFACT_PATTERNS.none { p -> p.matches(it.name) } }
             .forEach { it.delete() }
     }
 
