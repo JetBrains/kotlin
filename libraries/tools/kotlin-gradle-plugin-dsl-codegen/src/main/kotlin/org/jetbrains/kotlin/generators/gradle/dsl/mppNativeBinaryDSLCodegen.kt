@@ -33,8 +33,8 @@ private fun binaryType(
         typeName("$MPP_PACKAGE.$className"),
         typeName("${nativeOutputKindClass.fqName}.$outputKind"),
         baseMethodName,
-        "get${baseMethodName.capitalize()}",
-        "find${baseMethodName.capitalize()}",
+        "get${baseMethodName.capitalizeUS()}",
+        "find${baseMethodName.capitalizeUS()}",
         defaultBaseName
     )
 

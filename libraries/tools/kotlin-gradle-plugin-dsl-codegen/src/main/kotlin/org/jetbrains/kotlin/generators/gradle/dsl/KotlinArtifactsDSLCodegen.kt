@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.BitcodeEmbeddingMode
 import org.jetbrains.kotlin.gradle.plugin.mpp.NativeBuildType
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import java.io.File
+import java.util.*
 
 fun main() {
     generateAbstractKotlinArtifactsExtensionImplementation()
@@ -58,9 +59,9 @@ private fun generateAbstractKotlinArtifactsExtensionImplementation() {
         val name = nameParts.drop(1).joinToString(
             separator = "",
             prefix = nameParts.first(),
-            transform = String::capitalize
+            transform = String::capitalizeUS
         )
-        "val $name = KonanTarget.${it.name.toUpperCase()}"
+        "val $name = KonanTarget.${it.name.uppercase(Locale.US)}"
     }.indented(4)
 
     val code = listOf(
