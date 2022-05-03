@@ -675,6 +675,29 @@ class CommonizerIT : BaseGradleIT() {
         }
     }
 
+    @Test
+    fun `test cinterop caching`() {
+        with(preparedProject("commonizeCurlInterop")) {
+            val localBuildCacheDir = projectDir.resolve("local-build-cache-dir").also { assertTrue(it.mkdirs()) }
+            gradleSettingsScript().appendText("""
+                
+                buildCache {
+                    local {
+                        directory = "$localBuildCacheDir"
+                    }
+                }
+            """.trimIndent()
+            )
+            build(":commonize", options = defaultBuildOptions().copy(withBuildCache = true)) {
+                assertTasksExecuted(":cinteropCurlTargetA", ":cinteropCurlTargetB")
+            }
+            build(":clean") {}
+            build(":commonize", options = defaultBuildOptions().copy(withBuildCache = true)) {
+                assertTasksRetrievedFromCache(":cinteropCurlTargetA", ":cinteropCurlTargetB")
+            }
+        }
+    }
+
     private fun preparedProject(name: String): Project {
         return Project(name).apply {
             setupWorkingDir()
