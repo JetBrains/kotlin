@@ -19,8 +19,8 @@ import org.jetbrains.kotlin.name.Name
 
 internal class LLFirModuleWithDependenciesSymbolProvider(
     session: FirSession,
+    val dependencyProvider: LLFirDependentModuleProviders,
     private val providers: List<FirSymbolProvider>,
-    val dependencyProvider: DependentModuleProviders
 ) : FirSymbolProvider(session) {
 
     override fun getClassLikeSymbolByClassId(classId: ClassId): FirClassLikeSymbol<*>? =
@@ -77,7 +77,14 @@ internal class LLFirModuleWithDependenciesSymbolProvider(
         providers.firstNotNullOfOrNull { it.getPackage(fqName) }
 }
 
-internal class DependentModuleProviders(session: FirSession, private val providers: List<FirSymbolProvider>) : FirDependenciesSymbolProvider(session) {
+internal class LLFirDependentModuleProviders(
+    session: FirSession,
+    private val providers: List<FirSymbolProvider>
+) : FirDependenciesSymbolProvider(session) {
+
+    constructor(session: FirSession, createSubProviders: MutableList<FirSymbolProvider>.() -> Unit)
+            : this(session, buildList { createSubProviders() })
+
     override fun getClassLikeSymbolByClassId(classId: ClassId): FirClassLikeSymbol<*>? =
         providers.firstNotNullOfOrNull { provider ->
             when (provider) {
