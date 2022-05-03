@@ -31,6 +31,6 @@ internal class KtFirExpressionInfoProvider(
 
     override fun getWhenMissingCases(whenExpression: KtWhenExpression): List<WhenMissingCase> {
         val firWhenExpression = whenExpression.getOrBuildFirSafe<FirWhenExpression>(analysisSession.firResolveState) ?: return emptyList()
-        return FirWhenExhaustivenessTransformer.computeAllMissingCases(analysisSession.firResolveState.rootModuleSession, firWhenExpression)
+        return FirWhenExhaustivenessTransformer.computeAllMissingCases(analysisSession.firResolveState.useSiteFirSession, firWhenExpression)
     }
 }

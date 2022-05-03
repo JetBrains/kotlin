@@ -78,7 +78,7 @@ internal class KtFirKotlinPropertySymbol(
     override val modality: Modality get() = withValidityAssertion { firSymbol.modalityOrFinal }
     override val visibility: Visibility get() = withValidityAssertion { firSymbol.visibility }
 
-    override val annotationsList by cached { KtFirAnnotationListForDeclaration.create(firSymbol, resolveState.rootModuleSession, token) }
+    override val annotationsList by cached { KtFirAnnotationListForDeclaration.create(firSymbol, resolveState.useSiteFirSession, token) }
 
     override val callableIdIfNonLocal: CallableId? get() = withValidityAssertion { firSymbol.getCallableIdIfNonLocal() }
 

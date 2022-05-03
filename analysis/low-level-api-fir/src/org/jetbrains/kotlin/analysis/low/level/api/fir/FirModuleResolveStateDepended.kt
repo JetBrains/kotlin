@@ -12,13 +12,10 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.api.DiagnosticCheckerFilt
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.LLFirModuleResolveState
 import org.jetbrains.kotlin.analysis.low.level.api.fir.element.builder.FirElementBuilder
 import org.jetbrains.kotlin.analysis.low.level.api.fir.element.builder.FirTowerContextProvider
-import org.jetbrains.kotlin.analysis.low.level.api.fir.file.builder.ModuleFileCache
 import org.jetbrains.kotlin.analysis.low.level.api.fir.file.structure.KtToFirMapping
 import org.jetbrains.kotlin.analysis.low.level.api.fir.state.LLFirResolvableModuleResolveState
 import org.jetbrains.kotlin.analysis.low.level.api.fir.state.TowerProviderForElementForState
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.LLFirScopeSessionProvider
-import org.jetbrains.kotlin.analysis.low.level.api.fir.util.containingKtFileIfAny
-import org.jetbrains.kotlin.analysis.low.level.api.fir.util.originalKtFile
 import org.jetbrains.kotlin.analysis.project.structure.KtModule
 import org.jetbrains.kotlin.analysis.utils.caches.*
 import org.jetbrains.kotlin.diagnostics.KtPsiDiagnostic
@@ -40,8 +37,8 @@ internal class FirModuleResolveStateDepended(
     private val ktToFirMapping: KtToFirMapping?,
 ) : LLFirModuleResolveState() {
     override val project: Project get() = originalState.project
-    override val module: KtModule get() = originalState.module
-    override val rootModuleSession get() = originalState.rootModuleSession
+    override val useSiteKtModule: KtModule get() = originalState.useSiteKtModule
+    override val useSiteFirSession get() = originalState.useSiteFirSession
 
     private val scopeSessionProviderCache by softCachedValue(
         project,

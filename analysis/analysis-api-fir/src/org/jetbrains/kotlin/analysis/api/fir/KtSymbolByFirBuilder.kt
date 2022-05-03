@@ -63,8 +63,8 @@ internal class KtSymbolByFirBuilder private constructor(
 ) : ValidityTokenOwner {
     private val resolveState by weakRef(resolveState)
 
-    private val firProvider get() = resolveState.rootModuleSession.symbolProvider
-    val rootSession: FirSession = resolveState.rootModuleSession
+    private val firProvider get() = resolveState.useSiteFirSession.symbolProvider
+    val rootSession: FirSession = resolveState.useSiteFirSession
 
     val classifierBuilder = ClassifierSymbolBuilder()
     val functionLikeBuilder = FunctionLikeSymbolBuilder()

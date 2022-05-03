@@ -225,7 +225,7 @@ internal class KtFirExpressionTypeProvider(
         getDefiniteNullability(expression) == DefiniteNullability.DEFINITELY_NOT_NULL
 
     private fun getDefiniteNullability(expression: KtExpression): DefiniteNullability = withValidityAssertion {
-        fun FirExpression.isNotNullable() = with(analysisSession.rootModuleSession.typeContext) {
+        fun FirExpression.isNotNullable() = with(analysisSession.useSiteSession.typeContext) {
             !typeRef.coneType.isNullableType()
         }
 

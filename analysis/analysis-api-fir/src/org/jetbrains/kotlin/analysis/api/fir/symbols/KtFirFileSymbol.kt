@@ -29,7 +29,7 @@ internal class KtFirFileSymbol(
         TODO("Creating pointers for files from library is not supported yet")
     }
 
-    override val annotationsList by cached { KtFirAnnotationListForDeclaration.create(firSymbol, resolveState.rootModuleSession, token) }
+    override val annotationsList by cached { KtFirAnnotationListForDeclaration.create(firSymbol, resolveState.useSiteFirSession, token) }
 
     override fun equals(other: Any?): Boolean = symbolEquals(other)
     override fun hashCode(): Int = symbolHashCode()

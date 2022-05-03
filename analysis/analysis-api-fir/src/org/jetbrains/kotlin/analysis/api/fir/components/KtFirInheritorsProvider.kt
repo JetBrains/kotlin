@@ -26,7 +26,7 @@ internal class KtFirInheritorsProvider(
         require(classSymbol.modality == Modality.SEALED)
         require(classSymbol is KtFirNamedClassOrObjectSymbol)
 
-        val inheritorClassIds = classSymbol.firSymbol.fir.getSealedClassInheritors(analysisSession.rootModuleSession)
+        val inheritorClassIds = classSymbol.firSymbol.fir.getSealedClassInheritors(analysisSession.useSiteSession)
 
         with(analysisSession) {
             inheritorClassIds.mapNotNull { it.getCorrespondingToplevelClassOrObjectSymbol() as? KtNamedClassOrObjectSymbol }

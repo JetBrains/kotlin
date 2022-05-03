@@ -167,7 +167,7 @@ private class FirShorteningContext(val analysisSession: KtFirAnalysisSession) {
     private val firResolveState = analysisSession.firResolveState
 
     private val firSession: FirSession
-        get() = firResolveState.rootModuleSession
+        get() = firResolveState.useSiteFirSession
 
     fun findFirstClassifierInScopesByName(positionScopes: List<FirScope>, targetClassName: Name): AvailableSymbol<ClassId>? {
         for (scope in positionScopes) {
