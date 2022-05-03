@@ -98,8 +98,6 @@ internal object LLFirSessionFactory {
             )
 
             register(FirProvider::class, provider)
-            register(LLFirProvider::class, provider)
-
             register(FirPhaseManager::class, LLFirPhaseManager(sessionInvalidator))
 
             @OptIn(ExperimentalStdlibApi::class)
@@ -228,7 +226,6 @@ internal object LLFirSessionFactory {
             )
 
             register(FirProvider::class, provider)
-            register(LLFirProvider::class, provider)
 
             register(FirPhaseManager::class, LLFirPhaseManager(sessionInvalidator))
             val dependentProviders = buildList {
