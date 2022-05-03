@@ -11,7 +11,7 @@ import kotlinx.collections.immutable.PersistentMap
 import kotlinx.collections.immutable.persistentMapOf
 import kotlinx.collections.immutable.toPersistentMap
 import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirGlobalResolveComponents
-import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirPhaseRunner
+import org.jetbrains.kotlin.analysis.low.level.api.fir.project.structure.LLFirLibrarySessionFactory
 import org.jetbrains.kotlin.analysis.low.level.api.fir.project.structure.firKtModuleBasedModuleData
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.addValueFor
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.executeWithoutPCE
@@ -20,56 +20,64 @@ import org.jetbrains.kotlin.analysis.providers.createLibrariesModificationTracke
 import org.jetbrains.kotlin.analysis.providers.createModuleWithoutDependenciesOutOfBlockModificationTracker
 import org.jetbrains.kotlin.analysis.utils.caches.getValue
 import org.jetbrains.kotlin.analysis.utils.caches.softCachedValue
+import org.jetbrains.kotlin.analysis.utils.errors.unexpectedElementError
+import org.jetbrains.kotlin.config.LanguageVersionSettings
+import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
 import org.jetbrains.kotlin.fir.BuiltinTypes
-import org.jetbrains.kotlin.fir.FirSessionProvider
 import java.util.concurrent.ConcurrentHashMap
 
 class LLFirSessionProviderStorage(val project: Project) {
     private val sessionsCache = ConcurrentHashMap<KtModule, FromModuleViewSessionCache>()
 
-    private val librariesCache by softCachedValue(project, project.createLibrariesModificationTracker()) { LibrariesCache() }
+    private val librariesFactoryByUseSiteModule by softCachedValue(project, project.createLibrariesModificationTracker()) {
+        ConcurrentHashMap<KtModule, LLFirLibrarySessionFactory>()
+    }
 
     fun getSessionProvider(
-        rootModule: KtModule,
+        useSiteKtModule: KtModule,
         configureSession: (LLFirSession.() -> Unit)? = null
     ): LLFirSessionProvider {
-        val globalComponents = LLFirGlobalResolveComponents(rootModule, project)
+        val globalComponents = LLFirGlobalResolveComponents(useSiteKtModule, project)
 
-        val builtinTypes = BuiltinTypes()
+        val librariesSessionFactory = librariesFactoryByUseSiteModule.getOrPut(useSiteKtModule) {
+            val languageVersionSettings = when (useSiteKtModule) {
+                is KtSourceModule -> useSiteKtModule.languageVersionSettings
+                is KtLibraryModule, is KtLibrarySourceModule -> LanguageVersionSettingsImpl.DEFAULT
+                else -> unexpectedElementError("module", useSiteKtModule)
+            }
+            LLFirLibrarySessionFactory(project, useSiteKtModule, languageVersionSettings)
+        }
 
-        val builtinsAndCloneableSession = LLFirSessionFactory.createBuiltinsAndCloneableSession(project, builtinTypes, rootModule)
-        val cache = sessionsCache.getOrPut(rootModule) { FromModuleViewSessionCache() }
+        val cache = sessionsCache.getOrPut(useSiteKtModule) { FromModuleViewSessionCache() }
         val (sessions, session) = cache.withMappings(project) { mappings ->
             val sessions = mutableMapOf<KtModule, LLFirResolvableModuleSession>().apply { putAll(mappings) }
             val session = executeWithoutPCE {
-                when (rootModule) {
+                when (useSiteKtModule) {
                     is KtSourceModule -> {
                         LLFirSessionFactory.createSourcesSession(
                             project,
-                            rootModule,
-                            builtinsAndCloneableSession,
+                            useSiteKtModule,
                             globalComponents,
                             cache.sessionInvalidator,
-                            builtinTypes,
                             sessions,
                             isRootModule = true,
-                            librariesCache = librariesCache,
+                            librariesSessionFactory = librariesSessionFactory,
                             configureSession = configureSession,
                         )
                     }
                     is KtLibraryModule, is KtLibrarySourceModule -> {
                         LLFirSessionFactory.createLibraryOrLibrarySourceResolvableSession(
                             project,
-                            rootModule,
-                            builtinsAndCloneableSession,
+                            useSiteKtModule,
+                            librariesSessionFactory.builtinsAndCloneableSession,
                             globalComponents,
                             cache.sessionInvalidator,
-                            builtinTypes,
+                            librariesSessionFactory.builtInTypes,
                             sessions,
                             configureSession = configureSession,
                         )
                     }
-                    else -> error("Unexpected ${rootModule::class.simpleName}")
+                    else -> error("Unexpected ${useSiteKtModule::class.simpleName}")
                 }
 
             }
