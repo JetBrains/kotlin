@@ -9,6 +9,7 @@ import org.gradle.api.Project
 import org.gradle.api.logging.Logger
 import org.gradle.api.provider.Provider
 import org.gradle.internal.service.ServiceRegistry
+import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.isMain
 import org.jetbrains.kotlin.gradle.targets.js.dukat.DukatRootResolverPlugin
@@ -208,27 +209,36 @@ internal class KotlinRootNpmResolver internal constructor(
         val targetResolver = this[target.path]
         val mainCompilations = targetResolver.compilationResolvers.filter { it.compilation.isMain() }
 
-        return if (mainCompilations.isNotEmpty()) {
-            //TODO[Ilya Goncharov] Hack for Mixed mode of legacy and IR tooling
-            if (mainCompilations.size == 2) {
-                check(
-                    mainCompilations[0].compilation is KotlinJsIrCompilation
-                            || mainCompilations[1].compilation is KotlinJsIrCompilation
-                ) {
-                    "Cannot resolve project dependency $src -> $target." +
-                            "Dependency to project with multiple js compilation not supported yet."
+        if (mainCompilations.isEmpty()) return null
+
+        //TODO[Ilya Goncharov, Igor Iakovlev] Hack for Mixed mode of legacy and IR tooling and Wasm
+        var containsWasm = false
+        var containsIrJs = false
+        var containsLegacyJs = false
+        val errorMessage = "Cannot resolve project dependency $src -> $target." +
+                "Dependency to project with multiple js/wasm compilations is not supported yet."
+
+        check(mainCompilations.size <= 3) { errorMessage }
+        for (npmResolver in mainCompilations) {
+            when (val compilation = npmResolver.compilation) {
+                is KotlinJsIrCompilation -> {
+                    if (compilation.platformType == KotlinPlatformType.wasm) {
+                        check(!containsWasm) { errorMessage }
+                        containsWasm = true
+                    } else {
+                        check(!containsIrJs) { errorMessage }
+                        containsIrJs = true
+                    }
+                }
+                else -> {
+                    check(!containsLegacyJs) { errorMessage }
+                    containsLegacyJs = true
                 }
             }
+        }
+        check(containsWasm || containsIrJs || containsLegacyJs) { errorMessage }
 
-            if (mainCompilations.size > 2) {
-                error(
-                    "Cannot resolve project dependency $src -> $target." +
-                            "Dependency to project with multiple js compilation not supported yet."
-                )
-            }
-
-            mainCompilations
-        } else null
+        return mainCompilations
     }
 
     /**
