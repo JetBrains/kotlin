@@ -22,9 +22,6 @@ fun main(args: Array<String>) {
     System.setProperty("java.awt.headless", "true")
 
     val jvmOnlyBoxTests = listOf(
-        "testsWithJava9",
-        "testsWithJava15",
-        "testsWithJava17",
         "compileKotlinAgainstKotlin",
     )
 

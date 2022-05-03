@@ -22,7 +22,7 @@ import java.util.regex.Pattern;
 public class IrJsCodegenBoxErrorTestGenerated extends AbstractIrJsCodegenBoxErrorTest {
     @Test
     public void testAllFilesPresentInBoxError() throws Exception {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxError"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true, "testsWithJava9", "testsWithJava15", "testsWithJava17", "compileKotlinAgainstKotlin");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxError"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true, "compileKotlinAgainstKotlin");
     }
 
     @Nested
