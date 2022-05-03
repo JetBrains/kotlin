@@ -12,6 +12,6 @@
 -keep public class org.jetbrains.kotlin.backend.konan.ObjCInteropKt { public *; }
 -keep public class org.jetbrains.kotlin.backend.konan.ObjCOverridabilityCondition { public *; }
 -keep public class org.jetbrains.kotlin.cli.bc.K2NativeCompilerArguments* { public *; }
--keep public class org.jetbrains.kotlin.cli.bc.K2NativeKt { public ** parse*; }
+-keep public class org.jetbrains.kotlin.cli.bc.K2NativeKt { public *** parse*(...); }
 -keep public class org.jetbrains.kotlin.cli.bc.BinaryOptionWithValue { public *; }
 -keep public class org.jetbrains.kotlin.backend.konan.BinaryOptions { public *; }
