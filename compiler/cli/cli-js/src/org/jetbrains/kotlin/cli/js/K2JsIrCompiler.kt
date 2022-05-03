@@ -365,6 +365,7 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
                     "esm" -> WasmLoaderKind.BROWSER
                     "nodejs" -> WasmLoaderKind.NODE
                     "d8" -> WasmLoaderKind.D8
+                    "d8NodeCompatible" -> WasmLoaderKind.D8NodeCompatible
                     else -> throw IllegalArgumentException("Unrecognized flavor for the wasm launcher")
                 }
 

@@ -122,13 +122,18 @@ fun WasmCompiledModuleFragment.generateJs(): String {
 
 enum class WasmLoaderKind {
     D8,
+    D8NodeCompatible,
     NODE,
     BROWSER,
 }
 
 fun generateJsWasmLoader(kind: WasmLoaderKind, wasmFilePath: String, externalJs: String): String {
+    val nodeExitOnD8 =
+        if (kind == WasmLoaderKind.D8NodeCompatible) "if ((typeof process !== 'undefined') && (typeof process.versions.node !== 'undefined')) process.exit(0)\n"
+        else ""
+
     val instantiation = when (kind) {
-        WasmLoaderKind.D8 ->
+        WasmLoaderKind.D8, WasmLoaderKind.D8NodeCompatible ->
             """
                 const wasmModule = new WebAssembly.Module(read('$wasmFilePath', 'binary'));
                 const wasmInstance = new WebAssembly.Instance(wasmModule, { js_code });
@@ -164,9 +169,11 @@ fun generateJsWasmLoader(kind: WasmLoaderKind, wasmFilePath: String, externalJs:
 
         WasmLoaderKind.NODE ->
             "module.exports = wasmExports;\n"
+
+        WasmLoaderKind.D8NodeCompatible -> ""
     }
 
-    return externalJs + instantiation + init + export
+    return nodeExitOnD8 + externalJs + instantiation + init + export
 }
 
 fun writeCompilationResult(
