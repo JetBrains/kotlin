@@ -19,7 +19,7 @@ val projectsAllowedToUseFirFromSymbol = listOf(
 
 subprojects {
     if (name in projectsAllowedToUseFirFromSymbol) {
-        tasks.withType<org.jetbrains.kotlin.gradle.dsl.KotlinCompile<*>> {
+        tasks.withType<org.jetbrains.kotlin.gradle.dsl.KotlinCompile<*>>().configureEach {
             kotlinOptions {
                 freeCompilerArgs += "-opt-in=org.jetbrains.kotlin.fir.symbols.SymbolInternals"
             }

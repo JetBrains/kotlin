@@ -1,3 +1,5 @@
+import org.jetbrains.kotlin.gradle.dsl.KotlinJvmCompile
+
 plugins {
     kotlin("jvm")
     id("jps-compatible")
@@ -13,10 +15,12 @@ dependencies {
     testImplementation(kotlin("test-junit"))
 }
 
-kotlin.target.compilations.all {
-    kotlinOptions.languageVersion = "1.4"
-    kotlinOptions.apiVersion = "1.4"
-    kotlinOptions.freeCompilerArgs += listOf("-Xskip-prerelease-check", "-Xsuppress-version-warnings")
+tasks.withType<KotlinJvmCompile>().configureEach {
+    kotlinOptions {
+        languageVersion = "1.4"
+        apiVersion = "1.4"
+        freeCompilerArgs += listOf("-Xskip-prerelease-check", "-Xsuppress-version-warnings")
+    }
 }
 
 tasks.named<Jar>("jar") {

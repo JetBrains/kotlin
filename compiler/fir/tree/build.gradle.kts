@@ -46,9 +46,9 @@ val generateTree by tasks.registering(NoDebugJavaExec::class) {
     systemProperties["line.separator"] = "\n"
 }
 
-val compileKotlin by tasks
-
-compileKotlin.dependsOn(generateTree)
+tasks.named("compileKotlin") {
+    dependsOn(generateTree)
+}
 
 if (kotlinBuildProperties.isInJpsBuildIdeaSync) {
     apply(plugin = "idea")
