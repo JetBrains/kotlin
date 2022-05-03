@@ -12,9 +12,6 @@ val embedded by configurations
 
 embedded.apply {
     exclude("org.slf4j", "slf4j-api")
-    exclude("org.eclipse.aether", "aether-api")
-    exclude("org.eclipse.aether", "aether-util")
-    exclude("org.eclipse.aether", "aether-spi")
 }
 
 plugins {
@@ -26,11 +23,12 @@ dependencies {
     embedded(project(":kotlin-scripting-dependencies-maven")) { isTransitive = false }
     embedded(project(":kotlin-scripting-dependencies")) { isTransitive = false }
 
-    embedded("org.eclipse.aether:aether-connector-basic:1.1.0")
-    embedded("org.eclipse.aether:aether-transport-wagon:1.1.0")
-    embedded("org.eclipse.aether:aether-transport-file:1.1.0")
-    embedded("org.apache.maven:maven-core:3.8.1")
-    embedded("org.apache.maven.wagon:wagon-http:3.4.3")
+    embedded("org.apache.maven.resolver:maven-resolver-connector-basic:1.8.0")
+    embedded("org.apache.maven.resolver:maven-resolver-transport-file:1.8.0")
+    embedded("org.apache.maven.resolver:maven-resolver-transport-wagon:1.8.0")
+    embedded("org.apache.maven.resolver:maven-resolver-impl:1.8.0")
+    embedded("org.apache.maven:maven-core:3.8.5")
+    embedded("org.apache.maven.wagon:wagon-http:3.5.1")
 }
 
 sourceSets {
