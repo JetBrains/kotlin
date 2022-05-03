@@ -11,7 +11,7 @@ import com.intellij.psi.search.ProjectScope
 import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirGlobalResolveComponents
 import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirModuleResolveComponents
 import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirPhaseManager
-import org.jetbrains.kotlin.analysis.low.level.api.fir.project.structure.LLFirKtModuleBasedModuleData
+import org.jetbrains.kotlin.analysis.low.level.api.fir.project.structure.*
 import org.jetbrains.kotlin.analysis.low.level.api.fir.project.structure.LLFirLibraryProviderFactory
 import org.jetbrains.kotlin.analysis.low.level.api.fir.project.structure.LLFirLibrarySessionFactory
 import org.jetbrains.kotlin.analysis.low.level.api.fir.project.structure.registerIdeComponents
@@ -26,10 +26,7 @@ import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.backend.jvm.FirJvmTypeMapper
-import org.jetbrains.kotlin.fir.checkers.registerExtendedCommonCheckers
 import org.jetbrains.kotlin.fir.extensions.*
-import org.jetbrains.kotlin.fir.java.FirJavaFacadeForSource
-import org.jetbrains.kotlin.fir.java.JavaSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.providers.FirDependenciesSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.providers.FirProvider
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
@@ -38,12 +35,10 @@ import org.jetbrains.kotlin.fir.resolve.scopes.wrapScopeWithJvmMapped
 import org.jetbrains.kotlin.fir.scopes.FirKotlinScopeProvider
 import org.jetbrains.kotlin.fir.session.*
 import org.jetbrains.kotlin.fir.symbols.FirPhaseManager
-import org.jetbrains.kotlin.load.java.createJavaClassFinder
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.kotlin.resolve.jvm.modules.JavaModuleResolver
 import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatformAnalyzerServices
-import java.nio.file.Path
 
 @OptIn(PrivateSessionConstructor::class, SessionConfiguration::class)
 internal object LLFirSessionFactory {
@@ -53,7 +48,6 @@ internal object LLFirSessionFactory {
         globalResolveComponents: LLFirGlobalResolveComponents,
         sessionInvalidator: LLFirSessionInvalidator,
         sessionsCache: MutableMap<KtModule, LLFirResolvableModuleSession>,
-        isRootModule: Boolean,
         librariesSessionFactory: LLFirLibrarySessionFactory,
         configureSession: (LLFirSession.() -> Unit)? = null
     ): LLFirSourcesSession {
@@ -100,73 +94,40 @@ internal object LLFirSessionFactory {
             register(FirProvider::class, provider)
             register(FirPhaseManager::class, LLFirPhaseManager(sessionInvalidator))
 
-            @OptIn(ExperimentalStdlibApi::class)
-            val dependentProviders = buildList {
-                add(
-                    librariesSessionFactory.getLibrarySessionForSourceModule(module).symbolProvider
-                )
-                dependentModules
-                    .mapTo(this) {
-                        createSourcesSession(
-                            project,
-                            it,
-                            globalResolveComponents,
-                            sessionInvalidator,
-                            sessionsCache,
-                            isRootModule = false,
-                            librariesSessionFactory = librariesSessionFactory,
-                            configureSession = configureSession,
-                        ).symbolProvider
-                    }
-            }
+            registerCompilerPluginServices(contentScope, project, module)
+            registerCompilerPluginExtensions(project)
 
-            val projectWithDependenciesScope = contentScope.uniteWith(project.moduleScopeProvider.getModuleLibrariesScope(module))
-            val annotationsResolver = project.createAnnotationResolver(projectWithDependenciesScope)
-
-            // We need FirRegisteredPluginAnnotations and FirPredicateBasedProvider during extensions' registration process
-            register(FirRegisteredPluginAnnotations::class, LLFirIdeRegisteredPluginAnnotations(this@session, annotationsResolver))
-            register(
-                FirPredicateBasedProvider::class,
-                LLFirIdePredicateBasedProvider(
-                    this@session,
-                    annotationsResolver,
-                    project.createDeclarationProvider(projectWithDependenciesScope)
-                )
-            )
-
-            FirSessionFactory.FirSessionConfigurator(this).apply {
-                if (isRootModule) {
-                    registerExtendedCommonCheckers()
-                }
-                for (extensionRegistrar in FirExtensionRegistrar.getInstances(project)) {
-                    registerExtensions(extensionRegistrar.configure())
-                }
-            }.configure()
-
-            val switchableExtensionDeclarationsSymbolProvider =
-                FirSwitchableExtensionDeclarationsSymbolProvider.create(session)
-
-            switchableExtensionDeclarationsSymbolProvider?.let {
+            val switchableExtensionDeclarationsSymbolProvider = FirSwitchableExtensionDeclarationsSymbolProvider.create(session)?.also {
                 register(FirSwitchableExtensionDeclarationsSymbolProvider::class, it)
             }
 
-            val dependencyProvider = DependentModuleProviders(this, dependentProviders)
+            val dependencyProvider = LLFirDependentModuleProviders(this) {
+                add(librariesSessionFactory.getLibrarySessionForSourceModule(module).symbolProvider)
+                dependentModules
+                    .mapTo(this) { dependentSourceModule ->
+                        val dependentSourceSession = createSourcesSession(
+                            project,
+                            dependentSourceModule,
+                            globalResolveComponents,
+                            sessionInvalidator,
+                            sessionsCache,
+                            librariesSessionFactory = librariesSessionFactory,
+                            configureSession = configureSession,
+                        )
+                        dependentSourceSession.symbolProvider
+                    }
+            }
 
             register(
                 FirSymbolProvider::class,
                 LLFirModuleWithDependenciesSymbolProvider(
                     this,
+                    dependencyProvider,
                     providers = listOfNotNull(
                         provider.symbolProvider,
                         switchableExtensionDeclarationsSymbolProvider,
-                        JavaSymbolProvider(
-                            this,
-                            FirJavaFacadeForSource(
-                                this, moduleData, project.createJavaClassFinder(contentScope)
-                            )
-                        ),
+                        createJavaSymbolProvider(this, moduleData, project, contentScope)
                     ),
-                    dependencyProvider
                 )
             )
 
@@ -228,48 +189,35 @@ internal object LLFirSessionFactory {
             register(FirProvider::class, provider)
 
             register(FirPhaseManager::class, LLFirPhaseManager(sessionInvalidator))
-            val dependentProviders = buildList {
-                val librariesSearchScope = ProjectScope.getLibrariesScope(project)
-                    .intersectWith(GlobalSearchScope.notScope(libraryModule.contentScope)) // <all libraries scope> - <current library scope>
-                add(builtinsAndCloneableSession.symbolProvider)
-                addAll(
-                    LLFirLibraryProviderFactory.createProvidersByModuleLibraryDependencies(
-                        session,
-                        module,
-                        scopeProvider,
-                        project,
-                        builtinTypes
-                    ) { librariesSearchScope }
-                )
-            }
 
             // We need FirRegisteredPluginAnnotations during extensions' registration process
             val annotationsResolver = project.createAnnotationResolver(contentScope)
             register(FirRegisteredPluginAnnotations::class, LLFirIdeRegisteredPluginAnnotations(this@session, annotationsResolver))
             register(FirPredicateBasedProvider::class, FirEmptyPredicateBasedProvider())
 
-            FirSessionFactory.FirSessionConfigurator(this).apply {
-                for (extensionRegistrar in FirExtensionRegistrar.getInstances(project)) {
-                    registerExtensions(extensionRegistrar.configure())
-                }
-            }.configure()
+            registerCompilerPluginExtensions(project)
 
-            val dependencyProvider = DependentModuleProviders(this, dependentProviders)
+            val dependencyProvider = LLFirDependentModuleProviders(this) {
+                // <all libraries scope> - <current library scope>
+                val librariesSearchScope =
+                    ProjectScope.getLibrariesScope(project).intersectWith(GlobalSearchScope.notScope(libraryModule.contentScope))
+                add(builtinsAndCloneableSession.symbolProvider)
+                addAll(
+                    LLFirLibraryProviderFactory.createProvidersByModuleLibraryDependencies(
+                        session, module, scopeProvider, project, builtinTypes
+                    ) { librariesSearchScope }
+                )
+            }
 
             register(
                 FirSymbolProvider::class,
                 LLFirModuleWithDependenciesSymbolProvider(
                     this,
+                    dependencyProvider,
                     providers = listOf(
                         provider.symbolProvider,
-                        JavaSymbolProvider(
-                            this,
-                            FirJavaFacadeForSource(
-                                this, moduleData, project.createJavaClassFinder(contentScope)
-                            )
-                        ),
+                        createJavaSymbolProvider(this, moduleData, project, contentScope),
                     ),
-                    dependencyProvider
                 )
             )
 
@@ -281,13 +229,6 @@ internal object LLFirSessionFactory {
 
     }
 }
-
-private fun List<KtModule>.extractLibraryPaths(): List<Path> =
-    asSequence()
-        .filterIsInstance<KtBinaryModule>()
-        .flatMap { it.getBinaryRoots() }
-        .map { it.toAbsolutePath() }
-        .toList()
 
 @Deprecated(
     "This is a dirty hack used only for one usage (building fir for psi from stubs) and it should be removed after fix of that usage",

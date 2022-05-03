@@ -21,9 +21,7 @@ import org.jetbrains.kotlin.analysis.providers.createModuleWithoutDependenciesOu
 import org.jetbrains.kotlin.analysis.utils.caches.getValue
 import org.jetbrains.kotlin.analysis.utils.caches.softCachedValue
 import org.jetbrains.kotlin.analysis.utils.errors.unexpectedElementError
-import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
-import org.jetbrains.kotlin.fir.BuiltinTypes
 import java.util.concurrent.ConcurrentHashMap
 
 class LLFirSessionProviderStorage(val project: Project) {
@@ -60,7 +58,6 @@ class LLFirSessionProviderStorage(val project: Project) {
                             globalComponents,
                             cache.sessionInvalidator,
                             sessions,
-                            isRootModule = true,
                             librariesSessionFactory = librariesSessionFactory,
                             configureSession = configureSession,
                         )
