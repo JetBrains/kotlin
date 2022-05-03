@@ -38,10 +38,7 @@ import org.jetbrains.kotlin.fir.deserialization.EmptyModuleDataProvider
 import org.jetbrains.kotlin.fir.deserialization.LibraryPathFilter
 import org.jetbrains.kotlin.fir.deserialization.ModuleDataProvider
 import org.jetbrains.kotlin.fir.deserialization.MultipleModuleDataProvider
-import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
-import org.jetbrains.kotlin.fir.extensions.FirPredicateBasedProvider
-import org.jetbrains.kotlin.fir.extensions.FirRegisteredPluginAnnotations
-import org.jetbrains.kotlin.fir.extensions.FirSwitchableExtensionDeclarationsSymbolProvider
+import org.jetbrains.kotlin.fir.extensions.*
 import org.jetbrains.kotlin.fir.extensions.predicate.DeclarationPredicate
 import org.jetbrains.kotlin.fir.java.FirJavaFacadeForSource
 import org.jetbrains.kotlin.fir.java.JavaSymbolProvider
@@ -405,18 +402,7 @@ internal object LLFirSessionFactory {
             // We need FirRegisteredPluginAnnotations during extensions' registration process
             val annotationsResolver = project.createAnnotationResolver(contentScope)
             register(FirRegisteredPluginAnnotations::class, LLFirIdeRegisteredPluginAnnotations(this@session, annotationsResolver))
-            register(
-                FirPredicateBasedProvider::class,
-                object : FirPredicateBasedProvider() {
-                    override fun getSymbolsByPredicate(predicate: DeclarationPredicate): List<FirBasedSymbol<*>> = emptyList()
-
-                    override fun getOwnersOfDeclaration(declaration: FirDeclaration): List<FirBasedSymbol<*>>? = null
-
-                    override fun fileHasPluginAnnotations(file: FirFile): Boolean = false
-
-                    override fun matches(predicate: DeclarationPredicate, declaration: FirDeclaration): Boolean = false
-                }
-            )
+            register(FirPredicateBasedProvider::class, FirEmptyPredicateBasedProvider())
 
             FirSessionFactory.FirSessionConfigurator(this).apply {
                 for (extensionRegistrar in FirExtensionRegistrar.getInstances(project)) {

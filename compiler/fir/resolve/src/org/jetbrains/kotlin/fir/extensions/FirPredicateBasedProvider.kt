@@ -150,4 +150,15 @@ class FirPredicateBasedProviderImpl(private val session: FirSession) : FirPredic
     }
 }
 
+@NoMutableState
+class FirEmptyPredicateBasedProvider(): FirPredicateBasedProvider() {
+    override fun getSymbolsByPredicate(predicate: DeclarationPredicate): List<FirBasedSymbol<*>> = emptyList()
+
+    override fun getOwnersOfDeclaration(declaration: FirDeclaration): List<FirBasedSymbol<*>>? = null
+
+    override fun fileHasPluginAnnotations(file: FirFile): Boolean = false
+
+    override fun matches(predicate: DeclarationPredicate, declaration: FirDeclaration): Boolean = false
+}
+
 val FirSession.predicateBasedProvider: FirPredicateBasedProvider by FirSession.sessionComponentAccessor()
