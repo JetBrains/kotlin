@@ -27,7 +27,7 @@ internal class KtFirAnonymousObjectSymbol(
 ) : KtAnonymousObjectSymbol(), KtFirSymbol<FirAnonymousObjectSymbol> {
     override val psi: PsiElement? by cached { firSymbol.findPsi() }
 
-    override val annotationsList by cached { KtFirAnnotationListForDeclaration.create(firSymbol, resolveState.rootModuleSession, token) }
+    override val annotationsList by cached { KtFirAnnotationListForDeclaration.create(firSymbol, resolveState.useSiteFirSession, token) }
 
     override val superTypes: List<KtType> by cached { firSymbol.superTypesList(builder) }
 

@@ -48,7 +48,7 @@ internal class KtFirConstructorSymbol(
 
     override val visibility: Visibility get() = withValidityAssertion { firSymbol.visibility }
 
-    override val annotationsList by cached { KtFirAnnotationListForDeclaration.create(firSymbol, resolveState.rootModuleSession, token) }
+    override val annotationsList by cached { KtFirAnnotationListForDeclaration.create(firSymbol, resolveState.useSiteFirSession, token) }
 
     override val containingClassIdIfNonLocal: ClassId?
         get() = withValidityAssertion { firSymbol.containingClass()?.classId?.takeUnless { it.isLocal } }

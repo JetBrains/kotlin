@@ -39,7 +39,7 @@ internal abstract class LLFirResolvableModuleResolveState(
 ) : LLFirModuleResolveState() {
     abstract val globalComponents: LLFirGlobalResolveComponents
 
-    final override val rootModuleSession = sessionProvider.rootModuleSession
+    final override val useSiteFirSession = sessionProvider.rootModuleSession
 
     override fun getSessionFor(module: KtModule): FirSession =
         sessionProvider.getSession(module)
@@ -80,7 +80,7 @@ internal abstract class LLFirResolvableModuleResolveState(
             "This method will only work on compiled declarations, but this declaration is not compiled: ${ktDeclaration.getElementTextInContext()}"
         }
 
-        val searcher = FirDeclarationForCompiledElementSearcher(rootModuleSession.symbolProvider)
+        val searcher = FirDeclarationForCompiledElementSearcher(useSiteFirSession.symbolProvider)
         val firDeclaration = searcher.findNonLocalDeclaration(ktDeclaration)
         return firDeclaration.symbol
     }

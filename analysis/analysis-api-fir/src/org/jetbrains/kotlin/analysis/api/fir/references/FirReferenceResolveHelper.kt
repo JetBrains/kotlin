@@ -189,7 +189,7 @@ internal object FirReferenceResolveHelper {
         val symbolBuilder = analysisSession.firSymbolBuilder
         val adjustedResolutionExpression = adjustResolutionExpression(expression)
         val fir = adjustedResolutionExpression.getOrBuildFir(analysisSession.firResolveState)
-        val session = analysisSession.firResolveState.rootModuleSession
+        val session = analysisSession.firResolveState.useSiteFirSession
         return when (fir) {
             is FirResolvedTypeRef -> getSymbolsForResolvedTypeRef(fir, expression, session, symbolBuilder)
             is FirResolvedQualifier ->

@@ -29,7 +29,7 @@ fun FirBasedSymbol<*>.getContainingKtModule(resolveState: LLFirModuleResolveStat
     val target = when (this) {
         is FirCallableSymbol -> {
             // callable fake overrides have use-site FirModuleData
-            dispatchReceiverClassOrNull()?.toFirRegularClassSymbol(resolveState.rootModuleSession) ?: this
+            dispatchReceiverClassOrNull()?.toFirRegularClassSymbol(resolveState.useSiteFirSession) ?: this
         }
         else -> this
     }

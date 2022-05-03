@@ -53,7 +53,7 @@ internal class KtFirScopeProvider(
     override val token: ValidityToken,
 ) : KtScopeProvider(), ValidityTokenOwner {
     // KtFirScopeProvider is thread local, so it's okay to use the same session here
-    private val scopeSession = analysisSession.getScopeSessionFor(analysisSession.rootModuleSession)
+    private val scopeSession = analysisSession.getScopeSessionFor(analysisSession.useSiteSession)
 
 
     override val analysisSession: KtFirAnalysisSession by weakRef(analysisSession)
@@ -89,7 +89,7 @@ internal class KtFirScopeProvider(
     override fun getMemberScope(classSymbol: KtSymbolWithMembers): KtScope = withValidityAssertion {
         memberScopeCache.getOrPut(classSymbol) {
             val firScope = classSymbol.withFirForScope { fir ->
-                val firSession = analysisSession.rootModuleSession
+                val firSession = analysisSession.useSiteSession
                 fir.unsubstitutedScope(
                     firSession,
                     scopeSession,
@@ -103,7 +103,7 @@ internal class KtFirScopeProvider(
 
     override fun getStaticMemberScope(symbol: KtSymbolWithMembers): KtScope {
         val firScope = symbol.withFirForScope { fir ->
-            val firSession = analysisSession.rootModuleSession
+            val firSession = analysisSession.useSiteSession
             fir.scopeProvider.getStaticScope(
                 fir,
                 firSession,
@@ -116,7 +116,7 @@ internal class KtFirScopeProvider(
     override fun getDeclaredMemberScope(classSymbol: KtSymbolWithMembers): KtScope = withValidityAssertion {
         declaredMemberScopeCache.getOrPut(classSymbol) {
             val firScope = classSymbol.withFirForScope {
-                analysisSession.rootModuleSession.declaredMemberScope(it)
+                analysisSession.useSiteSession.declaredMemberScope(it)
             } ?: return@getOrPut getEmptyScope()
 
             KtFirDelegatingScope(firScope, builder, token)
@@ -130,7 +130,7 @@ internal class KtFirScopeProvider(
             val firScope = classSymbol.withFirForScope { fir ->
                 val delegateFields = fir.delegateFields
                 if (delegateFields.isNotEmpty()) {
-                    val firSession = analysisSession.rootModuleSession
+                    val firSession = analysisSession.useSiteSession
                     FirDelegatedMemberScope(
                         firSession,
                         scopeSession,
@@ -176,7 +176,7 @@ internal class KtFirScopeProvider(
 
     override fun getTypeScope(type: KtType): KtScope? {
         check(type is KtFirType) { "KtFirScopeProvider can only work with KtFirType, but ${type::class} was provided" }
-        val firSession = firResolveState.rootModuleSession
+        val firSession = firResolveState.useSiteFirSession
         val firTypeScope = type.coneType.scope(
             firSession,
             scopeSession,

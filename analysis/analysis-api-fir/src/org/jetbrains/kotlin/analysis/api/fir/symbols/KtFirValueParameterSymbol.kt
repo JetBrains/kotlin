@@ -53,7 +53,7 @@ internal class KtFirValueParameterSymbol(
 
     override val hasDefaultValue: Boolean get() = withValidityAssertion { firSymbol.hasDefaultValue }
 
-    override val annotationsList by cached { KtFirAnnotationListForDeclaration.create(firSymbol, resolveState.rootModuleSession, token) }
+    override val annotationsList by cached { KtFirAnnotationListForDeclaration.create(firSymbol, resolveState.useSiteFirSession, token) }
 
     override fun createPointer(): KtSymbolPointer<KtValueParameterSymbol> {
         KtPsiBasedSymbolPointer.createForSymbolFromSource(this)?.let { return it }

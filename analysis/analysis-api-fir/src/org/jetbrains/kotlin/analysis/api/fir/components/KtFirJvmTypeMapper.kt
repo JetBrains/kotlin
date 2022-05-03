@@ -19,6 +19,6 @@ internal class KtFirJvmTypeMapper(
 ) : KtJvmTypeMapper(), KtFirAnalysisSessionComponent {
 
     override fun mapTypeToJvmType(type: KtType, mode: TypeMappingMode): Type {
-        return analysisSession.rootModuleSession.jvmTypeMapper.mapType(type.coneType, mode)
+        return analysisSession.useSiteSession.jvmTypeMapper.mapType(type.coneType, mode)
     }
 }

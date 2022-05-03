@@ -44,7 +44,7 @@ internal class KtFirImportOptimizer(
     private val firResolveState: LLFirModuleResolveState
 ) : KtImportOptimizer() {
     private val firSession: FirSession
-        get() = firResolveState.rootModuleSession
+        get() = firResolveState.useSiteFirSession
 
     override fun analyseImports(file: KtFile): KtImportOptimizerResult {
         assertIsValidAndAccessible()

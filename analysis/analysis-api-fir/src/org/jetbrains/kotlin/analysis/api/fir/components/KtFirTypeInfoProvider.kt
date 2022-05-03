@@ -25,7 +25,7 @@ internal class KtFirTypeInfoProvider(
 
     override fun isFunctionalInterfaceType(type: KtType): Boolean {
         val coneType = (type as KtFirType).coneType
-        val firSession = analysisSession.rootModuleSession
+        val firSession = analysisSession.useSiteSession
         val samResolver = FirSamResolverImpl(
             firSession,
             analysisSession.getScopeSessionFor(firSession),
@@ -35,14 +35,14 @@ internal class KtFirTypeInfoProvider(
 
     override fun getFunctionClassKind(type: KtType): FunctionClassKind? {
         val coneType = (type as KtFirType).coneType
-        return coneType.functionClassKind(analysisSession.rootModuleSession)
+        return coneType.functionClassKind(analysisSession.useSiteSession)
     }
 
     override fun canBeNull(type: KtType): Boolean = (type as KtFirType).coneType.canBeNull
 
     override fun isDenotable(type: KtType): Boolean {
         val coneType = (type as KtFirType).coneType
-        return analysisSession.rootModuleSession.typeApproximator.approximateToSuperType(
+        return analysisSession.useSiteSession.typeApproximator.approximateToSuperType(
             coneType,
             PublicTypeApproximator.PublicApproximatorConfiguration(false)
         ) == null

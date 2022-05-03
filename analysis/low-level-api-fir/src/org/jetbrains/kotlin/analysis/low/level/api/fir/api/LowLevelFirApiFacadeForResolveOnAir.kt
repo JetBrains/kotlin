@@ -304,7 +304,7 @@ object LowLevelFirApiFacadeForResolveOnAir {
         val context = state.getTowerContextProvider(place.containingKtFile).getClosestAvailableParentContext(place)
             ?: error("TowerContext not found for ${place.getElementTextInContext()}")
 
-        val session = state.rootModuleSession
+        val session = state.useSiteFirSession
         val firTypeReference = buildFirUserTypeRef(
             typeReference = typeReference,
             session = session,

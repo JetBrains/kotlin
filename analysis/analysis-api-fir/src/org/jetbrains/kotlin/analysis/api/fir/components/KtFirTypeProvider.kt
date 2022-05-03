@@ -80,7 +80,7 @@ internal class KtFirTypeProvider(
     }
 
     override fun commonSuperType(types: Collection<KtType>): KtType? {
-        return analysisSession.rootModuleSession.typeContext
+        return analysisSession.useSiteSession.typeContext
             .commonSuperTypeOrNull(types.map { it.coneType })
             ?.asKtType()
     }
@@ -115,7 +115,7 @@ internal class KtFirTypeProvider(
     }
 
     override fun haveCommonSubtype(a: KtType, b: KtType): Boolean {
-        return analysisSession.rootModuleSession.typeContext.isCompatible(
+        return analysisSession.useSiteSession.typeContext.isCompatible(
             a.coneType,
             b.coneType
         ) == ConeTypeCompatibilityChecker.Compatibility.COMPATIBLE
@@ -136,7 +136,7 @@ internal class KtFirTypeProvider(
             // We also need to collect those on `upperBound` due to nullability.
             is ConeFlexibleType -> lowerBound.getDirectSuperTypes(shouldApproximate) + upperBound.getDirectSuperTypes(shouldApproximate)
             is ConeDefinitelyNotNullType -> original.getDirectSuperTypes(shouldApproximate).map {
-                ConeDefinitelyNotNullType.create(it, analysisSession.rootModuleSession.typeContext) ?: it
+                ConeDefinitelyNotNullType.create(it, analysisSession.useSiteSession.typeContext) ?: it
             }
             is ConeIntersectionType -> intersectedTypes.asSequence().flatMap { it.getDirectSuperTypes(shouldApproximate) }
             is ConeErrorType -> emptySequence()
@@ -146,7 +146,7 @@ internal class KtFirTypeProvider(
     }
 
     private fun ConeLookupTagBasedType.getSubstitutedSuperTypes(shouldApproximate: Boolean): Sequence<ConeKotlinType> {
-        val session = analysisSession.firResolveState.rootModuleSession
+        val session = analysisSession.firResolveState.useSiteFirSession
         val symbol = lookupTag.toSymbol(session)
         val superTypes = when (symbol) {
             is FirAnonymousObjectSymbol -> symbol.superConeTypes

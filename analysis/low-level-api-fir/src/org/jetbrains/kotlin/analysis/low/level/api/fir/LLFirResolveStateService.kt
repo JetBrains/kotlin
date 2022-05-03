@@ -10,9 +10,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.ProjectRootModificationTracker
 import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.LLFirModuleResolveState
-import org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.FirLazyDeclarationResolver
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.*
-import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirLibraryOrLibrarySourceResolvableModuleSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSessionProviderStorage
 import org.jetbrains.kotlin.analysis.low.level.api.fir.state.LLFirSourceModuleResolveState
 import org.jetbrains.kotlin.analysis.low.level.api.fir.state.LLFirLibraryOrLibrarySourceResolvableModuleResolveState
@@ -43,18 +41,18 @@ internal class LLFirResolveStateService(project: Project) {
             ServiceManager.getService(project, LLFirResolveStateService::class.java)
 
         internal fun createResolveStateFor(
-            module: KtModule,
+            useSiteKtModule: KtModule,
             sessionProviderStorage: LLFirSessionProviderStorage,
             configureSession: (LLFirSession.() -> Unit)? = null,
         ): LLFirResolvableModuleResolveState {
-            val sessionProvider = sessionProviderStorage.getSessionProvider(module, configureSession)
+            val sessionProvider = sessionProviderStorage.getSessionProvider(useSiteKtModule, configureSession)
             val useSiteSession = sessionProvider.rootModuleSession
-            return when (module) {
+            return when (useSiteKtModule) {
                 is KtSourceModule -> {
                     LLFirSourceModuleResolveState(
                         useSiteSession.moduleComponents.globalResolveComponents,
                         sessionProviderStorage.project,
-                        module,
+                        useSiteKtModule,
                         sessionProvider,
                     )
                 }
@@ -62,12 +60,12 @@ internal class LLFirResolveStateService(project: Project) {
                     LLFirLibraryOrLibrarySourceResolvableModuleResolveState(
                         useSiteSession.moduleComponents.globalResolveComponents,
                         sessionProviderStorage.project,
-                        module,
+                        useSiteKtModule,
                         sessionProvider,
                     )
                 }
                 else -> {
-                    error("Unexpected $module")
+                    error("Unexpected $useSiteKtModule")
                 }
             }
 
@@ -77,12 +75,12 @@ internal class LLFirResolveStateService(project: Project) {
 
 @TestOnly
 fun createResolveStateForNoCaching(
-    module: KtModule,
+    useSiteKtModule: KtModule,
     project: Project,
     configureSession: (LLFirSession.() -> Unit)? = null,
 ): LLFirModuleResolveState =
     LLFirResolveStateService.createResolveStateFor(
-        module = module,
+        useSiteKtModule = useSiteKtModule,
         sessionProviderStorage = LLFirSessionProviderStorage(project),
         configureSession = configureSession
     )

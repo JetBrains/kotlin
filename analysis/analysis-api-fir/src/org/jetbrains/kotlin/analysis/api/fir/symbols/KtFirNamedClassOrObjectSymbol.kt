@@ -65,7 +65,7 @@ internal class KtFirNamedClassOrObjectSymbol(
             else -> possiblyRawVisibility
         }
 
-    override val annotationsList by cached { KtFirAnnotationListForDeclaration.create(firSymbol, resolveState.rootModuleSession, token) }
+    override val annotationsList by cached { KtFirAnnotationListForDeclaration.create(firSymbol, resolveState.useSiteFirSession, token) }
 
     override val isInner: Boolean get() = withValidityAssertion { firSymbol.isInner }
     override val isData: Boolean get() = withValidityAssertion { firSymbol.isData }

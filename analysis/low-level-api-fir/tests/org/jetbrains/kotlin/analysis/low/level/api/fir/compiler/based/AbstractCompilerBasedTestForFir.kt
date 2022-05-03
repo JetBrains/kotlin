@@ -81,7 +81,7 @@ abstract class AbstractCompilerBasedTestForFir : AbstractCompilerBasedTest() {
             } else DiagnosticCheckerFilter.ONLY_COMMON_CHECKERS
 
             val analyzerFacade = LowLevelFirAnalyzerFacade(resolveState, allFirFiles.toMap(), diagnosticCheckerFilter)
-            return LowLevelFirOutputArtifact(resolveState.rootModuleSession, analyzerFacade)
+            return LowLevelFirOutputArtifact(resolveState.useSiteFirSession, analyzerFacade)
         }
     }
 

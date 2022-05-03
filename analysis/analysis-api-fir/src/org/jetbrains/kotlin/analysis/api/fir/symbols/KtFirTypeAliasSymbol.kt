@@ -49,7 +49,7 @@ internal class KtFirTypeAliasSymbol(
     override val expandedType: KtType by cached { builder.typeBuilder.buildKtType(firSymbol.resolvedExpandedTypeRef) }
 
     override val annotationsList: KtAnnotationsList by cached {
-        KtFirAnnotationListForDeclaration.create(firSymbol, resolveState.rootModuleSession, token)
+        KtFirAnnotationListForDeclaration.create(firSymbol, resolveState.useSiteFirSession, token)
     }
 
     override fun createPointer(): KtSymbolPointer<KtTypeAliasSymbol> {

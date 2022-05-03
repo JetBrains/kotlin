@@ -57,7 +57,7 @@ internal class KtFirFunctionSymbol(
     override val hasStableParameterNames: Boolean
         get() = withValidityAssertion { firSymbol.fir.getHasStableParameterNames(firSymbol.moduleData.session) }
 
-    override val annotationsList by cached { KtFirAnnotationListForDeclaration.create(firSymbol, resolveState.rootModuleSession, token) }
+    override val annotationsList by cached { KtFirAnnotationListForDeclaration.create(firSymbol, resolveState.useSiteFirSession, token) }
 
     override val isSuspend: Boolean get() = withValidityAssertion { firSymbol.isSuspend }
     override val isOverride: Boolean get() = withValidityAssertion { firSymbol.isOverride }

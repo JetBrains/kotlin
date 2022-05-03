@@ -28,7 +28,7 @@ internal class KtFirSamResolver(
     override fun getSamConstructor(ktClassLikeSymbol: KtClassLikeSymbol): KtSamConstructorSymbol? {
         val classId = ktClassLikeSymbol.classIdIfNonLocal ?: return null
         val owner = analysisSession.getClassLikeSymbol(classId) as? FirRegularClass ?: return null
-        val resolver = LocalSamResolver(analysisSession, analysisSession.rootModuleSession)
+        val resolver = LocalSamResolver(analysisSession, analysisSession.useSiteSession)
         return resolver.getSamConstructor(owner)?.let {
             analysisSession.firSymbolBuilder.functionLikeBuilder.buildSamConstructorSymbol(it.symbol)
         }

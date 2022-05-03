@@ -36,7 +36,7 @@ private constructor(
     private val mode: AnalysisSessionMode,
 ) : KtAnalysisSession(token) {
 
-    override val useSiteModule: KtModule get() = firResolveState.module
+    override val useSiteModule: KtModule get() = firResolveState.useSiteKtModule
 
     private enum class AnalysisSessionMode {
         REGULAR,
@@ -58,7 +58,7 @@ private constructor(
     override val scopeProviderImpl by threadLocal { KtFirScopeProvider(this, firSymbolBuilder, project, firResolveState, token) }
 
     override val symbolProviderImpl =
-        KtFirSymbolProvider(this, firResolveState.rootModuleSession.symbolProvider, firResolveState, firSymbolBuilder, token)
+        KtFirSymbolProvider(this, firResolveState.useSiteFirSession.symbolProvider, firResolveState, firSymbolBuilder, token)
 
     override val completionCandidateCheckerImpl = KtFirCompletionCandidateChecker(this, token)
 
@@ -119,9 +119,9 @@ private constructor(
         )
     }
 
-    val rootModuleSession: FirSession get() = firResolveState.rootModuleSession
-    val firSymbolProvider: FirSymbolProvider get() = rootModuleSession.symbolProvider
-    val targetPlatform: TargetPlatform get() = rootModuleSession.moduleData.platform
+    val useSiteSession: FirSession get() = firResolveState.useSiteFirSession
+    val firSymbolProvider: FirSymbolProvider get() = useSiteSession.symbolProvider
+    val targetPlatform: TargetPlatform get() = useSiteSession.moduleData.platform
 
     fun getScopeSessionFor(session: FirSession): ScopeSession = firResolveState.getScopeSessionFor(session)
 

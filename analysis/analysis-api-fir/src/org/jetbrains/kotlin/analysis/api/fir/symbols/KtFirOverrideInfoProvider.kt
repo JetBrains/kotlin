@@ -56,7 +56,7 @@ internal class KtFirOverrideInfoProvider(
         return memberFir.symbol.getImplementationStatus(
             SessionHolderImpl(
                 rootModuleSession,
-                analysisSession.getScopeSessionFor(analysisSession.rootModuleSession),
+                analysisSession.getScopeSessionFor(analysisSession.useSiteSession),
             ),
             parentClassFir.symbol
         )

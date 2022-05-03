@@ -39,7 +39,7 @@ import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 internal interface KtFirAnalysisSessionComponent {
     val analysisSession: KtFirAnalysisSession
 
-    val rootModuleSession: FirSession get() = analysisSession.firResolveState.rootModuleSession
+    val rootModuleSession: FirSession get() = analysisSession.firResolveState.useSiteFirSession
     val typeContext: ConeInferenceContext get() = rootModuleSession.typeContext
     val firSymbolBuilder get() = analysisSession.firSymbolBuilder
     val firResolveState get() = analysisSession.firResolveState
@@ -54,7 +54,7 @@ internal interface KtFirAnalysisSessionComponent {
         qualifiedAccessSource: KtSourceElement?,
         diagnosticCache: MutableList<KtDiagnostic>
     ): KtDiagnosticWithPsi<*>? {
-        val firDiagnostic = toFirDiagnostics(analysisSession.rootModuleSession, source, qualifiedAccessSource).firstOrNull() ?: return null
+        val firDiagnostic = toFirDiagnostics(analysisSession.useSiteSession, source, qualifiedAccessSource).firstOrNull() ?: return null
         diagnosticCache += firDiagnostic
         check(firDiagnostic is KtPsiDiagnostic)
         return firDiagnostic.asKtDiagnostic()
@@ -76,7 +76,7 @@ internal interface KtFirAnalysisSessionComponent {
 
     fun createTypeCheckerContext(): TypeCheckerState {
         // TODO use correct session here,
-        return analysisSession.firResolveState.rootModuleSession.typeContext.newTypeCheckerState(
+        return analysisSession.firResolveState.useSiteFirSession.typeContext.newTypeCheckerState(
             errorTypesEqualToAnything = true,
             stubTypesEqualToAnything = true
         )
