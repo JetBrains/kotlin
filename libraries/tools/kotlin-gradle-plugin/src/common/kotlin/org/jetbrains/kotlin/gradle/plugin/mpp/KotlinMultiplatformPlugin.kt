@@ -37,6 +37,7 @@ import org.jetbrains.kotlin.gradle.plugin.sources.checkSourceSetVisibilityRequir
 import org.jetbrains.kotlin.gradle.plugin.statistics.KotlinBuildStatsService
 import org.jetbrains.kotlin.gradle.scripting.internal.ScriptingGradleSubplugin
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrTargetPreset
+import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinWasmTargetPreset
 import org.jetbrains.kotlin.gradle.targets.native.tasks.artifact.registerKotlinArtifactsExtension
 import org.jetbrains.kotlin.gradle.tasks.AbstractKotlinCompileTool
 import org.jetbrains.kotlin.gradle.tasks.locateTask
@@ -195,14 +196,13 @@ class KotlinMultiplatformPlugin : Plugin<Project> {
         with(project.multiplatformExtension.presets) {
             add(KotlinJvmTargetPreset(project))
             add(KotlinJsTargetPreset(project).apply { irPreset = null })
-            add(KotlinJsIrTargetPreset(project, isWasm = false).apply { mixedMode = false })
+            add(KotlinJsIrTargetPreset(project).apply { mixedMode = false })
             add(
                 KotlinJsTargetPreset(project).apply {
-                    irPreset = KotlinJsIrTargetPreset(project, isWasm = false)
-                        .apply { mixedMode = true }
+                    irPreset = KotlinJsIrTargetPreset(project).apply { mixedMode = true }
                 }
             )
-            add(KotlinJsIrTargetPreset(project, isWasm = true).apply { mixedMode = false })
+            add(KotlinWasmTargetPreset(project))
             add(KotlinAndroidTargetPreset(project))
             add(KotlinJvmWithJavaTargetPreset(project))
 

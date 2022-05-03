@@ -19,10 +19,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinTargetWithBinaries
 import org.jetbrains.kotlin.gradle.targets.js.JsAggregatingExecutionSource
 import org.jetbrains.kotlin.gradle.targets.js.KotlinJsReportAggregatingTestRun
 import org.jetbrains.kotlin.gradle.targets.js.KotlinJsTarget
-import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsBrowserDsl
-import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsNodeDsl
-import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsSubTargetContainerDsl
-import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsTargetDsl
+import org.jetbrains.kotlin.gradle.targets.js.dsl.*
 import org.jetbrains.kotlin.gradle.targets.js.npm.npmProject
 import org.jetbrains.kotlin.gradle.tasks.locateOrRegisterTask
 import org.jetbrains.kotlin.gradle.tasks.registerTask
@@ -40,7 +37,9 @@ constructor(
     KotlinTargetWithBinaries<KotlinJsIrCompilation, KotlinJsBinaryContainer>(project, platformType),
     KotlinTargetWithTests<JsAggregatingExecutionSource, KotlinJsReportAggregatingTestRun>,
     KotlinJsTargetDsl,
-    KotlinJsSubTargetContainerDsl {
+    KotlinWasmTargetDsl,
+    KotlinJsSubTargetContainerDsl,
+    KotlinWasmSubTargetContainerDsl {
     override lateinit var testRuns: NamedDomainObjectContainer<KotlinJsReportAggregatingTestRun>
         internal set
 
@@ -151,6 +150,7 @@ constructor(
         }
     }
 
+    //Browser
     private val browserLazyDelegate = lazy {
         commonLazy
         project.objects.newInstance(KotlinBrowserJsIr::class.java, this).also {
@@ -173,6 +173,7 @@ constructor(
         body(browser)
     }
 
+    //node.js
     private val nodejsLazyDelegate = lazy {
         commonLazy
         project.objects.newInstance(KotlinNodeJsIr::class.java, this).also {
@@ -196,9 +197,33 @@ constructor(
         body(nodejs)
     }
 
+    //d8
+    private val d8LazyDelegate = lazy {
+        commonLazy
+        project.objects.newInstance(KotlinD8Ir::class.java, this).also {
+            it.configureSubTarget()
+            d8ConfiguredHandlers.forEach { handler ->
+                handler(it)
+            }
+
+            d8ConfiguredHandlers.clear()
+        }
+    }
+
+    private val d8ConfiguredHandlers = mutableListOf<KotlinWasmD8Dsl.() -> Unit>()
+
+    override val d8 by d8LazyDelegate
+
+    override val isD8Configured: Boolean
+        get() = d8LazyDelegate.isInitialized()
+
     private fun KotlinJsIrSubTarget.configureSubTarget() {
         configureTestSideEffect
         configure()
+    }
+
+    override fun d8(body: KotlinWasmD8Dsl.() -> Unit) {
+        body(d8)
     }
 
     override fun whenBrowserConfigured(body: KotlinJsBrowserDsl.() -> Unit) {
@@ -214,6 +239,14 @@ constructor(
             nodejs(body)
         } else {
             nodejsConfiguredHandlers += body
+        }
+    }
+
+    override fun whenD8Configured(body: KotlinWasmD8Dsl.() -> Unit) {
+        if (d8LazyDelegate.isInitialized()) {
+            d8(body)
+        } else {
+            d8ConfiguredHandlers += body
         }
     }
 

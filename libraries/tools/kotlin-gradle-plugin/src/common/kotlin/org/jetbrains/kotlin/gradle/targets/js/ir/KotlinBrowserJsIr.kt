@@ -35,6 +35,8 @@ open class KotlinBrowserJsIr @Inject constructor(target: KotlinJsIrTarget) :
     KotlinJsIrSubTarget(target, "browser"),
     KotlinJsBrowserDsl {
 
+    private val nodeJs = NodeJsRootPlugin.apply(project.rootProject)
+
     private val webpackTaskConfigurations: MutableList<KotlinWebpack.() -> Unit> = mutableListOf()
     private val runTaskConfigurations: MutableList<KotlinWebpack.() -> Unit> = mutableListOf()
 
@@ -45,11 +47,24 @@ open class KotlinBrowserJsIr @Inject constructor(target: KotlinJsIrTarget) :
     override val testTaskDescription: String
         get() = "Run all ${target.name} tests inside browser using karma and webpack"
 
-    override fun configureDefaultTestFramework(it: KotlinJsTest) {
-        it.useKarma {
-            useChromeHeadless()
+    override fun configureTestDependencies(test: KotlinJsTest) {
+        test.dependsOn(nodeJs.npmInstallTaskProvider, nodeJs.nodeJsSetupTaskProvider)
+    }
+
+    override fun configureDefaultTestFramework(test: KotlinJsTest) {
+        if (test.testFramework == null) {
+            test.useKarma {
+                useChromeHeadless()
+            }
+        }
+
+        if (test.enabled) {
+            nodeJs.taskRequirements.addTaskRequirements(test)
         }
     }
+
+    override val additionalCompilerOption: String?
+        get() = "-Xwasm-launcher=esm".takeIf { target.platformType == KotlinPlatformType.wasm }
 
     override fun commonWebpackConfig(body: KotlinWebpackConfig.() -> Unit) {
         webpackTaskConfigurations.add {
@@ -280,20 +295,6 @@ open class KotlinBrowserJsIr @Inject constructor(target: KotlinJsIrTarget) :
     ): T = when (kind) {
         KotlinJsBinaryMode.PRODUCTION -> releaseValue
         KotlinJsBinaryMode.DEVELOPMENT -> debugValue
-    }
-
-    override fun addLinkOptions(compilation: KotlinJsIrCompilation) {
-        if (compilation.platformType != KotlinPlatformType.wasm)
-            return
-
-        // Wasm requires different kinds of launchers for browser and nodejs. This might change in the future.
-        compilation.binaries
-            .withType(JsIrBinary::class.java)
-            .all {
-                it.linkTask.configure { linkTask ->
-                    linkTask.kotlinOptions.freeCompilerArgs += "-Xwasm-launcher=esm"
-                }
-            }
     }
 
     companion object {

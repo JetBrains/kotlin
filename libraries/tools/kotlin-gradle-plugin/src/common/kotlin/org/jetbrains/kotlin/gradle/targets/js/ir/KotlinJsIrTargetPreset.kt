@@ -19,8 +19,7 @@ import org.jetbrains.kotlin.gradle.utils.runProjectConfigurationHealthCheckWhenE
 import org.jetbrains.kotlin.statistics.metrics.StringMetrics
 
 open class KotlinJsIrTargetPreset(
-    project: Project,
-    isWasm: Boolean,
+    project: Project
 ) : KotlinOnlyTargetPreset<KotlinJsIrTarget, KotlinJsIrCompilation>(
     project
 ) {
@@ -29,21 +28,9 @@ open class KotlinJsIrTargetPreset(
     open val isMpp: Boolean
         get() = true
 
-    override val platformType: KotlinPlatformType =
-        if (isWasm)
-            KotlinPlatformType.wasm
-        else
-            KotlinPlatformType.js
+    override val platformType: KotlinPlatformType = KotlinPlatformType.js
 
     override fun instantiateTarget(name: String): KotlinJsIrTarget {
-        if (platformType == KotlinPlatformType.wasm && !PropertiesProvider(project).wasmStabilityNoWarn) {
-            project.logger.warn(
-                """
-                    New 'wasm' target is Work-in-Progress and is subject to change without notice.
-                """.trimIndent()
-            )
-        }
-
         return project.objects.newInstance(KotlinJsIrTarget::class.java, project, platformType, mixedMode).apply {
             this.isMpp = this@KotlinJsIrTargetPreset.isMpp
             if (!mixedMode) {
@@ -87,11 +74,7 @@ open class KotlinJsIrTargetPreset(
         return result
     }
 
-    override fun getName(): String = when (platformType) {
-        KotlinPlatformType.wasm -> WASM_PRESET_NAME
-        KotlinPlatformType.js -> JS_PRESET_NAME
-        else -> error("Unsupported platform type")
-    }
+    override fun getName(): String = JS_PRESET_NAME
 
     //TODO[Ilya Goncharov] remove public morozov
     public override fun createCompilationFactory(
@@ -104,15 +87,13 @@ open class KotlinJsIrTargetPreset(
             "js",
             KotlinJsCompilerType.IR.lowerName
         )
-        private const val WASM_PRESET_NAME = "wasm"
     }
 }
 
 class KotlinJsIrSingleTargetPreset(
     project: Project
 ) : KotlinJsIrTargetPreset(
-    project,
-    isWasm = false,
+    project
 ) {
     override val isMpp: Boolean
         get() = false

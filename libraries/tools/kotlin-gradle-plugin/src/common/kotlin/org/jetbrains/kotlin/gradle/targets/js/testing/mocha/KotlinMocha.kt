@@ -9,7 +9,6 @@ import org.gradle.api.Project
 import org.gradle.process.ProcessForkOptions
 import org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessagesClientSettings
 import org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessagesTestExecutionSpec
-import org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessagesTestExecutor.Companion.TC_PROJECT_PROPERTY
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
 import org.jetbrains.kotlin.gradle.targets.js.RequiredKotlinJsDependency
@@ -20,8 +19,8 @@ import org.jetbrains.kotlin.gradle.targets.js.npm.npmProject
 import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTest
 import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTestFramework
 import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinTestRunnerCliArgs
-import org.jetbrains.kotlin.gradle.utils.isConfigurationCacheAvailable
 import java.io.File
+import org.jetbrains.kotlin.gradle.targets.js.isTeamCity
 
 class KotlinMocha(@Transient override val compilation: KotlinJsCompilation, private val basePath: String) :
     KotlinJsTestFramework {
@@ -29,13 +28,6 @@ class KotlinMocha(@Transient override val compilation: KotlinJsCompilation, priv
     private val project: Project = compilation.target.project
     private val npmProject = compilation.npmProject
     private val versions = NodeJsRootPlugin.apply(project.rootProject).versions
-    private val isTeamCity by lazy {
-        if (isConfigurationCacheAvailable(project.gradle)) {
-            project.providers.gradleProperty(TC_PROJECT_PROPERTY).forUseAtConfigurationTime().isPresent
-        } else {
-            project.hasProperty(TC_PROJECT_PROPERTY)
-        }
-    }
 
     override val settingsState: String
         get() = "mocha"
@@ -67,7 +59,7 @@ class KotlinMocha(@Transient override val compilation: KotlinJsCompilation, priv
             prependSuiteName = true,
             stackTraceParser = ::parseNodeJsStackTraceAsJvm,
             ignoreOutOfRootNodes = true,
-            escapeTCMessagesInLog = isTeamCity
+            escapeTCMessagesInLog = project.isTeamCity
         )
 
         val cliArgs = KotlinTestRunnerCliArgs(
@@ -80,7 +72,6 @@ class KotlinMocha(@Transient override val compilation: KotlinJsCompilation, priv
         val file = task.inputFileProperty.get().asFile.toString()
 
         val adapter = createAdapterJs(file, "kotlin-test-nodejs-runner", ADAPTER_NODEJS)
-
         val args = mutableListOf(
             "--require",
             npmProject.require("source-map-support/register.js")

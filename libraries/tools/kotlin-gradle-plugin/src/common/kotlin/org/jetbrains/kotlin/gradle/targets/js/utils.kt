@@ -7,8 +7,11 @@ package org.jetbrains.kotlin.gradle.targets.js
 
 import org.gradle.internal.hash.FileHasher
 import org.gradle.internal.hash.Hashing.defaultFunction
+import org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessagesTestExecutor
 import org.jetbrains.kotlin.gradle.utils.appendLine
+import org.jetbrains.kotlin.gradle.utils.isConfigurationCacheAvailable
 import java.io.File
+import org.gradle.api.Project
 
 fun Appendable.appendConfigsFromDir(confDir: File) {
     val files = confDir.listFiles() ?: return
@@ -58,3 +61,10 @@ fun FileHasher.calculateDirHash(
 const val JS = "js"
 const val JS_MAP = "js.map"
 const val META_JS = "meta.js"
+
+val Project.isTeamCity: Boolean
+    get() = if (isConfigurationCacheAvailable(project.gradle)) {
+        project.providers.gradleProperty(TCServiceMessagesTestExecutor.TC_PROJECT_PROPERTY).forUseAtConfigurationTime().isPresent
+    } else {
+        project.hasProperty(TCServiceMessagesTestExecutor.TC_PROJECT_PROPERTY)
+    }

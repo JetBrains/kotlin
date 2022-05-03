@@ -11,9 +11,7 @@ import org.gradle.api.plugins.ExtensionAware
 import org.gradle.api.tasks.Copy
 import org.gradle.api.tasks.TaskProvider
 import org.gradle.language.base.plugins.LifecycleBasePlugin
-import org.jetbrains.kotlin.gradle.plugin.AbstractKotlinTargetConfigurator
-import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
-import org.jetbrains.kotlin.gradle.plugin.KotlinTargetWithTests
+import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.isMain
 import org.jetbrains.kotlin.gradle.plugin.whenEvaluated
 import org.jetbrains.kotlin.gradle.targets.js.KotlinJsPlatformTestRun
@@ -21,7 +19,6 @@ import org.jetbrains.kotlin.gradle.targets.js.dsl.Distribution
 import org.jetbrains.kotlin.gradle.targets.js.dsl.ExperimentalDistributionDsl
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsBinaryMode
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsSubTargetDsl
-import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmResolverPlugin
 import org.jetbrains.kotlin.gradle.targets.js.npm.npmProject
 import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTest
@@ -37,8 +34,6 @@ abstract class KotlinJsIrSubTarget(
     private val disambiguationClassifier: String
 ) : KotlinJsSubTargetDsl {
     val project get() = target.project
-
-    private val nodeJs = NodeJsRootPlugin.apply(project.rootProject)
 
     abstract val testTaskDescription: String
 
@@ -107,7 +102,16 @@ abstract class KotlinJsIrSubTarget(
             }
     }
 
-    abstract fun addLinkOptions(compilation: KotlinJsIrCompilation)
+    private fun addLinkOptions(compilation: KotlinJsIrCompilation) {
+        val additionalCompilerOption = additionalCompilerOption ?: return
+        compilation.binaries
+            .withType(JsIrBinary::class.java)
+            .all {
+                it.linkTask.configure { linkTask ->
+                    linkTask.kotlinOptions.freeCompilerArgs += additionalCompilerOption
+                }
+            }
+    }
 
     private fun configureTestsRun(testRun: KotlinJsPlatformTestRun, compilation: KotlinJsIrCompilation) {
         fun KotlinJsPlatformTestRun.subtargetTestTaskName(): String = disambiguateCamelCased(
@@ -139,7 +143,7 @@ abstract class KotlinJsIrSubTarget(
                 )
             )
 
-            testJs.dependsOn(nodeJs.npmInstallTaskProvider, nodeJs.nodeJsSetupTaskProvider)
+            configureTestDependencies(testJs)
 
             testJs.onlyIf { task ->
                 (task as KotlinJsTest).inputFileProperty
@@ -166,18 +170,14 @@ abstract class KotlinJsIrSubTarget(
 
         project.whenEvaluated {
             testJs.configure {
-                if (it.testFramework == null) {
-                    configureDefaultTestFramework(it)
-                }
-
-                if (it.enabled) {
-                    nodeJs.taskRequirements.addTaskRequirements(it)
-                }
+                configureDefaultTestFramework(it)
             }
         }
     }
 
-    protected abstract fun configureDefaultTestFramework(it: KotlinJsTest)
+    protected abstract fun configureDefaultTestFramework(test: KotlinJsTest)
+    protected abstract fun configureTestDependencies(test: KotlinJsTest)
+    protected abstract val additionalCompilerOption: String?
 
     private fun configureMain() {
         target.compilations.all { compilation ->
