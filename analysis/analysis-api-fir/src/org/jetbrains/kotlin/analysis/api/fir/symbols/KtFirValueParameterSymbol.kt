@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtPsiBasedSymbolPointe
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtSymbolPointer
 import org.jetbrains.kotlin.analysis.api.tokens.ValidityToken
 import org.jetbrains.kotlin.analysis.api.withValidityAssertion
-import org.jetbrains.kotlin.analysis.low.level.api.fir.api.LLFirModuleResolveState
+import org.jetbrains.kotlin.analysis.low.level.api.fir.api.LLFirResolveSession
 import org.jetbrains.kotlin.fir.renderWithType
 import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
 import org.jetbrains.kotlin.fir.types.arrayElementType
@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.name.Name
 
 internal class KtFirValueParameterSymbol(
     override val firSymbol: FirValueParameterSymbol,
-    override val resolveState: LLFirModuleResolveState,
+    override val firResolveSession: LLFirResolveSession,
     override val token: ValidityToken,
     private val builder: KtSymbolByFirBuilder
 ) : KtValueParameterSymbol(), KtFirSymbol<FirValueParameterSymbol> {
@@ -53,7 +53,7 @@ internal class KtFirValueParameterSymbol(
 
     override val hasDefaultValue: Boolean get() = withValidityAssertion { firSymbol.hasDefaultValue }
 
-    override val annotationsList by cached { KtFirAnnotationListForDeclaration.create(firSymbol, resolveState.useSiteFirSession, token) }
+    override val annotationsList by cached { KtFirAnnotationListForDeclaration.create(firSymbol, firResolveSession.useSiteFirSession, token) }
 
     override fun createPointer(): KtSymbolPointer<KtValueParameterSymbol> {
         KtPsiBasedSymbolPointer.createForSymbolFromSource(this)?.let { return it }

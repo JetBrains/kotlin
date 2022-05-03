@@ -26,7 +26,7 @@ internal class KtFirSymbolDeclarationRendererProvider(
 
     override fun render(type: KtType, options: KtTypeRendererOptions): String {
         require(type is KtFirType)
-        return ConeTypeIdeRenderer(analysisSession.firResolveState.useSiteFirSession, options).renderType(type.coneType)
+        return ConeTypeIdeRenderer(analysisSession.firResolveSession.useSiteFirSession, options).renderType(type.coneType)
     }
 
     override fun renderDeclaration(symbol: KtDeclarationSymbol, options: KtDeclarationRendererOptions): String {

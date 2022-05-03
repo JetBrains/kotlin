@@ -30,7 +30,7 @@ internal class KtFirCompileTimeConstantProvider(
         expression: KtExpression,
         mode: KtConstantEvaluationMode,
     ): KtConstantValue? = withValidityAssertion {
-        evaluateFir(expression.getOrBuildFir(firResolveState), expression, mode)
+        evaluateFir(expression.getOrBuildFir(firResolveSession), expression, mode)
     }
 
     private fun evaluateFir(

@@ -29,7 +29,7 @@ import org.jetbrains.kotlin.analysis.api.symbols.markers.KtSymbolWithMembers
 import org.jetbrains.kotlin.analysis.api.tokens.ValidityToken
 import org.jetbrains.kotlin.analysis.api.types.KtType
 import org.jetbrains.kotlin.analysis.api.withValidityAssertion
-import org.jetbrains.kotlin.analysis.low.level.api.fir.api.LLFirModuleResolveState
+import org.jetbrains.kotlin.analysis.low.level.api.fir.api.LLFirResolveSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.getElementTextInContext
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirClass
@@ -49,7 +49,7 @@ internal class KtFirScopeProvider(
     analysisSession: KtFirAnalysisSession,
     builder: KtSymbolByFirBuilder,
     private val project: Project,
-    firResolveState: LLFirModuleResolveState,
+    firResolveSession: LLFirResolveSession,
     override val token: ValidityToken,
 ) : KtScopeProvider(), ValidityTokenOwner {
     // KtFirScopeProvider is thread local, so it's okay to use the same session here
@@ -58,7 +58,7 @@ internal class KtFirScopeProvider(
 
     override val analysisSession: KtFirAnalysisSession by weakRef(analysisSession)
     private val builder by weakRef(builder)
-    private val firResolveState by weakRef(firResolveState)
+    private val firResolveSession by weakRef(firResolveSession)
 
     private val memberScopeCache = IdentityHashMap<KtSymbolWithMembers, KtScope>()
     private val declaredMemberScopeCache = IdentityHashMap<KtSymbolWithMembers, KtScope>()
@@ -176,7 +176,7 @@ internal class KtFirScopeProvider(
 
     override fun getTypeScope(type: KtType): KtScope? {
         check(type is KtFirType) { "KtFirScopeProvider can only work with KtFirType, but ${type::class} was provided" }
-        val firSession = firResolveState.useSiteFirSession
+        val firSession = firResolveSession.useSiteFirSession
         val firTypeScope = type.coneType.scope(
             firSession,
             scopeSession,
@@ -198,7 +198,7 @@ internal class KtFirScopeProvider(
         positionInFakeFile: KtElement
     ): KtScopeContext = withValidityAssertion {
         val towerDataContext =
-            analysisSession.firResolveState.getTowerContextProvider(originalFile).getClosestAvailableParentContext(positionInFakeFile)
+            analysisSession.firResolveSession.getTowerContextProvider(originalFile).getClosestAvailableParentContext(positionInFakeFile)
                 ?: error("Cannot find enclosing declaration for ${positionInFakeFile.getElementTextInContext()}")
 
         val implicitReceivers = towerDataContext.nonLocalTowerDataElements.mapNotNull { it.implicitReceiver }.distinct()

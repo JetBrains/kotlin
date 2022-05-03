@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.analysis.api.fir.utils
 
 import org.jetbrains.kotlin.analysis.api.fir.symbols.KtFirSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtSymbol
-import org.jetbrains.kotlin.analysis.low.level.api.fir.api.LLFirModuleResolveState
+import org.jetbrains.kotlin.analysis.low.level.api.fir.api.LLFirResolveSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.project.structure.LLFirBuiltinsModuleData
 import org.jetbrains.kotlin.analysis.low.level.api.fir.project.structure.LLFirKtModuleBasedModuleData
 import org.jetbrains.kotlin.analysis.low.level.api.fir.project.structure.firModuleData
@@ -25,20 +25,20 @@ val KtSymbol.firSymbol: FirBasedSymbol<*>
     }
 
 
-fun FirBasedSymbol<*>.getContainingKtModule(resolveState: LLFirModuleResolveState): KtModule {
+fun FirBasedSymbol<*>.getContainingKtModule(firResolveSession: LLFirResolveSession): KtModule {
     val target = when (this) {
         is FirCallableSymbol -> {
             // callable fake overrides have use-site FirModuleData
-            dispatchReceiverClassOrNull()?.toFirRegularClassSymbol(resolveState.useSiteFirSession) ?: this
+            dispatchReceiverClassOrNull()?.toFirRegularClassSymbol(firResolveSession.useSiteFirSession) ?: this
         }
         else -> this
     }
     return when (val moduleData = target.firModuleData) {
         is LLFirKtModuleBasedModuleData -> moduleData.ktModule
-        is LLFirBuiltinsModuleData -> resolveState.project.getService(ProjectStructureProvider::class.java).getStdlibWithBuiltinsModule(moduleData.useSiteKtModule)
+        is LLFirBuiltinsModuleData -> firResolveSession.project.getService(ProjectStructureProvider::class.java).getStdlibWithBuiltinsModule(moduleData.useSiteKtModule)
             ?: error("Builtins not found for the ${moduleData.useSiteKtModule.moduleDescription}")
     }
 }
 
-fun KtSymbol.getContainingKtModule(resolveState: LLFirModuleResolveState): KtModule =
-    firSymbol.getContainingKtModule(resolveState)
+fun KtSymbol.getContainingKtModule(firResolveSession: LLFirResolveSession): KtModule =
+    firSymbol.getContainingKtModule(firResolveSession)

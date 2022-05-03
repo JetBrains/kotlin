@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.compiler.based
 
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.DiagnosticCheckerFilter
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFirFile
-import org.jetbrains.kotlin.analysis.low.level.api.fir.createResolveStateForNoCaching
+import org.jetbrains.kotlin.analysis.low.level.api.fir.createFirResolveSessionForNoCaching
 import org.jetbrains.kotlin.analysis.low.level.api.fir.transformers.LLFirLazyTransformer
 import org.jetbrains.kotlin.analysis.test.framework.AbstractCompilerBasedTest
 import org.jetbrains.kotlin.analysis.test.framework.base.registerAnalysisApiBaseTestServices
@@ -67,21 +67,21 @@ abstract class AbstractCompilerBasedTestForFir : AbstractCompilerBasedTest() {
             val ktModule = moduleInfoProvider.getModule(module.name) as KtSourceModuleByCompilerConfiguration
 
             val project = testServices.compilerConfigurationProvider.getProject(module)
-            val resolveState = createResolveStateForNoCaching(ktModule, project)
+            val firResolveSession = createFirResolveSessionForNoCaching(ktModule, project)
 
             val allFirFiles =
                 module.files.filter { it.isKtFile }.zip(
                     ktModule.psiFiles
                         .filterIsInstance<KtFile>()
-                        .map { psiFile -> psiFile.getOrBuildFirFile(resolveState) }
+                        .map { psiFile -> psiFile.getOrBuildFirFile(firResolveSession) }
                 )
 
             val diagnosticCheckerFilter = if (FirDiagnosticsDirectives.WITH_EXTENDED_CHECKERS in module.directives) {
                 DiagnosticCheckerFilter.EXTENDED_AND_COMMON_CHECKERS
             } else DiagnosticCheckerFilter.ONLY_COMMON_CHECKERS
 
-            val analyzerFacade = LowLevelFirAnalyzerFacade(resolveState, allFirFiles.toMap(), diagnosticCheckerFilter)
-            return LowLevelFirOutputArtifact(resolveState.useSiteFirSession, analyzerFacade)
+            val analyzerFacade = LowLevelFirAnalyzerFacade(firResolveSession, allFirFiles.toMap(), diagnosticCheckerFilter)
+            return LowLevelFirOutputArtifact(firResolveSession.useSiteFirSession, analyzerFacade)
         }
     }
 

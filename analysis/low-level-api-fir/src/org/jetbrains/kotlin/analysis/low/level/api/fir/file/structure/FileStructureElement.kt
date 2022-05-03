@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.file.structure
 
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirModuleResolveComponents
-import org.jetbrains.kotlin.analysis.low.level.api.fir.api.LLFirModuleResolveState
+import org.jetbrains.kotlin.analysis.low.level.api.fir.api.LLFirResolveSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.LowLevelFirApiFacadeForResolveOnAir
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.collectDesignation
 import org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostics.FileDiagnosticRetriever
@@ -35,7 +35,7 @@ internal class KtToFirMapping(firElement: FirElement, recorder: FirElementsRecor
     private val mapping = FirElementsRecorder.recordElementsFrom(firElement, recorder)
     private val userTypeMapping = ConcurrentHashMap<KtUserType, FirElement>()
 
-    fun getElement(ktElement: KtElement, state: LLFirModuleResolveState): FirElement? {
+    fun getElement(ktElement: KtElement, firResolveSession: LLFirResolveSession): FirElement? {
         mapping[ktElement]?.let { return it }
 
         val userType = when (ktElement) {
@@ -49,15 +49,15 @@ internal class KtToFirMapping(firElement: FirElement, recorder: FirElementsRecor
 
         return userTypeMapping.getOrPut(userType) {
             val typeReference = KtPsiFactory(ktElement.project).createType(userType.text)
-            LowLevelFirApiFacadeForResolveOnAir.onAirResolveTypeInPlace(ktElement, typeReference, state)
+            LowLevelFirApiFacadeForResolveOnAir.onAirResolveTypeInPlace(ktElement, typeReference, firResolveSession)
         }
     }
 
-    fun getFirOfClosestParent(element: KtElement, state: LLFirModuleResolveState): FirElement? {
+    fun getFirOfClosestParent(element: KtElement, firResolveSession: LLFirResolveSession): FirElement? {
         var current: PsiElement? = element
         while (current != null && current !is KtFile) {
             if (current is KtElement) {
-                getElement(current, state)?.let { return it }
+                getElement(current, firResolveSession)?.let { return it }
             }
             current = current.parent
         }

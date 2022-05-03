@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.analysis.api.fir.symbols.KtFirSymbolProvider
 import org.jetbrains.kotlin.analysis.api.fir.utils.threadLocal
 import org.jetbrains.kotlin.analysis.api.impl.base.components.KtAnalysisScopeProviderImpl
 import org.jetbrains.kotlin.analysis.api.tokens.ValidityToken
-import org.jetbrains.kotlin.analysis.low.level.api.fir.api.LLFirModuleResolveState
+import org.jetbrains.kotlin.analysis.low.level.api.fir.api.LLFirResolveSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.LowLevelFirApiFacadeForResolveOnAir
 import org.jetbrains.kotlin.analysis.project.structure.KtModule
 import org.jetbrains.kotlin.fir.FirSession
@@ -30,13 +30,13 @@ import org.jetbrains.kotlin.psi.KtFile
 internal class KtFirAnalysisSession
 private constructor(
     private val project: Project,
-    val firResolveState: LLFirModuleResolveState,
+    val firResolveSession: LLFirResolveSession,
     internal val firSymbolBuilder: KtSymbolByFirBuilder,
     token: ValidityToken,
     private val mode: AnalysisSessionMode,
 ) : KtAnalysisSession(token) {
 
-    override val useSiteModule: KtModule get() = firResolveState.useSiteKtModule
+    override val useSiteModule: KtModule get() = firResolveSession.useSiteKtModule
 
     private enum class AnalysisSessionMode {
         REGULAR,
@@ -55,19 +55,19 @@ private constructor(
 
     override val samResolverImpl = KtFirSamResolver(this, token)
 
-    override val scopeProviderImpl by threadLocal { KtFirScopeProvider(this, firSymbolBuilder, project, firResolveState, token) }
+    override val scopeProviderImpl by threadLocal { KtFirScopeProvider(this, firSymbolBuilder, project, firResolveSession, token) }
 
     override val symbolProviderImpl =
-        KtFirSymbolProvider(this, firResolveState.useSiteFirSession.symbolProvider, firResolveState, firSymbolBuilder, token)
+        KtFirSymbolProvider(this, firResolveSession.useSiteFirSession.symbolProvider, firResolveSession, firSymbolBuilder, token)
 
     override val completionCandidateCheckerImpl = KtFirCompletionCandidateChecker(this, token)
 
     override val symbolDeclarationOverridesProviderImpl =
         KtFirSymbolDeclarationOverridesProvider(this, token)
 
-    override val referenceShortenerImpl = KtFirReferenceShortener(this, token, firResolveState)
+    override val referenceShortenerImpl = KtFirReferenceShortener(this, token, firResolveSession)
 
-    override val importOptimizerImpl: KtImportOptimizer = KtFirImportOptimizer(token, firResolveState)
+    override val importOptimizerImpl: KtImportOptimizer = KtFirImportOptimizer(token, firResolveSession)
 
     override val symbolDeclarationRendererProviderImpl: KtSymbolDeclarationRendererProvider =
         KtFirSymbolDeclarationRendererProvider(this, token)
@@ -104,42 +104,42 @@ private constructor(
         }
         require(!elementToReanalyze.isPhysical) { "Depended context should be build only for non-physical elements" }
 
-        val contextResolveState = LowLevelFirApiFacadeForResolveOnAir.getResolveStateForDependentCopy(
-            originalState = firResolveState,
+        val contextFirResolveSession = LowLevelFirApiFacadeForResolveOnAir.getFirResolveSessionForDependentCopy(
+            originalFirResolveSession = firResolveSession,
             originalKtFile = originalKtFile,
             elementToAnalyze = elementToReanalyze
         )
 
         return KtFirAnalysisSession(
             project,
-            contextResolveState,
-            firSymbolBuilder.createReadOnlyCopy(contextResolveState),
+            contextFirResolveSession,
+            firSymbolBuilder.createReadOnlyCopy(contextFirResolveSession),
             token,
             AnalysisSessionMode.DEPENDENT_COPY
         )
     }
 
-    val useSiteSession: FirSession get() = firResolveState.useSiteFirSession
+    val useSiteSession: FirSession get() = firResolveSession.useSiteFirSession
     val firSymbolProvider: FirSymbolProvider get() = useSiteSession.symbolProvider
     val targetPlatform: TargetPlatform get() = useSiteSession.moduleData.platform
 
-    fun getScopeSessionFor(session: FirSession): ScopeSession = firResolveState.getScopeSessionFor(session)
+    fun getScopeSessionFor(session: FirSession): ScopeSession = firResolveSession.getScopeSessionFor(session)
 
     companion object {
         @InvalidWayOfUsingAnalysisSession
-        internal fun createAnalysisSessionByResolveState(
-            firResolveState: LLFirModuleResolveState,
+        internal fun createAnalysisSessionByFirResolveSession(
+            firResolveSession: LLFirResolveSession,
             token: ValidityToken,
         ): KtFirAnalysisSession {
-            val project = firResolveState.project
+            val project = firResolveSession.project
             val firSymbolBuilder = KtSymbolByFirBuilder(
-                firResolveState,
+                firResolveSession,
                 project,
                 token
             )
             return KtFirAnalysisSession(
                 project,
-                firResolveState,
+                firResolveSession,
                 firSymbolBuilder,
                 token,
                 AnalysisSessionMode.REGULAR,

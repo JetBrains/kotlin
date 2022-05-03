@@ -9,12 +9,12 @@ import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.ProjectRootModificationTracker
 import org.jetbrains.annotations.TestOnly
-import org.jetbrains.kotlin.analysis.low.level.api.fir.api.LLFirModuleResolveState
+import org.jetbrains.kotlin.analysis.low.level.api.fir.api.LLFirResolveSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.*
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSessionProviderStorage
-import org.jetbrains.kotlin.analysis.low.level.api.fir.state.LLFirSourceModuleResolveState
-import org.jetbrains.kotlin.analysis.low.level.api.fir.state.LLFirLibraryOrLibrarySourceResolvableModuleResolveState
-import org.jetbrains.kotlin.analysis.low.level.api.fir.state.LLFirResolvableModuleResolveState
+import org.jetbrains.kotlin.analysis.low.level.api.fir.state.LLFirSourceResolveSession
+import org.jetbrains.kotlin.analysis.low.level.api.fir.state.LLFirLibraryOrLibrarySourceResolvableResolveSession
+import org.jetbrains.kotlin.analysis.low.level.api.fir.state.LLFirResolvableResolveSession
 import org.jetbrains.kotlin.analysis.project.structure.KtLibraryModule
 import org.jetbrains.kotlin.analysis.project.structure.KtLibrarySourceModule
 import org.jetbrains.kotlin.analysis.project.structure.KtModule
@@ -23,33 +23,33 @@ import org.jetbrains.kotlin.analysis.providers.createProjectWideOutOfBlockModifi
 import org.jetbrains.kotlin.analysis.utils.caches.strongCachedValue
 import java.util.concurrent.ConcurrentHashMap
 
-internal class LLFirResolveStateService(project: Project) {
+internal class LLFirResolveSessionService(project: Project) {
     private val sessionProviderStorage = LLFirSessionProviderStorage(project)
 
     private val stateCache by strongCachedValue(
         project.createProjectWideOutOfBlockModificationTracker(),
         ProjectRootModificationTracker.getInstance(project),
     ) {
-        ConcurrentHashMap<KtModule, LLFirResolvableModuleResolveState>()
+        ConcurrentHashMap<KtModule, LLFirResolvableResolveSession>()
     }
 
-    fun getResolveState(module: KtModule): LLFirResolvableModuleResolveState =
-        stateCache.computeIfAbsent(module) { createResolveStateFor(module, sessionProviderStorage) }
+    fun getFirResolveSession(module: KtModule): LLFirResolvableResolveSession =
+        stateCache.computeIfAbsent(module) { createFirResolveSessionFor(module, sessionProviderStorage) }
 
     companion object {
-        fun getInstance(project: Project): LLFirResolveStateService =
-            ServiceManager.getService(project, LLFirResolveStateService::class.java)
+        fun getInstance(project: Project): LLFirResolveSessionService =
+            ServiceManager.getService(project, LLFirResolveSessionService::class.java)
 
-        internal fun createResolveStateFor(
+        internal fun createFirResolveSessionFor(
             useSiteKtModule: KtModule,
             sessionProviderStorage: LLFirSessionProviderStorage,
             configureSession: (LLFirSession.() -> Unit)? = null,
-        ): LLFirResolvableModuleResolveState {
+        ): LLFirResolvableResolveSession {
             val sessionProvider = sessionProviderStorage.getSessionProvider(useSiteKtModule, configureSession)
             val useSiteSession = sessionProvider.rootModuleSession
             return when (useSiteKtModule) {
                 is KtSourceModule -> {
-                    LLFirSourceModuleResolveState(
+                    LLFirSourceResolveSession(
                         useSiteSession.moduleComponents.globalResolveComponents,
                         sessionProviderStorage.project,
                         useSiteKtModule,
@@ -57,7 +57,7 @@ internal class LLFirResolveStateService(project: Project) {
                     )
                 }
                 is KtLibraryModule, is KtLibrarySourceModule -> {
-                    LLFirLibraryOrLibrarySourceResolvableModuleResolveState(
+                    LLFirLibraryOrLibrarySourceResolvableResolveSession(
                         useSiteSession.moduleComponents.globalResolveComponents,
                         sessionProviderStorage.project,
                         useSiteKtModule,
@@ -74,12 +74,12 @@ internal class LLFirResolveStateService(project: Project) {
 }
 
 @TestOnly
-fun createResolveStateForNoCaching(
+fun createFirResolveSessionForNoCaching(
     useSiteKtModule: KtModule,
     project: Project,
     configureSession: (LLFirSession.() -> Unit)? = null,
-): LLFirModuleResolveState =
-    LLFirResolveStateService.createResolveStateFor(
+): LLFirResolveSession =
+    LLFirResolveSessionService.createFirResolveSessionFor(
         useSiteKtModule = useSiteKtModule,
         sessionProviderStorage = LLFirSessionProviderStorage(project),
         configureSession = configureSession

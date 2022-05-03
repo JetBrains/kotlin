@@ -38,7 +38,7 @@ internal class KtFirExpressionTypeProvider(
 ) : KtExpressionTypeProvider(), KtFirAnalysisSessionComponent {
 
     override fun getKtExpressionType(expression: KtExpression): KtType? = withValidityAssertion {
-        when (val fir = expression.unwrap().getOrBuildFir(firResolveState)) {
+        when (val fir = expression.unwrap().getOrBuildFir(firResolveSession)) {
             is FirFunctionCall -> {
                 getReturnTypeForArrayStyleAssignmentTarget(expression, fir)
                     ?: fir.typeRef.coneType.asKtType()
@@ -95,12 +95,12 @@ internal class KtFirExpressionTypeProvider(
     }
 
     override fun getReturnTypeForKtDeclaration(declaration: KtDeclaration): KtType = withValidityAssertion {
-        val firDeclaration = declaration.getOrBuildFirOfType<FirCallableDeclaration>(firResolveState)
+        val firDeclaration = declaration.getOrBuildFirOfType<FirCallableDeclaration>(firResolveSession)
         firDeclaration.returnTypeRef.coneType.asKtType()
     }
 
     override fun getFunctionalTypeForKtFunction(declaration: KtFunction): KtType = withValidityAssertion {
-        val firFunction = declaration.getOrBuildFirOfType<FirFunction>(firResolveState)
+        val firFunction = declaration.getOrBuildFirOfType<FirFunction>(firResolveSession)
         firFunction.constructFunctionalType(firFunction.isSuspend).asKtType()
     }
 
@@ -127,7 +127,7 @@ internal class KtFirExpressionTypeProvider(
 
     private fun getExpectedTypeOfFunctionParameter(expression: PsiElement): KtType? {
         val (ktCallExpression, argumentExpression) = expression.getFunctionCallAsWithThisAsParameter() ?: return null
-        val firCall = ktCallExpression.getOrBuildFirSafe<FirFunctionCall>(firResolveState) ?: return null
+        val firCall = ktCallExpression.getOrBuildFirSafe<FirFunctionCall>(firResolveSession) ?: return null
 
         val callee = (firCall.calleeReference as? FirResolvedNamedReference)?.resolvedSymbol
         if (callee?.fir?.origin == FirDeclarationOrigin.SamConstructor) {
@@ -161,7 +161,7 @@ internal class KtFirExpressionTypeProvider(
     private fun getExpectedTypeOfInfixFunctionParameter(expression: PsiElement): KtType? {
         val infixCallExpression =
             expression.unwrapQualified<KtBinaryExpression> { binaryExpr, expr -> binaryExpr.right == expr } ?: return null
-        val firCall = infixCallExpression.getOrBuildFirSafe<FirFunctionCall>(firResolveState) ?: return null
+        val firCall = infixCallExpression.getOrBuildFirSafe<FirFunctionCall>(firResolveSession) ?: return null
 
         // There is only one parameter for infix functions; get its type
         val arguments = firCall.argumentMapping ?: return null
@@ -229,7 +229,7 @@ internal class KtFirExpressionTypeProvider(
             !typeRef.coneType.isNullableType()
         }
 
-        when (val fir = expression.getOrBuildFir(analysisSession.firResolveState)) {
+        when (val fir = expression.getOrBuildFir(analysisSession.firResolveSession)) {
             is FirExpressionWithSmartcastToNull -> if (fir.isStable) {
                 return DefiniteNullability.DEFINITELY_NULL
             }

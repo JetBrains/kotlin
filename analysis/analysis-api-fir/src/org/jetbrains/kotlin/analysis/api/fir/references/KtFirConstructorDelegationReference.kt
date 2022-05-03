@@ -19,7 +19,7 @@ class KtFirConstructorDelegationReference(
 
     override fun KtAnalysisSession.resolveToSymbols(): Collection<KtSymbol> {
         check(this is KtFirAnalysisSession)
-        val fir = expression.getOrBuildFirSafe<FirDelegatedConstructorCall>(firResolveState) ?: return emptyList()
+        val fir = expression.getOrBuildFirSafe<FirDelegatedConstructorCall>(firResolveSession) ?: return emptyList()
         return listOfNotNull(fir.calleeReference.getResolvedKtSymbolOfNameReference(firSymbolBuilder))
     }
 }

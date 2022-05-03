@@ -60,9 +60,9 @@ internal class KtFirCompletionCandidateChecker(
         nameExpression: KtSimpleNameExpression,
         possibleExplicitReceiver: KtExpression?,
     ): KtExtensionApplicabilityResult {
-        val file = originalFile.getOrBuildFirFile(firResolveState)
+        val file = originalFile.getOrBuildFirFile(firResolveSession)
         val explicitReceiverExpression = possibleExplicitReceiver?.getMatchingFirExpressionForCallReceiver()
-        val resolver = SingleCandidateResolver(firResolveState.useSiteFirSession, file)
+        val resolver = SingleCandidateResolver(firResolveSession.useSiteFirSession, file)
         val implicitReceivers = getImplicitReceivers(originalFile, nameExpression)
         for (implicitReceiverValue in implicitReceivers) {
             val resolutionParameters = ResolutionParameters(
@@ -90,7 +90,7 @@ internal class KtFirCompletionCandidateChecker(
         originalFile: KtFile,
         fakeNameExpression: KtSimpleNameExpression
     ): Sequence<ImplicitReceiverValue<*>?> {
-        val towerDataContext = analysisSession.firResolveState.getTowerContextProvider(originalFile)
+        val towerDataContext = analysisSession.firResolveSession.getTowerContextProvider(originalFile)
             .getClosestAvailableParentContext(fakeNameExpression)
             ?: error("Cannot find enclosing declaration for ${fakeNameExpression.getElementTextInContext()}")
 
@@ -110,9 +110,9 @@ internal class KtFirCompletionCandidateChecker(
      */
     private fun KtExpression.getMatchingFirExpressionForCallReceiver(): FirExpression {
         val psiWholeCall = this.getQualifiedExpressionForReceiver()
-        if (psiWholeCall !is KtSafeQualifiedExpression) return this.getOrBuildFirOfType<FirExpression>(firResolveState)
+        if (psiWholeCall !is KtSafeQualifiedExpression) return this.getOrBuildFirOfType<FirExpression>(firResolveSession)
 
-        val firSafeCall = psiWholeCall.getOrBuildFirOfType<FirSafeCallExpression>(firResolveState)
+        val firSafeCall = psiWholeCall.getOrBuildFirOfType<FirSafeCallExpression>(firResolveSession)
         return firSafeCall.checkedSubjectRef.value
     }
 }

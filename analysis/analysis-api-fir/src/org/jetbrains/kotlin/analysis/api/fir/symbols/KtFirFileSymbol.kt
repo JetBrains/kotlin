@@ -14,12 +14,12 @@ import org.jetbrains.kotlin.analysis.api.symbols.markers.KtSymbolWithDeclaration
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtPsiBasedSymbolPointer
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtSymbolPointer
 import org.jetbrains.kotlin.analysis.api.tokens.ValidityToken
-import org.jetbrains.kotlin.analysis.low.level.api.fir.api.LLFirModuleResolveState
+import org.jetbrains.kotlin.analysis.low.level.api.fir.api.LLFirResolveSession
 import org.jetbrains.kotlin.fir.symbols.impl.FirFileSymbol
 
 internal class KtFirFileSymbol(
     override val firSymbol: FirFileSymbol,
-    override val resolveState: LLFirModuleResolveState,
+    override val firResolveSession: LLFirResolveSession,
     override val token: ValidityToken,
 ) : KtFileSymbol(), KtSymbolWithDeclarations, KtFirSymbol<FirFileSymbol> {
     override val psi: PsiElement? by cached { firSymbol.findPsi() }
@@ -29,7 +29,7 @@ internal class KtFirFileSymbol(
         TODO("Creating pointers for files from library is not supported yet")
     }
 
-    override val annotationsList by cached { KtFirAnnotationListForDeclaration.create(firSymbol, resolveState.useSiteFirSession, token) }
+    override val annotationsList by cached { KtFirAnnotationListForDeclaration.create(firSymbol, firResolveSession.useSiteFirSession, token) }
 
     override fun equals(other: Any?): Boolean = symbolEquals(other)
     override fun hashCode(): Int = symbolHashCode()

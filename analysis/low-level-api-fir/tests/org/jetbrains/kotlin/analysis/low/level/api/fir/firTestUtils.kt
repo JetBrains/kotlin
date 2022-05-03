@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirAnonymousInitializerSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirFileSymbol
-import org.jetbrains.kotlin.analysis.low.level.api.fir.api.LLFirModuleResolveState
+import org.jetbrains.kotlin.analysis.low.level.api.fir.api.LLFirResolveSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSession
 import org.jetbrains.kotlin.analysis.project.structure.getKtModule
 import org.jetbrains.kotlin.psi.KtElement
@@ -37,9 +37,9 @@ internal fun FirDeclaration.name(): String = symbol.name()
 internal inline fun <R> resolveWithClearCaches(
     context: KtElement,
     noinline configureSession: LLFirSession.() -> Unit = {},
-    action: (LLFirModuleResolveState) -> R,
+    action: (LLFirResolveSession) -> R,
 ): R {
     val project = context.project
-    val resolveState = createResolveStateForNoCaching(context.getKtModule(project), project, configureSession)
-    return action(resolveState)
+    val firResolveSession = createFirResolveSessionForNoCaching(context.getKtModule(project), project, configureSession)
+    return action(firResolveSession)
 }

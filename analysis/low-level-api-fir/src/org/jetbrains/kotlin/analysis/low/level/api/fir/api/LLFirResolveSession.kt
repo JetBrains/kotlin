@@ -20,7 +20,10 @@ import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtFile
 
-abstract class LLFirModuleResolveState {
+/**
+ * An entry point for a FIR Low Level API resolution. Represents a project view from a use-site [KtModule].
+ */
+abstract class LLFirResolveSession {
     abstract val project: Project
 
     abstract val useSiteFirSession: FirSession

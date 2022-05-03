@@ -12,7 +12,7 @@ import com.intellij.psi.impl.PsiElementFinderImpl
 import org.jetbrains.kotlin.analysis.api.InvalidWayOfUsingAnalysisSession
 import org.jetbrains.kotlin.analysis.api.KtAnalysisSessionProvider
 import org.jetbrains.kotlin.analysis.api.fir.KtFirAnalysisSessionProvider
-import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirResolveStateService
+import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirResolveSessionService
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.services.FirSealedClassInheritorsProcessorFactory
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.services.PackagePartProviderFactory
 import org.jetbrains.kotlin.analysis.low.level.api.fir.services.LLFirSealedClassInheritorsProcessorFactoryForTests
@@ -41,7 +41,7 @@ object AnalysisApiFirTestServiceRegistrar : AnalysisApiTestServiceRegistrar() {
         project.apply {
             registerService(KtAnalysisSessionProvider::class.java, KtFirAnalysisSessionProvider(this))
             registerService(FirSealedClassInheritorsProcessorFactory::class.java, LLFirSealedClassInheritorsProcessorFactoryForTests())
-            registerService(LLFirResolveStateService::class.java)
+            registerService(LLFirResolveSessionService::class.java)
             registerService(PackagePartProviderFactory::class.java, PackagePartProviderTestImpl(testServices))
 
             registerService(SymbolLightClassFacadeCache::class.java)

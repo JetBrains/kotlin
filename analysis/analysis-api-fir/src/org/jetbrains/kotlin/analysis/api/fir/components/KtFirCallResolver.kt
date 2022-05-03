@@ -110,7 +110,7 @@ internal class KtFirCallResolver(
             ?: containingBinaryExpressionForLhs
             ?: containingUnaryExpressionForIncOrDec
             ?: psi
-        val fir = psiToResolve.getOrBuildFir(analysisSession.firResolveState) ?: return emptyList()
+        val fir = psiToResolve.getOrBuildFir(analysisSession.firResolveSession) ?: return emptyList()
         return fir.getCallInfo(
             psiToResolve,
             psiToResolve == containingCallExpressionForCalleeExpression,
@@ -225,7 +225,7 @@ internal class KtFirCallResolver(
         val lhs = deparenthesize(this)
         val binaryExpression = parentOfType<KtBinaryExpression>() ?: return null
         if (deparenthesize(binaryExpression.left) != lhs || binaryExpression.operationToken !in KtTokens.ALL_ASSIGNMENTS) return null
-        val firBinaryExpression = binaryExpression.getOrBuildFir(analysisSession.firResolveState)
+        val firBinaryExpression = binaryExpression.getOrBuildFir(analysisSession.firResolveSession)
         if (firBinaryExpression is FirFunctionCall) {
             if (firBinaryExpression.origin == FirFunctionCallOrigin.Operator &&
                 firBinaryExpression.calleeReference.name in OperatorNameConventions.ASSIGNMENT_OPERATIONS
@@ -772,7 +772,7 @@ internal class KtFirCallResolver(
 
         val calleeName = originalFunctionCall.calleeOrCandidateName ?: return emptyList()
         val candidates = AllCandidatesResolver(analysisSession.useSiteSession).getAllCandidates(
-            analysisSession.firResolveState,
+            analysisSession.firResolveSession,
             originalFunctionCall,
             calleeName,
             psi

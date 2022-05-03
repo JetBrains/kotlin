@@ -188,8 +188,8 @@ internal object FirReferenceResolveHelper {
         if (expression.isSyntheticOperatorReference()) return emptyList()
         val symbolBuilder = analysisSession.firSymbolBuilder
         val adjustedResolutionExpression = adjustResolutionExpression(expression)
-        val fir = adjustedResolutionExpression.getOrBuildFir(analysisSession.firResolveState)
-        val session = analysisSession.firResolveState.useSiteFirSession
+        val fir = adjustedResolutionExpression.getOrBuildFir(analysisSession.firResolveSession)
+        val session = analysisSession.firResolveSession.useSiteFirSession
         return when (fir) {
             is FirResolvedTypeRef -> getSymbolsForResolvedTypeRef(fir, expression, session, symbolBuilder)
             is FirResolvedQualifier ->
@@ -258,7 +258,7 @@ internal object FirReferenceResolveHelper {
     ): Collection<KtSymbol> {
         val parentAsCall = expression.parent as? KtCallExpression
         if (parentAsCall != null) {
-            val firResolvable = parentAsCall.getOrBuildFirSafe<FirResolvable>(analysisSession.firResolveState)
+            val firResolvable = parentAsCall.getOrBuildFirSafe<FirResolvable>(analysisSession.firResolveSession)
             if (firResolvable != null) {
                 return getSymbolsByResolvable(firResolvable, expression, session, symbolBuilder)
             }
@@ -305,7 +305,7 @@ internal object FirReferenceResolveHelper {
         val ktValueArgumentList = ktValueArgument.parent as? KtValueArgumentList ?: return emptyList()
         val ktCallExpression = ktValueArgumentList.parent as? KtCallElement ?: return emptyList()
 
-        val firCall = ktCallExpression.getOrBuildFirSafe<FirCall>(analysisSession.firResolveState) ?: return emptyList()
+        val firCall = ktCallExpression.getOrBuildFirSafe<FirCall>(analysisSession.firResolveSession) ?: return emptyList()
         val parameter = firCall.findCorrespondingParameter(ktValueArgument) ?: return emptyList()
         return listOfNotNull(parameter.buildSymbol(symbolBuilder))
     }
@@ -333,7 +333,7 @@ internal object FirReferenceResolveHelper {
                 parent = parent.parent as? KtDotQualifiedExpression
                 continue
             }
-            val parentFir = selectorExpression.getOrBuildFir(analysisSession.firResolveState)
+            val parentFir = selectorExpression.getOrBuildFir(analysisSession.firResolveSession)
             if (parentFir is FirResolvedQualifier) {
                 var classId = parentFir.classId
                 while (unresolvedCounter > 0) {

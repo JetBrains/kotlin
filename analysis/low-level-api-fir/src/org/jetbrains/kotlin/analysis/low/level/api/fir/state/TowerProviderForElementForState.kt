@@ -5,26 +5,26 @@
 
 package org.jetbrains.kotlin.analysis.low.level.api.fir.state
 
-import org.jetbrains.kotlin.analysis.low.level.api.fir.FirModuleResolveStateDepended
-import org.jetbrains.kotlin.analysis.low.level.api.fir.api.LLFirModuleResolveState
+import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirResolveSessionDepended
+import org.jetbrains.kotlin.analysis.low.level.api.fir.api.LLFirResolveSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.LowLevelFirApiFacadeForResolveOnAir
 import org.jetbrains.kotlin.analysis.low.level.api.fir.element.builder.FirTowerContextProvider
 import org.jetbrains.kotlin.fir.declarations.FirTowerDataContext
 import org.jetbrains.kotlin.psi.KtElement
 
-internal class TowerProviderForElementForState(private val state: LLFirModuleResolveState) : FirTowerContextProvider {
+internal class TowerProviderForElementForState(private val firResolveSession: LLFirResolveSession) : FirTowerContextProvider {
     override fun getClosestAvailableParentContext(ktElement: KtElement): FirTowerDataContext? {
-        if (state is FirModuleResolveStateDepended) {
-            state.towerProviderBuiltUponElement
+        if (firResolveSession is LLFirResolveSessionDepended) {
+            firResolveSession.towerProviderBuiltUponElement
                 .getClosestAvailableParentContext(ktElement)
                 ?.let { return it }
 
             return LowLevelFirApiFacadeForResolveOnAir
-                .onAirGetTowerContextProvider(state.originalState, ktElement)
+                .onAirGetTowerContextProvider(firResolveSession.originalFirResolveSession, ktElement)
                 .getClosestAvailableParentContext(ktElement)
         }
         return LowLevelFirApiFacadeForResolveOnAir
-            .onAirGetTowerContextProvider(state, ktElement)
+            .onAirGetTowerContextProvider(firResolveSession, ktElement)
             .getClosestAvailableParentContext(ktElement)
     }
 }

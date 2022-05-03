@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.analysis.low.level.api.fir.compiler.based
 
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFirFile
-import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getResolveState
+import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getFirResolveSession
 import org.jetbrains.kotlin.analysis.project.structure.ProjectStructureProvider
 import org.jetbrains.kotlin.analysis.test.framework.project.structure.ktModuleProvider
 import org.jetbrains.kotlin.fir.declarations.FirFile
@@ -41,8 +41,8 @@ class SealedClassesInheritorsCaclulatorPreAnalysisHandler(
             val allFirFiles = mutableListOf<FirFile>()
             ktFiles.forEach { ktFile ->
                 val ktModule = ktModuleProvider.getKtModuleForKtElement(ktFile)
-                val resolveState = ktModule.getResolveState(project)
-                allFirFiles.add(ktFile.getOrBuildFirFile(resolveState))
+                val firResolveSession = ktModule.getFirResolveSession(project)
+                allFirFiles.add(ktFile.getOrBuildFirFile(firResolveSession))
             }
             allFirFiles.groupBy { it.moduleData.session }.forEach { (session, firFiles) ->
                 for (firFile in firFiles) {

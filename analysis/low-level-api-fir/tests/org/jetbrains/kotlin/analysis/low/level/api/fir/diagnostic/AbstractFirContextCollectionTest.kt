@@ -11,11 +11,10 @@ import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.resolve.ImplicitReceiverStack
 import org.jetbrains.kotlin.fir.resolve.SessionHolderImpl
-import org.jetbrains.kotlin.analysis.low.level.api.fir.state.LLFirSourceModuleResolveState
+import org.jetbrains.kotlin.analysis.low.level.api.fir.state.LLFirSourceResolveSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.DiagnosticCheckerFilter
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getDiagnostics
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFirFile
-import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getResolveState
 import org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostics.BeforeElementDiagnosticCollectionHandler
 import org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostics.fir.PersistenceContextCollector
 import org.jetbrains.kotlin.analysis.low.level.api.fir.file.structure.FileStructureElement
@@ -43,19 +42,19 @@ abstract class AbstractFirContextCollectionTest : AbstractLowLevelApiSingleFileT
                 @OptIn(SessionConfiguration::class)
                 register(BeforeElementDiagnosticCollectionHandler::class, handler)
             }
-        ) { resolveState ->
-            check(resolveState is LLFirSourceModuleResolveState)
+        ) { firResolveSession ->
+            check(firResolveSession is LLFirSourceResolveSession)
 
-            val session = resolveState.getSessionFor(ktFile.getKtModule()) as LLFirResolvableModuleSession
+            val session = firResolveSession.getSessionFor(ktFile.getKtModule()) as LLFirResolvableModuleSession
             val fileStructureCache = session.moduleComponents.fileStructureCache
 
             val fileStructure = fileStructureCache.getFileStructure(ktFile)
             val allStructureElements = fileStructure.getAllStructureElements()
 
             handler.elementsToCheckContext = allStructureElements.map { it.getFirDeclaration() }
-            handler.firFile = ktFile.getOrBuildFirFile(resolveState)
+            handler.firFile = ktFile.getOrBuildFirFile(firResolveSession)
 
-            ktFile.getDiagnostics(resolveState, DiagnosticCheckerFilter.ONLY_COMMON_CHECKERS)
+            ktFile.getDiagnostics(firResolveSession, DiagnosticCheckerFilter.ONLY_COMMON_CHECKERS)
         }
     }
 

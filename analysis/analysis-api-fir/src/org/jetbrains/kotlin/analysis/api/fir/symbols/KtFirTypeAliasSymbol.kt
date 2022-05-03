@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtSymbolPointer
 import org.jetbrains.kotlin.analysis.api.tokens.ValidityToken
 import org.jetbrains.kotlin.analysis.api.types.KtType
 import org.jetbrains.kotlin.analysis.api.withValidityAssertion
-import org.jetbrains.kotlin.analysis.low.level.api.fir.api.LLFirModuleResolveState
+import org.jetbrains.kotlin.analysis.low.level.api.fir.api.LLFirResolveSession
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fir.declarations.utils.visibility
@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.name.Name
 
 internal class KtFirTypeAliasSymbol(
     override val firSymbol: FirTypeAliasSymbol,
-    override val resolveState: LLFirModuleResolveState,
+    override val firResolveSession: LLFirResolveSession,
     override val token: ValidityToken,
     private val builder: KtSymbolByFirBuilder,
 ) : KtTypeAliasSymbol(), KtFirSymbol<FirTypeAliasSymbol> {
@@ -49,7 +49,7 @@ internal class KtFirTypeAliasSymbol(
     override val expandedType: KtType by cached { builder.typeBuilder.buildKtType(firSymbol.resolvedExpandedTypeRef) }
 
     override val annotationsList: KtAnnotationsList by cached {
-        KtFirAnnotationListForDeclaration.create(firSymbol, resolveState.useSiteFirSession, token)
+        KtFirAnnotationListForDeclaration.create(firSymbol, firResolveSession.useSiteFirSession, token)
     }
 
     override fun createPointer(): KtSymbolPointer<KtTypeAliasSymbol> {

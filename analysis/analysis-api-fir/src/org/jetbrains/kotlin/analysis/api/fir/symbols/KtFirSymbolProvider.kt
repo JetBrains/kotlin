@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.analysis.api.fir.utils.weakRef
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.tokens.ValidityToken
 import org.jetbrains.kotlin.analysis.api.withValidityAssertion
-import org.jetbrains.kotlin.analysis.low.level.api.fir.api.LLFirModuleResolveState
+import org.jetbrains.kotlin.analysis.low.level.api.fir.api.LLFirResolveSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFirFile
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFirOfType
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.resolveToFirSymbolOfType
@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.psi.*
 internal class KtFirSymbolProvider(
     override val analysisSession: KtAnalysisSession,
     firSymbolProvider: FirSymbolProvider,
-    private val resolveState: LLFirModuleResolveState,
+    private val firResolveSession: LLFirResolveSession,
     private val firSymbolBuilder: KtSymbolByFirBuilder,
     override val token: ValidityToken,
 ) : KtSymbolProvider(), ValidityTokenOwner {
@@ -41,23 +41,23 @@ internal class KtFirSymbolProvider(
             )
 
             psi.isLoopParameter -> {
-                firSymbolBuilder.variableLikeBuilder.buildLocalVariableSymbol(psi.resolveToFirSymbolOfType<FirPropertySymbol>(resolveState))
+                firSymbolBuilder.variableLikeBuilder.buildLocalVariableSymbol(psi.resolveToFirSymbolOfType<FirPropertySymbol>(firResolveSession))
             }
 
             else -> {
                 firSymbolBuilder.variableLikeBuilder.buildValueParameterSymbol(
-                    psi.resolveToFirSymbolOfType<FirValueParameterSymbol>(resolveState)
+                    psi.resolveToFirSymbolOfType<FirValueParameterSymbol>(firResolveSession)
                 )
             }
         }
     }
 
     override fun getFileSymbol(psi: KtFile): KtFileSymbol = withValidityAssertion {
-        firSymbolBuilder.buildFileSymbol(psi.getOrBuildFirFile(resolveState).symbol)
+        firSymbolBuilder.buildFileSymbol(psi.getOrBuildFirFile(firResolveSession).symbol)
     }
 
     override fun getFunctionLikeSymbol(psi: KtNamedFunction): KtFunctionLikeSymbol = withValidityAssertion {
-        when (val firSymbol = psi.resolveToFirSymbolOfType<FirFunctionSymbol<*>>(resolveState)) {
+        when (val firSymbol = psi.resolveToFirSymbolOfType<FirFunctionSymbol<*>>(firResolveSession)) {
             is FirNamedFunctionSymbol -> {
                 if (firSymbol.origin == FirDeclarationOrigin.SamConstructor) {
                     firSymbolBuilder.functionLikeBuilder.buildSamConstructorSymbol(firSymbol)
@@ -72,60 +72,60 @@ internal class KtFirSymbolProvider(
 
     override fun getConstructorSymbol(psi: KtConstructor<*>): KtConstructorSymbol = withValidityAssertion {
 
-        firSymbolBuilder.functionLikeBuilder.buildConstructorSymbol(psi.resolveToFirSymbolOfType<FirConstructorSymbol>(resolveState))
+        firSymbolBuilder.functionLikeBuilder.buildConstructorSymbol(psi.resolveToFirSymbolOfType<FirConstructorSymbol>(firResolveSession))
 
     }
 
     override fun getTypeParameterSymbol(psi: KtTypeParameter): KtTypeParameterSymbol = withValidityAssertion {
-        firSymbolBuilder.classifierBuilder.buildTypeParameterSymbol(psi.resolveToFirSymbolOfType<FirTypeParameterSymbol>(resolveState))
+        firSymbolBuilder.classifierBuilder.buildTypeParameterSymbol(psi.resolveToFirSymbolOfType<FirTypeParameterSymbol>(firResolveSession))
     }
 
     override fun getTypeAliasSymbol(psi: KtTypeAlias): KtTypeAliasSymbol = withValidityAssertion {
-        firSymbolBuilder.classifierBuilder.buildTypeAliasSymbol(psi.resolveToFirSymbolOfType<FirTypeAliasSymbol>(resolveState))
+        firSymbolBuilder.classifierBuilder.buildTypeAliasSymbol(psi.resolveToFirSymbolOfType<FirTypeAliasSymbol>(firResolveSession))
     }
 
     override fun getEnumEntrySymbol(psi: KtEnumEntry): KtEnumEntrySymbol = withValidityAssertion {
-        firSymbolBuilder.buildEnumEntrySymbol(psi.resolveToFirSymbolOfType<FirEnumEntrySymbol>(resolveState))
+        firSymbolBuilder.buildEnumEntrySymbol(psi.resolveToFirSymbolOfType<FirEnumEntrySymbol>(firResolveSession))
     }
 
     override fun getAnonymousFunctionSymbol(psi: KtNamedFunction): KtAnonymousFunctionSymbol = withValidityAssertion {
-        firSymbolBuilder.functionLikeBuilder.buildAnonymousFunctionSymbol(psi.getOrBuildFirOfType(resolveState))
+        firSymbolBuilder.functionLikeBuilder.buildAnonymousFunctionSymbol(psi.getOrBuildFirOfType(firResolveSession))
     }
 
     override fun getAnonymousFunctionSymbol(psi: KtFunctionLiteral): KtAnonymousFunctionSymbol = withValidityAssertion {
         firSymbolBuilder.functionLikeBuilder.buildAnonymousFunctionSymbol(
-            psi.resolveToFirSymbolOfType<FirAnonymousFunctionSymbol>(resolveState)
+            psi.resolveToFirSymbolOfType<FirAnonymousFunctionSymbol>(firResolveSession)
         )
     }
 
     override fun getVariableSymbol(psi: KtProperty): KtVariableSymbol = withValidityAssertion {
-        firSymbolBuilder.variableLikeBuilder.buildVariableSymbol(psi.resolveToFirSymbolOfType<FirPropertySymbol>(resolveState))
+        firSymbolBuilder.variableLikeBuilder.buildVariableSymbol(psi.resolveToFirSymbolOfType<FirPropertySymbol>(firResolveSession))
     }
 
     override fun getAnonymousObjectSymbol(psi: KtObjectLiteralExpression): KtAnonymousObjectSymbol = withValidityAssertion {
         firSymbolBuilder.classifierBuilder.buildAnonymousObjectSymbol(
-            psi.objectDeclaration.resolveToFirSymbolOfType<FirAnonymousObjectSymbol>(resolveState)
+            psi.objectDeclaration.resolveToFirSymbolOfType<FirAnonymousObjectSymbol>(firResolveSession)
         )
     }
 
     override fun getClassOrObjectSymbol(psi: KtClassOrObject): KtClassOrObjectSymbol = withValidityAssertion {
-        firSymbolBuilder.classifierBuilder.buildClassOrObjectSymbol(psi.resolveToFirSymbolOfType<FirClassSymbol<*>>(resolveState))
+        firSymbolBuilder.classifierBuilder.buildClassOrObjectSymbol(psi.resolveToFirSymbolOfType<FirClassSymbol<*>>(firResolveSession))
     }
 
     override fun getNamedClassOrObjectSymbol(psi: KtClassOrObject): KtNamedClassOrObjectSymbol? = withValidityAssertion {
         require(psi !is KtObjectDeclaration || psi.parent !is KtObjectLiteralExpression)
         // A KtClassOrObject may also map to an FirEnumEntry. Hence, we need to return null in this case.
         if (psi is KtEnumEntry) return null
-        firSymbolBuilder.classifierBuilder.buildNamedClassOrObjectSymbol(psi.resolveToFirSymbolOfType<FirRegularClassSymbol>(resolveState))
+        firSymbolBuilder.classifierBuilder.buildNamedClassOrObjectSymbol(psi.resolveToFirSymbolOfType<FirRegularClassSymbol>(firResolveSession))
     }
 
     override fun getPropertyAccessorSymbol(psi: KtPropertyAccessor): KtPropertyAccessorSymbol = withValidityAssertion {
-        firSymbolBuilder.callableBuilder.buildPropertyAccessorSymbol(psi.resolveToFirSymbolOfType<FirPropertyAccessorSymbol>(resolveState))
+        firSymbolBuilder.callableBuilder.buildPropertyAccessorSymbol(psi.resolveToFirSymbolOfType<FirPropertyAccessorSymbol>(firResolveSession))
     }
 
     override fun getClassInitializerSymbol(psi: KtClassInitializer): KtClassInitializerSymbol = withValidityAssertion {
         firSymbolBuilder.anonymousInitializerBuilder.buildClassInitializer(
-            psi.resolveToFirSymbolOfType<FirAnonymousInitializerSymbol>(resolveState)
+            psi.resolveToFirSymbolOfType<FirAnonymousInitializerSymbol>(firResolveSession)
         )
     }
 
@@ -139,5 +139,5 @@ internal class KtFirSymbolProvider(
         return firs.asSequence().map { firSymbol -> firSymbolBuilder.buildSymbol(firSymbol) }
     }
 
-    override val ROOT_PACKAGE_SYMBOL: KtPackageSymbol = KtFirPackageSymbol(FqName.ROOT, resolveState.project, token)
+    override val ROOT_PACKAGE_SYMBOL: KtPackageSymbol = KtFirPackageSymbol(FqName.ROOT, firResolveSession.project, token)
 }

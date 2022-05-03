@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.psi.KtFile
 import java.util.concurrent.ConcurrentHashMap
 
 /**
- * Belongs to a [org.jetbrains.kotlin.analysis.low.level.api.fir.api.LLFirModuleResolveState]
+ * Belongs to a [org.jetbrains.kotlin.analysis.low.level.api.fir.api.LLFirResolveSession]
  */
 internal class FileStructureCache(private val moduleResolveComponents: LLFirModuleResolveComponents) {
     private val cache = ConcurrentHashMap<KtFile, FileStructure>()

@@ -16,12 +16,12 @@ import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtFile
 
 
-internal class LLFirLibraryOrLibrarySourceResolvableModuleResolveState(
+internal class LLFirLibraryOrLibrarySourceResolvableResolveSession(
     override val globalComponents: LLFirGlobalResolveComponents,
     override val project: Project,
     override val useSiteKtModule: KtModule,
     sessionProvider: LLFirSessionProvider,
-) : LLFirResolvableModuleResolveState(sessionProvider) {
+) : LLFirResolvableResolveSession(sessionProvider) {
     override fun getDiagnostics(element: KtElement, filter: DiagnosticCheckerFilter): List<KtPsiDiagnostic> =
         emptyList()
 

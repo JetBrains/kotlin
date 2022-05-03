@@ -20,12 +20,12 @@ import org.jetbrains.kotlin.diagnostics.KtPsiDiagnostic
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtFile
 
-internal class LLFirSourceModuleResolveState(
+internal class LLFirSourceResolveSession(
     override val globalComponents: LLFirGlobalResolveComponents,
     override val project: Project,
     override val useSiteKtModule: KtModule,
     sessionProvider: LLFirSessionProvider,
-) : LLFirResolvableModuleResolveState(sessionProvider) {
+) : LLFirResolvableResolveSession(sessionProvider) {
     override fun getDiagnostics(element: KtElement, filter: DiagnosticCheckerFilter): List<KtPsiDiagnostic> {
         val moduleComponents = getModuleComponentsForElement(element)
         return moduleComponents.diagnosticsCollector.getDiagnosticsFor(element, filter)

@@ -27,32 +27,32 @@ import kotlin.reflect.KClass
 abstract class CachingKtAnalysisSessionProvider<State : Any>(private val project: Project) : KtAnalysisSessionProvider() {
     private val cache = KtAnalysisSessionCache<Pair<State, KClass<out ValidityToken>>>(project)
 
-    protected abstract fun getResolveState(contextElement: KtElement): State
-    protected abstract fun getResolveState(contextSymbol: KtSymbol): State
+    protected abstract fun getFirResolveSession(contextElement: KtElement): State
+    protected abstract fun getFirResolveSession(contextSymbol: KtSymbol): State
 
     protected abstract fun createAnalysisSession(
-        resolveState: State,
+        firResolveSession: State,
         validityToken: ValidityToken,
     ): KtAnalysisSession
 
     @InvalidWayOfUsingAnalysisSession
     final override fun getAnalysisSession(contextElement: KtElement, factory: ValidityTokenFactory): KtAnalysisSession {
-        val resolveState = getResolveState(contextElement)
-        return cache.getAnalysisSession(resolveState to factory.identifier) {
+        val firResolveSession = getFirResolveSession(contextElement)
+        return cache.getAnalysisSession(firResolveSession to factory.identifier) {
             val validityToken = factory.create(project)
-            createAnalysisSession(resolveState, validityToken)
+            createAnalysisSession(firResolveSession, validityToken)
         }
     }
 
     final override fun getAnalysisSessionBySymbol(contextSymbol: KtSymbol): KtAnalysisSession {
-        val resolveState = getResolveState(contextSymbol)
+        val firResolveSession = getFirResolveSession(contextSymbol)
         val token = contextSymbol.token
-        return getCachedAnalysisSession(resolveState, token)
-            ?: createAnalysisSession(resolveState, contextSymbol.token)
+        return getCachedAnalysisSession(firResolveSession, token)
+            ?: createAnalysisSession(firResolveSession, contextSymbol.token)
     }
 
-    private fun getCachedAnalysisSession(resolveState: State, token: ValidityToken): KtAnalysisSession? {
-        return cache.getCachedAnalysisSession(resolveState to token::class)
+    private fun getCachedAnalysisSession(firResolveSession: State, token: ValidityToken): KtAnalysisSession? {
+        return cache.getCachedAnalysisSession(firResolveSession to token::class)
     }
 
     @TestOnly
