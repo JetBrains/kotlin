@@ -5,22 +5,34 @@
 
 package org.jetbrains.kotlin.config
 
+import java.lang.invoke.MethodHandles
+import java.lang.invoke.MethodType
+
 const val APPLICATION_MANAGER_CLASS_NAME = "com.intellij.openapi.application.ApplicationManager"
 
 val isJps: Boolean by lazy {
+    val application = try {
+        Class.forName("com.intellij.openapi.application.Application")
+    } catch (ex: LinkageError) {
+        // If any Application super class is not in the classpath
+        return@lazy true
+    } catch (ex: ClassNotFoundException) {
+        return@lazy true
+    }
+    val applicationManager = try {
+        Class.forName(APPLICATION_MANAGER_CLASS_NAME)
+    } catch (ex: LinkageError) {
+        // If any ApplicationManager super class is not in the classpath
+        return@lazy true
+    } catch (ex: ClassNotFoundException) {
+        return@lazy true
+    }
     /*
         Normally, JPS shouldn't have an ApplicationManager class in the classpath,
         but that's not true for JPS inside IDEA right now.
         Though Application is not properly initialized inside JPS so we can use it as a check.
      */
-    return@lazy if (doesClassExist(APPLICATION_MANAGER_CLASS_NAME)) {
-        Class.forName(APPLICATION_MANAGER_CLASS_NAME).getMethod("getApplication").invoke(null) == null
-    } else {
-        true
-    }
-}
-
-private fun doesClassExist(fqName: String): Boolean {
-    val classPath = fqName.replace('.', '/') + ".class"
-    return {}.javaClass.classLoader.getResource(classPath) != null
+    return@lazy MethodHandles.lookup()
+        .findStatic(applicationManager, "getApplication", MethodType.methodType(application))
+        .invoke() == null
 }
