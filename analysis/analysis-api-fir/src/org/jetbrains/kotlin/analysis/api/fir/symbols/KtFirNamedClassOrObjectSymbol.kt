@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtSymbolPointer
 import org.jetbrains.kotlin.analysis.api.tokens.ValidityToken
 import org.jetbrains.kotlin.analysis.api.types.KtType
 import org.jetbrains.kotlin.analysis.api.withValidityAssertion
-import org.jetbrains.kotlin.analysis.low.level.api.fir.api.LLFirModuleResolveState
+import org.jetbrains.kotlin.analysis.low.level.api.fir.api.LLFirResolveSession
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
@@ -33,7 +33,7 @@ import org.jetbrains.kotlin.name.Name
 
 internal class KtFirNamedClassOrObjectSymbol(
     override val firSymbol: FirRegularClassSymbol,
-    override val resolveState: LLFirModuleResolveState,
+    override val firResolveSession: LLFirResolveSession,
     override val token: ValidityToken,
     private val builder: KtSymbolByFirBuilder
 ) : KtNamedClassOrObjectSymbol(), KtFirSymbol<FirRegularClassSymbol> {
@@ -65,7 +65,7 @@ internal class KtFirNamedClassOrObjectSymbol(
             else -> possiblyRawVisibility
         }
 
-    override val annotationsList by cached { KtFirAnnotationListForDeclaration.create(firSymbol, resolveState.useSiteFirSession, token) }
+    override val annotationsList by cached { KtFirAnnotationListForDeclaration.create(firSymbol, firResolveSession.useSiteFirSession, token) }
 
     override val isInner: Boolean get() = withValidityAssertion { firSymbol.isInner }
     override val isData: Boolean get() = withValidityAssertion { firSymbol.isData }

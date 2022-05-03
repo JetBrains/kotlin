@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.analysis.low.level.api.fir.resolver
 
 import org.jetbrains.kotlin.analysis.api.impl.barebone.parentsOfType
-import org.jetbrains.kotlin.analysis.low.level.api.fir.api.LLFirModuleResolveState
+import org.jetbrains.kotlin.analysis.low.level.api.fir.api.LLFirResolveSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFirFile
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.resolveToFirSymbol
 import org.jetbrains.kotlin.fir.FirSession
@@ -24,14 +24,14 @@ class AllCandidatesResolver(firSession: FirSession) {
     private val resolutionContext = ResolutionContext(firSession, bodyResolveComponents, bodyResolveComponents.transformer.context)
 
     fun getAllCandidates(
-        resolveState: LLFirModuleResolveState,
+        firResolveSession: LLFirResolveSession,
         functionCall: FirFunctionCall,
         calleeName: Name,
         element: KtElement
     ): List<OverloadCandidate> {
-        initializeBodyResolveContext(resolveState, element)
+        initializeBodyResolveContext(firResolveSession, element)
 
-        val firFile = element.containingKtFile.getOrBuildFirFile(resolveState)
+        val firFile = element.containingKtFile.getOrBuildFirFile(firResolveSession)
         return bodyResolveComponents.context.withFile(firFile, bodyResolveComponents) {
             bodyResolveComponents.callResolver.collectAllCandidates(
                 functionCall,
@@ -43,12 +43,12 @@ class AllCandidatesResolver(firSession: FirSession) {
     }
 
     @OptIn(PrivateForInline::class, SymbolInternals::class)
-    private fun initializeBodyResolveContext(resolveState: LLFirModuleResolveState, element: KtElement) {
+    private fun initializeBodyResolveContext(firResolveSession: LLFirResolveSession, element: KtElement) {
         // Set up needed context to get all candidates.
-        val towerContext = resolveState.getTowerContextProvider(element.containingKtFile).getClosestAvailableParentContext(element)
+        val towerContext = firResolveSession.getTowerContextProvider(element.containingKtFile).getClosestAvailableParentContext(element)
         towerContext?.let { bodyResolveComponents.context.replaceTowerDataContext(it) }
         val containingDeclarations =
-            element.parentsOfType<KtDeclaration>().map { it.resolveToFirSymbol(resolveState).fir }.toList().asReversed()
+            element.parentsOfType<KtDeclaration>().map { it.resolveToFirSymbol(firResolveSession).fir }.toList().asReversed()
         bodyResolveComponents.context.containers.addAll(containingDeclarations)
     }
 }

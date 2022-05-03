@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.low.level.api.fir
 
-import org.jetbrains.kotlin.analysis.low.level.api.fir.state.LLFirSourceModuleResolveState
+import org.jetbrains.kotlin.analysis.low.level.api.fir.state.LLFirSourceResolveSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.base.AbstractLowLevelApiSingleFileTest
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirRenderer
@@ -53,23 +53,23 @@ abstract class AbstractFirLazyDeclarationResolveTest : AbstractLowLevelApiSingle
     override fun doTestByFileStructure(ktFile: KtFile, moduleStructure: TestModuleStructure, testServices: TestServices) {
         val rendererOption = FirRenderer.RenderMode.WithDeclarationAttributes.copy(renderDeclarationResolvePhase = true)
         val resultBuilder = StringBuilder()
-        resolveWithClearCaches(ktFile) { firModuleResolveState ->
-            check(firModuleResolveState is LLFirSourceModuleResolveState)
-            val declarationToResolve = firModuleResolveState
+        resolveWithClearCaches(ktFile) { firResolveSession ->
+            check(firResolveSession is LLFirSourceResolveSession)
+            val declarationToResolve = firResolveSession
                 .getOrBuildFirFile(ktFile)
                 .findResolveMe()
             for (currentPhase in FirResolvePhase.values()) {
                 if (currentPhase == FirResolvePhase.SEALED_CLASS_INHERITORS) continue
                 declarationToResolve.ensureResolved(currentPhase)
-                val firFile = firModuleResolveState.getOrBuildFirFile(ktFile)
+                val firFile = firResolveSession.getOrBuildFirFile(ktFile)
                 resultBuilder.append("\n${currentPhase.name}:\n")
                 resultBuilder.append(firFile.render(rendererOption))
             }
         }
 
-        resolveWithClearCaches(ktFile) { firModuleResolveState ->
-            check(firModuleResolveState is LLFirSourceModuleResolveState)
-            val firFile = firModuleResolveState.getOrBuildFirFile(ktFile)
+        resolveWithClearCaches(ktFile) { firResolveSession ->
+            check(firResolveSession is LLFirSourceResolveSession)
+            val firFile = firResolveSession.getOrBuildFirFile(ktFile)
             firFile.ensureResolved(FirResolvePhase.BODY_RESOLVE)
             resultBuilder.append("\nFILE RAW TO BODY:\n")
             resultBuilder.append(firFile.render(rendererOption))

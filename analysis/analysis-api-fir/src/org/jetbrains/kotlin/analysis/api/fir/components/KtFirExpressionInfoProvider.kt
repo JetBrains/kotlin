@@ -23,14 +23,14 @@ internal class KtFirExpressionInfoProvider(
     override val token: ValidityToken,
 ) : KtExpressionInfoProvider(), KtFirAnalysisSessionComponent {
     override fun getReturnExpressionTargetSymbol(returnExpression: KtReturnExpression): KtCallableSymbol? {
-        val fir = returnExpression.getOrBuildFirSafe<FirReturnExpression>(firResolveState) ?: return null
+        val fir = returnExpression.getOrBuildFirSafe<FirReturnExpression>(firResolveSession) ?: return null
         val firTargetSymbol = fir.target.labeledElement
         if (firTargetSymbol is FirErrorFunction) return null
         return firSymbolBuilder.callableBuilder.buildCallableSymbol(firTargetSymbol.symbol)
     }
 
     override fun getWhenMissingCases(whenExpression: KtWhenExpression): List<WhenMissingCase> {
-        val firWhenExpression = whenExpression.getOrBuildFirSafe<FirWhenExpression>(analysisSession.firResolveState) ?: return emptyList()
-        return FirWhenExhaustivenessTransformer.computeAllMissingCases(analysisSession.firResolveState.useSiteFirSession, firWhenExpression)
+        val firWhenExpression = whenExpression.getOrBuildFirSafe<FirWhenExpression>(analysisSession.firResolveSession) ?: return emptyList()
+        return FirWhenExhaustivenessTransformer.computeAllMissingCases(analysisSession.firResolveSession.useSiteFirSession, firWhenExpression)
     }
 }

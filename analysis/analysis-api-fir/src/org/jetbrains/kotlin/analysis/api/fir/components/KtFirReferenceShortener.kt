@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.analysis.api.impl.barebone.parentsOfType
 import org.jetbrains.kotlin.analysis.api.symbols.KtCallableSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtClassLikeSymbol
 import org.jetbrains.kotlin.analysis.api.tokens.ValidityToken
-import org.jetbrains.kotlin.analysis.low.level.api.fir.api.LLFirModuleResolveState
+import org.jetbrains.kotlin.analysis.low.level.api.fir.api.LLFirResolveSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.LowLevelFirApiFacadeForResolveOnAir
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFir
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFirOfType
@@ -64,7 +64,7 @@ import org.jetbrains.kotlin.utils.addIfNotNull
 internal class KtFirReferenceShortener(
     override val analysisSession: KtFirAnalysisSession,
     override val token: ValidityToken,
-    override val firResolveState: LLFirModuleResolveState,
+    override val firResolveSession: LLFirResolveSession,
 ) : KtReferenceShortener(), KtFirAnalysisSessionComponent {
     private val context = FirShorteningContext(analysisSession)
 
@@ -77,10 +77,10 @@ internal class KtFirReferenceShortener(
         val declarationToVisit = file.findSmallestDeclarationContainingSelection(selection)
             ?: file.withDeclarationsResolvedToBodyResolve()
 
-        val firDeclaration = declarationToVisit.getOrBuildFirOfType<FirDeclaration>(firResolveState)
+        val firDeclaration = declarationToVisit.getOrBuildFirOfType<FirDeclaration>(firResolveSession)
 
         val towerContext =
-            LowLevelFirApiFacadeForResolveOnAir.onAirGetTowerContextProvider(firResolveState, declarationToVisit)
+            LowLevelFirApiFacadeForResolveOnAir.onAirGetTowerContextProvider(firResolveSession, declarationToVisit)
 
         //TODO: collect all usages of available symbols in the file and prevent importing symbols that could introduce name clashes, which
         // may alter the meaning of existing code.
@@ -90,7 +90,7 @@ internal class KtFirReferenceShortener(
             selection,
             classShortenOption = { classShortenOption(analysisSession.firSymbolBuilder.buildSymbol(it) as KtClassLikeSymbol) },
             callableShortenOption = { callableShortenOption(analysisSession.firSymbolBuilder.buildSymbol(it) as KtCallableSymbol) },
-            firResolveState,
+            firResolveSession,
         )
         firDeclaration.accept(collector)
 
@@ -105,7 +105,7 @@ internal class KtFirReferenceShortener(
 
     private fun KtFile.withDeclarationsResolvedToBodyResolve(): KtFile {
         for (declaration in declarations) {
-            declaration.getOrBuildFir(firResolveState) // temporary hack, resolves declaration to BODY_RESOLVE stage
+            declaration.getOrBuildFir(firResolveSession) // temporary hack, resolves declaration to BODY_RESOLVE stage
         }
 
         return this
@@ -164,10 +164,10 @@ private data class AvailableSymbol<out T>(
 )
 
 private class FirShorteningContext(val analysisSession: KtFirAnalysisSession) {
-    private val firResolveState = analysisSession.firResolveState
+    private val firResolveSession = analysisSession.firResolveSession
 
     private val firSession: FirSession
-        get() = firResolveState.useSiteFirSession
+        get() = firResolveSession.useSiteFirSession
 
     fun findFirstClassifierInScopesByName(positionScopes: List<FirScope>, targetClassName: Name): AvailableSymbol<ClassId>? {
         for (scope in positionScopes) {
@@ -286,7 +286,7 @@ private class ElementsToShortenCollector(
     private val selection: TextRange,
     private val classShortenOption: (FirClassLikeSymbol<*>) -> ShortenOption,
     private val callableShortenOption: (FirCallableSymbol<*>) -> ShortenOption,
-    private val firResolveState: LLFirModuleResolveState,
+    private val firResolveSession: LLFirResolveSession,
 ) :
     FirVisitorVoid() {
     val namesToImport: MutableList<FqName> = mutableListOf()

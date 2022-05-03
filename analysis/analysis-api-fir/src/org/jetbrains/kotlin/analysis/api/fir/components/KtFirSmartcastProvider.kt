@@ -51,7 +51,7 @@ internal class KtFirSmartcastProvider(
 
         val possibleFunctionCall = expression.getPossiblyQualifiedCallExpressionForCallee() ?: expression
 
-        return when (val firExpression = possibleFunctionCall.getOrBuildFir(analysisSession.firResolveState)) {
+        return when (val firExpression = possibleFunctionCall.getOrBuildFir(analysisSession.firResolveSession)) {
             is FirExpressionWithSmartcast -> firExpression
             is FirSafeCallExpression -> firExpression.selector as? FirExpressionWithSmartcast
             is FirImplicitInvokeCall -> firExpression.explicitReceiver as? FirExpressionWithSmartcast
@@ -80,7 +80,7 @@ internal class KtFirSmartcastProvider(
             ?: expression.getQualifiedExpressionForSelector()
             ?: expression
 
-        return when (val firExpression = wholeExpression.getOrBuildFir(analysisSession.firResolveState)) {
+        return when (val firExpression = wholeExpression.getOrBuildFir(analysisSession.firResolveSession)) {
             is FirQualifiedAccessExpression -> firExpression
             is FirSafeCallExpression -> firExpression.selector as? FirQualifiedAccessExpression
             else -> null

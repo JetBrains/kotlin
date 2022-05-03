@@ -31,8 +31,8 @@ abstract class AbstractFirLazyBodiesCalculatorTest : AbstractLowLevelApiSingleFi
     }
 
     override fun doTestByFileStructure(ktFile: KtFile, moduleStructure: TestModuleStructure, testServices: TestServices) {
-        resolveWithClearCaches(ktFile) { resolveState ->
-            val session = resolveState.useSiteFirSession
+        resolveWithClearCaches(ktFile) { firResolveSession ->
+            val session = firResolveSession.useSiteFirSession
             val provider = session.kotlinScopeProvider
 
             val laziedFirFile = RawFirBuilder(

@@ -26,11 +26,11 @@ internal class KtFirDiagnosticProvider(
         element: KtElement,
         filter: KtDiagnosticCheckerFilter
     ): Collection<KtDiagnosticWithPsi<*>> = withValidityAssertion {
-        element.getDiagnostics(firResolveState, filter.asLLFilter()).map { it.asKtDiagnostic() }
+        element.getDiagnostics(firResolveSession, filter.asLLFilter()).map { it.asKtDiagnostic() }
     }
 
     override fun collectDiagnosticsForFile(ktFile: KtFile, filter: KtDiagnosticCheckerFilter): Collection<KtDiagnosticWithPsi<*>> =
-        ktFile.collectDiagnosticsForFile(firResolveState, filter.asLLFilter()).map { it.asKtDiagnostic() }
+        ktFile.collectDiagnosticsForFile(firResolveSession, filter.asLLFilter()).map { it.asKtDiagnostic() }
 
 
     private fun KtDiagnosticCheckerFilter.asLLFilter() = when (this) {

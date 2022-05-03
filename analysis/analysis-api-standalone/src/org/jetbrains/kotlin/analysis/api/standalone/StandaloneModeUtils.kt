@@ -74,7 +74,7 @@ public fun configureApplicationEnvironment(app: MockApplication) {
  *   * [ClsJavaStubByVirtualFileCache]
  *   * [KotlinModificationTrackerFactory]
  *   * [KotlinAnnotationsResolverFactory]
- *   * [LLFirResolveStateService]
+ *   * [LLfirResolveSessionService]
  *   * [FirSealedClassInheritorsProcessorFactory]
  *   * [KtModuleScopeProvider]
  *   * [ProjectStructureProvider]
@@ -161,7 +161,7 @@ internal fun configureProjectEnvironment(
         KotlinStaticAnnotationsResolverFactory(ktFiles)
     )
 
-    RegisterComponentService.registerLLFirResolveStateService(project)
+    RegisterComponentService.registerLLFirResolveSessionService(project)
     project.picoContainer.registerComponentInstance(
         FirSealedClassInheritorsProcessorFactory::class.qualifiedName,
         object : FirSealedClassInheritorsProcessorFactory() {

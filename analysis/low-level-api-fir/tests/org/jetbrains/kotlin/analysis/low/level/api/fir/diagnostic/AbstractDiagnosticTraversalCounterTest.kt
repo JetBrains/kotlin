@@ -41,11 +41,11 @@ abstract class AbstractDiagnosticTraversalCounterTest  : AbstractLowLevelApiSing
                 @OptIn(SessionConfiguration::class)
                 register(BeforeElementDiagnosticCollectionHandler::class, handler)
             }
-        ) { resolveState ->
+        ) { firResolveSession ->
             // we should get diagnostics before we resolve the whole file by  ktFile.getOrBuildFir
-            ktFile.collectDiagnosticsForFile(resolveState, DiagnosticCheckerFilter.ONLY_COMMON_CHECKERS)
+            ktFile.collectDiagnosticsForFile(firResolveSession, DiagnosticCheckerFilter.ONLY_COMMON_CHECKERS)
 
-            val firFile = ktFile.getOrBuildFirOfType<FirFile>(resolveState)
+            val firFile = ktFile.getOrBuildFirOfType<FirFile>(firResolveSession)
 
             val errorElements = collectErrorElements(firFile, handler)
 

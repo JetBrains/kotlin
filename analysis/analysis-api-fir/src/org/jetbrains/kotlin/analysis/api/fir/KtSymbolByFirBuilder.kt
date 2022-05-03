@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.tokens.ValidityToken
 import org.jetbrains.kotlin.analysis.api.types.KtSubstitutor
 import org.jetbrains.kotlin.analysis.api.types.KtType
-import org.jetbrains.kotlin.analysis.low.level.api.fir.api.LLFirModuleResolveState
+import org.jetbrains.kotlin.analysis.low.level.api.fir.api.LLFirResolveSession
 import org.jetbrains.kotlin.analysis.providers.createPackageProvider
 import org.jetbrains.kotlin.builtins.functions.FunctionClassKind
 import org.jetbrains.kotlin.fir.*
@@ -53,7 +53,7 @@ import kotlin.contracts.contract
  */
 internal class KtSymbolByFirBuilder private constructor(
     private val project: Project,
-    resolveState: LLFirModuleResolveState,
+    firResolveSession: LLFirResolveSession,
     override val token: ValidityToken,
     val withReadOnlyCaching: Boolean,
     private val symbolsCache: BuilderCache<FirBasedSymbol<*>, KtSymbol>,
@@ -61,10 +61,10 @@ internal class KtSymbolByFirBuilder private constructor(
     private val filesCache: BuilderCache<FirFileSymbol, KtFileSymbol>,
     private val backingFieldCache: BuilderCache<FirBackingFieldSymbol, KtBackingFieldSymbol>,
 ) : ValidityTokenOwner {
-    private val resolveState by weakRef(resolveState)
+    private val firResolveSession by weakRef(firResolveSession)
 
-    private val firProvider get() = resolveState.useSiteFirSession.symbolProvider
-    val rootSession: FirSession = resolveState.useSiteFirSession
+    private val firProvider get() = firResolveSession.useSiteFirSession.symbolProvider
+    val rootSession: FirSession = firResolveSession.useSiteFirSession
 
     val classifierBuilder = ClassifierSymbolBuilder()
     val functionLikeBuilder = FunctionLikeSymbolBuilder()
@@ -74,13 +74,13 @@ internal class KtSymbolByFirBuilder private constructor(
     val typeBuilder = TypeBuilder()
 
     constructor(
-        resolveState: LLFirModuleResolveState,
+        firResolveSession: LLFirResolveSession,
         project: Project,
         token: ValidityToken
     ) : this(
         project = project,
         token = token,
-        resolveState = resolveState,
+        firResolveSession = firResolveSession,
         withReadOnlyCaching = false,
         symbolsCache = BuilderCache(),
         extensionReceiverSymbolsCache = BuilderCache(),
@@ -88,12 +88,12 @@ internal class KtSymbolByFirBuilder private constructor(
         filesCache = BuilderCache(),
     )
 
-    fun createReadOnlyCopy(newResolveState: LLFirModuleResolveState): KtSymbolByFirBuilder {
+    fun createReadOnlyCopy(newFirResolveSession: LLFirResolveSession): KtSymbolByFirBuilder {
         check(!withReadOnlyCaching) { "Cannot create readOnly KtSymbolByFirBuilder from a readonly one" }
         return KtSymbolByFirBuilder(
             project,
             token = token,
-            resolveState = newResolveState,
+            firResolveSession = newFirResolveSession,
             withReadOnlyCaching = true,
             symbolsCache = symbolsCache.createReadOnlyCopy(),
             extensionReceiverSymbolsCache = extensionReceiverSymbolsCache.createReadOnlyCopy(),
@@ -118,9 +118,9 @@ internal class KtSymbolByFirBuilder private constructor(
     }
 
     fun buildEnumEntrySymbol(firSymbol: FirEnumEntrySymbol) =
-        symbolsCache.cache(firSymbol) { KtFirEnumEntrySymbol(firSymbol, resolveState, token, this) }
+        symbolsCache.cache(firSymbol) { KtFirEnumEntrySymbol(firSymbol, firResolveSession, token, this) }
 
-    fun buildFileSymbol(firSymbol: FirFileSymbol) = filesCache.cache(firSymbol) { KtFirFileSymbol(firSymbol, resolveState, token) }
+    fun buildFileSymbol(firSymbol: FirFileSymbol) = filesCache.cache(firSymbol) { KtFirFileSymbol(firSymbol, firResolveSession, token) }
 
     private val packageProvider = project.createPackageProvider(GlobalSearchScope.allScope(project))//todo scope
 
@@ -165,19 +165,19 @@ internal class KtSymbolByFirBuilder private constructor(
         }
 
         fun buildNamedClassOrObjectSymbol(symbol: FirRegularClassSymbol): KtFirNamedClassOrObjectSymbol {
-            return symbolsCache.cache(symbol) { KtFirNamedClassOrObjectSymbol(symbol, resolveState, token, this@KtSymbolByFirBuilder) }
+            return symbolsCache.cache(symbol) { KtFirNamedClassOrObjectSymbol(symbol, firResolveSession, token, this@KtSymbolByFirBuilder) }
         }
 
         fun buildAnonymousObjectSymbol(symbol: FirAnonymousObjectSymbol): KtAnonymousObjectSymbol {
-            return symbolsCache.cache(symbol) { KtFirAnonymousObjectSymbol(symbol, resolveState, token, this@KtSymbolByFirBuilder) }
+            return symbolsCache.cache(symbol) { KtFirAnonymousObjectSymbol(symbol, firResolveSession, token, this@KtSymbolByFirBuilder) }
         }
 
         fun buildTypeAliasSymbol(symbol: FirTypeAliasSymbol): KtFirTypeAliasSymbol {
-            return symbolsCache.cache(symbol) { KtFirTypeAliasSymbol(symbol, resolveState, token, this@KtSymbolByFirBuilder) }
+            return symbolsCache.cache(symbol) { KtFirTypeAliasSymbol(symbol, firResolveSession, token, this@KtSymbolByFirBuilder) }
         }
 
         fun buildTypeParameterSymbol(firSymbol: FirTypeParameterSymbol): KtFirTypeParameterSymbol {
-            return symbolsCache.cache(firSymbol) { KtFirTypeParameterSymbol(firSymbol, resolveState, token, this@KtSymbolByFirBuilder) }
+            return symbolsCache.cache(firSymbol) { KtFirTypeParameterSymbol(firSymbol, firResolveSession, token, this@KtSymbolByFirBuilder) }
         }
 
         fun buildTypeParameterSymbolByLookupTag(lookupTag: ConeTypeParameterLookupTag): KtTypeParameterSymbol? {
@@ -228,7 +228,7 @@ internal class KtSymbolByFirBuilder private constructor(
             }
 
             check(firSymbol.origin != FirDeclarationOrigin.SamConstructor)
-            return symbolsCache.cache(firSymbol) { KtFirFunctionSymbol(firSymbol, resolveState, token, this@KtSymbolByFirBuilder) }
+            return symbolsCache.cache(firSymbol) { KtFirFunctionSymbol(firSymbol, firResolveSession, token, this@KtSymbolByFirBuilder) }
         }
 
         fun buildFunctionSignature(firSymbol: FirNamedFunctionSymbol): KtFunctionLikeSignature<KtFirFunctionSymbol> {
@@ -249,27 +249,27 @@ internal class KtSymbolByFirBuilder private constructor(
         }
 
         fun buildAnonymousFunctionSymbol(firSymbol: FirAnonymousFunctionSymbol): KtFirAnonymousFunctionSymbol {
-            return symbolsCache.cache(firSymbol) { KtFirAnonymousFunctionSymbol(firSymbol, resolveState, token, this@KtSymbolByFirBuilder) }
+            return symbolsCache.cache(firSymbol) { KtFirAnonymousFunctionSymbol(firSymbol, firResolveSession, token, this@KtSymbolByFirBuilder) }
         }
 
         fun buildConstructorSymbol(firSymbol: FirConstructorSymbol): KtFirConstructorSymbol {
             val originalFirSymbol = firSymbol.fir.originalConstructorIfTypeAlias?.symbol ?: firSymbol
             return symbolsCache.cache(originalFirSymbol) {
-                KtFirConstructorSymbol(originalFirSymbol, resolveState, token, this@KtSymbolByFirBuilder)
+                KtFirConstructorSymbol(originalFirSymbol, firResolveSession, token, this@KtSymbolByFirBuilder)
             }
         }
 
         fun buildSamConstructorSymbol(firSymbol: FirNamedFunctionSymbol): KtFirSamConstructorSymbol {
             check(firSymbol.origin == FirDeclarationOrigin.SamConstructor)
-            return symbolsCache.cache(firSymbol) { KtFirSamConstructorSymbol(firSymbol, resolveState, token, this@KtSymbolByFirBuilder) }
+            return symbolsCache.cache(firSymbol) { KtFirSamConstructorSymbol(firSymbol, firResolveSession, token, this@KtSymbolByFirBuilder) }
         }
 
         fun buildPropertyAccessorSymbol(firSymbol: FirPropertyAccessorSymbol): KtFunctionLikeSymbol {
             return symbolsCache.cache(firSymbol) {
                 if (firSymbol.isGetter) {
-                    KtFirPropertyGetterSymbol(firSymbol, resolveState, token, this@KtSymbolByFirBuilder)
+                    KtFirPropertyGetterSymbol(firSymbol, firResolveSession, token, this@KtSymbolByFirBuilder)
                 } else {
-                    KtFirPropertySetterSymbol(firSymbol, resolveState, token, this@KtSymbolByFirBuilder)
+                    KtFirPropertySetterSymbol(firSymbol, firResolveSession, token, this@KtSymbolByFirBuilder)
                 }
             }
         }
@@ -314,7 +314,7 @@ internal class KtSymbolByFirBuilder private constructor(
             }
 
             return symbolsCache.cache(firSymbol) {
-                KtFirKotlinPropertySymbol(firSymbol, resolveState, token, this@KtSymbolByFirBuilder)
+                KtFirKotlinPropertySymbol(firSymbol, firResolveSession, token, this@KtSymbolByFirBuilder)
             }
         }
 
@@ -330,31 +330,31 @@ internal class KtSymbolByFirBuilder private constructor(
         fun buildLocalVariableSymbol(firSymbol: FirPropertySymbol): KtFirLocalVariableSymbol {
             checkRequirementForBuildingSymbol<KtFirLocalVariableSymbol>(firSymbol, firSymbol.isLocal)
             return symbolsCache.cache(firSymbol) {
-                KtFirLocalVariableSymbol(firSymbol, resolveState, token, this@KtSymbolByFirBuilder)
+                KtFirLocalVariableSymbol(firSymbol, firResolveSession, token, this@KtSymbolByFirBuilder)
             }
         }
 
         fun buildSyntheticJavaPropertySymbol(firSymbol: FirSyntheticPropertySymbol): KtFirSyntheticJavaPropertySymbol {
             return symbolsCache.cache(firSymbol) {
-                KtFirSyntheticJavaPropertySymbol(firSymbol, resolveState, token, this@KtSymbolByFirBuilder)
+                KtFirSyntheticJavaPropertySymbol(firSymbol, firResolveSession, token, this@KtSymbolByFirBuilder)
             }
         }
 
         fun buildValueParameterSymbol(firSymbol: FirValueParameterSymbol): KtValueParameterSymbol {
             return symbolsCache.cache(firSymbol) {
-                KtFirValueParameterSymbol(firSymbol, resolveState, token, this@KtSymbolByFirBuilder)
+                KtFirValueParameterSymbol(firSymbol, firResolveSession, token, this@KtSymbolByFirBuilder)
             }
         }
 
 
         fun buildFieldSymbol(firSymbol: FirFieldSymbol): KtFirJavaFieldSymbol {
             checkRequirementForBuildingSymbol<KtFirJavaFieldSymbol>(firSymbol, firSymbol.fir.isJavaFieldOrSubstitutionOverrideOfJavaField())
-            return symbolsCache.cache(firSymbol) { KtFirJavaFieldSymbol(firSymbol, resolveState, token, this@KtSymbolByFirBuilder) }
+            return symbolsCache.cache(firSymbol) { KtFirJavaFieldSymbol(firSymbol, firResolveSession, token, this@KtSymbolByFirBuilder) }
         }
 
         fun buildBackingFieldSymbol(firSymbol: FirBackingFieldSymbol): KtFirBackingFieldSymbol {
             return backingFieldCache.cache(firSymbol) {
-                KtFirBackingFieldSymbol(firSymbol, resolveState, token, this@KtSymbolByFirBuilder)
+                KtFirBackingFieldSymbol(firSymbol, firResolveSession, token, this@KtSymbolByFirBuilder)
             }
         }
 
@@ -400,25 +400,25 @@ internal class KtSymbolByFirBuilder private constructor(
 
         fun buildGetterSymbol(firSymbol: FirPropertyAccessorSymbol): KtFirPropertyGetterSymbol {
             checkRequirementForBuildingSymbol<KtFirPropertyGetterSymbol>(firSymbol, firSymbol.isGetter)
-            return symbolsCache.cache(firSymbol) { KtFirPropertyGetterSymbol(firSymbol, resolveState, token, this@KtSymbolByFirBuilder) }
+            return symbolsCache.cache(firSymbol) { KtFirPropertyGetterSymbol(firSymbol, firResolveSession, token, this@KtSymbolByFirBuilder) }
         }
 
         fun buildSetterSymbol(firSymbol: FirPropertyAccessorSymbol): KtFirPropertySetterSymbol {
             checkRequirementForBuildingSymbol<KtFirPropertySetterSymbol>(firSymbol, firSymbol.isSetter)
-            return symbolsCache.cache(firSymbol) { KtFirPropertySetterSymbol(firSymbol, resolveState, token, this@KtSymbolByFirBuilder) }
+            return symbolsCache.cache(firSymbol) { KtFirPropertySetterSymbol(firSymbol, firResolveSession, token, this@KtSymbolByFirBuilder) }
         }
 
         fun buildExtensionReceiverSymbol(firCallableSymbol: FirCallableSymbol<*>): KtReceiverParameterSymbol? {
             if (firCallableSymbol.fir.receiverTypeRef == null) return null
             return extensionReceiverSymbolsCache.cache(firCallableSymbol) {
-                KtFirReceiverParameterSymbol(firCallableSymbol, resolveState, token, this@KtSymbolByFirBuilder)
+                KtFirReceiverParameterSymbol(firCallableSymbol, firResolveSession, token, this@KtSymbolByFirBuilder)
             }
         }
     }
 
     inner class AnonymousInitializerBuilder {
         fun buildClassInitializer(firSymbol: FirAnonymousInitializerSymbol): KtClassInitializerSymbol {
-            return symbolsCache.cache(firSymbol) { KtFirClassInitializerSymbol(firSymbol, resolveState, token) }
+            return symbolsCache.cache(firSymbol) { KtFirClassInitializerSymbol(firSymbol, firResolveSession, token) }
         }
     }
 

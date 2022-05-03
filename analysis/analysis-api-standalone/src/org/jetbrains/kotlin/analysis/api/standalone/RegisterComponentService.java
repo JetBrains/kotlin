@@ -6,13 +6,13 @@
 package org.jetbrains.kotlin.analysis.api.standalone;
 
 import com.intellij.mock.MockProject;
-import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirResolveStateService;
+import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirResolveSessionService;
 
 class RegisterComponentService {
-    static void registerLLFirResolveStateService(MockProject project) {
+    static void registerLLFirResolveSessionService(MockProject project) {
         project.registerService(
-                LLFirResolveStateService.class,
-                new LLFirResolveStateService(project)
+                LLFirResolveSessionService.class,
+                new LLFirResolveSessionService(project)
         );
     }
 }

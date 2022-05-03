@@ -44,13 +44,13 @@ internal class KtFirVisibilityChecker(
         val nonLocalContainingDeclaration = findContainingNonLocalDeclaration(position)
         val useSiteFirFile = useSiteFile.firSymbol.fir
         val containers = nonLocalContainingDeclaration
-            ?.getOrBuildFirSafe<FirCallableDeclaration>(analysisSession.firResolveState)
+            ?.getOrBuildFirSafe<FirCallableDeclaration>(analysisSession.firResolveSession)
             ?.collectDesignation()
             ?.path
             .orEmpty()
 
         val explicitDispatchReceiver = receiverExpression
-            ?.getOrBuildFirSafe<FirExpression>(analysisSession.firResolveState)
+            ?.getOrBuildFirSafe<FirExpression>(analysisSession.firResolveSession)
             ?.let { ExpressionReceiverValue(it) }
 
         val candidateFirSymbol = candidateSymbol.firSymbol.fir as FirMemberDeclaration

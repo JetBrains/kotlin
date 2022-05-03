@@ -86,7 +86,7 @@ internal class KtFirTypeProvider(
     }
 
     override fun getKtType(ktTypeReference: KtTypeReference): KtType = withValidityAssertion {
-        when (val fir = ktTypeReference.getOrBuildFir(firResolveState)) {
+        when (val fir = ktTypeReference.getOrBuildFir(firResolveSession)) {
             is FirResolvedTypeRef -> fir.coneType.asKtType()
             is FirDelegatedConstructorCall -> fir.constructedTypeRef.coneType.asKtType()
             else -> throwUnexpectedFirElementError(fir, ktTypeReference)
@@ -94,7 +94,7 @@ internal class KtFirTypeProvider(
     }
 
     override fun getReceiverTypeForDoubleColonExpression(expression: KtDoubleColonExpression): KtType? = withValidityAssertion {
-        when (val fir = expression.getOrBuildFir(firResolveState)) {
+        when (val fir = expression.getOrBuildFir(firResolveSession)) {
             is FirGetClassCall ->
                 fir.typeRef.coneType.getReceiverOfReflectionType()?.asKtType()
             is FirCallableReferenceAccess ->
@@ -122,7 +122,7 @@ internal class KtFirTypeProvider(
     }
 
     override fun getImplicitReceiverTypesAtPosition(position: KtElement): List<KtType> {
-        return analysisSession.firResolveState.getTowerContextProvider(position.containingKtFile)
+        return analysisSession.firResolveSession.getTowerContextProvider(position.containingKtFile)
             .getClosestAvailableParentContext(position)?.implicitReceiverStack?.map { it.type.asKtType() } ?: emptyList()
     }
 
@@ -146,7 +146,7 @@ internal class KtFirTypeProvider(
     }
 
     private fun ConeLookupTagBasedType.getSubstitutedSuperTypes(shouldApproximate: Boolean): Sequence<ConeKotlinType> {
-        val session = analysisSession.firResolveState.useSiteFirSession
+        val session = analysisSession.firResolveSession.useSiteFirSession
         val symbol = lookupTag.toSymbol(session)
         val superTypes = when (symbol) {
             is FirAnonymousObjectSymbol -> symbol.superConeTypes

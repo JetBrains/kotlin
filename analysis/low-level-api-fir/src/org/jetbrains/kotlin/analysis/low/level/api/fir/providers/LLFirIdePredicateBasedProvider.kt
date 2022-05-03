@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.providers
 
 import kotlinx.collections.immutable.PersistentList
 import kotlinx.collections.immutable.persistentListOf
-import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getResolveState
+import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getFirResolveSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.resolveToFirSymbol
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.getContainingFile
 import org.jetbrains.kotlin.analysis.providers.KotlinAnnotationsResolver
@@ -72,8 +72,8 @@ internal class LLFirIdePredicateBasedProvider(
             this !is KtProperty
         ) return null
 
-        val resolveState = this.getResolveState()
-        return this.resolveToFirSymbol(resolveState).fir
+        val firResolveSession = this.getFirResolveSession()
+        return this.resolveToFirSymbol(firResolveSession).fir
     }
 
     override fun getOwnersOfDeclaration(declaration: FirDeclaration): List<FirBasedSymbol<*>>? {

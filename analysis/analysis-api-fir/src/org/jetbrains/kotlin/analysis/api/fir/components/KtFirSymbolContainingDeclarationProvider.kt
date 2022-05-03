@@ -65,7 +65,7 @@ internal class KtFirSymbolContainingDeclarationProvider(
     }
 
     override fun getContainingModule(symbol: KtSymbol): KtModule {
-       return symbol.getContainingKtModule(analysisSession.firResolveState)
+       return symbol.getContainingKtModule(analysisSession.firResolveSession)
     }
 
     private fun getContainingDeclarationForBackingFieldSymbol(symbol: KtSymbolWithKind): KtSymbolWithKind {

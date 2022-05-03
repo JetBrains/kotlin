@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirModuleResolveCompone
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
-import org.jetbrains.kotlin.analysis.low.level.api.fir.api.LLFirModuleResolveState
+import org.jetbrains.kotlin.analysis.low.level.api.fir.api.LLFirResolveSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.file.structure.FileStructureElement
 import org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.declarationCanBeLazilyResolved
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.getElementTextInContext
@@ -60,10 +60,10 @@ internal class FirElementBuilder(
 
     fun getOrBuildFirFor(
         element: KtElement,
-        state: LLFirModuleResolveState,
+        firResolveSession: LLFirResolveSession,
     ): FirElement? = when (element) {
         is KtFile -> getOrBuildFirForKtFile(element)
-        else -> getOrBuildFirForNonKtFileElement(element, state)
+        else -> getOrBuildFirForNonKtFileElement(element, firResolveSession)
     }
 
     private fun getOrBuildFirForKtFile(ktFile: KtFile): FirFile {
@@ -79,7 +79,7 @@ internal class FirElementBuilder(
 
     private fun getOrBuildFirForNonKtFileElement(
         element: KtElement,
-        state: LLFirModuleResolveState,
+        firResolveSession: LLFirResolveSession,
     ): FirElement? {
         require(element !is KtFile)
 
@@ -92,8 +92,8 @@ internal class FirElementBuilder(
 
         val mappings = fileStructure.getStructureElementFor(element).mappings
         val psi = getPsiAsFirElementSource(element) ?: return null
-        return mappings.getFirOfClosestParent(psi, state)
-            ?: state.getOrBuildFirFile(firFile)
+        return mappings.getFirOfClosestParent(psi, firResolveSession)
+            ?: firResolveSession.getOrBuildFirFile(firFile)
     }
 
     @TestOnly

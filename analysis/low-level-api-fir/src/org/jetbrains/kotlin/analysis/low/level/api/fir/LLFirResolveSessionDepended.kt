@@ -9,11 +9,11 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.ProjectRootModificationTracker
 import com.intellij.psi.util.PsiModificationTracker
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.DiagnosticCheckerFilter
-import org.jetbrains.kotlin.analysis.low.level.api.fir.api.LLFirModuleResolveState
+import org.jetbrains.kotlin.analysis.low.level.api.fir.api.LLFirResolveSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.element.builder.FirElementBuilder
 import org.jetbrains.kotlin.analysis.low.level.api.fir.element.builder.FirTowerContextProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.file.structure.KtToFirMapping
-import org.jetbrains.kotlin.analysis.low.level.api.fir.state.LLFirResolvableModuleResolveState
+import org.jetbrains.kotlin.analysis.low.level.api.fir.state.LLFirResolvableResolveSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.state.TowerProviderForElementForState
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.LLFirScopeSessionProvider
 import org.jetbrains.kotlin.analysis.project.structure.KtModule
@@ -31,14 +31,14 @@ import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtFile
 import java.util.concurrent.ConcurrentHashMap
 
-internal class FirModuleResolveStateDepended(
-    val originalState: LLFirResolvableModuleResolveState,
+internal class LLFirResolveSessionDepended(
+    val originalFirResolveSession: LLFirResolvableResolveSession,
     val towerProviderBuiltUponElement: FirTowerContextProvider,
     private val ktToFirMapping: KtToFirMapping?,
-) : LLFirModuleResolveState() {
-    override val project: Project get() = originalState.project
-    override val useSiteKtModule: KtModule get() = originalState.useSiteKtModule
-    override val useSiteFirSession get() = originalState.useSiteFirSession
+) : LLFirResolveSession() {
+    override val project: Project get() = originalFirResolveSession.project
+    override val useSiteKtModule: KtModule get() = originalFirResolveSession.useSiteKtModule
+    override val useSiteFirSession get() = originalFirResolveSession.useSiteFirSession
 
     private val scopeSessionProviderCache by softCachedValue(
         project,
@@ -55,19 +55,19 @@ internal class FirModuleResolveStateDepended(
     }
 
     override fun getSessionFor(module: KtModule): FirSession =
-        originalState.getSessionFor(module)
+        originalFirResolveSession.getSessionFor(module)
 
     override fun getOrBuildFirFor(element: KtElement): FirElement? {
         val psi = FirElementBuilder.getPsiAsFirElementSource(element) ?: return null
         ktToFirMapping?.getFirOfClosestParent(psi, this)?.let { return it }
-        return originalState.getOrBuildFirFor(element = element)
+        return originalFirResolveSession.getOrBuildFirFor(element = element)
     }
 
     override fun getOrBuildFirFile(ktFile: KtFile): FirFile =
-        originalState.getOrBuildFirFile(ktFile)
+        originalFirResolveSession.getOrBuildFirFile(ktFile)
 
     override fun resolveFirToPhase(declaration: FirDeclaration, toPhase: FirResolvePhase) {
-        originalState.resolveFirToPhase(declaration, toPhase)
+        originalFirResolveSession.resolveFirToPhase(declaration, toPhase)
     }
 
     override fun getDiagnostics(element: KtElement, filter: DiagnosticCheckerFilter): List<KtPsiDiagnostic> =
@@ -77,7 +77,7 @@ internal class FirModuleResolveStateDepended(
         TODO("Diagnostics are not implemented for depended state")
 
     override fun resolveToFirSymbol(ktDeclaration: KtDeclaration, phase: FirResolvePhase): FirBasedSymbol<*> {
-        return originalState.resolveToFirSymbol(ktDeclaration, phase)
+        return originalFirResolveSession.resolveToFirSymbol(ktDeclaration, phase)
     }
 
     override fun getTowerContextProvider(ktFile: KtFile): FirTowerContextProvider =
