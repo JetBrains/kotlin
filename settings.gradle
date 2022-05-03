@@ -39,28 +39,6 @@ plugins {
     id "com.gradle.common-custom-user-data-gradle-plugin" version "1.6.5" apply false
 }
 
-File versionPropertiesFile = new File(rootProject.projectDir, "gradle/versions.properties")
-def versionProperties = new Properties()
-versionPropertiesFile.withInputStream {
-    versionProperties.load(it)
-}
-dependencyResolutionManagement {
-    components {
-        withModule("com.google.code.gson:gson") {
-            allVariants {
-                withDependencies {
-                   add("com.google.code.gson:gson") {
-                       version {
-                           it.require(versionProperties['versions.gson'])
-                       }
-                       because("Force using same gson version because of https://github.com/google/gson/pull/1991")
-                    }
-                }
-            }
-        }
-    }
-}
-
 def buildProperties = BuildPropertiesKt.getKotlinBuildPropertiesForSettings(settings)
 
 if (buildProperties.buildScanServer != null) {

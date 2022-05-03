@@ -1,7 +1,5 @@
-import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 import org.gradle.crypto.checksum.Checksum
 import org.gradle.plugins.ide.idea.model.IdeaModel
-import proguard.gradle.ProGuardTask
 
 buildscript {
     val cacheRedirectorEnabled = findProperty("cacheRedirectorEnabled")?.toString()?.toBoolean() == true
@@ -419,6 +417,7 @@ fun Task.listConfigurationContents(configName: String) {
 val ignoreTestFailures by extra(project.kotlinBuildProperties.ignoreTestFailures)
 
 allprojects {
+    pluginManager.apply("common-configuration")
     val mirrorRepo: String? = findProperty("maven.repository.mirror")?.toString()
 
     repositories {
