@@ -205,10 +205,10 @@ object FirSessionFactory {
                         firProvider.symbolProvider,
                         *(incrementalCompilationContext?.previousFirSessionsSymbolProviders?.toTypedArray() ?: emptyArray()),
                         symbolProviderForBinariesFromIncrementalCompilation,
-                        optionalAnnotationClassesProviderForBinariesFromIncrementalCompilation,
                         generatedSymbolsProvider,
                         JavaSymbolProvider(this, projectEnvironment.getFirJavaFacade(this, moduleData, javaSourcesScope)),
                         dependenciesSymbolProvider,
+                        optionalAnnotationClassesProviderForBinariesFromIncrementalCompilation,
                     )
                 )
             )
@@ -273,10 +273,10 @@ object FirSessionFactory {
                 this,
                 listOf(
                     classFileBasedSymbolProvider,
-                    optionalAnnotationClassesProvider,
                     FirBuiltinSymbolProvider(this, builtinsModuleData, kotlinScopeProvider),
                     FirCloneableSymbolProvider(this, builtinsModuleData, kotlinScopeProvider),
-                    FirDependenciesSymbolProviderImpl(this)
+                    FirDependenciesSymbolProviderImpl(this),
+                    optionalAnnotationClassesProvider
                 )
             )
             register(FirSymbolProvider::class, symbolProvider)
