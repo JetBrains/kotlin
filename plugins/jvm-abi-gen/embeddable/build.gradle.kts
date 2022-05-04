@@ -12,7 +12,6 @@ dependencies {
 
 publish()
 
-noDefaultJar()
 runtimeJar(rewriteDefaultJarDepsToShadedCompiler())
 
 sourcesJar()

@@ -121,10 +121,6 @@ val resultJar by task<Jar> {
     }
 }
 
-addArtifact("apiElements", resultJar)
-addArtifact("runtimeElements", resultJar)
-addArtifact("archives", resultJar)
-
+setPublishableArtifact(resultJar)
 sourcesJar()
-
 javadocJar()

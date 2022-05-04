@@ -147,6 +147,4 @@ val resultJar by task<Jar> {
 }
 
 
-addArtifact("runtime", resultJar)
-addArtifact("runtimeElements", resultJar)
-addArtifact("archives", resultJar)
+setPublishableArtifact(resultJar)

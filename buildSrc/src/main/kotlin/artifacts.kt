@@ -47,26 +47,29 @@ fun Project.testsJar(body: Jar.() -> Unit = {}): Jar {
     }
 }
 
-var Project.artifactsRemovedDiagnosticFlag: Boolean
-    get() = extra.has("artifactsRemovedDiagnosticFlag") && extra["artifactsRemovedDiagnosticFlag"] == true
-    set(value) {
-        extra["artifactsRemovedDiagnosticFlag"] = value
-    }
+fun Project.setPublishableArtifact(
+    jarTask: TaskProvider<out Jar>
+) {
+    addArtifact("runtimeElements", jarTask)
+    addArtifact("apiElements", jarTask)
+    addArtifact("archives", jarTask)
+}
 
-fun Project.removeArtifacts(configuration: Configuration, task: Task) {
-    configuration.artifacts.removeAll { artifact ->
-        artifact.file in task.outputs.files
-    }
-
-    artifactsRemovedDiagnosticFlag = true
+fun removeJarTaskArtifact(
+    jarTask: TaskProvider<out Jar>
+): Configuration.() -> Unit = {
+    val jarFile = jarTask.get().archiveFile.get().asFile
+    artifacts.removeIf { it.file == jarFile }
 }
 
 fun Project.noDefaultJar() {
-    tasks.named("jar").configure {
-        configurations.forEach { cfg ->
-            removeArtifacts(cfg, this)
-        }
+    val jarTask = tasks.named<Jar>("jar") {
+        enabled = false
     }
+
+    configurations.named("apiElements", removeJarTaskArtifact(jarTask))
+    configurations.named("runtimeElements", removeJarTaskArtifact(jarTask))
+    configurations.named("archives", removeJarTaskArtifact(jarTask))
 }
 
 fun Jar.addEmbeddedRuntime() {

@@ -40,8 +40,6 @@ sourceSets {
     "test" { projectDefault() }
 }
 
-publish()
-
 // dummy is used for rewriting dependencies to the shaded packages in the embeddable compiler
 compilerDummyJar(compilerDummyForDependenciesRewriting("compilerDummy") {
     archiveClassifier.set("dummy")
@@ -52,6 +50,10 @@ val runtimeJar = runtimeJar(embeddableCompiler()) {
     exclude("com/sun/jna/**")
     exclude("org/jetbrains/annotations/**")
     mergeServiceFiles()
+}
+
+publish {
+    setArtifacts(listOf(runtimeJar))
 }
 
 sourcesJar {

@@ -79,9 +79,7 @@ idePluginDependency {
         }
     }
 
-    addArtifact("runtime", resultJar)
-    addArtifact("runtimeElements", resultJar)
-    addArtifact("archives", resultJar)
+    setPublishableArtifact(resultJar)
 
     publish()
 
