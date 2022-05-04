@@ -49,6 +49,11 @@ declare namespace JS_TESTS {
             get _varCustomWithField(): number;
             set _varCustomWithField(value: number);
         }
+        class A5<T> {
+            constructor(value: T);
+            get value(): T;
+            test(): T;
+        }
         const O0: {
         };
         const O: {

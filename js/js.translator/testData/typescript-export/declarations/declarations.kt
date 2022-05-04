@@ -123,6 +123,10 @@ class A4 {
         set(value) { field = value * 10 }
 }
 
+@JsExport
+class A5<T>(val value: T) {
+    fun test(): T = value
+}
 
 @JsExport
 object O0
