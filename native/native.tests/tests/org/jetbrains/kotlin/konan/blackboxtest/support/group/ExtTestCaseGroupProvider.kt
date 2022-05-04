@@ -73,7 +73,7 @@ internal class ExtTestCaseGroupProvider : TestCaseGroupProvider, TestDisposable(
 
                 if (extTestDataFile.isRelevant)
                     testCases += extTestDataFile.createTestCase(
-                        definitelyStandaloneTest = testDataFile in standalones,
+                        definitelyStandaloneTest = settings.get<ForcedStandaloneTestKind>().value || testDataFile in standalones,
                         sharedModules = sharedModules
                     )
                 else
@@ -168,7 +168,8 @@ private class ExtTestDataFile(
         return doCreateTestCase(isStandaloneTest, sharedModules)
     }
 
-    /** Determine if the current test should be compiled as a standalone test, i.e.
+    /**
+     * Determine if the current test should be compiled as a standalone test, i.e.
      * - package names are not patched
      * - test is compiled independently of any other tests
      */

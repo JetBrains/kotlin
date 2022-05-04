@@ -10,10 +10,7 @@ import org.jetbrains.kotlin.konan.blackboxtest.support.TestCase.NoTestRunnerExtr
 import org.jetbrains.kotlin.konan.blackboxtest.support.TestCase.WithTestRunnerExtras
 import org.jetbrains.kotlin.konan.blackboxtest.support.runner.TestRunCheck.*
 import org.jetbrains.kotlin.konan.blackboxtest.support.runner.TestRunChecks
-import org.jetbrains.kotlin.konan.blackboxtest.support.settings.GeneratedSources
-import org.jetbrains.kotlin.konan.blackboxtest.support.settings.Settings
-import org.jetbrains.kotlin.konan.blackboxtest.support.settings.TestRoots
-import org.jetbrains.kotlin.konan.blackboxtest.support.settings.Timeouts
+import org.jetbrains.kotlin.konan.blackboxtest.support.settings.*
 import org.jetbrains.kotlin.konan.blackboxtest.support.util.*
 import org.jetbrains.kotlin.test.directives.model.Directive
 import org.jetbrains.kotlin.test.directives.model.RegisteredDirectives
@@ -182,8 +179,14 @@ internal class StandardTestCaseGroupProvider : TestCaseGroupProvider {
         val registeredDirectives = directivesParser.build()
 
         val freeCompilerArgs = parseFreeCompilerArgs(registeredDirectives, location)
-        val testKind = parseTestKind(registeredDirectives, location)
         val expectedTimeoutFailure = parseExpectedTimeoutFailure(registeredDirectives)
+
+        val testKind = parseTestKind(registeredDirectives, location).let { testKind ->
+            if (testKind == TestKind.REGULAR && settings.get<ForcedStandaloneTestKind>().value)
+                TestKind.STANDALONE
+            else
+                testKind
+        }
 
         if (testKind == TestKind.REGULAR) {
             // Fix package declarations to avoid unintended conflicts between symbols with the same name in different test cases.
