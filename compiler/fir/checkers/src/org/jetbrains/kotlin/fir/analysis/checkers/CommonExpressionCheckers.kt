@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers
 
+import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirDirectFieldOrDelegateAccessUnsupportedChecker
 import org.jetbrains.kotlin.fir.analysis.checkers.expression.*
 import org.jetbrains.kotlin.fir.analysis.checkers.syntax.FirCommaInWhenConditionChecker
 import org.jetbrains.kotlin.fir.analysis.checkers.syntax.FirConfusingWhenBranchSyntaxChecker
@@ -27,6 +28,7 @@ object CommonExpressionCheckers : ExpressionCheckers() {
     override val qualifiedAccessCheckers: Set<FirQualifiedAccessChecker>
         get() = setOf(
             FirOptInUsageAccessChecker,
+            FirDirectFieldOrDelegateAccessUnsupportedChecker,
         )
 
     override val qualifiedAccessExpressionCheckers: Set<FirQualifiedAccessExpressionChecker>
