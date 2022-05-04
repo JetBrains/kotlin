@@ -5920,6 +5920,18 @@ public class FirDiagnosticsWithLightTreeTestGenerated extends AbstractFirDiagnos
             }
 
             @Test
+            @TestMetadata("delegateAccessUnsupported.kt")
+            public void testDelegateAccessUnsupported() throws Exception {
+                runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/properties/delegateAccessUnsupported.kt");
+            }
+
+            @Test
+            @TestMetadata("directAccessUnsupported.kt")
+            public void testDirectAccessUnsupported() throws Exception {
+                runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/properties/directAccessUnsupported.kt");
+            }
+
+            @Test
             @TestMetadata("explicitBackingFieldUnsupported.kt")
             public void testExplicitBackingFieldUnsupported() throws Exception {
                 runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/properties/explicitBackingFieldUnsupported.kt");
@@ -6052,6 +6064,12 @@ public class FirDiagnosticsWithLightTreeTestGenerated extends AbstractFirDiagnos
                     }
 
                     @Test
+                    @TestMetadata("directAccessWithArray.kt")
+                    public void testDirectAccessWithArray() throws Exception {
+                        runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/properties/backingField/directAccess/directAccessWithArray.kt");
+                    }
+
+                    @Test
                     @TestMetadata("directAccessWithExplicitReceiver.kt")
                     public void testDirectAccessWithExplicitReceiver() throws Exception {
                         runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/properties/backingField/directAccess/directAccessWithExplicitReceiver.kt");
@@ -6114,6 +6132,12 @@ public class FirDiagnosticsWithLightTreeTestGenerated extends AbstractFirDiagnos
                 @TestMetadata("delegateAccessSeparateClass.kt")
                 public void testDelegateAccessSeparateClass() throws Exception {
                     runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/properties/delegateAccess/delegateAccessSeparateClass.kt");
+                }
+
+                @Test
+                @TestMetadata("delegateAccessWithArray.kt")
+                public void testDelegateAccessWithArray() throws Exception {
+                    runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/properties/delegateAccess/delegateAccessWithArray.kt");
                 }
 
                 @Test

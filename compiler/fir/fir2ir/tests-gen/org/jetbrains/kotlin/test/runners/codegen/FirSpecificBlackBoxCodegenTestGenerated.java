@@ -286,6 +286,22 @@ public class FirSpecificBlackBoxCodegenTestGenerated extends AbstractFirBlackBox
                 public void testBackingFieldWithSmartTypeParameters() throws Exception {
                     runTest("compiler/fir/fir2ir/testData/codegen/boxWithStdLib/properties/backingField/backingFieldWithSmartTypeParameters.kt");
                 }
+
+                @Nested
+                @TestMetadata("compiler/fir/fir2ir/testData/codegen/boxWithStdLib/properties/backingField/directAccess")
+                @TestDataPath("$PROJECT_ROOT")
+                public class DirectAccess {
+                    @Test
+                    public void testAllFilesPresentInDirectAccess() throws Exception {
+                        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/fir2ir/testData/codegen/boxWithStdLib/properties/backingField/directAccess"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+                    }
+
+                    @Test
+                    @TestMetadata("directAccessWithArray.kt")
+                    public void testDirectAccessWithArray() throws Exception {
+                        runTest("compiler/fir/fir2ir/testData/codegen/boxWithStdLib/properties/backingField/directAccess/directAccessWithArray.kt");
+                    }
+                }
             }
 
             @Nested
@@ -295,6 +311,12 @@ public class FirSpecificBlackBoxCodegenTestGenerated extends AbstractFirBlackBox
                 @Test
                 public void testAllFilesPresentInDelegateAccess() throws Exception {
                     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/fir2ir/testData/codegen/boxWithStdLib/properties/delegateAccess"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+                }
+
+                @Test
+                @TestMetadata("delegateAccessWithArray.kt")
+                public void testDelegateAccessWithArray() throws Exception {
+                    runTest("compiler/fir/fir2ir/testData/codegen/boxWithStdLib/properties/delegateAccess/delegateAccessWithArray.kt");
                 }
 
                 @Test
