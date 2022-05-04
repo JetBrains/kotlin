@@ -13,7 +13,7 @@ import kotlin.reflect.KClass
 
 internal abstract class Settings(private val parent: Settings?, settings: Iterable<Any>) {
     private val map: Map<KClass<*>, Any> = THashMap<KClass<*>, Any>().apply {
-        settings.forEach { it ->
+        settings.forEach {
             val (settingClass: KClass<*>, setting: Any) = if (it is Pair<*, *>) it.cast() else it::class to it
             val previous = put(settingClass, setting)
             assertTrue(previous == null) { "Duplicated settings: $settingClass, $previous, $setting" }
