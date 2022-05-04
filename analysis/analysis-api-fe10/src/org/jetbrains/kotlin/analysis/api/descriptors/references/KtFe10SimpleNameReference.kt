@@ -6,33 +6,80 @@
 package org.jetbrains.kotlin.analysis.api.descriptors.references
 
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
-import org.jetbrains.kotlin.analysis.api.descriptors.Fe10AnalysisFacade.AnalysisMode
-import org.jetbrains.kotlin.analysis.api.descriptors.KtFe10AnalysisSession
+import com.intellij.util.SmartList
 import org.jetbrains.kotlin.analysis.api.descriptors.references.base.KtFe10Reference
-import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.toKtSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KtSymbol
+import org.jetbrains.kotlin.analysis.api.descriptors.references.base.KtFe10ReferenceResolutionHelper
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.idea.references.KtSimpleNameReference
+import org.jetbrains.kotlin.idea.references.readWriteAccess
+import org.jetbrains.kotlin.load.java.descriptors.JavaPropertyDescriptor
+import org.jetbrains.kotlin.plugin.references.SimpleNameReferenceExtension
 import org.jetbrains.kotlin.psi.KtImportAlias
 import org.jetbrains.kotlin.psi.KtSimpleNameExpression
 import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.resolve.calls.util.getResolvedCall
+import org.jetbrains.kotlin.resolve.ImportedFromObjectCallableDescriptor
+import org.jetbrains.kotlin.resolve.bindingContextUtil.getReferenceTargets
+import org.jetbrains.kotlin.resolve.descriptorUtil.getImportableDescriptor
+
 
 class KtFe10SimpleNameReference(expression: KtSimpleNameExpression) : KtSimpleNameReference(expression), KtFe10Reference {
-    override fun KtAnalysisSession.resolveToSymbols(): Collection<KtSymbol> {
-        require(this is KtFe10AnalysisSession)
 
-        val bindingContext = analysisContext.analyze(expression, AnalysisMode.PARTIAL)
-
-        val descriptor = bindingContext[BindingContext.REFERENCE_TARGET, expression]
-            ?: expression.getResolvedCall(bindingContext)?.resultingDescriptor
-
-        return listOfNotNull(descriptor?.toKtSymbol(analysisContext))
+    override fun canBeReferenceTo(candidateTarget: PsiElement): Boolean {
+        return element.containingFile == candidateTarget.containingFile ||
+                KtFe10ReferenceResolutionHelper.getInstance().isInProjectOrLibSource(element, includeScriptsOutsideSourceRoots = true)
     }
 
-    override fun isReferenceToViaExtension(element: PsiElement): Boolean = false
+    override fun isReferenceToImportAlias(alias: KtImportAlias): Boolean {
+        return super<KtFe10Reference>.isReferenceToImportAlias(alias)
+    }
+
+    override fun getTargetDescriptors(context: BindingContext): Collection<DeclarationDescriptor> {
+        return SmartList<DeclarationDescriptor>().apply {
+            // Replace Java property with its accessor(s)
+            for (descriptor in expression.getReferenceTargets(context)) {
+                val sizeBefore = size
+
+                if (descriptor !is JavaPropertyDescriptor) {
+                    add(descriptor)
+                    continue
+                }
+
+                val readWriteAccess = expression.readWriteAccess(true)
+                descriptor.getter?.let {
+                    if (readWriteAccess.isRead) add(it)
+                }
+                descriptor.setter?.let {
+                    if (readWriteAccess.isWrite) add(it)
+                }
+
+                if (size == sizeBefore) {
+                    add(descriptor)
+                }
+            }
+        }
+    }
+
+    override fun isReferenceToViaExtension(element: PsiElement): Boolean {
+        for (extension in element.project.extensionArea.getExtensionPoint(SimpleNameReferenceExtension.EP_NAME).extensions) {
+            if (extension.isReferenceTo(this, element)) return true
+        }
+        return false
+    }
 
     override fun getImportAlias(): KtImportAlias? {
+        fun DeclarationDescriptor.unwrap() = if (this is ImportedFromObjectCallableDescriptor<*>) callableFromObject else this
+
+        val name = element.getReferencedName()
+        val file = element.containingKtFile
+        val importDirective = file.findImportByAlias(name) ?: return null
+        val fqName = importDirective.importedFqName ?: return null
+        val helper = KtFe10ReferenceResolutionHelper.getInstance()
+        val importedDescriptors = helper.resolveImportReference(file, fqName).map { it.unwrap() }
+        if (getTargetDescriptors(helper.partialAnalyze(element)).any {
+                it.unwrap().getImportableDescriptor() in importedDescriptors
+            }) {
+            return importDirective.alias
+        }
         return null
     }
 }

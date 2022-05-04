@@ -5,39 +5,31 @@
 
 package org.jetbrains.kotlin.analysis.api.descriptors.references
 
-import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
-import org.jetbrains.kotlin.analysis.api.descriptors.KtFe10AnalysisSession
 import org.jetbrains.kotlin.analysis.api.descriptors.references.base.KtFe10Reference
-import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.toKtCallableSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KtSymbol
-import org.jetbrains.kotlin.descriptors.PropertyDescriptor
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
+import org.jetbrains.kotlin.descriptors.VariableDescriptorWithAccessors
+import org.jetbrains.kotlin.descriptors.accessors
 import org.jetbrains.kotlin.idea.references.KtPropertyDelegationMethodsReference
+import org.jetbrains.kotlin.psi.KtImportAlias
 import org.jetbrains.kotlin.psi.KtProperty
 import org.jetbrains.kotlin.psi.KtPropertyDelegate
+import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.resolve.BindingContext
 
 class KtFe10PropertyDelegationMethodsReference(
     expression: KtPropertyDelegate
 ) : KtPropertyDelegationMethodsReference(expression), KtFe10Reference {
-    override fun KtAnalysisSession.resolveToSymbols(): Collection<KtSymbol> {
-        require(this is KtFe10AnalysisSession)
 
-        val property = expression.parent as? KtProperty
-        if (property == null || property.delegate !== element) {
-            return emptyList()
-        }
+    override fun getTargetDescriptors(context: BindingContext): Collection<DeclarationDescriptor> {
+        val property = expression.getStrictParentOfType<KtProperty>() ?: return emptyList()
+        val descriptor = context[BindingContext.DECLARATION_TO_DESCRIPTOR, property] as? VariableDescriptorWithAccessors
+            ?: return emptyList()
+        return descriptor.accessors.mapNotNull { accessor ->
+            context.get(BindingContext.DELEGATED_PROPERTY_RESOLVED_CALL, accessor)?.candidateDescriptor
+        } + listOfNotNull(context.get(BindingContext.PROVIDE_DELEGATE_RESOLVED_CALL, descriptor)?.candidateDescriptor)
+    }
 
-        val bindingContext = analysisContext.analyze(property)
-        val propertyDescriptor = bindingContext[BindingContext.DECLARATION_TO_DESCRIPTOR, property]
-
-        if (propertyDescriptor is PropertyDescriptor) {
-            return listOfNotNull(propertyDescriptor.getter, propertyDescriptor.setter)
-                .mapNotNull { accessor ->
-                    val descriptor = bindingContext[BindingContext.DELEGATED_PROPERTY_RESOLVED_CALL, accessor]?.resultingDescriptor
-                    descriptor?.toKtCallableSymbol(analysisContext)
-                }
-        }
-
-        return emptyList()
+    override fun isReferenceToImportAlias(alias: KtImportAlias): Boolean {
+        return super<KtFe10Reference>.isReferenceToImportAlias(alias)
     }
 }
