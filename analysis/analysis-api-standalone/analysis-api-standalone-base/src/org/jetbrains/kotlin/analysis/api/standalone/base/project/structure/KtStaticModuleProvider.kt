@@ -19,8 +19,8 @@ class KtStaticModuleProvider(
             }.ktModule
     }
 
-    override fun getKtLibraryModules(): Collection<KtLibraryModule> {
-        return testProjectStructure.allKtModules().filterIsInstance<KtLibraryModule>()
+    override fun getKtBinaryModules(): Collection<KtBinaryModule> {
+        return testProjectStructure.allKtModules().filterIsInstance<KtBinaryModule>()
     }
 
     override fun getStdlibWithBuiltinsModule(module: KtModule): KtLibraryModule {

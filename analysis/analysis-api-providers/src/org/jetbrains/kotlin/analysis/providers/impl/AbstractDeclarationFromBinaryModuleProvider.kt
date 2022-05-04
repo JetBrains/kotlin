@@ -13,22 +13,23 @@ import com.intellij.openapi.vfs.VirtualFileSystem
 import com.intellij.openapi.vfs.impl.jar.CoreJarFileSystem
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.util.io.URLUtil
-import org.jetbrains.kotlin.analysis.project.structure.KtLibraryModule
+import org.jetbrains.kotlin.analysis.project.structure.KtBinaryModule
 import org.jetbrains.kotlin.name.FqName
+import java.nio.file.Files
 import java.nio.file.Path
 
-public interface AbstractDeclarationFromLibraryModuleProvider {
+public interface AbstractDeclarationFromBinaryModuleProvider {
     public val scope: GlobalSearchScope
     public val jarFileSystem: CoreJarFileSystem
 
     public fun virtualFilesFromModule(
-        libraryModule: KtLibraryModule,
+        binaryModule: KtBinaryModule,
         fqName: FqName,
         isPackageName: Boolean,
     ): Collection<VirtualFile> {
         val fqNameString = fqName.asString()
         val fs = StandardFileSystems.local()
-        return libraryModule.getBinaryRoots().flatMap r@{ rootPath ->
+        return binaryModule.getBinaryRoots().flatMap r@{ rootPath ->
             val root = findRoot(rootPath, fs) ?: return@r emptySet()
             val files = mutableSetOf<VirtualFile>()
             VfsUtilCore.iterateChildrenRecursively(
@@ -68,10 +69,10 @@ public interface AbstractDeclarationFromLibraryModuleProvider {
         rootPath: Path,
         fs: VirtualFileSystem,
     ): VirtualFile? {
-        return if (rootPath.toFile().isDirectory) {
-            fs.findFileByPath(rootPath.toAbsolutePath().toString())
-        } else {
+        return if (Files.isRegularFile(rootPath) && ".jar" in rootPath.toString()) {
             jarFileSystem.refreshAndFindFileByPath(rootPath.toAbsolutePath().toString() + URLUtil.JAR_SEPARATOR)
+        } else {
+            fs.findFileByPath(rootPath.toAbsolutePath().toString())
         }
     }
 
