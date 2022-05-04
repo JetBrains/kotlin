@@ -55,9 +55,7 @@ internal class FragmentLocalFunctionPatchLowering(
     }
 
     override fun visitSimpleFunction(declaration: IrSimpleFunction): IrStatement {
-        if (declaration.name.asString() != GENERATED_FUNCTION_NAME) return declaration
-
-        declaration.body!!.transformChildrenVoid(object : IrElementTransformerVoidWithContext() {
+        declaration.body?.transformChildrenVoid(object : IrElementTransformerVoidWithContext() {
             override fun visitCall(expression: IrCall): IrExpression {
                 expression.transformChildrenVoid(this)
                 val localsData = localDeclarationsData[expression.symbol.owner] ?: return super.visitCall(expression)
