@@ -32,11 +32,25 @@ class CInteropIdeaSyncIT : BaseGradleIT() {
                 assertContains(ideaSyncWarningMessage)
             }
 
-            /* Task is not considered up-to-date after lenient failure */
-            build("commonize", options = ideaSyncBuildOptions) {
-                assertSuccessful()
-                assertTasksExecuted(interopTaskName)
-                assertContains(ideaSyncWarningMessage)
+            /*
+            The implementation before fixing KT-52243 considered the cinterop task as *not* up-to-date
+            when it was previously running in the IDE and therefore failing leniently. It would have always tried to re-run
+            this task to anticipate untracked environmental changes.
+
+            This cannot be easily implemented whilst also fixing KT-52243, which is more desirable.
+            A new mechanism for 'run tasks at import' leniency is proposed (using --continue), which is supposed to replace
+            the special cinterop mechanism.
+
+            https://youtrack.jetbrains.com/issue/KT-52243/
+            https://github.com/JetBrains/kotlin/pull/4812#issuecomment-1117287222
+             */
+            runCatching {
+                /* Task is not considered up-to-date after lenient failure */
+                build("commonize", options = ideaSyncBuildOptions) {
+                    assertSuccessful()
+                    assertTasksExecuted(interopTaskName)
+                    assertContains(ideaSyncWarningMessage)
+                }
             }
 
             /* Remove noise that causes failure */
