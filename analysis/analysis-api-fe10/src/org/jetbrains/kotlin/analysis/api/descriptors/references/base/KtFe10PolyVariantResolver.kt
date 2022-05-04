@@ -5,38 +5,72 @@
 
 package org.jetbrains.kotlin.analysis.api.descriptors.references.base
 
+import com.intellij.psi.JavaPsiFacade
+import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiElementResolveResult
 import com.intellij.psi.ResolveResult
 import com.intellij.psi.impl.source.resolve.ResolveCache
-import org.jetbrains.kotlin.analysis.api.KtAllowAnalysisOnEdt
-import org.jetbrains.kotlin.analysis.api.analyze
-import org.jetbrains.kotlin.analysis.api.descriptors.Fe10AnalysisFacade.AnalysisMode
-import org.jetbrains.kotlin.analysis.api.descriptors.KtFe10AnalysisSession
-import org.jetbrains.kotlin.analysis.api.lifetime.allowAnalysisOnEdt
+import org.jetbrains.kotlin.analysis.api.descriptors.utils.DescriptorToSourceUtilsIde
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
+import org.jetbrains.kotlin.descriptors.PackageViewDescriptor
 import org.jetbrains.kotlin.idea.references.AbstractKtReference
 import org.jetbrains.kotlin.idea.references.KtReference
-import org.jetbrains.kotlin.load.kotlin.toSourceElement
 import org.jetbrains.kotlin.psi.KtReferenceExpression
 import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.resolve.calls.util.getResolvedCall
-import org.jetbrains.kotlin.resolve.source.getPsi
+import java.util.*
 
 object KtFe10PolyVariantResolver : ResolveCache.PolyVariantResolver<KtReference> {
-    @OptIn(KtAllowAnalysisOnEdt::class)
-    override fun resolve(reference: KtReference, incompleteCode: Boolean): Array<ResolveResult> {
-        require(reference is AbstractKtReference<*>) { "reference should be AbstractKtReference, but was ${reference::class}" }
-        return allowAnalysisOnEdt {
-            val expression = reference.expression
-            analyze(reference.expression) {
-                val analysisSession = this as KtFe10AnalysisSession
-                val bindingContext = analysisSession.analysisContext.analyze(expression, AnalysisMode.PARTIAL)
-                val descriptor = when (expression) {
-                    is KtReferenceExpression -> bindingContext[BindingContext.REFERENCE_TARGET, expression]
-                    else -> expression.getResolvedCall(bindingContext)?.resultingDescriptor
-                }
-                val source = descriptor?.toSourceElement?.getPsi()
-                if (source != null) arrayOf(PsiElementResolveResult(source)) else emptyArray()
-            }
+    class KotlinResolveResult(element: PsiElement) : PsiElementResolveResult(element)
+
+    private fun resolveToPsiElements(ref: KtFe10Reference): Collection<PsiElement> {
+        require(ref is AbstractKtReference<*>) { "reference should be AbstractKtReference, but was ${ref::class}" }
+        val bindingContext = KtFe10ReferenceResolutionHelper.getInstance().partialAnalyze(ref.expression)
+        if (bindingContext == BindingContext.EMPTY) return emptySet()
+        return resolveToPsiElements(ref, bindingContext, ref.getTargetDescriptors(bindingContext))
+    }
+
+    private fun resolveToPsiElements(
+        ref: KtFe10Reference,
+        context: BindingContext,
+        targetDescriptors: Collection<DeclarationDescriptor>
+    ): Collection<PsiElement> {
+        if (targetDescriptors.isNotEmpty()) {
+            return targetDescriptors.flatMap { target -> resolveToPsiElements(ref, target) }.toSet()
         }
+
+        val labelTargets = getLabelTargets(ref, context)
+        if (labelTargets != null) {
+            return labelTargets
+        }
+
+        return Collections.emptySet()
+    }
+
+    private fun resolveToPsiElements(
+        ref: KtFe10Reference,
+        targetDescriptor: DeclarationDescriptor
+    ): Collection<PsiElement> = if (targetDescriptor is PackageViewDescriptor) {
+        val psiFacade = JavaPsiFacade.getInstance(ref.element.project)
+        val fqName = targetDescriptor.fqName.asString()
+        listOfNotNull(psiFacade.findPackage(fqName))
+    } else {
+        DescriptorToSourceUtilsIde.getAllDeclarations(ref.element.project, targetDescriptor, ref.element.resolveScope)
+    }
+
+    private fun getLabelTargets(ref: KtFe10Reference, context: BindingContext): Collection<PsiElement>? {
+        val reference = ref.element as? KtReferenceExpression ?: return null
+        val labelTarget = context[BindingContext.LABEL_TARGET, reference]
+        if (labelTarget != null) {
+            return listOf(labelTarget)
+        }
+
+        return context[BindingContext.AMBIGUOUS_LABEL_TARGET, reference]
+    }
+
+    // TODO: Old impl from IDE side has this logic wrapped inside runWithCancellationCheck. Figure out what we should do here.
+    override fun resolve(ref: KtReference, incompleteCode: Boolean): Array<ResolveResult> {
+        require(ref is KtFe10Reference) { "reference should be KtFe10Reference, but was ${ref::class}" }
+        val resolveToPsiElements = resolveToPsiElements(ref)
+        return resolveToPsiElements.map { KotlinResolveResult(it) }.toTypedArray()
     }
 }

@@ -6,22 +6,21 @@
 package org.jetbrains.kotlin.analysis.api.descriptors.references
 
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
-import org.jetbrains.kotlin.analysis.api.descriptors.Fe10AnalysisFacade.AnalysisMode
-import org.jetbrains.kotlin.analysis.api.descriptors.KtFe10AnalysisSession
 import org.jetbrains.kotlin.analysis.api.descriptors.references.base.KtFe10Reference
-import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.toKtCallableSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KtSymbol
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.idea.references.KtArrayAccessReference
 import org.jetbrains.kotlin.psi.KtArrayAccessExpression
-import org.jetbrains.kotlin.resolve.calls.util.getResolvedCall
+import org.jetbrains.kotlin.psi.KtImportAlias
+import org.jetbrains.kotlin.resolve.BindingContext
 
 class KtFe10ArrayAccessReference(expression: KtArrayAccessExpression) : KtArrayAccessReference(expression), KtFe10Reference {
-    override fun KtAnalysisSession.resolveToSymbols(): Collection<KtSymbol> {
-        require(this is KtFe10AnalysisSession)
+    override fun isReferenceToImportAlias(alias: KtImportAlias): Boolean {
+        return super<KtFe10Reference>.isReferenceToImportAlias(alias)
+    }
 
-        val bindingContext = analysisContext.analyze(expression, AnalysisMode.PARTIAL)
-        val descriptor = expression.getResolvedCall(bindingContext)?.resultingDescriptor
-        return listOfNotNull(descriptor?.toKtCallableSymbol(analysisContext))
+    override fun getTargetDescriptors(context: BindingContext): Collection<DeclarationDescriptor> {
+        val getFunctionDescriptor = context[BindingContext.INDEXED_LVALUE_GET, expression]?.candidateDescriptor
+        val setFunctionDescriptor = context[BindingContext.INDEXED_LVALUE_SET, expression]?.candidateDescriptor
+        return listOfNotNull(getFunctionDescriptor, setFunctionDescriptor)
     }
 }
