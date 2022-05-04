@@ -39,7 +39,7 @@ import java.util.List;
 import static org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilsKt.isEffectivelyExternal;
 
 public final class AnnotationsUtils {
-    private static final String JS_NAME = "kotlin.js.JsName";
+    public static final FqName JS_NAME = new FqName("kotlin.js.JsName");
     private static final FqName JS_EXPORT = new FqName("kotlin.js.JsExport");
     public static final FqName JS_MODULE_ANNOTATION = new FqName("kotlin.js.JsModule");
     private static final FqName JS_NON_MODULE_ANNOTATION = new FqName("kotlin.js.JsNonModule");
@@ -172,7 +172,7 @@ public final class AnnotationsUtils {
 
     @Nullable
     public static AnnotationDescriptor getJsNameAnnotation(@NotNull DeclarationDescriptor descriptor) {
-        return descriptor.getAnnotations().findAnnotation(new FqName(JS_NAME));
+        return descriptor.getAnnotations().findAnnotation(JS_NAME);
     }
 
     @Nullable

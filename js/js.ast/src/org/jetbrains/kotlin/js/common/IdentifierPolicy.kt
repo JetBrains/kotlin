@@ -50,3 +50,21 @@ fun String.isValidES5Identifier(): Boolean {
     }
     return true
 }
+
+val RESERVED_KEYWORDS: Set<String> = setOf(
+    // keywords
+    "await", "break", "case", "catch", "continue", "debugger", "default", "delete", "do", "else", "finally", "for", "function", "if",
+    "in", "instanceof", "new", "return", "switch", "this", "throw", "try", "typeof", "var", "void", "while", "with",
+
+    // future reserved words
+    "class", "const", "enum", "export", "extends", "import", "super",
+
+    // as future reserved words in strict mode
+    "implements", "interface", "let", "package", "private", "protected", "public", "static", "yield",
+
+    // additional reserved words
+    "null", "true", "false",
+
+    // disallowed as variable names in strict mode
+    "eval", "arguments",
+)

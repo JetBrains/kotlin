@@ -402,6 +402,12 @@ public class DiagnosticsTestWithJsStdLibGenerated extends AbstractDiagnosticsTes
         }
 
         @Test
+        @TestMetadata("nonConsumableIdentifiers.kt")
+        public void testNonConsumableIdentifiers() throws Exception {
+            runTest("compiler/testData/diagnostics/testsWithJsStdLib/export/nonConsumableIdentifiers.kt");
+        }
+
+        @Test
         @TestMetadata("secondaryConstructorWithoutJsName.kt")
         public void testSecondaryConstructorWithoutJsName() throws Exception {
             runTest("compiler/testData/diagnostics/testsWithJsStdLib/export/secondaryConstructorWithoutJsName.kt");

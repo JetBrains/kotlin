@@ -5,15 +5,19 @@
 
 package org.jetbrains.kotlin.js.resolve.diagnostics
 
+import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.builtins.isFunctionType
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.ClassKind.*
-import org.jetbrains.kotlin.js.resolve.diagnostics.JsExportDeclarationChecker.isExportable
+import org.jetbrains.kotlin.js.common.RESERVED_KEYWORDS
+import org.jetbrains.kotlin.js.naming.NameSuggestion
 import org.jetbrains.kotlin.js.translate.utils.AnnotationsUtils
+import org.jetbrains.kotlin.psi.KtAnnotationEntry
 import org.jetbrains.kotlin.psi.KtDeclaration
+import org.jetbrains.kotlin.psi.KtNamedDeclaration
 import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.BindingTrace
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.resolve.checkers.DeclarationChecker
 import org.jetbrains.kotlin.resolve.checkers.DeclarationCheckerContext
@@ -22,6 +26,7 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.isExtensionProperty
 import org.jetbrains.kotlin.resolve.descriptorUtil.isInsideInterface
 import org.jetbrains.kotlin.resolve.inline.isInlineWithReified
 import org.jetbrains.kotlin.resolve.isInlineClass
+import org.jetbrains.kotlin.resolve.source.getPsi
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.isDynamic
 import org.jetbrains.kotlin.types.typeUtil.*
@@ -60,6 +65,8 @@ object JsExportDeclarationChecker : DeclarationChecker {
         if (descriptor.isExpect) {
             reportWrongExportedDeclaration("expect")
         }
+
+        validateDeclarationOnConsumableName(declaration, descriptor, trace)
 
         when (descriptor) {
             is FunctionDescriptor -> {
@@ -200,5 +207,34 @@ object JsExportDeclarationChecker : DeclarationChecker {
         if (KotlinBuiltIns.isEnum(this)) return true
 
         return descriptor.isEffectivelyExternal() || AnnotationsUtils.isExportedObject(descriptor, bindingContext)
+    }
+
+    private fun validateDeclarationOnConsumableName(
+        declaration: KtDeclaration,
+        declarationDescriptor: DeclarationDescriptor,
+        trace: BindingTrace
+    ) {
+        if (!declarationDescriptor.isTopLevelInPackage() || declarationDescriptor.name.isSpecial) return
+
+        val name = declarationDescriptor.getKotlinOrJsName()
+
+        if (name !in RESERVED_KEYWORDS && NameSuggestion.sanitizeName(name) == name) return
+
+        val reportTarget = declarationDescriptor.getJsNameArgument() ?: declaration.getIdentifier()
+
+        trace.report(ErrorsJs.NON_CONSUMABLE_EXPORTED_IDENTIFIER.on(reportTarget, name))
+    }
+
+    private fun DeclarationDescriptor.getKotlinOrJsName(): String {
+        return AnnotationsUtils.getJsName(this) ?: name.identifier
+    }
+
+    private fun KtDeclaration.getIdentifier(): PsiElement {
+        return (this as KtNamedDeclaration).nameIdentifier!!
+    }
+
+    private fun DeclarationDescriptor.getJsNameArgument(): PsiElement? {
+        val jsNameAnnotation = AnnotationsUtils.getJsNameAnnotation(this) ?: return null
+        return (jsNameAnnotation.source.getPsi() as KtAnnotationEntry).valueArgumentList?.arguments?.first()
     }
 }

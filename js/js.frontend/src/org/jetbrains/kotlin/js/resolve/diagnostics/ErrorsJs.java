@@ -110,6 +110,8 @@ public interface ErrorsJs {
     DiagnosticFactory1<KtExpression, String> WRONG_EXPORTED_DECLARATION = DiagnosticFactory1.create(ERROR, DECLARATION_SIGNATURE_OR_DEFAULT);
     DiagnosticFactory2<PsiElement, String, KotlinType> NON_EXPORTABLE_TYPE = DiagnosticFactory2.create(WARNING, DECLARATION_SIGNATURE_OR_DEFAULT);
 
+    DiagnosticFactory1<PsiElement, String> NON_CONSUMABLE_EXPORTED_IDENTIFIER = DiagnosticFactory1.create(WARNING, DEFAULT);
+
     @SuppressWarnings("UnusedDeclaration")
     Object _initializer = new Object() {
         {
