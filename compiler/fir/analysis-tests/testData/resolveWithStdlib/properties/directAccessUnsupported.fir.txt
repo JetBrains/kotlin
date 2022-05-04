@@ -1,0 +1,13 @@
+FILE: directAccessUnsupported.kt
+    public final var number: R|kotlin/String|
+        internal <explicit backing field>: R|kotlin/Int| = Int(10)
+        public get(): R|kotlin/String| {
+            ^ F|/number|.R|kotlin/Int.toString|()
+        }
+        public set(newValue: R|kotlin/String|): R|kotlin/Unit| {
+            F|/number| = R|<local>/newValue|.R|kotlin/String.length|
+        }
+    public final fun updateNumber(): R|kotlin/Unit| {
+        F|/number| = Int(20)
+        lval rawValue: R|kotlin/Int| = F|/number|
+    }

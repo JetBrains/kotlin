@@ -147,6 +147,7 @@ fun TestConfigurationBuilder.baseFirDiagnosticTestConfiguration(
     ) {
         defaultDirectives {
             LANGUAGE + "+ExplicitBackingFields"
+            LANGUAGE + "+DirectFieldOrDelegateAccess"
         }
     }
 

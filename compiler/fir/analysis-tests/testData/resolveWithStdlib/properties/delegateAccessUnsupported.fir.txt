@@ -1,0 +1,30 @@
+FILE: delegateAccessUnsupported.kt
+    public final var number: R|kotlin/String|by object : R|kotlin/Any| {
+        private constructor(): R|<anonymous>| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final var rawValue: R|kotlin/Int| = Int(10)
+            public get(): R|kotlin/Int|
+            public set(value: R|kotlin/Int|): R|kotlin/Unit|
+
+        public final operator fun getValue(thisRef: R|kotlin/Any?|, property: R|kotlin/reflect/KProperty<*>|): R|kotlin/String| {
+            ^getValue this@R|/<anonymous>|.R|/<anonymous>.rawValue|.R|kotlin/Int.toString|()
+        }
+
+        public final operator fun setValue(thisRef: R|kotlin/Any?|, property: R|kotlin/reflect/KProperty<*>|, value: R|kotlin/String|): R|kotlin/Unit| {
+            this@R|/<anonymous>|.R|/<anonymous>.rawValue| = R|<local>/value|.R|kotlin/String.length|
+        }
+
+    }
+
+        public get(): R|kotlin/String| {
+            ^ D|/number|.R|/<anonymous>.getValue|(Null(null), ::R|/number|)
+        }
+        public set(<set-?>: R|kotlin/String|): R|kotlin/Unit| {
+            D|/number|.R|/<anonymous>.setValue|(Null(null), ::R|/number|, R|<local>/number|)
+        }
+    public final fun updateNumber(): R|kotlin/Unit| {
+        R|/number|.R|/<anonymous>.rawValue| = Int(20)
+        lval rawValue: R|kotlin/Int| = R|/number|.R|/<anonymous>.rawValue|
+    }

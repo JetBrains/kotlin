@@ -412,6 +412,12 @@ abstract class CommonCompilerArguments : CommonToolArguments() {
     @Argument(value = "-Xenable-incremental-compilation", description = "Enable incremental compilation")
     var incrementalCompilation: Boolean? by FreezableVar(null)
 
+    @Argument(
+        value = "-Xdirect-field-or-delegate-access",
+        description = "Enable syntax for accessing property fields and delegate members directly"
+    )
+    var directFieldOrDelegateAccess: Boolean by FreezableVar(false)
+
     @Argument(value = "-Xrender-internal-diagnostic-names", description = "Render internal names of warnings and errors")
     var renderInternalDiagnosticNames: Boolean by FreezableVar(false)
 
@@ -494,6 +500,10 @@ abstract class CommonCompilerArguments : CommonToolArguments() {
 
             if (useMixedNamedArguments) {
                 put(LanguageFeature.MixedNamedArgumentsInTheirOwnPosition, LanguageFeature.State.ENABLED)
+            }
+
+            if (directFieldOrDelegateAccess) {
+                put(LanguageFeature.DirectFieldOrDelegateAccess, LanguageFeature.State.ENABLED)
             }
 
             if (inferenceCompatibility) {
