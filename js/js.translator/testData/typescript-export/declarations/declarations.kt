@@ -216,7 +216,7 @@ class OuterClass {
 }
 
 @JsExport
-class KT38262 {
+open class KT38262 {
     fun then(): Int = 42
     fun catch(): Int = 24
 }

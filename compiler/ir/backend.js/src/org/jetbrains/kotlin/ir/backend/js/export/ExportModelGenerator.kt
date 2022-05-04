@@ -356,7 +356,7 @@ class ExportModelGenerator(
         val exportedClass = ExportedClass(
             name = name,
             isInterface = klass.isInterface,
-            isAbstract = klass.modality == Modality.ABSTRACT,
+            isAbstract = klass.modality == Modality.ABSTRACT || klass.modality == Modality.SEALED,
             superClass = superType,
             superInterfaces = superInterfaces,
             typeParameters = typeParameters,

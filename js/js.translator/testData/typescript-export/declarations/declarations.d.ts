@@ -62,7 +62,7 @@ declare namespace JS_TESTS {
                 get x(): number;
             };
         }
-        class TestSealed {
+        abstract class TestSealed {
             protected constructor(name: string);
             get name(): string;
         }
