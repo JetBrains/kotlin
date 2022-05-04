@@ -34,6 +34,7 @@ abstract class DeclarationCheckers {
     open val anonymousFunctionCheckers: Set<FirAnonymousFunctionChecker> = emptySet()
     open val propertyAccessorCheckers: Set<FirPropertyAccessorChecker> = emptySet()
     open val backingFieldCheckers: Set<FirBackingFieldChecker> = emptySet()
+    open val delegateFieldCheckers: Set<FirDelegateFieldChecker> = emptySet()
     open val valueParameterCheckers: Set<FirValueParameterChecker> = emptySet()
     open val enumEntryCheckers: Set<FirEnumEntryChecker> = emptySet()
     open val anonymousObjectCheckers: Set<FirAnonymousObjectChecker> = emptySet()
@@ -57,6 +58,7 @@ abstract class DeclarationCheckers {
     @CheckersComponentInternal internal val allAnonymousFunctionCheckers: Set<FirAnonymousFunctionChecker> by lazy { anonymousFunctionCheckers + functionCheckers + callableDeclarationCheckers + basicDeclarationCheckers }
     @CheckersComponentInternal internal val allPropertyAccessorCheckers: Set<FirPropertyAccessorChecker> by lazy { propertyAccessorCheckers + functionCheckers + callableDeclarationCheckers + basicDeclarationCheckers }
     @CheckersComponentInternal internal val allBackingFieldCheckers: Set<FirBackingFieldChecker> by lazy { backingFieldCheckers + callableDeclarationCheckers + basicDeclarationCheckers }
+    @CheckersComponentInternal internal val allDelegateFieldCheckers: Set<FirDelegateFieldChecker> by lazy { delegateFieldCheckers + callableDeclarationCheckers + basicDeclarationCheckers }
     @CheckersComponentInternal internal val allValueParameterCheckers: Set<FirValueParameterChecker> by lazy { valueParameterCheckers + callableDeclarationCheckers + basicDeclarationCheckers }
     @CheckersComponentInternal internal val allEnumEntryCheckers: Set<FirEnumEntryChecker> by lazy { enumEntryCheckers + callableDeclarationCheckers + basicDeclarationCheckers }
     @CheckersComponentInternal internal val allAnonymousObjectCheckers: Set<FirAnonymousObjectChecker> by lazy { anonymousObjectCheckers + classCheckers + classLikeCheckers + basicDeclarationCheckers }
