@@ -33,7 +33,7 @@ fun test6() {}
 
 annotation class AnnArray(val a: Array<String>)
 
-@AnnArray(<!NON_VARARG_SPREAD_ERROR!>*<!>["/"])
+@AnnArray(<!NON_VARARG_SPREAD_WARNING!>*<!>["/"])
 fun testArray() {}
 
 @Ann1(<!TYPE_MISMATCH, TYPE_MISMATCH!>[""]<!>)

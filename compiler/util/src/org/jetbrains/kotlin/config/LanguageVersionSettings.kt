@@ -222,7 +222,6 @@ enum class LanguageFeature(
     ProhibitSmartcastsOnPropertyFromAlienBaseClass(KOTLIN_1_7, kind = BUG_FIX),
     ProhibitInvalidCharsInNativeIdentifiers(KOTLIN_1_7, kind = BUG_FIX),
     DefinitelyNonNullableTypes(KOTLIN_1_7),
-    ReportNonVarargSpreadOnGenericCalls(KOTLIN_1_7, kind = BUG_FIX),
     ProhibitSimplificationOfNonTrivialConstBooleanExpressions(KOTLIN_1_7),
     SafeCallsAreAlwaysNullable(KOTLIN_1_7),
     RefineTypeCheckingOnAssignmentsToJavaFields(KOTLIN_1_7),
@@ -262,6 +261,7 @@ enum class LanguageFeature(
     ModifierNonBuiltinSuspendFunError(KOTLIN_1_8),
     SynchronizedSuspendError(KOTLIN_1_8),
     EnableDfaWarningsInK2(KOTLIN_1_8, kind = OTHER), // KT-50965
+    ReportNonVarargSpreadOnGenericCalls(KOTLIN_1_8, kind = BUG_FIX), // KT-48162
 
     // 1.9
 
