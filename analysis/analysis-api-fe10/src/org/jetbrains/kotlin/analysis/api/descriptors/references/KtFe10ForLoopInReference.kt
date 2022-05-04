@@ -5,26 +5,29 @@
 
 package org.jetbrains.kotlin.analysis.api.descriptors.references
 
-import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
-import org.jetbrains.kotlin.analysis.api.descriptors.KtFe10AnalysisSession
 import org.jetbrains.kotlin.analysis.api.descriptors.references.base.KtFe10Reference
-import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.toKtCallableSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KtSymbol
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.idea.references.KtForLoopInReference
 import org.jetbrains.kotlin.psi.KtForExpression
+import org.jetbrains.kotlin.psi.KtImportAlias
 import org.jetbrains.kotlin.resolve.BindingContext
 
 class KtFe10ForLoopInReference(expression: KtForExpression) : KtForLoopInReference(expression), KtFe10Reference {
-    override fun KtAnalysisSession.resolveToSymbols(): Collection<KtSymbol> {
-        check(this is KtFe10AnalysisSession)
 
-        val loopRange = element.loopRange ?: return emptyList()
-        val bindingContext = analysisContext.analyze(loopRange)
+    override fun getTargetDescriptors(context: BindingContext): Collection<DeclarationDescriptor> {
+        val loopRange = expression.loopRange ?: return emptyList()
+        return LOOP_RANGE_KEYS.mapNotNull { key -> context.get(key, loopRange)?.candidateDescriptor }
+    }
 
-        return listOf(
+    companion object {
+        private val LOOP_RANGE_KEYS = arrayOf(
             BindingContext.LOOP_RANGE_ITERATOR_RESOLVED_CALL,
-            BindingContext.LOOP_RANGE_HAS_NEXT_RESOLVED_CALL,
-            BindingContext.LOOP_RANGE_NEXT_RESOLVED_CALL
-        ).mapNotNull { slice -> bindingContext[slice, loopRange]?.resultingDescriptor?.toKtCallableSymbol(analysisContext) }
+            BindingContext.LOOP_RANGE_NEXT_RESOLVED_CALL,
+            BindingContext.LOOP_RANGE_HAS_NEXT_RESOLVED_CALL
+        )
+    }
+
+    override fun isReferenceToImportAlias(alias: KtImportAlias): Boolean {
+        return super<KtFe10Reference>.isReferenceToImportAlias(alias)
     }
 }

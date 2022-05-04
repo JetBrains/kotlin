@@ -5,24 +5,42 @@
 
 package org.jetbrains.kotlin.analysis.api.descriptors.references
 
-import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
-import org.jetbrains.kotlin.analysis.api.descriptors.Fe10AnalysisFacade.AnalysisMode
-import org.jetbrains.kotlin.analysis.api.descriptors.KtFe10AnalysisSession
+import com.intellij.openapi.util.TextRange
 import org.jetbrains.kotlin.analysis.api.descriptors.references.base.KtFe10Reference
-import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.toKtCallableSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KtSymbol
+import org.jetbrains.kotlin.analysis.api.descriptors.references.base.KtFe10ReferenceResolutionHelper
+import org.jetbrains.kotlin.analysis.api.tokens.HackToForceAllowRunningAnalyzeOnEDT
+import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.idea.references.KtDestructuringDeclarationReference
 import org.jetbrains.kotlin.psi.KtDestructuringDeclarationEntry
+import org.jetbrains.kotlin.psi.KtImportAlias
 import org.jetbrains.kotlin.resolve.BindingContext
 
 class KtFe10DestructuringDeclarationEntry(
     element: KtDestructuringDeclarationEntry
 ) : KtDestructuringDeclarationReference(element), KtFe10Reference {
-    override fun KtAnalysisSession.resolveToSymbols(): Collection<KtSymbol> {
-        check(this is KtFe10AnalysisSession)
+    override fun getTargetDescriptors(context: BindingContext): Collection<DeclarationDescriptor> {
+        return listOfNotNull(
+            context[BindingContext.VARIABLE, element],
+            context[BindingContext.COMPONENT_RESOLVED_CALL, element]?.candidateDescriptor
+        )
+    }
 
-        val bindingContext = analysisContext.analyze(element, AnalysisMode.PARTIAL)
-        val descriptor = bindingContext[BindingContext.COMPONENT_RESOLVED_CALL, element]?.resultingDescriptor
-        return listOfNotNull(descriptor?.toKtCallableSymbol(analysisContext))
+    override fun resolve() = multiResolve(false).asSequence()
+        .map { it.element }
+        .firstOrNull { it is KtDestructuringDeclarationEntry }
+
+    override fun getRangeInElement() = TextRange(0, element.textLength)
+
+    override fun isReferenceToImportAlias(alias: KtImportAlias): Boolean {
+        return super<KtFe10Reference>.isReferenceToImportAlias(alias)
+    }
+
+    @OptIn(HackToForceAllowRunningAnalyzeOnEDT::class)
+    override fun canRename(): Boolean {
+        val bindingContext = KtFe10ReferenceResolutionHelper.getInstance().partialAnalyze(element) //TODO: should it use full body resolve?
+        return resolveToDescriptors(bindingContext).all {
+            it is CallableMemberDescriptor && it.kind == CallableMemberDescriptor.Kind.SYNTHESIZED
+        }
     }
 }
