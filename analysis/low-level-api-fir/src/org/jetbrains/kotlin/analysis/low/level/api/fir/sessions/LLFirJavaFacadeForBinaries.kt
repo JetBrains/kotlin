@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.low.level.api.fir.sessions
 
+import com.intellij.util.io.URLUtil.JAR_SEPARATOR
 import org.jetbrains.kotlin.analysis.utils.errors.requireIsInstance
 import org.jetbrains.kotlin.fir.BuiltinTypes
 import org.jetbrains.kotlin.fir.FirModuleData
@@ -17,7 +18,6 @@ import org.jetbrains.kotlin.load.java.structure.classId
 import org.jetbrains.kotlin.load.java.structure.impl.VirtualFileBoundJavaClass
 import java.nio.file.Path
 import java.nio.file.Paths
-
 
 internal class LLFirJavaFacadeForBinaries(
     session: FirSession,
@@ -36,14 +36,26 @@ internal class LLFirJavaFacadeForBinaries(
         val virtualFile = javaClass.virtualFile
             ?: error("no virtual file for ${javaClass.classId}")
         val path = virtualFile.path
-        return if (JAR_DELIMITER in path) {
-            Paths.get(path.substringBefore(JAR_DELIMITER) + ".jar")
-        } else {
-            Paths.get(path)
+        return when {
+            JAR_DELIMITER in path ->
+                Paths.get(path.substringBefore(JAR_SEPARATOR))
+            JAR_SEPARATOR in path && "modules/" in path -> {
+                // CoreJrtFileSystem.CoreJrtHandler#findFile, which uses Path#resolve, finds a virtual file path to the file itself,
+                // e.g., "/path/to/jdk/home!/modules/java.base/java/lang/Object.class". (JDK home path + JAR separator + actual file path)
+                // URLs loaded from JDK, though, point to module names in a JRT protocol format,
+                // e.g., "jrt:///path/to/jdk/home!/java.base" (JRT protocol prefix + JDK home path + JAR separator + module name)
+                // After splitting at the JAR separator, it is regarded as a root directory "/java.base".
+                // To work with LibraryPathFilter, a hacky workaround here is to remove "modules/" from actual file path.
+                // e.g. "/path/to/jdk/home!/java.base/java/lang/Object.class", which, from Path viewpoint, belongs to "/java.base",
+                // after splitting at the JAR separator, in a similar way.
+                Paths.get(path.replace("modules/", ""))
+            }
+            else ->
+                Paths.get(path)
         }
     }
 
     companion object {
-        private const val JAR_DELIMITER = ".jar!/"
+        const val JAR_DELIMITER = ".jar$JAR_SEPARATOR"
     }
 }
