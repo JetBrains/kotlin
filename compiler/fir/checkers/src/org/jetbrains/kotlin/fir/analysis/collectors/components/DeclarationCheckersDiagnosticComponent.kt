@@ -61,6 +61,10 @@ class DeclarationCheckersDiagnosticComponent(
         checkers.allBackingFieldCheckers.check(backingField, data, reporter)
     }
 
+    override fun visitDelegateField(delegateField: FirDelegateField, data: CheckerContext) {
+        checkers.allDelegateFieldCheckers.check(delegateField, data, reporter)
+    }
+
     override fun visitValueParameter(valueParameter: FirValueParameter, data: CheckerContext) {
         checkers.allValueParameterCheckers.check(valueParameter, data, reporter)
     }

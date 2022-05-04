@@ -79,6 +79,7 @@ fun main(args: Array<String>) {
         alias<FirAnonymousFunction>("AnonymousFunctionChecker")
         alias<FirPropertyAccessor>("PropertyAccessorChecker")
         alias<FirBackingField>("BackingFieldChecker")
+        alias<FirDelegateField>("DelegateFieldChecker")
         alias<FirValueParameter>("ValueParameterChecker")
         alias<FirEnumEntry>("EnumEntryChecker")
         alias<FirAnonymousObject>("AnonymousObjectChecker")
