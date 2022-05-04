@@ -44,6 +44,7 @@ internal enum class ClassLevelProperty(shortName: String) {
     TEST_TARGET("target"),
     TEST_MODE("mode"),
     FORCE_STANDALONE("forceStandalone"),
+    COMPILE_ONLY("compileOnly"),
     OPTIMIZATION_MODE("optimizationMode"),
     MEMORY_MODEL("memoryModel"),
     USE_THREAD_STATE_CHECKER("useThreadStateChecker"),

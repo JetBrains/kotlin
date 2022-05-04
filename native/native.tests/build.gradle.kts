@@ -50,6 +50,7 @@ enum class TestProperty(shortName: String) {
     TEST_TARGET("target"),
     TEST_MODE("mode"),
     FORCE_STANDALONE("forceStandalone"),
+    COMPILE_ONLY("compileOnly"),
     OPTIMIZATION_MODE("optimizationMode"),
     MEMORY_MODEL("memoryModel"),
     USE_THREAD_STATE_CHECKER("useThreadStateChecker"),
@@ -117,6 +118,7 @@ fun nativeTest(taskName: String, vararg tags: String) = projectTest(taskName, jU
         TestProperty.TEST_TARGET.setUpFromGradleProperty(this)
         TestProperty.TEST_MODE.setUpFromGradleProperty(this)
         TestProperty.FORCE_STANDALONE.setUpFromGradleProperty(this)
+        TestProperty.COMPILE_ONLY.setUpFromGradleProperty(this)
         TestProperty.OPTIMIZATION_MODE.setUpFromGradleProperty(this)
         TestProperty.MEMORY_MODEL.setUpFromGradleProperty(this)
         TestProperty.USE_THREAD_STATE_CHECKER.setUpFromGradleProperty(this)
