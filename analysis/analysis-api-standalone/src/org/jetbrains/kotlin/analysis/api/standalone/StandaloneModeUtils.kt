@@ -9,7 +9,6 @@ import com.intellij.mock.MockApplication
 import com.intellij.mock.MockProject
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.StandardFileSystems
-import com.intellij.openapi.vfs.impl.jar.CoreJarFileSystem
 import com.intellij.psi.PsiElementFinder
 import com.intellij.psi.PsiManager
 import com.intellij.psi.search.GlobalSearchScope
@@ -86,18 +85,14 @@ public fun configureApplicationEnvironment(app: MockApplication) {
  *    * given [ktFiles] as Kotlin sources
  *    * other Java sources in [compilerConfig] (set via [addJavaSourceRoots])
  *    * JVM class paths in [compilerConfig] (set via [addJvmClasspathRoots]) as library.
- *
- *  To make sure the same instance of [CoreJarFileSystem] is used (and thus file lookup in jars is cached),
- *    pass [jarFileSystem] from [KotlinCoreEnvironment] if available.
  */
 public fun configureProjectEnvironment(
     project: MockProject,
     compilerConfig: CompilerConfiguration,
     packagePartProvider: (GlobalSearchScope) -> PackagePartProvider,
-    jarFileSystem: CoreJarFileSystem = CoreJarFileSystem(),
 ) {
     val ktFiles = getKtFilesFromPaths(project, getSourceFilePaths(compilerConfig))
-    configureProjectEnvironment(project, compilerConfig, ktFiles, packagePartProvider, jarFileSystem)
+    configureProjectEnvironment(project, compilerConfig, ktFiles, packagePartProvider)
 }
 
 private fun getSourceFilePaths(
@@ -139,7 +134,6 @@ internal fun configureProjectEnvironment(
     compilerConfig: CompilerConfiguration,
     ktFiles: List<KtFile>,
     packagePartProvider: (GlobalSearchScope) -> PackagePartProvider,
-    jarFileSystem: CoreJarFileSystem = CoreJarFileSystem(),
 ) {
     reRegisterJavaElementFinder(project)
 
@@ -181,7 +175,6 @@ internal fun configureProjectEnvironment(
             compilerConfig,
             project,
             ktFiles,
-            jarFileSystem
         )
     )
     project.picoContainer.registerComponentInstance(
