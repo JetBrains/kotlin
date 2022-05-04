@@ -174,6 +174,15 @@ class KotlinCliJavaFileManagerImpl(private val myPsiManager: PsiManager) : CoreJ
         val result = ArrayList<PsiClass>(1)
         forEachClassId(qName) { classId ->
             val relativeClassName = classId.relativeClassName.asString()
+
+            // Search java sources first. For build tools, it makes sense to build new files passing all the
+            // class files for the previous build on the class path.
+            result.addIfNotNull(
+                singleJavaFileRootsIndex.findJavaSourceClass(classId)
+                    ?.takeIf { it in scope }
+                    ?.findPsiClassInVirtualFile(relativeClassName)
+            )
+
             index.traverseDirectoriesInPackage(classId.packageFqName) { dir, rootType ->
                 val psiClass =
                     findVirtualFileGivenPackage(dir, relativeClassName, rootType)
@@ -185,12 +194,6 @@ class KotlinCliJavaFileManagerImpl(private val myPsiManager: PsiManager) : CoreJ
                 // traverse all
                 true
             }
-
-            result.addIfNotNull(
-                singleJavaFileRootsIndex.findJavaSourceClass(classId)
-                    ?.takeIf { it in scope }
-                    ?.findPsiClassInVirtualFile(relativeClassName)
-            )
 
             if (result.isNotEmpty()) {
                 return@time result.toTypedArray()
