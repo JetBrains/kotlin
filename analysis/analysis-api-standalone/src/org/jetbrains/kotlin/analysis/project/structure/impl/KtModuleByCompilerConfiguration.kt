@@ -6,10 +6,8 @@
 package org.jetbrains.kotlin.analysis.project.structure.impl
 
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.vfs.VirtualFile
-import com.intellij.openapi.vfs.impl.jar.CoreJarFileSystem
 import com.intellij.psi.search.GlobalSearchScope
-import org.jetbrains.kotlin.analysis.api.impl.base.util.LibraryUtils
+import com.intellij.psi.search.ProjectScope
 import org.jetbrains.kotlin.analysis.project.structure.KtLibraryModule
 import org.jetbrains.kotlin.analysis.project.structure.KtLibrarySourceModule
 import org.jetbrains.kotlin.analysis.project.structure.KtModule
@@ -52,7 +50,6 @@ internal class KtSourceModuleByCompilerConfiguration(
     compilerConfig: CompilerConfiguration,
     project: Project,
     ktFiles: List<KtFile>,
-    jarFileSystem: CoreJarFileSystem,
 ) : BaseKtModuleByCompilerConfiguration(compilerConfig, project), KtSourceModule {
     override val directRegularDependencies: List<KtLibraryModule> by lazy {
         val libraryRoots = compilerConfig.jvmModularRoots + compilerConfig.jvmClasspathRoots
@@ -62,16 +59,14 @@ internal class KtSourceModuleByCompilerConfiguration(
                 directories.forEach {
                     // E.g., project/app/build/intermediates/javac/debug/classes
                     val root = it.toPath()
-                    val virtualFilesProvider = { LibraryUtils.getAllVirtualFilesFromDirectory(root) }
-                    add(KtLibraryModuleByCompilerConfiguration(compilerConfig, project, virtualFilesProvider, root))
+                    add(KtLibraryModuleByCompilerConfiguration(compilerConfig, project, root))
                 }
             }
             libraryRootsByType[false]?.let { jars ->
                 jars.forEach {
                     // E.g., project/libs/libA/a.jar
                     val root = it.toPath()
-                    val virtualFilesProvider = { LibraryUtils.getAllVirtualFilesFromJar(root, jarFileSystem) }
-                    add(KtLibraryModuleByCompilerConfiguration(compilerConfig, project, virtualFilesProvider, root))
+                    add(KtLibraryModuleByCompilerConfiguration(compilerConfig, project, root))
                 }
             }
         }
@@ -85,8 +80,7 @@ internal class KtSourceModuleByCompilerConfiguration(
 internal class KtLibraryModuleByCompilerConfiguration(
     compilerConfig: CompilerConfiguration,
     project: Project,
-    virtualFilesProvider: () -> Collection<VirtualFile>,
-    private val root: Path,
+    root: Path,
 ) : BaseKtModuleByCompilerConfiguration(compilerConfig, project), KtLibraryModule {
     override val directRegularDependencies: List<KtModule> get() = emptyList()
 
@@ -97,12 +91,10 @@ internal class KtLibraryModuleByCompilerConfiguration(
         get() = null
 
     override val contentScope: GlobalSearchScope by lazy {
-        GlobalSearchScope.filesScope(project, virtualFilesProvider())
+        ProjectScope.getLibrariesScope(project)
     }
 
-    private val binaryRoots by lazy {
-        listOf(root)
-    }
+    private val binaryRoots = listOf(root)
 
     override fun getBinaryRoots(): Collection<Path> = binaryRoots
 }

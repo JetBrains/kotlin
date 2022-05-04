@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.analysis.project.structure.impl
 
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.vfs.impl.jar.CoreJarFileSystem
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.analysis.project.structure.KtLibraryModule
 import org.jetbrains.kotlin.analysis.project.structure.KtModule
@@ -18,9 +17,8 @@ internal class KtModuleProviderByCompilerConfiguration(
     compilerConfig: CompilerConfiguration,
     project: Project,
     ktFiles: List<KtFile>,
-    jarFileSystem: CoreJarFileSystem,
 ) : ProjectStructureProvider() {
-    private val sourceModule = KtSourceModuleByCompilerConfiguration(compilerConfig, project, ktFiles, jarFileSystem)
+    private val sourceModule = KtSourceModuleByCompilerConfiguration(compilerConfig, project, ktFiles)
 
     private val libraryModules: Collection<KtLibraryModule> by lazy {
         sourceModule.directRegularDependencies
