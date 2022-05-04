@@ -53,8 +53,8 @@ class JsExecutableProducer(
                 }
                 jsIrHeader.associatedModule = artifact.loadJsIrModule()
             }
-            val associatedModule = jsIrHeader.associatedModule ?: error("Internal error: cannot load module $moduleName")
-            val crossRef = crossModuleReferences[jsIrHeader] ?: error("Internal error: cannot find cross references for module $moduleName")
+            val associatedModule = jsIrHeader.associatedModule ?: icError("can not load module $moduleName")
+            val crossRef = crossModuleReferences[jsIrHeader] ?: icError("can not find cross references for module $moduleName")
             crossRef.initJsImportsForModule(associatedModule)
 
             val compiledModule = generateSingleWrappedModuleBody(

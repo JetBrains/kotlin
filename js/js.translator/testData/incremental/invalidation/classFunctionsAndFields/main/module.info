@@ -1,13 +1,16 @@
 STEP 0:
-    dependencies: stdlib, lib1
-    dirty: m.kt
+    dependencies: lib1
+    added file: m.kt
 STEP 1:
-    dependencies: stdlib, lib1
-STEP 2..3:
-    dependencies: stdlib, lib1
-    dirty: m.kt
+    dependencies: lib1
+STEP 2:
+    dependencies: lib1
+    updated inline imports: m.kt
+STEP 3:
+    dependencies: lib1
+    modified ir: m.kt
 STEP 4..9:
-    dependencies: stdlib, lib1
+    dependencies: lib1
 STEP 10..11:
-    dependencies: stdlib, lib1
-    dirty: m.kt
+    dependencies: lib1
+    modified ir: m.kt

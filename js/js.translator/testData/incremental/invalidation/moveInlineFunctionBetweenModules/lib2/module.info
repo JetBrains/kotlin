@@ -1,8 +1,10 @@
 STEP 0:
-    dependencies: stdlib, lib1
-    dirty: l2.kt
+    dependencies: lib1
+    added file: l2.kt
 STEP 1:
-    dependencies: stdlib, lib1
+    dependencies: lib1
     modifications:
-        U : l22.kt.1 -> l22.kt
-    dirty: l2.kt, l22.kt
+        U : l22.1.kt -> l22.kt
+    added file: l22.kt
+    updated exports: l22.kt
+    updated inline imports: l2.kt

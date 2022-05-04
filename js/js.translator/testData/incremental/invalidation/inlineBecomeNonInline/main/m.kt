@@ -1,4 +1,3 @@
-
 fun box(stepId: Int): String {
     when(stepId) {
         0, 1 -> if (foo() != 42) return "Fail"

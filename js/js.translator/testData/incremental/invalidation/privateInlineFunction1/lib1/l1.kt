@@ -1,4 +1,3 @@
-
 private inline fun privateBar(z: Int, l: (Int) -> Int) = l(z - 3)
 
 private inline fun privateFoo(x: Int, l: (Int) -> Int): Int {

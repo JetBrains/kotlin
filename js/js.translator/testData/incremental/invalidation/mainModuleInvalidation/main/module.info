@@ -1,8 +1,8 @@
 STEP 0:
-    dependencies: stdlib, lib1
-    dirty: m.kt, m0.kt, m1.kt
+    dependencies: lib1
+    added file: m.kt, m0.kt, m1.kt
 STEP 1:
-    dependencies: stdlib, lib1
+    dependencies: lib1
     modifications:
-        U : m.kt.1.txt -> m.kt
-    dirty: m.kt
+        U : m.1.kt -> m.kt
+    modified ir: m.kt

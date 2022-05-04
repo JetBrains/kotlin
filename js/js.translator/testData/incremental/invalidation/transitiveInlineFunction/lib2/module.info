@@ -1,3 +1,6 @@
-STEP 0..1:
-    dependencies: stdlib, lib1
-    dirty: l2.kt
+STEP 0:
+    dependencies: lib1
+    added file: l2.kt
+STEP 1:
+    dependencies: lib1
+    updated inline imports: l2.kt

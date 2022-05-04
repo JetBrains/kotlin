@@ -1,4 +1,3 @@
-
 suspend fun suspendBox(): Int {
     val x = fooX()
     val y = fooY()

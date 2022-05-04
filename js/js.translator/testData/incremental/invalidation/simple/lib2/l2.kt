@@ -1,2 +1,1 @@
-
 fun qux() = foo()

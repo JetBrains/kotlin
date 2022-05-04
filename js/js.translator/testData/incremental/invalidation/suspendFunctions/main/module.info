@@ -1,8 +1,8 @@
 STEP 0:
-    dependencies: stdlib, lib1
-    dirty: m.kt
+    dependencies: lib1
+    added file: m.kt
 STEP 1:
-    dependencies: stdlib, lib1
+    dependencies: lib1
 STEP 2:
-    dependencies: stdlib, lib1
-    dirty: m.kt
+    dependencies: lib1
+    updated inline imports: m.kt

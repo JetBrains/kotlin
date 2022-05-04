@@ -1,4 +1,3 @@
-
 fun box(step: Int): String {
     return when (step) {
         0 -> checkStep(step, qux = "\uD800", quz = "\uD800")

@@ -1,4 +1,3 @@
-
 fun isEqual(l: Any?, r: Any?) = if (l == r) true else null
 
 inline fun test1(x: () -> Any) = x()

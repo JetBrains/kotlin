@@ -1,4 +1,3 @@
-
 fun box(stepId: Int): String {
     when (stepId) {
         0 -> {

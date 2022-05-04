@@ -26,8 +26,28 @@ public class InvalidationTestGenerated extends AbstractInvalidationTest {
         KotlinTestUtils.runTest(this::doTest, TargetBackend.JS_IR, testDataFilePath);
     }
 
+    @TestMetadata("addUpdateRemoveDependentFile")
+    public void testAddUpdateRemoveDependentFile() throws Exception {
+        runTest("js/js.translator/testData/incremental/invalidation/addUpdateRemoveDependentFile/");
+    }
+
+    @TestMetadata("addUpdateRemoveDependentModule")
+    public void testAddUpdateRemoveDependentModule() throws Exception {
+        runTest("js/js.translator/testData/incremental/invalidation/addUpdateRemoveDependentModule/");
+    }
+
     public void testAllFilesPresentInInvalidation() throws Exception {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/incremental/invalidation"), Pattern.compile("^([^_](.+))$"), null, TargetBackend.JS_IR, false);
+    }
+
+    @TestMetadata("circleExportsUpdate")
+    public void testCircleExportsUpdate() throws Exception {
+        runTest("js/js.translator/testData/incremental/invalidation/circleExportsUpdate/");
+    }
+
+    @TestMetadata("circleInlineImportsUpdate")
+    public void testCircleInlineImportsUpdate() throws Exception {
+        runTest("js/js.translator/testData/incremental/invalidation/circleInlineImportsUpdate/");
     }
 
     @TestMetadata("class")
@@ -48,6 +68,16 @@ public class InvalidationTestGenerated extends AbstractInvalidationTest {
     @TestMetadata("crossModuleReferences")
     public void testCrossModuleReferences() throws Exception {
         runTest("js/js.translator/testData/incremental/invalidation/crossModuleReferences/");
+    }
+
+    @TestMetadata("eagerInitialization")
+    public void testEagerInitialization() throws Exception {
+        runTest("js/js.translator/testData/incremental/invalidation/eagerInitialization/");
+    }
+
+    @TestMetadata("exportsThroughInlineFunction")
+    public void testExportsThroughInlineFunction() throws Exception {
+        runTest("js/js.translator/testData/incremental/invalidation/exportsThroughInlineFunction/");
     }
 
     @TestMetadata("fakeOverride")
@@ -178,6 +208,16 @@ public class InvalidationTestGenerated extends AbstractInvalidationTest {
     @TestMetadata("unicodeSerializationAndDeserialization")
     public void testUnicodeSerializationAndDeserialization() throws Exception {
         runTest("js/js.translator/testData/incremental/invalidation/unicodeSerializationAndDeserialization/");
+    }
+
+    @TestMetadata("updateExports")
+    public void testUpdateExports() throws Exception {
+        runTest("js/js.translator/testData/incremental/invalidation/updateExports/");
+    }
+
+    @TestMetadata("updateExportsAndInlineImports")
+    public void testUpdateExportsAndInlineImports() throws Exception {
+        runTest("js/js.translator/testData/incremental/invalidation/updateExportsAndInlineImports/");
     }
 
     @TestMetadata("variance")

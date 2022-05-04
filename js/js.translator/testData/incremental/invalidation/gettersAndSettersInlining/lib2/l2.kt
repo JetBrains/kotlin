@@ -1,1 +1,1 @@
-class Child(name: String) : Parent(name)
+class Child(objectName: String) : Parent(objectName)

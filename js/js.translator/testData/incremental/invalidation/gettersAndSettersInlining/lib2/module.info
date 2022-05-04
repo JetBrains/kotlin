@@ -1,10 +1,10 @@
 STEP 0:
-    dependencies: stdlib, lib1
-    dirty: l2.kt
+    dependencies: lib1
+    added file: l2.kt
 STEP 1..3:
-    dependencies: stdlib, lib1
+    dependencies: lib1
 STEP 4:
-    dependencies: stdlib, lib1
+    dependencies: lib1
     modifications:
-        U : l2.kt.4.txt -> l2.kt
-    dirty: l2.kt
+        U : l2.4.kt -> l2.kt
+    modified ir: l2.kt

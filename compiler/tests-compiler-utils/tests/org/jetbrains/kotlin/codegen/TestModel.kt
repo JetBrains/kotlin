@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.codegen
 
+import org.jetbrains.kotlin.ir.backend.js.ic.DirtyFileState
 import java.io.File
 import java.util.regex.Pattern
 
@@ -43,17 +44,11 @@ class ModuleInfo(val moduleName: String) {
     class ModuleStep(
         val id: Int,
         val dependencies: Collection<String>,
-        val dirtyFiles: Collection<String>,
         val modifications: List<Modification>,
-        val directives: Set<StepDirectives>
+        val expectedFileStats: Map<String, Set<String>>
     )
 
     val steps = mutableListOf<ModuleStep>()
-}
-
-enum class StepDirectives(val mnemonic: String) {
-    FAST_PATH_UPDATE("FP"),
-    UNUSED_MODULE("UNUSED")
 }
 
 const val MODULES_LIST = "MODULES"
@@ -203,18 +198,10 @@ class ModuleInfoParser(infoFile: File) : InfoParser<ModuleInfo>(infoFile) {
         return modifications
     }
 
-    private fun MutableSet<StepDirectives>.parseStepFlags(flags: String) {
-        val tokens = flags.trim().split(" ").map { it.trim() }
-        for (directive in StepDirectives.values()) {
-            if (directive.mnemonic in tokens) add(directive)
-        }
-    }
-
     private fun parseSteps(firstId: Int, lastId: Int): List<ModuleInfo.ModuleStep> {
+        val expectedFileStats = mutableMapOf<String, Set<String>>()
         val dependencies = mutableSetOf<String>()
-        val dirtyFiles = mutableSetOf<String>()
         val modifications = mutableListOf<ModuleInfo.Modification>()
-        val directives = mutableSetOf<StepDirectives>()
 
         loop { line ->
             if (line.matches(STEP_PATTERN.toRegex()))
@@ -225,17 +212,30 @@ class ModuleInfoParser(infoFile: File) : InfoParser<ModuleInfo>(infoFile) {
             if (opIndex < 0) throwSyntaxError(line)
             val op = line.substring(0, opIndex)
 
-            when (op) {
-                "dependencies" -> line.substring(opIndex + 1).split(",").filter { it.isNotBlank() }.forEach { dependencies.add(it.trim()) }
-                "dirty" -> line.substring(opIndex + 1).split(",").filter { it.isNotBlank() }.forEach { dirtyFiles.add(it.trim()) }
-                "modifications" -> modifications.addAll(parseModifications())
-                "flags" -> directives.parseStepFlags(line.substring(opIndex + 1))
-                else -> println(diagnosticMessage("Unknown op $op", line))
+            fun getOpArgs() = line.substring(opIndex + 1).splitAndTrim()
+
+            val expectedState = DirtyFileState.values().find { it.str == op }
+            if (expectedState != null) {
+                expectedFileStats[expectedState.str] = getOpArgs().toSet()
+            } else {
+                when (op) {
+                    "dependencies" -> getOpArgs().forEach { dependencies.add(it) }
+                    "modifications" -> modifications.addAll(parseModifications())
+                    else -> println(diagnosticMessage("Unknown op $op", line))
+                }
             }
+
             false
         }
 
-        return (firstId..lastId).map { ModuleInfo.ModuleStep(it, dependencies, dirtyFiles, modifications, directives) }
+        return (firstId..lastId).map {
+            ModuleInfo.ModuleStep(
+                id = it,
+                dependencies = dependencies,
+                modifications = modifications,
+                expectedFileStats = expectedFileStats
+            )
+        }
     }
 
     override fun parse(entryName: String): ModuleInfo {

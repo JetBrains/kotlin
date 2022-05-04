@@ -1,2 +1,1 @@
-
 fun box() = foo("OK")

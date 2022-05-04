@@ -26,15 +26,15 @@ import org.jetbrains.kotlin.test.services.jsLibraryProvider
 import java.io.ByteArrayInputStream
 import java.io.File
 
-private class TestArtifactCache(var moduleName: String? = null) : ArtifactCache() {
-    override fun fetchArtifacts(): ModuleArtifact {
+private class TestArtifactCache(val moduleName: String, val binaryAsts: MutableMap<String, ByteArray> = mutableMapOf()) {
+    fun fetchArtifacts(): ModuleArtifact {
         val deserializer = JsIrAstDeserializer()
         return ModuleArtifact(
-            moduleName = moduleName ?: error("Module name is not set"),
+            moduleName = moduleName,
             fileArtifacts = binaryAsts.entries.map {
                 SrcFileArtifact(
                     srcFilePath = it.key,
-                    // TODO: It will be better to use saved fragments (this.fragments), but it doesn't work
+                    // TODO: It will be better to use saved fragments (from JsIrFragmentAndBinaryAst), but it doesn't work
                     //  Merger.merge() + JsNode.resolveTemporaryNames() modify fragments,
                     //  therefore the sequential calls produce different results
                     fragment = deserializer.deserialize(ByteArrayInputStream(it.value))
@@ -42,13 +42,6 @@ private class TestArtifactCache(var moduleName: String? = null) : ArtifactCache(
             }
         )
     }
-
-    fun invalidateForFile(srcPath: String) {
-        binaryAsts.remove(srcPath)
-        fragments.remove(srcPath)
-    }
-
-    fun getAst(srcPath: String) = binaryAsts[srcPath]
 }
 
 class JsIrIncrementalDataProvider(private val testServices: TestServices) : TestService {
@@ -76,8 +69,8 @@ class JsIrIncrementalDataProvider(private val testServices: TestServices) : Test
         for (testFile in module.files) {
             if (JsEnvironmentConfigurationDirectives.RECOMPILE in testFile.directives) {
                 val fileName = "/${testFile.name}"
-                oldBinaryAsts[fileName] = moduleCache.getAst(fileName) ?: error("No AST found for $fileName")
-                moduleCache.invalidateForFile(fileName)
+                oldBinaryAsts[fileName] = moduleCache.binaryAsts[fileName] ?: error("No AST found for $fileName")
+                moduleCache.binaryAsts.remove(fileName)
             }
         }
 
@@ -122,39 +115,45 @@ class JsIrIncrementalDataProvider(private val testServices: TestServices) : Test
         mainArguments: List<String>?
     ) {
         val canonicalPath = File(path).canonicalPath
-        var moduleCache = predefinedKlibHasIcCache[canonicalPath]
+        val predefinedModuleCache = predefinedKlibHasIcCache[canonicalPath]
+        if (predefinedModuleCache != null) {
+            icCache[canonicalPath] = predefinedModuleCache
+            return
+        }
 
-        if (moduleCache == null) {
-            moduleCache = icCache[canonicalPath] ?: TestArtifactCache()
+        val libs = allDependencies.associateBy { File(it.libraryFile.path).canonicalPath }
 
-            val libs = allDependencies.associateBy { File(it.libraryFile.path).canonicalPath }
+        val nameToKotlinLibrary: Map<String, KotlinLibrary> = libs.values.associateBy { it.moduleName }
 
-            val nameToKotlinLibrary: Map<String, KotlinLibrary> = libs.values.associateBy { it.moduleName }
-
-            val dependencyGraph = libs.values.associateWith {
-                it.manifestProperties.propertyList(KLIB_PROPERTY_DEPENDS, escapeInQuotes = true).map { depName ->
-                    nameToKotlinLibrary[depName] ?: error("No Library found for $depName")
-                }
+        val dependencyGraph = libs.values.associateWith {
+            it.manifestProperties.propertyList(KLIB_PROPERTY_DEPENDS, escapeInQuotes = true).map { depName ->
+                nameToKotlinLibrary[depName] ?: error("No Library found for $depName")
             }
+        }
 
-            val currentLib = libs[File(canonicalPath).canonicalPath] ?: error("Expected library at $canonicalPath")
+        val currentLib = libs[File(canonicalPath).canonicalPath] ?: error("Expected library at $canonicalPath")
 
-            val testPackage = extractTestPackage(testServices)
+        val testPackage = extractTestPackage(testServices)
 
-            moduleCache.moduleName = rebuildCacheForDirtyFiles(
-                currentLib,
-                configuration,
-                dependencyGraph,
-                dirtyFiles,
-                moduleCache,
-                IrFactoryImplForJsIC(WholeWorldStageController()),
-                setOf(FqName.fromSegments(listOfNotNull(testPackage, JsBoxRunner.TEST_FUNCTION))),
-                mainArguments,
-            )
+        val (mainModuleIr, rebuiltFiles) = rebuildCacheForDirtyFiles(
+            currentLib,
+            configuration,
+            dependencyGraph,
+            dirtyFiles,
+            IrFactoryImplForJsIC(WholeWorldStageController()),
+            setOf(FqName.fromSegments(listOfNotNull(testPackage, JsBoxRunner.TEST_FUNCTION))),
+            mainArguments,
+        )
 
-            if (canonicalPath in predefinedKlibHasIcCache) {
-                predefinedKlibHasIcCache[canonicalPath] = moduleCache
+        val moduleCache = icCache[canonicalPath] ?: TestArtifactCache(mainModuleIr.name.asString())
+        for (rebuiltFile in rebuiltFiles) {
+            if (rebuiltFile.irFile.module == mainModuleIr) {
+                moduleCache.binaryAsts[rebuiltFile.irFile.fileEntry.name] = rebuiltFile.binaryAst
             }
+        }
+
+        if (canonicalPath in predefinedKlibHasIcCache) {
+            predefinedKlibHasIcCache[canonicalPath] = moduleCache
         }
 
         icCache[canonicalPath] = moduleCache
@@ -162,3 +161,4 @@ class JsIrIncrementalDataProvider(private val testServices: TestServices) : Test
 }
 
 val TestServices.jsIrIncrementalDataProvider: JsIrIncrementalDataProvider by TestServices.testServiceAccessor()
+

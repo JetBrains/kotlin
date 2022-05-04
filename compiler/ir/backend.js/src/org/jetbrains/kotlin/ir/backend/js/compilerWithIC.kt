@@ -9,29 +9,27 @@ import org.jetbrains.kotlin.backend.common.phaser.PhaseConfig
 import org.jetbrains.kotlin.backend.common.phaser.PhaserState
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
-import org.jetbrains.kotlin.ir.backend.js.ic.ArtifactCache
-import org.jetbrains.kotlin.ir.backend.js.ic.JsMultiModuleCache
-import org.jetbrains.kotlin.ir.backend.js.ic.ModuleArtifact
 import org.jetbrains.kotlin.ir.backend.js.lower.collectNativeImplementations
 import org.jetbrains.kotlin.ir.backend.js.lower.generateJsTests
 import org.jetbrains.kotlin.ir.backend.js.lower.moveBodilessDeclarationsToSeparatePlace
 import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.JsIrLinker
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.*
+import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.util.ExternalDependenciesGenerator
 import org.jetbrains.kotlin.ir.util.noUnboundLeft
 import org.jetbrains.kotlin.js.config.RuntimeDiagnostic
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi2ir.descriptors.IrBuiltInsOverDescriptors
-import org.jetbrains.kotlin.serialization.js.ModuleKind
 
 @Suppress("UNUSED_PARAMETER")
 @OptIn(ObsoleteDescriptorBasedAPI::class)
 fun compileWithIC(
-    module: IrModuleFragment,
+    mainModule: IrModuleFragment,
     configuration: CompilerConfiguration,
     deserializer: JsIrLinker,
-    dependencies: Collection<IrModuleFragment>,
+    allModules: Collection<IrModuleFragment>,
+    filesToLower: Collection<IrFile>,
     mainArguments: List<String>? = null,
     exportedDeclarations: Set<FqName> = emptySet(),
     generateFullJs: Boolean = true,
@@ -45,22 +43,16 @@ fun compileWithIC(
     baseClassIntoMetadata: Boolean = false,
     lowerPerModule: Boolean = false,
     safeExternalBoolean: Boolean = false,
-    safeExternalBooleanDiagnostic: RuntimeDiagnostic? = null,
-    filesToLower: Set<String>?,
-    artifactCache: ArtifactCache,
-) {
-
-    val mainModule = module
-    val allModules = dependencies
-    val moduleDescriptor = module.descriptor
-    val irBuiltIns = module.irBuiltins
+    safeExternalBooleanDiagnostic: RuntimeDiagnostic? = null
+): List<JsIrFragmentAndBinaryAst> {
+    val irBuiltIns = mainModule.irBuiltins
     val symbolTable = (irBuiltIns as IrBuiltInsOverDescriptors).symbolTable
 
     val context = JsIrBackendContext(
-        moduleDescriptor,
+        mainModule.descriptor,
         irBuiltIns,
         symbolTable,
-        module,
+        mainModule,
         exportedDeclarations,
         configuration,
         es6mode = es6mode,
@@ -68,7 +60,7 @@ fun compileWithIC(
         baseClassIntoMetadata = baseClassIntoMetadata,
         safeExternalBoolean = safeExternalBoolean,
         safeExternalBooleanDiagnostic = safeExternalBooleanDiagnostic,
-        icCompatibleIr2Js = true,
+        icCompatibleIr2Js = IcCompatibleIr2Js.IC_MODE
     )
 
     // Load declarations referenced during `context` initialization
@@ -79,7 +71,7 @@ fun compileWithIC(
     symbolTable.noUnboundLeft("Unbound symbols at the end of linker")
 
     allModules.forEach {
-        collectNativeImplementations(context, module)
+        collectNativeImplementations(context, it)
         moveBodilessDeclarationsToSeparatePlace(context, it)
     }
 
@@ -93,18 +85,15 @@ fun compileWithIC(
         relativeRequirePath = relativeRequirePath,
     )
 
-    val dirtyFiles = filesToLower?.let { dirties ->
-        module.files.filter { it.fileEntry.name in dirties }
-    } ?: module.files
-
-    val astAndFragments = transformer.generateBinaryAst(dirtyFiles, allModules)
-    astAndFragments.forEach {
-        artifactCache.saveFragment(it.srcPath, it.fragment)
-        artifactCache.saveBinaryAst(it.srcPath, it.binaryAst)
-    }
+    return transformer.generateBinaryAst(filesToLower, allModules)
 }
 
-fun lowerPreservingTags(modules: Iterable<IrModuleFragment>, context: JsIrBackendContext, phaseConfig: PhaseConfig, controller: WholeWorldStageController) {
+fun lowerPreservingTags(
+    modules: Iterable<IrModuleFragment>,
+    context: JsIrBackendContext,
+    phaseConfig: PhaseConfig,
+    controller: WholeWorldStageController
+) {
     // Lower all the things
     controller.currentStage = 0
 

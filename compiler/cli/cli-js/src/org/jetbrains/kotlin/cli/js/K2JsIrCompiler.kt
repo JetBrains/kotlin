@@ -213,43 +213,42 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
             messageCollector.report(INFO, arguments.cacheDirectories ?: "")
             messageCollector.report(INFO, libraries.toString())
 
-            val includes = arguments.includes!!
-
-            var start = System.currentTimeMillis()
+            val start = System.currentTimeMillis()
 
             val cacheUpdater = CacheUpdater(
-                includes,
-                libraries,
-                configurationJs,
-                cacheDirectories,
-                { IrFactoryImplForJsIC(WholeWorldStageController()) },
-                mainCallArguments,
-                ::buildCacheForModuleFiles
+                mainModule = arguments.includes!!,
+                allModules = libraries,
+                icCachePaths = cacheDirectories,
+                compilerConfiguration = configurationJs,
+                irFactory = { IrFactoryImplForJsIC(WholeWorldStageController()) },
+                mainArguments = mainCallArguments,
+                executor = ::buildCacheForModuleFiles
             )
-            cacheUpdater.actualizeCaches { updateStatus, updatedModule ->
+
+            var tp = System.currentTimeMillis()
+            messageCollector.report(INFO, "IC cache updater initialization: ${tp - start}ms")
+
+            val artifacts = cacheUpdater.actualizeCaches {
                 val now = System.currentTimeMillis()
-                fun reportCacheStatus(status: String, removed: Set<String> = emptySet(), updated: Set<String> = emptySet()) {
-                    messageCollector.report(INFO, "IC per-file is $status duration ${now - start}ms; module [${File(updatedModule).name}]")
-                    removed.forEach { messageCollector.report(INFO, "  Removed: $it") }
-                    updated.forEach { messageCollector.report(INFO, "  Updated: $it") }
-                }
-                when (updateStatus) {
-                    is CacheUpdateStatus.FastPath -> reportCacheStatus("up-to-date; fast check")
-                    is CacheUpdateStatus.NoDirtyFiles -> reportCacheStatus("up-to-date; full check", updateStatus.removed)
-                    is CacheUpdateStatus.Dirty -> {
-                        var updated = updateStatus.updated
-                        val status = StringBuilder("dirty").apply {
-                            if (updateStatus.updatedAll) {
-                                append("; all ${updated.size} sources updated")
-                                updated = emptySet()
-                            }
-                            append("; cache building")
-                        }.toString()
-                        reportCacheStatus(status, updateStatus.removed, updated)
+                messageCollector.report(INFO, "IC $it: ${now - tp}ms")
+                tp = now
+            }
+
+            messageCollector.report(INFO, "IC rebuilt overall time: ${System.currentTimeMillis() - start}ms")
+
+            for ((libFile, srcFiles) in cacheUpdater.getDirtyFileStats()) {
+                val isCleanBuild = srcFiles.values.all { it.contains(DirtyFileState.ADDED_FILE) }
+                val msg = if (isCleanBuild) "fully rebuilt" else "partially rebuilt"
+                messageCollector.report(INFO, "module [${File(libFile.path).name}] was $msg")
+                if (!isCleanBuild) {
+                    for ((srcFile, stat) in srcFiles) {
+                        val statStr = stat.joinToString { it.str }
+                        messageCollector.report(INFO, "  file [${File(srcFile.path).name}]: ($statStr)")
                     }
                 }
-                start = now
             }
+
+            artifacts
         } else emptyList()
 
         // Run analysis if main module is sources

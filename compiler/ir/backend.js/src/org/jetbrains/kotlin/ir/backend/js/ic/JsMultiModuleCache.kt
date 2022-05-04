@@ -12,9 +12,9 @@ import java.io.File
 
 class JsMultiModuleCache(private val moduleArtifacts: List<ModuleArtifact>) {
     companion object {
-        private const val cacheModuleHeader = "cache.module.header.info"
-        private const val cacheJsModuleFile = "cache.module.js"
-        private const val cacheJsMapModuleFile = "cache.module.js.map"
+        private const val JS_MODULE_HEADER = "js.module.header.bin"
+        private const val CACHED_MODULE_JS = "module.js"
+        private const val CACHED_MODULE_JS_MAP = "module.js.map"
     }
 
     private enum class NameType(val typeMask: Int) {
@@ -25,7 +25,7 @@ class JsMultiModuleCache(private val moduleArtifacts: List<ModuleArtifact>) {
 
     private val headerToCachedInfo = mutableMapOf<JsIrModuleHeader, CachedModuleInfo>()
 
-    private fun ModuleArtifact.fetchModuleInfo() = File(artifactsDir, cacheModuleHeader).useCodedInputIfExists {
+    private fun ModuleArtifact.fetchModuleInfo() = File(artifactsDir, JS_MODULE_HEADER).useCodedInputIfExists {
         val definitions = mutableSetOf<String>()
         val nameBindings = mutableMapOf<String, String>()
 
@@ -49,7 +49,7 @@ class JsMultiModuleCache(private val moduleArtifacts: List<ModuleArtifact>) {
     }
 
     private fun CachedModuleInfo.commitModuleInfo() = artifact.artifactsDir?.let { cacheDir ->
-        File(cacheDir, cacheModuleHeader).useCodedOutput {
+        File(cacheDir, JS_MODULE_HEADER).useCodedOutput {
             val names = mutableMapOf<String, Pair<Int, String?>>()
             for ((tag, name) in jsIrHeader.nameBindings) {
                 names[tag] = NameType.NAME_BINDINGS.typeMask to name
@@ -72,15 +72,15 @@ class JsMultiModuleCache(private val moduleArtifacts: List<ModuleArtifact>) {
     }
 
     fun fetchCompiledJsCode(artifact: ModuleArtifact) = artifact.artifactsDir?.let { cacheDir ->
-        val jsCode = File(cacheDir, cacheJsModuleFile).ifExists { readText() }
-        val sourceMap = File(cacheDir, cacheJsMapModuleFile).ifExists { readText() }
+        val jsCode = File(cacheDir, CACHED_MODULE_JS).ifExists { readText() }
+        val sourceMap = File(cacheDir, CACHED_MODULE_JS_MAP).ifExists { readText() }
         jsCode?.let { CompilationOutputs(it, null, sourceMap) }
     }
 
     fun commitCompiledJsCode(artifact: ModuleArtifact, compilationOutputs: CompilationOutputs) = artifact.artifactsDir?.let { cacheDir ->
-        val jsCodeCache = File(cacheDir, cacheJsModuleFile).apply { recreate() }
+        val jsCodeCache = File(cacheDir, CACHED_MODULE_JS).apply { recreate() }
         jsCodeCache.writeText(compilationOutputs.jsCode)
-        val jsMapCache = File(cacheDir, cacheJsMapModuleFile)
+        val jsMapCache = File(cacheDir, CACHED_MODULE_JS_MAP)
         if (compilationOutputs.sourceMap != null) {
             jsMapCache.recreate()
             jsMapCache.writeText(compilationOutputs.sourceMap)
@@ -104,7 +104,7 @@ class JsMultiModuleCache(private val moduleArtifacts: List<ModuleArtifact>) {
 
     fun loadRequiredJsIrModules(crossModuleReferences: Map<JsIrModuleHeader, CrossModuleReferences>) {
         for ((header, references) in crossModuleReferences) {
-            val cachedInfo = headerToCachedInfo[header] ?: error("Internal error: cannot find artifact for module ${header.moduleName}")
+            val cachedInfo = headerToCachedInfo[header] ?: notFoundIcError("artifact for module ${header.moduleName}")
             val actualCrossModuleHash = references.crossModuleReferencesHashForIC()
             if (header.associatedModule == null && cachedInfo.crossModuleReferencesHash != actualCrossModuleHash) {
                 header.associatedModule = cachedInfo.artifact.loadJsIrModule()

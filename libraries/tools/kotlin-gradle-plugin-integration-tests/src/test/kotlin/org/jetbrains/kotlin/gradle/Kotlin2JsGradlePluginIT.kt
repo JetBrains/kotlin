@@ -172,7 +172,7 @@ class Kotlin2JsIrGradlePluginIT : AbstractKotlin2JsGradlePluginIT(true) {
         }
     }
 
-    @DisplayName("incremental compilation for JS IR  consider multiple artifacts in one project")
+    @DisplayName("incremental compilation for JS IR consider multiple artifacts in one project")
     @GradleTest
     fun testJsIrIncrementalMultipleArtifacts(gradleVersion: GradleVersion) {
         project("kotlin-js-ir-ic-multiple-artifacts", gradleVersion) {
@@ -196,14 +196,15 @@ class Kotlin2JsIrGradlePluginIT : AbstractKotlin2JsGradlePluginIT(true) {
                             .filter { it.isFile }
                             .forEach {
                                 val text = it.readText()
-                                if (text.contains("<kotlin-js-ir-ic-multiple-artifacts:lib>")) {
+                                // cache keeps the js code of compiled module, this substring from that js code
+                                if (text.contains("kotlin_js_ir_ic_multiple_artifacts_lib ")) {
                                     if (lib) {
                                         error("lib should be only once in cache")
                                     }
                                     lib = true
                                 }
-
-                                if (text.contains("<kotlin-js-ir-ic-multiple-artifacts:lib_other>")) {
+                                // cache keeps the js code of compiled module, this substring from that js code
+                                if (text.contains("kotlin_js_ir_ic_multiple_artifacts_lib_other ")) {
                                     if (libOther) {
                                         error("libOther should be only once in cache")
                                     }

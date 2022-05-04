@@ -1,23 +1,8 @@
 MODULES: lib1, main, libProxy
 
-STEP 0:
-    libs: lib1, main
-    dirty js: stdlib, lib1, main
-STEP 1..5:
+STEP 0..7:
     libs: lib1, main
     dirty js: lib1, main
-STEP 6..7:
-    libs: lib1, main
-    dirty js: stdlib, lib1, main
-STEP 8..13:
+STEP 8..23:
     libs: lib1, libProxy, main
     dirty js: lib1, libProxy, main
-STEP 14..16:
-    libs: lib1, libProxy, main
-    dirty js: stdlib, lib1, libProxy, main
-STEP 17..21:
-    libs: lib1, libProxy, main
-    dirty js: lib1, libProxy, main
-STEP 22..23:
-    libs: lib1, libProxy, main
-    dirty js: stdlib, lib1, libProxy, main

@@ -128,7 +128,7 @@ fun compileIr(
         safeExternalBoolean = safeExternalBoolean,
         safeExternalBooleanDiagnostic = safeExternalBooleanDiagnostic,
         granularity = granularity,
-        icCompatibleIr2Js = icCompatibleIr2Js,
+        icCompatibleIr2Js = if (icCompatibleIr2Js) IcCompatibleIr2Js.COMPATIBLE else IcCompatibleIr2Js.DISABLED
     )
 
     // Load declarations referenced during `context` initialization

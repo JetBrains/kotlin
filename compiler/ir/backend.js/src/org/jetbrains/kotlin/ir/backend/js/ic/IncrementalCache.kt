@@ -6,311 +6,249 @@
 package org.jetbrains.kotlin.ir.backend.js.ic
 
 import org.jetbrains.kotlin.backend.common.serialization.IdSignatureDeserializer
-import org.jetbrains.kotlin.backend.common.serialization.IrLibraryBytesSource
-import org.jetbrains.kotlin.backend.common.serialization.IrLibraryFileFromBytes
-import org.jetbrains.kotlin.backend.common.serialization.codedInputStream
-import org.jetbrains.kotlin.backend.common.serialization.proto.IrFile
+import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.JsIrFragmentAndBinaryAst
 import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.library.KotlinLibrary
+import org.jetbrains.kotlin.library.impl.javaFile
 import org.jetbrains.kotlin.protobuf.CodedInputStream
 import org.jetbrains.kotlin.protobuf.CodedOutputStream
-import org.jetbrains.kotlin.protobuf.ExtensionRegistryLite
 import java.io.File
 
 
-class IncrementalCache(private val library: KotlinLibrary, cachePath: String) : ArtifactCache() {
+class IncrementalCache(private val library: KotlinLibrary, cachePath: String) {
     companion object {
-        private const val cacheFullInfoFile = "cache.full.info"
-        private const val cacheFastInfoFile = "cache.fast.info"
-        private const val binaryAstSuffix = "binary.ast"
+        private const val CACHE_HEADER = "ic.header.bin"
+
+        private const val BINARY_AST_SUFFIX = "ast.bin"
+        private const val METADATA_SUFFIX = "metadata.bin"
     }
 
-    class CacheFastInfo(
-        var moduleName: String? = null,
-        var flatHash: ICHash = ICHash(),
-        var transHash: ICHash = ICHash(),
-        var configHash: ICHash = ICHash(),
-        var initialFlatHash: ICHash = ICHash()
-    )
-
-    private enum class CacheState { NON_LOADED, FETCHED_FOR_DEPENDENCY, FETCHED_FULL }
-
-    private var state = CacheState.NON_LOADED
     private var forceRebuildJs = false
-
     private val cacheDir = File(cachePath)
-    private val signatureToIdMapping = mutableMapOf<String, Map<IdSignature, Int>>()
+    private val signatureToIndexMappingFromMetadata = mutableMapOf<KotlinSourceFile, MutableMap<IdSignature, Int>>()
 
-    private val fingerprints = mutableMapOf<String, ICHash>()
-    private val usedInlineFunctions = mutableMapOf<String, Map<IdSignature, ICHash>>()
-    private val implementedInlineFunctions = mutableMapOf<String, Map<IdSignature, ICHash>>()
+    private val libraryFile = KotlinLibraryFile(library)
 
-    private var cacheFastInfo = CacheFastInfo().apply {
-        File(cacheDir, cacheFastInfoFile).useCodedInputIfExists {
-            moduleName = readString()
-            flatHash = ICHash.fromProtoStream(this)
-            transHash = ICHash.fromProtoStream(this)
-            configHash = ICHash.fromProtoStream(this)
+    class CacheHeader(val klibFileHash: ICHash = ICHash(), val configHash: ICHash = ICHash()) {
+        fun toProtoStream(out: CodedOutputStream) {
+            klibFileHash.toProtoStream(out)
+            configHash.toProtoStream(out)
         }
-        initialFlatHash = flatHash
-    }
 
-    val srcFingerprints: Map<String, ICHash> get() = fingerprints
-    val usedFunctions: Map<String, Map<IdSignature, ICHash>> get() = usedInlineFunctions
-    val implementedFunctions: Collection<Map<IdSignature, ICHash>> get() = implementedInlineFunctions.values
-
-    val klibUpdated: Boolean get() = cacheFastInfo.run { initialFlatHash == ICHash() || initialFlatHash != flatHash }
-
-    val klibTransitiveHash: ICHash get() = cacheFastInfo.transHash
-
-    var srcFilesInOrderFromKLib: List<String> = emptyList()
-        private set
-
-    var deletedSrcFiles: Set<String> = emptySet()
-        private set
-
-    fun updateSignatureToIdMapping(srcPath: String, mapping: Map<IdSignature, Int>) {
-        signatureToIdMapping[srcPath] = mapping
-    }
-
-    fun updateHashes(
-        srcPath: String, fingerprint: ICHash, usedFunctions: Map<IdSignature, ICHash>?, implementedFunctions: Map<IdSignature, ICHash>?
-    ) {
-        fingerprints[srcPath] = fingerprint
-        usedFunctions?.let { usedInlineFunctions[srcPath] = it }
-        implementedFunctions?.let { implementedInlineFunctions[srcPath] = it }
-    }
-
-    fun invalidateCacheForNewConfig(configHash: ICHash) {
-        if (cacheFastInfo.configHash != configHash) {
-            invalidate()
-            cacheFastInfo.configHash = configHash
-        }
-    }
-
-    fun checkAndUpdateCacheFastInfo(flatHash: ICHash, transHash: ICHash): Boolean {
-        if (cacheFastInfo.transHash != transHash) {
-            cacheFastInfo.flatHash = flatHash
-            cacheFastInfo.transHash = transHash
-            return false
-        }
-        return true
-    }
-
-    private fun commitCacheFastInfo(klibModuleName: String? = null): Unit = cacheFastInfo.run {
-        moduleName = klibModuleName ?: moduleName
-        val name = moduleName ?: error("Internal error: uninitialized fast cache info for ${library.libraryName}")
-        File(cacheDir, cacheFastInfoFile).useCodedOutput {
-            writeStringNoTag(name)
-            flatHash.toProtoStream(this)
-            transHash.toProtoStream(this)
-            configHash.toProtoStream(this)
-        }
-    }
-
-    private fun CodedInputStream.readFunctionHashes(
-        deserializer: IdSignatureDeserializer, signatureToId: MutableMap<IdSignature, Int>? = null
-    ): Map<IdSignature, ICHash>? {
-        val functions = readInt32()
-        if (functions == 0) {
-            return null
-        }
-        val result = mutableMapOf<IdSignature, ICHash>()
-        for (funIndex in 0 until functions) {
-            val sigId = readInt32()
-            val hash = ICHash.fromProtoStream(this)
-            try {
-                val signature = deserializer.deserializeIdSignature(sigId)
-                result[signature] = hash
-                signatureToId?.let { it[signature] = sigId }
-            } catch (ex: IndexOutOfBoundsException) {
-                // Signature has been removed
+        companion object {
+            fun fromProtoStream(input: CodedInputStream): CacheHeader {
+                val klibFileHash = ICHash.fromProtoStream(input)
+                val configHash = ICHash.fromProtoStream(input)
+                return CacheHeader(klibFileHash, configHash)
             }
         }
-        return result
     }
 
-    fun fetchFullCacheData() {
-        when (state) {
-            CacheState.FETCHED_FULL -> return
-            CacheState.FETCHED_FOR_DEPENDENCY ->
-                error("Internal error: cache for ${library.libraryName} has been already fetched for dependency")
-            CacheState.NON_LOADED -> {
-                state = CacheState.FETCHED_FULL
-                val signatureReaders = library.filesAndSigReaders()
-                srcFilesInOrderFromKLib = signatureReaders.map { it.first }
+    private var cacheHeader = File(cacheDir, CACHE_HEADER).useCodedInputIfExists {
+        CacheHeader.fromProtoStream(this)
+    } ?: CacheHeader()
 
-                File(cacheDir, cacheFullInfoFile).useCodedInputIfExists {
-                    val deleted = mutableSetOf<String>()
+    private fun loadCachedFingerprints() = File(cacheDir, CACHE_HEADER).useCodedInputIfExists {
+        // skip cache header
+        CacheHeader.fromProtoStream(this@useCodedInputIfExists)
+        buildMapUntil(readInt32()) {
+            val file = KotlinSourceFile.fromProtoStream(this@useCodedInputIfExists)
+            put(file, ICHash.fromProtoStream(this@useCodedInputIfExists))
+        }
+    } ?: emptyMap()
 
-                    val signatureReadersMap = signatureReaders.toMap()
-                    val srcFiles = readInt32()
-                    for (srcIndex in 0 until srcFiles) {
-                        val srcPath = readString()
-                        val fingerprint = ICHash.fromProtoStream(this)
+    private val kotlinLibraryHeader: KotlinLibraryHeader by lazy { KotlinLibraryHeader(library) }
 
-                        val deserializer = signatureReadersMap[srcPath]
-                        if (deserializer != null) {
-                            fingerprints[srcPath] = fingerprint
-                            val signatureToId = mutableMapOf<IdSignature, Int>()
-                            readFunctionHashes(deserializer, signatureToId)?.let { implementedInlineFunctions[srcPath] = it }
-                            readFunctionHashes(deserializer, signatureToId)?.let { usedInlineFunctions[srcPath] = it }
-                            if (signatureToId.isNotEmpty()) {
-                                signatureToIdMapping[srcPath] = signatureToId
-                            }
+    private class KotlinSourceFileMetadataFromDisk(
+        override val inverseDependencies: KotlinSourceFileMap<Set<IdSignature>>,
+        override val directDependencies: KotlinSourceFileMap<Set<IdSignature>>,
+
+        override val importedInlineFunctions: Map<IdSignature, ICHash>
+    ) : KotlinSourceFileMetadata()
+
+    private object KotlinSourceFileMetadataNotExist : KotlinSourceFileMetadata() {
+        override val inverseDependencies = KotlinSourceFileMap<Set<IdSignature>>(emptyMap())
+        override val directDependencies = KotlinSourceFileMap<Set<IdSignature>>(emptyMap())
+
+        override val importedInlineFunctions = emptyMap<IdSignature, ICHash>()
+    }
+
+    private val kotlinLibrarySourceFileMetadata = mutableMapOf<KotlinSourceFile, KotlinSourceFileMetadata>()
+
+    private fun KotlinSourceFile.getCacheFile(suffix: String) = File(cacheDir, "${File(path).name}.${path.stringHashForIC()}.$suffix")
+
+    private fun commitCacheHeader(fingerprints: List<Pair<KotlinSourceFile, ICHash>>) = File(cacheDir, CACHE_HEADER).useCodedOutput {
+        cacheHeader.toProtoStream(this)
+        writeInt32NoTag(fingerprints.size)
+        for ((srcFile, fingerprint) in fingerprints) {
+            srcFile.toProtoStream(this)
+            fingerprint.toProtoStream(this)
+        }
+    }
+
+    fun buildModuleArtifactAndCommitCache(
+        moduleName: String,
+        rebuiltFileFragments: Map<KotlinSourceFile, JsIrFragmentAndBinaryAst>,
+        signatureToIndexMapping: Map<KotlinSourceFile, Map<IdSignature, Int>>
+    ): ModuleArtifact {
+        val fileArtifacts = kotlinLibraryHeader.sourceFiles.map { srcFile ->
+            val binaryAstFile = srcFile.getCacheFile(BINARY_AST_SUFFIX)
+            val rebuiltFileFragment = rebuiltFileFragments[srcFile]
+            if (rebuiltFileFragment != null) {
+                binaryAstFile.apply { recreate() }.writeBytes(rebuiltFileFragment.binaryAst)
+            }
+
+            commitSourceFileMetadata(srcFile, signatureToIndexMapping[srcFile] ?: emptyMap())
+            SrcFileArtifact(srcFile.path, rebuiltFileFragment?.fragment, binaryAstFile)
+        }
+
+        return ModuleArtifact(moduleName, fileArtifacts, cacheDir, forceRebuildJs)
+    }
+
+    data class ModifiedFiles(
+        val modified: Map<KotlinSourceFile, KotlinSourceFileMetadata> = emptyMap(),
+        val removed: Map<KotlinSourceFile, KotlinSourceFileMetadata> = emptyMap(),
+        val newFiles: Set<KotlinSourceFile> = emptySet()
+    )
+
+    fun collectModifiedFiles(configHash: ICHash): ModifiedFiles {
+        val klibFileHash = library.libraryFile.javaFile().fileHashForIC()
+        cacheHeader = when {
+            cacheHeader.configHash != configHash -> {
+                cacheDir.deleteRecursively()
+                CacheHeader(klibFileHash, configHash)
+            }
+            cacheHeader.klibFileHash != klibFileHash -> CacheHeader(klibFileHash, configHash)
+            else -> return ModifiedFiles()
+        }
+
+        val cachedFingerprints = loadCachedFingerprints()
+        val deletedFiles = cachedFingerprints.keys.toMutableSet()
+        val newFiles = mutableSetOf<KotlinSourceFile>()
+
+        val newFingerprints = kotlinLibraryHeader.sourceFiles.mapIndexed { index, file -> file to library.fingerprint(index) }
+        val modifiedFiles = buildMap(newFingerprints.size) {
+            for ((file, fileNewFingerprint) in newFingerprints) {
+                val oldFingerprint = cachedFingerprints[file]
+                if (oldFingerprint == null) {
+                    newFiles += file
+                }
+                if (oldFingerprint != fileNewFingerprint) {
+                    val metadata = fetchSourceFileMetadata(file, false)
+                    put(file, metadata)
+                }
+                deletedFiles.remove(file)
+            }
+        }
+
+        val removedFilesMetadata = deletedFiles.associateWith {
+            val metadata = fetchSourceFileMetadata(it, false)
+            it.getCacheFile(BINARY_AST_SUFFIX).delete()
+            it.getCacheFile(METADATA_SUFFIX).delete()
+            metadata
+        }
+
+        forceRebuildJs = deletedFiles.isNotEmpty()
+        commitCacheHeader(newFingerprints)
+
+        return ModifiedFiles(modifiedFiles, removedFilesMetadata, newFiles)
+    }
+
+    fun fetchSourceFileFullMetadata(srcFile: KotlinSourceFile): KotlinSourceFileMetadata {
+        return fetchSourceFileMetadata(srcFile, true)
+    }
+
+    fun updateSourceFileMetadata(srcFile: KotlinSourceFile, sourceFileMetadata: KotlinSourceFileMetadata) {
+        kotlinLibrarySourceFileMetadata[srcFile] = sourceFileMetadata
+    }
+
+    private fun fetchSourceFileMetadata(srcFile: KotlinSourceFile, loadSignatures: Boolean) =
+        kotlinLibrarySourceFileMetadata.getOrPut(srcFile) {
+            val signatureToIndexMapping = signatureToIndexMappingFromMetadata.getOrPut(srcFile) { mutableMapOf() }
+            fun IdSignatureDeserializer.deserializeIdSignatureAndSave(index: Int): IdSignature {
+                val signature = deserializeIdSignature(index)
+                signatureToIndexMapping[signature] = index
+                return signature
+            }
+
+            val deserializer: IdSignatureDeserializer by lazy {
+                kotlinLibraryHeader.signatureDeserializers[srcFile] ?: notFoundIcError("signature deserializer", libraryFile, srcFile)
+            }
+
+            srcFile.getCacheFile(METADATA_SUFFIX).useCodedInputIfExists {
+                fun readDependencies() = buildMapUntil(readInt32()) {
+                    val libraryFile = KotlinLibraryFile.fromProtoStream(this@useCodedInputIfExists)
+                    val depends = buildMapUntil(readInt32()) {
+                        val dependencySrcFile = KotlinSourceFile.fromProtoStream(this@useCodedInputIfExists)
+                        val dependencySignatures = if (loadSignatures) {
+                            buildSetUntil(readInt32()) { add(deserializer.deserializeIdSignatureAndSave(readInt32())) }
                         } else {
-                            deleted.add(srcPath)
-                            skipFunctionHashes()
-                            skipFunctionHashes()
+                            repeat(readInt32()) { readInt32() }
+                            emptySet()
+                        }
+                        put(dependencySrcFile, dependencySignatures)
+                    }
+                    put(libraryFile, depends)
+                }
+
+                val directDependencies = KotlinSourceFileMap(readDependencies())
+                val reverseDependencies = KotlinSourceFileMap(readDependencies())
+
+                val importedInlineFunctions = if (loadSignatures) {
+                    buildMapUntil(readInt32()) {
+                        val signature = deserializer.deserializeIdSignatureAndSave(readInt32())
+                        val transitiveHash = ICHash.fromProtoStream(this@useCodedInputIfExists)
+                        put(signature, transitiveHash)
+                    }
+                } else {
+                    emptyMap()
+                }
+
+                KotlinSourceFileMetadataFromDisk(reverseDependencies, directDependencies, importedInlineFunctions)
+            } ?: KotlinSourceFileMetadataNotExist
+        }
+
+    private fun commitSourceFileMetadata(srcFile: KotlinSourceFile, signatureToIndexMapping: Map<IdSignature, Int>) {
+        val headerCacheFile = srcFile.getCacheFile(METADATA_SUFFIX)
+        val sourceFileMetadata = kotlinLibrarySourceFileMetadata[srcFile] ?: notFoundIcError("metadata", libraryFile, srcFile)
+        if (sourceFileMetadata.isEmpty()) {
+            headerCacheFile.delete()
+            return
+        }
+        if (sourceFileMetadata is KotlinSourceFileMetadataFromDisk) {
+            return
+        }
+
+        val signatureToIndexMappingSaved = signatureToIndexMappingFromMetadata[srcFile] ?: emptyMap()
+        fun serializeSignature(signature: IdSignature): Int {
+            val index = signatureToIndexMapping[signature] ?: signatureToIndexMappingSaved[signature]
+            return index ?: notFoundIcError("signature $signature", libraryFile, srcFile)
+        }
+
+        headerCacheFile.useCodedOutput {
+            fun writeDepends(depends: KotlinSourceFileMap<Set<IdSignature>>) {
+                writeInt32NoTag(depends.size)
+                for ((dependencyLibFile, dependencySrcFiles) in depends) {
+                    dependencyLibFile.toProtoStream(this)
+                    writeInt32NoTag(dependencySrcFiles.size)
+                    for ((dependencySrcFile, signatures) in dependencySrcFiles) {
+                        dependencySrcFile.toProtoStream(this)
+                        writeInt32NoTag(signatures.size)
+                        for (signature in signatures) {
+                            writeInt32NoTag(serializeSignature(signature))
                         }
                     }
-
-                    deletedSrcFiles = deleted
                 }
             }
-        }
-    }
 
-    private fun CodedInputStream.skipFunctionHashes() {
-        val functions = readInt32()
-        for (funIndex in 0 until functions) {
-            readInt32() // skip sigid
-            readFixed64() // skip hash
-        }
-    }
+            writeDepends(sourceFileMetadata.directDependencies)
+            writeDepends(sourceFileMetadata.inverseDependencies)
 
-    fun fetchCacheDataForDependency() = File(cacheDir, cacheFullInfoFile).useCodedInputIfExists {
-        if (state == CacheState.NON_LOADED) {
-            state = CacheState.FETCHED_FOR_DEPENDENCY
-            val signatureReadersMap = library.filesAndSigReaders().toMap()
-
-            val srcFiles = readInt32()
-            for (srcIndex in 0 until srcFiles) {
-                val srcPath = readString()
-                val fingerprint = ICHash.fromProtoStream(this)
-
-                val deserializer = signatureReadersMap[srcPath]
-                if (deserializer != null) {
-                    fingerprints[srcPath] = fingerprint
-                    readFunctionHashes(deserializer)?.let { implementedInlineFunctions[srcPath] = it }
-                }
-                skipFunctionHashes()
+            writeInt32NoTag(sourceFileMetadata.importedInlineFunctions.size)
+            for ((signature, transitiveHash) in sourceFileMetadata.importedInlineFunctions) {
+                writeInt32NoTag(serializeSignature(signature))
+                transitiveHash.toProtoStream(this)
             }
         }
-    }
-
-    private fun getBinaryAstPath(srcFile: String): File {
-        val binaryAstFileName = "${File(srcFile).name}.${srcFile.stringHashForIC()}.$binaryAstSuffix"
-        return File(cacheDir, binaryAstFileName)
-    }
-
-    private fun CodedOutputStream.writeFunctionHashes(sigToIndexMap: Map<IdSignature, Int>, hashes: Map<IdSignature, ICHash>) {
-        writeInt32NoTag(hashes.size)
-        for ((sig, functionHash) in hashes) {
-            val sigId = sigToIndexMap[sig] ?: error("No index found for sig $sig")
-            writeInt32NoTag(sigId)
-            functionHash.toProtoStream(this)
-        }
-    }
-
-    private fun commitCacheFullInfo() {
-        if (state != CacheState.FETCHED_FULL) {
-            error("Internal error: cache for ${library.libraryName} has not been fetched fully")
-        }
-
-        File(cacheDir, cacheFullInfoFile).useCodedOutput {
-            writeInt32NoTag(fingerprints.size)
-            for ((srcPath, fingerprint) in fingerprints) {
-                writeStringNoTag(srcPath)
-                fingerprint.toProtoStream(this)
-
-                val sigToIndexMap = signatureToIdMapping[srcPath] ?: emptyMap()
-                writeFunctionHashes(sigToIndexMap, implementedInlineFunctions[srcPath] ?: emptyMap())
-                writeFunctionHashes(sigToIndexMap, usedInlineFunctions[srcPath] ?: emptyMap())
-            }
-        }
-    }
-
-    private fun clearCacheAfterCommit() {
-        state = CacheState.FETCHED_FOR_DEPENDENCY
-        forceRebuildJs = deletedSrcFiles.isNotEmpty()
-        signatureToIdMapping.clear()
-        usedInlineFunctions.clear()
-        srcFilesInOrderFromKLib = emptyList()
-        deletedSrcFiles = emptySet()
-        binaryAsts.clear()
-    }
-
-    fun commitCacheForRemovedSrcFiles() {
-        commitCacheFastInfo()
-        if (deletedSrcFiles.isNotEmpty()) {
-            commitCacheFullInfo()
-        }
-        clearCacheAfterCommit()
-    }
-
-    fun commitCacheForRebuiltSrcFiles(klibModuleName: String) {
-        commitCacheFastInfo(klibModuleName)
-        commitCacheFullInfo()
-        for ((srcPath, ast) in binaryAsts) {
-            getBinaryAstPath(srcPath).apply { recreate() }.writeBytes(ast)
-        }
-        clearCacheAfterCommit()
-    }
-
-    override fun fetchArtifacts() = ModuleArtifact(
-        moduleName = cacheFastInfo.moduleName ?: error("Internal error: missing module name"),
-        fileArtifacts = fingerprints.keys.map {
-            SrcFileArtifact(it, fragments[it], getBinaryAstPath(it))
-        },
-        artifactsDir = cacheDir,
-        forceRebuildJs = forceRebuildJs
-    )
-
-    fun invalidate() {
-        cacheDir.deleteRecursively()
-        signatureToIdMapping.clear()
-        implementedInlineFunctions.clear()
-        usedInlineFunctions.clear()
-        fingerprints.clear()
-        binaryAsts.clear()
-        fragments.clear()
-        cacheFastInfo = CacheFastInfo()
-        srcFilesInOrderFromKLib = emptyList()
-        deletedSrcFiles = emptySet()
-    }
-
-    fun invalidateForSrcFile(srcPath: String) {
-        getBinaryAstPath(srcPath).delete()
-        signatureToIdMapping.remove(srcPath)
-        implementedInlineFunctions.remove(srcPath)
-        usedInlineFunctions.remove(srcPath)
-        fingerprints.remove(srcPath)
-        binaryAsts.remove(srcPath)
-        fragments.remove(srcPath)
-    }
-
-    private fun KotlinLibrary.filesAndSigReaders(): List<Pair<String, IdSignatureDeserializer>> {
-        val fileSize = fileCount()
-        val result = ArrayList<Pair<String, IdSignatureDeserializer>>(fileSize)
-        val extReg = ExtensionRegistryLite.newInstance()
-
-        for (i in 0 until fileSize) {
-            val fileStream = file(i).codedInputStream
-            val fileProto = IrFile.parseFrom(fileStream, extReg)
-            val sigReader = IdSignatureDeserializer(IrLibraryFileFromBytes(object : IrLibraryBytesSource() {
-                private fun err(): Nothing = error("Not supported")
-                override fun irDeclaration(index: Int): ByteArray = err()
-                override fun type(index: Int): ByteArray = err()
-                override fun signature(index: Int): ByteArray = signature(index, i)
-                override fun string(index: Int): ByteArray = string(index, i)
-                override fun body(index: Int): ByteArray = err()
-                override fun debugInfo(index: Int): ByteArray? = null
-            }), null)
-
-            result.add(fileProto.fileEntry.name to sigReader)
-        }
-
-        return result
     }
 }

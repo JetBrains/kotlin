@@ -1,24 +1,33 @@
 STEP 0:
-    dependencies: stdlib
     modifications:
-        U : proxy.kt.0.txt -> proxy.kt
-    dirty: proxy.kt
+        U : proxy.0.kt -> proxy.kt
+    added file: proxy.kt
 STEP 1..7:
-    dependencies: stdlib
-    flags: FP
 STEP 8:
-    dependencies: stdlib, lib1
+    dependencies: lib1
     modifications:
-        U : proxy.kt.1.txt -> proxy.kt
-    dirty: proxy.kt
-STEP 9..15:
-    dependencies: stdlib, lib1
-    dirty: proxy.kt
+        U : proxy.1.kt -> proxy.kt
+    added file: proxy.kt
+STEP 9:
+    dependencies: lib1
+    updated inline imports: proxy.kt
+STEP 10..14:
+    dependencies: lib1
+    modified ir: proxy.kt
+STEP 15:
+    dependencies: lib1
+    updated inline imports: proxy.kt
 STEP 16:
-    dependencies: stdlib, lib1
+    dependencies: lib1
     modifications:
-        U : proxy.kt.2.txt -> proxy.kt
-    dirty: proxy.kt
-STEP 17..23:
-    dependencies: stdlib, lib1
-    dirty: proxy.kt
+        U : proxy.2.kt -> proxy.kt
+    modified ir: proxy.kt
+STEP 17:
+    dependencies: lib1
+    updated inline imports: proxy.kt
+STEP 18..22:
+    dependencies: lib1
+    modified ir: proxy.kt
+STEP 23:
+    dependencies: lib1
+    updated inline imports: proxy.kt
