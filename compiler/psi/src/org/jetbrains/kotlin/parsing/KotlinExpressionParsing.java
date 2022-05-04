@@ -230,7 +230,7 @@ public class KotlinExpressionParsing extends AbstractKotlinParsing {
     }
 
     public static final TokenSet ALLOW_NEWLINE_OPERATIONS = TokenSet.create(
-            DOT, HASH, SAFE_ACCESS,
+            DOT, SAFE_ACCESS,
             COLON, AS_KEYWORD, AS_SAFE,
             ELVIS,
             // Can't allow `is` and `!is` because of when entry conditions: IS_KEYWORD, NOT_IS,
