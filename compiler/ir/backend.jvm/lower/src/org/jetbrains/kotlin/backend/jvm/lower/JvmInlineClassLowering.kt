@@ -345,6 +345,8 @@ private class JvmInlineClassLowering(context: JvmBackendContext) : JvmValueClass
     }
 
     override fun transformSimpleFunctionFlat(function: IrSimpleFunction, replacement: IrSimpleFunction): List<IrDeclaration> {
+        if (function.modality == Modality.ABSTRACT) return emptyList()
+
         replacement.valueParameters.forEach {
             it.transformChildrenVoid()
             it.defaultValue?.patchDeclarationParents(replacement)
@@ -900,7 +902,8 @@ private class JvmInlineClassLowering(context: JvmBackendContext) : JvmValueClass
                                     if (retargetClass.isInline) {
                                         putValueArgument(0, irGet(function.valueParameters[0]))
                                     } else {
-                                        dispatchReceiver = irGet(function.valueParameters[0])
+                                        dispatchReceiver =
+                                            irImplicitCast(irGet(function.valueParameters[0]), noinlineSubclass.owner.defaultType)
                                     }
                                     for ((target, source) in toCall.owner.explicitParameters.zip(function.explicitParameters).drop(1)) {
                                         putArgument(target, irGet(source))
@@ -1000,8 +1003,6 @@ private class JvmInlineClassLowering(context: JvmBackendContext) : JvmValueClass
                 }
             }
         }
-
-        info.top.declarations.removeIf { it is IrSimpleFunction && it.modality == Modality.ABSTRACT }
     }
 
     private fun buildUnboxFunction(irClass: IrClass) {
@@ -1190,7 +1191,9 @@ private class SealedInlineClassInfo(
 
                         val retargets = mutableMapOf<IrClassSymbol, IrSimpleFunctionSymbol>()
                         colorChildren(subclass.owner, method, method, retargets, visited)
-                        retargets[subclass] = method
+                        if (method.owner.modality != Modality.ABSTRACT) {
+                            retargets[subclass] = method
+                        }
 
                         val methodInTop =
                             context.inlineClassReplacements.getSealedInlineClassChildFunctionInTop(top to method.owner.withoutReceiver())

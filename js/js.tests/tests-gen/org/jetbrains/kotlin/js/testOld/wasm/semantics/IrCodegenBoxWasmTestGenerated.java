@@ -17920,6 +17920,28 @@ public class IrCodegenBoxWasmTestGenerated extends AbstractIrCodegenBoxWasmTest 
                         }
                     }
 
+                    @TestMetadata("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/abstractMethodMiddle")
+                    @TestDataPath("$PROJECT_ROOT")
+                    @RunWith(JUnit3RunnerWithInners.class)
+                    public static class AbstractMethodMiddle extends AbstractIrCodegenBoxWasmTest {
+                        private void runTest(String testDataFilePath) throws Exception {
+                            KotlinTestUtils.runTest0(this::doTest, TargetBackend.WASM, testDataFilePath);
+                        }
+
+                        private void runTest(String testDataFilePath, java.util.function.Function<String, String> transformer) throws Exception {
+                            KotlinTestUtils.runTest0(path -> doTestWithTransformer(path, transformer), TargetBackend.WASM, testDataFilePath);
+                        }
+
+                        public void testAllFilesPresentInAbstractMethodMiddle() throws Exception {
+                            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/abstractMethodMiddle"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+                        }
+
+                        @TestMetadata("stringAbstractMethodMiddle_I2_I3_O2.kt")
+                        public void testStringAbstractMethodMiddle_I2_I3_O2() throws Exception {
+                            runTest("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/abstractMethodMiddle/stringAbstractMethodMiddle_I2_I3_O2.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+                        }
+                    }
+
                     @TestMetadata("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/hashCode")
                     @TestDataPath("$PROJECT_ROOT")
                     @RunWith(JUnit3RunnerWithInners.class)

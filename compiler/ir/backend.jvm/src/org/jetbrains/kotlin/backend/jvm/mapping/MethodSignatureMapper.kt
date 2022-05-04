@@ -573,6 +573,8 @@ private fun IrFunction.isMethodImplOfTopSealedInlineClassCallingChild(callee: Ir
     if (parentAsClass.modality != Modality.SEALED) return false
     if (parentAsClass.isChildOfSealedInlineClass()) return false
 
+    if (callee.overriddenSymbols.any { it.owner == this }) return true
+
     var current: IrSimpleFunction? = callee
     while (current != null && current != this) {
         current = current.overriddenSymbols.find { it.owner.parentAsClass.isInline }?.owner

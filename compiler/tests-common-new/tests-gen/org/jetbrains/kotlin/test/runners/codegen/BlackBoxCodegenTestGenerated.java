@@ -25175,6 +25175,22 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
                     }
 
                     @Nested
+                    @TestMetadata("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/abstractMethodMiddle")
+                    @TestDataPath("$PROJECT_ROOT")
+                    public class AbstractMethodMiddle {
+                        @Test
+                        public void testAllFilesPresentInAbstractMethodMiddle() throws Exception {
+                            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/abstractMethodMiddle"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM, true);
+                        }
+
+                        @Test
+                        @TestMetadata("stringAbstractMethodMiddle_I2_I3_O2.kt")
+                        public void testStringAbstractMethodMiddle_I2_I3_O2() throws Exception {
+                            runTest("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/abstractMethodMiddle/stringAbstractMethodMiddle_I2_I3_O2.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+                        }
+                    }
+
+                    @Nested
                     @TestMetadata("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/hashCode")
                     @TestDataPath("$PROJECT_ROOT")
                     public class HashCode {

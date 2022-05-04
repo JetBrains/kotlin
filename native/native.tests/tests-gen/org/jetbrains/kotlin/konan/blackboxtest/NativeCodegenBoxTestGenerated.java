@@ -22901,6 +22901,29 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
                         }
 
                         @Nested
+                        @TestMetadata("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/abstractMethodMiddle")
+                        @TestDataPath("$PROJECT_ROOT")
+                        @Tag("codegen")
+                        @UseExtTestCaseGroupProvider()
+                        public class AbstractMethodMiddle {
+                            public AbstractMethodMiddle() {
+                                register("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/abstractMethodMiddle/stringAbstractMethodMiddle_I2_I3_O2.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+                            }
+
+                            @Test
+                            public void testAllFilesPresentInAbstractMethodMiddle() throws Exception {
+                                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/abstractMethodMiddle"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
+                            }
+
+                            @Test
+                            @TestMetadata("stringAbstractMethodMiddle_I2_I3_O2.kt")
+                            public void testStringAbstractMethodMiddle_I2_I3_O2() throws Exception {
+                                // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
+                                runTest("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/abstractMethodMiddle/stringAbstractMethodMiddle_I2_I3_O2.kt");
+                            }
+                        }
+
+                        @Nested
                         @TestMetadata("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/hashCode")
                         @TestDataPath("$PROJECT_ROOT")
                         @Tag("codegen")
