@@ -1,5 +1,2 @@
-import JavaClass.Inner.InnerInner.CONST
-
-fun main() {
-    val myKotlinConst = CONST
-}
+@Deprecated(JavaClass.CONST + JavaClass.CONST)
+class Usage

@@ -1,7 +1,3 @@
 public class JavaClass {
-    public class Inner {
-        public class InnerInner {
-            public static final String CONST = "A";
-        }
-    }
+    public static final String CONST = "A";
 }
