@@ -205,6 +205,7 @@ internal class CollectionStubMethodLowering(val context: JvmBackendContext) : Cl
         if (superFun.name != overridingFun.name) return false
         if (superFun.typeParameters.size != overridingFun.typeParameters.size) return false
         if (superFun.valueParameters.size != overridingFun.valueParameters.size) return false
+        if (!superFun.isSuspend && overridingFun.isSuspend) return false
 
         val typeChecker = createTypeCheckerState(superFun, overridingFun)
 
