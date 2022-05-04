@@ -146,7 +146,7 @@ fun TestConfigurationBuilder.baseFirDiagnosticTestConfiguration(
                 "compiler/fir/analysis-tests/testData/resolveWithStdlib/properties/delegateAccess/*"
     ) {
         defaultDirectives {
-            LANGUAGE with "+ExplicitBackingFields"
+            LANGUAGE with listOf("+ExplicitBackingFields", "+DirectFieldOrDelegateAccess")
         }
     }
 }

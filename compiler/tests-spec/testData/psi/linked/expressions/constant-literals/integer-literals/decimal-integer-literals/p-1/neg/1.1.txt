@@ -217,11 +217,12 @@ KtFile: 1.1.kt
     PsiWhiteSpace(' ')
     PsiElement(EQ)('=')
     PsiWhiteSpace(' ')
-    INTEGER_CONSTANT
-      PsiElement(INTEGER_LITERAL)('0')
-    PsiErrorElement:Property getter or setter expected
+    HASH_QUALIFIED_EXPRESSION
+      INTEGER_CONSTANT
+        PsiElement(INTEGER_LITERAL)('0')
       PsiElement(HASH)('#')
-      PsiElement(INTEGER_LITERAL)('1')
+      INTEGER_CONSTANT
+        PsiElement(INTEGER_LITERAL)('1')
   PsiWhiteSpace('\n')
   PROPERTY
     PsiElement(val)('val')

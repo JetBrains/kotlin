@@ -69,10 +69,11 @@ open class AbstractFirBlackBoxCodegenTest : AbstractJvmBlackBoxCodegenTestBase<F
             forTestsMatching(
                 "compiler/fir/fir2ir/testData/codegen/box/properties/backingField/*" or
                         "compiler/fir/fir2ir/testData/codegen/box/properties/delegateAccess/*" or
-                        "compiler/fir/fir2ir/testData/codegen/boxWithStdLib/properties/backingField/*"
+                        "compiler/fir/fir2ir/testData/codegen/boxWithStdLib/properties/backingField/*" or
+                        "compiler/fir/fir2ir/testData/codegen/boxWithStdLib/properties/delegateAccess/*"
             ) {
                 defaultDirectives {
-                    LanguageSettingsDirectives.LANGUAGE with "+ExplicitBackingFields"
+                    LanguageSettingsDirectives.LANGUAGE with listOf("+ExplicitBackingFields", "+DirectFieldOrDelegateAccess")
                 }
             }
         }
