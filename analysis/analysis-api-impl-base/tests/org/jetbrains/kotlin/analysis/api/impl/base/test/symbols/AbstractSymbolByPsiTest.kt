@@ -32,7 +32,7 @@ abstract class AbstractSymbolByPsiTest : AbstractSymbolTest() {
     private val KtDeclaration.isValidForSymbolCreation
         get() =
             when (this) {
-                is KtBackingField -> false
+                is KtBackingField, is KtPropertyDelegate -> false
                 is KtParameter -> !this.isFunctionTypeParameter
                 else -> true
             }
