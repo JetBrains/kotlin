@@ -23195,6 +23195,189 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
                         }
 
                         @Nested
+                        @TestMetadata("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/interfaceMethodAbstract")
+                        @TestDataPath("$PROJECT_ROOT")
+                        @Tag("codegen")
+                        @UseExtTestCaseGroupProvider()
+                        public class InterfaceMethodAbstract {
+                            public InterfaceMethodAbstract() {
+                                register("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/interfaceMethodAbstract/stringInterfaceMethodAbstract_I1.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+                                register("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/interfaceMethodAbstract/stringInterfaceMethodAbstract_I1_I2.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+                                register("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/interfaceMethodAbstract/stringInterfaceMethodAbstract_I1_I2_I3.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+                                register("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/interfaceMethodAbstract/stringInterfaceMethodAbstract_I1_I2_I3_O2.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+                                register("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/interfaceMethodAbstract/stringInterfaceMethodAbstract_I1_I2_O1.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+                                register("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/interfaceMethodAbstract/stringInterfaceMethodAbstract_I1_I2_O1_I3.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+                                register("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/interfaceMethodAbstract/stringInterfaceMethodAbstract_I1_I2_O1_I3_O2.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+                                register("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/interfaceMethodAbstract/stringInterfaceMethodAbstract_I1_I2_O1_O2.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+                                register("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/interfaceMethodAbstract/stringInterfaceMethodAbstract_I1_I2_O2.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+                                register("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/interfaceMethodAbstract/stringInterfaceMethodAbstract_I1_I3.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+                                register("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/interfaceMethodAbstract/stringInterfaceMethodAbstract_I1_I3_O2.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+                                register("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/interfaceMethodAbstract/stringInterfaceMethodAbstract_I1_O1.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+                                register("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/interfaceMethodAbstract/stringInterfaceMethodAbstract_I1_O1_I3.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+                                register("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/interfaceMethodAbstract/stringInterfaceMethodAbstract_I1_O1_I3_O2.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+                                register("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/interfaceMethodAbstract/stringInterfaceMethodAbstract_I1_O1_O2.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+                                register("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/interfaceMethodAbstract/stringInterfaceMethodAbstract_I1_O2.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+                                register("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/interfaceMethodAbstract/stringInterfaceMethodAbstract_I2_O1.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+                                register("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/interfaceMethodAbstract/stringInterfaceMethodAbstract_I2_O1_I3.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+                                register("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/interfaceMethodAbstract/stringInterfaceMethodAbstract_I2_O1_I3_O2.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+                                register("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/interfaceMethodAbstract/stringInterfaceMethodAbstract_I2_O1_O2.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+                                register("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/interfaceMethodAbstract/stringInterfaceMethodAbstract_O1_I3_O2.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+                            }
+
+                            @Test
+                            public void testAllFilesPresentInInterfaceMethodAbstract() throws Exception {
+                                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/interfaceMethodAbstract"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
+                            }
+
+                            @Test
+                            @TestMetadata("stringInterfaceMethodAbstract_I1.kt")
+                            public void testStringInterfaceMethodAbstract_I1() throws Exception {
+                                // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
+                                runTest("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/interfaceMethodAbstract/stringInterfaceMethodAbstract_I1.kt");
+                            }
+
+                            @Test
+                            @TestMetadata("stringInterfaceMethodAbstract_I1_I2.kt")
+                            public void testStringInterfaceMethodAbstract_I1_I2() throws Exception {
+                                // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
+                                runTest("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/interfaceMethodAbstract/stringInterfaceMethodAbstract_I1_I2.kt");
+                            }
+
+                            @Test
+                            @TestMetadata("stringInterfaceMethodAbstract_I1_I2_I3.kt")
+                            public void testStringInterfaceMethodAbstract_I1_I2_I3() throws Exception {
+                                // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
+                                runTest("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/interfaceMethodAbstract/stringInterfaceMethodAbstract_I1_I2_I3.kt");
+                            }
+
+                            @Test
+                            @TestMetadata("stringInterfaceMethodAbstract_I1_I2_I3_O2.kt")
+                            public void testStringInterfaceMethodAbstract_I1_I2_I3_O2() throws Exception {
+                                // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
+                                runTest("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/interfaceMethodAbstract/stringInterfaceMethodAbstract_I1_I2_I3_O2.kt");
+                            }
+
+                            @Test
+                            @TestMetadata("stringInterfaceMethodAbstract_I1_I2_O1.kt")
+                            public void testStringInterfaceMethodAbstract_I1_I2_O1() throws Exception {
+                                // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
+                                runTest("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/interfaceMethodAbstract/stringInterfaceMethodAbstract_I1_I2_O1.kt");
+                            }
+
+                            @Test
+                            @TestMetadata("stringInterfaceMethodAbstract_I1_I2_O1_I3.kt")
+                            public void testStringInterfaceMethodAbstract_I1_I2_O1_I3() throws Exception {
+                                // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
+                                runTest("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/interfaceMethodAbstract/stringInterfaceMethodAbstract_I1_I2_O1_I3.kt");
+                            }
+
+                            @Test
+                            @TestMetadata("stringInterfaceMethodAbstract_I1_I2_O1_I3_O2.kt")
+                            public void testStringInterfaceMethodAbstract_I1_I2_O1_I3_O2() throws Exception {
+                                // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
+                                runTest("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/interfaceMethodAbstract/stringInterfaceMethodAbstract_I1_I2_O1_I3_O2.kt");
+                            }
+
+                            @Test
+                            @TestMetadata("stringInterfaceMethodAbstract_I1_I2_O1_O2.kt")
+                            public void testStringInterfaceMethodAbstract_I1_I2_O1_O2() throws Exception {
+                                // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
+                                runTest("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/interfaceMethodAbstract/stringInterfaceMethodAbstract_I1_I2_O1_O2.kt");
+                            }
+
+                            @Test
+                            @TestMetadata("stringInterfaceMethodAbstract_I1_I2_O2.kt")
+                            public void testStringInterfaceMethodAbstract_I1_I2_O2() throws Exception {
+                                // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
+                                runTest("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/interfaceMethodAbstract/stringInterfaceMethodAbstract_I1_I2_O2.kt");
+                            }
+
+                            @Test
+                            @TestMetadata("stringInterfaceMethodAbstract_I1_I3.kt")
+                            public void testStringInterfaceMethodAbstract_I1_I3() throws Exception {
+                                // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
+                                runTest("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/interfaceMethodAbstract/stringInterfaceMethodAbstract_I1_I3.kt");
+                            }
+
+                            @Test
+                            @TestMetadata("stringInterfaceMethodAbstract_I1_I3_O2.kt")
+                            public void testStringInterfaceMethodAbstract_I1_I3_O2() throws Exception {
+                                // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
+                                runTest("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/interfaceMethodAbstract/stringInterfaceMethodAbstract_I1_I3_O2.kt");
+                            }
+
+                            @Test
+                            @TestMetadata("stringInterfaceMethodAbstract_I1_O1.kt")
+                            public void testStringInterfaceMethodAbstract_I1_O1() throws Exception {
+                                // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
+                                runTest("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/interfaceMethodAbstract/stringInterfaceMethodAbstract_I1_O1.kt");
+                            }
+
+                            @Test
+                            @TestMetadata("stringInterfaceMethodAbstract_I1_O1_I3.kt")
+                            public void testStringInterfaceMethodAbstract_I1_O1_I3() throws Exception {
+                                // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
+                                runTest("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/interfaceMethodAbstract/stringInterfaceMethodAbstract_I1_O1_I3.kt");
+                            }
+
+                            @Test
+                            @TestMetadata("stringInterfaceMethodAbstract_I1_O1_I3_O2.kt")
+                            public void testStringInterfaceMethodAbstract_I1_O1_I3_O2() throws Exception {
+                                // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
+                                runTest("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/interfaceMethodAbstract/stringInterfaceMethodAbstract_I1_O1_I3_O2.kt");
+                            }
+
+                            @Test
+                            @TestMetadata("stringInterfaceMethodAbstract_I1_O1_O2.kt")
+                            public void testStringInterfaceMethodAbstract_I1_O1_O2() throws Exception {
+                                // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
+                                runTest("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/interfaceMethodAbstract/stringInterfaceMethodAbstract_I1_O1_O2.kt");
+                            }
+
+                            @Test
+                            @TestMetadata("stringInterfaceMethodAbstract_I1_O2.kt")
+                            public void testStringInterfaceMethodAbstract_I1_O2() throws Exception {
+                                // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
+                                runTest("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/interfaceMethodAbstract/stringInterfaceMethodAbstract_I1_O2.kt");
+                            }
+
+                            @Test
+                            @TestMetadata("stringInterfaceMethodAbstract_I2_O1.kt")
+                            public void testStringInterfaceMethodAbstract_I2_O1() throws Exception {
+                                // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
+                                runTest("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/interfaceMethodAbstract/stringInterfaceMethodAbstract_I2_O1.kt");
+                            }
+
+                            @Test
+                            @TestMetadata("stringInterfaceMethodAbstract_I2_O1_I3.kt")
+                            public void testStringInterfaceMethodAbstract_I2_O1_I3() throws Exception {
+                                // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
+                                runTest("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/interfaceMethodAbstract/stringInterfaceMethodAbstract_I2_O1_I3.kt");
+                            }
+
+                            @Test
+                            @TestMetadata("stringInterfaceMethodAbstract_I2_O1_I3_O2.kt")
+                            public void testStringInterfaceMethodAbstract_I2_O1_I3_O2() throws Exception {
+                                // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
+                                runTest("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/interfaceMethodAbstract/stringInterfaceMethodAbstract_I2_O1_I3_O2.kt");
+                            }
+
+                            @Test
+                            @TestMetadata("stringInterfaceMethodAbstract_I2_O1_O2.kt")
+                            public void testStringInterfaceMethodAbstract_I2_O1_O2() throws Exception {
+                                // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
+                                runTest("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/interfaceMethodAbstract/stringInterfaceMethodAbstract_I2_O1_O2.kt");
+                            }
+
+                            @Test
+                            @TestMetadata("stringInterfaceMethodAbstract_O1_I3_O2.kt")
+                            public void testStringInterfaceMethodAbstract_O1_I3_O2() throws Exception {
+                                // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
+                                runTest("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/interfaceMethodAbstract/stringInterfaceMethodAbstract_O1_I3_O2.kt");
+                            }
+                        }
+
+                        @Nested
                         @TestMetadata("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/methodBottom")
                         @TestDataPath("$PROJECT_ROOT")
                         @Tag("codegen")

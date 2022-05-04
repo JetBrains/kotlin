@@ -975,7 +975,16 @@ private class JvmInlineClassLowering(context: JvmBackendContext) : JvmValueClass
                 }
 
                 if (retargets.any { (_, retarget) ->
-                        retarget.owner.parentAsClass.let { it.isInline && it.modality == Modality.SEALED }
+                        val retargetToSealedInline = retarget.owner.parentAsClass.let { it.isInline && it.modality == Modality.SEALED }
+                        if (retargetToSealedInline) return@any true
+                        val retargetToOverriddenOfAbstractInInterface =
+                            retarget.owner.overriddenSymbols.any { overridden ->
+                                overridden.owner.parentAsClass == info.top && overridden.owner.overriddenSymbols.any {
+                                    it.owner.parentAsClass.isInterface && it.owner.modality == Modality.ABSTRACT
+                                }
+                            }
+
+                        retargetToOverriddenOfAbstractInInterface
                     }
                 ) {
                     val bridge = context.irFactory.buildFun {
