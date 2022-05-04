@@ -43,7 +43,6 @@ object StandaloneProjectFactory {
         return KotlinCoreProjectEnvironment(projectDisposable, applicationEnvironment)
     }
 
-
     fun registerServicesForProjectEnvironment(
         environment: KotlinCoreProjectEnvironment,
         modules: KtModuleProjectStructure,
@@ -56,7 +55,7 @@ object StandaloneProjectFactory {
         KotlinCoreEnvironment.registerProjectServices(project)
 
         project.registerService(ProjectStructureProvider::class.java, KtStaticModuleProvider(modules))
-        initialiseVirtualFinderFinderServices(modules, environment, jdkHome, languageVersionSettings)
+        initialiseVirtualFileFinderServices(modules, environment, jdkHome, languageVersionSettings)
         initialiseAnnotationServices(project)
 
         project.setupHighestLanguageLevel()
@@ -67,7 +66,7 @@ object StandaloneProjectFactory {
         project.registerService(InferredAnnotationsManager::class.java, MockInferredAnnotationsManager())
     }
 
-    private fun initialiseVirtualFinderFinderServices(
+    private fun initialiseVirtualFileFinderServices(
         modules: KtModuleProjectStructure,
         environment: KotlinCoreProjectEnvironment,
         jdkHome: Path?,
@@ -167,7 +166,6 @@ object StandaloneProjectFactory {
             }
         }
     }
-
 
     fun createPackagePartsProvider(
         languageVersionSettings: LanguageVersionSettings,
