@@ -96,7 +96,7 @@ FILE fqName:<root> fileName:/genericClassInDifferentModule_m2.kt
       FUN DEFAULT_PROPERTY_ACCESSOR name:<set-bar> visibility:public modality:FINAL <> ($this:<root>.Derived1<T of <root>.Derived1>, <set-?>:T of <root>.Derived1) returnType:kotlin.Unit
         correspondingProperty: PROPERTY name:bar visibility:public modality:FINAL [var]
         overridden:
-          public final fun <set-bar> (<set-?>: T of <root>.Base): kotlin.Unit declared in <root>.Base
+          public final fun <set-bar> (value: T of <root>.Base): kotlin.Unit declared in <root>.Base
         $this: VALUE_PARAMETER name:<this> type:<root>.Derived1<T of <root>.Derived1>
         VALUE_PARAMETER name:<set-?> index:0 type:T of <root>.Derived1
         BLOCK_BODY
@@ -120,7 +120,7 @@ FILE fqName:<root> fileName:/genericClassInDifferentModule_m2.kt
       FUN name:<set-exn> visibility:public modality:FINAL <Z> ($this:<root>.Derived1<T of <root>.Derived1>, $receiver:Z of <root>.Derived1.<set-exn>, value:T of <root>.Derived1) returnType:kotlin.Unit
         correspondingProperty: PROPERTY name:exn visibility:public modality:FINAL [var]
         overridden:
-          public final fun <set-exn> <Z> (<set-?>: T of <root>.Base): kotlin.Unit declared in <root>.Base
+          public final fun <set-exn> <Z> (value: T of <root>.Base): kotlin.Unit declared in <root>.Base
         TYPE_PARAMETER name:Z index:0 variance: superTypes:[kotlin.Any?] reified:false
         $this: VALUE_PARAMETER name:<this> type:<root>.Derived1<T of <root>.Derived1>
         $receiver: VALUE_PARAMETER name:<this> type:Z of <root>.Derived1.<set-exn>

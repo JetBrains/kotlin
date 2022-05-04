@@ -88,13 +88,15 @@ class Fir2IrLazyPropertyAccessor(
                 )
 
                 if (isSetter) {
+                    val valueParameter = firAccessor?.valueParameters?.firstOrNull()
                     add(
                         declarationStorage.createDefaultSetterParameter(
                             startOffset, endOffset,
-                            (firAccessor?.valueParameters?.firstOrNull()?.returnTypeRef ?: firParentProperty.returnTypeRef).toIrType(
+                            (valueParameter?.returnTypeRef ?: firParentProperty.returnTypeRef).toIrType(
                                 typeConverter, conversionTypeContext
                             ),
-                            parent = this@Fir2IrLazyPropertyAccessor
+                            parent = this@Fir2IrLazyPropertyAccessor,
+                            name = valueParameter?.name
                         )
                     )
                 }

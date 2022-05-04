@@ -299,11 +299,12 @@ class Fir2IrDeclarationStorage(
         startOffset: Int,
         endOffset: Int,
         type: IrType,
-        parent: IrFunction
+        parent: IrFunction,
+        name: Name? = null
     ): IrValueParameter {
         return irFactory.createValueParameter(
             startOffset, endOffset, IrDeclarationOrigin.DEFINED, IrValueParameterSymbolImpl(),
-            SpecialNames.IMPLICIT_SET_PARAMETER, 0, type,
+            name ?: SpecialNames.IMPLICIT_SET_PARAMETER, 0, type,
             varargElementType = null,
             isCrossinline = false, isNoinline = false,
             isHidden = false, isAssignable = false

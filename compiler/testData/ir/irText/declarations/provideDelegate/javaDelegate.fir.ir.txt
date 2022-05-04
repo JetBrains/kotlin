@@ -2,7 +2,7 @@ FILE fqName:k fileName:/box.kt
   PROPERTY name:p1 visibility:public modality:FINAL [delegated,var]
     FIELD PROPERTY_DELEGATE name:p1$delegate type:kotlin.reflect.KMutableProperty0<@[FlexibleNullability] kotlin.String?> visibility:private [final,static]
       EXPRESSION_BODY
-        PROPERTY_REFERENCE 'public open foo: @[FlexibleNullability] kotlin.String? [var]' field=null getter='public open fun <get-foo> (): @[FlexibleNullability] kotlin.String? declared in <root>.J' setter='public open fun <set-foo> (<set-?>: @[FlexibleNullability] kotlin.String?): kotlin.Unit declared in <root>.J' type=kotlin.reflect.KMutableProperty0<@[FlexibleNullability] kotlin.String?> origin=null
+        PROPERTY_REFERENCE 'public open foo: @[FlexibleNullability] kotlin.String? [var]' field=null getter='public open fun <get-foo> (): @[FlexibleNullability] kotlin.String? declared in <root>.J' setter='public open fun <set-foo> (s: @[FlexibleNullability] kotlin.String?): kotlin.Unit declared in <root>.J' type=kotlin.reflect.KMutableProperty0<@[FlexibleNullability] kotlin.String?> origin=null
           $this: CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.J' type=<root>.J origin=null
     FUN DELEGATED_PROPERTY_ACCESSOR name:<get-p1> visibility:public modality:FINAL <> () returnType:@[FlexibleNullability] kotlin.String?
       correspondingProperty: PROPERTY name:p1 visibility:public modality:FINAL [delegated,var]
@@ -26,7 +26,7 @@ FILE fqName:k fileName:/box.kt
   PROPERTY name:p2 visibility:public modality:FINAL [delegated,var]
     FIELD PROPERTY_DELEGATE name:p2$delegate type:kotlin.reflect.KMutableProperty0<@[FlexibleNullability] kotlin.String?> visibility:private [final,static]
       EXPRESSION_BODY
-        PROPERTY_REFERENCE 'public open foo: @[FlexibleNullability] kotlin.String? [var]' field=null getter='public open fun <get-foo> (): @[FlexibleNullability] kotlin.String? declared in <root>.J' setter='public open fun <set-foo> (<set-?>: @[FlexibleNullability] kotlin.String?): kotlin.Unit declared in <root>.J' type=kotlin.reflect.KMutableProperty0<@[FlexibleNullability] kotlin.String?> origin=null
+        PROPERTY_REFERENCE 'public open foo: @[FlexibleNullability] kotlin.String? [var]' field=null getter='public open fun <get-foo> (): @[FlexibleNullability] kotlin.String? declared in <root>.J' setter='public open fun <set-foo> (s: @[FlexibleNullability] kotlin.String?): kotlin.Unit declared in <root>.J' type=kotlin.reflect.KMutableProperty0<@[FlexibleNullability] kotlin.String?> origin=null
           $this: CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.J' type=<root>.J origin=null
     FUN DELEGATED_PROPERTY_ACCESSOR name:<get-p2> visibility:public modality:FINAL <> () returnType:@[FlexibleNullability] kotlin.String?
       correspondingProperty: PROPERTY name:p2 visibility:public modality:FINAL [delegated,var]
