@@ -203,11 +203,16 @@ class LoopExpressionGenerator(statementGenerator: StatementGenerator) : Statemen
         irInnerBody.statements.add(irLoopParameter)
 
         if (ktLoopDestructuringDeclaration != null) {
+            val firstContainerValue = VariableLValue(context, irLoopParameter)
             statementGenerator.declareComponentVariablesInBlock(
                 ktLoopDestructuringDeclaration,
                 irInnerBody,
-                VariableLValue(context, irLoopParameter),
-                VariableLValue(context, irLoopParameter, startOffset = SYNTHETIC_OFFSET, endOffset = SYNTHETIC_OFFSET)
+                firstContainerValue,
+                if (context.extensions.debugInfoOnlyOnVariablesInDestructuringDeclarations) {
+                    VariableLValue(context, irLoopParameter, startOffset = SYNTHETIC_OFFSET, endOffset = SYNTHETIC_OFFSET)
+                } else {
+                    firstContainerValue
+                }
             )
         }
 

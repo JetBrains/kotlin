@@ -48,4 +48,7 @@ open class GeneratorExtensions : StubGeneratorExtensions() {
 
     open val parametersAreAssignable: Boolean
         get() = false
+
+    open val debugInfoOnlyOnVariablesInDestructuringDeclarations: Boolean
+        get() = false
 }
