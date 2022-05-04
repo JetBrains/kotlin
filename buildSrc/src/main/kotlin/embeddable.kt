@@ -126,10 +126,13 @@ fun Project.compilerDummyForDependenciesRewriting(
 const val COMPILER_DUMMY_JAR_CONFIGURATION_NAME = "compilerDummyJar"
 
 fun Project.compilerDummyJar(task: TaskProvider<out Jar>, body: Jar.() -> Unit = {}) {
-    task.configure(body)
-    task.configure {
-        addArtifact(COMPILER_DUMMY_JAR_CONFIGURATION_NAME, this, this)
+    configurations.getOrCreate(COMPILER_DUMMY_JAR_CONFIGURATION_NAME).apply {
+        isCanBeResolved = false
+        isCanBeConsumed = true
     }
+
+    task.configure(body)
+    addArtifact(COMPILER_DUMMY_JAR_CONFIGURATION_NAME, task)
 }
 
 const val EMBEDDABLE_COMPILER_TASK_NAME = "embeddable"
@@ -137,7 +140,11 @@ fun Project.embeddableCompilerDummyForDependenciesRewriting(
     taskName: String = EMBEDDABLE_COMPILER_TASK_NAME,
     body: ShadowJar.() -> Unit = {}
 ): TaskProvider<ShadowJar> {
-    val compilerDummyJar = configurations.getOrCreate("compilerDummyJar")
+    val compilerDummyJar = configurations.getOrCreate(COMPILER_DUMMY_JAR_CONFIGURATION_NAME).apply {
+        isCanBeResolved = true
+        isCanBeConsumed = false
+    }
+
     dependencies.add(
         compilerDummyJar.name,
         dependencies.project(":kotlin-compiler-embeddable", configuration = COMPILER_DUMMY_JAR_CONFIGURATION_NAME)
