@@ -3684,7 +3684,8 @@ class FunctionBodySkippingTransformTests : FunctionBodySkippingTransfomrTestsBas
                 if (%changed and 0b0001 === 0 || %composer.defaultsInvalid) {
                   if (%default and 0b0010 !== 0) {
                     values = Array(1) { it: Int ->
-                      "value " + it
+                      val tmp0_return = "value " + it
+                      tmp0_return
                     }
                     %dirty = %dirty and 0b01110000.inv()
                   }
