@@ -174,7 +174,7 @@ class MavenDependenciesResolver : ExternalDependenciesResolver {
                 }
             }
 
-            return makeResolveFailureResult(message, location)
+            return makeResolveFailureResult(listOf(message), location, exception)
         }
     }
 }

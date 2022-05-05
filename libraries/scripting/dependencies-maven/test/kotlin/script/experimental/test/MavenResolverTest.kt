@@ -131,19 +131,21 @@ class MavenResolverTest : ResolversTestBase() {
             DependenciesResolverOptionsName.PASSWORD to "invalid password",
         )
         resolver.addRepository("https://packages.jetbrains.team/maven/p/crl/maven/", options)
+        // If the real space-sdk is in Maven Local, test will not fail
         val result = runBlocking {
-            resolver.resolve("com.jetbrains:space-sdk:1.0-dev")
+            resolver.resolve("com.jetbrains:fake-space-sdk:1.0-dev")
         } as ResultWithDiagnostics.Failure
 
         assertEquals(1, result.reports.size)
         val diagnostic = result.reports.single()
         assertEquals(
-            "ArtifactResolutionException: Could not transfer artifact com.jetbrains:space-sdk:pom:1.0-dev " +
+            "ArtifactResolutionException: Could not transfer artifact com.jetbrains:fake-space-sdk:pom:1.0-dev " +
                     "from/to https___packages.jetbrains.team_maven_p_crl_maven_ (https://packages.jetbrains.team/maven/p/crl/maven/): " +
-                    "authentication failed for https://packages.jetbrains.team/maven/p/crl/maven/com/jetbrains/space-sdk/1.0-dev/space-sdk-1.0-dev.pom, " +
+                    "authentication failed for https://packages.jetbrains.team/maven/p/crl/maven/com/jetbrains/fake-space-sdk/1.0-dev/fake-space-sdk-1.0-dev.pom, " +
                     "status: 401 Unauthorized",
             diagnostic.message
         )
+        assertNotNull(diagnostic.exception)
     }
 
     fun testAuthIncorrectEnvUsage() {
