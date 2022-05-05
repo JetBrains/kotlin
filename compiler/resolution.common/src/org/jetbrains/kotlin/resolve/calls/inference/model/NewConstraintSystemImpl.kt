@@ -10,10 +10,7 @@ import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.resolve.calls.components.PostponedArgumentsAnalyzerContext
 import org.jetbrains.kotlin.resolve.calls.inference.*
 import org.jetbrains.kotlin.resolve.calls.inference.components.*
-import org.jetbrains.kotlin.types.AbstractTypeApproximator
-import org.jetbrains.kotlin.types.AbstractTypeChecker
-import org.jetbrains.kotlin.types.TypeApproximatorConfiguration
-import org.jetbrains.kotlin.types.isDefinitelyEmpty
+import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.model.*
 import org.jetbrains.kotlin.utils.SmartList
 import org.jetbrains.kotlin.utils.SmartSet
@@ -41,6 +38,8 @@ class NewConstraintSystemImpl(
     private val typeVariablesTransaction: MutableList<TypeVariableMarker> = SmartList()
     private val properTypesCache: MutableSet<KotlinTypeMarker> = SmartSet.create()
     private val notProperTypesCache: MutableSet<KotlinTypeMarker> = SmartSet.create()
+    private val emptyIntersectionTypesCache: MutableSet<Collection<KotlinTypeMarker>> = SmartSet.create()
+    private val nonEmptyIntersectionTypesCache: MutableSet<Collection<KotlinTypeMarker>> = SmartSet.create()
 
     private var couldBeResolvedWithUnrestrictedBuilderInference: Boolean = false
 
@@ -444,6 +443,21 @@ class NewConstraintSystemImpl(
         doPostponedComputationsIfAllVariablesAreFixed()
     }
 
+    override fun getEmptyIntersectionTypeKind(types: Collection<KotlinTypeMarker>): EmptyIntersectionTypeKind {
+        if (types in emptyIntersectionTypesCache)
+            return EmptyIntersectionTypeKind.MULTIPLE_CLASSES
+
+        if (types in nonEmptyIntersectionTypesCache)
+            return EmptyIntersectionTypeKind.NOT_EMPTY_INTERSECTION
+
+        return types.computeEmptyIntersectionTypeKind().also {
+            when (it) {
+                EmptyIntersectionTypeKind.MULTIPLE_CLASSES -> emptyIntersectionTypesCache.add(types)
+                EmptyIntersectionTypeKind.NOT_EMPTY_INTERSECTION -> nonEmptyIntersectionTypesCache.add(types)
+            }
+        }
+    }
+
     private fun checkInferredEmptyIntersection(variable: TypeVariableMarker, resultType: KotlinTypeMarker) {
         val intersectionTypeConstructor = resultType.typeConstructor().takeIf { it is IntersectionTypeConstructorMarker } ?: return
         val isInferredEmptyIntersectionForbidden =
@@ -454,7 +468,7 @@ class NewConstraintSystemImpl(
         if (upperTypes.size <= 1 || storage.errors.any { it is InferredEmptyIntersection && it.incompatibleTypes == upperTypes })
             return
 
-        if (upperTypes.computeEmptyIntersectionTypeKind().isDefinitelyEmpty()) {
+        if (getEmptyIntersectionTypeKind(upperTypes).isDefinitelyEmpty()) {
             // Remove existing errors from resolution stage because a completion error is more precise
             storage.errors.removeIf { it is InferredEmptyIntersection }
             val errorFactory =

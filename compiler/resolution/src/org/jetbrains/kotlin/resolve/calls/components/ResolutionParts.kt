@@ -889,7 +889,8 @@ internal object CheckIncompatibleTypeVariableUpperBounds : ResolutionPart() {
         callComponents.statelessCallbacks.isOldIntersectionIsEmpty(upperTypes.cast())
 
     override fun ResolutionCandidate.process(workIndex: Int) = with(getSystem().asConstraintSystemCompleterContext()) {
-        for (variableWithConstraints in getSystem().getBuilder().currentStorage().notFixedTypeVariables.values) {
+        val constraintSystem = getSystem()
+        for (variableWithConstraints in constraintSystem.getBuilder().currentStorage().notFixedTypeVariables.values) {
             val upperTypes = variableWithConstraints.constraints.extractUpperTypesToCheckIntersectionEmptiness()
 
             when {
@@ -900,7 +901,7 @@ internal object CheckIncompatibleTypeVariableUpperBounds : ResolutionPart() {
                     markCandidateForCompatibilityResolve(needToReportWarning = false)
                     continue
                 }
-                upperTypes.computeEmptyIntersectionTypeKind().isDefinitelyEmpty() -> {
+                constraintSystem.getEmptyIntersectionTypeKind(upperTypes).isDefinitelyEmpty() -> {
                     val isInferredEmptyIntersectionForbidden =
                         callComponents.languageVersionSettings.supportsFeature(LanguageFeature.ForbidInferringTypeVariablesIntoEmptyIntersection)
 

@@ -584,7 +584,7 @@ internal object CheckIncompatibleTypeVariableUpperBounds : ResolutionStage() {
                 if (upperTypes.size <= 1 || variableWithConstraints.constraints.any { it.kind.isLower() })
                     continue
 
-                if (upperTypes.computeEmptyIntersectionTypeKind().isDefinitelyEmpty()) {
+                if (candidate.system.getEmptyIntersectionTypeKind(upperTypes).isDefinitelyEmpty()) {
                     sink.yieldDiagnostic(
                         @Suppress("UNCHECKED_CAST")
                         InferredEmptyIntersectionDiagnostic(
