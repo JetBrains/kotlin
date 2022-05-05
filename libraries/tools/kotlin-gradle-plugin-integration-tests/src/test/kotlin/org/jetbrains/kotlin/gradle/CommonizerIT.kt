@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.gradle
 
+import groovy.json.StringEscapeUtils
 import org.gradle.api.logging.LogLevel.INFO
 import org.gradle.internal.os.OperatingSystem
 import org.jetbrains.kotlin.commonizer.CommonizerTarget
@@ -676,14 +677,14 @@ class CommonizerIT : BaseGradleIT() {
     }
 
     @Test
-    fun `test cinterop caching`() {
+    fun `test KT-52243 cinterop caching`() {
         with(preparedProject("commonizeCurlInterop")) {
             val localBuildCacheDir = projectDir.resolve("local-build-cache-dir").also { assertTrue(it.mkdirs()) }
             gradleSettingsScript().appendText("""
                 
                 buildCache {
                     local {
-                        directory = "$localBuildCacheDir"
+                        directory = "${StringEscapeUtils.escapeJava(localBuildCacheDir.absolutePath)}"
                     }
                 }
             """.trimIndent()
