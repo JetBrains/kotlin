@@ -25,8 +25,6 @@ abstract class SyntheticPropertyAccessorReference(
 
     override fun canRename() = true
 
-    abstract override fun handleElementRename(newElementName: String): PsiElement?
-
     override val resolvesByNames: Collection<Name>
         get() = listOf(element.getReferencedNameAsName())
 }
