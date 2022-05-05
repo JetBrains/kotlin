@@ -16753,9 +16753,21 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
             }
 
             @Test
+            @TestMetadata("substitutedContextReceivers.kt")
+            public void testSubstitutedContextReceivers() throws Exception {
+                runTest("compiler/testData/codegen/box/extensionFunctions/contextReceivers/substitutedContextReceivers.kt");
+            }
+
+            @Test
             @TestMetadata("superClassAndSubClassWithContextReceiver.kt")
             public void testSuperClassAndSubClassWithContextReceiver() throws Exception {
                 runTest("compiler/testData/codegen/box/extensionFunctions/contextReceivers/superClassAndSubClassWithContextReceiver.kt");
+            }
+
+            @Test
+            @TestMetadata("superClassAndSubClassWithContextReceiverSubstituted.kt")
+            public void testSuperClassAndSubClassWithContextReceiverSubstituted() throws Exception {
+                runTest("compiler/testData/codegen/box/extensionFunctions/contextReceivers/superClassAndSubClassWithContextReceiverSubstituted.kt");
             }
 
             @Test

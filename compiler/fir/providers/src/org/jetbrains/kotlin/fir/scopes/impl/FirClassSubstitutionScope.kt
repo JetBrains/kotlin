@@ -135,11 +135,16 @@ class FirClassSubstitutionScope(
             it.returnTypeRef.coneType.substitute(newSubstitutor)
         }
 
+        val newContextReceiverTypes = member.contextReceivers.map {
+            it.typeRef.coneType.substitute(newSubstitutor)
+        }
+
         if (newReceiverType == null &&
             newReturnType == null &&
             newParameterTypes.all { it == null } &&
             newTypeParameters === member.typeParameters &&
-            fakeOverrideSubstitution == null
+            fakeOverrideSubstitution == null &&
+            newContextReceiverTypes.all { it == null }
         ) {
             if (original.dispatchReceiverType?.substitute(substitutor) != null) {
                 return FirFakeOverrideGenerator.createSubstitutionOverrideFunction(
@@ -164,6 +169,7 @@ class FirClassSubstitutionScope(
             member,
             newDispatchReceiverType ?: dispatchReceiverTypeForSubstitutedMembers,
             newReceiverType,
+            newContextReceiverTypes,
             newReturnType,
             newParameterTypes,
             newTypeParameters as List<FirTypeParameter>,
@@ -188,7 +194,15 @@ class FirClassSubstitutionScope(
             it.returnTypeRef.coneType.substitute(newSubstitutor)
         }
 
-        if (newReturnType == null && newParameterTypes.all { it == null } && newTypeParameters === constructor.typeParameters) {
+        val newContextReceiverTypes = constructor.contextReceivers.map {
+            it.typeRef.coneType.substitute(newSubstitutor)
+        }
+
+        if (newReturnType == null &&
+            newParameterTypes.all { it == null } &&
+            newTypeParameters === constructor.typeParameters &&
+            newContextReceiverTypes.all { it == null }
+        ) {
             return original
         }
 
@@ -200,6 +214,7 @@ class FirClassSubstitutionScope(
             newDispatchReceiverType,
             newReturnType,
             newParameterTypes,
+            newContextReceiverTypes,
             newTypeParameters,
             makeExpect,
             fakeOverrideSubstitution
@@ -217,10 +232,15 @@ class FirClassSubstitutionScope(
             member, symbolForOverride
         )
 
+        val newContextReceiverTypes = member.contextReceivers.map {
+            it.typeRef.coneType.substitute(substitutor)
+        }
+
         if (newReceiverType == null &&
             newReturnType == null &&
             newTypeParameters === member.typeParameters &&
-            fakeOverrideSubstitution == null
+            fakeOverrideSubstitution == null &&
+            newContextReceiverTypes.all { it == null }
         ) {
             if (original.dispatchReceiverType?.substitute(substitutor) != null) {
                 return FirFakeOverrideGenerator.createSubstitutionOverrideProperty(
@@ -241,6 +261,7 @@ class FirClassSubstitutionScope(
             member,
             newDispatchReceiverType ?: dispatchReceiverTypeForSubstitutedMembers,
             newReceiverType,
+            newContextReceiverTypes,
             newReturnType,
             newTypeParameters as List<FirTypeParameter>,
             makeExpect,
@@ -316,6 +337,10 @@ class FirClassSubstitutionScope(
             it.returnTypeRef.coneType.substitute()
         }.orEmpty()
 
+        val newContextReceiverTypes = member.contextReceivers.map {
+            it.typeRef.coneType.substitute()
+        }
+
         if (original.dispatchReceiverType?.substitute(substitutor) == null &&
             newReturnType == null &&
             newGetterParameterTypes.all { it == null } &&
@@ -329,6 +354,7 @@ class FirClassSubstitutionScope(
             member,
             original,
             substitutor.substituteOrSelf(dispatchReceiverTypeForSubstitutedMembers) as ConeSimpleKotlinType?,
+            newContextReceiverTypes,
             newReturnType,
             newGetterParameterTypes,
             newSetterParameterTypes,

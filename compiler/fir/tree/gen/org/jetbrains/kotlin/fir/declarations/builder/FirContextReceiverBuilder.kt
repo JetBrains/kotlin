@@ -44,3 +44,16 @@ inline fun buildContextReceiver(init: FirContextReceiverBuilder.() -> Unit): Fir
     }
     return FirContextReceiverBuilder().apply(init).build()
 }
+
+@OptIn(ExperimentalContracts::class)
+inline fun buildContextReceiverCopy(original: FirContextReceiver, init: FirContextReceiverBuilder.() -> Unit): FirContextReceiver {
+    contract {
+        callsInPlace(init, kotlin.contracts.InvocationKind.EXACTLY_ONCE)
+    }
+    val copyBuilder = FirContextReceiverBuilder()
+    copyBuilder.source = original.source
+    copyBuilder.typeRef = original.typeRef
+    copyBuilder.customLabelName = original.customLabelName
+    copyBuilder.labelNameFromTypeRef = original.labelNameFromTypeRef
+    return copyBuilder.apply(init).build()
+}

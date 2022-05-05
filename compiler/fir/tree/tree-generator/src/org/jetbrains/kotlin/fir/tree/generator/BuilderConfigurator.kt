@@ -280,6 +280,10 @@ object BuilderConfigurator : AbstractBuilderConfigurator<FirTreeBuilder>(FirTree
             parents += loopJumpBuilder
         }
 
+        builder(contextReceiver) {
+            withCopy()
+        }
+
         builder(valueParameter, type = "FirValueParameterImpl") {
             openBuilder()
             withCopy()

@@ -15,12 +15,12 @@ import org.jetbrains.kotlin.fir.declarations.utils.isInner
 import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.substitution.substitutorByMap
-import org.jetbrains.kotlin.fir.symbols.ensureResolved
 import org.jetbrains.kotlin.fir.scopes.FakeOverrideTypeCalculator
 import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.scopes.impl.FirFakeOverrideGenerator
 import org.jetbrains.kotlin.fir.scopes.processClassifiersByName
 import org.jetbrains.kotlin.fir.scopes.scopeForClass
+import org.jetbrains.kotlin.fir.symbols.ensureResolved
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.visibilityChecker
@@ -197,6 +197,10 @@ private fun FirTypeAliasSymbol.findSAMConstructorForTypeAlias(
         valueParameter.returnTypeRef.coneType.let(substitutor::substituteOrNull)
     }
 
+    val newContextReceiverTypes = samConstructorForClass.contextReceivers.map { contextReceiver ->
+        contextReceiver.typeRef.coneType.let(substitutor::substituteOrNull)
+    }
+
     if (newReturnType == null && newParameterTypes.all { it == null }) return samConstructorForClass
 
     val symbolForOverride = FirFakeOverrideGenerator.createSymbolForSubstitutionOverride(namedSymbol, expansionRegularClass.classId)
@@ -205,6 +209,7 @@ private fun FirTypeAliasSymbol.findSAMConstructorForTypeAlias(
         session, symbolForOverride, samConstructorForClass,
         newDispatchReceiverType = null,
         newReceiverType = null,
+        newContextReceiverTypes,
         newReturnType, newParameterTypes, typeParameters,
     ).fir
 }
