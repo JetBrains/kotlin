@@ -20,6 +20,7 @@ class KtFe10KotlinReferenceProviderContributor : KotlinReferenceProviderContribu
             registerProvider(factory = ::KtFe10ArrayAccessReference)
             registerProvider(factory = ::KtFe10ConstructorDelegationReference)
             registerProvider(factory = ::KtFe10CollectionLiteralReference)
+            registerProvider(factory = ::Fe10KDocReference)
         }
     }
 }

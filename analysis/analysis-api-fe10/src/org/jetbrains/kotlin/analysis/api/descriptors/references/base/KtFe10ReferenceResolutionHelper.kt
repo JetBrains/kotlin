@@ -10,6 +10,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
+import org.jetbrains.kotlin.kdoc.psi.impl.KDocName
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtElement
@@ -33,6 +34,8 @@ interface KtFe10ReferenceResolutionHelper {
     ): KtDeclaration?
 
     fun findPsiDeclarations(declaration: DeclarationDescriptor, project: Project, resolveScope: GlobalSearchScope): Collection<PsiElement>
+
+    fun resolveKDocLink(element: KDocName): Collection<DeclarationDescriptor>
 
     companion object {
         fun getInstance() = ApplicationManager.getApplication().getService(KtFe10ReferenceResolutionHelper::class.java)
