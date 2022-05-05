@@ -7416,6 +7416,12 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
         }
 
         @Test
+        @TestMetadata("privateSuperType.kt")
+        public void testPrivateSuperType() throws Exception {
+            runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/privateSuperType.kt");
+        }
+
+        @Test
         @TestMetadata("propertyReference.kt")
         public void testPropertyReference() throws Exception {
             runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/propertyReference.kt");
