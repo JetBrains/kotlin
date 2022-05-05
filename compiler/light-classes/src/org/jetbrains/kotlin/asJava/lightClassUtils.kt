@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.asJava
 
+import com.intellij.lang.jvm.JvmModifier
 import com.intellij.psi.*
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.asJava.classes.KtFakeLightClass
@@ -18,6 +19,7 @@ import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.load.java.propertyNameByGetMethodName
 import org.jetbrains.kotlin.load.java.propertyNameBySetMethodName
+import org.jetbrains.kotlin.load.java.propertyNamesBySetMethodName
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
@@ -286,3 +288,52 @@ fun computeExpression(expression: PsiElement): Any? {
     if (constant.isError) return null
     return evalConstantValue(constant.toConstantValue(TypeUtils.NO_EXPECTED_TYPE))
 }
+
+private val PsiMethod.canBeGetter: Boolean
+    get() = JvmAbi.isGetterName(name) && parameters.isEmpty() && returnTypeElement?.textMatches("void") != true
+
+private val PsiMethod.canBeSetter: Boolean
+    get() = JvmAbi.isSetterName(name) && parameters.size == 1 && returnTypeElement?.textMatches("void") != false
+
+private val PsiMethod.probablyCanHaveSyntheticAccessors: Boolean
+    get() = canHaveOverride && !hasTypeParameters() && !isFinalProperty
+
+private val PsiMethod.getterName: Name? get() = propertyNameByGetMethodName(Name.identifier(name))
+private val PsiMethod.setterNames: Collection<Name>? get() = propertyNamesBySetMethodName(Name.identifier(name)).takeIf { it.isNotEmpty() }
+
+private val PsiMethod.isFinalProperty: Boolean
+    get() {
+        val property = unwrapped as? KtProperty ?: return false
+        if (property.hasModifier(KtTokens.OVERRIDE_KEYWORD)) return false
+        val containingClassOrObject = property.containingClassOrObject ?: return true
+        return containingClassOrObject is KtObjectDeclaration
+    }
+
+private val PsiMethod.isTopLevelDeclaration: Boolean get() = unwrapped?.isTopLevelKtOrJavaMember() == true
+
+val PsiMethod.syntheticAccessors: Collection<Name>
+    get() {
+        if (!probablyCanHaveSyntheticAccessors) return emptyList()
+
+        return when {
+            canBeGetter -> listOfNotNull(getterName)
+            canBeSetter -> setterNames.orEmpty()
+            else -> emptyList()
+        }
+    }
+
+val PsiMethod.canHaveSyntheticAccessors: Boolean get() = probablyCanHaveSyntheticAccessors && (canBeGetter || canBeSetter)
+
+val PsiMethod.canHaveSyntheticGetter: Boolean get() = probablyCanHaveSyntheticAccessors && canBeGetter
+
+val PsiMethod.canHaveSyntheticSetter: Boolean get() = probablyCanHaveSyntheticAccessors && canBeSetter
+
+val PsiMethod.syntheticGetter: Name? get() = if (canHaveSyntheticGetter) getterName else null
+
+val PsiMethod.syntheticSetters: Collection<Name>? get() = if (canHaveSyntheticSetter) setterNames else null
+
+/**
+ * Attention: only language constructs are checked. For example: static member, constructor, top-level property
+ * @return `false` if constraints are found. Otherwise, `true`
+ */
+val PsiMethod.canHaveOverride: Boolean get() = !hasModifier(JvmModifier.STATIC) && !isConstructor && !isTopLevelDeclaration

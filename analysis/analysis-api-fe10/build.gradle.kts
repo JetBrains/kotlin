@@ -15,6 +15,7 @@ dependencies {
     implementation(project(":compiler:backend.jvm"))
     implementation(project(":compiler:backend-common"))
     implementation(project(":compiler:backend.common.jvm"))
+    implementation(project(":compiler:light-classes"))
 
     testApiJUnit5()
     testImplementation(project(":analysis:analysis-api-providers"))
