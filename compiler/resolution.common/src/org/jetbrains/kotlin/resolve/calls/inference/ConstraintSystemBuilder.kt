@@ -18,6 +18,7 @@ interface ConstraintSystemOperation {
     fun markCouldBeResolvedWithUnrestrictedBuilderInference()
     fun unmarkPostponedVariable(variable: TypeVariableMarker)
     fun removePostponedVariables()
+    fun substituteFixedVariables(substitutor: TypeSubstitutorMarker)
 
     fun getBuiltFunctionalExpectedTypeForPostponedArgument(
         topLevelVariable: TypeConstructorMarker,

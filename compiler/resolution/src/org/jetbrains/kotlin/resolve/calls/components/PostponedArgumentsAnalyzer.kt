@@ -191,11 +191,11 @@ class PostponedArgumentsAnalyzer(
                 || languageVersionSettings.supportsFeature(LanguageFeature.UseBuilderInferenceWithoutAnnotation)
 
         if (inferenceSession != null && shouldUseBuilderInference) {
-            val storageSnapshot = c.getBuilder().currentStorage()
+            val constraintSystemBuilder = c.getBuilder()
 
             val postponedVariables = inferenceSession.inferPostponedVariables(
                 lambda,
-                storageSnapshot,
+                constraintSystemBuilder,
                 completionMode,
                 diagnosticHolder
             )
@@ -205,7 +205,7 @@ class PostponedArgumentsAnalyzer(
             }
 
             for ((constructor, resultType) in postponedVariables) {
-                val variableWithConstraints = storageSnapshot.notFixedTypeVariables[constructor] ?: continue
+                val variableWithConstraints = constraintSystemBuilder.currentStorage().notFixedTypeVariables[constructor] ?: continue
                 val variable = variableWithConstraints.typeVariable
 
                 c.getBuilder().unmarkPostponedVariable(variable)

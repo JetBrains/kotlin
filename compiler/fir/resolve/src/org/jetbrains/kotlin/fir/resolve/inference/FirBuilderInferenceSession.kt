@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.visitors.FirDefaultTransformer
 import org.jetbrains.kotlin.fir.visitors.transformSingle
 import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemBuilder
 import org.jetbrains.kotlin.resolve.calls.inference.buildAbstractResultingSubstitutor
 import org.jetbrains.kotlin.resolve.calls.inference.components.ConstraintSystemCompletionMode
 import org.jetbrains.kotlin.resolve.calls.inference.model.*
@@ -108,12 +109,14 @@ class FirBuilderInferenceSession(
 
     override fun inferPostponedVariables(
         lambda: ResolvedLambdaAtom,
-        initialStorage: ConstraintStorage,
+        constraintSystemBuilder: ConstraintSystemBuilder,
         completionMode: ConstraintSystemCompletionMode
     ): Map<ConeTypeVariableTypeConstructor, ConeKotlinType>? {
-        val (commonSystem, effectivelyEmptyConstraintSystem) = buildCommonSystem(initialStorage)
+        val (commonSystem, effectivelyEmptyConstraintSystem) = buildCommonSystem(constraintSystemBuilder.currentStorage())
+        val resultingSubstitutor by lazy { getResultingSubstitutor(commonSystem) }
+
         if (effectivelyEmptyConstraintSystem) {
-            updateCalls(commonSystem)
+            updateCalls(resultingSubstitutor)
             return null
         }
 
@@ -129,7 +132,11 @@ class FirBuilderInferenceSession(
             error("Shouldn't be called in complete constraint system mode")
         }
 
-        updateCalls(commonSystem)
+        if (completionMode == ConstraintSystemCompletionMode.FULL) {
+            constraintSystemBuilder.substituteFixedVariables(resultingSubstitutor)
+        }
+
+        updateCalls(resultingSubstitutor)
 
         @Suppress("UNCHECKED_CAST")
         return commonSystem.fixedTypeVariables as Map<ConeTypeVariableTypeConstructor, ConeKotlinType>
@@ -217,16 +224,18 @@ class FirBuilderInferenceSession(
         return introducedConstraint
     }
 
-    private fun updateCalls(commonSystem: NewConstraintSystemImpl) {
+    private fun getResultingSubstitutor(commonSystem: NewConstraintSystemImpl): ChainedSubstitutor {
         val nonFixedToVariablesSubstitutor = createNonFixedTypeToVariableSubstitutor()
         val commonSystemSubstitutor = commonSystem.buildCurrentSubstitutor() as ConeSubstitutor
-        val nonFixedTypesToResultSubstitutor = ChainedSubstitutor(nonFixedToVariablesSubstitutor, commonSystemSubstitutor)
+        return ChainedSubstitutor(nonFixedToVariablesSubstitutor, commonSystemSubstitutor)
+    }
 
-        val stubTypeSubstitutor = FirStubTypeTransformer(nonFixedTypesToResultSubstitutor)
+    private fun updateCalls(substitutor: ConeSubstitutor) {
+        val stubTypeSubstitutor = FirStubTypeTransformer(substitutor)
         lambda.transformSingle(stubTypeSubstitutor, null)
         // TODO: support diagnostics, see [CoroutineInferenceSession#updateCalls]
 
-        val completionResultsWriter = components.callCompleter.createCompletionResultsWriter(nonFixedTypesToResultSubstitutor)
+        val completionResultsWriter = components.callCompleter.createCompletionResultsWriter(substitutor)
         for ((call, _) in partiallyResolvedCalls) {
             call.transformSingle(completionResultsWriter, null)
             // TODO: support diagnostics, see [CoroutineInferenceSession#updateCalls]

@@ -209,9 +209,8 @@ class PostponedArgumentsAnalyzer(
         lambda.returnStatements = returnArguments
 
         if (inferenceSession != null) {
-            val storageSnapshot = c.getBuilder().currentStorage()
-
-            val postponedVariables = inferenceSession.inferPostponedVariables(lambda, storageSnapshot, completionMode)
+            val constraintSystemBuilder = c.getBuilder()
+            val postponedVariables = inferenceSession.inferPostponedVariables(lambda, constraintSystemBuilder, completionMode)
 
             if (postponedVariables == null) {
                 c.getBuilder().removePostponedVariables()
@@ -219,7 +218,7 @@ class PostponedArgumentsAnalyzer(
             }
 
             for ((constructor, resultType) in postponedVariables) {
-                val variableWithConstraints = storageSnapshot.notFixedTypeVariables[constructor] ?: continue
+                val variableWithConstraints = constraintSystemBuilder.currentStorage().notFixedTypeVariables[constructor] ?: continue
                 val variable = variableWithConstraints.typeVariable as ConeTypeVariable
 
                 c.getBuilder().unmarkPostponedVariable(variable)
