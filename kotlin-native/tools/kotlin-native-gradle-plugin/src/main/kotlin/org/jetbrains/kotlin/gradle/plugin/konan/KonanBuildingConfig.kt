@@ -81,25 +81,13 @@ abstract class KonanBuildingConfig<T : KonanBuildingTask>(
     }
 
     protected open fun generateTaskName(target: KonanTarget) =
-        "compileKonan${name.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() }}${
-            target.visibleName.replaceFirstChar {
-                if (it.isLowerCase()) it.titlecase(
-                    Locale.getDefault()
-                ) else it.toString()
-            }
-        }"
+        "compileKonan${name.replaceFirstChar { it.uppercase() }}${target.visibleName.replaceFirstChar { it.uppercase() }}"
 
     protected open fun generateAggregateTaskName() =
         "compileKonan${name.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() }}"
 
     protected open fun generateTargetAliasTaskName(targetName: String) =
-        "compileKonan${name.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() }}${
-            targetName.replaceFirstChar {
-                if (it.isLowerCase()) it.titlecase(
-                    Locale.getDefault()
-                ) else it.toString()
-            }
-        }"
+        "compileKonan${name.replaceFirstChar { it.uppercase() }}${targetName.replaceFirstChar { it.uppercase() }}"
 
     protected abstract fun generateTaskDescription(task: T): String
     protected abstract fun generateAggregateTaskDescription(task: Task): String

@@ -65,10 +65,10 @@ internal class EnvironmentVariablesImpl(val project: Project):  EnvironmentVaria
         }
 
     override val debuggingSymbols: Boolean
-        get() = System.getenv("DEBUGGING_SYMBOLS")?.uppercase(Locale.getDefault()) == "YES"
+        get() = System.getenv("DEBUGGING_SYMBOLS")?.uppercase() == "YES"
 
     override val enableOptimizations: Boolean
-        get() = System.getenv("KONAN_ENABLE_OPTIMIZATIONS")?.uppercase(Locale.getDefault()) == "YES"
+        get() = System.getenv("KONAN_ENABLE_OPTIMIZATIONS")?.uppercase() == "YES"
 }
 
 /**

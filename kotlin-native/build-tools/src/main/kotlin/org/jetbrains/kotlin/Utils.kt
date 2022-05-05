@@ -64,7 +64,7 @@ val Project.testTarget
     get() = findProperty("target") as? KonanTarget ?: HostManager.host
 
 val Project.testTargetSuffix
-    get() = (findProperty("target") as KonanTarget).name.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() }
+    get() = (findProperty("target") as KonanTarget).name.replaceFirstChar { it.uppercase() }
 
 val Project.verboseTest
     get() = hasProperty("test_verbose")
@@ -214,14 +214,7 @@ fun Project.getFilesToCompile(compile: List<String>, exclude: List<String>): Lis
 //region Task dependency.
 
 fun Project.findKonanBuildTask(artifact: String, target: KonanTarget): TaskProvider<Task> =
-    tasks.named(
-        "compileKonan${artifact.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() }}${
-            target.name.replaceFirstChar {
-                if (it.isLowerCase()) it.titlecase(
-                    Locale.getDefault()
-                ) else it.toString()
-            }
-        }")
+    tasks.named("compileKonan${artifact.replaceFirstChar { it.uppercase() }}${target.name.replaceFirstChar { it.uppercase() }}")
 
 fun Project.dependsOnDist(taskName: String) {
     project.tasks.getByName(taskName).dependsOnDist()

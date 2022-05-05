@@ -22,7 +22,6 @@ import org.gradle.api.*
 import org.gradle.api.component.ComponentWithVariants
 import org.gradle.api.component.SoftwareComponent
 import org.gradle.api.file.FileCollection
-import org.gradle.api.internal.FeaturePreviews
 import org.gradle.api.internal.component.SoftwareComponentInternal
 import org.gradle.api.internal.component.UsageContext
 import org.gradle.api.internal.project.ProjectInternal
@@ -44,7 +43,6 @@ import org.jetbrains.kotlin.gradle.plugin.konan.KonanPlugin.Companion.COMPILE_AL
 import org.jetbrains.kotlin.gradle.plugin.tasks.*
 import org.jetbrains.kotlin.konan.CURRENT
 import org.jetbrains.kotlin.konan.CompilerVersion
-import org.jetbrains.kotlin.konan.parseCompilerVersion
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.konan.target.buildDistribution
@@ -52,7 +50,6 @@ import org.jetbrains.kotlin.konan.target.customerDistribution
 import org.jetbrains.kotlin.konan.util.DependencyProcessor
 import org.jetbrains.kotlin.*
 import java.io.File
-import java.util.*
 import javax.inject.Inject
 
 /**
@@ -396,14 +393,8 @@ class KonanPlugin @Inject constructor(private val registry: ToolingModelBuilderR
                     val isCrossCompile = (task.target != HostManager.host.visibleName)
                     if (!isCrossCompile && !project.hasProperty("konanNoRun"))
                     task.runTask = project.tasks.register(
-                        "run${
-                            task.artifactName.replaceFirstChar {
-                                if (it.isLowerCase()) it.titlecase(
-                                    Locale.getDefault()
-                                ) else it.toString()
-                            }
-                        }", Exec::class.java) {
-                        group= "run"
+                        "run${task.artifactName.replaceFirstChar { it.uppercase() }}", Exec::class.java) {
+                        group = "run"
                         dependsOn(task)
                         val artifactPathClosure = object : Closure<String>(this) {
                             override fun call() = task.artifactPath

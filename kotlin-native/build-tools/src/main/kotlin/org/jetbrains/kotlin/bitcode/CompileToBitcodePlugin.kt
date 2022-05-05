@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.konan.target.PlatformManager
 import org.jetbrains.kotlin.konan.target.SanitizerKind
 import org.jetbrains.kotlin.konan.target.supportedSanitizers
 import java.io.File
-import java.util.*
 import javax.inject.Inject
 
 /**
@@ -54,12 +53,9 @@ open class CompileToBitcodeExtension @Inject constructor(val project: Project) {
             val sanitizers: List<SanitizerKind?> = target.supportedSanitizers() + listOf(null)
             sanitizers.forEach { sanitizer ->
                 project.tasks.register(
-                    "${targetName}${
-                        name.snakeCaseToCamelCase()
-                            .replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() }
-                    }${suffixForSanitizer(sanitizer)}",
-                    CompileToBitcode::class.java,
-                    name, targetName, outputGroup
+                        "${targetName}${name.snakeCaseToCamelCase().replaceFirstChar { it.uppercase() }}${suffixForSanitizer(sanitizer)}",
+                        CompileToBitcode::class.java,
+                        name, targetName, outputGroup
                 ).configure {
                     srcDirs = project.files(srcRoot.resolve("cpp"))
                     headersDirs = srcDirs + project.files(srcRoot.resolve("headers"))
@@ -82,7 +78,7 @@ open class CompileToBitcodeExtension @Inject constructor(val project: Project) {
     companion object {
 
         private fun String.snakeCaseToCamelCase() =
-                split('_').joinToString(separator = "") { it.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() } }
+                split('_').joinToString(separator = "") { word -> word.replaceFirstChar { it.uppercase() } }
 
         fun suffixForSanitizer(sanitizer: SanitizerKind?) =
             when (sanitizer) {

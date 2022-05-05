@@ -106,9 +106,8 @@ class ModelParser(private val variant: Variant, private val modulePrefix: String
     private fun findEmbeddableTask(project: Project, sourceSet: SourceSet): Jar? {
         val jarName = sourceSet.jarTaskName
         val embeddable = "embeddable"
-        val embeddedName = if (jarName == "jar") embeddable else jarName.dropLast("jar".length) + embeddable.replaceFirstChar {
-            if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString()
-        }
+        val embeddedName = if (jarName == "jar") embeddable else jarName.dropLast("jar".length) +
+                embeddable.replaceFirstChar { it.uppercase() }
         return project.tasks.findByName(embeddedName) as? Jar
     }
 
