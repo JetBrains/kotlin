@@ -9,12 +9,11 @@ import com.intellij.psi.PsiReference
 import org.jetbrains.kotlin.analysis.api.descriptors.references.*
 import org.jetbrains.kotlin.idea.references.KotlinPsiReferenceRegistrar
 import org.jetbrains.kotlin.idea.references.KotlinReferenceProviderContributor
+import org.jetbrains.kotlin.idea.references.KtDefaultAnnotationArgumentReference
 import org.jetbrains.kotlin.idea.references.readWriteAccess
 import org.jetbrains.kotlin.lexer.KtTokens
-import org.jetbrains.kotlin.psi.KtImportDirective
-import org.jetbrains.kotlin.psi.KtNameReferenceExpression
-import org.jetbrains.kotlin.psi.KtPackageDirective
-import org.jetbrains.kotlin.psi.KtUserType
+import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.getParentOfTypeAndBranch
 import org.jetbrains.kotlin.psi.psiUtil.parents
 import org.jetbrains.kotlin.resolve.references.ReferenceAccess
 
@@ -50,6 +49,14 @@ class KtFe10KotlinReferenceProviderContributor : KotlinReferenceProviderContribu
                             Fe10SyntheticPropertyAccessorReference(nameReferenceExpression, getter = false)
                         )
                 }
+            }
+
+            registerProvider<KtValueArgument> provider@{ element: KtValueArgument ->
+                if (element.isNamed()) return@provider null
+                val annotationEntry = element.getParentOfTypeAndBranch<KtAnnotationEntry> { valueArgumentList } ?: return@provider null
+                if (annotationEntry.valueArguments.size != 1) return@provider null
+
+                KtDefaultAnnotationArgumentReference(element)
             }
         }
     }
