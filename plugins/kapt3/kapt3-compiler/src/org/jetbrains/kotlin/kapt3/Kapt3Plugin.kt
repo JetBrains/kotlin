@@ -70,10 +70,9 @@ class Kapt3CommandLineProcessor : CommandLineProcessor {
         }
         if (configuration.getBoolean(CommonConfigurationKeys.USE_FIR)) {
             configuration[CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY]?.report(
-                CompilerMessageSeverity.STRONG_WARNING,
-                "ATTENTION!\n kapt currently doesn't support experimental K2 compiler, disabling K2 for kapt run"
+                CompilerMessageSeverity.ERROR,
+                "kapt currently doesn't support experimental K2 compiler"
             )
-            configuration.put(CommonConfigurationKeys.USE_FIR, false)
         }
 
         val kaptOptions = configuration[KAPT_OPTIONS]
