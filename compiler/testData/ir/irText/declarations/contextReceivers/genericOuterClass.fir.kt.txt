@@ -2,9 +2,9 @@ class A<T : Any?> {
   private /* final field */ val contextReceiverField0: T
   constructor(_context_receiver_0: T) /* primary */ {
     super/*Any*/()
+    <this>.#contextReceiverField0 = _context_receiver_0
     /* <init>() */
 
-    <this>.#contextReceiverField0 = _context_receiver_0
   }
 
 }
@@ -13,9 +13,9 @@ class B<P : Any?> {
   private /* final field */ val contextReceiverField0: Collection<P>
   constructor(_context_receiver_0: Collection<P>) /* primary */ {
     super/*Any*/()
+    <this>.#contextReceiverField0 = _context_receiver_0
     /* <init>() */
 
-    <this>.#contextReceiverField0 = _context_receiver_0
   }
 
 }

@@ -123,12 +123,6 @@ internal class ClassMemberGenerator(
                     }
                     body.statements += irDelegatingConstructorCall
                 }
-                if (delegatedConstructor?.isThis == false) {
-                    val instanceInitializerCall = IrInstanceInitializerCallImpl(
-                        startOffset, endOffset, irClass.symbol, irFunction.constructedClassType
-                    )
-                    body.statements += instanceInitializerCall
-                }
 
                 if (containingClass is FirRegularClass && containingClass.contextReceivers.isNotEmpty()) {
                     val contextReceiverFields =
@@ -156,6 +150,13 @@ internal class ClassMemberGenerator(
                             )
                         )
                     }
+                }
+
+                if (delegatedConstructor?.isThis == false) {
+                    val instanceInitializerCall = IrInstanceInitializerCallImpl(
+                        startOffset, endOffset, irClass.symbol, irFunction.constructedClassType
+                    )
+                    body.statements += instanceInitializerCall
                 }
 
                 val regularBody = firFunction.body?.let { visitor.convertToIrBlockBody(it) }

@@ -88,10 +88,10 @@ FILE fqName:<root> fileName:/delegatedPropertiesOperators.kt
       VALUE_PARAMETER name:_context_receiver_0 index:0 type:kotlin.Int
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
-        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Result modality:FINAL visibility:public superTypes:[kotlin.Any]'
         SET_FIELD 'FIELD FIELD_FOR_CLASS_CONTEXT_RECEIVER name:contextReceiverField0 type:kotlin.Int visibility:private [final]' type=kotlin.Unit origin=null
           receiver: GET_VAR '<this>: <root>.Result declared in <root>.Result' type=<root>.Result origin=null
           value: GET_VAR '_context_receiver_0: kotlin.Int declared in <root>.Result.<init>' type=kotlin.Int origin=null
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Result modality:FINAL visibility:public superTypes:[kotlin.Any]'
     PROPERTY name:s visibility:public modality:FINAL [delegated,var]
       FIELD PROPERTY_DELEGATE name:s$delegate type:<root>.Delegate visibility:private [final]
         EXPRESSION_BODY

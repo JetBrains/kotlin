@@ -31,9 +31,9 @@ class Result {
   private /* final field */ val contextReceiverField0: Int
   constructor(_context_receiver_0: Int) /* primary */ {
     super/*Any*/()
+    <this>.#contextReceiverField0 = _context_receiver_0
     /* <init>() */
 
-    <this>.#contextReceiverField0 = _context_receiver_0
   }
 
   var s: String /* by */

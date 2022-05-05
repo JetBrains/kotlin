@@ -16789,6 +16789,12 @@ public class FirBlackBoxCodegenTestGenerated extends AbstractFirBlackBoxCodegenT
             }
 
             @Test
+            @TestMetadata("useContextReceiverInPropertyInitializer.kt")
+            public void testUseContextReceiverInPropertyInitializer() throws Exception {
+                runTest("compiler/testData/codegen/box/extensionFunctions/contextReceivers/useContextReceiverInPropertyInitializer.kt");
+            }
+
+            @Test
             @TestMetadata("useFromAnotherModule.kt")
             public void testUseFromAnotherModule() throws Exception {
                 runTest("compiler/testData/codegen/box/extensionFunctions/contextReceivers/useFromAnotherModule.kt");

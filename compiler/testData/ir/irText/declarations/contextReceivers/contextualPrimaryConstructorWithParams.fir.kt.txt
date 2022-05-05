@@ -15,9 +15,9 @@ class OK {
   private /* final field */ val contextReceiverField0: O
   constructor(_context_receiver_0: O, k: String) /* primary */ {
     super/*Any*/()
+    <this>.#contextReceiverField0 = _context_receiver_0
     /* <init>() */
 
-    <this>.#contextReceiverField0 = _context_receiver_0
   }
 
   val k: String

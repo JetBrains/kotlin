@@ -89,9 +89,9 @@ class CounterIterator : Iterator<Int> {
   private /* final field */ val contextReceiverField0: CounterConfig
   constructor(_context_receiver_0: CounterConfig, counter: Counter) /* primary */ {
     super/*Any*/()
+    <this>.#contextReceiverField0 = _context_receiver_0
     /* <init>() */
 
-    <this>.#contextReceiverField0 = _context_receiver_0
   }
 
   private val counter: Counter
