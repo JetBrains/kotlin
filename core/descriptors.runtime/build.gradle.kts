@@ -26,8 +26,6 @@ dependencies {
     testApi(projectTests(":generators:test-generator"))
 
     testApi(intellijCore())
-
-    kotlinCompilerClasspath(project(":libraries:tools:stdlib-compiler-classpath"))
 }
 
 sourceSets {

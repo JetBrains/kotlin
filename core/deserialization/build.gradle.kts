@@ -11,7 +11,6 @@ dependencies {
     api(project(":core:util.runtime"))
     api(project(":core:descriptors"))
     api(commonDependency("javax.inject"))
-    kotlinCompilerClasspath(project(":libraries:tools:stdlib-compiler-classpath"))
 }
 
 sourceSets {

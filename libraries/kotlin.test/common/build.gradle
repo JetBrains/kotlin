@@ -7,7 +7,6 @@ JvmToolchain.updateJvmTarget(project, "1.6")
 dependencies {
     api kotlinStdlib("common")
     testApi project(":kotlin-test:kotlin-test-annotations-common")
-    kotlinCompilerClasspath project(':libraries:tools:stdlib-compiler-classpath')
 }
 
 jar {

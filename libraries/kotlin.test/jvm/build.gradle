@@ -19,7 +19,6 @@ dependencies {
     api(kotlinStdlib())
     testApi(project(":kotlin-test:kotlin-test-junit"))
     testApi('junit:junit:4.13.2')
-    kotlinCompilerClasspath(project(':libraries:tools:stdlib-compiler-classpath'))
 }
 
 jar {

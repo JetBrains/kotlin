@@ -9,7 +9,6 @@ dependencies {
     api(kotlinStdlib())
     compileOnly(project(":kotlin-reflect-api"))
     testApi(commonDependency("junit"))
-    kotlinCompilerClasspath(project(":libraries:tools:stdlib-compiler-classpath"))
 }
 
 sourceSets {

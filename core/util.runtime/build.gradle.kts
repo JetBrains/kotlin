@@ -7,7 +7,6 @@ project.configureJvmToolchain(JdkMajorVersion.JDK_1_6)
 
 dependencies {
     compileOnly(kotlinStdlib())
-    kotlinCompilerClasspath(project(":libraries:tools:stdlib-compiler-classpath"))
 }
 
 sourceSets {

@@ -44,7 +44,6 @@ configurations {
 dependencies {
     api project(':kotlin-stdlib')
     testApi project(':kotlin-test:kotlin-test-junit')
-    kotlinCompilerClasspath project(':libraries:tools:stdlib-compiler-classpath')
 }
 
 jar {

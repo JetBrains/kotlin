@@ -13,7 +13,6 @@ dependencies {
     api(project(":core:deserialization.common.jvm"))
     api(project(":core:util.runtime"))
     api(commonDependency("javax.inject"))
-    kotlinCompilerClasspath(project(":libraries:tools:stdlib-compiler-classpath"))
 }
 
 sourceSets {
