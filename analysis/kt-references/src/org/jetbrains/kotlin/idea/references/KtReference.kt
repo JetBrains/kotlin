@@ -5,11 +5,9 @@
 
 package org.jetbrains.kotlin.idea.references
 
-import com.intellij.openapi.application.Application
 import com.intellij.openapi.components.ServiceManager
 import com.intellij.psi.*
 import com.intellij.psi.impl.source.resolve.ResolveCache
-import com.intellij.util.IncorrectOperationException
 import org.jetbrains.kotlin.asJava.unwrapped
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
