@@ -74,8 +74,7 @@ class StabilityPropagationTransformTests : ComposeIrTransformTest() {
             A(x, %composer, 0b1110 and %dirty)
             A(Foo(0), %composer, 0)
             A(remember({
-              val tmp0_return = Foo(0)
-              tmp0_return
+              Foo(0)
             }, %composer, 0), %composer, 0b0110)
           } else {
             %composer.skipToGroupEnd()
@@ -117,8 +116,7 @@ class StabilityPropagationTransformTests : ComposeIrTransformTest() {
               A(x, %composer, 0b1000)
               A(Foo(0), %composer, 0b1000)
               A(remember({
-                val tmp0_return = Foo(0)
-                tmp0_return
+                Foo(0)
               }, %composer, 0), %composer, 0b1000)
               %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
                 Test(x, %composer, %changed or 0b0001)

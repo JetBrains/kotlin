@@ -730,4 +730,132 @@ class LambdaMemoizationTransformTests : ComposeIrTransformTest() {
         }
         """
     )
+
+    // We have to use composableLambdaInstance in crossinline lambdas, since they may be captured
+    // in anonymous objects and called in a context with a different composer.
+    @Test
+    fun testCrossinlineLambda() = verifyComposeIrTransform(
+        """
+            import androidx.compose.runtime.Composable
+
+            @Composable
+            fun Test() {
+              var lambda: (@Composable () -> Unit)? = null
+              f { s -> lambda = { Text(s) } }
+              lambda?.let { it() }
+            }
+        """,
+        """
+            @Composable
+            fun Test(%composer: Composer?, %changed: Int) {
+              if (isTraceInProgress()) {
+                traceEventStart(<>)
+              }
+              %composer = %composer.startRestartGroup(<>)
+              sourceInformation(%composer, "C(Test)*<it()>:Test.kt")
+              if (%changed !== 0 || !%composer.skipping) {
+                var lambda = null
+                f { s: String ->
+                  lambda = composableLambdaInstance(<>, true) { %composer: Composer?, %changed: Int ->
+                    sourceInformation(%composer, "C<Text(s...>:Test.kt")
+                    if (%changed and 0b1011 !== 0b0010 || !%composer.skipping) {
+                      Text(s, %composer, 0)
+                    } else {
+                      %composer.skipToGroupEnd()
+                    }
+                  }
+                }
+                val tmp0_safe_receiver = lambda
+                val tmp0_group = when {
+                  tmp0_safe_receiver == null -> {
+                    null
+                  }
+                  else -> {
+                    tmp0_safe_receiver.let { it: Function2<Composer, Int, Unit> ->
+                      it(%composer, 0)
+                    }
+                  }
+                }
+                tmp0_group
+              } else {
+                %composer.skipToGroupEnd()
+              }
+              %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
+                Test(%composer, %changed or 0b0001)
+              }
+              if (isTraceInProgress()) {
+                traceEventEnd()
+              }
+            }
+        """,
+        """
+            import androidx.compose.runtime.Composable
+            @Composable fun Text(s: String) {}
+            inline fun f(crossinline block: (String) -> Unit) = block("")
+        """
+    )
+
+    // The lambda argument to remember and cache should not contain composable calls so
+    // we have to use composableLambdaInstance.
+    @Test
+    fun testRememberComposableLambda() = verifyComposeIrTransform(
+        """
+            import androidx.compose.runtime.*
+
+            @Composable
+            fun Test(s: String) {
+              remember<@Composable () -> Unit> { { Text(s) } }()
+              currentComposer.cache<@Composable () -> Unit>(false) { { Text(s) } }()
+            }
+        """,
+        """
+            @Composable
+            fun Test(s: String, %composer: Composer?, %changed: Int) {
+              if (isTraceInProgress()) {
+                traceEventStart(<>)
+              }
+              %composer = %composer.startRestartGroup(<>)
+              sourceInformation(%composer, "C(Test)<rememb...>,<rememb...>,<curren...>:Test.kt")
+              val %dirty = %changed
+              if (%changed and 0b1110 === 0) {
+                %dirty = %dirty or if (%composer.changed(s)) 0b0100 else 0b0010
+              }
+              if (%dirty and 0b1011 !== 0b0010 || !%composer.skipping) {
+                remember({
+                  composableLambdaInstance(<>, true) { %composer: Composer?, %changed: Int ->
+                    sourceInformation(%composer, "C<Text(s...>:Test.kt")
+                    if (%changed and 0b1011 !== 0b0010 || !%composer.skipping) {
+                      Text(s, %composer, 0b1110 and %dirty)
+                    } else {
+                      %composer.skipToGroupEnd()
+                    }
+                  }
+                }, %composer, 0)(%composer, 6)
+                %composer.cache(false) {
+                  composableLambdaInstance(<>, true) { %composer: Composer?, %changed: Int ->
+                    sourceInformation(%composer, "C<Text(s...>:Test.kt")
+                    if (%changed and 0b1011 !== 0b0010 || !%composer.skipping) {
+                      Text(s, %composer, 0b1110 and %dirty)
+                    } else {
+                      %composer.skipToGroupEnd()
+                    }
+                  }
+                }
+                (%composer, 0)
+              } else {
+                %composer.skipToGroupEnd()
+              }
+              %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
+                Test(s, %composer, %changed or 0b0001)
+              }
+              if (isTraceInProgress()) {
+                traceEventEnd()
+              }
+            }
+        """,
+        """
+            import androidx.compose.runtime.Composable
+            @Composable fun Text(s: String) {}
+        """
+    )
 }

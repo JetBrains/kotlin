@@ -16,11 +16,10 @@
 
 package androidx.compose.compiler.plugins.kotlin.lower
 
-import androidx.compose.compiler.plugins.kotlin.ModuleMetrics
 import androidx.compose.compiler.plugins.kotlin.ComposeFqNames
 import androidx.compose.compiler.plugins.kotlin.FunctionMetrics
 import androidx.compose.compiler.plugins.kotlin.KtxNameConventions
-import androidx.compose.compiler.plugins.kotlin.allowsComposableCalls
+import androidx.compose.compiler.plugins.kotlin.ModuleMetrics
 import androidx.compose.compiler.plugins.kotlin.analysis.ComposeWritableSlices
 import androidx.compose.compiler.plugins.kotlin.analysis.Stability
 import androidx.compose.compiler.plugins.kotlin.analysis.StabilityInferencer
@@ -69,7 +68,6 @@ import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrField
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrFunction
-import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.declarations.IrProperty
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.declarations.IrTypeParameter
@@ -166,15 +164,6 @@ abstract class AbstractComposeLowering(
     val bindingTrace: BindingTrace,
     val metrics: ModuleMetrics
 ) : IrElementTransformerVoid(), ModuleLoweringPass {
-
-    var inlinedFunctions: Set<InlineLambdaInfo> = setOf()
-
-    override fun lower(module: IrModuleFragment) {
-        // TODO: Might be worth caching this up in ComposeIrGenerationExtension, or maybe not
-        // because it might be better to keep the transforms independent.
-        inlinedFunctions = IrInlineReferenceLocator.scan(context, module)
-    }
-
     @ObsoleteDescriptorBasedAPI
     protected val typeTranslator =
         TypeTranslatorImpl(
@@ -377,13 +366,6 @@ abstract class AbstractComposeLowering(
         return context.irTrace[ComposeWritableSlices.IS_COMPOSABLE_SINGLETON_CLASS, this] == true
     }
 
-    fun IrFunction.isInlinedLambda(): Boolean {
-        for (element in inlinedFunctions) {
-            if (element.argument.function == this) return true
-        }
-        return false
-    }
-
     protected val KotlinType.isEnum
         get() =
             (constructor.declarationDescriptor as? ClassDescriptor)?.kind == ClassKind.ENUM_CLASS
@@ -424,15 +406,6 @@ abstract class AbstractComposeLowering(
 
     fun KotlinType.isFinal(): Boolean = (constructor.declarationDescriptor as? ClassDescriptor)
         ?.modality == Modality.FINAL
-
-    @OptIn(ObsoleteDescriptorBasedAPI::class)
-    fun FunctionDescriptor.allowsComposableCalls(): Boolean {
-        return allowsComposableCalls(context.bindingContext)
-    }
-
-    @OptIn(ObsoleteDescriptorBasedAPI::class)
-    fun IrFunctionExpression.allowsComposableCalls(): Boolean =
-        function.descriptor.allowsComposableCalls(context.bindingContext)
 
     @OptIn(ObsoleteDescriptorBasedAPI::class)
     private fun IrFunction.createParameterDeclarations() {
