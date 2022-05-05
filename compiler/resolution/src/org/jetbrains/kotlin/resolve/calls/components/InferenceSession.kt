@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.resolve.calls.components
 
 import org.jetbrains.kotlin.resolve.calls.components.candidate.ResolutionCandidate
+import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemBuilder
 import org.jetbrains.kotlin.resolve.calls.inference.components.ConstraintSystemCompletionMode
 import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintStorage
 import org.jetbrains.kotlin.resolve.calls.model.*
@@ -26,7 +27,7 @@ interface InferenceSession {
             override fun currentConstraintSystem(): ConstraintStorage = ConstraintStorage.Empty
             override fun inferPostponedVariables(
                 lambda: ResolvedLambdaAtom,
-                initialStorage: ConstraintStorage,
+                constraintSystemBuilder: ConstraintSystemBuilder,
                 completionMode: ConstraintSystemCompletionMode,
                 diagnosticsHolder: KotlinDiagnosticsHolder
             ): Map<TypeConstructor, UnwrappedType> = emptyMap()
@@ -51,7 +52,7 @@ interface InferenceSession {
     fun currentConstraintSystem(): ConstraintStorage
     fun inferPostponedVariables(
         lambda: ResolvedLambdaAtom,
-        initialStorage: ConstraintStorage,
+        constraintSystemBuilder: ConstraintSystemBuilder,
         completionMode: ConstraintSystemCompletionMode,
         diagnosticsHolder: KotlinDiagnosticsHolder
     ): Map<TypeConstructor, UnwrappedType>?

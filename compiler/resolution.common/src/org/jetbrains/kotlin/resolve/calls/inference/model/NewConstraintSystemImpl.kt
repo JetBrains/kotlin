@@ -140,6 +140,10 @@ class NewConstraintSystemImpl(
         storage.postponedTypeVariables.clear()
     }
 
+    override fun substituteFixedVariables(substitutor: TypeSubstitutorMarker) {
+        storage.fixedTypeVariables.replaceAll { _, type -> substitutor.safeSubstitute(type) }
+    }
+
     override fun putBuiltFunctionalExpectedTypeForPostponedArgument(
         topLevelVariable: TypeConstructorMarker,
         pathToExpectedType: List<Pair<TypeConstructorMarker, Int>>,

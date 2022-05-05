@@ -12465,6 +12465,11 @@ public class IrCodegenBoxWasmTestGenerated extends AbstractIrCodegenBoxWasmTest 
                 runTest("compiler/testData/codegen/box/inference/builderInference/kt49887.kt");
             }
 
+            @TestMetadata("kt51988.kt")
+            public void testKt51988() throws Exception {
+                runTest("compiler/testData/codegen/box/inference/builderInference/kt51988.kt");
+            }
+
             @TestMetadata("labaledCall.kt")
             public void testLabaledCall() throws Exception {
                 runTest("compiler/testData/codegen/box/inference/builderInference/labaledCall.kt");
