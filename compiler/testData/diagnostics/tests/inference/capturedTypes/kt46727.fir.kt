@@ -89,7 +89,7 @@ fun main4() {
 
 fun takeStarFoo3(x: Foo3<*>) {
     x.value = <!ASSIGNMENT_TYPE_MISMATCH!>"test"<!>
-    x.value <!NONE_APPLICABLE!>+=<!> "test"
+    x.value <!UNRESOLVED_REFERENCE!>+=<!> "test"
 }
 
 fun main5() {

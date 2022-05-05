@@ -58,13 +58,16 @@ fun ConeInferenceContext.intersectTypesOrNull(types: List<ConeKotlinType>): Cone
 fun TypeCheckerProviderContext.equalTypes(a: ConeKotlinType, b: ConeKotlinType): Boolean =
     AbstractTypeChecker.equalTypes(this, a, b)
 
-private fun ConeTypeContext.makesSenseToBeDefinitelyNotNull(originalType: ConeKotlinType): Boolean {
-    return when (val type = originalType.lowerBoundIfFlexible()) {
-        is ConeTypeParameterType -> !type.lookupTag.symbol.isInitializedFir || type.isNullableType()
+private fun ConeTypeContext.makesSenseToBeDefinitelyNotNull(
+    type: ConeSimpleKotlinType,
+    avoidComprehensiveCheck: Boolean,
+): Boolean {
+    return when (type) {
+        is ConeTypeParameterType -> avoidComprehensiveCheck || type.isNullableType()
         // Actually, this branch should work for type parameters as well, but it breaks some cases. See KT-40114.
         // Basically, if we have `T : X..X?`, then `T <: Any` but we still have `T` != `T & Any`.
         is ConeTypeVariableType, is ConeCapturedType -> {
-            !AbstractNullabilityChecker.isSubtypeOfAny(
+            avoidComprehensiveCheck || !AbstractNullabilityChecker.isSubtypeOfAny(
                 newTypeCheckerState(errorTypesEqualToAnything = false, stubTypesEqualToAnything = false), type
             )
         }
@@ -76,22 +79,32 @@ private fun ConeTypeContext.makesSenseToBeDefinitelyNotNull(originalType: ConeKo
 fun ConeDefinitelyNotNullType.Companion.create(
     original: ConeKotlinType,
     typeContext: ConeTypeContext,
-    forceWithoutCheck: Boolean = false,
+    // Sometimes, it might be called before type parameter bounds are initialized
+    // or even before the symbols are bound to FIR
+    // In such cases, we just assume it makes sense to create DNN there
+    // NB: `makesSenseToBeDefinitelyNotNull` is mostly an optimization, it should not affect semantics
+    avoidComprehensiveCheck: Boolean = false,
 ): ConeDefinitelyNotNullType? {
     return when (original) {
         is ConeDefinitelyNotNullType -> original
-        is ConeFlexibleType -> create(original.lowerBound, typeContext)
-        is ConeSimpleKotlinType -> runIf(forceWithoutCheck || typeContext.makesSenseToBeDefinitelyNotNull(original)) {
+        is ConeFlexibleType -> create(original.lowerBound, typeContext, avoidComprehensiveCheck)
+        is ConeSimpleKotlinType -> runIf(typeContext.makesSenseToBeDefinitelyNotNull(original, avoidComprehensiveCheck)) {
             ConeDefinitelyNotNullType(original.coneLowerBoundIfFlexible())
         }
     }
 }
 
-fun ConeKotlinType.makeConeTypeDefinitelyNotNullOrNotNull(typeContext: ConeTypeContext): ConeKotlinType {
+fun ConeKotlinType.makeConeTypeDefinitelyNotNullOrNotNull(
+    typeContext: ConeTypeContext,
+    avoidComprehensiveCheck: Boolean = false,
+): ConeKotlinType {
     if (this is ConeIntersectionType) {
-        return ConeIntersectionType(intersectedTypes.map { it.makeConeTypeDefinitelyNotNullOrNotNull(typeContext) })
+        return ConeIntersectionType(intersectedTypes.map {
+            it.makeConeTypeDefinitelyNotNullOrNotNull(typeContext, avoidComprehensiveCheck)
+        })
     }
-    return ConeDefinitelyNotNullType.create(this, typeContext) ?: this.withNullability(ConeNullability.NOT_NULL, typeContext)
+    return ConeDefinitelyNotNullType.create(this, typeContext, avoidComprehensiveCheck)
+        ?: this.withNullability(ConeNullability.NOT_NULL, typeContext)
 }
 
 fun <T : ConeKotlinType> T.withArguments(arguments: Array<out ConeTypeProjection>): T {
