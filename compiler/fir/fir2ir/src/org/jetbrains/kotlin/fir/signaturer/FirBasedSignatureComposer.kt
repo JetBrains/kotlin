@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.fir.declarations.utils.visibility
 import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
 import org.jetbrains.kotlin.ir.util.IdSignature
+import org.jetbrains.kotlin.name.FqName
 
 // @NoMutableState -- we'll restore this annotation once we get rid of withFileSignature().
 class FirBasedSignatureComposer(override val mangler: FirMangler) : Fir2IrSignatureComposer {
@@ -122,7 +123,7 @@ class FirBasedSignatureComposer(override val mangler: FirMangler) : Fir2IrSignat
             else -> error("Unsupported FIR declaration in signature composer: ${declaration.render()}")
         }
         return if (isTopLevelPrivate(declaration) || forceTopLevelPrivate) {
-            val fileSig = fileSignature ?: return null
+            val fileSig = fileSignature ?: declaration.fakeFileSignature(publicSignature)
             IdSignature.CompositeSignature(fileSig, publicSignature)
         } else
             publicSignature
@@ -180,6 +181,13 @@ class FirBasedSignatureComposer(override val mangler: FirMangler) : Fir2IrSignat
 
     private fun isTopLevelPrivate(declaration: FirDeclaration): Boolean =
         declaration.symbol.getOwnerLookupTag() == null && declaration is FirMemberDeclaration && declaration.visibility == Visibilities.Private
+
+    // We only need file signatures to distinguish between declarations with the same fqName across different files,
+    // so FirDeclaration itself is an appropriate id.
+    private fun FirDeclaration.fakeFileSignature(commonSignature: IdSignature.CommonSignature) =
+        IdSignature.FileSignature(
+            this, FqName(commonSignature.packageFqName + "." + commonSignature.declarationFqName), "<unknown>"
+        )
 
     private fun FirProperty.getterOrDefault() =
         getter ?: FirDefaultPropertyGetter(
