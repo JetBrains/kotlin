@@ -7,6 +7,47 @@ import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 
 class DeprecationFilterTest : BaseAbstractTest() {
+
+    @Test
+    fun `should skip hidden deprecated level regardless of skipDeprecated`() {
+        val configuration = dokkaConfiguration {
+            sourceSets {
+                sourceSet {
+                    sourceRoots = listOf("src/main/kotlin/basic/Test.kt")
+                    skipDeprecated = false
+                    perPackageOptions = mutableListOf(
+                        PackageOptionsImpl(
+                            "example.*",
+                            true,
+                            false,
+                            false,
+                            false,
+                            DokkaDefaults.documentedVisibilities
+                        )
+                    )
+                }
+            }
+        }
+
+        testInline(
+            """
+            |/src/main/kotlin/basic/Test.kt
+            |package example
+            |
+            |@Deprecated("dep", level = DeprecationLevel.HIDDEN)
+            |fun testFunction() { }
+            |
+        """.trimMargin(),
+            configuration
+        ) {
+            preMergeDocumentablesTransformationStage = {
+                Assertions.assertTrue(
+                    it.first().packages.first().functions.isEmpty()
+                )
+            }
+        }
+    }
+
     @Test
     fun `function with false global skipDeprecated`() {
         val configuration = dokkaConfiguration {
@@ -37,6 +78,7 @@ class DeprecationFilterTest : BaseAbstractTest() {
             }
         }
     }
+
     @Test
     fun `deprecated function with false global skipDeprecated`() {
         val configuration = dokkaConfiguration {
@@ -67,6 +109,7 @@ class DeprecationFilterTest : BaseAbstractTest() {
             }
         }
     }
+
     @Test
     fun `deprecated function with true global skipDeprecated`() {
         val configuration = dokkaConfiguration {
@@ -97,6 +140,42 @@ class DeprecationFilterTest : BaseAbstractTest() {
             }
         }
     }
+
+    @Test
+    fun `should skip deprecated companion object`() {
+        val configuration = dokkaConfiguration {
+            sourceSets {
+                sourceSet {
+                    sourceRoots = listOf("src/main/kotlin/basic/Test.kt")
+                    skipDeprecated = true
+                }
+            }
+        }
+
+        testInline(
+            """
+            |/src/main/kotlin/basic/Test.kt
+            |package example
+            |
+            |class Test {
+            |    @Deprecated("dep")
+            |    companion object {
+            |        fun method() {}
+            |    }
+            |}
+            |
+            |
+        """.trimMargin(),
+            configuration
+        ) {
+            preMergeDocumentablesTransformationStage = {
+                Assertions.assertTrue(
+                    it.first().packages.first().classlikes.first().classlikes.isEmpty()
+                )
+            }
+        }
+    }
+
     @Test
     fun `deprecated function with false global true package skipDeprecated`() {
         val configuration = dokkaConfiguration {
@@ -137,6 +216,7 @@ class DeprecationFilterTest : BaseAbstractTest() {
             }
         }
     }
+
     @Test
     fun `deprecated function with true global false package skipDeprecated`() {
         val configuration = dokkaConfiguration {
