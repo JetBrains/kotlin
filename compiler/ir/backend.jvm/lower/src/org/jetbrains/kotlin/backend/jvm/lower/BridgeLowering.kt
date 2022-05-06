@@ -113,7 +113,7 @@ internal val bridgePhase = makeIrFilePhase(
     ::BridgeLowering,
     name = "Bridge",
     description = "Generate bridges",
-    prerequisite = setOf(jvmInlineClassPhase, jvmMultiFieldValueClassPhase)
+    prerequisite = setOf(jvmInlineClassPhase, jvmMultiFieldValueClassPhase, inheritedDefaultMethodsOnClassesPhase)
 )
 
 internal class BridgeLowering(val context: JvmBackendContext) : FileLoweringPass, IrElementTransformerVoid() {
@@ -446,6 +446,11 @@ internal class BridgeLowering(val context: JvmBackendContext) : FileLoweringPass
         }.apply {
             copyAttributes(target)
             copyParametersWithErasure(this@addBridge, bridge.overridden)
+            with(context.multiFieldValueClassReplacements) {
+                bindingNewFunctionToParameterTemplateStructure[bridge.overridden]?.also {
+                    bindingNewFunctionToParameterTemplateStructure[this@apply] = it
+                }
+            }
 
             // If target is a throwing stub, bridge also should just throw UnsupportedOperationException.
             // Otherwise, it might throw ClassCastException when downcasting bridge argument to expected type.
@@ -501,6 +506,11 @@ internal class BridgeLowering(val context: JvmBackendContext) : FileLoweringPass
             context.functionsWithSpecialBridges.add(target)
 
             copyParametersWithErasure(this@addSpecialBridge, specialBridge.overridden, specialBridge.substitutedParameterTypes)
+            with(context.multiFieldValueClassReplacements) {
+                bindingNewFunctionToParameterTemplateStructure[specialBridge.overridden]?.also {
+                    bindingNewFunctionToParameterTemplateStructure[this@apply] = it
+                }
+            }
 
             body = context.createIrBuilder(symbol, startOffset, endOffset).irBlockBody {
                 specialBridge.methodInfo?.let { info ->
@@ -627,17 +637,35 @@ internal class BridgeLowering(val context: JvmBackendContext) : FileLoweringPass
     ) =
         irCastIfNeeded(
             irCall(target, origin = IrStatementOrigin.BRIDGE_DELEGATION, superQualifierSymbol = superQualifierSymbol).apply {
-                val mfvcOrOriginal =
-                    this@BridgeLowering.context.inlineClassReplacements.originalFunctionForMethodReplacement[target] ?: target
-                val structure = with(this@BridgeLowering.context.multiFieldValueClassReplacements) {
-                    originalFunctionForMethodReplacement[mfvcOrOriginal]
-                        ?.let { bindingParameterTemplateStructure[it] }
+
+                val targetStructure = run {
+                    val mfvcOrOriginal =
+                        this@BridgeLowering.context.inlineClassReplacements.originalFunctionForMethodReplacement[target] ?: target
+                    this@BridgeLowering.context.multiFieldValueClassReplacements
+                        .bindingNewFunctionToParameterTemplateStructure[mfvcOrOriginal]
                         ?.also { structure ->
                             val errorMessage = { "Bad parameters structure: $structure" }
-                            require(structure.size == bridge.explicitParametersCount) { errorMessage() }
                             require(structure.sumOf { it.valueParameters.size } == target.explicitParametersCount) { errorMessage() }
                         }
                 }
+
+                val bridgeStructure = run {
+                    val mfvcOrOriginal =
+                        this@BridgeLowering.context.inlineClassReplacements.originalFunctionForMethodReplacement[bridge] ?: bridge
+                    this@BridgeLowering.context.multiFieldValueClassReplacements
+                        .bindingNewFunctionToParameterTemplateStructure[mfvcOrOriginal]
+                        ?.also { structure ->
+                            val errorMessage = { "Bad parameters structure: $structure" }
+                            require(structure.sumOf { it.valueParameters.size } == bridge.explicitParametersCount) { errorMessage() }
+                        }
+                }
+
+                require(targetStructure == null || bridgeStructure == null ||
+                                bridgeStructure.size == targetStructure.size &&
+                                (targetStructure zip bridgeStructure).none { (targetParameter, bridgeParameter) ->
+                                    targetParameter is MultiFieldValueClassMapping && bridgeParameter is MultiFieldValueClassMapping &&
+                                            targetParameter.declarations != bridgeParameter.declarations
+                                }) { "Incompatible structures: $bridgeStructure and $targetStructure" }
 
                 fun irGetOrCast(bridgeParameter: IrValueParameter, targetParameter: IrValueParameter) =
                     irGet(bridgeParameter).let { argument ->
@@ -647,29 +675,69 @@ internal class BridgeLowering(val context: JvmBackendContext) : FileLoweringPass
                             irCastIfNeeded(argument, targetParameter.type.upperBound)
                     }
 
-                val targetParameters = target.explicitParameters
-                val flattenedBridgeArguments = when (structure) {
-                    null -> bridge.explicitParameters.zip(target.explicitParameters, ::irGetOrCast)
-                    else -> {
-                        var index = 0
-                        (structure zip bridge.explicitParameters).flatMap { (remappedParameter, bridgeParameter) ->
-                            when (remappedParameter) {
-                                is MultiFieldValueClassMapping -> remappedParameter.declarations.unboxMethods.map { unboxFunction ->
+                val targetExplicitParameters = target.explicitParameters
+                val bridgeExplicitParameters = bridge.explicitParameters
+                var targetIndex = 0
+                var bridgeIndex = 0
+                var structureIndex = 0
+                while (targetIndex < targetExplicitParameters.size && bridgeIndex < bridgeExplicitParameters.size) {
+                    val targetRemappedParameter = targetStructure?.get(structureIndex)
+                    val bridgeRemappedParameter = bridgeStructure?.get(structureIndex)
+                    when (targetRemappedParameter) {
+                        is MultiFieldValueClassMapping -> when (bridgeRemappedParameter) {
+                            is MultiFieldValueClassMapping -> {
+                                require(bridgeRemappedParameter.declarations == targetRemappedParameter.declarations) {
+                                    "Incompatible parameters: $bridgeRemappedParameter, $targetRemappedParameter"
+                                }
+                                repeat(bridgeRemappedParameter.valueParameters.size) {
+                                    val bridgeParameter = bridgeExplicitParameters[bridgeIndex++]
+                                    val targetParameter = targetExplicitParameters[targetIndex++]
+                                    putArgument(targetParameter, irGetOrCast(bridgeParameter, targetParameter))
+                                }
+                            }
+                            is RegularMapping, null -> {
+                                val bridgeParameter = bridgeExplicitParameters[bridgeIndex++]
+                                val newArguments = targetRemappedParameter.declarations.unboxMethods.map { unboxFunction ->
                                     irCall(unboxFunction).apply {
-                                        dispatchReceiver = 
-                                            irCastIfNeeded(irGet(bridgeParameter), remappedParameter.declarations.valueClass.defaultType)
+                                        val targetParameterType = targetRemappedParameter.declarations.valueClass.defaultType
+                                        dispatchReceiver = irCastIfNeeded(irGet(bridgeParameter), targetParameterType)
                                     }
-                                }.also { index += it.size }
-                                is RegularMapping -> listOf(irGetOrCast(bridgeParameter, targetParameters[index++]))
+                                }
+                                for (newArgument in newArguments) {
+                                    putArgument(targetExplicitParameters[targetIndex++], newArgument)
+                                }
                             }
                         }
+                        is RegularMapping, null -> {
+                            val targetParameter = targetExplicitParameters[targetIndex]
+                            when (bridgeRemappedParameter) {
+                                is MultiFieldValueClassMapping -> {
+                                    val count = bridgeRemappedParameter.declarations.fields.size
+                                    val boxCall = irCall(bridgeRemappedParameter.declarations.boxMethod).apply {
+                                        for (i in 0 until count) {
+                                            putValueArgument(i, irGet(bridgeExplicitParameters[bridgeIndex++]))
+                                        }
+                                    }
+                                    putArgument(targetParameter, irCastIfNeeded(boxCall, targetParameter.type.upperBound))
+                                }
+                                is RegularMapping, null -> {
+                                    val bridgeParameter = bridgeExplicitParameters[bridgeIndex++]
+                                    putArgument(targetParameter, irGetOrCast(bridgeParameter, targetParameter))
+                                }
+                            }
+                            targetIndex++
+                        }
                     }
+                    structureIndex++
                 }
-                require(targetParameters.size == flattenedBridgeArguments.size) {
-                    "Incorrect number of arguments: ${flattenedBridgeArguments.size} instead of ${targetParameters.size}"
+                require(targetIndex == targetExplicitParameters.size && bridgeIndex == bridgeExplicitParameters.size) {
+                    "Incorrect bridge:\n${bridge.dump()}\n\nfor target\n${target.dump()}"
                 }
-                for ((targetParam, argument) in target.explicitParameters zip flattenedBridgeArguments) {
-                    putArgument(targetParam, argument)
+                require((targetStructure == null || structureIndex == targetStructure.size)) {
+                    "Invalid structure index $structureIndex for $targetStructure"
+                }
+                require((bridgeStructure == null || structureIndex == bridgeStructure.size)) {
+                    "Invalid structure index $structureIndex for $bridgeStructure"
                 }
             },
             bridge.returnType.upperBound
