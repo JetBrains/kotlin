@@ -15,10 +15,7 @@ import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
 import org.jetbrains.kotlin.backend.common.pop
 import org.jetbrains.kotlin.backend.common.push
 import org.jetbrains.kotlin.backend.jvm.*
-import org.jetbrains.kotlin.backend.jvm.ir.erasedUpperBound
-import org.jetbrains.kotlin.backend.jvm.ir.findTopSealedInlineSuperClass
-import org.jetbrains.kotlin.backend.jvm.ir.isInlineChildOfSealedInlineClass
-import org.jetbrains.kotlin.backend.jvm.ir.isInlineClassType
+import org.jetbrains.kotlin.backend.jvm.ir.*
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.config.ApiVersion
 import org.jetbrains.kotlin.descriptors.ClassKind
@@ -346,6 +343,8 @@ private class JvmInlineClassLowering(context: JvmBackendContext) : JvmValueClass
 
     override fun transformSimpleFunctionFlat(function: IrSimpleFunction, replacement: IrSimpleFunction): List<IrDeclaration> {
         if (function.modality == Modality.ABSTRACT) return emptyList()
+
+        if (function.parentAsClass.modality == Modality.SEALED && function.isFakeOverride) return listOf(function)
 
         replacement.valueParameters.forEach {
             it.transformChildrenVoid()
@@ -860,6 +859,12 @@ private class JvmInlineClassLowering(context: JvmBackendContext) : JvmValueClass
                 ) ?: error("Cannot find replacement for ${methodSymbol.owner.render()}")
             val oldBody = function.body
 
+            fun findFakeOverrideOfInterfaceMethod(): IrSimpleFunction? =
+                info.top.functions.find {
+                    it.name == methodSymbol.owner.name && it.isFakeOverride &&
+                            replacements.getSealedInlineClassChildFunctionInTop(info.top to it.withoutReceiver()).symbol == methodSymbol
+                }
+
             with(context.createIrBuilder(function.symbol)) {
                 function.body = irBlockBody {
                     var counter = 0
@@ -870,9 +875,29 @@ private class JvmInlineClassLowering(context: JvmBackendContext) : JvmValueClass
                                 +stmt.deepCopySavingMetadata()
                             }
                         }
-                        // TODO: Call super.method
                         null -> {
-                            irThrow(
+                            var expression: IrExpression? = null
+                            if (methodSymbol.owner.origin == JvmLoweredDeclarationOrigin.GENERATED_SEALED_INLINE_CLASS_METHOD) {
+                                val fakeOverride = findFakeOverrideOfInterfaceMethod()
+                                if (fakeOverride != null) {
+                                    val defaultMethod = fakeOverride.overriddenSymbols.find {
+                                        it.owner.parentAsClass.isInterface && it.owner.modality != Modality.ABSTRACT
+                                    }
+                                    if (defaultMethod != null) {
+                                        val defaultImplsMethod =
+                                            this@JvmInlineClassLowering.context.cachedDeclarations
+                                                .getDefaultImplsFunction(defaultMethod.owner)
+                                        expression = irCall(defaultImplsMethod.symbol).also {
+                                            for ((target, source) in defaultImplsMethod.explicitParameters
+                                                .zip(function.explicitParameters)
+                                            ) {
+                                                it.putArgument(target, irGet(source))
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                            expression ?: irThrow(
                                 irCall(this@JvmInlineClassLowering.context.ir.symbols.illegalStateExceptionCtorString).also {
                                     it.putValueArgument(0, irString("${counter++}"))
                                 }
@@ -977,14 +1002,8 @@ private class JvmInlineClassLowering(context: JvmBackendContext) : JvmValueClass
                 if (retargets.any { (_, retarget) ->
                         val retargetToSealedInline = retarget.owner.parentAsClass.let { it.isInline && it.modality == Modality.SEALED }
                         if (retargetToSealedInline) return@any true
-                        val retargetToOverriddenOfAbstractInInterface =
-                            retarget.owner.overriddenSymbols.any { overridden ->
-                                overridden.owner.parentAsClass == info.top && overridden.owner.overriddenSymbols.any {
-                                    it.owner.parentAsClass.isInterface && it.owner.modality == Modality.ABSTRACT
-                                }
-                            }
-
-                        retargetToOverriddenOfAbstractInInterface
+                        val retargetToOverriddenInInterface = retarget.owner.allOverridden().any { it.parentAsClass.isInterface }
+                        retargetToOverriddenInInterface
                     }
                 ) {
                     val bridge = context.irFactory.buildFun {
@@ -1009,6 +1028,16 @@ private class JvmInlineClassLowering(context: JvmBackendContext) : JvmValueClass
                     } else retarget.owner
 
                     override.overriddenSymbols += function.symbol
+                }
+
+                // Remove fake overrides of default methods, we generated its replacement ourselves
+                if (methodSymbol.owner.origin == JvmLoweredDeclarationOrigin.GENERATED_SEALED_INLINE_CLASS_METHOD) {
+                    val fakeOverride = findFakeOverrideOfInterfaceMethod()
+                    if (fakeOverride != null && fakeOverride.allOverridden().any {
+                            it.parentAsClass.isInterface && it.modality != Modality.ABSTRACT
+                    }) {
+                        info.top.declarations.remove(fakeOverride)
+                    }
                 }
             }
         }

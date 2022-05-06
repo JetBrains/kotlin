@@ -23378,6 +23378,18 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
                         }
 
                         @Nested
+                        @TestMetadata("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/interfaceMethodDefaultDefault")
+                        @TestDataPath("$PROJECT_ROOT")
+                        @Tag("codegen")
+                        @UseExtTestCaseGroupProvider()
+                        public class InterfaceMethodDefaultDefault {
+                            @Test
+                            public void testAllFilesPresentInInterfaceMethodDefaultDefault() throws Exception {
+                                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/interfaceMethodDefaultDefault"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
+                            }
+                        }
+
+                        @Nested
                         @TestMetadata("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/methodBottom")
                         @TestDataPath("$PROJECT_ROOT")
                         @Tag("codegen")
