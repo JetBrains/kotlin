@@ -992,6 +992,7 @@ task worker10(type: KonanLocalTest) {
 
 task worker11(type: KonanLocalTest) {
     enabled = (project.testTarget != 'wasm32') // Workers need pthreads.
+        && !isAggressiveGC // TODO: Investigate why too slow
     useGoldenData = true
     source = "runtime/workers/worker11.kt"
 }
@@ -1116,6 +1117,7 @@ standaloneTest("freeze1") {
 
 standaloneTest("freeze_stress") {
     enabled = (project.testTarget != 'wasm32') // No exceptions on WASM.
+        && !isAggressiveGC // TODO: Investigate why too slow
     useGoldenData = true
     flags = ["-Xbinary=freezing=full", "-tr"]
     source = "runtime/workers/freeze_stress.kt"
@@ -1211,6 +1213,7 @@ standaloneTest("lazy3") {
 
 task lazy4(type: KonanLocalTest) {
     enabled = (project.testTarget != 'wasm32') // Workers need pthreads. Need exceptions
+        && !isAggressiveGC // TODO: Investigate why too slow
     source = "runtime/workers/lazy4.kt"
 }
 
@@ -2604,6 +2607,7 @@ task hash_map0(type: KonanLocalTest) {
 }
 
 task hash_map1(type: KonanLocalTest) {
+    disabled = isAggressiveGC // TODO: Investigate why too slow
     useGoldenData = true
     source = "runtime/collections/hash_map1.kt"
 }
@@ -2667,6 +2671,7 @@ task trim(type: KonanLocalTest) {
 }
 
 task chars0(type: KonanLocalTest) {
+    disabled = isAggressiveGC // TODO: Investigate why too slow
     expectedFail = (project.testTarget == 'wasm32') // Uses exceptions.
     source = "runtime/text/chars0.kt"
     expectedExitStatus = 0
@@ -2679,6 +2684,7 @@ task indexof(type: KonanLocalTest) {
 task utf8(type: KonanLocalTest) {
     // Uses exceptions so cannot run on wasm.
     enabled = project.testTarget != 'wasm32'
+        && !isAggressiveGC // TODO: Investigate why too slow
     useGoldenData = true
     source = "runtime/text/utf8.kt"
 }
@@ -3390,7 +3396,8 @@ standaloneTest("stress_gc_allocations") {
         (project.testTarget != "watchos_x86") &&
         (project.testTarget != "watchos_x64") &&
         (project.testTarget != "watchos_simulator_arm64") &&
-        !isNoopGC
+        !isNoopGC &&
+        !isAggressiveGC // TODO: Investigate why too slow
     source = "runtime/memory/stress_gc_allocations.kt"
     flags = ['-tr', '-opt-in=kotlin.native.internal.InternalForKotlinNative']
 }
@@ -3498,6 +3505,7 @@ task vararg_of_literals(type: KonanLocalTest) {
 }
 
 standaloneTest('tailrec') {
+    disabled = isAggressiveGC // TODO: Investigate why too slow
     useGoldenData = true
     source = "lower/tailrec.kt"
     flags = ['-XXLanguage:-ProhibitTailrecOnVirtualMember', '-e', 'lower.tailrec.main']
@@ -4005,12 +4013,14 @@ standaloneTest("testing_stacktrace") {
 
 // Just check that the driver is able to produce runnable binaries.
 tasks.register("driver0", KonanDriverTest) {
+    disabled = isAggressiveGC // No need to test with different GC schedulers
     useGoldenData = true
     source = "runtime/basic/driver0.kt"
 }
 
 tasks.register("driver_opt", KonanDriverTest) {
     disabled = (cacheTesting != null) // Cache is not compatible with -opt.
+        || isAggressiveGC // No need to test with different GC schedulers
     useGoldenData = true
     source = "runtime/basic/driver_opt.kt"
     flags = ["-opt"]
@@ -4487,6 +4497,7 @@ standaloneTest("interop5") {
 
 interopTest("interop_bitfields") {
     disabled = (project.testTarget == 'wasm32') // No interop for wasm yet.
+        || isAggressiveGC // TODO: Investigate why too slow
     expectedFail = (project.testTarget == 'linux_mips32') // fails because of big-endiannes
     source = "interop/basics/bf.kt"
     interop = 'bitfields'
@@ -5250,6 +5261,8 @@ interopTest("interop_exceptions_cCallback") {
 }
 
 tasks.register("library_ir_provider_mismatch", KonanDriverTest) {
+    disabled = isAggressiveGC // No need to test with different GC schedulers
+
     def dir = buildDir.absolutePath
     def lib = "$projectDir/link/ir_providers/library/empty.kt"
     def invalidManifest = "$projectDir/link/ir_providers/library/manifest.properties"
@@ -5688,6 +5701,7 @@ if (isAppleTarget(project)) {
  */
 KotlinNativeTestKt.createTest(project, 'harmonyRegexTest', KonanGTest) { task ->
     task.enabled = (project.testTarget != 'wasm32') // Uses exceptions.
+        && !isAggressiveGC // TODO: Investigate why too slow
     task.useFilter = false
     task.testLogger = KonanTest.Logger.GTEST
 
@@ -5831,6 +5845,7 @@ standaloneTest("local_ea_arraysfieldwrite") {
 }
 
 tasks.register("override_konan_properties0", KonanDriverTest) {
+    disabled = isAggressiveGC // No need to test with different GC schedulers
     def overrides = PlatformInfo.isWindows()
             ? '-Xoverride-konan-properties="llvmInlineThreshold=76"'
             : '-Xoverride-konan-properties=llvmInlineThreshold=76'
@@ -5853,6 +5868,7 @@ tasks.register("llvm_variant_dev", KonanDriverTest) {
     // We use clang from Xcode on macOS for apple targets,
     // so it is hard to reliably detect LLVM variant for these targets.
     disabled = isAppleTarget(project)
+        || isAggressiveGC // No need to test with different GC schedulers
     flags = [
             "-Xllvm-variant=dev",
             "-Xverbose-phases=ObjectFiles"
@@ -6161,6 +6177,7 @@ project.tasks.named("test").configure {
 
 project.tasks.register("debugger_test", Test.class) {
     enabled = (target.family.appleFamily)  // KT-30366
+        && !isAggressiveGC // No need to test with different GC schedulers
     testLogging { exceptionFormat = 'full' }
     UtilsKt.dependsOnDist(it)
     systemProperties = ['kotlin.native.home': kotlinNativeDist,
