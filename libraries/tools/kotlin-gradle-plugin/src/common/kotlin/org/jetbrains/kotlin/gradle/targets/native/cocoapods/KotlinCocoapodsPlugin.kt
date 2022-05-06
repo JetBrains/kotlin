@@ -136,6 +136,14 @@ internal val PodBuildSettingsProperties.frameworkSearchPaths: List<String>
         return frameworkPathsSelfIncluding
     }
 
+//Make frameworks headers discoverable with any syntax (quotes, brackets, @import, etc.)
+//https://github.com/CocoaPods/CocoaPods/blob/d18f49392c5e9ed9a2cdcb2ee89391cf7690ee5d/lib/cocoapods/target/build_settings.rb#L1188
+private val PodBuildSettingsProperties.frameworkHeadersSearchPaths: List<String>
+    get() = mutableListOf<String>().apply {
+        headerPaths?.let { addAll(it.splitQuotedArgs()) }
+        publicHeadersFolderPath?.let { add("${configurationBuildDir.trimQuotes()}/${it.trimQuotes()}") }
+    }
+
 /**
  * Splits a string using a whitespace characters as delimiters.
  * Ignores whitespaces in quotes and drops quotes, e.g. a string
@@ -340,10 +348,8 @@ open class KotlinCocoapodsPlugin : Plugin<Project> {
                             // Here and below we need to split such paths taking this into account.
                             interop.compilerOpts.addAll(args.splitQuotedArgs())
                         }
-                        podBuildSettings.headerPaths?.let { args ->
-                            interop.compilerOpts.addAll(args.splitQuotedArgs().map { "-I$it" })
-                        }
 
+                        interop.compilerOpts.addAll(podBuildSettings.frameworkHeadersSearchPaths.map { "-I$it" })
                         interop.compilerOpts.addAll(podBuildSettings.frameworkSearchPaths.map { "-F$it" })
 
                     }

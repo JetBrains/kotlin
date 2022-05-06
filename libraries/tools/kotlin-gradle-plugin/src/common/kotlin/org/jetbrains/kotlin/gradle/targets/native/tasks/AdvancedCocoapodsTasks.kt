@@ -608,6 +608,7 @@ data class PodBuildSettingsProperties(
     internal val podsTargetSrcRoot: String,
     internal val cflags: String? = null,
     internal val headerPaths: String? = null,
+    internal val publicHeadersFolderPath: String? = null,
     internal val frameworkPaths: String? = null
 ) {
 
@@ -627,6 +628,7 @@ data class PodBuildSettingsProperties(
             appendText("$PODS_TARGET_SRCROOT=$podsTargetSrcRoot\n")
             cflags?.let { appendText("$OTHER_CFLAGS=$it\n") }
             headerPaths?.let { appendText("$HEADER_SEARCH_PATHS=$it\n") }
+            publicHeadersFolderPath?.let { appendText("$PUBLIC_HEADERS_FOLDER_PATH=$it\n") }
             frameworkPaths?.let { appendText("$FRAMEWORK_SEARCH_PATHS=$it") }
         }
     }
@@ -638,6 +640,7 @@ data class PodBuildSettingsProperties(
         const val PODS_TARGET_SRCROOT = "PODS_TARGET_SRCROOT"
         const val OTHER_CFLAGS = "OTHER_CFLAGS"
         const val HEADER_SEARCH_PATHS = "HEADER_SEARCH_PATHS"
+        const val PUBLIC_HEADERS_FOLDER_PATH = "PUBLIC_HEADERS_FOLDER_PATH"
         const val FRAMEWORK_SEARCH_PATHS = "FRAMEWORK_SEARCH_PATHS"
 
         fun readSettingsFromReader(reader: Reader): PodBuildSettingsProperties {
@@ -650,6 +653,7 @@ data class PodBuildSettingsProperties(
                     readProperty(PODS_TARGET_SRCROOT),
                     readNullableProperty(OTHER_CFLAGS),
                     readNullableProperty(HEADER_SEARCH_PATHS),
+                    readNullableProperty(PUBLIC_HEADERS_FOLDER_PATH),
                     readNullableProperty(FRAMEWORK_SEARCH_PATHS)
                 )
             }
