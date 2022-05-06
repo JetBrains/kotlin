@@ -7,14 +7,11 @@ package org.jetbrains.kotlin.backend.jvm.lower
 
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.IrElementTransformerVoidWithContext
-import org.jetbrains.kotlin.backend.common.ir.copyParameterDeclarationsFrom
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.pop
 import org.jetbrains.kotlin.backend.common.push
 import org.jetbrains.kotlin.backend.jvm.*
-import org.jetbrains.kotlin.backend.jvm.ir.isInlineClassType
 import org.jetbrains.kotlin.ir.IrStatement
-import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.builders.irReturn
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
@@ -139,7 +136,7 @@ internal abstract class JvmValueClassAbstractLowering(val context: JvmBackendCon
         return super.visitReturn(expression)
     }
 
-    protected open fun visitStatementContainer(container: IrStatementContainer) {
+    private fun visitStatementContainer(container: IrStatementContainer) {
         container.statements.transformFlat { statement ->
             if (statement is IrFunction)
                 transformFunctionFlat(statement)
@@ -148,12 +145,12 @@ internal abstract class JvmValueClassAbstractLowering(val context: JvmBackendCon
         }
     }
 
-    final override fun visitContainerExpression(expression: IrContainerExpression): IrExpression {
+    override fun visitContainerExpression(expression: IrContainerExpression): IrExpression {
         visitStatementContainer(expression)
         return expression
     }
 
-    final override fun visitBlockBody(body: IrBlockBody): IrBody {
+    override fun visitBlockBody(body: IrBlockBody): IrBody {
         visitStatementContainer(body)
         return body
     }
@@ -173,6 +170,7 @@ internal abstract class JvmValueClassAbstractLowering(val context: JvmBackendCon
     ): IrSimpleFunction {
         val bridgeFunction = createBridgeDeclaration(
             function,
+            replacement,
             when {
                 // If the original function has signature which need mangling we still need to replace it with a mangled version.
                 (!function.isFakeOverride || function.findInterfaceImplementation(context.state.jvmDefaultMode) != null) &&
@@ -202,9 +200,10 @@ internal abstract class JvmValueClassAbstractLowering(val context: JvmBackendCon
         return bridgeFunction
     }
 
-    private fun IrSimpleFunction.signatureRequiresMangling() =
-        fullValueParameterList.any { it.type.getRequiresMangling() } ||
-                context.state.functionsWithInlineClassReturnTypesMangled && returnType.getRequiresMangling() && returnType.isInlineClassType()
+    private fun IrSimpleFunction.signatureRequiresMangling(includeInline: Boolean = true, includeMFVC: Boolean = true) =
+        fullValueParameterList.any { it.type.getRequiresMangling(includeInline, includeMFVC) } ||
+                context.state.functionsWithInlineClassReturnTypesMangled &&
+                returnType.getRequiresMangling(includeInline = includeInline, includeMFVC = false)
 
     protected fun typedArgumentList(function: IrFunction, expression: IrMemberAccessExpression<*>) = listOfNotNull(
         function.dispatchReceiverParameter?.let { it to expression.dispatchReceiver },
@@ -215,20 +214,7 @@ internal abstract class JvmValueClassAbstractLowering(val context: JvmBackendCon
     // We may need to add a bridge method for inline class methods with static replacements. Ideally, we'd do this in BridgeLowering,
     // but unfortunately this is a special case in the old backend. The bridge method is not marked as such and does not follow the normal
     // visibility rules for bridge methods.
-    private fun createBridgeDeclaration(source: IrSimpleFunction, mangledName: Name) =
-        context.irFactory.buildFun {
-            updateFrom(source)
-            name = mangledName
-            returnType = source.returnType
-        }.apply {
-            copyParameterDeclarationsFrom(source)
-            annotations = source.annotations
-            parent = source.parent
-            // We need to ensure that this bridge has the same attribute owner as its static inline class replacement, since this
-            // is used in [CoroutineCodegen.isStaticInlineClassReplacementDelegatingCall] to identify the bridge and avoid generating
-            // a continuation class.
-            copyAttributes(source)
-        }
+    abstract fun createBridgeDeclaration(source: IrSimpleFunction, replacement: IrSimpleFunction, mangledName: Name): IrSimpleFunction
 
     protected abstract fun createBridgeBody(source: IrSimpleFunction, target: IrSimpleFunction, original: IrFunction, inverted: Boolean)
 }

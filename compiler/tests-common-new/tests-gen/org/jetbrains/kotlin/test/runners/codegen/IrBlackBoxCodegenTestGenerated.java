@@ -50190,15 +50190,33 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
         }
 
         @Test
+        @TestMetadata("complex.kt")
+        public void testComplex() throws Exception {
+            runTest("compiler/testData/codegen/box/valueClasses/complex.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+        }
+
+        @Test
         @TestMetadata("equality.kt")
         public void testEquality() throws Exception {
             runTest("compiler/testData/codegen/box/valueClasses/equality.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
         }
 
         @Test
-        @TestMetadata("simple.kt")
-        public void testSimple() throws Exception {
-            runTest("compiler/testData/codegen/box/valueClasses/simple.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+        @TestMetadata("MFVCFieldInitializationOrder.kt")
+        public void testMFVCFieldInitializationOrder() throws Exception {
+            runTest("compiler/testData/codegen/box/valueClasses/MFVCFieldInitializationOrder.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+        }
+
+        @Test
+        @TestMetadata("overrides.kt")
+        public void testOverrides() throws Exception {
+            runTest("compiler/testData/codegen/box/valueClasses/overrides.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+        }
+
+        @Test
+        @TestMetadata("throwingMFVCReassignments.kt")
+        public void testThrowingMFVCReassignments() throws Exception {
+            runTest("compiler/testData/codegen/box/valueClasses/throwingMFVCReassignments.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
         }
     }
 
