@@ -12,6 +12,9 @@ import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
+import org.jetbrains.kotlin.backend.jvm.MemoizedMultiFieldValueClassReplacements.RemappedParameter.MultiFieldValueClassMapping
+import org.jetbrains.kotlin.backend.jvm.MemoizedMultiFieldValueClassReplacements.RemappedParameter.RegularMapping
+import org.jetbrains.kotlin.backend.jvm.fullValueParameterList
 import org.jetbrains.kotlin.backend.jvm.ir.*
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.config.JvmDefaultMode
@@ -100,15 +103,47 @@ private class InheritedDefaultMethodsOnClassesLowering(val context: JvmBackendCo
                         }
                         passTypeArgumentsFrom(irFunction, offset = superMethod.parentAsClass.typeParameters.size)
 
-                        var offset = 0
                         irFunction.dispatchReceiverParameter?.let {
-                            putValueArgument(
-                                offset++,
-                                irGet(it).reinterpretAsDispatchReceiverOfType(superClassType)
-                            )
+                            putValueArgument(0, irGet(it).reinterpretAsDispatchReceiverOfType(superClassType))
                         }
-                        irFunction.extensionReceiverParameter?.let { putValueArgument(offset++, irGet(it)) }
-                        irFunction.valueParameters.mapIndexed { i, parameter -> putValueArgument(i + offset, irGet(parameter)) }
+                        val lowering = this@InheritedDefaultMethodsOnClassesLowering
+                        val mfvcOrOriginal = lowering.context.inlineClassReplacements.originalFunctionForMethodReplacement[classOverride]
+                            ?: classOverride
+                        val bindingNewFunctionToParameterTemplateStructure = lowering.context.multiFieldValueClassReplacements
+                            .bindingNewFunctionToParameterTemplateStructure
+                        val structure = bindingNewFunctionToParameterTemplateStructure[mfvcOrOriginal]?.let { structure ->
+                            val errorMessage = { "Bad parameters structure: $structure" }
+                            require(structure.sumOf { it.valueParameters.size } == classOverride.explicitParametersCount) { errorMessage() }
+                            if (defaultImplFun.explicitParametersCount == irFunction.explicitParametersCount) {
+                                null
+                            } else {
+                                require(structure.size == defaultImplFun.explicitParametersCount) { errorMessage() }
+                                structure
+                            }
+                        }
+                        require(structure == null || structure.first() is RegularMapping) {
+                            "Dispatch receiver for method replacement cannot be flattened"
+                        }
+                        val sourceFullValueParameterList = irFunction.fullValueParameterList
+                        if (structure == null) {
+                            sourceFullValueParameterList.forEachIndexed { index, parameter ->
+                                putValueArgument(1 + index, irGet(parameter))
+                            }
+                        } else {
+                            var flattenedIndex = 0
+                            for (i in 1 until structure.size) {
+                                when (val remappedParameter = structure[i]) {
+                                    is MultiFieldValueClassMapping ->
+                                        putValueArgument(i, irCall(remappedParameter.declarations.boxMethod).apply {
+                                            val boxArgumentsCount = remappedParameter.valueParameters.size
+                                            for (boxArgumentIndex in 0 until boxArgumentsCount) {
+                                                putValueArgument(boxArgumentIndex, irGet(sourceFullValueParameterList[flattenedIndex++]))
+                                            }
+                                        })
+                                    is RegularMapping -> putValueArgument(i, irGet(sourceFullValueParameterList[flattenedIndex++]))
+                                }
+                            }
+                        }
                     }
                 )
             }
