@@ -10,7 +10,7 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiElementResolveResult
 import com.intellij.psi.ResolveResult
 import com.intellij.psi.impl.source.resolve.ResolveCache
-import org.jetbrains.kotlin.analysis.api.descriptors.utils.DescriptorToSourceUtilsIde
+import org.jetbrains.kotlin.analysis.api.descriptors.references.util.DescriptorToSourceUtilsIde
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.PackageViewDescriptor
 import org.jetbrains.kotlin.idea.references.AbstractKtReference
