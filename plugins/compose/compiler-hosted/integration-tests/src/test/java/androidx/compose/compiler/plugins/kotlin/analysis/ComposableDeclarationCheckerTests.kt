@@ -255,4 +255,19 @@ class ComposableDeclarationCheckerTests : AbstractComposeDiagnosticsTest() {
         """
         )
     }
+
+    fun testOverrideWithoutComposeAnnotation() {
+        doTest(
+            """
+                import androidx.compose.runtime.Composable
+                interface Base {
+                    fun compose(content: () -> Unit)
+                }
+
+                class Impl : Base {
+                    <!CONFLICTING_OVERLOADS!>override fun compose(content: @Composable () -> Unit)<!> {}
+                }
+            """
+        )
+    }
 }
