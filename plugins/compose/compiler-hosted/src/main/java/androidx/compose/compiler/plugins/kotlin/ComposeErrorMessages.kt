@@ -87,7 +87,7 @@ class ComposeErrorMessages : DefaultErrorMessages.Extension {
         )
         MAP.put(
             ComposeErrors.COMPOSABLE_SUSPEND_FUN,
-            "Composable properties are not able to have backing fields"
+            "Composable function cannot be annotated as suspend"
         )
         MAP.put(
             ComposeErrors.ABSTRACT_COMPOSABLE_DEFAULT_PARAMETER_VALUE,
