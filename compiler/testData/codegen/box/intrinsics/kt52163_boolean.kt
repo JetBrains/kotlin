@@ -1,3 +1,5 @@
+// JVM_TARGET: 1.8
+
 fun test(): Int {
     val d: Any?
     d = true
