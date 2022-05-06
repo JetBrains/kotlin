@@ -307,6 +307,7 @@ extra["compilerArtifactsForIde"] = listOfNotNull(
     ":prepare:ide-plugin-dependencies:high-level-api-fir-tests-for-ide",
     ":prepare:ide-plugin-dependencies:high-level-api-fe10-for-ide",
     ":prepare:ide-plugin-dependencies:high-level-api-fe10-tests-for-ide",
+    ":prepare:ide-plugin-dependencies:kt-references-fe10-for-ide",
     ":prepare:ide-plugin-dependencies:analysis-api-providers-for-ide",
     ":prepare:ide-plugin-dependencies:analysis-project-structure-for-ide",
     ":prepare:ide-plugin-dependencies:symbol-light-classes-for-ide",

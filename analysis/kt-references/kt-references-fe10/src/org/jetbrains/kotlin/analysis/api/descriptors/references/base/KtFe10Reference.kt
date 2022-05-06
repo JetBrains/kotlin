@@ -7,11 +7,6 @@ package org.jetbrains.kotlin.analysis.api.descriptors.references.base
 
 import com.intellij.psi.PsiMethod
 import com.intellij.psi.impl.source.resolve.ResolveCache
-import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
-import org.jetbrains.kotlin.analysis.api.KtSymbolBasedReference
-import org.jetbrains.kotlin.analysis.api.descriptors.KtFe10AnalysisSession
-import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.toKtSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KtSymbol
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.idea.references.KtReference
 import org.jetbrains.kotlin.idea.references.unwrappedTargets
@@ -20,7 +15,7 @@ import org.jetbrains.kotlin.psi.KtImportAlias
 import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
 import org.jetbrains.kotlin.resolve.BindingContext
 
-interface KtFe10Reference : KtReference, KtSymbolBasedReference {
+interface KtFe10Reference : KtReference {
     override val resolver: ResolveCache.PolyVariantResolver<KtReference>
         get() = KtFe10PolyVariantResolver
 
@@ -51,11 +46,12 @@ interface KtFe10Reference : KtReference, KtSymbolBasedReference {
         }
     }
 
-    override fun KtAnalysisSession.resolveToSymbols(): Collection<KtSymbol> {
-        require(this is KtFe10AnalysisSession)
-        val bindingContext = KtFe10ReferenceResolutionHelper.getInstance().partialAnalyze(element)
-        return getTargetDescriptors(bindingContext).mapNotNull { descriptor ->
-            descriptor.toKtSymbol(analysisContext)
-        }
-    }
+//    TODO: Implement KtSymbolBasedReference and uncomment the following implementation after FE10 analysis API is made available in IDE
+//    override fun KtAnalysisSession.resolveToSymbols(): Collection<KtSymbol> {
+//        require(this is KtFe10AnalysisSession)
+//        val bindingContext = KtFe10ReferenceResolutionHelper.getInstance().partialAnalyze(element)
+//        return getTargetDescriptors(bindingContext).mapNotNull { descriptor ->
+//            descriptor.toKtSymbol(analysisContext)
+//        }
+//    }
 }
