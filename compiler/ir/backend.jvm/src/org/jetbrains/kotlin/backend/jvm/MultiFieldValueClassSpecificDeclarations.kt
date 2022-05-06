@@ -26,7 +26,11 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrGetField
-import org.jetbrains.kotlin.ir.types.*
+import org.jetbrains.kotlin.ir.symbols.IrValueSymbol
+import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.types.IrTypeSystemContext
+import org.jetbrains.kotlin.ir.types.isNullable
+import org.jetbrains.kotlin.ir.types.isSubtypeOf
 import org.jetbrains.kotlin.ir.util.constructedClass
 import org.jetbrains.kotlin.ir.util.constructors
 import org.jetbrains.kotlin.ir.util.defaultType
@@ -36,8 +40,8 @@ import org.jetbrains.kotlin.resolve.InlineClassDescriptorResolver
 
 sealed class MultiFieldValueClassTree<out TI, out TL> {
     abstract val type: IrType
-    val irClass: IrClass?
-        get() = type.getClass()
+    val irClass: IrClass
+        get() = type.erasedUpperBound
 
     companion object {
         @JvmStatic
@@ -56,7 +60,7 @@ sealed class MultiFieldValueClassTree<out TI, out TL> {
         fun create(type: IrType, replacements: MemoizedMultiFieldValueClassReplacements) = create(type, Unit, Unit, replacements)
     }
 
-    data class Leaf<out TL>(override val type: IrType, val leafValue: TL) : MultiFieldValueClassTree<Nothing, TL>() {
+    class Leaf<out TL>(override val type: IrType, val leafValue: TL) : MultiFieldValueClassTree<Nothing, TL>() {
         init {
             require(type.isNullable() || !type.isMultiFieldValueClassType())
         }
@@ -64,7 +68,7 @@ sealed class MultiFieldValueClassTree<out TI, out TL> {
         fun <RL> map(transformLeaf: Leaf<TL>.(TL) -> RL) = Leaf(type, transformLeaf(leafValue))
     }
 
-    data class InternalNode<out TI, out TL> internal constructor(
+    class InternalNode<out TI, out TL> internal constructor(
         override val type: IrType, val internalNodeValue: TI, val fields: List<TreeField<TI, TL>>
     ) : MultiFieldValueClassTree<TI, TL>() {
         constructor(
@@ -84,7 +88,7 @@ sealed class MultiFieldValueClassTree<out TI, out TL> {
             }
         })
 
-        data class TreeField<out TI, out TL>(
+        class TreeField<out TI, out TL>(
             val name: Name, val type: IrType, val visibility: DescriptorVisibility, val annotations: List<IrConstructorCall>,
             val node: MultiFieldValueClassTree<TI, TL>
         ) {
@@ -192,7 +196,7 @@ class MultiFieldValueClassSpecificDeclarations(
                 private fun makeName() = Name.guessByFirstCharacter(parts.joinToString("$"))
             })
         }
-    
+
     init {
         require(nodeFullNames.size == nodeFullNames.values.distinct().size) { "Ambiguous names found: ${nodeFullNames.values}" }
     }
@@ -219,6 +223,9 @@ class MultiFieldValueClassSpecificDeclarations(
     }
 
     val oldPrimaryConstructor = valueClass.primaryConstructor ?: error("Value classes have primary constructors")
+    private val oldFields = replacements.getOldFields(valueClass)
+
+    val oldProperties = oldFields.map { it.correspondingPropertySymbol!!.owner }.associateBy { it.name }
 
     val fields = leaves.map { leaf ->
         irFactory.buildField {
@@ -279,6 +286,7 @@ class MultiFieldValueClassSpecificDeclarations(
                 type = it.type,
                 makeGetter = { receiver: IrValueParameter -> irGetField(irGet(receiver), it) },
                 assigner = { receiver: IrValueParameter, value: IrExpression -> irSetField(irGet(receiver), it, value) },
+                symbol = null,
             )
         }
     )
@@ -377,17 +385,21 @@ class MultiFieldValueClassSpecificDeclarations(
 
     val properties: Map<MultiFieldValueClassTree<Unit, Unit>, IrProperty> =
         selfImplementationAgnosticDeclarations.nodeToExpressionGetters.filterKeys { it in nodeFullNames }.mapValues { (node, getter) ->
+            val propertyName = nodeFullNames[node]!!
+            val overrideable = oldProperties[propertyName]
             irFactory.buildProperty {
-                name = nodeFullNames[node]!!
+                name = propertyName
                 origin = IrDeclarationOrigin.GENERATED_MULTI_FIELD_VALUE_CLASS_MEMBER
                 visibility = gettersVisibilities[node]!!
             }.apply {
                 annotations = gettersAnnotations[node]!!
+                overrideable?.overriddenSymbols?.let { overriddenSymbols = it }
                 parent = valueClass
                 addGetter {
                     returnType = node.type
                     origin = IrDeclarationOrigin.GENERATED_MULTI_FIELD_VALUE_CLASS_MEMBER
                 }.apply {
+                    overrideable?.getter?.overriddenSymbols?.let { overriddenSymbols = it }
                     createDispatchReceiverParameter()
                     body = with(context.createIrBuilder(this.symbol)) {
                         irExprBody(getter(this, dispatchReceiverParameter!!))
@@ -396,11 +408,17 @@ class MultiFieldValueClassSpecificDeclarations(
             }
         }
 
-    data class VirtualProperty<in T>(val type: IrType, val makeGetter: ExpressionGenerator<T>, val assigner: ExpressionSupplier<T>?) {
+    data class VirtualProperty<in T>(
+        val type: IrType,
+        val makeGetter: ExpressionGenerator<T>,
+        val assigner: ExpressionSupplier<T>?,
+        val symbol: IrValueSymbol?
+    ) {
         constructor(declaration: IrValueDeclaration) : this(
             declaration.type,
             { irGet(declaration) },
             if (declaration.isAssignable) { _, value -> irSet(declaration, value) } else null,
+            declaration.symbol,
         )
 
         val isAssignable: Boolean
@@ -410,6 +428,7 @@ class MultiFieldValueClassSpecificDeclarations(
             type = type,
             makeGetter = { makeGetter(f(it)) },
             assigner = assigner?.let { assigner -> { additionalParam, value -> assigner(f(additionalParam), value) } },
+            symbol = symbol,
         )
     }
 
@@ -427,7 +446,8 @@ class MultiFieldValueClassSpecificDeclarations(
      */
     inner class ImplementationAgnostic<T>(val virtualFields: List<VirtualProperty<T>>) {
         val regularDeclarations = this@MultiFieldValueClassSpecificDeclarations
-        
+        val symbols = virtualFields.map { it.symbol }
+
         fun <R> map(f: (R) -> T) = ImplementationAgnostic(virtualFields.map { it.map(f) })
 
         init {
@@ -444,7 +464,7 @@ class MultiFieldValueClassSpecificDeclarations(
             indexesByInternalNode.mapValues { (node, indexes) ->
                 { additionalParameter ->
                     val arguments = virtualFields.slice(indexes).map { it.makeGetter(this, additionalParameter) }
-                    val innerDeclarations = replacements.getDeclarations(node.irClass!!)!!
+                    val innerDeclarations = replacements.getDeclarations(node.irClass)!!
                     irCall(innerDeclarations.boxMethod).apply {
                         for (i in arguments.indices) {
                             putValueArgument(i, arguments[i])
@@ -465,7 +485,7 @@ class MultiFieldValueClassSpecificDeclarations(
                 else -> nodeToExpressionGetters[field.node]!! to when (field.node) {
                     is Leaf -> null
                     is InternalNode -> {
-                        val irClass = field.node.irClass!!
+                        val irClass = field.node.irClass
                         val declarations = replacements.getDeclarations(irClass)!!
                         declarations.ImplementationAgnostic(nodeToSymbols[field.node]!!)
                     }

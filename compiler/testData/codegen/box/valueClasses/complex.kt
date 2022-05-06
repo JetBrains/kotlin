@@ -66,7 +66,7 @@ fun <T : List<Int>> h(r: R<T>) {
     g(r.z)
     f(r)
     r
-    C(2, B(3U), "") // todo fix box
+    C(2, B(3U), "")
     D(C(2, B(3U), ""))
     val x = D(C(2, B(3U), ""))
     var y = D(C(4, B(5U), "1"))
@@ -172,4 +172,4 @@ fun equalsChecks(left: R<List<Int>>, right: R<List<Int>>) {
 
 // todo add default parameters
 
-fun box() = "OK"//.also { h(R(1, 2U, E(D(C(3, B(4U), "5"))), A(listOf(listOf(6))))) }
+fun box() = "OK"

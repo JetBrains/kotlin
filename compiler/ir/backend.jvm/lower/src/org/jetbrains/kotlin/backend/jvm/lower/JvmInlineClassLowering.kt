@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.builders.declarations.addConstructor
+import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
@@ -29,6 +30,7 @@ import org.jetbrains.kotlin.ir.types.isNullable
 import org.jetbrains.kotlin.ir.types.makeNotNull
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.JVM_INLINE_ANNOTATION_FQ_NAME
 
 val jvmInlineClassPhase = makeIrFilePhase(
@@ -63,6 +65,21 @@ private class JvmInlineClassLowering(context: JvmBackendContext) : JvmValueClass
             valueMap[param.symbol] = newParam
         }
     }
+
+    override fun createBridgeDeclaration(source: IrSimpleFunction, replacement: IrSimpleFunction, mangledName: Name): IrSimpleFunction =
+        context.irFactory.buildFun {
+            updateFrom(source)
+            name = mangledName
+            returnType = source.returnType
+        }.apply {
+            copyParameterDeclarationsFrom(source)
+            annotations = source.annotations
+            parent = source.parent
+            // We need to ensure that this bridge has the same attribute owner as its static inline class replacement, since this
+            // is used in [CoroutineCodegen.isStaticInlineClassReplacementDelegatingCall] to identify the bridge and avoid generating
+            // a continuation class.
+            copyAttributes(source)
+        }
 
     override fun IrClass.isSpecificLoweringLogicApplicable(): Boolean = isSingleFieldValueClass
 

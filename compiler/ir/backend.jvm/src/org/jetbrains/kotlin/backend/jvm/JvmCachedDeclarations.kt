@@ -251,7 +251,8 @@ class JvmCachedDeclarations(
         defaultImplsRedirections.getOrPut(fakeOverride) {
             assert(fakeOverride.isFakeOverride)
             val irClass = fakeOverride.parentAsClass
-            context.irFactory.buildFun {
+            val mfvcReplacementStructure = context.multiFieldValueClassReplacements.bindingNewFunctionToParameterTemplateStructure
+            val redirectFunction = context.irFactory.buildFun {
                 origin = JvmLoweredDeclarationOrigin.SUPER_INTERFACE_METHOD_BRIDGE
                 name = fakeOverride.name
                 visibility = fakeOverride.visibility
@@ -275,6 +276,8 @@ class JvmCachedDeclarations(
                 annotations = fakeOverride.annotations
                 copyCorrespondingPropertyFrom(fakeOverride)
             }
+            mfvcReplacementStructure[fakeOverride]?.let { mfvcReplacementStructure[redirectFunction] = it }
+            redirectFunction
         }
 
     fun getRepeatedAnnotationSyntheticContainer(annotationClass: IrClass): IrClass =
