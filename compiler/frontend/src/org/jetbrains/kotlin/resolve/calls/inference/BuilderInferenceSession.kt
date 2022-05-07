@@ -193,7 +193,7 @@ class BuilderInferenceSession(
     fun hasInapplicableCall(): Boolean = hasInapplicableCall
 
     override fun writeOnlyStubs(callInfo: SingleCallResolutionResult): Boolean {
-        return !skipCall(callInfo)
+        return !skipCall(callInfo) && !arePostponedVariablesInferred()
     }
 
     private fun skipCall(callInfo: SingleCallResolutionResult): Boolean {
@@ -226,6 +226,8 @@ class BuilderInferenceSession(
 
     fun getCurrentSubstitutor(): NewTypeSubstitutor =
         commonSystem.buildCurrentSubstitutor().cast<NewTypeSubstitutor>().takeIf { !it.isEmpty } ?: EmptySubstitutor
+
+    private fun arePostponedVariablesInferred() = commonSystem.notFixedTypeVariables.isEmpty()
 
     override fun initializeLambda(lambda: ResolvedLambdaAtom) {
         this.lambda = lambda
