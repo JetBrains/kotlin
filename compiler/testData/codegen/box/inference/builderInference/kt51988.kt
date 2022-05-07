@@ -1,5 +1,4 @@
 // WITH_STDLIB
-// IGNORE_BACKEND_FIR: JVM_IR
 
 import kotlin.experimental.ExperimentalTypeInference
 
