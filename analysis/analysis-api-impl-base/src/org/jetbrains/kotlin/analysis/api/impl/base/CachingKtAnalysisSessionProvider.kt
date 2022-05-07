@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.analysis.api.InvalidWayOfUsingAnalysisSession
 import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
 import org.jetbrains.kotlin.analysis.api.KtAnalysisSessionProvider
 import org.jetbrains.kotlin.analysis.api.symbols.KtSymbol
+import org.jetbrains.kotlin.analysis.project.structure.KtModule
 import org.jetbrains.kotlin.analysis.api.tokens.KtLifetimeToken
 import org.jetbrains.kotlin.analysis.api.tokens.KtLifetimeTokenFactory
 import org.jetbrains.kotlin.psi.KtElement
@@ -29,6 +30,8 @@ abstract class CachingKtAnalysisSessionProvider<State : Any>(private val project
     protected abstract fun getFirResolveSession(contextElement: KtElement): State
     protected abstract fun getFirResolveSession(contextSymbol: KtSymbol): State
 
+    protected abstract fun getFirResolveSession(contextModule: KtModule): State
+
     protected abstract fun createAnalysisSession(
         firResolveSession: State,
         token: KtLifetimeToken,
@@ -40,6 +43,14 @@ abstract class CachingKtAnalysisSessionProvider<State : Any>(private val project
         return cache.getAnalysisSession(firResolveSession to factory.identifier) {
             val token = factory.create(project)
             createAnalysisSession(firResolveSession, token)
+        }
+    }
+
+    final override fun getAnalysisSessionByModule(ktModule: KtModule, factory: KtLifetimeTokenFactory): KtAnalysisSession {
+        val firResolveSession = getFirResolveSession(ktModule)
+        return cache.getAnalysisSession(firResolveSession to factory.identifier) {
+            val validityToken = factory.create(project)
+            createAnalysisSession(firResolveSession, validityToken)
         }
     }
 

@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
 import org.jetbrains.kotlin.analysis.api.KtAnalysisSessionProvider
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.base.KtFe10Symbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtSymbol
+import org.jetbrains.kotlin.analysis.project.structure.KtModule
 import org.jetbrains.kotlin.analysis.api.tokens.KtLifetimeTokenFactory
 import org.jetbrains.kotlin.analysis.project.structure.getKtModule
 import org.jetbrains.kotlin.psi.KtElement
@@ -34,6 +35,10 @@ class KtFe10AnalysisSessionProvider : KtAnalysisSessionProvider() {
         }
 
         throw UnsupportedOperationException("getAnalysisSessionBySymbol() should not be used on KtFe10AnalysisSession")
+    }
+
+    override fun getAnalysisSessionByModule(ktModule: KtModule, factory: KtLifetimeTokenFactory): KtAnalysisSession {
+        throw UnsupportedOperationException("getAnalysisSessionByModule() should not be used on KtFe10AnalysisSession")
     }
 
     override fun clearCaches() {}

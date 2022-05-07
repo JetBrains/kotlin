@@ -15,8 +15,9 @@ import com.intellij.openapi.util.Computable
 import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.analysis.api.symbols.KtSymbol
 import org.jetbrains.kotlin.analysis.api.tokens.KtAlwaysAccessibleLifetimeTokenFactory
-import org.jetbrains.kotlin.analysis.api.tokens.ReadActionConfinementValidityTokenFactoryFactory
 import org.jetbrains.kotlin.analysis.api.tokens.KtLifetimeTokenFactory
+import org.jetbrains.kotlin.analysis.api.tokens.ReadActionConfinementValidityTokenFactoryFactory
+import org.jetbrains.kotlin.analysis.project.structure.KtModule
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtFile
 
@@ -41,6 +42,9 @@ public abstract class KtAnalysisSessionProvider : Disposable {
 
     @InvalidWayOfUsingAnalysisSession
     public abstract fun getAnalysisSessionBySymbol(contextSymbol: KtSymbol): KtAnalysisSession
+
+    @InvalidWayOfUsingAnalysisSession
+    public abstract fun getAnalysisSessionByModule(ktModule: KtModule, factory: KtLifetimeTokenFactory): KtAnalysisSession
 
     @InvalidWayOfUsingAnalysisSession
     public inline fun <R> analyzeWithSymbolAsContext(
@@ -172,4 +176,15 @@ public inline fun <R> analyseInModalWindow(
     }
     task.queue()
     return task.result
+}
+
+@OptIn(InvalidWayOfUsingAnalysisSession::class)
+public inline fun <R> analyzeWithKtModule(
+    ktModule: KtModule,
+    tokenFactory: KtLifetimeTokenFactory,
+    crossinline action: KtAnalysisSession.() -> R
+): R {
+    checkNotNull(ktModule.project)
+    val sessionProvider = KtAnalysisSessionProvider.getInstance(ktModule.project!!)
+    return sessionProvider.getAnalysisSessionByModule(ktModule, tokenFactory).action()
 }
