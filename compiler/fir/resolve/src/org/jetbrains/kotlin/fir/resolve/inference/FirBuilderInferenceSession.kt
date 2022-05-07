@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.fir.expressions.FirArgumentList
 import org.jetbrains.kotlin.fir.expressions.FirResolvable
 import org.jetbrains.kotlin.fir.expressions.FirStatement
 import org.jetbrains.kotlin.fir.resolve.calls.Candidate
+import org.jetbrains.kotlin.fir.resolve.calls.ImplicitExtensionReceiverValue
 import org.jetbrains.kotlin.fir.resolve.calls.ResolutionContext
 import org.jetbrains.kotlin.fir.resolve.substitution.ChainedSubstitutor
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
@@ -35,6 +36,7 @@ class FirBuilderInferenceSession(
     private val stubsForPostponedVariables: Map<ConeTypeVariable, ConeStubType>,
 ) : FirInferenceSessionForChainedResolve(resolutionContext) {
     private val commonCalls: MutableList<Pair<FirStatement, Candidate>> = mutableListOf()
+    private var lambdaImplicitReceivers: MutableList<ImplicitExtensionReceiverValue> = mutableListOf()
 
     override val currentConstraintStorage: ConstraintStorage
         get() = ConstraintStorage.Empty
@@ -91,6 +93,10 @@ class FirBuilderInferenceSession(
 
     private fun Candidate.hasPostponed(): Boolean {
         return postponedAtoms.any { !it.analyzed }
+    }
+
+    fun addLambdaImplicitReceiver(receiver: ImplicitExtensionReceiverValue) {
+        lambdaImplicitReceivers += receiver
     }
 
     override fun <T> addCompletedCall(call: T, candidate: Candidate) where T : FirResolvable, T : FirStatement {
@@ -233,6 +239,11 @@ class FirBuilderInferenceSession(
     private fun updateCalls(substitutor: ConeSubstitutor) {
         val stubTypeSubstitutor = FirStubTypeTransformer(substitutor)
         lambda.transformSingle(stubTypeSubstitutor, null)
+
+        for (receiver in lambdaImplicitReceivers) {
+            receiver.replaceType(substitutor.substituteOrSelf(receiver.type))
+        }
+
         // TODO: support diagnostics, see [CoroutineInferenceSession#updateCalls]
 
         val completionResultsWriter = components.callCompleter.createCompletionResultsWriter(substitutor)
