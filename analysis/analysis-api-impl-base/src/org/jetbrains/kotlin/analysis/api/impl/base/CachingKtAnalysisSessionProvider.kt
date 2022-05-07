@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.analysis.api.isValid
 import org.jetbrains.kotlin.analysis.api.symbols.KtSymbol
 import org.jetbrains.kotlin.analysis.api.tokens.ValidityToken
 import org.jetbrains.kotlin.analysis.api.tokens.ValidityTokenFactory
+import org.jetbrains.kotlin.analysis.project.structure.KtModule
 import org.jetbrains.kotlin.psi.KtElement
 import java.util.concurrent.ConcurrentHashMap
 import kotlin.reflect.KClass
@@ -30,6 +31,8 @@ abstract class CachingKtAnalysisSessionProvider<State : Any>(private val project
     protected abstract fun getFirResolveSession(contextElement: KtElement): State
     protected abstract fun getFirResolveSession(contextSymbol: KtSymbol): State
 
+    protected abstract fun getFirResolveSession(contextModule: KtModule): State
+
     protected abstract fun createAnalysisSession(
         firResolveSession: State,
         validityToken: ValidityToken,
@@ -38,6 +41,14 @@ abstract class CachingKtAnalysisSessionProvider<State : Any>(private val project
     @InvalidWayOfUsingAnalysisSession
     final override fun getAnalysisSession(contextElement: KtElement, factory: ValidityTokenFactory): KtAnalysisSession {
         val firResolveSession = getFirResolveSession(contextElement)
+        return cache.getAnalysisSession(firResolveSession to factory.identifier) {
+            val validityToken = factory.create(project)
+            createAnalysisSession(firResolveSession, validityToken)
+        }
+    }
+
+    final override fun getAnalysisSessionByModule(ktModule: KtModule, factory: ValidityTokenFactory): KtAnalysisSession {
+        val firResolveSession = getFirResolveSession(ktModule)
         return cache.getAnalysisSession(firResolveSession to factory.identifier) {
             val validityToken = factory.create(project)
             createAnalysisSession(firResolveSession, validityToken)
