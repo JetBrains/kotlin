@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.KtIoFileSourceFile
 import org.jetbrains.kotlin.KtSourceFile
 import org.jetbrains.kotlin.KtVirtualFileSourceFile
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
-import org.jetbrains.kotlin.backend.jvm.JvmGeneratorExtensionsImpl
 import org.jetbrains.kotlin.backend.jvm.serialization.JvmIdSignatureDescriptor
 import org.jetbrains.kotlin.build.DEFAULT_KOTLIN_SOURCE_FILES_EXTENSIONS
 import org.jetbrains.kotlin.build.report.BuildReporter
@@ -45,6 +44,7 @@ import org.jetbrains.kotlin.fir.backend.Fir2IrConverter
 import org.jetbrains.kotlin.fir.backend.jvm.Fir2IrJvmSpecialAnnotationSymbolProvider
 import org.jetbrains.kotlin.fir.backend.jvm.FirJvmKotlinMangler
 import org.jetbrains.kotlin.fir.backend.jvm.FirJvmVisibilityConverter
+import org.jetbrains.kotlin.fir.backend.jvm.JvmFir2IrExtensions
 import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.moduleData
 import org.jetbrains.kotlin.fir.resolve.providers.firProvider
@@ -55,6 +55,7 @@ import org.jetbrains.kotlin.incremental.components.InlineConstTracker
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.incremental.multiproject.ModulesApiHistory
 import org.jetbrains.kotlin.ir.backend.jvm.serialization.JvmDescriptorMangler
+import org.jetbrains.kotlin.ir.backend.jvm.serialization.JvmIrMangler
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
 import org.jetbrains.kotlin.ir.util.IrMessageLogger
 import org.jetbrains.kotlin.load.java.JavaClassesTracker
@@ -267,20 +268,19 @@ class IncrementalFirJvmCompilerRunner(
             performanceManager?.notifyGenerationStarted()
             performanceManager?.notifyIRTranslationStarted()
 
-            val extensions = JvmGeneratorExtensionsImpl(configuration)
+            val extensions = JvmFir2IrExtensions(configuration)
             val irGenerationExtensions =
                 (projectEnvironment as? VfsBasedProjectEnvironment)?.project?.let { IrGenerationExtension.getInstances(it) }.orEmpty()
-            val mangler = JvmDescriptorMangler(null)
             val signaturer = JvmIdSignatureDescriptor(JvmDescriptorMangler(null))
             val allCommonFirFiles = cycleResult.session.moduleData.dependsOnDependencies
                 .map { it.session }
                 .filter { it.kind == FirSession.Kind.Source }
                 .flatMap { (it.firProvider as FirProviderImpl).getAllFirFiles() }
 
-            val (irModuleFragment, symbolTable, components) = Fir2IrConverter.createModuleFragment(
+            val (irModuleFragment, components) = Fir2IrConverter.createModuleFragment(
                 cycleResult.session, cycleResult.scopeSession, cycleResult.fir + allCommonFirFiles,
-                cycleResult.session.languageVersionSettings, mangler, signaturer,
-                extensions, FirJvmKotlinMangler(cycleResult.session), IrFactoryImpl,
+                cycleResult.session.languageVersionSettings, signaturer,
+                extensions, FirJvmKotlinMangler(cycleResult.session), JvmIrMangler, IrFactoryImpl,
                 FirJvmVisibilityConverter,
                 Fir2IrJvmSpecialAnnotationSymbolProvider(),
                 irGenerationExtensions
@@ -293,7 +293,7 @@ class IncrementalFirJvmCompilerRunner(
                 configuration,
                 extensions,
                 irModuleFragment,
-                symbolTable,
+                components.symbolTable,
                 components,
                 cycleResult.session
             )

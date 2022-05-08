@@ -21,7 +21,6 @@ import org.jetbrains.kotlin.KtSourceFile
 import org.jetbrains.kotlin.KtVirtualFileSourceFile
 import org.jetbrains.kotlin.analyzer.common.CommonPlatformAnalyzerServices
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
-import org.jetbrains.kotlin.backend.jvm.JvmGeneratorExtensionsImpl
 import org.jetbrains.kotlin.backend.jvm.JvmIrCodegenFactory
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.common.CommonCompilerPerformanceManager
@@ -48,6 +47,7 @@ import org.jetbrains.kotlin.fir.DependencyListForCliModule
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.backend.jvm.FirJvmBackendClassResolver
 import org.jetbrains.kotlin.fir.backend.jvm.FirJvmBackendExtension
+import org.jetbrains.kotlin.fir.backend.jvm.JvmFir2IrExtensions
 import org.jetbrains.kotlin.fir.checkers.registerExtendedCommonCheckers
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
 import org.jetbrains.kotlin.fir.java.FirProjectSessionProvider
@@ -185,12 +185,12 @@ fun convertAnalyzedFirToIr(
     analysisResults: ModuleCompilerAnalyzedOutput,
     environment: ModuleCompilerEnvironment
 ): ModuleCompilerIrBackendInput {
-    val extensions = JvmGeneratorExtensionsImpl(input.configuration)
+    val extensions = JvmFir2IrExtensions(input.configuration)
 
     // fir2ir
     val irGenerationExtensions =
         (environment.projectEnvironment as? VfsBasedProjectEnvironment)?.project?.let { IrGenerationExtension.getInstances(it) }
-    val (irModuleFragment, symbolTable, components) =
+    val (irModuleFragment, components) =
         analysisResults.session.convertToIr(
             analysisResults.scopeSession, analysisResults.fir, extensions, irGenerationExtensions ?: emptyList()
         )
@@ -200,7 +200,7 @@ fun convertAnalyzedFirToIr(
         input.configuration,
         extensions,
         irModuleFragment,
-        symbolTable,
+        components.symbolTable,
         components,
         analysisResults.session
     )
@@ -215,7 +215,6 @@ fun generateCodeFromIr(
     val codegenFactory = JvmIrCodegenFactory(
         input.configuration,
         input.configuration.get(CLIConfigurationKeys.PHASE_CONFIG),
-        jvmGeneratorExtensions = input.extensions
     )
     val dummyBindingContext = NoScopeRecordCliBindingTrace().bindingContext
 
@@ -242,7 +241,7 @@ fun generateCodeFromIr(
 
     generationState.beforeCompile()
     codegenFactory.generateModuleInFrontendIRMode(
-        generationState, input.irModuleFragment, input.symbolTable, input.extensions,
+        generationState, input.irModuleFragment, input.symbolTable, input.components.irProviders, input.extensions,
         FirJvmBackendExtension(input.firSession, input.components)
     ) {
         performanceManager?.notifyIRLoweringFinished()
