@@ -7,6 +7,8 @@
 
 #include "GCScheduler.hpp"
 
+#include <unordered_set>
+
 #include "Clock.hpp"
 
 #ifndef KONAN_NO_THREADS
