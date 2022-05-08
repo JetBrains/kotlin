@@ -387,9 +387,10 @@ internal class ObjCExportTranslatorImpl(
 
                     descriptor.enumEntries.forEach {
                         val entryName = namer.getEnumEntrySelector(it)
+                        val swiftName = namer.getEnumEntrySwiftName(it)
                         add {
                             ObjCProperty(entryName, it, type, listOf("class", "readonly"),
-                                    declarationAttributes = listOf(swiftNameAttribute(entryName)))
+                                    declarationAttributes = listOf(swiftNameAttribute(swiftName)))
                         }
                     }
 
@@ -589,7 +590,8 @@ internal class ObjCExportTranslatorImpl(
 
         val getterBridge = mapper.bridgeMethod(baseProperty.getter!!)
         val type = mapReturnType(getterBridge.returnBridge, property.getter!!, objCExportScope)
-        val name = namer.getPropertyName(baseProperty)
+        val propertyName = namer.getPropertyName(baseProperty)
+        val name = propertyName.objCName
 
         val attributes = mutableListOf<String>()
 
@@ -611,7 +613,7 @@ internal class ObjCExportTranslatorImpl(
         val getterSelector = getSelector(baseProperty.getter!!)
         val getterName: String? = if (getterSelector != name) getterSelector else null
 
-        val declarationAttributes = mutableListOf(swiftNameAttribute(name))
+        val declarationAttributes = mutableListOf(swiftNameAttribute(propertyName.swiftName))
         declarationAttributes.addIfNotNull(mapper.getDeprecation(property)?.toDeprecationAttribute())
 
         val visibilityComments = visibilityComments(property.visibility, "property")
@@ -804,7 +806,7 @@ internal class ObjCExportTranslatorImpl(
         }
     }
 
-    private val mustBeDocumentedAnnotationsStopList = setOf(StandardNames.FqNames.deprecated)
+    private val mustBeDocumentedAnnotationsStopList = setOf(StandardNames.FqNames.deprecated, KonanFqNames.objCName)
     private fun mustBeDocumentedAnnotations(annotations: Annotations): List<String> {
         return annotations.mapNotNull { it ->
             it.annotationClass?.let { annotationClass ->
@@ -1404,8 +1406,11 @@ internal fun ClassDescriptor.needCompanionObjectProperty(namer: ObjCExportNamer,
     val companionObject = companionObjectDescriptor
     if (companionObject == null || !mapper.shouldBeExposed(companionObject)) return false
 
-    if (kind == ClassKind.ENUM_CLASS && enumEntries.any { namer.getEnumEntrySelector(it) == ObjCExportNamer.companionObjectPropertyName })
-        return false // 'companion' property would clash with enum entry, don't generate it.
+    if (kind == ClassKind.ENUM_CLASS && enumEntries.any {
+                namer.getEnumEntrySelector(it) == ObjCExportNamer.companionObjectPropertyName ||
+                        namer.getEnumEntrySwiftName(it) == ObjCExportNamer.companionObjectPropertyName
+            }
+    ) return false // 'companion' property would clash with enum entry, don't generate it.
 
     return true
 }

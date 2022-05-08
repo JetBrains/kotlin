@@ -31,6 +31,12 @@ public class DiagnosticsNativeTestGenerated extends AbstractDiagnosticsNativeTes
     }
 
     @Test
+    @TestMetadata("objCName.kt")
+    public void testObjCName() throws Exception {
+        runTest("compiler/testData/diagnostics/nativeTests/objCName.kt");
+    }
+
+    @Test
     @TestMetadata("sharedImmutable.kt")
     public void testSharedImmutable() throws Exception {
         runTest("compiler/testData/diagnostics/nativeTests/sharedImmutable.kt");

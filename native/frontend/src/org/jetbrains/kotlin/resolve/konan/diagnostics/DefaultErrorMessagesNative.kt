@@ -38,7 +38,22 @@ private val DIAGNOSTIC_FACTORY_TO_RENDERER by lazy {
             "@ThreadLocal is applicable only to property with backing field, to property with delegation or to objects"
         )
         put(ErrorsNative.INAPPLICABLE_THREAD_LOCAL_TOP_LEVEL, "@ThreadLocal is applicable only to top level declarations")
-        put(ErrorsNative.INVALID_CHARACTERS_NATIVE, "Name {0}", CommonRenderers.STRING);
+        put(ErrorsNative.INVALID_CHARACTERS_NATIVE, "Name {0}", CommonRenderers.STRING)
+        put(ErrorsNative.INAPPLICABLE_OBJC_NAME, "@ObjCName is not applicable on overrides")
+        put(ErrorsNative.INVALID_OBJC_NAME, "@ObjCName should have a name and/or swiftName")
+        put(ErrorsNative.INVALID_OBJC_NAME_CHARS, "@ObjCName contains illegal characters: {0}", CommonRenderers.STRING)
+        put(
+            ErrorsNative.INVALID_OBJC_NAME_FIRST_CHAR, "@ObjCName contains illegal first characters: {0}",
+            CommonRenderers.STRING
+        )
+        put(
+            ErrorsNative.INCOMPATIBLE_OBJC_NAME_OVERRIDE, "Member \"{0}\" inherits inconsistent @ObjCName from {1}",
+            Renderers.NAME,
+            CommonRenderers.commaSeparated(Renderers.NAME)
+        )
+        put(ErrorsNative.INAPPLICABLE_EXACT_OBJC_NAME, "Exact @ObjCName is only applicable to classes, objects and interfaces")
+        put(ErrorsNative.MISSING_EXACT_OBJC_NAME, "Exact @ObjCName is required to have an ObjC name")
+        put(ErrorsNative.NON_LITERAL_OBJC_NAME_ARG, "@ObjCName accepts only literal string and boolean values")
     }
 }
 
