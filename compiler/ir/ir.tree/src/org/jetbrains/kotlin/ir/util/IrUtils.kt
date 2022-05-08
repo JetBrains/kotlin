@@ -1256,3 +1256,6 @@ private fun computeAllOverridden(function: IrSimpleFunction, result: MutableSet<
 
 fun IrBuiltIns.getKFunctionType(returnType: IrType, parameterTypes: List<IrType>) =
     kFunctionN(parameterTypes.size).typeWith(parameterTypes + returnType)
+
+fun IdSignature?.isComposite(): Boolean =
+    this is IdSignature.CompositeSignature

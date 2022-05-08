@@ -32,7 +32,7 @@ import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.ir.expressions.IrExpressionBody
 import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
-import org.jetbrains.kotlin.ir.util.IdSignature
+import org.jetbrains.kotlin.ir.util.isComposite
 
 class Fir2IrLazyProperty(
     components: Fir2IrComponents,
@@ -165,7 +165,7 @@ class Fir2IrLazyProperty(
             fir,
             isSetter = false,
             containingClass?.symbol?.toLookupTag(),
-            forceTopLevelPrivate = symbol.signature is IdSignature.CompositeSignature
+            forceTopLevelPrivate = symbol.signature.isComposite()
         )!!
         symbolTable.declareSimpleFunction(signature, symbolFactory = { Fir2IrSimpleFunctionSymbol(signature) }) { symbol ->
             Fir2IrLazyPropertyAccessor(
@@ -199,7 +199,7 @@ class Fir2IrLazyProperty(
                 fir,
                 isSetter = true,
                 containingClass?.symbol?.toLookupTag(),
-                forceTopLevelPrivate = symbol.signature is IdSignature.CompositeSignature
+                forceTopLevelPrivate = symbol.signature.isComposite()
             )!!
             symbolTable.declareSimpleFunction(signature, symbolFactory = { Fir2IrSimpleFunctionSymbol(signature) }) { symbol ->
                 Fir2IrLazyPropertyAccessor(
