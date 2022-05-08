@@ -623,3 +623,5 @@ val IrDeclarationParent.isFacadeClass: Boolean
             (origin == IrDeclarationOrigin.JVM_MULTIFILE_CLASS ||
                     origin == IrDeclarationOrigin.FILE_CLASS ||
                     origin == IrDeclarationOrigin.SYNTHETIC_FILE_CLASS)
+
+fun IdSignature?.isComposite() = this is IdSignature.CompositeSignature
