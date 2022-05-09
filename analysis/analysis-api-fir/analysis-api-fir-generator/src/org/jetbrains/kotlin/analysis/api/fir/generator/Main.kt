@@ -8,9 +8,12 @@ package org.jetbrains.kotlin.analysis.api.fir.generator
 import org.jetbrains.kotlin.fir.checkers.generator.diagnostics.DIAGNOSTICS_LIST
 import org.jetbrains.kotlin.fir.checkers.generator.diagnostics.JVM_DIAGNOSTICS_LIST
 import java.nio.file.Paths
+import org.jetbrains.kotlin.analysis.api.fir.generator.DiagnosticClassGenerator.generate
+import org.jetbrains.kotlin.fir.builder.SYNTAX_DIAGNOSTIC_LIST
 
 fun main() {
     val rootPath = Paths.get("analysis/analysis-api-fir/src").toAbsolutePath()
     val packageName = "org.jetbrains.kotlin.analysis.api.fir.diagnostics"
-    DiagnosticClassGenerator.generate(rootPath, DIAGNOSTICS_LIST + JVM_DIAGNOSTICS_LIST, packageName)
+    val diagnostics = DIAGNOSTICS_LIST + JVM_DIAGNOSTICS_LIST + SYNTAX_DIAGNOSTIC_LIST
+    generate(rootPath, diagnostics, packageName)
 }

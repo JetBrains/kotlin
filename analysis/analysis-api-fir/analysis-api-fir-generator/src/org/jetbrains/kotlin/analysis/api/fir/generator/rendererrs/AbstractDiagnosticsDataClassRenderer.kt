@@ -21,7 +21,7 @@ import java.io.File
 import kotlin.reflect.KType
 
 abstract class AbstractDiagnosticsDataClassRenderer : DiagnosticListRenderer() {
-    override fun render(file: File, diagnosticList: DiagnosticList, packageName: String) {
+    override fun render(file: File, diagnosticList: DiagnosticList, packageName: String, starImportsToAdd: Set<String>) {
         val hlDiagnosticsList = HLDiagnosticConverter.convert(diagnosticList)
         file.writeToFileUsingSmartPrinterIfFileContentChanged { render(hlDiagnosticsList, packageName) }
     }
