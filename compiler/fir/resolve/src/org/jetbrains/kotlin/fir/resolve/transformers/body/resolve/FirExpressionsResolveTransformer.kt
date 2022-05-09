@@ -875,19 +875,20 @@ open class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransform
 
         transformedLHS?.let { callableReferenceAccess.replaceExplicitReceiver(transformedLHS) }
 
-        if (data !is ResolutionMode.ContextDependent /* ContextDependentDelegate is Ok here */) {
-            val resolvedReference =
+        return when (data) {
+            is ResolutionMode.ContextDependent -> {
+                context.storeCallableReferenceContext(callableReferenceAccess)
+                callableReferenceAccess
+            }
+
+            else -> {
                 components.syntheticCallGenerator.resolveCallableReferenceWithSyntheticOuterCall(
                     callableReferenceAccess, data.expectedType, resolutionContext,
                 ) ?: callableReferenceAccess
-            dataFlowAnalyzer.exitCallableReference(resolvedReference)
-            return resolvedReference
+            }
+        }.also {
+            dataFlowAnalyzer.exitCallableReference(it)
         }
-
-        context.storeCallableReferenceContext(callableReferenceAccess)
-
-        dataFlowAnalyzer.exitCallableReference(callableReferenceAccess)
-        return callableReferenceAccess
     }
 
     override fun transformGetClassCall(getClassCall: FirGetClassCall, data: ResolutionMode): FirStatement {
