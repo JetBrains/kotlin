@@ -23,7 +23,6 @@ import org.gradle.api.tasks.*
 import org.gradle.work.ChangeType
 import org.gradle.work.Incremental
 import org.gradle.work.InputChanges
-import org.gradle.work.NormalizeLineEndings
 import org.jetbrains.kotlin.cli.common.arguments.DevModeOverwritingStrategies
 import org.jetbrains.kotlin.cli.common.arguments.K2JSDceArguments
 import org.jetbrains.kotlin.cli.js.dce.K2JSDce
@@ -79,13 +78,11 @@ abstract class KotlinJsDce @Inject constructor(
     // Source could be empty, while classpath not
     @get:Incremental
     @get:InputFiles
-    @get:NormalizeLineEndings
     @get:IgnoreEmptyDirectories
     @get:PathSensitive(PathSensitivity.RELATIVE)
     override val sources: FileCollection = super.sources
 
     @get:Incremental
-    @get:NormalizeLineEndings
     @get:InputFiles
     abstract override val libraries: ConfigurableFileCollection
 

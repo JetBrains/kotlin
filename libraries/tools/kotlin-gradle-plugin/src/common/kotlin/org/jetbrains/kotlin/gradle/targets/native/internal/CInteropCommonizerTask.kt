@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.gradle.targets.native.internal
 
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.*
-import org.gradle.work.NormalizeLineEndings
 import org.jetbrains.kotlin.commonizer.CommonizerDependency
 import org.jetbrains.kotlin.commonizer.TargetedCommonizerDependency
 import org.jetbrains.kotlin.commonizer.allLeaves
@@ -32,7 +31,6 @@ internal open class CInteropCommonizerTask : AbstractCInteropCommonizerTask() {
         @get:Input val konanTarget: KonanTarget,
         @get:Internal val sourceSets: Provider<Set<KotlinSourceSet>>,
 
-        @get:NormalizeLineEndings
         @get:Classpath
         val libraryFile: Provider<File>
     ) {
@@ -53,7 +51,6 @@ internal open class CInteropCommonizerTask : AbstractCInteropCommonizerTask() {
         get() = getAllInteropsGroups().map { outputDirectory(it) }.toSet()
 
     @Suppress("unused") // Used for UP-TO-DATE check
-    @get:NormalizeLineEndings
     @get:Classpath
     val commonizedNativeDistributionDependencies: Set<File>
         get() = getAllInteropsGroups().flatMap { group -> group.targets }
