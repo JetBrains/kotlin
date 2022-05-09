@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.codegen.coroutines.INVOKE_SUSPEND_METHOD_NAME
 import org.jetbrains.kotlin.codegen.coroutines.SUSPEND_IMPL_NAME_SUFFIX
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrExpression
+import org.jetbrains.kotlin.ir.expressions.IrFunctionReference
 import org.jetbrains.kotlin.ir.expressions.IrGetField
 import org.jetbrains.kotlin.ir.expressions.IrGetValue
 import org.jetbrains.kotlin.ir.util.functions
@@ -36,6 +37,10 @@ fun IrFunction.isInvokeSuspendOfContinuation(): Boolean =
 private fun IrFunction.isInvokeOfSuspendCallableReference(): Boolean =
     isSuspend && name.asString().let { name -> name == "invoke" || name.startsWith("invoke-") }
             && parentAsClass.origin == JvmLoweredDeclarationOrigin.FUNCTION_REFERENCE_IMPL
+            // References to inline functions don't count since they're not really *references* - the contents
+            // of the inline function are copy-pasted into the `invoke` method, and may require a continuation.
+            // (TODO: maybe the reference itself should be the continuation, just like lambdas?)
+            && (parentAsClass.attributeOwnerId as? IrFunctionReference)?.symbol?.owner?.isInline != true
 
 private fun IrFunction.isBridgeToSuspendImplMethod(): Boolean =
     isSuspend && this is IrSimpleFunction && (parent as? IrClass)?.functions?.any {

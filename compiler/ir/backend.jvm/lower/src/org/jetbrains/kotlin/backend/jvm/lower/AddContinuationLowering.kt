@@ -313,10 +313,12 @@ private class AddContinuationLowering(context: JvmBackendContext) : SuspendLower
                 val result = mutableListOf(view)
                 if (function.body == null || !function.hasContinuation()) return result
 
-                // This is a suspend function inside of SAM adapter.
-                // The attribute of function reference is used for the SAM adapter.
-                // So, we hack new attributes for continuation class.
-                if (function.parentAsClass.origin == JvmLoweredDeclarationOrigin.LAMBDA_IMPL) {
+                // Sometimes, suspend methods of SAM adapters or function references require a continuation class.
+                // However, the attribute owner is used to store the name of the SAM adapter or the function reference itself.
+                // So here we add a local class name using the suspend method itself as the key.
+                if (function.parentAsClass.origin == JvmLoweredDeclarationOrigin.LAMBDA_IMPL ||
+                    function.parentAsClass.origin == JvmLoweredDeclarationOrigin.FUNCTION_REFERENCE_IMPL
+                ) {
                     context.putLocalClassType(
                         function.attributeOwnerId,
                         Type.getObjectType("${context.getLocalClassType(function.parentAsClass)!!.internalName}$${function.name}$1")

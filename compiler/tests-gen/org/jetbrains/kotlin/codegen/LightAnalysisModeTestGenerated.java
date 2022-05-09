@@ -7561,6 +7561,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
             runTest("compiler/testData/codegen/box/coroutines/suspendFunctionAsSupertype.kt");
         }
 
+        @TestMetadata("suspendInlineReference.kt")
+        public void ignoreSuspendInlineReference() throws Exception {
+            runTest("compiler/testData/codegen/box/coroutines/suspendInlineReference.kt");
+        }
+
         private void runTest(String testDataFilePath) throws Exception {
             KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM, testDataFilePath);
         }
