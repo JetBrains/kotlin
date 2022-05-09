@@ -7428,6 +7428,12 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
         }
 
         @Test
+        @TestMetadata("suspendInlineReference.kt")
+        public void testSuspendInlineReference() throws Exception {
+            runTest("compiler/testData/codegen/box/coroutines/suspendInlineReference.kt");
+        }
+
+        @Test
         @TestMetadata("suspendLambdaInInterface.kt")
         public void testSuspendLambdaInInterface() throws Exception {
             runTest("compiler/testData/codegen/box/coroutines/suspendLambdaInInterface.kt");

@@ -10480,6 +10480,12 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
         }
 
         @Test
+        @TestMetadata("suspendInlineReference.kt")
+        public void testSuspendInlineReference() throws Exception {
+            runTest("compiler/testData/codegen/box/coroutines/suspendInlineReference.kt");
+        }
+
+        @Test
         @TestMetadata("suspendJavaOverrides.kt")
         public void testSuspendJavaOverrides() throws Exception {
             runTest("compiler/testData/codegen/box/coroutines/suspendJavaOverrides.kt");

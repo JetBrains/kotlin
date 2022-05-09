@@ -6559,6 +6559,11 @@ public class IrCodegenBoxWasmTestGenerated extends AbstractIrCodegenBoxWasmTest 
             runTest("compiler/testData/codegen/box/coroutines/suspendInTheMiddleOfObjectConstructionWithJumpOut.kt");
         }
 
+        @TestMetadata("suspendInlineReference.kt")
+        public void testSuspendInlineReference() throws Exception {
+            runTest("compiler/testData/codegen/box/coroutines/suspendInlineReference.kt");
+        }
+
         @TestMetadata("suspendLambdaInInterface.kt")
         public void testSuspendLambdaInInterface() throws Exception {
             runTest("compiler/testData/codegen/box/coroutines/suspendLambdaInInterface.kt");
