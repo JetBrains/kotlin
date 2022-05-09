@@ -66,8 +66,6 @@ internal class KtFirCallResolver(
     override val analysisSession: KtFirAnalysisSession,
     override val token: ValidityToken,
 ) : AbstractKtCallResolver(), KtFirAnalysisSessionComponent {
-    private val diagnosticCache = mutableListOf<KtDiagnostic>()
-
     private val equalsSymbolInAny: FirNamedFunctionSymbol by lazy(LazyThreadSafetyMode.PUBLICATION) {
         val session = analysisSession.useSiteSession
         val scope = session.declaredMemberScope(session.builtinTypes.anyType.toRegularClassSymbol(session)!!)
@@ -150,7 +148,7 @@ internal class KtFirCallResolver(
                     }
                     is FirErrorNamedReference -> {
                         val diagnostic = calleeReference.diagnostic
-                        val ktDiagnostic = (source?.let { diagnostic.asKtDiagnostic(it, psi.toKtPsiSourceElement(), diagnosticCache) }
+                        val ktDiagnostic = (source?.let { diagnostic.asKtDiagnostic(it, psi.toKtPsiSourceElement()) }
                             ?: KtNonBoundToPsiErrorDiagnostic(factoryName = null, diagnostic.reason, token))
 
                         if (diagnostic is ConeHiddenCandidateError)
@@ -171,8 +169,7 @@ internal class KtFirCallResolver(
                         val delegatedConstructorCall = this as? FirDelegatedConstructorCall ?: return null
                         val errorTypeRef = delegatedConstructorCall.constructedTypeRef as? FirErrorTypeRef ?: return null
                         val psiSource = psi.toKtPsiSourceElement()
-                        val ktDiagnostic =
-                            errorTypeRef.diagnostic.asKtDiagnostic(source ?: psiSource, psiSource, diagnosticCache) ?: return null
+                        val ktDiagnostic = errorTypeRef.diagnostic.asKtDiagnostic(source ?: psiSource, psiSource) ?: return null
                         KtErrorCallInfo(emptyList(), ktDiagnostic, token)
                     }
                     else -> null
@@ -812,7 +809,7 @@ internal class KtFirCallResolver(
         val diagnostic = createConeDiagnosticForCandidateWithError(candidate.currentApplicability, candidate)
         if (diagnostic is ConeHiddenCandidateError) return null
         val ktDiagnostic =
-            functionCall.source?.let { diagnostic.asKtDiagnostic(it, element.toKtPsiSourceElement(), diagnosticCache) }
+            functionCall.source?.let { diagnostic.asKtDiagnostic(it, element.toKtPsiSourceElement()) }
                 ?: KtNonBoundToPsiErrorDiagnostic(factoryName = null, diagnostic.reason, token)
         return KtInapplicableCallCandidateInfo(call, isInBestCandidates, ktDiagnostic)
     }
