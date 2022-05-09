@@ -806,7 +806,7 @@ class BodyResolveContext(
 
     @OptIn(PrivateForInline::class)
     fun storeCallableReferenceContext(callableReferenceAccess: FirCallableReferenceAccess) {
-        specialTowerDataContexts.storeCallableReferenceContext(callableReferenceAccess, towerDataContext)
+        specialTowerDataContexts.storeCallableReferenceContext(callableReferenceAccess, towerDataContext.createSnapshot())
     }
 
     @OptIn(PrivateForInline::class)

@@ -3742,6 +3742,12 @@ public class FirDiagnosticsWithLightTreeTestGenerated extends AbstractFirDiagnos
             }
 
             @Test
+            @TestMetadata("smartcastOnImplicitReceiverOfCallableReference.kt")
+            public void testSmartcastOnImplicitReceiverOfCallableReference() throws Exception {
+                runTest("compiler/fir/analysis-tests/testData/resolve/smartcasts/smartcastOnImplicitReceiverOfCallableReference.kt");
+            }
+
+            @Test
             @TestMetadata("smartcastToNothing.kt")
             public void testSmartcastToNothing() throws Exception {
                 runTest("compiler/fir/analysis-tests/testData/resolve/smartcasts/smartcastToNothing.kt");

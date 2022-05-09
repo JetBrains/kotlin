@@ -101,8 +101,8 @@ sealed class ImplicitReceiverValue<S : FirBasedSymbol<*>>(
      * Should be called only in ImplicitReceiverStack
      */
     fun replaceType(type: ConeKotlinType) {
-        if (!mutable) throw IllegalStateException("Cannot mutate an immutable ImplicitReceiverValue")
         if (type == this.type) return
+        if (!mutable) throw IllegalStateException("Cannot mutate an immutable ImplicitReceiverValue")
         this.type = type
         receiverExpression = if (type == originalReceiverExpression.typeRef.coneType) {
             originalReceiverExpression
