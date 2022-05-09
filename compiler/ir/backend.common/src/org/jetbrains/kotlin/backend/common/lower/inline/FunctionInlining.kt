@@ -93,8 +93,6 @@ class FunctionInlining(
 
     private var containerScope: ScopeWithIr? = null
 
-    private var deepInline: Boolean = false
-
     override fun lower(irBody: IrBody, container: IrDeclaration) {
         // TODO container: IrSymbolDeclaration
         containerScope = createScope(container as IrSymbolOwner)
@@ -171,13 +169,7 @@ class FunctionInlining(
 
                 parent = callee.parent
                 if (performRecursiveInline) {
-                    val old = deepInline
-                    try {
-                        deepInline = true
-                        body?.transformChildrenVoid()
-                    } finally {
-                        deepInline = old
-                    }
+                    body?.transformChildrenVoid()
                     valueParameters.forEachIndexed { index, param ->
                         if (callSite.getValueArgument(index) == null) {
                             // Default values can recursively reference [callee] - transform only needed.
