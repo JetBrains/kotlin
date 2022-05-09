@@ -105,7 +105,7 @@ fun compileModulesUsingFrontendIrAndLightTree(
 
     for (module in chunk) {
         val moduleConfiguration = compilerConfiguration.copy().applyModuleProperties(module, buildFile).apply {
-            addAll(JVMConfigurationKeys.FRIEND_PATHS, module.getFriendPaths())
+            put(JVMConfigurationKeys.FRIEND_PATHS, module.getFriendPaths())
         }
         val platformSources = linkedSetOf<KtSourceFile>()
         val commonSources = linkedSetOf<KtSourceFile>()
