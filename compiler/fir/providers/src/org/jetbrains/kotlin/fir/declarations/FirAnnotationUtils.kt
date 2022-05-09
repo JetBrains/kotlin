@@ -102,6 +102,10 @@ fun FirDeclaration.hasAnnotation(classId: ClassId): Boolean {
     return annotations.any { it.toAnnotationClassId() == classId }
 }
 
+fun FirBasedSymbol<*>.hasAnnotation(classId: ClassId): Boolean {
+    return resolvedAnnotationsWithClassIds.any { it.toAnnotationClassId() == classId }
+}
+
 fun <D> FirBasedSymbol<out D>.getAnnotationByClassId(classId: ClassId): FirAnnotation? where D : FirAnnotationContainer, D : FirDeclaration {
     return fir.getAnnotationByClassId(classId)
 }

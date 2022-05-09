@@ -45,6 +45,12 @@ abstract class FirBasedSymbol<E : FirDeclaration> {
             return fir.annotations
         }
 
+    val resolvedAnnotationsWithClassIds: List<FirAnnotation>
+        get() {
+            ensureResolved(FirResolvePhase.TYPES)
+            return fir.annotations
+        }
+
     val resolvedAnnotationClassIds: List<ClassId>
         get() {
             ensureResolved(FirResolvePhase.TYPES)
