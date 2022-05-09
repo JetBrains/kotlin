@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.impl.FirImplicitNullableAnyTypeRef
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.psi.KtCallableDeclaration
+import org.jetbrains.kotlin.psi.KtConstructor
 import org.jetbrains.kotlin.psi.KtFunction
 import org.jetbrains.kotlin.psi.KtTypeReference
 import org.jetbrains.kotlin.types.Variance
@@ -31,20 +32,26 @@ import org.jetbrains.kotlin.utils.addIfNotNull
 // TODO replace with structural type comparison?
 object KtDeclarationAndFirDeclarationEqualityChecker {
     fun representsTheSameDeclaration(psi: KtCallableDeclaration, fir: FirCallableDeclaration): Boolean {
-        if ((fir.receiverTypeRef != null) != (psi.receiverTypeReference != null)) return false
-        if (fir.receiverTypeRef != null
-            && !isTheSameTypes(
-                psi.receiverTypeReference!!,
-                fir.receiverTypeRef!!,
-                isVararg = false
-            )
-        ) {
-            return false
-        }
+        if (!receiverTypeMatch(psi, fir)) return false
+        if (!returnTypesMatch(psi, fir)) return false
+
         if (fir is FirFunction) {
             if (!typeParametersMatch(fir, psi) || !valueParametersMatch(fir, psi)) return false
         }
         return true
+    }
+
+    private fun receiverTypeMatch(psi: KtCallableDeclaration, fir: FirCallableDeclaration): Boolean {
+        if ((fir.receiverTypeRef != null) != (psi.receiverTypeReference != null)) return false
+        if (fir.receiverTypeRef != null && !isTheSameTypes(psi.receiverTypeReference!!, fir.receiverTypeRef!!, isVararg = false)) {
+            return false
+        }
+        return true
+    }
+
+    private fun returnTypesMatch(psi: KtCallableDeclaration, fir: FirCallableDeclaration): Boolean {
+        if (psi is KtConstructor<*>) return true
+        return isTheSameTypes(psi.typeReference!!, fir.returnTypeRef, isVararg = false)
     }
 
     private fun typeParametersMatch(firFunction: FirCallableDeclaration, psiFunction: KtCallableDeclaration): Boolean {
