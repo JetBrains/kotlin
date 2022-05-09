@@ -11,7 +11,6 @@ import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.*
 import org.gradle.work.Incremental
 import org.gradle.work.InputChanges
-import org.gradle.work.NormalizeLineEndings
 import org.jetbrains.kotlin.build.report.metrics.BuildMetricsReporter
 import org.jetbrains.kotlin.build.report.metrics.BuildMetricsReporterImpl
 import org.jetbrains.kotlin.gradle.internal.kapt.incremental.ClasspathSnapshot
@@ -42,13 +41,11 @@ abstract class KaptTask @Inject constructor(
         outputs.cacheIf(reason) { useBuildCache }
     }
 
-    @get:NormalizeLineEndings
     @get:Classpath
     abstract val compilerClasspath: ConfigurableFileCollection
 
     @get:PathSensitive(PathSensitivity.NONE)
     @get:Incremental
-    @get:NormalizeLineEndings
     @get:IgnoreEmptyDirectories
     @get:Optional
     @get:InputFiles
@@ -92,7 +89,6 @@ abstract class KaptTask @Inject constructor(
         level = DeprecationLevel.ERROR
     )
     @get:Incremental
-    @get:NormalizeLineEndings
     @get:Classpath
     internal val internalNonAbiClasspath: FileCollection = project.objects.fileCollection().from(
         { if (includeCompileClasspath.get()) classpath else null }

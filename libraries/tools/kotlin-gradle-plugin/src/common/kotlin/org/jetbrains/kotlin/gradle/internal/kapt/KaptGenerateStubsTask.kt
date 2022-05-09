@@ -22,7 +22,6 @@ import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.*
 import org.gradle.work.Incremental
-import org.gradle.work.NormalizeLineEndings
 import org.gradle.workers.WorkerExecutor
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.kotlin.gradle.dsl.KotlinJvmOptionsImpl
@@ -62,7 +61,6 @@ abstract class KaptGenerateStubsTask @Inject constructor(
      * Changes in this additional sources will trigger stubs regeneration,
      * but the sources themselves will not be used to find kapt annotations and generate stubs.
      */
-    @get:NormalizeLineEndings
     @get:InputFiles
     @get:IgnoreEmptyDirectories
     @get:PathSensitive(PathSensitivity.RELATIVE)
@@ -78,7 +76,6 @@ abstract class KaptGenerateStubsTask @Inject constructor(
     // Task need to run even if there is no Kotlin sources, but only Java
     @get:Incremental
     @get:InputFiles
-    @get:NormalizeLineEndings
     @get:IgnoreEmptyDirectories
     @get:PathSensitive(PathSensitivity.RELATIVE)
     override val sources: FileCollection = super.sources
