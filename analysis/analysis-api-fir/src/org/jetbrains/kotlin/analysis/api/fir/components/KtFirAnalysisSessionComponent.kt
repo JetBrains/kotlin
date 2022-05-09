@@ -52,10 +52,8 @@ internal interface KtFirAnalysisSessionComponent {
     fun ConeDiagnostic.asKtDiagnostic(
         source: KtSourceElement,
         qualifiedAccessSource: KtSourceElement?,
-        diagnosticCache: MutableList<KtDiagnostic>
     ): KtDiagnosticWithPsi<*>? {
         val firDiagnostic = toFirDiagnostics(analysisSession.useSiteSession, source, qualifiedAccessSource).firstOrNull() ?: return null
-        diagnosticCache += firDiagnostic
         check(firDiagnostic is KtPsiDiagnostic)
         return firDiagnostic.asKtDiagnostic()
     }
