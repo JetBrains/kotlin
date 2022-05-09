@@ -60,9 +60,6 @@ internal fun irBuilder(
                 endOffset
         ) {}
 
-//TODO: delete file on next kotlin dependency update
-internal fun IrExpression.isNullConst() = this is IrConst<*> && this.kind == IrConstKind.Null
-
 private var topLevelInitializersCounter = 0
 
 internal fun IrFile.addTopLevelInitializer(expression: IrExpression, context: KonanBackendContext, threadLocal: Boolean) {
