@@ -3734,3 +3734,8 @@ internal class JavaSamInterfaceConstructorReferenceImpl(
     override val token: ValidityToken,
 ) : KtFirDiagnostic.JavaSamInterfaceConstructorReference(), KtAbstractFirDiagnostic<PsiElement>
 
+internal class SyntaxImpl(
+    override val firDiagnostic: KtPsiDiagnostic,
+    override val token: ValidityToken,
+) : KtFirDiagnostic.Syntax(), KtAbstractFirDiagnostic<PsiElement>
+

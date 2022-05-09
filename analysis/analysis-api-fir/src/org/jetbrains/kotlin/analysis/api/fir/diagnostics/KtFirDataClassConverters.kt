@@ -4441,4 +4441,10 @@ internal val KT_DIAGNOSTIC_CONVERTER = KtDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
+    add(FirSyntaxErrors.SYNTAX) { firDiagnostic ->
+        SyntaxImpl(
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
 }
