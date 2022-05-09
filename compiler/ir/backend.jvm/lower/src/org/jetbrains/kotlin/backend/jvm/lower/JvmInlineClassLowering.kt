@@ -840,7 +840,34 @@ private class JvmInlineClassLowering(context: JvmBackendContext) : JvmValueClass
     }
 
     private fun rewriteMethodsForSealed(info: SealedInlineClassInfo) {
-        rewriteOpenMethodsForSealed(info)
+        rewriteOpenAndAbstractMethodsForSealed(info)
+
+        val toAdd = mutableListOf<IrSimpleFunction>()
+        // Generate a method for default method, not overridden in sealed inline class and its children.
+        for (method in info.top.functions) {
+            if (method.isFakeOverrideOfDefaultMethod()) {
+                val function = replacements.getReplacementFunction(method)
+                    ?: error("Cannot create sealed inline class method replacement for ${method.render()}")
+                with(context.createIrBuilder(function.symbol)) {
+                    function.body = irExprBody(
+                        irCall(method.symbol).also {
+                            // Just call the fake override, instead of calling DefaultImpls's one -- without
+                            // overrides, there is no need for it.
+                            for ((target, source) in method.explicitParameters.zip(function.explicitParameters)) {
+                                it.putArgument(target, irGet(source))
+                            }
+                        }
+                    )
+                }
+
+                toAdd += function
+                // There is no need to replace fake override with the bridge, since it calls the fake override
+            }
+        }
+
+        for (function in toAdd) {
+            info.top.addMember(function)
+        }
     }
 
     /**
@@ -849,7 +876,7 @@ private class JvmInlineClassLowering(context: JvmBackendContext) : JvmValueClass
      *
      * First, we check for noinline children, then for inline children and finally, just run the top's method body.
      */
-    private fun rewriteOpenMethodsForSealed(info: SealedInlineClassInfo) {
+    private fun rewriteOpenAndAbstractMethodsForSealed(info: SealedInlineClassInfo) {
         for ((methodSymbol, retargets, addToClass) in info.methods) {
             val replacements = context.inlineClassReplacements
             val original = methodSymbol.owner.attributeOwnerId as IrSimpleFunction
@@ -914,7 +941,16 @@ private class JvmInlineClassLowering(context: JvmBackendContext) : JvmValueClass
                     val branches = mutableListOf<IrBranch>()
 
                     for (noinlineSubclass in info.noinlineSubclasses) {
-                        val retarget = retargets[noinlineSubclass] ?: continue
+                        val retarget = retargets[noinlineSubclass]
+                        // No override defined in the child
+                        // In this case, we just move the body of the parent
+                        if (retarget == null) {
+                            branches += irBranch(
+                                irIs(irGet(function.valueParameters[0]), noinlineSubclass.owner.defaultType),
+                                copyOldBody()
+                            )
+                            continue
+                        }
                         val retargetClass = retarget.owner.parentAsClass
                         val toCall =
                             if (retargetClass.isInline) replacements.getReplacementFunction(retarget.owner)!!.symbol else retarget
@@ -1278,3 +1314,6 @@ private class SealedInlineClassInfo(
 private fun IrSimpleFunction.withoutReceiver() = MemoizedInlineClassReplacements.SimpleFunctionWithoutReceiver(
     name, typeParameters, returnType, extensionReceiverParameter, valueParameters
 )
+
+private fun IrSimpleFunction.isFakeOverrideOfDefaultMethod(): Boolean =
+    isFakeOverride && overriddenSymbols.any { it.owner.parentAsClass.isInterface && it.owner.modality != Modality.ABSTRACT }
