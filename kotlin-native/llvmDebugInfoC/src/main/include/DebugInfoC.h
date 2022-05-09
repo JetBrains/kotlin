@@ -106,8 +106,6 @@ DILocationRef LLVMCreateLocation(LLVMContextRef contextRef, unsigned line, unsig
 DILocationRef LLVMCreateLocationInlinedAt(LLVMContextRef contextRef, unsigned line, unsigned col, DIScopeOpaqueRef scope, DILocationRef refLocation);
 void LLVMBuilderSetDebugLocation(LLVMBuilderRef builder, DILocationRef refLocation);
 void LLVMBuilderResetDebugLocation(LLVMBuilderRef builder);
-const char* LLVMBuilderGetCurrentBbName(LLVMBuilderRef builder);
-const char *DIGetSubprogramLinkName(DISubprogramRef sp);
 LLVMValueRef LLVMBuilderGetCurrentFunction(LLVMBuilderRef builder);
 int DISubprogramDescribesFunction(DISubprogramRef sp, LLVMValueRef fn);
 # ifdef __cplusplus
