@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.gradle.plugin.cocoapods.KotlinCocoapodsPlugin.Compan
 import org.jetbrains.kotlin.gradle.plugin.cocoapods.KotlinCocoapodsPlugin.Companion.GENERATE_WRAPPER_PROPERTY
 import org.jetbrains.kotlin.gradle.plugin.cocoapods.KotlinCocoapodsPlugin.Companion.SYNC_TASK_NAME
 import org.jetbrains.kotlin.gradle.plugin.cocoapods.cocoapodsBuildDirs
+import org.jetbrains.kotlin.gradle.utils.appendLine
 import java.io.File
 
 /**
@@ -329,11 +330,12 @@ open class DefFileTask : DefaultTask() {
     @TaskAction
     fun generate() {
         outputFile.parentFile.mkdirs()
-        outputFile.writeText(
-            """
-            language = Objective-C
-            modules = ${pod.get().moduleName}
-        """.trimIndent()
-        )
+        outputFile.writeText(buildString {
+            appendLine("language = Objective-C")
+            with(pod.get()) {
+                if (headers != null) appendLine("headers = $headers")
+                else appendLine("modules = $moduleName")
+            }
+        })
     }
 }

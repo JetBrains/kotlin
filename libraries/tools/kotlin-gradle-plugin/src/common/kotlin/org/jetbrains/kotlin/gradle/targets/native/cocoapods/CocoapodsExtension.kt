@@ -154,7 +154,7 @@ open class CocoapodsExtension(private val project: Project) {
      * Add a CocoaPods dependency to the pod built from this project.
      */
     @JvmOverloads
-    fun pod(name: String, version: String? = null, path: File? = null, moduleName: String = name.asModuleName()) {
+    fun pod(name: String, version: String? = null, path: File? = null, moduleName: String = name.asModuleName(), headers: String? = null) {
         // Empty string will lead to an attempt to create two podDownload tasks.
         // One is original podDownload and second is podDownload + pod.name
         require(name.isNotEmpty()) { "Please provide not empty pod name to avoid ambiguity" }
@@ -183,7 +183,7 @@ open class CocoapodsExtension(private val project: Project) {
             project.logger.warn(warnMessage)
             podSource = path.parentFile
         }
-        addToPods(CocoapodsDependency(name, moduleName, version, podSource?.let { Path(it) }))
+        addToPods(CocoapodsDependency(name, moduleName, headers, version, podSource?.let { Path(it) }))
     }
 
 
@@ -271,6 +271,7 @@ open class CocoapodsExtension(private val project: Project) {
     data class CocoapodsDependency(
         private val name: String,
         @get:Input var moduleName: String,
+        @get:Optional @get:Input var headers: String? = null,
         @get:Optional @get:Input var version: String? = null,
         @get:Optional @get:Nested var source: PodLocation? = null,
         @get:Internal var extraOpts: List<String> = listOf(),
