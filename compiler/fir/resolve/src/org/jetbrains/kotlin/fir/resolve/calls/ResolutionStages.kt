@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.matchingParameterFunctionType
 import org.jetbrains.kotlin.fir.references.FirSuperReference
+import org.jetbrains.kotlin.fir.resolve.dfa.symbol
 import org.jetbrains.kotlin.fir.resolve.directExpansionType
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.inference.ConeTypeParameterBasedTypeVariable
@@ -25,7 +26,6 @@ import org.jetbrains.kotlin.fir.scopes.FirTypeScope
 import org.jetbrains.kotlin.fir.scopes.FirUnstableSmartcastTypeScope
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction
 import org.jetbrains.kotlin.fir.scopes.processOverriddenFunctions
-import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.SyntheticSymbol
 import org.jetbrains.kotlin.fir.symbols.ensureResolved
 import org.jetbrains.kotlin.fir.symbols.impl.*
@@ -152,7 +152,6 @@ private class ReceiverDescription(
 )
 
 object CheckDispatchReceiver : ResolutionStage() {
-    @OptIn(SymbolInternals::class)
     override suspend fun check(candidate: Candidate, callInfo: CallInfo, sink: CheckerSink, context: ResolutionContext) {
         val explicitReceiverExpression = callInfo.explicitReceiver
         if (explicitReceiverExpression.isSuperCall()) {
@@ -363,7 +362,6 @@ object CheckDslScopeViolation : ResolutionStage() {
         }
     }
 
-    @OptIn(SymbolInternals::class)
     private fun MutableSet<ClassId>.collectDslMarkerAnnotations(context: ResolutionContext, type: ConeKotlinType) {
         collectDslMarkerAnnotations(context, type.attributes.customAnnotations)
         when (type) {
@@ -379,15 +377,15 @@ object CheckDslScopeViolation : ResolutionStage() {
             is ConeDefinitelyNotNullType -> collectDslMarkerAnnotations(context, type.original)
             is ConeIntersectionType -> type.intersectedTypes.forEach { collectDslMarkerAnnotations(context, it) }
             is ConeClassLikeType -> {
-                val classDeclaration = type.toSymbol(context.session)?.fir ?: return
-                collectDslMarkerAnnotations(context, classDeclaration.annotations)
+                val classDeclaration = type.toSymbol(context.session) ?: return
+                collectDslMarkerAnnotations(context, classDeclaration.resolvedAnnotationsWithClassIds)
                 when (classDeclaration) {
-                    is FirClass -> {
-                        for (superType in classDeclaration.superConeTypes) {
+                    is FirClassSymbol -> {
+                        for (superType in classDeclaration.resolvedSuperTypes) {
                             collectDslMarkerAnnotations(context, superType)
                         }
                     }
-                    is FirTypeAlias -> {
+                    is FirTypeAliasSymbol -> {
                         type.directExpansionType(context.session)?.let {
                             collectDslMarkerAnnotations(context, it)
                         }
@@ -398,11 +396,10 @@ object CheckDslScopeViolation : ResolutionStage() {
         }
     }
 
-    @OptIn(SymbolInternals::class)
     private fun MutableSet<ClassId>.collectDslMarkerAnnotations(context: ResolutionContext, annotations: Collection<FirAnnotation>) {
         for (annotation in annotations) {
             val annotationClass =
-                annotation.annotationTypeRef.coneType.fullyExpandedType(context.session).toSymbol(context.session)?.fir as? FirClass
+                annotation.annotationTypeRef.coneType.fullyExpandedType(context.session).toSymbol(context.session) as? FirClassSymbol
                     ?: continue
             if (annotationClass.hasAnnotation(dslMarkerClassId)) {
                 add(annotationClass.classId)
