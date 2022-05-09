@@ -785,4 +785,15 @@ class KotlinGradleIT : KGPBaseTest() {
             build("tasks")
         }
     }
+
+    @DisplayName("KT-51913: KGP should not add attributes to 'legacy' configurations")
+    @GradleTest
+    fun noAttributesLegacyConfigurations(gradleVersion: GradleVersion) {
+        project(
+            "legacyConfigurationConsumer",
+            gradleVersion
+        ) {
+            build(":consumer:aggregate")
+        }
+    }
 }
