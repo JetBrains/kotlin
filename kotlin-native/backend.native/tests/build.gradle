@@ -5050,7 +5050,9 @@ if (PlatformInfo.isAppleTarget(project)) {
 }
 
 tasks.register("KT-50983", KonanDriverTest) {
-    enabled = PlatformInfo.isWindows() && (project.target.family == Family.MINGW)
+    // The test is not working on Windows Server 2019-based TeamCity agents for the unknown reason.
+    // TODO: Re-enable it after LLVM update where llvm-windres will be added.
+    enabled = false
     doBeforeBuild {
         mkdir(buildDir)
         exec {
