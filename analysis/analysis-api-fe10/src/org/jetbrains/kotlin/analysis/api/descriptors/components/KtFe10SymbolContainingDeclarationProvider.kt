@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.analysis.api.symbols.KtSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtValueParameterSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KtSymbolKind
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KtSymbolWithKind
-import org.jetbrains.kotlin.analysis.api.tokens.KtLifetimeToken
+import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeToken
 import org.jetbrains.kotlin.analysis.project.structure.KtLibraryModule
 import org.jetbrains.kotlin.analysis.project.structure.KtLibrarySourceModule
 import org.jetbrains.kotlin.analysis.project.structure.KtModule

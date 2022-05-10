@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.analysis.api.components.*
 import org.jetbrains.kotlin.analysis.api.descriptors.components.*
 import org.jetbrains.kotlin.analysis.api.impl.base.components.KtAnalysisScopeProviderImpl
 import org.jetbrains.kotlin.analysis.api.symbols.KtSymbolProvider
-import org.jetbrains.kotlin.analysis.api.tokens.KtLifetimeToken
+import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeToken
 import org.jetbrains.kotlin.analysis.project.structure.KtModule
 import org.jetbrains.kotlin.analysis.project.structure.getKtModule
 import org.jetbrains.kotlin.psi.KtElement

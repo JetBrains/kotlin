@@ -12,7 +12,7 @@ import com.intellij.psi.PsiType
 import org.jetbrains.kotlin.analysis.api.annotations.annotations
 import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.codegen.AsmUtil
-import org.jetbrains.kotlin.analysis.api.isValid
+import org.jetbrains.kotlin.analysis.api.lifetime.isValid
 import org.jetbrains.kotlin.analysis.api.symbols.KtCallableSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KtNamedSymbol

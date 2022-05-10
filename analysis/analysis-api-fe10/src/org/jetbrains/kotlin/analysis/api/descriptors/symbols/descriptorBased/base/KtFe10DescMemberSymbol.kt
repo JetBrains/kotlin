@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.ba
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KtSymbolWithKind
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KtSymbolWithModality
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KtSymbolWithVisibility
-import org.jetbrains.kotlin.analysis.api.withValidityAssertion
+import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.descriptors.MemberDescriptor
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibility

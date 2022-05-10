@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.analysis.api.fir.types
 
 import org.jetbrains.kotlin.analysis.api.KtTypeArgument
 import org.jetbrains.kotlin.analysis.api.KtTypeArgumentWithVariance
-import org.jetbrains.kotlin.analysis.api.KtLifetimeOwner
+import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeOwner
 import org.jetbrains.kotlin.analysis.api.annotations.KtAnnotationsList
 import org.jetbrains.kotlin.analysis.api.fir.KtSymbolByFirBuilder
 import org.jetbrains.kotlin.analysis.api.fir.annotations.KtFirAnnotationListForType
@@ -15,9 +15,9 @@ import org.jetbrains.kotlin.analysis.api.fir.getCandidateSymbols
 import org.jetbrains.kotlin.analysis.api.fir.utils.cached
 import org.jetbrains.kotlin.analysis.api.symbols.KtClassLikeSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtTypeParameterSymbol
-import org.jetbrains.kotlin.analysis.api.tokens.KtLifetimeToken
+import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeToken
 import org.jetbrains.kotlin.analysis.api.types.*
-import org.jetbrains.kotlin.analysis.api.withValidityAssertion
+import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl

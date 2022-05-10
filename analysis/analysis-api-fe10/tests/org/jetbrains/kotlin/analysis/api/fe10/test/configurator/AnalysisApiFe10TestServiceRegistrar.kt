@@ -9,7 +9,7 @@ import com.intellij.core.CoreJavaFileManager
 import com.intellij.mock.MockApplication
 import com.intellij.mock.MockProject
 import com.intellij.psi.impl.file.impl.JavaFileManager
-import org.jetbrains.kotlin.analysis.api.session.InvalidWayOfUsingAnalysisSession
+import org.jetbrains.kotlin.analysis.api.KtAnalysisApiInternals
 import org.jetbrains.kotlin.analysis.api.session.KtAnalysisSessionProvider
 import org.jetbrains.kotlin.analysis.api.descriptors.CliFe10AnalysisFacade
 import org.jetbrains.kotlin.analysis.api.descriptors.Fe10AnalysisFacade
@@ -29,10 +29,10 @@ object AnalysisApiFe10TestServiceRegistrar : AnalysisApiTestServiceRegistrar() {
         AnalysisHandlerExtension.registerExtensionPoint(project)
     }
 
-    @OptIn(InvalidWayOfUsingAnalysisSession::class)
+    @OptIn(KtAnalysisApiInternals::class)
     override fun registerProjectServices(project: MockProject, testServices: TestServices) {
         project.apply {
-            registerService(KtAnalysisSessionProvider::class.java, KtFe10AnalysisSessionProvider())
+            registerService(KtAnalysisSessionProvider::class.java, KtFe10AnalysisSessionProvider(project))
             registerService(Fe10AnalysisFacade::class.java, CliFe10AnalysisFacade(project))
             registerService(ModuleVisibilityManager::class.java, CliModuleVisibilityManagerImpl(enabled = true))
             registerService(CoreJavaFileManager::class.java, project.getService(JavaFileManager::class.java) as CoreJavaFileManager)

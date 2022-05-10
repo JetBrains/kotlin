@@ -11,19 +11,19 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiElementResolveResult
 import com.intellij.psi.ResolveResult
 import com.intellij.psi.impl.source.resolve.ResolveCache
+import org.jetbrains.kotlin.analysis.api.KtAllowAnalysisOnEdt
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.getElementTextInContext
-import org.jetbrains.kotlin.analysis.api.tokens.HackToForceAllowRunningAnalyzeOnEDT
-import org.jetbrains.kotlin.analysis.api.session.analyze
-import org.jetbrains.kotlin.analysis.api.impl.base.util.runInPossiblyEdtThread
+import org.jetbrains.kotlin.analysis.api.analyze
+import org.jetbrains.kotlin.analysis.api.lifetime.allowAnalysisOnEdt
 
 object KtFirReferenceResolver : ResolveCache.PolyVariantResolver<KtReference> {
     class KotlinResolveResult(element: PsiElement) : PsiElementResolveResult(element)
 
-    @OptIn(HackToForceAllowRunningAnalyzeOnEDT::class)
+    @OptIn(KtAllowAnalysisOnEdt::class)
     override fun resolve(ref: KtReference, incompleteCode: Boolean): Array<ResolveResult> {
         check(ref is KtFirReference) { "reference should be FirKtReference, but was ${ref::class}" }
         check(ref is AbstractKtReference<*>) { "reference should be AbstractKtReference, but was ${ref::class}" }
-        return runInPossiblyEdtThread {
+        return allowAnalysisOnEdt {
             val resolveToPsiElements = try {
                 analyze(ref.expression) { ref.getResolvedToPsi(this) }
             } catch (e: Throwable) {

@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.analysis.api.components.KtTypeInfoProvider
 import org.jetbrains.kotlin.analysis.api.fir.KtFirAnalysisSession
 import org.jetbrains.kotlin.analysis.api.fir.types.KtFirType
 import org.jetbrains.kotlin.analysis.api.fir.types.PublicTypeApproximator
-import org.jetbrains.kotlin.analysis.api.tokens.KtLifetimeToken
+import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeToken
 import org.jetbrains.kotlin.analysis.api.types.KtType
 import org.jetbrains.kotlin.builtins.functions.FunctionClassKind
 import org.jetbrains.kotlin.fir.resolve.FirSamResolverImpl

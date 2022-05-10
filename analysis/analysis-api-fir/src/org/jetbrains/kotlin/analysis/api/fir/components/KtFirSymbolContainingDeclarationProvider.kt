@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.analysis.api.fir.components
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.KtRealSourceElementKind
-import org.jetbrains.kotlin.analysis.api.assertIsValidAndAccessible
 import org.jetbrains.kotlin.analysis.api.components.KtSymbolContainingDeclarationProvider
 import org.jetbrains.kotlin.analysis.api.fir.KtFirAnalysisSession
 import org.jetbrains.kotlin.analysis.api.fir.symbols.KtFirReceiverParameterSymbol
@@ -19,7 +18,8 @@ import org.jetbrains.kotlin.analysis.api.impl.barebone.parentOfType
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KtSymbolKind
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KtSymbolWithKind
-import org.jetbrains.kotlin.analysis.api.tokens.KtLifetimeToken
+import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeToken
+import org.jetbrains.kotlin.analysis.api.lifetime.assertIsValidAndAccessible
 import org.jetbrains.kotlin.analysis.project.structure.KtModule
 import org.jetbrains.kotlin.psi
 import org.jetbrains.kotlin.psi.*

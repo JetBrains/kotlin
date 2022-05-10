@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.analysis.api.diagnostics.KtNonBoundToPsiErrorDiagnos
 import org.jetbrains.kotlin.analysis.api.impl.barebone.parentOfType
 import org.jetbrains.kotlin.analysis.api.impl.base.components.AbstractKtCallResolver
 import org.jetbrains.kotlin.analysis.api.symbols.*
-import org.jetbrains.kotlin.analysis.api.tokens.KtLifetimeToken
+import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeToken
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.diagnostics.DiagnosticWithParameters1

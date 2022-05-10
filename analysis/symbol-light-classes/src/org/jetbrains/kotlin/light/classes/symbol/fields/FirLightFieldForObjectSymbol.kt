@@ -10,7 +10,7 @@ import org.jetbrains.annotations.NotNull
 import org.jetbrains.kotlin.asJava.builder.LightMemberOrigin
 import org.jetbrains.kotlin.asJava.classes.KtLightClass
 import org.jetbrains.kotlin.asJava.classes.lazyPub
-import org.jetbrains.kotlin.analysis.api.isValid
+import org.jetbrains.kotlin.analysis.api.lifetime.isValid
 import org.jetbrains.kotlin.analysis.api.symbols.KtNamedClassOrObjectSymbol
 import org.jetbrains.kotlin.psi.KtDeclaration
 

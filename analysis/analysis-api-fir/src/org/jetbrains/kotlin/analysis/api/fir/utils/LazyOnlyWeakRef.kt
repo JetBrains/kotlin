@@ -5,13 +5,13 @@
 
 package org.jetbrains.kotlin.analysis.api.fir.utils
 
-import org.jetbrains.kotlin.analysis.api.KtLifetimeOwner
-import org.jetbrains.kotlin.analysis.api.tokens.KtLifetimeToken
+import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeOwner
+import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeToken
 import java.lang.ref.WeakReference
 import kotlin.reflect.KProperty
 
 class ReadOnlyWeakRef<V : Any>
-@Deprecated("Consider using ValidityTokenOwner.weakRef instead")
+@Deprecated("Consider using KtLifetimeTokenOwner.weakRef instead")
 constructor(value: V, val token: KtLifetimeToken) {
     val weakRef = WeakReference(value)
 

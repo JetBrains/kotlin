@@ -9,8 +9,8 @@ import org.jetbrains.kotlin.analysis.api.annotations.KtAnnotationApplication
 import org.jetbrains.kotlin.analysis.api.annotations.KtAnnotationsList
 import org.jetbrains.kotlin.analysis.api.fir.toKtAnnotationApplication
 import org.jetbrains.kotlin.analysis.api.impl.base.annotations.KtEmptyAnnotationsList
-import org.jetbrains.kotlin.analysis.api.tokens.KtLifetimeToken
-import org.jetbrains.kotlin.analysis.api.withValidityAssertion
+import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeToken
+import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.name.ClassId

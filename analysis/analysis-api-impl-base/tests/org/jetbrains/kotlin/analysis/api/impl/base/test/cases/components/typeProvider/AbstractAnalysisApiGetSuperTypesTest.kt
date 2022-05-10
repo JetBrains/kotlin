@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.typeProvider
 
-import org.jetbrains.kotlin.analysis.api.session.analyze
+import org.jetbrains.kotlin.analysis.api.analyze
 import org.jetbrains.kotlin.analysis.api.components.KtTypeRendererOptions
 import org.jetbrains.kotlin.analysis.test.framework.services.expressionMarkerProvider
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiSingleFileTest

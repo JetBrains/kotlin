@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.analysis.api.fir.diagnostics
 
 import com.intellij.psi.PsiElement
 import com.intellij.psi.impl.source.tree.LeafPsiElement
+import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeToken
 import org.jetbrains.kotlin.analysis.api.symbols.KtCallableSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtClassLikeSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtFunctionLikeSymbol
@@ -14,7 +15,6 @@ import org.jetbrains.kotlin.analysis.api.symbols.KtSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtTypeParameterSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtVariableLikeSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtVariableSymbol
-import org.jetbrains.kotlin.analysis.api.tokens.KtLifetimeToken
 import org.jetbrains.kotlin.analysis.api.types.KtType
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettings
@@ -3736,6 +3736,6 @@ internal class JavaSamInterfaceConstructorReferenceImpl(
 
 internal class SyntaxImpl(
     override val firDiagnostic: KtPsiDiagnostic,
-    override val token: ValidityToken,
+    override val token: KtLifetimeToken,
 ) : KtFirDiagnostic.Syntax(), KtAbstractFirDiagnostic<PsiElement>
 

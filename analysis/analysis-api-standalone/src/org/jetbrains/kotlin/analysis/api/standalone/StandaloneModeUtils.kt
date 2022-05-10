@@ -12,7 +12,7 @@ import com.intellij.openapi.vfs.StandardFileSystems
 import com.intellij.psi.PsiElementFinder
 import com.intellij.psi.PsiManager
 import com.intellij.psi.search.GlobalSearchScope
-import org.jetbrains.kotlin.analysis.api.session.InvalidWayOfUsingAnalysisSession
+import org.jetbrains.kotlin.analysis.api.KtAnalysisApiInternals
 import org.jetbrains.kotlin.analysis.api.session.KtAnalysisSessionProvider
 import org.jetbrains.kotlin.analysis.api.fir.KtFirAnalysisSessionProvider
 import org.jetbrains.kotlin.analysis.api.impl.base.references.HLApiReferenceProviderService
@@ -195,7 +195,7 @@ internal fun configureProjectEnvironment(
     )
 }
 
-@OptIn(InvalidWayOfUsingAnalysisSession::class)
+@OptIn(KtAnalysisApiInternals::class)
 private fun reRegisterJavaElementFinder(project: Project) {
     PsiElementFinder.EP.getPoint(project).unregisterExtension(JavaElementFinder::class.java)
     with(project as MockProject) {

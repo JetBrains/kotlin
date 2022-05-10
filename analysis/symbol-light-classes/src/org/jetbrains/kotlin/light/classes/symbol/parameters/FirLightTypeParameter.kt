@@ -13,7 +13,7 @@ import com.intellij.psi.impl.PsiClassImplUtil
 import com.intellij.psi.impl.light.LightElement
 import com.intellij.psi.javadoc.PsiDocComment
 import com.intellij.psi.search.SearchScope
-import org.jetbrains.kotlin.analysis.api.isValid
+import org.jetbrains.kotlin.analysis.api.lifetime.isValid
 import org.jetbrains.kotlin.analysis.api.symbols.KtTypeParameterSymbol
 import org.jetbrains.kotlin.analysis.api.types.KtClassErrorType
 import org.jetbrains.kotlin.analysis.api.types.KtNonErrorClassType

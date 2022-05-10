@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.analysis.api.fir.buildSymbol
 import org.jetbrains.kotlin.analysis.api.fir.components.KtFirAnalysisSessionComponent
 import org.jetbrains.kotlin.analysis.api.symbols.KtCallableSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtClassOrObjectSymbol
-import org.jetbrains.kotlin.analysis.api.tokens.KtLifetimeToken
+import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeToken
 import org.jetbrains.kotlin.fir.analysis.checkers.getImplementationStatus
 import org.jetbrains.kotlin.fir.analysis.checkers.isVisibleInClass
 import org.jetbrains.kotlin.fir.containingClass

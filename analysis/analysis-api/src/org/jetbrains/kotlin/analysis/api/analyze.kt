@@ -3,14 +3,16 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.analysis.api.session
+@file:OptIn(KtAnalysisApiInternals::class)
+
+package org.jetbrains.kotlin.analysis.api
 
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.progress.Task
 import com.intellij.openapi.util.Computable
-import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
-import org.jetbrains.kotlin.analysis.api.tokens.KtLifetimeTokenFactory
+import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeTokenFactory
+import org.jetbrains.kotlin.analysis.api.session.KtAnalysisSessionProvider
 import org.jetbrains.kotlin.analysis.project.structure.KtModule
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtFile
@@ -27,7 +29,6 @@ import org.jetbrains.kotlin.psi.KtFile
  * @see KtAnalysisSession
  * @see analyzeWithReadAction
  */
-@OptIn(InvalidWayOfUsingAnalysisSession::class)
 public inline fun <R> analyze(
     useSiteKtElement: KtElement,
     nonDefaultLifetimeTokenFactory: KtLifetimeTokenFactory? = null,
@@ -37,7 +38,6 @@ public inline fun <R> analyze(
         .analyse(useSiteKtElement, nonDefaultLifetimeTokenFactory, action)
 
 
-@OptIn(InvalidWayOfUsingAnalysisSession::class)
 public inline fun <R> analyze(
     ktModule: KtModule,
     nonDefaultLifetimeTokenFactory: KtLifetimeTokenFactory? = null,
@@ -49,8 +49,6 @@ public inline fun <R> analyze(
 }
 
 
-
-@OptIn(InvalidWayOfUsingAnalysisSession::class)
 public inline fun <R> analyzeInDependedAnalysisSession(
     originalFile: KtFile,
     elementToReanalyze: KtElement,

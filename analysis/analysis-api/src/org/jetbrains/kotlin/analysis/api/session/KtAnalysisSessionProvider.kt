@@ -10,41 +10,31 @@ import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.project.Project
 import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
-import org.jetbrains.kotlin.analysis.api.KtInternalApiMarker
-import org.jetbrains.kotlin.analysis.api.NoWriteActionInAnalyseCallChecker
+import org.jetbrains.kotlin.analysis.api.KtAnalysisApiInternals
+import org.jetbrains.kotlin.analysis.api.lifetime.impl.NoWriteActionInAnalyseCallChecker
+import org.jetbrains.kotlin.analysis.api.lifetime.KtDefaultLifetimeTokenProvider
 import org.jetbrains.kotlin.analysis.api.symbols.KtSymbol
-import org.jetbrains.kotlin.analysis.api.tokens.KtLifetimeTokenFactory
+import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeTokenFactory
 import org.jetbrains.kotlin.analysis.project.structure.KtModule
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtFile
-
-@RequiresOptIn("To use analysis session, consider using analyze/analyzeWithReadAction/analyseInModalWindow methods")
-public annotation class InvalidWayOfUsingAnalysisSession
-
-@RequiresOptIn
-public annotation class KtAnalysisSessionProviderInternals
 
 /**
  * Provides [KtAnalysisSession] by [contextElement]
  * Should not be used directly, consider using [analyse]/[analyzeWithReadAction]/[analyzeInModalWindow] instead
  */
-@InvalidWayOfUsingAnalysisSession
+@KtAnalysisApiInternals
 public abstract class KtAnalysisSessionProvider(public val project: Project) : Disposable {
 
     @Suppress("LeakingThis")
-    @OptIn(KtInternalApiMarker::class)
     public val noWriteActionInAnalyseCallChecker: NoWriteActionInAnalyseCallChecker = NoWriteActionInAnalyseCallChecker(this)
 
-    @InvalidWayOfUsingAnalysisSession
     public abstract fun getAnalysisSession(useSiteKtElement: KtElement, factory: KtLifetimeTokenFactory): KtAnalysisSession
 
-    @InvalidWayOfUsingAnalysisSession
     public abstract fun getAnalysisSessionBySymbol(contextSymbol: KtSymbol): KtAnalysisSession
 
-    @InvalidWayOfUsingAnalysisSession
     public abstract fun getAnalysisSessionByUseSiteKtModule(useSiteKtModule: KtModule, factory: KtLifetimeTokenFactory): KtAnalysisSession
 
-    @InvalidWayOfUsingAnalysisSession
     public inline fun <R> analyzeWithSymbolAsContext(
         contextSymbol: KtSymbol,
         action: KtAnalysisSession.() -> R
@@ -53,7 +43,6 @@ public abstract class KtAnalysisSessionProvider(public val project: Project) : D
         return action(analysisSession)
     }
 
-    @InvalidWayOfUsingAnalysisSession
     public inline fun <R> analyseInDependedAnalysisSession(
         originalFile: KtFile,
         elementToReanalyze: KtElement,
@@ -69,7 +58,6 @@ public abstract class KtAnalysisSessionProvider(public val project: Project) : D
         return analyse(dependedAnalysisSession, factory, action)
     }
 
-    @InvalidWayOfUsingAnalysisSession
     public inline fun <R> analyse(
         useSiteKtElement: KtElement,
         nonDefaultLifetimeTokenFactory: KtLifetimeTokenFactory?,
@@ -80,7 +68,6 @@ public abstract class KtAnalysisSessionProvider(public val project: Project) : D
         return analyse(getAnalysisSession(useSiteKtElement, factory), factory, action)
     }
 
-    @InvalidWayOfUsingAnalysisSession
     public inline fun <R> analyze(
         useSiteKtModule: KtModule,
         nonDefaultLifetimeTokenFactory: KtLifetimeTokenFactory?,
@@ -92,8 +79,6 @@ public abstract class KtAnalysisSessionProvider(public val project: Project) : D
         return analyse(getAnalysisSessionByUseSiteKtModule(useSiteKtModule, factory), factory, action)
     }
 
-    @OptIn(KtAnalysisSessionProviderInternals::class, KtInternalApiMarker::class)
-    @InvalidWayOfUsingAnalysisSession
     public inline fun <R> analyse(
         analysisSession: KtAnalysisSession,
         factory: KtLifetimeTokenFactory,
@@ -115,6 +100,7 @@ public abstract class KtAnalysisSessionProvider(public val project: Project) : D
     override fun dispose() {}
 
     public companion object {
+        @KtAnalysisApiInternals
         public fun getInstance(project: Project): KtAnalysisSessionProvider =
             ServiceManager.getService(project, KtAnalysisSessionProvider::class.java)
     }

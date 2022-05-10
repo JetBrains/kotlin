@@ -5,10 +5,10 @@
 
 package org.jetbrains.kotlin.analysis.api.components
 
-import org.jetbrains.kotlin.analysis.api.KtLifetimeOwner
-import org.jetbrains.kotlin.analysis.api.tokens.KtLifetimeToken
+import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeOwner
+import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeToken
 import org.jetbrains.kotlin.analysis.api.types.KtType
-import org.jetbrains.kotlin.analysis.api.withValidityAssertion
+import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.psi.KtExpression
 
 public abstract class KtSmartCastProvider : KtAnalysisSessionComponent() {

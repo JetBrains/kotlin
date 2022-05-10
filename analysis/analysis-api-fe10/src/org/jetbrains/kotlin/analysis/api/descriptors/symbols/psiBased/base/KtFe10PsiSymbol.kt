@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.analysis.api.descriptors.symbols.psiBased.base
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.base.KtFe10AnnotatedSymbol
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.base.KtFe10Symbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtSymbolOrigin
-import org.jetbrains.kotlin.analysis.api.withValidityAssertion
+import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.psi.KtElement

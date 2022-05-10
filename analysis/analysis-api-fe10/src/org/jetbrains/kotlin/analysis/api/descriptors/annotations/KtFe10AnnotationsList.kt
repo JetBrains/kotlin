@@ -10,8 +10,8 @@ import org.jetbrains.kotlin.analysis.api.annotations.KtAnnotationsList
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.toKtAnnotationApplication
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.maybeLocalClassId
 import org.jetbrains.kotlin.analysis.api.impl.base.annotations.KtEmptyAnnotationsList
-import org.jetbrains.kotlin.analysis.api.tokens.KtLifetimeToken
-import org.jetbrains.kotlin.analysis.api.withValidityAssertion
+import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeToken
+import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.resolve.descriptorUtil.annotationClass

@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.analysis.api.descriptors.types.base.asStringForDebug
 import org.jetbrains.kotlin.analysis.api.symbols.KtClassLikeSymbol
 import org.jetbrains.kotlin.analysis.api.types.KtClassErrorType
 import org.jetbrains.kotlin.analysis.api.types.KtTypeNullability
-import org.jetbrains.kotlin.analysis.api.withValidityAssertion
+import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.types.error.ErrorType
 
 internal class KtFe10ClassErrorType(

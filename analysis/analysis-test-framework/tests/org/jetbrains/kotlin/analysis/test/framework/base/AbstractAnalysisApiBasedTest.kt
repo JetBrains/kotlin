@@ -10,9 +10,8 @@ import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.testFramework.TestDataFile
 import junit.framework.ComparisonFailure
 import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
-import org.jetbrains.kotlin.analysis.api.session.analyze
-import org.jetbrains.kotlin.analysis.api.session.analyzeInDependedAnalysisSession
-import org.jetbrains.kotlin.analysis.api.session.InvalidWayOfUsingAnalysisSession
+import org.jetbrains.kotlin.analysis.api.analyze
+import org.jetbrains.kotlin.analysis.api.analyzeInDependedAnalysisSession
 import org.jetbrains.kotlin.analysis.test.framework.AnalysisApiTestDirectives
 import org.jetbrains.kotlin.analysis.test.framework.TestWithDisposable
 import org.jetbrains.kotlin.analysis.test.framework.project.structure.ktModuleProvider
@@ -115,7 +114,6 @@ abstract class AbstractAnalysisApiBasedTest : TestWithDisposable() {
         this.testInfo = this@AbstractAnalysisApiBasedTest.testInfo
     }
 
-    @OptIn(InvalidWayOfUsingAnalysisSession::class)
     protected fun runTest(@TestDataFile path: String) {
         testDataPath = configurator.preprocessTestDataPath(Paths.get(path))
         val testConfiguration = createTestConfiguration()

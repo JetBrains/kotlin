@@ -10,7 +10,7 @@ import com.intellij.psi.PsiModifierList
 import com.intellij.psi.PsiType
 import org.jetbrains.annotations.NotNull
 import org.jetbrains.kotlin.analysis.api.components.buildClassType
-import org.jetbrains.kotlin.analysis.api.isValid
+import org.jetbrains.kotlin.analysis.api.lifetime.isValid
 import org.jetbrains.kotlin.analysis.api.symbols.KtFunctionSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.markers.isPrivateOrPrivateToThis
 import org.jetbrains.kotlin.asJava.classes.lazyPub

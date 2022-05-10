@@ -5,9 +5,9 @@
 
 package org.jetbrains.kotlin.analysis.api.descriptors.utils
 
-import org.jetbrains.kotlin.analysis.api.KtLifetimeOwner
-import org.jetbrains.kotlin.analysis.api.tokens.KtLifetimeToken
-import org.jetbrains.kotlin.analysis.api.tokens.assertIsValidAndAccessible
+import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeOwner
+import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeToken
+import org.jetbrains.kotlin.analysis.api.lifetime.assertIsValidAndAccessible
 import kotlin.properties.ReadOnlyProperty
 import kotlin.reflect.KProperty
 

@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.bas
 import org.jetbrains.kotlin.analysis.api.descriptors.types.base.KtFe10Type
 import org.jetbrains.kotlin.analysis.api.descriptors.utils.KtFe10TypeRenderer
 import org.jetbrains.kotlin.analysis.api.symbols.KtDeclarationSymbol
-import org.jetbrains.kotlin.analysis.api.tokens.KtLifetimeToken
+import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeToken
 import org.jetbrains.kotlin.analysis.api.types.KtType
 import org.jetbrains.kotlin.analysis.utils.printer.prettyPrint
 

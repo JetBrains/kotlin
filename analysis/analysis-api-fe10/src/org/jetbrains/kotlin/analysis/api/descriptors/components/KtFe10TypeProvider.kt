@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.analysis.api.descriptors.components
 
-import org.jetbrains.kotlin.analysis.api.assertIsValidAndAccessible
 import org.jetbrains.kotlin.analysis.api.components.KtBuiltinTypes
 import org.jetbrains.kotlin.analysis.api.components.KtTypeProvider
 import org.jetbrains.kotlin.analysis.api.descriptors.Fe10AnalysisContext
@@ -28,10 +27,11 @@ import org.jetbrains.kotlin.analysis.api.symbols.KtCallableSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtNamedClassOrObjectSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KtPossibleMemberSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.nameOrAnonymous
-import org.jetbrains.kotlin.analysis.api.tokens.KtLifetimeToken
+import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeToken
+import org.jetbrains.kotlin.analysis.api.lifetime.assertIsValidAndAccessible
 import org.jetbrains.kotlin.analysis.api.types.KtType
 import org.jetbrains.kotlin.analysis.api.types.KtTypeNullability
-import org.jetbrains.kotlin.analysis.api.withValidityAssertion
+import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.name.StandardClassIds

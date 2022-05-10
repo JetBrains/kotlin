@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.analysis.api.components
 
 import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
-import org.jetbrains.kotlin.analysis.api.KtLifetimeOwner
+import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeOwner
 
 public abstract class KtAnalysisSessionComponent : KtLifetimeOwner {
     protected abstract val analysisSession: KtAnalysisSession

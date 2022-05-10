@@ -9,7 +9,7 @@ import com.intellij.mock.MockApplication
 import com.intellij.mock.MockProject
 import com.intellij.psi.PsiElementFinder
 import com.intellij.psi.impl.PsiElementFinderImpl
-import org.jetbrains.kotlin.analysis.api.session.InvalidWayOfUsingAnalysisSession
+import org.jetbrains.kotlin.analysis.api.KtAnalysisApiInternals
 import org.jetbrains.kotlin.analysis.api.session.KtAnalysisSessionProvider
 import org.jetbrains.kotlin.analysis.api.fir.KtFirAnalysisSessionProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirResolveSessionService
@@ -36,7 +36,7 @@ object AnalysisApiFirTestServiceRegistrar : AnalysisApiTestServiceRegistrar() {
         FirExtensionRegistrarAdapter.registerExtensionPoint(project)
     }
 
-    @OptIn(InvalidWayOfUsingAnalysisSession::class, TestInfrastructureInternals::class)
+    @OptIn(TestInfrastructureInternals::class, KtAnalysisApiInternals::class)
     override fun registerProjectServices(project: MockProject, testServices: TestServices) {
         project.apply {
             registerService(KtAnalysisSessionProvider::class.java, KtFirAnalysisSessionProvider(this))

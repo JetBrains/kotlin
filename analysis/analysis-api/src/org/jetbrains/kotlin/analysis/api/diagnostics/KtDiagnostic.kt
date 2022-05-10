@@ -8,8 +8,8 @@ package org.jetbrains.kotlin.analysis.api.diagnostics
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.diagnostics.Severity
-import org.jetbrains.kotlin.analysis.api.tokens.KtLifetimeToken
-import org.jetbrains.kotlin.analysis.api.KtLifetimeOwner
+import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeToken
+import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeOwner
 import kotlin.reflect.KClass
 
 public interface KtDiagnostic : KtLifetimeOwner {
