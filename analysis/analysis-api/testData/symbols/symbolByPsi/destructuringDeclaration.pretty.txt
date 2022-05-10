@@ -1,0 +1,15 @@
+fun destruct(): kotlin.Int
+
+class P {
+  constructor(x: kotlin.Int, y: kotlin.Int)
+
+  val x: kotlin.Int
+
+  val y: kotlin.Int
+
+  operator fun component1(): kotlin.Int
+
+  operator fun component2(): kotlin.Int
+
+  fun copy(x: kotlin.Int = ..., y: kotlin.Int = ...): P
+}

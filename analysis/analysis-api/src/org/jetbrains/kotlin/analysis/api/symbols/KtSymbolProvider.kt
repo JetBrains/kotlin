@@ -30,6 +30,7 @@ public abstract class KtSymbolProvider : KtAnalysisSessionComponent() {
         }
         is KtPropertyAccessor -> getPropertyAccessorSymbol(psi)
         is KtClassInitializer -> getClassInitializerSymbol(psi)
+        is KtDestructuringDeclarationEntry -> getDestructuringDeclarationEntrySymbol(psi)
         else -> error("Cannot build symbol for ${psi::class}")
     }
 
@@ -48,6 +49,7 @@ public abstract class KtSymbolProvider : KtAnalysisSessionComponent() {
     public abstract fun getNamedClassOrObjectSymbol(psi: KtClassOrObject): KtNamedClassOrObjectSymbol?
     public abstract fun getPropertyAccessorSymbol(psi: KtPropertyAccessor): KtPropertyAccessorSymbol
     public abstract fun getClassInitializerSymbol(psi: KtClassInitializer): KtClassInitializerSymbol
+    public abstract fun getDestructuringDeclarationEntrySymbol(psi: KtDestructuringDeclarationEntry): KtLocalVariableSymbol
 
     public abstract fun getClassOrObjectSymbolByClassId(classId: ClassId): KtClassOrObjectSymbol?
 
@@ -132,6 +134,13 @@ public interface KtSymbolProviderMixIn : KtAnalysisSessionMixIn {
 
     public fun FqName.getContainingCallableSymbolsWithName(name: Name): Sequence<KtSymbol> =
         withValidityAssertion { analysisSession.symbolProvider.getTopLevelCallableSymbols(this, name) }
+
+    /**
+     * @return symbol corresponding to the local variable introduced by individual destructuring declaration entries.
+     * E.g. `val (x, y) = p` has two declaration entries, one corresponding to `x`, one to `y`.
+     */
+    public fun KtDestructuringDeclarationEntry.getDestructuringDeclarationEntrySymbol(): KtLocalVariableSymbol =
+        analysisSession.symbolProvider.getDestructuringDeclarationEntrySymbol(this)
 
     @Suppress("PropertyName")
     public val ROOT_PACKAGE_SYMBOL: KtPackageSymbol

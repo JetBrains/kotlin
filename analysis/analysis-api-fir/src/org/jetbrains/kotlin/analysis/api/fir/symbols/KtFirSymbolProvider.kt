@@ -122,14 +122,14 @@ internal class KtFirSymbolProvider(
         // A KtClassOrObject may also map to an FirEnumEntry. Hence, we need to return null in this case.
         if (psi is KtEnumEntry) return null
         return firSymbolBuilder.classifierBuilder.buildNamedClassOrObjectSymbol(
-            psi.resolveToFirSymbolOfType<FirRegularClassSymbol>(firResolveSession)
-        )
+            psi.resolveToFirSymbolOfType<FirRegularClassSymbol>(firResolveSession))
+
     }
 
     override fun getPropertyAccessorSymbol(psi: KtPropertyAccessor): KtPropertyAccessorSymbol {
         return firSymbolBuilder.callableBuilder.buildPropertyAccessorSymbol(
-            psi.resolveToFirSymbolOfType<FirPropertyAccessorSymbol>(firResolveSession)
-        )
+            psi.resolveToFirSymbolOfType<FirPropertyAccessorSymbol>(firResolveSession))
+
     }
 
     override fun getClassInitializerSymbol(psi: KtClassInitializer): KtClassInitializerSymbol {
@@ -149,4 +149,12 @@ internal class KtFirSymbolProvider(
     }
 
     override val ROOT_PACKAGE_SYMBOL: KtPackageSymbol = KtFirPackageSymbol(FqName.ROOT, firResolveSession.project, token)
+
+    override fun getDestructuringDeclarationEntrySymbol(psi: KtDestructuringDeclarationEntry): KtLocalVariableSymbol {
+        return firSymbolBuilder.variableLikeBuilder.buildLocalVariableSymbol(
+            psi.resolveToFirSymbolOfType<FirPropertySymbol>(
+                firResolveSession
+            )
+        )
+    }
 }
