@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.typeProvider
 
-import org.jetbrains.kotlin.analysis.api.analyse
+import org.jetbrains.kotlin.analysis.api.session.analyze
 import org.jetbrains.kotlin.analysis.api.components.KtTypeRendererOptions
 import org.jetbrains.kotlin.analysis.test.framework.services.expressionMarkerProvider
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiSingleFileTest
@@ -21,7 +21,7 @@ abstract class AbstractAnalysisApiGetSuperTypesTest : AbstractAnalysisApiSingleF
         val expression = testServices.expressionMarkerProvider.getSelectedElement(ktFile)
 
         val actual = executeOnPooledThreadInReadAction {
-            analyse(expression) {
+            analyze(expression) {
                 val expectedType = expression.getExpectedType() ?: error("expect to get type of expression '${expression.text}'")
                 val directSuperTypes = expectedType.getDirectSuperTypes()
                 val approximatedDirectSuperTypes = expectedType.getDirectSuperTypes(shouldApproximate = true)

@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.psiTypeProvider
 
-import org.jetbrains.kotlin.analysis.api.analyse
+import org.jetbrains.kotlin.analysis.api.session.analyze
 import org.jetbrains.kotlin.analysis.test.framework.services.expressionMarkerProvider
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiSingleFileTest
 import org.jetbrains.kotlin.psi.KtExpression
@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.test.services.assertions
 abstract class AbstractAnalysisApiExpressionPsiTypeProviderTest : AbstractAnalysisApiSingleFileTest(){
     override fun doTestByFileStructure(ktFile: KtFile, module: TestModule, testServices: TestServices) {
         val declarationAtCaret = testServices.expressionMarkerProvider.getSelectedElement(ktFile) as KtExpression
-        val actual = analyse(ktFile) {
+        val actual = analyze(ktFile) {
             val returnType = declarationAtCaret.getKtType()
                 ?: error("Not a typable expression ${declarationAtCaret::class} ${declarationAtCaret.text}")
             val psiType = returnType.asPsiType(declarationAtCaret)

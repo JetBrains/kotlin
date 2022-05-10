@@ -9,7 +9,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiClass
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiElementVisitor
-import org.jetbrains.kotlin.analysis.api.analyse
+import org.jetbrains.kotlin.analysis.api.session.analyze
 import org.jetbrains.kotlin.analysis.test.framework.services.expressionMarkerProvider
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiSingleFileTest
 import org.jetbrains.kotlin.analysis.test.framework.utils.executeOnPooledThreadInReadAction
@@ -36,7 +36,7 @@ abstract class AbstractAnalysisApiPsiTypeProviderTest : AbstractAnalysisApiSingl
             ?: error("Can't find psi context for $declaration")
         val actual = buildString {
             executeOnPooledThreadInReadAction {
-                analyse(declaration) {
+                analyze(declaration) {
                     val ktType = declaration.getReturnKtType()
                     appendLine("KtType: ${ktType.render()}")
                     appendLine("PsiType: ${ktType.asPsiType(psiContext)}")
