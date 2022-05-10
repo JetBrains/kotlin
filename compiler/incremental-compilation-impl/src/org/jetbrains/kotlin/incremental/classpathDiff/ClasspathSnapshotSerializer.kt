@@ -20,21 +20,19 @@ object CachedClasspathSnapshotSerializer {
     // Note: This cache is shared across builds, so we need to be careful if the snapshot file's path hasn't changed but its contents have
     // changed. Luckily, each snapshot file is currently the output of a Gradle (non-incremental) transform, so that case will not happen.
     // TODO: Make this code safer (not relying on how the snapshot files are produced and whether Gradle maintains the above guarantee). For
-    // example, if the transform is incremental, the above case may happen (the output directory of am incremental transform is unchanged
-    // even though its inputs/outputs have changed). Potential solutions: Write the file's content hash in the file's
-    // name or to another file next to it.
-    private val cache = InMemoryCacheWithEviction<File, ClasspathEntrySnapshot>(maxTimePeriods = 20, maxMemoryUsageRatio = 0.8)
+    // example, if the transform is incremental, the above case may happen (the output directory of an incremental transform is unchanged
+    // even though its inputs/outputs have changed). Potential solutions: Write the file's content hash in the file's name or to another
+    // file next to it, or check that its timestamp and size haven't changed (we'll need to deal with directories too).
+    private val cache = InMemoryCacheWithEviction<File, ClasspathEntrySnapshot>(
+        maxTimePeriodsToKeepStrongReferences = 20,
+        maxTimePeriodsToKeepSoftReferences = 1000,
+        maxMemoryUsageRatioToKeepStrongReferences = 0.8
+    )
 
     fun load(classpathEntrySnapshotFiles: List<File>, reporter: ClasspathSnapshotBuildReporter): ClasspathSnapshot {
         cache.newTimePeriod()
-        reporter.reportVerbose {
-            val counts = cache.countCacheEntriesForDebug()
-            @Suppress("SpellCheckingInspection")
-            "Load classpath snapshot, cache size = ${counts.first + counts.second + counts.third}" +
-                    " (${counts.first} strong refs, ${counts.second + counts.third} soft refs, ${counts.third} are gc'd)"
-        }
 
-        var cacheMisses: Long = 0
+        var cacheMisses = 0L
         val classpathSnapshot = ClasspathSnapshot(classpathEntrySnapshotFiles.map { snapshotFile ->
             cache.computeIfAbsent(snapshotFile) {
                 cacheMisses++
@@ -43,8 +41,9 @@ object CachedClasspathSnapshotSerializer {
         })
 
         cache.evictEntries()
+        reporter.addMetric(BuildPerformanceMetric.LOAD_CLASSPATH_SNAPSHOT_EXECUTION_COUNT, 1)
+        reporter.addMetric(BuildPerformanceMetric.LOAD_CLASSPATH_ENTRY_SNAPSHOT_CACHE_HITS, classpathEntrySnapshotFiles.size - cacheMisses)
         reporter.addMetric(BuildPerformanceMetric.LOAD_CLASSPATH_ENTRY_SNAPSHOT_CACHE_MISSES, cacheMisses)
-        reporter.reportVerbose { "Loaded classpath snapshot, cache misses = $cacheMisses / ${classpathEntrySnapshotFiles.size}" }
 
         return classpathSnapshot
     }
