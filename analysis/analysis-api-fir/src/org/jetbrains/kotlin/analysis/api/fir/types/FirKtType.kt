@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.analysis.api.fir.types
 
 import org.jetbrains.kotlin.analysis.api.KtTypeArgument
 import org.jetbrains.kotlin.analysis.api.KtTypeArgumentWithVariance
-import org.jetbrains.kotlin.analysis.api.ValidityTokenOwner
+import org.jetbrains.kotlin.analysis.api.KtLifetimeOwner
 import org.jetbrains.kotlin.analysis.api.annotations.KtAnnotationsList
 import org.jetbrains.kotlin.analysis.api.fir.KtSymbolByFirBuilder
 import org.jetbrains.kotlin.analysis.api.fir.annotations.KtFirAnnotationListForType
@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.analysis.api.fir.getCandidateSymbols
 import org.jetbrains.kotlin.analysis.api.fir.utils.cached
 import org.jetbrains.kotlin.analysis.api.symbols.KtClassLikeSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtTypeParameterSymbol
-import org.jetbrains.kotlin.analysis.api.tokens.ValidityToken
+import org.jetbrains.kotlin.analysis.api.tokens.KtLifetimeToken
 import org.jetbrains.kotlin.analysis.api.types.*
 import org.jetbrains.kotlin.analysis.api.withValidityAssertion
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 
-internal interface KtFirType : ValidityTokenOwner {
+internal interface KtFirType : KtLifetimeOwner {
     val coneType: ConeKotlinType
 }
 
@@ -37,7 +37,7 @@ private fun KtFirType.typeHashcode(): Int = coneType.hashCode()
 
 internal class KtFirUsualClassType(
     override val coneType: ConeClassLikeTypeImpl,
-    override val token: ValidityToken,
+    override val token: KtLifetimeToken,
     private val builder: KtSymbolByFirBuilder,
 ) : KtUsualClassType(), KtFirType {
     override val classId: ClassId get() = withValidityAssertion { coneType.lookupTag.classId }
@@ -63,7 +63,7 @@ internal class KtFirUsualClassType(
 
 internal class KtFirFunctionalType(
     override val coneType: ConeClassLikeTypeImpl,
-    override val token: ValidityToken,
+    override val token: KtLifetimeToken,
     private val builder: KtSymbolByFirBuilder,
 ) : KtFunctionalType(), KtFirType {
     override val classId: ClassId get() = withValidityAssertion { coneType.lookupTag.classId }
@@ -117,7 +117,7 @@ internal class KtFirFunctionalType(
 
 internal class KtFirClassErrorType(
     override val coneType: ConeErrorType,
-    override val token: ValidityToken,
+    override val token: KtLifetimeToken,
     private val builder: KtSymbolByFirBuilder,
 ) : KtClassErrorType(), KtFirType {
 
@@ -140,7 +140,7 @@ internal class KtFirClassErrorType(
 
 internal class KtFirCapturedType(
     override val coneType: ConeCapturedType,
-    override val token: ValidityToken,
+    override val token: KtLifetimeToken,
     private val builder: KtSymbolByFirBuilder,
 ) : KtCapturedType(), KtFirType {
     override val nullability: KtTypeNullability get() = withValidityAssertion { coneType.nullability.asKtNullability() }
@@ -158,7 +158,7 @@ internal class KtFirCapturedType(
 
 internal class KtFirDefinitelyNotNullType(
     override val coneType: ConeDefinitelyNotNullType,
-    override val token: ValidityToken,
+    override val token: KtLifetimeToken,
     private val builder: KtSymbolByFirBuilder,
 ) : KtDefinitelyNotNullType(), KtFirType {
     override val original: KtType by cached { builder.typeBuilder.buildKtType(this.coneType.original) }
@@ -173,7 +173,7 @@ internal class KtFirDefinitelyNotNullType(
 
 internal class KtFirTypeParameterType(
     override val coneType: ConeTypeParameterType,
-    override val token: ValidityToken,
+    override val token: KtLifetimeToken,
     private val builder: KtSymbolByFirBuilder,
 ) : KtTypeParameterType(), KtFirType {
     override val name: Name get() = withValidityAssertion { coneType.lookupTag.name }
@@ -195,7 +195,7 @@ internal class KtFirTypeParameterType(
 
 internal class KtFirFlexibleType(
     override val coneType: ConeFlexibleType,
-    override val token: ValidityToken,
+    override val token: KtLifetimeToken,
     private val builder: KtSymbolByFirBuilder,
 ) : KtFlexibleType(), KtFirType {
 
@@ -213,7 +213,7 @@ internal class KtFirFlexibleType(
 
 internal class KtFirIntersectionType(
     override val coneType: ConeIntersectionType,
-    override val token: ValidityToken,
+    override val token: KtLifetimeToken,
     private val builder: KtSymbolByFirBuilder,
 ) : KtIntersectionType(), KtFirType {
     override val conjuncts: List<KtType> by cached {
@@ -231,7 +231,7 @@ internal class KtFirIntersectionType(
 
 internal class KtFirIntegerLiteralType(
     override val coneType: ConeIntegerLiteralConstantType,
-    override val token: ValidityToken,
+    override val token: KtLifetimeToken,
     private val builder: KtSymbolByFirBuilder,
 ) : KtIntegerLiteralType(), KtFirType {
     override val isUnsigned: Boolean get() = withValidityAssertion { coneType.isUnsigned }

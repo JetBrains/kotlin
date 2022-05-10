@@ -5,21 +5,20 @@
 
 package org.jetbrains.kotlin.analysis.api.descriptors.types.base
 
-import org.jetbrains.kotlin.analysis.api.ValidityTokenOwner
+import org.jetbrains.kotlin.analysis.api.KtLifetimeOwner
 import org.jetbrains.kotlin.analysis.api.annotations.KtAnnotated
 import org.jetbrains.kotlin.analysis.api.annotations.KtAnnotationsList
 import org.jetbrains.kotlin.analysis.api.components.KtTypeRendererOptions
 import org.jetbrains.kotlin.analysis.api.descriptors.Fe10AnalysisContext
 import org.jetbrains.kotlin.analysis.api.descriptors.annotations.KtFe10AnnotationsList
-import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.render
 import org.jetbrains.kotlin.analysis.api.descriptors.utils.KtFe10TypeRenderer
-import org.jetbrains.kotlin.analysis.api.tokens.ValidityToken
+import org.jetbrains.kotlin.analysis.api.tokens.KtLifetimeToken
 import org.jetbrains.kotlin.analysis.api.withValidityAssertion
 import org.jetbrains.kotlin.analysis.utils.printer.prettyPrint
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.UnwrappedType
 
-interface KtFe10Type : ValidityTokenOwner, KtAnnotated {
+interface KtFe10Type : KtLifetimeOwner, KtAnnotated {
     val type: UnwrappedType
 
     val analysisContext: Fe10AnalysisContext
@@ -29,7 +28,7 @@ interface KtFe10Type : ValidityTokenOwner, KtAnnotated {
             KtFe10AnnotationsList.create(type.annotations, token)
         }
 
-    override val token: ValidityToken
+    override val token: KtLifetimeToken
         get() = analysisContext.token
 }
 

@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.analysis.api.symbols.KtSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtSymbolProvider
 import org.jetbrains.kotlin.analysis.api.symbols.KtSymbolProviderMixIn
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtSymbolPointer
-import org.jetbrains.kotlin.analysis.api.tokens.ValidityToken
+import org.jetbrains.kotlin.analysis.api.tokens.KtLifetimeToken
 import org.jetbrains.kotlin.analysis.project.structure.KtModule
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtFile
@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.psi.KtFile
  *
  * To create analysis session consider using [analyse]
  */
-public abstract class KtAnalysisSession(final override val token: ValidityToken) : ValidityTokenOwner,
+public abstract class KtAnalysisSession(final override val token: KtLifetimeToken) : KtLifetimeOwner,
     KtSmartCastProviderMixIn,
     KtCallResolverMixIn,
     KtSamResolverMixIn,

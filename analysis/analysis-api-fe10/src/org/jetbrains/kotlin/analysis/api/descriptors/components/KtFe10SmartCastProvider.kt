@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.analysis.api.components.KtSmartCastProvider
 import org.jetbrains.kotlin.analysis.api.descriptors.KtFe10AnalysisSession
 import org.jetbrains.kotlin.analysis.api.descriptors.components.base.Fe10KtAnalysisSessionComponent
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.toKtType
-import org.jetbrains.kotlin.analysis.api.tokens.ValidityToken
+import org.jetbrains.kotlin.analysis.api.tokens.KtLifetimeToken
 import org.jetbrains.kotlin.analysis.api.types.KtType
 import org.jetbrains.kotlin.analysis.api.withValidityAssertion
 import org.jetbrains.kotlin.psi.KtExpression
@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.types.TypeIntersector
 internal class KtFe10SmartCastProvider(
     override val analysisSession: KtFe10AnalysisSession
 ) : KtSmartCastProvider(), Fe10KtAnalysisSessionComponent {
-    override val token: ValidityToken
+    override val token: KtLifetimeToken
         get() = analysisSession.token
 
     override fun getSmartCastedInfo(expression: KtExpression): KtSmartCastInfo? {

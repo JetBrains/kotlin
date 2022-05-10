@@ -5,11 +5,11 @@
 
 package org.jetbrains.kotlin.analysis.api.symbols
 
-import org.jetbrains.kotlin.analysis.api.ValidityTokenOwner
+import org.jetbrains.kotlin.analysis.api.KtLifetimeOwner
 import org.jetbrains.kotlin.analysis.api.annotations.KtAnnotationApplication
 import org.jetbrains.kotlin.analysis.api.annotations.KtConstantAnnotationValue
 import org.jetbrains.kotlin.analysis.api.annotations.annotationsByClassId
-import org.jetbrains.kotlin.analysis.api.tokens.ValidityToken
+import org.jetbrains.kotlin.analysis.api.tokens.KtLifetimeToken
 import org.jetbrains.kotlin.analysis.api.types.KtSubstitutor
 import org.jetbrains.kotlin.analysis.api.types.KtType
 import org.jetbrains.kotlin.analysis.api.withValidityAssertion
@@ -29,7 +29,7 @@ import org.jetbrains.kotlin.utils.addToStdlib.runIf
  *
  * Equality of [KtSignature] is derived from its content.
  */
-public sealed class KtSignature<out S : KtCallableSymbol> : ValidityTokenOwner {
+public sealed class KtSignature<out S : KtCallableSymbol> : KtLifetimeOwner {
     /**
      * The original symbol for this signature.
      */
@@ -58,7 +58,7 @@ public data class KtFunctionLikeSignature<out S : KtFunctionLikeSymbol>(
     private val _receiverType: KtType?,
     private val _valueParameters: List<KtVariableLikeSignature<KtValueParameterSymbol>>,
 ) : KtSignature<S>() {
-    override val token: ValidityToken
+    override val token: KtLifetimeToken
         get() = _symbol.token
     override val symbol: S
         get() = withValidityAssertion { _symbol }
@@ -82,7 +82,7 @@ public data class KtVariableLikeSignature<out S : KtVariableLikeSymbol>(
     private val _returnType: KtType,
     private val _receiverType: KtType?,
 ) : KtSignature<S>() {
-    override val token: ValidityToken
+    override val token: KtLifetimeToken
         get() = _symbol.token
     override val symbol: S
         get() = withValidityAssertion { _symbol }

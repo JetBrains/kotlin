@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.analysis.api.components.*
 import org.jetbrains.kotlin.analysis.api.descriptors.components.*
 import org.jetbrains.kotlin.analysis.api.impl.base.components.KtAnalysisScopeProviderImpl
 import org.jetbrains.kotlin.analysis.api.symbols.KtSymbolProvider
-import org.jetbrains.kotlin.analysis.api.tokens.ValidityToken
+import org.jetbrains.kotlin.analysis.api.tokens.KtLifetimeToken
 import org.jetbrains.kotlin.analysis.project.structure.KtModule
 import org.jetbrains.kotlin.analysis.project.structure.getKtModule
 import org.jetbrains.kotlin.psi.KtElement
@@ -21,7 +21,7 @@ class KtFe10AnalysisSession(
     val analysisContext: Fe10AnalysisContext,
     override val useSiteModule: KtModule
 ) : KtAnalysisSession(analysisContext.token) {
-    constructor(contextElement: KtElement, token: ValidityToken) : this(
+    constructor(contextElement: KtElement, token: KtLifetimeToken) : this(
         Fe10AnalysisContext(Fe10AnalysisFacade.getInstance(contextElement.project), contextElement, token),
         contextElement.getKtModule()
     )

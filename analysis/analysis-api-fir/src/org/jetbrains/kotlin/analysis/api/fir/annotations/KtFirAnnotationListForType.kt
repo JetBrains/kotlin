@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.analysis.api.annotations.KtAnnotationApplication
 import org.jetbrains.kotlin.analysis.api.annotations.KtAnnotationsList
 import org.jetbrains.kotlin.analysis.api.fir.toKtAnnotationApplication
 import org.jetbrains.kotlin.analysis.api.impl.base.annotations.KtEmptyAnnotationsList
-import org.jetbrains.kotlin.analysis.api.tokens.ValidityToken
+import org.jetbrains.kotlin.analysis.api.tokens.KtLifetimeToken
 import org.jetbrains.kotlin.analysis.api.withValidityAssertion
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.name.ClassId
 internal class KtFirAnnotationListForType private constructor(
     val coneType: ConeKotlinType,
     private val useSiteSession: FirSession,
-    override val token: ValidityToken,
+    override val token: KtLifetimeToken,
 ) : KtAnnotationsList() {
     override val annotations: List<KtAnnotationApplication>
         get() = withValidityAssertion { coneType.customAnnotations.map { it.toKtAnnotationApplication(useSiteSession) } }
@@ -43,7 +43,7 @@ internal class KtFirAnnotationListForType private constructor(
         fun create(
             coneType: ConeKotlinType,
             useSiteSession: FirSession,
-            token: ValidityToken,
+            token: KtLifetimeToken,
         ): KtAnnotationsList {
             return if (coneType.customAnnotations.isEmpty()) {
                 KtEmptyAnnotationsList(token)

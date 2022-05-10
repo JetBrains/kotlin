@@ -11,14 +11,14 @@ import org.jetbrains.kotlin.analysis.api.fir.symbols.KtFirNamedClassOrObjectSymb
 import org.jetbrains.kotlin.analysis.api.symbols.KtClassKind
 import org.jetbrains.kotlin.analysis.api.symbols.KtEnumEntrySymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtNamedClassOrObjectSymbol
-import org.jetbrains.kotlin.analysis.api.tokens.ValidityToken
+import org.jetbrains.kotlin.analysis.api.tokens.KtLifetimeToken
 import org.jetbrains.kotlin.analysis.api.withValidityAssertion
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.fir.declarations.getSealedClassInheritors
 
 internal class KtFirInheritorsProvider(
     override val analysisSession: KtFirAnalysisSession,
-    override val token: ValidityToken,
+    override val token: KtLifetimeToken,
 ) : KtInheritorsProvider(), KtFirAnalysisSessionComponent {
     override fun getInheritorsOfSealedClass(
         classSymbol: KtNamedClassOrObjectSymbol

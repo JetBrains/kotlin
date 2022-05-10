@@ -5,16 +5,13 @@
 
 package org.jetbrains.kotlin.analysis.api.scopes
 
-import org.jetbrains.kotlin.analysis.api.ValidityTokenOwner
+import org.jetbrains.kotlin.analysis.api.KtLifetimeOwner
 import org.jetbrains.kotlin.analysis.api.symbols.*
-import org.jetbrains.kotlin.analysis.api.symbols.markers.KtSymbolWithDeclarations
-import org.jetbrains.kotlin.analysis.api.symbols.markers.KtSymbolWithMembers
 import org.jetbrains.kotlin.analysis.api.withValidityAssertion
-import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 
 
-public interface KtScope : ValidityTokenOwner {
+public interface KtScope : KtLifetimeOwner {
     /**
      * Returns a **subset** of names which current scope may contain.
      * In other words `ALL_NAMES(scope)` is a subset of `scope.getAllNames()`

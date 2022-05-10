@@ -5,9 +5,8 @@
 
 package org.jetbrains.kotlin.analysis.api.descriptors.scopes
 
-import org.jetbrains.kotlin.analysis.api.ValidityTokenOwner
+import org.jetbrains.kotlin.analysis.api.KtLifetimeOwner
 import org.jetbrains.kotlin.analysis.api.descriptors.Fe10AnalysisContext
-import org.jetbrains.kotlin.analysis.api.descriptors.KtFe10AnalysisSession
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.toKtConstructorSymbol
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.toKtSymbol
 import org.jetbrains.kotlin.analysis.api.scopes.KtScope
@@ -16,7 +15,7 @@ import org.jetbrains.kotlin.analysis.api.symbols.KtCallableSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtClassifierSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtConstructorSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtPackageSymbol
-import org.jetbrains.kotlin.analysis.api.tokens.ValidityToken
+import org.jetbrains.kotlin.analysis.api.tokens.KtLifetimeToken
 import org.jetbrains.kotlin.analysis.api.withValidityAssertion
 import org.jetbrains.kotlin.descriptors.ConstructorDescriptor
 import org.jetbrains.kotlin.name.Name
@@ -25,7 +24,7 @@ import org.jetbrains.kotlin.resolve.scopes.LexicalScope
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.resolve.scopes.ResolutionScope
 
-internal abstract class KtFe10ScopeResolution : KtScope, ValidityTokenOwner {
+internal abstract class KtFe10ScopeResolution : KtScope, KtLifetimeOwner {
     abstract val analysisContext: Fe10AnalysisContext
     abstract val scope: ResolutionScope
 
@@ -57,14 +56,14 @@ internal abstract class KtFe10ScopeResolution : KtScope, ValidityTokenOwner {
         emptySequence()
     }
 
-    override val token: ValidityToken
+    override val token: KtLifetimeToken
         get() = analysisContext.token
 }
 
 internal class KtFe10ScopeLexical(
     override val scope: LexicalScope,
     override val analysisContext: Fe10AnalysisContext
-) : KtFe10ScopeResolution(), ValidityTokenOwner {
+) : KtFe10ScopeResolution(), KtLifetimeOwner {
     override fun getPossibleCallableNames(): Set<Name> = withValidityAssertion {
         return emptySet()
     }

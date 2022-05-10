@@ -50,11 +50,11 @@ Where `action` lambda represents the **KtAnalysisSession Scope**.
 
 ## Lifecycle Owners
 
-Every Lifecycle Owner has its lifecycle which is defined by corresponding `ValidityToken`. There is a special
+Every Lifecycle Owner has its lifecycle which is defined by corresponding `KtLifetimeToken`. There is a special
 function `analyseWithCustomToken` which allows specifying needed behaviour. There are also analyse function which is made for the IDE which
-analyses with `ReadActionConfinementValidityToken`
+analyses with `KtReadActionConfinementLifetimeToken`
 
-`ReadActionConfinementValidityToken` has the following contracts:
+`KtReadActionConfinementLifetimeToken` has the following contracts:
 
 * Accessibility contracts
     * Analysis should not be called from **EDT Thread**

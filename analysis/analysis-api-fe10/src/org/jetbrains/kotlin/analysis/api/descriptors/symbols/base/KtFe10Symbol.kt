@@ -7,11 +7,11 @@ package org.jetbrains.kotlin.analysis.api.descriptors.symbols.base
 
 import org.jetbrains.kotlin.analysis.api.descriptors.Fe10AnalysisContext
 import org.jetbrains.kotlin.analysis.api.symbols.KtSymbol
-import org.jetbrains.kotlin.analysis.api.tokens.ValidityToken
+import org.jetbrains.kotlin.analysis.api.tokens.KtLifetimeToken
 
 interface KtFe10Symbol : KtSymbol {
     val analysisContext: Fe10AnalysisContext
 
-    override val token: ValidityToken
+    override val token: KtLifetimeToken
         get() = analysisContext.token
 }

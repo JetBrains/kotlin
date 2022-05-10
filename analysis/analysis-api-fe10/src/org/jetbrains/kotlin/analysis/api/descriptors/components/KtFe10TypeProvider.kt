@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.analysis.api.symbols.KtCallableSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtNamedClassOrObjectSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KtPossibleMemberSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.nameOrAnonymous
-import org.jetbrains.kotlin.analysis.api.tokens.ValidityToken
+import org.jetbrains.kotlin.analysis.api.tokens.KtLifetimeToken
 import org.jetbrains.kotlin.analysis.api.types.KtType
 import org.jetbrains.kotlin.analysis.api.types.KtTypeNullability
 import org.jetbrains.kotlin.analysis.api.withValidityAssertion
@@ -62,7 +62,7 @@ internal class KtFe10TypeProvider(
         )
     }
 
-    override val token: ValidityToken
+    override val token: KtLifetimeToken
         get() = analysisSession.token
 
     override val builtinTypes: KtBuiltinTypes by cached { KtFe10BuiltinTypes(analysisContext) }
@@ -425,7 +425,7 @@ internal class KtFe10TypeProvider(
 }
 
 private class KtFe10BuiltinTypes(private val analysisContext: Fe10AnalysisContext) : KtBuiltinTypes() {
-    override val token: ValidityToken
+    override val token: KtLifetimeToken
         get() = analysisContext.token
 
     override val INT: KtType

@@ -42,7 +42,7 @@ object KtDiagnosticClassImplementationRenderer : AbstractDiagnosticsDataClassRen
             printParameter(parameter, diagnosticList)
         }
         println("override val firDiagnostic: KtPsiDiagnostic,")
-        println("override val token: ValidityToken,")
+        println("override val token: KtLifetimeToken,")
     }
 
     private fun SmartPrinter.printParameter(parameter: HLDiagnosticParameter, diagnosticList: HLDiagnosticList) {
@@ -60,6 +60,6 @@ object KtDiagnosticClassImplementationRenderer : AbstractDiagnosticsDataClassRen
 
     override val defaultImports = listOf(
         "org.jetbrains.kotlin.diagnostics.KtPsiDiagnostic",
-        "org.jetbrains.kotlin.analysis.api.tokens.ValidityToken",
+        "org.jetbrains.kotlin.analysis.api.tokens.KtLifetimeToken",
     )
 }

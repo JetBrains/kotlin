@@ -9,14 +9,14 @@ import org.jetbrains.kotlin.analysis.api.components.KtSubtypingComponent
 import org.jetbrains.kotlin.analysis.api.descriptors.KtFe10AnalysisSession
 import org.jetbrains.kotlin.analysis.api.descriptors.components.base.Fe10KtAnalysisSessionComponent
 import org.jetbrains.kotlin.analysis.api.descriptors.types.base.KtFe10Type
-import org.jetbrains.kotlin.analysis.api.tokens.ValidityToken
+import org.jetbrains.kotlin.analysis.api.tokens.KtLifetimeToken
 import org.jetbrains.kotlin.analysis.api.types.KtType
 import org.jetbrains.kotlin.analysis.api.withValidityAssertion
 
 internal class KtFe10SubtypingComponent(
     override val analysisSession: KtFe10AnalysisSession
 ) : KtSubtypingComponent(), Fe10KtAnalysisSessionComponent {
-    override val token: ValidityToken
+    override val token: KtLifetimeToken
         get() = analysisSession.token
 
     override fun isEqualTo(first: KtType, second: KtType): Boolean = withValidityAssertion {

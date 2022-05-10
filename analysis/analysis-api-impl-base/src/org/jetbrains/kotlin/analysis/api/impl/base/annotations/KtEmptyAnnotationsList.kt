@@ -7,11 +7,11 @@ package org.jetbrains.kotlin.analysis.api.impl.base.annotations
 
 import org.jetbrains.kotlin.analysis.api.annotations.KtAnnotationApplication
 import org.jetbrains.kotlin.analysis.api.annotations.KtAnnotationsList
-import org.jetbrains.kotlin.analysis.api.tokens.ValidityToken
+import org.jetbrains.kotlin.analysis.api.tokens.KtLifetimeToken
 import org.jetbrains.kotlin.analysis.api.withValidityAssertion
 import org.jetbrains.kotlin.name.ClassId
 
-class KtEmptyAnnotationsList(override val token: ValidityToken) : KtAnnotationsList() {
+class KtEmptyAnnotationsList(override val token: KtLifetimeToken) : KtAnnotationsList() {
     override val annotations: List<KtAnnotationApplication>
         get() = withValidityAssertion { emptyList() }
 

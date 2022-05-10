@@ -14,9 +14,9 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Computable
 import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.analysis.api.symbols.KtSymbol
-import org.jetbrains.kotlin.analysis.api.tokens.AlwaysAccessibleValidityTokenFactory
-import org.jetbrains.kotlin.analysis.api.tokens.ReadActionConfinementValidityTokenFactory
-import org.jetbrains.kotlin.analysis.api.tokens.ValidityTokenFactory
+import org.jetbrains.kotlin.analysis.api.tokens.KtAlwaysAccessibleLifetimeTokenFactory
+import org.jetbrains.kotlin.analysis.api.tokens.ReadActionConfinementValidityTokenFactoryFactory
+import org.jetbrains.kotlin.analysis.api.tokens.KtLifetimeTokenFactory
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtFile
 
@@ -37,7 +37,7 @@ public abstract class KtAnalysisSessionProvider : Disposable {
     public val noWriteActionInAnalyseCallChecker: NoWriteActionInAnalyseCallChecker = NoWriteActionInAnalyseCallChecker(this)
 
     @InvalidWayOfUsingAnalysisSession
-    public abstract fun getAnalysisSession(contextElement: KtElement, factory: ValidityTokenFactory): KtAnalysisSession
+    public abstract fun getAnalysisSession(contextElement: KtElement, factory: KtLifetimeTokenFactory): KtAnalysisSession
 
     @InvalidWayOfUsingAnalysisSession
     public abstract fun getAnalysisSessionBySymbol(contextSymbol: KtSymbol): KtAnalysisSession
@@ -57,18 +57,18 @@ public abstract class KtAnalysisSessionProvider : Disposable {
         elementToReanalyze: KtElement,
         action: KtAnalysisSession.() -> R
     ): R {
-        val dependedAnalysisSession = getAnalysisSession(originalFile, ReadActionConfinementValidityTokenFactory)
+        val dependedAnalysisSession = getAnalysisSession(originalFile, ReadActionConfinementValidityTokenFactoryFactory)
             .createContextDependentCopy(originalFile, elementToReanalyze)
-        return analyse(dependedAnalysisSession, ReadActionConfinementValidityTokenFactory, action)
+        return analyse(dependedAnalysisSession, ReadActionConfinementValidityTokenFactoryFactory, action)
     }
 
     @InvalidWayOfUsingAnalysisSession
-    public inline fun <R> analyse(contextElement: KtElement, tokenFactory: ValidityTokenFactory, action: KtAnalysisSession.() -> R): R =
+    public inline fun <R> analyse(contextElement: KtElement, tokenFactory: KtLifetimeTokenFactory, action: KtAnalysisSession.() -> R): R =
         analyse(getAnalysisSession(contextElement, tokenFactory), tokenFactory, action)
 
     @OptIn(KtAnalysisSessionProviderInternals::class, KtInternalApiMarker::class)
     @InvalidWayOfUsingAnalysisSession
-    public inline fun <R> analyse(analysisSession: KtAnalysisSession, factory: ValidityTokenFactory, action: KtAnalysisSession.() -> R): R {
+    public inline fun <R> analyse(analysisSession: KtAnalysisSession, factory: KtLifetimeTokenFactory, action: KtAnalysisSession.() -> R): R {
         noWriteActionInAnalyseCallChecker.beforeEnteringAnalysisContext()
         factory.beforeEnteringAnalysisContext()
         return try {
@@ -105,12 +105,12 @@ public abstract class KtAnalysisSessionProvider : Disposable {
 @OptIn(InvalidWayOfUsingAnalysisSession::class)
 public inline fun <R> analyse(contextElement: KtElement, action: KtAnalysisSession.() -> R): R =
     KtAnalysisSessionProvider.getInstance(contextElement.project)
-        .analyse(contextElement, ReadActionConfinementValidityTokenFactory, action)
+        .analyse(contextElement, ReadActionConfinementValidityTokenFactoryFactory, action)
 
 @OptIn(InvalidWayOfUsingAnalysisSession::class)
 public inline fun <R> analyseWithCustomToken(
     contextElement: KtElement,
-    tokenFactory: ValidityTokenFactory,
+    tokenFactory: KtLifetimeTokenFactory,
     action: KtAnalysisSession.() -> R
 ): R =
     KtAnalysisSessionProvider.getInstance(contextElement.project)
@@ -124,7 +124,7 @@ public inline fun <R> analyseForUast(
     contextElement: KtElement,
     action: KtAnalysisSession.() -> R
 ): R =
-    analyseWithCustomToken(contextElement, AlwaysAccessibleValidityTokenFactory, action)
+    analyseWithCustomToken(contextElement, KtAlwaysAccessibleLifetimeTokenFactory, action)
 
 @OptIn(InvalidWayOfUsingAnalysisSession::class)
 public inline fun <R> analyseInDependedAnalysisSession(

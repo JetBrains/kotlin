@@ -5,8 +5,8 @@
 
 package org.jetbrains.kotlin.analysis.api.components
 
-import org.jetbrains.kotlin.analysis.api.ValidityTokenOwner
-import org.jetbrains.kotlin.analysis.api.tokens.ValidityToken
+import org.jetbrains.kotlin.analysis.api.KtLifetimeOwner
+import org.jetbrains.kotlin.analysis.api.tokens.KtLifetimeToken
 import org.jetbrains.kotlin.analysis.api.types.KtType
 import org.jetbrains.kotlin.analysis.api.withValidityAssertion
 import org.jetbrains.kotlin.psi.KtExpression
@@ -42,8 +42,8 @@ public interface KtSmartCastProviderMixIn : KtAnalysisSessionMixIn {
 public data class KtSmartCastInfo(
     private val _smartCastType: KtType,
     private val _isStable: Boolean,
-    override val token: ValidityToken
-) : ValidityTokenOwner {
+    override val token: KtLifetimeToken
+) : KtLifetimeOwner {
     public val isStable: Boolean get() = withValidityAssertion { _isStable }
     public val smartCastType: KtType get() = withValidityAssertion { _smartCastType }
 }
@@ -51,8 +51,8 @@ public data class KtSmartCastInfo(
 public data class KtImplicitReceiverSmartCast(
     private val _type: KtType,
     private val _kind: KtImplicitReceiverSmartCastKind,
-    override val token: ValidityToken
-) : ValidityTokenOwner {
+    override val token: KtLifetimeToken
+) : KtLifetimeOwner {
     public val type: KtType get() = withValidityAssertion { _type }
     public val kind: KtImplicitReceiverSmartCastKind get() = withValidityAssertion { _kind }
 }
