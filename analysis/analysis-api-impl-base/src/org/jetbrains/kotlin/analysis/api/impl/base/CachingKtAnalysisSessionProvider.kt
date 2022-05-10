@@ -24,7 +24,7 @@ import java.util.concurrent.ConcurrentHashMap
 import kotlin.reflect.KClass
 
 @OptIn(InvalidWayOfUsingAnalysisSession::class)
-abstract class CachingKtAnalysisSessionProvider<State : Any>(private val project: Project) : KtAnalysisSessionProvider() {
+abstract class CachingKtAnalysisSessionProvider<State : Any>(project: Project) : KtAnalysisSessionProvider(project) {
     private val cache = KtAnalysisSessionCache<Pair<State, KClass<out KtLifetimeToken>>>(project)
 
     protected abstract fun getFirResolveSession(contextElement: KtElement): State
@@ -46,7 +46,7 @@ abstract class CachingKtAnalysisSessionProvider<State : Any>(private val project
         }
     }
 
-    final override fun getAnalysisSessionByModule(ktModule: KtModule, factory: KtLifetimeTokenFactory): KtAnalysisSession {
+    final override fun getAnalysisSessionByUseSiteKtModule(ktModule: KtModule, factory: KtLifetimeTokenFactory): KtAnalysisSession {
         val firResolveSession = getFirResolveSession(ktModule)
         return cache.getAnalysisSession(firResolveSession to factory.identifier) {
             val validityToken = factory.create(project)

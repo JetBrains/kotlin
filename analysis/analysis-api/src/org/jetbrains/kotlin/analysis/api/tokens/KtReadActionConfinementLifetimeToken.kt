@@ -31,7 +31,7 @@ public class KtReadActionConfinementLifetimeToken(project: Project) : KtLifetime
         if (application.isDispatchThread && !allowOnEdt.get()) return false
         if (ForbidKtResolve.resovleIsForbidenInActionWithName.get() != null) return false
         if (!application.isReadAccessAllowed) return false
-        if (!ReadActionConfinementValidityTokenFactoryFactory.isInsideAnalysisContext()) return false
+        if (!ReadActionConfinementValidityTokenFactory.isInsideAnalysisContext()) return false
         return true
     }
 
@@ -43,7 +43,7 @@ public class KtReadActionConfinementLifetimeToken(project: Project) : KtLifetime
         ForbidKtResolve.resovleIsForbidenInActionWithName.get()?.let { actionName ->
             return "Resolve is forbidden in $actionName"
         }
-        if (!ReadActionConfinementValidityTokenFactoryFactory.isInsideAnalysisContext()) return "Called outside analyse method"
+        if (!ReadActionConfinementValidityTokenFactory.isInsideAnalysisContext()) return "Called outside analyse method"
         error("Getting inaccessibility reason for validity token when it is accessible")
     }
 
@@ -53,10 +53,10 @@ public class KtReadActionConfinementLifetimeToken(project: Project) : KtLifetime
         public val allowOnEdt: ThreadLocal<Boolean> = ThreadLocal.withInitial { false }
     }
 
-    public override val factory: KtLifetimeTokenFactory = ReadActionConfinementValidityTokenFactoryFactory
+    public override val factory: KtLifetimeTokenFactory = ReadActionConfinementValidityTokenFactory
 }
 
-public object ReadActionConfinementValidityTokenFactoryFactory : KtLifetimeTokenFactory() {
+public object ReadActionConfinementValidityTokenFactory : KtLifetimeTokenFactory() {
     override val identifier: KClass<out KtLifetimeToken> = KtReadActionConfinementLifetimeToken::class
 
     override fun create(project: Project): KtLifetimeToken = KtReadActionConfinementLifetimeToken(project)

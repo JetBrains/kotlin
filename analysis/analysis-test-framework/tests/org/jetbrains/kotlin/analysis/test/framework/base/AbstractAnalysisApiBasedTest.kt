@@ -171,9 +171,13 @@ abstract class AbstractAnalysisApiBasedTest : TestWithDisposable() {
         return if (configurator.analyseInDependentSession) {
             val originalContainingFile = contextElement.containingKtFile
             val fileCopy = originalContainingFile.copy() as KtFile
-            analyseInDependedAnalysisSession(originalContainingFile, PsiTreeUtil.findSameElementInCopy(contextElement, fileCopy), action)
+            analyseInDependedAnalysisSession(
+                originalContainingFile,
+                PsiTreeUtil.findSameElementInCopy(contextElement, fileCopy),
+                action = action
+            )
         } else {
-            analyse(contextElement, action)
+            analyse(contextElement, action = action)
         }
     }
 
