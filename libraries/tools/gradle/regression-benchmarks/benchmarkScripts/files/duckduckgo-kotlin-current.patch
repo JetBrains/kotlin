@@ -1,17 +1,184 @@
+diff --git a/app/src/main/java/com/duckduckgo/app/browser/BrowserActivity.kt b/app/src/main/java/com/duckduckgo/app/browser/BrowserActivity.kt
+index 8e4a4e16..fd280da8 100644
+--- a/app/src/main/java/com/duckduckgo/app/browser/BrowserActivity.kt
++++ b/app/src/main/java/com/duckduckgo/app/browser/BrowserActivity.kt
+@@ -342,6 +342,7 @@ open class BrowserActivity : DuckDuckGoActivity(), CoroutineScope by MainScope()
+             is Command.ShowAppRatingPrompt -> showAppEnjoymentPrompt(RateAppDialogFragment.create(command.promptCount, viewModel))
+             is Command.ShowAppFeedbackPrompt -> showAppEnjoymentPrompt(GiveFeedbackDialogFragment.create(command.promptCount, viewModel))
+             is Command.LaunchFeedbackView -> startActivity(FeedbackActivity.intent(this))
++            else -> Unit
+         }
+     }
+ 
+diff --git a/app/src/main/java/com/duckduckgo/app/browser/BrowserTabFragment.kt b/app/src/main/java/com/duckduckgo/app/browser/BrowserTabFragment.kt
+index 1a75280d..bb4c5969 100644
+--- a/app/src/main/java/com/duckduckgo/app/browser/BrowserTabFragment.kt
++++ b/app/src/main/java/com/duckduckgo/app/browser/BrowserTabFragment.kt
+@@ -633,6 +633,7 @@ class BrowserTabFragment :
+             is DownloadCommand.ShowDownloadStartedMessage -> downloadStarted(command)
+             is DownloadCommand.ShowDownloadFailedMessage -> downloadFailed(command)
+             is DownloadCommand.ShowDownloadSuccessMessage -> downloadSucceeded(command)
++            else -> Unit
+         }
+     }
+ 
+@@ -863,6 +864,7 @@ class BrowserTabFragment :
+                 omnibarTextInput.setText(it.query)
+                 omnibarTextInput.setSelection(it.query.length)
+             }
++            else -> Unit
+         }
+     }
+ 
+diff --git a/app/src/main/java/com/duckduckgo/app/browser/BrowserTabViewModel.kt b/app/src/main/java/com/duckduckgo/app/browser/BrowserTabViewModel.kt
+index e59c99e3..fab2910d 100644
+--- a/app/src/main/java/com/duckduckgo/app/browser/BrowserTabViewModel.kt
++++ b/app/src/main/java/com/duckduckgo/app/browser/BrowserTabViewModel.kt
+@@ -1066,6 +1066,7 @@ class BrowserTabViewModel @Inject constructor(
+             is WebNavigationStateChange.PageCleared -> pageCleared()
+             is WebNavigationStateChange.UrlUpdated -> urlUpdated(stateChange.url)
+             is WebNavigationStateChange.PageNavigationCleared -> disableUserNavigation()
++            else -> Unit
+         }
+ 
+         if (newWebNavigationState.progress ?: 0 >= SHOW_CONTENT_MIN_PROGRESS) {
+diff --git a/app/src/main/java/com/duckduckgo/app/browser/BrowserViewModel.kt b/app/src/main/java/com/duckduckgo/app/browser/BrowserViewModel.kt
+index 399a2f56..0e4449e1 100644
+--- a/app/src/main/java/com/duckduckgo/app/browser/BrowserViewModel.kt
++++ b/app/src/main/java/com/duckduckgo/app/browser/BrowserViewModel.kt
+@@ -117,6 +117,7 @@ class BrowserViewModel @Inject constructor(
+                 is AppEnjoymentPromptOptions.ShowFeedbackPrompt -> {
+                     command.value = Command.ShowAppFeedbackPrompt(promptType.promptCount)
+                 }
++                else -> Unit
+             }
+         }
+     }
+diff --git a/app/src/main/java/com/duckduckgo/app/fire/AutomaticDataClearer.kt b/app/src/main/java/com/duckduckgo/app/fire/AutomaticDataClearer.kt
+index a0d65823..17fc73b8 100644
+--- a/app/src/main/java/com/duckduckgo/app/fire/AutomaticDataClearer.kt
++++ b/app/src/main/java/com/duckduckgo/app/fire/AutomaticDataClearer.kt
+@@ -195,6 +195,7 @@ class AutomaticDataClearer @Inject constructor(
+                     dataClearerState.value = FINISHED
+                 }
+             }
++            else -> Unit
+         }
+     }
+ 
+diff --git a/app/src/main/java/com/duckduckgo/app/fire/fireproofwebsite/ui/FireproofWebsiteAdapter.kt b/app/src/main/java/com/duckduckgo/app/fire/fireproofwebsite/ui/FireproofWebsiteAdapter.kt
+index 6b3b1f4c..a54ab9e3 100644
+--- a/app/src/main/java/com/duckduckgo/app/fire/fireproofwebsite/ui/FireproofWebsiteAdapter.kt
++++ b/app/src/main/java/com/duckduckgo/app/fire/fireproofwebsite/ui/FireproofWebsiteAdapter.kt
+@@ -137,6 +137,7 @@ class FireproofWebsiteAdapter(
+                     )
+                 ]
+             )
++            else -> Unit
+         }
+     }
+ 
+diff --git a/app/src/main/java/com/duckduckgo/app/icon/ui/ChangeIconActivity.kt b/app/src/main/java/com/duckduckgo/app/icon/ui/ChangeIconActivity.kt
+index 5904e811..3e6eea27 100644
+--- a/app/src/main/java/com/duckduckgo/app/icon/ui/ChangeIconActivity.kt
++++ b/app/src/main/java/com/duckduckgo/app/icon/ui/ChangeIconActivity.kt
+@@ -92,6 +92,7 @@ class ChangeIconActivity : DuckDuckGoActivity() {
+                     }
+                     .show()
+             }
++            else -> Unit
+         }
+     }
+ 
+diff --git a/app/src/main/java/com/duckduckgo/app/launch/LaunchBridgeActivity.kt b/app/src/main/java/com/duckduckgo/app/launch/LaunchBridgeActivity.kt
+index ef708ab5..09fef2f8 100644
+--- a/app/src/main/java/com/duckduckgo/app/launch/LaunchBridgeActivity.kt
++++ b/app/src/main/java/com/duckduckgo/app/launch/LaunchBridgeActivity.kt
+@@ -59,6 +59,7 @@ class LaunchBridgeActivity : DuckDuckGoActivity() {
+             is LaunchViewModel.Command.Home -> {
+                 showHome()
+             }
++            else -> Unit
+         }
+     }
+ 
+diff --git a/app/src/main/java/com/duckduckgo/app/location/ui/LocationPermissionsAdapter.kt b/app/src/main/java/com/duckduckgo/app/location/ui/LocationPermissionsAdapter.kt
+index 31750b34..a10a4e1b 100644
+--- a/app/src/main/java/com/duckduckgo/app/location/ui/LocationPermissionsAdapter.kt
++++ b/app/src/main/java/com/duckduckgo/app/location/ui/LocationPermissionsAdapter.kt
+@@ -167,6 +167,7 @@ class LocationPermissionsAdapter(
+             is LocationPermissionsViewHolder.LocationPermissionsItemViewHolder -> {
+                 holder.bind(getLocationPermission(position))
+             }
++            else -> Unit
+         }
+     }
+ 
+diff --git a/app/src/main/java/com/duckduckgo/app/privacy/ui/WebsitesAdapter.kt b/app/src/main/java/com/duckduckgo/app/privacy/ui/WebsitesAdapter.kt
+index 4cf9ded9..50beedbe 100644
+--- a/app/src/main/java/com/duckduckgo/app/privacy/ui/WebsitesAdapter.kt
++++ b/app/src/main/java/com/duckduckgo/app/privacy/ui/WebsitesAdapter.kt
+@@ -143,6 +143,7 @@ class WebsitesAdapter(
+             is WebsiteViewHolder.WebsiteItemViewHolder -> {
+                 holder.bind(entries[getWebsiteItemPosition(position)])
+             }
++            else -> Unit
+         }
+     }
+ }
+diff --git a/app/src/main/java/com/duckduckgo/app/privacy/ui/WhitelistActivity.kt b/app/src/main/java/com/duckduckgo/app/privacy/ui/WhitelistActivity.kt
+index e8bc2912..5d31bcd1 100644
+--- a/app/src/main/java/com/duckduckgo/app/privacy/ui/WhitelistActivity.kt
++++ b/app/src/main/java/com/duckduckgo/app/privacy/ui/WhitelistActivity.kt
+@@ -103,6 +103,7 @@ class WhitelistActivity : DuckDuckGoActivity() {
+             is ShowEdit -> showEditDialog(command.entry)
+             is ConfirmDelete -> showDeleteDialog(command.entry)
+             is ShowWhitelistFormatError -> showWhitelistFormatError()
++            else -> Unit
+         }
+     }
+ 
+diff --git a/app/src/main/java/com/duckduckgo/app/tabs/ui/TabSwitcherActivity.kt b/app/src/main/java/com/duckduckgo/app/tabs/ui/TabSwitcherActivity.kt
+index 97627faf..eb51c8d9 100644
+--- a/app/src/main/java/com/duckduckgo/app/tabs/ui/TabSwitcherActivity.kt
++++ b/app/src/main/java/com/duckduckgo/app/tabs/ui/TabSwitcherActivity.kt
+@@ -174,6 +174,7 @@ class TabSwitcherActivity : DuckDuckGoActivity(), TabSwitcherListener, Coroutine
+     private fun processCommand(command: Command?) {
+         when (command) {
+             is Close -> finishAfterTransition()
++            else -> Unit
+         }
+     }
+ 
+diff --git a/app/src/play/java/com/duckduckgo/referral/PlayStoreAppReferrerStateListener.kt b/app/src/play/java/com/duckduckgo/referral/PlayStoreAppReferrerStateListener.kt
+index d8dfa642..988cf1f9 100644
+--- a/app/src/play/java/com/duckduckgo/referral/PlayStoreAppReferrerStateListener.kt
++++ b/app/src/play/java/com/duckduckgo/referral/PlayStoreAppReferrerStateListener.kt
+@@ -165,6 +165,7 @@ class PlayStoreAppReferrerStateListener @Inject constructor(
+                 variantManager.updateAppReferrerVariant(VariantManager.RESERVED_EU_AUCTION_VARIANT)
+                 appReferrerDataStore.installedFromEuAuction = true
+             }
++            else -> Unit
+         }
+ 
+         appReferrerDataStore.referrerCheckedPreviously = true
 diff --git a/build.gradle b/build.gradle
-index 5e2a7230..9b06a640 100644
+index 8a5b9c6e..03f70375 100644
 --- a/build.gradle
 +++ b/build.gradle
-@@ -2,7 +2,7 @@
+@@ -2,9 +2,9 @@
  buildscript {
  
      ext {
--        kotlin_version = '1.6.10'
+-        kotlin_version = '1.6.21'
 +        kotlin_version = '<kotlin_version>'
          spotless = "6.1.2"
-         anvil_version = "2.3.11-1-6-10"
-         gradle_plugin = "7.0.3"
-@@ -13,6 +13,7 @@ buildscript {
+-        anvil_version = "2.4.0"
++        anvil_version = "2.4.1-1.7.0-Beta-25-SNAPSHOT"
+         gradle_plugin = "7.0.4"
+         min_sdk = 23
+         target_sdk = 30
+@@ -13,13 +13,19 @@ buildscript {
      }
  
      repositories {
@@ -19,15 +186,39 @@ index 5e2a7230..9b06a640 100644
          google()
          mavenCentral()
          maven { url "https://plugins.gradle.org/m2/" }
-@@ -36,6 +37,7 @@ apply plugin: 'com.osacky.fulladle'
++        maven { url "https://s01.oss.sonatype.org/content/repositories/snapshots/" }
+         flatDir {
+             dirs "$rootProject.projectDir/libs"
+         }
+     }
++    configurations.classpath.resolutionStrategy {
++        force 'org.jetbrains.kotlin:kotlin-stdlib-jdk8:<kotlin_version>'
++        force 'org.jetbrains.kotlin:kotlin-gradle-plugin-api:<kotlin_version>'
++    }
+     dependencies {
+         classpath "com.android.tools.build:gradle:$gradle_plugin"
+         classpath "com.diffplug.spotless:spotless-plugin-gradle:$spotless"
+@@ -36,11 +42,18 @@ apply plugin: 'com.osacky.fulladle'
  
  allprojects {
      repositories {
 +        mavenLocal()
          google()
          mavenCentral()
++        maven { url "https://s01.oss.sonatype.org/content/repositories/snapshots/" }
      }
-@@ -70,4 +72,4 @@ fladle {
+     configurations.all {
+-        resolutionStrategy.force 'org.objenesis:objenesis:2.6'
++        resolutionStrategy {
++            force 'org.objenesis:objenesis:2.6'
++            force 'org.jetbrains.kotlin:kotlin-stdlib-jdk8:<kotlin_version>'
++            force 'org.jetbrains.kotlin:kotlin-compiler-embeddable:<kotlin_version>'
++            force 'org.jetbrains.kotlinx:kotlinx-metadata-jvm:0.4.2'
++        }
+     }
+ }
+ 
+@@ -70,4 +83,4 @@ fladle {
      }
  }
  
@@ -35,15 +226,39 @@ index 5e2a7230..9b06a640 100644
 \ No newline at end of file
 +apply plugin: 'android-reporting'
 diff --git a/versions.properties b/versions.properties
-index 72231792..b6fea830 100644
+index 069ab45e..26f56990 100644
 --- a/versions.properties
 +++ b/versions.properties
-@@ -77,7 +77,7 @@ version.io.reactivex.rxjava2..rxjava=2.2.9
+@@ -69,7 +69,7 @@ version.jakewharton.rxrelay2=2.0.0
  
  version.jakewharton.timber=5.0.1
  
--version.kotlin=1.6.20
+-version.kotlin=1.6.21
 +version.kotlin=<kotlin_version>
  
  version.kotlinx.coroutines=1.6.1
+ 
+diff --git a/vpn/src/main/java/com/duckduckgo/mobile/android/vpn/apps/ui/TrackingProtectionExclusionListActivity.kt b/vpn/src/main/java/com/duckduckgo/mobile/android/vpn/apps/ui/TrackingProtectionExclusionListActivity.kt
+index ffa80389..caa53aa3 100644
+--- a/vpn/src/main/java/com/duckduckgo/mobile/android/vpn/apps/ui/TrackingProtectionExclusionListActivity.kt
++++ b/vpn/src/main/java/com/duckduckgo/mobile/android/vpn/apps/ui/TrackingProtectionExclusionListActivity.kt
+@@ -183,6 +183,7 @@ class TrackingProtectionExclusionListActivity :
+                 command.position
+             )
+             is Command.LaunchFeedback -> reportBreakage.launch(command.reportBreakageScreen)
++            else -> Unit
+         }
+     }
+ 
+diff --git a/vpn/src/main/java/com/duckduckgo/mobile/android/vpn/ui/tracker_activity/DeviceShieldTrackerActivity.kt b/vpn/src/main/java/com/duckduckgo/mobile/android/vpn/ui/tracker_activity/DeviceShieldTrackerActivity.kt
+index bdc8881c..7c8f067e 100644
+--- a/vpn/src/main/java/com/duckduckgo/mobile/android/vpn/ui/tracker_activity/DeviceShieldTrackerActivity.kt
++++ b/vpn/src/main/java/com/duckduckgo/mobile/android/vpn/ui/tracker_activity/DeviceShieldTrackerActivity.kt
+@@ -228,6 +228,7 @@ class DeviceShieldTrackerActivity :
+             is DeviceShieldTrackerActivityViewModel.Command.ShowRemoveFeatureConfirmationDialog -> launchRemoveFeatureConfirmationDialog()
+             is DeviceShieldTrackerActivityViewModel.Command.CloseScreen -> finish()
+             is DeviceShieldTrackerActivityViewModel.Command.OpenVpnSettings -> openVPNSettings()
++            else -> Unit
+         }
+     }
  
