@@ -1,0 +1,29 @@
+package
+
+public fun main(): kotlin.Unit
+
+public open class FromSupplier {
+    public constructor FromSupplier()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+    // Static members
+    public/*package*/ open fun </*0*/ @io.reactivex.rxjava3.annotations.NonNull T : kotlin.Any!> fromSupplier3(/*0*/ supplier: Supplier<out @io.reactivex.rxjava3.annotations.Nullable T!>!): Maybe<T!>!
+    public/*package*/ open fun </*0*/ @io.reactivex.rxjava3.annotations.NonNull T : kotlin.Any!> fromSupplier5(/*0*/ @io.reactivex.rxjava3.annotations.NonNull supplier: @io.reactivex.rxjava3.annotations.NonNull Supplier<out @io.reactivex.rxjava3.annotations.Nullable T!>!): Maybe<T!>!
+}
+
+public abstract class Maybe</*0*/ T : kotlin.Any!> {
+    public constructor Maybe</*0*/ T : kotlin.Any!>()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public final fun subscribe(): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+@FunctionalInterface /* annotation class not found */ public interface Supplier</*0*/ @io.reactivex.rxjava3.annotations.NonNull T : kotlin.Any!> {
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public abstract fun get(): T!
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
