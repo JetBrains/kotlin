@@ -99,6 +99,12 @@ public class FirOldFrontendForeignAnnotationsSourceJavaTestGenerated extends Abs
         }
 
         @Test
+        @TestMetadata("kt50734.kt")
+        public void testKt50734() throws Exception {
+            runTest("compiler/testData/diagnostics/foreignAnnotationsTests/tests/kt50734.kt");
+        }
+
+        @Test
         @TestMetadata("lombokSimple.kt")
         public void testLombokSimple() throws Exception {
             runTest("compiler/testData/diagnostics/foreignAnnotationsTests/tests/lombokSimple.kt");
