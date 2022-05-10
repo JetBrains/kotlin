@@ -127,4 +127,8 @@ internal class KtFe10SymbolProvider(
             .filter { it.name == name }
             .mapNotNull { it.toKtSymbol(analysisContext) as? KtCallableSymbol }
     }
+
+    override fun getDestructuringDeclarationEntrySymbol(psi: KtDestructuringDeclarationEntry): KtLocalVariableSymbol {
+        return KtFe10PsiLocalVariableSymbol(psi, analysisContext)
+    }
 }

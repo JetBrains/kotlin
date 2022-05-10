@@ -40,7 +40,11 @@ internal class KtFirSymbolProvider(
             )
 
             psi.isLoopParameter -> {
-                firSymbolBuilder.variableLikeBuilder.buildLocalVariableSymbol(psi.resolveToFirSymbolOfType<FirPropertySymbol>(firResolveSession))
+                firSymbolBuilder.variableLikeBuilder.buildLocalVariableSymbol(
+                    psi.resolveToFirSymbolOfType<FirPropertySymbol>(
+                        firResolveSession
+                    )
+                )
             }
 
             else -> {
@@ -117,11 +121,19 @@ internal class KtFirSymbolProvider(
         require(psi !is KtObjectDeclaration || psi.parent !is KtObjectLiteralExpression)
         // A KtClassOrObject may also map to an FirEnumEntry. Hence, we need to return null in this case.
         if (psi is KtEnumEntry) return null
-        firSymbolBuilder.classifierBuilder.buildNamedClassOrObjectSymbol(psi.resolveToFirSymbolOfType<FirRegularClassSymbol>(firResolveSession))
+        firSymbolBuilder.classifierBuilder.buildNamedClassOrObjectSymbol(
+            psi.resolveToFirSymbolOfType<FirRegularClassSymbol>(
+                firResolveSession
+            )
+        )
     }
 
     override fun getPropertyAccessorSymbol(psi: KtPropertyAccessor): KtPropertyAccessorSymbol = withValidityAssertion {
-        firSymbolBuilder.callableBuilder.buildPropertyAccessorSymbol(psi.resolveToFirSymbolOfType<FirPropertyAccessorSymbol>(firResolveSession))
+        firSymbolBuilder.callableBuilder.buildPropertyAccessorSymbol(
+            psi.resolveToFirSymbolOfType<FirPropertyAccessorSymbol>(
+                firResolveSession
+            )
+        )
     }
 
     override fun getClassInitializerSymbol(psi: KtClassInitializer): KtClassInitializerSymbol = withValidityAssertion {
@@ -141,4 +153,12 @@ internal class KtFirSymbolProvider(
     }
 
     override val ROOT_PACKAGE_SYMBOL: KtPackageSymbol = KtFirPackageSymbol(FqName.ROOT, firResolveSession.project, token)
+
+    override fun getDestructuringDeclarationEntrySymbol(psi: KtDestructuringDeclarationEntry): KtLocalVariableSymbol {
+        return firSymbolBuilder.variableLikeBuilder.buildLocalVariableSymbol(
+            psi.resolveToFirSymbolOfType<FirPropertySymbol>(
+                firResolveSession
+            )
+        )
+    }
 }
