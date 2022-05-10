@@ -8,6 +8,8 @@ package org.jetbrains.kotlin.analysis.api.impl.base.test.configurators
 import com.intellij.mock.MockApplication
 import com.intellij.mock.MockProject
 import org.jetbrains.kotlin.analysis.api.impl.base.references.HLApiReferenceProviderService
+import org.jetbrains.kotlin.analysis.api.session.KtDefaultLifetimeTokenProvider
+import org.jetbrains.kotlin.analysis.api.session.KtReadActionConfinementDefaultLifetimeTokenProvider
 import org.jetbrains.kotlin.analysis.project.structure.KtModuleScopeProvider
 import org.jetbrains.kotlin.analysis.project.structure.KtModuleScopeProviderImpl
 import org.jetbrains.kotlin.analysis.providers.KotlinAnnotationsResolverFactory
@@ -33,6 +35,7 @@ object AnalysisApiBaseTestServiceRegistrar: AnalysisApiTestServiceRegistrar()  {
 
         project.apply {
             registerService(KotlinModificationTrackerFactory::class.java, KotlinStaticModificationTrackerFactory::class.java)
+            registerService(KtDefaultLifetimeTokenProvider::class.java, KtReadActionConfinementDefaultLifetimeTokenProvider::class.java)
 
             registerService(KtModuleScopeProvider::class.java, KtModuleScopeProviderImpl())
             registerService(KotlinModificationTrackerFactory::class.java, KotlinStaticModificationTrackerFactory::class.java)

@@ -37,7 +37,7 @@ class KtFe10AnalysisSessionProvider : KtAnalysisSessionProvider() {
         throw UnsupportedOperationException("getAnalysisSessionBySymbol() should not be used on KtFe10AnalysisSession")
     }
 
-    override fun getAnalysisSessionByModule(ktModule: KtModule, factory: KtLifetimeTokenFactory): KtAnalysisSession {
+    override fun getAnalysisSessionByUseSiteKtModule(ktModule: KtModule, factory: KtLifetimeTokenFactory): KtAnalysisSession {
         throw UnsupportedOperationException("getAnalysisSessionByModule() should not be used on KtFe10AnalysisSession")
     }
 

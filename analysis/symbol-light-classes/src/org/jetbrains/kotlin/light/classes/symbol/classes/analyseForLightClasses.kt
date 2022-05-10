@@ -6,9 +6,9 @@
 package org.jetbrains.kotlin.light.classes.symbol.classes
 
 import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
-import org.jetbrains.kotlin.analysis.api.analyseWithCustomToken
+import org.jetbrains.kotlin.analysis.api.analyse
 import org.jetbrains.kotlin.analysis.api.tokens.KtAlwaysAccessibleLifetimeTokenFactory
 import org.jetbrains.kotlin.psi.KtElement
 
 internal inline fun <R> analyseForLightClasses(context: KtElement, action: KtAnalysisSession.() -> R): R =
-    analyseWithCustomToken(context, KtAlwaysAccessibleLifetimeTokenFactory, action)
+    analyse(context, KtAlwaysAccessibleLifetimeTokenFactory, action)
