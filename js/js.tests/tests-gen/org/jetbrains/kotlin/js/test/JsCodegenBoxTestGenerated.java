@@ -7182,6 +7182,18 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
         }
 
         @Test
+        @TestMetadata("kt52311_nullOnLeft.kt")
+        public void testKt52311_nullOnLeft() throws Exception {
+            runTest("compiler/testData/codegen/box/coroutines/kt52311_nullOnLeft.kt");
+        }
+
+        @Test
+        @TestMetadata("kt52311_nullOnRight.kt")
+        public void testKt52311_nullOnRight() throws Exception {
+            runTest("compiler/testData/codegen/box/coroutines/kt52311_nullOnRight.kt");
+        }
+
+        @Test
         @TestMetadata("lastExpressionIsLoop.kt")
         public void testLastExpressionIsLoop() throws Exception {
             runTest("compiler/testData/codegen/box/coroutines/lastExpressionIsLoop.kt");

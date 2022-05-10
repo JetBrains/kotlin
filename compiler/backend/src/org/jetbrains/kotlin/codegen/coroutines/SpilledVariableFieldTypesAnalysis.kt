@@ -161,7 +161,7 @@ private fun Type.isIntLike(): Boolean = when (sort) {
 }
 
 // Represents [ACONST_NULL, CHECKCAST Type] sequence result.
-internal class TypedNullValue(type: Type) : BasicValue(type)
+internal class TypedNullValue(type: Type) : StrictBasicValue(type)
 
 // Preserves nulls through CHECKCASTS.
 private class NullCheckcastAwareOptimizationBasicInterpreter : OptimizationBasicInterpreter() {
@@ -171,4 +171,12 @@ private class NullCheckcastAwareOptimizationBasicInterpreter : OptimizationBasic
         }
         return super.unaryOperation(insn, value)
     }
+
+    override fun merge(v: BasicValue, w: BasicValue): BasicValue =
+        when {
+            v is TypedNullValue && w is TypedNullValue -> if (v.type == w.type) v else StrictBasicValue.NULL_VALUE
+            v is TypedNullValue -> super.merge(StrictBasicValue.NULL_VALUE, w)
+            w is TypedNullValue -> super.merge(v, StrictBasicValue.NULL_VALUE)
+            else -> super.merge(v, w)
+        }
 }
