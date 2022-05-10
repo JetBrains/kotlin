@@ -12,9 +12,9 @@ import com.intellij.psi.util.CachedValuesManager
 import com.intellij.psi.util.PsiModificationTracker
 import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.analysis.providers.createProjectWideOutOfBlockModificationTracker
-import org.jetbrains.kotlin.analysis.api.InvalidWayOfUsingAnalysisSession
+import org.jetbrains.kotlin.analysis.api.session.InvalidWayOfUsingAnalysisSession
 import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
-import org.jetbrains.kotlin.analysis.api.KtAnalysisSessionProvider
+import org.jetbrains.kotlin.analysis.api.session.KtAnalysisSessionProvider
 import org.jetbrains.kotlin.analysis.api.symbols.KtSymbol
 import org.jetbrains.kotlin.analysis.project.structure.KtModule
 import org.jetbrains.kotlin.analysis.api.tokens.KtLifetimeToken
@@ -46,8 +46,8 @@ abstract class CachingKtAnalysisSessionProvider<State : Any>(project: Project) :
         }
     }
 
-    final override fun getAnalysisSessionByUseSiteKtModule(ktModule: KtModule, factory: KtLifetimeTokenFactory): KtAnalysisSession {
-        val firResolveSession = getFirResolveSession(ktModule)
+    final override fun getAnalysisSessionByUseSiteKtModule(useSiteKtModule: KtModule, factory: KtLifetimeTokenFactory): KtAnalysisSession {
+        val firResolveSession = getFirResolveSession(useSiteKtModule)
         return cache.getAnalysisSession(firResolveSession to factory.identifier) {
             val validityToken = factory.create(project)
             createAnalysisSession(firResolveSession, validityToken)

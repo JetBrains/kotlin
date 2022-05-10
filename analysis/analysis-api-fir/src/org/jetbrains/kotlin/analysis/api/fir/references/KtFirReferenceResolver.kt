@@ -13,7 +13,7 @@ import com.intellij.psi.ResolveResult
 import com.intellij.psi.impl.source.resolve.ResolveCache
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.getElementTextInContext
 import org.jetbrains.kotlin.analysis.api.tokens.HackToForceAllowRunningAnalyzeOnEDT
-import org.jetbrains.kotlin.analysis.api.analyse
+import org.jetbrains.kotlin.analysis.api.session.analyze
 import org.jetbrains.kotlin.analysis.api.impl.base.util.runInPossiblyEdtThread
 
 object KtFirReferenceResolver : ResolveCache.PolyVariantResolver<KtReference> {
@@ -25,7 +25,7 @@ object KtFirReferenceResolver : ResolveCache.PolyVariantResolver<KtReference> {
         check(ref is AbstractKtReference<*>) { "reference should be AbstractKtReference, but was ${ref::class}" }
         return runInPossiblyEdtThread {
             val resolveToPsiElements = try {
-                analyse(ref.expression) { ref.getResolvedToPsi(this) }
+                analyze(ref.expression) { ref.getResolvedToPsi(this) }
             } catch (e: Throwable) {
                 if (e is ControlFlowException || e is IndexNotReadyException) throw e
 

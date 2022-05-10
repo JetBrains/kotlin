@@ -9,8 +9,8 @@ import com.intellij.core.CoreJavaFileManager
 import com.intellij.mock.MockApplication
 import com.intellij.mock.MockProject
 import com.intellij.psi.impl.file.impl.JavaFileManager
-import org.jetbrains.kotlin.analysis.api.InvalidWayOfUsingAnalysisSession
-import org.jetbrains.kotlin.analysis.api.KtAnalysisSessionProvider
+import org.jetbrains.kotlin.analysis.api.session.InvalidWayOfUsingAnalysisSession
+import org.jetbrains.kotlin.analysis.api.session.KtAnalysisSessionProvider
 import org.jetbrains.kotlin.analysis.api.descriptors.CliFe10AnalysisFacade
 import org.jetbrains.kotlin.analysis.api.descriptors.Fe10AnalysisFacade
 import org.jetbrains.kotlin.analysis.api.descriptors.KtFe10AnalysisHandlerExtension

@@ -5,9 +5,9 @@
 
 package org.jetbrains.kotlin.analysis.api.descriptors
 
-import org.jetbrains.kotlin.analysis.api.InvalidWayOfUsingAnalysisSession
+import org.jetbrains.kotlin.analysis.api.session.InvalidWayOfUsingAnalysisSession
 import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
-import org.jetbrains.kotlin.analysis.api.KtAnalysisSessionProvider
+import org.jetbrains.kotlin.analysis.api.session.KtAnalysisSessionProvider
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.base.KtFe10Symbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtSymbol
 import org.jetbrains.kotlin.analysis.project.structure.KtModule
@@ -19,8 +19,8 @@ import java.lang.UnsupportedOperationException
 @InvalidWayOfUsingAnalysisSession
 class KtFe10AnalysisSessionProvider : KtAnalysisSessionProvider() {
     @InvalidWayOfUsingAnalysisSession
-    override fun getAnalysisSession(contextElement: KtElement, factory: KtLifetimeTokenFactory): KtAnalysisSession {
-        return KtFe10AnalysisSession(contextElement, factory.create(contextElement.project))
+    override fun getAnalysisSession(useSiteKtElement: KtElement, factory: KtLifetimeTokenFactory): KtAnalysisSession {
+        return KtFe10AnalysisSession(useSiteKtElement, factory.create(useSiteKtElement.project))
     }
 
     @InvalidWayOfUsingAnalysisSession
@@ -37,7 +37,7 @@ class KtFe10AnalysisSessionProvider : KtAnalysisSessionProvider() {
         throw UnsupportedOperationException("getAnalysisSessionBySymbol() should not be used on KtFe10AnalysisSession")
     }
 
-    override fun getAnalysisSessionByUseSiteKtModule(ktModule: KtModule, factory: KtLifetimeTokenFactory): KtAnalysisSession {
+    override fun getAnalysisSessionByUseSiteKtModule(useSiteKtModule: KtModule, factory: KtLifetimeTokenFactory): KtAnalysisSession {
         throw UnsupportedOperationException("getAnalysisSessionByModule() should not be used on KtFe10AnalysisSession")
     }
 

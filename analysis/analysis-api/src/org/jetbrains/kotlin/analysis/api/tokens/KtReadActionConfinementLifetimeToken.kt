@@ -9,6 +9,7 @@ import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.analysis.providers.createProjectWideOutOfBlockModificationTracker
 import org.jetbrains.kotlin.analysis.api.*
+import org.jetbrains.kotlin.analysis.api.session.InvalidWayOfUsingAnalysisSession
 import kotlin.reflect.KClass
 
 public class KtReadActionConfinementLifetimeToken(project: Project) : KtLifetimeToken() {

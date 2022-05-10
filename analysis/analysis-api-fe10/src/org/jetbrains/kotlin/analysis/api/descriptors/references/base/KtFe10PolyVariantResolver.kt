@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.analysis.api.descriptors.references.base
 import com.intellij.psi.PsiElementResolveResult
 import com.intellij.psi.ResolveResult
 import com.intellij.psi.impl.source.resolve.ResolveCache
-import org.jetbrains.kotlin.analysis.api.analyse
+import org.jetbrains.kotlin.analysis.api.session.analyze
 import org.jetbrains.kotlin.analysis.api.descriptors.Fe10AnalysisFacade.AnalysisMode
 import org.jetbrains.kotlin.analysis.api.descriptors.KtFe10AnalysisSession
 import org.jetbrains.kotlin.analysis.api.impl.base.util.runInPossiblyEdtThread
@@ -32,7 +32,7 @@ object KtFe10PolyVariantResolver : ResolveCache.PolyVariantResolver<KtReference>
         require(reference is AbstractKtReference<*>) { "reference should be AbstractKtReference, but was ${reference::class}" }
         return runInPossiblyEdtThread {
             val expression = reference.expression
-            analyse(reference.expression) {
+            analyze(reference.expression) {
                 val analysisSession = this as KtFe10AnalysisSession
                 val bindingContext = analysisSession.analysisContext.analyze(expression, AnalysisMode.PARTIAL)
                 val descriptor = when (expression) {
