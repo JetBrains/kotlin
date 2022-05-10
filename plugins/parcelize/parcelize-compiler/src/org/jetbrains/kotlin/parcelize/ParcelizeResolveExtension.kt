@@ -145,7 +145,7 @@ open class ParcelizeResolveExtension : SyntheticResolveExtension {
             val parcelClassType = resolveParcelClassType(thisDescriptor.module) ?: ErrorUtils.createErrorType(ErrorTypeKind.UNRESOLVED_PARCEL_TYPE)
             result += createMethod(
                 thisDescriptor, WRITE_TO_PARCEL, Modality.OPEN,
-                builtIns.unitType, "parcel" to parcelClassType, "flags" to builtIns.intType
+                builtIns.unitType, "out" to parcelClassType, "flags" to builtIns.intType
             )
         }
     }
