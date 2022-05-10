@@ -134,6 +134,9 @@ object FirOptInUsageBaseChecker {
         dispatchReceiverType: ConeKotlinType?,
     ): Set<Experimentality> {
         ensureResolved(FirResolvePhase.STATUS)
+        if (this.fir is FirDelegateField) {
+            return emptySet()
+        }
         val fir = this.fir
         if (!visited.add(fir)) return emptySet()
         val result = knownExperimentalities ?: SmartSet.create()
