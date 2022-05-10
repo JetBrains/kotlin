@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.analysis.api.symbols.KtAnonymousObjectSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.CanNotCreateSymbolPointerForLocalLibraryDeclarationException
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtPsiBasedSymbolPointer
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtSymbolPointer
-import org.jetbrains.kotlin.analysis.api.tokens.ValidityToken
+import org.jetbrains.kotlin.analysis.api.tokens.KtLifetimeToken
 import org.jetbrains.kotlin.analysis.api.types.KtType
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.LLFirResolveSession
 import org.jetbrains.kotlin.fir.symbols.impl.FirAnonymousObjectSymbol
@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirAnonymousObjectSymbol
 internal class KtFirAnonymousObjectSymbol(
     override val firSymbol: FirAnonymousObjectSymbol,
     override val firResolveSession: LLFirResolveSession,
-    override val token: ValidityToken,
+    override val token: KtLifetimeToken,
     private val builder: KtSymbolByFirBuilder,
 ) : KtAnonymousObjectSymbol(), KtFirSymbol<FirAnonymousObjectSymbol> {
     override val psi: PsiElement? by cached { firSymbol.findPsi() }

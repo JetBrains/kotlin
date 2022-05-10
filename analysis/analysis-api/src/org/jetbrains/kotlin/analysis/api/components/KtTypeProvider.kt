@@ -5,10 +5,9 @@
 
 package org.jetbrains.kotlin.analysis.api.components
 
-import org.jetbrains.kotlin.analysis.api.ValidityTokenOwner
+import org.jetbrains.kotlin.analysis.api.KtLifetimeOwner
 import org.jetbrains.kotlin.analysis.api.symbols.KtCallableSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtNamedClassOrObjectSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.markers.KtPossibleMemberSymbol
 import org.jetbrains.kotlin.analysis.api.types.KtFlexibleType
 import org.jetbrains.kotlin.analysis.api.types.KtType
 import org.jetbrains.kotlin.analysis.api.types.KtTypeNullability
@@ -139,7 +138,7 @@ public interface KtTypeProviderMixIn : KtAnalysisSessionMixIn {
 }
 
 @Suppress("PropertyName")
-public abstract class KtBuiltinTypes : ValidityTokenOwner {
+public abstract class KtBuiltinTypes : KtLifetimeOwner {
     public abstract val INT: KtType
     public abstract val LONG: KtType
     public abstract val SHORT: KtType

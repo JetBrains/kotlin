@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.bas
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.toKtClassifierSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtCallableSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtClassOrObjectSymbol
-import org.jetbrains.kotlin.analysis.api.tokens.ValidityToken
+import org.jetbrains.kotlin.analysis.api.tokens.KtLifetimeToken
 import org.jetbrains.kotlin.analysis.api.withValidityAssertion
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.util.ImplementationStatus
 internal class KtFe10OverrideInfoProvider(
     override val analysisSession: KtFe10AnalysisSession
 ) : KtOverrideInfoProvider(), Fe10KtAnalysisSessionComponent {
-    override val token: ValidityToken
+    override val token: KtLifetimeToken
         get() = analysisSession.token
 
     override fun isVisible(memberSymbol: KtCallableSymbol, classSymbol: KtClassOrObjectSymbol): Boolean = withValidityAssertion {

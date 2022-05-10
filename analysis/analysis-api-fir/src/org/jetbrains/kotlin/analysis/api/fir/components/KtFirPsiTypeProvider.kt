@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.analysis.api.components.KtPsiTypeProvider
 import org.jetbrains.kotlin.analysis.api.fir.KtFirAnalysisSession
 import org.jetbrains.kotlin.analysis.api.fir.types.KtFirType
 import org.jetbrains.kotlin.analysis.api.fir.types.PublicTypeApproximator
-import org.jetbrains.kotlin.analysis.api.tokens.ValidityToken
+import org.jetbrains.kotlin.analysis.api.tokens.KtLifetimeToken
 import org.jetbrains.kotlin.analysis.api.types.KtType
 import org.jetbrains.kotlin.analysis.api.types.KtTypeMappingMode
 import org.jetbrains.kotlin.analysis.api.withValidityAssertion
@@ -45,7 +45,7 @@ import java.text.StringCharacterIterator
 
 internal class KtFirPsiTypeProvider(
     override val analysisSession: KtFirAnalysisSession,
-    override val token: ValidityToken,
+    override val token: KtLifetimeToken,
 ) : KtPsiTypeProvider(), KtFirAnalysisSessionComponent {
 
     override fun asPsiType(

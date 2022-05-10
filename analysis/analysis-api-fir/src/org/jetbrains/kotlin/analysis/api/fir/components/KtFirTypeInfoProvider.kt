@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.analysis.api.components.KtTypeInfoProvider
 import org.jetbrains.kotlin.analysis.api.fir.KtFirAnalysisSession
 import org.jetbrains.kotlin.analysis.api.fir.types.KtFirType
 import org.jetbrains.kotlin.analysis.api.fir.types.PublicTypeApproximator
-import org.jetbrains.kotlin.analysis.api.tokens.ValidityToken
+import org.jetbrains.kotlin.analysis.api.tokens.KtLifetimeToken
 import org.jetbrains.kotlin.analysis.api.types.KtType
 import org.jetbrains.kotlin.builtins.functions.FunctionClassKind
 import org.jetbrains.kotlin.fir.resolve.FirSamResolverImpl
@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.fir.types.typeApproximator
 
 internal class KtFirTypeInfoProvider(
     override val analysisSession: KtFirAnalysisSession,
-    override val token: ValidityToken,
+    override val token: KtLifetimeToken,
 ) : KtTypeInfoProvider(), KtFirAnalysisSessionComponent {
 
     override fun isFunctionalInterfaceType(type: KtType): Boolean {

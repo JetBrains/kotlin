@@ -9,7 +9,7 @@ import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import org.jetbrains.kotlin.analysis.api.symbols.KtSymbolOrigin
-import org.jetbrains.kotlin.analysis.api.tokens.ValidityToken
+import org.jetbrains.kotlin.analysis.api.tokens.KtLifetimeToken
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.psi.KtElement
@@ -50,7 +50,7 @@ interface Fe10AnalysisFacade {
 class Fe10AnalysisContext(
     facade: Fe10AnalysisFacade,
     val contextElement: KtElement,
-    val token: ValidityToken
+    val token: KtLifetimeToken
 ) : Fe10AnalysisFacade by facade {
     val resolveSession: ResolveSession = getResolveSession(contextElement)
     val deprecationResolver: DeprecationResolver = getDeprecationResolver(contextElement)

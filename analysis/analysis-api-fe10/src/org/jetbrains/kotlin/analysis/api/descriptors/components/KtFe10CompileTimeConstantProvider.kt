@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.analysis.api.descriptors.components.base.Fe10KtAnaly
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.toKtConstantValue
 import org.jetbrains.kotlin.analysis.api.base.KtConstantValue
 import org.jetbrains.kotlin.analysis.api.components.KtConstantEvaluationMode
-import org.jetbrains.kotlin.analysis.api.tokens.ValidityToken
+import org.jetbrains.kotlin.analysis.api.tokens.KtLifetimeToken
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtNameReferenceExpression
@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.types.TypeUtils
 internal class KtFe10CompileTimeConstantProvider(
     override val analysisSession: KtFe10AnalysisSession
 ) : KtCompileTimeConstantProvider(), Fe10KtAnalysisSessionComponent {
-    override val token: ValidityToken
+    override val token: KtLifetimeToken
         get() = analysisSession.token
 
     override fun evaluate(

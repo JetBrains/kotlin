@@ -19,7 +19,7 @@ fun KtAnalysisSession.getSymbol() : KtSymbol {
 }
 ```
 
-## No leakages of ValidityTokenOwners from KtAnalysisSession context
-All `ValidityTokenOwners` you get inside a `KtAnalysisSessoin` context should never leak it. But you may:
-* Store your `ValidityTokenOwners` as a field inside a class that implements `ValidityTokenOwners`. This way your outer class is `ValidityTokenOwners` itself and all rules apply to it. 
+## No leakages of KtLifetimeTokenOwners from KtAnalysisSession context
+All `KtLifetimeTokenOwners` you get inside a `KtAnalysisSessoin` context should never leak it. But you may:
+* Store your `KtLifetimeTokenOwners` as a field inside a class that implements `KtLifetimeTokenOwners`. This way your outer class is `KtLifetimeTokenOwners` itself and all rules apply to it. 
 * Pass it to another function with a `KtAnalysisSessoin` receiver.

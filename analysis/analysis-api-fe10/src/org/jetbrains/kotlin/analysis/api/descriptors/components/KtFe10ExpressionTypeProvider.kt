@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.analysis.api.descriptors.Fe10AnalysisFacade.Analysis
 import org.jetbrains.kotlin.analysis.api.descriptors.KtFe10AnalysisSession
 import org.jetbrains.kotlin.analysis.api.descriptors.components.base.Fe10KtAnalysisSessionComponent
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.toKtType
-import org.jetbrains.kotlin.analysis.api.tokens.ValidityToken
+import org.jetbrains.kotlin.analysis.api.tokens.KtLifetimeToken
 import org.jetbrains.kotlin.analysis.api.types.KtType
 import org.jetbrains.kotlin.analysis.api.withValidityAssertion
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
@@ -46,7 +46,7 @@ class KtFe10ExpressionTypeProvider(
         )
     }
 
-    override val token: ValidityToken
+    override val token: KtLifetimeToken
         get() = analysisSession.token
 
     override fun getKtExpressionType(expression: KtExpression): KtType? = withValidityAssertion {

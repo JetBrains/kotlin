@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.analysis.api.symbols.KtSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtValueParameterSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KtSymbolKind
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KtSymbolWithKind
-import org.jetbrains.kotlin.analysis.api.tokens.ValidityToken
+import org.jetbrains.kotlin.analysis.api.tokens.KtLifetimeToken
 import org.jetbrains.kotlin.analysis.project.structure.KtLibraryModule
 import org.jetbrains.kotlin.analysis.project.structure.KtLibrarySourceModule
 import org.jetbrains.kotlin.analysis.project.structure.KtModule
@@ -40,7 +40,7 @@ import java.nio.file.Paths
 internal class KtFe10SymbolContainingDeclarationProvider(
     override val analysisSession: KtFe10AnalysisSession
 ) : KtSymbolContainingDeclarationProvider(), Fe10KtAnalysisSessionComponent {
-    override val token: ValidityToken
+    override val token: KtLifetimeToken
         get() = analysisSession.token
 
     override fun getContainingDeclaration(symbol: KtSymbol): KtSymbolWithKind? {

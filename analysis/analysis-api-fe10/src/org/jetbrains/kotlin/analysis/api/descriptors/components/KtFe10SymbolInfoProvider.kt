@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.bas
 import org.jetbrains.kotlin.analysis.api.symbols.KtPropertyAccessorSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtPropertySymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtSymbol
-import org.jetbrains.kotlin.analysis.api.tokens.ValidityToken
+import org.jetbrains.kotlin.analysis.api.tokens.KtLifetimeToken
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyAccessorDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
@@ -32,7 +32,7 @@ import org.jetbrains.kotlin.synthetic.SyntheticJavaPropertyDescriptor
 internal class KtFe10SymbolInfoProvider(
     override val analysisSession: KtFe10AnalysisSession
 ) : KtSymbolInfoProvider(), Fe10KtAnalysisSessionComponent {
-    override val token: ValidityToken
+    override val token: KtLifetimeToken
         get() = analysisSession.token
 
     override fun getDeprecation(symbol: KtSymbol): DeprecationInfo? {

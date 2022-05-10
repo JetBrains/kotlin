@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.analysis.providers.createProjectWideOutOfBlockModifi
 import org.jetbrains.kotlin.analysis.api.*
 import kotlin.reflect.KClass
 
-public class ReadActionConfinementValidityToken(project: Project) : ValidityToken() {
+public class KtReadActionConfinementLifetimeToken(project: Project) : KtLifetimeToken() {
     private val modificationTracker = project.createProjectWideOutOfBlockModificationTracker()
     private val onCreatedTimeStamp = modificationTracker.modificationCount
 
@@ -31,7 +31,7 @@ public class ReadActionConfinementValidityToken(project: Project) : ValidityToke
         if (application.isDispatchThread && !allowOnEdt.get()) return false
         if (ForbidKtResolve.resovleIsForbidenInActionWithName.get() != null) return false
         if (!application.isReadAccessAllowed) return false
-        if (!ReadActionConfinementValidityTokenFactory.isInsideAnalysisContext()) return false
+        if (!ReadActionConfinementValidityTokenFactoryFactory.isInsideAnalysisContext()) return false
         return true
     }
 
@@ -43,7 +43,7 @@ public class ReadActionConfinementValidityToken(project: Project) : ValidityToke
         ForbidKtResolve.resovleIsForbidenInActionWithName.get()?.let { actionName ->
             return "Resolve is forbidden in $actionName"
         }
-        if (!ReadActionConfinementValidityTokenFactory.isInsideAnalysisContext()) return "Called outside analyse method"
+        if (!ReadActionConfinementValidityTokenFactoryFactory.isInsideAnalysisContext()) return "Called outside analyse method"
         error("Getting inaccessibility reason for validity token when it is accessible")
     }
 
@@ -53,13 +53,13 @@ public class ReadActionConfinementValidityToken(project: Project) : ValidityToke
         public val allowOnEdt: ThreadLocal<Boolean> = ThreadLocal.withInitial { false }
     }
 
-    public override val factory: ValidityTokenFactory = ReadActionConfinementValidityTokenFactory
+    public override val factory: KtLifetimeTokenFactory = ReadActionConfinementValidityTokenFactoryFactory
 }
 
-public object ReadActionConfinementValidityTokenFactory : ValidityTokenFactory() {
-    override val identifier: KClass<out ValidityToken> = ReadActionConfinementValidityToken::class
+public object ReadActionConfinementValidityTokenFactoryFactory : KtLifetimeTokenFactory() {
+    override val identifier: KClass<out KtLifetimeToken> = KtReadActionConfinementLifetimeToken::class
 
-    override fun create(project: Project): ValidityToken = ReadActionConfinementValidityToken(project)
+    override fun create(project: Project): KtLifetimeToken = KtReadActionConfinementLifetimeToken(project)
 
     override fun beforeEnteringAnalysisContext() {
         currentAnalysisContextEnteringCount.set(currentAnalysisContextEnteringCount.get() + 1)
@@ -82,15 +82,15 @@ public annotation class HackToForceAllowRunningAnalyzeOnEDT
  * All frontend related work should not be allowed to be ran from EDT thread. Only use it as a temporary solution.
  *
  * @see KtAnalysisSession
- * @see ReadActionConfinementValidityToken
+ * @see KtReadActionConfinementLifetimeToken
  */
 @HackToForceAllowRunningAnalyzeOnEDT
 public inline fun <T> hackyAllowRunningOnEdt(action: () -> T): T {
-    if (ReadActionConfinementValidityToken.allowOnEdt.get()) return action()
-    ReadActionConfinementValidityToken.allowOnEdt.set(true)
+    if (KtReadActionConfinementLifetimeToken.allowOnEdt.get()) return action()
+    KtReadActionConfinementLifetimeToken.allowOnEdt.set(true)
     try {
         return action()
     } finally {
-        ReadActionConfinementValidityToken.allowOnEdt.set(false)
+        KtReadActionConfinementLifetimeToken.allowOnEdt.set(false)
     }
 }

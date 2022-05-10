@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.analysis.api.symbols.KtCallableSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtClassifierSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtConstructorSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtPackageSymbol
-import org.jetbrains.kotlin.analysis.api.tokens.ValidityToken
+import org.jetbrains.kotlin.analysis.api.tokens.KtLifetimeToken
 import org.jetbrains.kotlin.analysis.api.withValidityAssertion
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.ClassifierDescriptor
@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.resolve.BindingContext
 internal class KtFe10FileScope(
     private val ktFile: KtFile,
     private val analysisContext: Fe10AnalysisContext,
-    override val token: ValidityToken,
+    override val token: KtLifetimeToken,
 ) : KtScope {
     override fun getPossibleCallableNames(): Set<Name> = withValidityAssertion {
         ktFile.declarations.mapNotNullTo(mutableSetOf()) { (it as? KtCallableDeclaration)?.nameAsName }

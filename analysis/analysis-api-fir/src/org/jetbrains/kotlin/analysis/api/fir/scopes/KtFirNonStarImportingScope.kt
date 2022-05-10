@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.analysis.api.symbols.KtCallableSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtClassifierSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtConstructorSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtPackageSymbol
-import org.jetbrains.kotlin.analysis.api.tokens.ValidityToken
+import org.jetbrains.kotlin.analysis.api.tokens.KtLifetimeToken
 import org.jetbrains.kotlin.analysis.api.withValidityAssertion
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.scopes.impl.FirAbstractSimpleImportingScope
@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.name.Name
 internal class KtFirNonStarImportingScope(
     private val firScope: FirAbstractSimpleImportingScope,
     private val builder: KtSymbolByFirBuilder,
-    override val token: ValidityToken,
+    override val token: KtLifetimeToken,
 ) : KtScope {
     private val imports: List<NonStarImport> by cached {
         buildList {

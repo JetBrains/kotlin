@@ -9,7 +9,7 @@ import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.analysis.providers.createProjectWideOutOfBlockModificationTracker
 import kotlin.reflect.KClass
 
-public class AlwaysAccessibleValidityToken(project: Project) : ValidityToken() {
+public class KtAlwaysAccessibleLifetimeToken(project: Project) : KtLifetimeToken() {
     private val modificationTracker = project.createProjectWideOutOfBlockModificationTracker()
     private val onCreatedTimeStamp = modificationTracker.modificationCount
 
@@ -30,12 +30,12 @@ public class AlwaysAccessibleValidityToken(project: Project) : ValidityToken() {
         error("Getting inaccessibility reason for validity token when it is accessible")
     }
 
-    override val factory: ValidityTokenFactory = AlwaysAccessibleValidityTokenFactory
+    override val factory: KtLifetimeTokenFactory = KtAlwaysAccessibleLifetimeTokenFactory
 }
 
-public object AlwaysAccessibleValidityTokenFactory : ValidityTokenFactory() {
-    override val identifier: KClass<out ValidityToken> = AlwaysAccessibleValidityToken::class
+public object KtAlwaysAccessibleLifetimeTokenFactory : KtLifetimeTokenFactory() {
+    override val identifier: KClass<out KtLifetimeToken> = KtAlwaysAccessibleLifetimeToken::class
 
-    override fun create(project: Project): ValidityToken =
-        AlwaysAccessibleValidityToken(project)
+    override fun create(project: Project): KtLifetimeToken =
+        KtAlwaysAccessibleLifetimeToken(project)
 }

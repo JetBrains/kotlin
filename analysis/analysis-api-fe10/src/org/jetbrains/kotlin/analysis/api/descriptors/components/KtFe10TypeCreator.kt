@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.bas
 import org.jetbrains.kotlin.analysis.api.descriptors.types.KtFe10ClassErrorType
 import org.jetbrains.kotlin.analysis.api.descriptors.types.KtFe10UsualClassType
 import org.jetbrains.kotlin.analysis.api.descriptors.types.base.KtFe10Type
-import org.jetbrains.kotlin.analysis.api.tokens.ValidityToken
+import org.jetbrains.kotlin.analysis.api.tokens.KtLifetimeToken
 import org.jetbrains.kotlin.analysis.api.types.KtClassType
 import org.jetbrains.kotlin.analysis.api.types.KtTypeNullability
 import org.jetbrains.kotlin.analysis.api.types.KtTypeParameterType
@@ -34,7 +34,7 @@ import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 internal class KtFe10TypeCreator(
     override val analysisSession: KtFe10AnalysisSession
 ) : KtTypeCreator(), Fe10KtAnalysisSessionComponent {
-    override val token: ValidityToken
+    override val token: KtLifetimeToken
         get() = analysisSession.token
 
     override fun buildClassType(builder: KtClassTypeBuilder): KtClassType = withValidityAssertion {

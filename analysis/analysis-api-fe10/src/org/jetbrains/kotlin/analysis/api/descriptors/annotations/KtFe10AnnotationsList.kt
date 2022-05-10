@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.analysis.api.annotations.KtAnnotationsList
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.toKtAnnotationApplication
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.maybeLocalClassId
 import org.jetbrains.kotlin.analysis.api.impl.base.annotations.KtEmptyAnnotationsList
-import org.jetbrains.kotlin.analysis.api.tokens.ValidityToken
+import org.jetbrains.kotlin.analysis.api.tokens.KtLifetimeToken
 import org.jetbrains.kotlin.analysis.api.withValidityAssertion
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.name.ClassId
@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.annotationClass
 
 internal class KtFe10AnnotationsList private constructor(
     private val fe10Annotations: Annotations,
-    override val token: ValidityToken,
+    override val token: KtLifetimeToken,
 ) : KtAnnotationsList() {
     override val annotations: List<KtAnnotationApplication>
         get() = withValidityAssertion {
@@ -51,7 +51,7 @@ internal class KtFe10AnnotationsList private constructor(
     companion object {
         fun create(
             fe10Annotations: Annotations,
-            token: ValidityToken,
+            token: KtLifetimeToken,
         ): KtAnnotationsList {
             return if (!fe10Annotations.isEmpty()) {
                 KtFe10AnnotationsList(fe10Annotations, token)

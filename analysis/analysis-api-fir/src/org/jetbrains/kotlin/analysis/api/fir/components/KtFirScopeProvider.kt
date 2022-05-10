@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.analysis.api.fir.components
 
 import com.intellij.openapi.project.Project
 import com.intellij.psi.search.GlobalSearchScope
-import org.jetbrains.kotlin.analysis.api.ValidityTokenOwner
+import org.jetbrains.kotlin.analysis.api.KtLifetimeOwner
 import org.jetbrains.kotlin.analysis.api.components.KtImplicitReceiver
 import org.jetbrains.kotlin.analysis.api.components.KtScopeContext
 import org.jetbrains.kotlin.analysis.api.components.KtScopeProvider
@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.analysis.api.scopes.KtScope
 import org.jetbrains.kotlin.analysis.api.symbols.KtFileSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtPackageSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KtSymbolWithMembers
-import org.jetbrains.kotlin.analysis.api.tokens.ValidityToken
+import org.jetbrains.kotlin.analysis.api.tokens.KtLifetimeToken
 import org.jetbrains.kotlin.analysis.api.types.KtType
 import org.jetbrains.kotlin.analysis.api.withValidityAssertion
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.LLFirResolveSession
@@ -50,8 +50,8 @@ internal class KtFirScopeProvider(
     builder: KtSymbolByFirBuilder,
     private val project: Project,
     firResolveSession: LLFirResolveSession,
-    override val token: ValidityToken,
-) : KtScopeProvider(), ValidityTokenOwner {
+    override val token: KtLifetimeToken,
+) : KtScopeProvider(), KtLifetimeOwner {
     // KtFirScopeProvider is thread local, so it's okay to use the same session here
     private val scopeSession = analysisSession.getScopeSessionFor(analysisSession.useSiteSession)
 

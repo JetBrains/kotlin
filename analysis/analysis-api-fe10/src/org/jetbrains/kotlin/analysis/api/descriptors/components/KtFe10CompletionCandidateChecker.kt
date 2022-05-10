@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.analysis.api.components.KtExtensionApplicabilityResu
 import org.jetbrains.kotlin.analysis.api.descriptors.KtFe10AnalysisSession
 import org.jetbrains.kotlin.analysis.api.descriptors.components.base.Fe10KtAnalysisSessionComponent
 import org.jetbrains.kotlin.analysis.api.symbols.KtCallableSymbol
-import org.jetbrains.kotlin.analysis.api.tokens.ValidityToken
+import org.jetbrains.kotlin.analysis.api.tokens.KtLifetimeToken
 import org.jetbrains.kotlin.analysis.api.withValidityAssertion
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtFile
@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.psi.KtSimpleNameExpression
 internal class KtFe10CompletionCandidateChecker(
     override val analysisSession: KtFe10AnalysisSession
 ) : KtCompletionCandidateChecker(), Fe10KtAnalysisSessionComponent {
-    override val token: ValidityToken
+    override val token: KtLifetimeToken
         get() = analysisSession.token
 
     override fun checkExtensionFitsCandidate(

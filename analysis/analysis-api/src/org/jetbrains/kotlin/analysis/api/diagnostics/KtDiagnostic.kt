@@ -8,11 +8,11 @@ package org.jetbrains.kotlin.analysis.api.diagnostics
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.diagnostics.Severity
-import org.jetbrains.kotlin.analysis.api.tokens.ValidityToken
-import org.jetbrains.kotlin.analysis.api.ValidityTokenOwner
+import org.jetbrains.kotlin.analysis.api.tokens.KtLifetimeToken
+import org.jetbrains.kotlin.analysis.api.KtLifetimeOwner
 import kotlin.reflect.KClass
 
-public interface KtDiagnostic : ValidityTokenOwner {
+public interface KtDiagnostic : KtLifetimeOwner {
     public val severity: Severity
     public val factoryName: String?
     public val defaultMessage: String
@@ -27,7 +27,7 @@ public interface KtDiagnosticWithPsi<out PSI : PsiElement> : KtDiagnostic {
 public class KtNonBoundToPsiErrorDiagnostic(
     override val factoryName: String?,
     override val defaultMessage: String,
-    override val token: ValidityToken,
+    override val token: KtLifetimeToken,
 ) : KtDiagnostic {
     override val severity: Severity get() = Severity.ERROR
 }

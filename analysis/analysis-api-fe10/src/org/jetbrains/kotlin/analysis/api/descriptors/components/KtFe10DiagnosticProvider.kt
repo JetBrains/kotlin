@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.analysis.api.descriptors.Fe10AnalysisFacade.Analysis
 import org.jetbrains.kotlin.analysis.api.descriptors.KtFe10AnalysisSession
 import org.jetbrains.kotlin.analysis.api.descriptors.components.base.Fe10KtAnalysisSessionComponent
 import org.jetbrains.kotlin.analysis.api.diagnostics.KtDiagnosticWithPsi
-import org.jetbrains.kotlin.analysis.api.tokens.ValidityToken
+import org.jetbrains.kotlin.analysis.api.tokens.KtLifetimeToken
 import org.jetbrains.kotlin.analysis.api.withValidityAssertion
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.diagnostics.DiagnosticFactory
@@ -27,7 +27,7 @@ import kotlin.reflect.KClass
 internal class KtFe10DiagnosticProvider(
     override val analysisSession: KtFe10AnalysisSession
 ) : KtDiagnosticProvider(), Fe10KtAnalysisSessionComponent {
-    override val token: ValidityToken
+    override val token: KtLifetimeToken
         get() = analysisSession.token
 
     override fun getDiagnosticsForElement(element: KtElement, filter: KtDiagnosticCheckerFilter): Collection<KtDiagnosticWithPsi<*>> {
@@ -52,7 +52,7 @@ internal class KtFe10DiagnosticProvider(
     }
 }
 
-internal class KtFe10Diagnostic(private val diagnostic: Diagnostic, override val token: ValidityToken) : KtDiagnosticWithPsi<PsiElement> {
+internal class KtFe10Diagnostic(private val diagnostic: Diagnostic, override val token: KtLifetimeToken) : KtDiagnosticWithPsi<PsiElement> {
     override val severity: Severity
         get() = diagnostic.severity
 

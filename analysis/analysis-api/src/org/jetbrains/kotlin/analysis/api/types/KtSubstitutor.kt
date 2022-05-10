@@ -5,16 +5,16 @@
 
 package org.jetbrains.kotlin.analysis.api.types
 
-import org.jetbrains.kotlin.analysis.api.ValidityTokenOwner
-import org.jetbrains.kotlin.analysis.api.tokens.ValidityToken
+import org.jetbrains.kotlin.analysis.api.KtLifetimeOwner
+import org.jetbrains.kotlin.analysis.api.tokens.KtLifetimeToken
 import org.jetbrains.kotlin.analysis.api.withValidityAssertion
 
 
-public interface KtSubstitutor : ValidityTokenOwner {
+public interface KtSubstitutor : KtLifetimeOwner {
     public fun substituteOrSelf(type: KtType): KtType = substituteOrNull(type) ?: type
     public fun substituteOrNull(type: KtType): KtType?
 
-    public class Empty(override val token: ValidityToken) : KtSubstitutor {
+    public class Empty(override val token: KtLifetimeToken) : KtSubstitutor {
         override fun substituteOrNull(type: KtType): KtType = withValidityAssertion { type }
     }
 }

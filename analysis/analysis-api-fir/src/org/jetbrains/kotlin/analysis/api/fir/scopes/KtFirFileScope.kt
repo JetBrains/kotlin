@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.analysis.api.symbols.KtCallableSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtClassifierSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtConstructorSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtPackageSymbol
-import org.jetbrains.kotlin.analysis.api.tokens.ValidityToken
+import org.jetbrains.kotlin.analysis.api.tokens.KtLifetimeToken
 import org.jetbrains.kotlin.analysis.api.withValidityAssertion
 import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.name.Name
 
 internal class KtFirFileScope(
     private val owner: KtFirFileSymbol,
-    override val token: ValidityToken,
+    override val token: KtLifetimeToken,
     private val builder: KtSymbolByFirBuilder
 ) : KtScope {
 

@@ -6,15 +6,14 @@
 package org.jetbrains.kotlin.analysis.api.types
 
 import org.jetbrains.kotlin.analysis.api.KtTypeArgument
-import org.jetbrains.kotlin.analysis.api.ValidityTokenOwner
+import org.jetbrains.kotlin.analysis.api.KtLifetimeOwner
 import org.jetbrains.kotlin.analysis.api.annotations.KtAnnotated
-import org.jetbrains.kotlin.analysis.api.annotations.KtAnnotationsList
 import org.jetbrains.kotlin.analysis.api.symbols.KtClassLikeSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtTypeParameterSymbol
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 
-public sealed interface KtType : ValidityTokenOwner, KtAnnotated {
+public sealed interface KtType : KtLifetimeOwner, KtAnnotated {
     public val nullability: KtTypeNullability
     public fun asStringForDebugging(): String
 }

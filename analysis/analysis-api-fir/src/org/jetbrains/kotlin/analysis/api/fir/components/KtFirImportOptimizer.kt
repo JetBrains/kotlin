@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.analysis.api.components.KtImportOptimizer
 import org.jetbrains.kotlin.analysis.api.components.KtImportOptimizerResult
 import org.jetbrains.kotlin.analysis.api.fir.getCandidateSymbols
 import org.jetbrains.kotlin.analysis.api.fir.utils.computeImportableName
-import org.jetbrains.kotlin.analysis.api.tokens.ValidityToken
+import org.jetbrains.kotlin.analysis.api.tokens.KtLifetimeToken
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.LLFirResolveSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFirFile
 import org.jetbrains.kotlin.fir.FirElement
@@ -40,7 +40,7 @@ import org.jetbrains.kotlin.resolve.ImportPath
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
 internal class KtFirImportOptimizer(
-    override val token: ValidityToken,
+    override val token: KtLifetimeToken,
     private val firResolveSession: LLFirResolveSession
 ) : KtImportOptimizer() {
     private val firSession: FirSession

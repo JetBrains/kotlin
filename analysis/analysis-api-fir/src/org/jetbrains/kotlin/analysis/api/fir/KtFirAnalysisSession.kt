@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.analysis.api.fir.symbols.KtFirOverrideInfoProvider
 import org.jetbrains.kotlin.analysis.api.fir.symbols.KtFirSymbolProvider
 import org.jetbrains.kotlin.analysis.api.fir.utils.threadLocal
 import org.jetbrains.kotlin.analysis.api.impl.base.components.KtAnalysisScopeProviderImpl
-import org.jetbrains.kotlin.analysis.api.tokens.ValidityToken
+import org.jetbrains.kotlin.analysis.api.tokens.KtLifetimeToken
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.LLFirResolveSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.LowLevelFirApiFacadeForResolveOnAir
 import org.jetbrains.kotlin.analysis.project.structure.KtModule
@@ -32,7 +32,7 @@ private constructor(
     private val project: Project,
     val firResolveSession: LLFirResolveSession,
     internal val firSymbolBuilder: KtSymbolByFirBuilder,
-    token: ValidityToken,
+    token: KtLifetimeToken,
     private val mode: AnalysisSessionMode,
 ) : KtAnalysisSession(token) {
 
@@ -129,7 +129,7 @@ private constructor(
         @InvalidWayOfUsingAnalysisSession
         internal fun createAnalysisSessionByFirResolveSession(
             firResolveSession: LLFirResolveSession,
-            token: ValidityToken,
+            token: KtLifetimeToken,
         ): KtFirAnalysisSession {
             val project = firResolveSession.project
             val firSymbolBuilder = KtSymbolByFirBuilder(

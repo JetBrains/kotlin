@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.analysis.api.symbols.KtCallableSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtClassifierSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtConstructorSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtPackageSymbol
-import org.jetbrains.kotlin.analysis.api.tokens.ValidityToken
+import org.jetbrains.kotlin.analysis.api.tokens.KtLifetimeToken
 import org.jetbrains.kotlin.analysis.api.withValidityAssertion
 import org.jetbrains.kotlin.analysis.providers.createDeclarationProvider
 import org.jetbrains.kotlin.analysis.providers.createPackageProvider
@@ -32,7 +32,7 @@ internal class KtFirPackageScope(
     private val fqName: FqName,
     private val project: Project,
     private val builder: KtSymbolByFirBuilder,
-    override val token: ValidityToken,
+    override val token: KtLifetimeToken,
     private val searchScope: GlobalSearchScope,
     private val targetPlatform: TargetPlatform,
 ) : KtScope {

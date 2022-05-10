@@ -5,10 +5,10 @@
 
 package org.jetbrains.kotlin.analysis.api.calls
 
-import org.jetbrains.kotlin.analysis.api.ValidityTokenOwner
+import org.jetbrains.kotlin.analysis.api.KtLifetimeOwner
 import org.jetbrains.kotlin.analysis.api.diagnostics.KtDiagnostic
 import org.jetbrains.kotlin.analysis.api.symbols.*
-import org.jetbrains.kotlin.analysis.api.tokens.ValidityToken
+import org.jetbrains.kotlin.analysis.api.tokens.KtLifetimeToken
 import org.jetbrains.kotlin.analysis.api.types.KtType
 import org.jetbrains.kotlin.analysis.api.withValidityAssertion
 import org.jetbrains.kotlin.psi.KtExpression
@@ -16,13 +16,13 @@ import org.jetbrains.kotlin.psi.KtExpression
 /**
  * Call information at call site.
  */
-public sealed class KtCallInfo : ValidityTokenOwner
+public sealed class KtCallInfo : KtLifetimeOwner
 
 /**
  * Successfully resolved call.
  */
 public class KtSuccessCallInfo(private val _call: KtCall) : KtCallInfo() {
-    override val token: ValidityToken
+    override val token: KtLifetimeToken
         get() = _call.token
     public val call: KtCall get() = withValidityAssertion { _call }
 }
@@ -33,7 +33,7 @@ public class KtSuccessCallInfo(private val _call: KtCall) : KtCallInfo() {
 public class KtErrorCallInfo(
     private val _candidateCalls: List<KtCall>,
     private val _diagnostic: KtDiagnostic,
-    override val token: ValidityToken
+    override val token: KtLifetimeToken
 ) : KtCallInfo() {
     public val candidateCalls: List<KtCall> get() = withValidityAssertion { _candidateCalls }
     public val diagnostic: KtDiagnostic get() = withValidityAssertion { _diagnostic }
@@ -73,8 +73,8 @@ public fun KtCallInfo.successfulConstructorCallOrNull(): KtFunctionCall<KtConstr
 public sealed class KtCallCandidateInfo(
     private val _candidate: KtCall,
     private val _isInBestCandidates: Boolean,
-) : ValidityTokenOwner {
-    override val token: ValidityToken
+) : KtLifetimeOwner {
+    override val token: KtLifetimeToken
         get() = _candidate.token
     public val candidate: KtCall get() = withValidityAssertion { _candidate }
 
@@ -112,7 +112,7 @@ public class KtInapplicableCallCandidateInfo(
 /**
  * A call to a function, a simple/compound access to a property, or a simple/compound access through `get` and `set` convention.
  */
-public sealed class KtCall : ValidityTokenOwner
+public sealed class KtCall : KtLifetimeOwner
 
 /**
  * A callable symbol partially applied with receivers and type arguments. Essentially, this is a call that misses some information. For
@@ -123,9 +123,9 @@ public class KtPartiallyAppliedSymbol<out S : KtCallableSymbol, out C : KtSignat
     private val _signature: C,
     private val _dispatchReceiver: KtReceiverValue?,
     private val _extensionReceiver: KtReceiverValue?,
-) : ValidityTokenOwner {
+) : KtLifetimeOwner {
 
-    override val token: ValidityToken get() = _signature.token
+    override val token: KtLifetimeToken get() = _signature.token
 
     /**
      * The function or variable (property) declaration.
@@ -154,7 +154,7 @@ public val <S : KtCallableSymbol, C : KtSignature<S>> KtPartiallyAppliedSymbol<S
  * ```
  */
 public class KtCheckNotNullCall(
-    override val token: ValidityToken,
+    override val token: KtLifetimeToken,
     private val _baseExpression: KtExpression,
 ) : KtCall() {
     public val baseExpression: KtExpression get() = withValidityAssertion { _baseExpression }
@@ -190,7 +190,7 @@ public class KtSimpleFunctionCall(
     argumentMapping: LinkedHashMap<KtExpression, KtVariableLikeSignature<KtValueParameterSymbol>>,
     private val _isImplicitInvoke: Boolean,
 ) : KtFunctionCall<KtFunctionLikeSymbol>(argumentMapping) {
-    override val token: ValidityToken get() = _partiallyAppliedSymbol.token
+    override val token: KtLifetimeToken get() = _partiallyAppliedSymbol.token
 
     /**
      * The function and receivers for this call.
@@ -215,7 +215,7 @@ public class KtAnnotationCall(
     private val _partiallyAppliedSymbol: KtPartiallyAppliedFunctionSymbol<KtConstructorSymbol>,
     argumentMapping: LinkedHashMap<KtExpression, KtVariableLikeSignature<KtValueParameterSymbol>>,
 ) : KtFunctionCall<KtConstructorSymbol>(argumentMapping) {
-    override val token: ValidityToken get() = _partiallyAppliedSymbol.token
+    override val token: KtLifetimeToken get() = _partiallyAppliedSymbol.token
 
     /**
      * The function and receivers for this call.
@@ -239,7 +239,7 @@ public class KtDelegatedConstructorCall(
     private val _kind: Kind,
     argumentMapping: LinkedHashMap<KtExpression, KtVariableLikeSignature<KtValueParameterSymbol>>,
 ) : KtFunctionCall<KtConstructorSymbol>(argumentMapping) {
-    override val token: ValidityToken get() = _partiallyAppliedSymbol.token
+    override val token: KtLifetimeToken get() = _partiallyAppliedSymbol.token
 
     /**
      * The function and receivers for this call.
@@ -266,7 +266,7 @@ public class KtSimpleVariableAccessCall(
     private val _simpleAccess: KtSimpleVariableAccess
 ) : KtVariableAccessCall() {
 
-    override val token: ValidityToken get() = _partiallyAppliedSymbol.token
+    override val token: KtLifetimeToken get() = _partiallyAppliedSymbol.token
 
     override val partiallyAppliedSymbol: KtPartiallyAppliedVariableSymbol<KtVariableLikeSymbol> get() = withValidityAssertion { _partiallyAppliedSymbol }
 
@@ -337,7 +337,7 @@ public class KtCompoundVariableAccessCall(
     private val _partiallyAppliedSymbol: KtPartiallyAppliedVariableSymbol<KtVariableLikeSymbol>,
     private val _compoundAccess: KtCompoundAccess
 ) : KtVariableAccessCall(), KtCompoundAccessCall {
-    override val token: ValidityToken
+    override val token: KtLifetimeToken
         get() = _partiallyAppliedSymbol.token
     override val partiallyAppliedSymbol: KtPartiallyAppliedVariableSymbol<KtVariableLikeSymbol> get() = withValidityAssertion { _partiallyAppliedSymbol }
     override val compoundAccess: KtCompoundAccess get() = withValidityAssertion { _compoundAccess }
@@ -387,7 +387,7 @@ public class KtCompoundArrayAccessCall(
 
     ) : KtCall(), KtCompoundAccessCall {
 
-    override val token: ValidityToken get() = _compoundAccess.token
+    override val token: KtLifetimeToken get() = _compoundAccess.token
 
     override val compoundAccess: KtCompoundAccess get() = withValidityAssertion { _compoundAccess }
 
@@ -409,9 +409,9 @@ public class KtCompoundArrayAccessCall(
  * The type of access to a variable or using the array access convention.
  */
 public sealed class KtCompoundAccess(private val _operationPartiallyAppliedSymbol: KtPartiallyAppliedFunctionSymbol<KtFunctionSymbol>) :
-    ValidityTokenOwner {
+    KtLifetimeOwner {
 
-    override val token: ValidityToken
+    override val token: KtLifetimeToken
         get() = _operationPartiallyAppliedSymbol.token
 
     /**
@@ -461,7 +461,7 @@ public sealed class KtCompoundAccess(private val _operationPartiallyAppliedSymbo
 /**
  * A receiver value of a call.
  */
-public sealed class KtReceiverValue : ValidityTokenOwner
+public sealed class KtReceiverValue : KtLifetimeOwner
 
 /**
  * An explicit expression receiver. For example
@@ -472,7 +472,7 @@ public sealed class KtReceiverValue : ValidityTokenOwner
 public class KtExplicitReceiverValue(
     private val _expression: KtExpression,
     private val _isSafeNavigation: Boolean,
-    override val token: ValidityToken
+    override val token: KtLifetimeToken
 ) : KtReceiverValue() {
     public val expression: KtExpression get() = withValidityAssertion { _expression }
 
@@ -504,7 +504,7 @@ public class KtExplicitReceiverValue(
  * ```
  */
 public class KtImplicitReceiverValue(private val _symbol: KtSymbol) : KtReceiverValue() {
-    override val token: ValidityToken get() = _symbol.token
+    override val token: KtLifetimeToken get() = _symbol.token
     public val symbol: KtSymbol get() = withValidityAssertion { _symbol }
 }
 
@@ -519,7 +519,7 @@ public class KtImplicitReceiverValue(private val _symbol: KtSymbol) : KtReceiver
  * ```
  */
 public class KtSmartCastedReceiverValue(private val _original: KtReceiverValue, private val _smartCastType: KtType) : KtReceiverValue() {
-    override val token: ValidityToken
+    override val token: KtLifetimeToken
         get() = _original.token
     public val original: KtReceiverValue get() = withValidityAssertion { _original }
     public val smartCastType: KtType get() = withValidityAssertion { _smartCastType }

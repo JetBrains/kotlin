@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.api.annotations
 
-import org.jetbrains.kotlin.analysis.api.ValidityTokenOwner
+import org.jetbrains.kotlin.analysis.api.KtLifetimeOwner
 import org.jetbrains.kotlin.name.ClassId
 
 /**
@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.name.ClassId
  *
  * Annotation owners are usually implement [KtAnnotated]
  */
-public abstract class KtAnnotationsList : ValidityTokenOwner {
+public abstract class KtAnnotationsList : KtLifetimeOwner {
     /**
      * A list of annotations applied.
      *

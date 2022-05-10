@@ -19,14 +19,14 @@ import org.jetbrains.kotlin.analysis.api.impl.barebone.parentOfType
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KtSymbolKind
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KtSymbolWithKind
-import org.jetbrains.kotlin.analysis.api.tokens.ValidityToken
+import org.jetbrains.kotlin.analysis.api.tokens.KtLifetimeToken
 import org.jetbrains.kotlin.analysis.project.structure.KtModule
 import org.jetbrains.kotlin.psi
 import org.jetbrains.kotlin.psi.*
 
 internal class KtFirSymbolContainingDeclarationProvider(
     override val analysisSession: KtFirAnalysisSession,
-    override val token: ValidityToken,
+    override val token: KtLifetimeToken,
 ) : KtSymbolContainingDeclarationProvider(), KtFirAnalysisSessionComponent {
     override fun getContainingDeclaration(symbol: KtSymbol): KtSymbolWithKind? {
         assertIsValidAndAccessible()

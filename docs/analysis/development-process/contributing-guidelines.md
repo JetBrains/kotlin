@@ -110,9 +110,9 @@ If you fixed a bug or added new functionality to an existing feature, consider a
 
 ## Follow Analysis API Implementation Contracts
 
-* Add `ValidityTokenOwner` as supertype for all declarations which contains other `ValidityTokenOwner` inside (eg, via parameter types,
-  function return types) to ensure that internal `ValidityTokenOwner` are not exposed via your declaration.
-* You have some declaration which implements `ValidityTokenOwner`. It means that this declaration has a lifetime. And this declaration has
+* Add `KtLifetimeTokenOwner` as supertype for all declarations which contains other `KtLifetimeTokenOwner` inside (eg, via parameter types,
+  function return types) to ensure that internal `KtLifetimeTokenOwner` are not exposed via your declaration.
+* You have some declaration which implements `KtLifetimeTokenOwner`. It means that this declaration has a lifetime. And this declaration has
   to be checked to ensure that it is not used after its lifetime has come to the end. To ensure that all methods(except `hashCode`/`equals`
   /`toString`) and properties should be wrapped into `withValidityAssertion { .. }` check:
 

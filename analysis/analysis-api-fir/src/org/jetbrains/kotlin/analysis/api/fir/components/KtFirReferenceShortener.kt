@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.analysis.api.fir.utils.computeImportableName
 import org.jetbrains.kotlin.analysis.api.impl.barebone.parentsOfType
 import org.jetbrains.kotlin.analysis.api.symbols.KtCallableSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtClassLikeSymbol
-import org.jetbrains.kotlin.analysis.api.tokens.ValidityToken
+import org.jetbrains.kotlin.analysis.api.tokens.KtLifetimeToken
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.LLFirResolveSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.LowLevelFirApiFacadeForResolveOnAir
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFir
@@ -63,7 +63,7 @@ import org.jetbrains.kotlin.utils.addIfNotNull
 
 internal class KtFirReferenceShortener(
     override val analysisSession: KtFirAnalysisSession,
-    override val token: ValidityToken,
+    override val token: KtLifetimeToken,
     override val firResolveSession: LLFirResolveSession,
 ) : KtReferenceShortener(), KtFirAnalysisSessionComponent {
     private val context = FirShorteningContext(analysisSession)

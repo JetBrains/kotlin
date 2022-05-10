@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.analysis.api.symbols.KtCallableSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtClassifierSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtConstructorSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtPackageSymbol
-import org.jetbrains.kotlin.analysis.api.tokens.ValidityToken
+import org.jetbrains.kotlin.analysis.api.tokens.KtLifetimeToken
 import org.jetbrains.kotlin.analysis.api.withValidityAssertion
 import org.jetbrains.kotlin.fir.isSubstitutionOverride
 import org.jetbrains.kotlin.fir.scopes.FirContainingNamesAwareScope
@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.name.Name
 internal open class KtFirDelegatingScope(
     val firScope: FirContainingNamesAwareScope,
     private val builder: KtSymbolByFirBuilder,
-    final override val token: ValidityToken
+    final override val token: KtLifetimeToken
 ) : KtScope {
     private val allNamesCached by cached {
         getPossibleCallableNames() + getPossibleClassifierNames()

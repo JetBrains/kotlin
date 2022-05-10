@@ -6,9 +6,9 @@
 package org.jetbrains.kotlin.analysis.api.components
 
 import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
-import org.jetbrains.kotlin.analysis.api.ValidityTokenOwner
+import org.jetbrains.kotlin.analysis.api.KtLifetimeOwner
 
-public abstract class KtAnalysisSessionComponent : ValidityTokenOwner {
+public abstract class KtAnalysisSessionComponent : KtLifetimeOwner {
     protected abstract val analysisSession: KtAnalysisSession
 }
 

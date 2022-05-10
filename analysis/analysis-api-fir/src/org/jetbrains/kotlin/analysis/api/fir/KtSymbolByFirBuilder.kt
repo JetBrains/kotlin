@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.analysis.api.fir.symbols.*
 import org.jetbrains.kotlin.analysis.api.fir.types.*
 import org.jetbrains.kotlin.analysis.api.fir.utils.weakRef
 import org.jetbrains.kotlin.analysis.api.symbols.*
-import org.jetbrains.kotlin.analysis.api.tokens.ValidityToken
+import org.jetbrains.kotlin.analysis.api.tokens.KtLifetimeToken
 import org.jetbrains.kotlin.analysis.api.types.KtSubstitutor
 import org.jetbrains.kotlin.analysis.api.types.KtType
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.LLFirResolveSession
@@ -54,13 +54,13 @@ import kotlin.contracts.contract
 internal class KtSymbolByFirBuilder private constructor(
     private val project: Project,
     firResolveSession: LLFirResolveSession,
-    override val token: ValidityToken,
+    override val token: KtLifetimeToken,
     val withReadOnlyCaching: Boolean,
     private val symbolsCache: BuilderCache<FirBasedSymbol<*>, KtSymbol>,
     private val extensionReceiverSymbolsCache: BuilderCache<FirCallableSymbol<*>, KtSymbol>,
     private val filesCache: BuilderCache<FirFileSymbol, KtFileSymbol>,
     private val backingFieldCache: BuilderCache<FirBackingFieldSymbol, KtBackingFieldSymbol>,
-) : ValidityTokenOwner {
+) : KtLifetimeOwner {
     private val firResolveSession by weakRef(firResolveSession)
 
     private val firProvider get() = firResolveSession.useSiteFirSession.symbolProvider
@@ -76,7 +76,7 @@ internal class KtSymbolByFirBuilder private constructor(
     constructor(
         firResolveSession: LLFirResolveSession,
         project: Project,
-        token: ValidityToken
+        token: KtLifetimeToken
     ) : this(
         project = project,
         token = token,

@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.analysis.api.fir.components
 import org.jetbrains.kotlin.fir.BuiltinTypes
 import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
 import org.jetbrains.kotlin.fir.types.impl.FirImplicitBuiltinTypeRef
-import org.jetbrains.kotlin.analysis.api.tokens.ValidityToken
+import org.jetbrains.kotlin.analysis.api.tokens.KtLifetimeToken
 import org.jetbrains.kotlin.analysis.api.components.KtBuiltinTypes
 import org.jetbrains.kotlin.analysis.api.fir.KtSymbolByFirBuilder
 import org.jetbrains.kotlin.analysis.api.fir.types.KtFirUsualClassType
@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.analysis.api.fir.utils.cached
 import org.jetbrains.kotlin.analysis.api.fir.utils.weakRef
 import org.jetbrains.kotlin.analysis.api.types.KtType
 
-internal class KtFirBuiltInTypes(builtinTypes: BuiltinTypes, builder: KtSymbolByFirBuilder, override val token: ValidityToken) : KtBuiltinTypes() {
+internal class KtFirBuiltInTypes(builtinTypes: BuiltinTypes, builder: KtSymbolByFirBuilder, override val token: KtLifetimeToken) : KtBuiltinTypes() {
     private val builder by weakRef(builder)
 
     override val INT: KtType by cachedBuiltin(builtinTypes.intType)

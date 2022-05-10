@@ -5,21 +5,21 @@
 
 package org.jetbrains.kotlin.analysis.api
 
-import org.jetbrains.kotlin.analysis.api.tokens.ValidityToken
+import org.jetbrains.kotlin.analysis.api.tokens.KtLifetimeToken
 import org.jetbrains.kotlin.analysis.api.tokens.assertIsValidAndAccessible
 
-public interface ValidityTokenOwner {
-    public val token: ValidityToken
+public interface KtLifetimeOwner {
+    public val token: KtLifetimeToken
 }
 
-public fun ValidityTokenOwner.isValid(): Boolean = token.isValid()
+public fun KtLifetimeOwner.isValid(): Boolean = token.isValid()
 
 @Suppress("NOTHING_TO_INLINE")
-public inline fun ValidityTokenOwner.assertIsValidAndAccessible() {
+public inline fun KtLifetimeOwner.assertIsValidAndAccessible() {
     token.assertIsValidAndAccessible()
 }
 
-public inline fun <R> ValidityTokenOwner.withValidityAssertion(action: () -> R): R {
+public inline fun <R> KtLifetimeOwner.withValidityAssertion(action: () -> R): R {
     assertIsValidAndAccessible()
     return action()
 }

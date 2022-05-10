@@ -8,11 +8,11 @@ package org.jetbrains.kotlin.analysis.api.impl.base.scopes
 import org.jetbrains.kotlin.analysis.api.scopes.KtScope
 import org.jetbrains.kotlin.analysis.api.scopes.KtScopeNameFilter
 import org.jetbrains.kotlin.analysis.api.symbols.*
-import org.jetbrains.kotlin.analysis.api.tokens.ValidityToken
+import org.jetbrains.kotlin.analysis.api.tokens.KtLifetimeToken
 import org.jetbrains.kotlin.analysis.api.withValidityAssertion
 import org.jetbrains.kotlin.name.Name
 
-class KtEmptyScope(override val token: ValidityToken) : KtScope {
+class KtEmptyScope(override val token: KtLifetimeToken) : KtScope {
     override fun getAllPossibleNames(): Set<Name> = withValidityAssertion {
         return emptySet()
     }
