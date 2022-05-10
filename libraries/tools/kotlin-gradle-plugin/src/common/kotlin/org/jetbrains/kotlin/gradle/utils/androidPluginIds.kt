@@ -9,10 +9,12 @@ internal val androidPluginIds = listOf(
     "com.android.application",
     "com.android.library",
     "com.android.dynamic-feature",
-    "com.android.asset-pack",
-    "com.android.asset-pack-bundle",
     "com.android.test",
     // Deprecated android plugins
     "com.android.instantapp",
     "com.android.feature"
+    // For following plugins 'kotlin-android' should never be applied
+    // see https://issuetracker.google.com/issues/228449122
+    //"com.android.asset-pack",
+    //"com.android.asset-pack-bundle",
 )
