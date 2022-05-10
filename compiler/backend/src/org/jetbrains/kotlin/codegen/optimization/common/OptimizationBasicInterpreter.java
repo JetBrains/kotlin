@@ -204,7 +204,7 @@ public class OptimizationBasicInterpreter extends Interpreter<BasicValue> implem
             case DREM:
                 return StrictBasicValue.DOUBLE_VALUE;
             case AALOAD:
-                return StrictBasicValue.REFERENCE_VALUE;
+                return StrictBasicValue.NULL_VALUE;
             case LCMP:
             case FCMPL:
             case FCMPG:
@@ -331,6 +331,9 @@ public class OptimizationBasicInterpreter extends Interpreter<BasicValue> implem
             case ATHROW:
                 return null;
             case CHECKCAST:
+                if (value == StrictBasicValue.NULL_VALUE) {
+                    return StrictBasicValue.NULL_VALUE;
+                }
                 desc = ((TypeInsnNode) insn).desc;
                 return newValue(Type.getObjectType(desc));
             case INSTANCEOF:

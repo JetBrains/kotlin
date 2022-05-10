@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.codegen.coroutines
 import org.jetbrains.kotlin.codegen.StackValue
 import org.jetbrains.kotlin.codegen.optimization.common.FastMethodAnalyzer
 import org.jetbrains.kotlin.codegen.optimization.common.OptimizationBasicInterpreter
-import org.jetbrains.kotlin.codegen.optimization.common.StrictBasicValue
 import org.jetbrains.org.objectweb.asm.Label
 import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.Type
@@ -135,7 +134,7 @@ internal fun performSpilledVariableFieldTypesAnalysis(
     for ((insn, type) in interpreter.needsToBeCoerced) {
         methodNode.instructions.insert(insn, withInstructionAdapter { coerceInt(type, this) })
     }
-    return FastMethodAnalyzer(thisName, methodNode, NullCheckcastAwareOptimizationBasicInterpreter()).analyze()
+    return FastMethodAnalyzer(thisName, methodNode, OptimizationBasicInterpreter()).analyze()
 }
 
 private fun coerceInt(to: Type, v: InstructionAdapter) {
@@ -158,25 +157,4 @@ private fun coerceInt(to: Type, v: InstructionAdapter) {
 private fun Type.isIntLike(): Boolean = when (sort) {
     Type.BOOLEAN, Type.BYTE, Type.CHAR, Type.SHORT -> true
     else -> false
-}
-
-// Represents [ACONST_NULL, CHECKCAST Type] sequence result.
-internal class TypedNullValue(type: Type) : StrictBasicValue(type)
-
-// Preserves nulls through CHECKCASTS.
-private class NullCheckcastAwareOptimizationBasicInterpreter : OptimizationBasicInterpreter() {
-    override fun unaryOperation(insn: AbstractInsnNode, value: BasicValue?): BasicValue? {
-        if (insn.opcode == Opcodes.CHECKCAST && (value == StrictBasicValue.NULL_VALUE || value is TypedNullValue)) {
-            return TypedNullValue(Type.getObjectType((insn as TypeInsnNode).desc))
-        }
-        return super.unaryOperation(insn, value)
-    }
-
-    override fun merge(v: BasicValue, w: BasicValue): BasicValue =
-        when {
-            v is TypedNullValue && w is TypedNullValue -> if (v.type == w.type) v else StrictBasicValue.NULL_VALUE
-            v is TypedNullValue -> super.merge(StrictBasicValue.NULL_VALUE, w)
-            w is TypedNullValue -> super.merge(v, StrictBasicValue.NULL_VALUE)
-            else -> super.merge(v, w)
-        }
 }
