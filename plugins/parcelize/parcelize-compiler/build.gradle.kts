@@ -91,6 +91,7 @@ testsJar()
 projectTest(jUnitMode = JUnitMode.JUnit5) {
     useJUnitPlatform()
     dependsOn(parcelizeRuntimeForTests)
+    dependsOn(robolectricClasspath)
     dependsOn(":dist")
     workingDir = rootDir
     useAndroidJar()

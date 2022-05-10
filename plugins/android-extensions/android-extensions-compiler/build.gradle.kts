@@ -58,6 +58,7 @@ testsJar()
 
 projectTest {
     dependsOn(androidExtensionsRuntimeForTests)
+    dependsOn(robolectricClasspath)
     dependsOn(":dist")
     workingDir = rootDir
     useAndroidJar()
