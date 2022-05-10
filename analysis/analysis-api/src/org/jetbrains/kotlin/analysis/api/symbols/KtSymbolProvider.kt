@@ -28,6 +28,7 @@ public abstract class KtSymbolProvider : KtAnalysisSessionComponent() {
         }
         is KtPropertyAccessor -> getPropertyAccessorSymbol(psi)
         is KtClassInitializer -> getClassInitializerSymbol(psi)
+        is KtDestructuringDeclarationEntry -> getDestructuringDeclarationEntrySymbol(psi)
         else -> error("Cannot build symbol for ${psi::class}")
     }
 
@@ -46,6 +47,7 @@ public abstract class KtSymbolProvider : KtAnalysisSessionComponent() {
     public abstract fun getNamedClassOrObjectSymbol(psi: KtClassOrObject): KtNamedClassOrObjectSymbol?
     public abstract fun getPropertyAccessorSymbol(psi: KtPropertyAccessor): KtPropertyAccessorSymbol
     public abstract fun getClassInitializerSymbol(psi: KtClassInitializer): KtClassInitializerSymbol
+    public abstract fun getDestructuringDeclarationEntrySymbol(psi: KtDestructuringDeclarationEntry): KtVariableLikeSymbol
 
     public abstract fun getClassOrObjectSymbolByClassId(classId: ClassId): KtClassOrObjectSymbol?
 

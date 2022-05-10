@@ -140,4 +140,8 @@ internal class KtFirSymbolProvider(
     }
 
     override val ROOT_PACKAGE_SYMBOL: KtPackageSymbol = KtFirPackageSymbol(FqName.ROOT, firResolveSession.project, token)
+
+    override fun getDestructuringDeclarationEntrySymbol(psi: KtDestructuringDeclarationEntry): KtVariableLikeSymbol {
+        return firSymbolBuilder.variableLikeBuilder.buildVariableSymbol(psi.resolveToFirSymbolOfType<FirPropertySymbol>(firResolveSession))
+    }
 }
