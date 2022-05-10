@@ -8,11 +8,11 @@ package org.jetbrains.kotlin.analysis.api.descriptors.references.base
 import com.intellij.psi.PsiElementResolveResult
 import com.intellij.psi.ResolveResult
 import com.intellij.psi.impl.source.resolve.ResolveCache
-import org.jetbrains.kotlin.analysis.api.session.analyze
+import org.jetbrains.kotlin.analysis.api.KtAllowAnalysisOnEdt
+import org.jetbrains.kotlin.analysis.api.analyze
 import org.jetbrains.kotlin.analysis.api.descriptors.Fe10AnalysisFacade.AnalysisMode
 import org.jetbrains.kotlin.analysis.api.descriptors.KtFe10AnalysisSession
-import org.jetbrains.kotlin.analysis.api.impl.base.util.runInPossiblyEdtThread
-import org.jetbrains.kotlin.analysis.api.tokens.HackToForceAllowRunningAnalyzeOnEDT
+import org.jetbrains.kotlin.analysis.api.lifetime.allowAnalysisOnEdt
 import org.jetbrains.kotlin.idea.references.AbstractKtReference
 import org.jetbrains.kotlin.idea.references.KtReference
 import org.jetbrains.kotlin.load.kotlin.toSourceElement
@@ -27,10 +27,10 @@ internal interface CliKtFe10Reference : KtReference {
 }
 
 object KtFe10PolyVariantResolver : ResolveCache.PolyVariantResolver<KtReference> {
-    @OptIn(HackToForceAllowRunningAnalyzeOnEDT::class)
+    @OptIn(KtAllowAnalysisOnEdt::class)
     override fun resolve(reference: KtReference, incompleteCode: Boolean): Array<ResolveResult> {
         require(reference is AbstractKtReference<*>) { "reference should be AbstractKtReference, but was ${reference::class}" }
-        return runInPossiblyEdtThread {
+        return allowAnalysisOnEdt {
             val expression = reference.expression
             analyze(reference.expression) {
                 val analysisSession = this as KtFe10AnalysisSession

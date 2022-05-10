@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.analysis.api.fir.components
 import org.jetbrains.kotlin.fir.backend.jvm.jvmTypeMapper
 import org.jetbrains.kotlin.analysis.api.components.KtJvmTypeMapper
 import org.jetbrains.kotlin.analysis.api.fir.KtFirAnalysisSession
-import org.jetbrains.kotlin.analysis.api.tokens.KtLifetimeToken
+import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeToken
 import org.jetbrains.kotlin.analysis.api.types.KtType
 import org.jetbrains.kotlin.load.kotlin.TypeMappingMode
 import org.jetbrains.org.objectweb.asm.Type

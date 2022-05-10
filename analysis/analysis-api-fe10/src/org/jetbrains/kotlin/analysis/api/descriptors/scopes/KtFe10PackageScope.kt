@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.analysis.api.descriptors.symbols.KtFe10PackageSymbol
 import org.jetbrains.kotlin.analysis.api.scopes.KtScopeNameFilter
 import org.jetbrains.kotlin.analysis.api.symbols.KtConstructorSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtPackageSymbol
-import org.jetbrains.kotlin.analysis.api.withValidityAssertion
+import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 
 internal class KtFe10PackageScope(

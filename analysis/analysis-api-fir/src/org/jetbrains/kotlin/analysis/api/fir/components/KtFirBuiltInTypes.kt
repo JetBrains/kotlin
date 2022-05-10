@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.analysis.api.fir.components
 import org.jetbrains.kotlin.fir.BuiltinTypes
 import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
 import org.jetbrains.kotlin.fir.types.impl.FirImplicitBuiltinTypeRef
-import org.jetbrains.kotlin.analysis.api.tokens.KtLifetimeToken
+import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeToken
 import org.jetbrains.kotlin.analysis.api.components.KtBuiltinTypes
 import org.jetbrains.kotlin.analysis.api.fir.KtSymbolByFirBuilder
 import org.jetbrains.kotlin.analysis.api.fir.types.KtFirUsualClassType

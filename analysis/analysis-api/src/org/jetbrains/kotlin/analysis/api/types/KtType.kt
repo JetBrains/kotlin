@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.analysis.api.types
 
 import org.jetbrains.kotlin.analysis.api.KtTypeArgument
-import org.jetbrains.kotlin.analysis.api.KtLifetimeOwner
+import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeOwner
 import org.jetbrains.kotlin.analysis.api.annotations.KtAnnotated
 import org.jetbrains.kotlin.analysis.api.symbols.KtClassLikeSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtTypeParameterSymbol

@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.analysis.api.fir.utils.computeImportableName
 import org.jetbrains.kotlin.analysis.api.impl.barebone.parentsOfType
 import org.jetbrains.kotlin.analysis.api.symbols.KtCallableSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtClassLikeSymbol
-import org.jetbrains.kotlin.analysis.api.tokens.KtLifetimeToken
+import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeToken
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.LLFirResolveSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.LowLevelFirApiFacadeForResolveOnAir
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFir

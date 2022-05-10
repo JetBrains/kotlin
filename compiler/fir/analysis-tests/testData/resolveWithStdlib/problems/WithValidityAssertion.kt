@@ -1,25 +1,25 @@
 import kotlin.reflect.KProperty
 import kotlin.properties.ReadOnlyProperty
 
-interface ValidityToken {
+interface KtLifetimeToken {
     fun assertIsValid()
 }
 
-interface ValidityTokenOwner {
-    val token: ValidityToken
+interface KtLifetimeTokenOwner {
+    val token: KtLifetimeToken
 }
 
-<!NOTHING_TO_INLINE!>inline<!> fun ValidityTokenOwner.assertIsValid() {
+<!NOTHING_TO_INLINE!>inline<!> fun KtLifetimeTokenOwner.assertIsValid() {
     token.assertIsValid()
 }
 
-inline fun <R> ValidityTokenOwner.withValidityAssertion(action: () -> R): R {
+inline fun <R> KtLifetimeTokenOwner.withValidityAssertion(action: () -> R): R {
     assertIsValid()
     return action()
 }
 
 class ValidityAwareCachedValue<T>(
-    private val token: ValidityToken,
+    private val token: KtLifetimeToken,
     init: () -> T
 ) : ReadOnlyProperty<Any, T> {
     private val lazyValue = lazy(LazyThreadSafetyMode.PUBLICATION, init)
@@ -31,15 +31,15 @@ class ValidityAwareCachedValue<T>(
     }
 }
 
-internal fun <T> ValidityTokenOwner.cached(init: () -> T) = ValidityAwareCachedValue(token, init)
+internal fun <T> KtLifetimeTokenOwner.cached(init: () -> T) = ValidityAwareCachedValue(token, init)
 
 public typealias KtScopeNameFilter = (String) -> Boolean
 
 abstract class KtFirNonStarImportingScope(
     private val firScope: FirScope,
     private val builder: KtSymbolByFirBuilder,
-    override val token: ValidityToken,
-) : ValidityTokenOwner {
+    override val token: KtLifetimeToken,
+) : KtLifetimeTokenOwner {
     private val imports: List<String> by cached {
         buildList {
             getCallableNames().forEach {

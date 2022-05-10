@@ -29,10 +29,10 @@ import com.intellij.psi.scope.PsiScopeProcessor
 import com.intellij.psi.util.CachedValueProvider
 import com.intellij.psi.util.PsiUtil
 import org.jetbrains.annotations.NonNls
+import org.jetbrains.kotlin.analysis.api.KtAllowAnalysisOnEdt
 import org.jetbrains.kotlin.analysis.providers.createProjectWideOutOfBlockModificationTracker
 import org.jetbrains.kotlin.idea.KotlinLanguage
-import org.jetbrains.kotlin.analysis.api.tokens.HackToForceAllowRunningAnalyzeOnEDT
-import org.jetbrains.kotlin.analysis.api.tokens.hackyAllowRunningOnEdt
+import org.jetbrains.kotlin.analysis.api.lifetime.allowAnalysisOnEdt
 import org.jetbrains.kotlin.asJava.classes.*
 import org.jetbrains.kotlin.light.classes.symbol.classes.checkIsInheritor
 import javax.swing.Icon
@@ -44,10 +44,10 @@ abstract class FirLightClassBase protected constructor(
         get() = invalidAccess()
 
     private class FirLightClassesLazyCreator(private val project: Project) : KotlinClassInnerStuffCache.LazyCreator() {
-        @OptIn(HackToForceAllowRunningAnalyzeOnEDT::class)
+        @OptIn(KtAllowAnalysisOnEdt::class)
         override fun <T : Any> get(initializer: () -> T, dependencies: List<Any>): Lazy<T> = object : Lazy<T> {
             private val cachedValue = PsiCachedValueImpl(PsiManager.getInstance(project)) {
-                CachedValueProvider.Result.create(hackyAllowRunningOnEdt(initializer), dependencies)
+                CachedValueProvider.Result.create(allowAnalysisOnEdt(initializer), dependencies)
             }
 
             override val value: T

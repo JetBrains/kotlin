@@ -11,19 +11,19 @@ import com.intellij.psi.util.CachedValueProvider
 import com.intellij.psi.util.CachedValuesManager
 import com.intellij.psi.util.PsiModificationTracker
 import org.jetbrains.annotations.TestOnly
+import org.jetbrains.kotlin.analysis.api.KtAnalysisApiInternals
 import org.jetbrains.kotlin.analysis.providers.createProjectWideOutOfBlockModificationTracker
-import org.jetbrains.kotlin.analysis.api.session.InvalidWayOfUsingAnalysisSession
 import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
 import org.jetbrains.kotlin.analysis.api.session.KtAnalysisSessionProvider
 import org.jetbrains.kotlin.analysis.api.symbols.KtSymbol
 import org.jetbrains.kotlin.analysis.project.structure.KtModule
-import org.jetbrains.kotlin.analysis.api.tokens.KtLifetimeToken
-import org.jetbrains.kotlin.analysis.api.tokens.KtLifetimeTokenFactory
+import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeToken
+import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeTokenFactory
 import org.jetbrains.kotlin.psi.KtElement
 import java.util.concurrent.ConcurrentHashMap
 import kotlin.reflect.KClass
 
-@OptIn(InvalidWayOfUsingAnalysisSession::class)
+@KtAnalysisApiInternals
 abstract class CachingKtAnalysisSessionProvider<State : Any>(project: Project) : KtAnalysisSessionProvider(project) {
     private val cache = KtAnalysisSessionCache<Pair<State, KClass<out KtLifetimeToken>>>(project)
 
@@ -37,9 +37,8 @@ abstract class CachingKtAnalysisSessionProvider<State : Any>(project: Project) :
         token: KtLifetimeToken,
     ): KtAnalysisSession
 
-    @InvalidWayOfUsingAnalysisSession
-    final override fun getAnalysisSession(contextElement: KtElement, factory: KtLifetimeTokenFactory): KtAnalysisSession {
-        val firResolveSession = getFirResolveSession(contextElement)
+    final override fun getAnalysisSession(useSiteKtElement: KtElement, factory: KtLifetimeTokenFactory): KtAnalysisSession {
+        val firResolveSession = getFirResolveSession(useSiteKtElement)
         return cache.getAnalysisSession(firResolveSession to factory.identifier) {
             val token = factory.create(project)
             createAnalysisSession(firResolveSession, token)

@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.asJava.classes.METHOD_INDEX_FOR_GETTER
 import org.jetbrains.kotlin.asJava.classes.METHOD_INDEX_FOR_SETTER
 import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
-import org.jetbrains.kotlin.analysis.api.isValid
+import org.jetbrains.kotlin.analysis.api.lifetime.isValid
 import org.jetbrains.kotlin.analysis.api.symbols.KtPropertyAccessorSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtPropertyGetterSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtPropertySetterSymbol

@@ -120,7 +120,7 @@ If you fixed a bug or added new functionality to an existing feature, consider a
 public class KtCall(
     private val _symbol: KtSymbol,
     private val _isInvokeCall: Boolean,
-) : ValidityTokenOwner {
+) : KtLifetimeTokenOwner {
     public val symbol: KtSymbol get() = withValidityAssertion { _symbol }
     public val isInvokeCall: Boolean get() = withValidityAssertion { _isInvokeCall }
 

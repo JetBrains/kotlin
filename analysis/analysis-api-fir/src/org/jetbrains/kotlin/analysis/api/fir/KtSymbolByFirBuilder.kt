@@ -13,8 +13,9 @@ import org.jetbrains.kotlin.analysis.api.*
 import org.jetbrains.kotlin.analysis.api.fir.symbols.*
 import org.jetbrains.kotlin.analysis.api.fir.types.*
 import org.jetbrains.kotlin.analysis.api.fir.utils.weakRef
+import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeOwner
 import org.jetbrains.kotlin.analysis.api.symbols.*
-import org.jetbrains.kotlin.analysis.api.tokens.KtLifetimeToken
+import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeToken
 import org.jetbrains.kotlin.analysis.api.types.KtSubstitutor
 import org.jetbrains.kotlin.analysis.api.types.KtType
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.LLFirResolveSession
@@ -53,7 +54,7 @@ import kotlin.contracts.contract
  */
 internal class KtSymbolByFirBuilder private constructor(
     private val project: Project,
-    firResolveSession: LLFirResolveSession,
+    private val firResolveSession: LLFirResolveSession,
     override val token: KtLifetimeToken,
     val withReadOnlyCaching: Boolean,
     private val symbolsCache: BuilderCache<FirBasedSymbol<*>, KtSymbol>,
@@ -61,8 +62,6 @@ internal class KtSymbolByFirBuilder private constructor(
     private val filesCache: BuilderCache<FirFileSymbol, KtFileSymbol>,
     private val backingFieldCache: BuilderCache<FirBackingFieldSymbol, KtBackingFieldSymbol>,
 ) : KtLifetimeOwner {
-    private val firResolveSession by weakRef(firResolveSession)
-
     private val firProvider get() = firResolveSession.useSiteFirSession.symbolProvider
     val rootSession: FirSession = firResolveSession.useSiteFirSession
 
@@ -106,8 +105,6 @@ internal class KtSymbolByFirBuilder private constructor(
         buildSymbol(fir.symbol)
 
     fun buildSymbol(firSymbol: FirBasedSymbol<*>): KtSymbol {
-        assertIsValidAndAccessible()
-
         return when (firSymbol) {
             is FirClassLikeSymbol<*> -> classifierBuilder.buildClassLikeSymbol(firSymbol)
             is FirTypeParameterSymbol -> classifierBuilder.buildTypeParameterSymbol(firSymbol)
@@ -177,7 +174,14 @@ internal class KtSymbolByFirBuilder private constructor(
         }
 
         fun buildTypeParameterSymbol(firSymbol: FirTypeParameterSymbol): KtFirTypeParameterSymbol {
-            return symbolsCache.cache(firSymbol) { KtFirTypeParameterSymbol(firSymbol, firResolveSession, token, this@KtSymbolByFirBuilder) }
+            return symbolsCache.cache(firSymbol) {
+                KtFirTypeParameterSymbol(
+                    firSymbol,
+                    firResolveSession,
+                    token,
+                    this@KtSymbolByFirBuilder
+                )
+            }
         }
 
         fun buildTypeParameterSymbolByLookupTag(lookupTag: ConeTypeParameterLookupTag): KtTypeParameterSymbol? {
@@ -249,7 +253,14 @@ internal class KtSymbolByFirBuilder private constructor(
         }
 
         fun buildAnonymousFunctionSymbol(firSymbol: FirAnonymousFunctionSymbol): KtFirAnonymousFunctionSymbol {
-            return symbolsCache.cache(firSymbol) { KtFirAnonymousFunctionSymbol(firSymbol, firResolveSession, token, this@KtSymbolByFirBuilder) }
+            return symbolsCache.cache(firSymbol) {
+                KtFirAnonymousFunctionSymbol(
+                    firSymbol,
+                    firResolveSession,
+                    token,
+                    this@KtSymbolByFirBuilder
+                )
+            }
         }
 
         fun buildConstructorSymbol(firSymbol: FirConstructorSymbol): KtFirConstructorSymbol {
@@ -261,7 +272,14 @@ internal class KtSymbolByFirBuilder private constructor(
 
         fun buildSamConstructorSymbol(firSymbol: FirNamedFunctionSymbol): KtFirSamConstructorSymbol {
             check(firSymbol.origin == FirDeclarationOrigin.SamConstructor)
-            return symbolsCache.cache(firSymbol) { KtFirSamConstructorSymbol(firSymbol, firResolveSession, token, this@KtSymbolByFirBuilder) }
+            return symbolsCache.cache(firSymbol) {
+                KtFirSamConstructorSymbol(
+                    firSymbol,
+                    firResolveSession,
+                    token,
+                    this@KtSymbolByFirBuilder
+                )
+            }
         }
 
         fun buildPropertyAccessorSymbol(firSymbol: FirPropertyAccessorSymbol): KtFunctionLikeSymbol {
@@ -400,12 +418,26 @@ internal class KtSymbolByFirBuilder private constructor(
 
         fun buildGetterSymbol(firSymbol: FirPropertyAccessorSymbol): KtFirPropertyGetterSymbol {
             checkRequirementForBuildingSymbol<KtFirPropertyGetterSymbol>(firSymbol, firSymbol.isGetter)
-            return symbolsCache.cache(firSymbol) { KtFirPropertyGetterSymbol(firSymbol, firResolveSession, token, this@KtSymbolByFirBuilder) }
+            return symbolsCache.cache(firSymbol) {
+                KtFirPropertyGetterSymbol(
+                    firSymbol,
+                    firResolveSession,
+                    token,
+                    this@KtSymbolByFirBuilder
+                )
+            }
         }
 
         fun buildSetterSymbol(firSymbol: FirPropertyAccessorSymbol): KtFirPropertySetterSymbol {
             checkRequirementForBuildingSymbol<KtFirPropertySetterSymbol>(firSymbol, firSymbol.isSetter)
-            return symbolsCache.cache(firSymbol) { KtFirPropertySetterSymbol(firSymbol, firResolveSession, token, this@KtSymbolByFirBuilder) }
+            return symbolsCache.cache(firSymbol) {
+                KtFirPropertySetterSymbol(
+                    firSymbol,
+                    firResolveSession,
+                    token,
+                    this@KtSymbolByFirBuilder
+                )
+            }
         }
 
         fun buildExtensionReceiverSymbol(firCallableSymbol: FirCallableSymbol<*>): KtReceiverParameterSymbol? {
@@ -424,31 +456,29 @@ internal class KtSymbolByFirBuilder private constructor(
 
     inner class TypeBuilder {
         fun buildKtType(coneType: ConeKotlinType): KtType {
-            return withValidityAssertion {
-                when (coneType) {
-                    is ConeClassLikeTypeImpl -> {
-                        if (hasFunctionalClassId(coneType)) KtFirFunctionalType(coneType, token, this@KtSymbolByFirBuilder)
-                        else KtFirUsualClassType(coneType, token, this@KtSymbolByFirBuilder)
-                    }
-                    is ConeTypeParameterType -> KtFirTypeParameterType(coneType, token, this@KtSymbolByFirBuilder)
-                    is ConeErrorType -> KtFirClassErrorType(coneType, token, this@KtSymbolByFirBuilder)
-                    is ConeFlexibleType -> KtFirFlexibleType(coneType, token, this@KtSymbolByFirBuilder)
-                    is ConeIntersectionType -> KtFirIntersectionType(coneType, token, this@KtSymbolByFirBuilder)
-                    is ConeDefinitelyNotNullType -> KtFirDefinitelyNotNullType(coneType, token, this@KtSymbolByFirBuilder)
-                    is ConeCapturedType -> KtFirCapturedType(coneType, token, this@KtSymbolByFirBuilder)
-                    is ConeIntegerLiteralConstantType -> KtFirIntegerLiteralType(coneType, token, this@KtSymbolByFirBuilder)
-                    is ConeIntegerConstantOperatorType -> buildKtType(coneType.getApproximatedType())
-                    is ConeStubTypeForChainInference -> {
-                        // TODO this is a temporary hack to prevent FIR IDE from crashing on builder inference, see KT-50916
-                        val typeVariable = coneType.constructor.variable as? ConeTypeParameterBasedTypeVariable
-                        val typeParameterSymbol = typeVariable?.typeParameterSymbol ?: throwUnexpectedElementError(coneType)
-                        val coneTypeParameterType = typeParameterSymbol.toConeType() as ConeTypeParameterType
-
-                        KtFirTypeParameterType(coneTypeParameterType, token, this@KtSymbolByFirBuilder)
-                    }
-
-                    else -> throwUnexpectedElementError(coneType)
+            return when (coneType) {
+                is ConeClassLikeTypeImpl -> {
+                    if (hasFunctionalClassId(coneType)) KtFirFunctionalType(coneType, token, this@KtSymbolByFirBuilder)
+                    else KtFirUsualClassType(coneType, token, this@KtSymbolByFirBuilder)
                 }
+                is ConeTypeParameterType -> KtFirTypeParameterType(coneType, token, this@KtSymbolByFirBuilder)
+                is ConeErrorType -> KtFirClassErrorType(coneType, token, this@KtSymbolByFirBuilder)
+                is ConeFlexibleType -> KtFirFlexibleType(coneType, token, this@KtSymbolByFirBuilder)
+                is ConeIntersectionType -> KtFirIntersectionType(coneType, token, this@KtSymbolByFirBuilder)
+                is ConeDefinitelyNotNullType -> KtFirDefinitelyNotNullType(coneType, token, this@KtSymbolByFirBuilder)
+                is ConeCapturedType -> KtFirCapturedType(coneType, token, this@KtSymbolByFirBuilder)
+                is ConeIntegerLiteralConstantType -> KtFirIntegerLiteralType(coneType, token, this@KtSymbolByFirBuilder)
+                is ConeIntegerConstantOperatorType -> buildKtType(coneType.getApproximatedType())
+                is ConeStubTypeForChainInference -> {
+                    // TODO this is a temporary hack to prevent FIR IDE from crashing on builder inference, see KT-50916
+                    val typeVariable = coneType.constructor.variable as? ConeTypeParameterBasedTypeVariable
+                    val typeParameterSymbol = typeVariable?.typeParameterSymbol ?: throwUnexpectedElementError(coneType)
+                    val coneTypeParameterType = typeParameterSymbol.toConeType() as ConeTypeParameterType
+
+                    KtFirTypeParameterType(coneTypeParameterType, token, this@KtSymbolByFirBuilder)
+                }
+
+                else -> throwUnexpectedElementError(coneType)
             }
         }
 

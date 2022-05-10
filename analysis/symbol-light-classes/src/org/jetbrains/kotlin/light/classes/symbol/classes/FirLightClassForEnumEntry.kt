@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.light.classes.symbol
 import com.intellij.psi.*
 import com.intellij.psi.impl.PsiClassImplUtil
 import org.jetbrains.kotlin.asJava.elements.KtLightMethod
-import org.jetbrains.kotlin.analysis.api.isValid
+import org.jetbrains.kotlin.analysis.api.lifetime.isValid
 import org.jetbrains.kotlin.analysis.api.symbols.KtEnumEntrySymbol
 import org.jetbrains.kotlin.analysis.api.types.KtTypeMappingMode
 import org.jetbrains.kotlin.asJava.classes.KotlinSuperTypeListBuilder

@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.analysis.api.fir.utils
 
-import org.jetbrains.kotlin.analysis.api.session.InvalidWayOfUsingAnalysisSession
 import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
 import org.jetbrains.kotlin.analysis.api.fir.KtFirAnalysisSession
 import org.jetbrains.kotlin.analysis.api.fir.buildSymbol
@@ -13,7 +12,7 @@ import org.jetbrains.kotlin.analysis.api.fir.symbols.KtFirSymbol
 import org.jetbrains.kotlin.analysis.api.fir.symbols.pointers.createSignature
 import org.jetbrains.kotlin.analysis.api.symbols.KtClassLikeSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtSymbol
-import org.jetbrains.kotlin.analysis.api.tokens.KtLifetimeToken
+import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeToken
 import org.jetbrains.kotlin.analysis.api.types.KtType
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.LLFirResolveSession
 import org.jetbrains.kotlin.fir.FirElement
@@ -46,7 +45,6 @@ class KtAnalysisSessionFe10BindingHolder private constructor(
     fun toSignature(ktSymbol: KtSymbol): IdSignature = (ktSymbol as KtFirSymbol<*>).firSymbol.createSignature()
 
     companion object {
-        @InvalidWayOfUsingAnalysisSession
         fun create(firResolveSession: LLFirResolveSession, token: KtLifetimeToken, @Suppress("UNUSED_PARAMETER") ktElement: KtElement): KtAnalysisSessionFe10BindingHolder {
             @Suppress("DEPRECATION")
             val firAnalysisSession = KtFirAnalysisSession.createAnalysisSessionByFirResolveSession(firResolveSession, token)

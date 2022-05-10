@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.psiTypeProvider
 
-import org.jetbrains.kotlin.analysis.api.session.analyze
+import org.jetbrains.kotlin.analysis.api.analyze
 import org.jetbrains.kotlin.analysis.test.framework.services.expressionMarkerProvider
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiSingleFileTest
 import org.jetbrains.kotlin.psi.KtExpression

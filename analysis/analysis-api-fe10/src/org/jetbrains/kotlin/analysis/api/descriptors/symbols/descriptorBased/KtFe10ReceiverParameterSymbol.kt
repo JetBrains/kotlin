@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.analysis.api.symbols.KtReceiverParameterSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtSymbolPointer
 import org.jetbrains.kotlin.analysis.api.types.KtType
-import org.jetbrains.kotlin.analysis.api.withValidityAssertion
+import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.descriptors.ReceiverParameterDescriptor
 
 class KtFe10ReceiverParameterSymbol(

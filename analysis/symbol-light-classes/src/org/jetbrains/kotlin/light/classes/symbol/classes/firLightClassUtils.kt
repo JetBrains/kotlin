@@ -10,19 +10,17 @@ import com.intellij.psi.PsiModifier
 import com.intellij.psi.PsiReferenceList
 import com.intellij.psi.util.CachedValueProvider
 import com.intellij.psi.util.CachedValuesManager
-import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
+import org.jetbrains.kotlin.analysis.api.KtAllowAnalysisOnEdt
 import org.jetbrains.kotlin.analysis.providers.createProjectWideOutOfBlockModificationTracker
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KtSymbolWithMembers
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KtSymbolWithTypeParameters
 import org.jetbrains.kotlin.analysis.api.symbols.markers.isPrivateOrPrivateToThis
-import org.jetbrains.kotlin.analysis.api.tokens.HackToForceAllowRunningAnalyzeOnEDT
-import org.jetbrains.kotlin.analysis.api.tokens.hackyAllowRunningOnEdt
+import org.jetbrains.kotlin.analysis.api.lifetime.allowAnalysisOnEdt
 import org.jetbrains.kotlin.analysis.api.types.KtNonErrorClassType
 import org.jetbrains.kotlin.analysis.api.types.KtType
 import org.jetbrains.kotlin.analysis.project.structure.KtSourceModule
 import org.jetbrains.kotlin.analysis.project.structure.getKtModuleOfTypeSafe
-import org.jetbrains.kotlin.analysis.project.structure.NoCacheForModuleException
 import org.jetbrains.kotlin.asJava.builder.LightMemberOriginForDeclaration
 import org.jetbrains.kotlin.asJava.classes.*
 import org.jetbrains.kotlin.asJava.elements.KtLightField
@@ -32,7 +30,6 @@ import org.jetbrains.kotlin.config.JvmAnalysisFlags
 import org.jetbrains.kotlin.config.JvmDefaultMode
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
-import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.lexer.KtTokens.*
 import org.jetbrains.kotlin.light.classes.symbol.*
 import org.jetbrains.kotlin.load.java.JvmAbi
@@ -51,8 +48,8 @@ internal fun getOrCreateFirLightClass(classOrObject: KtClassOrObject): KtLightCl
             )
     }
 
-@OptIn(HackToForceAllowRunningAnalyzeOnEDT::class)
-internal fun createFirLightClassNoCache(classOrObject: KtClassOrObject): KtLightClass? = hackyAllowRunningOnEdt {
+@OptIn(KtAllowAnalysisOnEdt::class)
+internal fun createFirLightClassNoCache(classOrObject: KtClassOrObject): KtLightClass? = allowAnalysisOnEdt {
 
     val containingFile = classOrObject.containingFile
     if (containingFile is KtCodeFragment) {
@@ -75,7 +72,7 @@ internal fun createFirLightClassNoCache(classOrObject: KtClassOrObject): KtLight
 
     return when {
         classOrObject is KtEnumEntry -> lightClassForEnumEntry(classOrObject)
-        classOrObject.hasModifier(KtTokens.INLINE_KEYWORD) -> {
+        classOrObject.hasModifier(INLINE_KEYWORD) -> {
             analyseForLightClasses(classOrObject) {
                 classOrObject.getNamedClassOrObjectSymbol()?.let { FirLightInlineClass(it, classOrObject.manager) }
             }

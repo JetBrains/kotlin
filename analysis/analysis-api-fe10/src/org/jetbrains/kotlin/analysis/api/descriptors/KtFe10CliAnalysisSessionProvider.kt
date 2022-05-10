@@ -5,25 +5,25 @@
 
 package org.jetbrains.kotlin.analysis.api.descriptors
 
-import org.jetbrains.kotlin.analysis.api.session.InvalidWayOfUsingAnalysisSession
+import com.intellij.openapi.project.Project
+import org.jetbrains.kotlin.analysis.api.KtAnalysisApiInternals
 import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
 import org.jetbrains.kotlin.analysis.api.session.KtAnalysisSessionProvider
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.base.KtFe10Symbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtSymbol
 import org.jetbrains.kotlin.analysis.project.structure.KtModule
-import org.jetbrains.kotlin.analysis.api.tokens.KtLifetimeTokenFactory
+import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeTokenFactory
 import org.jetbrains.kotlin.analysis.project.structure.getKtModule
 import org.jetbrains.kotlin.psi.KtElement
 import java.lang.UnsupportedOperationException
 
-@InvalidWayOfUsingAnalysisSession
-class KtFe10AnalysisSessionProvider : KtAnalysisSessionProvider() {
-    @InvalidWayOfUsingAnalysisSession
+
+@OptIn(KtAnalysisApiInternals::class)
+class KtFe10AnalysisSessionProvider(project: Project) : KtAnalysisSessionProvider(project) {
     override fun getAnalysisSession(useSiteKtElement: KtElement, factory: KtLifetimeTokenFactory): KtAnalysisSession {
-        return KtFe10AnalysisSession(useSiteKtElement, factory.create(useSiteKtElement.project))
+        return KtFe10AnalysisSession(useSiteKtElement, factory.create(project))
     }
 
-    @InvalidWayOfUsingAnalysisSession
     override fun getAnalysisSessionBySymbol(contextSymbol: KtSymbol): KtAnalysisSession {
         if (contextSymbol is KtFe10Symbol) {
             return KtFe10AnalysisSession(contextSymbol.analysisContext, contextSymbol.analysisContext.contextElement.getKtModule())

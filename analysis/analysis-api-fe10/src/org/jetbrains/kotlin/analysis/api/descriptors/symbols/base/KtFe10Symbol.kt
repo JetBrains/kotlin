@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.analysis.api.descriptors.symbols.base
 
 import org.jetbrains.kotlin.analysis.api.descriptors.Fe10AnalysisContext
 import org.jetbrains.kotlin.analysis.api.symbols.KtSymbol
-import org.jetbrains.kotlin.analysis.api.tokens.KtLifetimeToken
+import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeToken
 
 interface KtFe10Symbol : KtSymbol {
     val analysisContext: Fe10AnalysisContext

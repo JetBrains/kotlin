@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.analysis.api.descriptors.types.base.asStringForDebug
 import org.jetbrains.kotlin.analysis.api.symbols.KtTypeParameterSymbol
 import org.jetbrains.kotlin.analysis.api.types.KtTypeNullability
 import org.jetbrains.kotlin.analysis.api.types.KtTypeParameterType
-import org.jetbrains.kotlin.analysis.api.withValidityAssertion
+import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.SimpleType

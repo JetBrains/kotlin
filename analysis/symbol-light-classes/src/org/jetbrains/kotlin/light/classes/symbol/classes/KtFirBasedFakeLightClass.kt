@@ -9,7 +9,6 @@ import com.intellij.psi.PsiClass
 import org.jetbrains.kotlin.asJava.classes.KtFakeLightClass
 import org.jetbrains.kotlin.asJava.classes.KtLightClass
 import org.jetbrains.kotlin.asJava.classes.LightClassInheritanceHelper
-import org.jetbrains.kotlin.analysis.api.tokens.HackToForceAllowRunningAnalyzeOnEDT
 import org.jetbrains.kotlin.light.classes.symbol.classes.checkIsInheritor
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
@@ -26,7 +25,6 @@ class KtFirBasedFakeLightClass(kotlinOrigin: KtClassOrObject) :
 
     override fun getContainingClass(): KtFakeLightClass? = _containingClass
 
-    @OptIn(HackToForceAllowRunningAnalyzeOnEDT::class)
     override fun isInheritor(baseClass: PsiClass, checkDeep: Boolean): Boolean {
         if (manager.areElementsEquivalent(baseClass, this)) return false
         LightClassInheritanceHelper.getService(project).isInheritor(this, baseClass, checkDeep).ifSure { return it }

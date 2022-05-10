@@ -1,15 +1,16 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.analysis.api
+package org.jetbrains.kotlin.analysis.api.lifetime.impl
 
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.application.ApplicationListener
 import com.intellij.openapi.application.ApplicationManager
+import org.jetbrains.kotlin.analysis.api.KtAnalysisApiInternals
 
-@KtInternalApiMarker
+@KtAnalysisApiInternals
 public class NoWriteActionInAnalyseCallChecker(parentDisposable: Disposable) {
     init {
         val listener = object : ApplicationListener {

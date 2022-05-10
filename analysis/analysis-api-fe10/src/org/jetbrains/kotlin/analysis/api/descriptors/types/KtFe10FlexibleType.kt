@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.analysis.api.descriptors.types.base.asStringForDebug
 import org.jetbrains.kotlin.analysis.api.types.KtFlexibleType
 import org.jetbrains.kotlin.analysis.api.types.KtType
 import org.jetbrains.kotlin.analysis.api.types.KtTypeNullability
-import org.jetbrains.kotlin.analysis.api.withValidityAssertion
+import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.types.FlexibleType
 
 internal class KtFe10FlexibleType(

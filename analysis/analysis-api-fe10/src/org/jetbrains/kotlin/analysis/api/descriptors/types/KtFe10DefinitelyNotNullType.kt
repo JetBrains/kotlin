@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.analysis.api.descriptors.types.base.KtFe10Type
 import org.jetbrains.kotlin.analysis.api.descriptors.types.base.asStringForDebugging
 import org.jetbrains.kotlin.analysis.api.types.KtDefinitelyNotNullType
 import org.jetbrains.kotlin.analysis.api.types.KtType
-import org.jetbrains.kotlin.analysis.api.withValidityAssertion
+import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.types.DefinitelyNotNullType
 
 internal class KtFe10DefinitelyNotNullType(

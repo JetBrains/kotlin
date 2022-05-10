@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.analysis.api.descriptors.types.base.KtFe10Type
 import org.jetbrains.kotlin.analysis.api.descriptors.types.base.asStringForDebugging
 import org.jetbrains.kotlin.analysis.api.types.KtCapturedType
 import org.jetbrains.kotlin.analysis.api.types.KtTypeNullability
-import org.jetbrains.kotlin.analysis.api.withValidityAssertion
+import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.resolve.calls.inference.CapturedType
 
 internal class KtFe10CapturedType(
