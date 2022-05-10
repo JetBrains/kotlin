@@ -220,7 +220,6 @@ abstract class BenchmarkTemplate(
                     row["execution median time"] into "Execution: ${row["benchmark"]}"
                 }
             }
-            .also { println(it.print(borders = true)) }
             .sortBy("scenario")
             .rename("scenario" to "Scenario")
             .reorderColumnsBy {
