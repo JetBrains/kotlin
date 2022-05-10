@@ -1,0 +1,9 @@
+fun destruct(): kotlin.Int
+
+data class P {
+  constructor(x: kotlin.Int, y: kotlin.Int)
+
+  val x: kotlin.Int
+
+  val y: kotlin.Int
+}

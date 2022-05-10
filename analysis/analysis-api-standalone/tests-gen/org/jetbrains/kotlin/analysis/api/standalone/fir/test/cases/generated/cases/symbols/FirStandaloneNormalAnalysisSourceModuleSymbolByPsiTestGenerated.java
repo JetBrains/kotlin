@@ -113,6 +113,12 @@ public class FirStandaloneNormalAnalysisSourceModuleSymbolByPsiTestGenerated ext
     }
 
     @Test
+    @TestMetadata("destructuringDeclaration.kt")
+    public void testDestructuringDeclaration() throws Exception {
+        runTest("analysis/analysis-api/testData/symbols/symbolByPsi/destructuringDeclaration.kt");
+    }
+
+    @Test
     @TestMetadata("dynamic.kt")
     public void testDynamic() throws Exception {
         runTest("analysis/analysis-api/testData/symbols/symbolByPsi/dynamic.kt");

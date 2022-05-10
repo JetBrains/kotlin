@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.analysis.api.impl.base.test.cases.symbols
 import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
 import org.jetbrains.kotlin.psi.KtBackingField
 import org.jetbrains.kotlin.psi.KtDeclaration
+import org.jetbrains.kotlin.psi.KtDestructuringDeclaration
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtParameter
 import org.jetbrains.kotlin.psi.psiUtil.collectDescendantsOfType
@@ -30,6 +31,7 @@ abstract class AbstractSymbolByPsiTest : AbstractSymbolTest() {
         get() =
             when (this) {
                 is KtBackingField -> false
+                is KtDestructuringDeclaration -> false
                 is KtParameter -> !this.isFunctionTypeParameter
                 else -> true
             }
