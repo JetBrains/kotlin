@@ -129,6 +129,6 @@ internal class KtFe10SymbolProvider(
     }
 
     override fun getDestructuringDeclarationEntrySymbol(psi: KtDestructuringDeclarationEntry): KtVariableLikeSymbol {
-        TODO("Not yet implemented")
+        return KtFe10PsiLocalVariableSymbol(psi, analysisContext)
     }
 }

@@ -113,6 +113,12 @@ public class FirStandaloneNormalAnalysisSourceModuleSymbolByPsiTestGenerated ext
     }
 
     @Test
+    @TestMetadata("destructuringDeclaration.kt")
+    public void testDestructuringDeclaration() throws Exception {
+        runTest("analysis/analysis-api/testData/symbols/symbolByPsi/destructuringDeclaration.kt");
+    }
+
+    @Test
     @TestMetadata("enum.kt")
     public void testEnum() throws Exception {
         runTest("analysis/analysis-api/testData/symbols/symbolByPsi/enum.kt");
