@@ -21,7 +21,6 @@ dependencies {
     api(project(":js:js.translator"))
     api(project(":native:frontend.native"))
     api(commonDependency("org.fusesource.jansi", "jansi"))
-    api(commonDependency("org.jline", "jline"))
     api(project(":compiler:fir:raw-fir:psi2fir"))
     api(project(":compiler:fir:resolve"))
     api(project(":compiler:fir:providers"))

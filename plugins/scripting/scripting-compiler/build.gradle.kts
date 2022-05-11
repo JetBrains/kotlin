@@ -19,6 +19,7 @@ dependencies {
     api(project(":kotlin-scripting-jvm"))
     api(project(":kotlin-scripting-compiler-impl"))
     api(kotlinStdlib())
+    api(commonDependency("org.jline", "jline"))
     compileOnly(intellijCore())
 
     testApi(project(":compiler:frontend"))
