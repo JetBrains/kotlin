@@ -591,6 +591,22 @@ internal class TestProcessor (val context: Context) {
     private fun createTestSuites(irFile: IrFile, annotationCollector: AnnotationCollector) {
         val statements = mutableListOf<IrExpression>()
 
+        // There is no specified order on fake override functions, so to ensure all the tests are run deterministically,
+        // sort the fake override functions by name.
+        for (testClass in annotationCollector.testClasses.values) {
+            val functions = testClass.functions.toList()
+            testClass.functions.clear()
+            val fakeOverrideFunctions = mutableListOf<TestFunction>()
+            for (function in functions) {
+                if (function.function.isFakeOverride)
+                    fakeOverrideFunctions.add(function)
+                else
+                    testClass.functions.add(function)
+            }
+            fakeOverrideFunctions.sortBy { it.functionName }
+            testClass.functions.addAll(fakeOverrideFunctions)
+        }
+
         annotationCollector.testClasses.filter {
             it.value.functions.any { it.kind == FunctionKind.TEST }
         }.forEach { (_, testClass) ->
