@@ -106,9 +106,7 @@ class KotlinMocha(@Transient override val compilation: KotlinJsCompilation, priv
             "--require",
             npmProject.require("source-map-support/register.js")
         ).apply {
-            if (debug) {
-                add("--inspect-brk")
-            }
+            add(mocha)
             add(createAdapterJs(file, "kotlin-test-nodejs-empty-runner", ADAPTER_EMPTY_NODEJS).canonicalPath)
             addAll(cliArgs.toList())
             if (platformType == KotlinPlatformType.wasm) {

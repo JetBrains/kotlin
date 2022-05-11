@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.gradle.util.normalizePath
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.condition.DisabledIf
+import java.io.File
 import java.nio.file.Files
 import java.nio.file.Paths
 import java.util.zip.ZipFile
@@ -32,6 +33,7 @@ import kotlin.io.path.*
 import kotlin.streams.toList
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
+import kotlin.test.assertNotEquals
 import kotlin.test.assertTrue
 
 @JsGradlePluginTests
@@ -1113,6 +1115,29 @@ abstract class AbstractKotlin2JsGradlePluginIT(protected val irBackend: Boolean)
     @GradleTest
     fun testMochaFailedModuleNotFound(gradleVersion: GradleVersion) {
         project("kotlin-js-nodejs-project", gradleVersion) {
+            build("nodeTest") {
+                assertOutputDoesNotContain("##teamcity[")
+            }
+
+            projectPath.resolve("src/test/kotlin/Tests.kt").appendText(
+                "\n" + """
+                |class Tests3 {
+                |   @Test
+                |   fun testHello() {
+                |       throw IllegalArgumentException("foo")
+                |   }
+                |}
+                """.trimMargin()
+            )
+            buildAndFail("nodeTest") {
+                assertTasksFailed(":nodeTest")
+
+                assertTestResults(
+                    projectPath.resolve("TEST-all.xml"),
+                    "nodeTest"
+                )
+            }
+
             projectPath.resolve("src/test/kotlin/Tests.kt").appendText(
                 "\n" + """
                 |
