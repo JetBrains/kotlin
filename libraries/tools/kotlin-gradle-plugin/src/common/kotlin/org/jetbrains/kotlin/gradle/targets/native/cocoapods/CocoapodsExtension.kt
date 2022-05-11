@@ -15,9 +15,11 @@ import org.gradle.api.tasks.*
 import org.gradle.util.ConfigureUtil
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.cocoapods.CocoapodsExtension.CocoapodsDependency.PodLocation.*
-import org.jetbrains.kotlin.gradle.plugin.mpp.NativeBuildType
 import org.jetbrains.kotlin.gradle.plugin.mpp.Framework
 import org.jetbrains.kotlin.gradle.plugin.mpp.NativeBinary
+import org.jetbrains.kotlin.gradle.plugin.mpp.NativeBuildType
+import org.jetbrains.kotlin.gradle.tasks.addArg
+import org.jetbrains.kotlin.gradle.tasks.addArgs
 import org.jetbrains.kotlin.konan.target.HostManager
 import java.io.File
 import java.net.URI
@@ -243,10 +245,7 @@ open class CocoapodsExtension(private val project: Project) {
 
     internal fun configureLinkingOptions(binary: NativeBinary, setRPath: Boolean = false) {
         pods.all { pod ->
-            binary.linkerOpts("-framework", pod.moduleName)
-
             binary.linkTaskProvider.configure { task ->
-
                 if (HostManager.hostIsMac) {
                     val podBuildTaskProvider = project.getPodBuildTaskProvider(binary.target, pod)
                     task.inputs.file(podBuildTaskProvider.map { it.buildSettingsFile })
@@ -255,10 +254,15 @@ open class CocoapodsExtension(private val project: Project) {
 
                 task.doFirst { _ ->
                     val podBuildSettings = project.getPodBuildSettingsProperties(binary.target, pod)
-                    binary.linkerOpts.addAll(podBuildSettings.frameworkSearchPaths.map { "-F$it" })
-                    if (setRPath) {
-                        binary.linkerOpts.addAll(podBuildSettings.frameworkSearchPaths.flatMap { listOf("-rpath", it) })
-                    }
+                    val frameworkFileName = pod.moduleName + ".framework"
+                    val frameworkSearchPaths = podBuildSettings.frameworkSearchPaths
+
+                    val frameworkFileExists = frameworkSearchPaths.any { dir -> File(dir, frameworkFileName).exists() }
+                    if (frameworkFileExists) binary.linkerOpts.addArg("-framework", pod.moduleName)
+
+                    binary.linkerOpts.addAll(frameworkSearchPaths.map { "-F$it" })
+
+                    if (setRPath) binary.linkerOpts.addArgs("-rpath", frameworkSearchPaths)
                 }
             }
         }
