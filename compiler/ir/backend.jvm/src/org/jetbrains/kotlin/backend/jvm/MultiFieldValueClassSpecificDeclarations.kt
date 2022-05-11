@@ -77,14 +77,14 @@ sealed class MultiFieldValueClassTree<out TI, out TL> {
         ) : this(type, defaultInternalNodeValue, 0.let {
             val valueClassRepresentation = type.erasedUpperBound.valueClassRepresentation as MultiFieldValueClassRepresentation
             val primaryConstructor = type.erasedUpperBound.primaryConstructor!!
-            val fieldsByName = replacements.getOldFields(primaryConstructor.constructedClass).associateBy { it.name }
+            val propertiesByName = replacements.getOldMFVCProperties(primaryConstructor.constructedClass).associateBy { it.name }
             valueClassRepresentation.underlyingPropertyNamesToTypes.map { (name, type) ->
-                val field = fieldsByName[name]!!
-                val innerVisibility = field.correspondingPropertySymbol!!.owner.visibility
+                val property = propertiesByName[name]!!
+                val innerVisibility = property.visibility
                 val comparison = visibility.compareTo(innerVisibility)
                     ?: error("Expected comparable visibilities but got $visibility and $innerVisibility")
                 val newVisibility = if (comparison < 0) visibility else innerVisibility
-                TreeField(name, type, defaultInternalNodeValue, newVisibility, field.annotations, defaultLeafValue, replacements)
+                TreeField(name, type, defaultInternalNodeValue, newVisibility, property.annotations, defaultLeafValue, replacements)
             }
         })
 
@@ -223,15 +223,16 @@ class MultiFieldValueClassSpecificDeclarations(
     }
 
     val oldPrimaryConstructor = valueClass.primaryConstructor ?: error("Value classes have primary constructors")
-    private val oldFields = replacements.getOldFields(valueClass)
 
-    val oldProperties = oldFields.map { it.correspondingPropertySymbol!!.owner }.associateBy { it.name }
+    val oldProperties = replacements.getOldMFVCProperties(valueClass).associateBy { it.name }
 
     val fields = leaves.map { leaf ->
         irFactory.buildField {
             this.name = nodeFullNames[leaf]!!
             this.type = leaf.type
             visibility = DescriptorVisibilities.PRIVATE
+        }.apply { 
+            parent = valueClass 
         }
     }
 
@@ -300,6 +301,7 @@ class MultiFieldValueClassSpecificDeclarations(
         copyTypeParametersFrom(oldPrimaryConstructor)
         addFlattenedClassRepresentationToParameters()
         val irConstructor = this@apply
+        parent = valueClass
         body = context.createIrBuilder(irConstructor.symbol).irBlockBody(irConstructor) {
             +irDelegatingConstructorCall(context.irBuiltIns.anyClass.owner.constructors.single())
             for (i in leaves.indices) {
@@ -319,6 +321,7 @@ class MultiFieldValueClassSpecificDeclarations(
         returnType = context.irBuiltIns.unitType
         modality = Modality.FINAL
     }.apply {
+        parent = valueClass
         copyTypeParametersFrom(oldPrimaryConstructor)
         addFlattenedClassRepresentationToParameters()
         // body is added in Lowering file
@@ -329,6 +332,7 @@ class MultiFieldValueClassSpecificDeclarations(
         origin = JvmLoweredDeclarationOrigin.SYNTHETIC_MULTI_FIELD_VALUE_CLASS_MEMBER
         returnType = valueClass.defaultType
     }.apply {
+        parent = valueClass
         copyTypeParametersFrom(valueClass)
         addFlattenedClassRepresentationToParameters()
         // body is added in Lowering file
@@ -349,6 +353,7 @@ class MultiFieldValueClassSpecificDeclarations(
         origin = JvmLoweredDeclarationOrigin.MULTI_FIELD_VALUE_CLASS_GENERATED_IMPL_METHOD
         returnType = context.irBuiltIns.booleanType
     }.apply {
+        parent = valueClass
         copyTypeParametersFrom(oldPrimaryConstructor)
         for (leaf in leaves) {
             addValueParameter {
