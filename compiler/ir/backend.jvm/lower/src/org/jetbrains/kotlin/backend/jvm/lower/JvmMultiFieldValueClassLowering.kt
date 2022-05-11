@@ -64,7 +64,7 @@ private class JvmMultiFieldValueClassLowering(context: JvmBackendContext) : JvmV
 
         fun remapSymbol(original: IrValueSymbol, replacement: IrValueDeclaration) {
             symbol2getter[original] = { irGet(replacement) }
-            symbol2setters[original] = listOf(if (replacement.isAssignable) { _, value -> irSet(replacement, value) } else null)
+            symbol2setters[original] = if (replacement.isAssignable) listOf { _, value -> irSet(replacement, value) } else listOf(null)
         }
 
         fun remapSymbol(
@@ -262,7 +262,7 @@ private class JvmMultiFieldValueClassLowering(context: JvmBackendContext) : JvmV
     }
 
     override fun handleSpecificNewClass(declaration: IrClass) {
-        replacements.setOldFields(declaration, declaration.fields.toList())
+        replacements.commitMFVCOldProperties(declaration)
         val newDeclarations = replacements.getDeclarations(declaration)!!
         if (newDeclarations.valueClass != declaration) error("Unexpected IrClass ${newDeclarations.valueClass} instead of $declaration")
         newDeclarations.replaceFields()
@@ -317,17 +317,11 @@ private class JvmMultiFieldValueClassLowering(context: JvmBackendContext) : JvmV
     private fun MultiFieldValueClassSpecificDeclarations.replaceFields() {
         valueClass.declarations.removeIf { it is IrField }
         valueClass.declarations += fields
-        for (field in fields) {
-            field.parent = valueClass
-        }
     }
 
     private fun MultiFieldValueClassSpecificDeclarations.replaceProperties() {
         valueClass.declarations.removeAll(oldProperties.values.mapNotNull { it.getter })
-        properties.values.forEach {
-            it.parent = valueClass
-        }
-        valueClass.declarations += properties.values.map { it.getter!!.apply { parent = valueClass } }
+        valueClass.declarations += properties.values.map { it.getter!! }
     }
 
     override fun createBridgeDeclaration(source: IrSimpleFunction, replacement: IrSimpleFunction, mangledName: Name): IrSimpleFunction =
@@ -454,9 +448,6 @@ private class JvmMultiFieldValueClassLowering(context: JvmBackendContext) : JvmV
     fun MultiFieldValueClassSpecificDeclarations.buildPrimaryMultiFieldValueClassConstructor() {
         valueClass.declarations.removeIf { it is IrConstructor && it.isPrimary }
         val primaryConstructorReplacements = listOf(primaryConstructor, primaryConstructorImpl)
-        for (exConstructor in primaryConstructorReplacements) {
-            exConstructor.parent = valueClass
-        }
         valueClass.declarations += primaryConstructorReplacements
 
         val initializersStatements = valueClass.declarations.filterIsInstance<IrAnonymousInitializer>().flatMap { it.body.statements }
@@ -483,7 +474,6 @@ private class JvmMultiFieldValueClassLowering(context: JvmBackendContext) : JvmV
             })
         }
         valueClass.declarations += boxMethod
-        boxMethod.parent = valueClass
     }
 
     fun MultiFieldValueClassSpecificDeclarations.buildUnboxFunctions() {
@@ -493,7 +483,6 @@ private class JvmMultiFieldValueClassLowering(context: JvmBackendContext) : JvmV
     @Suppress("unused")
     fun MultiFieldValueClassSpecificDeclarations.buildSpecializedEqualsMethod() {
         // todo defaults
-        specializedEqualsMethod.parent = valueClass
         specializedEqualsMethod.body = with(context.createIrBuilder(specializedEqualsMethod.symbol)) {
             // TODO: Revisit this once we allow user defined equals methods in inline/multi-field value classes.
             leaves.indices.map {
