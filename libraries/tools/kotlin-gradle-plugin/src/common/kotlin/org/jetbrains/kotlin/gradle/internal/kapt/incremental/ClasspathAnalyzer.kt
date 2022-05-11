@@ -9,7 +9,6 @@ import org.gradle.api.artifacts.transform.*
 import org.gradle.api.file.FileSystemLocation
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.Classpath
-import org.gradle.work.NormalizeLineEndings
 import org.jetbrains.org.objectweb.asm.ClassReader
 import org.jetbrains.org.objectweb.asm.ClassWriter
 import java.io.*
@@ -22,7 +21,6 @@ private const val MODULE_INFO = "module-info.class"
 @CacheableTransform
 abstract class StructureTransformAction : TransformAction<TransformParameters.None> {
 
-    @get:NormalizeLineEndings
     @get:InputArtifact
     @get:Classpath
     abstract val inputArtifact: Provider<FileSystemLocation>
@@ -45,7 +43,6 @@ abstract class StructureTransformAction : TransformAction<TransformParameters.No
 @CacheableTransform
 abstract class StructureTransformLegacyAction : TransformAction<TransformParameters.None> {
 
-    @get:NormalizeLineEndings
     @get:InputArtifact
     @get:Classpath
     abstract val inputArtifact: File

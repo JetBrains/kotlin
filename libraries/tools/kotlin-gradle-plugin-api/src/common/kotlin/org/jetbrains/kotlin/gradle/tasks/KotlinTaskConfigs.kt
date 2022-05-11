@@ -14,7 +14,6 @@ import org.gradle.api.provider.Property
 import org.gradle.api.tasks.*
 import org.gradle.api.tasks.util.PatternFilterable
 import org.gradle.work.Incremental
-import org.gradle.work.NormalizeLineEndings
 import org.jetbrains.kotlin.gradle.dsl.KotlinCompile
 import org.jetbrains.kotlin.gradle.dsl.KotlinJvmOptions
 import org.jetbrains.kotlin.gradle.plugin.CompilerPluginConfig
@@ -22,7 +21,6 @@ import org.jetbrains.kotlin.gradle.plugin.CompilerPluginConfig
 interface KotlinCompileTool : PatternFilterable, Task {
     @get:InputFiles
     @get:SkipWhenEmpty
-    @get:NormalizeLineEndings
     @get:IgnoreEmptyDirectories
     @get:PathSensitive(PathSensitivity.RELATIVE)
     val sources: FileCollection
@@ -40,7 +38,6 @@ interface KotlinCompileTool : PatternFilterable, Task {
     fun setSource(vararg sources: Any)
 
     @get:Classpath
-    @get:NormalizeLineEndings
     @get:Incremental
     val libraries: ConfigurableFileCollection
 
@@ -53,7 +50,6 @@ interface BaseKotlinCompile : KotlinCompileTool {
     @get:Internal
     val friendPaths: ConfigurableFileCollection
 
-    @get:NormalizeLineEndings
     @get:Classpath
     val pluginClasspath: ConfigurableFileCollection
 
@@ -92,7 +88,6 @@ interface BaseKapt : Task {
 
     //part of kaptClasspath consisting from external artifacts only
     //basically kaptClasspath = kaptExternalClasspath + artifacts built locally
-    @get:NormalizeLineEndings
     @get:Classpath
     val kaptExternalClasspath: ConfigurableFileCollection
 
@@ -121,7 +116,6 @@ interface BaseKapt : Task {
     @get:Internal
     val stubsDir: DirectoryProperty
 
-    @get:NormalizeLineEndings
     @get:Classpath
     val kaptClasspath: ConfigurableFileCollection
 
@@ -136,7 +130,6 @@ interface BaseKapt : Task {
     val sourceSetName: Property<String>
 
     @get:InputFiles
-    @get:NormalizeLineEndings
     @get:IgnoreEmptyDirectories
     @get:Incremental
     @get:PathSensitive(PathSensitivity.RELATIVE)
@@ -154,7 +147,6 @@ interface Kapt : BaseKapt {
     @get:Input
     val addJdkClassesToClasspath: Property<Boolean>
 
-    @get:NormalizeLineEndings
     @get:Classpath
     val kaptJars: ConfigurableFileCollection
 }
