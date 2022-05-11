@@ -668,7 +668,7 @@ private fun shouldDeclarationBeExported(declaration: IrDeclarationWithName, cont
 }
 
 fun IrOverridableDeclaration<*>.isAllowedFakeOverriddenDeclaration(context: JsIrBackendContext): Boolean {
-    if (this.resolveFakeOverride(allowAbstract = true)?.parentClassOrNull.isExportedInterface()) {
+    if (this.resolveFakeOverride(allowAbstract = true)?.parentClassOrNull.isExportedInterface(context)) {
         return true
     }
 
