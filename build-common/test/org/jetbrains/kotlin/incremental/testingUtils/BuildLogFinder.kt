@@ -28,6 +28,45 @@ data class BuildLogFinder(
     private val isFirIcEnabled: Boolean = false,
     private val isJpsBuild: Boolean = false,
 ) {
+
+    // for binary compatibility with IDE JPS tests
+    constructor(
+        isDataContainerBuildLogEnabled: Boolean = false,
+        isGradleEnabled: Boolean = false,
+        isJsEnabled: Boolean = false,
+        isScopeExpansionEnabled: Boolean = false,
+        isKlibEnabled: Boolean = false,
+        isFirEnabled: Boolean = false,
+        isJpsBuild: Boolean = false,
+    ) : this(
+        isDataContainerBuildLogEnabled = isDataContainerBuildLogEnabled,
+        isGradleEnabled = isGradleEnabled,
+        isJsEnabled = isJsEnabled,
+        isScopeExpansionEnabled = isScopeExpansionEnabled,
+        isKlibEnabled = isKlibEnabled,
+        isFirEnabled = isFirEnabled,
+        isFirIcEnabled = false,
+        isJpsBuild = isJpsBuild
+    )
+
+    constructor(
+        isDataContainerBuildLogEnabled: Boolean = false,
+        isGradleEnabled: Boolean = false,
+        isJsEnabled: Boolean = false,
+        isScopeExpansionEnabled: Boolean = false,
+        isKlibEnabled: Boolean = false,
+        isJpsBuild: Boolean = false,
+    ) : this(
+        isDataContainerBuildLogEnabled = isDataContainerBuildLogEnabled,
+        isGradleEnabled = isGradleEnabled,
+        isJsEnabled = isJsEnabled,
+        isScopeExpansionEnabled = isScopeExpansionEnabled,
+        isKlibEnabled = isKlibEnabled,
+        isFirEnabled = false,
+        isFirIcEnabled = false,
+        isJpsBuild = isJpsBuild
+    )
+
     companion object {
         private const val JS_LOG = "js-build.log"
         private const val KLIB_LOG = "klib-build.log"
