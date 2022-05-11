@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.isLocal
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirTypeAliasSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.LookupTagInternals
 import org.jetbrains.kotlin.fir.types.*
@@ -84,6 +85,13 @@ fun List<FirQualifierPart>.toTypeProjections(): Array<ConeTypeProjection> =
 private object TypeAliasConstructorKey : FirDeclarationDataKey()
 
 var FirConstructor.originalConstructorIfTypeAlias: FirConstructor? by FirDeclarationDataRegistry.data(TypeAliasConstructorKey)
+
+private object TypeAliasSymbolKey : FirDeclarationDataKey()
+
+/**
+ * The type alias symbol of this constructor if the constructor symbol is created from a type alias reference at call site.
+ */
+var FirConstructor.typeAliasSymbol: FirTypeAliasSymbol? by FirDeclarationDataRegistry.data(TypeAliasSymbolKey)
 
 val FirConstructorSymbol.isTypeAliasedConstructor: Boolean
     get() = fir.originalConstructorIfTypeAlias != null

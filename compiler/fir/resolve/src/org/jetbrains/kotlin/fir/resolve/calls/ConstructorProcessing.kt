@@ -21,8 +21,8 @@ import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.scopes.impl.FirFakeOverrideGenerator
 import org.jetbrains.kotlin.fir.scopes.processClassifiersByName
 import org.jetbrains.kotlin.fir.scopes.scopeForClass
-import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.symbols.impl.*
+import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.visibilityChecker
 import org.jetbrains.kotlin.name.Name
@@ -249,9 +249,7 @@ private fun processConstructors(
 
                     val outerType = bodyResolveComponents.outerClassManager.outerType(type)
 
-                    if (basicScope != null &&
-                        (matchedSymbol.fir.typeParameters.isNotEmpty() || outerType != null || type.typeArguments.isNotEmpty())
-                    ) {
+                    if (basicScope != null) {
                         TypeAliasConstructorsSubstitutingScope(
                             matchedSymbol,
                             basicScope,
@@ -321,6 +319,7 @@ private class TypeAliasConstructorsSubstitutingScope(
 
                 }.apply {
                     originalConstructorIfTypeAlias = originalConstructorSymbol.fir
+                    typeAliasSymbol = this@TypeAliasConstructorsSubstitutingScope.typeAliasSymbol
                 }.symbol
             )
         }
