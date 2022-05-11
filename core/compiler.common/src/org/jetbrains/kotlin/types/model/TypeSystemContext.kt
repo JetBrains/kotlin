@@ -347,7 +347,11 @@ interface TypeSystemInferenceExtensionContext : TypeSystemContext, TypeSystemBui
 
     private fun areIncompatibleSuperTypes(firstType: KotlinTypeMarker, secondType: KotlinTypeMarker): Boolean =
         firstType.typeConstructor() == secondType.typeConstructor()
-                && !AbstractTypeChecker.equalTypes(context = this, firstType, secondType)
+                && !AbstractTypeChecker.equalTypes(
+            newTypeCheckerState(errorTypesEqualToAnything = true, stubTypesEqualToAnything = true),
+            firstType,
+            secondType
+        )
 
     // interface A<T>
     // interface B : A<Int>
