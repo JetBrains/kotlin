@@ -44,14 +44,16 @@ class MemoizedMultiFieldValueClassReplacements(
                 null
         }
 
-    private val oldFields: MutableMap<IrClass, List<IrField>> =
-        ConcurrentHashMap<IrClass, List<IrField>>().withDefault { it.fields.toList() }
-
-    fun setOldFields(irClass: IrClass, fields: List<IrField>) {
-        oldFields[irClass] = fields
+    val getOldMFVCProperties: (IrClass) -> List<IrProperty> = storageManager.createMemoizedFunction { irClass ->
+        require(irClass.isMultiFieldValueClass) { "No need to save data for non MFVC" }
+        (irClass.properties.toList().filter { it.getter?.isMultiFieldValueClassOriginalFieldGetter == true }.takeIf { it.isNotEmpty() }
+            ?: irClass.fields.mapNotNull { it.correspondingPropertySymbol?.owner }.toList().takeIf { it.isNotEmpty() }
+            ?: error("No properties found: ${irClass.render()}"))
     }
 
-    fun getOldFields(irClass: IrClass): List<IrField> = oldFields.getOrPut(irClass) { irClass.fields.toList() }
+    fun commitMFVCOldProperties(irClass: IrClass) {
+        getOldMFVCProperties(irClass)
+    }
 
     class ValueParameterTemplate(
         val name: String,
@@ -258,8 +260,9 @@ class MemoizedMultiFieldValueClassReplacements(
                 }
                 function is IrSimpleFunction && !function.isFromJava() &&
                         function.fullValueParameterList.any { it.type.isMultiFieldValueClassType() && !it.type.isNullable() } &&
-                !(function.isFakeOverride && 
-                        bindingOldFunctionToParameterTemplateStructure[findSuperDeclaration(function, false, context.state.jvmDefaultMode)] == null)->
+                        (!function.isFakeOverride ||
+                                findSuperDeclaration(function, false, context.state.jvmDefaultMode)
+                                in bindingOldFunctionToParameterTemplateStructure) ->
                     createMethodReplacement(function)
                 else -> null
             }
