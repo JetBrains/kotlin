@@ -179,7 +179,12 @@ abstract class KotlinJsIrLink @Inject constructor(
     }
 
     private fun KotlinJsOptions.configureOptions(vararg additionalCompilerArgs: String) {
-        freeCompilerArgs += additionalCompilerArgs.toList() +
+        freeCompilerArgs += additionalCompilerArgs
+            .mapNotNull { arg ->
+                if (kotlinOptions.freeCompilerArgs
+                        .any { it.startsWith(arg) }
+                ) null else arg
+            } +
                 PRODUCE_JS +
                 "$ENTRY_IR_MODULE=${entryModule.get().asFile.canonicalPath}"
 

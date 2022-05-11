@@ -219,6 +219,38 @@ class Kotlin2JsIrGradlePluginIT : AbstractKotlin2JsGradlePluginIT(true) {
             }
         }
     }
+
+    @DisplayName("falsify kotlin js compiler args")
+    @GradleTest
+    fun testFalsifyKotlinJsCompilerArgs(gradleVersion: GradleVersion) {
+        project("simple-js-executable", gradleVersion) {
+            buildGradleKts.appendText(
+                """
+                |
+                |tasks.named<org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrLink>("compileProductionExecutableKotlinJs").configure {
+                |    kotlinOptions {
+                |        freeCompilerArgs += "-Xir-dce=false"
+                |        freeCompilerArgs += "-Xir-minimized-member-names=false"
+                |    }
+                |    
+                |    doLast {
+                |        kotlinOptions {
+                |            if (freeCompilerArgs.single { it.startsWith("-Xir-dce") } != "-Xir-dce=false") throw GradleException("fail1")
+                |            if (
+                |            freeCompilerArgs
+                |                .single { it.startsWith("-Xir-minimized-member-names") } != "-Xir-minimized-member-names=false"
+                |            ) throw GradleException("fail2")
+                |        }
+                |    }
+                |}
+               """.trimMargin()
+            )
+
+            build("build") {
+                assertFileInProjectNotExists("build/js/packages/kotlin-js-nodejs/kotlin/")
+            }
+        }
+    }
 }
 
 @JsGradlePluginTests
