@@ -5,17 +5,10 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers.extended.safe.initialization
 
-import org.jetbrains.kotlin.contracts.description.isDefinitelyVisited
-import org.jetbrains.kotlin.fir.analysis.cfa.util.*
-import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.analysis.checkers.extended.safe.initialization.Effect.*
 import org.jetbrains.kotlin.fir.analysis.checkers.extended.safe.initialization.Potential.*
+import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.FirVariableAssignment
-import org.jetbrains.kotlin.fir.expressions.toResolvedCallableSymbol
-import org.jetbrains.kotlin.fir.resolve.dfa.cfg.CFGNode
-import org.jetbrains.kotlin.fir.resolve.dfa.cfg.ControlFlowGraphVisitorVoid
-import org.jetbrains.kotlin.fir.resolve.dfa.cfg.VariableAssignmentNode
-import org.jetbrains.kotlin.fir.resolve.dfa.controlFlowGraph
 
 class CheckingEffects {
 }
@@ -41,7 +34,7 @@ object Checker {
         val alreadyInitializedVariable = mutableSetOf<FirVariable>()
         val maybeUninitializedProperties = run {
             val properties = firClass.declarations.filterIsInstance<FirProperty>()
-            properties.associateWith { EffectsAndPotentials() }
+            properties.associateWith { emptyEffsAndPots }
         }
 
         val notFinalAssignments = mutableMapOf<FirProperty, Set<FirVariableAssignment>>()
@@ -70,43 +63,17 @@ object Checker {
 //                is FirSimpleFunction -> checkBody(dec)
                 is FirField -> TODO()
                 is FirProperty -> {
-                    val (effs, _) = dec.initializer?.let(::analyser) ?: return@map dec.findFirstInitializationPoint()
+                    val (effs, _) = dec.initializer?.let(::analyser) ?: throw IllegalArgumentException()
                     val errors = effs.flatMap { effectChecking(it) }
                     alreadyInitializedVariable.add(dec)
                     errors
                 }
-                else -> listOf()
+                else -> emptyList()
             }
         }
-
-    private fun FirProperty.findFirstInitializationPoint(): List<Error> {
-        val graph = controlFlowGraphReference?.controlFlowGraph ?: return listOf()
-        val data = PropertyInitializationInfoCollector(setOf(symbol)).getData(graph)
-        val p = PropertyInitializationPoint(data)
-        graph.traverse(TraverseDirection.Forward, p)
-        return listOf()
-    }
-
-    class PropertyInitializationPoint(
-        val data: Map<CFGNode<*>, PathAwarePropertyInitializationInfo>,
-    ) : ControlFlowGraphVisitorVoid() {
-        val notFinalAssignment = mutableSetOf<FirVariableAssignment>()
-
-        override fun visitNode(node: CFGNode<*>) {}
-
-        override fun visitVariableAssignmentNode(node: VariableAssignmentNode) {
-            val symbol = node.fir.calleeReference.toResolvedCallableSymbol()
-
-            val info = data.getValue(node)
-            val eventOccurrencesRange = info.infoAtNormalPath[symbol] ?: return
-            if (!eventOccurrencesRange.isDefinitelyVisited())
-                notFinalAssignment.add(node.fir)
-        }
-
-    }
-
+    
     fun StateOfClass.checkBody(dec: FirFunction): List<Error> {
-        val (effs, _) = dec.body?.let(::analyser) ?: EffectsAndPotentials()
+        val (effs, _) = dec.body?.let(::analyser) ?: emptyEffsAndPots
         return effs.flatMap { effectChecking(it) }
     }
 
@@ -140,12 +107,12 @@ object Checker {
                     is Root.This -> {                                     // P-Inv1
                         val clazz = resolve(pot.clazz, method)
                         val potentials = pot.potentialsOf(this, method)
-                        EffectsAndPotentials(listOf(), potentials)
+                        EffectsAndPotentials(emptyList(), potentials)
                     }
                     is Root.Warm -> {                                     // P-Inv2
                         val clazz = resolve(pot.clazz, method)
                         val potentials = pot.potentialsOf(this, method)
-                        EffectsAndPotentials(listOf(), potentials.viewChange(pot))
+                        EffectsAndPotentials(emptyList(), potentials.viewChange(pot))
                     }
                     is Root.Cold -> EffectsAndPotentials(Promote(pot))
                     is FunPotential -> {
@@ -161,7 +128,7 @@ object Checker {
             is OuterPotential -> {
                 val (pot, outer) = potential
                 when (pot) {
-                    is Root.This -> EffectsAndPotentials()                // P-Out1
+                    is Root.This -> emptyEffsAndPots                // P-Out1
                     is Root.Warm -> {                                     // P-Out2
                         TODO()// просто вверх по цепочке наследования
                     }
@@ -186,10 +153,10 @@ object Checker {
                 when (pot) {
                     is Root.This -> {                                     // C-Acc1
                         if (alreadyInitializedVariable.contains(field))
-                            listOf()
+                            emptyList()
                         else listOf(Error.AccessError(field))
                     }
-                    is Root.Warm -> listOf()                              // C-Acc2
+                    is Root.Warm -> emptyList()                              // C-Acc2
                     is FunPotential -> throw Exception()                  // impossible
                     is Root.Cold -> listOf(Error.AccessError(field))           // illegal
                     else ->                                                         // C-Acc3
@@ -210,7 +177,7 @@ object Checker {
                             effectChecking(eff)
                         }
                     }
-                    is FunPotential -> listOf() // invoke
+                    is FunPotential -> emptyList() // invoke
                     is Root.Cold -> listOf(Error.InvError())              // illegal
                     else ->                                                         // C-Inv3
                         ruleAcc3(potentialPropagation(pot)) { p -> MethodAccess(p, method) }

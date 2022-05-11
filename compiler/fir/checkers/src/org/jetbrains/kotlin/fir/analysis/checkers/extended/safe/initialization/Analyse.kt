@@ -7,12 +7,11 @@ package org.jetbrains.kotlin.fir.analysis.checkers.extended.safe.initialization
 
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.analysis.checkers.extended.safe.initialization.Checker.StateOfClass
-import org.jetbrains.kotlin.fir.analysis.checkers.extended.safe.initialization.Checker.checkClass
+import org.jetbrains.kotlin.fir.analysis.checkers.extended.safe.initialization.Potential.Root
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.*
-import org.jetbrains.kotlin.fir.expressions.impl.FirNoReceiverExpression
-import org.jetbrains.kotlin.fir.analysis.checkers.extended.safe.initialization.Potential.Root
 import org.jetbrains.kotlin.fir.expressions.impl.FirElseIfTrueCondition
+import org.jetbrains.kotlin.fir.expressions.impl.FirNoReceiverExpression
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 
 object ClassAnalyser {
@@ -35,11 +34,11 @@ object ClassAnalyser {
             is FirSimpleFunction -> methodTyping(firDeclaration)
             is FirProperty -> fieldTyping(firDeclaration)
             is FirField -> TODO()
-            else -> EffectsAndPotentials()
+            else -> emptyEffsAndPots
         }
 
     fun StateOfClass.allEffectsAndPotentials(): EffectsAndPotentials =
-        firClass.declarations.fold(EffectsAndPotentials()) { prev, dec ->
+        firClass.declarations.fold(emptyEffsAndPots) { prev, dec ->
             val effsAndPots = analyseDeclaration(dec)
             prev + effsAndPots
         }
@@ -50,15 +49,15 @@ fun FirClass.findDec(firDeclaration: FirDeclaration?): Boolean = declarations.co
 @OptIn(SymbolInternals::class)
 fun StateOfClass.analyser(firElement: FirElement): EffectsAndPotentials =
     when (firElement) {
-        is FirBlock -> firElement.statements.fold(EffectsAndPotentials()) { sum, firStatement ->
+        is FirBlock -> firElement.statements.fold(emptyEffsAndPots) { sum, firStatement ->
             sum + analyser(firStatement)
         }
-        is FirTypeOperatorCall -> firElement.arguments.fold(EffectsAndPotentials()) { sum, operator ->
+        is FirTypeOperatorCall -> firElement.arguments.fold(emptyEffsAndPots) { sum, operator ->
             sum + analyser(operator)
         }
         is FirFunctionCall -> {
             val receiver = firElement.getReceiver()
-            val prefEffsAndPots = receiver?.let(::analyser) ?: EffectsAndPotentials()
+            val prefEffsAndPots = receiver?.let(::analyser) ?: emptyEffsAndPots
 
             val dec = firElement.calleeReference.toResolvedCallableSymbol()?.fir
 
@@ -77,9 +76,9 @@ fun StateOfClass.analyser(firElement: FirElement): EffectsAndPotentials =
                     is FirValueParameter -> TODO()
                     null -> TODO()
                 }
-            } else EffectsAndPotentials()
+            } else emptyEffsAndPots
 
-            val effsAndPotsOfArgs = firElement.arguments.fold(EffectsAndPotentials()) { sum, argDec ->
+            val effsAndPotsOfArgs = firElement.arguments.fold(emptyEffsAndPots) { sum, argDec ->
                 val (effs, pots) = analyser(argDec)
                 sum + effs + promote(pots)
                 // TODO: explicit receiver promotion
@@ -91,12 +90,12 @@ fun StateOfClass.analyser(firElement: FirElement): EffectsAndPotentials =
 
             val firProperty = firElement.calleeReference.toResolvedCallableSymbol()?.fir as FirVariable
 
-            val (prefEffs, prefPots) = receiver?.let(::analyser) ?: EffectsAndPotentials()      // Φ, Π
+            val (prefEffs, prefPots) = receiver?.let(::analyser) ?: emptyEffsAndPots      // Φ, Π
 
             val effsAndPots =
                 if (maybeUninitializedProperties.containsKey(firProperty))
                     select(prefPots, firProperty)                                               // Φ', Π'
-                else EffectsAndPotentials()
+                else emptyEffsAndPots
             effsAndPots + prefEffs                                                              // Φ ∪ Φ', Π'
         }
         is FirReturnExpression -> {
@@ -106,11 +105,11 @@ fun StateOfClass.analyser(firElement: FirElement): EffectsAndPotentials =
             val firClass = firElement.calleeReference.boundSymbol?.fir as FirClass
             resolveThis(firClass, EffectsAndPotentials(Root.This(firClass)), firClass)
         }
-        is FirConstExpression<*> -> EffectsAndPotentials()  // ???
+        is FirConstExpression<*> -> emptyEffsAndPots  // ???
         is FirWhenBranch -> firElement.run { analyser(condition) + analyser(result) }
         is FirWhenExpression -> firElement.run {
-            val effsAndPots = branches.fold(EffectsAndPotentials()) { sum, branch -> sum + analyser(branch) }
-            val sub = (subject ?: subjectVariable)?.let(::analyser) ?: EffectsAndPotentials()
+            val effsAndPots = branches.fold(emptyEffsAndPots) { sum, branch -> sum + analyser(branch) }
+            val sub = (subject ?: subjectVariable)?.let(::analyser) ?: emptyEffsAndPots
             sub + effsAndPots
         }
         is FirVariableAssignment -> {
@@ -127,7 +126,7 @@ fun StateOfClass.analyser(firElement: FirElement): EffectsAndPotentials =
 
             TODO()
         }
-        is FirElseIfTrueCondition -> EffectsAndPotentials()
+        is FirElseIfTrueCondition -> emptyEffsAndPots
         else -> throw IllegalArgumentException()
     }
 
@@ -136,9 +135,4 @@ private fun FirQualifiedAccess.getReceiver(): FirExpression? = when {
     dispatchReceiver !is FirNoReceiverExpression -> dispatchReceiver
     extensionReceiver !is FirNoReceiverExpression -> extensionReceiver
     else -> null
-}
-
-fun analyseAndCheck(firClass: FirClass) {
-    val checker = StateOfClass(firClass)
-    val errors = checker.checkClass()
 }

@@ -6,9 +6,11 @@
 package org.jetbrains.kotlin.fir.analysis.checkers.extended.safe.initialization
 
 
+val emptyEffsAndPots = EffectsAndPotentials()
+
 data class EffectsAndPotentials(
-    val effects: Effects = listOf(),
-    val potentials: Potentials = listOf()
+    val effects: Effects = emptyList(),
+    val potentials: Potentials = emptyList()
 ) {
     constructor(effect: Effect, potential: Potential) : this(listOf(effect), listOf(potential))
 
@@ -29,8 +31,8 @@ data class EffectsAndPotentials(
         addEffectsAndPotentials(pots = pots)
 
     fun addEffectsAndPotentials(
-        effs: Effects = listOf(),
-        pots: Potentials = listOf()
+        effs: Effects = emptyList(),
+        pots: Potentials = emptyList()
     ): EffectsAndPotentials =
         EffectsAndPotentials(effects + effs, potentials + pots)
 

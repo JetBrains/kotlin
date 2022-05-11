@@ -6,9 +6,9 @@
 package org.jetbrains.kotlin.fir.analysis.checkers.extended.safe.initialization
 
 import org.jetbrains.kotlin.fir.analysis.checkers.extended.safe.initialization.ClassAnalyser.analyseDeclaration
-import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.analysis.checkers.extended.safe.initialization.Effect.*
 import org.jetbrains.kotlin.fir.analysis.checkers.extended.safe.initialization.Potential.*
+import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.classId
 
 typealias Potentials = List<Potential>
@@ -28,6 +28,7 @@ sealed class Potential(val length: Int = 0) {
                 return "This(class=${clazz.classId.shortClassName})"
             }
         }
+
         data class Warm(val clazz: FirClass, val outer: Potential) : Root(outer.length + 1)
         data class Cold(val firDeclaration: FirDeclaration) : Root()
     }
@@ -50,7 +51,7 @@ sealed class Potential(val length: Int = 0) {
 fun select(potentials: Potentials, field: FirVariable): EffectsAndPotentials {
 
     fun select(potential: Potential, field: FirVariable): EffectsAndPotentials = when {
-        field is FirValueParameter -> EffectsAndPotentials()
+        field is FirValueParameter -> emptyEffsAndPots
         potential is Root.Cold -> EffectsAndPotentials(Promote(potential))
         potential.length < 2 -> EffectsAndPotentials(
             FieldAccess(potential, field),
@@ -59,7 +60,7 @@ fun select(potentials: Potentials, field: FirVariable): EffectsAndPotentials {
         else -> EffectsAndPotentials(Promote(potential))
     }
 
-    return potentials.fold(EffectsAndPotentials()) { sum, pot -> sum + select(pot, field) }
+    return potentials.fold(emptyEffsAndPots) { sum, pot -> sum + select(pot, field) }
 }
 
 fun call(potentials: Potentials, function: FirFunction): EffectsAndPotentials {
@@ -73,7 +74,7 @@ fun call(potentials: Potentials, function: FirFunction): EffectsAndPotentials {
         else -> EffectsAndPotentials(Promote(potential))
     }
 
-    return potentials.fold(EffectsAndPotentials()) { sum, pot -> sum + call(pot, function) }
+    return potentials.fold(emptyEffsAndPots) { sum, pot -> sum + call(pot, function) }
 }
 
 fun outerSelection(potentials: Potentials, clazz: FirClass): EffectsAndPotentials {
@@ -84,7 +85,7 @@ fun outerSelection(potentials: Potentials, clazz: FirClass): EffectsAndPotential
         else -> EffectsAndPotentials(Promote(potential))
     }
 
-    return potentials.fold(EffectsAndPotentials()) { sum, pot -> sum + outerSelection(pot, clazz) }
+    return potentials.fold(emptyEffsAndPots) { sum, pot -> sum + outerSelection(pot, clazz) }
 }
 
 fun promote(potentials: Potentials): Effects = potentials.map(Effect::Promote)
@@ -92,7 +93,7 @@ fun promote(potentials: Potentials): Effects = potentials.map(Effect::Promote)
 fun init(
     clazz: FirClass,
     fieldsPots: List<Potentials>,
-    potentials: Potentials = listOf()
+    potentials: Potentials = emptyList()
 ): EffectsAndPotentials {
     val propagateEffects = fieldsPots.flatMap(::promote)
     val prefixPotentials = potentials.map { pot -> Root.Warm(clazz, pot) }
