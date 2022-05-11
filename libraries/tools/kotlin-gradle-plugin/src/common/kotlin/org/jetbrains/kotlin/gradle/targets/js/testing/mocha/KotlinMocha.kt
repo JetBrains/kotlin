@@ -102,16 +102,17 @@ class KotlinMocha(@Transient override val compilation: KotlinJsCompilation, priv
             }
         }
 
-        val dryRunArgs = mutableListOf(
-            "--require",
-            npmProject.require("source-map-support/register.js")
-        ).apply {
-            if (debug) {
-                add("--inspect-brk")
-            }
-            add(createAdapterJs(file, "kotlin-test-nodejs-empty-runner", ADAPTER_EMPTY_NODEJS).canonicalPath)
-            addAll(cliArgs.toList())
-            if (platformType == KotlinPlatformType.wasm) {
+        val dryRunArgs = if (platformType == KotlinPlatformType.wasm)
+            null
+        else {
+            mutableListOf(
+                "--require",
+                npmProject.require("source-map-support/register.js")
+            ).apply {
+                add(mocha)
+                add(createAdapterJs(file, "kotlin-test-nodejs-empty-runner", ADAPTER_EMPTY_NODEJS).canonicalPath)
+                addAll(cliArgs.toList())
+
                 addAll(cliArg("-n", "experimental-wasm-typed-funcref,experimental-wasm-gc,experimental-wasm-eh"))
             }
         }
