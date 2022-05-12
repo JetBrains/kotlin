@@ -82,9 +82,7 @@ fun compileWasm(
     allModules.forEach { codeGenerator.generateModule(it) }
 
     val linkedModule = compiledWasmModule.linkWasmCompiledFragments()
-    val watGenerator = WasmIrToText()
-    watGenerator.appendWasmModule(linkedModule)
-    val wat = watGenerator.toString()
+    val wat = ""
 
     val js = compiledWasmModule.generateJs()
 
