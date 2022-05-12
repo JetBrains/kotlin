@@ -8,13 +8,13 @@ plugins {
 tasks
     .matching { it.name == "compileKotlin" && it is KotlinCompile }
     .configureEach {
-        (this as KotlinCompile).configureTaskToolchain(JdkMajorVersion.JDK_1_6)
+        (this as KotlinCompile).configureTaskToolchain(chooseJdk18ForJpsBuild(JdkMajorVersion.JDK_1_6))
     }
 
 tasks
     .matching { it.name == "compileJava" && it is JavaCompile }
     .configureEach {
-        (this as JavaCompile).configureTaskToolchain(JdkMajorVersion.JDK_1_6)
+        (this as JavaCompile).configureTaskToolchain(chooseJdk18ForJpsBuild(JdkMajorVersion.JDK_1_6))
     }
 
 dependencies {
