@@ -5,5 +5,6 @@ plugins {
 publishTestJarsForIde(
     listOf(
         ":jps:jps-plugin",
+        ":kotlin-build-common",
     )
 )
