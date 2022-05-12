@@ -21,6 +21,7 @@ import kotlin.script.experimental.dependencies.impl.SimpleExternalDependenciesRe
 import kotlin.script.experimental.dependencies.impl.makeExternalDependenciesResolverOptions
 import kotlin.script.experimental.dependencies.impl.set
 import kotlin.script.experimental.dependencies.maven.MavenDependenciesResolver
+import kotlin.script.experimental.dependencies.maven.impl.createMavenSettings
 
 @ExperimentalContracts
 class MavenResolverTest : ResolversTestBase() {
@@ -54,6 +55,11 @@ class MavenResolverTest : ResolversTestBase() {
     private fun parseOptions(options: String) = SimpleExternalDependenciesResolverOptionsParser(options).valueOrThrow()
 
     private val resolvedKotlinVersion = "1.5.31"
+
+    fun testDefaultSettings() {
+        val settings = createMavenSettings()
+        assertNotNull(settings.localRepository)
+    }
 
     fun testResolveSimple() {
         resolveAndCheck("org.jetbrains.kotlin:kotlin-annotations-jvm:$resolvedKotlinVersion") { files ->
