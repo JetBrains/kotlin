@@ -10,20 +10,20 @@ import org.jetbrains.kotlin.analysis.project.structure.*
 import org.jetbrains.kotlin.psi.psiUtil.contains
 
 class KtStaticModuleProvider(
-    private val testProjectStructure: KtModuleProjectStructure,
+    private val projectStructure: KtModuleProjectStructure,
 ) : ProjectStructureProvider() {
     override fun getKtModuleForKtElement(element: PsiElement): KtModule {
-        return testProjectStructure.mainModules
+        return projectStructure.mainModules
             .first { module ->
                 module.ktModule.contentScope.contains(element)
             }.ktModule
     }
 
     override fun getKtBinaryModules(): Collection<KtBinaryModule> {
-        return testProjectStructure.allKtModules().filterIsInstance<KtBinaryModule>()
+        return projectStructure.allKtModules().filterIsInstance<KtBinaryModule>()
     }
 
     override fun getStdlibWithBuiltinsModule(module: KtModule): KtLibraryModule {
-        return testProjectStructure.stdlibFor(module)
+        return projectStructure.stdlibFor(module)
     }
 }
