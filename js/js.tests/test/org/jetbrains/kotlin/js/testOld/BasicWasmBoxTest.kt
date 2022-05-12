@@ -176,7 +176,7 @@ abstract class BasicWasmBoxTest(
                     println(" ------ $name Test file://$path/test.js")
                 }
 
-                writeCompilationResult(res, dir, WasmLoaderKind.D8)
+                writeCompilationResult(res, dir, WasmLoaderKind.D8, writeWat = debugMode >= DebugMode.DEBUG)
                 File(dir, "test.js").writeText(testJs)
                 ExternalTool(System.getProperty("javascript.engine.path.V8"))
                     .run(
