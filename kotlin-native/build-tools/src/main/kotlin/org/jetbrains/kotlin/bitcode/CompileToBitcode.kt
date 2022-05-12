@@ -212,9 +212,12 @@ abstract class CompileToBitcode @Inject constructor(
             }
         }
 
+    @Input
+    var outputName = "${folderName}.bc"
+
     @get:OutputFile
     val outFile: File
-        get() = File(targetDir, "${folderName}.bc")
+        get() = File(targetDir, outputName)
 
     @get:Inject
     abstract val workerExecutor: WorkerExecutor

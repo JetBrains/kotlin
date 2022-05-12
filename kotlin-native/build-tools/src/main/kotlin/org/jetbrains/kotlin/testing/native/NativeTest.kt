@@ -12,14 +12,11 @@ import org.gradle.api.*
 import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.tasks.*
 import org.gradle.api.model.ObjectFactory
-import org.gradle.kotlin.dsl.getByType
 import org.gradle.process.ExecOperations
 import org.gradle.workers.WorkAction
 import org.gradle.workers.WorkParameters
 import org.gradle.workers.WorkerExecutor
 import org.jetbrains.kotlin.ExecClang
-import org.jetbrains.kotlin.bitcode.CompileToBitcode
-import org.jetbrains.kotlin.bitcode.CompileToBitcodeExtension
 import org.jetbrains.kotlin.konan.target.*
 import java.io.OutputStream
 
@@ -81,15 +78,17 @@ abstract class CompileNativeTestJob : WorkAction<CompileNativeTestParameters> {
             val execClang = ExecClang.create(objects, platformManager, llvmDir)
             val target = platformManager.targetByName(targetName)
 
+            val clangFlags = buildClangFlags(platformManager.platform(target).configurables)
+
             if (target.family.isAppleFamily) {
                 execClang.execToolchainClang(target) {
                     executable = "clang++"
-                    this.args = compilerArgs + listOf(llvmLinkOutputFile.absolutePath, "-o", compilerOutputFile.absolutePath)
+                    this.args = clangFlags + compilerArgs + listOf(llvmLinkOutputFile.absolutePath, "-o", compilerOutputFile.absolutePath)
                 }
             } else {
                 execClang.execBareClang {
                     executable = "clang++"
-                    this.args = compilerArgs + listOf(llvmLinkOutputFile.absolutePath, "-o", compilerOutputFile.absolutePath)
+                    this.args = clangFlags + compilerArgs + listOf(llvmLinkOutputFile.absolutePath, "-o", compilerOutputFile.absolutePath)
                 }
             }
         }
@@ -201,7 +200,7 @@ abstract class CompileNativeTest @Inject constructor(
 
             it.konanHome = project.project(":kotlin-native").projectDir
             it.llvmDir = project.file(project.findProperty("llvmDir")!!)
-            it.isInfoEnabled = logger.isInfoEnabled()
+            it.isInfoEnabled = logger.isInfoEnabled
         }
 
         workQueue.submit(CompileNativeTestJob::class.java, parameters)
@@ -275,103 +274,3 @@ private fun buildClangFlags(configurables: Configurables): List<String> = mutabl
     }
     addAll(listOf("-triple", targetTriple.toString()))
 }.toList()
-
-private fun createTestTask(
-        project: Project,
-        testName: String,
-        testedTaskNames: List<String>,
-        sanitizer: SanitizerKind?,
-        configureCompileToBitcode: CompileToBitcode.() -> Unit = {}
-): Task {
-    val platformManager = project.project(":kotlin-native").findProperty("platformManager") as PlatformManager
-    val googleTestExtension = project.extensions.getByName(RuntimeTestingPlugin.GOOGLE_TEST_EXTENSION_NAME) as GoogleTestExtension
-    val testedTasks = testedTaskNames.map {
-        project.tasks.getByName(it) as CompileToBitcode
-    }
-    val target = testedTasks.map {
-        it.target
-    }.distinct().single()
-    val konanTarget = platformManager.targetByName(target)
-    val compileToBitcodeTasks = testedTasks.mapNotNull {
-        val name = "${it.name}TestBitcode"
-        val task = project.tasks.findByName(name) as? CompileToBitcode ?:
-            project.tasks.create(name,
-                    CompileToBitcode::class.java,
-                    "${it.folderName}Tests",
-                    target, "test"
-                    ).apply {
-                srcDirs = it.srcDirs
-                headersDirs = it.headersDirs + googleTestExtension.headersDirs
-
-                this.sanitizer = sanitizer
-                excludeFiles = emptyList()
-                includeFiles = listOf("**/*Test.cpp", "**/*TestSupport.cpp", "**/*Test.mm", "**/*TestSupport.mm")
-                dependsOn(it)
-                dependsOn("downloadGoogleTest")
-                compilerArgs.addAll(it.compilerArgs)
-                this.configureCompileToBitcode()
-            }
-        if (task.inputFiles.count() == 0)
-            null
-        else
-            task
-    }
-    // TODO: Consider using sanitized versions.
-    val testFrameworkTasks = listOf(
-        project.tasks.getByName("${target}Googletest") as CompileToBitcode,
-        project.tasks.getByName("${target}Googlemock") as CompileToBitcode
-    )
-
-    val testSupportTask = project.tasks.getByName("${target}TestSupport${CompileToBitcodeExtension.suffixForSanitizer(sanitizer)}") as CompileToBitcode
-
-    val mimallocEnabled = testedTaskNames.any { it.contains("mimalloc", ignoreCase = true) }
-    val compileTask = project.tasks.create(
-            "${testName}Compile",
-            CompileNativeTest::class.java,
-            testName,
-            konanTarget,
-            testSupportTask.outFile,
-            platformManager,
-            mimallocEnabled,
-    ).apply {
-        val tasksToLink = (compileToBitcodeTasks + testedTasks + testFrameworkTasks)
-        this.sanitizer = sanitizer
-        this.inputFiles.setFrom(tasksToLink.map { it.outFile })
-        this.clangArgs.addAll(buildClangFlags(platformManager.platform(konanTarget).configurables))
-        dependsOn(testSupportTask)
-        dependsOn(tasksToLink)
-    }
-
-    val runTask = project.tasks.create(
-        testName,
-        RunNativeTest::class.java,
-        testName,
-        compileTask.outputFile,
-    ).apply {
-        this.sanitizer = sanitizer
-        dependsOn(compileTask)
-    }
-
-    return runTask
-}
-
-// TODO: These tests should be created by `CompileToBitcodeExtension`
-fun createTestTasks(
-        project: Project,
-        targetName: String,
-        testTaskName: String,
-        testedTaskNames: List<String>,
-        configureCompileToBitcode: CompileToBitcode.() -> Unit = {}
-): List<Task> {
-    val platformManager = project.rootProject.project(":kotlin-native").findProperty("platformManager") as PlatformManager
-    val target = platformManager.targetByName(targetName)
-    val sanitizers: List<SanitizerKind?> = target.supportedSanitizers() + listOf(null)
-    return sanitizers.map { sanitizer ->
-        val suffix = CompileToBitcodeExtension.suffixForSanitizer(sanitizer)
-        val name = testTaskName + suffix
-        val testedNames = testedTaskNames.map {
-            it + suffix
-        }
-        createTestTask(project, name, testedNames, sanitizer, configureCompileToBitcode)
-    }
-}

@@ -8,19 +8,14 @@ plugins {
 }
 
 bitcode {
-    create("files"){
-        dependsOn(":kotlin-native:dependencies:update")
-    }
-    create("env"){
-        dependsOn(":kotlin-native:dependencies:update")
-    }
+    module("files")
+    module("env")
 }
 
 val hostName: String by project
 
 val build by tasks.registering {
-    dependsOn("${hostName}Files")
-    dependsOn("${hostName}Env")
+    dependsOn("${hostName}Common")
 }
 
 val clean by tasks.registering {

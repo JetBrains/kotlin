@@ -18,7 +18,6 @@ import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.OutputFile
 import org.gradle.api.tasks.TaskAction
 import org.gradle.kotlin.dsl.getByType
-import org.jetbrains.kotlin.bitcode.CompileToBitcode
 import java.io.FileReader
 import java.io.FileWriter
 
@@ -109,30 +108,5 @@ fun mergeCompilationDatabases(project: Project, name: String, paths: List<String
     return project.tasks.create(name, MergeCompilationDatabases::class.java) {
         dependsOn(subtasks)
         inputFiles.addAll(subtasks.map { it.outputFile })
-    }
-}
-
-/**
- * Get all [CompileToBitcode] tasks in the project, group them by target, and generate
- * compilation database for each target. Tasks will be named <target>[name]. Databases
- * will be placed in a build dir in <target>/compile_commands.json
- */
-fun createCompilationDatabasesFromCompileToBitcodeTasks(project: Project, name: String) {
-    val compileTasks = project.tasks.withType(CompileToBitcode::class.java).toList()
-    val compdbTasks = compileTasks.groupBy({ task -> task.target }) { task ->
-        project.tasks.create("${task.name}_CompilationDatabase",
-                GenerateCompilationDatabase::class.java,
-                task.target,
-                task.inputFiles,
-                task.executable,
-                task.compilerFlags,
-                task.objDir)
-    }
-    for ((target, tasks) in compdbTasks) {
-        project.tasks.create("${target}${name}", MergeCompilationDatabases::class.java) {
-            dependsOn(tasks)
-            inputFiles.addAll(tasks.map { it.outputFile })
-            outputFile = File(File(project.buildDir, target), "compile_commands.json")
-        }
     }
 }
