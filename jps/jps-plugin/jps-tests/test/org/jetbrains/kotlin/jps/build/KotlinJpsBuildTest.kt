@@ -963,7 +963,7 @@ open class KotlinJpsBuildTest : KotlinJpsBuildTestBase() {
             val facet = KotlinFacetSettings()
             facet.useProjectSettings = false
             facet.compilerArguments = K2JVMCompilerArguments()
-            facet.compilerArguments?.pluginClasspaths = arrayOf(PathUtil.kotlinPathsForDistDirectory.lombokPluginJarPath.path)
+            facet.compilerArguments?.pluginClasspaths = arrayOf(PathUtil.kotlinPathsForDistDirectoryForTests.lombokPluginJarPath.path)
 
             it.container.setChild(
                 JpsKotlinFacetModuleExtension.KIND,
@@ -976,8 +976,8 @@ open class KotlinJpsBuildTest : KotlinJpsBuildTestBase() {
             facet.useProjectSettings = false
             facet.compilerArguments = K2JVMCompilerArguments()
             facet.compilerArguments?.pluginClasspaths = arrayOf(
-                PathUtil.kotlinPathsForDistDirectory.lombokPluginJarPath.path,
-                PathUtil.kotlinPathsForDistDirectory.allOpenPluginJarPath.path
+                PathUtil.kotlinPathsForDistDirectoryForTests.lombokPluginJarPath.path,
+                PathUtil.kotlinPathsForDistDirectoryForTests.allOpenPluginJarPath.path
             )
             it.container.setChild(
                 JpsKotlinFacetModuleExtension.KIND,
