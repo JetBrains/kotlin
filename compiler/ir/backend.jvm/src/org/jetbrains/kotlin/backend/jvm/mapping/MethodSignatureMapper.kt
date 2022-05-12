@@ -408,7 +408,9 @@ class MethodSignatureMapper(private val context: JvmBackendContext) {
         val calleeInSealedInlineClassTop = calleeParent.isChildOfSealedInlineClass() &&
                 caller?.isMethodImplOfTopSealedInlineClassCallingChild(callee) == false &&
                 (callee.origin == JvmLoweredDeclarationOrigin.STATIC_INLINE_CLASS_REPLACEMENT ||
-                        (callee.isFakeOverride && callee.overriddenSymbols.any { it.owner.parentAsClass.isInline }))
+                        (callee.isFakeOverride && callee.overriddenSymbols.any {
+                            it.owner.parentAsClass.isInline || it.owner.parentAsClass.isInterface && it.owner.modality != Modality.ABSTRACT
+                        }))
 
         if (calleeInSealedInlineClassTop) {
             calleeParent = calleeParent.defaultType.findTopSealedInlineSuperClass()
@@ -430,7 +432,7 @@ class MethodSignatureMapper(private val context: JvmBackendContext) {
         var declaration = findSuperDeclaration(callee, isSuperCall)
 
         if (calleeInSealedInlineClassTop) {
-            while (declaration.parentAsClass != calleeParent) {
+            while (declaration.parentAsClass != calleeParent && !calleeParent.isSubclassOf(declaration.parentAsClass)) {
                 declaration = declaration.overriddenSymbols.find { it.owner.parentAsClass == calleeParent }?.owner
                     ?: declaration.overriddenSymbols.find { it.owner.parentAsClass.isInline }?.owner
                             ?: error("Cannot find overridden of ${declaration.render()}")

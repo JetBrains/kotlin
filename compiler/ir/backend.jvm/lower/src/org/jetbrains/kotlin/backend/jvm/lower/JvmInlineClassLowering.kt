@@ -344,7 +344,9 @@ private class JvmInlineClassLowering(context: JvmBackendContext) : JvmValueClass
     override fun transformSimpleFunctionFlat(function: IrSimpleFunction, replacement: IrSimpleFunction): List<IrDeclaration> {
         if (function.modality == Modality.ABSTRACT) return emptyList()
 
-        if (function.parentAsClass.modality == Modality.SEALED && function.isFakeOverride) return listOf(function)
+        if (function.parentAsClass.let { it.isChildOfSealedInlineClass() || it.modality == Modality.SEALED } && function.isFakeOverride) {
+            return listOf(function)
+        }
 
         replacement.valueParameters.forEach {
             it.transformChildrenVoid()

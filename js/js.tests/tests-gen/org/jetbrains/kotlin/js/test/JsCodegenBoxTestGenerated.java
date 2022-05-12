@@ -20581,6 +20581,16 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                     }
 
                     @Nested
+                    @TestMetadata("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/interfaceMethodDefaultAll")
+                    @TestDataPath("$PROJECT_ROOT")
+                    public class InterfaceMethodDefaultAll {
+                        @Test
+                        public void testAllFilesPresentInInterfaceMethodDefaultAll() throws Exception {
+                            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/interfaceMethodDefaultAll"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS, true);
+                        }
+                    }
+
+                    @Nested
                     @TestMetadata("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/interfaceMethodDefaultDefault")
                     @TestDataPath("$PROJECT_ROOT")
                     public class InterfaceMethodDefaultDefault {
