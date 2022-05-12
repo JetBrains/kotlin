@@ -27,7 +27,9 @@ enum class DependenciesResolverOptionsName(optionName: String? = null) {
     USERNAME,
     PASSWORD,
     KEY_FILE,
-    KEY_PASSPHRASE;
+    KEY_PASSPHRASE,
+    CLASSIFIER,
+    EXTENSION;
 
     val key = optionName ?: name.lowercase()
 }
@@ -61,3 +63,15 @@ val ExternalDependenciesResolver.Options.privateKeyFile
  */
 val ExternalDependenciesResolver.Options.privateKeyPassphrase
     get() = value(DependenciesResolverOptionsName.KEY_PASSPHRASE)
+
+/**
+ * Classifier of all resolved artifacts
+ */
+val ExternalDependenciesResolver.Options.classifier
+    get() = value(DependenciesResolverOptionsName.CLASSIFIER)
+
+/**
+ * Extension of all resolved artifacts
+ */
+val ExternalDependenciesResolver.Options.extension
+    get() = value(DependenciesResolverOptionsName.EXTENSION)
