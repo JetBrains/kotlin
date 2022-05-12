@@ -19,6 +19,8 @@ import org.eclipse.aether.RepositorySystem
 import org.eclipse.aether.RepositorySystemSession
 import org.eclipse.aether.artifact.Artifact
 import org.eclipse.aether.collection.CollectRequest
+import org.eclipse.aether.collection.CollectResult
+import org.eclipse.aether.collection.DependencyCollectionException
 import org.eclipse.aether.connector.basic.BasicRepositoryConnectorFactory
 import org.eclipse.aether.graph.Dependency
 import org.eclipse.aether.graph.DependencyFilter
@@ -35,6 +37,8 @@ import org.eclipse.aether.transport.wagon.WagonConfigurator
 import org.eclipse.aether.transport.wagon.WagonProvider
 import org.eclipse.aether.transport.wagon.WagonTransporterFactory
 import org.eclipse.aether.util.filter.DependencyFilterUtils
+import org.eclipse.aether.util.graph.visitor.FilteringDependencyVisitor
+import org.eclipse.aether.util.graph.visitor.TreeDependencyVisitor
 import org.eclipse.aether.util.repository.AuthenticationBuilder
 import org.eclipse.aether.util.repository.DefaultMirrorSelector
 import org.eclipse.aether.util.repository.DefaultProxySelector
@@ -127,31 +131,47 @@ internal class AetherResolveSession(
         }
     }
 
-    fun resolve(root: Artifact, scope: String, transitive: Boolean, filter: DependencyFilter?): List<Artifact> {
-        return if (transitive) resolveDependencies(root, scope, filter)
+    fun resolve(
+        root: Artifact,
+        scope: String,
+        transitive: Boolean,
+        filter: DependencyFilter?,
+        classifier: String? = null,
+        extension: String? = null,
+    ): List<Artifact> {
+        return if (transitive) resolveDependencies(root, scope, filter, classifier, extension)
         else resolveArtifact(root)
     }
 
-    private fun resolveDependencies(root: Artifact, scope: String, filter: DependencyFilter? = null): List<Artifact> {
+    private fun resolveDependencies(
+        root: Artifact,
+        scope: String,
+        filter: DependencyFilter?,
+        classifier: String?,
+        extension: String?,
+    ): List<Artifact> {
         return fetch(
-            DependencyRequest(
-                request(Dependency(root, scope)),
-                filter ?: DependencyFilterUtils.classpathFilter(scope)
-            ),
-            { req -> repositorySystem.resolveDependencies(repositorySystemSession, req).artifactResults },
-            { req, ex ->
-                DependencyResolutionException(
-                    DependencyResult(req),
-                    IllegalArgumentException( //Logger.format(
-                        //        "failed to load '%s' from %[list]s into %s",
-                        //        req.getCollectRequest().getRoot(),
-                        //        Aether.reps(req.getCollectRequest().getRepositories()),
-                        //        session.getLocalRepositoryManager()
-                        //                .getRepository()
-                        //                .getBasedir()
-                        //),
-                        ex
+            request(Dependency(root, scope)),
+            { req ->
+                val requestsBuilder = ArtifactRequestBuilder(classifier, extension)
+                val collectionResult = repositorySystem.collectDependencies(repositorySystemSession, req)
+                collectionResult.root.accept(
+                    TreeDependencyVisitor(
+                        FilteringDependencyVisitor(
+                            requestsBuilder,
+                            filter ?: DependencyFilterUtils.classpathFilter(scope)
+                        )
                     )
+                )
+
+                val requests = requestsBuilder.requests
+                repositorySystem.resolveArtifacts(repositorySystemSession, requests)
+            },
+            { req, ex ->
+                DependencyCollectionException(
+                    CollectResult(req),
+                    ex.message,
+                    ex
                 )
             }
         )
