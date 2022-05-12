@@ -243,9 +243,9 @@ open class FirSupertypeResolverVisitor(
         if (firProviderInterceptor != null) firProviderInterceptor.getFirClassifierContainerFileIfAny(symbol)
         else symbol.moduleData.session.firProvider.getFirClassifierContainerFileIfAny(symbol.classId)
 
-    private fun getFirClassifierByFqName(classId: ClassId): FirClassLikeDeclaration? =
+    private fun getFirClassifierByFqName(moduleSession: FirSession, classId: ClassId): FirClassLikeDeclaration? =
         if (firProviderInterceptor != null) firProviderInterceptor.getFirClassifierByFqName(classId)
-        else session.firProvider.getFirClassifierByFqName(classId)
+        else moduleSession.firProvider.getFirClassifierByFqName(classId)
 
     override fun visitElement(element: FirElement, data: Any?) {}
 
@@ -283,12 +283,13 @@ open class FirSupertypeResolverVisitor(
         visited: MutableSet<FirClassLikeDeclaration> = mutableSetOf()
     ) {
         if (!visited.add(classLikeDeclaration)) return
-        val supertypes =
+        val supertypes: List<ConeKotlinType> =
             resolveSpecificClassLikeSupertypes(classLikeDeclaration, supertypeRefs).map { it.coneType }
 
         for (supertype in supertypes) {
             if (supertype !is ConeClassLikeType) continue
-            val fir = getFirClassifierByFqName(supertype.lookupTag.classId) ?: continue
+            val supertypeModuleSession = supertype.toSymbol(session)?.moduleData?.session ?: continue
+            val fir = getFirClassifierByFqName(supertypeModuleSession, supertype.lookupTag.classId) ?: continue
             resolveAllSupertypes(fir, fir.supertypeRefs(), visited)
         }
     }
@@ -301,6 +302,7 @@ open class FirSupertypeResolverVisitor(
 
     private fun prepareScopes(classLikeDeclaration: FirClassLikeDeclaration): PersistentList<FirScope> {
         val classId = classLikeDeclaration.symbol.classId
+        val classModuleSession = classLikeDeclaration.moduleData.session
 
         val result = when {
             classId.isLocal -> {
@@ -316,11 +318,11 @@ open class FirSupertypeResolverVisitor(
                 }
             }
             classLikeDeclaration.safeAs<FirRegularClass>()?.isCompanion == true -> {
-                val outerClassFir = classId.outerClassId?.let(::getFirClassifierByFqName) as? FirRegularClass
+                val outerClassFir = classId.outerClassId?.let { getFirClassifierByFqName(classModuleSession, it) } as? FirRegularClass
                 prepareScopeForCompanion(outerClassFir ?: return persistentListOf())
             }
             classId.isNestedClass -> {
-                val outerClassFir = classId.outerClassId?.let(::getFirClassifierByFqName) as? FirRegularClass
+                val outerClassFir = classId.outerClassId?.let { getFirClassifierByFqName(classModuleSession, it) } as? FirRegularClass
                 prepareScopeForNestedClasses(outerClassFir ?: return persistentListOf())
             }
             else -> getFirClassifierContainerFileIfAny(classLikeDeclaration.symbol)?.let(::prepareFileScopes) ?: persistentListOf()

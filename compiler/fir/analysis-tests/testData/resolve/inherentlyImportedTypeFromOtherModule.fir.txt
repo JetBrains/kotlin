@@ -1,0 +1,34 @@
+Module: lib
+FILE: module_lib_inherentlyImportedTypeFromOtherModule.kt
+    package dependency
+
+    public abstract class Test : R|kotlin/Any| {
+        public constructor(): R|dependency/Test| {
+            super<R|kotlin/Any|>()
+        }
+
+        public abstract interface Result : R|kotlin/Any| {
+        }
+
+        public final class Success : R|dependency/Test.Result| {
+            public constructor(): R|dependency/Test.Success| {
+                super<R|kotlin/Any|>()
+            }
+
+        }
+
+    }
+Module: main
+FILE: module_main_inherentlyImportedTypeFromOtherModule.kt
+    package main
+
+    public final class Main : R|dependency/Test| {
+        public constructor(): R|main/Main| {
+            super<R|dependency/Test|>()
+        }
+
+        public final fun usage(): R|dependency/Test.Result| {
+            ^usage R|dependency/Test.Success.Success|()
+        }
+
+    }

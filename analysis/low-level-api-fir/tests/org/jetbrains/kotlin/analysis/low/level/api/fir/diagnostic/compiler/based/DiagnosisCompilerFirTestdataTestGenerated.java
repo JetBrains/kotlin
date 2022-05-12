@@ -285,6 +285,24 @@ public class DiagnosisCompilerFirTestdataTestGenerated extends AbstractDiagnosis
         }
 
         @Test
+        @TestMetadata("inherentlyImportedTypeFromOtherModule.kt")
+        public void testInherentlyImportedTypeFromOtherModule() throws Exception {
+            runTest("compiler/fir/analysis-tests/testData/resolve/inherentlyImportedTypeFromOtherModule.kt");
+        }
+
+        @Test
+        @TestMetadata("inherentlyImportedTypeFromOtherModule2.kt")
+        public void testInherentlyImportedTypeFromOtherModule2() throws Exception {
+            runTest("compiler/fir/analysis-tests/testData/resolve/inherentlyImportedTypeFromOtherModule2.kt");
+        }
+
+        @Test
+        @TestMetadata("inherentlyImportedTypeFromOtherModule3.kt")
+        public void testInherentlyImportedTypeFromOtherModule3() throws Exception {
+            runTest("compiler/fir/analysis-tests/testData/resolve/inherentlyImportedTypeFromOtherModule3.kt");
+        }
+
+        @Test
         @TestMetadata("intersectionScope.kt")
         public void testIntersectionScope() throws Exception {
             runTest("compiler/fir/analysis-tests/testData/resolve/intersectionScope.kt");

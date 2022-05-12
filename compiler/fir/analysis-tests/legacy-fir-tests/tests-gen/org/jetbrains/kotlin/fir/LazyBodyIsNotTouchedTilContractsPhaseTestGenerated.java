@@ -244,6 +244,21 @@ public class LazyBodyIsNotTouchedTilContractsPhaseTestGenerated extends Abstract
         runTest("compiler/fir/analysis-tests/testData/resolve/incorrectSuperCall.kt");
     }
 
+    @TestMetadata("inherentlyImportedTypeFromOtherModule.kt")
+    public void testInherentlyImportedTypeFromOtherModule() throws Exception {
+        runTest("compiler/fir/analysis-tests/testData/resolve/inherentlyImportedTypeFromOtherModule.kt");
+    }
+
+    @TestMetadata("inherentlyImportedTypeFromOtherModule2.kt")
+    public void testInherentlyImportedTypeFromOtherModule2() throws Exception {
+        runTest("compiler/fir/analysis-tests/testData/resolve/inherentlyImportedTypeFromOtherModule2.kt");
+    }
+
+    @TestMetadata("inherentlyImportedTypeFromOtherModule3.kt")
+    public void testInherentlyImportedTypeFromOtherModule3() throws Exception {
+        runTest("compiler/fir/analysis-tests/testData/resolve/inherentlyImportedTypeFromOtherModule3.kt");
+    }
+
     @TestMetadata("intersectionScope.kt")
     public void testIntersectionScope() throws Exception {
         runTest("compiler/fir/analysis-tests/testData/resolve/intersectionScope.kt");
