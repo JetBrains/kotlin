@@ -41,9 +41,6 @@ class MavenDependenciesResolver : ExternalDependenciesResolver {
         return repositoryCoordinates.toRepositoryUrlOrNull() != null
     }
 
-    // TODO: make robust
-    val localRepo = File(File(System.getProperty("user.home")!!, ".m2"), "repository")
-
     val repos: ArrayList<RemoteRepository> = arrayListOf()
 
     private fun remoteRepositories() = if (repos.isEmpty()) arrayListOf(mavenCentral) else repos
@@ -64,7 +61,7 @@ class MavenDependenciesResolver : ExternalDependenciesResolver {
             val dependencyScopes = options.dependencyScopes ?: listOf(JavaScopes.COMPILE, JavaScopes.RUNTIME)
             val transitive = options.transitive ?: true
             val deps = AetherResolveSession(
-                localRepo, remoteRepositories()
+                null, remoteRepositories()
             ).resolve(
                 artifactId, dependencyScopes.joinToString(","), transitive, null
             )

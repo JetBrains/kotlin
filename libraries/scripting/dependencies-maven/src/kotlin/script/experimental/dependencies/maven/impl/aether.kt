@@ -5,12 +5,8 @@
 
 package kotlin.script.experimental.dependencies.maven.impl
 
-import org.apache.commons.io.filefilter.NameFileFilter
 import org.apache.maven.repository.internal.MavenRepositorySystemUtils
 import org.apache.maven.settings.Settings
-import org.apache.maven.settings.SettingsUtils
-import org.apache.maven.settings.TrackableBase
-import org.apache.maven.settings.building.*
 import org.apache.maven.wagon.Wagon
 import org.codehaus.plexus.DefaultContainerConfiguration
 import org.codehaus.plexus.DefaultPlexusContainer
@@ -39,15 +35,18 @@ import org.eclipse.aether.util.repository.AuthenticationBuilder
 import org.eclipse.aether.util.repository.DefaultMirrorSelector
 import org.eclipse.aether.util.repository.DefaultProxySelector
 import java.io.File
-import java.io.FileFilter
 import java.util.*
 
 val mavenCentral: RemoteRepository = RemoteRepository.Builder("maven central", "default", "https://repo.maven.apache.org/maven2/").build()
 
 internal class AetherResolveSession(
-    private val localRepo: File = File(File(System.getProperty("user.home")!!, ".m2"), "repository"),
+    localRepoDirectory: File? = null,
     remoteRepos: List<RemoteRepository> = listOf(mavenCentral)
 ) {
+
+    private val localRepoPath by lazy {
+        localRepoDirectory?.absolutePath ?: settings.localRepository
+    }
 
     private val remotes by lazy {
         val proxySelector = settings.activeProxy?.let { proxy ->
@@ -121,7 +120,7 @@ internal class AetherResolveSession(
     }
 
     private val repositorySystemSession: RepositorySystemSession by lazy {
-        val localRepo = LocalRepository(localRepo.absolutePath)
+        val localRepo = LocalRepository(localRepoPath)
         MavenRepositorySystemUtils.newSession().also {
             it.localRepositoryManager = repositorySystem.newLocalRepositoryManager(it, localRepo)
         }
@@ -216,52 +215,6 @@ internal class AetherResolveSession(
     }
 
     private val settings: Settings by lazy {
-        val builder: SettingsBuilder = DefaultSettingsBuilderFactory().newInstance()
-        val request: SettingsBuildingRequest = DefaultSettingsBuildingRequest()
-        val user = System.getProperty("org.apache.maven.user-settings")
-        if (user == null) {
-            request.userSettingsFile = File(
-                File(System.getProperty("user.home")).absoluteFile,
-                "/.m2/settings.xml"
-            )
-        } else {
-            request.userSettingsFile = File(user)
-        }
-        val global = System.getProperty("org.apache.maven.global-settings")
-        if (global != null) {
-            request.globalSettingsFile = File(global)
-        }
-        val result: SettingsBuildingResult = try {
-            builder.build(request)
-        } catch (ex: SettingsBuildingException) {
-            throw IllegalStateException(ex)
-        }
-        this.invokers(builder, result)
-    }
-
-    private fun invokers(
-        builder: SettingsBuilder,
-        result: SettingsBuildingResult
-    ): Settings {
-        var main = result.effectiveSettings
-        val files = File(System.getProperty("user.dir"))
-            .parentFile?.listFiles(
-                NameFileFilter("interpolated-settings.xml") as FileFilter
-            )
-        val settingsFile = files?.singleOrNull()
-        if (settingsFile != null) {
-            val irequest =
-                DefaultSettingsBuildingRequest()
-            irequest.userSettingsFile = settingsFile
-            main = try {
-                val isettings = builder.build(irequest)
-                    .effectiveSettings
-                SettingsUtils.merge(isettings, main, TrackableBase.USER_LEVEL)
-                isettings
-            } catch (ex: SettingsBuildingException) {
-                throw java.lang.IllegalStateException(ex)
-            }
-        }
-        return main
+        createMavenSettings()
     }
 }
