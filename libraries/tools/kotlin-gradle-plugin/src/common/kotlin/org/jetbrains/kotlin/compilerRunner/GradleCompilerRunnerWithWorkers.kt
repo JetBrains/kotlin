@@ -33,8 +33,9 @@ internal class GradleCompilerRunnerWithWorkers(
     kotlinDaemonJvmArgs: List<String>?,
     buildMetrics: BuildMetricsReporter,
     compilerExecutionStrategy: KotlinCompilerExecutionStrategy,
-    private val workerExecutor: WorkerExecutor
-) : GradleCompilerRunner(taskProvider, jdkToolsJar, kotlinDaemonJvmArgs, buildMetrics, compilerExecutionStrategy) {
+    useFallbackStrategy: Boolean,
+    private val workerExecutor: WorkerExecutor,
+) : GradleCompilerRunner(taskProvider, jdkToolsJar, kotlinDaemonJvmArgs, buildMetrics, compilerExecutionStrategy, useFallbackStrategy) {
     override fun runCompilerAsync(
         workArgs: GradleKotlinCompilerWorkArguments,
         taskOutputsBackup: TaskOutputsBackup?

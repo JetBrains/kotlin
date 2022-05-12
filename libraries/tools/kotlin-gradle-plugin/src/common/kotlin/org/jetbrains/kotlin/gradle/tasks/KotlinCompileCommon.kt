@@ -51,7 +51,8 @@ abstract class KotlinCompileCommon @Inject constructor(
                     normalizedKotlinDaemonJvmArguments.orNull,
                     metrics.get(),
                     compilerExecutionStrategy.get(),
-                    workerExecutor
+                    useFallbackStrategy.get(),
+                    workerExecutor,
                 )
             }
         )

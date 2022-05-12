@@ -64,4 +64,7 @@ interface CompileUsingKotlinDaemon : Task {
      */
     @get:Internal
     val compilerExecutionStrategy: Property<KotlinCompilerExecutionStrategy>
+
+    @get:Internal
+    val useFallbackStrategy: Property<Boolean>
 }

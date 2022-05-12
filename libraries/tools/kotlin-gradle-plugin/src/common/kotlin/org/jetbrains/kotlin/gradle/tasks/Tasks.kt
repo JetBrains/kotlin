@@ -339,6 +339,7 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments> @Inject constr
                     normalizedKotlinDaemonJvmArguments.orNull,
                     metrics.get(),
                     compilerExecutionStrategy.get(),
+                    useFallbackStrategy.get(),
                 )
             }
         )
@@ -602,6 +603,7 @@ abstract class KotlinCompile @Inject constructor(
                     normalizedKotlinDaemonJvmArguments.orNull,
                     metrics.get(),
                     compilerExecutionStrategy.get(),
+                    useFallbackStrategy.get(),
                     workerExecutor
                 )
             })
@@ -943,6 +945,7 @@ abstract class Kotlin2JsCompile @Inject constructor(
                     normalizedKotlinDaemonJvmArguments.orNull,
                     metrics.get(),
                     compilerExecutionStrategy.get(),
+                    useFallbackStrategy.get(),
                     workerExecutor
                 )
             }

@@ -60,6 +60,7 @@ internal open class GradleCompilerRunner(
     protected val kotlinDaemonJvmArgs: List<String>?,
     protected val buildMetrics: BuildMetricsReporter,
     protected val compilerExecutionStrategy: KotlinCompilerExecutionStrategy,
+    protected val useFallbackStrategy: Boolean,
 ) {
 
     internal val pathProvider = taskProvider.path.get()
@@ -197,6 +198,7 @@ internal open class GradleCompilerRunner(
             allWarningsAsErrors = compilerArgs.allWarningsAsErrors,
             daemonJvmArgs = kotlinDaemonJvmArgs,
             compilerExecutionStrategy = compilerExecutionStrategy,
+            useFallbackStrategy = useFallbackStrategy,
         )
         TaskLoggers.put(pathProvider, loggerProvider)
         return runCompilerAsync(
