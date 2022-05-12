@@ -31,7 +31,6 @@ import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.visitors.*
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
-import org.jetbrains.kotlin.utils.SmartList
 
 /*
  * This file was generated automatically
@@ -49,10 +48,10 @@ open class FirValueParameterBuilder : FirAnnotationContainerBuilder {
     open var deprecation: DeprecationsPerUseSite? = null
     open var containerSource: DeserializedContainerSource? = null
     open var dispatchReceiverType: ConeSimpleKotlinType? = null
-    open val contextReceivers: MutableList<FirContextReceiver> = SmartList()
+    open val contextReceivers: MutableList<FirContextReceiver> = mutableListOf()
     open lateinit var name: Name
     open var backingField: FirBackingField? = null
-    override val annotations: MutableList<FirAnnotation> = SmartList()
+    override val annotations: MutableList<FirAnnotation> = mutableListOf()
     open lateinit var symbol: FirValueParameterSymbol
     open var defaultValue: FirExpression? = null
     open var isCrossinline: Boolean by kotlin.properties.Delegates.notNull<Boolean>()

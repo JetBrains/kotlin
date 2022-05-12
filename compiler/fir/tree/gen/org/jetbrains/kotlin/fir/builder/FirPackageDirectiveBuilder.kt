@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
 import org.jetbrains.kotlin.fir.impl.FirPackageDirectiveImpl
 import org.jetbrains.kotlin.fir.visitors.*
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.utils.SmartList
 
 /*
  * This file was generated automatically

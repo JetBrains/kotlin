@@ -28,7 +28,6 @@ import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.types.impl.FirImplicitTypeRefImpl
 import org.jetbrains.kotlin.fir.visitors.*
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.utils.SmartList
 
 /*
  * This file was generated automatically
@@ -38,11 +37,11 @@ import org.jetbrains.kotlin.utils.SmartList
 @FirBuilderDsl
 class FirComponentCallBuilder : FirCallBuilder, FirAnnotationContainerBuilder, FirExpressionBuilder {
     override var source: KtSourceElement? = null
-    override val annotations: MutableList<FirAnnotation> = SmartList()
-    val typeArguments: MutableList<FirTypeProjection> = SmartList()
+    override val annotations: MutableList<FirAnnotation> = mutableListOf()
+    val typeArguments: MutableList<FirTypeProjection> = mutableListOf()
     var dispatchReceiver: FirExpression = FirNoReceiverExpression
     var extensionReceiver: FirExpression = FirNoReceiverExpression
-    val contextReceiverArguments: MutableList<FirExpression> = SmartList()
+    val contextReceiverArguments: MutableList<FirExpression> = mutableListOf()
     override var argumentList: FirArgumentList = FirEmptyArgumentList
     lateinit var explicitReceiver: FirExpression
     var componentIndex: Int by kotlin.properties.Delegates.notNull<Int>()

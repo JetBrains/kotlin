@@ -24,7 +24,6 @@ import org.jetbrains.kotlin.fir.types.FirTypeProjection
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.types.impl.FirImplicitTypeRefImpl
 import org.jetbrains.kotlin.fir.visitors.*
-import org.jetbrains.kotlin.utils.SmartList
 
 /*
  * This file was generated automatically
@@ -36,7 +35,7 @@ class FirAnnotationCallBuilder : FirCallBuilder, FirAnnotationContainerBuilder, 
     override var source: KtSourceElement? = null
     var useSiteTarget: AnnotationUseSiteTarget? = null
     var annotationTypeRef: FirTypeRef = FirImplicitTypeRefImpl(null)
-    val typeArguments: MutableList<FirTypeProjection> = SmartList()
+    val typeArguments: MutableList<FirTypeProjection> = mutableListOf()
     override var argumentList: FirArgumentList = FirEmptyArgumentList
     lateinit var calleeReference: FirReference
     var argumentMapping: FirAnnotationArgumentMapping = FirEmptyAnnotationArgumentMapping
@@ -62,7 +61,7 @@ class FirAnnotationCallBuilder : FirCallBuilder, FirAnnotationContainerBuilder, 
         }
 
     @Deprecated("Modification of 'annotations' has no impact for FirAnnotationCallBuilder", level = DeprecationLevel.HIDDEN)
-    override val annotations: MutableList<FirAnnotation> = SmartList()
+    override val annotations: MutableList<FirAnnotation> = mutableListOf()
 }
 
 @OptIn(ExperimentalContracts::class)

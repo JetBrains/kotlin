@@ -17,7 +17,6 @@ import org.jetbrains.kotlin.fir.expressions.builder.FirExpressionBuilder
 import org.jetbrains.kotlin.fir.expressions.impl.FirLazyBlock
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.visitors.*
-import org.jetbrains.kotlin.utils.SmartList
 
 /*
  * This file was generated automatically
@@ -37,7 +36,7 @@ class FirLazyBlockBuilder : FirAnnotationContainerBuilder, FirExpressionBuilder 
 
 
     @Deprecated("Modification of 'annotations' has no impact for FirLazyBlockBuilder", level = DeprecationLevel.HIDDEN)
-    override val annotations: MutableList<FirAnnotation> = SmartList()
+    override val annotations: MutableList<FirAnnotation> = mutableListOf()
 
     @Deprecated("Modification of 'typeRef' has no impact for FirLazyBlockBuilder", level = DeprecationLevel.HIDDEN)
     override var typeRef: FirTypeRef

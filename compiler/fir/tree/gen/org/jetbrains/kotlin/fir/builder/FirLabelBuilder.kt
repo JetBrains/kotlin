@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.fir.FirLabel
 import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
 import org.jetbrains.kotlin.fir.impl.FirLabelImpl
 import org.jetbrains.kotlin.fir.visitors.*
-import org.jetbrains.kotlin.utils.SmartList
 
 /*
  * This file was generated automatically

@@ -19,7 +19,6 @@ import org.jetbrains.kotlin.fir.references.impl.FirStubReference
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.types.impl.FirImplicitTypeRefImpl
 import org.jetbrains.kotlin.fir.visitors.*
-import org.jetbrains.kotlin.utils.SmartList
 
 /*
  * This file was generated automatically
@@ -29,7 +28,7 @@ import org.jetbrains.kotlin.utils.SmartList
 @FirBuilderDsl
 class FirElvisExpressionBuilder : FirAnnotationContainerBuilder, FirExpressionBuilder {
     override var source: KtSourceElement? = null
-    override val annotations: MutableList<FirAnnotation> = SmartList()
+    override val annotations: MutableList<FirAnnotation> = mutableListOf()
     var calleeReference: FirReference = FirStubReference
     lateinit var lhs: FirExpression
     lateinit var rhs: FirExpression

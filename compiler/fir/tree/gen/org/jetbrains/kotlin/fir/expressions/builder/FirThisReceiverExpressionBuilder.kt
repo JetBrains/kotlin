@@ -23,7 +23,6 @@ import org.jetbrains.kotlin.fir.types.FirTypeProjection
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.types.impl.FirImplicitTypeRefImpl
 import org.jetbrains.kotlin.fir.visitors.*
-import org.jetbrains.kotlin.utils.SmartList
 
 /*
  * This file was generated automatically
@@ -34,9 +33,9 @@ import org.jetbrains.kotlin.utils.SmartList
 class FirThisReceiverExpressionBuilder : FirQualifiedAccessBuilder, FirAnnotationContainerBuilder, FirExpressionBuilder {
     override var source: KtSourceElement? = null
     override var typeRef: FirTypeRef = FirImplicitTypeRefImpl(null)
-    override val annotations: MutableList<FirAnnotation> = SmartList()
-    override val typeArguments: MutableList<FirTypeProjection> = SmartList()
-    override val contextReceiverArguments: MutableList<FirExpression> = SmartList()
+    override val annotations: MutableList<FirAnnotation> = mutableListOf()
+    override val typeArguments: MutableList<FirTypeProjection> = mutableListOf()
+    override val contextReceiverArguments: MutableList<FirExpression> = mutableListOf()
     lateinit var calleeReference: FirThisReference
     var isImplicit: Boolean = false
 

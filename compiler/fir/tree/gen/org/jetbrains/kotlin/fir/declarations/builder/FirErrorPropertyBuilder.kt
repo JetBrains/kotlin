@@ -32,7 +32,6 @@ import org.jetbrains.kotlin.fir.types.impl.FirErrorTypeRefImpl
 import org.jetbrains.kotlin.fir.visitors.*
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
-import org.jetbrains.kotlin.utils.SmartList
 
 /*
  * This file was generated automatically
@@ -49,10 +48,10 @@ class FirErrorPropertyBuilder : FirAnnotationContainerBuilder {
     var deprecation: DeprecationsPerUseSite? = null
     var containerSource: DeserializedContainerSource? = null
     var dispatchReceiverType: ConeSimpleKotlinType? = null
-    val contextReceivers: MutableList<FirContextReceiver> = SmartList()
+    val contextReceivers: MutableList<FirContextReceiver> = mutableListOf()
     lateinit var name: Name
     var backingField: FirBackingField? = null
-    override val annotations: MutableList<FirAnnotation> = SmartList()
+    override val annotations: MutableList<FirAnnotation> = mutableListOf()
     lateinit var diagnostic: ConeDiagnostic
     lateinit var symbol: FirErrorPropertySymbol
 

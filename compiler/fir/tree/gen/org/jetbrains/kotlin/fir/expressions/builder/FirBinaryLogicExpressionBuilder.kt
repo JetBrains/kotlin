@@ -18,7 +18,6 @@ import org.jetbrains.kotlin.fir.expressions.impl.FirBinaryLogicExpressionImpl
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.types.impl.FirImplicitTypeRefImpl
 import org.jetbrains.kotlin.fir.visitors.*
-import org.jetbrains.kotlin.utils.SmartList
 
 /*
  * This file was generated automatically
@@ -28,7 +27,7 @@ import org.jetbrains.kotlin.utils.SmartList
 @FirBuilderDsl
 class FirBinaryLogicExpressionBuilder : FirAnnotationContainerBuilder, FirExpressionBuilder {
     override var source: KtSourceElement? = null
-    override val annotations: MutableList<FirAnnotation> = SmartList()
+    override val annotations: MutableList<FirAnnotation> = mutableListOf()
     lateinit var leftOperand: FirExpression
     lateinit var rightOperand: FirExpression
     lateinit var kind: LogicOperationKind

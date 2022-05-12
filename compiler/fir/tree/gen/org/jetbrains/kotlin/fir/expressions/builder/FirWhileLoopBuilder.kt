@@ -17,7 +17,6 @@ import org.jetbrains.kotlin.fir.expressions.FirWhileLoop
 import org.jetbrains.kotlin.fir.expressions.builder.FirLoopBuilder
 import org.jetbrains.kotlin.fir.expressions.impl.FirWhileLoopImpl
 import org.jetbrains.kotlin.fir.visitors.*
-import org.jetbrains.kotlin.utils.SmartList
 
 /*
  * This file was generated automatically
@@ -27,7 +26,7 @@ import org.jetbrains.kotlin.utils.SmartList
 @FirBuilderDsl
 class FirWhileLoopBuilder : FirLoopBuilder, FirAnnotationContainerBuilder {
     override var source: KtSourceElement? = null
-    override val annotations: MutableList<FirAnnotation> = SmartList()
+    override val annotations: MutableList<FirAnnotation> = mutableListOf()
     override var label: FirLabel? = null
     override lateinit var condition: FirExpression
     override lateinit var block: FirBlock

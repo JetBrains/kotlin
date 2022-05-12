@@ -25,7 +25,6 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirTypeAliasSymbol
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.visitors.*
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.utils.SmartList
 
 /*
  * This file was generated automatically
@@ -41,11 +40,11 @@ class FirTypeAliasBuilder : FirDeclarationBuilder, FirTypeParametersOwnerBuilder
     override var attributes: FirDeclarationAttributes = FirDeclarationAttributes()
     lateinit var status: FirDeclarationStatus
     var deprecation: DeprecationsPerUseSite? = null
-    override val typeParameters: MutableList<FirTypeParameter> = SmartList()
+    override val typeParameters: MutableList<FirTypeParameter> = mutableListOf()
     lateinit var name: Name
     lateinit var symbol: FirTypeAliasSymbol
     lateinit var expandedTypeRef: FirTypeRef
-    override val annotations: MutableList<FirAnnotation> = SmartList()
+    override val annotations: MutableList<FirAnnotation> = mutableListOf()
 
     override fun build(): FirTypeAlias {
         return FirTypeAliasImpl(

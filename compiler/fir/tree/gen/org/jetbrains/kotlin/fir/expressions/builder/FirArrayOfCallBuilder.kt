@@ -18,7 +18,6 @@ import org.jetbrains.kotlin.fir.expressions.impl.FirArrayOfCallImpl
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.types.impl.FirImplicitTypeRefImpl
 import org.jetbrains.kotlin.fir.visitors.*
-import org.jetbrains.kotlin.utils.SmartList
 
 /*
  * This file was generated automatically
@@ -29,7 +28,7 @@ import org.jetbrains.kotlin.utils.SmartList
 class FirArrayOfCallBuilder : FirCallBuilder, FirAnnotationContainerBuilder, FirExpressionBuilder {
     override var source: KtSourceElement? = null
     override var typeRef: FirTypeRef = FirImplicitTypeRefImpl(null)
-    override val annotations: MutableList<FirAnnotation> = SmartList()
+    override val annotations: MutableList<FirAnnotation> = mutableListOf()
     override lateinit var argumentList: FirArgumentList
 
     override fun build(): FirArrayOfCall {

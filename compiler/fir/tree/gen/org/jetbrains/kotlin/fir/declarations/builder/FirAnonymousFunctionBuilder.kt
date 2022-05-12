@@ -34,7 +34,6 @@ import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.types.impl.FirImplicitTypeRefImpl
 import org.jetbrains.kotlin.fir.visitors.*
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
-import org.jetbrains.kotlin.utils.SmartList
 
 /*
  * This file was generated automatically
@@ -44,7 +43,7 @@ import org.jetbrains.kotlin.utils.SmartList
 @FirBuilderDsl
 class FirAnonymousFunctionBuilder : FirFunctionBuilder, FirAnnotationContainerBuilder {
     override var source: KtSourceElement? = null
-    override val annotations: MutableList<FirAnnotation> = SmartList()
+    override val annotations: MutableList<FirAnnotation> = mutableListOf()
     override lateinit var moduleData: FirModuleData
     override lateinit var origin: FirDeclarationOrigin
     override var attributes: FirDeclarationAttributes = FirDeclarationAttributes()
@@ -53,9 +52,9 @@ class FirAnonymousFunctionBuilder : FirFunctionBuilder, FirAnnotationContainerBu
     override var deprecation: DeprecationsPerUseSite? = null
     override var containerSource: DeserializedContainerSource? = null
     override var dispatchReceiverType: ConeSimpleKotlinType? = null
-    override val contextReceivers: MutableList<FirContextReceiver> = SmartList()
+    override val contextReceivers: MutableList<FirContextReceiver> = mutableListOf()
     var controlFlowGraphReference: FirControlFlowGraphReference? = null
-    override val valueParameters: MutableList<FirValueParameter> = SmartList()
+    override val valueParameters: MutableList<FirValueParameter> = mutableListOf()
     override var body: FirBlock? = null
     lateinit var symbol: FirAnonymousFunctionSymbol
     var label: FirLabel? = null
@@ -63,7 +62,7 @@ class FirAnonymousFunctionBuilder : FirFunctionBuilder, FirAnnotationContainerBu
     var inlineStatus: InlineStatus = InlineStatus.Unknown
     var isLambda: Boolean by kotlin.properties.Delegates.notNull<Boolean>()
     var hasExplicitParameterList: Boolean by kotlin.properties.Delegates.notNull<Boolean>()
-    val typeParameters: MutableList<FirTypeParameter> = SmartList()
+    val typeParameters: MutableList<FirTypeParameter> = mutableListOf()
     var typeRef: FirTypeRef = FirImplicitTypeRefImpl(null)
 
     override fun build(): FirAnonymousFunction {

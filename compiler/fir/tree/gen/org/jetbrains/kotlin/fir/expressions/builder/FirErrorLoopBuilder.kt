@@ -19,7 +19,6 @@ import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.impl.FirEmptyExpressionBlock
 import org.jetbrains.kotlin.fir.expressions.impl.FirErrorLoopImpl
 import org.jetbrains.kotlin.fir.visitors.*
-import org.jetbrains.kotlin.utils.SmartList
 
 /*
  * This file was generated automatically
@@ -29,7 +28,7 @@ import org.jetbrains.kotlin.utils.SmartList
 @FirBuilderDsl
 class FirErrorLoopBuilder : FirAnnotationContainerBuilder {
     override var source: KtSourceElement? = null
-    override val annotations: MutableList<FirAnnotation> = SmartList()
+    override val annotations: MutableList<FirAnnotation> = mutableListOf()
     var label: FirLabel? = null
     lateinit var diagnostic: ConeDiagnostic
 

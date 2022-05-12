@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirOperation
 import org.jetbrains.kotlin.fir.expressions.impl.FirAssignmentOperatorStatementImpl
 import org.jetbrains.kotlin.fir.visitors.*
-import org.jetbrains.kotlin.utils.SmartList
 
 /*
  * This file was generated automatically
@@ -25,7 +24,7 @@ import org.jetbrains.kotlin.utils.SmartList
 @FirBuilderDsl
 class FirAssignmentOperatorStatementBuilder : FirAnnotationContainerBuilder {
     override var source: KtSourceElement? = null
-    override val annotations: MutableList<FirAnnotation> = SmartList()
+    override val annotations: MutableList<FirAnnotation> = mutableListOf()
     lateinit var operation: FirOperation
     lateinit var leftArgument: FirExpression
     lateinit var rightArgument: FirExpression

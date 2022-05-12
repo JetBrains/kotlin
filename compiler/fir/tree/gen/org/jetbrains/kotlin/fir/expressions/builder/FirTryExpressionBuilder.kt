@@ -20,7 +20,6 @@ import org.jetbrains.kotlin.fir.references.impl.FirStubReference
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.types.impl.FirImplicitTypeRefImpl
 import org.jetbrains.kotlin.fir.visitors.*
-import org.jetbrains.kotlin.utils.SmartList
 
 /*
  * This file was generated automatically
@@ -31,10 +30,10 @@ import org.jetbrains.kotlin.utils.SmartList
 class FirTryExpressionBuilder : FirAnnotationContainerBuilder, FirExpressionBuilder {
     override var source: KtSourceElement? = null
     override var typeRef: FirTypeRef = FirImplicitTypeRefImpl(null)
-    override val annotations: MutableList<FirAnnotation> = SmartList()
+    override val annotations: MutableList<FirAnnotation> = mutableListOf()
     var calleeReference: FirReference = FirStubReference
     lateinit var tryBlock: FirBlock
-    val catches: MutableList<FirCatch> = SmartList()
+    val catches: MutableList<FirCatch> = mutableListOf()
     var finallyBlock: FirBlock? = null
 
     override fun build(): FirTryExpression {

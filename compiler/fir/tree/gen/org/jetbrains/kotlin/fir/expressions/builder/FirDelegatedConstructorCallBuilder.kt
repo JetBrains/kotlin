@@ -22,7 +22,6 @@ import org.jetbrains.kotlin.fir.references.impl.FirExplicitSuperReference
 import org.jetbrains.kotlin.fir.references.impl.FirExplicitThisReference
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.visitors.*
-import org.jetbrains.kotlin.utils.SmartList
 
 /*
  * This file was generated automatically
@@ -32,7 +31,7 @@ import org.jetbrains.kotlin.utils.SmartList
 @FirBuilderDsl
 class FirDelegatedConstructorCallBuilder : FirCallBuilder, FirAnnotationContainerBuilder {
     override var source: KtSourceElement? = null
-    override val annotations: MutableList<FirAnnotation> = SmartList()
+    override val annotations: MutableList<FirAnnotation> = mutableListOf()
     override var argumentList: FirArgumentList = FirEmptyArgumentList
     lateinit var constructedTypeRef: FirTypeRef
     var dispatchReceiver: FirExpression = FirNoReceiverExpression

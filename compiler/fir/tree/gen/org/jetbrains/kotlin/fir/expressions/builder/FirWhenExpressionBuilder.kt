@@ -22,7 +22,6 @@ import org.jetbrains.kotlin.fir.references.impl.FirStubReference
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.types.impl.FirImplicitTypeRefImpl
 import org.jetbrains.kotlin.fir.visitors.*
-import org.jetbrains.kotlin.utils.SmartList
 
 /*
  * This file was generated automatically
@@ -33,11 +32,11 @@ import org.jetbrains.kotlin.utils.SmartList
 class FirWhenExpressionBuilder : FirAnnotationContainerBuilder, FirExpressionBuilder {
     override var source: KtSourceElement? = null
     override var typeRef: FirTypeRef = FirImplicitTypeRefImpl(null)
-    override val annotations: MutableList<FirAnnotation> = SmartList()
+    override val annotations: MutableList<FirAnnotation> = mutableListOf()
     var calleeReference: FirReference = FirStubReference
     var subject: FirExpression? = null
     var subjectVariable: FirVariable? = null
-    val branches: MutableList<FirWhenBranch> = SmartList()
+    val branches: MutableList<FirWhenBranch> = mutableListOf()
     var exhaustivenessStatus: ExhaustivenessStatus? = null
     var usedAsExpression: Boolean by kotlin.properties.Delegates.notNull<Boolean>()
 

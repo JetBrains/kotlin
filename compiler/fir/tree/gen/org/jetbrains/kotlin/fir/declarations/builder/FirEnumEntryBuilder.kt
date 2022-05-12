@@ -29,7 +29,6 @@ import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.visitors.*
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
-import org.jetbrains.kotlin.utils.SmartList
 
 /*
  * This file was generated automatically
@@ -43,17 +42,17 @@ class FirEnumEntryBuilder : FirAnnotationContainerBuilder {
     var resolvePhase: FirResolvePhase = FirResolvePhase.RAW_FIR
     lateinit var origin: FirDeclarationOrigin
     var attributes: FirDeclarationAttributes = FirDeclarationAttributes()
-    val typeParameters: MutableList<FirTypeParameterRef> = SmartList()
+    val typeParameters: MutableList<FirTypeParameterRef> = mutableListOf()
     lateinit var status: FirDeclarationStatus
     lateinit var returnTypeRef: FirTypeRef
     var deprecation: DeprecationsPerUseSite? = null
     var containerSource: DeserializedContainerSource? = null
     var dispatchReceiverType: ConeSimpleKotlinType? = null
-    val contextReceivers: MutableList<FirContextReceiver> = SmartList()
+    val contextReceivers: MutableList<FirContextReceiver> = mutableListOf()
     lateinit var name: Name
     var initializer: FirExpression? = null
     var backingField: FirBackingField? = null
-    override val annotations: MutableList<FirAnnotation> = SmartList()
+    override val annotations: MutableList<FirAnnotation> = mutableListOf()
     lateinit var symbol: FirEnumEntrySymbol
 
     override fun build(): FirEnumEntry {
