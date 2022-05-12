@@ -414,7 +414,7 @@ abstract class AbstractTypeApproximator(
 
             val argumentType = newArguments[index]?.getType() ?: argument.getType()
 
-            val capturedType = argumentType.lowerBoundIfFlexible().asCapturedType()
+            val capturedType = argumentType.lowerBoundIfFlexible().originalIfDefinitelyNotNullable().asCapturedType()
             val capturedStarProjectionOrNull =
                 capturedType?.typeConstructorProjection()?.takeIf { it.isStarProjection() }
 

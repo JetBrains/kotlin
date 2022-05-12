@@ -18471,6 +18471,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
             }
 
             @Test
+            @TestMetadata("recursiveSelfTypes.kt")
+            public void testRecursiveSelfTypes() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/j+k/recursiveSelfTypes.kt");
+            }
+
+            @Test
             @TestMetadata("safeCallDefinitelyNotNull.kt")
             public void testSafeCallDefinitelyNotNull() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/j+k/safeCallDefinitelyNotNull.kt");
