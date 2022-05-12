@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeUnmatchedTypeArgumentsError
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.resolve.transformers.FirImportResolveTransformer
+import org.jetbrains.kotlin.fir.resolve.typeAliasSymbol
 import org.jetbrains.kotlin.fir.scopes.impl.FirExplicitSimpleImportingScope
 import org.jetbrains.kotlin.fir.scopes.processClassifiersByName
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
@@ -95,7 +96,8 @@ internal object FirReferenceResolveHelper {
                 listOfNotNull(resolvedSymbol.fir.buildSymbol(symbolBuilder))
             }
             is FirResolvedNamedReference -> {
-                listOfNotNull(resolvedSymbol.buildSymbol(symbolBuilder))
+                val typeAliasSymbol = (resolvedSymbol.fir as? FirConstructor)?.typeAliasSymbol
+                listOfNotNull(resolvedSymbol.buildSymbol(symbolBuilder), typeAliasSymbol?.buildSymbol(symbolBuilder))
             }
             is FirThisReference -> {
                 val boundSymbol = boundSymbol
