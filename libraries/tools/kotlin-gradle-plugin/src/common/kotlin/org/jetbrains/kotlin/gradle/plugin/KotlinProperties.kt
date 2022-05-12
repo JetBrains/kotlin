@@ -418,6 +418,9 @@ internal class PropertiesProvider private constructor(private val project: Proje
             return KotlinCompilerExecutionStrategy.fromProperty(value?.toLowerCase())
         }
 
+    val kotlinDaemonUseFallbackStrategy: Boolean
+        get() = booleanProperty("kotlin.daemon.useFallbackStrategy") ?: true
+
     val writeKotlinDaemonsReport: Boolean
         get() = booleanProperty("kotlin.daemon.report.enabled") ?: false
 

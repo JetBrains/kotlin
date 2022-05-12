@@ -68,6 +68,7 @@ internal abstract class AbstractKotlinCompileConfig<TASK : AbstractKotlinCompile
                 })
             }
             task.compilerExecutionStrategy.value(propertiesProvider.kotlinCompilerExecutionStrategy)
+            task.useFallbackStrategy.value(propertiesProvider.kotlinDaemonUseFallbackStrategy)
 
             task.incremental = false
             task.useModuleDetection.convention(false)

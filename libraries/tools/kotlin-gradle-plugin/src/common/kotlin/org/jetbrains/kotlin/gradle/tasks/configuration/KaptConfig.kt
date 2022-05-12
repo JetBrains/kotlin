@@ -252,6 +252,7 @@ internal class KaptWithKotlincConfig(kotlinCompileTask: KotlinCompile, ext: Kapt
                 task.kotlinDaemonJvmArguments.value(it.split("\\s+".toRegex())).disallowChanges()
             }
             task.compilerExecutionStrategy.value(propertiesProvider.kotlinCompilerExecutionStrategy).disallowChanges()
+            task.useFallbackStrategy.value(propertiesProvider.kotlinDaemonUseFallbackStrategy)
         }
     }
 }

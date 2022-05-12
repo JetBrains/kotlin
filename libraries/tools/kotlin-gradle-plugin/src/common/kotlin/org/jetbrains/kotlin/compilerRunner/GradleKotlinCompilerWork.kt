@@ -66,6 +66,7 @@ internal class GradleKotlinCompilerWorkArguments(
     val allWarningsAsErrors: Boolean,
     val daemonJvmArgs: List<String>?,
     val compilerExecutionStrategy: KotlinCompilerExecutionStrategy,
+    val useFallbackStrategy: Boolean,
 ) : Serializable {
     companion object {
         const val serialVersionUID: Long = 0
@@ -102,6 +103,7 @@ internal class GradleKotlinCompilerWork @Inject constructor(
     private var icLogLines: List<String> = emptyList()
     private val daemonJvmArgs = config.daemonJvmArgs
     private val compilerExecutionStrategy = config.compilerExecutionStrategy
+    private val useFallbackStrategy = config.useFallbackStrategy
     private val rootBuildDir = config.rootBuildDir
 
     private val log: KotlinLogger =
@@ -153,8 +155,11 @@ internal class GradleKotlinCompilerWork @Inject constructor(
 
             if (daemonExitCode != null) {
                 return daemonExitCode to KotlinCompilerExecutionStrategy.DAEMON
-            } else {
+            } else if (useFallbackStrategy) {
                 log.warn("Could not connect to kotlin daemon. Using fallback strategy.")
+            } else {
+                log.warn("Could not connect to kotlin daemon. Fallback strategy is turned off.")
+                return ExitCode.INTERNAL_ERROR to KotlinCompilerExecutionStrategy.DAEMON
             }
         }
 
