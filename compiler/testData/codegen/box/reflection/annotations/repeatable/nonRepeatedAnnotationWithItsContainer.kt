@@ -4,7 +4,7 @@
 // FULL_JDK
 // WITH_REFLECT
 
-// Android doesn't have @Repeatable.
+// Android doesn't have @Repeatable before API level 24.
 // IGNORE_BACKEND: ANDROID
 
 package test

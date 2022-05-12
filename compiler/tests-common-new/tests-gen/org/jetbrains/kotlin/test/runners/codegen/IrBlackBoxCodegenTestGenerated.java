@@ -40148,6 +40148,12 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
                 }
 
                 @Test
+                @TestMetadata("kotlinAnnotationOnType.kt")
+                public void testKotlinAnnotationOnType() throws Exception {
+                    runTest("compiler/testData/codegen/box/reflection/annotations/repeatable/kotlinAnnotationOnType.kt");
+                }
+
+                @Test
                 @TestMetadata("kt49335.kt")
                 public void testKt49335() throws Exception {
                     runTest("compiler/testData/codegen/box/reflection/annotations/repeatable/kt49335.kt");
