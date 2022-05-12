@@ -3118,9 +3118,6 @@ public abstract interface class kotlin/coroutines/jvm/internal/CoroutineStackFra
 public abstract interface annotation class kotlin/experimental/ExperimentalTypeInference : java/lang/annotation/Annotation {
 }
 
-public abstract interface annotation class kotlin/internal/IntrinsicConstEvaluation : java/lang/annotation/Annotation {
-}
-
 public final class kotlin/internal/PlatformImplementationsKt {
 	public static final fun apiVersionIsAtLeast (III)Z
 }
