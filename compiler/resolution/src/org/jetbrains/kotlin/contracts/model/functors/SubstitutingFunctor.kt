@@ -20,8 +20,11 @@ import org.jetbrains.kotlin.contracts.model.*
 import org.jetbrains.kotlin.contracts.model.structure.*
 import org.jetbrains.kotlin.contracts.model.visitors.Reducer
 import org.jetbrains.kotlin.contracts.model.visitors.Substitutor
+import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
+import org.jetbrains.kotlin.descriptors.ReceiverParameterDescriptor
 import org.jetbrains.kotlin.descriptors.ValueDescriptor
+import org.jetbrains.kotlin.resolve.scopes.receivers.ImplicitClassReceiver
 import org.jetbrains.kotlin.utils.addIfNotNull
 
 class SubstitutingFunctor(
@@ -31,13 +34,7 @@ class SubstitutingFunctor(
     override fun doInvocation(arguments: List<Computation>, typeSubstitution: ESTypeSubstitution, reducer: Reducer): List<ESEffect> {
         if (basicEffects.isEmpty()) return emptyList()
 
-        val receiver =
-            listOfNotNull(ownerFunction.dispatchReceiverParameter?.toESVariable(), ownerFunction.extensionReceiverParameter?.toESVariable())
-        val parameters = receiver + ownerFunction.valueParameters.map { it.toESVariable() }
-
-        assert(parameters.size == arguments.size) {
-            "Arguments and parameters size mismatch: arguments.size = ${arguments.size}, parameters.size = ${parameters.size}"
-        }
+        val parameters = computeParameters(arguments)
 
         val substitutions = parameters.zip(arguments).toMap()
         val substitutor = Substitutor(substitutions, typeSubstitution, reducer)
@@ -59,6 +56,38 @@ class SubstitutingFunctor(
         }
 
         return substitutedClauses
+    }
+
+    private fun computeParameters(arguments: List<Computation>): List<ESVariable> {
+        val dispatchReceiver = ownerFunction.dispatchReceiverParameter?.toESVariable()
+        val extensionReceiver = ownerFunction.extensionReceiverParameter?.toESVariable()
+        val receivers = listOfNotNull(dispatchReceiver, extensionReceiver)
+        val valueParameters = ownerFunction.valueParameters.map { it.toESVariable() }
+        val parameters = receivers + valueParameters
+
+        if (parameters.size == arguments.size) {
+            return parameters
+        }
+
+        fun fail(): Nothing {
+            error("Arguments and parameters size mismatch: arguments.size = ${arguments.size}, parameters.size = ${parameters.size}")
+        }
+
+        val dispatchParameterDescriptor = dispatchReceiver?.descriptor ?: fail()
+        if (dispatchParameterDescriptor is ReceiverParameterDescriptor) {
+            val classDescriptor = (dispatchParameterDescriptor.value as? ImplicitClassReceiver)?.classDescriptor ?: fail()
+            if (classDescriptor.kind == ClassKind.OBJECT) {
+                val parametersWithoutDispatch = buildList {
+                    extensionReceiver?.let { add(it) }
+                    addAll(valueParameters)
+                }
+                if (parametersWithoutDispatch.size != arguments.size) {
+                    fail()
+                }
+                return parametersWithoutDispatch
+            }
+        }
+        fail()
     }
 
     private fun combine(effect: SimpleEffect, substitutedCondition: ESEffect): ESEffect? {

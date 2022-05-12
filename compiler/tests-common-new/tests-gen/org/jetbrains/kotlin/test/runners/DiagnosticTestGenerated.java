@@ -35838,6 +35838,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
                 }
 
                 @Test
+                @TestMetadata("functionInCompanion.kt")
+                public void testFunctionInCompanion() throws Exception {
+                    runTest("compiler/testData/diagnostics/testsWithStdLib/contracts/smartcasts/functionInCompanion.kt");
+                }
+
+                @Test
                 @TestMetadata("intersectingInfo.kt")
                 public void testIntersectingInfo() throws Exception {
                     runTest("compiler/testData/diagnostics/testsWithStdLib/contracts/smartcasts/intersectingInfo.kt");
