@@ -844,31 +844,33 @@ private class JvmInlineClassLowering(context: JvmBackendContext) : JvmValueClass
     private fun rewriteMethodsForSealed(info: SealedInlineClassInfo) {
         rewriteOpenAndAbstractMethodsForSealed(info)
 
-        val toAdd = mutableListOf<IrSimpleFunction>()
-        // Generate a method for default method, not overridden in sealed inline class and its children.
-        for (method in info.top.functions) {
-            if (method.isFakeOverrideOfDefaultMethod()) {
-                val function = replacements.getReplacementFunction(method)
-                    ?: error("Cannot create sealed inline class method replacement for ${method.render()}")
-                with(context.createIrBuilder(function.symbol)) {
-                    function.body = irExprBody(
-                        irCall(method.symbol).also {
-                            // Just call the fake override, instead of calling DefaultImpls's one -- without
-                            // overrides, there is no need for it.
-                            for ((target, source) in method.explicitParameters.zip(function.explicitParameters)) {
-                                it.putArgument(target, irGet(source))
+        if (context.state.jvmDefaultMode.let { it.isEnabled && !it.forAllMethodsWithBody }) {
+            val toAdd = mutableListOf<IrSimpleFunction>()
+            // Generate a method for default method, not overridden in sealed inline class and its children.
+            for (method in info.top.functions) {
+                if (method.isFakeOverrideOfDefaultMethod()) {
+                    val function = replacements.getReplacementFunction(method)
+                        ?: error("Cannot create sealed inline class method replacement for ${method.render()}")
+                    with(context.createIrBuilder(function.symbol)) {
+                        function.body = irExprBody(
+                            irCall(method.symbol).also {
+                                // Just call the fake override, instead of calling DefaultImpls's one -- without
+                                // overrides, there is no need for it.
+                                for ((target, source) in method.explicitParameters.zip(function.explicitParameters)) {
+                                    it.putArgument(target, irGet(source))
+                                }
                             }
-                        }
-                    )
+                        )
+                    }
+
+                    toAdd += function
+                    // There is no need to replace fake override with the bridge, since it calls the fake override
                 }
-
-                toAdd += function
-                // There is no need to replace fake override with the bridge, since it calls the fake override
             }
-        }
 
-        for (function in toAdd) {
-            info.top.addMember(function)
+            for (function in toAdd) {
+                info.top.addMember(function)
+            }
         }
     }
 
@@ -913,14 +915,37 @@ private class JvmInlineClassLowering(context: JvmBackendContext) : JvmValueClass
                                         it.owner.parentAsClass.isInterface && it.owner.modality != Modality.ABSTRACT
                                     }
                                     if (defaultMethod != null) {
-                                        val defaultImplsMethod =
-                                            this@JvmInlineClassLowering.context.cachedDeclarations
-                                                .getDefaultImplsFunction(defaultMethod.owner)
-                                        expression = irCall(defaultImplsMethod.symbol).also {
-                                            for ((target, source) in defaultImplsMethod.explicitParameters
-                                                .zip(function.explicitParameters)
-                                            ) {
-                                                it.putArgument(target, irGet(source))
+                                        val callDefaultImpls = this@JvmInlineClassLowering.context.state.jvmDefaultMode
+                                            .let { it.isEnabled && !it.forAllMethodsWithBody }
+                                        if (callDefaultImpls) {
+                                            val defaultImplsMethod =
+                                                this@JvmInlineClassLowering.context.cachedDeclarations
+                                                    .getDefaultImplsFunction(defaultMethod.owner)
+                                            expression = irCall(defaultImplsMethod.symbol).also {
+                                                for ((target, source) in defaultImplsMethod.explicitParameters
+                                                    .zip(function.explicitParameters)
+                                                ) {
+                                                    it.putArgument(target, irGet(source))
+                                                }
+                                            }
+                                        } else {
+                                            expression = IrCallImpl(
+                                                UNDEFINED_OFFSET, UNDEFINED_OFFSET,
+                                                defaultMethod.owner.returnType,
+                                                defaultMethod,
+                                                defaultMethod.owner.valueParameters.size,
+                                                defaultMethod.owner.typeParameters.size,
+                                                null,
+                                                defaultMethod.owner.parentAsClass.symbol
+                                            ).also {
+                                                it.dispatchReceiver = irImplicitCast(
+                                                    irGet(function.valueParameters[0]), defaultMethod.owner.parentAsClass.defaultType
+                                                )
+                                                for ((target, source) in defaultMethod.owner.explicitParameters
+                                                    .zip(function.explicitParameters).drop(1)
+                                                ) {
+                                                    it.putArgument(target, irGet(source))
+                                                }
                                             }
                                         }
                                     }
