@@ -168,9 +168,12 @@ fun writeCompilationResult(
     dir: File,
     loaderKind: WasmLoaderKind,
     fileNameBase: String = "index",
+    writeWat: Boolean = true,
 ) {
     dir.mkdirs()
-    File(dir, "$fileNameBase.wat").writeText(result.wat)
+    if (writeWat) {
+        File(dir, "$fileNameBase.wat").writeText(result.wat)
+    }
     File(dir, "$fileNameBase.wasm").writeBytes(result.wasm)
     val jsWithLoader = generateJsWasmLoader(loaderKind, "./$fileNameBase.wasm", result.js)
     File(dir, "$fileNameBase.js").writeText(jsWithLoader)
