@@ -15530,6 +15530,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
                 }
 
                 @Test
+                @TestMetadata("kt52364.kt")
+                public void testKt52364() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/inference/emptyIntersectionTypes/kt52364.kt");
+                }
+
+                @Test
                 @TestMetadata("nullableEmptyIntersection.kt")
                 public void testNullableEmptyIntersection() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/inference/emptyIntersectionTypes/nullableEmptyIntersection.kt");
