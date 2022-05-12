@@ -19,14 +19,14 @@ import org.jetbrains.kotlin.psi.KtFile
 
 /**
  * Execute given [action] in [KtAnalysisSession] context
- * Uses [useSiteKtElement] to get a module from which you would like to see the other modules
- * Usually [useSiteKtElement] is some element form the module you currently analysing now
+ * Uses [useSiteKtElement] as an [KtElement] which containing module is a use-site module,
+ * i.e, the module from which perspective the project will be analyzed.
  *
- * Should not be called from EDT thread
- * Should be called from read action
- * To analyse something from EDT thread, consider using [analyzeInModalWindow]
+ *  [nonDefaultLifetimeTokenFactory] represents lifetime and accessibility guaranties
+ *  which will be applied to the [org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeOwner] instances created during code analysis.
  *
  * @see KtAnalysisSession
+ * @see KtLifetimeTokenFactory
  * @see analyzeWithReadAction
  */
 public inline fun <R> analyze(
@@ -38,14 +38,24 @@ public inline fun <R> analyze(
         .analyse(useSiteKtElement, nonDefaultLifetimeTokenFactory, action)
 
 
+/**
+ * Execute given [action] in [KtAnalysisSession] context
+ * Uses [useSiteKtModule] as use-site module, i.e, the module from which perspective the project will be analyzed.
+ *
+ *  [nonDefaultLifetimeTokenFactory] represents lifetime and accessibility guaranties
+ *  which will be applied to the [org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeOwner] instances created during code analysis.
+ *
+ * @see KtAnalysisSession
+ * @see KtLifetimeTokenFactory
+ */
 public inline fun <R> analyze(
-    ktModule: KtModule,
+    useSiteKtModule: KtModule,
     nonDefaultLifetimeTokenFactory: KtLifetimeTokenFactory? = null,
     crossinline action: KtAnalysisSession.() -> R
 ): R {
-    checkNotNull(ktModule.project)
-    val sessionProvider = KtAnalysisSessionProvider.getInstance(ktModule.project!!)
-    return sessionProvider.analyze(ktModule, nonDefaultLifetimeTokenFactory, action)
+    checkNotNull(useSiteKtModule.project)
+    val sessionProvider = KtAnalysisSessionProvider.getInstance(useSiteKtModule.project!!)
+    return sessionProvider.analyze(useSiteKtModule, nonDefaultLifetimeTokenFactory, action)
 }
 
 
