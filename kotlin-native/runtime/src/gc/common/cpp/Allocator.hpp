@@ -7,15 +7,19 @@
 
 #include <utility>
 
-#include "std_support/CStdlib.hpp"
+#include "ObjectAlloc.hpp"
 
 namespace kotlin {
 namespace gc {
 
-class AlignedAllocator {
+// TODO: Try to move from custom allocator interface to standard one.
+//       Currently Free method is in the way: it is static to avoid keeping allocator state in
+//       unique_ptr's deleter in ObjectFactory.
+
+class Allocator {
 public:
-    void* Alloc(size_t size, size_t alignment) noexcept { return std_support::aligned_calloc(alignment, 1, size); }
-    static void Free(void* instance) noexcept { std_support::free(instance); }
+    void* Alloc(size_t size) noexcept { return allocateInObjectPool(size); }
+    static void Free(void* instance) noexcept { freeInObjectPool(instance); }
 };
 
 template <typename BaseAllocator, typename GCThreadData>
@@ -23,14 +27,14 @@ class AllocatorWithGC {
 public:
     AllocatorWithGC(BaseAllocator base, GCThreadData& gc) noexcept : base_(std::move(base)), gc_(gc) {}
 
-    void* Alloc(size_t size, size_t alignment) noexcept {
+    void* Alloc(size_t size) noexcept {
         gc_.SafePointAllocation(size);
-        if (void* ptr = base_.Alloc(size, alignment)) {
+        if (void* ptr = base_.Alloc(size)) {
             return ptr;
         }
         // Tell GC that we failed to allocate, and try one more time.
         gc_.OnOOM(size);
-        return base_.Alloc(size, alignment);
+        return base_.Alloc(size);
     }
 
     static void Free(void* instance) noexcept { BaseAllocator::Free(instance); }

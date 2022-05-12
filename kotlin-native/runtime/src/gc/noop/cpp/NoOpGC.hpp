@@ -28,7 +28,7 @@ class NoOpGC : private Pinned {
 public:
     class ObjectData {};
 
-    using Allocator = AlignedAllocator;
+    using Allocator = gc::Allocator;
 
     class ThreadData : private Pinned {
     public:

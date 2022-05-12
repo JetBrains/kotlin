@@ -130,8 +130,13 @@ bitcode {
         includeRuntime()
     }
 
-    create("std_alloc")
-    create("opt_alloc")
+    create("std_alloc") {
+        includeRuntime()
+    }
+
+    create("opt_alloc") {
+        includeRuntime()
+    }
 
     create("exceptionsSupport", file("src/exceptions_support")) {
         includeRuntime()

@@ -27,7 +27,7 @@ using testing::_;
 
 namespace {
 
-using SimpleAllocator = gc::AlignedAllocator;
+using SimpleAllocator = gc::Allocator;
 
 template <size_t DataAlignment>
 using ObjectFactoryStorage = mm::internal::ObjectFactoryStorage<DataAlignment, SimpleAllocator>;
@@ -781,19 +781,19 @@ public:
     MockAllocator();
     ~MockAllocator();
 
-    MOCK_METHOD(void*, Alloc, (size_t, size_t));
+    MOCK_METHOD(void*, Alloc, (size_t));
     MOCK_METHOD(void, Free, (void*));
 
-    void* DefaultAlloc(size_t size, size_t alignment) { return std_support::aligned_calloc(alignment, 1, size); }
+    void* DefaultAlloc(size_t size) { return allocateInObjectPool(size); }
 
-    void DefaultFree(void* instance) { std_support::free(instance); }
+    void DefaultFree(void* instance) { freeInObjectPool(instance); }
 };
 
 class GlobalMockAllocator {
 public:
-    void* Alloc(size_t size, size_t alignment) {
+    void* Alloc(size_t size) {
         RuntimeAssert(instance_ != nullptr, "Global allocator must be set");
-        return instance_->Alloc(size, alignment);
+        return instance_->Alloc(size);
     }
 
     static void Free(void* instance) {
@@ -819,7 +819,7 @@ private:
 
 MockAllocator::MockAllocator() {
     GlobalMockAllocator::SetMockAllocator(this);
-    ON_CALL(*this, Alloc(_, _)).WillByDefault([this](size_t size, size_t alignment) { return DefaultAlloc(size, alignment); });
+    ON_CALL(*this, Alloc(_)).WillByDefault([this](size_t size) { return DefaultAlloc(size); });
     ON_CALL(*this, Free(_)).WillByDefault([this](void* instance) { DefaultFree(instance); });
 }
 
@@ -862,9 +862,9 @@ TEST(ObjectFactoryTest, CreateObject) {
 
     size_t allocSize = 0;
     void* allocAddress = nullptr;
-    EXPECT_CALL(allocator, Alloc(_, _)).WillOnce([&](size_t size, size_t alignment) {
+    EXPECT_CALL(allocator, Alloc(_)).WillOnce([&](size_t size) {
         allocSize = size;
-        allocAddress = allocator.DefaultAlloc(size, alignment);
+        allocAddress = allocator.DefaultAlloc(size);
         return allocAddress;
     });
     auto* object = threadQueue.CreateObject(type.typeInfo());
@@ -897,9 +897,9 @@ TEST(ObjectFactoryTest, CreateObjectArray) {
 
     size_t allocSize = 0;
     void* allocAddress = nullptr;
-    EXPECT_CALL(allocator, Alloc(_, _)).WillOnce([&](size_t size, size_t alignment) {
+    EXPECT_CALL(allocator, Alloc(_)).WillOnce([&](size_t size) {
         allocSize = size;
-        allocAddress = allocator.DefaultAlloc(size, alignment);
+        allocAddress = allocator.DefaultAlloc(size);
         return allocAddress;
     });
     auto* array = threadQueue.CreateArray(theArrayTypeInfo, 3);
@@ -932,9 +932,9 @@ TEST(ObjectFactoryTest, CreateCharArray) {
 
     size_t allocSize = 0;
     void* allocAddress = nullptr;
-    EXPECT_CALL(allocator, Alloc(_, _)).WillOnce([&](size_t size, size_t alignment) {
+    EXPECT_CALL(allocator, Alloc(_)).WillOnce([&](size_t size) {
         allocSize = size;
-        allocAddress = allocator.DefaultAlloc(size, alignment);
+        allocAddress = allocator.DefaultAlloc(size);
         return allocAddress;
     });
     auto* array = threadQueue.CreateArray(theCharArrayTypeInfo, 3);
@@ -966,7 +966,7 @@ TEST(ObjectFactoryTest, Erase) {
     ObjectFactory objectFactory;
     ObjectFactory::ThreadQueue threadQueue(objectFactory, GlobalMockAllocator());
 
-    EXPECT_CALL(allocator, Alloc(_, _)).Times(20);
+    EXPECT_CALL(allocator, Alloc(_)).Times(20);
     for (int i = 0; i < 10; ++i) {
         threadQueue.CreateObject(objectType.typeInfo());
         threadQueue.CreateArray(theArrayTypeInfo, 3);
@@ -1007,7 +1007,7 @@ TEST(ObjectFactoryTest, Move) {
     ObjectFactory::ThreadQueue threadQueue(objectFactory, GlobalMockAllocator());
     ObjectFactory::FinalizerQueue finalizerQueue;
 
-    EXPECT_CALL(allocator, Alloc(_, _)).Times(20);
+    EXPECT_CALL(allocator, Alloc(_)).Times(20);
     for (int i = 0; i < 10; ++i) {
         threadQueue.CreateObject(objectType.typeInfo());
         threadQueue.CreateArray(theArrayTypeInfo, 3);
@@ -1059,7 +1059,7 @@ TEST(ObjectFactoryTest, RunFinalizers) {
     ObjectFactory::FinalizerQueue finalizerQueue;
 
     std_support::vector<ObjHeader*> objects;
-    EXPECT_CALL(allocator, Alloc(_, _)).Times(10);
+    EXPECT_CALL(allocator, Alloc(_)).Times(10);
     for (int i = 0; i < 10; ++i) {
         objects.push_back(threadQueue.CreateObject(objectType.typeInfo()));
     }
@@ -1095,7 +1095,7 @@ TEST(ObjectFactoryTest, ConcurrentPublish) {
     std::mutex expectedMutex;
     std_support::vector<ObjHeader*> expected;
 
-    EXPECT_CALL(allocator, Alloc(_, _)).Times(kThreadCount);
+    EXPECT_CALL(allocator, Alloc(_)).Times(kThreadCount);
     for (int i = 0; i < kThreadCount; ++i) {
         threads.emplace_back([&type, &objectFactory, &canStart, &readyCount, &expected, &expectedMutex]() {
                     ObjectFactory::ThreadQueue threadQueue(objectFactory, GlobalMockAllocator());

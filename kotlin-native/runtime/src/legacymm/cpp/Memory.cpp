@@ -46,6 +46,7 @@
 #include "MemoryPrivate.hpp"
 #include "Mutex.hpp"
 #include "Natives.h"
+#include "ObjectAlloc.hpp"
 #include "ObjectTraversal.hpp"
 #include "Porting.h"
 #include "Runtime.h"
@@ -88,6 +89,8 @@ namespace {
 ALWAYS_INLINE bool IsStrictMemoryModel() noexcept {
     return CurrentMemoryModel == MemoryModel::kStrict;
 }
+
+inline constexpr ObjectPoolAllocator<char> objectAllocator;
 
 typedef uint32_t container_size_t;
 
@@ -1074,7 +1077,7 @@ ContainerHeader* allocContainer(MemoryState* state, size_t size) {
     if (state != nullptr)
         state->allocSinceLastGc += size;
 #endif
-    result = new (std_support::calloc(1, alignUp(size, kObjectAlignment))) ContainerHeader();
+    result = new (allocateInObjectPool(alignUp(size, kObjectAlignment))) ContainerHeader();
     atomicAdd(&allocCount, 1);
   }
   if (state != nullptr) {
@@ -1115,7 +1118,7 @@ void processFinalizerQueue(MemoryState* state) {
     state->containers->erase(container);
 #endif
     CONTAINER_DESTROY_EVENT(state, container)
-    std_support::free(container);
+    freeInObjectPool(container);
     atomicAdd(&allocCount, -1);
   }
   RuntimeAssert(state->finalizerQueueSize == 0, "Queue must be empty here");
@@ -1156,7 +1159,7 @@ void scheduleDestroyContainer(MemoryState* state, ContainerHeader* container) {
     processFinalizerQueue(state);
   }
 #else
-  std_support::free(container);
+  freeInObjectPool(container);
   atomicAdd(&allocCount, -1);
   CONTAINER_DESTROY_EVENT(state, container);
 #endif
@@ -1767,7 +1770,7 @@ inline ArenaContainer* initedArena(ObjHeader** auxSlot) {
   auto frame = asFrameOverlay(auxSlot);
   auto arena = reinterpret_cast<ArenaContainer*>(frame->arena);
   if (!arena) {
-    arena = new (std_support::kalloc) ArenaContainer();
+    arena = std_support::allocator_new<ArenaContainer>(objectAllocator);
     MEMORY_LOG("Initializing arena in %p\n", frame)
     arena->Init();
     frame->arena = arena;
@@ -3150,7 +3153,7 @@ MetaObjHeader* ObjHeader::createMetaObject(ObjHeader* object) {
   }
 #endif
 
-  MetaObjHeader* meta = new (std_support::kalloc) MetaObjHeader();
+  MetaObjHeader* meta = std_support::allocator_new<MetaObjHeader>(objectAllocator);
   meta->typeInfo_ = typeInfo;
 #if KONAN_NO_THREADS
   *location = reinterpret_cast<TypeInfo*>(meta);
@@ -3158,7 +3161,7 @@ MetaObjHeader* ObjHeader::createMetaObject(ObjHeader* object) {
   TypeInfo* old = __sync_val_compare_and_swap(location, typeInfo, reinterpret_cast<TypeInfo*>(meta));
   if (old != typeInfo) {
     // Someone installed a new meta-object since the check.
-    std_support::free(meta);
+    std_support::allocator_delete(objectAllocator, meta);
     meta = reinterpret_cast<MetaObjHeader*>(old);
   }
 #endif
@@ -3178,7 +3181,7 @@ void ObjHeader::destroyMetaObject(ObjHeader* object) {
   Kotlin_ObjCExport_detachAndReleaseAssociatedObject(meta->associatedObject_);
 #endif
 
-  std_support::free(meta);
+  std_support::allocator_delete(objectAllocator, meta);
 }
 
 void ObjectContainer::Init(MemoryState* state, const TypeInfo* typeInfo) {
@@ -3228,7 +3231,7 @@ void ArenaContainer::Deinit() {
   while (chunk != nullptr) {
     auto toRemove = chunk;
     chunk = chunk->next;
-    std_support::free(toRemove);
+    freeInObjectPool(toRemove);
   }
 }
 
@@ -3236,7 +3239,7 @@ bool ArenaContainer::allocContainer(container_size_t minSize) {
   auto size = minSize + sizeof(ContainerHeader) + sizeof(ContainerChunk);
   size = alignUp(size, kContainerAlignment);
   // TODO: keep simple cache of container chunks.
-  ContainerChunk* result = new (std_support::calloc(1, size)) ContainerChunk();
+  ContainerChunk* result = new (allocateInObjectPool(size)) ContainerChunk();
   RuntimeCheck(result != nullptr, "Cannot alloc memory");
   if (result == nullptr) return false;
   result->next = currentChunk_;

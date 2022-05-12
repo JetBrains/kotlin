@@ -27,6 +27,7 @@ namespace internal {
 // A queue that is constructed by collecting subqueues from several `Producer`s.
 // This is essentially a heterogeneous `MultiSourceQueue` on top of a singly linked list that
 // uses `Allocator` to allocate and free memory.
+// Precondition on `Allocator`: must allocate with alignment at least `DataAlignment`.
 // TODO: Consider merging with `MultiSourceQueue` somehow.
 template <size_t DataAlignment, typename Allocator>
 class ObjectFactoryStorage : private Pinned {
@@ -52,11 +53,10 @@ public:
     public:
         ~Node() = default;
 
-        constexpr static std::pair<size_t, size_t> GetSizeAndAlignmentForDataSize(size_t dataSize) noexcept {
+        constexpr static size_t GetSizeForDataSize(size_t dataSize) noexcept {
             size_t dataSizeAligned = AlignUp(dataSize, DataAlignment);
-            size_t totalAlignment = std::max(alignof(Node), DataAlignment);
-            size_t totalSize = AlignUp(sizeof(Node) + dataSizeAligned, totalAlignment);
-            return std::make_pair(totalSize, totalAlignment);
+            size_t totalSize = AlignUp(sizeof(Node) + dataSizeAligned, DataAlignment);
+            return totalSize;
         }
 
         static Node& FromData(void* data) noexcept {
@@ -86,16 +86,16 @@ public:
         Node() noexcept = default;
 
         static unique_ptr<Node> Create(Allocator& allocator, size_t dataSize) noexcept {
-            auto [totalSize, totalAlignment] = GetSizeAndAlignmentForDataSize(dataSize);
+            auto totalSize = GetSizeForDataSize(dataSize);
             RuntimeAssert(
                     DataOffset() + dataSize <= totalSize, "totalSize %zu is not enough to fit data %zu at offset %zu", totalSize, dataSize,
                     DataOffset());
-            void* ptr = allocator.Alloc(totalSize, totalAlignment);
+            void* ptr = allocator.Alloc(totalSize);
             if (!ptr) {
                 konan::consoleErrorf("Out of memory trying to allocate %zu bytes. Aborting.\n", totalSize);
                 konan::abort();
             }
-            RuntimeAssert(IsAligned(ptr, totalAlignment), "Allocator returned unaligned to %zu pointer %p", totalAlignment, ptr);
+            RuntimeAssert(IsAligned(ptr, DataAlignment), "Allocator returned unaligned to %zu pointer %p", DataAlignment, ptr);
             return unique_ptr<Node>(new (ptr) Node());
         }
 
@@ -103,6 +103,7 @@ public:
         // There's some more data of an unknown (at compile-time) size here, but it cannot be represented
         // with C++ members.
     };
+    static_assert(alignof(Node) <= DataAlignment, "DataAlignment must be greater than Node alignment");
 
     class Producer : private MoveOnly {
     public:
@@ -515,7 +516,7 @@ public:
         static size_t ObjectAllocatedSize(const TypeInfo* typeInfo) noexcept {
             RuntimeAssert(!typeInfo->IsArray(), "Must not be an array");
             size_t allocSize = ObjectAllocatedDataSize(typeInfo);
-            return Storage::Node::GetSizeAndAlignmentForDataSize(allocSize).first;
+            return Storage::Node::GetSizeForDataSize(allocSize);
         }
 
         ObjHeader* CreateObject(const TypeInfo* typeInfo) noexcept {
@@ -532,7 +533,7 @@ public:
         static size_t ArrayAllocatedSize(const TypeInfo* typeInfo, uint32_t count) noexcept {
             RuntimeAssert(typeInfo->IsArray(), "Must be an array");
             size_t allocSize = ArrayAllocatedDataSize(typeInfo, count);
-            return Storage::Node::GetSizeAndAlignmentForDataSize(allocSize).first;
+            return Storage::Node::GetSizeForDataSize(allocSize);
         }
 
         ArrayHeader* CreateArray(const TypeInfo* typeInfo, uint32_t count) noexcept {

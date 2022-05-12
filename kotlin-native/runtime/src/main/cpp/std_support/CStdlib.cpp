@@ -6,6 +6,7 @@
 #include "std_support/CStdlib.hpp"
 
 #include <cstdint>
+#include <cstdlib>
 #include <unistd.h>
 
 using namespace kotlin;
@@ -22,18 +23,13 @@ extern "C" void dlfree(void*);
 #define realloc_impl dlrealloc
 #define free_impl dlfree
 #else
-extern "C" void* konan_malloc_impl(size_t);
-extern "C" void* konan_aligned_alloc_impl(size_t, size_t);
-extern "C" void* konan_calloc_impl(size_t, size_t);
-extern "C" void* konan_aligned_calloc_impl(size_t, size_t, size_t);
-extern "C" void* konan_realloc_impl(void*, size_t);
-extern "C" void konan_free_impl(void*);
-#define malloc_impl konan_malloc_impl
-#define aligned_alloc_impl konan_aligned_alloc_impl
-#define calloc_impl konan_calloc_impl
-#define aligned_calloc_impl konan_aligned_calloc_impl
-#define realloc_impl konan_realloc_impl
-#define free_impl konan_free_impl
+#define malloc_impl std::malloc
+// TODO: Consider using std::aligned_alloc
+#define aligned_alloc_impl(alignment, size) std::malloc(size)
+#define calloc_impl std::calloc
+#define aligned_calloc_impl(alignment, num, size) std::calloc(num, size)
+#define realloc_impl std::realloc
+#define free_impl std::free
 #endif
 
 void* std_support::malloc(std::size_t size) noexcept {

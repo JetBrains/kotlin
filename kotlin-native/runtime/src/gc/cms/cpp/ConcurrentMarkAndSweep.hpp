@@ -67,7 +67,7 @@ public:
     class ThreadData : private Pinned {
     public:
         using ObjectData = ConcurrentMarkAndSweep::ObjectData;
-        using Allocator = AllocatorWithGC<AlignedAllocator, ThreadData>;
+        using Allocator = AllocatorWithGC<Allocator, ThreadData>;
 
         explicit ThreadData(ConcurrentMarkAndSweep& gc, mm::ThreadData& threadData, GCSchedulerThreadData& gcScheduler) noexcept :
             gc_(gc), gcScheduler_(gcScheduler) {}
@@ -80,7 +80,7 @@ public:
 
         void OnOOM(size_t size) noexcept;
 
-        Allocator CreateAllocator() noexcept { return Allocator(AlignedAllocator(), *this); }
+        Allocator CreateAllocator() noexcept { return Allocator(gc::Allocator(), *this); }
 
     private:
         ConcurrentMarkAndSweep& gc_;

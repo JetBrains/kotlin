@@ -54,7 +54,7 @@ struct ObjectFactoryTraits {
         State state = State::kUnmarked;
     };
 
-    using Allocator = gc::AlignedAllocator;
+    using Allocator = gc::Allocator;
 };
 
 using ObjectFactory = mm::ObjectFactory<ObjectFactoryTraits>;
@@ -268,7 +268,7 @@ private:
     kotlin::ScopedMemoryInit memoryInit;
     FinalizerHooksTestSupport finalizerHooks_;
     ObjectFactory objectFactory_;
-    ObjectFactory::ThreadQueue objectFactoryThreadQueue_{objectFactory_, gc::AlignedAllocator()};
+    ObjectFactory::ThreadQueue objectFactoryThreadQueue_{objectFactory_, gc::Allocator()};
     ExtraObjectsDataFactory extraObjectFactory_;
     ExtraObjectsDataFactory::ThreadQueue extraObjectFactoryThreadQueue_{extraObjectFactory_};
     std_support::vector<ObjectFactory::FinalizerQueue> finalizers_;
