@@ -5,10 +5,19 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers.extended.safe.initialization
 
+import org.jetbrains.kotlin.contracts.description.isDefinitelyVisited
+import org.jetbrains.kotlin.fir.analysis.cfa.util.PropertyInitializationInfo
+import org.jetbrains.kotlin.fir.analysis.cfa.util.PropertyInitializationInfoCollector
 import org.jetbrains.kotlin.fir.analysis.checkers.extended.safe.initialization.Effect.*
 import org.jetbrains.kotlin.fir.analysis.checkers.extended.safe.initialization.Potential.*
 import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.expressions.FirVariableAssignment
+import org.jetbrains.kotlin.fir.declarations.utils.anonymousInitializers
+import org.jetbrains.kotlin.fir.expressions.FirExpression
+import org.jetbrains.kotlin.fir.resolve.dfa.cfg.NormalPath
+import org.jetbrains.kotlin.fir.resolve.dfa.cfg.WhenExitNode
+import org.jetbrains.kotlin.fir.resolve.dfa.controlFlowGraph
+import org.jetbrains.kotlin.fir.symbols.SymbolInternals
+import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 
 class CheckingEffects {
 }
@@ -31,16 +40,47 @@ fun resolve(clazz: FirClass, firDeclaration: FirDeclaration): FirClass = clazz /
 object Checker {
 
     data class StateOfClass(val firClass: FirClass) {
+        fun FirVariable.isPropertyInitialized(): Boolean =
+            alreadyInitializedVariable.contains(this) || localInitedProperties.contains(this)
+
         val alreadyInitializedVariable = mutableSetOf<FirVariable>()
-        val maybeUninitializedProperties = run {
-            val properties = firClass.declarations.filterIsInstance<FirProperty>()
-            properties.associateWith { emptyEffsAndPots }
+
+        data class InitializationPointInfo(val firVariables: Set<FirVariable>, val isPrimeInitialization: Boolean)
+
+        val initializationOrder = mutableMapOf<FirExpression, InitializationPointInfo>()
+
+
+        val localInitedProperties = LinkedHashSet<FirVariable>()
+        val notFinalAssignments = mutableMapOf<FirProperty, EffectsAndPotentials>()
+        val caches = mutableMapOf<FirDeclaration, EffectsAndPotentials>()
+
+        val allProperties = firClass.declarations.filterIsInstance<FirProperty>()
+
+        @OptIn(SymbolInternals::class)
+        fun FirAnonymousInitializer.initBlockAnalyser(propertySymbols: Set<FirPropertySymbol>) {
+            val graph = controlFlowGraphReference?.controlFlowGraph ?: return
+            val initLevel = graph.exitNode.level
+            val data = PropertyInitializationInfoCollector(propertySymbols).getData(graph)
+
+            for (entry in data.filterKeys { it is WhenExitNode }) {
+                val propertyInitializationInfo = entry.value[NormalPath] ?: PropertyInitializationInfo.EMPTY              // NormalPath ?
+                val assignmentPropertiesSymbols = propertyInitializationInfo.filterValues { it.isDefinitelyVisited() }
+
+                val assignmentProperties = assignmentPropertiesSymbols.keys.map { it.fir }.toSet()
+                val whenExitNode = entry.key
+                initializationOrder[whenExitNode.fir as FirExpression] =
+                    InitializationPointInfo(assignmentProperties, whenExitNode.level == initLevel)
+            }
         }
 
-        val notFinalAssignments = mutableMapOf<FirProperty, Set<FirVariableAssignment>>()
-        val caches = mutableMapOf<FirDeclaration, EffectsAndPotentials>()
-    }
+        init {
+            val inits = firClass.anonymousInitializers
+            val p = allProperties.mapTo(mutableSetOf()) { it.symbol }
 
+            for (init in inits)
+                init.initBlockAnalyser(p)
+        }
+    }
 
     fun StateOfClass.checkClass(): List<List<Error>> =
         firClass.declarations.map { dec ->
@@ -51,8 +91,8 @@ object Checker {
                     checkBody(dec)
                 }
                 is FirAnonymousInitializer -> {
-                    dec.body?.let(::analyser)
-                    TODO()
+                    val (effs, _) = dec.body?.let(::analyser) ?: emptyEffsAndPots
+                    effs.flatMap { effectChecking(it) }
                 }
                 is FirRegularClass -> {
                     val state = StateOfClass(dec)
@@ -63,7 +103,7 @@ object Checker {
 //                is FirSimpleFunction -> checkBody(dec)
                 is FirField -> TODO()
                 is FirProperty -> {
-                    val (effs, _) = dec.initializer?.let(::analyser) ?: throw IllegalArgumentException()
+                    val (effs, _) = dec.initializer?.let(::analyser) ?: return@map emptyList()
                     val errors = effs.flatMap { effectChecking(it) }
                     alreadyInitializedVariable.add(dec)
                     errors
@@ -71,7 +111,7 @@ object Checker {
                 else -> emptyList()
             }
         }
-    
+
     fun StateOfClass.checkBody(dec: FirFunction): List<Error> {
         val (effs, _) = dec.body?.let(::analyser) ?: emptyEffsAndPots
         return effs.flatMap { effectChecking(it) }
@@ -152,7 +192,7 @@ object Checker {
                 val (pot, field) = effect
                 when (pot) {
                     is Root.This -> {                                     // C-Acc1
-                        if (alreadyInitializedVariable.contains(field))
+                        if (field.isPropertyInitialized())
                             emptyList()
                         else listOf(Error.AccessError(field))
                     }
