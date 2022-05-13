@@ -3046,7 +3046,9 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
             }
         }
         else if (receiverDescriptor instanceof ScriptDescriptor) {
-            return generateScriptReceiver((ScriptDescriptor) receiverDescriptor);
+            StackValue ans = generateScriptReceiver((ScriptDescriptor) receiverDescriptor);
+
+            return ans != null ? ans : StackValue.thisOrOuter(this, receiverDescriptor, isSuper, castReceiver);
         }
         else {
             return StackValue.thisOrOuter(this, receiverDescriptor, isSuper, castReceiver);
@@ -3126,7 +3128,6 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
         return result;
     }
 
-    @NotNull
     private StackValue generateScriptReceiver(@NotNull ScriptDescriptor receiver) {
         CodegenContext cur = context;
         StackValue result = StackValue.LOCAL_0;
@@ -3150,7 +3151,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
                 return StackValue.field(classType, receiverKotlinType, currentScriptType, fieldName, false, result, receiver);
             }
 
-            result = cur.getOuterExpression(result, false);
+            result = cur.getOuterExpression(result, true);
 
             if (inStartConstructorContext) {
                 cur = getNotNullParentContextForMethod(cur);
@@ -3160,7 +3161,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
             cur = cur.getParentContext();
         }
 
-        throw new UnsupportedOperationException();
+        return result;
     }
 
     @NotNull
