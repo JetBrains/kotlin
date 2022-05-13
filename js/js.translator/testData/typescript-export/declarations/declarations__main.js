@@ -51,7 +51,7 @@ function box() {
     assert(sumNullable(10, null) === 10);
     assert(sumNullable(undefined, 20) === 20);
     assert(sumNullable(1, 2) === 3);
-    assert(defaultParameters(20, "OK") === "20OK");
+    assert(defaultParameters("", 20, "OK") === "20OK");
     assert(generic1("FOO") === "FOO");
     assert(generic1({ x: 10 }).x === 10);
     assert(generic2(null) === true);

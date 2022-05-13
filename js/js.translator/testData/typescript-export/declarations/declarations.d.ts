@@ -13,7 +13,7 @@ declare namespace JS_TESTS {
         function varargWithOtherParameters(x: string, y: Array<string>, z: string): number;
         function varargWithComplexType(x: Array<(p0: Array<Int32Array>) => Array<Int32Array>>): number;
         function sumNullable(x: Nullable<number>, y: Nullable<number>): number;
-        function defaultParameters(x?: number, y?: string): string;
+        function defaultParameters(a: string, x?: number, y?: string): string;
         function generic1<T>(x: T): T;
         function generic2<T>(x: Nullable<T>): boolean;
         function genericWithConstraint<T extends string>(x: T): T;
@@ -186,6 +186,17 @@ declare namespace JS_TESTS {
                 constructor(__value: number);
                 get value(): number;
             }
+        }
+        class KT39423 {
+            constructor(a: string, b?: Nullable<number>);
+            get a(): string;
+            get b(): Nullable<number>;
+            component1(): string;
+            component2(): Nullable<number>;
+            copy(a?: string, b?: Nullable<number>): foo.KT39423;
+            toString(): string;
+            hashCode(): number;
+            equals(other: Nullable<any>): boolean;
         }
     }
 }

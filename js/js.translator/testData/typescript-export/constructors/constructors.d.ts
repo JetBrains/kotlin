@@ -33,7 +33,7 @@ declare namespace JS_TESTS {
         static delegateToCreateFromInts(y: number, z: number): DerivedClassWithSecondaryCtor;
     }
     class KotlinGreeter {
-        constructor(greeting: string);
+        constructor(greeting?: string);
         get greeting(): string;
     }
 }

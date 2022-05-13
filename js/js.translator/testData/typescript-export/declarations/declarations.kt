@@ -35,8 +35,8 @@ fun sumNullable(x: Int?, y: Int?): Int =
     (x ?: 0) + (y ?: 0)
 
 @JsExport
-fun defaultParameters(x: Int = 10, y: String = "OK"): String =
-    x.toString() + y
+fun defaultParameters(a: String, x: Int = 10, y: String = "OK"): String =
+    a + x.toString() + y
 
 @JsExport
 fun <T> generic1(x: T): T = x
@@ -251,3 +251,9 @@ class __JsNameTest private constructor() {
     @JsName("NestedJsName")
     class __NestJsNameTest(@JsName("value") val __value: Int)
 }
+
+@JsExport
+data class KT39423(
+    val a: String,
+    val b: Int? = null
+)

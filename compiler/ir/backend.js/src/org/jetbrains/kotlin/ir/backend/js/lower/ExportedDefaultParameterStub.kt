@@ -66,7 +66,6 @@ class ExportedDefaultParameterStub(val context: JsIrBackendContext) : Declaratio
                     variables[valueParameter] = it
                 }
             }
-
         }
 
         if (variables.isNotEmpty()) {
@@ -79,7 +78,13 @@ class ExportedDefaultParameterStub(val context: JsIrBackendContext) : Declaratio
         }
 
 
-        return this
+        return also {
+            valueParameters.forEach {
+                if (it.defaultValue != null) {
+                    it.origin = JsLoweredDeclarationOrigin.JS_SHADOWED_DEFAULT_PARAMETER
+                }
+            }
+        }
     }
 
     override fun transformFlat(declaration: IrDeclaration): List<IrDeclaration>? {
@@ -113,8 +118,12 @@ class ExportedDefaultParameterStub(val context: JsIrBackendContext) : Declaratio
         exportedDefaultStubFun.copyParameterDeclarationsFrom(declaration)
         exportedDefaultStubFun.returnType = declaration.returnType.remapTypeParameters(declaration, exportedDefaultStubFun)
         exportedDefaultStubFun.valueParameters.forEach {
+            if (it.defaultValue != null) {
+                it.origin = JsLoweredDeclarationOrigin.JS_SHADOWED_DEFAULT_PARAMETER
+            }
+
             it.defaultValue = null
-            it.origin = JsLoweredDeclarationOrigin.JS_SHADOWED_DEFAULT_PARAMETER
+
         }
 
         declaration.origin = JsLoweredDeclarationOrigin.JS_SHADOWED_EXPORT
