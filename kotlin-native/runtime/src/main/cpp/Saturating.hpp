@@ -137,6 +137,34 @@ constexpr auto saturating_sub(T lhs, U rhs) noexcept {
     return result;
 }
 
+// here is workaround for bug https://bugs.llvm.org/show_bug.cgi?id=28629. It can be removed after migrating to llvm-13
+// function is not too careful around std::numeric_limits<T>::min(). It can sometimes report overflow, when result equal to it,
+// but it's okey for current usages
+template<typename T>
+constexpr bool custom_builtin_mul_overflow(T lhs, T rhs, T* result) {
+    if (lhs != 0 && rhs != 0) {
+        if constexpr (std::is_signed_v<T>) {
+            if (lhs == std::numeric_limits<T>::min() || rhs == std::numeric_limits<T>::min()) {
+                if (lhs != 1 && rhs != 1) return true;
+            } else {
+                T lhs_abs = (lhs < 0) ? -lhs : lhs;
+                T rhs_abs = (rhs < 0) ? -rhs : rhs;
+                if (std::numeric_limits<T>::max() / rhs_abs < lhs_abs) return true;
+            }
+        } else {
+            if (std::numeric_limits<T>::max() / rhs < lhs) return true;
+        }
+    }
+    *result = lhs * rhs;
+    return false;
+}
+
+#if KONAN_FORBID_BUILTIN_MUL_OVERFLOW
+#define mul_overflow custom_builtin_mul_overflow
+#else
+#define mul_overflow __builtin_mul_overflow
+#endif
+
 template <typename T, typename U>
 constexpr auto saturating_mul(T lhs, U rhs) noexcept {
     static_assert(std::is_integral_v<T>, "T must be integral");
@@ -144,8 +172,8 @@ constexpr auto saturating_mul(T lhs, U rhs) noexcept {
     static_assert(std::is_signed_v<T> == std::is_signed_v<U>, "T and U must have the same sign");
 
     using Result = internal::wider_t<T, U>;
-    Result result;
-    if (__builtin_mul_overflow(lhs, rhs, &result)) {
+    Result result{0};
+    if (mul_overflow(static_cast<Result>(lhs), static_cast<Result>(rhs), &result)) {
         if (lhs >= 0 && rhs >= 0) {
             // Multiplying non-negative numbers caused an overflow => overflowed upwards.
             result = std::numeric_limits<Result>::max();
