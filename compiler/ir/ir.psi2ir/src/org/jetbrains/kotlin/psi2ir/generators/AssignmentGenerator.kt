@@ -44,29 +44,23 @@ import org.jetbrains.kotlin.types.KotlinType
 class AssignmentGenerator(statementGenerator: StatementGenerator) : StatementGeneratorExtension(statementGenerator) {
 
     fun generateAssignment(ktExpression: KtBinaryExpression, origin: IrStatementOrigin): IrExpression {
-        val ktLeft = ktExpression.left!!
-        val irRhs = ktExpression.right!!.genExpr()
-        val irAssignmentReceiver = generateAssignmentReceiver(ktLeft, IrStatementOrigin.EQ)
-        return generateAssignOperatorCall(irAssignmentReceiver, ktExpression, origin) ?: irAssignmentReceiver.assign(irRhs)
+        val operatorCall = generateAssignOperatorCall(ktExpression, origin)
+        return if (operatorCall != null) {
+            operatorCall
+        } else {
+            val ktLeft = ktExpression.left!!
+            val irRhs = ktExpression.right!!.genExpr()
+            val irAssignmentReceiver = generateAssignmentReceiver(ktLeft, IrStatementOrigin.EQ)
+            irAssignmentReceiver.assign(irRhs)
+        }
     }
 
     private fun generateAssignOperatorCall(
-        irAssignmentReceiver: AssignmentReceiver,
         ktExpression: KtBinaryExpression,
         origin: IrStatementOrigin
     ): IrExpression? {
-        val ktLeft = ktExpression.left!!
-        val ktRight = ktExpression.right!!
-        val text = ktLeft.psiOrParent.text
-        println(text)
-        val opResolvedCall = getResolvedCall(ktExpression) ?: return null
-        return irAssignmentReceiver.assign { irLValue ->
-            val opCall = statementGenerator.pregenerateCallReceivers(opResolvedCall)
-            opCall.setExplicitReceiverValue(irLValue)
-            opCall.irValueArgumentsByIndex[0] = ktRight.genExpr()
-            statementGenerator.generateSamConversionForValueArgumentsIfRequired(opCall, opResolvedCall)
-            CallGenerator(statementGenerator).generateCall(ktExpression, opCall, origin)
-        }
+        getResolvedCall(ktExpression) ?: return null
+        return generateAugmentedAssignment(ktExpression, origin)
     }
 
     fun generateAugmentedAssignment(ktExpression: KtBinaryExpression, origin: IrStatementOrigin): IrExpression {
@@ -74,7 +68,7 @@ class AssignmentGenerator(statementGenerator: StatementGenerator) : StatementGen
         val isSimpleAssignment = get(BindingContext.VARIABLE_REASSIGNMENT, ktExpression) ?: false
         val ktLeft = ktExpression.left!!
         val ktRight = ktExpression.right!!
-        val irAssignmentReceiver = generateAssignmentReceiver(ktLeft, origin)
+        val irAssignmentReceiver = generateAssignmentReceiver(ktLeft, origin, isAugmentedAssignment = true)
         val isDynamicCall = opResolvedCall.resultingDescriptor.isDynamic()
 
         return irAssignmentReceiver.assign { irLValue ->
@@ -186,7 +180,8 @@ class AssignmentGenerator(statementGenerator: StatementGenerator) : StatementGen
     private fun generateAssignmentReceiver(
         ktLeft: KtExpression,
         origin: IrStatementOrigin,
-        isAssignmentStatement: Boolean = true
+        isAssignmentStatement: Boolean = true,
+        isAugmentedAssignment: Boolean = false
     ): AssignmentReceiver {
         val ktExpr = KtPsiUtil.safeDeparenthesize(ktLeft)
         if (ktExpr is KtArrayAccessExpression) {
@@ -222,7 +217,14 @@ class AssignmentGenerator(statementGenerator: StatementGenerator) : StatementGen
                 else
                     createVariableValue(ktExpr, descriptor, origin)
             is PropertyDescriptor ->
-                generateAssignmentReceiverForProperty(descriptor, origin, ktExpr, resolvedCall, isAssignmentStatement)
+                generateAssignmentReceiverForProperty(
+                    descriptor,
+                    origin,
+                    ktExpr,
+                    resolvedCall,
+                    isAssignmentStatement,
+                    isAugmentedAssignment
+                )
             is FakeCallableDescriptorForObject ->
                 OnceExpressionValue(ktExpr.genExpr())
             is ValueDescriptor ->
@@ -282,7 +284,8 @@ class AssignmentGenerator(statementGenerator: StatementGenerator) : StatementGen
         origin: IrStatementOrigin,
         ktLeft: KtExpression,
         resolvedCall: ResolvedCall<*>,
-        isAssignmentStatement: Boolean
+        isAssignmentStatement: Boolean,
+        isAugmentedAssignment: Boolean
     ): AssignmentReceiver =
         when {
             descriptor.isDynamic() ->
@@ -299,8 +302,8 @@ class AssignmentGenerator(statementGenerator: StatementGenerator) : StatementGen
                         isAssignmentReceiver = isAssignmentStatement
                     )
                 )
-            origin == IrStatementOrigin.EQ && !descriptor.isVar -> {
-                // An assignment to a val property can only be its initialization in the constructor.
+            origin == IrStatementOrigin.EQ && !descriptor.isVar && !isAugmentedAssignment -> {
+                // An assignment to a val property can only be its initialization in the constructor or an augmented assignment.
                 val receiver = resolvedCall.dispatchReceiver ?: descriptor.dispatchReceiverParameter?.value
                 createBackingFieldLValue(ktLeft, descriptor, statementGenerator.generateReceiverOrNull(ktLeft, receiver), null)
             }

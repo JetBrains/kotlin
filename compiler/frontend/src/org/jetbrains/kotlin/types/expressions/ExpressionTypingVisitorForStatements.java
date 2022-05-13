@@ -450,7 +450,7 @@ public class ExpressionTypingVisitorForStatements extends ExpressionTypingVisito
         KotlinType assignmentOperationType = null;
         TemporaryTraceAndCache temporaryForAssignmentOperation = null;
         boolean isDelegated = descriptor instanceof PropertyDescriptor && ((PropertyDescriptor) descriptor).isDelegated();
-        if (!descriptor.isVar() && !isDelegated) {
+        if (descriptor != null && !descriptor.isVar() && !isDelegated) {
             ExpressionReceiver receiver = ExpressionReceiver.Companion.create(left, leftType, context.trace.getBindingContext());
             temporaryForAssignmentOperation = TemporaryTraceAndCache.create(
                     context, "trace to check assignment operation like '=' for", expression);
