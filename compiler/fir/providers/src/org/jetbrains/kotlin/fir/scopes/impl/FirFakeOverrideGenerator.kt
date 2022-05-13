@@ -112,7 +112,7 @@ object FirFakeOverrideGenerator {
             moduleData = session.nullableModuleData ?: baseFunction.moduleData
             this.origin = origin
             name = baseFunction.name
-            status = baseFunction.status.copy(isExpect, newModality, newVisibility)
+            status = baseFunction.status.copy(newVisibility, newModality, isExpect = isExpect)
             symbol = newSymbol
             resolvePhase = baseFunction.resolvePhase
 
@@ -145,7 +145,7 @@ object FirFakeOverrideGenerator {
             moduleData = session.moduleData
             this.origin = origin
             receiverTypeRef = baseConstructor.receiverTypeRef?.withReplacedConeType(null)
-            status = baseConstructor.status.copy(isExpect)
+            status = baseConstructor.status.copy(isExpect = isExpect)
             symbol = fakeOverrideSymbol
 
             typeParameters += configureAnnotationsTypeParametersAndSignature(
@@ -330,7 +330,7 @@ object FirFakeOverrideGenerator {
             isVar = baseProperty.isVar
             this.symbol = newSymbol
             isLocal = false
-            status = baseProperty.status.copy(isExpect, newModality, newVisibility)
+            status = baseProperty.status.copy(newVisibility, newModality, isExpect = isExpect)
 
             resolvePhase = baseProperty.resolvePhase
             dispatchReceiverType = newDispatchReceiverType
