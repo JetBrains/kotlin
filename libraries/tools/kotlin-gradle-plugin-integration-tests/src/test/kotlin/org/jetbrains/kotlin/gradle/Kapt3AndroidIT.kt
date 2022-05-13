@@ -73,7 +73,7 @@ open class Kapt3Android36IT : Kapt3AndroidIT() {
     }
 }
 
-class Kapt3Android70IT : Kapt3AndroidIT() {
+open class Kapt3Android70IT : Kapt3AndroidIT() {
     override val androidGradlePluginVersion: AGPVersion
         get() = AGPVersion.v7_0_0
 
@@ -134,6 +134,10 @@ class Kapt3Android70IT : Kapt3AndroidIT() {
             modifyAndCheck("libJvmUtil.kt", "useLibJvmUtil.kt")
         }
     }
+}
+
+class Kapt3Android7WithClasspathSnapshot : Kapt3Android70IT() {
+    override fun defaultBuildOptions() = super.defaultBuildOptions().copy(useClasspathSnapshot = true)
 }
 
 class Kapt3Android42IT : BaseGradleIT() {
