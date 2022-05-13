@@ -17,7 +17,10 @@
 package org.jetbrains.kotlin.repl
 
 import com.intellij.openapi.util.text.StringUtil
+import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
+import org.jetbrains.kotlin.cli.common.messages.MessageRenderer
 import org.jetbrains.kotlin.cli.common.repl.ReplEvalResult
+import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.script.loadScriptingPlugin
 import org.jetbrains.kotlin.scripting.compiler.plugin.repl.ReplInterpreter
 import org.jetbrains.kotlin.scripting.compiler.plugin.repl.configuration.ConsoleReplConfiguration
@@ -86,8 +89,14 @@ abstract class AbstractReplInterpreterTest : KtUsefulTestCase() {
     protected fun doTest(path: String) {
         val configuration = KotlinTestUtils.newConfiguration(ConfigurationKind.ALL, TestJdkKind.MOCK_JDK)
         loadScriptingPlugin(configuration)
+        val projectEnvironment =
+            KotlinCoreEnvironment.ProjectEnvironment(
+                testRootDisposable,
+                KotlinCoreEnvironment.getOrCreateApplicationEnvironmentForTests(testRootDisposable, configuration),
+                configuration
+            )
         val repl = ReplInterpreter(
-            testRootDisposable, configuration,
+            projectEnvironment, configuration,
             ConsoleReplConfiguration()
         )
 
@@ -100,6 +109,7 @@ abstract class AbstractReplInterpreterTest : KtUsefulTestCase() {
 
             val actual = when (lineResult) {
                 is ReplEvalResult.ValueResult -> lineResult.value.toString()
+                is ReplEvalResult.Error.CompileTime -> MessageRenderer.WITHOUT_PATHS.render(CompilerMessageSeverity.ERROR, lineResult.message, lineResult.location)
                 is ReplEvalResult.Error -> lineResult.message
                 is ReplEvalResult.Incomplete -> INCOMPLETE_LINE_MESSAGE
                 is ReplEvalResult.UnitResult -> ""

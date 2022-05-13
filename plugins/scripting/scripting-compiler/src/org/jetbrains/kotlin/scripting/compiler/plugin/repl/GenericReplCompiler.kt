@@ -81,12 +81,12 @@ open class GenericReplCompiler(
             val analysisResult = compilerState.analyzerEngine.analyzeReplLine(psiFile, codeLine)
             AnalyzerWithCompilerReport.reportDiagnostics(analysisResult.diagnostics, errorHolder, renderDiagnosticName = false)
             val scriptDescriptor = when (analysisResult) {
-                is ReplCodeAnalyzerBase.ReplLineAnalysisResult.WithErrors -> {
-                    return ReplCompileResult.Error(errorHolder.renderMessage())
-                }
                 is ReplCodeAnalyzerBase.ReplLineAnalysisResult.Successful -> {
                     (analysisResult.scriptDescriptor as? ScriptDescriptor)
                         ?: error("Unexpected script descriptor type ${analysisResult.scriptDescriptor::class}")
+                }
+                is ReplCodeAnalyzerBase.ReplLineAnalysisResult.WithErrors -> {
+                    return ReplCompileResult.Error(errorHolder.renderMessage())
                 }
                 else -> error("Unexpected result ${analysisResult::class.java}")
             }

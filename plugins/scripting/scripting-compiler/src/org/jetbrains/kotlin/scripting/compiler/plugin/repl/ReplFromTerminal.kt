@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.scripting.compiler.plugin.repl
 
-import com.intellij.openapi.Disposable
+import com.intellij.core.JavaCoreProjectEnvironment
 import com.intellij.openapi.util.io.FileUtil
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.common.messages.GroupingMessageCollector
@@ -24,12 +24,12 @@ import java.util.concurrent.Executors
 import java.util.concurrent.Future
 
 class ReplFromTerminal(
-    disposable: Disposable,
+    projectEnvironment: JavaCoreProjectEnvironment,
     compilerConfiguration: CompilerConfiguration,
     private val replConfiguration: ReplConfiguration
 ) {
     private val replInitializer: Future<ReplInterpreter> = Executors.newSingleThreadExecutor().submit(Callable {
-        ReplInterpreter(disposable, compilerConfiguration, replConfiguration)
+        ReplInterpreter(projectEnvironment, compilerConfiguration, replConfiguration)
     })
 
     private val replInterpreter: ReplInterpreter
@@ -109,7 +109,7 @@ class ReplFromTerminal(
                 }
             }
             is ReplEvalResult.Error.Runtime -> writer.outputRuntimeError(evalResult.message)
-            is ReplEvalResult.Error.CompileTime -> writer.outputRuntimeError(evalResult.message)
+            is ReplEvalResult.Error.CompileTime -> writer.outputCompileError(evalResult.message)
             is ReplEvalResult.Incomplete -> writer.notifyIncomplete()
             is ReplEvalResult.HistoryMismatch -> {} // assuming handled elsewhere
         }
@@ -153,11 +153,11 @@ class ReplFromTerminal(
             return listOf(*command.split(" ".toRegex()).dropLastWhile(String::isEmpty).toTypedArray())
         }
 
-        fun run(disposable: Disposable, configuration: CompilerConfiguration) {
+        fun run(projectEnvironment: JavaCoreProjectEnvironment, configuration: CompilerConfiguration) {
             val replIdeMode = System.getProperty("kotlin.repl.ideMode") == "true"
             val replConfiguration = if (replIdeMode) IdeReplConfiguration() else ConsoleReplConfiguration()
             return try {
-                ReplFromTerminal(disposable, configuration, replConfiguration).doRun()
+                ReplFromTerminal(projectEnvironment, configuration, replConfiguration).doRun()
             } catch (e: Exception) {
                 replConfiguration.exceptionReporter.report(e)
                 throw e

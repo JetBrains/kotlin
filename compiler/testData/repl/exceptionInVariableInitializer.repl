@@ -2,7 +2,7 @@
 java.lang.RuntimeException
 	at Line_0$x$1.invoke(Line_0.kts:1)
 	at Line_0$x$1.invoke(Line_0.kts:1)
+	at Line_0.<init>(Line_0.kts:1)
 >>> x
-error: unresolved reference: x
-x
-^
+java.lang.NullPointerException
+	at Line_1.<init>(Line_1.kts:1)

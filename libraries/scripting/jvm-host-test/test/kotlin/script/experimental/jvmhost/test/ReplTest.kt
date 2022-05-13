@@ -456,8 +456,10 @@ class ReplTest : TestCase() {
                             is ResultValue.Unit -> Assert.assertNull("#$index: Expected $expectedVal, got Unit", expectedVal)
                             is ResultValue.Error -> Assert.assertTrue(
                                 "#$index: Expected $expectedVal, got Error: ${actualVal.error}",
-                                expectedVal is Throwable && expectedVal.message == actualVal.error.message
-                                        && expectedVal.cause?.message == actualVal.error.cause?.message
+                                        ((expectedVal as? Throwable) ?: (expectedVal as? ResultValue.Error)?.error).let {
+                                            it != null && it.message == actualVal.error.message
+                                                    && it.cause?.message == actualVal.error.cause?.message
+                                        }
                             )
                             is ResultValue.NotEvaluated -> Assert.assertEquals(
                                 "#$index: Expected $expectedVal, got NotEvaluated",

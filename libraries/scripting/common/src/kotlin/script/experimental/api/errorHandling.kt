@@ -98,6 +98,10 @@ data class ScriptDiagnostic(
     }
 }
 
+fun ScriptDiagnostic.isError() =
+    (severity == ScriptDiagnostic.Severity.ERROR || severity == ScriptDiagnostic.Severity.FATAL) &&
+            (code == ScriptDiagnostic.unspecifiedException || code == ScriptDiagnostic.unspecifiedError)
+
 /**
  * The result wrapper with diagnostics container
  */

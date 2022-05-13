@@ -3,3 +3,4 @@
 java.lang.IllegalStateException: message
 	at Line_0$B.foo(Line_0.kts:1)
 	at Line_0$B.toString(Line_0.kts:1)
+	at Line_1.<init>(Line_1.kts:1)

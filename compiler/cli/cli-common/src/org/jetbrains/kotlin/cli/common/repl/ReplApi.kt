@@ -148,7 +148,7 @@ sealed class ReplEvalResult : Serializable {
     }
 
     sealed class Error(val message: String) : ReplEvalResult() {
-        class Runtime(message: String, val cause: Exception? = null) : Error(message) {
+        class Runtime(message: String, val cause: Throwable? = null) : Error(message) {
             companion object { private val serialVersionUID: Long = 1L }
         }
 

@@ -298,7 +298,7 @@ class ScriptingHostTest : TestCase() {
             "println(\"$greeting\")".toScriptSource(),
             {},
             {
-                scriptExecutionWrapper {
+                scriptExecutionWrapper<Any?> {
                     val outStream = ByteArrayOutputStream()
                     val prevOut = System.out
                     System.setOut(PrintStream(outStream))
