@@ -26,4 +26,7 @@ interface ComponentRegistrar {
     }
 
     fun registerProjectComponents(project: MockProject, configuration: CompilerConfiguration)
+
+    val supportsK2: Boolean
+        get() = false
 }

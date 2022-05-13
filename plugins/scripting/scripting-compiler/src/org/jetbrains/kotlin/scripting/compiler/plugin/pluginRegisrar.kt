@@ -43,6 +43,11 @@ private fun <T : Any> ProjectExtensionDescriptor<T>.registerExtensionIfRequired(
 }
 
 class ScriptingCompilerConfigurationComponentRegistrar : ComponentRegistrar {
+    // Actually this plugin don't support K2, but it automatically registered in some cases,
+    //   so for now this flag is just a stub
+    override val supportsK2: Boolean
+        get() = true
+
     override fun registerProjectComponents(project: MockProject, configuration: CompilerConfiguration) {
         val messageCollector = configuration.get(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY)
         val hostConfiguration = ScriptingHostConfiguration(defaultJvmScriptingHostConfiguration) {

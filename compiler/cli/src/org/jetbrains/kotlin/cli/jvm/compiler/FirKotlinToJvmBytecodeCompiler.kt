@@ -87,13 +87,17 @@ object FirKotlinToJvmBytecodeCompiler {
         )
 
         projectConfiguration.get(ComponentRegistrar.PLUGIN_COMPONENT_REGISTRARS)?.let { pluginComponentRegistrars ->
-            val nonScriptPlugins = pluginComponentRegistrars.filter {
-                it::class.java.canonicalName != CLICompiler.SCRIPT_PLUGIN_REGISTRAR_NAME
+            val notSupportedPlugins = pluginComponentRegistrars.filter {
+                !it.supportsK2 || it::class.java.canonicalName != CLICompiler.SCRIPT_PLUGIN_REGISTRAR_NAME
             }
-            if (nonScriptPlugins.isNotEmpty()) {
+            if (notSupportedPlugins.isNotEmpty()) {
                 messageCollector.report(
                     CompilerMessageSeverity.ERROR,
-                    "Compiler plugins are enabled with K2 compiler.\n K2 does not support plugins yet, so please remove -Xuse-k2 flag"
+                    """
+                        |There are some plugins incompatible with K2 compiler:
+                        |${notSupportedPlugins.joinToString(separator = "\n|") { "  ${it::class.qualifiedName}" }}
+                        |Please remove -Xuse-k2
+                    """.trimMargin()
                 )
                 return false
             }
