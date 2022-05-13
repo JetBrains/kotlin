@@ -17,6 +17,10 @@ open class A {
         boo(y)
     }
 
+    <!INCOMPATIBLE_MODIFIERS!>private<!> <!INCOMPATIBLE_MODIFIERS!>open<!> tailrec fun booOpen(y: Int) {
+        booOpen(y)
+    }
+
     internal tailrec fun baa(y: Int) {
         baa(y)
     }
