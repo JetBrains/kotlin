@@ -221,15 +221,6 @@ fun main(args: Array<String>) {
             }
         }
 
-        testGroup("plugins/allopen/allopen-cli/test", "plugins/allopen/allopen-cli/testData") {
-            testClass<AbstractBytecodeListingTestForAllOpen> {
-                model("bytecodeListing", extension = "kt")
-            }
-            testClass<AbstractIrBytecodeListingTestForAllOpen> {
-                model("bytecodeListing", extension = "kt")
-            }
-        }
-
         testGroup("plugins/noarg/noarg-cli/test", "plugins/noarg/noarg-cli/testData") {
             testClass<AbstractDiagnosticsTestForNoArg> { model("diagnostics", extension = "kt") }
 
@@ -409,5 +400,15 @@ fun main(args: Array<String>) {
                 model("box/")
             }
         }
+
+        testGroup("plugins/allopen/allopen-cli/tests-gen", "plugins/allopen/allopen-cli/testData") {
+            testClass<AbstractBytecodeListingTestForAllOpen> {
+                model("bytecodeListing", excludedPattern = excludedFirTestdataPattern)
+            }
+            testClass<AbstractIrBytecodeListingTestForAllOpen> {
+                model("bytecodeListing", excludedPattern = excludedFirTestdataPattern)
+            }
+        }
+
     }
 }

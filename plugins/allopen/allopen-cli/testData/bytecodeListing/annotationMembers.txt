@@ -1,4 +1,4 @@
-@java.lang.annotation.Retention
+@java.lang.annotation.Retention(value=RUNTIME)
 @kotlin.Metadata
 public annotation class AllOpen {
     // source: 'annotationMembers.kt'
@@ -18,7 +18,7 @@ public final class MyComponent$Companion {
 }
 
 @AllOpen
-@java.lang.annotation.Retention
+@java.lang.annotation.Retention(value=RUNTIME)
 @kotlin.Metadata
 public annotation class MyComponent {
     // source: 'annotationMembers.kt'
@@ -44,7 +44,7 @@ public final class Plain$Companion {
     public final inner class Plain$Companion
 }
 
-@java.lang.annotation.Retention
+@java.lang.annotation.Retention(value=RUNTIME)
 @kotlin.Metadata
 public annotation class Plain {
     // source: 'annotationMembers.kt'

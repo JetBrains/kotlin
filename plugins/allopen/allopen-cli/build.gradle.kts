@@ -1,4 +1,3 @@
-
 description = "Kotlin AllOpen Compiler Plugin"
 
 plugins {
@@ -15,15 +14,21 @@ dependencies {
 
     testApi(project(":compiler:backend"))
     testApi(project(":compiler:cli"))
-    testApi(projectTests(":compiler:tests-common"))
-    testApi(commonDependency("junit:junit"))
 
     testApi(intellijCore())
+
+    testApiJUnit5()
+    testApi(projectTests(":compiler:tests-common-new"))
+    testApi(projectTests(":compiler:test-infrastructure"))
+    testApi(projectTests(":compiler:test-infrastructure-utils"))
 }
 
 sourceSets {
     "main" { projectDefault() }
-    "test" { projectDefault() }
+    "test" {
+        projectDefault()
+        generatedTestDir()
+    }
 }
 
 runtimeJar()
@@ -36,4 +41,5 @@ testsJar()
 
 projectTest(parallel = true) {
     workingDir = rootDir
+    useJUnitPlatform()
 }

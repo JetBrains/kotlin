@@ -13,10 +13,10 @@ class Test {
     private final @org.jetbrains.annotations.NotNull field protectedProp: java.lang.String
     private final @org.jetbrains.annotations.NotNull field publicProp: java.lang.String
     public method <init>(): void
-    public @org.jetbrains.annotations.NotNull method getInternalProp$test_module(): java.lang.String
+    public @org.jetbrains.annotations.NotNull method getInternalProp$main(): java.lang.String
     protected @org.jetbrains.annotations.NotNull method getProtectedProp(): java.lang.String
     public @org.jetbrains.annotations.NotNull method getPublicProp(): java.lang.String
-    public method internalMethod$test_module(): void
+    public method internalMethod$main(): void
     private method privateMethod(): void
     private method privateTailrecMethod(): void
     protected method protectedMethod(): void

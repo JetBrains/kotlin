@@ -1,28 +1,28 @@
-@java.lang.annotation.Retention
+@java.lang.annotation.Retention(value=RUNTIME)
 @kotlin.Metadata
 public annotation class org/springframework/boot/test/context/SpringBootTest {
     // source: 'springBootTest.kt'
 }
 
-@java.lang.annotation.Retention
+@java.lang.annotation.Retention(value=RUNTIME)
 @kotlin.Metadata
 public annotation class org/springframework/cache/annotation/Cacheable {
     // source: 'cacheable.kt'
 }
 
-@java.lang.annotation.Retention
+@java.lang.annotation.Retention(value=RUNTIME)
 @kotlin.Metadata
 public annotation class org/springframework/scheduling/annotation/Async {
     // source: 'async.kt'
 }
 
-@java.lang.annotation.Retention
+@java.lang.annotation.Retention(value=RUNTIME)
 @kotlin.Metadata
 public annotation class org/springframework/stereotype/Component {
     // source: 'component.kt'
 }
 
-@java.lang.annotation.Retention
+@java.lang.annotation.Retention(value=RUNTIME)
 @kotlin.Metadata
 public annotation class org/springframework/transaction/annotation/Transactional {
     // source: 'transactional.kt'

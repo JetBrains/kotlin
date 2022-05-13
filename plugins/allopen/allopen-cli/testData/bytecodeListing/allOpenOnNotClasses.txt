@@ -1,5 +1,5 @@
 @AllOpen
-@java.lang.annotation.Retention
+@java.lang.annotation.Retention(value=RUNTIME)
 @kotlin.Metadata
 public annotation class AllOpen {
     // source: 'allOpenOnNotClasses.kt'

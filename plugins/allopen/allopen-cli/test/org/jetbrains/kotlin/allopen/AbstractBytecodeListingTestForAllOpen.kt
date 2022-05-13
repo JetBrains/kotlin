@@ -16,25 +16,52 @@
 
 package org.jetbrains.kotlin.allopen
 
-import org.jetbrains.kotlin.ObsoleteTestInfrastructure
-import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
-import org.jetbrains.kotlin.codegen.AbstractBytecodeListingTest
-import org.jetbrains.kotlin.extensions.DeclarationAttributeAltererExtension
+import org.jetbrains.kotlin.test.Constructor
 import org.jetbrains.kotlin.test.TargetBackend
+import org.jetbrains.kotlin.test.backend.classic.ClassicBackendInput
+import org.jetbrains.kotlin.test.backend.classic.ClassicJvmBackendFacade
+import org.jetbrains.kotlin.test.backend.ir.IrBackendInput
+import org.jetbrains.kotlin.test.backend.ir.JvmIrBackendFacade
+import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
+import org.jetbrains.kotlin.test.frontend.classic.ClassicFrontend2ClassicBackendConverter
+import org.jetbrains.kotlin.test.frontend.classic.ClassicFrontend2IrConverter
+import org.jetbrains.kotlin.test.frontend.classic.ClassicFrontendFacade
+import org.jetbrains.kotlin.test.frontend.classic.ClassicFrontendOutputArtifact
+import org.jetbrains.kotlin.test.model.*
+import org.jetbrains.kotlin.test.runners.codegen.AbstractBytecodeListingTestBase
 
-@OptIn(ObsoleteTestInfrastructure::class)
-abstract class AbstractBytecodeListingTestForAllOpen : AbstractBytecodeListingTest() {
-    override fun setupEnvironment(environment: KotlinCoreEnvironment) {
-        val annotations = AbstractAllOpenDeclarationAttributeAltererExtension.ANNOTATIONS_FOR_TESTS +
-                AllOpenCommandLineProcessor.SUPPORTED_PRESETS.flatMap { it.value }
-
-        DeclarationAttributeAltererExtension.registerExtension(
-            environment.project,
-            CliAllOpenDeclarationAttributeAltererExtension(annotations)
-        )
+abstract class AbstractBytecodeListingTestForAllOpenBase<R : ResultingArtifact.FrontendOutput<R>, I : ResultingArtifact.BackendInput<I>>(
+    targetBackend: TargetBackend,
+    targetFrontend: FrontendKind<R>
+) : AbstractBytecodeListingTestBase<R, I>(targetBackend, targetFrontend){
+    override fun configure(builder: TestConfigurationBuilder) {
+        super.configure(builder)
+        builder.apply {
+            useConfigurators(::AllOpenEnvironmentConfigurator)
+        }
     }
 }
 
-abstract class AbstractIrBytecodeListingTestForAllOpen : AbstractBytecodeListingTestForAllOpen() {
-    override val backend = TargetBackend.JVM_IR
+open class AbstractBytecodeListingTestForAllOpen :
+    AbstractBytecodeListingTestForAllOpenBase<ClassicFrontendOutputArtifact, ClassicBackendInput>(
+        TargetBackend.JVM, FrontendKinds.ClassicFrontend
+    ) {
+    override val frontendFacade: Constructor<FrontendFacade<ClassicFrontendOutputArtifact>>
+        get() = ::ClassicFrontendFacade
+    override val frontendToBackendConverter: Constructor<Frontend2BackendConverter<ClassicFrontendOutputArtifact, ClassicBackendInput>>
+        get() = ::ClassicFrontend2ClassicBackendConverter
+    override val backendFacade: Constructor<BackendFacade<ClassicBackendInput, BinaryArtifacts.Jvm>>
+        get() = ::ClassicJvmBackendFacade
+}
+
+open class AbstractIrBytecodeListingTestForAllOpen :
+    AbstractBytecodeListingTestForAllOpenBase<ClassicFrontendOutputArtifact, IrBackendInput>(
+        TargetBackend.JVM_IR, FrontendKinds.ClassicFrontend
+    ) {
+    override val frontendFacade: Constructor<FrontendFacade<ClassicFrontendOutputArtifact>>
+        get() = ::ClassicFrontendFacade
+    override val frontendToBackendConverter: Constructor<Frontend2BackendConverter<ClassicFrontendOutputArtifact, IrBackendInput>>
+        get() = ::ClassicFrontend2IrConverter
+    override val backendFacade: Constructor<BackendFacade<IrBackendInput, BinaryArtifacts.Jvm>>
+        get() = ::JvmIrBackendFacade
 }
