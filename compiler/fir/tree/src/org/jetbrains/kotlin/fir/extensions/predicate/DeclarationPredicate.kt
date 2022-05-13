@@ -115,6 +115,7 @@ class UnderMetaAnnotated(metaAnnotations: Set<AnnotationFqn>) : MetaAnnotated(me
 infix fun DeclarationPredicate.or(other: DeclarationPredicate): DeclarationPredicate = DeclarationPredicate.Or(this, other)
 infix fun DeclarationPredicate.and(other: DeclarationPredicate): DeclarationPredicate = DeclarationPredicate.And(this, other)
 
+// ------------------- varargs -------------------
 fun under(vararg annotations: AnnotationFqn): DeclarationPredicate = UnderAnnotatedWith(annotations.toSet())
 fun has(vararg annotations: AnnotationFqn): DeclarationPredicate = AnnotatedWith(annotations.toSet())
 fun metaUnder(vararg metaAnnotations: AnnotationFqn): DeclarationPredicate = UnderMetaAnnotated(metaAnnotations.toSet())
@@ -122,3 +123,12 @@ fun metaHas(vararg metaAnnotations: AnnotationFqn): DeclarationPredicate = Annot
 
 fun hasOrUnder(vararg annotations: AnnotationFqn): DeclarationPredicate = has(*annotations) or under(*annotations)
 fun metaHasOrUnder(vararg metaAnnotations: AnnotationFqn): DeclarationPredicate = metaHas(*metaAnnotations) or metaUnder(*metaAnnotations)
+
+// ------------------- colelctions -------------------
+fun under(annotations: Collection<AnnotationFqn>): DeclarationPredicate = UnderAnnotatedWith(annotations.toSet())
+fun has(annotations: Collection<AnnotationFqn>): DeclarationPredicate = AnnotatedWith(annotations.toSet())
+fun metaUnder(metaAnnotations: Collection<AnnotationFqn>): DeclarationPredicate = UnderMetaAnnotated(metaAnnotations.toSet())
+fun metaHas(metaAnnotations: Collection<AnnotationFqn>): DeclarationPredicate = AnnotatedWithMeta(metaAnnotations.toSet())
+
+fun hasOrUnder(annotations: Collection<AnnotationFqn>): DeclarationPredicate = has(annotations) or under(annotations)
+fun metaHasOrUnder(metaAnnotations: Collection<AnnotationFqn>): DeclarationPredicate = metaHas(metaAnnotations) or metaUnder(metaAnnotations)

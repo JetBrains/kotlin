@@ -28,12 +28,19 @@ abstract class FirPredicateBasedProvider : FirSessionComponent {
     abstract fun fileHasPluginAnnotations(file: FirFile): Boolean
     abstract fun matches(predicate: DeclarationPredicate, declaration: FirDeclaration): Boolean
 
-    open fun registerAnnotatedDeclaration(declaration: FirDeclaration, owners: PersistentList<FirDeclaration>) {
+    fun matches(predicate: DeclarationPredicate, declaration: FirBasedSymbol<*>): Boolean {
+        return matches(predicate, declaration.fir)
     }
 
     fun matches(predicates: List<DeclarationPredicate>, declaration: FirDeclaration): Boolean {
         return predicates.any { matches(it, declaration) }
     }
+
+    fun matches(predicates: List<DeclarationPredicate>, declaration: FirBasedSymbol<*>): Boolean {
+        return matches(predicates, declaration.fir)
+    }
+
+    open fun registerAnnotatedDeclaration(declaration: FirDeclaration, owners: PersistentList<FirDeclaration>) {}
 }
 
 @NoMutableState
