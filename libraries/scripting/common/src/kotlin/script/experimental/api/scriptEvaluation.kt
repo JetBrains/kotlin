@@ -96,6 +96,24 @@ val ScriptEvaluationConfigurationKeys.hostConfiguration by PropertiesCollection.
  */
 val ScriptEvaluationConfigurationKeys.refineConfigurationBeforeEvaluate by PropertiesCollection.key<List<RefineEvaluationConfigurationData>>(isTransient = true)
 
+interface ScriptExecutionWrapper<T> {
+    fun invoke(block: () -> T): T
+}
+
+/**
+ *  An optional user-defined wrapper which is called with the code that actually executes script body
+ */
+val ScriptEvaluationConfigurationKeys.scriptExecutionWrapper by PropertiesCollection.key<ScriptExecutionWrapper<*>>(isTransient = true)
+
+/**
+ * A helper to enable passing lambda directly to the scriptExecutionWrapper "keyword"
+ */
+fun <T> ScriptEvaluationConfiguration.Builder.scriptExecutionWrapper(wrapper: (() -> T) -> T) {
+    ScriptEvaluationConfiguration.scriptExecutionWrapper.put(object : ScriptExecutionWrapper<T> {
+        override fun invoke(block: () -> T): T = wrapper(block)
+    })
+}
+
 /**
  * A helper to enable scriptsInstancesSharingMap with default implementation
  */

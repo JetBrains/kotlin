@@ -290,6 +290,31 @@ class ScriptingHostTest : TestCase() {
         Assert.assertEquals(greeting, output)
     }
 
+    @Test
+    fun testEvalWithWrapper() {
+        val greeting = "Hello from script!"
+        var output = ""
+        BasicJvmScriptingHost().evalWithTemplate<SimpleScriptTemplate>(
+            "println(\"$greeting\")".toScriptSource(),
+            {},
+            {
+                scriptExecutionWrapper {
+                    val outStream = ByteArrayOutputStream()
+                    val prevOut = System.out
+                    System.setOut(PrintStream(outStream))
+                    try {
+                        it()
+                    } finally {
+                        System.out.flush()
+                        System.setOut(prevOut)
+                        output = outStream.toString().trim()
+                    }
+                }
+            }
+        ).throwOnFailure()
+        Assert.assertEquals(greeting, output)
+    }
+
     private fun doDiamondImportTest(evaluationConfiguration: ScriptEvaluationConfiguration? = null): List<String> {
         val mainScript = "sharedVar += 1\nprintln(\"sharedVar == \$sharedVar\")".toScriptSource("main.kts")
         val middleScript = File(TEST_DATA_DIR, "importTest/diamondImportMiddle.kts").toScriptSource()
@@ -582,4 +607,3 @@ internal fun captureOutAndErr(body: () -> Unit): Pair<String, String> {
     }
     return outStream.toString().trim() to errStream.toString().trim()
 }
-
