@@ -1,6 +1,8 @@
 @file:Suppress("HasPlatformType")
 
+import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 import org.gradle.internal.jvm.Jvm
+import org.gradle.kotlin.dsl.support.serviceOf
 import java.util.regex.Pattern.quote
 
 description = "Kotlin Compiler"
@@ -223,15 +225,13 @@ dependencies {
 
 publish()
 
-val packCompiler by task<Jar> {
+val packCompiler by task<ShadowJar> {
+    configurations = emptyList()
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
     destinationDirectory.set(File(buildDir, "libs"))
     archiveClassifier.set("before-proguard")
 
-    dependsOn(fatJarContents)
-    from {
-        fatJarContents.map(::zipTree)
-    }
+    from(fatJarContents)
 
     dependsOn(fatJarContentsStripServices)
     from {
@@ -314,12 +314,18 @@ val jar = runtimeJar {
     dependsOn(pack)
     dependsOn(compilerVersion)
 
-    from {
-        zipTree(pack.get().singleOutputFile())
-    }
+    val packJar = pack.get().singleOutputFile()
+    inputs.file(packJar).withNormalizer(ClasspathNormalizer::class.java)
 
     from {
         compilerVersion.map(::zipTree)
+    }
+
+    val archiveOperations = serviceOf<ArchiveOperations>()
+    doFirst {
+        from {
+            archiveOperations.zipTree(packJar)
+        }
     }
 
     manifest.attributes["Class-Path"] = compilerManifestClassPath
