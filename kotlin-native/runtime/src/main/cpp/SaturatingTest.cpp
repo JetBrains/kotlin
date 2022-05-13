@@ -114,6 +114,52 @@ TEST(SaturatingSanityTest, SaturatingInPlace) {
     EXPECT_THAT(int8_t(value), -128);
 }
 
+TEST(SaturatingSanityTest, CustomBuiltinMullOverflow) {
+    int32_t result;
+    EXPECT_TRUE(custom_builtin_mul_overflow(1 << 16, 1 << 15, &result));
+    EXPECT_FALSE(custom_builtin_mul_overflow(1 << 15, 1 << 15, &result));
+    EXPECT_THAT(result, 1 << 30);
+    EXPECT_TRUE(custom_builtin_mul_overflow(std::numeric_limits<int32_t>::min(), 2, &result));
+    EXPECT_TRUE(custom_builtin_mul_overflow(std::numeric_limits<int32_t>::min(), -1, &result));
+    EXPECT_TRUE(custom_builtin_mul_overflow(std::numeric_limits<int32_t>::min(), -2, &result));
+    EXPECT_FALSE(custom_builtin_mul_overflow(std::numeric_limits<int32_t>::min(), 1, &result));
+    EXPECT_THAT(result, std::numeric_limits<int32_t>::min());
+    EXPECT_FALSE(custom_builtin_mul_overflow(std::numeric_limits<int32_t>::min(), 0, &result));
+    EXPECT_THAT(result, 0);
+
+    EXPECT_TRUE(custom_builtin_mul_overflow(2, std::numeric_limits<int32_t>::min(), &result));
+    EXPECT_TRUE(custom_builtin_mul_overflow(-1, std::numeric_limits<int32_t>::min(), &result));
+    EXPECT_TRUE(custom_builtin_mul_overflow(-2, std::numeric_limits<int32_t>::min(), &result));
+    EXPECT_FALSE(custom_builtin_mul_overflow(1, std::numeric_limits<int32_t>::min(), &result));
+    EXPECT_THAT(result, std::numeric_limits<int32_t>::min());
+    EXPECT_FALSE(custom_builtin_mul_overflow(0, std::numeric_limits<int32_t>::min(), &result));
+    EXPECT_THAT(result, 0);
+
+    EXPECT_FALSE(custom_builtin_mul_overflow(0, 0, &result));
+    EXPECT_THAT(result, 0);
+
+    EXPECT_FALSE(custom_builtin_mul_overflow(0, 1, &result));
+    EXPECT_THAT(result, 0);
+    EXPECT_FALSE(custom_builtin_mul_overflow(1, 0, &result));
+    EXPECT_THAT(result, 0);
+
+    EXPECT_TRUE(custom_builtin_mul_overflow(1 << 16, 1 << 15, &result));
+
+    EXPECT_FALSE(custom_builtin_mul_overflow(95, 22605091, &result));
+    EXPECT_THAT(result, 2147483645);
+
+    uint32_t uresult;
+    EXPECT_FALSE(custom_builtin_mul_overflow(65535u, 65537u, &uresult));
+    EXPECT_THAT(uresult, 4294967295u);
+    EXPECT_TRUE(custom_builtin_mul_overflow(65537u, 65537u, &uresult));
+    EXPECT_FALSE(custom_builtin_mul_overflow(0u, 4294967295u, &uresult));
+    EXPECT_THAT(uresult, 0);
+    EXPECT_FALSE(custom_builtin_mul_overflow(4294967295u, 0u, &uresult));
+    EXPECT_THAT(uresult, 0);
+    EXPECT_FALSE(custom_builtin_mul_overflow(0u, 0u, &uresult));
+    EXPECT_THAT(uresult, 0);
+}
+
 namespace {
 
 template <typename From, typename Into>
