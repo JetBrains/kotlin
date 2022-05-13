@@ -8,10 +8,16 @@
 package org.jetbrains.kotlin.compilerRunner
 
 import org.gradle.api.Project
+import org.gradle.api.attributes.Category
+import org.gradle.api.attributes.LibraryElements
+import org.gradle.api.attributes.Usage
+import org.gradle.kotlin.dsl.named
+import org.gradle.tooling.model.build.JavaEnvironment
 import org.jetbrains.kotlin.commonizer.CliCommonizer
 import org.jetbrains.kotlin.gradle.internal.KOTLIN_MODULE_GROUP
 import org.jetbrains.kotlin.gradle.plugin.KLIB_COMMONIZER_CLASSPATH_CONFIGURATION_NAME
 import org.jetbrains.kotlin.gradle.plugin.getKotlinPluginVersion
+import org.jetbrains.kotlin.gradle.plugin.usageByName
 
 private const val KOTLIN_KLIB_COMMONIZER_EMBEDDABLE = "kotlin-klib-commonizer-embeddable"
 
@@ -33,8 +39,17 @@ internal fun GradleCliCommonizer(commonizerToolRunner: KotlinNativeCommonizerToo
 
 internal fun Project.registerCommonizerClasspathConfigurationIfNecessary() {
     if (configurations.findByName(KLIB_COMMONIZER_CLASSPATH_CONFIGURATION_NAME) == null) {
-        project.configurations.create(KLIB_COMMONIZER_CLASSPATH_CONFIGURATION_NAME).defaultDependencies {
-            it.add(project.dependencies.create("$KOTLIN_MODULE_GROUP:$KOTLIN_KLIB_COMMONIZER_EMBEDDABLE:${getKotlinPluginVersion()}"))
+        project.configurations.create(KLIB_COMMONIZER_CLASSPATH_CONFIGURATION_NAME).run {
+            isCanBeResolved = true
+            isCanBeConsumed = false
+            attributes.attribute(Category.CATEGORY_ATTRIBUTE, objects.named(Category.LIBRARY))
+            attributes.attribute(LibraryElements.LIBRARY_ELEMENTS_ATTRIBUTE, objects.named(LibraryElements.JAR))
+            attributes.attribute(Usage.USAGE_ATTRIBUTE, usageByName(Usage.JAVA_RUNTIME))
+            defaultDependencies { dependencies ->
+                dependencies.add(
+                    project.dependencies.create("$KOTLIN_MODULE_GROUP:$KOTLIN_KLIB_COMMONIZER_EMBEDDABLE:${getKotlinPluginVersion()}")
+                )
+            }
         }
     }
 }
