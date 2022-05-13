@@ -36,37 +36,68 @@ abstract class FirExtensionRegistrar : FirExtensionRegistrarAdapter() {
     protected abstract fun ExtensionRegistrarContext.configurePlugin()
 
     protected inner class ExtensionRegistrarContext {
+        // ------------------ factory methods ------------------
+
+        @JvmName("plusStatusTransformerExtension")
+        operator fun (FirStatusTransformerExtension.Factory).unaryPlus() {
+            registerExtension(FirStatusTransformerExtension::class, this)
+        }
+
+        @JvmName("plusClassGenerationExtension")
+        operator fun (FirDeclarationGenerationExtension.Factory).unaryPlus() {
+            registerExtension(FirDeclarationGenerationExtension::class, this)
+        }
+
+        @JvmName("plusAdditionalCheckersExtension")
+        operator fun (FirAdditionalCheckersExtension.Factory).unaryPlus() {
+            registerExtension(FirAdditionalCheckersExtension::class, this)
+        }
+
+        @JvmName("plusSupertypeGenerationExtension")
+        operator fun (FirSupertypeGenerationExtension.Factory).unaryPlus() {
+            registerExtension(FirSupertypeGenerationExtension::class, this)
+        }
+
+        @JvmName("plusTypeAttributeExtension")
+        operator fun (FirTypeAttributeExtension.Factory).unaryPlus() {
+            registerExtension(FirTypeAttributeExtension::class, this)
+        }
+
+        @JvmName("plusExpressionResolutionExtension")
+        operator fun (FirExpressionResolutionExtension.Factory).unaryPlus() {
+            registerExtension(FirExpressionResolutionExtension::class, this)
+        }
+
+        // ------------------ reference methods ------------------
+
         @JvmName("plusStatusTransformerExtension")
         operator fun ((FirSession) -> FirStatusTransformerExtension).unaryPlus() {
-            registerExtension(FirStatusTransformerExtension::class, FirStatusTransformerExtension.Factory { this.invoke(it) })
+            FirStatusTransformerExtension.Factory { this.invoke(it) }.unaryPlus()
         }
 
         @JvmName("plusClassGenerationExtension")
         operator fun ((FirSession) -> FirDeclarationGenerationExtension).unaryPlus() {
-            registerExtension(FirDeclarationGenerationExtension::class, FirDeclarationGenerationExtension.Factory { this.invoke(it) })
+            FirDeclarationGenerationExtension.Factory { this.invoke(it) }.unaryPlus()
         }
 
         @JvmName("plusAdditionalCheckersExtension")
         operator fun ((FirSession) -> FirAdditionalCheckersExtension).unaryPlus() {
-            registerExtension(
-                FirAdditionalCheckersExtension::class,
-                FirAdditionalCheckersExtension.Factory { this.invoke(it) }
-            )
+            FirAdditionalCheckersExtension.Factory { this.invoke(it) }.unaryPlus()
         }
 
         @JvmName("plusSupertypeGenerationExtension")
         operator fun ((FirSession) -> FirSupertypeGenerationExtension).unaryPlus() {
-            registerExtension(FirSupertypeGenerationExtension::class, FirSupertypeGenerationExtension.Factory { this.invoke(it) })
+            FirSupertypeGenerationExtension.Factory { this.invoke(it) }.unaryPlus()
         }
 
         @JvmName("plusTypeAttributeExtension")
         operator fun ((FirSession) -> FirTypeAttributeExtension).unaryPlus() {
-            registerExtension(FirTypeAttributeExtension::class, FirTypeAttributeExtension.Factory { this.invoke(it) })
+            FirTypeAttributeExtension.Factory { this.invoke(it) }.unaryPlus()
         }
 
         @JvmName("plusExpressionResolutionExtension")
         operator fun ((FirSession) -> FirExpressionResolutionExtension).unaryPlus() {
-            registerExtension(FirExpressionResolutionExtension::class, FirExpressionResolutionExtension.Factory { this.invoke(it) })
+            FirExpressionResolutionExtension.Factory { this.invoke(it) }.unaryPlus()
         }
     }
 
@@ -87,9 +118,9 @@ abstract class FirExtensionRegistrar : FirExtensionRegistrarAdapter() {
         val extensionFactories: MutableList<FirExtension.Factory<FirExtension>> = mutableListOf()
     }
 
-    private val map: Map<KClass<out FirExtension>, RegisteredExtensionsFactories> = AVAILABLE_EXTENSIONS.map {
-        it to RegisteredExtensionsFactories(it)
-    }.toMap()
+    private val map: Map<KClass<out FirExtension>, RegisteredExtensionsFactories> = AVAILABLE_EXTENSIONS.associateWith {
+        RegisteredExtensionsFactories(it)
+    }
 
     private var isInitialized: AtomicBoolean = AtomicBoolean(false)
 
