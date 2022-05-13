@@ -15,3 +15,11 @@ class A<<!NON_EXPORTABLE_TYPE("upper bound; C")!>T : C<!>, <!NON_EXPORTABLE_TYPE
 
 @JsExport
 interface I2<<!NON_EXPORTABLE_TYPE("upper bound; C"), NON_EXPORTABLE_TYPE("upper bound; I")!>T<!>> where T : C, T : I
+
+@JsExport
+class B<T>(val a: T, <!NON_EXPORTABLE_TYPE!>val b: Comparable<T><!>) {
+    <!NON_EXPORTABLE_TYPE!>val c: Comparable<T><!> = b
+}
+
+@JsExport
+class D<T>(val a: T, val b: Array<T>)

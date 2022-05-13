@@ -10,8 +10,27 @@ package foo {
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
     }
 
+    @kotlin.js.JsExport public final class B</*0*/ T> {
+        public constructor B</*0*/ T>(/*0*/ a: T, /*1*/ b: kotlin.Comparable<T>)
+        public final val a: T
+        public final val b: kotlin.Comparable<T>
+        public final val c: kotlin.Comparable<T>
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+
     public abstract class C {
         public constructor C()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+
+    @kotlin.js.JsExport public final class D</*0*/ T> {
+        public constructor D</*0*/ T>(/*0*/ a: T, /*1*/ b: kotlin.Array<T>)
+        public final val a: T
+        public final val b: kotlin.Array<T>
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String

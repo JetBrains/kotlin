@@ -23,7 +23,7 @@ var x2: C<!>
 
 @JsExport
 class A(
-    <!NON_EXPORTABLE_TYPE("property; C"), NON_EXPORTABLE_TYPE("parameter; C")!>val x: C<!>,
+    <!NON_EXPORTABLE_TYPE("parameter; C")!>val x: C<!>,
     <!NON_EXPORTABLE_TYPE("parameter; C")!>y: C<!>
 ) {
     <!NON_EXPORTABLE_TYPE("return; C")!>fun foo(<!NON_EXPORTABLE_TYPE("parameter; C")!>x: C<!>)<!> = x

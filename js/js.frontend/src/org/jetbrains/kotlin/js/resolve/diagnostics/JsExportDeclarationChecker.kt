@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.js.translate.utils.AnnotationsUtils
 import org.jetbrains.kotlin.psi.KtAnnotationEntry
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtNamedDeclaration
+import org.jetbrains.kotlin.psi.KtParameter
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.BindingTrace
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
@@ -104,6 +105,7 @@ object JsExportDeclarationChecker : DeclarationChecker {
             }
 
             is PropertyDescriptor -> {
+                if (declaration is KtParameter) return
                 if (descriptor.isExtensionProperty) {
                     reportWrongExportedDeclaration("extension property")
                     return
@@ -189,6 +191,7 @@ object JsExportDeclarationChecker : DeclarationChecker {
         val nonNullable = makeNotNullable()
 
         val isPrimitiveExportableType = nonNullable.isAnyOrNullableAny() ||
+                nonNullable.isTypeParameter() ||
                 nonNullable.isDynamic() ||
                 nonNullable.isBoolean() ||
                 KotlinBuiltIns.isThrowableOrNullableThrowable(nonNullable) ||
