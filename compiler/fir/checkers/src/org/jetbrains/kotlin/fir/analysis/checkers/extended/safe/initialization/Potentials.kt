@@ -5,17 +5,18 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers.extended.safe.initialization
 
+import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.analysis.checkers.extended.safe.initialization.ClassAnalyser.analyseDeclaration
-import org.jetbrains.kotlin.fir.analysis.checkers.extended.safe.initialization.Effect.*
 import org.jetbrains.kotlin.fir.analysis.checkers.extended.safe.initialization.Potential.*
+import org.jetbrains.kotlin.fir.analysis.checkers.extended.safe.initialization._Effect.*
 import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.declarations.utils.classId
+import org.jetbrains.kotlin.fir.references.FirThisReference
 
 typealias Potentials = List<Potential>
 
-sealed class Potential(val length: Int = 0) {
+sealed class Potential(val firElement: FirElement, val length: Int = 0) {
 
-    sealed class Root(length: Int = 0) : Potential(length) {
+    sealed class Root(firElement: FirElement, length: Int = 0) : Potential(firElement, length) {
 
         fun effectsOf(state: Checker.StateOfClass, firDeclaration: FirDeclaration): Effects =
             state.analyseDeclaration(firDeclaration).effects
@@ -23,29 +24,29 @@ sealed class Potential(val length: Int = 0) {
         fun potentialsOf(state: Checker.StateOfClass, firDeclaration: FirDeclaration): Potentials =
             state.analyseDeclaration(firDeclaration).potentials
 
-        data class This(val clazz: FirClass) : Root() {
+        data class This(val firThisReference: FirThisReference) : Root(firThisReference) {
             override fun toString(): String {
-                return "This(class=${clazz.classId.shortClassName})"
+                return "This(class=this@${firThisReference.labelName})"
             }
         }
 
-        data class Warm(val clazz: FirClass, val outer: Potential) : Root(outer.length + 1)
-        data class Cold(val firDeclaration: FirDeclaration) : Root()
+        data class Warm(val clazz: FirClass, val outer: Potential) : Root(clazz, outer.length + 1)
+        data class Cold(val firDeclaration: FirDeclaration) : Root(firDeclaration)
     }
 
     data class MethodPotential(val potential: Potential, val method: FirFunction) :
-        Potential(potential.length + 1)
+        Potential(method, potential.length + 1)
 
     data class FieldPotential(val potential: Potential, val field: FirVariable) :
-        Potential(potential.length + 1)
+        Potential(field, potential.length + 1)
 
     data class OuterPotential(val potential: Potential, val outerClass: FirClass) :
-        Potential(potential.length + 1)
+        Potential(outerClass, potential.length + 1)
 
     data class FunPotential(
         val effectsAndPotentials: EffectsAndPotentials,
         val anonymousFunction: FirAnonymousFunction
-    ) : Potential(effectsAndPotentials.maxLength())
+    ) : Potential(anonymousFunction, effectsAndPotentials.maxLength())
 }
 
 fun select(potentials: Potentials, field: FirVariable): EffectsAndPotentials {
@@ -88,7 +89,7 @@ fun outerSelection(potentials: Potentials, clazz: FirClass): EffectsAndPotential
     return potentials.fold(emptyEffsAndPots) { sum, pot -> sum + outerSelection(pot, clazz) }
 }
 
-fun promote(potentials: Potentials): Effects = potentials.map(Effect::Promote)
+fun promote(potentials: Potentials): Effects = potentials.map(::Promote)
 
 fun init(
     clazz: FirClass,

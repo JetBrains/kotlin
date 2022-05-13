@@ -5,20 +5,32 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers.extended.safe.initialization
 
+import org.jetbrains.kotlin.fir.analysis.checkers.extended.safe.initialization.Potential.Root
+import org.jetbrains.kotlin.fir.analysis.checkers.extended.safe.initialization._Effect.*
 import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.declarations.FirFunction
-import org.jetbrains.kotlin.fir.declarations.FirProperty
-import org.jetbrains.kotlin.fir.analysis.checkers.extended.safe.initialization.Effect.*
-import org.jetbrains.kotlin.fir.analysis.checkers.extended.safe.initialization.Potential.*
 import org.jetbrains.kotlin.fir.declarations.FirVariable
 
 typealias Effects = List<Effect>
 
-sealed class Effect {
-    data class Promote(val potential: Potential) : Effect()
-    data class FieldAccess(val potential: Potential, val field: FirVariable) : Effect()
-    data class MethodAccess(val potential: Potential, var method: FirFunction) : Effect()
-    data class Init(val potential: Root.Warm, val clazz: FirClass) : Effect()
+typealias Effect = _Effect<*>
+
+sealed class _Effect<P : Potential>(val potential: P) {
+
+    operator fun component1() = potential
+
+    class Promote(potential: Potential) : _Effect<Potential>(potential)
+    class FieldAccess(potential: Potential, val field: FirVariable) : _Effect<Potential>(potential) {
+        operator fun component2() = field
+    }
+
+    class MethodAccess(potential: Potential, var method: FirFunction) : _Effect<Potential>(potential) {
+        operator fun component2() = method
+    }
+
+    class Init(potential: Root.Warm, val clazz: FirClass) : _Effect<Root.Warm>(potential) {
+        operator fun component2() = clazz
+    }
 }
 
 fun viewChange(effect: Effect, root: Potential): Effect {

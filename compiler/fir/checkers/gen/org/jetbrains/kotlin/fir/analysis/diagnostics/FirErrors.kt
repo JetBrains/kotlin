@@ -665,6 +665,9 @@ object FirErrors {
     val VARIABLE_INITIALIZER_IS_REDUNDANT by warning0<PsiElement>()
     val VARIABLE_NEVER_READ by warning0<KtNamedDeclaration>(SourceElementPositioningStrategies.DECLARATION_NAME)
     val USELESS_CALL_ON_NOT_NULL by warning0<PsiElement>(SourceElementPositioningStrategies.SELECTOR_BY_QUALIFIED)
+    val VALUE_CANNOT_BE_PROMOTED by warning1<KtElement, String>()
+    val INVOKE_METHOD_ON_COLD_OBJECT by warning1<KtElement, String>()
+    val ACCESS_TO_UNINITIALIZED_VALUE by warning2<KtElement, FirBasedSymbol<*>, String>()
 
     // Returns
     val RETURN_NOT_ALLOWED by error0<KtReturnExpression>(SourceElementPositioningStrategies.RETURN_WITH_LABEL)
