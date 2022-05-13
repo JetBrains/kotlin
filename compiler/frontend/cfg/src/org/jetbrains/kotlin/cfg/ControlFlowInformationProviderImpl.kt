@@ -676,7 +676,9 @@ class ControlFlowInformationProviderImpl private constructor(
             when (expressionInQuestion) {
                 is KtBinaryExpression -> if (expressionInQuestion.operationToken === KtTokens.EQ) {
                     expressionInQuestion.right?.let {
-                        report(Errors.UNUSED_VALUE.on(expressionInQuestion, it, variableDescriptor), ctxt)
+                        if (!variableDescriptor.isLocalVariableWithDelegate) {
+                            report(Errors.UNUSED_VALUE.on(expressionInQuestion, it, variableDescriptor), ctxt)
+                        }
                     }
                 }
                 is KtPostfixExpression -> {
@@ -688,6 +690,9 @@ class ControlFlowInformationProviderImpl private constructor(
             }
         }
     }
+
+    private val VariableDescriptor.isLocalVariableWithDelegate: Boolean
+        get() = this is LocalVariableDescriptor && this.isDelegated
 
     private fun processUnusedDeclaration(
         element: KtNamedDeclaration,
@@ -710,7 +715,9 @@ class ControlFlowInformationProviderImpl private constructor(
                     processUnusedParameter(ctxt, element, variableDescriptor)
             }
         } else if (variableUseState === ONLY_WRITTEN_NEVER_READ && KtPsiUtil.isRemovableVariableDeclaration(element)) {
-            report(Errors.ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE.on(element, variableDescriptor), ctxt)
+            if (!variableDescriptor.isLocalVariableWithDelegate) {
+                report(Errors.ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE.on(element, variableDescriptor), ctxt)
+            }
         } else if (variableUseState === WRITTEN_AFTER_READ && element is KtVariableDeclaration) {
             when (element) {
                 is KtProperty ->

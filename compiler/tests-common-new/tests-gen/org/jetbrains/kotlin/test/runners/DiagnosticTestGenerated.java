@@ -5951,6 +5951,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
             }
 
             @Test
+            @TestMetadata("unusedPropertyWithCustomAccessors.kt")
+            public void testUnusedPropertyWithCustomAccessors() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/controlFlowAnalysis/unusedPropertyWithCustomAccessors.kt");
+            }
+
+            @Test
             @TestMetadata("useUninitializedInLambda.kt")
             public void testUseUninitializedInLambda() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/controlFlowAnalysis/useUninitializedInLambda.kt");
