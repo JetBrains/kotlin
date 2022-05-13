@@ -168,3 +168,7 @@ val packFullRuntimeKLib by tasks.registering(Jar::class) {
     destinationDirectory.set(rootProject.buildDir.resolve("js-ir-runtime"))
     archiveFileName.set("full-runtime.klib")
 }
+
+tasks.withType<org.jetbrains.kotlin.gradle.targets.js.dukat.IntegratedDukatTask> {
+    enabled = false
+}

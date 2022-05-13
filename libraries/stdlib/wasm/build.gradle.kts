@@ -190,3 +190,7 @@ if (!isConfigurationCacheDisabled) {
         }
     }
 }
+
+tasks.withType<org.jetbrains.kotlin.gradle.targets.js.dukat.IntegratedDukatTask> {
+    enabled = false
+}
