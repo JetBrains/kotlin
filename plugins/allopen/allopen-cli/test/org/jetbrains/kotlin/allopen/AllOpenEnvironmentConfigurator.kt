@@ -6,8 +6,10 @@
 package org.jetbrains.kotlin.allopen
 
 import com.intellij.openapi.project.Project
+import org.jetbrains.kotlin.allopen.fir.FirAllOpenExtensionRegistrar
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.extensions.DeclarationAttributeAltererExtension
+import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.EnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.TestServices
@@ -21,5 +23,7 @@ class AllOpenEnvironmentConfigurator(testServices: TestServices) : EnvironmentCo
             project,
             CliAllOpenDeclarationAttributeAltererExtension(annotations)
         )
+
+        FirExtensionRegistrar.registerExtension(project, FirAllOpenExtensionRegistrar(annotations))
     }
 }

@@ -8,6 +8,14 @@ plugins {
 dependencies {
     compileOnly(project(":compiler:plugin-api"))
     compileOnly(project(":compiler:frontend"))
+
+    compileOnly(project(":compiler:fir:cones"))
+    compileOnly(project(":compiler:fir:tree"))
+    compileOnly(project(":compiler:fir:resolve"))
+    compileOnly(project(":compiler:fir:checkers"))
+    compileOnly(project(":compiler:ir.backend.common"))
+    compileOnly(project(":compiler:fir:entrypoint"))
+
     compileOnly(intellijCore())
 
     runtimeOnly(kotlinStdlib())
@@ -21,6 +29,12 @@ dependencies {
     testApi(projectTests(":compiler:tests-common-new"))
     testApi(projectTests(":compiler:test-infrastructure"))
     testApi(projectTests(":compiler:test-infrastructure-utils"))
+    testApi(project(":compiler:fir:checkers"))
+    testRuntimeOnly(project(":compiler:fir:fir-serialization"))
+
+    testCompileOnly(project(":kotlin-reflect-api"))
+    testRuntimeOnly(project(":kotlin-reflect"))
+    testRuntimeOnly(project(":core:descriptors.runtime"))
 }
 
 sourceSets {
@@ -32,11 +46,8 @@ sourceSets {
 }
 
 runtimeJar()
-
 sourcesJar()
-
 javadocJar()
-
 testsJar()
 
 projectTest(parallel = true) {

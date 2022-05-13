@@ -19,10 +19,10 @@ import java.util.regex.Pattern;
 @SuppressWarnings("all")
 @TestMetadata("plugins/allopen/allopen-cli/testData/bytecodeListing")
 @TestDataPath("$PROJECT_ROOT")
-public class BytecodeListingTestForAllOpenGenerated extends AbstractBytecodeListingTestForAllOpen {
+public class FirBytecodeListingTestForAllOpenGenerated extends AbstractFirBytecodeListingTestForAllOpen {
     @Test
     public void testAllFilesPresentInBytecodeListing() throws Exception {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/allopen/allopen-cli/testData/bytecodeListing"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), TargetBackend.JVM, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/allopen/allopen-cli/testData/bytecodeListing"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), TargetBackend.JVM_IR, true);
     }
 
     @Test

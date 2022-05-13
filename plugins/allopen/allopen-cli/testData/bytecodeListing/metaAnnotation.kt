@@ -1,3 +1,5 @@
+// IGNORE_BACKEND_FIR: JVM_IR
+//   FIR version does not support double-transitive annotations by design
 annotation class AllOpen
 
 @AllOpen

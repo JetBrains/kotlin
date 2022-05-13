@@ -62,6 +62,12 @@ public class IrBytecodeListingTestForAllOpenGenerated extends AbstractIrBytecode
     }
 
     @Test
+    @TestMetadata("nestedClass.kt")
+    public void testNestedClass() throws Exception {
+        runTest("plugins/allopen/allopen-cli/testData/bytecodeListing/nestedClass.kt");
+    }
+
+    @Test
     @TestMetadata("nestedInner.kt")
     public void testNestedInner() throws Exception {
         runTest("plugins/allopen/allopen-cli/testData/bytecodeListing/nestedInner.kt");

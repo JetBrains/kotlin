@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.generators.tests
 
 import org.jetbrains.kotlin.allopen.AbstractBytecodeListingTestForAllOpen
+import org.jetbrains.kotlin.allopen.AbstractFirBytecodeListingTestForAllOpen
 import org.jetbrains.kotlin.allopen.AbstractIrBytecodeListingTestForAllOpen
 import org.jetbrains.kotlin.android.parcel.AbstractParcelBoxTest
 import org.jetbrains.kotlin.android.parcel.AbstractParcelBytecodeListingTest
@@ -406,6 +407,9 @@ fun main(args: Array<String>) {
                 model("bytecodeListing", excludedPattern = excludedFirTestdataPattern)
             }
             testClass<AbstractIrBytecodeListingTestForAllOpen> {
+                model("bytecodeListing", excludedPattern = excludedFirTestdataPattern)
+            }
+            testClass<AbstractFirBytecodeListingTestForAllOpen> {
                 model("bytecodeListing", excludedPattern = excludedFirTestdataPattern)
             }
         }

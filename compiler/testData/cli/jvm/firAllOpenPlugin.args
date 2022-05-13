@@ -1,0 +1,6 @@
+-d
+$TEMP_DIR$
+-Xplugin=dist/kotlinc/lib/allopen-compiler-plugin.jar
+-P
+plugin\:org.jetbrains.kotlin.allopen\:annotation=foo.AllOpen
+$TESTDATA_DIR$/firAllOpenPlugin.kt

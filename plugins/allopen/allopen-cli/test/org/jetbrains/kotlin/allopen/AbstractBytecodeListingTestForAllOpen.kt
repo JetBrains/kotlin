@@ -27,6 +27,9 @@ import org.jetbrains.kotlin.test.frontend.classic.ClassicFrontend2ClassicBackend
 import org.jetbrains.kotlin.test.frontend.classic.ClassicFrontend2IrConverter
 import org.jetbrains.kotlin.test.frontend.classic.ClassicFrontendFacade
 import org.jetbrains.kotlin.test.frontend.classic.ClassicFrontendOutputArtifact
+import org.jetbrains.kotlin.test.frontend.fir.Fir2IrResultsConverter
+import org.jetbrains.kotlin.test.frontend.fir.FirFrontendFacade
+import org.jetbrains.kotlin.test.frontend.fir.FirOutputArtifact
 import org.jetbrains.kotlin.test.model.*
 import org.jetbrains.kotlin.test.runners.codegen.AbstractBytecodeListingTestBase
 
@@ -62,6 +65,18 @@ open class AbstractIrBytecodeListingTestForAllOpen :
         get() = ::ClassicFrontendFacade
     override val frontendToBackendConverter: Constructor<Frontend2BackendConverter<ClassicFrontendOutputArtifact, IrBackendInput>>
         get() = ::ClassicFrontend2IrConverter
+    override val backendFacade: Constructor<BackendFacade<IrBackendInput, BinaryArtifacts.Jvm>>
+        get() = ::JvmIrBackendFacade
+}
+
+open class AbstractFirBytecodeListingTestForAllOpen :
+    AbstractBytecodeListingTestForAllOpenBase<FirOutputArtifact, IrBackendInput>(
+        TargetBackend.JVM_IR, FrontendKinds.FIR
+    ) {
+    override val frontendFacade: Constructor<FrontendFacade<FirOutputArtifact>>
+        get() = ::FirFrontendFacade
+    override val frontendToBackendConverter: Constructor<Frontend2BackendConverter<FirOutputArtifact, IrBackendInput>>
+        get() = ::Fir2IrResultsConverter
     override val backendFacade: Constructor<BackendFacade<IrBackendInput, BinaryArtifacts.Jvm>>
         get() = ::JvmIrBackendFacade
 }
