@@ -116,21 +116,15 @@ abstract class IncrementalCompilerRunner<
 
         // If compilation has crashed or we failed to close caches we have to clear them
         var cachesMayBeCorrupted = true
-        return try {
-            val changedFiles = when (providedChangedFiles) {
-                is ChangedFiles.Dependencies -> {
-                    val changedSources = caches.inputsCache.sourceSnapshotMap.compareAndUpdate(allSourceFiles)
-                    ChangedFiles.Known(
-                        providedChangedFiles.modified + changedSources.modified,
-                        providedChangedFiles.removed + changedSources.removed
-                    )
-                }
-                null -> caches.inputsCache.sourceSnapshotMap.compareAndUpdate(allSourceFiles)
-                else -> providedChangedFiles
-            }
+        val compilationMode = try {
+            determineCompilationMode(providedChangedFiles, caches, allSourceFiles, args, messageCollector, classpathAbiSnapshot)
+        } catch (e: Exception) {
+            reporter.report { "Possible caches corruption: $e" }
+            return rebuild(BuildAttribute.UNKNOWN_CHANGED_SOURCES)
+        }
 
+        return try {
             @Suppress("MoveVariableDeclarationIntoWhen")
-            val compilationMode = sourcesToCompile(caches, changedFiles, args, messageCollector, classpathAbiSnapshot)
 
             val exitCode = when (compilationMode) {
                 is CompilationMode.Incremental -> {
@@ -189,13 +183,43 @@ abstract class IncrementalCompilerRunner<
             return exitCode
         } catch (e: Exception) { // todo: catch only cache corruption
             // todo: warn?
-            reporter.report { "Rebuilding because of possible caches corruption: $e" }
-            rebuild(BuildAttribute.CACHE_CORRUPTION)
+            reporter.report { "Possible caches corruption: $e" }
+            if (compilationMode is CompilationMode.Incremental ) {
+                rebuild(BuildAttribute.CACHE_CORRUPTION).also {
+                    cachesMayBeCorrupted = false
+                }
+            } else {
+                return ExitCode.INTERNAL_ERROR
+            }
         } finally {
             if (cachesMayBeCorrupted) {
                 cleanOutputsAndLocalStateOnRebuild(args)
             }
         }
+    }
+
+    private fun determineCompilationMode(
+        providedChangedFiles: ChangedFiles?,
+        caches: CacheManager,
+        allSourceFiles: List<File>,
+        args: Args,
+        messageCollector: MessageCollector,
+        classpathAbiSnapshot: Map<String, AbiSnapshot>
+    ): CompilationMode {
+        val changedFiles = when (providedChangedFiles) {
+            is ChangedFiles.Dependencies -> {
+                val changedSources = caches.inputsCache.sourceSnapshotMap.compareAndUpdate(allSourceFiles)
+                ChangedFiles.Known(
+                    providedChangedFiles.modified + changedSources.modified,
+                    providedChangedFiles.removed + changedSources.removed
+                )
+            }
+            null -> caches.inputsCache.sourceSnapshotMap.compareAndUpdate(allSourceFiles)
+            else -> providedChangedFiles
+        }
+
+        @Suppress("MoveVariableDeclarationIntoWhen")
+        return sourcesToCompile(caches, changedFiles, args, messageCollector, classpathAbiSnapshot)
     }
 
     /**

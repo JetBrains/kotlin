@@ -21,6 +21,7 @@ enum class BuildAttribute(val kind: BuildAttributeKind, val readableString: Stri
     CLASSPATH_SNAPSHOT_NOT_FOUND(BuildAttributeKind.REBUILD_REASON, "Classpath snapshot not found"),
     CACHE_CORRUPTION(BuildAttributeKind.REBUILD_REASON, "Cache corrupted"),
     UNKNOWN_CHANGES_IN_GRADLE_INPUTS(BuildAttributeKind.REBUILD_REASON, "Unknown Gradle changes"),
+    UNKNOWN_CHANGED_SOURCES(BuildAttributeKind.REBUILD_REASON, "Unknown changed sources"),
     JAVA_CHANGE_UNTRACKED_FILE_IS_REMOVED(BuildAttributeKind.REBUILD_REASON, "Untracked Java file is removed"),
     JAVA_CHANGE_UNEXPECTED_PSI(BuildAttributeKind.REBUILD_REASON, "Java PSI file is expected"),
     JAVA_CHANGE_UNKNOWN_QUALIFIER(BuildAttributeKind.REBUILD_REASON, "Unknown Java qualifier name"),
