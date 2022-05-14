@@ -1866,6 +1866,59 @@ open class RawFirBuilder(
             }
         }
 
+        private fun collectHashQualifiedNames(
+            expression: KtExpression,
+            collector: MutableList<Name> = mutableListOf()
+        ): List<Name>? {
+            when (expression) {
+                is KtSimpleNameExpression -> collector += expression.getReferencedNameAsName()
+                is KtHashQualifiedExpression -> {
+                    collectHashQualifiedNames(expression.receiverExpression, collector) ?: return null
+                    expression.selectorExpression?.let { collectHashQualifiedNames(it, collector) } ?: return null
+                }
+                else -> return null
+            }
+
+            return collector
+        }
+
+        override fun visitHashQualifiedExpression(expression: KtHashQualifiedExpression, data: Unit?): FirElement {
+            val qualifiedSource = when {
+                expression.getQualifiedExpressionForSelector() != null -> expression.parent
+                else -> expression
+            }.toFirSourceElement()
+
+            val expressionSource = expression.toFirSourceElement()
+            val parts = collectHashQualifiedNames(expression)
+
+            if (parts == null || parts.isEmpty()) {
+                return buildErrorExpression(qualifiedSource, ConeSimpleDiagnostic("Bad hash-qualified name", DiagnosticKind.IncorrectHashQualifiedName))
+            }
+
+            val containsUnderscoreNames = parts.any { it.toString().isUnderscore }
+            val diagnostic = if (containsUnderscoreNames) {
+                ConeUnderscoreUsageWithoutBackticks(expressionSource)
+            } else {
+                null
+            }
+
+            return buildPropertyAccessExpression {
+                source = qualifiedSource
+                calleeReference = buildSimpleNamedReference {
+                    source = if (expressionSource == qualifiedSource) {
+                        expressionSource.fakeElement(KtFakeSourceElementKind.ReferenceInAtomicQualifiedAccess)
+                    } else {
+                        expressionSource
+                    }
+                    name = parts.last()
+                    prefixParts += parts.dropLast(1)
+                }
+                if (diagnostic != null) {
+                    this.nonFatalDiagnostics.add(diagnostic)
+                }
+            }
+        }
+
         override fun visitSimpleNameExpression(expression: KtSimpleNameExpression, data: Unit): FirElement {
             val qualifiedSource = when {
                 expression.getQualifiedExpressionForSelector() != null -> expression.parent
@@ -2310,6 +2363,25 @@ open class RawFirBuilder(
                         }
                     )
 
+                is KtHashQualifiedExpression -> {
+                    val parts = collectHashQualifiedNames(calleeExpression)
+
+                    val reference = if (parts == null || parts.isEmpty()) {
+                        buildErrorNamedReference {
+                            source = calleeExpression.toFirSourceElement()
+                            diagnostic = ConeSimpleDiagnostic("Bad hash-qualified name", DiagnosticKind.IncorrectHashQualifiedName)
+                        }
+                    } else {
+                        buildSimpleNamedReference {
+                            source = calleeExpression.toFirSourceElement()
+                            name = parts.last()
+                            prefixParts.addAll(parts.dropLast(1))
+                        }
+                    }
+
+                    CalleeAndReceiver(reference)
+                }
+
                 is KtParenthesizedExpression -> splitToCalleeAndReceiver(calleeExpression.expression, defaultSource)
 
                 null -> {
@@ -2512,12 +2584,26 @@ open class RawFirBuilder(
         }
 
         override fun visitCallableReferenceExpression(expression: KtCallableReferenceExpression, data: Unit): FirElement {
+//            val nameExpression = expression.doubleColonTokenReference.nextSibling
+            val nameExpression = expression.callableReference2
+            val parts = collectHashQualifiedNames(nameExpression)
+
+            val reference = if (parts == null || parts.isEmpty()) {
+                buildErrorNamedReference {
+                    source = nameExpression.toFirSourceElement()
+                    diagnostic = ConeSimpleDiagnostic("Bad hash-qualified name", DiagnosticKind.IncorrectHashQualifiedName)
+                }
+            } else {
+                buildSimpleNamedReference {
+                    source = nameExpression.toFirSourceElement()
+                    name = parts.last()
+                    prefixParts.addAll(parts.dropLast(1))
+                }
+            }
+
             return buildCallableReferenceAccess {
                 source = expression.toFirSourceElement()
-                calleeReference = buildSimpleNamedReference {
-                    source = expression.callableReference.toFirSourceElement()
-                    name = expression.callableReference.getReferencedNameAsName()
-                }
+                calleeReference = reference
                 explicitReceiver = expression.receiverExpression?.toFirExpression("Incorrect receiver expression")
                 hasQuestionMarkAtLHS = expression.hasQuestionMarks
             }

@@ -38,6 +38,19 @@ public class KtCallableReferenceExpression extends KtDoubleColonExpression {
         throw new IllegalStateException("Callable reference simple name shouldn't be parsed to null");
     }
 
+    @NotNull
+    public KtReferenceExpression getCallableReference2() {
+        PsiElement psi = getDoubleColonTokenReference();
+        while (psi != null) {
+            if (psi instanceof KtSimpleNameExpression || psi instanceof KtHashQualifiedExpression) {
+                return (KtReferenceExpression) psi;
+            }
+            psi = psi.getNextSibling();
+        }
+
+        throw new IllegalStateException("Callable reference hash-qualified name shouldn't be parsed to null");
+    }
+
     @Override
     public <R, D> R accept(@NotNull KtVisitor<R, D> visitor, D data) {
         return visitor.visitCallableReferenceExpression(this, data);
