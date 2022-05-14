@@ -44,6 +44,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
 import org.jetbrains.kotlin.fir.types.FirTypeProjection
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.lexer.KtTokens.*
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.psi.stubs.elements.KtConstantExpressionElementType
 import org.jetbrains.kotlin.psi.stubs.elements.KtNameReferenceExpressionElementType
@@ -100,6 +101,7 @@ class ExpressionsConverter(
             COLLECTION_LITERAL_EXPRESSION -> convertCollectionLiteralExpression(expression)
             STRING_TEMPLATE -> convertStringTemplate(expression)
             is KtConstantExpressionElementType -> convertConstantExpression(expression)
+            HASH_QUALIFIED_EXPRESSION -> convertHashQualifiedNameExpression(expression)
             REFERENCE_EXPRESSION -> convertSimpleNameExpression(expression)
             DO_WHILE -> convertDoWhile(expression)
             WHILE -> convertWhile(expression)
@@ -480,6 +482,21 @@ class ExpressionsConverter(
             when (it.tokenType) {
                 COLONCOLON -> isReceiver = false
                 QUEST -> hasQuestionMarkAtLHS = true
+                HASH_QUALIFIED_EXPRESSION -> {
+                    val parts = collectHashQualifiedNames(it)
+                    namedReference = if (parts == null || parts.isEmpty()) {
+                        buildErrorNamedReference {
+                            source = it.toFirSourceElement()
+                            diagnostic = ConeSimpleDiagnostic("Bad hash-qualified name", DiagnosticKind.IncorrectHashQualifiedName)
+                        }
+                    } else {
+                        buildSimpleNamedReference {
+                            source = it.toFirSourceElement()
+                            name = parts.last()
+                            prefixParts.addAll(parts.dropLast(1))
+                        }
+                    }
+                }
                 else -> if (it.isExpression()) {
                     if (isReceiver) {
                         firReceiverExpression = getAsFirExpression(it, "Incorrect receiver expression")
@@ -522,7 +539,8 @@ class ExpressionsConverter(
                         val callExpressionCallee = if (tokenType == CALL_EXPRESSION) it.getFirstChildExpressionUnwrapped() else null
                         firSelector =
                             if (tokenType is KtNameReferenceExpressionElementType ||
-                                (tokenType == CALL_EXPRESSION && callExpressionCallee?.tokenType != LAMBDA_EXPRESSION)
+                                (tokenType == CALL_EXPRESSION && callExpressionCallee?.tokenType != LAMBDA_EXPRESSION) ||
+                                tokenType == HASH_QUALIFIED_EXPRESSION
                             ) {
                                 firExpression
                             } else {
@@ -570,6 +588,8 @@ class ExpressionsConverter(
      */
     private fun convertCallExpression(callSuffix: LighterASTNode): FirExpression {
         var name: String? = null
+        val prefixParts = mutableListOf<Name>()
+        var theDiagnostic: ConeDiagnostic? = null
         val firTypeArguments = mutableListOf<FirTypeProjection>()
         val valueArguments = mutableListOf<LighterASTNode>()
         var additionalArgument: FirExpression? = null
@@ -580,6 +600,16 @@ class ExpressionsConverter(
                 when (node.tokenType) {
                     REFERENCE_EXPRESSION -> {
                         name = node.asText
+                    }
+                    HASH_QUALIFIED_EXPRESSION -> {
+                        val parts = collectHashQualifiedNames(node)
+
+                        if (parts == null || parts.isEmpty()) {
+                            theDiagnostic = ConeSimpleDiagnostic("Bad hash-qualified name", DiagnosticKind.IncorrectHashQualifiedName)
+                        } else {
+                            name = parts.last().asString()
+                            prefixParts.addAll(parts.dropLast(1))
+                        }
                     }
                     SUPER_EXPRESSION -> {
                         superNode = node
@@ -605,11 +635,16 @@ class ExpressionsConverter(
 
         val source = callSuffix.toFirSourceElement()
 
+        theDiagnostic?.let {
+            return buildErrorExpression(source, it)
+        }
+
         val (calleeReference, explicitReceiver, isImplicitInvoke) = when {
             name != null -> CalleeAndReceiver(
                 buildSimpleNamedReference {
                     this.source = callSuffix.getFirstChildExpressionUnwrapped()?.toFirSourceElement() ?: source
                     this.name = name.nameAsSafeName()
+                    this.prefixParts.addAll(prefixParts)
                 }
             )
 
@@ -966,6 +1001,40 @@ class ExpressionsConverter(
         }
 
         return firExpressionList
+    }
+
+    /**
+     * @see org.jetbrains.kotlin.parsing.KotlinExpressionParsing.parseHashQualifiedExpression
+     * @see org.jetbrains.kotlin.fir.builder.RawFirBuilder.Visitor.visitHashQualifiedExpression
+     */
+    private fun convertHashQualifiedNameExpression(referenceExpression: LighterASTNode): FirExpression {
+        val nameSource = referenceExpression.toFirSourceElement()
+        val referenceSourceElement = if (nameSource.kind is KtFakeSourceElementKind) {
+            nameSource
+        } else {
+            nameSource.fakeElement(KtFakeSourceElementKind.ReferenceInAtomicQualifiedAccess)
+        }
+
+        val parts = collectHashQualifiedNames(referenceExpression)
+
+        if (parts == null || parts.isEmpty()) {
+            return buildErrorExpression(
+                nameSource, ConeSimpleDiagnostic("Bad hash-qualified name", DiagnosticKind.IncorrectHashQualifiedName)
+            )
+        }
+
+        return buildPropertyAccessExpression {
+            val containsUnderscoreNames = parts.any { it.toString().isUnderscore }
+            if (containsUnderscoreNames) {
+                nonFatalDiagnostics.add(ConeUnderscoreUsageWithoutBackticks(nameSource))
+            }
+            source = nameSource
+            calleeReference = buildSimpleNamedReference {
+                source = referenceSourceElement
+                name = parts.last()
+                prefixParts.addAll(parts.dropLast(1))
+            }
+        }
     }
 
     /**

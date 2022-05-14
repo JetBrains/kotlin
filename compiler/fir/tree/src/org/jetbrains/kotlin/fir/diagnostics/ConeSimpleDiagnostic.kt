@@ -41,6 +41,7 @@ enum class DiagnosticKind {
     NotLoopLabel,
     JumpOutsideLoop,
     VariableExpected,
+    IncorrectHashQualifiedName,
 
     ReturnNotAllowed,
     UnresolvedLabel,

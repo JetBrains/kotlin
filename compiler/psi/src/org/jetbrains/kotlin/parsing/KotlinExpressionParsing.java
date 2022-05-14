@@ -144,6 +144,8 @@ public class KotlinExpressionParsing extends AbstractKotlinParsing {
 
     @SuppressWarnings({"UnusedDeclaration"})
     public enum Precedence {
+        NAME_PART(HASH),
+
         POSTFIX(PLUSPLUS, MINUSMINUS, EXCLEXCL,
                 DOT, SAFE_ACCESS), // typeArguments? valueArguments : typeArguments : arrayAccess
 
@@ -388,7 +390,7 @@ public class KotlinExpressionParsing extends AbstractKotlinParsing {
             return true;
         }
 
-        parseSimpleNameExpression();
+        parseHashQualifiedSimpleNameExpression();
 
         if (at(LT)) {
             PsiBuilder.Marker typeArgumentList = mark();
@@ -425,7 +427,7 @@ public class KotlinExpressionParsing extends AbstractKotlinParsing {
 
     /*
      * postfixUnaryExpression
-     *   : atomicExpression postfixUnaryOperation*
+     *   : hashQualifiedExpression postfixUnaryOperation*
      *   ;
      *
      * postfixUnaryOperation
@@ -439,7 +441,7 @@ public class KotlinExpressionParsing extends AbstractKotlinParsing {
     private void parsePostfixExpression() {
         PsiBuilder.Marker expression = mark();
 
-        boolean firstExpressionParsed = at(COLONCOLON) ? parseDoubleColonSuffix(mark()) : parseAtomicExpression();
+        boolean firstExpressionParsed = at(COLONCOLON) ? parseDoubleColonSuffix(mark()) : parseHashQualifiedAtomicExpression();
 
         while (true) {
             if (interruptedWithNewLine()) {
@@ -459,7 +461,7 @@ public class KotlinExpressionParsing extends AbstractKotlinParsing {
                 if (!firstExpressionParsed) {
                     expression.drop();
                     expression = mark();
-                    firstExpressionParsed = parseAtomicExpression();
+                    firstExpressionParsed = parseHashQualifiedAtomicExpression();
                     continue;
                 }
 
@@ -516,11 +518,11 @@ public class KotlinExpressionParsing extends AbstractKotlinParsing {
     }
 
     /*
-     * atomicExpression typeParameters? valueParameters? functionLiteral*
+     * hashQualifiedExpression typeParameters? valueParameters? functionLiteral*
      */
     private void parseSelectorCallExpression() {
         PsiBuilder.Marker mark = mark();
-        parseAtomicExpression();
+        parseHashQualifiedAtomicExpression();
         if (!myBuilder.newlineBeforeCurrentToken() && parseCallSuffix()) {
             mark.done(CALL_EXPRESSION);
         }
@@ -685,6 +687,26 @@ public class KotlinExpressionParsing extends AbstractKotlinParsing {
             errorWithRecovery("Expecting an element", TokenSet.orSet(EXPRESSION_FOLLOW, TokenSet.create(LONG_TEMPLATE_ENTRY_END)));
         }
 
+        return ok;
+    }
+
+    /*
+     * hashQualifiedExpression
+     *   : atomicExpression ("#" atomicExpression)*
+     *   ;
+     */
+    private boolean parseHashQualifiedAtomicExpression() {
+        PsiBuilder.Marker expression = mark();
+        boolean ok = parseAtomicExpression();
+
+        while (ok && at(HASH)) {
+            advance();
+            ok = parseAtomicExpression();
+            expression.done(HASH_QUALIFIED_EXPRESSION);
+            expression = expression.precede();
+        }
+
+        expression.drop();
         return ok;
     }
 
@@ -1087,6 +1109,23 @@ public class KotlinExpressionParsing extends AbstractKotlinParsing {
         PsiBuilder.Marker simpleName = mark();
         expect(IDENTIFIER, "Expecting an identifier");
         simpleName.done(REFERENCE_EXPRESSION);
+    }
+
+    /*
+     * SimpleName ("#" SimpleName)*
+     */
+    private void parseHashQualifiedSimpleNameExpression() {
+        PsiBuilder.Marker expression = mark();
+        parseSimpleNameExpression();
+
+        while (at(HASH)) {
+            advance();
+            parseSimpleNameExpression();
+            expression.done(HASH_QUALIFIED_EXPRESSION);
+            expression = expression.precede();
+        }
+
+        expression.drop();
     }
 
     /*
