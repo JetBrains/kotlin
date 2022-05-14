@@ -137,6 +137,10 @@ abstract class BaseConverter(
     override val LighterASTNode?.indexExpressions: List<LighterASTNode>?
         get() = this?.getLastChildExpression()?.getChildrenAsArray()?.filterNotNull()?.filter { it.isExpression() }
 
+    override fun LighterASTNode.forEachChild(block: (LighterASTNode) -> Unit) {
+        return this.forEachChildren { block(it) }
+    }
+
     fun LighterASTNode.getParent(): LighterASTNode? {
         return tree.getParent(this)
     }

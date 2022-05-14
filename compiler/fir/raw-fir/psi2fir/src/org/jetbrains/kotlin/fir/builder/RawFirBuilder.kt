@@ -135,6 +135,10 @@ open class RawFirBuilder(
     override val PsiElement?.indexExpressions: List<PsiElement>?
         get() = (this as? KtArrayAccessExpression)?.indexExpressions
 
+    override fun PsiElement.forEachChild(block: (PsiElement) -> Unit) {
+        return this.children.forEach(block)
+    }
+
     private val KtModifierListOwner.visibility: Visibility
         get() = with(modifierList) {
             when {
