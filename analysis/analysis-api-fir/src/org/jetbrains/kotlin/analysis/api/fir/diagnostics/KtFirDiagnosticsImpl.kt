@@ -307,6 +307,11 @@ internal class SyntheticAccessWrongReceiverImpl(
     override val token: ValidityToken,
 ) : KtFirDiagnostic.SyntheticAccessWrongReceiver(), KtAbstractFirDiagnostic<PsiElement>
 
+internal class IncorrectHashQualifiedNameImpl(
+    override val firDiagnostic: KtPsiDiagnostic,
+    override val token: ValidityToken,
+) : KtFirDiagnostic.IncorrectHashQualifiedName(), KtAbstractFirDiagnostic<PsiElement>
+
 internal class CreatingAnInstanceOfAbstractClassImpl(
     override val firDiagnostic: KtPsiDiagnostic,
     override val token: ValidityToken,

@@ -129,6 +129,7 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
         val SYNTHETIC_ACCESS_WRONG_RECEIVER by error<PsiElement> {
             parameter<String>("name")
         }
+        val INCORRECT_HASH_QUALIFIED_NAME by error<PsiElement>()
     }
 
     val CALL_RESOLUTION by object : DiagnosticGroup("Call resolution") {
