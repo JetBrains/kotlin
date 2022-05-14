@@ -67,6 +67,8 @@ abstract class BaseFirBuilder<T>(val baseSession: FirSession, val context: Conte
     abstract val T?.arrayExpression: T?
     abstract val T?.indexExpressions: List<T>?
 
+    abstract fun T.forEachChild(block: (T) -> Unit)
+
     /**** Class name utils ****/
     inline fun <T> withChildClassName(
         name: Name,
