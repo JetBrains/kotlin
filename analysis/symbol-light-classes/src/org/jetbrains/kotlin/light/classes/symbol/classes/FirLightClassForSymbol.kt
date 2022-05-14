@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
 import org.jetbrains.kotlin.analysis.api.lifetime.isValid
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KtSymbolKind
-import org.jetbrains.kotlin.analysis.api.symbols.markers.KtSymbolWithVisibility
 import org.jetbrains.kotlin.asJava.builder.LightMemberOriginForDeclaration
 import org.jetbrains.kotlin.asJava.classes.METHOD_INDEX_BASE
 import org.jetbrains.kotlin.asJava.classes.METHOD_INDEX_FOR_NON_ORIGIN_METHOD
@@ -21,7 +20,6 @@ import org.jetbrains.kotlin.builtins.StandardNames.ENUM_VALUES
 import org.jetbrains.kotlin.builtins.StandardNames.ENUM_VALUE_OF
 import org.jetbrains.kotlin.builtins.StandardNames.HASHCODE_NAME
 import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.light.classes.symbol.classes.*
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.name.Name
@@ -40,24 +38,6 @@ internal open class FirLightClassForSymbol(
 
     init {
         require(classOrObjectSymbol.classKind != KtClassKind.INTERFACE && classOrObjectSymbol.classKind != KtClassKind.ANNOTATION_CLASS)
-    }
-
-    internal fun tryGetEffectiveVisibility(symbol: KtCallableSymbol): Visibility? {
-
-        if (symbol !is KtPropertySymbol && symbol !is KtFunctionSymbol) return null
-
-        var visibility = (symbol as? KtSymbolWithVisibility)?.visibility
-
-        analyzeWithSymbolAsContext(symbol) {
-            for (overriddenSymbol in symbol.getAllOverriddenSymbols()) {
-                val newVisibility = (overriddenSymbol as? KtSymbolWithVisibility)?.visibility
-                if (newVisibility != null) {
-                    visibility = newVisibility
-                }
-            }
-        }
-
-        return visibility
     }
 
     private val _modifierList: PsiModifierList? by lazyPub {

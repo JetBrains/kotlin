@@ -45,7 +45,7 @@ internal class FirLightAccessorMethodForSymbol(
             val defaultName = containingPropertySymbol.name.identifier.let {
                 if (containingClass.isAnnotationType) it else it.abiName()
             }
-            containingPropertySymbol.computeJvmMethodName(defaultName, containingClass, accessorSite)
+            containingPropertySymbol.computeJvmMethodName(defaultName, accessorSite)
         }
     }
 
@@ -110,8 +110,7 @@ internal class FirLightAccessorMethodForSymbol(
         )
 
         val visibility = isOverrideMethod.ifTrue {
-            (containingClass as? FirLightClassForSymbol)
-                ?.tryGetEffectiveVisibility(containingPropertySymbol)
+            tryGetEffectiveVisibility(containingPropertySymbol)
                 ?.toPsiVisibilityForMember(isTopLevel)
         } ?: propertyAccessorSymbol.toPsiVisibilityForMember(isTopLevel)
         modifiers.add(visibility)

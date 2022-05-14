@@ -17,8 +17,10 @@ import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
 import org.jetbrains.kotlin.analysis.api.annotations.*
 import org.jetbrains.kotlin.analysis.api.base.KtConstantValue
 import org.jetbrains.kotlin.analysis.api.components.DefaultTypeClassIds
+import org.jetbrains.kotlin.analysis.api.symbols.KtCallableSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtClassLikeSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtFunctionSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KtPropertySymbol
 import org.jetbrains.kotlin.analysis.api.symbols.markers.*
 import org.jetbrains.kotlin.analysis.api.types.*
 import org.jetbrains.kotlin.asJava.elements.psiType
@@ -87,6 +89,23 @@ internal fun KtSymbolWithModality.computeModalityForMethod(
     }
 }
 
+internal fun PsiElement.tryGetEffectiveVisibility(symbol: KtCallableSymbol): Visibility? {
+
+    if (symbol !is KtPropertySymbol && symbol !is KtFunctionSymbol) return null
+
+    var visibility = (symbol as? KtSymbolWithVisibility)?.visibility
+
+    analyzeWithSymbolAsContext(symbol) {
+        for (overriddenSymbol in symbol.getAllOverriddenSymbols()) {
+            val newVisibility = (overriddenSymbol as? KtSymbolWithVisibility)?.visibility
+            if (newVisibility != null) {
+                visibility = newVisibility
+            }
+        }
+    }
+
+    return visibility
+}
 
 internal fun KtSymbolWithVisibility.toPsiVisibilityForMember(isTopLevel: Boolean): String =
     visibility.toPsiVisibility(isTopLevel, forClass = false)

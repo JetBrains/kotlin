@@ -34,7 +34,7 @@ internal class FirLightSimpleMethodForSymbol(
 ) {
 
     private val _name: String by lazyPub {
-        functionSymbol.computeJvmMethodName(functionSymbol.name.asString(), containingClass)
+        functionSymbol.computeJvmMethodName(functionSymbol.name.asString())
     }
 
     override fun getName(): String = _name
@@ -95,8 +95,7 @@ internal class FirLightSimpleMethodForSymbol(
         )
 
         val visibility: String = functionSymbol.isOverride.ifTrue {
-            (containingClass as? FirLightClassForSymbol)
-                ?.tryGetEffectiveVisibility(functionSymbol)
+            tryGetEffectiveVisibility(functionSymbol)
                 ?.toPsiVisibilityForMember(isTopLevel)
         } ?: functionSymbol.toPsiVisibilityForMember(isTopLevel = isTopLevel)
 
