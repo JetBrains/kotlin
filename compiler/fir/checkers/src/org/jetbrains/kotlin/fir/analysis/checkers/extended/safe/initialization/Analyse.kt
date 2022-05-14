@@ -101,7 +101,7 @@ fun StateOfClass.analyser(firElement: FirElement): EffectsAndPotentials =
         is FirReturnExpression -> analyser(firElement.result)
         is FirThisReceiverExpression -> {
             val firClass = firElement.calleeReference.boundSymbol?.fir as FirClass
-            resolveThis(firClass, EffectsAndPotentials(Root.This(firClass)), firClass)
+            resolveThis(firClass, EffectsAndPotentials(Root.This(firElement.calleeReference)), firClass)
         }
         is FirConstExpression<*> -> emptyEffsAndPots  // ???
         is FirWhenBranch -> firElement.run {

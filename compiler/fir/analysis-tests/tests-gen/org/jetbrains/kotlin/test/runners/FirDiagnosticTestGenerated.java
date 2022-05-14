@@ -1108,6 +1108,12 @@ public class FirDiagnosticTestGenerated extends AbstractFirDiagnosticTest {
             }
 
             @Test
+            @TestMetadata("tmp.kt")
+            public void testTmp() throws Exception {
+                runTest("compiler/fir/analysis-tests/testData/resolve/cfg/tmp.kt");
+            }
+
+            @Test
             @TestMetadata("tryCatch.kt")
             public void testTryCatch() throws Exception {
                 runTest("compiler/fir/analysis-tests/testData/resolve/cfg/tryCatch.kt");
@@ -1515,6 +1521,12 @@ public class FirDiagnosticTestGenerated extends AbstractFirDiagnosticTest {
             @TestMetadata("testIllegalAnnotationClass.kt")
             public void testTestIllegalAnnotationClass() throws Exception {
                 runTest("compiler/fir/analysis-tests/testData/resolve/diagnostics/testIllegalAnnotationClass.kt");
+            }
+
+            @Test
+            @TestMetadata("tmpInitBlock.kt")
+            public void testTmpInitBlock() throws Exception {
+                runTest("compiler/fir/analysis-tests/testData/resolve/diagnostics/tmpInitBlock.kt");
             }
 
             @Test
@@ -2558,6 +2570,28 @@ public class FirDiagnosticTestGenerated extends AbstractFirDiagnosticTest {
                 @TestMetadata("variable.kt")
                 public void testVariable() throws Exception {
                     runTest("compiler/fir/analysis-tests/testData/resolve/extendedCheckers/RedundantCallOfConversionMethod/variable.kt");
+                }
+            }
+
+            @Nested
+            @TestMetadata("compiler/fir/analysis-tests/testData/resolve/extendedCheckers/SafeInitializationChecker")
+            @TestDataPath("$PROJECT_ROOT")
+            public class SafeInitializationChecker {
+                @Test
+                public void testAllFilesPresentInSafeInitializationChecker() throws Exception {
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/extendedCheckers/SafeInitializationChecker"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+                }
+
+                @Test
+                @TestMetadata("InitBlocks.kt")
+                public void testInitBlocks() throws Exception {
+                    runTest("compiler/fir/analysis-tests/testData/resolve/extendedCheckers/SafeInitializationChecker/InitBlocks.kt");
+                }
+
+                @Test
+                @TestMetadata("SimpleAccessToUninitializedValue.kt")
+                public void testSimpleAccessToUninitializedValue() throws Exception {
+                    runTest("compiler/fir/analysis-tests/testData/resolve/extendedCheckers/SafeInitializationChecker/SimpleAccessToUninitializedValue.kt");
                 }
             }
 

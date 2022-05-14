@@ -6,19 +6,47 @@
 package org.jetbrains.kotlin.fir.analysis.checkers.extended.safe.initialization
 
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
+import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirRegularClassChecker
 import org.jetbrains.kotlin.fir.analysis.checkers.extended.safe.initialization.Checker.checkClass
-import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.utils.addIfNotNull
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
+import org.jetbrains.kotlin.fir.declarations.FirRegularClass
+import org.jetbrains.kotlin.fir.resolve.dfa.DfaInternals
 
 object SafeInitialisationChecker : FirRegularClassChecker() {
 
     private val cache = mutableSetOf<Checker.StateOfClass>()
 
+    @OptIn(DfaInternals::class)
     override fun check(declaration: FirRegularClass, context: CheckerContext, reporter: DiagnosticReporter) {
         val state = Checker.StateOfClass(declaration)
-        val errors = state.checkClass().flatten()
+        val errors: Errors = state.checkClass().flatten()
+
+        for (error in errors) {
+            when (error) {
+                is Error.AccessError -> {
+                    val (_, field) = error.effect
+                    reporter.reportOn(field.source, FirErrors.ACCESS_TO_UNINITIALIZED_VALUE, field.symbol, error.toString(), context)
+                }
+                is Error.InvokeError -> {
+                    val (_, method) = error.effect
+                    reporter.reportOn(method.source, FirErrors.INVOKE_METHOD_ON_COLD_OBJECT, error.toString(), context)
+                }
+                is Error.PromoteError -> {
+                    val pot = error.effect.potential
+                    reporter.reportOn(
+                        pot.firElement.source,
+                        FirErrors.VALUE_CANNOT_BE_PROMOTED,
+                        error.toString(),
+                        context
+                    )
+                }
+            }
+
+
+        }
+
         cache.add(state)
     }
 }

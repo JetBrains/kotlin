@@ -953,6 +953,11 @@ public class LazyBodyIsNotTouchedTilContractsPhaseTestGenerated extends Abstract
             runTest("compiler/fir/analysis-tests/testData/resolve/cfg/simple.kt");
         }
 
+        @TestMetadata("tmp.kt")
+        public void testTmp() throws Exception {
+            runTest("compiler/fir/analysis-tests/testData/resolve/cfg/tmp.kt");
+        }
+
         @TestMetadata("tryCatch.kt")
         public void testTryCatch() throws Exception {
             runTest("compiler/fir/analysis-tests/testData/resolve/cfg/tryCatch.kt");
@@ -1316,6 +1321,11 @@ public class LazyBodyIsNotTouchedTilContractsPhaseTestGenerated extends Abstract
         @TestMetadata("testIllegalAnnotationClass.kt")
         public void testTestIllegalAnnotationClass() throws Exception {
             runTest("compiler/fir/analysis-tests/testData/resolve/diagnostics/testIllegalAnnotationClass.kt");
+        }
+
+        @TestMetadata("tmpInitBlock.kt")
+        public void testTmpInitBlock() throws Exception {
+            runTest("compiler/fir/analysis-tests/testData/resolve/diagnostics/tmpInitBlock.kt");
         }
 
         @TestMetadata("typeArgumentsNotAllowed.kt")
@@ -2241,6 +2251,29 @@ public class LazyBodyIsNotTouchedTilContractsPhaseTestGenerated extends Abstract
             @TestMetadata("variable.kt")
             public void testVariable() throws Exception {
                 runTest("compiler/fir/analysis-tests/testData/resolve/extendedCheckers/RedundantCallOfConversionMethod/variable.kt");
+            }
+        }
+
+        @TestMetadata("compiler/fir/analysis-tests/testData/resolve/extendedCheckers/SafeInitializationChecker")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class SafeInitializationChecker extends AbstractLazyBodyIsNotTouchedTilContractsPhaseTest {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+            }
+
+            public void testAllFilesPresentInSafeInitializationChecker() throws Exception {
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/extendedCheckers/SafeInitializationChecker"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+            }
+
+            @TestMetadata("InitBlocks.kt")
+            public void testInitBlocks() throws Exception {
+                runTest("compiler/fir/analysis-tests/testData/resolve/extendedCheckers/SafeInitializationChecker/InitBlocks.kt");
+            }
+
+            @TestMetadata("SimpleAccessToUninitializedValue.kt")
+            public void testSimpleAccessToUninitializedValue() throws Exception {
+                runTest("compiler/fir/analysis-tests/testData/resolve/extendedCheckers/SafeInitializationChecker/SimpleAccessToUninitializedValue.kt");
             }
         }
 

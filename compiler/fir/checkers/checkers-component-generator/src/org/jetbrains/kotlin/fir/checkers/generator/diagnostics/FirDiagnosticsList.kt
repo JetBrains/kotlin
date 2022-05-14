@@ -1249,6 +1249,16 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
         val VARIABLE_INITIALIZER_IS_REDUNDANT by warning<PsiElement>()
         val VARIABLE_NEVER_READ by warning<KtNamedDeclaration>(PositioningStrategy.DECLARATION_NAME)
         val USELESS_CALL_ON_NOT_NULL by warning<PsiElement>(PositioningStrategy.SELECTOR_BY_QUALIFIED)
+        val VALUE_CANNOT_BE_PROMOTED by warning<KtElement>() {
+            parameter<String>("trace")
+        }
+        val INVOKE_METHOD_ON_COLD_OBJECT by warning<KtElement>() {
+            parameter<String>("trace")
+        }
+        val ACCESS_TO_UNINITIALIZED_VALUE by warning<KtElement>() {
+            parameter<Symbol>("symbol")
+            parameter<String>("trace")
+        }
     }
 
     val RETURNS by object : DiagnosticGroup("Returns") {
