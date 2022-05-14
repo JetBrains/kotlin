@@ -23,7 +23,8 @@ import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
 import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes.INSIDE_DIRECTIVE_EXPRESSIONS
 import org.jetbrains.kotlin.utils.KotlinExceptionWithAttachments
 
-class KtHashQualifiedExpression : KtExpressionImplStub<KotlinPlaceHolderStub<KtHashQualifiedExpression>>, KtQualifiedExpression {
+class KtHashQualifiedExpression : KtExpressionImplStub<KotlinPlaceHolderStub<KtHashQualifiedExpression>>, KtQualifiedExpression,
+    KtReferenceExpression {
     constructor(node: ASTNode) : super(node)
 
     constructor(stub: KotlinPlaceHolderStub<KtHashQualifiedExpression>) : super(stub, KtStubElementTypes.HASH_QUALIFIED_EXPRESSION)
