@@ -994,7 +994,7 @@ object PositioningStrategies {
                         else -> element
                     }
                 }
-                is KtCallableReferenceExpression -> element.callableReference
+                is KtCallableReferenceExpression -> element.callableReference2
                 is KtCallExpression -> element.calleeExpression ?: element
                 is KtConstructorDelegationCall -> element.calleeExpression ?: element
                 is KtSuperTypeCallEntry -> element.calleeExpression
