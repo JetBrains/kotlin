@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.name.Name
 class FirPropertyFromParameterResolvedNamedReferenceBuilder {
     var source: KtSourceElement? = null
     lateinit var name: Name
+    val prefixParts: MutableList<Name> = mutableListOf()
     lateinit var resolvedSymbol: FirBasedSymbol<*>
 
     @OptIn(FirImplementationDetail::class)
@@ -31,6 +32,7 @@ class FirPropertyFromParameterResolvedNamedReferenceBuilder {
         return FirPropertyFromParameterResolvedNamedReference(
             source,
             name,
+            prefixParts,
             resolvedSymbol,
         )
     }

@@ -19,8 +19,9 @@ import org.jetbrains.kotlin.name.Name
 open class FirNamedReferenceWithCandidate(
     source: KtSourceElement?,
     name: Name,
-    val candidate: Candidate
-) : FirSimpleNamedReference(source, name, candidate.symbol) {
+    val candidate: Candidate,
+    prefixParts: List<Name>,
+) : FirSimpleNamedReference(source, name, candidate.symbol, prefixParts) {
     override val candidateSymbol: FirBasedSymbol<*>
         get() = candidate.symbol
 
@@ -31,8 +32,9 @@ class FirErrorReferenceWithCandidate(
     source: KtSourceElement?,
     name: Name,
     candidate: Candidate,
-    val diagnostic: ConeDiagnostic
-) : FirNamedReferenceWithCandidate(source, name, candidate) {
+    val diagnostic: ConeDiagnostic,
+    prefixParts: List<Name>,
+) : FirNamedReferenceWithCandidate(source, name, candidate, prefixParts) {
     override val isError: Boolean get() = true
 }
 
@@ -43,6 +45,8 @@ class FirPropertyWithExplicitBackingFieldResolvedNamedReference(
     val hasVisibleBackingField: Boolean,
 ) : FirResolvedNamedReference() {
     override val candidateSymbol: FirBasedSymbol<*>? get() = null
+
+    override val prefixParts = emptyList<Name>()
 
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {}
 

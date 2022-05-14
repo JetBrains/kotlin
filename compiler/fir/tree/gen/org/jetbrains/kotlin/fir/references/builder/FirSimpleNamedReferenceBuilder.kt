@@ -25,6 +25,7 @@ class FirSimpleNamedReferenceBuilder {
     var source: KtSourceElement? = null
     lateinit var name: Name
     var candidateSymbol: FirBasedSymbol<*>? = null
+    val prefixParts: MutableList<Name> = mutableListOf()
 
     @OptIn(FirImplementationDetail::class)
     fun build(): FirNamedReference {
@@ -32,6 +33,7 @@ class FirSimpleNamedReferenceBuilder {
             source,
             name,
             candidateSymbol,
+            prefixParts,
         )
     }
 

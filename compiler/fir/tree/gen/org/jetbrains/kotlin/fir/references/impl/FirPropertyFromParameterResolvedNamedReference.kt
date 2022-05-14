@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.fir.visitors.*
 class FirPropertyFromParameterResolvedNamedReference @FirImplementationDetail constructor(
     override val source: KtSourceElement?,
     override val name: Name,
+    override val prefixParts: MutableList<Name>,
     override val resolvedSymbol: FirBasedSymbol<*>,
 ) : FirResolvedNamedReference() {
     override val candidateSymbol: FirBasedSymbol<*>? get() = null

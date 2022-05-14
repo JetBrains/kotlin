@@ -606,6 +606,7 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
         namedReference.configure {
             +name
             +field("candidateSymbol", firBasedSymbolType, "*", nullable = true)
+            +fieldList("prefixParts", nameType)
         }
 
         resolvedNamedReference.configure {

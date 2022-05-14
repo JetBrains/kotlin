@@ -24,12 +24,14 @@ import org.jetbrains.kotlin.name.Name
 class FirBackingFieldReferenceBuilder {
     var source: KtSourceElement? = null
     var candidateSymbol: FirBasedSymbol<*>? = null
+    val prefixParts: MutableList<Name> = mutableListOf()
     lateinit var resolvedSymbol: FirBackingFieldSymbol
 
     fun build(): FirBackingFieldReference {
         return FirBackingFieldReferenceImpl(
             source,
             candidateSymbol,
+            prefixParts,
             resolvedSymbol,
         )
     }

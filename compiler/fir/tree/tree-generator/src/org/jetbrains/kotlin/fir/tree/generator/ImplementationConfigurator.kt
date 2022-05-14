@@ -101,7 +101,10 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
         impl(callableReferenceAccess)
 
         impl(componentCall) {
-            default("calleeReference", "FirSimpleNamedReference(source, Name.identifier(\"component\$componentIndex\"), null)")
+            default(
+                "calleeReference",
+                "FirSimpleNamedReference(source, Name.identifier(\"component\$componentIndex\"), null, emptyList())"
+            )
             useTypes(simpleNamedReferenceType, nameType)
             optInToInternals()
         }
@@ -378,6 +381,9 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
 
         impl(namedReference, "FirSimpleNamedReference") {
             kind = OpenClass
+            default("prefixParts") {
+                isMutable = false
+            }
         }
 
         impl(delegateFieldReference) {
