@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir.analysis.checkers.extended.safe.initialization
 
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.analysis.checkers.extended.safe.initialization.Checker.StateOfClass
+import org.jetbrains.kotlin.fir.analysis.checkers.extended.safe.initialization.Checker.effectChecking
 import org.jetbrains.kotlin.fir.analysis.checkers.extended.safe.initialization.Potential.Root
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.*
@@ -22,7 +23,7 @@ object ClassAnalyser {
     }
 
     fun StateOfClass.fieldTyping(firProperty: FirProperty): EffectsAndPotentials =
-        firProperty.initializer?.let(::analyser) ?: throw IllegalArgumentException()
+        caches[firProperty] ?: emptyEffsAndPots
 
     fun StateOfClass.methodTyping(firFunction: FirFunction): EffectsAndPotentials =
         firFunction.body?.let(::analyser) ?: throw IllegalArgumentException()
@@ -93,38 +94,66 @@ fun StateOfClass.analyser(firElement: FirElement): EffectsAndPotentials =
             val (prefEffs, prefPots) = receiver?.let(::analyser) ?: emptyEffsAndPots      // Φ, Π
 
             val effsAndPots =
-                if (maybeUninitializedProperties.containsKey(firProperty))
-                    select(prefPots, firProperty)                                               // Φ', Π'
-                else emptyEffsAndPots
+                if (allProperties.contains(firProperty)) select(prefPots, firProperty)
+                else emptyEffsAndPots                                               // Φ', Π'
             effsAndPots + prefEffs                                                              // Φ ∪ Φ', Π'
         }
-        is FirReturnExpression -> {
-            analyser(firElement.result)
-        }
+        is FirReturnExpression -> analyser(firElement.result)
         is FirThisReceiverExpression -> {
             val firClass = firElement.calleeReference.boundSymbol?.fir as FirClass
             resolveThis(firClass, EffectsAndPotentials(Root.This(firElement.calleeReference)), firClass)
         }
         is FirConstExpression<*> -> emptyEffsAndPots  // ???
-        is FirWhenBranch -> firElement.run { analyser(condition) + analyser(result) }
+        is FirWhenBranch -> firElement.run {
+            val localSize = localInitedProperties.size
+            val effsAndPots = analyser(condition) + analyser(result)
+
+            var i = 0
+            localInitedProperties.removeIf { i++ >= localSize }
+
+            effsAndPots
+
+        }
         is FirWhenExpression -> firElement.run {
             val effsAndPots = branches.fold(emptyEffsAndPots) { sum, branch -> sum + analyser(branch) }
             val sub = (subject ?: subjectVariable)?.let(::analyser) ?: emptyEffsAndPots
+
+            val (initedFirProperties, isPrimeInitialization) = initializationOrder.getOrElse(firElement) { return sub + effsAndPots }
+
+            if (isPrimeInitialization) {
+                alreadyInitializedVariable.addAll(initedFirProperties)
+//                initedFirProperties.forEach {
+//                    caches[it] = notFinalAssignments[it] ?: throw java.lang.IllegalArgumentException()
+//                    notFinalAssignments.remove(it)
+//                }
+                localInitedProperties.removeIf { initedFirProperties.contains(it) }
+            } else
+                localInitedProperties.addAll(initedFirProperties)
+
+            notFinalAssignments.keys.removeIf {
+                !(localInitedProperties.contains(it) || alreadyInitializedVariable.contains(it))
+            }
+
             sub + effsAndPots
         }
         is FirVariableAssignment -> {
-            val effsAnsPots = analyser(firElement.rValue)
+            val (effs, pots) = analyser(firElement.rValue)
+            errors.addAll(effs.flatMap { effectChecking(it) })
+
             when (val firDeclaration = firElement.lValue.toResolvedCallableSymbol()?.fir) {
                 is FirProperty -> {
-                    notFinalAssignments.getOrElse(firDeclaration) {
-                        maybeUninitializedProperties[firDeclaration]
-                    }
+                    val prevEffsAndPots = notFinalAssignments.getOrDefault(firDeclaration, emptyEffsAndPots)
+
+                    localInitedProperties.add(firDeclaration)
+
+                    val effsAndPots = prevEffsAndPots + pots
+                    notFinalAssignments[firDeclaration] = effsAndPots //
+                    caches[firDeclaration] = effsAndPots
                 }
                 is FirVariable -> {}
                 else -> throw IllegalArgumentException()
             }
-
-            TODO()
+            emptyEffsAndPots
         }
         is FirElseIfTrueCondition -> emptyEffsAndPots
         else -> throw IllegalArgumentException()
@@ -136,3 +165,4 @@ private fun FirQualifiedAccess.getReceiver(): FirExpression? = when {
     extensionReceiver !is FirNoReceiverExpression -> extensionReceiver
     else -> null
 }
+

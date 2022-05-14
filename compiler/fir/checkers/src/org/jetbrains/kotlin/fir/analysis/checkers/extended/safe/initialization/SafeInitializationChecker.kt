@@ -12,16 +12,14 @@ import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirRegularClassChe
 import org.jetbrains.kotlin.fir.analysis.checkers.extended.safe.initialization.Checker.checkClass
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
-import org.jetbrains.kotlin.fir.resolve.dfa.DfaInternals
 
 object SafeInitialisationChecker : FirRegularClassChecker() {
 
     private val cache = mutableSetOf<Checker.StateOfClass>()
 
-    @OptIn(DfaInternals::class)
     override fun check(declaration: FirRegularClass, context: CheckerContext, reporter: DiagnosticReporter) {
         val state = Checker.StateOfClass(declaration)
-        val errors: Errors = state.checkClass().flatten()
+        val errors: Errors = state.checkClass()
 
         for (error in errors) {
             when (error) {
@@ -43,8 +41,6 @@ object SafeInitialisationChecker : FirRegularClassChecker() {
                     )
                 }
             }
-
-
         }
 
         cache.add(state)

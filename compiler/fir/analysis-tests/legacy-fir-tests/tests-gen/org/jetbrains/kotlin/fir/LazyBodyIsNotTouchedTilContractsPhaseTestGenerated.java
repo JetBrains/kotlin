@@ -953,11 +953,6 @@ public class LazyBodyIsNotTouchedTilContractsPhaseTestGenerated extends Abstract
             runTest("compiler/fir/analysis-tests/testData/resolve/cfg/simple.kt");
         }
 
-        @TestMetadata("tmp.kt")
-        public void testTmp() throws Exception {
-            runTest("compiler/fir/analysis-tests/testData/resolve/cfg/tmp.kt");
-        }
-
         @TestMetadata("tryCatch.kt")
         public void testTryCatch() throws Exception {
             runTest("compiler/fir/analysis-tests/testData/resolve/cfg/tryCatch.kt");
@@ -1321,11 +1316,6 @@ public class LazyBodyIsNotTouchedTilContractsPhaseTestGenerated extends Abstract
         @TestMetadata("testIllegalAnnotationClass.kt")
         public void testTestIllegalAnnotationClass() throws Exception {
             runTest("compiler/fir/analysis-tests/testData/resolve/diagnostics/testIllegalAnnotationClass.kt");
-        }
-
-        @TestMetadata("tmpInitBlock.kt")
-        public void testTmpInitBlock() throws Exception {
-            runTest("compiler/fir/analysis-tests/testData/resolve/diagnostics/tmpInitBlock.kt");
         }
 
         @TestMetadata("typeArgumentsNotAllowed.kt")
