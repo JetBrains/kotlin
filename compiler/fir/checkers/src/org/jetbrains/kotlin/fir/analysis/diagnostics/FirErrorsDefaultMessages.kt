@@ -250,6 +250,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INCOMPATIBLE_TYPE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INCONSISTENT_TYPE_PARAMETER_BOUNDS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INCONSISTENT_TYPE_PARAMETER_VALUES
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INCORRECT_CHARACTER_LITERAL
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INCORRECT_HASH_QUALIFIED_NAME
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INC_DEC_SHOULD_NOT_RETURN_UNIT
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INFERENCE_ERROR
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INFERENCE_UNSUCCESSFUL_FORK
@@ -1011,6 +1012,10 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
             UNRESOLVED_REFERENCE_WRONG_RECEIVER,
             "Unresolved reference. None of the following candidates is applicable because of receiver type mismatch: {0}",
             SYMBOLS
+        )
+        map.put(
+            INCORRECT_HASH_QUALIFIED_NAME,
+            "Incorrect hash-qualified name",
         )
 
         // Types & type parameters

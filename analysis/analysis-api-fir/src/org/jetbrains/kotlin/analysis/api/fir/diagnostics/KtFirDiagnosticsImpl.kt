@@ -301,6 +301,11 @@ internal class UnresolvedImportImpl(
     override val token: ValidityToken,
 ) : KtFirDiagnostic.UnresolvedImport(), KtAbstractFirDiagnostic<PsiElement>
 
+internal class IncorrectHashQualifiedNameImpl(
+    override val firDiagnostic: KtPsiDiagnostic,
+    override val token: ValidityToken,
+) : KtFirDiagnostic.IncorrectHashQualifiedName(), KtAbstractFirDiagnostic<PsiElement>
+
 internal class CreatingAnInstanceOfAbstractClassImpl(
     override val firDiagnostic: KtPsiDiagnostic,
     override val token: ValidityToken,
