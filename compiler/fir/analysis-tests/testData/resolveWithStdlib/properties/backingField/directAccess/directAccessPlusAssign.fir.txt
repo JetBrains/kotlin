@@ -15,7 +15,7 @@ FILE: directAccessPlusAssign.kt
             }
         }
 
-        F|/number| = R|/number|.F|/number|.R|kotlin/Int.plus|(Int(4))
+        F|/number| = F|/number|.R|kotlin/Int.plus|(Int(4))
         when () {
             !=(R|/number|, String(10)) ->  {
                 ^box <strcat>(String(FAIL: expected 10, was ), R|/number|)

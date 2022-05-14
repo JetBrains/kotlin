@@ -1,14 +1,16 @@
 fun test() = "test"
 
+val rest = "rest"
+
 fun box() {
-    val a = <!SYNTHETIC_ACCESS_WRONG_RECEIVER!>10<!>#field
-    val b = <!SYNTHETIC_ACCESS_WRONG_RECEIVER!>"test"<!>#self
-    val c = (<!SYNTHETIC_ACCESS_WRONG_RECEIVER!>"a" + "b"<!>)#delegate
-    val d = <!SYNTHETIC_ACCESS_WRONG_RECEIVER!>test()<!>#field
+    val a = <!INCORRECT_HASH_QUALIFIED_NAME!>10#field<!>
+    val b = <!INCORRECT_HASH_QUALIFIED_NAME!>"test"#self<!>
+    val c = <!INCORRECT_HASH_QUALIFIED_NAME!>("a" + "b")#delegate<!>
+    val d = test()<!SYNTAX!>#field<!>
 
     with (20) {
-        val e = <!SYNTHETIC_ACCESS_WRONG_RECEIVER!>this@with<!>#delegate
+        val e = <!INCORRECT_HASH_QUALIFIED_NAME!>this@with#delegate<!>
     }
 
-    val g = <!SYNTHETIC_ACCESS_WRONG_RECEIVER!>::test<!>#field#self#self#delegate
+    val g = ::<!UNSUPPORTED!>rest#field#self#self<!>
 }

@@ -6,7 +6,7 @@ FILE: directAccessWithArray.kt
         }
     public final fun box(): R|kotlin/String| {
          {
-            lval <<array>>: R|kotlin/collections/MutableList<kotlin/Int>| = R|/number|.F|/number|
+            lval <<array>>: R|kotlin/collections/MutableList<kotlin/Int>| = F|/number|
             lval <<index_0>>: R|kotlin/Int| = Int(1)
             R|<local>/<<array>>|.R|SubstitutionOverride<kotlin/collections/MutableList.set: R|kotlin/Int|>|(R|<local>/<<index_0>>|, R|<local>/<<array>>|.R|SubstitutionOverride<kotlin/collections/MutableList.get: R|kotlin/Int|>|(R|<local>/<<index_0>>|).R|kotlin/Int.plus|(Int(4)))
         }

@@ -22,7 +22,7 @@ FILE: B.kt
             }
         }
 
-        R|/number|.F|/number| = Int(20)
+        F|/number| = Int(20)
         when () {
             !=(R|/number|, String(20)) ->  {
                 ^box <strcat>(String(FAIL: expected ), String("), String(20), String("), String(, was ), R|/number|)
@@ -30,7 +30,7 @@ FILE: B.kt
         }
 
         R|/number| = String(100)
-        lval rawValue: R|kotlin/Int| = R|/number|.F|/number|
+        lval rawValue: R|kotlin/Int| = F|/number|
         when () {
             !=(R|<local>/rawValue|, Int(3)) ->  {
                 ^box <strcat>(String(FAIL: expected ), String("), String(3), String("), String(, was ), R|<local>/rawValue|)

@@ -24,7 +24,7 @@ FILE: B.kt
             }
         }
 
-        R|/number|.<HIDDEN: <local>/field is invisible># = Int(20)
+        <HIDDEN: <local>/field is invisible># = Int(20)
         when () {
             !=(R|/number|, String(20)) ->  {
                 ^box <strcat>(String(FAIL: expected ), String("), String(20), String("), String(, was ), R|/number|)
@@ -32,7 +32,7 @@ FILE: B.kt
         }
 
         R|/number| = String(100)
-        lval rawValue: R|kotlin/Int| = R|/number|.<HIDDEN: <local>/field is invisible>#
+        lval rawValue: R|kotlin/Int| = <HIDDEN: <local>/field is invisible>#
         when () {
             !=(R|<local>/rawValue|, Int(3)) ->  {
                 ^box <strcat>(String(FAIL: expected ), String("), String(3), String("), String(, was ), R|<local>/rawValue|)
