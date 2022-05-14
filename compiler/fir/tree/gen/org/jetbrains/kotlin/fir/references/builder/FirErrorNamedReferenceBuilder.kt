@@ -24,12 +24,14 @@ import org.jetbrains.kotlin.name.Name
 class FirErrorNamedReferenceBuilder {
     var source: KtSourceElement? = null
     var candidateSymbol: FirBasedSymbol<*>? = null
+    val prefixParts: MutableList<Name> = mutableListOf()
     lateinit var diagnostic: ConeDiagnostic
 
     fun build(): FirErrorNamedReference {
         return FirErrorNamedReferenceImpl(
             source,
             candidateSymbol,
+            prefixParts,
             diagnostic,
         )
     }

@@ -810,7 +810,7 @@ class FirCallResolver(
                         resolvedSymbol = coneSymbol
                     }
                 }
-                FirNamedReferenceWithCandidate(source, name, candidate)
+                FirNamedReferenceWithCandidate(source, name, candidate, emptyList())
             }
         }
     }

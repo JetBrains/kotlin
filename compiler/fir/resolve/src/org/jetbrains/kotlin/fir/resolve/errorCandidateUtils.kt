@@ -21,7 +21,8 @@ fun createErrorReferenceWithErrorCandidate(
         source,
         callInfo.name,
         resolutionStageRunner.createErrorCandidate(callInfo, resolutionContext, diagnostic),
-        diagnostic
+        diagnostic,
+        emptyList(),
     )
 }
 
@@ -33,7 +34,7 @@ fun createErrorReferenceWithExistingCandidate(
     resolutionStageRunner: ResolutionStageRunner,
 ): FirErrorReferenceWithCandidate {
     resolutionStageRunner.fullyProcessCandidate(candidate, resolutionContext)
-    return FirErrorReferenceWithCandidate(source, candidate.callInfo.name, candidate, diagnostic)
+    return FirErrorReferenceWithCandidate(source, candidate.callInfo.name, candidate, diagnostic, emptyList())
 }
 
 fun ResolutionStageRunner.createErrorCandidate(

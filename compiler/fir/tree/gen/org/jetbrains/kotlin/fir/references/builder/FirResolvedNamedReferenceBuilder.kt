@@ -23,12 +23,14 @@ import org.jetbrains.kotlin.name.Name
 class FirResolvedNamedReferenceBuilder {
     var source: KtSourceElement? = null
     lateinit var name: Name
+    val prefixParts: MutableList<Name> = mutableListOf()
     lateinit var resolvedSymbol: FirBasedSymbol<*>
 
     fun build(): FirResolvedNamedReference {
         return FirResolvedNamedReferenceImpl(
             source,
             name,
+            prefixParts,
             resolvedSymbol,
         )
     }

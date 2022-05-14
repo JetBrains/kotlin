@@ -203,7 +203,7 @@ class FirSyntheticCallGenerator(
             )
         }
 
-        return FirNamedReferenceWithCandidate(null, name, candidate)
+        return FirNamedReferenceWithCandidate(null, name, candidate, emptyList())
     }
 
     private fun generateCandidate(callInfo: CallInfo, function: FirSimpleFunction, context: ResolutionContext): Candidate {

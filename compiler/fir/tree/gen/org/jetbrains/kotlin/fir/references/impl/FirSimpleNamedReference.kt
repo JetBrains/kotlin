@@ -21,6 +21,7 @@ open class FirSimpleNamedReference @FirImplementationDetail constructor(
     override val source: KtSourceElement?,
     override val name: Name,
     override val candidateSymbol: FirBasedSymbol<*>?,
+    override val prefixParts: List<Name>,
 ) : FirNamedReference() {
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {}
 

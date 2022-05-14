@@ -20,6 +20,7 @@ abstract class FirResolvedNamedReference : FirNamedReference() {
     abstract override val source: KtSourceElement?
     abstract override val name: Name
     abstract override val candidateSymbol: FirBasedSymbol<*>?
+    abstract override val prefixParts: List<Name>
     abstract val resolvedSymbol: FirBasedSymbol<*>
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitResolvedNamedReference(this, data)

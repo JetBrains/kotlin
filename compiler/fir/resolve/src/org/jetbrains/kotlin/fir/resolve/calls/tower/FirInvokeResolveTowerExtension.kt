@@ -305,7 +305,8 @@ private fun BodyResolveComponents.createExplicitReceiverForInvokeByCallable(
         calleeReference = FirNamedReferenceWithCandidate(
             null,
             symbol.callableId.callableName,
-            candidate
+            candidate,
+            emptyList(),
         )
         dispatchReceiver = candidate.dispatchReceiverExpression()
         this.typeRef = returnTypeCalculator.tryCalculateReturnType(symbol.fir)

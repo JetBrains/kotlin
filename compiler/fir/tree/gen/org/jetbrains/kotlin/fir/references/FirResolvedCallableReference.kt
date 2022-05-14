@@ -22,6 +22,7 @@ abstract class FirResolvedCallableReference : FirResolvedNamedReference() {
     abstract override val source: KtSourceElement?
     abstract override val name: Name
     abstract override val candidateSymbol: FirBasedSymbol<*>?
+    abstract override val prefixParts: List<Name>
     abstract override val resolvedSymbol: FirBasedSymbol<*>
     abstract val inferredTypeArguments: List<ConeKotlinType>
     abstract val mappedArguments: CallableReferenceMappedArguments
