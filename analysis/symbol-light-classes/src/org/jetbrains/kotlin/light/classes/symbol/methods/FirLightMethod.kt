@@ -81,13 +81,12 @@ internal abstract class FirLightMethod(
 
     protected fun <T> T.computeJvmMethodName(
         defaultName: String,
-        containingClass: FirLightClassBase,
         annotationUseSiteTarget: AnnotationUseSiteTarget? = null
     ): String where T : KtAnnotatedSymbol, T : KtSymbolWithVisibility, T : KtCallableSymbol {
         getJvmNameFromAnnotation(annotationUseSiteTarget)?.let { return it }
 
         val effectiveVisibilityIfNotInternal = (visibility != Visibilities.Internal).ifTrue {
-            (containingClass as? FirLightClassForSymbol)?.tryGetEffectiveVisibility(this)
+            tryGetEffectiveVisibility(this)
         } ?: this.visibility
 
         if (effectiveVisibilityIfNotInternal != Visibilities.Internal) return defaultName
