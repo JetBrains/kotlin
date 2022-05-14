@@ -115,8 +115,6 @@ fun StateOfClass.analyser(firElement: FirElement): EffectsAndPotentials =
 
         }
         is FirWhenExpression -> firElement.run {
-            val localInitedPropertiesSize = localInitedProperties.size
-
             val effsAndPots = branches.fold(emptyEffsAndPots) { sum, branch -> sum + analyser(branch) }
             val sub = (subject ?: subjectVariable)?.let(::analyser) ?: emptyEffsAndPots
 
@@ -140,10 +138,7 @@ fun StateOfClass.analyser(firElement: FirElement): EffectsAndPotentials =
         }
         is FirVariableAssignment -> {
             val (effs, pots) = analyser(firElement.rValue)
-            val errors = effs.flatMap { effectChecking(it) }
-
-            println(errors)
-            // reporter
+            errors.addAll(effs.flatMap { effectChecking(it) })
 
             when (val firDeclaration = firElement.lValue.toResolvedCallableSymbol()?.fir) {
                 is FirProperty -> {

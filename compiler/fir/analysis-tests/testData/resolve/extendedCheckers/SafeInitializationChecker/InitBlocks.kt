@@ -1,7 +1,9 @@
+// WITH_EXTENDED_CHECKERS
+
 class Init(b: Boolean, w: Boolean, init: Init) {
 
     val a: String
-    <!ACCESS_TO_UNINITIALIZED_VALUE!>var s: String<!>
+    <!ACCESS_TO_UNINITIALIZED_VALUE, ACCESS_TO_UNINITIALIZED_VALUE!>var s: String<!>
     val t: Init
 
     fun foo(): String = s
