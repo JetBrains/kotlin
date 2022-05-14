@@ -42,7 +42,7 @@ import static org.jetbrains.kotlin.parsing.KotlinWhitespaceAndCommentsBindersKt.
 
 public class KotlinExpressionParsing extends AbstractKotlinParsing {
     private static final TokenSet WHEN_CONDITION_RECOVERY_SET = TokenSet.create(RBRACE, IN_KEYWORD, NOT_IN, IS_KEYWORD, NOT_IS, ELSE_KEYWORD);
-    private static final TokenSet WHEN_CONDITION_RECOVERY_SET_WITH_ARROW = TokenSet.create(RBRACE, IN_KEYWORD, NOT_IN, IS_KEYWORD, NOT_IS, ELSE_KEYWORD, ARROW, DOT, HASH);
+    private static final TokenSet WHEN_CONDITION_RECOVERY_SET_WITH_ARROW = TokenSet.create(RBRACE, IN_KEYWORD, NOT_IN, IS_KEYWORD, NOT_IS, ELSE_KEYWORD, ARROW, DOT);
 
 
     private static final ImmutableMap<String, KtToken> KEYWORD_TEXTS = tokenSetToMap(KEYWORDS);
@@ -145,7 +145,7 @@ public class KotlinExpressionParsing extends AbstractKotlinParsing {
     @SuppressWarnings({"UnusedDeclaration"})
     public enum Precedence {
         POSTFIX(PLUSPLUS, MINUSMINUS, EXCLEXCL,
-                DOT, HASH, SAFE_ACCESS), // typeArguments? valueArguments : typeArguments : arrayAccess
+                DOT, SAFE_ACCESS), // typeArguments? valueArguments : typeArguments : arrayAccess
 
         PREFIX(MINUS, PLUS, MINUSMINUS, PLUSPLUS, EXCL) { // annotations
 
@@ -452,16 +452,9 @@ public class KotlinExpressionParsing extends AbstractKotlinParsing {
             else if (parseCallSuffix()) {
                 expression.done(CALL_EXPRESSION);
             }
-            else if (at(DOT) || at(HASH) || at(SAFE_ACCESS)) {
-                IElementType expressionType = DOT_QUALIFIED_EXPRESSION;
-
-                if (at(HASH)) {
-                    expressionType = HASH_QUALIFIED_EXPRESSION;
-                } else if (at(SAFE_ACCESS)) {
-                    expressionType = SAFE_ACCESS_EXPRESSION;
-                }
-
-                advance(); // DOT, HASH or SAFE_ACCESS
+            else if (at(DOT) || at(SAFE_ACCESS)) {
+                IElementType expressionType = at(DOT) ? DOT_QUALIFIED_EXPRESSION : SAFE_ACCESS_EXPRESSION;
+                advance(); // DOT or SAFE_ACCESS
 
                 if (!firstExpressionParsed) {
                     expression.drop();

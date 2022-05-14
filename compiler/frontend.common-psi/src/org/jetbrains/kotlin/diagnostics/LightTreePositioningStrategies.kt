@@ -692,7 +692,6 @@ object LightTreePositioningStrategies {
                 }
                 node.tokenType != KtNodeTypes.DOT_QUALIFIED_EXPRESSION &&
                         node.tokenType != KtNodeTypes.SAFE_ACCESS_EXPRESSION &&
-                        node.tokenType != KtNodeTypes.HASH_QUALIFIED_EXPRESSION &&
                         node.tokenType != KtNodeTypes.CALLABLE_REFERENCE_EXPRESSION
                 -> {
                     return super.mark(node, startOffset, endOffset, tree)
@@ -1389,7 +1388,7 @@ fun FlyweightCapableTreeStructure<LighterASTNode>.selector(node: LighterASTNode)
     for (child in children) {
         if (child == null) continue
         val tokenType = child.tokenType
-        if (tokenType == KtTokens.DOT || tokenType == KtTokens.COLONCOLON || tokenType == KtTokens.SAFE_ACCESS || tokenType == KtTokens.HASH) {
+        if (tokenType == KtTokens.DOT || tokenType == KtTokens.COLONCOLON || tokenType == KtTokens.SAFE_ACCESS) {
             dotOrDoubleColonFound = true
             continue
         }

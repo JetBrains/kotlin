@@ -230,7 +230,6 @@ class FirDiagnosticsHandler(testServices: TestServices) : FirAnalysisHandler(tes
     private fun DebugInfoDiagnosticFactory1.getPositionedElement(sourceElement: KtSourceElement): KtSourceElement {
         val elementType = sourceElement.elementType
         val elementTypeIsQualifiedAccess = elementType == KtNodeTypes.DOT_QUALIFIED_EXPRESSION
-                || elementType == KtNodeTypes.HASH_QUALIFIED_EXPRESSION
                 || elementType == KtNodeTypes.SAFE_ACCESS_EXPRESSION
         return if (this === DebugInfoDiagnosticFactory1.CALL && elementTypeIsQualifiedAccess) {
             if (sourceElement is KtPsiSourceElement) {
