@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.fir.expressions.builder.buildPropertyAccessExpressio
 import org.jetbrains.kotlin.fir.expressions.builder.buildResolvedReifiedParameterReference
 import org.jetbrains.kotlin.fir.references.*
 import org.jetbrains.kotlin.fir.references.builder.buildBackingFieldReference
+import org.jetbrains.kotlin.fir.references.builder.buildErrorNamedReference
 import org.jetbrains.kotlin.fir.references.builder.buildResolvedNamedReference
 import org.jetbrains.kotlin.fir.references.impl.FirSimpleNamedReference
 import org.jetbrains.kotlin.fir.resolve.*
@@ -35,8 +36,9 @@ import org.jetbrains.kotlin.fir.resolve.transformers.StoreReceiver
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirAbstractBodyResolveTransformer
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirExpressionsResolveTransformer
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.resultType
-import org.jetbrains.kotlin.fir.scopes.impl.FirSyntheticsScope
+import org.jetbrains.kotlin.fir.scopes.impl.SELF_NAME
 import org.jetbrains.kotlin.fir.scopes.unsubstitutedScope
+import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
@@ -88,11 +90,17 @@ class FirCallResolver(
         }
 
         val name = functionCall.calleeReference.name
-        val result = collectCandidates(functionCall, name, origin = functionCall.origin)
+        val result = collectCandidates(
+            functionCall, name, origin = functionCall.origin,
+            namePrefixParts = functionCall.calleeReference.prefixParts
+        )
 
         var forceCandidates: Collection<Candidate>? = null
         if (result.candidates.isEmpty()) {
-            val newResult = collectCandidates(functionCall, name, CallKind.VariableAccess, origin = functionCall.origin)
+            val newResult = collectCandidates(
+                functionCall, name, CallKind.VariableAccess, origin = functionCall.origin,
+                namePrefixParts = functionCall.calleeReference.prefixParts
+            )
             if (newResult.candidates.isNotEmpty()) {
                 forceCandidates = newResult.candidates
             }
@@ -190,38 +198,23 @@ class FirCallResolver(
 
         val collector = AllCandidatesCollector(components, components.resolutionStageRunner)
         val origin = (qualifiedAccess as? FirFunctionCall)?.origin ?: FirFunctionCallOrigin.Regular
+        val prefixParts = (qualifiedAccess.calleeReference as? FirNamedReference)?.prefixParts ?: emptyList()
         val result =
-            collectCandidates(qualifiedAccess, name, forceCallKind = null, origin, containingDeclarations, resolutionContext, collector)
+            collectCandidates(
+                qualifiedAccess, name, forceCallKind = null, origin,
+                containingDeclarations, resolutionContext, collector,
+                namePrefixParts = prefixParts,
+            )
         return collector.allCandidates.map { OverloadCandidate(it, isInBestCandidates = it in result.candidates) }
     }
 
-    private fun <T : FirQualifiedAccess> collectCandidates(
+    private fun <T : FirQualifiedAccess> runResolverForInfo(
+        info: CallInfo,
         qualifiedAccess: T,
-        name: Name,
-        forceCallKind: CallKind? = null,
-        origin: FirFunctionCallOrigin = FirFunctionCallOrigin.Regular,
-        containingDeclarations: List<FirDeclaration> = transformer.components.containingDeclarations,
+        receiver: FirExpression?,
         resolutionContext: ResolutionContext = transformer.resolutionContext,
-        collector: CandidateCollector? = null
+        collector: CandidateCollector? = null,
     ): ResolutionResult {
-        val explicitReceiver = qualifiedAccess.explicitReceiver
-        val argumentList = (qualifiedAccess as? FirFunctionCall)?.argumentList ?: FirEmptyArgumentList
-        val typeArguments = (qualifiedAccess as? FirFunctionCall)?.typeArguments.orEmpty()
-
-        val info = CallInfo(
-            qualifiedAccess,
-            forceCallKind ?: if (qualifiedAccess is FirFunctionCall) CallKind.Function else CallKind.VariableAccess,
-            name,
-            explicitReceiver,
-            argumentList,
-            isImplicitInvoke = qualifiedAccess is FirImplicitInvokeCall,
-            typeArguments,
-            session,
-            components.file,
-            containingDeclarations,
-            origin = origin,
-            searchSynthetics = qualifiedAccess.searchSynthetics,
-        )
         towerResolver.reset()
         val result = if (collector != null) {
             towerResolver.runResolver(info, resolutionContext, collector)
@@ -231,7 +224,7 @@ class FirCallResolver(
         val bestCandidates = result.bestCandidates()
 
         fun chooseMostSpecific(): Set<Candidate> {
-            val onSuperReference = (explicitReceiver as? FirQualifiedAccessExpression)?.calleeReference is FirSuperReference
+            val onSuperReference = (receiver as? FirQualifiedAccessExpression)?.calleeReference is FirSuperReference
             return conflictResolver.chooseMaximallySpecificCandidates(
                 bestCandidates, discriminateGenerics = true, discriminateAbstracts = onSuperReference
             )
@@ -252,6 +245,218 @@ class FirCallResolver(
         reducedCandidates = overloadByLambdaReturnTypeResolver.reduceCandidates(qualifiedAccess, bestCandidates, reducedCandidates)
 
         return ResolutionResult(info, result.currentApplicability, reducedCandidates)
+    }
+
+    private fun generateDelegateAccessReceiver(
+        originalAccess: FirQualifiedAccess,
+        delegateField: FirDelegateField,
+        dispatchReceiverExpression: FirExpression,
+        extensionReceiverExpression: FirExpression,
+        session: FirSession,
+        containingFile: FirFile,
+        containingDeclarations: List<FirDeclaration>,
+    ): FirPropertyAccessExpression {
+        val isAccessible =
+            FirVisibilityChecker.Default.isVisible(delegateField, session, containingFile, containingDeclarations, null)
+
+        val reference = if (isAccessible) {
+            buildResolvedNamedReference {
+                name = StandardNames.DELEGATE_FIELD
+                resolvedSymbol = delegateField.symbol
+            }
+        } else {
+            buildErrorNamedReference {
+                diagnostic = ConeVisibilityError(delegateField.symbol)
+            }
+        }
+
+        return buildPropertyAccessExpression {
+            calleeReference = reference
+            explicitReceiver = originalAccess.explicitReceiver
+            dispatchReceiver = dispatchReceiverExpression
+            extensionReceiver = extensionReceiverExpression
+            typeRef = delegateField.returnTypeRef
+        }
+    }
+
+    private fun createCandidateForSymbol(
+        symbol: FirBasedSymbol<*>,
+        callInfo: CallInfo,
+        explicitReceiverKind: ExplicitReceiverKind,
+        dispatchReceiverValue: ReceiverValue?,
+        givenExtensionReceiverOptions: List<ReceiverValue>,
+    ): ResolutionResult {
+        val candidateFactory = CandidateFactory(transformer.resolutionContext, callInfo)
+        val candidate = candidateFactory.createCandidate(
+            callInfo, symbol, explicitReceiverKind, scope = null,
+            dispatchReceiverValue, givenExtensionReceiverOptions,
+        )
+        val applicability = components.resolutionStageRunner.processCandidate(candidate, transformer.resolutionContext)
+        return ResolutionResult(callInfo, applicability, listOf(candidate))
+    }
+
+    private fun <T : FirQualifiedAccess> resolvePrefixPartForProperty(
+        symbol: FirPropertySymbol,
+        qualifiedAccess: T,
+        namePart: Name,
+        prefixReceiver: FirExpression?,
+        prefixCandidate: Candidate,
+        containingDeclarations: List<FirDeclaration>,
+        buildInfo: (FirExpression?, Name) -> CallInfo,
+        runResolver: (CallInfo, FirExpression?) -> ResolutionResult,
+    ): Pair<FirExpression?, ResolutionResult> {
+        val delegateField = symbol.fir.delegateField
+        val backingField = symbol.fir.backingField
+
+        return when {
+            delegateField != null -> {
+                val receiver = generateDelegateAccessReceiver(
+                    qualifiedAccess,
+                    delegateField,
+                    prefixCandidate.dispatchReceiverExpression(),
+                    prefixCandidate.chosenExtensionReceiverExpression(),
+                    session,
+                    components.file,
+                    containingDeclarations,
+                )
+                receiver to runResolver(buildInfo(receiver, namePart), receiver)
+            }
+            symbol.fir.hasBackingField && backingField != null -> {
+                prefixReceiver to createCandidateForSymbol(
+                    backingField.symbol, buildInfo(prefixReceiver, namePart),
+                    prefixCandidate.explicitReceiverKind,
+                    prefixCandidate.dispatchReceiverValue,
+                    prefixCandidate.givenExtensionReceiverOptions
+                )
+            }
+            else -> {
+                prefixReceiver to ResolutionResult(buildInfo(prefixReceiver, namePart), CandidateApplicability.HIDDEN, emptyList())
+            }
+        }
+    }
+
+    private fun <T : FirQualifiedAccess> resolvePrefixPart(
+        qualifiedAccess: T,
+        namePart: Name,
+        prefixReceiver: FirExpression?,
+        prefixCandidate: Candidate?,
+        containingDeclarations: List<FirDeclaration>,
+        buildInfo: (FirExpression?, Name) -> CallInfo,
+        runResolver: (CallInfo, FirExpression?) -> ResolutionResult,
+    ): Pair<FirExpression?, ResolutionResult> {
+        val symbol = prefixCandidate?.symbol
+
+        return when {
+            symbol == null -> prefixReceiver to runResolver(buildInfo(prefixReceiver, namePart), prefixReceiver)
+            namePart == SELF_NAME -> prefixReceiver to ResolutionResult(
+                buildInfo(prefixReceiver, namePart), prefixCandidate.applicability, listOf(prefixCandidate)
+            )
+            symbol is FirPropertySymbol -> resolvePrefixPartForProperty(
+                symbol, qualifiedAccess, namePart, prefixReceiver, prefixCandidate,
+                containingDeclarations, buildInfo, runResolver,
+            )
+            else -> prefixReceiver to ResolutionResult(
+                buildInfo(prefixReceiver, namePart), CandidateApplicability.HIDDEN, emptyList()
+            )
+        }
+    }
+
+    private fun <T : FirQualifiedAccess> collectCandidates(
+        qualifiedAccess: T,
+        name: Name,
+        forceCallKind: CallKind? = null,
+        origin: FirFunctionCallOrigin = FirFunctionCallOrigin.Regular,
+        containingDeclarations: List<FirDeclaration> = transformer.components.containingDeclarations,
+        resolutionContext: ResolutionContext = transformer.resolutionContext,
+        collector: CandidateCollector? = null,
+        namePrefixParts: List<Name> = emptyList(),
+    ): ResolutionResult {
+        val middleInfoBuilder: (FirExpression?, Name) -> CallInfo = { receiver, namePart ->
+            CallInfo(
+                qualifiedAccess,
+                CallKind.VariableAccess,
+                namePart,
+                receiver,
+                FirEmptyArgumentList,
+                isImplicitInvoke = false,
+                emptyList(),
+                session,
+                components.file,
+                containingDeclarations,
+                origin = origin,
+                namePrefixParts = namePrefixParts,
+            )
+        }
+
+        val finalInfoBuilder: (FirExpression?, Name) -> CallInfo = { receiver, namePart ->
+            val argumentList = (qualifiedAccess as? FirFunctionCall)?.argumentList ?: FirEmptyArgumentList
+            val typeArguments = (qualifiedAccess as? FirFunctionCall)?.typeArguments.orEmpty()
+
+            CallInfo(
+                qualifiedAccess,
+                forceCallKind ?: if (qualifiedAccess is FirFunctionCall) CallKind.Function else CallKind.VariableAccess,
+                namePart,
+                receiver,
+                argumentList,
+                isImplicitInvoke = qualifiedAccess is FirImplicitInvokeCall,
+                typeArguments,
+                session,
+                components.file,
+                containingDeclarations,
+                origin = origin,
+                namePrefixParts = namePrefixParts,
+            )
+        }
+
+        val resolverRunner: (CallInfo, FirExpression?) -> ResolutionResult = { info, receiver ->
+            runResolverForInfo(info, qualifiedAccess, receiver, resolutionContext, collector)
+        }
+
+        return collectCandidatesBase(
+            qualifiedAccess, name, containingDeclarations, namePrefixParts, middleInfoBuilder,
+            finalInfoBuilder, resolverRunner,
+        )
+    }
+
+    private fun <T : FirQualifiedAccess> collectCandidatesBase(
+        qualifiedAccess: T,
+        name: Name,
+        containingDeclarations: List<FirDeclaration> = transformer.components.containingDeclarations,
+        namePrefixParts: List<Name> = emptyList(),
+        middleInfoBuilder: (FirExpression?, Name) -> CallInfo,
+        finalInfoBuilder: (FirExpression?, Name) -> CallInfo,
+        resolverRunner: (CallInfo, FirExpression?) -> ResolutionResult,
+    ): ResolutionResult {
+        var prefixCandidate: Candidate? = null
+        var prefixReceiver = qualifiedAccess.explicitReceiver
+
+        for (namePart in namePrefixParts) {
+            val (receiver, result) = resolvePrefixPart(
+                qualifiedAccess,
+                namePart,
+                prefixReceiver,
+                prefixCandidate,
+                containingDeclarations,
+                middleInfoBuilder,
+                resolverRunner,
+            )
+
+            prefixReceiver = receiver
+            prefixCandidate = result.candidates.singleOrNull()
+                ?: return result
+        }
+
+        val (_, result) = resolvePrefixPart(
+            qualifiedAccess,
+            name,
+            prefixReceiver,
+            prefixCandidate,
+            containingDeclarations,
+            finalInfoBuilder,
+            resolverRunner,
+        )
+
+        return result
     }
 
     fun <T : FirQualifiedAccess> resolveVariableAccessAndSelectCandidate(qualifiedAccess: T, isUsedAsReceiver: Boolean): FirStatement {
@@ -280,7 +485,7 @@ class FirCallResolver(
         val nonFatalDiagnosticFromExpression = (qualifiedAccess as? FirPropertyAccessExpression)?.nonFatalDiagnostics
 
         val basicResult by lazy(LazyThreadSafetyMode.NONE) {
-            collectCandidates(qualifiedAccess, callee.name)
+            collectCandidates(qualifiedAccess, callee.name, namePrefixParts = callee.prefixParts)
         }
 
         // Even if it's not receiver, it makes sense to continue qualifier if resolution is unsuccessful
@@ -321,7 +526,7 @@ class FirCallResolver(
 
         var functionCallExpected = false
         if (result.candidates.isEmpty() && qualifiedAccess !is FirFunctionCall) {
-            val newResult = collectCandidates(qualifiedAccess, callee.name, CallKind.Function)
+            val newResult = collectCandidates(qualifiedAccess, callee.name, CallKind.Function, namePrefixParts = callee.prefixParts)
             if (newResult.candidates.isNotEmpty()) {
                 result = newResult
                 functionCallExpected = true
@@ -401,29 +606,65 @@ class FirCallResolver(
         val coneSubstitutor = constraintSystemBuilder.buildCurrentSubstitutor() as ConeSubstitutor
         val expectedType = resolvedCallableReferenceAtom.expectedType?.let(coneSubstitutor::substituteOrSelf)
 
-        val info = createCallableReferencesInfoForLHS(
-            callableReferenceAccess, lhs,
-            expectedType, constraintSystemBuilder,
-        )
         // No reset here!
         val localCollector = CandidateCollector(components, components.resolutionStageRunner)
+        var capturedInfo: CallInfo? = null
 
-        val result = transformer.context.withCallableReferenceTowerDataContext(callableReferenceAccess) {
-            towerResolver.runResolver(
-                info,
-                transformer.resolutionContext,
-                collector = localCollector,
-                manager = TowerResolveManager(localCollector),
+        val middleInfoBuilder: (FirExpression?, Name) -> CallInfo = { receiver, namePart ->
+            createCallableReferencesInfoForLHS(
+                callableReferenceAccess, lhs,
+                expectedType, constraintSystemBuilder,
+                receiver, namePart,
+            ).also {
+                capturedInfo = it
+            }
+        }
+
+        val finalInfoBuilder: (FirExpression?, Name) -> CallInfo = { receiver, namePart ->
+            createCallableReferencesInfoForLHS(
+                callableReferenceAccess, lhs,
+                expectedType, constraintSystemBuilder,
+                receiver, namePart,
+            ).also {
+                capturedInfo = it
+            }
+        }
+
+        val bestCandidates = mutableListOf<Candidate>()
+
+        val resolutionResult = transformer.context.withCallableReferenceTowerDataContext(callableReferenceAccess) {
+            val resolverRunner: (CallInfo, FirExpression?) -> ResolutionResult = { info, _ ->
+                val result = towerResolver.runResolver(
+                    info,
+                    transformer.resolutionContext,
+                    collector = localCollector,
+                    manager = TowerResolveManager(localCollector),
+                )
+                bestCandidates.addAll(result.bestCandidates())
+                val applicability = result.currentApplicability
+                val noSuccessfulCandidates = !applicability.isSuccess
+                val reducedCandidates = if (noSuccessfulCandidates) {
+                    bestCandidates.toSet()
+                } else {
+                    conflictResolver.chooseMaximallySpecificCandidates(bestCandidates, discriminateGenerics = true)
+                }
+                ResolutionResult(info, applicability, reducedCandidates)
+            }
+
+            collectCandidatesBase(
+                callableReferenceAccess,
+                callableReferenceAccess.calleeReference.name,
+                namePrefixParts = callableReferenceAccess.calleeReference.prefixParts,
+                middleInfoBuilder = middleInfoBuilder,
+                finalInfoBuilder = finalInfoBuilder,
+                resolverRunner = resolverRunner,
             )
         }
-        val bestCandidates = result.bestCandidates()
-        val applicability = result.currentApplicability
+
+        val info = capturedInfo ?: error("Should not have been not null")
+        val applicability = resolutionResult.applicability
         val noSuccessfulCandidates = !applicability.isSuccess
-        val reducedCandidates = if (noSuccessfulCandidates) {
-            bestCandidates.toSet()
-        } else {
-            conflictResolver.chooseMaximallySpecificCandidates(bestCandidates, discriminateGenerics = true)
-        }
+        val reducedCandidates = resolutionResult.candidates
 
         (callableReferenceAccess.explicitReceiver as? FirResolvedQualifier)?.replaceResolvedToCompanionObject(
             bestCandidates.isNotEmpty() && bestCandidates.all { it.isFromCompanionObjectTypeScope }
@@ -660,12 +901,14 @@ class FirCallResolver(
         lhs: DoubleColonLHS?,
         expectedType: ConeKotlinType?,
         outerConstraintSystemBuilder: ConstraintSystemBuilder?,
+        receiver: FirExpression?,
+        name: Name,
     ): CallInfo {
         return CallInfo(
             callableReferenceAccess,
             CallKind.CallableReference,
-            callableReferenceAccess.calleeReference.name,
-            callableReferenceAccess.explicitReceiver,
+            name,
+            receiver,
             FirEmptyArgumentList,
             isImplicitInvoke = false,
             emptyList(),
@@ -748,7 +991,7 @@ class FirCallResolver(
             candidates.isEmpty() -> {
                 val diagnostic = if (name.asString() == "invoke" && explicitReceiver is FirConstExpression<*>) {
                     ConeFunctionExpectedError(explicitReceiver.value?.toString() ?: "", explicitReceiver.typeRef.coneType)
-                } else if (callInfo.searchSynthetics && explicitReceiver != null && explicitReceiver !is FirPropertyAccessExpression) {
+                } else if (callInfo.namePrefixParts.isNotEmpty() && explicitReceiver != null && explicitReceiver !is FirPropertyAccessExpression) {
                     val target = explicitReceiver.source.text?.let { "'$it'" } ?: "the receiver"
                     ConeUnresolvedSyntheticsAccessError(name, target, explicitReceiver.source)
                 } else {
@@ -814,6 +1057,7 @@ class FirCallResolver(
                         this.source = source
                         this.name = name
                         resolvedSymbol = coneSymbol
+                        prefixParts.addAll(callInfo.namePrefixParts)
                     }
                 }
                 FirNamedReferenceWithCandidate(source, name, candidate, emptyList())

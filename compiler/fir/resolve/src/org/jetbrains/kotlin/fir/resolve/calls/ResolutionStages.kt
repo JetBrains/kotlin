@@ -62,7 +62,7 @@ internal object CheckExplicitReceiverConsistency : ResolutionStage() {
                     explicitReceiver != null &&
                     explicitReceiver !is FirResolvedQualifier &&
                     !explicitReceiver.isSuperReferenceExpression() &&
-                    !callInfo.searchSynthetics
+                    callInfo.namePrefixParts.isEmpty()
                 ) {
                     return sink.yieldDiagnostic(InapplicableWrongReceiver(actualType = explicitReceiver.typeRef.coneTypeSafe()))
                 }
@@ -547,7 +547,7 @@ internal object CheckVisibility : CheckerStage() {
     }
 
     private fun isInvisibleSynthetic(candidate: Candidate): Boolean {
-        if (!candidate.callInfo.searchSynthetics) {
+        if (candidate.callInfo.namePrefixParts.isEmpty()) {
             return false
         }
 

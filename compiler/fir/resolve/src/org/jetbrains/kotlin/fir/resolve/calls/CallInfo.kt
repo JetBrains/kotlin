@@ -42,7 +42,7 @@ data class CallInfo(
     val lhs: DoubleColonLHS? = null,
     val origin: FirFunctionCallOrigin = FirFunctionCallOrigin.Regular,
 
-    val searchSynthetics: Boolean = false,
+    val namePrefixParts: List<Name> = emptyList(),
 ) : AbstractCallInfo() {
     val arguments: List<FirExpression> get() = argumentList.arguments
 

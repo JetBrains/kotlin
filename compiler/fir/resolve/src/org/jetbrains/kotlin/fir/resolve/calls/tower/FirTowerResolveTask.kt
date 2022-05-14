@@ -253,60 +253,13 @@ internal open class FirTowerResolveTask(
         )
     }
 
-    private fun generateDelegateAccessReceiver(
-        propertyAccess: FirPropertyAccessExpression,
-        delegateField: FirDelegateField,
+    suspend fun runResolverForExpressionReceiver(
         info: CallInfo,
-    ): FirPropertyAccessExpression {
-        val isAccessible = isVisible(delegateField, info.session, info.containingFile, info.containingDeclarations, null)
-
-        val reference = if (isAccessible) {
-            buildResolvedNamedReference {
-                name = StandardNames.DELEGATE_FIELD
-                resolvedSymbol = delegateField.symbol
-            }
-        } else {
-            buildErrorNamedReference {
-                diagnostic = ConeVisibilityError(delegateField.symbol)
-            }
-        }
-
-        return buildPropertyAccessExpression {
-            calleeReference = reference
-            explicitReceiver = propertyAccess.explicitReceiver
-            dispatchReceiver = propertyAccess.dispatchReceiver
-            extensionReceiver = propertyAccess.extensionReceiver
-            typeRef = delegateField.returnTypeRef
-        }
-    }
-
-    private fun getReceiverForSynthetics(receiver: FirExpression, info: CallInfo): Pair<FirExpression?, FirDeclaration?> {
-        val syntheticsOwner = (receiver as? FirResolvable)?.calleeReference?.resolvedSymbol?.fir
-            ?: return null to null
-
-        val thePropertyAccess = receiver as? FirPropertyAccessExpression
-            ?: return null to null
-
-        val theProperty = syntheticsOwner as? FirProperty
-        val thePropertyDelegate = theProperty?.delegateField
-
-        val properReceiver = when {
-            thePropertyDelegate != null && info.name != SELF_NAME -> {
-                generateDelegateAccessReceiver(thePropertyAccess, thePropertyDelegate, info)
-            }
-            thePropertyAccess.dispatchReceiver !is FirNoReceiverExpression -> thePropertyAccess.dispatchReceiver
-            thePropertyAccess.extensionReceiver !is FirNoReceiverExpression -> thePropertyAccess.extensionReceiver
-            else -> thePropertyAccess.explicitReceiver
-        }
-
-        return properReceiver to syntheticsOwner
-    }
-
-    private suspend fun runResolverForExpressionReceiver(
-        info: CallInfo,
-        explicitReceiverValue: ExpressionReceiverValue,
+        receiver: FirExpression,
         parentGroup: TowerGroup = TowerGroup.EmptyRoot
     ) {
+        val explicitReceiverValue = ExpressionReceiverValue(receiver)
+
         processExtensionsThatHideMembers(info, explicitReceiverValue, parentGroup)
 
         // Member scope of expression receiver
@@ -338,44 +291,6 @@ internal open class FirTowerResolveTask(
                 )
             }
         )
-    }
-
-    private suspend fun runResolverForSyntheticsAccess(
-        info: CallInfo,
-        receiver: FirExpression,
-        parentGroup: TowerGroup = TowerGroup.EmptyRoot
-    ) {
-        val (properReceiver, syntheticsOwner) = getReceiverForSynthetics(receiver, info)
-
-        if (syntheticsOwner == null) {
-            return
-        }
-
-        if (properReceiver != null) {
-            val explicitReceiverValue = ExpressionReceiverValue(properReceiver, syntheticsOwner)
-            runResolverForExpressionReceiver(info, explicitReceiverValue, parentGroup)
-        } else {
-            processExtensionsThatHideMembers(info, explicitReceiverValue = null)
-
-            val scope = createSyntheticsScopeFor(syntheticsOwner, session, this.components.scopeSession)
-                ?: return
-
-            processLevel(
-                scope.toScopeTowerLevel(), info, parentGroup.Member,
-            )
-        }
-    }
-
-    suspend fun runResolverForExpressionReceiver(
-        info: CallInfo,
-        receiver: FirExpression,
-        parentGroup: TowerGroup = TowerGroup.EmptyRoot
-    ) {
-        if (info.searchSynthetics) {
-            runResolverForSyntheticsAccess(info, receiver.unwrapSmartcastExpression(), parentGroup)
-        } else {
-            runResolverForExpressionReceiver(info, ExpressionReceiverValue(receiver), parentGroup)
-        }
     }
 
     suspend fun runResolverForNoReceiver(
