@@ -100,6 +100,7 @@ class ExpressionsConverter(
             COLLECTION_LITERAL_EXPRESSION -> convertCollectionLiteralExpression(expression)
             STRING_TEMPLATE -> convertStringTemplate(expression)
             is KtConstantExpressionElementType -> convertConstantExpression(expression)
+            HASH_QUALIFIED_EXPRESSION -> convertHashQualifiedNameExpression(expression)
             REFERENCE_EXPRESSION -> convertSimpleNameExpression(expression)
             DO_WHILE -> convertDoWhile(expression)
             WHILE -> convertWhile(expression)
@@ -975,6 +976,38 @@ class ExpressionsConverter(
         }
 
         return firExpressionList
+    }
+
+    /**
+     * @see org.jetbrains.kotlin.parsing.KotlinExpressionParsing.parseHashQualifiedExpression
+     * @see org.jetbrains.kotlin.fir.builder.RawFirBuilder.Visitor.visitHashQualifiedExpression
+     */
+    private fun convertHashQualifiedNameExpression(referenceExpression: LighterASTNode): FirExpression {
+        val nameSource = referenceExpression.toFirSourceElement()
+        val referenceSourceElement = if (nameSource.kind is KtFakeSourceElementKind) {
+            nameSource
+        } else {
+            nameSource.fakeElement(KtFakeSourceElementKind.ReferenceInAtomicQualifiedAccess)
+        }
+
+        val parts = collectHashQualifiedNames(referenceExpression)
+
+        if (parts == null || parts.isEmpty()) {
+            return buildErrorExpression(null, ConeSimpleDiagnostic("Bad hash-qualified name", DiagnosticKind.IncorrectHashQualifiedName))
+        }
+
+        return buildPropertyAccessExpression {
+            val containsUnderscoreNames = parts.any { it.toString().isUnderscore }
+            if (containsUnderscoreNames) {
+                nonFatalDiagnostics.add(ConeUnderscoreUsageWithoutBackticks(nameSource))
+            }
+            source = nameSource
+            calleeReference = buildSimpleNamedReference {
+                source = referenceSourceElement
+                name = parts.last()
+                prefixParts.addAll(parts.dropLast(1))
+            }
+        }
     }
 
     /**

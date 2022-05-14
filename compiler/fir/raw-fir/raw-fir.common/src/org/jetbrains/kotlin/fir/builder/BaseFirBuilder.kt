@@ -891,6 +891,20 @@ abstract class BaseFirBuilder<T>(val baseSession: FirSession, val context: Conte
         }
     }
 
+    protected fun collectHashQualifiedNames(current: T, collector: MutableList<Name> = mutableListOf()): List<Name>? {
+        var result: List<Name>? = collector
+
+        current.forEachChild {
+            when (it.elementType) {
+                REFERENCE_EXPRESSION -> collector += it.getReferencedNameAsName()
+                HASH_QUALIFIED_EXPRESSION -> result = collectHashQualifiedNames(it, collector)
+                else -> result = null
+            }
+        }
+
+        return result
+    }
+
     private fun FirQualifiedAccessBuilder.initializeLValue(
         left: T?,
         convertQualified: T.() -> FirQualifiedAccess?
@@ -921,6 +935,22 @@ abstract class BaseFirBuilder<T>(val baseSession: FirSession, val context: Conte
                             source = left.toFirSourceElement()
                             diagnostic = ConeSimpleDiagnostic("Unsupported qualified LValue: ${left.asText}", DiagnosticKind.Syntax)
                         }
+                    }
+                }
+                HASH_QUALIFIED_EXPRESSION -> {
+                    val parts = collectHashQualifiedNames(left)
+
+                    if (parts == null || parts.isEmpty()) {
+                        return buildErrorNamedReference {
+                            source = left.toFirSourceElement()
+                            diagnostic = ConeSimpleDiagnostic("Bad hash-qualified name", DiagnosticKind.IncorrectHashQualifiedName)
+                        }
+                    }
+
+                    return buildSimpleNamedReference {
+                        source = left.toFirSourceElement()
+                        name = parts.last()
+                        prefixParts.addAll(parts.dropLast(1))
                     }
                 }
             }
