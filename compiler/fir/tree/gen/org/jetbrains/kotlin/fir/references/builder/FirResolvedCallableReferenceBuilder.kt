@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.name.Name
 class FirResolvedCallableReferenceBuilder {
     var source: KtSourceElement? = null
     lateinit var name: Name
+    val prefixParts: MutableList<Name> = mutableListOf()
     lateinit var resolvedSymbol: FirBasedSymbol<*>
     val inferredTypeArguments: MutableList<ConeKotlinType> = mutableListOf()
     lateinit var mappedArguments: CallableReferenceMappedArguments
@@ -33,6 +34,7 @@ class FirResolvedCallableReferenceBuilder {
         return FirResolvedCallableReferenceImpl(
             source,
             name,
+            prefixParts,
             resolvedSymbol,
             inferredTypeArguments,
             mappedArguments,

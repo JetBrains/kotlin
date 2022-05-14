@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.fir.visitors.*
 internal class FirResolvedCallableReferenceImpl(
     override val source: KtSourceElement?,
     override val name: Name,
+    override val prefixParts: MutableList<Name>,
     override val resolvedSymbol: FirBasedSymbol<*>,
     override val inferredTypeArguments: MutableList<ConeKotlinType>,
     override val mappedArguments: CallableReferenceMappedArguments,

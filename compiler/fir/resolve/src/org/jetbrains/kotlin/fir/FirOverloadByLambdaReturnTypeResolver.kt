@@ -47,7 +47,9 @@ class FirOverloadByLambdaReturnTypeResolver(
             var shouldRunCompletion = true
             val originalReference = qualifiedAccess.calleeReference
             for (candidate in bestCandidates) {
-                qualifiedAccess.replaceCalleeReference(FirNamedReferenceWithCandidate(null, candidate.callInfo.name, candidate))
+                qualifiedAccess.replaceCalleeReference(
+                    FirNamedReferenceWithCandidate(null, candidate.callInfo.name, candidate, emptyList())
+                )
                 shouldRunCompletion = shouldRunCompletion && inferenceSession.shouldRunCompletion(qualifiedAccess)
                 if (!shouldRunCompletion) break
             }
@@ -108,7 +110,7 @@ class FirOverloadByLambdaReturnTypeResolver(
         val originalCalleeReference = call.calleeReference
 
         for (candidate in lambdas.keys) {
-            call.replaceCalleeReference(FirNamedReferenceWithCandidate(null, candidate.callInfo.name, candidate))
+            call.replaceCalleeReference(FirNamedReferenceWithCandidate(null, candidate.callInfo.name, candidate, emptyList()))
             callCompleter.runCompletionForCall(
                 candidate,
                 ConstraintSystemCompletionMode.UNTIL_FIRST_LAMBDA,
@@ -133,7 +135,9 @@ class FirOverloadByLambdaReturnTypeResolver(
                 components.transformer.resolutionContext
             )
 
-            call.replaceCalleeReference(FirNamedReferenceWithCandidate(null, firstCandidate.callInfo.name, firstCandidate))
+            call.replaceCalleeReference(
+                FirNamedReferenceWithCandidate(null, firstCandidate.callInfo.name, firstCandidate, emptyList())
+            )
             val results = postponedArgumentsAnalyzer.analyzeLambda(
                 firstCandidate.system,
                 firstAtom,
@@ -142,7 +146,7 @@ class FirOverloadByLambdaReturnTypeResolver(
             )
             while (iterator.hasNext()) {
                 val (candidate, atom) = iterator.next()
-                call.replaceCalleeReference(FirNamedReferenceWithCandidate(null, candidate.callInfo.name, candidate))
+                call.replaceCalleeReference(FirNamedReferenceWithCandidate(null, candidate.callInfo.name, candidate, emptyList()))
                 postponedArgumentsAnalyzer.applyResultsOfAnalyzedLambdaToCandidateSystem(
                     candidate.system,
                     atom,
