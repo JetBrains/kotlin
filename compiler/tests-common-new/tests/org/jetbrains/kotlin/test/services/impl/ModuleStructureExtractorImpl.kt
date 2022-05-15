@@ -316,7 +316,9 @@ class ModuleStructureExtractorImpl(
 
             val targetBackend = currentModuleTargetBackend ?: defaultsProvider.defaultTargetBackend
             currentModuleLanguageVersionSettingsBuilder.configureUsingDirectives(moduleDirectives, environmentConfigurators, targetBackend)
-            val moduleName = currentModuleName ?: DEFAULT_MODULE_NAME
+            val moduleName = currentModuleName
+                ?: testServices.defaultDirectives[ModuleStructureDirectives.MODULE].firstOrNull()
+                ?: DEFAULT_MODULE_NAME
             val targetPlatform = currentModuleTargetPlatform ?: parseModulePlatformByName(moduleName) ?: defaultsProvider.defaultPlatform
             val testModule = TestModule(
                 name = moduleName,

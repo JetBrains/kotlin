@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.asJava.finder.JavaElementFinder
 import org.jetbrains.kotlin.light.classes.symbol.base.service.NullabilityAnnotationSourceProvider
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
+import org.jetbrains.kotlin.test.directives.ModuleStructureDirectives
 import org.jetbrains.kotlin.test.directives.ConfigurationDirectives
 import org.jetbrains.kotlin.test.directives.model.DirectiveApplicability
 import org.jetbrains.kotlin.test.directives.model.SimpleDirectivesContainer
@@ -29,6 +30,9 @@ import java.nio.file.Path
 import kotlin.io.path.exists
 import kotlin.io.path.nameWithoutExtension
 
+// Same as LightProjectDescriptor.TEST_MODULE_NAME
+private const val TEST_MODULE_NAME = "light_idea_test_case"
+
 abstract class AbstractSymbolLightClassesTestBase(
     override val configurator: AnalysisApiTestConfigurator
 ) : AbstractAnalysisApiBasedSingleModuleTest() {
@@ -41,6 +45,7 @@ abstract class AbstractSymbolLightClassesTestBase(
             useAdditionalSourceProviders(::NullabilityAnnotationSourceProvider)
             defaultDirectives {
                 +ConfigurationDirectives.WITH_STDLIB
+                ModuleStructureDirectives.MODULE + TEST_MODULE_NAME
             }
         }
     }
