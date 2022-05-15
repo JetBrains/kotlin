@@ -105,8 +105,6 @@ task prepareBuiltinsSources(type: Copy) {
         include "Progressions.kt"
         include "ProgressionIterators.kt"
         include "Ranges.kt"
-        include "internal/InternalAnnotations.kt"
-        include "internal/progressionUtil.kt"
         include "Unit.kt"
     }
     into builtinsSrcDir

@@ -15,6 +15,7 @@ sourceSets {
             srcDir 'src'
             srcDir commonSrcDir
             srcDir '../unsigned/src'
+            srcDir "$rootDir/core/builtins/src/kotlin/internal"
         }
     }
     test {
