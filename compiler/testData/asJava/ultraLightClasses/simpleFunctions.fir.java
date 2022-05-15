@@ -16,7 +16,7 @@ public final class Foo /* Foo*/ {
 
   public final int bar4();//  bar4()
 
-  public final void bar2(error.NonExistentClass, error.NonExistentClass);//  bar2(error.NonExistentClass, error.NonExistentClass)
+  public final void bar2$main(error.NonExistentClass, error.NonExistentClass);//  bar2$main(error.NonExistentClass, error.NonExistentClass)
 
   public void bar(int, @org.jetbrains.annotations.NotNull() java.lang.Object, @org.jetbrains.annotations.NotNull() Foo);//  bar(int, java.lang.Object, Foo)
 

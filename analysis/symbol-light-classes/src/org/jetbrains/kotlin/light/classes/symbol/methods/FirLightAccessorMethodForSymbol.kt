@@ -44,7 +44,7 @@ internal class FirLightAccessorMethodForSymbol(
             val defaultName = containingPropertySymbol.name.identifier.let {
                 if (containingClass.isAnnotationType) it else it.abiName()
             }
-            containingPropertySymbol.computeJvmMethodName(defaultName, accessorSite)
+            containingPropertySymbol.computeJvmMethodName(defaultName, containingClass, accessorSite)
         }
     }
 

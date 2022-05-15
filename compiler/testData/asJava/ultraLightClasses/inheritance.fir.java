@@ -26,7 +26,7 @@ public abstract class Base /* Base*/ {
 
   public final void nv();//  nv()
 
-  public int getX();//  getX()
+  public int getX$main();//  getX$main()
 
   public int getY();//  getY()
 
@@ -43,7 +43,7 @@ public final class Derived /* Derived*/ extends Base implements IntfWithProp {
 
   public int abs();//  abs()
 
-  public int getX();//  getX()
+  public int getX$main();//  getX$main()
 
 }
 
@@ -64,7 +64,7 @@ public abstract class AnotherDerived /* AnotherDerived*/ extends Base {
 
   public abstract void noReturn(@org.jetbrains.annotations.NotNull() java.lang.String);//  noReturn(java.lang.String)
 
-  public int getX();//  getX()
+  public int getX$main();//  getX$main()
 
   public int getY();//  getY()
 
