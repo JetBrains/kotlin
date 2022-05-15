@@ -102,7 +102,7 @@ public final class Foo /* Foo*/ {
   public final java.lang.String getDelegatedProp();//  getDelegatedProp()
 
   @org.jetbrains.annotations.NotNull()
-  public final java.lang.String getInternalVarPrivateSet();//  getInternalVarPrivateSet()
+  public final java.lang.String getInternalVarPrivateSet$main();//  getInternalVarPrivateSet$main()
 
   @org.jetbrains.annotations.NotNull()
   public final java.lang.String getLazyProp();//  getLazyProp()
@@ -111,7 +111,7 @@ public final class Foo /* Foo*/ {
   public final java.lang.String getName();//  getName()
 
   @org.jetbrains.annotations.NotNull()
-  public final java.lang.String getStringRepresentation();//  getStringRepresentation()
+  public final java.lang.String getStringRepresentation$main();//  getStringRepresentation$main()
 
   @org.jetbrains.annotations.NotNull()
   public final kotlin.jvm.functions.Function1<java.lang.Integer, java.lang.Integer> getSum();//  getSum()
@@ -163,7 +163,7 @@ public final class Foo /* Foo*/ {
 
   public final int getIntProp(int);//  getIntProp(int)
 
-  public final int getInternalWithPrivateSet();//  getInternalWithPrivateSet()
+  public final int getInternalWithPrivateSet$main();//  getInternalWithPrivateSet$main()
 
   public final void setC(boolean);//  setC(boolean)
 
@@ -187,7 +187,7 @@ public final class Foo /* Foo*/ {
 
   public final void setName(@org.jetbrains.annotations.NotNull() java.lang.String);//  setName(java.lang.String)
 
-  public final void setStringRepresentation(@org.jetbrains.annotations.NotNull() java.lang.String);//  setStringRepresentation(java.lang.String)
+  public final void setStringRepresentation$main(@org.jetbrains.annotations.NotNull() java.lang.String);//  setStringRepresentation$main(java.lang.String)
 
   public final void setSubject(error.NonExistentClass);//  setSubject(error.NonExistentClass)
 

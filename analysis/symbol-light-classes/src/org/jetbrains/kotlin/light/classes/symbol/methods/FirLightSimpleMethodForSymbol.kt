@@ -34,7 +34,7 @@ internal class FirLightSimpleMethodForSymbol(
 ) {
 
     private val _name: String by lazyPub {
-        functionSymbol.computeJvmMethodName(functionSymbol.name.asString())
+        functionSymbol.computeJvmMethodName(functionSymbol.name.asString(), containingClass)
     }
 
     override fun getName(): String = _name
