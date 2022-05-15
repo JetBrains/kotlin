@@ -1,0 +1,33 @@
+FILE: delegateAccessWithArray.kt
+    public final val number: R|kotlin/String|by object : R|kotlin/Any| {
+        private constructor(): R|<anonymous>| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val rawValue: R|kotlin/collections/MutableList<kotlin/Int>| = R|kotlin/collections/mutableListOf|<R|kotlin/Int|>(vararg(Int(10), Int(20)))
+            public get(): R|kotlin/collections/MutableList<kotlin/Int>|
+
+        public final operator fun getValue(thisRef: R|kotlin/Any?|, property: R|kotlin/reflect/KProperty<*>|): R|kotlin/String| {
+            ^getValue this@R|/<anonymous>|.R|/<anonymous>.rawValue|.R|kotlin/collections/joinToString|<R|kotlin/Int|>(String(, ))
+        }
+
+    }
+
+        public get(): R|kotlin/String| {
+            ^ D|/number|.R|/<anonymous>.getValue|(Null(null), ::R|/number|)
+        }
+    public final fun box(): R|kotlin/String| {
+         {
+            lval <array>: R|kotlin/collections/MutableList<kotlin/Int>| = R|/number|.R|/<anonymous>.rawValue|
+            lval <index_0>: R|kotlin/Int| = Int(1)
+            R|<local>/<array>|.R|SubstitutionOverride<kotlin/collections/MutableList.set: R|kotlin/Int|>|(R|<local>/<index_0>|, R|<local>/<array>|.R|SubstitutionOverride<kotlin/collections/MutableList.get: R|kotlin/Int|>|(R|<local>/<index_0>|).R|kotlin/Int.plus|(Int(4)))
+        }
+
+        when () {
+            !=(R|/number|, String(10, 24)) ->  {
+                ^box <strcat>(String(FAIL: expected `10, 24`, was ), R|/number|)
+            }
+        }
+
+        ^box String(OK)
+    }

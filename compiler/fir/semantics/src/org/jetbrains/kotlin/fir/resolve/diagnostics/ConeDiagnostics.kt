@@ -55,7 +55,7 @@ class ConeUnresolvedQualifierError(override val qualifier: String) : ConeUnresol
     override val reason: String get() = "Symbol not found for $qualifier"
 }
 
-class ConeUnresolvedNameError(val name: Name) : ConeUnresolvedError {
+open class ConeUnresolvedNameError(val name: Name) : ConeUnresolvedError {
     override val qualifier: String get() = name.asString()
     override val reason: String get() = "Unresolved name: $name"
 }

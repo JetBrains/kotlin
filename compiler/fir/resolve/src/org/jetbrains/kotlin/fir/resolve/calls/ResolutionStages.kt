@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.fir.resolve.calls
 
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.fir.FirVisibilityChecker
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.isInfix
 import org.jetbrains.kotlin.fir.declarations.utils.isOperator
@@ -15,7 +14,9 @@ import org.jetbrains.kotlin.fir.declarations.utils.modality
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.matchingParameterFunctionType
+import org.jetbrains.kotlin.fir.references.FirErrorNamedReference
 import org.jetbrains.kotlin.fir.references.FirSuperReference
+import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeVisibilityError
 import org.jetbrains.kotlin.fir.resolve.directExpansionType
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.inference.ConeTypeParameterBasedTypeVariable
@@ -56,7 +57,12 @@ internal object CheckExplicitReceiverConsistency : ResolutionStage() {
         // TODO: add invoke cases
         when (receiverKind) {
             NO_EXPLICIT_RECEIVER -> {
-                if (explicitReceiver != null && explicitReceiver !is FirResolvedQualifier && !explicitReceiver.isSuperReferenceExpression()) {
+                if (
+                    explicitReceiver != null &&
+                    explicitReceiver !is FirResolvedQualifier &&
+                    !explicitReceiver.isSuperReferenceExpression() &&
+                    callInfo.namePrefixParts.isEmpty()
+                ) {
                     return sink.yieldDiagnostic(InapplicableWrongReceiver(actualType = explicitReceiver.typeRef.coneTypeSafe()))
                 }
             }
@@ -518,7 +524,7 @@ internal object CheckVisibility : CheckerStage() {
         val symbol = candidate.symbol
         val declaration = symbol.fir
         if (declaration is FirMemberDeclaration) {
-            if (!visibilityChecker.isVisible(declaration, candidate)) {
+            if (!visibilityChecker.isVisible(declaration, candidate) || hasInvisibleReceiver(candidate)) {
                 sink.yieldDiagnostic(VisibilityError)
                 return
             }
@@ -538,6 +544,22 @@ internal object CheckVisibility : CheckerStage() {
                 }
             }
         }
+    }
+
+    private fun hasInvisibleReceiver(candidate: Candidate): Boolean {
+        if (candidate.callInfo.namePrefixParts.isEmpty()) {
+            return false
+        }
+
+        val receiver = when (candidate.explicitReceiverKind) {
+            EXTENSION_RECEIVER -> candidate.givenExtensionReceiverOptions.singleOrNull() ?: return false
+            DISPATCH_RECEIVER -> candidate.dispatchReceiverValue
+            else -> return false
+        }
+
+        val receiverExpression = receiver?.receiverExpression as? FirResolvable
+        val errorReference = receiverExpression?.calleeReference as? FirErrorNamedReference
+        return errorReference?.diagnostic is ConeVisibilityError
     }
 }
 

@@ -1,0 +1,28 @@
+FILE: delegateAccessFunctionCall.kt
+    public final val myProperty: R|kotlin/String|by object : R|kotlin/Any| {
+        private constructor(): R|<anonymous>| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final fun represent(decoration: R|kotlin/String|): R|kotlin/String| {
+            ^represent <strcat>(R|<local>/decoration|, String( Some representation ), R|<local>/decoration|)
+        }
+
+        public final operator fun getValue(thisRef: R|kotlin/Any?|, property: R|kotlin/reflect/KProperty<*>|): R|kotlin/String| {
+            ^getValue String(Hello)
+        }
+
+    }
+
+        public get(): R|kotlin/String| {
+            ^ D|/myProperty|.R|/<anonymous>.getValue|(Null(null), ::R|/myProperty|)
+        }
+    public final fun box(): R|kotlin/String| {
+        when () {
+            !=(R|/myProperty|.R|/<anonymous>.represent|(String(~~~)), String(~~~ Some representation ~~~)) ->  {
+                ^box String(FAIL: expected "~~~ Some representation ~~~")
+            }
+        }
+
+        ^box String(OK)
+    }

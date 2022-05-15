@@ -1,0 +1,26 @@
+FILE: directAccessPlusAssign.kt
+    public final var number: R|kotlin/String|
+        internal <explicit backing field>: R|kotlin/Int| = Int(10)
+        public get(): R|kotlin/String| {
+            ^ F|/number|.R|kotlin/Int.toString|()
+        }
+        public set(newValue: R|kotlin/String|): R|kotlin/Unit| {
+            F|/number| = R|<local>/newValue|.R|kotlin/String.length|
+        }
+    public final fun box(): R|kotlin/String| {
+        R|/number| = R|/number|.R|kotlin/String.plus|(String(test))
+        when () {
+            !=(R|/number|, String(6)) ->  {
+                ^box <strcat>(String(FAIL: expected 6, was ), R|/number|)
+            }
+        }
+
+        F|/number| = F|/number|.R|kotlin/Int.plus|(Int(4))
+        when () {
+            !=(R|/number|, String(10)) ->  {
+                ^box <strcat>(String(FAIL: expected 10, was ), R|/number|)
+            }
+        }
+
+        ^box String(OK)
+    }

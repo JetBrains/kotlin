@@ -1,0 +1,51 @@
+FILE: directAccessInSameClass.kt
+    public final class A : R|kotlin/Any| {
+        public constructor(): R|A| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final var number: R|kotlin/String|
+            internal <explicit backing field>: R|kotlin/Int| = Int(10)
+            public get(): R|kotlin/String| {
+                ^ this@R|/A|.F|/A.number|.R|kotlin/Int.toString|()
+            }
+            public set(newValue: R|kotlin/String|): R|kotlin/Unit| {
+                this@R|/A|.F|/A.number| = R|<local>/newValue|.R|kotlin/String.length|
+            }
+
+        public final fun test(): R|kotlin/String| {
+            when () {
+                !=(this@R|/A|.R|/A.number|, String(10)) ->  {
+                    ^test <strcat>(String(FAIL: expected ), String("), String(10), String("), String(, was ), this@R|/A|.R|/A.number|)
+                }
+            }
+
+            this@R|/A|.R|/A.number| = String(20)
+            when () {
+                !=(this@R|/A|.R|/A.number|, String(2)) ->  {
+                    ^test <strcat>(String(FAIL: expected ), String("), String(2), String("), String(, was ), this@R|/A|.R|/A.number|)
+                }
+            }
+
+            this@R|/A|.F|/A.number| = Int(20)
+            when () {
+                !=(this@R|/A|.R|/A.number|, String(20)) ->  {
+                    ^test <strcat>(String(FAIL: expected ), String("), String(20), String("), String(, was ), this@R|/A|.R|/A.number|)
+                }
+            }
+
+            this@R|/A|.R|/A.number| = String(100)
+            lval rawValue: R|kotlin/Int| = this@R|/A|.F|/A.number|
+            when () {
+                !=(R|<local>/rawValue|, Int(3)) ->  {
+                    ^test <strcat>(String(FAIL: expected ), String("), String(3), String("), String(, was ), R|<local>/rawValue|)
+                }
+            }
+
+            ^test String(OK)
+        }
+
+    }
+    public final fun box(): R|kotlin/String| {
+        ^box R|/A.A|().R|/A.test|()
+    }
