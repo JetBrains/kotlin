@@ -376,7 +376,7 @@ class GeneralNativeIT : BaseGradleIT() {
             headerPaths.forEach { assertFileExists(it) }
             frameworkPaths.forEach { assertFileExists(it) }
 
-            fileInWorkingDir(headerPaths[0]).readText().contains("+ (int32_t)exported")
+            assertTrue(fileInWorkingDir(headerPaths[0]).readText().contains("+ (int32_t)exported"))
 
             // Check that by default release frameworks have bitcode embedded.
             withNativeCommandLineArguments(":linkMainReleaseFrameworkIos") { arguments ->
