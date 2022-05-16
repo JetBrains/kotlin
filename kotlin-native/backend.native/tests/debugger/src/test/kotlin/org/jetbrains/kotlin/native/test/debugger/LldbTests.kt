@@ -343,7 +343,7 @@ class LldbTests {
                v()
             }
         """.feedOutput("kt42208-3.kt")
-        val binary = arrayOf(kt42208One, kt42208Two, kt42208Three).binary("kt42208", "-g", "-XXLanguage:+UnitConversion")
+        val binary = arrayOf(kt42208One, kt42208Two, kt42208Three).binary("kt42208", "-g", "-XXLanguage:+UnitConversionsOnArbitraryExpressions")
         """
             > b kt42208-2.kt:5
             > ${lldbCommandRunOrContinue()}

@@ -1,0 +1,12 @@
+package
+
+public val x: () -> kotlin.String
+public fun handle(/*0*/ run: Run): kotlin.Unit
+public fun test(): kotlin.Unit
+
+public fun interface Run {
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public abstract fun run(): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

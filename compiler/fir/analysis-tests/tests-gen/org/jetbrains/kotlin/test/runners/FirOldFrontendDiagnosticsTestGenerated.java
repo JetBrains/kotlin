@@ -32691,6 +32691,12 @@ public class FirOldFrontendDiagnosticsTestGenerated extends AbstractFirDiagnosti
             }
 
             @Test
+            @TestMetadata("kt49394.kt")
+            public void testKt49394() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/unitConversion/kt49394.kt");
+            }
+
+            @Test
             @TestMetadata("noUnitConversionForGenericTypeFromArrow.kt")
             public void testNoUnitConversionForGenericTypeFromArrow() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/unitConversion/noUnitConversionForGenericTypeFromArrow.kt");

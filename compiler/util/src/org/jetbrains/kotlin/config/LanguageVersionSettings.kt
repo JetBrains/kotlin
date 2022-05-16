@@ -142,7 +142,6 @@ enum class LanguageFeature(
     SamConversionForKotlinFunctions(KOTLIN_1_4),
     SamConversionPerArgument(KOTLIN_1_4),
     FunctionReferenceWithDefaultValueAsOtherType(KOTLIN_1_4),
-    UnitConversion(KOTLIN_1_4, defaultState = State.DISABLED),
     OverloadResolutionByLambdaReturnType(KOTLIN_1_4),
     ContractsOnCallsWithImplicitReceiver(KOTLIN_1_4),
     BooleanElvisBoundSmartCasts(KOTLIN_1_3, defaultState = State.DISABLED), // see KT-26357 for details
@@ -299,6 +298,7 @@ enum class LanguageFeature(
     GenericInlineClassParameter(sinceVersion = null, defaultState = State.ENABLED_WITH_WARNING, kind = UNSTABLE_FEATURE),
     ValueClasses(sinceVersion = null, defaultState = State.DISABLED, kind = UNSTABLE_FEATURE),
     JavaSamConversionEqualsHashCode(sinceVersion = null, defaultState = State.DISABLED, kind = UNSTABLE_FEATURE),
+    UnitConversionsOnArbitraryExpressions(sinceVersion = null, defaultState = State.DISABLED),
     ;
 
     val presentableName: String

@@ -1,4 +1,4 @@
-// !LANGUAGE: -UnitConversion
+// !LANGUAGE: -UnitConversionsOnArbitraryExpressions
 // !DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_EXPRESSION
 
 fun foo(f: () -> Unit) {}
