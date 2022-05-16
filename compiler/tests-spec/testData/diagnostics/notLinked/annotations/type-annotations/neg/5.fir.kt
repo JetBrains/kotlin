@@ -1,3 +1,4 @@
+// LANGUAGE: +ForbidTypeParameterAnnotationsInWhereClauses
 // TESTCASE NUMBER: 1, 2
 @Target(AnnotationTarget.TYPE)
 annotation class Ann(val x: Int)
@@ -9,4 +10,4 @@ abstract class Bar<T : @Ann(<!UNRESOLVED_REFERENCE!>unresolved_reference<!>) Any
  * TESTCASE NUMBER: 2
  * UNEXPECTED BEHAVIOUR
  */
-class B<T> where @Ann(unresolved_reference) T : Number
+class B<T> where <!ANNOTATION_IN_WHERE_CLAUSE, WRONG_ANNOTATION_TARGET!>@Ann(<!UNRESOLVED_REFERENCE!>unresolved_reference<!>)<!> T : Number
