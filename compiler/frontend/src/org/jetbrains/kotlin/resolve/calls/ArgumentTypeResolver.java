@@ -224,6 +224,10 @@ public class ArgumentTypeResolver {
         return null;
     }
 
+    public static boolean isCollectionLiteralArgument(@NotNull KtExpression expression) {
+        return expression instanceof KtCollectionLiteralExpression;
+    }
+
     @NotNull
     public KotlinTypeInfo getArgumentTypeInfo(
             @Nullable KtExpression expression,

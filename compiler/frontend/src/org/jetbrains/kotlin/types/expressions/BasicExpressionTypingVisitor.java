@@ -1303,7 +1303,8 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         KotlinTypeInfo leftTypeInfo = BindingContextUtils.getRecordedTypeInfo(left, context.trace.getBindingContext());
         boolean isLeftFunctionLiteral = ArgumentTypeResolver.isFunctionLiteralArgument(left, context);
         boolean isLeftCallableReference = ArgumentTypeResolver.isCallableReferenceArgument(left, context);
-        if (leftTypeInfo == null && (isLeftFunctionLiteral || isLeftCallableReference)) {
+        boolean isLeftCollectionLiteral = ArgumentTypeResolver.isCollectionLiteralArgument(left);
+        if (leftTypeInfo == null && (isLeftFunctionLiteral || isLeftCallableReference || isLeftCollectionLiteral)) {
             return TypeInfoFactoryKt.noTypeInfo(context);
         }
         assert leftTypeInfo != null : "Left expression was not processed: " + expression;
