@@ -346,11 +346,6 @@ internal class Context(config: KonanConfig) : KonanBackendContext(config) {
 
     var referencedFunctions: Set<IrFunction>? = null
 
-    val isNativeLibrary: Boolean by lazy {
-        val kind = config.configuration.get(KonanConfigKeys.PRODUCE)
-        kind == CompilerOutputKind.DYNAMIC || kind == CompilerOutputKind.STATIC
-    }
-
     internal val stdlibModule
         get() = this.builtIns.any.module
 
