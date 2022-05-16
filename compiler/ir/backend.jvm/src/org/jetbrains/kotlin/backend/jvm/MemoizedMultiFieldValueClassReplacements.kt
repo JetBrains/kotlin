@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.backend.jvm
 import org.jetbrains.kotlin.ir.declarations.IrFactory
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
+import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import java.util.concurrent.ConcurrentHashMap
 
@@ -27,6 +28,10 @@ class MemoizedMultiFieldValueClassReplacements(
      * Get a replacement for a function or a constructor.
      */
     override val getReplacementFunction: (IrFunction) -> IrSimpleFunction? = storageManager.createMemoizedFunctionWithNullableValues {
+        TODO()
+    }
+
+    override val replaceOverriddenSymbols: (IrSimpleFunction) -> List<IrSimpleFunctionSymbol> = storageManager.createMemoizedFunction {
         TODO()
     }
 }

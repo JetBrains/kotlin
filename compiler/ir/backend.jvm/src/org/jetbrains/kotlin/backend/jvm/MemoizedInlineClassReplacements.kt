@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.builders.declarations.buildProperty
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
+import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
 import org.jetbrains.kotlin.ir.types.impl.IrStarProjectionImpl
 import org.jetbrains.kotlin.ir.types.isInt
@@ -304,11 +305,21 @@ class MemoizedInlineClassReplacements(
                 }
             }
 
-            overriddenSymbols = function.overriddenSymbols.map {
-                getReplacementFunction(it.owner)?.symbol ?: it
-            }
+            overriddenSymbols = replaceOverriddenSymbols(function)
         }
 
         body()
     }
+
+    override val replaceOverriddenSymbols: (IrSimpleFunction) -> List<IrSimpleFunctionSymbol> =
+        storageManager.createMemoizedFunction { irSimpleFunction ->
+            irSimpleFunction.overriddenSymbols.map {
+                computeOverrideReplacement(it.owner).symbol
+            }
+        }
+
+    private fun computeOverrideReplacement(function: IrSimpleFunction): IrSimpleFunction =
+        getReplacementFunction(function) ?: function.also {
+            function.overriddenSymbols = replaceOverriddenSymbols(function)
+        }
 }

@@ -81,6 +81,16 @@ internal abstract class JvmValueClassAbstractLowering(val context: JvmBackendCon
         val replacement = replacements.getReplacementFunction(function)
         if (replacement == null) {
             function.transformChildrenVoid()
+            // Non-mangled functions can override mangled functions under some conditions, e.g., a function
+            // `fun f(): Nothing` can override a function `fun f(): UInt`. The former is not mangled, while
+            // the latter is.
+            //
+            // This is a potential problem for bridge generation, where we have to ensure that the overridden
+            // symbols are always up to date. Right now they might not be since we lower each file independently
+            // and since deserialized declarations are not mangled at all.
+            if (function is IrSimpleFunction) {
+                function.overriddenSymbols = replacements.replaceOverriddenSymbols(function)
+            }
             return null
         }
 
