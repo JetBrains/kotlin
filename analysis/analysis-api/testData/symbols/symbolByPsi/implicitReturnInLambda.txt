@@ -14,6 +14,7 @@ KtValueParameterSymbol:
   deprecationStatus: null
 
 KtLocalVariableSymbol:
+  annotationsList: []
   callableIdIfNonLocal: null
   isExtension: false
   isVal: true
@@ -26,6 +27,7 @@ KtLocalVariableSymbol:
   deprecationStatus: null
 
 KtAnonymousFunctionSymbol:
+  annotationsList: []
   callableIdIfNonLocal: null
   hasStableParameterNames: true
   isExtension: false
@@ -40,6 +42,7 @@ KtAnonymousFunctionSymbol:
   deprecationStatus: null
 
 KtLocalVariableSymbol:
+  annotationsList: []
   callableIdIfNonLocal: null
   isExtension: false
   isVal: true
@@ -67,6 +70,7 @@ KtValueParameterSymbol:
   deprecationStatus: null
 
 KtLocalVariableSymbol:
+  annotationsList: []
   callableIdIfNonLocal: null
   isExtension: false
   isVal: true
@@ -79,6 +83,7 @@ KtLocalVariableSymbol:
   deprecationStatus: null
 
 KtAnonymousFunctionSymbol:
+  annotationsList: []
   callableIdIfNonLocal: null
   hasStableParameterNames: true
   isExtension: false
@@ -93,6 +98,7 @@ KtAnonymousFunctionSymbol:
   deprecationStatus: null
 
 KtLocalVariableSymbol:
+  annotationsList: []
   callableIdIfNonLocal: null
   isExtension: false
   isVal: true
@@ -105,6 +111,7 @@ KtLocalVariableSymbol:
   deprecationStatus: null
 
 KtLocalVariableSymbol:
+  annotationsList: []
   callableIdIfNonLocal: null
   isExtension: false
   isVal: true
@@ -117,6 +124,7 @@ KtLocalVariableSymbol:
   deprecationStatus: null
 
 KtAnonymousFunctionSymbol:
+  annotationsList: []
   callableIdIfNonLocal: null
   hasStableParameterNames: true
   isExtension: false
