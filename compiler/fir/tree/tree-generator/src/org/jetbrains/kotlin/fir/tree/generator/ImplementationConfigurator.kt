@@ -96,6 +96,20 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
             }
         }
 
+        impl(errorAnnotationCall) {
+            commonAnnotationConfig()
+            default("argumentMapping") {
+                needAcceptAndTransform = false
+            }
+//            default("argumentMapping") {
+//                value = "FirEmptyAnnotationArgumentMapping"
+//            }
+//            default("annotationTypeRef") {
+//                value = "FirErrorTypeRefImpl(null, null, diagnostic)"
+//            }
+//            useTypes(errorTypeRefImplType)
+        }
+
         impl(arrayOfCall)
 
         impl(callableReferenceAccess)
