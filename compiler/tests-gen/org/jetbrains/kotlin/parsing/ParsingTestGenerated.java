@@ -276,6 +276,11 @@ public class ParsingTestGenerated extends AbstractParsingTest {
             runTest("compiler/testData/psi/EnumEntrySemicolonMember.kt");
         }
 
+        @TestMetadata("EnumEntryModifierKeywordNames.kt")
+        public void testEnumEntrySoftKeywords() throws Exception {
+            runTest("compiler/testData/psi/EnumEntryModifierKeywordNames.kt");
+        }
+
         @TestMetadata("EnumEntrySpaceInlineMember.kt")
         public void testEnumEntrySpaceInlineMember() throws Exception {
             runTest("compiler/testData/psi/EnumEntrySpaceInlineMember.kt");

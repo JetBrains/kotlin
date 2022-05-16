@@ -1126,7 +1126,7 @@ public class KotlinParsing extends AbstractKotlinParsing {
     private ParseEnumEntryResult parseEnumEntry() {
         PsiBuilder.Marker entry = mark();
 
-        parseModifierList(DEFAULT, TokenSet.create(COMMA, SEMICOLON, RBRACE));
+        parseModifierList(DEFAULT, TokenSet.create(LPAR, COMMA, SEMICOLON, RBRACE));
 
         if (!atSet(SOFT_KEYWORDS_AT_MEMBER_START) && at(IDENTIFIER)) {
             advance(); // IDENTIFIER
