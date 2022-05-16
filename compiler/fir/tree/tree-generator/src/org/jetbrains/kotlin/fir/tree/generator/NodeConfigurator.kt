@@ -468,6 +468,10 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
             +field("argumentMapping", annotationArgumentMapping, withReplace = true)
         }
 
+        errorAnnotationCall.configure {
+            +field("argumentMapping", annotationArgumentMapping, withReplace = true)
+        }
+
         annotationArgumentMapping.configure {
             +field("mapping", type("Map") to listOf(nameType, expression))
         }
