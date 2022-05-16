@@ -1,4 +1,5 @@
 KtTypeParameterSymbol:
+  annotationsList: []
   isReified: false
   name: X
   origin: SOURCE

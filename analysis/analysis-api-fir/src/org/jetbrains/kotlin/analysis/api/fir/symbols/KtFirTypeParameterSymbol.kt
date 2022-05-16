@@ -6,7 +6,9 @@
 package org.jetbrains.kotlin.analysis.api.fir.symbols
 
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.analysis.api.annotations.KtAnnotationsList
 import org.jetbrains.kotlin.analysis.api.fir.KtSymbolByFirBuilder
+import org.jetbrains.kotlin.analysis.api.fir.annotations.KtFirAnnotationListForDeclaration
 import org.jetbrains.kotlin.analysis.api.fir.findPsi
 import org.jetbrains.kotlin.analysis.api.fir.utils.cached
 import org.jetbrains.kotlin.analysis.api.symbols.KtTypeParameterSymbol
@@ -27,6 +29,11 @@ internal class KtFirTypeParameterSymbol(
     private val builder: KtSymbolByFirBuilder
 ) : KtTypeParameterSymbol(), KtFirSymbol<FirTypeParameterSymbol> {
     override val psi: PsiElement? by cached { firSymbol.findPsi() }
+
+    override val annotationsList: KtAnnotationsList
+        get() = withValidityAssertion {
+            KtFirAnnotationListForDeclaration.create(firSymbol, firResolveSession.useSiteFirSession, token)
+        }
 
     override val name: Name get() = withValidityAssertion { firSymbol.name }
 

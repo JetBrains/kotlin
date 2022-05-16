@@ -1,4 +1,8 @@
 KtTypeParameterSymbol:
+  annotationsList: [
+    org/jetbrains/annotations/NotNull()
+      psi: KtAnnotationEntry
+  ]
   isReified: false
   name: T
   origin: SOURCE
@@ -10,6 +14,7 @@ KtTypeParameterSymbol:
   deprecationStatus: null
 
 KtTypeParameterSymbol:
+  annotationsList: []
   isReified: false
   name: R
   origin: SOURCE

@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.types.Variance
 
-public sealed class KtClassifierSymbol : KtSymbol, KtPossiblyNamedSymbol, KtDeclarationSymbol
+public sealed class KtClassifierSymbol : KtSymbol, KtAnnotatedSymbol, KtPossiblyNamedSymbol, KtDeclarationSymbol
 
 public val KtClassifierSymbol.nameOrAnonymous: Name
     get() = name ?: SpecialNames.ANONYMOUS

@@ -1,4 +1,5 @@
 KtTypeParameterSymbol:
+  annotationsList: []
   isReified: false
   name: T
   origin: SOURCE
@@ -34,6 +35,7 @@ KtNamedClassOrObjectSymbol:
   deprecationStatus: null
 
 KtTypeParameterSymbol:
+  annotationsList: []
   isReified: false
   name: Z
   origin: SOURCE

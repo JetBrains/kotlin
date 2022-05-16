@@ -1,2 +1,3 @@
-class A<T, R> {
+import org.jetbrains.annotations.NotNull
+class A<@NotNull T, R> {
 }
