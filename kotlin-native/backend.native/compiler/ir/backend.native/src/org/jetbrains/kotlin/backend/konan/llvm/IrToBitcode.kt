@@ -443,7 +443,7 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
             overrideRuntimeGlobals()
             appendLlvmUsed("llvm.used", context.llvm.usedFunctions + context.llvm.usedGlobals)
             appendLlvmUsed("llvm.compiler.used", context.llvm.compilerUsedGlobals)
-            if (context.isNativeLibrary) {
+            if (context.config.produce.isNativeLibrary) {
                 appendCAdapters()
             }
         }
