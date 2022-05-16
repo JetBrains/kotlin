@@ -36,6 +36,9 @@ val KonanConfig.isFinalBinary: Boolean get() = when (this.produce) {
     CompilerOutputKind.FRAMEWORK -> !omitFrameworkBinary
 }
 
+val CompilerOutputKind.isNativeLibrary: Boolean
+    get() = this == CompilerOutputKind.DYNAMIC || this == CompilerOutputKind.STATIC
+
 val CompilerOutputKind.involvesBitcodeGeneration: Boolean
     get() = this != CompilerOutputKind.LIBRARY
 
