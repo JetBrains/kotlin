@@ -94,6 +94,7 @@ object FirTreeBuilder : AbstractFirTreeBuilder() {
     val annotation by element(Expression, expression)
     val annotationCall by element(Expression, annotation, call, resolvable)
     val annotationArgumentMapping by element(Expression)
+    val errorAnnotationCall by element(Expression, annotationCall, diagnosticHolder)
     val comparisonExpression by element(Expression, expression)
     val typeOperatorCall by element(Expression, expression, call)
     val assignmentOperatorStatement by element(Expression, statement)
