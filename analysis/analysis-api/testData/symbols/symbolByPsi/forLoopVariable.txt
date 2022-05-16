@@ -1,4 +1,5 @@
 KtLocalVariableSymbol:
+  annotationsList: []
   callableIdIfNonLocal: null
   isExtension: false
   isVal: true

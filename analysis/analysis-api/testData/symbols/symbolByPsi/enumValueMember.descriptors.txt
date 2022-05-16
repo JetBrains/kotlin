@@ -86,6 +86,7 @@ KtKotlinPropertySymbol:
   setterDeprecationStatus: null
 
 KtEnumEntrySymbol:
+  annotationsList: []
   callableIdIfNonLocal: /Style.SHEET
   containingEnumClassIdIfNonLocal: Style
   isExtension: false
