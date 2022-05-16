@@ -5,6 +5,8 @@
 
 package kotlinx.validation.api
 
+import kotlinx.metadata.jvm.JvmFieldSignature
+import kotlinx.metadata.jvm.JvmMethodSignature
 import kotlinx.metadata.jvm.KotlinClassMetadata
 import kotlinx.validation.*
 import org.objectweb.asm.*
@@ -16,7 +18,7 @@ import java.util.jar.*
 @ExternalApi
 @Suppress("unused")
 public fun JarFile.loadApiFromJvmClasses(visibilityFilter: (String) -> Boolean = { true }): List<ClassBinarySignature> =
-        classEntries().map { entry -> getInputStream(entry) }.loadApiFromJvmClasses(visibilityFilter)
+    classEntries().map { entry -> getInputStream(entry) }.loadApiFromJvmClasses(visibilityFilter)
 
 @ExternalApi
 public fun Sequence<InputStream>.loadApiFromJvmClasses(visibilityFilter: (String) -> Boolean = { true }): List<ClassBinarySignature> {
@@ -61,7 +63,22 @@ public fun Sequence<InputStream>.loadApiFromJvmClasses(visibilityFilter: (String
                         companionClass.isEffectivelyPublic(visibility)
                     }
 
-                val allMethods = methods.map { it.toMethodBinarySignature() }
+                val allMethods = methods.map {
+                    /**
+                     * For getters/setters, pull the annotations from the property
+                     *
+                     * This is either on the field if any or in a '$annotations' synthetic function
+                     */
+                    val annotationHolders = mVisibility?.members?.get(JvmMethodSignature(it.name, it.desc))?.annotationHolders
+
+                    val propertyAnnotations = annotationHolders?.method?.let { memberSignature->
+                        methods?.firstOrNull { it.name == memberSignature.name && it.desc == memberSignature.desc }?.visibleAnnotations
+                    }.orEmpty() + annotationHolders?.field?.let { memberSignature->
+                        fields?.firstOrNull { it.name == memberSignature.name && it.desc == memberSignature.desc }?.visibleAnnotations
+                    }.orEmpty()
+
+                    it.toMethodBinarySignature(propertyAnnotations)
+                }
                 // Signatures marked with @PublishedApi
                 val publishedApiSignatures = allMethods.filter {
                     it.isPublishedApi
@@ -86,14 +103,20 @@ public fun Sequence<InputStream>.loadApiFromJvmClasses(visibilityFilter: (String
 public fun List<ClassBinarySignature>.filterOutAnnotated(targetAnnotations: Set<String>): List<ClassBinarySignature> {
     if (targetAnnotations.isEmpty()) return this
     return filter {
-        it.annotations.all { ann -> !targetAnnotations.any { ann.refersToName(it) }  }
+        it.annotations.all { ann -> !targetAnnotations.any { ann.refersToName(it) } }
     }.map {
         ClassBinarySignature(
             it.name,
             it.superName,
             it.outerName,
             it.supertypes,
-            it.memberSignatures.filter { it.annotations.all { ann -> !targetAnnotations.any { ann.refersToName(it) } } },
+            it.memberSignatures.filter {
+                it.annotations.all { ann ->
+                    !targetAnnotations.any {
+                        ann.refersToName(it)
+                    }
+                }
+            },
             it.access,
             it.isEffectivelyPublic,
             it.isNotUsedWhenEmpty,
@@ -103,7 +126,10 @@ public fun List<ClassBinarySignature>.filterOutAnnotated(targetAnnotations: Set<
 }
 
 @ExternalApi
-public fun List<ClassBinarySignature>.filterOutNonPublic(nonPublicPackages: Collection<String> = emptyList(), nonPublicClasses: Collection<String> = emptyList()): List<ClassBinarySignature> {
+public fun List<ClassBinarySignature>.filterOutNonPublic(
+    nonPublicPackages: Collection<String> = emptyList(),
+    nonPublicClasses: Collection<String> = emptyList()
+): List<ClassBinarySignature> {
     val pathMapper: (String) -> String = { it.replace('.', '/') + '/' }
     val nonPublicPackagePaths = nonPublicPackages.map(pathMapper)
     val excludedClasses = nonPublicClasses.map(pathMapper)
@@ -156,8 +182,8 @@ public fun <T : Appendable> List<ClassBinarySignature>.dump(to: T): T {
         with(to) {
             append(classApi.signature).appendLine(" {")
             classApi.memberSignatures
-                    .sortedWith(MEMBER_SORT_ORDER)
-                    .forEach { append("\t").appendLine(it.signature) }
+                .sortedWith(MEMBER_SORT_ORDER)
+                .forEach { append("\t").appendLine(it.signature) }
             appendLine("}\n")
         }
     }

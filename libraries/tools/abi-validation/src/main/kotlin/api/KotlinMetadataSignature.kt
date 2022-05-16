@@ -106,12 +106,13 @@ data class MethodBinarySignature(
     }
 }
 
-fun MethodNode.toMethodBinarySignature() =
+fun MethodNode.toMethodBinarySignature(propertyAnnotations: List<AnnotationNode>?) =
     MethodBinarySignature(
         JvmMethodSignature(name, desc),
         isPublishedApi(),
         AccessFlags(access),
-        annotations(visibleAnnotations, invisibleAnnotations))
+        visibleAnnotations.orEmpty() + invisibleAnnotations.orEmpty() + propertyAnnotations.orEmpty()
+    )
 
 data class FieldBinarySignature(
     override val jvmMember: JvmFieldSignature,

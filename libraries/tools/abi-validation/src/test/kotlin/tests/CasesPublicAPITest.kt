@@ -40,6 +40,8 @@ class CasesPublicAPITest {
 
     @Test fun localClasses() { snapshotAPIAndCompare(testName.methodName) }
 
+    @Test fun marker() { snapshotAPIAndCompare(testName.methodName, setOf("cases/marker/HiddenField", "cases/marker/HiddenProperty")) }
+
     @Test fun nestedClasses() { snapshotAPIAndCompare(testName.methodName) }
 
     @Test fun private() { snapshotAPIAndCompare(testName.methodName) }
@@ -52,13 +54,13 @@ class CasesPublicAPITest {
 
     @Test fun whenMappings() { snapshotAPIAndCompare(testName.methodName) }
 
-    private fun snapshotAPIAndCompare(testClassRelativePath: String) {
+    private fun snapshotAPIAndCompare(testClassRelativePath: String, nonPublicMarkers: Set<String> = emptySet()) {
         val testClassPaths = baseClassPaths.map { it.resolve(testClassRelativePath) }
         val testClasses = testClassPaths.flatMap { it.listFiles().orEmpty().asIterable() }
         check(testClasses.isNotEmpty()) { "No class files are found in paths: $testClassPaths" }
 
         val testClassStreams = testClasses.asSequence().filter { it.name.endsWith(".class") }.map { it.inputStream() }
-        val api = testClassStreams.loadApiFromJvmClasses().filterOutNonPublic()
+        val api = testClassStreams.loadApiFromJvmClasses().filterOutNonPublic().filterOutAnnotated(nonPublicMarkers)
         val target = baseOutputPath.resolve(testClassRelativePath).resolve(testName.methodName + ".txt")
         api.dumpAndCompareWith(target)
     }
