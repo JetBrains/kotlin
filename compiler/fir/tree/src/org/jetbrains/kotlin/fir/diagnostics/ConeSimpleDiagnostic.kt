@@ -69,6 +69,7 @@ enum class DiagnosticKind {
     MissingStdlibClass,
     NotASupertype,
     SuperNotAvailable,
+    AnnotationNotAllowed,
 
     LoopInSupertype,
     RecursiveTypealiasExpansion,
