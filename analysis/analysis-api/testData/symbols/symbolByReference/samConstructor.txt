@@ -1,4 +1,5 @@
 KtSamConstructorSymbol:
+  annotationsList: []
   callableIdIfNonLocal: java/lang/Runnable
   hasStableParameterNames: true
   isExtension: false

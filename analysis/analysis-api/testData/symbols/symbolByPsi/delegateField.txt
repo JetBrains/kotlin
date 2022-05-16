@@ -87,6 +87,7 @@ KtNamedClassOrObjectSymbol:
   deprecationStatus: null
 
 KtAnonymousFunctionSymbol:
+  annotationsList: []
   callableIdIfNonLocal: null
   hasStableParameterNames: true
   isExtension: false
@@ -132,6 +133,7 @@ KtKotlinPropertySymbol:
   setterDeprecationStatus: null
 
 KtAnonymousFunctionSymbol:
+  annotationsList: []
   callableIdIfNonLocal: null
   hasStableParameterNames: true
   isExtension: false
