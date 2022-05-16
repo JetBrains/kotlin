@@ -122,6 +122,16 @@ object BuilderConfigurator : AbstractBuilderConfigurator<FirTreeBuilder>(FirTree
             useTypes(emptyArgumentListType, emptyAnnotationArgumentMappingType, implicitTypeRefType)
         }
 
+        builder(errorAnnotationCall) {
+            parents += callBuilder
+            default("argumentList") {
+                value = "FirEmptyArgumentList"
+            }
+            default("argumentMapping", "FirEmptyAnnotationArgumentMapping")
+            default("annotationTypeRef", "FirImplicitTypeRefImpl(null)")
+            useTypes(emptyArgumentListType, emptyAnnotationArgumentMappingType, implicitTypeRefType)
+        }
+
         builder(arrayOfCall) {
             parents += callBuilder
         }
