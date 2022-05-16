@@ -299,6 +299,11 @@ public class LazyBodyIsNotTouchedTilContractsPhaseTestGenerated extends Abstract
         runTest("compiler/fir/analysis-tests/testData/resolve/kt41990.kt");
     }
 
+    @TestMetadata("kt46483.kt")
+    public void testKt46483() throws Exception {
+        runTest("compiler/fir/analysis-tests/testData/resolve/kt46483.kt");
+    }
+
     @TestMetadata("labelAndReceiverForInfix.kt")
     public void testLabelAndReceiverForInfix() throws Exception {
         runTest("compiler/fir/analysis-tests/testData/resolve/labelAndReceiverForInfix.kt");

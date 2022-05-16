@@ -823,7 +823,7 @@ internal class WrongExtensionFunctionTypeWarningImpl(
 
 internal class AnnotationInWhereClauseImpl(
     override val firDiagnostic: KtPsiDiagnostic,
-    override val token: ValidityToken,
+    override val token: KtLifetimeToken,
 ) : KtFirDiagnostic.AnnotationInWhereClause(), KtAbstractFirDiagnostic<KtAnnotationEntry>
 
 internal class OptInUsageImpl(

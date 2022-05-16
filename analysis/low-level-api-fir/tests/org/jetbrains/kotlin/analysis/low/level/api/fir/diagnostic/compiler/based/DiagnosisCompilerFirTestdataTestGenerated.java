@@ -351,6 +351,12 @@ public class DiagnosisCompilerFirTestdataTestGenerated extends AbstractDiagnosis
         }
 
         @Test
+        @TestMetadata("kt46483.kt")
+        public void testKt46483() throws Exception {
+            runTest("compiler/fir/analysis-tests/testData/resolve/kt46483.kt");
+        }
+
+        @Test
         @TestMetadata("labelAndReceiverForInfix.kt")
         public void testLabelAndReceiverForInfix() throws Exception {
             runTest("compiler/fir/analysis-tests/testData/resolve/labelAndReceiverForInfix.kt");
