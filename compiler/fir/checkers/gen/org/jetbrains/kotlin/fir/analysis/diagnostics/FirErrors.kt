@@ -255,6 +255,7 @@ object FirErrors {
     val NOT_A_CLASS by error0<PsiElement>()
     val WRONG_EXTENSION_FUNCTION_TYPE by error0<KtAnnotationEntry>()
     val WRONG_EXTENSION_FUNCTION_TYPE_WARNING by warning0<KtAnnotationEntry>()
+    val ANNOTATION_IN_WHERE_CLAUSE by error0<KtAnnotationEntry>()
 
     // OptIn
     val OPT_IN_USAGE by warning2<PsiElement, FqName, String>(SourceElementPositioningStrategies.REFERENCE_BY_QUALIFIED)
