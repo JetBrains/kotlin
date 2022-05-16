@@ -27,7 +27,12 @@ fun ClassVisibility.findMember(signature: JvmMemberSignature): MemberVisibility?
     members[signature] ?: partVisibilities.mapNotNull { it.members[signature] }.firstOrNull()
 
 
-data class MemberVisibility(val member: JvmMemberSignature, val visibility: Flags?, val isReified: Boolean)
+data class MemberVisibility(
+    val member: JvmMemberSignature,
+    val visibility: Flags?,
+    val isReified: Boolean,
+    val annotationHolders: PropertyAnnotationHolders
+)
 
 private fun isPublic(visibility: Flags?, isPublishedApi: Boolean) =
     visibility == null
@@ -76,14 +81,28 @@ fun KotlinClassMetadata?.isFileOrMultipartFacade() =
 
 fun KotlinClassMetadata?.isSyntheticClass() = this is KotlinClassMetadata.SyntheticClass
 
+class PropertyAnnotationHolders(
+    val field: JvmMemberSignature?,
+    val method: JvmMethodSignature?,
+) {
+    companion object {
+        val None = PropertyAnnotationHolders(null, null)
+    }
+}
+
 fun KotlinClassMetadata.toClassVisibility(classNode: ClassNode): ClassVisibility {
     var flags: Flags? = null
     var _facadeClassName: String? = null
     val members = mutableListOf<MemberVisibility>()
 
-    fun addMember(signature: JvmMemberSignature?, flags: Flags, isReified: Boolean) {
+    fun addMember(
+        signature: JvmMemberSignature?,
+        flags: Flags,
+        isReified: Boolean,
+        annotationHolders: PropertyAnnotationHolders
+    ) {
         if (signature != null) {
-            members.add(MemberVisibility(signature, flags, isReified))
+            members.add(MemberVisibility(signature, flags, isReified, annotationHolders))
         }
     }
 
@@ -93,7 +112,7 @@ fun KotlinClassMetadata.toClassVisibility(classNode: ClassNode): ClassVisibility
                 flags = klass.flags
 
                 for (constructor in klass.constructors) {
-                    addMember(constructor.signature, constructor.flags, isReified = false)
+                    addMember(constructor.signature, constructor.flags, isReified = false, annotationHolders = PropertyAnnotationHolders.None)
                 }
             }
         is KotlinClassMetadata.FileFacade ->
@@ -107,20 +126,22 @@ fun KotlinClassMetadata.toClassVisibility(classNode: ClassNode): ClassVisibility
         fun List<KmTypeParameter>.containsReified() = any { Flag.TypeParameter.IS_REIFIED(it.flags) }
 
         for (function in container.functions) {
-            addMember(function.signature, function.flags, function.typeParameters.containsReified())
+            addMember(function.signature, function.flags, function.typeParameters.containsReified(), PropertyAnnotationHolders.None)
         }
 
         for (property in container.properties) {
             val isReified = property.typeParameters.containsReified()
-            addMember(property.getterSignature, property.getterFlags, isReified)
-            addMember(property.setterSignature, property.setterFlags, isReified)
+            val annotationDelegates = PropertyAnnotationHolders(property.fieldSignature, property.syntheticMethodForAnnotations)
+
+            addMember(property.getterSignature, property.getterFlags, isReified, annotationDelegates)
+            addMember(property.setterSignature, property.setterFlags, isReified, annotationDelegates)
 
             val fieldVisibility = when {
                 Flag.Property.IS_LATEINIT(property.flags) -> property.setterFlags
                 property.getterSignature == null && property.setterSignature == null -> property.flags // JvmField or const case
                 else -> flagsOf(Flag.IS_PRIVATE)
             }
-            addMember(property.fieldSignature, fieldVisibility, isReified = false)
+            addMember(property.fieldSignature, fieldVisibility, isReified = false, annotationHolders = PropertyAnnotationHolders.None)
         }
     }
 
