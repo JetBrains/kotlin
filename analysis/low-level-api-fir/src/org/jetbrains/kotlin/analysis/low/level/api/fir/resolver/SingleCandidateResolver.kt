@@ -82,7 +82,8 @@ class SingleCandidateResolver(
             calleeReference = FirNamedReferenceWithCandidate(
                 source = null,
                 name = resolutionParameters.callableSymbol.callableId.callableName,
-                candidate = candidate
+                candidate = candidate,
+                prefixParts = emptyList(),
             )
         }
         val expectedType = resolutionParameters.expectedType ?: bodyResolveComponents.noExpectedType
