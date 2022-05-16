@@ -34,6 +34,7 @@ import org.jetbrains.kotlin.gradle.tasks.configuration.*
 import org.jetbrains.kotlin.gradle.tasks.locateTask
 import org.jetbrains.kotlin.gradle.tasks.registerTask
 import org.jetbrains.kotlin.gradle.utils.SingleWarningPerBuild
+import org.jetbrains.kotlin.gradle.utils.isParentOf
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.ObjectOutputStream
@@ -470,16 +471,13 @@ class Kapt3GradleSubplugin @Inject internal constructor(private val registry: To
     private fun Kapt3SubpluginContext.createKaptGenerateStubsTask(): TaskProvider<KaptGenerateStubsTask> {
         val kaptTaskName = getKaptTaskName("kaptGenerateStubs")
         val kaptTaskProvider = project.registerTask<KaptGenerateStubsTask>(kaptTaskName)
-        val projectDir = project.projectDir
 
         val taskConfig = KaptGenerateStubsConfig(kotlinCompilation, kotlinCompile)
         taskConfig.configureTask {
             it.stubsDir.set(getKaptStubsDir())
             it.destinationDirectory.set(getKaptIncrementalDataDir())
-            it.exclude(
-                "${sourcesOutputDir.relativeTo(projectDir).path}/**",
-                "${kotlinSourcesOutputDir.relativeTo(projectDir).path}/**"
-            )
+            val generatedSourcesDirs = listOf(sourcesOutputDir, kotlinSourcesOutputDir)
+            it.exclude { fileElement -> generatedSourcesDirs.any { dir -> dir.isParentOf(fileElement.file) } }
             it.kaptClasspath.from(kaptClasspathConfigurations)
         }
 
