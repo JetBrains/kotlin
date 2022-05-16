@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.builder.*
 import org.jetbrains.kotlin.fir.declarations.impl.*
 import org.jetbrains.kotlin.fir.declarations.utils.*
+import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
 import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
 import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
 import org.jetbrains.kotlin.fir.expressions.*
@@ -367,7 +368,8 @@ class DeclarationsConverter(
      */
     fun convertAnnotationEntry(
         unescapedAnnotation: LighterASTNode,
-        defaultAnnotationUseSiteTarget: AnnotationUseSiteTarget? = null
+        defaultAnnotationUseSiteTarget: AnnotationUseSiteTarget? = null,
+        diagnostic: ConeDiagnostic? = null,
     ): FirAnnotationCall {
         var annotationUseSiteTarget: AnnotationUseSiteTarget? = null
         lateinit var constructorCalleePair: Pair<FirTypeRef, List<FirExpression>>
@@ -379,21 +381,34 @@ class DeclarationsConverter(
         }
         val qualifier = (constructorCalleePair.first as? FirUserTypeRef)?.qualifier?.last()
         val name = qualifier?.name ?: Name.special("<no-annotation-name>")
-        return buildAnnotationCall {
-            source = unescapedAnnotation.toFirSourceElement()
-            useSiteTarget = annotationUseSiteTarget ?: defaultAnnotationUseSiteTarget
-            annotationTypeRef = constructorCalleePair.first
-            calleeReference = buildSimpleNamedReference {
-                source = unescapedAnnotation
-                    .getChildNodeByType(CONSTRUCTOR_CALLEE)
-                    ?.getChildNodeByType(TYPE_REFERENCE)
-                    ?.getChildNodeByType(USER_TYPE)
-                    ?.getChildNodeByType(REFERENCE_EXPRESSION)
-                    ?.toFirSourceElement()
-                this.name = name
+        val theCalleeReference = buildSimpleNamedReference {
+            source = unescapedAnnotation
+                .getChildNodeByType(CONSTRUCTOR_CALLEE)
+                ?.getChildNodeByType(TYPE_REFERENCE)
+                ?.getChildNodeByType(USER_TYPE)
+                ?.getChildNodeByType(REFERENCE_EXPRESSION)
+                ?.toFirSourceElement()
+            this.name = name
+        }
+        return if (diagnostic == null) {
+            buildAnnotationCall {
+                source = unescapedAnnotation.toFirSourceElement()
+                useSiteTarget = annotationUseSiteTarget ?: defaultAnnotationUseSiteTarget
+                annotationTypeRef = constructorCalleePair.first
+                calleeReference = theCalleeReference
+                extractArgumentsFrom(constructorCalleePair.second)
+                typeArguments += qualifier?.typeArgumentList?.typeArguments ?: listOf()
             }
-            extractArgumentsFrom(constructorCalleePair.second)
-            typeArguments += qualifier?.typeArgumentList?.typeArguments ?: listOf()
+        } else {
+            buildErrorAnnotationCall {
+                source = unescapedAnnotation.toFirSourceElement()
+                useSiteTarget = annotationUseSiteTarget ?: defaultAnnotationUseSiteTarget
+                annotationTypeRef = constructorCalleePair.first
+                this.diagnostic = diagnostic
+                calleeReference = theCalleeReference
+                extractArgumentsFrom(constructorCalleePair.second)
+                typeArguments += qualifier?.typeArgumentList?.typeArguments ?: listOf()
+            }
         }
     }
 
@@ -1869,11 +1884,15 @@ class DeclarationsConverter(
         lateinit var identifier: String
         lateinit var firType: FirTypeRef
         lateinit var referenceExpression: LighterASTNode
+
+        val diagnostic = ConeSimpleDiagnostic(
+            "Type parameter annotations are not allowed inside where clauses", DiagnosticKind.AnnotationNotAllowed,
+        )
+
         val annotations = mutableListOf<FirAnnotation>()
         typeConstraint.forEachChildren {
             when (it.tokenType) {
-                //annotations will be saved later, on mapping stage with type parameters
-                ANNOTATION, ANNOTATION_ENTRY -> annotations += convertAnnotation(it)
+                ANNOTATION_ENTRY -> annotations += convertAnnotationEntry(it, diagnostic = diagnostic)
                 REFERENCE_EXPRESSION -> {
                     identifier = it.asText
                     referenceExpression = it
