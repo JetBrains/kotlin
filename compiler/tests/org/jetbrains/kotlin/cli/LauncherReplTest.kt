@@ -5,35 +5,33 @@
 
 package org.jetbrains.kotlin.cli
 
-import com.intellij.openapi.util.SystemInfo
 import junit.framework.TestCase
+import org.jetbrains.kotlin.cli.common.CompilerSystemProperties
 import org.jetbrains.kotlin.test.TestCaseWithTmpdir
 import org.jetbrains.kotlin.utils.PathUtil
-import java.io.File
-import java.io.InputStream
+import org.junit.Assert
+import java.io.*
 import java.util.concurrent.TimeUnit
 import kotlin.concurrent.thread
 
 class LauncherReplTest : TestCaseWithTmpdir() {
 
     private fun runInteractive(
-        executableName: String,
-        vararg inputs: String,
-        expectedOutPatterns: List<String> = emptyList(),
+        vararg inputsToExpectedOutputs: Pair<String?, String>,
         expectedExitCode: Int = 0,
         workDirectory: File? = null
     ) {
-        val executableFileName = if (SystemInfo.isWindows) "$executableName.bat" else executableName
-        val launcherFile = File(PathUtil.kotlinPathsForDistDirectory.homePath, "bin/$executableFileName")
-        assertTrue("Launcher script not found, run dist task: ${launcherFile.absolutePath}", launcherFile.exists())
+        val javaExecutable = File(File(CompilerSystemProperties.JAVA_HOME.safeValue, "bin"), "java")
 
-        val processBuilder = ProcessBuilder(launcherFile.absolutePath)
+        val processBuilder = ProcessBuilder(
+            javaExecutable.absolutePath,
+            "-jar",
+            File(PathUtil.kotlinPathsForDistDirectory.homePath, "lib/kotlin-compiler.jar").absolutePath,
+        )
         if (workDirectory != null) {
             processBuilder.directory(workDirectory)
         }
         val process = processBuilder.start()
-
-        val inputIter = inputs.iterator()
 
         data class ExceptionContainer(
             var value: Throwable? = null
@@ -43,9 +41,14 @@ class LauncherReplTest : TestCaseWithTmpdir() {
             val out = ArrayList<String>()
             val exceptionContainer = ExceptionContainer()
             val thread = thread {
+                val promptRegex = Regex("(?:\\u001B\\p{Graph}+)*(?:>>>|\\.\\.\\.)")
                 try {
-                    reader().forEachLine {
-                        out.add(it.trim())
+                    reader().forEachLine { rawLine ->
+                        promptRegex.split(rawLine).forEach { line ->
+                            if (line.isNotEmpty()) {
+                                out.add(line.trim())
+                            }
+                        }
                     }
                 } catch (e: Throwable) {
                     exceptionContainer.value = e
@@ -57,19 +60,12 @@ class LauncherReplTest : TestCaseWithTmpdir() {
         val (stdoutThread, stdoutException, processOut) = process.inputStream.captureStream()
         val (stderrThread, stderrException, processErr) = process.errorStream.captureStream()
 
+        val inputIter = inputsToExpectedOutputs.iterator()
         var stdinException: Throwable? = null
         val stdinThread =
             thread {
                 try {
-                    val writer = process.outputStream.writer()
-                    val eol = System.getProperty("line.separator")
-                    while (inputIter.hasNext()) {
-                        with(writer) {
-                            write(inputIter.next())
-                            write(eol)
-                            flush()
-                        }
-                    }
+                    writeInputsToOutStream(process.outputStream, inputIter)
                 } catch (e: Throwable) {
                     stdinException = e
                 }
@@ -90,15 +86,7 @@ class LauncherReplTest : TestCaseWithTmpdir() {
             TestCase.assertNull(stderrException.value)
             TestCase.assertFalse("stdin thread not finished", stdinThread.isAlive)
             TestCase.assertNull(stdinException)
-            TestCase.assertEquals(expectedOutPatterns.size, processOut.size)
-            for (i in 0 until expectedOutPatterns.size) {
-                val expectedPattern = expectedOutPatterns[i]
-                val actualLine = processOut[i]
-                TestCase.assertTrue(
-                    "line \"$actualLine\" do not match with expected pattern \"$expectedPattern\"",
-                    Regex(expectedPattern).matches(actualLine)
-                )
-            }
+            assertOutputMatches(inputsToExpectedOutputs, processOut)
             TestCase.assertEquals(expectedExitCode, process.exitValue())
             TestCase.assertFalse(inputIter.hasNext())
 
@@ -110,17 +98,76 @@ class LauncherReplTest : TestCaseWithTmpdir() {
         }
     }
 
+    private fun writeInputsToOutStream(dataOutStream: OutputStream, inputIter: Iterator<Pair<String?, String>>) {
+        val writer = dataOutStream.writer()
+        val eol = System.getProperty("line.separator")
+
+        fun writeNextInput(nextInput: String) {
+            with(writer) {
+                write(nextInput)
+                write(eol)
+                flush()
+            }
+        }
+
+        while (inputIter.hasNext()) {
+            val nextInput = inputIter.next().first ?: continue
+            writeNextInput(nextInput)
+        }
+        writeNextInput(":quit")
+    }
+
+    private fun assertOutputMatches(
+        inputsToExpectedOutputs: Array<out Pair<String?, String>>,
+        actualOut: List<String>
+    ) {
+        val inputsToExpectedOutputsIter = inputsToExpectedOutputs.iterator()
+        val actualIter = actualOut.iterator()
+
+        while (true) {
+            if (inputsToExpectedOutputsIter.hasNext() && !actualIter.hasNext()) {
+                Assert.fail("missing output for expected patterns:\n${inputsToExpectedOutputsIter.asSequence().joinToString("\n") { it.second } }")
+            }
+            if (!inputsToExpectedOutputsIter.hasNext() || !actualIter.hasNext()) break
+            val (input, expectedPattern) = inputsToExpectedOutputsIter.next()
+            val actualLine = actualIter.next()
+            val strippedActualLine = if (input != null) actualLine.removePrefix(input) else actualLine
+            assertTrue(
+                "line \"$strippedActualLine\" do not match with expected pattern \"$expectedPattern\"",
+                Regex(expectedPattern).matches(strippedActualLine)
+            )
+        }
+    }
+
+    val replOutHeader = arrayOf(
+        null to "Welcome to Kotlin version .*",
+        null to "Type :help for help, :quit for quit"
+    )
+
     fun testSimpleRepl() {
         runInteractive(
-            "kotlinc",
-            "println(42)",
-            ":quit",
-            expectedOutPatterns = listOf(
-                "Welcome to Kotlin version .*",
-                "Type :help for help, :quit for quit",
-                ".*42$",
-                ".*"
-            )
+            *replOutHeader,
+            "println(42)" to "42",
+        )
+    }
+
+    fun testReplResultFormatting() {
+        runInteractive(
+            *replOutHeader,
+            "class C" to "",
+            "C()" to "res1: Line_0\\.C = Line_0\\\$C@\\p{XDigit}+",
+        )
+    }
+
+    fun testReplValueClassConversion() {
+        runInteractive(
+            *replOutHeader,
+            "import kotlin.time.Duration.Companion.nanoseconds" to "",
+            "Result.success(\"OK\")" to "res1: kotlin\\.Result<kotlin\\.String> = Success\\(OK\\)",
+            "0U-1U" to "res2: kotlin.UInt = 4294967295",
+            "10.nanoseconds" to "res3: kotlin.time.Duration = 10ns",
+            "@JvmInline value class Z(val x: Int)" to "",
+            "Z(42)" to "res5: Line_4\\.Z = Z\\(x=42\\)",
         )
     }
 }

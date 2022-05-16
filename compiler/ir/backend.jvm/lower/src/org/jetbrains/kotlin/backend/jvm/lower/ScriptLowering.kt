@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrAnonymousInitializerImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrClassImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrExternalPackageFragmentImpl
+import org.jetbrains.kotlin.ir.descriptors.toIrBasedKotlinType
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrClassReferenceImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetFieldImpl
@@ -290,7 +291,7 @@ private class ScriptsToClassesLowering(val context: JvmBackendContext, val inner
 
         irScript.resultProperty?.owner?.let { irResultProperty ->
             context.state.scriptSpecific.resultFieldName = irResultProperty.name.identifier
-            context.state.scriptSpecific.resultTypeString = irResultProperty.backingField?.type?.render()
+            context.state.scriptSpecific.resultType = irResultProperty.backingField?.type?.toIrBasedKotlinType()
         }
     }
 

@@ -126,7 +126,7 @@ interface ReplEvalAction {
 }
 
 sealed class ReplEvalResult : Serializable {
-    class ValueResult(val name: String, val value: Any?, val type: String?) : ReplEvalResult() {
+    class ValueResult(val name: String, val value: Any?, val type: String?, val snippetInstance: Any? = null) : ReplEvalResult() {
         override fun toString(): String {
             val v = if (value is Function<*>) "<function${TypeIntrinsics.getFunctionArity(value)}>" else value
             return "$name: $type = $v"

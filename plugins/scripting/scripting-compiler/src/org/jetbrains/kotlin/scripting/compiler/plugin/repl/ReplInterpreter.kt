@@ -189,7 +189,7 @@ class ReplInterpreter(
                             is ResultWithDiagnostics.Success -> {
                                 when (val evalValue = evalResult.value.get().result) {
                                     is ResultValue.Unit -> ReplEvalResult.UnitResult()
-                                    is ResultValue.Value -> ReplEvalResult.ValueResult(evalValue.name, evalValue.value, evalValue.type)
+                                    is ResultValue.Value -> ReplEvalResult.ValueResult(evalValue.name, evalValue.value, evalValue.type, evalValue.scriptInstance)
                                     is ResultValue.Error -> ReplEvalResult.Error.Runtime(evalValue.renderError())
                                     else -> ReplEvalResult.Error.Runtime("Error: snippet is not evaluated")
                                 }

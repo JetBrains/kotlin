@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.cli.common.repl.ReplEvalResult
 import org.jetbrains.kotlin.cli.common.repl.replUnescapeLineBreaks
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.KotlinCompilerVersion
+import org.jetbrains.kotlin.descriptors.runtime.components.tryLoadClass
 import org.jetbrains.kotlin.scripting.compiler.plugin.repl.configuration.ConsoleReplConfiguration
 import org.jetbrains.kotlin.scripting.compiler.plugin.repl.configuration.IdeReplConfiguration
 import org.jetbrains.kotlin.scripting.compiler.plugin.repl.configuration.ReplConfiguration
@@ -99,13 +100,43 @@ class ReplFromTerminal(
         }
     }
 
+    private fun tryInterpretResultAsValueClass(evalResult: ReplEvalResult.ValueResult): String? {
+        // since value classes are inlined, simple evalResult.value.toString() may provide "incorrect" results (see e.g. #KT-45065)
+        // so we're trying to restore original type by the type name stored in the evalResult.type
+        val resultClass = evalResult.value?.javaClass
+        val resultClassTypeName = resultClass?.typeName ?: return null
+        val expectedType = evalResult.type?.substringBefore('<') ?: return null
+        if (expectedType == resultClassTypeName) return null
+        val expectedTypesPossiblyInner = generateSequence(expectedType) {
+            val lastDot = it.lastIndexOf('.')
+            if (lastDot > 0) buildString {
+                append(it.substring(0, lastDot))
+                append('$')
+                append(it.substring(lastDot + 1))
+            } else null
+        }
+        val classLoader = evalResult.snippetInstance?.javaClass?.classLoader
+            ?: resultClass.classLoader
+            ?: ReplFromTerminal::class.java.classLoader
+        val expectedClass = expectedTypesPossiblyInner.firstNotNullOfOrNull { classLoader.tryLoadClass(it) } ?: return null
+        val boxMethod = expectedClass.declaredMethods.find { ctor ->
+            ctor.name == "box-impl"
+        } ?: return null
+        return try {
+            val valueString = boxMethod.invoke(null, evalResult.value).toString()
+            "${evalResult.name}: ${evalResult.type} = $valueString"
+        } catch (e: Throwable) {
+            null
+        }
+    }
+
     private fun eval(line: String): ReplEvalResult {
         val evalResult = replInterpreter.eval(line)
         when (evalResult) {
             is ReplEvalResult.ValueResult, is ReplEvalResult.UnitResult -> {
                 writer.notifyCommandSuccess()
                 if (evalResult is ReplEvalResult.ValueResult) {
-                    writer.outputCommandResult(evalResult.toString())
+                    writer.outputCommandResult(tryInterpretResultAsValueClass(evalResult) ?: evalResult.toString())
                 }
             }
             is ReplEvalResult.Error.Runtime -> writer.outputRuntimeError(evalResult.message)
