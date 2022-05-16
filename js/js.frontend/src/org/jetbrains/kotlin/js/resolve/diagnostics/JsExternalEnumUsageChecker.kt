@@ -39,7 +39,7 @@ object JsExternalEnumUsageChecker : CallChecker {
 
     private fun ResolvedCall<*>.hasExternalEnumAsTypeArgument(): Boolean {
         val callee = candidateDescriptor ?: return false
-        val typeParameterDescriptor = callee.typeParameters.takeIf { it.size == 1 }?.getOrNull(0) ?: return false
+        val typeParameterDescriptor = callee.typeParameters.singleOrNull() ?: return false
         return isExternalEnum(typeArguments[typeParameterDescriptor]?.constructor?.declarationDescriptor)
     }
 
@@ -53,7 +53,7 @@ object JsExternalEnumUsageChecker : CallChecker {
 
     private fun ResolvedCall<*>.isFakeOverriddenSyntheticPropertyAccess(): Boolean {
         val propertyAccess = (candidateDescriptor as? PropertyDescriptor)?.takeIf { it.kind == CallableMemberDescriptor.Kind.FAKE_OVERRIDE } ?: return false
-        val original = propertyAccess.overriddenDescriptors.takeIf { it.size == 1 }?.first() ?: return false
+        val original = propertyAccess.overriddenDescriptors.singleOrNull() ?: return false
         return original.containingDeclaration.fqNameOrNull() == enumFqName
     }
 }
