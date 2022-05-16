@@ -1,4 +1,5 @@
 KtEnumEntrySymbol:
+  annotationsList: []
   callableIdIfNonLocal: /X.Y
   containingEnumClassIdIfNonLocal: X
   isExtension: false
@@ -11,6 +12,7 @@ KtEnumEntrySymbol:
   deprecationStatus: null
 
 KtEnumEntrySymbol:
+  annotationsList: []
   callableIdIfNonLocal: /X.Z
   containingEnumClassIdIfNonLocal: X
   isExtension: false

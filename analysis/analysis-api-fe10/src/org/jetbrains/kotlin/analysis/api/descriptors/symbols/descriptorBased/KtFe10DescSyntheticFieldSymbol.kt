@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased
 
 import org.jetbrains.kotlin.analysis.api.descriptors.Fe10AnalysisContext
+import org.jetbrains.kotlin.analysis.api.descriptors.symbols.base.KtFe10AnnotatedSymbol
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.base.KtFe10Symbol
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.toKtType
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.pointers.KtFe10DescSyntheticFieldSymbolPointer
@@ -18,6 +19,7 @@ import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtPsiBasedSymbolPointe
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtSymbolPointer
 import org.jetbrains.kotlin.analysis.api.types.KtType
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
+import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.impl.PropertyDescriptorImpl
 import org.jetbrains.kotlin.descriptors.impl.SyntheticFieldDescriptor
 import org.jetbrains.kotlin.load.kotlin.toSourceElement
@@ -28,12 +30,15 @@ import org.jetbrains.kotlin.resolve.source.getPsi
 internal class KtFe10DescSyntheticFieldSymbol(
     val descriptor: SyntheticFieldDescriptor,
     override val analysisContext: Fe10AnalysisContext
-) : KtBackingFieldSymbol(), KtFe10Symbol {
+) : KtBackingFieldSymbol(), KtFe10Symbol, KtFe10AnnotatedSymbol {
     override val owningProperty: KtKotlinPropertySymbol
         get() = withValidityAssertion {
             val kotlinProperty = descriptor.propertyDescriptor as PropertyDescriptorImpl
             KtFe10DescKotlinPropertySymbol(kotlinProperty, analysisContext)
         }
+
+    override val annotationsObject: Annotations
+        get() = descriptor.annotations
 
     override val returnType: KtType
         get() = withValidityAssertion { descriptor.propertyDescriptor.type.toKtType(analysisContext) }

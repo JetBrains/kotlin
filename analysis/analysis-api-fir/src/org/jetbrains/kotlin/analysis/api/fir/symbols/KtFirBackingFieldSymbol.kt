@@ -5,7 +5,9 @@
 
 package org.jetbrains.kotlin.analysis.api.fir.symbols
 
+import org.jetbrains.kotlin.analysis.api.annotations.KtAnnotationsList
 import org.jetbrains.kotlin.analysis.api.fir.KtSymbolByFirBuilder
+import org.jetbrains.kotlin.analysis.api.fir.annotations.KtFirAnnotationListForDeclaration
 import org.jetbrains.kotlin.analysis.api.fir.symbols.pointers.KtFirBackingFieldSymbolPointer
 import org.jetbrains.kotlin.analysis.api.symbols.KtBackingFieldSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtKotlinPropertySymbol
@@ -24,6 +26,11 @@ internal class KtFirBackingFieldSymbol(
     private val builder: KtSymbolByFirBuilder
 ) : KtBackingFieldSymbol(), KtFirSymbol<FirBackingFieldSymbol> {
     override val origin: KtSymbolOrigin get() = withValidityAssertion { super<KtBackingFieldSymbol>.origin }
+
+    override val annotationsList: KtAnnotationsList
+        get() = withValidityAssertion {
+            KtFirAnnotationListForDeclaration.create(firSymbol, firResolveSession.useSiteFirSession, token)
+        }
 
     override val returnType: KtType get() = withValidityAssertion { firSymbol.returnType(builder) }
 
