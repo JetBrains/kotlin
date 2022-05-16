@@ -1,0 +1,20 @@
+FILE: kt46483.kt
+    @R|kotlin/annotation/Repeatable|() @R|kotlin/annotation/Target|(allowedTargets = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE_PARAMETER|)) public final annotation class TypeParameterAnn : R|kotlin/Annotation| {
+        public constructor(name: R|kotlin/String|): R|TypeParameterAnn| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val name: R|kotlin/String| = R|<local>/name|
+            public get(): R|kotlin/String|
+
+    }
+    public abstract interface Generic<Z> : R|kotlin/Any| {
+    }
+    public final fun <@R|TypeParameterAnn|(name = String(T)) @R|TypeParameterAnn|(String(Prohibit me!!!)) T : R|kotlin/Any|, R|Generic<kotlin/String>|> whereClauseWithAnnotation(): R|kotlin/Unit| {
+    }
+    public final class Foo<@R|TypeParameterAnn|(name = String(T)) @R|TypeParameterAnn|(String(Prohibit me!!!)) T : R|kotlin/Any|, R|Generic<kotlin/String>|> : R|kotlin/Any| {
+        public constructor<@R|TypeParameterAnn|(name = String(T)) @R|TypeParameterAnn|(String(Prohibit me!!!)) T : R|kotlin/Any|, R|Generic<kotlin/String>|>(): R|Foo<T>| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
