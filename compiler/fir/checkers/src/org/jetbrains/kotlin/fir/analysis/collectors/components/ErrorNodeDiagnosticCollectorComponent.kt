@@ -46,6 +46,11 @@ class ErrorNodeDiagnosticCollectorComponent(
         }
     }
 
+    override fun visitErrorAnnotationCall(errorAnnotationCall: FirErrorAnnotationCall, data: CheckerContext) {
+        val source = errorAnnotationCall.source ?: return
+        reportFirDiagnostic(errorAnnotationCall.diagnostic, source, data)
+    }
+
     override fun visitErrorNamedReference(errorNamedReference: FirErrorNamedReference, data: CheckerContext) {
         val source = errorNamedReference.source ?: return
         val qualifiedAccessOrAnnotationCall = data.qualifiedAccessOrAnnotationCalls.lastOrNull()?.takeIf {
