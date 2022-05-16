@@ -21464,6 +21464,12 @@ public class FirBlackBoxCodegenTestGenerated extends AbstractFirBlackBoxCodegenT
         }
 
         @Test
+        @TestMetadata("kt52394.kt")
+        public void testKt52394() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/kt52394.kt");
+        }
+
+        @Test
         @TestMetadata("mangledDefaultParameterFunction.kt")
         public void testMangledDefaultParameterFunction() throws Exception {
             runTest("compiler/testData/codegen/box/inlineClasses/mangledDefaultParameterFunction.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());

@@ -17524,6 +17524,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
             runTest("compiler/testData/codegen/box/inlineClasses/kt51672.kt");
         }
 
+        @TestMetadata("kt52394.kt")
+        public void testKt52394() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/kt52394.kt");
+        }
+
         @TestMetadata("mangledDefaultParameterFunction.kt")
         public void testMangledDefaultParameterFunction() throws Exception {
             runTest("compiler/testData/codegen/box/inlineClasses/mangledDefaultParameterFunction.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
