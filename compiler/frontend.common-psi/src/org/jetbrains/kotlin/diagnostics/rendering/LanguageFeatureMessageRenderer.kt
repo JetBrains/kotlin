@@ -12,6 +12,9 @@ class LanguageFeatureMessageRenderer @JvmOverloads constructor(
     private val type: Type,
     private val useHtml: Boolean = false
 ) : DiagnosticParameterRenderer<Pair<LanguageFeature, LanguageVersionSettings>> {
+    private val additionalFeatureMessages = mapOf(
+        LanguageFeature.UnitConversionsOnArbitraryExpressions to "You can also change the original type of this expression to (...) -> Unit"
+    )
 
     enum class Type {
         UNSUPPORTED,
@@ -50,6 +53,10 @@ class LanguageFeatureMessageRenderer @JvmOverloads constructor(
             } else {
                 sb.append(" (see: ").append(hintUrl).append(")")
             }
+        }
+
+        if (feature in additionalFeatureMessages) {
+            sb.append(". ${additionalFeatureMessages[feature]}")
         }
 
         return sb.toString()
