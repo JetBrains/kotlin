@@ -9,6 +9,7 @@ import org.gradle.api.Action
 import org.gradle.api.Project
 import org.gradle.api.plugins.ExtensionAware
 import org.jetbrains.kotlin.gradle.dsl.*
+import org.jetbrains.kotlin.gradle.dsl.KotlinNativeArtifactDSL.ExperimentalArtifactDsl
 import org.jetbrains.kotlin.gradle.utils.castIsolatedKotlinPluginClassLoaderAware
 import javax.inject.Inject
 
@@ -22,6 +23,7 @@ internal fun Project.registerKotlinArtifactsExtension() {
 val Project.kotlinArtifactsExtension: KotlinArtifactsExtension
     get() = extensions.getByName(KOTLIN_ARTIFACTS_EXTENSION_NAME).castIsolatedKotlinPluginClassLoaderAware()
 
+@OptIn(ExperimentalArtifactDsl::class)
 abstract class KotlinNativeArtifactDSLImpl @Inject constructor(private val project: Project) : KotlinNativeArtifactDSL {
     companion object {
         private val UNSAFE_NAME_SYMBOLS = """\W""".toRegex()
