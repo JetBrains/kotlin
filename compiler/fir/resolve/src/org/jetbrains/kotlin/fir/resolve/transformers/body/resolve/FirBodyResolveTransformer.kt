@@ -219,6 +219,10 @@ open class FirBodyResolveTransformer(
         return expressionsTransformer.transformAnnotationCall(annotationCall, data)
     }
 
+    override fun transformErrorAnnotationCall(errorAnnotationCall: FirErrorAnnotationCall, data: ResolutionMode): FirStatement {
+        return transformAnnotationCall(errorAnnotationCall, data)
+    }
+
     override fun transformDelegatedConstructorCall(
         delegatedConstructorCall: FirDelegatedConstructorCall,
         data: ResolutionMode
