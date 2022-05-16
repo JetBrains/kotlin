@@ -9,6 +9,7 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.tree.IElementType
 import org.jetbrains.kotlin.*
 import org.jetbrains.kotlin.builtins.StandardNames.BACKING_FIELD
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
@@ -693,8 +694,28 @@ open class RawFirBuilder(
                 val owner = parameter.getStrictParentOfType<KtTypeParameterListOwner>() ?: return@buildTypeParameter
                 for (typeConstraint in owner.typeConstraints) {
                     val subjectName = typeConstraint.subjectTypeParameterName?.getReferencedNameAsName()
+
                     if (subjectName == parameterName) {
                         bounds += typeConstraint.boundTypeReference.toFirOrErrorType()
+                    }
+
+                    for (entry in typeConstraint.annotationEntries) {
+                        annotations += buildErrorAnnotationCall {
+                            source = entry.toFirSourceElement()
+                            useSiteTarget = entry.useSiteTarget?.getAnnotationUseSiteTarget()
+                            annotationTypeRef = entry.typeReference.toFirOrErrorType()
+                            diagnostic = ConeSimpleDiagnostic(
+                                "Type parameter annotations are not allowed inside where clauses", DiagnosticKind.AnnotationNotAllowed,
+                            )
+                            val name = (annotationTypeRef as? FirUserTypeRef)?.qualifier?.last()?.name
+                                ?: Name.special("<no-annotation-name>")
+                            calleeReference = buildSimpleNamedReference {
+                                source = (entry.typeReference?.typeElement as? KtUserType)?.referenceExpression?.toFirSourceElement()
+                                this.name = name
+                            }
+                            entry.extractArgumentsTo(this)
+                            typeArguments.appendTypeArguments(entry.typeArguments)
+                        }
                     }
                 }
                 addDefaultBoundIfNecessary()
