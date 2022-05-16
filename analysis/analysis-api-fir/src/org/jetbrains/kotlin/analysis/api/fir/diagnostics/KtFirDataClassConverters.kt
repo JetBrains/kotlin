@@ -955,6 +955,12 @@ internal val KT_DIAGNOSTIC_CONVERTER = KtDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
+    add(FirErrors.ANNOTATION_IN_WHERE_CLAUSE_ERROR) { firDiagnostic ->
+        AnnotationInWhereClauseErrorImpl(
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
     add(FirErrors.OPT_IN_USAGE) { firDiagnostic ->
         OptInUsageImpl(
             firDiagnostic.a,
