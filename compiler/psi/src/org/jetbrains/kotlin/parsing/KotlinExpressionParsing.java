@@ -699,9 +699,9 @@ public class KotlinExpressionParsing extends AbstractKotlinParsing {
         PsiBuilder.Marker expression = mark();
         boolean ok = parseAtomicExpression();
 
-        while (at(HASH)) {
+        while (ok && at(HASH)) {
             advance();
-            parseAtomicExpression();
+            ok = parseAtomicExpression();
             expression.done(HASH_QUALIFIED_EXPRESSION);
             expression = expression.precede();
         }
