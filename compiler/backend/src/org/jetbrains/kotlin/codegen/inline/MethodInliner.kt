@@ -49,7 +49,9 @@ class MethodInliner(
     private val sourceMapper: SourceMapCopier,
     private val inlineCallSiteInfo: InlineCallSiteInfo,
     private val overrideLineNumber: Boolean = false,
-    private val shouldPreprocessApiVersionCalls: Boolean = false
+    private val shouldPreprocessApiVersionCalls: Boolean = false,
+    private val defaultMaskStart: Int = -1,
+    private val defaultMaskEnd: Int = -1
 ) {
     private val languageVersionSettings = inliningContext.state.languageVersionSettings
     private val invokeCalls = ArrayList<InvokeCall>()
@@ -395,16 +397,20 @@ class MethodInliner(
         val reorderIrLambdaParameters = inliningContext.isInliningLambda &&
                 inliningContext.parent?.isInliningLambda == false &&
                 inliningContext.lambdaInfo is IrExpressionLambda
-        val newArgumentList = if (reorderIrLambdaParameters) {
+        val oldArgumentTypes = if (reorderIrLambdaParameters) {
             // In IR lambdas, captured variables come before real parameters, but after the extension receiver.
             // Move them to the end of the descriptor instead.
-            Type.getArgumentTypes(inliningContext.lambdaInfo!!.invokeMethod.descriptor) + parameters.capturedTypes
+            Type.getArgumentTypes(inliningContext.lambdaInfo!!.invokeMethod.descriptor)
         } else {
-            Type.getArgumentTypes(node.desc) + parameters.capturedTypes
+            Type.getArgumentTypes(node.desc)
         }
+        val oldArgumentOffsets = oldArgumentTypes.runningFold(0) { acc, type -> acc + type.size }
+        val newArgumentTypes = oldArgumentTypes.filterIndexed { index, _ ->
+            oldArgumentOffsets[index] !in defaultMaskStart..defaultMaskEnd
+        }.toTypedArray() + parameters.capturedTypes
         val transformedNode = MethodNode(
             Opcodes.API_VERSION, node.access, node.name,
-            Type.getMethodDescriptor(Type.getReturnType(node.desc), *newArgumentList),
+            Type.getMethodDescriptor(Type.getReturnType(node.desc), *newArgumentTypes),
             node.signature, node.exceptions?.toTypedArray()
         )
 
