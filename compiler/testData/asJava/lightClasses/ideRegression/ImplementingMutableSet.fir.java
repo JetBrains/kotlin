@@ -7,6 +7,8 @@ public final class SmartSet /* SmartSet*/<T>  extends kotlin.collections.Abstrac
 
   private int size;
 
+  private static final int ARRAY_THRESHOLD;
+
   @kotlin.jvm.JvmStatic()
   @org.jetbrains.annotations.NotNull()
   public static final <T> SmartSet<T> create();// <T>  create()
@@ -30,8 +32,6 @@ public final class SmartSet /* SmartSet*/<T>  extends kotlin.collections.Abstrac
 
 
 public static final class Companion /* SmartSet.Companion*/ {
-  private final int ARRAY_THRESHOLD;
-
   @kotlin.jvm.JvmStatic()
   @org.jetbrains.annotations.NotNull()
   public final <T> SmartSet<T> create();// <T>  create()

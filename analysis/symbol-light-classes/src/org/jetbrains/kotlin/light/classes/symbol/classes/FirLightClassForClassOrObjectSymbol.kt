@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.psi.KtClassBody
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.debugText.getDebugText
 import org.jetbrains.kotlin.psi.stubs.KotlinClassOrObjectStub
+import org.jetbrains.kotlin.utils.addToStdlib.applyIf
 import org.jetbrains.kotlin.utils.addToStdlib.ifFalse
 import org.jetbrains.kotlin.utils.addToStdlib.ifTrue
 
@@ -101,7 +102,9 @@ internal abstract class FirLightClassForClassOrObjectSymbol(
             analyzeWithSymbolAsContext(this) {
                 getDeclaredMemberScope().getCallableSymbols()
                     .filterIsInstance<KtPropertySymbol>()
-                    .filter { it.hasJvmFieldAnnotation() || it.hasJvmStaticAnnotation() || it is KtKotlinPropertySymbol && it.isConst }
+                    .applyIf(isInterface) {
+                        filter { it.hasJvmFieldAnnotation() || it.isConst }
+                    }
                     .mapTo(result) {
                         FirLightFieldForPropertySymbol(
                             propertySymbol = it,
@@ -109,13 +112,16 @@ internal abstract class FirLightClassForClassOrObjectSymbol(
                             containingClass = this@FirLightClassForClassOrObjectSymbol,
                             lightMemberOrigin = null,
                             isTopLevel = false,
-                            forceStatic = !it.hasJvmStaticAnnotation(),
+                            forceStatic = true,
                             takePropertyVisibility = true
                         )
                     }
             }
         }
     }
+
+    private val KtPropertySymbol.isConst: Boolean
+        get() = (this as? KtKotlinPropertySymbol)?.isConst == true
 
     private val _containingFile: PsiFile? by lazyPub {
 

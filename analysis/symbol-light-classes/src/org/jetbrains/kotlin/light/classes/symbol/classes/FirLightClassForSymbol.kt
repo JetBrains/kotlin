@@ -246,7 +246,10 @@ internal open class FirLightClassForSymbol(
             val propertySymbols = classOrObjectSymbol.getDeclaredMemberScope().getCallableSymbols()
                 .filterIsInstance<KtPropertySymbol>()
                 .applyIf(classOrObjectSymbol.isCompanionObject) {
-                    filterNot { it.hasJvmFieldAnnotation() || it is KtKotlinPropertySymbol && it.isConst }
+                    // All fields for companion object of classes are generated to the containing class
+                    // For interfaces, only @JvmField-annotated properties are generated to the containing class
+                    // Probably, the same should work for const vals but it doesn't at the moment (see KT-28294)
+                    filter { containingClass?.isInterface == true && !it.hasJvmFieldAnnotation() }
                 }
             val propertyGroups = propertySymbols.groupBy { it.isFromPrimaryConstructor }
 

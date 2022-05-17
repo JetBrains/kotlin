@@ -80,6 +80,12 @@ public final class Foo /* Foo*/ {
 
   public java.lang.String internalVarPrivateSet;
 
+  public static final int f1;
+
+  public static final int prop3;
+
+  public static int prop7;
+
   @org.jetbrains.annotations.NotNull()
   protected final java.lang.String getProtectedLateinitVar();//  getProtectedLateinitVar()
 
@@ -191,12 +197,6 @@ public final class Foo /* Foo*/ {
   }
 
 public static final class Companion /* Foo.Companion*/ {
-  private final int f1;
-
-  private final int prop3;
-
-  private int prop7;
-
   private  Companion();//  .ctor()
 
   public final int getF1();//  getF1()
