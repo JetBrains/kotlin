@@ -29,6 +29,10 @@ public static final class Companion /* A.Companion*/ {
 }
 
 public abstract interface B /* B*/ {
+  @kotlin.jvm.JvmField()
+  @org.jetbrains.annotations.NotNull()
+  public static final java.util.Collection<?> a;
+
   @org.jetbrains.annotations.NotNull()
   public static final B.Companion Companion;
 
