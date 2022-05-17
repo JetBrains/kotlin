@@ -27,6 +27,9 @@ class AtomicfuComponentRegistrar : ComponentRegistrar {
         registerExtensions(project)
     }
 
+    override val supportsK2: Boolean
+        get() = true
+
     companion object {
         fun registerExtensions(project: Project) {
             IrGenerationExtension.registerExtension(project, AtomicfuLoweringExtension()) }
