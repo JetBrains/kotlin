@@ -409,7 +409,7 @@ class KotlinMetadataTargetConfigurator :
         // Run this action immediately before the configuration first takes part in dependency resolution:
         configuration.withDependencies {
             val (unrequested, requested) = metadataDependencyResolutions
-                .partition { it is MetadataDependencyResolution.ExcludeAsUnrequested }
+                .partition { it is MetadataDependencyResolution.Exclude }
 
             unrequested.forEach {
                 val (group, name) = it.projectDependency?.run {
@@ -528,7 +528,7 @@ internal fun createMetadataDependencyTransformationClasspath(
             val artifactView = fromFiles.incoming.artifactView { view ->
                 view.componentFilter { id ->
                     allResolutionsByComponentId[id].let { resolutions ->
-                        resolutions == null || resolutions.any { it !is MetadataDependencyResolution.ExcludeAsUnrequested }
+                        resolutions == null || resolutions.any { it !is MetadataDependencyResolution.Exclude }
                     }
                 }
             }

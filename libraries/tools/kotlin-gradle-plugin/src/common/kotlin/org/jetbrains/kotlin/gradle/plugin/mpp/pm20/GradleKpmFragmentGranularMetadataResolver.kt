@@ -134,7 +134,7 @@ internal class GradleKpmFragmentGranularMetadataResolver(
         // FIXME this code is based on whole components; use module IDs with classifiers instead
         val resultSourceComponents = results.mapTo(mutableSetOf()) { it.dependency }
         resolvedComponentsByModuleId.values.minus(resultSourceComponents).forEach {
-            results.add(MetadataDependencyResolution.ExcludeAsUnrequested(it, it.toProjectOrNull(project)))
+            results.add(MetadataDependencyResolution.Exclude.Unrequested(it, it.toProjectOrNull(project)))
         }
 
         return results

@@ -101,7 +101,7 @@ class HierarchicalMppIT : KGPBaseTest() {
                 val thirdPartyLibApiVisibility = reports.filter { report ->
                     report.groupAndModule.startsWith("com.example.thirdparty:third-party-lib") && report.scope == "api"
                 }
-                val jvmJsSourceSets = setOf("jvmMain", "jsMain", "jvmTest", "jsTest", "jvmAndJsMain", "jvmAndJsTest")
+                val jvmJsSourceSets = setOf("jvmAndJsMain", "jvmAndJsTest")
                 thirdPartyLibApiVisibility.forEach {
                     if (it.sourceSetName in jvmJsSourceSets)
                         assertTrue("$it") { it.allVisibleSourceSets == setOf("commonMain") }
@@ -767,6 +767,76 @@ class HierarchicalMppIT : KGPBaseTest() {
             val options = buildOptions.copy(configurationCache = true, configurationCacheProblems = BaseGradleIT.ConfigurationCacheProblems.FAIL)
             buildAndFail("clean", "assemble", buildOptions = options) {
                 assertOutputContains("""Task \S+ is not compatible with configuration cache""".toRegex())
+            }
+        }
+    }
+
+    @GradleTest
+    @DisplayName("KT-52216: [TYPE_MISMATCH] Caused by unexpected metadata dependencies of leaf source sets")
+    fun `test default platform compilation source set has no metadata dependencies`(gradleVersion: GradleVersion) {
+        with(project("kt-52216", gradleVersion = gradleVersion)) {
+            build(":lib:publish")
+            testDependencyTransformations("p1") { reports ->
+                for (leafSourceSetName in listOf("jvmMain", "jsMain", "linuxX64Main")) {
+                    val report = reports.singleOrNull {
+                        it.sourceSetName == leafSourceSetName && it.scope == "implementation" && it.groupAndModule == "kt52216:lib"
+                    }
+                    assertNotNull(report, "No transformation for $leafSourceSetName implementation")
+                    assert(report.allVisibleSourceSets.isEmpty()) {
+                        "All visible source sets for leaf platform source set should always be empty, but found: ${
+                            report.allVisibleSourceSets.joinToString(prefix = "[", postfix = "]", separator = "; ")
+                        }"
+                    }
+                    assert(report.newVisibleSourceSets.isEmpty()) {
+                        "New visible source sets for leaf platform source set should always be empty, but found: ${
+                            report.newVisibleSourceSets.joinToString(prefix = "[", postfix = "]", separator = "; ")
+                        }"
+                    }
+                }
+            }
+
+            testDependencyTransformations("p2") { reports ->
+                val commonReport = reports.singleOrNull {
+                    it.sourceSetName == "commonMain" && it.scope == "implementation" && it.groupAndModule == "kt52216:lib"
+                }
+                assertNotNull(commonReport, "No transformation for commonMain implementation")
+                assert(commonReport.allVisibleSourceSets.singleOrNull() == "commonMain") {
+                    "All visible source sets of commonMain don't include library's commonMain"
+                }
+                assert(commonReport.newVisibleSourceSets.singleOrNull() == "commonMain") {
+                    "New visible source sets of commonMain don't include library's commonMain"
+                }
+
+                for (targetName in listOf("jvm", "js", "linuxX64")) {
+                    val intermediateReport = reports.singleOrNull {
+                        it.sourceSetName == "${targetName}Intermediate" && it.scope == "implementation" && it.groupAndModule == "kt52216:lib"
+                    }
+                    val leafReport = reports.singleOrNull {
+                        it.sourceSetName == "${targetName}Main" && it.scope == "implementation" && it.groupAndModule == "kt52216:lib"
+                    }
+
+                    assertNotNull(intermediateReport, "No transformation for ${targetName}Intermediate implementation")
+                    assertNotNull(leafReport, "No transformation for ${targetName}Main implementation")
+
+                    assert(intermediateReport.allVisibleSourceSets.singleOrNull() == "commonMain") {
+                        "Intermediate transformation should contain commonMain in all visible source sets, but it doesn't for target: $targetName"
+                    }
+                    assert(leafReport.allVisibleSourceSets.isEmpty()) {
+                        "All visible source sets for leaf platform source set should should be empty, but for target $targetName found: ${
+                            leafReport.allVisibleSourceSets.joinToString(prefix = "[", postfix = "]", separator = "; ")
+                        }"
+                    }
+                    assert(intermediateReport.newVisibleSourceSets.isEmpty()) {
+                        "New visible source sets for intermediate source set should should be empty, but for target $targetName found: ${
+                            leafReport.newVisibleSourceSets.joinToString(prefix = "[", postfix = "]", separator = "; ")
+                        }"
+                    }
+                    assert(leafReport.newVisibleSourceSets.isEmpty()) {
+                        "New visible source sets for leaf platform source set should always be empty, but for target $targetName found: ${
+                            leafReport.newVisibleSourceSets.joinToString(prefix = "[", postfix = "]", separator = "; ")
+                        }"
+                    }
+                }
             }
         }
     }

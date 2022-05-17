@@ -174,9 +174,12 @@ class DefaultKotlinSourceSet(
             val (group, name) = groupAndName
             val projectPath = resolution.projectDependency?.path
             when (resolution) {
+                // No metadata transformation leads to original dependency being used during import
                 is MetadataDependencyResolution.KeepOriginalDependency -> null
 
-                is MetadataDependencyResolution.ExcludeAsUnrequested ->
+                // We should pass empty transformation for excluded dependencies.
+                // No transformation at all will result in a composite metadata jar being used as a dependency.
+                is MetadataDependencyResolution.Exclude ->
                     MetadataDependencyTransformation(group, name, projectPath, null, emptySet(), emptyMap())
 
                 is MetadataDependencyResolution.ChooseVisibleSourceSets -> {
