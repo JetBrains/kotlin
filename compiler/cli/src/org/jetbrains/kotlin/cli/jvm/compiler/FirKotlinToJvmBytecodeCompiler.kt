@@ -104,6 +104,13 @@ object FirKotlinToJvmBytecodeCompiler {
                 return false
             }
         }
+        if (projectConfiguration.languageVersionSettings.supportsFeature(LanguageFeature.MultiPlatformProjects)) {
+            messageCollector.report(
+                CompilerMessageSeverity.ERROR,
+                "K2 compiler does not support multi-platform projects yet, so please remove -Xuse-k2 flag"
+            )
+            return false
+        }
 
         val outputs = ArrayList<Pair<FirResult, GenerationState>>(chunk.size)
         val targetIds = projectConfiguration.get(JVMConfigurationKeys.MODULES)?.map(::TargetId)
