@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.ExecClang
 import java.io.File
 import javax.inject.Inject
 import kotlinBuildProperties
-import isNativeRuntimeDebugInfoEnabled
 import org.gradle.api.Project
 import org.gradle.api.model.ObjectFactory
 import org.gradle.process.ExecOperations
@@ -133,7 +132,7 @@ abstract class CompileToBitcode @Inject constructor(
     val compilerFlags: List<String>
         get() {
             val commonFlags = listOfNotNull(
-                    "-gdwarf-2".takeIf { project.kotlinBuildProperties.isNativeRuntimeDebugInfoEnabled },
+                    "-gdwarf-2".takeIf { project.kotlinBuildProperties.getBoolean("kotlin.native.isNativeRuntimeDebugInfoEnabled", false) },
                     "-c", "-emit-llvm") + headersDirs.map { "-I$it" }
             val sanitizerFlags = when (sanitizer) {
                 null -> listOf()

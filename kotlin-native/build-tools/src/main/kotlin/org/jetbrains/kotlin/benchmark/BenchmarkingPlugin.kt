@@ -209,6 +209,7 @@ abstract class BenchmarkingPlugin: Plugin<Project> {
     protected open fun Project.collectCodeSize(applicationName: String) =
             getCodeSizeBenchmark(applicationName, nativeExecutable)
 
+    @OptIn(ExperimentalStdlibApi::class)
     protected open fun Project.configureKonanJsonTask(nativeTarget: KotlinNativeTarget): Task {
         return tasks.create("konanJsonReport") {
             group = BENCHMARKING_GROUP

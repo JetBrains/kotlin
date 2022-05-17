@@ -52,22 +52,25 @@ version = konanVersion
 repositories {
     maven("https://cache-redirector.jetbrains.com/maven-central")
     mavenCentral()
+    gradlePluginPortal()
 }
 
 dependencies {
-    compileOnly(gradleApi())
+    api(gradleApi())
 
-    implementation("org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion")
-    implementation("org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion")
-    implementation("org.jetbrains.kotlin:kotlin-reflect:$kotlinVersion")
+    api(kotlinStdlib())
+    implementation(project(":kotlin-gradle-plugin"))
+    implementation(project(":kotlin-reflect"))
+    implementation("org.jetbrains.kotlin:kotlin-build-gradle-plugin:${kotlinBuildProperties.buildGradlePluginVersion}")
+
     implementation("com.ullink.slack:simpleslackapi:$slackApiVersion") {
         exclude(group = "com.google.code.gson", module = "gson") // Workaround for Gradle dependency resolution error
     }
-    val versionPropertiesFile = project.rootProject.projectDir.resolve("gradle/versions.properties")
     val versionProperties = Properties()
-    versionPropertiesFile.inputStream().use { propInput ->
+    project.rootProject.projectDir.resolve("gradle/versions.properties").inputStream().use { propInput ->
         versionProperties.load(propInput)
     }
+    implementation(commonDependency("com.google.code.gson:gson"))
     configurations.all {
         resolutionStrategy.eachDependency {
             if (requested.group == "com.google.code.gson" && requested.name == "gson") {
@@ -82,12 +85,10 @@ dependencies {
     implementation("io.ktor:ktor-client-cio:$ktorVersion")
 
     api(project(":native:kotlin-native-utils"))
-
-    // Located in <repo root>/shared and always provided by the composite build.
-//    api("org.jetbrains.kotlin:kotlin-native-shared:$kotlinVersion")
-//    implementation("gradle.plugin.com.github.johnrengelman:shadow:$shadowVersion")
-//
-//    implementation("org.jetbrains.kotlinx:kotlinx-metadata-klib:$metadataVersion")
+    api(project(":kotlin-native:shared"))
+    api(project(":kotlinx-metadata-klib"))
+    api(project(":kotlin-util-klib"))
+    implementation("gradle.plugin.com.github.johnrengelman:shadow:${rootProject.extra["versions.shadow"]}")
 }
 
 sourceSets["main"].withConvention(KotlinSourceSet::class) {
@@ -98,8 +99,12 @@ val compileKotlin: KotlinCompile by tasks
 val compileGroovy: GroovyCompile by tasks
 
 compileKotlin.apply {
-    kotlinOptions.jvmTarget = "1.8"
-    kotlinOptions.freeCompilerArgs += "-Xskip-prerelease-check"
+    kotlinOptions {
+        languageVersion = "1.4"
+        apiVersion = "1.4"
+        jvmTarget = "1.8"
+        freeCompilerArgs += "-Xskip-prerelease-check"
+    }
 }
 
 // Add Kotlin classes to a classpath for the Groovy compiler

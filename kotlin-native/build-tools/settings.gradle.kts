@@ -16,7 +16,3 @@ pluginManagement {
         }
     }
 }
-
-rootProject.name = "kotlin-native-build-tools"
-
-includeBuild("../shared")

@@ -15,7 +15,6 @@
  */
 @file:Suppress("UnstableApiUsage")
 
-import org.jetbrains.kotlin.VersionGenerator
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 
@@ -26,38 +25,23 @@ plugins {
 val rootBuildDirectory by extra(file(".."))
 apply(from="../gradle/loadRootProperties.gradle")
 
-val konanVersion: String by extra
+val kotlinVersion = project.bootstrapKotlinVersion
 
 group = "org.jetbrains.kotlin"
-version = konanVersion
 
 repositories {
     maven("https://cache-redirector.jetbrains.com/maven-central")
     mavenCentral()
 }
 
-// FIXME(ddol): KLIB-REFACTORING-CLEANUP: drop generation of KonanVersion!
-val generateCompilerVersion by tasks.registering(VersionGenerator::class) {}
-
 sourceSets["main"].withConvention(KotlinSourceSet::class) {
     kotlin.srcDir("src/main/kotlin")
     kotlin.srcDir("src/library/kotlin")
-    kotlin.srcDir(generateCompilerVersion.get().versionSourceDirectory)
 }
 
 tasks.withType<KotlinCompile> {
-    dependsOn(generateCompilerVersion)
     kotlinOptions.jvmTarget = "1.8"
     kotlinOptions.freeCompilerArgs = listOf("-Xskip-prerelease-check")
-}
-
-tasks.clean {
-    doFirst {
-        val versionSourceDirectory = generateCompilerVersion.get().versionSourceDirectory
-        if (versionSourceDirectory.exists()) {
-            versionSourceDirectory.delete()
-        }
-    }
 }
 
 tasks.jar {
@@ -65,7 +49,7 @@ tasks.jar {
 }
 
 dependencies {
-    kotlinCompilerClasspath("org.jetbrains.kotlin:kotlin-compiler-embeddable:${project.bootstrapKotlinVersion}")
+    kotlinCompilerClasspath("org.jetbrains.kotlin:kotlin-compiler-embeddable:$kotlinVersion")
 
     implementation("org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion")
     implementation("org.jetbrains.kotlin:kotlin-reflect:$kotlinVersion")
