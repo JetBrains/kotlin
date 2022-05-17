@@ -48,6 +48,8 @@ internal open class FirLightInterfaceClassSymbol(
             createMethods(visibleDeclarations, result)
         }
 
+        addMethodsFromCompanionIfNeeded(result)
+
         result
     }
 

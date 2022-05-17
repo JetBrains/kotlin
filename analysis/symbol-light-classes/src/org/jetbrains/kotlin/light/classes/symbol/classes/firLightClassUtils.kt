@@ -251,6 +251,7 @@ internal fun FirLightClassBase.createPropertyAccessors(
     declaration: KtPropertySymbol,
     isTopLevel: Boolean,
     isMutable: Boolean = !declaration.isVal,
+    onlyJvmStatic: Boolean = false,
 ) {
     if (declaration is KtKotlinPropertySymbol && declaration.isConst) return
 
@@ -262,6 +263,7 @@ internal fun FirLightClassBase.createPropertyAccessors(
     if (declaration.hasJvmFieldAnnotation()) return
 
     fun KtPropertyAccessorSymbol.needToCreateAccessor(siteTarget: AnnotationUseSiteTarget): Boolean {
+        if (onlyJvmStatic && !hasJvmStaticAnnotation(siteTarget) && !declaration.hasJvmStaticAnnotation()) return false
         if (declaration.hasReifiedParameters) return false
         if (!hasBody && visibility.isPrivateOrPrivateToThis()) return false
         if (declaration.isHiddenOrSynthetic(project, siteTarget)) return false
