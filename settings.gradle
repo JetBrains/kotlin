@@ -194,7 +194,11 @@ include ":kotlin-allopen-compiler-plugin",
         ":kotlin-allopen-compiler-plugin.k2"
 
 include ":kotlin-noarg-compiler-plugin",
-        ":kotlin-sam-with-receiver-compiler-plugin",
+        ":kotlin-noarg-compiler-plugin.k1",
+        ":kotlin-noarg-compiler-plugin.backend",
+        ":kotlin-noarg-compiler-plugin.cli"
+
+include ":kotlin-sam-with-receiver-compiler-plugin",
         ":kotlin-imports-dumper-compiler-plugin",
         ":kotlin-script-runtime",
         ":plugins:fir-plugin-prototype",
@@ -686,7 +690,10 @@ project(':kotlin-allopen-compiler-plugin').projectDir = "$rootDir/plugins/allope
 project(':kotlin-allopen-compiler-plugin.cli').projectDir = "$rootDir/plugins/allopen/allopen.cli" as File
 project(':kotlin-allopen-compiler-plugin.k1').projectDir = "$rootDir/plugins/allopen/allopen.k1" as File
 project(':kotlin-allopen-compiler-plugin.k2').projectDir = "$rootDir/plugins/allopen/allopen.k2" as File
-project(':kotlin-noarg-compiler-plugin').projectDir = "$rootDir/plugins/noarg/noarg-cli" as File
+project(':kotlin-noarg-compiler-plugin').projectDir = "$rootDir/plugins/noarg" as File
+project(':kotlin-noarg-compiler-plugin.k1').projectDir = "$rootDir/plugins/noarg/noarg.k1" as File
+project(':kotlin-noarg-compiler-plugin.backend').projectDir = "$rootDir/plugins/noarg/noarg.backend" as File
+project(':kotlin-noarg-compiler-plugin.cli').projectDir = "$rootDir/plugins/noarg/noarg.cli" as File
 project(':kotlin-sam-with-receiver-compiler-plugin').projectDir = "$rootDir/plugins/sam-with-receiver/sam-with-receiver-cli" as File
 project(':tools:kotlinp').projectDir = "$rootDir/libraries/tools/kotlinp" as File
 project(':kotlin-project-model').projectDir = "$rootDir/libraries/tools/kotlin-project-model" as File

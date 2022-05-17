@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.name.JvmNames.JVM_OVERLOADS_FQ_NAME
 import org.jetbrains.kotlin.psi.KtModifierListOwner
 
-internal class NoArgIrGenerationExtension(
+class NoArgIrGenerationExtension(
     private val annotations: List<String>,
     private val invokeInitializers: Boolean,
 ) : IrGenerationExtension {

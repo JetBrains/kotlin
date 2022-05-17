@@ -1,4 +1,3 @@
-
 description = "Kotlin NoArg Compiler Plugin"
 
 plugins {
@@ -7,15 +6,9 @@ plugins {
 }
 
 dependencies {
-    compileOnly(project(":compiler:frontend"))
-    compileOnly(project(":compiler:frontend.java"))
-    compileOnly(project(":compiler:backend"))
-    compileOnly(project(":compiler:util"))
-    compileOnly(project(":compiler:plugin-api"))
-    compileOnly(project(":compiler:ir.backend.common"))
-    compileOnly(intellijCore())
-    compileOnly(commonDependency("org.jetbrains.intellij.deps:asm-all"))
-    implementation(kotlinStdlib())
+    embedded(project(":kotlin-noarg-compiler-plugin.k1"))
+    embedded(project(":kotlin-noarg-compiler-plugin.backend"))
+    embedded(project(":kotlin-noarg-compiler-plugin.cli"))
 
     testApi(project(":compiler:backend"))
     testApi(project(":compiler:cli"))
@@ -25,16 +18,13 @@ dependencies {
 }
 
 sourceSets {
-    "main" { projectDefault() }
+    "main" { none() }
     "test" { projectDefault() }
 }
 
 runtimeJar()
-
 sourcesJar()
-
 javadocJar()
-
 testsJar()
 
 projectTest(parallel = true) {
