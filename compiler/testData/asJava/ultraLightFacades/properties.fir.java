@@ -3,9 +3,6 @@ public final class PropertiesKt /* PropertiesKt*/ {
   private static error.NonExistentClass delegatedProp$delegate;
 
   @org.jetbrains.annotations.NotNull()
-  private static error.NonExistentClass lazyProp$delegate;
-
-  @org.jetbrains.annotations.NotNull()
   private static final java.lang.Object arrayConst;
 
   @org.jetbrains.annotations.NotNull()
@@ -22,6 +19,9 @@ public final class PropertiesKt /* PropertiesKt*/ {
 
   @org.jetbrains.annotations.NotNull()
   private static java.lang.String x$1;
+
+  @org.jetbrains.annotations.NotNull()
+  private static kotlin.Lazy<java.lang.String> lazyProp$delegate;
 
   @org.jetbrains.annotations.NotNull()
   public static final java.lang.String SUBSYSTEM_DEPRECATED = "This subsystem is deprecated" /* initializer type: java.lang.String */;

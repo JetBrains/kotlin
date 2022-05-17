@@ -1,9 +1,9 @@
 public final class ThrowsAnnotationKt /* ThrowsAnnotationKt*/ {
-  @<error>()
+  @kotlin.jvm.Throws()
   @org.jetbrains.annotations.NotNull()
   public static final java.lang.String readFile(@org.jetbrains.annotations.NotNull() java.lang.String);//  readFile(java.lang.String)
 
-  @<error>()
+  @kotlin.jvm.Throws()
   public static final void baz();//  baz()
 
 }

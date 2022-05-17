@@ -1,6 +1,13 @@
 public final class C /* C*/ {
+  @kotlin.jvm.JvmStatic()
+  @org.jetbrains.annotations.NotNull()
+  public java.lang.String x;
+
   @org.jetbrains.annotations.NotNull()
   public static final C.Companion Companion;
+
+  @kotlin.jvm.JvmStatic()
+  public static final void foo();//  foo()
 
   public  C();//  .ctor()
 
@@ -13,21 +20,21 @@ public final class C /* C*/ {
   }
 
 public static final class Companion /* C.Companion*/ {
-  @<error>()
+  @kotlin.jvm.JvmStatic()
   @org.jetbrains.annotations.NotNull()
   private java.lang.String x;
 
-  @<error>()
+  @kotlin.jvm.JvmStatic()
   @org.jetbrains.annotations.NotNull()
   public final java.lang.String getC(I);//  getC(I)
 
-  @<error>()
+  @kotlin.jvm.JvmStatic()
   public final void foo();//  foo()
 
-  @<error>()
+  @kotlin.jvm.JvmStatic()
   public final void setC(I, @org.jetbrains.annotations.NotNull() java.lang.String);//  setC(I, java.lang.String)
 
-  @<error>()
+  @kotlin.jvm.JvmStatic()
   public final void setC1(@org.jetbrains.annotations.NotNull() java.lang.String);//  setC1(java.lang.String)
 
   @org.jetbrains.annotations.NotNull()
@@ -80,15 +87,15 @@ public static final class Companion /* I.Companion*/ {
 }
 
 public final class Obj /* Obj*/ implements java.lang.Runnable {
-  @<error>()
+  @kotlin.jvm.JvmStatic()
   @org.jetbrains.annotations.NotNull()
   private static java.lang.String x;
 
   @org.jetbrains.annotations.NotNull()
   public static final Obj INSTANCE;
 
-  @<error>()
-  public final int zoo();//  zoo()
+  @kotlin.jvm.JvmStatic()
+  public static final int zoo();//  zoo()
 
   @org.jetbrains.annotations.NotNull()
   public final java.lang.String getX();//  getX()
