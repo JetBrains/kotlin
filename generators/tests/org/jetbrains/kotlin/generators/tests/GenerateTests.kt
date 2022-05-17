@@ -222,20 +222,6 @@ fun main(args: Array<String>) {
             }
         }
 
-        testGroup("plugins/noarg/noarg-cli/test", "plugins/noarg/noarg-cli/testData") {
-            testClass<AbstractDiagnosticsTestForNoArg> { model("diagnostics", extension = "kt") }
-
-            testClass<AbstractBytecodeListingTestForNoArg> {
-                model("bytecodeListing", extension = "kt", targetBackend = TargetBackend.JVM)
-            }
-            testClass<AbstractIrBytecodeListingTestForNoArg> {
-                model("bytecodeListing", extension = "kt", targetBackend = TargetBackend.JVM_IR)
-            }
-
-            testClass<AbstractBlackBoxCodegenTestForNoArg> { model("box", targetBackend = TargetBackend.JVM) }
-            testClass<AbstractIrBlackBoxCodegenTestForNoArg> { model("box", targetBackend = TargetBackend.JVM_IR) }
-        }
-
         testGroup("plugins/sam-with-receiver/sam-with-receiver-cli/test", "plugins/sam-with-receiver/sam-with-receiver-cli/testData") {
             testClass<AbstractSamWithReceiverTest> {
                 model("diagnostics")
@@ -414,5 +400,22 @@ fun main(args: Array<String>) {
             }
         }
 
+        testGroup("plugins/noarg/tests-gen", "plugins/noarg/testData") {
+            testClass<AbstractDiagnosticsTestForNoArg> {
+                model("diagnostics", excludedPattern = excludedFirTestdataPattern)
+            }
+            testClass<AbstractBytecodeListingTestForNoArg> {
+                model("bytecodeListing", excludedPattern = excludedFirTestdataPattern)
+            }
+            testClass<AbstractIrBytecodeListingTestForNoArg> {
+                model("bytecodeListing", excludedPattern = excludedFirTestdataPattern)
+            }
+            testClass<AbstractBlackBoxCodegenTestForNoArg> {
+                model("box")
+            }
+            testClass<AbstractIrBlackBoxCodegenTestForNoArg> {
+                model("box")
+            }
+        }
     }
 }

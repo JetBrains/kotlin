@@ -5,47 +5,84 @@
 
 package org.jetbrains.kotlin.noarg
 
-import org.jetbrains.kotlin.ObsoleteTestInfrastructure
-import org.jetbrains.kotlin.checkers.AbstractDiagnosticsTest
-import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
-import org.jetbrains.kotlin.codegen.AbstractBlackBoxCodegenTest
-import org.jetbrains.kotlin.codegen.AbstractBytecodeListingTest
-import org.jetbrains.kotlin.test.TargetBackend
+import com.intellij.openapi.project.Project
+import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
+import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
+import org.jetbrains.kotlin.test.directives.model.SimpleDirectivesContainer
+import org.jetbrains.kotlin.test.model.TestModule
+import org.jetbrains.kotlin.test.runners.AbstractDiagnosticTest
+import org.jetbrains.kotlin.test.runners.codegen.AbstractBlackBoxCodegenTest
+import org.jetbrains.kotlin.test.runners.codegen.AbstractBytecodeListingTest
+import org.jetbrains.kotlin.test.runners.codegen.AbstractIrBlackBoxCodegenTest
+import org.jetbrains.kotlin.test.runners.codegen.AbstractIrBytecodeListingTest
+import org.jetbrains.kotlin.test.services.EnvironmentConfigurator
+import org.jetbrains.kotlin.test.services.TestServices
 
-internal val NOARG_ANNOTATIONS = listOf("NoArg", "NoArg2", "test.NoArg")
+// ---------------------------- codegen ----------------------------
 
-@OptIn(ObsoleteTestInfrastructure::class)
-abstract class AbstractBlackBoxCodegenTestForNoArg : AbstractBlackBoxCodegenTest() {
-    override fun loadMultiFiles(files: MutableList<TestFile>) {
+open class AbstractBlackBoxCodegenTestForNoArg : AbstractBlackBoxCodegenTest() {
+    override fun configure(builder: TestConfigurationBuilder) {
+        super.configure(builder)
+        builder.enableNoArg()
+    }
+}
+
+open class AbstractIrBlackBoxCodegenTestForNoArg : AbstractIrBlackBoxCodegenTest() {
+    override fun configure(builder: TestConfigurationBuilder) {
+        super.configure(builder)
+        builder.enableNoArg()
+    }
+}
+
+// ---------------------------- bytecode ----------------------------
+
+open class AbstractBytecodeListingTestForNoArg : AbstractBytecodeListingTest() {
+    override fun configure(builder: TestConfigurationBuilder) {
+        super.configure(builder)
+        builder.enableNoArg()
+    }
+}
+
+open class AbstractIrBytecodeListingTestForNoArg : AbstractIrBytecodeListingTest() {
+    override fun configure(builder: TestConfigurationBuilder) {
+        super.configure(builder)
+        builder.enableNoArg()
+    }
+}
+
+// ---------------------------- diagnostic ----------------------------
+
+abstract class AbstractDiagnosticsTestForNoArg : AbstractDiagnosticTest() {
+    override fun configure(builder: TestConfigurationBuilder) {
+        super.configure(builder)
+        builder.enableNoArg()
+    }
+}
+
+// ---------------------------- configurator ----------------------------
+
+private fun TestConfigurationBuilder.enableNoArg() {
+    useConfigurators(::NoArgEnvironmentConfigurator)
+}
+
+class NoArgEnvironmentConfigurator(testServices: TestServices) : EnvironmentConfigurator(testServices) {
+    companion object {
+        private val NOARG_ANNOTATIONS = listOf("NoArg", "NoArg2", "test.NoArg")
+    }
+
+    override val directiveContainers: List<DirectivesContainer> = listOf(NoArgDirectives)
+
+    override fun registerCompilerExtensions(project: Project, module: TestModule, configuration: CompilerConfiguration) {
         NoArgComponentRegistrar.registerNoArgComponents(
-            myEnvironment.project,
+            project,
             NOARG_ANNOTATIONS,
-            backend.isIR,
-            files.any { it.directives.contains("INVOKE_INITIALIZERS") },
+            useIr = module.targetBackend?.isIR == true,
+            invokeInitializers = NoArgDirectives.INVOKE_INITIALIZERS in module.directives
         )
-
-        super.loadMultiFiles(files)
     }
 }
 
-@OptIn(ObsoleteTestInfrastructure::class)
-abstract class AbstractBytecodeListingTestForNoArg : AbstractBytecodeListingTest() {
-    override fun setupEnvironment(environment: KotlinCoreEnvironment) {
-        NoArgComponentRegistrar.registerNoArgComponents(environment.project, NOARG_ANNOTATIONS, backend.isIR, false)
-    }
-}
-
-abstract class AbstractIrBlackBoxCodegenTestForNoArg : AbstractBlackBoxCodegenTestForNoArg() {
-    override val backend: TargetBackend get() = TargetBackend.JVM_IR
-}
-
-abstract class AbstractIrBytecodeListingTestForNoArg : AbstractBytecodeListingTestForNoArg() {
-    override val backend: TargetBackend get() = TargetBackend.JVM_IR
-}
-
-@OptIn(ObsoleteTestInfrastructure::class)
-abstract class AbstractDiagnosticsTestForNoArg : AbstractDiagnosticsTest() {
-    override fun setupEnvironment(environment: KotlinCoreEnvironment) {
-        NoArgComponentRegistrar.registerNoArgComponents(environment.project, NOARG_ANNOTATIONS, backend.isIR, false)
-    }
+object NoArgDirectives : SimpleDirectivesContainer() {
+    val INVOKE_INITIALIZERS by directive("Enable 'Invoke initializers' mode")
 }

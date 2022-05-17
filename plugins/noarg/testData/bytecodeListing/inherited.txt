@@ -5,13 +5,13 @@ public interface Base {
 }
 
 @NoArg
-@java.lang.annotation.Retention
+@java.lang.annotation.Retention(value=RUNTIME)
 @kotlin.Metadata
 public annotation class MyAnno {
     // source: 'inherited.kt'
 }
 
-@java.lang.annotation.Retention
+@java.lang.annotation.Retention(value=RUNTIME)
 @kotlin.Metadata
 public annotation class NoArg {
     // source: 'inherited.kt'

@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 annotation class NoArg
 
 open class Base(val s: String)

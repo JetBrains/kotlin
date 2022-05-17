@@ -1,10 +1,10 @@
-@java.lang.annotation.Retention
+@java.lang.annotation.Retention(value=RUNTIME)
 @kotlin.Metadata
 public annotation class NoArg {
     // source: 'severalNoArg.kt'
 }
 
-@java.lang.annotation.Retention
+@java.lang.annotation.Retention(value=RUNTIME)
 @kotlin.Metadata
 public annotation class NoArg2 {
     // source: 'severalNoArg.kt'

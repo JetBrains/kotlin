@@ -5,13 +5,13 @@ public interface BaseIntf {
 }
 
 @NoArg
-@java.lang.annotation.Retention
+@java.lang.annotation.Retention(value=RUNTIME)
 @kotlin.Metadata
 public annotation class MetaAnno {
     // source: 'defaultParameters.kt'
 }
 
-@java.lang.annotation.Retention
+@java.lang.annotation.Retention(value=RUNTIME)
 @kotlin.Metadata
 public annotation class NoArg {
     // source: 'defaultParameters.kt'
