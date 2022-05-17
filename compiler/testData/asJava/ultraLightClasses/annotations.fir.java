@@ -28,12 +28,7 @@ public abstract @interface AnnoWithCompanion /* AnnoWithCompanion*/ {
   }
 
 public static final class Companion /* AnnoWithCompanion.Companion*/ {
-  @<error>()
-  private final int x;
-
   private  Companion();//  .ctor()
-
-  public final int getX();//  getX()
 
   public final void foo();//  foo()
 

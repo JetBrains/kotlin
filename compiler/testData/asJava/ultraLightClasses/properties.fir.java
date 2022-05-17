@@ -3,9 +3,6 @@ public final class Foo /* Foo*/ {
   private error.NonExistentClass delegatedProp$delegate;
 
   @org.jetbrains.annotations.NotNull()
-  private error.NonExistentClass lazyProp$delegate;
-
-  @org.jetbrains.annotations.NotNull()
   private final Foo b;
 
   @org.jetbrains.annotations.NotNull()
@@ -31,6 +28,9 @@ public final class Foo /* Foo*/ {
 
   @org.jetbrains.annotations.NotNull()
   private java.lang.String protectedWithPrivateSet;
+
+  @org.jetbrains.annotations.NotNull()
+  private kotlin.Lazy<java.lang.String> lazyProp$delegate;
 
   @org.jetbrains.annotations.NotNull()
   public static final Foo.Companion Companion;

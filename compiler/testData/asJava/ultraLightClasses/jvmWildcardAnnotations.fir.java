@@ -29,42 +29,42 @@ public class Open /* Open*/ {
 }
 
 public final class Container /* Container*/ {
-  @<error>()
+  @kotlin.jvm.JvmSuppressWildcards(suppress = false)
   @org.jetbrains.annotations.NotNull()
   public final Out<Open> bar();//  bar()
 
-  @<error>()
-  public final int bar(boolean, @org.jetbrains.annotations.NotNull() In<? super java.lang.Long>, long);//  bar(boolean, In<? super java.lang.Long>, long)
-
-  @<error>()
+  @kotlin.jvm.JvmSuppressWildcards(suppress = false)
   public final int foo(boolean, @org.jetbrains.annotations.NotNull() Out<java.lang.Integer>);//  foo(boolean, Out<java.lang.Integer>)
 
-  @<error>()
+  @kotlin.jvm.JvmSuppressWildcards(suppress = true)
+  public final int bar(boolean, @org.jetbrains.annotations.NotNull() In<? super java.lang.Long>, long);//  bar(boolean, In<? super java.lang.Long>, long)
+
+  @kotlin.jvm.JvmSuppressWildcards(suppress = true)
   public final void deepOpen(@org.jetbrains.annotations.NotNull() Out<? extends Out<? extends Out<? extends Open>>>);//  deepOpen(Out<? extends Out<? extends Out<? extends Open>>>)
 
   @org.jetbrains.annotations.NotNull()
   public final OutPair<Final, OutPair<Out<Final>, Out<Final>>> falseTrueFalse();//  falseTrueFalse()
 
   @org.jetbrains.annotations.NotNull()
-  public final OutPair<Open, OutPair<Open, Out<Open>>> combination();//  combination()
+  public final OutPair<Open, ? extends OutPair<Open,? extends Out<Open>>> combination();//  combination()
 
   public  Container();//  .ctor()
 
-  public final void simpleIn(@org.jetbrains.annotations.NotNull() In<java.lang.Object>);//  simpleIn(In<java.lang.Object>)
+  public final void simpleIn(@org.jetbrains.annotations.NotNull() In<? super java.lang.Object>);//  simpleIn(In<? super java.lang.Object>)
 
-  public final void simpleOut(@org.jetbrains.annotations.NotNull() Out<Final>);//  simpleOut(Out<Final>)
+  public final void simpleOut(@org.jetbrains.annotations.NotNull() Out<? extends Final>);//  simpleOut(Out<? extends Final>)
 
 }
 
 public abstract interface A /* A*/<T>  {
-  @<error>()
+  @kotlin.jvm.JvmSuppressWildcards(suppress = true)
   @org.jetbrains.annotations.NotNull()
   public abstract Out<T> foo();//  foo()
 
 }
 
 public abstract interface B /* B*/ {
-  @<error>()
+  @kotlin.jvm.JvmSuppressWildcards(suppress = true)
   @org.jetbrains.annotations.NotNull()
   public abstract In<Open> foo();//  foo()
 
