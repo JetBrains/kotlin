@@ -12,14 +12,15 @@ import com.intellij.psi.search.SearchScope
 import com.intellij.psi.stubs.IStubElementType
 import com.intellij.psi.stubs.StubElement
 import org.jetbrains.annotations.NonNls
-import org.jetbrains.kotlin.analysis.api.symbols.KtKotlinPropertySymbol
+import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.asJava.classes.getOutermostClassOrObject
 import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.asJava.elements.KtLightField
-import org.jetbrains.kotlin.analysis.api.symbols.KtNamedClassOrObjectSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KtPropertySymbol
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KtSymbolKind
+import org.jetbrains.kotlin.asJava.elements.KtLightMethod
 import org.jetbrains.kotlin.light.classes.symbol.classes.createInnerClasses
+import org.jetbrains.kotlin.light.classes.symbol.classes.createMethods
+import org.jetbrains.kotlin.light.classes.symbol.classes.createPropertyAccessors
 import org.jetbrains.kotlin.light.classes.symbol.classes.getOrCreateFirLightClass
 import org.jetbrains.kotlin.load.java.structure.LightClassOriginKind
 import org.jetbrains.kotlin.psi.KtClassBody
@@ -83,6 +84,28 @@ internal abstract class FirLightClassForClassOrObjectSymbol(
     override fun getStartOffsetInParent(): Int = kotlinOrigin?.startOffsetInParent ?: 0
     override fun isWritable() = false
     override val kotlinOrigin: KtClassOrObject? = classOrObjectSymbol.psi as? KtClassOrObject
+
+    protected fun addMethodsFromCompanionIfNeeded(result: MutableList<KtLightMethod>) {
+        classOrObjectSymbol.companionObject?.run {
+            analyzeWithSymbolAsContext(this) {
+                val methods = getDeclaredMemberScope().getCallableSymbols()
+                    .filterIsInstance<KtFunctionSymbol>()
+                    .filter { it.hasJvmStaticAnnotation() }
+                createMethods(methods, result)
+
+                val properties = getDeclaredMemberScope().getCallableSymbols()
+                    .filterIsInstance<KtPropertySymbol>()
+                properties.forEach { property ->
+                    createPropertyAccessors(
+                        result,
+                        property,
+                        isTopLevel = false,
+                        onlyJvmStatic = true
+                    )
+                }
+            }
+        }
+    }
 
     protected fun addCompanionObjectFieldIfNeeded(result: MutableList<KtLightField>) {
         classOrObjectSymbol.companionObject?.run {

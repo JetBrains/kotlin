@@ -15,7 +15,12 @@ public final class C /* C*/ {
   @kotlin.jvm.JvmStatic()
   public static final void foo();//  foo()
 
+  @org.jetbrains.annotations.NotNull()
+  public final java.lang.String getX();//  getX()
+
   public  C();//  .ctor()
+
+  public final void setX(@org.jetbrains.annotations.NotNull() java.lang.String);//  setX(java.lang.String)
 
 
 
