@@ -21,7 +21,8 @@ class CasesPublicAPITest {
         val baseOutputPath = File("src/test/kotlin/cases")
     }
 
-    @[Rule JvmField]
+    @Rule
+    @JvmField
     val testName = TestName()
 
     @Test fun annotations() { snapshotAPIAndCompare(testName.methodName) }

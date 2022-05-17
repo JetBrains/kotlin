@@ -9,7 +9,7 @@ import org.junit.Rule
 import org.junit.rules.TemporaryFolder
 import java.io.File
 
-internal open class BaseKotlinGradleTest {
+public open class BaseKotlinGradleTest {
     @Rule
     @JvmField
     internal val testProjectDir: TemporaryFolder = TemporaryFolder()

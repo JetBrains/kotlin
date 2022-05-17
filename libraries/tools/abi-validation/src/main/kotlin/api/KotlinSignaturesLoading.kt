@@ -5,9 +5,7 @@
 
 package kotlinx.validation.api
 
-import kotlinx.metadata.jvm.JvmFieldSignature
-import kotlinx.metadata.jvm.JvmMethodSignature
-import kotlinx.metadata.jvm.KotlinClassMetadata
+import kotlinx.metadata.jvm.*
 import kotlinx.validation.*
 import org.objectweb.asm.*
 import org.objectweb.asm.tree.*
@@ -50,7 +48,7 @@ public fun Sequence<InputStream>.loadApiFromJvmClasses(visibilityFilter: (String
                         it.isEffectivelyPublic(classAccess, mVisibility)
                     }.filter {
                         /*
-                         * Filter out 'public static final Companion' field that doesn't constitutes public API.
+                         * Filter out 'public static final Companion' field that doesn't constitute public API.
                          * For that we first check if field corresponds to the 'Companion' class and then
                          * if companion is effectively public by itself, so the 'Companion' field has the same visibility.
                          */
@@ -63,21 +61,31 @@ public fun Sequence<InputStream>.loadApiFromJvmClasses(visibilityFilter: (String
                         companionClass.isEffectivelyPublic(visibility)
                     }
 
+                // NB: this 'map' is O(methods + properties * methods) which may accidentally be quadratic
                 val allMethods = methods.map {
                     /**
                      * For getters/setters, pull the annotations from the property
-                     *
-                     * This is either on the field if any or in a '$annotations' synthetic function
+                     * This is either on the field if any or in a '$annotations' synthetic function.
                      */
-                    val annotationHolders = mVisibility?.members?.get(JvmMethodSignature(it.name, it.desc))?.annotationHolders
+                    val annotationHolders =
+                        mVisibility?.members?.get(JvmMethodSignature(it.name, it.desc))?.propertyAnnotation
+                    val foundAnnotations = ArrayList<AnnotationNode>()
+                    // lookup annotations from $annotations()
+                    val syntheticPropertyMethod = annotationHolders?.method
+                    if (syntheticPropertyMethod != null) {
+                        foundAnnotations += methods
+                            .firstOrNull { it.name == syntheticPropertyMethod.name && it.desc == syntheticPropertyMethod.desc }
+                            ?.visibleAnnotations ?: emptyList()
+                    }
 
-                    val propertyAnnotations = annotationHolders?.method?.let { memberSignature->
-                        methods?.firstOrNull { it.name == memberSignature.name && it.desc == memberSignature.desc }?.visibleAnnotations
-                    }.orEmpty() + annotationHolders?.field?.let { memberSignature->
-                        fields?.firstOrNull { it.name == memberSignature.name && it.desc == memberSignature.desc }?.visibleAnnotations
-                    }.orEmpty()
+                    val backingField = annotationHolders?.field
+                    if (backingField != null) {
+                        foundAnnotations += fields
+                            .firstOrNull { it.name == backingField.name && it.desc == backingField.desc }
+                            ?.visibleAnnotations ?: emptyList()
+                    }
 
-                    it.toMethodBinarySignature(propertyAnnotations)
+                    it.toMethodBinarySignature(foundAnnotations)
                 }
                 // Signatures marked with @PublishedApi
                 val publishedApiSignatures = allMethods.filter {

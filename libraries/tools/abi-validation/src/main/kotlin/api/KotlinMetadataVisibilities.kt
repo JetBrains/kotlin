@@ -8,7 +8,7 @@ package kotlinx.validation.api
 import kotlinx.metadata.*
 import kotlinx.metadata.jvm.*
 import kotlinx.metadata.jvm.KotlinClassHeader.Companion.COMPATIBLE_METADATA_VERSION
-import org.objectweb.asm.tree.ClassNode
+import org.objectweb.asm.tree.*
 
 class ClassVisibility(
     val name: String,
@@ -31,7 +31,11 @@ data class MemberVisibility(
     val member: JvmMemberSignature,
     val visibility: Flags?,
     val isReified: Boolean,
-    val annotationHolders: PropertyAnnotationHolders
+    /*
+     * This property includes both annotations on the member itself,
+     * **and**, if the member is a property, annotations on a field itself
+     */
+    val propertyAnnotation: PropertyAnnotationHolders? = null
 )
 
 private fun isPublic(visibility: Flags?, isPublishedApi: Boolean) =
@@ -81,14 +85,11 @@ fun KotlinClassMetadata?.isFileOrMultipartFacade() =
 
 fun KotlinClassMetadata?.isSyntheticClass() = this is KotlinClassMetadata.SyntheticClass
 
+// Auxiliary class that stores signatures of corresponding field and method for a property.
 class PropertyAnnotationHolders(
     val field: JvmMemberSignature?,
     val method: JvmMethodSignature?,
-) {
-    companion object {
-        val None = PropertyAnnotationHolders(null, null)
-    }
-}
+)
 
 fun KotlinClassMetadata.toClassVisibility(classNode: ClassNode): ClassVisibility {
     var flags: Flags? = null
@@ -99,10 +100,10 @@ fun KotlinClassMetadata.toClassVisibility(classNode: ClassNode): ClassVisibility
         signature: JvmMemberSignature?,
         flags: Flags,
         isReified: Boolean,
-        annotationHolders: PropertyAnnotationHolders
+        propertyAnnotation: PropertyAnnotationHolders? = null
     ) {
         if (signature != null) {
-            members.add(MemberVisibility(signature, flags, isReified, annotationHolders))
+            members.add(MemberVisibility(signature, flags, isReified, propertyAnnotation))
         }
     }
 
@@ -112,7 +113,7 @@ fun KotlinClassMetadata.toClassVisibility(classNode: ClassNode): ClassVisibility
                 flags = klass.flags
 
                 for (constructor in klass.constructors) {
-                    addMember(constructor.signature, constructor.flags, isReified = false, annotationHolders = PropertyAnnotationHolders.None)
+                    addMember(constructor.signature, constructor.flags, isReified = false)
                 }
             }
         is KotlinClassMetadata.FileFacade ->
@@ -126,22 +127,23 @@ fun KotlinClassMetadata.toClassVisibility(classNode: ClassNode): ClassVisibility
         fun List<KmTypeParameter>.containsReified() = any { Flag.TypeParameter.IS_REIFIED(it.flags) }
 
         for (function in container.functions) {
-            addMember(function.signature, function.flags, function.typeParameters.containsReified(), PropertyAnnotationHolders.None)
+            addMember(function.signature, function.flags, function.typeParameters.containsReified())
         }
 
         for (property in container.properties) {
             val isReified = property.typeParameters.containsReified()
-            val annotationDelegates = PropertyAnnotationHolders(property.fieldSignature, property.syntheticMethodForAnnotations)
+            val propertyAnnotations =
+                PropertyAnnotationHolders(property.fieldSignature, property.syntheticMethodForAnnotations)
 
-            addMember(property.getterSignature, property.getterFlags, isReified, annotationDelegates)
-            addMember(property.setterSignature, property.setterFlags, isReified, annotationDelegates)
+            addMember(property.getterSignature, property.getterFlags, isReified, propertyAnnotations)
+            addMember(property.setterSignature, property.setterFlags, isReified, propertyAnnotations)
 
             val fieldVisibility = when {
                 Flag.Property.IS_LATEINIT(property.flags) -> property.setterFlags
                 property.getterSignature == null && property.setterSignature == null -> property.flags // JvmField or const case
                 else -> flagsOf(Flag.IS_PRIVATE)
             }
-            addMember(property.fieldSignature, fieldVisibility, isReified = false, annotationHolders = PropertyAnnotationHolders.None)
+            addMember(property.fieldSignature, fieldVisibility, isReified = false)
         }
     }
 
