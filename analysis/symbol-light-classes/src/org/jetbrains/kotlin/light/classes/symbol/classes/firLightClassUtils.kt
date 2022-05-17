@@ -94,10 +94,6 @@ internal fun KtClassOrObjectSymbol.createLightClassNoCache(manager: PsiManager):
     }
 }
 
-
-
-
-
 private fun lightClassForEnumEntry(ktEnumEntry: KtEnumEntry): KtLightClass? {
     if (ktEnumEntry.body == null) return null
 
@@ -185,7 +181,7 @@ internal fun FirLightClassBase.createMethods(
     declarations: Sequence<KtCallableSymbol>,
     result: MutableList<KtLightMethod>,
     isTopLevel: Boolean = false,
-    suppressStaticForMethods: Boolean = false
+    suppressStatic : Boolean = false
 ) {
     val declarationGroups = declarations.groupBy { it is KtPropertySymbol && it.isFromPrimaryConstructor }
 
@@ -205,7 +201,7 @@ internal fun FirLightClassBase.createMethods(
                         containingClass = this@createMethods,
                         isTopLevel = isTopLevel,
                         methodIndex = methodIndex,
-                        suppressStatic = suppressStaticForMethods
+                        suppressStatic = suppressStatic
                     )
                 )
 
@@ -231,7 +227,12 @@ internal fun FirLightClassBase.createMethods(
                     }
                 }
             }
-            is KtPropertySymbol -> createPropertyAccessors(result, declaration, isTopLevel)
+            is KtPropertySymbol -> createPropertyAccessors(
+                result,
+                declaration,
+                isTopLevel = isTopLevel,
+                suppressStatic = suppressStatic
+            )
             is KtConstructorSymbol -> error("Constructors should be handled separately and not passed to this function")
         }
     }
@@ -252,6 +253,7 @@ internal fun FirLightClassBase.createPropertyAccessors(
     isTopLevel: Boolean,
     isMutable: Boolean = !declaration.isVal,
     onlyJvmStatic: Boolean = false,
+    suppressStatic: Boolean = false,
 ) {
     if (declaration is KtKotlinPropertySymbol && declaration.isConst) return
 
@@ -292,7 +294,8 @@ internal fun FirLightClassBase.createPropertyAccessors(
                 containingPropertySymbol = declaration,
                 lightMemberOrigin = lightMemberOrigin,
                 containingClass = this@createPropertyAccessors,
-                isTopLevel = isTopLevel
+                isTopLevel = isTopLevel,
+                suppressStatic = suppressStatic,
             )
         )
     }
@@ -315,7 +318,8 @@ internal fun FirLightClassBase.createPropertyAccessors(
                 containingPropertySymbol = declaration,
                 lightMemberOrigin = lightMemberOrigin,
                 containingClass = this@createPropertyAccessors,
-                isTopLevel = isTopLevel
+                isTopLevel = isTopLevel,
+                suppressStatic = suppressStatic,
             )
         )
     }
