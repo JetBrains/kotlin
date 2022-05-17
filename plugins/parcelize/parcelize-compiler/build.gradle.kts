@@ -1,5 +1,3 @@
-import org.jetbrains.kotlin.ideaExt.idea
-
 description = "Parcelize compiler plugin"
 
 plugins {
@@ -13,20 +11,17 @@ val layoutLib by configurations.creating
 val layoutLibApi by configurations.creating
 
 dependencies {
-    testApi(intellijCore())
-
-    compileOnly(project(":compiler:util"))
-    compileOnly(project(":compiler:plugin-api"))
-    compileOnly(project(":compiler:frontend"))
-    compileOnly(project(":compiler:frontend.java"))
-    compileOnly(project(":compiler:backend"))
-    compileOnly(project(":compiler:ir.backend.common"))
-    compileOnly(project(":compiler:backend.jvm"))
-    compileOnly(project(":compiler:ir.tree.impl"))
-    compileOnly(intellijCore())
-    compileOnly(commonDependency("org.jetbrains.intellij.deps:asm-all"))
+    embedded(project(":plugins:parcelize:parcelize-compiler:parcelize.common")) { isTransitive = false }
+    embedded(project(":plugins:parcelize:parcelize-compiler:parcelize.k1")) { isTransitive = false }
+    embedded(project(":plugins:parcelize:parcelize-compiler:parcelize.k2")) { isTransitive = false }
+    embedded(project(":plugins:parcelize:parcelize-compiler:parcelize.backend")) { isTransitive = false }
+    embedded(project(":plugins:parcelize:parcelize-compiler:parcelize.cli")) { isTransitive = false }
 
     testApiJUnit5()
+
+    testApi(intellijCore())
+
+    testApi(project(":plugins:parcelize:parcelize-compiler:parcelize.cli"))
 
     testApi(project(":compiler:util"))
     testApi(project(":compiler:backend"))
@@ -45,7 +40,6 @@ dependencies {
     testApi(project(":compiler:fir:checkers"))
     testApi(project(":compiler:fir:checkers:checkers.jvm"))
     testApi(project(":compiler:fir:checkers:checkers.js"))
-    testApi(project(":plugins:parcelize:parcelize-compiler:parcelize-fir"))
     testRuntimeOnly(project(":compiler:fir:fir-serialization"))
 
     testCompileOnly(project(":kotlin-reflect-api"))
@@ -66,27 +60,17 @@ dependencies {
     layoutLibApi("com.android.tools.layoutlib:layoutlib-api:26.5.0") { isTransitive = false }
 }
 
-val generationRoot = projectDir.resolve("tests-gen")
-
 sourceSets {
-    "main" { projectDefault() }
+    "main" { none() }
     "test" {
         projectDefault()
-        this.java.srcDir(generationRoot.name)
-    }
-}
-
-if (kotlinBuildProperties.isInJpsBuildIdeaSync) {
-    apply(plugin = "idea")
-    idea {
-        this.module.generatedSourceDirs.add(generationRoot)
+        generatedTestDir()
     }
 }
 
 runtimeJar()
-javadocJar()
 sourcesJar()
-
+javadocJar()
 testsJar()
 
 projectTest(jUnitMode = JUnitMode.JUnit5) {

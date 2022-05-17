@@ -25,6 +25,8 @@ import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
 import org.jetbrains.kotlin.fir.*
+import org.jetbrains.kotlin.fir.analysis.checkersComponent
+import org.jetbrains.kotlin.fir.analysis.extensions.additionalCheckers
 import org.jetbrains.kotlin.fir.backend.jvm.FirJvmTypeMapper
 import org.jetbrains.kotlin.fir.extensions.*
 import org.jetbrains.kotlin.fir.resolve.providers.FirDependenciesSymbolProvider
@@ -135,6 +137,7 @@ internal object LLFirSessionFactory {
             register(FirJvmTypeMapper::class, FirJvmTypeMapper(this))
 
             configureSession?.invoke(this)
+            extensionService.additionalCheckers.forEach(session.checkersComponent::register)
         }
     }
 
