@@ -126,17 +126,6 @@ internal open class FirLightClassForSymbol(
         result
     }
 
-    private fun addMethodsFromCompanionIfNeeded(result: MutableList<KtLightMethod>) {
-        classOrObjectSymbol.companionObject?.run {
-            analyzeWithSymbolAsContext(this) {
-                val methods = getDeclaredMemberScope().getCallableSymbols()
-                    .filterIsInstance<KtFunctionSymbol>()
-                    .filter { it.hasJvmStaticAnnotation() }
-                createMethods(methods, result)
-            }
-        }
-    }
-
     private fun addMethodsFromDataClass(result: MutableList<KtLightMethod>) {
         if (!classOrObjectSymbol.isData) return
 
