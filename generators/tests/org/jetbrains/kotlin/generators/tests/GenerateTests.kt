@@ -402,7 +402,7 @@ fun main(args: Array<String>) {
             }
         }
 
-        testGroup("plugins/allopen/allopen-cli/tests-gen", "plugins/allopen/allopen-cli/testData") {
+        testGroup("plugins/allopen/tests-gen", "plugins/allopen/testData") {
             testClass<AbstractBytecodeListingTestForAllOpen> {
                 model("bytecodeListing", excludedPattern = excludedFirTestdataPattern)
             }
