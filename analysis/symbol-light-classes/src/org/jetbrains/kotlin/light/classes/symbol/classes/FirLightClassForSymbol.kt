@@ -241,27 +241,6 @@ internal open class FirLightClassForSymbol(
         result
     }
 
-    private fun addFieldsFromCompanionIfNeeded(result: MutableList<KtLightField>) {
-        classOrObjectSymbol.companionObject?.run {
-            analyzeWithSymbolAsContext(this) {
-                getDeclaredMemberScope().getCallableSymbols()
-                    .filterIsInstance<KtPropertySymbol>()
-                    .filter { it.hasJvmFieldAnnotation() || it.hasJvmStaticAnnotation() || it is KtKotlinPropertySymbol && it.isConst }
-                    .mapTo(result) {
-                        FirLightFieldForPropertySymbol(
-                            propertySymbol = it,
-                            fieldName = it.name.asString(),
-                            containingClass = this@FirLightClassForSymbol,
-                            lightMemberOrigin = null,
-                            isTopLevel = false,
-                            forceStatic = !it.hasJvmStaticAnnotation(),
-                            takePropertyVisibility = true
-                        )
-                    }
-            }
-        }
-    }
-
     private fun addPropertyBackingFields(result: MutableList<KtLightField>) {
         analyzeWithSymbolAsContext(classOrObjectSymbol) {
             val propertySymbols = classOrObjectSymbol.getDeclaredMemberScope().getCallableSymbols()
