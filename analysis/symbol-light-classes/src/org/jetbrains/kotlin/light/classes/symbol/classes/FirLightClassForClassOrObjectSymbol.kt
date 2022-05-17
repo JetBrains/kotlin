@@ -39,6 +39,9 @@ internal abstract class FirLightClassForClassOrObjectSymbol(
 
     protected val isTopLevel: Boolean = classOrObjectSymbol.symbolKind == KtSymbolKind.TOP_LEVEL
 
+    internal val isCompanionObject: Boolean
+        get() = classOrObjectSymbol.classKind == KtClassKind.COMPANION_OBJECT
+
     private val _isDeprecated: Boolean by lazyPub {
         classOrObjectSymbol.hasDeprecatedAnnotation()
     }

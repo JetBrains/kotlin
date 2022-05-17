@@ -29,6 +29,7 @@ internal class FirLightAccessorMethodForSymbol(
     lightMemberOrigin: LightMemberOrigin?,
     containingClass: FirLightClassBase,
     private val isTopLevel: Boolean,
+    private val suppressStatic: Boolean = false,
 ) : FirLightMethod(
     lightMemberOrigin,
     containingClass,
@@ -115,7 +116,9 @@ internal class FirLightAccessorMethodForSymbol(
         } ?: propertyAccessorSymbol.toPsiVisibilityForMember(isTopLevel)
         modifiers.add(visibility)
 
-        if (containingPropertySymbol.hasJvmStaticAnnotation(accessorSite)) {
+        if (!suppressStatic &&
+            (containingPropertySymbol.hasJvmStaticAnnotation() || propertyAccessorSymbol.hasJvmStaticAnnotation(accessorSite))
+        ) {
             modifiers.add(PsiModifier.STATIC)
         }
 
