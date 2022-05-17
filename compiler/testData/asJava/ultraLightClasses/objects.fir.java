@@ -1,10 +1,16 @@
 public final class C /* C*/ {
   @kotlin.jvm.JvmStatic()
   @org.jetbrains.annotations.NotNull()
-  public java.lang.String x;
+  public static java.lang.String x;
 
   @org.jetbrains.annotations.NotNull()
   public static final C.Companion Companion;
+
+  @org.jetbrains.annotations.NotNull()
+  public static java.lang.String c1;
+
+  @org.jetbrains.annotations.NotNull()
+  public static java.lang.String c;
 
   @kotlin.jvm.JvmStatic()
   public static final void foo();//  foo()
@@ -20,10 +26,6 @@ public final class C /* C*/ {
   }
 
 public static final class Companion /* C.Companion*/ {
-  @kotlin.jvm.JvmStatic()
-  @org.jetbrains.annotations.NotNull()
-  private java.lang.String x;
-
   @kotlin.jvm.JvmStatic()
   @org.jetbrains.annotations.NotNull()
   public final java.lang.String getC(I);//  getC(I)
