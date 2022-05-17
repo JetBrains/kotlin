@@ -31,6 +31,7 @@ internal open class FirLightInterfaceClassSymbol(
     private val _ownFields: List<KtLightField> by lazyPub {
         mutableListOf<KtLightField>().also {
             addCompanionObjectFieldIfNeeded(it)
+            addFieldsFromCompanionIfNeeded(it)
         }
     }
 
