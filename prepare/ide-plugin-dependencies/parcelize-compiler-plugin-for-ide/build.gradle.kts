@@ -2,4 +2,10 @@ plugins {
     kotlin("jvm")
 }
 
-publishJarsForIde(listOf(":plugins:parcelize:parcelize-compiler", ":plugins:parcelize:parcelize-runtime"))
+publishJarsForIde(
+    listOf(
+        ":plugins:parcelize:parcelize-compiler:parcelize.common",
+        ":plugins:parcelize:parcelize-compiler:parcelize.k1",
+        ":plugins:parcelize:parcelize-runtime"
+    )
+)

@@ -2,4 +2,4 @@ plugins {
     kotlin("jvm")
 }
 
-publishJarsForIde(listOf(":kotlin-allopen-compiler-plugin"))
+publishJarsForIde(listOf(":kotlin-allopen-compiler-plugin.k1"))
