@@ -1,4 +1,4 @@
-@<error>()
+@kotlin.jvm.JvmRecord()
 public final class MyRec /* pkg.MyRec*/ {
   @org.jetbrains.annotations.NotNull()
   private final java.lang.String name;

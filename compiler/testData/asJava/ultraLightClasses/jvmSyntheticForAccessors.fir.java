@@ -3,10 +3,10 @@ public final class X /* X*/ {
 
   private int w;
 
-  @<error>()
+  @kotlin.jvm.JvmSynthetic()
   public final int getV();//  getV()
 
-  @<error>()
+  @kotlin.jvm.JvmSynthetic()
   public final void setW(int);//  setW(int)
 
   public  X();//  .ctor()

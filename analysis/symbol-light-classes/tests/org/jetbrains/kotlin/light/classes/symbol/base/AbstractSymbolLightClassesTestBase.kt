@@ -5,12 +5,9 @@
 
 package org.jetbrains.kotlin.light.classes.symbol.base
 
-import com.intellij.mock.MockApplication
-import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiClass
 import com.intellij.psi.search.GlobalSearchScope
-import com.intellij.util.pico.DefaultPicoContainer
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedSingleModuleTest
 import org.jetbrains.kotlin.analysis.test.framework.services.libraries.CompiledLibraryProvider
 import org.jetbrains.kotlin.analysis.test.framework.services.libraries.CompilerExecutor
@@ -19,10 +16,10 @@ import org.jetbrains.kotlin.asJava.finder.JavaElementFinder
 import org.jetbrains.kotlin.light.classes.symbol.base.service.NullabilityAnnotationSourceProvider
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
+import org.jetbrains.kotlin.test.directives.ConfigurationDirectives
 import org.jetbrains.kotlin.test.directives.model.DirectiveApplicability
 import org.jetbrains.kotlin.test.directives.model.SimpleDirectivesContainer
 import org.jetbrains.kotlin.test.model.TestModule
-import org.jetbrains.kotlin.test.services.TestModuleStructure
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.assertions
 import org.jetbrains.kotlin.test.services.service
@@ -42,6 +39,9 @@ abstract class AbstractSymbolLightClassesTestBase(
             useAdditionalServices(service(::CompiledLibraryProvider))
             useDirectives(Directives, CompilerExecutor.Directives)
             useAdditionalSourceProviders(::NullabilityAnnotationSourceProvider)
+            defaultDirectives {
+                +ConfigurationDirectives.WITH_STDLIB
+            }
         }
     }
 
