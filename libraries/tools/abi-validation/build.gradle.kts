@@ -64,6 +64,12 @@ val createClasspathManifest = tasks.register("createClasspathManifest") {
 
 val kotlinVersion: String by project
 
+configurations.implementation {
+    exclude(group = "org.jetbrains.kotlin", module = "kotlin-stdlib")
+    exclude(group = "org.jetbrains.kotlin", module = "kotlin-stdlib-jdk7")
+    exclude(group = "org.jetbrains.kotlin", module = "kotlin-stdlib-jdk8")
+}
+
 dependencies {
     implementation(gradleApi())
     implementation("org.jetbrains.kotlinx:kotlinx-metadata-jvm:0.4.2")
