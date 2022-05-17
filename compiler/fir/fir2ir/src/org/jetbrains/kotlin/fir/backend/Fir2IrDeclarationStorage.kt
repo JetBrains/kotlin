@@ -496,7 +496,7 @@ class Fir2IrDeclarationStorage(
         forceTopLevelPrivate: Boolean = false,
     ): IrSimpleFunction = convertCatching(function) {
         val simpleFunction = function as? FirSimpleFunction
-        val isLambda = function.source?.elementType.let { it == KtNodeTypes.FUNCTION_LITERAL || it == KtNodeTypes.LAMBDA_EXPRESSION }
+        val isLambda = function is FirAnonymousFunction && function.isLambda
         val updatedOrigin = when {
             isLambda -> IrDeclarationOrigin.LOCAL_FUNCTION_FOR_LAMBDA
             function.symbol.callableId.isKFunctionInvoke() -> IrDeclarationOrigin.FAKE_OVERRIDE
