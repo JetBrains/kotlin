@@ -39,7 +39,7 @@ internal class FirLightInlineClass(
                     it.deprecationStatus?.deprecationLevel == DeprecationLevelValue.HIDDEN
                 }
 
-            createMethods(applicableDeclarations, result, suppressStaticForMethods = false)
+            createMethods(applicableDeclarations, result, suppressStatic = false)
 
             val inlineClassParameterSymbol =
                 declaredMemberScope.getConstructors().singleOrNull { it.isPrimary }?.valueParameters?.singleOrNull()
