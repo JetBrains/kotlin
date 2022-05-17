@@ -33,7 +33,7 @@ open class KotlinMetadataStubBuilder(
 
     override fun buildFileStub(content: FileContent): PsiFileStub<*>? {
         val virtualFile = content.file
-        assert(virtualFile.fileType == fileType) { "Unexpected file type ${virtualFile.fileType}" }
+        assert(virtualFile.extension == fileType.defaultExtension || virtualFile.fileType == fileType) { "Unexpected file type ${virtualFile.fileType.name}" }
         val file = readFile(virtualFile, content.content) ?: return null
 
         when (file) {

@@ -310,7 +310,7 @@ object TopDownAnalyzerFacadeForJVM {
         // 'isDirectory' check is needed because otherwise directories such as 'frontend.java' would be recognized
         // as Java source files, which makes no sense
         override fun contains(file: VirtualFile) =
-            file.fileType === JavaFileType.INSTANCE && !file.isDirectory
+            (file.extension == JavaFileType.DEFAULT_EXTENSION || file.fileType === JavaFileType.INSTANCE) && !file.isDirectory
 
         override fun toString() = "All Java sources in the project"
     }

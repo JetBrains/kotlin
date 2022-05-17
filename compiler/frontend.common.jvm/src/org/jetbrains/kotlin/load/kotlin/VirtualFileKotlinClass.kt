@@ -9,7 +9,6 @@ import com.intellij.ide.highlighter.JavaClassFileType
 import com.intellij.openapi.diagnostic.ControlFlowException
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.vfs.VirtualFile
-import org.jetbrains.kotlin.load.kotlin.KotlinClassFinder
 import org.jetbrains.kotlin.load.kotlin.KotlinClassFinder.Result.KotlinClass
 import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
 import org.jetbrains.kotlin.name.ClassId
@@ -49,7 +48,7 @@ class VirtualFileKotlinClass private constructor(
 
         internal fun create(file: VirtualFile, fileContent: ByteArray?): KotlinClassFinder.Result? {
             return perfCounter.time {
-                assert(file.fileType == JavaClassFileType.INSTANCE) { "Trying to read binary data from a non-class file $file" }
+                assert(file.extension == JavaClassFileType.INSTANCE.defaultExtension || file.fileType == JavaClassFileType.INSTANCE) { "Trying to read binary data from a non-class file $file" }
 
                 try {
                     val byteContent = fileContent ?: file.contentsToByteArray(false)

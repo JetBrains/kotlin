@@ -62,7 +62,9 @@ class KotlinBinaryClassCache : Disposable {
         fun getKotlinBinaryClassOrClassFileContent(
             file: VirtualFile, fileContent: ByteArray? = null
         ): KotlinClassFinder.Result? {
-            if (file.fileType !== JavaClassFileType.INSTANCE) return null
+            if (file.extension != JavaClassFileType.INSTANCE.defaultExtension &&
+                file.fileType !== JavaClassFileType.INSTANCE
+            ) return null
 
             if (file.name == PsiJavaModule.MODULE_INFO_CLS_FILE) return null
 

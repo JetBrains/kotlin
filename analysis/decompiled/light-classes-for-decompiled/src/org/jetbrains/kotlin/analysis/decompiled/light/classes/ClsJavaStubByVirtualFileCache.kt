@@ -33,7 +33,7 @@ class ClsJavaStubByVirtualFileCache {
     }
 
     private fun createStub(file: VirtualFile): PsiJavaFileStub? {
-        if (file.fileType !== JavaClassFileType.INSTANCE) return null
+        if (file.extension != JavaClassFileType.INSTANCE.defaultExtension && file.fileType !== JavaClassFileType.INSTANCE) return null
 
         try {
             return ClsFileImpl.buildFileStub(file, file.contentsToByteArray(false))

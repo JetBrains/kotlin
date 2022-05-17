@@ -90,7 +90,7 @@ interface JavaModule {
             get() = moduleInfo.moduleName
 
         override val isSourceModule: Boolean
-            get() = moduleInfoFile.fileType == JavaFileType.INSTANCE
+            get() = moduleInfoFile.extension == JavaFileType.DEFAULT_EXTENSION || moduleInfoFile.fileType == JavaFileType.INSTANCE
 
         override fun exports(packageFqName: FqName): Boolean {
             return moduleInfo.exports.any { (fqName, toModules) ->

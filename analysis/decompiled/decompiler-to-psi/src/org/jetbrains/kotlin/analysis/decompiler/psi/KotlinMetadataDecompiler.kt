@@ -40,7 +40,7 @@ abstract class KotlinMetadataDecompiler<out V : BinaryVersion>(
 
     abstract fun readFile(bytes: ByteArray, file: VirtualFile): KotlinMetadataStubBuilder.FileWithMetadata?
 
-    override fun accepts(file: VirtualFile) = file.fileType == fileType
+    override fun accepts(file: VirtualFile) = file.extension == fileType.defaultExtension || file.fileType == fileType
 
     override fun getStubBuilder() = metadataStubBuilder
 

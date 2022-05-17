@@ -58,7 +58,7 @@ inline fun List<KotlinSourceRoot>.forAllFiles(
             continue
         }
 
-        if (!vFile.isDirectory && vFile.fileType != KotlinFileType.INSTANCE) {
+        if (!vFile.isDirectory && vFile.extension != KotlinFileType.EXTENSION && vFile.fileType != KotlinFileType.INSTANCE) {
             configuration.report(CompilerMessageSeverity.ERROR, "Source entry is not a Kotlin file: $sourceRootPath", reportLocation)
             continue
         }

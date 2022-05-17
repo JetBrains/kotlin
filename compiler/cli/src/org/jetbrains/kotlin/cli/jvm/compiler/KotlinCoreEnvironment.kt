@@ -314,7 +314,7 @@ class KotlinCoreEnvironment private constructor(
     private val VirtualFile.javaFiles: List<VirtualFile>
         get() = mutableListOf<VirtualFile>().apply {
             VfsUtilCore.processFilesRecursively(this@javaFiles) { file ->
-                if (file.fileType == JavaFileType.INSTANCE) {
+                if (file.extension == JavaFileType.DEFAULT_EXTENSION || file.fileType == JavaFileType.INSTANCE) {
                     add(file)
                 }
                 true

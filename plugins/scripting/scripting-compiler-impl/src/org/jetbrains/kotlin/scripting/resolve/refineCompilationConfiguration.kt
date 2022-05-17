@@ -55,7 +55,7 @@ internal fun VirtualFile.getAnnotationEntries(project: Project): Iterable<KtAnno
     val psiFile: PsiFile = PsiManager.getInstance(project).findFile(this)
         ?: throw IllegalArgumentException("Unable to load PSI from $canonicalPath")
     return (psiFile as? KtFile)?.annotationEntries
-        ?: throw IllegalArgumentException("Unable to extract kotlin annotations from $name ($fileType)")
+        ?: throw IllegalArgumentException("Unable to extract kotlin annotations from $name (${fileType.name})")
 }
 
 /**
@@ -335,7 +335,7 @@ fun SourceCode.getKtFile(definition: ScriptDefinition, project: Project): KtFile
             val psiFile: PsiFile = PsiManager.getInstance(project).findFile(file)
                 ?: throw IllegalArgumentException("Unable to load PSI from ${file.path}")
             (psiFile as? KtFile)
-                ?: throw IllegalArgumentException("Not a kotlin file ${file.path} (${file.fileType})")
+                ?: throw IllegalArgumentException("Not a kotlin file ${file.path} (${file.fileType.name})")
         }
     }
 
