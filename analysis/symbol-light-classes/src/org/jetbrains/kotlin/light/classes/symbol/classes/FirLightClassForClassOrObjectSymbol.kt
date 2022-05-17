@@ -12,10 +12,12 @@ import com.intellij.psi.search.SearchScope
 import com.intellij.psi.stubs.IStubElementType
 import com.intellij.psi.stubs.StubElement
 import org.jetbrains.annotations.NonNls
+import org.jetbrains.kotlin.analysis.api.symbols.KtKotlinPropertySymbol
 import org.jetbrains.kotlin.asJava.classes.getOutermostClassOrObject
 import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.asJava.elements.KtLightField
 import org.jetbrains.kotlin.analysis.api.symbols.KtNamedClassOrObjectSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KtPropertySymbol
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KtSymbolKind
 import org.jetbrains.kotlin.light.classes.symbol.classes.createInnerClasses
 import org.jetbrains.kotlin.light.classes.symbol.classes.getOrCreateFirLightClass
@@ -91,6 +93,27 @@ internal abstract class FirLightClassForClassOrObjectSymbol(
                     lightMemberOrigin = null
                 )
             )
+        }
+    }
+
+    protected fun addFieldsFromCompanionIfNeeded(result: MutableList<KtLightField>) {
+        classOrObjectSymbol.companionObject?.run {
+            analyzeWithSymbolAsContext(this) {
+                getDeclaredMemberScope().getCallableSymbols()
+                    .filterIsInstance<KtPropertySymbol>()
+                    .filter { it.hasJvmFieldAnnotation() || it.hasJvmStaticAnnotation() || it is KtKotlinPropertySymbol && it.isConst }
+                    .mapTo(result) {
+                        FirLightFieldForPropertySymbol(
+                            propertySymbol = it,
+                            fieldName = it.name.asString(),
+                            containingClass = this@FirLightClassForClassOrObjectSymbol,
+                            lightMemberOrigin = null,
+                            isTopLevel = false,
+                            forceStatic = !it.hasJvmStaticAnnotation(),
+                            takePropertyVisibility = true
+                        )
+                    }
+            }
         }
     }
 
