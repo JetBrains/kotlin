@@ -2,6 +2,7 @@ package org.jetbrains.kotlin
 
 import org.gradle.api.Project
 
+@OptIn(ExperimentalStdlibApi::class)
 data class EndorsedLibraryInfo(val project: Project, val name: String) {
 
     val projectName: String

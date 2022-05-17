@@ -111,7 +111,7 @@ open class RunJvmTask: JavaExec() {
     @TaskAction
     override fun exec() {
         assert(outputFileName != null) { "Output file name should be always set" }
-        predefinedArgs = args ?: emptyList()
+        predefinedArgs = args
         val filterArgs = filter.splitCommaSeparatedOption("-f")
         val filterRegexArgs = filterRegex.splitCommaSeparatedOption("-fr")
         when (repeatingType) {

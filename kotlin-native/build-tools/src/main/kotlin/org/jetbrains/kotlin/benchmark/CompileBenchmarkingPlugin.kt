@@ -4,7 +4,6 @@ import groovy.lang.Closure
 import org.gradle.api.*
 import org.gradle.api.tasks.Delete
 import org.gradle.api.tasks.Exec
-import org.gradle.util.ConfigureUtil
 import org.jetbrains.kotlin.*
 import javax.inject.Inject
 
@@ -17,12 +16,12 @@ class BuildStep (private val _name: String): Named  {
     }
 }
 
-class BuildStepContainer(project: Project): NamedDomainObjectContainer<BuildStep> by project.container(BuildStep::class.java) {
+class BuildStepContainer(val project: Project): NamedDomainObjectContainer<BuildStep> by project.container(BuildStep::class.java) {
     fun step(name: String, configure: Action<BuildStep>) =
         maybeCreate(name).apply { configure.execute(this) }
     
     fun step(name: String, configure: Closure<Unit>) =
-        step(name, ConfigureUtil.configureUsing(configure))
+        step(name, { project.configure(this, configure) })
 }
 
 open class CompileBenchmarkExtension @Inject constructor(val project: Project) {
@@ -32,7 +31,7 @@ open class CompileBenchmarkExtension @Inject constructor(val project: Project) {
     var compilerOpts: List<String> = emptyList()
 
     fun buildSteps(configure: Action<BuildStepContainer>): Unit = buildSteps.let { configure.execute(it) }
-    fun buildSteps(configure: Closure<Unit>): Unit = buildSteps(ConfigureUtil.configureUsing(configure))
+    fun buildSteps(configure: Closure<Unit>): Unit = buildSteps { project.configure(this, configure) }
 }
 
 open class CompileBenchmarkingPlugin : Plugin<Project> {
@@ -70,7 +69,7 @@ open class CompileBenchmarkingPlugin : Plugin<Project> {
                         isIgnoreExitValue = true
                         konanRun.dependsOn(this)
                         doLast {
-                            exitCodes[name] = execResult!!.exitValue
+                            exitCodes[name] = executionResult.get().exitValue
                         }
                     }
                 }

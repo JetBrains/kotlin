@@ -10,8 +10,6 @@ import org.gradle.api.DefaultTask
 import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.api.tasks.*
-import org.jetbrains.kotlin.gradle.plugin.tasks.KonanCompileProgramTask
-import org.jetbrains.kotlin.gradle.plugin.tasks.KonanCompileTask
 import org.jetbrains.kotlin.konan.target.*
 import java.io.File
 import java.nio.file.Path

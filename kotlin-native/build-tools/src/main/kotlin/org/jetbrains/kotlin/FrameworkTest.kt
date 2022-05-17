@@ -28,6 +28,7 @@ import java.nio.file.Paths
  * @property swiftSources  Swift-language test sources that use a given framework
  * @property frameworks names of frameworks
  */
+@OptIn(ExperimentalStdlibApi::class)
 open class FrameworkTest : DefaultTask(), KonanTestExecutable {
     @Input
     lateinit var swiftSources: List<String>

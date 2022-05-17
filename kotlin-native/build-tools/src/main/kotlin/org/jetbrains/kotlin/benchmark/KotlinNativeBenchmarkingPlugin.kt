@@ -68,7 +68,7 @@ open class KotlinNativeBenchmarkingPlugin: BenchmarkingPlugin() {
             val mainCompilation = kotlin.jvm().compilations.getByName("main")
             val runtimeDependencies = configurations.getByName(mainCompilation.runtimeDependencyConfigurationName)
             classpath(files(mainCompilation.output.allOutputs, runtimeDependencies))
-            main = "MainKt"
+            mainClass.set("MainKt")
 
             group = BENCHMARKING_GROUP
             description = "Runs the benchmark for Kotlin/JVM."

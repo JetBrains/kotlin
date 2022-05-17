@@ -6,7 +6,6 @@ import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.api.artifacts.Dependency
-import org.gradle.util.ConfigureUtil
 import org.jetbrains.kotlin.*
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
@@ -79,7 +78,7 @@ open class BenchmarkExtension @Inject constructor(val project: Project) {
             dependencies.action()
 
     fun dependencies(action: Closure<*>) {
-        ConfigureUtil.configure(action, dependencies)
+        project.configure(dependencies, action)
     }
 
     inner class BenchmarkDependencies  {
@@ -209,6 +208,7 @@ abstract class BenchmarkingPlugin: Plugin<Project> {
     protected open fun Project.collectCodeSize(applicationName: String) =
             getCodeSizeBenchmark(applicationName, nativeExecutable)
 
+    @OptIn(ExperimentalStdlibApi::class)
     protected open fun Project.configureKonanJsonTask(nativeTarget: KotlinNativeTarget): Task {
         return tasks.create("konanJsonReport") {
             group = BENCHMARKING_GROUP

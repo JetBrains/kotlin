@@ -205,6 +205,7 @@ open class CompileToBitcodeExtension @Inject constructor(val project: Project) {
 
         private const val COMPILATION_DATABASE_TASK_NAME = "CompilationDatabase"
 
+        @OptIn(ExperimentalStdlibApi::class)
         private val String.capitalized: String
             get() = replaceFirstChar { it.uppercase() }
 
