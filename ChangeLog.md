@@ -1,3 +1,68 @@
+## 1.7.0-RC
+
+### Compiler
+
+- [`KT-51640`](https://youtrack.jetbrains.com/issue/KT-51640) FIR: remove warning about "far from being production ready"
+- [`KT-52404`](https://youtrack.jetbrains.com/issue/KT-52404) Prolong deprecation cycle for errors at contravariant usages of star projected argument from Java
+- [`KT-51844`](https://youtrack.jetbrains.com/issue/KT-51844) New errors in overload resolution involving vararg extension methods
+- [`KT-50877`](https://youtrack.jetbrains.com/issue/KT-50877) Inconsistent flexible type
+- [`KT-51988`](https://youtrack.jetbrains.com/issue/KT-51988) "NPE: getContainingDeclaration…lDeclarationType.REGULAR) must not be null" when using @BuilderInference with multiple type arguments
+- [`KT-51925`](https://youtrack.jetbrains.com/issue/KT-51925) Native: "IllegalStateException: Symbol for kotlinx.cinterop/CStructVar|null[0] is unbound" caused by inline function
+- [`KT-52035`](https://youtrack.jetbrains.com/issue/KT-52035) FIR: add error in 1.7.0 branch if run on JS / Native configuration
+- [`KT-52037`](https://youtrack.jetbrains.com/issue/KT-52037) FIR: add error in 1.7.0 branch if run with non-compatible plugins
+
+### JavaScript
+
+- [`KT-52144`](https://youtrack.jetbrains.com/issue/KT-52144) KJS / IR: Missing property definitions for interfaced defined properties
+- [`KT-51973`](https://youtrack.jetbrains.com/issue/KT-51973) KJS / IR overridden properties of inherited interface missing
+
+### Native. Platforms
+
+- [`KT-52232`](https://youtrack.jetbrains.com/issue/KT-52232) Kotlin/Native: simplify toolchain dependency override for MinGW
+
+### Native. Runtime
+
+- [`KT-52365`](https://youtrack.jetbrains.com/issue/KT-52365) Kotlin/Native fails to compile projects for 32-bit targets when new memory manager is enabled
+
+### Tools. Commonizer
+
+- [`KT-51224`](https://youtrack.jetbrains.com/issue/KT-51224) MPP: For optimistically commonized numbers missed kotlinx.cinterop.UnsafeNumber
+- [`KT-51215`](https://youtrack.jetbrains.com/issue/KT-51215) MPP: Update Kdoc description for kotlinx.cinterop.UnsafeNumber
+
+### Tools. Gradle
+
+- [`KT-52187`](https://youtrack.jetbrains.com/issue/KT-52187) New IC can not be enabled in an Android project using kapt
+- [`KT-51898`](https://youtrack.jetbrains.com/issue/KT-51898) Upgrading Kotlin/Kotlin Gradle plugin to 1.5.3 and above breaks 'com.android.asset-pack' plugin
+- [`KT-51913`](https://youtrack.jetbrains.com/issue/KT-51913) Gradle plugin should not add attributes to the legacy configurations
+- [`KT-52313`](https://youtrack.jetbrains.com/issue/KT-52313) No recompilation in Gradle after adding or removing function parameters, removing functions (and maybe more) in dependent modules
+- [`KT-52141`](https://youtrack.jetbrains.com/issue/KT-52141) Optimize Java class snapshotting for the `kotlin.incremental.useClasspathSnapshot` feature
+- [`KT-51978`](https://youtrack.jetbrains.com/issue/KT-51978) Optimize classpath snapshot cache for the `kotlin.incremental.useClasspathSnapshot` feature
+- [`KT-51415`](https://youtrack.jetbrains.com/issue/KT-51415) Confusing build failure reason is displayed in case kapt is used and different JDKs are used for compileKotlin and compileJava tasks
+
+### Tools. Gradle. Cocoapods
+
+- [`KT-51861`](https://youtrack.jetbrains.com/issue/KT-51861) Custom binary name in CocoaPods plugin isn't respected by fatFramework task
+
+### Tools. Gradle. JS
+
+- [`KT-51895`](https://youtrack.jetbrains.com/issue/KT-51895) K/JS: Redundant technical messages during JS tests
+
+### Tools. Gradle. Multiplatform
+
+- [`KT-51947`](https://youtrack.jetbrains.com/issue/KT-51947) Mark HMPP tasks as notCompatibleWithConfigurationCache for Gradle 7.4 using Reflection
+
+### Tools. Kapt
+
+- [`KT-51463`](https://youtrack.jetbrains.com/issue/KT-51463) KAPT: Incremental compilation not working when rerunning unit tests
+
+### Tools. Scripts
+
+- [`KT-49173`](https://youtrack.jetbrains.com/issue/KT-49173) Add support for nullable types in provided properties and other configuration-defined declarations
+- [`KT-51213`](https://youtrack.jetbrains.com/issue/KT-51213) Kotlin JSR223 crashes with "ScriptException: ERROR java.lang.NullPointerException:" if bindings contain one or more null values
+- [`KT-48812`](https://youtrack.jetbrains.com/issue/KT-48812) Script: "IllegalStateException: unknown classifier kind SCRIPT" when passing a function reference to a Flow
+- [`KT-50902`](https://youtrack.jetbrains.com/issue/KT-50902) Scripts loaded from the compilation cache ignore the `loadDependencies` eval configuration property
+
+
 ## 1.7.0-Beta
 
 ### Analysis API. FIR
