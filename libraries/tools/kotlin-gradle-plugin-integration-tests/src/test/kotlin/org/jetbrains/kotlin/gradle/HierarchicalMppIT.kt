@@ -728,7 +728,7 @@ class HierarchicalMppIT : KGPBaseTest() {
                 assertTasksExecuted(":lib:publish")
             }
 
-            val gccIncompatibleTasks = listOf(
+            val configCacheIncompatibleTasks = listOf(
                 ":generateProjectStructureMetadata",
                 ":transformCommonMainDependenciesMetadata",
                 ":cinteropFooLinuxX64",
@@ -737,8 +737,8 @@ class HierarchicalMppIT : KGPBaseTest() {
             )
 
             build("clean", "assemble", buildOptions = options) {
-                assertTasksExecuted(gccIncompatibleTasks)
-                gccIncompatibleTasks.forEach { task ->
+                assertTasksExecuted(configCacheIncompatibleTasks)
+                configCacheIncompatibleTasks.forEach { task ->
                     assertOutputContains(
                         """Task `:$task` of type `.+`: .+(at execution time is unsupported)|(not supported with the configuration cache)"""
                             .toRegex()
@@ -748,7 +748,7 @@ class HierarchicalMppIT : KGPBaseTest() {
 
             build("clean", "assemble", buildOptions = options) {
                 assertOutputContains("Configuration cache entry discarded")
-                assertTasksExecuted(gccIncompatibleTasks)
+                assertTasksExecuted(configCacheIncompatibleTasks)
             }
         }
     }
