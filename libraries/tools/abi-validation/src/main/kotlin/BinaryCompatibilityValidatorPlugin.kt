@@ -64,7 +64,7 @@ class BinaryCompatibilityValidatorPlugin : Plugin<Project> {
             it.description = "Task that collects all target specific dump tasks"
         }
 
-        val commonApiCheck: TaskProvider<Task>? = project.tasks.register("apiCheck") {
+        val commonApiCheck: TaskProvider<Task> = project.tasks.register("apiCheck") {
             it.group = "verification"
             it.description = "Shortcut task that depends on all specific check tasks"
         }.apply { project.tasks.named("check") { it.dependsOn(this) } }
@@ -243,7 +243,7 @@ private fun Project.configureCheckTasks(
             logger.debug("Configuring api for ${targetConfig.targetName ?: "jvm"} to $r")
         }
     }
-    val apiCheck = task<ApiCompareCompareTask>(targetConfig.apiTaskName("Check")) {
+    val apiCheck = task<KotlinApiCompareTask>(targetConfig.apiTaskName("Check")) {
         isEnabled = apiCheckEnabled(extension) && apiBuild.map { it.enabled }.getOrElse(true)
         group = "verification"
         description = "Checks signatures of public API against the golden value in API folder for $projectName"
