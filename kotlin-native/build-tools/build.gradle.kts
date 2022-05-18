@@ -16,19 +16,16 @@ plugins {
 }
 
 buildscript {
-    val rootBuildDirectory by extra(project.file("../.."))
-
-    apply(from = rootBuildDirectory.resolve("kotlin-native/gradle/loadRootProperties.gradle"))
     dependencies {
-        classpath(commonDependency("com.google.code.gson:gson"))
+        classpath("com.google.code.gson:gson:2.8.6")
     }
 }
 
 val rootProperties = Properties().apply {
-    project(":kotlin-native").projectDir.resolve("gradle.properties").reader().use(::load)
+    rootDir.resolve("../gradle.properties").reader().use(::load)
 }
 
-val kotlinVersion = project.bootstrapKotlinVersion
+val kotlinVersion: String by rootProperties
 val konanVersion: String by rootProperties
 val slackApiVersion: String by rootProperties
 val ktorVersion: String by rootProperties
@@ -49,38 +46,48 @@ dependencies {
     implementation("org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion")
     implementation("org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion")
     implementation("org.jetbrains.kotlin:kotlin-reflect:$kotlinVersion")
-    implementation("com.ullink.slack:simpleslackapi:$slackApiVersion") {
-        exclude(group = "com.google.code.gson", module = "gson") // Workaround for Gradle dependency resolution error
-    }
-    val versionPropertiesFile = project.rootProject.projectDir.resolve("gradle/versions.properties")
-    val versionProperties = Properties()
-    versionPropertiesFile.inputStream().use { propInput ->
-        versionProperties.load(propInput)
-    }
-    configurations.all {
-        resolutionStrategy.eachDependency {
-            if (requested.group == "com.google.code.gson" && requested.name == "gson") {
-                useVersion(versionProperties["versions.gson"] as String)
-                because("Force using same gson version because of https://github.com/google/gson/pull/1991")
-            }
-        }
-    }
+    implementation("com.ullink.slack:simpleslackapi:$slackApiVersion")
 
     implementation("io.ktor:ktor-client-auth:$ktorVersion")
     implementation("io.ktor:ktor-client-core:$ktorVersion")
     implementation("io.ktor:ktor-client-cio:$ktorVersion")
 
-    api(project(":native:kotlin-native-utils"))
+    api("org.jetbrains.kotlin:kotlin-native-utils:$kotlinVersion")
 
     // Located in <repo root>/shared and always provided by the composite build.
-//    api("org.jetbrains.kotlin:kotlin-native-shared:$kotlinVersion")
-//    implementation("gradle.plugin.com.github.johnrengelman:shadow:$shadowVersion")
-//
-//    implementation("org.jetbrains.kotlinx:kotlinx-metadata-klib:$metadataVersion")
+    api("org.jetbrains.kotlin:kotlin-native-shared:$konanVersion")
+    implementation("gradle.plugin.com.github.johnrengelman:shadow:$shadowVersion")
+
+    implementation("org.jetbrains.kotlinx:kotlinx-metadata-klib:$metadataVersion")
 }
 
 sourceSets["main"].withConvention(KotlinSourceSet::class) {
     kotlin.srcDir("$projectDir/../tools/benchmarks/shared/src/main/kotlin/report")
+}
+
+gradlePlugin {
+    plugins {
+        create("benchmarkPlugin") {
+            id = "benchmarking"
+            implementationClass = "org.jetbrains.kotlin.benchmark.KotlinNativeBenchmarkingPlugin"
+        }
+        create("compileBenchmarking") {
+            id = "compile-benchmarking"
+            implementationClass = "org.jetbrains.kotlin.benchmark.CompileBenchmarkingPlugin"
+        }
+        create("swiftBenchmarking") {
+            id = "swift-benchmarking"
+            implementationClass = "org.jetbrains.kotlin.benchmark.SwiftBenchmarkingPlugin"
+        }
+        create("compileToBitcode") {
+            id = "compile-to-bitcode"
+            implementationClass = "org.jetbrains.kotlin.bitcode.CompileToBitcodePlugin"
+        }
+        create("runtimeTesting") {
+            id = "runtime-testing"
+            implementationClass = "org.jetbrains.kotlin.testing.native.RuntimeTestingPlugin"
+        }
+    }
 }
 
 val compileKotlin: KotlinCompile by tasks
@@ -93,6 +100,6 @@ compileKotlin.apply {
 
 // Add Kotlin classes to a classpath for the Groovy compiler
 compileGroovy.apply {
-    classpath += project.files(compileKotlin.destinationDirectory)
+    classpath += project.files(compileKotlin.destinationDir)
     dependsOn(compileKotlin)
 }
