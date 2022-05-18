@@ -121,7 +121,7 @@ class KotlinJsr223ScriptEngineIT {
         try {
             engine.eval("java.lang.fish")
             Assert.fail("Script error expected")
-        } catch (e: ScriptException) {}
+        } catch (_: ScriptException) {}
 
         val res1 = engine.eval("val x = 3")
         Assert.assertNull(res1)
