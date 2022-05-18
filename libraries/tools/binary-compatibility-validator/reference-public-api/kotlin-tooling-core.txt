@@ -35,6 +35,7 @@ public final class org/jetbrains/kotlin/tooling/core/KotlinToolingVersionKt {
 	public static final fun KotlinToolingVersion (Ljava/lang/String;)Lorg/jetbrains/kotlin/tooling/core/KotlinToolingVersion;
 	public static final fun KotlinToolingVersion (Lkotlin/KotlinVersion;Ljava/lang/String;)Lorg/jetbrains/kotlin/tooling/core/KotlinToolingVersion;
 	public static synthetic fun KotlinToolingVersion$default (Lkotlin/KotlinVersion;Ljava/lang/String;ILjava/lang/Object;)Lorg/jetbrains/kotlin/tooling/core/KotlinToolingVersion;
+	public static final fun KotlinToolingVersionOrNull (Ljava/lang/String;)Lorg/jetbrains/kotlin/tooling/core/KotlinToolingVersion;
 	public static final fun compareTo (Ljava/lang/String;Lorg/jetbrains/kotlin/tooling/core/KotlinToolingVersion;)I
 	public static final fun compareTo (Lorg/jetbrains/kotlin/tooling/core/KotlinToolingVersion;Ljava/lang/String;)I
 	public static final fun getBuildNumber (Lorg/jetbrains/kotlin/tooling/core/KotlinToolingVersion;)Ljava/lang/Integer;

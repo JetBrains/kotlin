@@ -3,32 +3,35 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
+@file:Suppress("FunctionName")
+
 package org.jetbrains.kotlin.tooling.core
 
 import java.io.Serializable
 import java.util.*
 
 fun KotlinToolingVersion(kotlinVersionString: String): KotlinToolingVersion {
-    fun throwInvalid(): Nothing {
-        throw IllegalArgumentException("Invalid Kotlin version: $kotlinVersionString")
-    }
-
-    val baseVersion = kotlinVersionString.split("-", limit = 2)[0]
-    val classifier = kotlinVersionString.split("-", limit = 2).getOrNull(1)
-
-    val baseVersionSplit = baseVersion.split(".")
-    if (!(baseVersionSplit.size == 2 || baseVersionSplit.size == 3)) throwInvalid()
-
-    return KotlinToolingVersion(
-        major = baseVersionSplit[0].toIntOrNull() ?: throwInvalid(),
-        minor = baseVersionSplit[1].toIntOrNull() ?: throwInvalid(),
-        patch = baseVersionSplit.getOrNull(2)?.let { it.toIntOrNull() ?: throwInvalid() } ?: 0,
-        classifier = classifier
-    )
+    return KotlinToolingVersionOrNull(kotlinVersionString)
+        ?: throw IllegalArgumentException("Invalid Kotlin version: $kotlinVersionString")
 }
 
 fun KotlinToolingVersion(kotlinVersion: KotlinVersion, classifier: String? = null): KotlinToolingVersion {
     return KotlinToolingVersion(kotlinVersion.major, kotlinVersion.minor, kotlinVersion.patch, classifier)
+}
+
+fun KotlinToolingVersionOrNull(kotlinVersionString: String): KotlinToolingVersion? {
+    val baseVersion = kotlinVersionString.split("-", limit = 2)[0]
+    val classifier = kotlinVersionString.split("-", limit = 2).getOrNull(1)
+
+    val baseVersionSplit = baseVersion.split(".")
+    if (!(baseVersionSplit.size == 2 || baseVersionSplit.size == 3)) return null
+
+    return KotlinToolingVersion(
+        major = baseVersionSplit[0].toIntOrNull() ?: return null,
+        minor = baseVersionSplit[1].toIntOrNull() ?: return null,
+        patch = baseVersionSplit.getOrNull(2)?.let { it.toIntOrNull() ?: return null } ?: 0,
+        classifier = classifier
+    )
 }
 
 class KotlinToolingVersion(

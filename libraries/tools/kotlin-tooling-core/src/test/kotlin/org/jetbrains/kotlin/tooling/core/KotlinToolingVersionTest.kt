@@ -6,10 +6,7 @@
 package org.jetbrains.kotlin.tooling.core
 
 import org.junit.Test
-import kotlin.test.assertEquals
-import kotlin.test.assertFailsWith
-import kotlin.test.assertFalse
-import kotlin.test.assertTrue
+import kotlin.test.*
 
 class KotlinToolingVersionTest {
 
@@ -310,5 +307,13 @@ class KotlinToolingVersionTest {
         assertTrue(
             KotlinToolingVersion("1.7.0-snapshot").isSnapshot
         )
+    }
+
+    @Test
+    fun illegalVersionString() {
+        assertFailsWith<IllegalArgumentException> { KotlinToolingVersion("x") }
+        assertFailsWith<IllegalArgumentException> { KotlinToolingVersion("1.6.20.1") }
+        assertNull(KotlinToolingVersionOrNull("x"))
+        assertNull(KotlinToolingVersionOrNull("1.6.20.1"))
     }
 }
