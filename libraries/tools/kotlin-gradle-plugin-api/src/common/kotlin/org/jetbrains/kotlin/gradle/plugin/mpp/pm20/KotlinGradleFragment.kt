@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.gradle.plugin.HasKotlinDependencies
 import org.jetbrains.kotlin.gradle.plugin.LanguageSettingsBuilder
 import org.jetbrains.kotlin.project.model.KotlinModuleFragment
 import org.jetbrains.kotlin.project.model.utils.variantsContainingFragment
+import org.jetbrains.kotlin.tooling.core.MutableExtras
 import org.jetbrains.kotlin.tooling.core.closure
 import org.jetbrains.kotlin.tooling.core.withClosure
 
@@ -28,6 +29,8 @@ interface KotlinGradleFragment : KotlinModuleFragment, HasKotlinDependencies, Ko
 
     val project: Project
         get() = containingModule.project
+
+    val extras: MutableExtras
 
     fun refines(other: KotlinGradleFragment)
 

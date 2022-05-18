@@ -5,8 +5,8 @@
 
 package org.jetbrains.kotlin.gradle.kpm.idea
 
-import org.jetbrains.kotlin.gradle.kpm.KotlinExternalModelContainer
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.*
+import org.jetbrains.kotlin.tooling.core.emptyExtras
 
 internal fun IdeaKotlinProjectModelBuildingContext.IdeaKotlinFragment(fragment: KotlinGradleFragment): IdeaKotlinFragment {
     return if (fragment is KotlinGradleVariant) buildIdeaKotlinVariant(fragment)
@@ -20,8 +20,8 @@ private fun IdeaKotlinProjectModelBuildingContext.buildIdeaKotlinFragment(fragme
         languageSettings = IdeaKotlinLanguageSettings(fragment.languageSettings),
         dependencies = dependencyResolver.resolve(fragment).toList(),
         sourceDirectories = fragment.kotlinSourceRoots.sourceDirectories.files.toList().map { file -> IdeaKotlinSourceDirectoryImpl(file) },
-        resourceDirectories = emptyList(),
-        external = (fragment as? KotlinGradleFragmentInternal)?.external ?: KotlinExternalModelContainer.Empty
+        resourceDirectories = emptyList(), // TODO
+        extras = emptyExtras() // TODO: Requires more sophisticated serialization
     )
 }
 

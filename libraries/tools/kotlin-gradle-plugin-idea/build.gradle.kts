@@ -11,6 +11,7 @@ kotlin.sourceSets.configureEach {
 }
 
 dependencies {
+    api(project(":kotlin-tooling-core"))
     implementation(kotlinStdlib())
     testImplementation(gradleApi())
     testImplementation(gradleKotlinDsl())
@@ -24,6 +25,7 @@ dependencies {
 
     testFixturesImplementation(gradleApi())
     testFixturesImplementation(gradleKotlinDsl())
+    testFixturesImplementation(project(":kotlin-tooling-core"))
     testFixturesImplementation(project(":kotlin-test:kotlin-test-junit"))
 }
 

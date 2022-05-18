@@ -5,6 +5,9 @@
 
 package org.jetbrains.kotlin.gradle.kpm.idea
 
+import org.jetbrains.kotlin.tooling.core.AbstractExtras
+import org.jetbrains.kotlin.tooling.core.Extras
+import org.jetbrains.kotlin.tooling.core.MutableExtras
 import org.junit.runner.RunWith
 import org.junit.runners.Parameterized
 import org.reflections.Reflections
@@ -14,10 +17,7 @@ import kotlin.reflect.KClass
 import kotlin.reflect.KVisibility.PUBLIC
 import kotlin.reflect.full.findAnnotation
 import kotlin.reflect.full.memberProperties
-import kotlin.test.Test
-import kotlin.test.assertEquals
-import kotlin.test.assertNotNull
-import kotlin.test.assertTrue
+import kotlin.test.*
 
 @OptIn(ExperimentalStdlibApi::class)
 @RunWith(Parameterized::class)
@@ -86,6 +86,13 @@ class IdeaKotlinProjectModelObjectGraphTest(private val node: KClass<*>, @Suppre
 
     companion object {
         private val reflections = Reflections("org.jetbrains.kotlin")
+        private val ignoredNodes = setOf(
+            /*
+             Extras interface and AbstractExtras are okay for now:
+             Let's check known implementations for correctness
+            */
+            Extras::class, MutableExtras::class, AbstractExtras::class
+        )
 
         @JvmStatic
         @Parameterized.Parameters(name = "{1}")
@@ -114,7 +121,14 @@ class IdeaKotlinProjectModelObjectGraphTest(private val node: KClass<*>, @Suppre
                 }
             }
 
-            return classes.map { clazz -> arrayOf(clazz, checkNotNull(clazz.simpleName)) }
+            fun KClass<*>.displayName() = java.name
+                .removePrefix("org.jetbrains.kotlin")
+                .removePrefix(".gradle.kpm")
+                .removePrefix(".")
+
+            return classes
+                .filter { it !in ignoredNodes }
+                .map { clazz -> arrayOf(clazz, checkNotNull(clazz.displayName())) }
         }
 
         private fun KClass<*>.resolveReachableClasses(): Set<KClass<*>> {

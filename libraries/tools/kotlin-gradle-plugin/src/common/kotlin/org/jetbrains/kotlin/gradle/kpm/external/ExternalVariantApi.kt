@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.gradle.kpm.external
 
 import org.gradle.api.Project
 import org.jetbrains.kotlin.gradle.dsl.KotlinTopLevelExtension
-import org.jetbrains.kotlin.gradle.kpm.KotlinMutableExternalModelContainer
 import org.jetbrains.kotlin.gradle.kpm.idea.IdeaKotlinProjectModelBuilder
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.*
 
@@ -36,6 +35,3 @@ fun KotlinGradleModule.createExternalJvmVariant(
 val KotlinGradleVariantInternal.compilationData
     get() = this.compilationData
 
-@ExternalVariantApi
-val KotlinGradleFragment.external: KotlinMutableExternalModelContainer
-    get() = (this as KotlinGradleFragmentInternal).external

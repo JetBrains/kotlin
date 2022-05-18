@@ -3,17 +3,16 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-@file:OptIn(InternalKotlinGradlePluginApi::class)
 
 package org.jetbrains.kotlin.gradle.android
 
-import org.jetbrains.kotlin.gradle.kpm.KotlinExternalModelKey
-import org.jetbrains.kotlin.gradle.kpm.KotlinExternalModelSerializer
-import org.jetbrains.kotlin.gradle.kpm.idea.InternalKotlinGradlePluginApi
+import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinGradleFragment
+import org.jetbrains.kotlin.tooling.core.extrasKeyOf
 import java.io.File
 import java.io.Serializable
 
-val androidDslKey = KotlinExternalModelKey<AndroidDsl>(KotlinExternalModelSerializer.serializable())
+internal val androidDslKey = extrasKeyOf<AndroidDsl>()
+val KotlinGradleFragment.androidDsl: AndroidDsl? get() = this.extras[androidDslKey]
 
 class AndroidDsl : Serializable {
     var compileSdk = 0

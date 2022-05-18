@@ -1,59 +1,3 @@
-public abstract class org/jetbrains/kotlin/gradle/kpm/KotlinExternalModelContainer : java/io/Serializable {
-	public static final field Companion Lorg/jetbrains/kotlin/gradle/kpm/KotlinExternalModelContainer$Companion;
-	public abstract fun contains (Lorg/jetbrains/kotlin/gradle/kpm/KotlinExternalModelKey;)Z
-	public fun equals (Ljava/lang/Object;)Z
-	public abstract fun get (Lorg/jetbrains/kotlin/gradle/kpm/KotlinExternalModelKey;)Ljava/lang/Object;
-	public abstract fun getIds ()Ljava/util/Set;
-	public final fun getOrThrow (Lorg/jetbrains/kotlin/gradle/kpm/KotlinExternalModelKey;)Ljava/lang/Object;
-	public fun hashCode ()I
-	public final fun isEmpty ()Z
-	public final fun isNotEmpty ()Z
-	public fun toString ()Ljava/lang/String;
-}
-
-public final class org/jetbrains/kotlin/gradle/kpm/KotlinExternalModelContainer$Empty : org/jetbrains/kotlin/gradle/kpm/KotlinExternalModelContainer {
-	public static final field INSTANCE Lorg/jetbrains/kotlin/gradle/kpm/KotlinExternalModelContainer$Empty;
-	public fun contains (Lorg/jetbrains/kotlin/gradle/kpm/KotlinExternalModelKey;)Z
-	public fun get (Lorg/jetbrains/kotlin/gradle/kpm/KotlinExternalModelKey;)Ljava/lang/Object;
-	public fun getIds ()Ljava/util/Set;
-}
-
-public final class org/jetbrains/kotlin/gradle/kpm/KotlinExternalModelId : java/io/Serializable {
-	public static final field Companion Lorg/jetbrains/kotlin/gradle/kpm/KotlinExternalModelId$Companion;
-	public fun <init> (Lorg/jetbrains/kotlin/gradle/kpm/KotlinExternalModelType;Ljava/lang/String;)V
-	public fun equals (Ljava/lang/Object;)Z
-	public fun hashCode ()I
-	public fun toString ()Ljava/lang/String;
-}
-
-public final class org/jetbrains/kotlin/gradle/kpm/KotlinExternalModelKey {
-	public fun <init> (Lorg/jetbrains/kotlin/gradle/kpm/KotlinExternalModelId;Lorg/jetbrains/kotlin/gradle/kpm/KotlinExternalModelSerializer;)V
-	public fun equals (Ljava/lang/Object;)Z
-	public fun hashCode ()I
-}
-
-public abstract interface class org/jetbrains/kotlin/gradle/kpm/KotlinExternalModelSerializer {
-	public static final field Companion Lorg/jetbrains/kotlin/gradle/kpm/KotlinExternalModelSerializer$Companion;
-	public abstract fun deserialize ([B)Ljava/lang/Object;
-	public abstract fun serialize (Ljava/lang/Object;)[B
-}
-
-public final class org/jetbrains/kotlin/gradle/kpm/KotlinExternalModelType : java/io/Serializable {
-	public static final field Companion Lorg/jetbrains/kotlin/gradle/kpm/KotlinExternalModelType$Companion;
-	public fun <init> (Ljava/lang/String;)V
-	public fun equals (Ljava/lang/Object;)Z
-	public fun hashCode ()I
-	public fun toString ()Ljava/lang/String;
-}
-
-public final class org/jetbrains/kotlin/gradle/kpm/KotlinExternalModelTypeKt {
-	public static final fun externalModelTypeSignature (Lkotlin/reflect/KType;)Ljava/lang/String;
-}
-
-public abstract class org/jetbrains/kotlin/gradle/kpm/KotlinMutableExternalModelContainer : org/jetbrains/kotlin/gradle/kpm/KotlinExternalModelContainer {
-	public abstract fun set (Lorg/jetbrains/kotlin/gradle/kpm/KotlinExternalModelKey;Ljava/lang/Object;)V
-}
-
 public abstract interface class org/jetbrains/kotlin/gradle/kpm/idea/IdeaKotlinBinaryCoordinates : org/jetbrains/kotlin/gradle/kpm/idea/IdeaKotlinDependencyCoordinates {
 	public abstract fun getGroup ()Ljava/lang/String;
 	public abstract fun getKotlinFragmentName ()Ljava/lang/String;
@@ -80,7 +24,7 @@ public abstract interface class org/jetbrains/kotlin/gradle/kpm/idea/IdeaKotlinD
 	public static final field DOCUMENTATION_BINARY_TYPE Ljava/lang/String;
 	public static final field SOURCES_BINARY_TYPE Ljava/lang/String;
 	public abstract fun getCoordinates ()Lorg/jetbrains/kotlin/gradle/kpm/idea/IdeaKotlinDependencyCoordinates;
-	public abstract fun getExternal ()Lorg/jetbrains/kotlin/gradle/kpm/KotlinExternalModelContainer;
+	public abstract fun getExtras ()Lorg/jetbrains/kotlin/tooling/core/Extras;
 }
 
 public final class org/jetbrains/kotlin/gradle/kpm/idea/IdeaKotlinDependency$Companion {
@@ -101,7 +45,7 @@ public final class org/jetbrains/kotlin/gradle/kpm/idea/IdeaKotlinDependencyKt {
 public abstract interface class org/jetbrains/kotlin/gradle/kpm/idea/IdeaKotlinFragment : java/io/Serializable {
 	public abstract fun getCoordinates ()Lorg/jetbrains/kotlin/gradle/kpm/idea/IdeaKotlinFragmentCoordinates;
 	public abstract fun getDependencies ()Ljava/util/List;
-	public abstract fun getExternal ()Lorg/jetbrains/kotlin/gradle/kpm/KotlinExternalModelContainer;
+	public abstract fun getExtras ()Lorg/jetbrains/kotlin/tooling/core/Extras;
 	public abstract fun getLanguageSettings ()Lorg/jetbrains/kotlin/gradle/kpm/idea/IdeaKotlinLanguageSettings;
 	public abstract fun getPlatforms ()Ljava/util/Set;
 	public abstract fun getResourceDirectories ()Ljava/util/List;
