@@ -11,10 +11,10 @@ import org.gradle.api.file.*
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.tasks.*
 import java.io.*
-import java.util.TreeSet
+import java.util.TreeMap
 import javax.inject.Inject
 
-open class ApiCompareCompareTask @Inject constructor(private val objects: ObjectFactory): DefaultTask() {
+open class KotlinApiCompareTask @Inject constructor(private val objects: ObjectFactory): DefaultTask() {
 
     /*
      * Nullability and optionality is a workaround for
@@ -38,6 +38,7 @@ open class ApiCompareCompareTask @Inject constructor(private val objects: Object
 
     @OutputFile
     @Optional
+    @Suppress("unused")
     val dummyOutputFile: File? = null
 
     private val projectName = project.name
@@ -47,38 +48,48 @@ open class ApiCompareCompareTask @Inject constructor(private val objects: Object
     @TaskAction
     fun verify() {
         val projectApiDir = projectApiDir
-        if (projectApiDir == null) {
-            error("Expected folder with API declarations '$nonExistingProjectApiDir' does not exist.\n" +
+            ?: error("Expected folder with API declarations '$nonExistingProjectApiDir' does not exist.\n" +
                     "Please ensure that ':apiDump' was executed in order to get API dump to compare the build against")
-        }
 
         val subject = projectName
-        val apiBuildDirFiles = mutableSetOf<RelativePath>()
-        // We use case-insensitive comparison to workaround issues with case-insensitive OSes
-        // and Gradle behaving slightly different on different platforms
-        val expectedApiFiles = TreeSet<RelativePath> { rp, rp2 ->
+
+        /*
+         * We use case-insensitive comparison to workaround issues with case-insensitive OSes
+         * and Gradle behaving slightly different on different platforms.
+         * We neither know original sensitivity of existing .api files, not
+         * build ones, because projectName that is part of the path can have any sensitvity.
+         * To workaround that, we replace paths we are looking for the same paths that
+         * actually exist on FS.
+         */
+        fun caseInsensitiveMap() = TreeMap<RelativePath, RelativePath> { rp, rp2 ->
             rp.toString().compareTo(rp2.toString(), true)
         }
+
+        val apiBuildDirFiles = caseInsensitiveMap()
+        val expectedApiFiles = caseInsensitiveMap()
+
         objects.fileTree().from(apiBuildDir).visit { file ->
-            apiBuildDirFiles.add(file.relativePath)
+            apiBuildDirFiles[file.relativePath] = file.relativePath
         }
         objects.fileTree().from(projectApiDir).visit { file ->
-            expectedApiFiles.add(file.relativePath)
+            expectedApiFiles[file.relativePath] = file.relativePath
         }
 
         if (apiBuildDirFiles.size != 1) {
             error("Expected a single file $subject.api, but found: $expectedApiFiles")
         }
 
-        val expectedApiDeclaration = apiBuildDirFiles.single()
+        var expectedApiDeclaration = apiBuildDirFiles.keys.single()
         if (expectedApiDeclaration !in expectedApiFiles) {
             error("File ${expectedApiDeclaration.lastName} is missing from ${projectApiDir.relativePath()}, please run " +
                     ":$subject:apiDump task to generate one")
         }
-
+        // Normalize case-sensitivity
+        expectedApiDeclaration = expectedApiFiles.getValue(expectedApiDeclaration)
+        val actualApiDeclaration = apiBuildDirFiles.getValue(expectedApiDeclaration)
         val diffSet = mutableSetOf<String>()
         val expectedFile = expectedApiDeclaration.getFile(projectApiDir)
-        val actualFile = expectedApiDeclaration.getFile(apiBuildDir)
+        val actualFile = actualApiDeclaration.getFile(apiBuildDir)
         val diff = compareFiles(expectedFile, actualFile)
         if (diff != null) diffSet.add(diff)
         if (diffSet.isNotEmpty()) {
