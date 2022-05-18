@@ -45,6 +45,7 @@ import kotlin.script.experimental.jvm.defaultJvmScriptingHostConfiguration
 import kotlin.script.experimental.jvm.impl.KJvmCompiledScript
 import kotlin.script.experimental.util.LinkedSnippet
 import kotlin.script.experimental.util.LinkedSnippetImpl
+import kotlin.script.experimental.util.PropertiesCollection
 import kotlin.script.experimental.util.add
 
 // NOTE: this implementation, as it is used in the REPL infrastructure, may be created for every snippet and provided with the state
@@ -105,14 +106,16 @@ open class KJvmReplCompilerBase<AnalyzerT : ReplCodeAnalyzerBase>(
                     )
                 }
 
-                val snippetNo = state.getNextLineNo()
+                // TODO: ensure that currentLineId passing is only used for single snippet compilation
+                val lineId = configuration[ScriptCompilationConfiguration.repl.currentLineId]
+                    ?: LineId(state.getNextLineNo(), state.currentGeneration, snippet.hashCode())
 
                 val analysisResult =
                     compilationState.analyzerEngine.analyzeReplLineWithImportedScripts(
                         snippetKtFile,
                         sourceFiles.drop(1),
                         snippet,
-                        snippetNo
+                        lineId.no
                     )
                 AnalyzerWithCompilerReport.reportDiagnostics(analysisResult.diagnostics, errorHolder, renderDiagnosticName = false)
 
@@ -148,7 +151,7 @@ open class KJvmReplCompilerBase<AnalyzerT : ReplCodeAnalyzerBase>(
                     return failure(messageCollector, *scriptDiagnostics.toTypedArray())
                 }
 
-                state.history.push(LineId(snippetNo, 0, snippet.hashCode()), scriptDescriptor)
+                state.history.push(lineId, scriptDescriptor)
 
                 val dependenciesProvider = ScriptDependenciesProvider.getInstance(context.environment.project)
                 makeCompiledScript(
@@ -366,3 +369,8 @@ class ReplCompilationState<AnalyzerT : ReplCodeAnalyzerBase>(
     val mangler: JvmDescriptorMangler get() = manglerAndSymbolTable.first
     val symbolTable: SymbolTable get() = manglerAndSymbolTable.second
 }
+
+/**
+ * Internal property for transferring line id information when using new repl infrastructure with legacy one
+ */
+val ReplScriptCompilationConfigurationKeys.currentLineId by PropertiesCollection.key<LineId>(isTransient = true)

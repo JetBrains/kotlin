@@ -441,6 +441,18 @@ obj
             tempDir.toFile().deleteRecursively()
         }
     }
+
+    @Test
+    fun testEvalWithCompilationError() {
+        val engine = ScriptEngineManager().getEngineByExtension("kts")
+        val compilable: Compilable = engine as Compilable
+        assertThrows(ScriptException::class.java) {
+            compilable.compile("foo")
+        }
+        compilable.compile("true")
+        engine.eval("val x = 3")
+        compilable.compile("x")
+    }
 }
 
 fun assertThrows(exceptionClass: Class<*>, body: () -> Unit) {

@@ -369,6 +369,19 @@ class ReplTest : TestCase() {
         )
     }
 
+    @Test
+    fun testCompileWithoutEval() {
+        val replCompiler = KJvmReplCompilerBase<ReplCodeAnalyzerBase>()
+        val replEvaluator = BasicJvmReplEvaluator()
+        val compCfg = simpleScriptCompilationConfiguration
+        runBlocking {
+            replCompiler.compile("false".toScriptSource(), compCfg)
+            replCompiler.compile("true".toScriptSource(), compCfg).onSuccess {
+                replEvaluator.eval(it, simpleScriptEvaluationConfiguration)
+            }
+        }
+    }
+
     companion object {
         private fun positionsEqual(a: SourceCode.Position?, b: SourceCode.Position?): Boolean {
             if (a == null || b == null) {

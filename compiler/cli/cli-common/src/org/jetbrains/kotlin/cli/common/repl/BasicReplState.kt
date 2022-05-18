@@ -36,6 +36,7 @@ data class LineId(override val no: Int, override val generation: Int, private va
 
 open class BasicReplStageHistory<T>(override val lock: ReentrantReadWriteLock = ReentrantReadWriteLock()) : IReplStageHistory<T>, ArrayList<ReplHistoryRecord<T>>() {
 
+    val currentLineNumber = AtomicInteger(REPL_CODE_LINE_FIRST_NO)
     val currentGeneration = AtomicInteger(REPL_CODE_LINE_FIRST_GEN)
 
     override fun push(id: ILineId, item: T) {
@@ -51,6 +52,7 @@ open class BasicReplStageHistory<T>(override val lock: ReentrantReadWriteLock = 
             val removed = map { it.id }
             clear()
             currentGeneration.incrementAndGet()
+            currentLineNumber.set(REPL_CODE_LINE_FIRST_NO)
             return removed
         }
     }
@@ -68,9 +70,13 @@ open class BasicReplStageHistory<T>(override val lock: ReentrantReadWriteLock = 
             val removed = asSequence().drop(idx + 1).map { it.id }.toList()
             removeRange(idx + 1, size)
             currentGeneration.incrementAndGet()
+            removed.lastOrNull()?.no?.let {
+                currentLineNumber.set(it)
+            }
             removed
         } else {
             currentGeneration.incrementAndGet()
+            currentLineNumber.set(id.no + 1)
             emptyList()
         }
     }
@@ -79,6 +85,8 @@ open class BasicReplStageHistory<T>(override val lock: ReentrantReadWriteLock = 
 open class BasicReplStageState<HistoryItemT>(override final val lock: ReentrantReadWriteLock = ReentrantReadWriteLock()): IReplStageState<HistoryItemT> {
 
     override val currentGeneration: Int get() = history.currentGeneration.get()
+
+    override fun getNextLineNo(): Int = history.currentLineNumber.getAndIncrement()
 
     override val history: BasicReplStageHistory<HistoryItemT> = BasicReplStageHistory(lock)
 }

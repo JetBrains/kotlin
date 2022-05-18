@@ -7,6 +7,7 @@ package kotlin.script.experimental.jvmhost.repl
 
 import org.jetbrains.kotlin.cli.common.repl.*
 import org.jetbrains.kotlin.scripting.compiler.plugin.impl.KJvmReplCompilerBase
+import org.jetbrains.kotlin.scripting.compiler.plugin.impl.currentLineId
 import org.jetbrains.kotlin.scripting.compiler.plugin.repl.JvmReplCompilerState
 import org.jetbrains.kotlin.scripting.compiler.plugin.repl.ReplCodeAnalyzerBase
 import java.util.concurrent.locks.ReentrantReadWriteLock
@@ -38,10 +39,21 @@ class JvmReplCompiler(
             replCompilerState
         )
 
+        val lineId = LineId(codeLine.no, codeLine.generation, snippet.hashCode())
+
         @Suppress("DEPRECATION_ERROR")
-        when (val res = internalScriptingRunSuspend { replCompiler.compile(listOf(snippet), scriptCompilationConfiguration) }) {
+        val res = internalScriptingRunSuspend {
+            replCompiler.compile(
+                listOf(snippet),
+                scriptCompilationConfiguration.with {
+                    repl {
+                        currentLineId(lineId)
+                    }
+                }
+            )
+        }
+        when (res) {
             is ResultWithDiagnostics.Success -> {
-                val lineId = LineId(codeLine.no, 0, snippet.hashCode())
                 ReplCompileResult.CompiledClasses(
                     lineId,
                     replCompiler.state.history.map { it.id },
