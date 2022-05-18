@@ -96,6 +96,9 @@ open class KJvmReplCompilerBase<AnalyzerT : ReplCodeAnalyzerBase>(
 
                 if (messageCollector.hasErrors()) return failure(messageCollector)
 
+                // TODO: support case then JvmDependencyFromClassLoader is registered in non-first line
+                // registerPackageFragmentProvidersIfNeeded already tries to avoid duplicated registering, but impact on
+                // executing it on every snippet needs to be evaluated first
                 if (state.history.isEmpty()) {
                     val updatedConfiguration = ScriptDependenciesProvider.getInstance(context.environment.project)
                         ?.getScriptConfiguration(snippetKtFile)?.configuration

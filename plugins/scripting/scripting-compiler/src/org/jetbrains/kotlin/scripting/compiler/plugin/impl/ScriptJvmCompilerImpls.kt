@@ -159,9 +159,17 @@ internal fun registerPackageFragmentProvidersIfNeeded(
     scriptCompilationConfiguration: ScriptCompilationConfiguration,
     environment: KotlinCoreEnvironment
 ) {
-    scriptCompilationConfiguration[ScriptCompilationConfiguration.dependencies]?.forEach { dependency ->
-        if (dependency is JvmDependencyFromClassLoader) {
-            // TODO: consider implementing deduplication
+    val scriptDependencies = scriptCompilationConfiguration[ScriptCompilationConfiguration.dependencies] ?: return
+    val scriptDependenciesFromClassLoader = scriptDependencies.filterIsInstance<JvmDependencyFromClassLoader>().takeIf { it.isNotEmpty() }
+        ?: return
+    // TODO: consider implementing deduplication/diff processing
+    val alreadyRegistered =
+        environment.project.extensionArea.getExtensionPoint(PackageFragmentProviderExtension.extensionPointName).extensions.any {
+            (it is PackageFragmentFromClassLoaderProviderExtension) &&
+                    it.scriptCompilationConfiguration[ScriptCompilationConfiguration.dependencies] == scriptDependencies
+        }
+    if (!alreadyRegistered) {
+        scriptDependenciesFromClassLoader.forEach { dependency ->
             PackageFragmentProviderExtension.registerExtension(
                 environment.project,
                 PackageFragmentFromClassLoaderProviderExtension(
