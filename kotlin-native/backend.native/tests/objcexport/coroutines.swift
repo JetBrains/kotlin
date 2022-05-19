@@ -48,6 +48,41 @@ private func testUnitCallSimple() throws {
     try assertNil(error)
 }
 
+private func testUnitCallNonMainDispatcher() throws {
+#if LEGACY_SUSPEND_UNIT_FUNCTION_EXPORT
+    var result: KotlinUnit? = nil
+#endif
+    var error: Error? = nil
+    var completionCalled = 0
+
+    let group = DispatchGroup()
+
+#if ALLOW_SUSPEND_ANY_THREAD
+#if LEGACY_SUSPEND_UNIT_FUNCTION_EXPORT
+    DispatchQueue.global().async(group: group) {
+        CoroutinesKt.unitSuspendFun { _result, _error in
+            completionCalled += 1
+            result = _result
+            error = _error
+        }
+    }
+#else
+    DispatchQueue.global().async(group: group) {
+        CoroutinesKt.unitSuspendFun { _error in
+            completionCalled += 1
+            error = _error
+        }
+    }
+#endif
+#endif
+
+#if ALLOW_SUSPEND_ANY_THREAD
+    group.wait()
+    try assertEquals(actual: completionCalled, expected: 1)
+#endif
+}
+
+
 private func testCallSuspendFun(doSuspend: Bool, doThrow: Bool) throws {
     class C {}
     let expectedResult = C()
@@ -630,6 +665,7 @@ class CoroutinesTests : SimpleTestProvider {
 
         test("TestCallSimple", testCallSimple)
         test("TestCallUnitSimple", testUnitCallSimple)
+        test("TestCallFromNonMainDispatcher", testUnitCallNonMainDispatcher)
         test("TestCall", testCall)
         test("TestCallChain", testCallChain)
         test("TestOverride", testOverride)

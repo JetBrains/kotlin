@@ -37,7 +37,7 @@ extern "C" OBJ_GETTER(Kotlin_ObjCExport_createContinuationArgumentImpl,
     KRef completionHolder, const TypeInfo** exceptionTypes);
 
 extern "C" OBJ_GETTER(Kotlin_ObjCExport_createContinuationArgument, id completion, const TypeInfo** exceptionTypes) {
-  if (pthread_main_np() != 1) {
+  if (!kotlin::compiler::suspendFunctionsFromAnyThreadFromObjCEnabled() && pthread_main_np() != 1) {
     [NSException raise:NSGenericException
         format:@"Calling Kotlin suspend functions from Swift/Objective-C is currently supported only on main thread"];
   }

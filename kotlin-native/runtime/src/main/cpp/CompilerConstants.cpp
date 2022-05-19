@@ -16,6 +16,7 @@ RUNTIME_WEAK int32_t Kotlin_gcSchedulerType = 2;
 RUNTIME_WEAK int32_t Kotlin_workerExceptionHandling = 0;
 RUNTIME_WEAK int32_t Kotlin_freezingEnabled = 1;
 RUNTIME_WEAK int32_t Kotlin_freezingChecksEnabled = 1;
+RUNTIME_WEAK int32_t Kotlin_suspendFunctionsFromAnyThreadFromObjC = 0;
 RUNTIME_WEAK const Kotlin_getSourceInfo_FunctionType Kotlin_getSourceInfo_Function = nullptr;
 #ifdef KONAN_ANDROID
 RUNTIME_WEAK int32_t Kotlin_printToAndroidLogcat = 1;
@@ -35,6 +36,10 @@ ALWAYS_INLINE bool compiler::freezingEnabled() noexcept {
 
 ALWAYS_INLINE bool compiler::freezingChecksEnabled() noexcept {
     return Kotlin_freezingChecksEnabled != 0;
+}
+
+ALWAYS_INLINE bool compiler::suspendFunctionsFromAnyThreadFromObjCEnabled() noexcept {
+    return Kotlin_suspendFunctionsFromAnyThreadFromObjC != 0;
 }
 
 ALWAYS_INLINE compiler::GCSchedulerType compiler::getGCSchedulerType() noexcept {

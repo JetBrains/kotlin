@@ -80,6 +80,7 @@ ALWAYS_INLINE inline std::string_view runtimeLogs() noexcept {
 
 bool freezingEnabled() noexcept;
 bool freezingChecksEnabled() noexcept;
+bool suspendFunctionsFromAnyThreadFromObjCEnabled() noexcept;
 
 
 ALWAYS_INLINE inline int getSourceInfo(void* addr, SourceInfo *result, int result_size) {
