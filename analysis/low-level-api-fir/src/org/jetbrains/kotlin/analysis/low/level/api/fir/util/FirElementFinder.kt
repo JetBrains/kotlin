@@ -7,7 +7,10 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.util
 
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.declarations.FirFile
+import org.jetbrains.kotlin.fir.declarations.FirRegularClass
+import org.jetbrains.kotlin.fir.declarations.utils.classId
 import org.jetbrains.kotlin.fir.psi
+import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
 import org.jetbrains.kotlin.psi.KtElement
 
@@ -31,6 +34,28 @@ object FirElementFinder {
                     goInside(element) -> {
                         element.acceptChildren(this)
                     }
+                }
+            }
+
+            override fun visitRegularClass(regularClass: FirRegularClass) {
+                // Checking the rest super types that weren't resolved on the first OUTER_CLASS_ARGUMENTS_REQUIRED check in FirTypeResolver
+                val oldResolvePhase = regularClass.resolvePhase
+                val oldList = regularClass.superTypeRefs.toList()
+
+                try {
+                    super.visitRegularClass(regularClass)
+                } catch (e: ConcurrentModificationException) {
+                    val newResolvePhase = regularClass.resolvePhase
+                    val newList = regularClass.superTypeRefs.toList()
+
+                    throw IllegalStateException(
+                        """
+                        CME while traversing superTypeRefs of declaration=${regularClass.render()}:
+                        classId: ${regularClass.classId},
+                        oldPhase: $oldResolvePhase, oldList: ${oldList.joinToString(",", "[", "]") { it.render() }},
+                        newPhase: $newResolvePhase, newList: ${newList.joinToString(",", "[", "]") { it.render() }}
+                        """.trimIndent(), e
+                    )
                 }
             }
         })
