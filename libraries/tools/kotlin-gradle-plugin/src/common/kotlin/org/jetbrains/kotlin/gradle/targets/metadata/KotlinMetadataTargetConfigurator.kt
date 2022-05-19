@@ -403,7 +403,7 @@ class KotlinMetadataTargetConfigurator :
     }
 
     /** Ensure that the [configuration] excludes the dependencies that are classified by this [GranularMetadataTransformation] as
-     * [MetadataDependencyResolution.ExcludeAsUnrequested], and uses exactly the same versions as were resolved for the requested
+     * [MetadataDependencyResolution.Exclude], and uses exactly the same versions as were resolved for the requested
      * dependencies during the transformation. */
     private fun GranularMetadataTransformation.applyToConfiguration(configuration: Configuration) {
         // Run this action immediately before the configuration first takes part in dependency resolution:
