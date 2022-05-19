@@ -16,6 +16,10 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrVarargImpl
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.isUnit
 import org.jetbrains.kotlin.ir.types.typeWith
+import org.jetbrains.kotlin.utils.IDEAPlatforms
+import org.jetbrains.kotlin.utils.IDEAPluginsCompatibilityAPI
+import org.jetbrains.kotlin.ir.util.createImplicitParameterDeclarationWithWrappedDescriptor as createImplicitParameterDeclarationWithWrappedDescriptorNew
+import org.jetbrains.kotlin.ir.util.isTopLevel as isTopLevelNew
 
 fun IrReturnTarget.returnType(context: CommonBackendContext) =
     when (this) {
@@ -119,3 +123,17 @@ fun CommonBackendContext.createArrayOfExpression(
         putValueArgument(0, arg0)
     }
 }
+
+@IDEAPluginsCompatibilityAPI(
+    IDEAPlatforms._221,
+    message = "Please use the same util from the org.jetbrains.kotlin.ir.util package",
+    plugins = "noria, rhizomedb"
+)
+fun IrClass.createImplicitParameterDeclarationWithWrappedDescriptor() = createImplicitParameterDeclarationWithWrappedDescriptorNew()
+
+@IDEAPluginsCompatibilityAPI(
+    IDEAPlatforms._221,
+    message = "Please use the same util from the org.jetbrains.kotlin.ir.util package",
+    plugins = "noria, rhizomedb"
+)
+val IrDeclaration.isTopLevel: Boolean get() = isTopLevelNew
