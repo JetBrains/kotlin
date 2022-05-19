@@ -11,16 +11,16 @@ inline operator fun <T, V> @ExtensionFunctionType Function2<T, T, V>.inc() = thi
 operator fun <T, V> @ExtensionFunctionType Function2<T, T, V>.dec() = this
 
 inline fun <T, V> inlineFunWithInvoke(s: (p: T) -> V, ext: T.(p: T) -> V) {
-    +s
+    +<!USAGE_IS_NOT_INLINABLE!>s<!>
     -<!USAGE_IS_NOT_INLINABLE!>s<!>
-    s++
-    ++s
+    <!USAGE_IS_NOT_INLINABLE!>s<!>++
+    ++<!USAGE_IS_NOT_INLINABLE!>s<!>
     <!USAGE_IS_NOT_INLINABLE!>s<!>--
     --<!USAGE_IS_NOT_INLINABLE!>s<!>
-    +ext
+    +<!USAGE_IS_NOT_INLINABLE!>ext<!>
     -<!USAGE_IS_NOT_INLINABLE!>ext<!>
-    ext++
-    ++ext
+    <!USAGE_IS_NOT_INLINABLE!>ext<!>++
+    ++<!USAGE_IS_NOT_INLINABLE!>ext<!>
     <!USAGE_IS_NOT_INLINABLE!>ext<!>--
     --<!USAGE_IS_NOT_INLINABLE!>ext<!>
 }
