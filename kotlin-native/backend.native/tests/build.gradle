@@ -5564,8 +5564,10 @@ if (isAppleTarget(project)) {
             artifact = frameworkArtifactName
             library = libraryName
             isStatic = true
+            opts = ["-Xbinary=objcExportSuspendFunctionLaunchThreadRestriction=none"]
         }
         swiftSources = ['objcexport']
+        swiftExtraOpts = [ '-D', 'ALLOW_SUSPEND_ANY_THREAD' ]
         if (isNoopGC) {
             swiftExtraOpts += ["-D", "NOOP_GC"]
         }

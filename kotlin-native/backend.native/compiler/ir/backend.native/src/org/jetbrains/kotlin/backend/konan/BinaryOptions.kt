@@ -26,6 +26,8 @@ object BinaryOptions : BinaryOptionRegistry() {
 
     val unitSuspendFunctionObjCExport by option<UnitSuspendFunctionObjCExport>()
 
+    val objcExportSuspendFunctionLaunchThreadRestriction by option<ObjCExportSuspendFunctionLaunchThreadRestriction>()
+
     val gcSchedulerType by option<GCSchedulerType>()
 
     val linkRuntime by option<RuntimeLinkageStrategyBinaryOption>()
