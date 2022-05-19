@@ -453,7 +453,7 @@ internal class ReflectiveAccessLowering(
                 getter.parentAsClass.defaultType,
                 JvmAbi.getterName(propertyName = property.name.asString()),
                 getter.extensionReceiverParameter?.let { listOf(it.type) } ?: listOf(),
-                call.dispatchReceiver!!,
+                call.dispatchReceiver,
                 listOfNotNull(call.extensionReceiver),
                 getter.returnType,
                 call.symbol
@@ -482,7 +482,7 @@ internal class ReflectiveAccessLowering(
                     setter.extensionReceiverParameter?.let { add(it.type) }
                     addAll(call.valueParameterTypes())
                 },
-                call.dispatchReceiver!!,
+                call.dispatchReceiver,
                 mutableListOf<IrExpression>().apply {
                     call.extensionReceiver?.let { add(it) }
                     addAll(call.getValueArguments())
