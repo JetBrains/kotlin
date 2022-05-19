@@ -1,5 +1,6 @@
 package org.jetbrains.kotlin.gradle
 
+import org.gradle.api.logging.LogLevel
 import org.gradle.testkit.runner.BuildResult
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.testbase.*
@@ -686,6 +687,28 @@ abstract class BaseIncrementalCompilationMultiProjectIT : IncrementalCompilation
 
     @DisplayName("KT-49780: No need to rebuild invalid code due to cache corruption")
     @GradleTest
+    fun testIncrementalBuildWithCompilationError2(gradleVersion: GradleVersion) {
+        defaultProject(gradleVersion) {
+            breakCachesAfterCompileKotlinExecution(this)
+
+            build("assemble")
+
+            subProject("lib").kotlinSourcesDir().resolve("bar/B.kt").modify {
+                it.replace("fun b() {}", "fun bb() = 123")
+            }
+
+            buildAndFail("assemble") {
+                printBuildOutput()
+                assertOutputContains("Unable to init caches. Possible caches corruption")
+                assertOutputContains("Non-incremental compilation will be performed:")
+                assertOutputDoesNotContain("Using fallback strategy")
+                assertOutputDoesNotContain("out-of-process execution strategy")
+            }
+        }
+    }
+
+    @DisplayName("KT-49780: No need to rebuild invalid code due to cache corruption")
+    @GradleTest
     open fun testIncrementalBuildWithCompilationError(gradleVersion: GradleVersion) {
         defaultProject(gradleVersion) {
             breakCachesAfterCompileKotlinExecution(this)
@@ -720,5 +743,19 @@ abstract class BaseIncrementalCompilationMultiProjectIT : IncrementalCompilation
         }
     }
 
+    private fun breakCachesInitialisationAfterCompileKotlinExecution(testProject: TestProject) {
+        listOf("app", "lib").forEach {
+            testProject.subProject(it).buildGradle.appendText(
+                """
+                    $compileKotlinTaskName {
+                        doLast {
+                            def file = new File(projectDir.path, "/build/kotlin/${compileKotlinTaskName}/cacheable/${compileCacheFolderName}/lookups/counters.tab")
+                            println("Update lookup file " + file.path)
+                            file.write("la-la")
+                        }
+                    }
+                """.trimIndent()
+            )
+        }
+    }
 }
-
