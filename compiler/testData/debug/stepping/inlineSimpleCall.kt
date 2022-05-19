@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JS_IR
 // FILE: test.kt
 
 inline fun inlineFun(s: () -> Unit) {

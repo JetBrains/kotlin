@@ -149,6 +149,10 @@ fun main(args: Array<String>) {
                 model("codegen/boxWasmJsInterop")
             }
 
+            testClass<AbstractIrJsSteppingTest> {
+                model("debug/stepping")
+            }
+
             testClass<AbstractFir2IrJsTextTest>(
                 suiteTestClassName = "Fir2IrJsTextTestGenerated"
             ) {

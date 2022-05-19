@@ -18,6 +18,13 @@
             </array>
           </value>
         </entry>
+        <entry key="$PROJECT_DIR$/compiler/testData/debug">
+          <value>
+            <array>
+              <option value="$PROJECT_DIR$/js/js.tests/build/{out,out-min,out-per-module,out-per-module-min}/debug/$TEST_DATA_FILE$_v5.js" />
+            </array>
+          </value>
+        </entry>
         <entry key="$PROJECT_DIR$/js/js.translator/testData/box">
           <value>
             <array>

@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.js.test.JsAdditionalSourceProvider
 import org.jetbrains.kotlin.js.test.converters.augmentWithModuleName
 import org.jetbrains.kotlin.js.test.handlers.JsBoxRunner.Companion.TEST_FUNCTION
 import org.jetbrains.kotlin.js.testOld.*
+import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtNamedFunction
 import org.jetbrains.kotlin.serialization.js.ModuleKind
 import org.jetbrains.kotlin.test.TargetBackend
@@ -24,6 +25,7 @@ import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.*
 import org.jetbrains.kotlin.test.services.configuration.JsEnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.configuration.JsEnvironmentConfigurator.Companion.getMainModule
+import org.jetbrains.kotlin.util.collectionUtils.filterIsInstanceAnd
 import java.io.File
 
 private const val MODULE_EMULATION_FILE = "${JsEnvironmentConfigurator.TEST_DATA_DIR_PATH}/moduleEmulation.js"
@@ -192,7 +194,7 @@ fun getTestModuleName(testServices: TestServices): String? {
     return getMainModule(testServices).name
 }
 
-fun extractTestPackage(testServices: TestServices): String? {
+fun getBoxFunction(testServices: TestServices): KtNamedFunction? {
     val runPlainBoxFunction = RUN_PLAIN_BOX_FUNCTION in testServices.moduleStructure.allDirectives
     if (runPlainBoxFunction) return null
     val ktFiles = testServices.moduleStructure.modules.flatMap { module ->
@@ -204,11 +206,13 @@ fun extractTestPackage(testServices: TestServices): String? {
             }
     }
 
-    return ktFiles.singleOrNull { ktFile ->
-        val boxFunction = ktFile.declarations.find { it is KtNamedFunction && it.name == TEST_FUNCTION }
-        boxFunction != null
-    }?.packageFqName?.asString()?.takeIf { it.isNotEmpty() }
+    return ktFiles.mapNotNull { ktFile ->
+        ktFile.declarations.filterIsInstanceAnd<KtNamedFunction> { it.name == TEST_FUNCTION }.firstOrNull()
+    }.singleOrNull()
 }
+
+fun extractTestPackage(testServices: TestServices): String? =
+    getBoxFunction(testServices)?.containingKtFile?.packageFqName?.asString()?.takeIf { it.isNotEmpty() }
 
 fun getTestChecker(testServices: TestServices): AbstractJsTestChecker {
     val runTestInNashorn = java.lang.Boolean.getBoolean("kotlin.js.useNashorn")

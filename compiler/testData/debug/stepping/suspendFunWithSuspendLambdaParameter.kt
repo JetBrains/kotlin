@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JS_IR
 // WITH_STDLIB
 // FILE: test.kt
 suspend fun foo(block: suspend Long.() -> String): String {

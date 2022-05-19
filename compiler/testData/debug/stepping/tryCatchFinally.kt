@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JS_IR
 // FILE: test.kt
 
 fun foo() {

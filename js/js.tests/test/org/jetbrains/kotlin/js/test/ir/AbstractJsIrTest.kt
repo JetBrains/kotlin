@@ -153,6 +153,21 @@ open class AbstractJsIrLineNumberTest : AbstractJsIrTest(
     }
 }
 
+open class AbstractIrJsSteppingTest : AbstractJsIrTest(
+    pathToTestDir = "compiler/testData/debug/stepping/",
+    testGroupOutputDirPrefix = "debug/stepping/"
+) {
+    override fun TestConfigurationBuilder.configuration() {
+        commonConfigurationForJsBlackBoxCodegenTest()
+        defaultDirectives {
+            +JsEnvironmentConfigurationDirectives.NO_COMMON_FILES
+        }
+        jsArtifactsHandlersStep {
+            useHandlers(::JsDebugRunner)
+        }
+    }
+}
+
 open class AbstractIrCodegenWasmJsInteropJsTest : AbstractJsIrTest(
     pathToTestDir = "compiler/testData/codegen/wasmJsInterop",
     testGroupOutputDirPrefix = "codegen/wasmJsInteropJs"

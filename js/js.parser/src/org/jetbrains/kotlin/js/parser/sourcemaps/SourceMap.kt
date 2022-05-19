@@ -21,6 +21,9 @@ import java.io.*
 class SourceMap(val sourceContentResolver: (String) -> Reader?) {
     val groups = mutableListOf<SourceMapGroup>()
 
+    @Suppress("UNUSED") // For use in the debugger
+    fun debugToString() = ByteArrayOutputStream().also { debug(PrintStream(it)) }.toString()
+
     fun debug(writer: PrintStream = System.out) {
         for ((index, group) in groups.withIndex()) {
             writer.print("${index + 1}:")

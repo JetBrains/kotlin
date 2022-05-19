@@ -155,7 +155,9 @@ fun Project.configureKotlinCompilationOptions() {
             // Requires serialization plugin
             ":wasm:wasm.ir",
             // Uses multiplatform
-            ":kotlin-stdlib-jvm-minimal-for-test"
+            ":kotlin-stdlib-jvm-minimal-for-test",
+            // Requires serialization plugin
+            ":js:js.tests",
         )
 
         // TODO: fix remaining warnings and remove this property.

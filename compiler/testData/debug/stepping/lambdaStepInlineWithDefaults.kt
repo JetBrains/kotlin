@@ -1,4 +1,4 @@
-
+// IGNORE_BACKEND: JS_IR
 // FILE: test.kt
 inline fun foo(stringMaker: () -> String = { "OK" }): String {
     return stringMaker()

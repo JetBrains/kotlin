@@ -41,6 +41,18 @@ abstract class AbstractJsBlackBoxCodegenTestBase<R : ResultingArtifact.FrontendO
     abstract val recompileFacade: Constructor<AbstractTestFacade<BinaryArtifacts.Js, BinaryArtifacts.Js>>
 
     override fun TestConfigurationBuilder.configuration() {
+        commonConfigurationForJsBlackBoxCodegenTest()
+        jsArtifactsHandlersStep {
+            useHandlers(
+                ::NodeJsGeneratorHandler,
+                ::JsBoxRunner,
+                ::JsMinifierRunner,
+                ::JsAstHandler
+            )
+        }
+    }
+
+    protected fun TestConfigurationBuilder.commonConfigurationForJsBlackBoxCodegenTest() {
         globalDefaults {
             frontend = targetFrontend
             targetPlatform = JsPlatforms.defaultJsPlatform
@@ -100,13 +112,7 @@ abstract class AbstractJsBlackBoxCodegenTestBase<R : ResultingArtifact.FrontendO
         afterBackendFacade?.let { facadeStep(it) }
         facadeStep(recompileFacade)
         jsArtifactsHandlersStep {
-            useHandlers(
-                ::NodeJsGeneratorHandler,
-                ::JsBoxRunner,
-                ::JsMinifierRunner,
-                ::JsAstHandler,
-                ::JsSourceMapPathRewriter
-            )
+            useHandlers(::JsSourceMapPathRewriter)
         }
     }
 }
