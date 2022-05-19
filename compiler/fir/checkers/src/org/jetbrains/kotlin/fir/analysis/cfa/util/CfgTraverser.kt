@@ -43,10 +43,10 @@ fun <I> ControlFlowGraph.collectDataForNode(
     val startNode = getEnterNode(direction)
     nodeMap[startNode] = initialInfo
 
-    val changed = mutableMapOf<CFGNode<*>, Boolean>()
+    var shouldContinue: Boolean
     do {
-        collectDataForNodeInternal(direction, initialInfo, visitor, nodeMap, changed, visitSubGraphs)
-    } while (changed.any { it.value })
+        shouldContinue = collectDataForNodeInternal(direction, initialInfo, visitor, nodeMap, visitSubGraphs)
+    } while (shouldContinue)
 
     return nodeMap
 }
@@ -56,13 +56,13 @@ private fun <I> ControlFlowGraph.collectDataForNodeInternal(
     initialInfo: I,
     visitor: ControlFlowGraphVisitor<I, Collection<Pair<EdgeLabel, I>>>,
     nodeMap: MutableMap<CFGNode<*>, I>,
-    changed: MutableMap<CFGNode<*>, Boolean>,
     visitSubGraphs: Boolean = true
-) {
+): Boolean {
+    var changed = false
     val nodes = getNodesInOrder(direction)
     for (node in nodes) {
         if (visitSubGraphs && direction == TraverseDirection.Backward && node is CFGNodeWithSubgraphs<*>) {
-            node.subGraphs.forEach { it.collectDataForNodeInternal(direction, initialInfo, visitor, nodeMap, changed) }
+            node.subGraphs.forEach { changed = changed or it.collectDataForNodeInternal(direction, initialInfo, visitor, nodeMap) }
         }
         val previousNodes = when (direction) {
             TraverseDirection.Forward -> node.previousCfgNodes
@@ -81,12 +81,13 @@ private fun <I> ControlFlowGraph.collectDataForNodeInternal(
         val data = nodeMap[node]
         val newData = node.accept(visitor, previousData)
         val hasChanged = newData != data
-        changed[node] = hasChanged
+        changed = changed or hasChanged
         if (hasChanged) {
             nodeMap[node] = newData
         }
         if (visitSubGraphs && direction == TraverseDirection.Forward && node is CFGNodeWithSubgraphs<*>) {
-            node.subGraphs.forEach { it.collectDataForNodeInternal(direction, initialInfo, visitor, nodeMap, changed) }
+            node.subGraphs.forEach { changed = changed or it.collectDataForNodeInternal(direction, initialInfo, visitor, nodeMap) }
         }
     }
+    return changed
 }
