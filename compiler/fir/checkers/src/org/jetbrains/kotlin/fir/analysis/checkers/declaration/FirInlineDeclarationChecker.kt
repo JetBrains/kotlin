@@ -187,7 +187,7 @@ object FirInlineDeclarationChecker : FirFunctionChecker() {
             if (receiverSymbol in inalienableParameters) {
                 if (!isInvokeOrInlineExtension(targetSymbol)) {
                     reporter.reportOn(
-                        qualifiedAccessExpression.source,
+                        receiverExpression.source ?: qualifiedAccessExpression.source,
                         FirErrors.USAGE_IS_NOT_INLINABLE,
                         receiverSymbol,
                         context
@@ -198,7 +198,8 @@ object FirInlineDeclarationChecker : FirFunctionChecker() {
 
         private fun isInvokeOrInlineExtension(targetSymbol: FirBasedSymbol<*>?): Boolean {
             if (targetSymbol !is FirNamedFunctionSymbol) return false
-            if (targetSymbol.isInline) return true
+            // TODO: receivers are currently not inline (KT-5837)
+            // if (targetSymbol.isInline) return true
             return targetSymbol.name == OperatorNameConventions.INVOKE &&
                     targetSymbol.dispatchReceiverType?.isBuiltinFunctionalType(session) == true
         }

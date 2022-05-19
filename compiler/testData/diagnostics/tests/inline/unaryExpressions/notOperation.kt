@@ -1,10 +1,11 @@
+// FIR_IDENTICAL
 // !DIAGNOSTICS: -UNUSED_EXPRESSION -UNUSED_PARAMETER -UNUSED_VARIABLE -NOTHING_TO_INLINE -ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE -UNUSED_VALUE -RECURSION_IN_INLINE
 inline operator fun <T, V> Function1<T, V>.not() : Boolean {
     return !this
 }
 
 inline fun <T, V> inlineFunWithInvoke(s: (p: T) -> V) {
-    !s
+    !<!USAGE_IS_NOT_INLINABLE!>s<!>
 }
 
 operator fun <T, U, V> Function2<T, U, V>.not() : Boolean {

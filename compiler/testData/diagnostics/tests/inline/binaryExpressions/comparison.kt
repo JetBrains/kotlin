@@ -1,12 +1,13 @@
+// FIR_IDENTICAL
 // !DIAGNOSTICS: -UNUSED_EXPRESSION -UNUSED_PARAMETER -UNUSED_VARIABLE -NOTHING_TO_INLINE -ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE -UNUSED_VALUE
 
 inline operator fun <T, U> Function1<T, U>.compareTo(p: Function1<T, U>) = 1
 
 inline fun <T, U, V> inlineFunWithInvoke(s: (p: T) -> U) {
-    s < s
-    s <= s
-    s > s
-    s >= s
+    <!USAGE_IS_NOT_INLINABLE!>s<!> < s
+    <!USAGE_IS_NOT_INLINABLE!>s<!> <= s
+    <!USAGE_IS_NOT_INLINABLE!>s<!> > s
+    <!USAGE_IS_NOT_INLINABLE!>s<!> >= s
 }
 
 //noinline

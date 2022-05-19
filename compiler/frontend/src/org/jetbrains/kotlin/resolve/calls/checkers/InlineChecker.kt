@@ -238,12 +238,12 @@ internal class InlineChecker(private val descriptor: FunctionDescriptor) : CallC
         if (descriptor !is SimpleFunctionDescriptor) {
             return false
         }
+        // TODO: receivers are currently not inline (KT-5837)
+        // if (InlineUtil.isInline(descriptor)) return true
 
         val containingDeclaration = descriptor.getContainingDeclaration()
-        val isInvoke = descriptor.getName() == OperatorNameConventions.INVOKE &&
+        return descriptor.getName() == OperatorNameConventions.INVOKE &&
                 containingDeclaration is ClassDescriptor && containingDeclaration.defaultType.isBuiltinFunctionalType
-
-        return isInvoke || InlineUtil.isInline(descriptor)
     }
 
     private fun checkVisibilityAndAccess(

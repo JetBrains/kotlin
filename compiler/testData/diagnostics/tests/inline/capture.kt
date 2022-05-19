@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // !DIAGNOSTICS: -UNUSED_EXPRESSION -UNUSED_PARAMETER -UNUSED_VARIABLE -NOTHING_TO_INLINE -NON_LOCAL_RETURN_NOT_ALLOWED
 
 infix fun Function1<Int, Unit>.noInlineExt(p: Int) {}
@@ -40,7 +41,7 @@ inline fun inlineFunWithInvokeNonInline(noinline s: (p: Int) -> Unit) {
 
 inline fun testExtension(s: (p: Int) -> Unit) {
     {
-        s.inlineExt()
+        <!USAGE_IS_NOT_INLINABLE!>s<!>.inlineExt()
     } ()
 }
 

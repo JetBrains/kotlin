@@ -17,13 +17,13 @@ inline operator fun <T, U, V> @ExtensionFunctionType Function2<T, U, V>.plus(p: 
 }
 
 inline fun <T, U, V> inlineFunWithInvoke(s: (p: T) -> U, ext: T.(p: U) -> V) {
-    s + s
-    ext + ext
+    <!USAGE_IS_NOT_INLINABLE!>s<!> + s
+    <!USAGE_IS_NOT_INLINABLE!>ext<!> + ext
 }
 
 inline fun <T, U, V> inlineFunWithInvoke(s: (p: T) -> U, ext: T.(p: U) -> V) {
-    s + s
-    ext + ext
+    <!USAGE_IS_NOT_INLINABLE!>s<!> + s
+    <!USAGE_IS_NOT_INLINABLE!>ext<!> + ext
 }
 
 inline fun <T, U> Function1<T, U>.submit() {

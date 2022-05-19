@@ -3,7 +3,7 @@ inline operator fun <T, U> Function1<T, U>.component1() = 1
 inline operator fun <T, U> Function1<T, U>.component2() = 2
 
 inline fun <T, U, V> inlineFunWithInvoke(s: (p: T) -> U) {
-    val (d1, e1) = s
+    val (d1, e1) = <!USAGE_IS_NOT_INLINABLE, USAGE_IS_NOT_INLINABLE!>s<!>
 }
 
 operator fun <T, U, V> Function2<T, U, V>.component1() = 1
