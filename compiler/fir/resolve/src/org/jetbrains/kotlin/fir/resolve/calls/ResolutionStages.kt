@@ -581,10 +581,10 @@ internal object CheckIncompatibleTypeVariableUpperBounds : ResolutionStage() {
                 val upperTypes = variableWithConstraints.constraints.extractUpperTypesToCheckIntersectionEmptiness()
 
                 // TODO: consider reporting errors on bounded type variables by incompatible types but with other lower constraints
-                if (
-                    variableWithConstraints.constraints.none { it.kind.isLower() }
-                    && upperTypes.computeEmptyIntersectionTypeKind().isDefinitelyEmpty()
-                ) {
+                if (upperTypes.size <= 1 || variableWithConstraints.constraints.any { it.kind.isLower() })
+                    continue
+
+                if (upperTypes.computeEmptyIntersectionTypeKind().isDefinitelyEmpty()) {
                     sink.yieldDiagnostic(
                         @Suppress("UNCHECKED_CAST")
                         InferredEmptyIntersectionDiagnostic(

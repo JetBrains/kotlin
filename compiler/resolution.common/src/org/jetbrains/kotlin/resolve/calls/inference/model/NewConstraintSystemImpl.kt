@@ -450,9 +450,13 @@ class NewConstraintSystemImpl(
             languageVersionSettings.supportsFeature(LanguageFeature.ForbidInferringTypeVariablesIntoEmptyIntersection)
         val upperTypes = intersectionTypeConstructor.supertypes()
 
+        // Diagnostic with these incompatible types has already been reported at the resolution stage
+        if (upperTypes.size <= 1 || storage.errors.any { it is InferredEmptyIntersection && it.incompatibleTypes == upperTypes })
+            return
+
         if (upperTypes.computeEmptyIntersectionTypeKind().isDefinitelyEmpty()) {
             // Remove existing errors from resolution stage because a completion error is more precise
-            storage.errors.removeIf { it is InferredEmptyIntersectionError || it is InferredEmptyIntersectionWarning }
+            storage.errors.removeIf { it is InferredEmptyIntersection }
             val errorFactory =
                 if (isInferredEmptyIntersectionForbidden) ::InferredEmptyIntersectionError else ::InferredEmptyIntersectionWarning
             addError(errorFactory(upperTypes, variable))

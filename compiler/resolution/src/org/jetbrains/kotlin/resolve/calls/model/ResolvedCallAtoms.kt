@@ -160,12 +160,15 @@ open class MutableResolvedCallAtom(
     override fun toString(): String = "$atom, candidate = $candidateDescriptor"
 }
 
-fun ResolutionCandidate.markCandidateForCompatibilityResolve() {
+fun ResolutionCandidate.markCandidateForCompatibilityResolve(needToReportWarning: Boolean = true) {
     if (callComponents.languageVersionSettings.supportsFeature(LanguageFeature.DisableCompatibilityModeForNewInference)) return
-    addDiagnostic(LowerPriorityToPreserveCompatibility.asDiagnostic())
+    addDiagnostic(LowerPriorityToPreserveCompatibility(needToReportWarning).asDiagnostic())
 }
 
-fun CallableReferencesCandidateFactory.markCandidateForCompatibilityResolve(diagnostics: SmartList<KotlinCallDiagnostic>) {
+fun CallableReferencesCandidateFactory.markCandidateForCompatibilityResolve(
+    diagnostics: SmartList<KotlinCallDiagnostic>,
+    needToReportWarning: Boolean = true,
+) {
     if (callComponents.languageVersionSettings.supportsFeature(LanguageFeature.DisableCompatibilityModeForNewInference)) return
-    diagnostics.add(LowerPriorityToPreserveCompatibility.asDiagnostic())
+    diagnostics.add(LowerPriorityToPreserveCompatibility(needToReportWarning).asDiagnostic())
 }
