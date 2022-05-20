@@ -826,6 +826,9 @@ class JvmSymbols(
             }
         }.symbol
 
+    val kClassJavaPropertyGetter: IrSimpleFunction =
+        kClassJava.owner.getter!!
+
     val spreadBuilder: IrClassSymbol = createClass(FqName("kotlin.jvm.internal.SpreadBuilder")) { klass ->
         klass.addConstructor().apply {
             addValueParameter("size", irBuiltIns.intType)
