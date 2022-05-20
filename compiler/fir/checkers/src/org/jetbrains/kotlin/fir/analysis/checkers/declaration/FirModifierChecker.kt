@@ -34,7 +34,7 @@ object FirModifierChecker : FirBasicDeclarationChecker() {
         if (declaration is FirFile) return
 
         val source = declaration.source ?: return
-        if (source.kind is KtFakeSourceElementKind) return
+        if (source.kind is KtFakeSourceElementKind && declaration !is FirDelegateField) return
 
         source.getModifierList()?.let { checkModifiers(it, declaration, context, reporter) }
     }
