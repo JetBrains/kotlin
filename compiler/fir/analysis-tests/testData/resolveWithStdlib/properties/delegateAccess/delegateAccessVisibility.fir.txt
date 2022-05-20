@@ -1,0 +1,51 @@
+FILE: delegateAccessVisibility.kt
+    public final val <T> R|T|.delegate: R|T|
+        public get(): R|T| {
+            ^ this@R|/delegate|
+        }
+    public final class MyDelegate : R|kotlin/Any| {
+        public constructor(): R|MyDelegate| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final var text: R|kotlin/String| = String(Test)
+            public get(): R|kotlin/String|
+            public set(value: R|kotlin/String|): R|kotlin/Unit|
+
+        public final operator fun getValue(thisRef: R|kotlin/Any?|, property: R|kotlin/reflect/KProperty<*>|): R|kotlin/String| {
+            ^getValue this@R|/MyDelegate|.R|/MyDelegate.text|
+        }
+
+    }
+    public final val a: R|kotlin/String|by R|/MyDelegate.MyDelegate|()
+        public get(): R|kotlin/String| {
+            ^ D|/a|.R|/MyDelegate.getValue|(Null(null), ::R|/a|)
+        }
+    public final val b: R|kotlin/String|by R|/MyDelegate.MyDelegate|()
+        public get(): R|kotlin/String| {
+            ^ D|/b|.R|/MyDelegate.getValue|(Null(null), ::R|/b|)
+        }
+    public final val c: R|kotlin/String|by R|/MyDelegate.MyDelegate|()
+        public get(): R|kotlin/String| {
+            ^ D|/c|.R|/MyDelegate.getValue|(Null(null), ::R|/c|)
+        }
+    public final val d: R|kotlin/String|by R|/MyDelegate.MyDelegate|()
+        public get(): R|kotlin/String| {
+            ^ D|/d|.R|/MyDelegate.getValue|(Null(null), ::R|/d|)
+        }
+    public final val e: R|kotlin/String|by R|/MyDelegate.MyDelegate|()
+        public get(): R|kotlin/String| {
+            ^ D|/e|.R|/MyDelegate.getValue|(Null(null), ::R|/e|)
+        }
+    public final fun test(): R|kotlin/Unit| {
+        lval a2: R|MyDelegate| = R|/a|.R|/delegate|<R|MyDelegate|>
+        lval b2: R|MyDelegate| = R|/a|.R|/delegate|<R|MyDelegate|>
+        lval c2: R|MyDelegate| = R|/a|.R|/delegate|<R|MyDelegate|>
+        lval d2: R|MyDelegate| = R|/a|.R|/delegate|<R|MyDelegate|>
+        lval e2: R|MyDelegate| = R|/a|.R|/delegate|<R|MyDelegate|>
+        lval a3: R|kotlin/String|by R|/MyDelegate.MyDelegate|()
+        lval b3: R|kotlin/String|by R|/MyDelegate.MyDelegate|()
+        lval c3: R|kotlin/String|by R|/MyDelegate.MyDelegate|()
+        lval d3: R|kotlin/String|by R|/MyDelegate.MyDelegate|()
+        lval e3: R|kotlin/String|by R|/MyDelegate.MyDelegate|()
+    }

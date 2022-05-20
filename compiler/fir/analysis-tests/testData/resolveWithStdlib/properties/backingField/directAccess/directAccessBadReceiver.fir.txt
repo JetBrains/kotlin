@@ -14,4 +14,7 @@ FILE: directAccessBadReceiver.kt
         }
         )
         lval g: <ERROR TYPE REF: References to variables aren't supported yet> = ::<References to variables aren't supported yet>#
+        lval h: <ERROR TYPE REF: Bad hash-qualified name> = ERROR_EXPR(Bad hash-qualified name)
+        lval i: <ERROR TYPE REF: Bad hash-qualified name> = ERROR_EXPR(Bad hash-qualified name)
+        lval j: <ERROR TYPE REF: Bad hash-qualified name> = ERROR_EXPR(Bad hash-qualified name)
     }

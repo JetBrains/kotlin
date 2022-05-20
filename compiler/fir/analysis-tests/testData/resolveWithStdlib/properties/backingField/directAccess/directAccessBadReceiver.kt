@@ -13,4 +13,8 @@ fun box() {
     }
 
     val g = ::<!UNSUPPORTED!>rest#field#self#self<!>
+
+    val h = <!INCORRECT_HASH_QUALIFIED_NAME!>rest#10<!>
+    val i = <!INCORRECT_HASH_QUALIFIED_NAME!>rest#"test"<!>
+    val j = <!INCORRECT_HASH_QUALIFIED_NAME!>rest#("a" + "b")<!>
 }
