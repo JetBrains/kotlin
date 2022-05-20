@@ -44,6 +44,25 @@ internal class KtFe10SymbolInfoProvider(
     }
 
     override fun getDeprecation(symbol: KtSymbol, annotationUseSiteTarget: AnnotationUseSiteTarget?): DeprecationInfo? {
+        when (annotationUseSiteTarget) {
+            AnnotationUseSiteTarget.PROPERTY_GETTER -> {
+                if (symbol is KtPropertySymbol) {
+                    return getDeprecation(symbol.getter ?: symbol)
+                }
+            }
+            AnnotationUseSiteTarget.PROPERTY_SETTER -> {
+                if (symbol is KtPropertySymbol) {
+                    return getDeprecation(symbol.setter ?: symbol)
+                }
+            }
+            AnnotationUseSiteTarget.SETTER_PARAMETER -> {
+                if (symbol is KtPropertySymbol) {
+                    return getDeprecation(symbol.setter?.parameter ?: symbol)
+                }
+            }
+            else -> {
+            }
+        }
         return getDeprecation(symbol) // TODO
     }
 
