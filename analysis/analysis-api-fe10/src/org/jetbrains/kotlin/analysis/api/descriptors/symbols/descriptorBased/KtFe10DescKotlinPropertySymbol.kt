@@ -102,7 +102,7 @@ internal class KtFe10DescKotlinPropertySymbol(
         }
 
     override val isDelegatedProperty: Boolean
-        get() = withValidityAssertion { descriptor.delegateField != null }
+        get() = withValidityAssertion { descriptor.isDelegated }
 
     override fun createPointer(): KtSymbolPointer<KtKotlinPropertySymbol> = withValidityAssertion {
         return KtPsiBasedSymbolPointer.createForSymbolFromSource(this) ?: KtFe10NeverRestoringSymbolPointer()
