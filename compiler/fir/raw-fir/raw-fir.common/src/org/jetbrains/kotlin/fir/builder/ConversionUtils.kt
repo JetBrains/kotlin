@@ -321,7 +321,7 @@ fun <T> FirPropertyBuilder.generateAccessorsByDelegate(
     }
 
     val isMember = ownerRegularOrAnonymousObjectSymbol != null
-    val fakeSource = delegateBuilder.source?.fakeElement(KtFakeSourceElementKind.DelegatedPropertyAccessor)
+    val fakeSource = delegateBuilder.expression.source?.fakeElement(KtFakeSourceElementKind.DelegatedPropertyAccessor)
 
     /*
      * If we have delegation with provide delegate then we generate call like

@@ -46,6 +46,11 @@ object LightTreePositioningStrategies {
                 KtNodeTypes.CONSTRUCTOR_DELEGATION_CALL -> {
                     return SECONDARY_CONSTRUCTOR_DELEGATION_CALL.mark(node, startOffset, endOffset, tree)
                 }
+                KtNodeTypes.PROPERTY_DELEGATE -> {
+                    val expression = tree.firstChildExpression(node) ?: return markElement(node, startOffset, endOffset, tree)
+                    val startingPart = tree.findChildByType(node, MODIFIER_KEYWORDS) ?: expression
+                    return markRange(startingPart, expression, startOffset, endOffset, tree, node)
+                }
             }
             return super.mark(node, startOffset, endOffset, tree)
         }

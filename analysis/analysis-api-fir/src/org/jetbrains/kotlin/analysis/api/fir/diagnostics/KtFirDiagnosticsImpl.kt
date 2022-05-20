@@ -2268,6 +2268,11 @@ internal class SetterVisibilityInconsistentWithPropertyVisibilityImpl(
     override val token: KtLifetimeToken,
 ) : KtFirDiagnostic.SetterVisibilityInconsistentWithPropertyVisibility(), KtAbstractFirDiagnostic<KtModifierListOwner>
 
+internal class DelegateVisibilityInconsistentWithPropertyVisibilityImpl(
+    override val firDiagnostic: KtPsiDiagnostic,
+    override val token: ValidityToken,
+) : KtFirDiagnostic.DelegateVisibilityInconsistentWithPropertyVisibility(), KtAbstractFirDiagnostic<KtModifierListOwner>
+
 internal class WrongSetterReturnTypeImpl(
     override val firDiagnostic: KtPsiDiagnostic,
     override val token: KtLifetimeToken,

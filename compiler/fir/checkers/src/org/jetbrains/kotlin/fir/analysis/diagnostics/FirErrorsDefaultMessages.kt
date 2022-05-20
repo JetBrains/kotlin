@@ -145,6 +145,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.DELEGATE_SPECIAL_
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.DELEGATE_SPECIAL_FUNCTION_NONE_APPLICABLE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.DELEGATE_SPECIAL_FUNCTION_RETURN_TYPE_MISMATCH
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.DELEGATE_USES_EXTENSION_PROPERTY_TYPE_PARAMETER
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.DELEGATE_VISIBILITY_INCONSISTENT_WITH_PROPERTY_VISIBILITY
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.DELEGATION_IN_INTERFACE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.DELEGATION_NOT_TO_INTERFACE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.DELEGATION_SUPER_CALL_IN_ENUM_CONSTRUCTOR
@@ -1513,6 +1514,10 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         map.put(
             SETTER_VISIBILITY_INCONSISTENT_WITH_PROPERTY_VISIBILITY,
             "Setter visibility must be the same or less permissive than property visibility"
+        )
+        map.put(
+            DELEGATE_VISIBILITY_INCONSISTENT_WITH_PROPERTY_VISIBILITY,
+            "Delegate visibility must be the same or less permissive than property visibility",
         )
         map.put(WRONG_SETTER_RETURN_TYPE, "Setter return type must be Unit")
         map.put(

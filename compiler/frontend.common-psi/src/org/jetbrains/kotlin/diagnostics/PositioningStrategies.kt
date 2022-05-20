@@ -53,6 +53,11 @@ object PositioningStrategies {
                 is KtConstructorDelegationCall -> {
                     return SECONDARY_CONSTRUCTOR_DELEGATION_CALL.mark(element)
                 }
+                is KtPropertyDelegate -> {
+                    val expression = element.expression ?: return markElement(element)
+                    val startingPart = element.modifierList ?: expression
+                    return markRange(startingPart, expression)
+                }
                 else -> {
                     return super.mark(element)
                 }
@@ -421,6 +426,7 @@ object PositioningStrategies {
                 is KtObjectDeclaration -> element.getObjectKeyword()!!
                 is KtPropertyAccessor -> element.namePlaceholder
                 is KtAnonymousInitializer -> element
+                is KtPropertyDelegate -> element.modifierList ?: return emptyList()
                 else -> throw IllegalArgumentException(
                     "Can't find text range for element '${element::class.java.canonicalName}' with the text '${element.text}'"
                 )
@@ -982,9 +988,14 @@ object PositioningStrategies {
      */
     class FindReferencePositioningStrategy(val locateReferencedName: Boolean) : PositioningStrategy<PsiElement>() {
         override fun mark(element: PsiElement): List<TextRange> {
-            if (element is KtBinaryExpression && element.operationToken == KtTokens.EQ) {
-                // Look for reference in LHS of variable assignment.
-                element.left?.let { return mark(it) }
+            when {
+                element is KtBinaryExpression && element.operationToken == KtTokens.EQ -> {
+                    // Look for reference in LHS of variable assignment.
+                    element.left?.let { return mark(it) }
+                }
+                element is KtPropertyDelegate -> {
+                    element.expression?.let { return mark(it) }
+                }
             }
             var result: PsiElement = when (element) {
                 is KtHashQualifiedExpression -> element
