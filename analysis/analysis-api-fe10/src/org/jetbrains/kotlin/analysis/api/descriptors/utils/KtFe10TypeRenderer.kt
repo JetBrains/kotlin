@@ -11,10 +11,8 @@ import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.bas
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.getKtNamedAnnotationArguments
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.maybeLocalClassId
 import org.jetbrains.kotlin.analysis.utils.printer.PrettyPrinter
+import org.jetbrains.kotlin.builtins.*
 import org.jetbrains.kotlin.builtins.functions.FunctionClassDescriptor
-import org.jetbrains.kotlin.builtins.getReceiverTypeFromFunctionType
-import org.jetbrains.kotlin.builtins.getReturnTypeFromFunctionType
-import org.jetbrains.kotlin.builtins.getValueParameterTypesFromFunctionType
 import org.jetbrains.kotlin.descriptors.ClassifierDescriptorWithTypeParameters
 import org.jetbrains.kotlin.descriptors.PossiblyInnerType
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
@@ -177,9 +175,21 @@ internal class KtFe10TypeRenderer(private val options: KtTypeRendererOptions, pr
     }
 
     private fun KtFe10RendererConsumer.renderFunctionType(type: SimpleType) {
-        val receiverType = type.getReceiverTypeFromFunctionType()
-        val valueParameters = type.getValueParameterTypesFromFunctionType()
-        val returnType = type.getReturnTypeFromFunctionType()
+        if (type.isSuspendFunctionType || type.isKSuspendFunctionType) {
+            append("suspend ")
+        }
+        val (receiverType, valueParameters, returnType) = when {
+            type.isKFunctionType || type.isKSuspendFunctionType -> Triple(
+                null,
+                type.arguments.dropLast(1),
+                type.arguments.last().type,
+            )
+            else -> Triple(
+                type.getReceiverTypeFromFunctionType(),
+                type.getValueParameterTypesFromFunctionType(),
+                type.getReturnTypeFromFunctionType()
+            )
+        }
 
         if (receiverType != null) {
             renderType(receiverType)
