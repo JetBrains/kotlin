@@ -1,7 +1,7 @@
 KtFunctionSymbol:
   callableIdIfNonLocal: test/TopLevel.Base.noGeneric
   name: noGeneric
-  origin: LIBRARY
+  origin: SOURCE
 
 KtFunctionSymbol:
   callableIdIfNonLocal: test/OtherTopLevel.Child.withOuter

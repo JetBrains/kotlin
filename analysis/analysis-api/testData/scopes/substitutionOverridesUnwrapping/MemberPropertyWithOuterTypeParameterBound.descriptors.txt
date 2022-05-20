@@ -1,7 +1,7 @@
 KtKotlinPropertySymbol:
   callableIdIfNonLocal: test/MyInterface.withOwnGeneric_InterfaceWithValBase
   name: withOwnGeneric_InterfaceWithValBase
-  origin: LIBRARY
+  origin: SOURCE
 
 KtKotlinPropertySymbol:
   callableIdIfNonLocal: test/Inheritor.withOwnAndOuterGenericAsTypeBound_InterfaceWithValBase

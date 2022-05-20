@@ -13,7 +13,7 @@ KtFunctionSymbol:
   isSuspend: false
   modality: FINAL
   name: withOuter
-  origin: LIBRARY
+  origin: SOURCE
   receiverType: null
   returnType: Outer?
   symbolKind: CLASS_MEMBER

@@ -1,7 +1,7 @@
 KtFunctionSymbol:
   callableIdIfNonLocal: test/Base.noGeneric
   name: noGeneric
-  origin: LIBRARY
+  origin: SOURCE
 
 KtFunctionSymbol:
   callableIdIfNonLocal: test/ClassWithGenericBase.withOuterGeneric
@@ -11,7 +11,7 @@ KtFunctionSymbol:
 KtFunctionSymbol:
   callableIdIfNonLocal: test/Base.withOwnGeneric
   name: withOwnGeneric
-  origin: LIBRARY
+  origin: SOURCE
 
 KtFunctionSymbol:
   callableIdIfNonLocal: test/ClassWithGenericBase.withOuterAndOwnGeneric

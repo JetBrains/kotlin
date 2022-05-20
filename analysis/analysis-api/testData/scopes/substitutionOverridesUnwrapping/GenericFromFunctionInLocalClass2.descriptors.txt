@@ -1,7 +1,7 @@
 KtFunctionSymbol:
   callableIdIfNonLocal: null
   name: noGenerics
-  origin: LIBRARY
+  origin: SOURCE
 
 KtFunctionSymbol:
   callableIdIfNonLocal: null

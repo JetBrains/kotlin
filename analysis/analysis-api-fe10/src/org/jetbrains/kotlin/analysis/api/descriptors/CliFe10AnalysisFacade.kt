@@ -64,7 +64,7 @@ class CliFe10AnalysisFacade(project: Project) : Fe10AnalysisFacade {
     }
 
     override fun getOrigin(file: VirtualFile): KtSymbolOrigin {
-        return KtSymbolOrigin.LIBRARY
+        return KtSymbolOrigin.SOURCE
     }
 }
 

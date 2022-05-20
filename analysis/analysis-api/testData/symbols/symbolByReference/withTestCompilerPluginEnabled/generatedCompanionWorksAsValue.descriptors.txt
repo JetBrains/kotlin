@@ -13,7 +13,7 @@ KtNamedClassOrObjectSymbol:
   isInner: false
   modality: FINAL
   name: WithGeneratedCompanion
-  origin: LIBRARY
+  origin: SOURCE
   superTypes: [
     kotlin/Any
   ]
