@@ -13,6 +13,9 @@ internal external fun printError(error: String?): Unit
 @JsFun("(message) => console.log(message)")
 private external fun printlnImpl(message: String?): Unit
 
+@JsFun("(message) => typeof write !== 'undefined' ? write(message) : console.log(message)")
+private external fun printImpl(message: String?): Unit
+
 /** Prints the line separator to the standard output stream. */
 public actual fun println() {
     printlnImpl("")
@@ -25,8 +28,7 @@ public actual fun println(message: Any?) {
 
 /** Prints the given [message] to the standard output stream. */
 public actual fun print(message: Any?) {
-    // TODO: Support print without newline
-    println(message)
+    printImpl(message?.toString())
 }
 
 @SinceKotlin("1.6")
