@@ -14,7 +14,10 @@ import org.jetbrains.kotlin.test.services.assertions
 abstract class AbstractAnalysisApiImportOptimizerTest : AbstractAnalysisApiBasedSingleModuleTest(){
     override fun doTestByFileStructure(ktFiles: List<KtFile>, module: TestModule, testServices: TestServices) {
         val mainKtFile = ktFiles.singleOrNull() ?: ktFiles.first { it.name == "main.kt" }
-        val unusedImports = analyseForTest(mainKtFile) { analyseImports(mainKtFile).unusedImports }
+        val unusedImports = analyseForTest(mainKtFile) {
+            val results = analyseImports(mainKtFile)
+            results.unusedImports
+        }
 
         val unusedImportPaths = unusedImports
             .map { it.importPath ?: error("Import $it should have an import path, instead was ${it.text}") }
