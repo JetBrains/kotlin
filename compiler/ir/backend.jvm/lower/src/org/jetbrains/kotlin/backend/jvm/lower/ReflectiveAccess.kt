@@ -5,15 +5,12 @@
 
 package org.jetbrains.kotlin.backend.jvm.lower
 
-import org.jetbrains.kotlin.backend.common.ClassLoweringPass
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.IrElementTransformerVoidWithContext
 import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
-import org.jetbrains.kotlin.backend.common.phaser.makeIrModulePhase
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.ir.*
 import org.jetbrains.kotlin.backend.jvm.lower.SyntheticAccessorLowering.Companion.isAccessible
-import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.*
@@ -23,13 +20,9 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrClassReferenceImpl
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.types.*
-import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
 import org.jetbrains.kotlin.ir.util.*
-import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.load.java.JvmAbi
-import org.jetbrains.kotlin.resolve.descriptorUtil.isCompanionObject
-import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 // Used from CodeFragmentCompiler for IDE Debugger Plug-In
 @Suppress("unused")
@@ -106,10 +99,10 @@ internal class ReflectiveAccessLowering(
         recordCompanionObjectAsDispatchReceiver(expression)
         expression.transformChildrenVoid(this)
 
-        val withSuper = expression.superQualifierSymbol != null
+        val superQualifier: IrClassSymbol? = expression.superQualifierSymbol
         val callee = expression.symbol
 
-        if (callee.isAccessible(withSuper)) {
+        if (callee.isAccessible(withSuper = superQualifier != null)) {
             return expression
         }
         return if (expression.origin == IrStatementOrigin.GET_PROPERTY) {
@@ -118,8 +111,8 @@ internal class ReflectiveAccessLowering(
             generateReflectiveAccessForSetter(expression)
         } else if (expression.dispatchReceiver == null && expression.extensionReceiver == null) {
             generateReflectiveStaticCall(expression)
-        } else if (withSuper) {
-            generateInvokeSpecialForCall(expression)
+        } else if (superQualifier != null) {
+            generateInvokeSpecialForCall(expression, superQualifier)
         } else {
             generateReflectiveMethodInvocation(expression)
         }
@@ -179,7 +172,7 @@ internal class ReflectiveAccessLowering(
     private val reflectSymbols = symbols.javaLangReflectSymbols
 
     private fun IrBuilderWithScope.javaClassObject(klass: IrType): IrExpression =
-        irCall(symbols.kClassJava.owner.getter!!).apply {
+        irCall(symbols.kClassJavaPropertyGetter).apply {
             extensionReceiver =
                 IrClassReferenceImpl(
                     startOffset, endOffset,
@@ -370,7 +363,7 @@ internal class ReflectiveAccessLowering(
                 val classVar = createTmpVariable(
                     javaClassObject(declaringClass),
                     nameHint = "klass",
-                    irType = symbols.kClassJava.owner.getter!!.returnType
+                    irType = symbols.kClassJavaPropertyGetter.returnType
                 )
                 val fieldVar = createTmpVariable(
                     getDeclaredField(irGet(classVar), fieldName),
@@ -495,7 +488,7 @@ internal class ReflectiveAccessLowering(
         val (fieldLocation, receiver) = fieldLocationAndReceiver(call)
         return generateReflectiveFieldSet(
             fieldLocation,
-            call.symbol.owner.correspondingPropertySymbol!!.owner.name.asString(),
+            property.name.asString(),
             call.getValueArgument(0)!!,
             call.type,
             receiver,
@@ -518,9 +511,9 @@ internal class ReflectiveAccessLowering(
     // not run on a JVM: it is interpreted by eval4j. Eval4j handles
     // invokespecial via JDI from which it *is* possible to do the required
     // super call.
-    private fun generateInvokeSpecialForCall(expression: IrCall): IrExpression {
+    private fun generateInvokeSpecialForCall(expression: IrCall, superQualifier: IrClassSymbol): IrExpression {
         val jvmSignature = context.methodSignatureMapper.mapSignatureSkipGeneric(expression.symbol.owner)
-        val owner = expression.superQualifierSymbol!!.owner
+        val owner = superQualifier.owner
         val builder = context.createJvmIrBuilder(expression.symbol)
 
         // invokeSpecial(owner: String, name: String, descriptor: String, isInterface: Boolean): T

@@ -67,7 +67,7 @@ class JvmAnnotationImplementationTransformer(val jvmContext: JvmBackendContext, 
         irGet(
             jvmContext.ir.symbols.javaLangClass.starProjectedType,
             null,
-            jvmContext.ir.symbols.kClassJava.owner.getter!!.symbol
+            jvmContext.ir.symbols.kClassJavaPropertyGetter.symbol
         ).apply {
             extensionReceiver = irExpression
         }
