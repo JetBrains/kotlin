@@ -8,7 +8,7 @@ Generally, FIR compiler supports search for declarations only with a specific cl
 
 _Note:_ there are plans to design some new syntax for passing information from code to plugins instead of annotations, because they have some problems and limitations due to the compiler design reasons.
 
-There is a special service in FIR named [FirPredicateBasedProvider](https://github.com/JetBrains/kotlin/blob/master/compiler/fir/resolve/src/org/jetbrains/kotlin/fir/extensions/FirPredicateBasedProvider.kt). It allows to find all declarations in compiled code which match some [DeclarationPredicate](https://github.com/JetBrains/kotlin/blob/master/compiler/fir/tree/src/org/jetbrains/kotlin/fir/extensions/predicate/DeclarationPredicate.kt).
+There is a special service in FIR named [FirPredicateBasedProvider](https://github.com/JetBrains/kotlin/blob/master/compiler/fir/tree/src/org/jetbrains/kotlin/fir/extensions/FirPredicateBasedProvider.kt). It allows to find all declarations in compiled code which match some [DeclarationPredicate](https://github.com/JetBrains/kotlin/blob/master/compiler/fir/tree/src/org/jetbrains/kotlin/fir/extensions/predicate/DeclarationPredicate.kt).
 
 There are multiple types of predicates and each one has DSL functions to create them (in parenthesis):
 - `AnnotatedWith` matches all declarations which have on of annotations passed to it (`has(vararg annotations: FqName)`)
