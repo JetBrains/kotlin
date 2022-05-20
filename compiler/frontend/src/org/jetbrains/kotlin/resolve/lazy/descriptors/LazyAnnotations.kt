@@ -61,7 +61,7 @@ class LazyAnnotations(
     override fun isEmpty() = annotationEntries.isEmpty()
 
     private val annotation = c.storageManager.createMemoizedFunction { entry: KtAnnotationEntry ->
-        LazyAnnotationDescriptor(c, entry)
+        c.trace.get(BindingContext.ANNOTATION, entry) ?: LazyAnnotationDescriptor(c, entry)
     }
 
     override fun iterator(): Iterator<AnnotationDescriptor> = annotationEntries.asSequence().map(annotation).iterator()
