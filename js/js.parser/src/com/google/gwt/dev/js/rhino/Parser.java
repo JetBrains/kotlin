@@ -702,7 +702,10 @@ public class Parser {
                 break;
             }
         }
-        ts.matchToken(TokenStream.SEMI);
+
+        if (pn.type != TokenStream.SINGLE_LINE_COMMENT && pn.type != TokenStream.MULTI_LINE_COMMENT) {
+            ts.matchToken(TokenStream.SEMI);
+        }
 
         return pn;
     }

@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.js.testOld.utils;
 
 import com.intellij.openapi.util.text.StringUtil;
+import kotlin.text.StringsKt;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.js.backend.ast.*;
@@ -308,14 +309,14 @@ public class DirectiveTestUtils {
             return isMultiLine ? new RecursiveJsVisitor() {
                 @Override
                 public void visitMultiLineComment(@NotNull JsMultiLineComment comment) {
-                    if (comment.getText().trim().equals(text)) {
+                    if (isTheSameText(comment.getText(), text)) {
                         setElementExists(true);
                     }
                 }
             } : new RecursiveJsVisitor() {
                 @Override
                 public void visitSingleLineComment(@NotNull JsSingleLineComment comment) {
-                    if (comment.getText().trim().equals(text)) {
+                    if (isTheSameText(comment.getText(), text)) {
                         setElementExists(true);
                     }
                 }
@@ -324,8 +325,21 @@ public class DirectiveTestUtils {
 
         @Override
         protected void loadArguments(@NotNull ArgumentsHelper arguments) {
-            this.text = arguments.findNamedArgument("text");
+            this.text = arguments.findNamedArgument("text").replace("\\n", System.lineSeparator());
             this.isMultiLine = Boolean.parseBoolean(arguments.findNamedArgument("multiline"));
+        }
+
+        private boolean isTheSameText(String str1, String str2) {
+            List<String> lines1 = StringsKt.lines(str1);
+            List<String> lines2 = StringsKt.lines(str2);
+
+            if (lines1.size() != lines2.size()) return false;
+
+            for (int i = 0; i < lines1.size(); i++) {
+                if (!lines1.get(i).trim().equals(lines2.get(i).trim())) return false;
+            }
+            
+            return true;
         }
     };
 
@@ -529,10 +543,6 @@ public class DirectiveTestUtils {
             return AstSearchUtil.getFunction(node, scopeFunctionName);
         }
         return node;
-    }
-
-    public static void checkCommentExists(JsNode node, String content, boolean isMultiline) {
-
     }
 
     public static void checkPropertyNotUsed(JsNode node, String propertyName, String scope, boolean isGetAllowed, boolean isSetAllowed)
