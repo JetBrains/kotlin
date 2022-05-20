@@ -51,6 +51,14 @@ abstract class AbstractFirDiagnosticsWithLightTreeTest : AbstractFirDiagnosticTe
     }
 }
 
+fun TestConfigurationBuilder.configurationForClassicAndFirTestsAlongside() {
+    useAfterAnalysisCheckers(
+        ::FirIdenticalChecker,
+        ::FirFailingTestSuppressor,
+    )
+    useMetaTestConfigurators(::FirOldFrontendMetaConfigurator)
+}
+
 // `baseDir` is used in Kotlin plugin from IJ infra
 fun TestConfigurationBuilder.baseFirDiagnosticTestConfiguration(
     baseDir: String = ".",
@@ -89,11 +97,7 @@ fun TestConfigurationBuilder.baseFirDiagnosticTestConfiguration(
     useMetaInfoProcessors(::PsiLightTreeMetaInfoProcessor)
 
     forTestsMatching("compiler/testData/diagnostics/*") {
-        useAfterAnalysisCheckers(
-            ::FirIdenticalChecker,
-            ::FirFailingTestSuppressor,
-        )
-        useMetaTestConfigurators(::FirOldFrontendMetaConfigurator)
+        configurationForClassicAndFirTestsAlongside()
     }
 
     forTestsMatching("compiler/fir/analysis-tests/testData/*") {

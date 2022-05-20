@@ -12,10 +12,9 @@ import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
 import org.jetbrains.kotlin.test.directives.model.SimpleDirectivesContainer
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.runners.AbstractDiagnosticTest
-import org.jetbrains.kotlin.test.runners.codegen.AbstractBlackBoxCodegenTest
-import org.jetbrains.kotlin.test.runners.codegen.AbstractBytecodeListingTest
-import org.jetbrains.kotlin.test.runners.codegen.AbstractIrBlackBoxCodegenTest
-import org.jetbrains.kotlin.test.runners.codegen.AbstractIrBytecodeListingTest
+import org.jetbrains.kotlin.test.runners.AbstractFirDiagnosticTest
+import org.jetbrains.kotlin.test.runners.codegen.*
+import org.jetbrains.kotlin.test.runners.configurationForClassicAndFirTestsAlongside
 import org.jetbrains.kotlin.test.services.EnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.TestServices
 
@@ -29,6 +28,13 @@ open class AbstractBlackBoxCodegenTestForNoArg : AbstractBlackBoxCodegenTest() {
 }
 
 open class AbstractIrBlackBoxCodegenTestForNoArg : AbstractIrBlackBoxCodegenTest() {
+    override fun configure(builder: TestConfigurationBuilder) {
+        super.configure(builder)
+        builder.enableNoArg()
+    }
+}
+
+open class AbstractFirBlackBoxCodegenTestForNoArg : AbstractFirBlackBoxCodegenTest() {
     override fun configure(builder: TestConfigurationBuilder) {
         super.configure(builder)
         builder.enableNoArg()
@@ -51,11 +57,26 @@ open class AbstractIrBytecodeListingTestForNoArg : AbstractIrBytecodeListingTest
     }
 }
 
+open class AbstractFirBytecodeListingTestForNoArg : AbstractFirBytecodeListingTest() {
+    override fun configure(builder: TestConfigurationBuilder) {
+        super.configure(builder)
+        builder.enableNoArg()
+    }
+}
+
 // ---------------------------- diagnostic ----------------------------
 
 abstract class AbstractDiagnosticsTestForNoArg : AbstractDiagnosticTest() {
     override fun configure(builder: TestConfigurationBuilder) {
         super.configure(builder)
+        builder.enableNoArg()
+    }
+}
+
+abstract class AbstractFirDiagnosticsTestForNoArg : AbstractFirDiagnosticTest() {
+    override fun configure(builder: TestConfigurationBuilder) {
+        super.configure(builder)
+        builder.configurationForClassicAndFirTestsAlongside()
         builder.enableNoArg()
     }
 }

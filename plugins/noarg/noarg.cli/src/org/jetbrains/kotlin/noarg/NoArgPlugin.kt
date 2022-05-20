@@ -17,13 +17,17 @@ import org.jetbrains.kotlin.container.StorageComponentContainer
 import org.jetbrains.kotlin.container.useInstance
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.extensions.StorageComponentContainerContributor
+import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
+import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrarAdapter
 import org.jetbrains.kotlin.noarg.NoArgCommandLineProcessor.Companion.SUPPORTED_PRESETS
 import org.jetbrains.kotlin.noarg.NoArgConfigurationKeys.ANNOTATION
 import org.jetbrains.kotlin.noarg.NoArgConfigurationKeys.INVOKE_INITIALIZERS
 import org.jetbrains.kotlin.noarg.NoArgConfigurationKeys.PRESET
 import org.jetbrains.kotlin.noarg.diagnostic.CliNoArgDeclarationChecker
+import org.jetbrains.kotlin.noarg.fir.FirNoArgExtensionRegistrar
 import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.platform.jvm.isJvm
+import java.util.concurrent.Executors
 
 object NoArgConfigurationKeys {
     val ANNOTATION: CompilerConfigurationKey<List<String>> =
@@ -73,6 +77,9 @@ class NoArgCommandLineProcessor : CommandLineProcessor {
 }
 
 class NoArgComponentRegistrar : ComponentRegistrar {
+    override val supportsK2: Boolean
+        get() = true
+
     override fun registerProjectComponents(project: MockProject, configuration: CompilerConfiguration) {
         val annotations = configuration.get(ANNOTATION).orEmpty().toMutableList()
         configuration.get(PRESET)?.forEach { preset ->
@@ -88,6 +95,7 @@ class NoArgComponentRegistrar : ComponentRegistrar {
     companion object {
         fun registerNoArgComponents(project: Project, annotations: List<String>, useIr: Boolean, invokeInitializers: Boolean) {
             StorageComponentContainerContributor.registerExtension(project, CliNoArgComponentContainerContributor(annotations, useIr))
+            FirExtensionRegistrar.registerExtension(project, FirNoArgExtensionRegistrar(annotations))
             ExpressionCodegenExtension.registerExtension(project, CliNoArgExpressionCodegenExtension(annotations, invokeInitializers))
             IrGenerationExtension.registerExtension(project, NoArgIrGenerationExtension(annotations, invokeInitializers))
         }

@@ -7,6 +7,7 @@ plugins {
 
 dependencies {
     embedded(project(":kotlin-noarg-compiler-plugin.k1"))
+    embedded(project(":kotlin-noarg-compiler-plugin.k2"))
     embedded(project(":kotlin-noarg-compiler-plugin.backend"))
     embedded(project(":kotlin-noarg-compiler-plugin.cli"))
 
@@ -22,6 +23,7 @@ dependencies {
     testCompileOnly(project(":kotlin-reflect-api"))
     testRuntimeOnly(project(":kotlin-reflect"))
     testRuntimeOnly(project(":core:descriptors.runtime"))
+    testRuntimeOnly(project(":compiler:fir:fir-serialization"))
 
     testApi(intellijCore())
 }

@@ -195,6 +195,7 @@ include ":kotlin-allopen-compiler-plugin",
 
 include ":kotlin-noarg-compiler-plugin",
         ":kotlin-noarg-compiler-plugin.k1",
+        ":kotlin-noarg-compiler-plugin.k2",
         ":kotlin-noarg-compiler-plugin.backend",
         ":kotlin-noarg-compiler-plugin.cli"
 
@@ -692,6 +693,7 @@ project(':kotlin-allopen-compiler-plugin.k1').projectDir = "$rootDir/plugins/all
 project(':kotlin-allopen-compiler-plugin.k2').projectDir = "$rootDir/plugins/allopen/allopen.k2" as File
 project(':kotlin-noarg-compiler-plugin').projectDir = "$rootDir/plugins/noarg" as File
 project(':kotlin-noarg-compiler-plugin.k1').projectDir = "$rootDir/plugins/noarg/noarg.k1" as File
+project(':kotlin-noarg-compiler-plugin.k2').projectDir = "$rootDir/plugins/noarg/noarg.k2" as File
 project(':kotlin-noarg-compiler-plugin.backend').projectDir = "$rootDir/plugins/noarg/noarg.backend" as File
 project(':kotlin-noarg-compiler-plugin.cli').projectDir = "$rootDir/plugins/noarg/noarg.cli" as File
 project(':kotlin-sam-with-receiver-compiler-plugin').projectDir = "$rootDir/plugins/sam-with-receiver/sam-with-receiver-cli" as File

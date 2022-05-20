@@ -1,4 +1,3 @@
-// FIR_IDENTICAL
 annotation class NoArg
 
 class Outer {

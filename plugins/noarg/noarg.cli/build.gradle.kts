@@ -7,9 +7,11 @@ plugins {
 
 dependencies {
     api(project(":kotlin-noarg-compiler-plugin.k1"))
+    api(project(":kotlin-noarg-compiler-plugin.k2"))
     api(project(":kotlin-noarg-compiler-plugin.backend"))
     compileOnly(project(":compiler:util"))
     compileOnly(project(":compiler:plugin-api"))
+    compileOnly(project(":compiler:fir:entrypoint"))
     compileOnly(project(":compiler:backend"))
     compileOnly(project(":compiler:ir.backend.common"))
     compileOnly(intellijCore())

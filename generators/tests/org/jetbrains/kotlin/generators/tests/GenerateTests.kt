@@ -404,16 +404,25 @@ fun main(args: Array<String>) {
             testClass<AbstractDiagnosticsTestForNoArg> {
                 model("diagnostics", excludedPattern = excludedFirTestdataPattern)
             }
+            testClass<AbstractFirDiagnosticsTestForNoArg> {
+                model("diagnostics", excludedPattern = excludedFirTestdataPattern)
+            }
             testClass<AbstractBytecodeListingTestForNoArg> {
                 model("bytecodeListing", excludedPattern = excludedFirTestdataPattern)
             }
             testClass<AbstractIrBytecodeListingTestForNoArg> {
                 model("bytecodeListing", excludedPattern = excludedFirTestdataPattern)
             }
+            testClass<AbstractFirBytecodeListingTestForNoArg> {
+                model("bytecodeListing", excludedPattern = excludedFirTestdataPattern)
+            }
             testClass<AbstractBlackBoxCodegenTestForNoArg> {
                 model("box")
             }
             testClass<AbstractIrBlackBoxCodegenTestForNoArg> {
+                model("box")
+            }
+            testClass<AbstractFirBlackBoxCodegenTestForNoArg> {
                 model("box")
             }
         }
