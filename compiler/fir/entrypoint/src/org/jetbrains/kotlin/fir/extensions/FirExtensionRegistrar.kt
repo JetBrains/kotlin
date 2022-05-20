@@ -30,6 +30,7 @@ abstract class FirExtensionRegistrar : FirExtensionRegistrarAdapter() {
             FirSupertypeGenerationExtension::class,
             FirTypeAttributeExtension::class,
             FirExpressionResolutionExtension::class,
+            FirExtensionSessionComponent::class,
         )
     }
 
@@ -68,6 +69,11 @@ abstract class FirExtensionRegistrar : FirExtensionRegistrarAdapter() {
             registerExtension(FirExpressionResolutionExtension::class, this)
         }
 
+        @JvmName("plusExtensionSessionComponent")
+        operator fun (FirExtensionSessionComponent.Factory).unaryPlus() {
+            registerExtension(FirExtensionSessionComponent::class, this)
+        }
+
         // ------------------ reference methods ------------------
 
         @JvmName("plusStatusTransformerExtension")
@@ -99,6 +105,11 @@ abstract class FirExtensionRegistrar : FirExtensionRegistrarAdapter() {
         operator fun ((FirSession) -> FirExpressionResolutionExtension).unaryPlus() {
             FirExpressionResolutionExtension.Factory { this.invoke(it) }.unaryPlus()
         }
+
+        @JvmName("plusExtensionSessionComponent")
+        operator fun ((FirSession) -> FirExtensionSessionComponent).unaryPlus() {
+            FirExtensionSessionComponent.Factory { this.invoke(it) }.unaryPlus()
+        }
     }
 
     @OptIn(PluginServicesInitialization::class)
@@ -125,7 +136,6 @@ abstract class FirExtensionRegistrar : FirExtensionRegistrarAdapter() {
     private var isInitialized: AtomicBoolean = AtomicBoolean(false)
 
     private fun <P : FirExtension> registerExtension(kClass: KClass<out P>, factory: FirExtension.Factory<P>) {
-        @Suppress("UNCHECKED_CAST")
         val registeredExtensions = map.getValue(kClass)
         registeredExtensions.extensionFactories += factory
     }
@@ -152,5 +162,8 @@ class BunchOfRegisteredExtensions @PluginServicesInitialization constructor(
 @OptIn(PluginServicesInitialization::class)
 fun FirExtensionService.registerExtensions(registeredExtensions: BunchOfRegisteredExtensions) {
     registeredExtensions.extensions.forEach { registerExtensions(it.kClass, it.extensionFactories) }
+    extensionSessionComponents.forEach {
+        session.register(it.componentClass, it)
+    }
     session.registeredPluginAnnotations.initialize()
 }
