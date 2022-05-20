@@ -31,9 +31,11 @@ internal actual object MonotonicTimeSource : DefaultTimeSource, TimeSource {  //
         if (isNode)
             HrTimeSource(js("process").unsafeCast<Process>())
         else
-            js("self").unsafeCast<GlobalPerformance?>()?.performance?.let(::PerformanceTimeSource)
+            js("typeof self !== 'undefined' ? self : globalThis")
+                .unsafeCast<GlobalPerformance?>()
+                ?.performance
+                ?.let(::PerformanceTimeSource)
                 ?: DateNowTimeSource
-
     }
 
     actual override fun markNow(): ValueTimeMark = actualSource.markNow()
