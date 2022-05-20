@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
 
 class FirAllOpenExtensionRegistrar(val allOpenAnnotationFqNames: List<String>) : FirExtensionRegistrar() {
     override fun ExtensionRegistrarContext.configurePlugin() {
-        +FirAllOpenStatusTransformer.getFactory(allOpenAnnotationFqNames)
+        +::FirAllOpenStatusTransformer
+        +FirAllOpenPredicateMatcher.getFactory(allOpenAnnotationFqNames)
     }
 }
