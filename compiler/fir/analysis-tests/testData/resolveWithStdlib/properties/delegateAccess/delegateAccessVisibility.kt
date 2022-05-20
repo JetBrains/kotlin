@@ -26,3 +26,11 @@ fun test() {
     val d3 by <!WRONG_MODIFIER_CONTAINING_DECLARATION!>internal<!> MyDelegate()
     val e3 by <!WRONG_MODIFIER_TARGET!>public<!> MyDelegate()
 }
+
+internal val g by private MyDelegate()
+private val h by <!DELEGATE_VISIBILITY_INCONSISTENT_WITH_PROPERTY_VISIBILITY!>internal<!> MyDelegate()
+private val i by private MyDelegate()
+internal val j by internal MyDelegate()
+
+public val k by private MyDelegate()
+public val l by internal MyDelegate()

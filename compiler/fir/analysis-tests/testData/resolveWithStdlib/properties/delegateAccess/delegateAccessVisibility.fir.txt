@@ -49,3 +49,27 @@ FILE: delegateAccessVisibility.kt
         lval d3: R|kotlin/String|by R|/MyDelegate.MyDelegate|()
         lval e3: R|kotlin/String|by R|/MyDelegate.MyDelegate|()
     }
+    internal final val g: R|kotlin/String|by R|/MyDelegate.MyDelegate|()
+        internal get(): R|kotlin/String| {
+            ^ D|/g|.R|/MyDelegate.getValue|(Null(null), ::R|/g|)
+        }
+    private final val h: R|kotlin/String|by R|/MyDelegate.MyDelegate|()
+        private get(): R|kotlin/String| {
+            ^ D|/h|.R|/MyDelegate.getValue|(Null(null), ::R|/h|)
+        }
+    private final val i: R|kotlin/String|by R|/MyDelegate.MyDelegate|()
+        private get(): R|kotlin/String| {
+            ^ D|/i|.R|/MyDelegate.getValue|(Null(null), ::R|/i|)
+        }
+    internal final val j: R|kotlin/String|by R|/MyDelegate.MyDelegate|()
+        internal get(): R|kotlin/String| {
+            ^ D|/j|.R|/MyDelegate.getValue|(Null(null), ::R|/j|)
+        }
+    public final val k: R|kotlin/String|by R|/MyDelegate.MyDelegate|()
+        public get(): R|kotlin/String| {
+            ^ D|/k|.R|/MyDelegate.getValue|(Null(null), ::R|/k|)
+        }
+    public final val l: R|kotlin/String|by R|/MyDelegate.MyDelegate|()
+        public get(): R|kotlin/String| {
+            ^ D|/l|.R|/MyDelegate.getValue|(Null(null), ::R|/l|)
+        }
