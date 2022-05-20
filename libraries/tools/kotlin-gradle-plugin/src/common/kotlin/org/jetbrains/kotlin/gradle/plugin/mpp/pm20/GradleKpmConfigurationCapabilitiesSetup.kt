@@ -8,6 +8,7 @@
 package org.jetbrains.kotlin.gradle.plugin.mpp.pm20
 
 import org.gradle.api.Project
+import org.gradle.api.artifacts.Configuration
 import org.gradle.api.artifacts.ConfigurationPublications
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.GradleKpmConfigurationCapabilitiesSetup.CapabilitiesContainer
 
