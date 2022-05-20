@@ -1582,7 +1582,7 @@ open class RawFirBuilder(
 
                         val delegateBuilder = FirWrappedDelegateExpressionBuilder().apply {
                             val delegateFirExpression = extractDelegateExpression()
-                            source = delegateFirExpression.source?.fakeElement(KtFakeSourceElementKind.WrappedDelegate)
+                            source = this@toFirProperty.delegate?.toFirSourceElement(KtFakeSourceElementKind.WrappedDelegate)
                             expression = delegateFirExpression
                         }
 
@@ -1647,8 +1647,8 @@ open class RawFirBuilder(
 
                             val delegateBuilder = FirWrappedDelegateExpressionBuilder().apply {
                                 val delegateExpression = extractDelegateExpression()
-                                source = delegateExpression.source?.fakeElement(KtFakeSourceElementKind.WrappedDelegate)
-                                expression = extractDelegateExpression()
+                                source = this@toFirProperty.delegate?.toFirSourceElement(KtFakeSourceElementKind.WrappedDelegate)
+                                expression = delegateExpression
                             }
 
                             generateAccessorsByDelegate(

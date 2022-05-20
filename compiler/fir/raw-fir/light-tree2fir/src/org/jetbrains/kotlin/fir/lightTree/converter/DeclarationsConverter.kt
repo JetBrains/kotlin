@@ -1102,6 +1102,7 @@ class DeclarationsConverter(
         var identifier: String? = null
         val firTypeParameters = mutableListOf<FirTypeParameter>()
         var isReturnType = false
+        var propertyDelegate: LighterASTNode? = null
         var delegateModifiers = Modifier()
         var delegateExpression: LighterASTNode? = null
         var isVar = false
@@ -1121,6 +1122,7 @@ class DeclarationsConverter(
                 TYPE_REFERENCE -> if (isReturnType) returnType = convertType(it) else receiverType = convertType(it)
                 TYPE_CONSTRAINT_LIST -> typeConstraints += convertTypeConstraints(it)
                 PROPERTY_DELEGATE -> extractDelegate(it).also { that ->
+                    propertyDelegate = it
                     delegateModifiers = that.first
                     delegateExpression = that.second
                 }
@@ -1148,7 +1150,7 @@ class DeclarationsConverter(
             this.isVar = isVar
             initializer = propertyInitializer
 
-            val delegateSource = delegateExpression?.toFirSourceElement()
+            val delegateSource = propertyDelegate?.toFirSourceElement(KtFakeSourceElementKind.WrappedDelegate)
 
             symbol = if (isLocal) FirPropertySymbol(propertyName) else FirPropertySymbol(callableIdForName(propertyName))
 
