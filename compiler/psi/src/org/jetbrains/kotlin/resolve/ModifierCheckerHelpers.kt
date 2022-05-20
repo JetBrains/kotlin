@@ -177,9 +177,9 @@ val possibleTargetMap = mapOf(
     SEALED_KEYWORD to EnumSet.of(KotlinTarget.CLASS_ONLY, KotlinTarget.INTERFACE),
     INNER_KEYWORD to EnumSet.of(KotlinTarget.CLASS_ONLY),
     OVERRIDE_KEYWORD to EnumSet.of(KotlinTarget.MEMBER_PROPERTY, KotlinTarget.MEMBER_FUNCTION),
-    PRIVATE_KEYWORD to defaultVisibilityTargets + KotlinTarget.BACKING_FIELD,
+    PRIVATE_KEYWORD to defaultVisibilityTargets + KotlinTarget.BACKING_FIELD + KotlinTarget.DELEGATE_FIELD,
     PUBLIC_KEYWORD to defaultVisibilityTargets,
-    INTERNAL_KEYWORD to defaultVisibilityTargets + KotlinTarget.BACKING_FIELD,
+    INTERNAL_KEYWORD to defaultVisibilityTargets + KotlinTarget.BACKING_FIELD + KotlinTarget.DELEGATE_FIELD,
     PROTECTED_KEYWORD to EnumSet.of(
         KotlinTarget.CLASS_ONLY,
         KotlinTarget.OBJECT,

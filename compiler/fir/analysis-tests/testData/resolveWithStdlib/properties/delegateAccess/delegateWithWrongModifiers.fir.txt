@@ -1,0 +1,19 @@
+FILE: delegateWithWrongModifiers.kt
+    public final class MyDelegate : R|kotlin/Any| {
+        public constructor(): R|MyDelegate| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final operator fun getValue(thisRef: R|kotlin/Any?|, property: R|kotlin/reflect/KProperty<*>|): R|kotlin/String| {
+            ^getValue String(Test)
+        }
+
+    }
+    public final val a: R|kotlin/String|by R|/MyDelegate.MyDelegate|()
+        public get(): R|kotlin/String| {
+            ^ D|/a|.R|/MyDelegate.getValue|(Null(null), ::R|/a|)
+        }
+    public final val b: R|kotlin/String|by R|/MyDelegate.MyDelegate|()
+        public get(): R|kotlin/String| {
+            ^ D|/b|.R|/MyDelegate.getValue|(Null(null), ::R|/b|)
+        }
