@@ -54,8 +54,8 @@ internal class ReturnsInsertionLowering(val context: Context) : FileLoweringPass
                 expression.acceptChildrenVoid(this)
                 if (expression !is IrReturnableBlock) return
                 if (expression.inlineFunctionSymbol?.owner?.returnType == context.irBuiltIns.unitType) {
-                    val irBuilder = context.createIrBuilder(expression.symbol, expression.endOffset, expression.endOffset)
-                    irBuilder.run {
+                    val offset = (expression.statements.lastOrNull() ?: expression).endOffset
+                    context.createIrBuilder(expression.symbol, offset, offset).run {
                         expression.statements += irReturn(irGetObject(symbols.unit))
                     }
                 }

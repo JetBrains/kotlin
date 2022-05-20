@@ -6,9 +6,7 @@
 package org.jetbrains.kotlin.native.test.debugger
 
 import org.intellij.lang.annotations.Language
-import org.jetbrains.kotlin.konan.target.hostTargetSuffix
 import org.junit.Assert.fail
-import java.io.IOException
 import java.nio.file.Files
 import java.nio.file.Path
 
@@ -59,25 +57,11 @@ import java.nio.file.Path
  *     Current executable set to [..]program.kexe[..]
  */
 fun lldbTest(@Language("kotlin") programText: String, lldbSession: String) {
-    if (!haveLldb) {
-        println("Skipping test: no LLDB")
+    lldbReasonToAbort()?.let {
+        println(it)
         return
     }
 
-    if (!targetIsHost() && !simulatorTestEnabled()) {
-        println("simulator tests disabled, check 'kotlin.native.test.debugger.simulator.enabled' property")
-        return
-    }
-
-    if (!isOsxDevToolsEnabled) {
-        println("""Development tools aren't available.
-                   |Please consider to execute:
-                   |  ${DistProperties.devToolsSecurity} -enable
-                   |or
-                   |  csrutil disable
-                   |to run lldb tests""".trimMargin())
-        return
-    }
     val lldbSessionSpec = LldbSessionSpecification.parse(lldbSession)
 
     val tmpdir = Files.createTempDirectory("debugger_test")
@@ -91,6 +75,64 @@ fun lldbTest(@Language("kotlin") programText: String, lldbSession: String) {
     val result = driver.runLldb(output, lldbSessionSpec.commands)
     lldbSessionSpec.match(result)
 }
+
+fun lldbReasonToAbort() = when {
+    !haveLldb ->
+        "Skipping test: no LLDB"
+    !targetIsHost() && !simulatorTestEnabled() ->
+        "simulator tests disabled, check 'kotlin.native.test.debugger.simulator.enabled' property"
+    !isOsxDevToolsEnabled ->
+        """Development tools aren't available.
+           |Please consider to execute:
+           |  ${DistProperties.devToolsSecurity} -enable
+           |or
+           |  csrutil disable
+           |to run lldb tests""".trimMargin()
+    else -> null
+}
+
+/**
+ * Another integration test for debug info.
+ *
+ * It works by compiling a given set of [src] files with debug info, then
+ * launching lldb, running to the given [breakpoint] and "step in" [steps] times.
+ * It then checks that none of the reached break points correspond to blank
+ * lines in the given source files.
+ */
+fun lldbCheckLineNumbers(src: Map<String, String>, breakpoint: String, steps: Int) {
+    lldbReasonToAbort()?.let {
+        println(it)
+        return
+    }
+
+    val tmpdir = Files.createTempDirectory("debugger_test")
+    tmpdir.toFile().deleteOnExit()
+
+    val source = src.map { (filename, content) ->
+        val path = tmpdir.resolve(filename)
+        Files.write(path, content.trimIndent().toByteArray())
+        path
+    }.toTypedArray()
+
+    val output = tmpdir.resolve("program.kexe")
+    val driver = ToolDriver()
+    driver.compile(output, source, "-g")
+
+    val commands = listOf("b ${breakpoint}", "r") + (1..steps).map { "s" } + listOf("q")
+    val result = driver.runLldb(output, commands)
+
+    val noCodeLine = Regex("^\\s*(//.*)?$")
+    val validSourceBreaks = src.flatMap { (filename, content) ->
+        content.lines().withIndex()
+                .filterNot { noCodeLine.matches(it.value) }
+                .map{ "$filename:${it.index}"}
+    }.toSet()
+
+    Regex("(${src.keys.joinToString("|")}):\\d+").findAll(result).forEach {
+        check(it.value in validSourceBreaks, { "${it.value} is not a meaningful debug stop" })
+    }
+}
+
 
 private val isOsxDevToolsEnabled: Boolean by lazy {
     //TODO: add OSX checks.

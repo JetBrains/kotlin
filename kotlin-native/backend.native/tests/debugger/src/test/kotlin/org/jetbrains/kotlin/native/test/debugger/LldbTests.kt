@@ -5,6 +5,7 @@
 
 import org.jetbrains.kotlin.native.test.debugger.lldbCommandRunOrContinue
 import org.jetbrains.kotlin.native.test.debugger.lldbComplexTest
+import org.jetbrains.kotlin.native.test.debugger.lldbCheckLineNumbers
 import org.jetbrains.kotlin.native.test.debugger.lldbTest
 import org.junit.Test
 
@@ -402,4 +403,38 @@ class LldbTests {
             > q
         """.trimIndent().lldb(binary)
     }
+
+    @Test
+    fun `lldb line numbers are valid in source`() {
+        // Whitespace is important, since the character offsets are what defines source lines
+        lldbCheckLineNumbers(mapOf(
+                "main.kt" to """
+    
+    fun main() {
+    
+        inliner {
+        
+            println("1")
+            
+        }
+        
+        inliner {
+            
+            println("2")
+            
+        }
+    
+    }
+    
+""", "inliner.kt" to """
+    ${" ".repeat(1000)}
+    inline fun inliner(block: ()->Unit) {
+    
+        block()
+    
+    }
+    
+"""), "main.kt:2", 15)
+    }
+
 }
