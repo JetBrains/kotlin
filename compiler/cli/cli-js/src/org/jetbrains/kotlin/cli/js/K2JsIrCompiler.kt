@@ -358,6 +358,7 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
                     backendContext = backendContext,
                     emitNameSection = arguments.wasmDebug,
                     allowIncompleteImplementations = arguments.irDce,
+                    generateWat = true,
                 )
 
                 val launcherKind = when (arguments.wasmLauncher) {

@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.wasm.ir.convertors.WasmIrToText
 import java.io.ByteArrayOutputStream
 import java.io.File
 
-class WasmCompilerResult(val wat: String, val js: String, val wasm: ByteArray)
+class WasmCompilerResult(val wat: String?, val js: String, val wasm: ByteArray)
 
 fun compileToLoweredIr(
     depsDescriptors: ModulesStructure,
@@ -76,15 +76,20 @@ fun compileWasm(
     backendContext: WasmBackendContext,
     emitNameSection: Boolean = false,
     allowIncompleteImplementations: Boolean = false,
+    generateWat: Boolean = false,
 ): WasmCompilerResult {
     val compiledWasmModule = WasmCompiledModuleFragment(backendContext.irBuiltIns)
     val codeGenerator = WasmModuleFragmentGenerator(backendContext, compiledWasmModule, allowIncompleteImplementations = allowIncompleteImplementations)
     allModules.forEach { codeGenerator.generateModule(it) }
 
     val linkedModule = compiledWasmModule.linkWasmCompiledFragments()
-    val watGenerator = WasmIrToText()
-    watGenerator.appendWasmModule(linkedModule)
-    val wat = watGenerator.toString()
+    val wat = if (generateWat) {
+        val watGenerator = WasmIrToText()
+        watGenerator.appendWasmModule(linkedModule)
+        watGenerator.toString()
+    } else {
+        null
+    }
 
     val js = compiledWasmModule.generateJs()
 
@@ -168,10 +173,9 @@ fun writeCompilationResult(
     dir: File,
     loaderKind: WasmLoaderKind,
     fileNameBase: String = "index",
-    writeWat: Boolean = true,
 ) {
     dir.mkdirs()
-    if (writeWat) {
+    if (result.wat != null) {
         File(dir, "$fileNameBase.wat").writeText(result.wat)
     }
     File(dir, "$fileNameBase.wasm").writeBytes(result.wasm)

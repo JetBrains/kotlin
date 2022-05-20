@@ -127,11 +127,14 @@ abstract class BasicWasmBoxTest(
                 propertyLazyInitialization = true,
             )
 
+            val generateWat = debugMode >= DebugMode.DEBUG
+
             val compilerResult = compileWasm(
                 allModules = allModules,
                 backendContext = backendContext,
                 emitNameSection = true,
                 allowIncompleteImplementations = false,
+                generateWat = generateWat,
             )
 
             eliminateDeadDeclarations(allModules, backendContext)
@@ -141,6 +144,7 @@ abstract class BasicWasmBoxTest(
                 backendContext = backendContext,
                 emitNameSection = true,
                 allowIncompleteImplementations = true,
+                generateWat = generateWat,
             )
 
             val testJsQuiet = """
@@ -176,7 +180,7 @@ abstract class BasicWasmBoxTest(
                     println(" ------ $name Test file://$path/test.js")
                 }
 
-                writeCompilationResult(res, dir, WasmLoaderKind.D8, writeWat = debugMode >= DebugMode.DEBUG)
+                writeCompilationResult(res, dir, WasmLoaderKind.D8)
                 File(dir, "test.js").writeText(testJs)
                 ExternalTool(System.getProperty("javascript.engine.path.V8"))
                     .run(
