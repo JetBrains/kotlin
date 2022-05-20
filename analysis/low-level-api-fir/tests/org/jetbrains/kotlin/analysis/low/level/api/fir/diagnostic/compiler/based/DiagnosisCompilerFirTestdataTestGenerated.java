@@ -6241,6 +6241,12 @@ public class DiagnosisCompilerFirTestdataTestGenerated extends AbstractDiagnosis
                 }
 
                 @Test
+                @TestMetadata("delegateAccessVisibility.kt")
+                public void testDelegateAccessVisibility() throws Exception {
+                    runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/properties/delegateAccess/delegateAccessVisibility.kt");
+                }
+
+                @Test
                 @TestMetadata("delegateAccessWithArray.kt")
                 public void testDelegateAccessWithArray() throws Exception {
                     runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/properties/delegateAccess/delegateAccessWithArray.kt");
@@ -6250,6 +6256,12 @@ public class DiagnosisCompilerFirTestdataTestGenerated extends AbstractDiagnosis
                 @TestMetadata("delegateAccessWithExplicitReceiver.kt")
                 public void testDelegateAccessWithExplicitReceiver() throws Exception {
                     runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/properties/delegateAccess/delegateAccessWithExplicitReceiver.kt");
+                }
+
+                @Test
+                @TestMetadata("delegateAccessWithExtensionAndMember.kt")
+                public void testDelegateAccessWithExtensionAndMember() throws Exception {
+                    runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/properties/delegateAccess/delegateAccessWithExtensionAndMember.kt");
                 }
 
                 @Test
@@ -6280,6 +6292,12 @@ public class DiagnosisCompilerFirTestdataTestGenerated extends AbstractDiagnosis
                 @TestMetadata("delegateAccessWithOverriddenProperties.kt")
                 public void testDelegateAccessWithOverriddenProperties() throws Exception {
                     runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/properties/delegateAccess/delegateAccessWithOverriddenProperties.kt");
+                }
+
+                @Test
+                @TestMetadata("delegateWithWrongModifiers.kt")
+                public void testDelegateWithWrongModifiers() throws Exception {
+                    runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/properties/delegateAccess/delegateWithWrongModifiers.kt");
                 }
 
                 @Test
