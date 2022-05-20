@@ -421,6 +421,7 @@ object PositioningStrategies {
                 is KtObjectDeclaration -> element.getObjectKeyword()!!
                 is KtPropertyAccessor -> element.namePlaceholder
                 is KtAnonymousInitializer -> element
+                is KtPropertyDelegate -> element.modifierList ?: return emptyList()
                 else -> throw IllegalArgumentException(
                     "Can't find text range for element '${element::class.java.canonicalName}' with the text '${element.text}'"
                 )

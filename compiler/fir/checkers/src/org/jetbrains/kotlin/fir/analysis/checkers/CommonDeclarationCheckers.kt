@@ -166,4 +166,9 @@ object CommonDeclarationCheckers : DeclarationCheckers() {
         get() = setOf(
             FirEnumCompanionInEnumConstructorCallChecker,
         )
+
+    override val delegateFieldCheckers: Set<FirDelegateFieldChecker>
+        get() = setOf(
+            FirDelegateFieldVisibilityConsistencyChecker,
+        )
 }
