@@ -13,6 +13,7 @@ where possible options include:
   -no-stdlib                 Don't automatically include the Kotlin/JVM stdlib and Kotlin reflection into the classpath
   -script-templates <fully qualified class name[,]>
                              Script definition template classes
+  -sourcepath <path>         List of directories to search for user source files
   -Werror                    Report an error if there are any warnings
   -api-version <version>     Allow using declarations only from the specified version of bundled libraries
   -X                         Print a synopsis of advanced options

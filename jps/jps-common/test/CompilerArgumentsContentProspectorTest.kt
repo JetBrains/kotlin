@@ -190,6 +190,7 @@ class CompilerArgumentsContentProspectorTest {
             K2JVMCompilerArguments::klibLibraries,
             K2JVMCompilerArguments::profileCompilerCommand,
             K2JVMCompilerArguments::repeatCompileModules,
+            K2JVMCompilerArguments::sourcepath,
             K2JVMCompilerArguments::lambdas,
             K2JVMCompilerArguments::samConversions
         )

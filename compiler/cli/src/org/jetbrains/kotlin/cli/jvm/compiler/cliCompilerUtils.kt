@@ -156,6 +156,7 @@ fun writeOutputs(
 fun ModuleBuilder.configureFromArgs(args: K2JVMCompilerArguments) {
     args.friendPaths?.forEach { addFriendDir(it) }
     args.classpath?.split(File.pathSeparator)?.forEach { addClasspathEntry(it) }
+    args.sourcepath?.split(File.pathSeparator)?.forEach { addSourceFiles(it) }
     args.javaSourceRoots?.forEach {
         addJavaSourceRoot(JavaRootPath(it, args.javaPackagePrefix))
     }
@@ -166,6 +167,7 @@ fun ModuleBuilder.configureFromArgs(args: K2JVMCompilerArguments) {
             addJavaSourceRoot(JavaRootPath(arg, args.javaPackagePrefix))
         } else {
             addSourceFiles(arg)
+
             if (arg in commonSources) {
                 addCommonSourceFiles(arg)
             }

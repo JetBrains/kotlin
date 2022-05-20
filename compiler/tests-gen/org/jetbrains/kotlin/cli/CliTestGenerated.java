@@ -929,6 +929,11 @@ public class CliTestGenerated extends AbstractCliTest {
             runTest("compiler/testData/cli/jvm/singleJavaFileRoots.args");
         }
 
+        @TestMetadata("sourcepath.args")
+        public void testSourcepath() throws Exception {
+            runTest("compiler/testData/cli/jvm/sourcepath.args");
+        }
+
         @TestMetadata("standaloneSamConversionsAreEnabledWithNewInference.args")
         public void testStandaloneSamConversionsAreEnabledWithNewInference() throws Exception {
             runTest("compiler/testData/cli/jvm/standaloneSamConversionsAreEnabledWithNewInference.args");

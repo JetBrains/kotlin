@@ -1,0 +1,5 @@
+$TESTDATA_DIR$/sourcepath/src.kt
+-sourcepath
+$TESTDATA_DIR$/sourcepath
+-d
+$TEMP_DIR$
