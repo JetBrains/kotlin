@@ -61,10 +61,10 @@ internal class TeamcityAdapter : FrameworkAdapter {
             try {
                 MessageType.Started.report(name)
                 testFn()
-                MessageType.Finished.report(name)
             } catch (e: Throwable) {
                 MessageType.Failed.report(name, e)
             }
+            MessageType.Finished.report(name)
         }
     }
 }
