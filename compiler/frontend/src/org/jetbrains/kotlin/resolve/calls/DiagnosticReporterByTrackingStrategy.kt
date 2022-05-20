@@ -607,12 +607,12 @@ class DiagnosticReporterByTrackingStrategy(
                 psiKotlinCall.psiCall.calleeExpression?.let {
                     val typeVariableText = (typeVariable as? TypeVariableFromCallableDescriptor)?.originalTypeParameter?.name?.asString()
                         ?: typeVariable.toString()
+                    val errorFactory = if (error is InferredEmptyIntersectionError)
+                        INFERRED_TYPE_VARIABLE_INTO_EMPTY_INTERSECTION.errorFactory
+                    else INFERRED_TYPE_VARIABLE_INTO_EMPTY_INTERSECTION.warningFactory
                     trace.reportDiagnosticOnce(
                         @Suppress("UNCHECKED_CAST")
-                        INFERRED_TYPE_VARIABLE_INTO_EMPTY_INTERSECTION.on(
-                            context.languageVersionSettings, it, typeVariableText,
-                            error.incompatibleTypes as Collection<KotlinType>
-                        )
+                        errorFactory.on(it, typeVariableText, error.incompatibleTypes as Collection<KotlinType>)
                     )
                 }
             }
