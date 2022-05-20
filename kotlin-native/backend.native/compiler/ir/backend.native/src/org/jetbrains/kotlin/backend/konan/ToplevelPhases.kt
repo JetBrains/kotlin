@@ -475,8 +475,8 @@ internal fun PhaseConfig.konanPhasesConfig(config: KonanConfig) {
         // Don't serialize anything to a final executable.
         disableUnless(serializerPhase, config.produce == CompilerOutputKind.LIBRARY)
         disableUnless(entryPointPhase, config.produce == CompilerOutputKind.PROGRAM)
-        disableUnless(buildAdditionalCacheInfoPhase, config.produce.isCache && config.lazyIrForCaches)
-        disableUnless(saveAdditionalCacheInfoPhase, config.produce.isCache && config.lazyIrForCaches)
+        disableUnless(buildAdditionalCacheInfoPhase, config.produce.isCache)
+        disableUnless(saveAdditionalCacheInfoPhase, config.produce.isCache)
         disableUnless(finalizeCachePhase, config.produce.isCache)
         disableUnless(exportInternalAbiPhase, config.produce.isCache)
         disableUnless(buildCExportsPhase, config.produce.isNativeLibrary)
