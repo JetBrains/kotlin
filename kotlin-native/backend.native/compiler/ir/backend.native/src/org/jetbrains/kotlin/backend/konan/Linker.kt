@@ -48,7 +48,7 @@ internal class CacheStorage(val context: Context) {
     }
 
     fun saveAdditionalCacheInfo() {
-        context.config.outputFiles.tempCacheDirectory!!.mkdirs()
+        context.config.outputFiles.prepareTempDirectories()
         if (!isPreliminaryCache)
             saveCacheBitcodeDependencies()
         if (isPreliminaryCache || context.configuration.get(KonanConfigKeys.FILE_TO_CACHE) == null) {
