@@ -1,0 +1,61 @@
+@kotlin.Metadata
+public final class A {
+    // source: 'MFVCFieldInitializationOrder.kt'
+    private field x$x: double
+    private field x$y: double
+    public method <init>(p0: double, p1: double): void
+    public final method getX$x(): double
+    public final method getX$y(): double
+    public final @org.jetbrains.annotations.NotNull method getX(): DPoint
+    public final method setX-sUp7gFk(p0: double, p1: double): void
+}
+
+@kotlin.Metadata
+public final class B {
+    // source: 'MFVCFieldInitializationOrder.kt'
+    private field a$x: double
+    private field a$y: double
+    private field b$x: double
+    private field b$y: double
+    private field c$x: double
+    private field c$y: double
+    public method <init>(): void
+    public final method getA$x(): double
+    public final method getA$y(): double
+    public final @org.jetbrains.annotations.NotNull method getA(): DPoint
+    public final method getB$x(): double
+    public final method getB$y(): double
+    public final @org.jetbrains.annotations.NotNull method getB(): DPoint
+    public final method getC$x(): double
+    public final method getC$y(): double
+    public final @org.jetbrains.annotations.NotNull method getC(): DPoint
+    public final method setA-sUp7gFk(p0: double, p1: double): void
+}
+
+@kotlin.jvm.JvmInline
+@kotlin.Metadata
+public final class DPoint {
+    // source: 'MFVCFieldInitializationOrder.kt'
+    private field x: double
+    private field y: double
+    private synthetic method <init>(p0: double, p1: double): void
+    public synthetic final static method box-impl(p0: double, p1: double): DPoint
+    public final static method constructor-impl(p0: double, p1: double): void
+    public method equals(@org.jetbrains.annotations.Nullable p0: java.lang.Object): boolean
+    public static method equals-impl(p0: double, p1: double, p2: java.lang.Object): boolean
+    public final static method equals-impl0(p0: double, p1: double, p2: double, p3: double): boolean
+    public final method getX(): double
+    public final method getY(): double
+    public method hashCode(): int
+    public static method hashCode-impl(p0: double, p1: double): int
+    public @org.jetbrains.annotations.NotNull method toString(): java.lang.String
+    public static method toString-impl(p0: double, p1: double): java.lang.String
+    public synthetic final method unbox-impl0(): double
+    public synthetic final method unbox-impl1(): double
+}
+
+@kotlin.Metadata
+public final class MFVCFieldInitializationOrderKt {
+    // source: 'MFVCFieldInitializationOrder.kt'
+    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
+}
