@@ -43,7 +43,7 @@ fun functionWithoutBoxes(x: D, y: D) {
 // 2 INVOKESTATIC C.constructor-impl \(IILjava/lang/String;\)V
 // 1 public final getX\(\)LC;
 // 1 public final getX\$x\(\)I
-// 1 public final getX\$y\(\)I
+// 1 public final getX\$y-\w*\(\)I
 // 1 public final getX\$z\(\)Ljava/lang/String;
 // 2 private synthetic <init>\(IILjava/lang/String;\)V
 // 1 public final static synthetic box-impl\(IILjava/lang/String;\)LD;
