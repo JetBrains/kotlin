@@ -231,8 +231,8 @@ class MultiFieldValueClassSpecificDeclarations(
             this.name = nodeFullNames[leaf]!!
             this.type = leaf.type
             visibility = DescriptorVisibilities.PRIVATE
-        }.apply { 
-            parent = valueClass 
+        }.apply {
+            parent = valueClass
         }
     }
 
@@ -276,12 +276,12 @@ class MultiFieldValueClassSpecificDeclarations(
         })
     }
 
-    fun IrBuilderWithScope.fieldGetter(receiver: IrValueParameter, field: IrField): IrGetField =
+    private fun IrBuilderWithScope.fieldGetter(receiver: IrValueParameter, field: IrField): IrGetField =
         irGetField(irGet(receiver), field)
 
-    fun IrFunction.fieldGetter(field: IrField): IrBuilderWithScope.() -> IrGetField = { fieldGetter(dispatchReceiverParameter!!, field) }
+    private fun IrFunction.fieldGetter(field: IrField): IrBuilderWithScope.() -> IrGetField = { fieldGetter(dispatchReceiverParameter!!, field) }
 
-    val selfImplementationAgnosticDeclarations = ImplementationAgnostic(
+    private val selfImplementationAgnosticDeclarations = ImplementationAgnostic(
         fields.map {
             VirtualProperty(
                 type = it.type,
@@ -462,7 +462,7 @@ class MultiFieldValueClassSpecificDeclarations(
             }
         }
 
-        val nodeToSymbols = indexesByInternalNode.mapValues { (_, indexes) -> virtualFields.slice(indexes) } +
+        private val nodeToSymbols = indexesByInternalNode.mapValues { (_, indexes) -> virtualFields.slice(indexes) } +
                 indexByLeaf.mapValues { (_, index) -> listOf(virtualFields[index]) }
 
         private val internalNodeToExpressionGetters: Map<InternalNode<Unit, Unit>, ExpressionGenerator<T>> =

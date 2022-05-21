@@ -2,6 +2,7 @@
 // TARGET_BACKEND: JVM_IR
 // WORKS_WHEN_VALUE_CLASS
 // LANGUAGE: +ValueClasses
+// CHECK_BYTECODE_LISTING
 
 @JvmInline
 value class DPoint(val x: Double, val y: Double)

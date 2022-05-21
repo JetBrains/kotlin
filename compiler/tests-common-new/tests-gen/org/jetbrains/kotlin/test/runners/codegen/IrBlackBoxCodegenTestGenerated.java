@@ -50214,6 +50214,12 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
         }
 
         @Test
+        @TestMetadata("overrides_inlineClass.kt")
+        public void testOverrides_inlineClass() throws Exception {
+            runTest("compiler/testData/codegen/box/valueClasses/overrides_inlineClass.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+        }
+
+        @Test
         @TestMetadata("throwingMFVCReassignments.kt")
         public void testThrowingMFVCReassignments() throws Exception {
             runTest("compiler/testData/codegen/box/valueClasses/throwingMFVCReassignments.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
