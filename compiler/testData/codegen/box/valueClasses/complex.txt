@@ -86,7 +86,7 @@ public final class C {
     public static method equals-impl(p0: int, p1: int, p2: java.lang.String, p3: java.lang.Object): boolean
     public final static method equals-impl0(p0: int, p1: int, p2: java.lang.String, p3: int, p4: int, p5: java.lang.String): boolean
     public final method getX(): int
-    public final method getY(): int
+    public final method getY-GsR9Xnw(): int
     public final @org.jetbrains.annotations.NotNull method getZ(): java.lang.String
     public method hashCode(): int
     public static method hashCode-impl(p0: int, p1: int, p2: java.lang.String): int
@@ -128,7 +128,7 @@ public final class D {
     public static method equals-impl(p0: int, p1: int, p2: java.lang.String, p3: java.lang.Object): boolean
     public final static method equals-impl0(p0: int, p1: int, p2: java.lang.String, p3: int, p4: int, p5: java.lang.String): boolean
     public final method getX$x(): int
-    public final method getX$y(): int
+    public final method getX$y-GsR9Xnw(): int
     public final @org.jetbrains.annotations.NotNull method getX$z(): java.lang.String
     public final @org.jetbrains.annotations.NotNull method getX(): C
     public method hashCode(): int
@@ -155,7 +155,7 @@ public final class E {
     public final static method equals-impl0(p0: int, p1: int, p2: java.lang.String, p3: int, p4: int, p5: java.lang.String): boolean
     public final static @org.jetbrains.annotations.NotNull method getWithNonTrivialSetters-impl(p0: int, p1: int, @org.jetbrains.annotations.NotNull p2: java.lang.String): D
     public final method getX$x$x(): int
-    public final method getX$x$y(): int
+    public final method getX$x$y-GsR9Xnw(): int
     public final @org.jetbrains.annotations.NotNull method getX$x$z(): java.lang.String
     public final @org.jetbrains.annotations.NotNull method getX$x(): C
     public final @org.jetbrains.annotations.NotNull method getX(): D
@@ -195,11 +195,11 @@ public final class NotInlined {
     public synthetic method <init>(p0: int, p1: int, p2: int, p3: int, p4: java.lang.String, p5: java.util.List, p6: int, p7: kotlin.jvm.internal.DefaultConstructorMarker): void
     public @org.jetbrains.annotations.NotNull method getFakeOverrideMFVC(): R
     public method getFakeOverrideRegular(): int
-    public final @org.jetbrains.annotations.NotNull method getL$t(): java.util.List
+    public final @org.jetbrains.annotations.NotNull method getL$t-GKOAj6k(): java.util.List
     public final method getL$x(): int
-    public final method getL$y(): int
+    public final method getL$y-pVg5ArA(): int
     public final method getL$z$x$x$x(): int
-    public final method getL$z$x$x$y(): int
+    public final method getL$z$x$x$y-GsR9Xnw(): int
     public final @org.jetbrains.annotations.NotNull method getL$z$x$x$z(): java.lang.String
     public final @org.jetbrains.annotations.NotNull method getL$z$x$x(): C
     public final @org.jetbrains.annotations.NotNull method getL$z$x(): D
@@ -239,11 +239,11 @@ public final class R {
     public static @org.jetbrains.annotations.NotNull method getFakeOverrideMFVC-impl(p0: int, p1: int, p2: int, p3: int, @org.jetbrains.annotations.NotNull p4: java.lang.String, @org.jetbrains.annotations.NotNull p5: java.util.List): R
     public method getFakeOverrideRegular(): int
     public static method getFakeOverrideRegular-impl(p0: int, p1: int, p2: int, p3: int, @org.jetbrains.annotations.NotNull p4: java.lang.String, @org.jetbrains.annotations.NotNull p5: java.util.List): int
-    public final @org.jetbrains.annotations.NotNull method getT(): java.util.List
+    public final @org.jetbrains.annotations.NotNull method getT-GKOAj6k(): java.util.List
     public final method getX(): int
-    public final method getY(): int
+    public final method getY-pVg5ArA(): int
     public final method getZ$x$x$x(): int
-    public final method getZ$x$x$y(): int
+    public final method getZ$x$x$y-GsR9Xnw(): int
     public final @org.jetbrains.annotations.NotNull method getZ$x$x$z(): java.lang.String
     public final @org.jetbrains.annotations.NotNull method getZ$x$x(): C
     public final @org.jetbrains.annotations.NotNull method getZ$x(): D

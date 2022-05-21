@@ -53,7 +53,6 @@ class MemoizedInlineClassReplacements(
                         (it.origin == IrDeclarationOrigin.DELEGATED_PROPERTY_ACCESSOR && it.visibility == DescriptorVisibilities.LOCAL) ||
                         it.isStaticValueClassReplacement ||
                         it.origin == JvmLoweredDeclarationOrigin.MULTI_FIELD_VALUE_CLASS_GENERATED_IMPL_METHOD ||
-                        it.origin == IrDeclarationOrigin.GENERATED_MULTI_FIELD_VALUE_CLASS_MEMBER ||
                         it.origin.isSynthetic && it.origin != IrDeclarationOrigin.SYNTHETIC_GENERATED_SAM_IMPLEMENTATION ->
                     null
 
@@ -166,6 +165,11 @@ class MemoizedInlineClassReplacements(
                     it.defaultValue = parameter.defaultValue?.patchDeclarationParents(this)
                 }
             }
+            context.multiFieldValueClassReplacements.run {
+                bindingNewFunctionToParameterTemplateStructure[function]?.also {
+                    bindingNewFunctionToParameterTemplateStructure[this@buildReplacement] = it
+                }
+            }
         }
 
     override fun createStaticReplacement(function: IrFunction): IrSimpleFunction =
@@ -201,6 +205,11 @@ class MemoizedInlineClassReplacements(
                 }
             }
             valueParameters = newValueParameters
+            context.multiFieldValueClassReplacements.run {
+                bindingNewFunctionToParameterTemplateStructure[function]?.also {
+                    bindingNewFunctionToParameterTemplateStructure[this@buildReplacement] = it
+                }
+            }
         }
 
     private fun buildReplacement(

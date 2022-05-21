@@ -333,7 +333,7 @@ private class JvmMultiFieldValueClassLowering(context: JvmBackendContext) : JvmV
             val overriddenReplaced = replacement.overriddenSymbols.firstOrNull {
                 replacements.bindingNewFunctionToParameterTemplateStructure[it.owner] != null
             }?.owner
-            if (source.isFakeOverride && source.parentAsClass.isMultiFieldValueClass && overriddenReplaced != null) {
+            if (source.parentAsClass.isMultiFieldValueClass && overriddenReplaced != null) {
                 copyParameterDeclarationsFrom(overriddenReplaced)
                 dispatchReceiverParameter = source.dispatchReceiverParameter!!.copyTo(this)
                 val replacementStructure = replacement.overriddenSymbols.firstNotNullOf {
@@ -358,67 +358,95 @@ private class JvmMultiFieldValueClassLowering(context: JvmBackendContext) : JvmV
         allScopes.push(createScope(source))
         source.body = context.createIrBuilder(source.symbol, source.startOffset, source.endOffset).run {
             val sourceExplicitParameters = source.explicitParameters
-            if (inverted) {
-                irExprBody(irCall(target).apply {
-                    passTypeArgumentsFrom(source)
-                    val targetExplicitParameters = target.explicitParameters
-                    val originalStructure: List<RemappedParameter> = replacements.bindingOldFunctionToParameterTemplateStructure[original]!!
-                    val targetStructure = replacements.bindingNewFunctionToParameterTemplateStructure[target]
-                    require(
-                        when (targetStructure) {
-                            null -> originalStructure.size == targetExplicitParameters.size
-                            else -> originalStructure.size == targetStructure.size &&
-                                    targetStructure.sumOf { it.valueParameters.size } == targetExplicitParameters.size
+            irExprBody(irCall(target).apply {
+                passTypeArgumentsFrom(source)
+                val targetExplicitParameters = target.explicitParameters
+                val sourceStructure: List<RemappedParameter>? = replacements.bindingNewFunctionToParameterTemplateStructure[source]
+                val targetStructure: List<RemappedParameter>? = replacements.bindingNewFunctionToParameterTemplateStructure[target]
+                val errorMessage = {
+                    """
+                        Incompatible structures for
+                        Source: $sourceStructure
+                        ${source.render()}
+                        Target: $targetStructure
+                        ${target.render()}
+                        """.trimIndent()
+                }
+                when (targetStructure) {
+                    null -> when (sourceStructure) {
+                        null -> require(targetExplicitParameters.size == sourceExplicitParameters.size, errorMessage)
+                        else -> {
+                            require(targetExplicitParameters.size == sourceStructure.size, errorMessage)
+                            require(sourceExplicitParameters.size == sourceStructure.sumOf { it.valueParameters.size }, errorMessage)
                         }
-                    ) {
-                        "Incompatible structures: $originalStructure, $targetStructure"
                     }
-                    val structuresSizes = originalStructure.size
-                    var flattenedSourceIndex = 0
-                    var flattenedTargetIndex = 0
-                    for (i in 0 until structuresSizes) {
-                        val remappedOriginalParameter = originalStructure[i]
-                        val remappedTargetParameter = targetStructure?.get(i)
-                        when (remappedOriginalParameter) {
-                            is MultiFieldValueClassMapping -> {
-                                when (remappedTargetParameter) {
-                                    is MultiFieldValueClassMapping -> {
-                                        require(remappedTargetParameter.valueParameters.size == remappedOriginalParameter.valueParameters.size) {
-                                            "Incompatible structures: $remappedTargetParameter, $remappedOriginalParameter"
-                                        }
-                                        repeat(remappedTargetParameter.valueParameters.size) {
-                                            putArgument(
-                                                targetExplicitParameters[flattenedTargetIndex++],
-                                                irGet(sourceExplicitParameters[flattenedSourceIndex++])
-                                            )
-                                        }
+                    else -> when (sourceStructure) {
+                        null -> {
+                            require(targetStructure.size == sourceExplicitParameters.size, errorMessage)
+                            require(targetStructure.sumOf { it.valueParameters.size } == targetExplicitParameters.size, errorMessage)
+                        }
+                        else -> {
+                            require(targetStructure.size == sourceStructure.size, errorMessage)
+                            require(sourceStructure.sumOf { it.valueParameters.size } == sourceExplicitParameters.size, errorMessage)
+                            require(targetStructure.sumOf { it.valueParameters.size } == targetExplicitParameters.size, errorMessage)
+                            require((targetStructure zip sourceStructure).none { (t, s) ->
+                                t is MultiFieldValueClassMapping && s is MultiFieldValueClassMapping && t.declarations != s.declarations
+                            }, errorMessage)
+                        }
+                    }
+                }
+                val structuresSizes = sourceStructure?.size ?: targetStructure?.size ?: targetExplicitParameters.size
+                var flattenedSourceIndex = 0
+                var flattenedTargetIndex = 0
+                for (i in 0 until structuresSizes) {
+                    val remappedSourceParameter = sourceStructure?.get(i)
+                    val remappedTargetParameter = targetStructure?.get(i)
+                    when (remappedSourceParameter) {
+                        is MultiFieldValueClassMapping -> {
+                            when (remappedTargetParameter) {
+                                is MultiFieldValueClassMapping -> {
+                                    require(remappedTargetParameter.valueParameters.size == remappedSourceParameter.valueParameters.size) {
+                                        "Incompatible structures: $remappedTargetParameter, $remappedSourceParameter"
                                     }
-                                    is RegularMapping, null ->
+                                    repeat(remappedTargetParameter.valueParameters.size) {
                                         putArgument(
                                             targetExplicitParameters[flattenedTargetIndex++],
-                                            irCall(remappedOriginalParameter.declarations.boxMethod).apply {
-                                                sourceExplicitParameters
-                                                    .slice(flattenedSourceIndex until flattenedSourceIndex + remappedOriginalParameter.valueParameters.size)
-                                                    .forEachIndexed { index, boxParameter -> putValueArgument(index, irGet(boxParameter)) }
-                                                    .also { flattenedSourceIndex += remappedOriginalParameter.valueParameters.size }
-                                            })
+                                            irGet(sourceExplicitParameters[flattenedSourceIndex++])
+                                        )
+                                    }
+                                }
+                                is RegularMapping, null ->
+                                    putArgument(
+                                        targetExplicitParameters[flattenedTargetIndex++],
+                                        irCall(remappedSourceParameter.declarations.boxMethod).apply {
+                                            sourceExplicitParameters
+                                                .slice(flattenedSourceIndex until flattenedSourceIndex + remappedSourceParameter.valueParameters.size)
+                                                .forEachIndexed { index, boxParameter -> putValueArgument(index, irGet(boxParameter)) }
+                                                .also { flattenedSourceIndex += remappedSourceParameter.valueParameters.size }
+                                        })
+                            }
+                        }
+                        is RegularMapping, null -> when (remappedTargetParameter) {
+                            is MultiFieldValueClassMapping -> {
+                                val receiver = sourceExplicitParameters[flattenedSourceIndex++]
+                                for (unboxMethod in remappedTargetParameter.declarations.unboxMethods) {
+                                    putArgument(
+                                        targetExplicitParameters[flattenedTargetIndex++],
+                                        irCall(unboxMethod).apply { dispatchReceiver = irGet(receiver) }
+                                    )
                                 }
                             }
-                            is RegularMapping -> putArgument(
+                            else -> putArgument(
                                 targetExplicitParameters[flattenedTargetIndex++],
                                 irGet(sourceExplicitParameters[flattenedSourceIndex++])
                             )
                         }
                     }
-                })
-            } else {
-                irExprBody(irCall(original).apply { // not target as it will be replaced during lowering
-                    passTypeArgumentsFrom(source)
-                    for ((parameter, newParameter) in sourceExplicitParameters.zip(original.explicitParameters)) {
-                        putArgument(newParameter, irGet(parameter))
-                    }
-                }).transform(this@JvmMultiFieldValueClassLowering, null)
-            }
+                }
+                require(flattenedTargetIndex == targetExplicitParameters.size && flattenedSourceIndex == sourceExplicitParameters.size) {
+                    "Incorrect source:\n${source.dump()}\n\nfor target\n${target.dump()}"
+                }
+            })
         }
         allScopes.pop()
     }
