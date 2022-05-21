@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.gradle.dsl.*
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.CompilationSourceSetUtil.compilationsBySourceSets
+import org.jetbrains.kotlin.gradle.plugin.mpp.gdt.getSourceSetMetadataClassPath
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.hasKpmModel
 import org.jetbrains.kotlin.gradle.plugin.sources.*
@@ -337,17 +338,24 @@ class KotlinMetadataTargetConfigurator :
             listOf(sourceSet)
         ) { }
 
-        compilation.compileDependencyFiles += createMetadataDependencyTransformationClasspath(
-            project.configurations.getByName(ALL_COMPILE_METADATA_CONFIGURATION_NAME),
-            compilation
-        )
+        val classpath = if (PropertiesProvider(project).experimentalGccSupport) {
+            getSourceSetMetadataClassPath(project, sourceSet)
+        } else {
+            createMetadataDependencyTransformationClasspath(
+                project.configurations.getByName(ALL_COMPILE_METADATA_CONFIGURATION_NAME),
+                compilation
+            )
+        }
+
+        //project.afterEvaluate { println("Files of $compilation: ${classpath.toList()}") }
+        compilation.compileDependencyFiles += classpath
 
         if (compilation is KotlinSharedNativeCompilation && sourceSet is DefaultKotlinSourceSet) {
             compilation.compileDependencyFiles += project.createCInteropMetadataDependencyClasspath(sourceSet)
         }
     }
 
-    private fun setupDependencyTransformationForSourceSet(
+    private fun setupDependencyTransformationForSourceSet( // TODO: Fix Configuration / Execution
         project: Project,
         sourceSet: KotlinSourceSet,
         isSourceSetPublished: Boolean

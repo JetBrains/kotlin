@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.gradle.utils
 import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.api.file.ConfigurableFileCollection
+import org.gradle.api.file.FileCollection
 import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.ListProperty
@@ -104,6 +105,11 @@ internal fun Project.filesProvider(
 ): ConfigurableFileCollection {
     return project.files(project.provider(provider)).builtBy(*buildDependencies)
 }
+
+internal fun Project.filesProviderFixed(
+    vararg buildDependencies: Any,
+    provider: () -> Any
+): FileCollection = files(provider()).builtBy(*buildDependencies)
 
 internal fun <T : Task> T.outputFilesProvider(provider: T.() -> Any): ConfigurableFileCollection {
     return project.filesProvider(this) { provider() }

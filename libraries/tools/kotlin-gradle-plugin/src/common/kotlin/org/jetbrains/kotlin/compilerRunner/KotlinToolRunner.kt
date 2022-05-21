@@ -7,6 +7,12 @@ package org.jetbrains.kotlin.compilerRunner
 
 import com.intellij.openapi.util.text.StringUtil.escapeStringCharacters
 import org.gradle.api.Project
+import org.gradle.api.file.ConfigurableFileCollection
+import org.gradle.api.logging.Logger
+import org.gradle.api.model.ObjectFactory
+import org.gradle.process.ExecOperations
+import org.gradle.process.ExecResult
+import org.gradle.process.JavaExecSpec
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.konan.target.HostManager
 import java.io.File
@@ -16,8 +22,36 @@ import java.util.concurrent.ConcurrentHashMap
 
 // Note: this class is public because it is used in the K/N build infrastructure.
 abstract class KotlinToolRunner(
-    val project: Project
+    private val executionContext: ExecutionContext
 ) {
+    /**
+     * Context Services that are required for [KotlinToolRunner] during Gradle Execution Phase
+     */
+    class ExecutionContext(
+        val files: (Any) -> ConfigurableFileCollection,
+        val javaexec: ((JavaExecSpec) -> Unit) -> ExecResult,
+        val logger: Logger,
+    ) {
+        companion object {
+            fun fromProject(project: Project) = ExecutionContext(
+                files = project::files,
+                javaexec = project::javaexec,
+                logger = project.logger
+            )
+
+            /** Gradle Configuration friendly context, should be used inside Task Execution Phase */
+            fun fromTaskContext(
+                objectFactory: ObjectFactory,
+                execOperations: ExecOperations,
+                logger: Logger
+            ) = ExecutionContext(
+                files = objectFactory.fileCollection()::from,
+                javaexec = execOperations::javaexec,
+                logger = logger
+            )
+        }
+    }
+
     // name that will be used in logs
     abstract val displayName: String
 
@@ -87,14 +121,14 @@ abstract class KotlinToolRunner(
 
     private fun runViaExec(args: List<String>) {
         val transformedArgs = transformArgs(args)
-        val classpath = project.files(classpath)
+        val classpath = executionContext.files(classpath)
         val systemProperties = System.getProperties().asSequence()
             .map { (k, v) -> k.toString() to v.toString() }
             .filter { (k, _) -> k !in execSystemPropertiesBlacklist }
             .escapeQuotesForWindows()
             .toMap() + execSystemProperties
 
-        project.logger.info(
+        executionContext.logger.info(
             """|Run "$displayName" tool in a separate JVM process
                |Main class = $mainClass
                |Arguments = ${args.toPrettyString()}
@@ -107,7 +141,7 @@ abstract class KotlinToolRunner(
             """.trimMargin()
         )
 
-        project.javaexec { spec ->
+        executionContext.javaexec { spec ->
             @Suppress("DEPRECATION")
             if (GradleVersion.current() >= GradleVersion.version("7.0")) spec.mainClass.set(mainClass)
             else spec.main = mainClass
@@ -124,7 +158,7 @@ abstract class KotlinToolRunner(
         val transformedArgs = transformArgs(args)
         val isolatedClassLoader = getIsolatedClassLoader()
 
-        project.logger.info(
+        executionContext.logger.info(
             """|Run in-process tool "$displayName"
                |Entry point method = $mainClass.$daemonEntryPoint
                |Classpath = ${isolatedClassLoader.urLs.map { it.file }.toPrettyString()}

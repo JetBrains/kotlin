@@ -11,6 +11,7 @@ import org.gradle.api.artifacts.repositories.ArtifactRepository
 import org.gradle.api.file.FileTree
 import org.gradle.api.logging.Logger
 import org.jetbrains.kotlin.compilerRunner.KotlinNativeCompilerRunner
+import org.jetbrains.kotlin.compilerRunner.KotlinNativeToolRunner
 import org.jetbrains.kotlin.compilerRunner.konanVersion
 import org.jetbrains.kotlin.gradle.logging.kotlinInfo
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
@@ -165,7 +166,7 @@ class NativeCompilerDownloader(
 
     fun downloadIfNeeded() {
 
-        val classpath = KotlinNativeCompilerRunner(project).classpath
+        val classpath = KotlinNativeToolRunner.Configuration(project).classpath
         if (classpath.isEmpty() || classpath.any { !it.exists() }) {
             downloadAndExtract()
         }

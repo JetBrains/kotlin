@@ -186,6 +186,9 @@ internal class PropertiesProvider private constructor(private val project: Proje
     val experimentalKpmModelMapping: Boolean
         get() = booleanProperty(PropertyNames.KOTLIN_KPM_EXPERIMENTAL_MODEL_MAPPING) ?: false
 
+    val experimentalGccSupport: Boolean
+        get() = booleanProperty(PropertyNames.KOTLIN_MPP_EXPERIMENTAL_GCC_SUPPORT) ?: false
+
     val ignoreDisabledNativeTargets: Boolean?
         get() = booleanProperty(DisabledNativeTargetsReporter.DISABLE_WARNING_PROPERTY_NAME)
 
@@ -463,6 +466,7 @@ internal class PropertiesProvider private constructor(private val project: Proje
         const val KOTLIN_MPP_ENABLE_OPTIMISTIC_NUMBER_COMMONIZATION = "kotlin.mpp.enableOptimisticNumberCommonization"
         const val KOTLIN_KPM_EXPERIMENTAL_MODEL_MAPPING = "kotlin.kpm.experimentalModelMapping"
         const val KOTLIN_MPP_ENABLE_PLATFORM_INTEGER_COMMONIZATION = "kotlin.mpp.enablePlatformIntegerCommonization"
+        const val KOTLIN_MPP_EXPERIMENTAL_GCC_SUPPORT = "kotlin.mpp.experimental.gcc"
         const val KOTLIN_ABI_SNAPSHOT = "kotlin.incremental.classpath.snapshot.enabled"
     }
 

@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.compilerRunner
 
 import org.gradle.api.Project
+import org.gradle.api.tasks.Input
 import org.jetbrains.kotlin.cli.common.messages.MessageRenderer
 import org.jetbrains.kotlin.gradle.dsl.NativeCacheKind
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
@@ -18,6 +19,7 @@ import org.jetbrains.kotlin.konan.properties.resolvablePropertyString
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.konan.util.DependencyDirectories
+import java.io.File
 import java.nio.file.Files
 import java.util.*
 
@@ -45,10 +47,39 @@ internal fun Project.getKonanCacheKind(target: KonanTarget): NativeCacheKind {
     }
 }
 
+private val Project.kotlinNativeCompilerJar: String
+    get() = if (nativeUseEmbeddableCompilerJar)
+        "$konanHome/konan/lib/kotlin-native-compiler-embeddable.jar"
+    else
+        "$konanHome/konan/lib/kotlin-native.jar"
+
 internal abstract class KotlinNativeToolRunner(
     protected val toolName: String,
-    project: Project
-) : KotlinToolRunner(project) {
+    private val configuration: Configuration, // TODO: can be ambigious with Gradle Configuration
+    executionContext: ExecutionContext
+) : KotlinToolRunner(executionContext) {
+
+    class Configuration(
+        val konanVersion: CompilerVersion,
+        val konanHome: String,
+        val jvmArgs: List<String>,
+        classpathProvider: () -> Set<File>,
+    ) {
+        val classpath by lazy(classpathProvider)
+
+        constructor(project: Project) : this(
+            konanVersion = project.konanVersion,
+            konanHome = project.konanHome,
+            jvmArgs = project.jvmArgs,
+            classpathProvider = { //TODO: test this
+                project.files(
+                    project.kotlinNativeCompilerJar,
+                    "${project.konanHome}/konan/lib/trove4j.jar"
+                ).files
+            }
+        )
+    }
+
     final override val displayName get() = toolName
 
     final override val mainClass get() = "org.jetbrains.kotlin.cli.utilities.MainKt"
@@ -65,29 +96,18 @@ internal abstract class KotlinNativeToolRunner(
 
     final override val execSystemProperties by lazy {
         // Still set konan.home for versions prior to 1.4-M3.
-        val konanHomeRequired = project.konanVersion.let {
+        val konanHomeRequired = configuration.konanVersion.let {
             !it.isAtLeast(1, 4, 0) ||
                     it.toString(showMeta = false, showBuild = false) in listOf("1.4-M1", "1.4-M2")
         }
 
         listOfNotNull(
-            if (konanHomeRequired) "konan.home" to project.konanHome else null,
+            if (konanHomeRequired) "konan.home" to configuration.konanHome else null,
             MessageRenderer.PROPERTY_KEY to MessageRenderer.GRADLE_STYLE.name
         ).toMap()
     }
 
-    final override val classpath by lazy {
-        project.files(
-            project.kotlinNativeCompilerJar,
-            "${project.konanHome}/konan/lib/trove4j.jar"
-        ).files
-    }
-
-    private val Project.kotlinNativeCompilerJar: String
-        get() = if (nativeUseEmbeddableCompilerJar)
-            "$konanHome/konan/lib/kotlin-native-compiler-embeddable.jar"
-        else
-            "$konanHome/konan/lib/kotlin-native.jar"
+    final override val classpath by lazy { configuration.classpath }
 
     final override fun checkClasspath() =
         check(classpath.isNotEmpty()) {
@@ -98,18 +118,21 @@ internal abstract class KotlinNativeToolRunner(
             """.trimIndent()
         }
 
-    data class IsolatedClassLoaderCacheKey(val classpath: Set<java.io.File>)
+    data class IsolatedClassLoaderCacheKey(val classpath: Set<File>)
 
     // TODO: can't we use this for other implementations too?
     final override val isolatedClassLoaderCacheKey get() = IsolatedClassLoaderCacheKey(classpath)
 
     override fun transformArgs(args: List<String>) = listOf(toolName) + args
 
-    final override fun getCustomJvmArgs() = project.jvmArgs
+    final override fun getCustomJvmArgs() = configuration.jvmArgs
 }
 
 /** A common ancestor for all runners that run the cinterop tool. */
-internal abstract class AbstractKotlinNativeCInteropRunner(toolName: String, project: Project) : KotlinNativeToolRunner(toolName, project) {
+internal abstract class AbstractKotlinNativeCInteropRunner(
+    toolName: String,
+    project: Project
+) : KotlinNativeToolRunner(toolName, Configuration(project), ExecutionContext.fromProject(project)) {
     override val mustRunViaExec get() = true
 
     override val execEnvironment by lazy {
@@ -140,7 +163,7 @@ internal abstract class AbstractKotlinNativeCInteropRunner(toolName: String, pro
 }
 
 /** Kotlin/Native C-interop tool runner */
-internal class KotlinNativeCInteropRunner private constructor(project: Project) : AbstractKotlinNativeCInteropRunner("cinterop", project) {
+internal class KotlinNativeCInteropRunner private constructor(private val project: Project) : AbstractKotlinNativeCInteropRunner("cinterop", project) {
     interface ExecutionContext {
         val project: Project
         fun runWithContext(action: () -> Unit)
@@ -162,10 +185,29 @@ internal class KotlinNativeCInteropRunner private constructor(project: Project) 
 }
 
 /** Kotlin/Native compiler runner */
-internal class KotlinNativeCompilerRunner(project: Project) : KotlinNativeToolRunner("konanc", project) {
-    private val useArgFile get() = project.disableKonanDaemon
+internal class KotlinNativeCompilerRunner(
+    private val configuration: Configuration,
+    executionContext: ExecutionContext
+) : KotlinNativeToolRunner("konanc", configuration.parent, executionContext) {
+    class Configuration(
+        val parent: KotlinNativeToolRunner.Configuration,
 
-    override val mustRunViaExec get() = project.disableKonanDaemon
+        @get:Input
+        val disableKonanDaemon: Boolean,
+
+        @get:Input
+        val isOffline: Boolean
+    ) {
+        constructor(project: Project) : this(
+            parent = KotlinNativeToolRunner.Configuration(project),
+            disableKonanDaemon = project.disableKonanDaemon,
+            isOffline = project.gradle.startParameter.isOffline
+        )
+    }
+
+    private val useArgFile get() = configuration.disableKonanDaemon
+
+    override val mustRunViaExec get() = configuration.disableKonanDaemon
 
     override fun transformArgs(args: List<String>): List<String> {
         if (!useArgFile) return super.transformArgs(args)
@@ -185,14 +227,14 @@ internal class KotlinNativeCompilerRunner(project: Project) : KotlinNativeToolRu
 
     override val defaultArguments: List<String>
         get() = mutableListOf<String>().apply {
-            if (project.gradle.startParameter.isOffline) {
+            if (configuration.isOffline) {
                 add("-Xoverride-konan-properties=airplaneMode=true")
             }
         }
 }
 
 /** Platform libraries generation tool. Runs the cinterop tool under the hood. */
-internal class KotlinNativeLibraryGenerationRunner(project: Project) :
+internal class KotlinNativeLibraryGenerationRunner(private val project: Project) :
     AbstractKotlinNativeCInteropRunner("generatePlatformLibraries", project) {
     // The library generator works for a long time so enabling C2 can improve performance.
     override val disableC2: Boolean = false

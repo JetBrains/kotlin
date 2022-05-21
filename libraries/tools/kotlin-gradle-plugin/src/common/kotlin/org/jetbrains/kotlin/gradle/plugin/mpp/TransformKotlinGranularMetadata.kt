@@ -30,7 +30,7 @@ open class TransformKotlinGranularMetadata
 ) : DefaultTask() {
 
     init {
-        notCompatibleWithConfigurationCache("Task $name does not support Gradle Configuration Cache. Check KT-49933 for more info")
+        //notCompatibleWithConfigurationCache("Task $name does not support Gradle Configuration Cache. Check KT-49933 for more info")
     }
 
     @get:OutputDirectory
@@ -80,7 +80,7 @@ open class TransformKotlinGranularMetadata
 
     @get:Internal
     @delegate:Transient
-    internal val transformation: GranularMetadataTransformation by lazy {
+    internal val transformation: GranularMetadataTransformation by lazy { // TODO: Move to execution
         GranularMetadataTransformation(
             project,
             kotlinSourceSet,
@@ -97,7 +97,7 @@ open class TransformKotlinGranularMetadata
 
     @get:Internal
     @delegate:Transient // exclude from Gradle instant execution state
-    internal val metadataDependencyResolutions: Iterable<MetadataDependencyResolution> by project.provider {
+    internal val metadataDependencyResolutions: Iterable<MetadataDependencyResolution> by project.provider { // TODO: Move to execution
         transformation.metadataDependencyResolutions
     }
 

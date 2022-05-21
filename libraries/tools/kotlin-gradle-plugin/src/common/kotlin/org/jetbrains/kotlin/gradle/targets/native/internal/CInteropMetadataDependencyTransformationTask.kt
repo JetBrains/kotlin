@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.gradle.tasks.dependsOn
 import org.jetbrains.kotlin.gradle.tasks.locateOrRegisterTask
 import org.jetbrains.kotlin.gradle.tasks.withType
 import org.jetbrains.kotlin.gradle.utils.filesProvider
+import org.jetbrains.kotlin.gradle.utils.filesProviderFixed
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 import org.jetbrains.kotlin.gradle.utils.outputFilesProvider
 import org.jetbrains.kotlin.library.KLIB_FILE_EXTENSION
@@ -118,14 +119,16 @@ internal open class CInteropMetadataDependencyTransformationTask @Inject constru
     @Suppress("unused")
     @get:InputFiles
     @get:Classpath
-    protected val inputArtifactFiles: FileCollection = project.filesProvider {
-        sourceSet.dependencyTransformations.values.map { it.configurationToResolve.withoutProjectDependencies() }
+    protected val inputArtifactFiles: FileCollection by lazy {
+        project.files(
+            sourceSet.dependencyTransformations.values.map { it.configurationToResolve.withoutProjectDependencies() }
+        )
     }
 
     @get:Internal
     protected val chooseVisibleSourceSets
         get() = sourceSet.dependencyTransformations.values
-            .flatMap { it.metadataDependencyResolutions }
+            .flatMap { it.metadataDependencyResolutions } // TODO: Move to execution
             .filterIsInstance<ChooseVisibleSourceSets>()
 
     @Suppress("unused")
@@ -138,13 +141,16 @@ internal open class CInteropMetadataDependencyTransformationTask @Inject constru
         outputDirectory.walkTopDown().maxDepth(2).filter { it.isFile && it.extension == KLIB_FILE_EXTENSION }.toList()
     }
 
+    init {
+        onlyIf { project.getCommonizerTarget(sourceSet) is SharedCommonizerTarget }
+    }
+
     @TaskAction
     protected fun transformDependencies() {
         if (outputDirectory.isDirectory) {
             outputDirectory.deleteRecursively()
         }
 
-        if (project.getCommonizerTarget(sourceSet) !is SharedCommonizerTarget) return
         chooseVisibleSourceSets.flatMap(::materializeMetadata)
     }
 
