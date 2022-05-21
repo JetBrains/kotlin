@@ -6,7 +6,12 @@
 package org.jetbrains.kotlin.name
 
 object JvmNames {
+    @JvmField
     val JVM_NAME: FqName = FqName("kotlin.jvm.JvmName")
+
+    @JvmField
+    val JVM_NAME_CLASS_ID = ClassId.topLevel(JVM_NAME)
+
     val JVM_NAME_SHORT: String = JVM_NAME.shortName().asString()
 
     val JVM_MULTIFILE_CLASS: FqName = FqName("kotlin.jvm.JvmMultifileClass")

@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.load.java.JvmAbi.JVM_FIELD_ANNOTATION_CLASS_ID
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.JvmNames.JVM_MULTIFILE_CLASS_ID
+import org.jetbrains.kotlin.name.JvmNames.JVM_NAME_CLASS_ID
 import org.jetbrains.kotlin.name.JvmNames.JVM_OVERLOADS_CLASS_ID
 import org.jetbrains.kotlin.name.JvmNames.JVM_SYNTHETIC_ANNOTATION_CLASS_ID
 import org.jetbrains.kotlin.name.StandardClassIds
@@ -36,7 +37,7 @@ internal fun KtAnnotatedSymbol.getJvmNameFromAnnotation(annotationUseSiteTarget:
     val annotation = annotations.firstOrNull {
         val siteTarget = it.useSiteTarget
         (siteTarget == null || siteTarget == annotationUseSiteTarget) &&
-                it.classId?.asString() == "kotlin/jvm/JvmName"
+                it.classId == JVM_NAME_CLASS_ID
     }
 
     return annotation?.let {
