@@ -50202,6 +50202,12 @@ public class FirBlackBoxCodegenTestGenerated extends AbstractFirBlackBoxCodegenT
         }
 
         @Test
+        @TestMetadata("overrides_typeParameters.kt")
+        public void testOverrides_typeParameters() throws Exception {
+            runTest("compiler/testData/codegen/box/valueClasses/overrides_typeParameters.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+        }
+
+        @Test
         @TestMetadata("throwingMFVCReassignments.kt")
         public void testThrowingMFVCReassignments() throws Exception {
             runTest("compiler/testData/codegen/box/valueClasses/throwingMFVCReassignments.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
