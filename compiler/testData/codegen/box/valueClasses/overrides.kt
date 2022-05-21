@@ -128,153 +128,184 @@ fun <T> equal(expected: () -> T, actual: () -> T) {
 
 fun box(): String {
     val dPoint = DPoint(1.0, 2.0)
-    equal({ dPoint.toString() }, { (dPoint as Any).toString() })
-
-    equal({ dPoint.equals(dPoint) }, { dPoint.equals(dPoint as Any) })
-    equal({ dPoint.equals(dPoint) }, { (dPoint as Any).equals(dPoint) })
-    equal({ dPoint.equals(dPoint) }, { dPoint.equals(dPoint as Any) })
-    equal({ dPoint.equals(dPoint) }, { (dPoint as Any).equals(dPoint as Any) })
-
+    
+    val lam1: () -> DPoint = { throw DataClassException(1) }
+    val lam2: () -> Unit = { throw DataClassException(2 to dPoint) }
+    val lam3: () -> DPoint = { throw DataClassException(3) }
+    val lam4: () -> Unit = { throw DataClassException(4 to dPoint) }
+    val lam5: () -> DPoint = { throw DataClassException(5) }
+    val lam6: () -> Unit = { throw DataClassException(6 to dPoint) }
+    val lam7: () -> DPoint = { throw DataClassException(7) }
+    val lam8: () -> Unit = { throw DataClassException(8 to dPoint) }
+    val lam9: () -> DPoint = { throw DataClassException(9) }
+    val lam10: () -> Unit = { throw DataClassException(10 to dPoint) }
+    val lam11: () -> DPoint = { throw DataClassException(11) }
+    val lam12: () -> Unit = { throw DataClassException(12 to dPoint) }
+    val lam13: () -> DPoint = { throw DataClassException(13) }
+    val lam14: () -> Unit = { throw DataClassException(14 to dPoint) }
+    val lam15: () -> DPoint = { throw DataClassException(15) }
+    val lam16: () -> Unit = { throw DataClassException(16 to dPoint) }
+    val lam17: () -> DPoint = { throw DataClassException(17) }
+    val lam18: () -> Unit = { throw DataClassException(18 to dPoint) }
+    val lam19: () -> Int = { throw DataClassException(19) }
+    val lam20: () -> Unit = { throw DataClassException(20 to 1) }
+    val emptyLam = {}
+    val dPointLam = { dPoint }
     val otherDPoint = DPoint(3.0, 4.0)
-    equal({ dPoint.equals(otherDPoint) }, { dPoint.equals(otherDPoint as Any) })
-    equal({ dPoint.equals(otherDPoint) }, { (dPoint as Any).equals(otherDPoint) })
-    equal({ dPoint.equals(otherDPoint) }, { dPoint.equals(otherDPoint as Any) })
-    equal({ dPoint.equals(otherDPoint) }, { (dPoint as Any).equals(otherDPoint as Any) })
+    val otherDPointLam = { otherDPoint }
+    equal({ "DPoint(x=1.0, y=2.0)" }, { dPoint.toString() })
+    equal({ "DPoint(x=1.0, y=2.0)" }, { (dPoint as Any).toString() })
+
+    equal({ true }, { dPoint.equals(dPoint) })
+    equal({ true }, { dPoint.equals(dPoint as Any) })
+    equal({ true }, { (dPoint as Any).equals(dPoint) })
+    equal({ true }, { (dPoint as Any).equals(dPoint as Any) })
+
+    equal({ false }, { dPoint.equals(otherDPoint) })
+    equal({ false }, { dPoint.equals(otherDPoint as Any) })
+    equal({ false }, { (dPoint as Any).equals(otherDPoint) })
+    equal({ false }, { (dPoint as Any).equals(otherDPoint as Any) })
 
     equal({ dPoint.hashCode() }, { (dPoint as Any).hashCode() })
 
-    equal({ dPoint.x }, { (dPoint as AbstractPoint<Double>).x })
-    equal({ dPoint.y }, { (dPoint as AbstractPoint<Double>).y })
+    equal({ 1.0 }, { dPoint.x })
+    equal({ 1.0 }, { (dPoint as AbstractPoint<Double>).x })
+    equal({ 2.0 }, { dPoint.y })
+    equal({ 2.0 }, { (dPoint as AbstractPoint<Double>).y })
 
 
     val realOverride = RealOverride(dPoint)
 
-    equal({ realOverride.p }, { (realOverride as GenericMFVCHolder<DPoint>).p })
-    equal({ realOverride.p1 }, { (realOverride as GenericMFVCHolder<DPoint>).p1 })
-    equal({ realOverride.p }, { (realOverride as ReifiedMFVCHolder).p })
-    equal({ realOverride.p1 }, { (realOverride as ReifiedMFVCHolder).p1 })
-    equal({ realOverride.p }, { (realOverride as GenericMFVCHolderWithMFVCUpperBound<DPoint>).p })
-    equal({ realOverride.p1 }, { (realOverride as GenericMFVCHolderWithMFVCUpperBound<DPoint>).p1 })
+    equal(dPointLam, { realOverride.p })
+    equal(dPointLam, { (realOverride as GenericMFVCHolder<DPoint>).p })
+    equal(lam13, { realOverride.p1 })
+    equal(lam13, { (realOverride as GenericMFVCHolder<DPoint>).p1 })
+    equal(dPointLam, { (realOverride as ReifiedMFVCHolder).p })
+    equal(lam13, { realOverride.p1 })
+    equal(lam13, { (realOverride as ReifiedMFVCHolder).p1 })
+    equal(dPointLam, { (realOverride as GenericMFVCHolderWithMFVCUpperBound<DPoint>).p })
+    equal(lam13, { (realOverride as GenericMFVCHolderWithMFVCUpperBound<DPoint>).p1 })
 
-    equal({ realOverride.p = dPoint }, { (realOverride as GenericMFVCHolder<DPoint>).p = dPoint })
-    equal({ realOverride.p1 = dPoint }, { (realOverride as GenericMFVCHolder<DPoint>).p1 = dPoint })
-    equal({ realOverride.p = dPoint }, { (realOverride as ReifiedMFVCHolder).p = dPoint })
-    equal({ realOverride.p1 = dPoint }, { (realOverride as ReifiedMFVCHolder).p1 = dPoint })
-    equal({ realOverride.p = dPoint }, { (realOverride as GenericMFVCHolderWithMFVCUpperBound<DPoint>).p = dPoint })
-    equal({ realOverride.p1 = dPoint }, { (realOverride as GenericMFVCHolderWithMFVCUpperBound<DPoint>).p1 = dPoint })
+    
+    equal(emptyLam, { realOverride.p = dPoint })
+    equal(emptyLam, { (realOverride as GenericMFVCHolder<DPoint>).p = dPoint })
+    equal(lam14, { realOverride.p1 = dPoint })
+    equal(lam14, { (realOverride as GenericMFVCHolder<DPoint>).p1 = dPoint })
+    equal(emptyLam, { (realOverride as ReifiedMFVCHolder).p = dPoint })
+    equal(lam14, { (realOverride as ReifiedMFVCHolder).p1 = dPoint })
+    equal(emptyLam, { (realOverride as GenericMFVCHolderWithMFVCUpperBound<DPoint>).p = dPoint })
+    equal(lam14, { (realOverride as GenericMFVCHolderWithMFVCUpperBound<DPoint>).p1 = dPoint })
 
 
     val genericFakeOverride = GenericFakeOverride()
 
-    equal({ genericFakeOverride.p }, { (genericFakeOverride as GenericMFVCHolderWithImpls<DPoint>).p })
-    equal({ genericFakeOverride.p1 }, { (genericFakeOverride as GenericMFVCHolderWithImpls<DPoint>).p1 })
+    equal(lam1, { genericFakeOverride.p })
+    equal(lam1, { (genericFakeOverride as GenericMFVCHolderWithImpls<DPoint>).p })
+    equal(lam3, { genericFakeOverride.p1 })
+    equal(lam3, { (genericFakeOverride as GenericMFVCHolderWithImpls<DPoint>).p1 })
     val reifiedFakeOverride = ReifiedFakeOverride()
-    equal({ reifiedFakeOverride.p }, { (reifiedFakeOverride as ReifiedMFVCHolderWithImpls).p })
-    equal({ reifiedFakeOverride.p1 }, { (reifiedFakeOverride as ReifiedMFVCHolderWithImpls).p1 })
+    equal(lam9, { reifiedFakeOverride.p })
+    equal(lam9, { (reifiedFakeOverride as ReifiedMFVCHolderWithImpls).p })
+    equal(lam11, { reifiedFakeOverride.p1 })
+    equal(lam11, { (reifiedFakeOverride as ReifiedMFVCHolderWithImpls).p1 })
     val genericFakeOverrideWithMFVCUpperBound = GenericFakeOverrideWithMFVCUpperBound()
-    equal(
-        { genericFakeOverrideWithMFVCUpperBound.p },
-        { (genericFakeOverrideWithMFVCUpperBound as GenericMFVCHolderWithMFVCUpperBoundWithImpls<DPoint>).p }
-    )
-    equal(
-        { genericFakeOverrideWithMFVCUpperBound.p1 },
-        { (genericFakeOverrideWithMFVCUpperBound as GenericMFVCHolderWithMFVCUpperBoundWithImpls<DPoint>).p1 }
-    )
+    equal(lam5, { genericFakeOverrideWithMFVCUpperBound.p })
+    equal(lam5, { (genericFakeOverrideWithMFVCUpperBound as GenericMFVCHolderWithMFVCUpperBoundWithImpls<DPoint>).p })
+    equal(lam7, { genericFakeOverrideWithMFVCUpperBound.p1 })
+    equal(lam7, { (genericFakeOverrideWithMFVCUpperBound as GenericMFVCHolderWithMFVCUpperBoundWithImpls<DPoint>).p1 })
     
-    equal({ genericFakeOverride.p = dPoint }, { (genericFakeOverride as GenericMFVCHolderWithImpls<DPoint>).p = dPoint })
-    equal({ genericFakeOverride.p1 = dPoint }, { (genericFakeOverride as GenericMFVCHolderWithImpls<DPoint>).p1 = dPoint })
-    equal({ reifiedFakeOverride.p = dPoint }, { (reifiedFakeOverride as ReifiedMFVCHolderWithImpls).p = dPoint })
-    equal({ reifiedFakeOverride.p1 = dPoint }, { (reifiedFakeOverride as ReifiedMFVCHolderWithImpls).p1 = dPoint })
-    equal(
-        { genericFakeOverrideWithMFVCUpperBound.p = dPoint },
-        { (genericFakeOverrideWithMFVCUpperBound as GenericMFVCHolderWithMFVCUpperBoundWithImpls<DPoint>).p = dPoint }
-    )
-    equal(
-        { genericFakeOverrideWithMFVCUpperBound.p1 = dPoint },
-        { (genericFakeOverrideWithMFVCUpperBound as GenericMFVCHolderWithMFVCUpperBoundWithImpls<DPoint>).p1 = dPoint }
-    )
+    equal(lam2, { genericFakeOverride.p = dPoint })
+    equal(lam2, { (genericFakeOverride as GenericMFVCHolderWithImpls<DPoint>).p = dPoint })
+    equal(lam4, { genericFakeOverride.p1 = dPoint })
+    equal(lam4, { (genericFakeOverride as GenericMFVCHolderWithImpls<DPoint>).p1 = dPoint })
+    equal(lam10, { reifiedFakeOverride.p = dPoint })
+    equal(lam10, { (reifiedFakeOverride as ReifiedMFVCHolderWithImpls).p = dPoint })
+    equal(lam12, { reifiedFakeOverride.p1 = dPoint })
+    equal(lam12, { (reifiedFakeOverride as ReifiedMFVCHolderWithImpls).p1 = dPoint })
+    equal(lam6, { genericFakeOverrideWithMFVCUpperBound.p = dPoint })
+    equal(lam6, { (genericFakeOverrideWithMFVCUpperBound as GenericMFVCHolderWithMFVCUpperBoundWithImpls<DPoint>).p = dPoint })
+    equal(lam8, { genericFakeOverrideWithMFVCUpperBound.p1 = dPoint })
+    equal(lam8, { (genericFakeOverrideWithMFVCUpperBound as GenericMFVCHolderWithMFVCUpperBoundWithImpls<DPoint>).p1 = dPoint })
     
     
     val genericFakeOverrideMFVC = GenericFakeOverrideMFVC(1.0, 2.0)
 
-    equal({ genericFakeOverrideMFVC.p }, { (genericFakeOverrideMFVC as GenericMFVCHolderWithImpls<DPoint>).p })
-    equal({ genericFakeOverrideMFVC.p1 }, { (genericFakeOverrideMFVC as GenericMFVCHolderWithImpls<DPoint>).p1 })
+    equal(lam1, { genericFakeOverrideMFVC.p })
+    equal(lam1, { (genericFakeOverrideMFVC as GenericMFVCHolderWithImpls<DPoint>).p })
+    equal(lam3, { genericFakeOverrideMFVC.p1 })
+    equal(lam3, { (genericFakeOverrideMFVC as GenericMFVCHolderWithImpls<DPoint>).p1 })
 
     val reifiedFakeOverrideMFVC = ReifiedFakeOverrideMFVC(1.0, 2.0)
-    equal({ reifiedFakeOverrideMFVC.p }, { (reifiedFakeOverrideMFVC as ReifiedMFVCHolderWithImpls).p })
-    equal({ reifiedFakeOverrideMFVC.p1 }, { (reifiedFakeOverrideMFVC as ReifiedMFVCHolderWithImpls).p1 })
+    equal(lam9, { reifiedFakeOverrideMFVC.p })
+    equal(lam9, { (reifiedFakeOverrideMFVC as ReifiedMFVCHolderWithImpls).p })
+    equal(lam11, { reifiedFakeOverrideMFVC.p1 })
+    equal(lam11, { (reifiedFakeOverrideMFVC as ReifiedMFVCHolderWithImpls).p1 })
 
     val genericFakeOverrideMFVCWithMFVCUpperBound = GenericFakeOverrideMFVCWithMFVCUpperBound(1.0, 2.0)
-    equal(
-        { genericFakeOverrideMFVCWithMFVCUpperBound.p }, 
-        { (genericFakeOverrideMFVCWithMFVCUpperBound as GenericMFVCHolderWithMFVCUpperBoundWithImpls<DPoint>).p },
-    )
-    equal(
-        { genericFakeOverrideMFVCWithMFVCUpperBound.p1 },
-        { (genericFakeOverrideMFVCWithMFVCUpperBound as GenericMFVCHolderWithMFVCUpperBoundWithImpls<DPoint>).p1 },
-    )
+    equal(lam5, { genericFakeOverrideMFVCWithMFVCUpperBound.p })
+    equal(lam5, { (genericFakeOverrideMFVCWithMFVCUpperBound as GenericMFVCHolderWithMFVCUpperBoundWithImpls<DPoint>).p })
+    equal(lam7, { genericFakeOverrideMFVCWithMFVCUpperBound.p1 })
+    equal(lam7, { (genericFakeOverrideMFVCWithMFVCUpperBound as GenericMFVCHolderWithMFVCUpperBoundWithImpls<DPoint>).p1 })
 
-    equal({ genericFakeOverrideMFVC.p = dPoint }, { (genericFakeOverrideMFVC as GenericMFVCHolderWithImpls<DPoint>).p = dPoint })
-    equal({ genericFakeOverrideMFVC.p1 = dPoint }, { (genericFakeOverrideMFVC as GenericMFVCHolderWithImpls<DPoint>).p1 = dPoint })
+    equal(lam2, { genericFakeOverrideMFVC.p = dPoint })
+    equal(lam2, { (genericFakeOverrideMFVC as GenericMFVCHolderWithImpls<DPoint>).p = dPoint })
+    equal(lam4, { genericFakeOverrideMFVC.p1 = dPoint })
+    equal(lam4, { (genericFakeOverrideMFVC as GenericMFVCHolderWithImpls<DPoint>).p1 = dPoint })
 
-    equal({ reifiedFakeOverrideMFVC.p = dPoint }, { (reifiedFakeOverrideMFVC as ReifiedMFVCHolderWithImpls).p = dPoint })
-    equal({ reifiedFakeOverrideMFVC.p1 = dPoint }, { (reifiedFakeOverrideMFVC as ReifiedMFVCHolderWithImpls).p1 = dPoint })
+    equal(lam10, { reifiedFakeOverrideMFVC.p = dPoint })
+    equal(lam10, { (reifiedFakeOverrideMFVC as ReifiedMFVCHolderWithImpls).p = dPoint })
+    equal(lam12, { reifiedFakeOverrideMFVC.p1 = dPoint })
+    equal(lam12, { (reifiedFakeOverrideMFVC as ReifiedMFVCHolderWithImpls).p1 = dPoint })
 
-    equal(
-        { genericFakeOverrideMFVCWithMFVCUpperBound.p = dPoint }, 
-        { (genericFakeOverrideMFVCWithMFVCUpperBound as GenericMFVCHolderWithMFVCUpperBoundWithImpls<DPoint>).p = dPoint },
-    )
-    equal(
-        { genericFakeOverrideMFVCWithMFVCUpperBound.p1 = dPoint },
-        { (genericFakeOverrideMFVCWithMFVCUpperBound as GenericMFVCHolderWithMFVCUpperBoundWithImpls<DPoint>).p1 = dPoint },
-    )
+    equal(lam6, { genericFakeOverrideMFVCWithMFVCUpperBound.p = dPoint })
+    equal(lam6, { (genericFakeOverrideMFVCWithMFVCUpperBound as GenericMFVCHolderWithMFVCUpperBoundWithImpls<DPoint>).p = dPoint })
+    equal(lam8, { genericFakeOverrideMFVCWithMFVCUpperBound.p1 = dPoint })
+    equal(lam8, { (genericFakeOverrideMFVCWithMFVCUpperBound as GenericMFVCHolderWithMFVCUpperBoundWithImpls<DPoint>).p1 = dPoint })
 
 
     val dPointWithInterface = DPointWithInterface(1.0, 2.0)
 
-    equal({ dPointWithInterface.somethingGeneric }, { (dPointWithInterface as SomePointInterface<DPoint>).somethingGeneric })
-    equal({ dPointWithInterface.somethingRegular }, { (dPointWithInterface as SomePointInterface<DPoint>).somethingRegular })
-    equal({ dPointWithInterface.somethingMFVC }, { (dPointWithInterface as SomePointInterface<DPoint>).somethingMFVC })
+    equal(lam15, { dPointWithInterface.somethingGeneric })
+    equal(lam15, { (dPointWithInterface as SomePointInterface<DPoint>).somethingGeneric })
+    equal(lam19, { dPointWithInterface.somethingRegular })
+    equal(lam19, { (dPointWithInterface as SomePointInterface<DPoint>).somethingRegular })
+    equal(lam17, { dPointWithInterface.somethingMFVC })
+    equal(lam17, { (dPointWithInterface as SomePointInterface<DPoint>).somethingMFVC })
 
-    equal({ dPointWithInterface.somethingGeneric }, { (dPointWithInterface as SomePointInterfaceWithMFVCBound<DPoint>).somethingGeneric })
-    equal({ dPointWithInterface.somethingRegular }, { (dPointWithInterface as SomePointInterfaceWithMFVCBound<DPoint>).somethingRegular })
-    equal({ dPointWithInterface.somethingMFVC }, { (dPointWithInterface as SomePointInterfaceWithMFVCBound<DPoint>).somethingMFVC })
+    equal(lam15, { (dPointWithInterface as SomePointInterfaceWithMFVCBound<DPoint>).somethingGeneric })
+    equal(lam19, { (dPointWithInterface as SomePointInterfaceWithMFVCBound<DPoint>).somethingRegular })
+    equal(lam17, { (dPointWithInterface as SomePointInterfaceWithMFVCBound<DPoint>).somethingMFVC })
 
-    equal(
-        { dPointWithInterface.somethingGeneric = dPoint },
-        { (dPointWithInterface as SomePointInterface<DPoint>).somethingGeneric = dPoint }
-    )
-    equal({ dPointWithInterface.somethingRegular = 1 }, { (dPointWithInterface as SomePointInterface<DPoint>).somethingRegular = 1 })
-    equal({ dPointWithInterface.somethingMFVC = dPoint }, { (dPointWithInterface as SomePointInterface<DPoint>).somethingMFVC = dPoint })
+    equal(lam16, { dPointWithInterface.somethingGeneric = dPoint })
+    equal(lam16, { (dPointWithInterface as SomePointInterface<DPoint>).somethingGeneric = dPoint })
+    equal(lam20, { dPointWithInterface.somethingRegular = 1 })
+    equal(lam20, { (dPointWithInterface as SomePointInterface<DPoint>).somethingRegular = 1 })
+    equal(lam18, { dPointWithInterface.somethingMFVC = dPoint })
+    equal(lam18, { (dPointWithInterface as SomePointInterface<DPoint>).somethingMFVC = dPoint })
 
-    equal(
-        { dPointWithInterface.somethingGeneric = dPoint }, 
-        { (dPointWithInterface as SomePointInterfaceWithMFVCBound<DPoint>).somethingGeneric = dPoint }
-    )
-    equal(
-        { dPointWithInterface.somethingRegular = 2 }, 
-        { (dPointWithInterface as SomePointInterfaceWithMFVCBound<DPoint>).somethingRegular = 2 }
-    )
-    equal(
-        { dPointWithInterface.somethingMFVC = dPoint},
-        { (dPointWithInterface as SomePointInterfaceWithMFVCBound<DPoint>).somethingMFVC = dPoint }
-    )
+    equal(lam16, { (dPointWithInterface as SomePointInterfaceWithMFVCBound<DPoint>).somethingGeneric = dPoint })
+    equal(lam20, { (dPointWithInterface as SomePointInterfaceWithMFVCBound<DPoint>).somethingRegular = 1 })
+    equal(lam18, { (dPointWithInterface as SomePointInterfaceWithMFVCBound<DPoint>).somethingMFVC = dPoint })
 
 
     val dSegment = DSegment(dPoint, otherDPoint)
 
-    equal({ dPoint }, { dSegment.p1 })
-    equal({ otherDPoint }, { dSegment.p2 })
-    equal({ dPoint.x }, { dSegment.p1.x })
-    equal({ otherDPoint.x }, { dSegment.p2.x })
-    equal({ dPoint.y }, { dSegment.p1.y })
-    equal({ otherDPoint.y }, { dSegment.p2.y })
-    equal({ dSegment.p1 }, { (dSegment as AbstractSegment<DPoint>).p1 })
-    equal({ dSegment.p2 }, { (dSegment as AbstractSegment<DPoint>).p2 })
-    equal({ dSegment.p1.x }, { (dSegment as AbstractSegment<DPoint>).p1.x })
-    equal({ dSegment.p2.x }, { (dSegment as AbstractSegment<DPoint>).p2.x })
-    equal({ dSegment.p1.y }, { (dSegment as AbstractSegment<DPoint>).p1.y })
-    equal({ dSegment.p2.y }, { (dSegment as AbstractSegment<DPoint>).p2.y })
+    equal(dPointLam, { dSegment.p1 })
+    equal(otherDPointLam, { dSegment.p2 })
+    equal({ 1.0 }, { dPoint.x })
+    equal({ 1.0 }, { dSegment.p1.x })
+    equal({ 3.0 }, { otherDPoint.x })
+    equal({ 3.0 }, { dSegment.p2.x })
+    equal({ 2.0 }, { dPoint.y })
+    equal({ 2.0 }, { dSegment.p1.y })
+    equal({ 4.0 }, { otherDPoint.y })
+    equal({ 4.0 }, { dSegment.p2.y })
+    equal(dPointLam, { (dSegment as AbstractSegment<DPoint>).p1 })
+    equal(otherDPointLam, { (dSegment as AbstractSegment<DPoint>).p2 })
+    equal({ 1.0 }, { (dSegment as AbstractSegment<DPoint>).p1.x })
+    equal({ 3.0 }, { (dSegment as AbstractSegment<DPoint>).p2.x })
+    equal({ 2.0 }, { (dSegment as AbstractSegment<DPoint>).p1.y })
+    equal({ 4.0 }, { (dSegment as AbstractSegment<DPoint>).p2.y })
 
     return "OK"
 }
