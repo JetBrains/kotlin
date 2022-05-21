@@ -93,8 +93,6 @@ internal fun KtAnnotatedSymbol.computeAnnotations(
     includeAnnotationsWithoutSite: Boolean = true
 ): List<PsiAnnotation> {
 
-    if (nullability == NullabilityType.Unknown && annotations.isEmpty()) return emptyList()
-
     val nullabilityAnnotation = when (nullability) {
         NullabilityType.NotNull -> NotNull::class.java
         NullabilityType.Nullable -> Nullable::class.java
