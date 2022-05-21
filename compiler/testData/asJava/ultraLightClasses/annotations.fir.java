@@ -1,23 +1,29 @@
+@java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
 @kotlin.annotation.Target(allowedTargets = {kotlin.annotation.AnnotationTarget.CLASS, kotlin.annotation.AnnotationTarget.FUNCTION, kotlin.annotation.AnnotationTarget.VALUE_PARAMETER, kotlin.annotation.AnnotationTarget.EXPRESSION})
 public abstract @interface Anno2 /* Anno2*/ {
 }
 
+@java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
 @kotlin.annotation.Target(allowedTargets = {kotlin.annotation.AnnotationTarget.CLASS, kotlin.annotation.AnnotationTarget.FUNCTION, kotlin.annotation.AnnotationTarget.VALUE_PARAMETER, kotlin.annotation.AnnotationTarget.EXPRESSION})
 public abstract @interface Anno3 /* Anno3*/ {
 }
 
+@java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
 @kotlin.annotation.Target(allowedTargets = kotlin.annotation.AnnotationTarget.CLASS)
 public abstract @interface Anno4 /* Anno4*/ {
 }
 
+@java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
 @kotlin.annotation.Target(allowedTargets = ?)
 public abstract @interface Anno5 /* Anno5*/ {
 }
 
+@java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
 @kotlin.annotation.Target(allowedTargets = ?)
 public abstract @interface Anno6 /* Anno6*/ {
 }
 
+@java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
 public abstract @interface AnnoWithCompanion /* AnnoWithCompanion*/ {
   @org.jetbrains.annotations.NotNull()
   public static final AnnoWithCompanion.Companion Companion;
@@ -39,6 +45,7 @@ public static final class Companion /* AnnoWithCompanion.Companion*/ {
 
 }
 
+@java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
 public abstract @interface Anno /* Anno*/ {
   public abstract Anno[] x();//  x()
 
@@ -47,23 +54,27 @@ public abstract @interface Anno /* Anno*/ {
 }
 
 @Deprecated(message = "This anno is deprecated, use === instead", replaceWith = ?)
+@java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
 @kotlin.annotation.MustBeDocumented()
 @kotlin.annotation.Retention(value = kotlin.annotation.AnnotationRetention.SOURCE)
 @kotlin.annotation.Target(allowedTargets = kotlin.annotation.AnnotationTarget.CLASS)
 public abstract @interface Fancy /* Fancy*/ {
 }
 
+@java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
 public abstract @interface ReplaceWith /* ReplaceWith*/ {
   public abstract java.lang.String expression();//  expression()
 
 }
 
+@java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
 public abstract @interface AnnotatedAttribute /* AnnotatedAttribute*/ {
   @Anno()
   public abstract java.lang.String x();//  x()
 
 }
 
+@java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
 public abstract @interface Deprecated /* Deprecated*/ {
   public abstract ReplaceWith replaceWith();//  replaceWith()
 
@@ -71,6 +82,7 @@ public abstract @interface Deprecated /* Deprecated*/ {
 
 }
 
+@java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
 public abstract @interface Ann /* Ann*/ {
   public abstract java.lang.Class<? extends java.lang.Object> arg2();//  arg2()
 

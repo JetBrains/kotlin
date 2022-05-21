@@ -6,7 +6,9 @@
 package org.jetbrains.kotlin.light.classes.symbol
 
 import com.intellij.openapi.project.Project
+import com.intellij.psi.CommonClassNames.JAVA_LANG_ANNOTATION_RETENTION
 import com.intellij.psi.PsiAnnotation
+import com.intellij.psi.PsiClass
 import com.intellij.psi.PsiElement
 import org.jetbrains.annotations.NotNull
 import org.jetbrains.annotations.Nullable
@@ -16,14 +18,16 @@ import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.analysis.api.symbols.KtFileSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KtAnnotatedSymbol
 import org.jetbrains.kotlin.analysis.api.annotations.KtConstantAnnotationValue
+import org.jetbrains.kotlin.analysis.api.annotations.KtEnumEntryAnnotationValue
+import org.jetbrains.kotlin.analysis.api.annotations.KtNamedAnnotationValue
+import org.jetbrains.kotlin.builtins.StandardNames.DEFAULT_VALUE_PARAMETER
 import org.jetbrains.kotlin.load.java.JvmAbi.JVM_FIELD_ANNOTATION_CLASS_ID
-import org.jetbrains.kotlin.name.ClassId
-import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.load.java.JvmAnnotationNames.RETENTION_POLICY_ENUM
+import org.jetbrains.kotlin.name.*
 import org.jetbrains.kotlin.name.JvmNames.JVM_MULTIFILE_CLASS_ID
 import org.jetbrains.kotlin.name.JvmNames.JVM_NAME_CLASS_ID
 import org.jetbrains.kotlin.name.JvmNames.JVM_OVERLOADS_CLASS_ID
 import org.jetbrains.kotlin.name.JvmNames.JVM_SYNTHETIC_ANNOTATION_CLASS_ID
-import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.resolve.annotations.JVM_STATIC_ANNOTATION_CLASS_ID
 import org.jetbrains.kotlin.resolve.inline.INLINE_ONLY_ANNOTATION_FQ_NAME
 
@@ -101,11 +105,21 @@ internal fun KtAnnotatedSymbol.computeAnnotations(
         FirLightSimpleAnnotation(it.name, parent)
     }
 
-    if (annotations.isEmpty()) {
-        return if (nullabilityAnnotation != null) listOf(nullabilityAnnotation) else emptyList()
-    }
+    val parentIsAnnotation = (parent as? PsiClass)?.isAnnotationType == true
 
     val result = mutableListOf<PsiAnnotation>()
+    if (annotations.isEmpty()) {
+        if (parentIsAnnotation) {
+            result.add(createRetentionRuntimeAnnotation(parent))
+        }
+
+        if (nullabilityAnnotation != null) {
+            result.add(nullabilityAnnotation)
+        }
+
+        return result
+    }
+
     for (annotation in annotations) {
 
         val siteTarget = annotation.useSiteTarget
@@ -117,9 +131,33 @@ internal fun KtAnnotatedSymbol.computeAnnotations(
         }
     }
 
+    if (parentIsAnnotation &&
+        annotations.none { it.classId?.asFqNameString() == JAVA_LANG_ANNOTATION_RETENTION }
+    ) {
+        result.add(createRetentionRuntimeAnnotation(parent))
+    }
+
     if (nullabilityAnnotation != null) {
         result.add(nullabilityAnnotation)
     }
 
     return result
 }
+
+private fun createRetentionRuntimeAnnotation(parent: PsiElement): PsiAnnotation =
+    FirLightSimpleAnnotation(
+        JAVA_LANG_ANNOTATION_RETENTION,
+        parent,
+        listOf(
+            KtNamedAnnotationValue(
+                name = DEFAULT_VALUE_PARAMETER,
+                expression = KtEnumEntryAnnotationValue(
+                    callableId = CallableId(
+                        ClassId.fromString(RETENTION_POLICY_ENUM.asString()),
+                        Name.identifier(AnnotationRetention.RUNTIME.name)
+                    ),
+                    sourcePsi = null
+                )
+            )
+        )
+    )
