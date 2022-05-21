@@ -12,7 +12,13 @@ interface AbstractPoint<T> {
 }
 
 @JvmInline
-value class DPoint(override val x: Double, override val y: Double): AbstractPoint<Double>
+value class MyDouble(val value: Double)
+
+val Double.my
+    get() = MyDouble(this)
+
+@JvmInline
+value class DPoint(override val x: MyDouble, override val y: MyDouble): AbstractPoint<MyDouble>
 
 interface GenericMFVCHolder<T> {
     var p: T
@@ -73,11 +79,11 @@ class GenericFakeOverrideWithMFVCUpperBound : GenericMFVCHolderWithMFVCUpperBoun
 
 
 @JvmInline
-value class GenericFakeOverrideMFVC(val field1: Double, val field2: Double) : GenericMFVCHolderWithImpls<DPoint>
+value class GenericFakeOverrideMFVC(val field1: MyDouble, val field2: MyDouble) : GenericMFVCHolderWithImpls<DPoint>
 @JvmInline
-value class ReifiedFakeOverrideMFVC(val field1: Double, val field2: Double) : ReifiedMFVCHolderWithImpls
+value class ReifiedFakeOverrideMFVC(val field1: MyDouble, val field2: MyDouble) : ReifiedMFVCHolderWithImpls
 @JvmInline
-value class GenericFakeOverrideMFVCWithMFVCUpperBound(val field1: Double, val field2: Double) : GenericMFVCHolderWithMFVCUpperBoundWithImpls<DPoint>
+value class GenericFakeOverrideMFVCWithMFVCUpperBound(val field1: MyDouble, val field2: MyDouble) : GenericMFVCHolderWithMFVCUpperBoundWithImpls<DPoint>
 
 
 interface SomePointInterface<T> {
@@ -97,7 +103,7 @@ interface SomePointInterfaceWithMFVCBound<T : DPoint> {
 }
 
 @JvmInline
-value class DPointWithInterface(val x: Double, val y: Double) : SomePointInterface<DPoint>, SomePointInterfaceWithMFVCBound<DPoint> {
+value class DPointWithInterface(val x: MyDouble, val y: MyDouble) : SomePointInterface<DPoint>, SomePointInterfaceWithMFVCBound<DPoint> {
     override var somethingGeneric: DPoint
         get() = throw DataClassException(15)
         set(value) = throw DataClassException(16 to value)
@@ -127,7 +133,7 @@ fun <T> equal(expected: () -> T, actual: () -> T) {
 }
 
 fun box(): String {
-    val dPoint = DPoint(1.0, 2.0)
+    val dPoint = DPoint(1.0.my, 2.0.my)
     equal({ dPoint.toString() }, { (dPoint as Any).toString() })
 
     equal({ dPoint.equals(dPoint) }, { dPoint.equals(dPoint as Any) })
@@ -135,7 +141,7 @@ fun box(): String {
     equal({ dPoint.equals(dPoint) }, { dPoint.equals(dPoint as Any) })
     equal({ dPoint.equals(dPoint) }, { (dPoint as Any).equals(dPoint as Any) })
 
-    val otherDPoint = DPoint(3.0, 4.0)
+    val otherDPoint = DPoint(3.0.my, 4.0.my)
     equal({ dPoint.equals(otherDPoint) }, { dPoint.equals(otherDPoint as Any) })
     equal({ dPoint.equals(otherDPoint) }, { (dPoint as Any).equals(otherDPoint) })
     equal({ dPoint.equals(otherDPoint) }, { dPoint.equals(otherDPoint as Any) })
@@ -143,8 +149,8 @@ fun box(): String {
 
     equal({ dPoint.hashCode() }, { (dPoint as Any).hashCode() })
 
-    equal({ dPoint.x }, { (dPoint as AbstractPoint<Double>).x })
-    equal({ dPoint.y }, { (dPoint as AbstractPoint<Double>).y })
+    equal({ dPoint.x }, { (dPoint as AbstractPoint<MyDouble>).x })
+    equal({ dPoint.y }, { (dPoint as AbstractPoint<MyDouble>).y })
 
 
     val realOverride = RealOverride(dPoint)
@@ -180,7 +186,7 @@ fun box(): String {
         { genericFakeOverrideWithMFVCUpperBound.p1 },
         { (genericFakeOverrideWithMFVCUpperBound as GenericMFVCHolderWithMFVCUpperBoundWithImpls<DPoint>).p1 }
     )
-    
+
     equal({ genericFakeOverride.p = dPoint }, { (genericFakeOverride as GenericMFVCHolderWithImpls<DPoint>).p = dPoint })
     equal({ genericFakeOverride.p1 = dPoint }, { (genericFakeOverride as GenericMFVCHolderWithImpls<DPoint>).p1 = dPoint })
     equal({ reifiedFakeOverride.p = dPoint }, { (reifiedFakeOverride as ReifiedMFVCHolderWithImpls).p = dPoint })
@@ -193,18 +199,18 @@ fun box(): String {
         { genericFakeOverrideWithMFVCUpperBound.p1 = dPoint },
         { (genericFakeOverrideWithMFVCUpperBound as GenericMFVCHolderWithMFVCUpperBoundWithImpls<DPoint>).p1 = dPoint }
     )
-    
-    
-    val genericFakeOverrideMFVC = GenericFakeOverrideMFVC(1.0, 2.0)
+
+
+    val genericFakeOverrideMFVC = GenericFakeOverrideMFVC(1.0.my, 2.0.my)
 
     equal({ genericFakeOverrideMFVC.p }, { (genericFakeOverrideMFVC as GenericMFVCHolderWithImpls<DPoint>).p })
     equal({ genericFakeOverrideMFVC.p1 }, { (genericFakeOverrideMFVC as GenericMFVCHolderWithImpls<DPoint>).p1 })
 
-    val reifiedFakeOverrideMFVC = ReifiedFakeOverrideMFVC(1.0, 2.0)
+    val reifiedFakeOverrideMFVC = ReifiedFakeOverrideMFVC(1.0.my, 2.0.my)
     equal({ reifiedFakeOverrideMFVC.p }, { (reifiedFakeOverrideMFVC as ReifiedMFVCHolderWithImpls).p })
     equal({ reifiedFakeOverrideMFVC.p1 }, { (reifiedFakeOverrideMFVC as ReifiedMFVCHolderWithImpls).p1 })
 
-    val genericFakeOverrideMFVCWithMFVCUpperBound = GenericFakeOverrideMFVCWithMFVCUpperBound(1.0, 2.0)
+    val genericFakeOverrideMFVCWithMFVCUpperBound = GenericFakeOverrideMFVCWithMFVCUpperBound(1.0.my, 2.0.my)
     equal(
         { genericFakeOverrideMFVCWithMFVCUpperBound.p }, 
         { (genericFakeOverrideMFVCWithMFVCUpperBound as GenericMFVCHolderWithMFVCUpperBoundWithImpls<DPoint>).p },
@@ -230,7 +236,7 @@ fun box(): String {
     )
 
 
-    val dPointWithInterface = DPointWithInterface(1.0, 2.0)
+    val dPointWithInterface = DPointWithInterface(1.0.my, 2.0.my)
 
     equal({ dPointWithInterface.somethingGeneric }, { (dPointWithInterface as SomePointInterface<DPoint>).somethingGeneric })
     equal({ dPointWithInterface.somethingRegular }, { (dPointWithInterface as SomePointInterface<DPoint>).somethingRegular })
@@ -262,7 +268,8 @@ fun box(): String {
 
 
     val dSegment = DSegment(dPoint, otherDPoint)
-
+    (dSegment as AbstractSegment<DPoint>).p1.x
+    
     equal({ dPoint }, { dSegment.p1 })
     equal({ otherDPoint }, { dSegment.p2 })
     equal({ dPoint.x }, { dSegment.p1.x })
