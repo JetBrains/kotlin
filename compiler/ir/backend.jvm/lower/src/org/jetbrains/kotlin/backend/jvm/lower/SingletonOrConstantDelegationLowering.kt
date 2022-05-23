@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 internal val singletonOrConstantDelegationPhase = makeIrFilePhase(
     ::SingletonOrConstantDelegationLowering,
     name = "SingletonOrConstantDelegation",
-    description = "Optimize `val x by ConstOrSingleton`: there is no need to construct a KProperty instance"
+    description = "Optimize `val x by ConstOrSingleton`: there is no need to store the value in a field"
 )
 
 private class SingletonOrConstantDelegationLowering(val context: JvmBackendContext) : FileLoweringPass {
