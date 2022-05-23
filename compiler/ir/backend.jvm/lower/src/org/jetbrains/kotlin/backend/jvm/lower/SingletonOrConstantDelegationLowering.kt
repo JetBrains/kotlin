@@ -33,11 +33,12 @@ private class SingletonOrConstantDelegationLowering(val context: JvmBackendConte
 }
 
 private class SingletonOrConstantDelegationTransformer(val context: JvmBackendContext) : IrElementTransformerVoid() {
-    override fun visitClass(declaration: IrClass) = declaration.apply {
-        transformChildren(this@SingletonOrConstantDelegationTransformer, null)
-        transformDeclarationsFlat {
+    override fun visitClass(declaration: IrClass): IrClass {
+        declaration.transformChildren(this, null)
+        declaration.transformDeclarationsFlat {
             (it as? IrProperty)?.transform()
         }
+        return declaration
     }
 
     private fun IrProperty.transform(): List<IrDeclaration>? {
