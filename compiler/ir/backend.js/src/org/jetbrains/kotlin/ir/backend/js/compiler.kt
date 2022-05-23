@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.js.backend.ast.JsProgram
 import org.jetbrains.kotlin.js.config.JSConfigurationKeys
 import org.jetbrains.kotlin.js.config.RuntimeDiagnostic
 import org.jetbrains.kotlin.name.FqName
+import java.io.File
 
 class CompilerResult(
     val outputs: Map<TranslationMode, CompilationOutputs>,
@@ -166,4 +167,12 @@ fun generateJsCode(
 
     val transformer = IrModuleToJsTransformer(context, null, true, nameTables)
     return transformer.generateModule(listOf(moduleFragment)).outputs[TranslationMode.FULL]!!.jsCode
+}
+
+fun CompilationOutputs.writeSourceMapIfPresent(outputJsFile: File) {
+    sourceMap?.let {
+        val mapFile = outputJsFile.resolveSibling("${outputJsFile.name}.map")
+        outputJsFile.appendText("\n//# sourceMappingURL=${mapFile.name}\n")
+        mapFile.writeText(it)
+    }
 }
