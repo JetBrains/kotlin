@@ -30,8 +30,9 @@ abstract class IrType : KotlinTypeMarker, IrAnnotationContainer {
     abstract override fun hashCode(): Int
 }
 
-abstract class IrErrorType(kotlinType: KotlinType?) : IrTypeBase(kotlinType) {
-    val symbol: IrClassSymbol = IrErrorClassImpl.symbol
+abstract class IrErrorType(kotlinType: KotlinType?, private val errorClassStubSymbol: IrClassSymbol? = null) : IrTypeBase(kotlinType) {
+    val symbol: IrClassSymbol
+        get() = errorClassStubSymbol ?: error("123")
 }
 
 abstract class IrDynamicType(kotlinType: KotlinType?) : IrTypeBase(kotlinType), DynamicTypeMarker
