@@ -52,6 +52,7 @@ import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.lexer.KtTokens.*
 import org.jetbrains.kotlin.name.*
+import org.jetbrains.kotlin.platform.js.isJs
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
 class DeclarationsConverter(
@@ -1934,9 +1935,15 @@ class DeclarationsConverter(
                 USER_TYPE -> firType = convertUserType(typeRefSource, it)
                 NULLABLE_TYPE -> firType = convertNullableType(typeRefSource, it, allTypeModifiers)
                 FUNCTION_TYPE -> firType = convertFunctionType(typeRefSource, it, isSuspend = allTypeModifiers.hasSuspend())
-                DYNAMIC_TYPE -> firType = buildDynamicTypeRef {
-                    source = typeRefSource
-                    isMarkedNullable = false
+                DYNAMIC_TYPE -> firType = when {
+                    this.baseModuleData.platform.isJs() -> buildDynamicTypeRef {
+                        source = typeRefSource
+                        isMarkedNullable = false
+                    }
+                    else -> buildErrorTypeRef {
+                        source = typeRefSource
+                        diagnostic = ConeSimpleDiagnostic("Unavailable type", DiagnosticKind.Syntax)
+                    }
                 }
                 INTERSECTION_TYPE -> firType = convertIntersectionType(typeRefSource, it, false)
                 CONTEXT_RECEIVER_LIST, TokenType.ERROR_ELEMENT -> firType =
@@ -2013,9 +2020,15 @@ class DeclarationsConverter(
                 USER_TYPE -> firType = convertUserType(typeRefSource, it, isNullable)
                 FUNCTION_TYPE -> firType = convertFunctionType(typeRefSource, it, isNullable, isSuspend = allTypeModifiers.hasSuspend())
                 NULLABLE_TYPE -> firType = convertNullableType(typeRefSource, it, allTypeModifiers)
-                DYNAMIC_TYPE -> firType = buildDynamicTypeRef {
-                    source = typeRefSource
-                    isMarkedNullable = true
+                DYNAMIC_TYPE -> firType = when {
+                    this.baseModuleData.platform.isJs() -> buildDynamicTypeRef {
+                        source = typeRefSource
+                        isMarkedNullable = true
+                    }
+                    else -> buildErrorTypeRef {
+                        source = typeRefSource
+                        diagnostic = ConeSimpleDiagnostic("Unavailable type", DiagnosticKind.Syntax)
+                    }
                 }
                 INTERSECTION_TYPE -> firType = convertIntersectionType(typeRefSource, it, isNullable)
             }

@@ -14,6 +14,7 @@ dependencies {
     api(project(":compiler:fir:raw-fir:raw-fir.common"))
     implementation(project(":compiler:psi"))
     implementation(kotlinxCollectionsImmutable())
+    implementation(project(":js:js.config"))
 
     compileOnly(intellijCore())
     compileOnly(commonDependency("com.google.guava:guava"))

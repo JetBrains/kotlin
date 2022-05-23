@@ -40,6 +40,7 @@ import org.jetbrains.kotlin.lexer.KtTokens.*
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
+import org.jetbrains.kotlin.platform.js.isJs
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.*
 import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
@@ -1700,9 +1701,15 @@ open class RawFirBuilder(
                 }
 
             val firTypeBuilder = when (val unwrappedElement = typeElement.unwrapNullable()) {
-                is KtDynamicType -> FirDynamicTypeRefBuilder().apply {
-                    this.source = source
-                    isMarkedNullable = isNullable
+                is KtDynamicType -> when {
+                    this@RawFirBuilder.baseModuleData.platform.isJs() -> FirDynamicTypeRefBuilder().apply {
+                        this.source = source
+                        isMarkedNullable = isNullable
+                    }
+                    else -> FirErrorTypeRefBuilder().apply {
+                        this.source = source
+                        diagnostic = ConeSimpleDiagnostic("Unavailable type", DiagnosticKind.Syntax)
+                    }
                 }
                 is KtUserType -> {
                     var referenceExpression = unwrappedElement.referenceExpression
