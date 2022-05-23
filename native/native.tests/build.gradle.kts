@@ -70,7 +70,11 @@ enum class TestProperty(shortName: String) {
     fun readGradleProperty(task: Test): String? = task.project.findProperty(propertyName)?.toString()
 }
 
-fun nativeTest(taskName: String, vararg tags: String) = projectTest(taskName, jUnitMode = JUnitMode.JUnit5) {
+fun nativeTest(taskName: String, vararg tags: String) = projectTest(
+    taskName,
+    jUnitMode = JUnitMode.JUnit5,
+    maxHeapSizeMb = 6 * 1024 // Extra heap space for Kotlin/Native compiler.
+) {
     group = "verification"
 
     if (kotlinBuildProperties.isKotlinNativeEnabled) {
@@ -81,8 +85,8 @@ fun nativeTest(taskName: String, vararg tags: String) = projectTest(taskName, jU
             false
         }
 
-        maxHeapSize = "6G" // Extra heap space for Kotlin/Native compiler.
-        jvmArgs("-XX:MaxJavaStackTraceDepth=1000000") // Effectively remove the limit for the amount of stack trace elements in Throwable.
+        // Effectively remove the limit for the amount of stack trace elements in Throwable.
+        jvmArgs("-XX:MaxJavaStackTraceDepth=1000000")
 
         // Double the stack size. This is needed to compile some marginal tests with extra-deep IR tree, which requires a lot of stack frames
         // for visiting it. Example: codegen/box/strings/concatDynamicWithConstants.kt
