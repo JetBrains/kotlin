@@ -248,7 +248,7 @@ fun main(args: Array<String>) {
             }
         }
 
-        testGroup("plugins/lombok/lombok-compiler-plugin/tests", "plugins/lombok/lombok-compiler-plugin/testData") {
+        testGroup("plugins/lombok/tests-gen", "plugins/lombok/testData") {
             testClass<AbstractLombokCompileTest> {
                 model("compile")
             }

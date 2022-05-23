@@ -65,7 +65,7 @@ dependencies {
     testApi(projectTests(":kotlin-annotation-processing-cli"))
     testApi(projectTests(":kotlin-allopen-compiler-plugin"))
     testApi(projectTests(":kotlin-noarg-compiler-plugin"))
-    testApi(projectTests(":plugins:lombok:lombok-compiler-plugin"))
+    testApi(projectTests(":kotlin-lombok-compiler-plugin"))
     testApi(projectTests(":kotlin-sam-with-receiver-compiler-plugin"))
     testApi(projectTests(":kotlinx-serialization-compiler-plugin"))
     testApi(projectTests(":kotlinx-atomicfu-compiler-plugin"))

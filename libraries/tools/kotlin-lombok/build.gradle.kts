@@ -6,7 +6,7 @@ plugins {
 }
 
 dependencies {
-    embedded(project(":plugins:lombok:lombok-compiler-plugin")) { isTransitive = false }
+    embedded(project(":kotlin-lombok-compiler-plugin")) { isTransitive = false }
 
     commonApi(project(":kotlin-gradle-plugin-model"))
 }
