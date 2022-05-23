@@ -1,6 +1,4 @@
 // WITH_STDLIB
-// IGNORE_BACKEND: JS
-// Ignore reason: changed line numbers after bootstrap update
 
 fun box(): String {
     val list = ArrayList<Pair<String,String>>()

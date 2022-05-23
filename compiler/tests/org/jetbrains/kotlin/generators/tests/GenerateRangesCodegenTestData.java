@@ -78,7 +78,7 @@ public class GenerateRangesCodegenTestData {
 
     private static final List<String> USE_OLD_MANGLING_IN_UNSIGNED_EXPRESSION_TESTS = Collections.emptyList();
 
-    private static final List<String> JS_FAILING_TESTS = Arrays.asList("simpleRange", "emptyRange", "oneElementRange", "simpleRangeWithNonConstantEnds");
+    private static final List<String> JS_FAILING_TESTS = Collections.emptyList();
 
     static {
         for (String integerType : INTEGER_PRIMITIVES) {
