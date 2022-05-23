@@ -208,11 +208,7 @@ class IrModuleToJsTransformer(
         val sourceMapBuilder = SourceMap3Builder(null, jsCode, sourceMapPrefix)
         val sourceMapBuilderConsumer =
             if (sourceMapsEnabled) {
-                val sourceRoots = configuration.get(JSConfigurationKeys.SOURCE_MAP_SOURCE_ROOTS, emptyList<String>()).map(::File)
-                val generateRelativePathsInSourceMap = sourceMapPrefix.isEmpty() && sourceRoots.isEmpty()
-                val outputDir = if (generateRelativePathsInSourceMap) configuration.get(JSConfigurationKeys.OUTPUT_DIR) else null
-
-                val pathResolver = SourceFilePathResolver(sourceRoots, outputDir)
+                val pathResolver = SourceFilePathResolver.create(configuration)
 
                 val sourceMapContentEmbedding =
                     configuration.get(JSConfigurationKeys.SOURCE_MAP_EMBED_SOURCES, SourceMapSourceEmbedding.INLINING)

@@ -410,11 +410,7 @@ fun generateSingleWrappedModuleBody(
         val sourceMapPrefix = sourceMapsInfo.sourceMapPrefix
         sourceMapBuilder = SourceMap3Builder(null, jsCode, sourceMapPrefix)
 
-        val sourceRoots = sourceMapsInfo.sourceRoots.map(::File)
-        val generateRelativePathsInSourceMap = sourceMapPrefix.isEmpty() && sourceRoots.isEmpty()
-        val outputDir = if (generateRelativePathsInSourceMap) sourceMapsInfo.outputDir else null
-
-        val pathResolver = SourceFilePathResolver(sourceRoots, outputDir)
+        val pathResolver = SourceFilePathResolver.create(sourceMapsInfo.sourceRoots, sourceMapPrefix, sourceMapsInfo.outputDir)
 
         val sourceMapContentEmbedding =
             sourceMapsInfo.sourceMapContentEmbedding
