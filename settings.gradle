@@ -784,5 +784,6 @@ if (buildProperties.isKotlinNativeEnabled) {
     include ":kotlin-native-compiler-embeddable"
     project(":kotlin-native-compiler-embeddable").projectDir = "$rootDir/kotlin-native/prepare/kotlin-native-embeddable-compiler" as File
     include ':kotlin-native:build-tools'
-    include ':kotlin-native:shared'
+    include ':kotlin-native-shared'
+    project(":kotlin-native-shared").projectDir = "$rootDir/kotlin-native/shared" as File
 }

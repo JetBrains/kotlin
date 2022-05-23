@@ -82,7 +82,7 @@ dependencies {
     implementation("io.ktor:ktor-client-cio:$ktorVersion")
 
     api(project(":native:kotlin-native-utils"))
-    api(project(":kotlin-native:shared"))
+    api(project(":kotlin-native-shared"))
     api(project(":kotlinx-metadata-klib"))
     api(project(":kotlin-util-klib"))
     implementation("gradle.plugin.com.github.johnrengelman:shadow:${rootProject.extra["versions.shadow"]}")
