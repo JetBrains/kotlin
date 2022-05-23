@@ -707,6 +707,12 @@ public class IrInterpreterAfterPsi2IrTestGenerated extends AbstractIrInterpreter
         }
 
         @Test
+        @TestMetadata("javaPropertyReference.kt")
+        public void testJavaPropertyReference() throws Exception {
+            runTest("compiler/testData/ir/interpreter/reference/javaPropertyReference.kt");
+        }
+
+        @Test
         @TestMetadata("propertyReference.kt")
         public void testPropertyReference() throws Exception {
             runTest("compiler/testData/ir/interpreter/reference/propertyReference.kt");

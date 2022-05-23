@@ -20,7 +20,7 @@ internal open class KProperty0Proxy(
     state: KPropertyState, callInterceptor: CallInterceptor
 ) : AbstractKPropertyProxy(state, callInterceptor), KProperty0<Any?> {
     override val getter: KProperty0.Getter<Any?>
-        get() = object : Getter(state.property.getter!!), KProperty0.Getter<Any?> {
+        get() = object : Getter(state.property.getter!!), KProperty0.Getter<Any?> { // TODO avoid !!; getter will be null in case of java property
             override fun invoke(): Any? = call()
 
             override fun call(vararg args: Any?): Any? {
@@ -54,8 +54,8 @@ internal open class KProperty0Proxy(
 internal class KMutableProperty0Proxy(
     state: KPropertyState, callInterceptor: CallInterceptor
 ) : KProperty0Proxy(state, callInterceptor), KMutableProperty0<Any?> {
-    override val setter: KMutableProperty0.Setter<Any?> =
-        object : Setter(state.property.setter!!), KMutableProperty0.Setter<Any?> {
+    override val setter: KMutableProperty0.Setter<Any?>
+        get() = object : Setter(state.property.setter!!), KMutableProperty0.Setter<Any?> {
             override fun invoke(p1: Any?) = call(p1)
 
             override fun call(vararg args: Any?) {
