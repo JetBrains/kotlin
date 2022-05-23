@@ -22343,6 +22343,28 @@ public class DiagnosisCompilerTestFE10TestdataTestGenerated extends AbstractDiag
             public void testPlusAssignOnVarAndCollections() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/operatorsOverloading/plusAssignOnVarAndCollections.kt");
             }
+
+            @Nested
+            @TestMetadata("compiler/testData/diagnostics/tests/operatorsOverloading/until")
+            @TestDataPath("$PROJECT_ROOT")
+            public class Until {
+                @Test
+                public void testAllFilesPresentInUntil() throws Exception {
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/operatorsOverloading/until"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
+                }
+
+                @Test
+                @TestMetadata("custom.kt")
+                public void testCustom() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/operatorsOverloading/until/custom.kt");
+                }
+
+                @Test
+                @TestMetadata("simple.kt")
+                public void testSimple() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/operatorsOverloading/until/simple.kt");
+                }
+            }
         }
 
         @Nested

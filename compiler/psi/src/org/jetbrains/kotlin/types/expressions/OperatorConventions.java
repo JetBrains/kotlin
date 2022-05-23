@@ -62,6 +62,7 @@ public class OperatorConventions {
             .put(KtTokens.DIV, DIV)
             .put(KtTokens.PERC, REM)
             .put(KtTokens.RANGE, RANGE_TO)
+            .put(KtTokens.RANGE_UNTIL, RANGE_UNTIL)
             .build();
 
     public static final ImmutableBiMap<Name, Name> REM_TO_MOD_OPERATION_NAMES = ImmutableBiMap.<Name, Name>builder()

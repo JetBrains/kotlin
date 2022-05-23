@@ -61,6 +61,7 @@ object OperatorNameConventions {
     @JvmField val MOD = Name.identifier("mod")
     @JvmField val REM = Name.identifier("rem")
     @JvmField val RANGE_TO = Name.identifier("rangeTo")
+    @JvmField val RANGE_UNTIL = Name.identifier("rangeUntil")
 
     @JvmField val TIMES_ASSIGN = Name.identifier("timesAssign")
     @JvmField val DIV_ASSIGN = Name.identifier("divAssign")

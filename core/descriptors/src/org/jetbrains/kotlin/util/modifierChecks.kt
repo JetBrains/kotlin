@@ -46,6 +46,7 @@ import org.jetbrains.kotlin.util.OperatorNameConventions.ITERATOR
 import org.jetbrains.kotlin.util.OperatorNameConventions.NEXT
 import org.jetbrains.kotlin.util.OperatorNameConventions.PROVIDE_DELEGATE
 import org.jetbrains.kotlin.util.OperatorNameConventions.RANGE_TO
+import org.jetbrains.kotlin.util.OperatorNameConventions.RANGE_UNTIL
 import org.jetbrains.kotlin.util.OperatorNameConventions.SET
 import org.jetbrains.kotlin.util.OperatorNameConventions.SET_VALUE
 import org.jetbrains.kotlin.util.OperatorNameConventions.SIMPLE_UNARY_OPERATION_NAMES
@@ -194,6 +195,7 @@ object OperatorChecks : AbstractModifierChecks() {
         Checks(NEXT, MemberOrExtension, NoValueParameters),
         Checks(HAS_NEXT, MemberOrExtension, NoValueParameters, ReturnsBoolean),
         Checks(RANGE_TO, MemberOrExtension, SingleValueParameter, NoDefaultAndVarargsCheck),
+        Checks(RANGE_UNTIL, MemberOrExtension, SingleValueParameter, NoDefaultAndVarargsCheck),
         Checks(EQUALS, Member) {
             fun DeclarationDescriptor.isAny() = this is ClassDescriptor && KotlinBuiltIns.isAny(this)
             ensure(containingDeclaration.isAny() || overriddenDescriptors.any { it.containingDeclaration.isAny() }) {

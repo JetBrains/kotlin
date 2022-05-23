@@ -49,6 +49,7 @@ import org.jetbrains.kotlin.util.OperatorNameConventions.ITERATOR
 import org.jetbrains.kotlin.util.OperatorNameConventions.NEXT
 import org.jetbrains.kotlin.util.OperatorNameConventions.PROVIDE_DELEGATE
 import org.jetbrains.kotlin.util.OperatorNameConventions.RANGE_TO
+import org.jetbrains.kotlin.util.OperatorNameConventions.RANGE_UNTIL
 import org.jetbrains.kotlin.util.OperatorNameConventions.SET
 import org.jetbrains.kotlin.util.OperatorNameConventions.SET_VALUE
 import org.jetbrains.kotlin.util.OperatorNameConventions.SIMPLE_UNARY_OPERATION_NAMES
@@ -179,6 +180,7 @@ private object OperatorFunctionChecks {
         checkFor(NEXT, memberOrExtension, ValueParametersCount.none)
         checkFor(HAS_NEXT, memberOrExtension, ValueParametersCount.none, Returns.boolean)
         checkFor(RANGE_TO, memberOrExtension, ValueParametersCount.single, noDefaultAndVarargs)
+        checkFor(RANGE_UNTIL, memberOrExtension, ValueParametersCount.single, noDefaultAndVarargs)
         checkFor(
             EQUALS,
             member,
