@@ -314,6 +314,12 @@ public class DiagnosticsTestWithJsStdLibGenerated extends AbstractDiagnosticsTes
         }
 
         @Test
+        @TestMetadata("rangeUntilExpression.kt")
+        public void testRangeUntilExpression() throws Exception {
+            runTest("compiler/testData/diagnostics/testsWithJsStdLib/dynamicTypes/rangeUntilExpression.kt");
+        }
+
+        @Test
         @TestMetadata("reified.kt")
         public void testReified() throws Exception {
             runTest("compiler/testData/diagnostics/testsWithJsStdLib/dynamicTypes/reified.kt");
