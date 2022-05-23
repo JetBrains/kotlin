@@ -90,17 +90,11 @@ private fun AnalysisApiTestGroup.generateAnalysisApiNonComponentsTests() {
             model("memberScopeByFqName")
         }
 
-        test(
-            AbstractFileScopeTest::class,
-            filter = frontendIs(FrontendKind.Fir),
-        ) {
+        test(AbstractFileScopeTest::class) {
             model("fileScopeTest", extension = "kt")
         }
 
-        test(
-            AbstractDelegateMemberScopeTest::class,
-            filter = frontendIs(FrontendKind.Fir),
-        ) {
+        test(AbstractDelegateMemberScopeTest::class) {
             model("delegatedMemberScope")
         }
     }
@@ -132,7 +126,7 @@ private fun AnalysisApiTestGroup.generateAnalysisApiNonComponentsTests() {
 
         test(
             AbstractAnalysisApiAnnotationsOnFilesTest::class,
-            filter = frontendIs(FrontendKind.Fir) and analysisSessionModeIs(AnalysisSessionMode.Normal), // TODO "fe10 fails with Rewrite at slice ANNOTATION key"
+            filter = analysisSessionModeIs(AnalysisSessionMode.Normal),
         ) {
             model("annotationsOnFiles")
         }
@@ -240,7 +234,7 @@ private fun AnalysisApiTestGroup.generateAnalysisApiComponentsTests() {
     }
 
     component("typeInfoProvider") {
-        test(AbstractFunctionClassKindTest::class, filter = frontendIs(FrontendKind.Fir)) {
+        test(AbstractFunctionClassKindTest::class) {
             model("functionClassKind")
         }
         test(AbstractAnalysisApiGetSuperTypesTest::class, filter = frontendIs(FrontendKind.Fir)) {
