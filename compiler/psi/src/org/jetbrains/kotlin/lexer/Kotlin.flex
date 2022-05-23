@@ -296,6 +296,7 @@ LONELY_BACKTICK=`
 "->"         { return KtTokens.ARROW     ; }
 "=>"         { return KtTokens.DOUBLE_ARROW; }
 ".."         { return KtTokens.RANGE     ; }
+"..<"        { return KtTokens.RANGE_UNTIL; }
 "::"         { return KtTokens.COLONCOLON; }
 "["          { return KtTokens.LBRACKET  ; }
 "]"          { return KtTokens.RBRACKET  ; }

@@ -125,6 +125,7 @@ public interface KtTokens {
     KtSingleValueToken SEMICOLON   = new KtSingleValueToken("SEMICOLON", ";");
     KtSingleValueToken DOUBLE_SEMICOLON   = new KtSingleValueToken("DOUBLE_SEMICOLON", ";;");
     KtSingleValueToken RANGE       = new KtSingleValueToken("RANGE", "..");
+    KtSingleValueToken RANGE_UNTIL       = new KtSingleValueToken("RANGE_UNTIL", "..<");
     KtSingleValueToken EQ          = new KtSingleValueToken("EQ", "=");
     KtSingleValueToken MULTEQ      = new KtSingleValueToken("MULTEQ", "*=");
     KtSingleValueToken DIVEQ       = new KtSingleValueToken("DIVEQ", "/=");
@@ -264,7 +265,7 @@ public interface KtTokens {
     TokenSet OPERATIONS = TokenSet.create(AS_KEYWORD, AS_SAFE, IS_KEYWORD, IN_KEYWORD, DOT, PLUSPLUS, MINUSMINUS, EXCLEXCL, MUL, PLUS,
                                           MINUS, EXCL, DIV, PERC, LT, GT, LTEQ, GTEQ, EQEQEQ, EXCLEQEQEQ, EQEQ, EXCLEQ, ANDAND, OROR,
                                           SAFE_ACCESS, ELVIS,
-                                          RANGE, EQ, MULTEQ, DIVEQ, PERCEQ, PLUSEQ, MINUSEQ,
+                                          RANGE, RANGE_UNTIL, EQ, MULTEQ, DIVEQ, PERCEQ, PLUSEQ, MINUSEQ,
                                           NOT_IN, NOT_IS,
                                           IDENTIFIER);
 
