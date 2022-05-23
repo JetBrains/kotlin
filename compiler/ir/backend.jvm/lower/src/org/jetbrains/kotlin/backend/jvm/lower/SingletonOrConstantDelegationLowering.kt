@@ -50,9 +50,9 @@ private class SingletonOrConstantDelegationTransformer(val context: JvmBackendCo
         object : IrElementTransformerVoid() {
             override fun visitCall(expression: IrCall) = expression.apply {
                 if ((dispatchReceiver as? IrGetField)?.symbol == backingField?.symbol) {
-                    dispatchReceiver = delegate.copyIfNeeded()
+                    dispatchReceiver = delegate.shallowCopy()
                 } else if ((extensionReceiver as? IrGetField)?.symbol == backingField?.symbol) {
-                    extensionReceiver = delegate.copyIfNeeded()
+                    extensionReceiver = delegate.shallowCopy()
                 }
             }
         }.apply {
@@ -66,16 +66,14 @@ private class SingletonOrConstantDelegationTransformer(val context: JvmBackendCo
             context.irFactory.createAnonymousInitializer(
                 startOffset, endOffset, IrDeclarationOrigin.DEFINED, IrAnonymousInitializerSymbolImpl(parentAsClass.symbol)
             ).apply {
-                body = context.irFactory.createBlockBody(startOffset, endOffset, listOf(delegate))
+                body = context.irFactory.createBlockBody(startOffset, endOffset, listOf(delegate.shallowCopy()))
             }
         }
 
         val delegateMethod = context.createSyntheticMethodForPropertyDelegate(this).apply {
-            body = context.createJvmIrBuilder(symbol).run { irExprBody(delegate.copyIfNeeded()) }
+            body = context.createJvmIrBuilder(symbol).run { irExprBody(delegate.shallowCopy()) }
         }
 
         return listOfNotNull(this, receiverBlock, delegateMethod)
     }
-
-    private fun IrExpression.copyIfNeeded() = if (this is IrConst<*>) shallowCopy() else this
 }
