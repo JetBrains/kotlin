@@ -57,12 +57,12 @@ internal class KtFe10JvmTypeMapperContext(private val resolveSession: ResolveSes
         return when (val declaration = typeConstructor.declarationDescriptor) {
             is TypeParameterDescriptor -> declaration.name.asString().sanitize()
             is TypeAliasDescriptor -> getClassInternalName(declaration.expandedType.constructor)
-            is ClassDescriptor -> computeNonLocalClassInternalName(declaration) ?: computeSupertypeInternalName(declaration)
+            is ClassDescriptor -> computeClassInternalName(declaration) ?: computeSupertypeInternalName(declaration)
             else -> error("Unexpected declaration type: $declaration")
         }
     }
 
-    private fun computeNonLocalClassInternalName(descriptor: ClassDescriptor): String? {
+    private fun computeClassInternalName(descriptor: ClassDescriptor): String? {
         val selfName = descriptor.name.takeIf { !it.isSpecial } ?: return null
 
         return when (val parent = descriptor.containingDeclaration) {
@@ -71,10 +71,10 @@ internal class KtFe10JvmTypeMapperContext(private val resolveSession: ResolveSes
                 "$packageInternalName/$selfName"
             }
             is ClassDescriptor -> {
-                val parentInternalName = computeNonLocalClassInternalName(parent)
+                val parentInternalName = computeClassInternalName(parent)
                 if (parentInternalName != null) "$parentInternalName$$selfName" else null
             }
-            else -> null
+            else -> selfName.asString()
         }
     }
 
@@ -89,12 +89,12 @@ internal class KtFe10JvmTypeMapperContext(private val resolveSession: ResolveSes
             }
 
             if (declaration.kind != ClassKind.INTERFACE && declaration.kind != ClassKind.ANNOTATION_CLASS) {
-                val internalName = computeNonLocalClassInternalName(declaration)
+                val internalName = computeClassInternalName(declaration)
                 if (internalName != null) {
                     return internalName
                 }
             } else if (interfaceSupertypeInternalName == null) {
-                interfaceSupertypeInternalName = computeNonLocalClassInternalName(declaration)
+                interfaceSupertypeInternalName = computeClassInternalName(declaration)
             }
         }
 
