@@ -63,7 +63,7 @@ private class SingletonOrConstantDelegationTransformer(val context: JvmBackendCo
 
         backingField = null
 
-        val receiverBlock = (delegate as? IrGetSingletonValue)?.run {
+        val initializerBlock = (delegate as? IrGetSingletonValue)?.run {
             context.irFactory.createAnonymousInitializer(
                 startOffset, endOffset, IrDeclarationOrigin.DEFINED, IrAnonymousInitializerSymbolImpl(parentAsClass.symbol)
             ).apply {
@@ -75,6 +75,6 @@ private class SingletonOrConstantDelegationTransformer(val context: JvmBackendCo
             body = context.createJvmIrBuilder(symbol).run { irExprBody(delegate.shallowCopy()) }
         }
 
-        return listOfNotNull(this, receiverBlock, delegateMethod)
+        return listOfNotNull(this, initializerBlock, delegateMethod)
     }
 }
