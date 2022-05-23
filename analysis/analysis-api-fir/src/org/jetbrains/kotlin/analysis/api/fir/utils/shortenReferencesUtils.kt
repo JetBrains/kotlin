@@ -6,15 +6,23 @@
 package org.jetbrains.kotlin.analysis.api.fir.utils
 
 import com.intellij.openapi.project.Project
+import org.jetbrains.kotlin.analysis.api.components.ShorteningImportInfo
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.psi.KtCodeFragment
-import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.psi.KtPsiFactory
+import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.ImportPath
 
 private val SimpleImportPathComparator: Comparator<ImportPath> = compareBy(ImportPath::toString)
+
+fun addImportToFile(
+    project: Project,
+    file: KtFile,
+    importInfo: ShorteningImportInfo,
+    alias: Name? = null
+) {
+    addImportToFile(project, file, importInfo.importToAdd, importInfo.importIsStar, alias)
+}
 
 fun addImportToFile(
     project: Project,

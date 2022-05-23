@@ -9,6 +9,8 @@ import com.intellij.openapi.util.TextRange
 import org.jetbrains.kotlin.analysis.api.components.KtReferenceShortener
 import org.jetbrains.kotlin.analysis.api.components.ShortenCommand
 import org.jetbrains.kotlin.analysis.api.components.ShortenOption
+import com.intellij.psi.SmartPsiElementPointer
+import org.jetbrains.kotlin.analysis.api.components.*
 import org.jetbrains.kotlin.analysis.api.descriptors.KtFe10AnalysisSession
 import org.jetbrains.kotlin.analysis.api.descriptors.components.base.Fe10KtAnalysisSessionComponent
 import org.jetbrains.kotlin.analysis.api.symbols.KtCallableSymbol
@@ -35,14 +37,9 @@ internal class KtFe10ReferenceShortener(
         // Descriptor-based shortening is implemented on the IDE plugin side.
         return object : ShortenCommand {
 
-            // Is it better to make these properties nullable, what affects FIR KtReferenceShortener usage, or assign
-            // proxy values, since FE10 implementation is not supposed to be called anyway yet?
             override val targetFile: KtFile? = null
-            override val importsToAdd: List<FqName>? = null
-            override val starImportsToAdd: List<FqName>? = null
-            override val typesToShorten: List<SmartPsiElementPointer<KtUserType>>? = null
-            override val qualifiersToShorten: List<SmartPsiElementPointer<KtDotQualifiedExpression>>? = null
-
+            override val ktDotQualifierShortenings: List<KtDotQualifierShortening> = emptyList()
+            override val ktUserTypeShortenings: List<KtUserTypeShortening> = emptyList()
             override val isEmpty: Boolean
                 get() = true
 

@@ -84,31 +84,64 @@ public interface KtReferenceShortenerMixIn : KtAnalysisSessionMixIn {
 }
 
 /**
- * A group of *members*.
- *
- * This is a class representing results of KtReferenceShortener work: the command, invoking shortening, and used extracted data for it.
+ * These classes represent information about the elements to shorten
+ */
+
+public data class ShorteningImportInfo(
+    val importToAdd: FqName,
+    val importIsStar: Boolean
+)
+
+public sealed class KtElementShortening {
+    public abstract val element: SmartPsiElementPointer<*>
+    public abstract val importInfo: ShorteningImportInfo?
+    public abstract val childElement: KtElementShortening?
+
+    public val psi: KtElement?
+        get() = element.element as? KtElement
+}
+
+public class KtDotQualifierShortening(
+    override val element: SmartPsiElementPointer<KtDotQualifiedExpression>,
+    override val importInfo: ShorteningImportInfo?,
+    override val childElement: KtDotQualifierShortening?
+) : KtElementShortening()
+
+public class KtUserTypeShortening(
+    override val element: SmartPsiElementPointer<KtUserType>,
+    override val importInfo: ShorteningImportInfo?,
+    override val childElement: KtUserTypeShortening?
+) : KtElementShortening()
+
+/**
+ * This is a class representing results of KtReferenceShortener work
  *
  * @property targetFile The file in which the qualifiers to shorten is located
- * @property importsToAdd The necessary explicit imports to make
- * while shortening qualified symbols to retain them within reach after the shortening
- * @property starImportsToAdd The necessary star imports to make
- * while shortening qualified symbols to retain them within reach after the shortening
- * @property typesToShorten The list of qualified type usages in declarations to shorten
- * @property qualifiersToShorten the list of qualified type usages in expressions with dot
+ * @property ktDotQualifierShortenings shortenings of KtDotQualifiedExpression elements in the file
+ * @property ktUserTypeShortenings shortenings of KtUserType elements in the file
  * @property isEmpty The flag responsible for detection if any shortening is applicable
  */
 
 public interface ShortenCommand {
 
     public val targetFile: KtFile?
-    public val importsToAdd: List<FqName>?
-    public val starImportsToAdd: List<FqName>?
-    public val typesToShorten: List<SmartPsiElementPointer<KtUserType>>?
-    public val qualifiersToShorten: List<SmartPsiElementPointer<KtDotQualifiedExpression>>?
+    public val ktDotQualifierShortenings: List<KtDotQualifierShortening>
+    public val ktUserTypeShortenings: List<KtUserTypeShortening>
     public val isEmpty: Boolean
+
+    /**
+     * Collects all distinct imports from possible shortenings to launch reference shortening correctly without duplicating them
+     */
+    public fun getAllDistinctImports(considerInnerElements: Boolean = false): List<ShorteningImportInfo> =
+        buildSet {
+            ktDotQualifierShortenings.mapNotNullTo(this) { it.importInfo }
+            ktUserTypeShortenings.mapNotNullTo(this) { it.importInfo }
+        }.toList()
 
     /**
      * Launches reference shortening using the information stored in properties of this class
      */
-    public fun invokeShortening()
+
+    // TODO: should implementation be logically moved here? FE10 logic should be the same when it comes.
+    public fun invokeShortening() {}
 }
