@@ -607,6 +607,13 @@ fun IrExpression.shallowCopyOrNull(): IrExpression? =
                 type,
                 symbol
             )
+        is IrGetEnumValue ->
+            IrGetEnumValueImpl(
+                startOffset,
+                endOffset,
+                type,
+                symbol
+            )
         is IrGetValueImpl ->
             IrGetValueImpl(
                 startOffset,
