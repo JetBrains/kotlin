@@ -11,6 +11,7 @@ plugins {
     kotlin
     groovy
     `kotlin-dsl`
+    id("gradle-plugin-dependency-configuration")
 }
 
 buildscript {
@@ -56,7 +57,9 @@ dependencies {
     api(gradleApi())
 
     api(kotlinStdlib())
-    implementation(project(":kotlin-gradle-plugin"))
+    commonApi(project(":kotlin-gradle-plugin"))
+    commonApi(project(":kotlin-gradle-plugin-api"))
+    commonApi(project(":kotlin-gradle-plugin-model"))
     implementation(project(":kotlin-reflect"))
     implementation("org.jetbrains.kotlin:kotlin-build-gradle-plugin:${kotlinBuildProperties.buildGradlePluginVersion}")
 
