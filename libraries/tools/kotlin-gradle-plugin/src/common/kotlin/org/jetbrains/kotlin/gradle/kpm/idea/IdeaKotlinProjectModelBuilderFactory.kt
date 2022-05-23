@@ -10,7 +10,7 @@ package org.jetbrains.kotlin.gradle.kpm.idea
 import org.jetbrains.kotlin.gradle.kpm.external.ExternalVariantApi
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.FragmentGranularMetadataResolverFactory
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinPm20ProjectExtension
-import org.jetbrains.kotlin.gradle.utils.UnsafeApi
+import org.jetbrains.kotlin.tooling.core.UnsafeApi
 
 @OptIn(UnsafeApi::class)
 internal fun IdeaKotlinProjectModelBuilder.Companion.default(

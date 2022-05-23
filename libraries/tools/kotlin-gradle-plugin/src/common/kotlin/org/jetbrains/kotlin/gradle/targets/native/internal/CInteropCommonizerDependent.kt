@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinSharedNativeCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.associateWithClosure
 import org.jetbrains.kotlin.gradle.targets.native.internal.CInteropIdentifier.Scope
-import org.jetbrains.kotlin.gradle.utils.UnsafeApi
+import org.jetbrains.kotlin.tooling.core.UnsafeApi
 
 internal class CInteropCommonizerDependent @UnsafeApi constructor(
     val target: SharedCommonizerTarget,

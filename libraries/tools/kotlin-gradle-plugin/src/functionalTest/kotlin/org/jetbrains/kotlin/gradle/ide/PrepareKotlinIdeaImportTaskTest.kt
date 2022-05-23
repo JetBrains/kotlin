@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.gradle.enableCInteropCommonization
 import org.jetbrains.kotlin.gradle.plugin.ide.Idea222Api
 import org.jetbrains.kotlin.gradle.plugin.ide.ideaImportDependsOn
 import org.jetbrains.kotlin.gradle.plugin.ide.prepareKotlinIdeaImportTask
-import org.jetbrains.kotlin.gradle.utils.UnsafeApi
+import org.jetbrains.kotlin.tooling.core.UnsafeApi
 import kotlin.test.Test
 import kotlin.test.assertNotNull
 import kotlin.test.assertNull

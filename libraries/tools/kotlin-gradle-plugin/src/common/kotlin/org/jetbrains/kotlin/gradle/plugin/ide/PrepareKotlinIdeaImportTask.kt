@@ -10,7 +10,7 @@ import org.gradle.api.Task
 import org.gradle.api.tasks.TaskProvider
 import org.jetbrains.kotlin.gradle.tasks.dependsOn
 import org.jetbrains.kotlin.gradle.tasks.locateOrRegisterTask
-import org.jetbrains.kotlin.gradle.utils.UnsafeApi
+import org.jetbrains.kotlin.tooling.core.UnsafeApi
 
 @Idea222Api
 internal fun Project.ideaImportDependsOn(task: TaskProvider<*>) {
