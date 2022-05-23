@@ -1021,6 +1021,9 @@ abstract class AbstractKotlin2JsGradlePluginIT(protected val irBackend: Boolean)
             build("build") {
                 checkIrCompilationMessage()
 
+                // It makes sense only since Tests will be run on Gradle 7.2
+                assertOutputDoesNotContain("Execution optimizations have been disabled for task ':nodeTest'")
+
                 assertTasksExecuted(":nodeTest")
             }
         }

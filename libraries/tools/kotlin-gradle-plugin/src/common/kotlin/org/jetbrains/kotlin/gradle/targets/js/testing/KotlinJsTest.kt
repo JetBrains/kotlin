@@ -46,7 +46,7 @@ constructor(
 
     private val projectPath = project.path
 
-    @Nested
+    @Input
     var environment = mutableMapOf<String, String>()
 
     @get:Internal
