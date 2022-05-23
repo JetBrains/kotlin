@@ -120,7 +120,7 @@ fun JavaExec.usesAndroidSdk() {
     dependsOn(acceptAndroidSdkLicenses)
 
     doFirst {
-        environment("ANDROID_SDK_ROOT", configurations["androidSdk"].singleFile.canonicalPath)
+        environment("ANDROID_HOME", configurations["androidSdk"].singleFile.canonicalPath)
     }
 }
 
