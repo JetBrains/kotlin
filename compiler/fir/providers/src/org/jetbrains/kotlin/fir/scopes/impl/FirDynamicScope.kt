@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.scopes.impl
 
+import org.jetbrains.kotlin.builtins.StandardNames.DYNAMIC_FQ_NAME
 import org.jetbrains.kotlin.descriptors.EffectiveVisibility
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
@@ -140,7 +141,7 @@ class FirDynamicMembersStorage(val session: FirSession) : FirSessionComponent {
         }
 
         this.name = name
-        this.symbol = FirNamedFunctionSymbol(CallableId(this.name))
+        this.symbol = FirNamedFunctionSymbol(CallableId(DYNAMIC_FQ_NAME, this.name))
 
         moduleData = session.moduleData
         origin = FirDeclarationOrigin.DynamicScope
@@ -168,7 +169,7 @@ class FirDynamicMembersStorage(val session: FirSession) : FirSessionComponent {
 
     private fun buildPseudoPropertyByName(name: Name) = buildProperty {
         this.name = name
-        this.symbol = FirPropertySymbol(CallableId(this.name))
+        this.symbol = FirPropertySymbol(CallableId(DYNAMIC_FQ_NAME, this.name))
 
         status = FirResolvedDeclarationStatusImpl(
             Visibilities.Public,
