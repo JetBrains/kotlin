@@ -150,7 +150,7 @@ fun generateJsWasmLoader(kind: WasmLoaderKind, wasmFilePath: String, externalJs:
 
         WasmLoaderKind.BROWSER ->
             """
-                const { wasmInstance } = await WebAssembly.instantiateStreaming(fetch("$wasmFilePath"), { js_code });
+                const { instance: wasmInstance } = await WebAssembly.instantiateStreaming(fetch("$wasmFilePath"), { js_code });
             """.trimIndent()
     }
 
