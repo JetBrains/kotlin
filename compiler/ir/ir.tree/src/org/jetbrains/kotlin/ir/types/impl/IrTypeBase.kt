@@ -5,8 +5,6 @@
 
 package org.jetbrains.kotlin.ir.types.impl
 
-import com.intellij.lang.jvm.source.JvmDeclarationSearch
-import com.intellij.lang.jvm.source.JvmDeclarationSearch
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.Modality
@@ -44,10 +42,8 @@ class IrErrorTypeImpl(
 
 object IrErrorClassImpl : IrClassImpl(
     UNDEFINED_OFFSET, UNDEFINED_OFFSET, IrDeclarationOrigin.DEFAULT_PROPERTY_ACCESSOR, IrClassSymbolImpl(),
-    Name.special("error"), ClassKind.CLASS, DescriptorVisibilities.DEFAULT_VISIBILITY, Modality.FINAL
-) {
-
-}
+    Name.special("<error>"), ClassKind.CLASS, DescriptorVisibilities.DEFAULT_VISIBILITY, Modality.FINAL
+)
 
 class IrDynamicTypeImpl(
     kotlinType: KotlinType?,

@@ -6,8 +6,10 @@
 package org.jetbrains.kotlin.ir.types
 
 import org.jetbrains.kotlin.ir.declarations.IrAnnotationContainer
+import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
 import org.jetbrains.kotlin.ir.symbols.IrTypeAliasSymbol
+import org.jetbrains.kotlin.ir.types.impl.IrErrorClassImpl
 import org.jetbrains.kotlin.ir.types.impl.IrTypeBase
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.Variance
@@ -28,7 +30,9 @@ abstract class IrType : KotlinTypeMarker, IrAnnotationContainer {
     abstract override fun hashCode(): Int
 }
 
-abstract class IrErrorType(kotlinType: KotlinType?) : IrTypeBase(kotlinType)
+abstract class IrErrorType(kotlinType: KotlinType?) : IrTypeBase(kotlinType) {
+    val symbol: IrClassSymbol = IrErrorClassImpl.symbol
+}
 
 abstract class IrDynamicType(kotlinType: KotlinType?) : IrTypeBase(kotlinType), DynamicTypeMarker
 
