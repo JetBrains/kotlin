@@ -14454,6 +14454,56 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
         }
 
         @Nested
+        @TestMetadata("compiler/testData/codegen/box/delegatedProperty/delegateToConst")
+        @TestDataPath("$PROJECT_ROOT")
+        public class DelegateToConst {
+            @Test
+            public void testAllFilesPresentInDelegateToConst() throws Exception {
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/delegatedProperty/delegateToConst"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM, true);
+            }
+
+            @Test
+            @TestMetadata("delegateToConst.kt")
+            public void testDelegateToConst() throws Exception {
+                runTest("compiler/testData/codegen/box/delegatedProperty/delegateToConst/delegateToConst.kt");
+            }
+
+            @Test
+            @TestMetadata("delegateToConstProperty.kt")
+            public void testDelegateToConstProperty() throws Exception {
+                runTest("compiler/testData/codegen/box/delegatedProperty/delegateToConst/delegateToConstProperty.kt");
+            }
+        }
+
+        @Nested
+        @TestMetadata("compiler/testData/codegen/box/delegatedProperty/delegateToSingleton")
+        @TestDataPath("$PROJECT_ROOT")
+        public class DelegateToSingleton {
+            @Test
+            public void testAllFilesPresentInDelegateToSingleton() throws Exception {
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/delegatedProperty/delegateToSingleton"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM, true);
+            }
+
+            @Test
+            @TestMetadata("delegateToEnum.kt")
+            public void testDelegateToEnum() throws Exception {
+                runTest("compiler/testData/codegen/box/delegatedProperty/delegateToSingleton/delegateToEnum.kt");
+            }
+
+            @Test
+            @TestMetadata("delegateToSingleton.kt")
+            public void testDelegateToSingleton() throws Exception {
+                runTest("compiler/testData/codegen/box/delegatedProperty/delegateToSingleton/delegateToSingleton.kt");
+            }
+
+            @Test
+            @TestMetadata("withSideEffects.kt")
+            public void testWithSideEffects() throws Exception {
+                runTest("compiler/testData/codegen/box/delegatedProperty/delegateToSingleton/withSideEffects.kt");
+            }
+        }
+
+        @Nested
         @TestMetadata("compiler/testData/codegen/box/delegatedProperty/local")
         @TestDataPath("$PROJECT_ROOT")
         public class Local {

@@ -11789,6 +11789,57 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
             }
         }
 
+        @TestMetadata("compiler/testData/codegen/box/delegatedProperty/delegateToConst")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class DelegateToConst extends AbstractLightAnalysisModeTest {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM, testDataFilePath);
+            }
+
+            public void testAllFilesPresentInDelegateToConst() throws Exception {
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/delegatedProperty/delegateToConst"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM, true);
+            }
+
+            @TestMetadata("delegateToConst.kt")
+            public void testDelegateToConst() throws Exception {
+                runTest("compiler/testData/codegen/box/delegatedProperty/delegateToConst/delegateToConst.kt");
+            }
+
+            @TestMetadata("delegateToConstProperty.kt")
+            public void testDelegateToConstProperty() throws Exception {
+                runTest("compiler/testData/codegen/box/delegatedProperty/delegateToConst/delegateToConstProperty.kt");
+            }
+        }
+
+        @TestMetadata("compiler/testData/codegen/box/delegatedProperty/delegateToSingleton")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class DelegateToSingleton extends AbstractLightAnalysisModeTest {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM, testDataFilePath);
+            }
+
+            public void testAllFilesPresentInDelegateToSingleton() throws Exception {
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/delegatedProperty/delegateToSingleton"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM, true);
+            }
+
+            @TestMetadata("delegateToEnum.kt")
+            public void testDelegateToEnum() throws Exception {
+                runTest("compiler/testData/codegen/box/delegatedProperty/delegateToSingleton/delegateToEnum.kt");
+            }
+
+            @TestMetadata("delegateToSingleton.kt")
+            public void testDelegateToSingleton() throws Exception {
+                runTest("compiler/testData/codegen/box/delegatedProperty/delegateToSingleton/delegateToSingleton.kt");
+            }
+
+            @TestMetadata("withSideEffects.kt")
+            public void testWithSideEffects() throws Exception {
+                runTest("compiler/testData/codegen/box/delegatedProperty/delegateToSingleton/withSideEffects.kt");
+            }
+        }
+
         @TestMetadata("compiler/testData/codegen/box/delegatedProperty/local")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)

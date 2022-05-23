@@ -9794,6 +9794,57 @@ public class IrCodegenBoxWasmTestGenerated extends AbstractIrCodegenBoxWasmTest 
             }
         }
 
+        @TestMetadata("compiler/testData/codegen/box/delegatedProperty/delegateToConst")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class DelegateToConst extends AbstractIrCodegenBoxWasmTest {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest0(this::doTest, TargetBackend.WASM, testDataFilePath);
+            }
+
+            public void testAllFilesPresentInDelegateToConst() throws Exception {
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/delegatedProperty/delegateToConst"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+            }
+
+            @TestMetadata("delegateToConst.kt")
+            public void testDelegateToConst() throws Exception {
+                runTest("compiler/testData/codegen/box/delegatedProperty/delegateToConst/delegateToConst.kt");
+            }
+
+            @TestMetadata("delegateToConstProperty.kt")
+            public void testDelegateToConstProperty() throws Exception {
+                runTest("compiler/testData/codegen/box/delegatedProperty/delegateToConst/delegateToConstProperty.kt");
+            }
+        }
+
+        @TestMetadata("compiler/testData/codegen/box/delegatedProperty/delegateToSingleton")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class DelegateToSingleton extends AbstractIrCodegenBoxWasmTest {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest0(this::doTest, TargetBackend.WASM, testDataFilePath);
+            }
+
+            public void testAllFilesPresentInDelegateToSingleton() throws Exception {
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/delegatedProperty/delegateToSingleton"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+            }
+
+            @TestMetadata("delegateToEnum.kt")
+            public void testDelegateToEnum() throws Exception {
+                runTest("compiler/testData/codegen/box/delegatedProperty/delegateToSingleton/delegateToEnum.kt");
+            }
+
+            @TestMetadata("delegateToSingleton.kt")
+            public void testDelegateToSingleton() throws Exception {
+                runTest("compiler/testData/codegen/box/delegatedProperty/delegateToSingleton/delegateToSingleton.kt");
+            }
+
+            @TestMetadata("withSideEffects.kt")
+            public void testWithSideEffects() throws Exception {
+                runTest("compiler/testData/codegen/box/delegatedProperty/delegateToSingleton/withSideEffects.kt");
+            }
+        }
+
         @TestMetadata("compiler/testData/codegen/box/delegatedProperty/local")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
