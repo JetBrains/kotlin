@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.resolve.calls.inference.model
 
 import org.jetbrains.kotlin.resolve.calls.tower.CandidateApplicability
 import org.jetbrains.kotlin.resolve.calls.tower.CandidateApplicability.*
+import org.jetbrains.kotlin.types.EmptyIntersectionTypeKind
 import org.jetbrains.kotlin.types.model.KotlinTypeMarker
 import org.jetbrains.kotlin.types.model.TypeVariableMarker
 
@@ -138,16 +139,19 @@ class NoSuccessfulFork(val position: IncorporationConstraintPosition) : Constrai
 sealed interface InferredEmptyIntersection {
     val incompatibleTypes: Collection<KotlinTypeMarker>
     val typeVariable: TypeVariableMarker
+    val kind: EmptyIntersectionTypeKind
 }
 
 class InferredEmptyIntersectionWarning(
     override val incompatibleTypes: Collection<KotlinTypeMarker>,
-    override val typeVariable: TypeVariableMarker
+    override val typeVariable: TypeVariableMarker,
+    override val kind: EmptyIntersectionTypeKind,
 ) : ConstraintSystemError(RESOLVED), InferredEmptyIntersection
 
 class InferredEmptyIntersectionError(
     override val incompatibleTypes: Collection<KotlinTypeMarker>,
-    override val typeVariable: TypeVariableMarker
+    override val typeVariable: TypeVariableMarker,
+    override val kind: EmptyIntersectionTypeKind,
 ) : ConstraintSystemError(INAPPLICABLE), InferredEmptyIntersection
 
 class OnlyInputTypesDiagnostic(val typeVariable: TypeVariableMarker) : ConstraintSystemError(INAPPLICABLE)

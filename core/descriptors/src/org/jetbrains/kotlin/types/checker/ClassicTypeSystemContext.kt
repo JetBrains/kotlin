@@ -305,6 +305,12 @@ interface ClassicTypeSystemContext : TypeSystemInferenceExtensionContext, TypeSy
         return DescriptorUtils.isInterface(declarationDescriptor)
     }
 
+    override fun TypeConstructorMarker.isFinalClassConstructor(): Boolean {
+        require(this is TypeConstructor, this::errorMessage)
+        val classDescriptor = declarationDescriptor as? ClassDescriptor ?: return false
+        return classDescriptor.isFinalClass
+    }
+
     override fun TypeConstructorMarker.isCommonFinalClassConstructor(): Boolean {
         require(this is TypeConstructor, this::errorMessage)
         val classDescriptor = declarationDescriptor as? ClassDescriptor ?: return false

@@ -899,8 +899,10 @@ public interface Errors {
 
     DiagnosticFactoryForDeprecation1<PsiElement, TypeParameterDescriptor> TYPE_INFERENCE_ONLY_INPUT_TYPES =
             DiagnosticFactoryForDeprecation1.create(LanguageFeature.StrictOnlyInputTypesChecks);
-    DiagnosticFactoryForDeprecation2<PsiElement, String, Collection<KotlinType>> INFERRED_TYPE_VARIABLE_INTO_EMPTY_INTERSECTION =
-            DiagnosticFactoryForDeprecation2.create(LanguageFeature.ForbidInferringTypeVariablesIntoEmptyIntersection);
+    DiagnosticFactoryForDeprecation3<PsiElement, String, Collection<KotlinType>, String> INFERRED_TYPE_VARIABLE_INTO_EMPTY_INTERSECTION =
+            DiagnosticFactoryForDeprecation3.create(LanguageFeature.ForbidInferringTypeVariablesIntoEmptyIntersection);
+    DiagnosticFactory2<PsiElement, String, Collection<KotlinType>> INFERRED_TYPE_VARIABLE_INTO_POSSIBLE_EMPTY_INTERSECTION =
+            DiagnosticFactory2.create(WARNING);
     DiagnosticFactory1<PsiElement, InferenceErrorData> TYPE_INFERENCE_UPPER_BOUND_VIOLATED = DiagnosticFactory1.create(ERROR);
     DiagnosticFactory2<KtElement, KotlinType, KotlinType> TYPE_INFERENCE_EXPECTED_TYPE_MISMATCH = DiagnosticFactory2.create(ERROR);
     DiagnosticFactory0<PsiElement> TYPE_INFERENCE_CANDIDATE_WITH_SAM_AND_VARARG = DiagnosticFactory0.create(WARNING);

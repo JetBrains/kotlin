@@ -901,14 +901,16 @@ internal object CheckIncompatibleTypeVariableUpperBounds : ResolutionPart() {
                     markCandidateForCompatibilityResolve(needToReportWarning = false)
                     continue
                 }
-                constraintSystem.getEmptyIntersectionTypeKind(upperTypes).isDefinitelyEmpty() -> {
-                    val isInferredEmptyIntersectionForbidden =
-                        callComponents.languageVersionSettings.supportsFeature(LanguageFeature.ForbidInferringTypeVariablesIntoEmptyIntersection)
+                else -> {
+                    val emptyIntersectionKind = constraintSystem.getEmptyIntersectionTypeKind(upperTypes).takeIf { it.isDefinitelyEmpty() }
+                        ?: continue
+                    val isInferredEmptyIntersectionForbidden = callComponents.languageVersionSettings.supportsFeature(
+                        LanguageFeature.ForbidInferringTypeVariablesIntoEmptyIntersection
+                    )
+                    val errorFactory =
+                        if (isInferredEmptyIntersectionForbidden) ::InferredEmptyIntersectionError else ::InferredEmptyIntersectionWarning
 
-                    val errorFactory = if (isInferredEmptyIntersectionForbidden)
-                        ::InferredEmptyIntersectionError
-                    else ::InferredEmptyIntersectionWarning
-                    addError(errorFactory(upperTypes, variableWithConstraints.typeVariable))
+                    addError(errorFactory(upperTypes, variableWithConstraints.typeVariable, emptyIntersectionKind))
                 }
             }
         }

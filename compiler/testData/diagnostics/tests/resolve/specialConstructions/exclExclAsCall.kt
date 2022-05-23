@@ -12,7 +12,7 @@ fun <T: A> emptyNullableListOfA(): List<T>? = null
 //-------------------------------
 
 fun testExclExcl() {
-    doList(emptyNullableListOfA()!!) //should be an error here
+    <!INFERRED_TYPE_VARIABLE_INTO_POSSIBLE_EMPTY_INTERSECTION("")!>doList<!>(emptyNullableListOfA()!!) //should be an error here
     val l: List<Int> = <!TYPE_MISMATCH!><!TYPE_MISMATCH!>id<!>(<!TYPE_MISMATCH!>emptyNullableListOfA<!>()<!TYPE_MISMATCH!>!!<!>)<!>
 
     doList(strangeNullableList { doInt(it) }!!) //lambda should be analyzed (at completion phase)

@@ -39,9 +39,7 @@ import org.jetbrains.kotlin.resolve.calls.inference.model.SimpleConstraintSystem
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind.*
 import org.jetbrains.kotlin.resolve.calls.tower.CandidateApplicability
 import org.jetbrains.kotlin.resolve.deprecation.DeprecationLevelValue
-import org.jetbrains.kotlin.types.AbstractNullabilityChecker
-import org.jetbrains.kotlin.types.TypeApproximatorConfiguration
-import org.jetbrains.kotlin.types.isDefinitelyEmpty
+import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
 abstract class ResolutionStage {
@@ -584,15 +582,17 @@ internal object CheckIncompatibleTypeVariableUpperBounds : ResolutionStage() {
                 if (upperTypes.size <= 1 || variableWithConstraints.constraints.any { it.kind.isLower() })
                     continue
 
-                if (candidate.system.getEmptyIntersectionTypeKind(upperTypes).isDefinitelyEmpty()) {
-                    sink.yieldDiagnostic(
-                        @Suppress("UNCHECKED_CAST")
-                        InferredEmptyIntersectionDiagnostic(
-                            upperTypes as Collection<ConeKotlinType>,
-                            variableWithConstraints.typeVariable as ConeTypeVariable
-                        )
+                val emptyIntersectionKind = candidate.system.getEmptyIntersectionTypeKind(upperTypes).takeIf { it.isDefinitelyEmpty() }
+                    ?: continue
+
+                sink.yieldDiagnostic(
+                    @Suppress("UNCHECKED_CAST")
+                    InferredEmptyIntersectionDiagnostic(
+                        upperTypes as Collection<ConeKotlinType>,
+                        variableWithConstraints.typeVariable as ConeTypeVariable,
+                        emptyIntersectionKind
                     )
-                }
+                )
             }
         }
 }

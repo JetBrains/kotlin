@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.resolve.ForbiddenNamedArgumentsTarget
 import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintSystemError
 import org.jetbrains.kotlin.resolve.calls.tower.CandidateApplicability
 import org.jetbrains.kotlin.resolve.calls.tower.CandidateApplicability.*
+import org.jetbrains.kotlin.types.EmptyIntersectionTypeKind
 
 abstract class ResolutionDiagnostic(val applicability: CandidateApplicability)
 
@@ -30,7 +31,8 @@ class MixingNamedAndPositionArguments(override val argument: FirExpression) : In
 
 class InferredEmptyIntersectionDiagnostic(
     val incompatibleTypes: Collection<ConeKotlinType>,
-    val typeVariable: ConeTypeVariable
+    val typeVariable: ConeTypeVariable,
+    val kind: EmptyIntersectionTypeKind
 ) : ResolutionDiagnostic(INAPPLICABLE)
 
 class TooManyArguments(

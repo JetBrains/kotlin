@@ -40,6 +40,7 @@ import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.checker.intersectWrappedTypes
 import org.jetbrains.kotlin.types.error.ErrorUtils
 import org.jetbrains.kotlin.types.expressions.ControlStructureTypingUtils
+import org.jetbrains.kotlin.types.isPossiblyEmpty
 import org.jetbrains.kotlin.types.model.TypeSystemInferenceExtensionContextDelegate
 import org.jetbrains.kotlin.types.model.TypeVariableMarker
 import org.jetbrains.kotlin.types.model.freshTypeConstructor
@@ -604,16 +605,23 @@ class DiagnosticReporterByTrackingStrategy(
 
             InferredEmptyIntersectionError::class.java, InferredEmptyIntersectionWarning::class.java -> {
                 val typeVariable = (error as InferredEmptyIntersection).typeVariable
-                psiKotlinCall.psiCall.calleeExpression?.let {
+                psiKotlinCall.psiCall.calleeExpression?.let { expression ->
                     val typeVariableText = (typeVariable as? TypeVariableFromCallableDescriptor)?.originalTypeParameter?.name?.asString()
                         ?: typeVariable.toString()
-                    val errorFactory = if (error is InferredEmptyIntersectionError)
-                        INFERRED_TYPE_VARIABLE_INTO_EMPTY_INTERSECTION.errorFactory
-                    else INFERRED_TYPE_VARIABLE_INTO_EMPTY_INTERSECTION.warningFactory
-                    trace.reportDiagnosticOnce(
-                        @Suppress("UNCHECKED_CAST")
-                        errorFactory.on(it, typeVariableText, error.incompatibleTypes as Collection<KotlinType>)
-                    )
+
+                    @Suppress("UNCHECKED_CAST")
+                    val incompatibleTypes = error.incompatibleTypes as Collection<KotlinType>
+
+                    val diagnostic = if (error.kind.isPossiblyEmpty()) {
+                        INFERRED_TYPE_VARIABLE_INTO_POSSIBLE_EMPTY_INTERSECTION.on(expression, typeVariableText, incompatibleTypes)
+                    } else {
+                        INFERRED_TYPE_VARIABLE_INTO_EMPTY_INTERSECTION.on(
+                            context.languageVersionSettings, expression, typeVariableText,
+                            incompatibleTypes, error.kind.description?.let { " ($it)" }.orEmpty()
+                        )
+                    }
+
+                    trace.reportDiagnosticOnce(diagnostic)
                 }
             }
         }
