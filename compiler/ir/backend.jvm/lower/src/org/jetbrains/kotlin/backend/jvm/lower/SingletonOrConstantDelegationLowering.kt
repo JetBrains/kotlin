@@ -17,7 +17,10 @@ import org.jetbrains.kotlin.ir.symbols.impl.IrAnonymousInitializerSymbolImpl
 import org.jetbrains.kotlin.ir.util.parentAsClass
 import org.jetbrains.kotlin.ir.util.shallowCopy
 import org.jetbrains.kotlin.ir.util.transformDeclarationsFlat
+import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
+import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.util.OperatorNameConventions
 
 internal val singletonOrConstantDelegationPhase = makeIrFilePhase(
     ::SingletonOrConstantDelegationLowering,
@@ -48,18 +51,21 @@ private class SingletonOrConstantDelegationTransformer(val context: JvmBackendCo
             return null
         }
 
-        object : IrElementTransformerVoid() {
-            override fun visitCall(expression: IrCall) = expression.apply {
-                if ((dispatchReceiver as? IrGetField)?.symbol == backingField?.symbol) {
-                    dispatchReceiver = delegate.shallowCopy()
-                } else if ((extensionReceiver as? IrGetField)?.symbol == backingField?.symbol) {
-                    extensionReceiver = delegate.shallowCopy()
+        val receiverMapper = object : IrElementTransformer<Name> {
+            override fun visitCall(expression: IrCall, data: Name): IrCall {
+                if (expression.symbol.owner.name == data) {
+                    if ((expression.dispatchReceiver as? IrGetField)?.symbol == backingField?.symbol) {
+                        expression.dispatchReceiver = delegate.shallowCopy()
+                    } else if ((expression.extensionReceiver as? IrGetField)?.symbol == backingField?.symbol) {
+                        expression.extensionReceiver = delegate.shallowCopy()
+                    }
                 }
+                return expression
             }
-        }.apply {
-            getter?.body?.transform(this, null)
-            setter?.body?.transform(this, null)
         }
+
+        getter?.body?.transform(receiverMapper, OperatorNameConventions.GET_VALUE)
+        setter?.body?.transform(receiverMapper, OperatorNameConventions.SET_VALUE)
 
         backingField = null
 
