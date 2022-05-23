@@ -531,7 +531,10 @@ internal class KtFe10Renderer(
                 if (descriptor.isExplicitOverride && containingDeclaration.ktModality != Modality.FINAL) {
                     return Modality.OPEN
                 } else if (containingDeclaration.kind == ClassKind.INTERFACE && descriptor.visibility != DescriptorVisibilities.PRIVATE) {
-                    return if (descriptor.ktModality == Modality.ABSTRACT) Modality.ABSTRACT else Modality.OPEN
+                    return if (descriptor.ktModality == Modality.ABSTRACT || descriptor.kind == CallableMemberDescriptor.Kind.DELEGATION)
+                        Modality.ABSTRACT
+                    else
+                        Modality.OPEN
                 }
 
                 return Modality.FINAL
