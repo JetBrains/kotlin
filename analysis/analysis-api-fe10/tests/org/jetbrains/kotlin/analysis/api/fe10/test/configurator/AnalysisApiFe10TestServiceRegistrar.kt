@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisA
 import org.jetbrains.kotlin.cli.common.CliModuleVisibilityManagerImpl
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.idea.references.KotlinReferenceProviderContributor
+import org.jetbrains.kotlin.light.classes.symbol.caches.SymbolLightClassFacadeCache
 import org.jetbrains.kotlin.load.kotlin.ModuleVisibilityManager
 import org.jetbrains.kotlin.resolve.extensions.AnalysisHandlerExtension
 import org.jetbrains.kotlin.test.services.TestServices
@@ -36,6 +37,8 @@ object AnalysisApiFe10TestServiceRegistrar : AnalysisApiTestServiceRegistrar() {
             registerService(Fe10AnalysisFacade::class.java, CliFe10AnalysisFacade(project))
             registerService(ModuleVisibilityManager::class.java, CliModuleVisibilityManagerImpl(enabled = true))
             registerService(CoreJavaFileManager::class.java, project.getService(JavaFileManager::class.java) as CoreJavaFileManager)
+
+            registerService(SymbolLightClassFacadeCache::class.java)
         }
         AnalysisHandlerExtension.registerExtension(project, KtFe10AnalysisHandlerExtension())
         KotlinCoreEnvironment.registerKotlinLightClassSupport(project)
