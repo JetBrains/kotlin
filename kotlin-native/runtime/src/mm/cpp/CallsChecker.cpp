@@ -100,6 +100,7 @@ extern "C" const char* Kotlin_callsCheckerGoodFunctionNames[] = {
         "__exp10f",
         "free",
         "getrusage",
+        "gettimeofday",
         "hypot",
         "hypotf",
         "isinf",
