@@ -2,6 +2,7 @@
 // WITH_REFLECT
 
 import kotlin.reflect.KProperty
+import kotlin.test.assertEquals
 
 object Store {
     private val map = mutableMapOf<Pair<Any?, KProperty<*>>, String?>()
@@ -18,7 +19,7 @@ object O {
 }
 
 fun box(): String? {
-    assert(O::s.getDelegate() == Store)
+    assertEquals(Store, O::s.getDelegate())
     O.s = "OK"
     return O.s
 }
