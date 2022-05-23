@@ -5,11 +5,22 @@
 
 package org.jetbrains.kotlin.ir.types.impl
 
+import com.intellij.lang.jvm.source.JvmDeclarationSearch
+import com.intellij.lang.jvm.source.JvmDeclarationSearch
+import org.jetbrains.kotlin.descriptors.ClassKind
+import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
+import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
+import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrTypeParameter
+import org.jetbrains.kotlin.ir.declarations.impl.IrClassImpl
+import org.jetbrains.kotlin.ir.declarations.lazy.IrLazyClass
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
+import org.jetbrains.kotlin.ir.symbols.impl.IrClassSymbolImpl
 import org.jetbrains.kotlin.ir.types.*
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.types.model.CaptureStatus
@@ -29,6 +40,13 @@ class IrErrorTypeImpl(
     override fun equals(other: Any?): Boolean = other is IrErrorTypeImpl
 
     override fun hashCode(): Int = IrErrorTypeImpl::class.java.hashCode()
+}
+
+object IrErrorClassImpl : IrClassImpl(
+    UNDEFINED_OFFSET, UNDEFINED_OFFSET, IrDeclarationOrigin.DEFAULT_PROPERTY_ACCESSOR, IrClassSymbolImpl(),
+    Name.special("error"), ClassKind.CLASS, DescriptorVisibilities.DEFAULT_VISIBILITY, Modality.FINAL
+) {
+
 }
 
 class IrDynamicTypeImpl(
