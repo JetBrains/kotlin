@@ -412,18 +412,20 @@ mi_msecs_t _mi_clock_now(void) {
 }
 #else
 #include <time.h>
-#ifdef CLOCK_REALTIME
-mi_msecs_t _mi_clock_now(void) {
-  struct timespec t;
-  clock_gettime(CLOCK_REALTIME, &t);
-  return ((mi_msecs_t)t.tv_sec * 1000) + ((mi_msecs_t)t.tv_nsec / 1000000);
-}
-#else
+// Changed to be compatible with losing clock_gettime function(eg. iOS9.x)
+// https://youtrack.jetbrains.com/issue/KT-52430
+//#ifdef CLOCK_REALTIME
+//mi_msecs_t _mi_clock_now(void) {
+//  struct timespec t;
+//  clock_gettime(CLOCK_REALTIME, &t);
+//  return ((mi_msecs_t)t.tv_sec * 1000) + ((mi_msecs_t)t.tv_nsec / 1000000);
+//}
+//#else
 // low resolution timer
 mi_msecs_t _mi_clock_now(void) {
   return ((mi_msecs_t)clock() / ((mi_msecs_t)CLOCKS_PER_SEC / 1000));
 }
-#endif
+//#endif
 #endif
 
 
