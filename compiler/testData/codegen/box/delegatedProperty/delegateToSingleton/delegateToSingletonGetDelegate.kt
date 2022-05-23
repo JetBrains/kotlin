@@ -1,7 +1,7 @@
-// WITH_STDLIB
+// TARGET_BACKEND: JVM
+// WITH_REFLECT
 
 import kotlin.reflect.KProperty
-import kotlin.test.assertEquals
 
 object Store {
     private val map = mutableMapOf<Pair<Any?, KProperty<*>>, String?>()
@@ -17,7 +17,4 @@ object O {
     var s: String? by Store
 }
 
-fun box(): String? {
-    O.s = "OK"
-    return O.s
-}
+fun box() = if (O::s.getDelegate() == Store) "OK" else "FAILURE"

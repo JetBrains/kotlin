@@ -11806,9 +11806,19 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
                 runTest("compiler/testData/codegen/box/delegatedProperty/delegateToConst/delegateToConst.kt");
             }
 
+            @TestMetadata("delegateToConstGetDelegate.kt")
+            public void testDelegateToConstGetDelegate() throws Exception {
+                runTest("compiler/testData/codegen/box/delegatedProperty/delegateToConst/delegateToConstGetDelegate.kt");
+            }
+
             @TestMetadata("delegateToConstProperty.kt")
             public void testDelegateToConstProperty() throws Exception {
                 runTest("compiler/testData/codegen/box/delegatedProperty/delegateToConst/delegateToConstProperty.kt");
+            }
+
+            @TestMetadata("delegateToConstPropertyGetDelegate.kt")
+            public void testDelegateToConstPropertyGetDelegate() throws Exception {
+                runTest("compiler/testData/codegen/box/delegatedProperty/delegateToConst/delegateToConstPropertyGetDelegate.kt");
             }
         }
 
@@ -11829,9 +11839,19 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
                 runTest("compiler/testData/codegen/box/delegatedProperty/delegateToSingleton/delegateToEnum.kt");
             }
 
+            @TestMetadata("delegateToEnumGetDelegate.kt")
+            public void testDelegateToEnumGetDelegate() throws Exception {
+                runTest("compiler/testData/codegen/box/delegatedProperty/delegateToSingleton/delegateToEnumGetDelegate.kt");
+            }
+
             @TestMetadata("delegateToSingleton.kt")
             public void testDelegateToSingleton() throws Exception {
                 runTest("compiler/testData/codegen/box/delegatedProperty/delegateToSingleton/delegateToSingleton.kt");
+            }
+
+            @TestMetadata("delegateToSingletonGetDelegate.kt")
+            public void testDelegateToSingletonGetDelegate() throws Exception {
+                runTest("compiler/testData/codegen/box/delegatedProperty/delegateToSingleton/delegateToSingletonGetDelegate.kt");
             }
 
             @TestMetadata("withSideEffects.kt")
