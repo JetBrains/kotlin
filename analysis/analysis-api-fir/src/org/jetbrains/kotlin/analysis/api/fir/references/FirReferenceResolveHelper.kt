@@ -179,6 +179,12 @@ internal object FirReferenceResolveHelper {
         return if (constructorCalleeExpression.parent is KtSuperTypeCallEntry) constructorCalleeExpression else expression
     }
 
+    fun postResolutionAdjustFir(fir: FirElement?): FirElement? {
+        when (fir) {
+            is FirProperty -> return fir.initializer
+            else -> return fir
+        }
+    }
 
     internal fun resolveSimpleNameReference(
         ref: KtFirSimpleNameReference,
@@ -188,7 +194,8 @@ internal object FirReferenceResolveHelper {
         if (expression.isSyntheticOperatorReference()) return emptyList()
         val symbolBuilder = analysisSession.firSymbolBuilder
         val adjustedResolutionExpression = adjustResolutionExpression(expression)
-        val fir = adjustedResolutionExpression.getOrBuildFir(analysisSession.firResolveSession)
+        val fir2 = adjustedResolutionExpression.getOrBuildFir(analysisSession.firResolveSession)
+        val fir = postResolutionAdjustFir(fir2)
         val session = analysisSession.firResolveSession.useSiteFirSession
         return when (fir) {
             is FirResolvedTypeRef -> getSymbolsForResolvedTypeRef(fir, expression, session, symbolBuilder)
@@ -210,8 +217,19 @@ internal object FirReferenceResolveHelper {
                 getSymbolByDelegatedConstructorCall(expression, adjustedResolutionExpression, fir, session, symbolBuilder)
             is FirResolvable -> getSymbolsByResolvable(fir, expression, session, symbolBuilder)
             is FirNamedArgumentExpression -> getSymbolsByNameArgumentExpression(expression, analysisSession, symbolBuilder)
+            is FirProperty -> getSymbolsByProperty(fir, expression, analysisSession, symbolBuilder)
             else -> handleUnknownFirElement(expression, analysisSession, session, symbolBuilder)
         }
+    }
+
+    private fun getSymbolsByProperty(
+        fir: FirProperty,
+        expression: KtSimpleNameExpression,
+        sessions: KtFirAnalysisSession,
+        symbolBuilder: KtSymbolByFirBuilder
+    ): Collection<KtSymbol> {
+        println("$fir $expression $sessions $symbolBuilder")
+        return listOf()
     }
 
     private fun getSymbolByDelegatedConstructorCall(
