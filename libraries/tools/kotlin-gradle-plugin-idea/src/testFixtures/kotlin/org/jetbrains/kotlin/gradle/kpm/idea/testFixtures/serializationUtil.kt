@@ -1,6 +1,5 @@
 package org.jetbrains.kotlin.gradle.kpm.idea.testFixtures
 
-import org.gradle.internal.io.ClassLoaderObjectInputStream
 import java.io.*
 
 /*
@@ -25,4 +24,11 @@ fun ByteArray.deserialize(classLoader: ClassLoader): Any {
     val inputStream = ByteArrayInputStream(this)
     val objectInputStream = ClassLoaderObjectInputStream(inputStream, classLoader)
     return objectInputStream.use { it.readObject() }
+}
+
+class ClassLoaderObjectInputStream(stream: InputStream?, private val classLoader: ClassLoader) : ObjectInputStream(stream) {
+    @Throws(IOException::class, ClassNotFoundException::class)
+    override fun resolveClass(desc: ObjectStreamClass): Class<*> {
+        return Class.forName(desc.name, false, classLoader)
+    }
 }
