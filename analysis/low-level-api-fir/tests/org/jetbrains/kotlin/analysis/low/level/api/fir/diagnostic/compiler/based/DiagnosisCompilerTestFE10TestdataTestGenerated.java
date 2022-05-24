@@ -13911,12 +13911,6 @@ public class DiagnosisCompilerTestFE10TestdataTestGenerated extends AbstractDiag
             }
 
             @Test
-            @TestMetadata("kt51844.kt")
-            public void testKt51844() throws Exception {
-                runTest("compiler/testData/diagnostics/tests/inference/kt51844.kt");
-            }
-
-            @Test
             @TestMetadata("kt6175.kt")
             public void testKt6175() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/inference/kt6175.kt");
