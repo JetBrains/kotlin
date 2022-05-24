@@ -46,6 +46,14 @@ tasks {
 val commonSourceSet = createGradleCommonSourceSet()
 reconfigureMainSourcesSetForGradlePlugin(commonSourceSet)
 publishShadowedJar(sourceSets[SourceSet.MAIN_SOURCE_SET_NAME], commonSourceSet)
+
+// Disabling this task, so "com.gradle.plugin-publish" will not publish unshadowed jar into Gradle Plugin Portal
+// Without it 'jar' task is asked to run by "com.gradle.plugin-publish" even if artifacts are removed. The problem
+// is that 'jar' task runs after shadow task plus their outputs has the same name leading to '.jar' file overwrite.
+tasks.named("jar") {
+    enabled = false
+}
+
 if (!kotlinBuildProperties.isInJpsBuildIdeaSync) {
     // Used for Gradle 7.0+ versions
     val gradle70SourceSet = createGradlePluginVariant(
