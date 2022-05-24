@@ -1,4 +1,4 @@
-//FILE: ValueExample.java
+// FILE: ValueExample.java
 
 import lombok.*;
 
@@ -26,7 +26,7 @@ import lombok.*;
     }
 }
 
-//FILE: test.kt
+// FILE: test.kt
 
 fun box(): String {
     val obj = ValueExample("name", 12, 4.5)

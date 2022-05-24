@@ -1,4 +1,4 @@
-//FILE: GetterSetterExample.java
+// FILE: GetterSetterExample.java
 
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -11,7 +11,7 @@ public class GetterSetterExample {
 }
 
 
-//FILE: test.kt
+// FILE: test.kt
 
 fun box(): String {
     val obj = GetterSetterExample()

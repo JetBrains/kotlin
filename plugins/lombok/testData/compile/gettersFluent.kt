@@ -1,4 +1,4 @@
-//FILE: FluentTest.java
+// FILE: FluentTest.java
 
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -25,7 +25,7 @@ public class FluentTest {
 }
 
 
-//FILE: test.kt
+// FILE: test.kt
 
 fun box(): String {
     val obj = FluentTest()

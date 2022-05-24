@@ -1,4 +1,4 @@
-//FILE: GetterTest.java
+// FILE: GetterTest.java
 
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -13,7 +13,7 @@ public class GetterTest {
 }
 
 
-//FILE: test.kt
+// FILE: test.kt
 
 fun box(): String {
     val obj = GetterTest()
@@ -23,6 +23,6 @@ fun box(): String {
     return "OK"
 }
 
-//FILE: lombok.config
+// FILE: lombok.config
 #lombok config keys are case insensitive
 lombok.getter.noisprefix=true

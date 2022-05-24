@@ -1,6 +1,6 @@
 //KT-46529
 
-//FILE: PrefixJava.java
+// FILE: PrefixJava.java
 
 import lombok.*;
 import lombok.experimental.*;
@@ -13,7 +13,7 @@ public class PrefixJava {
 }
 
 
-//FILE: test.kt
+// FILE: test.kt
 
 fun box(): String {
     //not generated because doesn't have prefix from class level @Accessors
@@ -24,5 +24,5 @@ fun box(): String {
     return "OK"
 }
 
-//FILE: lombok.config
+// FILE: lombok.config
 lombok.accessors.prefix += pxa

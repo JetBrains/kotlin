@@ -1,4 +1,4 @@
-//FILE: SuperClass.java
+// FILE: SuperClass.java
 
 import lombok.*;
 import java.util.*;
@@ -11,7 +11,7 @@ public class SuperClass {
 
 }
 
-//FILE: ClashTest.java
+// FILE: ClashTest.java
 
 import lombok.*;
 import java.util.*;
@@ -56,7 +56,7 @@ public class ClashTest extends SuperClass {
 
 }
 
-//FILE: ChildClass.java
+// FILE: ChildClass.java
 
 import lombok.*;
 import java.util.*;
@@ -71,7 +71,7 @@ public class ChildClass extends ClashTest{
 }
 
 
-//FILE: test.kt
+// FILE: test.kt
 
 class KotlinChildClass : ClashTest() {
 

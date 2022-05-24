@@ -1,4 +1,4 @@
-//FILE: Anno.java
+// FILE: Anno.java
 
 import java.lang.*;
 import java.lang.annotation.*;
@@ -9,7 +9,7 @@ public @interface Anno {
     String value() default "sdf";
 }
 
-//FILE: Foo.java
+// FILE: Foo.java
 
 import lombok.*;
 import org.jetbrains.annotations.*;
@@ -20,7 +20,7 @@ public class Foo {
 }
 
 
-//FILE: test.kt
+// FILE: test.kt
 
 @Anno
 fun box(): String {

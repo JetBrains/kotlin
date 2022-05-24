@@ -1,4 +1,4 @@
-//FILE: SetterTest.java
+// FILE: SetterTest.java
 
 import lombok.AccessLevel;
 import lombok.Setter;
@@ -18,7 +18,7 @@ public class SetterTest {
 }
 
 
-//FILE: test.kt
+// FILE: test.kt
 
 fun box(): String {
     val obj = SetterTest()

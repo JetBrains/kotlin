@@ -1,4 +1,4 @@
-//FILE: ConstructorExample.java
+// FILE: ConstructorExample.java
 
 import lombok.*;
 
@@ -19,7 +19,7 @@ public class ConstructorExample<A, B> {
 }
 
 
-//FILE: test.kt
+// FILE: test.kt
 
 fun box(): String {
     val generated = ConstructorExample<Long, Boolean>(12, 42L, true)

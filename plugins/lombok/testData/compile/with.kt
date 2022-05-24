@@ -1,4 +1,4 @@
-//FILE: WithExample.java
+// FILE: WithExample.java
 
 import lombok.*;
 
@@ -16,7 +16,7 @@ public class WithExample {
 }
 
 
-//FILE: test.kt
+// FILE: test.kt
 
 fun box(): String {
     val obj: WithExample = WithExample().withAge(16).withName("fooo")

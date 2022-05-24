@@ -1,4 +1,4 @@
-//FILE: GetterTest.java
+// FILE: GetterTest.java
 
 import lombok.*;
 import lombok.experimental.*;
@@ -20,7 +20,7 @@ public class GetterTest {
 }
 
 
-//FILE: test.kt
+// FILE: test.kt
 
 fun box(): String {
     val obj = GetterTest()
@@ -30,6 +30,6 @@ fun box(): String {
     return "OK"
 }
 
-//FILE: lombok.config
+// FILE: lombok.config
 lombok.accessors.fluent=true
 lombok.accessors.chain=false

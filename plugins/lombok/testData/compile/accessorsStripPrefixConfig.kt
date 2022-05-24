@@ -1,4 +1,4 @@
-//FILE: AccessorsTest.java
+// FILE: AccessorsTest.java
 
 import lombok.*;
 import lombok.experimental.*;
@@ -41,7 +41,7 @@ public class AccessorsTest {
 }
 
 
-//FILE: test.kt
+// FILE: test.kt
 
 fun box(): String {
     val obj = AccessorsTest()
@@ -66,6 +66,6 @@ fun box(): String {
     return "OK"
 }
 
-//FILE: lombok.config
+// FILE: lombok.config
 lombok.accessors.prefix += f
 lombok.accessors.prefix+=field

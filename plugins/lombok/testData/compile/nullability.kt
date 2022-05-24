@@ -1,4 +1,4 @@
-//FILE: GetterSetterExample.java
+// FILE: GetterSetterExample.java
 
 import lombok.*;
 import org.jetbrains.annotations.*;
@@ -12,7 +12,7 @@ public class GetterSetterExample {
 }
 
 
-//FILE: test.kt
+// FILE: test.kt
 
 fun box(): String {
     val obj = GetterSetterExample()

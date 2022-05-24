@@ -1,4 +1,4 @@
-//FILE: GenericsTest.java
+// FILE: GenericsTest.java
 
 import lombok.*;
 import java.util.*;
@@ -24,7 +24,7 @@ public class GenericsTest<A, B> {
 }
 
 
-//FILE: test.kt
+// FILE: test.kt
 
 fun box(): String {
     val obj = GenericsTest<String, Boolean>()
