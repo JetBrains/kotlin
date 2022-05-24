@@ -22360,6 +22360,18 @@ public class DiagnosisCompilerTestFE10TestdataTestGenerated extends AbstractDiag
                 }
 
                 @Test
+                @TestMetadata("customDefault.kt")
+                public void testCustomDefault() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/operatorsOverloading/until/customDefault.kt");
+                }
+
+                @Test
+                @TestMetadata("customDisabled.kt")
+                public void testCustomDisabled() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/operatorsOverloading/until/customDisabled.kt");
+                }
+
+                @Test
                 @TestMetadata("simple.kt")
                 public void testSimple() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/operatorsOverloading/until/simple.kt");

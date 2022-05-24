@@ -262,6 +262,7 @@ enum class LanguageFeature(
     ReportNonVarargSpreadOnGenericCalls(KOTLIN_1_8, kind = BUG_FIX), // KT-48162
     AllowExpressionAfterTypeReferenceWithoutSpacing(KOTLIN_1_8, kind = BUG_FIX), // KT-35811
     RefineTypeCheckingOnAssignmentsToJavaFields(KOTLIN_1_8, kind = BUG_FIX),
+    RangeUntilOperator(KOTLIN_1_8), // KT-15613
 
     // 1.9
 
