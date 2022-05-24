@@ -29,7 +29,8 @@ import org.jetbrains.kotlin.kapt3.test.AbstractClassFileToSourceStubConverterTes
 import org.jetbrains.kotlin.kapt3.test.AbstractIrClassFileToSourceStubConverterTest
 import org.jetbrains.kotlin.kapt3.test.AbstractIrKotlinKaptContextTest
 import org.jetbrains.kotlin.kapt3.test.AbstractKotlinKaptContextTest
-import org.jetbrains.kotlin.lombok.AbstractLombokCompileTest
+import org.jetbrains.kotlin.lombok.AbstractBlackBoxCodegenTestForLombok
+import org.jetbrains.kotlin.lombok.AbstractIrBlackBoxCodegenTestForLombok
 import org.jetbrains.kotlin.noarg.*
 import org.jetbrains.kotlin.parcelize.test.runners.*
 import org.jetbrains.kotlin.samWithReceiver.AbstractSamWithReceiverScriptTest
@@ -247,12 +248,6 @@ fun main(args: Array<String>) {
                 model("codegen")
             }
         }
-
-        testGroup("plugins/lombok/tests-gen", "plugins/lombok/testData") {
-            testClass<AbstractLombokCompileTest> {
-                model("compile")
-            }
-        }
 /*
     testGroup("plugins/android-extensions/android-extensions-idea/tests", "plugins/android-extensions/android-extensions-idea/testData") {
         testClass<AbstractAndroidCompletionTest> {
@@ -424,6 +419,15 @@ fun main(args: Array<String>) {
             }
             testClass<AbstractFirBlackBoxCodegenTestForNoArg> {
                 model("box")
+            }
+        }
+
+        testGroup("plugins/lombok/tests-gen", "plugins/lombok/testData") {
+            testClass<AbstractBlackBoxCodegenTestForLombok> {
+                model("compile")
+            }
+            testClass<AbstractIrBlackBoxCodegenTestForLombok> {
+                model("compile")
             }
         }
     }

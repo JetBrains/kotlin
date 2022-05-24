@@ -1,3 +1,4 @@
+// IGNORE_ERRORS
 // FILE: Anno.java
 
 import java.lang.*;
@@ -22,7 +23,7 @@ public class Foo {
 
 // FILE: test.kt
 
-@Anno
+<!WRONG_ANNOTATION_TARGET!>@Anno<!>
 fun box(): String {
     val obj = Foo()
     return "OK"
