@@ -132,6 +132,9 @@ fun nativeTest(taskName: String, vararg tags: String) = projectTest(
         TestProperty.CACHE_MODE.setUpFromGradleProperty(this)
         TestProperty.EXECUTION_TIMEOUT.setUpFromGradleProperty(this)
 
+        // Pass the current Gradle task name so test can use it in logging.
+        environment("GRADLE_TASK_NAME", path)
+
         useJUnitPlatform {
             includeTags(*tags)
         }

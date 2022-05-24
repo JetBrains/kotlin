@@ -43,9 +43,6 @@ class NativeBlackBoxTestSupport : BeforeEachCallback {
     override fun beforeEach(extensionContext: ExtensionContext): Unit = with(extensionContext) {
         val settings = createTestRunSettings()
 
-        // Set the essential compiler property.
-        System.setProperty("kotlin.native.home", settings.get<KotlinNativeHome>().dir.path)
-
         // Inject the required properties to test instance.
         with(settings.get<BlackBoxTestInstances>().enclosingTestInstance) {
             testRunSettings = settings
@@ -58,9 +55,6 @@ class NativeSimpleTestSupport : BeforeEachCallback {
     override fun beforeEach(extensionContext: ExtensionContext): Unit = with(extensionContext) {
         val settings = createSimpleTestRunSettings()
 
-        // Set the essential compiler property.
-        System.setProperty("kotlin.native.home", settings.get<KotlinNativeHome>().dir.path)
-
         // Inject the required properties to test instance.
         with(settings.get<SimpleTestInstances>().enclosingTestInstance) {
             testRunSettings = settings
@@ -70,14 +64,20 @@ class NativeSimpleTestSupport : BeforeEachCallback {
 }
 
 private object NativeTestSupport {
-    private val NAMESPACE = ExtensionContext.Namespace.create(NativeBlackBoxTestSupport::class.java.simpleName)
+    private val NAMESPACE = ExtensionContext.Namespace.create(NativeTestSupport::class.java.simpleName)
 
     /*************** Test process settings ***************/
 
     fun ExtensionContext.getOrCreateTestProcessSettings(): TestProcessSettings =
         root.getStore(NAMESPACE).getOrComputeIfAbsent(TestProcessSettings::class.java.name) {
+            val nativeHome = computeNativeHome()
+
+            // Apply the necessary process-wide settings:
+            System.setProperty("kotlin.native.home", nativeHome.dir.path) // Set the essential compiler property.
+            setUpMemoryTracking() // Set up memory tracking and reporting.
+
             TestProcessSettings(
-                computeNativeHome(),
+                nativeHome,
                 computeNativeClassLoader(),
                 computeBaseDirs()
             )
@@ -101,6 +101,33 @@ private object NativeTestSupport {
         testBuildDir.mkdirs() // Make sure it exists. Don't clean up.
 
         return BaseDirs(testBuildDir)
+    }
+
+    private fun ExtensionContext.setUpMemoryTracking() {
+        TestLogger.initialize() // Initialize special logging (directly to Gradle's console).
+
+        val gradleTaskName = EnvironmentVariable.GRADLE_TASK_NAME.readValue()
+        fun Long.toMBs() = (this / 1024 / 1024)
+
+        // Set up memory tracking and reporting:
+        MemoryTracker.startTracking(intervalMillis = 1000) { memoryMark ->
+            TestLogger.log(
+                buildString {
+                    append(memoryMark.timestamp).append(' ').append(gradleTaskName)
+                    append(" Memory usage (MB): ")
+                    append("used=").append(memoryMark.usedMemory.toMBs())
+                    append(", free=").append(memoryMark.freeMemory.toMBs())
+                    append(", total=").append(memoryMark.totalMemory.toMBs())
+                    append(", max=").append(memoryMark.maxMemory.toMBs())
+                }
+            )
+        }
+
+        // Stop tracking memory when all tests are finished:
+        root.getStore(NAMESPACE).put(
+            testClassKeyFor<MemoryTracker>(),
+            ExtensionContext.Store.CloseableResource { MemoryTracker.stopTracking() }
+        )
     }
 
     /*************** Test class settings (common part) ***************/

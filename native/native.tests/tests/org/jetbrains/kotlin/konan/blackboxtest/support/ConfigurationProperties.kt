@@ -87,7 +87,8 @@ private fun fullPropertyName(shortName: String) = "kotlin.internal.native.test.$
 /*************** Environment variables ***************/
 
 internal enum class EnvironmentVariable {
-    PROJECT_BUILD_DIR;
+    PROJECT_BUILD_DIR,
+    GRADLE_TASK_NAME;
 
     fun readValue(): String = System.getenv(name) ?: fail { "Unspecified $name environment variable" }
 }
