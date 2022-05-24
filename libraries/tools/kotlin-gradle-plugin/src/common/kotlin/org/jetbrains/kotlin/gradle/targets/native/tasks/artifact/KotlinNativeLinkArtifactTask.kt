@@ -5,18 +5,19 @@
 
 package org.jetbrains.kotlin.gradle.targets.native.tasks.artifact
 
-import groovy.lang.Closure
 import org.gradle.api.Action
 import org.gradle.api.DefaultTask
 import org.gradle.api.file.FileCollection
+import org.gradle.api.model.ObjectFactory
 import org.gradle.api.tasks.*
+import org.gradle.process.ExecOperations
 import org.jetbrains.kotlin.compilerRunner.KotlinNativeCompilerRunner
+import org.jetbrains.kotlin.compilerRunner.KotlinToolRunner
 import org.jetbrains.kotlin.gradle.dsl.KotlinCommonToolOptions
 import org.jetbrains.kotlin.gradle.internal.ensureParentDirsCreated
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.mpp.BitcodeEmbeddingMode
 import org.jetbrains.kotlin.gradle.targets.native.tasks.buildKotlinNativeBinaryLinkerArgs
-import org.jetbrains.kotlin.gradle.utils.getValue
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.konan.util.visibleName
@@ -25,7 +26,9 @@ import javax.inject.Inject
 
 open class KotlinNativeLinkArtifactTask @Inject constructor(
     @get:Input val konanTarget: KonanTarget,
-    @get:Input val outputKind: CompilerOutputKind
+    @get:Input val outputKind: CompilerOutputKind,
+    private val objectFactory: ObjectFactory,
+    private val execOperations: ExecOperations
 ) : DefaultTask() {
 
     @get:Input
@@ -74,7 +77,7 @@ open class KotlinNativeLinkArtifactTask @Inject constructor(
     var librariesConfiguration: String? = null
 
     @get:Classpath
-    val libraries: FileCollection by project.provider {
+    val libraries: FileCollection by lazy {
         librariesConfiguration?.let {
             project.configurations.getByName(it)
         } ?: project.objects.fileCollection()
@@ -84,7 +87,7 @@ open class KotlinNativeLinkArtifactTask @Inject constructor(
     var exportLibrariesConfiguration: String? = null
 
     @get:Classpath
-    val exportLibraries: FileCollection by project.provider {
+    val exportLibraries: FileCollection by lazy {
         exportLibrariesConfiguration?.let {
             project.configurations.getByName(it)
         } ?: project.objects.fileCollection()
@@ -94,7 +97,7 @@ open class KotlinNativeLinkArtifactTask @Inject constructor(
     var includeLibrariesConfiguration: String? = null
 
     @get:Classpath
-    val includeLibraries: FileCollection by project.provider {
+    val includeLibraries: FileCollection by lazy {
         includeLibrariesConfiguration?.let {
             project.configurations.getByName(it)
         } ?: project.objects.fileCollection()
@@ -145,6 +148,9 @@ open class KotlinNativeLinkArtifactTask @Inject constructor(
             return destinationDir.resolve(outFileName)
         }
 
+    @get:Nested
+    internal val runnerSettings = KotlinNativeCompilerRunner.Settings(project)
+
     @TaskAction
     fun link() {
         val outFile = outputFile
@@ -176,6 +182,9 @@ open class KotlinNativeLinkArtifactTask @Inject constructor(
             additionalOptions = emptyList()//todo support org.jetbrains.kotlin.gradle.tasks.CacheBuilder and org.jetbrains.kotlin.gradle.tasks.ExternalDependenciesBuilder
         )
 
-        KotlinNativeCompilerRunner(project).run(buildArgs)
+        KotlinNativeCompilerRunner(
+            settings = runnerSettings,
+            executionContext = KotlinToolRunner.GradleExecutionContext.fromTaskContext(objectFactory, execOperations, logger)
+        ).run(buildArgs)
     }
 }

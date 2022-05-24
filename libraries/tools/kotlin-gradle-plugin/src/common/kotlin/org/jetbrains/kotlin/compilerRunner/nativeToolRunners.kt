@@ -6,10 +6,7 @@
 package org.jetbrains.kotlin.compilerRunner
 
 import org.gradle.api.Project
-import org.gradle.api.tasks.Classpath
-import org.gradle.api.tasks.Input
-import org.gradle.api.tasks.InputFile
-import org.gradle.api.tasks.Nested
+import org.gradle.api.tasks.*
 import org.jetbrains.kotlin.cli.common.messages.MessageRenderer
 import org.jetbrains.kotlin.gradle.dsl.NativeCacheKind
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
@@ -68,6 +65,7 @@ internal abstract class KotlinNativeToolRunner(
         @get:Input
         val konanHome: String,
         @get:InputFile
+        @get:PathSensitive(PathSensitivity.ABSOLUTE)
         val konanPropertiesFile: File,
         @get:Input
         val jvmArgs: List<String>,
