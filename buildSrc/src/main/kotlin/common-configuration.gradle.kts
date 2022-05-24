@@ -163,7 +163,7 @@ fun Project.configureKotlinCompilationOptions() {
                 freeCompilerArgs += jvmCompilerArgs
 
                 if (useJvmFir && project.path !in projectsWithDisabledFirBootstrap) {
-                    freeCompilerArgs += "-Xuse-fir"
+                    freeCompilerArgs += "-Xuse-k2"
                     freeCompilerArgs += "-Xabi-stability=stable"
                     if (useFirLT) {
                         freeCompilerArgs += "-Xuse-fir-lt"

@@ -60,7 +60,7 @@ ext.configureFrontendIr = { Project project ->
     project.tasks.withType(KotlinCompile.class) { task ->
         task.kotlinOptions {
             if (project.kotlinBuildProperties.useFirForLibraries) {
-                freeCompilerArgs += "-Xuse-fir"
+                freeCompilerArgs += "-Xuse-k2"
                 allWarningsAsErrors = false
             }
             if (project.properties.renderDiagnosticNames) {
