@@ -9,14 +9,13 @@ import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.FirConstructor
 import org.jetbrains.kotlin.fir.declarations.getAnnotationByClassId
 import org.jetbrains.kotlin.fir.declarations.utils.isInner
+import org.jetbrains.kotlin.fir.expressions.FirExpressionWithSmartcastToNull
 import org.jetbrains.kotlin.fir.expressions.builder.buildResolvedQualifier
-import org.jetbrains.kotlin.fir.resolve.BodyResolveComponents
-import org.jetbrains.kotlin.fir.resolve.ScopeSession
+import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.resolve.calls.*
-import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.resultType
-import org.jetbrains.kotlin.fir.resolve.typeForQualifier
+import org.jetbrains.kotlin.fir.scopes.FakeOverrideTypeCalculator
 import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.scopes.impl.FirDefaultStarImportingScope
 import org.jetbrains.kotlin.fir.scopes.impl.importedFromObjectData
@@ -91,15 +90,15 @@ class MemberScopeTowerLevel(
         processScopeMembers: FirScope.(processor: (T) -> Unit) -> Unit
     ): ProcessResult {
         var empty = true
-        val scope = dispatchReceiverValue.scope(session, scopeSession) ?: return ProcessResult.SCOPE_EMPTY
-        scope.processScopeMembers { candidate ->
+
+        fun processCandidate(candidate: T, scope: FirScope) {
             empty = false
             if (candidate is FirCallableSymbol<*> &&
                 (implicitExtensionInvokeMode || candidate.hasConsistentExtensionReceiver(extensionReceiver))
             ) {
                 val fir = candidate.fir
                 if ((fir as? FirConstructor)?.isInner == false) {
-                    return@processScopeMembers
+                    return
                 }
 
                 output.consumeCandidate(
@@ -121,6 +120,9 @@ class MemberScopeTowerLevel(
             }
         }
 
+        val scope = dispatchReceiverValue.scope(session, scopeSession) ?: return ProcessResult.SCOPE_EMPTY
+        scope.processScopeMembers { processCandidate(it, scope) }
+
         if (extensionReceiver == null) {
             val withSynthetic = FirSyntheticPropertiesScope(session, scope)
             withSynthetic.processScopeMembers { symbol ->
@@ -128,6 +130,15 @@ class MemberScopeTowerLevel(
                 output.consumeCandidate(symbol, dispatchReceiverValue, null, scope)
             }
         }
+
+        val maybeSmartcastToNullReceiver = dispatchReceiverValue.receiverExpression as? FirExpressionWithSmartcastToNull
+        val maybeDynamicType = maybeSmartcastToNullReceiver?.smartcastType?.coneType as? ConeDynamicType
+        val maybeDynamicScope = maybeDynamicType?.scope(session, scopeSession, FakeOverrideTypeCalculator.DoNothing)
+
+        if (empty && maybeDynamicScope != null) {
+            maybeDynamicScope.processScopeMembers { processCandidate(it, maybeDynamicScope) }
+        }
+
         return if (empty) ProcessResult.SCOPE_EMPTY else ProcessResult.FOUND
     }
 

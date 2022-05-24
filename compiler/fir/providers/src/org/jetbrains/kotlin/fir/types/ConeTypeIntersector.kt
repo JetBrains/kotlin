@@ -71,14 +71,12 @@ object ConeTypeIntersector {
 
         ConeIntegerLiteralIntersector.findCommonIntersectionType(filteredEqualTypes)?.let { return it }
 
-        val (dynamics, filteredEqualNonDynamicTypes) = filteredEqualTypes.partition { it is ConeDynamicType }
-
         /*
          * For the case like it(ft(String..String?), String?), where ft(String..String?) == String?, we prefer to _keep_ flexible type.
          * When a == b, the former, i.e., the one in the list will be filtered out, and the other one will remain.
          * So, here, we sort the interim list such that flexible types appear later.
          */
-        val sortedEqualTypes = filteredEqualNonDynamicTypes.sortedWith { p0, p1 ->
+        val sortedEqualTypes = filteredEqualTypes.sortedWith { p0, p1 ->
             when {
                 p0 is ConeFlexibleType && p1 is ConeFlexibleType -> 0
                 p0 is ConeFlexibleType -> 1
@@ -91,11 +89,9 @@ object ConeTypeIntersector {
         }
         assert(filteredSuperAndEqualTypes.isNotEmpty(), errorMessage)
 
-        if (filteredSuperAndEqualTypes.size < 2 && dynamics.isEmpty()) {
-            return filteredSuperAndEqualTypes.single()
-        }
+        if (filteredSuperAndEqualTypes.size < 2) return filteredSuperAndEqualTypes.single()
 
-        return ConeIntersectionType(filteredSuperAndEqualTypes + dynamics.take(1))
+        return ConeIntersectionType(filteredSuperAndEqualTypes)
     }
 
     private fun filterTypes(

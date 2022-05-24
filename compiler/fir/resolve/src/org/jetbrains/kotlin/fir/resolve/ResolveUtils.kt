@@ -334,33 +334,42 @@ private inline fun <T : FirExpression> BodyResolveComponents.transformExpression
     val allTypes = typesFromSmartCast.also {
         it += originalType
     }
+    if (allTypes.all { it is ConeDynamicType }) return null
     val intersectedType = ConeTypeIntersector.intersectTypes(session.typeContext, allTypes)
-    if (intersectedType == originalType) return null
+    if (intersectedType == originalType && intersectedType !is ConeDynamicType) return null
     val intersectedTypeRef = buildResolvedTypeRef {
         source = expression.resultType.source?.fakeElement(KtFakeSourceElementKind.SmartCastedTypeRef)
         type = intersectedType
         annotations += expression.resultType.annotations
         delegatedTypeRef = expression.resultType
     }
-    // For example, if (x == null) { ... },
-    //   we need to track the type without `Nothing?` so that resolution with this as receiver can go through properly.
-    if (typesFromSmartCast.any { it.isNullableNothing }) {
-        val typesFromSmartcastWithoutNullableNothing =
-            typesFromSmartCast.filterTo(mutableListOf()) { !it.isNullableNothing }.also {
-                it += originalType
-            }
-        val intersectedTypeWithoutNullableNothing =
-            ConeTypeIntersector.intersectTypes(session.typeContext, typesFromSmartcastWithoutNullableNothing)
-        val intersectedTypeRefWithoutNullableNothing = buildResolvedTypeRef {
+
+    val reducedTypes = when {
+        // For example, if (x is String) { ... }, where x: dynamic
+        //   the dynamic type will "consume" all other, erasing information
+        intersectedType is ConeDynamicType -> {
+            typesFromSmartCast.filterTo(mutableListOf()) { it !is ConeDynamicType }
+        }
+        // For example, if (x == null) { ... },
+        //   we need to track the type without `Nothing?` so that resolution with this as receiver can go through properly.
+        typesFromSmartCast.any { it.isNullableNothing } -> {
+            typesFromSmartCast.filterTo(mutableListOf()) { !it.isNullableNothing }.also { it += originalType }
+        }
+        else -> null
+    }
+
+    if (reducedTypes != null) {
+        val reducedIntersectedType = ConeTypeIntersector.intersectTypes(session.typeContext, reducedTypes)
+        val reducedIntersectedTypeRef = buildResolvedTypeRef {
             source = expression.resultType.source?.fakeElement(KtFakeSourceElementKind.SmartCastedTypeRef)
-            type = intersectedTypeWithoutNullableNothing
+            type = reducedIntersectedType
             annotations += expression.resultType.annotations
             delegatedTypeRef = expression.resultType
         }
         return smartcastToNullBuilder().apply {
             originalExpression = expression
             smartcastType = intersectedTypeRef
-            smartcastTypeWithoutNullableNothing = intersectedTypeRefWithoutNullableNothing
+            smartcastTypeWithoutNullableNothing = reducedIntersectedTypeRef
             this.typesFromSmartCast = typesFromSmartCast
             this.smartcastStability = smartcastStability
         }
