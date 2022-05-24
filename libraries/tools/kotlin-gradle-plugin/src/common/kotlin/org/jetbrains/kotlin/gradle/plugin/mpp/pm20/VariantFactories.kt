@@ -12,11 +12,11 @@ import kotlin.reflect.KClass
 internal fun registerDefaultVariantFactories(project: Project) {
     project.kpmModules.configureEach { module ->
         module.fragments.registerFactory(
-            KotlinJvmVariant::class.java,
+            KpmJvmVariant::class.java,
             KotlinJvmVariantFactory(module)
         )
 
-        fun <T : KotlinNativeVariantInternal> registerNativeVariantFactory(
+        fun <T : KpmNativeVariantInternal> registerNativeVariantFactory(
             constructor: KotlinNativeVariantConstructor<T>
         ) = module.fragments.registerFactory(
             constructor.variantClass, KotlinNativeVariantFactory(module, constructor)

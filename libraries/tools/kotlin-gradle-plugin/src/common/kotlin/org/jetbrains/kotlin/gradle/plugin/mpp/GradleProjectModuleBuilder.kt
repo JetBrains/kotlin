@@ -26,33 +26,33 @@ import org.jetbrains.kotlin.gradle.utils.getOrPutRootProjectProperty
 import org.jetbrains.kotlin.project.model.*
 
 class ProjectStructureMetadataModuleBuilder {
-    private val modulesCache = mutableMapOf<KotlinModuleIdentifier, KotlinModule>()
+    private val modulesCache = mutableMapOf<KpmModuleIdentifier, KpmModule>()
 
     private fun buildModuleFromProjectStructureMetadata(
         component: ResolvedComponentResult,
         metadata: KotlinProjectStructureMetadata
-    ): KotlinModule {
-        val moduleData = BasicKotlinModule(component.toSingleModuleIdentifier()).apply {
+    ): KpmModule {
+        val moduleData = KpmBasicModule(component.toSingleModuleIdentifier()).apply {
             metadata.sourceSetNamesByVariantName.keys.forEach { variantName ->
-                fragments.add(BasicKotlinModuleVariant(this@apply, variantName))
+                fragments.add(KpmBasicVariant(this@apply, variantName))
             }
-            fun fragment(sourceSetName: String): BasicKotlinModuleFragment {
+            fun fragment(sourceSetName: String): KpmBasicFragment {
                 if (fragments.none { it.fragmentName == sourceSetName })
-                    fragments.add(BasicKotlinModuleFragment(this@apply, sourceSetName))
+                    fragments.add(KpmBasicFragment(this@apply, sourceSetName))
                 return fragmentByName(sourceSetName)
             }
             metadata.sourceSetNamesByVariantName.forEach { (variantName, sourceSets) ->
                 val variant = fragmentByName(variantName)
                 sourceSets.forEach { sourceSetName ->
-                    variant.directRefinesDependencies.add(fragment(sourceSetName))
+                    variant.declaredRefinesDependencies.add(fragment(sourceSetName))
                 }
             }
             metadata.sourceSetModuleDependencies.forEach { (sourceSetName, dependencies) ->
                 val fragment = fragment(sourceSetName)
                 dependencies.forEach { dependency ->
                     fragment.declaredModuleDependencies.add(
-                        KotlinModuleDependency(
-                            MavenModuleIdentifier(
+                        KpmModuleDependency(
+                            KpmMavenModuleIdentifier(
                                 dependency.groupId.orEmpty(),
                                 dependency.moduleId,
                                 null /* TODO */
@@ -65,18 +65,18 @@ class ProjectStructureMetadataModuleBuilder {
             metadata.sourceSetsDependsOnRelation.forEach { (depending, dependencies) ->
                 val dependingFragment = fragment(depending)
                 dependencies.forEach { dependency ->
-                    dependingFragment.directRefinesDependencies.add(fragment(dependency))
+                    dependingFragment.declaredRefinesDependencies.add(fragment(dependency))
                 }
             }
         }
-        return ExternalImportedKotlinModule(
+        return KpmExternalImportedModule(
             moduleData,
             metadata,
             moduleData.fragments.filterTo(mutableSetOf()) { it.fragmentName in metadata.hostSpecificSourceSets }
         )
     }
 
-    fun getModule(component: ResolvedComponentResult, projectStructureMetadata: KotlinProjectStructureMetadata): KotlinModule {
+    fun getModule(component: ResolvedComponentResult, projectStructureMetadata: KotlinProjectStructureMetadata): KpmModule {
         val moduleId = component.toSingleModuleIdentifier()
         return modulesCache.getOrPut(moduleId) {
             buildModuleFromProjectStructureMetadata(
@@ -123,7 +123,7 @@ private fun detectModules(targets: Iterable<KotlinTarget>, sourceSets: Iterable<
 class GradleProjectModuleBuilder(private val addInferredSourceSetVisibilityAsExplicit: Boolean) {
     private fun getModulesFromPm20Project(project: Project) = project.kpmModules.toList()
 
-    fun buildModulesFromProject(project: Project): List<KotlinModule> {
+    fun buildModulesFromProject(project: Project): List<KpmModule> {
         if (project.hasKpmModel)
             return getModulesFromPm20Project(project)
 
@@ -144,19 +144,19 @@ class GradleProjectModuleBuilder(private val addInferredSourceSetVisibilityAsExp
                 .flatMap { component -> (component as? KotlinVariant)?.usages.orEmpty() }
         }.groupBy { it.compilation }
 
-        val moduleByFragment = mutableMapOf<KotlinModuleFragment, KotlinModule>()
+        val moduleByFragment = mutableMapOf<KpmFragment, KpmModule>()
 
         val result = moduleCompilationCluster.entries.map { (classifier, compilationsToInclude) ->
             val sourceSetsToInclude = compilationsToInclude.flatMapTo(mutableSetOf()) { it.allKotlinSourceSets }
 
-            val moduleIdentifier = LocalModuleIdentifier(
+            val moduleIdentifier = KpmLocalModuleIdentifier(
                 project.currentBuildId().name,
                 project.path,
                 classifier.takeIf { it != KotlinCompilation.MAIN_COMPILATION_NAME }
             )
 
-            BasicKotlinModule(moduleIdentifier).apply {
-                val variantToCompilation = mutableMapOf<BasicKotlinModuleFragment, KotlinCompilation<*>>()
+            KpmBasicModule(moduleIdentifier).apply {
+                val variantToCompilation = mutableMapOf<KpmBasicFragment, KotlinCompilation<*>>()
 
                 compilationsToInclude.forEach { compilation ->
                     // A compilation may be exposed as more than one variant, so we collect all of its names
@@ -165,7 +165,7 @@ class GradleProjectModuleBuilder(private val addInferredSourceSetVisibilityAsExp
                             ?: listOf(compilation.defaultSourceSetName)
 
                     variantNames.forEach { variantName ->
-                        val variant = BasicKotlinModuleVariant(this@apply, variantName, DefaultLanguageSettingsBuilder())
+                        val variant = KpmBasicVariant(this@apply, variantName, DefaultLanguageSettingsBuilder())
                         moduleByFragment[variant] = this@apply
                         variantToCompilation[variant] = compilation
                         fragments.add(variant)
@@ -181,8 +181,8 @@ class GradleProjectModuleBuilder(private val addInferredSourceSetVisibilityAsExp
                 }
                 // Once all fragments are created, add dependencies between them
                 sourceSetsToInclude.forEach { sourceSet ->
-                    val existingVariant = fragments.filterIsInstance<BasicKotlinModuleVariant>().find { it.fragmentName == sourceSet.name }
-                    val fragment = existingVariant ?: BasicKotlinModuleFragment(this@apply, sourceSet.name, sourceSet.languageSettings).also { fragments.add(it) }
+                    val existingVariant = fragments.filterIsInstance<KpmBasicVariant>().find { it.fragmentName == sourceSet.name }
+                    val fragment = existingVariant ?: KpmBasicFragment(this@apply, sourceSet.name, sourceSet.languageSettings).also { fragments.add(it) }
                     moduleByFragment[fragment] = this@apply
                     fragment.kotlinSourceRoots = sourceSet.kotlin.sourceDirectories.toList()
 
@@ -197,7 +197,7 @@ class GradleProjectModuleBuilder(private val addInferredSourceSetVisibilityAsExp
                         ?: variantToCompilation.getValue(fragment).defaultSourceSet
                     sourceSet.dependsOn.forEach { dependency ->
                         val dependencyFragment = fragmentByName(dependency.name)
-                        fragment.directRefinesDependencies.add(dependencyFragment)
+                        fragment.declaredRefinesDependencies.add(dependencyFragment)
                     }
                 }
             }
@@ -210,7 +210,7 @@ class GradleProjectModuleBuilder(private val addInferredSourceSetVisibilityAsExp
             val variant = fragmentByName(compilation.defaultSourceSetName)
             compilation.associateWith.forEach { associate ->
                 val associateVariant = fragmentByName(associate.defaultSourceSetName)
-                variant.declaredModuleDependencies.add(KotlinModuleDependency(associateVariant.containingModule.moduleIdentifier))
+                variant.declaredModuleDependencies.add(KpmModuleDependency(associateVariant.containingModule.moduleIdentifier))
             }
         }
 
@@ -219,7 +219,7 @@ class GradleProjectModuleBuilder(private val addInferredSourceSetVisibilityAsExp
                 val fragment = fragmentByName(sourceSet.name)
                 getVisibleSourceSetsFromAssociateCompilations(project, sourceSet).forEach { dependency ->
                     val dependencyFragment = fragmentByName(dependency.name)
-                    fragment.declaredModuleDependencies.add(KotlinModuleDependency(dependencyFragment.containingModule.moduleIdentifier))
+                    fragment.declaredModuleDependencies.add(KpmModuleDependency(dependencyFragment.containingModule.moduleIdentifier))
                 }
             }
         }
@@ -238,44 +238,44 @@ class GradleProjectModuleBuilder(private val addInferredSourceSetVisibilityAsExp
 
 internal fun Dependency.toModuleDependency(
     project: Project
-): KotlinModuleDependency {
-    return KotlinModuleDependency(
+): KpmModuleDependency {
+    return KpmModuleDependency(
         when (this) {
             is ProjectDependency ->
-                LocalModuleIdentifier(
+                KpmLocalModuleIdentifier(
                     project.currentBuildId().name,
                     dependencyProject.path,
                     moduleClassifiersFromCapabilities(requestedCapabilities).single() // FIXME multiple capabilities
                 )
             is ModuleDependency ->
-                MavenModuleIdentifier(
+                KpmMavenModuleIdentifier(
                     group.orEmpty(),
                     name,
                     moduleClassifiersFromCapabilities(requestedCapabilities).single() // FIXME multiple capabilities
                 )
-            else -> MavenModuleIdentifier(group.orEmpty(), name, null)
+            else -> KpmMavenModuleIdentifier(group.orEmpty(), name, null)
         }
     )
 }
 
-private fun BasicKotlinModule.fragmentByName(name: String) =
+private fun KpmBasicModule.fragmentByName(name: String) =
     fragments.single { it.fragmentName == name }
 
 class CachingModuleVariantResolver(private val actualResolver: ModuleVariantResolver) : ModuleVariantResolver {
-    private val resultCacheByRequestingVariant: MutableMap<KotlinModuleVariant, MutableMap<KotlinModule, VariantResolution>> = mutableMapOf()
+    private val resultCacheByRequestingVariant: MutableMap<org.jetbrains.kotlin.project.model.KpmVariant, MutableMap<KpmModule, VariantResolution>> = mutableMapOf()
 
-    override fun getChosenVariant(requestingVariant: KotlinModuleVariant, dependencyModule: KotlinModule): VariantResolution {
+    override fun getChosenVariant(requestingVariant: org.jetbrains.kotlin.project.model.KpmVariant, dependencyModule: KpmModule): VariantResolution {
         val resultCache = resultCacheByRequestingVariant.getOrPut(requestingVariant) { mutableMapOf() }
         return resultCache.getOrPut(dependencyModule) { actualResolver.getChosenVariant(requestingVariant, dependencyModule) }
     }
 }
 
 class GradleModuleVariantResolver : ModuleVariantResolver {
-    override fun getChosenVariant(requestingVariant: KotlinModuleVariant, dependencyModule: KotlinModule): VariantResolution {
+    override fun getChosenVariant(requestingVariant: org.jetbrains.kotlin.project.model.KpmVariant, dependencyModule: KpmModule): VariantResolution {
         // TODO maybe improve this behavior? Currently it contradicts dependency resolution in that it may return a chosen variant for an
         //  unrequested dependency. This workaround is needed for synthetic modules which were not produced from module metadata, so maybe
         //  those modules should be marked somehow
-        if (dependencyModule is ExternalPlainKotlinModule) {
+        if (dependencyModule is KpmExternalPlainModule) {
             return VariantResolution.fromMatchingVariants(
                 requestingVariant,
                 dependencyModule,
@@ -283,7 +283,7 @@ class GradleModuleVariantResolver : ModuleVariantResolver {
             )
         }
 
-        if (requestingVariant !is KotlinGradleVariant) {
+        if (requestingVariant !is KpmGradleVariant) {
             return VariantResolution.Unknown(requestingVariant, dependencyModule)
         }
 
@@ -300,7 +300,7 @@ class GradleModuleVariantResolver : ModuleVariantResolver {
         // FIXME check composite builds, it's likely that resolvedVariantProvider fails on them?
         val resolvedGradleVariantName = resolvedVariantProvider.getResolvedVariantName(dependencyModuleId, compileClasspath)
         val kotlinVariantName = when (dependencyModule) {
-            is KotlinGradleModule -> {
+            is KpmGradleModule -> {
                 dependencyModule.variants.singleOrNull { resolvedGradleVariantName in it.gradleVariantNames }?.name
                     ?: return VariantResolution.Unknown(requestingVariant, dependencyModule)
             }
@@ -315,10 +315,10 @@ class GradleModuleVariantResolver : ModuleVariantResolver {
             VariantResolution.VariantMatch(requestingVariant, dependencyModule, resultVariant)
     }
 
-    private fun getCompileDependenciesConfigurationForVariant(project: Project, requestingVariant: KotlinModuleVariant): Configuration =
+    private fun getCompileDependenciesConfigurationForVariant(project: Project, requestingVariant: org.jetbrains.kotlin.project.model.KpmVariant): Configuration =
         when {
             project.hasKpmModel -> {
-                (requestingVariant as KotlinGradleVariant).compileDependenciesConfiguration
+                (requestingVariant as KpmGradleVariant).compileDependenciesConfiguration
             }
             else -> {
                 val targets =

@@ -22,16 +22,15 @@ val KotlinPm20ProjectExtension.ideaKotlinProjectModelBuilder: IdeaKotlinProjectM
     get() = this.ideaKotlinProjectModelBuilder
 
 @ExternalVariantApi
-fun KotlinGradleModule.createExternalJvmVariant(
+fun KpmGradleModule.createExternalJvmVariant(
     name: String,
     config: KotlinJvmVariantConfig
-): KotlinJvmVariant {
+): KpmJvmVariant {
     val variant = KotlinJvmVariantFactory(this, config).create(name)
     fragments.add(variant)
     return variant
 }
 
 @ExternalVariantApi
-val KotlinGradleVariantInternal.compilationData
+val KpmGradleVariantInternal.compilationData
     get() = this.compilationData
-

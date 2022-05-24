@@ -15,18 +15,18 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.hasKpmModel
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.kpmModules
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.metadataCompilationRegistryByModuleId
 import org.jetbrains.kotlin.gradle.targets.native.internal.*
-import org.jetbrains.kotlin.project.model.KotlinModuleIdentifier
+import org.jetbrains.kotlin.project.model.KpmModuleIdentifier
 
 internal fun ProjectMetadataProvider(
     dependencyProject: Project,
-    moduleIdentifier: KotlinModuleIdentifier
+    moduleIdentifier: KpmModuleIdentifier
 ): ProjectMetadataProvider {
     return ProjectMetadataProviderImpl(dependencyProject, moduleIdentifier)
 }
 
 private class ProjectMetadataProviderImpl(
     private val dependencyProject: Project,
-    private val moduleIdentifier: KotlinModuleIdentifier
+    private val moduleIdentifier: KpmModuleIdentifier
 ) : ProjectMetadataProvider() {
     override fun getSourceSetCompiledMetadata(sourceSetName: String): FileCollection {
         val projectExtension = dependencyProject.topLevelExtensionOrNull

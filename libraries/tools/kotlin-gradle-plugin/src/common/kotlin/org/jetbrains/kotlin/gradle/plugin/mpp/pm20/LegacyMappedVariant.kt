@@ -25,20 +25,19 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.publishedConfigurationName
 import org.jetbrains.kotlin.gradle.plugin.sources.kpm.FragmentMappedKotlinSourceSet
 import org.jetbrains.kotlin.gradle.utils.filesProvider
 import org.jetbrains.kotlin.project.model.KotlinAttributeKey
-import org.jetbrains.kotlin.project.model.KotlinModuleDependency
-import org.jetbrains.kotlin.project.model.KotlinModuleFragment
+import org.jetbrains.kotlin.project.model.KpmModuleDependency
 import org.jetbrains.kotlin.tooling.core.MutableExtras
 import org.jetbrains.kotlin.tooling.core.mutableExtrasOf
 
 internal open class LegacyMappedVariant(
     internal val compilation: KotlinCompilation<*>,
-) : KotlinGradleVariant {
+) : KpmGradleVariant {
     override fun toString(): String = "variant mapped to $compilation"
 
     private val fragmentForDefaultSourceSet =
         (compilation.defaultSourceSet as FragmentMappedKotlinSourceSet).underlyingFragment
 
-    override val containingModule: KotlinGradleModule get() = fragmentForDefaultSourceSet.containingModule
+    override val containingModule: KpmGradleModule get() = fragmentForDefaultSourceSet.containingModule
 
     override val platformType: KotlinPlatformType
         get() = compilation.platformType
@@ -90,11 +89,11 @@ internal open class LegacyMappedVariant(
 
     override val extras: MutableExtras = mutableExtrasOf()
 
-    override fun refines(other: KotlinGradleFragment) {
+    override fun refines(other: KpmGradleFragment) {
         fragmentForDefaultSourceSet.refines(other)
     }
 
-    override fun refines(other: NamedDomainObjectProvider<KotlinGradleFragment>) {
+    override fun refines(other: NamedDomainObjectProvider<KpmGradleFragment>) {
         fragmentForDefaultSourceSet.refines(other)
     }
 
@@ -106,10 +105,10 @@ internal open class LegacyMappedVariant(
     override val fragmentName: String
         get() = fragmentForDefaultSourceSet.fragmentName + "Variant"
 
-    override val directRefinesDependencies: Iterable<KotlinGradleFragment>
-        get() = fragmentForDefaultSourceSet.directRefinesDependencies
+    override val declaredRefinesDependencies: Iterable<KpmGradleFragment>
+        get() = fragmentForDefaultSourceSet.declaredRefinesDependencies
 
-    override val declaredModuleDependencies: Iterable<KotlinModuleDependency>
+    override val declaredModuleDependencies: Iterable<KpmModuleDependency>
         get() = fragmentForDefaultSourceSet.declaredModuleDependencies
 
     /** This configuration includes the dependencies from the refines-parents */
@@ -151,7 +150,7 @@ internal open class LegacyMappedVariant(
 
 internal class LegacyMappedVariantWithRuntime(private val compilationWithRuntime: KotlinCompilationToRunnableFiles<*>) :
     LegacyMappedVariant(compilationWithRuntime),
-    KotlinGradleVariantWithRuntime {
+    KpmGradleVariantWithRuntime {
 
     override val runtimeDependenciesConfiguration: Configuration
         get() = project.configurations.getByName(compilationWithRuntime.runtimeDependencyConfigurationName)
@@ -195,7 +194,7 @@ internal fun mapTargetCompilationsToKpmVariants(target: AbstractKotlinTarget, pu
         }
 
     whenPublicationShouldRegister {
-        val mainModule = target.project.kpmModules.getByName(KotlinGradleModule.MAIN_MODULE_NAME)
+        val mainModule = target.project.kpmModules.getByName(KpmGradleModule.MAIN_MODULE_NAME)
         target.kotlinComponents.forEach { kotlinComponent ->
             val moduleHolder = DefaultSingleMavenPublishedModuleHolder(
                 mainModule,

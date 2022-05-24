@@ -15,13 +15,12 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinDependencyHandler
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.LanguageSettingsBuilder
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.*
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.unambiguousNameInProject
 import org.jetbrains.kotlin.gradle.plugin.sources.createDefaultSourceDirectorySet
 
 class FragmentMappedKotlinSourceSet(
     private val sourceSetName: String,
     private val project: Project,
-    internal val underlyingFragment: KotlinGradleFragment
+    internal val underlyingFragment: KpmGradleFragment
 ) : KotlinSourceSet {
     val displayName: String
         get() = sourceSetName
@@ -75,7 +74,7 @@ class FragmentMappedKotlinSourceSet(
 
     override val dependsOn: Set<KotlinSourceSet>
         get() = project.kotlinExtension.sourceSets.filter {
-            it is FragmentMappedKotlinSourceSet && it.underlyingFragment in underlyingFragment.directRefinesDependencies
+            it is FragmentMappedKotlinSourceSet && it.underlyingFragment in underlyingFragment.declaredRefinesDependencies
         }.toSet()
 
     override fun toString(): String = "source set $name"

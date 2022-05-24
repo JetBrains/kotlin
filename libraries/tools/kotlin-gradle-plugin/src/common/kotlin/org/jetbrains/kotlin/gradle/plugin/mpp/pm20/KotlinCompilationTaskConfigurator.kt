@@ -20,14 +20,14 @@ open class KotlinCompilationTaskConfigurator(
 ) {
     open val fragmentSourcesProvider: FragmentSourcesProvider = FragmentSourcesProvider()
 
-    open fun getSourcesForFragmentCompilation(fragment: KotlinGradleFragment): MultipleSourceRootsProvider =
+    open fun getSourcesForFragmentCompilation(fragment: KpmGradleFragment): MultipleSourceRootsProvider =
         fragmentSourcesProvider.getSourcesFromRefinesClosure(fragment)
 
-    open fun getCommonSourcesForFragmentCompilation(fragment: KotlinGradleFragment): MultipleSourceRootsProvider =
+    open fun getCommonSourcesForFragmentCompilation(fragment: KpmGradleFragment): MultipleSourceRootsProvider =
         fragmentSourcesProvider.getCommonSourcesFromRefinesClosure(fragment)
 
     fun createKotlinJvmCompilationTask(
-        variant: KotlinGradleVariant,
+        variant: KpmGradleVariant,
         compilationData: KotlinCompilationData<*>
     ): TaskProvider<out KotlinCompile> {
         Kotlin2JvmSourceSetProcessor(KotlinTasksProvider(), compilationData).run()
@@ -46,7 +46,7 @@ open class KotlinCompilationTaskConfigurator(
     }
 
     protected fun createKotlinNativeCompilationTask(
-        fragment: KotlinGradleFragment,
+        fragment: KpmGradleFragment,
         compilationData: KotlinNativeCompilationData<*>,
         configure: KotlinNativeCompile.() -> Unit
     ): TaskProvider<KotlinNativeCompile> {
@@ -65,7 +65,7 @@ open class KotlinCompilationTaskConfigurator(
     }
 
     fun createKotlinNativeCompilationTask(
-        variant: KotlinGradleVariant,
+        variant: KpmGradleVariant,
         compilationData: KotlinNativeCompilationData<*>
     ): TaskProvider<KotlinNativeCompile> = createKotlinNativeCompilationTask(variant, compilationData) {
         kotlinPluginData = project.compilerPluginProviderForPlatformCompilation(variant, compilationData)

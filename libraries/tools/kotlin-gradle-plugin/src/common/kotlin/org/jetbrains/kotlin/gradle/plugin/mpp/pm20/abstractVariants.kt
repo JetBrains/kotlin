@@ -15,21 +15,20 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.DefaultKotlinCompilationOutput
 import org.jetbrains.kotlin.gradle.plugin.mpp.MavenPublicationCoordinatesProvider
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.ComputedCapability
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.disambiguateName
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.newDependencyFilesHolder
 import org.jetbrains.kotlin.gradle.plugin.mpp.publishedConfigurationName
 import org.jetbrains.kotlin.gradle.utils.dashSeparatedName
 import org.jetbrains.kotlin.project.model.KotlinAttributeKey
 import org.jetbrains.kotlin.project.model.KotlinPlatformTypeAttribute
 
-abstract class KotlinGradleVariantInternal(
-    containingModule: KotlinGradleModule,
+abstract class KpmGradleVariantInternal(
+    containingModule: KpmGradleModule,
     fragmentName: String,
     dependencyConfigurations: KotlinFragmentDependencyConfigurations,
     final override val compileDependenciesConfiguration: Configuration,
     final override val apiElementsConfiguration: Configuration
-) : KotlinGradleFragmentInternal(
+) : KpmGradleFragmentInternal(
     containingModule, fragmentName, dependencyConfigurations
-), KotlinGradleVariant {
+), KpmGradleVariant {
 
     override val variantAttributes: Map<KotlinAttributeKey, String>
         get() = mapOf(KotlinPlatformTypeAttribute to kotlinPlatformTypeAttributeFromPlatform(platformType)) // TODO user attributes
@@ -51,7 +50,7 @@ abstract class KotlinGradleVariantInternal(
 }
 
 class DefaultSingleMavenPublishedModuleHolder(
-    private var module: KotlinGradleModule, override val defaultPublishedModuleSuffix: String?
+    private var module: KpmGradleModule, override val defaultPublishedModuleSuffix: String?
 ) : SingleMavenPublishedModuleHolder {
     private val project get() = module.project
 
@@ -80,24 +79,24 @@ class DefaultSingleMavenPublishedModuleHolder(
 private fun kotlinPlatformTypeAttributeFromPlatform(platformType: KotlinPlatformType) = platformType.name
 
 // TODO: rewrite with the artifacts API
-internal val KotlinGradleVariant.defaultSourceArtifactTaskName: String
+internal val KpmGradleVariant.defaultSourceArtifactTaskName: String
     get() = disambiguateName("sourcesJar")
 
-abstract class KotlinGradleVariantWithRuntimeInternal(
-    containingModule: KotlinGradleModule,
+abstract class KpmGradleVariantWithRuntimeInternal(
+    containingModule: KpmGradleModule,
     fragmentName: String,
     dependencyConfigurations: KotlinFragmentDependencyConfigurations,
     compileDependencyConfiguration: Configuration,
     apiElementsConfiguration: Configuration,
     final override val runtimeDependenciesConfiguration: Configuration,
     final override val runtimeElementsConfiguration: Configuration
-) : KotlinGradleVariantInternal(
+) : KpmGradleVariantInternal(
     containingModule = containingModule,
     fragmentName = fragmentName,
     dependencyConfigurations = dependencyConfigurations,
     compileDependenciesConfiguration = compileDependencyConfiguration,
     apiElementsConfiguration = apiElementsConfiguration
-), KotlinGradleVariantWithRuntime {
+), KpmGradleVariantWithRuntime {
     // TODO deduplicate with KotlinCompilation?
 
     override var runtimeDependencyFiles: FileCollection = project.files(runtimeDependenciesConfiguration)
@@ -106,17 +105,17 @@ abstract class KotlinGradleVariantWithRuntimeInternal(
         project.files(listOf({ compilationOutputs.allOutputs }, { runtimeDependencyFiles }))
 }
 
-private fun defaultModuleSuffix(module: KotlinGradleModule, variantName: String): String =
+private fun defaultModuleSuffix(module: KpmGradleModule, variantName: String): String =
     dashSeparatedName(variantName, module.moduleClassifier)
 
-abstract class KotlinGradlePublishedVariantWithRuntime(
-    containingModule: KotlinGradleModule, fragmentName: String,
+abstract class KpmGradlePublishedVariantWithRuntime(
+    containingModule: KpmGradleModule, fragmentName: String,
     dependencyConfigurations: KotlinFragmentDependencyConfigurations,
     compileDependencyConfiguration: Configuration,
     apiElementsConfiguration: Configuration,
     runtimeDependencyConfiguration: Configuration,
     runtimeElementsConfiguration: Configuration
-) : KotlinGradleVariantWithRuntimeInternal(
+) : KpmGradleVariantWithRuntimeInternal(
     containingModule = containingModule,
     fragmentName = fragmentName,
     dependencyConfigurations = dependencyConfigurations,

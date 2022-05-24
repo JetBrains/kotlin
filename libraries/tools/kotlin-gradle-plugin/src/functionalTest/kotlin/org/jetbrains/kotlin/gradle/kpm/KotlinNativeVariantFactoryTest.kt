@@ -25,7 +25,7 @@ class KotlinNativeVariantFactoryTest(
     @Suppress("unused") private val variantClassName: String
 ) : AbstractKpmExtensionTest() {
 
-    private lateinit var variant: KotlinNativeVariantInternal
+    private lateinit var variant: KpmNativeVariantInternal
 
     @BeforeTest
     fun createVariant() {
@@ -87,12 +87,12 @@ class KotlinNativeVariantFactoryTest(
         @JvmStatic
         @Parameterized.Parameters(name = "{1}")
         fun data() = listOf(
-            KotlinLinuxX64Variant.constructor,
-            KotlinMacosX64Variant.constructor,
-            KotlinMacosX64Variant.constructor,
-            KotlinMacosArm64Variant.constructor,
-            KotlinIosX64Variant.constructor,
-            KotlinIosArm64Variant.constructor
+            KpmLinuxX64Variant.constructor,
+            KpmMacosX64Variant.constructor,
+            KpmMacosX64Variant.constructor,
+            KpmMacosArm64Variant.constructor,
+            KpmIosX64Variant.constructor,
+            KpmIosArm64Variant.constructor
         ).map { arrayOf(it, it.variantClass.simpleName) }
     }
 }

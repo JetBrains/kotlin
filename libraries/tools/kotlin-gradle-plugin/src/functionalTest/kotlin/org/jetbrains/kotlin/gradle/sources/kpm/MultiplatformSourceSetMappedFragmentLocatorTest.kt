@@ -14,7 +14,7 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 import org.jetbrains.kotlin.gradle.plugin.sources.kpm.MultiplatformSourceSetMappedFragmentLocator
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinGradleModule
+import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KpmGradleModule
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.kpmModules
 import org.jetbrains.kotlin.gradle.plugin.sources.kpm.SourceSetMappedFragmentLocator
 
@@ -42,17 +42,17 @@ internal open class MultiplatformSourceSetMappedFragmentLocatorTest : Multiplatf
 
     @Test
     fun `name with one part is returned as fragment name with main module`() {
-        doTest("foo", "foo", KotlinGradleModule.MAIN_MODULE_NAME)
+        doTest("foo", "foo", KpmGradleModule.MAIN_MODULE_NAME)
     }
 
     @Test
     fun `main is truncated from name`() {
-        doTest("fooBarMain", "fooBar", KotlinGradleModule.MAIN_MODULE_NAME)
+        doTest("fooBarMain", "fooBar", KpmGradleModule.MAIN_MODULE_NAME)
     }
 
     @Test
     fun `module chosen for test fragment`() {
-        doTest("abcDefGhiTest", "abcDefGhi", KotlinGradleModule.TEST_MODULE_NAME)
+        doTest("abcDefGhiTest", "abcDefGhi", KpmGradleModule.TEST_MODULE_NAME)
     }
 
     @Test
@@ -60,12 +60,12 @@ internal open class MultiplatformSourceSetMappedFragmentLocatorTest : Multiplatf
         val nameWithDigits = "testDigits123Accepted123"
         project.kpmModules.create(nameWithDigits)
         doTest("foo${nameWithDigits.capitalize()}", "foo", nameWithDigits)
-        doTest("${nameWithDigits}Main", nameWithDigits, KotlinGradleModule.MAIN_MODULE_NAME)
+        doTest("${nameWithDigits}Main", nameWithDigits, KpmGradleModule.MAIN_MODULE_NAME)
     }
 
     @Test
     fun `capitalized name handling`() {
-        doTest("IAmTheMain", "IAmThe", KotlinGradleModule.MAIN_MODULE_NAME)
+        doTest("IAmTheMain", "IAmThe", KpmGradleModule.MAIN_MODULE_NAME)
     }
 
     @Test
@@ -78,7 +78,7 @@ internal open class MultiplatformSourceSetMappedFragmentLocatorTest : Multiplatf
         // also check for the same logic in fragments that go to main if no suffix matched:
 
         val nameForMain = "fooBarBaz"
-        doTest(nameForMain, nameForMain, KotlinGradleModule.MAIN_MODULE_NAME)
+        doTest(nameForMain, nameForMain, KpmGradleModule.MAIN_MODULE_NAME)
         val moduleSuffixName = "barBaz"
         project.kpmModules.create(moduleSuffixName)
         doTest(nameForMain, "foo", moduleSuffixName)
@@ -95,12 +95,12 @@ internal class MultiplatformSourceSetMappedFragmentLocatorTestWithAndroid : Mult
 
     @Test
     fun `android source set names`() {
-        doTest("androidMain", "android", KotlinGradleModule.MAIN_MODULE_NAME)
-        doTest("androidTest", "android", KotlinGradleModule.TEST_MODULE_NAME)
-        doTest("androidAndroidTest", "androidAndroid", KotlinGradleModule.TEST_MODULE_NAME)
+        doTest("androidMain", "android", KpmGradleModule.MAIN_MODULE_NAME)
+        doTest("androidTest", "android", KpmGradleModule.TEST_MODULE_NAME)
+        doTest("androidAndroidTest", "androidAndroid", KpmGradleModule.TEST_MODULE_NAME)
 
-        doTest("androidDebug", "androidDebug", KotlinGradleModule.MAIN_MODULE_NAME)
-        doTest("androidDebugTest", "androidDebug", KotlinGradleModule.TEST_MODULE_NAME)
-        doTest("androidDebugAndroidTest", "androidDebugAndroid", KotlinGradleModule.TEST_MODULE_NAME)
+        doTest("androidDebug", "androidDebug", KpmGradleModule.MAIN_MODULE_NAME)
+        doTest("androidDebugTest", "androidDebug", KpmGradleModule.TEST_MODULE_NAME)
+        doTest("androidDebugAndroidTest", "androidDebugAndroid", KpmGradleModule.TEST_MODULE_NAME)
     }
 }

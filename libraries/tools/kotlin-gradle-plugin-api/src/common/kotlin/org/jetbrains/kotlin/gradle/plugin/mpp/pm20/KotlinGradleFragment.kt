@@ -12,16 +12,16 @@ import org.gradle.api.Project
 import org.gradle.api.file.SourceDirectorySet
 import org.jetbrains.kotlin.gradle.plugin.HasKotlinDependencies
 import org.jetbrains.kotlin.gradle.plugin.LanguageSettingsBuilder
-import org.jetbrains.kotlin.project.model.KotlinModuleFragment
+import org.jetbrains.kotlin.project.model.KpmFragment
 import org.jetbrains.kotlin.project.model.utils.variantsContainingFragment
 import org.jetbrains.kotlin.tooling.core.MutableExtras
 import org.jetbrains.kotlin.tooling.core.closure
 import org.jetbrains.kotlin.tooling.core.withClosure
 
-interface KotlinGradleFragment : KotlinModuleFragment, HasKotlinDependencies, KotlinFragmentDependencyConfigurations, Named {
+interface KpmGradleFragment : KpmFragment, HasKotlinDependencies, KotlinFragmentDependencyConfigurations, Named {
     override val kotlinSourceRoots: SourceDirectorySet
 
-    override val containingModule: KotlinGradleModule
+    override val containingModule: KpmGradleModule
 
     override fun getName(): String = fragmentName
 
@@ -32,11 +32,17 @@ interface KotlinGradleFragment : KotlinModuleFragment, HasKotlinDependencies, Ko
 
     val extras: MutableExtras
 
-    fun refines(other: KotlinGradleFragment)
+    fun refines(other: KpmGradleFragment)
 
-    fun refines(other: NamedDomainObjectProvider<KotlinGradleFragment>)
+    fun refines(other: NamedDomainObjectProvider<KpmGradleFragment>)
 
-    override val directRefinesDependencies: Iterable<KotlinGradleFragment>
+    override val declaredRefinesDependencies: Iterable<KpmGradleFragment>
+
+    override val refinesClosure: Set<KpmGradleFragment>
+        get() = this.closure { it.declaredRefinesDependencies }
+
+    override val withRefinesClosure: Set<KpmGradleFragment>
+        get() = this.withClosure { it.declaredRefinesDependencies }
 
     override fun dependencies(configureClosure: Closure<Any?>) =
         dependencies f@{ project.configure(this@f, configureClosure) }
@@ -63,14 +69,8 @@ interface KotlinGradleFragment : KotlinModuleFragment, HasKotlinDependencies, Ko
                 listOf(transitiveApiConfiguration.name, transitiveImplementationConfiguration.name)
 }
 
-val KotlinGradleFragment.withRefinesClosure: Set<KotlinGradleFragment>
-    get() = this.withClosure { it.directRefinesDependencies }
-
-val KotlinGradleFragment.refinesClosure: Set<KotlinGradleFragment>
-    get() = this.closure { it.directRefinesDependencies }
-
-val KotlinGradleFragment.path: String
+val KpmGradleFragment.path: String
     get() = "${project.path}/${containingModule.name}/$fragmentName"
 
-val KotlinGradleFragment.containingVariants: Set<KotlinGradleVariant>
-    get() = containingModule.variantsContainingFragment(this).map { it as KotlinGradleVariant }.toSet()
+val KpmGradleFragment.containingVariants: Set<KpmGradleVariant>
+    get() = containingModule.variantsContainingFragment(this).map { it as KpmGradleVariant }.toSet()

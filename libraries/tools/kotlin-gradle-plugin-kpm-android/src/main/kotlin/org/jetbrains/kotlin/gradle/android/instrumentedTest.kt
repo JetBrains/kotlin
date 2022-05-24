@@ -5,12 +5,12 @@
 
 package org.jetbrains.kotlin.gradle.android
 
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinGradleModule
+import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KpmGradleModule
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinPm20ProjectExtension
 
 val KotlinPm20ProjectExtension.instrumentedTest
     get() = modules.maybeCreate("instrumentedTest")
 
-fun KotlinPm20ProjectExtension.instrumentedTest(configure: KotlinGradleModule.() -> Unit) {
+fun KotlinPm20ProjectExtension.instrumentedTest(configure: KpmGradleModule.() -> Unit) {
     instrumentedTest.apply(configure)
 }

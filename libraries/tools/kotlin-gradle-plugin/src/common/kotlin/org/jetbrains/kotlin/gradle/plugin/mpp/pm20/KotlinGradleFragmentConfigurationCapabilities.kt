@@ -16,19 +16,19 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinGradleFragmentConfigura
 /* Internal abbreviation */
 internal typealias FragmentCapabilities<T> = KotlinGradleFragmentConfigurationCapabilities<T>
 
-interface KotlinGradleFragmentConfigurationCapabilities<in T : KotlinGradleFragment> {
+interface KotlinGradleFragmentConfigurationCapabilities<in T : KpmGradleFragment> {
     interface CapabilitiesContainer {
         fun capability(notation: Any)
     }
 
     fun setCapabilities(container: CapabilitiesContainer, fragment: T)
 
-    object None : KotlinGradleFragmentConfigurationCapabilities<KotlinGradleFragment> {
-        override fun setCapabilities(container: CapabilitiesContainer, fragment: KotlinGradleFragment) = Unit
+    object None : KotlinGradleFragmentConfigurationCapabilities<KpmGradleFragment> {
+        override fun setCapabilities(container: CapabilitiesContainer, fragment: KpmGradleFragment) = Unit
     }
 }
 
-fun <T : KotlinGradleFragment> KotlinGradleFragmentConfigurationCapabilities<T>.setCapabilities(
+fun <T : KpmGradleFragment> KotlinGradleFragmentConfigurationCapabilities<T>.setCapabilities(
     publications: ConfigurationPublications, fragment: T
 ) = setCapabilities(CapabilitiesContainer(publications), fragment)
 
@@ -44,13 +44,13 @@ private class CapabilitiesContainerImpl(
     override fun capability(notation: Any) = publications.capability(notation)
 }
 
-class KotlinGradleFragmentConfigurationCapabilitiesContext<T : KotlinGradleFragment> internal constructor(
+class KotlinGradleFragmentConfigurationCapabilitiesContext<T : KpmGradleFragment> internal constructor(
     internal val container: CapabilitiesContainer, val fragment: T
 ) : CapabilitiesContainer by container {
     val project: Project get() = fragment.project
 }
 
-fun <T : KotlinGradleFragment> FragmentCapabilities(
+fun <T : KpmGradleFragment> FragmentCapabilities(
     setCapabilities: KotlinGradleFragmentConfigurationCapabilitiesContext<T>.() -> Unit
 ): KotlinGradleFragmentConfigurationCapabilities<T> = object : KotlinGradleFragmentConfigurationCapabilities<T> {
     override fun setCapabilities(container: CapabilitiesContainer, fragment: T) {
@@ -59,7 +59,7 @@ fun <T : KotlinGradleFragment> FragmentCapabilities(
     }
 }
 
-operator fun <T : KotlinGradleFragment> FragmentCapabilities<T>.plus(other: FragmentCapabilities<T>): FragmentCapabilities<T> {
+operator fun <T : KpmGradleFragment> FragmentCapabilities<T>.plus(other: FragmentCapabilities<T>): FragmentCapabilities<T> {
     if (this === KotlinGradleFragmentConfigurationCapabilities.None) return other
     if (other === KotlinGradleFragmentConfigurationCapabilities.None) return this
 
@@ -78,7 +78,7 @@ operator fun <T : KotlinGradleFragment> FragmentCapabilities<T>.plus(other: Frag
     return CompositeFragmentCapabilities(listOf(this, other))
 }
 
-internal class CompositeFragmentCapabilities<in T : KotlinGradleFragment>(val children: List<FragmentCapabilities<T>>) :
+internal class CompositeFragmentCapabilities<in T : KpmGradleFragment>(val children: List<FragmentCapabilities<T>>) :
     FragmentCapabilities<T> {
     override fun setCapabilities(container: CapabilitiesContainer, fragment: T) {
         children.forEach { child -> child.setCapabilities(container, fragment) }

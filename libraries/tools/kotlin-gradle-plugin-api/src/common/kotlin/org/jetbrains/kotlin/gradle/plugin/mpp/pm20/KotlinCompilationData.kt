@@ -39,7 +39,7 @@ interface KotlinCompilationData<T : KotlinCommonOptions> {
 }
 
 interface KotlinVariantCompilationData<T : KotlinCommonOptions> : KotlinCompilationData<T> {
-    override val owner: KotlinGradleVariant
+    override val owner: KpmGradleVariant
 
     override val project: Project get() = owner.containingModule.project
 

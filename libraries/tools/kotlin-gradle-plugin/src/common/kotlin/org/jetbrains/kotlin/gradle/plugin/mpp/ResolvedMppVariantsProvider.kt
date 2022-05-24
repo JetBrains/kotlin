@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.toModuleIdentifiers
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.toSingleModuleIdentifier
 import org.jetbrains.kotlin.gradle.plugin.usageByName
 import org.jetbrains.kotlin.gradle.utils.getOrPut
-import org.jetbrains.kotlin.project.model.KotlinModuleIdentifier
+import org.jetbrains.kotlin.project.model.KpmModuleIdentifier
 import java.io.File
 
 internal class ResolvedMppVariantsProvider private constructor(private val project: Project) {
@@ -33,7 +33,7 @@ internal class ResolvedMppVariantsProvider private constructor(private val proje
 
     /** Gets the name of the variant that the module specified by the [moduleIdentifier] resolved to in the given [configuration].
      * The [moduleIdentifier] may be either the root module or a platform-specific module, the result is the same for the two cases. */
-    fun getResolvedVariantName(moduleIdentifier: KotlinModuleIdentifier, configuration: Configuration): String? =
+    fun getResolvedVariantName(moduleIdentifier: KpmModuleIdentifier, configuration: Configuration): String? =
         getEntryForModule(moduleIdentifier).run {
             if (configuration !in resolvedVariantsByConfiguration) {
                 resolveConfigurationAndSaveVariants(configuration, artifactResolutionMode = ArtifactResolutionMode.NONE)
@@ -46,7 +46,7 @@ internal class ResolvedMppVariantsProvider private constructor(private val proje
      * module of a multiplatform project, not one of its platform-specific modules, as seen in the given [configuration].
      * If the [configuration] requests platform artifacts and not the common code metadata, then this function will resolve its
      * dependencies to metadata separately. */
-    fun getHostSpecificMetadataArtifactByRootModule(rootModuleIdentifier: KotlinModuleIdentifier, configuration: Configuration): File? {
+    fun getHostSpecificMetadataArtifactByRootModule(rootModuleIdentifier: KpmModuleIdentifier, configuration: Configuration): File? {
         val rootModuleEntry = getEntryForModule(rootModuleIdentifier)
 
         val platformModuleEntry = rootModuleEntry.run {
@@ -68,7 +68,7 @@ internal class ResolvedMppVariantsProvider private constructor(private val proje
     }
 
     /** Gets the artifact of a particular MPP platform-specific [moduleIdentifier] as resolved in the [configuration]. */
-    fun getResolvedArtifactByPlatformModule(moduleIdentifier: KotlinModuleIdentifier, configuration: Configuration): File? =
+    fun getResolvedArtifactByPlatformModule(moduleIdentifier: KpmModuleIdentifier, configuration: Configuration): File? =
         getEntryForModule(moduleIdentifier).run {
             if (configuration !in resolvedArtifactByConfiguration) {
                 resolveConfigurationAndSaveVariants(configuration, artifactResolutionMode = ArtifactResolutionMode.NORMAL)
@@ -77,10 +77,10 @@ internal class ResolvedMppVariantsProvider private constructor(private val proje
             resolvedArtifactByConfiguration.getOrPut(configuration) { null }
         }
 
-    private fun getEntryForModule(moduleIdentifier: KotlinModuleIdentifier) =
+    private fun getEntryForModule(moduleIdentifier: KpmModuleIdentifier) =
         entriesCache.getOrPut(moduleIdentifier, { ModuleEntry(moduleIdentifier) })
 
-    private val entriesCache: MutableMap<KotlinModuleIdentifier, ModuleEntry> = mutableMapOf()
+    private val entriesCache: MutableMap<KpmModuleIdentifier, ModuleEntry> = mutableMapOf()
 
     private val mppComponentsByConfiguration: MutableMap<Configuration, Set<ResolvedComponentResult>> = mutableMapOf()
 
@@ -211,9 +211,9 @@ internal class ResolvedMppVariantsProvider private constructor(private val proje
      */
     private class ModuleEntry(
         @Suppress("unused") // simplify debugging
-        val moduleIdentifier: KotlinModuleIdentifier
+        val moduleIdentifier: KpmModuleIdentifier
     ) {
-        val dependenciesByConfiguration: MutableMap<Configuration, List<KotlinModuleIdentifier>> = HashMap()
+        val dependenciesByConfiguration: MutableMap<Configuration, List<KpmModuleIdentifier>> = HashMap()
         val resolvedVariantsByConfiguration: MutableMap<Configuration, List<ResolvedVariantResult?>?> = HashMap()
         val resolvedArtifactByConfiguration: MutableMap<Configuration, File?> = HashMap()
         val resolvedMetadataArtifactByConfiguration: MutableMap<Configuration, File?> = HashMap()

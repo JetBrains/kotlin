@@ -12,18 +12,18 @@ import org.gradle.api.NamedDomainObjectSet
 import org.gradle.api.Project
 import org.jetbrains.kotlin.gradle.plugin.HasKotlinDependencies
 import org.jetbrains.kotlin.gradle.plugin.KotlinDependencyHandler
-import org.jetbrains.kotlin.project.model.KotlinModule
-import org.jetbrains.kotlin.project.model.KotlinModuleIdentifier
+import org.jetbrains.kotlin.project.model.KpmModule
+import org.jetbrains.kotlin.project.model.KpmModuleIdentifier
 import org.jetbrains.kotlin.project.model.KpmCompilerPlugin
 
-interface KotlinGradleModule : KotlinModule, Named, HasKotlinDependencies {
+interface KpmGradleModule : KpmModule, Named, HasKotlinDependencies {
     val project: Project
     val moduleClassifier: String?
 
-    override val fragments: ExtensiblePolymorphicDomainObjectContainer<KotlinGradleFragment>
+    override val fragments: ExtensiblePolymorphicDomainObjectContainer<KpmGradleFragment>
 
     // TODO DSL & build script model: find a way to create a flexible typed view on fragments?
-    override val variants: NamedDomainObjectSet<KotlinGradleVariant>
+    override val variants: NamedDomainObjectSet<KpmGradleVariant>
 
     override val plugins: Set<KpmCompilerPlugin>
 
@@ -34,7 +34,7 @@ interface KotlinGradleModule : KotlinModule, Named, HasKotlinDependencies {
     fun makePublic()
 
     companion object {
-        val KotlinModuleIdentifier.moduleName get() = moduleClassifier ?: MAIN_MODULE_NAME
+        val KpmModuleIdentifier.moduleName get() = moduleClassifier ?: MAIN_MODULE_NAME
 
         const val MAIN_MODULE_NAME = "main"
         const val TEST_MODULE_NAME = "test"
@@ -47,10 +47,10 @@ interface KotlinGradleModule : KotlinModule, Named, HasKotlinDependencies {
 
     // DSL
 
-    val common: KotlinGradleFragment
-        get() = fragments.getByName(KotlinGradleFragment.COMMON_FRAGMENT_NAME)
+    val common: KpmGradleFragment
+        get() = fragments.getByName(KpmGradleFragment.COMMON_FRAGMENT_NAME)
 
-    fun common(configure: KotlinGradleFragment.() -> Unit) =
+    fun common(configure: KpmGradleFragment.() -> Unit) =
         common.configure()
 
     override fun dependencies(configure: KotlinDependencyHandler.() -> Unit) =

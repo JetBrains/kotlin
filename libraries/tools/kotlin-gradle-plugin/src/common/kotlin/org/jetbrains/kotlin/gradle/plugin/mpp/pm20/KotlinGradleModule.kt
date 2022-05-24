@@ -15,26 +15,26 @@ import org.jetbrains.kotlin.project.model.*
 import org.jetbrains.kotlin.project.model.utils.variantsContainingFragment
 import javax.inject.Inject
 
-open class KotlinGradleModuleInternal(
+open class KpmGradleModuleInternal(
     final override val project: Project,
     final override val moduleClassifier: String?
-) : KotlinGradleModule {
+) : KpmGradleModule {
 
     @Inject
     constructor(project: Project, moduleName: CharSequence) : this(
         project,
-        moduleName.takeIf { it != KotlinGradleModule.MAIN_MODULE_NAME }?.toString()
+        moduleName.takeIf { it != KpmGradleModule.MAIN_MODULE_NAME }?.toString()
     )
 
-    override val moduleIdentifier: KotlinModuleIdentifier =
-        LocalModuleIdentifier(project.currentBuildId().name, project.path, moduleClassifier)
+    override val moduleIdentifier: KpmModuleIdentifier =
+        KpmLocalModuleIdentifier(project.currentBuildId().name, project.path, moduleClassifier)
 
-    override val fragments: ExtensiblePolymorphicDomainObjectContainer<KotlinGradleFragment> =
-        project.objects.polymorphicDomainObjectContainer(KotlinGradleFragment::class.java)
+    override val fragments: ExtensiblePolymorphicDomainObjectContainer<KpmGradleFragment> =
+        project.objects.polymorphicDomainObjectContainer(KpmGradleFragment::class.java)
 
     // TODO DSL & build script model: find a way to create a flexible typed view on fragments?
-    override val variants: NamedDomainObjectSet<KotlinGradleVariant> by lazy {
-        fragments.withType(KotlinGradleVariant::class.java)
+    override val variants: NamedDomainObjectSet<KpmGradleVariant> by lazy {
+        fragments.withType(KpmGradleVariant::class.java)
     }
 
     override val plugins: Set<KpmCompilerPlugin> by lazy {
@@ -70,14 +70,14 @@ open class KotlinGradleModuleInternal(
     override fun toString(): String = "$moduleIdentifier (Gradle)"
 }
 
-internal val KotlinGradleModule.resolvableMetadataConfigurationName: String
+internal val KpmGradleModule.resolvableMetadataConfigurationName: String
     get() = lowerCamelCaseName(name, "DependenciesMetadata")
 
-internal val KotlinGradleModule.isMain
+internal val KpmGradleModule.isMain
     get() = moduleIdentifier.moduleClassifier == null
 
-internal fun KotlinGradleModule.disambiguateName(simpleName: String) =
+internal fun KpmGradleModule.disambiguateName(simpleName: String) =
     lowerCamelCaseName(moduleClassifier, simpleName)
 
-internal fun KotlinGradleModule.variantsContainingFragment(fragment: KotlinModuleFragment): Iterable<KotlinGradleVariant> =
-    (this as KotlinModule).variantsContainingFragment(fragment).onEach { it as KotlinGradleVariant } as Iterable<KotlinGradleVariant>
+internal fun KpmGradleModule.variantsContainingFragment(fragment: KpmFragment): Iterable<KpmGradleVariant> =
+    (this as KpmModule).variantsContainingFragment(fragment).onEach { it as KpmGradleVariant } as Iterable<KpmGradleVariant>

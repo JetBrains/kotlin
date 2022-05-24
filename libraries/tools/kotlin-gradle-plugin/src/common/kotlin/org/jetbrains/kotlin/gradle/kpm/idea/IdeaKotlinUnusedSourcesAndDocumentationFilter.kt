@@ -5,11 +5,11 @@
 
 package org.jetbrains.kotlin.gradle.kpm.idea
 
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinGradleFragment
+import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KpmGradleFragment
 
 internal object IdeaKotlinUnusedSourcesAndDocumentationFilter : IdeaKotlinDependencyTransformer {
     override fun transform(
-        fragment: KotlinGradleFragment, dependencies: Set<IdeaKotlinDependency>
+        fragment: KpmGradleFragment, dependencies: Set<IdeaKotlinDependency>
     ): Set<IdeaKotlinDependency> {
         val sourcesAndDocumentationDependencies = dependencies
             .filterIsInstance<IdeaKotlinResolvedBinaryDependency>()

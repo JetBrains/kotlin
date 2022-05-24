@@ -31,7 +31,7 @@ import org.jetbrains.kotlin.gradle.utils.filesProvider
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 import org.jetbrains.kotlin.gradle.utils.outputFilesProvider
 import org.jetbrains.kotlin.library.KLIB_FILE_EXTENSION
-import org.jetbrains.kotlin.project.model.KotlinModuleIdentifier
+import org.jetbrains.kotlin.project.model.KpmModuleIdentifier
 import java.io.File
 import java.util.concurrent.Callable
 import javax.inject.Inject
@@ -104,7 +104,7 @@ internal open class CInteropMetadataDependencyTransformationTask @Inject constru
 
     @Suppress("unused")
     class ChooseVisibleSourceSetProjection(
-        @Input val dependencyModuleIdentifiers: List<KotlinModuleIdentifier>,
+        @Input val dependencyModuleIdentifiers: List<KpmModuleIdentifier>,
         @Nested val projectStructureMetadata: KotlinProjectStructureMetadata,
         @Input val visibleSourceSetsProvidingCInterops: Set<String>
     ) {

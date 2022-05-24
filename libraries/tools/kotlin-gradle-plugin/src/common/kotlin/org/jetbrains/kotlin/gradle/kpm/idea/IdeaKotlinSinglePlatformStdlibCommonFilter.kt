@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.gradle.kpm.idea
 
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinGradleFragment
+import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KpmGradleFragment
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.containingVariants
 
 internal object IdeaKotlinSinglePlatformStdlibCommonFilter : IdeaKotlinDependencyTransformer {
@@ -13,7 +13,7 @@ internal object IdeaKotlinSinglePlatformStdlibCommonFilter : IdeaKotlinDependenc
     private val stdlibCoordinatesModules = setOf("kotlin-stdlib-common", "kotlin-test-common", "kotlin-test-annotations-common")
 
     override fun transform(
-        fragment: KotlinGradleFragment,
+        fragment: KpmGradleFragment,
         dependencies: Set<IdeaKotlinDependency>
     ): Set<IdeaKotlinDependency> {
         val platforms = fragment.containingVariants.map { it.platformType }.toSet()

@@ -33,9 +33,9 @@ class KpmPluginWithTransientPluginOptions(
         )
     )
 
-    override fun forMetadataCompilation(fragment: KotlinModuleFragment) = pluginData()
-    override fun forNativeMetadataCompilation(fragment: KotlinModuleFragment) = pluginData()
-    override fun forPlatformCompilation(variant: KotlinModuleVariant) = pluginData()
+    override fun forMetadataCompilation(fragment: KpmFragment) = pluginData()
+    override fun forNativeMetadataCompilation(fragment: KpmFragment) = pluginData()
+    override fun forPlatformCompilation(variant: KpmVariant) = pluginData()
 }
 
 class GradleKpmPluginWithTransientPluginOptions : GradleKpmCompilerPlugin {

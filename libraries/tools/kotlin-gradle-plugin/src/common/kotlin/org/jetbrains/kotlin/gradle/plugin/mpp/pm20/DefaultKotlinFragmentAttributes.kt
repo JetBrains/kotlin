@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsages.producerRuntimeUsage
 import org.jetbrains.kotlin.gradle.plugin.usageByName
 import org.jetbrains.kotlin.gradle.utils.isGradleVersionAtLeast
 
-val KotlinFragmentPlatformAttributes = FragmentAttributes<KotlinGradleVariant> {
+val KotlinFragmentPlatformAttributes = FragmentAttributes<KpmGradleVariant> {
     if (isGradleVersionAtLeast(7, 0) && fragment.platformType == KotlinPlatformType.jvm) {
         namedAttribute(TARGET_JVM_ENVIRONMENT_ATTRIBUTE, TargetJvmEnvironment.STANDARD_JVM)
     }
@@ -28,26 +28,26 @@ val KotlinFragmentPlatformAttributes = FragmentAttributes<KotlinGradleVariant> {
     attribute(KotlinPlatformType.attribute, fragment.platformType)
 }
 
-val KotlinFragmentConsumerApiUsageAttribute = FragmentAttributes<KotlinGradleVariant> {
+val KotlinFragmentConsumerApiUsageAttribute = FragmentAttributes<KpmGradleVariant> {
     attribute(USAGE_ATTRIBUTE, consumerApiUsage(project, fragment.platformType))
 }
 
-val KotlinFragmentProducerApiUsageAttribute = FragmentAttributes<KotlinGradleVariant> {
+val KotlinFragmentProducerApiUsageAttribute = FragmentAttributes<KpmGradleVariant> {
     attribute(USAGE_ATTRIBUTE, producerApiUsage(fragment.project, fragment.platformType))
 }
 
-val KotlinFragmentConsumerRuntimeUsageAttribute = FragmentAttributes<KotlinGradleVariant> {
+val KotlinFragmentConsumerRuntimeUsageAttribute = FragmentAttributes<KpmGradleVariant> {
     attribute(USAGE_ATTRIBUTE, consumerRuntimeUsage(fragment.project, fragment.platformType))
 }
 
-val KotlinFragmentProducerRuntimeUsageAttribute = FragmentAttributes<KotlinGradleVariant> {
+val KotlinFragmentProducerRuntimeUsageAttribute = FragmentAttributes<KpmGradleVariant> {
     attribute(USAGE_ATTRIBUTE, producerRuntimeUsage(fragment.project, fragment.platformType))
 }
 
-val KotlinFragmentMetadataUsageAttribute = FragmentAttributes<KotlinGradleFragment> {
+val KotlinFragmentMetadataUsageAttribute = FragmentAttributes<KpmGradleFragment> {
     attribute(USAGE_ATTRIBUTE, fragment.project.usageByName(KotlinUsages.KOTLIN_METADATA))
 }
 
-val KotlinFragmentKonanTargetAttribute = FragmentAttributes<KotlinNativeVariantInternal> {
+val KotlinFragmentKonanTargetAttribute = FragmentAttributes<KpmNativeVariantInternal> {
     attributes.attribute(KotlinNativeTarget.konanTargetAttribute, fragment.konanTarget.name)
 }

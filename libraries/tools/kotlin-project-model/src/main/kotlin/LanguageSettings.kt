@@ -10,6 +10,5 @@ interface LanguageSettings {
     val apiVersion: String?
     val progressiveMode: Boolean
     val enabledLanguageFeatures: Set<String>
-
     val optInAnnotationsInUse: Set<String>
 }

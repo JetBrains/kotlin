@@ -18,9 +18,9 @@ import org.jetbrains.kotlin.gradle.dsl.topLevelExtension
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.ComputedCapability
 import org.jetbrains.kotlin.gradle.utils.getValue
-import org.jetbrains.kotlin.project.model.KotlinModuleIdentifier
-import org.jetbrains.kotlin.project.model.LocalModuleIdentifier
-import org.jetbrains.kotlin.project.model.MavenModuleIdentifier
+import org.jetbrains.kotlin.project.model.KpmModuleIdentifier
+import org.jetbrains.kotlin.project.model.KpmLocalModuleIdentifier
+import org.jetbrains.kotlin.project.model.KpmMavenModuleIdentifier
 
 internal object ModuleIds {
     fun fromDependency(dependency: Dependency): ModuleDependencyIdentifier = when (dependency) {
@@ -71,9 +71,9 @@ internal object ModuleIds {
         idOfRootModule(thisProject.project(projectPath))
 
     // FIXME use capabilities to point to auxiliary modules
-    fun lossyFromModuleIdentifier(thisProject: Project, moduleIdentifier: KotlinModuleIdentifier): ModuleDependencyIdentifier {
+    fun lossyFromModuleIdentifier(thisProject: Project, moduleIdentifier: KpmModuleIdentifier): ModuleDependencyIdentifier {
         when (moduleIdentifier) {
-            is LocalModuleIdentifier -> {
+            is KpmLocalModuleIdentifier -> {
                 check(moduleIdentifier.buildId == thisProject.currentBuildId().name)
                 val dependencyProject = thisProject.project(moduleIdentifier.projectId)
                 val topLevelExtension = dependencyProject.topLevelExtension
@@ -101,7 +101,7 @@ internal object ModuleIds {
                 )
                 return ChangingModuleDependencyIdentifier({ coordinatesProvider.group }, { coordinatesProvider.name })
             }
-            is MavenModuleIdentifier -> {
+            is KpmMavenModuleIdentifier -> {
                 return ModuleDependencyIdentifier(moduleIdentifier.group, moduleIdentifier.name)
             }
             else -> error("unexpected module identifier $moduleIdentifier")

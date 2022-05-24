@@ -5,14 +5,13 @@
 
 package org.jetbrains.kotlin.gradle.kpm.idea
 
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinGradleFragment
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.refinesClosure
+import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KpmGradleFragment
 
 internal object IdeaKotlinRefinesDependencyResolver : IdeaKotlinDependencyResolver {
-    override fun resolve(fragment: KotlinGradleFragment): Set<IdeaKotlinDependency> = fragment.refinesClosure
+    override fun resolve(fragment: KpmGradleFragment): Set<IdeaKotlinDependency> = fragment.refinesClosure
         .map { refinesDependencyFragment -> createRefinesDependency(refinesDependencyFragment) }.toSet()
 
-    private fun createRefinesDependency(fragment: KotlinGradleFragment): IdeaKotlinDependency {
+    private fun createRefinesDependency(fragment: KpmGradleFragment): IdeaKotlinDependency {
         return IdeaKotlinFragmentDependencyImpl(
             type = IdeaKotlinFragmentDependency.Type.Refines,
             coordinates = IdeaKotlinFragmentCoordinates(fragment)

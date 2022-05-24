@@ -6,13 +6,13 @@
 
 package org.jetbrains.kotlin.gradle.android
 
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinGradleFragment
+import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KpmGradleFragment
 import org.jetbrains.kotlin.tooling.core.extrasKeyOf
 import java.io.File
 import java.io.Serializable
 
 internal val androidDslKey = extrasKeyOf<AndroidDsl>()
-val KotlinGradleFragment.androidDsl: AndroidDsl? get() = this.extras[androidDslKey]
+val KpmGradleFragment.androidDsl: AndroidDsl? get() = this.extras[androidDslKey]
 
 class AndroidDsl : Serializable {
     var compileSdk = 0

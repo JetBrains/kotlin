@@ -20,16 +20,16 @@ import org.jetbrains.kotlin.gradle.plugin.sources.FragmentConsistencyChecker
 import org.jetbrains.kotlin.gradle.plugin.sources.FragmentConsistencyChecks
 import org.jetbrains.kotlin.gradle.utils.addExtendsFromRelation
 import org.jetbrains.kotlin.gradle.utils.runProjectConfigurationHealthCheckWhenEvaluated
-import org.jetbrains.kotlin.project.model.KotlinModuleDependency
+import org.jetbrains.kotlin.project.model.KpmModuleDependency
 import org.jetbrains.kotlin.tooling.core.MutableExtras
 import org.jetbrains.kotlin.tooling.core.mutableExtrasOf
 import javax.inject.Inject
 
-open class KotlinGradleFragmentInternal @Inject constructor(
-    final override val containingModule: KotlinGradleModule,
+open class KpmGradleFragmentInternal @Inject constructor(
+    final override val containingModule: KpmGradleModule,
     final override val fragmentName: String,
     dependencyConfigurations: KotlinFragmentDependencyConfigurations
-) : KotlinGradleFragment,
+) : KpmGradleFragment,
     KotlinFragmentDependencyConfigurations by dependencyConfigurations {
 
     final override fun getName(): String = fragmentName
@@ -44,12 +44,12 @@ open class KotlinGradleFragmentInternal @Inject constructor(
     // FIXME check for consistency
     override val languageSettings: LanguageSettingsBuilder = DefaultLanguageSettingsBuilder()
 
-    override fun refines(other: KotlinGradleFragment) {
+    override fun refines(other: KpmGradleFragment) {
         checkCanRefine(other)
         refines(containingModule.fragments.named(other.name))
     }
 
-    override fun refines(other: NamedDomainObjectProvider<KotlinGradleFragment>) {
+    override fun refines(other: NamedDomainObjectProvider<KpmGradleFragment>) {
         _directRefinesDependencies.add(other)
         other.configure { checkCanRefine(it) }
 
@@ -66,11 +66,11 @@ open class KotlinGradleFragmentInternal @Inject constructor(
         )
 
         project.runProjectConfigurationHealthCheckWhenEvaluated {
-            kotlinGradleFragmentConsistencyChecker.runAllChecks(this@KotlinGradleFragmentInternal, other.get())
+            kotlinGradleFragmentConsistencyChecker.runAllChecks(this@KpmGradleFragmentInternal, other.get())
         }
     }
 
-    private fun checkCanRefine(other: KotlinGradleFragment) {
+    private fun checkCanRefine(other: KpmGradleFragment) {
         check(containingModule == other.containingModule) {
             "Fragments can only refine each other within one module. Can't make $this refine $other"
         }
@@ -82,15 +82,15 @@ open class KotlinGradleFragmentInternal @Inject constructor(
     override fun dependencies(configureClosure: Closure<Any?>) =
         dependencies f@{ ConfigureUtil.configure(configureClosure, this@f) }
 
-    private val _directRefinesDependencies = mutableSetOf<Provider<KotlinGradleFragment>>()
+    private val _directRefinesDependencies = mutableSetOf<Provider<KpmGradleFragment>>()
 
-    override val directRefinesDependencies: Iterable<KotlinGradleFragment>
+    override val declaredRefinesDependencies: Iterable<KpmGradleFragment>
         get() = _directRefinesDependencies.map { it.get() }.toSet()
 
     // TODO: separate the declared module dependencies and exported module dependencies? we need this to keep implementation dependencies
     //       out of the consumer's metadata compilations compile classpath; however, Native variants must expose implementation as API
     //       anyway, so for now all fragments follow that behavior
-    override val declaredModuleDependencies: Iterable<KotlinModuleDependency>
+    override val declaredModuleDependencies: Iterable<KpmModuleDependency>
         get() = listOf(apiConfiguration, implementationConfiguration).flatMapTo(mutableSetOf()) { exportConfiguration ->
             exportConfiguration.allDependencies.map { dependency -> dependency.toModuleDependency(project) }
         }
@@ -106,7 +106,7 @@ open class KotlinGradleFragmentInternal @Inject constructor(
         FragmentConsistencyChecker(
             unitsName = "fragments",
             name = { name },
-            checks = FragmentConsistencyChecks<KotlinGradleFragment>(
+            checks = FragmentConsistencyChecks<KpmGradleFragment>(
                 unitName = "fragment",
                 languageSettings = { languageSettings }
             ).allChecks

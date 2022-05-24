@@ -15,7 +15,7 @@ import java.io.File
 import java.util.*
 
 internal class FragmentGranularMetadataResolver(
-    private val requestingFragment: KotlinGradleFragment,
+    private val requestingFragment: KpmGradleFragment,
     private val refinesParentResolvers: Lazy<Iterable<FragmentGranularMetadataResolver>>
 ) {
     val resolutions: Iterable<MetadataDependencyResolution> by lazy {
@@ -25,14 +25,14 @@ internal class FragmentGranularMetadataResolver(
     private val project: Project
         get() = requestingFragment.containingModule.project
 
-    private val parentResultsByModuleIdentifier: Map<KotlinModuleIdentifier, List<MetadataDependencyResolution>> by lazy {
+    private val parentResultsByModuleIdentifier: Map<KpmModuleIdentifier, List<MetadataDependencyResolution>> by lazy {
         refinesParentResolvers.value.flatMap { it.resolutions }.groupBy { it.dependency.toSingleModuleIdentifier() }
     }
 
-    private val moduleResolver = GradleModuleDependencyResolver.getForCurrentBuild(project)
+    private val moduleResolver = KpmGradleModuleDependencyResolver.getForCurrentBuild(project)
     private val variantResolver = GradleModuleVariantResolver.getForCurrentBuild(project)
     private val fragmentResolver = DefaultModuleFragmentsResolver(variantResolver)
-    private val dependencyGraphResolver = GradleKotlinDependencyGraphResolver(moduleResolver)
+    private val dependencyGraphResolver = KpmGradleDependencyGraphResolver(moduleResolver)
 
     private fun doResolveMetadataDependencies(): Iterable<MetadataDependencyResolution> {
         val configurationToResolve = configurationToResolveMetadataDependencies(project, requestingFragment.containingModule)
@@ -44,10 +44,10 @@ internal class FragmentGranularMetadataResolver(
 
         val dependencyGraph = dependencyGraphResolver.resolveDependencyGraph(requestingFragment.containingModule)
 
-        if (dependencyGraph is DependencyGraphResolution.Unknown)
+        if (dependencyGraph is KpmDependencyGraphResolution.Unknown)
             error("unexpected failure in dependency graph resolution for $requestingFragment in $project")
 
-        dependencyGraph as GradleDependencyGraph // refactor the type hierarchy to avoid this downcast? FIXME?
+        dependencyGraph as KpmGradleDependencyGraph // refactor the type hierarchy to avoid this downcast? FIXME?
         val fragmentsToInclude = requestingFragment.withRefinesClosure
         val requestedDependencies = dependencyGraph.root.dependenciesByFragment.filterKeys { it in fragmentsToInclude }.values.flatten()
 
@@ -74,7 +74,7 @@ internal class FragmentGranularMetadataResolver(
             val resolvedComponentResult = dependencyNode.selectedComponent
             val isResolvedAsProject = resolvedComponentResult.toProjectOrNull(project)
             val result = when (dependencyModule) {
-                is ExternalPlainKotlinModule -> {
+                is KpmExternalPlainModule -> {
                     MetadataDependencyResolution.KeepOriginalDependency(resolvedComponentResult, isResolvedAsProject)
                 }
                 else -> run {
@@ -96,7 +96,7 @@ internal class FragmentGranularMetadataResolver(
                                 "the presence of a proper Kotlin Module"
                     )
 
-                    val projectStructureMetadata = (dependencyModule as? ExternalImportedKotlinModule)?.projectStructureMetadata
+                    val projectStructureMetadata = (dependencyModule as? KpmExternalImportedModule)?.projectStructureMetadata
                         ?: checkNotNull(projectStructureMetadataExtractor.getProjectStructureMetadata())
 
 
@@ -111,7 +111,7 @@ internal class FragmentGranularMetadataResolver(
                             projectStructureMetadata = projectStructureMetadata,
                             primaryArtifactFile = projectStructureMetadataExtractor.primaryArtifactFile,
                             hostSpecificArtifactsBySourceSet = if (
-                                dependencyModule is ExternalImportedKotlinModule && chosenFragments != null
+                                dependencyModule is KpmExternalImportedModule && chosenFragments != null
                             ) resolveHostSpecificMetadataArtifacts(dependencyModule, chosenFragments) else emptyMap(),
                         ).asMetadataProvider()
                     }
@@ -140,14 +140,14 @@ internal class FragmentGranularMetadataResolver(
         return results
     }
 
-    private fun fragmentsNamesVisibleByParents(kotlinModuleIdentifier: KotlinModuleIdentifier): MutableSet<String> {
+    private fun fragmentsNamesVisibleByParents(kotlinModuleIdentifier: KpmModuleIdentifier): MutableSet<String> {
         val parentResolutionsForDependency = parentResultsByModuleIdentifier[kotlinModuleIdentifier].orEmpty()
         return parentResolutionsForDependency.filterIsInstance<MetadataDependencyResolution.ChooseVisibleSourceSets>()
             .flatMapTo(mutableSetOf()) { it.allVisibleSourceSetNames }
     }
 
     private fun resolveHostSpecificMetadataArtifacts(
-        dependencyModule: ExternalImportedKotlinModule,
+        dependencyModule: KpmExternalImportedModule,
         chosenFragments: FragmentResolution.ChosenFragments,
     ): Map<String, File> {
         val visibleFragments = chosenFragments.visibleFragments
@@ -161,7 +161,7 @@ internal class FragmentGranularMetadataResolver(
             // resolve the dependencies of that variant getting the host-specific metadata artifact
             relevantVariantResolution?.let { resolution ->
                 val configurationResolvingPlatformVariant =
-                    (resolution.requestingVariant as KotlinGradleVariant).compileDependenciesConfiguration
+                    (resolution.requestingVariant as KpmGradleVariant).compileDependenciesConfiguration
                 val hostSpecificArtifact = ResolvedMppVariantsProvider.get(project)
                     .getHostSpecificMetadataArtifactByRootModule(
                         dependencyModule.moduleIdentifier,

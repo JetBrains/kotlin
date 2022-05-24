@@ -35,7 +35,7 @@ class IdeaKotlinPlatformDependencyResolutionDslHandle internal constructor(
     private val additionalDependencies = mutableListOf<IdeaKotlinDependencyResolver>()
 
     @ExternalVariantPlatformDependencyResolutionDsl
-    var platformResolutionAttributes: FragmentAttributes<KotlinGradleFragment>? = null
+    var platformResolutionAttributes: FragmentAttributes<KpmGradleFragment>? = null
 
     @ExternalVariantPlatformDependencyResolutionDsl
     class ArtifactViewDslHandle(
@@ -43,10 +43,10 @@ class IdeaKotlinPlatformDependencyResolutionDslHandle internal constructor(
         var binaryType: String
     ) {
         @ExternalVariantPlatformDependencyResolutionDsl
-        var attributes: FragmentAttributes<KotlinGradleFragment> = FragmentAttributes { }
+        var attributes: FragmentAttributes<KpmGradleFragment> = FragmentAttributes { }
 
         @ExternalVariantPlatformDependencyResolutionDsl
-        fun attributes(setAttributes: KotlinGradleFragmentConfigurationAttributesContext<KotlinGradleFragment>.() -> Unit) {
+        fun attributes(setAttributes: KotlinGradleFragmentConfigurationAttributesContext<KpmGradleFragment>.() -> Unit) {
             attributes += FragmentAttributes(setAttributes)
         }
     }
@@ -64,7 +64,7 @@ class IdeaKotlinPlatformDependencyResolutionDslHandle internal constructor(
 
     @ExternalVariantPlatformDependencyResolutionDsl
     fun withPlatformResolutionAttributes(
-        setAttributes: KotlinGradleFragmentConfigurationAttributesContext<KotlinGradleFragment>.() -> Unit
+        setAttributes: KotlinGradleFragmentConfigurationAttributesContext<KpmGradleFragment>.() -> Unit
     ) {
         val additionalAttributes = FragmentAttributes(setAttributes)
         this.platformResolutionAttributes = platformResolutionAttributes?.plus(additionalAttributes) ?: additionalAttributes
@@ -76,7 +76,7 @@ class IdeaKotlinPlatformDependencyResolutionDslHandle internal constructor(
     }
 
     @ExternalVariantPlatformDependencyResolutionDsl
-    fun additionalDependencies(dependencyProvider: (KotlinGradleFragment) -> List<IdeaKotlinDependency>) {
+    fun additionalDependencies(dependencyProvider: (KpmGradleFragment) -> List<IdeaKotlinDependency>) {
         this.additionalDependencies += IdeaKotlinDependencyResolver { fragment -> dependencyProvider(fragment).toSet() }
     }
 
@@ -130,7 +130,7 @@ class IdeaKotlinPlatformDependencyResolutionDslHandle internal constructor(
         return parentConstraint and this.constraint
     }
 
-    private fun buildPlatformResolutionAttributes(): FragmentAttributes<KotlinGradleFragment>? {
+    private fun buildPlatformResolutionAttributes(): FragmentAttributes<KpmGradleFragment>? {
         val parentAttributes = parent?.buildPlatformResolutionAttributes() ?: return this.platformResolutionAttributes
         return parentAttributes + (this.platformResolutionAttributes ?: return parentAttributes)
     }

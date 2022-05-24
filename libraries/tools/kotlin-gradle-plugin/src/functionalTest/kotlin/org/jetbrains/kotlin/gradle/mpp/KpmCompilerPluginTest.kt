@@ -9,7 +9,7 @@ package org.jetbrains.kotlin.gradle.mpp
 import org.gradle.api.Project
 import org.gradle.api.artifacts.Configuration
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.GradleKpmCompilerPlugin
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinLinuxX64Variant
+import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KpmLinuxX64Variant
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.jvm
 import org.jetbrains.kotlin.gradle.tasks.AbstractKotlinCompile
 import org.jetbrains.kotlin.gradle.tasks.AbstractKotlinNativeCompile
@@ -37,7 +37,7 @@ class KpmCompilerPluginTest {
             options = mapOf("a" to "c"),
             platformArtifact = "native-only"
         ) {
-            override fun forPlatformCompilation(variant: KotlinModuleVariant): PluginData? =
+            override fun forPlatformCompilation(variant: KpmVariant): PluginData? =
                 if (variant.platform == KotlinPlatformTypeAttribute.NATIVE) {
                     super.forPlatformCompilation(variant)
                 } else {
@@ -52,7 +52,7 @@ class KpmCompilerPluginTest {
             projectModel {
                 main {
                     jvm
-                    val linuxX64 = fragments.create("linuxX64", KotlinLinuxX64Variant::class.java)
+                    val linuxX64 = fragments.create("linuxX64", KpmLinuxX64Variant::class.java)
                     val jvmAndLinux = fragments.create("jvmAndLinux")
 
                     jvm.refines(jvmAndLinux)
@@ -176,20 +176,20 @@ class KpmCompilerPluginTest {
             options = options.map { StringOption(it.key, it.value) }
         )
 
-        override fun forMetadataCompilation(fragment: KotlinModuleFragment) = metadataArtifact?.let(::pluginData)
+        override fun forMetadataCompilation(fragment: KpmFragment) = metadataArtifact?.let(::pluginData)
 
-        override fun forNativeMetadataCompilation(fragment: KotlinModuleFragment) = metadataNativeArtifact?.let(::pluginData)
+        override fun forNativeMetadataCompilation(fragment: KpmFragment) = metadataNativeArtifact?.let(::pluginData)
 
-        override fun forPlatformCompilation(variant: KotlinModuleVariant) = platformArtifact?.let(::pluginData)
+        override fun forPlatformCompilation(variant: KpmVariant) = platformArtifact?.let(::pluginData)
 
     }
 
     open class TestPluginWithListeners : KpmCompilerPlugin, GradleKpmCompilerPlugin {
         override val kpmCompilerPlugin: KpmCompilerPlugin get() = this.also { onGetKpmCompilerPlugin() }
         override fun apply(target: Project) = onApply()
-        override fun forMetadataCompilation(fragment: KotlinModuleFragment): PluginData? = null.also { onPluginDataGet() }
-        override fun forNativeMetadataCompilation(fragment: KotlinModuleFragment): PluginData? = null.also { onPluginDataGet() }
-        override fun forPlatformCompilation(variant: KotlinModuleVariant): PluginData? = null.also { onPluginDataGet() }
+        override fun forMetadataCompilation(fragment: KpmFragment): PluginData? = null.also { onPluginDataGet() }
+        override fun forNativeMetadataCompilation(fragment: KpmFragment): PluginData? = null.also { onPluginDataGet() }
+        override fun forPlatformCompilation(variant: KpmVariant): PluginData? = null.also { onPluginDataGet() }
 
         companion object {
             var onApply: () -> Unit = {}

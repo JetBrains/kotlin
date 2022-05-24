@@ -32,7 +32,7 @@ class KotlinFragmentConfigurationDefinitionTest : AbstractKpmExtensionTest() {
 
     @Test
     fun `test withProvider`() {
-        val testDefinition = ConfigurationDefinition<KotlinGradleFragment>(
+        val testDefinition = ConfigurationDefinition<KpmGradleFragment>(
             provider = ConfigurationProvider { project.configurations.create("a") }
         ).withConfigurationProvider { project.configurations.create("b") }
 
@@ -59,14 +59,14 @@ class KotlinFragmentConfigurationDefinitionTest : AbstractKpmExtensionTest() {
         val testAttribute2 = Attribute.of("testAttribute2", String::class.java)
         val testConfiguration = project.configurations.create("dummy")
 
-        val fragmentAttributes1 = FragmentAttributes<KotlinGradleFragment> {
+        val fragmentAttributes1 = FragmentAttributes<KpmGradleFragment> {
             assertSame(testConfiguration.attributes, attributes)
             assertNull(attributes.getAttribute(testAttribute1))
             assertNull(attributes.getAttribute(testAttribute2))
             attribute(testAttribute1, "value1")
         }
 
-        val fragmentAttributes2 = FragmentAttributes<KotlinGradleFragment> {
+        val fragmentAttributes2 = FragmentAttributes<KpmGradleFragment> {
             assertSame(testConfiguration.attributes, attributes)
             assertEquals(attributes.getAttribute(testAttribute1), "value1")
             assertNull(attributes.getAttribute(testAttribute2))
@@ -96,12 +96,12 @@ class KotlinFragmentConfigurationDefinitionTest : AbstractKpmExtensionTest() {
 
     @Test
     fun `test definition + attributes`() {
-        val definition = ConfigurationDefinition<KotlinGradleFragment>(
+        val definition = ConfigurationDefinition<KpmGradleFragment>(
             provider = ConfigurationProvider { project.configurations.create("a") }
         )
 
-        val attributes1 = FragmentAttributes<KotlinGradleFragment> { }
-        val attributes2 = FragmentAttributes<KotlinGradleFragment> { }
+        val attributes1 = FragmentAttributes<KpmGradleFragment> { }
+        val attributes2 = FragmentAttributes<KpmGradleFragment> { }
 
         val newDefinition = definition + attributes1 + attributes2
         assertEquals(
@@ -112,11 +112,11 @@ class KotlinFragmentConfigurationDefinitionTest : AbstractKpmExtensionTest() {
 
     @Test
     fun `test artifacts + artifacts`() {
-        val artifacts1 = FragmentArtifacts<KotlinGradleFragment> {
+        val artifacts1 = FragmentArtifacts<KpmGradleFragment> {
             artifact(project.file("artifact1.jar"))
         }
 
-        val artifacts2 = FragmentArtifacts<KotlinGradleFragment> {
+        val artifacts2 = FragmentArtifacts<KpmGradleFragment> {
             artifact(project.file("artifact2-a.jar"))
             artifact(project.file("artifact2-b.jar"))
         }
@@ -141,12 +141,12 @@ class KotlinFragmentConfigurationDefinitionTest : AbstractKpmExtensionTest() {
 
     @Test
     fun `test definition + artifacts`() {
-        val definition = ConfigurationDefinition<KotlinGradleFragment>(
+        val definition = ConfigurationDefinition<KpmGradleFragment>(
             provider = ConfigurationProvider { throw NotImplementedError() }
         )
 
-        val artifacts1 = FragmentArtifacts<KotlinGradleFragment> {}
-        val artifacts2 = FragmentArtifacts<KotlinGradleFragment> {}
+        val artifacts1 = FragmentArtifacts<KpmGradleFragment> {}
+        val artifacts2 = FragmentArtifacts<KpmGradleFragment> {}
 
         val newDefinition = definition + artifacts1 + artifacts2
         assertEquals(
@@ -157,11 +157,11 @@ class KotlinFragmentConfigurationDefinitionTest : AbstractKpmExtensionTest() {
 
     @Test
     fun `test capability + capability`() {
-        val capabilities1 = FragmentCapabilities<KotlinGradleFragment> {
+        val capabilities1 = FragmentCapabilities<KpmGradleFragment> {
             capability("capability1")
         }
 
-        val capabilities2 = FragmentCapabilities<KotlinGradleFragment> {
+        val capabilities2 = FragmentCapabilities<KpmGradleFragment> {
             capability("capability2")
         }
 
@@ -191,12 +191,12 @@ class KotlinFragmentConfigurationDefinitionTest : AbstractKpmExtensionTest() {
 
     @Test
     fun `test definition + capability`() {
-        val definition = ConfigurationDefinition<KotlinGradleFragment>(
+        val definition = ConfigurationDefinition<KpmGradleFragment>(
             provider = ConfigurationProvider { throw NotImplementedError() }
         )
 
-        val capabilities1 = FragmentCapabilities<KotlinGradleFragment> {}
-        val capabilities2 = FragmentCapabilities<KotlinGradleFragment> {}
+        val capabilities1 = FragmentCapabilities<KpmGradleFragment> {}
+        val capabilities2 = FragmentCapabilities<KpmGradleFragment> {}
         val newDefinition = definition + capabilities1 + capabilities2
 
         assertEquals(

@@ -5,10 +5,10 @@
 
 package org.jetbrains.kotlin.gradle.kpm.idea
 
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinGradleModule
+import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KpmGradleModule
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.currentBuildId
 
-internal fun IdeaKotlinModuleCoordinates(module: KotlinGradleModule): IdeaKotlinModuleCoordinates {
+internal fun IdeaKotlinModuleCoordinates(module: KpmGradleModule): IdeaKotlinModuleCoordinates {
     return IdeaKotlinModuleCoordinatesImpl(
         buildId = module.project.currentBuildId().name,
         projectPath = module.project.path,

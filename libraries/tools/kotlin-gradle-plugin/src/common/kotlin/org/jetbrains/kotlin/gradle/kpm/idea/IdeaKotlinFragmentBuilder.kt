@@ -8,12 +8,12 @@ package org.jetbrains.kotlin.gradle.kpm.idea
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.*
 import org.jetbrains.kotlin.tooling.core.emptyExtras
 
-internal fun IdeaKotlinProjectModelBuildingContext.IdeaKotlinFragment(fragment: KotlinGradleFragment): IdeaKotlinFragment {
-    return if (fragment is KotlinGradleVariant) buildIdeaKotlinVariant(fragment)
+internal fun IdeaKotlinProjectModelBuildingContext.IdeaKotlinFragment(fragment: KpmGradleFragment): IdeaKotlinFragment {
+    return if (fragment is KpmGradleVariant) buildIdeaKotlinVariant(fragment)
     else buildIdeaKotlinFragment(fragment)
 }
 
-private fun IdeaKotlinProjectModelBuildingContext.buildIdeaKotlinFragment(fragment: KotlinGradleFragment): IdeaKotlinFragment {
+private fun IdeaKotlinProjectModelBuildingContext.buildIdeaKotlinFragment(fragment: KpmGradleFragment): IdeaKotlinFragment {
     return IdeaKotlinFragmentImpl(
         coordinates = IdeaKotlinFragmentCoordinates(fragment),
         platforms = fragment.containingVariants.map { variant -> IdeaKotlinPlatform(variant) }.toSet(),
@@ -25,7 +25,7 @@ private fun IdeaKotlinProjectModelBuildingContext.buildIdeaKotlinFragment(fragme
     )
 }
 
-private fun IdeaKotlinProjectModelBuildingContext.buildIdeaKotlinVariant(variant: KotlinGradleVariant): IdeaKotlinVariant {
+private fun IdeaKotlinProjectModelBuildingContext.buildIdeaKotlinVariant(variant: KpmGradleVariant): IdeaKotlinVariant {
     return IdeaKotlinVariantImpl(
         fragment = buildIdeaKotlinFragment(variant),
         platform = IdeaKotlinPlatform(variant),

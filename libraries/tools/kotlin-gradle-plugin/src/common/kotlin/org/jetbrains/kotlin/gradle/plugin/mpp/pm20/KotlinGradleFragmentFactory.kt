@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinGradleFragmentFactory.F
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinGradleFragmentFactory.FragmentInstantiator
 
 /**
- * Factory used by [KotlinGradleModule] to polymorphic-ally create fragments/variants.
+ * Factory used by [KpmGradleModule] to polymorphic-ally create fragments/variants.
  * Fragments are created in two stages with this factory:
  *
  * [FragmentInstantiator]:
@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinGradleFragmentFactory.F
  *   - Setting up additional Gradle tasks
  *   - Setting up publication
  */
-class KotlinGradleFragmentFactory<T : KotlinGradleFragment>(
+class KotlinGradleFragmentFactory<T : KpmGradleFragment>(
     private val fragmentInstantiator: FragmentInstantiator<T>,
     private val fragmentConfigurator: FragmentConfigurator<T>
 ) : NamedDomainObjectFactory<T> {
@@ -34,14 +34,14 @@ class KotlinGradleFragmentFactory<T : KotlinGradleFragment>(
     /**
      * @see KotlinGradleFragmentFactory
      */
-    interface FragmentInstantiator<out T : KotlinGradleFragment> {
+    interface FragmentInstantiator<out T : KpmGradleFragment> {
         fun create(name: String): T
     }
 
     /**
      * @see KotlinGradleFragmentFactory
      */
-    interface FragmentConfigurator<in T : KotlinGradleFragment> {
+    interface FragmentConfigurator<in T : KpmGradleFragment> {
         fun configure(fragment: T)
     }
 
@@ -50,7 +50,7 @@ class KotlinGradleFragmentFactory<T : KotlinGradleFragment>(
     }
 }
 
-internal fun <T : KotlinGradleFragment> Configuration.configure(
+internal fun <T : KpmGradleFragment> Configuration.configure(
     definition: KotlinGradleFragmentConfigurationDefinition<T>, fragment: T
 ) {
     definition.attributes.setAttributes(attributes, fragment)

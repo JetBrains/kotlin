@@ -9,8 +9,8 @@ package org.jetbrains.kotlin.gradle.plugin.mpp.pm20
 
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.FragmentNameDisambiguation
 
-fun <T : KotlinNativeVariantInternal> KotlinNativeVariantFactory(
-    module: KotlinGradleModule,
+fun <T : KpmNativeVariantInternal> KotlinNativeVariantFactory(
+    module: KpmGradleModule,
     constructor: KotlinNativeVariantConstructor<T>,
     config: KotlinNativeVariantConfig<T> = KotlinNativeVariantConfig()
 ) = KotlinGradleFragmentFactory(
@@ -18,7 +18,7 @@ fun <T : KotlinNativeVariantInternal> KotlinNativeVariantFactory(
     fragmentConfigurator = KotlinNativeVariantConfigurator(config)
 )
 
-data class KotlinNativeVariantConfig<T : KotlinNativeVariantInternal>(
+data class KotlinNativeVariantConfig<T : KpmNativeVariantInternal>(
     val dependenciesConfigurationFactory: KotlinFragmentDependencyConfigurationsFactory =
         DefaultKotlinFragmentDependencyConfigurationsFactory,
 
@@ -42,12 +42,12 @@ data class KotlinNativeVariantConfig<T : KotlinNativeVariantInternal>(
     val sourceDirectoriesConfigurator: KotlinSourceDirectoriesConfigurator<T> =
         DefaultKotlinSourceDirectoriesConfigurator,
 
-    val publicationConfigurator: KotlinPublicationConfigurator<KotlinNativeVariantInternal> =
+    val publicationConfigurator: KotlinPublicationConfigurator<KpmNativeVariantInternal> =
         KotlinPublicationConfigurator.NativeVariantPublication
 )
 
-class KotlinNativeVariantInstantiator<T : KotlinNativeVariantInternal>(
-    private val module: KotlinGradleModule,
+class KotlinNativeVariantInstantiator<T : KpmNativeVariantInternal>(
+    private val module: KpmGradleModule,
     private val kotlinNativeVariantConstructor: KotlinNativeVariantConstructor<T>,
     private val config: KotlinNativeVariantConfig<T>
 
@@ -76,7 +76,7 @@ class KotlinNativeVariantInstantiator<T : KotlinNativeVariantInternal>(
     }
 }
 
-class KotlinNativeVariantConfigurator<T : KotlinNativeVariantInternal>(
+class KotlinNativeVariantConfigurator<T : KpmNativeVariantInternal>(
     private val config: KotlinNativeVariantConfig<T>
 ) : KotlinGradleFragmentFactory.FragmentConfigurator<T> {
 

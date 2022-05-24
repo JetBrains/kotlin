@@ -10,28 +10,31 @@ import org.jetbrains.kotlin.tooling.core.closure
 import org.jetbrains.kotlin.tooling.core.withClosure
 import java.io.File
 
-interface KotlinModuleFragment {
-    val containingModule: KotlinModule
+interface KpmFragment {
+    val containingModule: KpmModule
 
     val fragmentName: String
-    val directRefinesDependencies: Iterable<KotlinModuleFragment>
 
     val languageSettings: LanguageSettings?
-
-    // TODO: scopes
-    val declaredModuleDependencies: Iterable<KotlinModuleDependency>
 
     // TODO: should this be source roots or source files?
     val kotlinSourceRoots: Iterable<File>
 
+    // TODO: scopes
+    val declaredModuleDependencies: Iterable<KpmModuleDependency>
+
+    val declaredRefinesDependencies: Iterable<KpmFragment>
+
+    val refinesClosure: Set<KpmFragment>
+        get() = this.closure { it.declaredRefinesDependencies }
+
+    val withRefinesClosure: Set<KpmFragment>
+        get() = this.withClosure { it.declaredRefinesDependencies }
+
     companion object
 }
 
-interface KotlinModuleVariant : KotlinModuleFragment {
-    val variantAttributes: Map<KotlinAttributeKey, String>
-}
-
-val KotlinModuleFragment.fragmentAttributeSets: Map<KotlinAttributeKey, Set<String>>
+val KpmFragment.fragmentAttributeSets: Map<KotlinAttributeKey, Set<String>>
     get() = mutableMapOf<KotlinAttributeKey, MutableSet<String>>().apply {
         containingModule.variantsContainingFragment(this@fragmentAttributeSets).forEach { variant ->
             variant.variantAttributes.forEach { (attribute, value) ->
@@ -40,37 +43,20 @@ val KotlinModuleFragment.fragmentAttributeSets: Map<KotlinAttributeKey, Set<Stri
         }
     }
 
-val KotlinModuleFragment.refinesClosure: Set<KotlinModuleFragment>
-    get() = this.closure { it.directRefinesDependencies }
+val KpmVariant.platform get() = variantAttributes[KotlinPlatformTypeAttribute]
 
-val KotlinModuleFragment.withRefinesClosure: Set<KotlinModuleFragment>
-    get() = this.withClosure { it.directRefinesDependencies }
-
-val KotlinModuleVariant.platform get() = variantAttributes[KotlinPlatformTypeAttribute]
-
-open class BasicKotlinModuleFragment(
-    override val containingModule: KotlinModule,
+open class KpmBasicFragment(
+    override val containingModule: KpmModule,
     override val fragmentName: String,
     override val languageSettings: LanguageSettings? = null
-) : KotlinModuleFragment {
+) : KpmFragment {
 
-    override val directRefinesDependencies: MutableSet<BasicKotlinModuleFragment> = mutableSetOf()
+    override val declaredRefinesDependencies: MutableSet<KpmBasicFragment> = mutableSetOf()
 
-    override val declaredModuleDependencies: MutableSet<KotlinModuleDependency> = mutableSetOf()
+    override val declaredModuleDependencies: MutableSet<KpmModuleDependency> = mutableSetOf()
 
     override var kotlinSourceRoots: Iterable<File> = emptyList()
+
     override fun toString(): String = "fragment $fragmentName"
 }
 
-class BasicKotlinModuleVariant(
-    containingModule: KotlinModule,
-    fragmentName: String,
-    languageSettings: LanguageSettings? = null
-) : BasicKotlinModuleFragment(
-    containingModule,
-    fragmentName,
-    languageSettings
-), KotlinModuleVariant {
-    override val variantAttributes: MutableMap<KotlinAttributeKey, String> = mutableMapOf()
-    override fun toString(): String = "variant $fragmentName"
-}

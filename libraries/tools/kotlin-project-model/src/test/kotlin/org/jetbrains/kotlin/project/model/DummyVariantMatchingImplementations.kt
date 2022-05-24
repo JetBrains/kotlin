@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.project.model
 
 class MatchVariantsByExactAttributes : ModuleVariantResolver {
-    override fun getChosenVariant(requestingVariant: KotlinModuleVariant, dependencyModule: KotlinModule): VariantResolution {
+    override fun getChosenVariant(requestingVariant: KpmVariant, dependencyModule: KpmModule): VariantResolution {
         val candidates = dependencyModule.variants
         return candidates.filter { candidate ->
             candidate.variantAttributes.all { (attributeKey, candidateValue) ->

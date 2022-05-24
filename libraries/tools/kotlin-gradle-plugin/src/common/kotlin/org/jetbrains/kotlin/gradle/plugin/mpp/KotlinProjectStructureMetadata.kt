@@ -14,9 +14,8 @@ import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.Nested
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtensionOrNull
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinGradleModule
+import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KpmGradleModule
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.hasKpmModel
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.withRefinesClosure
 import org.jetbrains.kotlin.gradle.plugin.sources.KotlinDependencyScope
 import org.jetbrains.kotlin.gradle.plugin.sources.sourceSetDependencyConfigurationByScope
 import org.jetbrains.kotlin.gradle.targets.metadata.dependsOnClosureWithInterCompilationDependencies
@@ -191,7 +190,7 @@ internal fun buildKotlinProjectStructureMetadata(project: Project): KotlinProjec
     )
 }
 
-internal fun buildProjectStructureMetadata(module: KotlinGradleModule): KotlinProjectStructureMetadata {
+internal fun buildProjectStructureMetadata(module: KpmGradleModule): KotlinProjectStructureMetadata {
     val kotlinVariantToGradleVariantNames = module.variants.associate { it.name to it.gradleVariantNames }
 
     fun <T> expandVariantKeys(map: Map<String, T>) =
@@ -202,7 +201,7 @@ internal fun buildProjectStructureMetadata(module: KotlinGradleModule): KotlinPr
     val kotlinFragmentsPerKotlinVariant =
         module.variants.associate { variant -> variant.name to variant.withRefinesClosure.map { it.name }.toSet() }
     val fragmentRefinesRelation =
-        module.fragments.associate { it.name to it.directRefinesDependencies.map { it.fragmentName }.toSet() }
+        module.fragments.associate { it.name to it.declaredRefinesDependencies.map { it.fragmentName }.toSet() }
 
     // FIXME: support native implementation-as-api-dependencies
     // FIXME: support dependencies on auxiliary modules

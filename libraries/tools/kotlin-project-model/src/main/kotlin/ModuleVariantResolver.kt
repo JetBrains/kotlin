@@ -20,7 +20,7 @@ interface ModuleVariantResolver {
      * In this case it should return [VariantResolution.Unknown], and the caller (which might be an aggregating [ModuleVariantResolver])
      * may consult other sources to get the variant match.
      */
-    fun getChosenVariant(requestingVariant: KotlinModuleVariant, dependencyModule: KotlinModule): VariantResolution
+    fun getChosenVariant(requestingVariant: KpmVariant, dependencyModule: KpmModule): VariantResolution
 }
 
 /**
@@ -28,14 +28,14 @@ interface ModuleVariantResolver {
  * usually done by some [ModuleVariantResolver].
  */
 sealed class VariantResolution(
-    val requestingVariant: KotlinModuleVariant,
-    val dependencyModule: KotlinModule
+    val requestingVariant: KpmVariant,
+    val dependencyModule: KpmModule
 ) {
     companion object {
         fun fromMatchingVariants(
-            requestingVariant: KotlinModuleVariant,
-            dependencyModule: KotlinModule,
-            matchingVariants: Collection<KotlinModuleVariant>
+            requestingVariant: KpmVariant,
+            dependencyModule: KpmModule,
+            matchingVariants: Collection<KpmVariant>
         ) = when (matchingVariants.size) {
             0 -> NoVariantMatch(requestingVariant, dependencyModule)
             1 -> VariantMatch(requestingVariant, dependencyModule, matchingVariants.single())
@@ -55,20 +55,20 @@ sealed class VariantResolution(
      * The resolver decided that the [chosenVariant] is the best variant match.
      */
     class VariantMatch(
-        requestingVariant: KotlinModuleVariant,
-        dependencyModule: KotlinModule,
-        val chosenVariant: KotlinModuleVariant
+        requestingVariant: KpmVariant,
+        dependencyModule: KpmModule,
+        val chosenVariant: KpmVariant
     ) : VariantResolution(requestingVariant, dependencyModule)
 
     // TODO: think about restricting calls with the type system to avoid partial functions in resolvers?
-    class Unknown(requestingVariant: KotlinModuleVariant, dependencyModule: KotlinModule) :
+    class Unknown(requestingVariant: KpmVariant, dependencyModule: KpmModule) :
         VariantResolution(requestingVariant, dependencyModule)
 
     /**
      * Returned when the resolver detects that the [requestingVariant] does not depend on [dependencyModule] and therefore should not get
      * any variant of that module at all.
      */
-    class NotRequested(requestingVariant: KotlinModuleVariant, dependencyModule: KotlinModule) :
+    class NotRequested(requestingVariant: KpmVariant, dependencyModule: KpmModule) :
         VariantResolution(requestingVariant, dependencyModule)
 
     /**
@@ -76,8 +76,8 @@ sealed class VariantResolution(
      * done externally and the external system did not provide any details of the failure.
      */
     class NoVariantMatch(
-        requestingVariant: KotlinModuleVariant,
-        dependencyModule: KotlinModule
+        requestingVariant: KpmVariant,
+        dependencyModule: KpmModule
     ) : VariantResolution(requestingVariant, dependencyModule)
 
     /**
@@ -85,8 +85,8 @@ sealed class VariantResolution(
      * best match for the [requestingVariant].
      */
     class AmbiguousVariants(
-        requestingVariant: KotlinModuleVariant,
-        dependencyModule: KotlinModule,
-        val matchingVariants: Iterable<KotlinModuleVariant>
+        requestingVariant: KpmVariant,
+        dependencyModule: KpmModule,
+        val matchingVariants: Iterable<KpmVariant>
     ) : VariantResolution(requestingVariant, dependencyModule)
 }

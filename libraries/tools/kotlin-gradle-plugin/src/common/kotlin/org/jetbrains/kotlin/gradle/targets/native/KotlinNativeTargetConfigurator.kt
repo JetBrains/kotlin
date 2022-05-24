@@ -450,7 +450,7 @@ open class KotlinNativeTargetConfigurator<T : KotlinNativeTarget> : AbstractKotl
                     it.dependsOn(compileTaskProvider)
                 }
             }
-            val shouldAddCompileOutputsToElements = compilation.owner is KotlinGradleVariant || compilation.isMainCompilationData()
+            val shouldAddCompileOutputsToElements = compilation.owner is KpmGradleVariant || compilation.isMainCompilationData()
             if (shouldAddCompileOutputsToElements) {
                 createRegularKlibArtifact(compilation, compileTaskProvider)
             }
@@ -536,7 +536,7 @@ open class KotlinNativeTargetConfigurator<T : KotlinNativeTarget> : AbstractKotl
 
         private val KotlinNativeCompilationData<*>.apiElementsConfigurationName: String
             get() = when (val dataOwner = owner) {
-                is KotlinGradleVariant -> dataOwner.apiElementsConfiguration.name
+                is KpmGradleVariant -> dataOwner.apiElementsConfiguration.name
                 is KotlinTarget -> dataOwner.apiElementsConfigurationName
                 else -> error("unexpected owner of $this")
             }

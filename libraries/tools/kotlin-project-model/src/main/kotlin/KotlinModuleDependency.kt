@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.project.model
 
-data class KotlinModuleDependency(val moduleIdentifier: KotlinModuleIdentifier) {
+data class KpmModuleDependency(val moduleIdentifier: KpmModuleIdentifier) {
     override fun toString(): String = "dependency $moduleIdentifier"
 }
 

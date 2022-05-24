@@ -18,17 +18,17 @@ import org.jetbrains.kotlin.project.model.*
 import java.io.File
 
 internal fun Project.compilerPluginProviderForMetadata(
-    fragment: KotlinGradleFragment,
+    fragment: KpmGradleFragment,
     compilationData: KotlinCommonFragmentMetadataCompilationData
 ) = compilerPluginDataProvider(compilationData, fragment::metadataCompilationPluginData)
 
 internal fun Project.compilerPluginProviderForNativeMetadata(
-    fragment: KotlinGradleFragment,
+    fragment: KpmGradleFragment,
     compilationData: KotlinNativeFragmentMetadataCompilationData
 ) = compilerPluginDataProvider(compilationData, fragment::nativeMetadataCompilationPluginData)
 
 internal fun Project.compilerPluginProviderForPlatformCompilation(
-    variant: KotlinGradleVariant,
+    variant: KpmGradleVariant,
     compilationData: KotlinCompilationData<*>
 ) = compilerPluginDataProvider(compilationData, variant::platformCompilationPluginData)
 

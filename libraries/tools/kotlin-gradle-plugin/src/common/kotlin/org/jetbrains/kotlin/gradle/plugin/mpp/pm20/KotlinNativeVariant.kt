@@ -12,18 +12,17 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.NativeCompileOptions
 import org.jetbrains.kotlin.gradle.plugin.mpp.publishedConfigurationName
 import org.jetbrains.kotlin.konan.target.KonanTarget
-import javax.inject.Inject
 
-abstract class KotlinNativeVariantInternal(
-    containingModule: KotlinGradleModule,
+abstract class KpmNativeVariantInternal(
+    containingModule: KpmGradleModule,
     fragmentName: String,
     val konanTarget: KonanTarget,
     dependencyConfigurations: KotlinFragmentDependencyConfigurations,
     compileDependencyConfiguration: Configuration,
     apiElementsConfiguration: Configuration,
     final override val hostSpecificMetadataElementsConfiguration: Configuration?
-) : KotlinNativeVariant,
-    KotlinGradleVariantInternal(
+) : KpmNativeVariant,
+    KpmGradleVariantInternal(
         containingModule = containingModule,
         fragmentName = fragmentName,
         dependencyConfigurations = dependencyConfigurations,
@@ -44,11 +43,11 @@ abstract class KotlinNativeVariantInternal(
     override val compilationData by lazy { KotlinNativeVariantCompilationData(this) }
 }
 
-class KotlinNativeVariantConstructor<T : KotlinNativeVariantInternal>(
+class KotlinNativeVariantConstructor<T : KpmNativeVariantInternal>(
     val konanTarget: KonanTarget,
     val variantClass: Class<T>,
     private val constructor: (
-        containingModule: KotlinGradleModule,
+        containingModule: KpmGradleModule,
         fragmentName: String,
         dependencyConfigurations: KotlinFragmentDependencyConfigurations,
         compileDependencyConfiguration: Configuration,
@@ -57,7 +56,7 @@ class KotlinNativeVariantConstructor<T : KotlinNativeVariantInternal>(
     ) -> T
 ) {
     operator fun invoke(
-        containingModule: KotlinGradleModule,
+        containingModule: KpmGradleModule,
         fragmentName: String,
         dependencyConfigurations: KotlinFragmentDependencyConfigurations,
         compileDependencyConfiguration: Configuration,
@@ -78,7 +77,7 @@ interface KotlinNativeCompilationData<T : KotlinCommonOptions> : KotlinCompilati
 }
 
 internal class KotlinNativeVariantCompilationData(
-    val variant: KotlinNativeVariantInternal
+    val variant: KpmNativeVariantInternal
 ) : KotlinVariantCompilationDataInternal<KotlinCommonOptions>, KotlinNativeCompilationData<KotlinCommonOptions> {
     override val konanTarget: KonanTarget
         get() = variant.konanTarget
@@ -89,7 +88,7 @@ internal class KotlinNativeVariantCompilationData(
     override val project: Project
         get() = variant.containingModule.project
 
-    override val owner: KotlinNativeVariant
+    override val owner: KpmNativeVariant
         get() = variant
 
     override val kotlinOptions: KotlinCommonOptions = NativeCompileOptions { variant.languageSettings }
@@ -97,7 +96,7 @@ internal class KotlinNativeVariantCompilationData(
 
 internal class KotlinMappedNativeCompilationFactory(
     target: KotlinNativeTarget,
-    private val variantClass: Class<out KotlinNativeVariantInternal>
+    private val variantClass: Class<out KpmNativeVariantInternal>
 ) : KotlinNativeCompilationFactory(target) {
     override fun create(name: String): KotlinNativeCompilation {
         val module = target.project.kpmModules.maybeCreate(name)

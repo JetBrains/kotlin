@@ -18,19 +18,19 @@ interface KpmCompilerPlugin {
      * Returns [PluginData] when applicable for [fragment] compilation
      * Returns [null] if not applicable
      */
-    fun forMetadataCompilation(fragment: KotlinModuleFragment): PluginData?
+    fun forMetadataCompilation(fragment: KpmFragment): PluginData?
 
     /**
      * Returns [PluginData] when applicable for [fragment] compilation
      * Returns [null] if not applicable
      */
-    fun forNativeMetadataCompilation(fragment: KotlinModuleFragment): PluginData?
+    fun forNativeMetadataCompilation(fragment: KpmFragment): PluginData?
 
     /**
      * Returns [PluginData] when applicable for [variant] compilation
      * Returns [null] if not applicable
      */
-    fun forPlatformCompilation(variant: KotlinModuleVariant): PluginData?
+    fun forPlatformCompilation(variant: KpmVariant): PluginData?
 }
 
 /**
@@ -79,17 +79,17 @@ data class FilesOption(
 
 // TODO: It should be part of "Compilation Process": KotlinModule.compilationRequestFor(METADATA | PLATFORM) -> CompilationRequest
 //  But there is no such thing at the moment :)
-fun KotlinModuleFragment.metadataCompilationPluginData(): List<PluginData> =
+fun KpmFragment.metadataCompilationPluginData(): List<PluginData> =
     containingModule
         .plugins
         .mapNotNull { plugin -> plugin.forMetadataCompilation(this) }
 
-fun KotlinModuleFragment.nativeMetadataCompilationPluginData(): List<PluginData> =
+fun KpmFragment.nativeMetadataCompilationPluginData(): List<PluginData> =
     containingModule
         .plugins
         .mapNotNull { plugin -> plugin.forNativeMetadataCompilation(this) }
 
-fun KotlinModuleVariant.platformCompilationPluginData(): List<PluginData> =
+fun KpmVariant.platformCompilationPluginData(): List<PluginData> =
     containingModule
         .plugins
         .mapNotNull { plugin -> plugin.forPlatformCompilation(this) }
@@ -108,11 +108,11 @@ abstract class BasicKpmCompilerPlugin : KpmCompilerPlugin {
 
     protected abstract val pluginOptions: List<PluginOption>
 
-    override fun forMetadataCompilation(fragment: KotlinModuleFragment) = pluginDataOrNull(commonPluginArtifact())
+    override fun forMetadataCompilation(fragment: KpmFragment) = pluginDataOrNull(commonPluginArtifact())
 
-    override fun forNativeMetadataCompilation(fragment: KotlinModuleFragment) = pluginDataOrNull(nativePluginArtifact())
+    override fun forNativeMetadataCompilation(fragment: KpmFragment) = pluginDataOrNull(nativePluginArtifact())
 
-    override fun forPlatformCompilation(variant: KotlinModuleVariant) =
+    override fun forPlatformCompilation(variant: KpmVariant) =
         when (variant.platform) {
             KotlinPlatformTypeAttribute.NATIVE -> nativePluginArtifact()
             else -> commonPluginArtifact()

@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.gradle.dsl.topLevelExtensionOrNull
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinPm20ProjectExtension
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.hasKpmModel
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.kpmModules
-import org.jetbrains.kotlin.project.model.KotlinModuleIdentifier
+import org.jetbrains.kotlin.project.model.KpmModuleIdentifier
 import java.io.File
 import java.io.InputStream
 import java.util.zip.ZipFile
@@ -25,7 +25,7 @@ sealed class MppDependencyProjectStructureMetadataExtractor {
 }
 
 internal class ProjectMppDependencyProjectStructureMetadataExtractor(
-    val moduleIdentifier: KotlinModuleIdentifier,
+    val moduleIdentifier: KpmModuleIdentifier,
     val dependencyProject: Project
 ) : MppDependencyProjectStructureMetadataExtractor() {
 

@@ -11,10 +11,10 @@ import org.jetbrains.kotlin.gradle.plugin.sources.kpm.FragmentMappedKotlinSource
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 import java.io.File
 
-interface KotlinSourceDirectoriesConfigurator<in T : KotlinGradleFragment>: KotlinGradleFragmentFactory.FragmentConfigurator<T>
+interface KotlinSourceDirectoriesConfigurator<in T : KpmGradleFragment>: KotlinGradleFragmentFactory.FragmentConfigurator<T>
 
-object DefaultKotlinSourceDirectoriesConfigurator : KotlinSourceDirectoriesConfigurator<KotlinGradleFragment> {
-    override fun configure(fragment: KotlinGradleFragment) {
+object DefaultKotlinSourceDirectoriesConfigurator : KotlinSourceDirectoriesConfigurator<KpmGradleFragment> {
+    override fun configure(fragment: KpmGradleFragment) {
         fragment.kotlinSourceRoots.srcDir(
             fragment.project.provider {
                 defaultSourceFolder(
@@ -25,7 +25,7 @@ object DefaultKotlinSourceDirectoriesConfigurator : KotlinSourceDirectoriesConfi
         )
     }
 
-    private fun fragmentDirectoryName(fragment: KotlinGradleFragment): String {
+    private fun fragmentDirectoryName(fragment: KpmGradleFragment): String {
         val project = fragment.project
         val isModelMappingEnabled = project.multiplatformExtensionOrNull != null
         val kpmDefaultResult = lowerCamelCaseName(fragment.name, fragment.containingModule.name)
@@ -40,7 +40,7 @@ object DefaultKotlinSourceDirectoriesConfigurator : KotlinSourceDirectoriesConfi
         }
     }
 
-    fun defaultSourceFolder(fragment: KotlinGradleFragment, type: String): File {
+    fun defaultSourceFolder(fragment: KpmGradleFragment, type: String): File {
         val fragmentDirectoryName = fragmentDirectoryName(fragment)
         return fragment.project.file("src/$fragmentDirectoryName/$type")
     }

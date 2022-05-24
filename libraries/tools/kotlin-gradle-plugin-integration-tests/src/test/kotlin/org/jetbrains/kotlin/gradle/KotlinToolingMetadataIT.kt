@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.gradle
 
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinGradleModule
+import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KpmGradleModule
 import org.jetbrains.kotlin.gradle.tooling.BuildKotlinToolingMetadataTask
 import org.jetbrains.kotlin.gradle.tooling.BuildKotlinToolingMetadataTask.Companion.taskNameForKotlinModule
 import org.jetbrains.kotlin.konan.target.KonanTarget
@@ -29,7 +29,7 @@ class KotlinToolingMetadataMppIT : BaseGradleIT() {
 
     private val buildKotlinToolingMetadataTaskName get() =
         if (isKpmModelMappingEnabled) {
-            taskNameForKotlinModule(KotlinGradleModule.MAIN_MODULE_NAME)
+            taskNameForKotlinModule(KpmGradleModule.MAIN_MODULE_NAME)
         } else {
             BuildKotlinToolingMetadataTask.defaultTaskName
         }
@@ -122,7 +122,7 @@ class KotlinToolingMetadataMppIT : BaseGradleIT() {
 
         with(transformProjectWithPluginsDsl("kpm-multi-module-published")) {
             val expectedMetadataByModule = mapOf<String, KotlinToolingMetadata.() -> Unit>(
-                KotlinGradleModule.MAIN_MODULE_NAME to {
+                KpmGradleModule.MAIN_MODULE_NAME to {
                     val nativeTarget = projectTargets.single { it.platformType == KotlinPlatformType.native.name }
                     assertEquals(KonanTarget.LINUX_X64.name, nativeTarget.extras.native?.konanTarget)
                 },

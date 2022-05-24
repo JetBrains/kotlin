@@ -18,7 +18,7 @@ internal fun setupKpmModulesPublication(project: Project) {
     }
 }
 
-internal fun setupPublicationForModule(module: KotlinGradleModule) {
+internal fun setupPublicationForModule(module: KpmGradleModule) {
     val project = module.project
 
     val metadataElements = project.configurations.getByName(metadataElementsConfigurationName(module))
@@ -50,7 +50,7 @@ internal fun setupPublicationForModule(module: KotlinGradleModule) {
     }
 }
 
-private fun MavenPublication.setupKotlinToolingMetadataIfNeeded(module: KotlinGradleModule) {
+private fun MavenPublication.setupKotlinToolingMetadataIfNeeded(module: KpmGradleModule) {
     val buildKotlinToolingMetadataTask = module.buildKotlinToolingMetadataTask ?: return
 
     artifact(buildKotlinToolingMetadataTask.map { it.outputFile }) { artifact ->

@@ -11,9 +11,9 @@ import org.gradle.api.file.FileCollection
 import org.gradle.api.publish.maven.MavenPublication
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilationOutput
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
-import org.jetbrains.kotlin.project.model.KotlinModuleVariant
+import org.jetbrains.kotlin.project.model.KpmVariant
 
-interface KotlinGradleVariant : KotlinGradleFragment, KotlinModuleVariant {
+interface KpmGradleVariant : KpmGradleFragment, KpmVariant {
     val platformType: KotlinPlatformType
 
     // TODO generalize with KotlinCompilation?
@@ -33,7 +33,7 @@ interface KotlinGradleVariant : KotlinGradleFragment, KotlinModuleVariant {
     val gradleVariantNames: Set<String>
 }
 
-interface KotlinGradleVariantWithRuntime : KotlinGradleVariant {
+interface KpmGradleVariantWithRuntime : KpmGradleVariant {
     // TODO deduplicate with KotlinCompilation?
     val runtimeDependenciesConfiguration: Configuration
 
@@ -45,7 +45,7 @@ interface KotlinGradleVariantWithRuntime : KotlinGradleVariant {
     val runtimeElementsConfiguration: Configuration
 }
 
-interface KotlinNativeVariant : KotlinGradleVariant {
+interface KpmNativeVariant : KpmGradleVariant {
     override val platformType: KotlinPlatformType
         get() = KotlinPlatformType.native
 

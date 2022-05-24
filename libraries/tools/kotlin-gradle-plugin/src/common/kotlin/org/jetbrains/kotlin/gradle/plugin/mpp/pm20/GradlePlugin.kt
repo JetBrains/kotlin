@@ -44,13 +44,13 @@ abstract class KotlinPm20GradlePlugin @Inject constructor(
 
     private fun createDefaultModules(project: Project) {
         project.pm20Extension.apply {
-            modules.create(KotlinGradleModule.MAIN_MODULE_NAME)
-            modules.create(KotlinGradleModule.TEST_MODULE_NAME)
+            modules.create(KpmGradleModule.MAIN_MODULE_NAME)
+            modules.create(KpmGradleModule.TEST_MODULE_NAME)
             main { makePublic() }
         }
     }
 
-    private fun setupPublicationForModule(module: KotlinGradleModule) {
+    private fun setupPublicationForModule(module: KpmGradleModule) {
         val project = module.project
 
         val metadataElements = project.configurations.getByName(metadataElementsConfigurationName(module))
@@ -87,7 +87,7 @@ abstract class KotlinPm20GradlePlugin @Inject constructor(
     }
 }
 
-fun rootPublicationComponentName(module: KotlinGradleModule) =
+fun rootPublicationComponentName(module: KpmGradleModule) =
     module.disambiguateName("root")
 
 open class KotlinPm20ProjectExtension(project: Project) : KotlinTopLevelExtension(project) {
@@ -96,53 +96,53 @@ open class KotlinPm20ProjectExtension(project: Project) : KotlinTopLevelExtensio
 
     internal val ideaKotlinProjectModelBuilder by lazy { IdeaKotlinProjectModelBuilder.default(this) }
 
-    val modules: NamedDomainObjectContainer<KotlinGradleModule>
+    val modules: NamedDomainObjectContainer<KpmGradleModule>
         get() = project.kpmModules
 
     @Suppress("unused") // DSL function
-    fun mainAndTest(configure: KotlinGradleModule.() -> Unit) {
+    fun mainAndTest(configure: KpmGradleModule.() -> Unit) {
         main(configure)
         test(configure)
     }
 
-    val main: KotlinGradleModule
-        get() = modules.getByName(KotlinGradleModule.MAIN_MODULE_NAME)
+    val main: KpmGradleModule
+        get() = modules.getByName(KpmGradleModule.MAIN_MODULE_NAME)
 
-    val test: KotlinGradleModule
-        get() = modules.getByName(KotlinGradleModule.TEST_MODULE_NAME)
+    val test: KpmGradleModule
+        get() = modules.getByName(KpmGradleModule.TEST_MODULE_NAME)
 
-    fun main(configure: KotlinGradleModule.() -> Unit = { }) = main.apply(configure)
-    fun test(configure: KotlinGradleModule.() -> Unit = { }) = test.apply(configure)
+    fun main(configure: KpmGradleModule.() -> Unit = { }) = main.apply(configure)
+    fun test(configure: KpmGradleModule.() -> Unit = { }) = test.apply(configure)
 
     @PublishedApi
     @JvmName("isAllowCommonizer")
     internal fun isAllowCommonizerForIde(@Suppress("UNUSED_PARAMETER") project: Project): Boolean = false
 }
 
-val KotlinGradleModule.jvm: KotlinJvmVariant
-    get() = fragments.maybeCreate("jvm", KotlinJvmVariant::class.java)
+val KpmGradleModule.jvm: KpmJvmVariant
+    get() = fragments.maybeCreate("jvm", KpmJvmVariant::class.java)
 
-fun KotlinGradleModule.jvm(configure: KotlinJvmVariant.() -> Unit): KotlinJvmVariant = jvm.apply(configure)
+fun KpmGradleModule.jvm(configure: KpmJvmVariant.() -> Unit): KpmJvmVariant = jvm.apply(configure)
 
-fun KotlinPm20ProjectExtension.jvm(configure: KotlinFragmentSlice<KotlinJvmVariant>.() -> Unit) {
-    val getOrCreateVariant: KotlinGradleModule.() -> KotlinJvmVariant = { jvm }
+fun KotlinPm20ProjectExtension.jvm(configure: KotlinFragmentSlice<KpmJvmVariant>.() -> Unit) {
+    val getOrCreateVariant: KpmGradleModule.() -> KpmJvmVariant = { jvm }
     mainAndTest { getOrCreateVariant(this) }
     val slice = KotlinFragmentSlice(this, getOrCreateVariant)
     configure(slice)
 }
 
-open class KotlinFragmentSlice<T : KotlinGradleFragment>(
+open class KotlinFragmentSlice<T : KpmGradleFragment>(
     val pm20ProjectExtension: KotlinPm20ProjectExtension,
-    val getOrCreateFragment: (KotlinGradleModule) -> T
+    val getOrCreateFragment: (KpmGradleModule) -> T
 ) {
     fun inMain(configure: T.() -> Unit) {
-        pm20ProjectExtension.modules.getByName(KotlinGradleModule.MAIN_MODULE_NAME).apply {
+        pm20ProjectExtension.modules.getByName(KpmGradleModule.MAIN_MODULE_NAME).apply {
             getOrCreateFragment(this).configure()
         }
     }
 
     fun inTest(configure: T.() -> Unit) {
-        pm20ProjectExtension.modules.getByName(KotlinGradleModule.TEST_MODULE_NAME).apply {
+        pm20ProjectExtension.modules.getByName(KpmGradleModule.TEST_MODULE_NAME).apply {
             getOrCreateFragment(this).configure()
         }
     }
@@ -161,11 +161,11 @@ open class KotlinFragmentSlice<T : KotlinGradleFragment>(
         pm20ProjectExtension.modules.getByName(moduleName).apply { getOrCreateFragment(this).configure() }
     }
 
-    fun inModule(module: NamedDomainObjectProvider<KotlinGradleModule>, configure: T.() -> Unit) {
+    fun inModule(module: NamedDomainObjectProvider<KpmGradleModule>, configure: T.() -> Unit) {
         module.get().apply { inModule(this, configure) }
     }
 
-    fun inModule(module: KotlinGradleModule, configure: T.() -> Unit) {
+    fun inModule(module: KpmGradleModule, configure: T.() -> Unit) {
         getOrCreateFragment(module).configure()
     }
 }

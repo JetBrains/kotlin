@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.gradle.utils.dashSeparatedName
 import org.jetbrains.kotlin.gradle.utils.filesProvider
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 import org.jetbrains.kotlin.library.KLIB_FILE_EXTENSION
-import org.jetbrains.kotlin.project.model.KotlinModuleFragment
+import org.jetbrains.kotlin.project.model.KpmFragment
 import java.util.concurrent.Callable
 
 internal fun setupFragmentsMetadataForKpmModules(project: Project) {
@@ -38,7 +38,7 @@ internal fun setupFragmentsMetadataForKpmModules(project: Project) {
     }
 }
 
-internal fun configureMetadataResolutionAndBuild(module: KotlinGradleModule) {
+internal fun configureMetadataResolutionAndBuild(module: KpmGradleModule) {
     val project = module.project
     createResolvableMetadataConfigurationForModule(module)
 
@@ -52,7 +52,7 @@ internal fun configureMetadataResolutionAndBuild(module: KotlinGradleModule) {
     generateAndExportProjectStructureMetadata(module)
 }
 
-internal fun configureMetadataExposure(module: KotlinGradleModule) {
+internal fun configureMetadataExposure(module: KpmGradleModule) {
     val project = module.project
     project.configurations.create(metadataElementsConfigurationName(module)).apply {
         isCanBeConsumed = false
@@ -83,14 +83,14 @@ internal fun configureMetadataExposure(module: KotlinGradleModule) {
     )
 }
 
-fun metadataElementsConfigurationName(module: KotlinGradleModule) =
+fun metadataElementsConfigurationName(module: KpmGradleModule) =
     module.disambiguateName("metadataElements")
 
-fun sourceElementsConfigurationName(module: KotlinGradleModule) =
+fun sourceElementsConfigurationName(module: KpmGradleModule) =
     module.disambiguateName("sourceElements")
 
 private fun generateAndExportProjectStructureMetadata(
-    module: KotlinGradleModule
+    module: KpmGradleModule
 ) {
     val project = module.project
     val projectStructureMetadata = project.createGenerateProjectStructureMetadataTask(module)
@@ -105,7 +105,7 @@ private fun generateAndExportProjectStructureMetadata(
     }
 }
 
-private fun createResolvableMetadataConfigurationForModule(module: KotlinGradleModule) {
+private fun createResolvableMetadataConfigurationForModule(module: KpmGradleModule) {
     val project = module.project
     project.configurations.create(module.resolvableMetadataConfigurationName).apply {
         isCanBeConsumed = false
@@ -121,7 +121,7 @@ private fun createResolvableMetadataConfigurationForModule(module: KotlinGradleM
 }
 
 private fun configureMetadataCompilationsAndCreateRegistry(
-    module: KotlinGradleModule,
+    module: KpmGradleModule,
     metadataCompilationRegistry: MetadataCompilationRegistry
 ) {
     val project = module.project
@@ -143,7 +143,7 @@ private fun configureMetadataCompilationsAndCreateRegistry(
 }
 
 private fun configureMetadataJarTask(
-    module: KotlinGradleModule,
+    module: KpmGradleModule,
     registry: MetadataCompilationRegistry
 ) {
     val project = module.project
@@ -169,11 +169,11 @@ private fun configureMetadataJarTask(
     }
 }
 
-internal fun metadataJarName(module: KotlinGradleModule) =
+internal fun metadataJarName(module: KpmGradleModule) =
     lowerCamelCaseName(module.moduleClassifier, KotlinMetadataTargetConfigurator.ALL_METADATA_JAR_NAME)
 
 private fun createCommonMetadataCompilation(
-    fragment: KotlinGradleFragment,
+    fragment: KpmGradleFragment,
     compileAllTask: TaskProvider<DefaultTask>,
     metadataCompilationRegistry: MetadataCompilationRegistry
 ) {
@@ -194,7 +194,7 @@ private fun createCommonMetadataCompilation(
 }
 
 private fun createNativeMetadataCompilation(
-    fragment: KotlinGradleFragment,
+    fragment: KpmGradleFragment,
     compileAllTask: TaskProvider<DefaultTask>,
     metadataCompilationRegistry: MetadataCompilationRegistry
 ) {
@@ -216,7 +216,7 @@ private fun createNativeMetadataCompilation(
 
 private class MetadataCompilationTasksConfigurator(project: Project) : KotlinCompilationTaskConfigurator(project) {
     fun createKotlinCommonCompilationTask(
-        fragment: KotlinGradleFragment,
+        fragment: KpmGradleFragment,
         compilationData: KotlinCommonFragmentMetadataCompilationData
     ) {
         KotlinCommonSourceSetProcessor(
@@ -235,22 +235,22 @@ private class MetadataCompilationTasksConfigurator(project: Project) : KotlinCom
     }
 
     fun createKotlinNativeMetadataCompilationTask(
-        fragment: KotlinGradleFragment,
+        fragment: KpmGradleFragment,
         compilationData: KotlinNativeFragmentMetadataCompilationData
     ): TaskProvider<KotlinNativeCompile> = createKotlinNativeCompilationTask(fragment, compilationData) {
         kotlinPluginData = project.compilerPluginProviderForNativeMetadata(fragment, compilationData)
     }
 
-    override fun getSourcesForFragmentCompilation(fragment: KotlinGradleFragment): MultipleSourceRootsProvider {
+    override fun getSourcesForFragmentCompilation(fragment: KpmGradleFragment): MultipleSourceRootsProvider {
         return project.provider { listOf(fragmentSourcesProvider.getFragmentOwnSources(fragment)) }
     }
 
-    override fun getCommonSourcesForFragmentCompilation(fragment: KotlinGradleFragment): MultipleSourceRootsProvider {
+    override fun getCommonSourcesForFragmentCompilation(fragment: KpmGradleFragment): MultipleSourceRootsProvider {
         return project.provider { listOf(fragmentSourcesProvider.getFragmentOwnSources(fragment)) }
     }
 }
 
-private fun resolvedMetadataProviders(fragment: KotlinGradleFragment) =
+private fun resolvedMetadataProviders(fragment: KpmGradleFragment) =
     fragment.withRefinesClosure.map {
         FragmentResolvedMetadataProvider(
             fragment.project.tasks.withType<TransformKotlinGranularMetadataForFragment>().named(transformFragmentMetadataTaskName(it))
@@ -259,7 +259,7 @@ private fun resolvedMetadataProviders(fragment: KotlinGradleFragment) =
 
 private fun createExtractMetadataTask(
     project: Project,
-    fragment: KotlinGradleFragment,
+    fragment: KpmGradleFragment,
     transformation: FragmentGranularMetadataResolver
 ) {
     project.tasks.register(
@@ -293,5 +293,5 @@ private fun disableMetadataCompilationIfNotYetSupported(
     }
 }
 
-private fun transformFragmentMetadataTaskName(fragment: KotlinModuleFragment) =
+private fun transformFragmentMetadataTaskName(fragment: KpmFragment) =
     lowerCamelCaseName("resolve", fragment.disambiguateName("Metadata"))

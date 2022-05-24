@@ -13,15 +13,15 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.filterModuleName
 import org.jetbrains.kotlin.gradle.targets.jvm.KotlinJvmTarget
 
-open class KotlinJvmVariant(
-    containingModule: KotlinGradleModule,
+open class KpmJvmVariant(
+    containingModule: KpmGradleModule,
     fragmentName: String,
     dependencyConfigurations: KotlinFragmentDependencyConfigurations,
     compileDependenciesConfiguration: Configuration,
     apiElementsConfiguration: Configuration,
     runtimeDependenciesConfiguration: Configuration,
     runtimeElementsConfiguration: Configuration
-) : KotlinGradlePublishedVariantWithRuntime(
+) : KpmGradlePublishedVariantWithRuntime(
     containingModule = containingModule,
     fragmentName = fragmentName,
     dependencyConfigurations = dependencyConfigurations,
@@ -36,14 +36,14 @@ open class KotlinJvmVariant(
         get() = KotlinPlatformType.jvm
 }
 
-class KotlinJvmVariantCompilationData(val variant: KotlinJvmVariant) : KotlinVariantCompilationDataInternal<KotlinJvmOptions> {
-    override val owner: KotlinJvmVariant get() = variant
+class KotlinJvmVariantCompilationData(val variant: KpmJvmVariant) : KotlinVariantCompilationDataInternal<KotlinJvmOptions> {
+    override val owner: KpmJvmVariant get() = variant
 
     // TODO pull out to the variant
     override val kotlinOptions: KotlinJvmOptions = KotlinJvmOptionsImpl()
 }
 
-internal fun KotlinGradleVariant.ownModuleName(): String {
+internal fun KpmGradleVariant.ownModuleName(): String {
     val project = containingModule.project
     val baseName = project.archivesName
         ?: project.name
@@ -56,7 +56,7 @@ internal class KotlinMappedJvmCompilationFactory(
 ) : KotlinJvmCompilationFactory(target) {
     override fun create(name: String): KotlinJvmCompilation {
         val module = target.project.kpmModules.maybeCreate(name)
-        val variant = module.fragments.create(target.name, KotlinJvmVariant::class.java)
+        val variant = module.fragments.create(target.name, KpmJvmVariant::class.java)
 
         return KotlinJvmCompilation(
             VariantMappedCompilationDetailsWithRuntime(variant, target),

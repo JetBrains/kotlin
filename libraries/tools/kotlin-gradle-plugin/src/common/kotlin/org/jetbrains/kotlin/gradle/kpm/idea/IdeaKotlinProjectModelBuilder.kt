@@ -7,10 +7,10 @@ import org.jetbrains.kotlin.gradle.kpm.external.ExternalVariantApi
 import org.jetbrains.kotlin.gradle.kpm.idea.IdeaKotlinProjectModelBuilder.FragmentConstraint
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType.native
 import org.jetbrains.kotlin.gradle.plugin.getKotlinPluginVersion
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinGradleFragment
+import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KpmGradleFragment
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinPm20ProjectExtension
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.containingVariants
-import org.jetbrains.kotlin.project.model.KotlinModuleVariant
+import org.jetbrains.kotlin.project.model.KpmVariant
 import java.io.File
 
 internal interface IdeaKotlinProjectModelBuildingContext {
@@ -94,11 +94,11 @@ interface IdeaKotlinProjectModelBuilder {
      * Used for scoping [IdeaKotlinDependencyResolver], [IdeaKotlinDependencyTransformer] and [IdeaKotlinDependencyEffect]
      */
     fun interface FragmentConstraint {
-        operator fun invoke(fragment: KotlinGradleFragment): Boolean
+        operator fun invoke(fragment: KpmGradleFragment): Boolean
 
         companion object {
             val unconstrained = FragmentConstraint { true }
-            val isVariant = FragmentConstraint { fragment -> fragment is KotlinModuleVariant }
+            val isVariant = FragmentConstraint { fragment -> fragment is KpmVariant }
             val isNative = FragmentConstraint { fragment -> fragment.containingVariants.run { any() && all { it.platformType == native } } }
         }
     }

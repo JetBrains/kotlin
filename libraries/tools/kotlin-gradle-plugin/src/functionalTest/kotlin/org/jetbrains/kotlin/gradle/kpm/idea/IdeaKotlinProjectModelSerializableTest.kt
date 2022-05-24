@@ -12,9 +12,9 @@ import org.jetbrains.kotlin.gradle.kpm.AbstractKpmExtensionTest
 import org.jetbrains.kotlin.gradle.kpm.buildIdeaKotlinProjectModel
 import org.jetbrains.kotlin.gradle.kpm.idea.testFixtures.deserialize
 import org.jetbrains.kotlin.gradle.kpm.idea.testFixtures.serialize
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinIosX64Variant
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinLinuxX64Variant
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinMacosX64Variant
+import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KpmIosX64Variant
+import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KpmLinuxX64Variant
+import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KpmMacosX64Variant
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.jvm
 import java.io.ByteArrayInputStream
 import java.io.ByteArrayOutputStream
@@ -40,9 +40,9 @@ class IdeaKotlinProjectModelSerializableTest : AbstractKpmExtensionTest() {
         kotlin.mainAndTest {
             val native = fragments.create("native")
             val apple = fragments.create("apple")
-            val ios = fragments.create<KotlinIosX64Variant>("ios")
-            val macos = fragments.create<KotlinMacosX64Variant>("macos")
-            val linux = fragments.create<KotlinLinuxX64Variant>("linux")
+            val ios = fragments.create<KpmIosX64Variant>("ios")
+            val macos = fragments.create<KpmMacosX64Variant>("macos")
+            val linux = fragments.create<KpmLinuxX64Variant>("linux")
             val jvm = jvm
 
             apple.refines(native)

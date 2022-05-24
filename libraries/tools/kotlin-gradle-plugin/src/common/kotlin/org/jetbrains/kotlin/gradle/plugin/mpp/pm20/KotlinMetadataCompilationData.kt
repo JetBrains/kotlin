@@ -32,8 +32,8 @@ interface KotlinCommonFragmentMetadataCompilationData : KotlinMetadataCompilatio
 
 internal abstract class AbstractKotlinFragmentMetadataCompilationData<T : KotlinCommonOptions>(
     final override val project: Project,
-    val fragment: KotlinGradleFragment,
-    private val module: KotlinGradleModule,
+    val fragment: KpmGradleFragment,
+    private val module: KpmGradleModule,
     private val compileAllTask: TaskProvider<DefaultTask>,
     val metadataCompilationRegistry: MetadataCompilationRegistry,
     private val resolvedMetadataFiles: Lazy<Iterable<ResolvedMetadataFilesProvider>>
@@ -106,8 +106,8 @@ internal abstract class AbstractKotlinFragmentMetadataCompilationData<T : Kotlin
 
 internal open class KotlinCommonFragmentMetadataCompilationDataImpl(
     project: Project,
-    fragment: KotlinGradleFragment,
-    module: KotlinGradleModule,
+    fragment: KpmGradleFragment,
+    module: KpmGradleModule,
     compileAllTask: TaskProvider<DefaultTask>,
     metadataCompilationRegistry: MetadataCompilationRegistry,
     resolvedMetadataFiles: Lazy<Iterable<ResolvedMetadataFilesProvider>>
@@ -133,18 +133,18 @@ interface KotlinNativeFragmentMetadataCompilationData :
     KotlinMetadataCompilationData<KotlinCommonOptions>,
     KotlinNativeCompilationData<KotlinCommonOptions>
 
-internal fun KotlinGradleFragment.isNativeShared(): Boolean =
+internal fun KpmGradleFragment.isNativeShared(): Boolean =
     containingVariants.run {
         any() && all { it.platformType == KotlinPlatformType.native }
     }
 
-internal fun KotlinGradleFragment.isNativeHostSpecific(): Boolean =
+internal fun KpmGradleFragment.isNativeHostSpecific(): Boolean =
     this in getHostSpecificFragments(containingModule)
 
 internal open class KotlinNativeFragmentMetadataCompilationDataImpl(
     project: Project,
-    fragment: KotlinGradleFragment,
-    module: KotlinGradleModule,
+    fragment: KpmGradleFragment,
+    module: KpmGradleModule,
     compileAllTask: TaskProvider<DefaultTask>,
     metadataCompilationRegistry: MetadataCompilationRegistry,
     resolvedMetadataFiles: Lazy<Iterable<ResolvedMetadataFilesProvider>>
@@ -168,7 +168,7 @@ internal open class KotlinNativeFragmentMetadataCompilationDataImpl(
     override val konanTarget: KonanTarget
         get() {
             val nativeVariants =
-                fragment.containingVariants.filterIsInstance<KotlinNativeVariantInternal>()
+                fragment.containingVariants.filterIsInstance<KpmNativeVariantInternal>()
             return nativeVariants.firstOrNull { it.konanTarget.enabledOnCurrentHost }?.konanTarget
                 ?: nativeVariants.firstOrNull()?.konanTarget
                 ?: HostManager.host
@@ -182,10 +182,10 @@ internal open class KotlinNativeFragmentMetadataCompilationDataImpl(
 // TODO think about more generic case: a fragment that can be compiled by an arbitrary compiler
 //      what tasks should we create? should there be a generic task for that?
 internal class MetadataCompilationRegistry {
-    private val commonCompilationDataPerFragment = LinkedHashMap<KotlinGradleFragment, KotlinCommonFragmentMetadataCompilationDataImpl>()
-    private val nativeCompilationDataPerFragment = LinkedHashMap<KotlinGradleFragment, KotlinNativeFragmentMetadataCompilationDataImpl>()
+    private val commonCompilationDataPerFragment = LinkedHashMap<KpmGradleFragment, KotlinCommonFragmentMetadataCompilationDataImpl>()
+    private val nativeCompilationDataPerFragment = LinkedHashMap<KpmGradleFragment, KotlinNativeFragmentMetadataCompilationDataImpl>()
 
-    fun registerCommon(fragment: KotlinGradleFragment, compilationData: KotlinCommonFragmentMetadataCompilationDataImpl) {
+    fun registerCommon(fragment: KpmGradleFragment, compilationData: KotlinCommonFragmentMetadataCompilationDataImpl) {
         commonCompilationDataPerFragment.compute(fragment) { _, existing ->
             existing?.let { error("common compilation data for fragment $fragment already registered") }
             compilationData
@@ -193,7 +193,7 @@ internal class MetadataCompilationRegistry {
         withAllCommonCallbacks.forEach { it.invoke(compilationData) }
     }
 
-    fun registerNative(fragment: KotlinGradleFragment, compilationData: KotlinNativeFragmentMetadataCompilationDataImpl) {
+    fun registerNative(fragment: KpmGradleFragment, compilationData: KotlinNativeFragmentMetadataCompilationDataImpl) {
         nativeCompilationDataPerFragment.compute(fragment) { _, existing ->
             existing?.let { error("native compilation data for fragment $fragment already registered") }
             compilationData
@@ -201,7 +201,7 @@ internal class MetadataCompilationRegistry {
         withAllNativeCallbacks.forEach { it.invoke(compilationData) }
     }
 
-    fun getForFragmentOrNull(fragment: KotlinGradleFragment): AbstractKotlinFragmentMetadataCompilationData<*>? =
+    fun getForFragmentOrNull(fragment: KpmGradleFragment): AbstractKotlinFragmentMetadataCompilationData<*>? =
         listOf(commonCompilationDataPerFragment.getValue(fragment), nativeCompilationDataPerFragment.getValue(fragment)).singleOrNull {
             it.isActive
         }

@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.KotlinNameDisambiguation
 /* Internal abbreviation */
 internal typealias ConfigurationDefinition<T> = KotlinGradleFragmentConfigurationDefinition<T>
 
-data class KotlinGradleFragmentConfigurationDefinition<in T : KotlinGradleFragment>(
+data class KotlinGradleFragmentConfigurationDefinition<in T : KpmGradleFragment>(
     val provider: KotlinGradleFragmentConfigurationProvider,
     val attributes: KotlinGradleFragmentConfigurationAttributes<T> = KotlinGradleFragmentConfigurationAttributes.None,
     val artifacts: KotlinGradleFragmentConfigurationArtifacts<T> = KotlinGradleFragmentConfigurationArtifacts.None,
@@ -26,29 +26,29 @@ internal typealias ConfigurationContext = KotlinGradleFragmentConfigurationConte
 
 interface KotlinGradleFragmentConfigurationContext : KotlinNameDisambiguation {
     val project: Project get() = module.project
-    val module: KotlinGradleModule
+    val module: KpmGradleModule
     val dependencies: KotlinFragmentDependencyConfigurations
 }
 
 internal class KotlinGradleFragmentConfigurationContextImpl(
-    override val module: KotlinGradleModule,
+    override val module: KpmGradleModule,
     override val dependencies: KotlinFragmentDependencyConfigurations,
     names: KotlinNameDisambiguation
 ) : KotlinGradleFragmentConfigurationContext, KotlinNameDisambiguation by names
 
-fun <T : KotlinGradleFragment> KotlinGradleFragmentConfigurationDefinition<T>.withConfigurationProvider(
+fun <T : KpmGradleFragment> KotlinGradleFragmentConfigurationDefinition<T>.withConfigurationProvider(
     provider: KotlinGradleFragmentConfigurationContext.() -> Configuration
 ) = copy(provider = ConfigurationProvider(provider))
 
-operator fun <T : KotlinGradleFragment> KotlinGradleFragmentConfigurationDefinition<T>.plus(other: FragmentAttributes<T>):
+operator fun <T : KpmGradleFragment> KotlinGradleFragmentConfigurationDefinition<T>.plus(other: FragmentAttributes<T>):
         KotlinGradleFragmentConfigurationDefinition<T> = copy(attributes = attributes + other)
 
-operator fun <T : KotlinGradleFragment> KotlinGradleFragmentConfigurationDefinition<T>.plus(other: FragmentArtifacts<T>):
+operator fun <T : KpmGradleFragment> KotlinGradleFragmentConfigurationDefinition<T>.plus(other: FragmentArtifacts<T>):
         KotlinGradleFragmentConfigurationDefinition<T> = copy(artifacts = artifacts + other)
 
-operator fun <T : KotlinGradleFragment> KotlinGradleFragmentConfigurationDefinition<T>.plus(other: FragmentConfigurationRelation):
+operator fun <T : KpmGradleFragment> KotlinGradleFragmentConfigurationDefinition<T>.plus(other: FragmentConfigurationRelation):
         KotlinGradleFragmentConfigurationDefinition<T> = copy(relations = relations + other)
 
 @AdvancedKotlinGradlePluginApi
-operator fun <T : KotlinGradleFragment> KotlinGradleFragmentConfigurationDefinition<T>.plus(other: FragmentCapabilities<T>):
+operator fun <T : KpmGradleFragment> KotlinGradleFragmentConfigurationDefinition<T>.plus(other: FragmentCapabilities<T>):
         KotlinGradleFragmentConfigurationDefinition<T> = copy(capabilities = capabilities + other)

@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.FragmentAttributes
  * Resolves 'platform' binary dependencies for a given variant or fragment.
  * 'platform' binaries refer to actually linkable/executable artifacts (like .class files bundled as jar, or linkable native klibs)
  * This resolver is capable of resolving those artifacts even for non-variant "platform-like" fragments.
- * It will then use the [KotlinGradleFragment.transitiveApiConfiguration] and [KotlinGradleFragment.transitiveImplementationConfiguratione]'s
+ * It will then use the [KpmGradleFragment.transitiveApiConfiguration] and [KpmGradleFragment.transitiveImplementationConfiguratione]'s
  * to resolve those binaries. See [IdeaKotlinPlatformDependencyResolver.ArtifactResolution.PlatformFragment]
  */
 class IdeaKotlinPlatformDependencyResolver(
@@ -30,28 +30,28 @@ class IdeaKotlinPlatformDependencyResolver(
 
     sealed class ArtifactResolution {
         /**
-         * Resolve the artifacts from a [KotlinGradleVariant] using its [KotlinGradleVariant.compileDependenciesConfiguration],
+         * Resolve the artifacts from a [KpmGradleVariant] using its [KpmGradleVariant.compileDependenciesConfiguration],
          * which already knows how to resolve platform artifacts.
          * @param artifactViewAttributes: Additional attributes that will be used to create an [ArtifactView] for resolving the dependencies.
          */
         data class Variant(
-            internal val artifactViewAttributes: FragmentAttributes<KotlinGradleFragment> = FragmentAttributes { }
+            internal val artifactViewAttributes: FragmentAttributes<KpmGradleFragment> = FragmentAttributes { }
         ) : ArtifactResolution()
 
         /**
-         * Capable of resolving artifacts from a plain [KotlinGradleFragment] which does not have to implement [KotlinGradleVariant].
+         * Capable of resolving artifacts from a plain [KpmGradleFragment] which does not have to implement [KpmGradleVariant].
          * Such fragments are called 'platform-like', since they still resolve the linkable platform dependencies.
          * @param platformResolutionAttributes: Attributes describing how to resolve platform artifacts in general.
          * @param artifactViewAttributes: Additional attributes that will be used to create an [ArtifactView] for
          * resolving the dependencies
          */
         data class PlatformFragment(
-            internal val platformResolutionAttributes: FragmentAttributes<KotlinGradleFragment>,
-            internal val artifactViewAttributes: FragmentAttributes<KotlinGradleFragment> = FragmentAttributes { },
+            internal val platformResolutionAttributes: FragmentAttributes<KpmGradleFragment>,
+            internal val artifactViewAttributes: FragmentAttributes<KpmGradleFragment> = FragmentAttributes { },
         ) : ArtifactResolution()
     }
 
-    override fun resolve(fragment: KotlinGradleFragment): Set<IdeaKotlinBinaryDependency> {
+    override fun resolve(fragment: KpmGradleFragment): Set<IdeaKotlinBinaryDependency> {
         val artifacts = artifactResolution.createArtifactView(fragment)?.artifacts ?: return emptySet()
 
         val unresolvedDependencies = artifacts.failures
@@ -87,15 +87,15 @@ private val ComponentIdentifier.ideaKotlinBinaryCoordinates: IdeaKotlinBinaryCoo
         else -> null
     }
 
-private fun ArtifactResolution.createArtifactView(fragment: KotlinGradleFragment): ArtifactView? {
+private fun ArtifactResolution.createArtifactView(fragment: KpmGradleFragment): ArtifactView? {
     return when (this) {
         is ArtifactResolution.Variant -> createVariantArtifactView(fragment)
         is ArtifactResolution.PlatformFragment -> createPlatformFragmentArtifactView(fragment)
     }
 }
 
-private fun ArtifactResolution.Variant.createVariantArtifactView(fragment: KotlinGradleFragment): ArtifactView? {
-    if (fragment !is KotlinGradleVariant) return null
+private fun ArtifactResolution.Variant.createVariantArtifactView(fragment: KpmGradleFragment): ArtifactView? {
+    if (fragment !is KpmGradleVariant) return null
     return fragment.compileDependenciesConfiguration.incoming.artifactView { view ->
         view.isLenient = true
         view.componentFilter { id -> id !is ProjectComponentIdentifier }
@@ -103,7 +103,7 @@ private fun ArtifactResolution.Variant.createVariantArtifactView(fragment: Kotli
     }
 }
 
-private fun ArtifactResolution.PlatformFragment.createPlatformFragmentArtifactView(fragment: KotlinGradleFragment): ArtifactView {
+private fun ArtifactResolution.PlatformFragment.createPlatformFragmentArtifactView(fragment: KpmGradleFragment): ArtifactView {
     val fragmentCompileDependencies = fragment.project.configurations.detachedConfiguration()
 
     fragmentCompileDependencies.dependencies.addAll(
