@@ -481,10 +481,11 @@ abstract class BaseFirBuilder<T>(val baseSession: FirSession, val context: Conte
         getElementType: (T) -> IElementType = { it.elementType },
         convertTemplateEntry: T?.(String) -> FirExpression
     ) : FirExpression {
-        // TODO set source to corresponding fake element everywhere
+        val baseSource = base.toFirSourceElement()
+        val desugaredSource = baseSource.fakeElement(KtFakeSourceElementKind.DesugaredBuildLiteralCall)
         val objectReceiver = buildPropertyAccessExpression {
             calleeReference = buildSimpleNamedReference {
-                source = null
+                source = desugaredSource
                 name = Name.identifier(prefix)
             }
         }
@@ -520,9 +521,9 @@ abstract class BaseFirBuilder<T>(val baseSession: FirSession, val context: Conte
                 when (elementType) {
                     LITERAL_STRING_TEMPLATE_ENTRY, ESCAPE_STRING_TEMPLATE_ENTRY -> {
                         statements += buildFunctionCall {
-                            source = null
+                            source = desugaredSource
                             calleeReference = buildSimpleNamedReference {
-                                source = null
+                                source = desugaredSource
                                 name = OperatorNameConventions.APPEND_STRING
                             }
                             argumentList = buildArgumentList {
@@ -532,9 +533,9 @@ abstract class BaseFirBuilder<T>(val baseSession: FirSession, val context: Conte
                     }
                     SHORT_STRING_TEMPLATE_ENTRY, LONG_STRING_TEMPLATE_ENTRY -> {
                         statements += buildFunctionCall {
-                            source = null
+                            source = desugaredSource
                             calleeReference = buildSimpleNamedReference {
-                                source = null
+                                source = desugaredSource
                                 name = OperatorNameConventions.APPEND_OBJECT
                             }
                             argumentList = buildArgumentList {
@@ -548,11 +549,11 @@ abstract class BaseFirBuilder<T>(val baseSession: FirSession, val context: Conte
         }
 
         val lambdaArgument = buildLambdaArgumentExpression {
-            source = null
+            source = desugaredSource
             expression = buildAnonymousFunctionExpression {
-                source = null
+                source = desugaredSource
                 anonymousFunction = buildAnonymousFunction {
-                    source = null
+                    source = desugaredSource
                     moduleData = baseModuleData
                     origin = FirDeclarationOrigin.Source
                     returnTypeRef = buildImplicitTypeRef()
@@ -566,9 +567,9 @@ abstract class BaseFirBuilder<T>(val baseSession: FirSession, val context: Conte
         }
 
         val buildLiteralCall = buildFunctionCall {
-            source = null
+            source = desugaredSource
             calleeReference = buildSimpleNamedReference {
-                source = null
+                source = desugaredSource
                 name = OperatorNameConventions.BUILD_LITERAL
             }
             explicitReceiver = objectReceiver

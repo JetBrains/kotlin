@@ -5,8 +5,10 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers.syntax
 
+import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.KtPsiSourceElement
 import org.jetbrains.kotlin.KtLightSourceElement
+import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
@@ -46,4 +48,7 @@ object FirAnonymousFunctionSyntaxChecker : FirDeclarationSyntaxChecker<FirAnonym
             )
         }
     }
+
+    override fun isApplicable(element: FirAnonymousFunction, source: KtSourceElement): Boolean =
+        source.kind !is KtFakeSourceElementKind
 }
