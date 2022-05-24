@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.cli.common.ExitCode.*
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.cli.common.environment.setIdeaIoUseFallback
 import org.jetbrains.kotlin.cli.common.messages.*
+import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.ERROR
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.INFO
 import org.jetbrains.kotlin.cli.jvm.plugins.PluginCliParser
 import org.jetbrains.kotlin.compiler.plugin.ComponentRegistrar
@@ -161,8 +162,15 @@ abstract class CLICompiler<A : CommonCompilerArguments> : CLITool<A>() {
     protected abstract fun MutableList<String>.addPlatformOptions(arguments: A)
 
     protected fun loadPlugins(paths: KotlinPaths?, arguments: A, configuration: CompilerConfiguration): ExitCode {
-        var pluginClasspaths: Iterable<String> = arguments.pluginClasspaths?.asIterable() ?: emptyList()
-        val pluginOptions = arguments.pluginOptions?.toMutableList() ?: ArrayList()
+        val pluginClasspaths = arguments.pluginClasspaths.orEmpty().toMutableList()
+        val pluginOptions = arguments.pluginOptions.orEmpty().toMutableList()
+        val messageCollector = configuration.getNotNull(MESSAGE_COLLECTOR_KEY)
+
+        for (classpath in pluginClasspaths) {
+            if (!File(classpath).exists()) {
+                messageCollector.report(ERROR, "Plugin classpath entry points to a non-existent location: $classpath")
+            }
+        }
 
         if (!arguments.disableDefaultScriptingPlugin) {
             val explicitOrLoadedScriptingPlugin =
@@ -174,9 +182,8 @@ abstract class CLICompiler<A : CommonCompilerArguments> : CLITool<A>() {
                 val (jars, missingJars) =
                     PathUtil.KOTLIN_SCRIPTING_PLUGIN_CLASSPATH_JARS.map { File(libPath, it) }.partition { it.exists() }
                 if (missingJars.isEmpty()) {
-                    pluginClasspaths = jars.map { it.canonicalPath } + pluginClasspaths
+                    pluginClasspaths.addAll(0, jars.map { it.canonicalPath })
                 } else {
-                    val messageCollector = configuration.getNotNull(MESSAGE_COLLECTOR_KEY)
                     messageCollector.report(
                         CompilerMessageSeverity.LOGGING,
                         "Scripting plugin will not be loaded: not all required jars are present in the classpath (missing files: $missingJars)"

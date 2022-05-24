@@ -1,0 +1,2 @@
+error: plugin classpath entry points to a non-existent location: /non-existing-path
+COMPILATION_ERROR
