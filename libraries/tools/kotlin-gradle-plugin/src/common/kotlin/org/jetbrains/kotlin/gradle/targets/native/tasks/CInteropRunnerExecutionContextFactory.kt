@@ -5,29 +5,33 @@
 
 package org.jetbrains.kotlin.gradle.targets.native.tasks
 
-import org.gradle.api.Project
 import org.gradle.api.Task
 import org.jetbrains.kotlin.compilerRunner.KotlinNativeCInteropRunner
-import org.jetbrains.kotlin.gradle.internal.isInIdeaSync
+import org.jetbrains.kotlin.compilerRunner.KotlinNativeToolRunner
+import org.jetbrains.kotlin.compilerRunner.KotlinToolRunner
 
 internal fun KotlinNativeCInteropRunner.Companion.createExecutionContext(
-    task: Task
+    task: Task,
+    isInIdeaSync: Boolean,
+    runnerSettings: KotlinNativeToolRunner.Settings,
+    gradleExecutionContext: KotlinToolRunner.GradleExecutionContext
 ): KotlinNativeCInteropRunner.ExecutionContext {
-    return if (task.project.isInIdeaSync) IdeaSyncKotlinNativeCInteropRunnerExecutionContext(task)
-    else DefaultKotlinNativeCInteropRunnerExecutionContext(task.project)
+    return if (isInIdeaSync) IdeaSyncKotlinNativeCInteropRunnerExecutionContext(runnerSettings, gradleExecutionContext, task)
+    else DefaultKotlinNativeCInteropRunnerExecutionContext(runnerSettings, gradleExecutionContext)
 }
 
 private class DefaultKotlinNativeCInteropRunnerExecutionContext(
-    override val project: Project
+    override val runnerSettings: KotlinNativeToolRunner.Settings,
+    override val gradleExecutionContext: KotlinToolRunner.GradleExecutionContext
 ) : KotlinNativeCInteropRunner.ExecutionContext {
     override fun runWithContext(action: () -> Unit) = action()
 }
 
 private class IdeaSyncKotlinNativeCInteropRunnerExecutionContext(
+    override val runnerSettings: KotlinNativeToolRunner.Settings,
+    override val gradleExecutionContext: KotlinToolRunner.GradleExecutionContext,
     private val task: Task
 ) : KotlinNativeCInteropRunner.ExecutionContext {
-
-    override val project: Project = task.project
 
     override fun runWithContext(action: () -> Unit) {
         try {

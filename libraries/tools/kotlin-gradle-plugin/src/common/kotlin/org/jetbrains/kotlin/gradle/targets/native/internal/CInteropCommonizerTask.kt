@@ -5,12 +5,16 @@
 
 package org.jetbrains.kotlin.gradle.targets.native.internal
 
+import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.*
+import org.gradle.process.ExecOperations
 import org.jetbrains.kotlin.commonizer.CommonizerDependency
 import org.jetbrains.kotlin.commonizer.TargetedCommonizerDependency
 import org.jetbrains.kotlin.commonizer.allLeaves
 import org.jetbrains.kotlin.compilerRunner.GradleCliCommonizer
+import org.jetbrains.kotlin.compilerRunner.KotlinNativeCommonizerToolRunner
+import org.jetbrains.kotlin.compilerRunner.KotlinToolRunner
 import org.jetbrains.kotlin.compilerRunner.konanHome
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtensionOrNull
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
@@ -22,9 +26,14 @@ import org.jetbrains.kotlin.gradle.targets.native.internal.CInteropCommonizerTas
 import org.jetbrains.kotlin.gradle.tasks.CInteropProcess
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import java.io.File
+import javax.inject.Inject
 
 @CacheableTask
-internal open class CInteropCommonizerTask : AbstractCInteropCommonizerTask() {
+internal open class CInteropCommonizerTask
+@Inject constructor (
+    private val objectFactory: ObjectFactory,
+    private val execOperations: ExecOperations,
+) : AbstractCInteropCommonizerTask() {
 
     internal data class CInteropGist(
         @get:Input val identifier: CInteropIdentifier,
@@ -41,6 +50,9 @@ internal open class CInteropCommonizerTask : AbstractCInteropCommonizerTask() {
     }
 
     override val outputDirectory: File = project.buildDir.resolve("classes/kotlin/commonizer")
+
+    @get:Nested
+    internal val runnerSettings = KotlinNativeCommonizerToolRunner.Settings(project)
 
     @get:Nested
     internal var cinterops = setOf<CInteropGist>()
@@ -81,7 +93,12 @@ internal open class CInteropCommonizerTask : AbstractCInteropCommonizerTask() {
         outputDirectory(group).deleteRecursively()
         if (cinteropsForTarget.isEmpty()) return
 
-        GradleCliCommonizer(project).commonizeLibraries(
+        val commonizerRunner = KotlinNativeCommonizerToolRunner(
+            context = KotlinToolRunner.GradleExecutionContext.fromTaskContext(objectFactory, execOperations, logger),
+            settings = runnerSettings
+        )
+
+        GradleCliCommonizer(commonizerRunner).commonizeLibraries(
             konanHome = project.file(project.konanHome),
             outputTargets = group.targets,
             inputLibraries = cinteropsForTarget.map { it.libraryFile.get() }.filter { it.exists() }.toSet(),
