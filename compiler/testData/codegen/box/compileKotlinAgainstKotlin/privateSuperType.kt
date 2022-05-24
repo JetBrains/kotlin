@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: NATIVE
 // MODULE: lib
 // FILE: Z.kt
 package z
