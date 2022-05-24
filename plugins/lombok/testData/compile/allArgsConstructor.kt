@@ -19,8 +19,7 @@ public class ConstructorExample {
 
 //FILE: test.kt
 
-class Test {
-    fun run() {
-        val generated = ConstructorExample(12, "sdf", true)
-    }
+fun box(): String {
+    val generated = ConstructorExample(12, "sdf", true)
+    return "OK"
 }

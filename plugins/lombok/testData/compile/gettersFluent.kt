@@ -27,24 +27,23 @@ public class FluentTest {
 
 //FILE: test.kt
 
-class Test {
-    fun run() {
-        val obj = FluentTest()
-        assertEquals(obj.age(), 10)
+fun box(): String {
+    val obj = FluentTest()
+    assertEquals(obj.age(), 10)
 
-        obj.primitiveBoolean()
+    obj.primitiveBoolean()
 
-        obj.boxedBoolean()
+    obj.boxedBoolean()
 
-        obj.overrideAnnotation
-        obj.getOverrideAnnotation()
+    obj.overrideAnnotation
+    obj.getOverrideAnnotation()
 
-        OverridenGetterTest().usage()
-    }
+    OverridenGetterTest().usage()
+    return "OK"
+}
 
-    class OverridenGetterTest : FluentTest() {
-        fun usage() {
-            name()
-        }
+class OverridenGetterTest : FluentTest() {
+    fun usage() {
+        name()
     }
 }

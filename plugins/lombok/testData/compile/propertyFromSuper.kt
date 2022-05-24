@@ -13,8 +13,7 @@ public class ChildClass extends ParentClass {}
 
 
 //FILE: test.kt
-class Test {
-    fun run() {
-        ChildClass::class
-    }
+fun box(): String {
+    ChildClass::class
+    return "OK"
 }

@@ -20,25 +20,24 @@ public class SetterTest {
 
 //FILE: test.kt
 
-class Test {
-    fun run() {
-        val obj = SetterTest()
-        obj.setAge(42)
-        obj.age = 42
+fun box(): String {
+    val obj = SetterTest()
+    obj.setAge(42)
+    obj.age = 42
 
-        //synthetic property generated only when there is a getter
+    //synthetic property generated only when there is a getter
 //        obj.primitiveBoolean = false
-        obj.setPrimitiveBoolean(true)
+    obj.setPrimitiveBoolean(true)
 
-        //shouldn't be accesible from here
+    //shouldn't be accesible from here
 //        obj.setName("abc")
 
-        OverridenGetterTest().usage()
-    }
+    OverridenGetterTest().usage()
+    return "OK"
+}
 
-    class OverridenGetterTest : SetterTest() {
-        fun usage() {
-            setName("abc")
-        }
+class OverridenGetterTest : SetterTest() {
+    fun usage() {
+        setName("abc")
     }
 }

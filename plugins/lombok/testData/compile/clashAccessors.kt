@@ -79,32 +79,31 @@ class KotlinChildClass : ClashTest() {
 
 }
 
-class Test {
-    fun run() {
-        val obj = ClashTest()
+fun box(): String {
+    val obj = ClashTest()
 
-        obj.getAge()
-        //thats shouldn't work because lombok doesn't generate clashing method
+    obj.getAge()
+    //thats shouldn't work because lombok doesn't generate clashing method
 //        obj.setAge(41)
 //        obj.age = 12
-        val age = obj.age
+    val age = obj.age
 
 
-        obj.getName()
-        obj.setName("Al")
-        val name = obj.name
-        obj.name = "sdf"
+    obj.getName()
+    obj.setName("Al")
+    val name = obj.name
+    obj.name = "sdf"
 
-        obj.isHuman()
-        obj.setHuman(true)
-        obj.isHuman("sdf")
-        val isHuman = obj.isHuman
-        obj.isHuman = false
+    obj.isHuman()
+    obj.setHuman(true)
+    obj.isHuman("sdf")
+    val isHuman = obj.isHuman
+    obj.isHuman = false
 
-        val childObj = KotlinChildClass()
-        childObj.getToOverride()
-        childObj.setToOverride(34)
-        childObj.toOverride
-        childObj.toOverride = 412
-    }
+    val childObj = KotlinChildClass()
+    childObj.getToOverride()
+    childObj.setToOverride(34)
+    childObj.toOverride
+    childObj.toOverride = 412
+    return "OK"
 }

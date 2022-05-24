@@ -23,8 +23,7 @@ public class Foo {
 //FILE: test.kt
 
 @Anno
-class Test {
-    fun run() {
-        val obj = Foo()
-    }
+fun box(): String {
+    val obj = Foo()
+    return "OK"
 }

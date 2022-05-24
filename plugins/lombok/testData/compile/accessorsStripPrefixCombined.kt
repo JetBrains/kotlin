@@ -15,15 +15,13 @@ public class PrefixJava {
 
 //FILE: test.kt
 
-class Test {
-    fun run() {
-        //not generated because doesn't have prefix from class level @Accessors
-        //assertEquals(PrefixJava().propA, "A")
-        //not generated because doesn't have prefix from config
-        //assertEquals(PrefixJava().propC, "C")
-        assertEquals(PrefixJava().propD, "D")
-    }
-
+fun box(): String {
+    //not generated because doesn't have prefix from class level @Accessors
+    //assertEquals(PrefixJava().propA, "A")
+    //not generated because doesn't have prefix from config
+    //assertEquals(PrefixJava().propC, "C")
+    assertEquals(PrefixJava().propD, "D")
+    return "OK"
 }
 
 //FILE: lombok.config

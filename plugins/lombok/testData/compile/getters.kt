@@ -25,30 +25,30 @@ public class GetterTest {
 
 //FILE: test.kt
 
-class Test {
-    fun run() {
-        val obj = GetterTest()
-        val getter = obj.getAge()
-        val property = obj.age
+fun box(): String {
+    val obj = GetterTest()
+    val getter = obj.getAge()
+    val property = obj.age
 
-        //todo kotlin doesn't see isBoolean methods as property
-//        obj.primitiveBoolean
-        obj.isPrimitiveBoolean()
+    //todo kotlin doesn't seee isBoolean methods as property
+//    obj.primitiveBoolean
+    obj.isPrimitiveBoolean()
 
-        obj.boxedBoolean
-        obj.getBoxedBoolean()
+    obj.boxedBoolean
+    obj.getBoxedBoolean()
 
-        //shouldn't be accesible from here
-//        obj.getName()
+    //shouldn't be accesible from here
+//    obj.getName()
 
-//        obj.getInvisible()
+//    obj.getInvisible()
 
-        OverridenGetterTest().usage()
-    }
+    OverridenGetterTest().usage()
+    return "OK"
+}
 
-    class OverridenGetterTest : GetterTest() {
-        fun usage() {
-            getName()
-        }
+class OverridenGetterTest : GetterTest() {
+    fun usage() {
+        getName()
     }
 }
+

@@ -19,13 +19,12 @@ public class GetterTest {
 
 //FILE: test.kt
 
-class Test {
-    fun run() {
-        val obj = GetterTest()
-        val ref: GetterTest = obj.name("some").age(34)
-        obj.name()
-        obj.age()
-    }
+fun box(): String {
+    val obj = GetterTest()
+    val ref: GetterTest = obj.name("some").age(34)
+    obj.name()
+    obj.age()
+   return "OK"
 }
 
 //FILE: lombok.config

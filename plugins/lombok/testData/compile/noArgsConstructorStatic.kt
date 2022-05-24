@@ -22,9 +22,9 @@ public class ConstructorExample {
 
 //FILE: test.kt
 
-class Test {
-    fun run() {
-        val existing: ConstructorExample = ConstructorExample("existing")
-        val generated: ConstructorExample = ConstructorExample.make()
-    }
+fun box(): String {
+    val existing: ConstructorExample = ConstructorExample("existing")
+    val generated: ConstructorExample = ConstructorExample.make()
+    return "OK"
 }
+

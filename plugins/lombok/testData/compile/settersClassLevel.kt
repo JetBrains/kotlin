@@ -23,18 +23,17 @@ public class SetterTest {
 
 //FILE: test.kt
 
-class Test {
-    fun run() {
-        val obj = SetterTest()
-        obj.setAge(42)
-        assertEquals(obj.age, 42)
-        obj.age = 43
-        assertEquals(obj.age, 43)
+fun box(): String {
+    val obj = SetterTest()
+    obj.setAge(42)
+    assertEquals(obj.age, 42)
+    obj.age = 43
+    assertEquals(obj.age, 43)
 
-        obj.setPrimitiveBoolean(true)
+    obj.setPrimitiveBoolean(true)
 
-        
-//        no setters generated for final variable
-//        obj.setFinalName("error")
-    }
+//    no setters generated for final variable
+//    obj.setFinalName("error")
+    return "OK"
 }
+

@@ -43,30 +43,27 @@ public class AccessorsTest {
 
 //FILE: test.kt
 
-class Test {
-    fun run() {
-        val obj = AccessorsTest()
+fun box(): String {
+    val obj = AccessorsTest()
 
-//        obj.getAge()
-//        obj.setAge(123)
+//    obj.getAge()
+//    obj.setAge(123)
 
-        obj.getTarget()
-        obj.setTarget(34)
+    obj.getTarget()
+    obj.setTarget(34)
 
-        obj.getValue()
-        obj.setValue("sdf")
+    obj.getValue()
+    obj.setValue("sdf")
 
-        obj.isHuman()
-        obj.setHuman(true)
+    obj.isHuman()
+    obj.setHuman(true)
 
-        obj.isPrefixedBoolean()
-        obj.setPrefixedBoolean(false)
+    obj.isPrefixedBoolean()
+    obj.setPrefixedBoolean(false)
 
-        obj.getIsNonPrimitiveHuman()
-        obj.setIsNonPrimitiveHuman(false)
-
-    }
-
+    obj.getIsNonPrimitiveHuman()
+    obj.setIsNonPrimitiveHuman(false)
+    return "OK"
 }
 
 //FILE: lombok.config

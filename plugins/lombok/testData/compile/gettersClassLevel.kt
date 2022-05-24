@@ -23,26 +23,25 @@ public class ClassLevelGetterTest {
 
 //FILE: test.kt
 
-class Test {
-    fun run() {
-        val obj = ClassLevelGetterTest()
-        val getter = obj.getAge()
-        val property = obj.age
+fun box(): String {
+    val obj = ClassLevelGetterTest()
+    val getter = obj.getAge()
+    val property = obj.age
 
-        obj.isPrimitiveBoolean()
+    obj.isPrimitiveBoolean()
 
-        obj.boxedBoolean
-        obj.getBoxedBoolean()
+    obj.boxedBoolean
+    obj.getBoxedBoolean()
 
-        //shouldn't be accesible from here
+    //shouldn't be accesible from here
 //        obj.getName()
 
-        OverridenGetterTest().usage()
-    }
+    OverridenGetterTest().usage()
+    return "OK"
+}
 
-    class OverridenGetterTest : ClassLevelGetterTest() {
-        fun usage() {
-            getName()
-        }
+class OverridenGetterTest : ClassLevelGetterTest() {
+    fun usage() {
+        getName()
     }
 }

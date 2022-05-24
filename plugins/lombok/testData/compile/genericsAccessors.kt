@@ -26,13 +26,13 @@ public class GenericsTest<A, B> {
 
 //FILE: test.kt
 
-class Test {
-    fun run() {
-        val obj = GenericsTest<String, Boolean>()
-        val age: Int = obj.getAge();
-        obj.setFieldA("fooo");
-        val a: String = obj.getFieldA();
-        val b: Boolean? = obj.getFieldB();
-        obj.setFieldC(java.util.HashMap<String, Boolean>());
-    }
+fun box(): String {
+    val obj = GenericsTest<String, Boolean>()
+    val age: Int = obj.getAge();
+    obj.setFieldA("fooo");
+    val a: String = obj.getFieldA();
+    val b: Boolean? = obj.getFieldB();
+    obj.setFieldC(java.util.HashMap<String, Boolean>());
+    return "OK"
 }
+

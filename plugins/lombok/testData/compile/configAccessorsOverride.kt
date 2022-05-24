@@ -22,13 +22,12 @@ public class GetterTest {
 
 //FILE: test.kt
 
-class Test {
-    fun run() {
-        val obj = GetterTest()
-        val ref: GetterTest = obj.fluent(true)
-        obj.name()
-        obj.age()
-    }
+fun box(): String {
+    val obj = GetterTest()
+    val ref: GetterTest = obj.fluent(true)
+    obj.name()
+    obj.age()
+    return "OK"
 }
 
 //FILE: lombok.config

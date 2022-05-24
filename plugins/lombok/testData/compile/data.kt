@@ -27,18 +27,17 @@ import lombok.*;
 
 //FILE: test.kt
 
-class Test {
-    fun run() {
-        val obj = DataExample("name")
-        obj.getName()
-        assertEquals(obj.name, "name")
-        obj.getTags()
-        val tags = obj.tags
-        obj.setScore(1.5)
-        assertEquals(obj.score, 1.5)
-        obj.score = 2.5
-        assertEquals(obj.score, 2.5)
+fun box(): String {
+    val obj = DataExample("name")
+    obj.getName()
+    assertEquals(obj.name, "name")
+    obj.getTags()
+    val tags = obj.tags
+    obj.setScore(1.5)
+    assertEquals(obj.score, 1.5)
+    obj.score = 2.5
+    assertEquals(obj.score, 2.5)
 
-        val ex: DataExample.Exercise<Int> = DataExample.Exercise.of("name", 12)
-    }
+    val ex: DataExample.Exercise<Int> = DataExample.Exercise.of("name", 12)
+    return "OK"
 }

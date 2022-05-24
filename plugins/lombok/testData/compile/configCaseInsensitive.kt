@@ -15,13 +15,12 @@ public class GetterTest {
 
 //FILE: test.kt
 
-class Test {
-    fun run() {
-        val obj = GetterTest()
+fun box(): String {
+    val obj = GetterTest()
 
-        obj.primitiveBoolean
-        obj.getPrimitiveBoolean()
-    }
+    obj.primitiveBoolean
+    obj.getPrimitiveBoolean()
+    return "OK"
 }
 
 //FILE: lombok.config

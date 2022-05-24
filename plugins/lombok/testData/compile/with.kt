@@ -18,11 +18,9 @@ public class WithExample {
 
 //FILE: test.kt
 
-class Test {
-
-    fun run() {
-        val obj: WithExample = WithExample().withAge(16).withName("fooo")
-        assertEquals(obj.getName(), "fooo")
-        assertEquals(obj.age, 16)
-    }
+fun box(): String {
+    val obj: WithExample = WithExample().withAge(16).withName("fooo")
+    assertEquals(obj.getName(), "fooo")
+    assertEquals(obj.age, 16)
+    return "OK"
 }

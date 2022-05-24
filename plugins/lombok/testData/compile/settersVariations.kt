@@ -25,15 +25,13 @@ public class SetterTest {
 
 //FILE: test.kt
 
-class Test {
-    fun run() {
-        val obj = SetterTest()
-        obj.fluent(12)
-        assertEquals(obj.fluent(), 12)
-        obj.setChained("zz").getChained()
-        assertEquals(obj.getChained(), "zz")
-        obj.whyNotBoth("zzz").whyNotBoth()
-        assertEquals(obj.whyNotBoth(), "zzz")
-    }
-
+fun box(): String {
+    val obj = SetterTest()
+    obj.fluent(12)
+    assertEquals(obj.fluent(), 12)
+    obj.setChained("zz").getChained()
+    assertEquals(obj.getChained(), "zz")
+    obj.whyNotBoth("zzz").whyNotBoth()
+    assertEquals(obj.whyNotBoth(), "zzz")
+    return "OK"
 }

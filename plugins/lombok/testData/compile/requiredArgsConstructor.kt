@@ -33,9 +33,9 @@ public class ConstructorExample {
 
 //FILE: test.kt
 
-class Test {
-    fun run() {
-        val generated = ConstructorExample("foo", true)
-        assertEquals(generated.foo, "foo")
-    }
+fun box(): String {
+    val generated = ConstructorExample("foo", true)
+    assertEquals(generated.foo, "foo")
+    return "OK"
 }
+

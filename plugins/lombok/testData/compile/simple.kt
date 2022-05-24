@@ -13,10 +13,9 @@ public class GetterSetterExample {
 
 //FILE: test.kt
 
-class Test {
-    fun run() {
-        val obj = GetterSetterExample()
-        val getter = obj.getAge()
-        val property = obj.age
-    }
+fun box(): String {
+    val obj = GetterSetterExample()
+    val getter = obj.getAge()
+    val property = obj.age
+    return "OK"
 }
