@@ -1,0 +1,5 @@
+package
+
+public fun main(): kotlin.Unit
+public inline fun test(/*0*/ block: () -> kotlin.Unit): kotlin.Unit
+public inline fun (() -> kotlin.Unit).call(): kotlin.Unit

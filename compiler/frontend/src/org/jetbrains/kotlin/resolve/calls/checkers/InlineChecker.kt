@@ -218,7 +218,13 @@ internal class InlineChecker(private val descriptor: FunctionDescriptor) : CallC
     ) {
         val inlinableCall = isInvokeOrInlineExtension(callDescriptor)
         if (!inlinableCall) {
-            context.trace.report(USAGE_IS_NOT_INLINABLE.on(receiverExpression, receiverExpression, descriptor))
+            if (InlineUtil.isInline(callDescriptor) &&
+                !context.languageVersionSettings.supportsFeature(LanguageFeature.ForbidExtensionCallsOnInlineFunctionalParameters)
+            ) {
+                context.trace.report(USAGE_IS_NOT_INLINABLE_WARNING.on(receiverExpression, receiverExpression, descriptor))
+            } else {
+                context.trace.report(USAGE_IS_NOT_INLINABLE.on(receiverExpression, receiverExpression, descriptor))
+            }
         } else {
             checkNonLocalReturn(context, lambdaDescriptor, receiverExpression)
         }

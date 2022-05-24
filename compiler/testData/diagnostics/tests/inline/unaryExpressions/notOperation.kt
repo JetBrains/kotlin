@@ -1,4 +1,5 @@
 // FIR_IDENTICAL
+// !LANGUAGE: +ForbidExtensionCallsOnInlineFunctionalParameters
 // !DIAGNOSTICS: -UNUSED_EXPRESSION -UNUSED_PARAMETER -UNUSED_VARIABLE -NOTHING_TO_INLINE -ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE -UNUSED_VALUE -RECURSION_IN_INLINE
 inline operator fun <T, V> Function1<T, V>.not() : Boolean {
     return !this

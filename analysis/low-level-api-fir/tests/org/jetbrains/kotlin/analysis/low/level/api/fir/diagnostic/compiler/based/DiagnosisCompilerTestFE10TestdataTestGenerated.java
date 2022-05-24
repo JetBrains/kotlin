@@ -16927,6 +16927,18 @@ public class DiagnosisCompilerTestFE10TestdataTestGenerated extends AbstractDiag
             }
 
             @Test
+            @TestMetadata("forbidExtensionCallsOnInlineFunctionalParameters_after.kt")
+            public void testForbidExtensionCallsOnInlineFunctionalParameters_after() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/inline/forbidExtensionCallsOnInlineFunctionalParameters_after.kt");
+            }
+
+            @Test
+            @TestMetadata("forbidExtensionCallsOnInlineFunctionalParameters_before.kt")
+            public void testForbidExtensionCallsOnInlineFunctionalParameters_before() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/inline/forbidExtensionCallsOnInlineFunctionalParameters_before.kt");
+            }
+
+            @Test
             @TestMetadata("fromInlineToNoInline.kt")
             public void testFromInlineToNoInline() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/inline/fromInlineToNoInline.kt");

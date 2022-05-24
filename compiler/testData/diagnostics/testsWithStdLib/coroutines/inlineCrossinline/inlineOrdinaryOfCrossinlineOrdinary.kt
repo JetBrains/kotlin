@@ -1,3 +1,4 @@
+// !LANGUAGE: +ForbidExtensionCallsOnInlineFunctionalParameters
 // !DIAGNOSTICS: -UNUSED_VARIABLE
 // WITH_COROUTINES
 // SKIP_TXT
