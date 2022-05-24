@@ -599,16 +599,36 @@ fun IrExpression.shallowCopy(): IrExpression =
 
 fun IrExpression.shallowCopyOrNull(): IrExpression? =
     when (this) {
+        is IrCall ->
+            IrCallImpl(
+                startOffset,
+                endOffset,
+                type,
+                symbol,
+                typeArgumentsCount,
+                valueArgumentsCount,
+                origin,
+                superQualifierSymbol
+            ).also { copy ->
+                for (i in 0 until typeArgumentsCount) {
+                    copy.putTypeArgument(i, getTypeArgument(i))
+                }
+                for (i in 0 until valueArgumentsCount) {
+                    copy.putValueArgument(i, getValueArgument(i))
+                }
+                copy.dispatchReceiver = dispatchReceiver
+                copy.extensionReceiver = extensionReceiver
+            }
         is IrConst<*> -> shallowCopy()
-        is IrGetObjectValue ->
-            IrGetObjectValueImpl(
+        is IrGetEnumValue ->
+            IrGetEnumValueImpl(
                 startOffset,
                 endOffset,
                 type,
                 symbol
             )
-        is IrGetEnumValue ->
-            IrGetEnumValueImpl(
+        is IrGetObjectValue ->
+            IrGetObjectValueImpl(
                 startOffset,
                 endOffset,
                 type,

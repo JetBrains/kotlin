@@ -11094,6 +11094,28 @@ public class IrJsCodegenBoxTestGenerated extends AbstractIrJsCodegenBoxTest {
         }
 
         @Nested
+        @TestMetadata("compiler/testData/codegen/box/delegatedProperty/delegateToFinalProperty")
+        @TestDataPath("$PROJECT_ROOT")
+        public class DelegateToFinalProperty {
+            @Test
+            public void testAllFilesPresentInDelegateToFinalProperty() throws Exception {
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/delegatedProperty/delegateToFinalProperty"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
+            }
+
+            @Test
+            @TestMetadata("delegateToFinalObjectProperty.kt")
+            public void testDelegateToFinalObjectProperty() throws Exception {
+                runTest("compiler/testData/codegen/box/delegatedProperty/delegateToFinalProperty/delegateToFinalObjectProperty.kt");
+            }
+
+            @Test
+            @TestMetadata("delegateToFinalProperty.kt")
+            public void testDelegateToFinalProperty() throws Exception {
+                runTest("compiler/testData/codegen/box/delegatedProperty/delegateToFinalProperty/delegateToFinalProperty.kt");
+            }
+        }
+
+        @Nested
         @TestMetadata("compiler/testData/codegen/box/delegatedProperty/delegateToSingleton")
         @TestDataPath("$PROJECT_ROOT")
         public class DelegateToSingleton {

@@ -10,12 +10,14 @@ import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.ir.createJvmIrBuilder
 import org.jetbrains.kotlin.backend.jvm.lower.JvmPropertiesLowering.Companion.createSyntheticMethodForPropertyDelegate
+import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.builders.irExprBody
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.symbols.impl.IrAnonymousInitializerSymbolImpl
 import org.jetbrains.kotlin.ir.util.parentAsClass
 import org.jetbrains.kotlin.ir.util.shallowCopy
+import org.jetbrains.kotlin.ir.util.statements
 import org.jetbrains.kotlin.ir.util.transformDeclarationsFlat
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
@@ -47,7 +49,7 @@ private class SingletonOrConstantDelegationTransformer(val context: JvmBackendCo
     private fun IrProperty.transform(): List<IrDeclaration>? {
         if (!isDelegated || isFakeOverride || backingField == null) return null
         val delegate = backingField?.initializer?.expression
-        if (delegate !is IrGetSingletonValue && delegate !is IrConst<*>) {
+        if (delegate?.isConst() != true) {
             return null
         }
 
@@ -69,13 +71,16 @@ private class SingletonOrConstantDelegationTransformer(val context: JvmBackendCo
 
         backingField = null
 
-        val initializerBlock = (delegate as? IrGetSingletonValue)?.run {
+        val initializerBlock = if (delegate !is IrConst<*>)
             context.irFactory.createAnonymousInitializer(
-                startOffset, endOffset, IrDeclarationOrigin.DEFINED, IrAnonymousInitializerSymbolImpl(parentAsClass.symbol)
+                delegate.startOffset,
+                delegate.endOffset,
+                IrDeclarationOrigin.DEFINED,
+                IrAnonymousInitializerSymbolImpl(parentAsClass.symbol)
             ).apply {
-                body = context.irFactory.createBlockBody(startOffset, endOffset, listOf(delegate.shallowCopy()))
+                body = context.irFactory.createBlockBody(delegate.startOffset, delegate.endOffset, listOf(delegate.shallowCopy()))
             }
-        }
+        else null
 
         val delegateMethod = context.createSyntheticMethodForPropertyDelegate(this).apply {
             body = context.createJvmIrBuilder(symbol).run { irExprBody(delegate.shallowCopy()) }
@@ -83,4 +88,18 @@ private class SingletonOrConstantDelegationTransformer(val context: JvmBackendCo
 
         return listOfNotNull(this, initializerBlock, delegateMethod)
     }
+
+    private fun IrExpression.isConst(): Boolean =
+        when (this) {
+            is IrConst<*>, is IrGetSingletonValue -> true
+            is IrCall ->
+                dispatchReceiver?.isConst() != false
+                        && extensionReceiver?.isConst() != false
+                        && symbol.owner.run {
+                    modality == Modality.FINAL
+                            && origin == IrDeclarationOrigin.DEFAULT_PROPERTY_ACCESSOR
+                            && ((body?.statements?.singleOrNull() as? IrReturn)?.value as? IrGetField)?.symbol?.owner?.isFinal == true
+                }
+            else -> false
+        }
 }
