@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.ResolveTreeB
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.ensurePhase
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.resolve.ResolutionMode
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.transformers.plugin.FirCompilerRequiredAnnotationsResolveTransformer
 
@@ -25,7 +24,7 @@ internal class LLFirDesignatedAnnotationsResolveTransformed(
         if (!designationIterator.hasNext()) {
             val declaration = designation.declaration
             if (declaration is FirRegularClass || declaration is FirTypeAlias) {
-                declaration.transform<FirDeclaration, ResolutionMode>(this, ResolutionMode.ContextIndependent)
+                declaration.transform<FirDeclaration, Mode>(this, Mode.RegularAnnotations)
             }
             return
         }

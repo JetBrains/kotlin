@@ -1,4 +1,4 @@
-import org.jetbrains.kotlin.fir.plugin.AllOpen
+// FILE: first.kt
 
 @Open
 class A {
@@ -13,6 +13,9 @@ class B : A() {
 
     }
 }
+
+// FILE: second.kt
+import org.jetbrains.kotlin.fir.plugin.AllOpen
 
 @AllOpen
 annotation class Open

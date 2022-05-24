@@ -24,9 +24,11 @@ import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.fqName
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProviderInternals
 import org.jetbrains.kotlin.fir.resolve.transformers.*
+import org.jetbrains.kotlin.fir.resolve.transformers.plugin.FirCompilerRequiredAnnotationsResolveTransformer.Mode
 import org.jetbrains.kotlin.fir.types.ConeClassLikeType
 import org.jetbrains.kotlin.fir.types.FirUserTypeRef
 import org.jetbrains.kotlin.fir.types.coneTypeSafe
+import org.jetbrains.kotlin.fir.visitors.transformSingle
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -37,8 +39,20 @@ import org.jetbrains.kotlin.name.StandardClassIds.Annotations.WasExperimental
 class FirCompilerRequiredAnnotationsResolveProcessor(
     session: FirSession,
     scopeSession: ScopeSession
-) : FirTransformerBasedResolveProcessor(session, scopeSession) {
-    override val transformer = FirCompilerRequiredAnnotationsResolveTransformer(session, scopeSession)
+) : FirGlobalResolveProcessor(session, scopeSession) {
+
+    override fun process(files: Collection<FirFile>) {
+        val transformer = FirCompilerRequiredAnnotationsResolveTransformer(session, scopeSession)
+        val registeredPluginAnnotations = session.registeredPluginAnnotations
+        if (!registeredPluginAnnotations.hasRegisteredAnnotations) {
+            files.forEach { it.transformSingle(transformer, Mode.RegularAnnotations) }
+            return
+        }
+        if (registeredPluginAnnotations.metaAnnotations.isNotEmpty()) {
+            files.forEach { it.transformSingle(transformer, Mode.MetaAnnotations) }
+        }
+        files.forEach { it.transformSingle(transformer, Mode.RegularAnnotations) }
+    }
 
     @OptIn(FirSymbolProviderInternals::class)
     override fun beforePhase() {
@@ -54,30 +68,44 @@ class FirCompilerRequiredAnnotationsResolveProcessor(
 open class FirCompilerRequiredAnnotationsResolveTransformer(
     final override val session: FirSession,
     scopeSession: ScopeSession
-) : FirAbstractPhaseTransformer<Any?>(COMPILER_REQUIRED_ANNOTATIONS) {
+) : FirAbstractPhaseTransformer<Mode>(COMPILER_REQUIRED_ANNOTATIONS) {
+    enum class Mode {
+        MetaAnnotations,
+        RegularAnnotations
+    }
+
     private val annotationTransformer = FirAnnotationResolveTransformer(session, scopeSession)
     private val importTransformer = FirPartialImportResolveTransformer(session)
 
     val extensionService = session.extensionService
-    override fun <E : FirElement> transformElement(element: E, data: Any?): E {
+    override fun <E : FirElement> transformElement(element: E, data: Mode): E {
         throw IllegalStateException("Should not be here")
     }
 
-    override fun transformFile(file: FirFile, data: Any?): FirFile {
+    override fun transformFile(file: FirFile, data: Mode): FirFile {
         checkSessionConsistency(file)
         val registeredPluginAnnotations = session.registeredPluginAnnotations
-        val newAnnotations = file.resolveAnnotations(registeredPluginAnnotations.annotations, registeredPluginAnnotations.metaAnnotations)
+        val regularAnnotations: Set<AnnotationFqn>
+        val metaAnnotations: Set<AnnotationFqn>
+        when (data) {
+            Mode.MetaAnnotations -> {
+                regularAnnotations = emptySet()
+                metaAnnotations = registeredPluginAnnotations.metaAnnotations
+            }
+            Mode.RegularAnnotations -> {
+                regularAnnotations = registeredPluginAnnotations.annotations
+                metaAnnotations = emptySet()
+            }
+        }
+
+        val newAnnotations = file.resolveAnnotations(regularAnnotations, metaAnnotations)
         if (!newAnnotations.isEmpty) {
             for (metaAnnotation in newAnnotations.keySet()) {
                 registeredPluginAnnotations.registerUserDefinedAnnotation(metaAnnotation, newAnnotations[metaAnnotation])
             }
-            val newAnnotationsFqns = newAnnotations.values().mapTo(mutableSetOf()) { it.symbol.classId.asSingleFqName() }
-            file.resolveAnnotations(newAnnotationsFqns, emptySet())
         }
         return file
     }
-
-    fun <T> withFile(file: FirFile, f: () -> T): T = annotationTransformer.withFile(file, f)
 
     fun <T> withFileAndScopes(file: FirFile, f: () -> T): T {
         annotationTransformer.withFile(file) {
@@ -85,11 +113,11 @@ open class FirCompilerRequiredAnnotationsResolveTransformer(
         }
     }
 
-    override fun transformRegularClass(regularClass: FirRegularClass, data: Any?): FirStatement {
+    override fun transformRegularClass(regularClass: FirRegularClass, data: Mode): FirStatement {
         return annotationTransformer.transformRegularClass(regularClass, LinkedHashMultimap.create())
     }
 
-    override fun transformTypeAlias(typeAlias: FirTypeAlias, data: Any?): FirStatement {
+    override fun transformTypeAlias(typeAlias: FirTypeAlias, data: Mode): FirStatement {
         return annotationTransformer.transformTypeAlias(typeAlias, LinkedHashMultimap.create())
     }
 
@@ -97,10 +125,11 @@ open class FirCompilerRequiredAnnotationsResolveTransformer(
         annotations: Set<AnnotationFqn>,
         metaAnnotations: Set<AnnotationFqn>
     ): Multimap<AnnotationFqn, FirRegularClass> {
-        importTransformer.acceptableFqNames = annotations
+        val acceptableNames = annotations + metaAnnotations
+        importTransformer.acceptableFqNames = acceptableNames
         this.transformImports(importTransformer, null)
 
-        annotationTransformer.acceptableFqNames = annotations
+        annotationTransformer.acceptableFqNames = acceptableNames
         annotationTransformer.metaAnnotations = metaAnnotations
         val newAnnotations = LinkedHashMultimap.create<AnnotationFqn, FirRegularClass>()
         this.transform<FirFile, Multimap<AnnotationFqn, FirRegularClass>>(annotationTransformer, newAnnotations)

@@ -1,4 +1,4 @@
-FILE: metaAnnotation.kt
+FILE: first.kt
     @R|Open|() public open class A : R|kotlin/Any| {
         public constructor(): R|A| {
             super<R|kotlin/Any|>()
@@ -17,6 +17,7 @@ FILE: metaAnnotation.kt
         }
 
     }
+FILE: second.kt
     @R|org/jetbrains/kotlin/fir/plugin/AllOpen|() public open annotation class Open : R|kotlin/Annotation| {
         public constructor(): R|Open| {
             super<R|kotlin/Any|>()
