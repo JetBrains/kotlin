@@ -39,16 +39,15 @@ class FunctionCodegen(private val irFunction: IrFunction, private val classCodeg
     private val context = classCodegen.context
 
     fun generate(
-        inlinedInto: ExpressionCodegen? = null,
         reifiedTypeParameters: ReifiedTypeParametersUsages = classCodegen.reifiedTypeParametersUsages
     ): SMAPAndMethodNode =
         try {
-            doGenerate(inlinedInto, reifiedTypeParameters)
+            doGenerate(reifiedTypeParameters)
         } catch (e: Throwable) {
             throw RuntimeException("Exception while generating code for:\n${irFunction.dump()}", e)
         }
 
-    private fun doGenerate(inlinedInto: ExpressionCodegen?, reifiedTypeParameters: ReifiedTypeParametersUsages): SMAPAndMethodNode {
+    private fun doGenerate(reifiedTypeParameters: ReifiedTypeParametersUsages): SMAPAndMethodNode {
         val signature = context.methodSignatureMapper.mapSignatureWithGeneric(irFunction)
         val flags = irFunction.calculateMethodFlags()
         val isSynthetic = flags.and(Opcodes.ACC_SYNTHETIC) != 0
@@ -115,9 +114,7 @@ class FunctionCodegen(private val irFunction: IrFunction, private val classCodeg
             context.state.globalInlineContext.enterDeclaration(irFunction.suspendFunctionOriginal().toIrBasedDescriptor())
             try {
                 val adapter = InstructionAdapter(methodVisitor)
-                ExpressionCodegen(
-                    irFunction, signature, frameMap, adapter, classCodegen, inlinedInto, sourceMapper, reifiedTypeParameters
-                ).generate()
+                ExpressionCodegen(irFunction, signature, frameMap, adapter, classCodegen, sourceMapper, reifiedTypeParameters).generate()
             } finally {
                 context.state.globalInlineContext.exitDeclaration()
             }
